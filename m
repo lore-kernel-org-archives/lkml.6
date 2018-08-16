@@ -2,151 +2,315 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEFE1C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:12:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CFE0C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:18:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9937D2147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:12:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 629192147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:18:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VQxvzcB2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9937D2147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NxSwpJ0v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 629192147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392257AbeHPTLa (ORCPT
+        id S2392263AbeHPTRy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 15:11:30 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36875 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729150AbeHPTL3 (ORCPT
+        Thu, 16 Aug 2018 15:17:54 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:33985 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727878AbeHPTRy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 15:11:29 -0400
-Received: by mail-ed1-f68.google.com with SMTP id b10-v6so2982451eds.4
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 09:12:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=hhwqjwEScaeL5xaedZPs90ti3VEVxm0RNH2CzA1mlws=;
-        b=VQxvzcB24jsh2E1McbEystVy4XRgv3Z5xew0+nItBA3HCtU1wZCtFjis/MXsdCUDBA
-         qdfjyX3LMD77HM1NyPacNIAFALXb+r4wFV19B2AOtSqvoHZRwIdeVJU6B8EytYLw4a+F
-         XTo2bTnz6/6zhINzIwolVc5JvXvEDu9PK558ApcKHYaDNrgUzXIHizJkg3nMXhg1S8zy
-         FONUkrWu8JbnehXRpeXsZ5hv35aL46ezkGl0PQV75lBQWJyxPsINwV4e6L/FClEE83KF
-         KAKybW9l9eeyFlHyeMimsqMrrxJgalzxllbb8hfVQYVXffIBqNyHN53CjWcgT+G8jCWC
-         wetg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=hhwqjwEScaeL5xaedZPs90ti3VEVxm0RNH2CzA1mlws=;
-        b=ZWYb6hcI0DJb4eLeIBKIWrxidDq+kI1fgQjkZl6/t2vASoMz5YG0567fecTnsn9UcU
-         C8UTriedi3XwkxkiSnmeU6JuHXuGvNPyD/jpjCbTlzjokmQKVYs3tMhIZrIqltZ/Rwxz
-         tQvyaVMkaohjZ/O8p3El0v9GEwpF4YR+pDuBmquMMODDcUf/Y9SBjeix3t2UXmm+uv61
-         JsNMmhOe/p7EvpREId92CDf+/opD76RNioWdzyZUk0YHGIEJu5Fn6PHAkMUdxVEobXKL
-         XJ3XyknVMnK3rROtgMGGIyog+rsC2sxDqhTNprZF1+PHObuYrwOJb7WRgsqhuDSrbwmW
-         5PJQ==
-X-Gm-Message-State: AOUpUlG5Gaf1P+UIDPoYi/pU6jjtVGWWsAwUqWdtYWTL6fnAxY1uqHva
-        3+TY5TH3Y4NeZcjsMz3rseRxzbTAWGgPRn2GsgKzUA==
-X-Google-Smtp-Source: AA+uWPykSSmt9vaa9LpyesytXhYQjhXEoDiG/MCyKCcwmbmAASHYfl/fWLbPyp2msxStzIPPw7RHrqOCAJ3v6Vjand4=
-X-Received: by 2002:a50:8921:: with SMTP id e30-v6mr37931069ede.213.1534435923856;
- Thu, 16 Aug 2018 09:12:03 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a50:f68b:0:0:0:0:0 with HTTP; Thu, 16 Aug 2018 09:12:03
- -0700 (PDT)
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Thu, 16 Aug 2018 21:42:03 +0530
-Message-ID: <CABb+yY10OBQaidRYXrGfi=n-PaaJU+sb6J3dJjZ0rjP+6AXB5w@mail.gmail.com>
-Subject: [GIT PULL] Mailbox changes for v4.19
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 16 Aug 2018 15:17:54 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180816161826euoutp02cb07e3bb4f2f178a7d002dde0f4726b7~LabDgFt8J0430504305euoutp02Q;
+        Thu, 16 Aug 2018 16:18:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180816161826euoutp02cb07e3bb4f2f178a7d002dde0f4726b7~LabDgFt8J0430504305euoutp02Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1534436306;
+        bh=W9QJbDIDoz4luUJQ6cERZI/1lcR7oHTxfvkVrFV6ouQ=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=NxSwpJ0v4RirtJG91QunOE8hKjJoZdv0LrMFWlSqumtQuETuSNYy2onFvGDclhVdl
+         dWSDadlRowLw0b9IJXfkv2vjV2RFMsoPASIvWh++4fTnPz0Q5QN7V0SS83MGVsBnx/
+         DfFi0Ps4tgZDBPnKyUisIU4WEJh9Zm7silY8nlyw=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180816161825eucas1p1dcd139201001b7e985cbfd565c4e1440~LabDAUbkm3258532585eucas1p1Q;
+        Thu, 16 Aug 2018 16:18:25 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id DF.E7.04441.1D3A57B5; Thu, 16
+        Aug 2018 17:18:25 +0100 (BST)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180816161825eucas1p11be9cea5d622b905154590bae90a47a4~LabCVaRU71523315233eucas1p1c;
+        Thu, 16 Aug 2018 16:18:25 +0000 (GMT)
+X-AuditID: cbfec7f2-5e3ff70000001159-22-5b75a3d114ca
+Received: from eusync4.samsung.com ( [203.254.199.214]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 10.75.04128.0D3A57B5; Thu, 16
+        Aug 2018 17:18:24 +0100 (BST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Received: from mcdsrvbld02.digital.local ([106.116.37.23]) by
+        eusync4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
+        (built May  5 2014)) with ESMTPA id <0PDK00I11AMJUK70@eusync4.samsung.com>;
+        Thu, 16 Aug 2018 17:18:24 +0100 (BST)
+From:   Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
+        Michael Forney <forney@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        =?UTF-8?q?Bj=C3=B8rn=20Forsman?= <bjorn.forsman@gmail.com>
+Subject: [PATCH] Revert
+ "kbuild: create deterministic initramfs directory listings"
+Date:   Thu, 16 Aug 2018 18:18:17 +0200
+Message-id: <20180816161817.12267-1-andrzej.p@samsung.com>
+X-Mailer: git-send-email 2.11.0
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOIsWRmVeSWpSXmKPExsWy7djPc7oXF5dGG3Q0KFvMetnOYtExczG7
+        xcezV9gtLu+aw2ax995nRgdWj52z7rJ7LNhU6tG3ZRWjx4np31k8Pm+SC2CN4rJJSc3JLEst
+        0rdL4MpYcO87Y0G3ZsWOj1cZGxgnKHYxcnJICJhILJj9jq2LkYtDSGAFo8THvReZQBJCAp8Z
+        JS7e8IYp2rnlDSNE0TJGiSdzljKCJHgFBCV+TL7H0sXIwcEsIC9x5FI2SJhZQFNi6+717BD1
+        TUwSPWfeg9WzCRhL7D3YAWaLCChIbO59xgpSxCxwjFHi6vsLzCAJYYFQiaZXbewgNouAqsSu
+        Q6fYIJZZSVw6eYQd4iJ5iV1tF8GaJQSmsElca74KlXCRaD/VDGULS7w6vgXKlpG4PLmbBcKu
+        l9j0ZQ8bhD2FUeLeXKg3rSUOHwcZCvICn8SkbdOZQT6TEOCV6GgTgijxkJj1+z8LJIRiJR7M
+        Wsg0gVF6FlJYzEKExSyksFjAyLyKUTy1tDg3PbXYMC+1XK84Mbe4NC9dLzk/dxMjMLpP/zv+
+        aQfj10tJhxgFOBiVeHg79EuihVgTy4orcw8xSnAwK4nwupeURgvxpiRWVqUW5ccXleakFh9i
+        lOZgURLn5dNKixYSSE8sSc1OTS1ILYLJMnFwSjUwzsjZfcy86kvhs88KLdJss9iBSeC0oryn
+        4q7kneyPjqduDfqy0f3vz/O/nKMD16Zxai24YbFvnmBVhfLKC65z9JazzpnO8slLPDpd01k+
+        fYfoNB6/HzmaWlGHNO/zrCp9M7uT4ZUry5x3iokrKtVjEnrDG1TLZ2St2WBwx/T7wyn5SwrX
+        mN1SYinOSDTUYi4qTgQAAqsWh+oCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsVy+t/xa7oXFpdGG3RsN7eY9bKdxaJj5mJ2
+        i49nr7BbXN41h81i773PjA6sHjtn3WX3WLCp1KNvyypGjxPTv7N4fN4kF8AaxWWTkpqTWZZa
+        pG+XwJWx4N53xoJuzYodH68yNjBOUOxi5OSQEDCR2LnlDWMXIxeHkMASRonzv14xgiR4BQQl
+        fky+x9LFyMHBLCAvceRSNkiYWUBdYtK8RcwQ9S1MEsc/r2AGSbAJGEvsPdgB1isioCCxufcZ
+        K0gRs8AJRomTL96wgSSEBUIlml61sYPYLAKqErsOnWKDWGYlcenkEXaIi+QldrVdZJ3AyDsL
+        yR2zEO6YheSOBYzMqxhFUkuLc9Nzi430ihNzi0vz0vWS83M3MQKDcNuxn1t2MHa9Cz7EKMDB
+        qMTD+8CwJFqINbGsuDL3EKMEB7OSCK97SWm0EG9KYmVValF+fFFpTmrxIUZpDhYlcd7zBpVR
+        QgLpiSWp2ampBalFMFkmDk6pBsbO/QoB18yWL94+y8Jln+/+GY8NzgbbZxZ1hdYwRQZkzZtl
+        f8G6km15GrPxl6yFc7+wZmcd+lClfdU7+WnMfxWNgkk7tTOLCyfX1MyyXSj891Rqw4dk3fcp
+        bzZEOp0wD830EU/9XbPT4PQBpV8JLs7/f96/qVtooc1t5CN/KfNibs3+4owXrkosxRmJhlrM
+        RcWJAOftjwk+AgAA
+X-CMS-MailID: 20180816161825eucas1p11be9cea5d622b905154590bae90a47a4
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180816161825eucas1p11be9cea5d622b905154590bae90a47a4
+References: <CGME20180816161825eucas1p11be9cea5d622b905154590bae90a47a4@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+This reverts commit 9e6e0d5f2a2713402cf9dce69b9f9b516e4185d2.
 
-The following changes since commit 0585df468e8f4481b78256a2bf09449290bfcbf3:
+The reverted commit introduces broken builds. Even though the cpio archive
+does contain all the specified files, it seems that the kernel, while
+populating rootfs, scans the cpio buffer linearly and fails to create
+files whose parent directories are nonexistent at the moment of this failed
+creation. As a result, such files are not accessible when kernel boots into
+initramfs.
 
-  Merge tag 'media/v4.18-3' of
-git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media
-(2018-08-02 16:55:42 -0700)
+Here is how to reproduce, from inside kernel source directory, with the
+patch in question not reverted:
 
-are available in the Git repository at:
+$ mkdir -p ../test/find/me/if/you/can
+$ touch ../test/find/me/if/you/can/file.txt
+$ cat ../initramfs.list
+file /busybox-x86_64 ../initramfs/busybox-x86_64 0755 0 0
+dir /sbin 0755 0 0
+dir /proc 0755 0 0
+dir /sys 0755 0 0
+dir /bin 0755 0 0
+dir /usr 0755 0 0
+dir /usr/sbin 0755 0 0
+dir /usr/bin 0755 0 0
+dir /etc 0755 0 0
+dir /etc/init.d 0755 0 0
+file /etc/inittab ../initramfs/inittab 0755 0 0
+file /etc/init.d/rcS ../initramfs/rcS-x86_64 0755 0 0
+dir /lib 0755 0 0
+dir /lib/modules 0755 0 0
+$ ls ../initramfs
+busybox-x86_64  inittab  rcS-x86_64
+$ cat ../initramfs/inittab
+::sysinit:/etc/init.d/rcS
+::askfirst:-/bin/sh
+::ctrlaltdel:/sbin/reboot
+::shutdown:/sbin/swapoff -a
+::shutdown:/sbin/umount -a -r
+::restart:/sbin/init
+$ cat ../initramfs/rcS-x86_64
+#!/busybox-x86_64 sh
 
-  git://git.linaro.org/landing-teams/working/fujitsu/integration.git
-tags/mailbox-v4.19
+/busybox-x86_64 --install
 
-for you to fetch changes up to 2bb7005696e2246baa88772341ca032ff09a63cb:
+mount -t proc none /proc
+mount -t sysfs none /sys
 
-  mailbox: Add support for i.MX messaging unit (2018-08-15 09:53:07 +0530)
+mdev -s
+echo /sbin/mdev > /proc/sys/kernel/hotplug
+$ scripts/gen_initramfs_list.sh ../test/ ../initramfs.list
 
-----------------------------------------------------------------
-- xgene : potential null pointer fix
+#####################
+# ../test/
+# Last modified: 1534428527.0818855150
 
-- omap : switch to spdx license and use of_device_get_match_data() to match data
+file /find/me/if/you/can/file.txt ../test/find/me/if/you/can/file.txt 664 1000 1000
+dir /find/me/if/you/can 775 1000 1000
+dir /find/me/if/you 775 1000 1000
+dir /find/me/if 775 1000 1000
+dir /find/me 775 1000 1000
+dir /find 775 1000 1000
 
-- ti-msgmgr : cleanup and optimisation. New TI specific feature -
-secure proxy thread.
+#####################
+# ../initramfs.list
+# Last modified: 1534433777.8384497600
 
-- mediatek : add driver for CMDQ controller.
+file /busybox-x86_64 ../initramfs/busybox-x86_64 0755 0 0
+dir /sbin 0755 0 0
+dir /proc 0755 0 0
+dir /sys 0755 0 0
+dir /bin 0755 0 0
+dir /usr 0755 0 0
+dir /usr/sbin 0755 0 0
+dir /usr/bin 0755 0 0
+dir /etc 0755 0 0
+dir /etc/init.d 0755 0 0
+file /etc/inittab ../initramfs/inittab 0755 0 0
+file /etc/init.d/rcS ../initramfs/rcS-x86_64 0755 0 0
+dir /lib 0755 0 0
+dir /lib/modules 0755 0 0
 
-- nxp : add driver for MU controller
+$ cat ../initramfs.cpio | cpio -t
+find/me/if/you/can/file.txt
+find/me/if/you/can
+find/me/if/you
+find/me/if
+find/me
+find
+busybox-x86_64
+sbin
+proc
+sys
+bin
+usr
+usr/sbin
+usr/bin
+etc
+etc/init.d
+etc/inittab
+etc/init.d/rcS
+lib
+lib/modules
+1961 bloków
 
-----------------------------------------------------------------
-Dong Aisheng (1):
-      dt-bindings: arm: fsl: add mu binding doc
+BUT:
 
-Gustavo A. R. Silva (1):
-      mailbox: xgene-slimpro: Fix potential NULL pointer dereference
+$ qemu-system-x86_64 -nographic -serial mon:stdio \
+	-kernel arch/x86/boot/bzImage \
+	-append "root=/dev/ram console=ttyS0 rdinit=/busybox-x86_64 init" \
+	-M q35 -initrd ../initramfs.cpio
 
-Houlong Wei (2):
-      dt-bindings: soc: Add documentation for the MediaTek GCE unit
-      mailbox: mediatek: Add Mediatek CMDQ driver
+# ls
+bin             etc             linuxrc         sbin
+busybox-x86_64  find            proc            sys
+dev             lib             root            usr
+/ # ls -l find
+total 0
 
-Nishanth Menon (6):
-      mailbox: ti-msgmgr: Get rid of unused structure members
-      mailbox: ti-msgmgr: Allocate Rx channel resources only on request
-      mailbox: ti-msgmgr: Change message count mask to be descriptor based
-      mailbox: ti-msgmgr: Move the memory region name to descriptor
-      dt-bindings: mailbox: Add support for secure proxy threads
-      mailbox: ti-msgmgr: Add support for Secure Proxy
+With the patch reverted the file /find/me/if/you/can/file.txt
+is accessible:
 
-Oleksij Rempel (2):
-      dt-bindings: mailbox: imx-mu: add generic MU channel support
-      mailbox: Add support for i.MX messaging unit
+$ scripts/gen_initramfs_list.sh ../test/ ../initramfs.list
 
-Randy Dunlap (1):
-      mailbox: add MODULE_LICENSE() for mtk-cmdq-mailbox.c
+#####################
+# ../test/
+# Last modified: 1534428527.0818855150
 
-Suman Anna (2):
-      mailbox/omap: switch to SPDX license identifier
-      mailbox/omap: use of_device_get_match_data() to get match data
+dir /find 775 1000 1000
+dir /find/me 775 1000 1000
+dir /find/me/if 775 1000 1000
+dir /find/me/if/you 775 1000 1000
+dir /find/me/if/you/can 775 1000 1000
+file /find/me/if/you/can/file.txt ../test/find/me/if/you/can/file.txt 664 1000 1000
 
- .../devicetree/bindings/mailbox/fsl,mu.txt         |  54 ++
- .../devicetree/bindings/mailbox/mtk-gce.txt        |  57 ++
- .../bindings/mailbox/ti,secure-proxy.txt           |  50 ++
- drivers/mailbox/Kconfig                            |  16 +
- drivers/mailbox/Makefile                           |   4 +
- drivers/mailbox/imx-mailbox.c                      | 358 +++++++++++++
- drivers/mailbox/mailbox-xgene-slimpro.c            |   6 +-
- drivers/mailbox/mtk-cmdq-mailbox.c                 | 571 +++++++++++++++++++++
- drivers/mailbox/omap-mailbox.c                     |  31 +-
- drivers/mailbox/ti-msgmgr.c                        | 353 ++++++++++---
- include/dt-bindings/gce/mt8173-gce.h               |  44 ++
- include/linux/mailbox/mtk-cmdq-mailbox.h           |  77 +++
- include/linux/omap-mailbox.h                       |   5 +-
- 13 files changed, 1536 insertions(+), 90 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mailbox/fsl,mu.txt
- create mode 100644 Documentation/devicetree/bindings/mailbox/mtk-gce.txt
- create mode 100644
-Documentation/devicetree/bindings/mailbox/ti,secure-proxy.txt
- create mode 100644 drivers/mailbox/imx-mailbox.c
- create mode 100644 drivers/mailbox/mtk-cmdq-mailbox.c
- create mode 100644 include/dt-bindings/gce/mt8173-gce.h
- create mode 100644 include/linux/mailbox/mtk-cmdq-mailbox.h
+#####################
+# ../initramfs.list
+# Last modified: 1534433777.8384497600
+
+file /busybox-x86_64 ../initramfs/busybox-x86_64 0755 0 0
+dir /sbin 0755 0 0
+dir /proc 0755 0 0
+dir /sys 0755 0 0
+dir /bin 0755 0 0
+dir /usr 0755 0 0
+dir /usr/sbin 0755 0 0
+dir /usr/bin 0755 0 0
+dir /etc 0755 0 0
+dir /etc/init.d 0755 0 0
+file /etc/inittab ../initramfs/inittab 0755 0 0
+file /etc/init.d/rcS ../initramfs/rcS-x86_64 0755 0 0
+dir /lib 0755 0 0
+dir /lib/modules 0755 0 0
+
+$ cat ../initramfs.cpio | cpio -t
+find
+find/me
+find/me/if
+find/me/if/you
+find/me/if/you/can
+find/me/if/you/can/file.txt
+busybox-x86_64
+sbin
+proc
+sys
+bin
+usr
+usr/sbin
+usr/bin
+etc
+etc/init.d
+etc/inittab
+etc/init.d/rcS
+lib
+lib/modules
+1961 bloków
+
+$ qemu-system-x86_64 -nographic -serial mon:stdio \
+	-kernel arch/x86/boot/bzImage \
+	-append "root=/dev/ram console=ttyS0 rdinit=/busybox-x86_64 init" \
+	-M q35 -initrd ../initramfs.cpio
+
+# find find/
+find/
+find/me
+find/me/if
+find/me/if/you
+find/me/if/you/can
+find/me/if/you/can/file.txt
+/ #
+
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+---
+ scripts/gen_initramfs_list.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/gen_initramfs_list.sh b/scripts/gen_initramfs_list.sh
+index 10e528b..e5d7b03 100755
+--- a/scripts/gen_initramfs_list.sh
++++ b/scripts/gen_initramfs_list.sh
+@@ -174,7 +174,7 @@ dir_filelist() {
+ 	${dep_list}header "$1"
+ 
+ 	srcdir=$(echo "$1" | sed -e 's://*:/:g')
+-	dirlist=$(find "${srcdir}" -printf "%p %m %U %G\n" | sort)
++	dirlist=$(find "${srcdir}" -printf "%p %m %U %G\n")
+ 
+ 	# If $dirlist is only one line, then the directory is empty
+ 	if [  "$(echo "${dirlist}" | wc -l)" -gt 1 ]; then
+-- 
+2.7.4
+
