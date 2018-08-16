@@ -3,99 +3,137 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A032C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 21:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3764C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 21:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B82F32147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 21:10:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B82F32147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id A94C92147E
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 21:14:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A94C92147E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726004AbeHQALc (ORCPT
+        id S1726022AbeHQAPd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 20:11:32 -0400
-Received: from mail-qt0-f175.google.com ([209.85.216.175]:42444 "EHLO
-        mail-qt0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725856AbeHQALc (ORCPT
+        Thu, 16 Aug 2018 20:15:33 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59524 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725864AbeHQAPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 20:11:32 -0400
-Received: by mail-qt0-f175.google.com with SMTP id z8-v6so6472307qto.9
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 14:10:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3rdic9wbU2bcbev5+zWhc5YGti3xVIxNp8/IQdJskXs=;
-        b=Q+1elaI/VmB8grT7+Opdv5A8yRrm4cY6RCawbaRVQUfo7IRziBM9t+Td+GO59Ucm5d
-         f6ph/QEz47nWpTgi36twQ67kbfTy1zyxViCZr3Eo385RCUKAxzHjJ1RP2gxpzu5Vn+GL
-         aX97eZ/+GmoLMKi9GH5nHon+G+3U+ocl4Xkg99x0Djqw4UfG3CmhhcY/9d1L5I7nyOhr
-         g36qRRSRnlOIuFElquEOGZN4r0Ba9xs8t7AB4XBlV2D5VDy0ldqbNZt4obSXTlB7DVu2
-         mHaDiyMRtpmlL4BlWD0BJiClMk884YeOvJL65iEOoZPTjbmIKsmhrrE5TTGE+2usRPeE
-         7ldA==
-X-Gm-Message-State: AOUpUlGih+OOh6vcjvqWOy0pFadbECYQHFsmzhEi8O19aWz1XNfE71V7
-        Ec5FrNwmd2uKthR2tnFe8sC+ncK1+njuZtCmdek=
-X-Google-Smtp-Source: AA+uWPxxLGYvynR2GJHUHip3BqENWDkgnsmmSk2JNQSelxcKFa4CEY6qt8maYWvHplXastiRiyXgDYgjvA8lh3LHh1A=
-X-Received: by 2002:a0c:8b67:: with SMTP id d39-v6mr28512157qvc.180.1534453850236;
- Thu, 16 Aug 2018 14:10:50 -0700 (PDT)
+        Thu, 16 Aug 2018 20:15:32 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7GL9Lkq041640
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 17:14:49 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kwgpjrpg2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 17:14:49 -0400
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
+        Thu, 16 Aug 2018 15:14:48 -0600
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 16 Aug 2018 15:14:46 -0600
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7GLEjOc61145096
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 16 Aug 2018 14:14:45 -0700
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6434B136053;
+        Thu, 16 Aug 2018 15:14:45 -0600 (MDT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0FB9613605D;
+        Thu, 16 Aug 2018 15:14:39 -0600 (MDT)
+Received: from oc6728276242.ibm.com (unknown [9.80.207.203])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 16 Aug 2018 15:14:39 -0600 (MDT)
+Subject: Re: [RFC 1/2] dt-bindings: media: Add Aspeed Video Engine binding
+ documentation
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-aspeed@lists.ozlabs.org, andrew@aj.id.au,
+        openbmc@lists.ozlabs.org, mchehab@kernel.org,
+        linux-media@vger.kernel.org, robh@kernel.org
+References: <1534448601-74120-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1534448601-74120-2-git-send-email-eajames@linux.vnet.ibm.com>
+From:   Eddie James <eajames@linux.vnet.ibm.com>
+Date:   Thu, 16 Aug 2018 16:14:37 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180816204506.GA21144@agluck-desk>
-In-Reply-To: <20180816204506.GA21144@agluck-desk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 16 Aug 2018 23:10:33 +0200
-Message-ID: <CAK8P3a2vAMzL22ds=kM1WRZgATzOrAz_y8Yk6edqJTVRJJFydw@mail.gmail.com>
-Subject: Re: how to fix acpi_pci_root_remap_iospace?
-To:     Tony Luck <tony.luck@intel.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jchandra@broadcom.com, Sinan Kaya <okaya@codeaurora.org>,
-        Tomasz Nowicki <tn@semihalf.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1534448601-74120-2-git-send-email-eajames@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18081621-0016-0000-0000-0000091BC9CA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009557; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01074510; UDB=6.00553739; IPR=6.00854468;
+ MB=3.00022764; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-16 21:14:48
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081621-0017-0000-0000-00004005D3A0
+Message-Id: <0072215a-9249-2ad3-3d66-2f1b605ad915@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-16_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808160216
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 10:45 PM Luck, Tony <tony.luck@intel.com> wrote:
->
-> Bjorn,
->
-> Back in commit:
->
->   0a70abb38062 ("PCI/ACPI: Support I/O resources when parsing host bridge resources")
->
-> we added acpi_pci_root_remap_iospace().  On ia64 this was a no-op because ia64
-> didn't define PCI_IOBASE, so the entire body of the function was skipped.
->
-> But in the current merge window commit:
->
->   0bbf47eab469 ("ia64: use asm-generic/io.h")
->
-> ended up defining PCI_IOBASE for us, and now we die horribly
-> in early boot with:
->
->   kernel BUG at lib/ioremap.c:72!
 
-Ah, that explains it. I'm sorry for causing you trouble here, and glad
-you figured out the cause.
 
-> Is PCI_IOBASE the right thing to check for to decide whether
-> acpi_pci_root_remap_iospace() needs to do anything?
+On 08/16/2018 02:43 PM, Eddie James wrote:
+> Document the bindings.
 >
-> The ugly fix would be:
+> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+> ---
+>   .../devicetree/bindings/media/aspeed-video.txt     | 25 ++++++++++++++++++++++
+>   1 file changed, 25 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
+>
+> diff --git a/Documentation/devicetree/bindings/media/aspeed-video.txt b/Documentation/devicetree/bindings/media/aspeed-video.txt
+> new file mode 100644
+> index 0000000..91a494e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/aspeed-video.txt
+> @@ -0,0 +1,25 @@
+> +* Device tree bindings for Aspeed Video Engine
+> +
+> +The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs can
+> +capture and compress video data from digital or analog sources.
+> +
+> +Required properties:
+> + - compatible:		"aspeed,ast2400-video" or "aspeed,ast2500-video"
+> + - reg:			contains the offset and length of the VE memory region
+> + - clocks:		pointers to the the "vclk" and "eclk" of the syscon
+> + - clock-names:		"vclk-gate", "eclk-gate"
+> + - resets:		pointer to the VE reset of the syscon
+> + - interrupts:		the interrupt associated with the VE on this platform
+> + - reg-scu:		pointer to the syscon itself
 
-Another way would be to add
+Forgot to remove syscon reference in latest, it's not needed.
 
- #include <asm-generic/io.h>
-+#undef PCI_IOBASE
+Thanks,
+Eddie
 
-in your asm/io.h. This is about as ugly as the your version, but
-it would be local to ia64 ;-)
+> +
+> +Example:
+> +
+> +video: video@1e700000 {
+> +        compatible = "aspeed,ast2500-video";
+> +        reg = <0x1e700000 0x20000>;
+> +        clocks = <&syscon ASPEED_CLK_GATE_VCLK>, <&syscon ASPEED_CLK_GATE_ECLK>;
+> +        clock-names = "vclk-gate", "eclk-gate";
+> +        resets = <&syscon ASPEED_RESET_VIDEO>;
+> +        interrupts = <7>;
+> +        reg-scu = <&syscon>;
+> +};
 
-      Arnd
