@@ -2,110 +2,226 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB88C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF752C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33B7F2148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:25:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33B7F2148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id 689FD21523
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:27:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fdcPkr6Z";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fdcPkr6Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 689FD21523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390457AbeHPMWb (ORCPT
+        id S2390476AbeHPMYY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 08:22:31 -0400
-Received: from outbound-smtp26.blacknight.com ([81.17.249.194]:60508 "EHLO
-        outbound-smtp26.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727253AbeHPMWa (ORCPT
+        Thu, 16 Aug 2018 08:24:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37842 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727206AbeHPMYY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 08:22:30 -0400
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp26.blacknight.com (Postfix) with ESMTPS id 60C2DB8B28
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 10:25:14 +0100 (IST)
-Received: (qmail 533 invoked from network); 16 Aug 2018 09:25:14 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.237.66])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 16 Aug 2018 09:25:14 -0000
-Date:   Thu, 16 Aug 2018 10:25:08 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, linux-mm@kvack.org
-Subject: Re: [PATCH] mm, page_alloc: actually ignore mempolicies for high
- priority allocations
-Message-ID: <20180816092507.GA1719@techsingularity.net>
-References: <20180612122624.8045-1-vbabka@suse.cz>
- <20180815151652.05d4c4684b7dff2282b5c046@linux-foundation.org>
+        Thu, 16 Aug 2018 08:24:24 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C7ADE61FEF; Thu, 16 Aug 2018 09:27:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534411629;
+        bh=lBsyIqx49GNZCowyi0v2m1UVdmX7/pzVBPsRzmvjBnY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fdcPkr6ZgNCfiYzhM+e4AyNz6acwyGCH8kavctjdBxOYKFJ5TVWZ7GnB17Tkvta/I
+         JJxRC3+BbQgAUt2m+Y2cukhFI2S1CqDMU1OsZjlVdF8RzaADX9VtS3taIoPqlAod7C
+         kyr6uf/M5w3p+UTmuGOy78jb8f3FWqUJbf787rko=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id E110B62198;
+        Thu, 16 Aug 2018 09:27:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534411629;
+        bh=lBsyIqx49GNZCowyi0v2m1UVdmX7/pzVBPsRzmvjBnY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fdcPkr6ZgNCfiYzhM+e4AyNz6acwyGCH8kavctjdBxOYKFJ5TVWZ7GnB17Tkvta/I
+         JJxRC3+BbQgAUt2m+Y2cukhFI2S1CqDMU1OsZjlVdF8RzaADX9VtS3taIoPqlAod7C
+         kyr6uf/M5w3p+UTmuGOy78jb8f3FWqUJbf787rko=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20180815151652.05d4c4684b7dff2282b5c046@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 16 Aug 2018 14:57:08 +0530
+From:   poza@codeaurora.org
+To:     Jon Derrick <jonathan.derrick@intel.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Dongdong Liu <liudongdong3@huawei.com>
+Subject: Re: [PATCH 1/2] PCI/DPC: Add 'nodpc' parameter
+In-Reply-To: <1534368400-2807-1-git-send-email-jonathan.derrick@intel.com>
+References: <1534368400-2807-1-git-send-email-jonathan.derrick@intel.com>
+Message-ID: <f11c06374a90650e862cb68206ad2fdb@codeaurora.org>
+X-Sender: poza@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 03:16:52PM -0700, Andrew Morton wrote:
-> From: Vlastimil Babka <vbabka@suse.cz>
-> Subject: mm, page_alloc: actually ignore mempolicies for high priority allocations
+On 2018-08-16 02:56, Jon Derrick wrote:
+> Some users may want to disable downstream port containment (DPC), so
+> give them this option
 > 
-> The __alloc_pages_slowpath() function has for a long time contained code
-> to ignore node restrictions from memory policies for high priority
-> allocations.  The current code that resets the zonelist iterator however
-> does effectively nothing after commit 7810e6781e0f ("mm, page_alloc: do
-> not break __GFP_THISNODE by zonelist reset") removed a buggy zonelist
-> reset.  Even before that commit, mempolicy restrictions were still not
-> ignored, as they are passed in ac->nodemask which is untouched by the
-> code.
+> Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
+> ---
+>  drivers/pci/pci.c      |  2 ++
+>  drivers/pci/pci.h      |  6 ++++++
+>  drivers/pci/pcie/dpc.c | 48 
+> ++++++++++++++++++++++++++++++++++++++----------
+>  include/linux/pci.h    |  6 ++++++
+>  4 files changed, 52 insertions(+), 10 deletions(-)
 > 
-> We can either remove the code, or make it work as intended.  Since
-> ac->nodemask can be set from task's mempolicy via alloc_pages_current()
-> and thus also alloc_pages(), it may indeed affect kernel allocations, and
-> it makes sense to ignore it to allow progress for high priority
-> allocations.
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 80da484..4e629c2 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -6062,6 +6062,8 @@ static int __init pci_setup(char *str)
+>  				pcie_ats_disabled = true;
+>  			} else if (!strcmp(str, "noaer")) {
+>  				pci_no_aer();
+> +			} else if (!strcmp(str, "nodpc")) {
+> +				pci_no_dpc();
+>  			} else if (!strcmp(str, "earlydump")) {
+>  				pci_early_dump = true;
+>  			} else if (!strncmp(str, "realloc=", 8)) {
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 6e0d152..f73f29e 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -536,4 +536,10 @@ static inline void
+> pci_aer_clear_fatal_status(struct pci_dev *dev) { }
+>  static inline void pci_aer_clear_device_status(struct pci_dev *dev) { 
+> }
+>  #endif
 > 
-> Thus, this patch resets ac->nodemask to NULL in such cases.  This assumes
-> all callers can handle it (i.e.  there are no guarantees as in the case of
-> __GFP_THISNODE) which seems to be the case.  The same assumption is
-> already present in check_retry_cpuset() for some time.
+> +#ifdef CONFIG_PCIE_DPC
+> +void pci_no_dpc(void);
+> +#else
+> +static inline void pci_no_dpc(void) { }
+> +#endif
+> +
+>  #endif /* DRIVERS_PCI_H */
+> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+> index f03279f..068fca0 100644
+> --- a/drivers/pci/pcie/dpc.c
+> +++ b/drivers/pci/pcie/dpc.c
+> @@ -44,6 +44,18 @@ struct dpc_dev {
+>  	"Memory Request Completion Timeout",		 /* Bit Position 18 */
+>  };
 > 
-> The expected effect is that high priority kernel allocations in the
-> context of userspace tasks (e.g.  OOM victims) restricted by mempolicies
-> will have higher chance to succeed if they are restricted to nodes with
-> depleted memory, while there are other nodes with free memory left.
-> 
-> 
-> Ot's not a new intention, but for the first time the code will match the
-> intention, AFAICS.  It was intended by commit 183f6371aac2 ("mm: ignore
-> mempolicies when using ALLOC_NO_WATERMARK") in v3.6 but I think it never
-> really worked, as mempolicy restriction was already encoded in nodemask,
-> not zonelist, at that time.
-> 
-> So originally that was for ALLOC_NO_WATERMARK only.  Then it was adjusted
-> by e46e7b77c909 ("mm, page_alloc: recalculate the preferred zoneref if the
-> context can ignore memory policies") and cd04ae1e2dc8 ("mm, oom: do not
-> rely on TIF_MEMDIE for memory reserves access") to the current state.  So
-> even GFP_ATOMIC would now ignore mempolicies after the initial attempts
-> fail - if the code worked as people thought it does.
-> 
-> Link: http://lkml.kernel.org/r/20180612122624.8045-1-vbabka@suse.cz
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> +static int pcie_dpc_disable;
+> +
+> +void pci_no_dpc(void)
+> +{
+> +	pcie_dpc_disable = 1;
+> +}
+> +
+> +bool pci_dpc_available(void)
+> +{
+> +	return !pcie_dpc_disable && pci_aer_available() && pci_msi_enabled();
 
-FWIW, I thought I acked this already.
+1) why do you check pci_aer_available() ?
+2) and pci_aer_available() already internally checks pci_msi_enabled();
 
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
-
--- 
-Mel Gorman
-SUSE Labs
+> +}
+> +
+>  static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
+>  {
+>  	unsigned long timeout = jiffies + HZ;
+> @@ -209,6 +221,17 @@ static irqreturn_t dpc_irq(int irq, void *context)
+>  	return IRQ_HANDLED;
+>  }
+> 
+> +static void dpc_disable(struct pci_dev *pdev)
+> +{
+> +	u16 cap_pos, ctl;
+> +
+> +	cap_pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_DPC);
+> +	pci_read_config_word(pdev, cap_pos + PCI_EXP_DPC_CTL, &ctl);
+> +	ctl &= ~(PCI_EXP_DPC_CTL_EN_FATAL | PCI_EXP_DPC_CTL_EN_NONFATAL |
+> +		 PCI_EXP_DPC_CTL_INT_EN);
+> +	pci_write_config_word(pdev, cap_pos + PCI_EXP_DPC_CTL, ctl);
+> +}
+> +
+>  #define FLAG(x, y) (((x) & (y)) ? '+' : '-')
+>  static int dpc_probe(struct pcie_device *dev)
+>  {
+> @@ -221,9 +244,16 @@ static int dpc_probe(struct pcie_device *dev)
+>  	if (pcie_aer_get_firmware_first(pdev))
+>  		return -ENOTSUPP;
+> 
+> +	if (!pci_dpc_available()) {
+> +		status = -ENOTSUPP;
+> +		goto disable_dpc;
+> +	}
+> +
+>  	dpc = devm_kzalloc(device, sizeof(*dpc), GFP_KERNEL);
+> -	if (!dpc)
+> -		return -ENOMEM;
+> +	if (!dpc) {
+> +		status = -ENOMEM;
+> +		goto disable_dpc;
+> +	}
+> 
+>  	dpc->cap_pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_DPC);
+>  	dpc->dev = dev;
+> @@ -235,7 +265,7 @@ static int dpc_probe(struct pcie_device *dev)
+>  	if (status) {
+>  		dev_warn(device, "request IRQ%d failed: %d\n", dev->irq,
+>  			 status);
+> -		return status;
+> +		goto disable_dpc;
+>  	}
+> 
+>  	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CAP, &cap);
+> @@ -260,17 +290,15 @@ static int dpc_probe(struct pcie_device *dev)
+>  		FLAG(cap, PCI_EXP_DPC_CAP_SW_TRIGGER), dpc->rp_log_size,
+>  		FLAG(cap, PCI_EXP_DPC_CAP_DL_ACTIVE));
+>  	return status;
+> +
+> +disable_dpc:
+> +	dpc_disable(pdev);
+> +	return status;
+>  }
+> 
+>  static void dpc_remove(struct pcie_device *dev)
+>  {
+> -	struct dpc_dev *dpc = get_service_data(dev);
+> -	struct pci_dev *pdev = dev->port;
+> -	u16 ctl;
+> -
+> -	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, &ctl);
+> -	ctl &= ~(PCI_EXP_DPC_CTL_EN_FATAL | PCI_EXP_DPC_CTL_INT_EN);
+> -	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
+> +	dpc_disable(dev->port);
+>  }
+> 
+>  static struct pcie_port_service_driver dpcdriver = {
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 5454e6b..559b792 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -1473,6 +1473,12 @@ static inline int pci_irqd_intx_xlate(struct
+> irq_domain *d,
+>  static inline bool pci_aer_available(void) { return false; }
+>  #endif
+> 
+> +#ifdef CONFIG_PCIE_DPC
+> +bool pci_dpc_available(void);
+> +#else
+> +static inline bool pci_dpc_available(void) { return false; }
+> +#endif
+> +
+>  #ifdef CONFIG_PCIE_ECRC
+>  void pcie_set_ecrc_checking(struct pci_dev *dev);
+>  void pcie_ecrc_get_policy(char *str);
