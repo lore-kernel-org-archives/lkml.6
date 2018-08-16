@@ -2,170 +2,96 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA58C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 22:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26B08C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 22:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20947208D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 22:18:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20947208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	by mail.kernel.org (Postfix) with ESMTP id A2F2E20B80
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 22:21:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AXKHjX8e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F2E20B80
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbeHQBTI (ORCPT
+        id S1726097AbeHQBVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 21:19:08 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45868 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725888AbeHQBTH (ORCPT
+        Thu, 16 Aug 2018 21:21:54 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:40606 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725888AbeHQBVy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 21:19:07 -0400
-Received: by mail-lf1-f67.google.com with SMTP id 73-v6so2431933lfs.12;
-        Thu, 16 Aug 2018 15:18:13 -0700 (PDT)
+        Thu, 16 Aug 2018 21:21:54 -0400
+Received: by mail-pl0-f68.google.com with SMTP id s17-v6so2743195plp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 15:21:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NYP7VZBZNyqf1DnlV+O4f4dQ8mFO7hS1AjN3sKFUHIo=;
+        b=AXKHjX8ewwVAyjzP4gSeHmCfM9OS5tpsxh0ZAYZsdm+kR7+mvBjzaTHSnxJiuOJ1lH
+         dpYN91NWzFtP/2FhFsfE6E9eGf6llaJv0cLq9snpONP+/XkGmpPzvLzyCYoLb24rBWBE
+         dVBpWD9TuXqDn/KDpyHpKfoicqm9UK5yYlWjhuIzfmRjj2gTasuxzDuHFWsppUW/VjRX
+         ighNs6gWYEEhP+4vdPIfn7Q9iPViTW4SBl/6qm02xD9rUkB22w9vO3HmzMpedGpJ/w6w
+         kk2SlqmY7qDryra4qiIVU+8WvBdSGbSsKh9VZ/JnKqh2otoKPeIdU9/P30l175lajFFH
+         eu5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=dQ88hhfq/flUFw+Ni4Bm5n6Zjze2N1GdXWcr+RlXaoI=;
-        b=djeAoIMxPuuiayvZzs6aC4g+4rDUzE6kk0Ed5WIUxFSqbYOwqEfwLC/bwVYyB1e0bJ
-         W7OA3yRAAQnu18iXUaHtdxgZKcCcP9e9zUzuAQsr8Z5exoUOrT/R6UEsHPPJQuUnK/xl
-         ckU5QNZVKinjT9xrUy/VKBbrx/DDbVXYVSzDHJkwt6vUgGngwe7EkkJeCKr3Fx+VNsyw
-         NgRz5W6zJgMWo1wg3VAUm7YYfwmlxce75G4FyBI5Ln4D7p/HTTIBKWlRJFRS2HrxxZsm
-         RdqjDN3DOgcFard9k1B7i6P6SgJCuOM0oqF2rZ4rJkXiYLyFtChM+IJx3anxsFC5jR4T
-         4FjA==
-X-Gm-Message-State: AOUpUlFcjvy43qLzi0szsxezBqhI5/jp2hFH4o886rG9iuBK8uzsxXy9
-        mz1EylLwwehXGaXDlkltyeQ5XJytWZ0=
-X-Google-Smtp-Source: AA+uWPz2XF+pB/4JYJ+1UjVpDiFamqjqVV0c2EF5L/f+WbEX0n0D1dLZ+ckhB7wDG8hbr8anWGCbUQ==
-X-Received: by 2002:a19:63dc:: with SMTP id v89-v6mr21629631lfi.23.1534457892502;
-        Thu, 16 Aug 2018 15:18:12 -0700 (PDT)
-Received: from [192.168.1.183] (128-68-185-116.broadband.corbina.ru. [128.68.185.116])
-        by smtp.gmail.com with ESMTPSA id l78-v6sm88142lfl.4.2018.08.16.15.18.11
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NYP7VZBZNyqf1DnlV+O4f4dQ8mFO7hS1AjN3sKFUHIo=;
+        b=sUz3vQZ5+5GRAUQLmxnnu+dqSkJkP9rGIqqavs+GHY4t8sxVtJSL9pSbJKv3rwYH7A
+         S+nCvtJAv/yK7QTETB8Ng5TpConxvBcBlN57ins0SS7prN06FS/10ngrNq4woVLXinoJ
+         BGVG0qRAnqwbajWewcxYsBOmr+2y1jfc+vt83bhT5FuiL8czEpp+dDFcO2Xc2hazsPL0
+         OCrvUYFgIAveLn5ywRkJFdSlkebwfj1bUJdcT1iG0rsrqCwqxjoGZ36LpavnpZUxJJDq
+         n/YmlBONnA1ytIpS2c5iL82Ws4l/ETh8R3lR6MFWhYZpPkrFk8x5mfynH2Hp36KAGR8n
+         uwFA==
+X-Gm-Message-State: AOUpUlGrnaR5Uayy6t60rOIrNQnusqrKww8XetGX3Oo6FSZa6qAPoZGL
+        SOtGTgWgOOgaM3kLBjYnQP8=
+X-Google-Smtp-Source: AA+uWPwrCkvEsNVN71pn575wv68RQLXPkpZsshuqg8LpPCsQ8cLOfBNMc8vXfvrLf47xnGeYK7aSTg==
+X-Received: by 2002:a17:902:7e45:: with SMTP id a5-v6mr30596366pln.151.1534458061168;
+        Thu, 16 Aug 2018 15:21:01 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::7:4c81])
+        by smtp.gmail.com with ESMTPSA id w2-v6sm327873pge.44.2018.08.16.15.20.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Aug 2018 15:18:11 -0700 (PDT)
-Reply-To: alex.popov@linux.com
-Subject: Re: [GIT PULL] gcc-plugin updates for v4.19-rc1
-To:     Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-crypto <linux-crypto@vger.kernel.org>
-References: <20180813214328.GA15137@beast>
- <CA+55aFw5Tkn6DgkAZS-UGOjJpYp2R4rFAm9ixu_=FONeqRyofg@mail.gmail.com>
- <CAGXu5jK_w7JRywdQ78FfQxeLSMmXbvyDDnaYzj27=y8wnAzKxQ@mail.gmail.com>
- <CA+55aFyFCWH3YJnRUKtSzs9Mvny0eU+=QANxoPTE+9B9CkUWDw@mail.gmail.com>
- <CAGXu5jJ1JNSxJABUTAO85z_hXjSkjD=nWEho7KrYJTqqVGivig@mail.gmail.com>
- <CA+55aFy6jNLsywVYdGp83AMrXBo_P-pkjkphPGrO=82SPKCpLQ@mail.gmail.com>
- <CAGXu5j+Yv9Bu4mJPOfkpxrom91kSKaUESHR-Tn1CAJCTTZy_8w@mail.gmail.com>
-From:   Alexander Popov <alex.popov@linux.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=alex.popov@linux.com; prefer-encrypt=mutual; keydata=
- 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
- jXz/74kjFsyRgZA+d6a1pGtOwITEBxtxxg==
-Message-ID: <43da98d0-409b-88b9-0178-a79b581fc044@linux.com>
-Date:   Fri, 17 Aug 2018 01:18:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 16 Aug 2018 15:21:00 -0700 (PDT)
+Date:   Thu, 16 Aug 2018 15:20:58 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: [PATCH] tracing: Add SPDX License format to bpf_trace.c
+Message-ID: <20180816222056.2fddxbzpjox2for4@ast-mbp.dhcp.thefacebook.com>
+References: <20180816154817.6e8f0b93@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+Yv9Bu4mJPOfkpxrom91kSKaUESHR-Tn1CAJCTTZy_8w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180816154817.6e8f0b93@gandalf.local.home>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On 15.08.2018 23:56, Kees Cook wrote:
-> On Wed, Aug 15, 2018 at 1:18 PM, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->> I absolutely refuse to take any hardening patches at all that have
->> BUG() or panic() or similar machine-killing in it.
+On Thu, Aug 16, 2018 at 03:48:17PM -0400, Steven Rostedt wrote:
+> [ Alexei and/or Daniel, I'm adding SPDX headers to the tracing
+>   directory. Can you ack this patch? Thanks ]
 > 
-> Okay, mental model adjusted. :) It was only "strong discouraged" until now.
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 > 
->> I thought VLA's were mostly gone.
-...
-> And after that, there's a single patch to move -Wvla up into the
-> top-level Makefile:
+> Add the SPDX License header to ease license compliance management.
 > 
-> https://patchwork.kernel.org/patch/10489873/
-> 
-> So, we're basically done
+> Cc: Alexei Starovoitov <ast@plumgrid.com>
 
-I've just sent the 15th version of the series with changes according to the
-feedback from Linus:
+ohh. did you get a reply from that address? ;)
 
-1. BUG_ON() in stackleak_erase() is safely eliminated;
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-2. Stack Clash detection (alloca() check) is completely dropped, since global
-'-Wvla' should arrive soon. stackleak_check_alloca() for arm64 is dropped as
-well in a separate commit.
+Acked-by: Alexei Starovoitov <ast@kernel.org>
 
-This version is rebased onto Linus' tree.
-
-Best regards,
-Alexander
