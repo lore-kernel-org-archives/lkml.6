@@ -2,163 +2,90 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B5CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A622C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F0822147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:13:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F0822147A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CFC5F21477
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:14:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="jUaGwcGs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFC5F21477
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726008AbeHPXN6 (ORCPT
+        id S1726097AbeHPXOt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 19:13:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36674 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725823AbeHPXN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 19:13:58 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9EA777721E;
-        Thu, 16 Aug 2018 20:13:27 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 81E351049469;
-        Thu, 16 Aug 2018 20:13:25 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     nouveau@lists.freedesktop.org
-Cc:     stable@vger.kernel.org, Karol Herbst <kherbst@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/nouveau: Prevent handling ACPI HPD events too early
-Date:   Thu, 16 Aug 2018 16:13:13 -0400
-Message-Id: <20180816201313.6370-1-lyude@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 16 Aug 2018 20:13:27 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 16 Aug 2018 20:13:27 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+        Thu, 16 Aug 2018 19:14:49 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36070 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725965AbeHPXOt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 19:14:49 -0400
+Received: by mail-io0-f196.google.com with SMTP id m4-v6so4946920iop.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 13:14:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=r68fp81UveCrVseP5WsDMBkHFOz4CEP2y7m6ApU/9c0=;
+        b=jUaGwcGsnYk/GyTY+QOS/icqb27hptl8eY7+OGpjxNWBbbrx0teC6RkB7zS7Hb8J6R
+         bdkTlnP0K5PGuD+an71SNHx/bVDzA0Jlsg3ajfuteqWzjYaeagGxQ6CkM+p8nSfVgfdh
+         xhI9x4shtAWmdSHdM0tMTmfB9di43RqJK8K6oUS0+pivohIdJFSN4BghZkmOEuvaG1cd
+         KY++BrzEZGr0LUasJKdEFmEDH245VoXGHBeoUdjkbt04tpOfCLom32qlRVy+V7CU7FGb
+         X0sYGssXvzFQTGsj/gEHwfnmHqd9C27IXddDn6IHk8HHRap9/DVYhyvQKBkGgCg9Fx1a
+         OaEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=r68fp81UveCrVseP5WsDMBkHFOz4CEP2y7m6ApU/9c0=;
+        b=IlkPnGEPEmc+iM2sqkMy7iDCp4DDJ7QoafCLPJKhQRZuVbTTL0tnsco878ewVZRq5t
+         Unwm2QetgSk/IfY9EeTvIOGdhyrHcoffMqy+PFsuBQg4j5Zjuwv2VQbZM/h8bKwdXawW
+         7z3rMcmROGDarLECEOzVo5KqPBj9o5MtnMrts9vRWEebbszhPw5YrGYs5km9KHKKzDmT
+         21tr1+rmxzktRs0umwN6KYSLkReqNZj4v1/dqIJsItn240Ivxj7xjhi1xQF7v8KJJXIi
+         4ViQGPBYIbcnyq+N6pILP0sC78IkOkp51fKTNcf86iADoWOUaxoZ+hBZ6odV9xRr4ajl
+         vskw==
+X-Gm-Message-State: AOUpUlHQwO44pGguXoYPMNyVHOwG7RSttr5qGtNXTtebAZf8HirChzPD
+        9NpgkhYvjrLBl2Rydp+wPyORhw==
+X-Google-Smtp-Source: AA+uWPyihayFJG3qs2ILlWlZVM31jXC8DLtJAhtwywkwzVjoaVF1qTAGYjHM8lAWajEuZkgwgF1cTQ==
+X-Received: by 2002:a6b:294b:: with SMTP id p72-v6mr25794966iop.17.1534450459313;
+        Thu, 16 Aug 2018 13:14:19 -0700 (PDT)
+Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
+        by smtp.gmail.com with ESMTPSA id y15-v6sm243597ioy.18.2018.08.16.13.14.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Aug 2018 13:14:17 -0700 (PDT)
+Subject: Re: [PATCH] tracing/blktrace: Fix to allow setting same value
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     linux-block@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>
+References: <20180816160837.30cb63cf@gandalf.local.home>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <82cb73d7-38a9-5e73-cf80-ff0873253d9e@kernel.dk>
+Date:   Thu, 16 Aug 2018 14:14:15 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180816160837.30cb63cf@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On most systems with ACPI hotplugging support, it seems that we always
-receive a hotplug event once we re-enable EC interrupts even if the GPU
-hasn't even been resumed yet.
+On 8/16/18 2:08 PM, Steven Rostedt wrote:
+> [
+>   Jens, you want to take this one, or do you want me to?
+> ]
 
-This can cause problems since even though we schedule hpd_work to handle
-connector reprobing for us, hpd_work synchronizes on
-pm_runtime_get_sync() to wait until the device is ready to perform
-reprobing. Since runtime suspend/resume callbacks are disabled before
-the PM core calls ->suspend(), any calls to pm_runtime_get_sync() during
-this period will grab a runtime PM ref and return immediately with
--EACCES. Because we schedule hpd_work from our ACPI HPD handler, and
-hpd_work synchronizes on pm_runtime_get_sync(), this causes us to launch
-a connector reprobe immediately even if the GPU isn't actually resumed
-just yet. This causes various warnings in dmesg and occasionally, also
-prevents some displays connected to the dedicated GPU from coming back
-up after suspend. Example:
+I can queue it up - done. Thanks!
 
-usb 1-4: USB disconnect, device number 14
-usb 1-4.1: USB disconnect, device number 15
-WARNING: CPU: 0 PID: 838 at drivers/gpu/drm/nouveau/include/nvkm/subdev/i2c.h:170 nouveau_dp_detect+0x17e/0x370 [nouveau]
-CPU: 0 PID: 838 Comm: kworker/0:6 Not tainted 4.17.14-201.Lyude.bz1477182.V3.fc28.x86_64 #1
-Hardware name: LENOVO 20EQS64N00/20EQS64N00, BIOS N1EET77W (1.50 ) 03/28/2018
-Workqueue: events nouveau_display_hpd_work [nouveau]
-RIP: 0010:nouveau_dp_detect+0x17e/0x370 [nouveau]
-RSP: 0018:ffffa15143933cf0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff8cb4f656c400 RCX: 0000000000000000
-RDX: ffffa1514500e4e4 RSI: ffffa1514500e4e4 RDI: 0000000001009002
-RBP: ffff8cb4f4a8a800 R08: ffffa15143933cfd R09: ffffa15143933cfc
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8cb4fb57a000
-R13: ffff8cb4fb57a000 R14: ffff8cb4f4a8f800 R15: ffff8cb4f656c418
-FS:  0000000000000000(0000) GS:ffff8cb51f400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f78ec938000 CR3: 000000073720a003 CR4: 00000000003606f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- ? _cond_resched+0x15/0x30
- nouveau_connector_detect+0x2ce/0x520 [nouveau]
- ? _cond_resched+0x15/0x30
- ? ww_mutex_lock+0x12/0x40
- drm_helper_probe_detect_ctx+0x8b/0xe0 [drm_kms_helper]
- drm_helper_hpd_irq_event+0xa8/0x120 [drm_kms_helper]
- nouveau_display_hpd_work+0x2a/0x60 [nouveau]
- process_one_work+0x187/0x340
- worker_thread+0x2e/0x380
- ? pwq_unbound_release_workfn+0xd0/0xd0
- kthread+0x112/0x130
- ? kthread_create_worker_on_cpu+0x70/0x70
- ret_from_fork+0x35/0x40
-Code: 4c 8d 44 24 0d b9 00 05 00 00 48 89 ef ba 09 00 00 00 be 01 00 00 00 e8 e1 09 f8 ff 85 c0 0f 85 b2 01 00 00 80 7c 24 0c 03 74 02 <0f> 0b 48 89 ef e8 b8 07 f8 ff f6 05 51 1b c8 ff 02 0f 84 72 ff
----[ end trace 55d811b38fc8e71a ]---
-
-So, to fix this we attempt to grab a runtime PM reference in the ACPI
-handler itself asynchronously. If the GPU is already awake (it will have
-normal hotplugging at this point) or runtime PM callbacks are currently
-disabled on the device, we drop our reference without updating the
-autosuspend delay. We only schedule connector reprobes when we
-successfully managed to queue up a resume request with our asynchronous
-PM ref.
-
-This also has the added benefit of preventing redundant connector
-reprobes from ACPI while the GPU is runtime resumed!
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: stable@vger.kernel.org
-Cc: Karol Herbst <kherbst@redhat.com>
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1477182#c41
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- drivers/gpu/drm/nouveau/nouveau_display.c | 26 +++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/nouveau/nouveau_display.c b/drivers/gpu/drm/nouveau/nouveau_display.c
-index 4b873e668b26..2e3226ff9f95 100644
---- a/drivers/gpu/drm/nouveau/nouveau_display.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_display.c
-@@ -377,15 +377,29 @@ nouveau_display_acpi_ntfy(struct notifier_block *nb, unsigned long val,
- {
- 	struct nouveau_drm *drm = container_of(nb, typeof(*drm), acpi_nb);
- 	struct acpi_bus_event *info = data;
-+	int ret;
- 
- 	if (!strcmp(info->device_class, ACPI_VIDEO_CLASS)) {
- 		if (info->type == ACPI_VIDEO_NOTIFY_PROBE) {
--			/*
--			 * This may be the only indication we receive of a
--			 * connector hotplug on a runtime suspended GPU,
--			 * schedule hpd_work to check.
--			 */
--			schedule_work(&drm->hpd_work);
-+			ret = pm_runtime_get(drm->dev->dev);
-+			if (ret == 1 || ret == -EACCES) {
-+				/* If the GPU is already awake, or in a state
-+				 * where we can't wake it up, it can handle
-+				 * it's own hotplug events.
-+				 */
-+				pm_runtime_put_autosuspend(drm->dev->dev);
-+			} else if (ret == 0) {
-+				/* This may be the only indication we receive
-+				 * of a connector hotplug on a runtime
-+				 * suspended GPU, schedule hpd_work to check.
-+				 */
-+				NV_DEBUG(drm, "ACPI requested connector reprobe\n");
-+				schedule_work(&drm->hpd_work);
-+				pm_runtime_put_noidle(drm->dev->dev);
-+			} else {
-+				NV_WARN(drm, "Dropped ACPI reprobe event due to RPM error: %d\n",
-+					ret);
-+			}
- 
- 			/* acpi-video should not generate keypresses for this */
- 			return NOTIFY_BAD;
 -- 
-2.17.1
+Jens Axboe
 
