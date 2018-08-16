@@ -2,268 +2,121 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7234FC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA90C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AEF3214DC
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:19:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AEF3214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 294CE21480
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:20:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bLj/nD3r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 294CE21480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389918AbeHPLQJ (ORCPT
+        id S2389927AbeHPLQ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 07:16:09 -0400
-Received: from mga05.intel.com ([192.55.52.43]:27823 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389906AbeHPLQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 07:16:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2018 01:19:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,246,1531810800"; 
-   d="scan'208";a="83781752"
-Received: from devel-ww.sh.intel.com ([10.239.48.110])
-  by orsmga002.jf.intel.com with ESMTP; 16 Aug 2018 01:19:17 -0700
-From:   Wei Wang <wei.w.wang@intel.com>
-To:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
-        mst@redhat.com, mhocko@kernel.org, akpm@linux-foundation.org,
-        penguin-kernel@I-love.SAKURA.ne.jp
-Cc:     wei.w.wang@intel.com
-Subject: [PATCH v4 3/3] virtio_balloon: replace oom notifier with shrinker
-Date:   Thu, 16 Aug 2018 15:50:58 +0800
-Message-Id: <1534405858-27085-4-git-send-email-wei.w.wang@intel.com>
+        Thu, 16 Aug 2018 07:16:59 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:32841 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388202AbeHPLQ7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 07:16:59 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d4-v6so1694045pfn.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 01:20:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=V0eY6+fmzUQEUNfRvyKK9lRfPheki8Rb1IGP5PMneFw=;
+        b=bLj/nD3rp1RfeE5UYgimzR2WHJE4fpT+zsTYAZzvev6SFAh5luFtsamINuMnkG3bzt
+         F1hs2F+zI5h9xxtTWtFyRJUUKdI6ni5zwKAwG7tZ8d7QawZHHkFE9EsZgK1uYZEi4jAG
+         fERG9oaC+Df0T77lhlZ239cqWPGgCZ9ao1z7M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=V0eY6+fmzUQEUNfRvyKK9lRfPheki8Rb1IGP5PMneFw=;
+        b=C2m3/oU4bZlwSBfYz179lzimKHumjz5PcmjJV3o9wnU/y6tboS1dqCbwXdPxMNTDzn
+         N8kTnZJaoU4xRsa8foNKt0XgaQiQauhoJkjo2ycKkeiz1YpQcChWd8Qbp+8h6jkYd2fn
+         iQlVHogBdHor3FO9/u7Jm0qT3NlSUYb44XQquSt2lVbK7u0335ZijzVcZPNgdnOxk2za
+         FpTrg9XQJABVqluVcyelljnXffWLhHzK+SHUGhqVPelqtZXiS38U9vmuY1hWPBqe7GWJ
+         cmTl8I9Be+v1Ik2m+9UToqUTAe0/a/NabqPstWIMXXzM0JxYxC7RX6HwqRnnt9paGL4+
+         j/GA==
+X-Gm-Message-State: AOUpUlHNePngKNxGKjoYLk2ZUosMbFPU7yB33ur9p6vvohLwoolzFweT
+        g9n5tbckW0HMSgsrN8fFsLonhA==
+X-Google-Smtp-Source: AA+uWPwQ1ZE1VFgpIoXQnLQtOmMZJXkR/CnoEHly2rXLDIeAI6qaR0XYRnGr3ViCSg8Yci3eaA7ArQ==
+X-Received: by 2002:a63:b504:: with SMTP id y4-v6mr28595656pge.247.1534407609928;
+        Thu, 16 Aug 2018 01:20:09 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id s66-v6sm24406279pgc.67.2018.08.16.01.20.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 16 Aug 2018 01:20:08 -0700 (PDT)
+From:   Chunyan Zhang <zhang.chunyan@linaro.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@unisoc.com>,
+        Jason Wu <jason.wu@unisoc.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V5 06/10] mmc: sdhci: Disable auto-CMD23 if stuff bits is set in CMD23 argument
+Date:   Thu, 16 Aug 2018 16:19:56 +0800
+Message-Id: <1534407596-29696-1-git-send-email-zhang.chunyan@linaro.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1534405858-27085-1-git-send-email-wei.w.wang@intel.com>
-References: <1534405858-27085-1-git-send-email-wei.w.wang@intel.com>
+In-Reply-To: <1534406064-10065-7-git-send-email-zhang.chunyan@linaro.org>
+References: <1534406064-10065-7-git-send-email-zhang.chunyan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The OOM notifier is getting deprecated to use for the reasons:
-- As a callout from the oom context, it is too subtle and easy to
-  generate bugs and corner cases which are hard to track;
-- It is called too late (after the reclaiming has been performed).
-  Drivers with large amuont of reclaimable memory is expected to
-  release them at an early stage of memory pressure;
-- The notifier callback isn't aware of oom contrains;
-Link: https://lkml.org/lkml/2018/7/12/314
+For version 4.10 and aboves, SDHCI_ARGUMENT2 is also used to indicate
+32-bit number of blocks, so it doesn't support stuff bits in argument
+of CMD23, but only block count for the following command (CMD18/25).
 
-This patch replaces the virtio-balloon oom notifier with a shrinker
-to release balloon pages on memory pressure. The balloon pages are
-given back to mm adaptively by returning the number of pages that the
-reclaimer is asking for (i.e. sc->nr_to_scan).
-
-Currently the max possible value of sc->nr_to_scan passed to the balloon
-shrinker is SHRINK_BATCH, which is 128. This is smaller than the
-limitation that only VIRTIO_BALLOON_ARRAY_PFNS_MAX (256) pages can be
-returned via one invocation of leak_balloon. But this patch still
-considers the case that SHRINK_BATCH or shrinker->batch could be changed
-to a value larger than VIRTIO_BALLOON_ARRAY_PFNS_MAX, which will need to
-do multiple invocations of leak_balloon.
-
-Historically, the feature VIRTIO_BALLOON_F_DEFLATE_ON_OOM has been used
-to release balloon pages on OOM. We continue to use this feature bit for
-the shrinker, so the shrinker is only registered when this feature bit
-has been negotiated with host.
-
-Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 ---
- drivers/virtio/virtio_balloon.c | 110 +++++++++++++++++++++-------------------
- 1 file changed, 59 insertions(+), 51 deletions(-)
+ drivers/mmc/host/sdhci.c | 10 ++++++++++
+ drivers/mmc/host/sdhci.h |  1 +
+ 2 files changed, 11 insertions(+)
 
-diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-index d97d73c..d1c1f62 100644
---- a/drivers/virtio/virtio_balloon.c
-+++ b/drivers/virtio/virtio_balloon.c
-@@ -27,7 +27,6 @@
- #include <linux/slab.h>
- #include <linux/module.h>
- #include <linux/balloon_compaction.h>
--#include <linux/oom.h>
- #include <linux/wait.h>
- #include <linux/mm.h>
- #include <linux/mount.h>
-@@ -40,13 +39,8 @@
-  */
- #define VIRTIO_BALLOON_PAGES_PER_PAGE (unsigned)(PAGE_SIZE >> VIRTIO_BALLOON_PFN_SHIFT)
- #define VIRTIO_BALLOON_ARRAY_PFNS_MAX 256
--#define OOM_VBALLOON_DEFAULT_PAGES 256
- #define VIRTBALLOON_OOM_NOTIFY_PRIORITY 80
- 
--static int oom_pages = OOM_VBALLOON_DEFAULT_PAGES;
--module_param(oom_pages, int, S_IRUSR | S_IWUSR);
--MODULE_PARM_DESC(oom_pages, "pages to free on OOM");
--
- #ifdef CONFIG_BALLOON_COMPACTION
- static struct vfsmount *balloon_mnt;
- #endif
-@@ -86,8 +80,8 @@ struct virtio_balloon {
- 	/* Memory statistics */
- 	struct virtio_balloon_stat stats[VIRTIO_BALLOON_S_NR];
- 
--	/* To register callback in oom notifier call chain */
--	struct notifier_block nb;
-+	/* To register a shrinker to shrink memory upon memory pressure */
-+	struct shrinker shrinker;
- };
- 
- static struct virtio_device_id id_table[] = {
-@@ -365,38 +359,6 @@ static void update_balloon_size(struct virtio_balloon *vb)
- 		      &actual);
- }
- 
--/*
-- * virtballoon_oom_notify - release pages when system is under severe
-- *			    memory pressure (called from out_of_memory())
-- * @self : notifier block struct
-- * @dummy: not used
-- * @parm : returned - number of freed pages
-- *
-- * The balancing of memory by use of the virtio balloon should not cause
-- * the termination of processes while there are pages in the balloon.
-- * If virtio balloon manages to release some memory, it will make the
-- * system return and retry the allocation that forced the OOM killer
-- * to run.
-- */
--static int virtballoon_oom_notify(struct notifier_block *self,
--				  unsigned long dummy, void *parm)
--{
--	struct virtio_balloon *vb;
--	unsigned long *freed;
--	unsigned num_freed_pages;
--
--	vb = container_of(self, struct virtio_balloon, nb);
--	if (!virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM))
--		return NOTIFY_OK;
--
--	freed = parm;
--	num_freed_pages = leak_balloon(vb, oom_pages);
--	update_balloon_size(vb);
--	*freed += num_freed_pages;
--
--	return NOTIFY_OK;
--}
--
- static void update_balloon_stats_func(struct work_struct *work)
- {
- 	struct virtio_balloon *vb;
-@@ -550,6 +512,52 @@ static struct file_system_type balloon_fs = {
- 
- #endif /* CONFIG_BALLOON_COMPACTION */
- 
-+static unsigned long virtio_balloon_shrinker_scan(struct shrinker *shrinker,
-+						  struct shrink_control *sc)
-+{
-+	unsigned long pages_to_free, pages_freed = 0;
-+	struct virtio_balloon *vb = container_of(shrinker,
-+					struct virtio_balloon, shrinker);
-+
-+	pages_to_free = sc->nr_to_scan * VIRTIO_BALLOON_PAGES_PER_PAGE;
-+
-+	/*
-+	 * One invocation of leak_balloon can deflate at most
-+	 * VIRTIO_BALLOON_ARRAY_PFNS_MAX balloon pages, so we call it
-+	 * multiple times to deflate pages till reaching pages_to_free.
-+	 */
-+	while (vb->num_pages && pages_to_free) {
-+		pages_to_free -= pages_freed;
-+		pages_freed += leak_balloon(vb, pages_to_free);
-+	}
-+	update_balloon_size(vb);
-+
-+	return pages_freed / VIRTIO_BALLOON_PAGES_PER_PAGE;
-+}
-+
-+static unsigned long virtio_balloon_shrinker_count(struct shrinker *shrinker,
-+						   struct shrink_control *sc)
-+{
-+	struct virtio_balloon *vb = container_of(shrinker,
-+					struct virtio_balloon, shrinker);
-+
-+	return vb->num_pages / VIRTIO_BALLOON_PAGES_PER_PAGE;
-+}
-+
-+static void virtio_balloon_unregister_shrinker(struct virtio_balloon *vb)
-+{
-+	unregister_shrinker(&vb->shrinker);
-+}
-+
-+static int virtio_balloon_register_shrinker(struct virtio_balloon *vb)
-+{
-+	vb->shrinker.scan_objects = virtio_balloon_shrinker_scan;
-+	vb->shrinker.count_objects = virtio_balloon_shrinker_count;
-+	vb->shrinker.seeks = DEFAULT_SEEKS;
-+
-+	return register_shrinker(&vb->shrinker);
-+}
-+
- static int virtballoon_probe(struct virtio_device *vdev)
- {
- 	struct virtio_balloon *vb;
-@@ -580,17 +588,10 @@ static int virtballoon_probe(struct virtio_device *vdev)
- 	if (err)
- 		goto out_free_vb;
- 
--	vb->nb.notifier_call = virtballoon_oom_notify;
--	vb->nb.priority = VIRTBALLOON_OOM_NOTIFY_PRIORITY;
--	err = register_oom_notifier(&vb->nb);
--	if (err < 0)
--		goto out_del_vqs;
--
- #ifdef CONFIG_BALLOON_COMPACTION
- 	balloon_mnt = kern_mount(&balloon_fs);
- 	if (IS_ERR(balloon_mnt)) {
- 		err = PTR_ERR(balloon_mnt);
--		unregister_oom_notifier(&vb->nb);
- 		goto out_del_vqs;
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index b3328ee..04e0904 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1729,6 +1729,16 @@ static void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ 		}
  	}
  
-@@ -599,12 +600,19 @@ static int virtballoon_probe(struct virtio_device *vdev)
- 	if (IS_ERR(vb->vb_dev_info.inode)) {
- 		err = PTR_ERR(vb->vb_dev_info.inode);
- 		kern_unmount(balloon_mnt);
--		unregister_oom_notifier(&vb->nb);
- 		goto out_del_vqs;
- 	}
- 	vb->vb_dev_info.inode->i_mapping->a_ops = &balloon_aops;
- #endif
--
 +	/*
-+	 * We continue to use VIRTIO_BALLOON_F_DEFLATE_ON_OOM to decide if a
-+	 * shrinker needs to be registered to relieve memory pressure.
++	 * From version 4.10 onward, ARGUMENT2 register is also used as 32-bit
++	 * block count register which doesn't support stuff bits of
++	 * CMD23 argument.
 +	 */
-+	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM)) {
-+		err = virtio_balloon_register_shrinker(vb);
-+		if (err)
-+			goto out_del_vqs;
-+	}
- 	virtio_device_ready(vdev);
++	if (host->version >= SDHCI_SPEC_410 &&
++	    mrq->sbc && (mrq->sbc->arg & SDHCI_ARG2_STUFF) &&
++	    (host->flags & SDHCI_AUTO_CMD23))
++		host->flags &= ~SDHCI_AUTO_CMD23;
++
+ 	if (!present || host->flags & SDHCI_DEVICE_DEAD) {
+ 		mrq->cmd->error = -ENOMEDIUM;
+ 		sdhci_finish_mrq(host, mrq);
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index d34971ac..daf8c1e 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -28,6 +28,7 @@
  
- 	if (towards_target(vb))
-@@ -636,8 +644,8 @@ static void virtballoon_remove(struct virtio_device *vdev)
- {
- 	struct virtio_balloon *vb = vdev->priv;
+ #define SDHCI_DMA_ADDRESS	0x00
+ #define SDHCI_ARGUMENT2		SDHCI_DMA_ADDRESS
++#define  SDHCI_ARG2_STUFF	GENMASK(31, 16)
+ #define SDHCI_32BIT_BLK_CNT	SDHCI_DMA_ADDRESS
  
--	unregister_oom_notifier(&vb->nb);
--
-+	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM))
-+		virtio_balloon_unregister_shrinker(vb);
- 	spin_lock_irq(&vb->stop_update_lock);
- 	vb->stop_update = true;
- 	spin_unlock_irq(&vb->stop_update_lock);
+ #define SDHCI_BLOCK_SIZE	0x04
 -- 
 2.7.4
 
