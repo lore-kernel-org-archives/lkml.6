@@ -6,44 +6,39 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F16C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA24C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:35:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C43621486
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:33:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C43621486
+	by mail.kernel.org (Postfix) with ESMTP id 3843521480
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:35:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3843521480
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392027AbeHPSc0 (ORCPT
+        id S2392034AbeHPSeg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 14:32:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40692 "EHLO mail.kernel.org"
+        Thu, 16 Aug 2018 14:34:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725808AbeHPSc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 14:32:26 -0400
+        id S1726347AbeHPSeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 14:34:36 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6C2020C0A;
-        Thu, 16 Aug 2018 15:33:12 +0000 (UTC)
-Date:   Thu, 16 Aug 2018 11:33:11 -0400
+        by mail.kernel.org (Postfix) with ESMTPSA id CB90220C51;
+        Thu, 16 Aug 2018 15:35:22 +0000 (UTC)
+Date:   Thu, 16 Aug 2018 11:35:21 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Prarit Bhargava <prarit@redhat.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Mark Salter <msalter@redhat.com>,
-        Al Stone <ahs3@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        x86@kernel.org, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Kees Cook <keescook@chromium.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] console: Add console=auto option
-Message-ID: <20180816113311.676971d0@gandalf.local.home>
-In-Reply-To: <4335912e-dab7-c516-d71e-47ed479c638a@redhat.com>
-References: <20180816141055.451-1-prarit@redhat.com>
-        <20180816150948.GA10648@kroah.com>
-        <4335912e-dab7-c516-d71e-47ed479c638a@redhat.com>
+To:     Tobias Waldekranz <tobias@waldekranz.com>
+Cc:     <netdev@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: Re: [PATCH v2] net: phy: add tracepoints
+Message-ID: <20180816113521.55637a71@gandalf.local.home>
+In-Reply-To: <20180816152452.7834-1-tobias@waldekranz.com>
+References: <20180816152452.7834-1-tobias@waldekranz.com>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -53,92 +48,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Aug 2018 11:28:24 -0400
-Prarit Bhargava <prarit@redhat.com> wrote:
+On Thu, 16 Aug 2018 17:24:48 +0200
+Tobias Waldekranz <tobias@waldekranz.com> wrote:
 
-> On 08/16/2018 11:09 AM, Greg Kroah-Hartman wrote:
-> > On Thu, Aug 16, 2018 at 10:10:55AM -0400, Prarit Bhargava wrote:  
-> >> ACPI may contain an SPCR table that defines a default system console.
-> >> On ARM if the table is present then the SPCR console is enabled by default.
-> >> On x86 the SPCR console is used if 'earlycon' (no parameters) is
-> >> specified as a kernel parameter and is used only as the early console.
-> >> To use the SPCR data as a console a user must boot with 'earlycon',
-> >> grep logs & specify a console= kernel parameter, and then reboot again.
-> >>
-> >> Add 'console=auto' that enables a firmware or hardware console, and on
-> >> x86 enable the SPCR console if 'console=auto' is specified.
-> >>
-> >> Tested on systems with and without an ACPI SPCR.  The following kernel
-> >> parameters were also tested:
-> >>
-> >> console=ttyS0,115200    		works
-> >> earlycon                		works (early console only)
-> >> console=auto            		works (full console as expected)
-> >> no console or earlycon arguments	works (no output as expected)
-> >>
-> >> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-> >> Cc: Mark Salter <msalter@redhat.com>
-> >> Cc: Al Stone <ahs3@redhat.com>
-> >> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> >> Cc: Len Brown <len.brown@intel.com>
-> >> Cc: Pavel Machek <pavel@ucw.cz>
-> >> Cc: x86@kernel.org
-> >> Cc: Petr Mladek <pmladek@suse.com>
-> >> Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> >> Cc: Steven Rostedt <rostedt@goodmis.org>
-> >> Cc: Kees Cook <keescook@chromium.org>
-> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >> Cc: linux-pm@vger.kernel.org
-> >> ---
-> >>  Documentation/admin-guide/kernel-parameters.txt |  1 +
-> >>  arch/x86/kernel/acpi/boot.c                     |  5 +++++
-> >>  include/linux/console.h                         |  1 +
-> >>  kernel/printk/printk.c                          | 10 ++++++++++
-> >>  4 files changed, 17 insertions(+)
-> >>
-> >> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> >> index a32f2a126791..dd057224f33b 100644
-> >> --- a/Documentation/admin-guide/kernel-parameters.txt
-> >> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> >> @@ -635,6 +635,7 @@
-> >>  
-> >>  		hvc<n>	Use the hypervisor console device <n>. This is for
-> >>  			both Xen and PowerPC hypervisors.
-> >> +		auto	[X86] Enable ACPI SPCR console
-> >>  
-> >>  		If the device connected to the port is not a TTY but a braille
-> >>  		device, prepend "brl," before the device type, for instance
-> >> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-> >> index 3b20607d581b..fb2616ba3b21 100644
-> >> --- a/arch/x86/kernel/acpi/boot.c
-> >> +++ b/arch/x86/kernel/acpi/boot.c
-> >> @@ -1771,3 +1771,8 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
-> >>  	e820__range_add(addr, size, E820_TYPE_ACPI);
-> >>  	e820__update_table_print();
-> >>  }
-> >> +
-> >> +void __init arch_console_setup(void)
-> >> +{
-> >> +	acpi_parse_spcr(false, true);
-> >> +}  
-> > 
-> > <snip>
-> >   
-> >> +int arch_console_setup(void);  
-> > 
-> > Function does not match its prototype :(
-> > 
-> > How did you build this successfully?  
+> Two tracepoints for now:
 > 
-> Weird, it compiles on my system?
+>    * `phy_interrupt` Pretty self-explanatory.
+> 
+>    * `phy_state_change` Whenever the PHY's state machine is run, trace
+>      the old and the new state.
+> 
+> Signed-off-by: Tobias Waldekranz <tobias@waldekranz.com>
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+> v1 -> v2:
+>    * Actually include the entire patch, based on current net-next.
+>    * Pretty print the PHY's state according to Steven's suggestion.
 
-Are you compiling with ACPI enabled?
+Cool!
 
-It would still compile without it and use the properly prototyped
-"weak" function.
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
 -- Steve
 
-> 
-> I'll fix it though.
-> 
+> ---
