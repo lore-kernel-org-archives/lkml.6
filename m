@@ -2,164 +2,153 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D1C6C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6E7C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D98AD20C0E
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:39:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D98AD20C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4162C2147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:45:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="T26ROPs4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4162C2147A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729740AbeHPUjD (ORCPT
+        id S1729860AbeHPUpi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 16:39:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60352 "EHLO mx1.redhat.com"
+        Thu, 16 Aug 2018 16:45:38 -0400
+Received: from mail-bn3nam01on0105.outbound.protection.outlook.com ([104.47.33.105]:58143
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728702AbeHPUjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 16:39:03 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 80C43401021C;
-        Thu, 16 Aug 2018 17:39:12 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 33CA810FFE4E;
-        Thu, 16 Aug 2018 17:39:10 +0000 (UTC)
-From:   Prarit Bhargava <prarit@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Prarit Bhargava <prarit@redhat.com>,
-        Mark Salter <msalter@redhat.com>, Al Stone <ahs3@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        x86@kernel.org, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v2] console: Add console=auto option
-Date:   Thu, 16 Aug 2018 13:39:01 -0400
-Message-Id: <20180816173902.18971-1-prarit@redhat.com>
-In-Reply-To: <728a8e68-ea4b-4040-a0fc-217df4f1928d@redhat.com>
-References: <728a8e68-ea4b-4040-a0fc-217df4f1928d@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 16 Aug 2018 17:39:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 16 Aug 2018 17:39:12 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
+        id S1727973AbeHPUpi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 16:45:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1XPbk1vqqINla1PhzvQtTAmc5OPK4kLQJRobmMql3uw=;
+ b=T26ROPs40yjchiv5adDARmKlWaKY+rkQ4WhneZvFMDbP7jO4W4WiBzuJN3GWaSf+zy9CrXNfBK9wv4b9ets9EISGoUBqUyIHpfNmvsY6p+lRSnYi+LmG1UATCzjBCFnLwYXtEwBQYhdZMG4SXoQg1c7cj2QvePoSNfXBVkQYS/c=
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
+ DM5PR21MB0155.namprd21.prod.outlook.com (10.173.173.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1080.7; Thu, 16 Aug 2018 17:45:43 +0000
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::65dd:b17f:eb0d:2eee]) by DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::65dd:b17f:eb0d:2eee%8]) with mapi id 15.20.1080.009; Thu, 16 Aug 2018
+ 17:45:43 +0000
+From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
+To:     Oscar Salvador <osalvador@techadventures.net>
+CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "yasu.isimatu@gmail.com" <yasu.isimatu@gmail.com>,
+        "jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v3 1/4] mm/memory-hotplug: Drop unused args from
+ remove_memory_section
+Thread-Topic: [PATCH v3 1/4] mm/memory-hotplug: Drop unused args from
+ remove_memory_section
+Thread-Index: AQHUNKYz7/cjSBVw10qThdVTfaqF8qTCqJyA
+Date:   Thu, 16 Aug 2018 17:45:43 +0000
+Message-ID: <20180816174543.e6puawtdomoadnrd@xakep.localdomain>
+References: <20180815144219.6014-1-osalvador@techadventures.net>
+ <20180815144219.6014-2-osalvador@techadventures.net>
+In-Reply-To: <20180815144219.6014-2-osalvador@techadventures.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [73.69.118.222]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR21MB0155;6:LIyIRaufhKMWw20v9ID0AClmTNQhOuNFq8W3Vg568Y04o5+kD7bQLjHN8/4WtuofUbgFTCFH20FBeDKHS5IkRrGykYwiYp/JfFJ5y4nUVvKvHYHC93RrEMzYtTMfwfOoP64rtYgHiRT2b6q+gnA9bPsdxaIJDo6vEv2TQ1oYmEzvhpW18FyJxoSNGsCwpR4nlN4FvyD3VV9qBV6hfidrW4GT9xwSlERsOY8xe7z2KG1odpZbQ8MwG/x2JqLTDb114ppTj+gc2LbV+rgJEYoMel/o5z2I9aXBBJJSOvNlPfMeEajzwVb+HU56oZT7HgDiK6nfna8ZiWWyuVrNOBNeaXg8CEcjzzwP3lq8ZOUqoMs+BcBpfuImUJrPpNoqmaWdh/gNazQmbgjrQVqVriXiaFq8DbTmm88B80xiXfpPGN3BSy6Ec6VFljIJ+iAUMcjPdl/WDDI3ICLmLK7yl0oTfg==;5:z2CcgPPwpVsX1LOTbh0EORuz7OKqhCeNqousNzLAXZmrBHzDK8ubrfTxsplSQxOzl9aaExywK4jNFrMALAKKkZi6K7ifAArTlqmX78e11TZS4lhJuTRUn1qHmS/W1MAQFmGTNK49F+M70r5qzG7qTfyU0+AQAekqALjxu8Rqotk=;7:BF4nMvjUYtcYR8bCJH4lAPOqKTnsTxc1OFOpoIlAnh46TxS7fONc0r5fxGiXFsX6Ip5uv4HrhU67dMOGRUVHjK7pvXtZON9e30Zwif+HJQMCHH4peFf7MLNlyxkflRtskom3ZyUxBD7ze3CR7Y5tG+1kAUELMf9LOywTK+0uuF1mcnA87YDibHrmaHiLmI3FBHM9LzFWNZt9FcJp+QIsK0TIsFug6RiybsGmvQeRnLGzJNKxjBf8jmhm7LNabC8E
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 8968f469-4d0b-40c9-3120-08d603a01738
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7193020);SRVR:DM5PR21MB0155;
+x-ms-traffictypediagnostic: DM5PR21MB0155:
+x-microsoft-antispam-prvs: <DM5PR21MB0155B85FB97A9B5DF399AA1E9D3E0@DM5PR21MB0155.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(20180801012)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231336)(8210008)(944501410)(52105095)(2018427008)(10201501046)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(201708071742011)(7699016);SRVR:DM5PR21MB0155;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0155;
+x-forefront-prvs: 07665BE9D1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(376002)(346002)(396003)(136003)(199004)(189003)(2900100001)(6916009)(8936002)(4326008)(6246003)(6506007)(39060400002)(68736007)(53546011)(1076002)(105586002)(3846002)(6346003)(256004)(6116002)(102836004)(10290500003)(97736004)(25786009)(106356001)(5660300001)(10090500001)(8676002)(229853002)(6486002)(6512007)(9686003)(6436002)(81156014)(81166006)(186003)(305945005)(7736002)(53936002)(2906002)(86612001)(7416002)(26005)(33896004)(446003)(86362001)(11346002)(575784001)(476003)(14454004)(316002)(99286004)(76176011)(22452003)(66066001)(486006)(5250100002)(478600001)(72206003)(54906003);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0155;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
+x-microsoft-antispam-message-info: VVxgqPr08xmopUrUg4pQ4T8pefpyGGjPRjn1gUVEGwaa5qm/Eepmc74y0aG9WcT+tTTxzPTWzbP73qazmUZf8bIajz+iFjCldFo5e2KCNV7Tp281QP2XqZmR3ao/GegTED+lHjmf/oFE2SvkEZzM9nOHB+NAFSVjq5/+94DHKFeMc50fT367fKpudMGqfeOzOClhF1k1+NfesJ9xzcniM4yf+T/r7FIdVBJdoVLNT2lVLJhls2CMGsHvQDJy9nKQmRs26SGAywW5fWmWKEQNmCrJDlc1IGFkJphzA/gq72vnuf6fsrsUeH9nLabgxR+07lao08m+GBTy0unj9PfVfqujN1xkZGlvd7A3/son2H4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <14461EB7149D29409BA6145B64D908DE@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8968f469-4d0b-40c9-3120-08d603a01738
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2018 17:45:43.7522
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0155
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ACPI may contain an SPCR table that defines a default system console.
-On ARM if the table is present then the SPCR console is enabled by default.
-On x86 the SPCR console is used if 'earlycon' (no parameters) is
-specified as a kernel parameter and is used only as the early console.
-To use the SPCR data as a console a user must boot with 'earlycon',
-grep logs & specify a console= kernel parameter, and then reboot again.
+On 18-08-15 16:42:16, Oscar Salvador wrote:
+> From: Oscar Salvador <osalvador@suse.de>
+>=20
+> unregister_memory_section() calls remove_memory_section()
+> with three arguments:
+>=20
+> * node_id
+> * section
+> * phys_device
+>=20
+> Neither node_id nor phys_device are used.
+> Let us drop them from the function.
 
-Add 'console=auto' that enables a firmware or hardware console, and on
-x86 enable the SPCR console if 'console=auto' is specified.
+Looks good:
+Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
 
-Tested on systems with and without an ACPI SPCR.  The following kernel
-parameters were also tested:
-
-console=ttyS0,115200    		works
-earlycon                		works (early console only)
-console=auto            		works (full console as expected)
-no console or earlycon arguments	works (no output as expected)
-
-v2: Fix prototype.
-
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Cc: Mark Salter <msalter@redhat.com>
-Cc: Al Stone <ahs3@redhat.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: x86@kernel.org
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-pm@vger.kernel.org
----
- Documentation/admin-guide/kernel-parameters.txt |  1 +
- arch/x86/kernel/acpi/boot.c                     |  5 +++++
- include/linux/console.h                         |  1 +
- kernel/printk/printk.c                          | 10 ++++++++++
- 4 files changed, 17 insertions(+)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a32f2a126791..dd057224f33b 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -635,6 +635,7 @@
- 
- 		hvc<n>	Use the hypervisor console device <n>. This is for
- 			both Xen and PowerPC hypervisors.
-+		auto	[X86] Enable ACPI SPCR console
- 
- 		If the device connected to the port is not a TTY but a braille
- 		device, prepend "brl," before the device type, for instance
-diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-index 3b20607d581b..fb2616ba3b21 100644
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -1771,3 +1771,8 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
- 	e820__range_add(addr, size, E820_TYPE_ACPI);
- 	e820__update_table_print();
- }
-+
-+void __init arch_console_setup(void)
-+{
-+	acpi_parse_spcr(false, true);
-+}
-diff --git a/include/linux/console.h b/include/linux/console.h
-index dfd6b0e97855..c2a6dde9a799 100644
---- a/include/linux/console.h
-+++ b/include/linux/console.h
-@@ -181,6 +181,7 @@ extern int is_console_locked(void);
- extern int braille_register_console(struct console *, int index,
- 		char *console_options, char *braille_options);
- extern int braille_unregister_console(struct console *);
-+void arch_console_setup(void);
- #ifdef CONFIG_TTY
- extern void console_sysfs_notify(void);
- #else
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 247808333ba4..bdd53858664b 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2078,6 +2078,11 @@ static int __init console_msg_format_setup(char *str)
- }
- __setup("console_msg_format=", console_msg_format_setup);
- 
-+void __init __weak arch_console_setup(void)
-+{
-+	return;
-+}
-+
- /*
-  * Set up a console.  Called via do_early_param() in init/main.c
-  * for each "console=" parameter in the boot command line.
-@@ -2088,6 +2093,11 @@ static int __init console_setup(char *str)
- 	char *s, *options, *brl_options = NULL;
- 	int idx;
- 
-+	if (!strcmp(str, "auto")) {
-+		arch_console_setup();
-+		return 1;
-+	}
-+
- 	if (_braille_console_setup(&str, &brl_options))
- 		return 1;
- 
--- 
-2.14.4
-
+>=20
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>  drivers/base/memory.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+> index c8a1cb0b6136..2c622a9a7490 100644
+> --- a/drivers/base/memory.c
+> +++ b/drivers/base/memory.c
+> @@ -752,8 +752,7 @@ unregister_memory(struct memory_block *memory)
+>  	device_unregister(&memory->dev);
+>  }
+> =20
+> -static int remove_memory_section(unsigned long node_id,
+> -			       struct mem_section *section, int phys_device)
+> +static int remove_memory_section(struct mem_section *section)
+>  {
+>  	struct memory_block *mem;
+> =20
+> @@ -785,7 +784,7 @@ int unregister_memory_section(struct mem_section *sec=
+tion)
+>  	if (!present_section(section))
+>  		return -EINVAL;
+> =20
+> -	return remove_memory_section(0, section, 0);
+> +	return remove_memory_section(section);
+>  }
+>  #endif /* CONFIG_MEMORY_HOTREMOVE */
+> =20
+> --=20
+> 2.13.6
+> =
