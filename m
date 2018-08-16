@@ -6,140 +6,139 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CF5C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F16C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:33:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 072F5208EB
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:28:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 072F5208EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C43621486
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:33:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C43621486
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404063AbeHPS1l (ORCPT
+        id S2392027AbeHPSc0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 14:27:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37228 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725808AbeHPS1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 14:27:41 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 16 Aug 2018 14:32:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40692 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725808AbeHPSc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 14:32:26 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 88899401EF13;
-        Thu, 16 Aug 2018 15:28:27 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 14F1F1049464;
-        Thu, 16 Aug 2018 15:28:25 +0000 (UTC)
-Subject: Re: [PATCH] console: Add console=auto option
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, Mark Salter <msalter@redhat.com>,
+        by mail.kernel.org (Postfix) with ESMTPSA id B6C2020C0A;
+        Thu, 16 Aug 2018 15:33:12 +0000 (UTC)
+Date:   Thu, 16 Aug 2018 11:33:11 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Prarit Bhargava <prarit@redhat.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Mark Salter <msalter@redhat.com>,
         Al Stone <ahs3@redhat.com>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
         x86@kernel.org, Petr Mladek <pmladek@suse.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
         Kees Cook <keescook@chromium.org>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] console: Add console=auto option
+Message-ID: <20180816113311.676971d0@gandalf.local.home>
+In-Reply-To: <4335912e-dab7-c516-d71e-47ed479c638a@redhat.com>
 References: <20180816141055.451-1-prarit@redhat.com>
- <20180816150948.GA10648@kroah.com>
-From:   Prarit Bhargava <prarit@redhat.com>
-Message-ID: <4335912e-dab7-c516-d71e-47ed479c638a@redhat.com>
-Date:   Thu, 16 Aug 2018 11:28:24 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        <20180816150948.GA10648@kroah.com>
+        <4335912e-dab7-c516-d71e-47ed479c638a@redhat.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180816150948.GA10648@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 16 Aug 2018 15:28:27 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 16 Aug 2018 15:28:27 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 16 Aug 2018 11:28:24 -0400
+Prarit Bhargava <prarit@redhat.com> wrote:
 
-
-On 08/16/2018 11:09 AM, Greg Kroah-Hartman wrote:
-> On Thu, Aug 16, 2018 at 10:10:55AM -0400, Prarit Bhargava wrote:
->> ACPI may contain an SPCR table that defines a default system console.
->> On ARM if the table is present then the SPCR console is enabled by default.
->> On x86 the SPCR console is used if 'earlycon' (no parameters) is
->> specified as a kernel parameter and is used only as the early console.
->> To use the SPCR data as a console a user must boot with 'earlycon',
->> grep logs & specify a console= kernel parameter, and then reboot again.
->>
->> Add 'console=auto' that enables a firmware or hardware console, and on
->> x86 enable the SPCR console if 'console=auto' is specified.
->>
->> Tested on systems with and without an ACPI SPCR.  The following kernel
->> parameters were also tested:
->>
->> console=ttyS0,115200    		works
->> earlycon                		works (early console only)
->> console=auto            		works (full console as expected)
->> no console or earlycon arguments	works (no output as expected)
->>
->> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
->> Cc: Mark Salter <msalter@redhat.com>
->> Cc: Al Stone <ahs3@redhat.com>
->> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
->> Cc: Len Brown <len.brown@intel.com>
->> Cc: Pavel Machek <pavel@ucw.cz>
->> Cc: x86@kernel.org
->> Cc: Petr Mladek <pmladek@suse.com>
->> Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
->> Cc: Steven Rostedt <rostedt@goodmis.org>
->> Cc: Kees Cook <keescook@chromium.org>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: linux-pm@vger.kernel.org
->> ---
->>  Documentation/admin-guide/kernel-parameters.txt |  1 +
->>  arch/x86/kernel/acpi/boot.c                     |  5 +++++
->>  include/linux/console.h                         |  1 +
->>  kernel/printk/printk.c                          | 10 ++++++++++
->>  4 files changed, 17 insertions(+)
->>
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->> index a32f2a126791..dd057224f33b 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -635,6 +635,7 @@
->>  
->>  		hvc<n>	Use the hypervisor console device <n>. This is for
->>  			both Xen and PowerPC hypervisors.
->> +		auto	[X86] Enable ACPI SPCR console
->>  
->>  		If the device connected to the port is not a TTY but a braille
->>  		device, prepend "brl," before the device type, for instance
->> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
->> index 3b20607d581b..fb2616ba3b21 100644
->> --- a/arch/x86/kernel/acpi/boot.c
->> +++ b/arch/x86/kernel/acpi/boot.c
->> @@ -1771,3 +1771,8 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
->>  	e820__range_add(addr, size, E820_TYPE_ACPI);
->>  	e820__update_table_print();
->>  }
->> +
->> +void __init arch_console_setup(void)
->> +{
->> +	acpi_parse_spcr(false, true);
->> +}
+> On 08/16/2018 11:09 AM, Greg Kroah-Hartman wrote:
+> > On Thu, Aug 16, 2018 at 10:10:55AM -0400, Prarit Bhargava wrote:  
+> >> ACPI may contain an SPCR table that defines a default system console.
+> >> On ARM if the table is present then the SPCR console is enabled by default.
+> >> On x86 the SPCR console is used if 'earlycon' (no parameters) is
+> >> specified as a kernel parameter and is used only as the early console.
+> >> To use the SPCR data as a console a user must boot with 'earlycon',
+> >> grep logs & specify a console= kernel parameter, and then reboot again.
+> >>
+> >> Add 'console=auto' that enables a firmware or hardware console, and on
+> >> x86 enable the SPCR console if 'console=auto' is specified.
+> >>
+> >> Tested on systems with and without an ACPI SPCR.  The following kernel
+> >> parameters were also tested:
+> >>
+> >> console=ttyS0,115200    		works
+> >> earlycon                		works (early console only)
+> >> console=auto            		works (full console as expected)
+> >> no console or earlycon arguments	works (no output as expected)
+> >>
+> >> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+> >> Cc: Mark Salter <msalter@redhat.com>
+> >> Cc: Al Stone <ahs3@redhat.com>
+> >> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> >> Cc: Len Brown <len.brown@intel.com>
+> >> Cc: Pavel Machek <pavel@ucw.cz>
+> >> Cc: x86@kernel.org
+> >> Cc: Petr Mladek <pmladek@suse.com>
+> >> Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> >> Cc: Steven Rostedt <rostedt@goodmis.org>
+> >> Cc: Kees Cook <keescook@chromium.org>
+> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >> Cc: linux-pm@vger.kernel.org
+> >> ---
+> >>  Documentation/admin-guide/kernel-parameters.txt |  1 +
+> >>  arch/x86/kernel/acpi/boot.c                     |  5 +++++
+> >>  include/linux/console.h                         |  1 +
+> >>  kernel/printk/printk.c                          | 10 ++++++++++
+> >>  4 files changed, 17 insertions(+)
+> >>
+> >> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> >> index a32f2a126791..dd057224f33b 100644
+> >> --- a/Documentation/admin-guide/kernel-parameters.txt
+> >> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> >> @@ -635,6 +635,7 @@
+> >>  
+> >>  		hvc<n>	Use the hypervisor console device <n>. This is for
+> >>  			both Xen and PowerPC hypervisors.
+> >> +		auto	[X86] Enable ACPI SPCR console
+> >>  
+> >>  		If the device connected to the port is not a TTY but a braille
+> >>  		device, prepend "brl," before the device type, for instance
+> >> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+> >> index 3b20607d581b..fb2616ba3b21 100644
+> >> --- a/arch/x86/kernel/acpi/boot.c
+> >> +++ b/arch/x86/kernel/acpi/boot.c
+> >> @@ -1771,3 +1771,8 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
+> >>  	e820__range_add(addr, size, E820_TYPE_ACPI);
+> >>  	e820__update_table_print();
+> >>  }
+> >> +
+> >> +void __init arch_console_setup(void)
+> >> +{
+> >> +	acpi_parse_spcr(false, true);
+> >> +}  
+> > 
+> > <snip>
+> >   
+> >> +int arch_console_setup(void);  
+> > 
+> > Function does not match its prototype :(
+> > 
+> > How did you build this successfully?  
 > 
-> <snip>
+> Weird, it compiles on my system?
+
+Are you compiling with ACPI enabled?
+
+It would still compile without it and use the properly prototyped
+"weak" function.
+
+-- Steve
+
 > 
->> +int arch_console_setup(void);
-> 
-> Function does not match its prototype :(
-> 
-> How did you build this successfully?
-
-Weird, it compiles on my system?
-
-I'll fix it though.
-
-P.
-
+> I'll fix it though.
 > 
