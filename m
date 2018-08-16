@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF694C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97269C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:48:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9609B21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:48:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9609B21479
+	by mail.kernel.org (Postfix) with ESMTP id 506FE2147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:48:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 506FE2147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728261AbeHPVsc (ORCPT
+        id S1729003AbeHPVse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:48:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57418 "EHLO
+        Thu, 16 Aug 2018 17:48:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57516 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728153AbeHPVsU (ORCPT
+        with ESMTP id S1728239AbeHPVsd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:48:20 -0400
+        Thu, 16 Aug 2018 17:48:33 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 17423CC4;
-        Thu, 16 Aug 2018 18:48:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C8CACCB7;
+        Thu, 16 Aug 2018 18:48:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.18 14/22] crypto: vmac - require a block cipher with 128-bit block size
-Date:   Thu, 16 Aug 2018 20:45:30 +0200
-Message-Id: <20180816171557.073348215@linuxfoundation.org>
+Subject: [PATCH 4.18 18/22] crypto: skcipher - fix aligning block size in skcipher_copy_iv()
+Date:   Thu, 16 Aug 2018 20:45:34 +0200
+Message-Id: <20180816171557.234832609@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171556.502583508@linuxfoundation.org>
 References: <20180816171556.502583508@linuxfoundation.org>
@@ -52,37 +52,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-commit 73bf20ef3df262026c3470241ae4ac8196943ffa upstream.
+commit 0567fc9e90b9b1c8dbce8a5468758e6206744d4a upstream.
 
-The VMAC template assumes the block cipher has a 128-bit block size, but
-it failed to check for that.  Thus it was possible to instantiate it
-using a 64-bit block size cipher, e.g. "vmac(cast5)", causing
-uninitialized memory to be used.
+The ALIGN() macro needs to be passed the alignment, not the alignmask
+(which is the alignment minus 1).
 
-Add the needed check when instantiating the template.
-
-Fixes: f1939f7c5645 ("crypto: vmac - New hash algorithm for intel_txt support")
-Cc: <stable@vger.kernel.org> # v2.6.32+
+Fixes: b286d8b1a690 ("crypto: skcipher - Add skcipher walk interface")
+Cc: <stable@vger.kernel.org> # v4.10+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/vmac.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ crypto/skcipher.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/crypto/vmac.c
-+++ b/crypto/vmac.c
-@@ -655,6 +655,10 @@ static int vmac_create(struct crypto_tem
- 	if (IS_ERR(alg))
- 		return PTR_ERR(alg);
+--- a/crypto/skcipher.c
++++ b/crypto/skcipher.c
+@@ -399,7 +399,7 @@ static int skcipher_copy_iv(struct skcip
+ 	unsigned size;
+ 	u8 *iv;
  
-+	err = -EINVAL;
-+	if (alg->cra_blocksize != 16)
-+		goto out_put_alg;
-+
- 	inst = shash_alloc_instance("vmac", alg);
- 	err = PTR_ERR(inst);
- 	if (IS_ERR(inst))
+-	aligned_bs = ALIGN(bs, alignmask);
++	aligned_bs = ALIGN(bs, alignmask + 1);
+ 
+ 	/* Minimum size to align buffer by alignmask. */
+ 	size = alignmask & ~a;
 
 
