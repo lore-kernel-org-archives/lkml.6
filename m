@@ -6,39 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 447A9C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B67BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:46:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFDE92147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:46:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFDE92147D
+	by mail.kernel.org (Postfix) with ESMTP id 3A69221479
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:46:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A69221479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730158AbeHPVqL (ORCPT
+        id S1730175AbeHPVqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:46:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56766 "EHLO
+        Thu, 16 Aug 2018 17:46:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56794 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730123AbeHPVqJ (ORCPT
+        with ESMTP id S1728834AbeHPVqQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:46:09 -0400
+        Thu, 16 Aug 2018 17:46:16 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7C057CE8;
-        Thu, 16 Aug 2018 18:45:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E2A14CEB;
+        Thu, 16 Aug 2018 18:46:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Valente <paolo.valente@linaro.org>,
-        Angelo Ruocco <angeloruocco90@gmail.com>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Lee Tibbert <lee.tibbert@gmail.com>,
-        Mirko Montanari <mirkomontanari91@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org,
+        Thierry Escande <thierry.escande@collabora.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 17/22] block, bfq: fix wrong init of saved start time for weight raising
-Date:   Thu, 16 Aug 2018 20:45:18 +0200
-Message-Id: <20180816171625.072831365@linuxfoundation.org>
+Subject: [PATCH 4.14 19/22] ASoC: Intel: cht_bsw_max98090_ti: Fix jack initialization
+Date:   Thu, 16 Aug 2018 20:45:20 +0200
+Message-Id: <20180816171625.259282988@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171622.831964729@linuxfoundation.org>
 References: <20180816171622.831964729@linuxfoundation.org>
@@ -55,147 +54,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Valente <paolo.valente@linaro.org>
+From: Thierry Escande <thierry.escande@collabora.com>
 
-commit 4baa8bb13f41307f3eb62fe91f93a1a798ebef53 upstream.
+commit 3bbda5a38601f7675a214be2044e41d7749e6c7b upstream.
 
-This commit fixes a bug that causes bfq to fail to guarantee a high
-responsiveness on some drives, if there is heavy random read+write I/O
-in the background. More precisely, such a failure allowed this bug to
-be found [1], but the bug may well cause other yet unreported
-anomalies.
+If the ts3a227e audio accessory detection hardware is present and its
+driver probed, the jack needs to be created before enabling jack
+detection in the ts3a227e driver. With this patch, the jack is
+instantiated in the max98090 headset init function if the ts3a227e is
+present. This fixes a null pointer dereference as the jack detection
+enabling function in the ts3a driver was called before the jack is
+created.
 
-BFQ raises the weight of the bfq_queues associated with soft real-time
-applications, to privilege the I/O, and thus reduce latency, for these
-applications. This mechanism is named soft-real-time weight raising in
-BFQ. A soft real-time period may happen to be nested into an
-interactive weight raising period, i.e., it may happen that, when a
-bfq_queue switches to a soft real-time weight-raised state, the
-bfq_queue is already being weight-raised because deemed interactive
-too. In this case, BFQ saves in a special variable
-wr_start_at_switch_to_srt, the time instant when the interactive
-weight-raising period started for the bfq_queue, i.e., the time
-instant when BFQ started to deem the bfq_queue interactive. This value
-is then used to check whether the interactive weight-raising period
-would still be in progress when the soft real-time weight-raising
-period ends.  If so, interactive weight raising is restored for the
-bfq_queue. This restore is useful, in particular, because it prevents
-bfq_queues from losing their interactive weight raising prematurely,
-as a consequence of spurious, short-lived soft real-time
-weight-raising periods caused by wrong detections as soft real-time.
+[minor correction to keep error handling on jack creation the same
+as before by Pierre Bossart]
 
-If, instead, a bfq_queue switches to soft-real-time weight raising
-while it *is not* already in an interactive weight-raising period,
-then the variable wr_start_at_switch_to_srt has no meaning during the
-following soft real-time weight-raising period. Unfortunately the
-handling of this case is wrong in BFQ: not only the variable is not
-flagged somehow as meaningless, but it is also set to the time when
-the switch to soft real-time weight-raising occurs. This may cause an
-interactive weight-raising period to be considered mistakenly as still
-in progress, and thus a spurious interactive weight-raising period to
-start for the bfq_queue, at the end of the soft-real-time
-weight-raising period. In particular the spurious interactive
-weight-raising period will be considered as still in progress, if the
-soft-real-time weight-raising period does not last very long. The
-bfq_queue will then be wrongly privileged and, if I/O bound, will
-unjustly steal bandwidth to truly interactive or soft real-time
-bfq_queues, harming responsiveness and low latency.
-
-This commit fixes this issue by just setting wr_start_at_switch_to_srt
-to minus infinity (farthest past time instant according to jiffies
-macros): when the soft-real-time weight-raising period ends, certainly
-no interactive weight-raising period will be considered as still in
-progress.
-
-[1] Background I/O Type: Random - Background I/O mix: Reads and writes
-- Application to start: LibreOffice Writer in
-http://www.phoronix.com/scan.php?page=news_item&px=Linux-4.13-IO-Laptop
-
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Angelo Ruocco <angeloruocco90@gmail.com>
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-Tested-by: Lee Tibbert <lee.tibbert@gmail.com>
-Tested-by: Mirko Montanari <mirkomontanari91@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Acked-By: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/bfq-iosched.c |   50 +++++++++++++++++++++++++++++++-------------------
- 1 file changed, 31 insertions(+), 19 deletions(-)
+ sound/soc/intel/boards/cht_bsw_max98090_ti.c |   45 ++++++++++++++++++---------
+ 1 file changed, 31 insertions(+), 14 deletions(-)
 
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -1203,6 +1203,24 @@ static unsigned int bfq_wr_duration(stru
- 	return dur;
- }
+--- a/sound/soc/intel/boards/cht_bsw_max98090_ti.c
++++ b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
+@@ -116,23 +116,19 @@ static int cht_codec_init(struct snd_soc
+ 	struct cht_mc_private *ctx = snd_soc_card_get_drvdata(runtime->card);
+ 	struct snd_soc_jack *jack = &ctx->jack;
  
-+/*
-+ * Return the farthest future time instant according to jiffies
-+ * macros.
-+ */
-+static unsigned long bfq_greatest_from_now(void)
-+{
-+	return jiffies + MAX_JIFFY_OFFSET;
-+}
+-	/**
+-	* TI supports 4 butons headset detection
+-	* KEY_MEDIA
+-	* KEY_VOICECOMMAND
+-	* KEY_VOLUMEUP
+-	* KEY_VOLUMEDOWN
+-	*/
+-	if (ctx->ts3a227e_present)
+-		jack_type = SND_JACK_HEADPHONE | SND_JACK_MICROPHONE |
+-					SND_JACK_BTN_0 | SND_JACK_BTN_1 |
+-					SND_JACK_BTN_2 | SND_JACK_BTN_3;
+-	else
+-		jack_type = SND_JACK_HEADPHONE | SND_JACK_MICROPHONE;
++	if (ctx->ts3a227e_present) {
++		/*
++		 * The jack has already been created in the
++		 * cht_max98090_headset_init() function.
++		 */
++		snd_soc_jack_notifier_register(jack, &cht_jack_nb);
++		return 0;
++	}
 +
-+/*
-+ * Return the farthest past time instant according to jiffies
-+ * macros.
-+ */
-+static unsigned long bfq_smallest_from_now(void)
-+{
-+	return jiffies - MAX_JIFFY_OFFSET;
-+}
-+
- static void bfq_update_bfqq_wr_on_rq_arrival(struct bfq_data *bfqd,
- 					     struct bfq_queue *bfqq,
- 					     unsigned int old_wr_coeff,
-@@ -1217,7 +1235,19 @@ static void bfq_update_bfqq_wr_on_rq_arr
- 			bfqq->wr_coeff = bfqd->bfq_wr_coeff;
- 			bfqq->wr_cur_max_time = bfq_wr_duration(bfqd);
- 		} else {
--			bfqq->wr_start_at_switch_to_srt = jiffies;
-+			/*
-+			 * No interactive weight raising in progress
-+			 * here: assign minus infinity to
-+			 * wr_start_at_switch_to_srt, to make sure
-+			 * that, at the end of the soft-real-time
-+			 * weight raising periods that is starting
-+			 * now, no interactive weight-raising period
-+			 * may be wrongly considered as still in
-+			 * progress (and thus actually started by
-+			 * mistake).
-+			 */
-+			bfqq->wr_start_at_switch_to_srt =
-+				bfq_smallest_from_now();
- 			bfqq->wr_coeff = bfqd->bfq_wr_coeff *
- 				BFQ_SOFTRT_WEIGHT_FACTOR;
- 			bfqq->wr_cur_max_time =
-@@ -2896,24 +2926,6 @@ static unsigned long bfq_bfqq_softrt_nex
- 		   jiffies + nsecs_to_jiffies(bfqq->bfqd->bfq_slice_idle) + 4);
- }
++	jack_type = SND_JACK_HEADPHONE | SND_JACK_MICROPHONE;
  
--/*
-- * Return the farthest future time instant according to jiffies
-- * macros.
-- */
--static unsigned long bfq_greatest_from_now(void)
--{
--	return jiffies + MAX_JIFFY_OFFSET;
--}
+ 	ret = snd_soc_card_jack_new(runtime->card, "Headset Jack",
+ 					jack_type, jack, NULL, 0);
 -
--/*
-- * Return the farthest past time instant according to jiffies
-- * macros.
-- */
--static unsigned long bfq_smallest_from_now(void)
--{
--	return jiffies - MAX_JIFFY_OFFSET;
--}
--
- /**
-  * bfq_bfqq_expire - expire a queue.
-  * @bfqd: device owning the queue.
+ 	if (ret) {
+ 		dev_err(runtime->dev, "Headset Jack creation failed %d\n", ret);
+ 		return ret;
+@@ -188,6 +184,27 @@ static int cht_max98090_headset_init(str
+ {
+ 	struct snd_soc_card *card = component->card;
+ 	struct cht_mc_private *ctx = snd_soc_card_get_drvdata(card);
++	struct snd_soc_jack *jack = &ctx->jack;
++	int jack_type;
++	int ret;
++
++	/*
++	 * TI supports 4 butons headset detection
++	 * KEY_MEDIA
++	 * KEY_VOICECOMMAND
++	 * KEY_VOLUMEUP
++	 * KEY_VOLUMEDOWN
++	 */
++	jack_type = SND_JACK_HEADPHONE | SND_JACK_MICROPHONE |
++		    SND_JACK_BTN_0 | SND_JACK_BTN_1 |
++		    SND_JACK_BTN_2 | SND_JACK_BTN_3;
++
++	ret = snd_soc_card_jack_new(card, "Headset Jack", jack_type,
++				    jack, NULL, 0);
++	if (ret) {
++		dev_err(card->dev, "Headset Jack creation failed %d\n", ret);
++		return ret;
++	}
+ 
+ 	return ts3a227e_enable_jack_detect(component, &ctx->jack);
+ }
 
 
