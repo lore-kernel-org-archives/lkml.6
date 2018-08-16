@@ -2,112 +2,215 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 183AFC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84331C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A53E02098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:51:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQYh/Sbt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A53E02098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C5322098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:52:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C5322098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbeHPVwE (ORCPT
+        id S1728960AbeHPVsC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:52:04 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45562 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726011AbeHPVwD (ORCPT
+        Thu, 16 Aug 2018 17:48:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57340 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726183AbeHPVr7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:52:03 -0400
-Received: by mail-lj1-f194.google.com with SMTP id w16-v6so4458629ljh.12;
-        Thu, 16 Aug 2018 11:51:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=clYKojRQUsud5/ZvoYLWTCNK/A+DZ2sQsL+x7p9aJj8=;
-        b=KQYh/SbtXmNnU+XspWqhx/JIOH8EE6eNoFjBWcwPeCX59TgCKnV8cvzeee+87w8Xw/
-         Td1DY8usc4+2cGBsuzsdDwhrtB2eAL6rsSIVV1EDOOVJkMyLJ9gWeBNZHKNIm4jBADoI
-         RLmcchGbCSXwulEbWjGVrE88ZxXgnOVHxwGrmGlej5A5QHc2OQzu2IttFA29ChUf1lG7
-         uMr9rFghAIbDBbfKpEBLJmz3Q1XNwRd9wGX7pidIUEPcRhPCrRBG6ghb9I8ztulYwF6i
-         nMRAkClIORSFjpWz47vmq+XTEsHWI3Eud+Kb7b+ecYfjU4p+/CD3VPUA6mERtovyijGn
-         1Mog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=clYKojRQUsud5/ZvoYLWTCNK/A+DZ2sQsL+x7p9aJj8=;
-        b=IM9aHZfd6QeYfSXrXLqRrYDSo92JD1Jk6iiNPEwvvtC1lin1hCelcnRArzkNOfqzXQ
-         g4hEIzJ2+QQ/MxbY9JhXlyZovFy5+Ca2L+GcXU3WHOWOLS75nLxnKiyscmew4KNsvlsf
-         98FXePrm+Zahmy2ZrZ1AewlkNhVK5tVZ5x/W2MTVH7xm4LGDXu+KEC+DQl8/MCKQcf+W
-         p4lsTm7uPFGLumCxcpc5pwn/DEuyo5fWrFh6wcFxjF7Pda/JkFonvvcdzTyRVT8B+HGa
-         zUXCGjvKImNOeZeXS4FbobYrh/wSfmsuRwfQU05KCzQul7SYcUEs+fZGqzYBa/LIb2Ku
-         khxQ==
-X-Gm-Message-State: AOUpUlEsojC18M+8vV2hgwleSGb4aClZR81JG99U3aZZtDBiU5+Z/XL3
-        Gc0wmJRNgPjXMFnNzoHA59oZ3UZE
-X-Google-Smtp-Source: AA+uWPw0cpr2gs8GGLKO+mYmQQfnh+tOWNqFFLJp2rJlK2xTONDADVwy12wkl5UyYrhfoT70J1dr2Q==
-X-Received: by 2002:a2e:9599:: with SMTP id w25-v6mr5165172ljh.6.1534445511268;
-        Thu, 16 Aug 2018 11:51:51 -0700 (PDT)
-Received: from localhost (89-70-31-6.dynamic.chello.pl. [89.70.31.6])
-        by smtp.gmail.com with ESMTPSA id r73-v6sm14748lfi.34.2018.08.16.11.51.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 Aug 2018 11:51:50 -0700 (PDT)
-From:   Tomasz Duszynski <tduszyns@gmail.com>
-To:     linux-iio@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, jic23@kernel.org
-Subject: [PATCH] iio: pressure: ms5611: remove deprecated compatible strings
-Date:   Thu, 16 Aug 2018 20:49:15 +0200
-Message-Id: <20180816184915.32138-1-tduszyns@gmail.com>
+        Thu, 16 Aug 2018 17:47:59 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 56927CC4;
+        Thu, 16 Aug 2018 18:47:48 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Gilad Ben-Yossef <gilad@benyossef.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.17 09/21] crypto: ccree - fix iv handling
+Date:   Thu, 16 Aug 2018 20:45:19 +0200
+Message-Id: <20180816171612.936902479@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180816171612.136242278@linuxfoundation.org>
+References: <20180816171612.136242278@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Compatible strings tend to follow manufacturer,model format.
-In case one wants to do a matching with manufacturer stripped
-off he can still do so since SPI/I2C core will try id_table
-based matching anyway.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+------------------
+
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+
+commit 00904aa0cd59a36d659ec93d272309e2174bcb5b upstream.
+
+We were copying our last cipher block into the request for use as IV for
+all modes of operations. Fix this by discerning the behaviour based on
+the mode of operation used: copy ciphertext for CBC, update counter for
+CTR.
+
+CC: stable@vger.kernel.org
+Fixes: 63ee04c8b491 ("crypto: ccree - add skcipher support")
+Reported by: Hadar Gat <hadar.gat@arm.com>
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/iio/pressure/ms5611_i2c.c | 2 --
- drivers/iio/pressure/ms5611_spi.c | 2 --
- 2 files changed, 4 deletions(-)
+ drivers/crypto/ccree/cc_cipher.c |  111 +++++++++++++++++++++++++++++----------
+ 1 file changed, 84 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/iio/pressure/ms5611_i2c.c b/drivers/iio/pressure/ms5611_i2c.c
-index 55fb5fc0b6ea..0469c8ae1134 100644
---- a/drivers/iio/pressure/ms5611_i2c.c
-+++ b/drivers/iio/pressure/ms5611_i2c.c
-@@ -117,9 +117,7 @@ static int ms5611_i2c_remove(struct i2c_client *client)
- #if defined(CONFIG_OF)
- static const struct of_device_id ms5611_i2c_matches[] = {
- 	{ .compatible = "meas,ms5611" },
--	{ .compatible = "ms5611" },
- 	{ .compatible = "meas,ms5607" },
--	{ .compatible = "ms5607" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, ms5611_i2c_matches);
-diff --git a/drivers/iio/pressure/ms5611_spi.c b/drivers/iio/pressure/ms5611_spi.c
-index 932e05001e1a..cd11d022208e 100644
---- a/drivers/iio/pressure/ms5611_spi.c
-+++ b/drivers/iio/pressure/ms5611_spi.c
-@@ -119,9 +119,7 @@ static int ms5611_spi_remove(struct spi_device *spi)
- #if defined(CONFIG_OF)
- static const struct of_device_id ms5611_spi_matches[] = {
- 	{ .compatible = "meas,ms5611" },
--	{ .compatible = "ms5611" },
- 	{ .compatible = "meas,ms5607" },
--	{ .compatible = "ms5607" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, ms5611_spi_matches);
--- 
-2.18.0
+--- a/drivers/crypto/ccree/cc_cipher.c
++++ b/drivers/crypto/ccree/cc_cipher.c
+@@ -554,34 +554,82 @@ static void cc_setup_cipher_data(struct
+ 	}
+ }
+ 
++/*
++ * Update a CTR-AES 128 bit counter
++ */
++static void cc_update_ctr(u8 *ctr, unsigned int increment)
++{
++	if (IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) ||
++	    IS_ALIGNED((unsigned long)ctr, 8)) {
++
++		__be64 *high_be = (__be64 *)ctr;
++		__be64 *low_be = high_be + 1;
++		u64 orig_low = __be64_to_cpu(*low_be);
++		u64 new_low = orig_low + (u64)increment;
++
++		*low_be = __cpu_to_be64(new_low);
++
++		if (new_low < orig_low)
++			*high_be = __cpu_to_be64(__be64_to_cpu(*high_be) + 1);
++	} else {
++		u8 *pos = (ctr + AES_BLOCK_SIZE);
++		u8 val;
++		unsigned int size;
++
++		for (; increment; increment--)
++			for (size = AES_BLOCK_SIZE; size; size--) {
++				val = *--pos + 1;
++				*pos = val;
++				if (val)
++					break;
++			}
++	}
++}
++
+ static void cc_cipher_complete(struct device *dev, void *cc_req, int err)
+ {
+ 	struct skcipher_request *req = (struct skcipher_request *)cc_req;
+ 	struct scatterlist *dst = req->dst;
+ 	struct scatterlist *src = req->src;
+ 	struct cipher_req_ctx *req_ctx = skcipher_request_ctx(req);
+-	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+-	unsigned int ivsize = crypto_skcipher_ivsize(tfm);
++	struct crypto_skcipher *sk_tfm = crypto_skcipher_reqtfm(req);
++	struct crypto_tfm *tfm = crypto_skcipher_tfm(sk_tfm);
++	struct cc_cipher_ctx *ctx_p = crypto_tfm_ctx(tfm);
++	unsigned int ivsize = crypto_skcipher_ivsize(sk_tfm);
++	unsigned int len;
+ 
+-	cc_unmap_cipher_request(dev, req_ctx, ivsize, src, dst);
+-	kzfree(req_ctx->iv);
++	switch (ctx_p->cipher_mode) {
++	case DRV_CIPHER_CBC:
++		/*
++		 * The crypto API expects us to set the req->iv to the last
++		 * ciphertext block. For encrypt, simply copy from the result.
++		 * For decrypt, we must copy from a saved buffer since this
++		 * could be an in-place decryption operation and the src is
++		 * lost by this point.
++		 */
++		if (req_ctx->gen_ctx.op_type == DRV_CRYPTO_DIRECTION_DECRYPT)  {
++			memcpy(req->iv, req_ctx->backup_info, ivsize);
++			kzfree(req_ctx->backup_info);
++		} else if (!err) {
++			len = req->cryptlen - ivsize;
++			scatterwalk_map_and_copy(req->iv, req->dst, len,
++						 ivsize, 0);
++		}
++		break;
++
++	case DRV_CIPHER_CTR:
++		/* Compute the counter of the last block */
++		len = ALIGN(req->cryptlen, AES_BLOCK_SIZE) / AES_BLOCK_SIZE;
++		cc_update_ctr((u8 *)req->iv, len);
++		break;
+ 
+-	/*
+-	 * The crypto API expects us to set the req->iv to the last
+-	 * ciphertext block. For encrypt, simply copy from the result.
+-	 * For decrypt, we must copy from a saved buffer since this
+-	 * could be an in-place decryption operation and the src is
+-	 * lost by this point.
+-	 */
+-	if (req_ctx->gen_ctx.op_type == DRV_CRYPTO_DIRECTION_DECRYPT)  {
+-		memcpy(req->iv, req_ctx->backup_info, ivsize);
+-		kzfree(req_ctx->backup_info);
+-	} else if (!err) {
+-		scatterwalk_map_and_copy(req->iv, req->dst,
+-					 (req->cryptlen - ivsize),
+-					 ivsize, 0);
++	default:
++		break;
+ 	}
+ 
++	cc_unmap_cipher_request(dev, req_ctx, ivsize, src, dst);
++	kzfree(req_ctx->iv);
++
+ 	skcipher_request_complete(req, err);
+ }
+ 
+@@ -713,20 +761,29 @@ static int cc_cipher_encrypt(struct skci
+ static int cc_cipher_decrypt(struct skcipher_request *req)
+ {
+ 	struct crypto_skcipher *sk_tfm = crypto_skcipher_reqtfm(req);
++	struct crypto_tfm *tfm = crypto_skcipher_tfm(sk_tfm);
++	struct cc_cipher_ctx *ctx_p = crypto_tfm_ctx(tfm);
+ 	struct cipher_req_ctx *req_ctx = skcipher_request_ctx(req);
+ 	unsigned int ivsize = crypto_skcipher_ivsize(sk_tfm);
+ 	gfp_t flags = cc_gfp_flags(&req->base);
++	unsigned int len;
+ 
+-	/*
+-	 * Allocate and save the last IV sized bytes of the source, which will
+-	 * be lost in case of in-place decryption and might be needed for CTS.
+-	 */
+-	req_ctx->backup_info = kmalloc(ivsize, flags);
+-	if (!req_ctx->backup_info)
+-		return -ENOMEM;
++	if (ctx_p->cipher_mode == DRV_CIPHER_CBC) {
++
++		/* Allocate and save the last IV sized bytes of the source,
++		 * which will be lost in case of in-place decryption.
++		 */
++		req_ctx->backup_info = kzalloc(ivsize, flags);
++		if (!req_ctx->backup_info)
++			return -ENOMEM;
++
++		len = req->cryptlen - ivsize;
++		scatterwalk_map_and_copy(req_ctx->backup_info, req->src, len,
++					 ivsize, 0);
++	} else {
++		req_ctx->backup_info = NULL;
++	}
+ 
+-	scatterwalk_map_and_copy(req_ctx->backup_info, req->src,
+-				 (req->cryptlen - ivsize), ivsize, 0);
+ 	req_ctx->is_giv = false;
+ 
+ 	return cc_cipher_process(req, DRV_CRYPTO_DIRECTION_DECRYPT);
+
 
