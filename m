@@ -2,197 +2,99 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEB3C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B88FC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0AF320C51
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:41:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0AF320C51
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 136C520C51
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:42:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ocm5hnpn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 136C520C51
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392034AbeHPSkd (ORCPT
+        id S2392049AbeHPSlt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 14:40:33 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:50688 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731502AbeHPSkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 14:40:33 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41rrCY5PdNz9tvpw;
-        Thu, 16 Aug 2018 17:41:13 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 2LkHkUtVZDDl; Thu, 16 Aug 2018 17:41:13 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41rrCY4rtlz9tvpn;
-        Thu, 16 Aug 2018 17:41:13 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2CE5F8B7EF;
-        Thu, 16 Aug 2018 17:41:17 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id WdJh27FOKZfz; Thu, 16 Aug 2018 17:41:17 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 73B6B8B7E9;
-        Thu, 16 Aug 2018 17:41:16 +0200 (CEST)
-Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
-To:     dgilbert@interlog.com, Jeffrey Lien <Jeff.Lien@wdc.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        David Darrington <david.darrington@wdc.com>,
-        Jeff Furlong <jeff.furlong@wdc.com>,
-        Joe Perches <joe@perches.com>
-References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
- <20180810201601.GA80850@gmail.com>
- <SN1PR04MB1824A5944E0428AC84B62886EA3E0@SN1PR04MB1824.namprd04.prod.outlook.com>
- <ba74a9d1-cccc-913a-927a-82e561afef3d@interlog.com>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <7f1b5ca8-cd89-71cc-21bb-5a058bc1e908@c-s.fr>
-Date:   Thu, 16 Aug 2018 17:41:13 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 16 Aug 2018 14:41:49 -0400
+Received: from mail-wr1-f44.google.com ([209.85.221.44]:45393 "EHLO
+        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbeHPSlt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 14:41:49 -0400
+Received: by mail-wr1-f44.google.com with SMTP id f12-v6so4552235wrv.12
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 08:42:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dZeOpssipWt4A0KAhARiWlYfPbosSBvyE4w+JqR5UzY=;
+        b=ocm5hnpniE3+0nDNmjd0pN413EVOqEmQVDzZpPZevNusTsfUn9BWn3khpYNHYRSwen
+         xKNxWI/pDdPoMR0NznJQpSDml5NSh53nzYZ4weISTZIR5ZWL/L985DEym2HyXepwkR3u
+         8irFqvW+74uS7CB1S0OnNbqbI2gvqg/NaQ+CQsgkXbd5p7qpJik71gZdXV3DbF9vlvSi
+         l0Fd0jQnalmyEh+fJKUNyJzqpV9tIw9GeECHepgu+hjUp1gnN0QuoTd0eCGKcOGfmHhW
+         +Pgz4pIfRV8Hq4L8hAg6nJ2ssapPz+no5vWm8GB3QDFFQuG/XX7trIBvfV97773ASFTX
+         X9pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dZeOpssipWt4A0KAhARiWlYfPbosSBvyE4w+JqR5UzY=;
+        b=AjEIyT/ROXPd5eDALMW/x/lDjnsFcT9AOpLcm82GNIJYiRcYRd6PwhwtrgW6a8zGvo
+         msR7aBEQy57cT1wQ8LUecdAZlmKETvMPJpShY8zCrpd0hNunKbF2PbjmhPubnxyNDEKT
+         k0tGkD9LdBawk2KamnwYaxrpRsT8wGssvPVEBnz8nxvlTISg3/RiTpAqAjdg+Zh7NVOc
+         xpriBO84w2i7KehKAXHj0XuriRggmZn76+RhOGHTHVamvaIgKabaDzJ+JosXuAslNfgT
+         GScbjYfQLiAeUBrSk3kcnvaegq5qt5FG/W1QWTQWGGe5IPBdrSY7cvGCEDik0uGkyjnD
+         daJA==
+X-Gm-Message-State: AOUpUlHk70SHO6gV2Nio+xBRk8GQ8sx3j5HS5DIaDuRvfvxCbwNeds0k
+        OM64nz6EpTheDN48uFJ4QfDniU9jn5CkLdiru+YrKCQC
+X-Google-Smtp-Source: AA+uWPwr8Yb642gHoTJOyFRMlJGEaKBkaVxtieihs6TOOleSMNkILZNGMVbAXxuN6XUW/ttEHn5E2Tzz0YQIk7GKvDA=
+X-Received: by 2002:a5d:62c7:: with SMTP id o7-v6mr21186647wrv.83.1534434152661;
+ Thu, 16 Aug 2018 08:42:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <ba74a9d1-cccc-913a-927a-82e561afef3d@interlog.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <CA+icZUW9Cg0G41ZSwjUBaJ+F9qCc23GGMp8aCgfNQejstKJmmQ@mail.gmail.com>
+In-Reply-To: <CA+icZUW9Cg0G41ZSwjUBaJ+F9qCc23GGMp8aCgfNQejstKJmmQ@mail.gmail.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Thu, 16 Aug 2018 17:42:21 +0200
+Message-ID: <CAFLxGvxhUyqs3_esJwBjHrTY0Ba=bPB=425hWr0rz-BySTjzoA@mail.gmail.com>
+Subject: Re: Merge branch 'l1tf-final' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+To:     sedat.dilek@gmail.com
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Aug 16, 2018 at 2:58 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>
+> Hi Linus,
+>
+> I am here on Linux v4.18 and tried first to merge the l1tf-final Git-branch.
+> Unfortunately, this is no more available in the tip Git-tree.
+>
+> Then I saw Linux v4.18.1 which includes all the above stuff.
+>
+> I tried to 'git cherry-pick -m 1 958f338e96f874a0d29442396d6adf9c1e17aa2d'.
+> I know the commit-id is the hash of a merge.
+> Luckily, I could get the "diff" and applied it.
+> But the history misses.
+>
+> How can I get the history and subjects of all commits in your tree to
+> cherry-pick the single commits?
+>
+> Do you happen to know another solution to get easily all L1TF commits
+> with any other tricks?
 
-Please include your new patch as plain text inside the mail, not as a 
-MIME attachment. Otherwise it is not downloadable from 
-https://patchwork.kernel.org/patch/10563093/
+That should help:
+git log --oneline
+958f338e96f874a0d29442396d6adf9c1e17aa2d^..958f338e96f874a0d29442396d6adf9c1e17aa2d
 
-Christophe
-
-Le 16/08/2018 à 16:22, Douglas Gilbert a écrit :
-> Hi,
-> Rather than present this formerly as an alternate patch, attached is a
-> clean-up of my patch which uses the variable size table proposed by
-> Joe Perches <joe@perches.com> and is based on the original patch that
-> started this thread.
-> 
-> Doug Gilbert
-> 
-> On 2018-08-16 10:02 AM, Jeffrey Lien wrote:
->> Eric,
->> We did not test the slice by 4 or 8 tables.  I'm not sure of  the 
->> value of doing that since the slice by 16 will provide the best 
->> performance gain.   If I'm missing anything here, please let me know.
->>
->> I'm working on a new version of the patch based on the feedback from 
->> others and will also change the pointer variables to start with p and 
->> fix the indenting you mentioned below in the new version of the patch.
->>
->> Thanks
->>
->> Jeff Lien
->>
->> -----Original Message-----
->> From: Eric Biggers [mailto:ebiggers@kernel.org]
->> Sent: Friday, August 10, 2018 3:16 PM
->> To: Jeffrey Lien <Jeff.Lien@wdc.com>
->> Cc: linux-kernel@vger.kernel.org; linux-crypto@vger.kernel.org; 
->> linux-block@vger.kernel.org; linux-scsi@vger.kernel.org; 
->> herbert@gondor.apana.org.au; tim.c.chen@linux.intel.com; 
->> martin.petersen@oracle.com; David Darrington 
->> <david.darrington@wdc.com>; Jeff Furlong <jeff.furlong@wdc.com>
->> Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
->>
->> On Fri, Aug 10, 2018 at 02:12:11PM -0500, Jeff Lien wrote:
->>> This patch provides a performance improvement for the CRC16
->>> calculations done in read/write workloads using the T10 Type 1/2/3
->>> guard field.  For example, today with sequential write workloads (one
->>> thread/CPU of IO) we consume 100% of the CPU because of the CRC16
->>> computation bottleneck.  Today's block devices are considerably
->>> faster, but the CRC16 calculation prevents folks from utilizing the
->>> throughput of such devices.  To speed up this calculation and expose
->>> the block device throughput, we slice the old single byte for loop 
->>> into a 16 byte for loop, with a larger CRC table to match.  The 
->>> result has shown 5x performance improvements on various big endian 
->>> and little endian systems running the 4.18.0 kernel version.
->>>
->>> FIO Sequential Write, 64K Block Size, Queue Depth 64
->>> BE Base Kernel:        bw=201.5 MiB/s
->>> BE Modified CRC Calc:  bw=968.1 MiB/s
->>> 4.80x performance improvement
->>>
->>> LE Base Kernel:        bw=357 MiB/s
->>> LE Modified CRC Calc:  bw=1964 MiB/s
->>> 5.51x performance improvement
->>>
->>> FIO Sequential Read, 64K Block Size, Queue Depth 64
->>> BE Base Kernel:        bw=611.2 MiB/s
->>> BE Modified CRC calc:  bw=684.9 MiB/s
->>> 1.12x performance improvement
->>>
->>> LE Base Kernel:        bw=797 MiB/s
->>> LE Modified CRC Calc:  bw=2730 MiB/s
->>> 3.42x performance improvement
->>
->> Did you also test the slice-by-4 (requires 2048-byte table) and 
->> slice-by-8 (requires 4096-byte table) methods?  Your proposal is 
->> slice-by-16 (requires 8192-byte table); the original was slice-by-1 
->> (requires 512-byte table).
->>
->>>   __u16 crc_t10dif_generic(__u16 crc, const unsigned char *buffer,
->>> size_t len)  {
->>> -    unsigned int i;
->>> +    const __u8 *i = (const __u8 *)buffer;
->>> +    const __u8 *i_end = i + len;
->>> +    const __u8 *i_last16 = i + (len / 16 * 16);
->>
->> 'i' is normally a loop counter, not a pointer.
->> Use 'p', 'p_end', and 'p_last16'.
->>
->>> -    for (i = 0 ; i < len ; i++)
->>> -        crc = (crc << 8) ^ t10_dif_crc_table[((crc >> 8) ^ 
->>> buffer[i]) & 0xff];
->>> +    for (; i < i_last16; i += 16) {
->>> +        crc = t10_dif_crc_table[15][i[0] ^ (__u8)(crc >>  8)] ^
->>> +        t10_dif_crc_table[14][i[1] ^ (__u8)(crc >>  0)] ^
->>> +        t10_dif_crc_table[13][i[2]] ^
->>> +        t10_dif_crc_table[12][i[3]] ^
->>> +        t10_dif_crc_table[11][i[4]] ^
->>> +        t10_dif_crc_table[10][i[5]] ^
->>> +        t10_dif_crc_table[9][i[6]] ^
->>> +        t10_dif_crc_table[8][i[7]] ^
->>> +        t10_dif_crc_table[7][i[8]] ^
->>> +        t10_dif_crc_table[6][i[9]] ^
->>> +        t10_dif_crc_table[5][i[10]] ^
->>> +        t10_dif_crc_table[4][i[11]] ^
->>> +        t10_dif_crc_table[3][i[12]] ^
->>> +        t10_dif_crc_table[2][i[13]] ^
->>> +        t10_dif_crc_table[1][i[14]] ^
->>> +        t10_dif_crc_table[0][i[15]];
->>> +    }
->>
->> Please indent this properly.
->>
->>         crc = t10_dif_crc_table[15][i[0] ^ (__u8)(crc >>  8)] ^
->>               t10_dif_crc_table[14][i[1] ^ (__u8)(crc >>  0)] ^
->>               t10_dif_crc_table[13][i[2]] ^
->>               t10_dif_crc_table[12][i[3]] ^
->>               t10_dif_crc_table[11][i[4]] ^
->>               ...
->>
->> - Eric
->>
-> 
+-- 
+Thanks,
+//richard
