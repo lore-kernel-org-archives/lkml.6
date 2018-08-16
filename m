@@ -2,198 +2,232 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FA3C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:06:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C64C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44776214C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:06:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="XS9deY6S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44776214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+	by mail.kernel.org (Postfix) with ESMTP id F3BF2208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:14:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3BF2208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387854AbeHPHBi (ORCPT
+        id S2387933AbeHPHHa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 03:01:38 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38991 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387501AbeHPHBi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 03:01:38 -0400
-Received: by mail-wm0-f65.google.com with SMTP id q8-v6so3026602wmq.4
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 21:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=I7uxka0u1jLTlIWbBxTQjzk5UHp9i68gBytUNKwzkww=;
-        b=XS9deY6Ss69c+bGM/stH9ymwbyNLF15GA4wcUMqZECbL2Ylp6y+TS6qQsjAqSUGp+k
-         BH4DEVZT1eF4ZxjuOatd3MYaeBa7Q4k8tmkQ4GHPOl6m7K3bWfqQR6c9avj8/X8mNlRA
-         VW/OipCCOBx9FbTIsD+XVcVD8QWXwg8mnbtR3vjF1hBOT5NG8nUXm0+QX5XB/xbgNH1L
-         3bRtxsWTcFTFF1IRD22NHF983K56t4luAygyi9WQ7pkZVizAq9eQhrzd6Lpn3v0LzBpr
-         /ZPrqn1IrogXbFQLhC/Zz2xcUpQqp/RFKPB3KWN2dsLS/vOX0vBfP0q6Q5lRR7J+Glhw
-         X+Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=I7uxka0u1jLTlIWbBxTQjzk5UHp9i68gBytUNKwzkww=;
-        b=h319iBH2KJaPev+5v1WHiA9m1qlOjYJGTFMjQoSGV1IdplPZ+2Bmt2hKPgSx1c8oY2
-         llYqrGwwWN5lgnQ9WveifkUT/m4IKgqFo5eP2pJLxr81VeKZlyKBH4r4iirn5fMMBPk9
-         Uq2mAOYzvkX8NbWHMK/W7/VcmW8eGen0q7Ie4IvclLllIVIIJBXfdHkoJX1I21bKOm7Y
-         1Anvhx9Fz/OQVkL5AHyLQJ8ix/5mWHggJUBYpauIWn7ja39R8m10qW+C7xM6bAYSKApX
-         1VlA/goI1Y/zeAEJm1pO8QX3STAsG019GDnukuQJIybR2kNZ2c5TPfBRb1n/3VQ4q0ny
-         BekA==
-X-Gm-Message-State: AOUpUlHvaqrqJJwmGxkAMBvXjZLfEeQ6JU5xoU3WUiLQlsQPu3SgHjCF
-        L3LoHUnwtYooT9y6K7NthGv3vXkHIHfcgr+uWu7nYw==
-X-Google-Smtp-Source: AA+uWPwc0v2hHzbanI3OiFm9zv/WWYM8p674fZRWzxr9gyfkxLZTq0qx6oP0vT+4v/vWSnvxAy9U+W/AhDhqzuXuNZg=
-X-Received: by 2002:a1c:8a04:: with SMTP id m4-v6mr14465873wmd.137.1534392365170;
- Wed, 15 Aug 2018 21:06:05 -0700 (PDT)
+        Thu, 16 Aug 2018 03:07:30 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:53188 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726213AbeHPHHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 03:07:30 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 20527A0245C68;
+        Thu, 16 Aug 2018 12:11:48 +0800 (CST)
+Received: from [127.0.0.1] (10.177.23.164) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Thu, 16 Aug 2018
+ 12:11:44 +0800
+Subject: Re: [PATCH v3 1/2] iommu/arm-smmu-v3: fix unexpected CMD_SYNC timeout
+To:     John Garry <john.garry@huawei.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>
+References: <1534328582-17664-1-git-send-email-thunder.leizhen@huawei.com>
+ <1534328582-17664-2-git-send-email-thunder.leizhen@huawei.com>
+ <6027cd67-7c76-673c-082f-8dd0b7a575b0@arm.com>
+ <20180815130046.GA19402@arm.com>
+ <5961191f-f913-9bbf-5d0d-81800bec36a1@huawei.com>
+CC:     Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LinuxArm <linuxarm@huawei.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Libin <huawei.libin@huawei.com>
+From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <5B74F97F.8010902@huawei.com>
+Date:   Thu, 16 Aug 2018 12:11:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Received: by 2002:adf:9dd2:0:0:0:0:0 with HTTP; Wed, 15 Aug 2018 21:06:04
- -0700 (PDT)
-In-Reply-To: <1534377377-70108-2-git-send-email-atish.patra@wdc.com>
-References: <1534377377-70108-1-git-send-email-atish.patra@wdc.com> <1534377377-70108-2-git-send-email-atish.patra@wdc.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Thu, 16 Aug 2018 09:36:04 +0530
-Message-ID: <CAAhSdy1Legi9jzYnkN2am3QKLw7Y8tpbUfmJVA0gBRB4nPnXjA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/5] RISC-V: Add logical CPU indexing for RISC-V
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     palmer@sifive.com, linux-riscv@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5961191f-f913-9bbf-5d0d-81800bec36a1@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.23.164]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 5:26 AM, Atish Patra <atish.patra@wdc.com> wrote:
-> Currently, both linux cpu id and hardware cpu id are same.
-> This is not recommended as it will lead to discontinuous cpu
-> indexing in Linux. Moreover, kdump kernel will run from CPU0
-> which would be absent if we follow existing scheme.
->
-> Implement a logical mapping between Linux cpu id and hardware
-> cpuid to decouple these two. Always mark the boot processor as
-> cpu0 and all other cpus get the logical cpu id based on their
-> booting order.
->
-> Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> ---
->  arch/riscv/include/asm/smp.h | 17 ++++++++++++++++-
->  arch/riscv/kernel/setup.c    |  2 ++
->  arch/riscv/kernel/smp.c      | 19 +++++++++++++++++++
->  3 files changed, 37 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/include/asm/smp.h b/arch/riscv/include/asm/smp.h
-> index 36016845..0763337b 100644
-> --- a/arch/riscv/include/asm/smp.h
-> +++ b/arch/riscv/include/asm/smp.h
-> @@ -22,6 +22,12 @@
->  #include <linux/cpumask.h>
->  #include <linux/irqreturn.h>
->
-> +/*
-> + * Mapping between linux logical cpu index and hartid.
-> + */
-> +extern u64 __cpu_logical_map[NR_CPUS];
-> +#define cpu_logical_map(cpu)    __cpu_logical_map[cpu]
-> +
->  #ifdef CONFIG_SMP
->
->  /* SMP initialization hook for setup_arch */
-> @@ -33,6 +39,8 @@ void arch_send_call_function_ipi_mask(struct cpumask *mask);
->  /* Hook for the generic smp_call_function_single() routine. */
->  void arch_send_call_function_single_ipi(int cpu);
->
-> +int riscv_hartid_to_cpuid(int hartid);
-> +void cpuid_to_hartid_mask(const struct cpumask *in, struct cpumask *out);
->  /*
->   * This is particularly ugly: it appears we can't actually get the definition
->   * of task_struct here, but we need access to the CPU this task is running on.
-> @@ -41,6 +49,13 @@ void arch_send_call_function_single_ipi(int cpu);
->   */
->  #define raw_smp_processor_id() (*((int*)((char*)get_current() + TASK_TI_CPU)))
->
-> -#endif /* CONFIG_SMP */
-> +#else
-> +
-> +static inline int riscv_hartid_to_cpuid(int hartid) { return 0 ; }
-> +static inline void cpuid_to_hartid_mask(const struct cpumask *in,
-> +                                      struct cpumask *out) {
-> +       cpumask_set_cpu(cpu_logical_map(0), out);
-> +}
->
-> +#endif /* CONFIG_SMP */
->  #endif /* _ASM_RISCV_SMP_H */
-> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-> index db20dc63..e21ed481 100644
-> --- a/arch/riscv/kernel/setup.c
-> +++ b/arch/riscv/kernel/setup.c
-> @@ -82,6 +82,8 @@ EXPORT_SYMBOL(empty_zero_page);
->  /* The lucky hart to first increment this variable will boot the other cores */
->  atomic_t hart_lottery;
->
-> +u64 __cpu_logical_map[NR_CPUS];
 
-If hardware IDs are always machine word size then its better to use
-"unsigned long" in-place of u64.
 
-The __cpu_logical_map[] should be zero initially because zero is a
-valid hardware ID. Better set all entries to -1 by assigning { -1 } to the
-array.
+On 2018/8/16 2:08, John Garry wrote:
+> On 15/08/2018 14:00, Will Deacon wrote:
+>> On Wed, Aug 15, 2018 at 01:26:31PM +0100, Robin Murphy wrote:
+>>> On 15/08/18 11:23, Zhen Lei wrote:
+>>>> The condition "(int)(VAL - sync_idx) >= 0" to break loop in function
+>>>> __arm_smmu_sync_poll_msi requires that sync_idx must be increased
+>>>> monotonously according to the sequence of the CMDs in the cmdq.
+>>>>
+>>>> But ".msidata = atomic_inc_return_relaxed(&smmu->sync_nr)" is not protected
+>>>> by spinlock, so the following scenarios may appear:
+>>>> cpu0            cpu1
+>>>> msidata=0
+>>>>             msidata=1
+>>>>             insert cmd1
+>>>> insert cmd0
+>>>>             smmu execute cmd1
+>>>> smmu execute cmd0
+>>>>             poll timeout, because msidata=1 is overridden by
+>>>>             cmd0, that means VAL=0, sync_idx=1.
+>>>>
+>>>> This is not a functional problem, just make the caller wait for a long
+>>>> time until TIMEOUT. It's rare to happen, because any other CMD_SYNCs
+>>>> during the waiting period will break it.
+>>>>
+>>>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+>>>> ---
+>>>>  drivers/iommu/arm-smmu-v3.c | 12 ++++++++----
+>>>>  1 file changed, 8 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+>>>> index 1d64710..3f5c236 100644
+>>>> --- a/drivers/iommu/arm-smmu-v3.c
+>>>> +++ b/drivers/iommu/arm-smmu-v3.c
+>>>> @@ -566,7 +566,7 @@ struct arm_smmu_device {
+>>>>
+>>>>      int                gerr_irq;
+>>>>      int                combined_irq;
+>>>> -    atomic_t            sync_nr;
+>>>> +    u32                sync_nr;
+>>>>
+>>>>      unsigned long            ias; /* IPA */
+>>>>      unsigned long            oas; /* PA */
+>>>> @@ -775,6 +775,11 @@ static int queue_remove_raw(struct arm_smmu_queue *q, u64 *ent)
+>>>>      return 0;
+>>>>  }
+>>>>
+>>>> +static inline void arm_smmu_cmdq_sync_set_msidata(u64 *cmd, u32 msidata)
+>>>
+>>> If we *are* going to go down this route then I think it would make sense to
+>>> move the msiaddr and CMDQ_SYNC_0_CS_MSI logic here as well; i.e.
+>>> arm_smmu_cmdq_build_cmd() always generates a "normal" SEV-based sync
+>>> command, then calling this guy would convert it to an MSI-based one. As-is,
+>>> having bits of mutually-dependent data handled across two separate places
+>>> just seems too messy and error-prone.
+>>
+>> Yeah, but I'd first like to see some number showing that doing all of this
+>> under the lock actually has an impact.
+> 
+> Update:
+> 
+> I tested this patch versus a modified version which builds the command under the queue spinlock (* below). From my testing there is a small difference:
+> 
+> Setup:
+> Testing Single NVME card
+> fio 15 processes
+> No process pinning
+> 
+> Average Results:
+> v3 patch read/r,w/write (IOPS): 301K/149K,149K/307K
+> Build under lock version read/r,w/write (IOPS): 304K/150K,150K/311K
+> 
+> I don't know why it's better to build under the lock. We can test more.
 
-Also, I feel  __cpu_logical_map[] should be part of smp.c instead of
-setup.c. Any particular reason for having it in setup.c?
+I have analysed the assembly code, the memset will be optimized as Robin said to be "stp xzr, xzr, [x0]",
+and the switch..case is as below:
+ffff0000085e5744 <arm_smmu_cmdq_build_cmd>:
+ffff0000085e5744:       a9007c1f        stp     xzr, xzr, [x0]			//memset
+ffff0000085e5748:       39400023        ldrb    w3, [x1]
+ffff0000085e574c:       f9400002        ldr     x2, [x0]
+ffff0000085e5750:       aa020062        orr     x2, x3, x2
+ffff0000085e5754:       f9000002        str     x2, [x0]
+ffff0000085e5758:       39400023        ldrb    w3, [x1]			//ent->opcode
+ffff0000085e575c:       51000463        sub     w3, w3, #0x1
+ffff0000085e5760:       7101147f        cmp     w3, #0x45
+ffff0000085e5764:       54000069        b.ls    ffff0000085e5770
+ffff0000085e5768:       12800023        mov     w3, #0xfffffffe
+ffff0000085e576c:       1400000e        b       ffff0000085e57a4
+ffff0000085e5770:       b0003024        adrp    x4, ffff000008bea000
+ffff0000085e5774:       91096084        add     x4, x4, #0x258			//static table in rodata
+ffff0000085e5778:       38634883        ldrb    w3, [x4,w3,uxtw]		//use ent->opcode as index
+ffff0000085e577c:       10000064        adr     x4, ffff0000085e5788
+ffff0000085e5780:       8b238883        add     x3, x4, w3, sxtb #2
+ffff0000085e5784:       d61f0060        br      x3				//jump to "case xxx:"
 
-> +
->  #ifdef CONFIG_BLK_DEV_INITRD
->  static void __init setup_initrd(void)
->  {
-> diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
-> index 906fe21e..d55379ee 100644
-> --- a/arch/riscv/kernel/smp.c
-> +++ b/arch/riscv/kernel/smp.c
-> @@ -38,7 +38,26 @@ enum ipi_message_type {
->         IPI_MAX
->  };
->
-> +int riscv_hartid_to_cpuid(int hartid)
-> +{
-> +       int i = -1;
-> +
-> +       for (i = 0; i < NR_CPUS; i++)
-> +               if (cpu_logical_map(i) == hartid)
-> +                       return i;
-> +
-> +       pr_err("Couldn't find cpu id for hartid [%d]\n", hartid);
-> +       BUG();
-> +       return i;
-> +}
->
-> +void cpuid_to_hartid_mask(const struct cpumask *in, struct cpumask *out)
+Actually, after apply the patch "inline arm_smmu_cmdq_build_cmd" sent by Robin, the memset and static table will be removed:
+ffff0000085e68a8:       94123207        bl      ffff000008a730c4 <_raw_spin_lock_irqsave>
+ffff0000085e68ac:       b9410ad5        ldr     w21, [x22,#264]
+ffff0000085e68b0:       aa0003fa        mov     x26, x0
+ffff0000085e68b4:       110006b5        add     w21, w21, #0x1			//++smmu->sync_nr
+ffff0000085e68b8:       b9010ad5        str     w21, [x22,#264]
+ffff0000085e68bc:       b50005f3        cbnz    x19, ffff0000085e6978		//if (ent->sync.msiaddr)
+ffff0000085e68c0:       d28408c2        mov     x2, #0x2046
+ffff0000085e68c4:       f2a1f802        movk    x2, #0xfc0, lsl #16		//the constant part of CMD_SYNC
+ffff0000085e68c8:       aa158042        orr     x2, x2, x21, lsl #32		//or msidata
+ffff0000085e68cc:       aa1603e0        mov     x0, x22				//x0 = x22 = smmu
+ffff0000085e68d0:       910163a1        add     x1, x29, #0x58			//x1 = the address of local variable "cmd"
+ffff0000085e68d4:       f9002fa2        str     x2, [x29,#88]			//save cmd[0]
+ffff0000085e68d8:       927ec673        and     x19, x19, #0xffffffffffffc
+ffff0000085e68dc:       f90033b3        str     x19, [x29,#96]			//save cmd[1]
+ffff0000085e68e0:       97fffd0d        bl      ffff0000085e5d14 <arm_smmu_cmdq_insert_cmd>
 
-May be rename cpuid_to_hartid_mask() to riscv_cpuid_to_hartid_mask()
-for consistency.
+So that, my patch v2 plus Robin's "inline arm_smmu_cmdq_build_cmd()" is a good choice.
 
-> +{
-> +       int cpu;
-> +
-> +       for_each_cpu(cpu, in)
-> +               cpumask_set_cpu(cpu_logical_map(cpu), out);
-> +}
->  /* Unsupported */
->  int setup_profiling_timer(unsigned int multiplier)
->  {
-> --
-> 2.7.4
->
+But the assembly code of my patch v3, it seems that is still shorter than above:
+ffff0000085e695c:       9412320a        bl      ffff000008a73184 <_raw_spin_lock_irqsave>
+ffff0000085e6960:       aa0003f6        mov     x22, x0
+ffff0000085e6964:       b9410a62        ldr     w2, [x19,#264]
+ffff0000085e6968:       aa1303e0        mov     x0, x19
+ffff0000085e696c:       f94023a3        ldr     x3, [x29,#64]
+ffff0000085e6970:       910103a1        add     x1, x29, #0x40
+ffff0000085e6974:       11000442        add     w2, w2, #0x1			//++smmu->sync_nr
+ffff0000085e6978:       b9010a62        str     w2, [x19,#264]
+ffff0000085e697c:       b9005ba2        str     w2, [x29,#88]
+ffff0000085e6980:       aa028062        orr     x2, x3, x2, lsl #32
+ffff0000085e6984:       f90023a2        str     x2, [x29,#64]
+ffff0000085e6988:       97fffd58        bl      ffff0000085e5ee8 <arm_smmu_cmdq_insert_cmd>
+
+> 
+> I suppose there is no justification to build the command outside the spinlock based on these results alone...
+> 
+> Cheers,
+> John
+> 
+> * Modified version:
+> static int __arm_smmu_cmdq_issue_sync_msi(struct arm_smmu_device *smmu)
+> {
+>     u64 cmd[CMDQ_ENT_DWORDS];
+>     unsigned long flags;
+>     struct arm_smmu_cmdq_ent ent = {
+>         .opcode = CMDQ_OP_CMD_SYNC,
+>         .sync    = {
+>             .msiaddr = virt_to_phys(&smmu->sync_count),
+>         },
+>     };
+> 
+>     spin_lock_irqsave(&smmu->cmdq.lock, flags);
+>     ent.sync.msidata = ++smmu->sync_nr;
+>     arm_smmu_cmdq_build_cmd(cmd, &ent);
+>     arm_smmu_cmdq_insert_cmd(smmu, cmd);
+>     spin_unlock_irqrestore(&smmu->cmdq.lock, flags);
+> 
+>     return __arm_smmu_sync_poll_msi(smmu, ent.sync.msidata);
+> }
+> 
+> 
+>> Will
+>>
+>> .
+>>
+> 
+> 
+> 
+> .
+> 
+
+-- 
+Thanks!
+BestRegards
+
