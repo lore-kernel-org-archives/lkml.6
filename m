@@ -6,64 +6,64 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A91C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 12:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF97C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 12:55:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 096DD214DC
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 12:55:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0957C208B1
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 12:55:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="URnqjOZu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 096DD214DC
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ji60Kg0T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0957C208B1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391493AbeHPPx5 (ORCPT
+        id S2391508AbeHPPyC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 11:53:57 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38091 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391479AbeHPPx5 (ORCPT
+        Thu, 16 Aug 2018 11:54:02 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39347 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391495AbeHPPyB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 11:53:57 -0400
-Received: by mail-pf1-f193.google.com with SMTP id x17-v6so1996865pfh.5
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 05:55:32 -0700 (PDT)
+        Thu, 16 Aug 2018 11:54:01 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j8-v6so1996817pff.6
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 05:55:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=Q+AUOMeB2Ab47XkW5MPLyXFqW7/NNAsWImFo6vB5OtQ=;
-        b=URnqjOZuTORwigtzkX6s24VzknHrs8yQxQ5TfLTc+uITW4cEWB3jI1TkqWlOLbBq4U
-         Sx91giRa9ZEudT8BVAWDBLI04S4rgZZFVvp+nQjcOz8I+NUMnjlPpfrwq2DhShDQoA8C
-         6byd+8Chnpm1tPZ6E734EzvTPdwR1XpSnugMM=
+        bh=BA6EUgEDG+QEKqWglGb9R70yREW5HSha1lFzrihmISo=;
+        b=Ji60Kg0TpBcfdBzisg3BjYKwonNgLy8/u8cNY5490NQ3wXsdtbIKLOlJvvRLHuYJ9C
+         iGqxtK1upJSHM8r068wOEWaThtC2phAIclZrQGSJnITHzKFgaDPCz7wqr/6VOeXdlYko
+         VCOASIk0h/qRhLjs0TX+9zVnkqNuFrRbFUA4s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=Q+AUOMeB2Ab47XkW5MPLyXFqW7/NNAsWImFo6vB5OtQ=;
-        b=spyyPZuizDuRNQGXONIp1eiVShXMpcdPD2UsbGJa4Ae64/7MrIkEbw7GK71NQ9tTiZ
-         WoksDW+NsmnFg+F/8LcM/+8b8akjZAgY6kh6vSYrsCKltXmlEvgDncQ2TFc9sVn0bqze
-         Hvbi/qorwMceTX8bsElNWm3hdgT7DmMFVQwZ+070PZjSBDrHn2wU5zRaLtqxvDLp6UH1
-         egRCYEx0/8agtOCeiIn0KN0GV6y1vV1fVpI6FhlMHW8N5Xa6g5JLiqqVr7MjNkVPaiVe
-         6VRD1YtlaTC1GbNuKlJ1JU+pz/dNOsgp0g9hijiQxDrkvKZugdYfB9bq8HvFGkhO3qQT
-         xNZw==
-X-Gm-Message-State: AOUpUlELBQajDuDbZPxVxG+qBWVLHKQ/PSktV5sTKf8Rtpdws12b9m6J
-        XmM/g99LxvlIYXbVr+YGpdND6w==
-X-Google-Smtp-Source: AA+uWPwDyjd0IfHzC/9VyYs/GWbJ+yLFmhz60JST8M5HTzKboZ8wnTw+vFWElRt7Qz5BC+H6zoXPvw==
-X-Received: by 2002:a62:ca0d:: with SMTP id n13-v6mr31983354pfg.69.1534424132161;
-        Thu, 16 Aug 2018 05:55:32 -0700 (PDT)
+        bh=BA6EUgEDG+QEKqWglGb9R70yREW5HSha1lFzrihmISo=;
+        b=EMlVDlR4vGMW9D+uUOB461yO634Z4dmwZCGRhexepVIofMwqinVWe+7J9w5zetQQZp
+         Ex5xs9WSl6B11M+XWCZ926vtsUDIRQtFjZsvAx1QYmth4fcx3j5D9hyNxw2ljULdM9nV
+         N++9ESFb5Dmoj3uIP7+U06mz+zCbWlrkgIhhtRvFnLgeBsCx/M9A/u2HRIx/OQuklixA
+         EeAbnNMENNB796ze/ZCcdYVwbKkhMV4XY+qC6n2HB/D4TqvPoy+Vc8FQdhC0tBtufEyh
+         OFSQQR/b7jtRldMuN1vobtCxSBbhyzaq8JL0msBJuuL12kCydkWtdMte/CgoKvWKGT3o
+         HkWQ==
+X-Gm-Message-State: AOUpUlEgAnbnSYorTz+G7WV7Mp0zX1Ae6EyJ0ctlLjeDEzIJSDJIACw7
+        AJMq6Y90YfhLeyOAugedg+lHhQ==
+X-Google-Smtp-Source: AA+uWPy08aOdPpfk5/IL+UE9SZVVCImWKw/qZZQn4HcVE5yQTNdPDEkX2Xd26u0aG9yjmx/FeIOuMw==
+X-Received: by 2002:a63:fb07:: with SMTP id o7-v6mr29515528pgh.333.1534424135683;
+        Thu, 16 Aug 2018 05:55:35 -0700 (PDT)
 Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id 203-v6sm34944589pgb.14.2018.08.16.05.55.29
+        by smtp.gmail.com with ESMTPSA id 203-v6sm34944589pgb.14.2018.08.16.05.55.32
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 16 Aug 2018 05:55:31 -0700 (PDT)
+        Thu, 16 Aug 2018 05:55:34 -0700 (PDT)
 From:   Baolin Wang <baolin.wang@linaro.org>
 To:     broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
 Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com,
         lanqing.liu@spreadtrum.com, baolin.wang@linaro.org,
         linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] dt-bindings: spi: Add Spreadtrum SPI controller documentation
-Date:   Thu, 16 Aug 2018 20:54:50 +0800
-Message-Id: <53e9467b4b16911576bcfb71c50c108ea83a803c.1534423916.git.baolin.wang@linaro.org>
+Subject: [PATCH v2 3/3] spi: sprd: Add SPI driver for Spreadtrum SC9860
+Date:   Thu, 16 Aug 2018 20:54:51 +0800
+Message-Id: <2dab4859c89a6091f196e7dc43964606bf7a8cf4.1534423916.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <a77a6bb8b3abf1c127014c78f71533c24afacd93.1534423916.git.baolin.wang@linaro.org>
 References: <a77a6bb8b3abf1c127014c78f71533c24afacd93.1534423916.git.baolin.wang@linaro.org>
@@ -76,51 +76,807 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lanqing Liu <lanqing.liu@spreadtrum.com>
 
-This patch adds the binding documentation for Spreadtrum SPI
-controller device.
+This patch adds the SPI controller driver for Spreadtrum SC9860 platform.
 
 Signed-off-by: Lanqing Liu <lanqing.liu@spreadtrum.com>
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
 Changes from v1:
- - Remove the sprd,spi-interval property.
+ - Enable the auto_runtime_pm of SPI core.
+ - Remove the sprd_spi_setup() function.
+ - Move the hardware SPI hardware initialization to transfer setup function.
+ - Modify the SPI speed calculation formula.
+ - Add one hw_speed_hz field to save the real SPI line speed.
+ - Optimize the method of the spi_max_speed variable initialization.
+ - Optimize the word delay time.
+ - Fix some coding style issues.
 ---
- Documentation/devicetree/bindings/spi/spi-sprd.txt |   26 ++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/spi/spi-sprd.txt
+ drivers/spi/Kconfig    |    6 +
+ drivers/spi/Makefile   |    1 +
+ drivers/spi/spi-sprd.c |  745 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 752 insertions(+)
+ create mode 100644 drivers/spi/spi-sprd.c
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-sprd.txt b/Documentation/devicetree/bindings/spi/spi-sprd.txt
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index ad5d68e..c49c40c 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -596,6 +596,12 @@ config SPI_SIRF
+ 	help
+ 	  SPI driver for CSR SiRFprimaII SoCs
+ 
++config SPI_SPRD
++	tristate "Spreadtrum SPI controller"
++	depends on ARCH_SPRD || COMPILE_TEST
++	help
++	  SPI driver for Spreadtrum SoCs.
++
+ config SPI_SPRD_ADI
+ 	tristate "Spreadtrum ADI controller"
+ 	depends on ARCH_SPRD || COMPILE_TEST
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index cb1f437..5bb6b37 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -88,6 +88,7 @@ obj-$(CONFIG_SPI_SH_HSPI)		+= spi-sh-hspi.o
+ obj-$(CONFIG_SPI_SH_MSIOF)		+= spi-sh-msiof.o
+ obj-$(CONFIG_SPI_SH_SCI)		+= spi-sh-sci.o
+ obj-$(CONFIG_SPI_SIRF)		+= spi-sirf.o
++obj-$(CONFIG_SPI_SPRD)			+= spi-sprd.o
+ obj-$(CONFIG_SPI_SPRD_ADI)		+= spi-sprd-adi.o
+ obj-$(CONFIG_SPI_STM32) 		+= spi-stm32.o
+ obj-$(CONFIG_SPI_ST_SSC4)		+= spi-st-ssc4.o
+diff --git a/drivers/spi/spi-sprd.c b/drivers/spi/spi-sprd.c
 new file mode 100644
-index 0000000..bad211a
+index 0000000..a9a6c5e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/spi-sprd.txt
-@@ -0,0 +1,26 @@
-+Spreadtrum SPI Controller
++++ b/drivers/spi/spi-sprd.c
+@@ -0,0 +1,745 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Spreadtrum Communications Inc.
 +
-+Required properties:
-+- compatible: Should be "sprd,sc9860-spi".
-+- reg: Offset and length of SPI controller register space.
-+- interrupts: Should contain SPI interrupt.
-+- clock-names: Should contain following entries:
-+	"spi" for SPI clock,
-+	"source" for SPI source (parent) clock,
-+	"enable" for SPI module enable clock.
-+- clocks: List of clock input name strings sorted in the same order
-+	as the clock-names property.
-+- #address-cells: The number of cells required to define a chip select
-+	address on the SPI bus. Should be set to 1.
-+- #size-cells: Should be set to 0.
++#include <linux/clk.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/spi/spi.h>
 +
-+Example:
-+spi0: spi@70a00000{
-+	compatible = "sprd,sc9860-spi";
-+	reg = <0 0x70a00000 0 0x1000>;
-+	interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+	clock-names = "spi", "source","enable";
-+	clocks = <&clk_spi0>, <&ext_26m>, <&clk_ap_apb_gates 5>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
++#define SPRD_SPI_TXD			0x0
++#define SPRD_SPI_CLKD			0x4
++#define SPRD_SPI_CTL0			0x8
++#define SPRD_SPI_CTL1			0xc
++#define SPRD_SPI_CTL2			0x10
++#define SPRD_SPI_CTL3			0x14
++#define SPRD_SPI_CTL4			0x18
++#define SPRD_SPI_CTL5			0x1c
++#define SPRD_SPI_INT_EN			0x20
++#define SPRD_SPI_INT_CLR		0x24
++#define SPRD_SPI_INT_RAW_STS		0x28
++#define SPRD_SPI_INT_MASK_STS		0x2c
++#define SPRD_SPI_STS1			0x30
++#define SPRD_SPI_STS2			0x34
++#define SPRD_SPI_DSP_WAIT		0x38
++#define SPRD_SPI_STS3			0x3c
++#define SPRD_SPI_CTL6			0x40
++#define SPRD_SPI_STS4			0x44
++#define SPRD_SPI_FIFO_RST		0x48
++#define SPRD_SPI_CTL7			0x4c
++#define SPRD_SPI_STS5			0x50
++#define SPRD_SPI_CTL8			0x54
++#define SPRD_SPI_CTL9			0x58
++#define SPRD_SPI_CTL10			0x5c
++#define SPRD_SPI_CTL11			0x60
++#define SPRD_SPI_CTL12			0x64
++#define SPRD_SPI_STS6			0x68
++#define SPRD_SPI_STS7			0x6c
++#define SPRD_SPI_STS8			0x70
++#define SPRD_SPI_STS9			0x74
++
++/* Bits & mask definition for register CTL0 */
++#define SPRD_SPI_SCK_REV		BIT(13)
++#define SPRD_SPI_NG_TX			BIT(1)
++#define SPRD_SPI_NG_RX			BIT(0)
++#define SPRD_SPI_CHNL_LEN_MASK		GENMASK(4, 0)
++#define SPRD_SPI_CSN_MASK		GENMASK(11, 8)
++#define SPRD_SPI_CS0_VALID		BIT(8)
++
++/* Bits & mask definition for register SPI_INT_EN */
++#define SPRD_SPI_TX_END_INT_EN		BIT(8)
++#define SPRD_SPI_RX_END_INT_EN		BIT(9)
++
++/* Bits & mask definition for register SPI_INT_RAW_STS */
++#define SPRD_SPI_TX_END_RAW		BIT(8)
++#define SPRD_SPI_RX_END_RAW		BIT(9)
++
++/* Bits & mask definition for register SPI_INT_CLR */
++#define SPRD_SPI_TX_END_CLR		BIT(8)
++#define SPRD_SPI_RX_END_CLR		BIT(9)
++
++/* Bits & mask definition for register INT_MASK_STS */
++#define SPRD_SPI_MASK_RX_END		BIT(9)
++#define SPRD_SPI_MASK_TX_END		BIT(8)
++
++/* Bits & mask definition for register STS2 */
++#define SPRD_SPI_TX_BUSY		BIT(8)
++
++/* Bits & mask definition for register CTL1 */
++#define SPRD_SPI_RX_MODE		BIT(12)
++#define SPRD_SPI_TX_MODE		BIT(13)
++#define SPRD_SPI_RTX_MD_MASK		GENMASK(13, 12)
++
++/* Bits & mask definition for register CTL2 */
++#define SPRD_SPI_DMA_EN			BIT(6)
++
++/* Bits & mask definition for register CTL4 */
++#define SPRD_SPI_START_RX		BIT(9)
++#define SPRD_SPI_ONLY_RECV_MASK		GENMASK(8, 0)
++
++/* Bits & mask definition for register SPI_INT_CLR */
++#define SPRD_SPI_RX_END_INT_CLR		BIT(9)
++#define SPRD_SPI_TX_END_INT_CLR		BIT(8)
++
++/* Bits & mask definition for register SPI_INT_RAW */
++#define SPRD_SPI_RX_END_IRQ		BIT(9)
++#define SPRD_SPI_TX_END_IRQ		BIT(8)
++
++/* Bits & mask definition for register CTL12 */
++#define SPRD_SPI_SW_RX_REQ		BIT(0)
++#define SPRD_SPI_SW_TX_REQ		BIT(1)
++
++/* Bits & mask definition for register CTL7 */
++#define SPRD_SPI_DATA_LINE2_EN		BIT(15)
++#define SPRD_SPI_MODE_MASK		GENMASK(5, 3)
++#define SPRD_SPI_MODE_OFFSET		3
++#define SPRD_SPI_3WIRE_MODE		4
++#define SPRD_SPI_4WIRE_MODE		0
++
++/* Bits & mask definition for register CTL8 */
++#define SPRD_SPI_TX_MAX_LEN_MASK	GENMASK(19, 0)
++#define SPRD_SPI_TX_LEN_H_MASK		GENMASK(3, 0)
++#define SPRD_SPI_TX_LEN_H_OFFSET	16
++
++/* Bits & mask definition for register CTL9 */
++#define SPRD_SPI_TX_LEN_L_MASK		GENMASK(15, 0)
++
++/* Bits & mask definition for register CTL10 */
++#define SPRD_SPI_RX_MAX_LEN_MASK	GENMASK(19, 0)
++#define SPRD_SPI_RX_LEN_H_MASK		GENMASK(3, 0)
++#define SPRD_SPI_RX_LEN_H_OFFSET	16
++
++/* Bits & mask definition for register CTL11 */
++#define SPRD_SPI_RX_LEN_L_MASK		GENMASK(15, 0)
++
++/* Default & maximum word delay cycles */
++#define SPRD_SPI_MIN_DELAY_CYCLE	14
++#define SPRD_SPI_MAX_DELAY_CYCLE	130
++
++#define SPRD_SPI_FIFO_SIZE		32
++#define SPRD_SPI_CHIP_CS_NUM		0x4
++#define SPRD_SPI_CHNL_LEN		2
++#define SPRD_SPI_DEFAULT_SOURCE		26000000
++#define SPRD_SPI_MAX_SPEED_HZ		48000000
++#define SPRD_SPI_AUTOSUSPEND_DELAY	100
++
++struct sprd_spi {
++	void __iomem *base;
++	struct device *dev;
++	struct clk *clk;
++	u32 src_clk;
++	u32 hw_mode;
++	u32 trans_len;
++	u32 trans_mode;
++	u32 word_delay;
++	u32 hw_speed_hz;
++	u32 len;
++	int status;
++	const void *tx_buf;
++	void *rx_buf;
++	int (*read_bufs)(struct sprd_spi *ss, u32 len);
++	int (*write_bufs)(struct sprd_spi *ss, u32 len);
 +};
++
++static u32 sprd_spi_transfer_max_timeout(struct sprd_spi *ss,
++					 struct spi_transfer *t)
++{
++	/*
++	 * The time spent on transmission of the full FIFO data is the maximum
++	 * SPI transmission time.
++	 */
++	u32 size = t->bits_per_word * SPRD_SPI_FIFO_SIZE;
++	u32 bit_time_us = DIV_ROUND_UP(USEC_PER_SEC, ss->hw_speed_hz);
++	u32 total_time_us = size * bit_time_us;
++	/*
++	 * There is an interval between data and the data in our SPI hardware,
++	 * so the total transmission time need add the interval time.
++	 */
++	u32 interval_cycle = SPRD_SPI_FIFO_SIZE * ss->word_delay;
++	u32 interval_time_us = DIV_ROUND_UP(interval_cycle * USEC_PER_SEC,
++					    ss->src_clk);
++
++	return total_time_us + interval_time_us;
++}
++
++static int sprd_spi_wait_for_tx_end(struct sprd_spi *ss, struct spi_transfer *t)
++{
++	u32 val, us;
++	int ret;
++
++	us = sprd_spi_transfer_max_timeout(ss, t);
++	ret = readl_relaxed_poll_timeout(ss->base + SPRD_SPI_INT_RAW_STS, val,
++					 val & SPRD_SPI_TX_END_IRQ, 0, us);
++	if (ret) {
++		dev_err(ss->dev, "SPI error, spi send timeout!\n");
++		return ret;
++	}
++
++	ret = readl_relaxed_poll_timeout(ss->base + SPRD_SPI_STS2, val,
++					 !(val & SPRD_SPI_TX_BUSY), 0, us);
++	if (ret) {
++		dev_err(ss->dev, "SPI error, spi busy timeout!\n");
++		return ret;
++	}
++
++	writel_relaxed(SPRD_SPI_TX_END_INT_CLR, ss->base + SPRD_SPI_INT_CLR);
++
++	return 0;
++}
++
++static int sprd_spi_wait_for_rx_end(struct sprd_spi *ss, struct spi_transfer *t)
++{
++	u32 val, us;
++	int ret;
++
++	us = sprd_spi_transfer_max_timeout(ss, t);
++	ret = readl_relaxed_poll_timeout(ss->base + SPRD_SPI_INT_RAW_STS, val,
++					 val & SPRD_SPI_RX_END_IRQ, 0, us);
++	if (ret) {
++		dev_err(ss->dev, "SPI error, spi rx timeout!\n");
++		return ret;
++	}
++
++	writel_relaxed(SPRD_SPI_RX_END_INT_CLR, ss->base + SPRD_SPI_INT_CLR);
++
++	return 0;
++}
++
++static void sprd_spi_tx_req(struct sprd_spi *ss)
++{
++	writel_relaxed(SPRD_SPI_SW_TX_REQ, ss->base + SPRD_SPI_CTL12);
++}
++
++static void sprd_spi_rx_req(struct sprd_spi *ss)
++{
++	writel_relaxed(SPRD_SPI_SW_RX_REQ, ss->base + SPRD_SPI_CTL12);
++}
++
++static void sprd_spi_enter_idle(struct sprd_spi *ss)
++{
++	u32 val = readl_relaxed(ss->base + SPRD_SPI_CTL1);
++
++	val &= ~SPRD_SPI_RTX_MD_MASK;
++	writel_relaxed(val, ss->base + SPRD_SPI_CTL1);
++}
++
++static void sprd_spi_set_transfer_bits(struct sprd_spi *ss, u32 bits)
++{
++	u32 val = readl_relaxed(ss->base + SPRD_SPI_CTL0);
++
++	/* Set the valid bits for every transaction */
++	val &= ~(SPRD_SPI_CHNL_LEN_MASK << SPRD_SPI_CHNL_LEN);
++	val |= bits << SPRD_SPI_CHNL_LEN;
++	writel_relaxed(val, ss->base + SPRD_SPI_CTL0);
++}
++
++static void sprd_spi_set_tx_length(struct sprd_spi *ss, u32 length)
++{
++	u32 val = readl_relaxed(ss->base + SPRD_SPI_CTL8);
++
++	length &= SPRD_SPI_TX_MAX_LEN_MASK;
++	val &= ~SPRD_SPI_TX_LEN_H_MASK;
++	val |= length >> SPRD_SPI_TX_LEN_H_OFFSET;
++	writel_relaxed(val, ss->base + SPRD_SPI_CTL8);
++
++	val = length & SPRD_SPI_TX_LEN_L_MASK;
++	writel_relaxed(val, ss->base + SPRD_SPI_CTL9);
++}
++
++static void sprd_spi_set_rx_length(struct sprd_spi *ss, u32 length)
++{
++	u32 val = readl_relaxed(ss->base + SPRD_SPI_CTL10);
++
++	length &= SPRD_SPI_RX_MAX_LEN_MASK;
++	val &= ~SPRD_SPI_RX_LEN_H_MASK;
++	val |= length >> SPRD_SPI_RX_LEN_H_OFFSET;
++	writel_relaxed(val, ss->base + SPRD_SPI_CTL10);
++
++	val = length & SPRD_SPI_RX_LEN_L_MASK;
++	writel_relaxed(val, ss->base + SPRD_SPI_CTL11);
++}
++
++static void sprd_spi_chipselect(struct spi_device *sdev, bool cs)
++{
++	struct spi_controller *sctlr = sdev->controller;
++	struct sprd_spi *ss = spi_controller_get_devdata(sctlr);
++	u32 val;
++
++	val = readl_relaxed(ss->base + SPRD_SPI_CTL0);
++	/*  The SPI controller will pull down CS pin if cs is 0 */
++	if (!cs) {
++		val &= ~SPRD_SPI_CS0_VALID;
++		writel_relaxed(val, ss->base + SPRD_SPI_CTL0);
++	} else {
++		val |= SPRD_SPI_CSN_MASK;
++		writel_relaxed(val, ss->base + SPRD_SPI_CTL0);
++	}
++}
++
++static int sprd_spi_write_only_receive(struct sprd_spi *ss, u32 len)
++{
++	u32 val;
++
++	/* Clear the start receive bit and reset receive data number */
++	val = readl_relaxed(ss->base + SPRD_SPI_CTL4);
++	val &= ~(SPRD_SPI_START_RX | SPRD_SPI_ONLY_RECV_MASK);
++	writel_relaxed(val, ss->base + SPRD_SPI_CTL4);
++
++	/* Set the receive data length */
++	val = readl_relaxed(ss->base + SPRD_SPI_CTL4);
++	val |= len & SPRD_SPI_ONLY_RECV_MASK;
++	writel_relaxed(val, ss->base + SPRD_SPI_CTL4);
++
++	/* Trigger to receive data */
++	val = readl_relaxed(ss->base + SPRD_SPI_CTL4);
++	val |= SPRD_SPI_START_RX;
++	writel_relaxed(val, ss->base + SPRD_SPI_CTL4);
++
++	return len;
++}
++
++static int sprd_spi_write_bufs_u8(struct sprd_spi *ss, u32 len)
++{
++	u8 *tx_p = (u8 *)ss->tx_buf;
++	int i;
++
++	for (i = 0; i < len; i++)
++		writeb_relaxed(tx_p[i], ss->base + SPRD_SPI_TXD);
++
++	ss->tx_buf += i;
++	return i;
++}
++
++static int sprd_spi_write_bufs_u16(struct sprd_spi *ss, u32 len)
++{
++	u16 *tx_p = (u16 *)ss->tx_buf;
++	int i;
++
++	for (i = 0; i < len; i++)
++		writew_relaxed(tx_p[i], ss->base + SPRD_SPI_TXD);
++
++	ss->tx_buf += i << 1;
++	return i << 1;
++}
++
++static int sprd_spi_write_bufs_u32(struct sprd_spi *ss, u32 len)
++{
++	u32 *tx_p = (u32 *)ss->tx_buf;
++	int i;
++
++	for (i = 0; i < len; i++)
++		writel_relaxed(tx_p[i], ss->base + SPRD_SPI_TXD);
++
++	ss->tx_buf += i << 2;
++	return i << 2;
++}
++
++static int sprd_spi_read_bufs_u8(struct sprd_spi *ss, u32 len)
++{
++	u8 *rx_p = (u8 *)ss->rx_buf;
++	int i;
++
++	for (i = 0; i < len; i++)
++		rx_p[i] = readb_relaxed(ss->base + SPRD_SPI_TXD);
++
++	ss->rx_buf += i;
++	return i;
++}
++
++static int sprd_spi_read_bufs_u16(struct sprd_spi *ss, u32 len)
++{
++	u16 *rx_p = (u16 *)ss->rx_buf;
++	int i;
++
++	for (i = 0; i < len; i++)
++		rx_p[i] = readw_relaxed(ss->base + SPRD_SPI_TXD);
++
++	ss->rx_buf += i << 1;
++	return i << 1;
++}
++
++static int sprd_spi_read_bufs_u32(struct sprd_spi *ss, u32 len)
++{
++	u32 *rx_p = (u32 *)ss->rx_buf;
++	int i;
++
++	for (i = 0; i < len; i++)
++		rx_p[i] = readl_relaxed(ss->base + SPRD_SPI_TXD);
++
++	ss->rx_buf += i << 2;
++	return i << 2;
++}
++
++static int sprd_spi_txrx_bufs(struct spi_device *sdev, struct spi_transfer *t)
++{
++	struct sprd_spi *ss = spi_controller_get_devdata(sdev->controller);
++	u32 trans_len = ss->trans_len, len;
++	int ret, write_size = 0;
++
++	while (trans_len) {
++		len = trans_len > SPRD_SPI_FIFO_SIZE ? SPRD_SPI_FIFO_SIZE :
++			trans_len;
++		if (ss->trans_mode & SPRD_SPI_TX_MODE) {
++			sprd_spi_set_tx_length(ss, len);
++			write_size += ss->write_bufs(ss, len);
++
++			/*
++			 * For our 3 wires mode or dual TX line mode, we need
++			 * to request the controller to transfer.
++			 */
++			if (ss->hw_mode & SPI_3WIRE || ss->hw_mode & SPI_TX_DUAL)
++				sprd_spi_tx_req(ss);
++
++			ret = sprd_spi_wait_for_tx_end(ss, t);
++		} else {
++			sprd_spi_set_rx_length(ss, len);
++
++			/*
++			 * For our 3 wires mode or dual TX line mode, we need
++			 * to request the controller to read.
++			 */
++			if (ss->hw_mode & SPI_3WIRE || ss->hw_mode & SPI_TX_DUAL)
++				sprd_spi_rx_req(ss);
++			else
++				write_size += ss->write_bufs(ss, len);
++
++			ret = sprd_spi_wait_for_rx_end(ss, t);
++		}
++
++		if (ret)
++			goto complete;
++
++		if (ss->trans_mode & SPRD_SPI_RX_MODE)
++			ss->read_bufs(ss, len);
++
++		trans_len -= len;
++	}
++
++	ret = write_size;
++
++complete:
++	sprd_spi_enter_idle(ss);
++
++	return ret;
++}
++
++static void sprd_spi_set_speed(struct sprd_spi *ss, u32 speed_hz)
++{
++	/*
++	 * From SPI datasheet, the prescale calculation formula:
++	 * prescale = SPI source clock / (2 * SPI_freq) - 1;
++	 */
++	u32 clk_div = DIV_ROUND_UP(ss->src_clk, speed_hz << 1) - 1;
++
++	/* Save the real hardware speed */
++	ss->hw_speed_hz = (ss->src_clk >> 1) / (clk_div + 1);
++	writel_relaxed(clk_div, ss->base + SPRD_SPI_CLKD);
++}
++
++static void sprd_spi_init_hw(struct sprd_spi *ss, struct spi_transfer *t)
++{
++	u16 word_delay, interval;
++	u32 val;
++
++	val = readl_relaxed(ss->base + SPRD_SPI_CTL7);
++	val &= ~(SPRD_SPI_SCK_REV | SPRD_SPI_NG_TX | SPRD_SPI_NG_RX);
++	/* Set default chip selection, clock phase and clock polarity */
++	val |= ss->hw_mode & SPI_CPHA ? SPRD_SPI_NG_RX : SPRD_SPI_NG_TX;
++	val |= ss->hw_mode & SPI_CPOL ? SPRD_SPI_SCK_REV : 0;
++	writel_relaxed(val, ss->base + SPRD_SPI_CTL0);
++
++	/*
++	 * Set the intervals of two SPI frames, and the inteval calculation
++	 * formula as below per datasheet:
++	 * interval time (source clock cycles) = interval * 4 + 10.
++	 */
++	word_delay = clamp_t(u16, t->word_delay, SPRD_SPI_MIN_DELAY_CYCLE,
++			     SPRD_SPI_MAX_DELAY_CYCLE);
++	interval = DIV_ROUND_UP(word_delay - 10, 4);
++	ss->word_delay = interval * 4 + 10;
++	writel_relaxed(interval, ss->base + SPRD_SPI_CTL5);
++
++	/* Reset SPI fifo */
++	writel_relaxed(1, ss->base + SPRD_SPI_FIFO_RST);
++	writel_relaxed(0, ss->base + SPRD_SPI_FIFO_RST);
++
++	/* Set SPI work mode */
++	val = readl_relaxed(ss->base + SPRD_SPI_CTL7);
++	val &= ~SPRD_SPI_MODE_MASK;
++
++	if (ss->hw_mode & SPI_3WIRE)
++		val |= SPRD_SPI_3WIRE_MODE << SPRD_SPI_MODE_OFFSET;
++	else
++		val |= SPRD_SPI_4WIRE_MODE << SPRD_SPI_MODE_OFFSET;
++
++	if (ss->hw_mode & SPI_TX_DUAL)
++		val |= SPRD_SPI_DATA_LINE2_EN;
++	else
++		val &= ~SPRD_SPI_DATA_LINE2_EN;
++
++	writel_relaxed(val, ss->base + SPRD_SPI_CTL7);
++}
++
++static int sprd_spi_setup_transfer(struct spi_device *sdev,
++				   struct spi_transfer *t)
++{
++	struct sprd_spi *ss = spi_controller_get_devdata(sdev->controller);
++	u8 bits_per_word = t->bits_per_word;
++	u32 val, mode = 0;
++
++	ss->len = t->len;
++	ss->tx_buf = t->tx_buf;
++	ss->rx_buf = t->rx_buf;
++
++	ss->hw_mode = sdev->mode;
++	sprd_spi_init_hw(ss, t);
++
++	/* Set tansfer speed and valid bits */
++	sprd_spi_set_speed(ss, t->speed_hz);
++	sprd_spi_set_transfer_bits(ss, bits_per_word);
++
++	if (bits_per_word > 16)
++		bits_per_word = round_up(bits_per_word, 16);
++	else
++		bits_per_word = round_up(bits_per_word, 8);
++
++	switch (bits_per_word) {
++	case 8:
++		ss->trans_len = t->len;
++		ss->read_bufs = sprd_spi_read_bufs_u8;
++		ss->write_bufs = sprd_spi_write_bufs_u8;
++		break;
++	case 16:
++		ss->trans_len = t->len >> 1;
++		ss->read_bufs = sprd_spi_read_bufs_u16;
++		ss->write_bufs = sprd_spi_write_bufs_u16;
++		break;
++	case 32:
++		ss->trans_len = t->len >> 2;
++		ss->read_bufs = sprd_spi_read_bufs_u32;
++		ss->write_bufs = sprd_spi_write_bufs_u32;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	/* Set transfer read or write mode */
++	val = readl_relaxed(ss->base + SPRD_SPI_CTL1);
++	val &= ~SPRD_SPI_RTX_MD_MASK;
++	if (t->tx_buf)
++		mode |= SPRD_SPI_TX_MODE;
++	if (t->rx_buf)
++		mode |= SPRD_SPI_RX_MODE;
++
++	writel_relaxed(val | mode, ss->base + SPRD_SPI_CTL1);
++
++	ss->trans_mode = mode;
++
++	/*
++	 * If in only receive mode, we need to trigger the SPI controller to
++	 * receive data automatically.
++	 */
++	if (ss->trans_mode == SPRD_SPI_RX_MODE)
++		ss->write_bufs = sprd_spi_write_only_receive;
++
++	return 0;
++}
++
++static int sprd_spi_transfer_one(struct spi_controller *sctlr,
++				 struct spi_device *sdev,
++				 struct spi_transfer *t)
++{
++	int ret;
++
++	ret = sprd_spi_setup_transfer(sdev, t);
++	if (ret)
++		goto setup_err;
++
++	ret = sprd_spi_txrx_bufs(sdev, t);
++	if (ret == t->len)
++		ret = 0;
++	else if (ret >= 0)
++		ret = -EREMOTEIO;
++
++setup_err:
++	spi_finalize_current_transfer(sctlr);
++
++	return ret;
++}
++
++static int sprd_spi_clk_init(struct platform_device *pdev, struct sprd_spi *ss)
++{
++	struct clk *clk_spi, *clk_parent;
++
++	clk_spi = devm_clk_get(&pdev->dev, "spi");
++	if (IS_ERR(clk_spi)) {
++		dev_warn(&pdev->dev, "can't get the spi clock\n");
++		clk_spi = NULL;
++	}
++
++	clk_parent = devm_clk_get(&pdev->dev, "source");
++	if (IS_ERR(clk_parent)) {
++		dev_warn(&pdev->dev, "can't get the source clock\n");
++		clk_parent = NULL;
++	}
++
++	ss->clk = devm_clk_get(&pdev->dev, "enable");
++	if (IS_ERR(ss->clk)) {
++		dev_err(&pdev->dev, "can't get the enable clock\n");
++		return PTR_ERR(ss->clk);
++	}
++
++	if (!clk_set_parent(clk_spi, clk_parent))
++		ss->src_clk = clk_get_rate(clk_spi);
++	else
++		ss->src_clk = SPRD_SPI_DEFAULT_SOURCE;
++
++	return 0;
++}
++
++static int sprd_spi_probe(struct platform_device *pdev)
++{
++	struct spi_controller *sctlr;
++	struct resource *res;
++	struct sprd_spi *ss;
++	int ret;
++
++	pdev->id = of_alias_get_id(pdev->dev.of_node, "spi");
++	sctlr = spi_alloc_master(&pdev->dev, sizeof(*ss));
++	if (!sctlr)
++		return -ENOMEM;
++
++	ss = spi_controller_get_devdata(sctlr);
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	ss->base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(ss->base)) {
++		ret = PTR_ERR(ss->base);
++		goto free_controller;
++	}
++
++	ss->dev = &pdev->dev;
++	sctlr->dev.of_node = pdev->dev.of_node;
++	sctlr->mode_bits = SPI_CPOL | SPI_CPHA | SPI_3WIRE | SPI_TX_DUAL;
++	sctlr->bus_num = pdev->id;
++	sctlr->set_cs = sprd_spi_chipselect;
++	sctlr->transfer_one = sprd_spi_transfer_one;
++	sctlr->auto_runtime_pm = true;
++	sctlr->max_speed_hz = min_t(u32, ss->src_clk >> 1,
++				    SPRD_SPI_MAX_SPEED_HZ);
++
++	platform_set_drvdata(pdev, sctlr);
++	ret = sprd_spi_clk_init(pdev, ss);
++	if (ret)
++		goto free_controller;
++
++	ret = clk_prepare_enable(ss->clk);
++	if (ret)
++		goto free_controller;
++
++	ret = pm_runtime_set_active(&pdev->dev);
++	if (ret < 0)
++		goto disable_clk;
++
++	pm_runtime_set_autosuspend_delay(&pdev->dev,
++					 SPRD_SPI_AUTOSUSPEND_DELAY);
++	pm_runtime_use_autosuspend(&pdev->dev);
++	pm_runtime_enable(&pdev->dev);
++	ret = pm_runtime_get_sync(&pdev->dev);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed to resume SPI controller\n");
++		goto err_rpm_put;
++	}
++
++	ret = devm_spi_register_controller(&pdev->dev, sctlr);
++	if (ret)
++		goto err_rpm_put;
++
++	pm_runtime_mark_last_busy(&pdev->dev);
++	pm_runtime_put_autosuspend(&pdev->dev);
++
++	return 0;
++
++err_rpm_put:
++	pm_runtime_put_noidle(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
++disable_clk:
++	clk_disable_unprepare(ss->clk);
++free_controller:
++	spi_controller_put(sctlr);
++
++	return ret;
++}
++
++static int __exit sprd_spi_remove(struct platform_device *pdev)
++{
++	struct spi_controller *sctlr = platform_get_drvdata(pdev);
++	struct sprd_spi *ss = spi_controller_get_devdata(sctlr);
++	int ret;
++
++	ret = pm_runtime_get_sync(ss->dev);
++	if (ret < 0) {
++		dev_err(ss->dev, "failed to resume SPI controller\n");
++		return ret;
++	}
++
++	clk_disable_unprepare(ss->clk);
++	pm_runtime_put_noidle(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
++
++	return 0;
++}
++
++static int __maybe_unused sprd_spi_runtime_suspend(struct device *dev)
++{
++	struct spi_controller *sctlr = dev_get_drvdata(dev);
++	struct sprd_spi *ss = spi_controller_get_devdata(sctlr);
++
++	clk_disable_unprepare(ss->clk);
++
++	return 0;
++}
++
++static int __maybe_unused sprd_spi_runtime_resume(struct device *dev)
++{
++	struct spi_controller *sctlr = dev_get_drvdata(dev);
++	struct sprd_spi *ss = spi_controller_get_devdata(sctlr);
++	int ret;
++
++	ret = clk_prepare_enable(ss->clk);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static const struct dev_pm_ops sprd_spi_pm_ops = {
++	SET_RUNTIME_PM_OPS(sprd_spi_runtime_suspend,
++			   sprd_spi_runtime_resume, NULL)
++};
++
++static const struct of_device_id sprd_spi_of_match[] = {
++	{ .compatible = "sprd,sc9860-spi", },
++	{ /* sentinel */ }
++};
++
++static struct platform_driver sprd_spi_driver = {
++	.driver = {
++		.name = "sprd-spi",
++		.of_match_table = sprd_spi_of_match,
++		.pm = &sprd_spi_pm_ops,
++	},
++	.probe = sprd_spi_probe,
++	.remove  = sprd_spi_remove,
++};
++
++module_platform_driver(sprd_spi_driver);
++
++MODULE_DESCRIPTION("Spreadtrum SPI Controller driver");
++MODULE_AUTHOR("Lanqing Liu <lanqing.liu@spreadtrum.com>");
++MODULE_LICENSE("GPL v2");
 -- 
 1.7.9.5
 
