@@ -2,116 +2,106 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33169C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 06:21:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE971C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 06:31:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDD322147E
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 06:21:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDD322147E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id A2FF02147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 06:31:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="gHRTxCw4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2FF02147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388926AbeHPJRu (ORCPT
+        id S2388984AbeHPJ1i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 05:17:50 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:6410 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726168AbeHPJRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 05:17:50 -0400
-Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.55])
-        by Forcepoint Email with ESMTP id E806E6C3B3C4F;
-        Thu, 16 Aug 2018 14:21:33 +0800 (CST)
-Received: from DGGEMM526-MBX.china.huawei.com ([169.254.8.26]) by
- DGGEMM404-HUB.china.huawei.com ([10.3.20.212]) with mapi id 14.03.0399.000;
- Thu, 16 Aug 2018 14:21:33 +0800
-From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-CC:     Roger Quadros <rogerq@ti.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "mathias.nyman@linux.intel.com" <mathias.nyman@linux.intel.com>,
-        "drinkcat@chromium.org" <drinkcat@chromium.org>,
-        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
-        "drake@endlessm.com" <drake@endlessm.com>,
-        "mike.looijmans@topic.nl" <mike.looijmans@topic.nl>,
-        "joe@perches.com" <joe@perches.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] usb: hub: try old enumeration scheme first for high
- speed devices
-Thread-Topic: [PATCH] usb: hub: try old enumeration scheme first for high
- speed devices
-Thread-Index: AQHUMHhu69J7qZINb0WTPExaubbbVKS4SOuAgAA6VQCABl4BAP//8QSAgAMd8CA=
-Date:   Thu, 16 Aug 2018 06:21:33 +0000
-Message-ID: <678F3D1BB717D949B966B68EAEB446ED0C9B2CC0@dggemm526-mbx.china.huawei.com>
-References: <678F3D1BB717D949B966B68EAEB446ED0C9B12B9@dggemm526-mbx.china.huawei.com>
- <Pine.LNX.4.44L0.1808141022450.1466-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1808141022450.1466-100000@iolanthe.rowland.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.67.222.15]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 16 Aug 2018 05:27:38 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:36661 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728479AbeHPJ1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 05:27:37 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 57562312;
+        Thu, 16 Aug 2018 06:18:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=Kp3xcXSbPGeessTJYU9IK2fQQtg=; b=gHRTxC
+        w4ahMSyke6p1/G87PlM5FJkOkRPlfxTbVtzVEQH7obQ3YL0rbi5aIpe9WFSmwJt0
+        ZsseF1rtuTJJ1ELMU2Z7NyCQsw3sqUzcI70lLwEXLPRWktZ3MBCcDfXbgYPH5m23
+        4TvB+Pxx+wUYQCOyTqjIwPN6+EffOZ9jEANL+uMa3qEdwwKm/gvpdjfGV7CVRc/n
+        xUC3qZgYCZJA/AsuCp9nRlhFkE1tU/P39lJ1mVSZgD57OgVF+DbkoU+1xX15cdH/
+        iHzcSzbC4EcX177oavckIE8hSQQXYfVMGVAwJ+FgML6kerMFY3nKQj7supXwVL/z
+        +wZpakkNy09JgQ1g==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 03e7d261 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Thu, 16 Aug 2018 06:18:03 +0000 (UTC)
+Received: by mail-oi0-f51.google.com with SMTP id v8-v6so6174963oie.5;
+        Wed, 15 Aug 2018 23:31:23 -0700 (PDT)
+X-Gm-Message-State: AOUpUlENLmStZzKGrtTPtpXLJ+p89+aAxD/X83uylLaDqeq6gsjGwGOm
+        wJdqXARNqJ/ajSJxO7V1R3jAribE9yEf/fy41uI=
+X-Google-Smtp-Source: AA+uWPwKBlyW2+zcRqsPAHSkPL1NCaYCrIhg5cnKmSpBlvsLY54WJNY7ZrT8xR0Y17i2wjEHuKc/mChYug+C75kAGHA=
+X-Received: by 2002:aca:fc94:: with SMTP id a142-v6mr28040733oii.29.1534401082674;
+ Wed, 15 Aug 2018 23:31:22 -0700 (PDT)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+References: <20180801072246.GA15677@sol.localdomain> <CAHmME9pbwj0RaX4YM9epGOSgDRNUt=GA4UzO_iKcW=Md7kG6JQ@mail.gmail.com>
+ <20180814211229.GB24575@gmail.com>
+In-Reply-To: <20180814211229.GB24575@gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Wed, 15 Aug 2018 23:31:11 -0700
+X-Gmail-Original-Message-ID: <CAHmME9rtrnaU1LHM_dZ1WNw-Td4UhOz0kjmqb-e-0ykOnW7XyA@mail.gmail.com>
+Message-ID: <CAHmME9rtrnaU1LHM_dZ1WNw-Td4UhOz0kjmqb-e-0ykOnW7XyA@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] zinc: Introduce minimal cryptography library
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Eric Biggers <ebiggers3@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        "Daniel J . Bernstein" <djb@cr.yp.to>,
+        Tanja Lange <tanja@hyperelliptic.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Karthikeyan Bhargavan <karthik.bhargavan@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgYWxhbjoNCg0KPi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+RnJvbTogQWxhbiBTdGVy
-biBbbWFpbHRvOnN0ZXJuQHJvd2xhbmQuaGFydmFyZC5lZHVdDQo+U2VudDogVHVlc2RheSwgQXVn
-dXN0IDE0LCAyMDE4IDEwOjQwIFBNDQo+VG86IFplbmd0YW8gKEIpIDxwcmltZS56ZW5nQGhpc2ls
-aWNvbi5jb20+DQo+Q2M6IFJvZ2VyIFF1YWRyb3MgPHJvZ2VycUB0aS5jb20+OyBncmVna2hAbGlu
-dXhmb3VuZGF0aW9uLm9yZzsNCj5tYXRoaWFzLm55bWFuQGxpbnV4LmludGVsLmNvbTsgZHJpbmtj
-YXRAY2hyb21pdW0ub3JnOw0KPmZlbGlwZS5iYWxiaUBsaW51eC5pbnRlbC5jb207IGRyYWtlQGVu
-ZGxlc3NtLmNvbTsgbWlrZS5sb29pam1hbnNAdG9waWMubmw7DQo+am9lQHBlcmNoZXMuY29tOyBs
-aW51eC11c2JAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+
-U3ViamVjdDogUkU6IFtQQVRDSF0gdXNiOiBodWI6IHRyeSBvbGQgZW51bWVyYXRpb24gc2NoZW1l
-IGZpcnN0IGZvciBoaWdoIHNwZWVkDQo+ZGV2aWNlcw0KPg0KPk9uIFR1ZSwgMTQgQXVnIDIwMTgs
-IFplbmd0YW8gKEIpIHdyb3RlOg0KPg0KPj4gSGkgYWxhbjoNCj4+DQo+PiA+LS0tLS1PcmlnaW5h
-bCBNZXNzYWdlLS0tLS0NCj4+ID5Gcm9tOiBsaW51eC11c2Itb3duZXJAdmdlci5rZXJuZWwub3Jn
-DQo+PiA+W21haWx0bzpsaW51eC11c2Itb3duZXJAdmdlci5rZXJuZWwub3JnXSBPbiBCZWhhbGYg
-T2YgQWxhbiBTdGVybg0KPj4gPlNlbnQ6IEZyaWRheSwgQXVndXN0IDEwLCAyMDE4IDEwOjIwIFBN
-DQo+PiA+VG86IFJvZ2VyIFF1YWRyb3MgPHJvZ2VycUB0aS5jb20+DQo+PiA+Q2M6IFplbmd0YW8g
-KEIpIDxwcmltZS56ZW5nQGhpc2lsaWNvbi5jb20+Ow0KPj4gPmdyZWdraEBsaW51eGZvdW5kYXRp
-b24ub3JnOyBtYXRoaWFzLm55bWFuQGxpbnV4LmludGVsLmNvbTsNCj4+ID5kcmlua2NhdEBjaHJv
-bWl1bS5vcmc7IGZlbGlwZS5iYWxiaUBsaW51eC5pbnRlbC5jb207DQo+PiA+ZHJha2VAZW5kbGVz
-c20uY29tOyBtaWtlLmxvb2lqbWFuc0B0b3BpYy5ubDsgam9lQHBlcmNoZXMuY29tOw0KPj4gPmxp
-bnV4LXVzYkB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4+
-ID5TdWJqZWN0OiBSZTogW1BBVENIXSB1c2I6IGh1YjogdHJ5IG9sZCBlbnVtZXJhdGlvbiBzY2hl
-bWUgZmlyc3QgZm9yDQo+PiA+aGlnaCBzcGVlZCBkZXZpY2VzDQo+PiA+DQo+PiA+T24gRnJpLCAx
-MCBBdWcgMjAxOCwgUm9nZXIgUXVhZHJvcyB3cm90ZToNCj4+ID4NCj4+ID4+IEhpLA0KPj4gPj4N
-Cj4+ID4+IE9uIDEwLzA4LzE4IDE4OjAxLCBaZW5nIFRhbyB3cm90ZToNCj4+ID4+ID4gVGhlIG5l
-dyBzY2hlbWUgaXMgcmVxdWlyZWQganVzdCB0byBzdXBwb3J0IGxlZ2FjeSBsb3cgYW5kDQo+PiA+
-PiA+IGZ1bGwtc3BlZWQgZGV2aWNlcy4gRm9yIGhpZ2ggc3BlZWQgZGV2aWNlcywgaXQgd2lsbCBz
-bG93ZXIgdGhlIGVudW1lcmF0aW9uDQo+c3BlZWQuDQo+PiA+PiA+IFNvIGluIHRoaXMgcGF0Y2gg
-d2UgdHJ5IHRoZSAib2xkIiBlbnVtZXJhdGlvbiBzY2hlbWUgZmlyc3QgZm9yDQo+PiA+PiA+IGhp
-Z2ggc3BlZWQgZGV2aWNlcy4NCj4+ID4+DQo+PiA+PiBIb3cgc2xvdyBkb2VzIGl0IGdldD8gSXMg
-aXQgc2lnbmlmaWNhbnQ/DQo+PiA+PiBEbyB3ZSByaXNrIGJyZWFraW5nIGV4aXN0aW5nIEhTIGRl
-dmljZXMgdGhhdCB3b3JrPyBJIGRvbid0IHRoaW5rIHdlDQo+PiA+PiBjYW4gYmUgc3VyZSB0aWxs
-IHdlIHJ1biB0aGlzIHRocm91Z2ggdGVzdGluZy4NCj4+ID4NCj4+ID5JbmRlZWQuICBJIGFtIGV4
-dHJlbWVseSBza2VwdGljYWwgYWJvdXQgYSBwYXRjaCBsaWtlIHRoaXMsIHVubGVzcw0KPj4gPnNv
-bWVib2R5IGNhbiBzaG93IHRoYXQgV2luZG93cyB1c2VzIHRoZSAib2xkIiBzY2hlbWUgZm9yIGhp
-Z2gtc3BlZWQNCj5kZXZpY2VzLg0KPj4NCj4+IFllcywgdGhpcyBpcyB3aGF0IHRoZSB3aW5kb3dz
-IGhhcyBkb25lLCB5b3UgY2FuIHJlZmVyIHRvDQo+PiBodHRwczovL2Jsb2dzLm1zZG4ubWljcm9z
-b2Z0LmNvbS91c2Jjb3JlYmxvZy8yMDEzLzA0LzExL3VzYi0yLTEtMi0wLTEtDQo+PiAxLWRldmlj
-ZS1lbnVtZXJhdGlvbi1jaGFuZ2VzLWluLXdpbmRvd3MtOC8NCj4NCj5BbmQgdGhhdCBibG9nIHBv
-c3QgaXMgNSB5ZWFycyBvbGQhDQo+DQo+T2theSwgSSB0aGluayB3ZSBjYW4gZ28gYWhlYWQgYW5k
-IG1ha2UgdGhpcyBjaGFuZ2UuICBIb3dldmVyLCB5b3Ugc2hvdWxkDQo+dXBkYXRlIHRoZSBwYXRj
-aCBkZXNjcmlwdGlvbiB0byBtZW50aW9uIHdoYXQgTWljcm9zb2Z0IGRpZCBpbiBXaW5kb3dzIDgg
-YW5kDQo+c2F5IHRoYXQgdGhlIG5ldyBiZWhhdmlvciBtYXRjaGVzIHRoZWlycy4NCj4NCk9rYXks
-IEkgd2lsbCB1cGRhdGUgaXQgdGhlIGNoYW5nZSBsb2cgaW4gdjIuDQoNCj5BbHNvLCBhcyBSb2dl
-ciBtZW50aW9uZWQsIHlvdSBzaG91bGQgdXBkYXRlIHRoZSBkb2N1bWVudGF0aW9uIHRvIHNheSB0
-aGF0IHRoZQ0KPm9sZF9zY2hlbWVfZmlyc3QgbW9kdWxlIHBhcmFtZXRlciBub3cgYXBwbGllcyBv
-bmx5IHRvIGxvdy0gYW5kIGZ1bGwtc3BlZWQNCj5kZXZpY2VzLCBzaW5jZSBoaWdoLSBhbmQgU3Vw
-ZXJTcGVlZCBkZXZpY2VzIGFsd2F5cyB1c2UgdGhlIG9sZCBzY2hlbWUgZmlyc3QuDQo+DQoNClNp
-bmNlIHdlIHNob3VsZCBoYXZlIGRlZGljYXRlZCBlbnVtZXJhdGlvbiBmbG93IGZvciBTUywgSElH
-SCwgbG93IGFuZCBmdWxsIHNwZWVkIGRldmljZXMsDQpTbyBJIHRoaW5rIHRoZSBvbGRfc2NoZW1l
-X2ZpcnN0IGFuZCB1c2VfYm90aF9zY2hlbWVzIHBhcmFtZXRlcnMgc2hvdWxkIGJlIHJlbW92ZWQu
-DQpXaGF0IGRvIHlvdSB0aGluayBhYm91dCBpdD8NCg0KPkFsYW4gU3Rlcm4NCg0K
+Hi Eric,
+
+On Tue, Aug 14, 2018 at 2:12 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> On ARM Cortex-A7, OpenSSL's ChaCha20 implementation is 13.9 cpb (cycles per
+> byte), whereas Linux's is faster: 11.9 cpb.
+>
+> The reason Linux's ChaCha20 NEON implementation is faster than OpenSSL's
+>
+> I understand there are tradeoffs, and different implementations can be faster on
+> different CPUs.
+>
+> So if your proposal goes in, I'd likely need to write a patch
+> to get the old performance back, at least on Cortex-A7...
+
+Yes, absolutely. Different CPUs behave differently indeed, but if you
+have improvements for hardware that matters to you, we should
+certainly incorporate these, and also loop Andy Polyakov in (I've
+added him to the CC for the WIP v2). ChaCha is generally pretty
+obvious, but for big integer algorithms -- like Poly1305 and
+Curve25519 -- I think it's all the more important to involve Andy and
+the rest of the world in general, so that Linux benefits from bug
+research and fuzzing in places that are typically and classically
+prone to nasty issues. In other words, let's definitely incorporate
+your improvements after the patchset goes in, and at the same time
+we'll try to bring Andy and others into the fold, where our
+improvements can generally track each others.
+
+> Also, I don't know whether Andy P. considered the 4xNEON implementation
+> technique.  It could even be fastest on other ARM CPUs too, I don't know.
+
+After v2, when he's CC'd in, let's plan to start discussing this with him.
+
+Jason
