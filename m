@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF309C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7BCC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:47:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DA1121479
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:47:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DA1121479
+	by mail.kernel.org (Postfix) with ESMTP id D013D21479
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:47:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D013D21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729051AbeHPVrx (ORCPT
+        id S1728835AbeHPVr6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:47:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57296 "EHLO
+        Thu, 16 Aug 2018 17:47:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57330 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726183AbeHPVru (ORCPT
+        with ESMTP id S1726183AbeHPVrz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:47:50 -0400
+        Thu, 16 Aug 2018 17:47:55 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 015D2D3B;
-        Thu, 16 Aug 2018 18:47:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4372DCE8;
+        Thu, 16 Aug 2018 18:47:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mhocko@suse.com,
-        akpm@linux-foundation.org, hpa@zytor.com, cpandya@codeaurora.org,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 4.17 06/21] x86/mm: Disable ioremap free page handling on x86-PAE
-Date:   Thu, 16 Aug 2018 20:45:16 +0200
-Message-Id: <20180816171612.669302985@linuxfoundation.org>
+        stable@vger.kernel.org, Hadar Gat <hadar.gat@arm.com>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.17 08/21] crypto: ccree - fix finup
+Date:   Thu, 16 Aug 2018 20:45:18 +0200
+Message-Id: <20180816171612.816465187@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171612.136242278@linuxfoundation.org>
 References: <20180816171612.136242278@linuxfoundation.org>
@@ -53,74 +51,140 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Toshi Kani <toshi.kani@hpe.com>
+From: Hadar Gat <hadar.gat@arm.com>
 
-commit f967db0b9ed44ec3057a28f3b28efc51df51b835 upstream.
+commit 26497e72a1aba4d27c50c4cbf0182db94e58a590 upstream.
 
-ioremap() supports pmd mappings on x86-PAE.  However, kernel's pmd
-tables are not shared among processes on x86-PAE.  Therefore, any
-update to sync'd pmd entries need re-syncing.  Freeing a pte page
-also leads to a vmalloc fault and hits the BUG_ON in vmalloc_sync_one().
+finup() operation was incorrect, padding was missing.
+Fix by setting the ccree HW to enable padding.
 
-Disable free page handling on x86-PAE.  pud_free_pmd_page() and
-pmd_free_pte_page() simply return 0 if a given pud/pmd entry is present.
-This assures that ioremap() does not update sync'd pmd entries at the
-cost of falling back to pte mappings.
-
-Fixes: 28ee90fe6048 ("x86/mm: implement free pmd/pte page interfaces")
-Reported-by: Joerg Roedel <joro@8bytes.org>
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: mhocko@suse.com
-Cc: akpm@linux-foundation.org
-Cc: hpa@zytor.com
-Cc: cpandya@codeaurora.org
-Cc: linux-mm@kvack.org
-Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Hadar Gat <hadar.gat@arm.com>
+[ gilad@benyossef.com: refactored for better code sharing ]
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 Cc: stable@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20180627141348.21777-2-toshi.kani@hpe.com
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/pgtable.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/crypto/ccree/cc_hash.c |   81 ++++++++---------------------------------
+ 1 file changed, 16 insertions(+), 65 deletions(-)
 
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -715,6 +715,7 @@ int pmd_clear_huge(pmd_t *pmd)
- 	return 0;
+--- a/drivers/crypto/ccree/cc_hash.c
++++ b/drivers/crypto/ccree/cc_hash.c
+@@ -602,7 +602,7 @@ static int cc_hash_update(struct ahash_r
+ 	return rc;
  }
  
-+#ifdef CONFIG_X86_64
- /**
-  * pud_free_pmd_page - Clear pud entry and free pmd page.
-  * @pud: Pointer to a PUD.
-@@ -762,4 +763,22 @@ int pmd_free_pte_page(pmd_t *pmd)
+-static int cc_hash_finup(struct ahash_request *req)
++static int cc_do_finup(struct ahash_request *req, bool update)
+ {
+ 	struct ahash_req_ctx *state = ahash_request_ctx(req);
+ 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
+@@ -619,15 +619,15 @@ static int cc_hash_finup(struct ahash_re
+ 	int rc;
+ 	gfp_t flags = cc_gfp_flags(&req->base);
  
- 	return 1;
+-	dev_dbg(dev, "===== %s-finup (%d) ====\n", is_hmac ? "hmac" : "hash",
+-		nbytes);
++	dev_dbg(dev, "===== %s-%s (%d) ====\n", is_hmac ? "hmac" : "hash",
++		update ? "finup" : "final", nbytes);
+ 
+ 	if (cc_map_req(dev, state, ctx)) {
+ 		dev_err(dev, "map_ahash_source() failed\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	if (cc_map_hash_request_final(ctx->drvdata, state, src, nbytes, 1,
++	if (cc_map_hash_request_final(ctx->drvdata, state, src, nbytes, update,
+ 				      flags)) {
+ 		dev_err(dev, "map_ahash_request_final() failed\n");
+ 		cc_unmap_req(dev, state, ctx);
+@@ -646,67 +646,7 @@ static int cc_hash_finup(struct ahash_re
+ 
+ 	idx = cc_restore_hash(desc, ctx, state, idx);
+ 
+-	if (is_hmac)
+-		idx = cc_fin_hmac(desc, req, idx);
+-
+-	idx = cc_fin_result(desc, req, idx);
+-
+-	rc = cc_send_request(ctx->drvdata, &cc_req, desc, idx, &req->base);
+-	if (rc != -EINPROGRESS && rc != -EBUSY) {
+-		dev_err(dev, "send_request() failed (rc=%d)\n", rc);
+-		cc_unmap_hash_request(dev, state, src, true);
+-		cc_unmap_result(dev, state, digestsize, result);
+-		cc_unmap_req(dev, state, ctx);
+-	}
+-	return rc;
+-}
+-
+-static int cc_hash_final(struct ahash_request *req)
+-{
+-	struct ahash_req_ctx *state = ahash_request_ctx(req);
+-	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
+-	struct cc_hash_ctx *ctx = crypto_ahash_ctx(tfm);
+-	u32 digestsize = crypto_ahash_digestsize(tfm);
+-	struct scatterlist *src = req->src;
+-	unsigned int nbytes = req->nbytes;
+-	u8 *result = req->result;
+-	struct device *dev = drvdata_to_dev(ctx->drvdata);
+-	bool is_hmac = ctx->is_hmac;
+-	struct cc_crypto_req cc_req = {};
+-	struct cc_hw_desc desc[CC_MAX_HASH_SEQ_LEN];
+-	unsigned int idx = 0;
+-	int rc;
+-	gfp_t flags = cc_gfp_flags(&req->base);
+-
+-	dev_dbg(dev, "===== %s-final (%d) ====\n", is_hmac ? "hmac" : "hash",
+-		nbytes);
+-
+-	if (cc_map_req(dev, state, ctx)) {
+-		dev_err(dev, "map_ahash_source() failed\n");
+-		return -EINVAL;
+-	}
+-
+-	if (cc_map_hash_request_final(ctx->drvdata, state, src, nbytes, 0,
+-				      flags)) {
+-		dev_err(dev, "map_ahash_request_final() failed\n");
+-		cc_unmap_req(dev, state, ctx);
+-		return -ENOMEM;
+-	}
+-
+-	if (cc_map_result(dev, state, digestsize)) {
+-		dev_err(dev, "map_ahash_digest() failed\n");
+-		cc_unmap_hash_request(dev, state, src, true);
+-		cc_unmap_req(dev, state, ctx);
+-		return -ENOMEM;
+-	}
+-
+-	/* Setup request structure */
+-	cc_req.user_cb = cc_hash_complete;
+-	cc_req.user_arg = req;
+-
+-	idx = cc_restore_hash(desc, ctx, state, idx);
+-
+-	/* "DO-PAD" must be enabled only when writing current length to HW */
++	/* Pad the hash */
+ 	hw_desc_init(&desc[idx]);
+ 	set_cipher_do(&desc[idx], DO_PAD);
+ 	set_cipher_mode(&desc[idx], ctx->hw_mode);
+@@ -731,6 +671,17 @@ static int cc_hash_final(struct ahash_re
+ 	return rc;
  }
-+
-+#else /* !CONFIG_X86_64 */
-+
-+int pud_free_pmd_page(pud_t *pud)
+ 
++static int cc_hash_finup(struct ahash_request *req)
 +{
-+	return pud_none(*pud);
++	return cc_do_finup(req, true);
 +}
 +
-+/*
-+ * Disable free page handling on x86-PAE. This assures that ioremap()
-+ * does not update sync'd pmd entries. See vmalloc_sync_one().
-+ */
-+int pmd_free_pte_page(pmd_t *pmd)
++
++static int cc_hash_final(struct ahash_request *req)
 +{
-+	return pmd_none(*pmd);
++	return cc_do_finup(req, false);
 +}
 +
-+#endif /* CONFIG_X86_64 */
- #endif	/* CONFIG_HAVE_ARCH_HUGE_VMAP */
+ static int cc_hash_init(struct ahash_request *req)
+ {
+ 	struct ahash_req_ctx *state = ahash_request_ctx(req);
 
 
