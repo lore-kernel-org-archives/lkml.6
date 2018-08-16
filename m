@@ -6,37 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 187F4C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F32C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:45:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C99882147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:45:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C99882147D
+	by mail.kernel.org (Postfix) with ESMTP id D77B121479
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:45:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D77B121479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730082AbeHPVpy (ORCPT
+        id S1730102AbeHPVp7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:45:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56692 "EHLO
+        Thu, 16 Aug 2018 17:45:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56716 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727613AbeHPVpx (ORCPT
+        with ESMTP id S1730085AbeHPVp5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:45:53 -0400
+        Thu, 16 Aug 2018 17:45:57 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 59E7CCC4;
-        Thu, 16 Aug 2018 18:45:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63A78CC4;
+        Thu, 16 Aug 2018 18:45:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Morse <james.morse@arm.com>,
-        Borislav Petkov <bp@suse.de>,
-        Tyler Baicar <tbaicar@codeaurora.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 12/22] ACPI / APEI: Remove ghes_ioremap_area
-Date:   Thu, 16 Aug 2018 20:45:13 +0200
-Message-Id: <20180816171624.623030411@linuxfoundation.org>
+Subject: [PATCH 4.14 13/22] sched/debug: Fix task state recording/printout
+Date:   Thu, 16 Aug 2018 20:45:14 +0200
+Message-Id: <20180816171624.726313966@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171622.831964729@linuxfoundation.org>
 References: <20180816171622.831964729@linuxfoundation.org>
@@ -53,94 +55,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Morse <james.morse@arm.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 520e18a5080d2c444a03280d99c8a35cb667d321 upstream.
+commit 3f5fe9fef5b2da06b6319fab8123056da5217c3f upstream.
 
-Now that nothing is using the ghes_ioremap_area pages, rip them out.
+The recent conversion of the task state recording to use task_state_index()
+broke the sched_switch tracepoint task state output.
 
-Signed-off-by: James Morse <james.morse@arm.com>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Tested-by: Tyler Baicar <tbaicar@codeaurora.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: All applicable <stable@vger.kernel.org>
+task_state_index() returns surprisingly an index (0-7) which is then
+printed with __print_flags() applying bitmasks. Not really working and
+resulting in weird states like 'prev_state=t' instead of 'prev_state=I'.
+
+Use TASK_REPORT_MAX instead of TASK_STATE_MAX to report preemption. Build a
+bitmask from the return value of task_state_index() and store it in
+entry->prev_state, which makes __print_flags() work as expected.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: stable@vger.kernel.org
+Fixes: efb40f588b43 ("sched/tracing: Fix trace_sched_switch task-state printing")
+Link: http://lkml.kernel.org/r/alpine.DEB.2.20.1711221304180.1751@nanos
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/acpi/apei/ghes.c |   39 ++-------------------------------------
- 1 file changed, 2 insertions(+), 37 deletions(-)
+ include/trace/events/sched.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -114,19 +114,7 @@ static DEFINE_MUTEX(ghes_list_mutex);
-  * from BIOS to Linux can be determined only in NMI, IRQ or timer
-  * handler, but general ioremap can not be used in atomic context, so
-  * the fixmap is used instead.
-- */
--
--/*
-- * Two virtual pages are used, one for IRQ/PROCESS context, the other for
-- * NMI context (optionally).
-- */
--#define GHES_IOREMAP_PAGES           2
--#define GHES_IOREMAP_IRQ_PAGE(base)	(base)
--#define GHES_IOREMAP_NMI_PAGE(base)	((base) + PAGE_SIZE)
--
--/* virtual memory area for atomic ioremap */
--static struct vm_struct *ghes_ioremap_area;
--/*
-+ *
-  * These 2 spinlocks are used to prevent the fixmap entries from being used
-  * simultaneously.
-  */
-@@ -141,23 +129,6 @@ static atomic_t ghes_estatus_cache_alloc
+--- a/include/trace/events/sched.h
++++ b/include/trace/events/sched.h
+@@ -116,9 +116,9 @@ static inline long __trace_sched_switch_
+ 	 * RUNNING (we will not have dequeued if state != RUNNING).
+ 	 */
+ 	if (preempt)
+-		return TASK_STATE_MAX;
++		return TASK_REPORT_MAX;
  
- static int ghes_panic_timeout __read_mostly = 30;
- 
--static int ghes_ioremap_init(void)
--{
--	ghes_ioremap_area = __get_vm_area(PAGE_SIZE * GHES_IOREMAP_PAGES,
--		VM_IOREMAP, VMALLOC_START, VMALLOC_END);
--	if (!ghes_ioremap_area) {
--		pr_err(GHES_PFX "Failed to allocate virtual memory area for atomic ioremap.\n");
--		return -ENOMEM;
--	}
--
--	return 0;
--}
--
--static void ghes_ioremap_exit(void)
--{
--	free_vm_area(ghes_ioremap_area);
--}
--
- static void __iomem *ghes_ioremap_pfn_nmi(u64 pfn)
- {
- 	phys_addr_t paddr;
-@@ -1247,13 +1218,9 @@ static int __init ghes_init(void)
- 
- 	ghes_nmi_init_cxt();
- 
--	rc = ghes_ioremap_init();
--	if (rc)
--		goto err;
--
- 	rc = ghes_estatus_pool_init();
- 	if (rc)
--		goto err_ioremap_exit;
-+		goto err;
- 
- 	rc = ghes_estatus_pool_expand(GHES_ESTATUS_CACHE_AVG_SIZE *
- 				      GHES_ESTATUS_CACHE_ALLOCED_MAX);
-@@ -1277,8 +1244,6 @@ static int __init ghes_init(void)
- 	return 0;
- err_pool_exit:
- 	ghes_estatus_pool_exit();
--err_ioremap_exit:
--	ghes_ioremap_exit();
- err:
- 	return rc;
+-	return __get_task_state(p);
++	return 1 << __get_task_state(p);
  }
+ #endif /* CREATE_TRACE_POINTS */
+ 
+@@ -164,7 +164,7 @@ TRACE_EVENT(sched_switch,
+ 				{ 0x40, "P" }, { 0x80, "I" }) :
+ 		  "R",
+ 
+-		__entry->prev_state & TASK_STATE_MAX ? "+" : "",
++		__entry->prev_state & TASK_REPORT_MAX ? "+" : "",
+ 		__entry->next_comm, __entry->next_pid, __entry->next_prio)
+ );
+ 
 
 
