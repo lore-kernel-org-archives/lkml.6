@@ -3,43 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9840DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B6BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:48:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 552BB2147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:48:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 552BB2147D
+	by mail.kernel.org (Postfix) with ESMTP id EE405214C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:48:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE405214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728736AbeHPVs6 (ORCPT
+        id S1728909AbeHPVtC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:48:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57704 "EHLO
+        Thu, 16 Aug 2018 17:49:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57746 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728504AbeHPVsw (ORCPT
+        with ESMTP id S1728357AbeHPVs7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:48:52 -0400
+        Thu, 16 Aug 2018 17:48:59 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A26E8D29;
-        Thu, 16 Aug 2018 18:48:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AFF56D3B;
+        Thu, 16 Aug 2018 18:48:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Kelley <mikelley@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        devel@linuxdriverproject.org, "H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 4.18 03/22] x86/hyper-v: Check for VP_INVAL in hyperv_flush_tlb_others()
-Date:   Thu, 16 Aug 2018 20:45:19 +0200
-Message-Id: <20180816171556.628980028@linuxfoundation.org>
+        stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, keescook@google.com,
+        aarcange@redhat.com, jgross@suse.com, jpoimboe@redhat.com,
+        peterz@infradead.org, torvalds@linux-foundation.org, bp@alien8.de,
+        luto@kernel.org, ak@linux.intel.com
+Subject: [PATCH 4.18 05/22] x86/mm/pti: Clear Global bit more aggressively
+Date:   Thu, 16 Aug 2018 20:45:21 +0200
+Message-Id: <20180816171556.704216479@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171556.502583508@linuxfoundation.org>
 References: <20180816171556.502583508@linuxfoundation.org>
@@ -56,58 +54,182 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-commit 110d2a7fc39725d2c29d2fede4f34a35a4f98882 upstream.
+commit eac7073aa69aa1cac819aa712146284f53f642b1 upstream.
 
-Commit 1268ed0c474a ("x86/hyper-v: Fix the circular dependency in IPI
- enlightenment") pre-filled hv_vp_index with VP_INVAL so it is now
-(theoretically) possible to observe hv_cpu_number_to_vp_number()
-returning VP_INVAL. We need to check for that in hyperv_flush_tlb_others().
+The kernel image starts out with the Global bit set across the entire
+kernel image.  The bit is cleared with set_memory_nonglobal() in the
+configurations with PCIDs where the performance benefits of the Global bit
+are not needed.
 
-Not checking for VP_INVAL on the first call site where we do
+However, this is fragile.  It means that we are stuck opting *out* of the
+less-secure (Global bit set) configuration, which seems backwards.  Let's
+start more secure (Global bit clear) and then let things opt back in if
+they want performance, or are truly mapping common data between kernel and
+userspace.
 
- if (hv_cpu_number_to_vp_number(cpumask_last(cpus)) >= 64)
-                        goto do_ex_hypercall;
+This fixes a bug.  Before this patch, there are areas that are unmapped
+from the user page tables (like like everything above 0xffffffff82600000 in
+the example below).  These have the hallmark of being a wrong Global area:
+they are not identical in the 'current_kernel' and 'current_user' page
+table dumps.  They are also read-write, which means they're much more
+likely to contain secrets.
 
-is OK, in case we're eligible for non-ex hypercall we'll catch the
-issue later in for_each_cpu() cycle and in case we'll be doing ex-
-hypercall cpumask_to_vpset() will fail.
+Before this patch:
 
-It would be nice to change hv_cpu_number_to_vp_number() return
-value's type to 'u32' but this will likely be a bigger change as
-all call sites need to be checked first.
+current_kernel:---[ High Kernel Mapping ]---
+current_kernel-0xffffffff80000000-0xffffffff81000000          16M                               pmd
+current_kernel-0xffffffff81000000-0xffffffff81e00000          14M     ro         PSE     GLB x  pmd
+current_kernel-0xffffffff81e00000-0xffffffff81e11000          68K     ro                 GLB x  pte
+current_kernel-0xffffffff81e11000-0xffffffff82000000        1980K     RW                 GLB NX pte
+current_kernel-0xffffffff82000000-0xffffffff82600000           6M     ro         PSE     GLB NX pmd
+current_kernel-0xffffffff82600000-0xffffffff82c00000           6M     RW         PSE     GLB NX pmd
+current_kernel-0xffffffff82c00000-0xffffffff82e00000           2M     RW                 GLB NX pte
+current_kernel-0xffffffff82e00000-0xffffffff83200000           4M     RW         PSE     GLB NX pmd
+current_kernel-0xffffffff83200000-0xffffffffa0000000         462M                               pmd
 
-Fixes: 1268ed0c474a ("x86/hyper-v: Fix the circular dependency in IPI enlightenment")
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+ current_user:---[ High Kernel Mapping ]---
+ current_user-0xffffffff80000000-0xffffffff81000000          16M                               pmd
+ current_user-0xffffffff81000000-0xffffffff81e00000          14M     ro         PSE     GLB x  pmd
+ current_user-0xffffffff81e00000-0xffffffff81e11000          68K     ro                 GLB x  pte
+ current_user-0xffffffff81e11000-0xffffffff82000000        1980K     RW                 GLB NX pte
+ current_user-0xffffffff82000000-0xffffffff82600000           6M     ro         PSE     GLB NX pmd
+ current_user-0xffffffff82600000-0xffffffffa0000000         474M                               pmd
+
+After this patch:
+
+current_kernel:---[ High Kernel Mapping ]---
+current_kernel-0xffffffff80000000-0xffffffff81000000          16M                               pmd
+current_kernel-0xffffffff81000000-0xffffffff81e00000          14M     ro         PSE     GLB x  pmd
+current_kernel-0xffffffff81e00000-0xffffffff81e11000          68K     ro                 GLB x  pte
+current_kernel-0xffffffff81e11000-0xffffffff82000000        1980K     RW                     NX pte
+current_kernel-0xffffffff82000000-0xffffffff82600000           6M     ro         PSE     GLB NX pmd
+current_kernel-0xffffffff82600000-0xffffffff82c00000           6M     RW         PSE         NX pmd
+current_kernel-0xffffffff82c00000-0xffffffff82e00000           2M     RW                     NX pte
+current_kernel-0xffffffff82e00000-0xffffffff83200000           4M     RW         PSE         NX pmd
+current_kernel-0xffffffff83200000-0xffffffffa0000000         462M                               pmd
+
+  current_user:---[ High Kernel Mapping ]---
+  current_user-0xffffffff80000000-0xffffffff81000000          16M                               pmd
+  current_user-0xffffffff81000000-0xffffffff81e00000          14M     ro         PSE     GLB x  pmd
+  current_user-0xffffffff81e00000-0xffffffff81e11000          68K     ro                 GLB x  pte
+  current_user-0xffffffff81e11000-0xffffffff82000000        1980K     RW                     NX pte
+  current_user-0xffffffff82000000-0xffffffff82600000           6M     ro         PSE     GLB NX pmd
+  current_user-0xffffffff82600000-0xffffffffa0000000         474M                               pmd
+
+Fixes: 0f561fce4d69 ("x86/pti: Enable global pages for shared areas")
+Reported-by: Hugh Dickins <hughd@google.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-Cc: devel@linuxdriverproject.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/20180709174012.17429-3-vkuznets@redhat.com
+Cc: keescook@google.com
+Cc: aarcange@redhat.com
+Cc: jgross@suse.com
+Cc: jpoimboe@redhat.com
+Cc: gregkh@linuxfoundation.org
+Cc: peterz@infradead.org
+Cc: torvalds@linux-foundation.org
+Cc: bp@alien8.de
+Cc: luto@kernel.org
+Cc: ak@linux.intel.com
+Cc: Kees Cook <keescook@google.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Link: https://lkml.kernel.org/r/20180802225825.A100C071@viggo.jf.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/hyperv/mmu.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/x86/mm/pageattr.c |    6 ++++++
+ arch/x86/mm/pti.c      |   34 ++++++++++++++++++++++++----------
+ 2 files changed, 30 insertions(+), 10 deletions(-)
 
---- a/arch/x86/hyperv/mmu.c
-+++ b/arch/x86/hyperv/mmu.c
-@@ -95,6 +95,11 @@ static void hyperv_flush_tlb_others(cons
- 	} else {
- 		for_each_cpu(cpu, cpus) {
- 			vcpu = hv_cpu_number_to_vp_number(cpu);
-+			if (vcpu == VP_INVAL) {
-+				local_irq_restore(flags);
-+				goto do_native;
-+			}
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -1784,6 +1784,12 @@ int set_memory_nonglobal(unsigned long a
+ 				      __pgprot(_PAGE_GLOBAL), 0);
+ }
+ 
++int set_memory_global(unsigned long addr, int numpages)
++{
++	return change_page_attr_set(&addr, numpages,
++				    __pgprot(_PAGE_GLOBAL), 0);
++}
 +
- 			if (vcpu >= 64)
- 				goto do_native;
+ static int __set_memory_enc_dec(unsigned long addr, int numpages, bool enc)
+ {
+ 	struct cpa_data cpa;
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -436,6 +436,13 @@ static inline bool pti_kernel_image_glob
+ }
+ 
+ /*
++ * This is the only user for these and it is not arch-generic
++ * like the other set_memory.h functions.  Just extern them.
++ */
++extern int set_memory_nonglobal(unsigned long addr, int numpages);
++extern int set_memory_global(unsigned long addr, int numpages);
++
++/*
+  * For some configurations, map all of kernel text into the user page
+  * tables.  This reduces TLB misses, especially on non-PCID systems.
+  */
+@@ -447,7 +454,8 @@ void pti_clone_kernel_text(void)
+ 	 * clone the areas past rodata, they might contain secrets.
+ 	 */
+ 	unsigned long start = PFN_ALIGN(_text);
+-	unsigned long end = (unsigned long)__end_rodata_hpage_align;
++	unsigned long end_clone  = (unsigned long)__end_rodata_hpage_align;
++	unsigned long end_global = PFN_ALIGN((unsigned long)__stop___ex_table);
+ 
+ 	if (!pti_kernel_image_global_ok())
+ 		return;
+@@ -459,14 +467,18 @@ void pti_clone_kernel_text(void)
+ 	 * pti_set_kernel_image_nonglobal() did to clear the
+ 	 * global bit.
+ 	 */
+-	pti_clone_pmds(start, end, _PAGE_RW);
++	pti_clone_pmds(start, end_clone, _PAGE_RW);
++
++	/*
++	 * pti_clone_pmds() will set the global bit in any PMDs
++	 * that it clones, but we also need to get any PTEs in
++	 * the last level for areas that are not huge-page-aligned.
++	 */
++
++	/* Set the global bit for normal non-__init kernel text: */
++	set_memory_global(start, (end_global - start) >> PAGE_SHIFT);
+ }
+ 
+-/*
+- * This is the only user for it and it is not arch-generic like
+- * the other set_memory.h functions.  Just extern it.
+- */
+-extern int set_memory_nonglobal(unsigned long addr, int numpages);
+ void pti_set_kernel_image_nonglobal(void)
+ {
+ 	/*
+@@ -478,9 +490,11 @@ void pti_set_kernel_image_nonglobal(void
+ 	unsigned long start = PFN_ALIGN(_text);
+ 	unsigned long end = ALIGN((unsigned long)_end, PMD_PAGE_SIZE);
+ 
+-	if (pti_kernel_image_global_ok())
+-		return;
+-
++	/*
++	 * This clears _PAGE_GLOBAL from the entire kernel image.
++	 * pti_clone_kernel_text() map put _PAGE_GLOBAL back for
++	 * areas that are mapped to userspace.
++	 */
+ 	set_memory_nonglobal(start, (end - start) >> PAGE_SHIFT);
+ }
  
 
 
