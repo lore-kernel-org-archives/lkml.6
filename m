@@ -3,554 +3,497 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 692FDC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4854AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED6F0208D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:58:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D83E321473
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:05:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2M1o/rm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED6F0208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bW0EOcnZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D83E321473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726016AbeHPW6y (ORCPT
+        id S1725955AbeHPXGC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 18:58:54 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45311 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725803AbeHPW6y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 18:58:54 -0400
-Received: by mail-wr1-f67.google.com with SMTP id f12-v6so5164381wrv.12;
-        Thu, 16 Aug 2018 12:58:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bxxexDjo7qtxFmSQtYOIiDGnAgZAsLh8v8WwkE1KIDw=;
-        b=F2M1o/rmvomQn5l1QPAKvVBbdiTp/SO9bW97w7qY/42hYEVug+7LLrWXKaUNWSRQsk
-         z0QSMFH727VyA1C5eM2RhkXN35sVuruwjGOP5LYFkSHD8+Bv8BAHcUkZ+C0JpIjr5UDx
-         mcDQOj0ebEMSaw7bgAiw/LQBENCYFBgh0+e9G8LE1IHcOHvkeHAAT6eckxPRveIlIMr4
-         RybHMY9j8WePfvPiZnuhzsKK4jiCWoutlO5/htIGXZhNv9wokm9BO8mFFgxvbyTVR/Xq
-         hu2RB3R3mfG0CMDqPb9pE+6Yy0CgQGsI05Ggvj6ShK48ORVo2U24Nvp7kQbd6Cv27Wct
-         SYvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bxxexDjo7qtxFmSQtYOIiDGnAgZAsLh8v8WwkE1KIDw=;
-        b=mTOwSUWvSeEeajGucMbT9R2U7Cti3j5tqqbK/mSvoELa6LY9lK8XighN3IEEf8wJeU
-         6BYltfGdbQz5vXBP595PjpsWkZEaUmjxG6nq0DdlR/9gGi2wzy94cAriv4MFuZoNo6ei
-         1nyTsJzZHe0dM7olxW1mSNDcoca0T9hW0+3dgkkMKxjbgH0kXoVDTi6GOK211Ko1Hltr
-         +GgS7F/N2q+mzkQ+4/FXoNZ9kmbhe6oytvilbQgJkSuu5mkLkPOvuqA9zhIau9IEw7To
-         8f4TlkJWQnu1jUQl1okv80esDosnm/L7xGOF3T+Akiaa2yRgrgLDJSxsrbKuwNhUjzpC
-         o7aw==
-X-Gm-Message-State: AOUpUlFIoW1A5tRuaSeoPk7E2lhj/af/M4CXer+LTIfMUoRzBsUaNuQB
-        BW0k4P6WThEEH79pQdZurGJ5hjlG
-X-Google-Smtp-Source: AA+uWPyMLF4Ftp5TG8UHTRFbxiiAVLRS0fBWzT5PxkaARSh3Y5SeY3ijrBZT2u5mTDpsz1HIUB9BjA==
-X-Received: by 2002:adf:a29b:: with SMTP id s27-v6mr21351936wra.100.1534449504318;
-        Thu, 16 Aug 2018 12:58:24 -0700 (PDT)
-Received: from [192.168.1.18] (bkw170.neoplus.adsl.tpnet.pl. [83.28.190.170])
-        by smtp.gmail.com with ESMTPSA id m68-v6sm4204913wmb.10.2018.08.16.12.58.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Aug 2018 12:58:23 -0700 (PDT)
-Subject: Re: [PATCH v4 2/2] leds: lm3697: Introduce the lm3697 driver
-To:     Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-References: <20180816172058.31700-1-dmurphy@ti.com>
- <20180816172058.31700-2-dmurphy@ti.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <9ef9cd25-5c73-964c-ac09-55c0c78e5dc9@gmail.com>
-Date:   Thu, 16 Aug 2018 21:58:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 16 Aug 2018 19:06:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44710 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725783AbeHPXGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 19:06:01 -0400
+Received: from mail-yb0-f171.google.com (mail-yb0-f171.google.com [209.85.213.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 910822147A;
+        Thu, 16 Aug 2018 20:05:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534449932;
+        bh=wuroVYR0JEL3FEwqmKMg7RUchM6aOYjUuGXdCtpFf20=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=bW0EOcnZOnSGV+rA/wRMgffKKWAv07GUTDSV/mc245YvWayXQ8W3kARBYpZ1Oervn
+         89ADOlOWxGdJYOurxQwkH3gKxsxcl4UV+lUoJhgs8o1Ba2bHt+wQ7DzWR3zszkoycG
+         7HLIaVZ6+Y1U9TjmtkU+Y9fkQjIpYEmZ8JGPa1Jw=
+Received: by mail-yb0-f171.google.com with SMTP id r3-v6so1103477ybo.4;
+        Thu, 16 Aug 2018 13:05:32 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGKLgU3Wav3n+hdpptmw+VbCNmaRAqkH5ROR0jXprcjt4uxR9Jl
+        27o+xzTZ/PHVCGVhhiqItId4Jacp8D2pOx6uor4=
+X-Google-Smtp-Source: AA+uWPyO7YrzhCzyjDCoUjS8yke/XVC0Dt3z84Bw8F7SpBmthtR+5tcxuGclPVocypffQX/jbm7Rt3xoFgd2Ry5V/Qw=
+X-Received: by 2002:a25:f212:: with SMTP id i18-v6mr17441738ybe.267.1534449931724;
+ Thu, 16 Aug 2018 13:05:31 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180816172058.31700-2-dmurphy@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a25:81c8:0:0:0:0:0 with HTTP; Thu, 16 Aug 2018 13:04:51
+ -0700 (PDT)
+In-Reply-To: <20180816185952.GA3932@archbook>
+References: <20180815220958.3606-1-atull@kernel.org> <20180815220958.3606-2-atull@kernel.org>
+ <20180816185952.GA3932@archbook>
+From:   Alan Tull <atull@kernel.org>
+Date:   Thu, 16 Aug 2018 15:04:51 -0500
+X-Gmail-Original-Message-ID: <CANk1AXTZqaZxrEeb3TpyH7HtiVNw+MvVsBZzXWZkSLzUGQkrnA@mail.gmail.com>
+Message-ID: <CANk1AXTZqaZxrEeb3TpyH7HtiVNw+MvVsBZzXWZkSLzUGQkrnA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fpga: add FPGA manager debugfs
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fpga@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Alan Tull <atull@opensource.altera.com>,
+        Matthew Gerlach <matthew.gerlach@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan,
+On Thu, Aug 16, 2018 at 1:59 PM, Moritz Fischer <mdf@kernel.org> wrote:
+> Hi Alan,
 
-Thank you for the patch.
+Hi Moritz,
 
-I didn't review DT parsing details in v3, but now I've produced
-diff between v3 and v4 to check what has changed.
+> comments inline. While I see how this is useful, I have the
+> suspicion that from the moment this gets merged vendor kernels
+> will just default to use this ...
 
-I'm quite surprised realizing that you're not validating
-HVLED and control banks assignment, having in mind earlier
-discussions and your concerns about numerous DT configurations
-to check.
+Yeah, I have that suspicion as well.  That's probably why I sat on
+this and didn't upstream it for 2 years.  But on the other hand, I
+keep hearing of lots of cases of people implementing this
+independently anyway.  At least if it is debugfs, it makes it clear
+that it's not intended for production use.
 
-Is it on purpose?
+>
+> On Wed, Aug 15, 2018 at 05:09:58PM -0500, Alan Tull wrote:
+>> From: Alan Tull <atull@opensource.altera.com>
+>>
+>> Implement DebugFS for the FPGA Manager Framework for
+>> debugging and developmental use.
+>>
+>> Enabled by CONFIG_FPGA_MGR_DEBUG_FS
+>>
+>> Each FPGA gets its own directory such as
+>>  <debugfs>/fpga_manager/fpga0 and three files:
+>>
+>>  * [RW] flags          = flags as defined in fpga-mgr.h
+>>  * [RW] firmware_name  = write/read back name of FPGA image
+>>                          firmware file to program
+>>  * [WO] image          = write-only file for directly writing
+>>                          fpga image w/o firmware layer
+>>  * [RW] config_complete_timeout_us = maximum for the FPGA to
+>>                          go to the operating state after
+>>                        programming
+>>
+>> The debugfs is implemented in a separate fpga_mgr_debugfs.c
+>> file, but the FPGA manager core is still built as one
+>> module.  Note the name change from fpga-mgr.ko to fpga_mgr.ko.
+>>
+>> Signed-off-by: Alan Tull <atull@kernel.org>
+>> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+>> ---
+>>  drivers/fpga/Kconfig            |   7 ++
+>>  drivers/fpga/Makefile           |   4 +-
+>>  drivers/fpga/fpga-mgr-debugfs.c | 221 ++++++++++++++++++++++++++++++++++++++++
+>>  drivers/fpga/fpga-mgr-debugfs.h |  22 ++++
+>>  drivers/fpga/fpga-mgr.c         |   8 ++
+>>  include/linux/fpga/fpga-mgr.h   |   3 +
+>>  6 files changed, 264 insertions(+), 1 deletion(-)
+>>  create mode 100644 drivers/fpga/fpga-mgr-debugfs.c
+>>  create mode 100644 drivers/fpga/fpga-mgr-debugfs.h
+>>
+>> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+>> index 1ebcef4..600924d 100644
+>> --- a/drivers/fpga/Kconfig
+>> +++ b/drivers/fpga/Kconfig
+>> @@ -9,6 +9,13 @@ menuconfig FPGA
+>>         kernel.  The FPGA framework adds a FPGA manager class and FPGA
+>>         manager drivers.
+>>
+>> +config FPGA_MGR_DEBUG_FS
+>> +       bool "FPGA Manager DebugFS"
+>> +       depends on FPGA && DEBUG_FS
+>> +       help
+>> +         Say Y here if you want to expose a DebugFS interface for the
+>> +      FPGA Manager Framework.
+>> +
+>>  if FPGA
+>>
+>>  config FPGA_MGR_SOCFPGA
+>> diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+>> index 7a2d73b..62910cc 100644
+>> --- a/drivers/fpga/Makefile
+>> +++ b/drivers/fpga/Makefile
+>> @@ -4,7 +4,9 @@
+>>  #
+>>
+>>  # Core FPGA Manager Framework
+>> -obj-$(CONFIG_FPGA)                   += fpga-mgr.o
+>> +obj-$(CONFIG_FPGA)                   += fpga_mgr.o
+>> +fpga_mgr-y                           := fpga-mgr.o
+>> +fpga_mgr-$(CONFIG_FPGA_MGR_DEBUG_FS) += fpga-mgr-debugfs.o
+>>
+>>  # FPGA Manager Drivers
+>>  obj-$(CONFIG_FPGA_MGR_ALTERA_CVP)    += altera-cvp.o
+>> diff --git a/drivers/fpga/fpga-mgr-debugfs.c b/drivers/fpga/fpga-mgr-debugfs.c
+>> new file mode 100644
+>> index 0000000..f2fdf58
+>> --- /dev/null
+>> +++ b/drivers/fpga/fpga-mgr-debugfs.c
+>> @@ -0,0 +1,221 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * FPGA Manager DebugFS
+>> + *
+>> + *  Copyright (C) 2016-2018 Intel Corporation.  All rights reserved.
+>> + */
+>> +#include <linux/debugfs.h>
+>> +#include <linux/fpga/fpga-mgr.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/uaccess.h>
+>> +
+>> +static struct dentry *fpga_mgr_debugfs_root;
+>> +
+>> +struct fpga_mgr_debugfs {
+>> +     struct dentry *debugfs_dir;
+>> +     struct fpga_image_info *info;
+>> +};
+>> +
+>> +static ssize_t fpga_mgr_firmware_write_file(struct file *file,
+>> +                                         const char __user *user_buf,
+>> +                                         size_t count, loff_t *ppos)
+>> +{
+>> +     struct fpga_manager *mgr = file->private_data;
+>> +     struct fpga_mgr_debugfs *debugfs = mgr->debugfs;
+>> +     struct device *dev = &mgr->dev;
+>> +     char *buf;
+>> +     int ret;
+>> +
+>> +     ret = fpga_mgr_lock(mgr);
+>> +     if (ret) {
+>> +             dev_err(dev, "FPGA manager is busy\n");
+>> +             return -EBUSY;
+>> +     }
+>> +
+>> +     buf = devm_kzalloc(dev, count, GFP_KERNEL);
+>> +     if (!buf) {
+>> +             fpga_mgr_unlock(mgr);
+>> +             return -ENOMEM;
+>> +     }
+>> +
+>> +     if (copy_from_user(buf, user_buf, count)) {
+>> +             fpga_mgr_unlock(mgr);
+>> +             devm_kfree(dev, buf);
+>> +             return -EFAULT;
+>> +     }
+>> +
+>> +     buf[count] = 0;
+>> +     if (buf[count - 1] == '\n')
+>> +             buf[count - 1] = 0;
+>> +
+>> +     /* Release previous firmware name (if any). Save current one. */
+>> +     if (debugfs->info->firmware_name)
+>> +             devm_kfree(dev, debugfs->info->firmware_name);
+>> +     debugfs->info->firmware_name = buf;
+>> +
+>> +     ret = fpga_mgr_load(mgr, debugfs->info);
+>> +     if (ret)
+>> +             dev_err(dev, "fpga_mgr_load returned with value %d\n", ret);
+>> +
+>> +     fpga_mgr_unlock(mgr);
+>> +
+>> +     return count;
+>> +}
+>> +
+>> +static ssize_t fpga_mgr_firmware_read_file(struct file *file,
+>> +                                        char __user *user_buf,
+>> +                                        size_t count, loff_t *ppos)
+>> +{
+>> +     struct fpga_manager *mgr = file->private_data;
+>> +     struct fpga_mgr_debugfs *debugfs = mgr->debugfs;
+>> +     char *buf;
+>> +     int ret;
+>> +
+>> +     if (!debugfs->info->firmware_name)
+>> +             return 0;
+>> +
+>> +     buf = kzalloc(PAGE_SIZE, GFP_KERNEL);
+>> +     if (!buf)
+>> +             return -ENOMEM;
+>> +
+>> +     ret = snprintf(buf, PAGE_SIZE, "%s\n", debugfs->info->firmware_name);
+> snip:
+> ---->8->8->8-----
+>> +     if (ret < 0) {
+>> +             kfree(buf);
+>> +             return ret;
+>> +     }
+> ---->8->8->8-----
+> just replace with:
+>         if (ret < 0)
+>                 goto out;
+>> +
+>> +     ret = simple_read_from_buffer(user_buf, count, ppos, buf, ret);
+>
+> out:
+>> +     kfree(buf);
+>> +     return ret;
+>> +}
 
-Regardless of that - please find two nits below.
+Yes, that's better. I'll include that in v2.
 
-On 08/16/2018 07:20 PM, Dan Murphy wrote:
-> Introduce the lm3697 LED driver for
-> backlighting and display.
-> 
-> Datasheet location:
-> http://www.ti.com/lit/ds/symlink/lm3697.pdf
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
-> 
-> v4 - Made modifications to the control bank routine to accomodate the DT changes
-> https://lore.kernel.org/patchwork/patch/974811/
-> v3 - Add code to support led-sources and control bank configuration also fix
-> other miscellaneous issues reported- https://lore.kernel.org/patchwork/patch/972336/
-> v2 - Removed unneed 'of' calls in dt_parse, fixed comment, fixed checkpatch
-> error, and change led registration - https://lore.kernel.org/patchwork/patch/971327/
-> 
->  drivers/leds/Kconfig       |   9 +
->  drivers/leds/Makefile      |   1 +
->  drivers/leds/leds-lm3697.c | 381 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 391 insertions(+)
->  create mode 100644 drivers/leds/leds-lm3697.c
-> 
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 44097a3e0fcc..784cbe375724 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -151,6 +151,15 @@ config LEDS_LM3642
->  	  converter plus 1.5A constant current driver for a high-current
->  	  white LED.
->  
-> +config LEDS_LM3697
-> +	tristate "LED support for LM3697 Chip"
-> +	depends on LEDS_CLASS && I2C
-> +	select REGMAP_I2C
-> +	help
-> +	  This option enables support for LEDs connected to LM3697.
-> +	  The LM3697 is an 11 bit high performance backlight driver for
-> +	  keypad and display lighting.
-> +
->  config LEDS_LM3692X
->  	tristate "LED support for LM3692x Chips"
->  	depends on LEDS_CLASS && I2C && OF
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 420b5d2cfa62..2813f089f3db 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -19,6 +19,7 @@ obj-$(CONFIG_LEDS_LOCOMO)		+= leds-locomo.o
->  obj-$(CONFIG_LEDS_LM3530)		+= leds-lm3530.o
->  obj-$(CONFIG_LEDS_LM3533)		+= leds-lm3533.o
->  obj-$(CONFIG_LEDS_LM3642)		+= leds-lm3642.o
-> +obj-$(CONFIG_LEDS_LM3697)		+= leds-lm3697.o
->  obj-$(CONFIG_LEDS_MIKROTIK_RB532)	+= leds-rb532.o
->  obj-$(CONFIG_LEDS_S3C24XX)		+= leds-s3c24xx.o
->  obj-$(CONFIG_LEDS_NET48XX)		+= leds-net48xx.o
-> diff --git a/drivers/leds/leds-lm3697.c b/drivers/leds/leds-lm3697.c
-> new file mode 100644
-> index 000000000000..390c6a928899
-> --- /dev/null
-> +++ b/drivers/leds/leds-lm3697.c
-> @@ -0,0 +1,381 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// TI LM3697 LED chip family driver
-> +// Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
-> +
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/i2c.h>
-> +#include <linux/init.h>
-> +#include <linux/leds.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/of.h>
-> +#include <linux/of_gpio.h>
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/slab.h>
-> +#include <uapi/linux/uleds.h>
-> +
-> +#define LM3697_REV			0x0
-> +#define LM3697_RESET			0x1
-> +#define LM3697_OUTPUT_CONFIG		0x10
-> +#define LM3697_CTRL_A_RAMP		0x11
-> +#define LM3697_CTRL_B_RAMP		0x12
-> +#define LM3697_CTRL_A_B_RT_RAMP		0x13
-> +#define LM3697_CTRL_A_B_RAMP_CFG	0x14
-> +#define LM3697_CTRL_A_B_BRT_CFG		0x16
-> +#define LM3697_CTRL_A_FS_CURR_CFG	0x17
-> +#define LM3697_CTRL_B_FS_CURR_CFG	0x18
-> +#define LM3697_PWM_CFG			0x1c
-> +#define LM3697_CTRL_A_BRT_LSB		0x20
-> +#define LM3697_CTRL_A_BRT_MSB		0x21
-> +#define LM3697_CTRL_B_BRT_LSB		0x22
-> +#define LM3697_CTRL_B_BRT_MSB		0x23
-> +#define LM3697_CTRL_ENABLE		0x24
-> +
-> +#define LM3697_SW_RESET		BIT(0)
-> +
-> +#define LM3697_CTRL_A_EN	BIT(0)
-> +#define LM3697_CTRL_B_EN	BIT(1)
-> +#define LM3697_CTRL_A_B_EN	(LM3697_CTRL_A_EN | LM3697_CTRL_B_EN)
-> +
-> +#define LM3697_MAX_LED_STRINGS	3
-> +
-> +#define LM3697_CONTROL_A	0
-> +#define LM3697_CONTROL_B	1
-> +#define LM3697_HVLED		1
+>> +
+>> +static const struct file_operations fpga_mgr_firmware_fops = {
+>> +     .open = simple_open,
+>> +     .read = fpga_mgr_firmware_read_file,
+>> +     .write = fpga_mgr_firmware_write_file,
+>> +     .llseek = default_llseek,
+>> +};
+>> +
+>> +static ssize_t fpga_mgr_image_write_file(struct file *file,
+>> +                                      const char __user *user_buf,
+>> +                                      size_t count, loff_t *ppos)
+>> +{
+>> +     struct fpga_manager *mgr = file->private_data;
+>> +     struct fpga_mgr_debugfs *debugfs = mgr->debugfs;
+>> +     struct device *dev = &mgr->dev;
+>> +     char *buf;
+>> +     int ret;
+>> +
+>> +     dev_info(dev, "writing %zu bytes to %s\n", count, mgr->name);
+>> +
+>> +     ret = fpga_mgr_lock(mgr);
+>> +     if (ret) {
+>> +             dev_err(dev, "FPGA manager is busy\n");
+>> +             return -EBUSY;
+>> +     }
+>> +
+>> +     buf = kzalloc(count, GFP_KERNEL);
+>> +     if (!buf) {
+>> +             fpga_mgr_unlock(mgr);
+>> +             return -ENOMEM;
+>> +     }
+>> +
+>> +     if (copy_from_user(buf, user_buf, count)) {
+>> +             fpga_mgr_unlock(mgr);
+>> +             kfree(buf);
+>> +             return -EFAULT;
+>> +     }
+>> +
+>> +     /* If firmware interface was previously used, forget it. */
+>> +     if (debugfs->info->firmware_name)
+>> +             devm_kfree(dev, debugfs->info->firmware_name);
+>> +     debugfs->info->firmware_name = NULL;
+>> +
+>> +     debugfs->info->buf = buf;
+>> +     debugfs->info->count = count;
+>> +
+>> +     ret = fpga_mgr_load(mgr, debugfs->info);
+>> +     if (ret)
+>> +             dev_err(dev, "fpga_mgr_load returned with value %d\n", ret);
+>> +
+>> +     fpga_mgr_unlock(mgr);
+>> +
+>> +     debugfs->info->buf = NULL;
+>> +     debugfs->info->count = 0;
+>
+> Is that ordering between unlock() and setting those correct?
 
-s/LM3697_HVLED/LM3697_HVLED_ASSIGNED/
+This order should be alright, but I'll switch it anyway to be more
+obviously correct.
 
-It will be more informative in this form.
+>> +
+>> +     kfree(buf);
+>> +
+>> +     return count;
+>> +}
+>> +
+>> +static const struct file_operations fpga_mgr_image_fops = {
+>> +     .open = simple_open,
+>> +     .write = fpga_mgr_image_write_file,
+>> +     .llseek = default_llseek,
+>> +};
+>> +
+>> +void fpga_mgr_debugfs_add(struct fpga_manager *mgr)
+>> +{
+>> +     struct device *dev = &mgr->dev;
+>> +     struct fpga_mgr_debugfs *debugfs;
+>> +     struct fpga_image_info *info;
+>> +
+>> +     if (!fpga_mgr_debugfs_root)
+>> +             return;
+>> +
+>> +     debugfs = kzalloc(sizeof(*debugfs), GFP_KERNEL);
+>> +     if (!debugfs)
+>> +             return;
+>> +
+>> +     info = fpga_image_info_alloc(dev);
+>> +     if (!info) {
+>> +             kfree(debugfs);
+>> +             return;
+>> +     }
+>> +     debugfs->info = info;
+>> +
+>> +     debugfs->debugfs_dir = debugfs_create_dir(dev_name(dev),
+>> +                                               fpga_mgr_debugfs_root);
+>> +
+>> +     debugfs_create_file("firmware_name", 0600, debugfs->debugfs_dir, mgr,
+>> +                         &fpga_mgr_firmware_fops);
+>> +
+>> +     debugfs_create_file("image", 0200, debugfs->debugfs_dir, mgr,
+>> +                         &fpga_mgr_image_fops);
+>> +
+>> +     debugfs_create_u32("flags", 0600, debugfs->debugfs_dir, &info->flags);
+>> +
+>> +     debugfs_create_u32("config_complete_timeout_us", 0600,
+>> +                        debugfs->debugfs_dir,
+>> +                        &info->config_complete_timeout_us);
+>> +
+>> +     mgr->debugfs = debugfs;
+>> +}
+>> +
+>> +void fpga_mgr_debugfs_remove(struct fpga_manager *mgr)
+>> +{
+>> +     struct fpga_mgr_debugfs *debugfs = mgr->debugfs;
+>> +
+>> +     if (!fpga_mgr_debugfs_root)
+>> +             return;
+>> +
+>> +     debugfs_remove_recursive(debugfs->debugfs_dir);
+>> +
+>> +     /* this function also frees debugfs->info->firmware_name */
+>> +     fpga_image_info_free(debugfs->info);
+>> +
+>> +     kfree(debugfs);
+>> +}
+>> +
+>> +void fpga_mgr_debugfs_init(void)
+>> +{
+>> +     fpga_mgr_debugfs_root = debugfs_create_dir("fpga_manager", NULL);
+>> +     if (!fpga_mgr_debugfs_root)
+>> +             pr_warn("fpga_mgr: Failed to create debugfs root\n");
+>> +}
+>> +
+>> +void fpga_mgr_debugfs_uninit(void)
+>> +{
+>> +     debugfs_remove_recursive(fpga_mgr_debugfs_root);
+>> +}
+>> diff --git a/drivers/fpga/fpga-mgr-debugfs.h b/drivers/fpga/fpga-mgr-debugfs.h
+>> new file mode 100644
+>> index 0000000..17cd3eb
+>> --- /dev/null
+>> +++ b/drivers/fpga/fpga-mgr-debugfs.h
+>> @@ -0,0 +1,22 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +#ifndef _LINUX_FPGA_MGR_DEBUGFS_H
+>> +#define _LINUX_FPGA_MGR_DEBUGFS_H
+>> +
+>> +#if IS_ENABLED(CONFIG_FPGA_MGR_DEBUG_FS)
+>> +
+>> +void fpga_mgr_debugfs_add(struct fpga_manager *mgr);
+>> +void fpga_mgr_debugfs_remove(struct fpga_manager *mgr);
+>> +void fpga_mgr_debugfs_init(void);
+>> +void fpga_mgr_debugfs_uninit(void);
+>> +
+>> +#else
+>> +
+>> +void fpga_mgr_debugfs_add(struct fpga_manager *mgr) {}
+>> +void fpga_mgr_debugfs_remove(struct fpga_manager *mgr) {}
+>> +void fpga_mgr_debugfs_init(void) {}
+>> +void fpga_mgr_debugfs_uninit(void) {}
+>> +
+>> +#endif /* CONFIG_FPGA_MGR_DEBUG_FS */
+>> +
+>> +#endif /*_LINUX_FPGA_MGR_DEBUGFS_H */
+>> diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
+>> index c8684bc..66eb6f6 100644
+>> --- a/drivers/fpga/fpga-mgr.c
+>> +++ b/drivers/fpga/fpga-mgr.c
+>> @@ -17,6 +17,7 @@
+>>  #include <linux/slab.h>
+>>  #include <linux/scatterlist.h>
+>>  #include <linux/highmem.h>
+>> +#include "fpga-mgr-debugfs.h"
+>>
+>>  static DEFINE_IDA(fpga_mgr_ida);
+>>  static struct class *fpga_mgr_class;
+>> @@ -698,6 +699,8 @@ int fpga_mgr_register(struct fpga_manager *mgr)
+>>       if (ret)
+>>               goto error_device;
+>>
+>> +     fpga_mgr_debugfs_add(mgr);
+>> +
+>>       dev_info(&mgr->dev, "%s registered\n", mgr->name);
+>>
+>>       return 0;
+>> @@ -722,6 +725,8 @@ void fpga_mgr_unregister(struct fpga_manager *mgr)
+>>  {
+>>       dev_info(&mgr->dev, "%s %s\n", __func__, mgr->name);
+>>
+>> +     fpga_mgr_debugfs_remove(mgr);
+>> +
+>>       /*
+>>        * If the low level driver provides a method for putting fpga into
+>>        * a desired state upon unregister, do it.
+>> @@ -748,11 +753,14 @@ static int __init fpga_mgr_class_init(void)
+>>       fpga_mgr_class->dev_groups = fpga_mgr_groups;
+>>       fpga_mgr_class->dev_release = fpga_mgr_dev_release;
+>>
+>> +     fpga_mgr_debugfs_init();
+>> +
+>>       return 0;
+>>  }
+>>
+>>  static void __exit fpga_mgr_class_exit(void)
+>>  {
+>> +     fpga_mgr_debugfs_uninit();
+>>       class_destroy(fpga_mgr_class);
+>>       ida_destroy(&fpga_mgr_ida);
+>>  }
+>> diff --git a/include/linux/fpga/fpga-mgr.h b/include/linux/fpga/fpga-mgr.h
+>> index 777c502..e8f2159 100644
+>> --- a/include/linux/fpga/fpga-mgr.h
+>> +++ b/include/linux/fpga/fpga-mgr.h
+>> @@ -170,6 +170,9 @@ struct fpga_manager {
+>>       struct fpga_compat_id *compat_id;
+>>       const struct fpga_manager_ops *mops;
+>>       void *priv;
+>> +#if IS_ENABLED(CONFIG_FPGA_MGR_DEBUG_FS)
+>> +     void *debugfs;
+>> +#endif
+>>  };
+>>
+>>  #define to_fpga_manager(d) container_of(d, struct fpga_manager, dev)
+>> --
+>> 2.7.4
+>>
+>
+> Thanks,
+>
+> Moritz
 
-> +
-> +/**
-> + * struct lm3697_led -
-> + * @hvled_strings - Array of LED strings associated with a control bank
-> + * @label - LED label
-> + * @led_dev - LED class device
-> + * @priv - Pointer to the device struct
-> + * @control_bank - Control bank the LED is associated to. 0 is control bank A
-> + *		   1 is control bank B.
-> + */
-> +struct lm3697_led {
-> +	u32 hvled_strings[LM3697_MAX_LED_STRINGS];
-> +	char label[LED_MAX_NAME_SIZE];
-> +	struct led_classdev led_dev;
-> +	struct lm3697 *priv;
-> +	int control_bank;
-> +};
-> +
-> +/**
-> + * struct lm3697 -
-> + * @enable_gpio - Hardware enable gpio
-> + * @regulator - LED supply regulator pointer
-> + * @client - Pointer to the I2C client
-> + * @regmap - Devices register map
-> + * @dev - Pointer to the devices device struct
-> + * @lock - Lock for reading/writing the device
-> + * @leds - Array of LED strings.
-> + */
-> +struct lm3697 {
-> +	struct gpio_desc *enable_gpio;
-> +	struct regulator *regulator;
-> +	struct i2c_client *client;
-> +	struct regmap *regmap;
-> +	struct device *dev;
-> +	struct mutex lock;
-> +	struct lm3697_led leds[];
-> +};
-> +
-> +static const struct reg_default lm3697_reg_defs[] = {
-> +	{LM3697_OUTPUT_CONFIG, 0x6},
-> +	{LM3697_CTRL_A_RAMP, 0x0},
-> +	{LM3697_CTRL_B_RAMP, 0x0},
-> +	{LM3697_CTRL_A_B_RT_RAMP, 0x0},
-> +	{LM3697_CTRL_A_B_RAMP_CFG, 0x0},
-> +	{LM3697_CTRL_A_B_BRT_CFG, 0x0},
-> +	{LM3697_CTRL_A_FS_CURR_CFG, 0x13},
-> +	{LM3697_CTRL_B_FS_CURR_CFG, 0x13},
-> +	{LM3697_PWM_CFG, 0xc},
-> +	{LM3697_CTRL_A_BRT_LSB, 0x0},
-> +	{LM3697_CTRL_A_BRT_MSB, 0x0},
-> +	{LM3697_CTRL_B_BRT_LSB, 0x0},
-> +	{LM3697_CTRL_B_BRT_MSB, 0x0},
-> +	{LM3697_CTRL_ENABLE, 0x0},
-> +};
-> +
-> +static const struct regmap_config lm3697_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +
-> +	.max_register = LM3697_CTRL_ENABLE,
-> +	.reg_defaults = lm3697_reg_defs,
-> +	.num_reg_defaults = ARRAY_SIZE(lm3697_reg_defs),
-> +	.cache_type = REGCACHE_FLAT,
-> +};
-> +
-> +static int lm3697_brightness_set(struct led_classdev *led_cdev,
-> +				enum led_brightness brt_val)
-> +{
-> +	struct lm3697_led *led = container_of(led_cdev, struct lm3697_led,
-> +					      led_dev);
-> +	int brt_msb_reg, brt_lsb_reg, ctrl_en_val;
-> +	int led_brightness_lsb = (brt_val >> 5);
-> +	int ret;
-> +
-> +	mutex_lock(&led->priv->lock);
-> +
-> +	if (led->control_bank == LM3697_CONTROL_A) {
-> +		brt_msb_reg = LM3697_CTRL_A_BRT_MSB;
-> +		brt_lsb_reg = LM3697_CTRL_A_BRT_LSB;
-> +		ctrl_en_val = LM3697_CTRL_A_EN;
-> +	} else {
-> +		brt_msb_reg = LM3697_CTRL_B_BRT_MSB;
-> +		brt_lsb_reg = LM3697_CTRL_B_BRT_LSB;
-> +		ctrl_en_val = LM3697_CTRL_B_EN;
-> +	}
-> +
-> +	if (brt_val == LED_OFF)
-> +		ret = regmap_update_bits(led->priv->regmap, LM3697_CTRL_ENABLE,
-> +					 ctrl_en_val, ~ctrl_en_val);
-> +	else
-> +		ret = regmap_update_bits(led->priv->regmap, LM3697_CTRL_ENABLE,
-> +					 ctrl_en_val, ctrl_en_val);
-> +
-> +	if (ret) {
-> +		dev_err(&led->priv->client->dev, "Cannot write CTRL enable\n");
-> +		goto out;
-> +	}
-> +
-> +	ret = regmap_write(led->priv->regmap, brt_lsb_reg, led_brightness_lsb);
-> +	if (ret) {
-> +		dev_err(&led->priv->client->dev, "Cannot write LSB\n");
-> +		goto out;
-> +	}
-> +
-> +	ret = regmap_write(led->priv->regmap, brt_msb_reg, brt_val);
-> +	if (ret) {
-> +		dev_err(&led->priv->client->dev, "Cannot write MSB\n");
-> +		goto out;
-> +	}
-> +out:
-> +	mutex_unlock(&led->priv->lock);
-> +	return ret;
-> +}
-> +
-> +static int lm3697_set_control_bank(struct lm3697 *priv)
-> +{
-> +	u8 control_bank_config = 0;
-> +	struct lm3697_led *led;
-> +	int ret, i;
-> +
-> +	led = &priv->leds[0];
-> +	if (led->control_bank == LM3697_CONTROL_A)
-> +		led = &priv->leds[1];
-> +
-> +	for (i = 0; i < LM3697_MAX_LED_STRINGS; i++) {
-> +		if (led->hvled_strings[i] == LM3697_HVLED)
-> +			control_bank_config |= 1 << i;
-> +	}
-> +
-> +	ret = regmap_write(priv->regmap, LM3697_OUTPUT_CONFIG,
-> +			   control_bank_config);
-> +	if (ret)
-> +		dev_err(&priv->client->dev, "Cannot write OUTPUT config\n");
-> +
-> +	return ret;
-> +}
-> +
-> +static int lm3697_init(struct lm3697 *priv)
-> +{
-> +	int ret;
-> +
-> +	if (priv->enable_gpio) {
-> +		gpiod_direction_output(priv->enable_gpio, 1);
-> +	} else {
-> +		ret = regmap_write(priv->regmap, LM3697_RESET, LM3697_SW_RESET);
-> +		if (ret) {
-> +			dev_err(&priv->client->dev, "Cannot reset the device\n");
-> +			goto out;
-> +		}
-> +	}
-> +
-> +	ret = regmap_write(priv->regmap, LM3697_CTRL_ENABLE, 0x0);
-> +	if (ret) {
-> +		dev_err(&priv->client->dev, "Cannot write ctrl enable\n");
-> +		goto out;
-> +	}
-> +
-> +	ret = lm3697_set_control_bank(priv);
-> +	if (ret)
-> +		dev_err(&priv->client->dev, "Setting the CRTL bank failed\n");
-> +
-> +out:
-> +	return ret;
-> +}
-> +
-> +static int lm3697_probe_dt(struct lm3697 *priv)
-> +{
-> +	struct fwnode_handle *child = NULL;
-> +	struct lm3697_led *led;
-> +	const char *name;
-> +	int control_bank;
-> +	size_t i = 0;
-> +	int ret;
-> +
-> +	priv->enable_gpio = devm_gpiod_get_optional(&priv->client->dev,
-> +						   "enable", GPIOD_OUT_LOW);
-> +	if (IS_ERR(priv->enable_gpio)) {
-> +		ret = PTR_ERR(priv->enable_gpio);
-> +		dev_err(&priv->client->dev, "Failed to get enable gpio: %d\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	priv->regulator = devm_regulator_get(&priv->client->dev, "vled");
-> +	if (IS_ERR(priv->regulator))
-> +		priv->regulator = NULL;
-> +
-> +	device_for_each_child_node(priv->dev, child) {
-> +		ret = fwnode_property_read_u32(child, "reg", &control_bank);
-> +		if (ret) {
-> +			dev_err(&priv->client->dev, "reg property missing\n");
-> +			fwnode_handle_put(child);
-> +			goto child_out;
-> +		}
-> +
-> +		if (control_bank > LM3697_CONTROL_B) {
-> +			dev_err(&priv->client->dev, "reg property is invalid\n");
-> +			ret = -EINVAL;
-> +			fwnode_handle_put(child);
-> +			goto child_out;
-> +		}
-> +
-> +		led = &priv->leds[i];
-> +		led->control_bank = control_bank;
-> +		ret = fwnode_property_read_u32_array(child, "led-sources",
-> +						    led->hvled_strings,
-> +						    LM3697_MAX_LED_STRINGS);
-> +		if (ret) {
-> +			dev_err(&priv->client->dev, "led-sources property missing\n");
-> +			fwnode_handle_put(child);
-> +			goto child_out;
-> +		}
-> +
-> +		fwnode_property_read_string(child, "linux,default-trigger",
-> +					    &led->led_dev.default_trigger);
-> +
-> +		ret = fwnode_property_read_string(child, "label", &name);
-> +		if (ret)
-> +			snprintf(led->label, sizeof(led->label),
-> +				"%s::", priv->client->name);
-> +		else
-> +			snprintf(led->label, sizeof(led->label),
-> +				 "%s:%s", priv->client->name, name);
-> +
-> +		led->priv = priv;
-> +		led->led_dev.name = led->label;
-> +		led->led_dev.brightness_set_blocking = lm3697_brightness_set;
-> +
-> +		ret = devm_led_classdev_register(priv->dev, &led->led_dev);
-> +		if (ret) {
-> +			dev_err(&priv->client->dev, "led register err: %d\n",
-> +				ret);
-> +			fwnode_handle_put(child);
-> +			goto child_out;
-> +		}
-> +
-> +		i++;
-> +	}
-> +
-> +child_out:
-> +	return ret;
-> +}
-> +
-> +static int lm3697_probe(struct i2c_client *client,
-> +			const struct i2c_device_id *id)
-> +{
-> +	struct lm3697 *led;
-> +	int count;
-> +	int ret;
-> +
-> +	count = device_get_child_node_count(&client->dev);
-> +	if (!count) {
-> +		dev_err(&client->dev, "LEDs are not defined in device tree!");
-> +		return -ENODEV;
-> +	}
-> +
-> +	led = devm_kzalloc(&client->dev, struct_size(led, leds, count),
-> +			   GFP_KERNEL);
-> +	if (!led)
-> +		return -ENOMEM;
-> +
-> +	mutex_init(&led->lock);
-> +	i2c_set_clientdata(client, led);
-> +
-> +	led->client = client;
-> +	led->dev = &client->dev;
-> +	led->regmap = devm_regmap_init_i2c(client, &lm3697_regmap_config);
-> +	if (IS_ERR(led->regmap)) {
-> +		ret = PTR_ERR(led->regmap);
-> +		dev_err(&client->dev, "Failed to allocate register map: %d\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = lm3697_probe_dt(led);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = lm3697_init(led);
+Thanks for the review!
 
-Let's simplify it:
-
-return lm3697_init(led);
-
-> +
-> +	return ret;
-> +}
-> +
-> +static int lm3697_remove(struct i2c_client *client)
-> +{
-> +	struct lm3697 *led = i2c_get_clientdata(client);
-> +	int ret;
-> +
-> +	ret = regmap_update_bits(led->regmap, LM3697_CTRL_ENABLE,
-> +				 LM3697_CTRL_A_B_EN, 0);
-> +	if (ret) {
-> +		dev_err(&led->client->dev, "Failed to disable the device\n");
-> +		return ret;
-> +	}
-> +
-> +	if (led->enable_gpio)
-> +		gpiod_direction_output(led->enable_gpio, 0);
-> +
-> +	if (led->regulator) {
-> +		ret = regulator_disable(led->regulator);
-> +		if (ret)
-> +			dev_err(&led->client->dev,
-> +				"Failed to disable regulator\n");
-> +	}
-> +
-> +	mutex_destroy(&led->lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct i2c_device_id lm3697_id[] = {
-> +	{ "lm3697", 0 },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, lm3697_id);
-> +
-> +static const struct of_device_id of_lm3697_leds_match[] = {
-> +	{ .compatible = "ti,lm3697", },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, of_lm3697_leds_match);
-> +
-> +static struct i2c_driver lm3697_driver = {
-> +	.driver = {
-> +		.name	= "lm3697",
-> +		.of_match_table = of_lm3697_leds_match,
-> +	},
-> +	.probe		= lm3697_probe,
-> +	.remove		= lm3697_remove,
-> +	.id_table	= lm3697_id,
-> +};
-> +module_i2c_driver(lm3697_driver);
-> +
-> +MODULE_DESCRIPTION("Texas Instruments LM3697 LED driver");
-> +MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
-> +MODULE_LICENSE("GPL v2");
-> 
-
--- 
-Best regards,
-Jacek Anaszewski
+Alan
