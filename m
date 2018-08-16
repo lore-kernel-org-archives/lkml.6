@@ -2,109 +2,190 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D41CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 625C6C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:31:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 437CD2148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:27:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 437CD2148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E19DD2148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:31:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=waldekranz-com.20150623.gappssmtp.com header.i=@waldekranz-com.20150623.gappssmtp.com header.b="xnsgcI5h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E19DD2148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=waldekranz.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390488AbeHPMZB (ORCPT
+        id S2390505AbeHPM2P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 08:25:01 -0400
-Received: from foss.arm.com ([217.140.101.70]:34814 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727206AbeHPMZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 08:25:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C1A17A9;
-        Thu, 16 Aug 2018 02:27:46 -0700 (PDT)
-Received: from [10.1.32.182] (desktop-vlo843j.cambridge.arm.com [10.1.32.182])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A33D3F5BD;
-        Thu, 16 Aug 2018 02:27:44 -0700 (PDT)
-Subject: Re: [PATCH v3 1/2] iommu/arm-smmu-v3: fix unexpected CMD_SYNC timeout
-To:     Will Deacon <will.deacon@arm.com>,
-        "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LinuxArm <linuxarm@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Libin <huawei.libin@huawei.com>,
-        John Garry <john.garry@huawei.com>
-References: <1534328582-17664-1-git-send-email-thunder.leizhen@huawei.com>
- <1534328582-17664-2-git-send-email-thunder.leizhen@huawei.com>
- <6027cd67-7c76-673c-082f-8dd0b7a575b0@arm.com> <5B7533FD.20903@huawei.com>
- <20180816091805.GB31093@arm.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <ad5bd6c0-20bd-9581-a12a-4464e5ec69f6@arm.com>
-Date:   Thu, 16 Aug 2018 10:27:38 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180816091805.GB31093@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Thu, 16 Aug 2018 08:28:15 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33232 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731376AbeHPM2P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 08:28:15 -0400
+Received: by mail-lf1-f65.google.com with SMTP id u14-v6so2925403lfu.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 02:30:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=waldekranz-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:organization;
+        bh=1g4W4DPaKo8EPB3Yox5xayg40Vuqf10sRmiBShKv2lk=;
+        b=xnsgcI5h2HGvV3WSHfrPncUurTtTTGHpaW/85eJfbzThiuBqIc39gt1j4GimLNdj51
+         QxnVaSwZGnaD14yNSEtvSxLVpBy8u+fDHApdxfEh+PY48OTHUbdrz7xhF/DfrwD2ztX8
+         j2hZ3wywf/wiInKe0lzkY2mj3js6hSXzxNu/PlBC/9rBcog83BOWasHXi4iNUB2PkXk5
+         tukrvTedg2xQGfLU/Bag6lku+i1j7vjaZ6TP81f9sYGMmLDJJCLmhGCuJmR5E6X1luGi
+         DYYNILjA21UpipfjgzbCuNd3LV3Vhny+iU2bayV6zB0YQQzQfO3PiOlou3Jm4mpVrT1E
+         SJTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:organization;
+        bh=1g4W4DPaKo8EPB3Yox5xayg40Vuqf10sRmiBShKv2lk=;
+        b=YPHBkmMs3OhEU0VC/YN08i3SWGnP051o3j/qo/jPpHUVxeOxX/3Bh6sOrLkRakcuDx
+         DtCSrMll//uEQQHeLjBJdRHws4UHogzlxJgUnS+yOKDpjlVgvPUs6XRx2w+0C9uwDd5f
+         DWIXXCti1riP/3jFHj4W6y44KLLY+wEB8w+ZKV+sqpqjAyuA/aRMphIaFnhgrdIecqS+
+         ZSyQR5mEZ/bFO8njKF0TscjBmKbqbkziJWzLrDRAz3shtYZ6T799sIb86lcDWUnijADs
+         HCOvTKUjazh5axuFWxCsrhseFoC6iekmd0q16V7LSlD0FGEgqfB7ZP5d93DcBVQ3MHnc
+         Gr3A==
+X-Gm-Message-State: AOUpUlHDetEftpi3SDqqN8bF0dIOKyeHxFC7xxBgrDuNA5HGF15+B3S2
+        FXLIHV0Eo2omV1PKuw3njgn1hyF2n1YTlQ==
+X-Google-Smtp-Source: AA+uWPzM/Eb+beb25k3oWmvoiYUdQFWYDTS0DOkKU9iyMEKgOf1iCYhOnV515vxpXOoYMcLpNhh1zg==
+X-Received: by 2002:a19:c715:: with SMTP id x21-v6mr3629083lff.110.1534411857339;
+        Thu, 16 Aug 2018 02:30:57 -0700 (PDT)
+Received: from wkz-wmo.labs.westermo.se (static-193-12-47-89.cust.tele2.se. [193.12.47.89])
+        by smtp.gmail.com with ESMTPSA id l78-v6sm4982854lfl.4.2018.08.16.02.30.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Aug 2018 02:30:56 -0700 (PDT)
+From:   Tobias Waldekranz <tobias@waldekranz.com>
+To:     Tobias Waldekranz <tobias.waldekranz@westermo.se>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org (open list),
+        netdev@vger.kernel.org (open list:ETHERNET PHY LIBRARY)
+Subject: [PATCH] net: phy: add tracepoints
+Date:   Thu, 16 Aug 2018 11:30:53 +0200
+Message-Id: <20180816093056.2485-1-tobias@waldekranz.com>
+X-Mailer: git-send-email 2.17.1
+Organization: Westermo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-16 10:18 AM, Will Deacon wrote:
-> On Thu, Aug 16, 2018 at 04:21:17PM +0800, Leizhen (ThunderTown) wrote:
->> On 2018/8/15 20:26, Robin Murphy wrote:
->>> On 15/08/18 11:23, Zhen Lei wrote:
->>>> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
->>>> index 1d64710..3f5c236 100644
->>>> --- a/drivers/iommu/arm-smmu-v3.c
->>>> +++ b/drivers/iommu/arm-smmu-v3.c
->>>> @@ -566,7 +566,7 @@ struct arm_smmu_device {
->>>>
->>>>        int                gerr_irq;
->>>>        int                combined_irq;
->>>> -    atomic_t            sync_nr;
->>>> +    u32                sync_nr;
->>>>
->>>>        unsigned long            ias; /* IPA */
->>>>        unsigned long            oas; /* PA */
->>>> @@ -775,6 +775,11 @@ static int queue_remove_raw(struct arm_smmu_queue *q, u64 *ent)
->>>>        return 0;
->>>>    }
->>>>
->>>> +static inline void arm_smmu_cmdq_sync_set_msidata(u64 *cmd, u32 msidata)
->>>
->>> If we *are* going to go down this route then I think it would make sense
->>> to move the msiaddr and CMDQ_SYNC_0_CS_MSI logic here as well; i.e.
->>> arm_smmu_cmdq_build_cmd() always generates a "normal" SEV-based sync
->>> command, then calling this guy would convert it to an MSI-based one.
->>> As-is, having bits of mutually-dependent data handled across two
->>> separate places just seems too messy and error-prone.
->>
->> Yes, How about create a new function "arm_smmu_cmdq_build_sync_msi_cmd"?
->>
->> static inline
->> void arm_smmu_cmdq_build_sync_msi_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
->> {
->> 	cmd[0]  = FIELD_PREP(CMDQ_0_OP, ent->opcode);
->> 	cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_IRQ);
->> 	cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSH, ARM_SMMU_SH_ISH);
->> 	cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSIATTR, ARM_SMMU_MEMATTR_OIWB);
->> 	cmd[1]  = ent->sync.msiaddr & CMDQ_SYNC_1_MSIADDR_MASK;
->> }
-> 
-> None of this seems justified given the numbers from John, so please just do
-> the simple thing and build the command with the lock held.
+Two tracepoints for now:
 
-Agreed - sorry if my wording was unclear, but that suggestion was only 
-for the possibility of it proving genuinely worthwhile to build the 
-command outside the lock. Since that isn't the case, I definitely prefer 
-the simpler approach too.
+   * `phy_interrupt` Pretty self-explanatory.
 
-Robin.
+   * `phy_state_change` Whenever the PHY's state machine is run, trace
+     the old and the new state.
+
+Signed-off-by: Tobias Waldekranz <tobias@waldekranz.com>
+---
+ drivers/net/phy/phy.c      |  4 +++
+ include/trace/events/phy.h | 68 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 72 insertions(+)
+ create mode 100644 include/trace/events/phy.h
+
+diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+index 9aabfa1a455a..8d22926f3962 100644
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -38,6 +38,9 @@
+ 
+ #include <asm/irq.h>
+ 
++#define CREATE_TRACE_POINTS
++#include <trace/events/phy.h>
++
+ #define PHY_STATE_STR(_state)			\
+ 	case PHY_##_state:			\
+ 		return __stringify(_state);	\
+@@ -1039,6 +1042,7 @@ void phy_state_machine(struct work_struct *work)
+ 	if (err < 0)
+ 		phy_error(phydev);
+ 
++        trace_phy_state_change(phydev, old_state);
+ 	if (old_state != phydev->state)
+ 		phydev_dbg(phydev, "PHY state change %s -> %s\n",
+ 			   phy_state_to_str(old_state),
+diff --git a/include/trace/events/phy.h b/include/trace/events/phy.h
+new file mode 100644
+index 000000000000..7ba6c0dda47e
+--- /dev/null
++++ b/include/trace/events/phy.h
+@@ -0,0 +1,68 @@
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM phy
++
++#if !defined(_TRACE_PHY_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_PHY_H
++
++#include <linux/tracepoint.h>
++
++TRACE_EVENT(phy_interrupt,
++	    TP_PROTO(int irq, struct phy_device *phydev),
++	    TP_ARGS(irq, phydev),
++	    TP_STRUCT__entry(
++		    __field(int, irq)
++		    __field(int, addr)
++		    __field(int, state)
++		    __array(char, ifname, IFNAMSIZ)
++		    ),
++	    TP_fast_assign(
++		    __entry->irq = irq;
++		    __entry->addr = phydev->mdio.addr;
++		    __entry->state = phydev->state;
++		    if (phydev->attached_dev)
++			    memcpy(__entry->ifname,
++				   netdev_name(phydev->attached_dev),
++				   IFNAMSIZ);
++		    else
++			    memset(__entry->ifname, 0, IFNAMSIZ);
++		    ),
++	    TP_printk("phy-%d-irq irq=%d ifname=%16s state=%d",
++		      __entry->addr,
++		      __entry->irq,
++		      __entry->ifname,
++		      __entry->state
++		    )
++	);
++
++TRACE_EVENT(phy_state_change,
++	    TP_PROTO(struct phy_device *phydev, enum phy_state old_state),
++	    TP_ARGS(phydev, old_state),
++	    TP_STRUCT__entry(
++		    __field(int, addr)
++		    __field(int, state)
++		    __field(int, old_state)
++		    __array(char, ifname, IFNAMSIZ)
++		    ),
++	    TP_fast_assign(
++		    __entry->addr = phydev->mdio.addr;
++		    __entry->state = phydev->state;
++		    __entry->old_state = old_state;
++		    if (phydev->attached_dev)
++			    memcpy(__entry->ifname,
++				   netdev_name(phydev->attached_dev),
++				   IFNAMSIZ);
++		    else
++			    memset(__entry->ifname, 0, IFNAMSIZ);
++		    ),
++	    TP_printk("phy-%d-change ifname=%16s old_state=%d state=%d",
++		      __entry->addr,
++		      __entry->ifname,
++		      __entry->old_state,
++		      __entry->state
++		    )
++	);
++
++#endif /* _TRACE_PHY_H */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
+-- 
+2.17.1
+
