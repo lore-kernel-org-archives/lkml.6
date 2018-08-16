@@ -6,39 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FA7C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF3DC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 761D02147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 761D02147D
+	by mail.kernel.org (Postfix) with ESMTP id 43CF72147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43CF72147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729804AbeHPVow (ORCPT
+        id S1729850AbeHPVoz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:44:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56578 "EHLO
+        Thu, 16 Aug 2018 17:44:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56592 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729683AbeHPVou (ORCPT
+        with ESMTP id S1729683AbeHPVox (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:44:50 -0400
+        Thu, 16 Aug 2018 17:44:53 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 283BACB7;
-        Thu, 16 Aug 2018 18:44:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3C2A9CC4;
+        Thu, 16 Aug 2018 18:44:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Lucas De Marchi <lucas.demarchi@profusion.mobi>,
-        Lucas De Marchi <lucas.de.marchi@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Jessica Yu <jeyu@kernel.org>,
-        Chih-Wei Huang <cwhuang@linux.org.tw>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 4.9 06/15] kbuild: verify that $DEPMOD is installed
-Date:   Thu, 16 Aug 2018 20:41:59 +0200
-Message-Id: <20180816171626.733766051@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.9 07/15] crypto: x86/sha256-mb - fix digest copy in sha256_mb_mgr_get_comp_job_avx2()
+Date:   Thu, 16 Aug 2018 20:42:00 +0200
+Message-Id: <20180816171626.856827601@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171625.340082081@linuxfoundation.org>
 References: <20180816171625.340082081@linuxfoundation.org>
@@ -55,101 +50,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 934193a654c1f4d0643ddbf4b2529b508cae926e upstream.
+commit af839b4e546613aed1fbd64def73956aa98631e7 upstream.
 
-Verify that 'depmod' ($DEPMOD) is installed.
-This is a partial revert of commit 620c231c7a7f
-("kbuild: do not check for ancient modutils tools").
+There is a copy-paste error where sha256_mb_mgr_get_comp_job_avx2()
+copies the SHA-256 digest state from sha256_mb_mgr::args::digest to
+job_sha256::result_digest.  Consequently, the sha256_mb algorithm
+sometimes calculates the wrong digest.  Fix it.
 
-Also update Documentation/process/changes.rst to refer to
-kmod instead of module-init-tools.
+Reproducer using AF_ALG:
 
-Fixes kernel bugzilla #198965:
-https://bugzilla.kernel.org/show_bug.cgi?id=198965
+    #include <assert.h>
+    #include <linux/if_alg.h>
+    #include <stdio.h>
+    #include <string.h>
+    #include <sys/socket.h>
+    #include <unistd.h>
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>
-Cc: Lucas De Marchi <lucas.de.marchi@gmail.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Chih-Wei Huang <cwhuang@linux.org.tw>
-Cc: stable@vger.kernel.org # any kernel since 2012
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+    static const __u8 expected[32] =
+        "\xad\x7f\xac\xb2\x58\x6f\xc6\xe9\x66\xc0\x04\xd7\xd1\xd1\x6b\x02"
+        "\x4f\x58\x05\xff\x7c\xb4\x7c\x7a\x85\xda\xbd\x8b\x48\x89\x2c\xa7";
+
+    int main()
+    {
+        int fd;
+        struct sockaddr_alg addr = {
+            .salg_type = "hash",
+            .salg_name = "sha256_mb",
+        };
+        __u8 data[4096] = { 0 };
+        __u8 digest[32];
+        int ret;
+        int i;
+
+        fd = socket(AF_ALG, SOCK_SEQPACKET, 0);
+        bind(fd, (void *)&addr, sizeof(addr));
+        fork();
+        fd = accept(fd, 0, 0);
+        do {
+            ret = write(fd, data, 4096);
+            assert(ret == 4096);
+            ret = read(fd, digest, 32);
+            assert(ret == 32);
+        } while (memcmp(digest, expected, 32) == 0);
+
+        printf("wrong digest: ");
+        for (i = 0; i < 32; i++)
+            printf("%02x", digest[i]);
+        printf("\n");
+    }
+
+Output was:
+
+    wrong digest: ad7facb2000000000000000000000000ffffffef7cb47c7a85dabd8b48892ca7
+
+Fixes: 172b1d6b5a93 ("crypto: sha256-mb - fix ctx pointer and digest copy")
+Cc: <stable@vger.kernel.org> # v4.8+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/Changes |   19 +++++++------------
- scripts/depmod.sh     |    8 +++++++-
- 2 files changed, 14 insertions(+), 13 deletions(-)
+ arch/x86/crypto/sha256-mb/sha256_mb_mgr_flush_avx2.S |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/Documentation/Changes
-+++ b/Documentation/Changes
-@@ -33,7 +33,7 @@ GNU C                  3.2
- GNU make               3.80             make --version
- binutils               2.12             ld -v
- util-linux             2.10o            fdformat --version
--module-init-tools      0.9.10           depmod -V
-+kmod                   13               depmod -V
- e2fsprogs              1.41.4           e2fsck -V
- jfsutils               1.1.3            fsck.jfs -V
- reiserfsprogs          3.6.3            reiserfsck -V
-@@ -143,12 +143,6 @@ is not build with ``CONFIG_KALLSYMS`` an
- reproduce the Oops with that option, then you can still decode that Oops
- with ksymoops.
- 
--Module-Init-Tools
-------------------
--
--A new module loader is now in the kernel that requires ``module-init-tools``
--to use.  It is backward compatible with the 2.4.x series kernels.
--
- Mkinitrd
- --------
- 
-@@ -363,16 +357,17 @@ Util-linux
- 
- - <ftp://ftp.kernel.org/pub/linux/utils/util-linux/>
- 
-+Kmod
-+----
-+
-+- <https://www.kernel.org/pub/linux/utils/kernel/kmod/>
-+- <https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git>
-+
- Ksymoops
- --------
- 
- - <ftp://ftp.kernel.org/pub/linux/utils/kernel/ksymoops/v2.4/>
- 
--Module-Init-Tools
-------------------
--
--- <ftp://ftp.kernel.org/pub/linux/kernel/people/rusty/modules/>
--
- Mkinitrd
- --------
- 
---- a/scripts/depmod.sh
-+++ b/scripts/depmod.sh
-@@ -10,10 +10,16 @@ DEPMOD=$1
- KERNELRELEASE=$2
- SYMBOL_PREFIX=$3
- 
--if ! test -r System.map -a -x "$DEPMOD"; then
-+if ! test -r System.map ; then
- 	exit 0
- fi
- 
-+if [ -z $(command -v $DEPMOD) ]; then
-+	echo "'make modules_install' requires $DEPMOD. Please install it." >&2
-+	echo "This is probably in the kmod package." >&2
-+	exit 1
-+fi
-+
- # older versions of depmod don't support -P <symbol-prefix>
- # support was added in module-init-tools 3.13
- if test -n "$SYMBOL_PREFIX"; then
+--- a/arch/x86/crypto/sha256-mb/sha256_mb_mgr_flush_avx2.S
++++ b/arch/x86/crypto/sha256-mb/sha256_mb_mgr_flush_avx2.S
+@@ -265,7 +265,7 @@ ENTRY(sha256_mb_mgr_get_comp_job_avx2)
+ 	vpinsrd	$1, _args_digest+1*32(state, idx, 4), %xmm0, %xmm0
+ 	vpinsrd	$2, _args_digest+2*32(state, idx, 4), %xmm0, %xmm0
+ 	vpinsrd	$3, _args_digest+3*32(state, idx, 4), %xmm0, %xmm0
+-	vmovd   _args_digest(state , idx, 4) , %xmm0
++	vmovd	_args_digest+4*32(state, idx, 4), %xmm1
+ 	vpinsrd	$1, _args_digest+5*32(state, idx, 4), %xmm1, %xmm1
+ 	vpinsrd	$2, _args_digest+6*32(state, idx, 4), %xmm1, %xmm1
+ 	vpinsrd	$3, _args_digest+7*32(state, idx, 4), %xmm1, %xmm1
 
 
