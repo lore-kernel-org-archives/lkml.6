@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AAB9C43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1432C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06C062147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06C062147D
+	by mail.kernel.org (Postfix) with ESMTP id 76B1F21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76B1F21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbeHPVm0 (ORCPT
+        id S1728401AbeHPVma (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:42:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56048 "EHLO
+        Thu, 16 Aug 2018 17:42:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56060 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728344AbeHPVmZ (ORCPT
+        with ESMTP id S1728344AbeHPVm3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:42:25 -0400
+        Thu, 16 Aug 2018 17:42:29 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6B6DFCB7;
-        Thu, 16 Aug 2018 18:42:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7B9A3CC4;
+        Thu, 16 Aug 2018 18:42:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Liu Chao <liuchao741@huawei.com>,
         Eric Biggers <ebiggers@google.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 3.18 13/15] crypto: blkcipher - fix crash flushing dcache in error path
-Date:   Thu, 16 Aug 2018 20:41:50 +0200
-Message-Id: <20180816171634.055296313@linuxfoundation.org>
+Subject: [PATCH 3.18 14/15] crypto: ablkcipher - fix crash flushing dcache in error path
+Date:   Thu, 16 Aug 2018 20:41:51 +0200
+Message-Id: <20180816171634.099522281@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171633.546734046@linuxfoundation.org>
 References: <20180816171633.546734046@linuxfoundation.org>
@@ -53,96 +53,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-commit 0868def3e4100591e7a1fdbf3eed1439cc8f7ca3 upstream.
+commit 318abdfbe708aaaa652c79fb500e9bd60521f9dc upstream.
 
-Like the skcipher_walk case:
+Like the skcipher_walk and blkcipher_walk cases:
 
 scatterwalk_done() is only meant to be called after a nonzero number of
 bytes have been processed, since scatterwalk_pagedone() will flush the
 dcache of the *previous* page.  But in the error case of
-blkcipher_walk_done(), e.g. if the input wasn't an integer number of
+ablkcipher_walk_done(), e.g. if the input wasn't an integer number of
 blocks, scatterwalk_done() was actually called after advancing 0 bytes.
 This caused a crash ("BUG: unable to handle kernel paging request")
 during '!PageSlab(page)' on architectures like arm and arm64 that define
 ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE, provided that the input was
 page-aligned as in that case walk->offset == 0.
 
-Fix it by reorganizing blkcipher_walk_done() to skip the
+Fix it by reorganizing ablkcipher_walk_done() to skip the
 scatterwalk_advance() and scatterwalk_done() if an error has occurred.
 
-This bug was found by syzkaller fuzzing.
-
-Reproducer, assuming ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE:
-
-	#include <linux/if_alg.h>
-	#include <sys/socket.h>
-	#include <unistd.h>
-
-	int main()
-	{
-		struct sockaddr_alg addr = {
-			.salg_type = "skcipher",
-			.salg_name = "ecb(aes-generic)",
-		};
-		char buffer[4096] __attribute__((aligned(4096))) = { 0 };
-		int fd;
-
-		fd = socket(AF_ALG, SOCK_SEQPACKET, 0);
-		bind(fd, (void *)&addr, sizeof(addr));
-		setsockopt(fd, SOL_ALG, ALG_SET_KEY, buffer, 16);
-		fd = accept(fd, NULL, NULL);
-		write(fd, buffer, 15);
-		read(fd, buffer, 15);
-	}
-
 Reported-by: Liu Chao <liuchao741@huawei.com>
-Fixes: 5cde0af2a982 ("[CRYPTO] cipher: Added block cipher type")
-Cc: <stable@vger.kernel.org> # v2.6.19+
+Fixes: bf06099db18a ("crypto: skcipher - Add ablkcipher_walk interfaces")
+Cc: <stable@vger.kernel.org> # v2.6.35+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/blkcipher.c |   54 +++++++++++++++++++++++++----------------------------
- 1 file changed, 26 insertions(+), 28 deletions(-)
+ crypto/ablkcipher.c |   57 +++++++++++++++++++++++-----------------------------
+ 1 file changed, 26 insertions(+), 31 deletions(-)
 
---- a/crypto/blkcipher.c
-+++ b/crypto/blkcipher.c
-@@ -70,19 +70,18 @@ static inline u8 *blkcipher_get_spot(u8
+--- a/crypto/ablkcipher.c
++++ b/crypto/ablkcipher.c
+@@ -72,11 +72,9 @@ static inline u8 *ablkcipher_get_spot(u8
  	return max(start, end_page);
  }
  
--static inline unsigned int blkcipher_done_slow(struct blkcipher_walk *walk,
--					       unsigned int bsize)
-+static inline void blkcipher_done_slow(struct blkcipher_walk *walk,
-+				       unsigned int bsize)
+-static inline unsigned int ablkcipher_done_slow(struct ablkcipher_walk *walk,
+-						unsigned int bsize)
++static inline void ablkcipher_done_slow(struct ablkcipher_walk *walk,
++					unsigned int n)
  {
- 	u8 *addr;
+-	unsigned int n = bsize;
+-
+ 	for (;;) {
+ 		unsigned int len_this_page = scatterwalk_pagelen(&walk->out);
  
- 	addr = (u8 *)ALIGN((unsigned long)walk->buffer, walk->alignmask + 1);
- 	addr = blkcipher_get_spot(addr, bsize);
- 	scatterwalk_copychunks(addr, &walk->out, bsize, 1);
+@@ -88,17 +86,13 @@ static inline unsigned int ablkcipher_do
+ 		n -= len_this_page;
+ 		scatterwalk_start(&walk->out, scatterwalk_sg_next(walk->out.sg));
+ 	}
+-
 -	return bsize;
  }
  
--static inline unsigned int blkcipher_done_fast(struct blkcipher_walk *walk,
--					       unsigned int n)
-+static inline void blkcipher_done_fast(struct blkcipher_walk *walk,
-+				       unsigned int n)
+-static inline unsigned int ablkcipher_done_fast(struct ablkcipher_walk *walk,
+-						unsigned int n)
++static inline void ablkcipher_done_fast(struct ablkcipher_walk *walk,
++					unsigned int n)
  {
- 	if (walk->flags & BLKCIPHER_WALK_COPY) {
- 		blkcipher_map_dst(walk);
-@@ -96,49 +95,48 @@ static inline unsigned int blkcipher_don
- 
  	scatterwalk_advance(&walk->in, n);
  	scatterwalk_advance(&walk->out, n);
 -
 -	return n;
  }
  
- int blkcipher_walk_done(struct blkcipher_desc *desc,
- 			struct blkcipher_walk *walk, int err)
+ static int ablkcipher_walk_next(struct ablkcipher_request *req,
+@@ -108,39 +102,40 @@ int ablkcipher_walk_done(struct ablkciph
+ 			 struct ablkcipher_walk *walk, int err)
  {
+ 	struct crypto_tfm *tfm = req->base.tfm;
 -	unsigned int nbytes = 0;
 +	unsigned int n; /* bytes processed */
 +	bool more;
@@ -152,57 +130,54 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 +	if (unlikely(err < 0))
 +		goto finish;
  
--		if (likely(!(walk->flags & BLKCIPHER_WALK_SLOW)))
--			n = blkcipher_done_fast(walk, n);
+-		if (likely(!(walk->flags & ABLKCIPHER_WALK_SLOW)))
+-			n = ablkcipher_done_fast(walk, n);
 -		else if (WARN_ON(err)) {
 +	n = walk->nbytes - err;
 +	walk->total -= n;
 +	more = (walk->total != 0);
 +
-+	if (likely(!(walk->flags & BLKCIPHER_WALK_SLOW))) {
-+		blkcipher_done_fast(walk, n);
++	if (likely(!(walk->flags & ABLKCIPHER_WALK_SLOW))) {
++		ablkcipher_done_fast(walk, n);
 +	} else {
 +		if (WARN_ON(err)) {
 +			/* unexpected case; didn't process all bytes */
  			err = -EINVAL;
 -			goto err;
 -		} else
--			n = blkcipher_done_slow(walk, n);
+-			n = ablkcipher_done_slow(walk, n);
 -
 -		nbytes = walk->total - n;
 -		err = 0;
 +			goto finish;
 +		}
-+		blkcipher_done_slow(walk, n);
++		ablkcipher_done_slow(walk, n);
  	}
  
 -	scatterwalk_done(&walk->in, 0, nbytes);
 -	scatterwalk_done(&walk->out, 1, nbytes);
--
--err:
--	walk->total = nbytes;
--	walk->nbytes = nbytes;
 +	scatterwalk_done(&walk->in, 0, more);
 +	scatterwalk_done(&walk->out, 1, more);
  
+-err:
+-	walk->total = nbytes;
+-	walk->nbytes = nbytes;
+-
 -	if (nbytes) {
 +	if (more) {
- 		crypto_yield(desc->flags);
- 		return blkcipher_walk_next(desc, walk);
+ 		crypto_yield(req->base.flags);
+ 		return ablkcipher_walk_next(req, walk);
  	}
 -
 +	err = 0;
 +finish:
 +	walk->nbytes = 0;
- 	if (walk->iv != desc->info)
- 		memcpy(desc->info, walk->iv, walk->ivsize);
- 	if (walk->buffer != walk->page)
- 		kfree(walk->buffer);
- 	if (walk->page)
- 		free_page((unsigned long)walk->page);
+ 	if (walk->iv != req->info)
+ 		memcpy(req->info, walk->iv, tfm->crt_ablkcipher.ivsize);
+ 	kfree(walk->iv_buffer);
 -
  	return err;
  }
- EXPORT_SYMBOL_GPL(blkcipher_walk_done);
+ EXPORT_SYMBOL_GPL(ablkcipher_walk_done);
 
 
