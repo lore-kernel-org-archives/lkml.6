@@ -2,127 +2,160 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F9D9C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68DC5C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6281208EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:10:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WnFTTzc+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6281208EA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 23DE9208FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:11:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23DE9208FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390843AbeHPRIu (ORCPT
+        id S2391595AbeHPRKI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 13:08:50 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:35448 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389865AbeHPRIt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 13:08:49 -0400
-Received: by mail-oi0-f67.google.com with SMTP id m11-v6so8244710oic.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 07:09:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R8V/VATXaUG1NBxPIVcMG9W6YIR2vLHATGZXwtoAXgk=;
-        b=WnFTTzc+n49UniYqvGanoAO2JpMtKjNOrXJF6vagWkariDH/DDt4AK9ToXVAuNQZxS
-         2gY7A8nM3WLtExppcdlt0spJuwSxM/KZr9iwV1IfmfYbjgu1VmF4jPayB9kAe8KD8gQ8
-         5pwT7DmVIpCwCgBE3V0jj+rApDpbhM9zSHjMeaZvc0xrb6Es/eg2AGk6g35jSle7XVIp
-         3N0JWQcwGN1X+BSz0LcM6OryErRZxr5TJ5yWLE7TX2M0djdu0R6YQijgt75+WunB+QhO
-         kWXbFzIufPSWfsk8Z+FYK9poJIJ3iuyKlClbjZFBMkk/iFr1mKJ8znzGDFJevWUPyc6F
-         pzHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R8V/VATXaUG1NBxPIVcMG9W6YIR2vLHATGZXwtoAXgk=;
-        b=c8zmnyCQs22HQewrMyO6iL/Zqi9ti2JAMQDSevbQQ2vLmIskpeuMvaVeW2xfrXG08U
-         wQni7GaCw3iBQCnrsDVEFNsHpOdcNB2Rah9rskYAQ8Den2E3uxtZroxGyU0o92ZKsw1J
-         p2zI8Dv5UF5JcZZ0JSMLgsyYuWM2yj8JMumt85FPskBzz0PP69vuXFXYSmmr3Vb+y039
-         z78r+SHhl/QSMoe5GCTc57HeS/07dBB2uTyoSVEVAbBb8n1ZlV6NXtyUcpp2a5VKsrlG
-         ZccodpOLJLtsQ/thq0+e1jZlodqlBhFjgdH4TlKuJtW4W14ZT49PykIfD8cRkDipdz/d
-         c89w==
-X-Gm-Message-State: AOUpUlHnMYZh8mc3RDy9PNlWYeq8xM4XBItATBBTvI3qYKnZJ7ReCp1b
-        wMjEZWgSCAHbD2KPWri3i1HH8q/Yf+zrMgS8xKBuMw==
-X-Google-Smtp-Source: AA+uWPyFWgrDsmaRh9FYodBvx2VgGazK9tOSI7NelzG5UikSd6NKAuwtpH3naPBm/3wszgqIqaz++XnNLuzL+dMTkQg=
-X-Received: by 2002:aca:dc55:: with SMTP id t82-v6mr32247857oig.159.1534428597305;
- Thu, 16 Aug 2018 07:09:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180815235355.14908-1-casey.schaufler@intel.com> <20180815235355.14908-3-casey.schaufler@intel.com>
-In-Reply-To: <20180815235355.14908-3-casey.schaufler@intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 16 Aug 2018 16:09:31 +0200
-Message-ID: <CAG48ez0=RSok9mAo9QHsho+Qnm_ZDqkH68Amfzj9A_jWmOZaOA@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/5] X86: Support LSM determination of side-channel vulnerability
-To:     casey.schaufler@intel.com
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        selinux@tycho.nsa.gov, SMACK-discuss@lists.01.org,
-        Dave Hansen <dave.hansen@intel.com>, deneen.t.dock@intel.com,
-        kristen@linux.intel.com, Arjan van de Ven <arjan@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 16 Aug 2018 13:10:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53626 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390887AbeHPRKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 13:10:08 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 436214023351;
+        Thu, 16 Aug 2018 14:11:14 +0000 (UTC)
+Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 533132166BA0;
+        Thu, 16 Aug 2018 14:11:11 +0000 (UTC)
+From:   Prarit Bhargava <prarit@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Prarit Bhargava <prarit@redhat.com>,
+        Mark Salter <msalter@redhat.com>, Al Stone <ahs3@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        x86@kernel.org, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH] console: Add console=auto option
+Date:   Thu, 16 Aug 2018 10:10:55 -0400
+Message-Id: <20180816141055.451-1-prarit@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 16 Aug 2018 14:11:14 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 16 Aug 2018 14:11:14 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 11:51 AM Casey Schaufler
-<casey.schaufler@intel.com> wrote:
->
-> From: Casey Schaufler <cschaufler@localhost.localdomain>
->
-> When switching between tasks it may be necessary
-> to set an indirect branch prediction barrier if the
-> tasks are potentially vulnerable to side-channel
-> attacks. This adds a call to security_task_safe_sidechannel
-> so that security modules can weigh in on the decision.
->
-> Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
-> ---
->  arch/x86/mm/tlb.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-> index 6eb1f34c3c85..8714d4af06aa 100644
-> --- a/arch/x86/mm/tlb.c
-> +++ b/arch/x86/mm/tlb.c
-> @@ -7,6 +7,7 @@
->  #include <linux/export.h>
->  #include <linux/cpu.h>
->  #include <linux/debugfs.h>
-> +#include <linux/security.h>
->
->  #include <asm/tlbflush.h>
->  #include <asm/mmu_context.h>
-> @@ -270,11 +271,14 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
->                  * threads. It will also not flush if we switch to idle
->                  * thread and back to the same process. It will flush if we
->                  * switch to a different non-dumpable process.
-> +                * If a security module thinks that the transition
-> +                * is unsafe do the flush.
->                  */
-> -               if (tsk && tsk->mm &&
-> -                   tsk->mm->context.ctx_id != last_ctx_id &&
-> -                   get_dumpable(tsk->mm) != SUID_DUMP_USER)
-> -                       indirect_branch_prediction_barrier();
-> +               if (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id) {
-> +                       if (get_dumpable(tsk->mm) != SUID_DUMP_USER ||
-> +                           security_task_safe_sidechannel(tsk) != 0)
-> +                               indirect_branch_prediction_barrier();
-> +               }
+ACPI may contain an SPCR table that defines a default system console.
+On ARM if the table is present then the SPCR console is enabled by default.
+On x86 the SPCR console is used if 'earlycon' (no parameters) is
+specified as a kernel parameter and is used only as the early console.
+To use the SPCR data as a console a user must boot with 'earlycon',
+grep logs & specify a console= kernel parameter, and then reboot again.
 
-Does this enforce transitivity? What happens if we first switch from
-an attacker task to a task without ->mm, and immediately afterwards
-from the task without ->mm to a victim task? In that case, whether a
-flush happens between the attacker task and the victim task depends on
-whether the LSM thinks that the mm-less task should have access to the
-victim task, right?
+Add 'console=auto' that enables a firmware or hardware console, and on
+x86 enable the SPCR console if 'console=auto' is specified.
+
+Tested on systems with and without an ACPI SPCR.  The following kernel
+parameters were also tested:
+
+console=ttyS0,115200    		works
+earlycon                		works (early console only)
+console=auto            		works (full console as expected)
+no console or earlycon arguments	works (no output as expected)
+
+Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+Cc: Mark Salter <msalter@redhat.com>
+Cc: Al Stone <ahs3@redhat.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: x86@kernel.org
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-pm@vger.kernel.org
+---
+ Documentation/admin-guide/kernel-parameters.txt |  1 +
+ arch/x86/kernel/acpi/boot.c                     |  5 +++++
+ include/linux/console.h                         |  1 +
+ kernel/printk/printk.c                          | 10 ++++++++++
+ 4 files changed, 17 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index a32f2a126791..dd057224f33b 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -635,6 +635,7 @@
+ 
+ 		hvc<n>	Use the hypervisor console device <n>. This is for
+ 			both Xen and PowerPC hypervisors.
++		auto	[X86] Enable ACPI SPCR console
+ 
+ 		If the device connected to the port is not a TTY but a braille
+ 		device, prepend "brl," before the device type, for instance
+diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+index 3b20607d581b..fb2616ba3b21 100644
+--- a/arch/x86/kernel/acpi/boot.c
++++ b/arch/x86/kernel/acpi/boot.c
+@@ -1771,3 +1771,8 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
+ 	e820__range_add(addr, size, E820_TYPE_ACPI);
+ 	e820__update_table_print();
+ }
++
++void __init arch_console_setup(void)
++{
++	acpi_parse_spcr(false, true);
++}
+diff --git a/include/linux/console.h b/include/linux/console.h
+index dfd6b0e97855..b802f62289a9 100644
+--- a/include/linux/console.h
++++ b/include/linux/console.h
+@@ -181,6 +181,7 @@ extern int is_console_locked(void);
+ extern int braille_register_console(struct console *, int index,
+ 		char *console_options, char *braille_options);
+ extern int braille_unregister_console(struct console *);
++int arch_console_setup(void);
+ #ifdef CONFIG_TTY
+ extern void console_sysfs_notify(void);
+ #else
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 247808333ba4..b74eba44183e 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -2078,6 +2078,11 @@ static int __init console_msg_format_setup(char *str)
+ }
+ __setup("console_msg_format=", console_msg_format_setup);
+ 
++int __init __weak arch_console_setup(void)
++{
++	return 0;
++}
++
+ /*
+  * Set up a console.  Called via do_early_param() in init/main.c
+  * for each "console=" parameter in the boot command line.
+@@ -2088,6 +2093,11 @@ static int __init console_setup(char *str)
+ 	char *s, *options, *brl_options = NULL;
+ 	int idx;
+ 
++	if (!strcmp(str, "auto")) {
++		arch_console_setup();
++		return 1;
++	}
++
+ 	if (_braille_console_setup(&str, &brl_options))
+ 		return 1;
+ 
+-- 
+2.14.4
+
