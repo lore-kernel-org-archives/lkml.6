@@ -2,109 +2,178 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF8AC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 02:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6BD9C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 02:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2AF4214C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 02:10:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3C9A214C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 02:13:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uJ5B2Cxx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2AF4214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Q3HkxWTb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3C9A214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387635AbeHPFFo (ORCPT
+        id S2387647AbeHPFIG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 01:05:44 -0400
-Received: from mail-pf1-f170.google.com ([209.85.210.170]:41341 "EHLO
-        mail-pf1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731034AbeHPFFo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 01:05:44 -0400
-Received: by mail-pf1-f170.google.com with SMTP id y10-v6so1281658pfn.8;
-        Wed, 15 Aug 2018 19:10:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=niriNrNKbzF8IjjLOKh2YdIi99OoU54/ADjk/iIuLo4=;
-        b=uJ5B2CxxXfGS9zE/sY7Q8kufXskDmNCJs2dNqVwVN1ehOrwE42rC99S8cdQDwHaC9W
-         s5DC0V+rUDKQp4VmSw3aWdsCOL5nJDc/5hr9BJ4MCZUB6a68GpU7yj1asu3+yWexIIWi
-         sZWyC9P7Ml8C+3BbYzyyx6dpJGQh4owYEtSCx/yMDGSD0AinuSaLyn82grDeuZMM4CGb
-         wIIsSlVGtHKSxsAZMMPTKrgran57L9xPXU3bVFHcCo0/3bOEcyCNSulS5BJ4hF1KL8mm
-         2jQ+FjKr31oYAMaxEV2U7GWkgO6IUhr0+xw/FBUskyxTr1daMyrb1GH67SX9roR1yIJd
-         rP/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=niriNrNKbzF8IjjLOKh2YdIi99OoU54/ADjk/iIuLo4=;
-        b=Nol0jUF12E9RhLMsAW8lAx1eyrUg6dJ36bmEK2SV8GtMH8DycjsTMJAP1jxQ6uSShT
-         1bGIpNghIxj8yTCGT/gbZv+YUdcZkieEVa7w93cu+MfDFP8lYbXBgOHDH3tVqrYTxw/Y
-         Oc+gfaCxas7kg4TlAIgV0mwtfgpldjsvNPWff3QMCWl+Zf5g1fncZq7wcfRpKXi92Q7W
-         SaQJ/WyY30muVZU3C1HR+ZGTva947+nBeY8i9NQDo/c40U9RPXDijosg2Jn5G05aDS3+
-         3dwXzxNI4QDfvkQupoCP55WtZQm6SubBQg+Y1eSS9ykz/FXJijWxnoaLD3avD9qJPEhH
-         Z79g==
-X-Gm-Message-State: AOUpUlFmqrjX2JQug0nBtvagxAv1IjT2dH101ExfxzJoYzcA4gwLvHrS
-        BtarzhLIxUi+f7SSeSa8rTEnZRtY
-X-Google-Smtp-Source: AA+uWPzHCXvp++7n+5oRVYAQcqHwt7jetU7Gix0o2M0H5RZ1twWLCBzsVzBGnYPflsHxbfAJbYu/ew==
-X-Received: by 2002:a62:d417:: with SMTP id a23-v6mr4562875pfh.144.1534385441580;
-        Wed, 15 Aug 2018 19:10:41 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:184a])
-        by smtp.gmail.com with ESMTPSA id 143-v6sm39559803pfy.156.2018.08.15.19.10.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Aug 2018 19:10:40 -0700 (PDT)
-Date:   Wed, 15 Aug 2018 19:10:38 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Andrew Lutomirski <luto@kernel.org>
-Cc:     dhowells@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>, ast@kernel.org,
-        Laura Abbott <labbott@fedoraproject.org>,
-        linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Kernel Fedora <kernel@lists.fedoraproject.org>,
-        daniel@iogearbox.net
-Subject: Re: Kernel lockdown patch & IPAddressAllow/IPAddressDeny systemd
- feature with Secure Boot
-Message-ID: <20180816021037.6yxi5rqolhqxipza@ast-mbp.dhcp.thefacebook.com>
-References: <20180807212531.25161.63476@mailman01.phx2.fedoraproject.org>
- <CALeDE9ORLoyiUcf8Bmwr2rPyo7-3d8Fo54WuPGWtv4ByE_JG=Q@mail.gmail.com>
- <CAObL_7GOOQ01NPf4y1MqRJh4S=CYV8NPmEGTbkrTcjrfUKc5LA@mail.gmail.com>
+        Thu, 16 Aug 2018 01:08:06 -0400
+Received: from ozlabs.org ([203.11.71.1]:34531 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730182AbeHPFIG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 01:08:06 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41rVGx014Tz9s8k;
+        Thu, 16 Aug 2018 12:12:56 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1534385579;
+        bh=wXu/4H7u+Tsch4PEFT8sE3lfADl45x2mpPcGYLCEDIU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Q3HkxWTbTT1imGUsyDA3dly8thEKDjIUJ4z8Wby4WVaO2PaJaZnR1kyvJKDKN4AUS
+         TBi30GkT70gYDOooZhEq7EKPB3VGGzuQUuW3Rm3VaV3zYRJpj+5zJDnrQ5RIL8EMPF
+         +c7/M6V9z0GDa0jOinrNLkekuIoykgfiQ04fLD12Pfprfp1BbErCsi3IqbShsN+vhS
+         0u2QX1ZZXV+8237kCvJ+i7oZgGy6XDOkm2P3M7DFLBdTDJ+nirXMe39hU3GI+krtqm
+         /ylRGu0IvtGJQAI9JrITlhR+L+bcZAiSvFnKUvV28DZP0kyiFIsy/i//2xEeA5jvJt
+         Uw/zR9yomi/zg==
+Date:   Thu, 16 Aug 2018 12:12:56 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Paulo Zanoni <paulo.r.zanoni@intel.com>
+Subject: Re: linux-next: manual merge of the mfd tree with the drm-intel
+ tree
+Message-ID: <20180816121256.0435930e@canb.auug.org.au>
+In-Reply-To: <20180726151006.345e8397@canb.auug.org.au>
+References: <20180726151006.345e8397@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAObL_7GOOQ01NPf4y1MqRJh4S=CYV8NPmEGTbkrTcjrfUKc5LA@mail.gmail.com>
-User-Agent: NeoMutt/20180223
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ex_lo=vQHCdeSqjX49RZ7=."; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 07:14:00AM -0700, Andrew Lutomirski wrote:
-> [Removed Fedora devel list because it's subscriber-only]
-> 
-> > On Aug 8, 2018, at 12:29 AM, Peter Robinson <pbrobinson@gmail.com> wrote:
-> >
-> > Probably a good idea to cc: this to the kernel list :-)
-> >
-> > I suspect it's intentional but with the planned changes for iptables
-> > etc to be backed by bpf in the upstream kernel sometime in the future
-> > it's likely going to need to be reviewed.
-> >
-> 
-> I thought this got covered in review. I think this part of lockdown
-> needs to get reverted or fixed ASAP.
+--Sig_/ex_lo=vQHCdeSqjX49RZ7=.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I don't see lockdown in Linus's tree. Is this fedora only issue?
+Hi all,
 
-> (I definitely brought up multiple issues with the bpf lockdown stuff.
-> It's clearly extremely broken right now in the "new kernel breaks
-> *current* Linux distro" sense.)
+On Thu, 26 Jul 2018 15:10:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the mfd tree got a conflict in:
+>=20
+>   drivers/gpu/drm/i915/intel_display.h
+>=20
+> between commit:
+>=20
+>   6075546f57f8 ("drm/i915/icl: store the port type for TC ports")
+>=20
+> from the drm-intel tree and commit:
+>=20
+>   9c229127aee2 ("drm/i915: hdmi: add CEC notifier to intel_hdmi")
+>=20
+> from the mfd tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc drivers/gpu/drm/i915/intel_display.h
+> index 0a79a46d5805,1f176a71e081..000000000000
+> --- a/drivers/gpu/drm/i915/intel_display.h
+> +++ b/drivers/gpu/drm/i915/intel_display.h
+> @@@ -126,24 -126,30 +126,48 @@@ enum port=20
+>  =20
+>   #define port_name(p) ((p) + 'A')
+>  =20
+> + /*
+> +  * Ports identifier referenced from other drivers.
+> +  * Expected to remain stable over time
+> +  */
+> + static inline const char *port_identifier(enum port port)
+> + {
+> + 	switch (port) {
+> + 	case PORT_A:
+> + 		return "Port A";
+> + 	case PORT_B:
+> + 		return "Port B";
+> + 	case PORT_C:
+> + 		return "Port C";
+> + 	case PORT_D:
+> + 		return "Port D";
+> + 	case PORT_E:
+> + 		return "Port E";
+> + 	case PORT_F:
+> + 		return "Port F";
+> + 	default:
+> + 		return "<invalid>";
+> + 	}
+> + }
+> +=20
+>  +enum tc_port {
+>  +	PORT_TC_NONE =3D -1,
+>  +
+>  +	PORT_TC1 =3D 0,
+>  +	PORT_TC2,
+>  +	PORT_TC3,
+>  +	PORT_TC4,
+>  +
+>  +	I915_MAX_TC_PORTS
+>  +};
+>  +
+>  +enum tc_port_type {
+>  +	TC_PORT_UNKNOWN =3D 0,
+>  +	TC_PORT_TYPEC,
+>  +	TC_PORT_TBT,
+>  +	TC_PORT_LEGACY,
+>  +};
+>  +
+>   enum dpio_channel {
+>   	DPIO_CH0,
+>   	DPIO_CH1
 
-+1
+This is now a conflict between Linus' tree and the mfd tree.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ex_lo=vQHCdeSqjX49RZ7=.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt03agACgkQAVBC80lX
+0Gx6KAf9Gkj+UMsAWDisxNjEYdpuUiNb6jRkRKhhQLbFJhLrhVCTrXZPdO8RAu/a
+IeWxHtIY1NtTdJzklsFAmZs5f0WrGEbwsAeM+O26fk/JH9+c+pBoZKyB1FIxF2Qo
+EeEBeY9V81YXpg7YAaRyH3Wp7ZOF8doZ2un5hFWMFcrO8/i//uIqK3HRIuZF4Dw2
+mjVPH+pOt9x3ZioQBl6aQag4C4fmvYaePUQYa6Qs2zXUByX/7kb4Dkk1ONZZM3uu
+roF6nw6ucFFXbiYxIFbNLILoa+2Q3SUH3GWTbugmAfgjFGimj09o3jotvXC0s4Ob
+N+5ROcveDzQlIsQVXkKaoLJ8iS13yA==
+=x9sD
+-----END PGP SIGNATURE-----
+
+--Sig_/ex_lo=vQHCdeSqjX49RZ7=.--
