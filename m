@@ -2,189 +2,116 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7BCC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:47:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A69C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:47:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D013D21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:47:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D013D21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id DAEC121479
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:47:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C7bhUIiJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAEC121479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728835AbeHPVr6 (ORCPT
+        id S1730516AbeHPVsD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:47:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57330 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726183AbeHPVrz (ORCPT
+        Thu, 16 Aug 2018 17:48:03 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38100 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728301AbeHPVr7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:47:55 -0400
-Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4372DCE8;
-        Thu, 16 Aug 2018 18:47:45 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hadar Gat <hadar.gat@arm.com>,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.17 08/21] crypto: ccree - fix finup
-Date:   Thu, 16 Aug 2018 20:45:18 +0200
-Message-Id: <20180816171612.816465187@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180816171612.136242278@linuxfoundation.org>
-References: <20180816171612.136242278@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 16 Aug 2018 17:47:59 -0400
+Received: by mail-wm0-f67.google.com with SMTP id t25-v6so5222105wmi.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 11:47:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=eoOhojkqM1h5g63vmx7Vze3CKxiR1nADmqiCkp0+M4U=;
+        b=C7bhUIiJXrXQT6l2eRHavOZx6HV0B7LaVMrBualvczXyxWumWUT3n53pa/LkGD0214
+         E2x1M2W1p38UBm8R80686mSpE01dZkyf+7jrPbX16JWTES1D2Qt1UrksHVjiWL66TM4z
+         4xGaK7x2EcRCN5yvryYUqjbagPuZtKR8rjF9o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=eoOhojkqM1h5g63vmx7Vze3CKxiR1nADmqiCkp0+M4U=;
+        b=YNS/DzHsakPciccBtOTbfiM6CQsU0N/xWg5efKqk+z7t6E+yDv1hXbFhWzuoM1bTRr
+         lplUDRxjo6Gcq6TgRKR4mj/vWcfqX4PU+yR6REF7WeSJ+5vZ3+Yfo4j4zuq+1FTN3Nek
+         gI4fxpaJWWiypz90euW0pqDHqGgYPdy98ToHbhdwvuZjuPITXjPl8o/7CKTYPPEvYhDQ
+         MzKsCb4uEKdBT98CJzQsu4A7a7rTsR9WOKmNcCI3x7XolPbAV7t62ieJuelB6WF+898I
+         pIpqRmglfyOIAUkiLMLG43wF7troZDL401KM49SQg1gV8cu0H4WxtLw0CCxCta7EZXp6
+         2OFQ==
+X-Gm-Message-State: AOUpUlE5ZlKPIwvaJTMi0A966ZmfedP5bcp7iL2ZLnoPtwVYtq10feS2
+        JRMaMxZT9OmGxHGEhs/G9Ltc4HWAPIvisGH55Hg3U0uymwg=
+X-Google-Smtp-Source: AA+uWPyQpk4S+IXu5q1U49XZIYQGGODBD5BL+twTiGxLD00WqziWMmTSVfV7alewR7+Ye0Y96W60fXbf7vWH1CG1Q4Q=
+X-Received: by 2002:a1c:3a8f:: with SMTP id h137-v6mr18014479wma.41.1534445268486;
+ Thu, 16 Aug 2018 11:47:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Received: by 2002:a1c:c243:0:0:0:0:0 with HTTP; Thu, 16 Aug 2018 11:47:47
+ -0700 (PDT)
+In-Reply-To: <95c5c8b6-35f9-b1b4-0153-591b000c0a79@iki.fi>
+References: <462f8ae6-9948-a8e5-7504-623d40344336@iki.fi> <20180816102219.GF31093@arm.com>
+ <CALAqxLWJzpV2Mqkz_ed_5zYX3SFyMZTBgTzyRAden7ab3VNm-Q@mail.gmail.com> <95c5c8b6-35f9-b1b4-0153-591b000c0a79@iki.fi>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Thu, 16 Aug 2018 11:47:47 -0700
+Message-ID: <CALAqxLUZiSyi0f365B-QRTT1gkWq9RP-4n2950NcF0w9oSXYEg@mail.gmail.com>
+Subject: Re: AArch64 boot failure on Hikey960 on latest master after "arm64:
+ insn: Don't fallback on nosync path for general insn patching"
+To:     Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Aug 16, 2018 at 11:37 AM, Tuomas Tynkkynen
+<tuomas.tynkkynen@iki.fi> wrote:
+> Hi,
+>
+> On 08/16/2018 08:57 PM, John Stultz wrote:
+>>
+>> On Thu, Aug 16, 2018 at 3:22 AM, Will Deacon <will.deacon@arm.com> wrote:
+>>>
+>>> Hi Tuomas, [+John]
+>
+> ...
+>>>
+>>>
+>>> Out of interest -- do you know if Hikey960 is used by any boot-testing
+>>> farms? The patch above has been in linux-next for ages, but we didn't see
+>>> any complaints until it hit mainline :(
+>>
+>>
+>> Unfortunately not yet. HiKey960 upstreaming is ongoing, and the UFS
+>> support patches should land in the 4.19 merge window.
+>> After which, it will enable more mainline testing as folks won't have
+>> to carry patches just to get the system to boot.
+>>
+>
+> A microSD rootfs gets me a working system on e.g. v4.17... except that
+> even there the system hangs if I don't have 'clk_ignore_unused' on
+> the kernel command line. I wonder if this is a known problem?
 
-------------------
+Oh, good point. I'm usually focusing on AOSP, so I've not tried
+booting from the uSD slot.
 
-From: Hadar Gat <hadar.gat@arm.com>
+As for the  clk_ignore_unused, I've not seen it, but I'm usually
+testing with a much larger patch stack targeting AOSP (only
+occasionally trying with a smaller set to validate patches being
+prepped for upstream).  So if you want to file a bug, please do so
+here: https://bugs.96boards.org/
 
-commit 26497e72a1aba4d27c50c4cbf0182db94e58a590 upstream.
+Appreciate your testing! Please do feel free to reach out/cc me if you
+run into other issues.
 
-finup() operation was incorrect, padding was missing.
-Fix by setting the ccree HW to enable padding.
-
-Signed-off-by: Hadar Gat <hadar.gat@arm.com>
-[ gilad@benyossef.com: refactored for better code sharing ]
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/crypto/ccree/cc_hash.c |   81 ++++++++---------------------------------
- 1 file changed, 16 insertions(+), 65 deletions(-)
-
---- a/drivers/crypto/ccree/cc_hash.c
-+++ b/drivers/crypto/ccree/cc_hash.c
-@@ -602,7 +602,7 @@ static int cc_hash_update(struct ahash_r
- 	return rc;
- }
- 
--static int cc_hash_finup(struct ahash_request *req)
-+static int cc_do_finup(struct ahash_request *req, bool update)
- {
- 	struct ahash_req_ctx *state = ahash_request_ctx(req);
- 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
-@@ -619,15 +619,15 @@ static int cc_hash_finup(struct ahash_re
- 	int rc;
- 	gfp_t flags = cc_gfp_flags(&req->base);
- 
--	dev_dbg(dev, "===== %s-finup (%d) ====\n", is_hmac ? "hmac" : "hash",
--		nbytes);
-+	dev_dbg(dev, "===== %s-%s (%d) ====\n", is_hmac ? "hmac" : "hash",
-+		update ? "finup" : "final", nbytes);
- 
- 	if (cc_map_req(dev, state, ctx)) {
- 		dev_err(dev, "map_ahash_source() failed\n");
- 		return -EINVAL;
- 	}
- 
--	if (cc_map_hash_request_final(ctx->drvdata, state, src, nbytes, 1,
-+	if (cc_map_hash_request_final(ctx->drvdata, state, src, nbytes, update,
- 				      flags)) {
- 		dev_err(dev, "map_ahash_request_final() failed\n");
- 		cc_unmap_req(dev, state, ctx);
-@@ -646,67 +646,7 @@ static int cc_hash_finup(struct ahash_re
- 
- 	idx = cc_restore_hash(desc, ctx, state, idx);
- 
--	if (is_hmac)
--		idx = cc_fin_hmac(desc, req, idx);
--
--	idx = cc_fin_result(desc, req, idx);
--
--	rc = cc_send_request(ctx->drvdata, &cc_req, desc, idx, &req->base);
--	if (rc != -EINPROGRESS && rc != -EBUSY) {
--		dev_err(dev, "send_request() failed (rc=%d)\n", rc);
--		cc_unmap_hash_request(dev, state, src, true);
--		cc_unmap_result(dev, state, digestsize, result);
--		cc_unmap_req(dev, state, ctx);
--	}
--	return rc;
--}
--
--static int cc_hash_final(struct ahash_request *req)
--{
--	struct ahash_req_ctx *state = ahash_request_ctx(req);
--	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
--	struct cc_hash_ctx *ctx = crypto_ahash_ctx(tfm);
--	u32 digestsize = crypto_ahash_digestsize(tfm);
--	struct scatterlist *src = req->src;
--	unsigned int nbytes = req->nbytes;
--	u8 *result = req->result;
--	struct device *dev = drvdata_to_dev(ctx->drvdata);
--	bool is_hmac = ctx->is_hmac;
--	struct cc_crypto_req cc_req = {};
--	struct cc_hw_desc desc[CC_MAX_HASH_SEQ_LEN];
--	unsigned int idx = 0;
--	int rc;
--	gfp_t flags = cc_gfp_flags(&req->base);
--
--	dev_dbg(dev, "===== %s-final (%d) ====\n", is_hmac ? "hmac" : "hash",
--		nbytes);
--
--	if (cc_map_req(dev, state, ctx)) {
--		dev_err(dev, "map_ahash_source() failed\n");
--		return -EINVAL;
--	}
--
--	if (cc_map_hash_request_final(ctx->drvdata, state, src, nbytes, 0,
--				      flags)) {
--		dev_err(dev, "map_ahash_request_final() failed\n");
--		cc_unmap_req(dev, state, ctx);
--		return -ENOMEM;
--	}
--
--	if (cc_map_result(dev, state, digestsize)) {
--		dev_err(dev, "map_ahash_digest() failed\n");
--		cc_unmap_hash_request(dev, state, src, true);
--		cc_unmap_req(dev, state, ctx);
--		return -ENOMEM;
--	}
--
--	/* Setup request structure */
--	cc_req.user_cb = cc_hash_complete;
--	cc_req.user_arg = req;
--
--	idx = cc_restore_hash(desc, ctx, state, idx);
--
--	/* "DO-PAD" must be enabled only when writing current length to HW */
-+	/* Pad the hash */
- 	hw_desc_init(&desc[idx]);
- 	set_cipher_do(&desc[idx], DO_PAD);
- 	set_cipher_mode(&desc[idx], ctx->hw_mode);
-@@ -731,6 +671,17 @@ static int cc_hash_final(struct ahash_re
- 	return rc;
- }
- 
-+static int cc_hash_finup(struct ahash_request *req)
-+{
-+	return cc_do_finup(req, true);
-+}
-+
-+
-+static int cc_hash_final(struct ahash_request *req)
-+{
-+	return cc_do_finup(req, false);
-+}
-+
- static int cc_hash_init(struct ahash_request *req)
- {
- 	struct ahash_req_ctx *state = ahash_request_ctx(req);
-
-
+thanks
+-john
