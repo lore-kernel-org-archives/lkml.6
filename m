@@ -2,134 +2,477 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBF8C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C8FC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:59:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB7FE20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:59:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="SsCWsD0z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB7FE20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id 5306920A8B
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:59:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5306920A8B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726265AbeHPV7u (ORCPT
+        id S1726400AbeHPWAH convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:59:50 -0400
-Received: from mail-co1nam03on0132.outbound.protection.outlook.com ([104.47.40.132]:48064
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725749AbeHPV7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:59:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=izJtUjMI6nUfqnPdrIL+aJBy/ZjKPjvJ7iXjqm5jrqs=;
- b=SsCWsD0zAAlPrjbJ+QbMEtRgRWTDeC3aKF0kzMHbqjnn+D0UnpeW1OHOd+qAFO/pSbFUefkREIMPd2ERzEq4VM4T3oCD7kTMtAdpACScDLSq74/LFT4RwKofp7B+Wx+gA090wxGps/Yiu/KATE+OojWtqOhLnfDWhlICPtPJf9o=
-Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
- DM5PR21MB0780.namprd21.prod.outlook.com (10.173.173.7) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1080.5; Thu, 16 Aug 2018 18:59:31 +0000
-Received: from DM5PR21MB0508.namprd21.prod.outlook.com
- ([fe80::65dd:b17f:eb0d:2eee]) by DM5PR21MB0508.namprd21.prod.outlook.com
- ([fe80::65dd:b17f:eb0d:2eee%8]) with mapi id 15.20.1080.009; Thu, 16 Aug 2018
- 18:59:31 +0000
-From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
-To:     Oscar Salvador <osalvador@techadventures.net>
-CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mhocko@suse.com" <mhocko@suse.com>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "yasu.isimatu@gmail.com" <yasu.isimatu@gmail.com>,
-        "jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>,
-        "david@redhat.com" <david@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH v3 4/4] mm/memory_hotplug: Drop node_online check in
- unregister_mem_sect_under_nodes
-Thread-Topic: [PATCH v3 4/4] mm/memory_hotplug: Drop node_online check in
- unregister_mem_sect_under_nodes
-Thread-Index: AQHUNKY0L/M1Chtix0yg3O5Mw7071qTCvTkA
-Date:   Thu, 16 Aug 2018 18:59:31 +0000
-Message-ID: <20180816185930.tfg2rzjnh34lmuxa@xakep.localdomain>
-References: <20180815144219.6014-1-osalvador@techadventures.net>
- <20180815144219.6014-5-osalvador@techadventures.net>
-In-Reply-To: <20180815144219.6014-5-osalvador@techadventures.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [73.69.118.222]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR21MB0780;6:KwasRoKHEBWqdtdR14KODzu8Shdj9HDV0NrYpeqc6y2NXtgMOfYfRIuMk/yRGWpAbfDFWdBFOfHRD+Od7zYXp5iAF/VgJbDg0QqOUNkXmGtnxoS2W+nX6/eIDL2dliyh4aNQpDxjxShB5SIDP7CFf8kpmro8QX+ZKu6IBIHBAFr2COuxJ6oOYmGwyZ5bIsbqIpxazYEzCGAZeOdqFcfSUOSuQTQhTNhVhPgroqBJvCjp64vpppTvWSke4I4+duCrBGeDfrDZsT9KuZYV9mJ1+6mphXfXmfpOdfW6pEsOt90y2CZuapEcldf6RcjPaTSIvBCzbVGEK2j76EVCz91UvGKDwV6CSAvg/GOHcWTNmy/BUKdFHLqDr8XGUFJCNx6sYQSoxKX0VY29zRPMyNLxfsrU49L3Z+esFCqx5de4ONANEMpnBdudMTp+gl6bzNyLHEQw6l8eqjxAJFBt3IXGuA==;5:OPai/aWTbVFl115gn9pHF2GHVsBj7Jawn37V+MY9wxiQUL9/Ts/pvHgpouAPwXNXD7FLAd8uvw+xGSAQKEYHfwPWQqzxXo6McCJOu2x5ekeNM9X7K5SryW5vZfLMuYA89E7Cu9htYNjTT6T76rkkuk8ds042e4f3Rhb6aPDuOPw=;7:QbO1uAIoHraR3k7tn/Bpmw76HhM1QFw8JldJWqQuSc6JTepcO9hvjxf+yFfvGzH2RbgWXck6V0fm8TmlDGwEmBpyvGra3SjfSHXMxtUyrUhxi4ygnJwxTk6MgYP2/Y4SaoqyRvC+SG0YVg7BmkR6t4xpvjOjPN7FLxF38clLm6UY0hZl/MMl/7EGxMIN0FC1riFCV05WgGBIPi/EZALKwstxMBilADrJehS5MauXB6eccuFUPrJhPRztHNZvBeIY
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: e8ce9db1-eb09-4913-4607-08d603aa667a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0780;
-x-ms-traffictypediagnostic: DM5PR21MB0780:
-x-microsoft-antispam-prvs: <DM5PR21MB07807AB34422D39FC64B1B9A9D3E0@DM5PR21MB0780.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(20180801012)(6040522)(2401047)(5005006)(8121501046)(3231336)(8214008)(944501410)(52105095)(2018427008)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:DM5PR21MB0780;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0780;
-x-forefront-prvs: 07665BE9D1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(136003)(346002)(396003)(366004)(39860400002)(376002)(199004)(189003)(102836004)(106356001)(6486002)(9686003)(6512007)(76176011)(186003)(22452003)(6246003)(54906003)(486006)(8676002)(86612001)(6436002)(53936002)(66066001)(316002)(25786009)(105586002)(39060400002)(6506007)(99286004)(2900100001)(53546011)(7736002)(4326008)(305945005)(476003)(68736007)(1076002)(229853002)(26005)(33896004)(3846002)(6116002)(14454004)(97736004)(6916009)(5250100002)(6346003)(8936002)(10090500001)(446003)(10290500003)(11346002)(2906002)(72206003)(478600001)(5660300001)(81156014)(86362001)(256004)(7416002)(81166006)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0780;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
-x-microsoft-antispam-message-info: nYen15FnUEzByqhzASOQetrafowILgCfHxMkvNVe9vkyenVcFtgKTNikACGiXC4X4SNlqBCbthyF2MeYtHMjjXO1f3e7XtmTMlu3nBrHHeI8E+oS48BUvauqYL/zkLJ/T9pmz7rhGSWaQ2yjFYmfjF4aSDsmdu0rRUhgJmrmBoefXiqNZ3/1h0zAxjvEU9XUIzOeEfaYFVzftD64H6XIFqPU8T9/TD8PWKEmq+joZAtY0r5HxYSeAnGcnOjfoc/MhnhqCOMK/tZHE6p1clJQvk5w5oegzVe96UYqtefYw/1FcZf8npJe9cz/iIcClzavf536JUWNsYx1+ObG4Emi3DxK7wv+HXWBqmZidQ0p5IM+PtsVPf1TCQwgDITuCEQXsc7dlRiFqQru9/c0ci5EQWqrcJoZGtPyNFkjShdaQW5FpexmZ8mWTNqWUpvNe12s3GgOl4nlP42E2e1spkmNCY6+lvCcD3YmVSkpJDgKHvk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <E026F4C5C651CE45ABA9F717F027A8C3@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 16 Aug 2018 18:00:07 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37148 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeHPWAH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 18:00:07 -0400
+Received: by mail-pg1-f193.google.com with SMTP id n7-v6so2475662pgq.4
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 11:59:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=a6ij+bf7DST9/Xq6u9FGxT57TJzPh/2P04GETxyy5hA=;
+        b=sw8gEe9EvckelvEdRI+zDQrq3TepUKX3xiqwj0O0AIyBKx1vTS10jrWX5XnnTO92j+
+         3TWdRvwJIEWa/Lb8GCy/YkJI7b1JlWwfJomuBWcdTTMCWpPZow/MNesQxlMMxPUSkeH7
+         hYLbNiT+mK5n/1ebnqp/PwEX94uVtcmeXsvbv7R02MjCtZMGB5uXpx8JhvMIYMqlkzOg
+         7o2/11FfoEkoXXjk30ez2zyGljW+pMHpEEw1GedSGmCBCeBInUxftq643Pjv9KPmAp20
+         K3psIjcexZhLokfvR9gFy15jNY3vvV8fWZy/x/iLZl9DhbE/VDvPyh+vTEHdqjv4Ft0Z
+         +lbQ==
+X-Gm-Message-State: AOUpUlFV+xedyPmGoRf/Finzu+cWVnzZAq8IFyaDRFDV1acvgYzRkmwu
+        biAHrWbDHVYzvFHnYgtuPLiOSQ==
+X-Google-Smtp-Source: AA+uWPziBlVFkGYGb8UuD5BPvr3IkOQhI463rqknOOWrUOerFUcr0xvugbb2yGisBd25DCkMMA+1Ew==
+X-Received: by 2002:a63:cf10:: with SMTP id j16-v6mr30069722pgg.238.1534445994338;
+        Thu, 16 Aug 2018 11:59:54 -0700 (PDT)
+Received: from localhost ([207.114.172.147])
+        by smtp.gmail.com with ESMTPSA id x1-v6sm37965pgr.59.2018.08.16.11.59.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 16 Aug 2018 11:59:53 -0700 (PDT)
+Date:   Thu, 16 Aug 2018 11:59:52 -0700
+From:   Moritz Fischer <mdf@kernel.org>
+To:     Alan Tull <atull@kernel.org>
+Cc:     Moritz Fischer <mdf@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
+        linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
+        linux-doc@vger.kernel.org, Alan Tull <atull@opensource.altera.com>,
+        Matthew Gerlach <matthew.gerlach@linux.intel.com>
+Subject: Re: [PATCH 2/2] fpga: add FPGA manager debugfs
+Message-ID: <20180816185952.GA3932@archbook>
+References: <20180815220958.3606-1-atull@kernel.org>
+ <20180815220958.3606-2-atull@kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8ce9db1-eb09-4913-4607-08d603aa667a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2018 18:59:31.6835
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0780
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180815220958.3606-2-atull@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-08-15 16:42:19, Oscar Salvador wrote:
-> From: Oscar Salvador <osalvador@suse.de>
->=20
-> We are getting the nid from the pages that are not yet removed,
-> but a node can only be offline when its memory/cpu's have been removed.
-> Therefore, we know that the node is still online.
+Hi Alan,
 
-Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+comments inline. While I see how this is useful, I have the
+suspicion that from the moment this gets merged vendor kernels
+will just default to use this ...
 
->=20
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+On Wed, Aug 15, 2018 at 05:09:58PM -0500, Alan Tull wrote:
+> From: Alan Tull <atull@opensource.altera.com>
+> 
+> Implement DebugFS for the FPGA Manager Framework for
+> debugging and developmental use.
+> 
+> Enabled by CONFIG_FPGA_MGR_DEBUG_FS
+> 
+> Each FPGA gets its own directory such as
+>  <debugfs>/fpga_manager/fpga0 and three files:
+> 
+>  * [RW] flags          = flags as defined in fpga-mgr.h
+>  * [RW] firmware_name  = write/read back name of FPGA image
+>                          firmware file to program
+>  * [WO] image          = write-only file for directly writing
+>                          fpga image w/o firmware layer
+>  * [RW] config_complete_timeout_us = maximum for the FPGA to
+>                          go to the operating state after
+> 			 programming
+> 
+> The debugfs is implemented in a separate fpga_mgr_debugfs.c
+> file, but the FPGA manager core is still built as one
+> module.  Note the name change from fpga-mgr.ko to fpga_mgr.ko.
+> 
+> Signed-off-by: Alan Tull <atull@kernel.org>
+> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
 > ---
->  drivers/base/node.c | 2 --
->  1 file changed, 2 deletions(-)
->=20
-> diff --git a/drivers/base/node.c b/drivers/base/node.c
-> index 81b27b5b1f15..b23769e4fcbb 100644
-> --- a/drivers/base/node.c
-> +++ b/drivers/base/node.c
-> @@ -465,8 +465,6 @@ void unregister_mem_sect_under_nodes(struct memory_bl=
-ock *mem_blk,
-> =20
->  		if (nid < 0)
->  			continue;
-> -		if (!node_online(nid))
-> -			continue;
->  		/*
->  		 * It is possible that NODEMASK_ALLOC fails due to memory
->  		 * pressure.
-> --=20
-> 2.13.6
-> =
+>  drivers/fpga/Kconfig            |   7 ++
+>  drivers/fpga/Makefile           |   4 +-
+>  drivers/fpga/fpga-mgr-debugfs.c | 221 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/fpga/fpga-mgr-debugfs.h |  22 ++++
+>  drivers/fpga/fpga-mgr.c         |   8 ++
+>  include/linux/fpga/fpga-mgr.h   |   3 +
+>  6 files changed, 264 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/fpga/fpga-mgr-debugfs.c
+>  create mode 100644 drivers/fpga/fpga-mgr-debugfs.h
+> 
+> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> index 1ebcef4..600924d 100644
+> --- a/drivers/fpga/Kconfig
+> +++ b/drivers/fpga/Kconfig
+> @@ -9,6 +9,13 @@ menuconfig FPGA
+>  	  kernel.  The FPGA framework adds a FPGA manager class and FPGA
+>  	  manager drivers.
+>  
+> +config FPGA_MGR_DEBUG_FS
+> +       bool "FPGA Manager DebugFS"
+> +       depends on FPGA && DEBUG_FS
+> +       help
+> +         Say Y here if you want to expose a DebugFS interface for the
+> +	 FPGA Manager Framework.
+> +
+>  if FPGA
+>  
+>  config FPGA_MGR_SOCFPGA
+> diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+> index 7a2d73b..62910cc 100644
+> --- a/drivers/fpga/Makefile
+> +++ b/drivers/fpga/Makefile
+> @@ -4,7 +4,9 @@
+>  #
+>  
+>  # Core FPGA Manager Framework
+> -obj-$(CONFIG_FPGA)			+= fpga-mgr.o
+> +obj-$(CONFIG_FPGA)			+= fpga_mgr.o
+> +fpga_mgr-y				:= fpga-mgr.o
+> +fpga_mgr-$(CONFIG_FPGA_MGR_DEBUG_FS)	+= fpga-mgr-debugfs.o
+>  
+>  # FPGA Manager Drivers
+>  obj-$(CONFIG_FPGA_MGR_ALTERA_CVP)	+= altera-cvp.o
+> diff --git a/drivers/fpga/fpga-mgr-debugfs.c b/drivers/fpga/fpga-mgr-debugfs.c
+> new file mode 100644
+> index 0000000..f2fdf58
+> --- /dev/null
+> +++ b/drivers/fpga/fpga-mgr-debugfs.c
+> @@ -0,0 +1,221 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * FPGA Manager DebugFS
+> + *
+> + *  Copyright (C) 2016-2018 Intel Corporation.  All rights reserved.
+> + */
+> +#include <linux/debugfs.h>
+> +#include <linux/fpga/fpga-mgr.h>
+> +#include <linux/slab.h>
+> +#include <linux/uaccess.h>
+> +
+> +static struct dentry *fpga_mgr_debugfs_root;
+> +
+> +struct fpga_mgr_debugfs {
+> +	struct dentry *debugfs_dir;
+> +	struct fpga_image_info *info;
+> +};
+> +
+> +static ssize_t fpga_mgr_firmware_write_file(struct file *file,
+> +					    const char __user *user_buf,
+> +					    size_t count, loff_t *ppos)
+> +{
+> +	struct fpga_manager *mgr = file->private_data;
+> +	struct fpga_mgr_debugfs *debugfs = mgr->debugfs;
+> +	struct device *dev = &mgr->dev;
+> +	char *buf;
+> +	int ret;
+> +
+> +	ret = fpga_mgr_lock(mgr);
+> +	if (ret) {
+> +		dev_err(dev, "FPGA manager is busy\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	buf = devm_kzalloc(dev, count, GFP_KERNEL);
+> +	if (!buf) {
+> +		fpga_mgr_unlock(mgr);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	if (copy_from_user(buf, user_buf, count)) {
+> +		fpga_mgr_unlock(mgr);
+> +		devm_kfree(dev, buf);
+> +		return -EFAULT;
+> +	}
+> +
+> +	buf[count] = 0;
+> +	if (buf[count - 1] == '\n')
+> +		buf[count - 1] = 0;
+> +
+> +	/* Release previous firmware name (if any). Save current one. */
+> +	if (debugfs->info->firmware_name)
+> +		devm_kfree(dev, debugfs->info->firmware_name);
+> +	debugfs->info->firmware_name = buf;
+> +
+> +	ret = fpga_mgr_load(mgr, debugfs->info);
+> +	if (ret)
+> +		dev_err(dev, "fpga_mgr_load returned with value %d\n", ret);
+> +
+> +	fpga_mgr_unlock(mgr);
+> +
+> +	return count;
+> +}
+> +
+> +static ssize_t fpga_mgr_firmware_read_file(struct file *file,
+> +					   char __user *user_buf,
+> +					   size_t count, loff_t *ppos)
+> +{
+> +	struct fpga_manager *mgr = file->private_data;
+> +	struct fpga_mgr_debugfs *debugfs = mgr->debugfs;
+> +	char *buf;
+> +	int ret;
+> +
+> +	if (!debugfs->info->firmware_name)
+> +		return 0;
+> +
+> +	buf = kzalloc(PAGE_SIZE, GFP_KERNEL);
+> +	if (!buf)
+> +		return -ENOMEM;
+> +
+> +	ret = snprintf(buf, PAGE_SIZE, "%s\n", debugfs->info->firmware_name);
+snip:
+---->8->8->8-----
+> +	if (ret < 0) {
+> +		kfree(buf);
+> +		return ret;
+> +	}
+---->8->8->8-----
+just replace with:
+	if (ret < 0)
+		goto out;
+> +
+> +	ret = simple_read_from_buffer(user_buf, count, ppos, buf, ret);
+
+out:
+> +	kfree(buf);
+> +	return ret;
+> +}
+> +
+> +static const struct file_operations fpga_mgr_firmware_fops = {
+> +	.open = simple_open,
+> +	.read = fpga_mgr_firmware_read_file,
+> +	.write = fpga_mgr_firmware_write_file,
+> +	.llseek = default_llseek,
+> +};
+> +
+> +static ssize_t fpga_mgr_image_write_file(struct file *file,
+> +					 const char __user *user_buf,
+> +					 size_t count, loff_t *ppos)
+> +{
+> +	struct fpga_manager *mgr = file->private_data;
+> +	struct fpga_mgr_debugfs *debugfs = mgr->debugfs;
+> +	struct device *dev = &mgr->dev;
+> +	char *buf;
+> +	int ret;
+> +
+> +	dev_info(dev, "writing %zu bytes to %s\n", count, mgr->name);
+> +
+> +	ret = fpga_mgr_lock(mgr);
+> +	if (ret) {
+> +		dev_err(dev, "FPGA manager is busy\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	buf = kzalloc(count, GFP_KERNEL);
+> +	if (!buf) {
+> +		fpga_mgr_unlock(mgr);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	if (copy_from_user(buf, user_buf, count)) {
+> +		fpga_mgr_unlock(mgr);
+> +		kfree(buf);
+> +		return -EFAULT;
+> +	}
+> +
+> +	/* If firmware interface was previously used, forget it. */
+> +	if (debugfs->info->firmware_name)
+> +		devm_kfree(dev, debugfs->info->firmware_name);
+> +	debugfs->info->firmware_name = NULL;
+> +
+> +	debugfs->info->buf = buf;
+> +	debugfs->info->count = count;
+> +
+> +	ret = fpga_mgr_load(mgr, debugfs->info);
+> +	if (ret)
+> +		dev_err(dev, "fpga_mgr_load returned with value %d\n", ret);
+> +
+> +	fpga_mgr_unlock(mgr);
+> +
+> +	debugfs->info->buf = NULL;
+> +	debugfs->info->count = 0;
+
+Is that ordering between unlock() and setting those correct?
+> +
+> +	kfree(buf);
+> +
+> +	return count;
+> +}
+> +
+> +static const struct file_operations fpga_mgr_image_fops = {
+> +	.open = simple_open,
+> +	.write = fpga_mgr_image_write_file,
+> +	.llseek = default_llseek,
+> +};
+> +
+> +void fpga_mgr_debugfs_add(struct fpga_manager *mgr)
+> +{
+> +	struct device *dev = &mgr->dev;
+> +	struct fpga_mgr_debugfs *debugfs;
+> +	struct fpga_image_info *info;
+> +
+> +	if (!fpga_mgr_debugfs_root)
+> +		return;
+> +
+> +	debugfs = kzalloc(sizeof(*debugfs), GFP_KERNEL);
+> +	if (!debugfs)
+> +		return;
+> +
+> +	info = fpga_image_info_alloc(dev);
+> +	if (!info) {
+> +		kfree(debugfs);
+> +		return;
+> +	}
+> +	debugfs->info = info;
+> +
+> +	debugfs->debugfs_dir = debugfs_create_dir(dev_name(dev),
+> +						  fpga_mgr_debugfs_root);
+> +
+> +	debugfs_create_file("firmware_name", 0600, debugfs->debugfs_dir, mgr,
+> +			    &fpga_mgr_firmware_fops);
+> +
+> +	debugfs_create_file("image", 0200, debugfs->debugfs_dir, mgr,
+> +			    &fpga_mgr_image_fops);
+> +
+> +	debugfs_create_u32("flags", 0600, debugfs->debugfs_dir, &info->flags);
+> +
+> +	debugfs_create_u32("config_complete_timeout_us", 0600,
+> +			   debugfs->debugfs_dir,
+> +			   &info->config_complete_timeout_us);
+> +
+> +	mgr->debugfs = debugfs;
+> +}
+> +
+> +void fpga_mgr_debugfs_remove(struct fpga_manager *mgr)
+> +{
+> +	struct fpga_mgr_debugfs *debugfs = mgr->debugfs;
+> +
+> +	if (!fpga_mgr_debugfs_root)
+> +		return;
+> +
+> +	debugfs_remove_recursive(debugfs->debugfs_dir);
+> +
+> +	/* this function also frees debugfs->info->firmware_name */
+> +	fpga_image_info_free(debugfs->info);
+> +
+> +	kfree(debugfs);
+> +}
+> +
+> +void fpga_mgr_debugfs_init(void)
+> +{
+> +	fpga_mgr_debugfs_root = debugfs_create_dir("fpga_manager", NULL);
+> +	if (!fpga_mgr_debugfs_root)
+> +		pr_warn("fpga_mgr: Failed to create debugfs root\n");
+> +}
+> +
+> +void fpga_mgr_debugfs_uninit(void)
+> +{
+> +	debugfs_remove_recursive(fpga_mgr_debugfs_root);
+> +}
+> diff --git a/drivers/fpga/fpga-mgr-debugfs.h b/drivers/fpga/fpga-mgr-debugfs.h
+> new file mode 100644
+> index 0000000..17cd3eb
+> --- /dev/null
+> +++ b/drivers/fpga/fpga-mgr-debugfs.h
+> @@ -0,0 +1,22 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#ifndef _LINUX_FPGA_MGR_DEBUGFS_H
+> +#define _LINUX_FPGA_MGR_DEBUGFS_H
+> +
+> +#if IS_ENABLED(CONFIG_FPGA_MGR_DEBUG_FS)
+> +
+> +void fpga_mgr_debugfs_add(struct fpga_manager *mgr);
+> +void fpga_mgr_debugfs_remove(struct fpga_manager *mgr);
+> +void fpga_mgr_debugfs_init(void);
+> +void fpga_mgr_debugfs_uninit(void);
+> +
+> +#else
+> +
+> +void fpga_mgr_debugfs_add(struct fpga_manager *mgr) {}
+> +void fpga_mgr_debugfs_remove(struct fpga_manager *mgr) {}
+> +void fpga_mgr_debugfs_init(void) {}
+> +void fpga_mgr_debugfs_uninit(void) {}
+> +
+> +#endif /* CONFIG_FPGA_MGR_DEBUG_FS */
+> +
+> +#endif /*_LINUX_FPGA_MGR_DEBUGFS_H */
+> diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
+> index c8684bc..66eb6f6 100644
+> --- a/drivers/fpga/fpga-mgr.c
+> +++ b/drivers/fpga/fpga-mgr.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/scatterlist.h>
+>  #include <linux/highmem.h>
+> +#include "fpga-mgr-debugfs.h"
+>  
+>  static DEFINE_IDA(fpga_mgr_ida);
+>  static struct class *fpga_mgr_class;
+> @@ -698,6 +699,8 @@ int fpga_mgr_register(struct fpga_manager *mgr)
+>  	if (ret)
+>  		goto error_device;
+>  
+> +	fpga_mgr_debugfs_add(mgr);
+> +
+>  	dev_info(&mgr->dev, "%s registered\n", mgr->name);
+>  
+>  	return 0;
+> @@ -722,6 +725,8 @@ void fpga_mgr_unregister(struct fpga_manager *mgr)
+>  {
+>  	dev_info(&mgr->dev, "%s %s\n", __func__, mgr->name);
+>  
+> +	fpga_mgr_debugfs_remove(mgr);
+> +
+>  	/*
+>  	 * If the low level driver provides a method for putting fpga into
+>  	 * a desired state upon unregister, do it.
+> @@ -748,11 +753,14 @@ static int __init fpga_mgr_class_init(void)
+>  	fpga_mgr_class->dev_groups = fpga_mgr_groups;
+>  	fpga_mgr_class->dev_release = fpga_mgr_dev_release;
+>  
+> +	fpga_mgr_debugfs_init();
+> +
+>  	return 0;
+>  }
+>  
+>  static void __exit fpga_mgr_class_exit(void)
+>  {
+> +	fpga_mgr_debugfs_uninit();
+>  	class_destroy(fpga_mgr_class);
+>  	ida_destroy(&fpga_mgr_ida);
+>  }
+> diff --git a/include/linux/fpga/fpga-mgr.h b/include/linux/fpga/fpga-mgr.h
+> index 777c502..e8f2159 100644
+> --- a/include/linux/fpga/fpga-mgr.h
+> +++ b/include/linux/fpga/fpga-mgr.h
+> @@ -170,6 +170,9 @@ struct fpga_manager {
+>  	struct fpga_compat_id *compat_id;
+>  	const struct fpga_manager_ops *mops;
+>  	void *priv;
+> +#if IS_ENABLED(CONFIG_FPGA_MGR_DEBUG_FS)
+> +	void *debugfs;
+> +#endif
+>  };
+>  
+>  #define to_fpga_manager(d) container_of(d, struct fpga_manager, dev)
+> -- 
+> 2.7.4
+> 
+
+Thanks,
+
+Moritz
