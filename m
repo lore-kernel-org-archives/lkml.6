@@ -2,114 +2,161 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2508C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73635C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 865302147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:25:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 865302147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 24FBB2147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:26:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+jI0km8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24FBB2147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391840AbeHPRYM (ORCPT
+        id S2391850AbeHPRZN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 13:24:12 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57558 "EHLO mail.bootlin.com"
+        Thu, 16 Aug 2018 13:25:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389613AbeHPRYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 13:24:12 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DA1A8207F3; Thu, 16 Aug 2018 16:25:14 +0200 (CEST)
-Received: from qschulz (AAubervilliers-681-1-43-114.w90-88.abo.wanadoo.fr [90.88.161.114])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8787C20703;
-        Thu, 16 Aug 2018 16:25:14 +0200 (CEST)
-Date:   Thu, 16 Aug 2018 16:25:14 +0200
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Rob Herring <robh@kernel.org>, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org, mark.rutland@arm.com,
-        davem@davemloft.net, kishon@ti.com, andrew@lunn.ch,
-        f.fainelli@gmail.com, linux-mips@linux-mips.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, allan.nielsen@microsemi.com,
-        thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH net-next 02/10] dt-bindings: net: ocelot: remove hsio
- from the list of register address spaces
-Message-ID: <20180816142514.pf4eiqeditoy4uei@qschulz>
-References: <cover.aa759035f6eefdd0bb2a5ae335dab5bd5399bd46.1532954208.git-series.quentin.schulz@bootlin.com>
- <3558e538b55a2249b0a179c04c27e9d3715bbbaa.1532954208.git-series.quentin.schulz@bootlin.com>
- <20180813223103.GA16669@rob-hp-laptop>
- <20180814064953.vboz2gryq4jff34n@qschulz>
- <20180814124135.GK943@piout.net>
+        id S1726384AbeHPRZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 13:25:13 -0400
+Received: from mail-yb0-f178.google.com (mail-yb0-f178.google.com [209.85.213.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C814021486;
+        Thu, 16 Aug 2018 14:26:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534429576;
+        bh=WfPNLG8dyjSTrlQhF9xLCSDuAbW7b07/OcokzulIxrs=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=c+jI0km8m/845TG+FVmeq1gIUc4+y86N0QY0iWkgB3vjtLvHCe11LL0J55kx4+/pS
+         AKdqbbxjR1QS6iX/RwXyFUYlVxmxWDiZF0MUn1uYyNTTmc/PlyGBL0vnQuLZcPPa0m
+         snbyjTILKkvIcfagm6ICBU3pWv9i+8XepLgYfWOw=
+Received: by mail-yb0-f178.google.com with SMTP id d34-v6so674856yba.3;
+        Thu, 16 Aug 2018 07:26:16 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEsJJRV4QN8S+2hQ8AgTsadekOvEgVUuNzPm48pJTbFO2KyNWAn
+        hM7+1xSrWxwfEUR0aTQrlQ788Sc2U5lHa0AayBc=
+X-Google-Smtp-Source: AA+uWPw3okflg09NRb2oUVq9G48V5AyXAvO5WE3GbVCX8TkZHCbZXKYFNOkx8+f32JG+odEnuL6p/fPdBF/x3M7Q6k0=
+X-Received: by 2002:a25:d84e:: with SMTP id p75-v6mr16319903ybg.315.1534429575996;
+ Thu, 16 Aug 2018 07:26:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="aqdqbjx2wofggoxf"
-Content-Disposition: inline
-In-Reply-To: <20180814124135.GK943@piout.net>
-User-Agent: NeoMutt/20171215
+Received: by 2002:a25:81c8:0:0:0:0:0 with HTTP; Thu, 16 Aug 2018 07:25:35
+ -0700 (PDT)
+In-Reply-To: <9043a69f-47d8-0ffe-ca15-77c9c73c085f@infradead.org>
+References: <20180815220958.3606-1-atull@kernel.org> <20180815220958.3606-2-atull@kernel.org>
+ <9043a69f-47d8-0ffe-ca15-77c9c73c085f@infradead.org>
+From:   Alan Tull <atull@kernel.org>
+Date:   Thu, 16 Aug 2018 09:25:35 -0500
+X-Gmail-Original-Message-ID: <CANk1AXTOKKVdVDEkQ5d73F3nzgDDK9jgm2gRPpXbNM5A4aNS1w@mail.gmail.com>
+Message-ID: <CANk1AXTOKKVdVDEkQ5d73F3nzgDDK9jgm2gRPpXbNM5A4aNS1w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fpga: add FPGA manager debugfs
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Moritz Fischer <mdf@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fpga@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Alan Tull <atull@opensource.altera.com>,
+        Matthew Gerlach <matthew.gerlach@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Aug 15, 2018 at 5:34 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
 
---aqdqbjx2wofggoxf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Randy,
 
-Hi Alexandre,
+> On 08/15/2018 03:09 PM, Alan Tull wrote:
+>> From: Alan Tull <atull@opensource.altera.com>
+>>
+>> Implement DebugFS for the FPGA Manager Framework for
+>> debugging and developmental use.
+>>
+>> Enabled by CONFIG_FPGA_MGR_DEBUG_FS
+>
+> Hi Alan,
+>
+> for your v2 changes:
+>
+>> Each FPGA gets its own directory such as
+>>  <debugfs>/fpga_manager/fpga0 and three files:
+>
+> s/three/four/
 
-On Tue, Aug 14, 2018 at 02:41:35PM +0200, Alexandre Belloni wrote:
-> On 14/08/2018 08:49:53+0200, Quentin Schulz wrote:
-> > Understood but it's an intermediate patch. Later (patch 8), the SerDes
-> > muxing "controller" is added as a child to this node. There most likely
-> > will be some others in the future (temperature sensor for example).
-> >=20
-> > Furthermore, there's already a simple-mfd without children in this file:
-> > https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree=
-/bindings/mips/mscc.txt#L19
-> >=20
-> > How should we handle this case?
-> >=20
->=20
-> There were child nodes in previous version of the binding. You can
-> remove simple-mfd now. The useful registers that are not used by any
-> drivers are gpr and chipid.
->=20
+Yes
 
-And what about the use case I'm facing? I've got child nodes defined in
-it but with a later patch (but they actually haven't made it to the
-DT binding documentation, so that's for the next version of the patch
-series).
+>
+>>
+>>  * [RW] flags          = flags as defined in fpga-mgr.h
+>>  * [RW] firmware_name  = write/read back name of FPGA image
+>>                          firmware file to program
+>>  * [WO] image          = write-only file for directly writing
+>>                          fpga image w/o firmware layer
+>>  * [RW] config_complete_timeout_us = maximum for the FPGA to
+>>                          go to the operating state after
+>>                        programming
+>>
+>> The debugfs is implemented in a separate fpga_mgr_debugfs.c
+>
+>       debugfs interface is
 
-OK, for removing simple-mfd from CPU chip regs documentation.
+Yes
 
-Thanks,
-Quentin
+>
+>> file, but the FPGA manager core is still built as one
+>> module.  Note the name change from fpga-mgr.ko to fpga_mgr.ko.
+>>
+>> Signed-off-by: Alan Tull <atull@kernel.org>
+>> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+>> ---
+>>  drivers/fpga/Kconfig            |   7 ++
+>>  drivers/fpga/Makefile           |   4 +-
+>>  drivers/fpga/fpga-mgr-debugfs.c | 221 ++++++++++++++++++++++++++++++++++++++++
+>>  drivers/fpga/fpga-mgr-debugfs.h |  22 ++++
+>>  drivers/fpga/fpga-mgr.c         |   8 ++
+>>  include/linux/fpga/fpga-mgr.h   |   3 +
+>>  6 files changed, 264 insertions(+), 1 deletion(-)
+>>  create mode 100644 drivers/fpga/fpga-mgr-debugfs.c
+>>  create mode 100644 drivers/fpga/fpga-mgr-debugfs.h
+>>
+>> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+>> index 1ebcef4..600924d 100644
+>> --- a/drivers/fpga/Kconfig
+>> +++ b/drivers/fpga/Kconfig
+>> @@ -9,6 +9,13 @@ menuconfig FPGA
+>>         kernel.  The FPGA framework adds a FPGA manager class and FPGA
+>>         manager drivers.
+>>
+>> +config FPGA_MGR_DEBUG_FS
+>> +       bool "FPGA Manager DebugFS"
+>> +       depends on FPGA && DEBUG_FS
+>> +       help
+>> +         Say Y here if you want to expose a DebugFS interface for the
+>> +      FPGA Manager Framework.
+>
+> Use tab indentation for bool, depends, and help lines.
+>
+> Use tab +2 spaces for help text.
 
---aqdqbjx2wofggoxf
-Content-Type: application/pgp-signature; name="signature.asc"
+Yes, thanks for catching that.  I'll fix these in v2.
 
------BEGIN PGP SIGNATURE-----
+Thanks for the review!
 
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlt1iUkACgkQhLiadT7g
-8aMS4Q/+OD8XkRtfVO/sHnbGEJXJShU19E8I7jLuwgrlSuxKKY2yoUIv/KOVCnrv
-hwM4A3Jo63fuWFwrcTSJxos4GirvwFFFKwRufzSoLB8q/WvUk6oxDso5zmPZirem
-GJ8H6jVFQCYPOKOD1RLEmY2UhAhM/u6nI0Fq5BFY3ONLfXoGnIwmVDRm6+r1R7MS
-YPO7il+4YkHXCxFauTepBGVPH4KoQCLZzCBqShg52PP8pa7/VF6lgc1QXeLPRYkj
-jzZrQnsIYosDRaAK/5fGvSQ93E0swboIzjrP3wVx7iiZFk7i566/CIOtoeLfLB9S
-bHf34VdoT+xdkmJFVkZq6n8rovF/ly9uMcUQ/nfIMq0nr6ZRgblUfDuSnrdhH+Xj
-RMR5DlEmDVuuxffm6MBmw+SHC/eIUF+u4J7CN2qQ4nZthqgN3o0Gs5Y2RC/vehUe
-J/XUV/ak89lQ7ouNF2HjZvhPCYKYSGtnVeYr4af0bFJ8N+8hFyXYm/Q9GacrVnQk
-8wIp6kP7U3kghjaYJ9denBc8NP9VoiwXl2lj38mXz/ubiGuA65Yz0MeKoIB7HnP8
-BoFBEWfoK3QR+fYyWmq5CNWLkBZaX9O6xhLaZ0uCx4pEMwP5a4ZT3/R2xROUE8UH
-NtEArLELWMHs6MXfLsTMRMlk/Yfh4hGDydFKNPfGDlc6c6ZlRLk=
-=MYiC
------END PGP SIGNATURE-----
+Alan
 
---aqdqbjx2wofggoxf--
+>
+>> +
+>>  if FPGA
+>>
+>>  config FPGA_MGR_SOCFPGA
+>
+> thanks,
+> --
+> ~Randy
