@@ -2,253 +2,170 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5261C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 22:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA58C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 22:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E4A3208D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 22:16:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="LHpax/X8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E4A3208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 20947208D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 22:18:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20947208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726047AbeHQBR2 (ORCPT
+        id S1726133AbeHQBTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 21:17:28 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:36621 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbeHQBR2 (ORCPT
+        Thu, 16 Aug 2018 21:19:08 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45868 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725888AbeHQBTH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 21:17:28 -0400
-Received: by mail-it0-f68.google.com with SMTP id p81-v6so8936362itp.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 15:16:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=NzW2/MkenckITEon2Sc7c1PDvG6EUmEi4Mi8Ch5Y4V4=;
-        b=LHpax/X8lFAeH0pPdDNAsYG8ROSkOnoP9/d7bNDQ+qP8/NRicIFs9gz38l9fVS7oFF
-         Ct+X31L7kNwLE5ytbmNWNow/bszqRkiWZGEoBNmMRkn8YU49NWJ/EYfZpcSdDIqOKrqq
-         TOPwVcoKBxq9VGBn3Rc8HSijnCjDVMdi5oQpE=
+        Thu, 16 Aug 2018 21:19:07 -0400
+Received: by mail-lf1-f67.google.com with SMTP id 73-v6so2431933lfs.12;
+        Thu, 16 Aug 2018 15:18:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=NzW2/MkenckITEon2Sc7c1PDvG6EUmEi4Mi8Ch5Y4V4=;
-        b=PKYA4QpsJ5psFMhkecSrmrme7qBMVOhjtAI2yqJzjSudQM95YiN6U2yrEhLThNHUWz
-         398eNVHjYY+tdY/YIdwna54K0/rJpKWBFszB4Pe620bNf3soPu4hGw9TK7K7xlcOW5jg
-         sRYhR9sMkeFnzHX1YWVuCdQkncsBnm23umimLSHBAD4kQ287yT1tORd1VrUyMBSywQPz
-         Ies+ZMda9R3Aer8MZS6POQoF7a4MfL8blnBQv3R96ApxiYSAEXAloekTjloGJtyEd6QM
-         v9z4g1u8Wg2Yct/UYlEtjtHL12+tWv2yDfxBqOjMg5jh/5hb+micBEWa93T9HgL8dZUj
-         XoTw==
-X-Gm-Message-State: AOUpUlGTWKEnsqiA2e7Aj+cYVRGHFTGA6ztOZ8bkERgrofk4wmLKd5LS
-        xptw8c9nYaJqISMxNNRF3huBR/Uo/2l0Mo6d9ZxgjQ==
-X-Google-Smtp-Source: AA+uWPxznWU9F+1y6eqbOduvdC2yX6yZV54yzPmP0lTcwoBi8NKoxKqREGpZv6LlARiIErSbuF6LVLsBgB/jrGTqBOY=
-X-Received: by 2002:a24:6e0f:: with SMTP id w15-v6mr23673454itc.77.1534457795091;
- Thu, 16 Aug 2018 15:16:35 -0700 (PDT)
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=dQ88hhfq/flUFw+Ni4Bm5n6Zjze2N1GdXWcr+RlXaoI=;
+        b=djeAoIMxPuuiayvZzs6aC4g+4rDUzE6kk0Ed5WIUxFSqbYOwqEfwLC/bwVYyB1e0bJ
+         W7OA3yRAAQnu18iXUaHtdxgZKcCcP9e9zUzuAQsr8Z5exoUOrT/R6UEsHPPJQuUnK/xl
+         ckU5QNZVKinjT9xrUy/VKBbrx/DDbVXYVSzDHJkwt6vUgGngwe7EkkJeCKr3Fx+VNsyw
+         NgRz5W6zJgMWo1wg3VAUm7YYfwmlxce75G4FyBI5Ln4D7p/HTTIBKWlRJFRS2HrxxZsm
+         RdqjDN3DOgcFard9k1B7i6P6SgJCuOM0oqF2rZ4rJkXiYLyFtChM+IJx3anxsFC5jR4T
+         4FjA==
+X-Gm-Message-State: AOUpUlFcjvy43qLzi0szsxezBqhI5/jp2hFH4o886rG9iuBK8uzsxXy9
+        mz1EylLwwehXGaXDlkltyeQ5XJytWZ0=
+X-Google-Smtp-Source: AA+uWPz2XF+pB/4JYJ+1UjVpDiFamqjqVV0c2EF5L/f+WbEX0n0D1dLZ+ckhB7wDG8hbr8anWGCbUQ==
+X-Received: by 2002:a19:63dc:: with SMTP id v89-v6mr21629631lfi.23.1534457892502;
+        Thu, 16 Aug 2018 15:18:12 -0700 (PDT)
+Received: from [192.168.1.183] (128-68-185-116.broadband.corbina.ru. [128.68.185.116])
+        by smtp.gmail.com with ESMTPSA id l78-v6sm88142lfl.4.2018.08.16.15.18.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Aug 2018 15:18:11 -0700 (PDT)
+Reply-To: alex.popov@linux.com
+Subject: Re: [GIT PULL] gcc-plugin updates for v4.19-rc1
+To:     Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-crypto <linux-crypto@vger.kernel.org>
+References: <20180813214328.GA15137@beast>
+ <CA+55aFw5Tkn6DgkAZS-UGOjJpYp2R4rFAm9ixu_=FONeqRyofg@mail.gmail.com>
+ <CAGXu5jK_w7JRywdQ78FfQxeLSMmXbvyDDnaYzj27=y8wnAzKxQ@mail.gmail.com>
+ <CA+55aFyFCWH3YJnRUKtSzs9Mvny0eU+=QANxoPTE+9B9CkUWDw@mail.gmail.com>
+ <CAGXu5jJ1JNSxJABUTAO85z_hXjSkjD=nWEho7KrYJTqqVGivig@mail.gmail.com>
+ <CA+55aFy6jNLsywVYdGp83AMrXBo_P-pkjkphPGrO=82SPKCpLQ@mail.gmail.com>
+ <CAGXu5j+Yv9Bu4mJPOfkpxrom91kSKaUESHR-Tn1CAJCTTZy_8w@mail.gmail.com>
+From:   Alexander Popov <alex.popov@linux.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=alex.popov@linux.com; prefer-encrypt=mutual; keydata=
+ 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
+ jXz/74kjFsyRgZA+d6a1pGtOwITEBxtxxg==
+Message-ID: <43da98d0-409b-88b9-0178-a79b581fc044@linux.com>
+Date:   Fri, 17 Aug 2018 01:18:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a4f:e502:0:0:0:0:0 with HTTP; Thu, 16 Aug 2018 15:16:34
- -0700 (PDT)
-X-Originating-IP: [212.51.149.109]
-In-Reply-To: <CALAqxLVrZXRT875-AxN=jt_kSD5=Nb9SuCW4PEsVL=pQkT_ugw@mail.gmail.com>
-References: <CAPM=9txqtcX42eSYjkyJLL8mmzomXRRHi7iWmW=BYgk=CAagZg@mail.gmail.com>
- <CALAqxLXt3MOc=W_gnsR=D=Um5RPsK+6sTKDbSiqro_53ZbXfQQ@mail.gmail.com>
- <CAKMK7uFb0jXVm4gGr_TR07mhT924sTORGXZVNzx4rdTe3Pj94Q@mail.gmail.com>
- <CALAqxLWq-wgbc+aS0p45rvxmPj3KicsOV5ucCB-tcKWr74uqCQ@mail.gmail.com>
- <CAKMK7uEbfa24DaDbWjxgerzH69q-niHS5==z6NqJd3Yxi0q+7A@mail.gmail.com> <CALAqxLVrZXRT875-AxN=jt_kSD5=Nb9SuCW4PEsVL=pQkT_ugw@mail.gmail.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Fri, 17 Aug 2018 00:16:34 +0200
-X-Google-Sender-Auth: uSLRm1AfVe1opZoiyw65ghboYRM
-Message-ID: <CAKMK7uHrCAQpUhd2D4PpiizascLwP1kYgMM6cZv3B8OGez66Sw@mail.gmail.com>
-Subject: Re: [git pull] drm for 4.19-rc1
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     Dave Airlie <airlied@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAGXu5j+Yv9Bu4mJPOfkpxrom91kSKaUESHR-Tn1CAJCTTZy_8w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 11:21 PM, John Stultz <john.stultz@linaro.org> wrot=
-e:
-> On Thu, Aug 16, 2018 at 1:46 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
->> On Thu, Aug 16, 2018 at 10:38 PM, John Stultz <john.stultz@linaro.org> w=
-rote:
->>> On Thu, Aug 16, 2018 at 12:16 AM, Daniel Vetter <daniel@ffwll.ch> wrote=
-:
->>>> On Thu, Aug 16, 2018 at 8:04 AM, John Stultz <john.stultz@linaro.org> =
-wrote:
->>>>> On Tue, Aug 14, 2018 at 7:53 PM, Dave Airlie <airlied@gmail.com> wrot=
-e:
->>>>>> This is the main drm pull request for 4.19.
->>>>>>
->>>>>> Rob has some new hardware support for new qualcomm hw that I'll send=
- along
->>>>>> separately. This has the display part of it, the remaining pull is f=
-or the
->>>>>> acceleration engine.
->>>>>>
->>>>>> This also contains a wound-wait/wait-die mutex rework, Peter has ack=
-ed it
->>>>>> for merging via my tree.
->>>>>>
->>>>>> Otherwise mostly the usual level of activity.
->>>>>
->>>>> Hey Folks,
->>>>>   Since this branch landed, I've been seeing the following panic on
->>>>> bootup w/ the HiKey board (which uses the hisilicon/kirin drm driver)=
-:
->>>>>
->>>>> [    8.088388] Unable to handle kernel read from unreadable memory at
->>>>> virtual address 0000000000000030
->>>>> [    8.088393] Mem abort info:
->>>>> [    8.088397]   ESR =3D 0x96000005
->>>>> [    8.088402]   Exception class =3D DABT (current EL), IL =3D 32 bit=
-s
->>>>> [    8.088406]   SET =3D 0, FnV =3D 0
->>>>> [    8.088410]   EA =3D 0, S1PTW =3D 0
->>>>> [    8.088413] Data abort info:
->>>>> [    8.088417]   ISV =3D 0, ISS =3D 0x00000005
->>>>> [    8.088421]   CM =3D 0, WnR =3D 0
->>>>> [    8.088427] user pgtable: 4k pages, 39-bit VAs, pgdp =3D (____ptrv=
-al____)
->>>>> [    8.088432] [0000000000000030] pgd=3D0000000000000000, pud=3D00000=
-00000000000
->>>>> [    8.088443] Internal error: Oops: 96000005 [#1] PREEMPT SMP
->>>>> [    8.088453] CPU: 5 PID: 1414 Comm: kworker/5:2 Tainted: G        W
->>>>>        4.18.0-07439-gbf1fba4 #633
->>>>> [    8.088457] Hardware name: HiKey Development Board (DT)
->>>>> [    8.088474] Workqueue: events adv7511_hpd_work
->>>>> [    8.088482] pstate: 40400005 (nZcv daif +PAN -UAO)
->>>>> [    8.088493] pc : drm_sysfs_hotplug_event+0x40/0x78
->>>>> [    8.088499] lr : drm_sysfs_hotplug_event+0x40/0x78
->>>>> [    8.088502] sp : ffffff800ba73d20
->>>>> [    8.088506] x29: ffffff800ba73d20 x28: 0000000000000000
->>>>> [    8.088514] x27: ffffff8009293cd8 x26: ffffffc074e55938
->>>>> [    8.088522] x25: 0000000000000000 x24: ffffffc07ff85000
->>>>> [    8.088530] x23: ffffffc0742c4a78 x22: ffffffc07ff86c00
->>>>> [    8.088537] x21: ffffffc0750d0e00 x20: 0000000000000000
->>>>> [    8.088545] x19: ffffff8009009a48 x18: 0000000000000000
->>>>> [    8.088552] x17: 0000000000000000 x16: ffffffc074fbde80
->>>>> [    8.088560] x15: 0000000000000000 x14: ffffffc005f96c00
->>>>> [    8.088568] x13: 00000040770c9000 x12: 0000000034d5d91d
->>>>> [    8.088575] x11: 0000000000000000 x10: 0000000000000990
->>>>> [    8.088582] x9 : ffffff800ba739b0 x8 : ffffff800913e000
->>>>> [    8.088589] x7 : 0000000000000000 x6 : ffffff8009009a48
->>>>> [    8.088596] x5 : ffffff80090588d0 x4 : 0000000000000000
->>>>> [    8.088602] x3 : ffffff8009009a48 x2 : 0000000000000000
->>>>> [    8.088608] x1 : 18701cfc97cf1200 x0 : 0000000000000000
->>>>> [    8.120775] Process kworker/5:2 (pid: 1414, stack limit =3D 0x(___=
-_ptrval____))
->>>>> [    8.120778] Call trace:
->>>>> [    8.120787]  drm_sysfs_hotplug_event+0x40/0x78
->>>>> [    8.120794]  drm_kms_helper_hotplug_event+0x14/0x40
->>>>> [    8.120800]  adv7511_hpd_work+0x64/0xe0
->>>>> [    8.120807]  process_one_work+0x12c/0x320
->>>>> [    8.120814]  worker_thread+0x48/0x458
->>>>> [    8.126654]  kthread+0xf8/0x128
->>>>> [    8.126661]  ret_from_fork+0x10/0x18
->>>>> [    8.126672] Code: aa0003f4 52800020 a902ffa2 94006637 (f9401a80)
->>>>> [    8.135638] ---[ end trace cf7120942e6f40fa ]---
->>>>>
->>>>> And earlier in boot we see:
->>>>>
->>>>> [    4.620909] kirin-drm f4100000.ade: bound f4107800.dsi (ops dsi_op=
-s)
->>>>> [    4.627304] [drm] Supports vblank timestamp caching Rev 2 (21.10.2=
-013).
->>>>> [    4.633935] [drm] No driver support for vblank timestamp query.
->>>>> [    4.732910] kirin-drm f4100000.ade: [drm:drm_fb_helper_fbdev_setup=
-]
->>>>> *ERROR* Failed to set fbdev configuration
->>>>> [    4.742948] [drm:kirin_drm_bind] *ERROR* failed to initialize fbde=
-v.
->>>>> [    4.749585] kirin-drm f4100000.ade: master bind failed: -22
->>>>> [    4.755218] dw-dsi: probe of f4107800.dsi failed with error -22
->>>>>
->>>>> I've also seen similar trouble w/ the HiKey960 which uses a similar
->>>>> but still out of tree driver that also utilizes the cma fbhelper code=
-,
->>>>> which makes me suspect it has to do with the drm/cma-helper changes
->>>>> below:
->>>>>
->>>>>> Noralf Tr=C3=B8nnes (15):
->>>>>>       drm/file: Don't set master on in-kernel clients
->>>>>>       drm: Make ioctls available for in-kernel clients
->>>>>>       drm: Begin an API for in-kernel clients
->>>>>>       drm/fb-helper: Add generic fbdev emulation .fb_probe function
->>>>>>       drm/pl111: Set .gem_prime_vmap and .gem_prime_mmap
->>>>>>       drm/cma-helper: Use the generic fbdev emulation
->>>>>>       drm/debugfs: Add internal client debugfs file
->>>>>>       drm/fb-helper: Finish the generic fbdev emulation
->>>>>>       drm/tinydrm: Use drm_fbdev_generic_setup()
->>>>>>       drm/cma-helper: Remove drm_fb_cma_fbdev_init_with_funcs()
->>>>>
->>>>> Though I've not yet had time to bisect this down tonight.
->>>>>
->>>>> I'll spend some more time on this tomorrow, but wanted to give folks =
-a
->>>>> heads up in the meantime.
->>>>
->>>> Hm, not immediately seeing what's going boom here. Bisect would indeed
->>>> be good, but maybe we need to chase the callchain to figure out where
->>>> exactly that -EINVAL is coming from in the reworked code (and why
->>>> hikey is the first to hit that, there's lots of cma based drivers
->>>> after all).
->>>
->>> So I can confirm reverting:
->>> 85b5bafb86e6 ("drm/cma-helper: Remove drm_fb_cma_fbdev_init_with_funcs(=
-)")
->>> and
->>> 894a677f4b3e ("drm/cma-helper: Use the generic fbdev emulation")
->>>
->>> makes things work again.
->>>
->>> Though without the reverts, I was digging to understand what was
->>> failing, and it seems when we call into
->>> drm_client_framebuffer_create(), as Noralf suggested, we're eventually
->>> failing at drm_internal_framebuffer_create() when checking
->>> config->max_height.  The kirin driver is somewhat limited w/ max
->>> width/height values at 2048 each.
->>>
->>> Though I'm on a 1920x1080 monitor (max resolution supported by the
->>> board), it seems we're trying to allocate a 1920x2160 buffer? I know
->>> Android tries to allocate 2x Y for page-flipping, but I'm not sure yet
->>> why the old code didn't hit this problem.
->>>
->>> Unfortunately bumping the max width/height values to 4096 cause the
->>> system to hard hang as userspace starts up (and setting it to
->>> 2048/2160 does the same).
->>>
->>> So yea, I'm going to continue to dig at the hard-hang issue, and
->>> hopefully we can just  bump the max width/height, but if there are
->>> other suggestions, please let me know.
->>
->> You happen to have set drm_fb_overalloc respectively
->> CONFIG_DRM_FBDEV_OVERALLOC? Was added so that mali blob can pageflip,
->> would explain what's going on at least.
->
-> Yep. CONFIG_DRM_FBDEV_OVERALLOC is set to 200.
+Hello,
 
-So ->max_height is indeed the limit (or should be, minus driver bugs)
-for framebuffers. That's enforced in drm_framebuffer_create_internal
-for everything (both ioctl and should also for all internal callers),
-except the cma helpers never made sure this is correct. So I'd call
-this a bugfix.
+On 15.08.2018 23:56, Kees Cook wrote:
+> On Wed, Aug 15, 2018 at 1:18 PM, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>> I absolutely refuse to take any hardening patches at all that have
+>> BUG() or panic() or similar machine-killing in it.
+> 
+> Okay, mental model adjusted. :) It was only "strong discouraged" until now.
+> 
+>> I thought VLA's were mostly gone.
+...
+> And after that, there's a single patch to move -Wvla up into the
+> top-level Makefile:
+> 
+> https://patchwork.kernel.org/patch/10489873/
+> 
+> So, we're basically done
 
-Now the question is whether the fbdev page-flipping actually worked on
-older kernels for you or not ...
--Daniel
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+I've just sent the 15th version of the series with changes according to the
+feedback from Linus:
+
+1. BUG_ON() in stackleak_erase() is safely eliminated;
+
+2. Stack Clash detection (alloca() check) is completely dropped, since global
+'-Wvla' should arrive soon. stackleak_check_alloca() for arm64 is dropped as
+well in a separate commit.
+
+This version is rebased onto Linus' tree.
+
+Best regards,
+Alexander
