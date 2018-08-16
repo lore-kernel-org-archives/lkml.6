@@ -6,71 +6,70 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 626E6C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D244AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:12:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16279214C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:12:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F247214C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:12:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A3ih0iot"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16279214C2
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JYzjFbQ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F247214C2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390325AbeHPMJZ (ORCPT
+        id S2390338AbeHPMJz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 08:09:25 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41992 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728165AbeHPMJY (ORCPT
+        Thu, 16 Aug 2018 08:09:55 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39137 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728165AbeHPMJy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 08:09:24 -0400
-Received: by mail-wr1-f67.google.com with SMTP id e7-v6so3463097wrs.9
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 02:12:14 -0700 (PDT)
+        Thu, 16 Aug 2018 08:09:54 -0400
+Received: by mail-wm0-f66.google.com with SMTP id q8-v6so3656411wmq.4
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 02:12:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=QAwynADlPKYuP4aeifp7Ola9qHjzWIRt8Cy2YRNpqvE=;
-        b=A3ih0iotjw5WB/ZWP4+RM/jkU+7CkA3E1+ZRP3dp6A9kk2tgqka8deceXqDnKfiUgx
-         GulJj5R+JP1FEdOeShHsqL0/Qqm6p8maZeXjrRdN8XK8fVHnC2lmAufGx3TISjvoxKvB
-         kOojCx/cwLzAfJKVYB5P2m3LGqtKdpCcqAzX4=
+        bh=dQXB3XbKb4lq83X5qoG2vmD4HiWZuEhQuTiwPKNXM/0=;
+        b=JYzjFbQ1QNU9oKT6TSj06HG/+IOz91Kgb86WbaWI89oUkaasinUGHvnYCubu3NXv3R
+         TnV7Kci4jMJdaWRg1r88RbmW7cx9H8aBVub7epH2gLqRz53Jf49HzXks7xjxXXAVEj4W
+         FFm2PuiQhBWdut8iAs9iIUod1c79GMZS47paA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=QAwynADlPKYuP4aeifp7Ola9qHjzWIRt8Cy2YRNpqvE=;
-        b=fVQNgQAyvA+H4RH2U2Xd4BA4qr4JS7x6a/w9AapfWA5yQwYpy5Dr5I+KezFxRGoUUG
-         9abfejVtUz9JwJM4I+cfKxwtsQrigCdHl84HzV87Bu8Lr/aN+1zc4GNeaObEOZgARd0Q
-         uY+q2e3ZVOrCdpcQtJujUuL5fqVXFIzBpJzAWFwRzLk3vYqKvLg8N/wGoNFwAyfbY7tv
-         OIdtShctzIPhqUd+kdw28Uf7tyhors3Wvk14dCVXxfn/TdYOdISSaNMvxEycDVlaE0O5
-         pPuyyz1B/g5+8/KaKbBfrKUTLUWf9MwHn3ifRpj+ABmzYpsh4UMyENDoifEYA53IIBK6
-         LyHg==
-X-Gm-Message-State: AOUpUlHMwhk9kFhJ/NsHGxslFkz2FA0B+WyiWBv1CL7k5KPo6ferH/VI
-        NuvZ8GLZLXDxTDeuqDFFO17se3F67KM=
-X-Google-Smtp-Source: AA+uWPzcJMFF0SeRzchiR1BoLaqUZFxaXo4NFE7N34WVuH7XLrPXyBzlz9ZybIFhS/SA59VZwU/VTQ==
-X-Received: by 2002:adf:e70a:: with SMTP id c10-v6mr1185432wrm.143.1534410734088;
-        Thu, 16 Aug 2018 02:12:14 -0700 (PDT)
+        bh=dQXB3XbKb4lq83X5qoG2vmD4HiWZuEhQuTiwPKNXM/0=;
+        b=lpl9t0/780PnAOTccuO7Q0/g+9Bv84zH1emyLOBQslhWl9hLOoTi2FLnJ2Mt+7LrU+
+         U6pkaSA7F9wu3Rj0Armo+gkGnYsKaVxJBLDPTSzTVLgJD+7thZEb6W9wFILsnAgSA7Bs
+         4Bc86KPkSbzi0/uMrCWknPLJTVEJNriW7Eb2G6yUvJ4ktl12j9PhSkjX56L73vHBspOl
+         meJlMB/P6A9OYooaESp9bN4ev096cZm9pfTQlVMnGcptxrtnvmC0vUVin+2Zm/U0mRp7
+         vO/+jSqEWq1IDXEDWGQfgI106waBa81ibfFsmbtuaN0+AJ8oeUtItwXU2s3QVq4DvEKM
+         6l3w==
+X-Gm-Message-State: AOUpUlH+2Jq4ygBNWQCpm3b0wIPDO29F4sDU+OKRQkThYYeYsNsFI8m7
+        SdPOUZPVbvPaNd9G5d5+wAtrWcoqCig=
+X-Google-Smtp-Source: AA+uWPyuKyQpd+Tf27R8JXmj38PX03aLt2zTkwoACEJ9uODsWOSALFdfxktJLsRUMc393kD9AZ31sQ==
+X-Received: by 2002:a1c:ec9d:: with SMTP id h29-v6mr16193872wmi.94.1534410764193;
+        Thu, 16 Aug 2018 02:12:44 -0700 (PDT)
 Received: from dell ([2.31.163.71])
-        by smtp.gmail.com with ESMTPSA id 199-v6sm1693332wmp.37.2018.08.16.02.12.12
+        by smtp.gmail.com with ESMTPSA id u7-v6sm1085000wmd.46.2018.08.16.02.12.43
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 Aug 2018 02:12:13 -0700 (PDT)
-Date:   Thu, 16 Aug 2018 10:12:11 +0100
+        Thu, 16 Aug 2018 02:12:43 -0700 (PDT)
+Date:   Thu, 16 Aug 2018 10:12:41 +0100
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Richard Fitzgerald <rf@opensource.cirrus.com>
 Cc:     patches@opensource.cirrus.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mfd: madera: Don't use regmap_read_poll_timeout to
- poll for BOOT_DONE
-Message-ID: <20180816091211.GF10054@dell>
+Subject: Re: [PATCH 1/2] mfd: madera: Add register definitions for accessory
+ detect
+Message-ID: <20180816091241.GG10054@dell>
 References: <20180807090813.15695-1-rf@opensource.cirrus.com>
- <20180807090813.15695-2-rf@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180807090813.15695-2-rf@opensource.cirrus.com>
+In-Reply-To: <20180807090813.15695-1-rf@opensource.cirrus.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -79,83 +78,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, 07 Aug 2018, Richard Fitzgerald wrote:
 
-> While polling for BOOT_DONE the chip could NAK a read because it is
-> still booting, which would terminate the regmap_read_poll_timeout()
-> with an error.
-> 
-> Instead implement a polling loop that ignores read errors so we
-> always poll until the chip signals boot or the loop times out.
+> Add some register definitions for accessory detection, used
+> by the extcon driver.
 > 
 > Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 > ---
->  drivers/mfd/madera-core.c | 38 ++++++++++++++++++++++++--------------
->  1 file changed, 24 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
-> index 8cfea969b060..bc5545c53ee5 100644
-> --- a/drivers/mfd/madera-core.c
-> +++ b/drivers/mfd/madera-core.c
-> @@ -132,33 +132,43 @@ const char *madera_name_from_type(enum madera_type type)
->  }
->  EXPORT_SYMBOL_GPL(madera_name_from_type);
->  
-> -#define MADERA_BOOT_POLL_MAX_INTERVAL_US  5000
-> -#define MADERA_BOOT_POLL_TIMEOUT_US	 25000
-> +#define MADERA_BOOT_POLL_INTERVAL_USEC		5000
-> +#define MADERA_BOOT_POLL_TIMEOUT_USEC		25000
->  
->  static int madera_wait_for_boot(struct madera *madera)
->  {
-> -	unsigned int val;
-> -	int ret;
-> +	ktime_t timeout;
-> +	unsigned int val = 0;
-> +	int ret = 0;
->  
->  	/*
->  	 * We can't use an interrupt as we need to runtime resume to do so,
->  	 * so we poll the status bit. This won't race with the interrupt
->  	 * handler because it will be blocked on runtime resume.
-> +	 * The chip could NAK a read request while it is booting so ignore
-> +	 * errors from regmap_read.
->  	 */
-> -	ret = regmap_read_poll_timeout(madera->regmap,
-> -				       MADERA_IRQ1_RAW_STATUS_1,
-> -				       val,
-> -				       (val & MADERA_BOOT_DONE_STS1),
-> -				       MADERA_BOOT_POLL_MAX_INTERVAL_US,
-> -				       MADERA_BOOT_POLL_TIMEOUT_US);
-> -
-> -	if (ret)
-> -		dev_err(madera->dev, "Polling BOOT_DONE_STS failed: %d\n", ret);
-> +	regmap_read(madera->regmap, MADERA_IRQ1_RAW_STATUS_1, &val);
-> +	if (val & MADERA_BOOT_DONE_STS1)
-> +		goto done;
+>  include/linux/mfd/madera/registers.h | 51 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
 
-Move the usleep_range() invokation to after the regmap_read(), then
-you can remove these 3 lines and have the same semantics.
-
-> +	timeout = ktime_add_us(ktime_get(), MADERA_BOOT_POLL_TIMEOUT_USEC);
-> +	do {
-> +		usleep_range(MADERA_BOOT_POLL_INTERVAL_USEC / 2,
-> +			     MADERA_BOOT_POLL_INTERVAL_USEC);
-> +		regmap_read(madera->regmap, MADERA_IRQ1_RAW_STATUS_1, &val);
-> +		if (val & MADERA_BOOT_DONE_STS1)
-> +			goto done;
-> +	} while (ktime_compare(ktime_get(), timeout) <= 0);
-> +
-> +	dev_err(madera->dev, "Polling BOOT_DONE_STS timed out\n");
-> +	ret = -ETIMEDOUT;
->  
->  	/*
->  	 * BOOT_DONE defaults to unmasked on boot so we must ack it.
-> -	 * Do this unconditionally to avoid interrupt storms.
-> +	 * Do this even after a timeout to avoid interrupt storms.
->  	 */
-> +done:
->  	regmap_write(madera->regmap, MADERA_IRQ1_STATUS_1,
->  		     MADERA_BOOT_DONE_EINT1);
->  
+Applied, thanks.
 
 -- 
 Lee Jones [李琼斯]
