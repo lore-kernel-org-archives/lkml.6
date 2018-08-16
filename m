@@ -2,113 +2,105 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59712C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BCDCC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EE7121470
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:36:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EE7121470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E5A4121470
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:37:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="OkfbIdX4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5A4121470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403887AbeHPQfK (ORCPT
+        id S2391703AbeHPQgQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 12:35:10 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:32968 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403866AbeHPQfJ (ORCPT
+        Thu, 16 Aug 2018 12:36:16 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:39438 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391636AbeHPQgQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 12:35:09 -0400
-Received: by mail-qk0-f194.google.com with SMTP id z78-v6so1455229qka.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 06:36:30 -0700 (PDT)
+        Thu, 16 Aug 2018 12:36:16 -0400
+Received: by mail-ed1-f68.google.com with SMTP id h4-v6so2694780edi.6
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 06:37:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Ulmo5s7uX0cJuFfy+70Dejg7erdoQQn+Sh2MGhAo2Js=;
+        b=OkfbIdX4Qbzs7FSET/XjHRnpXDGVptcrs8OjvOVG/2Cue9/Rm6P0Q4Gww2Nedxnl82
+         iO5vPOseOSYLGCMVO5FIcxYVO/F6GXWqJt68R3xVFBrOUn6mWReZeJ57auC52icZ8yKa
+         orcxff31tsh9E5uXR3Ox6PSK4WBIczHzY4OVk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OOu+4bREw0jn3x9PH3U5OMPynu9OlfDCuJH/bYMq9kg=;
-        b=Pxp17B2QVHJCURYSraBNibZGSZM3hBkIsFOQKgm2RaVhVltmvb2Q8XFeVLwgYyqYOd
-         SnIwLwImKZJ0vRVCD5GDe634Jp1bR80vIcbWahDxCtEzJO7pD0cJmI+AFGUZlRBxc02l
-         dkQ8ikiNF4XafjnaKm2x+uRBWh7b9gvYQE0QK8KfW3ai4qP27MW3NkVM3YayaWnga0/O
-         Z/GvjyeJR9i6wSbc/a70nEJsxFzKIvT23S3tGAsPm8mCRA/R5OeuCbA5S0L7yujb20Il
-         UPrKEYjJuZ17R9AwCY8ZX7o6p5v5utUrwFO9WkrC2o/5ImI9Ap2dqhKo9pByYTuisS2T
-         WOiw==
-X-Gm-Message-State: AOUpUlHl1qRxT7JSiZNm81/IUGPXJDRY6baTr9NNKoOKYPcpQ2So/AhE
-        Dm0Xjtd4hpIxUc3HEq9CLRPsldYKph4=
-X-Google-Smtp-Source: AA+uWPxsYoM9K9G411RFxlkXL9n5XtQAQnjv75MOXBV31wqzGROfqB3TWlVPqeiIgTxYnMKPoxssZA==
-X-Received: by 2002:ae9:e817:: with SMTP id a23-v6mr27647321qkg.213.1534426589623;
-        Thu, 16 Aug 2018 06:36:29 -0700 (PDT)
-Received: from ?IPv6:2601:602:9802:a8dc::8a8f? ([2601:602:9802:a8dc::8a8f])
-        by smtp.gmail.com with ESMTPSA id x26-v6sm17745071qth.15.2018.08.16.06.36.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Aug 2018 06:36:28 -0700 (PDT)
-Subject: Re: Kernel lockdown patch & IPAddressAllow/IPAddressDeny systemd
- feature with Secure Boot
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Andrew Lutomirski <luto@kernel.org>
-Cc:     dhowells@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>, ast@kernel.org,
-        Laura Abbott <labbott@fedoraproject.org>,
-        linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Kernel Fedora <kernel@lists.fedoraproject.org>,
-        daniel@iogearbox.net
-References: <20180807212531.25161.63476@mailman01.phx2.fedoraproject.org>
- <CALeDE9ORLoyiUcf8Bmwr2rPyo7-3d8Fo54WuPGWtv4ByE_JG=Q@mail.gmail.com>
- <CAObL_7GOOQ01NPf4y1MqRJh4S=CYV8NPmEGTbkrTcjrfUKc5LA@mail.gmail.com>
- <20180816021037.6yxi5rqolhqxipza@ast-mbp.dhcp.thefacebook.com>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <17c09f82-a32d-fc3b-042b-c44c366f873c@redhat.com>
-Date:   Thu, 16 Aug 2018 06:36:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180816021037.6yxi5rqolhqxipza@ast-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Ulmo5s7uX0cJuFfy+70Dejg7erdoQQn+Sh2MGhAo2Js=;
+        b=KzUviJCG88n0fAQmf58kQ1ddScA2/sjJAMCnP+CQHVKWTe72RRdbkhyXh5V7cva8Dt
+         YP+o/fSswqyJBPYtqo1sKHz9rGKP8rKv2WJynbhVj2FC9BliYK3+VhXPDhMDfmoOf7fL
+         T53gTUWvz40vkW0SkbMNVVPnHSstwGCDns36BXWRs3DUy37hyIXonai1ZvR1TW6h8zU8
+         fV1ojVrtVsUaR30R8++vxFn9KWhWnt42GpeYtbS30duGEaO1iILphaHH74Ty/3E4Sa+W
+         s5z/+TnAcwScK0HGG5BfYOFmDCHoNMciPp/2VugWQiEow+v4/D9QTiCVl7E1hq+0fG0u
+         v9eg==
+X-Gm-Message-State: AOUpUlGiPjJPXz1K0C6xaZDJBaGsYaUAGy4IjwYL82Gi9zAacFCGjLvj
+        5Tdhlv2rpc/MkARRguzEQ9VEPw==
+X-Google-Smtp-Source: AA+uWPyOIn4M5rLXSXNzP1UvMK84li5KXpCbWoyn2fp5W07EowUBYVO2T/Q8C79iOnC+ze86xtRfig==
+X-Received: by 2002:a50:83e6:: with SMTP id 93-v6mr36070743edi.164.1534426654888;
+        Thu, 16 Aug 2018 06:37:34 -0700 (PDT)
+Received: from prevas-ravi.waoo.dk (dhcp-5-186-120-115.cgn.ip.fibianet.dk. [5.186.120.115])
+        by smtp.gmail.com with ESMTPSA id u25-v6sm831443edm.45.2018.08.16.06.37.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 16 Aug 2018 06:37:34 -0700 (PDT)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-cachefs@redhat.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] fscache: don't duplicate seq_release_private
+Date:   Thu, 16 Aug 2018 15:37:31 +0200
+Message-Id: <20180816133731.21830-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/15/2018 07:10 PM, Alexei Starovoitov wrote:
-> On Tue, Aug 14, 2018 at 07:14:00AM -0700, Andrew Lutomirski wrote:
->> [Removed Fedora devel list because it's subscriber-only]
->>
->>> On Aug 8, 2018, at 12:29 AM, Peter Robinson <pbrobinson@gmail.com> wrote:
->>>
->>> Probably a good idea to cc: this to the kernel list :-)
->>>
->>> I suspect it's intentional but with the planned changes for iptables
->>> etc to be backed by bpf in the upstream kernel sometime in the future
->>> it's likely going to need to be reviewed.
->>>
->>
->> I thought this got covered in review. I think this part of lockdown
->> needs to get reverted or fixed ASAP.
-> 
-> I don't see lockdown in Linus's tree. Is this fedora only issue?
-> 
+Replace fscache_objlist_release by the completely equivalent
+seq_release_private.
 
-The entire lockdown/secure boot series is out of tree at the moment.
-We're working to get it included.  If you search LWN, you
-can find some articles explaining the long saga of the patch series.
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ fs/fscache/object-list.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
->> (I definitely brought up multiple issues with the bpf lockdown stuff.
->> It's clearly extremely broken right now in the "new kernel breaks
->> *current* Linux distro" sense.)
-> 
-> +1
-> 
+diff --git a/fs/fscache/object-list.c b/fs/fscache/object-list.c
+index 43e6e28c164f..3e1c97d34e25 100644
+--- a/fs/fscache/object-list.c
++++ b/fs/fscache/object-list.c
+@@ -397,21 +397,9 @@ static int fscache_objlist_open(struct inode *inode, struct file *file)
+ 	return 0;
+ }
+ 
+-/*
+- * clean up on close
+- */
+-static int fscache_objlist_release(struct inode *inode, struct file *file)
+-{
+-	struct seq_file *m = file->private_data;
+-
+-	kfree(m->private);
+-	m->private = NULL;
+-	return seq_release(inode, file);
+-}
+-
+ const struct file_operations fscache_objlist_fops = {
+ 	.open		= fscache_objlist_open,
+ 	.read		= seq_read,
+ 	.llseek		= seq_lseek,
+-	.release	= fscache_objlist_release,
++	.release	= seq_release_private,
+ };
+-- 
+2.16.4
 
-Yes, we need to review what exactly is in Fedora. It's the merge
-window so this is a good time to do that anyway. We're still
-playing catch up after Flock in Dresden last week. Can you file
-a bugzilla for tracking so we don't forget?
-
-Thanks,
-Laura
