@@ -2,147 +2,203 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 774F6C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F94C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C4BA21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:32:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C4BA21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 74AFD20C0E
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:38:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74AFD20C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729718AbeHPUbz (ORCPT
+        id S1729565AbeHPUiX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 16:31:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41414 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728676AbeHPUbz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 16:31:55 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 84C6A410BC3F;
-        Thu, 16 Aug 2018 17:32:05 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D02132156712;
-        Thu, 16 Aug 2018 17:32:02 +0000 (UTC)
-Date:   Thu, 16 Aug 2018 13:32:01 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Oscar Salvador <osalvador@techadventures.net>
-Cc:     Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, Pavel.Tatashin@microsoft.com,
-        david@redhat.com, yasu.isimatu@gmail.com, logang@deltatee.com,
-        dave.jiang@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: Re: [RFC PATCH 2/3] mm/memory_hotplug: Create __shrink_pages and
- move it to offline_pages
-Message-ID: <20180816173201.GC28097@redhat.com>
-References: <20180807135221.GA3301@redhat.com>
- <20180807145900.GH10003@dhcp22.suse.cz>
- <20180807151810.GB3301@redhat.com>
- <20180808064758.GB27972@dhcp22.suse.cz>
- <20180808165814.GB3429@redhat.com>
- <20180809082415.GB24884@dhcp22.suse.cz>
- <20180809142709.GA3386@redhat.com>
- <20180809150950.GB15611@dhcp22.suse.cz>
- <20180809165821.GC3386@redhat.com>
- <20180816145849.GA17638@techadventures.net>
+        Thu, 16 Aug 2018 16:38:23 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:56773 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728702AbeHPUiW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 16:38:22 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id 8076420423B;
+        Thu, 16 Aug 2018 19:38:30 +0200 (CEST)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id uTnAwa4sYyVb; Thu, 16 Aug 2018 19:38:27 +0200 (CEST)
+Received: from [192.168.48.23] (host-45-58-245-67.dyn.295.ca [45.58.245.67])
+        by smtp.infotech.no (Postfix) with ESMTPA id E124A20416A;
+        Thu, 16 Aug 2018 19:38:24 +0200 (CEST)
+Reply-To: dgilbert@interlog.com
+Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
+To:     Christophe LEROY <christophe.leroy@c-s.fr>,
+        Jeffrey Lien <Jeff.Lien@wdc.com>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        David Darrington <david.darrington@wdc.com>,
+        Jeff Furlong <jeff.furlong@wdc.com>,
+        Joe Perches <joe@perches.com>
+References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
+ <20180810201601.GA80850@gmail.com>
+ <SN1PR04MB1824A5944E0428AC84B62886EA3E0@SN1PR04MB1824.namprd04.prod.outlook.com>
+ <ba74a9d1-cccc-913a-927a-82e561afef3d@interlog.com>
+ <7f1b5ca8-cd89-71cc-21bb-5a058bc1e908@c-s.fr>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <e2f9fa43-6104-214e-1570-b3753cb14b13@interlog.com>
+Date:   Thu, 16 Aug 2018 13:38:22 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <7f1b5ca8-cd89-71cc-21bb-5a058bc1e908@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180816145849.GA17638@techadventures.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 16 Aug 2018 17:32:05 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 16 Aug 2018 17:32:05 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 04:58:49PM +0200, Oscar Salvador wrote:
-> On Thu, Aug 09, 2018 at 12:58:21PM -0400, Jerome Glisse wrote:
-> > I agree, i never thought about that before. Looking at existing resource
-> > management i think the simplest solution would be to use a refcount on the
-> > resources instead of the IORESOURCE_BUSY flags.
-> > 
-> > So when you release resource as part of hotremove you would only dec the
-> > refcount and a resource is not busy only when refcount is zero.
-> > 
-> > Just the idea i had in mind. Right now i am working on other thing, Oscar
-> > is this something you would like to work on ? Feel free to come up with
-> > something better than my first idea :)
+On 2018-08-16 11:41 AM, Christophe LEROY wrote:
+> Hi,
 > 
-> So, I thought a bit about this.
-> First I talked a bit with Jerome about the refcount idea.
-> The problem with reconverting this to refcount is that it is too intrusive,
-> and I think it is not really needed.
-> 
-> I then thought about defining a new flag, something like
-> 
-> #define IORESOURCE_NO_HOTREMOVE	xxx
-> 
-> but we ran out of bits for the flag field.
-> 
-> I then thought about doing something like:
-> 
-> struct resource {
->         resource_size_t start;
->         resource_size_t end;
->         const char *name;
->         unsigned long flags;
->         unsigned long desc;
->         struct resource *parent, *sibling, *child;
-> #ifdef CONFIG_MEMORY_HOTREMOVE
->         bool device_managed;
-> #endif
-> };
-> 
-> but it is just too awful, not needed, and bytes consuming.
+> Please include your new patch as plain text inside the mail, not as a MIME 
+> attachment. Otherwise it is not downloadable from 
+> https://patchwork.kernel.org/patch/10563093/
 
-Agree the above is ugly.
+It should be downloadable from:
+     http://sg.danny.cz/sg/p/0001-T10-CRC16-function-build-time-sized-table.patch
 
-> 
-> The only idea I had left is:
-> 
-> register_memory_resource(), which defines a new resource for the added memory-chunk
-> is only called from add_memory().
-> This function is only being hit when we add memory-chunks.
-> 
-> HMM/devm gets the resources their own way, calling devm_request_mem_region().
-> 
-> So resources that are requested from HMM/devm, have the following flags:
-> 
->  (IORESOURCE_MEM|IORESOURCE_BUSY)
-> 
-> while resources that are requested via mem-hotplug have:
-> 
->  (IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY)
-> 
-> IORESOURCE_SYSTEM_RAM = (IORESOURCE_MEM|IORESOURCE_SYSRAM)
-> 
-> 
-> release_mem_region_adjustable() is only being called from hot-remove path, so
-> unless I am mistaken, all resources hitting that path should match IORESOURCE_SYSTEM_RAM.
-> 
-> That leaves me with the idea that we could check for the resource->flags to contain IORESOURCE_SYSRAM,
-> as I think it is only being set for memory-chunks that are added via memory-hot-add path.
-> 
-> In case it is not, we know that that resource belongs to HMM/devm, so we can back off since
-> they take care of releasing the resource via devm_release_mem_region.
-> 
-> I am working on a RFC v2 containing this, but, Jerome, could you confirm above assumption, please?
+With regard to your comment about slice (table ?) size, that is partially
+addressed by a kernel build time option shown in the above patch. That
+could be taken a bit further with a sysfs knob (where ?) to reduce the
+effective table size from that which the kernel is built with. To increase
+the size of the table would imply fetching some more heap and having an
+algorithm that could generate the extra part of that table required.
 
-I think you nail it. I am not 100% sure about devm as i have not
-followed closely how persistent memory can be reported by ACPI. But
-i am pretty sure it should never end up as SYSRAM.
+Doug Gilbert
 
-Thank you for scratching your head on this :)
+> Christophe
+> 
+> Le 16/08/2018 à 16:22, Douglas Gilbert a écrit :
+>> Hi,
+>> Rather than present this formerly as an alternate patch, attached is a
+>> clean-up of my patch which uses the variable size table proposed by
+>> Joe Perches <joe@perches.com> and is based on the original patch that
+>> started this thread.
+>>
+>> Doug Gilbert
+>>
+>> On 2018-08-16 10:02 AM, Jeffrey Lien wrote:
+>>> Eric,
+>>> We did not test the slice by 4 or 8 tables.  I'm not sure of  the value of 
+>>> doing that since the slice by 16 will provide the best performance gain.   If 
+>>> I'm missing anything here, please let me know.
+>>>
+>>> I'm working on a new version of the patch based on the feedback from others 
+>>> and will also change the pointer variables to start with p and fix the 
+>>> indenting you mentioned below in the new version of the patch.
+>>>
+>>> Thanks
+>>>
+>>> Jeff Lien
+>>>
+>>> -----Original Message-----
+>>> From: Eric Biggers [mailto:ebiggers@kernel.org]
+>>> Sent: Friday, August 10, 2018 3:16 PM
+>>> To: Jeffrey Lien <Jeff.Lien@wdc.com>
+>>> Cc: linux-kernel@vger.kernel.org; linux-crypto@vger.kernel.org; 
+>>> linux-block@vger.kernel.org; linux-scsi@vger.kernel.org; 
+>>> herbert@gondor.apana.org.au; tim.c.chen@linux.intel.com; 
+>>> martin.petersen@oracle.com; David Darrington <david.darrington@wdc.com>; Jeff 
+>>> Furlong <jeff.furlong@wdc.com>
+>>> Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
+>>>
+>>> On Fri, Aug 10, 2018 at 02:12:11PM -0500, Jeff Lien wrote:
+>>>> This patch provides a performance improvement for the CRC16
+>>>> calculations done in read/write workloads using the T10 Type 1/2/3
+>>>> guard field.  For example, today with sequential write workloads (one
+>>>> thread/CPU of IO) we consume 100% of the CPU because of the CRC16
+>>>> computation bottleneck.  Today's block devices are considerably
+>>>> faster, but the CRC16 calculation prevents folks from utilizing the
+>>>> throughput of such devices.  To speed up this calculation and expose
+>>>> the block device throughput, we slice the old single byte for loop into a 16 
+>>>> byte for loop, with a larger CRC table to match.  The result has shown 5x 
+>>>> performance improvements on various big endian and little endian systems 
+>>>> running the 4.18.0 kernel version.
+>>>>
+>>>> FIO Sequential Write, 64K Block Size, Queue Depth 64
+>>>> BE Base Kernel:        bw=201.5 MiB/s
+>>>> BE Modified CRC Calc:  bw=968.1 MiB/s
+>>>> 4.80x performance improvement
+>>>>
+>>>> LE Base Kernel:        bw=357 MiB/s
+>>>> LE Modified CRC Calc:  bw=1964 MiB/s
+>>>> 5.51x performance improvement
+>>>>
+>>>> FIO Sequential Read, 64K Block Size, Queue Depth 64
+>>>> BE Base Kernel:        bw=611.2 MiB/s
+>>>> BE Modified CRC calc:  bw=684.9 MiB/s
+>>>> 1.12x performance improvement
+>>>>
+>>>> LE Base Kernel:        bw=797 MiB/s
+>>>> LE Modified CRC Calc:  bw=2730 MiB/s
+>>>> 3.42x performance improvement
+>>>
+>>> Did you also test the slice-by-4 (requires 2048-byte table) and slice-by-8 
+>>> (requires 4096-byte table) methods?  Your proposal is slice-by-16 (requires 
+>>> 8192-byte table); the original was slice-by-1 (requires 512-byte table).
+>>>
+>>>>   __u16 crc_t10dif_generic(__u16 crc, const unsigned char *buffer,
+>>>> size_t len)  {
+>>>> -    unsigned int i;
+>>>> +    const __u8 *i = (const __u8 *)buffer;
+>>>> +    const __u8 *i_end = i + len;
+>>>> +    const __u8 *i_last16 = i + (len / 16 * 16);
+>>>
+>>> 'i' is normally a loop counter, not a pointer.
+>>> Use 'p', 'p_end', and 'p_last16'.
+>>>
+>>>> -    for (i = 0 ; i < len ; i++)
+>>>> -        crc = (crc << 8) ^ t10_dif_crc_table[((crc >> 8) ^ buffer[i]) & 0xff];
+>>>> +    for (; i < i_last16; i += 16) {
+>>>> +        crc = t10_dif_crc_table[15][i[0] ^ (__u8)(crc >>  8)] ^
+>>>> +        t10_dif_crc_table[14][i[1] ^ (__u8)(crc >>  0)] ^
+>>>> +        t10_dif_crc_table[13][i[2]] ^
+>>>> +        t10_dif_crc_table[12][i[3]] ^
+>>>> +        t10_dif_crc_table[11][i[4]] ^
+>>>> +        t10_dif_crc_table[10][i[5]] ^
+>>>> +        t10_dif_crc_table[9][i[6]] ^
+>>>> +        t10_dif_crc_table[8][i[7]] ^
+>>>> +        t10_dif_crc_table[7][i[8]] ^
+>>>> +        t10_dif_crc_table[6][i[9]] ^
+>>>> +        t10_dif_crc_table[5][i[10]] ^
+>>>> +        t10_dif_crc_table[4][i[11]] ^
+>>>> +        t10_dif_crc_table[3][i[12]] ^
+>>>> +        t10_dif_crc_table[2][i[13]] ^
+>>>> +        t10_dif_crc_table[1][i[14]] ^
+>>>> +        t10_dif_crc_table[0][i[15]];
+>>>> +    }
+>>>
+>>> Please indent this properly.
+>>>
+>>>         crc = t10_dif_crc_table[15][i[0] ^ (__u8)(crc >>  8)] ^
+>>>               t10_dif_crc_table[14][i[1] ^ (__u8)(crc >>  0)] ^
+>>>               t10_dif_crc_table[13][i[2]] ^
+>>>               t10_dif_crc_table[12][i[3]] ^
+>>>               t10_dif_crc_table[11][i[4]] ^
+>>>               ...
+>>>
+>>> - Eric
+>>>
+>>
+> 
 
-Cheers,
-J�r�me
