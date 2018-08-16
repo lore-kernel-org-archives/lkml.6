@@ -3,41 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92401C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B1DC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 482DD2147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 482DD2147D
+	by mail.kernel.org (Postfix) with ESMTP id CFD8E2147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFD8E2147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729466AbeHPVo1 (ORCPT
+        id S1729511AbeHPVob (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:44:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56448 "EHLO
+        Thu, 16 Aug 2018 17:44:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56464 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729446AbeHPVoZ (ORCPT
+        with ESMTP id S1729448AbeHPVo3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:44:25 -0400
+        Thu, 16 Aug 2018 17:44:29 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC57FCC4;
-        Thu, 16 Aug 2018 18:44:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8797ECC4;
+        Thu, 16 Aug 2018 18:44:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thierry Escande <thierry.escande@collabora.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Vinod Koul <vinod.koul@intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.9 12/15] ASoC: Intel: cht_bsw_max98090_ti: Fix jack initialization
-Date:   Thu, 16 Aug 2018 20:42:05 +0200
-Message-Id: <20180816171627.164875882@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Salyzyn <salyzyn@android.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kees Cook <keescook@chromium.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        security@kernel.org, kernel-team@android.com
+Subject: [PATCH 4.9 13/15] Bluetooth: hidp: buffer overflow in hidp_process_report
+Date:   Thu, 16 Aug 2018 20:42:06 +0200
+Message-Id: <20180816171627.237837164@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171625.340082081@linuxfoundation.org>
 References: <20180816171625.340082081@linuxfoundation.org>
@@ -54,95 +56,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thierry Escande <thierry.escande@collabora.com>
+From: Mark Salyzyn <salyzyn@android.com>
 
-commit 3bbda5a38601f7675a214be2044e41d7749e6c7b upstream.
+commit 7992c18810e568b95c869b227137a2215702a805 upstream.
 
-If the ts3a227e audio accessory detection hardware is present and its
-driver probed, the jack needs to be created before enabling jack
-detection in the ts3a227e driver. With this patch, the jack is
-instantiated in the max98090 headset init function if the ts3a227e is
-present. This fixes a null pointer dereference as the jack detection
-enabling function in the ts3a driver was called before the jack is
-created.
+CVE-2018-9363
 
-[minor correction to keep error handling on jack creation the same
-as before by Pierre Bossart]
+The buffer length is unsigned at all layers, but gets cast to int and
+checked in hidp_process_report and can lead to a buffer overflow.
+Switch len parameter to unsigned int to resolve issue.
 
-Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Acked-By: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+This affects 3.18 and newer kernels.
+
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Fixes: a4b1b5877b514b276f0f31efe02388a9c2836728 ("HID: Bluetooth: hidp: make sure input buffers are big enough")
+Cc: Marcel Holtmann <marcel@holtmann.org>
+Cc: Johan Hedberg <johan.hedberg@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: linux-bluetooth@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: security@kernel.org
+Cc: kernel-team@android.com
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/intel/boards/cht_bsw_max98090_ti.c |   45 ++++++++++++++++++---------
- 1 file changed, 31 insertions(+), 14 deletions(-)
+ net/bluetooth/hidp/core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-+++ b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-@@ -128,23 +128,19 @@ static int cht_codec_init(struct snd_soc
- 	struct cht_mc_private *ctx = snd_soc_card_get_drvdata(runtime->card);
- 	struct snd_soc_jack *jack = &ctx->jack;
- 
--	/**
--	* TI supports 4 butons headset detection
--	* KEY_MEDIA
--	* KEY_VOICECOMMAND
--	* KEY_VOLUMEUP
--	* KEY_VOLUMEDOWN
--	*/
--	if (ctx->ts3a227e_present)
--		jack_type = SND_JACK_HEADPHONE | SND_JACK_MICROPHONE |
--					SND_JACK_BTN_0 | SND_JACK_BTN_1 |
--					SND_JACK_BTN_2 | SND_JACK_BTN_3;
--	else
--		jack_type = SND_JACK_HEADPHONE | SND_JACK_MICROPHONE;
-+	if (ctx->ts3a227e_present) {
-+		/*
-+		 * The jack has already been created in the
-+		 * cht_max98090_headset_init() function.
-+		 */
-+		snd_soc_jack_notifier_register(jack, &cht_jack_nb);
-+		return 0;
-+	}
-+
-+	jack_type = SND_JACK_HEADPHONE | SND_JACK_MICROPHONE;
- 
- 	ret = snd_soc_card_jack_new(runtime->card, "Headset Jack",
- 					jack_type, jack, NULL, 0);
--
- 	if (ret) {
- 		dev_err(runtime->dev, "Headset Jack creation failed %d\n", ret);
- 		return ret;
-@@ -200,6 +196,27 @@ static int cht_max98090_headset_init(str
- {
- 	struct snd_soc_card *card = component->card;
- 	struct cht_mc_private *ctx = snd_soc_card_get_drvdata(card);
-+	struct snd_soc_jack *jack = &ctx->jack;
-+	int jack_type;
-+	int ret;
-+
-+	/*
-+	 * TI supports 4 butons headset detection
-+	 * KEY_MEDIA
-+	 * KEY_VOICECOMMAND
-+	 * KEY_VOLUMEUP
-+	 * KEY_VOLUMEDOWN
-+	 */
-+	jack_type = SND_JACK_HEADPHONE | SND_JACK_MICROPHONE |
-+		    SND_JACK_BTN_0 | SND_JACK_BTN_1 |
-+		    SND_JACK_BTN_2 | SND_JACK_BTN_3;
-+
-+	ret = snd_soc_card_jack_new(card, "Headset Jack", jack_type,
-+				    jack, NULL, 0);
-+	if (ret) {
-+		dev_err(card->dev, "Headset Jack creation failed %d\n", ret);
-+		return ret;
-+	}
- 
- 	return ts3a227e_enable_jack_detect(component, &ctx->jack);
+--- a/net/bluetooth/hidp/core.c
++++ b/net/bluetooth/hidp/core.c
+@@ -431,8 +431,8 @@ static void hidp_del_timer(struct hidp_s
+ 		del_timer(&session->timer);
  }
+ 
+-static void hidp_process_report(struct hidp_session *session,
+-				int type, const u8 *data, int len, int intr)
++static void hidp_process_report(struct hidp_session *session, int type,
++				const u8 *data, unsigned int len, int intr)
+ {
+ 	if (len > HID_MAX_BUFFER_SIZE)
+ 		len = HID_MAX_BUFFER_SIZE;
 
 
