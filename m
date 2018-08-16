@@ -6,32 +6,33 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A522C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C103C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1739A208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:19:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1739A208E3
+	by mail.kernel.org (Postfix) with ESMTP id 52EC62148C
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:24:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52EC62148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391207AbeHPORI (ORCPT
+        id S2391216AbeHPOWm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 10:17:08 -0400
-Received: from smtp2.provo.novell.com ([137.65.250.81]:33725 "EHLO
+        Thu, 16 Aug 2018 10:22:42 -0400
+Received: from smtp2.provo.novell.com ([137.65.250.81]:42026 "EHLO
         smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726392AbeHPORH (ORCPT
+        with ESMTP id S2389028AbeHPOWm (ORCPT
         <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Thu, 16 Aug 2018 10:17:07 -0400
+        Thu, 16 Aug 2018 10:22:42 -0400
 Received: from Beta.suse.asia (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
-        by smtp2.provo.novell.com with ESMTP (NOT encrypted); Thu, 16 Aug 2018 05:19:02 -0600
+        by smtp2.provo.novell.com with ESMTP (NOT encrypted); Thu, 16 Aug 2018 05:24:35 -0600
 From:   Larry Chen <lchen@suse.com>
-Cc:     linux-kernel@vger.kernel.org
+To:     mfasheh@versity.com, jlbec@evilplan.org
+Cc:     linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        akpm@linux-foundation.org
 Subject: [PATCH] fix crash on ocfs2_duplicate_clusters_by_page
-Date:   Thu, 16 Aug 2018 19:18:52 +0800
-Message-Id: <20180816111852.11846-1-lchen@suse.com>
+Date:   Thu, 16 Aug 2018 19:24:26 +0800
+Message-Id: <20180816112426.12218-1-lchen@suse.com>
 X-Mailer: git-send-email 2.13.7
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
