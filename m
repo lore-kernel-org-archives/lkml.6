@@ -2,110 +2,167 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C8BEC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA98C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:30:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 163C8214DC
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:30:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14D0B2148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:30:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fx0USMhr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 163C8214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="kCaichJB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14D0B2148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404303AbeHPTaD (ORCPT
+        id S2404317AbeHPTaM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 15:30:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51374 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727859AbeHPTaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 15:30:02 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E6CC2148E;
-        Thu, 16 Aug 2018 16:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534437031;
-        bh=QxP50+tvqngiH6SO8geYnf48YgWulK4ZPL5qEmhn5rM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fx0USMhrJ+NXZWcCCZaou0VRE+ZtE6mUPFwaB77GujT/U7u4nmzOb8k9YGcPSOlvK
-         aEU5KkXQtn3C/0N3b08VTvdtAKYf62GSFIqe0bnx8XAw41DBmKG668e1OEHsiBKGE0
-         hhPjGwds0OI4v5A6x1Q/+joVQYZitHEzmKYDPWOI=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Shuah Khan <shuah@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 02/32] selftests/ftrace: Add --stop-fail hidden option for debug
-Date:   Fri, 17 Aug 2018 01:30:08 +0900
-Message-Id: <153443700818.23257.8232348122806172328.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <153443695002.23257.13628220023468200991.stgit@devbox>
-References: <153443695002.23257.13628220023468200991.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        Thu, 16 Aug 2018 15:30:12 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:35871 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727859AbeHPTaL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 15:30:11 -0400
+Received: by mail-it0-f65.google.com with SMTP id p81-v6so7494085itp.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 09:30:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=RdJMMoJaOhGxExMQgCjhAYjsATfPlV/oePVcJar9G8o=;
+        b=kCaichJBf3TyO0JPDsn173CGutoNuMoVciz8ijBb1BY9iRhNGxG6+al1EAMqRDBaX2
+         wL83JRfvTtUjk1sFV3Khi0Ny/NNwTf/evPnLzhMidp6eQzMXZY+heh+aJjALsTGbtM8n
+         c6ZuzgjicbtIKTfWtAQGJDACQa2EOvMEaW1Iw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=RdJMMoJaOhGxExMQgCjhAYjsATfPlV/oePVcJar9G8o=;
+        b=BxZPzhwpP/5mWzKemLc0iE78McvkPhgt6pB75pScTYNG624Xj2GWJVd2Twi1KREYvU
+         2B0e9fGXRc3C4Bn1O5jOoLyNanGK0T/zYVBEz269qcYfAIfnp7K+8/NEm02YqmjUio1X
+         qtMJlawozP2R8mqaxfKDARduQQLZMvHCBRMd2BIHWMZ9pdWXUZ43AiX6gniZVAMJdAwt
+         REQsNAN2ZH/ccmtv9LsrT6E1RkNv3WJ+KcQJ0z7Wg1UcqHGPI6KpscLxh1svQWJFzhqX
+         kOIt0wQAwQzZVSsthbNZ7UQKADmJy7nR11v1+DgJzYbHoJ0MPonY8FZegc//7/8J4dEI
+         8MBQ==
+X-Gm-Message-State: AOUpUlHe18k1/QKvNANzMZS6xAYcvNeDBc9CQ8dzTtq7sB7rUCRwwtxv
+        4Dy3B09PB9Sf/g4GdOAaRIZIjlTVfzC678EfvnhDHQ==
+X-Google-Smtp-Source: AA+uWPziYBw2XDo+smWo8Z9JJNV/GrkvE52++0tShrTW8xZ8wkiwkgqxG1bcgHhxD7EAjy48jbXEavPihczYyRaSBGw=
+X-Received: by 2002:a24:6e0f:: with SMTP id w15-v6mr22612520itc.77.1534437040298;
+ Thu, 16 Aug 2018 09:30:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a4f:e502:0:0:0:0:0 with HTTP; Thu, 16 Aug 2018 09:30:39
+ -0700 (PDT)
+X-Originating-IP: [212.51.149.109]
+In-Reply-To: <20180816155538.GR164269@art_vandelay>
+References: <20180815153604.90152-1-sean@poorly.run> <20180816073248.GZ21634@phenom.ffwll.local>
+ <20180816155538.GR164269@art_vandelay>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Thu, 16 Aug 2018 18:30:39 +0200
+X-Google-Sender-Auth: ho1PG4D2uTwYUP0HwouammMJSzI
+Message-ID: <CAKMK7uGpT428FnT_7zwbDovLNHk8GMuOzf9gW9wiBkyiOLSw3w@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: drm-misc: Change seanpaul's email address
+To:     Sean Paul <sean@poorly.run>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@linux.ie>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add --stop-fail option for debugging the ftracetest.
+On Thu, Aug 16, 2018 at 5:55 PM, Sean Paul <sean@poorly.run> wrote:
+> On Thu, Aug 16, 2018 at 09:32:48AM +0200, Daniel Vetter wrote:
+>> On Wed, Aug 15, 2018 at 11:35:29AM -0400, Sean Paul wrote:
+>> > Since chromium.org is now enforcing DMARC, my mails are going to
+>> > people's spam folders. While this development might be desirable
+>> > for people I communicate with, it's undesirable for me :-)
+>> >
+>> > Cc: Dave Airlie <airlied@linux.ie>
+>> > Cc: Gustavo Padovan <gustavo@padovan.org>
+>> > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+>> > Signed-off-by: Sean Paul <sean@poorly.run>
+>> > ---
+>> >  MAINTAINERS | 2 +-
+>> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>> >
+>> > diff --git a/MAINTAINERS b/MAINTAINERS
+>> > index 93f189f0d60d..5eaa1c91d4a4 100644
+>> > --- a/MAINTAINERS
+>> > +++ b/MAINTAINERS
+>> > @@ -4662,7 +4662,7 @@ F:    include/linux/vga*
+>> >  DRM DRIVERS AND MISC GPU PATCHES
+>> >  M: Gustavo Padovan <gustavo@padovan.org>
+>> >  M: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+>> > -M: Sean Paul <seanpaul@chromium.org>
+>> > +M: Sean Paul <sean@poorly.run>
+>>
+>> Glorious domain :-)
+>>
+>> Aside: ffwll.ch has been running with dkim since a while, seems to work
+>> correctly. You just need non-strict dkim enforcement, which at least for
+>> gapps is the default.
+>>
+>> But even then Linus' gmail inbox throws my mails away every once in a
+>> while, so email clearly doesn't work.
+>
+> My (completely incorrect, i'm sure) understanding is that DKIM is fine, but
+> DMARC is the problem.
+>
+> It seems Mailman was altering some (or all) of my messages which caused DMARC
+> to fail. At the very least the "Prevent duplicate messages" setting in mailman
+> strips users cc from the headers. So if any one of the recipients has this
+> setting enabled, the headers are munged, DMARC fails, and emails go to spam.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- tools/testing/selftests/ftrace/ftracetest |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Hm tbh I didn't know about DMARC yet. Sounds like it just tells the
+recipient how your domain would like SPF/DKIM failures to be handled.
+One of these (if configured correctly) should survive mailing lists. I
+did crawl dri-devel a bit, and there's mails that passed through with
+full dmarc enforcement. So it's not impossible.
 
-diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
-index f9a9d424c980..c9c7fa8dc440 100755
---- a/tools/testing/selftests/ftrace/ftracetest
-+++ b/tools/testing/selftests/ftrace/ftracetest
-@@ -69,6 +69,10 @@ parse_opts() { # opts
-       DEBUG=1
-       shift 1
-     ;;
-+    --stop-fail)
-+      STOP_FAILURE=1
-+      shift 1
-+    ;;
-     --fail-unsupported)
-       UNSUPPORTED_RESULT=1
-       shift 1
-@@ -117,6 +121,7 @@ KEEP_LOG=0
- DEBUG=0
- VERBOSE=0
- UNSUPPORTED_RESULT=0
-+STOP_FAILURE=0
- # Parse command-line options
- parse_opts $*
- 
-@@ -304,6 +309,10 @@ run_test() { # testfile
- # Main loop
- for t in $TEST_CASES; do
-   run_test $t
-+  if [ $STOP_FAILURE -ne 0 -a $TOTAL_RESULT -ne 0 ]; then
-+    echo "A failure detected. Stop test."
-+    exit 1
-+  fi
- done
- 
- # Test on instance loop
-@@ -315,6 +324,10 @@ for t in $TEST_CASES; do
-   run_test $t
-   rmdir $TRACING_DIR
-   TRACING_DIR=$SAVED_TRACING_DIR
-+  if [ $STOP_FAILURE -ne 0 -a $TOTAL_RESULT -ne 0 ]; then
-+    echo "A failure detected. Stop test."
-+    exit 1
-+  fi
- done
- 
- prlog ""
+But hey in practice it doesn't even work for gmail->gmail when the
+moon howling is too bad :-)
+-Daniel
 
+
+>
+>>
+>> </rant>
+>>
+>> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+>
+> Thanks, pushed to -misc-next-fixes
+>
+> Sean
+>
+>> >  W: https://01.org/linuxgraphics/gfx-docs/maintainer-tools/drm-misc.html
+>> >  S: Maintained
+>> >  T: git git://anongit.freedesktop.org/drm/drm-misc
+>> > --
+>> > Sean Paul, Software Engineer, Google / Chromium OS
+>> >
+>> > _______________________________________________
+>> > dri-devel mailing list
+>> > dri-devel@lists.freedesktop.org
+>> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>
+>> --
+>> Daniel Vetter
+>> Software Engineer, Intel Corporation
+>> http://blog.ffwll.ch
+>
+> --
+> Sean Paul, Software Engineer, Google / Chromium OS
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
