@@ -2,84 +2,104 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8651FC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 241B7C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 12:06:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3715B214C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:48:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3715B214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id A73062148C
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 12:06:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A73062148C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391337AbeHPOqJ (ORCPT
+        id S2391372AbeHPPE4 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 10:46:09 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55138 "EHLO mail.bootlin.com"
+        Thu, 16 Aug 2018 11:04:56 -0400
+Received: from ozlabs.org ([203.11.71.1]:59983 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727340AbeHPOqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 10:46:09 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3CF4220763; Thu, 16 Aug 2018 13:48:03 +0200 (CEST)
-Received: from localhost (unknown [78.250.249.73])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E0042206DE;
-        Thu, 16 Aug 2018 13:48:01 +0200 (CEST)
-Date:   Thu, 16 Aug 2018 13:47:55 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 00/16] clk: at91: Rework DT bindings
-Message-ID: <20180816114755.GH21707@piout.net>
-References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
- <153271100280.48062.2538655794734424353@swboyd.mtv.corp.google.com>
+        id S1728675AbeHPPE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 11:04:56 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41rlS44WXRz9s3x;
+        Thu, 16 Aug 2018 22:06:42 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Meelis Roos <mroos@linux.ee>, linux-powerpc@vger.kernel.org,
+        Linux Kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: ptrace compile failure with gcc-8.2 on 32-bit powerpc
+In-Reply-To: <alpine.LRH.2.21.1808161041350.16413@math.ut.ee>
+References: <alpine.LRH.2.21.1808161041350.16413@math.ut.ee>
+Date:   Thu, 16 Aug 2018 22:06:41 +1000
+Message-ID: <87wosqa52m.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <153271100280.48062.2538655794734424353@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/07/2018 10:03:22-0700, Stephen Boyd wrote:
-> Quoting Alexandre Belloni (2018-07-17 15:27:41)
-> > This is the promised rework of the at91 PMC clocks driver. It is mainly
-> > necessary to remove the DTC warnings but it also complies with the CCF
-> > rule that there should be one node per controller instead of one node
-> > per clock.
-> > 
-> > This only handles the PMC, I'm planning to also rework the SCKC bindings
-> > later (without breaking the DT ABI).
-> > 
-> > The series is based on top of clk-next plus at91-dt so I don't think it
-> > is convenient to have it this cycle. However, I would really like to
-> > ensure we agree on the new bindings this cycle before converting all the
-> > other platforms as this is a bit tedious.
-> > 
-> > The first two patches are actually fixes and may be considered for this
-> > cycle.
-> > 
-> > One nice note:
-> > at91-sama5d2_xplained.dtb goes from 29351 bytes to 22082 bytes
-> 
-> Patches look mostly good. Rob is happy with the bindings and so am I.
-> 
-> One general question is why the drivers can't be moved to real platform
-> drivers instead of using OF_CLK_DECLARE?
-> 
+Meelis Roos <mroos@linux.ee> writes:
+> After upgrading my distro compiler to gcc-8.2, Linux fails to compile on 
+> 32-bit powerpc (tested with 4.17, 4.18 and v4.18-7873-gf91e654474d4).
 
-I tried, this makes the clocksource drivers fail with -EPROBE_DEFER and
-so the kernel just stops there.
+Yeah I noticed this just yesterday.
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>   CC      arch/powerpc/kernel/ptrace.o
+> In file included from ./include/linux/bitmap.h:9,
+>                  from ./include/linux/cpumask.h:12,
+>                  from ./include/linux/rcupdate.h:44,
+>                  from ./include/linux/rculist.h:11,
+>                  from ./include/linux/pid.h:5,
+>                  from ./include/linux/sched.h:14,
+>                  from arch/powerpc/kernel/ptrace.c:19:
+> In function ‘memcpy’,
+>     inlined from ‘user_regset_copyin’ at ./include/linux/regset.h:295:4,
+>     inlined from ‘vr_set’ at arch/powerpc/kernel/ptrace.c:619:9:
+> ./include/linux/string.h:345:9: error: ‘__builtin_memcpy’ offset [-527, -529] is out of the bounds [0, 16] of object ‘vrsave’ with type ‘union <anonymous>’ [-Werror=array-bounds]
+>   return __builtin_memcpy(p, q, size);
+>          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> arch/powerpc/kernel/ptrace.c: In function ‘vr_set’:
+> arch/powerpc/kernel/ptrace.c:614:5: note: ‘vrsave’ declared here
+>    } vrsave;
+>      ^~~~~~
+
+I couldn't actually work out how GCC has decided this is definitely
+happening, possibly it just thinks it _could_ happen. I think it's
+wrong, but admittedly the code is not easy to follow.
+
+The patch below should fix the build error, but I haven't had time to
+test it actually works at runtime:
+
+diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
+index 9667666eb18e..607273067d3f 100644
+--- a/arch/powerpc/kernel/ptrace.c
++++ b/arch/powerpc/kernel/ptrace.c
+@@ -570,7 +570,8 @@ static int vr_get(struct task_struct *target, const struct user_regset *regset,
+ 		vrsave.word = target->thread.vrsave;
+ 
+ 		ret = user_regset_copyout(&pos, &count, &kbuf, &ubuf, &vrsave,
+-					  33 * sizeof(vector128), -1);
++					  33 * sizeof(vector128),
++					  34 * sizeof(vector128));
+ 	}
+ 
+ 	return ret;
+@@ -617,7 +618,8 @@ static int vr_set(struct task_struct *target, const struct user_regset *regset,
+ 		vrsave.word = target->thread.vrsave;
+ 
+ 		ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &vrsave,
+-					 33 * sizeof(vector128), -1);
++					 33 * sizeof(vector128),
++					 34 * sizeof(vector128));
+ 		if (!ret)
+ 			target->thread.vrsave = vrsave.word;
+ 	}
+
+
+cheers
