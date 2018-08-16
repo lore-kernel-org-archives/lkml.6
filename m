@@ -2,133 +2,142 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9002AC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A70E0C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E93321527
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:32:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="geACDdyD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E93321527
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6BB972148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:33:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BB972148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390443AbeHPMaN (ORCPT
+        id S2390517AbeHPMaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 08:30:13 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38481 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727273AbeHPMaN (ORCPT
+        Thu, 16 Aug 2018 08:30:18 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:4419 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727273AbeHPMaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 08:30:13 -0400
-Received: by mail-wr1-f68.google.com with SMTP id w11-v6so962092wrc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 02:32:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HuTfP9BMmzMFsrSla6nm+FKruglPuVH/SWNeJAqBHdU=;
-        b=geACDdyDVBFn6xiHie7nofeKG8RJTv6ugrNkAole6q/FaCCt06nWnLrb2JPn79AYWi
-         uPjkBCDZJ7j+15tLFSP/ye0ASseoXP+3c3Hb5c6cdlKTpCroAAspEvFj5vSWsvBJ7Zwr
-         XxiUhJvxXIjOaysx2eEcHOfpe0TeS1EvoixMw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HuTfP9BMmzMFsrSla6nm+FKruglPuVH/SWNeJAqBHdU=;
-        b=UMD+WCaIVrUOtJem66mWJyAYwaHcze7Z7Pt2fRXd0ZTYU7ZiTw3acFgrjrLh1X8xHy
-         J7kz0fm6Ka9bgp3wjAbCBZUbjia0khkvCBv8pDDHGBd+fIG72/s7ozLcZJK8/kH7gbIA
-         EsslJ37fndRuZstQWVFg5/bh6/8Hpd8wFIdjniAYeGJYwGMhIn7TjawOAJNgAn75zy6i
-         ncy29sRWl2+1GkOOHYabhm6p2hgchBfs9TnSBRROTANoRviOlPTKzH9gN+93+L19IRhY
-         34m90HjyR2notnzE/u1f4szM2OzHYykpnL0Kl2sfCxbyP3rPXng1uPphHsC8f6enV6ha
-         Bp2g==
-X-Gm-Message-State: AOUpUlEQWb/p+rLY6/z79IOAIuQoDjPXFY1Pre8E6kBbWggz0VOXZsiM
-        ZbBdTHmF7q/NQHgJEdy0ETk6jw==
-X-Google-Smtp-Source: AA+uWPyk6DWUJksBbJwL+qVYGljGBiCMZiJnGwvUNuGnkKmxT+jHeIWz3oPc1LT93rONWQ3TqhmwJQ==
-X-Received: by 2002:adf:9404:: with SMTP id 4-v6mr211661wrq.129.1534411974934;
-        Thu, 16 Aug 2018 02:32:54 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id w9-v6sm35411582wrk.28.2018.08.16.02.32.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 Aug 2018 02:32:53 -0700 (PDT)
-Date:   Thu, 16 Aug 2018 10:32:51 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Jason Wessel <jason.wessel@windriver.com>,
-        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kdb: kdb_main: refactor code in kdb_md_line
-Message-ID: <20180816093251.jc5tvmzqrpgtyqms@holly.lan>
-References: <20180815150616.GA31173@embeddedor.com>
+        Thu, 16 Aug 2018 08:30:18 -0400
+X-IronPort-AV: E=Sophos;i="5.53,246,1531810800"; 
+   d="scan'208";a="15384163"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 16 Aug 2018 02:33:00 -0700
+Received: from [10.145.4.54] (10.10.76.4) by chn-sv-exch05.mchp-main.com
+ (10.10.76.106) with Microsoft SMTP Server id 14.3.352.0; Thu, 16 Aug 2018
+ 02:32:59 -0700
+Subject: Re: [PATCH] arm/mach-at91/pm: Do not double put the device node
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        zhong jiang <zhongjiang@huawei.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux@armlinux.org.uk>
+References: <1534211696-4221-1-git-send-email-zhongjiang@huawei.com>
+ <20180814125954.GM943@piout.net>
+From:   Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Message-ID: <59e252e6-6027-9f52-9ee8-8d0bd32659d2@microchip.com>
+Date:   Thu, 16 Aug 2018 12:32:57 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180815150616.GA31173@embeddedor.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20180814125954.GM943@piout.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 10:06:16AM -0500, Gustavo A. R. Silva wrote:
-> Replace the whole switch statement with a for loop.
-> This makes the code much clear and easy to read.
-> 
-> This also addresses the following Coverity warnings:
-> 
-> Addresses-Coverity-ID: 115090 ("Missing break in switch")
-> Addresses-Coverity-ID: 115091 ("Missing break in switch")
-> Addresses-Coverity-ID: 114700 ("Missing break in switch")
-> 
-> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  kernel/debug/kdb/kdb_main.c | 20 ++------------------
->  1 file changed, 2 insertions(+), 18 deletions(-)
-> 
-> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-> index 2ddfce8..4b896a6 100644
-> --- a/kernel/debug/kdb/kdb_main.c
-> +++ b/kernel/debug/kdb/kdb_main.c
-> @@ -1538,25 +1538,9 @@ static void kdb_md_line(const char *fmtstr, unsigned long addr,
->  			wc.word = word;
->  #define printable_char(c) \
->  	({unsigned char __c = c; isascii(__c) && isprint(__c) ? __c : '.'; })
-> -			switch (bytesperword) {
-> -			case 8:
-> +			for (i = 0; i < bytesperword; i++)
+Hi Alexandre,
 
-i already a control variable for the outer loop. It is not safe to reuse
-it here.
+On 14.08.2018 15:59, Alexandre Belloni wrote:
+> On 14/08/2018 09:54:56+0800, zhong jiang wrote:
+>> Device node iterators put the previous value of the index variable,
+>> so an explicit put causes a double put.
+>>
+> 
+> While for_each_matching_node_and_match will get and put the node
+> properly, there is also a call to of_find_device_by_node that will get a
+> reference to the node.
+> 
 
+Looking through of_find_device_by_node() it seems that a put_device() on the
+struct device member of the returned struct platform_device has to be called
+instead of of_node_put().
 
-Daniel.
+of_find_device_by_node() calls bus_find_device():
 
->  				*c++ = printable_char(*cp++);
-> -				*c++ = printable_char(*cp++);
-> -				*c++ = printable_char(*cp++);
-> -				*c++ = printable_char(*cp++);
-> -				addr += 4;
-> -			case 4:
-> -				*c++ = printable_char(*cp++);
-> -				*c++ = printable_char(*cp++);
-> -				addr += 2;
-> -			case 2:
-> -				*c++ = printable_char(*cp++);
-> -				addr++;
-> -			case 1:
-> -				*c++ = printable_char(*cp++);
-> -				addr++;
-> -				break;
-> -			}
-> +			addr += bytesperword;
->  #undef printable_char
->  		}
->  	}
-> -- 
-> 2.7.4
+dev = bus_find_device(&platform_bus_type, NULL, np, of_dev_node_match); 
+
+the match function, of_dev_node_match(), is just as follows:
+
+static int of_dev_node_match(struct device *dev, void *data)                    
+{                                                                               
+        return dev->of_node == data;                                            
+}                                                                               
+
+but bus_find_device() takes a reference to the struct device returned in case it
+founds a match, via get_device():
+
+struct device *bus_find_device(struct bus_type *bus,                            
+                               struct device *start, void *data,                
+                               int (*match)(struct device *dev,
+			       void*data))    
+{                                                                               
+        struct klist_iter i;                                                    
+        struct device *dev;                                                     
+                                                                                
+        if (!bus || !bus->p)                                                    
+                return NULL;                                                    
+                                                                                
+        klist_iter_init_node(&bus->p->klist_devices, &i,                        
+                             (start ? &start->p->knode_bus : NULL));            
+        while ((dev = next_device(&i)))                                         
+                if (match(dev, data) && get_device(dev))                        
+                        break;                                                  
+        klist_iter_exit(&i);                                                    
+        return dev;                                                             
+}                                                                               
+
+So, I think a put_device(&pdev->dev) has to be called in at91_pm_config_ws()
+instead of of_node_put(np). My bad!
+
+Thank you,
+Claudiu Beznea
+
+>> I detect the issue with the help of Coccinelle.
+>>
+>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+>> ---
+>>  arch/arm/mach-at91/pm.c | 5 +----
+>>  1 file changed, 1 insertion(+), 4 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+>> index 32fae4d..a5ec35f 100644
+>> --- a/arch/arm/mach-at91/pm.c
+>> +++ b/arch/arm/mach-at91/pm.c
+>> @@ -143,15 +143,12 @@ static int at91_pm_config_ws(unsigned int pm_mode, bool set)
+>>  
+>>  			/* Check if enabled on SHDWC. */
+>>  			if (wsi->shdwc_mr_bit && !(val & wsi->shdwc_mr_bit))
+>> -				goto put_node;
+>> +				continue;
+>>  
+>>  			mode |= wsi->pmc_fsmr_bit;
+>>  			if (wsi->set_polarity)
+>>  				polarity |= wsi->pmc_fsmr_bit;
+>>  		}
+>> -
+>> -put_node:
+>> -		of_node_put(np);
+>>  	}
+>>  
+>>  	if (mode) {
+>> -- 
+>> 1.7.12.4
+>>
 > 
