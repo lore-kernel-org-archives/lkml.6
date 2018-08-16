@@ -2,114 +2,145 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC75BC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7573BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:29:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94F052148C
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:27:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94F052148C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 242512148C
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:29:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="zxiQQ1y2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 242512148C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389985AbeHPLYY (ORCPT
+        id S2390002AbeHPL0V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 07:24:24 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:60269 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731260AbeHPLYY (ORCPT
+        Thu, 16 Aug 2018 07:26:21 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:43118 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729008AbeHPL0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 07:24:24 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fqDck-0002cE-GT; Thu, 16 Aug 2018 10:27:18 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fqDcj-0002fZ-ON; Thu, 16 Aug 2018 10:27:17 +0200
-Date:   Thu, 16 Aug 2018 10:27:17 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Esben Haabendal <esben.haabendal@gmail.com>
-Cc:     linux-i2c@vger.kernel.org, Esben Haabendal <eha@deif.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Peter Rosin <peda@axentia.se>,
-        Wei Jinhua <wei.jinhua1@zte.com.cn>,
-        Phil Reid <preid@electromag.com.au>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] i2c: imx: Fix race condition in dma read
-Message-ID: <20180816082717.tnoslzw4hwuanvxp@pengutronix.de>
-References: <20180809123207.9732-1-esben.haabendal@gmail.com>
- <20180809123207.9732-2-esben.haabendal@gmail.com>
+        Thu, 16 Aug 2018 07:26:21 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7G8TP27160092;
+        Thu, 16 Aug 2018 08:29:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=ZwUiwvKPW2ixFoZONtmJIMLGO/EZl7+1pWJ4SyCO2tA=;
+ b=zxiQQ1y2O2ygV2L4bvALhBndp+KFynXlMsPRlH+bs9Dy4rnj5nUKI6sno9oyOqP6MZVL
+ E0TPKWH87lNC7e7M/Eqm+4bJw1V72lO1WE0JOa0RAa/KX9lOCYoxcR/Q04MVjequ3tut
+ qFojbx4xGfXYH0CHzZbyFGPssjUcFY4E5+XDnOL1+qqn5wl6zsONkKmzt4Sjym4QmQwf
+ S4OQ85oiIcQNl0A1kPCgzE8Y9D6z2HW5WpZ5ew1gM4jInbEJsmq4pJM0Ww6akGms7hjN
+ T+pAgi1Jy8MPsVXsBIF4m47RrfuyI45srrzQwNpWdvj7jTo5iZbYXPomQdHkh0nbXhHv TA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2ksreq8yaf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Aug 2018 08:29:25 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7G8TOQM005397
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Aug 2018 08:29:24 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7G8TNZA029161;
+        Thu, 16 Aug 2018 08:29:23 GMT
+Received: from [10.182.69.179] (/10.182.69.179)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 16 Aug 2018 01:29:23 -0700
+Subject: Re: [PATCH 2/2] blk-mq: sync the update nr_hw_queues with
+ part_in_flight
+To:     Ming Lei <tom.leiming@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Keith Busch <keith.busch@linux.intel.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1534317915-5041-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1534317915-5041-3-git-send-email-jianchao.w.wang@oracle.com>
+ <CACVXFVO+g2ACx9XYx4XtwRkpSC9bCYeSFEj07Z==6r7nT-HxkQ@mail.gmail.com>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <8cd103e6-0986-2c45-00f2-8a2a540a2eb5@oracle.com>
+Date:   Thu, 16 Aug 2018 16:29:33 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180809123207.9732-2-esben.haabendal@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <CACVXFVO+g2ACx9XYx4XtwRkpSC9bCYeSFEj07Z==6r7nT-HxkQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8986 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=897
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808160091
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 09, 2018 at 02:32:05PM +0200, Esben Haabendal wrote:
-> From: Esben Haabendal <eha@deif.com>
+
+
+On 08/16/2018 12:50 PM, Ming Lei wrote:
+> On Wed, Aug 15, 2018 at 3:25 PM, Jianchao Wang
+> <jianchao.w.wang@oracle.com> wrote:
+>> For blk-mq, part_in_flight/rw will invoke blk_mq_in_flight/rw to
+>> account the inflight requests. It will access the queue_hw_ctx and
+>> nr_hw_queues w/o any protection. When updating nr_hw_queues and
+>> blk_mq_in_flight/rw occur concurrently, panic comes up.
 > 
-> This fixes a race condition, where the DMAEN bit ends up being set after
-> I2C slave has transmitted a byte following the dummy read.  When that
-> happens, an interrupt is generated instead, and no DMA request is generated
-> to kickstart the DMA read, and a timeout happens after DMA_TIMEOUT (1 sec).
+> When updating nr_hw_queues, all queues are frozen, and there shouldn't
+> be any inflight requests, so there shouldn't be such issue.
 > 
-> Fixed by setting the DMAEN bit before the dummy read.
+
+I get following crash when do updating nr_hw_queues test.
+
+[  112.643189] BUG: unable to handle kernel NULL pointer dereference at 0000000000000174
+[  112.643275] PGD 40baf8067 P4D 40baf8067 PUD 40bb38067 PMD 0 
+[  112.643334] Oops: 0000 [#1] PREEMPT SMP
+[  112.643372] CPU: 7 PID: 1526 Comm: fio Kdump: loaded Not tainted 4.18.0-rc6+ #250
+[  112.643434] Hardware name: LENOVO 10MLS0E339/3106, BIOS M1AKT22A 06/27/2017
+[  112.643499] RIP: 0010:blk_mq_queue_tag_busy_iter+0x4d/0x250
+[  112.643548] Code: 48 89 54 24 20 c7 44 24 0c 00 00 00 00 85 c9 0f 84 25 01 00 00 48 8b 7c 24 10 48 63 44 24 0c 48 8b 97 88 01 00 00 4c 8b 34 c2 <41> 8b 96 74 01 00 00 4d 8b a6 e8 01 00 00 85 d2 0f 84 e0 00 00 00 
+[  112.643791] RSP: 0018:ffff95708284fc70 EFLAGS: 00010202
+[  112.643840] RAX: 0000000000000002 RBX: ffff895b49570e18 RCX: 00000000000000ff
+[  112.643899] RDX: ffff895b4fc1d6c0 RSI: ffffffff8b6a94b0 RDI: ffff895b49570e18
+[  112.643961] RBP: 000000000000001f R08: 0000000000000000 R09: 0000000000000000
+[  112.644021] R10: ffff95708284fcd8 R11: ffffffff8b6b547d R12: ffff895b4fc30b40
+[  112.644081] R13: 0000000000000000 R14: 0000000000000000 R15: ffff895b48c96c40
+[  112.644144] FS:  00007fa79fd4c700(0000) GS:ffff895b62dc0000(0000) knlGS:0000000000000000
+[  112.644212] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  112.644270] CR2: 0000000000000174 CR3: 000000040b9ae001 CR4: 00000000003606e0
+[  112.644357] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  112.644459] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  112.644552] Call Trace:
+[  112.644603]  ? blk_mq_stop_hw_queues+0x50/0x50
+[  112.644675]  ? blk_mq_stop_hw_queues+0x50/0x50
+[  112.644748]  blk_mq_in_flight+0x2e/0x40
+[  112.644792]  part_round_stats+0x158/0x160
+[  112.644835]  part_stat_show+0x9c/0x530
+[  112.644873]  ? lock_acquire+0xab/0x200
+[  112.644913]  ? kernfs_seq_start+0x32/0x90
+[  112.644959]  dev_attr_show+0x19/0x50
+[  112.644996]  sysfs_kf_seq_show+0xad/0x100
+[  112.645039]  seq_read+0xa5/0x410
+[  112.645075]  ? __mutex_lock+0x20e/0x990
+[  112.645117]  __vfs_read+0x23/0x160
+[  112.645158]  vfs_read+0xa0/0x140
+[  112.645193]  ksys_read+0x45/0xa0
+[  112.645230]  do_syscall_64+0x5a/0x1a0
+[  112.645267]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+
+The blk_mq_in_flight will access the queue_hw_ctx and nr_hw_queues when updating nr_hw_queues is ongoing.
+
+Thanks
+Jianchao
+
 > 
-> Signed-off-by: Esben Haabendal <eha@deif.com>
-> ---
->  drivers/i2c/busses/i2c-imx.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+> Thanks,
+> Ming Lei
 > 
-> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-> index 498c5e891649..f7bd6c21da27 100644
-> --- a/drivers/i2c/busses/i2c-imx.c
-> +++ b/drivers/i2c/busses/i2c-imx.c
-> @@ -668,9 +668,6 @@ static int i2c_imx_dma_read(struct imx_i2c_struct *i2c_imx,
->  	struct imx_i2c_dma *dma = i2c_imx->dma;
->  	struct device *dev = &i2c_imx->adapter.dev;
->  
-> -	temp = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2CR);
-> -	temp |= I2CR_DMAEN;
-> -	imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2CR);
->  
->  	dma->chan_using = dma->chan_rx;
->  	dma->dma_transfer_dir = DMA_DEV_TO_MEM;
-> @@ -809,6 +806,8 @@ static int i2c_imx_read(struct imx_i2c_struct *i2c_imx, struct i2c_msg *msgs, bo
->  	 */
->  	if ((msgs->len - 1) || block_data)
->  		temp &= ~I2CR_TXAK;
-> +	if (i2c_imx->dma && msgs->len >= DMA_THRESHOLD && !block_data)
-> +		temp |= I2CR_DMAEN;
-
-Instead of duplicating the if condition I'd do:
-
-	int use_dma = i2c_imx->dma && msgs->len >= DMA_THRESHOLD && !block_data;
-
-and then simplify the two conditions to just "use_dma".
-
-With this changed you can add my Ack.
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
