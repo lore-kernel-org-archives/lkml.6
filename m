@@ -2,41 +2,40 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2629CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0796EC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6CFA21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6CFA21473
+	by mail.kernel.org (Postfix) with ESMTP id BFD5C21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFD5C21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729583AbeHPVof (ORCPT
+        id S1729633AbeHPVoj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:44:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56504 "EHLO
+        Thu, 16 Aug 2018 17:44:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56520 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729448AbeHPVof (ORCPT
+        with ESMTP id S1729544AbeHPVoi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:44:35 -0400
+        Thu, 16 Aug 2018 17:44:38 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A5CD6CC4;
-        Thu, 16 Aug 2018 18:44:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA22ACE8;
+        Thu, 16 Aug 2018 18:44:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Toshi Kani <toshi.kani@hpe.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mhocko@suse.com,
-        akpm@linux-foundation.org, hpa@zytor.com, cpandya@codeaurora.org,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        Joerg Roedel <joro@8bytes.org>
-Subject: [PATCH 4.9 15/15] x86/mm: Add TLB purge to free pmd/pte page interfaces
-Date:   Thu, 16 Aug 2018 20:42:08 +0200
-Message-Id: <20180816171627.340614373@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sebastian Gottschall <s.gottschall@dd-wrt.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 02/15] x86: i8259: Add missing include file
+Date:   Thu, 16 Aug 2018 20:41:55 +0200
+Message-Id: <20180816171625.917350241@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171625.340082081@linuxfoundation.org>
 References: <20180816171625.340082081@linuxfoundation.org>
@@ -53,124 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Toshi Kani <toshi.kani@hpe.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit 5e0fb5df2ee871b841f96f9cb6a7f2784e96aa4e upstream.
+commit 0a957467c5fd46142bc9c52758ffc552d4c5e2f7 upstream.
 
-ioremap() calls pud_free_pmd_page() / pmd_free_pte_page() when it creates
-a pud / pmd map.  The following preconditions are met at their entry.
- - All pte entries for a target pud/pmd address range have been cleared.
- - System-wide TLB purges have been peformed for a target pud/pmd address
-   range.
+i8259.h uses inb/outb and thus needs to include asm/io.h to avoid the
+following build error, as seen with x86_64:defconfig and CONFIG_SMP=n.
 
-The preconditions assure that there is no stale TLB entry for the range.
-Speculation may not cache TLB entries since it requires all levels of page
-entries, including ptes, to have P & A-bits set for an associated address.
-However, speculation may cache pud/pmd entries (paging-structure caches)
-when they have P-bit set.
+  In file included from drivers/rtc/rtc-cmos.c:45:0:
+  arch/x86/include/asm/i8259.h: In function 'inb_pic':
+  arch/x86/include/asm/i8259.h:32:24: error:
+	implicit declaration of function 'inb'
 
-Add a system-wide TLB purge (INVLPG) to a single page after clearing
-pud/pmd entry's P-bit.
+  arch/x86/include/asm/i8259.h: In function 'outb_pic':
+  arch/x86/include/asm/i8259.h:45:2: error:
+	implicit declaration of function 'outb'
 
-SDM 4.10.4.1, Operation that Invalidate TLBs and Paging-Structure Caches,
-states that:
-  INVLPG invalidates all paging-structure caches associated with the
-  current PCID regardless of the liner addresses to which they correspond.
-
-Fixes: 28ee90fe6048 ("x86/mm: implement free pmd/pte page interfaces")
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: mhocko@suse.com
-Cc: akpm@linux-foundation.org
-Cc: hpa@zytor.com
-Cc: cpandya@codeaurora.org
-Cc: linux-mm@kvack.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: stable@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20180627141348.21777-4-toshi.kani@hpe.com
+Reported-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Suggested-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Fixes: 447ae3166702 ("x86: Don't include linux/irq.h from asm/hardirq.h")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/pgtable.c |   38 +++++++++++++++++++++++++++++++-------
- 1 file changed, 31 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/i8259.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -659,24 +659,44 @@ int pmd_clear_huge(pmd_t *pmd)
-  * @pud: Pointer to a PUD.
-  * @addr: Virtual address associated with pud.
-  *
-- * Context: The pud range has been unmaped and TLB purged.
-+ * Context: The pud range has been unmapped and TLB purged.
-  * Return: 1 if clearing the entry succeeded. 0 otherwise.
-+ *
-+ * NOTE: Callers must allow a single page allocation.
-  */
- int pud_free_pmd_page(pud_t *pud, unsigned long addr)
- {
--	pmd_t *pmd;
-+	pmd_t *pmd, *pmd_sv;
-+	pte_t *pte;
- 	int i;
+--- a/arch/x86/include/asm/i8259.h
++++ b/arch/x86/include/asm/i8259.h
+@@ -2,6 +2,7 @@
+ #define _ASM_X86_I8259_H
  
- 	if (pud_none(*pud))
- 		return 1;
+ #include <linux/delay.h>
++#include <asm/io.h>
  
- 	pmd = (pmd_t *)pud_page_vaddr(*pud);
--
--	for (i = 0; i < PTRS_PER_PMD; i++)
--		if (!pmd_free_pte_page(&pmd[i], addr + (i * PMD_SIZE)))
--			return 0;
-+	pmd_sv = (pmd_t *)__get_free_page(GFP_KERNEL);
-+	if (!pmd_sv)
-+		return 0;
-+
-+	for (i = 0; i < PTRS_PER_PMD; i++) {
-+		pmd_sv[i] = pmd[i];
-+		if (!pmd_none(pmd[i]))
-+			pmd_clear(&pmd[i]);
-+	}
+ extern unsigned int cached_irq_mask;
  
- 	pud_clear(pud);
-+
-+	/* INVLPG to clear all paging-structure caches */
-+	flush_tlb_kernel_range(addr, addr + PAGE_SIZE-1);
-+
-+	for (i = 0; i < PTRS_PER_PMD; i++) {
-+		if (!pmd_none(pmd_sv[i])) {
-+			pte = (pte_t *)pmd_page_vaddr(pmd_sv[i]);
-+			free_page((unsigned long)pte);
-+		}
-+	}
-+
-+	free_page((unsigned long)pmd_sv);
- 	free_page((unsigned long)pmd);
- 
- 	return 1;
-@@ -687,7 +707,7 @@ int pud_free_pmd_page(pud_t *pud, unsign
-  * @pmd: Pointer to a PMD.
-  * @addr: Virtual address associated with pmd.
-  *
-- * Context: The pmd range has been unmaped and TLB purged.
-+ * Context: The pmd range has been unmapped and TLB purged.
-  * Return: 1 if clearing the entry succeeded. 0 otherwise.
-  */
- int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
-@@ -699,6 +719,10 @@ int pmd_free_pte_page(pmd_t *pmd, unsign
- 
- 	pte = (pte_t *)pmd_page_vaddr(*pmd);
- 	pmd_clear(pmd);
-+
-+	/* INVLPG to clear all paging-structure caches */
-+	flush_tlb_kernel_range(addr, addr + PAGE_SIZE-1);
-+
- 	free_page((unsigned long)pte);
- 
- 	return 1;
 
 
