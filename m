@@ -2,121 +2,313 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F60CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F982C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:26:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 081692147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:22:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="nM+1E1Q5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 081692147A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F8D02147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:26:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F8D02147A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbeHPVW1 (ORCPT
+        id S1726914AbeHPV0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:22:27 -0400
-Received: from mail-eopbgr700134.outbound.protection.outlook.com ([40.107.70.134]:57072
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725971AbeHPVW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:22:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PUVnslCv3BuCak19cOppJJFBa2ALR44ZvtxZmm+xefw=;
- b=nM+1E1Q5HPf0pLBHnE3kXNvBYbK70Xz022cuONWT7ILBrvxcrBSvdH49zv6gOUshfbaHk5rj9YpVCkYhvpbeak7J2gk2bl99ak4X9SuxnDS5Od9I+01nRVt42pzOvGpYWnzUciaIrnRzpyGpn+KC8rUWxZRpXEiAdxAKa4qQpbI=
-Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
- DM5PR21MB0843.namprd21.prod.outlook.com (10.173.172.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1080.7; Thu, 16 Aug 2018 18:22:21 +0000
-Received: from DM5PR21MB0508.namprd21.prod.outlook.com
- ([fe80::65dd:b17f:eb0d:2eee]) by DM5PR21MB0508.namprd21.prod.outlook.com
- ([fe80::65dd:b17f:eb0d:2eee%8]) with mapi id 15.20.1080.009; Thu, 16 Aug 2018
- 18:22:21 +0000
-From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
-To:     Oscar Salvador <osalvador@techadventures.net>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        "mhocko@suse.com" <mhocko@suse.com>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "yasu.isimatu@gmail.com" <yasu.isimatu@gmail.com>,
-        "jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>,
-        "david@redhat.com" <david@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH v3 3/4] mm/memory_hotplug: Refactor
- unregister_mem_sect_under_nodes
-Thread-Topic: [PATCH v3 3/4] mm/memory_hotplug: Refactor
- unregister_mem_sect_under_nodes
-Thread-Index: AQHUNKY0SEMNBRldw0KDglUlvnp8kKTBXbOAgACj+ICAALEsAA==
-Date:   Thu, 16 Aug 2018 18:22:21 +0000
-Message-ID: <20180816182220.dmlun5edcbf4lspj@xakep.localdomain>
-References: <20180815144219.6014-1-osalvador@techadventures.net>
- <20180815144219.6014-4-osalvador@techadventures.net>
- <20180815150121.7ec35ddabf18aea88d84437f@linux-foundation.org>
- <20180816074813.GA16221@techadventures.net>
-In-Reply-To: <20180816074813.GA16221@techadventures.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [73.69.118.222]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR21MB0843;6:xDVs9ntyBLIlt98/cuhM2wUeAUxN0mV3fNKD6qZ+YBZ4CUhEnYbvl/ToiXz3+PG92DVVDfp+hF7qgyE4WdWJ8rRMYggYS8U89FfrGuAjvOqh/CkDOAO74RuObADRKy0EGwOa3sZLVLAksm80MYJYX6Ne/wAhtvR+Q94JKOJY+042jrngbhlYS0CKk/dhvF/xavsmAHLm8H7FYFWqxrpFMWcjg4HliqKmiKxPT74tGCTXmp2UaeRbsgP6gc7qeVNYOKKKRHPSHIGL6IdpL+W/xm5YY+HAayaDK+U+gMSoylExZW87TA95H5zLgBMwxfffzlb6+Uc+49nbW6YOXWIMaCC50PyFw5g0an0G0gtaxuP5bFdZ+vHWTxCYzmwX+frdoX6pW7G9vZiYRBpLM0Xmrz0/f8ulVUDqulDyw9u18fkB730XJy8BjC4fDrZC4BtXE1k7RRuAtKfEVvg6IBo4Sw==;5:9FV+yij0a3J0nbZ2l90JaAJqP/zhyBJIxkJ/WL0caOWU/p1bBZZsSH2AJ75rITDWRgLcQfg37heSGdp3Ik9EG11oBtSPlI/e3M5GJhhNoRMeOx61LFksW9WskVSVkvws4szoK5vLwjLPb/+o3hHfm/XPb8u2Aq/FGg3AkfZwbNg=;7:bnUhBSkauOyaDndv/p6G5H2N7NPlSIY9DAbq6manFKM/C0BoLQ6orA2ZUtAOtPEFt8Wk8nMBeJrVNBKY8Q1+dAPsxyI1hoPjMoKBzBElUiMtdz7uxLydfWLTj4ZYVJWYVWP3kMYurfJzM2wPL1woKAZHzOpJQvxOchzA3yGlxoIKAhZ47+WLUhBW6Y2mpyR37TDHiITt2hbEaYRoRUfr8P7WhxuvDkPISBjymaSUmS++Ck6IQZtfLzXTdwtm7Trw
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: c0ee592c-4dd6-43bd-6fa6-08d603a5354f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0843;
-x-ms-traffictypediagnostic: DM5PR21MB0843:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
-x-microsoft-antispam-prvs: <DM5PR21MB08436A197971F910754CE96E9D3E0@DM5PR21MB0843.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(20180801012)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231336)(8210008)(944501410)(52105095)(2018427008)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(201708071742011)(7699016);SRVR:DM5PR21MB0843;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0843;
-x-forefront-prvs: 07665BE9D1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(136003)(346002)(366004)(376002)(199004)(189003)(54094003)(66066001)(256004)(53936002)(11346002)(305945005)(5660300001)(105586002)(81166006)(22452003)(446003)(106356001)(81156014)(486006)(476003)(316002)(10090500001)(8936002)(68736007)(186003)(39060400002)(6436002)(99286004)(7736002)(6506007)(4326008)(26005)(3846002)(14454004)(6116002)(102836004)(93886005)(8676002)(7416002)(2906002)(10290500003)(86362001)(25786009)(229853002)(2900100001)(72206003)(478600001)(76176011)(6512007)(1076002)(6486002)(9686003)(6916009)(6246003)(5250100002)(33896004)(86612001)(54906003)(97736004);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0843;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 62Q1lQh0oJ29dRPj82KLmt+nIkMyHi+mruUYBfylGFnf9uNHNvFp4x+i+qXiJVC5FsWlb3Iq08aaDj2pU3ID2CuZY0hCIYdbduBk+n1H2mfwEDe1YVW13Wowzofu29HpUoiExeFJip2SceDB+2d8WACBcw7PvsfwnmUM7vSoA5LbghMQg0iMAd/eYl1DXemGth3kVfMJPfSb9+goPpcAy1Vr8uCujjH/4drmC3wYRU/o/1rf84mQKL4zK+0TihZErNtFY94GHq9F4AhQnfMyXxTEqY/TXLQfrQyibU7YOTTrS5fJ2gUFEfe/P6mltpobdoaqfWQ8hU3ptoOTqx2kGNC67BPU9Qo4JgV3C4SHcGo=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <D33BD405BF53E24FB8DD25B72AF4ABD6@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0ee592c-4dd6-43bd-6fa6-08d603a5354f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2018 18:22:21.6407
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0843
+        Thu, 16 Aug 2018 17:26:14 -0400
+Received: from smtprelay0120.hostedemail.com ([216.40.44.120]:44617 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726470AbeHPV0O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 17:26:14 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 64F05837F242;
+        Thu, 16 Aug 2018 18:26:08 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: nest27_8c9423c30c95f
+X-Filterd-Recvd-Size: 12627
+Received: from joe-laptop.perches.com (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 16 Aug 2018 18:26:05 +0000 (UTC)
+From:   Joe Perches <joe@perches.com>
+To:     Linus Torvalds <torvalds@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Rob Herring <rob.herring@linaro.org>,
+        Jonas Oberg <jonas@fsfe.org>,
+        Andrew Morton <akpm@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Subject: [PATCH] license-rules.rst and LICENSES: Use only spdx version 3 with -only and -or-later
+Date:   Thu, 16 Aug 2018 11:26:03 -0700
+Message-Id: <f9a4cd2b1c1cd7938a4e0b8aa9489a0ad96669ca.1534443693.git.joe@perches.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > d) What's the maximum number of nodes, ever?  Perhaps we can always
-> >    fit a nodemask_t onto the stack, dunno.
->=20
-> Right now, we define the maximum as NODES_SHIFT =3D 10, so:
->=20
-> 1 << 10 =3D 1024 Maximum nodes.
->=20
-> Since this makes only 128 bytes, I wonder if we can just go ahead and def=
-ine a nodemask_t
-> whithin the stack.
-> 128 bytes is not that much, is it?
+The current linux-kernel source git tree has a mixture of the deprecated
+spdx version 2 and the newer version 3 uses.
 
-Yeah, sue stack here, 128b is tiny. This also will solve Andrew's point of =
-having an untested path when alloc fails, and simplify the patch overall.
+Update the process/license-rules.rst file to show only the version 3 style
+and use only the version 3 styles in LICENSES.
 
-Thank you,
-Pavel=
+Add a script to update all old versions in the tree as well.
+
+I suggest this be applied and the script be run and applied immediately
+after an -rc1.  The script could also be used at any time after the initial
+use to update any other deprecated spdx license uses.
+
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ Documentation/process/license-rules.rst | 60 ++++++++++++++++-----------------
+ LICENSES/preferred/GPL-2.0              |  6 ----
+ LICENSES/preferred/LGPL-2.0             |  8 ++---
+ LICENSES/preferred/LGPL-2.1             |  8 ++---
+ scripts/update_spdx_v2_licenses.sh      | 15 +++++++++
+ 5 files changed, 53 insertions(+), 44 deletions(-)
+ create mode 100755 scripts/update_spdx_v2_licenses.sh
+
+diff --git a/Documentation/process/license-rules.rst b/Documentation/process/license-rules.rst
+index 8ea26325fe3f..2b294611b6c1 100644
+--- a/Documentation/process/license-rules.rst
++++ b/Documentation/process/license-rules.rst
+@@ -16,12 +16,12 @@ The license described in the COPYING file applies to the kernel source
+ as a whole, though individual source files can have a different license
+ which is required to be compatible with the GPL-2.0::
+ 
+-    GPL-1.0+  :  GNU General Public License v1.0 or later
+-    GPL-2.0+  :  GNU General Public License v2.0 or later
+-    LGPL-2.0  :  GNU Library General Public License v2 only
+-    LGPL-2.0+ :  GNU Library General Public License v2 or later
+-    LGPL-2.1  :  GNU Lesser General Public License v2.1 only
+-    LGPL-2.1+ :  GNU Lesser General Public License v2.1 or later
++    GPL-1.0-or-later  :  GNU General Public License v1.0 or later
++    GPL-2.0-or-later  :  GNU General Public License v2.0 or later
++    LGPL-2.0-only     :  GNU Library General Public License v2 only
++    LGPL-2.0-or-later :  GNU Library General Public License v2 or later
++    LGPL-2.1-only     :  GNU Lesser General Public License v2.1 only
++    LGPL-2.1-or-later :  GNU Lesser General Public License v2.1 or later
+ 
+ Aside from that, individual files can be provided under a dual license,
+ e.g. one of the compatible GPL variants and alternatively under a
+@@ -98,21 +98,21 @@ License identifier syntax
+    "(", ")" .
+ 
+    License identifiers for licenses like [L]GPL with the 'or later' option
+-   are constructed by using a "+" for indicating the 'or later' option.::
++   are constructed by using the '-or-later' option.::
+ 
+-      // SPDX-License-Identifier: GPL-2.0+
+-      // SPDX-License-Identifier: LGPL-2.1+
++      // SPDX-License-Identifier: GPL-2.0-or-later
++      // SPDX-License-Identifier: LGPL-2.1-or-later
+ 
+    WITH should be used when there is a modifier to a license needed.
+    For example, the linux kernel UAPI files use the expression::
+ 
+-      // SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
+-      // SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note
++      // SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note
++      // SPDX-License-Identifier: GPL-2.0-or-later WITH Linux-syscall-note
+ 
+    Other examples using WITH exceptions found in the kernel are::
+ 
+-      // SPDX-License-Identifier: GPL-2.0 WITH mif-exception
+-      // SPDX-License-Identifier: GPL-2.0+ WITH GCC-exception-2.0
++      // SPDX-License-Identifier: GPL-2.0-only WITH mif-exception
++      // SPDX-License-Identifier: GPL-2.0-or-later WITH GCC-exception-2.0
+ 
+    Exceptions can only be used with particular License identifiers. The
+    valid License identifiers are listed in the tags of the exception text
+@@ -123,28 +123,28 @@ License identifier syntax
+    to be selected.  For example, some dtsi files are available under dual
+    licenses::
+ 
+-      // SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
++      // SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause
+ 
+    Examples from the kernel for license expressions in dual licensed files::
+ 
+-      // SPDX-License-Identifier: GPL-2.0 OR MIT
+-      // SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
+-      // SPDX-License-Identifier: GPL-2.0 OR Apache-2.0
+-      // SPDX-License-Identifier: GPL-2.0 OR MPL-1.1
+-      // SPDX-License-Identifier: (GPL-2.0 WITH Linux-syscall-note) OR MIT
+-      // SPDX-License-Identifier: GPL-1.0+ OR BSD-3-Clause OR OpenSSL
++      // SPDX-License-Identifier: GPL-2.0-only OR MIT
++      // SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++      // SPDX-License-Identifier: GPL-2.0-only OR Apache-2.0
++      // SPDX-License-Identifier: GPL-2.0-only OR MPL-1.1
++      // SPDX-License-Identifier: (GPL-2.0-only WITH Linux-syscall-note) OR MIT
++      // SPDX-License-Identifier: GPL-1.0-or-later OR BSD-3-Clause OR OpenSSL
+ 
+    AND should be used if the file has multiple licenses whose terms all
+    apply to use the file. For example, if code is inherited from another
+    project and permission has been given to put it in the kernel, but the
+    original license terms need to remain in effect::
+ 
+-      // SPDX-License-Identifier: (GPL-2.0 WITH Linux-syscall-note) AND MIT
++      // SPDX-License-Identifier: (GPL-2.0-only WITH Linux-syscall-note) AND MIT
+ 
+    Another other example where both sets of license terms need to be
+    adhered to is::
+ 
+-      // SPDX-License-Identifier: GPL-1.0+ AND LGPL-2.1+
++      // SPDX-License-Identifier: GPL-1.0-or-later AND LGPL-2.1-or-later
+ 
+ License identifiers
+ -------------------
+@@ -168,7 +168,7 @@ kernel, can be broken down into:
+ 
+    Examples::
+ 
+-      LICENSES/preferred/GPL-2.0
++      LICENSES/preferred/GPL-2.0-only
+ 
+    Contains the GPL version 2 license text and the required metatags::
+ 
+@@ -204,17 +204,17 @@ kernel, can be broken down into:
+ 
+    File format examples::
+ 
+-      Valid-License-Identifier: GPL-2.0
+-      Valid-License-Identifier: GPL-2.0+
+-      SPDX-URL: https://spdx.org/licenses/GPL-2.0.html
++      Valid-License-Identifier: GPL-2.0-only
++      Valid-License-Identifier: GPL-2.0-or-later
++      SPDX-URL: https://spdx.org/licenses/GPL-2.0-only.html
+       Usage-Guide:
+         To use this license in source code, put one of the following SPDX
+ 	tag/value pairs into a comment according to the placement
+ 	guidelines in the licensing rules documentation.
+ 	For 'GNU General Public License (GPL) version 2 only' use:
+-	  SPDX-License-Identifier: GPL-2.0
++	  SPDX-License-Identifier: GPL-2.0-only
+ 	For 'GNU General Public License (GPL) version 2 or any later version' use:
+-	  SPDX-License-Identifier: GPL-2.0+
++	  SPDX-License-Identifier: GPL-2.0-or-later
+       License-Text:
+         Full license text
+ 
+@@ -338,7 +338,7 @@ kernel, can be broken down into:
+ 
+       SPDX-Exception-Identifier: Linux-syscall-note
+       SPDX-URL: https://spdx.org/licenses/Linux-syscall-note.html
+-      SPDX-Licenses: GPL-2.0, GPL-2.0+, GPL-1.0+, LGPL-2.0, LGPL-2.0+, LGPL-2.1, LGPL-2.1+
++      SPDX-Licenses: GPL-2.0-only, GPL-2.0-or-later, GPL-1.0-or-later, LGPL-2.0-only, LGPL-2.0-or-later, LGPL-2.1-only, LGPL-2.1-or-later
+       Usage-Guidance:
+         This exception is used together with one of the above SPDX-Licenses
+ 	to mark user-space API (uapi) header files so they can be included
+@@ -353,7 +353,7 @@ kernel, can be broken down into:
+ 
+       SPDX-Exception-Identifier: GCC-exception-2.0
+       SPDX-URL: https://spdx.org/licenses/GCC-exception-2.0.html
+-      SPDX-Licenses: GPL-2.0, GPL-2.0+
++      SPDX-Licenses: GPL-2.0-only, GPL-2.0-or-later
+       Usage-Guidance:
+         The "GCC Runtime Library exception 2.0" is used together with one
+ 	of the above SPDX-Licenses for code imported from the GCC runtime
+diff --git a/LICENSES/preferred/GPL-2.0 b/LICENSES/preferred/GPL-2.0
+index ff0812fd89cc..cabbb1779d45 100644
+--- a/LICENSES/preferred/GPL-2.0
++++ b/LICENSES/preferred/GPL-2.0
+@@ -1,6 +1,4 @@
+-Valid-License-Identifier: GPL-2.0
+ Valid-License-Identifier: GPL-2.0-only
+-Valid-License-Identifier: GPL-2.0+
+ Valid-License-Identifier: GPL-2.0-or-later
+ SPDX-URL: https://spdx.org/licenses/GPL-2.0.html
+ Usage-Guide:
+@@ -8,12 +6,8 @@ Usage-Guide:
+   tag/value pairs into a comment according to the placement
+   guidelines in the licensing rules documentation.
+   For 'GNU General Public License (GPL) version 2 only' use:
+-    SPDX-License-Identifier: GPL-2.0
+-  or
+     SPDX-License-Identifier: GPL-2.0-only
+   For 'GNU General Public License (GPL) version 2 or any later version' use:
+-    SPDX-License-Identifier: GPL-2.0+
+-  or
+     SPDX-License-Identifier: GPL-2.0-or-later
+ License-Text:
+ 
+diff --git a/LICENSES/preferred/LGPL-2.0 b/LICENSES/preferred/LGPL-2.0
+index 957d798fe037..443c5569c4f5 100644
+--- a/LICENSES/preferred/LGPL-2.0
++++ b/LICENSES/preferred/LGPL-2.0
+@@ -1,15 +1,15 @@
+-Valid-License-Identifier: LGPL-2.0
+-Valid-License-Identifier: LGPL-2.0+
++Valid-License-Identifier: LGPL-2.0-only
++Valid-License-Identifier: LGPL-2.0-or-later
+ SPDX-URL: https://spdx.org/licenses/LGPL-2.0.html
+ Usage-Guide:
+   To use this license in source code, put one of the following SPDX
+   tag/value pairs into a comment according to the placement
+   guidelines in the licensing rules documentation.
+   For 'GNU Library General Public License (LGPL) version 2.0 only' use:
+-    SPDX-License-Identifier: LGPL-2.0
++    SPDX-License-Identifier: LGPL-2.0-only
+   For 'GNU Library General Public License (LGPL) version 2.0 or any later
+   version' use:
+-    SPDX-License-Identifier: LGPL-2.0+
++    SPDX-License-Identifier: LGPL-2.0-or-later
+ License-Text:
+ 
+ GNU LIBRARY GENERAL PUBLIC LICENSE
+diff --git a/LICENSES/preferred/LGPL-2.1 b/LICENSES/preferred/LGPL-2.1
+index 27bb4342a3e8..8738a8d578fa 100644
+--- a/LICENSES/preferred/LGPL-2.1
++++ b/LICENSES/preferred/LGPL-2.1
+@@ -1,15 +1,15 @@
+-Valid-License-Identifier: LGPL-2.1
+-Valid-License-Identifier: LGPL-2.1+
++Valid-License-Identifier: LGPL-2.1-only
++Valid-License-Identifier: LGPL-2.1-or-later
+ SPDX-URL: https://spdx.org/licenses/LGPL-2.1.html
+ Usage-Guide:
+   To use this license in source code, put one of the following SPDX
+   tag/value pairs into a comment according to the placement
+   guidelines in the licensing rules documentation.
+   For 'GNU Lesser General Public License (LGPL) version 2.1 only' use:
+-    SPDX-License-Identifier: LGPL-2.1
++    SPDX-License-Identifier: LGPL-2.1-only
+   For 'GNU Lesser General Public License (LGPL) version 2.1 or any later
+   version' use:
+-    SPDX-License-Identifier: LGPL-2.1+
++    SPDX-License-Identifier: LGPL-2.1-or-later
+ License-Text:
+ 
+ GNU LESSER GENERAL PUBLIC LICENSE
+diff --git a/scripts/update_spdx_v2_licenses.sh b/scripts/update_spdx_v2_licenses.sh
+new file mode 100755
+index 000000000000..4d422cab600a
+--- /dev/null
++++ b/scripts/update_spdx_v2_licenses.sh
+@@ -0,0 +1,15 @@
++#!/bin/bash
++
++# GPL variants without \+ that should use -only
++
++spdx_find='(SPDX-License-Identifier:\s[\s\(]*.*\bL?GPL-[12].[01])(\s|\)|$)'
++spdx_replace='\1-only\2'
++git grep -P --name-only "$spdx_find" -- './*' ':(exclude)LICENSES/' | \
++    xargs -r perl -p -i -e "s/$spdx_find/$spdx_replace/"
++
++# GPL variants with \+ that should use -or-later
++
++spdx_find='(SPDX-License-Identifier:\s[\s\(]*.*\bL?GPL-[12].[01])\+(\s|\)|$)'
++spdx_replace='\1-or-later\2'
++git grep -P --name-only "$spdx_find" -- './*' ':(exclude)LICENSES/' | \
++    xargs -r perl -p -i -e "s/$spdx_find/$spdx_replace/"
+-- 
+2.15.0
+
