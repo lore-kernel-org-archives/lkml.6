@@ -2,76 +2,153 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF12FC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0285C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E3712148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:48:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E3712148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 73919208D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:54:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73919208D8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389841AbeHPLp4 (ORCPT
+        id S2389983AbeHPLvb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 07:45:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35924 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726284AbeHPLp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 07:45:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 05A2EAE10;
-        Thu, 16 Aug 2018 08:48:54 +0000 (UTC)
-Date:   Thu, 16 Aug 2018 10:48:53 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Joe Perches <joe@perches.com>, Oleg Nesterov <oleg@redhat.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2] riscv: Convert uses of REG_FMT to %p
-Message-ID: <20180816084853.plptubcgubpc5fm4@pathway.suse.cz>
-References: <e14dedc721b7aed1cf3ff1bdbc09014c0131c276.1532795905.git.joe@perches.com>
- <CAHp75VcvdAVWCuUpj+aQeD5aEU1LM1SjOPJ7_1hdQnQiya36SA@mail.gmail.com>
+        Thu, 16 Aug 2018 07:51:31 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:45872 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726290AbeHPLva (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 07:51:30 -0400
+Received: by mail-oi0-f65.google.com with SMTP id q11-v6so6693306oic.12;
+        Thu, 16 Aug 2018 01:54:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CgMPK+Hv4oVFlE6NY3KNTglyAR3kf+lCGzm5b5XziVg=;
+        b=FIFaw5jbZFBGGzXpWLAQqdZSM19zR+9/kjBHm4Se38eU8tx6vGBTP7pcQCeXrkCUW4
+         1+odkk4oth5QlTRP67aS5Ap0pFgicKoSJdJ/ZTxLxXPB2RvjGkmcrz+NSJKd4lY3oNaw
+         M4od5zbBY+95lYojP+vMxP0u1rTG83qZVZWZZ+gzx5R3s2Nz4az241p8XpTMRfzZUPbi
+         SIaXvwl0Ykbj+gTgGSrwuqHtgB0yt0xA5JjWARo4+VD82babIm0uWzxQBIUlc/aNRspR
+         LwQok4FF8NZ5KHnrki6qoynroeWgRi2VfYEFsclnlyf3wRQ02ZOKejgRUacD+sps0L6M
+         X5BQ==
+X-Gm-Message-State: AOUpUlGcRuwIJEuJfrI40yJ2BCDNONlAnl5E28g0CM5LxWT323T0WU6+
+        4KIYZDw2llffWU0egn1OfICaO9/WRNfbY0QcIRU=
+X-Google-Smtp-Source: AA+uWPxSzQKfstbbNI7XNPbS3zzewIlfVO+fqo1lBf0wOZxgAz1dKAWEwUewESYrDM84V4tnQCQyon3xxN+8scr1l+g=
+X-Received: by 2002:aca:b885:: with SMTP id i127-v6mr33089835oif.180.1534409667789;
+ Thu, 16 Aug 2018 01:54:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcvdAVWCuUpj+aQeD5aEU1LM1SjOPJ7_1hdQnQiya36SA@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+References: <CAB4CAwfms8_zJ=xB5wJ0Sgr6gu9-mFnqwEz2cUR-sOHdEV5zqQ@mail.gmail.com>
+ <CAJZ5v0gKfyB7=5ZGj9uXejoBjkuf2snsKwYJM2Ar1_Vg8A8SCg@mail.gmail.com> <CAB4CAwfdwU6FQVEWWO2dLw-RJHTpqWeuk_BiH04ssE=iCOrJ+A@mail.gmail.com>
+In-Reply-To: <CAB4CAwfdwU6FQVEWWO2dLw-RJHTpqWeuk_BiH04ssE=iCOrJ+A@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 16 Aug 2018 10:54:15 +0200
+Message-ID: <CAJZ5v0i6PXg1rTjBTZy3tGVihmb84qZpqzmHrwSdACWZ+SOgYg@mail.gmail.com>
+Subject: Re: Keyboard lost after exit s2idle on ASUS UX433FN
+To:     Chris Chiu <chiu@endlessm.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 2018-07-29 17:21:19, Andy Shevchenko wrote:
-> On Sat, Jul 28, 2018 at 7:39 PM, Joe Perches <joe@perches.com> wrote:
-> > Use %p pointer output instead of REG_FMT and cast the unsigned longs to
-> > (void *) to avoid exposing kernel addresses.
+On Thu, Aug 16, 2018 at 10:18 AM Chris Chiu <chiu@endlessm.com> wrote:
+>
+> On Thu, Aug 16, 2018 at 3:26 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > On Thu, Aug 16, 2018 at 4:45 AM Chris Chiu <chiu@endlessm.com> wrote:
+> >>
+> >> Hi,
+> >>     We recently hit a weird problem on the ASUS laptop UX433FN with
+> >> latest Intel Core i7-8565U CPU on kernel 4.18. The keyboard stops
+> >> functioning after exit s2idle. It stops firing interrupts after resume
+> >> on any keypress. We thought it should be something wrong with i8042
+> >> driver or even atkbd driver, so we tried to skip the suspend/resume
+> >> path of i8042 and input devices but no luck.
+> >>
+> >>     Then we tried to hack the s2idle code to fail right before it goes
+> >> into the idle state to find out which code really cause the keyboard
+> >> broken. It comes with an interesting finding that if it aborts s2idle
+> >> before cpuidle_resume() in s2idle_enter(), the keyboard is fine. If it
+> >> aborts after cpuidle_resume, then the keyboard down. At least it
+> >> proves that even with dpm_noirq_begin() and
+> >> dpm_noirq_suspend_devices() executed, the keyboard is still alive.
+> >> There should be something wrong with the cpuidle.
+> >>
+> >>     Going deeper into intel_idle_s2idle() which is invoked by
+> >> cpuidle_enter_s2idle(), we found that the keyboard interrupt will no
+> >> longer function after mwait_idle_with_hints() which just simply
+> >> executing intel monitor and mwait instructions. So I don't know what
+> >> should be the next step I can take. Can anyone give some pieces of
+> >> advice?
 > >
-> > Miscellanea:
+> > It may indicate that the deepest C-states used by s2idle simply don't
+> > work correctly on the affected system.
 > >
-> > o Convert pr_cont to printk(KERN_DEFAULT as these uses are
-> >   new logging lines and not previous line continuations
-> > o Remove the now unused REG_FMT defines
-> 
-> > +       pr_alert("Unable to handle kernel %s at virtual address %p\n",
-> 
-> > +                (addr < PAGE_SIZE) ? "NULL pointer dereference" :
-> > +                "paging request", (void *)addr);
-> 
-> Hmm... This is what printf() should take care of.
-> 
-> Petr, what is the status of your series to unify this kind of
-> addresses to be printed?
+> > To verify this, you can try to disable the deepest C-states via sysfs
+> > using the "disable" attribute under
+> > /sys/devices/system/cpu/cpuX/cpuidle/stateX/
+> >
+> Thanks for the great help. I can have the keyboard work after s2idle with
+> the following command
+>
+> echo 1 > /sys/devices/system/cpu/cpuX/cpuidle/state8/disable
+>
+> cpuX, X can be 0 to 7 on this CPU.
+> And only state8 disable would work, it fails on state 0~7 disabled.
 
-Ah, I had to put the series on hold because of other urgent work and
-vacations. But I am going to continue on it and resend it within next
-weeks or so.
+Well, if you disable one of states 0-7 alone, it will still attempt to
+use state8. :-)
 
-Best Regards,
-Petr
+It generally uses the deepest one enabled.
+
+> There're 9 (0-8) states on the cpuidle of this machine. However, I have another
+> laptop with the same CPU Intel Core i7-8565U which only have 4(0-3) states
+> under the same '/sys/devices/system/cpu/cpuX/cpuidle/' entry. Sorry that I
+> don't have enough background knowledge about cpuidle. I thought the #C
+> state should be depend on CPU, but why the same i7-8565 has different
+> number of C-states?
+
+What is there in /sys/devices/system/cpu/cpuidle/current_driver on
+each of these systems?
+
+>  And for this case, should I just disable C-8 state or there
+> should be a generic fix with it?
+
+No, it just doesn't work specifically on your system, unfortunately,
+so you need to disable state8 manually, at least for the time being.
+If all UX433FNs turn out to be affected, we may consider adding a
+quirk for them, but for now we just don't know.
+
+Do the "name" and "desc" sysfs files of state8 on the affected system
+contain "C10" and "MWAIT 0x60", respectively?
+
+To make a more persistent record of this issue, you can file a bug at
+bugzilla.kernel.org against cpuidle and put all of the relevant
+information into it.  It is possible that some special magic is needed
+to make the deepest idle state safe on this system and it may be hard
+to find out, but at least it is good to know that this happens.
+
+> > Is s2idle the default suspend method on that system?  If so, have you
+> > checked whether or not suspend-to-RAM works too?
+> >
+>
+> Yes, it's default s2idle. If I do 'echo mem > /sys/power/state', the keyboard
+> would still fail.
+
+OK
+
+What's there in /sys/power/mem_sleep ?
+
+Thanks,
+Rafael
