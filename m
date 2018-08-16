@@ -2,149 +2,134 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A89EDC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBF8C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D91D21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:57:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D91D21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EB7FE20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:59:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="SsCWsD0z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB7FE20673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728825AbeHPVnN (ORCPT
+        id S1726265AbeHPV7u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:43:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48208 "EHLO mx1.redhat.com"
+        Thu, 16 Aug 2018 17:59:50 -0400
+Received: from mail-co1nam03on0132.outbound.protection.outlook.com ([104.47.40.132]:48064
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728795AbeHPVnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:43:13 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9CDD9407605F;
-        Thu, 16 Aug 2018 18:43:04 +0000 (UTC)
-Received: from [10.36.116.35] (ovpn-116-35.ams2.redhat.com [10.36.116.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4D4141D08B;
-        Thu, 16 Aug 2018 18:43:01 +0000 (UTC)
-Subject: Re: [PATCH v3 2/4] mm/memory_hotplug: Drop mem_blk check from
+        id S1725749AbeHPV7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 17:59:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=izJtUjMI6nUfqnPdrIL+aJBy/ZjKPjvJ7iXjqm5jrqs=;
+ b=SsCWsD0zAAlPrjbJ+QbMEtRgRWTDeC3aKF0kzMHbqjnn+D0UnpeW1OHOd+qAFO/pSbFUefkREIMPd2ERzEq4VM4T3oCD7kTMtAdpACScDLSq74/LFT4RwKofp7B+Wx+gA090wxGps/Yiu/KATE+OojWtqOhLnfDWhlICPtPJf9o=
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
+ DM5PR21MB0780.namprd21.prod.outlook.com (10.173.173.7) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1080.5; Thu, 16 Aug 2018 18:59:31 +0000
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::65dd:b17f:eb0d:2eee]) by DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::65dd:b17f:eb0d:2eee%8]) with mapi id 15.20.1080.009; Thu, 16 Aug 2018
+ 18:59:31 +0000
+From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
+To:     Oscar Salvador <osalvador@techadventures.net>
+CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "yasu.isimatu@gmail.com" <yasu.isimatu@gmail.com>,
+        "jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v3 4/4] mm/memory_hotplug: Drop node_online check in
  unregister_mem_sect_under_nodes
-To:     Oscar Salvador <osalvador@techadventures.net>,
-        akpm@linux-foundation.org
-Cc:     mhocko@suse.com, vbabka@suse.cz, dan.j.williams@intel.com,
-        yasu.isimatu@gmail.com, jonathan.cameron@huawei.com,
-        Pavel.Tatashin@microsoft.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+Thread-Topic: [PATCH v3 4/4] mm/memory_hotplug: Drop node_online check in
+ unregister_mem_sect_under_nodes
+Thread-Index: AQHUNKY0L/M1Chtix0yg3O5Mw7071qTCvTkA
+Date:   Thu, 16 Aug 2018 18:59:31 +0000
+Message-ID: <20180816185930.tfg2rzjnh34lmuxa@xakep.localdomain>
 References: <20180815144219.6014-1-osalvador@techadventures.net>
- <20180815144219.6014-3-osalvador@techadventures.net>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <29a2c884-836c-d659-ee39-2c865943a3f5@redhat.com>
-Date:   Thu, 16 Aug 2018 20:43:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180815144219.6014-3-osalvador@techadventures.net>
-Content-Type: text/plain; charset=utf-8
+ <20180815144219.6014-5-osalvador@techadventures.net>
+In-Reply-To: <20180815144219.6014-5-osalvador@techadventures.net>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 16 Aug 2018 18:43:04 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 16 Aug 2018 18:43:04 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [73.69.118.222]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR21MB0780;6:KwasRoKHEBWqdtdR14KODzu8Shdj9HDV0NrYpeqc6y2NXtgMOfYfRIuMk/yRGWpAbfDFWdBFOfHRD+Od7zYXp5iAF/VgJbDg0QqOUNkXmGtnxoS2W+nX6/eIDL2dliyh4aNQpDxjxShB5SIDP7CFf8kpmro8QX+ZKu6IBIHBAFr2COuxJ6oOYmGwyZ5bIsbqIpxazYEzCGAZeOdqFcfSUOSuQTQhTNhVhPgroqBJvCjp64vpppTvWSke4I4+duCrBGeDfrDZsT9KuZYV9mJ1+6mphXfXmfpOdfW6pEsOt90y2CZuapEcldf6RcjPaTSIvBCzbVGEK2j76EVCz91UvGKDwV6CSAvg/GOHcWTNmy/BUKdFHLqDr8XGUFJCNx6sYQSoxKX0VY29zRPMyNLxfsrU49L3Z+esFCqx5de4ONANEMpnBdudMTp+gl6bzNyLHEQw6l8eqjxAJFBt3IXGuA==;5:OPai/aWTbVFl115gn9pHF2GHVsBj7Jawn37V+MY9wxiQUL9/Ts/pvHgpouAPwXNXD7FLAd8uvw+xGSAQKEYHfwPWQqzxXo6McCJOu2x5ekeNM9X7K5SryW5vZfLMuYA89E7Cu9htYNjTT6T76rkkuk8ds042e4f3Rhb6aPDuOPw=;7:QbO1uAIoHraR3k7tn/Bpmw76HhM1QFw8JldJWqQuSc6JTepcO9hvjxf+yFfvGzH2RbgWXck6V0fm8TmlDGwEmBpyvGra3SjfSHXMxtUyrUhxi4ygnJwxTk6MgYP2/Y4SaoqyRvC+SG0YVg7BmkR6t4xpvjOjPN7FLxF38clLm6UY0hZl/MMl/7EGxMIN0FC1riFCV05WgGBIPi/EZALKwstxMBilADrJehS5MauXB6eccuFUPrJhPRztHNZvBeIY
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: e8ce9db1-eb09-4913-4607-08d603aa667a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0780;
+x-ms-traffictypediagnostic: DM5PR21MB0780:
+x-microsoft-antispam-prvs: <DM5PR21MB07807AB34422D39FC64B1B9A9D3E0@DM5PR21MB0780.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(20180801012)(6040522)(2401047)(5005006)(8121501046)(3231336)(8214008)(944501410)(52105095)(2018427008)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:DM5PR21MB0780;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0780;
+x-forefront-prvs: 07665BE9D1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(136003)(346002)(396003)(366004)(39860400002)(376002)(199004)(189003)(102836004)(106356001)(6486002)(9686003)(6512007)(76176011)(186003)(22452003)(6246003)(54906003)(486006)(8676002)(86612001)(6436002)(53936002)(66066001)(316002)(25786009)(105586002)(39060400002)(6506007)(99286004)(2900100001)(53546011)(7736002)(4326008)(305945005)(476003)(68736007)(1076002)(229853002)(26005)(33896004)(3846002)(6116002)(14454004)(97736004)(6916009)(5250100002)(6346003)(8936002)(10090500001)(446003)(10290500003)(11346002)(2906002)(72206003)(478600001)(5660300001)(81156014)(86362001)(256004)(7416002)(81166006)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0780;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
+x-microsoft-antispam-message-info: nYen15FnUEzByqhzASOQetrafowILgCfHxMkvNVe9vkyenVcFtgKTNikACGiXC4X4SNlqBCbthyF2MeYtHMjjXO1f3e7XtmTMlu3nBrHHeI8E+oS48BUvauqYL/zkLJ/T9pmz7rhGSWaQ2yjFYmfjF4aSDsmdu0rRUhgJmrmBoefXiqNZ3/1h0zAxjvEU9XUIzOeEfaYFVzftD64H6XIFqPU8T9/TD8PWKEmq+joZAtY0r5HxYSeAnGcnOjfoc/MhnhqCOMK/tZHE6p1clJQvk5w5oegzVe96UYqtefYw/1FcZf8npJe9cz/iIcClzavf536JUWNsYx1+ObG4Emi3DxK7wv+HXWBqmZidQ0p5IM+PtsVPf1TCQwgDITuCEQXsc7dlRiFqQru9/c0ci5EQWqrcJoZGtPyNFkjShdaQW5FpexmZ8mWTNqWUpvNe12s3GgOl4nlP42E2e1spkmNCY6+lvCcD3YmVSkpJDgKHvk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <E026F4C5C651CE45ABA9F717F027A8C3@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8ce9db1-eb09-4913-4607-08d603aa667a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2018 18:59:31.6835
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0780
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.08.2018 16:42, Oscar Salvador wrote:
+On 18-08-15 16:42:19, Oscar Salvador wrote:
 > From: Oscar Salvador <osalvador@suse.de>
-> 
-> Before calling to unregister_mem_sect_under_nodes(),
-> remove_memory_section() already checks if we got a valid memory_block.
-> 
-> No need to check that again in unregister_mem_sect_under_nodes().
-> 
-> If more functions start using unregister_mem_sect_under_nodes() in the
-> future, we can always place a WARN_ON to catch null mem_blk's so we can
-> safely back off.
-> 
-> For now, let us keep the check in remove_memory_section() since it is the
-> only function that uses it.
-> 
+>=20
+> We are getting the nid from the pages that are not yet removed,
+> but a node can only be offline when its memory/cpu's have been removed.
+> Therefore, we know that the node is still online.
+
+Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+
+>=20
 > Signed-off-by: Oscar Salvador <osalvador@suse.de>
-> Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
 > ---
->  drivers/base/node.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
+>  drivers/base/node.c | 2 --
+>  1 file changed, 2 deletions(-)
+>=20
 > diff --git a/drivers/base/node.c b/drivers/base/node.c
-> index 1ac4c36e13bb..dd3bdab230b2 100644
+> index 81b27b5b1f15..b23769e4fcbb 100644
 > --- a/drivers/base/node.c
 > +++ b/drivers/base/node.c
-> @@ -455,10 +455,6 @@ int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
->  	NODEMASK_ALLOC(nodemask_t, unlinked_nodes, GFP_KERNEL);
->  	unsigned long pfn, sect_start_pfn, sect_end_pfn;
->  
-> -	if (!mem_blk) {
-> -		NODEMASK_FREE(unlinked_nodes);
-> -		return -EFAULT;
-> -	}
->  	if (!unlinked_nodes)
->  		return -ENOMEM;
->  	nodes_clear(*unlinked_nodes);
-> 
-
-Reviewed-by: David Hildenbrand <david@redhat.com>
-
--- 
-
-Thanks,
-
-David / dhildenb
+> @@ -465,8 +465,6 @@ void unregister_mem_sect_under_nodes(struct memory_bl=
+ock *mem_blk,
+> =20
+>  		if (nid < 0)
+>  			continue;
+> -		if (!node_online(nid))
+> -			continue;
+>  		/*
+>  		 * It is possible that NODEMASK_ALLOC fails due to memory
+>  		 * pressure.
+> --=20
+> 2.13.6
+> =
