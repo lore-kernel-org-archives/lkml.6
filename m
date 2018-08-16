@@ -2,80 +2,82 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E2AC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90ADEC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBA052147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:18:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBA052147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4843520870
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:19:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dpF4+l/Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4843520870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392280AbeHPTSD (ORCPT
+        id S2392294AbeHPTTG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 15:18:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56434 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727878AbeHPTSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 15:18:02 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3995DBB430;
-        Thu, 16 Aug 2018 16:18:36 +0000 (UTC)
-Received: from t450s.home (ovpn-120-10.rdu2.redhat.com [10.10.120.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E3C2610C1F;
-        Thu, 16 Aug 2018 16:18:35 +0000 (UTC)
-Date:   Thu, 16 Aug 2018 10:18:35 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: [GIT PULL] VFIO updates for v4.19-rc1
-Message-ID: <20180816101835.08c91d7a@t450s.home>
+        Thu, 16 Aug 2018 15:19:06 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36922 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727592AbeHPTTG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 15:19:06 -0400
+Received: by mail-io0-f196.google.com with SMTP id z19-v6so4338625ioh.4;
+        Thu, 16 Aug 2018 09:19:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=X8ObAOw2LGoCOaPVuGK9EAPp+FDDdbxaX498z0OSutg=;
+        b=dpF4+l/YmCBdo+18IMFCFnzw2qTTorfh5Sen8/h89hHgsoDEZ/n91k9HNFgKOv7e1S
+         eVk7S3KMJoncelWKbNRWERXj4TM+lbrqokzn9h35qaO7PS2wN2c3Age8ip4t3N3NadnH
+         hAtvHhIeCDDogvVsJHFVWBB1jIjYEuZvGcdEY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=X8ObAOw2LGoCOaPVuGK9EAPp+FDDdbxaX498z0OSutg=;
+        b=AO/mavS2lw77OSJLe22aenrkjCVmq/h0/quHv8zLptPSTYNZOLoGfZT+gmjPkeH/UG
+         97OZvh7vv0QfvUw27lsxphlDbHogQMqA+WggPWdsA92bTZ++ATkbC7ooXbcfTb9g38p0
+         rIaRY6giWV1lP/HXiyFKdAjlc32EsPrMklNr6gDrClPG4KpDL5s4yecHUmGlZplNk9Tw
+         s4GEeaPPVD+olEaag0HcDq8sxl23OL8Zu7ArxeWl4/8lPkNSHwQzRQ9cK5Ctlcsx0jQv
+         pcP0MSlN2g7jV+b2RDXe+LbtPxbKe1kQXxLfu1UkXH3Xi1E5LXG6njzho4WrvLjXdUoJ
+         tuPQ==
+X-Gm-Message-State: AOUpUlFZ8kqRpt4Jk/YD76r2T7aPsAVP++KbwqFQ40hnSujWLyUErCY+
+        Nx1SgvbsHvvG76r1r6QpUeg+JUtDF/DheQeNwQ59yQ==
+X-Google-Smtp-Source: AA+uWPyWG6S55gIIM6rPK3Mwtq4WsaYujeVMng1pL2tvO8W9mxe0J2vg0VBsfBr+v5Odw2Y/itx5uTa6/XBUa3qebsM=
+X-Received: by 2002:a6b:7a08:: with SMTP id h8-v6mr22278916iom.238.1534436379005;
+ Thu, 16 Aug 2018 09:19:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 16 Aug 2018 16:18:36 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 16 Aug 2018 16:18:36 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'alex.williamson@redhat.com' RCPT:''
+References: <CAK7LNAT9p+YPmvasWPG1qdriM+dkauf6h3bqJLnxTcZo8LG_SA@mail.gmail.com>
+ <CA+55aFxRPLjo_XnWDw5sYLnSjNhf8iPHGXomQitnGJjyuViXCQ@mail.gmail.com> <CAK7LNASWKrg=U+a1NJW-2SEp2LtG9wwDHQbPdYk=nDHCVSMeEA@mail.gmail.com>
+In-Reply-To: <CAK7LNASWKrg=U+a1NJW-2SEp2LtG9wwDHQbPdYk=nDHCVSMeEA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 16 Aug 2018 09:19:28 -0700
+Message-ID: <CA+55aFwZqfnA-Pteoq_S=2A905FonVi9AcwD5o2esvNzpE3-bA@mail.gmail.com>
+Subject: Re: [GIT PULL 2/3] Kconfig updates for v4.19
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, Aug 16, 2018 at 12:54 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> I wrote this patch:
+> https://patchwork.kernel.org/patch/10567117/
 
-The following changes since commit 1ffaddd029c867d134a1dde39f540dcc8c52e274:
+Looks good to me.
 
-  Linux 4.18-rc8 (2018-08-05 12:37:41 -0700)
+> I will apply it to my tree with some other fixes
+> and send another pull request in this MW.
 
-are available in the Git repository at:
-
-  git://github.com/awilliam/linux-vfio.git tags/vfio-v4.19-rc1
-
-for you to fetch changes up to 0dd0e297f0ec780b6b3484ba38b27d18c8ca7af9:
-
-  vfio-pci: Disable binding to PFs with SR-IOV enabled (2018-08-06 12:23:19 -0600)
-
-----------------------------------------------------------------
-VFIO updates for v4.19
-
- - Mark switch fall throughs (Gustavo A. R. Silva)
-
- - Disable binding SR-IOV enabled PFs (Alex Williamson)
-
-----------------------------------------------------------------
-Alex Williamson (1):
-      vfio-pci: Disable binding to PFs with SR-IOV enabled
-
-Gustavo A. R. Silva (1):
-      vfio: Mark expected switch fall-throughs
-
- drivers/vfio/pci/vfio_pci.c     | 15 ++++++++++++++-
- drivers/vfio/vfio_iommu_type1.c |  1 +
- 2 files changed, 15 insertions(+), 1 deletion(-)
+Thanks,
+              Linus
