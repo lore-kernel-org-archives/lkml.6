@@ -2,90 +2,118 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD80C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 21:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A4D0C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 21:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BAED20C0D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 21:01:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BAED20C0D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 173942147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 21:03:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TkSSLKIU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 173942147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725982AbeHQACG (ORCPT
+        id S1726039AbeHQADw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 20:02:06 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:40976 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbeHQACG (ORCPT
+        Thu, 16 Aug 2018 20:03:52 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:40047 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbeHQADw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 20:02:06 -0400
-Received: by mail-qt0-f193.google.com with SMTP id e19-v6so6451375qtp.8
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 14:01:26 -0700 (PDT)
+        Thu, 16 Aug 2018 20:03:52 -0400
+Received: by mail-vk0-f65.google.com with SMTP id q184-v6so2150172vke.7
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 14:03:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=UO9LRJwzqqduqzNHjgLRd9IRZdQPAiMYmv3yQW4+S8Q=;
+        b=TkSSLKIUSlbNOvlckRYMm0C8WjLhhAwg16J0wh3UxUsJjr3nT/1bizrsNzWcRhKAWT
+         U/FzsrTm+9uh5u+du8UMlh3cp4nTq6RUyF53t23AHW7Gk98UehgNpOKH7md28aKrOpmz
+         AGsKDM0d81CfHcndUL9CN6phFaytmByKnCtjM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=G9mVSEOM9s/JSjp4p2NdqxbvCIboDj2DAiAY3D4x5mI=;
-        b=a+gLxXTKX+gR60RHCLN/WCA7HY7zUoNYYNPfHFP5p0n2Dee2AIRU/hUaULbOXAG+zB
-         AMRHo9K7s9Ifz3YoTui+TfnAsc5VVV5Q+cLqU69uIzZn+WmI4b9+1yTqDX3B/w5Ny1es
-         T6unHmhZ6sc9UZW/ePiEUqAK9exXOaJRmRx8IMhqQ2cgTY+niMB1mJq6zctvUcsYe0wZ
-         m+6hk/Hfe03jyi316E4vrgfS+sidAQn8ULQi5Ht/y5LZww+wxceemm2eQC01nLcGR11w
-         +exIE3X6KlqDd0W5133lOGtgMVE2sR5vdxXYTnOpJN5zSG7ZegkakaSzfviYrr0lrZQx
-         ypdA==
-X-Gm-Message-State: AOUpUlHIj+G8k57FhnTnhnffJC69x9k0zJgcF9gRHRqaRBCOQL5S/7tN
-        R7B68zRn3EMcZmc6qTfoUb24LqMaE5oD2HeLjWI=
-X-Google-Smtp-Source: ANB0Vdan2qfTh0KktUkBWFewiaTb2xc6WIR45iOB0G3z+RhqqmjOLlFMoUWJvs6uvvNvx3rEa4ZNh9yKTtNHTCvt7oo=
-X-Received: by 2002:ac8:2f43:: with SMTP id k3-v6mr1934280qta.163.1534453285983;
- Thu, 16 Aug 2018 14:01:25 -0700 (PDT)
+        bh=UO9LRJwzqqduqzNHjgLRd9IRZdQPAiMYmv3yQW4+S8Q=;
+        b=Veq57SkZP2WHyV1TyT6S47m01E4v9CoIrM9uAbFEEg6NFQjeAD+jeVnmHSRVL8Cn67
+         ZHKxH5pWQZpx8ZUHT3RBNqkSasC3I96kj8kPFhUTLlrB0TDuQzwtH3JBvhWhp5Z1XNDc
+         /gxK2WwCsawUPTw9cwfBnEouabMjZpCudui7wCJ3siEpB+8463Vb4YvrF6Ny0d4q6DZx
+         1K13by95L3YyeMBsmGBfb1Hw55LPBoUSDWGQyNw3ezUtOC/G0mJ4ihnffYanYknxIKME
+         dBuzt6KYG6Z+8bfJuTk32sNGwbs7D/pM5IXtVmDj8M4Ub4qatFuNj8EybQzVJv3mhOfC
+         KW4g==
+X-Gm-Message-State: AOUpUlG+ZGaKdVWPE1k8490Y4tga6vQIIwvt8zPsT5GTyZb5uR2i7Zpp
+        UA6+gjUapHhBLxcRJxNUyCPLscW7TJ6ilg==
+X-Google-Smtp-Source: AA+uWPysn9joEFkfMO0wfVXgt7z3cxRvH+U5RWcj6wWkj7bbuDbnCnqrLGqldaJwhFoGBu5JrNL68w==
+X-Received: by 2002:a1f:61c5:: with SMTP id v188-v6mr20586760vkb.19.1534453391273;
+        Thu, 16 Aug 2018 14:03:11 -0700 (PDT)
+Received: from mail-vk0-f49.google.com (mail-vk0-f49.google.com. [209.85.213.49])
+        by smtp.gmail.com with ESMTPSA id b15-v6sm57067uak.40.2018.08.16.14.03.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Aug 2018 14:03:10 -0700 (PDT)
+Received: by mail-vk0-f49.google.com with SMTP id v72-v6so2148965vkd.4
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 14:03:10 -0700 (PDT)
+X-Received: by 2002:a1f:a784:: with SMTP id q126-v6mr20905354vke.70.1534453389723;
+ Thu, 16 Aug 2018 14:03:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180811155554.3382650-1-arnd@arndb.de> <0e2639d6-7816-4e85-3212-74fcd118e396@amd.com>
-In-Reply-To: <0e2639d6-7816-4e85-3212-74fcd118e396@amd.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 16 Aug 2018 23:01:09 +0200
-Message-ID: <CAK8P3a3Z8Z5WjgD2Y_-QfZA+bt59z7kCvfaBTzNuHn6QWCVxJw@mail.gmail.com>
-Subject: Re: [PATCH] [v3] drm: amd: dc: don't use FP math when Kcov is enabled
-To:     sunpeng.li@amd.com
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>, michel.daenzer@amd.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org, Shirish S <shirish.s@amd.com>,
-        Jerry.Zuo@amd.com, dri-devel <dri-devel@lists.freedesktop.org>,
-        Jordan Lazare <Jordan.Lazare@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>
+Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Thu, 16 Aug 2018 14:03:08 -0700 (PDT)
+In-Reply-To: <037cd5e2-0d3b-c20f-a444-99087b86706b@codeaurora.org>
+References: <20180814170617.100087-1-dianders@chromium.org>
+ <20180814170617.100087-2-dianders@chromium.org> <bf70f01d-41ac-dcdc-b503-5e0eb1e70329@codeaurora.org>
+ <CAD=FV=VNCOyyq5+xvSudTmtBgPm4-s7gj7GRCvuL5vSmA6yDVA@mail.gmail.com>
+ <aa2bd1f6-74b4-a63b-d115-88d6e16ed95d@codeaurora.org> <CAD=FV=WBw2SKgPq8Atb+SkziUku8p7N4GWemHYZZvoMSE0bK9g@mail.gmail.com>
+ <20180815111318.GY2414@sirena.org.uk> <CAD=FV=VT6b1SmboyuBSGCnm17HTxxvAL8Hec23Dmc6Yfk5jYOg@mail.gmail.com>
+ <037cd5e2-0d3b-c20f-a444-99087b86706b@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 16 Aug 2018 14:03:08 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UnJMGRan=pOujXFkG2oHZUFoiHvk8om+=31SVu7-y6Mg@mail.gmail.com>
+Message-ID: <CAD=FV=UnJMGRan=pOujXFkG2oHZUFoiHvk8om+=31SVu7-y6Mg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] regulator: core: If consumers don't call
+ regulator_set_load() assume max
+To:     David Collins <collinsd@codeaurora.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 9:56 PM Leo Li <sunpeng.li@amd.com> wrote:
-> On 2018-08-11 11:54 AM, Arnd Bergmann wrote:
-> >
-> > I tried implementing the two functions in KCOV: __sanitizer_cov_trace_cmpd
-> > and __sanitizer_cov_trace_cmpf, but that fails to build on architectures
-> > that do not support any floating-point functions, or would require making
-> > that code x86 specific as well.  I also looked at what it would take to
->
-> Hi Arnd,
->
-> Is there a reason why we can't make __sanitizer_cov_trace_cmpd and
-> __sanitizer_cov_trace_cmpf X86 dependent?
->
-> I sent out two patches to disable DCN1, but would prefer implementing
-> these two functions as opposed to disabling a component.
+Hi,
 
-I think it should be possible to implement them, perhaps not even hard
-to do it in an architecture independent way. I tried this at some point
-and couldn't figure it out, but I suppose it would fix the problem nicely.
+On Thu, Aug 16, 2018 at 1:58 PM, David Collins <collinsd@codeaurora.org> wrote:
+> Hello Doug,
+>
+> On 08/16/2018 01:07 PM, Doug Anderson wrote:
+>> I'll work on either adding more regulator_set_load() calls to clients
+>> or perhaps disabling the "regulator-allow-set-load" for a bunch of
+>> rails.  David: presumably if we have a rail that we never need to be
+>> on-and-in-low-power-mode can just be left in high power mode all the
+>> time?  There should be no advantage of being in low power mode for a
+>> regulator that is off, right?
+>
+> Generally speaking, yes, that is true on both points.  The only caveat is
+> that there could be a minor power penalty if APPS votes for OFF+HPM and a
+> non-HLOS processor votes for ON+LPM for the same regulator.  This would
+> lead to an aggregated state of ON+HPM when only ON+LPM is really needed.
 
-This would assume that the two functions can only ever be called
-from a context that already has access to the fpu, which I think is
-the case here.
+OK, thanks for the confirmation.  ...so if we know that this is a rail
+that the non HLOS has no business dealing with then this would be a
+nice simplification so we don't need to go add code to all drivers
+everywhere when all they want is a simple regulator that turns on and
+off.
 
-         Arnd
+Presumably we could also add code somewhere in Linux that would
+automatically vote for LPM for a regulator that has been disabled if
+we had to.
+
+-Doug
