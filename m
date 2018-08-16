@@ -3,117 +3,104 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E9DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 12:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC35C41536
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 12:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E74020839
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 12:34:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E74020839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id F274821480
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 12:46:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F274821480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391421AbeHPPcy (ORCPT
+        id S2391440AbeHPPo5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 11:32:54 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41807 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbeHPPcy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 11:32:54 -0400
-Received: by mail-wr1-f65.google.com with SMTP id j5-v6so4014608wrr.8
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 05:34:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8AhVT0lZxlSJXddYcz8ILsnXrHfl0DH3qmhnwDP60Ys=;
-        b=oJh7bJjTUfMAv1P6tZoolUAI0rbj6Reydw+vxlrpMNIla6k1cB4U7g3R8ySQTIm+6G
-         mW6BXtNL5Wu1oJbMfMAAt2sNUGTEsTaUZUgJKd/rBYzVGUeeX2H4Q3LhOfpX+Ar+g2RY
-         yt/vAn0zo5iTEF98bXUpkp4vxoGVEAsMh6NsEZOStTpW8QFMICDHORv8eCJDjxNnutCO
-         Mld5riJlo3BJv3OvCEtekux2m4rsIm+c9/TrSoNE0NjbAHhIhM+9A1RDFgHe+s9xeGkN
-         UZbJ5bj3imP4+z2WZj2qelnsJCKA/F+yKnJGKn9uvoGxJ8CanY75T0SDYhRR4POFasQh
-         mjvw==
-X-Gm-Message-State: AOUpUlHkT+en2/usJFymFXumfewJ/7SK8EGkhQqcro1VuXFBDk85HtyK
-        fr/Em5HDUFIoiHck6gI6214=
-X-Google-Smtp-Source: AA+uWPwTMcIewbgqBVthCEeo/9n+XY9ooRDZTC/pb+CEh3S8KCPcKe7Vj6g5W63/1z+IiKYRyuwOfA==
-X-Received: by 2002:a5d:694e:: with SMTP id r14-v6mr18771632wrw.278.1534422874530;
-        Thu, 16 Aug 2018 05:34:34 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id 9-v6sm64224235wrb.48.2018.08.16.05.34.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Aug 2018 05:34:33 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 0FA071248E7; Thu, 16 Aug 2018 14:34:33 +0200 (CEST)
-Date:   Thu, 16 Aug 2018 14:34:33 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Jia He <jia.he@hxt-semitech.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Petr Tesarik <ptesarik@suse.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Mathieu Malaterre <malat@debian.org>,
+        Thu, 16 Aug 2018 11:44:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50730 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726062AbeHPPo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 11:44:57 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DDB392635A;
+        Thu, 16 Aug 2018 12:46:34 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.234])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BF3272026D7E;
+        Thu, 16 Aug 2018 12:46:32 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 86E2022425E; Thu, 16 Aug 2018 08:46:32 -0400 (EDT)
+Date:   Thu, 16 Aug 2018 08:46:32 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Dave Young <dyoung@redhat.com>
+Cc:     Yannik Sembritzki <yannik@sembritzki.me>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Baoquan He <bhe@redhat.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v1 2/5] mm/memory_hotplug: enforce section alignment when
- onlining/offlining
-Message-ID: <20180816123433.GB16861@techadventures.net>
-References: <20180816100628.26428-1-david@redhat.com>
- <20180816100628.26428-3-david@redhat.com>
+        Justin Forbes <jforbes@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH 2/2] [FIXED v2] Replace magic for trusting the secondary
+ keyring with #define
+Message-ID: <20180816124632.GA24061@redhat.com>
+References: <20180815194244.29564-3-yannik@sembritzki.me>
+ <201808160443.5h16PxVs%fengguang.wu@intel.com>
+ <1bfa03ed-c9f8-d0f2-700c-c93e96d5b99c@sembritzki.me>
+ <CA+55aFw1oaRiqAU_61BwqS5QWS2VtZ6o9cAF3YEVx2NfMkmHpQ@mail.gmail.com>
+ <fcc28be0-f066-9c7a-7a4e-05d0cc1c0967@sembritzki.me>
+ <20180816011106.GC5915@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180816100628.26428-3-david@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180816011106.GC5915@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 16 Aug 2018 12:46:34 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 16 Aug 2018 12:46:34 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vgoyal@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 12:06:25PM +0200, David Hildenbrand wrote:
-> onlining/offlining code works on whole sections, so let's enforce that.
-> Existing code only allows to add memory in memory block size. And only
-> whole memory blocks can be onlined/offlined. Memory blocks are always
-> aligned to sections, so this should not break anything.
+On Thu, Aug 16, 2018 at 09:11:06AM +0800, Dave Young wrote:
+> On 08/16/18 at 12:07am, Yannik Sembritzki wrote:
+> > Signed-off-by: Yannik Sembritzki <yannik@sembritzki.me>
+> > ---
+> >  arch/x86/kernel/kexec-bzimage64.c       | 2 +-
+> >  certs/system_keyring.c                  | 3 ++-
+> >  crypto/asymmetric_keys/pkcs7_key_type.c | 2 +-
+> >  include/linux/verification.h            | 3 +++
+> >  4 files changed, 7 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/kexec-bzimage64.c
+> > b/arch/x86/kernel/kexec-bzimage64.c
+> > index 74628275..97d199a3 100644
+> > --- a/arch/x86/kernel/kexec-bzimage64.c
+> > +++ b/arch/x86/kernel/kexec-bzimage64.c
+> > @@ -532,7 +532,7 @@ static int bzImage64_cleanup(void *loader_data)
+> >  static int bzImage64_verify_sig(const char *kernel, unsigned long
+> > kernel_len)
+> >  {
+> >      return verify_pefile_signature(kernel, kernel_len,
+> > -                       ((struct key *)1UL),
+> > +                       TRUST_SECONDARY_KEYRING,
 > 
-> online_pages/offline_pages will implicitly mark whole sections
-> online/offline, so the code really can only handle such granularities.
-> 
-> (especially offlining code cannot deal with pageblock_nr_pages but
->  theoretically only MAX_ORDER-1)
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> Instead of fix your 1st patch in 2nd patch, I would suggest to
+> switch the patch order.  In 1st patch change the common code to use
+> the new macro and in 2nd patch you can directly fix the kexec code
+> with TRUST_SECONDARY_KEYRING.
 
-Hi David,
-
-If you are really willing to move the checks from this patch[1] to
-online/offline_pages, you might consider to put that in as well.
-So we have a function that checks for everything, and not multiple checks.
-
-Another thing is that I would have prefered to take the checks up to
-memory_block_action, but offline_pages gets also called from ppc-memtrace code.
-
-Other than that, 
-
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-
-
-[1] https://patchwork.kernel.org/patch/10567277/
+I agree. It looks cleaner that first patch change the common code and
+introduce the macro to replace 1UL. And second patch makes use of that
+macro in kexec bzImage64 verification.
 
 Thanks
--- 
-Oscar Salvador
-SUSE L3
+Vivek
