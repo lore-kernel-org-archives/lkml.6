@@ -2,95 +2,123 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,TVD_PH_BODY_ACCOUNTS_PRE,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF1EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC2CC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A933721526
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:31:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ns5uExzp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A933721526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7FB61214C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:31:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FB61214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbeHPXbq (ORCPT
+        id S1726376AbeHPXcA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 19:31:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49964 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725903AbeHPXbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 19:31:46 -0400
-Received: from localhost (unknown [64.22.249.253])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 16 Aug 2018 19:32:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37006 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726336AbeHPXcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 19:32:00 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4596E214C2;
-        Thu, 16 Aug 2018 20:31:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534451472;
-        bh=24eVCuKRBIrQbJRgg5TWyGAJzKw+vH/lOmeUBq9YNm4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ns5uExzpfFWECnUMHuGSmZhoBVOE/JM/RFm/dXUsQuNurofwZO6+Xm6Gr6Y4LRQ//
-         39TROPT7JNC6FMgcoDcExN38p+TutWJ9CtlZy2nGXOip0q4rny8KlxEFbFC83tfVtW
-         CCn4Ns7VXOZJBaRpBmi00oyGrTsP/BeoZy7Ed+js=
-Date:   Thu, 16 Aug 2018 15:31:11 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Derrick, Jonathan" <jonathan.derrick@intel.com>
-Cc:     "willy@infradead.org" <willy@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "okaya@kernel.org" <okaya@kernel.org>,
-        "liudongdong3@huawei.com" <liudongdong3@huawei.com>,
-        "poza@codeaurora.org" <poza@codeaurora.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Busch, Keith" <keith.busch@intel.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH 1/2] PCI/DPC: Add 'nodpc' parameter
-Message-ID: <20180816203111.GB10316@bhelgaas-glaptop.roam.corp.google.com>
-References: <1534368400-2807-1-git-send-email-jonathan.derrick@intel.com>
- <20180816154940.GD5762@bombadil.infradead.org>
- <1534434641.17819.27.camel@intel.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 8964F40201C4;
+        Thu, 16 Aug 2018 20:31:25 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-130.rdu2.redhat.com [10.10.120.130])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6203E20180F8;
+        Thu, 16 Aug 2018 20:31:21 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <1534435000.3166.9.camel@HansenPartnership.com>
+References: <1534435000.3166.9.camel@HansenPartnership.com> <1534432615.3166.5.camel@HansenPartnership.com> <CA+55aFzRHVXP4Ag4aygao1dTGaaMJZSOisHT2ks3_WP97kLLhQ@mail.gmail.com> <20180815100053.13609-1-yannik@sembritzki.me> <CA+55aFx2goMXj7rQg-qx-puiiWYJmkDMU1xniWEu6ikDBNgfdQ@mail.gmail.com> <654fbafb-69da-cd9a-b176-7b03401e71c5@sembritzki.me> <20180815174247.GB29541@redhat.com> <20180815185812.GC29541@redhat.com> <b2649b70-37b6-3929-a9d0-3d82033b2686@sembritzki.me> <20180815194932.GD29541@redhat.com> <20628.1534427487@warthog.procyon.org.uk> <30607.1534434597@warthog.procyon.org.uk>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Vivek Goyal <vgoyal@redhat.com>, yannik@sembritzki.me,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH] Fix kexec forbidding kernels signed with custom platform keys to boot
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1534434641.17819.27.camel@intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <18925.1534451480.1@warthog.procyon.org.uk>
+Date:   Thu, 16 Aug 2018 21:31:20 +0100
+Message-ID: <18926.1534451480@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 16 Aug 2018 20:31:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 16 Aug 2018 20:31:25 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 03:50:47PM +0000, Derrick, Jonathan wrote:
-> On Thu, 2018-08-16 at 08:49 -0700, Matthew Wilcox wrote:
-> > On Wed, Aug 15, 2018 at 03:26:39PM -0600, Jon Derrick wrote:
-> > > Some users may want to disable downstream port containment (DPC),
-> > > so
-> > > give them this option
-> > 
-> > Is it possible they might only want to disable DPC on a subset of the
-> > hierarchy rather than globally?
+James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+
+> As a step by step process, I agree.  However, I think we can automate
+> it to the point where you install a package and it says "insert your
+> yubikey" every time you upgrade the kernel
+
+That's a very bad idea.  You train people to unlock their private key on
+request.  It can be abused like one of those emails that tells you that your
+account has been suspended - just follow the link and put in your password
+please.
+
+Further, you expose the unlocked key on a machine that might be compromised.
+
+> Mehmet's patches don't require building a new kernel.  They merely
+> require the added key be linked into the Red Hat built bzImage and then
+> the resulting blob be signed.  You can still identify that the original
+> bzImage is the Red Hat one.
+
+No, you can't.  You might *think* that it is, but the signature you're
+checking is after the image has being fiddled with by the key-adder - and that
+means there's a window in which someone else can fiddle with the image too.
+
+Mehmet's patches make sense from the reproducible kernel build PoV, but don't
+actually help with the security so much since they're replacing, say, a RH
+generated key with one you've generated locally, likely on the box that you
+don't necessarily trust.
+
+The bootloader would need to check the kernel image with the keys and the
+image with the keys stripped off.  And if you're doing that, it doesn't make
+sense to modify the kernel image, but rather load the keys separately,
+possibly by an initrd=-like option on the bootloader or in your initrd.
+
+> > That's the problem is right there.  AIUI, we *don't* want to set up a
+> > third party signing process.  As I said, it potentially comes with lawyers
+> > attached.
 > 
-> Absolutely. I was hoping Logan's pci dev_str would land because I have
-> a few others I want to convert to that api for granular tuning
+> Right so generate a business pressure to overcome the legal one.
 
-What's the use case here?  I acknowledge there are cases where we need
-them, but I'm not a fan of kernel parameters in general because
-they're a real hassle for users.
+No.  We *really* don't want to do this, and the legal reasons are minor ones
+like people suing us for GPL infringement[*] or because we said no.
 
-Is there something wrong with DPC?  Is there some way we can make it
-smarter so it does the right thing automatically?
+The primary reason is that we aren't willing to just rubber stamp any old
+kernel module.  The signature is, in effect, a certification.  We'd be putting
+our name to something and we would want to be absolutely sure we know what it
+does, review all the sources and have thoroughly tested it internally - and
+we'd have to be willing to support it to some extent.  That takes a lot of
+resources - and also requires the module vendor to be willing to open up their
+sources to us.
 
-I'm more OK with a blanket "nodpc" switch intended for debugging.
-If we add the complexity of subsets of the hierarchy it starts
-sounding like an administrative thing that makes me more hesitant. 
+We also don't want to sign the keys of third party vendors because then we
+give away a certain degree of control over whatever they do with that, though
+we would have the option of blacklisting it - after the fact.
 
-Could this be done via a sysfs switch instead?  That potentially could
-work for hot-added things where a kernel parameter doesn't work so
-well.
+[*] I've had people demand the transient private keys for Fedora kernels under
+    the GPL.  They didn't seem to like the answer that I couldn't give them
+    those keys because no one had them anymore; they seemed to think that this
+    in some way violated their rights under the GPL.
 
-Please squash the doc patch and the code change so it's easier to keep
-them together.
-
-Bjorn
+David
