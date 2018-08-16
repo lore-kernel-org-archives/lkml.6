@@ -2,141 +2,132 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A6DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 05:20:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3DE8C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 05:23:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78884214C1
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 05:20:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78884214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C5D3214C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 05:23:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V4PDs+9c";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FQCEiaMH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C5D3214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388237AbeHPIP6 (ORCPT
+        id S2388251AbeHPITD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 04:15:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33524 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726295AbeHPIP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 04:15:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A82B2AD06;
-        Thu, 16 Aug 2018 05:20:07 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Jeff Layton <jlayton@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Thu, 16 Aug 2018 15:19:59 +1000
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "linux-samsung-soc\@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [BUG][BISECT] NFSv4 root failures after "fs/locks: allow a lock request to block other requests."
-In-Reply-To: <8acb99be800a1842278f754986a17d6fc93af409.camel@kernel.org>
-References: <CAJKOXPc2cb1OK3tmRCO2p+docdXY=PoU1MEBa-VDyEM4mG1eSw@mail.gmail.com> <8acb99be800a1842278f754986a17d6fc93af409.camel@kernel.org>
-Message-ID: <87o9e2anwg.fsf@notabene.neil.brown.name>
+        Thu, 16 Aug 2018 04:19:03 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56170 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726367AbeHPITD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 04:19:03 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 565C96221A; Thu, 16 Aug 2018 05:23:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534396992;
+        bh=uHMXIJP+m6/O0v2CpnOgKxk/Dmpb2jFAcMQv5SYObCE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=V4PDs+9cOtznuzhKgCwh1wwMUEthArHuXw5JsyysM7GveidpBpN+xMBhRXZkvtauO
+         If3nHKJSPqDJoKaUJCo1dzNTLSytNe1ohpADJpyS2JmjJkASD8UNPJiJtdyFSXP8io
+         CUyiDHp7MSekLx1KmtSGzNLqkvvEvlmnlJdn5Sxw=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 6690D6221A;
+        Thu, 16 Aug 2018 05:23:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534396991;
+        bh=uHMXIJP+m6/O0v2CpnOgKxk/Dmpb2jFAcMQv5SYObCE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FQCEiaMHmP7IMKV3gBVfycJcTX6WSiKIVBh/sVZQRVHhEvcuhO6CGFZrZoDrx6QQ0
+         sMJWoIFTaP/Y1WYVhKwDw50tRLj7iW/3iHUF76SUOJaodOZS0y4LCpPYHpWhX1FuBZ
+         jf98C6bNYW0oaBRCCFUK6+BRje7JfT03o6Z4msaU=
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 16 Aug 2018 10:53:11 +0530
+From:   kgunda@codeaurora.org
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     jingoohan1@gmail.com, lee.jones@linaro.org,
+        b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org,
+        daniel.thompson@linaro.org, jacek.anaszewski@gmail.com,
+        pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-msm-owner@vger.kernel.org
+Subject: Re: [PATCH V4 3/8] backlight: qcom-wled: Add new properties for
+ PMI8998
+In-Reply-To: <20180807052355.GA23866@tuxbook-pro>
+References: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
+ <1531131741-19971-4-git-send-email-kgunda@codeaurora.org>
+ <20180807052355.GA23866@tuxbook-pro>
+Message-ID: <897ab82c450bff71658c1fa32e7e6021@codeaurora.org>
+X-Sender: kgunda@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On 2018-08-07 10:53, Bjorn Andersson wrote:
+> On Mon 09 Jul 03:22 PDT 2018, Kiran Gunda wrote:
+>> diff --git 
+>> a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt 
+>> b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+> [..]
+>>  - qcom,num-strings
+>>  	Usage:        optional
+>>  	Value type:   <u32>
+>>  	Definition:   #; number of led strings attached;
+>> -		      value from 1 to 3. default: 2
+>> -		      This property is supported only for PM8941.
+>> +		      value: For PM8941 from 1 to 3.
+>> +			     For PMI8998 from 1 to 4.
+> [..]
+>> +- qcom,enabled-strings
+>> +	Usage:        optional
+>> +	Value tyoe:   <u32 array>
+>> +	Definition:   Array of the WLED strings numbered from 0 to 3. Each
+>> +		      string of leds are operated individually. Specify the
+>> +		      list of strings used by the device. Any combination of
+>> +		      led strings can be used.
+> [..]
+>> 
+>>  Example:
+>> 
+>> @@ -99,4 +146,5 @@ pm8941-wled@d800 {
+>>  	qcom,switching-freq = <1600>;
+>>  	qcom,ovp = <29>;
+>>  	qcom,num-strings = <2>;
+>> +	qcom,enabled-strings = <0x00 0x01>;
+> 
+> Nit. I would assume that specifying qcom,num-strings = <2> implies that
+> the first 2 strings are used, so one would not also specify
+> qcom,enabled-strings.
+> 
+Thanks Bjorn for reviewing the series !
 
-On Wed, Aug 15 2018, Jeff Layton wrote:
+"qcom,enabled-strings" need be specified along with the 
+"qcom,num-strings".
+Because the enabled-strings can be <0, 2> or <0, 3 > also. The driver 
+picks the string
+configuration from the enabled-strings array and enable only those 
+current-sinks.
 
-> On Wed, 2018-08-15 at 14:28 +0200, Krzysztof Kozlowski wrote:
->> Hi,
->>=20
->> Bisect pointed commit ce3147990450a68b3f549088b30f087742a08b5d
->> ("fs/locks: allow a lock request to block other requests.") to failure
->> boot of NFSv4 with root on several boards.
->>=20
->> Log is here:
->> https://krzk.eu/#/builders/21/builds/836/steps/12/logs/serial0
->>=20
->> With several errors:
->> kernel BUG at ../fs/locks.c:336!
->> Unable to handle kernel NULL pointer dereference at virtual address 0000=
-0004
->>=20
->> Configuration:
->> 1. exynos_defconfig
->> 2. Arch ARM Linux
->> 3. Boards:
->> a. Odroid family (ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC)
->> b. Toradex Colibri VF50 (ARMv7, UP, Cortex-A5)
->> 4. Systemd: v236, 238
->> 5. All boards boot from TFTP with NFS root (NFSv4)
->>=20
->> On Colibri VF50 I got slightly different errors:
->> [   11.663204] Internal error: Oops - undefined instruction: 0 [#1] ARM
->> [   12.455273] Unable to handle kernel NULL pointer dereference at
->> virtual address 00000004
->> and only with some specific GCC (v6.3) or with other conditions which
->> I did not bisect yet. Maybe Colibri's failure is unrelated to that
->> commit.
->>=20
->> Best regards,
->> Krzysztof
-
-Thanks a lot for the report Krzysztof!!
-
->
-> The BUG is due to a lock being freed when the fl_blocked list wasn't
-> empty (implying that there were still blocked locks waiting on it).
->
-> There are a number of calls to locks_delete_lock_ctx in posix_lock_inode
-> and I don't think the fl_blocked list is being handled properly with all
-> of them. It only transplants the blocked locks to a new lock when there
-> are surviving locks on the list, and that may not be the case when the
-> whole file is being unlocked.
-
-locks_delete_lock_ctx() calls locks_unlink_lock_ctx() which calls
-locks_wake_up_block() which doesn't only wake_up the blocks, but also
-detached them. When that function completes, ->fl_blocked must be empty.
-
-The trace shows the locks_free_lock() call at the end of fcntl_setlk64()
-as the problematic call.
-This suggests that do_lock_file_wait() exited with ->fl_blocked
-non-empty, which it shouldn't.
-
-I think we need to insert a call to locks_wake_up_block() in
-do_lock_file_wait() before it returns.
-I cannot find a sequence that would make this necessary, but
-it isn't surprising that there might be one.
-
-I'll dig through the code a bit more later and make sure I understand
-what is happening.
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlt1CX8ACgkQOeye3VZi
-gbmzlRAAk2m+Da7jlPd3bZsAFMEg/mNhyNH3ZKpOLv4kLuHIHf51bX0DqFNsJaro
-XzAuTbgpj8o1EycMhV2uwMAhUVk5GvqUebcQUZa0XTcRTyrwGMlc+2WgtJrPBU9y
-/Jgnnro68Zo+rYdvy+YFQKjXFvhKwNWEeqeqMH3v62eO2gIyjatL+Vpgyim+U5zn
-S0uxVLl31wWXU9YSLJW/8SKXbfJJnxKIJ1YmwChFsr5HaKPnIk3Nct+hAU43Qv2C
-1PmBNZjQOIzN3qqZJM5Crj5IDsFnNoIgxhOromgX2tUQ34iksWyKbg63lRuG4x79
-UKXbZMxon8JPyMfQpXq+lwrBbpfawTVNnYT0T+c6/ZA3avwI97CgVybgXRcFu8sw
-S5GdSh1ZfXMH8F3yFp13JD6pb7gqlxWjNwBXF1jQNPdJOflTNN+OyfjEyW87v6vG
-Jqbt3g5utzLmo8BvipaIJkoQ8eoHXyNn/13TTHIABQeLRYJ0aQpena4kvA6eo7SA
-ZxDlxt2o66qB6DzmxI7ez+uCBtKNeIg16WBn2i9pF4QgxOujHU/dEkUH/vg0qJjA
-CBADZOSTtOKkzp7t/3vrS21tpSvwhJ4Jb6M1PL+yDMP2OelNr2LV6Y4p75a8XOeB
-D+fw90Ug5nvZUaWoKWzsQbr/NvhQsDdXWnBc1iXhzmecFsR9gsE=
-=qiMl
------END PGP SIGNATURE-----
---=-=-=--
+> (And you should use decimal for natural numbers)
+> 
+I will modify it in next series.
+> 
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
+> Regards,
+> Bjorn
+> --
+> To unsubscribe from this list: send the line "unsubscribe 
+> linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
