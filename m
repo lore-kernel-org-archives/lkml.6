@@ -6,34 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84331C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C65EC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C5322098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:52:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C5322098A
+	by mail.kernel.org (Postfix) with ESMTP id 605172147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:52:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 605172147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728960AbeHPVsC (ORCPT
+        id S1726729AbeHPVwn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:48:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57340 "EHLO
+        Thu, 16 Aug 2018 17:52:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57314 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726183AbeHPVr7 (ORCPT
+        with ESMTP id S1726295AbeHPVrw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:47:59 -0400
+        Thu, 16 Aug 2018 17:47:52 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 56927CC4;
-        Thu, 16 Aug 2018 18:47:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 36B30CC4;
+        Thu, 16 Aug 2018 18:47:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gilad Ben-Yossef <gilad@benyossef.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.17 09/21] crypto: ccree - fix iv handling
-Date:   Thu, 16 Aug 2018 20:45:19 +0200
-Message-Id: <20180816171612.936902479@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Lucas De Marchi <lucas.demarchi@profusion.mobi>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jessica Yu <jeyu@kernel.org>,
+        Chih-Wei Huang <cwhuang@linux.org.tw>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 4.17 07/21] kbuild: verify that $DEPMOD is installed
+Date:   Thu, 16 Aug 2018 20:45:17 +0200
+Message-Id: <20180816171612.721082087@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171612.136242278@linuxfoundation.org>
 References: <20180816171612.136242278@linuxfoundation.org>
@@ -50,167 +55,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gilad Ben-Yossef <gilad@benyossef.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit 00904aa0cd59a36d659ec93d272309e2174bcb5b upstream.
+commit 934193a654c1f4d0643ddbf4b2529b508cae926e upstream.
 
-We were copying our last cipher block into the request for use as IV for
-all modes of operations. Fix this by discerning the behaviour based on
-the mode of operation used: copy ciphertext for CBC, update counter for
-CTR.
+Verify that 'depmod' ($DEPMOD) is installed.
+This is a partial revert of commit 620c231c7a7f
+("kbuild: do not check for ancient modutils tools").
 
-CC: stable@vger.kernel.org
-Fixes: 63ee04c8b491 ("crypto: ccree - add skcipher support")
-Reported by: Hadar Gat <hadar.gat@arm.com>
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Also update Documentation/process/changes.rst to refer to
+kmod instead of module-init-tools.
+
+Fixes kernel bugzilla #198965:
+https://bugzilla.kernel.org/show_bug.cgi?id=198965
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>
+Cc: Lucas De Marchi <lucas.de.marchi@gmail.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Chih-Wei Huang <cwhuang@linux.org.tw>
+Cc: stable@vger.kernel.org # any kernel since 2012
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/ccree/cc_cipher.c |  111 +++++++++++++++++++++++++++++----------
- 1 file changed, 84 insertions(+), 27 deletions(-)
+ Documentation/process/changes.rst |   19 +++++++------------
+ scripts/depmod.sh                 |    8 +++++++-
+ 2 files changed, 14 insertions(+), 13 deletions(-)
 
---- a/drivers/crypto/ccree/cc_cipher.c
-+++ b/drivers/crypto/ccree/cc_cipher.c
-@@ -554,34 +554,82 @@ static void cc_setup_cipher_data(struct
- 	}
- }
+--- a/Documentation/process/changes.rst
++++ b/Documentation/process/changes.rst
+@@ -35,7 +35,7 @@ binutils               2.20
+ flex                   2.5.35           flex --version
+ bison                  2.0              bison --version
+ util-linux             2.10o            fdformat --version
+-module-init-tools      0.9.10           depmod -V
++kmod                   13               depmod -V
+ e2fsprogs              1.41.4           e2fsck -V
+ jfsutils               1.1.3            fsck.jfs -V
+ reiserfsprogs          3.6.3            reiserfsck -V
+@@ -156,12 +156,6 @@ is not build with ``CONFIG_KALLSYMS`` an
+ reproduce the Oops with that option, then you can still decode that Oops
+ with ksymoops.
  
-+/*
-+ * Update a CTR-AES 128 bit counter
-+ */
-+static void cc_update_ctr(u8 *ctr, unsigned int increment)
-+{
-+	if (IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) ||
-+	    IS_ALIGNED((unsigned long)ctr, 8)) {
-+
-+		__be64 *high_be = (__be64 *)ctr;
-+		__be64 *low_be = high_be + 1;
-+		u64 orig_low = __be64_to_cpu(*low_be);
-+		u64 new_low = orig_low + (u64)increment;
-+
-+		*low_be = __cpu_to_be64(new_low);
-+
-+		if (new_low < orig_low)
-+			*high_be = __cpu_to_be64(__be64_to_cpu(*high_be) + 1);
-+	} else {
-+		u8 *pos = (ctr + AES_BLOCK_SIZE);
-+		u8 val;
-+		unsigned int size;
-+
-+		for (; increment; increment--)
-+			for (size = AES_BLOCK_SIZE; size; size--) {
-+				val = *--pos + 1;
-+				*pos = val;
-+				if (val)
-+					break;
-+			}
-+	}
-+}
-+
- static void cc_cipher_complete(struct device *dev, void *cc_req, int err)
- {
- 	struct skcipher_request *req = (struct skcipher_request *)cc_req;
- 	struct scatterlist *dst = req->dst;
- 	struct scatterlist *src = req->src;
- 	struct cipher_req_ctx *req_ctx = skcipher_request_ctx(req);
--	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
--	unsigned int ivsize = crypto_skcipher_ivsize(tfm);
-+	struct crypto_skcipher *sk_tfm = crypto_skcipher_reqtfm(req);
-+	struct crypto_tfm *tfm = crypto_skcipher_tfm(sk_tfm);
-+	struct cc_cipher_ctx *ctx_p = crypto_tfm_ctx(tfm);
-+	unsigned int ivsize = crypto_skcipher_ivsize(sk_tfm);
-+	unsigned int len;
+-Module-Init-Tools
+------------------
+-
+-A new module loader is now in the kernel that requires ``module-init-tools``
+-to use.  It is backward compatible with the 2.4.x series kernels.
+-
+ Mkinitrd
+ --------
  
--	cc_unmap_cipher_request(dev, req_ctx, ivsize, src, dst);
--	kzfree(req_ctx->iv);
-+	switch (ctx_p->cipher_mode) {
-+	case DRV_CIPHER_CBC:
-+		/*
-+		 * The crypto API expects us to set the req->iv to the last
-+		 * ciphertext block. For encrypt, simply copy from the result.
-+		 * For decrypt, we must copy from a saved buffer since this
-+		 * could be an in-place decryption operation and the src is
-+		 * lost by this point.
-+		 */
-+		if (req_ctx->gen_ctx.op_type == DRV_CRYPTO_DIRECTION_DECRYPT)  {
-+			memcpy(req->iv, req_ctx->backup_info, ivsize);
-+			kzfree(req_ctx->backup_info);
-+		} else if (!err) {
-+			len = req->cryptlen - ivsize;
-+			scatterwalk_map_and_copy(req->iv, req->dst, len,
-+						 ivsize, 0);
-+		}
-+		break;
+@@ -371,16 +365,17 @@ Util-linux
+ 
+ - <https://www.kernel.org/pub/linux/utils/util-linux/>
+ 
++Kmod
++----
 +
-+	case DRV_CIPHER_CTR:
-+		/* Compute the counter of the last block */
-+		len = ALIGN(req->cryptlen, AES_BLOCK_SIZE) / AES_BLOCK_SIZE;
-+		cc_update_ctr((u8 *)req->iv, len);
-+		break;
- 
--	/*
--	 * The crypto API expects us to set the req->iv to the last
--	 * ciphertext block. For encrypt, simply copy from the result.
--	 * For decrypt, we must copy from a saved buffer since this
--	 * could be an in-place decryption operation and the src is
--	 * lost by this point.
--	 */
--	if (req_ctx->gen_ctx.op_type == DRV_CRYPTO_DIRECTION_DECRYPT)  {
--		memcpy(req->iv, req_ctx->backup_info, ivsize);
--		kzfree(req_ctx->backup_info);
--	} else if (!err) {
--		scatterwalk_map_and_copy(req->iv, req->dst,
--					 (req->cryptlen - ivsize),
--					 ivsize, 0);
-+	default:
-+		break;
- 	}
- 
-+	cc_unmap_cipher_request(dev, req_ctx, ivsize, src, dst);
-+	kzfree(req_ctx->iv);
++- <https://www.kernel.org/pub/linux/utils/kernel/kmod/>
++- <https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git>
 +
- 	skcipher_request_complete(req, err);
- }
+ Ksymoops
+ --------
  
-@@ -713,20 +761,29 @@ static int cc_cipher_encrypt(struct skci
- static int cc_cipher_decrypt(struct skcipher_request *req)
- {
- 	struct crypto_skcipher *sk_tfm = crypto_skcipher_reqtfm(req);
-+	struct crypto_tfm *tfm = crypto_skcipher_tfm(sk_tfm);
-+	struct cc_cipher_ctx *ctx_p = crypto_tfm_ctx(tfm);
- 	struct cipher_req_ctx *req_ctx = skcipher_request_ctx(req);
- 	unsigned int ivsize = crypto_skcipher_ivsize(sk_tfm);
- 	gfp_t flags = cc_gfp_flags(&req->base);
-+	unsigned int len;
+ - <https://www.kernel.org/pub/linux/utils/kernel/ksymoops/v2.4/>
  
--	/*
--	 * Allocate and save the last IV sized bytes of the source, which will
--	 * be lost in case of in-place decryption and might be needed for CTS.
--	 */
--	req_ctx->backup_info = kmalloc(ivsize, flags);
--	if (!req_ctx->backup_info)
--		return -ENOMEM;
-+	if (ctx_p->cipher_mode == DRV_CIPHER_CBC) {
+-Module-Init-Tools
+------------------
+-
+-- <https://www.kernel.org/pub/linux/utils/kernel/module-init-tools/>
+-
+ Mkinitrd
+ --------
+ 
+--- a/scripts/depmod.sh
++++ b/scripts/depmod.sh
+@@ -11,10 +11,16 @@ DEPMOD=$1
+ KERNELRELEASE=$2
+ SYMBOL_PREFIX=$3
+ 
+-if ! test -r System.map -a -x "$DEPMOD"; then
++if ! test -r System.map ; then
+ 	exit 0
+ fi
+ 
++if [ -z $(command -v $DEPMOD) ]; then
++	echo "'make modules_install' requires $DEPMOD. Please install it." >&2
++	echo "This is probably in the kmod package." >&2
++	exit 1
++fi
 +
-+		/* Allocate and save the last IV sized bytes of the source,
-+		 * which will be lost in case of in-place decryption.
-+		 */
-+		req_ctx->backup_info = kzalloc(ivsize, flags);
-+		if (!req_ctx->backup_info)
-+			return -ENOMEM;
-+
-+		len = req->cryptlen - ivsize;
-+		scatterwalk_map_and_copy(req_ctx->backup_info, req->src, len,
-+					 ivsize, 0);
-+	} else {
-+		req_ctx->backup_info = NULL;
-+	}
- 
--	scatterwalk_map_and_copy(req_ctx->backup_info, req->src,
--				 (req->cryptlen - ivsize), ivsize, 0);
- 	req_ctx->is_giv = false;
- 
- 	return cc_cipher_process(req, DRV_CRYPTO_DIRECTION_DECRYPT);
+ # older versions of depmod don't support -P <symbol-prefix>
+ # support was added in module-init-tools 3.13
+ if test -n "$SYMBOL_PREFIX"; then
 
 
