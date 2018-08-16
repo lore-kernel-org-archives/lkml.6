@@ -2,44 +2,40 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 843E6C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A632C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ABC021479
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:54:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ABC021479
+	by mail.kernel.org (Postfix) with ESMTP id E5CE72147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:55:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5CE72147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730204AbeHPVqX (ORCPT
+        id S1726470AbeHPVzT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:46:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56820 "EHLO
+        Thu, 16 Aug 2018 17:55:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56812 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728762AbeHPVqV (ORCPT
+        with ESMTP id S1727592AbeHPVqS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:46:21 -0400
+        Thu, 16 Aug 2018 17:46:18 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C907FCEB;
-        Thu, 16 Aug 2018 18:46:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ECC60D09;
+        Thu, 16 Aug 2018 18:46:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Salyzyn <salyzyn@android.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Kees Cook <keescook@chromium.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        security@kernel.org, kernel-team@android.com
-Subject: [PATCH 4.14 20/22] Bluetooth: hidp: buffer overflow in hidp_process_report
-Date:   Thu, 16 Aug 2018 20:45:21 +0200
-Message-Id: <20180816171625.311412216@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sebastian Gottschall <s.gottschall@dd-wrt.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 02/22] x86: i8259: Add missing include file
+Date:   Thu, 16 Aug 2018 20:45:03 +0200
+Message-Id: <20180816171623.206316944@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171622.831964729@linuxfoundation.org>
 References: <20180816171622.831964729@linuxfoundation.org>
@@ -56,50 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mark Salyzyn <salyzyn@android.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit 7992c18810e568b95c869b227137a2215702a805 upstream.
+commit 0a957467c5fd46142bc9c52758ffc552d4c5e2f7 upstream.
 
-CVE-2018-9363
+i8259.h uses inb/outb and thus needs to include asm/io.h to avoid the
+following build error, as seen with x86_64:defconfig and CONFIG_SMP=n.
 
-The buffer length is unsigned at all layers, but gets cast to int and
-checked in hidp_process_report and can lead to a buffer overflow.
-Switch len parameter to unsigned int to resolve issue.
+  In file included from drivers/rtc/rtc-cmos.c:45:0:
+  arch/x86/include/asm/i8259.h: In function 'inb_pic':
+  arch/x86/include/asm/i8259.h:32:24: error:
+	implicit declaration of function 'inb'
 
-This affects 3.18 and newer kernels.
+  arch/x86/include/asm/i8259.h: In function 'outb_pic':
+  arch/x86/include/asm/i8259.h:45:2: error:
+	implicit declaration of function 'outb'
 
-Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-Fixes: a4b1b5877b514b276f0f31efe02388a9c2836728 ("HID: Bluetooth: hidp: make sure input buffers are big enough")
-Cc: Marcel Holtmann <marcel@holtmann.org>
-Cc: Johan Hedberg <johan.hedberg@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: linux-bluetooth@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: security@kernel.org
-Cc: kernel-team@android.com
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Reported-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Suggested-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Fixes: 447ae3166702 ("x86: Don't include linux/irq.h from asm/hardirq.h")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bluetooth/hidp/core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/i8259.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/bluetooth/hidp/core.c
-+++ b/net/bluetooth/hidp/core.c
-@@ -431,8 +431,8 @@ static void hidp_del_timer(struct hidp_s
- 		del_timer(&session->timer);
- }
+--- a/arch/x86/include/asm/i8259.h
++++ b/arch/x86/include/asm/i8259.h
+@@ -3,6 +3,7 @@
+ #define _ASM_X86_I8259_H
  
--static void hidp_process_report(struct hidp_session *session,
--				int type, const u8 *data, int len, int intr)
-+static void hidp_process_report(struct hidp_session *session, int type,
-+				const u8 *data, unsigned int len, int intr)
- {
- 	if (len > HID_MAX_BUFFER_SIZE)
- 		len = HID_MAX_BUFFER_SIZE;
+ #include <linux/delay.h>
++#include <asm/io.h>
+ 
+ extern unsigned int cached_irq_mask;
+ 
 
 
