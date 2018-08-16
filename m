@@ -2,205 +2,140 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B846C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88546C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47DDC2147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TKwbpiDe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47DDC2147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 41DB021473
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41DB021473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729049AbeHPVnk (ORCPT
+        id S1729080AbeHPVnr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:43:40 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:54812 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbeHPVnj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:43:39 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7GIhQUb050942;
-        Thu, 16 Aug 2018 13:43:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1534445006;
-        bh=uO4/h/n1JD/Vh1aNdFNOvckW59ctw8pZ1uHp684kGGM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=TKwbpiDehJRkTipGByEbICrWVjavNI/r/yAzt6KFZ303lrHeN/hK+xY3l4HoGuD9w
-         4hvMjG4NjmvTBTN6183/3Cnl3TV05uqOcPHpq9y7/jVZLP0icb7/dbNoDlhZ5bgtkg
-         x2+AVrWSIy2WUNxWnwegf1+R66utN9cNt727gYwQ=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7GIhQ4I016373;
-        Thu, 16 Aug 2018 13:43:26 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 16
- Aug 2018 13:43:26 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 16 Aug 2018 13:43:26 -0500
-Received: from [172.22.174.92] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7GIhQG1013754;
-        Thu, 16 Aug 2018 13:43:26 -0500
-Subject: Re: [PATCH v4 1/2] dt-bindings: leds: Add bindings for lm3697 driver
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        <robh+dt@kernel.org>, <pavel@ucw.cz>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>
-References: <20180816172058.31700-1-dmurphy@ti.com>
- <aecaa2ff-e75c-2059-684a-908aedc20929@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <0c91fe1f-8ab4-8092-b8c2-a22f89f4b8ea@ti.com>
-Date:   Thu, 16 Aug 2018 13:43:19 -0500
+        Thu, 16 Aug 2018 17:43:47 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48230 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725947AbeHPVnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 17:43:46 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ECB4C407605F;
+        Thu, 16 Aug 2018 18:43:37 +0000 (UTC)
+Received: from [10.36.116.35] (ovpn-116-35.ams2.redhat.com [10.36.116.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E47981134CA8;
+        Thu, 16 Aug 2018 18:43:34 +0000 (UTC)
+Subject: Re: [PATCH v3 4/4] mm/memory_hotplug: Drop node_online check in
+ unregister_mem_sect_under_nodes
+To:     Oscar Salvador <osalvador@techadventures.net>,
+        akpm@linux-foundation.org
+Cc:     mhocko@suse.com, vbabka@suse.cz, dan.j.williams@intel.com,
+        yasu.isimatu@gmail.com, jonathan.cameron@huawei.com,
+        Pavel.Tatashin@microsoft.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+References: <20180815144219.6014-1-osalvador@techadventures.net>
+ <20180815144219.6014-5-osalvador@techadventures.net>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <f0c61403-b7a1-d1af-f52c-7be307365ee9@redhat.com>
+Date:   Thu, 16 Aug 2018 20:43:34 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <aecaa2ff-e75c-2059-684a-908aedc20929@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180815144219.6014-5-osalvador@techadventures.net>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 16 Aug 2018 18:43:38 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 16 Aug 2018 18:43:38 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
-
-On 08/16/2018 01:37 PM, Jacek Anaszewski wrote:
-> Hi Dan,
+On 15.08.2018 16:42, Oscar Salvador wrote:
+> From: Oscar Salvador <osalvador@suse.de>
 > 
-> Thanks for the update.
+> We are getting the nid from the pages that are not yet removed,
+> but a node can only be offline when its memory/cpu's have been removed.
+> Therefore, we know that the node is still online.
 > 
-> I have one remark below.
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> ---
+>  drivers/base/node.c | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> On 08/16/2018 07:20 PM, Dan Murphy wrote:
->> Add the device tree bindings for the lm3697
->> LED driver for backlighting and display.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->>
->> v4 - Removed HVLED definition in favor of HVLED place definition - https://lore.kernel.org/patchwork/patch/974812/
->> v3 - Updated subject with prefered title - https://lore.kernel.org/patchwork/patch/972337/
->> v2 - Fixed subject and patch commit message - https://lore.kernel.org/patchwork/patch/971326/
->>
->>  .../devicetree/bindings/leds/leds-lm3697.txt  | 86 +++++++++++++++++++
->>  1 file changed, 86 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
->>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
->> new file mode 100644
->> index 000000000000..bcd67d53c889
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
->> @@ -0,0 +1,86 @@
->> +* Texas Instruments - LM3697 Highly Efficient White LED Driver
->> +
->> +The LM3697 11-bit LED driver provides high-
->> +performance backlight dimming for 1, 2, or 3 series
->> +LED strings while delivering up to 90% efficiency.
->> +
->> +This device is suitable for Display and Keypad Lighting
->> +
->> +Required properties:
->> +	- compatible:
->> +		"ti,lm3967"
->> +	- reg :  I2C slave address
->> +	- #address-cells : 1
->> +	- #size-cells : 0
->> +
->> +Optional properties:
->> +	- enable-gpios : gpio pin to enable/disable the device.
->> +	- vled-supply : LED supply
->> +
->> +Required child properties:
->> +	- reg : 0 - LED is Controlled by bank A
->> +		1 - LED is Controlled by bank B
->> +	- led-sources : Indicates which HVLED string is associated to which
->> +			control bank.  Each element in the array is associated
->> +			with a specific HVLED string.  Element 0 is HVLED1,
->> +			element 1 is HVLED2 and element 2 HVLED3.
->> +			Additional information is contained
->> +			in Documentation/devicetree/bindings/leds/common.txt
->> +			0 - HVLED is not active in this control bank
->> +			1 - HVLED string is controlled by this control bank
->> +
->> +Optional child properties:
->> +	- label : see Documentation/devicetree/bindings/leds/common.txt
->> +	- linux,default-trigger :
->> +	   see Documentation/devicetree/bindings/leds/common.txt
->> +
->> +Example:
->> +
->> +HVLED string 1 and 2 controlled by control bank A and HVLED string controlled by
-> 
-> s/1 and 2/1 and 3/
-> s/HVLED string controller/HVLED string 2 controlled/
+> diff --git a/drivers/base/node.c b/drivers/base/node.c
+> index 81b27b5b1f15..b23769e4fcbb 100644
+> --- a/drivers/base/node.c
+> +++ b/drivers/base/node.c
+> @@ -465,8 +465,6 @@ void unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
+>  
+>  		if (nid < 0)
+>  			continue;
+> -		if (!node_online(nid))
+> -			continue;
+>  		/*
+>  		 * It is possible that NODEMASK_ALLOC fails due to memory
+>  		 * pressure.
 > 
 
-Thanks I will fix this up in v5 after the code review.
+Sounds reasonable to me
 
-Dan
-
->> +control bank B.
->> +
->> +led-controller@36 {
->> +	compatible = "ti,lm3967";
->> +	reg = <0x36>;
->> +	#address-cells = <1>;
->> +	#size-cells = <0>;
->> +
->> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
->> +	vled-supply = <&vbatt>;
->> +
->> +	led@0 {
->> +		reg = <0>;
->> +		led-sources = <1 0 1>;
->> +		label = "white:first_backlight_cluster";
->> +		linux,default-trigger = "backlight";
->> +	};
->> +
->> +	led@1 {
->> +		reg = <1>;
->> +		led-sources = <0 1 0>;
->> +		label = "white:second_backlight_cluster";
->> +		linux,default-trigger = "backlight";
->> +	};
->> +}
->> +
->> +All HVLED strings controlled by control bank A
->> +
->> +led-controller@36 {
->> +	compatible = "ti,lm3967";
->> +	reg = <0x36>;
->> +	#address-cells = <1>;
->> +	#size-cells = <0>;
->> +
->> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
->> +	vled-supply = <&vbatt>;
->> +
->> +	led@0 {
->> +		reg = <0>;
->> +		led-sources = <1 1 1>;
->> +		label = "white:backlight_cluster";
->> +		linux,default-trigger = "backlight";
->> +	};
->> +}
->> +
->> +For more product information please see the link below:
->> +http://www.ti.com/lit/ds/symlink/lm3697.pdf
->>
-> 
-
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
 -- 
-------------------
-Dan Murphy
+
+Thanks,
+
+David / dhildenb
