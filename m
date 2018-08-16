@@ -2,142 +2,190 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A70E0C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEFDC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:34:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BB972148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:33:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BB972148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id D09D52148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:34:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=waldekranz-com.20150623.gappssmtp.com header.i=@waldekranz-com.20150623.gappssmtp.com header.b="AuLjc1VP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D09D52148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=waldekranz.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390517AbeHPMaS (ORCPT
+        id S2390531AbeHPMbj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 08:30:18 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:4419 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727273AbeHPMaS (ORCPT
+        Thu, 16 Aug 2018 08:31:39 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:37015 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387553AbeHPMbi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 08:30:18 -0400
-X-IronPort-AV: E=Sophos;i="5.53,246,1531810800"; 
-   d="scan'208";a="15384163"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 16 Aug 2018 02:33:00 -0700
-Received: from [10.145.4.54] (10.10.76.4) by chn-sv-exch05.mchp-main.com
- (10.10.76.106) with Microsoft SMTP Server id 14.3.352.0; Thu, 16 Aug 2018
- 02:32:59 -0700
-Subject: Re: [PATCH] arm/mach-at91/pm: Do not double put the device node
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        zhong jiang <zhongjiang@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux@armlinux.org.uk>
-References: <1534211696-4221-1-git-send-email-zhongjiang@huawei.com>
- <20180814125954.GM943@piout.net>
-From:   Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Message-ID: <59e252e6-6027-9f52-9ee8-8d0bd32659d2@microchip.com>
-Date:   Thu, 16 Aug 2018 12:32:57 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180814125954.GM943@piout.net>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 16 Aug 2018 08:31:38 -0400
+Received: by mail-lj1-f195.google.com with SMTP id v9-v6so3133543ljk.4
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 02:34:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=waldekranz-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:organization;
+        bh=1g4W4DPaKo8EPB3Yox5xayg40Vuqf10sRmiBShKv2lk=;
+        b=AuLjc1VPGEFjCod4WjjxF2SP8PILZWQsbrohXnNsN65tzephB07/AScQv1hWE4wpbA
+         aYx3/6Se+sMxFO/OUV+pvQDHbjunkLqA1qNPB1Ubt9LzEBcslTEPS1BbJtUSOpJiB6zb
+         OYKn3Tz+S7EGtKN4ajhOXD7GkKhOGxfGJl0Ua3GdwzmDC0uiyY7T+gYbTr5rwYuf7qkL
+         tx62FnGkWH70W6Xic3d/94r2QOEAXe2YpbW3t/vXVOsC8R52bZ1XND9ef9yGwWGeniXQ
+         0+VkfZXpQTRPJvkw3EO+wB+HYIolXQyqhtfW24GDdPohFpt+O27VEDi5Dz+NonFFTdio
+         lz8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:organization;
+        bh=1g4W4DPaKo8EPB3Yox5xayg40Vuqf10sRmiBShKv2lk=;
+        b=YjebC9CkcdfxdaYkn8NTPfjKzEZOp/tFXxHSstRheClB3EtdWFC9QgVRv2u6eiWxgR
+         kLdFGZCApST0TVHhq0aMFYZFd1wGJOKihRUjbzgT++kXJtDuSxnEoHpuefBqDAVNXno3
+         WnEfdmctXknV2T8Qdlc3tcpauZqJeAtyVnQvToV3Mx1F/MJtBOvUoGYzVJQI38HiAlis
+         Xg6AEOZczxtrprrHEvPgUMWU8iaHqb1zDciwrDvuVgkl30juETFohA7llAgZpRj9hjZN
+         nujZt/imQ/2y4aGlwYQ7gyxeBb3c7Qzjr1pY8H6Apw6DXM27YZU77t5OfVypgA9JLoIq
+         KiyQ==
+X-Gm-Message-State: AOUpUlF1oaeVjKRN4N4queHz0EJZI0omiz/RdPuWTwjH25fD2nk8xaZb
+        xWDXcn/eDSkBxMXBoUeW4MdX9Q==
+X-Google-Smtp-Source: AA+uWPxZelV1QGSD5lRgOSr4KWre3MO8QmzqFT+xTfq/2e2MezGNLx48nSFTqYHaso2OdNv2vCv3hg==
+X-Received: by 2002:a2e:2096:: with SMTP id g22-v6mr4176691lji.37.1534412059468;
+        Thu, 16 Aug 2018 02:34:19 -0700 (PDT)
+Received: from wkz-wmo.labs.westermo.se (static-193-12-47-89.cust.tele2.se. [193.12.47.89])
+        by smtp.gmail.com with ESMTPSA id q85-v6sm4983138lfg.20.2018.08.16.02.34.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Aug 2018 02:34:18 -0700 (PDT)
+From:   Tobias Waldekranz <tobias@waldekranz.com>
+To:     tobias@waldekranz.com
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org (open list),
+        netdev@vger.kernel.org (open list:ETHERNET PHY LIBRARY)
+Subject: [PATCH] net: phy: add tracepoints
+Date:   Thu, 16 Aug 2018 11:34:15 +0200
+Message-Id: <20180816093418.2621-1-tobias@waldekranz.com>
+X-Mailer: git-send-email 2.17.1
+Organization: Westermo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
+Two tracepoints for now:
 
-On 14.08.2018 15:59, Alexandre Belloni wrote:
-> On 14/08/2018 09:54:56+0800, zhong jiang wrote:
->> Device node iterators put the previous value of the index variable,
->> so an explicit put causes a double put.
->>
-> 
-> While for_each_matching_node_and_match will get and put the node
-> properly, there is also a call to of_find_device_by_node that will get a
-> reference to the node.
-> 
+   * `phy_interrupt` Pretty self-explanatory.
 
-Looking through of_find_device_by_node() it seems that a put_device() on the
-struct device member of the returned struct platform_device has to be called
-instead of of_node_put().
+   * `phy_state_change` Whenever the PHY's state machine is run, trace
+     the old and the new state.
 
-of_find_device_by_node() calls bus_find_device():
+Signed-off-by: Tobias Waldekranz <tobias@waldekranz.com>
+---
+ drivers/net/phy/phy.c      |  4 +++
+ include/trace/events/phy.h | 68 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 72 insertions(+)
+ create mode 100644 include/trace/events/phy.h
 
-dev = bus_find_device(&platform_bus_type, NULL, np, of_dev_node_match); 
+diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+index 9aabfa1a455a..8d22926f3962 100644
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -38,6 +38,9 @@
+ 
+ #include <asm/irq.h>
+ 
++#define CREATE_TRACE_POINTS
++#include <trace/events/phy.h>
++
+ #define PHY_STATE_STR(_state)			\
+ 	case PHY_##_state:			\
+ 		return __stringify(_state);	\
+@@ -1039,6 +1042,7 @@ void phy_state_machine(struct work_struct *work)
+ 	if (err < 0)
+ 		phy_error(phydev);
+ 
++        trace_phy_state_change(phydev, old_state);
+ 	if (old_state != phydev->state)
+ 		phydev_dbg(phydev, "PHY state change %s -> %s\n",
+ 			   phy_state_to_str(old_state),
+diff --git a/include/trace/events/phy.h b/include/trace/events/phy.h
+new file mode 100644
+index 000000000000..7ba6c0dda47e
+--- /dev/null
++++ b/include/trace/events/phy.h
+@@ -0,0 +1,68 @@
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM phy
++
++#if !defined(_TRACE_PHY_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_PHY_H
++
++#include <linux/tracepoint.h>
++
++TRACE_EVENT(phy_interrupt,
++	    TP_PROTO(int irq, struct phy_device *phydev),
++	    TP_ARGS(irq, phydev),
++	    TP_STRUCT__entry(
++		    __field(int, irq)
++		    __field(int, addr)
++		    __field(int, state)
++		    __array(char, ifname, IFNAMSIZ)
++		    ),
++	    TP_fast_assign(
++		    __entry->irq = irq;
++		    __entry->addr = phydev->mdio.addr;
++		    __entry->state = phydev->state;
++		    if (phydev->attached_dev)
++			    memcpy(__entry->ifname,
++				   netdev_name(phydev->attached_dev),
++				   IFNAMSIZ);
++		    else
++			    memset(__entry->ifname, 0, IFNAMSIZ);
++		    ),
++	    TP_printk("phy-%d-irq irq=%d ifname=%16s state=%d",
++		      __entry->addr,
++		      __entry->irq,
++		      __entry->ifname,
++		      __entry->state
++		    )
++	);
++
++TRACE_EVENT(phy_state_change,
++	    TP_PROTO(struct phy_device *phydev, enum phy_state old_state),
++	    TP_ARGS(phydev, old_state),
++	    TP_STRUCT__entry(
++		    __field(int, addr)
++		    __field(int, state)
++		    __field(int, old_state)
++		    __array(char, ifname, IFNAMSIZ)
++		    ),
++	    TP_fast_assign(
++		    __entry->addr = phydev->mdio.addr;
++		    __entry->state = phydev->state;
++		    __entry->old_state = old_state;
++		    if (phydev->attached_dev)
++			    memcpy(__entry->ifname,
++				   netdev_name(phydev->attached_dev),
++				   IFNAMSIZ);
++		    else
++			    memset(__entry->ifname, 0, IFNAMSIZ);
++		    ),
++	    TP_printk("phy-%d-change ifname=%16s old_state=%d state=%d",
++		      __entry->addr,
++		      __entry->ifname,
++		      __entry->old_state,
++		      __entry->state
++		    )
++	);
++
++#endif /* _TRACE_PHY_H */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
+-- 
+2.17.1
 
-the match function, of_dev_node_match(), is just as follows:
-
-static int of_dev_node_match(struct device *dev, void *data)                    
-{                                                                               
-        return dev->of_node == data;                                            
-}                                                                               
-
-but bus_find_device() takes a reference to the struct device returned in case it
-founds a match, via get_device():
-
-struct device *bus_find_device(struct bus_type *bus,                            
-                               struct device *start, void *data,                
-                               int (*match)(struct device *dev,
-			       void*data))    
-{                                                                               
-        struct klist_iter i;                                                    
-        struct device *dev;                                                     
-                                                                                
-        if (!bus || !bus->p)                                                    
-                return NULL;                                                    
-                                                                                
-        klist_iter_init_node(&bus->p->klist_devices, &i,                        
-                             (start ? &start->p->knode_bus : NULL));            
-        while ((dev = next_device(&i)))                                         
-                if (match(dev, data) && get_device(dev))                        
-                        break;                                                  
-        klist_iter_exit(&i);                                                    
-        return dev;                                                             
-}                                                                               
-
-So, I think a put_device(&pdev->dev) has to be called in at91_pm_config_ws()
-instead of of_node_put(np). My bad!
-
-Thank you,
-Claudiu Beznea
-
->> I detect the issue with the help of Coccinelle.
->>
->> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->> ---
->>  arch/arm/mach-at91/pm.c | 5 +----
->>  1 file changed, 1 insertion(+), 4 deletions(-)
->>
->> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
->> index 32fae4d..a5ec35f 100644
->> --- a/arch/arm/mach-at91/pm.c
->> +++ b/arch/arm/mach-at91/pm.c
->> @@ -143,15 +143,12 @@ static int at91_pm_config_ws(unsigned int pm_mode, bool set)
->>  
->>  			/* Check if enabled on SHDWC. */
->>  			if (wsi->shdwc_mr_bit && !(val & wsi->shdwc_mr_bit))
->> -				goto put_node;
->> +				continue;
->>  
->>  			mode |= wsi->pmc_fsmr_bit;
->>  			if (wsi->set_polarity)
->>  				polarity |= wsi->pmc_fsmr_bit;
->>  		}
->> -
->> -put_node:
->> -		of_node_put(np);
->>  	}
->>  
->>  	if (mode) {
->> -- 
->> 1.7.12.4
->>
-> 
