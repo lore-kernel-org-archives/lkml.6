@@ -6,140 +6,96 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 239B2C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A00C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD4B421473
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4B421473
+	by mail.kernel.org (Postfix) with ESMTP id 5B0DE21480
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B0DE21480
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbeHPVmF (ORCPT
+        id S1728238AbeHPVmN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:42:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55988 "EHLO
+        Thu, 16 Aug 2018 17:42:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56002 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbeHPVmF (ORCPT
+        with ESMTP id S1728194AbeHPVmM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:42:05 -0400
+        Thu, 16 Aug 2018 17:42:12 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B827DCC4;
-        Thu, 16 Aug 2018 18:41:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6D2A1CE8;
+        Thu, 16 Aug 2018 18:42:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 3.18 00/15] 3.18.119-stable review
-Date:   Thu, 16 Aug 2018 20:41:37 +0200
-Message-Id: <20180816171633.546734046@linuxfoundation.org>
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        Wei Liu <wei.liu2@citrix.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 01/15] xen/netfront: dont cache skb_shinfo()
+Date:   Thu, 16 Aug 2018 20:41:38 +0200
+Message-Id: <20180816171633.602226005@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180816171633.546734046@linuxfoundation.org>
+References: <20180816171633.546734046@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-3.18.119-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-3.18.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 3.18.119-rc1
-X-KernelTest-Deadline: 2018-08-18T17:16+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 3.18.119 release.
-There are 15 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Sat Aug 18 17:16:20 UTC 2018.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.119-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
-and the diffstat can be found below.
+From: Juergen Gross <jgross@suse.com>
 
-thanks,
+commit d472b3a6cf63cd31cae1ed61930f07e6cd6671b5 upstream.
 
-greg k-h
+skb_shinfo() can change when calling __pskb_pull_tail(): Don't cache
+its return value.
 
--------------
-Pseudo-Shortlog of commits:
+Cc: stable@vger.kernel.org
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Wei Liu <wei.liu2@citrix.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 3.18.119-rc1
+---
+ drivers/net/xen-netfront.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Mark Salyzyn <salyzyn@android.com>
-    Bluetooth: hidp: buffer overflow in hidp_process_report
-
-Eric Biggers <ebiggers@google.com>
-    crypto: ablkcipher - fix crash flushing dcache in error path
-
-Eric Biggers <ebiggers@google.com>
-    crypto: blkcipher - fix crash flushing dcache in error path
-
-Eric Biggers <ebiggers@google.com>
-    crypto: vmac - separate tfm and request context
-
-Eric Biggers <ebiggers@google.com>
-    crypto: vmac - require a block cipher with 128-bit block size
-
-Randy Dunlap <rdunlap@infradead.org>
-    kbuild: verify that $DEPMOD is installed
-
-Liwei Song <liwei.song@windriver.com>
-    i2c: ismt: fix wrong device address when unmap the data buffer
-
-Andrey Ryabinin <a.ryabinin@samsung.com>
-    mm: slub: fix format mismatches in slab_err() callers
-
-Erick Reyes <erickreyes@google.com>
-    ALSA: info: Check for integer overflow in snd_info_entry_write()
-
-Masami Hiramatsu <mhiramat@kernel.org>
-    kprobes/x86: Fix %p uses in error messages
-
-Oleksij Rempel <o.rempel@pengutronix.de>
-    ARM: dts: imx6sx: fix irq for pcie bridge
-
-Al Viro <viro@zeniv.linux.org.uk>
-    fix __legitimize_mnt()/mntput() race
-
-Al Viro <viro@zeniv.linux.org.uk>
-    fix mntput/mntput race
-
-Al Viro <viro@zeniv.linux.org.uk>
-    root dentries need RCU-delayed freeing
-
-Juergen Gross <jgross@suse.com>
-    xen/netfront: don't cache skb_shinfo()
-
-
--------------
-
-Diffstat:
-
- Documentation/Changes          |  17 +-
- Makefile                       |   4 +-
- arch/arm/boot/dts/imx6sx.dtsi  |   2 +-
- arch/x86/kernel/kprobes/core.c |   4 +-
- crypto/ablkcipher.c            |  57 +++---
- crypto/blkcipher.c             |  54 +++---
- crypto/vmac.c                  | 412 ++++++++++++++++++-----------------------
- drivers/i2c/busses/i2c-ismt.c  |   2 +-
- drivers/net/xen-netfront.c     |   8 +-
- fs/dcache.c                    |   6 +-
- fs/namespace.c                 |  28 ++-
- include/crypto/vmac.h          |  63 -------
- mm/slub.c                      |   6 +-
- net/bluetooth/hidp/core.c      |   4 +-
- scripts/depmod.sh              |   8 +-
- sound/core/info.c              |   4 +-
- 16 files changed, 297 insertions(+), 382 deletions(-)
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -903,7 +903,6 @@ static RING_IDX xennet_fill_frags(struct
+ 				  struct sk_buff *skb,
+ 				  struct sk_buff_head *list)
+ {
+-	struct skb_shared_info *shinfo = skb_shinfo(skb);
+ 	RING_IDX cons = queue->rx.rsp_cons;
+ 	struct sk_buff *nskb;
+ 
+@@ -912,15 +911,16 @@ static RING_IDX xennet_fill_frags(struct
+ 			RING_GET_RESPONSE(&queue->rx, ++cons);
+ 		skb_frag_t *nfrag = &skb_shinfo(nskb)->frags[0];
+ 
+-		if (shinfo->nr_frags == MAX_SKB_FRAGS) {
++		if (skb_shinfo(skb)->nr_frags == MAX_SKB_FRAGS) {
+ 			unsigned int pull_to = NETFRONT_SKB_CB(skb)->pull_to;
+ 
+ 			BUG_ON(pull_to <= skb_headlen(skb));
+ 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
+ 		}
+-		BUG_ON(shinfo->nr_frags >= MAX_SKB_FRAGS);
++		BUG_ON(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS);
+ 
+-		skb_add_rx_frag(skb, shinfo->nr_frags, skb_frag_page(nfrag),
++		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
++				skb_frag_page(nfrag),
+ 				rx->offset, rx->status, PAGE_SIZE);
+ 
+ 		skb_shinfo(nskb)->nr_frags = 0;
 
 
