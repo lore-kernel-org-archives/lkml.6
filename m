@@ -2,139 +2,132 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5BACC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E68C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:03:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C31F20936
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:03:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C31F20936
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D4B7820936
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:03:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dxgqJ4ej"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4B7820936
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390684AbeHPNAs (ORCPT
+        id S2390698AbeHPNBP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 09:00:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46800 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727219AbeHPNAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 09:00:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 01D72AF3B;
-        Thu, 16 Aug 2018 10:03:18 +0000 (UTC)
-Date:   Thu, 16 Aug 2018 12:03:17 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        Mel Gorman <mgorman@techsingularity.net>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, linux-mm@kvack.org
-Subject: Re: [PATCH] mm, page_alloc: actually ignore mempolicies for high
- priority allocations
-Message-ID: <20180816100317.GV32645@dhcp22.suse.cz>
-References: <20180612122624.8045-1-vbabka@suse.cz>
- <20180815151652.05d4c4684b7dff2282b5c046@linux-foundation.org>
+        Thu, 16 Aug 2018 09:01:15 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:35182 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727219AbeHPNBP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 09:01:15 -0400
+Received: by mail-oi0-f68.google.com with SMTP id m11-v6so7033875oic.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 03:03:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=TXZmpRb/NmzG8w/RDUMO2wTVk/j99qe6L1IDjdmxW+Y=;
+        b=dxgqJ4ejppzEbgT/a8+8ey3V9c+7Ybfzodq664ddmkJ/BU8AjgZU90TC+lY/6LI2C8
+         QBDBvXfsfG+9NPecwHA6v0z3F+YGuevpGf91A4r3YkqLAwuX58gjZRsIppEPfPYJ3Uqq
+         h+ha+UFjXewLXAhccuHBgK0a7XOPxRtksstOo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=TXZmpRb/NmzG8w/RDUMO2wTVk/j99qe6L1IDjdmxW+Y=;
+        b=LSbsLL0tLX7qjgu8Tnb6cq6oZYCbggVeknajWfCb927si6kzGpMGQ4+mpWJmApMRNp
+         +V7RB2LI39/+LHNYh+TXalis+Mvdl83mYZ7WjHG1d9YyM02wN0hy1EZENbUJbOjOOaJK
+         s7QAX/LJFk/DXVNo4sB3IkJF+O8DR1bgjiTBeCcF9j9ySb1L2yeLqnRPSl/wfyXbk4V3
+         tRNMEdJBcF+rAXMAMHIDvNw9isSQCP0Fl6hS5Os/eu4cGpZCgKW9c2YjGyAzMazbeNhv
+         ucQ/Zr5S8Iq7fx+aVBoiuNMnu5wbAuR7Lsce7B1rLREud5kjrr5cFJDwQy3CFlv1t2yW
+         SrhQ==
+X-Gm-Message-State: AOUpUlEhQ8Np8T9P+VHKCIprlFp0D6I2ldCfC+y7d8e6syN3wX0ZoG6p
+        QjF6PDhEQ/vZTFMKogx2sPKiV7tc39cfdX0DF0XaSQ==
+X-Google-Smtp-Source: AA+uWPztGb2FlJ8I3ahszmoh1FH+u0U7DL3rEpAUyso6dvPr+Foz1bo9bXS6XGudHulN1qW8kepDdY/ejJ7cNRCAuuY=
+X-Received: by 2002:aca:ed45:: with SMTP id l66-v6mr31774763oih.40.1534413827343;
+ Thu, 16 Aug 2018 03:03:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180815151652.05d4c4684b7dff2282b5c046@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a9d:2f9b:0:0:0:0:0 with HTTP; Thu, 16 Aug 2018 03:03:06
+ -0700 (PDT)
+In-Reply-To: <CAAQ0ZWRj6VhgY_hBz0iaxG8rJQVOVCKn4GOpoC_m1opp+qEyqQ@mail.gmail.com>
+References: <1534333184-25599-1-git-send-email-igor.opaniuk@linaro.org> <CAAQ0ZWRj6VhgY_hBz0iaxG8rJQVOVCKn4GOpoC_m1opp+qEyqQ@mail.gmail.com>
+From:   Igor Opaniuk <igor.opaniuk@linaro.org>
+Date:   Thu, 16 Aug 2018 13:03:06 +0300
+Message-ID: <CAModR+VU9XmhYt_BdXd1QCTX0d5yUXjQNVjVQpViLuW8aWdMOw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mmc: dw_mmc: hi3798cv200: add MMC_CAP_CMD23 capability
+To:     Shawn Guo <shawn.guo@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        tianshuliang <tianshuliang@hisilicon.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 15-08-18 15:16:52, Andrew Morton wrote:
-[...]
-> From: Vlastimil Babka <vbabka@suse.cz>
-> Subject: mm, page_alloc: actually ignore mempolicies for high priority allocations
-> 
-> The __alloc_pages_slowpath() function has for a long time contained code
-> to ignore node restrictions from memory policies for high priority
-> allocations.  The current code that resets the zonelist iterator however
-> does effectively nothing after commit 7810e6781e0f ("mm, page_alloc: do
-> not break __GFP_THISNODE by zonelist reset") removed a buggy zonelist
-> reset.  Even before that commit, mempolicy restrictions were still not
-> ignored, as they are passed in ac->nodemask which is untouched by the
-> code.
-> 
-> We can either remove the code, or make it work as intended.  Since
-> ac->nodemask can be set from task's mempolicy via alloc_pages_current()
-> and thus also alloc_pages(), it may indeed affect kernel allocations, and
-> it makes sense to ignore it to allow progress for high priority
-> allocations.
-> 
-> Thus, this patch resets ac->nodemask to NULL in such cases.  This assumes
-> all callers can handle it (i.e.  there are no guarantees as in the case of
-> __GFP_THISNODE) which seems to be the case.  The same assumption is
-> already present in check_retry_cpuset() for some time.
-> 
-> The expected effect is that high priority kernel allocations in the
-> context of userspace tasks (e.g.  OOM victims) restricted by mempolicies
-> will have higher chance to succeed if they are restricted to nodes with
-> depleted memory, while there are other nodes with free memory left.
-> 
-> 
-> Ot's not a new intention, but for the first time the code will match the
-> intention, AFAICS.  It was intended by commit 183f6371aac2 ("mm: ignore
-> mempolicies when using ALLOC_NO_WATERMARK") in v3.6 but I think it never
-> really worked, as mempolicy restriction was already encoded in nodemask,
-> not zonelist, at that time.
-> 
-> So originally that was for ALLOC_NO_WATERMARK only.  Then it was adjusted
-> by e46e7b77c909 ("mm, page_alloc: recalculate the preferred zoneref if the
-> context can ignore memory policies") and cd04ae1e2dc8 ("mm, oom: do not
-> rely on TIF_MEMDIE for memory reserves access") to the current state.  So
-> even GFP_ATOMIC would now ignore mempolicies after the initial attempts
-> fail - if the code worked as people thought it does.
-> 
-> Link: http://lkml.kernel.org/r/20180612122624.8045-1-vbabka@suse.cz
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Hi Shawn,
 
-The code is quite subtle and we have a bad history of copying stuff
-without rethinking whether the code still is needed. Which is sad and a
-clear sign that the code is too complex. I cannot say this change
-doesn't have any subtle side effects but it makes the intention clear at
-least so I _think_ it is good to go. If we find some unintended side
-effects we should simply rethink the whole reset zonelist thing.
+Will test it today with the change you suggested, in case if
+everything is OK will send v2 asap
 
-That being said
-Acked-by: Michal Hocko <mhocko@suse.com>
+Thanks
 
-> ---
-> 
->  mm/page_alloc.c |    7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> --- a/mm/page_alloc.c~mm-page_alloc-actually-ignore-mempolicies-for-high-priority-allocations
-> +++ a/mm/page_alloc.c
-> @@ -4165,11 +4165,12 @@ retry:
->  		alloc_flags = reserve_flags;
->  
->  	/*
-> -	 * Reset the zonelist iterators if memory policies can be ignored.
-> -	 * These allocations are high priority and system rather than user
-> -	 * orientated.
-> +	 * Reset the nodemask and zonelist iterators if memory policies can be
-> +	 * ignored. These allocations are high priority and system rather than
-> +	 * user oriented.
->  	 */
->  	if (!(alloc_flags & ALLOC_CPUSET) || reserve_flags) {
-> +		ac->nodemask = NULL;
->  		ac->preferred_zoneref = first_zones_zonelist(ac->zonelist,
->  					ac->high_zoneidx, ac->nodemask);
->  	}
-> _
-> 
+On 16 August 2018 at 11:01, Shawn Guo <shawn.guo@linaro.org> wrote:
+> On Wed, Aug 15, 2018 at 7:39 PM Igor Opaniuk <igor.opaniuk@linaro.org> wrote:
+>>
+>> Enable access to the RPMB on the on-board eMMC of the
+>> Poplar board.
+>>
+>> Signed-off-by: Igor Opaniuk <igor.opaniuk@linaro.org>
+>> ---
+>>  drivers/mmc/host/dw_mmc-hi3798cv200.c | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>>
+>> diff --git a/drivers/mmc/host/dw_mmc-hi3798cv200.c b/drivers/mmc/host/dw_mmc-hi3798cv200.c
+>> index f9b333f..7a023f0 100644
+>> --- a/drivers/mmc/host/dw_mmc-hi3798cv200.c
+>> +++ b/drivers/mmc/host/dw_mmc-hi3798cv200.c
+>> @@ -23,6 +23,12 @@ struct hi3798cv200_priv {
+>>         struct clk *drive_clk;
+>>  };
+>>
+>> +static unsigned long dw_mci_hi3798cv200_caps[] = {
+>> +       MMC_CAP_CMD23,
+>> +       MMC_CAP_CMD23,
+>> +       0
+>> +};
+>
+> I believe the three dwmmc blocks integrated on Hi3798CV200 SoC are
+> identical on CMD23 support.  So I expect the zero to be MMC_CAP_CMD23
+> as well.
+>
+> Shawn
+>
+>> +
+>>  static void dw_mci_hi3798cv200_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>>  {
+>>         struct hi3798cv200_priv *priv = host->priv;
+>> @@ -160,6 +166,8 @@ static int dw_mci_hi3798cv200_init(struct dw_mci *host)
+>>  }
+>>
+>>  static const struct dw_mci_drv_data hi3798cv200_data = {
+>> +       .caps = dw_mci_hi3798cv200_caps,
+>> +       .num_caps = ARRAY_SIZE(dw_mci_hi3798cv200_caps),
+>>         .init = dw_mci_hi3798cv200_init,
+>>         .set_ios = dw_mci_hi3798cv200_set_ios,
+>>         .execute_tuning = dw_mci_hi3798cv200_execute_tuning,
+>> --
+>> 2.7.4
+>>
+
+
 
 -- 
-Michal Hocko
-SUSE Labs
+Regards,
+Igor Opaniuk
