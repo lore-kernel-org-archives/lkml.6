@@ -6,41 +6,43 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8520C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC0DC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75D7C21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75D7C21473
+	by mail.kernel.org (Postfix) with ESMTP id 3322121473
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3322121473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728789AbeHPVnJ (ORCPT
+        id S1728856AbeHPVnO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:43:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56230 "EHLO
+        Thu, 16 Aug 2018 17:43:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56246 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727674AbeHPVnJ (ORCPT
+        with ESMTP id S1727674AbeHPVnN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:43:09 -0400
+        Thu, 16 Aug 2018 17:43:13 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 010A3CC4;
-        Thu, 16 Aug 2018 18:43:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3FACDCE8;
+        Thu, 16 Aug 2018 18:43:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mhocko@suse.com,
-        akpm@linux-foundation.org, hpa@zytor.com, cpandya@codeaurora.org,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 4.4 01/13] x86/mm: Disable ioremap free page handling on x86-PAE
-Date:   Thu, 16 Aug 2018 20:41:48 +0200
-Message-Id: <20180816171628.612166526@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Thierry Escande <thierry.escande@collabora.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.4 10/13] ASoC: Intel: cht_bsw_max98090_ti: Fix jack initialization
+Date:   Thu, 16 Aug 2018 20:41:57 +0200
+Message-Id: <20180816171629.069531707@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171628.554317013@linuxfoundation.org>
 References: <20180816171628.554317013@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,74 +54,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Toshi Kani <toshi.kani@hpe.com>
+From: Thierry Escande <thierry.escande@collabora.com>
 
-commit f967db0b9ed44ec3057a28f3b28efc51df51b835 upstream.
+commit 3bbda5a38601f7675a214be2044e41d7749e6c7b upstream.
 
-ioremap() supports pmd mappings on x86-PAE.  However, kernel's pmd
-tables are not shared among processes on x86-PAE.  Therefore, any
-update to sync'd pmd entries need re-syncing.  Freeing a pte page
-also leads to a vmalloc fault and hits the BUG_ON in vmalloc_sync_one().
+If the ts3a227e audio accessory detection hardware is present and its
+driver probed, the jack needs to be created before enabling jack
+detection in the ts3a227e driver. With this patch, the jack is
+instantiated in the max98090 headset init function if the ts3a227e is
+present. This fixes a null pointer dereference as the jack detection
+enabling function in the ts3a driver was called before the jack is
+created.
 
-Disable free page handling on x86-PAE.  pud_free_pmd_page() and
-pmd_free_pte_page() simply return 0 if a given pud/pmd entry is present.
-This assures that ioremap() does not update sync'd pmd entries at the
-cost of falling back to pte mappings.
+[minor correction to keep error handling on jack creation the same
+as before by Pierre Bossart]
 
-Fixes: 28ee90fe6048 ("x86/mm: implement free pmd/pte page interfaces")
-Reported-by: Joerg Roedel <joro@8bytes.org>
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: mhocko@suse.com
-Cc: akpm@linux-foundation.org
-Cc: hpa@zytor.com
-Cc: cpandya@codeaurora.org
-Cc: linux-mm@kvack.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: stable@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20180627141348.21777-2-toshi.kani@hpe.com
+Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Acked-By: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/pgtable.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ sound/soc/intel/boards/cht_bsw_max98090_ti.c |   45 ++++++++++++++++++---------
+ 1 file changed, 31 insertions(+), 14 deletions(-)
 
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -676,6 +676,7 @@ int pmd_clear_huge(pmd_t *pmd)
- 	return 0;
- }
+--- a/sound/soc/intel/boards/cht_bsw_max98090_ti.c
++++ b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
+@@ -131,23 +131,19 @@ static int cht_codec_init(struct snd_soc
+ 	struct cht_mc_private *ctx = snd_soc_card_get_drvdata(runtime->card);
+ 	struct snd_soc_jack *jack = &ctx->jack;
  
-+#ifdef CONFIG_X86_64
- /**
-  * pud_free_pmd_page - Clear pud entry and free pmd page.
-  * @pud: Pointer to a PUD.
-@@ -723,4 +724,22 @@ int pmd_free_pte_page(pmd_t *pmd)
+-	/**
+-	* TI supports 4 butons headset detection
+-	* KEY_MEDIA
+-	* KEY_VOICECOMMAND
+-	* KEY_VOLUMEUP
+-	* KEY_VOLUMEDOWN
+-	*/
+-	if (ctx->ts3a227e_present)
+-		jack_type = SND_JACK_HEADPHONE | SND_JACK_MICROPHONE |
+-					SND_JACK_BTN_0 | SND_JACK_BTN_1 |
+-					SND_JACK_BTN_2 | SND_JACK_BTN_3;
+-	else
+-		jack_type = SND_JACK_HEADPHONE | SND_JACK_MICROPHONE;
++	if (ctx->ts3a227e_present) {
++		/*
++		 * The jack has already been created in the
++		 * cht_max98090_headset_init() function.
++		 */
++		snd_soc_jack_notifier_register(jack, &cht_jack_nb);
++		return 0;
++	}
++
++	jack_type = SND_JACK_HEADPHONE | SND_JACK_MICROPHONE;
  
- 	return 1;
+ 	ret = snd_soc_card_jack_new(runtime->card, "Headset Jack",
+ 					jack_type, jack, NULL, 0);
+-
+ 	if (ret) {
+ 		dev_err(runtime->dev, "Headset Jack creation failed %d\n", ret);
+ 		return ret;
+@@ -203,6 +199,27 @@ static int cht_max98090_headset_init(str
+ {
+ 	struct snd_soc_card *card = component->card;
+ 	struct cht_mc_private *ctx = snd_soc_card_get_drvdata(card);
++	struct snd_soc_jack *jack = &ctx->jack;
++	int jack_type;
++	int ret;
++
++	/*
++	 * TI supports 4 butons headset detection
++	 * KEY_MEDIA
++	 * KEY_VOICECOMMAND
++	 * KEY_VOLUMEUP
++	 * KEY_VOLUMEDOWN
++	 */
++	jack_type = SND_JACK_HEADPHONE | SND_JACK_MICROPHONE |
++		    SND_JACK_BTN_0 | SND_JACK_BTN_1 |
++		    SND_JACK_BTN_2 | SND_JACK_BTN_3;
++
++	ret = snd_soc_card_jack_new(card, "Headset Jack", jack_type,
++				    jack, NULL, 0);
++	if (ret) {
++		dev_err(card->dev, "Headset Jack creation failed %d\n", ret);
++		return ret;
++	}
+ 
+ 	return ts3a227e_enable_jack_detect(component, &ctx->jack);
  }
-+
-+#else /* !CONFIG_X86_64 */
-+
-+int pud_free_pmd_page(pud_t *pud)
-+{
-+	return pud_none(*pud);
-+}
-+
-+/*
-+ * Disable free page handling on x86-PAE. This assures that ioremap()
-+ * does not update sync'd pmd entries. See vmalloc_sync_one().
-+ */
-+int pmd_free_pte_page(pmd_t *pmd)
-+{
-+	return pmd_none(*pmd);
-+}
-+
-+#endif /* CONFIG_X86_64 */
- #endif	/* CONFIG_HAVE_ARCH_HUGE_VMAP */
 
 
