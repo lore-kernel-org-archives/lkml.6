@@ -4,119 +4,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CEFFC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 449E6C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA9B82089E
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:52:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0043720C0D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:52:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q9pA60Bv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA9B82089E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fGHLAMAM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0043720C0D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731133AbeHPTvi (ORCPT
+        id S1730843AbeHPTvi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 16 Aug 2018 15:51:38 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36092 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727745AbeHPTvg (ORCPT
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44338 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727285AbeHPTve (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 15:51:36 -0400
-Received: by mail-wm0-f68.google.com with SMTP id w24-v6so4945740wmc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 09:51:57 -0700 (PDT)
+        Thu, 16 Aug 2018 15:51:34 -0400
+Received: by mail-wr1-f65.google.com with SMTP id r16-v6so4732988wrt.11
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 09:51:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gLZ7QU55IsLVhhisN3q0YJquTs5gtaPrOh82kVhuIcI=;
-        b=Q9pA60BvtGVg5Qk9BZEC9RPwv6VE30CQG96npMXKKLFK687sa2wy5rmGfhusSXFe1y
-         6P4pAvKNB9K5o0+W9hW8qcfmjyx7QitMS0xwesCJ0X1vc960UZV3Rv2aPGzYPumCJQCc
-         e9DKMRLroOeAn7gPZuXSrQ666mIhWcaGixrxk=
+        h=from:to:cc:subject:date:message-id;
+        bh=kAJN5fxC24ZODwvl+eKV5x4mhAs5Fw7VBfu8pF7El8s=;
+        b=fGHLAMAMm2lu4C8wbEa9LebpuT0CWFBu8Dl2kK/eZX0j4PU7yubwoMjcXb2/l76E68
+         url8VIG0TUwC7auEYiMr006uz+2nxGfKfIOTQL9YYHzLD3VnfZsvw17xw+NjiPY41s1o
+         XaiDFv07Bb2iWxRqI2up33sXAQZF8mvSVmgpQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=gLZ7QU55IsLVhhisN3q0YJquTs5gtaPrOh82kVhuIcI=;
-        b=USf56FvQ/fOCTnPANJ9jCK/kaE9QcvvJ3/W5rntLkNIxRVyN/uAz/1hsP8VxIjtEjT
-         hYof6V/iWqB6FsU8iE1QyDIz+5RFWKQwUjopg4SAPlrp0HOxy4Zmh3P83MgTT5JBjFdF
-         W1eY+vW9AfMLKJzqTe1fiaFSOEUXTVsovabyTH9P50vawGtm8UCDHs3cnIYfRmGa+/dc
-         RVFpooDonVS9ZJKpeKtSQQC3+v7ynOQxV9O8q8EwEtmzzPkrSpjoSvQ268qfwf2xbZxl
-         pwcNl1CRkIH5DBmBc2liUk8gkZxHG1pS2tyQkLfpoEV4skKXnjXNrclL7mdpbZFBMjGq
-         O/BA==
-X-Gm-Message-State: AOUpUlGf1KM9t2pibvxXIXDeDv8VNFP10O940ItGd4s1tTuGG6eX+qE9
-        m63bN0A1MarpGGZ2knziiuTfmg==
-X-Google-Smtp-Source: AA+uWPyQc/QmVFufHKF653DtcznVIl+PWJw7XwfaujV607gnewQr09bbFnhCJOQ9rPBbffEGh0fXsA==
-X-Received: by 2002:a1c:bb86:: with SMTP id l128-v6mr16316007wmf.26.1534438317067;
-        Thu, 16 Aug 2018 09:51:57 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kAJN5fxC24ZODwvl+eKV5x4mhAs5Fw7VBfu8pF7El8s=;
+        b=ECbCcY5ntgAj1pyyjQHDf1ap+scnWkiLQNrul5WPxRZjOinfWvN6LAriPVgnqq8apm
+         wmdZ2BPpm9+snhQemXfgrQKNn0t8P1/nLIS8CsnV/BMDES/vO723uDHBHWXTjIAKA5Xb
+         likdFblrreXf8Hng5wi9EcvBQVBIALo95TCBTPdanQnqmr2OUdjQY1iiUsjukJm6QxlX
+         4lE26yl145qtf+/wMRzOBWmdRznHY4Q5/3QBiOEq4Rjj6VAHN3b7rVYDANT4trglU94S
+         wDkQVIEXdFODt9Tc9zC5vVrqeY5JXg3zdHKViyjfnhNKJmD6XXD/Hlvp0WH7RB6D2WpP
+         O85g==
+X-Gm-Message-State: AOUpUlF7S5BV5o+O/Toai1sPran3YyI/iW70lmFPleuEyBKZSEMGLnsl
+        oSy8tqIwGvBGDe/vN537y3u/7g==
+X-Google-Smtp-Source: AA+uWPwrIXEOxfwHQ1ScvvFjEAlbdtaxTUZ6ObwN+omTBKgZLK8CpHMh2nF5cbOoqF8dyCzzROSWsQ==
+X-Received: by 2002:adf:f1c8:: with SMTP id z8-v6mr2412002wro.214.1534438315762;
+        Thu, 16 Aug 2018 09:51:55 -0700 (PDT)
 Received: from localhost.localdomain (146-241-5-103.dyn.eolo.it. [146.241.5.103])
-        by smtp.gmail.com with ESMTPSA id o3-v6sm30036180wrj.31.2018.08.16.09.51.55
+        by smtp.gmail.com with ESMTPSA id o3-v6sm30036180wrj.31.2018.08.16.09.51.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Aug 2018 09:51:56 -0700 (PDT)
+        Thu, 16 Aug 2018 09:51:55 -0700 (PDT)
 From:   Paolo Valente <paolo.valente@linaro.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         ulf.hansson@linaro.org, linus.walleij@linaro.org,
         broonie@kernel.org, bfq-iosched@googlegroups.com,
         oleksandr@natalenko.name, Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX/IMPROVEMENT 1/4] block, bfq: readd missing reset of parent-entity service
-Date:   Thu, 16 Aug 2018 18:51:15 +0200
-Message-Id: <20180816165118.17402-2-paolo.valente@linaro.org>
+Subject: [PATCH BUGFIX/IMPROVEMENT 0/4] bfq: two fixes and one improvement related to I/O control
+Date:   Thu, 16 Aug 2018 18:51:14 +0200
+Message-Id: <20180816165118.17402-1-paolo.valente@linaro.org>
 X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180816165118.17402-1-paolo.valente@linaro.org>
-References: <20180816165118.17402-1-paolo.valente@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The received-service counter needs to be equal to 0 when an entity is
-set in service. Unfortunately, commit "block, bfq: fix service being
-wrongly set to zero in case of preemption" mistakenly removed the
-resetting of this counter for the parent entities of the bfq_queue
-being set in service. This commit fixes this issue by resetting
-service for parent entities, directly on the expiration of the
-in-service bfq_queue.
+Hi Jens,
 
-Fixes: 9fae8dd59ff3 ("block, bfq: fix service being wrongly set to zero in case of preemption")
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
----
- block/bfq-iosched.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+while working a little bit on cgroups I/O control, I found two nasty
+bugs in bfq. They break bandwidth control in simple configurations
+with one-process groups. These bugs are fixed by the first two patches
+in this series.
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 41d9036b1822..62efc1b97afb 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -3298,6 +3298,27 @@ void bfq_bfqq_expire(struct bfq_data *bfqd,
- 		 */
- 	} else
- 		entity->service = 0;
-+
-+	/*
-+	 * Reset the received-service counter for every parent entity.
-+	 * Differently from what happens with bfqq->entity.service,
-+	 * the resetting of this counter never needs to be postponed
-+	 * for parent entities. In fact, in case bfqq may have a
-+	 * chance to go on being served using the last, partially
-+	 * consumed budget, bfqq->entity.service needs to be kept,
-+	 * because if bfqq then actually goes on being served using
-+	 * the same budget, the last value of bfqq->entity.service is
-+	 * needed to properly decrement bfqq->entity.budget by the
-+	 * portion already consumed. In contrast, it is not necessary
-+	 * to keep entity->service for parent entities too, because
-+	 * the bubble up of the new value of bfqq->entity.budget will
-+	 * make sure that the budgets of parent entities are correct,
-+	 * even in case bfqq and thus parent entities go on receiving
-+	 * service with the same budget.
-+	 */
-+	entity = entity->parent;
-+	for_each_entity(entity)
-+		entity->service = 0;
- }
- 
- /*
--- 
+These fixes improved I/O control so much, that I could reduce the
+write overcharge factor, used by bfq to counter write-induced
+issues. This reduction is performed by the third patch.
+
+The fourth patch contains a little code improvement I made in a
+function that has to do with I/O control.
+
+I hope we are still in time for 4.19.
+
+Thanks,
+Paolo
+
+Paolo Valente (4):
+  block, bfq: readd missing reset of parent-entity service
+  block, bfq: always update the budget of an entity when needed
+  block, bfq: reduce write overcharge
+  block, bfq: improve code of bfq_bfqq_charge_time
+
+ block/bfq-iosched.c | 54 +++++++++++++++++++++++++++++++++++++++--------------
+ block/bfq-wf2q.c    | 22 +++++++++++-----------
+ 2 files changed, 51 insertions(+), 25 deletions(-)
+
+--
 2.16.1
-
