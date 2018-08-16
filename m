@@ -2,113 +2,107 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D0EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A522C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:19:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23691208A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:14:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="WtDr5Bkh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23691208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1739A208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:19:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1739A208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391193AbeHPOM1 (ORCPT
+        id S2391207AbeHPORI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 10:12:27 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37914 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727058AbeHPOM1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 10:12:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=JgnG8yfjFiol9u0HuzL1/o2iUjAt5ST2KVh3SFOsCJM=; b=WtDr5BkhsUJa
-        XN9iGcnxc3h7meHBM04WklTbtodCMeeZaHXJwXbC99Rt2Ksc8kZBa//XJOSN7z64ZanWoWNSfac6k
-        h3QVeSwLIZdJneFDrjxrQBF0KNaNaLNg93vAh3pa9JMRIyVs1DOSyNhZ9J/lebgIHjJQEA8c/0qWA
-        +sZ2w=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fqGEP-0002hY-Fo; Thu, 16 Aug 2018 11:14:21 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 32926440078; Thu, 16 Aug 2018 12:14:21 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Ryan Lee <ryans.lee@maximintegrated.com>
-Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        ryans.lee@maximintegrated.com, kuninori.morimoto.gx@renesas.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        ryan.lee.maxim@gmail.com, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: max98373: Added speaker FS gain cotnrol register to volatile." to the asoc tree
-In-Reply-To:  <20180816015338.3734-1-ryans.lee@maximintegrated.com>
-Message-Id: <20180816111421.32926440078@finisterre.ee.mobilebroadband>
-Date:   Thu, 16 Aug 2018 12:14:21 +0100 (BST)
+        Thu, 16 Aug 2018 10:17:08 -0400
+Received: from smtp2.provo.novell.com ([137.65.250.81]:33725 "EHLO
+        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbeHPORH (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Thu, 16 Aug 2018 10:17:07 -0400
+Received: from Beta.suse.asia (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
+        by smtp2.provo.novell.com with ESMTP (NOT encrypted); Thu, 16 Aug 2018 05:19:02 -0600
+From:   Larry Chen <lchen@suse.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] fix crash on ocfs2_duplicate_clusters_by_page
+Date:   Thu, 16 Aug 2018 19:18:52 +0800
+Message-Id: <20180816111852.11846-1-lchen@suse.com>
+X-Mailer: git-send-email 2.13.7
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+ocfs2_duplicate_clusters_by_page may crash if an extent's page is dirty.
+When a page has not been written back, it is still in dirty state. If at
+that moment, ocfs2_duplicate_clusters_by_page is called against this
+page, the crash happens.
 
-   ASoC: max98373: Added speaker FS gain cotnrol register to volatile.
+To fix this bug, we can just unlock the page and wait the page until
+it's not dirty.
 
-has been applied to the asoc tree at
+I don't know whether the patch is appropriate, so I need comments,
+thanks.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+The following is the core dump:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+kernel BUG at /root/code/ocfs2/refcounttree.c:2961!
+__ocfs2_move_extent+0x80/0x450 [ocfs2]
+? __ocfs2_claim_clusters+0x130/0x250 [ocfs2]
+ocfs2_defrag_extent+0x5b8/0x5e0 [ocfs2]
+__ocfs2_move_extents_range+0x2a4/0x470 [ocfs2]
+ocfs2_move_extents+0x180/0x3b0 [ocfs2]
+? ocfs2_wait_for_recovery+0x13/0x70 [ocfs2]
+ocfs2_ioctl_move_extents+0x133/0x2d0 [ocfs2]
+ocfs2_ioctl+0x253/0x640 [ocfs2]
+do_vfs_ioctl+0x90/0x5f0
+SyS_ioctl+0x74/0x80
+do_syscall_64+0x74/0x140
+entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+To: mfasheh@versity.com,
+    jlbec@evilplan.org
+Cc: linux-kernel@vger.kernel.org,
+    ocfs2-devel@oss.oracle.com,
+    akpm@linux-foundation.org
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 0d22825255f25adb6a609f130b42c752d3fd0f5d Mon Sep 17 00:00:00 2001
-From: Ryan Lee <ryans.lee@maximintegrated.com>
-Date: Wed, 15 Aug 2018 18:53:38 -0700
-Subject: [PATCH] ASoC: max98373: Added speaker FS gain cotnrol register to
- volatile.
-
-Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Larry Chen <lchen@suse.com>
 ---
- sound/soc/codecs/max98373.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/ocfs2/refcounttree.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/max98373.c b/sound/soc/codecs/max98373.c
-index 92b7125ea169..2764fae69333 100644
---- a/sound/soc/codecs/max98373.c
-+++ b/sound/soc/codecs/max98373.c
-@@ -520,6 +520,7 @@ static bool max98373_volatile_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
- 	case MAX98373_R2000_SW_RESET ... MAX98373_R2009_INT_FLAG3:
-+	case MAX98373_R203E_AMP_PATH_GAIN:
- 	case MAX98373_R2054_MEAS_ADC_PVDD_CH_READBACK:
- 	case MAX98373_R2055_MEAS_ADC_THERM_CH_READBACK:
- 	case MAX98373_R20B6_BDE_CUR_STATE_READBACK:
+diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
+index 7869622af22a..ee3b9dbbc310 100644
+--- a/fs/ocfs2/refcounttree.c
++++ b/fs/ocfs2/refcounttree.c
+@@ -2946,6 +2946,7 @@ int ocfs2_duplicate_clusters_by_page(handle_t *handle,
+ 		if (map_end & (PAGE_SIZE - 1))
+ 			to = map_end & (PAGE_SIZE - 1);
+ 
++retry:
+ 		page = find_or_create_page(mapping, page_index, GFP_NOFS);
+ 		if (!page) {
+ 			ret = -ENOMEM;
+@@ -2957,8 +2958,13 @@ int ocfs2_duplicate_clusters_by_page(handle_t *handle,
+ 		 * In case PAGE_SIZE <= CLUSTER_SIZE, This page
+ 		 * can't be dirtied before we CoW it out.
+ 		 */
+-		if (PAGE_SIZE <= OCFS2_SB(sb)->s_clustersize)
+-			BUG_ON(PageDirty(page));
++		if (PAGE_SIZE <= OCFS2_SB(sb)->s_clustersize) {
++			if (PageDirty(page)) {
++				unlock_page(page);
++				cond_resched();
++				goto retry;
++			}
++		}
+ 
+ 		if (!PageUptodate(page)) {
+ 			ret = block_read_full_page(page, ocfs2_get_block);
 -- 
-2.18.0
+2.13.7
 
