@@ -6,40 +6,33 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0280C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78286C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9467521473
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9467521473
+	by mail.kernel.org (Postfix) with ESMTP id 3C87F21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C87F21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbeHPVmd (ORCPT
+        id S1728482AbeHPVmg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:42:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56072 "EHLO
+        Thu, 16 Aug 2018 17:42:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56094 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728344AbeHPVmc (ORCPT
+        with ESMTP id S1728344AbeHPVmf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:42:32 -0400
+        Thu, 16 Aug 2018 17:42:35 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6ADB0CB7;
-        Thu, 16 Aug 2018 18:42:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 386F8CB7;
+        Thu, 16 Aug 2018 18:42:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Salyzyn <salyzyn@android.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Kees Cook <keescook@chromium.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        security@kernel.org, kernel-team@android.com
-Subject: [PATCH 3.18 15/15] Bluetooth: hidp: buffer overflow in hidp_process_report
-Date:   Thu, 16 Aug 2018 20:41:52 +0200
-Message-Id: <20180816171634.138355244@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 3.18 02/15] root dentries need RCU-delayed freeing
+Date:   Thu, 16 Aug 2018 20:41:39 +0200
+Message-Id: <20180816171633.637791038@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171633.546734046@linuxfoundation.org>
 References: <20180816171633.546734046@linuxfoundation.org>
@@ -56,50 +49,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mark Salyzyn <salyzyn@android.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 7992c18810e568b95c869b227137a2215702a805 upstream.
+commit 90bad5e05bcdb0308cfa3d3a60f5c0b9c8e2efb3 upstream.
 
-CVE-2018-9363
+Since mountpoint crossing can happen without leaving lazy mode,
+root dentries do need the same protection against having their
+memory freed without RCU delay as everything else in the tree.
 
-The buffer length is unsigned at all layers, but gets cast to int and
-checked in hidp_process_report and can lead to a buffer overflow.
-Switch len parameter to unsigned int to resolve issue.
+It's partially hidden by RCU delay between detaching from the
+mount tree and dropping the vfsmount reference, but the starting
+point of pathwalk can be on an already detached mount, in which
+case umount-caused RCU delay has already passed by the time the
+lazy pathwalk grabs rcu_read_lock().  If the starting point
+happens to be at the root of that vfsmount *and* that vfsmount
+covers the entire filesystem, we get trouble.
 
-This affects 3.18 and newer kernels.
-
-Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-Fixes: a4b1b5877b514b276f0f31efe02388a9c2836728 ("HID: Bluetooth: hidp: make sure input buffers are big enough")
-Cc: Marcel Holtmann <marcel@holtmann.org>
-Cc: Johan Hedberg <johan.hedberg@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: linux-bluetooth@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: security@kernel.org
-Cc: kernel-team@android.com
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Fixes: 48a066e72d97 ("RCU'd vsfmounts")
+Cc: stable@vger.kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bluetooth/hidp/core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/dcache.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/bluetooth/hidp/core.c
-+++ b/net/bluetooth/hidp/core.c
-@@ -416,8 +416,8 @@ static void hidp_del_timer(struct hidp_s
- 		del_timer(&session->timer);
- }
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1848,10 +1848,12 @@ struct dentry *d_make_root(struct inode
+ 		static const struct qstr name = QSTR_INIT("/", 1);
  
--static void hidp_process_report(struct hidp_session *session,
--				int type, const u8 *data, int len, int intr)
-+static void hidp_process_report(struct hidp_session *session, int type,
-+				const u8 *data, unsigned int len, int intr)
- {
- 	if (len > HID_MAX_BUFFER_SIZE)
- 		len = HID_MAX_BUFFER_SIZE;
+ 		res = __d_alloc(root_inode->i_sb, &name);
+-		if (res)
++		if (res) {
++			res->d_flags |= DCACHE_RCUACCESS;
+ 			d_instantiate(res, root_inode);
+-		else
++		} else {
+ 			iput(root_inode);
++		}
+ 	}
+ 	return res;
+ }
 
 
