@@ -2,129 +2,163 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A38C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 626E6C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DE2C214C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:10:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DE2C214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tronnes.org
+	by mail.kernel.org (Postfix) with ESMTP id 16279214C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:12:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A3ih0iot"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16279214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390322AbeHPMHU (ORCPT
+        id S2390325AbeHPMJZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 08:07:20 -0400
-Received: from smtp.domeneshop.no ([194.63.252.55]:57198 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390308AbeHPMHT (ORCPT
+        Thu, 16 Aug 2018 08:09:25 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41992 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728165AbeHPMJY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 08:07:19 -0400
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:51306 helo=[192.168.10.175])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <noralf@tronnes.org>)
-        id 1fqEID-0004R5-Li; Thu, 16 Aug 2018 11:10:09 +0200
-Subject: Re: [PATCH10 3/3] ARM:drm ivip Intel FPGA Video and Image Processing
- Suite
-To:     "Ong, Hean Loong" <hean.loong.ong@intel.com>,
-        "airlied@linux.ie" <airlied@linux.ie>
-Cc:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "See, Chin Liang" <chin.liang.see@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "Vandervennet, Yves" <yves.vandervennet@intel.com>
-References: <1534237029-2648-1-git-send-email-hean.loong.ong@intel.com>
- <1534237029-2648-4-git-send-email-hean.loong.ong@intel.com>
- <28d5e08c-4ae2-2d09-6ce4-985578535d34@tronnes.org>
- <1534408434.3432.3.camel@intel.com>
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <d25039b3-9b7f-e36d-5b87-970e11232530@tronnes.org>
-Date:   Thu, 16 Aug 2018 11:10:01 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 16 Aug 2018 08:09:24 -0400
+Received: by mail-wr1-f67.google.com with SMTP id e7-v6so3463097wrs.9
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 02:12:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=QAwynADlPKYuP4aeifp7Ola9qHjzWIRt8Cy2YRNpqvE=;
+        b=A3ih0iotjw5WB/ZWP4+RM/jkU+7CkA3E1+ZRP3dp6A9kk2tgqka8deceXqDnKfiUgx
+         GulJj5R+JP1FEdOeShHsqL0/Qqm6p8maZeXjrRdN8XK8fVHnC2lmAufGx3TISjvoxKvB
+         kOojCx/cwLzAfJKVYB5P2m3LGqtKdpCcqAzX4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=QAwynADlPKYuP4aeifp7Ola9qHjzWIRt8Cy2YRNpqvE=;
+        b=fVQNgQAyvA+H4RH2U2Xd4BA4qr4JS7x6a/w9AapfWA5yQwYpy5Dr5I+KezFxRGoUUG
+         9abfejVtUz9JwJM4I+cfKxwtsQrigCdHl84HzV87Bu8Lr/aN+1zc4GNeaObEOZgARd0Q
+         uY+q2e3ZVOrCdpcQtJujUuL5fqVXFIzBpJzAWFwRzLk3vYqKvLg8N/wGoNFwAyfbY7tv
+         OIdtShctzIPhqUd+kdw28Uf7tyhors3Wvk14dCVXxfn/TdYOdISSaNMvxEycDVlaE0O5
+         pPuyyz1B/g5+8/KaKbBfrKUTLUWf9MwHn3ifRpj+ABmzYpsh4UMyENDoifEYA53IIBK6
+         LyHg==
+X-Gm-Message-State: AOUpUlHMwhk9kFhJ/NsHGxslFkz2FA0B+WyiWBv1CL7k5KPo6ferH/VI
+        NuvZ8GLZLXDxTDeuqDFFO17se3F67KM=
+X-Google-Smtp-Source: AA+uWPzcJMFF0SeRzchiR1BoLaqUZFxaXo4NFE7N34WVuH7XLrPXyBzlz9ZybIFhS/SA59VZwU/VTQ==
+X-Received: by 2002:adf:e70a:: with SMTP id c10-v6mr1185432wrm.143.1534410734088;
+        Thu, 16 Aug 2018 02:12:14 -0700 (PDT)
+Received: from dell ([2.31.163.71])
+        by smtp.gmail.com with ESMTPSA id 199-v6sm1693332wmp.37.2018.08.16.02.12.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 16 Aug 2018 02:12:13 -0700 (PDT)
+Date:   Thu, 16 Aug 2018 10:12:11 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc:     patches@opensource.cirrus.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mfd: madera: Don't use regmap_read_poll_timeout to
+ poll for BOOT_DONE
+Message-ID: <20180816091211.GF10054@dell>
+References: <20180807090813.15695-1-rf@opensource.cirrus.com>
+ <20180807090813.15695-2-rf@opensource.cirrus.com>
 MIME-Version: 1.0
-In-Reply-To: <1534408434.3432.3.camel@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180807090813.15695-2-rf@opensource.cirrus.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 07 Aug 2018, Richard Fitzgerald wrote:
 
-Den 16.08.2018 10.33, skrev Ong, Hean Loong:
-> On Wed, 2018-08-15 at 14:26 +0200, Noralf Trønnes wrote:
->> Den 14.08.2018 10.57, skrev Hean-Loong, Ong:
->>> From: Ong Hean Loong <hean.loong.ong@intel.com>
->>>
->>> Driver for Intel FPGA Video and Image Processing Suite Frame Buffer
->>> II.
->>> The driver only supports the Intel Arria10 devkit and its variants.
->>> This driver can be either loaded staticlly or in modules.
->>> The OF device tree binding is located at:
->>> Documentation/devicetree/bindings/display/altr,vip-fb2.txt
->>>
->>> Signed-off-by: Ong Hean Loong <hean.loong.ong@intel.com>
->>> ---
+> While polling for BOOT_DONE the chip could NAK a read because it is
+> still booting, which would terminate the regmap_read_poll_timeout()
+> with an error.
+> 
+> Instead implement a polling loop that ignores read errors so we
+> always poll until the chip signals boot or the loop times out.
+> 
+> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> ---
+>  drivers/mfd/madera-core.c | 38 ++++++++++++++++++++++++--------------
+>  1 file changed, 24 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
+> index 8cfea969b060..bc5545c53ee5 100644
+> --- a/drivers/mfd/madera-core.c
+> +++ b/drivers/mfd/madera-core.c
+> @@ -132,33 +132,43 @@ const char *madera_name_from_type(enum madera_type type)
+>  }
+>  EXPORT_SYMBOL_GPL(madera_name_from_type);
+>  
+> -#define MADERA_BOOT_POLL_MAX_INTERVAL_US  5000
+> -#define MADERA_BOOT_POLL_TIMEOUT_US	 25000
+> +#define MADERA_BOOT_POLL_INTERVAL_USEC		5000
+> +#define MADERA_BOOT_POLL_TIMEOUT_USEC		25000
+>  
+>  static int madera_wait_for_boot(struct madera *madera)
+>  {
+> -	unsigned int val;
+> -	int ret;
+> +	ktime_t timeout;
+> +	unsigned int val = 0;
+> +	int ret = 0;
+>  
+>  	/*
+>  	 * We can't use an interrupt as we need to runtime resume to do so,
+>  	 * so we poll the status bit. This won't race with the interrupt
+>  	 * handler because it will be blocked on runtime resume.
+> +	 * The chip could NAK a read request while it is booting so ignore
+> +	 * errors from regmap_read.
+>  	 */
+> -	ret = regmap_read_poll_timeout(madera->regmap,
+> -				       MADERA_IRQ1_RAW_STATUS_1,
+> -				       val,
+> -				       (val & MADERA_BOOT_DONE_STS1),
+> -				       MADERA_BOOT_POLL_MAX_INTERVAL_US,
+> -				       MADERA_BOOT_POLL_TIMEOUT_US);
+> -
+> -	if (ret)
+> -		dev_err(madera->dev, "Polling BOOT_DONE_STS failed: %d\n", ret);
+> +	regmap_read(madera->regmap, MADERA_IRQ1_RAW_STATUS_1, &val);
+> +	if (val & MADERA_BOOT_DONE_STS1)
+> +		goto done;
 
-<snip>
+Move the usleep_range() invokation to after the regmap_read(), then
+you can remove these 3 lines and have the same semantics.
 
->>> +int intelvipfb_probe(struct device *dev)
->>> +{
->>> +	int retval;
->>> +	struct drm_device *drm;
->>> +	struct intelvipfb_priv *fbpriv = dev_get_drvdata(dev);
->>> +	struct drm_connector *connector;
->>> +	u32 formats[] = {DRM_FORMAT_XRGB8888};
->>> +
->>> +	drm = fbpriv->drm;
->>> +
->>> +	drm->dev_private = fbpriv;
->>> +
->>> +	intelvipfb_setup_mode_config(drm);
->>> +
->>> +	connector = intelvipfb_conn_setup(drm);
->>> +	if (!connector) {
->>> +		dev_err(drm->dev, "Connector setup failed\n");
->>> +		goto err_mode_config;
->>> +	}
->>> +
->>> +	retval = drm_simple_display_pipe_init(drm, &fbpriv->pipe,
->>> +					      &fbpriv_funcs,
->>> formats,
->>> +			ARRAY_SIZE(formats), NULL, connector);
->>> +	if (retval < 0) {
->>> +		dev_err(drm->dev, "Cannot setup simple display
->>> pipe\n");
->>> +		goto err_mode_config;
->>> +	}
->>> +
->>> +	fbpriv->fbcma = drm_fbdev_cma_init(drm,
->>> +			drm->mode_config.preferred_depth,
->>> +			drm->mode_config.num_connector);
->> Please use drm_fbdev_generic_setup() for fbdev emulation. It tears
->> down
->> automatically on drm_dev_unregister() and you don't need the
->> drm_driver->lastclose hook.
->>
->> All drivers that use drm_fbdev_cma_init() will move to this shortly.
->>
->> Noralf.
->>
-> I could not find any examples that currently uses
-> the drm_fbdev_generic_setup (). Would you mind pointing me on where
-> such examples are available that would allow me to replace the
-> assignment of the fbcma pointer with drm_fbdev_generic_setup() method
+> +	timeout = ktime_add_us(ktime_get(), MADERA_BOOT_POLL_TIMEOUT_USEC);
+> +	do {
+> +		usleep_range(MADERA_BOOT_POLL_INTERVAL_USEC / 2,
+> +			     MADERA_BOOT_POLL_INTERVAL_USEC);
+> +		regmap_read(madera->regmap, MADERA_IRQ1_RAW_STATUS_1, &val);
+> +		if (val & MADERA_BOOT_DONE_STS1)
+> +			goto done;
+> +	} while (ktime_compare(ktime_get(), timeout) <= 0);
+> +
+> +	dev_err(madera->dev, "Polling BOOT_DONE_STS timed out\n");
+> +	ret = -ETIMEDOUT;
+>  
+>  	/*
+>  	 * BOOT_DONE defaults to unmasked on boot so we must ack it.
+> -	 * Do this unconditionally to avoid interrupt storms.
+> +	 * Do this even after a timeout to avoid interrupt storms.
+>  	 */
+> +done:
+>  	regmap_write(madera->regmap, MADERA_IRQ1_STATUS_1,
+>  		     MADERA_BOOT_DONE_EINT1);
+>  
 
-This is the only one converted so far:
-Commit: dff1c7032ffea20cca2ad3973ed4c69c8182683d
-drm/tinydrm: Use drm_fbdev_generic_setup()
-
-Noralf.
-
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
