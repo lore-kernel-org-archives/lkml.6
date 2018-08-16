@@ -2,149 +2,121 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D550EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E61C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:21:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 828A9213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:20:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70FD82147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:21:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c3ODO9aW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 828A9213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKKtnr2V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70FD82147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725965AbeHPXV0 (ORCPT
+        id S1726062AbeHPXWZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 19:21:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47272 "EHLO mail.kernel.org"
+        Thu, 16 Aug 2018 19:22:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725783AbeHPXV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 19:21:26 -0400
-Received: from mail-yb0-f180.google.com (mail-yb0-f180.google.com [209.85.213.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1725783AbeHPXWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 19:22:24 -0400
+Received: from localhost (unknown [64.22.249.253])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F962213A2;
-        Thu, 16 Aug 2018 20:20:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99488213A2;
+        Thu, 16 Aug 2018 20:21:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534450854;
-        bh=9J4lOxCNrfVUtXPcyGryaJQZcO1MjI6GpUIdCya5PJI=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=c3ODO9aWB/6FkG26/m0I6Uerb7mFlBFeP1ADCQZIkLe3Yzf228NjeIj4XYMCUONFW
-         jhu/YFZ10Yrwd3YnePjx3667TRVu7gwbLZs6Pzci56lLj+3e+CIHHEbQyXcYIERdbI
-         5XiPqyG1pTYEUneSE1LY5snm/zv4P9boCf5AzY/k=
-Received: by mail-yb0-f180.google.com with SMTP id e9-v6so1121998ybq.1;
-        Thu, 16 Aug 2018 13:20:54 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGjMbv7/y5loaKj6vjDjdkrZY5WhDuLlxsXYhdW05dIqDL9jm6O
-        /d+oVvNYLiYOLtPmRMXU7FvCurHOawc2vUCf/B8=
-X-Google-Smtp-Source: AA+uWPyL978DlUdfVHMF2n6LWVYxJQM7z0dA4t5VZ1lCQ1wYURwR9QskJkeNaq8z8fKctYjhDm/1KCMoIk0U5Ap/NKo=
-X-Received: by 2002:a5b:52:: with SMTP id e18-v6mr17303177ybp.88.1534450853337;
- Thu, 16 Aug 2018 13:20:53 -0700 (PDT)
+        s=default; t=1534450912;
+        bh=VTbjId63JiCpm8KcFwHQ3Bu8PILedgHcfYHqMtcgSNE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vKKtnr2VIE5U82wLcPfrUdoQjGw18+FOWUZ2lml11qj0mXQayRkGHIFsWAHHFVJr/
+         ORehNTLTiyhJL7/zXvg+06TmXJdzpf1liS3zFSB5chtpGcYXGLd47NmmBpe8Q52taJ
+         EEKKWIlWrLFyZThpBLn8sUVMMtJV8qHikZFPx9pg=
+Date:   Thu, 16 Aug 2018 15:21:51 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux PCI <linux-pci@vger.kernel.org>,
+        teika kazura <teika@gmx.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] PCI / ACPI / PM: Resume all bridges on suspend-to-RAM
+Message-ID: <20180816202151.GA10316@bhelgaas-glaptop.roam.corp.google.com>
+References: <6401388.2t0qD3iTOr@aspire.rjw.lan>
 MIME-Version: 1.0
-Received: by 2002:a25:81c8:0:0:0:0:0 with HTTP; Thu, 16 Aug 2018 13:20:12
- -0700 (PDT)
-In-Reply-To: <20180816190252.GB3932@archbook>
-References: <20180814191526.3247-1-atull@kernel.org> <20180814191526.3247-8-atull@kernel.org>
- <20180816190252.GB3932@archbook>
-From:   Alan Tull <atull@kernel.org>
-Date:   Thu, 16 Aug 2018 15:20:12 -0500
-X-Gmail-Original-Message-ID: <CANk1AXR3gAc6YiC-WARrgnFbJWQVWv2Nuz49u7qyobJdKdNotg@mail.gmail.com>
-Message-ID: <CANk1AXR3gAc6YiC-WARrgnFbJWQVWv2Nuz49u7qyobJdKdNotg@mail.gmail.com>
-Subject: Re: [PATCH 7/8] docs: fpga: document fpga manager flags
-To:     Moritz Fischer <mdf@kernel.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fpga@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6401388.2t0qD3iTOr@aspire.rjw.lan>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 2:02 PM, Moritz Fischer <mdf@kernel.org> wrote:
-Hi Moritz,
+On Thu, Aug 16, 2018 at 12:56:46PM +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Commit 26112ddc254c (PCI / ACPI / PM: Resume bridges w/o drivers on
+> suspend-to-RAM) attempted to fix a functional regression resulting
+> from commit c62ec4610c40 (PM / core: Fix direct_complete handling
+> for devices with no callbacks) by resuming PCI bridges without
+> drivers (that is, "parallel PCI" ones) during system-wide suspend if
+> the target system state is not ACPI S0 (working state).
+> 
+> That turns out insufficient, however, as it is reported that, at
+> least in one case, the platform firmware gets confused if a PCIe
+> root port is suspended before entering the ACPI S3 sleep state.
+> 
+> For this reason, drop the driver check from acpi_pci_need_resume()
+> and resume all bridges (including PCIe ports with drivers) during
+> system-wide suspend if the target system state is not ACPI S0.
+> 
+> [If the target system state is ACPI S0, it means suspend-to-idle
+>  and the platform firmware is not going to be invoked to actually
+>  suspend the system, so there is no need to resume the bridges in
+>  that case.]
+> 
+> Fixes: c62ec4610c40 (PM / core: Fix direct_complete handling for devices with no callbacks)
+> Reported-by: teika kazura <teika@gmx.com>
+> Tested-by: teika kazura <teika@gmx.com>
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=200675
+> Cc: 4.15+ <stable@vger.kernel.org> # 4.15+: 26112ddc254c (PCI / ACPI / PM: Resume bridges ...)
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> Hi Alan,
->
-> On Tue, Aug 14, 2018 at 02:15:25PM -0500, Alan Tull wrote:
->> Add flags #defines to kerneldoc documentation in a
->> useful place.
->>
->> Signed-off-by: Alan Tull <atull@kernel.org>
->> ---
->>  Documentation/driver-api/fpga/fpga-mgr.rst |  5 +++++
->>  include/linux/fpga/fpga-mgr.h              | 18 ++++++++++++------
->>  2 files changed, 17 insertions(+), 6 deletions(-)
->>
->> diff --git a/Documentation/driver-api/fpga/fpga-mgr.rst b/Documentation/driver-api/fpga/fpga-mgr.rst
->> index 431556d..db8885e 100644
->> --- a/Documentation/driver-api/fpga/fpga-mgr.rst
->> +++ b/Documentation/driver-api/fpga/fpga-mgr.rst
->> @@ -183,6 +183,11 @@ API for implementing a new FPGA Manager driver
->>  API for programming an FPGA
->>  ---------------------------
->>
->> +FPGA Manager flags
->> +
->> +.. kernel-doc:: include/linux/fpga/fpga-mgr.h
->> +   :doc: FPGA Manager flags
->> +
->>  .. kernel-doc:: include/linux/fpga/fpga-mgr.h
->>     :functions: fpga_image_info
->>
->> diff --git a/include/linux/fpga/fpga-mgr.h b/include/linux/fpga/fpga-mgr.h
->> index 1ca02ce..777c502 100644
->> --- a/include/linux/fpga/fpga-mgr.h
->> +++ b/include/linux/fpga/fpga-mgr.h
->> @@ -53,12 +53,18 @@ enum fpga_mgr_states {
->>       FPGA_MGR_STATE_OPERATING,
->>  };
->>
->> -/*
->> - * FPGA Manager flags
->> - * FPGA_MGR_PARTIAL_RECONFIG: do partial reconfiguration if supported
->> - * FPGA_MGR_EXTERNAL_CONFIG: FPGA has been configured prior to Linux booting
->> - * FPGA_MGR_BITSTREAM_LSB_FIRST: SPI bitstream bit order is LSB first
->
-> We are actually missing the ENCRYPTED flag here, can you add that while
-> we're at it? I must've forgotten to add that back then ... derp.
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Sure!
+Thanks for doing this.  I don't like dependencies on the PCIe
+PM/AER/hotplug/etc features being implemented as a "driver" because
+they could be implemented in the PCI core directly.
 
->
->> - * FPGA_MGR_COMPRESSED_BITSTREAM: FPGA bitstream is compressed
->> +/**
->> + * DOC: FPGA Manager flags
->> + *
->> + * Flags used in the &fpga_image_info->flags field
->> + *
->> + * %FPGA_MGR_PARTIAL_RECONFIG: do partial reconfiguration if supported
->> + *
->> + * %FPGA_MGR_EXTERNAL_CONFIG: FPGA has been configured prior to Linux booting
-
-How about this description?
-
-+ *
-+ * %FPGA_MGR_ENCRYPTED_BITSTREAM: indicates bitstream is encrypted
-
->> + *
->> + * %FPGA_MGR_BITSTREAM_LSB_FIRST: SPI bitstream bit order is LSB first
->> + *
->> + * %FPGA_MGR_COMPRESSED_BITSTREAM: FPGA bitstream is compressed
->>   */
->>  #define FPGA_MGR_PARTIAL_RECONFIG    BIT(0)
->>  #define FPGA_MGR_EXTERNAL_CONFIG     BIT(1)
->> --
->> 2.7.4
->>
->
-> Thanks,
-> Moritz
-
-Thanks,
-Alan
+> ---
+>  drivers/pci/pci-acpi.c |    6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> Index: linux-pm/drivers/pci/pci-acpi.c
+> ===================================================================
+> --- linux-pm.orig/drivers/pci/pci-acpi.c
+> +++ linux-pm/drivers/pci/pci-acpi.c
+> @@ -632,13 +632,11 @@ static bool acpi_pci_need_resume(struct
+>  	/*
+>  	 * In some cases (eg. Samsung 305V4A) leaving a bridge in suspend over
+>  	 * system-wide suspend/resume confuses the platform firmware, so avoid
+> -	 * doing that, unless the bridge has a driver that should take care of
+> -	 * the PM handling.  According to Section 16.1.6 of ACPI 6.2, endpoint
+> +	 * doing that.  According to Section 16.1.6 of ACPI 6.2, endpoint
+>  	 * devices are expected to be in D3 before invoking the S3 entry path
+>  	 * from the firmware, so they should not be affected by this issue.
+>  	 */
+> -	if (pci_is_bridge(dev) && !dev->driver &&
+> -	    acpi_target_system_state() != ACPI_STATE_S0)
+> +	if (pci_is_bridge(dev) && acpi_target_system_state() != ACPI_STATE_S0)
+>  		return true;
+>  
+>  	if (!adev || !acpi_device_power_manageable(adev))
+> 
