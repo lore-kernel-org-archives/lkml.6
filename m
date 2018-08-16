@@ -2,118 +2,102 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE6CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7617CC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:51:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D0CA20936
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:47:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D0CA20936
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 1FED021470
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:51:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ogXoMJxR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FED021470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391077AbeHPNpW (ORCPT
+        id S2388231AbeHPNta (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 09:45:22 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54945 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727640AbeHPNpV (ORCPT
+        Thu, 16 Aug 2018 09:49:30 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56106 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387896AbeHPNta (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 09:45:21 -0400
-Received: by mail-wm0-f65.google.com with SMTP id c14-v6so4002219wmb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 03:47:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OwegCybYnkdi9HYS2tjbDA27vUmWOCD2wUJPhX45qUs=;
-        b=E2JtJ6m8g/8o65Dd5AldNmPEPm7LtzJqpYLuLRMP8sXgBuCvnlMOo+Fqy4nPhmZ6ct
-         B4TaMrznAGAtGPg4EhVOaEusbcWV7h41ZRZD5I6WDtIcq///8ZNnksfa2Tnbs5EJcQDW
-         eatoHB4BJtuulyZCugWTCMmIENsTG77rf7xl8woBCP3oOza1PpfQ7LynwJtICSXACOpY
-         3rEch6D9ek+HDi9ZFFyAGUnVxyB7mIwc6pylqm8VWjOibDyuZrAbdVp6lRjvU04Wlv+k
-         FTZ9p4ElxvV8V9McZyScmPw8N3IQvL+d4mAmaQ3VjHSezJ8nGKt57Gf88a2hfRu7I1br
-         6l2Q==
-X-Gm-Message-State: AOUpUlFrvTrLu0vWw/VN6VWgvkvppR9Nqn+zZdwVIfcPhcwyGjFyq3Ld
-        GQTwFJFy74HMi0LchV1GJ+8=
-X-Google-Smtp-Source: AA+uWPxUbvP5C4ssWeYOiJXV/veJdbOY4B6jHjiWMdxYvWMjwvi8nps4nyJYvOZTEk+uYTwrvdpq0A==
-X-Received: by 2002:a1c:a813:: with SMTP id r19-v6mr15128646wme.100.1534416458300;
-        Thu, 16 Aug 2018 03:47:38 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id r18-v6sm533227wmh.28.2018.08.16.03.47.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Aug 2018 03:47:37 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 6C80A1248DC; Thu, 16 Aug 2018 12:47:36 +0200 (CEST)
-Date:   Thu, 16 Aug 2018 12:47:36 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Jia He <jia.he@hxt-semitech.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Petr Tesarik <ptesarik@suse.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Baoquan He <bhe@redhat.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v1 3/5] mm/memory_hotplug: check if sections are already
- online/offline
-Message-ID: <20180816104736.GA16861@techadventures.net>
-References: <20180816100628.26428-1-david@redhat.com>
- <20180816100628.26428-4-david@redhat.com>
+        Thu, 16 Aug 2018 09:49:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Pr6KVZSCbL7Du4YeoGE2b6PCMpl6DCqiDOKt3gzpIPA=; b=ogXoMJxROwk0Ev1p18MbFjmdm
+        iinjgHAjQhOuP0dvBTcYXwC/7Ck7ppeNOnu2dzanwsqRdz3+fAYKbVdWM0AZ6wGLGV62n+UQpVQRK
+        QqolSwoowp384FmzEfc9iY09m/eValIVkt0oqjWkjHIJeOHJsDwqKKy6Dw2o9CZRYCdSE=;
+Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fqFsP-0002gY-24; Thu, 16 Aug 2018 10:51:37 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id E84D6440078; Thu, 16 Aug 2018 11:51:35 +0100 (BST)
+Date:   Thu, 16 Aug 2018 11:51:35 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [RFC PATCH] ASoC: core: Optimise suspend/resume of DAPM widgets
+Message-ID: <20180816105135.GZ2414@sirena.org.uk>
+References: <1533301025-19980-1-git-send-email-jonathanh@nvidia.com>
+ <20180803163605.GD6591@sirena.org.uk>
+ <7ba86328-5bb6-5280-df6f-9937173fb2ab@nvidia.com>
+ <20180814144004.GD5810@sirena.org.uk>
+ <e1bc40ec-de7e-2b77-d7f6-ec6b3066aeec@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="0786ZyFfTSxuegBe"
 Content-Disposition: inline
-In-Reply-To: <20180816100628.26428-4-david@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <e1bc40ec-de7e-2b77-d7f6-ec6b3066aeec@nvidia.com>
+X-Cookie: Many are called, few volunteer.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 12:06:26PM +0200, David Hildenbrand wrote:
 
-> +
-> +/* check if all mem sections are offline */
-> +bool mem_sections_offline(unsigned long pfn, unsigned long end_pfn)
-> +{
-> +	for (; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
-> +		unsigned long section_nr = pfn_to_section_nr(pfn);
-> +
-> +		if (WARN_ON(!valid_section_nr(section_nr)))
-> +			continue;
-> +		if (online_section_nr(section_nr))
-> +			return false;
-> +	}
-> +	return true;
-> +}
+--0786ZyFfTSxuegBe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-AFAICS pages_correctly_probed will catch this first.
-pages_correctly_probed checks for the section to be:
+On Wed, Aug 15, 2018 at 07:48:47PM +0100, Jon Hunter wrote:
 
-- present
-- valid
-- !online
+> So then I made the following change to avoid scheduling the function
+> calls unnecessarily (which I think should be fine) ...
 
-Maybe it makes sense to rename it, and write another pages_correctly_probed routine
-for the offline case.
+> Please note that I am just using ktime_get() to log the time on entry
+> and exit from dapm_power_widgets() and so yes the time may not be
+> purely the time take to execute this function if we are preempted,
+> but I am measuring in the same way in both cases and so it does seem
+> to show some improvement.
 
-So all checks would stay in memory_block_action level, and we would not need
-the mem_sections_offline/online stuff.
+That seems like a simple and useful optimization, will you send a patch?
 
-Thanks
--- 
-Oscar Salvador
-SUSE L3
+--0786ZyFfTSxuegBe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlt1VzQACgkQJNaLcl1U
+h9C++wf/QB19v9pWanJUtK3uJI3vVk9Y6HQxYhrr0b9X6aZ9IPlhxWlBssaSEY0O
+1zygbrumfW9K8OLLANmo8Xb0oMb8YcXwG5UO2aIieuIwxvQo+hwUUI9QwH020JB7
++3bRvRumioLOfR+NeZTg7M5oGuuGK34o0j/pyCT0Ej3v2YKZUlai0ynwxGkfbuav
+RiPia8eACF76DkDRBcWMQYy45+kZIXdkBOJvZcnzWGUfhlNEugWo92oYQxSshySV
+TsUG1H3HGN1/JvAogds/wVAOXSA8dt8fc1KddCdPEtaCPAoGa8NooKZDlrJFHn1L
+FQhmW9eQB1nzC8venmJohqs7SiPvNA==
+=OMjY
+-----END PGP SIGNATURE-----
+
+--0786ZyFfTSxuegBe--
