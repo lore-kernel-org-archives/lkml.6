@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9576C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19590C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:06:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 711702087B
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:06:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 711702087B
+	by mail.kernel.org (Postfix) with ESMTP id D03622087B
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:06:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D03622087B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389792AbeHPLDH (ORCPT
+        id S2389805AbeHPLDK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 07:03:07 -0400
-Received: from mout.perfora.net ([74.208.4.196]:40157 "EHLO mout.perfora.net"
+        Thu, 16 Aug 2018 07:03:10 -0400
+Received: from mout.perfora.net ([74.208.4.194]:44055 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389777AbeHPLDH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 07:03:07 -0400
+        id S2387930AbeHPLDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 07:03:09 -0400
 Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
  mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0LloAA-1gPY710pVo-00ZOnY; Thu, 16 Aug 2018 10:06:11 +0200
+ 0M5O2r-1g4zcc0NQt-00zZ1r; Thu, 16 Aug 2018 10:06:09 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
 Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
@@ -32,27 +32,25 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 2/2] ARM: dts: tegra20/tegra30: add pmu interrupt-affinity
-Date:   Thu, 16 Aug 2018 10:06:04 +0200
-Message-Id: <20180816080604.29064-2-marcel@ziswiler.com>
+Subject: [PATCH v2 1/2] ARM: dts: tegra20: restore address order
+Date:   Thu, 16 Aug 2018 10:06:03 +0200
+Message-Id: <20180816080604.29064-1-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180816080604.29064-1-marcel@ziswiler.com>
-References: <20180816080604.29064-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:cGLiOg2/fUa6c4ORM0lbdno4EKsX1FtZ4a/VwFApu5sjY8CCa18
- cBnP2wIDujXw13B+QWHTYFp69yWG7jk7RMJdZWIC3y/vq1iqtwiLN1CtCdfx+ARK44oYVBj
- M8rzBu1iAWGTlWoNYi12Jwdrpv4Vj20tpijx2xoz+iBtdk1ZwsrXS1t9rEAB+/6Tj29XZ+1
- WPC6E7De+a9fPS1MkGf2Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:+N8BB+V741A=:kkwgakCkLM7R0DGIbCpwX7
- dbIvPu5AGVF7hEaK9hvDlYeID5xoHC3OAST7QRLn5NF48iI6FvK7W+cSZcycosLWPW5522qX7
- A0mOQ7wqRn31e65SYD2R4abPLG9LSozqzBYSY7Jd19n+kxmWVBl8KMh3oKYDto4IJ3/wCWrUS
- GgX5iBoWIqqBauwmgqS9bF0PjfUHqulmVEM68EfySRQpjVuO7Fo7KG6F4v35DTbgTtJhGPBZk
- sZPgfE+RG0jJQ2WYAnkk2Ru0HkvX/xN5c1QsQsNzBrMMhmVTPdIhhIE/8d3wGwyZ2jA7FVAsS
- Z71KP/TWSyhnaFCNOUR/35jTfhOVEyftVeJm+ulpK3VoQYltxDebe0qg1DRAgq6z3Vova+nl1
- MxXDBLL1Fqcx8H7YXeiMRu8DxXjbESM3ybjc5aze5c7sUw6hnCLSk/hy+YLqR1NXnZ4WiguhR
- pOcFbqI7KdDiWkemZVZ2uv8NDuWCMMyia7GhIzZV2AnH0dZbJzEGNkxRoL7Ic5RPPqBNsOJZD
- BNlbSSBeFOwlV4FXdmdjJ0nBEt3NryURUl5mbnQvybDReAGcMzqtWaYjGQVG9dMq/tLFS2g0M
- 334sNnqC0vYART7FEBg14Xotbs6T3gSffKtRf3J7kuX4RvHChtJ47EMDE+lUBSR/uNF4Y3NDB
- NdmvxbDd6qin+wqDsnljruDMDWQNBibV1h1y6nf3lfpTvAylPeDmjB+pt6OVhEWpm2i8=
+X-Provags-ID: V03:K1:3xQ2YxewvfZr83lsmFHc7/U5FbYJ/+iyE0tIYNIy8QLZ3Q+Brep
+ v2xB/ih7XKkjue/uMieUHdncZxN9gW2qWS1E4wJ28mWZIUNKudOd31dec18IFgSO7nttrfk
+ krqzp4I55Zwtr8ERX9Jy3hg612Zw6LXO4a3eI1YWcRo2ywBPi0/UtKdIltX8OOTWMNO2jnq
+ cVhthskcfDFuVSXG2RBPw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:jXOi7jnaHIU=:VBL47qcqwIlU5Jxryoui89
+ i1ZvCdE0Qs9ChH91FTX+voAKAu0+IDBSuJQTJU/20pXfnWOknMWHFTI8GG6tnJZsh4/KzDRQk
+ 18JYCfgZWn38kCaR+lfBk8VOAbLXBn7k1LIYW8gqouFrLLnJkcmWK4yU9LZerJQoqIBPHdHP/
+ JL56VKarqM/1hdcJAG0fTfQW+j0UiXzSuQE1nv/8OaD5VHeQEpa9rWs9K9FB7CYY4lbIsYAOU
+ C1T+fwGi0S8/zV1vHlkOtKbIaLdTLU/+w3fIhGvYheay5Uzj0vEMwtUrinmijw8AzHx26wA/R
+ Zuc1RbUTvai4zQU5HlJvglsyc9BS66KviSZgKhOd+FrWFS+GL4GGcAx/RPQve/jNCXrHke/gO
+ kz6z9pMDIMwiUMMGp18mJ3hJBIjAjroXsb3JbfY/l4BKo37Zwd3N+Pv5k0aQ1Y++0sLo9+IFV
+ ImmrQ5apAO63D/DW/OtPR1D5o2htIZgi7JUXazyhBApRX/c0KGbhp/0hxDcK1YhPBdL0NfZBt
+ l7ARfKIgYA3QlpxfwT4TXDNYMb4dbMMndEYvegJg0AkSZAB9yBt5PC49ip0WIoqi7cIh9sl5m
+ L5rMLEWnjHK2svoZEmY/uVr/Lz2vRHDebRZpwVRy6xnm7986n8zyi60tIBavUcDT04TH6jnQB
+ KiqXzbAH74qFXMvXRN2Q5gvyMgW1ycAaQgVUoZew8qBZ9HnR7iGygSqJhGakFbXKXiBY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,49 +58,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-This is similar to tegra124 and avoids the following being reported
-upon boot:
-
-hw perfevents: no interrupt-affinity property for /pmu, guessing.
+Commit 6c468f109884 ("ARM: dts: tegra: add Tegra20 NAND flash
+controller node") introduced the nand-controller node. However, it got
+added at the wrong spot not honoring the address order. Fix this.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Reviewed-by: Stefan Agner <stefan@agner.ch>
 
 ---
 
-Changes in v2:
-- Add Stefan's acks.
+Changes in v2: None
 
- arch/arm/boot/dts/tegra20.dtsi | 2 ++
- arch/arm/boot/dts/tegra30.dtsi | 4 ++++
- 2 files changed, 6 insertions(+)
+ arch/arm/boot/dts/tegra20.dtsi | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index a22c6a8f8f83..dcad6d6128cf 100644
+index 979f38293fe5..a22c6a8f8f83 100644
 --- a/arch/arm/boot/dts/tegra20.dtsi
 +++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -867,5 +867,7 @@
- 		compatible = "arm,cortex-a9-pmu";
- 		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&{/cpus/cpu@0}>,
-+				     <&{/cpus/cpu@1}>;
+@@ -419,19 +419,6 @@
+ 		status = "disabled";
  	};
- };
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index a6781f653310..1de10f0d1da7 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -1013,5 +1013,9 @@
- 			     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&{/cpus/cpu@0}>,
-+				     <&{/cpus/cpu@1}>,
-+				     <&{/cpus/cpu@2}>,
-+				     <&{/cpus/cpu@3}>;
+ 
+-	gmi@70009000 {
+-		compatible = "nvidia,tegra20-gmi";
+-		reg = <0x70009000 0x1000>;
+-		#address-cells = <2>;
+-		#size-cells = <1>;
+-		ranges = <0 0 0xd0000000 0xfffffff>;
+-		clocks = <&tegra_car TEGRA20_CLK_NOR>;
+-		clock-names = "gmi";
+-		resets = <&tegra_car 42>;
+-		reset-names = "gmi";
+-		status = "disabled";
+-	};
+-
+ 	nand-controller@70008000 {
+ 		compatible = "nvidia,tegra20-nand";
+ 		reg = <0x70008000 0x100>;
+@@ -447,6 +434,19 @@
+ 		status = "disabled";
  	};
- };
+ 
++	gmi@70009000 {
++		compatible = "nvidia,tegra20-gmi";
++		reg = <0x70009000 0x1000>;
++		#address-cells = <2>;
++		#size-cells = <1>;
++		ranges = <0 0 0xd0000000 0xfffffff>;
++		clocks = <&tegra_car TEGRA20_CLK_NOR>;
++		clock-names = "gmi";
++		resets = <&tegra_car 42>;
++		reset-names = "gmi";
++		status = "disabled";
++	};
++
+ 	pwm: pwm@7000a000 {
+ 		compatible = "nvidia,tegra20-pwm";
+ 		reg = <0x7000a000 0x100>;
 -- 
 2.14.4
 
