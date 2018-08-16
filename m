@@ -2,96 +2,180 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C0E4C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 02:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 851DDC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 02:47:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49C0621477
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 02:45:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43A6121477
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 02:47:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="TUpr8MSc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49C0621477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ku9QaMy9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43A6121477
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387843AbeHPFkY (ORCPT
+        id S2387854AbeHPFmO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 01:40:24 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:51228 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387829AbeHPFkX (ORCPT
+        Thu, 16 Aug 2018 01:42:14 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58306 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731184AbeHPFmO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 01:40:23 -0400
-Received: by mail-it0-f67.google.com with SMTP id e14-v6so4447184itf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 19:45:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=4NjXMMZ3A4BysZWBrPKppSZgGP8FIbTNVKf2oftvaPY=;
-        b=TUpr8MScVCFXjx1mNDA79c+tZSwXLkXRxuYsmKZNDJa/6I6GegawemjiRK/ImHcZ95
-         wM/nYTHItk413RGzJRwEXmVtPOMkUmHKaGot68ZgJ4gyb1x2pozdBrdFGoeZgVo9BqJf
-         LlR6Q7af5llL74Tj7tbqGPPlu5BMNXTvDGu9gFzVE/jQS1zHY+6RSztv9vh+SjPCgc7u
-         Vchha4XkDjtUOoOVt1AgeYus1VLql41OJu7F8G1I07n44XUX8C5nykva4XEAXp4wTj+7
-         aaJATbxt/GPsUP3mxHrqPfTLKDoNGwfLPWPgUHXF7D/xiSctKqC8FAPsTRYXL6tNdmnC
-         q9xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=4NjXMMZ3A4BysZWBrPKppSZgGP8FIbTNVKf2oftvaPY=;
-        b=VHsqnpfvKbN8g+uCmhONDtxv79LNV0618q5gNGIkvmTMxO+Dd8ewZLBRXbv6dN98yc
-         DITVuL2UskmRMmHkKcUFZiZVxaG/cvLVUWmDpxNuCWg8Mez7GGIUnjsdzro3LnynP1MK
-         XYxxNyxplCOyJU8YMvvXVES9tVnckk5U9nozmRV0NVWbxVwQ7noj1LhmUPrhW4BXLvgJ
-         va7L36BXUlBjoR3zAyjhK2xwLvwzghmqFnoYjrw5baROFYEU4VnZRmqok2m/f4I734Hn
-         hSpwUTaGSbzRJkfIOXvFQWT1HLkKVj1QGexaqGQHo3JtQsfSLTD9+NVzwoTUkz08RlEC
-         JUiQ==
-X-Gm-Message-State: AOUpUlGvh5MU8Ik8UxNBwyIKx5qwYu/bTVDFMfEeWCa99muTVG0v82F3
-        /ZJAXfSeMqxInqoEgF5dNYyPlfZIGpq63QoSPAuezw==
-X-Google-Smtp-Source: AA+uWPzPt3YxPFbyrBju/clf6/dwdMA79qYHroLiUUsYVf7pSrcd7L4MGLA2jZ4Mu0HCAqNQVXxuq/tONfnFuyQWBRw=
-X-Received: by 2002:a02:5f92:: with SMTP id x18-v6mr24376351jad.22.1534387512637;
- Wed, 15 Aug 2018 19:45:12 -0700 (PDT)
+        Thu, 16 Aug 2018 01:42:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=faxjcFdpEC766ltR91iVAfQ1HE+MjueEHAx3zpkEd7Q=; b=Ku9QaMy9FLJ5qGCaxVnhHOQDM
+        A9o5Nzy1xlHFtCjhZK9aieqAWJAB3wJGFaWvyOTxNeEdOeZPnWcfgr7KrvznfzCyW5ztZd/pUaXGg
+        up+0N21FJpWnUyD7dBQYQ/RYcfg9LwU59aBVWsVXCagaElpoN3cC9WDUKkalUeCZCmGYYS1xvFCUa
+        1KITCFOEj2BFgUPhmGux5VmnCoPTbIXTUeUZl37CdSPJmE6xZCG1d0yi53f38Hmh1wxSBlzH6D0BO
+        m4G+VT1UYr5+J3XQbtKinIG9Er7FI4OONkAk/wX01LzzZ/KaITlPdITNIs101bLO+S1dY503pr7NW
+        EeGRRJ0zQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fq8JI-0006wT-OO; Thu, 16 Aug 2018 02:46:52 +0000
+Date:   Wed, 15 Aug 2018 19:46:52 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     mhocko@kernel.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, vbabka@suse.cz, akpm@linux-foundation.org,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC v8 PATCH 3/5] mm: mmap: zap pages with read mmap_sem in
+ munmap
+Message-ID: <20180816024652.GA11808@bombadil.infradead.org>
+References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
+ <20180815191606.GA4201@bombadil.infradead.org>
+ <20180815210946.GA28919@bombadil.infradead.org>
+ <78e658dd-bdb0-09ca-9af5-b523c7ff529f@linux.alibaba.com>
 MIME-Version: 1.0
-Received: by 2002:ac0:8704:0:0:0:0:0 with HTTP; Wed, 15 Aug 2018 19:45:12
- -0700 (PDT)
-From:   Chris Chiu <chiu@endlessm.com>
-Date:   Thu, 16 Aug 2018 10:45:12 +0800
-Message-ID: <CAB4CAwfms8_zJ=xB5wJ0Sgr6gu9-mFnqwEz2cUR-sOHdEV5zqQ@mail.gmail.com>
-Subject: Keyboard lost after exit s2idle on ASUS UX433FN
-To:     jacob.jun.pan@linux.intel.com, Len Brown <lenb@kernel.org>,
-        linux-pm@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, pavel@ucw.cz
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <78e658dd-bdb0-09ca-9af5-b523c7ff529f@linux.alibaba.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-    We recently hit a weird problem on the ASUS laptop UX433FN with
-latest Intel Core i7-8565U CPU on kernel 4.18. The keyboard stops
-functioning after exit s2idle. It stops firing interrupts after resume
-on any keypress. We thought it should be something wrong with i8042
-driver or even atkbd driver, so we tried to skip the suspend/resume
-path of i8042 and input devices but no luck.
+On Wed, Aug 15, 2018 at 02:54:13PM -0700, Yang Shi wrote:
+> 
+> 
+> On 8/15/18 2:09 PM, Matthew Wilcox wrote:
+> > On Wed, Aug 15, 2018 at 12:16:06PM -0700, Matthew Wilcox wrote:
+> > > (not even compiled, and I can see a good opportunity for combining the
+> > > VM_LOCKED loop with the has_uprobes loop)
+> > I was rushing to get that sent earlier.  Here it is tidied up to
+> > actually compile.
+> 
+> Thanks for the example. Yes, I believe the code still can be compacted to
+> save some lines. However, the cover letter and the commit log of this patch
+> has elaborated the discussion in the earlier reviews about why we do it in
+> this way.
 
-    Then we tried to hack the s2idle code to fail right before it goes
-into the idle state to find out which code really cause the keyboard
-broken. It comes with an interesting finding that if it aborts s2idle
-before cpuidle_resume() in s2idle_enter(), the keyboard is fine. If it
-aborts after cpuidle_resume, then the keyboard down. At least it
-proves that even with dpm_noirq_begin() and
-dpm_noirq_suspend_devices() executed, the keyboard is still alive.
-There should be something wrong with the cpuidle.
+You mean the other callers which need to hold mmap_sem write-locked for
+longer?  I hadn't really considered those; how about this?
 
-    Going deeper into intel_idle_s2idle() which is invoked by
-cpuidle_enter_s2idle(), we found that the keyboard interrupt will no
-longer function after mwait_idle_with_hints() which just simply
-executing intel monitor and mwait instructions. So I don't know what
-should be the next step I can take. Can anyone give some pieces of
-advice?
+ mmap.c |   47 +++++++++++++++++++++++++++++------------------
+ 1 file changed, 29 insertions(+), 18 deletions(-)
 
-Chris
+diff --git a/mm/mmap.c b/mm/mmap.c
+index de699523c0b7..06dc31d1da8c 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2798,11 +2798,11 @@ int split_vma(struct mm_struct *mm, struct vm_area_struct *vma,
+  * work.  This now handles partial unmappings.
+  * Jeremy Fitzhardinge <jeremy@goop.org>
+  */
+-int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+-	      struct list_head *uf)
++static int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
++	      struct list_head *uf, bool downgrade)
+ {
+ 	unsigned long end;
+-	struct vm_area_struct *vma, *prev, *last;
++	struct vm_area_struct *vma, *prev, *last, *tmp;
+ 
+ 	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE-start)
+ 		return -EINVAL;
+@@ -2816,7 +2816,7 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 	if (!vma)
+ 		return 0;
+ 	prev = vma->vm_prev;
+-	/* we have  start < vma->vm_end  */
++	/* we have start < vma->vm_end  */
+ 
+ 	/* if it doesn't overlap, we have nothing.. */
+ 	end = start + len;
+@@ -2873,18 +2873,22 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 
+ 	/*
+ 	 * unlock any mlock()ed ranges before detaching vmas
++	 * and check to see if there's any reason we might have to hold
++	 * the mmap_sem write-locked while unmapping regions.
+ 	 */
+-	if (mm->locked_vm) {
+-		struct vm_area_struct *tmp = vma;
+-		while (tmp && tmp->vm_start < end) {
+-			if (tmp->vm_flags & VM_LOCKED) {
+-				mm->locked_vm -= vma_pages(tmp);
+-				munlock_vma_pages_all(tmp);
+-			}
+-			tmp = tmp->vm_next;
++	for (tmp = vma; tmp && tmp->vm_start < end; tmp = tmp->vm_next) {
++		if (tmp->vm_flags & VM_LOCKED) {
++			mm->locked_vm -= vma_pages(tmp);
++			munlock_vma_pages_all(tmp);
+ 		}
++		if (tmp->vm_file &&
++				has_uprobes(tmp, tmp->vm_start, tmp->vm_end))
++			downgrade = false;
+ 	}
+ 
++	if (downgrade)
++		downgrade_write(&mm->mmap_sem);
++
+ 	/*
+ 	 * Remove the vma's, and unmap the actual pages
+ 	 */
+@@ -2896,7 +2900,13 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 	/* Fix up all other VM information */
+ 	remove_vma_list(mm, vma);
+ 
+-	return 0;
++	return downgrade ? 1 : 0;
++}
++
++int do_unmap(struct mm_struct *mm, unsigned long start, size_t len,
++		struct list_head *uf)
++{
++	return __do_munmap(mm, start, len, uf, false);
+ }
+ 
+ int vm_munmap(unsigned long start, size_t len)
+@@ -2905,11 +2915,12 @@ int vm_munmap(unsigned long start, size_t len)
+ 	struct mm_struct *mm = current->mm;
+ 	LIST_HEAD(uf);
+ 
+-	if (down_write_killable(&mm->mmap_sem))
+-		return -EINTR;
+-
+-	ret = do_munmap(mm, start, len, &uf);
+-	up_write(&mm->mmap_sem);
++	down_write(&mm->mmap_sem);
++	ret = __do_munmap(mm, start, len, &uf, true);
++	if (ret == 1)
++		up_read(&mm->mmap_sem);
++	else
++		up_write(&mm->mmap_sem);
+ 	userfaultfd_unmap_complete(mm, &uf);
+ 	return ret;
+ }
