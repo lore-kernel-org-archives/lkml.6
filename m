@@ -2,176 +2,82 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AAA5C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71000C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:06:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C796D2148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:05:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="gB+Ur9J+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C796D2148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	by mail.kernel.org (Postfix) with ESMTP id 358222148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:06:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 358222148E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390730AbeHPNDY (ORCPT
+        id S2390741AbeHPNEG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 09:03:24 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:54011 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390717AbeHPNDX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 09:03:23 -0400
-Received: by mail-it0-f67.google.com with SMTP id 72-v6so5554225itw.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 03:05:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=B+SvdDqNcYif6HW3cOGSC1YiyeXgkYkrg7qn2EvFv0U=;
-        b=gB+Ur9J+TsWFBIs4S1yQL+9fSLC9fLcZ15LoWm817pP+ATevCScNLHgVkgDPUJ47G0
-         wi+MOnYnIfW0WmYddoJ+S98ojZ4SqgbD92wD3EhAwg0UNKJEVzvmUO2lKQxN1PjkI3Jw
-         8DvCLqMWavMfNaRYCKWsRJBHlW4wQHrb40FeVUl3X9UhP96eaVKrcqwQgaFkKgQggYql
-         QB/2MExDet2FLOdPdFeadNRD9qudZ++GtDertD466oUarcICsMMWv+BjSSwPr8p9GK21
-         kpuiG9LrkCseFc8EeTMET4Dbf0ENFtpyghWJ9cBbcyFmnCUriLiGwJJu4VSmBreKqNv8
-         jr6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=B+SvdDqNcYif6HW3cOGSC1YiyeXgkYkrg7qn2EvFv0U=;
-        b=KmNEGUBotIqyTpsZJERhnuvQu3cJwmq5zqgaKA1OokbfizMdPl3D9IYiBL80xKDgQb
-         r3hqJVuqVWsbjULH1mQKXB6lZh1uCv2BnpjeEKeFNbqqOAo1sJjVQsVYrxgGyfhbeuO+
-         n0veg0vnbyKF9ZJy9Ol7C3fMzbJXqSK5rtfW2TNofT8LcrcuYxM6+EMR0dA3Hk1kU0N4
-         GuEzkLqfsd7glmh3eJbb9RY/zkprFVs/lMtlNGX9LGrTklDTDQ4SkK3wmItcDMsxAAwy
-         5MCfDHBF7aRMWCMVi46R8n2ffI0nbuSH4O2ChgN99S2vuY2icH2xE8dXdGJ2zOUCtVlN
-         FA5w==
-X-Gm-Message-State: AOUpUlHFp5Pmg4/xyXQx4KAyRlTI0n3oG94nhFoebtzn3jupa88gjwVC
-        KeqFV41bCaeP1uGLJtk7P1ZOM5h0H+9hlIX4DrVtNQ==
-X-Google-Smtp-Source: AA+uWPytM4/2jY8Pb3EC4QFbv4ClRRzMoAaJ6F1/kLx+dNQHyhkzQ086N5ekjqChQ1Mnyp20ocvVNHO1uiwj2leIafc=
-X-Received: by 2002:a24:3b0e:: with SMTP id c14-v6mr22296599ita.42.1534413954279;
- Thu, 16 Aug 2018 03:05:54 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ac0:8704:0:0:0:0:0 with HTTP; Thu, 16 Aug 2018 03:05:53
- -0700 (PDT)
-In-Reply-To: <CAJZ5v0i6PXg1rTjBTZy3tGVihmb84qZpqzmHrwSdACWZ+SOgYg@mail.gmail.com>
-References: <CAB4CAwfms8_zJ=xB5wJ0Sgr6gu9-mFnqwEz2cUR-sOHdEV5zqQ@mail.gmail.com>
- <CAJZ5v0gKfyB7=5ZGj9uXejoBjkuf2snsKwYJM2Ar1_Vg8A8SCg@mail.gmail.com>
- <CAB4CAwfdwU6FQVEWWO2dLw-RJHTpqWeuk_BiH04ssE=iCOrJ+A@mail.gmail.com> <CAJZ5v0i6PXg1rTjBTZy3tGVihmb84qZpqzmHrwSdACWZ+SOgYg@mail.gmail.com>
-From:   Chris Chiu <chiu@endlessm.com>
-Date:   Thu, 16 Aug 2018 18:05:53 +0800
-Message-ID: <CAB4CAweumP0qZEJGsNNeEEH3-g13E1dGQD9+zsh1fKysA9MsuQ@mail.gmail.com>
-Subject: Re: Keyboard lost after exit s2idle on ASUS UX433FN
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 16 Aug 2018 09:04:06 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39204 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728018AbeHPNEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 09:04:05 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 821AB8197009;
+        Thu, 16 Aug 2018 10:06:36 +0000 (UTC)
+Received: from t460s.redhat.com (ovpn-116-94.ams2.redhat.com [10.36.116.94])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D1CDE1010413;
+        Thu, 16 Aug 2018 10:06:28 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Kemi Wang <kemi.wang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Jia He <jia.he@hxt-semitech.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Petr Tesarik <ptesarik@suse.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Baoquan He <bhe@redhat.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH v1 0/5] mm/memory_hotplug: online/offline_pages refactorings
+Date:   Thu, 16 Aug 2018 12:06:23 +0200
+Message-Id: <20180816100628.26428-1-david@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 16 Aug 2018 10:06:36 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 16 Aug 2018 10:06:36 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 4:54 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Thu, Aug 16, 2018 at 10:18 AM Chris Chiu <chiu@endlessm.com> wrote:
->>
->> On Thu, Aug 16, 2018 at 3:26 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
->> > On Thu, Aug 16, 2018 at 4:45 AM Chris Chiu <chiu@endlessm.com> wrote:
->> >>
->> >> Hi,
->> >>     We recently hit a weird problem on the ASUS laptop UX433FN with
->> >> latest Intel Core i7-8565U CPU on kernel 4.18. The keyboard stops
->> >> functioning after exit s2idle. It stops firing interrupts after resume
->> >> on any keypress. We thought it should be something wrong with i8042
->> >> driver or even atkbd driver, so we tried to skip the suspend/resume
->> >> path of i8042 and input devices but no luck.
->> >>
->> >>     Then we tried to hack the s2idle code to fail right before it goes
->> >> into the idle state to find out which code really cause the keyboard
->> >> broken. It comes with an interesting finding that if it aborts s2idle
->> >> before cpuidle_resume() in s2idle_enter(), the keyboard is fine. If it
->> >> aborts after cpuidle_resume, then the keyboard down. At least it
->> >> proves that even with dpm_noirq_begin() and
->> >> dpm_noirq_suspend_devices() executed, the keyboard is still alive.
->> >> There should be something wrong with the cpuidle.
->> >>
->> >>     Going deeper into intel_idle_s2idle() which is invoked by
->> >> cpuidle_enter_s2idle(), we found that the keyboard interrupt will no
->> >> longer function after mwait_idle_with_hints() which just simply
->> >> executing intel monitor and mwait instructions. So I don't know what
->> >> should be the next step I can take. Can anyone give some pieces of
->> >> advice?
->> >
->> > It may indicate that the deepest C-states used by s2idle simply don't
->> > work correctly on the affected system.
->> >
->> > To verify this, you can try to disable the deepest C-states via sysfs
->> > using the "disable" attribute under
->> > /sys/devices/system/cpu/cpuX/cpuidle/stateX/
->> >
->> Thanks for the great help. I can have the keyboard work after s2idle with
->> the following command
->>
->> echo 1 > /sys/devices/system/cpu/cpuX/cpuidle/state8/disable
->>
->> cpuX, X can be 0 to 7 on this CPU.
->> And only state8 disable would work, it fails on state 0~7 disabled.
->
-> Well, if you disable one of states 0-7 alone, it will still attempt to
-> use state8. :-)
->
-> It generally uses the deepest one enabled.
->
->> There're 9 (0-8) states on the cpuidle of this machine. However, I have another
->> laptop with the same CPU Intel Core i7-8565U which only have 4(0-3) states
->> under the same '/sys/devices/system/cpu/cpuX/cpuidle/' entry. Sorry that I
->> don't have enough background knowledge about cpuidle. I thought the #C
->> state should be depend on CPU, but why the same i7-8565 has different
->> number of C-states?
->
-> What is there in /sys/devices/system/cpu/cpuidle/current_driver on
-> each of these systems?
->
->>  And for this case, should I just disable C-8 state or there
->> should be a generic fix with it?
->
-> No, it just doesn't work specifically on your system, unfortunately,
-> so you need to disable state8 manually, at least for the time being.
-> If all UX433FNs turn out to be affected, we may consider adding a
-> quirk for them, but for now we just don't know.
->
-> Do the "name" and "desc" sysfs files of state8 on the affected system
-> contain "C10" and "MWAIT 0x60", respectively?
->
-> To make a more persistent record of this issue, you can file a bug at
-> bugzilla.kernel.org against cpuidle and put all of the relevant
-> information into it.  It is possible that some special magic is needed
-> to make the deepest idle state safe on this system and it may be hard
-> to find out, but at least it is good to know that this happens.
->
+While looking into onlining/offlining of subsections, I noticed that
+online/offlining code can in its current form only deal with whole sections
+and that onlining/offlining of sections that are already online/offline is
+problematic. So let's add some additional checks (that also serve as
+implicit documentation) and do some cleanups.
 
-Thanks. I've reported on https://bugzilla.kernel.org/show_bug.cgi?id=200829.
-Also, include information you request. Please let me know if anything missing.
+David Hildenbrand (5):
+  mm/memory_hotplug: drop intermediate __offline_pages
+  mm/memory_hotplug: enforce section alignment when onlining/offlining
+  mm/memory_hotplug: check if sections are already online/offline
+  mm/memory_hotplug: onlining pages can only fail due to notifiers
+  mm/memory_hotplug: print only with DEBUG_VM in online/offline_pages()
 
-Chris
+ include/linux/mmzone.h |  2 ++
+ mm/memory_hotplug.c    | 43 ++++++++++++++++++++++--------------------
+ mm/sparse.c            | 28 +++++++++++++++++++++++++++
+ 3 files changed, 53 insertions(+), 20 deletions(-)
 
->> > Is s2idle the default suspend method on that system?  If so, have you
->> > checked whether or not suspend-to-RAM works too?
->> >
->>
->> Yes, it's default s2idle. If I do 'echo mem > /sys/power/state', the keyboard
->> would still fail.
->
-> OK
->
-> What's there in /sys/power/mem_sleep ?
->
-> Thanks,
-> Rafael
+-- 
+2.17.1
+
