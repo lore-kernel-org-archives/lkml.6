@@ -6,199 +6,160 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F94C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D1C6C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74AFD20C0E
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:38:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74AFD20C0E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
+	by mail.kernel.org (Postfix) with ESMTP id D98AD20C0E
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:39:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D98AD20C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729565AbeHPUiX (ORCPT
+        id S1729740AbeHPUjD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 16:38:23 -0400
-Received: from smtp.infotech.no ([82.134.31.41]:56773 "EHLO smtp.infotech.no"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728702AbeHPUiW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 16:38:22 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp.infotech.no (Postfix) with ESMTP id 8076420423B;
-        Thu, 16 Aug 2018 19:38:30 +0200 (CEST)
-X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
-Received: from smtp.infotech.no ([127.0.0.1])
-        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id uTnAwa4sYyVb; Thu, 16 Aug 2018 19:38:27 +0200 (CEST)
-Received: from [192.168.48.23] (host-45-58-245-67.dyn.295.ca [45.58.245.67])
-        by smtp.infotech.no (Postfix) with ESMTPA id E124A20416A;
-        Thu, 16 Aug 2018 19:38:24 +0200 (CEST)
-Reply-To: dgilbert@interlog.com
-Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
-To:     Christophe LEROY <christophe.leroy@c-s.fr>,
-        Jeffrey Lien <Jeff.Lien@wdc.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        David Darrington <david.darrington@wdc.com>,
-        Jeff Furlong <jeff.furlong@wdc.com>,
-        Joe Perches <joe@perches.com>
-References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
- <20180810201601.GA80850@gmail.com>
- <SN1PR04MB1824A5944E0428AC84B62886EA3E0@SN1PR04MB1824.namprd04.prod.outlook.com>
- <ba74a9d1-cccc-913a-927a-82e561afef3d@interlog.com>
- <7f1b5ca8-cd89-71cc-21bb-5a058bc1e908@c-s.fr>
-From:   Douglas Gilbert <dgilbert@interlog.com>
-Message-ID: <e2f9fa43-6104-214e-1570-b3753cb14b13@interlog.com>
-Date:   Thu, 16 Aug 2018 13:38:22 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <7f1b5ca8-cd89-71cc-21bb-5a058bc1e908@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+        Thu, 16 Aug 2018 16:39:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60352 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728702AbeHPUjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 16:39:03 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 80C43401021C;
+        Thu, 16 Aug 2018 17:39:12 +0000 (UTC)
+Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 33CA810FFE4E;
+        Thu, 16 Aug 2018 17:39:10 +0000 (UTC)
+From:   Prarit Bhargava <prarit@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Prarit Bhargava <prarit@redhat.com>,
+        Mark Salter <msalter@redhat.com>, Al Stone <ahs3@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        x86@kernel.org, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v2] console: Add console=auto option
+Date:   Thu, 16 Aug 2018 13:39:01 -0400
+Message-Id: <20180816173902.18971-1-prarit@redhat.com>
+In-Reply-To: <728a8e68-ea4b-4040-a0fc-217df4f1928d@redhat.com>
+References: <728a8e68-ea4b-4040-a0fc-217df4f1928d@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 16 Aug 2018 17:39:12 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 16 Aug 2018 17:39:12 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-16 11:41 AM, Christophe LEROY wrote:
-> Hi,
-> 
-> Please include your new patch as plain text inside the mail, not as a MIME 
-> attachment. Otherwise it is not downloadable from 
-> https://patchwork.kernel.org/patch/10563093/
+ACPI may contain an SPCR table that defines a default system console.
+On ARM if the table is present then the SPCR console is enabled by default.
+On x86 the SPCR console is used if 'earlycon' (no parameters) is
+specified as a kernel parameter and is used only as the early console.
+To use the SPCR data as a console a user must boot with 'earlycon',
+grep logs & specify a console= kernel parameter, and then reboot again.
 
-It should be downloadable from:
-     http://sg.danny.cz/sg/p/0001-T10-CRC16-function-build-time-sized-table.patch
+Add 'console=auto' that enables a firmware or hardware console, and on
+x86 enable the SPCR console if 'console=auto' is specified.
 
-With regard to your comment about slice (table ?) size, that is partially
-addressed by a kernel build time option shown in the above patch. That
-could be taken a bit further with a sysfs knob (where ?) to reduce the
-effective table size from that which the kernel is built with. To increase
-the size of the table would imply fetching some more heap and having an
-algorithm that could generate the extra part of that table required.
+Tested on systems with and without an ACPI SPCR.  The following kernel
+parameters were also tested:
 
-Doug Gilbert
+console=ttyS0,115200    		works
+earlycon                		works (early console only)
+console=auto            		works (full console as expected)
+no console or earlycon arguments	works (no output as expected)
 
-> Christophe
-> 
-> Le 16/08/2018 à 16:22, Douglas Gilbert a écrit :
->> Hi,
->> Rather than present this formerly as an alternate patch, attached is a
->> clean-up of my patch which uses the variable size table proposed by
->> Joe Perches <joe@perches.com> and is based on the original patch that
->> started this thread.
->>
->> Doug Gilbert
->>
->> On 2018-08-16 10:02 AM, Jeffrey Lien wrote:
->>> Eric,
->>> We did not test the slice by 4 or 8 tables.  I'm not sure of  the value of 
->>> doing that since the slice by 16 will provide the best performance gain.   If 
->>> I'm missing anything here, please let me know.
->>>
->>> I'm working on a new version of the patch based on the feedback from others 
->>> and will also change the pointer variables to start with p and fix the 
->>> indenting you mentioned below in the new version of the patch.
->>>
->>> Thanks
->>>
->>> Jeff Lien
->>>
->>> -----Original Message-----
->>> From: Eric Biggers [mailto:ebiggers@kernel.org]
->>> Sent: Friday, August 10, 2018 3:16 PM
->>> To: Jeffrey Lien <Jeff.Lien@wdc.com>
->>> Cc: linux-kernel@vger.kernel.org; linux-crypto@vger.kernel.org; 
->>> linux-block@vger.kernel.org; linux-scsi@vger.kernel.org; 
->>> herbert@gondor.apana.org.au; tim.c.chen@linux.intel.com; 
->>> martin.petersen@oracle.com; David Darrington <david.darrington@wdc.com>; Jeff 
->>> Furlong <jeff.furlong@wdc.com>
->>> Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
->>>
->>> On Fri, Aug 10, 2018 at 02:12:11PM -0500, Jeff Lien wrote:
->>>> This patch provides a performance improvement for the CRC16
->>>> calculations done in read/write workloads using the T10 Type 1/2/3
->>>> guard field.  For example, today with sequential write workloads (one
->>>> thread/CPU of IO) we consume 100% of the CPU because of the CRC16
->>>> computation bottleneck.  Today's block devices are considerably
->>>> faster, but the CRC16 calculation prevents folks from utilizing the
->>>> throughput of such devices.  To speed up this calculation and expose
->>>> the block device throughput, we slice the old single byte for loop into a 16 
->>>> byte for loop, with a larger CRC table to match.  The result has shown 5x 
->>>> performance improvements on various big endian and little endian systems 
->>>> running the 4.18.0 kernel version.
->>>>
->>>> FIO Sequential Write, 64K Block Size, Queue Depth 64
->>>> BE Base Kernel:        bw=201.5 MiB/s
->>>> BE Modified CRC Calc:  bw=968.1 MiB/s
->>>> 4.80x performance improvement
->>>>
->>>> LE Base Kernel:        bw=357 MiB/s
->>>> LE Modified CRC Calc:  bw=1964 MiB/s
->>>> 5.51x performance improvement
->>>>
->>>> FIO Sequential Read, 64K Block Size, Queue Depth 64
->>>> BE Base Kernel:        bw=611.2 MiB/s
->>>> BE Modified CRC calc:  bw=684.9 MiB/s
->>>> 1.12x performance improvement
->>>>
->>>> LE Base Kernel:        bw=797 MiB/s
->>>> LE Modified CRC Calc:  bw=2730 MiB/s
->>>> 3.42x performance improvement
->>>
->>> Did you also test the slice-by-4 (requires 2048-byte table) and slice-by-8 
->>> (requires 4096-byte table) methods?  Your proposal is slice-by-16 (requires 
->>> 8192-byte table); the original was slice-by-1 (requires 512-byte table).
->>>
->>>>   __u16 crc_t10dif_generic(__u16 crc, const unsigned char *buffer,
->>>> size_t len)  {
->>>> -    unsigned int i;
->>>> +    const __u8 *i = (const __u8 *)buffer;
->>>> +    const __u8 *i_end = i + len;
->>>> +    const __u8 *i_last16 = i + (len / 16 * 16);
->>>
->>> 'i' is normally a loop counter, not a pointer.
->>> Use 'p', 'p_end', and 'p_last16'.
->>>
->>>> -    for (i = 0 ; i < len ; i++)
->>>> -        crc = (crc << 8) ^ t10_dif_crc_table[((crc >> 8) ^ buffer[i]) & 0xff];
->>>> +    for (; i < i_last16; i += 16) {
->>>> +        crc = t10_dif_crc_table[15][i[0] ^ (__u8)(crc >>  8)] ^
->>>> +        t10_dif_crc_table[14][i[1] ^ (__u8)(crc >>  0)] ^
->>>> +        t10_dif_crc_table[13][i[2]] ^
->>>> +        t10_dif_crc_table[12][i[3]] ^
->>>> +        t10_dif_crc_table[11][i[4]] ^
->>>> +        t10_dif_crc_table[10][i[5]] ^
->>>> +        t10_dif_crc_table[9][i[6]] ^
->>>> +        t10_dif_crc_table[8][i[7]] ^
->>>> +        t10_dif_crc_table[7][i[8]] ^
->>>> +        t10_dif_crc_table[6][i[9]] ^
->>>> +        t10_dif_crc_table[5][i[10]] ^
->>>> +        t10_dif_crc_table[4][i[11]] ^
->>>> +        t10_dif_crc_table[3][i[12]] ^
->>>> +        t10_dif_crc_table[2][i[13]] ^
->>>> +        t10_dif_crc_table[1][i[14]] ^
->>>> +        t10_dif_crc_table[0][i[15]];
->>>> +    }
->>>
->>> Please indent this properly.
->>>
->>>         crc = t10_dif_crc_table[15][i[0] ^ (__u8)(crc >>  8)] ^
->>>               t10_dif_crc_table[14][i[1] ^ (__u8)(crc >>  0)] ^
->>>               t10_dif_crc_table[13][i[2]] ^
->>>               t10_dif_crc_table[12][i[3]] ^
->>>               t10_dif_crc_table[11][i[4]] ^
->>>               ...
->>>
->>> - Eric
->>>
->>
-> 
+v2: Fix prototype.
+
+Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+Cc: Mark Salter <msalter@redhat.com>
+Cc: Al Stone <ahs3@redhat.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: x86@kernel.org
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-pm@vger.kernel.org
+---
+ Documentation/admin-guide/kernel-parameters.txt |  1 +
+ arch/x86/kernel/acpi/boot.c                     |  5 +++++
+ include/linux/console.h                         |  1 +
+ kernel/printk/printk.c                          | 10 ++++++++++
+ 4 files changed, 17 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index a32f2a126791..dd057224f33b 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -635,6 +635,7 @@
+ 
+ 		hvc<n>	Use the hypervisor console device <n>. This is for
+ 			both Xen and PowerPC hypervisors.
++		auto	[X86] Enable ACPI SPCR console
+ 
+ 		If the device connected to the port is not a TTY but a braille
+ 		device, prepend "brl," before the device type, for instance
+diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+index 3b20607d581b..fb2616ba3b21 100644
+--- a/arch/x86/kernel/acpi/boot.c
++++ b/arch/x86/kernel/acpi/boot.c
+@@ -1771,3 +1771,8 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
+ 	e820__range_add(addr, size, E820_TYPE_ACPI);
+ 	e820__update_table_print();
+ }
++
++void __init arch_console_setup(void)
++{
++	acpi_parse_spcr(false, true);
++}
+diff --git a/include/linux/console.h b/include/linux/console.h
+index dfd6b0e97855..c2a6dde9a799 100644
+--- a/include/linux/console.h
++++ b/include/linux/console.h
+@@ -181,6 +181,7 @@ extern int is_console_locked(void);
+ extern int braille_register_console(struct console *, int index,
+ 		char *console_options, char *braille_options);
+ extern int braille_unregister_console(struct console *);
++void arch_console_setup(void);
+ #ifdef CONFIG_TTY
+ extern void console_sysfs_notify(void);
+ #else
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 247808333ba4..bdd53858664b 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -2078,6 +2078,11 @@ static int __init console_msg_format_setup(char *str)
+ }
+ __setup("console_msg_format=", console_msg_format_setup);
+ 
++void __init __weak arch_console_setup(void)
++{
++	return;
++}
++
+ /*
+  * Set up a console.  Called via do_early_param() in init/main.c
+  * for each "console=" parameter in the boot command line.
+@@ -2088,6 +2093,11 @@ static int __init console_setup(char *str)
+ 	char *s, *options, *brl_options = NULL;
+ 	int idx;
+ 
++	if (!strcmp(str, "auto")) {
++		arch_console_setup();
++		return 1;
++	}
++
+ 	if (_braille_console_setup(&str, &brl_options))
+ 		return 1;
+ 
+-- 
+2.14.4
 
