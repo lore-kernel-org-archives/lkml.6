@@ -3,38 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9356FC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91EE0C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:47:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 454EA21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:46:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 454EA21479
+	by mail.kernel.org (Postfix) with ESMTP id 5626121479
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:47:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5626121479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbeHPVrC (ORCPT
+        id S1727753AbeHPVrE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:47:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56980 "EHLO
+        Thu, 16 Aug 2018 17:47:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56990 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbeHPVq7 (ORCPT
+        with ESMTP id S1727406AbeHPVrC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:46:59 -0400
+        Thu, 16 Aug 2018 17:47:02 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 58CA1CE8;
-        Thu, 16 Aug 2018 18:46:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5D3F4CE8;
+        Thu, 16 Aug 2018 18:46:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
         Gary R Hook <gary.hook@amd.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.17 10/21] crypto: ccp - Check for NULL PSP pointer at module unload
-Date:   Thu, 16 Aug 2018 20:45:20 +0200
-Message-Id: <20180816171613.022581299@linuxfoundation.org>
+Subject: [PATCH 4.17 11/21] crypto: ccp - Fix command completion detection race
+Date:   Thu, 16 Aug 2018 20:45:21 +0200
+Message-Id: <20180816171613.101659505@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171612.136242278@linuxfoundation.org>
 References: <20180816171612.136242278@linuxfoundation.org>
@@ -53,38 +54,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Lendacky <thomas.lendacky@amd.com>
 
-commit afb31cd2d1a1bc3ca055fb2519ec4e9ab969ffe0 upstream.
+commit f426d2b20f1cd63818873593031593e15c3db20b upstream.
 
-Should the PSP initialization fail, the PSP data structure will be
-freed and the value contained in the sp_device struct set to NULL.
-At module unload, psp_dev_destroy() does not check if the pointer
-value is NULL and will end up dereferencing a NULL pointer.
+The wait_event() function is used to detect command completion.  The
+interrupt handler will set the wait condition variable when the interrupt
+is triggered.  However, the variable used for wait_event() is initialized
+after the command has been submitted, which can create a race condition
+with the interrupt handler and result in the wait_event() never returning.
+Move the initialization of the wait condition variable to just before
+command submission.
 
-Add a pointer check of the psp_data field in the sp_device struct
-in psp_dev_destroy() and return immediately if it is NULL.
-
+Fixes: 200664d5237f ("crypto: ccp: Add Secure Encrypted Virtualization (SEV) command support")
 Cc: <stable@vger.kernel.org> # 4.16.x-
-Fixes: 2a6170dfe755 ("crypto: ccp: Add Platform Security Processor (PSP) device support")
 Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Reviewed-by: Brijesh Singh <brijesh.singh@amd.com>
+Acked-by: Gary R Hook <gary.hook@amd.com>
 Acked-by: Gary R Hook <gary.hook@amd.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/ccp/psp-dev.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/crypto/ccp/psp-dev.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 --- a/drivers/crypto/ccp/psp-dev.c
 +++ b/drivers/crypto/ccp/psp-dev.c
-@@ -732,6 +732,9 @@ void psp_dev_destroy(struct sp_device *s
+@@ -78,8 +78,6 @@ done:
+ 
+ static void sev_wait_cmd_ioc(struct psp_device *psp, unsigned int *reg)
  {
- 	struct psp_device *psp = sp->psp_data;
+-	psp->sev_int_rcvd = 0;
+-
+ 	wait_event(psp->sev_int_queue, psp->sev_int_rcvd);
+ 	*reg = ioread32(psp->io_regs + PSP_CMDRESP);
+ }
+@@ -140,6 +138,8 @@ static int __sev_do_cmd_locked(int cmd,
+ 	iowrite32(phys_lsb, psp->io_regs + PSP_CMDBUFF_ADDR_LO);
+ 	iowrite32(phys_msb, psp->io_regs + PSP_CMDBUFF_ADDR_HI);
  
-+	if (!psp)
-+		return;
++	psp->sev_int_rcvd = 0;
 +
- 	if (psp->sev_misc)
- 		kref_put(&misc_dev->refcount, sev_exit);
- 
+ 	reg = cmd;
+ 	reg <<= PSP_CMDRESP_CMD_SHIFT;
+ 	reg |= PSP_CMDRESP_IOC;
 
 
