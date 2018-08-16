@@ -2,194 +2,173 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8397C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E035C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:45:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 720BE208D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:45:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08648208D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:45:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fJN0wUZd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 720BE208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="RfY+aTd3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08648208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726218AbeHPWp0 (ORCPT
+        id S1726289AbeHPWpq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 18:45:26 -0400
-Received: from twosheds.infradead.org ([90.155.92.209]:50564 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbeHPWp0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 18:45:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=twosheds.20170209; h=Mime-Version:Date:Content-Type:
-        References:In-Reply-To:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=mJThfzD8G3L4SZX8JEVpQGeeVCxmfkXO3+KopZMTztk=; b=fJN0wUZdxZfZ66hlQOJCdqnqq
-        BxhcJwO18hNQNXEONZBf1EiRPu+oZ6rmnQGAIbtbWaoq44lvqAeeqwthDautBjLUGLq7m3Bbq5B1u
-        TUzB9T54Z8qzkgPFkxg2XMtTwA6ffqU41b9n8cptG2exa5wwFsayJFg29IJLnovDb4cpHyZEAnehI
-        Abpf/rKIBAlWDt9rfNw1qKYpX16KR+mrA9nK6L21Q6PWkM4ZzdugVpd+PBfqnsHp0KyXJGqYiPqTl
-        g4S3WRI1tQTbLeus+Zuf21rOyWGeurWCmantgAAiKtTJoOM3Bjkr38jA5xjmAV7DxyAN0vi2v5K+V
-        cMEEB7H3g==;
-Received: from [54.239.6.177] (helo=vpn-10-85-94-104.fra53.corp.amazon.com)
-        by twosheds.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fqOCY-003EmL-7O; Thu, 16 Aug 2018 19:44:58 +0000
-Message-ID: <1534448697.6862.60.camel@infradead.org>
-Subject: Re: [PATCH] x86/vdso: Fix vDSO build if a retpoline is emitted
-From:   David Woodhouse <dwmw2@infradead.org>
-To:     Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Matt Rickard <matt@softrans.com.au>,
-        Jason Vas Dias <jason.vas.dias@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>
-In-Reply-To: <c76538cd3afbe19c6246c2d1715bc6a60bd63985.1534448381.git.luto@kernel.org>
-References: <c76538cd3afbe19c6246c2d1715bc6a60bd63985.1534448381.git.luto@kernel.org>
-Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-oID3vmPqOXmOhLwK9f0D"
-Date:   Thu, 16 Aug 2018 21:44:57 +0200
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+        Thu, 16 Aug 2018 18:45:46 -0400
+Received: from mail-by2nam01on0078.outbound.protection.outlook.com ([104.47.34.78]:46928
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725835AbeHPWpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 18:45:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QCI7KRuClDf2o9p8iWvcx0Ymn/p+IBlKOslbUssCMLM=;
+ b=RfY+aTd3ECv45MZb8ic70tM7v/ZVn1EPyNiKuUztrHOAMnWgN9YTKlc62UuhQcKRNESP05pA03Fi4e/LRbtLmlm4ToNp/TxI1KjI9vWEfzP/ibmLznZphYBAStlHZoy7SnoR693JYCeRMLqasM9ub3VWnbJ+sx2fEET/VGKqnRw=
+Received: from SN1PR12CA0053.namprd12.prod.outlook.com (2603:10b6:802:20::24)
+ by MWHPR1201MB0128.namprd12.prod.outlook.com (2603:10b6:301:55::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1038.22; Thu, 16 Aug
+ 2018 19:45:16 +0000
+Received: from CO1NAM03FT030.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e48::204) by SN1PR12CA0053.outlook.office365.com
+ (2603:10b6:802:20::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1017.15 via Frontend
+ Transport; Thu, 16 Aug 2018 19:45:15 +0000
+Authentication-Results: spf=none (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; arndb.de; dkim=none (message not signed)
+ header.d=none;arndb.de; dmarc=permerror action=none header.from=amd.com;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+Received: from SATLEXCHOV02.amd.com (165.204.84.17) by
+ CO1NAM03FT030.mail.protection.outlook.com (10.152.80.169) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id
+ 15.20.1059.14 via Frontend Transport; Thu, 16 Aug 2018 19:45:15 +0000
+Received: from SATLEXDAG01.amd.com (10.181.40.3) by SATLEXCHOV02.amd.com
+ (10.181.40.72) with Microsoft SMTP Server (TLS) id 14.3.389.1; Thu, 16 Aug
+ 2018 14:45:14 -0500
+Received: from leodev.amd.com (10.180.168.240) by SATLEXDAG01.amd.com
+ (10.181.40.3) with Microsoft SMTP Server id 14.3.389.1; Thu, 16 Aug 2018
+ 15:45:13 -0400
+From:   <sunpeng.li@amd.com>
+To:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
+        <arnd@arndb.de>, <michel.daenzer@amd.com>
+CC:     <linux-kernel@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
+        <airlied@linux.ie>, <Jordan.Lazare@amd.com>,
+        <harry.wentland@amd.com>, "Leo (Sunpeng) Li" <sunpeng.li@amd.com>
+Subject: [PATCH 2/2] drm/amd/display: Don't build DCN1 when kcov is enabled
+Date:   Thu, 16 Aug 2018 15:44:39 -0400
+Message-ID: <1534448679-13823-2-git-send-email-sunpeng.li@amd.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1534448679-13823-1-git-send-email-sunpeng.li@amd.com>
+References: <1534448679-13823-1-git-send-email-sunpeng.li@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(396003)(39860400002)(376002)(346002)(2980300002)(428003)(199004)(189003)(53936002)(426003)(7696005)(476003)(2616005)(126002)(446003)(336012)(11346002)(486006)(186003)(26005)(76176011)(53416004)(51416003)(50466002)(105586002)(16586007)(77096007)(8936002)(106466001)(14444005)(6306002)(110136005)(54906003)(86152003)(48376002)(316002)(50226002)(8676002)(36756003)(86362001)(72206003)(97736004)(81156014)(81166006)(305945005)(4326008)(2201001)(68736007)(2906002)(6636002)(966005)(2876002)(478600001)(6666003)(47776003)(5660300001)(356003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR1201MB0128;H:SATLEXCHOV02.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;CO1NAM03FT030;1:23aj5H23r1c4tIV4n5vKO9CnDc2vhKzJAwoYZ6YCoi4kjanGeI0JJQtu0fajIPN50sHqlBsSqj/H34KA0EoHmoFWBJK5n/yELaO9iOZOU0ucZ+OVclg5tszJrHIrIJQQ
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: c5092c8e-977d-4ae3-7f94-08d603b0c9da
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060);SRVR:MWHPR1201MB0128;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR1201MB0128;3:/YArFlwC8BWaWWVzJXNYR877iATH0XBuC2nAI0K4uPRlXrw+FIa+u3X200gpmUebBKi2r9HBldtJQqkR8u6p8kd/GUYo2AqAymbmcbWsQ4K+6tK8HftUpfUwOcstkkOm2vaGz41e5v8qh92FS5QUE/SvAEqNiZYbBK4HTsanRBC0RlQuICb6EP+86VFbQ+gYX3H+2X3Ymnf9foWUlg496LQUwbYgib/wk44ia11zgLu1J/h17IecdFPQDsLye+eCU6UGO8n4biPxWsS9P9AQ3cVhqNe5OvZIZCnri7uZELh2aM38Z6KSlDhglYwxoxZ9Mr8KBukDTiz4HH0LR8GDwk4sD461BCgkrf7fTvcj/Es=;25:P4pyAZ+GitMa6ykjsdi0GS+P9lL6T/sX3CYGgPgwLPeCcutp/IN87dSRX7a69+rba8o/7XCN74+teomD4uoxetRWNGTK8x+VZGpKYCc79sn/gGWEtwJz4mbVe45rtfvRY48ngbLzuANq0ZXMHRmux+6spgVrDQ2TJzwIDNR5wrTBz1B2sf4hhqXjYz8xy0/XVWOmISfAzR9k15XFDos5Orea/lczJLqaVXDY7IqdE3UveP/ltC1IrGyAhph9P7lhSaa9U0j+dAa/XqdXHqZAd73bFOpk6/PMeH4nvxNOoy9kK+dlu9HqiyiueAXayYHHjYERYdG4OgJpUN8lt55DFA==
+X-MS-TrafficTypeDiagnostic: MWHPR1201MB0128:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR1201MB0128;31:qFoh1aVvrgzUv2Jlvhj9RM7LLq0iC4/9EEAH4hZR7GIvR99Z9Sbu6wbloVzRfZ7nBqsKPtu9drhIqXw1kE5JehWCTFP5o7TiMieB9ORntDHLwbl+egI6xenCHbE1aPPC59MdJUh6vBNxPIUMVkIxraGh14CyRxRhMPGYbHCzSyb9RiDjqN5uSUgz5qJmLkK/IOkzv8UWw2EUW1MuAEQpai230Lm49O0FLlwlvCMmSH0=;20:N8JeOuCXZoCSHBe0u1MrFgADwyRACTpSLvIEt+KW0jjOg5Emfa+vzuzqEb0N5GLYbP328DV/weNroNfiEG12OVHjljf/ioizJysFYZYD4tI26kGO+Ueg5WpNgWz5Je82v6BDip9ZzqTN9RJQRJ4PF1M3RexMrf9rgNPtSM4W9PSYtQgFciJsvekUoIOfUVZNw307X1gjzkKHYKs9wpSzVUW+oXsWdR9/U/9zOwP4dE2dkuL9LyBASFLmeUntXuzcXTGwVju51oDv/jUPukpZ6TKg95M8YFHfc+JumkLGBGoduFgI2aj/lCf8pAJw4zBCa1l9D4X0JqbEsQJUexiekGYdcrB2EsLLqb4DlnHzzoycjInVCxNaeNIfal5jaydIuZJoTDXfGaq0cZPgZzWRtXNT10wG1t0S1+Y/ZYeNedQk702qvi/PpKn6kbkl/Vj53mMNZmCh9g3eehCsmBZm2dVix6c5Qx2xwo0Rt+DBfO+5AwPufF2dYUN+mnHlP86F
+X-Microsoft-Antispam-PRVS: <MWHPR1201MB01286455D693E4949063C853823E0@MWHPR1201MB0128.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110)(217544274631240);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93003095)(3002001)(10201501046)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:MWHPR1201MB0128;BCL:0;PCL:0;RULEID:;SRVR:MWHPR1201MB0128;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR1201MB0128;4:16L9hASSofzTaNsa/CtxyB22ZhAF1V/taC3G3btlxilFXajdWWOXs+aWG0xQaoV8ABxCeuNYibN09VmbJlus9UexGin7PoIQjSV0/onVXs47ejshUIlYX2k84vOICx+X1UWRrwws0ZC6lunPvtbEegYnI6SR4qOh2HzxnqEhkhzEOIwa+WSYlL/mfDlaI4nV3shmXfDX4XTE6tAhlLb/oFz+CsdrG4UjDuJChzWoyFvpIAOi4EMYBRkQ55Hkj10k75Xi/D0D5EthT3cbR+nOHcZZ9Ze3S8eO+9qpyAXuNcaaXFhybx2qLptCU5TwPw9fZQn/vyrch9VJQP3kfabPRfIqUc+riLRX63QmRTkH2Ho=
+X-Forefront-PRVS: 07665BE9D1
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR1201MB0128;23:Wb/kIqqqvOkL0+YwSN8tRj/YXbr+xd8QQkpwW/E?=
+ =?us-ascii?Q?xGenoc4fUd04Yr5mqdwgI/+l85ZQoVvh7YfgnX1laS45EdPv1FPiPlZdOKFl?=
+ =?us-ascii?Q?b4iXpqZ6HM0IIlpfwu1CBI6Ke81kHQMxxU6tnOsYYdNTs+bY4unGZuRHWBlh?=
+ =?us-ascii?Q?7hXmKjzrYldHKYEo4CrYOOAsUFZq7AJVQK5iOjENWk/nPnDQtHQcuZf9ovAT?=
+ =?us-ascii?Q?QKriDc63+rLMQldnrcb3L/bTyyaTSWwlzbVFYNUiEE7yekRimJyd78vTRgRU?=
+ =?us-ascii?Q?iNt4Bno1aP+r5Cjjl0hNnQX+Zw7mffLy3ya0zUY0aIMSA3GQMZJ2pbdC8AGU?=
+ =?us-ascii?Q?S0bPxqMcY0Fu4AMGcQHItmMO1RuMcvyeEL8/0SlwbjDYnfp3AXCTSZucPhTi?=
+ =?us-ascii?Q?YCP+2CXhB3ofF8Foaz3hAH2M/G2lvCpXnIBjBdnXhWe+MYNpoMirMw9KWBr3?=
+ =?us-ascii?Q?zA/USq5oNIOe2Xato5HNEVt4/ftWa5LKwDNL0iTyCWjMcQLOzFQQ2eqCvE6s?=
+ =?us-ascii?Q?JXtYR10Hw6DZX/re8QRXsMBuYRHNkM0bXIJPkkXIHWymnmyDnwk0dVgO5Fbk?=
+ =?us-ascii?Q?d9xAm/xzYdViRjz0+Ntxvtcu+P0jBH5HPPL76knE3b4WTHxOn5xWrjwpMfaJ?=
+ =?us-ascii?Q?hTz8XiRBjza5Qq6R2GdgM8ndFJRG1OK3OWbtFFlqj5VAxnVBbSm0hetmtfwN?=
+ =?us-ascii?Q?1+x7souOrmj5wWzN/jqQ8fPkOV6yBEmAOVwSaCEfYQSMcTF/KSgzVvKsBTx5?=
+ =?us-ascii?Q?mJEgtTBXX4+IMihxxtefcF/OaR+X3PDoRsYOfHIlioA5PA92186PI2DBKz9J?=
+ =?us-ascii?Q?sa+1SwNo7l+V6/srFiD/IPHerrdzkt2BQ7wutq1EdP+FCQ7+fFRmgcth6Nai?=
+ =?us-ascii?Q?fT/6H9z0vsY++hOupUVmII8ne7AXMRggcLKUiWidzIILDoAJ3pAzY0qNPV/Z?=
+ =?us-ascii?Q?4oDg0jD4Oc9LXIvB+UW/Ba2tpUi3pYhoW6ApXqhYuhBeLTk7AfAEz3J2bOvN?=
+ =?us-ascii?Q?4aZRMgTaUaWCftDiuGdM2GEOWwLaHKPYuG+4jq5q/B2HKYNSVCXNJYuvxJEs?=
+ =?us-ascii?Q?BalSQZCS0eo9hQfZuihHU+AqwBVZW4LRAFjKMpxFk82R9+5zmUAJLFzm+DjE?=
+ =?us-ascii?Q?ft6uo8mF62pW2pLgArB3Qhyp1zCx3XP+E8AgG2T5+JPXdQUGrEwpZa2dIb/Q?=
+ =?us-ascii?Q?v4+FQcBvMwu7yV0DF3U85xRlSaYmKgvZvnq1IkNc+jtkXtp/6DRxSLr+BeQd?=
+ =?us-ascii?Q?pOrgY8aN/6fsc80eGN7h0dAk4nZ9ELV5v3yytnBgn?=
+X-Microsoft-Antispam-Message-Info: QmLV+tdd9ojtI+UuWQgu4VGssHQfeaYb/VPc0ASB3Y4I5V9kMosRHTZ8tzzQybjLq0QHsJh/L4v5penM3m1FHEYFXwqT1OYgCWXMpHk1KFM48EiLeWe0F6YsGvGKrdlme0LXxUVo7AZinJRIRCs7Qj90C8LfTbmx87kMzZLf83z1pgTu1aOAyQR3XzrTBQeNl/91JnDpeQzcsqHpubk7Ar5y98qBOXo92hkcmiG2G+Db1BwtYRMdW3d4iduSN23/Hnhmbx7H1lKvuce6EisaObAQWK4MfdkAkxziwe8nCwrzjVab7SwXyGf+O2m7QZrn483KPJqR0vDslIka6b9SnL+t4DBEbCgM0U+RSZ54Q4M=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR1201MB0128;6:9C4NSa2zoXVqZC1R4+WwwVMmOt8bLPuEBJEngwp15sQzsJs4wOgYrREdqtxhJiNPQl+6//P7jges5XkQ/OtiO6zQ80U5uwLK1lEJimBcFSvu61nmLYeZ4boGuNNMJMalnLnpKkcPdu3o23K+2oLsdFp+iAFuEkXFsmIsHA3shJkraGO2S9rJ/5MQZtJSrnyjGh/YeyS2qXnOeWUVL0ejVp+W8mN6WiOh+tbbb4YDkTxEXYaqSBUtqMY3NvZfBJyG9gDpNaunzTUJnN5XFrfydN1NBlDSj1/o1bRdg7sLBccqNkufssXvCZ2R+7LNddeo1mj5Qubw/REuqlK3nWzf+/PmoMp+4KCFc7TPAy++GFEbOqAqF90cvj6e8hyzZBgCSoysz7IAbaNQvFAdgfOhWfV4WL//po/CauZSFzPps7ojNi6N8lD6s/IOSw3rIbY29mWkTb7hTczVPBHEezQw4w==;5:ZNRh7L/lRFuKqWFtT8WS5Kr5K6WZNUQNXJJrMs6ORgvce+Ab24SNmRWdHTBkapHnY/o/WzgDmDAbYedaIPf3aDtKqAQEdA3r0KS5bOhYFD+K4b6GE8NzfwjA9pFD83GEW5JJU6nO1z4a3fY3V/TDoQpXGHgrq3jOGbXxfPrfLDk=;7:JvJs3jqRU/ecsiGLDK+EtyX8EI0WngFeLTSBHx3DDbi2dcYPzp4HMCjW+k+Hovwy6O7jqIL2sOZdcEbTk4I0RUp9Ht6sFMP+fpzb8an/G846TrDe5VEUKJi1OvtM3p7Ohdq/WL3hAD0Ys0UsWcwuVnwN1I4xsdXpYI7YlFwNtP0EGCIkIX4prIIl3dstSllbz+AAqBvdVb1odJeHzm5ObpGDcMmWjaywWyB7XkJ+0VSOovrJNzxBfml9ZKN4pXwl
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR1201MB0128;20:/h/IFqTmX8bkLaiRJUXfOXFN9OkGZMnIiStpEdb7guKIh0zBkexUnCjUO7095IQQSQkg3WePj2hhY5thRzY0xoJBpOV2mQJ5X8z657CI16jsJpMkRMwQLPezwj/nl6fR1iuStC4shX5U6BbHDO2lC/cwDvecyEgHOCanvX0R+Jjd9hxC/6nn0yuvXfGGdp3Qo6PHa8MdElsR1bG3i1zEXScthJgx0s+26juUWABFwn+NGaM8P1l0C0wVTKFJVDeW
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2018 19:45:15.2983
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5092c8e-977d-4ae3-7f94-08d603b0c9da
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV02.amd.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1201MB0128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: "Leo (Sunpeng) Li" <sunpeng.li@amd.com>
 
---=-oID3vmPqOXmOhLwK9f0D
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+DCN1 contains code that utilizes fp math. When
+CONFIG_KCOV_INSTRUMENT_ALL and CONFIG_KCOV_ENABLE_COMPARISONS are
+enabled, build errors are found. See this earlier patch for details:
 
+https://lists.freedesktop.org/archives/dri-devel/2018-August/186131.html
 
+As a short term solution, disable CONFIG_DRM_AMD_DC_DCN1_0 when
+KCOV_INSTRUMENT_ALL and KCOV_ENABLE_COMPARISONS are enabled. In
+addition, make it a fully derived config, taking into account
+CONFIG_X86.
 
-On Thu, 2018-08-16 at 12:41 -0700, Andy Lutomirski wrote:
-> Currently, if the vDSO ends up containing an indirect branch or
-> call, GCC will emit the "external thunk" style of retpoline, and it
-> will fail to link.
->=20
-> Fix it by building the vDSO with inline retpoline thunks.
->=20
-> I haven't seen any reports of this triggering on an unpatched
-> kernel.
->=20
-> Cc: Matt Rickard <matt@softrans.com.au>
-> Cc: Jason Vas Dias <jason.vas.dias@gmail.com>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Andi Kleen <ak@linux.intel.com>
-> Fixes: commit 76b043848fd2 ("x86/retpoline: Add initial retpoline support=
-")
-> Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Leo (Sunpeng) Li <sunpeng.li@amd.com>
+---
+ drivers/gpu/drm/amd/display/Kconfig | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Acked-by: David Woodhouse <dwmw@amazon.co.uk>
-
-Thanks.
---=-oID3vmPqOXmOhLwK9f0D
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA4MTYxOTQ0NTdaMC8GCSqG
-SIb3DQEJBDEiBCCG7/HLRHuMSIs9wVI7gPa2ItL0sDP05QXG3BUzY1645DCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAFyAZ8QswNGI
-6c+WEgH0Ut2C/4qlNlkfpnkYgoNEKY9mVc/3ecSh9YUEdd7342EngBgmquCO3kpmZggS2VwQK2pA
-WoVnH+uUYs6/ZjNNVdX3G58XmS+pncfjpraw30RmP7CtrL8J4EnN/bH7i1RjpbeYJ7kjd1ocuLDp
-np8oEttVKH/lVeokaAGOiLmX6H8+AxmfMsLI2JBpHtrr9x129ykVstym7Lc3a3+WW4WbUhGWJxmw
-Xs8YjyGpUkIYFs/24V2cwKG3TneeMShADagbyH136YEG0TTJrJOk1j8GE+KvdmdysICYzjm8JM8X
-XlRVxUx+EwvYuGoDVL312dkbozMAAAAAAAA=
-
-
---=-oID3vmPqOXmOhLwK9f0D--
+diff --git a/drivers/gpu/drm/amd/display/Kconfig b/drivers/gpu/drm/amd/display/Kconfig
+index 4c35625..ed654a7 100644
+--- a/drivers/gpu/drm/amd/display/Kconfig
++++ b/drivers/gpu/drm/amd/display/Kconfig
+@@ -4,18 +4,16 @@ menu "Display Engine Configuration"
+ config DRM_AMD_DC
+ 	bool "AMD DC - Enable new display engine"
+ 	default y
++	select DRM_AMD_DC_DCN1_0 if X86 && !(KCOV_INSTRUMENT_ALL && KCOV_ENABLE_COMPARISONS)
+ 	help
+ 	  Choose this option if you want to use the new display engine
+ 	  support for AMDGPU. This adds required support for Vega and
+ 	  Raven ASICs.
+ 
+ config DRM_AMD_DC_DCN1_0
+-	bool "DCN 1.0 Raven family"
+-	depends on DRM_AMD_DC && X86
+-	default y
++	def_bool n
+ 	help
+-	  Choose this option if you want to have
+-	  RV family for display engine
++	  RV family support for display engine
+ 
+ config DEBUG_KERNEL_DC
+ 	bool "Enable kgdb break in DC"
+-- 
+2.7.4
 
