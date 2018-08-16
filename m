@@ -2,192 +2,166 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A8EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C27C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:19:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96EB821480
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:17:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3208520779
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:19:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="G9ayk57m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96EB821480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jfsW14JS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3208520779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbeHPVRq (ORCPT
+        id S1726478AbeHPVTk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:17:46 -0400
-Received: from mail-eopbgr680066.outbound.protection.outlook.com ([40.107.68.66]:49576
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726213AbeHPVRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:17:46 -0400
+        Thu, 16 Aug 2018 17:19:40 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40215 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbeHPVTk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 17:19:40 -0400
+Received: by mail-pg1-f193.google.com with SMTP id x5-v6so2427506pgp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 11:19:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/w8btVQ1PT4RJBbod6NY5NfhdEF+G0U5irrxHxoZ6cM=;
- b=G9ayk57mfizKMEl4PUPAq7yjpVcWIcZ5PH5l9L7ZuTzH2bzleYinXVW+Mj+a4ZEX/+IuYwSPS1HAX2oD1Hl0nOGev3Am3sBrQZuScE+iZFv/zPS6SAbz4v8Y0Cyh9ASwsTYfUpeFVDFCyS1PFKziG3HU5+j8HPve3ZQGl3X4ODY=
-Received: from BN7PR12MB2593.namprd12.prod.outlook.com (20.176.176.31) by
- BN7PR12MB2593.namprd12.prod.outlook.com (20.176.176.31) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1017.15; Thu, 16 Aug 2018 18:17:43 +0000
-Received: from BN7PR12MB2593.namprd12.prod.outlook.com
- ([fe80::51e6:2f16:498f:8d96]) by BN7PR12MB2593.namprd12.prod.outlook.com
- ([fe80::51e6:2f16:498f:8d96%4]) with mapi id 15.20.1017.020; Thu, 16 Aug 2018
- 18:17:43 +0000
-From:   "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-To:     Michael Jin <mikhail.jin@gmail.com>, Borislav Petkov <bp@suse.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH V2] EDAC, amd64: Add Family 17h Model 10h support.
-Thread-Topic: [PATCH V2] EDAC, amd64: Add Family 17h Model 10h support.
-Thread-Index: AQHUNIzjACRAwj0HZkCccL/9TlZhkqTCrdPQ
-Date:   Thu, 16 Aug 2018 18:17:43 +0000
-Message-ID: <BN7PR12MB2593B097267132250140FBEAF83E0@BN7PR12MB2593.namprd12.prod.outlook.com>
-References: <20180815114107.29797-1-mikhail.jin@gmail.com>
-In-Reply-To: <20180815114107.29797-1-mikhail.jin@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com; 
-x-originating-ip: [2601:3c2:8280:2327:a156:973f:d5f1:b585]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN7PR12MB2593;20:SnHQPhw2DOWUa4BIe+ILFiSX05JAE5P5JzByB1DYT0kcr7Jx6BKY94HJ+2BRRXj7EoFl+IO+rCyhfXZaqoRjuUl6Jasjl+lacMHWoAFL+sfbDD4SiwAq03SkZHa0SWdjB9yBiFW/7nsJNzk648m9rAka1FtOOet6gJVb9rxaZUIulK0+ZaQ24OZtS8tGFkhCNIUZ/CId5XoGBBpbuYjmPfTGU0YR0rj0GrCrrBMn1GERFEZ57BaXeuK+1Lf4Iomx
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 73425c68-8dfd-4bff-85fc-08d603a48f6c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN7PR12MB2593;
-x-ms-traffictypediagnostic: BN7PR12MB2593:
-x-microsoft-antispam-prvs: <BN7PR12MB2593CCBC774F2BDACF59F87CF83E0@BN7PR12MB2593.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(767451399110)(42068640409301);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699016);SRVR:BN7PR12MB2593;BCL:0;PCL:0;RULEID:;SRVR:BN7PR12MB2593;
-x-forefront-prvs: 07665BE9D1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(39860400002)(396003)(366004)(199004)(189003)(13464003)(105586002)(316002)(39060400002)(99286004)(33656002)(106356001)(2900100001)(4326008)(97736004)(54906003)(5660300001)(25786009)(110136005)(966005)(14454004)(72206003)(478600001)(53936002)(81156014)(6306002)(6436002)(446003)(7696005)(46003)(81166006)(9686003)(256004)(55016002)(6116002)(186003)(6506007)(76176011)(229853002)(305945005)(486006)(8676002)(6246003)(5250100002)(86362001)(8936002)(68736007)(7736002)(11346002)(476003)(53546011)(102836004)(74316002)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2593;H:BN7PR12MB2593.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: VdHXtHfzkRAGP2its1+5fG4hgX+4sdw5K3bZARk1/YouHpvSyURSrS+BDINDwqiILqbhWv0eqDJFbbKjl6t8stBDJlCFT++CYzOnmGI6VknXy+jee5QRg2OhAJaHk71cL7Y252UGubl/VG63HpkHOkV1B1YPGo3d9hf5y9gReXUjiKD291WFlR+DSWenq57exXlN+etiRyGZug4M2PcDmQHkJdSqgqvEWrru4KtUpfLFcMX7/PFUA+LgFv7flnPlmfU4hbSVbhxTHltZjHG1xIHd4DAta37X0QDoTKYO2bimxXftQO102jbnT776m6PeJ9v/t5yd6bG6IWekhlXF52dPRJBWy3D1FF5+qzxZhMI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=qJMHuHTVGhwnr6L5S/TZGf6QH3njnufBnAhGikZ9RDc=;
+        b=jfsW14JSzLMGgiYv0j91nPGD0SVLXycJWLTVcuIVQkzqq/x3wzKCW88uPh84dS9YCt
+         p9DB5qq4CFgvAKEEKyX/e+JxvdhTpdEWbgIIzHz9mhXLaX1LUXiI94EGUH3ioUPLIQGx
+         +5s/D+KjTMqjzwCw6Hue22IfYd+LgbTi+p3AM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=qJMHuHTVGhwnr6L5S/TZGf6QH3njnufBnAhGikZ9RDc=;
+        b=ucodJOwhiI6QGohw2QNfibtMC+LrSAL2hA47QY1M0TeNyonc8sul6YQwYsEqfBR5ZZ
+         abX5YgbJUtaOXeGWlykiAqvr423qQm0pyi2bFJDImX1SENVcxFh2f9D8+7yOAc5su7bx
+         YkkYxpvndZMqF6lzUusVgwzPU7i4VlnGNN7tE/4wvVTVvXS20Xu3CMr3BoFG01Ba3KIP
+         RuQ8KTH508MlvEyA4P6+gZi+umda9vaDDN/SXnFaFfaEYHkIvNhr7FGWhCnjejjZTrEt
+         i+Ypv7IOLMlZKZqLe/Kfgn6QyMQAEVtRyrvLbmr4dN10c0KbQpJCkuSWuP0ILr1+LqZ9
+         HnTQ==
+X-Gm-Message-State: AOUpUlE9pb3sKYn5LsABoB+Nhs5cSVFKc+qB3bSQ4elLSUHbiAix66C5
+        FmNc/EH3bg8ca9cK8HUCn0Ti+A==
+X-Google-Smtp-Source: AA+uWPy0CI9nOk5JFm6ydrxK1Q1l2dZnQWz7NiY/DKnhiaZe+K1wokLQgQWNZ4zuIn7mCrpvnhCEGQ==
+X-Received: by 2002:a63:8dca:: with SMTP id z193-v6mr30169579pgd.228.1534443578609;
+        Thu, 16 Aug 2018 11:19:38 -0700 (PDT)
+Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
+        by smtp.gmail.com with ESMTPSA id e14-v6sm31138706pff.128.2018.08.16.11.19.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 16 Aug 2018 11:19:37 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 73425c68-8dfd-4bff-85fc-08d603a48f6c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2018 18:17:43.3236
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2593
+Content-Transfer-Encoding: quoted-printable
+To:     Doug Anderson <dianders@chromium.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <CAD=FV=V8ujNN-jxOm6a_OthyQFGucbv0-1Du3BjScVPKPz-Tsw@mail.gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+References: <20180725222900.33231-1-swboyd@chromium.org>
+ <20180725222900.33231-2-swboyd@chromium.org>
+ <CAD=FV=V8ujNN-jxOm6a_OthyQFGucbv0-1Du3BjScVPKPz-Tsw@mail.gmail.com>
+Message-ID: <153444357718.28926.1637234742079120461@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v2 1/3] pinctrl: msm: Really mask level interrupts to prevent
+ latching
+Date:   Thu, 16 Aug 2018 11:19:37 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Michael Jin <mikhail.jin@gmail.com>
-> Sent: Wednesday, August 15, 2018 6:41 AM
-> To: Borislav Petkov <bp@suse.de>; Ghannam, Yazen
-> <Yazen.Ghannam@amd.com>; Mauro Carvalho Chehab
-> <mchehab@kernel.org>
-> Cc: linux-edac@vger.kernel.org; linux-kernel@vger.kernel.org; Michael Jin
-> <mikhail.jin@gmail.com>; stable@vger.kernel.org
-> Subject: [PATCH V2] EDAC, amd64: Add Family 17h Model 10h support.
->=20
-> Add support for ECC error decoding on family 17h models 10h-2fh.
->=20
+Quoting Doug Anderson (2018-08-13 16:53:42)
+> Hi,
+> =
 
-Can you please make this more specific? Something like "Add PCI device IDs
-for Fam17h Models 10h-2Fh so that amd64_edac_mod will load".
+> On Wed, Jul 25, 2018 at 3:28 PM, Stephen Boyd <swboyd@chromium.org> wrote:
+> > diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/=
+pinctrl-msm.c
+> > index 2155a30c282b..3970dc599092 100644
+> > --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> > +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> > @@ -634,6 +634,19 @@ static void msm_gpio_irq_mask(struct irq_data *d)
+> >         raw_spin_lock_irqsave(&pctrl->lock, flags);
+> >
+> >         val =3D readl(pctrl->regs + g->intr_cfg_reg);
+> > +       /*
+> > +        * Leaving the RAW_STATUS_EN bit enabled causes level interrupt=
+s that
+> > +        * are still asserted to re-latch after we ack them. Clear the =
+raw
+> > +        * status enable bit too so the interrupt can't even latch into=
+ the
+> > +        * hardware while it's masked, but only do this for level inter=
+rupts
+> > +        * because edge interrupts have a problem with the raw status b=
+it
+> > +        * toggling and causing spurious interrupts.
+> =
 
-> Link: https://lkml.kernel.org/r/20180810193623.24629-1-
-> mikhail.jin@gmail.com
-> Cc: stable@vger.kernel.org
+> This whole "spurious interrupts" explanation still seems dodgy.  Have
+> you experienced it yourself, or is this looking through some previous
+> commits? =
 
-This won't apply to all stable branches. EDAC support for Fam17h was added
-in v4.10.
 
-I'm not sure if the stable tag needs to be modified, or if the stable queue=
-s
-automatically drop patches that don't apply.
+There's a similar comment in the code already from the initial commit.
+See msm_gpio_irq_set_type() and this really old commit from downstream
+kernels[1]. I haven't seen a problem with this myself, but I believe
+there have been problems with the mask/unmask causing an interrupt to
+latch into the hardware just because we change the raw status enable
+bit. For level type interrupts this isn't a problem because the level is
+'present' when we mask it so toggling raw status can't cause a spurious
+level to be seen.
 
-> Signed-off-by: Michael Jin <mikhail.jin@gmail.com>
-> ---
->  drivers/edac/amd64_edac.c | 15 +++++++++++++++
->  drivers/edac/amd64_edac.h |  3 +++
->  2 files changed, 18 insertions(+)
->=20
-> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-> index 18aeabb1d5ee..2d7b6d37d6ec 100644
-> --- a/drivers/edac/amd64_edac.c
-> +++ b/drivers/edac/amd64_edac.c
-> @@ -2200,6 +2200,15 @@ static struct amd64_family_type family_types[] =3D=
- {
->  			.dbam_to_cs		=3D f17_base_addr_to_cs_size,
->  		}
->  	},
-> +	[F17_M10H_CPUS] =3D {
-> +		.ctl_name =3D "F17h_M10h",
-> +		.f0_id =3D PCI_DEVICE_ID_AMD_17H_M10H_DF_F0,
-> +		.f6_id =3D PCI_DEVICE_ID_AMD_17H_M10H_DF_F6,
-> +		.ops =3D {
-> +			.early_channel_count	=3D f17_early_channel_count,
-> +			.dbam_to_cs		=3D f17_base_addr_to_cs_size,
-> +		}
-> +	},
->  };
->=20
->  /*
-> @@ -3188,6 +3197,12 @@ static struct amd64_family_type
-> *per_family_init(struct amd64_pvt *pvt)
->  		break;
->=20
->  	case 0x17:
-> +		/* Check if CPU model is in range 10h-2fh */
+For edge types I don't believe this is a problem we need to solve. We
+may mask the edge because it just keeps coming during IRQ processing and
+then when we ack the line while it's masked it will be cleared out of
+the status register and only relatch when the edge comes back. It only
+becomes a spurious irq if we toggle this raw status bit, but we don't
+ever need to do that for edge type interrupts because we always want the
+edge to latch into the hardware after we ack it (even if it's masked).
+So the irq status for edge types should always be forwarded to the
+status register and it should always latch into the status register, but
+when the irq is physically masked we don't want the CPU to be
+interrupted when that happens, we just want to remember it happened to
+make sure we replay the interrupt later on unmask.
 
-This comment is not needed because it's obvious from the code.
+> As per my comments in v1, I'd still rather the comment state
+> the reason as: it's important to _not_ lose edge interrupts when
+> masked.
 
-> +		if (pvt->model >=3D 0x10 && pvt->model <=3D 0x2f) {
-> +			fam_type =3D &family_types[F17_M10H_CPUS];
-> +			pvt->ops =3D &family_types[F17_M10H_CPUS].ops;
-> +			break;
-> +		}
->  		fam_type	=3D &family_types[F17_CPUS];
->  		pvt->ops	=3D &family_types[F17_CPUS].ops;
->  		break;
-> diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
-> index 1d4b74e9a037..4242f8e39c18 100644
-> --- a/drivers/edac/amd64_edac.h
-> +++ b/drivers/edac/amd64_edac.h
-> @@ -115,6 +115,8 @@
->  #define PCI_DEVICE_ID_AMD_16H_M30H_NB_F2 0x1582
->  #define PCI_DEVICE_ID_AMD_17H_DF_F0	0x1460
->  #define PCI_DEVICE_ID_AMD_17H_DF_F6	0x1466
-> +#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F0 0x15e8
-> +#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F6 0x15ee
->=20
->  /*
->   * Function 1 - Address Map
-> @@ -281,6 +283,7 @@ enum amd_families {
->  	F16_CPUS,
->  	F16_M30H_CPUS,
->  	F17_CPUS,
-> +	F17_M10H_CPUS,
->  	NUM_FAMILIES,
->  };
->=20
-> --
+Ok! Let me try to rewrite this comment with the reasoning for level and
+edge types.
 
-Other than those few nits this looks good to me.
+> =
 
-Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> =
 
-Thanks,
-Yazen
+> > +        */
+> > +       if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK) {
+> > +               val &=3D ~BIT(g->intr_raw_status_bit);
+> > +               writel(val, pctrl->regs + g->intr_cfg_reg);
+> > +       }
+> =
+
+> In v1 you claimed you were going to combine this with the next write
+> (you said you'd combine things in both mask and unmask).  ...is there
+> a reason why you didn't?  As per my comments in v1 I believe it's
+> safer from a correctness point of view to combine them.
+> =
+
+
+Hmm I seem to have mis-copied the patch from one directory to another.
+I'll resend with both combined because I tested that.
+
+[1] https://source.codeaurora.org/quic/la/kernel/msm/commit/?h=3Dmsm-3.4&id=
+=3Dea45a49ee524cfafe136c0ac67623e64e614ba27
+
