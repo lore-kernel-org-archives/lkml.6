@@ -3,42 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A28C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E82C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 234452147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 234452147D
+	by mail.kernel.org (Postfix) with ESMTP id 9900721473
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9900721473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbeHPVmQ (ORCPT
+        id S1728317AbeHPVmU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:42:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56014 "EHLO
+        Thu, 16 Aug 2018 17:42:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56030 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728244AbeHPVmQ (ORCPT
+        with ESMTP id S1728274AbeHPVmT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:42:16 -0400
+        Thu, 16 Aug 2018 17:42:19 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7D483CE8;
-        Thu, 16 Aug 2018 18:42:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8BB99CB7;
+        Thu, 16 Aug 2018 18:42:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Lucas De Marchi <lucas.demarchi@profusion.mobi>,
-        Lucas De Marchi <lucas.de.marchi@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Jessica Yu <jeyu@kernel.org>,
-        Chih-Wei Huang <cwhuang@linux.org.tw>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 3.18 10/15] kbuild: verify that $DEPMOD is installed
-Date:   Thu, 16 Aug 2018 20:41:47 +0200
-Message-Id: <20180816171633.932203595@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 3.18 11/15] crypto: vmac - require a block cipher with 128-bit block size
+Date:   Thu, 16 Aug 2018 20:41:48 +0200
+Message-Id: <20180816171633.974230377@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171633.546734046@linuxfoundation.org>
 References: <20180816171633.546734046@linuxfoundation.org>
@@ -55,98 +50,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 934193a654c1f4d0643ddbf4b2529b508cae926e upstream.
+commit 73bf20ef3df262026c3470241ae4ac8196943ffa upstream.
 
-Verify that 'depmod' ($DEPMOD) is installed.
-This is a partial revert of commit 620c231c7a7f
-("kbuild: do not check for ancient modutils tools").
+The VMAC template assumes the block cipher has a 128-bit block size, but
+it failed to check for that.  Thus it was possible to instantiate it
+using a 64-bit block size cipher, e.g. "vmac(cast5)", causing
+uninitialized memory to be used.
 
-Also update Documentation/process/changes.rst to refer to
-kmod instead of module-init-tools.
+Add the needed check when instantiating the template.
 
-Fixes kernel bugzilla #198965:
-https://bugzilla.kernel.org/show_bug.cgi?id=198965
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>
-Cc: Lucas De Marchi <lucas.de.marchi@gmail.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Chih-Wei Huang <cwhuang@linux.org.tw>
-Cc: stable@vger.kernel.org # any kernel since 2012
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Fixes: f1939f7c5645 ("crypto: vmac - New hash algorithm for intel_txt support")
+Cc: <stable@vger.kernel.org> # v2.6.32+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/Changes |   17 ++++++-----------
- scripts/depmod.sh     |    8 +++++++-
- 2 files changed, 13 insertions(+), 12 deletions(-)
+ crypto/vmac.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/Documentation/Changes
-+++ b/Documentation/Changes
-@@ -25,7 +25,7 @@ o  Gnu C                  3.2
- o  Gnu make               3.80                    # make --version
- o  binutils               2.12                    # ld -v
- o  util-linux             2.10o                   # fdformat --version
--o  module-init-tools      0.9.10                  # depmod -V
-+o  kmod                   13                      # depmod -V
- o  e2fsprogs              1.41.4                  # e2fsck -V
- o  jfsutils               1.1.3                   # fsck.jfs -V
- o  reiserfsprogs          3.6.3                   # reiserfsck -V
-@@ -119,12 +119,6 @@ is not build with CONFIG_KALLSYMS and yo
- reproduce the Oops with that option, then you can still decode that Oops
- with ksymoops.
+--- a/crypto/vmac.c
++++ b/crypto/vmac.c
+@@ -655,6 +655,10 @@ static int vmac_create(struct crypto_tem
+ 	if (IS_ERR(alg))
+ 		return PTR_ERR(alg);
  
--Module-Init-Tools
-------------------
--
--A new module loader is now in the kernel that requires module-init-tools
--to use.  It is backward compatible with the 2.4.x series kernels.
--
- Mkinitrd
- --------
- 
-@@ -302,14 +296,15 @@ Util-linux
- ----------
- o  <ftp://ftp.kernel.org/pub/linux/utils/util-linux/>
- 
-+Kmod
-+----
-+o  <https://www.kernel.org/pub/linux/utils/kernel/kmod/>
-+o  <https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git>
++	err = -EINVAL;
++	if (alg->cra_blocksize != 16)
++		goto out_put_alg;
 +
- Ksymoops
- --------
- o  <ftp://ftp.kernel.org/pub/linux/utils/kernel/ksymoops/v2.4/>
- 
--Module-Init-Tools
-------------------
--o  <ftp://ftp.kernel.org/pub/linux/kernel/people/rusty/modules/>
--
- Mkinitrd
- --------
- o  <https://code.launchpad.net/initrd-tools/main>
---- a/scripts/depmod.sh
-+++ b/scripts/depmod.sh
-@@ -10,10 +10,16 @@ DEPMOD=$1
- KERNELRELEASE=$2
- SYMBOL_PREFIX=$3
- 
--if ! test -r System.map -a -x "$DEPMOD"; then
-+if ! test -r System.map ; then
- 	exit 0
- fi
- 
-+if [ -z $(command -v $DEPMOD) ]; then
-+	echo "'make modules_install' requires $DEPMOD. Please install it." >&2
-+	echo "This is probably in the kmod package." >&2
-+	exit 1
-+fi
-+
- # older versions of depmod don't support -P <symbol-prefix>
- # support was added in module-init-tools 3.13
- if test -n "$SYMBOL_PREFIX"; then
+ 	inst = shash_alloc_instance("vmac", alg);
+ 	err = PTR_ERR(inst);
+ 	if (IS_ERR(inst))
 
 
