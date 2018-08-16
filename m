@@ -2,102 +2,71 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7617CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49033C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:57:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FED021470
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:51:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ogXoMJxR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FED021470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0658F214C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:57:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0658F214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388231AbeHPNta (ORCPT
+        id S2389047AbeHPNzA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 09:49:30 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56106 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387896AbeHPNta (ORCPT
+        Thu, 16 Aug 2018 09:55:00 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:56531 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731255AbeHPNzA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 09:49:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Pr6KVZSCbL7Du4YeoGE2b6PCMpl6DCqiDOKt3gzpIPA=; b=ogXoMJxROwk0Ev1p18MbFjmdm
-        iinjgHAjQhOuP0dvBTcYXwC/7Ck7ppeNOnu2dzanwsqRdz3+fAYKbVdWM0AZ6wGLGV62n+UQpVQRK
-        QqolSwoowp384FmzEfc9iY09m/eValIVkt0oqjWkjHIJeOHJsDwqKKy6Dw2o9CZRYCdSE=;
-Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fqFsP-0002gY-24; Thu, 16 Aug 2018 10:51:37 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id E84D6440078; Thu, 16 Aug 2018 11:51:35 +0100 (BST)
-Date:   Thu, 16 Aug 2018 11:51:35 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [RFC PATCH] ASoC: core: Optimise suspend/resume of DAPM widgets
-Message-ID: <20180816105135.GZ2414@sirena.org.uk>
-References: <1533301025-19980-1-git-send-email-jonathanh@nvidia.com>
- <20180803163605.GD6591@sirena.org.uk>
- <7ba86328-5bb6-5280-df6f-9937173fb2ab@nvidia.com>
- <20180814144004.GD5810@sirena.org.uk>
- <e1bc40ec-de7e-2b77-d7f6-ec6b3066aeec@nvidia.com>
+        Thu, 16 Aug 2018 09:55:00 -0400
+Received: from 79.184.254.66.ipv4.supernova.orange.pl (79.184.254.66) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 7814ea9d5291691c; Thu, 16 Aug 2018 12:57:12 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH] cpuidle: menu: Update stale polling override comment
+Date:   Thu, 16 Aug 2018 12:55:01 +0200
+Message-ID: <2037635.8RjXc8lXCc@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="0786ZyFfTSxuegBe"
-Content-Disposition: inline
-In-Reply-To: <e1bc40ec-de7e-2b77-d7f6-ec6b3066aeec@nvidia.com>
-X-Cookie: Many are called, few volunteer.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
---0786ZyFfTSxuegBe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The comment to explain why the menu governor uses idle state 1
+instead of idle state 0 as the first one sometimes is stale (among
+other things it mentions a user setting not present any more),
+so update it.
 
-On Wed, Aug 15, 2018 at 07:48:47PM +0100, Jon Hunter wrote:
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpuidle/governors/menu.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> So then I made the following change to avoid scheduling the function
-> calls unnecessarily (which I think should be fine) ...
+Index: linux-pm/drivers/cpuidle/governors/menu.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/menu.c
++++ linux-pm/drivers/cpuidle/governors/menu.c
+@@ -328,9 +328,8 @@ static int menu_select(struct cpuidle_dr
+ 		unsigned int polling_threshold;
+ 
+ 		/*
+-		 * We want to default to C1 (hlt), not to busy polling
+-		 * unless the timer is happening really really soon, or
+-		 * C1's exit latency exceeds the user configured limit.
++		 * Default to a physical idle state, not to busy polling, unless
++		 * a timer is going to trigger really really soon.
+ 		 */
+ 		polling_threshold = max_t(unsigned int, 20, s->target_residency);
+ 		if (data->next_timer_us > polling_threshold &&
 
-> Please note that I am just using ktime_get() to log the time on entry
-> and exit from dapm_power_widgets() and so yes the time may not be
-> purely the time take to execute this function if we are preempted,
-> but I am measuring in the same way in both cases and so it does seem
-> to show some improvement.
-
-That seems like a simple and useful optimization, will you send a patch?
-
---0786ZyFfTSxuegBe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlt1VzQACgkQJNaLcl1U
-h9C++wf/QB19v9pWanJUtK3uJI3vVk9Y6HQxYhrr0b9X6aZ9IPlhxWlBssaSEY0O
-1zygbrumfW9K8OLLANmo8Xb0oMb8YcXwG5UO2aIieuIwxvQo+hwUUI9QwH020JB7
-+3bRvRumioLOfR+NeZTg7M5oGuuGK34o0j/pyCT0Ej3v2YKZUlai0ynwxGkfbuav
-RiPia8eACF76DkDRBcWMQYy45+kZIXdkBOJvZcnzWGUfhlNEugWo92oYQxSshySV
-TsUG1H3HGN1/JvAogds/wVAOXSA8dt8fc1KddCdPEtaCPAoGa8NooKZDlrJFHn1L
-FQhmW9eQB1nzC8venmJohqs7SiPvNA==
-=OMjY
------END PGP SIGNATURE-----
-
---0786ZyFfTSxuegBe--
