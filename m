@@ -3,52 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18678C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD5FC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD50121480
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD50121480
+	by mail.kernel.org (Postfix) with ESMTP id 0498A21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0498A21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728625AbeHPVms (ORCPT
+        id S1728649AbeHPVmv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:42:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56134 "EHLO
+        Thu, 16 Aug 2018 17:42:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56162 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728520AbeHPVmr (ORCPT
+        with ESMTP id S1727674AbeHPVmu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:42:47 -0400
+        Thu, 16 Aug 2018 17:42:50 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2CF0AD02;
-        Thu, 16 Aug 2018 18:42:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5F0A5CEB;
+        Thu, 16 Aug 2018 18:42:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Jon Medhurst <tixy@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        "Tobin C . Harding" <me@tobin.cc>,
-        Will Deacon <will.deacon@arm.com>, acme@kernel.org,
-        akpm@linux-foundation.org, brueckner@linux.vnet.ibm.com,
-        linux-arch@vger.kernel.org, rostedt@goodmis.org,
-        schwidefsky@de.ibm.com, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 3.18 06/15] kprobes/x86: Fix %p uses in error messages
-Date:   Thu, 16 Aug 2018 20:41:43 +0200
-Message-Id: <20180816171633.784233812@linuxfoundation.org>
+        Siqi Lin <siqilin@google.com>,
+        Erick Reyes <erickreyes@google.com>
+Subject: [PATCH 3.18 07/15] ALSA: info: Check for integer overflow in snd_info_entry_write()
+Date:   Thu, 16 Aug 2018 20:41:44 +0200
+Message-Id: <20180816171633.819923543@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171633.546734046@linuxfoundation.org>
 References: <20180816171633.546734046@linuxfoundation.org>
@@ -65,60 +50,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Erick Reyes <erickreyes@google.com>
 
-commit 0ea063306eecf300fcf06d2f5917474b580f666f upstream.
+Commit 4adb7bcbcb69 ("ALSA: core: Use seq_file for text proc file
+reads") heavily refactored ALSA procfs and fixed the overflow as
+a side-effect, so this fix only applies to kernels < 4.2 and
+there is no upstream equivalent
 
-Remove all %p uses in error messages in kprobes/x86.
+snd_info_entry_write() resizes the buffer with an unsigned long
+size argument that gets truncated because resize_info_buffer()
+takes the size parameter as an unsigned int. On 64-bit kernels,
+this causes the following copy_to_user() to write out-of-bounds
+if (pos + count) can't be represented by an unsigned int.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: David Howells <dhowells@redhat.com>
-Cc: David S . Miller <davem@davemloft.net>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Jon Medhurst <tixy@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Tobin C . Harding <me@tobin.cc>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: acme@kernel.org
-Cc: akpm@linux-foundation.org
-Cc: brueckner@linux.vnet.ibm.com
-Cc: linux-arch@vger.kernel.org
-Cc: rostedt@goodmis.org
-Cc: schwidefsky@de.ibm.com
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/lkml/152491902310.9916.13355297638917767319.stgit@devbox
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Siqi Lin <siqilin@google.com>
+Signed-off-by: Erick Reyes <erickreyes@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kernel/kprobes/core.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ sound/core/info.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -365,7 +365,6 @@ int __copy_instruction(u8 *dest, u8 *src
- 		newdisp = (u8 *) src + (s64) insn.displacement.value - (u8 *) dest;
- 		if ((s64) (s32) newdisp != newdisp) {
- 			pr_err("Kprobes error: new displacement does not fit into s32 (%llx)\n", newdisp);
--			pr_err("\tSrc: %p, Dest: %p, old disp: %x\n", src, dest, insn.displacement.value);
- 			return 0;
- 		}
- 		disp = (u8 *) dest + insn_offset_displacement(&insn);
-@@ -568,8 +567,7 @@ static int reenter_kprobe(struct kprobe
- 		 * Raise a BUG or we'll continue in an endless reentering loop
- 		 * and eventually a stack overflow.
- 		 */
--		printk(KERN_WARNING "Unrecoverable kprobe detected at %p.\n",
--		       p->addr);
-+		pr_err("Unrecoverable kprobe detected.\n");
- 		dump_kprobe(p);
- 		BUG();
- 	default:
+--- a/sound/core/info.c
++++ b/sound/core/info.c
+@@ -253,6 +253,7 @@ static ssize_t snd_info_entry_write(stru
+ 	struct snd_info_buffer *buf;
+ 	ssize_t size = 0;
+ 	loff_t pos;
++	unsigned long realloc_size;
+ 
+ 	data = file->private_data;
+ 	if (snd_BUG_ON(!data))
+@@ -261,7 +262,8 @@ static ssize_t snd_info_entry_write(stru
+ 	pos = *offset;
+ 	if (pos < 0 || (long) pos != pos || (ssize_t) count < 0)
+ 		return -EIO;
+-	if ((unsigned long) pos + (unsigned long) count < (unsigned long) pos)
++	realloc_size = (unsigned long) pos + (unsigned long) count;
++	if (realloc_size < (unsigned long) pos || realloc_size > UINT_MAX)
+ 		return -EIO;
+ 	switch (entry->content) {
+ 	case SNDRV_INFO_CONTENT_TEXT:
 
 
