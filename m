@@ -2,100 +2,113 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 449E6C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A31C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0043720C0D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:52:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fGHLAMAM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0043720C0D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8C6A2208AD
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:55:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C6A2208AD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730843AbeHPTvi (ORCPT
+        id S1726280AbeHPTzD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 15:51:38 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44338 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727285AbeHPTve (ORCPT
+        Thu, 16 Aug 2018 15:55:03 -0400
+Received: from eu-smtp-delivery-211.mimecast.com ([207.82.80.211]:55192 "EHLO
+        eu-smtp-delivery-211.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725968AbeHPTzD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 15:51:34 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r16-v6so4732988wrt.11
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 09:51:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=kAJN5fxC24ZODwvl+eKV5x4mhAs5Fw7VBfu8pF7El8s=;
-        b=fGHLAMAMm2lu4C8wbEa9LebpuT0CWFBu8Dl2kK/eZX0j4PU7yubwoMjcXb2/l76E68
-         url8VIG0TUwC7auEYiMr006uz+2nxGfKfIOTQL9YYHzLD3VnfZsvw17xw+NjiPY41s1o
-         XaiDFv07Bb2iWxRqI2up33sXAQZF8mvSVmgpQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=kAJN5fxC24ZODwvl+eKV5x4mhAs5Fw7VBfu8pF7El8s=;
-        b=ECbCcY5ntgAj1pyyjQHDf1ap+scnWkiLQNrul5WPxRZjOinfWvN6LAriPVgnqq8apm
-         wmdZ2BPpm9+snhQemXfgrQKNn0t8P1/nLIS8CsnV/BMDES/vO723uDHBHWXTjIAKA5Xb
-         likdFblrreXf8Hng5wi9EcvBQVBIALo95TCBTPdanQnqmr2OUdjQY1iiUsjukJm6QxlX
-         4lE26yl145qtf+/wMRzOBWmdRznHY4Q5/3QBiOEq4Rjj6VAHN3b7rVYDANT4trglU94S
-         wDkQVIEXdFODt9Tc9zC5vVrqeY5JXg3zdHKViyjfnhNKJmD6XXD/Hlvp0WH7RB6D2WpP
-         O85g==
-X-Gm-Message-State: AOUpUlF7S5BV5o+O/Toai1sPran3YyI/iW70lmFPleuEyBKZSEMGLnsl
-        oSy8tqIwGvBGDe/vN537y3u/7g==
-X-Google-Smtp-Source: AA+uWPwrIXEOxfwHQ1ScvvFjEAlbdtaxTUZ6ObwN+omTBKgZLK8CpHMh2nF5cbOoqF8dyCzzROSWsQ==
-X-Received: by 2002:adf:f1c8:: with SMTP id z8-v6mr2412002wro.214.1534438315762;
-        Thu, 16 Aug 2018 09:51:55 -0700 (PDT)
-Received: from localhost.localdomain (146-241-5-103.dyn.eolo.it. [146.241.5.103])
-        by smtp.gmail.com with ESMTPSA id o3-v6sm30036180wrj.31.2018.08.16.09.51.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Aug 2018 09:51:55 -0700 (PDT)
-From:   Paolo Valente <paolo.valente@linaro.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        broonie@kernel.org, bfq-iosched@googlegroups.com,
-        oleksandr@natalenko.name, Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX/IMPROVEMENT 0/4] bfq: two fixes and one improvement related to I/O control
-Date:   Thu, 16 Aug 2018 18:51:14 +0200
-Message-Id: <20180816165118.17402-1-paolo.valente@linaro.org>
-X-Mailer: git-send-email 2.16.1
+        Thu, 16 Aug 2018 15:55:03 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-74-F1LuNzHWOlSzF6yoS0JSCQ-1; Thu, 16 Aug 2018 17:55:20 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 16 Aug 2018 17:57:00 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 16 Aug 2018 17:56:59 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'James Bottomley' <James.Bottomley@HansenPartnership.com>,
+        David Howells <dhowells@redhat.com>
+CC:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "yannik@sembritzki.me" <yannik@sembritzki.me>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        Matthew Garrett <mjg59@google.com>
+Subject: RE: [PATCH] Fix kexec forbidding kernels signed with custom platform
+ keys to boot
+Thread-Topic: [PATCH] Fix kexec forbidding kernels signed with custom platform
+ keys to boot
+Thread-Index: AQHUNXn4ODgxaBfgD0OOj1lwNa9r7KTCl2Eg
+Date:   Thu, 16 Aug 2018 16:56:59 +0000
+Message-ID: <b29ce8375b454440b7b019ac20cfe726@AcuMS.aculab.com>
+References: <1534432615.3166.5.camel@HansenPartnership.com>
+         <CA+55aFzRHVXP4Ag4aygao1dTGaaMJZSOisHT2ks3_WP97kLLhQ@mail.gmail.com>
+         <20180815100053.13609-1-yannik@sembritzki.me>
+         <CA+55aFx2goMXj7rQg-qx-puiiWYJmkDMU1xniWEu6ikDBNgfdQ@mail.gmail.com>
+         <654fbafb-69da-cd9a-b176-7b03401e71c5@sembritzki.me>
+         <20180815174247.GB29541@redhat.com>
+ <20180815185812.GC29541@redhat.com>
+         <b2649b70-37b6-3929-a9d0-3d82033b2686@sembritzki.me>
+         <20180815194932.GD29541@redhat.com>
+         <20628.1534427487@warthog.procyon.org.uk>
+         <30607.1534434597@warthog.procyon.org.uk>
+ <1534435000.3166.9.camel@HansenPartnership.com>
+In-Reply-To: <1534435000.3166.9.camel@HansenPartnership.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+MIME-Version: 1.0
+X-MC-Unique: F1LuNzHWOlSzF6yoS0JSCQ-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jens,
+RnJvbTogSmFtZXMgQm90dG9tbGV5DQo+IFNlbnQ6IDE2IEF1Z3VzdCAyMDE4IDE2OjU3DQo+IE9u
+IFRodSwgMjAxOC0wOC0xNiBhdCAxNjo0OSArMDEwMCwgRGF2aWQgSG93ZWxscyB3cm90ZToNCj4g
+PiBKYW1lcyBCb3R0b21sZXkgPEphbWVzLkJvdHRvbWxleUBIYW5zZW5QYXJ0bmVyc2hpcC5jb20+
+IHdyb3RlOg0KPiA+DQo+ID4gPiA+IFRoZSBwcm9ibGVtIHdpdGggdGhhdCBpcyB0aGF0IGl0IG1l
+YW5zIHlvdSBjYW4ndCBsb2FkIHRoaXJkIHBhcnR5DQo+ID4gPiA+IG1vZHVsZXMgLSBzdWNoIGFz
+IHRoZSBOVmlkaWEgZHJpdmVyLsKgwqBUaGF0J3MgZmluZSBpZiB5b3UNCj4gPiA+ID4gYWJzb2x1
+dGVseSByZWplY3QgdGhlIHJpZ2h0IG9mIHBlb3BsZSB0byBwcm9kdWNlIHRoaXJkIHBhcnR5DQo+
+ID4gPiA+IGRyaXZlcnMgZm9yIHRoZSBMaW51eCBrZXJuZWwgYW5kIGFic29sdXRlbHkgcmVxdWly
+ZSB0aGF0IHRoZXkNCj4gPiA+ID4gb3BlbiBhbmQgdXBzdHJlYW0gdGhlaXIgY29kZSBpZiB0aGV5
+IHdhbnQgaW4uDQo+ID4gPg0KPiA+ID4gU28gaWYgeW91IGJ1aWxkIHlvdXIgb3duIGtlcm5lbCBh
+bmQgd2FudCB0byBsb2FkIHRoZSBuVmlkaWEgbW9kdWxlLA0KPiA+ID4geW91IGhhdmUgdGhlIGtl
+eSB0byBzaWduIGl0Lg0KPiA+DQo+ID4gSSB0aGluayB5b3UgaGF2ZSB0byBhc3N1bWUgdGhhdCBk
+b2luZyB0aGlzIGlzIGJleW9uZCBtb3N0IHBlb3BsZS4NCj4gDQo+IEFzIGEgc3RlcCBieSBzdGVw
+IHByb2Nlc3MsIEkgYWdyZWUuICBIb3dldmVyLCBJIHRoaW5rIHdlIGNhbiBhdXRvbWF0ZQ0KPiBp
+dCB0byB0aGUgcG9pbnQgd2hlcmUgeW91IGluc3RhbGwgYSBwYWNrYWdlIGFuZCBpdCBzYXlzICJp
+bnNlcnQgeW91cg0KPiB5dWJpa2V5IiBldmVyeSB0aW1lIHlvdSB1cGdyYWRlIHRoZSBrZXJuZWwN
+Cg0KV2hhdCBhYm91dCAzcmQgcGFydGllcyB0aGF0IHdhbnQgdG8gcmVsZWFzZSBkcml2ZXJzIHRo
+YXQgY2FuIGJlIGxvYWRlZA0KaW50byAnZGlzdHJpYnV0aW9uJyBrZXJuZWxzPw0KV2UgY2FuIGRv
+IHRoYXQgZm9yIHdpbmRvd3MgKHByb3ZpZGVkIHdlJ3ZlIHBhaWQgdGhlICdkcml2ZXIgc2lnbmlu
+ZyB0YXgnKQ0KYmVjYXVzZSB3aW5kb3dzIGhhcyBhIHN0YWJsZSBrZXJuZWwgRERJL0RLSS4NCkZv
+ciBMaW51eCB3ZSBoYXZlIHRvIHJlbGVhc2UgbW9zdCBvZiB0aGUgZHJpdmVyIGFzIGEgYmluYXJ5
+ICdibG9iJyBhbmQNCmNvbXBpbGUgd3JhcHBlciBjb2RlIG9uIHRoZSB0YXJnZXQgc3lzdGVtIHdp
+dGggdGhlIGNvcnJlY3Qga2VybmVsIGhlYWRlcnMuDQpUaGVyZSBpcyBubyB3YXkgd2UgY291bGQg
+Z2VuZXJhdGUgc2lnbmVkIGNvcGllcyBmb3IgZXZlcnkgJ2Rpc3RyaWJ1dGlvbicNCmtlcm5lbCAt
+IGV2ZW4gaWYgdGhlcmUgd2FzIGEgd2F5IHRvIGdldCB0aGVtIHNpZ25lZC4NCkV2ZW4gaWYgd2Ug
+YWdyZWVkIHRvIG1ha2Ugb3VyIHNvdXJjZSBjb2RlIGF2YWlsYWJsZSBpdCB3b3VsZG4ndCBiZQ0K
+YWNjZXB0ZWQgZm9yIGluY2x1c2lvbiBpbiB0aGUga2VybmVsIHNvdXJjZSB0cmVlLg0KDQoJRGF2
+aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50
+IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTcz
+ODYgKFdhbGVzKQ0K
 
-while working a little bit on cgroups I/O control, I found two nasty
-bugs in bfq. They break bandwidth control in simple configurations
-with one-process groups. These bugs are fixed by the first two patches
-in this series.
-
-These fixes improved I/O control so much, that I could reduce the
-write overcharge factor, used by bfq to counter write-induced
-issues. This reduction is performed by the third patch.
-
-The fourth patch contains a little code improvement I made in a
-function that has to do with I/O control.
-
-I hope we are still in time for 4.19.
-
-Thanks,
-Paolo
-
-Paolo Valente (4):
-  block, bfq: readd missing reset of parent-entity service
-  block, bfq: always update the budget of an entity when needed
-  block, bfq: reduce write overcharge
-  block, bfq: improve code of bfq_bfqq_charge_time
-
- block/bfq-iosched.c | 54 +++++++++++++++++++++++++++++++++++++++--------------
- block/bfq-wf2q.c    | 22 +++++++++++-----------
- 2 files changed, 51 insertions(+), 25 deletions(-)
-
---
-2.16.1
