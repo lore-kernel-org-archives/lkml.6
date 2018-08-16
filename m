@@ -2,253 +2,555 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0CDC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 692FDC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:58:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E73912146F
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:55:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED6F0208D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:58:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="GVCU/+bO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E73912146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2M1o/rm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED6F0208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbeHPW4X (ORCPT
+        id S1726016AbeHPW6y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 18:56:23 -0400
-Received: from mail-eopbgr710070.outbound.protection.outlook.com ([40.107.71.70]:39871
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725810AbeHPW4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 18:56:23 -0400
+        Thu, 16 Aug 2018 18:58:54 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45311 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725803AbeHPW6y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 18:58:54 -0400
+Received: by mail-wr1-f67.google.com with SMTP id f12-v6so5164381wrv.12;
+        Thu, 16 Aug 2018 12:58:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hZ2fzBxoiLs5G5HWM391lObr0nyhbWqJ6qWqEQX1F3o=;
- b=GVCU/+bOV46ibHAUoU5iPHGzy7htxFjN4VLefO8nd9i1+oRJAJXUyPZUkLGgASIN2/U0zIoL8KZ80xt5MoIAzz0sVYcvcXFv/xOGb+hCDVV7L7XkVkYSQk93i+gKzE6dPWGtOdmdxAAoB0hmQ1yTlJbmktCpkchZisTLkB1fxv4=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Sunpeng.Li@amd.com; 
-Received: from [192.168.1.2] (165.204.55.250) by
- BLUPR12MB0595.namprd12.prod.outlook.com (2a01:111:e400:594f::28) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1038.23; Thu, 16 Aug
- 2018 19:55:53 +0000
-Subject: Re: [PATCH] [v3] drm: amd: dc: don't use FP math when Kcov is enabled
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>
-Cc:     David Airlie <airlied@linux.ie>,
-        =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel.daenzer@amd.com>,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        Shirish S <shirish.s@amd.com>,
-        "Jerry (Fangzhi) Zuo" <Jerry.Zuo@amd.com>,
-        dri-devel@lists.freedesktop.org,
-        "Lazare, Jordan" <Jordan.Lazare@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>
-References: <20180811155554.3382650-1-arnd@arndb.de>
-From:   Leo Li <sunpeng.li@amd.com>
-Message-ID: <0e2639d6-7816-4e85-3212-74fcd118e396@amd.com>
-Date:   Thu, 16 Aug 2018 15:55:49 -0400
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bxxexDjo7qtxFmSQtYOIiDGnAgZAsLh8v8WwkE1KIDw=;
+        b=F2M1o/rmvomQn5l1QPAKvVBbdiTp/SO9bW97w7qY/42hYEVug+7LLrWXKaUNWSRQsk
+         z0QSMFH727VyA1C5eM2RhkXN35sVuruwjGOP5LYFkSHD8+Bv8BAHcUkZ+C0JpIjr5UDx
+         mcDQOj0ebEMSaw7bgAiw/LQBENCYFBgh0+e9G8LE1IHcOHvkeHAAT6eckxPRveIlIMr4
+         RybHMY9j8WePfvPiZnuhzsKK4jiCWoutlO5/htIGXZhNv9wokm9BO8mFFgxvbyTVR/Xq
+         hu2RB3R3mfG0CMDqPb9pE+6Yy0CgQGsI05Ggvj6ShK48ORVo2U24Nvp7kQbd6Cv27Wct
+         SYvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bxxexDjo7qtxFmSQtYOIiDGnAgZAsLh8v8WwkE1KIDw=;
+        b=mTOwSUWvSeEeajGucMbT9R2U7Cti3j5tqqbK/mSvoELa6LY9lK8XighN3IEEf8wJeU
+         6BYltfGdbQz5vXBP595PjpsWkZEaUmjxG6nq0DdlR/9gGi2wzy94cAriv4MFuZoNo6ei
+         1nyTsJzZHe0dM7olxW1mSNDcoca0T9hW0+3dgkkMKxjbgH0kXoVDTi6GOK211Ko1Hltr
+         +GgS7F/N2q+mzkQ+4/FXoNZ9kmbhe6oytvilbQgJkSuu5mkLkPOvuqA9zhIau9IEw7To
+         8f4TlkJWQnu1jUQl1okv80esDosnm/L7xGOF3T+Akiaa2yRgrgLDJSxsrbKuwNhUjzpC
+         o7aw==
+X-Gm-Message-State: AOUpUlFIoW1A5tRuaSeoPk7E2lhj/af/M4CXer+LTIfMUoRzBsUaNuQB
+        BW0k4P6WThEEH79pQdZurGJ5hjlG
+X-Google-Smtp-Source: AA+uWPyMLF4Ftp5TG8UHTRFbxiiAVLRS0fBWzT5PxkaARSh3Y5SeY3ijrBZT2u5mTDpsz1HIUB9BjA==
+X-Received: by 2002:adf:a29b:: with SMTP id s27-v6mr21351936wra.100.1534449504318;
+        Thu, 16 Aug 2018 12:58:24 -0700 (PDT)
+Received: from [192.168.1.18] (bkw170.neoplus.adsl.tpnet.pl. [83.28.190.170])
+        by smtp.gmail.com with ESMTPSA id m68-v6sm4204913wmb.10.2018.08.16.12.58.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Aug 2018 12:58:23 -0700 (PDT)
+Subject: Re: [PATCH v4 2/2] leds: lm3697: Introduce the lm3697 driver
+To:     Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <20180816172058.31700-1-dmurphy@ti.com>
+ <20180816172058.31700-2-dmurphy@ti.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <9ef9cd25-5c73-964c-ac09-55c0c78e5dc9@gmail.com>
+Date:   Thu, 16 Aug 2018 21:58:21 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180811155554.3382650-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180816172058.31700-2-dmurphy@ti.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [165.204.55.250]
-X-ClientProxiedBy: YTOPR0101CA0058.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b00:14::35) To BLUPR12MB0595.namprd12.prod.outlook.com
- (2a01:111:e400:594f::28)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 869575bb-3016-40b6-b932-08d603b24656
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BLUPR12MB0595;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0595;3:elttS6qGVZ9aGtmBhXjFuQIxdxeBK3JF8XiAP77k1WGoILj2uuNKA9oVoudt7PFtMN21EtecLhcGNsOHYqYdA/AzwWDuPz3rhNmiMgExJaA03belD6oB29y9bdN3S8ZNrVFBDOXQn0YA3Xr5vrD3hWBY3hU95gf8P6kWpnVdoTIypyWHqReTUcCYkpcs2R4mihoXMUkyX+3FpgqDWpT64mMNI2ac+xCfUVshbdj2hHm0e8moEoThGy+VU6+OiLt0;25:dtd5oSXAADEne0Y66cO+scgE8oR6O07D/3GbqV8b8mZtb5C+hVbe7Q5tToRn93eiPWtDBt8GFpMODISa+gS7+0mczlbwceXW6vy6cuEW/pNs1qMQaISTgPsxHPCWkgV5yFlDZbq7omObuWSHXV7QQz3lYhCl4blpYyfx6EqZxZYroOz3Oz15cIg4X761rO8qqNs/tzo+ao9gafGl5Xs3ry5VPy5kNCucX3BnZixf0btHkZisHeHpLycOJECIjB6bzowRq+VoT37xmk3cSGTDgpQlG62Ns1VBiVAPFdfthH+FmNC099JX3UksNWA9znuhsdsW83n38cFK9kATQ0eJ7A==;31:e4I2zvvayjOlnaLV2AJHCVKxNolby/u39nCOlLS4HAVHy1JYKpVfPkAJfk8iQDvdXxWaWGJSWY/ofowZloUgF51m7sQlVgJeiO5S/wf31dLNaqQaQ+g3zIxT133BWii1eSJEZnKTHLTD9CvpJTmx/hT9eYNP2gjSrBhEaxFgXKwhcUrkIWRx/tzRJ4rEr8RPn5IZoaWMBb+jSGoP9Ksg3dpqlLVT3TNnu3Bqu/RmzhU=
-X-MS-TrafficTypeDiagnostic: BLUPR12MB0595:
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0595;20:mpXYWwx82qiwW1JBUvF3LqfBxIHFPXB9V5MyUU3xtMc/duIddgy/UU4T1QO2iP68cTUAWJqjKKgGakSIZ7aBjXCZ8lDZtIpTTNiTxT//opGgrhJCffABl2PFhCvH8qx6fOfW5KQEyYh8QmesivFzxSZ/reqL967ppxiBBaC4wPCVjF5eHuRbjuniHiAxkCb0Fu01wH7SUQGPnSf+s56uJFruUPsYHHBQzzh+vHyZAumOhFDLmYZzHJ0vkJH+WuRrpbXgWis/nAqOKFPpx2Pci8PzMa25ZuFKr9d1DbWXkyJQrj1QIe2isdWh1AwxE0PLFcNHHEjHC+mRRF/LiEywPCBvDmVdC/5ZxH0OAz3ya298KDNJHJOHQfITR7U5AVwCP72waxBwzLi0wvkYzIRfgdYvPUHY9bkA0fHzuBDeEAH8r7b//hYEOv6DmF0dFprVEeQmxw+ydMdK5X1/IWWDi6Q2jm/+nzyv3lTQJvUsyWBS43TDke7qo+cQZaC1a3eR;4:TlWDOdgkNOUwo2GjFZs13zIvei3sspkaKK5QbSo4F880GiEW+ZqNVsNjlPDjuryDmZQw/+Ma06KOLQsG61fiC3iN1iQPNIcFV7TXhTCHFZkj65zzDI2iMEhEaaRj0w93Ar9KUQvGhyXp/ZCWeOp5Yjslnb6Pik93pwa53VimizrmshnyZ0igWLdLH9NrWInkl7bw2jwYGTVAwg2ytBL47HFPe0QBzXCPWiH1joxvsCRmrzvNQsIvx/hGvtLYQyqC0KC9Ktts/TsudfU3hxnZu8Qqo+5nLYF4nJKBKonK1xqKFjhvfMLLrQ2orxVuS//r
-X-Microsoft-Antispam-PRVS: <BLUPR12MB059561549BFD38F55B0784F9823E0@BLUPR12MB0595.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(788757137089);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:BLUPR12MB0595;BCL:0;PCL:0;RULEID:;SRVR:BLUPR12MB0595;
-X-Forefront-PRVS: 07665BE9D1
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(376002)(366004)(39860400002)(396003)(346002)(136003)(189003)(199004)(26005)(476003)(6246003)(52146003)(2486003)(52116002)(64126003)(23676004)(77096007)(67846002)(16576012)(58126008)(76176011)(7736002)(54906003)(110136005)(316002)(305945005)(117156002)(68736007)(446003)(81166006)(25786009)(11346002)(4326008)(81156014)(2906002)(6116002)(8676002)(386003)(72206003)(3846002)(2616005)(956004)(8936002)(230700001)(31696002)(53546011)(16526019)(86362001)(575784001)(486006)(97736004)(65956001)(65806001)(6486002)(31686004)(47776003)(478600001)(66066001)(229853002)(50466002)(6666003)(6636002)(53936002)(65826007)(36756003)(105586002)(5660300001)(106356001)(14444005);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR12MB0595;H:[192.168.1.2];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCTFVQUjEyTUIwNTk1OzIzOlZEY0hoNjA5N3M2R1RjSkJVaGM2aThRbVhv?=
- =?utf-8?B?OUVoV09hMkkzbjhRWG9XbXlhZmwvMGZnUHdPeFpoZUpNaE9VM2R3SFR4cCtD?=
- =?utf-8?B?bW5Cb3FPRVpYWTc2TXFKVnRwQVMvM1YwaDhxMUNuSCtyOThMZkVZTW1FUmZW?=
- =?utf-8?B?bVJMRGl5RThLelhxS3VYbHdFdnJ0SEluU0lxSnVQQll2T0JjR2Rpd2VZa2ho?=
- =?utf-8?B?VTJvRy92Y0pDRVkzQ0F4d0h4Q1FRdkRwQk9qZ0ZxZmZMdERmdXkwTW9mRSs5?=
- =?utf-8?B?bU5DdnNNQ1p6ajRnQk1kVUlpTm9xd2lvc3NTb0pFdXNJclVTS3BUYjNSODc4?=
- =?utf-8?B?YVhOUU81VExNTDFCOVg4ekhEOGxtM09HOXdrd0gwSy9qbGt4bEsrU3lpZzAz?=
- =?utf-8?B?dTlYeDVnRkRPbnZmV1NDQmtLUVRCSGpQSnBEWGlsdVZNQXFub0JjMHdjNFJo?=
- =?utf-8?B?OUdkTXFmWmUwNVFBWER3N3hWZkVGMmtRR01qN09UVjJubHZFdjYzenZPREZF?=
- =?utf-8?B?alFJTW0reEk3U1lVS3JtVG5lUWl4QWR6OGpNRWhobThLWnFJaFVWN3haaU5t?=
- =?utf-8?B?VENveHM3ck9TdER5UXl2d3FVZndXNU5FUUNaRHpBZFcvY3ova3JpYWJla0di?=
- =?utf-8?B?b0oyRHd5TEttL2IvRFlaeWdVdXluOGZTcENYNGt5YVVOdCs2cmhBL1VqVTA0?=
- =?utf-8?B?U3JDTmhqbjdCNGVBeFRkUTUya05JRUd0Z0J4YkFZLzFNZUVrQ0JEdEIyczZ5?=
- =?utf-8?B?d045N2ZybjhkeHZCZVU1NkNOajd1YVg5QWdSRDVGV3hSTDJlU2IyRVBwN09r?=
- =?utf-8?B?YjZWRTZsdGdHeFNjdmRFNEg3MEFqUHJuU3FEWHVMWENtdm9nakZCaFp3RlJC?=
- =?utf-8?B?TGVWZ2xuT3lBMzBzdStzNTJzUCtvRXFZb0RyU3JMb0VoMW9NVVkrcmhZQ1dV?=
- =?utf-8?B?TUhhVnN2QllQaGZuVXFQN2JTdG5KRERMYXlYMTNnZFdWTXpHVlRKUFBMSk1x?=
- =?utf-8?B?QXhhamJDWG5wREd2eHdORUhCYnhONFhMR005MnZHdkFxR1FZR21MNU1yNXBl?=
- =?utf-8?B?Z1p3S29pU0dSQUtqOXUzS3hQU2ZCaXdhNXJDR1U1M0IvN2NHbkRUK2RJSTFD?=
- =?utf-8?B?TUhBbm5xTzAzRDRwK1c5VmRyZ2poR3IvY2g0RURZUFZ4SEx4elpCSGt3aGx0?=
- =?utf-8?B?MnRWbnZldUlGVnY0MCtWZEFQZC9pakNkd21zUTZDWEpNZ09RV0JZNEZyTjBD?=
- =?utf-8?B?Z1ppcURoZUlRRVBKSVhHMktQOHNxeVNiWWZ6azdXamNpbWFUQnNBZ2N2NWho?=
- =?utf-8?B?dEdlRjVwdU9xOEpORERxSEF3SDkwWldvQUVlL2R0V29tcnNiOW1SRGJESTl4?=
- =?utf-8?B?LzZ3cFI0Yi9WeUFzeStzcXlqK09VaEM3UjBuZzkzV0RndDhja21zWHBkMlVW?=
- =?utf-8?B?VVJ0RnppY1NnamFvR3R6Y0hSTnRFTWpZVXVVNEszSE5yd0NwanhHdXFsWGk4?=
- =?utf-8?B?OEFtV3A2STBMemlJa3daVC9JMXFabER6MTBYTmdyM2kvanA1dllKeGtLK1ZY?=
- =?utf-8?B?YjdEL3UveERTakIxUmwyRVlnM0dkU25iOFdETFF5T0NuUUdmelBqVFBkcEZF?=
- =?utf-8?B?MDVrZm5HZXdnemw3QjBoQkJ5ZFRrQ2RDTmhWUmE3L0gzaHA3MGxKVm52aTFG?=
- =?utf-8?B?Q2Z5ZS9ZRDdSdGhMd3BMallZQ0VzNERuc3V0NWNzZ2JSOXBBd2xKa0VDT05s?=
- =?utf-8?B?U1dqU3hSaUN6YlZLU1ErZlhWYlFBQ1hlRE12aTZtRlA0YzZKUE9VUHFhclFV?=
- =?utf-8?B?ek5WcEt5eE1VRVZMNlBlNUVsWHJHSEQ2UW1vUGxDdVAzS2pzbGV1YkpBV1I3?=
- =?utf-8?B?SURVbzVDVUxvRzdSRVp2Z1JWblEvNzBFSEFLOWZKV1pEMWIreEgvZnRqazhC?=
- =?utf-8?B?OFVtSnpBQlZGSUtDakZKRjAyK1Nsd2FQOEIzOWIxMzRqNXNsTnRIV05FRkhs?=
- =?utf-8?B?RU5VS3VucW1mbFUxSnkweEw4eDZYZGEyNXo5M2RaWW5lNjlmTmRIN0dTTVFR?=
- =?utf-8?Q?+HNDFdudoQMGge1QmvTGWTRWp?=
-X-Microsoft-Antispam-Message-Info: uaHLPxz2MuSuLrIzoS1a4LxrT7HnyBhuLo+ATxkc2r+6zo1B9sRRGnxovlx8HT5tpP4sRYtY6LsM68zBdqTzyNKFQkKtiTHm80bGKh1gDMUoTdY9RHl6CgSs3EusubIfz08q3X3SsSIGPuIL4+pv+zYSMPKXl4LbCgC1yUBJ+oWEu0C8IzREnLlI2SrSA4ecJWy9zmHZsUCX/F8hEd6FkcmxsjKLs9n+J5jicktu+1B5aPkXP6yZcIHWoY/7WTyVr+RYPQfYz5hSZ6PSIpNs2M7BbHh7ZiUH4cqQYofRgEYCgyqRH7f0pf86gT1hSsxPkR8GHOlyeEkqxk6DuY4/1bdnP3mqQpQHPLOv6j6H4kg=
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0595;6:lk/chrKRt/QgUbZEpcmEMb1TXoM6fAqt12+rwTP/5DXwcZyZer1jU9soFxdmdP4tK33OjOJaM4mc8oy08Lmsm437aog3f1FbkBXe3U7tJ3yaPbP89BpT2AWtDi1l25PouoyKDuqM7tc3Jxtmb85VMDSDA66cKBDHLGBGllnfuYmPN0GBslDf3VIzXwQNlzJFdb3aP0GNKQirbdMaIylRhUH0IGsrP0IsaNA8aBJBPgKhZtiuRqTA/dskFtiTbmhG19rPGN+d1rw52Z+TyOOv0SKhZZI0oKMb5PhaYyODlI2b3gY6L0uhsS+gWJgEJDLmasRp+zPD/2SJ5NsZeaAy7euTzC0IHGWX4GioNT0oUceY5aQml7TB/Oq2mCYiGdGn1kC1opPTxSLN6ZqyMcMVBN6+4nXXGRIW7T06Tt450anhr9wzqSH+CwT3c/rgH1hCd/zrNDShMF3jeo1Ti48bBQ==;5:jhkR18HpK4GWOSvW8YsOH3unW9PGvIBlSrieehXvuO6FJMk+MfliioP+FHOJt60moj+iDAfgLxPQM7NT1yN1TeLYiO9Zub2AQpbbRwfy4JZVYnSgcrdVfnk8F/EhYTJ/EdV5fASD6Vk8a/6SbiFJ/hNVpFf14H8ROiTPNdPipOM=;7:n4IxeYFjYrfxHMmWGkVpFyEYg/AiOYzNLkeKwy5H4y8osTDBKs0VWSszFyN2rWuYlrQO1b11id//JRK6pkuWVz5zMTiM45gVN/u76/ruaa/Zgg22r0/+dpE1c7wWVnt2+0eQMw6+r/dA14dbPWrI7SXyxEEWspUslahyAeRiOpEX+dUPw9YjVU7ZuHFZabRKINvwt3k0V5a7oV+pM4qfchvsmp9qvIQYz0E/u1xSXe7y4Ix+c/udqr3HQ2EhF1cV
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0595;20:Ii+iOK0biOYVAB7PV16fcp+ZIJjsurTomeHFYs0AAyUinFAZfXLTmwZsq3g/vQ5VF1jrcQck8a580EnxchG7QBoxbo5/QKgW9xL1X5yMpmfquoz9jgvnsdm+t7+76uOq1uPoi0zVczDfopMxlcaw+Ul3RrsfY3kkgRgsBeh2A10zYV0NNgnjbNK1hhr8GflxUmQOIE1/eUsxAmrrmbQoCvbLRsUGTXIEfsDStVYsZlC/UYrd7VwOIbYPgyZ2z0h1
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2018 19:55:53.4470 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 869575bb-3016-40b6-b932-08d603b24656
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR12MB0595
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dan,
 
+Thank you for the patch.
 
-On 2018-08-11 11:54 AM, Arnd Bergmann wrote:
-> Building the DCN 1.0 Raven display driver with CONFIG_KCOV_INSTRUMENT_ALL=y
-> and CONFIG_KCOV_ENABLE_COMPARISONS=y results in warnings about many functions
-> that do a comparison of floating-point variables:
+I didn't review DT parsing details in v3, but now I've produced
+diff between v3 and v4 to check what has changed.
+
+I'm quite surprised realizing that you're not validating
+HVLED and control banks assignment, having in mind earlier
+discussions and your concerns about numerous DT configurations
+to check.
+
+Is it on purpose?
+
+Regardless of that - please find two nits below.
+
+On 08/16/2018 07:20 PM, Dan Murphy wrote:
+> Introduce the lm3697 LED driver for
+> backlighting and display.
 > 
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calcs.o: In function `dcn_bw_calc_rq_dlg_ttu':
-> dcn_calcs.c:(.text+0x263): undefined reference to `__sanitizer_cov_trace_cmpf'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calcs.o: In function `hack_force_pipe_split':
-> dcn_calcs.c:(.text+0x155b): undefined reference to `__sanitizer_cov_trace_cmpf'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calcs.o: In function `dcn_find_dcfclk_suits_all':
-> dcn_calcs.c:(.text+0x190e): undefined reference to `__sanitizer_cov_trace_cmpf'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calcs.o: In function `dcn_validate_bandwidth':
-> dcn_calcs.c:(.text+0xe121): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_math.o: In function `dcn_bw_mod':
-> dcn_calc_math.c:(.text+0x22): undefined reference to `__sanitizer_cov_trace_cmpf'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_math.o: In function `dcn_bw_min2':
-> dcn_calc_math.c:(.text+0xb2): undefined reference to `__sanitizer_cov_trace_cmpf'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_math.o: In function `dcn_bw_ceil2':
-> dcn_calc_math.c:(.text+0x2a0): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_math.o: In function `dcn_bw_max3':
-> dcn_calc_math.c:(.text+0x325): undefined reference to `__sanitizer_cov_trace_cmpf'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_math.o: In function `dcn_bw_max5':
-> dcn_calc_math.c:(.text+0x3c3): undefined reference to `__sanitizer_cov_trace_cmpf'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_math.o: In function `dcn_bw_log':
-> dcn_calc_math.c:(.text+0x54e): undefined reference to `__sanitizer_cov_trace_cmpd'
-> dcn_calc_math.c:(.text+0x57c): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `scaler_settings_calculation':
-> dcn_calc_auto.c:(.text+0x5c5): undefined reference to `__sanitizer_cov_trace_cmpf'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `mode_support_and_system_configuration':
-> dcn_calc_auto.c:(.text+0x137c): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `mode_support_and_system_configuration':
-> dcn_calc_auto.c:(.text+0x9233): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `mode_support_and_system_configuration':
-> dcn_calc_auto.c:(.text+0xb70f): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `mode_support_and_system_configuration':
-> dcn_calc_auto.c:(.text+0x121fd): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `display_pipe_configuration':
-> dcn_calc_auto.c:(.text+0x15a2f): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `dispclkdppclkdcfclk_deep_sleep_prefetch_parameters_watermarks_and_performance_calculation':
-> dcn_calc_auto.c:(.text+0x17c2d): undefined reference to `__sanitizer_cov_trace_cmpf'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `dispclkdppclkdcfclk_deep_sleep_prefetch_parameters_watermarks_and_performance_calculation':
-> dcn_calc_auto.c:(.text+0x19362): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `dispclkdppclkdcfclk_deep_sleep_prefetch_parameters_watermarks_and_performance_calculation':
-> dcn_calc_auto.c:(.text+0x25575): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/calcs/dcn_calc_auto.o: In function `dispclkdppclkdcfclk_deep_sleep_prefetch_parameters_watermarks_and_performance_calculation':
-> dcn_calc_auto.c:(.text+0x27f33): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/dml/display_rq_dlg_calc.o: In function `get_refcyc_per_delivery':
-> display_rq_dlg_calc.c:(.text+0xb5): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/dml/display_rq_dlg_calc.o: In function `calculate_ttu_cursor.isra.1':
-> display_rq_dlg_calc.c:(.text+0x9f6): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/dml/display_rq_dlg_calc.o: In function `dml_rq_dlg_get_dlg_params':
-> display_rq_dlg_calc.c:(.text+0x82cc): undefined reference to `__sanitizer_cov_trace_cmpf'
-> drivers/gpu/drm/amd/display/dc/dml/dml1_display_rq_dlg_calc.o: In function `get_refcyc_per_delivery.isra.0':
-> dml1_display_rq_dlg_calc.c:(.text+0x6c4): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/dml/dml1_display_rq_dlg_calc.o: In function `get_vratio_pre.isra.2':
-> dml1_display_rq_dlg_calc.c:(.text+0x957): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/dml/dml1_display_rq_dlg_calc.o: In function `get_swath_need.isra.3':
-> dml1_display_rq_dlg_calc.c:(.text+0xc8e): undefined reference to `__sanitizer_cov_trace_cmpf'
-> drivers/gpu/drm/amd/display/dc/dml/dml1_display_rq_dlg_calc.o: In function `dml1_extract_rq_regs':
-> dml1_display_rq_dlg_calc.c:(.text+0x30a8): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/dml/dml1_display_rq_dlg_calc.o: In function `dml1_rq_dlg_get_dlg_params':
-> dml1_display_rq_dlg_calc.c:(.text+0x41ee): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/dml/dml1_display_rq_dlg_calc.o: In function `dml1_rq_dlg_get_dlg_params':
-> dml1_display_rq_dlg_calc.c:(.text+0x8f95): undefined reference to `__sanitizer_cov_trace_cmpf'
-> drivers/gpu/drm/amd/display/dc/dml/dml_common_defs.o: In function `dml_round':
-> dml_common_defs.c:(.text+0x77): undefined reference to `__sanitizer_cov_trace_cmpd'
-> drivers/gpu/drm/amd/display/dc/dml/display_mode_vba.o: In function `adjust_ReturnBW':
-> display_mode_vba.c:(.text+0x4490): undefined reference to `__sanitizer_cov_trace_cmpd'
+> Datasheet location:
+> http://www.ti.com/lit/ds/symlink/lm3697.pdf
 > 
-> We already prevent the driver from being built on non-x86 architectures
-> because of its use of floating-point arithmetic, this extends the
-> dependency to also cover Kcov-enabled builds, which arguably is a much
-> more severe limitation.
-> 
-> I tried implementing the two functions in KCOV: __sanitizer_cov_trace_cmpd
-> and __sanitizer_cov_trace_cmpf, but that fails to build on architectures
-> that do not support any floating-point functions, or would require making
-> that code x86 specific as well.  I also looked at what it would take to
-
-Hi Arnd,
-
-Is there a reason why we can't make __sanitizer_cov_trace_cmpd and
-__sanitizer_cov_trace_cmpf X86 dependent?
-
-I sent out two patches to disable DCN1, but would prefer implementing
-these two functions as opposed to disabling a component.
-
-Thanks,
-Leo
-
-> convert the code to fixed-point arithmetic, but quickly gave up. This
-> is probably the right approach, but it requires a non-trivial amount of
-> work and certainly won't be appropriate as a bugfix.
-> 
-> Fixes: bf2e2e2e0ea9 ("drm/amd/display: Limit DCN to x86 arch")
-> Fixes: 4841203102a3 ("drm/amdgpu/display: Replace CONFIG_DRM_AMD_DC_DCN1_0 with CONFIG_X86")
-> Link: drm: amd: dc: don't use FP math when Kcov is enabled
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
 > ---
-> v3: rebase on top of 4841203102a3, which removed the option for
-> CONFIG_DRM_AMD_DC_DCN1_0. The problem still gets hit occasionally
-> in randconfig testing.
-> ---
->   drivers/gpu/drm/amd/display/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/gpu/drm/amd/display/Kconfig b/drivers/gpu/drm/amd/display/Kconfig
-> index 325083b0297e..b132d434e572 100644
-> --- a/drivers/gpu/drm/amd/display/Kconfig
-> +++ b/drivers/gpu/drm/amd/display/Kconfig
-> @@ -3,6 +3,7 @@ menu "Display Engine Configuration"
->   
->   config DRM_AMD_DC
->   	bool "AMD DC - Enable new display engine"
-> +	depends on !X86 || !(KCOV_INSTRUMENT_ALL && KCOV_ENABLE_COMPARISONS) || BROKEN
->   	default y
->   	help
->   	  Choose this option if you want to use the new display engine
+> v4 - Made modifications to the control bank routine to accomodate the DT changes
+> https://lore.kernel.org/patchwork/patch/974811/
+> v3 - Add code to support led-sources and control bank configuration also fix
+> other miscellaneous issues reported- https://lore.kernel.org/patchwork/patch/972336/
+> v2 - Removed unneed 'of' calls in dt_parse, fixed comment, fixed checkpatch
+> error, and change led registration - https://lore.kernel.org/patchwork/patch/971327/
 > 
+>  drivers/leds/Kconfig       |   9 +
+>  drivers/leds/Makefile      |   1 +
+>  drivers/leds/leds-lm3697.c | 381 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 391 insertions(+)
+>  create mode 100644 drivers/leds/leds-lm3697.c
+> 
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 44097a3e0fcc..784cbe375724 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -151,6 +151,15 @@ config LEDS_LM3642
+>  	  converter plus 1.5A constant current driver for a high-current
+>  	  white LED.
+>  
+> +config LEDS_LM3697
+> +	tristate "LED support for LM3697 Chip"
+> +	depends on LEDS_CLASS && I2C
+> +	select REGMAP_I2C
+> +	help
+> +	  This option enables support for LEDs connected to LM3697.
+> +	  The LM3697 is an 11 bit high performance backlight driver for
+> +	  keypad and display lighting.
+> +
+>  config LEDS_LM3692X
+>  	tristate "LED support for LM3692x Chips"
+>  	depends on LEDS_CLASS && I2C && OF
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 420b5d2cfa62..2813f089f3db 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -19,6 +19,7 @@ obj-$(CONFIG_LEDS_LOCOMO)		+= leds-locomo.o
+>  obj-$(CONFIG_LEDS_LM3530)		+= leds-lm3530.o
+>  obj-$(CONFIG_LEDS_LM3533)		+= leds-lm3533.o
+>  obj-$(CONFIG_LEDS_LM3642)		+= leds-lm3642.o
+> +obj-$(CONFIG_LEDS_LM3697)		+= leds-lm3697.o
+>  obj-$(CONFIG_LEDS_MIKROTIK_RB532)	+= leds-rb532.o
+>  obj-$(CONFIG_LEDS_S3C24XX)		+= leds-s3c24xx.o
+>  obj-$(CONFIG_LEDS_NET48XX)		+= leds-net48xx.o
+> diff --git a/drivers/leds/leds-lm3697.c b/drivers/leds/leds-lm3697.c
+> new file mode 100644
+> index 000000000000..390c6a928899
+> --- /dev/null
+> +++ b/drivers/leds/leds-lm3697.c
+> @@ -0,0 +1,381 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// TI LM3697 LED chip family driver
+> +// Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
+> +
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/i2c.h>
+> +#include <linux/init.h>
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/of_gpio.h>
+> +#include <linux/regmap.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/slab.h>
+> +#include <uapi/linux/uleds.h>
+> +
+> +#define LM3697_REV			0x0
+> +#define LM3697_RESET			0x1
+> +#define LM3697_OUTPUT_CONFIG		0x10
+> +#define LM3697_CTRL_A_RAMP		0x11
+> +#define LM3697_CTRL_B_RAMP		0x12
+> +#define LM3697_CTRL_A_B_RT_RAMP		0x13
+> +#define LM3697_CTRL_A_B_RAMP_CFG	0x14
+> +#define LM3697_CTRL_A_B_BRT_CFG		0x16
+> +#define LM3697_CTRL_A_FS_CURR_CFG	0x17
+> +#define LM3697_CTRL_B_FS_CURR_CFG	0x18
+> +#define LM3697_PWM_CFG			0x1c
+> +#define LM3697_CTRL_A_BRT_LSB		0x20
+> +#define LM3697_CTRL_A_BRT_MSB		0x21
+> +#define LM3697_CTRL_B_BRT_LSB		0x22
+> +#define LM3697_CTRL_B_BRT_MSB		0x23
+> +#define LM3697_CTRL_ENABLE		0x24
+> +
+> +#define LM3697_SW_RESET		BIT(0)
+> +
+> +#define LM3697_CTRL_A_EN	BIT(0)
+> +#define LM3697_CTRL_B_EN	BIT(1)
+> +#define LM3697_CTRL_A_B_EN	(LM3697_CTRL_A_EN | LM3697_CTRL_B_EN)
+> +
+> +#define LM3697_MAX_LED_STRINGS	3
+> +
+> +#define LM3697_CONTROL_A	0
+> +#define LM3697_CONTROL_B	1
+> +#define LM3697_HVLED		1
+
+s/LM3697_HVLED/LM3697_HVLED_ASSIGNED/
+
+It will be more informative in this form.
+
+> +
+> +/**
+> + * struct lm3697_led -
+> + * @hvled_strings - Array of LED strings associated with a control bank
+> + * @label - LED label
+> + * @led_dev - LED class device
+> + * @priv - Pointer to the device struct
+> + * @control_bank - Control bank the LED is associated to. 0 is control bank A
+> + *		   1 is control bank B.
+> + */
+> +struct lm3697_led {
+> +	u32 hvled_strings[LM3697_MAX_LED_STRINGS];
+> +	char label[LED_MAX_NAME_SIZE];
+> +	struct led_classdev led_dev;
+> +	struct lm3697 *priv;
+> +	int control_bank;
+> +};
+> +
+> +/**
+> + * struct lm3697 -
+> + * @enable_gpio - Hardware enable gpio
+> + * @regulator - LED supply regulator pointer
+> + * @client - Pointer to the I2C client
+> + * @regmap - Devices register map
+> + * @dev - Pointer to the devices device struct
+> + * @lock - Lock for reading/writing the device
+> + * @leds - Array of LED strings.
+> + */
+> +struct lm3697 {
+> +	struct gpio_desc *enable_gpio;
+> +	struct regulator *regulator;
+> +	struct i2c_client *client;
+> +	struct regmap *regmap;
+> +	struct device *dev;
+> +	struct mutex lock;
+> +	struct lm3697_led leds[];
+> +};
+> +
+> +static const struct reg_default lm3697_reg_defs[] = {
+> +	{LM3697_OUTPUT_CONFIG, 0x6},
+> +	{LM3697_CTRL_A_RAMP, 0x0},
+> +	{LM3697_CTRL_B_RAMP, 0x0},
+> +	{LM3697_CTRL_A_B_RT_RAMP, 0x0},
+> +	{LM3697_CTRL_A_B_RAMP_CFG, 0x0},
+> +	{LM3697_CTRL_A_B_BRT_CFG, 0x0},
+> +	{LM3697_CTRL_A_FS_CURR_CFG, 0x13},
+> +	{LM3697_CTRL_B_FS_CURR_CFG, 0x13},
+> +	{LM3697_PWM_CFG, 0xc},
+> +	{LM3697_CTRL_A_BRT_LSB, 0x0},
+> +	{LM3697_CTRL_A_BRT_MSB, 0x0},
+> +	{LM3697_CTRL_B_BRT_LSB, 0x0},
+> +	{LM3697_CTRL_B_BRT_MSB, 0x0},
+> +	{LM3697_CTRL_ENABLE, 0x0},
+> +};
+> +
+> +static const struct regmap_config lm3697_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +
+> +	.max_register = LM3697_CTRL_ENABLE,
+> +	.reg_defaults = lm3697_reg_defs,
+> +	.num_reg_defaults = ARRAY_SIZE(lm3697_reg_defs),
+> +	.cache_type = REGCACHE_FLAT,
+> +};
+> +
+> +static int lm3697_brightness_set(struct led_classdev *led_cdev,
+> +				enum led_brightness brt_val)
+> +{
+> +	struct lm3697_led *led = container_of(led_cdev, struct lm3697_led,
+> +					      led_dev);
+> +	int brt_msb_reg, brt_lsb_reg, ctrl_en_val;
+> +	int led_brightness_lsb = (brt_val >> 5);
+> +	int ret;
+> +
+> +	mutex_lock(&led->priv->lock);
+> +
+> +	if (led->control_bank == LM3697_CONTROL_A) {
+> +		brt_msb_reg = LM3697_CTRL_A_BRT_MSB;
+> +		brt_lsb_reg = LM3697_CTRL_A_BRT_LSB;
+> +		ctrl_en_val = LM3697_CTRL_A_EN;
+> +	} else {
+> +		brt_msb_reg = LM3697_CTRL_B_BRT_MSB;
+> +		brt_lsb_reg = LM3697_CTRL_B_BRT_LSB;
+> +		ctrl_en_val = LM3697_CTRL_B_EN;
+> +	}
+> +
+> +	if (brt_val == LED_OFF)
+> +		ret = regmap_update_bits(led->priv->regmap, LM3697_CTRL_ENABLE,
+> +					 ctrl_en_val, ~ctrl_en_val);
+> +	else
+> +		ret = regmap_update_bits(led->priv->regmap, LM3697_CTRL_ENABLE,
+> +					 ctrl_en_val, ctrl_en_val);
+> +
+> +	if (ret) {
+> +		dev_err(&led->priv->client->dev, "Cannot write CTRL enable\n");
+> +		goto out;
+> +	}
+> +
+> +	ret = regmap_write(led->priv->regmap, brt_lsb_reg, led_brightness_lsb);
+> +	if (ret) {
+> +		dev_err(&led->priv->client->dev, "Cannot write LSB\n");
+> +		goto out;
+> +	}
+> +
+> +	ret = regmap_write(led->priv->regmap, brt_msb_reg, brt_val);
+> +	if (ret) {
+> +		dev_err(&led->priv->client->dev, "Cannot write MSB\n");
+> +		goto out;
+> +	}
+> +out:
+> +	mutex_unlock(&led->priv->lock);
+> +	return ret;
+> +}
+> +
+> +static int lm3697_set_control_bank(struct lm3697 *priv)
+> +{
+> +	u8 control_bank_config = 0;
+> +	struct lm3697_led *led;
+> +	int ret, i;
+> +
+> +	led = &priv->leds[0];
+> +	if (led->control_bank == LM3697_CONTROL_A)
+> +		led = &priv->leds[1];
+> +
+> +	for (i = 0; i < LM3697_MAX_LED_STRINGS; i++) {
+> +		if (led->hvled_strings[i] == LM3697_HVLED)
+> +			control_bank_config |= 1 << i;
+> +	}
+> +
+> +	ret = regmap_write(priv->regmap, LM3697_OUTPUT_CONFIG,
+> +			   control_bank_config);
+> +	if (ret)
+> +		dev_err(&priv->client->dev, "Cannot write OUTPUT config\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static int lm3697_init(struct lm3697 *priv)
+> +{
+> +	int ret;
+> +
+> +	if (priv->enable_gpio) {
+> +		gpiod_direction_output(priv->enable_gpio, 1);
+> +	} else {
+> +		ret = regmap_write(priv->regmap, LM3697_RESET, LM3697_SW_RESET);
+> +		if (ret) {
+> +			dev_err(&priv->client->dev, "Cannot reset the device\n");
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	ret = regmap_write(priv->regmap, LM3697_CTRL_ENABLE, 0x0);
+> +	if (ret) {
+> +		dev_err(&priv->client->dev, "Cannot write ctrl enable\n");
+> +		goto out;
+> +	}
+> +
+> +	ret = lm3697_set_control_bank(priv);
+> +	if (ret)
+> +		dev_err(&priv->client->dev, "Setting the CRTL bank failed\n");
+> +
+> +out:
+> +	return ret;
+> +}
+> +
+> +static int lm3697_probe_dt(struct lm3697 *priv)
+> +{
+> +	struct fwnode_handle *child = NULL;
+> +	struct lm3697_led *led;
+> +	const char *name;
+> +	int control_bank;
+> +	size_t i = 0;
+> +	int ret;
+> +
+> +	priv->enable_gpio = devm_gpiod_get_optional(&priv->client->dev,
+> +						   "enable", GPIOD_OUT_LOW);
+> +	if (IS_ERR(priv->enable_gpio)) {
+> +		ret = PTR_ERR(priv->enable_gpio);
+> +		dev_err(&priv->client->dev, "Failed to get enable gpio: %d\n",
+> +			ret);
+> +		return ret;
+> +	}
+> +
+> +	priv->regulator = devm_regulator_get(&priv->client->dev, "vled");
+> +	if (IS_ERR(priv->regulator))
+> +		priv->regulator = NULL;
+> +
+> +	device_for_each_child_node(priv->dev, child) {
+> +		ret = fwnode_property_read_u32(child, "reg", &control_bank);
+> +		if (ret) {
+> +			dev_err(&priv->client->dev, "reg property missing\n");
+> +			fwnode_handle_put(child);
+> +			goto child_out;
+> +		}
+> +
+> +		if (control_bank > LM3697_CONTROL_B) {
+> +			dev_err(&priv->client->dev, "reg property is invalid\n");
+> +			ret = -EINVAL;
+> +			fwnode_handle_put(child);
+> +			goto child_out;
+> +		}
+> +
+> +		led = &priv->leds[i];
+> +		led->control_bank = control_bank;
+> +		ret = fwnode_property_read_u32_array(child, "led-sources",
+> +						    led->hvled_strings,
+> +						    LM3697_MAX_LED_STRINGS);
+> +		if (ret) {
+> +			dev_err(&priv->client->dev, "led-sources property missing\n");
+> +			fwnode_handle_put(child);
+> +			goto child_out;
+> +		}
+> +
+> +		fwnode_property_read_string(child, "linux,default-trigger",
+> +					    &led->led_dev.default_trigger);
+> +
+> +		ret = fwnode_property_read_string(child, "label", &name);
+> +		if (ret)
+> +			snprintf(led->label, sizeof(led->label),
+> +				"%s::", priv->client->name);
+> +		else
+> +			snprintf(led->label, sizeof(led->label),
+> +				 "%s:%s", priv->client->name, name);
+> +
+> +		led->priv = priv;
+> +		led->led_dev.name = led->label;
+> +		led->led_dev.brightness_set_blocking = lm3697_brightness_set;
+> +
+> +		ret = devm_led_classdev_register(priv->dev, &led->led_dev);
+> +		if (ret) {
+> +			dev_err(&priv->client->dev, "led register err: %d\n",
+> +				ret);
+> +			fwnode_handle_put(child);
+> +			goto child_out;
+> +		}
+> +
+> +		i++;
+> +	}
+> +
+> +child_out:
+> +	return ret;
+> +}
+> +
+> +static int lm3697_probe(struct i2c_client *client,
+> +			const struct i2c_device_id *id)
+> +{
+> +	struct lm3697 *led;
+> +	int count;
+> +	int ret;
+> +
+> +	count = device_get_child_node_count(&client->dev);
+> +	if (!count) {
+> +		dev_err(&client->dev, "LEDs are not defined in device tree!");
+> +		return -ENODEV;
+> +	}
+> +
+> +	led = devm_kzalloc(&client->dev, struct_size(led, leds, count),
+> +			   GFP_KERNEL);
+> +	if (!led)
+> +		return -ENOMEM;
+> +
+> +	mutex_init(&led->lock);
+> +	i2c_set_clientdata(client, led);
+> +
+> +	led->client = client;
+> +	led->dev = &client->dev;
+> +	led->regmap = devm_regmap_init_i2c(client, &lm3697_regmap_config);
+> +	if (IS_ERR(led->regmap)) {
+> +		ret = PTR_ERR(led->regmap);
+> +		dev_err(&client->dev, "Failed to allocate register map: %d\n",
+> +			ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = lm3697_probe_dt(led);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = lm3697_init(led);
+
+Let's simplify it:
+
+return lm3697_init(led);
+
+> +
+> +	return ret;
+> +}
+> +
+> +static int lm3697_remove(struct i2c_client *client)
+> +{
+> +	struct lm3697 *led = i2c_get_clientdata(client);
+> +	int ret;
+> +
+> +	ret = regmap_update_bits(led->regmap, LM3697_CTRL_ENABLE,
+> +				 LM3697_CTRL_A_B_EN, 0);
+> +	if (ret) {
+> +		dev_err(&led->client->dev, "Failed to disable the device\n");
+> +		return ret;
+> +	}
+> +
+> +	if (led->enable_gpio)
+> +		gpiod_direction_output(led->enable_gpio, 0);
+> +
+> +	if (led->regulator) {
+> +		ret = regulator_disable(led->regulator);
+> +		if (ret)
+> +			dev_err(&led->client->dev,
+> +				"Failed to disable regulator\n");
+> +	}
+> +
+> +	mutex_destroy(&led->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct i2c_device_id lm3697_id[] = {
+> +	{ "lm3697", 0 },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, lm3697_id);
+> +
+> +static const struct of_device_id of_lm3697_leds_match[] = {
+> +	{ .compatible = "ti,lm3697", },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, of_lm3697_leds_match);
+> +
+> +static struct i2c_driver lm3697_driver = {
+> +	.driver = {
+> +		.name	= "lm3697",
+> +		.of_match_table = of_lm3697_leds_match,
+> +	},
+> +	.probe		= lm3697_probe,
+> +	.remove		= lm3697_remove,
+> +	.id_table	= lm3697_id,
+> +};
+> +module_i2c_driver(lm3697_driver);
+> +
+> +MODULE_DESCRIPTION("Texas Instruments LM3697 LED driver");
+> +MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
+> +MODULE_LICENSE("GPL v2");
+> 
+
+-- 
+Best regards,
+Jacek Anaszewski
