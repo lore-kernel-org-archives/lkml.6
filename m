@@ -3,82 +3,225 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D86CFC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C334C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:24:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD5EB2124D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:24:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD5EB2124D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 756812124D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:24:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 756812124D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cr.yp.to
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388144AbeHPHTx (ORCPT
+        id S2388164AbeHPHUF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 03:19:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47060 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726072AbeHPHTx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 03:19:53 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 27B4C40216F3;
-        Thu, 16 Aug 2018 04:24:17 +0000 (UTC)
-Received: from [10.72.12.48] (ovpn-12-48.pek2.redhat.com [10.72.12.48])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 64EE12166BA0;
-        Thu, 16 Aug 2018 04:24:10 +0000 (UTC)
-Subject: Re: [RFC PATCH net-next V2 0/6] XDP rx handler
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     David Ahern <dsahern@gmail.com>,
-        Jesper Dangaard Brouer <jbrouer@redhat.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, mst@redhat.com
-References: <1534130250-5302-1-git-send-email-jasowang@redhat.com>
- <20180814003253.fkgl6lyklc7fclvq@ast-mbp>
- <5de3d14f-f21a-c806-51f4-b5efd7d809b7@redhat.com>
- <20180814121734.105769fa@redhat.com>
- <03ab3b18-9b13-8169-7e68-ada307694bc1@redhat.com>
- <08bf7aec-078a-612d-833f-5b3d09a289d0@gmail.com>
- <aa9cf883-7822-70a7-5ab5-c873b69c2098@redhat.com>
- <f4c0346d-6665-5312-0310-ffbda505b7ec@gmail.com>
- <2792239a-ed3b-d66e-0c1c-e99455311eff@redhat.com>
- <20180816040517.7vjm4bwxosyzvapu@ast-mbp.dhcp.thefacebook.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <4e5c81ee-56ae-1d70-273e-c551ad6c932b@redhat.com>
-Date:   Thu, 16 Aug 2018 12:24:07 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 16 Aug 2018 03:20:05 -0400
+Received: from salsa.cs.uic.edu ([131.193.32.108]:60508 "HELO salsa.cs.uic.edu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+        id S2388146AbeHPHUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 03:20:04 -0400
+Received: (qmail 15047 invoked by uid 1010); 16 Aug 2018 04:24:27 -0000
+Received: from unknown (unknown)
+  by unknown with QMTP; 16 Aug 2018 04:24:27 -0000
+Received: (qmail 15530 invoked by uid 1000); 16 Aug 2018 04:24:54 -0000
+Date:   16 Aug 2018 04:24:54 -0000
+Message-ID: <20180816042454.15529.qmail@cr.yp.to>
+Automatic-Legal-Notices: See https://cr.yp.to/mailcopyright.html.
+From:   "D. J. Bernstein" <djb@cr.yp.to>
+To:     Eric Biggers <ebiggers@kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Tanja Lange <tanja@hyperelliptic.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Karthikeyan Bhargavan <karthik.bhargavan@gmail.com>
+Subject: Re: [PATCH v1 2/3] zinc: Introduce minimal cryptography library
+References: <20180801072246.GA15677@sol.localdomain>
+ <CAHmME9pbwj0RaX4YM9epGOSgDRNUt=GA4UzO_iKcW=Md7kG6JQ@mail.gmail.com>
+ <20180814211229.GB24575@gmail.com>
+ <20180815162819.22765.qmail@cr.yp.to>
+ <20180815195732.GA79500@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180816040517.7vjm4bwxosyzvapu@ast-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 16 Aug 2018 04:24:17 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 16 Aug 2018 04:24:17 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--NzB8fVQJ5HfG6fxh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2018年08月16日 12:05, Alexei Starovoitov wrote:
-> On Thu, Aug 16, 2018 at 11:34:20AM +0800, Jason Wang wrote:
->>> Nothing about the topology is hard coded. The idea is to mimic a
->>> hardware pipeline and acknowledging that a port device can have an
->>> arbitrary layers stacked on it - multiple vlan devices, bonds, macvlans, etc
->> I may miss something but BPF forbids loop. Without a loop how can we make
->> sure all stacked devices is enumerated correctly without knowing the
->> topology in advance?
-> not following. why do you need a loop to implement macvlan as an xdp prog?
-> if loop is needed, such algorithm is not going to scale whether
-> it's implemented as bpf program or as in-kernel c code.
+Eric Biggers writes:
+> You'd probably attract more contributors if you followed established
+> open source conventions.
 
-David said the port can have arbitrary layers stacked on it. So if we 
-try to enumerate them before making forwarding decisions purely by BPF 
-program, it looks to me a loop is needed here.
+SUPERCOP already has thousands of implementations from hundreds of
+contributors. New speed records are more likely to appear in SUPERCOP
+than in any other cryptographic software collection. The API is shared
+by state-of-the-art benchmarks, state-of-the-art tests, three ongoing
+competitions, and increasingly popular production libraries.
 
-Thanks
+Am I correctly gathering from this thread that someone adding a new
+implementation of a crypto primitive to the kernel has to worry about
+checking the architecture and CPU features to figure out whether the
+implementation will run? Wouldn't it make more sense to take this
+error-prone work away from the implementor and have a robust automated
+central testing mechanism, as in SUPERCOP?
+
+Am I also correctly gathering that adding an extra implementation to the
+kernel can hurt performance, unless the implementor goes to extra effort
+to check for the CPUs where the previous implementation is faster---or
+to build some ad-hoc timing mechanism ("raid6: using algorithm avx2x4
+gen() 31737 MB/s")? Wouldn't it make more sense to take this error-prone
+work away from the implementor and have a robust automated central
+timing mechanism, as in SUPERCOP?
+
+I also didn't notice anyone disputing Jason's comment about the "general
+clunkiness" of the kernel's internal crypto API---but is there really no
+consensus as to what the replacement API is supposed to be? Someone who
+simply wants to implement some primitives has to decide on function-call
+details, argue about the software location, add configuration options,
+etc.? Wouldn't it make more sense to do this centrally, as in SUPERCOP?
+
+And then there's the bigger question of how the community is organizing
+ongoing work on accelerating---and auditing, and fixing, and hopefully
+verifying---implementations of cryptographic primitives. Does it really
+make sense that people looking for what's already been done have to go
+poking around a bunch of separate libraries? Wouldn't it make more sense
+to have one central collection of code, as in SUPERCOP? Is there any
+fundamental obstacle to having libraries share code for primitives?
+
+> there doesn't appear to be an official git repository for SUPERCOP,
+> nor is there any mention of how to send patches, nor is there any
+> COPYING or LICENSE file, nor even a README file.
+
+https://bench.cr.yp.to/call-stream.html explains the API and submission
+procedure for stream ciphers. There are similar pages for other types of
+cryptographic primitives. https://bench.cr.yp.to/tips.html explains the
+develop-test cycle and various useful options.
+
+Licenses vary across implementations. There's a minimum requirement of
+public distribution for verifiability of benchmark results, but it's up
+to individual implementors to decide what they'll allow beyond that.
+Patent status also varies; constant-time status varies; verification
+status varies; code quality varies; cryptographic security varies; etc.
+As I mentioned, SUPERCOP includes MD5 and Speck and RSA-512.
+
+For comparison, where can I find an explanation of how to test kernel
+crypto patches, and how fast is the develop-test cycle? Okay, I don't
+have a kernel crypto patch, but I did write a kernel patch recently that
+(I think) fixes some recent Lenovo ACPI stupidity:
+
+   https://marc.info/?l=qubes-users&m=153308905514481
+
+I'd propose this for review and upstream adoption _if_ it survives
+enough tests---but what's the right test procedure? I see superficial
+documentation of where to submit a patch for review, but am I really
+supposed to do this before serious testing? The patch works on my
+laptop, and several other people say it works, but obviously this is
+missing the big question of whether the patch breaks _other_ laptops.
+I see an online framework for testing, but using it looks awfully
+complicated, and the level of coverage is unclear to me. Has anyone
+tried to virtualize kernel testing---to capture hardware data from many
+machines and then centrally simulate kernels running on those machines,
+for example to check that those machines don't take certain code paths?
+I suppose that people who work with the kernel all the time would know
+what to do, but for me the lack of information was enough of a deterrent
+that I switched to doing something else.
+
+> Another issue is that the ChaCha code in SUPERCOP is duplicated for
+> each number of rounds: 8, 12, and 20.
+
+These are auto-generated, of course.
+
+To understand this API detail, consider some of the possibilities for
+the round counts supported by compiled code:
+
+   * 20
+   * 12
+   * 8
+   * caller selection from among 20 and 12 and 8
+   * caller selection of any multiple of 4
+   * caller selection of any multiple of 2
+   * caller selection of anything
+
+I hope that in the long term everyone is simply using 20, and then the
+pure 20 is the simplest and smallest and most easily verified code, but
+obviously there are other implementations today. An API with a separate
+function for each round count allows any of these implementations to be
+trivially benchmarked and used, whereas an API that insists on passing
+the round count as an argument prohibits at least the first three and
+maybe more.
+
+> crypto_stream/chacha20/dolbeau/arm-neon/, which uses a method similar to the
+> Linux implementation but it uses GCC intrinsics, so its performance will heavily
+> depend on how the compiler assigns and spills registers, which can vary greatly
+> depending on the compiler version and options.
+
+Sure. The damage done by incompetent compilers is particularly clear for
+in-order CPUs such as the Cortex-A7.
+
+> I understand that Salsa20 is similar to ChaCha, and that ideas from Salsa20
+> implementations often apply to ChaCha too.  But it's not always obvious what
+> carries over and what doesn't; the rotation amounts can matter a lot, for
+> example, as different rotations can be implemented in different ways.
+
+This sounds backwards to me. ChaCha20 supports essentially all the
+Salsa20 implementation techniques plus some extra streamlining: often a
+bit less register pressure, often less data reorganization, and often
+some rotation speedups.
+
+> Nor is it always obvious which ideas from SSE2 or AVX2 implementations
+> (for example) carry over to NEON implementations, as these instruction
+> sets are different enough that each has its own unique quirks and
+> optimizations.
+
+Of course.
+
+> Previously I also found that OpenSSL's ARM NEON implementation of Poly1305 is
+> much faster than the implementations in SUPERCOP, as well as more
+> understandable.  (I don't know the 'qhasm' language, for example.)  So from my
+> perspective, I've had more luck with OpenSSL than SUPERCOP when looking for fast
+> implementations of crypto algorithms.  Have you considered adding the OpenSSL
+> implementations to SUPERCOP?
+
+Almost all of the implementations in SUPERCOP were submitted by the
+implementors, with a few exceptions for wrappers. Realistically, the
+implementors are in the best position to check that they're getting the
+expected results and to be in control of any necessary updates.
+
+---Dan
+
+--NzB8fVQJ5HfG6fxh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbdPyWAAoJELDADU47DlRZRT4P/jXLMqeH1j/Ybbdd73zo/4qB
+fClPLtJzSWVJJ1Um2fKf9U89HTGy34stYflHzDDI9kd4/N2JYAh4mIlN3VcJ86h5
+Lb9Eld4LznYnibDWhgBGi/T1Y1MgbqG9iIEGsiq1/Pxj+JUb24vPKYPotGnucgdD
+mgs46Od3jaeEfcgbRLz0ajMmfcOx7G4UX+cggJ0pXFNj9mQseHauRpQhtaeeaHg3
+Dw5boLS6El/svESQYsZtAzTPuIHr40Qhg1vLL7OMIRb87/o6HrAuRFhSpcQS78Ia
+BhqYuSFbSbSc6yjoE4hbWQC0pAxfubrSwxK0y1TwlTdudmqZWoNErLe5cfdD7XnR
+muR6MPxc1oOpDA1xAPtr3YlVNX0uxyi4FLMOapmQkO4fprNcYWBj8ZsZAwIIj7pD
+hNmbOyKgcdQoEgVSh5WKZIVsPcUoypoRgTlyMqYptD9ocu4CRv4Gmhrnj/LZmJik
+Iquk8ONJoUHpPvE6yvznuvxAYHAVOYks+S52yHGyziryM/kWaIQb8y1I/B0bRxCq
+WMoHAEcCX3qLP49wEsFPJ/j3O/FwX7tVDmff+mPpnFbjMHY79AYtgeZg++KNNmUG
+BQAAs4fzhgppNw4zaIPrTY/KGz67j48fy4qwbwGignZMKxwDPCj+c37wTaqQrZ4r
+tWDe59IVHdcpbZINi41I
+=GQ+7
+-----END PGP SIGNATURE-----
+
+--NzB8fVQJ5HfG6fxh--
