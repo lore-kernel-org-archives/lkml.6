@@ -2,144 +2,91 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA0C2C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D7B5C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:22:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3254E2146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:18:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3254E2146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id EE5FD2148C
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:22:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE5FD2148C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390984AbeHPNQT (ORCPT
+        id S2390989AbeHPNTq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 09:16:19 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11120 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729663AbeHPNQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 09:16:19 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id B83C2A62DED6E;
-        Thu, 16 Aug 2018 18:18:44 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.399.0; Thu, 16 Aug 2018
- 18:18:45 +0800
-Message-ID: <5B754F84.3070502@huawei.com>
-Date:   Thu, 16 Aug 2018 18:18:44 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Thu, 16 Aug 2018 09:19:46 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35274 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729663AbeHPNTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 09:19:46 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FA167A9;
+        Thu, 16 Aug 2018 03:22:13 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2080A3F5BC;
+        Thu, 16 Aug 2018 03:22:13 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 4E9531AE2DA4; Thu, 16 Aug 2018 11:22:20 +0100 (BST)
+Date:   Thu, 16 Aug 2018 11:22:20 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        john.stultz@linaro.org
+Subject: Re: AArch64 boot failure on Hikey960 on latest master after "arm64:
+ insn: Don't fallback on nosync path for general insn patching"
+Message-ID: <20180816102219.GF31093@arm.com>
+References: <462f8ae6-9948-a8e5-7504-623d40344336@iki.fi>
 MIME-Version: 1.0
-To:     Claudiu Beznea <Claudiu.Beznea@microchip.com>
-CC:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux@armlinux.org.uk>
-Subject: Re: [PATCH] arm/mach-at91/pm: Do not double put the device node
-References: <1534211696-4221-1-git-send-email-zhongjiang@huawei.com> <20180814125954.GM943@piout.net> <59e252e6-6027-9f52-9ee8-8d0bd32659d2@microchip.com>
-In-Reply-To: <59e252e6-6027-9f52-9ee8-8d0bd32659d2@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <462f8ae6-9948-a8e5-7504-623d40344336@iki.fi>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/16 17:32, Claudiu Beznea wrote:
-> Hi Alexandre,
->
-> On 14.08.2018 15:59, Alexandre Belloni wrote:
->> On 14/08/2018 09:54:56+0800, zhong jiang wrote:
->>> Device node iterators put the previous value of the index variable,
->>> so an explicit put causes a double put.
->>>
->> While for_each_matching_node_and_match will get and put the node
->> properly, there is also a call to of_find_device_by_node that will get a
->> reference to the node.
->>
-> Looking through of_find_device_by_node() it seems that a put_device() on the
-> struct device member of the returned struct platform_device has to be called
-> instead of of_node_put().
->
-> of_find_device_by_node() calls bus_find_device():
->
-> dev = bus_find_device(&platform_bus_type, NULL, np, of_dev_node_match); 
->
-> the match function, of_dev_node_match(), is just as follows:
->
-> static int of_dev_node_match(struct device *dev, void *data)                    
-> {                                                                               
->         return dev->of_node == data;                                            
-> }                                                                               
->
-> but bus_find_device() takes a reference to the struct device returned in case it
-> founds a match, via get_device():
->
-> struct device *bus_find_device(struct bus_type *bus,                            
->                                struct device *start, void *data,                
->                                int (*match)(struct device *dev,
-> 			       void*data))    
-> {                                                                               
->         struct klist_iter i;                                                    
->         struct device *dev;                                                     
->                                                                                 
->         if (!bus || !bus->p)                                                    
->                 return NULL;                                                    
->                                                                                 
->         klist_iter_init_node(&bus->p->klist_devices, &i,                        
->                              (start ? &start->p->knode_bus : NULL));            
->         while ((dev = next_device(&i)))                                         
->                 if (match(dev, data) && get_device(dev))                        
->                         break;                                                  
->         klist_iter_exit(&i);                                                    
->         return dev;                                                             
-> }                                                                               
->
-> So, I think a put_device(&pdev->dev) has to be called in at91_pm_config_ws()
-> instead of of_node_put(np). My bad!
-Yes, you're right. Thanks, Claudiu. I will repost in v2.
+Hi Tuomas, [+John]
 
-Sincerely,
-zhong jiang
-> Thank you,
-> Claudiu Beznea
->
->>> I detect the issue with the help of Coccinelle.
->>>
->>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->>> ---
->>>  arch/arm/mach-at91/pm.c | 5 +----
->>>  1 file changed, 1 insertion(+), 4 deletions(-)
->>>
->>> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
->>> index 32fae4d..a5ec35f 100644
->>> --- a/arch/arm/mach-at91/pm.c
->>> +++ b/arch/arm/mach-at91/pm.c
->>> @@ -143,15 +143,12 @@ static int at91_pm_config_ws(unsigned int pm_mode, bool set)
->>>  
->>>  			/* Check if enabled on SHDWC. */
->>>  			if (wsi->shdwc_mr_bit && !(val & wsi->shdwc_mr_bit))
->>> -				goto put_node;
->>> +				continue;
->>>  
->>>  			mode |= wsi->pmc_fsmr_bit;
->>>  			if (wsi->set_polarity)
->>>  				polarity |= wsi->pmc_fsmr_bit;
->>>  		}
->>> -
->>> -put_node:
->>> -		of_node_put(np);
->>>  	}
->>>  
->>>  	if (mode) {
->>> -- 
->>> 1.7.12.4
->>>
-> .
->
+On Thu, Aug 16, 2018 at 02:38:51AM +0300, Tuomas Tynkkynen wrote:
+> Booting Linus's master of today with the usual arm64 defconfig fails for
+> me on the Hikey960 board. I've bisected it down to:
+> 
+> commit 693350a7998018391852c48f68956cf0f855b2b9 (HEAD, refs/bisect/bad)
+> Author: Will Deacon <will.deacon@arm.com>
+> Date:   Tue Jun 19 17:55:28 2018 +0100
+> 
+>     arm64: insn: Don't fallback on nosync path for general insn patching
+> 
+> Here's the boot log with earlycon enabled after which the boot hangs:
 
+Thanks for the boot log, that's really helpful. Please can you try the diff
+below?
 
+Out of interest -- do you know if Hikey960 is used by any boot-testing
+farms? The patch above has been in linux-next for ages, but we didn't see
+any complaints until it hit mainline :(
+
+Cheers,
+
+Will
+
+--->8
+
+diff --git a/arch/arm64/kernel/jump_label.c b/arch/arm64/kernel/jump_label.c
+index c2dd1ad3e648..e0756416e567 100644
+--- a/arch/arm64/kernel/jump_label.c
++++ b/arch/arm64/kernel/jump_label.c
+@@ -36,7 +36,7 @@ void arch_jump_label_transform(struct jump_entry *entry,
+ 		insn = aarch64_insn_gen_nop();
+ 	}
+ 
+-	aarch64_insn_patch_text(&addr, &insn, 1);
++	aarch64_insn_patch_text_nosync(addr, insn);
+ }
+ 
+ void arch_jump_label_transform_static(struct jump_entry *entry,
