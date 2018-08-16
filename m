@@ -2,113 +2,114 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4901EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2508C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 057E42147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:22:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lWlez8Qa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 057E42147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 865302147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:25:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 865302147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391823AbeHPRVc (ORCPT
+        id S2391840AbeHPRYM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 13:21:32 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:42386 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391810AbeHPRVa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 13:21:30 -0400
-Received: by mail-oi0-f68.google.com with SMTP id b16-v6so8291998oic.9
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 07:22:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4pzI73aVQK34I0le6F39OSJR6QjAySQDcjKJqpm/U08=;
-        b=lWlez8QaRwPpFqyTYfIrgaGWSM79qZ/D/1bqmwFIvoIv4eRL5xncIdrItKqGJtn4Ry
-         hCrORUdCxF32WBdzBJV5R7fRYYNvafmRg4684iagMQiD1ftf4PwHVR/Ywaov0L68p1c0
-         kX5NXPdANvgjtp7jt1qYBzKKEKQvSjInlgtvHCufsVfhv3tieLI288Dbd9LTLO/kM20l
-         YUwQNpetIHaC0BcJysqK7vNNDg5OFXEW4sHJHJPfNiQdAEDqSs7xanrL2gqxGnxIUbp2
-         b11qY37JtDU22/g219XcnoE9bDDN7l8iXqKwM+HVRAMWgMtdoIMLWmgbUmzwRVe4vhhh
-         UG8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4pzI73aVQK34I0le6F39OSJR6QjAySQDcjKJqpm/U08=;
-        b=BqKDlsHCDxFwkYPSAZpAyfFEGokgYUORLBn48jtStnqBq7fOJOepF2qNnXstNkCDGN
-         2bj61a2g9u4OJ8FUGT12YgtZTcJjghdJWvTP/UIpjD8OOi3oYByvY7gUH4Pgik6cKhPI
-         ddnrMC/ALE74NJvec7jVZH5Kz7723/TytI98M95kVNpzHQ1sPu3vwzjX4SGlAcUO0QbV
-         A9VI7392L2O+SO7cb4o5SCL8kKhT2EOBMZMEH6H3VMU3hcqQ/gY8RM9OfKl1zL1yNYan
-         frClH3Nz9PrBY8TKilNYr+I0tk7IclB2khhtREPWGlhOHTSexPRdy4eIiXsee8XxE8GB
-         NJ7g==
-X-Gm-Message-State: AOUpUlFzYtHNCIjp8MSzT/LTUES02LIqhmSSOcBSNLCNNtUOgDkMNgP+
-        jlrd0jtyx18tvdmutFhpj0gft7qv4Px9wZaJqtyb8A==
-X-Google-Smtp-Source: AA+uWPw0Q7bcReiSfjAPpFKewnu00zixCbI5uAa7b3HlCJlsCBgLw/wQo7gAwN5Zk/N89zULOeB2DdgUwX/BFaXLEI8=
-X-Received: by 2002:aca:3882:: with SMTP id f124-v6mr30188934oia.195.1534429354622;
- Thu, 16 Aug 2018 07:22:34 -0700 (PDT)
+        Thu, 16 Aug 2018 13:24:12 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57558 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389613AbeHPRYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 13:24:12 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id DA1A8207F3; Thu, 16 Aug 2018 16:25:14 +0200 (CEST)
+Received: from qschulz (AAubervilliers-681-1-43-114.w90-88.abo.wanadoo.fr [90.88.161.114])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8787C20703;
+        Thu, 16 Aug 2018 16:25:14 +0200 (CEST)
+Date:   Thu, 16 Aug 2018 16:25:14 +0200
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Rob Herring <robh@kernel.org>, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, mark.rutland@arm.com,
+        davem@davemloft.net, kishon@ti.com, andrew@lunn.ch,
+        f.fainelli@gmail.com, linux-mips@linux-mips.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, allan.nielsen@microsemi.com,
+        thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH net-next 02/10] dt-bindings: net: ocelot: remove hsio
+ from the list of register address spaces
+Message-ID: <20180816142514.pf4eiqeditoy4uei@qschulz>
+References: <cover.aa759035f6eefdd0bb2a5ae335dab5bd5399bd46.1532954208.git-series.quentin.schulz@bootlin.com>
+ <3558e538b55a2249b0a179c04c27e9d3715bbbaa.1532954208.git-series.quentin.schulz@bootlin.com>
+ <20180813223103.GA16669@rob-hp-laptop>
+ <20180814064953.vboz2gryq4jff34n@qschulz>
+ <20180814124135.GK943@piout.net>
 MIME-Version: 1.0
-References: <20180815235355.14908-1-casey.schaufler@intel.com> <20180815235355.14908-6-casey.schaufler@intel.com>
-In-Reply-To: <20180815235355.14908-6-casey.schaufler@intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 16 Aug 2018 16:22:08 +0200
-Message-ID: <CAG48ez0OAFqzak1=OEF5V8cZR_-dYUiXnUVp=mgnikexjQkELA@mail.gmail.com>
-Subject: Re: [PATCH RFC 5/5] SELinux: Support SELinux determination of
- side-channel vulnerability
-To:     casey.schaufler@intel.com
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        selinux@tycho.nsa.gov, SMACK-discuss@lists.01.org,
-        Dave Hansen <dave.hansen@intel.com>, deneen.t.dock@intel.com,
-        kristen@linux.intel.com, Arjan van de Ven <arjan@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="aqdqbjx2wofggoxf"
+Content-Disposition: inline
+In-Reply-To: <20180814124135.GK943@piout.net>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 11:52 AM Casey Schaufler
-<casey.schaufler@intel.com> wrote:
->
-> SELinux considers tasks to be side-channel safe if they
-> have PROCESS_SHARE access.
->
-> Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
-> ---
->  security/selinux/hooks.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index a8bf324130f5..7fbd7d7ac1cb 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -4219,6 +4219,14 @@ static void selinux_task_to_inode(struct task_struct *p,
->         spin_unlock(&isec->lock);
->  }
->
-> +static int selinux_task_safe_sidechannel(struct task_struct *p)
-> +{
-> +       struct av_decision avd;
-> +
-> +       return avc_has_perm_noaudit(&selinux_state, current_sid(), task_sid(p),
-> +                                   SECCLASS_PROCESS, PROCESS__SHARE, 0, &avd);
-> +}
 
-current_sid() -> current_security() -> current_cred_xxx() ->
-current_cred() accesses current->cred, the subjective credentials
-associated with the current syscall context, affected by
-override_creds(). You probably want to look at objective credentials
-here, since what you're interested in is not the security context of
-the current syscall, but the security context of the userspace code
-running in the current address space.
+--aqdqbjx2wofggoxf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-task_sid() does the right thing and looks at the objective creds.
+Hi Alexandre,
+
+On Tue, Aug 14, 2018 at 02:41:35PM +0200, Alexandre Belloni wrote:
+> On 14/08/2018 08:49:53+0200, Quentin Schulz wrote:
+> > Understood but it's an intermediate patch. Later (patch 8), the SerDes
+> > muxing "controller" is added as a child to this node. There most likely
+> > will be some others in the future (temperature sensor for example).
+> >=20
+> > Furthermore, there's already a simple-mfd without children in this file:
+> > https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree=
+/bindings/mips/mscc.txt#L19
+> >=20
+> > How should we handle this case?
+> >=20
+>=20
+> There were child nodes in previous version of the binding. You can
+> remove simple-mfd now. The useful registers that are not used by any
+> drivers are gpr and chipid.
+>=20
+
+And what about the use case I'm facing? I've got child nodes defined in
+it but with a later patch (but they actually haven't made it to the
+DT binding documentation, so that's for the next version of the patch
+series).
+
+OK, for removing simple-mfd from CPU chip regs documentation.
+
+Thanks,
+Quentin
+
+--aqdqbjx2wofggoxf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlt1iUkACgkQhLiadT7g
+8aMS4Q/+OD8XkRtfVO/sHnbGEJXJShU19E8I7jLuwgrlSuxKKY2yoUIv/KOVCnrv
+hwM4A3Jo63fuWFwrcTSJxos4GirvwFFFKwRufzSoLB8q/WvUk6oxDso5zmPZirem
+GJ8H6jVFQCYPOKOD1RLEmY2UhAhM/u6nI0Fq5BFY3ONLfXoGnIwmVDRm6+r1R7MS
+YPO7il+4YkHXCxFauTepBGVPH4KoQCLZzCBqShg52PP8pa7/VF6lgc1QXeLPRYkj
+jzZrQnsIYosDRaAK/5fGvSQ93E0swboIzjrP3wVx7iiZFk7i566/CIOtoeLfLB9S
+bHf34VdoT+xdkmJFVkZq6n8rovF/ly9uMcUQ/nfIMq0nr6ZRgblUfDuSnrdhH+Xj
+RMR5DlEmDVuuxffm6MBmw+SHC/eIUF+u4J7CN2qQ4nZthqgN3o0Gs5Y2RC/vehUe
+J/XUV/ak89lQ7ouNF2HjZvhPCYKYSGtnVeYr4af0bFJ8N+8hFyXYm/Q9GacrVnQk
+8wIp6kP7U3kghjaYJ9denBc8NP9VoiwXl2lj38mXz/ubiGuA65Yz0MeKoIB7HnP8
+BoFBEWfoK3QR+fYyWmq5CNWLkBZaX9O6xhLaZ0uCx4pEMwP5a4ZT3/R2xROUE8UH
+NtEArLELWMHs6MXfLsTMRMlk/Yfh4hGDydFKNPfGDlc6c6ZlRLk=
+=MYiC
+-----END PGP SIGNATURE-----
+
+--aqdqbjx2wofggoxf--
