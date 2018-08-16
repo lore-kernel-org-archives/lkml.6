@@ -2,118 +2,101 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B68D7C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF595C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:03:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 624C821480
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:01:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BvdQ0ujo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 624C821480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 76D6321486
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:03:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76D6321486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391528AbeHPQAI (ORCPT
+        id S2391544AbeHPQCV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 12:00:08 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37578 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbeHPQAI (ORCPT
+        Thu, 16 Aug 2018 12:02:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:8546 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2391530AbeHPQCV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 12:00:08 -0400
-Received: by mail-lf1-f68.google.com with SMTP id j8-v6so3338489lfb.4;
-        Thu, 16 Aug 2018 06:01:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=YBkkEzB991JIxBfC03qX0tPqpzD9juLQ2gm6AxY1L0c=;
-        b=BvdQ0ujoWrml1D1kXTlGfxGjagJgp38sAiLUrYRm6O6ASuh5UuzQb6GhHkLAoInz6+
-         OSO8ZQ7sMYo9rfbVs5ugoyaKUGEaDRsQ4oy30PKtzAtKtanVkx5WfRAW00m3Dadpk19y
-         gHVBCyyTknDi3NRMHPerXO3D+lRGW3K4R2n3cPdG1A757qM3OBTrGfLOJkisnmXOYYqe
-         TrUOGd730tZYy11SsHsQQTVJEM0DIWe076rmBByUcXzFQ0dvS10/u+c68jGG94NIReOK
-         aoF5z9LlS9iOWKwvSDF+qv4JLRr9EeOIvA5o2EBTiAH3jssbkoHO+9KmbWSfIB+xoUn/
-         bRkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=YBkkEzB991JIxBfC03qX0tPqpzD9juLQ2gm6AxY1L0c=;
-        b=FgEcU+da/nQAGHYffyvJ+6KNYr3DssbkrdTTYzLnoxdaTZgyqB50vwl3YXZEtqRzs7
-         +fQ/J8uZpeqQVUNnSv48VzYW3fgmtX+1137BykMmLYWZwZDvkaCnGUFyaW391EJhy+6V
-         a26qo9DhzGB+K1Dr/lOFtMqSYzQj/psEeDN36zXw4zkuD5/i9w/MBnCLp4KT8u8uV6AF
-         TqWHXu9IFGiEPGBsnM2k2loEa/5TotEDE8+EwG7sNUgWsTez0CtsG1MHBt5Z40ktIe6k
-         AfqT3D5vu5o6kYUdZy7MpnmMFMLexp1LRTgUpoLGycJk4WSbnM15Vwp9hL5N5CuNl7al
-         D18w==
-X-Gm-Message-State: AOUpUlEV6GuhDgTXkRs5E/PLQtw5GTn/VmlrGRTMAxHDB8ct/vkOKTdu
-        PJRn37h4mSE1v1I5SGBAMs6xZGteYsvSsqu7jqA=
-X-Google-Smtp-Source: AA+uWPzA676jtqvmStkIDBQfiAxw0G0Zen1mvwXTa4t9MzuQyLzm98Qal50rEDfyVC+h/rZXaQcfORtrwrW0NPhy3bI=
-X-Received: by 2002:a19:f50d:: with SMTP id j13-v6mr18790925lfb.127.1534424499047;
- Thu, 16 Aug 2018 06:01:39 -0700 (PDT)
-MIME-Version: 1.0
-From:   Wang Jian <jianjian.wang1@gmail.com>
-Date:   Thu, 16 Aug 2018 21:01:27 +0800
-Message-ID: <CAP4sYWUDb8wtNVvgPO+3a5MWoiBGuafQpvG6KR30RWinf36Msw@mail.gmail.com>
-Subject: [PATCH 1/1] tap: comment fix
-To:     "David S . Miller" <davem@davemloft.net>,
-        Jason <jasowang@redhat.com>, girish.moodalbail@oracle.com,
-        mst@redhat.com, Willem de Bruijn <willemb@google.com>,
-        viro@zeniv.linux.org.uk, wexu@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 16 Aug 2018 12:02:21 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7GCxtC6113448
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 09:03:51 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kw9mh0j98-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 09:03:50 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Thu, 16 Aug 2018 14:03:48 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 16 Aug 2018 14:03:45 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7GD3ijb16515286
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 16 Aug 2018 13:03:44 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 347A64C052;
+        Thu, 16 Aug 2018 16:03:49 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9052B4C059;
+        Thu, 16 Aug 2018 16:03:47 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.148])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 16 Aug 2018 16:03:47 +0100 (BST)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Thu, 16 Aug 2018 16:03:42 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: [PATCH v2 1/3] docs: core-api/gfp_mask-from-fs-io: add a label for cross-referencing
+Date:   Thu, 16 Aug 2018 16:03:36 +0300
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1534424618-24713-1-git-send-email-rppt@linux.vnet.ibm.com>
+References: <1534424618-24713-1-git-send-email-rppt@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18081613-0020-0000-0000-000002B7AFFD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081613-0021-0000-0000-00002104E853
+Message-Id: <1534424618-24713-2-git-send-email-rppt@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-16_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=983 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808160137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The tap_queue and the "tap_dev" are loosely coupled, not "macvlan_dev".
-
-And I also change one rcu_read_lock's place, seems can reduce rcu
-critical section a little.
-
-Signed-off-by: Wang Jian <jianjian.wang1@gmail.com>
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 ---
- drivers/net/tap.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Documentation/core-api/gfp_mask-from-fs-io.rst | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/tap.c b/drivers/net/tap.c
-index f0f7cd9..e5e5a8e 100644
---- a/drivers/net/tap.c
-+++ b/drivers/net/tap.c
-@@ -125,7 +125,7 @@ static struct tap_dev *tap_dev_get_rcu(const
-struct net_device *dev)
-
- /*
-  * RCU usage:
-- * The tap_queue and the macvlan_dev are loosely coupled, the
-+ * The tap_queue and the tap_dev are loosely coupled, the
-  * pointers from one to the other can only be read while rcu_read_lock
-  * or rtnl is held.
-  *
-@@ -720,8 +720,6 @@ static ssize_t tap_get_user(struct tap_queue *q,
-struct msghdr *m,
-            __vlan_get_protocol(skb, skb->protocol, &depth) != 0)
-                skb_set_network_header(skb, depth);
-
--       rcu_read_lock();
--       tap = rcu_dereference(q->tap);
-        /* copy skb_ubuf_info for callback when skb has no error */
-        if (zerocopy) {
-                skb_shinfo(skb)->destructor_arg = m->msg_control;
-@@ -732,6 +730,8 @@ static ssize_t tap_get_user(struct tap_queue *q,
-struct msghdr *m,
-                uarg->callback(uarg, false);
-        }
-
-+       rcu_read_lock();
-+       tap = rcu_dereference(q->tap);
-        if (tap) {
-                skb->dev = tap->dev;
-                dev_queue_xmit(skb);
-
+diff --git a/Documentation/core-api/gfp_mask-from-fs-io.rst b/Documentation/core-api/gfp_mask-from-fs-io.rst
+index e0df8f4..e7c32a8 100644
+--- a/Documentation/core-api/gfp_mask-from-fs-io.rst
++++ b/Documentation/core-api/gfp_mask-from-fs-io.rst
+@@ -1,3 +1,5 @@
++.. _gfp_mask_from_fs_io:
++
+ =================================
+ GFP masks used from FS/IO context
+ =================================
 -- 
-Regards,
-Wang Jian
+2.7.4
+
