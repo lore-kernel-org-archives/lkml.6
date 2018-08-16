@@ -2,143 +2,154 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30241C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 494F5C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA5DA20C07
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:15:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Q9yoCKAc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA5DA20C07
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	by mail.kernel.org (Postfix) with ESMTP id ECB8A208A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:20:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECB8A208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729565AbeHPUO6 (ORCPT
+        id S1729920AbeHPUUI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 16:14:58 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:44710 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728927AbeHPUO6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 16:14:58 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 5A52C8EE171;
-        Thu, 16 Aug 2018 10:15:13 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 7XC4CR5n48mu; Thu, 16 Aug 2018 10:15:13 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 76E748EE092;
-        Thu, 16 Aug 2018 10:15:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1534439713;
-        bh=dvLOWuwdU9754Ye3uLY4sFYi9HMiwhz26xL9QxMjaIw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Q9yoCKAcEUQjAq9xsGGLzpODjGDfLs7vuC8k+UMYW80SkaI4HIz46LtJ8vVFwBJGs
-         lCx1YWfOQSGxgrzhdxpMVsvtC8+k05ALyyaNHmIoYRhUC7kn29QsWuZTW7Dc+82tOm
-         CC93FvWXFnjuVKmmIvvve8oBxW9KGR/5jgCaFpLo=
-Message-ID: <1534439711.3166.13.camel@HansenPartnership.com>
-Subject: Re: [PATCH] Fix kexec forbidding kernels signed with custom
- platform keys to boot
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     David Laight <David.Laight@ACULAB.COM>,
-        David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "yannik@sembritzki.me" <yannik@sembritzki.me>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Date:   Thu, 16 Aug 2018 10:15:11 -0700
-In-Reply-To: <b29ce8375b454440b7b019ac20cfe726@AcuMS.aculab.com>
-References: <1534432615.3166.5.camel@HansenPartnership.com>
-         <CA+55aFzRHVXP4Ag4aygao1dTGaaMJZSOisHT2ks3_WP97kLLhQ@mail.gmail.com>
-         <20180815100053.13609-1-yannik@sembritzki.me>
-         <CA+55aFx2goMXj7rQg-qx-puiiWYJmkDMU1xniWEu6ikDBNgfdQ@mail.gmail.com>
-         <654fbafb-69da-cd9a-b176-7b03401e71c5@sembritzki.me>
-         <20180815174247.GB29541@redhat.com> <20180815185812.GC29541@redhat.com>
-         <b2649b70-37b6-3929-a9d0-3d82033b2686@sembritzki.me>
-         <20180815194932.GD29541@redhat.com>
-         <20628.1534427487@warthog.procyon.org.uk>
-         <30607.1534434597@warthog.procyon.org.uk>
-         <1534435000.3166.9.camel@HansenPartnership.com>
-         <b29ce8375b454440b7b019ac20cfe726@AcuMS.aculab.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 16 Aug 2018 16:20:08 -0400
+Received: from foss.arm.com ([217.140.101.70]:39292 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726987AbeHPUUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 16:20:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C9EE7A9;
+        Thu, 16 Aug 2018 10:20:22 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 816833F5B3;
+        Thu, 16 Aug 2018 10:20:19 -0700 (PDT)
+Date:   Thu, 16 Aug 2018 18:20:17 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v3 07/14] sched/core: uclamp: enforce last task UCLAMP_MAX
+Message-ID: <20180816172016.GG2960@e110439-lin>
+References: <20180806163946.28380-1-patrick.bellasi@arm.com>
+ <20180806163946.28380-8-patrick.bellasi@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180806163946.28380-8-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-16 at 16:56 +0000, David Laight wrote:
-> From: James Bottomley
-> > Sent: 16 August 2018 16:57
-> > On Thu, 2018-08-16 at 16:49 +0100, David Howells wrote:
-> > > James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-> > > 
-> > > > > The problem with that is that it means you can't load third
-> > > > > party modules - such as the NVidia driver.  That's fine if
-> > > > > you absolutely reject the right of people to produce third
-> > > > > party drivers for the Linux kernel and absolutely require
-> > > > > that they open and upstream their code if they want in.
-> > > > 
-> > > > So if you build your own kernel and want to load the nVidia
-> > > > module, you have the key to sign it.
-> > > 
-> > > I think you have to assume that doing this is beyond most people.
-> > 
-> > As a step by step process, I agree.  However, I think we can
-> > automate it to the point where you install a package and it says
-> > "insert your yubikey" every time you upgrade the kernel
+On 06-Aug 17:39, Patrick Bellasi wrote:
+> When a util_max clamped task sleeps, its clamp constraints are removed
+> from the CPU. However, the blocked utilization on that CPU can still be
+> higher than the max clamp value enforced while that task was running.
+> This max clamp removal when a CPU is going to be idle could thus allow
+> unwanted CPU frequency increases, right while the task is not running.
 > 
-> What about 3rd parties that want to release drivers that can be
-> loadedinto 'distribution' kernels?
+> This can happen, for example, where there is another (smaller) task
+> running on a different CPU of the same frequency domain.
+> In this case, when we aggregate the utilization of all the CPUs in a
+> shared frequency domain, schedutil can still see the full non clamped
+> blocked utilization of all the CPUs and thus eventually increase the
+> frequency.
+> 
+> Let's fix this by using:
+> 
+>    uclamp_cpu_put_id(UCLAMP_MAX)
+>       uclamp_cpu_update(last_clamp_value)
+> 
+> to detect when a CPU has no more RUNNABLE clamped tasks and to flag this
+> condition. Thus, while a CPU is idle, we can still enforce the last used
+> clamp value for it.
+> 
+> To the contrary, we do not track any UCLAMP_MIN since, while a CPU is
+> idle, we don't want to enforce any minimum frequency
+> Indeed, we rely just on blocked load decay to smoothly reduce the
+> frequency.
 
-You'd follow the distributions external kernel module process, I think.
+[...]
 
-> We can do that for windows (provided we've paid the 'driver signing
-> tax') because windows has a stable kernel DDI/DKI.
-> For Linux we have to release most of the driver as a binary 'blob'
-> and compile wrapper code on the target system with the correct kernel
-> headers.
+> @@ -906,7 +906,8 @@ uclamp_group_find(int clamp_id, unsigned int clamp_value)
+>   * For the specified clamp index, this method computes the new CPU utilization
+>   * clamp to use until the next change on the set of RUNNABLE tasks on that CPU.
+>   */
+> -static inline void uclamp_cpu_update(struct rq *rq, int clamp_id)
+> +static inline void uclamp_cpu_update(struct rq *rq, int clamp_id,
+> +				     unsigned int last_clamp_value)
+>  {
+>  	struct uclamp_group *uc_grp = &rq->uclamp.group[clamp_id][0];
+>  	int max_value = UCLAMP_NOT_VALID;
+> @@ -924,6 +925,19 @@ static inline void uclamp_cpu_update(struct rq *rq, int clamp_id)
+>  		if (max_value >= SCHED_CAPACITY_SCALE)
+>  			break;
+>  	}
+> +
+> +	/*
+> +	 * Just for the UCLAMP_MAX value, in case there are no RUNNABLE
+> +	 * task, we keep the CPU clamped to the last task's clamp value.
+> +	 * This avoids frequency spikes to MAX when one CPU, with an high
+> +	 * blocked utilization, sleeps and another CPU, in the same frequency
+> +	 * domain, do not see anymore the clamp on the first CPU.
+> +	 */
+> +	if (clamp_id == UCLAMP_MAX && max_value == UCLAMP_NOT_VALID) {
+> +		rq->uclamp.flags |= UCLAMP_FLAG_IDLE;
+> +		max_value = last_clamp_value;
+> +	}
+> +
+>  	rq->uclamp.value[clamp_id] = max_value;
+>  }
+>  
+> @@ -953,13 +967,26 @@ static inline void uclamp_cpu_get_id(struct task_struct *p,
+>  	uc_grp = &rq->uclamp.group[clamp_id][0];
+>  	uc_grp[group_id].tasks += 1;
+>  
+> +	/* Force clamp update on idle exit */
+> +	uc_cpu = &rq->uclamp;
+> +	clamp_value = p->uclamp[clamp_id].value;
+> +	if (unlikely(uc_cpu->flags & UCLAMP_FLAG_IDLE)) {
+> +		/*
+> +		 * This function is called for both UCLAMP_MIN (before) and
+> +		 * UCLAMP_MAX (after). Let's reset the flag only the second
+> +		 * once we know that UCLAMP_MIN has been already updated.
+> +		 */
+> +		if (clamp_id == UCLAMP_MAX)
+> +			uc_cpu->flags &= ~UCLAMP_FLAG_IDLE;
+> +		uc_cpu->value[clamp_id] = clamp_value;
+> +		return;
+> +	}
 
-Right, that's the usual distribution kernel module approach.  I'm most
-familiar with the SUSE DKMS packaging project, which has a lot of
-automation around this.  I believe it's actually pretty easy to use
-from talking to people about it.  Of course, SUSE doesn't currently use
-signed kernel modules, which makes the key issue a non problem for them
-...
+Just notice that the code block above is not reached when we enqueue a task
+without a valid clamp group, i.e. an un-clamped task, which is the
+default for all tasks.
 
-> There is no way we could generate signed copies for every
-> 'distribution' kernel - even if there was a way to get them signed.
-> Even if we agreed to make our source code available it wouldn't be
-> accepted for inclusion in the kernel source tree.
+The fix should be as simple as moving this block at the beginning of
+uclamp_cpu_update() so that we always un-conditionally release the
+clamp holding as soon as we enqueue the first task after a CPU wakeup,
+i.e. when the UCLAMP_FLAG_IDLE flag is set.
 
-Well, I think for signed kernel modules the DKMS process could be
-adapted to generate a private key and then install the public component
-in the kernel, resign with the private key, put the private key in the
-MoK database and that means the DKMS process now has a key with which
-it could sign any kernel module at the request of the user.  Of course
-the main problem will be guarding the private key.
+Will fix this on v4.
 
-However, in the above process signing is under the control of the end
-user.  I'm guessing you want signing to be under the control of an
-external third party or the distro, like the Microsoft case?  In that
-case you have to either persuade the distros to run a signing service
-or persuade them to trust a third party to run it.
+-- 
+#include <best/regards.h>
 
-James
-
+Patrick Bellasi
