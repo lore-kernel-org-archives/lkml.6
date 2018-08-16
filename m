@@ -2,92 +2,130 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F4FC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD43BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:02:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C53FD208B0
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:00:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C53FD208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id 74DA1208B0
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:02:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74DA1208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390078AbeHPQ7E (ORCPT
+        id S2389513AbeHPRBN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 12:59:04 -0400
-Received: from mout.gmx.net ([212.227.15.19]:36011 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727732AbeHPQ7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 12:59:04 -0400
-Received: from localhost.localdomain ([79.203.83.237]) by mail.gmx.com
- (mrgmx002 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 0M0Ppl-1g8faH0bgD-00uab4; Thu, 16 Aug 2018 16:00:00 +0200
-Received: by localhost.localdomain (Postfix, from userid 1000)
-        id 50C2480087; Thu, 16 Aug 2018 15:59:58 +0200 (CEST)
-From:   Sven Joachim <svenjoac@gmx.de>
-To:     Adam Borowski <kilobyte@angband.pl>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: Linux 4.18.1
-References: <20180816101429.GA10680@kroah.com>
-        <20180816130540.eu4rs5rago6b5lzq@angband.pl>
-Date:   Thu, 16 Aug 2018 15:59:58 +0200
-In-Reply-To: <20180816130540.eu4rs5rago6b5lzq@angband.pl> (Adam Borowski's
-        message of "Thu, 16 Aug 2018 15:05:40 +0200")
-Message-ID: <878t56mmxt.fsf@turtle.gmx.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.50 (gnu/linux)
+        Thu, 16 Aug 2018 13:01:13 -0400
+Received: from gateway31.websitewelcome.com ([192.185.143.31]:22694 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387574AbeHPRBN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 13:01:13 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id EF67119A2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 09:02:24 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id qIqOfqfn3PvAdqIqmfqPou; Thu, 16 Aug 2018 09:02:23 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.72.226] (port=48026 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fqIqM-000Qr8-QP; Thu, 16 Aug 2018 09:01:42 -0500
+Date:   Thu, 16 Aug 2018 09:01:41 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH v2] kdb: kdb_main: refactor code in kdb_md_line
+Message-ID: <20180816140141.GA28913@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Provags-ID: V03:K1:65SSbyttq8uj5ieFRlpxr6PcxMrER8BbNekLlYd5d4tOP4hRCqi
- kuZfGiYhIGSM2tG477aXwuZOLybVdfOxEJFOphPWY8Wlwj3C91np1UtLU9b7faUWyvEjnEL
- RIBqV7f8fn8sVCI0v00md9nbDYIXXH1TYXayhwcqImQPhZrZzNFBLBmWDkC7mtX0s6gw1x0
- 0ABKK33jBQ3yDmFKw7H3A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:f+kMO8iMQa8=:ebaKrLfYA/WJU+8vZxZ32S
- tVBM6Oo6Qs66liNe9mBpW1kljSjhh/247OiLtJDbZyWVCPewWJct3OQd01/31kF4ZYc2k/CD1
- cmZ8kEuZk7z/I8I+CmmaGT/z4fO3qcqu4pqabheahopqJfFPFmeFUpmj+pgC8XflHdB9lGhmC
- k8K1PZe2fercBTaYBt7VJq2ZOfi0YApLPu/m5JfuFYFxf1h0dxj2Hy72UV6LTvfdDPSl2Th7M
- An2Ay45V+Aiw05BIMs+59bHutDTDEYP4WFzUg6hgAWpAw1ZugBRnkN1GnyIOTEtkvr1opjkR7
- 6heifoJJsHjppI/fI4vF+VmsoHmlqqiCLT4vMf1DrFcromkZzBiIu0Z4gY3/28969lDXpctaB
- Ae+MR5ZrskimBfeqZ8el+KhPqyScGOTGCwsF7Ok4X6qu5z0//f9yFQnWiy+Q55Zm2eGma7bUy
- KIM5JOQ6Tob2OKrBXPAZCwROFwuMkGoLJaqBx1KVpWVEMRqKVZduMzZxYrR46cdFexVeVByYG
- 55XGWBP6SQLIx7g7giEnbpZKfb7XO/BoB969PUTo69faIKRjQJs6Bj8DDIDqwDuXSSLUPnAcx
- IYsSYqr6FCY+Yc35uW19WytjGisLFU8TiZBiBNapEWxNN1Or5UZREiOQHqe03N1hN9NUW8+Q9
- ff0SknFRWQ7Ce8I3p5Zt7GSiwCVg3hpmMA6LUn+ViF5p5l82WR+kVI1bVXh7/USSG/TdVyt+l
- T95oyJyLqhSviNNw9wa5p3KU+fTrLNQO8WJzLLaeFjvHJj7+TxuJQHSPMwhcWy21O/FPDJPLx
- i7x1BjZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.72.226
+X-Source-L: No
+X-Exim-ID: 1fqIqM-000Qr8-QP
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.72.226]:48026
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-16 15:05 +0200, Adam Borowski wrote:
+Replace the whole switch statement with a for loop.
+This makes the code much clear and easy to read.
 
-> On Thu, Aug 16, 2018 at 12:14:29PM +0200, Greg KH wrote:
->> I'm announcing the release of the 4.18.1 kernel.
->
-> I'm afraid that I get a build failure; v4.18 is ok, v4.18.1 fails with:
->
-> ld: arch/x86/kvm/x86.o: in function `kvm_get_arch_capabilities':
-> (.text+0x43b2): undefined reference to `l1tf_vmx_mitigation'
+This also addresses the following Coverity warnings:
 
-Same here and also in 4.17.15, but not in Linus' tree.
+Addresses-Coverity-ID: 115090 ("Missing break in switch")
+Addresses-Coverity-ID: 115091 ("Missing break in switch")
+Addresses-Coverity-ID: 114700 ("Missing break in switch")
 
-> .config attached.
+Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+Changes in v2:
+ - Add new variable j and use it for the for loop.
 
-Probably relevant:
+ kernel/debug/kdb/kdb_main.c | 21 +++------------------
+ 1 file changed, 3 insertions(+), 18 deletions(-)
 
-> CONFIG_KVM=y
-> # CONFIG_KVM_INTEL is not set
-> CONFIG_KVM_AMD=y
+diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+index 2ddfce8..a9ad288 100644
+--- a/kernel/debug/kdb/kdb_main.c
++++ b/kernel/debug/kdb/kdb_main.c
+@@ -1493,6 +1493,7 @@ static void kdb_md_line(const char *fmtstr, unsigned long addr,
+ 	char cbuf[32];
+ 	char *c = cbuf;
+ 	int i;
++	int j;
+ 	unsigned long word;
+ 
+ 	memset(cbuf, '\0', sizeof(cbuf));
+@@ -1538,25 +1539,9 @@ static void kdb_md_line(const char *fmtstr, unsigned long addr,
+ 			wc.word = word;
+ #define printable_char(c) \
+ 	({unsigned char __c = c; isascii(__c) && isprint(__c) ? __c : '.'; })
+-			switch (bytesperword) {
+-			case 8:
++			for (j = 0; j < bytesperword; j++)
+ 				*c++ = printable_char(*cp++);
+-				*c++ = printable_char(*cp++);
+-				*c++ = printable_char(*cp++);
+-				*c++ = printable_char(*cp++);
+-				addr += 4;
+-			case 4:
+-				*c++ = printable_char(*cp++);
+-				*c++ = printable_char(*cp++);
+-				addr += 2;
+-			case 2:
+-				*c++ = printable_char(*cp++);
+-				addr++;
+-			case 1:
+-				*c++ = printable_char(*cp++);
+-				addr++;
+-				break;
+-			}
++			addr += bytesperword;
+ #undef printable_char
+ 		}
+ 	}
+-- 
+2.7.4
 
-I have CONFIG_KVM{,AMD}=m and CONFIG_KVM_INTEL is not set either.
-
-Cheers,
-       Sven
