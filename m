@@ -6,74 +6,74 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 637F6C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1AC0C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F1432147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:10:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A14CE2147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:11:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="sDNYbp0A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F1432147A
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="zUNDbP4m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A14CE2147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbeHPWKU (ORCPT
+        id S1726288AbeHPWMI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 18:10:20 -0400
-Received: from mail-it0-f48.google.com ([209.85.214.48]:39683 "EHLO
-        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726090AbeHPWKU (ORCPT
+        Thu, 16 Aug 2018 18:12:08 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:41516 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725968AbeHPWMH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 18:10:20 -0400
-Received: by mail-it0-f48.google.com with SMTP id g141-v6so8189008ita.4
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 12:10:04 -0700 (PDT)
+        Thu, 16 Aug 2018 18:12:07 -0400
+Received: by mail-io0-f196.google.com with SMTP id q4-v6so4770992iob.8
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 12:11:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kEBHf+Bb2D0ixiOGGLYnhCwkWUrodpCWHMAq+nCzBFg=;
-        b=sDNYbp0AIPZb2Ep0lQduxHxOZX5jVYT5VxJxxa4U7UcfNPtmhydUpOGWslLYnzonO2
-         fGiZsyY3HmTUlvbf9Z16q13qEGKS4q4bq+Ioyw6acnuo3J196r0nbHzZPKv+GWH+z8DX
-         2MTOuPk8xNKBvqEYJqzRT2l0Kb1IFalWfxETTFL1RURf+SwsJk1WBS2vNejvTqpUMI3s
-         own/21LZ7Wt1zbs7sbJ6gSHGkSYuvsdLZxluHxdYFme/El1j/XY11N6y5rFoV5AYfDZC
-         I1ZgI18FGXSSQVDFPUd1L7QNjaV069HudpybYcA3okQUP5vVKAdPbENeCYfL7doq5l4n
-         aDyQ==
+        bh=JC+UVoXhXaaYQ+xpSZnODh+SvO+nh4B1OD/uPQfQhgA=;
+        b=zUNDbP4merDmu13RdbWKCH+MoVdZmapy/I819/Zqv2iP6bVj8Bl/9kAotd1jsXw28z
+         E6qTsNSypNYFqzQ+tWH0GQ9PlZAc68STot4t1n/QtIAZOyUfXd7ViHjeSMNJARIBZvuu
+         XEzH854moqrxdd1RvoEC0fkhi0qAqt7cYr6YGwrTUxV14sskPrIGT3IL10xEQONGP2aH
+         /iDMMsfhJ+fynvxK4IUTy8kcO+ZLR4/adJ5R0n/UbRsH8w8pO+K960jsr0dKQKTE2Unt
+         f/UIMTQCGko/v8DE9lJyWs6WJN60jxffdUeYeaKRDNVlAj6PjWgsItVWj46ZxvAL82mq
+         xrIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=kEBHf+Bb2D0ixiOGGLYnhCwkWUrodpCWHMAq+nCzBFg=;
-        b=gXAPsRYRfEzF+iKlTZyFkdmivmsqhNNfjNZifoLUQyUorPODtyfRZxvzxleFTL3B+L
-         1+mnGVEGes4O7FvM+skPvr5l3n6Us/tW25Z0W6z+C2rV6aU4ASW9bL7l+11Mcw7OPKr+
-         e16CnFxjLoabVJKOzWXFpl6N1Dqjrzqi3r0TTZ71j9fU2C2mzPFU6eW+1tZqdMBXxLep
-         /tE4LgZIfuM3Gj8g3MHCNVi8uh8R17dpW817Mrn7wLxnxsWzGGN2KbEgAxaJQ3RSDokP
-         RA545TbwAy3Y3mvSLdh0zZPU1AGnDE2Ur5XMW1eCWpCn/6y2n6bnFTO7+cCbAygKE2Dt
-         ZtrQ==
-X-Gm-Message-State: AOUpUlFjkkphmdVOy+O/oCSUVf+eGfUrV95+MKeDNx5+AoXEExeciSUB
-        AXOKfabCeUS/HN1/N/TtIht5UA==
-X-Google-Smtp-Source: AA+uWPzfK5ryscLCFjP7pjQM/ufpAhcbGTQnL5bowVzVG/s+uBVE7Wx6hd/OB8sazkp1V6bviARlnA==
-X-Received: by 2002:a02:97a1:: with SMTP id s30-v6mr26774317jaj.89.1534446604526;
-        Thu, 16 Aug 2018 12:10:04 -0700 (PDT)
+        bh=JC+UVoXhXaaYQ+xpSZnODh+SvO+nh4B1OD/uPQfQhgA=;
+        b=Blqf1/s428fk+aia7aedwumskQw3lL2MPyGDdWC++jzlI5QdWEPpismkeqZ5TGrFwS
+         s+yVIUfNJZZMIDsdUXEKQRd75rP4/KkiL4W0TgS+/MNowylLrvWxw5kBkmjUVimBRkWp
+         QHGOEn1+EtG2Cm1bg6TaKwTCFdtQVjB2Zti/yKKpwNqCrvh27YJBu7mGtSUZTDXkHHdg
+         nmPZKPH2c/HfgtBSwInhd7b8YXDTJzBMPozRmTf5Hmvi+uyguK7CbbsWxJhjJkvX4Gzu
+         nKWzlcEV3S28dC6yyTPqrAQnsXDpFKoTwk46cUHM8BAEsi6TevjfeUjaPnlM+3rrd+f2
+         tmKg==
+X-Gm-Message-State: AOUpUlGF3KCfGZ/zHGm/ZsVFg70mrXdkIu/9qz5oeIdZa4vAq89cOlmV
+        EFbprGPi7n7tPqW7ZM331mMPlw==
+X-Google-Smtp-Source: ANB0VdZEnsVeKISnJ+RZCFhqJpsAV/zEyZRNqQHkdBAIo0Op9gmJ9nsBtyh3kwWmR/cHI2w5iNUmbA==
+X-Received: by 2002:a6b:249:: with SMTP id 70-v6mr978206ioc.123.1534446711720;
+        Thu, 16 Aug 2018 12:11:51 -0700 (PDT)
 Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
-        by smtp.gmail.com with ESMTPSA id d134-v6sm19926iog.84.2018.08.16.12.10.02
+        by smtp.gmail.com with ESMTPSA id z195-v6sm61732ioe.38.2018.08.16.12.11.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Aug 2018 12:10:03 -0700 (PDT)
-Subject: Re: [PATCH BUGFIX/IMPROVEMENT 0/4] bfq: two fixes and one improvement
- related to I/O control
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        broonie@kernel.org, bfq-iosched@googlegroups.com,
-        oleksandr@natalenko.name
-References: <20180816165118.17402-1-paolo.valente@linaro.org>
+        Thu, 16 Aug 2018 12:11:50 -0700 (PDT)
+Subject: Re: [PATCH] block, bfq: return nbytes and not zero from struct cftype
+ .write() method
+To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        Paolo Valente <paolo.valente@linaro.org>
+Cc:     linux-block@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Arianna Avanzini <avanzini.arianna@gmail.com>
+References: <f574e019-00f2-96c3-fc32-541c6584ca96@maciej.szmigiero.name>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5ac17a9b-1c38-0664-15e3-ff75c9671388@kernel.dk>
-Date:   Thu, 16 Aug 2018 13:10:01 -0600
+Message-ID: <19c68f93-017d-cda1-632f-039ca3ca0158@kernel.dk>
+Date:   Thu, 16 Aug 2018 13:11:49 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180816165118.17402-1-paolo.valente@linaro.org>
+In-Reply-To: <f574e019-00f2-96c3-fc32-541c6584ca96@maciej.szmigiero.name>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -82,29 +82,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/16/18 10:51 AM, Paolo Valente wrote:
-> Hi Jens,
+On 8/15/18 3:56 PM, Maciej S. Szmigiero wrote:
+> The value that struct cftype .write() method returns is then directly
+> returned to userspace as the value returned by write() syscall, so it
+> should be the number of bytes actually written (or consumed) and not zero.
 > 
-> while working a little bit on cgroups I/O control, I found two nasty
-> bugs in bfq. They break bandwidth control in simple configurations
-> with one-process groups. These bugs are fixed by the first two patches
-> in this series.
-> 
-> These fixes improved I/O control so much, that I could reduce the
-> write overcharge factor, used by bfq to counter write-induced
-> issues. This reduction is performed by the third patch.
-> 
-> The fourth patch contains a little code improvement I made in a
-> function that has to do with I/O control.
-> 
-> I hope we are still in time for 4.19.
+> Returning zero from write() syscall makes programs like /bin/echo or bash
+> spin.
 
-Patches look fine to me. You are in fact several weeks late for 4.19, I
-need to have anything that's going in to 4.19 by -rc6 or -rc7 time
-(depending on whether we have an -rc8 or not). This is to ensure that it
-gets plenty of time in linux-next as well. I've queued up patches this
-time (since they were small), but please send them in in due time next
-time.
+Applied, thanks.
+
+Just a heads-up that gmail thinks your email is spam.
 
 -- 
 Jens Axboe
