@@ -2,160 +2,593 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68DC5C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:11:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F3DC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23DE9208FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:11:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23DE9208FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 218B5208FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:12:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 218B5208FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391595AbeHPRKI (ORCPT
+        id S2391709AbeHPRKu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 13:10:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53626 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390887AbeHPRKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 13:10:08 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 436214023351;
-        Thu, 16 Aug 2018 14:11:14 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 533132166BA0;
-        Thu, 16 Aug 2018 14:11:11 +0000 (UTC)
-From:   Prarit Bhargava <prarit@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Prarit Bhargava <prarit@redhat.com>,
-        Mark Salter <msalter@redhat.com>, Al Stone <ahs3@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        x86@kernel.org, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pm@vger.kernel.org
-Subject: [PATCH] console: Add console=auto option
-Date:   Thu, 16 Aug 2018 10:10:55 -0400
-Message-Id: <20180816141055.451-1-prarit@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 16 Aug 2018 14:11:14 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 16 Aug 2018 14:11:14 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
+        Thu, 16 Aug 2018 13:10:50 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:36806 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728012AbeHPRKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 13:10:50 -0400
+Received: from wd0180.dip.tu-dresden.de ([141.76.108.180] helo=phil.dip.tu-dresden.de)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1fqJ0D-0000Dq-Re; Thu, 16 Aug 2018 16:11:53 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     thierry.reding@gmail.com
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        seanpaul@chromium.org, briannorris@chromium.org, hl@rock-chips.com,
+        nickey.yang@rock-chips.com, Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v3] drm/panel: add Kingdisplay kd097d04 panel driver
+Date:   Thu, 16 Aug 2018 16:11:41 +0200
+Message-Id: <20180816141141.5208-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ACPI may contain an SPCR table that defines a default system console.
-On ARM if the table is present then the SPCR console is enabled by default.
-On x86 the SPCR console is used if 'earlycon' (no parameters) is
-specified as a kernel parameter and is used only as the early console.
-To use the SPCR data as a console a user must boot with 'earlycon',
-grep logs & specify a console= kernel parameter, and then reboot again.
+From: YYS <nickey.yang@rock-chips.com>
 
-Add 'console=auto' that enables a firmware or hardware console, and on
-x86 enable the SPCR console if 'console=auto' is specified.
+Support Kingdisplay kd097d04 9.7" 1536x2048 TFT LCD panel,
+it is a MIPI dual-DSI panel.
 
-Tested on systems with and without an ACPI SPCR.  The following kernel
-parameters were also tested:
+v3:
+- address Thierry's comments
+  - error handling for init dsi writes in init
+  - unconditionally remove the panel
+  - don't use drm_panel_detach
+  - a bit of variable signednes wiggling
+- I did talk to ChromeOS people and the delays really should be as short
+  as possible, so dropped the 100ms from the delay comments
+v2:
+- update timing + cmds from chromeos kernel
+- new backlight API including switch to devm_of_find_backlight
+- fix most of Sean Paul's comments
+  enable/prepare tracking seems something all panels do
+- document origins of the init sequence
+- lanes per dsi interface to 4 (two interfaces). Matches how tegra
+  and pending rockchip dual-dsi handle (dual-)dsi lanes
+- spdx header instead of license boilerplate
 
-console=ttyS0,115200    		works
-earlycon                		works (early console only)
-console=auto            		works (full console as expected)
-no console or earlycon arguments	works (no output as expected)
-
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Cc: Mark Salter <msalter@redhat.com>
-Cc: Al Stone <ahs3@redhat.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: x86@kernel.org
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-pm@vger.kernel.org
+Signed-off-by: Nickey Yang <nickey.yang@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- Documentation/admin-guide/kernel-parameters.txt |  1 +
- arch/x86/kernel/acpi/boot.c                     |  5 +++++
- include/linux/console.h                         |  1 +
- kernel/printk/printk.c                          | 10 ++++++++++
- 4 files changed, 17 insertions(+)
+ drivers/gpu/drm/panel/Kconfig                 |  11 +
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ .../drm/panel/panel-kingdisplay-kd097d04.c    | 473 ++++++++++++++++++
+ 3 files changed, 485 insertions(+)
+ create mode 100644 drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a32f2a126791..dd057224f33b 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -635,6 +635,7 @@
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 6020c30a33b3..458253dc0842 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -77,6 +77,17 @@ config DRM_PANEL_JDI_LT070ME05000
+ 	  The panel has a 1200(RGB)×1920 (WUXGA) resolution and uses
+ 	  24 bit per pixel.
  
- 		hvc<n>	Use the hypervisor console device <n>. This is for
- 			both Xen and PowerPC hypervisors.
-+		auto	[X86] Enable ACPI SPCR console
- 
- 		If the device connected to the port is not a TTY but a braille
- 		device, prepend "brl," before the device type, for instance
-diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-index 3b20607d581b..fb2616ba3b21 100644
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -1771,3 +1771,8 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
- 	e820__range_add(addr, size, E820_TYPE_ACPI);
- 	e820__update_table_print();
- }
++config DRM_PANEL_KINGDISPLAY_KD097D04
++	tristate "Kingdisplay kd097d04 panel"
++	depends on OF
++	depends on DRM_MIPI_DSI
++	depends on BACKLIGHT_CLASS_DEVICE
++	help
++	  Say Y here if you want to enable support for Kingdisplay kd097d04
++	  TFT-LCD modules. The panel has a 1536x2048 resolution and uses
++	  24 bit RGB per pixel. It provides a MIPI DSI interface to
++	  the host and has a built-in LED backlight.
 +
-+void __init arch_console_setup(void)
+ config DRM_PANEL_SAMSUNG_LD9040
+ 	tristate "Samsung LD9040 RGB/SPI panel"
+ 	depends on OF && SPI
+diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+index 5ccaaa9d13af..d59f75b84d48 100644
+--- a/drivers/gpu/drm/panel/Makefile
++++ b/drivers/gpu/drm/panel/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_DRM_PANEL_ILITEK_IL9322) += panel-ilitek-ili9322.o
+ obj-$(CONFIG_DRM_PANEL_ILITEK_ILI9881C) += panel-ilitek-ili9881c.o
+ obj-$(CONFIG_DRM_PANEL_INNOLUX_P079ZCA) += panel-innolux-p079zca.o
+ obj-$(CONFIG_DRM_PANEL_JDI_LT070ME05000) += panel-jdi-lt070me05000.o
++obj-$(CONFIG_DRM_PANEL_KINGDISPLAY_KD097D04) += panel-kingdisplay-kd097d04.o
+ obj-$(CONFIG_DRM_PANEL_LG_LG4573) += panel-lg-lg4573.o
+ obj-$(CONFIG_DRM_PANEL_ORISETECH_OTM8009A) += panel-orisetech-otm8009a.o
+ obj-$(CONFIG_DRM_PANEL_PANASONIC_VVX10F034N00) += panel-panasonic-vvx10f034n00.o
+diff --git a/drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c b/drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c
+new file mode 100644
+index 000000000000..5a68d3d4b9fc
+--- /dev/null
++++ b/drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c
+@@ -0,0 +1,473 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (c) 2017, Fuzhou Rockchip Electronics Co., Ltd
++ */
++
++#include <linux/backlight.h>
++#include <linux/gpio/consumer.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/regulator/consumer.h>
++
++#include <drm/drmP.h>
++#include <drm/drm_crtc.h>
++#include <drm/drm_mipi_dsi.h>
++#include <drm/drm_panel.h>
++
++#include <video/mipi_display.h>
++
++struct kingdisplay_panel {
++	struct drm_panel base;
++	struct mipi_dsi_device *link;
++
++	struct backlight_device *backlight;
++	struct regulator *supply;
++	struct gpio_desc *enable_gpio;
++
++	bool prepared;
++	bool enabled;
++};
++
++struct kingdisplay_panel_cmd {
++	char cmd;
++	char data;
++};
++
++/*
++ * According to the discussion on
++ * https://review.coreboot.org/#/c/coreboot/+/22472/
++ * the panel init array is not part of the panels datasheet but instead
++ * just came in this form from the panel vendor.
++ */
++static const struct kingdisplay_panel_cmd init_code[] = {
++	/* voltage setting */
++	{ 0xB0, 0x00 },
++	{ 0xB2, 0x02 },
++	{ 0xB3, 0x11 },
++	{ 0xB4, 0x00 },
++	{ 0xB6, 0x80 },
++	/* VCOM disable */
++	{ 0xB7, 0x02 },
++	{ 0xB8, 0x80 },
++	{ 0xBA, 0x43 },
++	/* VCOM setting */
++	{ 0xBB, 0x53 },
++	/* VSP setting */
++	{ 0xBC, 0x0A },
++	/* VSN setting */
++	{ 0xBD, 0x4A },
++	/* VGH setting */
++	{ 0xBE, 0x2F },
++	/* VGL setting */
++	{ 0xBF, 0x1A },
++	{ 0xF0, 0x39 },
++	{ 0xF1, 0x22 },
++	/* Gamma setting */
++	{ 0xB0, 0x02 },
++	{ 0xC0, 0x00 },
++	{ 0xC1, 0x01 },
++	{ 0xC2, 0x0B },
++	{ 0xC3, 0x15 },
++	{ 0xC4, 0x22 },
++	{ 0xC5, 0x11 },
++	{ 0xC6, 0x15 },
++	{ 0xC7, 0x19 },
++	{ 0xC8, 0x1A },
++	{ 0xC9, 0x16 },
++	{ 0xCA, 0x18 },
++	{ 0xCB, 0x13 },
++	{ 0xCC, 0x18 },
++	{ 0xCD, 0x13 },
++	{ 0xCE, 0x1C },
++	{ 0xCF, 0x19 },
++	{ 0xD0, 0x21 },
++	{ 0xD1, 0x2C },
++	{ 0xD2, 0x2F },
++	{ 0xD3, 0x30 },
++	{ 0xD4, 0x19 },
++	{ 0xD5, 0x1F },
++	{ 0xD6, 0x00 },
++	{ 0xD7, 0x01 },
++	{ 0xD8, 0x0B },
++	{ 0xD9, 0x15 },
++	{ 0xDA, 0x22 },
++	{ 0xDB, 0x11 },
++	{ 0xDC, 0x15 },
++	{ 0xDD, 0x19 },
++	{ 0xDE, 0x1A },
++	{ 0xDF, 0x16 },
++	{ 0xE0, 0x18 },
++	{ 0xE1, 0x13 },
++	{ 0xE2, 0x18 },
++	{ 0xE3, 0x13 },
++	{ 0xE4, 0x1C },
++	{ 0xE5, 0x19 },
++	{ 0xE6, 0x21 },
++	{ 0xE7, 0x2C },
++	{ 0xE8, 0x2F },
++	{ 0xE9, 0x30 },
++	{ 0xEA, 0x19 },
++	{ 0xEB, 0x1F },
++	/* GOA MUX setting */
++	{ 0xB0, 0x01 },
++	{ 0xC0, 0x10 },
++	{ 0xC1, 0x0F },
++	{ 0xC2, 0x0E },
++	{ 0xC3, 0x0D },
++	{ 0xC4, 0x0C },
++	{ 0xC5, 0x0B },
++	{ 0xC6, 0x0A },
++	{ 0xC7, 0x09 },
++	{ 0xC8, 0x08 },
++	{ 0xC9, 0x07 },
++	{ 0xCA, 0x06 },
++	{ 0xCB, 0x05 },
++	{ 0xCC, 0x00 },
++	{ 0xCD, 0x01 },
++	{ 0xCE, 0x02 },
++	{ 0xCF, 0x03 },
++	{ 0xD0, 0x04 },
++	{ 0xD6, 0x10 },
++	{ 0xD7, 0x0F },
++	{ 0xD8, 0x0E },
++	{ 0xD9, 0x0D },
++	{ 0xDA, 0x0C },
++	{ 0xDB, 0x0B },
++	{ 0xDC, 0x0A },
++	{ 0xDD, 0x09 },
++	{ 0xDE, 0x08 },
++	{ 0xDF, 0x07 },
++	{ 0xE0, 0x06 },
++	{ 0xE1, 0x05 },
++	{ 0xE2, 0x00 },
++	{ 0xE3, 0x01 },
++	{ 0xE4, 0x02 },
++	{ 0xE5, 0x03 },
++	{ 0xE6, 0x04 },
++	{ 0xE7, 0x00 },
++	{ 0xEC, 0xC0 },
++	/* GOA timing setting */
++	{ 0xB0, 0x03 },
++	{ 0xC0, 0x01 },
++	{ 0xC2, 0x6F },
++	{ 0xC3, 0x6F },
++	{ 0xC5, 0x36 },
++	{ 0xC8, 0x08 },
++	{ 0xC9, 0x04 },
++	{ 0xCA, 0x41 },
++	{ 0xCC, 0x43 },
++	{ 0xCF, 0x60 },
++	{ 0xD2, 0x04 },
++	{ 0xD3, 0x04 },
++	{ 0xD4, 0x03 },
++	{ 0xD5, 0x02 },
++	{ 0xD6, 0x01 },
++	{ 0xD7, 0x00 },
++	{ 0xDB, 0x01 },
++	{ 0xDE, 0x36 },
++	{ 0xE6, 0x6F },
++	{ 0xE7, 0x6F },
++	/* GOE setting */
++	{ 0xB0, 0x06 },
++	{ 0xB8, 0xA5 },
++	{ 0xC0, 0xA5 },
++	{ 0xD5, 0x3F },
++};
++
++static inline
++struct kingdisplay_panel *to_kingdisplay_panel(struct drm_panel *panel)
 +{
-+	acpi_parse_spcr(false, true);
++	return container_of(panel, struct kingdisplay_panel, base);
 +}
-diff --git a/include/linux/console.h b/include/linux/console.h
-index dfd6b0e97855..b802f62289a9 100644
---- a/include/linux/console.h
-+++ b/include/linux/console.h
-@@ -181,6 +181,7 @@ extern int is_console_locked(void);
- extern int braille_register_console(struct console *, int index,
- 		char *console_options, char *braille_options);
- extern int braille_unregister_console(struct console *);
-+int arch_console_setup(void);
- #ifdef CONFIG_TTY
- extern void console_sysfs_notify(void);
- #else
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 247808333ba4..b74eba44183e 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2078,6 +2078,11 @@ static int __init console_msg_format_setup(char *str)
- }
- __setup("console_msg_format=", console_msg_format_setup);
- 
-+int __init __weak arch_console_setup(void)
++
++static int kingdisplay_panel_disable(struct drm_panel *panel)
 +{
++	struct kingdisplay_panel *kingdisplay = to_kingdisplay_panel(panel);
++	int err;
++
++	if (!kingdisplay->enabled)
++		return 0;
++
++	backlight_disable(kingdisplay->backlight);
++
++	err = mipi_dsi_dcs_set_display_off(kingdisplay->link);
++	if (err < 0)
++		DRM_DEV_ERROR(panel->dev, "failed to set display off: %d\n",
++			      err);
++
++	kingdisplay->enabled = false;
++
 +	return 0;
 +}
 +
- /*
-  * Set up a console.  Called via do_early_param() in init/main.c
-  * for each "console=" parameter in the boot command line.
-@@ -2088,6 +2093,11 @@ static int __init console_setup(char *str)
- 	char *s, *options, *brl_options = NULL;
- 	int idx;
- 
-+	if (!strcmp(str, "auto")) {
-+		arch_console_setup();
-+		return 1;
++static int kingdisplay_panel_unprepare(struct drm_panel *panel)
++{
++	struct kingdisplay_panel *kingdisplay = to_kingdisplay_panel(panel);
++	int err;
++
++	if (!kingdisplay->prepared)
++		return 0;
++
++	err = mipi_dsi_dcs_enter_sleep_mode(kingdisplay->link);
++	if (err < 0) {
++		DRM_DEV_ERROR(panel->dev, "failed to enter sleep mode: %d\n",
++			      err);
++		return err;
 +	}
 +
- 	if (_braille_console_setup(&str, &brl_options))
- 		return 1;
- 
++	/* T15: 120ms */
++	msleep(120);
++
++	gpiod_set_value_cansleep(kingdisplay->enable_gpio, 0);
++
++	err = regulator_disable(kingdisplay->supply);
++	if (err < 0)
++		return err;
++
++	kingdisplay->prepared = false;
++
++	return 0;
++}
++
++static int kingdisplay_panel_prepare(struct drm_panel *panel)
++{
++	struct kingdisplay_panel *kingdisplay = to_kingdisplay_panel(panel);
++	int err, regulator_err;
++	unsigned int i;
++
++	if (kingdisplay->prepared)
++		return 0;
++
++	gpiod_set_value_cansleep(kingdisplay->enable_gpio, 0);
++
++	err = regulator_enable(kingdisplay->supply);
++	if (err < 0)
++		return err;
++
++	/* T2: 15ms */
++	usleep_range(15000, 16000);
++
++	gpiod_set_value_cansleep(kingdisplay->enable_gpio, 1);
++
++	/* T4: 15ms */
++	usleep_range(15000, 16000);
++
++	for (i = 0; i < ARRAY_SIZE(init_code); i++) {
++		err = mipi_dsi_generic_write(kingdisplay->link, &init_code[i],
++					sizeof(struct kingdisplay_panel_cmd));
++		if (err < 0) {
++			DRM_DEV_ERROR(panel->dev, "failed write init cmds: %d\n",
++				      err);
++			goto poweroff;
++		}
++	}
++
++	err = mipi_dsi_dcs_exit_sleep_mode(kingdisplay->link);
++	if (err < 0) {
++		DRM_DEV_ERROR(panel->dev, "failed to exit sleep mode: %d\n",
++			      err);
++		goto poweroff;
++	}
++
++	/* T6: 120ms */
++	msleep(120);
++
++	err = mipi_dsi_dcs_set_display_on(kingdisplay->link);
++	if (err < 0) {
++		DRM_DEV_ERROR(panel->dev, "failed to set display on: %d\n",
++			      err);
++		goto poweroff;
++	}
++
++	/* T7: 10ms */
++	usleep_range(10000, 10000);
++
++	kingdisplay->prepared = true;
++
++	return 0;
++
++poweroff:
++	regulator_err = regulator_disable(kingdisplay->supply);
++	if (regulator_err)
++		DRM_DEV_ERROR(panel->dev, "failed to disable regulator: %d\n",
++			      regulator_err);
++
++	gpiod_set_value_cansleep(kingdisplay->enable_gpio, 0);
++	return err;
++}
++
++static int kingdisplay_panel_enable(struct drm_panel *panel)
++{
++	struct kingdisplay_panel *kingdisplay = to_kingdisplay_panel(panel);
++	int ret;
++
++	if (kingdisplay->enabled)
++		return 0;
++
++	ret = backlight_enable(kingdisplay->backlight);
++	if (ret) {
++		DRM_DEV_ERROR(panel->drm->dev,
++			      "Failed to enable backlight %d\n", ret);
++		return ret;
++	}
++
++	kingdisplay->enabled = true;
++
++	return 0;
++}
++
++static const struct drm_display_mode default_mode = {
++	.clock = 229000,
++	.hdisplay = 1536,
++	.hsync_start = 1536 + 100,
++	.hsync_end = 1536 + 100 + 24,
++	.htotal = 1536 + 100 + 24 + 100,
++	.vdisplay = 2048,
++	.vsync_start = 2048 + 95,
++	.vsync_end = 2048 + 95 + 2,
++	.vtotal = 2048 + 95 + 2 + 23,
++	.vrefresh = 60,
++};
++
++static int kingdisplay_panel_get_modes(struct drm_panel *panel)
++{
++	struct drm_display_mode *mode;
++
++	mode = drm_mode_duplicate(panel->drm, &default_mode);
++	if (!mode) {
++		DRM_DEV_ERROR(panel->drm->dev, "failed to add mode %ux%ux@%u\n",
++			      default_mode.hdisplay, default_mode.vdisplay,
++			      default_mode.vrefresh);
++		return -ENOMEM;
++	}
++
++	drm_mode_set_name(mode);
++
++	drm_mode_probed_add(panel->connector, mode);
++
++	panel->connector->display_info.width_mm = 147;
++	panel->connector->display_info.height_mm = 196;
++	panel->connector->display_info.bpc = 8;
++
++	return 1;
++}
++
++static const struct drm_panel_funcs kingdisplay_panel_funcs = {
++	.disable = kingdisplay_panel_disable,
++	.unprepare = kingdisplay_panel_unprepare,
++	.prepare = kingdisplay_panel_prepare,
++	.enable = kingdisplay_panel_enable,
++	.get_modes = kingdisplay_panel_get_modes,
++};
++
++static const struct of_device_id kingdisplay_of_match[] = {
++	{ .compatible = "kingdisplay,kd097d04", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, kingdisplay_of_match);
++
++static int kingdisplay_panel_add(struct kingdisplay_panel *kingdisplay)
++{
++	struct device *dev = &kingdisplay->link->dev;
++	int err;
++
++	kingdisplay->supply = devm_regulator_get(dev, "power");
++	if (IS_ERR(kingdisplay->supply))
++		return PTR_ERR(kingdisplay->supply);
++
++	kingdisplay->enable_gpio = devm_gpiod_get_optional(dev, "enable",
++							   GPIOD_OUT_HIGH);
++	if (IS_ERR(kingdisplay->enable_gpio)) {
++		err = PTR_ERR(kingdisplay->enable_gpio);
++		dev_dbg(dev, "failed to get enable gpio: %d\n", err);
++		kingdisplay->enable_gpio = NULL;
++	}
++
++	kingdisplay->backlight = devm_of_find_backlight(dev);
++	if (IS_ERR(kingdisplay->backlight))
++		return PTR_ERR(kingdisplay->backlight);
++
++	drm_panel_init(&kingdisplay->base);
++	kingdisplay->base.funcs = &kingdisplay_panel_funcs;
++	kingdisplay->base.dev = &kingdisplay->link->dev;
++
++	return drm_panel_add(&kingdisplay->base);
++}
++
++static void kingdisplay_panel_del(struct kingdisplay_panel *kingdisplay)
++{
++	drm_panel_remove(&kingdisplay->base);
++}
++
++static int kingdisplay_panel_probe(struct mipi_dsi_device *dsi)
++{
++	struct kingdisplay_panel *kingdisplay;
++	int err;
++
++	dsi->lanes = 4;
++	dsi->format = MIPI_DSI_FMT_RGB888;
++	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
++			  MIPI_DSI_MODE_LPM;
++
++	kingdisplay = devm_kzalloc(&dsi->dev, sizeof(*kingdisplay), GFP_KERNEL);
++	if (!kingdisplay)
++		return -ENOMEM;
++
++	mipi_dsi_set_drvdata(dsi, kingdisplay);
++	kingdisplay->link = dsi;
++
++	err = kingdisplay_panel_add(kingdisplay);
++	if (err < 0)
++		return err;
++
++	err = mipi_dsi_attach(dsi);
++	return err;
++}
++
++static int kingdisplay_panel_remove(struct mipi_dsi_device *dsi)
++{
++	struct kingdisplay_panel *kingdisplay = mipi_dsi_get_drvdata(dsi);
++	int err;
++
++	err = kingdisplay_panel_unprepare(&kingdisplay->base);
++	if (err < 0)
++		DRM_DEV_ERROR(&dsi->dev, "failed to unprepare panel: %d\n",
++			      err);
++
++	err = kingdisplay_panel_disable(&kingdisplay->base);
++	if (err < 0)
++		DRM_DEV_ERROR(&dsi->dev, "failed to disable panel: %d\n", err);
++
++	err = mipi_dsi_detach(dsi);
++	if (err < 0)
++		DRM_DEV_ERROR(&dsi->dev, "failed to detach from DSI host: %d\n",
++			      err);
++
++	kingdisplay_panel_del(kingdisplay);
++
++	return 0;
++}
++
++static void kingdisplay_panel_shutdown(struct mipi_dsi_device *dsi)
++{
++	struct kingdisplay_panel *kingdisplay = mipi_dsi_get_drvdata(dsi);
++
++	kingdisplay_panel_unprepare(&kingdisplay->base);
++	kingdisplay_panel_disable(&kingdisplay->base);
++}
++
++static struct mipi_dsi_driver kingdisplay_panel_driver = {
++	.driver = {
++		.name = "panel-kingdisplay-kd097d04",
++		.of_match_table = kingdisplay_of_match,
++	},
++	.probe = kingdisplay_panel_probe,
++	.remove = kingdisplay_panel_remove,
++	.shutdown = kingdisplay_panel_shutdown,
++};
++module_mipi_dsi_driver(kingdisplay_panel_driver);
++
++MODULE_AUTHOR("Chris Zhong <zyw@rock-chips.com>");
++MODULE_AUTHOR("Nickey Yang <nickey.yang@rock-chips.com>");
++MODULE_DESCRIPTION("kingdisplay KD097D04 panel driver");
++MODULE_LICENSE("GPL v2");
 -- 
-2.14.4
+2.17.0
 
