@@ -2,177 +2,189 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89CE5C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 06:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FBD2C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 06:11:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AC562148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 06:04:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="REjn47MX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AC562148E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 258212147E
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 06:11:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 258212147E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388817AbeHPJAi (ORCPT
+        id S2388837AbeHPJIB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 05:00:38 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42403 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387491AbeHPJAh (ORCPT
+        Thu, 16 Aug 2018 05:08:01 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:44995 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387491AbeHPJIB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 05:00:37 -0400
-Received: by mail-wr1-f68.google.com with SMTP id e7-v6so3006904wrs.9
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Aug 2018 23:04:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=zkFWPQuwM0C/VxBX8QeMmLf3lHUvpYjoImeMLy9Pw10=;
-        b=REjn47MXebqS+6aW0uEKtJCC6hoRWFsU1EFFZ6oD3nMp1QQeJNWMQ6I42IMaZbwnRc
-         3ME3yVohhcXPXTfckc+Sj2MtXZmv94c5hDqCBTj/zQWJQquC83o6jua16KJ59UGBvHNk
-         RIbsBRz/zakFcb5vcm9uZ1i+xFSjd8PsTTVjA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=zkFWPQuwM0C/VxBX8QeMmLf3lHUvpYjoImeMLy9Pw10=;
-        b=Y1hFkQDsMBZgJr0+qwMAmt+DE165vh0RJlbOtN9xuJP/sZSsBpj7vkN2oE3MwToFz0
-         F0pZ1uBilvCqEalihEklse5FJ0RW4M8SgkJVLNs1SCacPsPf4p/T98OqIAWZMyqLNmjV
-         biM4SoiSvECjpjlC9ArrK2ChvG3I+1iWWInVG7tPkzIR5/IpDZy672A8kmidVR9ywsmb
-         pz2V1RCf85+5iRV97ZAls8cinYwsqUnPNE0MJ0nDCMx+pSP3ugjqZAklgIOc0CZkCoRV
-         ZozUCo2GdNqPA62qHWEHKDlX1S1JqUlP2d2D0mwL7TdBr7VRfSPgB9s3eNkma2eQatoe
-         kj9w==
-X-Gm-Message-State: AOUpUlGouWXTgs1skmE7DbGn5F5+shKPehIHN0DAwOyPxr0S1j6A3Xa9
-        TWLQXqVm79xIz0stKylesry4ohW8V3bKiImGLSFU5Q==
-X-Google-Smtp-Source: AA+uWPyAYra3+M4jkKFpRUG/e96RuwWwAG8HAOTyA5d+i0aZu17n5OEXRd21kwnNBENyvz4FLDhtt2rLu6u8StVRIYc=
-X-Received: by 2002:a5d:6103:: with SMTP id v3-v6mr18557414wrt.265.1534399471501;
- Wed, 15 Aug 2018 23:04:31 -0700 (PDT)
+        Thu, 16 Aug 2018 05:08:01 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R621e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0T6i6Xc2_1534399883;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T6i6Xc2_1534399883)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 16 Aug 2018 14:11:32 +0800
+Subject: Re: [RFC v8 PATCH 3/5] mm: mmap: zap pages with read mmap_sem in
+ munmap
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     mhocko@kernel.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, vbabka@suse.cz, akpm@linux-foundation.org,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
+ <20180815191606.GA4201@bombadil.infradead.org>
+ <20180815210946.GA28919@bombadil.infradead.org>
+ <78e658dd-bdb0-09ca-9af5-b523c7ff529f@linux.alibaba.com>
+ <20180816024652.GA11808@bombadil.infradead.org>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <b286c2f8-d3a5-89f8-954b-608a26c28a22@linux.alibaba.com>
+Date:   Wed, 15 Aug 2018 23:11:23 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Received: by 2002:a1c:c243:0:0:0:0:0 with HTTP; Wed, 15 Aug 2018 23:04:30
- -0700 (PDT)
-In-Reply-To: <CAPM=9txqtcX42eSYjkyJLL8mmzomXRRHi7iWmW=BYgk=CAagZg@mail.gmail.com>
-References: <CAPM=9txqtcX42eSYjkyJLL8mmzomXRRHi7iWmW=BYgk=CAagZg@mail.gmail.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Wed, 15 Aug 2018 23:04:30 -0700
-Message-ID: <CALAqxLXt3MOc=W_gnsR=D=Um5RPsK+6sTKDbSiqro_53ZbXfQQ@mail.gmail.com>
-Subject: Re: [git pull] drm for 4.19-rc1
-To:     Dave Airlie <airlied@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180816024652.GA11808@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 7:53 PM, Dave Airlie <airlied@gmail.com> wrote:
-> This is the main drm pull request for 4.19.
+
+
+On 8/15/18 7:46 PM, Matthew Wilcox wrote:
+> On Wed, Aug 15, 2018 at 02:54:13PM -0700, Yang Shi wrote:
+>>
+>> On 8/15/18 2:09 PM, Matthew Wilcox wrote:
+>>> On Wed, Aug 15, 2018 at 12:16:06PM -0700, Matthew Wilcox wrote:
+>>>> (not even compiled, and I can see a good opportunity for combining the
+>>>> VM_LOCKED loop with the has_uprobes loop)
+>>> I was rushing to get that sent earlier.  Here it is tidied up to
+>>> actually compile.
+>> Thanks for the example. Yes, I believe the code still can be compacted to
+>> save some lines. However, the cover letter and the commit log of this patch
+>> has elaborated the discussion in the earlier reviews about why we do it in
+>> this way.
+> You mean the other callers which need to hold mmap_sem write-locked for
+> longer?  I hadn't really considered those; how about this?
+
+Thanks. Yes, this is the other potential implementation. My rationale 
+about a separate function for the optimized path is I would prefer 
+optimize this step by step by starting with some relatively simple way, 
+then add enhancement on top of it.
+
+And, I would prefer keep the current implementation of do_munmap since 
+it is called somewhere else and it might be called by the optimized path 
+for some reason until we are confident enough that the optimization 
+doesn't have regression.
+
+This sounds like separate function vs an extra parameter. We do save 
+some lines with extra parameter instead of a separate function.
+
+Thanks,
+Yang
+
 >
-> Rob has some new hardware support for new qualcomm hw that I'll send alon=
-g
-> separately. This has the display part of it, the remaining pull is for th=
-e
-> acceleration engine.
+>   mmap.c |   47 +++++++++++++++++++++++++++++------------------
+>   1 file changed, 29 insertions(+), 18 deletions(-)
 >
-> This also contains a wound-wait/wait-die mutex rework, Peter has acked it
-> for merging via my tree.
->
-> Otherwise mostly the usual level of activity.
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index de699523c0b7..06dc31d1da8c 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -2798,11 +2798,11 @@ int split_vma(struct mm_struct *mm, struct vm_area_struct *vma,
+>    * work.  This now handles partial unmappings.
+>    * Jeremy Fitzhardinge <jeremy@goop.org>
+>    */
+> -int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+> -	      struct list_head *uf)
+> +static int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+> +	      struct list_head *uf, bool downgrade)
+>   {
+>   	unsigned long end;
+> -	struct vm_area_struct *vma, *prev, *last;
+> +	struct vm_area_struct *vma, *prev, *last, *tmp;
+>   
+>   	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE-start)
+>   		return -EINVAL;
+> @@ -2816,7 +2816,7 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+>   	if (!vma)
+>   		return 0;
+>   	prev = vma->vm_prev;
+> -	/* we have  start < vma->vm_end  */
+> +	/* we have start < vma->vm_end  */
+>   
+>   	/* if it doesn't overlap, we have nothing.. */
+>   	end = start + len;
+> @@ -2873,18 +2873,22 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+>   
+>   	/*
+>   	 * unlock any mlock()ed ranges before detaching vmas
+> +	 * and check to see if there's any reason we might have to hold
+> +	 * the mmap_sem write-locked while unmapping regions.
+>   	 */
+> -	if (mm->locked_vm) {
+> -		struct vm_area_struct *tmp = vma;
+> -		while (tmp && tmp->vm_start < end) {
+> -			if (tmp->vm_flags & VM_LOCKED) {
+> -				mm->locked_vm -= vma_pages(tmp);
+> -				munlock_vma_pages_all(tmp);
+> -			}
+> -			tmp = tmp->vm_next;
+> +	for (tmp = vma; tmp && tmp->vm_start < end; tmp = tmp->vm_next) {
+> +		if (tmp->vm_flags & VM_LOCKED) {
+> +			mm->locked_vm -= vma_pages(tmp);
+> +			munlock_vma_pages_all(tmp);
+>   		}
+> +		if (tmp->vm_file &&
+> +				has_uprobes(tmp, tmp->vm_start, tmp->vm_end))
+> +			downgrade = false;
+>   	}
+>   
+> +	if (downgrade)
+> +		downgrade_write(&mm->mmap_sem);
+> +
+>   	/*
+>   	 * Remove the vma's, and unmap the actual pages
+>   	 */
+> @@ -2896,7 +2900,13 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+>   	/* Fix up all other VM information */
+>   	remove_vma_list(mm, vma);
+>   
+> -	return 0;
+> +	return downgrade ? 1 : 0;
+> +}
+> +
+> +int do_unmap(struct mm_struct *mm, unsigned long start, size_t len,
+> +		struct list_head *uf)
+> +{
+> +	return __do_munmap(mm, start, len, uf, false);
+>   }
+>   
+>   int vm_munmap(unsigned long start, size_t len)
+> @@ -2905,11 +2915,12 @@ int vm_munmap(unsigned long start, size_t len)
+>   	struct mm_struct *mm = current->mm;
+>   	LIST_HEAD(uf);
+>   
+> -	if (down_write_killable(&mm->mmap_sem))
+> -		return -EINTR;
+> -
+> -	ret = do_munmap(mm, start, len, &uf);
+> -	up_write(&mm->mmap_sem);
+> +	down_write(&mm->mmap_sem);
+> +	ret = __do_munmap(mm, start, len, &uf, true);
+> +	if (ret == 1)
+> +		up_read(&mm->mmap_sem);
+> +	else
+> +		up_write(&mm->mmap_sem);
+>   	userfaultfd_unmap_complete(mm, &uf);
+>   	return ret;
+>   }
 
-Hey Folks,
-  Since this branch landed, I've been seeing the following panic on
-bootup w/ the HiKey board (which uses the hisilicon/kirin drm driver):
-
-[    8.088388] Unable to handle kernel read from unreadable memory at
-virtual address 0000000000000030
-[    8.088393] Mem abort info:
-[    8.088397]   ESR =3D 0x96000005
-[    8.088402]   Exception class =3D DABT (current EL), IL =3D 32 bits
-[    8.088406]   SET =3D 0, FnV =3D 0
-[    8.088410]   EA =3D 0, S1PTW =3D 0
-[    8.088413] Data abort info:
-[    8.088417]   ISV =3D 0, ISS =3D 0x00000005
-[    8.088421]   CM =3D 0, WnR =3D 0
-[    8.088427] user pgtable: 4k pages, 39-bit VAs, pgdp =3D (____ptrval____=
-)
-[    8.088432] [0000000000000030] pgd=3D0000000000000000, pud=3D00000000000=
-00000
-[    8.088443] Internal error: Oops: 96000005 [#1] PREEMPT SMP
-[    8.088453] CPU: 5 PID: 1414 Comm: kworker/5:2 Tainted: G        W
-       4.18.0-07439-gbf1fba4 #633
-[    8.088457] Hardware name: HiKey Development Board (DT)
-[    8.088474] Workqueue: events adv7511_hpd_work
-[    8.088482] pstate: 40400005 (nZcv daif +PAN -UAO)
-[    8.088493] pc : drm_sysfs_hotplug_event+0x40/0x78
-[    8.088499] lr : drm_sysfs_hotplug_event+0x40/0x78
-[    8.088502] sp : ffffff800ba73d20
-[    8.088506] x29: ffffff800ba73d20 x28: 0000000000000000
-[    8.088514] x27: ffffff8009293cd8 x26: ffffffc074e55938
-[    8.088522] x25: 0000000000000000 x24: ffffffc07ff85000
-[    8.088530] x23: ffffffc0742c4a78 x22: ffffffc07ff86c00
-[    8.088537] x21: ffffffc0750d0e00 x20: 0000000000000000
-[    8.088545] x19: ffffff8009009a48 x18: 0000000000000000
-[    8.088552] x17: 0000000000000000 x16: ffffffc074fbde80
-[    8.088560] x15: 0000000000000000 x14: ffffffc005f96c00
-[    8.088568] x13: 00000040770c9000 x12: 0000000034d5d91d
-[    8.088575] x11: 0000000000000000 x10: 0000000000000990
-[    8.088582] x9 : ffffff800ba739b0 x8 : ffffff800913e000
-[    8.088589] x7 : 0000000000000000 x6 : ffffff8009009a48
-[    8.088596] x5 : ffffff80090588d0 x4 : 0000000000000000
-[    8.088602] x3 : ffffff8009009a48 x2 : 0000000000000000
-[    8.088608] x1 : 18701cfc97cf1200 x0 : 0000000000000000
-[    8.120775] Process kworker/5:2 (pid: 1414, stack limit =3D 0x(____ptrva=
-l____))
-[    8.120778] Call trace:
-[    8.120787]  drm_sysfs_hotplug_event+0x40/0x78
-[    8.120794]  drm_kms_helper_hotplug_event+0x14/0x40
-[    8.120800]  adv7511_hpd_work+0x64/0xe0
-[    8.120807]  process_one_work+0x12c/0x320
-[    8.120814]  worker_thread+0x48/0x458
-[    8.126654]  kthread+0xf8/0x128
-[    8.126661]  ret_from_fork+0x10/0x18
-[    8.126672] Code: aa0003f4 52800020 a902ffa2 94006637 (f9401a80)
-[    8.135638] ---[ end trace cf7120942e6f40fa ]---
-
-And earlier in boot we see:
-
-[    4.620909] kirin-drm f4100000.ade: bound f4107800.dsi (ops dsi_ops)
-[    4.627304] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
-[    4.633935] [drm] No driver support for vblank timestamp query.
-[    4.732910] kirin-drm f4100000.ade: [drm:drm_fb_helper_fbdev_setup]
-*ERROR* Failed to set fbdev configuration
-[    4.742948] [drm:kirin_drm_bind] *ERROR* failed to initialize fbdev.
-[    4.749585] kirin-drm f4100000.ade: master bind failed: -22
-[    4.755218] dw-dsi: probe of f4107800.dsi failed with error -22
-
-I've also seen similar trouble w/ the HiKey960 which uses a similar
-but still out of tree driver that also utilizes the cma fbhelper code,
-which makes me suspect it has to do with the drm/cma-helper changes
-below:
-
-> Noralf Tr=C3=B8nnes (15):
->       drm/file: Don't set master on in-kernel clients
->       drm: Make ioctls available for in-kernel clients
->       drm: Begin an API for in-kernel clients
->       drm/fb-helper: Add generic fbdev emulation .fb_probe function
->       drm/pl111: Set .gem_prime_vmap and .gem_prime_mmap
->       drm/cma-helper: Use the generic fbdev emulation
->       drm/debugfs: Add internal client debugfs file
->       drm/fb-helper: Finish the generic fbdev emulation
->       drm/tinydrm: Use drm_fbdev_generic_setup()
->       drm/cma-helper: Remove drm_fb_cma_fbdev_init_with_funcs()
-
-Though I've not yet had time to bisect this down tonight.
-
-I'll spend some more time on this tomorrow, but wanted to give folks a
-heads up in the meantime.
-
-thanks
--john
