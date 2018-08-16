@@ -6,37 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F11C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C73CAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C11BE21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:46:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C11BE21479
+	by mail.kernel.org (Postfix) with ESMTP id 8B81121479
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:46:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B81121479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730266AbeHPVqd (ORCPT
+        id S1730286AbeHPVqh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:46:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56886 "EHLO
+        Thu, 16 Aug 2018 17:46:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56902 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730232AbeHPVqb (ORCPT
+        with ESMTP id S1730232AbeHPVqe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:46:31 -0400
+        Thu, 16 Aug 2018 17:46:34 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1E6DED25;
-        Thu, 16 Aug 2018 18:46:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5C9ACD09;
+        Thu, 16 Aug 2018 18:46:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mhocko@suse.com,
-        akpm@linux-foundation.org, hpa@zytor.com, cpandya@codeaurora.org,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 4.14 03/22] x86/mm: Disable ioremap free page handling on x86-PAE
-Date:   Thu, 16 Aug 2018 20:45:04 +0200
-Message-Id: <20180816171623.395508866@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Lucas De Marchi <lucas.demarchi@profusion.mobi>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jessica Yu <jeyu@kernel.org>,
+        Chih-Wei Huang <cwhuang@linux.org.tw>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 4.14 04/22] kbuild: verify that $DEPMOD is installed
+Date:   Thu, 16 Aug 2018 20:45:05 +0200
+Message-Id: <20180816171623.515243801@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171622.831964729@linuxfoundation.org>
 References: <20180816171622.831964729@linuxfoundation.org>
@@ -53,74 +55,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Toshi Kani <toshi.kani@hpe.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit f967db0b9ed44ec3057a28f3b28efc51df51b835 upstream.
+commit 934193a654c1f4d0643ddbf4b2529b508cae926e upstream.
 
-ioremap() supports pmd mappings on x86-PAE.  However, kernel's pmd
-tables are not shared among processes on x86-PAE.  Therefore, any
-update to sync'd pmd entries need re-syncing.  Freeing a pte page
-also leads to a vmalloc fault and hits the BUG_ON in vmalloc_sync_one().
+Verify that 'depmod' ($DEPMOD) is installed.
+This is a partial revert of commit 620c231c7a7f
+("kbuild: do not check for ancient modutils tools").
 
-Disable free page handling on x86-PAE.  pud_free_pmd_page() and
-pmd_free_pte_page() simply return 0 if a given pud/pmd entry is present.
-This assures that ioremap() does not update sync'd pmd entries at the
-cost of falling back to pte mappings.
+Also update Documentation/process/changes.rst to refer to
+kmod instead of module-init-tools.
 
-Fixes: 28ee90fe6048 ("x86/mm: implement free pmd/pte page interfaces")
-Reported-by: Joerg Roedel <joro@8bytes.org>
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: mhocko@suse.com
-Cc: akpm@linux-foundation.org
-Cc: hpa@zytor.com
-Cc: cpandya@codeaurora.org
-Cc: linux-mm@kvack.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: stable@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20180627141348.21777-2-toshi.kani@hpe.com
+Fixes kernel bugzilla #198965:
+https://bugzilla.kernel.org/show_bug.cgi?id=198965
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>
+Cc: Lucas De Marchi <lucas.de.marchi@gmail.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Chih-Wei Huang <cwhuang@linux.org.tw>
+Cc: stable@vger.kernel.org # any kernel since 2012
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/pgtable.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ Documentation/process/changes.rst |   19 +++++++------------
+ scripts/depmod.sh                 |    8 +++++++-
+ 2 files changed, 14 insertions(+), 13 deletions(-)
 
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -712,6 +712,7 @@ int pmd_clear_huge(pmd_t *pmd)
- 	return 0;
- }
+--- a/Documentation/process/changes.rst
++++ b/Documentation/process/changes.rst
+@@ -33,7 +33,7 @@ GNU C                  3.2
+ GNU make               3.81             make --version
+ binutils               2.20             ld -v
+ util-linux             2.10o            fdformat --version
+-module-init-tools      0.9.10           depmod -V
++kmod                   13               depmod -V
+ e2fsprogs              1.41.4           e2fsck -V
+ jfsutils               1.1.3            fsck.jfs -V
+ reiserfsprogs          3.6.3            reiserfsck -V
+@@ -141,12 +141,6 @@ is not build with ``CONFIG_KALLSYMS`` an
+ reproduce the Oops with that option, then you can still decode that Oops
+ with ksymoops.
  
-+#ifdef CONFIG_X86_64
- /**
-  * pud_free_pmd_page - Clear pud entry and free pmd page.
-  * @pud: Pointer to a PUD.
-@@ -759,4 +760,22 @@ int pmd_free_pte_page(pmd_t *pmd)
+-Module-Init-Tools
+------------------
+-
+-A new module loader is now in the kernel that requires ``module-init-tools``
+-to use.  It is backward compatible with the 2.4.x series kernels.
+-
+ Mkinitrd
+ --------
  
- 	return 1;
- }
+@@ -346,16 +340,17 @@ Util-linux
+ 
+ - <https://www.kernel.org/pub/linux/utils/util-linux/>
+ 
++Kmod
++----
 +
-+#else /* !CONFIG_X86_64 */
++- <https://www.kernel.org/pub/linux/utils/kernel/kmod/>
++- <https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git>
 +
-+int pud_free_pmd_page(pud_t *pud)
-+{
-+	return pud_none(*pud);
-+}
+ Ksymoops
+ --------
+ 
+ - <https://www.kernel.org/pub/linux/utils/kernel/ksymoops/v2.4/>
+ 
+-Module-Init-Tools
+------------------
+-
+-- <https://www.kernel.org/pub/linux/utils/kernel/module-init-tools/>
+-
+ Mkinitrd
+ --------
+ 
+--- a/scripts/depmod.sh
++++ b/scripts/depmod.sh
+@@ -11,10 +11,16 @@ DEPMOD=$1
+ KERNELRELEASE=$2
+ SYMBOL_PREFIX=$3
+ 
+-if ! test -r System.map -a -x "$DEPMOD"; then
++if ! test -r System.map ; then
+ 	exit 0
+ fi
+ 
++if [ -z $(command -v $DEPMOD) ]; then
++	echo "'make modules_install' requires $DEPMOD. Please install it." >&2
++	echo "This is probably in the kmod package." >&2
++	exit 1
++fi
 +
-+/*
-+ * Disable free page handling on x86-PAE. This assures that ioremap()
-+ * does not update sync'd pmd entries. See vmalloc_sync_one().
-+ */
-+int pmd_free_pte_page(pmd_t *pmd)
-+{
-+	return pmd_none(*pmd);
-+}
-+
-+#endif /* CONFIG_X86_64 */
- #endif	/* CONFIG_HAVE_ARCH_HUGE_VMAP */
+ # older versions of depmod don't support -P <symbol-prefix>
+ # support was added in module-init-tools 3.13
+ if test -n "$SYMBOL_PREFIX"; then
 
 
