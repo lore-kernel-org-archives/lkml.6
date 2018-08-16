@@ -2,132 +2,99 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 381BAC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:21:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF63C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7A1D208A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:21:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7A1D208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id B60102145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 17:21:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B60102145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728535AbeHPUVX (ORCPT
+        id S1728702AbeHPUVa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 16:21:23 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:47274 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725969AbeHPUVW (ORCPT
+        Thu, 16 Aug 2018 16:21:30 -0400
+Received: from gateway34.websitewelcome.com ([192.185.148.104]:18261 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728312AbeHPUVa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 16:21:22 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fqLxj-0004nO-0o; Thu, 16 Aug 2018 11:21:31 -0600
-Received: from [97.119.167.31] (helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fqLxi-0004Ug-Aw; Thu, 16 Aug 2018 11:21:30 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Steve French <smfrench@gmail.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        trond.myklebust@hammerspace.com,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Steve Dickson <steved@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ebiederm@redhat.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-nfs@vger.kernel.org,
-        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
-References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-        <17763.1534350685@warthog.procyon.org.uk>
-        <87pnyiew8x.fsf@xmission.com>
-        <CAH2r5muKOWBe9zMM8duNJ3rp1bzQh-mUj5zYoARO5pmc4de_+A@mail.gmail.com>
-Date:   Thu, 16 Aug 2018 12:21:23 -0500
-In-Reply-To: <CAH2r5muKOWBe9zMM8duNJ3rp1bzQh-mUj5zYoARO5pmc4de_+A@mail.gmail.com>
-        (Steve French's message of "Thu, 16 Aug 2018 11:24:56 -0500")
-Message-ID: <87in4acjn0.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 16 Aug 2018 16:21:30 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id 1FB16163940
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 12:21:44 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id qLxef1g4dPvAdqLxof1OnW; Thu, 16 Aug 2018 12:21:43 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.72.226] (port=51192 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fqLxd-002l7H-JT; Thu, 16 Aug 2018 12:21:25 -0500
+Date:   Thu, 16 Aug 2018 12:21:24 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] futex: Mark expected switch fall-throughs
+Message-ID: <20180816172124.GA2407@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fqLxi-0004Ug-Aw;;;mid=<87in4acjn0.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18gCLRR5hyEu8VeoAcvITnRRHb6CUf2MKU=
-X-SA-Exim-Connect-IP: 97.119.167.31
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: Should we split the network filesystem setup into two phases?
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.72.226
+X-Source-L: No
+X-Exim-ID: 1fqLxd-002l7H-JT
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.72.226]:51192
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Steve French <smfrench@gmail.com> writes:
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-> On Thu, Aug 16, 2018 at 2:56 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->>
->> David Howells <dhowells@redhat.com> writes:
->>
->> > Having just re-ported NFS on top of the new mount API stuff, I find that I
->> > don't really like the idea of superblocks being separated by communication
->> > parameters - especially when it might seem reasonable to be able to adjust
->> > those parameters.
->> >
->> > Does it make sense to abstract out the remote peer and allow (a) that to be
->> > configured separately from any superblocks using it and (b) that to be used to
->> > create superblocks?
-> <snip>
->> At least for devpts we always create a new filesystem instance every
->> time mount(2) is called.  NFS seems to have the option to create a new
->> filesystem instance every time mount(2) is called as well, (even if the
->> filesystem parameters are the same).  And depending on the case I can
->> see the attraction for other filesystems as well.
->>
->> So I don't think we can completely abandon the option for filesystems
->> to always create a new filesystem instance when mount(8) is called.
->
-> In cifs we attempt to match new mounts to existing tree connections
-> (instances of connections to a \\server\share) from other mount(s)
-> based first on whether security settings match (e.g. are both
-> Kerberos) and then on whether encryption is on/off and whether this is
-> a snapshot mount (smb3 previous versions feature).  If neither is
-> mounted with a snaphsot and the encryption settings match then
-> we will use the same tree id to talk with the server as the other
-> mounts use.  Interesting idea to allow mount to force a new
-> tree id.
->
-> What was the NFS mount option you were talking about?
-> Looking at the nfs man page the only one that looked similar
-> was "nosharecache"
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ kernel/futex.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I was remembering this from reading the nfs mount code:
+diff --git a/kernel/futex.c b/kernel/futex.c
+index 1f450e0..11fc3bb 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -3523,10 +3523,12 @@ long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
+ 	switch (cmd) {
+ 	case FUTEX_WAIT:
+ 		val3 = FUTEX_BITSET_MATCH_ANY;
++		/* fall through */
+ 	case FUTEX_WAIT_BITSET:
+ 		return futex_wait(uaddr, flags, val, timeout, val3);
+ 	case FUTEX_WAKE:
+ 		val3 = FUTEX_BITSET_MATCH_ANY;
++		/* fall through */
+ 	case FUTEX_WAKE_BITSET:
+ 		return futex_wake(uaddr, flags, val, val3);
+ 	case FUTEX_REQUEUE:
+-- 
+2.7.4
 
-static int nfs_compare_super(struct super_block *sb, void *data)
-{
-...
-	if (!nfs_compare_super_address(old, server))
-		return 0;
-	/* Note: NFS_MOUNT_UNSHARED == NFS4_MOUNT_UNSHARED */
-	if (old->flags & NFS_MOUNT_UNSHARED)
-		return 0;
-...
-}
-
-If a filesystem has NFS_MOUNT_UNSHARED set it does not serve as a
-candidate for new mount requests.  Skimming the code it looks like
-nosharecache is what sets NFS_MOUNT_UNSHARED.
-
-
-Another interesting and common case is tmpfs which always creates a new
-filesystem instance whenever it is mounted.
-
-Eric
