@@ -3,144 +3,163 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFBDC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0F8AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:00:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 035AF20C03
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 10:59:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 035AF20C03
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id AA77B20C03
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:00:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA77B20C03
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391150AbeHPN5c (ORCPT
+        id S2391163AbeHPN6k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 09:57:32 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:6024 "EHLO huawei.com"
+        Thu, 16 Aug 2018 09:58:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40642 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389136AbeHPN5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 09:57:32 -0400
-Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id 877537CA6ACCA;
-        Thu, 16 Aug 2018 18:59:41 +0800 (CST)
-Received: from DGGEMM422-HUB.china.huawei.com (10.1.198.39) by
- DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
- id 14.3.399.0; Thu, 16 Aug 2018 18:59:42 +0800
-Received: from DGGEMM526-MBX.china.huawei.com ([169.254.8.26]) by
- dggemm422-hub.china.huawei.com ([10.1.198.39]) with mapi id 14.03.0399.000;
- Thu, 16 Aug 2018 18:59:38 +0800
-From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
-To:     Roger Quadros <rogerq@ti.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "mathias.nyman@linux.intel.com" <mathias.nyman@linux.intel.com>,
-        "drinkcat@chromium.org" <drinkcat@chromium.org>,
-        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
-        "drake@endlessm.com" <drake@endlessm.com>,
-        "mike.looijmans@topic.nl" <mike.looijmans@topic.nl>,
-        "joe@perches.com" <joe@perches.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] usb: hub: try old enumeration scheme first for high
- speed devices
-Thread-Topic: [PATCH] usb: hub: try old enumeration scheme first for high
- speed devices
-Thread-Index: AQHUMHhu69J7qZINb0WTPExaubbbVKS4SOuAgAA6VQCABl4BAP//8QSAgAMd8CD//4ruAIAAwyzQ
-Date:   Thu, 16 Aug 2018 10:59:38 +0000
-Message-ID: <678F3D1BB717D949B966B68EAEB446ED0C9B33C7@dggemm526-mbx.china.huawei.com>
-References: <678F3D1BB717D949B966B68EAEB446ED0C9B12B9@dggemm526-mbx.china.huawei.com>
- <Pine.LNX.4.44L0.1808141022450.1466-100000@iolanthe.rowland.org>
- <678F3D1BB717D949B966B68EAEB446ED0C9B2CC0@dggemm526-mbx.china.huawei.com>
- <f4372b12-327c-ee51-76ae-2e2bc5cdceed@ti.com>
-In-Reply-To: <f4372b12-327c-ee51-76ae-2e2bc5cdceed@ti.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.67.222.15]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S2389136AbeHPN6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 09:58:39 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8F3D3819702B;
+        Thu, 16 Aug 2018 11:00:51 +0000 (UTC)
+Received: from [10.36.116.94] (ovpn-116-94.ams2.redhat.com [10.36.116.94])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3EF32112D17B;
+        Thu, 16 Aug 2018 11:00:48 +0000 (UTC)
+Subject: Re: [PATCH v1 3/5] mm/memory_hotplug: check if sections are already
+ online/offline
+To:     Oscar Salvador <osalvador@techadventures.net>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Kemi Wang <kemi.wang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Jia He <jia.he@hxt-semitech.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Petr Tesarik <ptesarik@suse.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Baoquan He <bhe@redhat.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20180816100628.26428-1-david@redhat.com>
+ <20180816100628.26428-4-david@redhat.com>
+ <20180816104736.GA16861@techadventures.net>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <62da84ee-090f-29e4-0a39-fcfd543ee81d@redhat.com>
+Date:   Thu, 16 Aug 2018 13:00:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180816104736.GA16861@techadventures.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 16 Aug 2018 11:00:51 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 16 Aug 2018 11:00:51 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgUm9nZXI6DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IFJvZ2VyIFF1
-YWRyb3MgW21haWx0bzpyb2dlcnFAdGkuY29tXQ0KPlNlbnQ6IFRodXJzZGF5LCBBdWd1c3QgMTYs
-IDIwMTggMzoxNyBQTQ0KPlRvOiBaZW5ndGFvIChCKSA8cHJpbWUuemVuZ0BoaXNpbGljb24uY29t
-PjsgQWxhbiBTdGVybg0KPjxzdGVybkByb3dsYW5kLmhhcnZhcmQuZWR1Pg0KPkNjOiBncmVna2hA
-bGludXhmb3VuZGF0aW9uLm9yZzsgbWF0aGlhcy5ueW1hbkBsaW51eC5pbnRlbC5jb207DQo+ZHJp
-bmtjYXRAY2hyb21pdW0ub3JnOyBmZWxpcGUuYmFsYmlAbGludXguaW50ZWwuY29tOw0KPmRyYWtl
-QGVuZGxlc3NtLmNvbTsgbWlrZS5sb29pam1hbnNAdG9waWMubmw7IGpvZUBwZXJjaGVzLmNvbTsN
-Cj5saW51eC11c2JAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
-DQo+U3ViamVjdDogUmU6IFtQQVRDSF0gdXNiOiBodWI6IHRyeSBvbGQgZW51bWVyYXRpb24gc2No
-ZW1lIGZpcnN0IGZvciBoaWdoDQo+c3BlZWQgZGV2aWNlcw0KPg0KPk9uIDE2LzA4LzE4IDA5OjIx
-LCBaZW5ndGFvIChCKSB3cm90ZToNCj4+IEhpIGFsYW46DQo+Pg0KPj4+IC0tLS0tT3JpZ2luYWwg
-TWVzc2FnZS0tLS0tDQo+Pj4gRnJvbTogQWxhbiBTdGVybiBbbWFpbHRvOnN0ZXJuQHJvd2xhbmQu
-aGFydmFyZC5lZHVdDQo+Pj4gU2VudDogVHVlc2RheSwgQXVndXN0IDE0LCAyMDE4IDEwOjQwIFBN
-DQo+Pj4gVG86IFplbmd0YW8gKEIpIDxwcmltZS56ZW5nQGhpc2lsaWNvbi5jb20+DQo+Pj4gQ2M6
-IFJvZ2VyIFF1YWRyb3MgPHJvZ2VycUB0aS5jb20+OyBncmVna2hAbGludXhmb3VuZGF0aW9uLm9y
-ZzsNCj4+PiBtYXRoaWFzLm55bWFuQGxpbnV4LmludGVsLmNvbTsgZHJpbmtjYXRAY2hyb21pdW0u
-b3JnOw0KPj4+IGZlbGlwZS5iYWxiaUBsaW51eC5pbnRlbC5jb207IGRyYWtlQGVuZGxlc3NtLmNv
-bTsNCj4+PiBtaWtlLmxvb2lqbWFuc0B0b3BpYy5ubDsgam9lQHBlcmNoZXMuY29tOyBsaW51eC11
-c2JAdmdlci5rZXJuZWwub3JnOw0KPj4+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4+
-PiBTdWJqZWN0OiBSRTogW1BBVENIXSB1c2I6IGh1YjogdHJ5IG9sZCBlbnVtZXJhdGlvbiBzY2hl
-bWUgZmlyc3QgZm9yDQo+Pj4gaGlnaCBzcGVlZCBkZXZpY2VzDQo+Pj4NCj4+PiBPbiBUdWUsIDE0
-IEF1ZyAyMDE4LCBaZW5ndGFvIChCKSB3cm90ZToNCj4+Pg0KPj4+PiBIaSBhbGFuOg0KPj4+Pg0K
-Pj4+Pj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4+Pj4+IEZyb206IGxpbnV4LXVzYi1v
-d25lckB2Z2VyLmtlcm5lbC5vcmcNCj4+Pj4+IFttYWlsdG86bGludXgtdXNiLW93bmVyQHZnZXIu
-a2VybmVsLm9yZ10gT24gQmVoYWxmIE9mIEFsYW4gU3Rlcm4NCj4+Pj4+IFNlbnQ6IEZyaWRheSwg
-QXVndXN0IDEwLCAyMDE4IDEwOjIwIFBNDQo+Pj4+PiBUbzogUm9nZXIgUXVhZHJvcyA8cm9nZXJx
-QHRpLmNvbT4NCj4+Pj4+IENjOiBaZW5ndGFvIChCKSA8cHJpbWUuemVuZ0BoaXNpbGljb24uY29t
-PjsNCj4+Pj4+IGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnOyBtYXRoaWFzLm55bWFuQGxpbnV4
-LmludGVsLmNvbTsNCj4+Pj4+IGRyaW5rY2F0QGNocm9taXVtLm9yZzsgZmVsaXBlLmJhbGJpQGxp
-bnV4LmludGVsLmNvbTsNCj4+Pj4+IGRyYWtlQGVuZGxlc3NtLmNvbTsgbWlrZS5sb29pam1hbnNA
-dG9waWMubmw7IGpvZUBwZXJjaGVzLmNvbTsNCj4+Pj4+IGxpbnV4LXVzYkB2Z2VyLmtlcm5lbC5v
-cmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4+Pj4+IFN1YmplY3Q6IFJlOiBbUEFU
-Q0hdIHVzYjogaHViOiB0cnkgb2xkIGVudW1lcmF0aW9uIHNjaGVtZSBmaXJzdCBmb3INCj4+Pj4+
-IGhpZ2ggc3BlZWQgZGV2aWNlcw0KPj4+Pj4NCj4+Pj4+IE9uIEZyaSwgMTAgQXVnIDIwMTgsIFJv
-Z2VyIFF1YWRyb3Mgd3JvdGU6DQo+Pj4+Pg0KPj4+Pj4+IEhpLA0KPj4+Pj4+DQo+Pj4+Pj4gT24g
-MTAvMDgvMTggMTg6MDEsIFplbmcgVGFvIHdyb3RlOg0KPj4+Pj4+PiBUaGUgbmV3IHNjaGVtZSBp
-cyByZXF1aXJlZCBqdXN0IHRvIHN1cHBvcnQgbGVnYWN5IGxvdyBhbmQNCj4+Pj4+Pj4gZnVsbC1z
-cGVlZCBkZXZpY2VzLiBGb3IgaGlnaCBzcGVlZCBkZXZpY2VzLCBpdCB3aWxsIHNsb3dlciB0aGUN
-Cj4+Pj4+Pj4gZW51bWVyYXRpb24NCj4+PiBzcGVlZC4NCj4+Pj4+Pj4gU28gaW4gdGhpcyBwYXRj
-aCB3ZSB0cnkgdGhlICJvbGQiIGVudW1lcmF0aW9uIHNjaGVtZSBmaXJzdCBmb3INCj4+Pj4+Pj4g
-aGlnaCBzcGVlZCBkZXZpY2VzLg0KPj4+Pj4+DQo+Pj4+Pj4gSG93IHNsb3cgZG9lcyBpdCBnZXQ/
-IElzIGl0IHNpZ25pZmljYW50Pw0KPj4+Pj4+IERvIHdlIHJpc2sgYnJlYWtpbmcgZXhpc3Rpbmcg
-SFMgZGV2aWNlcyB0aGF0IHdvcms/IEkgZG9uJ3QgdGhpbmsNCj4+Pj4+PiB3ZSBjYW4gYmUgc3Vy
-ZSB0aWxsIHdlIHJ1biB0aGlzIHRocm91Z2ggdGVzdGluZy4NCj4+Pj4+DQo+Pj4+PiBJbmRlZWQu
-ICBJIGFtIGV4dHJlbWVseSBza2VwdGljYWwgYWJvdXQgYSBwYXRjaCBsaWtlIHRoaXMsIHVubGVz
-cw0KPj4+Pj4gc29tZWJvZHkgY2FuIHNob3cgdGhhdCBXaW5kb3dzIHVzZXMgdGhlICJvbGQiIHNj
-aGVtZSBmb3INCj5oaWdoLXNwZWVkDQo+Pj4gZGV2aWNlcy4NCj4+Pj4NCj4+Pj4gWWVzLCB0aGlz
-IGlzIHdoYXQgdGhlIHdpbmRvd3MgaGFzIGRvbmUsIHlvdSBjYW4gcmVmZXIgdG8NCj4+Pj4NCj5o
-dHRwczovL2Jsb2dzLm1zZG4ubWljcm9zb2Z0LmNvbS91c2Jjb3JlYmxvZy8yMDEzLzA0LzExL3Vz
-Yi0yLTEtMi0wLQ0KPj4+PiAxLSAxLWRldmljZS1lbnVtZXJhdGlvbi1jaGFuZ2VzLWluLXdpbmRv
-d3MtOC8NCj4+Pg0KPj4+IEFuZCB0aGF0IGJsb2cgcG9zdCBpcyA1IHllYXJzIG9sZCENCj4+Pg0K
-Pj4+IE9rYXksIEkgdGhpbmsgd2UgY2FuIGdvIGFoZWFkIGFuZCBtYWtlIHRoaXMgY2hhbmdlLiAg
-SG93ZXZlciwgeW91DQo+Pj4gc2hvdWxkIHVwZGF0ZSB0aGUgcGF0Y2ggZGVzY3JpcHRpb24gdG8g
-bWVudGlvbiB3aGF0IE1pY3Jvc29mdCBkaWQgaW4NCj4+PiBXaW5kb3dzIDggYW5kIHNheSB0aGF0
-IHRoZSBuZXcgYmVoYXZpb3IgbWF0Y2hlcyB0aGVpcnMuDQo+Pj4NCj4+IE9rYXksIEkgd2lsbCB1
-cGRhdGUgaXQgdGhlIGNoYW5nZSBsb2cgaW4gdjIuDQo+Pg0KPj4+IEFsc28sIGFzIFJvZ2VyIG1l
-bnRpb25lZCwgeW91IHNob3VsZCB1cGRhdGUgdGhlIGRvY3VtZW50YXRpb24gdG8gc2F5DQo+Pj4g
-dGhhdCB0aGUgb2xkX3NjaGVtZV9maXJzdCBtb2R1bGUgcGFyYW1ldGVyIG5vdyBhcHBsaWVzIG9u
-bHkgdG8gbG93LQ0KPj4+IGFuZCBmdWxsLXNwZWVkIGRldmljZXMsIHNpbmNlIGhpZ2gtIGFuZCBT
-dXBlclNwZWVkIGRldmljZXMgYWx3YXlzIHVzZQ0KPnRoZSBvbGQgc2NoZW1lIGZpcnN0Lg0KPj4+
-DQo+Pg0KPj4gU2luY2Ugd2Ugc2hvdWxkIGhhdmUgZGVkaWNhdGVkIGVudW1lcmF0aW9uIGZsb3cg
-Zm9yIFNTLCBISUdILCBsb3cgYW5kDQo+PiBmdWxsIHNwZWVkIGRldmljZXMsIFNvIEkgdGhpbmsg
-dGhlIG9sZF9zY2hlbWVfZmlyc3QgYW5kIHVzZV9ib3RoX3NjaGVtZXMNCj5wYXJhbWV0ZXJzIHNo
-b3VsZCBiZSByZW1vdmVkLg0KPj4gV2hhdCBkbyB5b3UgdGhpbmsgYWJvdXQgaXQ/DQo+DQo+SSB0
-aGluayB3ZSBzaG91bGQgcmV0YWluIHRoZW0gYXMgc29tZSBob3N0IGNvbnRyb2xsZXJzIGNhbiBo
-YXZlIGlzc3VlcyBhbmQNCj50aGVzZSBwYXJhbWV0ZXJzIGdpdmUgc29tZSBjb250cm9sIHRvIHN5
-c3RlbSBpbnRlZ3JhdG9ycyB0byB3b3JrYXJvdW5kIGlmDQo+cmVxdWlyZWQuDQo+DQo+SSdtIGF3
-YXJlIG9mIG9uZSBlcnJhdGEgWzFdIHRoYXQgcmVxdWlyZXMgdGhlIG9sZF9zY2hlbWVfZmlyc3Qg
-dG8gYmUgc2V0IGluDQo+Y2VydGFpbiBjaXJjdW1zdGFuY2VzLg0KPg0KPlsxXSBodHRwOi8vd3d3
-LnRpLmNvbS9saXQvZXIvc3ByejQyOWwvc3ByejQyOWwucGRmDQo+U2VjdGlvbiBpODk3DQoNCkkg
-J2QgcmF0aGVyIHRvIHVzZSBhIHF1aXJrIHRvIHdvcmthcm91bmQuDQpBbmQgdGhlIG1haW4gaWRl
-YSBpcyB0byBrZWVwIHRoZSBlbnVtZXJhdGlvbiBmbG93IGFzIHNpbXBsZSBhcyBwb3NzaWJsZS4N
-Cg0KPg0KPi0tDQo+VGV4YXMgSW5zdHJ1bWVudHMgRmlubGFuZCBPeSwgUG9ya2thbGFua2F0dSAy
-MiwgMDAxODAgSGVsc2lua2kuDQo+WS10dW5udXMvQnVzaW5lc3MgSUQ6IDA2MTU1MjEtNC4gS290
-aXBhaWtrYS9Eb21pY2lsZTogSGVsc2lua2kNCg==
+On 16.08.2018 12:47, Oscar Salvador wrote:
+> On Thu, Aug 16, 2018 at 12:06:26PM +0200, David Hildenbrand wrote:
+> 
+>> +
+>> +/* check if all mem sections are offline */
+>> +bool mem_sections_offline(unsigned long pfn, unsigned long end_pfn)
+>> +{
+>> +	for (; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
+>> +		unsigned long section_nr = pfn_to_section_nr(pfn);
+>> +
+>> +		if (WARN_ON(!valid_section_nr(section_nr)))
+>> +			continue;
+>> +		if (online_section_nr(section_nr))
+>> +			return false;
+>> +	}
+>> +	return true;
+>> +}
+> 
+> AFAICS pages_correctly_probed will catch this first.
+> pages_correctly_probed checks for the section to be:
+> 
+> - present
+> - valid
+> - !online
+
+Right, I missed that function.
+
+> 
+> Maybe it makes sense to rename it, and write another pages_correctly_probed routine
+> for the offline case.
+> 
+> So all checks would stay in memory_block_action level, and we would not need
+> the mem_sections_offline/online stuff.
+
+I guess I would rather have it all moved into
+online_pages/offline_pages, so we have a clean interface.
+
+> 
+> Thanks
+> 
+
+
+-- 
+
+Thanks,
+
+David / dhildenb
