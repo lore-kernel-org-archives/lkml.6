@@ -2,90 +2,104 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F87C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83305C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 755B9214C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:15:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 755B9214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 3131D214C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:18:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3131D214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390376AbeHPMNH (ORCPT
+        id S2390407AbeHPMPK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 08:13:07 -0400
-Received: from eu-smtp-delivery-211.mimecast.com ([146.101.78.211]:46584 "EHLO
-        eu-smtp-delivery-211.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728165AbeHPMNH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 08:13:07 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by eu-smtp-1.mimecast.com with ESMTP id
- uk-mta-123-Ank6DcxCOM2-xgQfLXSRQA-1; Thu, 16 Aug 2018 10:15:53 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 16 Aug 2018 10:17:32 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 16 Aug 2018 10:17:32 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Linus Torvalds' <torvalds@linux-foundation.org>
-CC:     Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Mike Galbraith" <efault@gmx.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: RE: Build failures with gcc 4.5 and older
-Thread-Topic: Build failures with gcc 4.5 and older
-Thread-Index: AQHUM/HAiGfsyFkD4UmbPfzcSwB5naTAwY9QgAAjZICAABVscP//+GIAgAEofxA=
-Date:   Thu, 16 Aug 2018 09:17:32 +0000
-Message-ID: <5740f0ea692244a5a9bc7c4ac9263687@AcuMS.aculab.com>
-References: <20180814170904.GA12768@roeck-us.net>
- <aa4bedb7b1af45c59ff4e61f3f199287@AcuMS.aculab.com>
- <CA+55aFyeW7rqgGqOusZSz-jFP-CMH=hcyVGKhxyLxNeyBgLbqw@mail.gmail.com>
- <d87ba353f6fc44668969a8535790cdc9@AcuMS.aculab.com>
- <CA+55aFwwon2MLEhw-ERLskWed8b58NseLYF-7OOQhhjMcD-A6A@mail.gmail.com>
-In-Reply-To: <CA+55aFwwon2MLEhw-ERLskWed8b58NseLYF-7OOQhhjMcD-A6A@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
+        Thu, 16 Aug 2018 08:15:10 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34678 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390378AbeHPMPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 08:15:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 816527A9;
+        Thu, 16 Aug 2018 02:17:58 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4F09B3F5BD;
+        Thu, 16 Aug 2018 02:17:58 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 7A8181AE11BC; Thu, 16 Aug 2018 10:18:05 +0100 (BST)
+Date:   Thu, 16 Aug 2018 10:18:05 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LinuxArm <linuxarm@huawei.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Libin <huawei.libin@huawei.com>,
+        John Garry <john.garry@huawei.com>
+Subject: Re: [PATCH v3 1/2] iommu/arm-smmu-v3: fix unexpected CMD_SYNC timeout
+Message-ID: <20180816091805.GB31093@arm.com>
+References: <1534328582-17664-1-git-send-email-thunder.leizhen@huawei.com>
+ <1534328582-17664-2-git-send-email-thunder.leizhen@huawei.com>
+ <6027cd67-7c76-673c-082f-8dd0b7a575b0@arm.com>
+ <5B7533FD.20903@huawei.com>
 MIME-Version: 1.0
-X-MC-Unique: Ank6DcxCOM2-xgQfLXSRQA-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B7533FD.20903@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMTUgQXVndXN0IDIwMTggMTc6MzQNCj4gVG86
-IERhdmlkIExhaWdodA0KPiBDYzogR3VlbnRlciBSb2VjazsgTGludXggS2VybmVsIE1haWxpbmcg
-TGlzdDsgUmlrIHZhbiBSaWVsOyBNaWtlIEdhbGJyYWl0aDsgRGF2ZSBIYW5zZW47IEFuZHJldyBN
-b3J0b24NCj4gU3ViamVjdDogUmU6IEJ1aWxkIGZhaWx1cmVzIHdpdGggZ2NjIDQuNSBhbmQgb2xk
-ZXINCj4gDQo+IE9uIFdlZCwgQXVnIDE1LCAyMDE4IGF0IDk6MTYgQU0gRGF2aWQgTGFpZ2h0IDxE
-YXZpZC5MYWlnaHRAYWN1bGFiLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiA+DQo+ID4gPiBCdXQgc29t
-ZSBsaWJlbGYgYnVnIHRoYXQgaXMgbGVzcyB0aGFuIGEgeWVhciBvbGQgaXMgbGlrZWx5IHRvIGJp
-dGUgcGVvcGxlLg0KPiA+DQo+ID4gU2VlIGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE3LzkvMTAv
-MTg2IGZvciB0aGUgbGliZWxmIGZpeC4NCj4gPiBJdCBpc24ndCBhbnl0aGluZyBsaWtlIGFzIHJh
-cmUgYXMgdGhvc2UgZW1haWxzIHN1Z2dlc3QuDQo+ID4gQW4gJ2FsbG1vZGNvbmZpZycgYnVpbGQg
-ZmFpbHMgb24gYSBsb3Qgb2Ygb2JqZWN0IGZpbGVzIGFmdGVyIDQuMTUtcmM5Lg0KPiANCj4gT2ss
-IGJ1dCB0aGF0IHBhdGNoIHRoYXQgZml4ZXMgaXQgd2FzIG1lcmdlZCBhIGxvbmcgdGltZSBhZ28g
-YWxyZWFkeS4NCj4gU2VlIGNvbW1pdCA5N2RhYjJhZTdlODQgKCJvYmp0b29sOiBGaXggb2JqZWN0
-IGZpbGUgY29ycnVwdGlvbiIpDQo+IA0KPiBTbyBJJ20gYSBiaXQgY29uZnVzZWQgYnkgeW91ciBp
-c3N1ZS4gVGhlIHRoaW5nIHlvdSBwb2ludCB0byBmcm9tIGxhc3QNCj4geWVhciB3YXMgbGl0ZXJh
-bGwgZml4ZWQgYW5kIGNvbW1pdHRlZCB0byB0aGUgdHJlZSBpbiBhIGNvdXBsZSBvZiBkYXlzDQo+
-IGRheXMuDQoNCkhtbW0uLi4gSSBzdGlsbCBoYWQgdG8gdXBkYXRlIGZyb20gbGliZWxmLTAuMTUz
-LnNvIHRvIGxpYmVsZi0wLjE2NS5zbw0KaW4gb3JkZXIgdG8gZ2V0IHRoZSBvdXRwdXQgZnJvbSBv
-Ymp0b29sIHRvIGJlIHZhbGlkLg0KSSdtIHN1cmUgSSdkIHNlZW4gYSBwYXRjaCB0byBsaWJlbGYg
-YXMgd2VsbC4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJh
-bWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0
-cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On Thu, Aug 16, 2018 at 04:21:17PM +0800, Leizhen (ThunderTown) wrote:
+> On 2018/8/15 20:26, Robin Murphy wrote:
+> > On 15/08/18 11:23, Zhen Lei wrote:
+> >> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> >> index 1d64710..3f5c236 100644
+> >> --- a/drivers/iommu/arm-smmu-v3.c
+> >> +++ b/drivers/iommu/arm-smmu-v3.c
+> >> @@ -566,7 +566,7 @@ struct arm_smmu_device {
+> >>
+> >>       int                gerr_irq;
+> >>       int                combined_irq;
+> >> -    atomic_t            sync_nr;
+> >> +    u32                sync_nr;
+> >>
+> >>       unsigned long            ias; /* IPA */
+> >>       unsigned long            oas; /* PA */
+> >> @@ -775,6 +775,11 @@ static int queue_remove_raw(struct arm_smmu_queue *q, u64 *ent)
+> >>       return 0;
+> >>   }
+> >>
+> >> +static inline void arm_smmu_cmdq_sync_set_msidata(u64 *cmd, u32 msidata)
+> > 
+> > If we *are* going to go down this route then I think it would make sense
+> > to move the msiaddr and CMDQ_SYNC_0_CS_MSI logic here as well; i.e.
+> > arm_smmu_cmdq_build_cmd() always generates a "normal" SEV-based sync
+> > command, then calling this guy would convert it to an MSI-based one.
+> > As-is, having bits of mutually-dependent data handled across two
+> > separate places just seems too messy and error-prone.
+> 
+> Yes, How about create a new function "arm_smmu_cmdq_build_sync_msi_cmd"?
+> 
+> static inline
+> void arm_smmu_cmdq_build_sync_msi_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
+> {
+> 	cmd[0]  = FIELD_PREP(CMDQ_0_OP, ent->opcode);
+> 	cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_IRQ);
+> 	cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSH, ARM_SMMU_SH_ISH);
+> 	cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSIATTR, ARM_SMMU_MEMATTR_OIWB);
+> 	cmd[1]  = ent->sync.msiaddr & CMDQ_SYNC_1_MSIADDR_MASK;
+> }
 
+None of this seems justified given the numbers from John, so please just do
+the simple thing and build the command with the lock held.
+
+Will
