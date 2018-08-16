@@ -2,281 +2,110 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE86C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB06AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA8E52148C
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:30:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA8E52148C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 862C72148C
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:34:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="CN8sbb0/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 862C72148C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391193AbeHPO2T (ORCPT
+        id S2391245AbeHPOca (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 10:28:19 -0400
-Received: from mga03.intel.com ([134.134.136.65]:34871 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726062AbeHPO2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 10:28:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2018 04:30:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,247,1531810800"; 
-   d="scan'208";a="225102013"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.72]) ([10.237.72.72])
-  by orsmga004.jf.intel.com with ESMTP; 16 Aug 2018 04:30:17 -0700
-Subject: Re: [PATCH V8 1/2] scsi: ufs: set the device reference clock setting
-To:     Sayali Lokhande <sayalil@codeaurora.org>, subhashj@codeaurora.org,
-        cang@codeaurora.org, vivek.gautam@codeaurora.org,
-        rnayak@codeaurora.org, vinholikatti@gmail.com,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        asutoshd@codeaurora.org, evgreen@chromium.org,
-        riteshh@codeaurora.org
-Cc:     linux-scsi@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-References: <1533805799-5831-1-git-send-email-sayalil@codeaurora.org>
- <1533805799-5831-2-git-send-email-sayalil@codeaurora.org>
- <4efbbb33-95ec-c631-57d4-ca9898e6d475@intel.com>
- <1756f41e-6280-8a14-bc83-e4dab8fa4d9c@codeaurora.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <5b30fb6c-0cb2-f0be-3df6-918963db6369@intel.com>
-Date:   Thu, 16 Aug 2018 14:28:36 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 16 Aug 2018 10:32:30 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:41030 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391216AbeHPOca (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 10:32:30 -0400
+Received: by mail-pl0-f68.google.com with SMTP id w19-v6so1961752ply.8
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 04:34:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Subax9Rmkay8BJ9objlFfmUWJgRdRhAIQcj91vI4W/c=;
+        b=CN8sbb0/daU5vY0+CmBCEWBN4st0EIst8kpnn5C4KVRGTWWYil4MEBTnIhjCT2T2Ib
+         KtzjOLZjJAsvRdi7bpCaHkwTmnRxBt4IgOwgYCyo3TK25/iBvr+rsuFLHIiRhs0WL921
+         muk4Sr0x1ASJz17jtmEO1kK3sF6ANE0NL/1TlMogXS/OisYCF1NpXJuQyb9JDwOz3Jw7
+         2g6WgaqQ7AzbzrnMigK28tKIYGrUIibKXgSPLCYZu0kCz3GX7rGVsQY9aYYD3aYFRpxZ
+         Eft2ar0qsV8FxqUM8GBqfoKDKu5Wds/Sgq+U3tAhOibIs8QrpuJudXt/LVm+JsSa+s71
+         BNOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Subax9Rmkay8BJ9objlFfmUWJgRdRhAIQcj91vI4W/c=;
+        b=WDoraDV2lmvpFwnqUmFYmDNh5eXVgkZPUNFampD+3t0cL+jsoNZUuMbDPmu5LsAoVq
+         sOlrcn2S5SOSzID/016+1qSiCeLe9G+uYWwKR2aJjvUMgNiBvmJkYHNPEMt2Zs6cYINA
+         vuXFyFMolupgohxJAKcsfwGHIG8zefRdU5LcrjRwO6eBPOTFf6+N4QpoS0Ku92JZoy/w
+         cxLPIJLsqwC5vyWCm46hgEn/a51BwIAbYlBAU0Hi+OhiS7vmdZ08bweXB7lnPFi6XnmM
+         53cg0lB0JrrMRblNqDmY0fwvNw0JfWkaQTcmaMSSFTRB+aJeMCy0Ww1JGMR1d1jbCY1C
+         LElw==
+X-Gm-Message-State: AOUpUlE5ubWlBfrieG6c1tvXPQfqrlLI5fonZqS3fqszcVXSNhGkihgV
+        lNfrZOhMY/h85JE+QsXOImuf6w==
+X-Google-Smtp-Source: AA+uWPz3x3q3NJZDjqJFDMQL0SqQ2s3UrQrdGVuUK9j/3Y7elAOgthbtRmlwm32es8nCIhyGgC43Cw==
+X-Received: by 2002:a17:902:3e3:: with SMTP id d90-v6mr28577027pld.12.1534419271803;
+        Thu, 16 Aug 2018 04:34:31 -0700 (PDT)
+Received: from skyninja.hgst.com (rap-us.hgst.com. [199.255.44.250])
+        by smtp.gmail.com with ESMTPSA id d12-v6sm30022530pfn.118.2018.08.16.04.34.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Aug 2018 04:34:30 -0700 (PDT)
+From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
+        javier@cnexlabs.com, hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
+        youngtack.jin@circuitblvd.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [RFC PATCH v2 0/1] lightnvm: move bad block and chunk state logic to core
+Date:   Thu, 16 Aug 2018 13:34:16 +0200
+Message-Id: <20180816113417.3641-1-mb@lightnvm.io>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <1756f41e-6280-8a14-bc83-e4dab8fa4d9c@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/08/18 13:44, Sayali Lokhande wrote:
-> 
-> On 8/13/2018 6:06 PM, Adrian Hunter wrote:
->> On 09/08/18 12:09, Sayali Lokhande wrote:
->>> From: Subhash Jadavani <subhashj@codeaurora.org>
->>>
->>> UFS host supplies the reference clock to UFS device and UFS device
->>> specification allows host to provide one of the 4 frequencies (19.2 MHz,
->>> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
->>> device reference clock frequency setting in the device based on what
->>> frequency it is supplying to UFS device.
->>>
->>> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
->>> Signed-off-by: Can Guo <cang@codeaurora.org>
->>> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
->>> ---
->>>   drivers/scsi/ufs/ufs.h           | 21 ++++++++++
->>>   drivers/scsi/ufs/ufshcd-pltfrm.c |  2 +
->>>   drivers/scsi/ufs/ufshcd.c        | 89
->>> ++++++++++++++++++++++++++++++++++++++++
->>>   drivers/scsi/ufs/ufshcd.h        |  2 +
->>>   4 files changed, 114 insertions(+)
->>>
->>> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
->>> index 14e5bf7..c555ac0 100644
->>> --- a/drivers/scsi/ufs/ufs.h
->>> +++ b/drivers/scsi/ufs/ufs.h
->>> @@ -378,6 +378,27 @@ enum query_opcode {
->>>       UPIU_QUERY_OPCODE_TOGGLE_FLAG    = 0x8,
->>>   };
->>>   +/* bRefClkFreq attribute values */
->>> +enum ref_clk_freq_hz {
->>> +    REF_CLK_FREQ_19_2_MHZ    = 19200000,
->>> +    REF_CLK_FREQ_26_MHZ    = 26000000,
->>> +    REF_CLK_FREQ_38_4_MHZ    = 38400000,
->>> +    REF_CLK_FREQ_52_MHZ    = 52000000,
->>> +};
->>> +
->>> +enum bref_clk_freq {
->>> +    bREF_CLK_FREQ_0, /* 19.2 MHz */
->>> +    bREF_CLK_FREQ_1, /* 26 MHz */
->>> +    bREF_CLK_FREQ_2, /* 38.4 MHz */
->>> +    bREF_CLK_FREQ_3, /* 52 MHz */
->>> +    bREF_CLK_FREQ_INVAL,
->>> +};
->>> +
->>> +struct ufs_ref_clk {
->>> +    enum ref_clk_freq_hz freq_hz;
->>> +    enum bref_clk_freq val;
->>> +};
->>> +
->>>   /* Query response result code */
->>>   enum {
->>>       QUERY_RESULT_SUCCESS                    = 0x00,
->>> diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c
->>> b/drivers/scsi/ufs/ufshcd-pltfrm.c
->>> index e82bde0..0953563 100644
->>> --- a/drivers/scsi/ufs/ufshcd-pltfrm.c
->>> +++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
->>> @@ -343,6 +343,8 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
->>>       pm_runtime_set_active(&pdev->dev);
->>>       pm_runtime_enable(&pdev->dev);
->>>   +    ufshcd_parse_dev_ref_clk_freq(hba);
->>> +
->>>       ufshcd_init_lanes_per_dir(hba);
->>>         err = ufshcd_init(hba, mmio_base, irq);
->>> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
->>> index c5b1bf1..0cbdde7 100644
->>> --- a/drivers/scsi/ufs/ufshcd.c
->>> +++ b/drivers/scsi/ufs/ufshcd.c
->>> @@ -6296,6 +6296,89 @@ static void ufshcd_def_desc_sizes(struct ufs_hba
->>> *hba)
->>>       hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
->>>   }
->>>   +static struct ufs_ref_clk ufs_ref_clk_freqs[] = {
->>> +    {REF_CLK_FREQ_19_2_MHZ, bREF_CLK_FREQ_0},
->>> +    {REF_CLK_FREQ_26_MHZ, bREF_CLK_FREQ_1},
->>> +    {REF_CLK_FREQ_38_4_MHZ, bREF_CLK_FREQ_2},
->>> +    {REF_CLK_FREQ_52_MHZ, bREF_CLK_FREQ_3},
->>> +};
->>> +
->>> +static inline enum bref_clk_freq
->>> +ufs_get_bref_clk_for_ref_clk_freq_hz(u32 freq)
->>> +{
->>> +    enum bref_clk_freq val;
->>> +
->>> +    for (val = bREF_CLK_FREQ_0; val <= bREF_CLK_FREQ_3; val++)
->>> +        if (ufs_ref_clk_freqs[val].freq_hz == freq)
->>> +            return val;
->>> +
->>> +    /* if no match found, return invalid*/
->>> +    return bREF_CLK_FREQ_INVAL;
->>> +}
->>> +
->>> +void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
->>> +{
->>> +    struct device *dev = hba->dev;
->>> +    struct device_node *np = dev->of_node;
->>> +    struct clk *refclk = NULL;
->>> +    u32 freq = 0;
->>> +
->>> +    if (!np)
->>> +        return;
->>> +
->>> +    hba->dev_ref_clk_freq = bREF_CLK_FREQ_INVAL;
->>> +
->>> +    refclk = of_clk_get_by_name(np, "ref_clk");
->> What about users that don't use DT?
-> If there is no DT entry present for ref_clk, we simply set to
-> bREF_CLK_FREQ_INVAL and thus ref clk will not be changed. It will maintain
-> the Manufacturer default value whatever is set by the ufs device vendor.
+This patch moves the 1.2 and 2.0 block/chunk metadata retrieval to
+core.
 
-I meant there is no way for non-DT uses to specify the ref_clk.
+Hi Javier, I did not end up using your patch. I had misunderstood what
+was implemented. Instead I implemented the detection of the each chunk by
+first sensing the first page, then the last page, and if the chunk
+is sensed as open, a per page scan will be executed to update the write
+pointer appropriately.
 
->>
->>> +    if (!refclk)
->>> +        return;
->>> +
->>> +    freq = clk_get_rate(refclk);
->>> +    if (freq > REF_CLK_FREQ_52_MHZ) {
->>> +        dev_err(hba->dev,
->>> +        "%s: invalid ref_clk setting = %d\n",
->>> +        __func__, freq);
->>> +        return;
->>> +    }
->>> +
->>> +    hba->dev_ref_clk_freq =
->>> +        ufs_get_bref_clk_for_ref_clk_freq_hz(freq);
->>> +}
->>> +
->>> +static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
->>> +{
->>> +    int err = 0;
->>> +    int ref_clk = -1;
->>> +
->>> +    err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
->>> +            QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
->>> +
->>> +    if (err) {
->>> +        dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
->>> +             __func__, err);
->>> +        goto out;
->>> +    }
->>> +
->>> +    if (ref_clk == hba->dev_ref_clk_freq)
->>> +        goto out; /* nothing to update */
->>> +
->>> +    err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
->>> +            QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0,
->>> +            &hba->dev_ref_clk_freq);
->>> +
->>> +    if (err)
->>> +        dev_err(hba->dev, "%s: bRefClkFreq setting to %d Hz failed\n",
->>> +        __func__, ufs_ref_clk_freqs[hba->dev_ref_clk_freq].freq_hz);
->>> +    /*
->>> +     * It is good to print this out here to debug any later failures
->>> +     * related to gear switch.
->>> +     */
->>> +    dev_dbg(hba->dev, "%s: bRefClkFreq setting to %d Hz succeeded\n",
->>> +        __func__, ufs_ref_clk_freqs[hba->dev_ref_clk_freq].freq_hz);
->>> +
->>> +out:
->>> +    return err;
->>> +}
->>> +
->>>   /**
->>>    * ufshcd_probe_hba - probe hba to detect device and initialize
->>>    * @hba: per-adapter instance
->>> @@ -6361,6 +6444,12 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
->>>               "%s: Failed getting max supported power mode\n",
->>>               __func__);
->>>       } else {
->>> +        /*
->>> +         * Set the right value to bRefClkFreq before attempting to
->>> +         * switch to HS gears.
->>> +         */
->>> +        if (hba->dev_ref_clk_freq < bREF_CLK_FREQ_INVAL)
->> hba->dev_ref_clk_freq does not always get initialized
-> In ufshcd_parse_dev_ref_clk_freq() function we are initializing the
-> hba->dev_ref_clk_freqto inval as default.
+Note that one needs a real drive to test the implementation. The 1.2
+qemu implementation is lacking. I did update it a bit, such that
+it defaults to all blocks being free. It can be picked up in the ocssd
+qemu repository.
 
-Not if there is no DT
+Changes since v1:
 
->                                           This parse function will be always
-> called in init
+  - Add sensing of chunks wrt to free/open/closed
+  - Add update of write pointer if chunk state is open
 
-Not if the driver isn't ufshcd-pltfrm
+Matias Bjørling (1):
+  lightnvm: move bad block and chunk state logic to core
 
->                and thus dev_ref_clk_freq should always get initialized to
-> called in init and thus dev_ref_clk_freq should always get initialized to
-> defult inval or valid setting if found (in between 19.2 MHz to 52MHz).
->>
->>> +            ufshcd_set_dev_ref_clk(hba);
->>>           ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
->>>           if (ret) {
->>>               dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n",
->>> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
->>> index 8110dcd..101a75c 100644
->>> --- a/drivers/scsi/ufs/ufshcd.h
->>> +++ b/drivers/scsi/ufs/ufshcd.h
->>> @@ -548,6 +548,7 @@ struct ufs_hba {
->>>       void *priv;
->>>       unsigned int irq;
->>>       bool is_irq_enabled;
->>> +    u32 dev_ref_clk_freq;
->>>         /* Interrupt aggregation support is broken */
->>>       #define UFSHCD_QUIRK_BROKEN_INTR_AGGR            0x1
->>> @@ -746,6 +747,7 @@ static inline void ufshcd_rmwl(struct ufs_hba *hba,
->>> u32 mask, u32 val, u32 reg)
->>>   int ufshcd_wait_for_register(struct ufs_hba *hba, u32 reg, u32 mask,
->>>                   u32 val, unsigned long interval_us,
->>>                   unsigned long timeout_ms, bool can_sleep);
->>> +void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba);
->>>     static inline void check_upiu_size(void)
->>>   {
->>>
-> 
-> 
+ drivers/lightnvm/core.c      | 310 +++++++++++++++++++++++++++++++++++--------
+ drivers/lightnvm/pblk-core.c |   6 +-
+ drivers/lightnvm/pblk-init.c | 116 +---------------
+ drivers/lightnvm/pblk.h      |   2 +-
+ drivers/nvme/host/lightnvm.c |   4 +-
+ include/linux/lightnvm.h     |  15 +--
+ 6 files changed, 266 insertions(+), 187 deletions(-)
+
+-- 
+2.11.0
 
