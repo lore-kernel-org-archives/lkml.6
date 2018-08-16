@@ -2,129 +2,113 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27FB0C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59712C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:36:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E12092147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:33:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E12092147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 0EE7121470
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:36:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EE7121470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403872AbeHPQcE (ORCPT
+        id S2403887AbeHPQfK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 12:32:04 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43005 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbeHPQcE (ORCPT
+        Thu, 16 Aug 2018 12:35:10 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:32968 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403866AbeHPQfJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 12:32:04 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fqIOu-00084q-UM; Thu, 16 Aug 2018 13:33:21 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: aacraid: remove unused variables dev and cpu
-Date:   Thu, 16 Aug 2018 14:33:20 +0100
-Message-Id: <20180816133320.19682-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 16 Aug 2018 12:35:09 -0400
+Received: by mail-qk0-f194.google.com with SMTP id z78-v6so1455229qka.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 06:36:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OOu+4bREw0jn3x9PH3U5OMPynu9OlfDCuJH/bYMq9kg=;
+        b=Pxp17B2QVHJCURYSraBNibZGSZM3hBkIsFOQKgm2RaVhVltmvb2Q8XFeVLwgYyqYOd
+         SnIwLwImKZJ0vRVCD5GDe634Jp1bR80vIcbWahDxCtEzJO7pD0cJmI+AFGUZlRBxc02l
+         dkQ8ikiNF4XafjnaKm2x+uRBWh7b9gvYQE0QK8KfW3ai4qP27MW3NkVM3YayaWnga0/O
+         Z/GvjyeJR9i6wSbc/a70nEJsxFzKIvT23S3tGAsPm8mCRA/R5OeuCbA5S0L7yujb20Il
+         UPrKEYjJuZ17R9AwCY8ZX7o6p5v5utUrwFO9WkrC2o/5ImI9Ap2dqhKo9pByYTuisS2T
+         WOiw==
+X-Gm-Message-State: AOUpUlHl1qRxT7JSiZNm81/IUGPXJDRY6baTr9NNKoOKYPcpQ2So/AhE
+        Dm0Xjtd4hpIxUc3HEq9CLRPsldYKph4=
+X-Google-Smtp-Source: AA+uWPxsYoM9K9G411RFxlkXL9n5XtQAQnjv75MOXBV31wqzGROfqB3TWlVPqeiIgTxYnMKPoxssZA==
+X-Received: by 2002:ae9:e817:: with SMTP id a23-v6mr27647321qkg.213.1534426589623;
+        Thu, 16 Aug 2018 06:36:29 -0700 (PDT)
+Received: from ?IPv6:2601:602:9802:a8dc::8a8f? ([2601:602:9802:a8dc::8a8f])
+        by smtp.gmail.com with ESMTPSA id x26-v6sm17745071qth.15.2018.08.16.06.36.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Aug 2018 06:36:28 -0700 (PDT)
+Subject: Re: Kernel lockdown patch & IPAddressAllow/IPAddressDeny systemd
+ feature with Secure Boot
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Andrew Lutomirski <luto@kernel.org>
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>, ast@kernel.org,
+        Laura Abbott <labbott@fedoraproject.org>,
+        linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Kernel Fedora <kernel@lists.fedoraproject.org>,
+        daniel@iogearbox.net
+References: <20180807212531.25161.63476@mailman01.phx2.fedoraproject.org>
+ <CALeDE9ORLoyiUcf8Bmwr2rPyo7-3d8Fo54WuPGWtv4ByE_JG=Q@mail.gmail.com>
+ <CAObL_7GOOQ01NPf4y1MqRJh4S=CYV8NPmEGTbkrTcjrfUKc5LA@mail.gmail.com>
+ <20180816021037.6yxi5rqolhqxipza@ast-mbp.dhcp.thefacebook.com>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <17c09f82-a32d-fc3b-042b-c44c366f873c@redhat.com>
+Date:   Thu, 16 Aug 2018 06:36:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180816021037.6yxi5rqolhqxipza@ast-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 08/15/2018 07:10 PM, Alexei Starovoitov wrote:
+> On Tue, Aug 14, 2018 at 07:14:00AM -0700, Andrew Lutomirski wrote:
+>> [Removed Fedora devel list because it's subscriber-only]
+>>
+>>> On Aug 8, 2018, at 12:29 AM, Peter Robinson <pbrobinson@gmail.com> wrote:
+>>>
+>>> Probably a good idea to cc: this to the kernel list :-)
+>>>
+>>> I suspect it's intentional but with the planned changes for iptables
+>>> etc to be backed by bpf in the upstream kernel sometime in the future
+>>> it's likely going to need to be reviewed.
+>>>
+>>
+>> I thought this got covered in review. I think this part of lockdown
+>> needs to get reverted or fixed ASAP.
+> 
+> I don't see lockdown in Linus's tree. Is this fedora only issue?
+> 
 
-Variables dev and cpu are not being used and are redundant and hence can
-be removed.
+The entire lockdown/secure boot series is out of tree at the moment.
+We're working to get it included.  If you search LWN, you
+can find some articles explaining the long saga of the patch series.
 
-Cleans up clang warnings:
-warning: variable 'dev' set but not used [-Wunused-but-set-variable]
-warning: variable 'cpu' set but not used [-Wunused-but-set-variable]
+>> (I definitely brought up multiple issues with the bpf lockdown stuff.
+>> It's clearly extremely broken right now in the "new kernel breaks
+>> *current* Linux distro" sense.)
+> 
+> +1
+> 
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/aacraid/aachba.c  | 7 -------
- drivers/scsi/aacraid/commsup.c | 2 --
- 2 files changed, 9 deletions(-)
+Yes, we need to review what exactly is in Fedora. It's the merge
+window so this is a good time to do that anyway. We're still
+playing catch up after Flock in Dresden last week. Can you file
+a bugzilla for tracking so we don't forget?
 
-diff --git a/drivers/scsi/aacraid/aachba.c b/drivers/scsi/aacraid/aachba.c
-index 6e356325d8d9..bd7f352c28f3 100644
---- a/drivers/scsi/aacraid/aachba.c
-+++ b/drivers/scsi/aacraid/aachba.c
-@@ -3480,7 +3480,6 @@ int aac_dev_ioctl(struct aac_dev *dev, int cmd, void __user *arg)
- 
- static void aac_srb_callback(void *context, struct fib * fibptr)
- {
--	struct aac_dev *dev;
- 	struct aac_srb_reply *srbreply;
- 	struct scsi_cmnd *scsicmd;
- 
-@@ -3491,8 +3490,6 @@ static void aac_srb_callback(void *context, struct fib * fibptr)
- 
- 	BUG_ON(fibptr == NULL);
- 
--	dev = fibptr->dev;
--
- 	srbreply = (struct aac_srb_reply *) fib_data(fibptr);
- 
- 	scsicmd->sense_buffer[0] = '\0';  /* Initialize sense valid flag to false */
-@@ -3921,13 +3918,11 @@ static int aac_send_hba_fib(struct scsi_cmnd *scsicmd)
- 
- static long aac_build_sg(struct scsi_cmnd *scsicmd, struct sgmap *psg)
- {
--	struct aac_dev *dev;
- 	unsigned long byte_count = 0;
- 	int nseg;
- 	struct scatterlist *sg;
- 	int i;
- 
--	dev = (struct aac_dev *)scsicmd->device->host->hostdata;
- 	// Get rid of old data
- 	psg->count = 0;
- 	psg->sg[0].addr = 0;
-@@ -3963,14 +3958,12 @@ static long aac_build_sg(struct scsi_cmnd *scsicmd, struct sgmap *psg)
- 
- static long aac_build_sg64(struct scsi_cmnd *scsicmd, struct sgmap64 *psg)
- {
--	struct aac_dev *dev;
- 	unsigned long byte_count = 0;
- 	u64 addr;
- 	int nseg;
- 	struct scatterlist *sg;
- 	int i;
- 
--	dev = (struct aac_dev *)scsicmd->device->host->hostdata;
- 	// Get rid of old data
- 	psg->count = 0;
- 	psg->sg[0].addr[0] = 0;
-diff --git a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
-index 6e1b022a823d..1e77d96a18f2 100644
---- a/drivers/scsi/aacraid/commsup.c
-+++ b/drivers/scsi/aacraid/commsup.c
-@@ -2586,9 +2586,7 @@ int aac_acquire_irq(struct aac_dev *dev)
- void aac_free_irq(struct aac_dev *dev)
- {
- 	int i;
--	int cpu;
- 
--	cpu = cpumask_first(cpu_online_mask);
- 	if (aac_is_src(dev)) {
- 		if (dev->max_msix > 1) {
- 			for (i = 0; i < dev->max_msix; i++)
--- 
-2.17.1
-
+Thanks,
+Laura
