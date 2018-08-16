@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0693DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FA7C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABCAE21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABCAE21479
+	by mail.kernel.org (Postfix) with ESMTP id 761D02147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 761D02147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729750AbeHPVot (ORCPT
+        id S1729804AbeHPVow (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:44:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56564 "EHLO
+        Thu, 16 Aug 2018 17:44:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56578 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729683AbeHPVor (ORCPT
+        with ESMTP id S1729683AbeHPVou (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:44:47 -0400
+        Thu, 16 Aug 2018 17:44:50 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0BE68D09;
-        Thu, 16 Aug 2018 18:44:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 283BACB7;
+        Thu, 16 Aug 2018 18:44:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liwei Song <liwei.song@windriver.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 4.9 05/15] i2c: ismt: fix wrong device address when unmap the data buffer
-Date:   Thu, 16 Aug 2018 20:41:58 +0200
-Message-Id: <20180816171626.647379110@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Lucas De Marchi <lucas.demarchi@profusion.mobi>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jessica Yu <jeyu@kernel.org>,
+        Chih-Wei Huang <cwhuang@linux.org.tw>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 4.9 06/15] kbuild: verify that $DEPMOD is installed
+Date:   Thu, 16 Aug 2018 20:41:59 +0200
+Message-Id: <20180816171626.733766051@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171625.340082081@linuxfoundation.org>
 References: <20180816171625.340082081@linuxfoundation.org>
@@ -51,78 +55,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Liwei Song <liwei.song@windriver.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit 17e83549e199d89aace7788a9f11c108671eecf5 upstream.
+commit 934193a654c1f4d0643ddbf4b2529b508cae926e upstream.
 
-Fix the following kernel bug:
+Verify that 'depmod' ($DEPMOD) is installed.
+This is a partial revert of commit 620c231c7a7f
+("kbuild: do not check for ancient modutils tools").
 
-kernel BUG at drivers/iommu/intel-iommu.c:3260!
-invalid opcode: 0000 [#5] PREEMPT SMP
-Hardware name: Intel Corp. Harcuvar/Server, BIOS HAVLCRB0.X64.0013.D39.1608311820 08/31/2016
-task: ffff880175389950 ti: ffff880176bec000 task.ti: ffff880176bec000
-RIP: 0010:[<ffffffff8150a83b>]  [<ffffffff8150a83b>] intel_unmap+0x25b/0x260
-RSP: 0018:ffff880176bef5e8  EFLAGS: 00010296
-RAX: 0000000000000024 RBX: ffff8800773c7c88 RCX: 000000000000ce04
-RDX: 0000000080000000 RSI: 0000000000000000 RDI: 0000000000000009
-RBP: ffff880176bef638 R08: 0000000000000010 R09: 0000000000000004
-R10: ffff880175389c78 R11: 0000000000000a4f R12: ffff8800773c7868
-R13: 00000000ffffac88 R14: ffff8800773c7818 R15: 0000000000000001
-FS:  00007fef21258700(0000) GS:ffff88017b5c0000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000066d6d8 CR3: 000000007118c000 CR4: 00000000003406e0
-Stack:
- 00000000ffffac88 ffffffff8199867f ffff880176bef5f8 ffff880100000030
- ffff880176bef668 ffff8800773c7c88 ffff880178288098 ffff8800772c0010
- ffff8800773c7818 0000000000000001 ffff880176bef648 ffffffff8150a86e
-Call Trace:
- [<ffffffff8199867f>] ? printk+0x46/0x48
- [<ffffffff8150a86e>] intel_unmap_page+0xe/0x10
- [<ffffffffa039d99b>] ismt_access+0x27b/0x8fa [i2c_ismt]
- [<ffffffff81554420>] ? __pm_runtime_suspend+0xa0/0xa0
- [<ffffffff815544a0>] ? pm_suspend_timer_fn+0x80/0x80
- [<ffffffff81554420>] ? __pm_runtime_suspend+0xa0/0xa0
- [<ffffffff815544a0>] ? pm_suspend_timer_fn+0x80/0x80
- [<ffffffff8143dfd0>] ? pci_bus_read_dev_vendor_id+0xf0/0xf0
- [<ffffffff8172b36c>] i2c_smbus_xfer+0xec/0x4b0
- [<ffffffff810aa4d5>] ? vprintk_emit+0x345/0x530
- [<ffffffffa038936b>] i2cdev_ioctl_smbus+0x12b/0x240 [i2c_dev]
- [<ffffffff810aa829>] ? vprintk_default+0x29/0x40
- [<ffffffffa0389b33>] i2cdev_ioctl+0x63/0x1ec [i2c_dev]
- [<ffffffff811b04c8>] do_vfs_ioctl+0x328/0x5d0
- [<ffffffff8119d8ec>] ? vfs_write+0x11c/0x190
- [<ffffffff8109d449>] ? rt_up_read+0x19/0x20
- [<ffffffff811b07f1>] SyS_ioctl+0x81/0xa0
- [<ffffffff819a351b>] system_call_fastpath+0x16/0x6e
+Also update Documentation/process/changes.rst to refer to
+kmod instead of module-init-tools.
 
-This happen When run "i2cdetect -y 0" detect SMBus iSMT adapter.
+Fixes kernel bugzilla #198965:
+https://bugzilla.kernel.org/show_bug.cgi?id=198965
 
-After finished I2C block read/write, when unmap the data buffer,
-a wrong device address was pass to dma_unmap_single().
-
-To fix this, give dma_unmap_single() the "dev" parameter, just like
-what dma_map_single() does, then unmap can find the right devices.
-
-Fixes: 13f35ac14cd0 ("i2c: Adding support for Intel iSMT SMBus 2.0 host controller")
-Signed-off-by: Liwei Song <liwei.song@windriver.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>
+Cc: Lucas De Marchi <lucas.de.marchi@gmail.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Chih-Wei Huang <cwhuang@linux.org.tw>
+Cc: stable@vger.kernel.org # any kernel since 2012
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-ismt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/Changes |   19 +++++++------------
+ scripts/depmod.sh     |    8 +++++++-
+ 2 files changed, 14 insertions(+), 13 deletions(-)
 
---- a/drivers/i2c/busses/i2c-ismt.c
-+++ b/drivers/i2c/busses/i2c-ismt.c
-@@ -589,7 +589,7 @@ static int ismt_access(struct i2c_adapte
+--- a/Documentation/Changes
++++ b/Documentation/Changes
+@@ -33,7 +33,7 @@ GNU C                  3.2
+ GNU make               3.80             make --version
+ binutils               2.12             ld -v
+ util-linux             2.10o            fdformat --version
+-module-init-tools      0.9.10           depmod -V
++kmod                   13               depmod -V
+ e2fsprogs              1.41.4           e2fsck -V
+ jfsutils               1.1.3            fsck.jfs -V
+ reiserfsprogs          3.6.3            reiserfsck -V
+@@ -143,12 +143,6 @@ is not build with ``CONFIG_KALLSYMS`` an
+ reproduce the Oops with that option, then you can still decode that Oops
+ with ksymoops.
  
- 	/* unmap the data buffer */
- 	if (dma_size != 0)
--		dma_unmap_single(&adap->dev, dma_addr, dma_size, dma_direction);
-+		dma_unmap_single(dev, dma_addr, dma_size, dma_direction);
+-Module-Init-Tools
+------------------
+-
+-A new module loader is now in the kernel that requires ``module-init-tools``
+-to use.  It is backward compatible with the 2.4.x series kernels.
+-
+ Mkinitrd
+ --------
  
- 	if (unlikely(!time_left)) {
- 		dev_err(dev, "completion wait timed out\n");
+@@ -363,16 +357,17 @@ Util-linux
+ 
+ - <ftp://ftp.kernel.org/pub/linux/utils/util-linux/>
+ 
++Kmod
++----
++
++- <https://www.kernel.org/pub/linux/utils/kernel/kmod/>
++- <https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git>
++
+ Ksymoops
+ --------
+ 
+ - <ftp://ftp.kernel.org/pub/linux/utils/kernel/ksymoops/v2.4/>
+ 
+-Module-Init-Tools
+------------------
+-
+-- <ftp://ftp.kernel.org/pub/linux/kernel/people/rusty/modules/>
+-
+ Mkinitrd
+ --------
+ 
+--- a/scripts/depmod.sh
++++ b/scripts/depmod.sh
+@@ -10,10 +10,16 @@ DEPMOD=$1
+ KERNELRELEASE=$2
+ SYMBOL_PREFIX=$3
+ 
+-if ! test -r System.map -a -x "$DEPMOD"; then
++if ! test -r System.map ; then
+ 	exit 0
+ fi
+ 
++if [ -z $(command -v $DEPMOD) ]; then
++	echo "'make modules_install' requires $DEPMOD. Please install it." >&2
++	echo "This is probably in the kmod package." >&2
++	exit 1
++fi
++
+ # older versions of depmod don't support -P <symbol-prefix>
+ # support was added in module-init-tools 3.13
+ if test -n "$SYMBOL_PREFIX"; then
 
 
