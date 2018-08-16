@@ -2,100 +2,96 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D494C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 07:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5254C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 07:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08C56214C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 07:26:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08C56214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7BBAE214C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 07:30:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BBAE214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389333AbeHPKXX (ORCPT
+        id S2389351AbeHPK0y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 06:23:23 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:38897 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727882AbeHPKXW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 06:23:22 -0400
-Received: by mail-oi0-f67.google.com with SMTP id v8-v6so6384134oie.5;
-        Thu, 16 Aug 2018 00:26:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lZ9y2sYJ1Wfm8H0xQnUEJDKShQYzLJw3wrSOVfEWD/8=;
-        b=nR5XR+kcjFN9BOuFDQIC0k6WlhGGER47z4NVwqqKv+O4hP5yMc2lIFOPMZErs20N7/
-         pE/tlRUvcQblsKc7ubOevQInSHXfgzEe2eKk9o8I0z87AhU/KUmgLpbVuBwgNEhrN4Xf
-         rTH8j/iPUUea+/tnp3NjJzd2yCuzhEVlrQL5WSUxlmm5EISDi1bnXzWLmm+JKpMeLNGq
-         GWXexRIOahg5FjPOoBQx+aJSHq8+oOBTU2iHyuzz7bIYggiJkYj0j/dzB7xzTU8jPUUw
-         dBJ85SkyeC25zsUuDLXXMtJrFdgNQglxt8KI/Oc3Tb0su4QmJ7T+xHxBzLEhhUYD977S
-         nUcw==
-X-Gm-Message-State: AOUpUlHNPVrie9O7TnWEKd4iYHnK9ixX5jIFb1tymP8tCmsjqziclWEB
-        NJLn9O42QtYbip3C2gowyO7QgBQ9Ouq2+bEraBQ=
-X-Google-Smtp-Source: AA+uWPw2IqlKOay9UxcbM86iWZ1jtIPzYLvESpB+0/xudxwTsrEFmI2d8HEc0KvivsLGp0YXSDjLHIQIWawbvAnU2k0=
-X-Received: by 2002:aca:b841:: with SMTP id i62-v6mr28644260oif.358.1534404412492;
- Thu, 16 Aug 2018 00:26:52 -0700 (PDT)
+        Thu, 16 Aug 2018 06:26:54 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34590 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727285AbeHPK0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 06:26:54 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 93F91818A6B0;
+        Thu, 16 Aug 2018 07:30:22 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A4AB79DE;
+        Thu, 16 Aug 2018 07:30:17 +0000 (UTC)
+Date:   Thu, 16 Aug 2018 09:30:15 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.ibm.com>
+Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+Subject: Re: [PATCH v9 10/22] s390: vfio-ap: sysfs interfaces to configure
+ adapters
+Message-ID: <20180816093015.19e54936.cohuck@redhat.com>
+In-Reply-To: <4bf27c7a-34c6-9160-cdc6-19022b86202b@linux.ibm.com>
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1534196899-16987-11-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <20180815115242.35a2a1ce.cohuck@redhat.com>
+        <4bf27c7a-34c6-9160-cdc6-19022b86202b@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-References: <CAB4CAwfms8_zJ=xB5wJ0Sgr6gu9-mFnqwEz2cUR-sOHdEV5zqQ@mail.gmail.com>
-In-Reply-To: <CAB4CAwfms8_zJ=xB5wJ0Sgr6gu9-mFnqwEz2cUR-sOHdEV5zqQ@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 16 Aug 2018 09:26:41 +0200
-Message-ID: <CAJZ5v0gKfyB7=5ZGj9uXejoBjkuf2snsKwYJM2Ar1_Vg8A8SCg@mail.gmail.com>
-Subject: Re: Keyboard lost after exit s2idle on ASUS UX433FN
-To:     Chris Chiu <chiu@endlessm.com>
-Cc:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 16 Aug 2018 07:30:22 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 16 Aug 2018 07:30:22 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 4:45 AM Chris Chiu <chiu@endlessm.com> wrote:
->
-> Hi,
->     We recently hit a weird problem on the ASUS laptop UX433FN with
-> latest Intel Core i7-8565U CPU on kernel 4.18. The keyboard stops
-> functioning after exit s2idle. It stops firing interrupts after resume
-> on any keypress. We thought it should be something wrong with i8042
-> driver or even atkbd driver, so we tried to skip the suspend/resume
-> path of i8042 and input devices but no luck.
->
->     Then we tried to hack the s2idle code to fail right before it goes
-> into the idle state to find out which code really cause the keyboard
-> broken. It comes with an interesting finding that if it aborts s2idle
-> before cpuidle_resume() in s2idle_enter(), the keyboard is fine. If it
-> aborts after cpuidle_resume, then the keyboard down. At least it
-> proves that even with dpm_noirq_begin() and
-> dpm_noirq_suspend_devices() executed, the keyboard is still alive.
-> There should be something wrong with the cpuidle.
->
->     Going deeper into intel_idle_s2idle() which is invoked by
-> cpuidle_enter_s2idle(), we found that the keyboard interrupt will no
-> longer function after mwait_idle_with_hints() which just simply
-> executing intel monitor and mwait instructions. So I don't know what
-> should be the next step I can take. Can anyone give some pieces of
-> advice?
+On Wed, 15 Aug 2018 12:59:35 -0400
+Tony Krowiak <akrowiak@linux.ibm.com> wrote:
 
-It may indicate that the deepest C-states used by s2idle simply don't
-work correctly on the affected system.
+> On 08/15/2018 05:52 AM, Cornelia Huck wrote:
+> > On Mon, 13 Aug 2018 17:48:07 -0400
+> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-To verify this, you can try to disable the deepest C-states via sysfs
-using the "disable" attribute under
-/sys/devices/system/cpu/cpuX/cpuidle/stateX/
+> >> +/**
+> >> + * unassign_adapter_store
+> >> + *
+> >> + * @dev: the matrix device
+> >> + * @attr: a mediated matrix device attribute
+> >> + * @buf: a buffer containing the adapter ID (APID) to be assigned
+> >> + * @count: the number of bytes in @buf
+> >> + *
+> >> + * Parses the APID from @buf and unassigns it from the mediated matrix device.
+> >> + * The APID must be a valid value  
+> > A valid value, but not necessarily assigned, right?  
+> 
+> You are correct, if the APID is not assigned, then the corresponding bit 
+> will be
+> cleared regardless. In a previous version, the functions failed if the 
+> APID is
+> not assigned, but a colleague removed that check. I guess it makes sense 
+> given
+> it really does not hurt anything to ask to unassign an APID that isn't 
+> assigned
+> to begin with. Would you prefer I update the comment, or do you feel the 
+> user
+> should be made aware of an attempt to unassign an APID that is not assigned?
 
-Is s2idle the default suspend method on that system?  If so, have you
-checked whether or not suspend-to-RAM works too?
-
-Thanks,
-Rafael
+I think the code is fine; updating the comment would be good.
