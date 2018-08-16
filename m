@@ -6,39 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0409BC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D46A0C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B714221473
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B714221473
+	by mail.kernel.org (Postfix) with ESMTP id 91FFA2147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91FFA2147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbeHPVmz (ORCPT
+        id S1728710AbeHPVnD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:42:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56172 "EHLO
+        Thu, 16 Aug 2018 17:43:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56186 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727674AbeHPVmy (ORCPT
+        with ESMTP id S1727674AbeHPVnC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:42:54 -0400
+        Thu, 16 Aug 2018 17:43:02 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 644F3CEB;
-        Thu, 16 Aug 2018 18:42:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 773E8CB7;
+        Thu, 16 Aug 2018 18:42:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Ryabinin <a.ryabinin@samsung.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 3.18 08/15] mm: slub: fix format mismatches in slab_err() callers
-Date:   Thu, 16 Aug 2018 20:41:45 +0200
-Message-Id: <20180816171633.856272393@linuxfoundation.org>
+        stable@vger.kernel.org, Liwei Song <liwei.song@windriver.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 3.18 09/15] i2c: ismt: fix wrong device address when unmap the data buffer
+Date:   Thu, 16 Aug 2018 20:41:46 +0200
+Message-Id: <20180816171633.898037818@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171633.546734046@linuxfoundation.org>
 References: <20180816171633.546734046@linuxfoundation.org>
@@ -55,67 +51,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrey Ryabinin <a.ryabinin@samsung.com>
+From: Liwei Song <liwei.song@windriver.com>
 
-commit f6edde9cbe0634e4391b6e421a609ca3f57f6c38 upstream.
+commit 17e83549e199d89aace7788a9f11c108671eecf5 upstream.
 
-Adding __printf(3, 4) to slab_err exposed following:
+Fix the following kernel bug:
 
-  mm/slub.c: In function `check_slab':
-  mm/slub.c:852:4: warning: format `%u' expects argument of type `unsigned int', but argument 4 has type `const char *' [-Wformat=]
-      s->name, page->objects, maxobj);
-      ^
-  mm/slub.c:852:4: warning: too many arguments for format [-Wformat-extra-args]
-  mm/slub.c:857:4: warning: format `%u' expects argument of type `unsigned int', but argument 4 has type `const char *' [-Wformat=]
-      s->name, page->inuse, page->objects);
-      ^
-  mm/slub.c:857:4: warning: too many arguments for format [-Wformat-extra-args]
+kernel BUG at drivers/iommu/intel-iommu.c:3260!
+invalid opcode: 0000 [#5] PREEMPT SMP
+Hardware name: Intel Corp. Harcuvar/Server, BIOS HAVLCRB0.X64.0013.D39.1608311820 08/31/2016
+task: ffff880175389950 ti: ffff880176bec000 task.ti: ffff880176bec000
+RIP: 0010:[<ffffffff8150a83b>]  [<ffffffff8150a83b>] intel_unmap+0x25b/0x260
+RSP: 0018:ffff880176bef5e8  EFLAGS: 00010296
+RAX: 0000000000000024 RBX: ffff8800773c7c88 RCX: 000000000000ce04
+RDX: 0000000080000000 RSI: 0000000000000000 RDI: 0000000000000009
+RBP: ffff880176bef638 R08: 0000000000000010 R09: 0000000000000004
+R10: ffff880175389c78 R11: 0000000000000a4f R12: ffff8800773c7868
+R13: 00000000ffffac88 R14: ffff8800773c7818 R15: 0000000000000001
+FS:  00007fef21258700(0000) GS:ffff88017b5c0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000066d6d8 CR3: 000000007118c000 CR4: 00000000003406e0
+Stack:
+ 00000000ffffac88 ffffffff8199867f ffff880176bef5f8 ffff880100000030
+ ffff880176bef668 ffff8800773c7c88 ffff880178288098 ffff8800772c0010
+ ffff8800773c7818 0000000000000001 ffff880176bef648 ffffffff8150a86e
+Call Trace:
+ [<ffffffff8199867f>] ? printk+0x46/0x48
+ [<ffffffff8150a86e>] intel_unmap_page+0xe/0x10
+ [<ffffffffa039d99b>] ismt_access+0x27b/0x8fa [i2c_ismt]
+ [<ffffffff81554420>] ? __pm_runtime_suspend+0xa0/0xa0
+ [<ffffffff815544a0>] ? pm_suspend_timer_fn+0x80/0x80
+ [<ffffffff81554420>] ? __pm_runtime_suspend+0xa0/0xa0
+ [<ffffffff815544a0>] ? pm_suspend_timer_fn+0x80/0x80
+ [<ffffffff8143dfd0>] ? pci_bus_read_dev_vendor_id+0xf0/0xf0
+ [<ffffffff8172b36c>] i2c_smbus_xfer+0xec/0x4b0
+ [<ffffffff810aa4d5>] ? vprintk_emit+0x345/0x530
+ [<ffffffffa038936b>] i2cdev_ioctl_smbus+0x12b/0x240 [i2c_dev]
+ [<ffffffff810aa829>] ? vprintk_default+0x29/0x40
+ [<ffffffffa0389b33>] i2cdev_ioctl+0x63/0x1ec [i2c_dev]
+ [<ffffffff811b04c8>] do_vfs_ioctl+0x328/0x5d0
+ [<ffffffff8119d8ec>] ? vfs_write+0x11c/0x190
+ [<ffffffff8109d449>] ? rt_up_read+0x19/0x20
+ [<ffffffff811b07f1>] SyS_ioctl+0x81/0xa0
+ [<ffffffff819a351b>] system_call_fastpath+0x16/0x6e
 
-  mm/slub.c: In function `on_freelist':
-  mm/slub.c:905:4: warning: format `%d' expects argument of type `int', but argument 5 has type `long unsigned int' [-Wformat=]
-      "should be %d", page->objects, max_objects);
+This happen When run "i2cdetect -y 0" detect SMBus iSMT adapter.
 
-Fix first two warnings by removing redundant s->name.
-Fix the last by changing type of max_object from unsigned long to int.
+After finished I2C block read/write, when unmap the data buffer,
+a wrong device address was pass to dma_unmap_single().
 
-Signed-off-by: Andrey Ryabinin <a.ryabinin@samsung.com>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Acked-by: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+To fix this, give dma_unmap_single() the "dev" parameter, just like
+what dma_map_single() does, then unmap can find the right devices.
+
+Fixes: 13f35ac14cd0 ("i2c: Adding support for Intel iSMT SMBus 2.0 host controller")
+Signed-off-by: Liwei Song <liwei.song@windriver.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/slub.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-ismt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -849,12 +849,12 @@ static int check_slab(struct kmem_cache
- 	maxobj = order_objects(compound_order(page), s->size, s->reserved);
- 	if (page->objects > maxobj) {
- 		slab_err(s, page, "objects %u > max %u",
--			s->name, page->objects, maxobj);
-+			page->objects, maxobj);
- 		return 0;
- 	}
- 	if (page->inuse > page->objects) {
- 		slab_err(s, page, "inuse %u > max %u",
--			s->name, page->inuse, page->objects);
-+			page->inuse, page->objects);
- 		return 0;
- 	}
- 	/* Slab_pad_check fixes things up after itself */
-@@ -871,7 +871,7 @@ static int on_freelist(struct kmem_cache
- 	int nr = 0;
- 	void *fp;
- 	void *object = NULL;
--	unsigned long max_objects;
-+	int max_objects;
+--- a/drivers/i2c/busses/i2c-ismt.c
++++ b/drivers/i2c/busses/i2c-ismt.c
+@@ -587,7 +587,7 @@ static int ismt_access(struct i2c_adapte
  
- 	fp = page->freelist;
- 	while (fp && nr <= page->objects) {
+ 	/* unmap the data buffer */
+ 	if (dma_size != 0)
+-		dma_unmap_single(&adap->dev, dma_addr, dma_size, dma_direction);
++		dma_unmap_single(dev, dma_addr, dma_size, dma_direction);
+ 
+ 	if (unlikely(!ret)) {
+ 		dev_err(dev, "completion wait timed out\n");
 
 
