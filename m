@@ -2,362 +2,193 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A51C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07239C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:41:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CDBB2148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:39:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CDBB2148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id A0B242148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:41:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="SLl0uh24"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0B242148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391272AbeHPOhz (ORCPT
+        id S2391282AbeHPOjK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 10:37:55 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11173 "EHLO huawei.com"
+        Thu, 16 Aug 2018 10:39:10 -0400
+Received: from mail-cys01nam02on0040.outbound.protection.outlook.com ([104.47.37.40]:19444
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727443AbeHPOhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 10:37:54 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 56C68BA1978DD;
-        Thu, 16 Aug 2018 19:39:48 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.399.0; Thu, 16 Aug 2018
- 19:39:45 +0800
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix performance issue observed with
- multi-thread sequential read
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
- <57149b77-3576-87ed-2cae-a3bc2e8088f2@huawei.com>
- <20180813201150.GA27044@jaegeuk-macbookpro.roam.corp.google.com>
- <0e07e79b-5b67-9355-1fa0-402a5d118bd1@huawei.com>
- <20180814040434.GA52730@jaegeuk-macbookpro.roam.corp.google.com>
- <7194f3d2-b875-376a-4c46-37c598bf3e8e@huawei.com>
- <20180814172837.GD56510@jaegeuk-macbookpro.roam.corp.google.com>
- <167ce8f1-ee4d-2ffc-3518-32850465cd0c@huawei.com>
- <20180815021524.GA84720@jaegeuk-macbookpro.roam.corp.google.com>
- <aba79ead-0d26-8caf-e677-e674002fa534@huawei.com>
- <20180816013452.GA12293@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <70ea1366-89eb-d011-aa4f-ec8003fcf24b@huawei.com>
-Date:   Thu, 16 Aug 2018 19:39:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180816013452.GA12293@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
+        id S1727443AbeHPOjK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 10:39:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S1cd09fkrWlQHHmJYkEwiH2WD7PpITaJP257YPVQJOY=;
+ b=SLl0uh24Wdfty2TygDzGoMoS4o0CfENJ90jxOaoM/xSBPEDJ7EknCV+qri6aL3eQf8ZHU3R2cer1d2B2tsAMP1d4TC2HzRbpLrx5FRhegJe6YTs8wmy4u3Sood0c4ZZVE8QIgg0sKNZcyjldArTRmV0mZCLVFGFMLvzytPfzUJ0=
+Received: from CY4PR0201MB3619.namprd02.prod.outlook.com (52.132.99.26) by
+ CY4PR0201MB3410.namprd02.prod.outlook.com (52.132.98.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1059.19; Thu, 16 Aug 2018 11:41:03 +0000
+Received: from CY4PR0201MB3619.namprd02.prod.outlook.com
+ ([fe80::89f3:8315:e747:d23a]) by CY4PR0201MB3619.namprd02.prod.outlook.com
+ ([fe80::89f3:8315:e747:d23a%3]) with mapi id 15.20.1038.025; Thu, 16 Aug 2018
+ 11:41:00 +0000
+From:   Radhey Shyam Pandey <radheys@xilinx.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     "vkoul@kernel.org" <vkoul@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Michal Simek <michals@xilinx.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC PATCH 1/2] dt-bindings: dmaengine: xilinx_dma: Add binding
+ for Xilinx MCDMA IP
+Thread-Topic: [RFC PATCH 1/2] dt-bindings: dmaengine: xilinx_dma: Add binding
+ for Xilinx MCDMA IP
+Thread-Index: AQHUKPZtIRBmjEQhREKOeeG9VWSlVKS/gYkAgALUDQA=
+Date:   Thu, 16 Aug 2018 11:41:00 +0000
+Message-ID: <CY4PR0201MB3619B5EE41F221455E78D075C73E0@CY4PR0201MB3619.namprd02.prod.outlook.com>
+References: <1533059173-21405-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+ <1533059173-21405-2-git-send-email-radhey.shyam.pandey@xilinx.com>
+ <20180814161326.GA17341@rob-hp-laptop>
+In-Reply-To: <20180814161326.GA17341@rob-hp-laptop>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=radheys@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR0201MB3410;6:P502mOfWfEg+PbRea/ONdHnYfjYd8K/XSRebjHO+9FtV+QBSAdn5eybtk5pyx5b+SUg5am25at6zLTlfaL0ezZuIUnHbkMIG/ACwqn7I4f1r0g/sLSsc44cWW2D1cmHDAmCL2aIalCDK20HglLhawA5HeSEZRdO6/E0ckaxwFogW/P8EFzqgPX9JPGFKyn0xmruy+rM3OJaGJLMTtfoOA//H8j1DKICAikTZa56dyLFmAUz9VURLVghwAyMsatjzbOJ52oIEaT0gPNWDk1xDTwoQv6JAOmIPExmdb+96bmxtHzpe1XeZHMkph6beFbRIx1x/4NYPbLRiK89O071LmaeWPt/FYavsHKA6cC26yTWlkGfd9+7jI5WwIXihP7IH+nm2P3Ka2VK4Br5krR7BOxeq/IYguKg/S2CtHwNZ1LhjD/mT6wZIhKA2GxN/3uORdoFkojLgwVodpLecuDJv4g==;5:Y3VOeO5o0gc3sBlUEUQrH9k5hM9hQOhaQNpghDM3OgJv+wc2jMSBXWTLZnMZeKmpfJh/JVqNWa4kxrlbPDC2UtWIaI9km0oAfKOOTO8WWO7wweOrzSd8tnlfLmQB1MHsDV+Jpn0BCmg/92889Wj9KYFD7g81r2DwdNfqyy6UmKA=;7:GFQdSHqeLPy4Q3R4wFVrCjesgsXMvXIx94dVikT9qz7R/MNBt0VntAVSZKRstFIJI7MQKI8NGhbZmVJPfXFNpMMBF5kjV35G+mxZjuLSQUumjzFceo+dHd73ehCQwcay7HwKqt88DYH/NCtx4S3BLZ2soLaCTpns9eSg6j2Hj32JlO2P3Oy/IMIk3AcANEYkvOpaDXaiTaNAbadLVV3bxYk/CfNeE1YINFxNDwI4wyOHFtEhGeCRl1qZ3QJzCq/s
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(136003)(366004)(376002)(346002)(39860400002)(396003)(199004)(189003)(51914003)(13464003)(53546011)(478600001)(217873002)(68736007)(14454004)(966005)(256004)(14444005)(6506007)(8936002)(8676002)(97736004)(86362001)(316002)(81166006)(81156014)(54906003)(2900100001)(106356001)(7696005)(99286004)(229853002)(105586002)(76176011)(3846002)(74316002)(6436002)(6116002)(6916009)(66066001)(11346002)(305945005)(6246003)(7736002)(446003)(4326008)(476003)(5660300001)(186003)(486006)(6306002)(5250100002)(33656002)(25786009)(102836004)(53936002)(55016002)(26005)(9686003)(2906002)(422495003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR0201MB3410;H:CY4PR0201MB3619.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-correlation-id: 365f5dd3-85e2-4aed-dc17-08d6036d23d6
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:CY4PR0201MB3410;
+x-ms-traffictypediagnostic: CY4PR0201MB3410:
+x-microsoft-antispam-prvs: <CY4PR0201MB3410BE71FFF9A22378F13DFFC73E0@CY4PR0201MB3410.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(258649278758335)(192813158149592)(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(201708071742011)(7699016);SRVR:CY4PR0201MB3410;BCL:0;PCL:0;RULEID:;SRVR:CY4PR0201MB3410;
+x-forefront-prvs: 07665BE9D1
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: SDh0wn/Tf8VRg9ul5m+KXvm+To/TKgXWpbvfxkjAI2z+dWIqpWtHR7aets5bGKHwIyyH37yGHPlWhoyZ5Br7zExKQvMsHgrSg+ejYOkHZvpgUEH8XPqNb7O5lWrXpADBeyMlZQcCbg08dUq2TzHKRFp3ewg7Nx5maP5K/ig8j+++WZW65GfUXJmPU1V9Q/bO6J11GAD1VkEqQ6g9OlPlEPc1UX/D2kuDoObUED07i1VWItUJB2hrn5dtHHUSl4nZjD9GOhwwpWMG+w3FFiV1fDbqDEPc1UmaULbFY31J+EMudMh0+FLbFFhXZg3mYv8euGuWPytciE7w5Wvn+TUkC5SCuQAEFhnAzmVgIwHQDC4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 365f5dd3-85e2-4aed-dc17-08d6036d23d6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2018 11:41:00.6324
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR0201MB3410
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/16 9:34, Jaegeuk Kim wrote:
-> On 08/15, Chao Yu wrote:
->> On 2018/8/15 10:15, Jaegeuk Kim wrote:
->>> On 08/15, Chao Yu wrote:
->>>> On 2018/8/15 1:28, Jaegeuk Kim wrote:
->>>>> On 08/14, Chao Yu wrote:
->>>>>> On 2018/8/14 12:04, Jaegeuk Kim wrote:
->>>>>>> On 08/14, Chao Yu wrote:
->>>>>>>> On 2018/8/14 4:11, Jaegeuk Kim wrote:
->>>>>>>>> On 08/13, Chao Yu wrote:
->>>>>>>>>> Hi Jaegeuk,
->>>>>>>>>>
->>>>>>>>>> On 2018/8/11 2:56, Jaegeuk Kim wrote:
->>>>>>>>>>> This reverts the commit - "b93f771 - f2fs: remove writepages lock"
->>>>>>>>>>> to fix the drop in sequential read throughput.
->>>>>>>>>>>
->>>>>>>>>>> Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
->>>>>>>>>>> device: UFS
->>>>>>>>>>>
->>>>>>>>>>> Before -
->>>>>>>>>>> read throughput: 185 MB/s
->>>>>>>>>>> total read requests: 85177 (of these ~80000 are 4KB size requests).
->>>>>>>>>>> total write requests: 2546 (of these ~2208 requests are written in 512KB).
->>>>>>>>>>>
->>>>>>>>>>> After -
->>>>>>>>>>> read throughput: 758 MB/s
->>>>>>>>>>> total read requests: 2417 (of these ~2042 are 512KB reads).
->>>>>>>>>>> total write requests: 2701 (of these ~2034 requests are written in 512KB).
->>>>>>>>>>
->>>>>>>>>> IMO, it only impact sequential read performance in a large file which may be
->>>>>>>>>> fragmented during multi-thread writing.
->>>>>>>>>>
->>>>>>>>>> In android environment, mostly, the large file should be cold type, such as apk,
->>>>>>>>>> mp3, rmvb, jpeg..., so I think we only need to serialize writepages() for cold
->>>>>>>>>> data area writer.
->>>>>>>>>>
->>>>>>>>>> So how about adding a mount option to serialize writepage() for different type
->>>>>>>>>> of log, e.g. in android, using serialize=4; by default, using serialize=7
->>>>>>>>>> HOT_DATA	1
->>>>>>>>>> WARM_DATA	2
->>>>>>>>>> COLD_DATA	4
->>>>>>>>>
->>>>>>>>> Well, I don't think we need to give too many mount options for this fragmented
->>>>>>>>> case. How about doing this for the large files only like this?
->>>>>>>>
->>>>>>>> Thread A write 512 pages			Thread B write 8 pages
->>>>>>>>
->>>>>>>> - writepages()
->>>>>>>>  - mutex_lock(&sbi->writepages);
->>>>>>>>   - writepage();
->>>>>>>> ...
->>>>>>>> 						- writepages()
->>>>>>>> 						 - writepage()
->>>>>>>> 						  ....
->>>>>>>>   - writepage();
->>>>>>>> ...
->>>>>>>>  - mutex_unlock(&sbi->writepages);
->>>>>>>>
->>>>>>>> Above case will also cause fragmentation since we didn't serialize all
->>>>>>>> concurrent IO with the lock.
->>>>>>>>
->>>>>>>> Do we need to consider such case?
->>>>>>>
->>>>>>> We can simply allow 512 and 8 in the same segment, which would not a big deal,
->>>>>>> when considering starvation of Thread B.
->>>>>>
->>>>>> Yeah, but in reality, there would be more threads competing in same log header,
->>>>>> so I worry that the effect of defragmenting will not so good as we expect,
->>>>>> anyway, for benchmark, it's enough.
->>>>>
->>>>> Basically, I think this is not a benchmark issue. :) It just reveals the issue
->>>>> much easily. Let me think about three cases:
->>>>> 1) WB_SYNC_NONE & WB_SYNC_NONE
->>>>>  -> can simply use mutex_lock
->>>>>
->>>>> 2) WB_SYNC_ALL & WB_SYNC_NONE
->>>>>  -> can use mutex_lock on WB_SYNC_ALL having >512 blocks, while WB_SYNC_NONE
->>>>>     will skip writing blocks
->>>>>
->>>>> 3) WB_SYNC_ALL & WB_SYNC_ALL
->>>>>  -> can use mutex_lock on WB_SYNC_ALL having >512 blocks, in order to avoid
->>>>>     starvation.
->>>>>
->>>>>
->>>>> I've been testing the below.
->>>>>
->>>>> if (!S_ISDIR(inode->i_mode) && (wbc->sync_mode != WB_SYNC_ALL ||
->>>>>                 get_dirty_pages(inode) <= SM_I(sbi)->min_seq_blocks)) {
->>>>>         mutex_lock(&sbi->writepages);
->>>>>         locked = true;
->>>>
->>>> Just cover buffered IO? how about covering Direct IO and atomic write as well?
->>>
->>> I'd expect direct IO does in-place-updates, and not sure whether we need to
->>
->> For initial writes, they are not IPU.
-> 
-> It's a little bit different. DIO allocates blocks first in the bulk mode, and
-> sumbit bios later. So, it'd be more likely to allocate consecutive blocks by
-> get_data_block_dio, if user gave a big chunk to write. I'm more concerend about
-> lock contention, and don't think we have to serialize all the block allocation.
+Hi Rob,
 
-IMO, that's a tradeoff between avoid fragmentation and improving concurrency.
+Thanks for the review.=20
 
-For single kind of above demands, we can separate optimizing design with
-configuration, enable it dynamically, but there is no single best choice to
-adapt all demands.
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: Tuesday, August 14, 2018 9:43 PM
+> To: Radhey Shyam Pandey <radheys@xilinx.com>
+> Cc: vkoul@kernel.org; mark.rutland@arm.com; Michal Simek
+> <michals@xilinx.com>; dan.j.williams@intel.com; Appana Durga Kedareswara
+> Rao <appanad@xilinx.com>; lars@metafoo.de; dmaengine@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [RFC PATCH 1/2] dt-bindings: dmaengine: xilinx_dma: Add bind=
+ing
+> for Xilinx MCDMA IP
+>=20
+> On Tue, Jul 31, 2018 at 11:16:12PM +0530, Radhey Shyam Pandey wrote:
+> > Add devicetree binding for Xilinx AXI Multichannel Direct Memory
+> > Access (AXI MCDMA) IP. The AXI MCDMA provides high-bandwidth direct
+> > memory access between memory and AXI4-Stream target peripherals. The
+> > AXI MCDMA core provides scatter-gather interface with multiple channel
+> support.
+> >
+> > Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+> > ---
+> >  Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt | 10
+> > ++++++++--
+> >  1 file changed, 8 insertions(+), 2 deletions(-)
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt
+> > b/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt
+> > index 174af2c..57bb02e 100644
+> > --- a/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt
+> > +++ b/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt
+> > @@ -11,9 +11,13 @@ is to receive from the device.
+> >  Xilinx AXI CDMA engine, it does transfers between memory-mapped
+> > source  address and a memory-mapped destination address.
+> >
+> > +Xilinx AXI MCDMA engine, it does transfer between memory and AXI4
+> > +stream target devices. It can be configured to have up to 16
+> > +independent transmit and receive channels.
+> > +
+> >  Required properties:
+> >  - compatible: Should be "xlnx,axi-vdma-1.00.a" or "xlnx,axi-dma-1.00.a=
+" or
+> > -	      "xlnx,axi-cdma-1.00.a""
+> > +	      "xlnx,axi-cdma-1.00.a" or "xlnx,axi-mcdma-1.00.a".
+>=20
+> Please reformat to 1 per line.
+Yes, I will fix it in v2.
 
-Well, the design is okay for me, and could you send out the patch? :)
+>=20
+> >  - #dma-cells: Should be <1>, see "dmas" property below
+> >  - reg: Should contain VDMA registers location and length.
+> >  - xlnx,addrwidth: Should be the vdma addressing size in bits(ex: 32 bi=
+ts).
+> > @@ -56,6 +60,8 @@ Required child node properties:
+> >  	For CDMA: It should be "xlnx,axi-cdma-channel".
+> >  	For AXIDMA: It should be either "xlnx,axi-dma-mm2s-channel" or
+> >  	"xlnx,axi-dma-s2mm-channel".
+> > +	For MCDMA: It should be either "xlnx,axi-mcdma-mm2s-channel" or
+> > +	"xlnx,axi-mcdma-s2mm-channel".
+>=20
+> What's wrong with reusing the existing xlnx,axi-dma-* names?
+Valid point. I think we can reuse it (Reason for adding was to follow
+similar convention as of DMA , VDMA IPs).  I will address it in v2.
 
-Thanks,
-
-
-> 
->>
->>> add another lock contention between buffered or direct IO. Atomic writes
->>> would be covered by ->min_seq_blocks.
->>
->> Okay. :)
->>
->> Thanks,
->>
->>>
->>>>
->>>> Thanks,
->>>>
->>>>> }
->>>>>
->>>>> Thanks,
->>>>>
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>> Thanks,
->>>>>>>>
->>>>>>>>>
->>>>>>>>> >From 4fea0b6e4da8512a72dd52afc7a51beb35966ad9 Mon Sep 17 00:00:00 2001
->>>>>>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>>>> Date: Thu, 9 Aug 2018 17:53:34 -0700
->>>>>>>>> Subject: [PATCH] f2fs: fix performance issue observed with multi-thread
->>>>>>>>>  sequential read
->>>>>>>>>
->>>>>>>>> This reverts the commit - "b93f771 - f2fs: remove writepages lock"
->>>>>>>>> to fix the drop in sequential read throughput.
->>>>>>>>>
->>>>>>>>> Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
->>>>>>>>> device: UFS
->>>>>>>>>
->>>>>>>>> Before -
->>>>>>>>> read throughput: 185 MB/s
->>>>>>>>> total read requests: 85177 (of these ~80000 are 4KB size requests).
->>>>>>>>> total write requests: 2546 (of these ~2208 requests are written in 512KB).
->>>>>>>>>
->>>>>>>>> After -
->>>>>>>>> read throughput: 758 MB/s
->>>>>>>>> total read requests: 2417 (of these ~2042 are 512KB reads).
->>>>>>>>> total write requests: 2701 (of these ~2034 requests are written in 512KB).
->>>>>>>>>
->>>>>>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
->>>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>>>> ---
->>>>>>>>>  Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
->>>>>>>>>  fs/f2fs/data.c                          | 10 ++++++++++
->>>>>>>>>  fs/f2fs/f2fs.h                          |  2 ++
->>>>>>>>>  fs/f2fs/segment.c                       |  1 +
->>>>>>>>>  fs/f2fs/super.c                         |  1 +
->>>>>>>>>  fs/f2fs/sysfs.c                         |  2 ++
->>>>>>>>>  6 files changed, 24 insertions(+)
->>>>>>>>>
->>>>>>>>> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
->>>>>>>>> index 9b0123388f18..94a24aedcdb2 100644
->>>>>>>>> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
->>>>>>>>> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
->>>>>>>>> @@ -51,6 +51,14 @@ Description:
->>>>>>>>>  		 Controls the dirty page count condition for the in-place-update
->>>>>>>>>  		 policies.
->>>>>>>>>  
->>>>>>>>> +What:		/sys/fs/f2fs/<disk>/min_seq_blocks
->>>>>>>>> +Date:		August 2018
->>>>>>>>> +Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
->>>>>>>>> +Description:
->>>>>>>>> +		 Controls the dirty page count condition for batched sequential
->>>>>>>>> +		 writes in ->writepages.
->>>>>>>>> +
->>>>>>>>> +
->>>>>>>>>  What:		/sys/fs/f2fs/<disk>/min_hot_blocks
->>>>>>>>>  Date:		March 2017
->>>>>>>>>  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
->>>>>>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>>>>>>> index 45f043ee48bd..f09231b1cc74 100644
->>>>>>>>> --- a/fs/f2fs/data.c
->>>>>>>>> +++ b/fs/f2fs/data.c
->>>>>>>>> @@ -2132,6 +2132,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
->>>>>>>>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->>>>>>>>>  	struct blk_plug plug;
->>>>>>>>>  	int ret;
->>>>>>>>> +	bool locked = false;
->>>>>>>>>  
->>>>>>>>>  	/* deal with chardevs and other special file */
->>>>>>>>>  	if (!mapping->a_ops->writepage)
->>>>>>>>> @@ -2162,10 +2163,19 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
->>>>>>>>>  	else if (atomic_read(&sbi->wb_sync_req[DATA]))
->>>>>>>>>  		goto skip_write;
->>>>>>>>>  
->>>>>>>>> +	if (!S_ISDIR(inode->i_mode) &&
->>>>>>>>> +			get_dirty_pages(inode) <= SM_I(sbi)->min_seq_blocks) {
->>>>>>>>> +		mutex_lock(&sbi->writepages);
->>>>>>>>> +		locked = true;
->>>>>>>>> +	}
->>>>>>>>> +
->>>>>>>>>  	blk_start_plug(&plug);
->>>>>>>>>  	ret = f2fs_write_cache_pages(mapping, wbc, io_type);
->>>>>>>>>  	blk_finish_plug(&plug);
->>>>>>>>>  
->>>>>>>>> +	if (locked)
->>>>>>>>> +		mutex_unlock(&sbi->writepages);
->>>>>>>>> +
->>>>>>>>>  	if (wbc->sync_mode == WB_SYNC_ALL)
->>>>>>>>>  		atomic_dec(&sbi->wb_sync_req[DATA]);
->>>>>>>>>  	/*
->>>>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>>>>>>> index 375aa9f30cfa..098bdedc28bf 100644
->>>>>>>>> --- a/fs/f2fs/f2fs.h
->>>>>>>>> +++ b/fs/f2fs/f2fs.h
->>>>>>>>> @@ -913,6 +913,7 @@ struct f2fs_sm_info {
->>>>>>>>>  	unsigned int ipu_policy;	/* in-place-update policy */
->>>>>>>>>  	unsigned int min_ipu_util;	/* in-place-update threshold */
->>>>>>>>>  	unsigned int min_fsync_blocks;	/* threshold for fsync */
->>>>>>>>> +	unsigned int min_seq_blocks;	/* threshold for sequential blocks */
->>>>>>>>>  	unsigned int min_hot_blocks;	/* threshold for hot block allocation */
->>>>>>>>>  	unsigned int min_ssr_sections;	/* threshold to trigger SSR allocation */
->>>>>>>>>  
->>>>>>>>> @@ -1133,6 +1134,7 @@ struct f2fs_sb_info {
->>>>>>>>>  	struct rw_semaphore sb_lock;		/* lock for raw super block */
->>>>>>>>>  	int valid_super_block;			/* valid super block no */
->>>>>>>>>  	unsigned long s_flag;				/* flags for sbi */
->>>>>>>>> +	struct mutex writepages;		/* mutex for writepages() */
->>>>>>>>>  
->>>>>>>>>  #ifdef CONFIG_BLK_DEV_ZONED
->>>>>>>>>  	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
->>>>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>>>>>> index 63fc647f9ac2..ffea2d1303bd 100644
->>>>>>>>> --- a/fs/f2fs/segment.c
->>>>>>>>> +++ b/fs/f2fs/segment.c
->>>>>>>>> @@ -4131,6 +4131,7 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
->>>>>>>>>  		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
->>>>>>>>>  	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
->>>>>>>>>  	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
->>>>>>>>> +	sm_info->min_seq_blocks = sbi->blocks_per_seg * sbi->segs_per_sec;
->>>>>>>>>  	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
->>>>>>>>>  	sm_info->min_ssr_sections = reserved_sections(sbi);
->>>>>>>>>  
->>>>>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>>>>>>> index be41dbd7b261..53d70b64fea1 100644
->>>>>>>>> --- a/fs/f2fs/super.c
->>>>>>>>> +++ b/fs/f2fs/super.c
->>>>>>>>> @@ -2842,6 +2842,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>>>>>>>  	/* init f2fs-specific super block info */
->>>>>>>>>  	sbi->valid_super_block = valid_super_block;
->>>>>>>>>  	mutex_init(&sbi->gc_mutex);
->>>>>>>>> +	mutex_init(&sbi->writepages);
->>>>>>>>>  	mutex_init(&sbi->cp_mutex);
->>>>>>>>>  	init_rwsem(&sbi->node_write);
->>>>>>>>>  	init_rwsem(&sbi->node_change);
->>>>>>>>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
->>>>>>>>> index cd2e030e47b8..81c0e5337443 100644
->>>>>>>>> --- a/fs/f2fs/sysfs.c
->>>>>>>>> +++ b/fs/f2fs/sysfs.c
->>>>>>>>> @@ -397,6 +397,7 @@ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
->>>>>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
->>>>>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
->>>>>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
->>>>>>>>> +F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_seq_blocks, min_seq_blocks);
->>>>>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_hot_blocks, min_hot_blocks);
->>>>>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ssr_sections, min_ssr_sections);
->>>>>>>>>  F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
->>>>>>>>> @@ -449,6 +450,7 @@ static struct attribute *f2fs_attrs[] = {
->>>>>>>>>  	ATTR_LIST(ipu_policy),
->>>>>>>>>  	ATTR_LIST(min_ipu_util),
->>>>>>>>>  	ATTR_LIST(min_fsync_blocks),
->>>>>>>>> +	ATTR_LIST(min_seq_blocks),
->>>>>>>>>  	ATTR_LIST(min_hot_blocks),
->>>>>>>>>  	ATTR_LIST(min_ssr_sections),
->>>>>>>>>  	ATTR_LIST(max_victim_search),
->>>>>>>>>
->>>>>>>
->>>>>>> .
->>>>>>>
->>>>>
->>>>> .
->>>>>
->>>
->>> .
->>>
-> 
-> .
-> 
-
+>=20
+> >  - interrupts: Should contain per channel VDMA interrupts.
+> >  - xlnx,datawidth: Should contain the stream data width, take values
+> >  	{32,64...1024}.
+> > @@ -68,7 +74,7 @@ Optional child node properties for VDMA:
+> >  	enabled/disabled in hardware.
+> >  - xlnx,enable-vert-flip: Tells vertical flip is
+> >  	enabled/disabled in hardware(S2MM path).
+> > -Optional child node properties for AXI DMA:
+> > +Optional child node properties for AXI DMA and MCDMA:=09
+> >  -dma-channels: Number of dma channels in child node.
+> >
+> >  Example:
+> > --
+> > 2.7.4
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe devicetree"
+> > in the body of a message to majordomo@vger.kernel.org More majordomo
+> > info at  http://vger.kernel.org/majordomo-info.html
