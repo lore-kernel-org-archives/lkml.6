@@ -2,129 +2,107 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAFBC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1FF2C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:37:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81F1D2147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:36:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9864A20C0D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:37:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQRML6m5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81F1D2147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="otReBDuT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9864A20C0D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbeHPVgb (ORCPT
+        id S1728075AbeHPVhc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:36:31 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:47000 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbeHPVga (ORCPT
+        Thu, 16 Aug 2018 17:37:32 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36220 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726312AbeHPVhc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:36:30 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f14-v6so2430825pgv.13;
-        Thu, 16 Aug 2018 11:36:24 -0700 (PDT)
+        Thu, 16 Aug 2018 17:37:32 -0400
+Received: by mail-lj1-f196.google.com with SMTP id u7-v6so4450195lji.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 11:37:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=/liKSTknX/gmM/wkBQoDje8mWaRjo2SjCqgInwvJeiU=;
-        b=aQRML6m5RlpRbdvuPpiVejCxsGqD9YyZWq5QD4Op3rjWRlu03gC0Akp/6dZFrSBP60
-         vrYVqQNASAU31ViTQQl+c+Ex2c//nM3RR/+girCjSGsv9MUp7UXVkXVOwYarAJJ7Wa/R
-         z//9mfjHX9GOV2Wll0nzwpXBIUVzlc5ykfF1pTBpMm9kRK0/EDe6KFQB0iOlW3cEubKs
-         8FTUoiStK9KaCH5Rkr/1myBtlEWll1+NXENUl+diNcGl/lphecvmR9iLDyf/y06dpZG0
-         s6d0GWh2gJqLeMe/u5rNIqzh+YEMCm4eyC/7bOHdMM93Dvd1iVNj67IAOIsEI8yHpp+G
-         o5Kw==
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7fpyD5QkjGMTzyqAYnXR/sR7gSNdiSbya+0evF8OqQ4=;
+        b=otReBDuTAWlWsYXB4485SHQtN4lc/XkitAm6Jmxqhf/bI5ycM0/ctEe+vfXAw69pes
+         w1RTpdvoDPmOWVwZHcJddHQASG3bdqW7ZIbvF3xJoGcPRI+HjaffjYzvFnwwuM9arCs1
+         4HPtbEzC4t+/GfuAT8OffgMrCvclkhPJ9I0PWf/LOjV7hgQSQbSycHQhbWue7a3WGfFL
+         HNSub4awDa5XkMoQP96JsaJWUsrHuXbO6qDVmL58H6gAJQntzdj+JgvTR+6Om73a3eJA
+         vCCsR9dXNj8osoCsTS7EKFJ6uUAZ3P+VIoz09rLPGX09rbQbA+xidOkdXVOY8c8CvLHZ
+         jv5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/liKSTknX/gmM/wkBQoDje8mWaRjo2SjCqgInwvJeiU=;
-        b=JicVCGi6J4QLRKZF61T+ubkJHbn2wZCBKbi8WBhcr+eTqkJabbavg8FKYGyISE7uJj
-         vuy+qgVAz3Jn6DpJypgwccgS1Na3djwz41SHed8gWxMFreXRKRA0ujeqSdciaZM1cVKA
-         G/I72ZH2z6IraU7wNJ2Nz/jjYws4fXEAm3cFtfYxHqo1hkXG/HmXImvC+nc90VETooXk
-         aTWUq7hGQNgdJMprElM7bB+5w/fxkFE0j55NLAU7rIJzbGua1nImoefedWHhcAahpGNw
-         78fgRsnElS2NotiWWUxnSO/+SQ02SxkWf8LUMHrrqoKIH/CXM3Lc0z9GIM66AsunVd3A
-         WIfA==
-X-Gm-Message-State: AOUpUlEQK+YKoNlCH8Wx17WlXFgposx6sBCZwo6rAl4XCIjvO+eRwiTX
-        ULlXDT+DG9oYqEhWEvzSY9C5muWitf0QZPoBH6s=
-X-Google-Smtp-Source: AA+uWPwOuTlw1FwAawk2C1fDV+FUsHQK4LxqaxesbwL+h524cCrWLsF0qZi4WduJlcPN/LBdvyudEnXb0fQPH/Uvv/k=
-X-Received: by 2002:a63:2643:: with SMTP id m64-v6mr2696766pgm.55.1534444584486;
- Thu, 16 Aug 2018 11:36:24 -0700 (PDT)
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7fpyD5QkjGMTzyqAYnXR/sR7gSNdiSbya+0evF8OqQ4=;
+        b=mnxAfe0cJrvpTEYlUctQxh3HgfvP/RhSD0+lwNtCEgUr4MOs6IhaVbADfnEYNHr6ZP
+         UVfmaQ8iv4ef5/U2qKKjvPhi+2Lankfqur3oLTSz4ANMCJ69weRQQjoHQSelZJ3TUJMK
+         Hi80TpYcnwNclZYRyu5wZ+hl/aAJiIDbPLdoGAAyL0U22BOwt+85t4rsWQBuyt5zIrcQ
+         a81eCnegulfDwJzKlVr9GCMe1P10lOKMcOiKMgVEqHnku36VJ+DwlbW6zVC5vgQUhShi
+         k409LPhQPBJX+P0Bs1wehueRdSCJ2vX7AWFaLKFzq5ZAsTMPF5aWXM+1FPS8MOT3AAe1
+         79ew==
+X-Gm-Message-State: AOUpUlEOkTBC6s4jqk9WseI/VpDifFE7FIfSwPzKlMr5He89ZCl/Qw9r
+        BuG4eXU4YmG+OZBYuVMK0hFyjethZGc=
+X-Google-Smtp-Source: AA+uWPxHOg1tmhmqFdfiX2kcrlEfudDYPG1DGdMNSXlSdYaP9h815O2R8n9b++I1+5SBJvC0E1S4zQ==
+X-Received: by 2002:a2e:5d88:: with SMTP id v8-v6mr21057967lje.137.1534444644650;
+        Thu, 16 Aug 2018 11:37:24 -0700 (PDT)
+Received: from [10.112.23.205] (nat-eduroam-hy-138-172.fe.helsinki.fi. [128.214.138.172])
+        by smtp.gmail.com with ESMTPSA id j10-v6sm4690ljb.33.2018.08.16.11.37.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Aug 2018 11:37:23 -0700 (PDT)
+Subject: Re: AArch64 boot failure on Hikey960 on latest master after "arm64:
+ insn: Don't fallback on nosync path for general insn patching"
+To:     John Stultz <john.stultz@linaro.org>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>
+References: <462f8ae6-9948-a8e5-7504-623d40344336@iki.fi>
+ <20180816102219.GF31093@arm.com>
+ <CALAqxLWJzpV2Mqkz_ed_5zYX3SFyMZTBgTzyRAden7ab3VNm-Q@mail.gmail.com>
+From:   Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
+Message-ID: <95c5c8b6-35f9-b1b4-0153-591b000c0a79@iki.fi>
+Date:   Thu, 16 Aug 2018 21:37:22 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
- <17763.1534350685@warthog.procyon.org.uk> <87pnyiew8x.fsf@xmission.com>
- <CAH2r5muKOWBe9zMM8duNJ3rp1bzQh-mUj5zYoARO5pmc4de_+A@mail.gmail.com> <87tvnuz0ms.fsf@suse.com>
-In-Reply-To: <87tvnuz0ms.fsf@suse.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 16 Aug 2018 13:36:13 -0500
-Message-ID: <CAH2r5mvLSf2Cqdi9LwVre2MyiSh+7ZxGgRp_Am3D_090oFDCzw@mail.gmail.com>
-Subject: Re: Should we split the network filesystem setup into two phases?
-To:     =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        David Howells <dhowells@redhat.com>,
-        trond.myklebust@hammerspace.com,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Steve Dickson <steved@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ebiederm@redhat.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-nfs@vger.kernel.org,
-        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CALAqxLWJzpV2Mqkz_ed_5zYX3SFyMZTBgTzyRAden7ab3VNm-Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 12:23 PM Aur=C3=A9lien Aptel <aaptel@suse.com> wrot=
-e:
->
-> Steve French <smfrench@gmail.com> writes:
-> > In cifs we attempt to match new mounts to existing tree connections
-> > (instances of connections to a \\server\share) from other mount(s)
-> > based first on whether security settings match (e.g. are both
-> > Kerberos) and then on whether encryption is on/off and whether this is
-> > a snapshot mount (smb3 previous versions feature).  If neither is
-> > mounted with a snaphsot and the encryption settings match then
-> > we will use the same tree id to talk with the server as the other
-> > mounts use.  Interesting idea to allow mount to force a new
-> > tree id.
->
-> We actually already have this mount option in cifs.ko, it's "nosharesock"=
-.
+Hi,
 
-Yes - good point.  It is very easy to do on cifs.  I mainly use that to sim=
-ulate
-multiple clients for testing servers (so each mount to the same server
-whether or not the share matched, looks like a different client, coming
-from a different socket and thus with different session ids and tree
-ids as well).
+On 08/16/2018 08:57 PM, John Stultz wrote:
+> On Thu, Aug 16, 2018 at 3:22 AM, Will Deacon <will.deacon@arm.com> wrote:
+>> Hi Tuomas, [+John]
+...
+>>
+>> Out of interest -- do you know if Hikey960 is used by any boot-testing
+>> farms? The patch above has been in linux-next for ages, but we didn't see
+>> any complaints until it hit mainline :(
+> 
+> Unfortunately not yet. HiKey960 upstreaming is ongoing, and the UFS
+> support patches should land in the 4.19 merge window.
+> After which, it will enable more mainline testing as folks won't have
+> to carry patches just to get the system to boot.
+> 
 
-It is very useful when trying to simulate multiple clients running to the s=
-ame
-server while using only one client machine (or VM).
+A microSD rootfs gets me a working system on e.g. v4.17... except that
+even there the system hangs if I don't have 'clk_ignore_unused' on
+the kernel command line. I wonder if this is a known problem?
 
-> > What was the NFS mount option you were talking about?
-> > Looking at the nfs man page the only one that looked similar
-> > was "nosharecache"
-
-The nfs man page apparently discourages its use:
-
-"As of kernel 2.6.18, the behavior specified by nosharecache is legacy
-caching behavior. This is  considered  a  data risk"
-
-
---=20
-Thanks,
-
-Steve
+- Tuomas
