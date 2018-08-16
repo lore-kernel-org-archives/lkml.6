@@ -2,182 +2,136 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12510C4321D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 877DAC04AB9
 	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:39:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DADB621480
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:39:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DADB621480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=winds.org
+	by mail.kernel.org (Postfix) with ESMTP id 13EB7214C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:39:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="wuC53nu0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13EB7214C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388180AbeHPHfH (ORCPT
+        id S2388195AbeHPHfM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 03:35:07 -0400
-Received: from winds.org ([68.75.195.9]:55894 "EHLO winds.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387933AbeHPHfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 03:35:07 -0400
-Received: by winds.org (Postfix, from userid 100)
-        id 73762AAC771; Thu, 16 Aug 2018 00:39:29 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-        by winds.org (Postfix) with ESMTP id 6D5FF7EA06C;
-        Thu, 16 Aug 2018 00:39:29 -0400 (EDT)
-Date:   Thu, 16 Aug 2018 00:39:29 -0400 (EDT)
-From:   Byron Stanoszek <gandalf@winds.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4.18 00/79] 4.18.1-stable review
-In-Reply-To: <20180815173254.GB22317@kroah.com>
-Message-ID: <alpine.LNX.2.21.1808152259230.10088@winds.org>
-References: <alpine.LNX.2.21.1808151306290.29065@winds.org> <20180815173254.GB22317@kroah.com>
-User-Agent: Alpine 2.21 (LNX 202 2017-01-01)
+        Thu, 16 Aug 2018 03:35:12 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:47344 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387933AbeHPHfL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 03:35:11 -0400
+Received: from mail-vk0-f47.google.com (mail-vk0-f47.google.com [209.85.213.47]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id w7G4dR7f028294;
+        Thu, 16 Aug 2018 13:39:28 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w7G4dR7f028294
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1534394368;
+        bh=lyrDa94olQTmuq24n9p0X2WJLbjDhCnQgLTh3zMh26g=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=wuC53nu060ClIj2M7nMd0pUKhb2IjQxSzp82znUo1IMqS+bJyC61kGSsmr+AsFBtF
+         Yua/nr9jeXUgKLmN5rB5qdR85F7NwZfp4qmR6Y28DppI2qOsveW+6gqHrB7bS9O9yl
+         GlYSgmqoFMTTD/J/cPkFw0aBEBbdTsMPkHUX54GQUBi2MLItOHVvxI+W2GJ61XG7zU
+         ajUtF66a8cajz9h98LrNnH3vmuEkeSx7/PwCltPfifwNzdFFLjIiajmkYtr62NhCo2
+         pw3jFrO9sTRx27v4J7xc3l7zNSigZ0XjnsQPeSipX6N2rRP8hcCkX304JBuBsrDwIo
+         7QWNYYJ2t/UhA==
+X-Nifty-SrcIP: [209.85.213.47]
+Received: by mail-vk0-f47.google.com with SMTP id s17-v6so773318vke.10;
+        Wed, 15 Aug 2018 21:39:28 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHTSp6T8wBB4yYTKeReHmTj+HyPdcZk0f/rkqSnOGhf8xxnKPn/
+        fDtbuON+7nAUOiIAol9RO1Nmf6FQAbavXKmwcXE=
+X-Google-Smtp-Source: AA+uWPxBTjh6AxIyYdHc0O6OZmhBMPMvCm9drx5U9lgGvI4kmOGU5bqP2PbRWPDwGgSDFLnu7L5JPfm0sm2qTeHwOOA=
+X-Received: by 2002:a1f:4049:: with SMTP id n70-v6mr18539524vka.140.1534394367285;
+ Wed, 15 Aug 2018 21:39:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Wed, 15 Aug 2018 21:38:46
+ -0700 (PDT)
+In-Reply-To: <20180616111004.GB28657@zn.tnic>
+References: <20180616111004.GB28657@zn.tnic>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 16 Aug 2018 13:38:46 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATpMkwS523LMDSU2sQfMzTfQ8kv_+MWjz5jdbZHS65G8Q@mail.gmail.com>
+Message-ID: <CAK7LNATpMkwS523LMDSU2sQfMzTfQ8kv_+MWjz5jdbZHS65G8Q@mail.gmail.com>
+Subject: Re: /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 15 Aug 2018, Greg Kroah-Hartman wrote:
+Hi Borislav,
 
-> On Wed, Aug 15, 2018 at 01:24:25PM -0400, Byron Stanoszek wrote:
->> Hi Greg & Thomas,
->>
->> I'd like to report a regression in Linux 4.18.1 regarding the L1TF patches.
->>
->> The kernel no longer thinks I have SMT enabled in the BIOS. This works fine in
->> 4.18.0.
->>
->> Not sure if this matters, but in my particular 4-core system, my third core is
->> broken (core #2). So I must boot using "maxcpus=2" and then online the other
->> cores & SMT threads at startup using:
->>
->> echo 1 > /sys/devices/system/cpu/cpu3/online
->> echo 1 > /sys/devices/system/cpu/cpu4/online
->> echo 1 > /sys/devices/system/cpu/cpu5/online
->> echo 1 > /sys/devices/system/cpu/cpu7/online
->>
->> In 4.18.0, dmesg shows:
->>
->> smpboot: Booting Node 0 Processor 3 APIC 0x6
->> smpboot: Booting Node 0 Processor 4 APIC 0x1
->> smpboot: Booting Node 0 Processor 5 APIC 0x3
->> smpboot: Booting Node 0 Processor 7 APIC 0x7
->>
->> In 4.18.1, dmesg shows:
->>
->> smpboot: Booting Node 0 Processor 3 APIC 0x6
->> smpboot: Booting Node 0 Processor 4 APIC 0x1
->> smpboot: CPU 4 is now offline
->> smpboot: Booting Node 0 Processor 5 APIC 0x3
->> smpboot: CPU 5 is now offline
->> smpboot: Booting Node 0 Processor 7 APIC 0x7
->> smpboot: CPU 7 is now offline
->>
->> and I get an "Operation cancelled" error in the shell when trying to online 4,
->> 5, and 7.
->>
->> In 4.18.1, /sys/devices/system/cpu/smt/control says "notsupported".
->>
->>  - - -
->>
->> A possible second regression is the following:
->>
->> My CPU normally runs at 3600 MHz. I usually run my CPU at 2800 MHz to keep from
->> overheating under full load (it is a fanless system). I do this by running
->> "echo 1 > /sys/class/thermal/cooling_device5/cur_state", and confirm with "cat
->> /proc/cpuinfo" (shows 2800).
->>
->> This works in 4.18.0 but not in 4.18.1. I get no error from the "echo" command
->> (and the state reads back as "1"), but the CPU remains running at 3600 MHz.
+2018-06-16 20:10 GMT+09:00 Borislav Petkov <bp@alien8.de>:
+> Hi,
 >
-> How about Linus's tree at the moment, is it ok there?
+> I'm seeing this when I do
 >
-> thanks,
+> # make menuconfig
 >
-> greg k-h
+> after a fresh repo clean: git clean -dqfx
 >
+> Might wanna silence it...
+>
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+>   HOSTCC  scripts/kconfig/lxdialog/checklist.o
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+>   HOSTCC  scripts/kconfig/lxdialog/inputbox.o
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+>   HOSTCC  scripts/kconfig/lxdialog/menubox.o
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+>   HOSTCC  scripts/kconfig/lxdialog/textbox.o
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+>   HOSTCC  scripts/kconfig/lxdialog/util.o
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+> /bin/sh: 1: .: Can't open scripts/kconfig/.mconf-cfg
+>   HOSTCC  scripts/kconfig/lxdialog/yesno.o
+>   UPD     scripts/kconfig/.mconf-cfg
+>   HOSTCC  scripts/kconfig/mconf.o
+>   HOSTLD  scripts/kconfig/mconf
+> scripts/kconfig/mconf  Kconfig
+>
+> Thx.
 
-It also fails in Linus's tree. Seems like this logic is to blame:
 
-/*
-  * If SMT was disabled by BIOS, detect it here, after the CPUs have been
-  * brought online. This ensures the smt/l1tf sysfs entries are consistent
-  * with reality. cpu_smt_available is set to true during the bringup of non
-  * boot CPUs when a SMT sibling is detected. Note, this may overwrite
-  * cpu_smt_control's previous setting.
-  */
-void __init cpu_smt_check_topology(void)
-{
-         if (!cpu_smt_available)
-                 cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
-}
+Sorry for delay.
 
-SMT is enabled in my BIOS, but because I booted with maxcpus=2, the init code
-never officially booted any SMT thread yet--just primary threads. I suspect the
-line 'cpu_smt_available = true;' in kernel/cpu.c function cpu_smt_allowed() is
-never being reached.
+Now I addressed this problem.
+https://patchwork.kernel.org/patch/10566951/
 
-It is then impossible to boot any SMT thread after init is done, since
-'cpu_smt_available' is false.
 
-The following test patch makes everything work for me on both mainline and
-4.18.1, but we might as well throw out 'cpu_smt_available' altogether then (or
-find another way to set it appropriately). Just because we didn't boot any SMT
-threads at init shouldn't mean that SMT is disabled by the BIOS.
+Thanks.
 
----
 
-x86/l1tf: Fix booting with low maxcpus=# causes SMT to be disabled
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> Good mailing practices for 400: avoid top-posting and trim the reply.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-If maxcpus=# is given on the kernel command line where # is too low for
-any SMT CPU (thread) to be booted during init, then the kernel thinks
-SMT is disabled by the BIOS. SMT threads are then unable to be manually
-brought online later after init.
 
-Set 'cpu_smt_available' early on in init instead, if
-topology_smt_supported() returns true.
-
-Fixes: 958f338e96f8 ("Merge branch 'l1tf-final' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip")
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Byron Stanoszek <gandalf@winds.org>
----
-  kernel/cpu.c | 10 ++--------
-  1 file changed, 2 insertions(+), 8 deletions(-)
-
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index ed44d7d34c2d..bf9be8b8c0a0 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -378,6 +378,8 @@ void __init cpu_smt_check_topology_early(void)
-  {
-  	if (!topology_smt_supported())
-  		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
-+	else
-+		cpu_smt_available = true;
-  }
-
-  /*
-@@ -405,14 +407,6 @@ static inline bool cpu_smt_allowed(unsigned int cpu)
-  	if (topology_is_primary_thread(cpu))
-  		return true;
-
--	/*
--	 * If the CPU is not a 'primary' thread and the booted_once bit is
--	 * set then the processor has SMT support. Store this information
--	 * for the late check of SMT support in cpu_smt_check_topology().
--	 */
--	if (per_cpu(cpuhp_state, cpu).booted_once)
--		cpu_smt_available = true;
--
-  	if (cpu_smt_control == CPU_SMT_ENABLED)
-  		return true;
 
 -- 
-2.18.0
+Best Regards
+Masahiro Yamada
