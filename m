@@ -3,225 +3,181 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C334C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12510C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:39:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 756812124D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:24:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 756812124D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cr.yp.to
+	by mail.kernel.org (Postfix) with ESMTP id DADB621480
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 04:39:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DADB621480
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=winds.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388164AbeHPHUF (ORCPT
+        id S2388180AbeHPHfH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 03:20:05 -0400
-Received: from salsa.cs.uic.edu ([131.193.32.108]:60508 "HELO salsa.cs.uic.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-        id S2388146AbeHPHUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 03:20:04 -0400
-Received: (qmail 15047 invoked by uid 1010); 16 Aug 2018 04:24:27 -0000
-Received: from unknown (unknown)
-  by unknown with QMTP; 16 Aug 2018 04:24:27 -0000
-Received: (qmail 15530 invoked by uid 1000); 16 Aug 2018 04:24:54 -0000
-Date:   16 Aug 2018 04:24:54 -0000
-Message-ID: <20180816042454.15529.qmail@cr.yp.to>
-Automatic-Legal-Notices: See https://cr.yp.to/mailcopyright.html.
-From:   "D. J. Bernstein" <djb@cr.yp.to>
-To:     Eric Biggers <ebiggers@kernel.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Tanja Lange <tanja@hyperelliptic.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Karthikeyan Bhargavan <karthik.bhargavan@gmail.com>
-Subject: Re: [PATCH v1 2/3] zinc: Introduce minimal cryptography library
-References: <20180801072246.GA15677@sol.localdomain>
- <CAHmME9pbwj0RaX4YM9epGOSgDRNUt=GA4UzO_iKcW=Md7kG6JQ@mail.gmail.com>
- <20180814211229.GB24575@gmail.com>
- <20180815162819.22765.qmail@cr.yp.to>
- <20180815195732.GA79500@gmail.com>
+        Thu, 16 Aug 2018 03:35:07 -0400
+Received: from winds.org ([68.75.195.9]:55894 "EHLO winds.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387933AbeHPHfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 03:35:07 -0400
+Received: by winds.org (Postfix, from userid 100)
+        id 73762AAC771; Thu, 16 Aug 2018 00:39:29 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+        by winds.org (Postfix) with ESMTP id 6D5FF7EA06C;
+        Thu, 16 Aug 2018 00:39:29 -0400 (EDT)
+Date:   Thu, 16 Aug 2018 00:39:29 -0400 (EDT)
+From:   Byron Stanoszek <gandalf@winds.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4.18 00/79] 4.18.1-stable review
+In-Reply-To: <20180815173254.GB22317@kroah.com>
+Message-ID: <alpine.LNX.2.21.1808152259230.10088@winds.org>
+References: <alpine.LNX.2.21.1808151306290.29065@winds.org> <20180815173254.GB22317@kroah.com>
+User-Agent: Alpine 2.21 (LNX 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
-Content-Disposition: inline
+Content-Type: text/plain; format=flowed; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 15 Aug 2018, Greg Kroah-Hartman wrote:
 
---NzB8fVQJ5HfG6fxh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Wed, Aug 15, 2018 at 01:24:25PM -0400, Byron Stanoszek wrote:
+>> Hi Greg & Thomas,
+>>
+>> I'd like to report a regression in Linux 4.18.1 regarding the L1TF patches.
+>>
+>> The kernel no longer thinks I have SMT enabled in the BIOS. This works fine in
+>> 4.18.0.
+>>
+>> Not sure if this matters, but in my particular 4-core system, my third core is
+>> broken (core #2). So I must boot using "maxcpus=2" and then online the other
+>> cores & SMT threads at startup using:
+>>
+>> echo 1 > /sys/devices/system/cpu/cpu3/online
+>> echo 1 > /sys/devices/system/cpu/cpu4/online
+>> echo 1 > /sys/devices/system/cpu/cpu5/online
+>> echo 1 > /sys/devices/system/cpu/cpu7/online
+>>
+>> In 4.18.0, dmesg shows:
+>>
+>> smpboot: Booting Node 0 Processor 3 APIC 0x6
+>> smpboot: Booting Node 0 Processor 4 APIC 0x1
+>> smpboot: Booting Node 0 Processor 5 APIC 0x3
+>> smpboot: Booting Node 0 Processor 7 APIC 0x7
+>>
+>> In 4.18.1, dmesg shows:
+>>
+>> smpboot: Booting Node 0 Processor 3 APIC 0x6
+>> smpboot: Booting Node 0 Processor 4 APIC 0x1
+>> smpboot: CPU 4 is now offline
+>> smpboot: Booting Node 0 Processor 5 APIC 0x3
+>> smpboot: CPU 5 is now offline
+>> smpboot: Booting Node 0 Processor 7 APIC 0x7
+>> smpboot: CPU 7 is now offline
+>>
+>> and I get an "Operation cancelled" error in the shell when trying to online 4,
+>> 5, and 7.
+>>
+>> In 4.18.1, /sys/devices/system/cpu/smt/control says "notsupported".
+>>
+>>  - - -
+>>
+>> A possible second regression is the following:
+>>
+>> My CPU normally runs at 3600 MHz. I usually run my CPU at 2800 MHz to keep from
+>> overheating under full load (it is a fanless system). I do this by running
+>> "echo 1 > /sys/class/thermal/cooling_device5/cur_state", and confirm with "cat
+>> /proc/cpuinfo" (shows 2800).
+>>
+>> This works in 4.18.0 but not in 4.18.1. I get no error from the "echo" command
+>> (and the state reads back as "1"), but the CPU remains running at 3600 MHz.
+>
+> How about Linus's tree at the moment, is it ok there?
+>
+> thanks,
+>
+> greg k-h
+>
 
-Eric Biggers writes:
-> You'd probably attract more contributors if you followed established
-> open source conventions.
+It also fails in Linus's tree. Seems like this logic is to blame:
 
-SUPERCOP already has thousands of implementations from hundreds of
-contributors. New speed records are more likely to appear in SUPERCOP
-than in any other cryptographic software collection. The API is shared
-by state-of-the-art benchmarks, state-of-the-art tests, three ongoing
-competitions, and increasingly popular production libraries.
+/*
+  * If SMT was disabled by BIOS, detect it here, after the CPUs have been
+  * brought online. This ensures the smt/l1tf sysfs entries are consistent
+  * with reality. cpu_smt_available is set to true during the bringup of non
+  * boot CPUs when a SMT sibling is detected. Note, this may overwrite
+  * cpu_smt_control's previous setting.
+  */
+void __init cpu_smt_check_topology(void)
+{
+         if (!cpu_smt_available)
+                 cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
+}
 
-Am I correctly gathering from this thread that someone adding a new
-implementation of a crypto primitive to the kernel has to worry about
-checking the architecture and CPU features to figure out whether the
-implementation will run? Wouldn't it make more sense to take this
-error-prone work away from the implementor and have a robust automated
-central testing mechanism, as in SUPERCOP?
+SMT is enabled in my BIOS, but because I booted with maxcpus=2, the init code
+never officially booted any SMT thread yet--just primary threads. I suspect the
+line 'cpu_smt_available = true;' in kernel/cpu.c function cpu_smt_allowed() is
+never being reached.
 
-Am I also correctly gathering that adding an extra implementation to the
-kernel can hurt performance, unless the implementor goes to extra effort
-to check for the CPUs where the previous implementation is faster---or
-to build some ad-hoc timing mechanism ("raid6: using algorithm avx2x4
-gen() 31737 MB/s")? Wouldn't it make more sense to take this error-prone
-work away from the implementor and have a robust automated central
-timing mechanism, as in SUPERCOP?
+It is then impossible to boot any SMT thread after init is done, since
+'cpu_smt_available' is false.
 
-I also didn't notice anyone disputing Jason's comment about the "general
-clunkiness" of the kernel's internal crypto API---but is there really no
-consensus as to what the replacement API is supposed to be? Someone who
-simply wants to implement some primitives has to decide on function-call
-details, argue about the software location, add configuration options,
-etc.? Wouldn't it make more sense to do this centrally, as in SUPERCOP?
+The following test patch makes everything work for me on both mainline and
+4.18.1, but we might as well throw out 'cpu_smt_available' altogether then (or
+find another way to set it appropriately). Just because we didn't boot any SMT
+threads at init shouldn't mean that SMT is disabled by the BIOS.
 
-And then there's the bigger question of how the community is organizing
-ongoing work on accelerating---and auditing, and fixing, and hopefully
-verifying---implementations of cryptographic primitives. Does it really
-make sense that people looking for what's already been done have to go
-poking around a bunch of separate libraries? Wouldn't it make more sense
-to have one central collection of code, as in SUPERCOP? Is there any
-fundamental obstacle to having libraries share code for primitives?
+---
 
-> there doesn't appear to be an official git repository for SUPERCOP,
-> nor is there any mention of how to send patches, nor is there any
-> COPYING or LICENSE file, nor even a README file.
+x86/l1tf: Fix booting with low maxcpus=# causes SMT to be disabled
 
-https://bench.cr.yp.to/call-stream.html explains the API and submission
-procedure for stream ciphers. There are similar pages for other types of
-cryptographic primitives. https://bench.cr.yp.to/tips.html explains the
-develop-test cycle and various useful options.
+If maxcpus=# is given on the kernel command line where # is too low for
+any SMT CPU (thread) to be booted during init, then the kernel thinks
+SMT is disabled by the BIOS. SMT threads are then unable to be manually
+brought online later after init.
 
-Licenses vary across implementations. There's a minimum requirement of
-public distribution for verifiability of benchmark results, but it's up
-to individual implementors to decide what they'll allow beyond that.
-Patent status also varies; constant-time status varies; verification
-status varies; code quality varies; cryptographic security varies; etc.
-As I mentioned, SUPERCOP includes MD5 and Speck and RSA-512.
+Set 'cpu_smt_available' early on in init instead, if
+topology_smt_supported() returns true.
 
-For comparison, where can I find an explanation of how to test kernel
-crypto patches, and how fast is the develop-test cycle? Okay, I don't
-have a kernel crypto patch, but I did write a kernel patch recently that
-(I think) fixes some recent Lenovo ACPI stupidity:
+Fixes: 958f338e96f8 ("Merge branch 'l1tf-final' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip")
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Byron Stanoszek <gandalf@winds.org>
+---
+  kernel/cpu.c | 10 ++--------
+  1 file changed, 2 insertions(+), 8 deletions(-)
 
-   https://marc.info/?l=qubes-users&m=153308905514481
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index ed44d7d34c2d..bf9be8b8c0a0 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -378,6 +378,8 @@ void __init cpu_smt_check_topology_early(void)
+  {
+  	if (!topology_smt_supported())
+  		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
++	else
++		cpu_smt_available = true;
+  }
 
-I'd propose this for review and upstream adoption _if_ it survives
-enough tests---but what's the right test procedure? I see superficial
-documentation of where to submit a patch for review, but am I really
-supposed to do this before serious testing? The patch works on my
-laptop, and several other people say it works, but obviously this is
-missing the big question of whether the patch breaks _other_ laptops.
-I see an online framework for testing, but using it looks awfully
-complicated, and the level of coverage is unclear to me. Has anyone
-tried to virtualize kernel testing---to capture hardware data from many
-machines and then centrally simulate kernels running on those machines,
-for example to check that those machines don't take certain code paths?
-I suppose that people who work with the kernel all the time would know
-what to do, but for me the lack of information was enough of a deterrent
-that I switched to doing something else.
+  /*
+@@ -405,14 +407,6 @@ static inline bool cpu_smt_allowed(unsigned int cpu)
+  	if (topology_is_primary_thread(cpu))
+  		return true;
 
-> Another issue is that the ChaCha code in SUPERCOP is duplicated for
-> each number of rounds: 8, 12, and 20.
+-	/*
+-	 * If the CPU is not a 'primary' thread and the booted_once bit is
+-	 * set then the processor has SMT support. Store this information
+-	 * for the late check of SMT support in cpu_smt_check_topology().
+-	 */
+-	if (per_cpu(cpuhp_state, cpu).booted_once)
+-		cpu_smt_available = true;
+-
+  	if (cpu_smt_control == CPU_SMT_ENABLED)
+  		return true;
 
-These are auto-generated, of course.
-
-To understand this API detail, consider some of the possibilities for
-the round counts supported by compiled code:
-
-   * 20
-   * 12
-   * 8
-   * caller selection from among 20 and 12 and 8
-   * caller selection of any multiple of 4
-   * caller selection of any multiple of 2
-   * caller selection of anything
-
-I hope that in the long term everyone is simply using 20, and then the
-pure 20 is the simplest and smallest and most easily verified code, but
-obviously there are other implementations today. An API with a separate
-function for each round count allows any of these implementations to be
-trivially benchmarked and used, whereas an API that insists on passing
-the round count as an argument prohibits at least the first three and
-maybe more.
-
-> crypto_stream/chacha20/dolbeau/arm-neon/, which uses a method similar to the
-> Linux implementation but it uses GCC intrinsics, so its performance will heavily
-> depend on how the compiler assigns and spills registers, which can vary greatly
-> depending on the compiler version and options.
-
-Sure. The damage done by incompetent compilers is particularly clear for
-in-order CPUs such as the Cortex-A7.
-
-> I understand that Salsa20 is similar to ChaCha, and that ideas from Salsa20
-> implementations often apply to ChaCha too.  But it's not always obvious what
-> carries over and what doesn't; the rotation amounts can matter a lot, for
-> example, as different rotations can be implemented in different ways.
-
-This sounds backwards to me. ChaCha20 supports essentially all the
-Salsa20 implementation techniques plus some extra streamlining: often a
-bit less register pressure, often less data reorganization, and often
-some rotation speedups.
-
-> Nor is it always obvious which ideas from SSE2 or AVX2 implementations
-> (for example) carry over to NEON implementations, as these instruction
-> sets are different enough that each has its own unique quirks and
-> optimizations.
-
-Of course.
-
-> Previously I also found that OpenSSL's ARM NEON implementation of Poly1305 is
-> much faster than the implementations in SUPERCOP, as well as more
-> understandable.  (I don't know the 'qhasm' language, for example.)  So from my
-> perspective, I've had more luck with OpenSSL than SUPERCOP when looking for fast
-> implementations of crypto algorithms.  Have you considered adding the OpenSSL
-> implementations to SUPERCOP?
-
-Almost all of the implementations in SUPERCOP were submitted by the
-implementors, with a few exceptions for wrappers. Realistically, the
-implementors are in the best position to check that they're getting the
-expected results and to be in control of any necessary updates.
-
----Dan
-
---NzB8fVQJ5HfG6fxh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJbdPyWAAoJELDADU47DlRZRT4P/jXLMqeH1j/Ybbdd73zo/4qB
-fClPLtJzSWVJJ1Um2fKf9U89HTGy34stYflHzDDI9kd4/N2JYAh4mIlN3VcJ86h5
-Lb9Eld4LznYnibDWhgBGi/T1Y1MgbqG9iIEGsiq1/Pxj+JUb24vPKYPotGnucgdD
-mgs46Od3jaeEfcgbRLz0ajMmfcOx7G4UX+cggJ0pXFNj9mQseHauRpQhtaeeaHg3
-Dw5boLS6El/svESQYsZtAzTPuIHr40Qhg1vLL7OMIRb87/o6HrAuRFhSpcQS78Ia
-BhqYuSFbSbSc6yjoE4hbWQC0pAxfubrSwxK0y1TwlTdudmqZWoNErLe5cfdD7XnR
-muR6MPxc1oOpDA1xAPtr3YlVNX0uxyi4FLMOapmQkO4fprNcYWBj8ZsZAwIIj7pD
-hNmbOyKgcdQoEgVSh5WKZIVsPcUoypoRgTlyMqYptD9ocu4CRv4Gmhrnj/LZmJik
-Iquk8ONJoUHpPvE6yvznuvxAYHAVOYks+S52yHGyziryM/kWaIQb8y1I/B0bRxCq
-WMoHAEcCX3qLP49wEsFPJ/j3O/FwX7tVDmff+mPpnFbjMHY79AYtgeZg++KNNmUG
-BQAAs4fzhgppNw4zaIPrTY/KGz67j48fy4qwbwGignZMKxwDPCj+c37wTaqQrZ4r
-tWDe59IVHdcpbZINi41I
-=GQ+7
------END PGP SIGNATURE-----
-
---NzB8fVQJ5HfG6fxh--
+-- 
+2.18.0
