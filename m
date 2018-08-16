@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1901C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 187F4C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 835A221479
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:45:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 835A221479
+	by mail.kernel.org (Postfix) with ESMTP id C99882147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:45:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C99882147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730059AbeHPVpw (ORCPT
+        id S1730082AbeHPVpy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:45:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56674 "EHLO
+        Thu, 16 Aug 2018 17:45:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56692 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727613AbeHPVpv (ORCPT
+        with ESMTP id S1727613AbeHPVpx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:45:51 -0400
+        Thu, 16 Aug 2018 17:45:53 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4C9E3D09;
-        Thu, 16 Aug 2018 18:45:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 59E7CCC4;
+        Thu, 16 Aug 2018 18:45:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Chao <liuchao741@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 11/22] crypto: skcipher - fix crash flushing dcache in error path
-Date:   Thu, 16 Aug 2018 20:45:12 +0200
-Message-Id: <20180816171624.459923914@linuxfoundation.org>
+        stable@vger.kernel.org, James Morse <james.morse@arm.com>,
+        Borislav Petkov <bp@suse.de>,
+        Tyler Baicar <tbaicar@codeaurora.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.14 12/22] ACPI / APEI: Remove ghes_ioremap_area
+Date:   Thu, 16 Aug 2018 20:45:13 +0200
+Message-Id: <20180816171624.623030411@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171622.831964729@linuxfoundation.org>
 References: <20180816171622.831964729@linuxfoundation.org>
@@ -51,146 +53,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: James Morse <james.morse@arm.com>
 
-commit 8088d3dd4d7c6933a65aa169393b5d88d8065672 upstream.
+commit 520e18a5080d2c444a03280d99c8a35cb667d321 upstream.
 
-scatterwalk_done() is only meant to be called after a nonzero number of
-bytes have been processed, since scatterwalk_pagedone() will flush the
-dcache of the *previous* page.  But in the error case of
-skcipher_walk_done(), e.g. if the input wasn't an integer number of
-blocks, scatterwalk_done() was actually called after advancing 0 bytes.
-This caused a crash ("BUG: unable to handle kernel paging request")
-during '!PageSlab(page)' on architectures like arm and arm64 that define
-ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE, provided that the input was
-page-aligned as in that case walk->offset == 0.
+Now that nothing is using the ghes_ioremap_area pages, rip them out.
 
-Fix it by reorganizing skcipher_walk_done() to skip the
-scatterwalk_advance() and scatterwalk_done() if an error has occurred.
-
-This bug was found by syzkaller fuzzing.
-
-Reproducer, assuming ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE:
-
-	#include <linux/if_alg.h>
-	#include <sys/socket.h>
-	#include <unistd.h>
-
-	int main()
-	{
-		struct sockaddr_alg addr = {
-			.salg_type = "skcipher",
-			.salg_name = "cbc(aes-generic)",
-		};
-		char buffer[4096] __attribute__((aligned(4096))) = { 0 };
-		int fd;
-
-		fd = socket(AF_ALG, SOCK_SEQPACKET, 0);
-		bind(fd, (void *)&addr, sizeof(addr));
-		setsockopt(fd, SOL_ALG, ALG_SET_KEY, buffer, 16);
-		fd = accept(fd, NULL, NULL);
-		write(fd, buffer, 15);
-		read(fd, buffer, 15);
-	}
-
-Reported-by: Liu Chao <liuchao741@huawei.com>
-Fixes: b286d8b1a690 ("crypto: skcipher - Add skcipher walk interface")
-Cc: <stable@vger.kernel.org> # v4.10+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: James Morse <james.morse@arm.com>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Tested-by: Tyler Baicar <tbaicar@codeaurora.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/skcipher.c |   49 +++++++++++++++++++++++++------------------------
- 1 file changed, 25 insertions(+), 24 deletions(-)
+ drivers/acpi/apei/ghes.c |   39 ++-------------------------------------
+ 1 file changed, 2 insertions(+), 37 deletions(-)
 
---- a/crypto/skcipher.c
-+++ b/crypto/skcipher.c
-@@ -95,7 +95,7 @@ static inline u8 *skcipher_get_spot(u8 *
- 	return max(start, end_page);
- }
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -114,19 +114,7 @@ static DEFINE_MUTEX(ghes_list_mutex);
+  * from BIOS to Linux can be determined only in NMI, IRQ or timer
+  * handler, but general ioremap can not be used in atomic context, so
+  * the fixmap is used instead.
+- */
+-
+-/*
+- * Two virtual pages are used, one for IRQ/PROCESS context, the other for
+- * NMI context (optionally).
+- */
+-#define GHES_IOREMAP_PAGES           2
+-#define GHES_IOREMAP_IRQ_PAGE(base)	(base)
+-#define GHES_IOREMAP_NMI_PAGE(base)	((base) + PAGE_SIZE)
+-
+-/* virtual memory area for atomic ioremap */
+-static struct vm_struct *ghes_ioremap_area;
+-/*
++ *
+  * These 2 spinlocks are used to prevent the fixmap entries from being used
+  * simultaneously.
+  */
+@@ -141,23 +129,6 @@ static atomic_t ghes_estatus_cache_alloc
  
--static int skcipher_done_slow(struct skcipher_walk *walk, unsigned int bsize)
-+static void skcipher_done_slow(struct skcipher_walk *walk, unsigned int bsize)
- {
- 	u8 *addr;
+ static int ghes_panic_timeout __read_mostly = 30;
  
-@@ -103,23 +103,24 @@ static int skcipher_done_slow(struct skc
- 	addr = skcipher_get_spot(addr, bsize);
- 	scatterwalk_copychunks(addr, &walk->out, bsize,
- 			       (walk->flags & SKCIPHER_WALK_PHYS) ? 2 : 1);
+-static int ghes_ioremap_init(void)
+-{
+-	ghes_ioremap_area = __get_vm_area(PAGE_SIZE * GHES_IOREMAP_PAGES,
+-		VM_IOREMAP, VMALLOC_START, VMALLOC_END);
+-	if (!ghes_ioremap_area) {
+-		pr_err(GHES_PFX "Failed to allocate virtual memory area for atomic ioremap.\n");
+-		return -ENOMEM;
+-	}
+-
 -	return 0;
- }
- 
- int skcipher_walk_done(struct skcipher_walk *walk, int err)
+-}
+-
+-static void ghes_ioremap_exit(void)
+-{
+-	free_vm_area(ghes_ioremap_area);
+-}
+-
+ static void __iomem *ghes_ioremap_pfn_nmi(u64 pfn)
  {
--	unsigned int n = walk->nbytes - err;
--	unsigned int nbytes;
-+	unsigned int n; /* bytes processed */
-+	bool more;
+ 	phys_addr_t paddr;
+@@ -1247,13 +1218,9 @@ static int __init ghes_init(void)
  
--	nbytes = walk->total - n;
-+	if (unlikely(err < 0))
-+		goto finish;
+ 	ghes_nmi_init_cxt();
  
--	if (unlikely(err < 0)) {
--		nbytes = 0;
--		n = 0;
--	} else if (likely(!(walk->flags & (SKCIPHER_WALK_PHYS |
--					   SKCIPHER_WALK_SLOW |
--					   SKCIPHER_WALK_COPY |
--					   SKCIPHER_WALK_DIFF)))) {
-+	n = walk->nbytes - err;
-+	walk->total -= n;
-+	more = (walk->total != 0);
-+
-+	if (likely(!(walk->flags & (SKCIPHER_WALK_PHYS |
-+				    SKCIPHER_WALK_SLOW |
-+				    SKCIPHER_WALK_COPY |
-+				    SKCIPHER_WALK_DIFF)))) {
- unmap_src:
- 		skcipher_unmap_src(walk);
- 	} else if (walk->flags & SKCIPHER_WALK_DIFF) {
-@@ -131,28 +132,28 @@ unmap_src:
- 		skcipher_unmap_dst(walk);
- 	} else if (unlikely(walk->flags & SKCIPHER_WALK_SLOW)) {
- 		if (WARN_ON(err)) {
-+			/* unexpected case; didn't process all bytes */
- 			err = -EINVAL;
--			nbytes = 0;
--		} else
--			n = skcipher_done_slow(walk, n);
-+			goto finish;
-+		}
-+		skcipher_done_slow(walk, n);
-+		goto already_advanced;
- 	}
- 
--	if (err > 0)
--		err = 0;
+-	rc = ghes_ioremap_init();
+-	if (rc)
+-		goto err;
 -
--	walk->total = nbytes;
--	walk->nbytes = nbytes;
--
- 	scatterwalk_advance(&walk->in, n);
- 	scatterwalk_advance(&walk->out, n);
--	scatterwalk_done(&walk->in, 0, nbytes);
--	scatterwalk_done(&walk->out, 1, nbytes);
-+already_advanced:
-+	scatterwalk_done(&walk->in, 0, more);
-+	scatterwalk_done(&walk->out, 1, more);
+ 	rc = ghes_estatus_pool_init();
+ 	if (rc)
+-		goto err_ioremap_exit;
++		goto err;
  
--	if (nbytes) {
-+	if (more) {
- 		crypto_yield(walk->flags & SKCIPHER_WALK_SLEEP ?
- 			     CRYPTO_TFM_REQ_MAY_SLEEP : 0);
- 		return skcipher_walk_next(walk);
- 	}
-+	err = 0;
-+finish:
-+	walk->nbytes = 0;
- 
- 	/* Short-circuit for the common/fast path. */
- 	if (!((unsigned long)walk->buffer | (unsigned long)walk->page))
+ 	rc = ghes_estatus_pool_expand(GHES_ESTATUS_CACHE_AVG_SIZE *
+ 				      GHES_ESTATUS_CACHE_ALLOCED_MAX);
+@@ -1277,8 +1244,6 @@ static int __init ghes_init(void)
+ 	return 0;
+ err_pool_exit:
+ 	ghes_estatus_pool_exit();
+-err_ioremap_exit:
+-	ghes_ioremap_exit();
+ err:
+ 	return rc;
+ }
 
 
