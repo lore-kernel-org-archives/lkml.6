@@ -6,39 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C72FC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B037C43615
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:49:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C95B21480
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:49:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C95B21480
+	by mail.kernel.org (Postfix) with ESMTP id CFD1221480
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:49:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFD1221480
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729142AbeHPVtK (ORCPT
+        id S1729388AbeHPVtM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:49:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57810 "EHLO
+        Thu, 16 Aug 2018 17:49:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57820 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727131AbeHPVtH (ORCPT
+        with ESMTP id S1728790AbeHPVtL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:49:07 -0400
+        Thu, 16 Aug 2018 17:49:11 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 068B1CC4;
-        Thu, 16 Aug 2018 18:48:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0EAC8CE8;
+        Thu, 16 Aug 2018 18:48:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Lucas De Marchi <lucas.demarchi@profusion.mobi>,
-        Lucas De Marchi <lucas.de.marchi@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Jessica Yu <jeyu@kernel.org>,
-        Chih-Wei Huang <cwhuang@linux.org.tw>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 4.18 08/22] kbuild: verify that $DEPMOD is installed
-Date:   Thu, 16 Aug 2018 20:45:24 +0200
-Message-Id: <20180816171556.829602149@linuxfoundation.org>
+        stable@vger.kernel.org, Hadar Gat <hadar.gat@arm.com>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.18 09/22] crypto: ccree - fix finup
+Date:   Thu, 16 Aug 2018 20:45:25 +0200
+Message-Id: <20180816171556.869359053@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171556.502583508@linuxfoundation.org>
 References: <20180816171556.502583508@linuxfoundation.org>
@@ -55,101 +51,140 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Hadar Gat <hadar.gat@arm.com>
 
-commit 934193a654c1f4d0643ddbf4b2529b508cae926e upstream.
+commit 26497e72a1aba4d27c50c4cbf0182db94e58a590 upstream.
 
-Verify that 'depmod' ($DEPMOD) is installed.
-This is a partial revert of commit 620c231c7a7f
-("kbuild: do not check for ancient modutils tools").
+finup() operation was incorrect, padding was missing.
+Fix by setting the ccree HW to enable padding.
 
-Also update Documentation/process/changes.rst to refer to
-kmod instead of module-init-tools.
-
-Fixes kernel bugzilla #198965:
-https://bugzilla.kernel.org/show_bug.cgi?id=198965
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>
-Cc: Lucas De Marchi <lucas.de.marchi@gmail.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Chih-Wei Huang <cwhuang@linux.org.tw>
-Cc: stable@vger.kernel.org # any kernel since 2012
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Hadar Gat <hadar.gat@arm.com>
+[ gilad@benyossef.com: refactored for better code sharing ]
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/process/changes.rst |   19 +++++++------------
- scripts/depmod.sh                 |    8 +++++++-
- 2 files changed, 14 insertions(+), 13 deletions(-)
+ drivers/crypto/ccree/cc_hash.c |   81 ++++++++---------------------------------
+ 1 file changed, 16 insertions(+), 65 deletions(-)
 
---- a/Documentation/process/changes.rst
-+++ b/Documentation/process/changes.rst
-@@ -35,7 +35,7 @@ binutils               2.20
- flex                   2.5.35           flex --version
- bison                  2.0              bison --version
- util-linux             2.10o            fdformat --version
--module-init-tools      0.9.10           depmod -V
-+kmod                   13               depmod -V
- e2fsprogs              1.41.4           e2fsck -V
- jfsutils               1.1.3            fsck.jfs -V
- reiserfsprogs          3.6.3            reiserfsck -V
-@@ -156,12 +156,6 @@ is not build with ``CONFIG_KALLSYMS`` an
- reproduce the Oops with that option, then you can still decode that Oops
- with ksymoops.
+--- a/drivers/crypto/ccree/cc_hash.c
++++ b/drivers/crypto/ccree/cc_hash.c
+@@ -602,7 +602,7 @@ static int cc_hash_update(struct ahash_r
+ 	return rc;
+ }
  
--Module-Init-Tools
-------------------
+-static int cc_hash_finup(struct ahash_request *req)
++static int cc_do_finup(struct ahash_request *req, bool update)
+ {
+ 	struct ahash_req_ctx *state = ahash_request_ctx(req);
+ 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
+@@ -619,15 +619,15 @@ static int cc_hash_finup(struct ahash_re
+ 	int rc;
+ 	gfp_t flags = cc_gfp_flags(&req->base);
+ 
+-	dev_dbg(dev, "===== %s-finup (%d) ====\n", is_hmac ? "hmac" : "hash",
+-		nbytes);
++	dev_dbg(dev, "===== %s-%s (%d) ====\n", is_hmac ? "hmac" : "hash",
++		update ? "finup" : "final", nbytes);
+ 
+ 	if (cc_map_req(dev, state, ctx)) {
+ 		dev_err(dev, "map_ahash_source() failed\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	if (cc_map_hash_request_final(ctx->drvdata, state, src, nbytes, 1,
++	if (cc_map_hash_request_final(ctx->drvdata, state, src, nbytes, update,
+ 				      flags)) {
+ 		dev_err(dev, "map_ahash_request_final() failed\n");
+ 		cc_unmap_req(dev, state, ctx);
+@@ -646,67 +646,7 @@ static int cc_hash_finup(struct ahash_re
+ 
+ 	idx = cc_restore_hash(desc, ctx, state, idx);
+ 
+-	if (is_hmac)
+-		idx = cc_fin_hmac(desc, req, idx);
 -
--A new module loader is now in the kernel that requires ``module-init-tools``
--to use.  It is backward compatible with the 2.4.x series kernels.
+-	idx = cc_fin_result(desc, req, idx);
 -
- Mkinitrd
- --------
+-	rc = cc_send_request(ctx->drvdata, &cc_req, desc, idx, &req->base);
+-	if (rc != -EINPROGRESS && rc != -EBUSY) {
+-		dev_err(dev, "send_request() failed (rc=%d)\n", rc);
+-		cc_unmap_hash_request(dev, state, src, true);
+-		cc_unmap_result(dev, state, digestsize, result);
+-		cc_unmap_req(dev, state, ctx);
+-	}
+-	return rc;
+-}
+-
+-static int cc_hash_final(struct ahash_request *req)
+-{
+-	struct ahash_req_ctx *state = ahash_request_ctx(req);
+-	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
+-	struct cc_hash_ctx *ctx = crypto_ahash_ctx(tfm);
+-	u32 digestsize = crypto_ahash_digestsize(tfm);
+-	struct scatterlist *src = req->src;
+-	unsigned int nbytes = req->nbytes;
+-	u8 *result = req->result;
+-	struct device *dev = drvdata_to_dev(ctx->drvdata);
+-	bool is_hmac = ctx->is_hmac;
+-	struct cc_crypto_req cc_req = {};
+-	struct cc_hw_desc desc[CC_MAX_HASH_SEQ_LEN];
+-	unsigned int idx = 0;
+-	int rc;
+-	gfp_t flags = cc_gfp_flags(&req->base);
+-
+-	dev_dbg(dev, "===== %s-final (%d) ====\n", is_hmac ? "hmac" : "hash",
+-		nbytes);
+-
+-	if (cc_map_req(dev, state, ctx)) {
+-		dev_err(dev, "map_ahash_source() failed\n");
+-		return -EINVAL;
+-	}
+-
+-	if (cc_map_hash_request_final(ctx->drvdata, state, src, nbytes, 0,
+-				      flags)) {
+-		dev_err(dev, "map_ahash_request_final() failed\n");
+-		cc_unmap_req(dev, state, ctx);
+-		return -ENOMEM;
+-	}
+-
+-	if (cc_map_result(dev, state, digestsize)) {
+-		dev_err(dev, "map_ahash_digest() failed\n");
+-		cc_unmap_hash_request(dev, state, src, true);
+-		cc_unmap_req(dev, state, ctx);
+-		return -ENOMEM;
+-	}
+-
+-	/* Setup request structure */
+-	cc_req.user_cb = cc_hash_complete;
+-	cc_req.user_arg = req;
+-
+-	idx = cc_restore_hash(desc, ctx, state, idx);
+-
+-	/* "DO-PAD" must be enabled only when writing current length to HW */
++	/* Pad the hash */
+ 	hw_desc_init(&desc[idx]);
+ 	set_cipher_do(&desc[idx], DO_PAD);
+ 	set_cipher_mode(&desc[idx], ctx->hw_mode);
+@@ -731,6 +671,17 @@ static int cc_hash_final(struct ahash_re
+ 	return rc;
+ }
  
-@@ -371,16 +365,17 @@ Util-linux
- 
- - <https://www.kernel.org/pub/linux/utils/util-linux/>
- 
-+Kmod
-+----
++static int cc_hash_finup(struct ahash_request *req)
++{
++	return cc_do_finup(req, true);
++}
 +
-+- <https://www.kernel.org/pub/linux/utils/kernel/kmod/>
-+- <https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git>
 +
- Ksymoops
- --------
- 
- - <https://www.kernel.org/pub/linux/utils/kernel/ksymoops/v2.4/>
- 
--Module-Init-Tools
-------------------
--
--- <https://www.kernel.org/pub/linux/utils/kernel/module-init-tools/>
--
- Mkinitrd
- --------
- 
---- a/scripts/depmod.sh
-+++ b/scripts/depmod.sh
-@@ -10,10 +10,16 @@ fi
- DEPMOD=$1
- KERNELRELEASE=$2
- 
--if ! test -r System.map -a -x "$DEPMOD"; then
-+if ! test -r System.map ; then
- 	exit 0
- fi
- 
-+if [ -z $(command -v $DEPMOD) ]; then
-+	echo "'make modules_install' requires $DEPMOD. Please install it." >&2
-+	echo "This is probably in the kmod package." >&2
-+	exit 1
-+fi
++static int cc_hash_final(struct ahash_request *req)
++{
++	return cc_do_finup(req, false);
++}
 +
- # older versions of depmod require the version string to start with three
- # numbers, so we cheat with a symlink here
- depmod_hack_needed=true
+ static int cc_hash_init(struct ahash_request *req)
+ {
+ 	struct ahash_req_ctx *state = ahash_request_ctx(req);
 
 
