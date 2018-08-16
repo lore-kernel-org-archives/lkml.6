@@ -2,90 +2,118 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A622C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFA5C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFC5F21477
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:14:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="jUaGwcGs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFC5F21477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id BC2FE21477
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 20:16:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC2FE21477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726097AbeHPXOt (ORCPT
+        id S1726066AbeHPXRE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 19:14:49 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:36070 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725965AbeHPXOt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 19:14:49 -0400
-Received: by mail-io0-f196.google.com with SMTP id m4-v6so4946920iop.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 13:14:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=r68fp81UveCrVseP5WsDMBkHFOz4CEP2y7m6ApU/9c0=;
-        b=jUaGwcGsnYk/GyTY+QOS/icqb27hptl8eY7+OGpjxNWBbbrx0teC6RkB7zS7Hb8J6R
-         bdkTlnP0K5PGuD+an71SNHx/bVDzA0Jlsg3ajfuteqWzjYaeagGxQ6CkM+p8nSfVgfdh
-         xhI9x4shtAWmdSHdM0tMTmfB9di43RqJK8K6oUS0+pivohIdJFSN4BghZkmOEuvaG1cd
-         KY++BrzEZGr0LUasJKdEFmEDH245VoXGHBeoUdjkbt04tpOfCLom32qlRVy+V7CU7FGb
-         X0sYGssXvzFQTGsj/gEHwfnmHqd9C27IXddDn6IHk8HHRap9/DVYhyvQKBkGgCg9Fx1a
-         OaEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=r68fp81UveCrVseP5WsDMBkHFOz4CEP2y7m6ApU/9c0=;
-        b=IlkPnGEPEmc+iM2sqkMy7iDCp4DDJ7QoafCLPJKhQRZuVbTTL0tnsco878ewVZRq5t
-         Unwm2QetgSk/IfY9EeTvIOGdhyrHcoffMqy+PFsuBQg4j5Zjuwv2VQbZM/h8bKwdXawW
-         7z3rMcmROGDarLECEOzVo5KqPBj9o5MtnMrts9vRWEebbszhPw5YrGYs5km9KHKKzDmT
-         21tr1+rmxzktRs0umwN6KYSLkReqNZj4v1/dqIJsItn240Ivxj7xjhi1xQF7v8KJJXIi
-         4ViQGPBYIbcnyq+N6pILP0sC78IkOkp51fKTNcf86iADoWOUaxoZ+hBZ6odV9xRr4ajl
-         vskw==
-X-Gm-Message-State: AOUpUlHQwO44pGguXoYPMNyVHOwG7RSttr5qGtNXTtebAZf8HirChzPD
-        9NpgkhYvjrLBl2Rydp+wPyORhw==
-X-Google-Smtp-Source: AA+uWPyihayFJG3qs2ILlWlZVM31jXC8DLtJAhtwywkwzVjoaVF1qTAGYjHM8lAWajEuZkgwgF1cTQ==
-X-Received: by 2002:a6b:294b:: with SMTP id p72-v6mr25794966iop.17.1534450459313;
-        Thu, 16 Aug 2018 13:14:19 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
-        by smtp.gmail.com with ESMTPSA id y15-v6sm243597ioy.18.2018.08.16.13.14.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Aug 2018 13:14:17 -0700 (PDT)
-Subject: Re: [PATCH] tracing/blktrace: Fix to allow setting same value
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     linux-block@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>
-References: <20180816160837.30cb63cf@gandalf.local.home>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <82cb73d7-38a9-5e73-cf80-ff0873253d9e@kernel.dk>
-Date:   Thu, 16 Aug 2018 14:14:15 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180816160837.30cb63cf@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 16 Aug 2018 19:17:04 -0400
+Received: from mga17.intel.com ([192.55.52.151]:43390 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725895AbeHPXRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 19:17:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2018 13:16:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,248,1531810800"; 
+   d="scan'208";a="225248274"
+Received: from rchatre-s.jf.intel.com ([10.54.70.76])
+  by orsmga004.jf.intel.com with ESMTP; 16 Aug 2018 13:16:33 -0700
+From:   Reinette Chatre <reinette.chatre@intel.com>
+To:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        vikas.shivappa@linux.intel.com
+Cc:     gavin.hindman@intel.com, jithu.joseph@intel.com,
+        dave.hansen@intel.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: [PATCH V2 0/6] perf/core and x86/intel_rdt: Fix lack of coordination with perf
+Date:   Thu, 16 Aug 2018 13:16:03 -0700
+Message-Id: <cover.1534450299.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/16/18 2:08 PM, Steven Rostedt wrote:
-> [
->   Jens, you want to take this one, or do you want me to?
-> ]
+Dear Maintainers,
 
-I can queue it up - done. Thanks!
+This is the second attempt at fixing the lack of coordination between the
+pseudo-locking measurement code and perf. Thank you very much for your
+feedback on the first version. The entire solution, including the cover
+letter, has been reworked based on your feedback, while submitted as a V2,
+none of the patches from V1 remained.
+
+Changes since V1:
+- Use in-kernel interface to perf.
+- Do not write directly to PMU registers.
+- Do not introduce another PMU owner. perf maintains role as performing
+  resource arbitration for PMU.
+- User space is able to use perf and resctrl at the same time.
+- event_base_rdpmc is accessed and used only within an interrupts
+  disabled section.
+- Internals of events are never accessed directly, inline function used.
+- Due to "pinned" usage the scheduling of event may have failed.  Error
+  state is checked in recommended way and have a credible error
+  handling.
+- use X86_CONFIG
+
+This code is based on the x86/cache branch of tip.git
+
+The success of Cache Pseudo-Locking, as measured by how many cache lines
+from a physical memory region has been locked to cache, can be measured
+via the use of hardware performance events. Specifically, the number of
+cache hits and misses reading a memory region after it has been
+pseudo-locked to cache. This measurement is triggered via the resctrl
+debugfs interface.
+
+The current solution accesses performance counters and their configuration
+registers directly without coordination with other performance event users
+(perf).
+Two of the issues that exist with the current solution:
+- By writing to the performance monitoring registers directly a new owner
+  for these resources is introduced. The perf infrastructure already exist
+  to perform resource arbitration and the in-kernel infrastructure should
+  be used to do so.
+- The current lack of coordination with perf will have consequences any time
+  two users, for example perf and cache pseudo-locking, attempt to do any
+  kind of measurement at the same time.
+
+In this series the measurement of Cache Pseudo-Lock regions is moved to use
+the in-kernel interface to perf. During the rework of the measurement
+function the L2 and L3 cache measurements are separated to avoid the
+additional code needed to decide on which measurement causing unrelated
+cache hits and misses.
+
+Your feedback on this work will be greatly appreciated.
+
+Reinette
+
+Reinette Chatre (6):
+  perf/core: Add sanity check to deal with pinned event failure
+  x86/intel_rdt: Remove local register variables
+  x86/intel_rdt: Create required perf event attributes
+  x86/intel_rdt: Add helper to obtain performance counter index
+  x86/intel_rdt: Use perf infrastructure for measurements
+  x86/intel_rdt: Re-enable pseudo-lock measurements
+
+ Documentation/x86/intel_rdt_ui.txt          |  22 +-
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 419 ++++++++++++++------
+ kernel/events/core.c                        |   6 +
+ 3 files changed, 310 insertions(+), 137 deletions(-)
 
 -- 
-Jens Axboe
+2.17.0
 
