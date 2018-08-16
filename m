@@ -6,41 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 077ABC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA06AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEBF821480
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEBF821480
+	by mail.kernel.org (Postfix) with ESMTP id 6624521473
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6624521473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729145AbeHPVnz (ORCPT
+        id S1729175AbeHPVn6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:43:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56332 "EHLO
+        Thu, 16 Aug 2018 17:43:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56342 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbeHPVny (ORCPT
+        with ESMTP id S1729148AbeHPVn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:43:54 -0400
+        Thu, 16 Aug 2018 17:43:57 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 36739CB7;
-        Thu, 16 Aug 2018 18:43:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B1434CB7;
+        Thu, 16 Aug 2018 18:43:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 03/13] kasan: dont emit builtin calls when sanitization is off
-Date:   Thu, 16 Aug 2018 20:41:50 +0200
-Message-Id: <20180816171628.704400352@linuxfoundation.org>
+        stable@vger.kernel.org, Liwei Song <liwei.song@windriver.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.4 04/13] i2c: ismt: fix wrong device address when unmap the data buffer
+Date:   Thu, 16 Aug 2018 20:41:51 +0200
+Message-Id: <20180816171628.753777777@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171628.554317013@linuxfoundation.org>
 References: <20180816171628.554317013@linuxfoundation.org>
@@ -57,77 +51,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrey Konovalov <andreyknvl@google.com>
+From: Liwei Song <liwei.song@windriver.com>
 
-commit 0e410e158e5baa1300bdf678cea4f4e0cf9d8b94 upstream.
+commit 17e83549e199d89aace7788a9f11c108671eecf5 upstream.
 
-With KASAN enabled the kernel has two different memset() functions, one
-with KASAN checks (memset) and one without (__memset).  KASAN uses some
-macro tricks to use the proper version where required.  For example
-memset() calls in mm/slub.c are without KASAN checks, since they operate
-on poisoned slab object metadata.
+Fix the following kernel bug:
 
-The issue is that clang emits memset() calls even when there is no
-memset() in the source code.  They get linked with improper memset()
-implementation and the kernel fails to boot due to a huge amount of KASAN
-reports during early boot stages.
+kernel BUG at drivers/iommu/intel-iommu.c:3260!
+invalid opcode: 0000 [#5] PREEMPT SMP
+Hardware name: Intel Corp. Harcuvar/Server, BIOS HAVLCRB0.X64.0013.D39.1608311820 08/31/2016
+task: ffff880175389950 ti: ffff880176bec000 task.ti: ffff880176bec000
+RIP: 0010:[<ffffffff8150a83b>]  [<ffffffff8150a83b>] intel_unmap+0x25b/0x260
+RSP: 0018:ffff880176bef5e8  EFLAGS: 00010296
+RAX: 0000000000000024 RBX: ffff8800773c7c88 RCX: 000000000000ce04
+RDX: 0000000080000000 RSI: 0000000000000000 RDI: 0000000000000009
+RBP: ffff880176bef638 R08: 0000000000000010 R09: 0000000000000004
+R10: ffff880175389c78 R11: 0000000000000a4f R12: ffff8800773c7868
+R13: 00000000ffffac88 R14: ffff8800773c7818 R15: 0000000000000001
+FS:  00007fef21258700(0000) GS:ffff88017b5c0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000066d6d8 CR3: 000000007118c000 CR4: 00000000003406e0
+Stack:
+ 00000000ffffac88 ffffffff8199867f ffff880176bef5f8 ffff880100000030
+ ffff880176bef668 ffff8800773c7c88 ffff880178288098 ffff8800772c0010
+ ffff8800773c7818 0000000000000001 ffff880176bef648 ffffffff8150a86e
+Call Trace:
+ [<ffffffff8199867f>] ? printk+0x46/0x48
+ [<ffffffff8150a86e>] intel_unmap_page+0xe/0x10
+ [<ffffffffa039d99b>] ismt_access+0x27b/0x8fa [i2c_ismt]
+ [<ffffffff81554420>] ? __pm_runtime_suspend+0xa0/0xa0
+ [<ffffffff815544a0>] ? pm_suspend_timer_fn+0x80/0x80
+ [<ffffffff81554420>] ? __pm_runtime_suspend+0xa0/0xa0
+ [<ffffffff815544a0>] ? pm_suspend_timer_fn+0x80/0x80
+ [<ffffffff8143dfd0>] ? pci_bus_read_dev_vendor_id+0xf0/0xf0
+ [<ffffffff8172b36c>] i2c_smbus_xfer+0xec/0x4b0
+ [<ffffffff810aa4d5>] ? vprintk_emit+0x345/0x530
+ [<ffffffffa038936b>] i2cdev_ioctl_smbus+0x12b/0x240 [i2c_dev]
+ [<ffffffff810aa829>] ? vprintk_default+0x29/0x40
+ [<ffffffffa0389b33>] i2cdev_ioctl+0x63/0x1ec [i2c_dev]
+ [<ffffffff811b04c8>] do_vfs_ioctl+0x328/0x5d0
+ [<ffffffff8119d8ec>] ? vfs_write+0x11c/0x190
+ [<ffffffff8109d449>] ? rt_up_read+0x19/0x20
+ [<ffffffff811b07f1>] SyS_ioctl+0x81/0xa0
+ [<ffffffff819a351b>] system_call_fastpath+0x16/0x6e
 
-The solution is to add -fno-builtin flag for files with KASAN_SANITIZE :=
-n marker.
+This happen When run "i2cdetect -y 0" detect SMBus iSMT adapter.
 
-Link: http://lkml.kernel.org/r/8ffecfffe04088c52c42b92739c2bd8a0bcb3f5e.1516384594.git.andreyknvl@google.com
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-Acked-by: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[ Nick : Backported to 4.4 avoiding KUBSAN ]
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+After finished I2C block read/write, when unmap the data buffer,
+a wrong device address was pass to dma_unmap_single().
+
+To fix this, give dma_unmap_single() the "dev" parameter, just like
+what dma_map_single() does, then unmap can find the right devices.
+
+Fixes: 13f35ac14cd0 ("i2c: Adding support for Intel iSMT SMBus 2.0 host controller")
+Signed-off-by: Liwei Song <liwei.song@windriver.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Makefile               |    3 ++-
- scripts/Makefile.kasan |    3 +++
- scripts/Makefile.lib   |    2 +-
- 3 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-ismt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/Makefile
-+++ b/Makefile
-@@ -418,7 +418,8 @@ export MAKE AWK GENKSYMS INSTALLKERNEL P
- export HOSTCXX HOSTCXXFLAGS LDFLAGS_MODULE CHECK CHECKFLAGS
+--- a/drivers/i2c/busses/i2c-ismt.c
++++ b/drivers/i2c/busses/i2c-ismt.c
+@@ -587,7 +587,7 @@ static int ismt_access(struct i2c_adapte
  
- export KBUILD_CPPFLAGS NOSTDINC_FLAGS LINUXINCLUDE OBJCOPYFLAGS LDFLAGS
--export KBUILD_CFLAGS CFLAGS_KERNEL CFLAGS_MODULE CFLAGS_GCOV CFLAGS_KASAN
-+export KBUILD_CFLAGS CFLAGS_KERNEL CFLAGS_MODULE CFLAGS_GCOV
-+export CFLAGS_KASAN CFLAGS_KASAN_NOSANITIZE
- export KBUILD_AFLAGS AFLAGS_KERNEL AFLAGS_MODULE
- export KBUILD_AFLAGS_MODULE KBUILD_CFLAGS_MODULE KBUILD_LDFLAGS_MODULE
- export KBUILD_AFLAGS_KERNEL KBUILD_CFLAGS_KERNEL
---- a/scripts/Makefile.kasan
-+++ b/scripts/Makefile.kasan
-@@ -28,4 +28,7 @@ else
-         CFLAGS_KASAN := $(CFLAGS_KASAN_MINIMAL)
-     endif
- endif
-+
-+CFLAGS_KASAN_NOSANITIZE := -fno-builtin
-+
- endif
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -126,7 +126,7 @@ endif
- ifeq ($(CONFIG_KASAN),y)
- _c_flags += $(if $(patsubst n%,, \
- 		$(KASAN_SANITIZE_$(basetarget).o)$(KASAN_SANITIZE)y), \
--		$(CFLAGS_KASAN))
-+		$(CFLAGS_KASAN), $(CFLAGS_KASAN_NOSANITIZE))
- endif
+ 	/* unmap the data buffer */
+ 	if (dma_size != 0)
+-		dma_unmap_single(&adap->dev, dma_addr, dma_size, dma_direction);
++		dma_unmap_single(dev, dma_addr, dma_size, dma_direction);
  
- # If building the kernel in a separate objtree expand all occurrences
+ 	if (unlikely(!time_left)) {
+ 		dev_err(dev, "completion wait timed out\n");
 
 
