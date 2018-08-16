@@ -2,75 +2,88 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBDC9C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 06:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE96C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 06:46:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D13C214AB
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 06:35:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D13C214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 71EF3214C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 06:46:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71EF3214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388926AbeHPJb0 (ORCPT
+        id S2389018AbeHPJmi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 05:31:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40374 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726335AbeHPJbZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 05:31:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8E732AE85;
-        Thu, 16 Aug 2018 06:35:10 +0000 (UTC)
-Date:   Thu, 16 Aug 2018 08:35:09 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Andy Lutomirski <luto@kernel.org>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: [RFC PATCH 1/2] mm: rework memcg kernel stack accounting
-Message-ID: <20180816063509.GS32645@dhcp22.suse.cz>
-References: <20180815003620.15678-1-guro@fb.com>
- <20180815163923.GA28953@cmpxchg.org>
- <20180815165513.GA26330@castle.DHCP.thefacebook.com>
- <20180815172044.GA29793@cmpxchg.org>
+        Thu, 16 Aug 2018 05:42:38 -0400
+Received: from mga12.intel.com ([192.55.52.136]:47374 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726133AbeHPJmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 05:42:38 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2018 23:46:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,246,1531810800"; 
+   d="scan'208";a="255271580"
+Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
+  by fmsmga006.fm.intel.com with ESMTP; 15 Aug 2018 23:46:17 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1fqC2y-0004ea-Tf; Thu, 16 Aug 2018 14:46:16 +0800
+Date:   Thu, 16 Aug 2018 14:46:02 +0800
+From:   kbuild test robot <fengguang.wu@intel.com>
+To:     Roy Im <roy.im.opensource@diasemi.com>
+Cc:     kbuild-all@01.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] Input: fix boolreturn.cocci warnings
+Message-ID: <20180816064602.GA94754@cairo>
+References: <662cd241e04a1e033c87d1a94c594740b594b0b6.1534384964.git.Roy.Im@diasemi.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180815172044.GA29793@cmpxchg.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <662cd241e04a1e033c87d1a94c594740b594b0b6.1534384964.git.Roy.Im@diasemi.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 15-08-18 13:20:44, Johannes Weiner wrote:
-[...]
-> This is completely backwards.
-> 
-> We respect the limits unless there is a *really* strong reason not
-> to. The only situations I can think of is during OOM kills to avoid
-> memory deadlocks and during packet reception for correctness issues
-> (and because the network stack has its own way to reclaim memory).
-> 
-> Relying on some vague future allocations in the process's lifetime to
-> fail in order to contain it is crappy and unreliable. And unwinding
-> the stack allocation isn't too much complexity to warrant breaking the
-> containment rules here, even if it were several steps. But it looks
-> like it's nothing more than a 'goto free_stack'.
-> 
-> Please just fix this.
+From: kbuild test robot <fengguang.wu@intel.com>
 
-Thinking about it some more (sorry I should have done that in my
-previous reply already) I do agree with Johannes. We should really back
-off as soon as possible rather than rely on a future action because
-this is quite subtle and prone to unexpected behavior.
+drivers/input/misc/da7280.c:116:9-10: WARNING: return of 0/1 in function 'da7280_volatile_register' with return type bool
 
--- 
-Michal Hocko
-SUSE Labs
+ Return statements in functions returning bool should use
+ true/false instead of 1/0.
+Generated by: scripts/coccinelle/misc/boolreturn.cocci
+
+Fixes: a067f5d53e35 ("Input: new da7280 haptic driver")
+CC: Roy Im <roy.im.opensource@diasemi.com>
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+---
+
+ da7280.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/input/misc/da7280.c
++++ b/drivers/input/misc/da7280.c
+@@ -113,9 +113,9 @@ static bool da7280_volatile_register(str
+ 	case DA7280_IRQ_EVENT_SEQ_DIAG:
+ 	case DA7280_IRQ_STATUS1:
+ 	case DA7280_TOP_CTL1:
+-		return 1;
++		return true;
+ 	default:
+-		return 0;
++		return false;
+ 	}
+ }
+ 
