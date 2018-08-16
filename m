@@ -2,126 +2,100 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0C9C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F93DC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89647208B0
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:44:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jm5lsIKA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89647208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1DDE4208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:48:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DDE4208DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391595AbeHPRna (ORCPT
+        id S2391823AbeHPRq6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 13:43:30 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33919 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387920AbeHPRna (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 13:43:30 -0400
-Received: by mail-lj1-f196.google.com with SMTP id f8-v6so3880150ljk.1;
-        Thu, 16 Aug 2018 07:44:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6qBxbROM1k9F8/ORuHlv3cnYc9rLSXJYRNrBNVec3jo=;
-        b=jm5lsIKAkbED62cthZO810XpXM1vgSsrnoz785s4mfiYaaO4Y6buOVkm5NOJVvynyo
-         kV7IMjyJrRgFQ4u51vSYzS5RbpfcLCEVl/d1ewK2vwXZ13kqksJSvP0+aHFOjTMu/L3m
-         IPlWyEOpDkMFuQMUYOMCNS9Vn0YqFRu6MQwq5FO7Py6tTY76aw+THbPZuoB7ev5Y3q6U
-         YTEbPJTgfm/TvMdXWaVWgxtOcwEP2copTxhbdFFAhuxxY4L2emUt6JTCPokhC34HD1ot
-         Dwb2lKduXqdsFAGg9+/0a/aUlMoizV0bgvPi9k36CK+5Wg7vsAYdPfvvJ7DhQlwNStF5
-         F/jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6qBxbROM1k9F8/ORuHlv3cnYc9rLSXJYRNrBNVec3jo=;
-        b=pxCd5R/saPaNKYtaSkE0QNFthK5LFnQI+MyROiK0Jb+8AXJOY4a8TD9Y4aLoiruhFG
-         Qv1j03RRHRL8jGx6z3b51hgew3j8MGAusGR46ldVXjFYEZvGmyYvRRH6ngoR3WOeths4
-         XFVvOFZG47WElZRcNjJF2ZQJVns79Qju8VPjfINST6HNfEQDH+83ucVUYc9EOaCQH87w
-         SgCBSVQYzke+GEb5PA2/7Ho9M/6rzrg/giwJ68DAHhFSpVN4qHFuoiY6/442dLq2hftx
-         UtS1+D/TZm1KJih5mh5MZsdPgLr8109t99z4PPlT4CftMFugUiZIG512dpqrYPHdN6JB
-         IVFg==
-X-Gm-Message-State: AOUpUlFqB6muKbwAuSb7n+aF0JqucM/rBKOl92B2Ly1UnNryiUG46LFi
-        aOMwzEsq3Ztz9JYpKYuAbI0=
-X-Google-Smtp-Source: AA+uWPxTRLDWU/qzvTgCejVA7s5Msn0meMKx+KkcluPIRDFoTSByG/KCvE8+tVeGwm3kNPQ0cIaeWw==
-X-Received: by 2002:a2e:9c82:: with SMTP id x2-v6mr22205848lji.131.1534430669578;
-        Thu, 16 Aug 2018 07:44:29 -0700 (PDT)
-Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id w12-v6sm4432705lji.63.2018.08.16.07.44.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Aug 2018 07:44:28 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Stefan Agner <stefan@agner.ch>, thierry.reding@gmail.com
-Cc:     jonathanh@nvidia.com, linus.walleij@linaro.org,
-        pdeschrijver@nvidia.co, marcel.ziswiler@toradex.com,
-        keescook@chromium.org, linux-tegra@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: tegra: readd gpio-ranges properties
-Date:   Thu, 16 Aug 2018 17:44:27 +0300
-Message-ID: <1828884.n7pPtpPvFR@dimapc>
-In-Reply-To: <2268060.eSddBDDeqC@dimapc>
-References: <20180726154025.13173-1-stefan@agner.ch> <2777476.ese58fB1FL@dimapc> <2268060.eSddBDDeqC@dimapc>
+        Thu, 16 Aug 2018 13:46:58 -0400
+Received: from foss.arm.com ([217.140.101.70]:37448 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387920AbeHPRq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 13:46:58 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8110C7A9;
+        Thu, 16 Aug 2018 07:47:58 -0700 (PDT)
+Received: from [10.4.13.23] (en101.emea.arm.com [10.4.13.23])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 51F1E3F5D0;
+        Thu, 16 Aug 2018 07:47:57 -0700 (PDT)
+Subject: Re: [PATCH 03/13] coresight: tmc-etb/etf: Prepare to handle errors
+ enabling
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        robert.walker@arm.com, mike.leach@arm.com
+References: <1533562915-21558-1-git-send-email-suzuki.poulose@arm.com>
+ <1533562915-21558-4-git-send-email-suzuki.poulose@arm.com>
+ <20180815192246.GA11625@xps15>
+From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <0c55731b-b1cb-18ed-bf7c-057d1310cfdc@arm.com>
+Date:   Thu, 16 Aug 2018 15:47:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180815192246.GA11625@xps15>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, 2 August 2018 13:35:46 MSK Dmitry Osipenko wrote:
-> On Thursday, 2 August 2018 02:11:23 MSK Dmitry Osipenko wrote:
-> > On Thursday, 2 August 2018 01:51:42 MSK Stefan Agner wrote:
-> > > On 01.08.2018 22:51, Dmitry Osipenko wrote:
-> > > > On Thursday, 26 July 2018 18:40:25 MSK Stefan Agner wrote:
-> > > >> The properties have been commented out to prevent a regression a
-> > > >> while ago. The first regression should be resolved by
-> > > >> commit 44af7927316e ("spi: Map SPI OF client IRQ at probe time").
-> > > >> 
-> > > >> The second regression is probably addressed by
-> > > >> commit 494fd7b7ad10 ("PM / core: fix deferred probe breaking suspend
-> > > >> resume
-> > > >> order") and/or maybe others. Readd the gpio-ranges properties to see
-> > > >> whether regressions still get reported.
-> > > >> 
-> > > >> This reverts commit 4f1d841475e1f6e9e32496dda11215db56f4ea73
-> > > >> ("ARM: tegra: Comment out gpio-ranges properties").
-> > > >> 
-> > > >> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > > >> ---
-> > > > 
-> > > > Unfortunately the second regression hasn't been addressed yet, this
-> > > > patch
-> > > > still breaks wake-up using GPIO key. BTW, better to spell "readd" as
-> > > > "re-add".
-> > > 
-> > > You do have the hardware and could test it?
-> > 
-> > Yes, I have.
-> > 
-> > > Hm, that is unfortunate. I think this was the patch which should address
-> > > the issue:
-> > > https://lkml.org/lkml/2015/9/10/218
-> > 
-> > I've tested the patch and it is still actual, i.e. it fixes the wake-up.
-> > Welcome back to 2015 :-)
+On 15/08/18 20:22, Mathieu Poirier wrote:
+> On Mon, Aug 06, 2018 at 02:41:45PM +0100, Suzuki K Poulose wrote:
+>> Prepare to handle errors in enabling the hardware and
+>> report it back to the core driver.
+>>
+>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-tmc-etf.c | 71 +++++++++++++++----------
+>>   1 file changed, 44 insertions(+), 27 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+>> index 4156c95..ceb4b30 100644
+>> --- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
+>> +++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+
+>> @@ -271,6 +285,7 @@ static void tmc_disable_etf_sink(struct coresight_device *csdev)
+>>   static int tmc_enable_etf_link(struct coresight_device *csdev,
+>>   			       int inport, int outport)
+>>   {
+>> +	int ret;
+>>   	unsigned long flags;
+>>   	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+>>   
+>> @@ -280,11 +295,13 @@ static int tmc_enable_etf_link(struct coresight_device *csdev,
+>>   		return -EBUSY;
+>>   	}
+>>   
+>> -	tmc_etf_enable_hw(drvdata);
+>> -	drvdata->mode = CS_MODE_SYSFS;
+>> +	ret = tmc_etf_enable_hw(drvdata);
+>> +	if (!ret)
+>> +		drvdata->mode = CS_MODE_SYSFS;
+>>   	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>>   
+>> -	dev_dbg(drvdata->dev, "TMC-ETF enabled\n");
+>> +	if (!ret)
+>> +		dev_dbg(drvdata->dev, "TMC-ETF enabled\n");
+>>   	return 0;
 > 
-> Actually, the pinctrl-gpio probe order is easily fixable by reshuffling the
-> drivers registration order within the kernel. I'll send patches.
+> We need to tell the caller if an error as occured:
+> 
+>          return ret;
+> 
 
-Linus applied the GPIO / PINCTRL drivers probe-reorder patches for-next, so 
-this DT patch should be good for 4.20.
+Thanks for catching it, will fix.
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
-
-
+Suzuki
