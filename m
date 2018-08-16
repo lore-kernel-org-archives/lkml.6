@@ -2,139 +2,148 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 535E7C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD076C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E8762148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:21:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85AD5214AB
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 09:24:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GqIDM8LK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E8762148E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VEIO8UjW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85AD5214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390432AbeHPMTA (ORCPT
+        id S2390443AbeHPMVr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 08:19:00 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:49986 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727243AbeHPMTA (ORCPT
+        Thu, 16 Aug 2018 08:21:47 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44140 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727253AbeHPMVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 08:19:00 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7G9IpLT012350;
-        Thu, 16 Aug 2018 09:20:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=N6UNoeuLUqBzuX6fo923I1SNsCQl1mjHmLxlcaQghrw=;
- b=GqIDM8LKxFCotAR1V6tbBV7eh48rk5RVR6i/8yppXkCWhfQ6Vp1t/YbVmMqtlYqaKJjO
- lKJsZ54aqqd1SLHaKJQDBoon4ORLPVtLSTC5mIQVP8Tf9ilXpr8bm2j7YygMSDP1tkrq
- VZg5WaP7zKhI7OsBK3nI8GVZdBEAFwqfOe7Aa0vWbvNMQ4FEohT0gDtIDO4kbXBimmD4
- AOpe68yCyOiZdg39itYcQ9v0y+axA2jIhSEM+VCtt5zDNs+So/oL7mmklG83UR3NDvOP
- 3D8pcshb/sRC5XAKilJAQCEyIMLj3GO4FTGNQavqc1zxffHvPW6n5AoVaAdjB39XAV50 TA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2ksreq99c2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 16 Aug 2018 09:20:42 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7G9KfWI012343
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 16 Aug 2018 09:20:41 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7G9Kfps026095;
-        Thu, 16 Aug 2018 09:20:41 GMT
-Received: from [10.182.69.179] (/10.182.69.179)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 16 Aug 2018 02:20:40 -0700
-Subject: Re: [PATCH 2/2] blk-mq: sync the update nr_hw_queues with
- part_in_flight
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Ming Lei <tom.leiming@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Keith Busch <keith.busch@linux.intel.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1534317915-5041-1-git-send-email-jianchao.w.wang@oracle.com>
- <1534317915-5041-3-git-send-email-jianchao.w.wang@oracle.com>
- <CACVXFVO+g2ACx9XYx4XtwRkpSC9bCYeSFEj07Z==6r7nT-HxkQ@mail.gmail.com>
- <8cd103e6-0986-2c45-00f2-8a2a540a2eb5@oracle.com>
- <20180816090334.GA7144@ming.t460p>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <f3fad2f5-9ab5-438a-d5a6-93c637921378@oracle.com>
-Date:   Thu, 16 Aug 2018 17:20:50 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 16 Aug 2018 08:21:46 -0400
+Received: by mail-lf1-f65.google.com with SMTP id g6-v6so2888134lfb.11
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 02:24:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=MlEs7Lrjj+jD7q/cIKJizBRpruSZ1cojNxLU/jWmUJs=;
+        b=VEIO8UjWnuKafq+bokF8XJ0SnaAmTUzRqR4n4EmKG1Isf1gGdbsTjv1UWGiPuLAFjK
+         hqzPqKxdVvCnG3PFo2ykRLB2Q7J9SzAf1s3fcU90b/ZtH8vuv/r5ViUWDNdVQYfBFRts
+         4rJh7MkBN78lagt9olP+FaO+7oqwAiyOI/24fde0ag6nSf8nBB2tQOA+uuwIxJxiz5iK
+         HOFvHjplfdLtVBQJ1PP2XlsRzlITf/seo18XW83SOBj8Icj02VdzY0/1HpH6k9k+Yr4S
+         fRrs890BsXFFffdQmcqPSo/5LWSrxZNs1J/m6z8nD96b0GvsvnDnklciT2E6KsjrzeP3
+         0f9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=MlEs7Lrjj+jD7q/cIKJizBRpruSZ1cojNxLU/jWmUJs=;
+        b=ZDFWtQhbft0hzVUIuN2FE8BoDvq1TJRVdwdxQaaZ22YVXp1HNGUjUHa1FlI7itqIoE
+         yxoX766S+bEI9Uaj+i4Kv97J8KhJGx70nkQ5of2zhsZA780Miy8RdGOmU24UXXPFGUEt
+         kLk6iK9+BqTOe9xJZC9aA7PHFjQHold/IdZai6LkZX2j+ACYBWeaYGU6jG4XKuENFl13
+         OHqcKKJl1S3VTPVHgVflAPR8Na/061omm5yNo61b7rtNSlVSmxxQuQZrpbd0mH7IKYT7
+         zxPevV7PMDKrNPWL5P0azQGlLao355gkdaAcY6VcnDvRagABVUCOpEprR2ex4kBANTAz
+         m0Ig==
+X-Gm-Message-State: AOUpUlGg7xUyILGZgZ7WBckFouqIlKFDXNcb5RppKf/0a2MtLBS/5nWg
+        EQTiQBuSVx4fRVfDYUazTAcZ/LXl8Lw=
+X-Google-Smtp-Source: AA+uWPz4imXfnbXtuVnZLx7DWRoW8l7f0SZmVwSF5idV5fFWxnnPL7QmuHXuyedXXSiSTZffW2dLPQ==
+X-Received: by 2002:a19:6801:: with SMTP id d1-v6mr18559286lfc.8.1534411470875;
+        Thu, 16 Aug 2018 02:24:30 -0700 (PDT)
+Received: from uranus.localdomain ([5.18.103.226])
+        by smtp.gmail.com with ESMTPSA id z10-v6sm4276323ljh.57.2018.08.16.02.24.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 16 Aug 2018 02:24:29 -0700 (PDT)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id 811B1460B3D; Thu, 16 Aug 2018 12:24:29 +0300 (MSK)
+Date:   Thu, 16 Aug 2018 12:24:29 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrey Vagin <avagin@virtuozzo.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: [linux-next] Kernel panic while tetsing criu
+Message-ID: <20180816092429.GV10406@uranus.lan>
 MIME-Version: 1.0
-In-Reply-To: <20180816090334.GA7144@ming.t460p>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8986 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808160098
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ming
+Hi Eric! We're regularly running criu on linux-next and today
+kernel get panicing.
+---
+[  753.478579] BUG: unable to handle kernel NULL pointer dereference at 00000000000006a8
+[  753.479674] PGD 800000011215f067 P4D 800000011215f067 PUD 1134a8067 PMD 0
+[  753.480590] Oops: 0000 [#1] SMP PTI
+[  753.481054] CPU: 0 PID: 32493 Comm: file_fown Not tainted 4.18.0-next-20180815-00001-g1532db2f419f-dirty #2
+[  753.482329] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20180531_142017-buildhw-08.phx2.fedoraproject.org-1.fc28 04/01/2014
+[  753.484096] RIP: 0010:send_sigio_to_task+0x81/0x2c0
+[  753.484792] Code: b9 02 00 00 00 31 f6 48 c7 c7 60 35 46 b2 e8 46 9c e3 ff e8 71 94 e5 ff 5a 85 c0 74 0d 80 3d 1e 26 2b 01 00 0f 84 cc 01 00 00 <4d> 8b b4 24 a8 06 00 00 e8 52 94 e5 ff 85 c0 74 0d 80 3d fe 25 2b
+[  753.487383] RSP: 0018:ffffbd8440f5bcc0 EFLAGS: 00010202
+[  753.488128] RAX: 0000000000000001 RBX: ffff99a75224f7c8 RCX: 00000000133c1702
+[  753.489166] RDX: ffffffffb12bd995 RSI: 00000000d1f2807e RDI: 0000000000000246
+[  753.490184] RBP: ffffbd8440f5bd78 R08: 0000000000000001 R09: 0000000000000000
+[  753.491204] R10: ffffffffb2463560 R11: 0000000000000000 R12: 0000000000000000
+[  753.492249] R13: 0000000000000002 R14: 0000000000000005 R15: 0000000000000001
+[  753.493273] FS:  00007f01488d04c0(0000) GS:ffff99a77ba00000(0000) knlGS:0000000000000000
+[  753.494423] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  753.495244] CR2: 00000000000006a8 CR3: 00000001327b8004 CR4: 00000000003606f0
+[  753.496251] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  753.497269] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  753.498276] Call Trace:
+[  753.498653]  ? __lock_is_held+0x4f/0x90
+[  753.499198]  send_sigio+0x137/0x1c0
+[  753.499701]  kill_fasync+0xdd/0x210
+[  753.500208]  pipe_read+0x165/0x310
+[  753.500703]  __vfs_read+0x133/0x190
+[  753.501201]  vfs_read+0x9c/0x150
+[  753.501764]  ksys_read+0x52/0xc0
+[  753.502229]  do_syscall_64+0x60/0x210
+[  753.502756]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  753.503474] RIP: 0033:0x7f01483f5701
+[  753.504012] Code: fe ff ff 48 8d 3d af 8f 09 00 48 83 ec 08 e8 96 fe 01 00 66 0f 1f 44 00 00 8b 05 4a f1 2c 00 48 63 ff 85 c0 75 13 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 57 f3 c3 0f 1f 44 00 00 55 53 48 89 d5 48 89
+[  753.506667] RSP: 002b:00007ffdbb2d2878 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+[  753.507737] RAX: ffffffffffffffda RBX: 0000000000000025 RCX: 00007f01483f5701
+[  753.508733] RDX: 000000000000001c RSI: 00007ffdbb2d28a0 RDI: 0000000000000004
+[  753.509714] RBP: 00000000004043f0 R08: 0000000000000000 R09: 0000000000000000
+[  753.510696] R10: 000000000000038b R11: 0000000000000246 R12: 0000000000000000
+[  753.511677] R13: 00007ffdbb2d2a70 R14: 0000000000000000 R15: 0000000000000000
+[  753.512662] Modules linked in:
+[  753.513095] CR2: 00000000000006a8
+[  753.513579] ---[ end trace 2d68e222d9dac4c3 ]---
 
-On 08/16/2018 05:03 PM, Ming Lei wrote:
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index b42a2c9ba00e..fbc5534f8178 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -113,6 +113,10 @@ void blk_mq_in_flight(struct request_queue *q, struct hd_struct *part,
->  	struct mq_inflight mi = { .part = part, .inflight = inflight, };
->  
->  	inflight[0] = inflight[1] = 0;
-> +
-> +	if (percpu_ref_is_dying(&q->q_usage_counter))
-> +		return;
-> +
->  	blk_mq_queue_tag_busy_iter(q, blk_mq_check_inflight, &mi);
->  }
+we suspect it might be due to commit 9c2db007787ef1aac6728c5e03d37b0ae935d122
+because oneliner
 
-That's a good idea to use q->q_usage_counter.
-But I think we could do following modification:
-1. use percpu_ref_is_zero, then we will not miss any in-flight request here.
-2. use rcu to ensure the user of blk_mq_in_flight has gone out of the critical section.
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index a04accf6847f..20e4daf83aab 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -791,6 +791,8 @@ void send_sigio(struct fown_struct *fown, int fd, int band)
+       if (type <= PIDTYPE_TGID) {
+               rcu_read_lock();
+               p = pid_task(pid, PIDTYPE_PID);
++               if (!p)
++                       goto out_unlock_fown;
+               send_sigio_to_task(p, fown, fd, band, type);
+               rcu_read_unlock();
+       } else {
 
-Like following patch:
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 89904cc..cd9878e 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -113,7 +113,12 @@ void blk_mq_in_flight(struct request_queue *q, struct hd_struct *part,
- 
-        inflight[0] = inflight[1] = 0;
- 
-+       rcu_read_lock();
-+       if (percpu_ref_is_zero(&q->q_usage_counter))
-+               return;
-+
-        blk_mq_queue_tag_busy_iter(q, blk_mq_check_inflight, &mi);
-+       rcu_read_unlock();
- }
- 
- static void blk_mq_check_inflight_rw(struct blk_mq_hw_ctx *hctx,
-@@ -2907,6 +2912,7 @@ static void __blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set,
-        list_for_each_entry(q, &set->tag_list, tag_set_list)
-                blk_mq_freeze_queue(q);
- 
-+       synchronize_rcu();
-        /*
-         * switch io scheduler to NULL to clean up the data in it.
-         * will get it back after update mapping between cpu and hw queues.
+has helped.
 
-And also, some comment is needed to describe them. ；）
+Could you please take a look once time permit?
 
-Thanks
-Jianchao
+p.s. Andrew noticed the problem and asked me to notify,
+also he has been testing this oneliner patch. I'm out
+of sources at the moment but I think Andrew will help
+to test if needed.
+
+	Cyrill
