@@ -2,282 +2,192 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C4E0C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 07:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFEBAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 07:16:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E27B8214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 07:15:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E27B8214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6A64C214AB
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 07:16:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="QT4VYQkb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A64C214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389224AbeHPKLw (ORCPT
+        id S2389244AbeHPKNN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 06:11:52 -0400
-Received: from mga12.intel.com ([192.55.52.136]:50809 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727882AbeHPKLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 06:11:52 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2018 00:15:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,246,1531810800"; 
-   d="gz'50?scan'50,208,50";a="249242239"
-Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by orsmga005.jf.intel.com with ESMTP; 16 Aug 2018 00:15:18 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1fqCV3-000ExC-RG; Thu, 16 Aug 2018 15:15:17 +0800
-Date:   Thu, 16 Aug 2018 15:15:02 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     kbuild-all@01.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, kernel-hardening@lists.openwall.com,
-        daniel@iogearbox.net, jannh@google.com, keescook@chromium.org,
-        kristen@linux.intel.com, dave.hansen@intel.com,
-        arjan@linux.intel.com, Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: Re: [PATCH v3 2/3] x86/modules: Increase randomization for modules
-Message-ID: <201808161516.1Wjg2efl%fengguang.wu@intel.com>
-References: <1534365020-18943-3-git-send-email-rick.p.edgecombe@intel.com>
+        Thu, 16 Aug 2018 06:13:13 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36948 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389228AbeHPKNN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 06:13:13 -0400
+Received: by mail-io0-f193.google.com with SMTP id z19-v6so3084607ioh.4
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 00:16:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=e5VWh6EO3wADMLsrRdgR+Xg6f/jFsWhx2Q5ROFY0Fy8=;
+        b=QT4VYQkbLgNP+JTZSZCPA5EnR5ggtXBY4JSXJMDrNcTZlbAW7wvVBS39awbALc0xEp
+         VZbc4dUE6nt0QYNjvQrHFpD5chsi9LjP+5dfWYUr0ymHDAhgGwwe2YFl4vFVMhAns9Rm
+         Hm+vP/s0vtEIv0cQPWhdR3h6rsfgNCxCV36sM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=e5VWh6EO3wADMLsrRdgR+Xg6f/jFsWhx2Q5ROFY0Fy8=;
+        b=iyYZOA1LltRjUzniOBR1dSA/L6l8XO6jq6m0C4oYk04bYPVcKvEcpufKf9prDOjYjx
+         NfTdRyEL6Y7I0Y4KZmrqY+eXwSHcrIUMdvOIWxF7cY92enp8RQMDIVS16epxmxunEZqT
+         HRTw2R91c9cbGIvh2Gi/6YVCA3yMqRD9DXDuo8efD5vXd73eIhndGMAx9rjMxez0441l
+         39XXNJ5Z4NnFxW9cj5wxp84TVcTegwaxS7Ig7bNpgGkADNlSjH8HN35XLOK8Wf+ZECVb
+         tAzwFahwqaCPG5FZXrtLOjDYBF1wm+Q7vgg+UMaeG+flGNiYQbpn+zTsrVAkwHVHauor
+         krtA==
+X-Gm-Message-State: AOUpUlHbP7a7ft8Inbt1coLaswtZ5HRlaDChCsWQGTsQAg+xHqqdi+vy
+        unVFqnVXEoYxFBKsKGVCRixdLN4DVwRnigQcfvPGuQ==
+X-Google-Smtp-Source: AA+uWPxpUx3ipHSLCynlGdnlW+4DyHjbMHnUPB/GVCBz3C5OWfbrWJFFqm2S1yLWTU1miZ1HrALALGifGbscGeUjjAo=
+X-Received: by 2002:a5e:d50d:: with SMTP id e13-v6mr8972282iom.291.1534403805070;
+ Thu, 16 Aug 2018 00:16:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="NzB8fVQJ5HfG6fxh"
-Content-Disposition: inline
-In-Reply-To: <1534365020-18943-3-git-send-email-rick.p.edgecombe@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a4f:e502:0:0:0:0:0 with HTTP; Thu, 16 Aug 2018 00:16:44
+ -0700 (PDT)
+X-Originating-IP: [212.51.149.109]
+In-Reply-To: <CALAqxLXt3MOc=W_gnsR=D=Um5RPsK+6sTKDbSiqro_53ZbXfQQ@mail.gmail.com>
+References: <CAPM=9txqtcX42eSYjkyJLL8mmzomXRRHi7iWmW=BYgk=CAagZg@mail.gmail.com>
+ <CALAqxLXt3MOc=W_gnsR=D=Um5RPsK+6sTKDbSiqro_53ZbXfQQ@mail.gmail.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Thu, 16 Aug 2018 09:16:44 +0200
+X-Google-Sender-Auth: 2q4trg5yktEcDAhBEL3-xy3x9JA
+Message-ID: <CAKMK7uFb0jXVm4gGr_TR07mhT924sTORGXZVNzx4rdTe3Pj94Q@mail.gmail.com>
+Subject: Re: [git pull] drm for 4.19-rc1
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     Dave Airlie <airlied@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Aug 16, 2018 at 8:04 AM, John Stultz <john.stultz@linaro.org> wrote=
+:
+> On Tue, Aug 14, 2018 at 7:53 PM, Dave Airlie <airlied@gmail.com> wrote:
+>> This is the main drm pull request for 4.19.
+>>
+>> Rob has some new hardware support for new qualcomm hw that I'll send alo=
+ng
+>> separately. This has the display part of it, the remaining pull is for t=
+he
+>> acceleration engine.
+>>
+>> This also contains a wound-wait/wait-die mutex rework, Peter has acked i=
+t
+>> for merging via my tree.
+>>
+>> Otherwise mostly the usual level of activity.
+>
+> Hey Folks,
+>   Since this branch landed, I've been seeing the following panic on
+> bootup w/ the HiKey board (which uses the hisilicon/kirin drm driver):
+>
+> [    8.088388] Unable to handle kernel read from unreadable memory at
+> virtual address 0000000000000030
+> [    8.088393] Mem abort info:
+> [    8.088397]   ESR =3D 0x96000005
+> [    8.088402]   Exception class =3D DABT (current EL), IL =3D 32 bits
+> [    8.088406]   SET =3D 0, FnV =3D 0
+> [    8.088410]   EA =3D 0, S1PTW =3D 0
+> [    8.088413] Data abort info:
+> [    8.088417]   ISV =3D 0, ISS =3D 0x00000005
+> [    8.088421]   CM =3D 0, WnR =3D 0
+> [    8.088427] user pgtable: 4k pages, 39-bit VAs, pgdp =3D (____ptrval__=
+__)
+> [    8.088432] [0000000000000030] pgd=3D0000000000000000, pud=3D000000000=
+0000000
+> [    8.088443] Internal error: Oops: 96000005 [#1] PREEMPT SMP
+> [    8.088453] CPU: 5 PID: 1414 Comm: kworker/5:2 Tainted: G        W
+>        4.18.0-07439-gbf1fba4 #633
+> [    8.088457] Hardware name: HiKey Development Board (DT)
+> [    8.088474] Workqueue: events adv7511_hpd_work
+> [    8.088482] pstate: 40400005 (nZcv daif +PAN -UAO)
+> [    8.088493] pc : drm_sysfs_hotplug_event+0x40/0x78
+> [    8.088499] lr : drm_sysfs_hotplug_event+0x40/0x78
+> [    8.088502] sp : ffffff800ba73d20
+> [    8.088506] x29: ffffff800ba73d20 x28: 0000000000000000
+> [    8.088514] x27: ffffff8009293cd8 x26: ffffffc074e55938
+> [    8.088522] x25: 0000000000000000 x24: ffffffc07ff85000
+> [    8.088530] x23: ffffffc0742c4a78 x22: ffffffc07ff86c00
+> [    8.088537] x21: ffffffc0750d0e00 x20: 0000000000000000
+> [    8.088545] x19: ffffff8009009a48 x18: 0000000000000000
+> [    8.088552] x17: 0000000000000000 x16: ffffffc074fbde80
+> [    8.088560] x15: 0000000000000000 x14: ffffffc005f96c00
+> [    8.088568] x13: 00000040770c9000 x12: 0000000034d5d91d
+> [    8.088575] x11: 0000000000000000 x10: 0000000000000990
+> [    8.088582] x9 : ffffff800ba739b0 x8 : ffffff800913e000
+> [    8.088589] x7 : 0000000000000000 x6 : ffffff8009009a48
+> [    8.088596] x5 : ffffff80090588d0 x4 : 0000000000000000
+> [    8.088602] x3 : ffffff8009009a48 x2 : 0000000000000000
+> [    8.088608] x1 : 18701cfc97cf1200 x0 : 0000000000000000
+> [    8.120775] Process kworker/5:2 (pid: 1414, stack limit =3D 0x(____ptr=
+val____))
+> [    8.120778] Call trace:
+> [    8.120787]  drm_sysfs_hotplug_event+0x40/0x78
+> [    8.120794]  drm_kms_helper_hotplug_event+0x14/0x40
+> [    8.120800]  adv7511_hpd_work+0x64/0xe0
+> [    8.120807]  process_one_work+0x12c/0x320
+> [    8.120814]  worker_thread+0x48/0x458
+> [    8.126654]  kthread+0xf8/0x128
+> [    8.126661]  ret_from_fork+0x10/0x18
+> [    8.126672] Code: aa0003f4 52800020 a902ffa2 94006637 (f9401a80)
+> [    8.135638] ---[ end trace cf7120942e6f40fa ]---
+>
+> And earlier in boot we see:
+>
+> [    4.620909] kirin-drm f4100000.ade: bound f4107800.dsi (ops dsi_ops)
+> [    4.627304] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013)=
+.
+> [    4.633935] [drm] No driver support for vblank timestamp query.
+> [    4.732910] kirin-drm f4100000.ade: [drm:drm_fb_helper_fbdev_setup]
+> *ERROR* Failed to set fbdev configuration
+> [    4.742948] [drm:kirin_drm_bind] *ERROR* failed to initialize fbdev.
+> [    4.749585] kirin-drm f4100000.ade: master bind failed: -22
+> [    4.755218] dw-dsi: probe of f4107800.dsi failed with error -22
+>
+> I've also seen similar trouble w/ the HiKey960 which uses a similar
+> but still out of tree driver that also utilizes the cma fbhelper code,
+> which makes me suspect it has to do with the drm/cma-helper changes
+> below:
+>
+>> Noralf Tr=C3=B8nnes (15):
+>>       drm/file: Don't set master on in-kernel clients
+>>       drm: Make ioctls available for in-kernel clients
+>>       drm: Begin an API for in-kernel clients
+>>       drm/fb-helper: Add generic fbdev emulation .fb_probe function
+>>       drm/pl111: Set .gem_prime_vmap and .gem_prime_mmap
+>>       drm/cma-helper: Use the generic fbdev emulation
+>>       drm/debugfs: Add internal client debugfs file
+>>       drm/fb-helper: Finish the generic fbdev emulation
+>>       drm/tinydrm: Use drm_fbdev_generic_setup()
+>>       drm/cma-helper: Remove drm_fb_cma_fbdev_init_with_funcs()
+>
+> Though I've not yet had time to bisect this down tonight.
+>
+> I'll spend some more time on this tomorrow, but wanted to give folks a
+> heads up in the meantime.
 
---NzB8fVQJ5HfG6fxh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Rick,
-
-Thank you for the patch! Yet something to improve:
-
-[auto build test ERROR on linus/master]
-[also build test ERROR on v4.18 next-20180815]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Rick-Edgecombe/KASLR-feature-to-randomize-each-loadable-module/20180816-120750
-config: um-x86_64_defconfig (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=um SUBARCH=x86_64
-
-Note: the linux-review/Rick-Edgecombe/KASLR-feature-to-randomize-each-loadable-module/20180816-120750 HEAD 7eff11788897c8579f53bc7043f854794dbad25f builds fine.
-      It only hurts bisectibility.
-
-All error/warnings (new ones prefixed by >>):
-
-   arch/x86/um/../kernel/module.c: In function 'kaslr_randomize_each_module':
->> arch/x86/um/../kernel/module.c:53:9: error: implicit declaration of function 'kaslr_enabled' [-Werror=implicit-function-declaration]
-     return kaslr_enabled()
-            ^~~~~~~~~~~~~
-   arch/x86/um/../kernel/module.c: In function 'get_modules_rand_len':
->> arch/x86/um/../kernel/module.c:68:9: error: 'MODULES_RAND_LEN' undeclared (first use in this function); did you mean 'MODULE_NAME_LEN'?
-     return MODULES_RAND_LEN;
-            ^~~~~~~~~~~~~~~~
-            MODULE_NAME_LEN
-   arch/x86/um/../kernel/module.c:68:9: note: each undeclared identifier is reported only once for each function it appears in
->> arch/x86/um/../kernel/module.c:69:1: warning: control reaches end of non-void function [-Wreturn-type]
-    }
-    ^
-   cc1: some warnings being treated as errors
-
-vim +/kaslr_enabled +53 arch/x86/um/../kernel/module.c
-
-    50	
-    51	static inline int kaslr_randomize_each_module(void)
-    52	{
-  > 53		return kaslr_enabled()
-    54				&& IS_ENABLED(CONFIG_RANDOMIZE_BASE)
-    55				&& IS_ENABLED(CONFIG_X86_64);
-    56	}
-    57	
-    58	static inline int kaslr_randomize_base(void)
-    59	{
-    60		return kaslr_enabled()
-    61				&& IS_ENABLED(CONFIG_RANDOMIZE_BASE)
-    62				&& !IS_ENABLED(CONFIG_X86_64);
-    63	}
-    64	
-    65	#ifdef CONFIG_X86_64
-    66	static inline const unsigned long get_modules_rand_len(void)
-    67	{
-  > 68		return MODULES_RAND_LEN;
-  > 69	}
-    70	#else
-    71	static inline const unsigned long get_modules_rand_len(void)
-    72	{
-    73		BUILD_BUG();
-    74		return 0;
-    75	}
-    76	#endif
-    77	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
---NzB8fVQJ5HfG6fxh
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-H4sICNkbdVsAAy5jb25maWcAjFxbc9s4sn7fX8HyVJ3K1J4kviSOvaf8AIGghBFvBkBJ9gtL
-kZhENbbkleSZyb8/DZCUALKhuGprY3U37n35ugHOb//6LSCv+83zfL9azJ+efgbfq3W1ne+r
-ZfBt9VT9XxBmQZqpgIVcfQDheLV+/efj63Pw6cPFzYfzYFxt19VTQDfrb6vvr9BwtVn/67d/
-wf9+A+LzC/Sx/U/wfbF4/yV4F1ZfV/N18OXD1Yfz9xfXv9d/gSzN0ogPS0pLLsshpXc/WxL8
-KCdMSJ6ld1/Or87PD7IxSYcH1oHMxX05zcQYejBzGJrlPAW7av/6chxpILIxS8ssLWWSH0fj
-KVclSyclEcMy5glXdxeXNy03ziiJ2xHPzjBySQqVHfsbFDwOS0liZcmHLCJFrMpRJlVKEnZ3
-9m69WVe/HwTklFhzkg9ywnPaI+h/qYqP9DyTfFYm9wUrGE7tNaEik7JMWJKJh5IoRegImHBy
-NbuQLOaDYLUL1pu93sIjixSgEDanoY/IhMHu0VEtoQckcdyeBpxOsHv9uvu521fPx9MYspQJ
-Ts3hyVE2tY6/4VDY5DGbsFTJti+1eq62O6w7xekYjpZBV+rYVZqVo8eSZkkCp2ctEog5jJGF
-nCLrqVvxMGadno4/R3w4KgWTMG4CWmBtvWAsyRXIp6ydNc2Lj2q++zPYw/SD+XoZ7Pbz/S6Y
-Lxab1/V+tf7eWQc0KAmlWZEqng4t1ZIhDJBRBgcIfGUvqcsrJ1foISoix1IRJW2umaagRSCx
-nU0fSuDZg8HPks1gCzF1kLWw3dwl1RYy4OmlpeF8XP/Rp5hlHclxpnuIQGl4BKb66bjzPFVj
-MLyIdWWuDro/FFmRS3spYAh0iKxiEI8bcVs6ZIPC5iENa0Yp6YiFx1lHhIvS5Rw6pZEsByQN
-pzxUI/TQhLLboiLNsDkP5Sm+CBPin3QE2vvIhOUsanrIJpwyZ841AzRVK9upEc2WYVYGblDm
-BBT2OFyhZJlav7XLS2XHPQkgoQPC2jusdiimOt2YfTSO23eM4MXgWEIGBk2Jcg+syysnl/ix
-sZg8oBytQbCpJvgIz4HSMsvBvfBHVkaZ0A4L/klIShl2gB1pCX844cOJAQTcE4ydhfbmGzde
-8PDi2jLVPLIX7rX5TrMEYh3XR+VMAfbsGBtauxiB4se92NV3q9q4bRdiOQoWR+DjhdXJgEjY
-hsIZqFBs1vkJGtNZfk2mST6jI3uEPLP7knyYkjiyzNvM1yaYuGUT5Ag8jXUC3IIMJJxwydrN
-sZYNTQZECG5v5FiLPCSOOre0Ev5FTufANvuitVLxiWPOcM7t8Kgy6rM0CCbClRXmycLQdU0m
-qDRYMa+23zbb5/l6UQXsr2oN0Y9AHKQ6/kFEP0abSVJvXWmin6MDEMZzogDGWXogYzJwLDMu
-BpgxgxhsphiyFom5jYCrXV/MpSoFKGSW4A5GZBGPIST3llkk8fvdS7VYfVstgs2LRsTWooBr
-nWlihUKAFTxzFEMJcIkaFUUxGYLBFHmeCQvSaFAEnqfPgKBOx3XrHu8AqQhgOwEuC7YBXJOl
-/I93F0ecnQrt2OXdRb240Wa3D162m0W12222wf7nS41ivlXz/eu22tUgp1nd+AbduiSXFGdo
-y8XdZ0KUexDd1eTWTs5ursGjgcZorwYLBQffhP9rWyS+8POUpG5/jR+4/tQlZxOXkoAfT4rE
-ALeIJDx+uLs+ABNNhBMxs7NxeEMmSdgnUjABUlhWDyqkRzoSrj8NuHJnYc/TwHHQ9QZUnc23
-ix+Qwn1cmKRt9/EfI18uq2815ZCIiKlkSamXTUKIkPEwE1yNLAW9KmOw0LjMh4oMYjuAtOcy
-mjKAx66JAeIEDtjOGDlQnS9RwQE2hw+ppZSQLEW2N4R/ZWYHi4QMuUmKxL3lIEEHYH7GHspM
-hOA8LyylSkgOQQyH/QCOrJhTL7Berrw7gEjJqHZFLbqHkwnoj/l2vgBPFoTVX6tFZdm+VDAB
-sKfu1KW0dCGFUFVSCIV2HATQ1yGphw5F9SgzsICkQ4N/SkB1WU0++7b8z/n/wv9dnNkCNe9l
-vzuzZohQtSJK8M3h3fNBEPlZ6iTTDcr6OHWCmIHoYefSav/3Zvtnf9/0OIDbXAvQQI6pEWAQ
-O1tuOQoiBkaXMUeoIWGdrLDlTBhVmcDjYCsSYiCs5SaUSIX1nFOCYU1rouKgV20VQ1vual8t
-tKt9v6xeqvUS4mc/yBj8YrwCWC0AFI1vqU4HOxDHeIZGh0sIZ8pBaR46wMsRkbVNQRRUZofa
-JNfufcK12jr5q/YLlslmYQFeQyMKA9w0Gum4LTDEJo12ck7tzKBHg+t6AXhIs8n7r/NdtQz+
-rCEHBKxvqycnuc7jYshTo4iU3p19//e/z5zJ68JTLeOgK4uMHB6sN9Go0faEBmfJRCPd887C
-ndzTkDRepzpnJSHSfSNTpJrvbVyz8SiahU2hCs+amn4gRT/UszwgsJXkw1NsrT8C1A6vPgie
-wGTh8MNyrCEpmnkDxHHAaZMsDSQ+sMX3la6O+ZZiQwhop7OyR9BrfDNbCTUCI1BdKOiI0SQE
-PitzIiTDvYkWmw7w7PlYYwCECICdpdQ/ab2dWU76ZpHPt/uVdhSBAtTmIDWYl+LKnHc40Vkl
-qn0yzORR1MpvIu6Q61JfFsjFj2r5+uRgep7V6XaaZXbdtaGGjJiN6nNodA+hwiqT3JfthvTq
-II1MW2e1OrVqNzVPT+NE06bzu7NlNV+C/6gOPiK5PzFpizl+GBjfeRi5ZQyie2Rgnho9kTm4
-Jm3HgFq4jWcavoAhG/4pHtp2CirPfI1tptv6WA4yx8v+qRav+/nXp8rcEwQmo9tbBz3gaZQo
-7dad5NyFAfpXGRZJfthxHQZGsAIn22v6qnFhj5xwwOrPdpe6x3aiSfW82f4Mkvl6/r16RqMl
-ZFfKybs0oTS5A5ABWNrV+DyGoJors0EmMfpkaaXOSqm2AuRo89ED5ORhKEp1AOzHpF1iyU27
-KRqn6rzCNL/7dH57SFVSBqoEENaE2XHiVOViBpas8xvUVUQiS5W+aUC5j3mW4Y7/cVDg7vDR
-xLgMz+x0AR18BOTcOisd+3wlrMRkPd2a9DH8gsUPwP2NEiKw7KFGiebgGzQJQb9/4nBKY+Yc
-QE0pQ06w+mSR8pmD4eB3T/YY2GIslM0i4ZyP/m1qKWgfhiuLAWD/mHu8vZFJ+FAn8Sc60emW
-hIwL31GNNcfsAfVF7hbxvK7laUCLH3J+CB8l+GblWRqI5SmudnoyPOenmEPtMVhSzFAZ+QDZ
-S5aNOfOvlucTxb3cKCvwWWsmwUvyhsckPm1ej6l9g2eTm4PU/gasI5VuvaYrUaSpXTrosAeM
-ddtqPe2QFM1bsjvPIsz9em0kBJn+QkJz4YikEhmut3p0+HN4CmwcZGgx4FYppnWJLf/ubPH6
-dbU4c3tPws8+ZAqnf+07fH1xrNOernPpyYAvN2VesK0k9zkzEK5TJxyq5SeYYCIhpR590jc/
-CucJz4WPAv3Dr3EVXt2MLz0jDAQPh1i+a5Imc/yS2GrVkNDOJjFJy5vzy4t7lB0yCq3x+cUU
-rxMSRWL87GaXn/GuSI7nCfko8w3PGWN63p8/ef2I/3YupJ68BA6DGASOsrOcpRM55YriTmgi
-9RW5J27CjHS9zW+5SR77PWYq8SFHEldfs34zU8iPvBLxFUArCSZQnpJKqcSddZMQmVKKgGzj
-FzI0JlJyzNUYrzYrB4V8KN27ncF93EETwb7aNZf0zizzsRqyFN8kkggS+iZI8EaeRJBEMFPh
-s+WoHFMMRk65YHFd/LESqKFW4ItelnhgrKtquQv2m+BrFVRrjfSXGuUHCaFG4IimWoqGGro0
-NALKrL51PD+OOOVAxb1WNOaeMoPe21vcE1HCI5zB8lHpS/7TCN+8XIInj3EYZQJ4hPPiaR2Q
-sasJXWVl9R2e6w7ZxFP8TsiDKYY1EnbDiPA4m7jxwhxYXS0Nwu3qrzrTPlYMV4uGHGS9a6j6
-Zm3E4tyu7TlkAMVqdHf2cfd1tf74Y7N/eXr9br1imqgkt0vyLQWASJG6l1FpSGKnPpiLeqCI
-i2RKANKZdyCtsUWr7fPf820VPG3my2prZWpTUxqzZ8xmgJkO/ehnVscta6XrlwL1opBd12nL
-1JRyrOTRikL6mUco+MQTrBsBNhEe0FkLKEALTTeQoydwlnio1mIEcCxthXORDbCIa119NY8y
-Dm+jBq+7YHmoolv5Kaiqt56dKDxeZREyeFP8wkpz5gJjEGP63YoUgxBrCWSN4LF3WK0IhZM6
-vOHq8GJdU3rGqCZ5NhXju5v+sFQ85CqLO6WgnlgoBlj4OCx7ENoVqpYsCI6wAKiU2p71HcbJ
-YTuj1tFokrBAvr68bLb71uKT1W6BHTroc/KgaznoKJBLx5kswALBRIwO4T71UiclvXkwBsqZ
-BLvDTI79Gk55e0Vn171mqvpnvgv4erffvj6bBwC7H2Duy2C/na93uqtAF9uCJSxp9aL/bBdJ
-nvbVdh5E+ZAE31ovsdz8vdaeInje6HJj8G5b/fd1ta1giEv6e9uUr/fVU5BwGvxPsK2ezBPX
-nbuFRxFtQLXrbHmSQrjpkyegNH3qsSNzX+5j0vl2iQ3jld8cb97lHlZgl7Xe0Uwmv3fjgJ7f
-obvj6dBR1jsVqZFWrUDWxrROHJg6w3RuYQgP9atRgeuM9CG3BPczioihBmrgg3GUdnRyVjBt
-CopHs8nSsJOR2YZgmyi7L0gMKMUPYhXzWC9AHp284EB85uNAK8gufaPR+loYS4aL1J43/Cwn
-Zu3m+a4HtUx8jiWNE7dAWWuGhlNH+1u6ahSuwFZXX1+10ci/V/vFj4BYd5GWeLu3+mbWubOt
-b1PTMBMQcAnVhWbz2hhhJ+TR9u82C44sVZzgTEFxeiEygTehZMKLBGeBw+Mp3ow90pF9j2yx
-RgWZMo6y+M3l59kMZ7nvQSxOQsSExR4e1xrAEny4lCg/jymRpVnCcC7e6Obq9hxlaDvSQdlx
-Dkknee43EwBgJJFol0InswJlAVKXhf0U2uZlMRFRTAS+MEiROeDQGa6WAD2yXD7gE5pwp6yR
-QEbXoC5P8eChk4K0jDy3bRl+6ufa3eqgww+ZvpDwjJO3F/RedpLn/ramotvNRmyJzN+WdLGa
-wzUQVimssmweYRzfiMQjam+J5h5ujj01FCMjwTbwPNmwTT1U/9UHIDoqv9+tllVQyEEb7IwU
-JL1Nnqs5bdZPlvMX/aKnFxansf24Rv86OJ0wUWzs4SnnMwv46X0Z7TZLbCdhswYCEh3YM5xL
-uaQZzuo4ni5LSB7bUzXvdrA6tt2w57IcJgs58e6MIE3ei/EYif0NJccZUuF05ZF/fAhtl2Sz
-TOxhqYkJNfw1ZZFgutKVjXf9C6ffdflkV1XB/kcrdQyUx8KIBy2Y2whf1n98ZbbsvpYCm7MS
-+pTPbm/0czFrUTEbEvrgJTaZ0tWlNZdyKHEk1LwyxesZ4CDri1UrF56MgYRbLaSzJK6fbxQ4
-phxNkTe57VKTuGE6cejq9hqv0pqbjF5aX0PuS4olNZqMTjxPcKQ78iDgPO9/cpOrPFg8bRZ/
-YiMDs7z4fHNTfwjVz8NqRWyCjn6P672psDRyvlya9yDzp3rg3QdnSJ5SJfCy3DDnma/ClmdT
-yGrJxPNdhuGCZ/dU1mu+frQcey6PAFcmBJ/WlOiSc4ZXuAUbFhBGs/5pD7fzlx+rxQ7Jepzn
-i7pqRWPCLS8LQaLMRpSXMVcqZpBOg3dzHxJO8W0CI9CXsr57pinYo+cyp37JxwcQtt3oWiP1
-hAyKyLryPmqpDsiAFfCATopZyGXu+0il8BSwzRu/2oqwS2/NBqCUsLQ4PMhYLbab3ebbPhj9
-fKm27yfB99cKkmRE60Fph77btdFUP5JBrYEaK5Kb1+2iwhxuAk51kM2Q6XIAsYX1ZN4ppRpm
-kEO+Xb976dRfRPW82Vc6Qe8mT+Llefcdm4hRL12d7+fiGQ3eSfP1XZCtwduvXn4PDh8VdHJ8
-8vy0+Q5kuaHdoQfbzXy52DxjvNWHZIbR71/nT9Ck28aaNeA63pvyTD+w/MfXKE+0X48E85Sh
-Zjr99RlKJnCl5B6lzKdJ36WL+wAS1pe+kRORlPrpuL60SJ334cZN6aopJEtx7IHYUUL7vnz0
-4Hw+eXScTc1WC3jdH/U8yhGkHzXIerndrJb2GBACRcY9d4+eKxhdUOzv2WiqKwILjWhQ68TD
-uCnOoWGSZ55XGzFPOhG/uQcAM6s30X6uJbWdEqdID/pzCQyfbl11eEfOp9K+wjAEfQGjP5vT
-fXbG0NLNV2mE4jGolZKMFt7HpUaIpabwzD16b2R8acEfg9CZm/7tFdZXMgPzEuy4UsG4/oxL
-1su3NL4hg7AnNh1E9Ke4kCREuA1aA5QzXSREpf4wAihr5mcNI+k97YES/oYpj080jS79LfU3
-ngQLGWymY4W7iy2tfr5cZjmmfDoSmy+4nM+6E31XpvTn+B2+PRNccw78NFM8snKAsEvgNaFs
-vsq07hhrBtLrfZEppwBiCId3BSZXjAj6Oar5XrORnxKRdtZTM3q6e+TrN56TixO8S9983e9c
-C5VF0tj7s0urScddMA4AVwOdiwFE6rBrrzhf/HBvXiLZe35Zs8P3Iks+hpPQeLieg+Myu72+
-Pndm+gfgbfc53iOIeWZZhBE2wzCTHyOiPqaqM+4x1pon3p5eJ9DWa1iqZzp1INxVr8uNeSLc
-W6bxH5HzYS8Qxu4LYUPr/ZcuNNG8Jk2ylIO1OC85NZOOeBwKhtmH/iTMHtV8jHz82V5qHxMO
-c6d92unXMj03d0QwUVhSwYhyv5s3//Q2rm3FZQ3XYYKKud/4ZpDnDpnfW5HwBC/y80YnWXlc
-eNmDE7MZ+FknWlFBEg9L3hdEjnxqeiJw6G8zZ17bTk6sPvfz7tPZp5Pcaz9XnBo0l6pzF2bl
-cnLia1b4NKqtCXiUKj0RNyPp+Q8T6Lc2vgPkPkYWEr92+iZvfwsPPw4fb5+tdpubm8+37y+s
-px9aAIZhxkl8uvqCr8oW+vImoS/4G0JH6Obz+VuE8PeLHaE3DfeGid9cv2VO13iU7Qi9ZeLX
-+H9wpiPkeT3pCr1lC649T3pdodtfC91evaGn27cc8O3VG/bp9tMb5nTzxb9PgAG07pf4h/ZO
-NxeXb5k2SPmVgEjKPS/nrbn427cS/p1pJfzq00r8ek/8itNK+M+6lfCbVivhP8DDfvx6MRe/
-Xs2FfznjjN+UnkcMLRv/qEGzE0J1GPJdQjQSlOkvP34hAklAIfB08CAkMqL4rwZ7EDyOfzHc
-kLBfigjGPAXWRoLDuiDjOi2TFhwvVjvb96tFqUKMuechtZYpVORYcV0HrBav29X+J1bPHbMH
-DzxqSg9lmLD/b+xaetvGgfC9v8LHXWC3iJO02z30QMl0rEaWFEqOk1yM1BUSo40d2A62/fc7
-MyT1oDh0gQIpNJ8pvoYzpGY+lnSKVamEIWYKHlNYodcgU8D/TKiJxPRy3ErGeXFPwZSxcHzy
-Acz/Ok0MgRj8dsvGa9ockLadwpMhYqUd5j0d6GfPdeP9r9fjbrTe7evRbj96rn+8dmNNNRhZ
-L0SXGqj3+Hz4XIoO/UHn4RAapddxUsykGoowiNr7cAhVsJt23wfPvMDGZxpUkK3JdVF4Golf
-53vnT/YdTKKHEU/8s99IZdyX96WgYWCf1KDq5rmvNm5ynfeHq0lSErUHBt6WnlKupuPzT/OF
-L8LbIDDgdVAvfDjsOfS/LUGj+yL6w7jZpsqnIWJRzSQTlWEg2NDBQiPejs/1FklAMcRLbteo
-HJgr/t/m+DwSh8NuvSHR5PH42IspNpWP/YfBthPD4ngm4N/5WZGn9+OLM7+pa5TpKilhSH4H
-49+td0HnH/xOgO3xXC3Kj5d+x6mLgZcFQaW8SW75KSSh+bA3vbV0KBF9wnrZfXMCuE13RcEB
-jqf+T45WzJzFNmJuP25qGiw8VcuQuDhR9bvwy8HkLVX/64j+UPF4eOZ7C6wv3/MzkPaYBUxF
-TlT01inUREk+1YfjwITEKr4gesuhxsfMLqEFVOOzCZfoYnQLDUOw039Dq+YTvwvaiMO/TmD+
-yhT/hmBqPjmhuIhgtqot4oTOAuLiPKyMMzHmZwRI4Q2eOQGCD+PgeAHC7+xb+Tworq7U+N/g
-C5aFUwM93zevz73o22aF8xk0QVS14ZWxNCRiQVS2iJKgugoVB0uI0nw55XxiqwJiLmEvEPQr
-MCM9OD8REJwzEy7vQYun9De4Ms3EA0O6Y8depKUIz0trBsOGhCN9tXJVwEYsPAuDo1IW3Ke/
-xoEIjka1zE8NqoF4Jtk7Sxy+rw8HzSU+HCs+HNZaoQcm3VKLP10GlSx9CPYPiGfBZe6hrIYp
-O+px+233MsreXr7We0PodfQ3UGRlsooL5c1isJ2goisdVuM6niQhqzZUfS1zzMUQMijzS1JV
-UkmMgyjuPSsj5dfBfmhQNgsszY7jt8CKiQFycbjPClj6ZbPzq/dHDKQBh/ZAsb6HzdOW+CtH
-6+d6/V0n+BI03XzdP+5/jfa7t+NmW/cIbipMYlRl52uVDe8gKoUqST2EiNMkm2C6YlmtHA4Y
-MPbgRkNPe5sQE6duDxx0DeJVUi1WTFkXznYJHsDCkU7drUEfkCaxjO4/eX6qJZzWEESoJa+0
-iIiYQ5aYNyKx/3guTSLtcnE/87sgOnaU6YkGdfeAvASeTtIsm3PhcvwYcXmV6rORzknFTTet
-I8Wvh/3Pg8rhpG9E8AbvcyTQxxR2T/VKqI0TNIPHQtmVt7nvOny9z489jXjdb7bH7xRk+u2l
-Pjz5jqYM/zoGnvqmk050QmZ2TR9qjyX+YRE3C/z63dCozmVZ4mn1oITLtg5Rnle2IhOXfLsx
-M5sf9d9ExU+Kf6Bmrc29Fb6W6VxeN+rFCGVGJwkY5NBnC+/L54uy0gE2rWiqwM+hX34en51f
-9gcJUy3mK5cir524sOxRwYKJ0TYke1BAlDM0D3T4ny+zYI4z881OC0tJzFf43XouHJIK2xYH
-onsqz9J7tyOKnCJKhnnYmuJwKcW1pb3yvKdDBdsSi1Hffz77OfahdOh59xARX6bZYz/3mcQm
-9de3pyeHA4K6T95VMiu5eC5dJAJ5miwqBtpe5hkX96qLyaMvktuom+FIhS/9iE5tTevmcp5C
-Rw472UpCxROj7gK1MIC69bOaochcOoKk950YHVxDkVz0Ou7SKlvGUZHBY5NxUPT8G8SHajtz
-8p8NcwKM5Cjdrb+/vWrNnz1un5xY1ylRvdHdBRWfO6+Fq9ki07dqeEHLm3CEeiEymJCgH7k/
-YqwnX92KdCFbSlEtxBU3X1TtY0tRqEny23bhY55mTf9Kj7EEf4WPBjTcBvDaayldKiTtQeFJ
-VqM0oz8Or5stZRv8NXp5O9Y/a/hPfVy/f//+z9a5org5KvuKTFQTkd0xMfltEx/ndwOwDGxj
-oOItYWto9ngCzR3I6UKWSw0CxcyXSKwRwFLN+VWiBWHfkDdtTLi/AlQczNwK0/xZx6atIO8I
-trzy3aGgVRyqC3YGd6fI/sbz5psVRi9goeYlTD3NOpqcQjAEsVpIcY6JZDLXNSZW0BZMNu6b
-zHf2fhyvIcDbcPB2Dr6fEXFyMAikBJNcSlfu3JSBoEkz526MvVQDS+kgdaAqGDBicfECbZet
-pFKUHfhFDqguG7ChTw1iDJFt5WVgxcb3Nd+WPJh+sLTDMj3V/eVfnvV6FgDMlkj5GQAY162h
-nyMkx2uMslWZiQJvoPI0LgL9AEOnr5CQljq7u7TRc5FBn9OdMvoHzPrSwJF2JQRsiI/zwNwi
-CblffqLNduLgVgfUkIs6V8j4PddzHEfS5AC1L0KiG7plo8yZNF6CsNKoveMCWWN5XYpgox7Q
-NfI0wZquwjDDTcrK8YKKJP54Gd4+UpNm8g5ZhgJt1jsz/QWcmWWIuwZgxSRVEID2P/4jApLr
-TWFQDjqfMoQdiFgsmFQTkmK89BQMHo9QeGRElysE+os7VdJz6JrJTKXq4dkQG3Gg21j4O4hO
-apBCP6wHVIblnwoMKcUwByo62KO6U4KCI9igDz0f5jnDVY57BtiUIutQnCu14PNONBEaE1oa
-lcIXUy2FSu/bi5n+Bw2F0vZWcgAA
-
---NzB8fVQJ5HfG6fxh--
+Hm, not immediately seeing what's going boom here. Bisect would indeed
+be good, but maybe we need to chase the callchain to figure out where
+exactly that -EINVAL is coming from in the reworked code (and why
+hikey is the first to hit that, there's lots of cma based drivers
+after all).
+-Daniel
+--=20
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
