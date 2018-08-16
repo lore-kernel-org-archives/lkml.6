@@ -7,109 +7,100 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0043C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB83C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F243208AD
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:37:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69B65208AD
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 19:39:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QSGuiHyR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F243208AD
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d3EwBUk+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69B65208AD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbeHPWiD (ORCPT
+        id S1726154AbeHPWjk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 18:38:03 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53639 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbeHPWiC (ORCPT
+        Thu, 16 Aug 2018 18:39:40 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:51647 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbeHPWjk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 18:38:02 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s9-v6so5498956wmh.3;
-        Thu, 16 Aug 2018 12:37:39 -0700 (PDT)
+        Thu, 16 Aug 2018 18:39:40 -0400
+Received: by mail-it0-f67.google.com with SMTP id e14-v6so7883889itf.1;
+        Thu, 16 Aug 2018 12:39:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EOomyM8+CFscMDL/FtVrbfedSmCw2XhfclDbxVuU84k=;
-        b=QSGuiHyRrbqDBtLPWME1dtWTHCYv928M8yDYKc4rZx0M4hYCkkCJSvG/4BPrRNLQGy
-         V0QGya1NF97HrAf+1XW/H1lfmdln0+par1RugYT3djyIo3aYLq6kIoWfpssePUJedDYW
-         MR8847GjigzkdTTE7sBX0RiCPD94Q7N96dYJIiJHBX5OcT56abirMLDUjbEhOrwqpFbY
-         usZFGkCbdey92IeT6FfcZuEPAQW2vcSKStkOgAcRKJBCv0YzNlkcksXdlOfPwN3dIdEP
-         IAzJHy1wUEqsCZ6A+bzMfmk6w0t7XKP30kV0Uq1xogzcec03830KmOIrdgIH+h1hGrR/
-         epOA==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=y2s3qWJ7AJZQpkDWKK763XfizOXHIwPJC3+H1b1KXDE=;
+        b=d3EwBUk+WMWoXBhorzcx2UNmT5cbp7jhHh76HnOP3nsv8y+SIGyjJUPzKE8bM6h8in
+         gwaGERn5+C5zwkrNRI39VB7Vu+3plnBhJZvs5ahZAZwLbYi8fOVFE0twsVqJXnXcB72+
+         hnzG8fX8wHQTqApF0m0oq6lcGwLgdPgQbK8yMpxIH3wzL4g+BHjxAmpYB70XKZ+wamM3
+         EF8e+L4/YvjTHanVehmLSSBJcyoc5nVB70T6sVbnLISqTQGv3Sbc9/E3+fHyVlpkyNoy
+         IKYJ1osTv3r46v+lIMHOH8EdD710o/7znSTt0BN30Sn+rbE7TEDqkfvtcK5ElemUoCUq
+         Hcsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EOomyM8+CFscMDL/FtVrbfedSmCw2XhfclDbxVuU84k=;
-        b=HQgGPAMOB/sUUWKssBzQRrBkgmNaJZDxg7JNyRRRiigmvOb31Gn4rpCZ2F2msX2c++
-         RTmxNSS0iUBxeXiHU7uX6GCA1d8fMohQNnxiQrtDPFFEp84aSwGsTUz8fPCPWfZyqcv/
-         sZj6/P80C6vYVW6DpzP9K7lvrAJpY8iORRbhu3J4yoGEvjav+VNG0DtRaNj+fV9vCfyj
-         y1jne32WVYIvQWATtdW2DHi38cjGsMlKbSqhSOAKxMBloKFn6TVBefzdBHwTkmOTF7wS
-         TUxLy93mzq8eidawkyL8/7BeAwjXzKgMMF0HuYVuwCCTRmGgeXii5UNdas7dnhIpoYwN
-         59Xg==
-X-Gm-Message-State: AOUpUlFyCz5qLI/WnXgAieonpy41MolX7E1wW0eHLsCNDAMcsPHG4GBh
-        W7/b6bWVUDk/TOtT48nELZVydq32
-X-Google-Smtp-Source: AA+uWPyB7BloZ1IjC76RLI5F7p8qOz+P1nV5W29J4b43pp9U1BJMSMYnS1liAckC7ItLEftq6A880g==
-X-Received: by 2002:a1c:b213:: with SMTP id b19-v6mr16146489wmf.141.1534448259305;
-        Thu, 16 Aug 2018 12:37:39 -0700 (PDT)
-Received: from ?IPv6:2003:ea:8bd4:d600:fce9:ceca:5c9:a793? (p200300EA8BD4D600FCE9CECA05C9A793.dip0.t-ipconnect.de. [2003:ea:8bd4:d600:fce9:ceca:5c9:a793])
-        by smtp.googlemail.com with ESMTPSA id r140-v6sm4213270wmd.7.2018.08.16.12.37.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Aug 2018 12:37:38 -0700 (PDT)
-Subject: Re: [PATCH] r8169: don't use MSI-X on RTL8106e
-To:     David Miller <davem@davemloft.net>, jian-hong@endlessm.com
-Cc:     nic_swsd@realtek.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@endlessm.com
-References: <20180815062110.16155-1-jian-hong@endlessm.com>
- <20180816.122131.604270853620318143.davem@davemloft.net>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <458efbf9-5971-653a-e7cd-8c56ba055648@gmail.com>
-Date:   Thu, 16 Aug 2018 21:37:31 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=y2s3qWJ7AJZQpkDWKK763XfizOXHIwPJC3+H1b1KXDE=;
+        b=HGA9679VpUrs3UA8Z37K6Pp6v1VVOYX9DU/tciY5V2QGDSAqE4QXd84BbxBhsGv2W9
+         5zOodyZIPXwU0G9vs/0E1Q0IflkTkfy30zw1EpYhC8sQQKFB+pEl+DVwa7wyvVUluV6m
+         /RUxeSPnLUPiqgoVrnewptXXGYobL3RK2fPSLVoKLiNe0iw8GruzpJlJk4PIjywlRP88
+         wCv77r9yH1i1VUvBHboJ2KGiPIjwouGlGVZeRmyvdKSxpjmpIzsGSlIfzNm2ma6jMNVj
+         yMhNhvz6mF9euOSoBJc1BEHH+Hx3Y+VnYq90B7U0XjvMrCBQeIe9XqfEgMEq5L8z+MsF
+         +jCg==
+X-Gm-Message-State: AOUpUlHrGHFPc5VWmV0atQIp/v/B4mjr2Wry0W/cbKsk1VzdlnEznQam
+        kQl4nwwoosU6r7j8Q/R3odqJHwZ7DTexrMwvkDU=
+X-Google-Smtp-Source: AA+uWPzt1ubEnOzr2nxTTvAW+nfOowp02khmeQ1kxgmnYN/oi7y7XUB/yMTwwgOzmUnYcdKa5v+oQCZHVgVvkYO2evY=
+X-Received: by 2002:a02:9a83:: with SMTP id m3-v6mr28848068jak.116.1534448357829;
+ Thu, 16 Aug 2018 12:39:17 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180816.122131.604270853620318143.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a4f:5a03:0:0:0:0:0 with HTTP; Thu, 16 Aug 2018 12:39:17
+ -0700 (PDT)
+In-Reply-To: <BN7PR12MB2593B097267132250140FBEAF83E0@BN7PR12MB2593.namprd12.prod.outlook.com>
+References: <20180815114107.29797-1-mikhail.jin@gmail.com> <BN7PR12MB2593B097267132250140FBEAF83E0@BN7PR12MB2593.namprd12.prod.outlook.com>
+From:   Michael Jin <mikhail.jin@gmail.com>
+Date:   Thu, 16 Aug 2018 15:39:17 -0400
+Message-ID: <CAO6F7DmPHBpf299g40pzUAbL-JK5S2eNbhwXN0kVmLhtwcqDqQ@mail.gmail.com>
+Subject: Re: [PATCH V2] EDAC, amd64: Add Family 17h Model 10h support.
+To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc:     Borislav Petkov <bp@suse.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.08.2018 21:21, David Miller wrote:
-> From: <jian-hong@endlessm.com>
-> Date: Wed, 15 Aug 2018 14:21:10 +0800
-> 
->> Found the ethernet network on ASUS X441UAR doesn't come back on resume
->> from suspend when using MSI-X.  The chip is RTL8106e - version 39.
-> 
-> Heiner, please take a look at this.
-> 
-> You recently disabled MSI-X on RTL8168g for similar reasons.
-> 
-> Now that we've seen two chips like this, maybe there is some other
-> problem afoot.
-> 
-Thanks for the hint. I saw it already and just contacted Realtek
-whether they are aware of any MSI-X issues with particular chip
-versions. With the chip versions I have access to MSI-X works fine.
+On Thu, Aug 16, 2018 at 2:17 PM, Ghannam, Yazen <Yazen.Ghannam@amd.com> wrote:
+>> -----Original Message-----
+>> From: Michael Jin <mikhail.jin@gmail.com>
+>> Sent: Wednesday, August 15, 2018 6:41 AM
+>> To: Borislav Petkov <bp@suse.de>; Ghannam, Yazen
+>> <Yazen.Ghannam@amd.com>; Mauro Carvalho Chehab
+>> <mchehab@kernel.org>
+>> Cc: linux-edac@vger.kernel.org; linux-kernel@vger.kernel.org; Michael Jin
+>> <mikhail.jin@gmail.com>; stable@vger.kernel.org
+>> Subject: [PATCH V2] EDAC, amd64: Add Family 17h Model 10h support.
+>>
+>> Add support for ECC error decoding on family 17h models 10h-2fh.
+>>
+>
+> Can you please make this more specific? Something like "Add PCI device IDs
+> for Fam17h Models 10h-2Fh so that amd64_edac_mod will load".
 
-There's also the theoretical option that the issues are caused by
-broken BIOS's. But so far only chip versions have been reported
-which are very similar, at least with regard to version number
-(2x VER_40, 1x VER_39). So they may share some buggy component.
+I have submitted patch v3 with a commit message that is more specific.
 
-Let's see whether Realtek can provide some hint.
-If more chip versions are reported having problems with MSI-X,
-then we could switch to a whitelist or disable MSI-X in general.
+>>       case 0x17:
+>> +             /* Check if CPU model is in range 10h-2fh */
+>
+> This comment is not needed because it's obvious from the code.
 
-Heiner
+The comment in patch v2 has been removed in patch v3.
 
-> Thanks.
-> 
-
+Thanks,
+Michael
