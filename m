@@ -5,93 +5,190 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5254C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 07:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3667C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 07:30:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BBAE214C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 07:30:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BBAE214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7991F214C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 07:30:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7991F214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389351AbeHPK0y (ORCPT
+        id S2389367AbeHPK12 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 06:26:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34590 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727285AbeHPK0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 06:26:54 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 93F91818A6B0;
-        Thu, 16 Aug 2018 07:30:22 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A4AB79DE;
-        Thu, 16 Aug 2018 07:30:17 +0000 (UTC)
-Date:   Thu, 16 Aug 2018 09:30:15 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-Subject: Re: [PATCH v9 10/22] s390: vfio-ap: sysfs interfaces to configure
- adapters
-Message-ID: <20180816093015.19e54936.cohuck@redhat.com>
-In-Reply-To: <4bf27c7a-34c6-9160-cdc6-19022b86202b@linux.ibm.com>
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1534196899-16987-11-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <20180815115242.35a2a1ce.cohuck@redhat.com>
-        <4bf27c7a-34c6-9160-cdc6-19022b86202b@linux.ibm.com>
-Organization: Red Hat GmbH
+        Thu, 16 Aug 2018 06:27:28 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49662 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387865AbeHPK11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 06:27:27 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 71A30208CC; Thu, 16 Aug 2018 09:30:53 +0200 (CEST)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1637820712;
+        Thu, 16 Aug 2018 09:30:53 +0200 (CEST)
+Date:   Thu, 16 Aug 2018 09:30:52 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/7] mtd: rawnand: ams-delta: Set port direction when
+ needed
+Message-ID: <20180816093052.2bcbf004@bbrezillon>
+In-Reply-To: <20180813223448.21316-6-jmkrzyszt@gmail.com>
+References: <20180806222918.12644-1-jmkrzyszt@gmail.com>
+        <20180813223448.21316-1-jmkrzyszt@gmail.com>
+        <20180813223448.21316-6-jmkrzyszt@gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 16 Aug 2018 07:30:22 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 16 Aug 2018 07:30:22 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 15 Aug 2018 12:59:35 -0400
-Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+On Tue, 14 Aug 2018 00:34:46 +0200
+Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-> On 08/15/2018 05:52 AM, Cornelia Huck wrote:
-> > On Mon, 13 Aug 2018 17:48:07 -0400
-> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-
-> >> +/**
-> >> + * unassign_adapter_store
-> >> + *
-> >> + * @dev: the matrix device
-> >> + * @attr: a mediated matrix device attribute
-> >> + * @buf: a buffer containing the adapter ID (APID) to be assigned
-> >> + * @count: the number of bytes in @buf
-> >> + *
-> >> + * Parses the APID from @buf and unassigns it from the mediated matrix device.
-> >> + * The APID must be a valid value  
-> > A valid value, but not necessarily assigned, right?  
+> In its current shape, the driver sets data port direction before each
+> byte read/write operation, even during multi-byte transfers.  Improve
+> performance of the driver by setting the port direction only when
+> needed.
 > 
-> You are correct, if the APID is not assigned, then the corresponding bit 
-> will be
-> cleared regardless. In a previous version, the functions failed if the 
-> APID is
-> not assigned, but a colleague removed that check. I guess it makes sense 
-> given
-> it really does not hurt anything to ask to unassign an APID that isn't 
-> assigned
-> to begin with. Would you prefer I update the comment, or do you feel the 
-> user
-> should be made aware of an attempt to unassign an APID that is not assigned?
+> This optimisation will become particularly important as soon as
+> planned conversion of the driver to GPIO API for data I/O will be
+> implemented.
+> 
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> ---
+>  drivers/mtd/nand/raw/ams-delta.c | 59 ++++++++++++++++++++++++++++++++--------
+>  1 file changed, 47 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
+> index 09d6901fc94d..5f9180fe4f8b 100644
+> --- a/drivers/mtd/nand/raw/ams-delta.c
+> +++ b/drivers/mtd/nand/raw/ams-delta.c
+> @@ -45,6 +45,7 @@ struct ams_delta_nand {
+>  	struct gpio_desc	*gpiod_ale;
+>  	struct gpio_desc	*gpiod_cle;
+>  	void __iomem		*io_base;
+> +	bool			data_in;
+>  };
+>  
+>  /*
+> @@ -72,50 +73,83 @@ static const struct mtd_partition partition_info[] = {
+>  	  .size		=  3 * SZ_256K },
+>  };
+>  
+> -static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
+> +static void ams_delta_write_next_byte(struct mtd_info *mtd, u_char byte)
+>  {
+>  	struct nand_chip *this = mtd_to_nand(mtd);
+>  	struct ams_delta_nand *priv = nand_get_controller_data(this);
+> -	void __iomem *io_base = priv->io_base;
+>  
+> -	writew(0, io_base + OMAP_MPUIO_IO_CNTL);
+>  	writew(byte, this->IO_ADDR_W);
+> +
+>  	gpiod_set_value(priv->gpiod_nwe, 0);
+>  	ndelay(40);
+>  	gpiod_set_value(priv->gpiod_nwe, 1);
+>  }
+>  
+> -static u_char ams_delta_read_byte(struct mtd_info *mtd)
+> +static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
+>  {
+> -	u_char res;
+>  	struct nand_chip *this = mtd_to_nand(mtd);
+>  	struct ams_delta_nand *priv = nand_get_controller_data(this);
+>  	void __iomem *io_base = priv->io_base;
+>  
+> +	if (priv->data_in) {
+> +		writew(0, io_base + OMAP_MPUIO_IO_CNTL);
+> +		priv->data_in = false;
+> +	}
+> +
+> +	ams_delta_write_next_byte(mtd, byte);
+> +}
 
-I think the code is fine; updating the comment would be good.
+I'm not a big fan of this {read,write}_byte/next_byte() approach.
+
+Can't we do something like:
+
+static void ams_delta_io_write(struct ams_delta_nand *priv, u8 data)
+{
+	writew(byte, priv->nand_chip.IO_ADDR_W);
+  	gpiod_set_value(priv->gpiod_nwe, 0);
+  	ndelay(40);
+  	gpiod_set_value(priv->gpiod_nwe, 1);
+}
+
+static u8 ams_delta_io_read(struct ams_delta_nand *priv)
+{
+	u8 res;
+
+  	gpiod_set_value(priv->gpiod_nre, 0);
+  	ndelay(40);
+	res = readw(priv->nand_chip.IO_ADDR_R);
+ 	gpiod_set_value(priv->gpiod_nre, 1);
+ 
+ 	return res;
+}
+
+static void ams_delta_set_io_dir(struct ams_delta_nand *priv, bool in)
+{
+	if (in == priv->data_in)
+		return;
+
+	writew(in ? ~0 : 0, priv->io_base + OMAP_MPUIO_IO_CNTL);
+	priv->data_in = in;
+}
+
+static void ams_delta_write_buf(struct mtd_info *mtd, const u8 *buf,
+				int len)
+{
+	struct nand_chip *this = mtd_to_nand(mtd);
+	struct ams_delta_nand *priv = nand_get_controller_data(this);
+	int i;
+
+	ams_delta_set_io_dir(priv, false);
+
+	for (i =0; i < len; i++)
+		ams_delta_io_write(priv, buf[i]);
+}
+
+static void ams_delta_write_byte(struct mtd_info *mtd, u8 byte)
+{
+	ams_delta_write_buf(mtd, &byte, 1);
+}
+
+static void ams_delta_read_buf(struct mtd_info *mtd, u8 *buf, int len)
+{
+	struct nand_chip *this = mtd_to_nand(mtd);
+	struct ams_delta_nand *priv = nand_get_controller_data(this);
+	int i;
+
+	ams_delta_set_io_dir(priv, true);
+
+	for (i = 0; i < len; i++)
+		buf[i] = ams_delta_io_read(priv);
+}
+
+static u8 ams_delta_read_byte(struct mtd_info *mtd)
+{
+	u8 res;
+
+	ams_delta_read_buf(mtd, &res, 1);
+
+	return res;
+}
+
