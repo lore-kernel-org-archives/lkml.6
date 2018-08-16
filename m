@@ -6,123 +6,135 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D46A0C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA72C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91FFA2147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91FFA2147D
+	by mail.kernel.org (Postfix) with ESMTP id 7F2782147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:43:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F2782147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728710AbeHPVnD (ORCPT
+        id S1728751AbeHPVnG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:43:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56186 "EHLO
+        Thu, 16 Aug 2018 17:43:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56212 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727674AbeHPVnC (ORCPT
+        with ESMTP id S1727674AbeHPVnF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:43:02 -0400
+        Thu, 16 Aug 2018 17:43:05 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 773E8CB7;
-        Thu, 16 Aug 2018 18:42:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7D2E6CB7;
+        Thu, 16 Aug 2018 18:42:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liwei Song <liwei.song@windriver.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 3.18 09/15] i2c: ismt: fix wrong device address when unmap the data buffer
-Date:   Thu, 16 Aug 2018 20:41:46 +0200
-Message-Id: <20180816171633.898037818@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.4 00/13] 4.4.149-stable review
+Date:   Thu, 16 Aug 2018 20:41:47 +0200
+Message-Id: <20180816171628.554317013@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180816171633.546734046@linuxfoundation.org>
-References: <20180816171633.546734046@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.149-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.4.149-rc1
+X-KernelTest-Deadline: 2018-08-18T17:16+00:00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.4.149 release.
+There are 13 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Sat Aug 18 17:16:16 UTC 2018.
+Anything received after that time might be too late.
 
-From: Liwei Song <liwei.song@windriver.com>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.149-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+and the diffstat can be found below.
 
-commit 17e83549e199d89aace7788a9f11c108671eecf5 upstream.
+thanks,
 
-Fix the following kernel bug:
+greg k-h
 
-kernel BUG at drivers/iommu/intel-iommu.c:3260!
-invalid opcode: 0000 [#5] PREEMPT SMP
-Hardware name: Intel Corp. Harcuvar/Server, BIOS HAVLCRB0.X64.0013.D39.1608311820 08/31/2016
-task: ffff880175389950 ti: ffff880176bec000 task.ti: ffff880176bec000
-RIP: 0010:[<ffffffff8150a83b>]  [<ffffffff8150a83b>] intel_unmap+0x25b/0x260
-RSP: 0018:ffff880176bef5e8  EFLAGS: 00010296
-RAX: 0000000000000024 RBX: ffff8800773c7c88 RCX: 000000000000ce04
-RDX: 0000000080000000 RSI: 0000000000000000 RDI: 0000000000000009
-RBP: ffff880176bef638 R08: 0000000000000010 R09: 0000000000000004
-R10: ffff880175389c78 R11: 0000000000000a4f R12: ffff8800773c7868
-R13: 00000000ffffac88 R14: ffff8800773c7818 R15: 0000000000000001
-FS:  00007fef21258700(0000) GS:ffff88017b5c0000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000066d6d8 CR3: 000000007118c000 CR4: 00000000003406e0
-Stack:
- 00000000ffffac88 ffffffff8199867f ffff880176bef5f8 ffff880100000030
- ffff880176bef668 ffff8800773c7c88 ffff880178288098 ffff8800772c0010
- ffff8800773c7818 0000000000000001 ffff880176bef648 ffffffff8150a86e
-Call Trace:
- [<ffffffff8199867f>] ? printk+0x46/0x48
- [<ffffffff8150a86e>] intel_unmap_page+0xe/0x10
- [<ffffffffa039d99b>] ismt_access+0x27b/0x8fa [i2c_ismt]
- [<ffffffff81554420>] ? __pm_runtime_suspend+0xa0/0xa0
- [<ffffffff815544a0>] ? pm_suspend_timer_fn+0x80/0x80
- [<ffffffff81554420>] ? __pm_runtime_suspend+0xa0/0xa0
- [<ffffffff815544a0>] ? pm_suspend_timer_fn+0x80/0x80
- [<ffffffff8143dfd0>] ? pci_bus_read_dev_vendor_id+0xf0/0xf0
- [<ffffffff8172b36c>] i2c_smbus_xfer+0xec/0x4b0
- [<ffffffff810aa4d5>] ? vprintk_emit+0x345/0x530
- [<ffffffffa038936b>] i2cdev_ioctl_smbus+0x12b/0x240 [i2c_dev]
- [<ffffffff810aa829>] ? vprintk_default+0x29/0x40
- [<ffffffffa0389b33>] i2cdev_ioctl+0x63/0x1ec [i2c_dev]
- [<ffffffff811b04c8>] do_vfs_ioctl+0x328/0x5d0
- [<ffffffff8119d8ec>] ? vfs_write+0x11c/0x190
- [<ffffffff8109d449>] ? rt_up_read+0x19/0x20
- [<ffffffff811b07f1>] SyS_ioctl+0x81/0xa0
- [<ffffffff819a351b>] system_call_fastpath+0x16/0x6e
+-------------
+Pseudo-Shortlog of commits:
 
-This happen When run "i2cdetect -y 0" detect SMBus iSMT adapter.
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.4.149-rc1
 
-After finished I2C block read/write, when unmap the data buffer,
-a wrong device address was pass to dma_unmap_single().
+Toshi Kani <toshi.kani@hpe.com>
+    x86/mm: Add TLB purge to free pmd/pte page interfaces
 
-To fix this, give dma_unmap_single() the "dev" parameter, just like
-what dma_map_single() does, then unmap can find the right devices.
+Chintan Pandya <cpandya@codeaurora.org>
+    ioremap: Update pgtable free interfaces with addr
 
-Fixes: 13f35ac14cd0 ("i2c: Adding support for Intel iSMT SMBus 2.0 host controller")
-Signed-off-by: Liwei Song <liwei.song@windriver.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Mark Salyzyn <salyzyn@android.com>
+    Bluetooth: hidp: buffer overflow in hidp_process_report
 
----
- drivers/i2c/busses/i2c-ismt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thierry Escande <thierry.escande@collabora.com>
+    ASoC: Intel: cht_bsw_max98090_ti: Fix jack initialization
 
---- a/drivers/i2c/busses/i2c-ismt.c
-+++ b/drivers/i2c/busses/i2c-ismt.c
-@@ -587,7 +587,7 @@ static int ismt_access(struct i2c_adapte
- 
- 	/* unmap the data buffer */
- 	if (dma_size != 0)
--		dma_unmap_single(&adap->dev, dma_addr, dma_size, dma_direction);
-+		dma_unmap_single(dev, dma_addr, dma_size, dma_direction);
- 
- 	if (unlikely(!ret)) {
- 		dev_err(dev, "completion wait timed out\n");
+Eric Biggers <ebiggers@google.com>
+    crypto: ablkcipher - fix crash flushing dcache in error path
+
+Eric Biggers <ebiggers@google.com>
+    crypto: blkcipher - fix crash flushing dcache in error path
+
+Eric Biggers <ebiggers@google.com>
+    crypto: vmac - separate tfm and request context
+
+Eric Biggers <ebiggers@google.com>
+    crypto: vmac - require a block cipher with 128-bit block size
+
+Randy Dunlap <rdunlap@infradead.org>
+    kbuild: verify that $DEPMOD is installed
+
+Liwei Song <liwei.song@windriver.com>
+    i2c: ismt: fix wrong device address when unmap the data buffer
+
+Andrey Konovalov <andreyknvl@google.com>
+    kasan: don't emit builtin calls when sanitization is off
+
+Takashi Iwai <tiwai@suse.de>
+    tcp: Fix missing range_truesize enlargement in the backport
+
+Toshi Kani <toshi.kani@hpe.com>
+    x86/mm: Disable ioremap free page handling on x86-PAE
+
+
+-------------
+
+Diffstat:
+
+ Documentation/Changes                        |  17 +-
+ Makefile                                     |   7 +-
+ arch/arm64/mm/mmu.c                          |   4 +-
+ arch/x86/mm/pgtable.c                        |  61 +++-
+ crypto/ablkcipher.c                          |  57 ++--
+ crypto/blkcipher.c                           |  54 ++--
+ crypto/vmac.c                                | 412 ++++++++++++---------------
+ drivers/i2c/busses/i2c-ismt.c                |   2 +-
+ include/asm-generic/pgtable.h                |   8 +-
+ include/crypto/vmac.h                        |  63 ----
+ lib/ioremap.c                                |   4 +-
+ net/bluetooth/hidp/core.c                    |   4 +-
+ net/ipv4/tcp_input.c                         |   1 +
+ scripts/Makefile.kasan                       |   3 +
+ scripts/Makefile.lib                         |   2 +-
+ scripts/depmod.sh                            |   8 +-
+ sound/soc/intel/boards/cht_bsw_max98090_ti.c |  45 ++-
+ 17 files changed, 354 insertions(+), 398 deletions(-)
 
 
