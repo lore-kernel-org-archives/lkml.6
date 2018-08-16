@@ -2,149 +2,123 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 702CEC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 884FAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D6AA20C0D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:38:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 436A720C0D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 16:39:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJ6VKJyz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D6AA20C0D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ts+1+blP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 436A720C0D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392463AbeHPTiZ (ORCPT
+        id S2392478AbeHPTif (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 15:38:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53102 "EHLO mail.kernel.org"
+        Thu, 16 Aug 2018 15:38:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392441AbeHPTiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 15:38:24 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        id S2392441AbeHPTif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 15:38:35 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19F0220C0D;
-        Thu, 16 Aug 2018 16:38:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A26C220C0D;
+        Thu, 16 Aug 2018 16:38:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534437529;
-        bh=VfygmLqZlAAp0Tc95k3Cs4qdd1+vX3Yksj1AydcitJo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hJ6VKJyz6AyyfBQMFKo5Z9y/LPxjt8mCkw+ERo6+FaJ3Gcemmlbe5YWvyGcYeBjE5
-         ULys7wWdkiwv9si/Hj6PWMuHVFABbDjjvwsI4Io+seL9jzBhbErlr5KDQbUAWkAJyF
-         s23hxhpXDCNozKAEAaGUGy9rvnY42dnjeSPRRZXs=
-Date:   Fri, 17 Aug 2018 01:38:47 +0900
+        s=default; t=1534437540;
+        bh=EGV+Ihps72t2MSg3/tUq2WAvUqqkMOUJ8oZozMfUsuk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Ts+1+blPL3kHFLTIWaJPFoqNfbMlFKibE0I9FMLb/538YPWYbGHNyGM6ExlV71iv5
+         NkCn//fsbVBQ5go8MSNPeEmW8uF9wxmMswVRTgRmAlWIy1Zfn18bryBw86pu0jus2z
+         Zd1lfeMPaECezNFiUzviR6zcqU8ulmIb6maKXyDw=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Subject: Re: [PATCH 2/2] tracing/blktrace: Fix to allow setting same value
-Message-Id: <20180817013847.85ff26224bfd48d0fca1fd3f@kernel.org>
-In-Reply-To: <20180816103802.08678002@gandalf.local.home>
-References: <153441301698.6024.1680500212551396320.stgit@devbox>
-        <153441307534.6024.2684721209411781531.stgit@devbox>
-        <20180816103802.08678002@gandalf.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+To:     Shuah Khan <shuah@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 20/32] selftests/ftrace: Add kprobe-event with symbol argument test
+Date:   Fri, 17 Aug 2018 01:38:37 +0900
+Message-Id: <153443751761.23257.743998194793037725.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <153443695002.23257.13628220023468200991.stgit@devbox>
+References: <153443695002.23257.13628220023468200991.stgit@devbox>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Aug 2018 10:38:02 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Add a testcase for kprobe-event with @symbol argument.
+Since @symbol needs to refer the kernel data symbol
+(linux_proc_banner), it requires CONFIG_KALLSYMS_ALL.
 
-> On Thu, 16 Aug 2018 18:51:15 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > Current trace-enable attribute in sysfs returns an error
-> > if user writes the same setting value as current one,
-> > e.g.
-> > 
-> >   # cat /sys/block/sda/trace/enable
-> >   0
-> >   # echo 0 > /sys/block/sda/trace/enable
-> >   bash: echo: write error: Invalid argument
-> >   # echo 1 > /sys/block/sda/trace/enable
-> >   # echo 1 > /sys/block/sda/trace/enable
-> >   bash: echo: write error: Device or resource busy
-> > 
-> > But this is not a preferred behavior, it should ignore
-> > if new setting is same as current one. This fixes the
-> > problem as below.
-> > 
-> >   # cat /sys/block/sda/trace/enable
-> >   0
-> >   # echo 0 > /sys/block/sda/trace/enable
-> >   # echo 1 > /sys/block/sda/trace/enable
-> >   # echo 1 > /sys/block/sda/trace/enable
-> > 
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > Cc: Jens Axboe <axboe@kernel.dk>
-> > Cc: linux-block@vger.kernel.org
-> > ---
-> >  kernel/trace/blktrace.c |   11 +++++++----
-> >  1 file changed, 7 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-> > index 987d9a9ae283..e67db1e8a000 100644
-> > --- a/kernel/trace/blktrace.c
-> > +++ b/kernel/trace/blktrace.c
-> > @@ -1602,11 +1602,11 @@ static int blk_trace_remove_queue(struct request_queue *q)
-> >  	struct blk_trace *bt;
-> >  
-> >  	bt = xchg(&q->blk_trace, NULL);
-> > -	if (bt == NULL)
-> > -		return -EINVAL;
-> > +	if (bt != NULL) {
-> > +		put_probe_ref();
-> > +		blk_trace_free(bt);
-> > +	}
-> >  
-> > -	put_probe_ref();
-> > -	blk_trace_free(bt);
-> >  	return 0;
-> >  }
-> >  
-> > @@ -1619,6 +1619,9 @@ static int blk_trace_setup_queue(struct request_queue *q,
-> >  	struct blk_trace *bt = NULL;
-> >  	int ret = -ENOMEM;
-> >  
-> > +	if (q->blk_trace)
-> > +		return 0;
-> > +
-> >  	bt = kzalloc(sizeof(*bt), GFP_KERNEL);
-> >  	if (!bt)
-> >  		return -ENOMEM;
-> 
-> Hmm, why not just do this? Does this fix it too?
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ tools/testing/selftests/ftrace/config              |    1 +
+ .../ftrace/test.d/kprobe/kprobe_args_symbol.tc     |   39 ++++++++++++++++++++
+ 2 files changed, 40 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_symbol.tc
 
-Ah, yes, but we need to clear "ret" in that case.
+diff --git a/tools/testing/selftests/ftrace/config b/tools/testing/selftests/ftrace/config
+index 32cf61b6bb54..b7ac74fcb0fa 100644
+--- a/tools/testing/selftests/ftrace/config
++++ b/tools/testing/selftests/ftrace/config
+@@ -11,3 +11,4 @@ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_SAMPLES=y
+ CONFIG_SAMPLE_TRACE_PRINTK=m
++CONFIG_KALLSYMS_ALL=y
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_symbol.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_symbol.tc
+new file mode 100644
+index 000000000000..2b6dd33f9076
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_symbol.tc
+@@ -0,0 +1,39 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: Kprobe event symbol argument
++
++[ -f kprobe_events ] || exit_unsupported # this is configurable
++
++SYMBOL="linux_proc_banner"
++
++if [ ! -f /proc/kallsyms ]; then
++  echo "Can not check the target symbol - please enable CONFIG_KALLSYMS"
++  exit_unresolved
++elif ! grep "$SYMBOL\$" /proc/kallsyms; then
++  echo "Linux banner is not exported - please enable CONFIG_KALLSYMS_ALL"
++  exit_unresolved
++fi
++
++: "Test get basic types symbol argument"
++echo "p:testprobe_u _do_fork arg1=@linux_proc_banner:u64 arg2=@linux_proc_banner:u32 arg3=@linux_proc_banner:u16 arg4=@linux_proc_banner:u8" > kprobe_events
++echo "p:testprobe_s _do_fork arg1=@linux_proc_banner:s64 arg2=@linux_proc_banner:s32 arg3=@linux_proc_banner:s16 arg4=@linux_proc_banner:s8" >> kprobe_events
++if grep -q "x8/16/32/64" README; then
++  echo "p:testprobe_x _do_fork arg1=@linux_proc_banner:x64 arg2=@linux_proc_banner:x32 arg3=@linux_proc_banner:x16 arg4=@linux_proc_banner:x8" >> kprobe_events
++fi
++echo "p:testprobe_bf _do_fork arg1=@linux_proc_banner:b8@4/32" >> kprobe_events
++echo 1 > events/kprobes/enable
++(echo "forked")
++echo 0 > events/kprobes/enable
++grep "testprobe_[usx]:.* arg1=.* arg2=.* arg3=.* arg4=.*" trace
++grep "testprobe_bf:.* arg1=.*" trace
++
++: "Test get string symbol argument"
++echo "p:testprobe_str _do_fork arg1=@linux_proc_banner:string" > kprobe_events
++echo 1 > events/kprobes/enable
++(echo "forked")
++echo 0 > events/kprobes/enable
++RESULT=`grep "testprobe_str" trace | sed -e 's/.* arg1=\(.*\)/\1/'`
++
++RESULT=`echo $RESULT | sed -e 's/.* \((.*)\) \((.*)\) .*/\1 \2/'`
++ORIG=`cat /proc/version | sed -e 's/.* \((.*)\) \((.*)\) .*/\1 \2/'`
++test "$RESULT" = "$ORIG"
 
-Thanks!
-
-> 
-> diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-> index 987d9a9ae283..10b2b9c5fd25 100644
-> --- a/kernel/trace/blktrace.c
-> +++ b/kernel/trace/blktrace.c
-> @@ -1841,6 +1841,8 @@ static ssize_t sysfs_blk_trace_attr_store(struct device *dev,
->  	mutex_lock(&q->blk_trace_mutex);
->  
->  	if (attr == &dev_attr_enable) {
-> +		if (!!value == !!q->blk_trace)
-> +			goto out_unlock_bdev;
->  		if (value)
->  			ret = blk_trace_setup_queue(q, bdev);
->  		else
-> 
-> -- Steve
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
