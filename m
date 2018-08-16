@@ -2,81 +2,146 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FD1C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96FCEC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEB442148C
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:15:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEB442148C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 469A5208FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:16:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sHii2XNj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 469A5208FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391719AbeHPROF (ORCPT
+        id S2391734AbeHPRPO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 13:14:05 -0400
-Received: from mga04.intel.com ([192.55.52.120]:28055 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726312AbeHPROF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 13:14:05 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2018 07:15:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,247,1531810800"; 
-   d="scan'208";a="83855657"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.44])
-  by orsmga002.jf.intel.com with ESMTP; 16 Aug 2018 07:15:11 -0700
-Date:   Thu, 16 Aug 2018 08:15:59 -0600
-From:   Keith Busch <keith.busch@intel.com>
-To:     Michal Wnukowski <wnukowski@google.com>
-Cc:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "axboe@fb.com" <axboe@fb.com>, "hch@lst.de" <hch@lst.de>,
-        "keith.busch@linux.intel.com" <keith.busch@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "sagi@grimberg.me" <sagi@grimberg.me>,
-        "yigitfiliz@google.com" <yigitfiliz@google.com>
-Subject: Re: [PATCH v2] Bugfix for handling of shadow doorbell buffer.
-Message-ID: <20180816141558.GB5438@localhost.localdomain>
-References: <CA+55aFxOc7_s-BbWJx-kyit-pH9m5fQJk6MSMJ57tFFvMtNh-w@mail.gmail.com>
- <20180815225157.89523-1-wnukowski@google.com>
+        Thu, 16 Aug 2018 13:15:14 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:41909 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726312AbeHPRPO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 13:15:14 -0400
+Received: by mail-oi0-f65.google.com with SMTP id k12-v6so8241877oiw.8
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 07:16:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VJJtEHz/Df5gyQRZGNdlwzVmY5ghFvMgBdqhmv3aTds=;
+        b=sHii2XNjT/MJZ0YTypRWKbWHGKKX2uAJJxkxNTN7wZ7RR+mHQPrYRBFf5A7xg/Qilp
+         WMflr559ZnT3Hjq/RL8j8JWLwYeqFGWJYU+m3e0345+7NxpBZtl9YtQmiUVu1Wx4+VXi
+         5M5MWmtlasYqQ7T4ChF8n67lvzDeOWdA1t5l1fm5TvfB9jMae1i0VWmT9a23N7yk0ISh
+         tmWJDRsR+/Ng31AWOa0eEnkgFnsvQotnl9KcOussgVybE83VzsgNCo7/TKGv/3bye4X0
+         u/yq6pXGGqJ5t3YsFGCkdDGUcaY04NNkS2tjr87+mXV5yCBAPb+bjBNvC86/yfz01bFF
+         xIRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VJJtEHz/Df5gyQRZGNdlwzVmY5ghFvMgBdqhmv3aTds=;
+        b=i5aGU23JOv6gfCkBKUuMEk4geu3dbr1Vga/ZwSNi2G9F3HxhAXyuW0N+zWHEyekbXt
+         s6ONMsRYAzCnAfsdnZKIQ4IIqG7V6PbbwDhPsI/uAElrWDjLx4eKUJt1ykh6yUra4dmO
+         h6KkLUdzyewmSrLSUaCdG1keUzZhjGf2U9IxRmCs6ujw8+/fXU0pUe50ZNSDyALjrKbH
+         Al2f/A3zDznh+wpKw9/NWlcSzJmokBzoGxeZFxRcohh58C9PZp0u7Xq8hIAczPXzEbNm
+         9+tn5vbc7OTOJAOJ5L+GxZPX7+AlfsLy0z2XbYZBc6deKQD2xI8MNfzsEkim6r/D0WV+
+         kkNA==
+X-Gm-Message-State: AOUpUlGchiFSA6wfFW0gR5NWrpG/0s2tRVwdO5j594Z0rk/IDDkXxMtC
+        7cpkIaMcCDVRhQaapZbPZTo/+cnGVRt7fDZb8SsiNg==
+X-Google-Smtp-Source: AA+uWPx8Sp1ReJ6hSTj9Qjc80uYgsbyieXcs0Rf9tT9hNq0ilLnhpHhjCg55bGlMeOZmcbD9gn3RDEws6YUISNuKw48=
+X-Received: by 2002:aca:3882:: with SMTP id f124-v6mr30162447oia.195.1534428979344;
+ Thu, 16 Aug 2018 07:16:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180815225157.89523-1-wnukowski@google.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+References: <20180815235355.14908-1-casey.schaufler@intel.com> <20180815235355.14908-4-casey.schaufler@intel.com>
+In-Reply-To: <20180815235355.14908-4-casey.schaufler@intel.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 16 Aug 2018 16:15:52 +0200
+Message-ID: <CAG48ez1kLTcc6aDf7hYXFMw4oD1hp9Dx74-wuAjbQ7hdAQzE=Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 3/5] LSM: Security module checking for side-channel dangers
+To:     casey.schaufler@intel.com
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        selinux@tycho.nsa.gov, SMACK-discuss@lists.01.org,
+        Dave Hansen <dave.hansen@intel.com>, deneen.t.dock@intel.com,
+        kristen@linux.intel.com, Arjan van de Ven <arjan@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 03:51:57PM -0700, Michal Wnukowski wrote:
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index 17a0190bd88f..4452f8553301 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -306,6 +306,14 @@ static bool nvme_dbbuf_update_and_check_event(u16 value, u32 *dbbuf_db,
->  		old_value = *dbbuf_db;
->  		*dbbuf_db = value;
->  
-> +		/*
-> +		 * Ensure that the doorbell is updated before reading
-> +		 * the EventIdx from memory. NVMe controller should have
-> +		 * similar ordering guarantees - update EventIdx before
-> +		 * reading doorbell.
-> +		 */
-> +		mb();
-> +
->  		if (!nvme_dbbuf_need_event(*dbbuf_ei, value, old_value))
->  			return false;
->  	}
+On Thu, Aug 16, 2018 at 11:51 AM Casey Schaufler
+<casey.schaufler@intel.com> wrote:
+>
+> From: Casey Schaufler <cschaufler@localhost.localdomain>
+>
+> The sidechannel LSM checks for cases where a side-channel
+> attack may be dangerous based on security attributes of tasks.
+> This includes:
+>         Effective UID of the tasks is different
+>         Capablity sets are different
+>         Tasks are in different namespaces
+> An option is also provided to assert that task are never
+> to be considered safe. This is high paranoia, and expensive
+> as well.
+>
+> Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
+[...]
+> +static int safe_by_uid(struct task_struct *p)
+> +{
+> +       const struct cred *ccred = current->cred;
+> +       const struct cred *pcred = p->cred;
 
-Looks good to me. This should also be a stable candidate.
+See below.
 
-Reviewed-by: Keith Busch <keith.busch@intel.com>
+[...]
+> +static int safe_by_capability(struct task_struct *p)
+> +{
+> +       const struct cred *ccred = current->cred;
+> +       const struct cred *pcred = p->cred;
+
+See below.
+
+[...]
+> +       if (current->cred->user_ns != p->cred->user_ns)
+> +               return -EACCES;
+
+Shouldn't this access be using one of the rcu_dereference_* helpers?
+Something like rcu_dereference_protected(..., 1).
+
+Also, you're looking at ->cred, and you don't want to do that. ->cred
+are the *subjective* credentials of the task, meaning the credentials
+that should only be used when this task actively performs an access.
+Depending on what userspace is doing, an unprivileged process' ->cred
+will randomly flake to something with GLOBAL_ROOT_UID because of
+override_creds() calls - for example, if you access a file through
+overlayfs in certain ways, your ->cred will temporarily be overwritten
+by ovl_override_creds(), which mostly switches to the credentials of
+the filesystem's creator (iow, normally root). coredumps can also
+override the EUID with GLOBAL_ROOT_UID:
+
+    if (__get_dumpable(cprm.mm_flags) == SUID_DUMP_ROOT) {
+        /* Setuid core dump mode */
+        cred->fsuid = GLOBAL_ROOT_UID;  /* Dump root private */
+        need_suid_safe = true;
+    }
+
+    retval = coredump_wait(siginfo->si_signo, &core_state);
+    if (retval < 0)
+        goto fail_creds;
+
+    old_cred = override_creds(cred);
+
+Please use the objective credentials (->real_cred) instead, which are
+not subject to random override_creds() effects, and are designed to be
+used when looking at the privileges associated with an overall task
+(as opposed to the privileges associated with the task's current
+syscall context).
+
+At least for the current-> access, you probably want
+current_real_cred(), which has been defined for this kind of use.
