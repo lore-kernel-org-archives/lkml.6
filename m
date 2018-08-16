@@ -2,88 +2,107 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 434DFC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9576C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:06:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE0F42147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:03:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE0F42147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 711702087B
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:06:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 711702087B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389771AbeHPLAe (ORCPT
+        id S2389792AbeHPLDH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 07:00:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35796 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726321AbeHPLAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 07:00:34 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4AB05819703A;
-        Thu, 16 Aug 2018 08:03:50 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-131.pek2.redhat.com [10.72.12.131])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4A0612166BA5;
-        Thu, 16 Aug 2018 08:03:37 +0000 (UTC)
-Date:   Thu, 16 Aug 2018 16:02:59 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Yannik Sembritzki <yannik@sembritzki.me>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Baoquan He <bhe@redhat.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH 2/2] [FIXED v2] Replace magic for trusting the secondary
- keyring with #define
-Message-ID: <20180816080259.GA6241@dhcp-128-65.nay.redhat.com>
-References: <20180815194244.29564-3-yannik@sembritzki.me>
- <201808160443.5h16PxVs%fengguang.wu@intel.com>
- <1bfa03ed-c9f8-d0f2-700c-c93e96d5b99c@sembritzki.me>
- <CA+55aFw1oaRiqAU_61BwqS5QWS2VtZ6o9cAF3YEVx2NfMkmHpQ@mail.gmail.com>
- <fcc28be0-f066-9c7a-7a4e-05d0cc1c0967@sembritzki.me>
- <20180816011106.GC5915@dhcp-128-65.nay.redhat.com>
- <7834c175-7480-d5bd-d964-a4dd783af1f3@sembritzki.me>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7834c175-7480-d5bd-d964-a4dd783af1f3@sembritzki.me>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 16 Aug 2018 08:03:50 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 16 Aug 2018 08:03:50 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
+        Thu, 16 Aug 2018 07:03:07 -0400
+Received: from mout.perfora.net ([74.208.4.196]:40157 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389777AbeHPLDH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 07:03:07 -0400
+Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
+ mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0LloAA-1gPY710pVo-00ZOnY; Thu, 16 Aug 2018 10:06:11 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 2/2] ARM: dts: tegra20/tegra30: add pmu interrupt-affinity
+Date:   Thu, 16 Aug 2018 10:06:04 +0200
+Message-Id: <20180816080604.29064-2-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180816080604.29064-1-marcel@ziswiler.com>
+References: <20180816080604.29064-1-marcel@ziswiler.com>
+X-Provags-ID: V03:K1:cGLiOg2/fUa6c4ORM0lbdno4EKsX1FtZ4a/VwFApu5sjY8CCa18
+ cBnP2wIDujXw13B+QWHTYFp69yWG7jk7RMJdZWIC3y/vq1iqtwiLN1CtCdfx+ARK44oYVBj
+ M8rzBu1iAWGTlWoNYi12Jwdrpv4Vj20tpijx2xoz+iBtdk1ZwsrXS1t9rEAB+/6Tj29XZ+1
+ WPC6E7De+a9fPS1MkGf2Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:+N8BB+V741A=:kkwgakCkLM7R0DGIbCpwX7
+ dbIvPu5AGVF7hEaK9hvDlYeID5xoHC3OAST7QRLn5NF48iI6FvK7W+cSZcycosLWPW5522qX7
+ A0mOQ7wqRn31e65SYD2R4abPLG9LSozqzBYSY7Jd19n+kxmWVBl8KMh3oKYDto4IJ3/wCWrUS
+ GgX5iBoWIqqBauwmgqS9bF0PjfUHqulmVEM68EfySRQpjVuO7Fo7KG6F4v35DTbgTtJhGPBZk
+ sZPgfE+RG0jJQ2WYAnkk2Ru0HkvX/xN5c1QsQsNzBrMMhmVTPdIhhIE/8d3wGwyZ2jA7FVAsS
+ Z71KP/TWSyhnaFCNOUR/35jTfhOVEyftVeJm+ulpK3VoQYltxDebe0qg1DRAgq6z3Vova+nl1
+ MxXDBLL1Fqcx8H7YXeiMRu8DxXjbESM3ybjc5aze5c7sUw6hnCLSk/hy+YLqR1NXnZ4WiguhR
+ pOcFbqI7KdDiWkemZVZ2uv8NDuWCMMyia7GhIzZV2AnH0dZbJzEGNkxRoL7Ic5RPPqBNsOJZD
+ BNlbSSBeFOwlV4FXdmdjJ0nBEt3NryURUl5mbnQvybDReAGcMzqtWaYjGQVG9dMq/tLFS2g0M
+ 334sNnqC0vYART7FEBg14Xotbs6T3gSffKtRf3J7kuX4RvHChtJ47EMDE+lUBSR/uNF4Y3NDB
+ NdmvxbDd6qin+wqDsnljruDMDWQNBibV1h1y6nf3lfpTvAylPeDmjB+pt6OVhEWpm2i8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/16/18 at 09:43am, Yannik Sembritzki wrote:
-> On 16.08.2018 03:11, Dave Young wrote:
-> > Instead of fix your 1st patch in 2nd patch, I would suggest to
-> > switch the patch order.  In 1st patch change the common code to use
-> > the new macro and in 2nd patch you can directly fix the kexec code
-> > with TRUST_SECONDARY_KEYRING.
-> My reasoning for doing it in this order was that the first patch which
-> fixes the bug itself should be merged into stable, while the refactoring
-> doesn't necessarily have to. I'm not familiar with the linux development
-> process, so please correct me if this should be done in another fashion.
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Frankly I'm not sure about the stable process.  But personally I do not 
-like the order.
+This is similar to tegra124 and avoids the following being reported
+upon boot:
 
-Cced Greg for opinions about stable concern.
+hw perfevents: no interrupt-affinity property for /pmu, guessing.
 
-> 
-> Yannik
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Reviewed-by: Stefan Agner <stefan@agner.ch>
+
+---
+
+Changes in v2:
+- Add Stefan's acks.
+
+ arch/arm/boot/dts/tegra20.dtsi | 2 ++
+ arch/arm/boot/dts/tegra30.dtsi | 4 ++++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index a22c6a8f8f83..dcad6d6128cf 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -867,5 +867,7 @@
+ 		compatible = "arm,cortex-a9-pmu";
+ 		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&{/cpus/cpu@0}>,
++				     <&{/cpus/cpu@1}>;
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index a6781f653310..1de10f0d1da7 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -1013,5 +1013,9 @@
+ 			     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&{/cpus/cpu@0}>,
++				     <&{/cpus/cpu@1}>,
++				     <&{/cpus/cpu@2}>,
++				     <&{/cpus/cpu@3}>;
+ 	};
+ };
+-- 
+2.14.4
+
