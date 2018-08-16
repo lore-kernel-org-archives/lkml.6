@@ -6,89 +6,88 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8518C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD23C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F3B720779
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:50:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F3B720779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5ACD72147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:50:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ACD72147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404167AbeHPStU (ORCPT
+        id S2404181AbeHPStr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 14:49:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49496 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726170AbeHPStU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 14:49:20 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0EF1C814FDCE;
-        Thu, 16 Aug 2018 15:50:02 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-130.rdu2.redhat.com [10.10.120.130])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3F6DE1134CCB;
-        Thu, 16 Aug 2018 15:49:58 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <1534432615.3166.5.camel@HansenPartnership.com>
-References: <1534432615.3166.5.camel@HansenPartnership.com> <CA+55aFzRHVXP4Ag4aygao1dTGaaMJZSOisHT2ks3_WP97kLLhQ@mail.gmail.com> <20180815100053.13609-1-yannik@sembritzki.me> <CA+55aFx2goMXj7rQg-qx-puiiWYJmkDMU1xniWEu6ikDBNgfdQ@mail.gmail.com> <654fbafb-69da-cd9a-b176-7b03401e71c5@sembritzki.me> <20180815174247.GB29541@redhat.com> <20180815185812.GC29541@redhat.com> <b2649b70-37b6-3929-a9d0-3d82033b2686@sembritzki.me> <20180815194932.GD29541@redhat.com> <20628.1534427487@warthog.procyon.org.uk>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     dhowells@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Vivek Goyal <vgoyal@redhat.com>, yannik@sembritzki.me,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH] Fix kexec forbidding kernels signed with custom platform keys to boot
+        Thu, 16 Aug 2018 14:49:47 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38164 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726170AbeHPStr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 14:49:47 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 845037A9;
+        Thu, 16 Aug 2018 08:50:29 -0700 (PDT)
+Received: from [10.4.13.23] (en101.emea.arm.com [10.4.13.23])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB62E3F5BD;
+        Thu, 16 Aug 2018 08:50:28 -0700 (PDT)
+Subject: Re: [PATCH 1/2] coresight: etb10: Refactor etb_drvdata::mode handling
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org
+References: <1534284866-2523-1-git-send-email-mathieu.poirier@linaro.org>
+ <5cd6b8a8-2370-517d-deb1-378bff6e362b@arm.com> <20180816154817.GA14955@xps15>
+From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <0796196d-f969-1e87-418b-bd67d4f5bf63@arm.com>
+Date:   Thu, 16 Aug 2018 16:50:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <30606.1534434597.1@warthog.procyon.org.uk>
-Date:   Thu, 16 Aug 2018 16:49:57 +0100
-Message-ID: <30607.1534434597@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 16 Aug 2018 15:50:02 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 16 Aug 2018 15:50:02 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+In-Reply-To: <20180816154817.GA14955@xps15>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-
-> > The problem with that is that it means you can't load third party
-> > modules - such as the NVidia driver.  That's fine if you absolutely
-> > reject the right of people to produce third party drivers for the
-> > Linux kernel and absolutely require that they open and upstream their
-> > code if they want in.
+On 16/08/18 16:48, Mathieu Poirier wrote:
+> On Thu, Aug 16, 2018 at 04:13:03PM +0100, Suzuki K Poulose wrote:
+>> Hi Mathieu,
+>>
+>> The patch looks good to me. One minor nit below.
 > 
-> So if you build your own kernel and want to load the nVidia module, you
-> have the key to sign it.
+> You have not included any comment - did you change your mind?
+> 
 
-I think you have to assume that doing this is beyond most people.  Further, as
-a distribution we would prefer people didn't raise bugs against kernels that
-we didn't build.
+Sorry, yes I did. It was about folding the checks where ETB is already
+enabled in SYSFS.
 
-> If you're a distribution and want third party modules to be loaded you can
-> set up a third party signing process using a distro key ... I don't see what
-> the big problem is.
+>>
+>> On 14/08/18 23:14, Mathieu Poirier wrote:
+>>> This patch moves the etb_drvdata::mode from a locat_t to a simple u32,
+>>> as it is for the ETF and ETR drivers.  This streamlines the code and adds
+>>> commonality with the other drivers when dealing with similar operations.
+>>>
+>>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>> ---
+>>>   drivers/hwtracing/coresight/coresight-etb10.c | 62 +++++++++++++++------------
+>>>   1 file changed, 34 insertions(+), 28 deletions(-)
+>>>
+>>> diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
+>>> index 9fd77fdc1244..69287163ce4e 100644
+>>> --- a/drivers/hwtracing/coresight/coresight-etb10.c
+>>> +++ b/drivers/hwtracing/coresight/coresight-etb10.c
+>>
+>>> @@ -488,7 +494,7 @@ static void etb_dump(struct etb_drvdata *drvdata)
+>>>   	unsigned long flags;
+>>>   	spin_lock_irqsave(&drvdata->spinlock, flags);
+>>> -	if (local_read(&drvdata->mode) == CS_MODE_SYSFS) {
+>>> +	if (drvdata->mode == CS_MODE_SYSFS) {
+>>>   		etb_disable_hw(drvdata);
+>>>   		etb_dump_hw(drvdata);
+>>>   		etb_enable_hw(drvdata);
+>>
+>> Looks good to me.
+>>
+>> Reviewed-by : Suzuki K Poulose <suzuki.poulose@arm.com>
 
-That's the problem is right there.  AIUI, we *don't* want to set up a third
-party signing process.  As I said, it potentially comes with lawyers attached.
-
-> So your lawyers tell you if you sign a third party module for your
-> kernel then you could get blamed for the damage it causes?
-
-There's more to it than that, but I feel I should discuss it with our legal
-dept. before airing it here.
-
-David
+Suzuki
