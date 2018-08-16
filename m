@@ -2,188 +2,320 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD473C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C5EC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F25421480
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:47:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLUgLrQo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F25421480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 331BD20C51
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:47:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 331BD20C51
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404081AbeHPSqZ (ORCPT
+        id S2404095AbeHPSqk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 14:46:25 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39289 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389292AbeHPSqZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 14:46:25 -0400
-Received: by mail-pl0-f67.google.com with SMTP id w14-v6so2282532plp.6;
-        Thu, 16 Aug 2018 08:47:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=T/N/mAPPA1dB9mhQ2J3upaF/1sNB9f5UTZ/DeV5efsU=;
-        b=kLUgLrQoBr/n0Cb6RYLVlgNANIkW2W47YS3pt9n3vuq0cmwuDxCxmt0+AmpYbkqKHB
-         E3rOBZzHxm6MWvaR4+XU0d3QmaMMm3CA7mm/I9yeo0MRWv6hHB75NvX7MX5bsiRCclrN
-         RBM9P7zKpt10uXyhyHs5HnkkQIaziB4sPd16MIBmgKbaOsNMw517B5wnIJOEO7scPgjh
-         o7WdE9xKTt+KF+qp+P2cgRfFlu6qXITu9przZBDE1Lkk3Y5s2fe+jqs1gT3kdrWeobTy
-         UifAgBlfAcHdnBZjAl1dhGyqYEf3simIKnRg92F4NcnYrRgx4NjHyYXLQ4F89NIlphTI
-         7/7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=T/N/mAPPA1dB9mhQ2J3upaF/1sNB9f5UTZ/DeV5efsU=;
-        b=lqWR2bTyMJTO1gyqDKxaE9EdjZ4BdyVP4pqfzMS+Cif+o0+FcJkXbqctXeyJp+6+VD
-         oNoFE2wgpotmuZYGZ6FXcC74fO26wHBMJqHSctnV/odYEsjlq7sRbBI8n2XDTXsHeC3r
-         ym80tobO+eD2jLv/35hk/bRC2a/KKZC4e7H5OPFNCCYtIvFYBIaGpSFiAEvR4lOqnPc5
-         aq5NqgD6o7rod9QJZAOV4u5QtzA8woHpoFGrQkcwqwxPc6U9/jjik5XQU5fTAsiVdxvk
-         AKBLSxooWhveX4vT/KoKF0bFckP6NTIcm7ywavQxumMHyrYt7SNm1j0VsAFLN6EjCkcj
-         bcEg==
-X-Gm-Message-State: AOUpUlFxGutmGqPF3R+/eRTsPUHZizZdDgq1zNLciWGz/arJrBiD6pOY
-        1X46t9mDcQyHO1MFpsplyJc=
-X-Google-Smtp-Source: AA+uWPxfvzBb+xwi6tGCTU47jmjNyaMRimMaghJssR7vqcVeCYb66WtC4GXdZ+qbWZCg2+sdZmqWuw==
-X-Received: by 2002:a17:902:2702:: with SMTP id c2-v6mr29966018plb.248.1534434427664;
-        Thu, 16 Aug 2018 08:47:07 -0700 (PDT)
-Received: from localhost.localdomain (ec2-34-212-148-38.us-west-2.compute.amazonaws.com. [34.212.148.38])
-        by smtp.gmail.com with ESMTPSA id d9-v6sm39563744pfb.86.2018.08.16.08.47.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Aug 2018 08:47:06 -0700 (PDT)
-Date:   Thu, 16 Aug 2018 08:47:03 -0700
-From:   Eduardo Valentin <edubezval@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Rui Zhang <rui.zhang@intel.com>
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] Thermal-SoC management updates for v4.19-rc1
-Message-ID: <20180816154702.GA5033@localhost.localdomain>
+        Thu, 16 Aug 2018 14:46:40 -0400
+Received: from mga01.intel.com ([192.55.52.88]:57496 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727026AbeHPSqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 14:46:39 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2018 08:45:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,247,1531810800"; 
+   d="p7s'?scan'208";a="65719384"
+Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
+  by orsmga008.jf.intel.com with ESMTP; 16 Aug 2018 08:45:08 -0700
+Received: from orsmsx113.amr.corp.intel.com (10.22.240.9) by
+ ORSMSX107.amr.corp.intel.com (10.22.240.5) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 16 Aug 2018 08:45:08 -0700
+Received: from orsmsx101.amr.corp.intel.com ([169.254.8.46]) by
+ ORSMSX113.amr.corp.intel.com ([169.254.9.72]) with mapi id 14.03.0319.002;
+ Thu, 16 Aug 2018 08:45:08 -0700
+From:   "Derrick, Jonathan" <jonathan.derrick@intel.com>
+To:     "poza@codeaurora.org" <poza@codeaurora.org>
+CC:     "liudongdong3@huawei.com" <liudongdong3@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "Busch, Keith" <keith.busch@intel.com>,
+        "okaya@kernel.org" <okaya@kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "helgaas@kernel.org" <helgaas@kernel.org>
+Subject: Re: [PATCH 1/2] PCI/DPC: Add 'nodpc' parameter
+Thread-Topic: [PATCH 1/2] PCI/DPC: Add 'nodpc' parameter
+Thread-Index: AQHUNN8oPZdeP/Rn10aUfkbk3uP46aTCkjUAgABpmYA=
+Date:   Thu, 16 Aug 2018 15:45:07 +0000
+Message-ID: <1534434305.17819.26.camel@intel.com>
+References: <1534368400-2807-1-git-send-email-jonathan.derrick@intel.com>
+         <f11c06374a90650e862cb68206ad2fdb@codeaurora.org>
+In-Reply-To: <f11c06374a90650e862cb68206ad2fdb@codeaurora.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.255.4.68]
+Content-Type: multipart/signed; micalg=sha-1;
+        protocol="application/x-pkcs7-signature"; boundary="=-JDsYvsl1RnmrMSQ8kdiR"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus,
+--=-JDsYvsl1RnmrMSQ8kdiR
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Please consider pulling from
+On Thu, 2018-08-16 at 14:57 +0530, poza@codeaurora.org wrote:
+> On 2018-08-16 02:56, Jon Derrick wrote:
+> > Some users may want to disable downstream port containment (DPC),
+> > so
+> > give them this option
+> >=20
+> > Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
+> > ---
+> >  drivers/pci/pci.c      |  2 ++
+> >  drivers/pci/pci.h      |  6 ++++++
+> >  drivers/pci/pcie/dpc.c | 48=20
+> > ++++++++++++++++++++++++++++++++++++++----------
+> >  include/linux/pci.h    |  6 ++++++
+> >  4 files changed, 52 insertions(+), 10 deletions(-)
+> >=20
+> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > index 80da484..4e629c2 100644
+> > --- a/drivers/pci/pci.c
+> > +++ b/drivers/pci/pci.c
+> > @@ -6062,6 +6062,8 @@ static int __init pci_setup(char *str)
+> >  				pcie_ats_disabled =3D true;
+> >  			} else if (!strcmp(str, "noaer")) {
+> >  				pci_no_aer();
+> > +			} else if (!strcmp(str, "nodpc")) {
+> > +				pci_no_dpc();
+> >  			} else if (!strcmp(str, "earlydump")) {
+> >  				pci_early_dump =3D true;
+> >  			} else if (!strncmp(str, "realloc=3D", 8)) {
+> > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> > index 6e0d152..f73f29e 100644
+> > --- a/drivers/pci/pci.h
+> > +++ b/drivers/pci/pci.h
+> > @@ -536,4 +536,10 @@ static inline void
+> > pci_aer_clear_fatal_status(struct pci_dev *dev) { }
+> >  static inline void pci_aer_clear_device_status(struct pci_dev
+> > *dev) {=20
+> > }
+> >  #endif
+> >=20
+> > +#ifdef CONFIG_PCIE_DPC
+> > +void pci_no_dpc(void);
+> > +#else
+> > +static inline void pci_no_dpc(void) { }
+> > +#endif
+> > +
+> >  #endif /* DRIVERS_PCI_H */
+> > diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+> > index f03279f..068fca0 100644
+> > --- a/drivers/pci/pcie/dpc.c
+> > +++ b/drivers/pci/pcie/dpc.c
+> > @@ -44,6 +44,18 @@ struct dpc_dev {
+> >  	"Memory Request Completion Timeout",		 /*
+> > Bit Position 18 */
+> >  };
+> >=20
+> > +static int pcie_dpc_disable;
+> > +
+> > +void pci_no_dpc(void)
+> > +{
+> > +	pcie_dpc_disable =3D 1;
+> > +}
+> > +
+> > +bool pci_dpc_available(void)
+> > +{
+> > +	return !pcie_dpc_disable && pci_aer_available() &&
+> > pci_msi_enabled();
+>=20
+> 1) why do you check pci_aer_available() ?
+I'd assumed a dependency on aer, but looking at it again I see it calls
+into err.c without a requirement on aer.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal linus
+Then it also seems the pci_aer_available() and AER dependency check in
+portdrv_core.c is unneccessary too.
 
-to receive Thermal-SoC Management updates for v4.19-rc1 with top-most
+> 2) and pci_aer_available() already internally checks
+> pci_msi_enabled();
+>=20
+> > +}
+> > +
+> >  static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
+> >  {
+> >  	unsigned long timeout =3D jiffies + HZ;
+> > @@ -209,6 +221,17 @@ static irqreturn_t dpc_irq(int irq, void
+> > *context)
+> >  	return IRQ_HANDLED;
+> >  }
+> >=20
+> > +static void dpc_disable(struct pci_dev *pdev)
+> > +{
+> > +	u16 cap_pos, ctl;
+> > +
+> > +	cap_pos =3D pci_find_ext_capability(pdev,
+> > PCI_EXT_CAP_ID_DPC);
+> > +	pci_read_config_word(pdev, cap_pos + PCI_EXP_DPC_CTL,
+> > &ctl);
+> > +	ctl &=3D ~(PCI_EXP_DPC_CTL_EN_FATAL |
+> > PCI_EXP_DPC_CTL_EN_NONFATAL |
+> > +		 PCI_EXP_DPC_CTL_INT_EN);
+> > +	pci_write_config_word(pdev, cap_pos + PCI_EXP_DPC_CTL,
+> > ctl);
+> > +}
+> > +
+> >  #define FLAG(x, y) (((x) & (y)) ? '+' : '-')
+> >  static int dpc_probe(struct pcie_device *dev)
+> >  {
+> > @@ -221,9 +244,16 @@ static int dpc_probe(struct pcie_device *dev)
+> >  	if (pcie_aer_get_firmware_first(pdev))
+> >  		return -ENOTSUPP;
+> >=20
+> > +	if (!pci_dpc_available()) {
+> > +		status =3D -ENOTSUPP;
+> > +		goto disable_dpc;
+> > +	}
+> > +
+> >  	dpc =3D devm_kzalloc(device, sizeof(*dpc), GFP_KERNEL);
+> > -	if (!dpc)
+> > -		return -ENOMEM;
+> > +	if (!dpc) {
+> > +		status =3D -ENOMEM;
+> > +		goto disable_dpc;
+> > +	}
+> >=20
+> >  	dpc->cap_pos =3D pci_find_ext_capability(pdev,
+> > PCI_EXT_CAP_ID_DPC);
+> >  	dpc->dev =3D dev;
+> > @@ -235,7 +265,7 @@ static int dpc_probe(struct pcie_device *dev)
+> >  	if (status) {
+> >  		dev_warn(device, "request IRQ%d failed: %d\n",
+> > dev->irq,
+> >  			 status);
+> > -		return status;
+> > +		goto disable_dpc;
+> >  	}
+> >=20
+> >  	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CAP,
+> > &cap);
+> > @@ -260,17 +290,15 @@ static int dpc_probe(struct pcie_device *dev)
+> >  		FLAG(cap, PCI_EXP_DPC_CAP_SW_TRIGGER), dpc-
+> > >rp_log_size,
+> >  		FLAG(cap, PCI_EXP_DPC_CAP_DL_ACTIVE));
+> >  	return status;
+> > +
+> > +disable_dpc:
+> > +	dpc_disable(pdev);
+> > +	return status;
+> >  }
+> >=20
+> >  static void dpc_remove(struct pcie_device *dev)
+> >  {
+> > -	struct dpc_dev *dpc =3D get_service_data(dev);
+> > -	struct pci_dev *pdev =3D dev->port;
+> > -	u16 ctl;
+> > -
+> > -	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL,
+> > &ctl);
+> > -	ctl &=3D ~(PCI_EXP_DPC_CTL_EN_FATAL |
+> > PCI_EXP_DPC_CTL_INT_EN);
+> > -	pci_write_config_word(pdev, dpc->cap_pos +
+> > PCI_EXP_DPC_CTL, ctl);
+> > +	dpc_disable(dev->port);
+> >  }
+> >=20
+> >  static struct pcie_port_service_driver dpcdriver =3D {
+> > diff --git a/include/linux/pci.h b/include/linux/pci.h
+> > index 5454e6b..559b792 100644
+> > --- a/include/linux/pci.h
+> > +++ b/include/linux/pci.h
+> > @@ -1473,6 +1473,12 @@ static inline int pci_irqd_intx_xlate(struct
+> > irq_domain *d,
+> >  static inline bool pci_aer_available(void) { return false; }
+> >  #endif
+> >=20
+> > +#ifdef CONFIG_PCIE_DPC
+> > +bool pci_dpc_available(void);
+> > +#else
+> > +static inline bool pci_dpc_available(void) { return false; }
+> > +#endif
+> > +
+> >  #ifdef CONFIG_PCIE_ECRC
+> >  void pcie_set_ecrc_checking(struct pci_dev *dev);
+> >  void pcie_ecrc_get_policy(char *str);
+--=-JDsYvsl1RnmrMSQ8kdiR
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-84b64de597bcc26549a7cbfe2fa8022bbc142daa:
+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
+AG6qjTBc2iB2iz6IVnzrBtQT5DR3KM6EqbMTwur8keTC11xls7lwWexzsSgt37V9UNKAqfsZPgcX
+AgMBAAGjggI3MIICMzAdBgNVHQ4EFgQUJRdznv8EeAa3g+3F5NKtNNctuBcwHwYDVR0jBBgwFoAU
+HmkqtNwo/kcYTiELP7ysES/wmPUwZQYDVR0fBF4wXDBaoFigVoZUaHR0cDovL3d3dy5pbnRlbC5j
+b20vcmVwb3NpdG9yeS9DUkwvSW50ZWwlMjBFeHRlcm5hbCUyMEJhc2ljJTIwSXNzdWluZyUyMENB
+JTIwNEEuY3JsMIGfBggrBgEFBQcBAQSBkjCBjzBpBggrBgEFBQcwAoZdaHR0cDovL3d3dy5pbnRl
+bC5jb20vcmVwb3NpdG9yeS9jZXJ0aWZpY2F0ZXMvSW50ZWwlMjBFeHRlcm5hbCUyMEJhc2ljJTIw
+SXNzdWluZyUyMENBJTIwNEEuY3J0MCIGCCsGAQUFBzABhhZodHRwOi8vb2NzcC5pbnRlbC5jb20v
+MAsGA1UdDwQEAwIHgDA8BgkrBgEEAYI3FQcELzAtBiUrBgEEAYI3FQiGw4x1hJnlUYP9gSiFjp9T
+gpHACWeB3r05lfBDAgFkAgEJMB8GA1UdJQQYMBYGCCsGAQUFBwMEBgorBgEEAYI3CgMMMCkGCSsG
+AQQBgjcVCgQcMBowCgYIKwYBBQUHAwQwDAYKKwYBBAGCNwoDDDBRBgNVHREESjBIoCoGCisGAQQB
+gjcUAgOgHAwaam9uYXRoYW4uZGVycmlja0BpbnRlbC5jb22BGmpvbmF0aGFuLmRlcnJpY2tAaW50
+ZWwuY29tMA0GCSqGSIb3DQEBBQUAA4IBAQA5LNb+VnWY0V21FlNjnQ2BIb5gmlED29zwQiC5yezn
+2SexgvN31129iJSkXuiBHdcVJiUAUPHYuxPRwumwbrkY6m+sYi9kIzKt+ZKNNAN4WbnavsbyRBlb
+cIn2E5swqD+sks8AmKivHmg+gFeboLaOf+EqVihIz1Wec1PpbX98R1t2ep7Y/81DD1fIjAWHl6Mq
+TJwjKQuYB01kkJdXZAGPXUQSARR1y2D1YpCkDqfGH2STaB4nenD4INSyhTGo5RV9wwTAibyrIq50
+rnmvBnHTmICQVdHuIhG1gGmDLUAGqfrU3W2QJr9gkICdrTMgIEdd8s73wknaZxZKqfRxnMVQMYIC
+FzCCAhMCAQEwgZAweTELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRQwEgYDVQQHEwtTYW50YSBD
+bGFyYTEaMBgGA1UEChMRSW50ZWwgQ29ycG9yYXRpb24xKzApBgNVBAMTIkludGVsIEV4dGVybmFs
+IEJhc2ljIElzc3VpbmcgQ0EgNEECEzMAAKye+0C3syvSXOcAAAAArJ4wCQYFKw4DAhoFAKBdMBgG
+CSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE4MDgxNjE1NDUwNVowIwYJ
+KoZIhvcNAQkEMRYEFBwJqnY6HkeNyvQ1oYxFjHHzCzylMA0GCSqGSIb3DQEBAQUABIIBAEH8NPbt
+VpTAbbvg5u0MHtZ+GNUHRAmy1Ip7jtBPv+xnHhqcLr7x2QreIc7ali1NC5tdBhlQNcWAvwPnc7u1
+FIM1L5rgPyjZMk6VEmk4rkb3jC+IwsZeRXprrJAwb+7tUwIwVXp57O5Iy0rZm8h0PkVyS69hUD/K
+xU5LKPlrd31NHBGKjmBeLp1QXLvcANWU3EM+CpJfbYu8m131O0yMB570CrASpeCCZz8BiqVUGhBD
++F6KA22tyUXGegpxCZxx+chylN0QPBqsxIf6hoxDLTSN7Yp6/V51cznKMC0YN1WCMs4uch87aqO+
+FL6W5yZRWABU9pW4ixcMtrhBEm2t0jAAAAAAAAA=
 
-  thermal: armada: fix copy-paste error in armada_thermal_probe() (2018-08-01 09:56:12 -0700)
 
-on top of commit 021c91791a5e7e85c567452f1be3e4c2c6cb6063:
-
-  Linux 4.18-rc3 (2018-07-01 16:04:53 -0700)
-
-Specifics:
-- Rework of tsens driver to add support for tsens-v2 (Amit Kucheria)
-- Rework of armada thermal driver to use syscon and multichannel support (Miquel Raynal)
-- Fixes on following drivers: TI SoC, IMX, Exynos, RCar, thermal hwmon
-
-KernelCI bot testing links:
-Full Boot Summary:
-https://kernelci.org/boot/all/job/evalenti/branch/for-kernelci/kernel/v4.18-rc3-34-g84b64de597bc/
-Full Build Summary:
-https://kernelci.org/build/evalenti/branch/for-kernelci/kernel/v4.18-rc3-34-g84b64de597bc/
-
-BR,
-
-Eduardo Valentin
-
-----------------------------------------------------------------
-Amit Kucheria (8):
-      thermal: tsens: Get rid of unused fields in structure
-      dt: thermal: tsens: Document the fallback DT property for v2 of TSENS IP
-      thermal: tsens: Add support to split up register address space into two
-      thermal: tsens: Rename tsens-8996 to tsens-v2 for reuse
-      thermal: tsens: Add generic support for TSENS v2 IP
-      thermal: tsens: Rename variable
-      thermal: tsens: switch from of_iomap() to devm_ioremap_resource()
-      thermal: tsens: Fix negative temperature reporting
-
-Bartlomiej Zolnierkiewicz (1):
-      thermal: ti-soc-thermal: remove dead code
-
-Jean-Christophe Dubois (1):
-      thermal: i.MX: Allow thermal probe to fail gracefully in case of bad calibration.
-
-Krzysztof Kozlowski (1):
-      thermal: samsung: Remove Exynos5440 clock handling left-overs
-
-Marc Zyngier (2):
-      thermal_hwmon: Sanitize attribute name passed to hwmon
-      thermal_hwmon: Pass the originating device down to hwmon_device_register_with_info
-
-Miquel Raynal (19):
-      thermal: armada: add a function that sanitizes the thermal zone name
-      thermal: armada: remove useless register accesses
-      thermal: armada: remove misleading comments
-      thermal: armada: rename the initialization routine
-      thermal: armada: dissociate a380 and cp110 ->init() hooks
-      thermal: armada: average over samples to avoid glitches
-      thermal: armada: convert driver to syscon register accesses
-      thermal: armada: use the resource managed registration helper alternative
-      thermal: armada: add multi-channel sensors support
-      thermal: armada: remove sensors validity from the IP initialization
-      thermal: armada: move validity check out of the read function
-      thermal: armada: get rid of the ->is_valid() pointer
-      dt-bindings: cp110: rename cp110 syscon file
-      dt-bindings: ap806: prepare the syscon file to list other syscons nodes
-      dt-bindings: cp110: prepare the syscon file to list other syscons nodes
-      dt-bindings: ap806: add the thermal node in the syscon file
-      dt-bindings: cp110: update documentation since DT de-duplication
-      dt-bindings: cp110: add the thermal node in the syscon file
-      dt-bindings: thermal: armada: add reference to new bindings
-
-Simon Horman (1):
-      thermal: rcar_thermal: avoid NULL dereference in absence of IRQ resources
-
-Wei Yongjun (1):
-      thermal: armada: fix copy-paste error in armada_thermal_probe()
-
- .../arm/marvell/ap806-system-controller.txt        |  48 +-
- ...controller0.txt => cp110-system-controller.txt} |  61 ++-
- .../devicetree/bindings/thermal/armada-thermal.txt |   5 +
- .../devicetree/bindings/thermal/qcom-tsens.txt     |  31 +-
- drivers/thermal/armada_thermal.c                   | 534 ++++++++++++++++-----
- drivers/thermal/imx_thermal.c                      |   5 +-
- drivers/thermal/qcom/Makefile                      |   2 +-
- drivers/thermal/qcom/tsens-8996.c                  |  84 ----
- drivers/thermal/qcom/tsens-common.c                |  29 +-
- drivers/thermal/qcom/tsens-v2.c                    |  77 +++
- drivers/thermal/qcom/tsens.c                       |   3 +
- drivers/thermal/qcom/tsens.h                       |   8 +-
- drivers/thermal/rcar_thermal.c                     |   2 +-
- drivers/thermal/samsung/exynos_tmu.c               |   5 -
- drivers/thermal/thermal_hwmon.c                    |   3 +-
- drivers/thermal/ti-soc-thermal/dra752-bandgap.h    |  68 ---
- .../thermal/ti-soc-thermal/dra752-thermal-data.c   |  65 ---
- .../thermal/ti-soc-thermal/omap3-thermal-data.c    |   6 -
- .../thermal/ti-soc-thermal/omap4-thermal-data.c    |  10 -
- drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h  |  10 -
- .../thermal/ti-soc-thermal/omap5-thermal-data.c    |  46 +-
- drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h  |  41 --
- drivers/thermal/ti-soc-thermal/ti-bandgap.c        | 370 --------------
- drivers/thermal/ti-soc-thermal/ti-bandgap.h        |  43 +-
- 24 files changed, 649 insertions(+), 907 deletions(-)
- rename Documentation/devicetree/bindings/arm/marvell/{cp110-system-controller0.txt => cp110-system-controller.txt} (85%)
- delete mode 100644 drivers/thermal/qcom/tsens-8996.c
- create mode 100644 drivers/thermal/qcom/tsens-v2.c
+--=-JDsYvsl1RnmrMSQ8kdiR--
