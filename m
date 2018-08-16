@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78286C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F7E0C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C87F21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C87F21473
+	by mail.kernel.org (Postfix) with ESMTP id 3FE6A21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FE6A21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbeHPVmg (ORCPT
+        id S1728517AbeHPVmk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:42:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56094 "EHLO
+        Thu, 16 Aug 2018 17:42:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56102 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728344AbeHPVmf (ORCPT
+        with ESMTP id S1728344AbeHPVmj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:42:35 -0400
+        Thu, 16 Aug 2018 17:42:39 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 386F8CB7;
-        Thu, 16 Aug 2018 18:42:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 42AF4CC4;
+        Thu, 16 Aug 2018 18:42:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 3.18 02/15] root dentries need RCU-delayed freeing
-Date:   Thu, 16 Aug 2018 20:41:39 +0200
-Message-Id: <20180816171633.637791038@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 3.18 03/15] fix mntput/mntput race
+Date:   Thu, 16 Aug 2018 20:41:40 +0200
+Message-Id: <20180816171633.673294381@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171633.546734046@linuxfoundation.org>
 References: <20180816171633.546734046@linuxfoundation.org>
@@ -51,45 +52,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 90bad5e05bcdb0308cfa3d3a60f5c0b9c8e2efb3 upstream.
+commit 9ea0a46ca2c318fcc449c1e6b62a7230a17888f1 upstream.
 
-Since mountpoint crossing can happen without leaving lazy mode,
-root dentries do need the same protection against having their
-memory freed without RCU delay as everything else in the tree.
+mntput_no_expire() does the calculation of total refcount under mount_lock;
+unfortunately, the decrement (as well as all increments) are done outside
+of it, leading to false positives in the "are we dropping the last reference"
+test.  Consider the following situation:
+	* mnt is a lazy-umounted mount, kept alive by two opened files.  One
+of those files gets closed.  Total refcount of mnt is 2.  On CPU 42
+mntput(mnt) (called from __fput()) drops one reference, decrementing component
+	* After it has looked at component #0, the process on CPU 0 does
+mntget(), incrementing component #0, gets preempted and gets to run again -
+on CPU 69.  There it does mntput(), which drops the reference (component #69)
+and proceeds to spin on mount_lock.
+	* On CPU 42 our first mntput() finishes counting.  It observes the
+decrement of component #69, but not the increment of component #0.  As the
+result, the total it gets is not 1 as it should've been - it's 0.  At which
+point we decide that vfsmount needs to be killed and proceed to free it and
+shut the filesystem down.  However, there's still another opened file
+on that filesystem, with reference to (now freed) vfsmount, etc. and we are
+screwed.
 
-It's partially hidden by RCU delay between detaching from the
-mount tree and dropping the vfsmount reference, but the starting
-point of pathwalk can be on an already detached mount, in which
-case umount-caused RCU delay has already passed by the time the
-lazy pathwalk grabs rcu_read_lock().  If the starting point
-happens to be at the root of that vfsmount *and* that vfsmount
-covers the entire filesystem, we get trouble.
+It's not a wide race, but it can be reproduced with artificial slowdown of
+the mnt_get_count() loop, and it should be easier to hit on SMP KVM setups.
 
+Fix consists of moving the refcount decrement under mount_lock; the tricky
+part is that we want (and can) keep the fast case (i.e. mount that still
+has non-NULL ->mnt_ns) entirely out of mount_lock.  All places that zero
+mnt->mnt_ns are dropping some reference to mnt and they call synchronize_rcu()
+before that mntput().  IOW, if mntput() observes (under rcu_read_lock())
+a non-NULL ->mnt_ns, it is guaranteed that there is another reference yet to
+be dropped.
+
+Reported-by: Jann Horn <jannh@google.com>
+Tested-by: Jann Horn <jannh@google.com>
 Fixes: 48a066e72d97 ("RCU'd vsfmounts")
 Cc: stable@vger.kernel.org
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/dcache.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/namespace.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1848,10 +1848,12 @@ struct dentry *d_make_root(struct inode
- 		static const struct qstr name = QSTR_INIT("/", 1);
- 
- 		res = __d_alloc(root_inode->i_sb, &name);
--		if (res)
-+		if (res) {
-+			res->d_flags |= DCACHE_RCUACCESS;
- 			d_instantiate(res, root_inode);
--		else
-+		} else {
- 			iput(root_inode);
-+		}
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1049,12 +1049,22 @@ static DECLARE_DELAYED_WORK(delayed_mntp
+ static void mntput_no_expire(struct mount *mnt)
+ {
+ 	rcu_read_lock();
+-	mnt_add_count(mnt, -1);
+-	if (likely(mnt->mnt_ns)) { /* shouldn't be the last one */
++	if (likely(READ_ONCE(mnt->mnt_ns))) {
++		/*
++		 * Since we don't do lock_mount_hash() here,
++		 * ->mnt_ns can change under us.  However, if it's
++		 * non-NULL, then there's a reference that won't
++		 * be dropped until after an RCU delay done after
++		 * turning ->mnt_ns NULL.  So if we observe it
++		 * non-NULL under rcu_read_lock(), the reference
++		 * we are dropping is not the final one.
++		 */
++		mnt_add_count(mnt, -1);
+ 		rcu_read_unlock();
+ 		return;
  	}
- 	return res;
- }
+ 	lock_mount_hash();
++	mnt_add_count(mnt, -1);
+ 	if (mnt_get_count(mnt)) {
+ 		rcu_read_unlock();
+ 		unlock_mount_hash();
 
 
