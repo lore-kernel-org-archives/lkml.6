@@ -6,188 +6,105 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D4CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F46C04AB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4466121480
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:47:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4466121480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 28A7D21480
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:47:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28A7D21480
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404111AbeHPSqs (ORCPT
+        id S2404127AbeHPSqv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 14:46:48 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:33529 "EHLO pegase1.c-s.fr"
+        Thu, 16 Aug 2018 14:46:51 -0400
+Received: from foss.arm.com ([217.140.101.70]:38080 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727026AbeHPSqs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 14:46:48 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41rrLk1tPsz9tvpy;
-        Thu, 16 Aug 2018 17:47:26 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id D6eoNhWq1Aus; Thu, 16 Aug 2018 17:47:26 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41rrLk1HlFz9tvpn;
-        Thu, 16 Aug 2018 17:47:26 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 58F5F8B7E9;
-        Thu, 16 Aug 2018 17:47:29 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id VnoBVlSTq9-c; Thu, 16 Aug 2018 17:47:29 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 08C118B7F0;
-        Thu, 16 Aug 2018 17:47:27 +0200 (CEST)
-Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
-To:     Jeffrey Lien <Jeff.Lien@wdc.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        David Darrington <david.darrington@wdc.com>,
-        Jeff Furlong <jeff.furlong@wdc.com>
-References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
- <20180810201601.GA80850@gmail.com>
- <SN1PR04MB1824A5944E0428AC84B62886EA3E0@SN1PR04MB1824.namprd04.prod.outlook.com>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <a97dd75a-44fd-8f59-428d-a9723b287de9@c-s.fr>
-Date:   Thu, 16 Aug 2018 17:47:25 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        id S1727026AbeHPSqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 14:46:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 487867A9;
+        Thu, 16 Aug 2018 08:47:33 -0700 (PDT)
+Received: from [10.4.13.23] (en101.emea.arm.com [10.4.13.23])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 581953F5BD;
+        Thu, 16 Aug 2018 08:47:32 -0700 (PDT)
+Subject: Re: [PATCH 08/13] coresight: Add support for CLAIM tag protocol
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        robert.walker@arm.com, mike.leach@arm.com
+References: <1533562915-21558-1-git-send-email-suzuki.poulose@arm.com>
+ <1533562915-21558-9-git-send-email-suzuki.poulose@arm.com>
+ <20180814232053.GA5131@xps15>
+From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <4aff79b4-593e-a19b-5e3f-de2a6d5bacb7@arm.com>
+Date:   Thu, 16 Aug 2018 16:47:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <SN1PR04MB1824A5944E0428AC84B62886EA3E0@SN1PR04MB1824.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180814232053.GA5131@xps15>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Don't be so sure that slice by 16 provides the best performance.
-
-Some time ago, I did the comparison for CRC32 between slice by 4 and 
-slice by 8 (as included in the kernel), and the result is the following 
-on an mpc8xx (powerpc/32)
-
-With CONFIG_CRC32_SLICEBY8:
-[ 1.109204] crc32: CRC_LE_BITS = 64, CRC_BE BITS = 64
-[ 1.114401] crc32: self tests passed, processed 225944 bytes in 15118910 
-nsec
-[ 1.130655] crc32c: CRC_LE_BITS = 64
-[ 1.134235] crc32c: self tests passed, processed 225944 bytes in 4479879 
-nsec
-
-With CONFIG_CRC32_SLICEBY4:
-[ 1.097129] crc32: CRC_LE_BITS = 32, CRC_BE BITS = 32
-[ 1.101878] crc32: self tests passed, processed 225944 bytes in 8616242 nsec
-[ 1.116298] crc32c: CRC_LE_BITS = 32
-[ 1.119607] crc32c: self tests passed, processed 225944 bytes in 3289576 
-nsec
-
-As you can see, slice by 4 is better than slice by 8 on that CPU.
-
-So I'm sure it is worth doing the test for CRC16 as well.
-
-Christophe
-
-Le 16/08/2018 à 16:02, Jeffrey Lien a écrit :
-> Eric,
-> We did not test the slice by 4 or 8 tables.  I'm not sure of  the value of doing that since the slice by 16 will provide the best performance gain.   If I'm missing anything here, please let me know.
+On 15/08/18 00:20, Mathieu Poirier wrote:
+> On Mon, Aug 06, 2018 at 02:41:50PM +0100, Suzuki K Poulose wrote:
+>> Add support for the CLAIM tag protocol for negotiating the
+>> device ownership with other agents trying to use the coresight
+>> component (internal vs. external). The Coresight architecture
+>> specifies CLAIM tags (managed via CLAIMSET CLAIMCLR registers)
+>> to negotiate the ownership of the device. PSCI recommends the
+>> reservation of the bits in CLAIM tags for self-hosted and external
+>> debug use. This patch implements the protocol for claiming
+>> the devices before they are actually used.
 > 
-> I'm working on a new version of the patch based on the feedback from others and will also change the pointer variables to start with p and fix the indenting you mentioned below in the new version of the patch.
+> I think the first paragraph of the cover letter (minus the reference to the
+> documentation since you've included it below) would be perfect instead of the
+> above.
 > 
-> Thanks
-> 
-> Jeff Lien
-> 
-> -----Original Message-----
-> From: Eric Biggers [mailto:ebiggers@kernel.org]
-> Sent: Friday, August 10, 2018 3:16 PM
-> To: Jeffrey Lien <Jeff.Lien@wdc.com>
-> Cc: linux-kernel@vger.kernel.org; linux-crypto@vger.kernel.org; linux-block@vger.kernel.org; linux-scsi@vger.kernel.org; herbert@gondor.apana.org.au; tim.c.chen@linux.intel.com; martin.petersen@oracle.com; David Darrington <david.darrington@wdc.com>; Jeff Furlong <jeff.furlong@wdc.com>
-> Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
-> 
-> On Fri, Aug 10, 2018 at 02:12:11PM -0500, Jeff Lien wrote:
->> This patch provides a performance improvement for the CRC16
->> calculations done in read/write workloads using the T10 Type 1/2/3
->> guard field.  For example, today with sequential write workloads (one
->> thread/CPU of IO) we consume 100% of the CPU because of the CRC16
->> computation bottleneck.  Today's block devices are considerably
->> faster, but the CRC16 calculation prevents folks from utilizing the
->> throughput of such devices.  To speed up this calculation and expose
->> the block device throughput, we slice the old single byte for loop into a 16 byte for loop, with a larger CRC table to match.  The result has shown 5x performance improvements on various big endian and little endian systems running the 4.18.0 kernel version.
 >>
->> FIO Sequential Write, 64K Block Size, Queue Depth 64
->> BE Base Kernel:        bw=201.5 MiB/s
->> BE Modified CRC Calc:  bw=968.1 MiB/s
->> 4.80x performance improvement
->>
->> LE Base Kernel:        bw=357 MiB/s
->> LE Modified CRC Calc:  bw=1964 MiB/s
->> 5.51x performance improvement
->>
->> FIO Sequential Read, 64K Block Size, Queue Depth 64
->> BE Base Kernel:        bw=611.2 MiB/s
->> BE Modified CRC calc:  bw=684.9 MiB/s
->> 1.12x performance improvement
->>
->> LE Base Kernel:        bw=797 MiB/s
->> LE Modified CRC Calc:  bw=2730 MiB/s
->> 3.42x performance improvement
+>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-priv.h |  7 +++
+>>   drivers/hwtracing/coresight/coresight.c      | 85 ++++++++++++++++++++++++++++
+>>   include/linux/coresight.h                    | 20 +++++++
+>>   3 files changed, 112 insertions(+)
+
+>> +void coresight_disclaim_device_unlocked(void __iomem *base)
+>> +{
+>> +
+>> +	if (coresight_is_claimed_self_hosted(base))
+>> +		coresight_clear_claim_tags(base);
+>> +	else
+>> +		/*
+>> +		 * Either we or the external agent doesn't follow
+>> +		 * the protocol.
+>> +		 */
+>> +		WARN_ON_ONCE(1);
 > 
-> Did you also test the slice-by-4 (requires 2048-byte table) and slice-by-8 (requires 4096-byte table) methods?  Your proposal is slice-by-16 (requires 8192-byte table); the original was slice-by-1 (requires 512-byte table).
+> When writing "... or the external agent doesn't follow the protocol", I deduce
+> that an external agent would have trampled our claim tag.  I think this needs
+> to be said explicitly in the comment.
 > 
->>   __u16 crc_t10dif_generic(__u16 crc, const unsigned char *buffer,
->> size_t len)  {
->> -	unsigned int i;
->> +	const __u8 *i = (const __u8 *)buffer;
->> +	const __u8 *i_end = i + len;
->> +	const __u8 *i_last16 = i + (len / 16 * 16);
+
+>> +static inline int coresight_claim_device_unlocked(void __iomem *base)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>> +static inline int coresight_claim_device(void __iomem *base)
+>> +{
+>> +	return 0;
+>> +}
 > 
-> 'i' is normally a loop counter, not a pointer.
-> Use 'p', 'p_end', and 'p_last16'.
-> 
->>   
->> -	for (i = 0 ; i < len ; i++)
->> -		crc = (crc << 8) ^ t10_dif_crc_table[((crc >> 8) ^ buffer[i]) & 0xff];
->> +	for (; i < i_last16; i += 16) {
->> +		crc = t10_dif_crc_table[15][i[0] ^ (__u8)(crc >>  8)] ^
->> +		t10_dif_crc_table[14][i[1] ^ (__u8)(crc >>  0)] ^
->> +		t10_dif_crc_table[13][i[2]] ^
->> +		t10_dif_crc_table[12][i[3]] ^
->> +		t10_dif_crc_table[11][i[4]] ^
->> +		t10_dif_crc_table[10][i[5]] ^
->> +		t10_dif_crc_table[9][i[6]] ^
->> +		t10_dif_crc_table[8][i[7]] ^
->> +		t10_dif_crc_table[7][i[8]] ^
->> +		t10_dif_crc_table[6][i[9]] ^
->> +		t10_dif_crc_table[5][i[10]] ^
->> +		t10_dif_crc_table[4][i[11]] ^
->> +		t10_dif_crc_table[3][i[12]] ^
->> +		t10_dif_crc_table[2][i[13]] ^
->> +		t10_dif_crc_table[1][i[14]] ^
->> +		t10_dif_crc_table[0][i[15]];
->> +	}
-> 
-> Please indent this properly.
-> 
-> 		crc = t10_dif_crc_table[15][i[0] ^ (__u8)(crc >>  8)] ^
-> 		      t10_dif_crc_table[14][i[1] ^ (__u8)(crc >>  0)] ^
-> 		      t10_dif_crc_table[13][i[2]] ^
-> 		      t10_dif_crc_table[12][i[3]] ^
-> 		      t10_dif_crc_table[11][i[4]] ^
-> 		      ...
-> 
-> - Eric
-> 
+> Returning 0 would give a caller the impression the operation has succeeded when
+> in fact it didn't.  I think we should return an error code here.
+
+
+Agreed on all points, will respin.
+
+Suzuki
