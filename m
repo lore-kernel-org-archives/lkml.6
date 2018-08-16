@@ -6,69 +6,193 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA24C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:35:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEB3C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:41:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3843521480
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:35:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3843521480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id F0AF320C51
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:41:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0AF320C51
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392034AbeHPSeg (ORCPT
+        id S2392034AbeHPSkd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 14:34:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41128 "EHLO mail.kernel.org"
+        Thu, 16 Aug 2018 14:40:33 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:50688 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726347AbeHPSeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 14:34:36 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB90220C51;
-        Thu, 16 Aug 2018 15:35:22 +0000 (UTC)
-Date:   Thu, 16 Aug 2018 11:35:21 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Tobias Waldekranz <tobias@waldekranz.com>
-Cc:     <netdev@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: Re: [PATCH v2] net: phy: add tracepoints
-Message-ID: <20180816113521.55637a71@gandalf.local.home>
-In-Reply-To: <20180816152452.7834-1-tobias@waldekranz.com>
-References: <20180816152452.7834-1-tobias@waldekranz.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1731502AbeHPSkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 14:40:33 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41rrCY5PdNz9tvpw;
+        Thu, 16 Aug 2018 17:41:13 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 2LkHkUtVZDDl; Thu, 16 Aug 2018 17:41:13 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41rrCY4rtlz9tvpn;
+        Thu, 16 Aug 2018 17:41:13 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2CE5F8B7EF;
+        Thu, 16 Aug 2018 17:41:17 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id WdJh27FOKZfz; Thu, 16 Aug 2018 17:41:17 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 73B6B8B7E9;
+        Thu, 16 Aug 2018 17:41:16 +0200 (CEST)
+Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
+To:     dgilbert@interlog.com, Jeffrey Lien <Jeff.Lien@wdc.com>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        David Darrington <david.darrington@wdc.com>,
+        Jeff Furlong <jeff.furlong@wdc.com>,
+        Joe Perches <joe@perches.com>
+References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
+ <20180810201601.GA80850@gmail.com>
+ <SN1PR04MB1824A5944E0428AC84B62886EA3E0@SN1PR04MB1824.namprd04.prod.outlook.com>
+ <ba74a9d1-cccc-913a-927a-82e561afef3d@interlog.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <7f1b5ca8-cd89-71cc-21bb-5a058bc1e908@c-s.fr>
+Date:   Thu, 16 Aug 2018 17:41:13 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <ba74a9d1-cccc-913a-927a-82e561afef3d@interlog.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Aug 2018 17:24:48 +0200
-Tobias Waldekranz <tobias@waldekranz.com> wrote:
+Hi,
 
-> Two tracepoints for now:
+Please include your new patch as plain text inside the mail, not as a 
+MIME attachment. Otherwise it is not downloadable from 
+https://patchwork.kernel.org/patch/10563093/
+
+Christophe
+
+Le 16/08/2018 à 16:22, Douglas Gilbert a écrit :
+> Hi,
+> Rather than present this formerly as an alternate patch, attached is a
+> clean-up of my patch which uses the variable size table proposed by
+> Joe Perches <joe@perches.com> and is based on the original patch that
+> started this thread.
 > 
->    * `phy_interrupt` Pretty self-explanatory.
+> Doug Gilbert
 > 
->    * `phy_state_change` Whenever the PHY's state machine is run, trace
->      the old and the new state.
+> On 2018-08-16 10:02 AM, Jeffrey Lien wrote:
+>> Eric,
+>> We did not test the slice by 4 or 8 tables.  I'm not sure of  the 
+>> value of doing that since the slice by 16 will provide the best 
+>> performance gain.   If I'm missing anything here, please let me know.
+>>
+>> I'm working on a new version of the patch based on the feedback from 
+>> others and will also change the pointer variables to start with p and 
+>> fix the indenting you mentioned below in the new version of the patch.
+>>
+>> Thanks
+>>
+>> Jeff Lien
+>>
+>> -----Original Message-----
+>> From: Eric Biggers [mailto:ebiggers@kernel.org]
+>> Sent: Friday, August 10, 2018 3:16 PM
+>> To: Jeffrey Lien <Jeff.Lien@wdc.com>
+>> Cc: linux-kernel@vger.kernel.org; linux-crypto@vger.kernel.org; 
+>> linux-block@vger.kernel.org; linux-scsi@vger.kernel.org; 
+>> herbert@gondor.apana.org.au; tim.c.chen@linux.intel.com; 
+>> martin.petersen@oracle.com; David Darrington 
+>> <david.darrington@wdc.com>; Jeff Furlong <jeff.furlong@wdc.com>
+>> Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
+>>
+>> On Fri, Aug 10, 2018 at 02:12:11PM -0500, Jeff Lien wrote:
+>>> This patch provides a performance improvement for the CRC16
+>>> calculations done in read/write workloads using the T10 Type 1/2/3
+>>> guard field.  For example, today with sequential write workloads (one
+>>> thread/CPU of IO) we consume 100% of the CPU because of the CRC16
+>>> computation bottleneck.  Today's block devices are considerably
+>>> faster, but the CRC16 calculation prevents folks from utilizing the
+>>> throughput of such devices.  To speed up this calculation and expose
+>>> the block device throughput, we slice the old single byte for loop 
+>>> into a 16 byte for loop, with a larger CRC table to match.  The 
+>>> result has shown 5x performance improvements on various big endian 
+>>> and little endian systems running the 4.18.0 kernel version.
+>>>
+>>> FIO Sequential Write, 64K Block Size, Queue Depth 64
+>>> BE Base Kernel:        bw=201.5 MiB/s
+>>> BE Modified CRC Calc:  bw=968.1 MiB/s
+>>> 4.80x performance improvement
+>>>
+>>> LE Base Kernel:        bw=357 MiB/s
+>>> LE Modified CRC Calc:  bw=1964 MiB/s
+>>> 5.51x performance improvement
+>>>
+>>> FIO Sequential Read, 64K Block Size, Queue Depth 64
+>>> BE Base Kernel:        bw=611.2 MiB/s
+>>> BE Modified CRC calc:  bw=684.9 MiB/s
+>>> 1.12x performance improvement
+>>>
+>>> LE Base Kernel:        bw=797 MiB/s
+>>> LE Modified CRC Calc:  bw=2730 MiB/s
+>>> 3.42x performance improvement
+>>
+>> Did you also test the slice-by-4 (requires 2048-byte table) and 
+>> slice-by-8 (requires 4096-byte table) methods?  Your proposal is 
+>> slice-by-16 (requires 8192-byte table); the original was slice-by-1 
+>> (requires 512-byte table).
+>>
+>>>   __u16 crc_t10dif_generic(__u16 crc, const unsigned char *buffer,
+>>> size_t len)  {
+>>> -    unsigned int i;
+>>> +    const __u8 *i = (const __u8 *)buffer;
+>>> +    const __u8 *i_end = i + len;
+>>> +    const __u8 *i_last16 = i + (len / 16 * 16);
+>>
+>> 'i' is normally a loop counter, not a pointer.
+>> Use 'p', 'p_end', and 'p_last16'.
+>>
+>>> -    for (i = 0 ; i < len ; i++)
+>>> -        crc = (crc << 8) ^ t10_dif_crc_table[((crc >> 8) ^ 
+>>> buffer[i]) & 0xff];
+>>> +    for (; i < i_last16; i += 16) {
+>>> +        crc = t10_dif_crc_table[15][i[0] ^ (__u8)(crc >>  8)] ^
+>>> +        t10_dif_crc_table[14][i[1] ^ (__u8)(crc >>  0)] ^
+>>> +        t10_dif_crc_table[13][i[2]] ^
+>>> +        t10_dif_crc_table[12][i[3]] ^
+>>> +        t10_dif_crc_table[11][i[4]] ^
+>>> +        t10_dif_crc_table[10][i[5]] ^
+>>> +        t10_dif_crc_table[9][i[6]] ^
+>>> +        t10_dif_crc_table[8][i[7]] ^
+>>> +        t10_dif_crc_table[7][i[8]] ^
+>>> +        t10_dif_crc_table[6][i[9]] ^
+>>> +        t10_dif_crc_table[5][i[10]] ^
+>>> +        t10_dif_crc_table[4][i[11]] ^
+>>> +        t10_dif_crc_table[3][i[12]] ^
+>>> +        t10_dif_crc_table[2][i[13]] ^
+>>> +        t10_dif_crc_table[1][i[14]] ^
+>>> +        t10_dif_crc_table[0][i[15]];
+>>> +    }
+>>
+>> Please indent this properly.
+>>
+>>         crc = t10_dif_crc_table[15][i[0] ^ (__u8)(crc >>  8)] ^
+>>               t10_dif_crc_table[14][i[1] ^ (__u8)(crc >>  0)] ^
+>>               t10_dif_crc_table[13][i[2]] ^
+>>               t10_dif_crc_table[12][i[3]] ^
+>>               t10_dif_crc_table[11][i[4]] ^
+>>               ...
+>>
+>> - Eric
+>>
 > 
-> Signed-off-by: Tobias Waldekranz <tobias@waldekranz.com>
-> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
-> v1 -> v2:
->    * Actually include the entire patch, based on current net-next.
->    * Pretty print the PHY's state according to Steven's suggestion.
-
-Cool!
-
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
-> ---
