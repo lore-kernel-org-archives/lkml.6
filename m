@@ -2,99 +2,124 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09DCAC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40996C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:33:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B283720658
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:29:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B283720658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id DBF7A2147E
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:33:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBF7A2147E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391679AbeHPQ2N (ORCPT
+        id S2391687AbeHPQbh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 12:28:13 -0400
-Received: from smtp20.cstnet.cn ([159.226.251.20]:50538 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727244AbeHPQ2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 12:28:12 -0400
-Received: from [172.20.20.131] (unknown [182.150.46.145])
-        by APP-10 (Coremail) with SMTP id tACowACXYu0qfHVbIyTNAQ--.17029S2;
-        Thu, 16 Aug 2018 21:29:15 +0800 (CST)
-From:   Pu Wen <puwen@hygon.cn>
-Subject: Re: [PATCH v3 13/17] x86/xen: enable Hygon support to Xen
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        thomas.lendacky@amd.com, bp@alien8.de, pbonzini@redhat.com,
-        JBeulich@suse.com
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-References: <cover.1533989492.git.puwen@hygon.cn>
- <2747ad959f07459000f2693a98d237e2b3149ca1.1533989493.git.puwen@hygon.cn>
- <b32887e0-df6e-fb31-d9cd-6b31961c9c2b@oracle.com>
- <0aa44410-47ec-27e2-10d9-c0dc5d2e457a@suse.com>
- <150f6a8d-33e8-a84d-f34b-17bdb7264ebe@oracle.com>
-Message-ID: <16c21c53-2a03-d5fe-9232-8c0e377566a7@hygon.cn>
-Date:   Thu, 16 Aug 2018 21:29:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 16 Aug 2018 12:31:37 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36810 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725901AbeHPQbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 12:31:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9C6A80D;
+        Thu, 16 Aug 2018 06:32:57 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 181393F5BC;
+        Thu, 16 Aug 2018 06:32:54 -0700 (PDT)
+Date:   Thu, 16 Aug 2018 14:32:49 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v3 03/14] sched/core: uclamp: add CPU's clamp groups
+ accounting
+Message-ID: <20180816133249.GA2964@e110439-lin>
+References: <20180806163946.28380-1-patrick.bellasi@arm.com>
+ <20180806163946.28380-4-patrick.bellasi@arm.com>
+ <a24def9b-57bb-d072-5064-0421076d2e43@arm.com>
+ <20180814164905.GG2605@e110439-lin>
+ <7c45c1a8-24cb-6798-5b6f-3b5dfc9b490d@arm.com>
+ <20180815105428.GA7388@e110439-lin>
+ <ccd9c53f-55f7-a285-39eb-4303888dafcd@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <150f6a8d-33e8-a84d-f34b-17bdb7264ebe@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: tACowACXYu0qfHVbIyTNAQ--.17029S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKF18Gw1kGr1rWw43Gr4kJFb_yoWDGFbE9F
-        WUCr1Uu3yvv3W0qan5Gr15ArsxJrsYkrWjgFyjyFWUAFW3A345GF13KrWvkr18twsxGrnI
-        kwn2kws8K3ya9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUb38YjsxI4VWkCwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
-        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
-        cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z2
-        80aVCY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4UJVWxJr
-        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7
-        Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
-        0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
-        17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
-        C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI
-        42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
-        evJa73UjIFyTuYvjxUzgAwUUUUU
-X-Originating-IP: [182.150.46.145]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ccd9c53f-55f7-a285-39eb-4303888dafcd@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/12 21:26, Boris Ostrovsky wrote:
-> On 08/12/2018 04:55 AM, Juergen Gross wrote:
->> On 11/08/18 16:34, Boris Ostrovsky wrote:
->>> On 08/11/2018 09:29 AM, Pu Wen wrote:
->>>>   bool pmu_msr_read(unsigned int msr, uint64_t *val, int *err)
->>>>   {
->>>> -	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
->>>> +	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
->>>> +	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
->>>
->>> 'if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)' please.
->> Really? Xen supports Centaur, too.
+Hi Dietmar!
+
+On 15-Aug 12:59, Dietmar Eggemann wrote:
+> On 08/15/2018 12:54 PM, Patrick Bellasi wrote:
+> >On 15-Aug 11:37, Dietmar Eggemann wrote:
+> >>On 08/14/2018 06:49 PM, Patrick Bellasi wrote:
+
+[...]
+
+> >>If this is only for testing/debugging, I would suggest a simple one line
+> >>BUG_ON()
+> >
+> >These are (eventually) considered as recoverable errors... thus,
+> >AFAIK, using BUG_ON is overkilling and discouraged:
+> >   https://elixir.bootlin.com/linux/latest/source/include/asm-generic/bug.h#L42
 > 
-> VPMU doesn't --- hypervisor will not initialize it. Besides, the
-> existing code will steer non-AMD execution to Intel, which is not right
-> either.
+> Not sure about that. If this refcounting is out of sync, that's indicating a
+> serious issue here for me which should be fixed.
+
+Well, refconting seems quite ok to me, we always inc/dec under RQ
+locking and it's a per-CPU variable.
+
+The warning is there to report issues on further testing as well as to
+be safe with respect to possible future modifications of the code.
+
+> >>You find CONFIG_SCHED_DEBUG=y in production kernels as well.
+> >
+> >AFAIK, that setting is discouraged for production kernels...
+> >Moreover, it's still better to WARN sometimes on a production kernel
+> >the crash the device, isnt't it?
 > 
-> I'll add a check to bail if VPMU is not initialized properly, we seem to
-> ignore xen_pmu_init() failures. Which, BTW, makes this patch rather
-> pointless until there is support for Hygon Xen.
+> IMHO, if this is something which should not happen at all, a BUG_ON() is the
+> right thing to do here.
 
-So should it still need to test vendor Hygon here or wait for your check
-done?
+I don't agree on that. I agree it should not happen but since it's a
+recoverable error it think we should not panic.
 
-Thanks,
-Pu Wen
+There are really few BUG_ON() in core.c and they are all for much more
+serious issues than a (eventually) broken refcount.
 
+IMHO instead an (unlikely) inconsistent refcont for an "optional
+optimization" on "frequency selection" is not such a critical
+failure worth a device crash.
+
+> And you get the call stack to investigate why it hit.
+
+We can always add a stack dump if we notice the warning.
+
+But, since we do not agree on that point, I would say we should better
+wait for what the maintainers prefers.
+
+Best,
+Patrick
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
