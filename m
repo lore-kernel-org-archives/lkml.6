@@ -2,217 +2,202 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8610DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 05:04:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7470CC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 05:06:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33FA6214C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 05:04:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33FA6214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 363AB20E20
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 05:06:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 363AB20E20
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388111AbeHPIAP (ORCPT
+        id S2388213AbeHPICI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 04:00:15 -0400
-Received: from mga18.intel.com ([134.134.136.126]:58350 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726051AbeHPIAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 04:00:14 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2018 22:04:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,246,1531810800"; 
-   d="gz'50?scan'50,208,50";a="75749860"
-Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by orsmga003.jf.intel.com with ESMTP; 15 Aug 2018 22:04:10 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1fqAS9-000J5n-Nu; Thu, 16 Aug 2018 13:04:09 +0800
-Date:   Thu, 16 Aug 2018 13:01:17 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     kbuild-all@01.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, kernel-hardening@lists.openwall.com,
-        daniel@iogearbox.net, jannh@google.com, keescook@chromium.org,
-        kristen@linux.intel.com, dave.hansen@intel.com,
-        arjan@linux.intel.com, Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: Re: [PATCH v3 1/3] vmalloc: Add __vmalloc_node_try_addr function
-Message-ID: <201808161238.TzQpjorB%fengguang.wu@intel.com>
-References: <1534365020-18943-2-git-send-email-rick.p.edgecombe@intel.com>
+        Thu, 16 Aug 2018 04:02:08 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:56131 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbeHPICH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 04:02:07 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fqAU9-00057a-K7; Wed, 15 Aug 2018 23:06:13 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fqAU8-00053H-7r; Wed, 15 Aug 2018 23:06:13 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     David Howells <dhowells@redhat.com>
+Cc:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        sfrench@samba.org, steved@redhat.com, viro@zeniv.linux.org.uk,
+        torvalds@linux-foundation.org,
+        "Eric W. Biederman" <ebiederm@redhat.com>,
+        linux-api@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net
+References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+        <17763.1534350685@warthog.procyon.org.uk>
+Date:   Thu, 16 Aug 2018 00:06:06 -0500
+In-Reply-To: <17763.1534350685@warthog.procyon.org.uk> (David Howells's
+        message of "Wed, 15 Aug 2018 17:31:25 +0100")
+Message-ID: <87pnyiew8x.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="azLHFNyN32YCQGCU"
-Content-Disposition: inline
-In-Reply-To: <1534365020-18943-2-git-send-email-rick.p.edgecombe@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-XM-SPF: eid=1fqAU8-00053H-7r;;;mid=<87pnyiew8x.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+zH+uRQ/4nj6EqW67JAQvHVTeYFxwggYo=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: Should we split the network filesystem setup into two phases?
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+David Howells <dhowells@redhat.com> writes:
 
---azLHFNyN32YCQGCU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Having just re-ported NFS on top of the new mount API stuff, I find that I
+> don't really like the idea of superblocks being separated by communication
+> parameters - especially when it might seem reasonable to be able to adjust
+> those parameters.
+>
+> Does it make sense to abstract out the remote peer and allow (a) that to be
+> configured separately from any superblocks using it and (b) that to be used to
+> create superblocks?
+>
+> Note that what a 'remote peer' is would be different for different
+> filesystems:
+>
+>  (*) For NFS, it would probably be a named server, with address(es) attached
+>      to the name.  In lieu of actually having a name, the initial IP address
+>      could be used.
+>
+>  (*) For CIFS, it would probably be a named server.  I'm not sure if CIFS
+>      allows an abstraction for a share that can move about inside a domain.
+>
+>  (*) For AFS, it would be a cell, I think, where the actual fileserver(s) used
+>      are a matter of direction from the Volume Location server.
+>
+>  (*) For 9P and Ceph, I don't really know.
+>
+> What could be configured?  Well, addresses, ports, timeouts.  Maybe protocol
+> level negotiation - though not being able to explicitly specify, say, the
+> particular version and minorversion on an NFS share would be problematic for
+> backward compatibility.
+>
+> One advantage it could give us is that it might make it easier if someone asks
+> for server X to query userspace in some way for the default parameters for X
+> are.
+>
+> What might this look like in terms of userspace?  Well, we could overload the
+> new mount API:
+>
+> 	peer1 = fsopen("nfs", FSOPEN_CREATE_PEER);
+> 	fsconfig(peer1, FSCONFIG_SET_NS, "net", NULL, netns_fd);
+> 	fsconfig(peer1, FSCONFIG_SET_STRING, "peer_name", "server.home");
+> 	fsconfig(peer1, FSCONFIG_SET_STRING, "vers", "4.2");
+> 	fsconfig(peer1, FSCONFIG_SET_STRING, "address", "tcp:192.168.1.1");
+> 	fsconfig(peer1, FSCONFIG_SET_STRING, "address", "tcp:192.168.1.2");
+> 	fsconfig(peer1, FSCONFIG_SET_STRING, "timeo", "122");
+> 	fsconfig(peer1, FSCONFIG_CMD_SET_UP_PEER, NULL, NULL, 0);
+>
+> 	peer2 = fsopen("nfs", FSOPEN_CREATE_PEER);
+> 	fsconfig(peer2, FSCONFIG_SET_NS, "net", NULL, netns_fd);
+> 	fsconfig(peer2, FSCONFIG_SET_STRING, "peer_name", "server2.home");
+> 	fsconfig(peer2, FSCONFIG_SET_STRING, "vers", "3");
+> 	fsconfig(peer2, FSCONFIG_SET_STRING, "address", "tcp:192.168.1.3");
+> 	fsconfig(peer2, FSCONFIG_SET_STRING, "address", "udp:192.168.1.4+6001");
+> 	fsconfig(peer2, FSCONFIG_CMD_SET_UP_PEER, NULL, NULL, 0);
+>
+> 	fs = fsopen("nfs", 0);
+> 	fsconfig(fs, FSCONFIG_SET_PEER, "peer.1", NULL, peer1);
+> 	fsconfig(fs, FSCONFIG_SET_PEER, "peer.2", NULL, peer2);
+> 	fsconfig(fs, FSCONFIG_SET_STRING, "source", "/home/dhowells", 0);
+> 	m = fsmount(fs, 0, 0);
+>
+> [Note that Eric's oft-repeated point about the 'creation' operation altering
+>  established parameters still stands here.]
+>
+> You could also then reopen it for configuration, maybe by:
+>
+> 	peer = fspick(AT_FDCWD, "/mnt", FSPICK_PEER);
+>
+> or:
+>
+> 	peer = fspick(AT_FDCWD, "nfs:server.home", FSPICK_PEER_BY_NAME);
+>
+> though it might be better to give it its own syscall:
+>
+> 	peer = fspeer("nfs", "server.home", O_CLOEXEC);
+> 	fsconfig(peer, FSCONFIG_SET_NS, "net", NULL, netns_fd);
+> 	...
+> 	fsconfig(peer, FSCONFIG_CMD_SET_UP_PEER, NULL, NULL, 0);
+>
+> In terms of alternative interfaces, I'm not sure how easy it would be to make
+> it like cgroups where you go and create a dir in a special filesystem, say,
+> "/sys/peers/nfs", because the peers records and names would have to be network
+> namespaced.  Also, it might make it more difficult to use to create a root fs.
+>
+> On the other hand, being able to adjust the peer configuration by:
+>
+> 	echo 71 >/sys/peers/nfs/server.home/timeo
+>
+> does have a certain appeal.
+>
+> Also, netlink might be the right option, but I'm not sure how you'd pin the
+> resultant object whilst you make use of it.
+>
+> A further thought is that is it worth making this idea more general and
+> encompassing non-network devices also?  This would run into issues of some
+> logical sources being visible across namespaces and but not others.
 
-Hi Rick,
+Even network filesystems are going to have challenges of filesystems
+being visible in some network namespaces and not others.  As some
+filesystems will be visible on the internet and some filesystems will
+only be visible on the appropriate local network.  Network namespaces
+are sometimes used to deal with the case of local networks with
+overlapping ip addresses.
 
-Thank you for the patch! Yet something to improve:
+I think you are proposing a model for network filesystems that is
+essentially the same situation where we are with most block devices
+filesystems today.  Where some parameters identitify the local
+filesystem instance and some parameters identify how the kernel
+interacts with that filesystem instance.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v4.18 next-20180815]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-url:    https://github.com/0day-ci/linux/commits/Rick-Edgecombe/KASLR-feature-to-randomize-each-loadable-module/20180816-120750
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+For system efficiency there is a strong argument for having the fewest
+number of filesystem instances we can.  Otherwise we will be caching the
+same data twice and wasting space in RAM etc.
 
-All error/warnings (new ones prefixed by >>):
 
->> mm/vmalloc.c:1713:13: warning: 'pvm_find_next_prev' used but never defined
-    static bool pvm_find_next_prev(unsigned long end,
-                ^~~~~~~~~~~~~~~~~~
---
-   mm/vmalloc.o: In function `__vmalloc_node_try_addr':
->> vmalloc.c:(.text+0x12b5): undefined reference to `pvm_find_next_prev'
+So I like the idea.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
---azLHFNyN32YCQGCU
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+At least for devpts we always create a new filesystem instance every
+time mount(2) is called.  NFS seems to have the option to create a new
+filesystem instance every time mount(2) is called as well, (even if the
+filesystem parameters are the same).  And depending on the case I can
+see the attraction for other filesystems as well.
 
-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
+So I don't think we can completely abandon the option for filesystems
+to always create a new filesystem instance when mount(8) is called.
 
---azLHFNyN32YCQGCU--
+
+
+I most definitely support thinking this through and figuring out how it
+best make sense for the new filesystem API to create new filesystem
+instances or fail to create new filesystems instances.
+
+
+Eric
+
