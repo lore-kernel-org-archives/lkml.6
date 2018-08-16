@@ -6,37 +6,42 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13535C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C74EC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C72FC2147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C72FC2147D
+	by mail.kernel.org (Postfix) with ESMTP id 1641421473
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:44:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1641421473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729675AbeHPVom (ORCPT
+        id S1729714AbeHPVop (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:44:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56532 "EHLO
+        Thu, 16 Aug 2018 17:44:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56552 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729448AbeHPVol (ORCPT
+        with ESMTP id S1729683AbeHPVoo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:44:41 -0400
+        Thu, 16 Aug 2018 17:44:44 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B7EA6CEB;
-        Thu, 16 Aug 2018 18:44:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C635BD02;
+        Thu, 16 Aug 2018 18:44:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mhocko@suse.com,
-        akpm@linux-foundation.org, hpa@zytor.com, cpandya@codeaurora.org,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 4.9 03/15] x86/mm: Disable ioremap free page handling on x86-PAE
-Date:   Thu, 16 Aug 2018 20:41:56 +0200
-Message-Id: <20180816171626.039847305@linuxfoundation.org>
+        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sami Tolvanen <samitolvanen@google.com>
+Subject: [PATCH 4.9 04/15] kasan: dont emit builtin calls when sanitization is off
+Date:   Thu, 16 Aug 2018 20:41:57 +0200
+Message-Id: <20180816171626.307647594@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180816171625.340082081@linuxfoundation.org>
 References: <20180816171625.340082081@linuxfoundation.org>
@@ -53,74 +58,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Toshi Kani <toshi.kani@hpe.com>
+From: Andrey Konovalov <andreyknvl@google.com>
 
-commit f967db0b9ed44ec3057a28f3b28efc51df51b835 upstream.
+commit 0e410e158e5baa1300bdf678cea4f4e0cf9d8b94 upstream.
 
-ioremap() supports pmd mappings on x86-PAE.  However, kernel's pmd
-tables are not shared among processes on x86-PAE.  Therefore, any
-update to sync'd pmd entries need re-syncing.  Freeing a pte page
-also leads to a vmalloc fault and hits the BUG_ON in vmalloc_sync_one().
+With KASAN enabled the kernel has two different memset() functions, one
+with KASAN checks (memset) and one without (__memset).  KASAN uses some
+macro tricks to use the proper version where required.  For example
+memset() calls in mm/slub.c are without KASAN checks, since they operate
+on poisoned slab object metadata.
 
-Disable free page handling on x86-PAE.  pud_free_pmd_page() and
-pmd_free_pte_page() simply return 0 if a given pud/pmd entry is present.
-This assures that ioremap() does not update sync'd pmd entries at the
-cost of falling back to pte mappings.
+The issue is that clang emits memset() calls even when there is no
+memset() in the source code.  They get linked with improper memset()
+implementation and the kernel fails to boot due to a huge amount of KASAN
+reports during early boot stages.
 
-Fixes: 28ee90fe6048 ("x86/mm: implement free pmd/pte page interfaces")
-Reported-by: Joerg Roedel <joro@8bytes.org>
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: mhocko@suse.com
-Cc: akpm@linux-foundation.org
-Cc: hpa@zytor.com
-Cc: cpandya@codeaurora.org
-Cc: linux-mm@kvack.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: stable@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
+The solution is to add -fno-builtin flag for files with KASAN_SANITIZE :=
+n marker.
+
+Link: http://lkml.kernel.org/r/8ffecfffe04088c52c42b92739c2bd8a0bcb3f5e.1516384594.git.andreyknvl@google.com
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+Acked-by: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
 Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20180627141348.21777-2-toshi.kani@hpe.com
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[ Sami: Backported to 4.9 avoiding c5caf21ab0cf8 and e7c52b84fb ]
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/pgtable.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ Makefile               |    3 ++-
+ scripts/Makefile.kasan |    3 +++
+ scripts/Makefile.lib   |    2 +-
+ 3 files changed, 6 insertions(+), 2 deletions(-)
 
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -653,6 +653,7 @@ int pmd_clear_huge(pmd_t *pmd)
- 	return 0;
- }
+--- a/Makefile
++++ b/Makefile
+@@ -417,7 +417,8 @@ export MAKE AWK GENKSYMS INSTALLKERNEL P
+ export HOSTCXX HOSTCXXFLAGS LDFLAGS_MODULE CHECK CHECKFLAGS
  
-+#ifdef CONFIG_X86_64
- /**
-  * pud_free_pmd_page - Clear pud entry and free pmd page.
-  * @pud: Pointer to a PUD.
-@@ -700,4 +701,22 @@ int pmd_free_pte_page(pmd_t *pmd)
+ export KBUILD_CPPFLAGS NOSTDINC_FLAGS LINUXINCLUDE OBJCOPYFLAGS LDFLAGS
+-export KBUILD_CFLAGS CFLAGS_KERNEL CFLAGS_MODULE CFLAGS_KASAN CFLAGS_UBSAN
++export KBUILD_CFLAGS CFLAGS_KERNEL CFLAGS_MODULE
++export CFLAGS_KASAN CFLAGS_KASAN_NOSANITIZE CFLAGS_UBSAN
+ export KBUILD_AFLAGS AFLAGS_KERNEL AFLAGS_MODULE
+ export KBUILD_AFLAGS_MODULE KBUILD_CFLAGS_MODULE KBUILD_LDFLAGS_MODULE
+ export KBUILD_AFLAGS_KERNEL KBUILD_CFLAGS_KERNEL
+--- a/scripts/Makefile.kasan
++++ b/scripts/Makefile.kasan
+@@ -28,4 +28,7 @@ else
+         CFLAGS_KASAN := $(CFLAGS_KASAN_MINIMAL)
+     endif
+ endif
++
++CFLAGS_KASAN_NOSANITIZE := -fno-builtin
++
+ endif
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -127,7 +127,7 @@ endif
+ ifeq ($(CONFIG_KASAN),y)
+ _c_flags += $(if $(patsubst n%,, \
+ 		$(KASAN_SANITIZE_$(basetarget).o)$(KASAN_SANITIZE)y), \
+-		$(CFLAGS_KASAN))
++		$(CFLAGS_KASAN), $(CFLAGS_KASAN_NOSANITIZE))
+ endif
  
- 	return 1;
- }
-+
-+#else /* !CONFIG_X86_64 */
-+
-+int pud_free_pmd_page(pud_t *pud)
-+{
-+	return pud_none(*pud);
-+}
-+
-+/*
-+ * Disable free page handling on x86-PAE. This assures that ioremap()
-+ * does not update sync'd pmd entries. See vmalloc_sync_one().
-+ */
-+int pmd_free_pte_page(pmd_t *pmd)
-+{
-+	return pmd_none(*pmd);
-+}
-+
-+#endif /* CONFIG_X86_64 */
- #endif	/* CONFIG_HAVE_ARCH_HUGE_VMAP */
+ ifeq ($(CONFIG_UBSAN),y)
 
 
