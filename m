@@ -2,90 +2,126 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C0EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0C9C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07410208B0
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:43:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07410208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 89647208B0
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:44:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jm5lsIKA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89647208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389645AbeHPRmz (ORCPT
+        id S2391595AbeHPRna (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 13:42:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47256 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387985AbeHPRmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 13:42:54 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DDFC7818F04C;
-        Thu, 16 Aug 2018 14:43:55 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-130.rdu2.redhat.com [10.10.120.130])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 606F72142F21;
-        Thu, 16 Aug 2018 14:43:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <1534429345.3166.1.camel@HansenPartnership.com>
-References: <1534429345.3166.1.camel@HansenPartnership.com> <20180815185812.GC29541@redhat.com> <20180815100053.13609-1-yannik@sembritzki.me> <CA+55aFx2goMXj7rQg-qx-puiiWYJmkDMU1xniWEu6ikDBNgfdQ@mail.gmail.com> <654fbafb-69da-cd9a-b176-7b03401e71c5@sembritzki.me> <20180815174247.GB29541@redhat.com> <4911.1534421610@warthog.procyon.org.uk>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     dhowells@redhat.com, Vivek Goyal <vgoyal@redhat.com>,
-        Yannik Sembritzki <yannik@sembritzki.me>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
-        "Justin M. Forbes" <jforbes@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH] Fix kexec forbidding kernels signed with custom platform keys to boot
+        Thu, 16 Aug 2018 13:43:30 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33919 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387920AbeHPRna (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 13:43:30 -0400
+Received: by mail-lj1-f196.google.com with SMTP id f8-v6so3880150ljk.1;
+        Thu, 16 Aug 2018 07:44:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=6qBxbROM1k9F8/ORuHlv3cnYc9rLSXJYRNrBNVec3jo=;
+        b=jm5lsIKAkbED62cthZO810XpXM1vgSsrnoz785s4mfiYaaO4Y6buOVkm5NOJVvynyo
+         kV7IMjyJrRgFQ4u51vSYzS5RbpfcLCEVl/d1ewK2vwXZ13kqksJSvP0+aHFOjTMu/L3m
+         IPlWyEOpDkMFuQMUYOMCNS9Vn0YqFRu6MQwq5FO7Py6tTY76aw+THbPZuoB7ev5Y3q6U
+         YTEbPJTgfm/TvMdXWaVWgxtOcwEP2copTxhbdFFAhuxxY4L2emUt6JTCPokhC34HD1ot
+         Dwb2lKduXqdsFAGg9+/0a/aUlMoizV0bgvPi9k36CK+5Wg7vsAYdPfvvJ7DhQlwNStF5
+         F/jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=6qBxbROM1k9F8/ORuHlv3cnYc9rLSXJYRNrBNVec3jo=;
+        b=pxCd5R/saPaNKYtaSkE0QNFthK5LFnQI+MyROiK0Jb+8AXJOY4a8TD9Y4aLoiruhFG
+         Qv1j03RRHRL8jGx6z3b51hgew3j8MGAusGR46ldVXjFYEZvGmyYvRRH6ngoR3WOeths4
+         XFVvOFZG47WElZRcNjJF2ZQJVns79Qju8VPjfINST6HNfEQDH+83ucVUYc9EOaCQH87w
+         SgCBSVQYzke+GEb5PA2/7Ho9M/6rzrg/giwJ68DAHhFSpVN4qHFuoiY6/442dLq2hftx
+         UtS1+D/TZm1KJih5mh5MZsdPgLr8109t99z4PPlT4CftMFugUiZIG512dpqrYPHdN6JB
+         IVFg==
+X-Gm-Message-State: AOUpUlFqB6muKbwAuSb7n+aF0JqucM/rBKOl92B2Ly1UnNryiUG46LFi
+        aOMwzEsq3Ztz9JYpKYuAbI0=
+X-Google-Smtp-Source: AA+uWPxTRLDWU/qzvTgCejVA7s5Msn0meMKx+KkcluPIRDFoTSByG/KCvE8+tVeGwm3kNPQ0cIaeWw==
+X-Received: by 2002:a2e:9c82:: with SMTP id x2-v6mr22205848lji.131.1534430669578;
+        Thu, 16 Aug 2018 07:44:29 -0700 (PDT)
+Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id w12-v6sm4432705lji.63.2018.08.16.07.44.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Aug 2018 07:44:28 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Stefan Agner <stefan@agner.ch>, thierry.reding@gmail.com
+Cc:     jonathanh@nvidia.com, linus.walleij@linaro.org,
+        pdeschrijver@nvidia.co, marcel.ziswiler@toradex.com,
+        keescook@chromium.org, linux-tegra@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM: tegra: readd gpio-ranges properties
+Date:   Thu, 16 Aug 2018 17:44:27 +0300
+Message-ID: <1828884.n7pPtpPvFR@dimapc>
+In-Reply-To: <2268060.eSddBDDeqC@dimapc>
+References: <20180726154025.13173-1-stefan@agner.ch> <2777476.ese58fB1FL@dimapc> <2268060.eSddBDDeqC@dimapc>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <25235.1534430630.1@warthog.procyon.org.uk>
-Date:   Thu, 16 Aug 2018 15:43:50 +0100
-Message-ID: <25236.1534430630@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 16 Aug 2018 14:43:55 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 16 Aug 2018 14:43:55 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+On Thursday, 2 August 2018 13:35:46 MSK Dmitry Osipenko wrote:
+> On Thursday, 2 August 2018 02:11:23 MSK Dmitry Osipenko wrote:
+> > On Thursday, 2 August 2018 01:51:42 MSK Stefan Agner wrote:
+> > > On 01.08.2018 22:51, Dmitry Osipenko wrote:
+> > > > On Thursday, 26 July 2018 18:40:25 MSK Stefan Agner wrote:
+> > > >> The properties have been commented out to prevent a regression a
+> > > >> while ago. The first regression should be resolved by
+> > > >> commit 44af7927316e ("spi: Map SPI OF client IRQ at probe time").
+> > > >> 
+> > > >> The second regression is probably addressed by
+> > > >> commit 494fd7b7ad10 ("PM / core: fix deferred probe breaking suspend
+> > > >> resume
+> > > >> order") and/or maybe others. Readd the gpio-ranges properties to see
+> > > >> whether regressions still get reported.
+> > > >> 
+> > > >> This reverts commit 4f1d841475e1f6e9e32496dda11215db56f4ea73
+> > > >> ("ARM: tegra: Comment out gpio-ranges properties").
+> > > >> 
+> > > >> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> > > >> ---
+> > > > 
+> > > > Unfortunately the second regression hasn't been addressed yet, this
+> > > > patch
+> > > > still breaks wake-up using GPIO key. BTW, better to spell "readd" as
+> > > > "re-add".
+> > > 
+> > > You do have the hardware and could test it?
+> > 
+> > Yes, I have.
+> > 
+> > > Hm, that is unfortunate. I think this was the patch which should address
+> > > the issue:
+> > > https://lkml.org/lkml/2015/9/10/218
+> > 
+> > I've tested the patch and it is still actual, i.e. it fixes the wake-up.
+> > Welcome back to 2015 :-)
+> 
+> Actually, the pinctrl-gpio probe order is easily fixable by reshuffling the
+> drivers registration order within the kernel. I'll send patches.
 
-> I've told you several times you can't use the secure boot keys for any form
-> of trust beyond boot,
+Linus applied the GPIO / PINCTRL drivers probe-reorder patches for-next, so 
+this DT patch should be good for 4.20.
 
-Yes - and you've been told several times that you're wrong.
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
 
-As far as I can tell, you seem to think that whilst keys from the UEFI storage
-could be used to verify a hacked module, they couldn't be used to verify a
-hacked boot-time component (shim, grub, kernel, etc.).
 
-However, if you can load a hacked module, you can very likely replace the
-shim, say, with a hacked one.  In fact, replacing the shim may be easier
-because modules are tied to their parent kernel in other ways besides the
-signing key, whereas a shim must be standalone.
-
-I will grant, however, that it I can understand a desire to reduce the attack
-surface by not trusting the UEFI keys beyond booting - but then you shouldn't
-use them for kexec *either*.
-
-> Personally, I don't see any use for the UEFI keys in the kernel beyond
-> kexec
-
-Allowing you to load the NVidia module, say, into the kernel without the
-distribution having to build it in with the kernel.
-
-David
