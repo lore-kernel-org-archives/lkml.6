@@ -3,110 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0798C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B96A5C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72A0E2124D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:17:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72A0E2124D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sembritzki.me
+	by mail.kernel.org (Postfix) with ESMTP id 6D2AC2147E
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:22:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D2AC2147E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403866AbeHPQQY (ORCPT
+        id S2391636AbeHPQVM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 12:16:24 -0400
-Received: from mail.sembritzki.me ([5.45.101.249]:33562 "EHLO
-        mail.sembritzki.me" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730302AbeHPQQX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 12:16:23 -0400
-Received: from [192.168.1.22] (x55b2f10f.dyn.telefonica.de [85.178.241.15])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.sembritzki.me (Postfix) with ESMTPSA id 0B406A7A2C;
-        Thu, 16 Aug 2018 15:17:47 +0200 (CEST)
-Subject: Re: [PATCH 1/2] Replace magic for trusting the secondary keyring with
- #define
-To:     David Howells <dhowells@redhat.com>
-Cc:     torvalds@linux-foundation.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dyoung@redhat.com,
-        James.Bottomley@HansenPartnership.com, gregkh@linuxfoundation.org
-References: <153442471049.17751.3835342719465644394.stgit@warthog.procyon.org.uk>
- <18610.1534425319@warthog.procyon.org.uk>
-From:   Yannik Sembritzki <yannik@sembritzki.me>
-Openpgp: preference=signencrypt
-Autocrypt: addr=yannik@sembritzki.me; prefer-encrypt=mutual; keydata=
- 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
- YfNfIPB+
-Message-ID: <07e17009-18bb-df72-3408-7e8c0c11e16f@sembritzki.me>
-Date:   Thu, 16 Aug 2018 15:17:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thu, 16 Aug 2018 12:21:12 -0400
+Received: from smtp20.cstnet.cn ([159.226.251.20]:48696 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731048AbeHPQVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 12:21:12 -0400
+Received: from [172.20.20.131] (unknown [182.150.46.145])
+        by APP-10 (Coremail) with SMTP id tACowACnrWF7enVbitnMAQ--.8593S2;
+        Thu, 16 Aug 2018 21:22:04 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+Subject: Re: [PATCH v3 13/17] x86/xen: enable Hygon support to Xen
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        thomas.lendacky@amd.com, bp@alien8.de, pbonzini@redhat.com,
+        jgross@suse.com, JBeulich@suse.com
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+References: <cover.1533989492.git.puwen@hygon.cn>
+ <2747ad959f07459000f2693a98d237e2b3149ca1.1533989493.git.puwen@hygon.cn>
+ <b32887e0-df6e-fb31-d9cd-6b31961c9c2b@oracle.com>
+Message-ID: <d8e2dfb0-a2ff-5376-c39f-83626f257fda@hygon.cn>
+Date:   Thu, 16 Aug 2018 21:22:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <18610.1534425319@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: de-DE
+In-Reply-To: <b32887e0-df6e-fb31-d9cd-6b31961c9c2b@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: tACowACnrWF7enVbitnMAQ--.8593S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tF1UZr1UArW8Gw13WFyUWrg_yoW8Jw1rpr
+        Z3AF1FyFW8urn2qas3A34kXryj9F1vvr4rCr43Ka13Ar909r90vFWrArnYgFykC3y8Jr10
+        vryY9F1xCFZavaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvEb7Iv0xC_KF4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
+        jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4
+        A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8Jr0_Cr
+        1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xK
+        xwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+        1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+        b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+        vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI
+        42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
+        evJa73UjIFyTuYvjxU7RwZUUUUU
+X-Originating-IP: [182.150.46.145]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.08.2018 15:15, David Howells wrote:
-> I would suggest something like that.  I've switched the patches over as has
-> been suggested.  I think it makes more sense to create the constant first and
-> then use that.
->
-> I've also fleshed out the patch description a bit and added cc and Fixes
-> fields as appropriate.
+On 2018/8/11 22:34, Boris Ostrovsky wrote:
+> On 08/11/2018 09:29 AM, Pu Wen wrote:
+>> To make Xen work correctly on Hygon platforms, reuse AMD's Xen support
+>> code path and add vendor check for Hygon along with AMD.
+>>
+>> Signed-off-by: Pu Wen <puwen@hygon.cn>
+>> ---
+>>   arch/x86/xen/pmu.c | 15 ++++++++++++---
+>>   1 file changed, 12 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/x86/xen/pmu.c b/arch/x86/xen/pmu.c
+>> index 7d00d4a..1053dda 100644
+>> --- a/arch/x86/xen/pmu.c
+>> +++ b/arch/x86/xen/pmu.c
+>> @@ -90,6 +90,12 @@ static void xen_pmu_arch_init(void)
+>>   			k7_counters_mirrored = 0;
+>>   			break;
+>>   		}
+>> +	} else if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
+>> +		amd_num_counters = F10H_NUM_COUNTERS;
+> 
+> I haven't looked in details at Zen's PMU but the PMC section in the spec
+> starts with
+>    "There are six core performance events counters per thread..."
 
-Thanks, that looks good to me.
-I see that you only cc'd stable@ in the (now) second patch. I'm curious,
-will this automatically apply the first patch to stable?
+There are six core performance events counters per thread, so there are
+six MSRs for these counters(0-5). Also there are four legacy PMC MSRs,
+they are alias of the counters(0-3).
 
-Yannik
+In this version of kernel Zen use the lagacy version of PMU MSRs for Xen.
+For safety consideration, Dhyana just fullow this stategy. And it works
+fine when VPMU enabled in Xen on Hygon platforms by testing with perf.
+
+Thanks,
+Pu Wen
 
