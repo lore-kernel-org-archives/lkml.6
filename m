@@ -3,254 +3,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFD4C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 03:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 591D0C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 03:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21877208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 03:34:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21877208C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F77520657
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 03:39:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F77520657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388057AbeHPG3z (ORCPT
+        id S2388076AbeHPGfF convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 02:29:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45980 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388039AbeHPG3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 02:29:54 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AC90140216F3;
-        Thu, 16 Aug 2018 03:34:29 +0000 (UTC)
-Received: from [10.72.12.37] (ovpn-12-37.pek2.redhat.com [10.72.12.37])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8D81379A9;
-        Thu, 16 Aug 2018 03:34:23 +0000 (UTC)
-Subject: Re: [RFC PATCH net-next V2 0/6] XDP rx handler
-To:     David Ahern <dsahern@gmail.com>,
-        Jesper Dangaard Brouer <jbrouer@redhat.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, mst@redhat.com
-References: <1534130250-5302-1-git-send-email-jasowang@redhat.com>
- <20180814003253.fkgl6lyklc7fclvq@ast-mbp>
- <5de3d14f-f21a-c806-51f4-b5efd7d809b7@redhat.com>
- <20180814121734.105769fa@redhat.com>
- <03ab3b18-9b13-8169-7e68-ada307694bc1@redhat.com>
- <08bf7aec-078a-612d-833f-5b3d09a289d0@gmail.com>
- <aa9cf883-7822-70a7-5ab5-c873b69c2098@redhat.com>
- <f4c0346d-6665-5312-0310-ffbda505b7ec@gmail.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <2792239a-ed3b-d66e-0c1c-e99455311eff@redhat.com>
-Date:   Thu, 16 Aug 2018 11:34:20 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <f4c0346d-6665-5312-0310-ffbda505b7ec@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Thu, 16 Aug 2018 02:35:05 -0400
+Received: from mga12.intel.com ([192.55.52.136]:30585 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726273AbeHPGfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 02:35:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2018 20:39:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,246,1531810800"; 
+   d="scan'208";a="83725622"
+Received: from pgsmsx107.gar.corp.intel.com ([10.221.44.105])
+  by orsmga002.jf.intel.com with ESMTP; 15 Aug 2018 20:39:38 -0700
+Received: from pgsmsx110.gar.corp.intel.com (10.221.44.111) by
+ PGSMSX107.gar.corp.intel.com (10.221.44.105) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 16 Aug 2018 11:39:37 +0800
+Received: from pgsmsx101.gar.corp.intel.com ([169.254.1.221]) by
+ PGSMSX110.gar.corp.intel.com ([169.254.13.194]) with mapi id 14.03.0319.002;
+ Thu, 16 Aug 2018 11:39:37 +0800
+From:   "Ooi, Joyce" <joyce.ooi@intel.com>
+To:     David Miller <davem@davemloft.net>
+CC:     "peppe.cavallaro@st.com" <peppe.cavallaro@st.com>,
+        "alexandre.torgue@st.com" <alexandre.torgue@st.com>,
+        "joabreu@synopsys.com" <joabreu@synopsys.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Ong, Hean Loong" <hean.loong.ong@intel.com>,
+        "Vandervennet, Yves" <yves.vandervennet@intel.com>
+Subject: RE: [PATCH] net: stmmac: Add SMC support for EMAC System Manager
+ register
+Thread-Topic: [PATCH] net: stmmac: Add SMC support for EMAC System Manager
+ register
+Thread-Index: AQHUMtDFYnhmIYgh9E6ESFb7g+bMN6S9XxMAgAKwr9A=
+Date:   Thu, 16 Aug 2018 03:39:36 +0000
+Message-ID: <D53702B8F0ACD34B9B1D7D82EE03C04507691FD8@PGSMSX101.gar.corp.intel.com>
+References: <1534142494-11541-1-git-send-email-joyce.ooi@intel.com>
+ <20180813.094806.2117966073798365808.davem@davemloft.net>
+In-Reply-To: <20180813.094806.2117966073798365808.davem@davemloft.net>
+Accept-Language: en-US
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 16 Aug 2018 03:34:29 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 16 Aug 2018 03:34:29 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDI2ZDNmYTctYjVjZi00ZTk1LWIxNmEtZWVkYzdkNjBlNjdmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNEZReDI3OUhtQU5kcGp3VDdQYzJpYU1WMTR3U1pvN29EUUNvODEwdXp6QnZkTStMOW1OR200Z2R4YnJnUmZ1MCJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [172.30.20.206]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> -----Original Message-----
+> From: David Miller [mailto:davem@davemloft.net]
+> Sent: Tuesday, August 14, 2018 12:48 AM
+> To: Ooi, Joyce <joyce.ooi@intel.com>
+> Cc: peppe.cavallaro@st.com; alexandre.torgue@st.com;
+> joabreu@synopsys.com; netdev@vger.kernel.org; linux-kernel@vger.kernel.org;
+> Ong, Hean Loong <hean.loong.ong@intel.com>; Vandervennet, Yves
+> <yves.vandervennet@intel.com>
+> Subject: Re: [PATCH] net: stmmac: Add SMC support for EMAC System Manager
+> register
+> 
+> From: "Ooi, Joyce" <joyce.ooi@intel.com>
+> Date: Sun, 12 Aug 2018 23:41:34 -0700
+> 
+> > As there is restriction to access to EMAC System Manager registers in
+> > the kernel for Intel Stratix10, the use of SMC calls are required and
+> > added in dwmac-socfpga driver.
+> >
+> > Signed-off-by: Ooi, Joyce <joyce.ooi@intel.com>
+> > ---
+> > This patch is dependent on https://lkml.org/lkml/2018/7/26/624
+> 
+> I guess I cannot apply this to my networking tree then.
+> 
+> I would suggest that you make a helper in a header file which dos the special
+> SMC EMAC accesses, or alternatively the regular regmap access, based upon the
+> CPP ifdef.
+Could you please explain what you mean by 'a helper in a header file'?
 
-
-On 2018年08月16日 01:17, David Ahern wrote:
-> On 8/14/18 6:29 PM, Jason Wang wrote:
->>
->> On 2018年08月14日 22:03, David Ahern wrote:
->>> On 8/14/18 7:20 AM, Jason Wang wrote:
->>>> On 2018年08月14日 18:17, Jesper Dangaard Brouer wrote:
->>>>> On Tue, 14 Aug 2018 15:59:01 +0800
->>>>> Jason Wang <jasowang@redhat.com> wrote:
->>>>>
->>>>>> On 2018年08月14日 08:32, Alexei Starovoitov wrote:
->>>>>>> On Mon, Aug 13, 2018 at 11:17:24AM +0800, Jason Wang wrote:
->>>>>>>> Hi:
->>>>>>>>
->>>>>>>> This series tries to implement XDP support for rx hanlder. This
->>>>>>>> would
->>>>>>>> be useful for doing native XDP on stacked device like macvlan,
->>>>>>>> bridge
->>>>>>>> or even bond.
->>>>>>>>
->>>>>>>> The idea is simple, let stacked device register a XDP rx handler.
->>>>>>>> And
->>>>>>>> when driver return XDP_PASS, it will call a new helper xdp_do_pass()
->>>>>>>> which will try to pass XDP buff to XDP rx handler directly. XDP rx
->>>>>>>> handler may then decide how to proceed, it could consume the
->>>>>>>> buff, ask
->>>>>>>> driver to drop the packet or ask the driver to fallback to normal
->>>>>>>> skb
->>>>>>>> path.
->>>>>>>>
->>>>>>>> A sample XDP rx handler was implemented for macvlan. And virtio-net
->>>>>>>> (mergeable buffer case) was converted to call xdp_do_pass() as an
->>>>>>>> example. For ease comparision, generic XDP support for rx handler
->>>>>>>> was
->>>>>>>> also implemented.
->>>>>>>>
->>>>>>>> Compared to skb mode XDP on macvlan, native XDP on macvlan
->>>>>>>> (XDP_DROP)
->>>>>>>> shows about 83% improvement.
->>>>>>> I'm missing the motiviation for this.
->>>>>>> It seems performance of such solution is ~1M packet per second.
->>>>>> Notice it was measured by virtio-net which is kind of slow.
->>>>>>
->>>>>>> What would be a real life use case for such feature ?
->>>>>> I had another run on top of 10G mlx4 and macvlan:
->>>>>>
->>>>>> XDP_DROP on mlx4: 14.0Mpps
->>>>>> XDP_DROP on macvlan: 10.05Mpps
->>>>>>
->>>>>> Perf shows macvlan_hash_lookup() and indirect call to
->>>>>> macvlan_handle_xdp() are the reasons for the number drop. I think the
->>>>>> numbers are acceptable. And we could try more optimizations on top.
->>>>>>
->>>>>> So here's real life use case is trying to have an fast XDP path for rx
->>>>>> handler based device:
->>>>>>
->>>>>> - For containers, we can run XDP for macvlan (~70% of wire speed).
->>>>>> This
->>>>>> allows a container specific policy.
->>>>>> - For VM, we can implement macvtap XDP rx handler on top. This
->>>>>> allow us
->>>>>> to forward packet to VM without building skb in the setup of macvtap.
->>>>>> - The idea could be used by other rx handler based device like bridge,
->>>>>> we may have a XDP fast forwarding path for bridge.
->>>>>>
->>>>>>> Another concern is that XDP users expect to get line rate performance
->>>>>>> and native XDP delivers it. 'generic XDP' is a fallback only
->>>>>>> mechanism to operate on NICs that don't have native XDP yet.
->>>>>> So I can replace generic XDP TX routine with a native one for macvlan.
->>>>> If you simply implement ndo_xdp_xmit() for macvlan, and instead use
->>>>> XDP_REDIRECT, then we are basically done.
->>>> As I replied in another thread this probably not true. Its
->>>> ndo_xdp_xmit() just need to call under layer device's ndo_xdp_xmit()
->>>> except for the case of bridge mode.
->>>>
->>>>>>> Toshiaki's veth XDP work fits XDP philosophy and allows
->>>>>>> high speed networking to be done inside containers after veth.
->>>>>>> It's trying to get to line rate inside container.
->>>>>> This is one of the goal of this series as well. I agree veth XDP work
->>>>>> looks pretty fine, but it only work for a specific setup I believe
->>>>>> since
->>>>>> it depends on XDP_REDIRECT which is supported by few drivers (and
->>>>>> there's no VF driver support).
->>>>> The XDP_REDIRECT (RX-side) is trivial to add to drivers.  It is a bad
->>>>> argument that only a few drivers implement this.  Especially since all
->>>>> drivers also need to be extended with your proposed xdp_do_pass() call.
->>>>>
->>>>> (rant) The thing that is delaying XDP_REDIRECT adaption in drivers, is
->>>>> that it is harder to implement the TX-side, as the ndo_xdp_xmit() call
->>>>> have to allocate HW TX-queue resources.  If we disconnect RX and TX
->>>>> side of redirect, then we can implement RX-side in an afternoon.
->>>> That's exactly the point, ndo_xdp_xmit() may requires per CPU TX queues
->>>> which breaks assumptions of some drivers. And since we don't disconnect
->>>> RX and TX, it looks to me the partial implementation is even worse?
->>>> Consider a user can redirect from mlx4 to ixgbe but not ixgbe to mlx4.
->>>>
->>>>>> And in order to make it work for a end
->>>>>> user, the XDP program still need logic like hash(map) lookup to
->>>>>> determine the destination veth.
->>>>> That _is_ the general idea behind XDP and eBPF, that we need to add
->>>>> logic
->>>>> that determine the destination.  The kernel provides the basic
->>>>> mechanisms for moving/redirecting packets fast, and someone else
->>>>> builds an orchestration tool like Cilium, that adds the needed logic.
->>>> Yes, so my reply is for the concern about performance. I meant anyway
->>>> the hash lookup will make it not hit the wire speed.
->>>>
->>>>> Did you notice that we (Ahern) added bpf_fib_lookup a FIB route lookup
->>>>> accessible from XDP.
->>>> Yes.
->>>>
->>>>> For macvlan, I imagine that we could add a BPF helper that allows you
->>>>> to lookup/call macvlan_hash_lookup().
->>>> That's true but we still need a method to feed macvlan with XDP buff.
->>>> I'm not sure if this could be treated as another kind of redirection,
->>>> but ndo_xdp_xmit() could not be used for this case for sure. Compared to
->>>> redirection, XDP rx handler has its own advantages:
->>>>
->>>> 1) Use the exist API and userspace to setup the network topology instead
->>>> of inventing new tools and its own specific API. This means user can
->>>> just setup macvlan (macvtap, bridge or other) as usual and simply attach
->>>> XDP programs to both macvlan and its under layer device.
->>>> 2) Ease the processing of complex logic, XDP can not do cloning or
->>>> reference counting. We can differ those cases and let normal networking
->>>> stack to deal with such packets seamlessly. I believe this is one of the
->>>> advantage of XDP. This makes us to focus on the fast path and greatly
->>>> simplify the codes.
->>>>
->>>> Like ndo_xdp_xmit(), XDP rx handler is used to feed RX handler with XDP
->>>> buff. It's just another basic mechanism. Policy is still done by XDP
->>>> program itself.
->>>>
->>> I have been looking into handling stacked devices via lookup helper
->>> functions. The idea is that a program only needs to be installed on the
->>> root netdev (ie., the one representing the physical port), and it can
->>> use helpers to create an efficient pipeline to decide what to do with
->>> the packet in the presence of stacked devices.
->>>
->>> For example, anyone doing pure L3 could do:
->>>
->>> {port, vlan} --> [ find l2dev ] --> [ find l3dev ] ...
->>>
->>>     --> [ l3 forward lookup ] --> [ header rewrite ] --> XDP_REDIRECT
->>>
->>> port is the netdev associated with the ingress_ifindex in the xdp_md
->>> context, vlan is the vlan in the packet or the assigned PVID if
->>> relevant. From there l2dev could be a bond or bridge device for example,
->>> and l3dev is the one with a network address (vlan netdev, bond netdev,
->>> etc).
->> Looks less flexible since the topology is hard coded in the XDP program
->> itself and this requires all logic to be implemented in the program on
->> the root netdev.
-> Nothing about the topology is hard coded. The idea is to mimic a
-> hardware pipeline and acknowledging that a port device can have an
-> arbitrary layers stacked on it - multiple vlan devices, bonds, macvlans, etc
-
-I may miss something but BPF forbids loop. Without a loop how can we 
-make sure all stacked devices is enumerated correctly without knowing 
-the topology in advance?
-
->
->>> I have L3 forwarding working for vlan devices and bonds. I had not
->>> considered macvlans specifically yet, but it should be straightforward
->>> to add.
->>>
->> Yes, and all these could be done through XDP rx handler as well, and it
->> can do even more with rather simple logic:
->  From a forwarding perspective I suspect the rx handler approach is going
-> to have much more overhead (ie., higher latency per packet and hence
-> lower throughput) as the layers determine which one to use (e.g., is the
-> FIB lookup done on the port device, vlan device, or macvlan device on
-> the vlan device).
-
-Well, if we want stacked device behave correctly, this is probably the 
-only way. E.g in the above figure, to make "find l2dev" work correctly, 
-we still need device specific logic which would be much similar to what 
-XDP rx handler did.
-
-Thanks
-
->
->> 1 macvlan has its own namespace, and want its own bpf logic.
->> 2 Ruse the exist topology information for dealing with more complex
->> setup like macvlan on top of bond and team. There's no need to bpf
->> program to care about topology. If you look at the code, there's even no
->> need to attach XDP on each stacked device. The calling of xdp_do_pass()
->> can try to pass XDP buff to upper device even if there's no XDP program
->> attached to current layer.
->> 3 Deliver XDP buff to userspace through macvtap.
->>
->> Thanks
-
+Thanks.
+> 
+> That way you won't have to put all of those CPP tests in the foo.c code.
+> 
+> Thanks.
