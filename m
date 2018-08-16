@@ -2,106 +2,92 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 597F4C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F4FC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D3972147E
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:59:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D3972147E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C53FD208B0
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:00:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C53FD208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389865AbeHPQ5u (ORCPT
+        id S2390078AbeHPQ7E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 12:57:50 -0400
-Received: from foss.arm.com ([217.140.101.70]:37064 "EHLO foss.arm.com"
+        Thu, 16 Aug 2018 12:59:04 -0400
+Received: from mout.gmx.net ([212.227.15.19]:36011 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727732AbeHPQ5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 12:57:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 915BF80D;
-        Thu, 16 Aug 2018 06:59:02 -0700 (PDT)
-Received: from [10.4.12.39] (e113632-lin.emea.arm.com [10.4.12.39])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E2673F5D0;
-        Thu, 16 Aug 2018 06:59:01 -0700 (PDT)
-Subject: Re: AArch64 boot failure on Hikey960 on latest master after "arm64:
- insn: Don't fallback on nosync path for general insn patching"
-To:     Will Deacon <will.deacon@arm.com>,
-        Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        john.stultz@linaro.org
-References: <462f8ae6-9948-a8e5-7504-623d40344336@iki.fi>
- <20180816102219.GF31093@arm.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <6490931d-65b6-e524-f2d0-65cbac0a263b@arm.com>
-Date:   Thu, 16 Aug 2018 14:58:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727732AbeHPQ7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 12:59:04 -0400
+Received: from localhost.localdomain ([79.203.83.237]) by mail.gmx.com
+ (mrgmx002 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 0M0Ppl-1g8faH0bgD-00uab4; Thu, 16 Aug 2018 16:00:00 +0200
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id 50C2480087; Thu, 16 Aug 2018 15:59:58 +0200 (CEST)
+From:   Sven Joachim <svenjoac@gmx.de>
+To:     Adam Borowski <kilobyte@angband.pl>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: Linux 4.18.1
+References: <20180816101429.GA10680@kroah.com>
+        <20180816130540.eu4rs5rago6b5lzq@angband.pl>
+Date:   Thu, 16 Aug 2018 15:59:58 +0200
+In-Reply-To: <20180816130540.eu4rs5rago6b5lzq@angband.pl> (Adam Borowski's
+        message of "Thu, 16 Aug 2018 15:05:40 +0200")
+Message-ID: <878t56mmxt.fsf@turtle.gmx.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.50 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180816102219.GF31093@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Provags-ID: V03:K1:65SSbyttq8uj5ieFRlpxr6PcxMrER8BbNekLlYd5d4tOP4hRCqi
+ kuZfGiYhIGSM2tG477aXwuZOLybVdfOxEJFOphPWY8Wlwj3C91np1UtLU9b7faUWyvEjnEL
+ RIBqV7f8fn8sVCI0v00md9nbDYIXXH1TYXayhwcqImQPhZrZzNFBLBmWDkC7mtX0s6gw1x0
+ 0ABKK33jBQ3yDmFKw7H3A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:f+kMO8iMQa8=:ebaKrLfYA/WJU+8vZxZ32S
+ tVBM6Oo6Qs66liNe9mBpW1kljSjhh/247OiLtJDbZyWVCPewWJct3OQd01/31kF4ZYc2k/CD1
+ cmZ8kEuZk7z/I8I+CmmaGT/z4fO3qcqu4pqabheahopqJfFPFmeFUpmj+pgC8XflHdB9lGhmC
+ k8K1PZe2fercBTaYBt7VJq2ZOfi0YApLPu/m5JfuFYFxf1h0dxj2Hy72UV6LTvfdDPSl2Th7M
+ An2Ay45V+Aiw05BIMs+59bHutDTDEYP4WFzUg6hgAWpAw1ZugBRnkN1GnyIOTEtkvr1opjkR7
+ 6heifoJJsHjppI/fI4vF+VmsoHmlqqiCLT4vMf1DrFcromkZzBiIu0Z4gY3/28969lDXpctaB
+ Ae+MR5ZrskimBfeqZ8el+KhPqyScGOTGCwsF7Ok4X6qu5z0//f9yFQnWiy+Q55Zm2eGma7bUy
+ KIM5JOQ6Tob2OKrBXPAZCwROFwuMkGoLJaqBx1KVpWVEMRqKVZduMzZxYrR46cdFexVeVByYG
+ 55XGWBP6SQLIx7g7giEnbpZKfb7XO/BoB969PUTo69faIKRjQJs6Bj8DDIDqwDuXSSLUPnAcx
+ IYsSYqr6FCY+Yc35uW19WytjGisLFU8TiZBiBNapEWxNN1Or5UZREiOQHqe03N1hN9NUW8+Q9
+ ff0SknFRWQ7Ce8I3p5Zt7GSiwCVg3hpmMA6LUn+ViF5p5l82WR+kVI1bVXh7/USSG/TdVyt+l
+ T95oyJyLqhSviNNw9wa5p3KU+fTrLNQO8WJzLLaeFjvHJj7+TxuJQHSPMwhcWy21O/FPDJPLx
+ i7x1BjZ
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 2018-08-16 15:05 +0200, Adam Borowski wrote:
 
-On 16/08/18 11:22, Will Deacon wrote:
-> Hi Tuomas, [+John]
-> 
-> On Thu, Aug 16, 2018 at 02:38:51AM +0300, Tuomas Tynkkynen wrote:
->> Booting Linus's master of today with the usual arm64 defconfig fails for
->> me on the Hikey960 board. I've bisected it down to:
->>
->> commit 693350a7998018391852c48f68956cf0f855b2b9 (HEAD, refs/bisect/bad)
->> Author: Will Deacon <will.deacon@arm.com>
->> Date:   Tue Jun 19 17:55:28 2018 +0100
->>
->>     arm64: insn: Don't fallback on nosync path for general insn patching
->>
->> Here's the boot log with earlycon enabled after which the boot hangs:
-> 
-> Thanks for the boot log, that's really helpful. Please can you try the diff
-> below?
-> 
+> On Thu, Aug 16, 2018 at 12:14:29PM +0200, Greg KH wrote:
+>> I'm announcing the release of the 4.18.1 kernel.
+>
+> I'm afraid that I get a build failure; v4.18 is ok, v4.18.1 fails with:
+>
+> ld: arch/x86/kvm/x86.o: in function `kvm_get_arch_capabilities':
+> (.text+0x43b2): undefined reference to `l1tf_vmx_mitigation'
 
-I get the same "BUG: scheduling while atomic" when running the current master
-(f91e654474d413201ae578820fb63f8a811f6c4e), and confirmed that I don't get
-it on my setup when checking out the direct parent of 693350a7998018391852c48f68956cf0f855b2b9.
+Same here and also in 4.17.15, but not in Linus' tree.
 
-Tried out the diff and the board doesn't seem to die anymore, so FWIW:
+> .config attached.
 
-Tested-by: Valentin Schneider <valentin.schneider@arm.com>
+Probably relevant:
 
-> Out of interest -- do you know if Hikey960 is used by any boot-testing
-> farms? The patch above has been in linux-next for ages, but we didn't see
-> any complaints until it hit mainline :(
-> 
-> Cheers,
-> 
-> Will
-> 
-> --->8
-> 
-> diff --git a/arch/arm64/kernel/jump_label.c b/arch/arm64/kernel/jump_label.c
-> index c2dd1ad3e648..e0756416e567 100644
-> --- a/arch/arm64/kernel/jump_label.c
-> +++ b/arch/arm64/kernel/jump_label.c
-> @@ -36,7 +36,7 @@ void arch_jump_label_transform(struct jump_entry *entry,
->  		insn = aarch64_insn_gen_nop();
->  	}
->  
-> -	aarch64_insn_patch_text(&addr, &insn, 1);
-> +	aarch64_insn_patch_text_nosync(addr, insn);
->  }
->  
->  void arch_jump_label_transform_static(struct jump_entry *entry,
-> 
+> CONFIG_KVM=y
+> # CONFIG_KVM_INTEL is not set
+> CONFIG_KVM_AMD=y
+
+I have CONFIG_KVM{,AMD}=m and CONFIG_KVM_INTEL is not set either.
+
+Cheers,
+       Sven
