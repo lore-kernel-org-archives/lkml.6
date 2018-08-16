@@ -2,130 +2,152 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C908C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC24C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AFE72147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:20:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2VBUtBz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AFE72147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D70D62147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:21:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D70D62147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.nsa.gov
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391747AbeHPRTo (ORCPT
+        id S2391762AbeHPRUG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 13:19:44 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44788 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726312AbeHPRTo (ORCPT
+        Thu, 16 Aug 2018 13:20:06 -0400
+Received: from uphb19pa08.eemsg.mail.mil ([214.24.26.82]:27560 "EHLO
+        USFB19PA11.eemsg.mail.mil" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726312AbeHPRUF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 13:19:44 -0400
-Received: by mail-ed1-f67.google.com with SMTP id f23-v6so2767893edr.11;
-        Thu, 16 Aug 2018 07:20:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mPNAyvUc5igL1QygBGgNImKNgLha/c/d1hs8DeQhV5k=;
-        b=B2VBUtBzh/fOoelUqAdJue7rhE/zTaKNs8kxX3tvkDFTxjfkexLb89nopZCVAH4ORP
-         vy7fXn2V7OW0Je1NwhDIhGyd23GVxOAPAfTmFs3IwEkW7mtaFn3YJLKzlzd4b6Hzyboh
-         UMJAHhyIZSqdBUebEkLcxO/XuRpveEBjSFB5ba0Ya+aJtzkwW6QY7/EItNVboudQpYZH
-         j69SAcCT4LSsNTj/9RooTDy5CP4/pTXnTxU8jCWpKV+p2vmGLUC76JUfPXfVSL9QLa1E
-         9UXAnVVwfiOtmiprhaH0KVoDX+jUUJp0txgWlFTzOuepYz1dnRXM8Qs150F4RklV2zR0
-         qmlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mPNAyvUc5igL1QygBGgNImKNgLha/c/d1hs8DeQhV5k=;
-        b=rMvJDBKig6irFV8rj/MAfvJoZoXXK8tGjWAZijc9YAkP8zYv0T3I+zhgCyl7i7TYOQ
-         tNy4ZRWlHrlF3g0IEBXsHwXrH8LGIAWhiJ9w/48vLIBmdS2d2CF6s1onq+7nA7zTN9Gd
-         V36Su0qU+8LIjykkYkNbCB2jQOkRri7Jc8B4T4BYCdpqkJoFvIEP/llKt9yx2+b5pALI
-         +/aMVmP109+ovlpYOVkP6tFn7dArbUylwPUy2798Hy/0GmqFdslXJSVtWmI72+40YZQh
-         yUtE6GI6WCx+Jd1kfC+mCPdafjIzOvAO66Oio0MfpNeO/XN6hktatey0kCiPSDl8DWmn
-         b6jA==
-X-Gm-Message-State: AOUpUlHkEab0tlZZIEKMPYbRwHE0g/nJ/APOjrRBcvbHbXvRrqjq+DRP
-        tVcm+ddcKeMKE349i0uCHQ==
-X-Google-Smtp-Source: AA+uWPz2mRRQ4iz1dqFEs/3AJqky+0+iKMS3qhmKKTMO6BzB3263w2DR5h7BaboZJBHec9bN8pLUJA==
-X-Received: by 2002:a50:b505:: with SMTP id y5-v6mr37080920edd.195.1534429247864;
-        Thu, 16 Aug 2018 07:20:47 -0700 (PDT)
-Received: from avx2 (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
-        by smtp.gmail.com with ESMTPSA id c34-v6sm1497412edc.71.2018.08.16.07.20.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Aug 2018 07:20:46 -0700 (PDT)
-Date:   Thu, 16 Aug 2018 17:20:44 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Colascione <dancol@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH 4/4] mm: proc/pid/smaps_rollup: convert to single value
- seq_file
-Message-ID: <20180816142044.GB15817@avx2>
-References: <20180723111933.15443-1-vbabka@suse.cz>
- <20180723111933.15443-5-vbabka@suse.cz>
- <cb1d1965-9a13-e80f-dfde-a5d3bf9f510c@suse.cz>
- <20180726162637.GB25227@avx2>
- <bf4525b0-fd5b-4c4c-2cb3-adee3dd95a48@suse.cz>
+        Thu, 16 Aug 2018 13:20:05 -0400
+X-Greylist: delayed 596 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 Aug 2018 13:20:04 EDT
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by USFB19PA11.eemsg.mail.mil with ESMTP/TLS/AES256-SHA; 16 Aug 2018 14:11:12 +0000
+X-IronPort-AV: E=Sophos;i="5.53,247,1531785600"; 
+   d="scan'208";a="17090905"
+IronPort-PHdr: =?us-ascii?q?9a23=3AqaZrgB2MN8334Ke4smDT+DRfVm0co7zxezQtwd?=
+ =?us-ascii?q?8ZsesQKf/xwZ3uMQTl6Ol3ixeRBMOHs6wC07KempujcFRI2YyGvnEGfc4EfD?=
+ =?us-ascii?q?4+ouJSoTYdBtWYA1bwNv/gYn9yNs1DUFh44yPzahANS47xaFLIv3K98yMZFA?=
+ =?us-ascii?q?nhOgppPOT1HZPZg9iq2+yo9JDffwRFiCChbb9uMR67sRjfus4KjIV4N60/0A?=
+ =?us-ascii?q?HJonxGe+RXwWNnO1eelAvi68mz4ZBu7T1et+ou+MBcX6r6eb84TaFDAzQ9L2?=
+ =?us-ascii?q?81/szrugLdQgaJ+3ART38ZkhtMAwjC8RH6QpL8uTb0u+ZhxCWXO9D9QKsqUj?=
+ =?us-ascii?q?q+8ahkVB7oiD8GNzEn9mHXltdwh79frB64uhBz35LYbISTOfVwZKPdec4RS3?=
+ =?us-ascii?q?RHUMhfSidNBpqwY5UTA+YEO+tTsovzqEYUrRamGAeiGu3vxD9LiHH406I13O?=
+ =?us-ascii?q?YuHh3J0gE7A9IDsm7ZoMnpOKocU+24yrTDwzXZb/NR3Dfw8JXGcgw/rvGUXb?=
+ =?us-ascii?q?J/b8zRwlQyGQPAlFqQrYjlMC2V1+8QtGWb9PdvVfm0hm47qwB+vjivxsA2ho?=
+ =?us-ascii?q?nPnYIa0ErI9Sp+wIYrPNC1TlNwb928EJZIqi2XOIR7TtkiTm11oio21LILtY?=
+ =?us-ascii?q?ChcCQXzpks2gTRZOadc4eS5xLuTOORITBli317YL+/nBOy8VS4yu37S8m0zE?=
+ =?us-ascii?q?5GripbndnIsXAAzwDT5dKdSvt840ehwiyD1wHV6uFKJkA0jrTUJII7zr4slp?=
+ =?us-ascii?q?scrUTDHijslEXwkKCWbVkr9vKt6+TmZrXqvp6cN4lqhQHiKqkih8OyDOsiPg?=
+ =?us-ascii?q?UOQmSX4/qw2bL98UHjXblGlvg2nbPYsJDeK8QbvKm5AwpN34Y49hm/FCyr0M?=
+ =?us-ascii?q?gYnHYbLFJFfwiLj47yO17UOvz4AvC/g0q0nDdx2//GJqHhAonKLnXbjLjuZ6?=
+ =?us-ascii?q?195FBcyQYp1tBQ+5JUBascIPL9Xk/+qsbYAwQ4Mwyy3+boFtF92pkCVmKIB6?=
+ =?us-ascii?q?+TKLnSvkOQ5uIzP+mMY5cYuDXjJPg/4f7hk3s5lUYdfaazx5sYdW63HvJnI0?=
+ =?us-ascii?q?WfbnrhmdMBEWYRvgoiV+zmklqCUSZNaHa0UaMz/DU7CIa8AYjfQYCthaSL3D?=
+ =?us-ascii?q?2nEZ1OemBGFleMHG/sd4WFXfcMdS2TLtZikjMaT7ihTZEu1RW1uQ/kxLpoMP?=
+ =?us-ascii?q?DU9jcbtZ39zth14fPclRUo+TxzFcSd3HmHT3tokWMQWz82wKd/rFR5yleC16?=
+ =?us-ascii?q?h4nvNZGcVI5/xXTgg6KITcz+1mC9HyQw7Be9CJR0u7QtWiHz48Vcwxw9AQbE?=
+ =?us-ascii?q?ZnAdmijQ7M3zCsA7ALk7yHHps08rjT33LpPcZy127G1LU9j1khWsZBKGqoi7?=
+ =?us-ascii?q?Jh+gbWHoLGjkSZl722eqQBxy7N73yOzW6PvEFDTA5wSr/JUWwCakfMqtT5/E?=
+ =?us-ascii?q?zCRae0Cbs7KgtB1dKCKqxSZ9L0l1pGWunsNM7eY22rnWewHgiHxrWXYYrrfW?=
+ =?us-ascii?q?UdwDvSCEwenw8P+naGMBA0Bj29rGLGEDxuCVXvblvx/uZgrnO0UFE7zweQY0?=
+ =?us-ascii?q?19zba65xkViuCfS/4I37IEvjshpCtwHFqnw93WDN+ArRJ7fKpAedM9/EtH1W?=
+ =?us-ascii?q?XBugx+JJygLrtihkIAfARxpE7u0xR3CoNdkckltn8qzQxyKb6G31NFbT+XwZ?=
+ =?us-ascii?q?fwOrjPIGno4B+vc7LW2k3Z0NuO4KgP8vY4pE/lvAyyEkoi8nNn08Ra0neG55?=
+ =?us-ascii?q?XKChYSXoz1Ukot6xd6oLTaMWEB4Nb/3GZhIOGPuT/LxtwtCfFtnh2pZNpOdr?=
+ =?us-ascii?q?iPFAbvHckXHeCvLvAnnx6iaRdSeKhR+bQyMsfjd/Kc1KOtPeBvtDanlnhcpo?=
+ =?us-ascii?q?dl30ST/i54DOXP2tJNx/CewxvCVDrmilqlmt74lJoCZjwIGGe7jy/+C8oZYq?=
+ =?us-ascii?q?x0YJZOEmqlPte22sQ7gpnhRnpV3ECsCklA28KzfxeWKVvn0kkYzkkToHq6iQ?=
+ =?us-ascii?q?Ok3jd0lHcvtaPZ0yvQh6zZUTMsGStHRXJpkEz3CYy1lMwBGhDxKQ8zm1/t6U?=
+ =?us-ascii?q?/kyu5braJkIm/7QEFUciywJGZnFuO8u7yPbsgJ9NUkti5UeOW6fV2eDLX6pl?=
+ =?us-ascii?q?9S0DniBHdTwhg/dje3qtP4mQB3jCSWK3M35HPDe8h27RPe4sHMA/9XwjcCAi?=
+ =?us-ascii?q?J/jGr5HF+5auK18M2UmpGLieW3U2asR9UHaiXw5Z+Rvyu8o2txCFuwmO7lyY?=
+ =?us-ascii?q?6vKhQzzSKuj4oibi7PthupJ9Cxj6k=3D?=
+X-IPAS-Result: =?us-ascii?q?A2CuBABahXVb/wHyM5BcHAEBAQQBAQoBAYMlgXoSKINui?=
+ =?us-ascii?q?GmMBgEBAQEBAQaBCAgliFyNOYF6hHcCg2E2FgECAQEBAQEBAgFsKII1JAGCX?=
+ =?us-ascii?q?gEFIwQRUQsYAgImAgJXBgEMBgIBAYJfP4F1Dah6ezODfgFphXmBC4gkeYEHg?=
+ =?us-ascii?q?TkMgio1h3+CVwKNQo0rCY9VBhWOLpRpByqBUisIAhgIIQ+DJIIlFxGNUFIjM?=
+ =?us-ascii?q?I5QAQE?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 16 Aug 2018 14:11:10 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto.infosec.tycho.ncsc.mil [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id w7GEB6gR029392;
+        Thu, 16 Aug 2018 10:11:06 -0400
+Subject: Re: [PATCH RFC 5/5] SELinux: Support SELinux determination of
+ side-channel vulnerability
+To:     Casey Schaufler <casey.schaufler@intel.com>,
+        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov,
+        SMACK-discuss@lists.01.org, dave.hansen@intel.com,
+        deneen.t.dock@intel.com, kristen@linux.intel.com,
+        arjan@linux.intel.com
+References: <20180815235355.14908-1-casey.schaufler@intel.com>
+ <20180815235355.14908-6-casey.schaufler@intel.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <0b383282-1369-79e9-d111-f03e2897660e@tycho.nsa.gov>
+Date:   Thu, 16 Aug 2018 10:12:58 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <bf4525b0-fd5b-4c4c-2cb3-adee3dd95a48@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180815235355.14908-6-casey.schaufler@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 10:53:53AM +0200, Vlastimil Babka wrote:
-> On 07/26/2018 06:26 PM, Alexey Dobriyan wrote:
-> > On Wed, Jul 25, 2018 at 08:53:53AM +0200, Vlastimil Babka wrote:
-> >> I moved the reply to this thread since the "added to -mm tree"
-> >> notification Alexey replied to in <20180724182908.GD27053@avx2> has
-> >> reduced CC list and is not linked to the patch postings.
-> >>
-> >> On 07/24/2018 08:29 PM, Alexey Dobriyan wrote:
-> >>> On Mon, Jul 23, 2018 at 04:55:48PM -0700, akpm@linux-foundation.org wrote:
-> >>>> The patch titled
-> >>>>      Subject: mm: /proc/pid/smaps_rollup: convert to single value seq_file
-> >>>> has been added to the -mm tree.  Its filename is
-> >>>>      mm-proc-pid-smaps_rollup-convert-to-single-value-seq_file.patch
-> >>>
-> >>>> Subject: mm: /proc/pid/smaps_rollup: convert to single value seq_file
-> >>>>
-> >>>> The /proc/pid/smaps_rollup file is currently implemented via the
-> >>>> m_start/m_next/m_stop seq_file iterators shared with the other maps files,
-> >>>> that iterate over vma's.  However, the rollup file doesn't print anything
-> >>>> for each vma, only accumulate the stats.
-> >>>
-> >>> What I don't understand why keep seq_ops then and not do all the work in
-> >>> ->show hook.  Currently /proc/*/smaps_rollup is at ~500 bytes so with
-> >>> minimum 1 page seq buffer, no buffer resizing is possible.
-> >>
-> >> Hmm IIUC seq_file also provides the buffer and handles feeding the data
-> >> from there to the user process, which might have called read() with a smaller
-> >> buffer than that. So I would rather not avoid the seq_file infrastructure.
-> >> Or you're saying it could be converted to single_open()? Maybe, with more work.
-> > 
-> > Prefereably yes.
+On 08/15/2018 07:53 PM, Casey Schaufler wrote:
+> SELinux considers tasks to be side-channel safe if they
+> have PROCESS_SHARE access.
 > 
-> OK here it is. Sending as a new patch instead of delta, as that's easier
-> to review - the delta is significant. Line stats wise it's the same.
-> Again a bit less boilerplate thans to no special seq_ops, a bit more
-> copy/paste in the open and release functions. But I guess it's better
-> overall.
+> Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
+> ---
+>   security/selinux/hooks.c | 9 +++++++++
+>   1 file changed, 9 insertions(+)
 > 
-> ----8>----
-> From c6a2eaf3bb3546509d6b7c42f8bcc56cd7e92f90 Mon Sep 17 00:00:00 2001
-> From: Vlastimil Babka <vbabka@suse.cz>
-> Date: Wed, 18 Jul 2018 13:14:30 +0200
-> Subject: [PATCH] mm: proc/pid/smaps_rollup: convert to single value seq_file
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index a8bf324130f5..7fbd7d7ac1cb 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -4219,6 +4219,14 @@ static void selinux_task_to_inode(struct task_struct *p,
+>   	spin_unlock(&isec->lock);
+>   }
+>   
+> +static int selinux_task_safe_sidechannel(struct task_struct *p)
+> +{
+> +	struct av_decision avd;
+> +
+> +	return avc_has_perm_noaudit(&selinux_state, current_sid(), task_sid(p),
+> +				    SECCLASS_PROCESS, PROCESS__SHARE, 0, &avd);
+> +}
 
-Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
+If you are going to apply this kind of check, is there a reason you 
+wouldn't just use the ptrace checking logic?  Just call 
+ptrace_may_access() with PTRACE_MODE_READ and dispense with having a 
+separate hook altogether.  Then you get uids/gids, caps, dumpable, and 
+security module checking for free.
+
+Regardless, I don't think share permission is the right answer here; it 
+has very different semantics and security implications, and is almost 
+never allowed in Android policy (just one instance for kernel->init 
+transition).
+
+> +
+>   /* Returns error only if unable to parse addresses */
+>   static int selinux_parse_skb_ipv4(struct sk_buff *skb,
+>   			struct common_audit_data *ad, u8 *proto)
+> @@ -7002,6 +7010,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+>   	LSM_HOOK_INIT(task_movememory, selinux_task_movememory),
+>   	LSM_HOOK_INIT(task_kill, selinux_task_kill),
+>   	LSM_HOOK_INIT(task_to_inode, selinux_task_to_inode),
+> +	LSM_HOOK_INIT(task_safe_sidechannel, selinux_task_safe_sidechannel),
+>   
+>   	LSM_HOOK_INIT(ipc_permission, selinux_ipc_permission),
+>   	LSM_HOOK_INIT(ipc_getsecid, selinux_ipc_getsecid),
+> 
+
