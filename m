@@ -6,316 +6,188 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C5EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D4CC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 331BD20C51
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:47:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 331BD20C51
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4466121480
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 15:47:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4466121480
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404095AbeHPSqk (ORCPT
+        id S2404111AbeHPSqs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 14:46:40 -0400
-Received: from mga01.intel.com ([192.55.52.88]:57496 "EHLO mga01.intel.com"
+        Thu, 16 Aug 2018 14:46:48 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:33529 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727026AbeHPSqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 14:46:39 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2018 08:45:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,247,1531810800"; 
-   d="p7s'?scan'208";a="65719384"
-Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
-  by orsmga008.jf.intel.com with ESMTP; 16 Aug 2018 08:45:08 -0700
-Received: from orsmsx113.amr.corp.intel.com (10.22.240.9) by
- ORSMSX107.amr.corp.intel.com (10.22.240.5) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Thu, 16 Aug 2018 08:45:08 -0700
-Received: from orsmsx101.amr.corp.intel.com ([169.254.8.46]) by
- ORSMSX113.amr.corp.intel.com ([169.254.9.72]) with mapi id 14.03.0319.002;
- Thu, 16 Aug 2018 08:45:08 -0700
-From:   "Derrick, Jonathan" <jonathan.derrick@intel.com>
-To:     "poza@codeaurora.org" <poza@codeaurora.org>
-CC:     "liudongdong3@huawei.com" <liudongdong3@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Busch, Keith" <keith.busch@intel.com>,
-        "okaya@kernel.org" <okaya@kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "helgaas@kernel.org" <helgaas@kernel.org>
-Subject: Re: [PATCH 1/2] PCI/DPC: Add 'nodpc' parameter
-Thread-Topic: [PATCH 1/2] PCI/DPC: Add 'nodpc' parameter
-Thread-Index: AQHUNN8oPZdeP/Rn10aUfkbk3uP46aTCkjUAgABpmYA=
-Date:   Thu, 16 Aug 2018 15:45:07 +0000
-Message-ID: <1534434305.17819.26.camel@intel.com>
-References: <1534368400-2807-1-git-send-email-jonathan.derrick@intel.com>
-         <f11c06374a90650e862cb68206ad2fdb@codeaurora.org>
-In-Reply-To: <f11c06374a90650e862cb68206ad2fdb@codeaurora.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.255.4.68]
-Content-Type: multipart/signed; micalg=sha-1;
-        protocol="application/x-pkcs7-signature"; boundary="=-JDsYvsl1RnmrMSQ8kdiR"
+        id S1727026AbeHPSqs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 14:46:48 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41rrLk1tPsz9tvpy;
+        Thu, 16 Aug 2018 17:47:26 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id D6eoNhWq1Aus; Thu, 16 Aug 2018 17:47:26 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41rrLk1HlFz9tvpn;
+        Thu, 16 Aug 2018 17:47:26 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 58F5F8B7E9;
+        Thu, 16 Aug 2018 17:47:29 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id VnoBVlSTq9-c; Thu, 16 Aug 2018 17:47:29 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 08C118B7F0;
+        Thu, 16 Aug 2018 17:47:27 +0200 (CEST)
+Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
+To:     Jeffrey Lien <Jeff.Lien@wdc.com>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        David Darrington <david.darrington@wdc.com>,
+        Jeff Furlong <jeff.furlong@wdc.com>
+References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
+ <20180810201601.GA80850@gmail.com>
+ <SN1PR04MB1824A5944E0428AC84B62886EA3E0@SN1PR04MB1824.namprd04.prod.outlook.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <a97dd75a-44fd-8f59-428d-a9723b287de9@c-s.fr>
+Date:   Thu, 16 Aug 2018 17:47:25 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <SN1PR04MB1824A5944E0428AC84B62886EA3E0@SN1PR04MB1824.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-JDsYvsl1RnmrMSQ8kdiR
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Thu, 2018-08-16 at 14:57 +0530, poza@codeaurora.org wrote:
-> On 2018-08-16 02:56, Jon Derrick wrote:
-> > Some users may want to disable downstream port containment (DPC),
-> > so
-> > give them this option
-> >=20
-> > Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
-> > ---
-> >  drivers/pci/pci.c      |  2 ++
-> >  drivers/pci/pci.h      |  6 ++++++
-> >  drivers/pci/pcie/dpc.c | 48=20
-> > ++++++++++++++++++++++++++++++++++++++----------
-> >  include/linux/pci.h    |  6 ++++++
-> >  4 files changed, 52 insertions(+), 10 deletions(-)
-> >=20
-> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> > index 80da484..4e629c2 100644
-> > --- a/drivers/pci/pci.c
-> > +++ b/drivers/pci/pci.c
-> > @@ -6062,6 +6062,8 @@ static int __init pci_setup(char *str)
-> >  				pcie_ats_disabled =3D true;
-> >  			} else if (!strcmp(str, "noaer")) {
-> >  				pci_no_aer();
-> > +			} else if (!strcmp(str, "nodpc")) {
-> > +				pci_no_dpc();
-> >  			} else if (!strcmp(str, "earlydump")) {
-> >  				pci_early_dump =3D true;
-> >  			} else if (!strncmp(str, "realloc=3D", 8)) {
-> > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> > index 6e0d152..f73f29e 100644
-> > --- a/drivers/pci/pci.h
-> > +++ b/drivers/pci/pci.h
-> > @@ -536,4 +536,10 @@ static inline void
-> > pci_aer_clear_fatal_status(struct pci_dev *dev) { }
-> >  static inline void pci_aer_clear_device_status(struct pci_dev
-> > *dev) {=20
-> > }
-> >  #endif
-> >=20
-> > +#ifdef CONFIG_PCIE_DPC
-> > +void pci_no_dpc(void);
-> > +#else
-> > +static inline void pci_no_dpc(void) { }
-> > +#endif
-> > +
-> >  #endif /* DRIVERS_PCI_H */
-> > diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-> > index f03279f..068fca0 100644
-> > --- a/drivers/pci/pcie/dpc.c
-> > +++ b/drivers/pci/pcie/dpc.c
-> > @@ -44,6 +44,18 @@ struct dpc_dev {
-> >  	"Memory Request Completion Timeout",		 /*
-> > Bit Position 18 */
-> >  };
-> >=20
-> > +static int pcie_dpc_disable;
-> > +
-> > +void pci_no_dpc(void)
-> > +{
-> > +	pcie_dpc_disable =3D 1;
-> > +}
-> > +
-> > +bool pci_dpc_available(void)
-> > +{
-> > +	return !pcie_dpc_disable && pci_aer_available() &&
-> > pci_msi_enabled();
->=20
-> 1) why do you check pci_aer_available() ?
-I'd assumed a dependency on aer, but looking at it again I see it calls
-into err.c without a requirement on aer.
+Don't be so sure that slice by 16 provides the best performance.
 
-Then it also seems the pci_aer_available() and AER dependency check in
-portdrv_core.c is unneccessary too.
+Some time ago, I did the comparison for CRC32 between slice by 4 and 
+slice by 8 (as included in the kernel), and the result is the following 
+on an mpc8xx (powerpc/32)
 
-> 2) and pci_aer_available() already internally checks
-> pci_msi_enabled();
->=20
-> > +}
-> > +
-> >  static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
-> >  {
-> >  	unsigned long timeout =3D jiffies + HZ;
-> > @@ -209,6 +221,17 @@ static irqreturn_t dpc_irq(int irq, void
-> > *context)
-> >  	return IRQ_HANDLED;
-> >  }
-> >=20
-> > +static void dpc_disable(struct pci_dev *pdev)
-> > +{
-> > +	u16 cap_pos, ctl;
-> > +
-> > +	cap_pos =3D pci_find_ext_capability(pdev,
-> > PCI_EXT_CAP_ID_DPC);
-> > +	pci_read_config_word(pdev, cap_pos + PCI_EXP_DPC_CTL,
-> > &ctl);
-> > +	ctl &=3D ~(PCI_EXP_DPC_CTL_EN_FATAL |
-> > PCI_EXP_DPC_CTL_EN_NONFATAL |
-> > +		 PCI_EXP_DPC_CTL_INT_EN);
-> > +	pci_write_config_word(pdev, cap_pos + PCI_EXP_DPC_CTL,
-> > ctl);
-> > +}
-> > +
-> >  #define FLAG(x, y) (((x) & (y)) ? '+' : '-')
-> >  static int dpc_probe(struct pcie_device *dev)
-> >  {
-> > @@ -221,9 +244,16 @@ static int dpc_probe(struct pcie_device *dev)
-> >  	if (pcie_aer_get_firmware_first(pdev))
-> >  		return -ENOTSUPP;
-> >=20
-> > +	if (!pci_dpc_available()) {
-> > +		status =3D -ENOTSUPP;
-> > +		goto disable_dpc;
-> > +	}
-> > +
-> >  	dpc =3D devm_kzalloc(device, sizeof(*dpc), GFP_KERNEL);
-> > -	if (!dpc)
-> > -		return -ENOMEM;
-> > +	if (!dpc) {
-> > +		status =3D -ENOMEM;
-> > +		goto disable_dpc;
-> > +	}
-> >=20
-> >  	dpc->cap_pos =3D pci_find_ext_capability(pdev,
-> > PCI_EXT_CAP_ID_DPC);
-> >  	dpc->dev =3D dev;
-> > @@ -235,7 +265,7 @@ static int dpc_probe(struct pcie_device *dev)
-> >  	if (status) {
-> >  		dev_warn(device, "request IRQ%d failed: %d\n",
-> > dev->irq,
-> >  			 status);
-> > -		return status;
-> > +		goto disable_dpc;
-> >  	}
-> >=20
-> >  	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CAP,
-> > &cap);
-> > @@ -260,17 +290,15 @@ static int dpc_probe(struct pcie_device *dev)
-> >  		FLAG(cap, PCI_EXP_DPC_CAP_SW_TRIGGER), dpc-
-> > >rp_log_size,
-> >  		FLAG(cap, PCI_EXP_DPC_CAP_DL_ACTIVE));
-> >  	return status;
-> > +
-> > +disable_dpc:
-> > +	dpc_disable(pdev);
-> > +	return status;
-> >  }
-> >=20
-> >  static void dpc_remove(struct pcie_device *dev)
-> >  {
-> > -	struct dpc_dev *dpc =3D get_service_data(dev);
-> > -	struct pci_dev *pdev =3D dev->port;
-> > -	u16 ctl;
-> > -
-> > -	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL,
-> > &ctl);
-> > -	ctl &=3D ~(PCI_EXP_DPC_CTL_EN_FATAL |
-> > PCI_EXP_DPC_CTL_INT_EN);
-> > -	pci_write_config_word(pdev, dpc->cap_pos +
-> > PCI_EXP_DPC_CTL, ctl);
-> > +	dpc_disable(dev->port);
-> >  }
-> >=20
-> >  static struct pcie_port_service_driver dpcdriver =3D {
-> > diff --git a/include/linux/pci.h b/include/linux/pci.h
-> > index 5454e6b..559b792 100644
-> > --- a/include/linux/pci.h
-> > +++ b/include/linux/pci.h
-> > @@ -1473,6 +1473,12 @@ static inline int pci_irqd_intx_xlate(struct
-> > irq_domain *d,
-> >  static inline bool pci_aer_available(void) { return false; }
-> >  #endif
-> >=20
-> > +#ifdef CONFIG_PCIE_DPC
-> > +bool pci_dpc_available(void);
-> > +#else
-> > +static inline bool pci_dpc_available(void) { return false; }
-> > +#endif
-> > +
-> >  #ifdef CONFIG_PCIE_ECRC
-> >  void pcie_set_ecrc_checking(struct pci_dev *dev);
-> >  void pcie_ecrc_get_policy(char *str);
---=-JDsYvsl1RnmrMSQ8kdiR
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+With CONFIG_CRC32_SLICEBY8:
+[ 1.109204] crc32: CRC_LE_BITS = 64, CRC_BE BITS = 64
+[ 1.114401] crc32: self tests passed, processed 225944 bytes in 15118910 
+nsec
+[ 1.130655] crc32c: CRC_LE_BITS = 64
+[ 1.134235] crc32c: self tests passed, processed 225944 bytes in 4479879 
+nsec
 
-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
-AG6qjTBc2iB2iz6IVnzrBtQT5DR3KM6EqbMTwur8keTC11xls7lwWexzsSgt37V9UNKAqfsZPgcX
-AgMBAAGjggI3MIICMzAdBgNVHQ4EFgQUJRdznv8EeAa3g+3F5NKtNNctuBcwHwYDVR0jBBgwFoAU
-HmkqtNwo/kcYTiELP7ysES/wmPUwZQYDVR0fBF4wXDBaoFigVoZUaHR0cDovL3d3dy5pbnRlbC5j
-b20vcmVwb3NpdG9yeS9DUkwvSW50ZWwlMjBFeHRlcm5hbCUyMEJhc2ljJTIwSXNzdWluZyUyMENB
-JTIwNEEuY3JsMIGfBggrBgEFBQcBAQSBkjCBjzBpBggrBgEFBQcwAoZdaHR0cDovL3d3dy5pbnRl
-bC5jb20vcmVwb3NpdG9yeS9jZXJ0aWZpY2F0ZXMvSW50ZWwlMjBFeHRlcm5hbCUyMEJhc2ljJTIw
-SXNzdWluZyUyMENBJTIwNEEuY3J0MCIGCCsGAQUFBzABhhZodHRwOi8vb2NzcC5pbnRlbC5jb20v
-MAsGA1UdDwQEAwIHgDA8BgkrBgEEAYI3FQcELzAtBiUrBgEEAYI3FQiGw4x1hJnlUYP9gSiFjp9T
-gpHACWeB3r05lfBDAgFkAgEJMB8GA1UdJQQYMBYGCCsGAQUFBwMEBgorBgEEAYI3CgMMMCkGCSsG
-AQQBgjcVCgQcMBowCgYIKwYBBQUHAwQwDAYKKwYBBAGCNwoDDDBRBgNVHREESjBIoCoGCisGAQQB
-gjcUAgOgHAwaam9uYXRoYW4uZGVycmlja0BpbnRlbC5jb22BGmpvbmF0aGFuLmRlcnJpY2tAaW50
-ZWwuY29tMA0GCSqGSIb3DQEBBQUAA4IBAQA5LNb+VnWY0V21FlNjnQ2BIb5gmlED29zwQiC5yezn
-2SexgvN31129iJSkXuiBHdcVJiUAUPHYuxPRwumwbrkY6m+sYi9kIzKt+ZKNNAN4WbnavsbyRBlb
-cIn2E5swqD+sks8AmKivHmg+gFeboLaOf+EqVihIz1Wec1PpbX98R1t2ep7Y/81DD1fIjAWHl6Mq
-TJwjKQuYB01kkJdXZAGPXUQSARR1y2D1YpCkDqfGH2STaB4nenD4INSyhTGo5RV9wwTAibyrIq50
-rnmvBnHTmICQVdHuIhG1gGmDLUAGqfrU3W2QJr9gkICdrTMgIEdd8s73wknaZxZKqfRxnMVQMYIC
-FzCCAhMCAQEwgZAweTELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRQwEgYDVQQHEwtTYW50YSBD
-bGFyYTEaMBgGA1UEChMRSW50ZWwgQ29ycG9yYXRpb24xKzApBgNVBAMTIkludGVsIEV4dGVybmFs
-IEJhc2ljIElzc3VpbmcgQ0EgNEECEzMAAKye+0C3syvSXOcAAAAArJ4wCQYFKw4DAhoFAKBdMBgG
-CSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE4MDgxNjE1NDUwNVowIwYJ
-KoZIhvcNAQkEMRYEFBwJqnY6HkeNyvQ1oYxFjHHzCzylMA0GCSqGSIb3DQEBAQUABIIBAEH8NPbt
-VpTAbbvg5u0MHtZ+GNUHRAmy1Ip7jtBPv+xnHhqcLr7x2QreIc7ali1NC5tdBhlQNcWAvwPnc7u1
-FIM1L5rgPyjZMk6VEmk4rkb3jC+IwsZeRXprrJAwb+7tUwIwVXp57O5Iy0rZm8h0PkVyS69hUD/K
-xU5LKPlrd31NHBGKjmBeLp1QXLvcANWU3EM+CpJfbYu8m131O0yMB570CrASpeCCZz8BiqVUGhBD
-+F6KA22tyUXGegpxCZxx+chylN0QPBqsxIf6hoxDLTSN7Yp6/V51cznKMC0YN1WCMs4uch87aqO+
-FL6W5yZRWABU9pW4ixcMtrhBEm2t0jAAAAAAAAA=
+With CONFIG_CRC32_SLICEBY4:
+[ 1.097129] crc32: CRC_LE_BITS = 32, CRC_BE BITS = 32
+[ 1.101878] crc32: self tests passed, processed 225944 bytes in 8616242 nsec
+[ 1.116298] crc32c: CRC_LE_BITS = 32
+[ 1.119607] crc32c: self tests passed, processed 225944 bytes in 3289576 
+nsec
 
+As you can see, slice by 4 is better than slice by 8 on that CPU.
 
---=-JDsYvsl1RnmrMSQ8kdiR--
+So I'm sure it is worth doing the test for CRC16 as well.
+
+Christophe
+
+Le 16/08/2018 à 16:02, Jeffrey Lien a écrit :
+> Eric,
+> We did not test the slice by 4 or 8 tables.  I'm not sure of  the value of doing that since the slice by 16 will provide the best performance gain.   If I'm missing anything here, please let me know.
+> 
+> I'm working on a new version of the patch based on the feedback from others and will also change the pointer variables to start with p and fix the indenting you mentioned below in the new version of the patch.
+> 
+> Thanks
+> 
+> Jeff Lien
+> 
+> -----Original Message-----
+> From: Eric Biggers [mailto:ebiggers@kernel.org]
+> Sent: Friday, August 10, 2018 3:16 PM
+> To: Jeffrey Lien <Jeff.Lien@wdc.com>
+> Cc: linux-kernel@vger.kernel.org; linux-crypto@vger.kernel.org; linux-block@vger.kernel.org; linux-scsi@vger.kernel.org; herbert@gondor.apana.org.au; tim.c.chen@linux.intel.com; martin.petersen@oracle.com; David Darrington <david.darrington@wdc.com>; Jeff Furlong <jeff.furlong@wdc.com>
+> Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
+> 
+> On Fri, Aug 10, 2018 at 02:12:11PM -0500, Jeff Lien wrote:
+>> This patch provides a performance improvement for the CRC16
+>> calculations done in read/write workloads using the T10 Type 1/2/3
+>> guard field.  For example, today with sequential write workloads (one
+>> thread/CPU of IO) we consume 100% of the CPU because of the CRC16
+>> computation bottleneck.  Today's block devices are considerably
+>> faster, but the CRC16 calculation prevents folks from utilizing the
+>> throughput of such devices.  To speed up this calculation and expose
+>> the block device throughput, we slice the old single byte for loop into a 16 byte for loop, with a larger CRC table to match.  The result has shown 5x performance improvements on various big endian and little endian systems running the 4.18.0 kernel version.
+>>
+>> FIO Sequential Write, 64K Block Size, Queue Depth 64
+>> BE Base Kernel:        bw=201.5 MiB/s
+>> BE Modified CRC Calc:  bw=968.1 MiB/s
+>> 4.80x performance improvement
+>>
+>> LE Base Kernel:        bw=357 MiB/s
+>> LE Modified CRC Calc:  bw=1964 MiB/s
+>> 5.51x performance improvement
+>>
+>> FIO Sequential Read, 64K Block Size, Queue Depth 64
+>> BE Base Kernel:        bw=611.2 MiB/s
+>> BE Modified CRC calc:  bw=684.9 MiB/s
+>> 1.12x performance improvement
+>>
+>> LE Base Kernel:        bw=797 MiB/s
+>> LE Modified CRC Calc:  bw=2730 MiB/s
+>> 3.42x performance improvement
+> 
+> Did you also test the slice-by-4 (requires 2048-byte table) and slice-by-8 (requires 4096-byte table) methods?  Your proposal is slice-by-16 (requires 8192-byte table); the original was slice-by-1 (requires 512-byte table).
+> 
+>>   __u16 crc_t10dif_generic(__u16 crc, const unsigned char *buffer,
+>> size_t len)  {
+>> -	unsigned int i;
+>> +	const __u8 *i = (const __u8 *)buffer;
+>> +	const __u8 *i_end = i + len;
+>> +	const __u8 *i_last16 = i + (len / 16 * 16);
+> 
+> 'i' is normally a loop counter, not a pointer.
+> Use 'p', 'p_end', and 'p_last16'.
+> 
+>>   
+>> -	for (i = 0 ; i < len ; i++)
+>> -		crc = (crc << 8) ^ t10_dif_crc_table[((crc >> 8) ^ buffer[i]) & 0xff];
+>> +	for (; i < i_last16; i += 16) {
+>> +		crc = t10_dif_crc_table[15][i[0] ^ (__u8)(crc >>  8)] ^
+>> +		t10_dif_crc_table[14][i[1] ^ (__u8)(crc >>  0)] ^
+>> +		t10_dif_crc_table[13][i[2]] ^
+>> +		t10_dif_crc_table[12][i[3]] ^
+>> +		t10_dif_crc_table[11][i[4]] ^
+>> +		t10_dif_crc_table[10][i[5]] ^
+>> +		t10_dif_crc_table[9][i[6]] ^
+>> +		t10_dif_crc_table[8][i[7]] ^
+>> +		t10_dif_crc_table[7][i[8]] ^
+>> +		t10_dif_crc_table[6][i[9]] ^
+>> +		t10_dif_crc_table[5][i[10]] ^
+>> +		t10_dif_crc_table[4][i[11]] ^
+>> +		t10_dif_crc_table[3][i[12]] ^
+>> +		t10_dif_crc_table[2][i[13]] ^
+>> +		t10_dif_crc_table[1][i[14]] ^
+>> +		t10_dif_crc_table[0][i[15]];
+>> +	}
+> 
+> Please indent this properly.
+> 
+> 		crc = t10_dif_crc_table[15][i[0] ^ (__u8)(crc >>  8)] ^
+> 		      t10_dif_crc_table[14][i[1] ^ (__u8)(crc >>  0)] ^
+> 		      t10_dif_crc_table[13][i[2]] ^
+> 		      t10_dif_crc_table[12][i[3]] ^
+> 		      t10_dif_crc_table[11][i[4]] ^
+> 		      ...
+> 
+> - Eric
+> 
