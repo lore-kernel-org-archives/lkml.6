@@ -2,135 +2,116 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 274C4C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 02:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78746C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 02:45:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64D0221477
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 02:38:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39A0D21477
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 02:45:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="geVIXaHz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64D0221477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P2ndkyj3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39A0D21477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387722AbeHPFdI (ORCPT
+        id S2387797AbeHPFkS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 01:33:08 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:57353 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbeHPFdI (ORCPT
+        Thu, 16 Aug 2018 01:40:18 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41676 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbeHPFkS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 01:33:08 -0400
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w7G2btxI018048;
-        Thu, 16 Aug 2018 11:37:56 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w7G2btxI018048
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1534387076;
-        bh=Krx9n8AGL0iTihVOqrt+6O4bMqXSTmOwr9n15SH2boE=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=geVIXaHzkuZXemzJorleUNniyFVFi6Tz3SyPhGunxqhvc3UthRYof08AWa+8C0ZQW
-         sO/1p25iTf1F5iPaY5z6RL8BDqaTO+vL0M3P2FvGEkKbYu5GmfxvBMsa60IkxmeJjW
-         twVLxPtqszkM/QwjJmusq6UTGwj7LmOtKIICSfDEjiE03FTCnTZsfcvpv2hl53LC+V
-         sgXQqFX7HRaEMfNWc7CikE+Kyozi3hnWqi24AntMYxXh183XA5X6c6efYoF2z9RFvi
-         HtRfjz+Uc4M3m6TM3x8i+O0184aWueNVC8sWeQwsBO5qWbNjMh4GRVcoZ/w7RNdu2P
-         EGWD5iEBBxLRA==
-X-Nifty-SrcIP: [209.85.222.51]
-Received: by mail-ua1-f51.google.com with SMTP id w7-v6so2777565uan.9;
-        Wed, 15 Aug 2018 19:37:56 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHS1dS3l29llVi44HJVgFoKWzRyLhKR0FkIXckZUEEJW7RI8wmk
-        OANvOC7Q2xsJz/oi6tHJFZuDt6uZDK/CepvKFww=
-X-Google-Smtp-Source: AA+uWPxCjWA+udgf99BIW8ak90yJop0tEAYsLzhoLo/Q9gN3UUqbOBLFl0U58E4g7oPRIoPdTGzl0kLLh8O5w5U1xrI=
-X-Received: by 2002:ab0:4c24:: with SMTP id l36-v6mr18503767uaf.199.1534387075175;
- Wed, 15 Aug 2018 19:37:55 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Wed, 15 Aug 2018 19:37:14
- -0700 (PDT)
-In-Reply-To: <eafb5a94-f140-27f2-bc91-c6b95a18c97d@infradead.org>
-References: <eafb5a94-f140-27f2-bc91-c6b95a18c97d@infradead.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 16 Aug 2018 11:37:14 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQWM0X3yeifD_3jsiP7yPb2G0B52fmsrBM=iqpaVSA9kA@mail.gmail.com>
-Message-ID: <CAK7LNAQWM0X3yeifD_3jsiP7yPb2G0B52fmsrBM=iqpaVSA9kA@mail.gmail.com>
-Subject: Re: [PATCH v2] scripts: modpost: check memory allocation results
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Yuexing Wang <wangyxlandq@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 16 Aug 2018 01:40:18 -0400
+Received: by mail-pf1-f195.google.com with SMTP id y10-v6so1315553pfn.8;
+        Wed, 15 Aug 2018 19:45:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=F2lUfS2qMObMXB1Iowh/bq7TdSASYc3dbif4z8CD7hU=;
+        b=P2ndkyj3vvGWwRNSixRpkXslvL8MMGPtqsvra5P06SZKIiE+FzGnhesd6ejsprncPn
+         O2rY4CGxWlrFfzXxzyR15Y9fVMznu41PqTGZFokHvwpXfTVD8ghn96ZgzWvLPPnX1vVl
+         e+4WYj8kxjU+prsBlmsOkR5gwjIHtah+AFGyMD/c7E9qpXD9AzMtfyvqlE2c2QuDYk5Z
+         RMqLxhFnwqsXfMj8quCyENLQ25Kv2PpFrQ0tGvnamPasuX03TSBsnam7YV8LDYrX3hlx
+         pRS6H+5lclKT0SfS9uIerQsMUSLjsEJKJqgLAUi8NtgY+aFeEQOJFkg8EC92n45pBcUL
+         bSJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=F2lUfS2qMObMXB1Iowh/bq7TdSASYc3dbif4z8CD7hU=;
+        b=Hn907JE0Oz2FGh7wwWIKdqED492jhOc9DWItgh3elHY7Xuf34FmKl6sObKLSpJ3q7S
+         ez4wVBe97baS7Jp1KFKAk5gOFxgLS0gb0Jt20GyIeD5Q/3GfjWN5R1OBqkM4mknCSMuC
+         iK9aYq0ax7OQJhaBPJijFFdLGIUl/qkmlc9Ch44ZpBztqKuWVTUQ5yiCj8GedG41zWLV
+         sz+MU7BLyal+laRsxXBKVNkOcWwddIjctkbsJXEq3WW0GMpvPygXNuHpZJXEKdjv587z
+         uVO+p1kULhcB9KZ1F7clxVqy2KQKniGT1ZlD3Mw4nWymVzsEgEfo/1hM/0cEM6tMqGXM
+         m1mA==
+X-Gm-Message-State: AOUpUlGEfi1vbbAn2OHWxVJq2sn/sdijTGcWKK7kc7+bXwhRQo4+Xavd
+        1Ojw2xEAv/rr25WMmB32vaE=
+X-Google-Smtp-Source: AA+uWPwv7QKnMJ/Xn5y3z/LPP+xW+4UAiLsQXcd+yx6gR29blHHLp9cpoKNvC7M0gc+Cz7erOfelSQ==
+X-Received: by 2002:a63:d80f:: with SMTP id b15-v6mr27628317pgh.347.1534387507257;
+        Wed, 15 Aug 2018 19:45:07 -0700 (PDT)
+Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id t15-v6sm37823323pfa.158.2018.08.15.19.45.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 15 Aug 2018 19:45:06 -0700 (PDT)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
+        Juha Kuikka <juha.kuikka@gmail.com>
+Subject: [PATCH v2 0/2] Rumble support for Xbox One S controller
+Date:   Wed, 15 Aug 2018 19:44:08 -0700
+Message-Id: <20180816024410.29218-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-08-16 4:30 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
-> From: Randy Dunlap <rdunlap@infradead.org>
->
-> Fix missing error check for memory allocation functions in
-> scripts/mod/modpost.c.
->
-> Fixes kernel bugzilla #200319:
-> https://bugzilla.kernel.org/show_bug.cgi?id=200319
->
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Yuexing Wang <wangyxlandq@gmail.com>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> v2: add checks in more places
+Everyone:
 
-Applied to linux-kbuild. Thanks!
+This is v2 of the patches adding support for rumble for Xbox One S
+controller connected over Bluetooth. Hopefully all of the changes are
+pretty straightforward and self-explanatory.
 
+Feedback is wellcome!
 
->  scripts/mod/modpost.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> --- linux-next-20180814.orig/scripts/mod/modpost.c
-> +++ linux-next-20180814/scripts/mod/modpost.c
-> @@ -672,7 +672,7 @@ static void handle_modversions(struct mo
->                         if (ELF_ST_TYPE(sym->st_info) == STT_SPARC_REGISTER)
->                                 break;
->                         if (symname[0] == '.') {
-> -                               char *munged = strdup(symname);
-> +                               char *munged = NOFAIL(strdup(symname));
->                                 munged[0] = '_';
->                                 munged[1] = toupper(munged[1]);
->                                 symname = munged;
-> @@ -1318,7 +1318,7 @@ static Elf_Sym *find_elf_symbol2(struct
->  static char *sec2annotation(const char *s)
->  {
->         if (match(s, init_exit_sections)) {
-> -               char *p = malloc(20);
-> +               char *p = NOFAIL(malloc(20));
->                 char *r = p;
->
->                 *p++ = '_';
-> @@ -1338,7 +1338,7 @@ static char *sec2annotation(const char *
->                         strcat(p, " ");
->                 return r;
->         } else {
-> -               return strdup("");
-> +               return NOFAIL(strdup(""));
->         }
->  }
->
-> @@ -2036,7 +2036,7 @@ void buf_write(struct buffer *buf, const
->  {
->         if (buf->size - buf->pos < len) {
->                 buf->size += len + SZ;
-> -               buf->p = realloc(buf->p, buf->size);
-> +               buf->p = NOFAIL(realloc(buf->p, buf->size));
->         }
->         strncpy(buf->p + buf->pos, s, len);
->         buf->pos += len;
->
->
+Changes since [v1]:
 
+    - code converting the driver to use struct ms_data is split into a
+      separate patch
 
+    - CONFIG_MICROSOFT_FF removed
+
+    - explicit PID comparison replaced with MS_QUIRK_FF
+
+    - ms_init_ff() converted to be a no-op for devices that don't have FF
+
+    - all FF cleanup actions moved into ms_remove_ff()
+
+    - struct xb1s_ff_report declared to be packed, magic 4 replaced
+      with MAGNITUDE_NUM, output_report_dmabuf converted to be void *
+      to avoid the need to typecast it.
+
+Thanks,
+Andrey Smirnov
+
+[v1] lkml.kernel.org/r/20180810001714.14659-1-andrew.smirnov@gmail.com
+
+Andrey Smirnov (2):
+  hid: microsoft: Convert private data to be a proper struct
+  hid: microsoft: Add rumble support for Xbox One S controller
+
+ drivers/hid/hid-ids.h       |   1 +
+ drivers/hid/hid-microsoft.c | 142 ++++++++++++++++++++++++++++++++++--
+ 2 files changed, 138 insertions(+), 5 deletions(-)
 
 -- 
-Best Regards
-Masahiro Yamada
+2.17.1
+
