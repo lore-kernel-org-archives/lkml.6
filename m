@@ -2,98 +2,152 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1533DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 442E8C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:41:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAF2220C03
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:38:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAF2220C03
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id E380F20C03
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 08:41:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="wNmHVnd+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E380F20C03
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390089AbeHPLfO (ORCPT
+        id S2390094AbeHPLiU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 07:35:14 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48004 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389366AbeHPLfN (ORCPT
+        Thu, 16 Aug 2018 07:38:20 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35318 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389453AbeHPLiU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 07:35:13 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 3968E26104F
-Subject: Re: [PATCH 2/4] dt-bindings: phy-rockchip-inno-usb2: add
- documentation for extcon and utmi-avalid properties.
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, amstan@chromium.org,
-        groeck@google.com, kieran.bingham@ideasonboard.com,
-        kernel@collabora.com, bleung@chromium.org, heiko@sntech.de,
-        devicetree@vger.kernel.org, Frank Wang <frank.wang@rock-chips.com>,
-        linux-rockchip@lists.infradead.org,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <20180815095934.11205-1-enric.balletbo@collabora.com>
- <20180815095934.11205-3-enric.balletbo@collabora.com>
- <20180815222157.GA8193@rob-hp-laptop>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <a71af5b8-cdc1-cf26-8c01-beb523e7c332@collabora.com>
-Date:   Thu, 16 Aug 2018 10:38:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180815222157.GA8193@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Thu, 16 Aug 2018 07:38:20 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w10-v6so1748018pgv.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 01:41:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=y4PHHWGgb1VEd7a2iwknInHmrtvQEkgYTSsBpz46itk=;
+        b=wNmHVnd+hfrXlxYublfv05BoJ+PMY/A9K32iXbRNdfumiwxpmhn7L8LACfDfSg5+lH
+         5O1LjccI2c5LGnYv8dQyZevbkz4xg9jnUq1f6IJP/mU8T1Kql0ZT/n9q8vq7qWmT12x7
+         jv/1dXgOPK91CJ6DT7bz5o0AIsjAy2KTsHYOkm4LWbDVeLO/ifaYJaHqOb1tNnk7EYlE
+         GM7zvlIWMKrpZGJlwRWojncbISng6VnBePdqvFjZY/jnOeuPTjV0aKYk3gdqr9iU2C/Z
+         MF15mgHBcdgMPk/bJ1c6c6sBOcGJRZNynfB9ercTZG1gWcURtLkcWIwlkqFiA2oMG1/x
+         WscQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=y4PHHWGgb1VEd7a2iwknInHmrtvQEkgYTSsBpz46itk=;
+        b=oMnqNDyhJBw4af+9YVM8IziM58FEyouVVdMM8RRH9fU59MnbY1rtJT7Kta2ymHoJEP
+         amesksoDFwol7RC/Do8vCyWtlSpJ1Ex22S+Bhxz2zETqEvxlbSLVHffFs04YUhWAps+Q
+         o7FIHNI/ZV4JlBoNid6DWGdKA9hBpnkoh/KFjyEd9nH8J6mVp4+myMzN+M1H8Wg2XOZk
+         X3hPiFPslUOKVPQEiDz/uV5WVcvFPG0oduvMBW4G+bJrF8Tlc/w9pYoVYMTzVZfUD/aW
+         /0k9OL6LPxWY9GsMFXheqhxjJDKpVM13ygRHwfCzt6YuOjH58sGxPrC4c55wEYrCDFT7
+         EPhw==
+X-Gm-Message-State: AOUpUlGI1nKR08qmKtpF4pxU52yIh3X6phR0/Nln1GikiY8Ha3p+alqa
+        pNkOnwQ28CaAE40TE+5DNl3QlQ==
+X-Google-Smtp-Source: AA+uWPykkCEkUtsSI5hZwZQLOLXUrMg4pDfbKwT5gcutgLe1YKh3V/2ZzAvi3oOxckYOuXXdMZFIbg==
+X-Received: by 2002:a63:77ce:: with SMTP id s197-v6mr404142pgc.172.1534408881864;
+        Thu, 16 Aug 2018 01:41:21 -0700 (PDT)
+Received: from localhost.localdomain (125-227-158-176.HINET-IP.hinet.net. [125.227.158.176])
+        by smtp.gmail.com with ESMTPSA id 14-v6sm50643046pft.93.2018.08.16.01.41.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Aug 2018 01:41:21 -0700 (PDT)
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+To:     Corentin Chary <corentin.chary@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        acpi4asus-user@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@endlessm.com
+Cc:     Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: [RFC PATCH] platform/x86: asus-wmi: Simplify the keyboard brightness updating process
+Date:   Thu, 16 Aug 2018 16:41:04 +0800
+Message-Id: <20180816084104.434-1-jian-hong@endlessm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+The original asus-wmi queues a work which calls the ACPI/WMI methods to
+update the keyboard LED brightness.  Similar drivers - acer-wmi,
+dell-wmi-led just call the ACPI/WMI methods directly without workqueues.
 
-On 16/08/18 00:21, Rob Herring wrote:
-> On Wed, Aug 15, 2018 at 11:59:32AM +0200, Enric Balletbo i Serra wrote:
->> Commit 98898f3bc83c8 ("phy: rockchip-inno-usb2: support otg-port for
->> rk3399") introduces two new properties. The extcon property is used to
->> detect the cable-state, and the rockchip,utmi-avalid is used to indicate
->> which register should be used to detect the vbus state.
->>
->> Document these properties in the documentation binding.
->>
->> Fixes: 98898f3bc83c8 ("phy: rockchip-inno-usb2: support otg-port for rk3399")
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> ---
->>
->>  .../devicetree/bindings/phy/phy-rockchip-inno-usb2.txt         | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/phy/phy-rockchip-inno-usb2.txt b/Documentation/devicetree/bindings/phy/phy-rockchip-inno-usb2.txt
->> index 074a7b3b0425..2d4808d3920b 100644
->> --- a/Documentation/devicetree/bindings/phy/phy-rockchip-inno-usb2.txt
->> +++ b/Documentation/devicetree/bindings/phy/phy-rockchip-inno-usb2.txt
->> @@ -23,6 +23,7 @@ Optional properties:
->>  		 register files". When set driver will request its
->>  		 phandle as one companion-grf for some special SoCs
->>  		 (e.g RV1108).
->> + - extcon : phandle to the extcon device for the otg phy.
-> 
-> extcon is not a good binding. The usb connector binding should be used 
-> instead for new users.
-> 
+This patch simplifies the keyboard brightness updating process which
+calls the kbd_led_update function directly without workqueue in
+asus-wmi.
 
-Ok, although the extcon thing is implemented in the driver, so I was trying to
-just describe how is implemented now, looks like nobody is using it apart from
-me (patches not upstreamed yet). I suppose switch to the usb connector binding
-will imply some driver modifications. I will take a look.
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+---
+ drivers/platform/x86/asus-wmi.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-Thanks,
- Enric
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 34dcc1aac4ea..d3d500851a7a 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -239,7 +239,6 @@ struct asus_wmi {
+ 	int lightbar_led_wk;
+ 	struct workqueue_struct *led_workqueue;
+ 	struct work_struct tpd_led_work;
+-	struct work_struct kbd_led_work;
+ 	struct work_struct wlan_led_work;
+ 	struct work_struct lightbar_led_work;
+ 
+@@ -456,12 +455,9 @@ static enum led_brightness tpd_led_get(struct led_classdev *led_cdev)
+ 	return read_tpd_led_state(asus);
+ }
+ 
+-static void kbd_led_update(struct work_struct *work)
++static void kbd_led_update(struct asus_wmi *asus)
+ {
+ 	int ctrl_param = 0;
+-	struct asus_wmi *asus;
+-
+-	asus = container_of(work, struct asus_wmi, kbd_led_work);
+ 
+ 	/*
+ 	 * bits 0-2: level
+@@ -516,7 +512,7 @@ static void do_kbd_led_set(struct led_classdev *led_cdev, int value)
+ 		value = 0;
+ 
+ 	asus->kbd_led_wk = value;
+-	queue_work(asus->led_workqueue, &asus->kbd_led_work);
++	kbd_led_update(asus);
+ }
+ 
+ static void kbd_led_set(struct led_classdev *led_cdev,
+@@ -671,8 +667,6 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
+ 
+ 	led_val = kbd_led_read(asus, NULL, NULL);
+ 	if (led_val >= 0) {
+-		INIT_WORK(&asus->kbd_led_work, kbd_led_update);
+-
+ 		asus->kbd_led_wk = led_val;
+ 		asus->kbd_led.name = "asus::kbd_backlight";
+ 		asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
+@@ -2314,7 +2308,7 @@ static int asus_hotk_resume(struct device *device)
+ 	struct asus_wmi *asus = dev_get_drvdata(device);
+ 
+ 	if (!IS_ERR_OR_NULL(asus->kbd_led.dev))
+-		queue_work(asus->led_workqueue, &asus->kbd_led_work);
++		kbd_led_update(asus);
+ 
+ 	return 0;
+ }
+@@ -2350,7 +2344,7 @@ static int asus_hotk_restore(struct device *device)
+ 		rfkill_set_sw_state(asus->uwb.rfkill, bl);
+ 	}
+ 	if (!IS_ERR_OR_NULL(asus->kbd_led.dev))
+-		queue_work(asus->led_workqueue, &asus->kbd_led_work);
++		kbd_led_update(asus);
+ 
+ 	return 0;
+ }
+-- 
+2.11.0
 
-> Rob
-> 
