@@ -2,124 +2,129 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40996C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27FB0C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBF7A2147E
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:33:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBF7A2147E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E12092147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 13:33:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E12092147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391687AbeHPQbh (ORCPT
+        id S2403872AbeHPQcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 12:31:37 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36810 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725901AbeHPQbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 12:31:36 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9C6A80D;
-        Thu, 16 Aug 2018 06:32:57 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 181393F5BC;
-        Thu, 16 Aug 2018 06:32:54 -0700 (PDT)
-Date:   Thu, 16 Aug 2018 14:32:49 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v3 03/14] sched/core: uclamp: add CPU's clamp groups
- accounting
-Message-ID: <20180816133249.GA2964@e110439-lin>
-References: <20180806163946.28380-1-patrick.bellasi@arm.com>
- <20180806163946.28380-4-patrick.bellasi@arm.com>
- <a24def9b-57bb-d072-5064-0421076d2e43@arm.com>
- <20180814164905.GG2605@e110439-lin>
- <7c45c1a8-24cb-6798-5b6f-3b5dfc9b490d@arm.com>
- <20180815105428.GA7388@e110439-lin>
- <ccd9c53f-55f7-a285-39eb-4303888dafcd@arm.com>
+        Thu, 16 Aug 2018 12:32:04 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43005 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbeHPQcE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 12:32:04 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fqIOu-00084q-UM; Thu, 16 Aug 2018 13:33:21 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: aacraid: remove unused variables dev and cpu
+Date:   Thu, 16 Aug 2018 14:33:20 +0100
+Message-Id: <20180816133320.19682-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ccd9c53f-55f7-a285-39eb-4303888dafcd@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dietmar!
+From: Colin Ian King <colin.king@canonical.com>
 
-On 15-Aug 12:59, Dietmar Eggemann wrote:
-> On 08/15/2018 12:54 PM, Patrick Bellasi wrote:
-> >On 15-Aug 11:37, Dietmar Eggemann wrote:
-> >>On 08/14/2018 06:49 PM, Patrick Bellasi wrote:
+Variables dev and cpu are not being used and are redundant and hence can
+be removed.
 
-[...]
+Cleans up clang warnings:
+warning: variable 'dev' set but not used [-Wunused-but-set-variable]
+warning: variable 'cpu' set but not used [-Wunused-but-set-variable]
 
-> >>If this is only for testing/debugging, I would suggest a simple one line
-> >>BUG_ON()
-> >
-> >These are (eventually) considered as recoverable errors... thus,
-> >AFAIK, using BUG_ON is overkilling and discouraged:
-> >   https://elixir.bootlin.com/linux/latest/source/include/asm-generic/bug.h#L42
-> 
-> Not sure about that. If this refcounting is out of sync, that's indicating a
-> serious issue here for me which should be fixed.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/aacraid/aachba.c  | 7 -------
+ drivers/scsi/aacraid/commsup.c | 2 --
+ 2 files changed, 9 deletions(-)
 
-Well, refconting seems quite ok to me, we always inc/dec under RQ
-locking and it's a per-CPU variable.
-
-The warning is there to report issues on further testing as well as to
-be safe with respect to possible future modifications of the code.
-
-> >>You find CONFIG_SCHED_DEBUG=y in production kernels as well.
-> >
-> >AFAIK, that setting is discouraged for production kernels...
-> >Moreover, it's still better to WARN sometimes on a production kernel
-> >the crash the device, isnt't it?
-> 
-> IMHO, if this is something which should not happen at all, a BUG_ON() is the
-> right thing to do here.
-
-I don't agree on that. I agree it should not happen but since it's a
-recoverable error it think we should not panic.
-
-There are really few BUG_ON() in core.c and they are all for much more
-serious issues than a (eventually) broken refcount.
-
-IMHO instead an (unlikely) inconsistent refcont for an "optional
-optimization" on "frequency selection" is not such a critical
-failure worth a device crash.
-
-> And you get the call stack to investigate why it hit.
-
-We can always add a stack dump if we notice the warning.
-
-But, since we do not agree on that point, I would say we should better
-wait for what the maintainers prefers.
-
-Best,
-Patrick
-
+diff --git a/drivers/scsi/aacraid/aachba.c b/drivers/scsi/aacraid/aachba.c
+index 6e356325d8d9..bd7f352c28f3 100644
+--- a/drivers/scsi/aacraid/aachba.c
++++ b/drivers/scsi/aacraid/aachba.c
+@@ -3480,7 +3480,6 @@ int aac_dev_ioctl(struct aac_dev *dev, int cmd, void __user *arg)
+ 
+ static void aac_srb_callback(void *context, struct fib * fibptr)
+ {
+-	struct aac_dev *dev;
+ 	struct aac_srb_reply *srbreply;
+ 	struct scsi_cmnd *scsicmd;
+ 
+@@ -3491,8 +3490,6 @@ static void aac_srb_callback(void *context, struct fib * fibptr)
+ 
+ 	BUG_ON(fibptr == NULL);
+ 
+-	dev = fibptr->dev;
+-
+ 	srbreply = (struct aac_srb_reply *) fib_data(fibptr);
+ 
+ 	scsicmd->sense_buffer[0] = '\0';  /* Initialize sense valid flag to false */
+@@ -3921,13 +3918,11 @@ static int aac_send_hba_fib(struct scsi_cmnd *scsicmd)
+ 
+ static long aac_build_sg(struct scsi_cmnd *scsicmd, struct sgmap *psg)
+ {
+-	struct aac_dev *dev;
+ 	unsigned long byte_count = 0;
+ 	int nseg;
+ 	struct scatterlist *sg;
+ 	int i;
+ 
+-	dev = (struct aac_dev *)scsicmd->device->host->hostdata;
+ 	// Get rid of old data
+ 	psg->count = 0;
+ 	psg->sg[0].addr = 0;
+@@ -3963,14 +3958,12 @@ static long aac_build_sg(struct scsi_cmnd *scsicmd, struct sgmap *psg)
+ 
+ static long aac_build_sg64(struct scsi_cmnd *scsicmd, struct sgmap64 *psg)
+ {
+-	struct aac_dev *dev;
+ 	unsigned long byte_count = 0;
+ 	u64 addr;
+ 	int nseg;
+ 	struct scatterlist *sg;
+ 	int i;
+ 
+-	dev = (struct aac_dev *)scsicmd->device->host->hostdata;
+ 	// Get rid of old data
+ 	psg->count = 0;
+ 	psg->sg[0].addr[0] = 0;
+diff --git a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
+index 6e1b022a823d..1e77d96a18f2 100644
+--- a/drivers/scsi/aacraid/commsup.c
++++ b/drivers/scsi/aacraid/commsup.c
+@@ -2586,9 +2586,7 @@ int aac_acquire_irq(struct aac_dev *dev)
+ void aac_free_irq(struct aac_dev *dev)
+ {
+ 	int i;
+-	int cpu;
+ 
+-	cpu = cpumask_first(cpu_online_mask);
+ 	if (aac_is_src(dev)) {
+ 		if (dev->max_msix > 1) {
+ 			for (i = 0; i < dev->max_msix; i++)
 -- 
-#include <best/regards.h>
+2.17.1
 
-Patrick Bellasi
