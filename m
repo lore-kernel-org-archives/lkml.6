@@ -6,123 +6,77 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68449C43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E3EC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:40:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 257A721486
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:38:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 257A721486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id E09EC208B0
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 14:40:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E09EC208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403942AbeHPRhD (ORCPT
+        id S2403952AbeHPRjj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 13:37:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58240 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403914AbeHPRhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 13:37:02 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94429208B0;
-        Thu, 16 Aug 2018 14:38:04 +0000 (UTC)
-Date:   Thu, 16 Aug 2018 10:38:02 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Subject: Re: [PATCH 2/2] tracing/blktrace: Fix to allow setting same value
-Message-ID: <20180816103802.08678002@gandalf.local.home>
-In-Reply-To: <153441307534.6024.2684721209411781531.stgit@devbox>
-References: <153441301698.6024.1680500212551396320.stgit@devbox>
-        <153441307534.6024.2684721209411781531.stgit@devbox>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Thu, 16 Aug 2018 13:39:39 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44517 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727358AbeHPRji (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 13:39:38 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1fqJS3-0002nK-O4; Thu, 16 Aug 2018 16:40:39 +0200
+Message-ID: <1534430439.4135.6.camel@pengutronix.de>
+Subject: Re: [PATCH] drm/panel: p079zca: unconditionally remove the panel on
+ removal
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Heiko Stuebner <heiko@sntech.de>, thierry.reding@gmail.com
+Cc:     hl@rock-chips.com, briannorris@chromium.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        nickey.yang@rock-chips.com, seanpaul@chromium.org
+Date:   Thu, 16 Aug 2018 16:40:39 +0200
+In-Reply-To: <20180816140920.5009-1-heiko@sntech.de>
+References: <20180816140920.5009-1-heiko@sntech.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Aug 2018 18:51:15 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
-
-> Current trace-enable attribute in sysfs returns an error
-> if user writes the same setting value as current one,
-> e.g.
+On Thu, 2018-08-16 at 16:09 +0200, Heiko Stuebner wrote:
+> There is no need to check innolux->base.dev when trying to remove
+> the panel, as that variable is always set directly before the panel
+> gets added and will still be available on panel_remove.
 > 
->   # cat /sys/block/sda/trace/enable
->   0
->   # echo 0 > /sys/block/sda/trace/enable
->   bash: echo: write error: Invalid argument
->   # echo 1 > /sys/block/sda/trace/enable
->   # echo 1 > /sys/block/sda/trace/enable
->   bash: echo: write error: Device or resource busy
-> 
-> But this is not a preferred behavior, it should ignore
-> if new setting is same as current one. This fixes the
-> problem as below.
-> 
->   # cat /sys/block/sda/trace/enable
->   0
->   # echo 0 > /sys/block/sda/trace/enable
->   # echo 1 > /sys/block/sda/trace/enable
->   # echo 1 > /sys/block/sda/trace/enable
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: linux-block@vger.kernel.org
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 > ---
->  kernel/trace/blktrace.c |   11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
+>  drivers/gpu/drm/panel/panel-innolux-p079zca.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-> index 987d9a9ae283..e67db1e8a000 100644
-> --- a/kernel/trace/blktrace.c
-> +++ b/kernel/trace/blktrace.c
-> @@ -1602,11 +1602,11 @@ static int blk_trace_remove_queue(struct request_queue *q)
->  	struct blk_trace *bt;
+> diff --git a/drivers/gpu/drm/panel/panel-innolux-p079zca.c b/drivers/gpu/drm/panel/panel-innolux-p079zca.c
+> index 72edb334d997..ca4ae45dd307 100644
+> --- a/drivers/gpu/drm/panel/panel-innolux-p079zca.c
+> +++ b/drivers/gpu/drm/panel/panel-innolux-p079zca.c
+> @@ -506,8 +506,7 @@ static int innolux_panel_add(struct mipi_dsi_device *dsi,
 >  
->  	bt = xchg(&q->blk_trace, NULL);
-> -	if (bt == NULL)
-> -		return -EINVAL;
-> +	if (bt != NULL) {
-> +		put_probe_ref();
-> +		blk_trace_free(bt);
-> +	}
->  
-> -	put_probe_ref();
-> -	blk_trace_free(bt);
->  	return 0;
+>  static void innolux_panel_del(struct innolux_panel *innolux)
+>  {
+> -	if (innolux->base.dev)
+> -		drm_panel_remove(&innolux->base);
+> +	drm_panel_remove(&innolux->base);
 >  }
 >  
-> @@ -1619,6 +1619,9 @@ static int blk_trace_setup_queue(struct request_queue *q,
->  	struct blk_trace *bt = NULL;
->  	int ret = -ENOMEM;
->  
-> +	if (q->blk_trace)
-> +		return 0;
-> +
->  	bt = kzalloc(sizeof(*bt), GFP_KERNEL);
->  	if (!bt)
->  		return -ENOMEM;
+>  static int innolux_panel_probe(struct mipi_dsi_device *dsi)
 
-Hmm, why not just do this? Does this fix it too?
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index 987d9a9ae283..10b2b9c5fd25 100644
---- a/kernel/trace/blktrace.c
-+++ b/kernel/trace/blktrace.c
-@@ -1841,6 +1841,8 @@ static ssize_t sysfs_blk_trace_attr_store(struct device *dev,
- 	mutex_lock(&q->blk_trace_mutex);
- 
- 	if (attr == &dev_attr_enable) {
-+		if (!!value == !!q->blk_trace)
-+			goto out_unlock_bdev;
- 		if (value)
- 			ret = blk_trace_setup_queue(q, bdev);
- 		else
-
--- Steve
+regards
+Philipp
