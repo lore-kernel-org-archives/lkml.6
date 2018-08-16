@@ -6,106 +6,267 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB44C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 02:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E60C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 03:00:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7415220A8B
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 02:56:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7415220A8B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=diasemi.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F3E32148D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 03:00:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F3E32148D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387889AbeHPFv0 (ORCPT
+        id S2387945AbeHPFzP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 01:51:26 -0400
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.1]:8185 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727634AbeHPFvZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 01:51:25 -0400
-Received: from [46.226.52.104] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-1.bemta.az-a.eu-west-1.aws.symcld.net id 9B/11-09223-9C7E47B5; Thu, 16 Aug 2018 02:56:09 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHIsWRWlGSWpSXmKPExsUS3ulwWPfk85J
-  og/1nJS3mHznHanF40QtGi5ufvrFaXN41h81i6fWLTBate4+wO7B5rJm3htFj56y77B6bVnWy
-  eXzeJBfAEsWamZeUX5HAmjFn4VvmgqmcFYu+vmVqYHzB1sXIxSEksJZR4sj2bSxdjJxAToXEs
-  ZYt7CA2r4CpxIpzP8HibAI6Eo9mrmcCsVkEVCUmr3vJDGILC1hKnFlwjxHEFhEIknj86CwLyF
-  Bmgd2MEh8uHGCGGCQocXLmE7BBzAISEgdfvGCGWKYlcW7NKrBmCQF7ienvrzJD2PoSL79uZIK
-  wDSW+z/rGAmGbSyy+MwPKtpa4/mEW2wRGgVlIVsxCsmIBI9MqRoukosz0jJLcxMwcXUMDA11D
-  QyNdQ0tjXUNjS73EKt1EvdRS3fLU4hJdQ73E8mK94src5JwUvbzUkk2MwLBnAIIdjJe+JR9il
-  ORgUhLl1a8ujhbiS8pPqcxILM6ILyrNSS0+xCjDwaEkwXvlWUm0kGBRanpqRVpmDjACYdISHD
-  xKIrwZIGne4oLE3OLMdIjUKUZdjj/vp05iFmLJy89LlRLnPQhSJABSlFGaBzcClgwuMcpKCfM
-  yAh0lxFOQWpSbWYIq/4pRnINRSZj3GcgUnsy8ErhNr4COYAI6IlmkEOSIkkSElFQD48TME88m
-  buWfnMvpxi3P7LDLdUsT7/SrM1Lu8QRbbzZbq9KcsSd+qQb7HeuCah+Hk0IORuFrE3v+nmhsb
-  5xbWiqb/eHFwdLru0yXKN1K2Cyil7i3u/vCip8GDJ/X23SEx67j/mM5kfHq/+Yj1g+ko37dtr
-  2Tbl6xxX2RzLbDj7M/FTsmmHw7rcRSnJFoqMVcVJwIAI0u1m0BAwAA
-X-Env-Sender: roy.im.opensource@diasemi.com
-X-Msg-Ref: server-8.tower-268.messagelabs.com!1534388168!5525239!1
-X-Originating-IP: [87.137.64.195]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.9.15; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 4206 invoked from network); 16 Aug 2018 02:56:09 -0000
-Received: from unknown (HELO NB-EX-CASHUB01.diasemi.com) (87.137.64.195)
-  by server-8.tower-268.messagelabs.com with AES128-SHA encrypted SMTP; 16 Aug 2018 02:56:09 -0000
-Received: from krsrvapps-01.diasemi.com (10.95.17.50) by
- NB-EX-CASHUB01.diasemi.com (10.1.16.140) with Microsoft SMTP Server id
- 14.3.382.0; Thu, 16 Aug 2018 04:56:08 +0200
-Received: by krsrvapps-01.diasemi.com (Postfix, from userid 22266)      id
- 6BC345F7F9; Thu, 16 Aug 2018 11:56:07 +0900 (KST)
-Message-ID: <cover.1534384964.git.Roy.Im@diasemi.com>
-From:   Roy Im <roy.im.opensource@diasemi.com>
-Date:   Thu, 16 Aug 2018 11:02:44 +0900
-Subject: [PATCH V1 0/3]  da7280: haptic driver submission
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        <devicetree@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
+        Thu, 16 Aug 2018 01:55:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52152 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727697AbeHPFzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 01:55:15 -0400
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 094AE20A8B;
+        Thu, 16 Aug 2018 02:59:57 +0000 (UTC)
+Date:   Wed, 15 Aug 2018 22:59:55 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Jim Cromie <jim.cromie@gmail.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [RFC PATCH 1/3] tracing: Add support for logging data to
+ uncached buffer
+Message-ID: <20180815225955.38d21271@vmware.local.home>
+In-Reply-To: <6b62fd3a5abf1baf48a07ba8a31a92d17f501f77.1533211509.git.saiprakash.ranjan@codeaurora.org>
+References: <cover.1533211508.git.saiprakash.ranjan@codeaurora.org>
+        <6b62fd3a5abf1baf48a07ba8a31a92d17f501f77.1533211509.git.saiprakash.ranjan@codeaurora.org>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-ServerInfo: NB-EX-CASHUB01.diasemi.com, 9
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 16.08.2018 00:48:00
-X-EXCLAIMER-MD-CONFIG: 8d172408-bd6a-42b1-8e53-daaedf35a5af
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roy Im <roy.im.opensource@diasemi.com>
 
-This patch adds support for the Dialog DA7280 Haptic driver IC.
+Sorry for the late reply, I actually wrote this email over a week ago,
+but never hit send. And the email was pushed back behind other
+windows. :-/
 
-In this patch set the following is provided:
 
-[PATCH V1 1/3] MAINTAINERS file update for DA7280
-[PATCH V1 2/3] DA7280 DT Binding
-[PATCH V1 3/3] DA7280 Driver
+On Fri,  3 Aug 2018 19:58:42 +0530
+Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
 
-This patch applies against linux-next and v4.18
+> diff --git a/kernel/trace/trace_rtb.c b/kernel/trace/trace_rtb.c
+> new file mode 100644
+> index 000000000000..e8c24db71a2d
+> --- /dev/null
+> +++ b/kernel/trace/trace_rtb.c
+> @@ -0,0 +1,160 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2018 The Linux Foundation. All rights reserved.
+> + */
+> +#include <linux/atomic.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/export.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/rtb.h>
+> +#include <linux/sched/clock.h>
+> +
+> +static struct platform_device *rtb_dev;
+> +static atomic_t rtb_idx;
+> +
+> +struct rtb_state {
+> +	struct rtb_layout *rtb;
+> +	phys_addr_t phys;
+> +	unsigned int nentries;
+> +	unsigned int size;
+> +	int enabled;
+> +};
+> +
+> +static struct rtb_state rtb = {
+> +	.enabled = 0,
+> +};
 
-Thank you,
-Roy Im, Dialog Semiconductor Ltd.
+No need for the initialization, you could just have:
 
-Roy Im (3):
-  MAINTAINERS: da7280 updates to the Dialog Semiconductor search terms
-  Documentation: devicetree: input: new binding for da7280
-  Input: new da7280 haptic driver
+static struct rtb_state rtb;
 
- .../devicetree/bindings/input/dlg,da7280.txt       |   91 ++
- MAINTAINERS                                        |    2 +
- drivers/input/misc/Kconfig                         |   12 +
- drivers/input/misc/Makefile                        |    1 +
- drivers/input/misc/da7280.c                        | 1452 ++++++++++++++++++++
- drivers/input/misc/da7280.h                        |  412 ++++++
- 6 files changed, 1970 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/dlg,da7280.txt
- create mode 100644 drivers/input/misc/da7280.c
- create mode 100644 drivers/input/misc/da7280.h
+And it will be initialized to all zeros. Or did you do that to document
+that it is not enabled at boot?
 
--- 
-end-of-patch for PATCH V1
+> +
+> +static int rtb_panic_notifier(struct notifier_block *this,
+> +					unsigned long event, void *ptr)
+> +{
+> +	rtb.enabled = 0;
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static struct notifier_block rtb_panic_blk = {
+> +	.notifier_call  = rtb_panic_notifier,
+> +	.priority = INT_MAX,
+> +};
+> +
+> +static void rtb_write_type(const char *log_type,
+> +			struct rtb_layout *start)
+> +{
+> +	start->log_type = log_type;
+> +}
+> +
+> +static void rtb_write_caller(u64 caller, struct rtb_layout *start)
+> +{
+> +	start->caller = caller;
+> +}
+> +
+> +static void rtb_write_data(u64 data, struct rtb_layout *start)
+> +{
+> +	start->data = data;
+> +}
+> +
+> +static void rtb_write_timestamp(struct rtb_layout *start)
+> +{
+> +	start->timestamp = sched_clock();
+> +}
+
+Why have the above static functions? They are not very helpful, and
+appear to be actually confusing. They are used once.
+
+> +
+> +static void uncached_logk_pc_idx(const char *log_type, u64 caller,
+> +				u64 data, int idx)
+> +{
+> +	struct rtb_layout *start;
+> +
+> +	start = &rtb.rtb[idx & (rtb.nentries - 1)];
+> +
+> +	rtb_write_type(log_type, start);
+> +	rtb_write_caller(caller, start);
+> +	rtb_write_data(data, start);
+> +	rtb_write_timestamp(start);
+
+How is the above better than:
+
+	start->log_type = log_type;
+	start->caller = caller;
+	start->data = data;
+ 	start->timestamp = sched_clock();
+
+??
+
+> +	/* Make sure data is written */
+> +	mb();
+> +}
+> +
+> +static int rtb_get_idx(void)
+> +{
+> +	int i, offset;
+> +
+> +	i = atomic_inc_return(&rtb_idx);
+> +	i--;
+> +
+> +	/* Check if index has wrapped around */
+> +	offset = (i & (rtb.nentries - 1)) -
+> +		 ((i - 1) & (rtb.nentries - 1));
+> +	if (offset < 0) {
+> +		i = atomic_inc_return(&rtb_idx);
+> +		i--;
+> +	}
+> +
+> +	return i;
+> +}
+> +
+> +noinline void notrace uncached_logk(const char *log_type, void *data)
+
+BTW, all files in this directory have their functions notrace by
+default.
+
+-- Steve
+
+
+> +{
+> +	int i;
+> +
+> +	if (!rtb.enabled)
+> +		return;
+> +
+> +	i = rtb_get_idx();
+> +	uncached_logk_pc_idx(log_type, (u64)(__builtin_return_address(0)),
+> +				(u64)(data), i);
+> +}
+> +EXPORT_SYMBOL(uncached_logk);
+> +
+> +int rtb_init(void)
+> +{
+> +	struct device_node *np;
+> +	u32 size;
+> +	int ret;
+> +
+> +	np = of_find_node_by_name(NULL, "ramoops");
+> +	if (!np)
+> +		return -ENODEV;
+> +
+> +	ret = of_property_read_u32(np, "rtb-size", &size);
+> +	if (ret) {
+> +		of_node_put(np);
+> +		return ret;
+> +	}
+> +
+> +	rtb.size = size;
+> +
+> +	/* Create a dummy platform device to use dma api */
+> +	rtb_dev = platform_device_register_simple("rtb", -1, NULL, 0);
+> +	if (IS_ERR(rtb_dev))
+> +		return PTR_ERR(rtb_dev);
+> +
+> +	/*
+> +	 * The device is a dummy, so arch_setup_dma_ops
+> +	 * is not called, thus leaving the device with dummy DMA ops
+> +	 * which returns null in case of arm64.
+> +	 */
+> +	of_dma_configure(&rtb_dev->dev, NULL, true);
+> +	rtb.rtb = dma_alloc_coherent(&rtb_dev->dev, rtb.size,
+> +					&rtb.phys, GFP_KERNEL);
+> +	if (!rtb.rtb)
+> +		return -ENOMEM;
+> +
+> +	rtb.nentries = rtb.size / sizeof(struct rtb_layout);
+> +	/* Round this down to a power of 2 */
+> +	rtb.nentries = __rounddown_pow_of_two(rtb.nentries);
+> +
+> +	memset(rtb.rtb, 0, rtb.size);
+> +	atomic_set(&rtb_idx, 0);
+> +
+> +	atomic_notifier_chain_register(&panic_notifier_list,
+> +						&rtb_panic_blk);
+> +	rtb.enabled = 1;
+> +	return 0;
+> +}
+> +
+> +void rtb_exit(void)
+> +{
+> +	dma_free_coherent(&rtb_dev->dev, rtb.size, rtb.rtb, rtb.phys);
+> +	platform_device_unregister(rtb_dev);
+> +}
 
