@@ -2,203 +2,144 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F051AC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 239B2C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7A5D20C0D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:37:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ly2k2RBW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7A5D20C0D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CD4B421473
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 18:42:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4B421473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728167AbeHPVhv (ORCPT
+        id S1728185AbeHPVmF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 17:37:51 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43270 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727853AbeHPVht (ORCPT
+        Thu, 16 Aug 2018 17:42:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55988 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbeHPVmF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 17:37:49 -0400
-Received: by mail-wr1-f65.google.com with SMTP id b15-v6so4987781wrv.10;
-        Thu, 16 Aug 2018 11:37:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ko94EtcnTTFWdT8rbBTWfqin0PckBNI75sE9SICxMmY=;
-        b=ly2k2RBW5WQXbmKDZlX7Yo18qWtE+UiAdG3IT85IDH4iIuY+3ERpTRuSELcTYS63Yi
-         BCXPucV7S8s8xkvVALyXmm5uHdZ8MWHMhDNDUrFle6dmGdmJt7GGMXwPB0d9/hNbZfwV
-         Oc2AvNnjw+itngySRhHsbBeth/M4LBmMmNOLD5YK/HmWSSuIpjaTbauxyP/gyaC/M2Ke
-         aSViEP3h3hfZ4UC/8XREIsb7bvISuWNlQMXXfXAEBCZY6rOIuzq65NfLVatBibY3ErkU
-         udYpwp/8Zq+8vxT9Da16TKlODlzjTwbsIhKxbJI0Aq8ZSYGkIEbvmjuYEhdO5C6Ag0qM
-         pzAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ko94EtcnTTFWdT8rbBTWfqin0PckBNI75sE9SICxMmY=;
-        b=XgWEDSvqXaHTwUCvHaaYpzgLcCnJxbAG2djL05YGXZF6jPYuR424Mzrk6Nqc9sFATq
-         uc9pR9/b5TNM8s6OlQsKnsRc7u4Ge71oABECc7TZVLb2KGWYWBkLZ0UFSVEKBoGizthc
-         NHpCSnQAMWgSvVrZOFb4iRXo5kSmfGc9c0QtqpPc1TcZqEFz5jLiMpMSHW6pNm2E7ZtG
-         6dmP7UW8VUoVBZ4ZrZJPBgZFhggARPYV4GqcGjk8Zdrl3Vuz0+FMKnGgPYI9jAVxAFIy
-         6JJJFMBAkI525/9WeUMFfInPSVmU5F6Uta7iGJHK3YkUp1/ldUuJMWPmcpxyVFoOlDmH
-         vCsA==
-X-Gm-Message-State: AOUpUlGQlM3kd8xUu/W7ZRYT9zWsGFLTii8O7pobYvLpDXszHccYAAdS
-        7OnQ37CIdzy+MBxg/TxPwOaq2+5S
-X-Google-Smtp-Source: AA+uWPzqaGbyfZTQ+pRXC9cbr9UaBY/J3su3l6YXqYhLBldMpKUFwVhSG67G1Fsx440Fty81kUQs7g==
-X-Received: by 2002:adf:c612:: with SMTP id n18-v6mr19233546wrg.177.1534444661598;
-        Thu, 16 Aug 2018 11:37:41 -0700 (PDT)
-Received: from [192.168.1.18] (bkw170.neoplus.adsl.tpnet.pl. [83.28.190.170])
-        by smtp.gmail.com with ESMTPSA id x16-v6sm4616wro.84.2018.08.16.11.37.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Aug 2018 11:37:40 -0700 (PDT)
-Subject: Re: [PATCH v4 1/2] dt-bindings: leds: Add bindings for lm3697 driver
-To:     Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-References: <20180816172058.31700-1-dmurphy@ti.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <aecaa2ff-e75c-2059-684a-908aedc20929@gmail.com>
-Date:   Thu, 16 Aug 2018 20:37:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180816172058.31700-1-dmurphy@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 16 Aug 2018 17:42:05 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B827DCC4;
+        Thu, 16 Aug 2018 18:41:56 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 3.18 00/15] 3.18.119-stable review
+Date:   Thu, 16 Aug 2018 20:41:37 +0200
+Message-Id: <20180816171633.546734046@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+User-Agent: quilt/0.65
+X-stable: review
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-3.18.119-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-3.18.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 3.18.119-rc1
+X-KernelTest-Deadline: 2018-08-18T17:16+00:00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
+This is the start of the stable review cycle for the 3.18.119 release.
+There are 15 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Thanks for the update.
+Responses should be made by Sat Aug 18 17:16:20 UTC 2018.
+Anything received after that time might be too late.
 
-I have one remark below.
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.119-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
+and the diffstat can be found below.
 
-On 08/16/2018 07:20 PM, Dan Murphy wrote:
-> Add the device tree bindings for the lm3697
-> LED driver for backlighting and display.
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
-> 
-> v4 - Removed HVLED definition in favor of HVLED place definition - https://lore.kernel.org/patchwork/patch/974812/
-> v3 - Updated subject with prefered title - https://lore.kernel.org/patchwork/patch/972337/
-> v2 - Fixed subject and patch commit message - https://lore.kernel.org/patchwork/patch/971326/
-> 
->  .../devicetree/bindings/leds/leds-lm3697.txt  | 86 +++++++++++++++++++
->  1 file changed, 86 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
-> new file mode 100644
-> index 000000000000..bcd67d53c889
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
-> @@ -0,0 +1,86 @@
-> +* Texas Instruments - LM3697 Highly Efficient White LED Driver
-> +
-> +The LM3697 11-bit LED driver provides high-
-> +performance backlight dimming for 1, 2, or 3 series
-> +LED strings while delivering up to 90% efficiency.
-> +
-> +This device is suitable for Display and Keypad Lighting
-> +
-> +Required properties:
-> +	- compatible:
-> +		"ti,lm3967"
-> +	- reg :  I2C slave address
-> +	- #address-cells : 1
-> +	- #size-cells : 0
-> +
-> +Optional properties:
-> +	- enable-gpios : gpio pin to enable/disable the device.
-> +	- vled-supply : LED supply
-> +
-> +Required child properties:
-> +	- reg : 0 - LED is Controlled by bank A
-> +		1 - LED is Controlled by bank B
-> +	- led-sources : Indicates which HVLED string is associated to which
-> +			control bank.  Each element in the array is associated
-> +			with a specific HVLED string.  Element 0 is HVLED1,
-> +			element 1 is HVLED2 and element 2 HVLED3.
-> +			Additional information is contained
-> +			in Documentation/devicetree/bindings/leds/common.txt
-> +			0 - HVLED is not active in this control bank
-> +			1 - HVLED string is controlled by this control bank
-> +
-> +Optional child properties:
-> +	- label : see Documentation/devicetree/bindings/leds/common.txt
-> +	- linux,default-trigger :
-> +	   see Documentation/devicetree/bindings/leds/common.txt
-> +
-> +Example:
-> +
-> +HVLED string 1 and 2 controlled by control bank A and HVLED string controlled by
+thanks,
 
-s/1 and 2/1 and 3/
-s/HVLED string controller/HVLED string 2 controlled/
+greg k-h
 
-> +control bank B.
-> +
-> +led-controller@36 {
-> +	compatible = "ti,lm3967";
-> +	reg = <0x36>;
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-> +	vled-supply = <&vbatt>;
-> +
-> +	led@0 {
-> +		reg = <0>;
-> +		led-sources = <1 0 1>;
-> +		label = "white:first_backlight_cluster";
-> +		linux,default-trigger = "backlight";
-> +	};
-> +
-> +	led@1 {
-> +		reg = <1>;
-> +		led-sources = <0 1 0>;
-> +		label = "white:second_backlight_cluster";
-> +		linux,default-trigger = "backlight";
-> +	};
-> +}
-> +
-> +All HVLED strings controlled by control bank A
-> +
-> +led-controller@36 {
-> +	compatible = "ti,lm3967";
-> +	reg = <0x36>;
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-> +	vled-supply = <&vbatt>;
-> +
-> +	led@0 {
-> +		reg = <0>;
-> +		led-sources = <1 1 1>;
-> +		label = "white:backlight_cluster";
-> +		linux,default-trigger = "backlight";
-> +	};
-> +}
-> +
-> +For more product information please see the link below:
-> +http://www.ti.com/lit/ds/symlink/lm3697.pdf
-> 
+-------------
+Pseudo-Shortlog of commits:
 
--- 
-Best regards,
-Jacek Anaszewski
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 3.18.119-rc1
+
+Mark Salyzyn <salyzyn@android.com>
+    Bluetooth: hidp: buffer overflow in hidp_process_report
+
+Eric Biggers <ebiggers@google.com>
+    crypto: ablkcipher - fix crash flushing dcache in error path
+
+Eric Biggers <ebiggers@google.com>
+    crypto: blkcipher - fix crash flushing dcache in error path
+
+Eric Biggers <ebiggers@google.com>
+    crypto: vmac - separate tfm and request context
+
+Eric Biggers <ebiggers@google.com>
+    crypto: vmac - require a block cipher with 128-bit block size
+
+Randy Dunlap <rdunlap@infradead.org>
+    kbuild: verify that $DEPMOD is installed
+
+Liwei Song <liwei.song@windriver.com>
+    i2c: ismt: fix wrong device address when unmap the data buffer
+
+Andrey Ryabinin <a.ryabinin@samsung.com>
+    mm: slub: fix format mismatches in slab_err() callers
+
+Erick Reyes <erickreyes@google.com>
+    ALSA: info: Check for integer overflow in snd_info_entry_write()
+
+Masami Hiramatsu <mhiramat@kernel.org>
+    kprobes/x86: Fix %p uses in error messages
+
+Oleksij Rempel <o.rempel@pengutronix.de>
+    ARM: dts: imx6sx: fix irq for pcie bridge
+
+Al Viro <viro@zeniv.linux.org.uk>
+    fix __legitimize_mnt()/mntput() race
+
+Al Viro <viro@zeniv.linux.org.uk>
+    fix mntput/mntput race
+
+Al Viro <viro@zeniv.linux.org.uk>
+    root dentries need RCU-delayed freeing
+
+Juergen Gross <jgross@suse.com>
+    xen/netfront: don't cache skb_shinfo()
+
+
+-------------
+
+Diffstat:
+
+ Documentation/Changes          |  17 +-
+ Makefile                       |   4 +-
+ arch/arm/boot/dts/imx6sx.dtsi  |   2 +-
+ arch/x86/kernel/kprobes/core.c |   4 +-
+ crypto/ablkcipher.c            |  57 +++---
+ crypto/blkcipher.c             |  54 +++---
+ crypto/vmac.c                  | 412 ++++++++++++++++++-----------------------
+ drivers/i2c/busses/i2c-ismt.c  |   2 +-
+ drivers/net/xen-netfront.c     |   8 +-
+ fs/dcache.c                    |   6 +-
+ fs/namespace.c                 |  28 ++-
+ include/crypto/vmac.h          |  63 -------
+ mm/slub.c                      |   6 +-
+ net/bluetooth/hidp/core.c      |   4 +-
+ scripts/depmod.sh              |   8 +-
+ sound/core/info.c              |   4 +-
+ 16 files changed, 297 insertions(+), 382 deletions(-)
+
+
