@@ -2,164 +2,251 @@ Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0F8AC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B9FEC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:14:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA77B20C03
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:00:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA77B20C03
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 94D14208A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 11:14:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WVnCFtmm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94D14208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391163AbeHPN6k (ORCPT
+        id S2391179AbeHPOL4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 09:58:40 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40642 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389136AbeHPN6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 09:58:39 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8F3D3819702B;
-        Thu, 16 Aug 2018 11:00:51 +0000 (UTC)
-Received: from [10.36.116.94] (ovpn-116-94.ams2.redhat.com [10.36.116.94])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3EF32112D17B;
-        Thu, 16 Aug 2018 11:00:48 +0000 (UTC)
-Subject: Re: [PATCH v1 3/5] mm/memory_hotplug: check if sections are already
- online/offline
-To:     Oscar Salvador <osalvador@techadventures.net>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Jia He <jia.he@hxt-semitech.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Petr Tesarik <ptesarik@suse.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Baoquan He <bhe@redhat.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20180816100628.26428-1-david@redhat.com>
- <20180816100628.26428-4-david@redhat.com>
- <20180816104736.GA16861@techadventures.net>
-From:   David Hildenbrand <david@redhat.com>
+        Thu, 16 Aug 2018 10:11:56 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:59356 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727058AbeHPOL4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Aug 2018 10:11:56 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7GBDouY109878;
+        Thu, 16 Aug 2018 06:13:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1534418030;
+        bh=svF4GYcljpqt1L9YWCIOMvkwlZOquxGgt7NlGWsflic=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=WVnCFtmmm8G8t1pg4xzPD68FcRj2Eci0meP6Oow0K2jMhfmwo2N6CD+6Ok6viFUAF
+         9wk5v3airQvwqJitsqjaRvZ6X30Y5PEOkMPsvEEihNWDrwSe+szCYw14VI3pgrAbjz
+         lGrnwWl5mbkveBUopT2FWZEtl87RFiowfblEgbwQ=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7GBDngG014296;
+        Thu, 16 Aug 2018 06:13:49 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 16
+ Aug 2018 06:13:49 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 16 Aug 2018 06:13:49 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7GBDkbT023099;
+        Thu, 16 Aug 2018 06:13:47 -0500
+Subject: Re: [PATCH] usb: hub: try old enumeration scheme first for high speed
+ devices
+To:     "Zengtao (B)" <prime.zeng@hisilicon.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "mathias.nyman@linux.intel.com" <mathias.nyman@linux.intel.com>,
+        "drinkcat@chromium.org" <drinkcat@chromium.org>,
+        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
+        "drake@endlessm.com" <drake@endlessm.com>,
+        "mike.looijmans@topic.nl" <mike.looijmans@topic.nl>,
+        "joe@perches.com" <joe@perches.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <678F3D1BB717D949B966B68EAEB446ED0C9B12B9@dggemm526-mbx.china.huawei.com>
+ <Pine.LNX.4.44L0.1808141022450.1466-100000@iolanthe.rowland.org>
+ <678F3D1BB717D949B966B68EAEB446ED0C9B2CC0@dggemm526-mbx.china.huawei.com>
+ <f4372b12-327c-ee51-76ae-2e2bc5cdceed@ti.com>
+ <678F3D1BB717D949B966B68EAEB446ED0C9B33C7@dggemm526-mbx.china.huawei.com>
+From:   Roger Quadros <rogerq@ti.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <62da84ee-090f-29e4-0a39-fcfd543ee81d@redhat.com>
-Date:   Thu, 16 Aug 2018 13:00:47 +0200
+Autocrypt: addr=rogerq@ti.com; prefer-encrypt=mutual; keydata=
+ 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
+ IwrfNkJOLj3CvocMIw==
+Message-ID: <69b675eb-ed6a-8df3-a39f-e985f6a6df22@ti.com>
+Date:   Thu, 16 Aug 2018 14:13:46 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180816104736.GA16861@techadventures.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 16 Aug 2018 11:00:51 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 16 Aug 2018 11:00:51 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+In-Reply-To: <678F3D1BB717D949B966B68EAEB446ED0C9B33C7@dggemm526-mbx.china.huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.08.2018 12:47, Oscar Salvador wrote:
-> On Thu, Aug 16, 2018 at 12:06:26PM +0200, David Hildenbrand wrote:
+On 16/08/18 13:59, Zengtao (B) wrote:
+> Hi Roger:
 > 
->> +
->> +/* check if all mem sections are offline */
->> +bool mem_sections_offline(unsigned long pfn, unsigned long end_pfn)
->> +{
->> +	for (; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
->> +		unsigned long section_nr = pfn_to_section_nr(pfn);
->> +
->> +		if (WARN_ON(!valid_section_nr(section_nr)))
->> +			continue;
->> +		if (online_section_nr(section_nr))
->> +			return false;
->> +	}
->> +	return true;
->> +}
+>> -----Original Message-----
+>> From: Roger Quadros [mailto:rogerq@ti.com]
+>> Sent: Thursday, August 16, 2018 3:17 PM
+>> To: Zengtao (B) <prime.zeng@hisilicon.com>; Alan Stern
+>> <stern@rowland.harvard.edu>
+>> Cc: gregkh@linuxfoundation.org; mathias.nyman@linux.intel.com;
+>> drinkcat@chromium.org; felipe.balbi@linux.intel.com;
+>> drake@endlessm.com; mike.looijmans@topic.nl; joe@perches.com;
+>> linux-usb@vger.kernel.org; linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH] usb: hub: try old enumeration scheme first for high
+>> speed devices
+>>
+>> On 16/08/18 09:21, Zengtao (B) wrote:
+>>> Hi alan:
+>>>
+>>>> -----Original Message-----
+>>>> From: Alan Stern [mailto:stern@rowland.harvard.edu]
+>>>> Sent: Tuesday, August 14, 2018 10:40 PM
+>>>> To: Zengtao (B) <prime.zeng@hisilicon.com>
+>>>> Cc: Roger Quadros <rogerq@ti.com>; gregkh@linuxfoundation.org;
+>>>> mathias.nyman@linux.intel.com; drinkcat@chromium.org;
+>>>> felipe.balbi@linux.intel.com; drake@endlessm.com;
+>>>> mike.looijmans@topic.nl; joe@perches.com; linux-usb@vger.kernel.org;
+>>>> linux-kernel@vger.kernel.org
+>>>> Subject: RE: [PATCH] usb: hub: try old enumeration scheme first for
+>>>> high speed devices
+>>>>
+>>>> On Tue, 14 Aug 2018, Zengtao (B) wrote:
+>>>>
+>>>>> Hi alan:
+>>>>>
+>>>>>> -----Original Message-----
+>>>>>> From: linux-usb-owner@vger.kernel.org
+>>>>>> [mailto:linux-usb-owner@vger.kernel.org] On Behalf Of Alan Stern
+>>>>>> Sent: Friday, August 10, 2018 10:20 PM
+>>>>>> To: Roger Quadros <rogerq@ti.com>
+>>>>>> Cc: Zengtao (B) <prime.zeng@hisilicon.com>;
+>>>>>> gregkh@linuxfoundation.org; mathias.nyman@linux.intel.com;
+>>>>>> drinkcat@chromium.org; felipe.balbi@linux.intel.com;
+>>>>>> drake@endlessm.com; mike.looijmans@topic.nl; joe@perches.com;
+>>>>>> linux-usb@vger.kernel.org; linux-kernel@vger.kernel.org
+>>>>>> Subject: Re: [PATCH] usb: hub: try old enumeration scheme first for
+>>>>>> high speed devices
+>>>>>>
+>>>>>> On Fri, 10 Aug 2018, Roger Quadros wrote:
+>>>>>>
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> On 10/08/18 18:01, Zeng Tao wrote:
+>>>>>>>> The new scheme is required just to support legacy low and
+>>>>>>>> full-speed devices. For high speed devices, it will slower the
+>>>>>>>> enumeration
+>>>> speed.
+>>>>>>>> So in this patch we try the "old" enumeration scheme first for
+>>>>>>>> high speed devices.
+>>>>>>>
+>>>>>>> How slow does it get? Is it significant?
+>>>>>>> Do we risk breaking existing HS devices that work? I don't think
+>>>>>>> we can be sure till we run this through testing.
+>>>>>>
+>>>>>> Indeed.  I am extremely skeptical about a patch like this, unless
+>>>>>> somebody can show that Windows uses the "old" scheme for
+>> high-speed
+>>>> devices.
+>>>>>
+>>>>> Yes, this is what the windows has done, you can refer to
+>>>>>
+>> https://blogs.msdn.microsoft.com/usbcoreblog/2013/04/11/usb-2-1-2-0-
+>>>>> 1- 1-device-enumeration-changes-in-windows-8/
+>>>>
+>>>> And that blog post is 5 years old!
+>>>>
+>>>> Okay, I think we can go ahead and make this change.  However, you
+>>>> should update the patch description to mention what Microsoft did in
+>>>> Windows 8 and say that the new behavior matches theirs.
+>>>>
+>>> Okay, I will update it the change log in v2.
+>>>
+>>>> Also, as Roger mentioned, you should update the documentation to say
+>>>> that the old_scheme_first module parameter now applies only to low-
+>>>> and full-speed devices, since high- and SuperSpeed devices always use
+>> the old scheme first.
+>>>>
+>>>
+>>> Since we should have dedicated enumeration flow for SS, HIGH, low and
+>>> full speed devices, So I think the old_scheme_first and use_both_schemes
+>> parameters should be removed.
+>>> What do you think about it?
+>>
+>> I think we should retain them as some host controllers can have issues and
+>> these parameters give some control to system integrators to workaround if
+>> required.
+>>
+>> I'm aware of one errata [1] that requires the old_scheme_first to be set in
+>> certain circumstances.
+>>
+>> [1] http://www.ti.com/lit/er/sprz429l/sprz429l.pdf
+>> Section i897
 > 
-> AFAICS pages_correctly_probed will catch this first.
-> pages_correctly_probed checks for the section to be:
-> 
-> - present
-> - valid
-> - !online
+> I 'd rather to use a quirk to workaround.
+> And the main idea is to keep the enumeration flow as simple as possible.
 
-Right, I missed that function.
+The workaround isn't always required. Only in certain circumstances decided
+by the user.
+How can a user set the quirk? Now it is as easy as setting it
+in the kernel command line.
 
-> 
-> Maybe it makes sense to rename it, and write another pages_correctly_probed routine
-> for the offline case.
-> 
-> So all checks would stay in memory_block_action level, and we would not need
-> the mem_sections_offline/online stuff.
+One option would be to use the old_scheme_first_port via sysfs.
+/sys/bus/usb/devices/.../(hub interface)/portX/quirks
 
-I guess I would rather have it all moved into
-online_pages/offline_pages, so we have a clean interface.
-
-> 
-> Thanks
-> 
-
+But that won't work if devices are hard-wired in the system and get enumerated
+before user gets access to sysfs. We need a way to force one type of scheme
+before devices are enumerated.
 
 -- 
+cheers,
+-roger
 
-Thanks,
-
-David / dhildenb
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
