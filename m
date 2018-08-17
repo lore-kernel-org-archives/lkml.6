@@ -6,105 +6,202 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B883C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F66C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E89F208FA
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:28:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 508D021534
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:29:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w1sBMN0o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E89F208FA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z6Ybwzqj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 508D021534
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbeHQVdR (ORCPT
+        id S1728073AbeHQVeK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 17:33:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54062 "EHLO mail.kernel.org"
+        Fri, 17 Aug 2018 17:34:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726888AbeHQVdQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 17:33:16 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
+        id S1727467AbeHQVeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 17:34:10 -0400
+Received: from localhost (unknown [104.132.1.88])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 446EA208FA;
-        Fri, 17 Aug 2018 18:28:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B0BA208AD;
+        Fri, 17 Aug 2018 18:29:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534530532;
-        bh=hPVW0l+TlRTb28axWJBeUN+w3rCJtUiX3cR75urmw0I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=w1sBMN0oFdp1xXgIGE4RzboyTrCy6etgAgJLItZvyd0Wc2JZLCDQamROe5UkTuAWN
-         CY64HqdiE9zSYCmpyKG6BzHuhHpEqx+CuODl1GYUfuQ+1DRTyhzXAgLB8A8ySc9ZRH
-         ZSjHjC8t/jBqxag97l3ImlYA1uzJkFk7weUML8jc=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id DE581141C3A; Fri, 17 Aug 2018 15:28:49 -0300 (-03)
-Date:   Fri, 17 Aug 2018 15:28:49 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: Re: [PATCH 06/13] perf tools: Add compression id into struct
- kmod_path
-Message-ID: <20180817182849.GE22443@kernel.org>
-References: <20180817094813.15086-1-jolsa@kernel.org>
- <20180817094813.15086-7-jolsa@kernel.org>
- <20180817182315.GD22443@kernel.org>
+        s=default; t=1534530585;
+        bh=FeQo/xWHKj0c77yG2gp2s3XlaVdMnIHmomUIuHHCBx8=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=z6Ybwzqj6VGsVYbxuMj4tB5k+LD0O1n++cCj07XA4LVc+5M5FucKIB5M2K5p8k8WL
+         ijnv1uupTPivtcZFPPDlhb48LaVsTGpIORFOzrKH6cwhJBhpQe7REGzR7gJAF/ZZvQ
+         nQegZW3fStf5s81ty305IHjFZZ8yZJ10vx1SPDLQ=
+Date:   Fri, 17 Aug 2018 11:29:44 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH v4] f2fs: fix performance issue observed with
+ multi-thread sequential read
+Message-ID: <20180817182944.GA58612@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180810023758.46974-1-jaegeuk@kernel.org>
+ <20180810024859.GA48219@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180817182315.GD22443@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Aug 17, 2018 at 03:23:15PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Fri, Aug 17, 2018 at 11:48:06AM +0200, Jiri Olsa escreveu:
-> >  static const struct {
-> >  	const char *fmt;
-> >  	int (*decompress)(const char *input, int output);
-> >  } compressions[] = {
-> > +	[COMP_ID__NONE] = { 0 },
-> 
-> 
-> This broke the build in many places, problems of this kind:
-> 
->   CC       /tmp/build/perf/util/dso.o
->   LD       /tmp/build/perf/scripts/python/Perf-Trace-Util/libperf-in.o
->   LD       /tmp/build/perf/scripts/libperf-in.o
->   CC       /tmp/build/perf/trace/beauty/clone.o
->   CC       /tmp/build/perf/util/symbol.o
-> util/dso.c:201:24: error: missing field 'decompress' initializer [-Werror,-Wmissing-field-initializers]
->         [COMP_ID__NONE] = { 0 },
->                               ^
-> 1 error generated.
->   CC       /tmp/build/perf/trace/beauty/fcntl.o
-> mv: cannot stat '/tmp/build/perf/util/.dso.o.tmp': No such file or directory
-> /git/linux/tools/build/Makefile.build:96: recipe for target '/tmp/build/perf/util/dso.o' failed
-> 
-> If we look just at those that failed, its several gcc versions:
-> 
->   11     9.91 centos:5                      : FAIL gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
->   12    14.34 centos:6                      : FAIL gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-23)
->   16    47.50 debian:9                      : FAIL gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
->   28    53.92 fedora:25                     : FAIL gcc (GCC) 6.4.1 20170727 (Red Hat 6.4.1-1)
->   29    60.75 fedora:26                     : FAIL gcc (GCC) 7.3.1 20180130 (Red Hat 7.3.1-2)
->   30    90.76 fedora:27                     : FAIL gcc (GCC) 7.3.1 20180712 (Red Hat 7.3.1-6)
->   41    12.78 oraclelinux:6                 : FAIL gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-23.0.1)
->   43    12.85 ubuntu:12.04.5                : FAIL gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
->   46    45.56 ubuntu:16.04                  : FAIL gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609
->   54    49.60 ubuntu:17.10                  : FAIL gcc (Ubuntu 7.2.0-8ubuntu3.2) 7.2.0
+This reverts the commit - "b93f771 - f2fs: remove writepages lock"
+to fix the drop in sequential read throughput.
 
-Sorry, gcc eats this with gusto, its just clang that is not taking it,
-for instance, this is the one in fedora:27:
+Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
+device: UFS
 
-clang version 5.0.2 (tags/RELEASE_502/final)
+Before -
+read throughput: 185 MB/s
+total read requests: 85177 (of these ~80000 are 4KB size requests).
+total write requests: 2546 (of these ~2208 requests are written in 512KB).
 
-- Arnaldo
+After -
+read throughput: 758 MB/s
+total read requests: 2417 (of these ~2042 are 512KB reads).
+total write requests: 2701 (of these ~2034 requests are written in 512KB).
+
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+
+Change log from v3:
+ - add more conditions to serialize the allocation
+
+ Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
+ fs/f2fs/data.c                          | 10 ++++++++++
+ fs/f2fs/f2fs.h                          |  2 ++
+ fs/f2fs/segment.c                       |  1 +
+ fs/f2fs/super.c                         |  1 +
+ fs/f2fs/sysfs.c                         |  2 ++
+ 6 files changed, 24 insertions(+)
+
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 9b0123388f18..94a24aedcdb2 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -51,6 +51,14 @@ Description:
+ 		 Controls the dirty page count condition for the in-place-update
+ 		 policies.
+ 
++What:		/sys/fs/f2fs/<disk>/min_seq_blocks
++Date:		August 2018
++Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
++Description:
++		 Controls the dirty page count condition for batched sequential
++		 writes in ->writepages.
++
++
+ What:		/sys/fs/f2fs/<disk>/min_hot_blocks
+ Date:		March 2017
+ Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 43d3723dc886..fb63425ea242 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2130,6 +2130,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct blk_plug plug;
+ 	int ret;
++	bool locked = false;
+ 
+ 	/* deal with chardevs and other special file */
+ 	if (!mapping->a_ops->writepage)
+@@ -2160,10 +2161,19 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 	else if (atomic_read(&sbi->wb_sync_req[DATA]))
+ 		goto skip_write;
+ 
++	if (!S_ISDIR(inode->i_mode) && (wbc->sync_mode != WB_SYNC_ALL ||
++			get_dirty_pages(inode) <= SM_I(sbi)->min_seq_blocks)) {
++		mutex_lock(&sbi->writepages);
++		locked = true;
++	}
++
+ 	blk_start_plug(&plug);
+ 	ret = f2fs_write_cache_pages(mapping, wbc, io_type);
+ 	blk_finish_plug(&plug);
+ 
++	if (locked)
++		mutex_unlock(&sbi->writepages);
++
+ 	if (wbc->sync_mode == WB_SYNC_ALL)
+ 		atomic_dec(&sbi->wb_sync_req[DATA]);
+ 	/*
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9a6ba4a8d338..170573f8a04a 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -913,6 +913,7 @@ struct f2fs_sm_info {
+ 	unsigned int ipu_policy;	/* in-place-update policy */
+ 	unsigned int min_ipu_util;	/* in-place-update threshold */
+ 	unsigned int min_fsync_blocks;	/* threshold for fsync */
++	unsigned int min_seq_blocks;	/* threshold for sequential blocks */
+ 	unsigned int min_hot_blocks;	/* threshold for hot block allocation */
+ 	unsigned int min_ssr_sections;	/* threshold to trigger SSR allocation */
+ 
+@@ -1133,6 +1134,7 @@ struct f2fs_sb_info {
+ 	struct rw_semaphore sb_lock;		/* lock for raw super block */
+ 	int valid_super_block;			/* valid super block no */
+ 	unsigned long s_flag;				/* flags for sbi */
++	struct mutex writepages;		/* mutex for writepages() */
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index b136e39e1e9e..20650e25117b 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4127,6 +4127,7 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
+ 		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
+ 	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
+ 	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
++	sm_info->min_seq_blocks = sbi->blocks_per_seg * sbi->segs_per_sec;
+ 	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
+ 	sm_info->min_ssr_sections = reserved_sections(sbi);
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index c6e4750a9187..6b6cb4eb8439 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2864,6 +2864,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	/* init f2fs-specific super block info */
+ 	sbi->valid_super_block = valid_super_block;
+ 	mutex_init(&sbi->gc_mutex);
++	mutex_init(&sbi->writepages);
+ 	mutex_init(&sbi->cp_mutex);
+ 	init_rwsem(&sbi->node_write);
+ 	init_rwsem(&sbi->node_change);
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index cd2e030e47b8..81c0e5337443 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -397,6 +397,7 @@ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
++F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_seq_blocks, min_seq_blocks);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_hot_blocks, min_hot_blocks);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ssr_sections, min_ssr_sections);
+ F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
+@@ -449,6 +450,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(ipu_policy),
+ 	ATTR_LIST(min_ipu_util),
+ 	ATTR_LIST(min_fsync_blocks),
++	ATTR_LIST(min_seq_blocks),
+ 	ATTR_LIST(min_hot_blocks),
+ 	ATTR_LIST(min_ssr_sections),
+ 	ATTR_LIST(max_victim_search),
+-- 
+2.17.0.441.gb46fe60e1d-goog
+
