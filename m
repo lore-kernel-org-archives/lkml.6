@@ -2,162 +2,117 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 354B4C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF87FC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF16321893
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:33:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF16321893
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6548221894
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:34:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QF++/AMr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6548221894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726782AbeHQLfd (ORCPT
+        id S1726831AbeHQLg2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 07:35:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35450 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726349AbeHQLfd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 07:35:33 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AE72340216F1;
-        Fri, 17 Aug 2018 08:33:01 +0000 (UTC)
-Received: from [10.36.112.15] (unknown [10.36.112.15])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0AE7C2026D6C;
-        Fri, 17 Aug 2018 08:32:57 +0000 (UTC)
-Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Christoffer Dall <cdall@cs.columbia.edu>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>
-References: <20180723144641.62b2b226@canb.auug.org.au>
- <20180816101515.24d0b49f@canb.auug.org.au>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
- CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
- hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
- DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
- P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
- Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
- UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
- tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
- wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0f
- UGFvbG8gQm9uemluaSA8Ym9uemluaUBnbnUub3JnPsLBTQQTAQIAIwUCVEJ7AwIbAwcLCQgH
- AwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEH4VEAzNNmmxNcwOniaZVLsuy1lW/ntYCA0Caz0i
- sHpmecK8aWlvL9wpQCk4GlOX9L1emyYXZPmzIYB0IRqmSzAlZxi+A2qm9XOxs5gJ2xqMEXX5
- FMtUH3kpkWWJeLqe7z0EoQdUI4EG988uv/tdZyqjUn2XJE+K01x7r3MkUSFz/HZKZiCvYuze
- VlS0NTYdUt5jBXualvAwNKfxEkrxeHjxgdFHjYWhjflahY7TNRmuqPM/Lx7wAuyoDjlYNE40
- Z+Kun4/KjMbjgpcF4Nf3PJQR8qXI6p3so2qsSn91tY7DFSJO6v2HwFJkC2jU95wxfNmTEUZc
- znXahYbVOwCDJRuPrE5GKFd/XJU9u5hNtr/uYipHij01WXal2cce1S5mn1/HuM1yo1u8xdHy
- IupCd57EWI948e8BlhpujUCU2tzOb2iYS0kpmJ9/oLVZrOcSZCcCl2P0AaCAsj59z2kwQS9D
- du0WxUs8waso0Qq6tDEHo8yLCOJDzSz4oojTtWe4zsulVnWV+wu70AioemAT8S6JOtlu60C5
- dHgQUD1Tp+ReXpDKXmjbASJx4otvW0qah3o6JaqO79tbDqIvncu3tewwp6c85uZd48JnIOh3
- utBAu684nJakbbvZUGikJfxd887ATQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAem
- Vv9Yfn2PbDIbxXqLff7oyVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CR
- wkMHtOmzQiQ2tSLjKh/cHeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuf
- fAb589AJW50kkQK9VD/9QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v02
- 8TVAaYbIhxvDY0hUQE4r8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQ
- zCYHXAzwnGi8WU9iuE1P0wARAQABwsEzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EO
- oJy0uZggJm7gZKeJ7iUpeX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBT
- uiJ0bfo55SWsUNN+c9hhIX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHn
- plOzCXHvmdlW0i6SrMsBDl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4
- HYv/7ZnASVkR5EERFF3+6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz
- 876SvcOb5SL5SKg9/rCBufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvr
- iy9enJ8kxJwhC0ECbSKFY+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y
- 1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
- /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
- 53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <84803922-9430-43d2-7db6-e9c0dd02da6a@redhat.com>
-Date:   Fri, 17 Aug 2018 10:32:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 17 Aug 2018 07:36:28 -0400
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:40502 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbeHQLg2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 07:36:28 -0400
+Received: by mail-wm0-f54.google.com with SMTP id y9-v6so6688501wma.5
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 01:33:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=wovn9MBxuOUBfVTb6YKy7wBqfRENNLLOE/mwW6Xl3ts=;
+        b=QF++/AMrUFZNB+4a/o52IHB1F8lrctVwZcXjJv9leFlTTUEWrZujblhoT4762YCgj8
+         DvUM96+hDbwB/9w2Ho21Dhv8jPy5ZVrCj3ZslroMfzri6j7d70rooWcFZ7MJf3rt7Vv3
+         ixc2ToftuTgGDO8X+onfJj/OSSMnwHArKs2xbqG6AZx1LZeI1KdadHzCnqXUKgDBogS7
+         iP1lfqmislFQoKVJ4HnHnpgIt5KGJm15pbX9k6bIWvOZnygQY0Sz9wl5hOVkWqt4cr2c
+         Ywb7gjWTbPAu8+JYw9J//1+ONe3NdVkLslXwYolshhf4BdjZ6fToki/eJtPpGfF3XN5s
+         p4Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=wovn9MBxuOUBfVTb6YKy7wBqfRENNLLOE/mwW6Xl3ts=;
+        b=FyZou/yCTK92t6iyXQRfy+zwQpu2G/tqLSuqP1AloCDhLfeNlsiu96M5l0uycTZ33L
+         ai3yKH84hXwqewr/b4FOjUepC4J9x1EdH/9z8RThdN+j5axO9OI3eFMLn5yHrfBAjX5h
+         3k/9DTsb/9aTCLlTW0wrcERo01eNzB1z7djMlTvyC2jiJvRLFl3b//w4Ie4FJZxIAavG
+         9xoRQ8pv10RQEW2fWdAPjzLedLdC2XeA/8ropkSm0iPWnWr9T5dnVm++vhviZzvS38o0
+         9hMoZ619sfJ8JCSDUSFuHsmH7Ou93+jgsGOwe8gYkC+9cfs4HASqg92M1aKlaZaC74kX
+         MCdA==
+X-Gm-Message-State: AOUpUlGLMNfeYdSUfL6Mq+pchM5VVHwckBJjabKv4ee9n/G/HsLUYg55
+        fDsNtMYHopXcyzehc50/wNGpF24hTWRdiTZXwMI=
+X-Google-Smtp-Source: AA+uWPz9gcF4hCMaScX6Q41xCqk5Z4y1pDnQl3wUjFmYtYHYcEvHltNKx9A5PkXpSCYpy9HdvXnNRhrWAoD2iSR79wY=
+X-Received: by 2002:a1c:d702:: with SMTP id o2-v6mr17964938wmg.115.1534494837019;
+ Fri, 17 Aug 2018 01:33:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180816101515.24d0b49f@canb.auug.org.au>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="va2T1wBdwSrHwBAFRTvzJAFCnG1iHKtTA"
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 17 Aug 2018 08:33:01 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 17 Aug 2018 08:33:01 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Received: by 2002:a5d:4302:0:0:0:0:0 with HTTP; Fri, 17 Aug 2018 01:33:55
+ -0700 (PDT)
+In-Reply-To: <CAFLxGvxhUyqs3_esJwBjHrTY0Ba=bPB=425hWr0rz-BySTjzoA@mail.gmail.com>
+References: <CA+icZUW9Cg0G41ZSwjUBaJ+F9qCc23GGMp8aCgfNQejstKJmmQ@mail.gmail.com>
+ <CAFLxGvxhUyqs3_esJwBjHrTY0Ba=bPB=425hWr0rz-BySTjzoA@mail.gmail.com>
+From:   Vegard Nossum <vegard.nossum@gmail.com>
+Date:   Fri, 17 Aug 2018 10:33:55 +0200
+Message-ID: <CAOMGZ=G-MU7qTSeA4VFK+-nx2jFAM2fGL8WpQ6eBRvovEhaneQ@mail.gmail.com>
+Subject: Re: Merge branch 'l1tf-final' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+To:     Richard Weinberger <richard.weinberger@gmail.com>
+Cc:     sedat.dilek@gmail.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        x86 maintainers <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---va2T1wBdwSrHwBAFRTvzJAFCnG1iHKtTA
-Content-Type: multipart/mixed; boundary="KOIs3meSzZMIIu5yUSGuMz8FTgbRswz2o";
- protected-headers="v1"
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will.deacon@arm.com>,
- Linux-Next Mailing List <linux-next@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?=
- <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
-Message-ID: <84803922-9430-43d2-7db6-e9c0dd02da6a@redhat.com>
-Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-References: <20180723144641.62b2b226@canb.auug.org.au>
- <20180816101515.24d0b49f@canb.auug.org.au>
-In-Reply-To: <20180816101515.24d0b49f@canb.auug.org.au>
+On 16 August 2018 at 17:42, Richard Weinberger
+<richard.weinberger@gmail.com> wrote:
+> On Thu, Aug 16, 2018 at 2:58 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>>
+>> Hi Linus,
+>>
+>> I am here on Linux v4.18 and tried first to merge the l1tf-final Git-branch.
+>> Unfortunately, this is no more available in the tip Git-tree.
+>>
+>> Then I saw Linux v4.18.1 which includes all the above stuff.
+>>
+>> I tried to 'git cherry-pick -m 1 958f338e96f874a0d29442396d6adf9c1e17aa2d'.
+>> I know the commit-id is the hash of a merge.
+>> Luckily, I could get the "diff" and applied it.
+>> But the history misses.
+>>
+>> How can I get the history and subjects of all commits in your tree to
+>> cherry-pick the single commits?
+>>
+>> Do you happen to know another solution to get easily all L1TF commits
+>> with any other tricks?
+>
+> That should help:
+> git log --oneline
+> 958f338e96f874a0d29442396d6adf9c1e17aa2d^..958f338e96f874a0d29442396d6adf9c1e17aa2d
 
---KOIs3meSzZMIIu5yUSGuMz8FTgbRswz2o
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Hey,
 
-On 16/08/2018 02:15, Stephen Rothwell wrote:
->>  -#define ARM64_HAS_STAGE2_FWB			31
->>  +#define ARM64_MISMATCHED_CACHE_TYPE		31
->> ++#define ARM64_HAS_STAGE2_FWB			32
->>  =20
->> --#define ARM64_NCAPS				32
->> ++#define ARM64_NCAPS				33
->>  =20
->>   #endif /* __ASM_CPUCAPS_H */
-> This is now a conflict between Linus' tree and the kvm-arm tree (and
-> presumably soon the kvm tree).
+As a shorthand for this, you can also use just:
 
-This should have been sorted out using topic branches.  I'll handle it
-myself by splitting the pull request in two, but please try to organize
-better the changes in non-KVM-specific arch/arm and arch/arm64 files.
+git log --oneline 958f338e96f87^-
 
-Thanks,
+The syntax was made especially so that you can see all the commits
+that arrived via a merge commit without having to write the rev of the
+merge twice but is otherwise exactly equivalent to "rev^..rev".
 
-Paolo
+It should work from git v2.13. Just a tip :-)
 
 
---KOIs3meSzZMIIu5yUSGuMz8FTgbRswz2o--
-
---va2T1wBdwSrHwBAFRTvzJAFCnG1iHKtTA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEE8TM4V0tmI4mGbHaCv/vSX3jHroMFAlt2iDgACgkQv/vSX3jH
-roNupQgAgcVLFG86iqscCth8pKx1/84CtidFnLAGyAmjkm2CUVE1TFrgwp8zEWv0
-C5QeF3L80L2f8FuPk8SLxhfCXhXVqI8ji4mya7T0kiu6bJnz9s7S3L01of9knSdl
-KgWNB7cTQaZVCK9gQbM/KnNwCcNwwpdSmEB4x7GVLyDCPWhu7BnPo7+KyDRDg9fw
-CJA3go5liyKm6N1+vPjFPLAhlc24St9y+XYBjs43pFR1zeJYeK2Hqz1eShOk1sBL
-0EpRgOg7SduZwwE8RWLi0kXdIGXeBWHmsGGyV3P0x8IwZdfRW/NgXQGK25ABNlf/
-cC7uJ3UUrlEIAbXo43UoIn64IMB/6w==
-=Z//r
------END PGP SIGNATURE-----
-
---va2T1wBdwSrHwBAFRTvzJAFCnG1iHKtTA--
+Vegard
