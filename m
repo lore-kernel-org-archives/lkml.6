@@ -2,130 +2,120 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2CADC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 05:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D75C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 05:50:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88B46208D4
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 05:45:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88B46208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
+	by mail.kernel.org (Postfix) with ESMTP id 2EACA2151C
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 05:50:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EACA2151C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbeHQIrU (ORCPT
+        id S1726423AbeHQIwD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 04:47:20 -0400
-Received: from mout.gmx.net ([212.227.15.19]:57345 "EHLO mout.gmx.net"
+        Fri, 17 Aug 2018 04:52:03 -0400
+Received: from gate.crashing.org ([63.228.1.57]:57329 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725837AbeHQIrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 04:47:20 -0400
-Received: from localhost ([123.218.187.51]) by mail.gmx.com (mrgmx002
- [212.227.17.184]) with ESMTPSA (Nemesis) id 0MO7im-1fl3vW2ZyG-005WjG; Fri, 17
- Aug 2018 07:45:11 +0200
-Date:   Fri, 17 Aug 2018 14:43:54 +0900 (JST)
-Message-Id: <20180817.144354.2288619657950222607.teika@gmx.com>
-To:     rjw@rjwysocki.net
-Cc:     linux-pci@vger.kernel.org, bhelgaas@google.com,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, mika.westerberg@linux.intel.com
-Subject: Re: [PATCH] PCI / ACPI / PM: Resume all bridges on suspend-to-RAM
-From:   Teika Kazura <teika@gmx.com>
-In-Reply-To: <6401388.2t0qD3iTOr@aspire.rjw.lan>
-References: <6401388.2t0qD3iTOr@aspire.rjw.lan>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=utf-8
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:aIrZFPrTQ+gkNEV5KkHy//nANYz3Xgtgh9TNz1y+PyT5ZC73lOa
- 7ulb5Zxw9WhwC8ePsIyu4W33r7RLEn8x2lja6eg2BE/o1XWPSka1XugnOwDw83HLt2adV0n
- JglMMyCguJR/eoEEwXFJe8YKtn/agOY/Qif7LKvBqhQvTzhzFU3LO/nyUKYx7M9g0e6X2oS
- YkzLLbzdnbPPcz/2+/ryw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:jZ6J+HqxVb8=:uuKlpkFapn2TTWWUwfidcT
- OTlLaad9mJoxgdkfslkq6ZWwP7A2nTQ8rJaYSWJLMkcYSwcUABXL4tPLXc7AXA+eAn7zuZbNH
- d+taWbalL1qCr4LX4GwPRwZtMDAdP/9r3921lz7wCoW+VmIRNxHidvR0SMD19rpZs9xMwj5ML
- 5lMjNfP8LeG6NzjUciPCQK2JSoX/5s7w92fD7J9k94XZ24KzcP236tku5Xftbi1rYfLRnKZUr
- MvcEujRJLCSoxPFkNV1ALqqdrr/PHdZsV23L/opwcX/0D0LpZt2tDsWix557QatXzq1SD4rEs
- W8M/lAthmJW8ZAUGa32I7VDuQ+imEZA75v1J2jU2Aqm28Soexm9B/ikDnOP9CcCAK5BY1XDTO
- pzi9myKI62FhQ9SraVtl9WmxPzvyKb4uo5/NB5hUXVubj7OuWYVNlvHyIry0Ba7TilZtd1iIX
- 5/om0hVcZB8JbKL4FBMIisDW7QjLJ8akOXx/SFKpvOuu0a8oMEi5mOEbvsv1+U7tamNOeaCMw
- QvSC1LLHg2NqBTc/rZe7DRwlNf1HebDs/S/qM5lnckBLnCuw3wH81gSz4mw+FfGXm2GOYP5Uf
- rB+1bCefsM4tkLdz7nNXcrYFlLLAOnAZFnRBavNHf4F7273h6eBBicJa9WCNixZJs36jHPfFo
- ssX8BZyp0jKFd5FQvFWWfRH6Y4dOiPwdlO3xoGI4IJ/g0zDeOqsepP2eZzT1bDfc+yPQYdkbx
- sGOkcwq0vMDukXKtW1OlhJop4bgICGbXo2iduzX64vSFi+q4+zfkQntGYj2b3Gez7xOAKzCvv
- bsoQugX
+        id S1726134AbeHQIwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 04:52:03 -0400
+Received: from pasglop.ozlabs.ibm.com (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w7H4nAsH017258;
+        Thu, 16 Aug 2018 23:49:30 -0500
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
+Cc:     Hari Vyas <hari.vyas@broadcom.com>, Ray Jui <ray.jui@broadcom.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jens Axboe <axboe@kernel.dk>, Lukas Wunner <lukas@wunner.de>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Marta Rybczynska <mrybczyn@kalray.eu>,
+        Pierre-Yves Kerbrat <pkerbrat@kalray.eu>,
+        linux-kernel@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: [RFC PATCH 4/6] pci: Add a mutex to pci_dev to protect device state
+Date:   Fri, 17 Aug 2018 14:49:00 +1000
+Message-Id: <20180817044902.31420-5-benh@kernel.crashing.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180817044902.31420-1-benh@kernel.crashing.org>
+References: <20180817044902.31420-1-benh@kernel.crashing.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rm9yIHRoZSByZWNvcmQsIGFib3V0IHRoZSBleGFjdG5lc3Mgb2YgdGhlIHBhdGNoIGRlc2NyaXB0
-aW9uLg0KDQpUaGUgcGF0Y2ggbWVudGlvbnMgdGhlIHJlZ3Jlc3Npb24gYnkgdGhlIGNvbW1pdCBj
-NjJlYzQ2MTBjNDAsIGJ1dCBpdCBpcyBub3QgdGhlIGNhdXNlIG9mIHRoZSBidWcgKGh0dHBzOi8v
-YnVnemlsbGEua2VybmVsLm9yZy9zaG93X2J1Zy5jZ2k/aWQ9MjAwNjcpIHJlcG9ydGVkIGJ5IG1l
-OyBJIHJldmVydGVkIGM2MmVjNDYxMGM0MCBvbiBsaW51eC00LjE3LjEzLCBhbmQgdGhlIGJ1ZyBy
-ZW1haW5lZC4NCg0KIyBTb21lIGRldGFpbHM6IG15IGJ1ZyB3YXMgaW50cm9kdWNlZCBieSB0aGUg
-Y29tbWl0IChpKSA4NzdiMzcyOWNhMCBvbiBKYW4gMy4gVGhlIGNvbW1pdCAoaWkpIGM2MmVjNDYx
-MGM0MCB3YXMgb24gTWF5IDIyLiBUaGUgY29tbWl0IChpaWkpIDI2MTEyZGRjMjU0YyBvbiBKdW4g
-MzAgZml4ZXMgb25lIHByb2JsZW0gY2F1c2VkIGJ5IGM2MmVjNDYxMGM0MC4gVGhlIHByZXNlbnQg
-cGF0Y2ggbW9kaWZpZXMgdGhlIGNvZGUgb2YgdGhlIGNvbW1pdCAoaWlpKSwgc28gaXQgY2FuIGJl
-IHNhaWQgYXMgdGhlIGNvbXBsZXRpb24gb2YgdGhlIGNvbW1pdCAoaWlpKS4gSXQgYXQgdGhlIHNh
-bWUgdGltZSBmaXhlcyBteSBidWcsIHRvby4NCg0KVGhpcyBzdWdnZXN0cyB0aGUgcHJlc2VudCBw
-YXRjaCBwb3NzaWJseSBmaXhlcyBvdGhlciB1bmtub3duIFBNIHByb2JsZW1zOyBmb3JtZXIga2Vy
-bmVscyBoYWQgc29tZSBsb29zZSBlbmQocykuIE5vdyB0aGlzIHBhdGNoIHB1dHMgdGhlIGtlcm5l
-bCBpbiBhIGJldHRlciBwb3NpdGlvbi4NCg0KSSdtIGEgbGF5IExpbnV4IHVzZXIsIGFuZCBkb24n
-dCBrbm93IGlmIHRoaXMgcG9zdCBoZWxwcy4gSWYgaXQgZG9lcywgaXQgbWF5IGJlIHdvcnRoIG1l
-bnRpb25pbmcgaXQgaW4gdGhlIGFib3ZlIGJ1Z3ppbGxhIGVudHJ5Lg0KDQpEemnEmWt1asSZICh0
-aGFua3MpLCBrZXJuZWwgZGV2ZWxvcGVycy4gQmVzdCByZWdhcmRzLA0KVGVpa2EgKFRlaWthIGth
-enVyYSkNCg0KRnJvbTogIlJhZmFlbCBKLiBXeXNvY2tpIiA8cmp3QHJqd3lzb2NraS5uZXQ+DQpT
-dWJqZWN0OiBbUEFUQ0hdIFBDSSAvIEFDUEkgLyBQTTogUmVzdW1lIGFsbCBicmlkZ2VzIG9uIHN1
-c3BlbmQtdG8tUkFNDQpEYXRlOiBUaHUsIDE2IEF1ZyAyMDE4IDEyOjU2OjQ2ICswMjAwDQoNCj4g
-RnJvbTogUmFmYWVsIEouIFd5c29ja2kgPHJhZmFlbC5qLnd5c29ja2lAaW50ZWwuY29tPg0KPiAN
-Cj4gQ29tbWl0IDI2MTEyZGRjMjU0YyAoUENJIC8gQUNQSSAvIFBNOiBSZXN1bWUgYnJpZGdlcyB3
-L28gZHJpdmVycyBvbg0KPiBzdXNwZW5kLXRvLVJBTSkgYXR0ZW1wdGVkIHRvIGZpeCBhIGZ1bmN0
-aW9uYWwgcmVncmVzc2lvbiByZXN1bHRpbmcNCj4gZnJvbSBjb21taXQgYzYyZWM0NjEwYzQwIChQ
-TSAvIGNvcmU6IEZpeCBkaXJlY3RfY29tcGxldGUgaGFuZGxpbmcNCj4gZm9yIGRldmljZXMgd2l0
-aCBubyBjYWxsYmFja3MpIGJ5IHJlc3VtaW5nIFBDSSBicmlkZ2VzIHdpdGhvdXQNCj4gZHJpdmVy
-cyAodGhhdCBpcywgInBhcmFsbGVsIFBDSSIgb25lcykgZHVyaW5nIHN5c3RlbS13aWRlIHN1c3Bl
-bmQgaWYNCj4gdGhlIHRhcmdldCBzeXN0ZW0gc3RhdGUgaXMgbm90IEFDUEkgUzAgKHdvcmtpbmcg
-c3RhdGUpLg0KPiANCj4gVGhhdCB0dXJucyBvdXQgaW5zdWZmaWNpZW50LCBob3dldmVyLCBhcyBp
-dCBpcyByZXBvcnRlZCB0aGF0LCBhdA0KPiBsZWFzdCBpbiBvbmUgY2FzZSwgdGhlIHBsYXRmb3Jt
-IGZpcm13YXJlIGdldHMgY29uZnVzZWQgaWYgYSBQQ0llDQo+IHJvb3QgcG9ydCBpcyBzdXNwZW5k
-ZWQgYmVmb3JlIGVudGVyaW5nIHRoZSBBQ1BJIFMzIHNsZWVwIHN0YXRlLg0KPiANCj4gRm9yIHRo
-aXMgcmVhc29uLCBkcm9wIHRoZSBkcml2ZXIgY2hlY2sgZnJvbSBhY3BpX3BjaV9uZWVkX3Jlc3Vt
-ZSgpDQo+IGFuZCByZXN1bWUgYWxsIGJyaWRnZXMgKGluY2x1ZGluZyBQQ0llIHBvcnRzIHdpdGgg
-ZHJpdmVycykgZHVyaW5nDQo+IHN5c3RlbS13aWRlIHN1c3BlbmQgaWYgdGhlIHRhcmdldCBzeXN0
-ZW0gc3RhdGUgaXMgbm90IEFDUEkgUzAuDQo+IA0KPiBbSWYgdGhlIHRhcmdldCBzeXN0ZW0gc3Rh
-dGUgaXMgQUNQSSBTMCwgaXQgbWVhbnMgc3VzcGVuZC10by1pZGxlDQo+ICBhbmQgdGhlIHBsYXRm
-b3JtIGZpcm13YXJlIGlzIG5vdCBnb2luZyB0byBiZSBpbnZva2VkIHRvIGFjdHVhbGx5DQo+ICBz
-dXNwZW5kIHRoZSBzeXN0ZW0sIHNvIHRoZXJlIGlzIG5vIG5lZWQgdG8gcmVzdW1lIHRoZSBicmlk
-Z2VzIGluDQo+ICB0aGF0IGNhc2UuXQ0KPiANCj4gRml4ZXM6IGM2MmVjNDYxMGM0MCAoUE0gLyBj
-b3JlOiBGaXggZGlyZWN0X2NvbXBsZXRlIGhhbmRsaW5nIGZvciBkZXZpY2VzIHdpdGggbm8gY2Fs
-bGJhY2tzKQ0KPiBSZXBvcnRlZC1ieTogdGVpa2Ega2F6dXJhIDx0ZWlrYUBnbXguY29tPg0KPiBU
-ZXN0ZWQtYnk6IHRlaWthIGthenVyYSA8dGVpa2FAZ214LmNvbT4NCj4gTGluazogaHR0cHM6Ly9i
-dWd6aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0yMDA2NzUNCj4gQ2M6IDQuMTUrIDxz
-dGFibGVAdmdlci5rZXJuZWwub3JnPiAjIDQuMTUrOiAyNjExMmRkYzI1NGMgKFBDSSAvIEFDUEkg
-LyBQTTogUmVzdW1lIGJyaWRnZXMgLi4uKQ0KPiBTaWduZWQtb2ZmLWJ5OiBSYWZhZWwgSi4gV3lz
-b2NraSA8cmFmYWVsLmoud3lzb2NraUBpbnRlbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9wY2kv
-cGNpLWFjcGkuYyB8ICAgIDYgKystLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25z
-KCspLCA0IGRlbGV0aW9ucygtKQ0KPiANCj4gSW5kZXg6IGxpbnV4LXBtL2RyaXZlcnMvcGNpL3Bj
-aS1hY3BpLmMNCj4gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PQ0KPiAtLS0gbGludXgtcG0ub3JpZy9kcml2ZXJzL3BjaS9w
-Y2ktYWNwaS5jDQo+ICsrKyBsaW51eC1wbS9kcml2ZXJzL3BjaS9wY2ktYWNwaS5jDQo+IEBAIC02
-MzIsMTMgKzYzMiwxMSBAQCBzdGF0aWMgYm9vbCBhY3BpX3BjaV9uZWVkX3Jlc3VtZShzdHJ1Y3QN
-Cj4gIAkvKg0KPiAgCSAqIEluIHNvbWUgY2FzZXMgKGVnLiBTYW1zdW5nIDMwNVY0QSkgbGVhdmlu
-ZyBhIGJyaWRnZSBpbiBzdXNwZW5kIG92ZXINCj4gIAkgKiBzeXN0ZW0td2lkZSBzdXNwZW5kL3Jl
-c3VtZSBjb25mdXNlcyB0aGUgcGxhdGZvcm0gZmlybXdhcmUsIHNvIGF2b2lkDQo+IC0JICogZG9p
-bmcgdGhhdCwgdW5sZXNzIHRoZSBicmlkZ2UgaGFzIGEgZHJpdmVyIHRoYXQgc2hvdWxkIHRha2Ug
-Y2FyZSBvZg0KPiAtCSAqIHRoZSBQTSBoYW5kbGluZy4gIEFjY29yZGluZyB0byBTZWN0aW9uIDE2
-LjEuNiBvZiBBQ1BJIDYuMiwgZW5kcG9pbnQNCj4gKwkgKiBkb2luZyB0aGF0LiAgQWNjb3JkaW5n
-IHRvIFNlY3Rpb24gMTYuMS42IG9mIEFDUEkgNi4yLCBlbmRwb2ludA0KPiAgCSAqIGRldmljZXMg
-YXJlIGV4cGVjdGVkIHRvIGJlIGluIEQzIGJlZm9yZSBpbnZva2luZyB0aGUgUzMgZW50cnkgcGF0
-aA0KPiAgCSAqIGZyb20gdGhlIGZpcm13YXJlLCBzbyB0aGV5IHNob3VsZCBub3QgYmUgYWZmZWN0
-ZWQgYnkgdGhpcyBpc3N1ZS4NCj4gIAkgKi8NCj4gLQlpZiAocGNpX2lzX2JyaWRnZShkZXYpICYm
-ICFkZXYtPmRyaXZlciAmJg0KPiAtCSAgICBhY3BpX3RhcmdldF9zeXN0ZW1fc3RhdGUoKSAhPSBB
-Q1BJX1NUQVRFX1MwKQ0KPiArCWlmIChwY2lfaXNfYnJpZGdlKGRldikgJiYgYWNwaV90YXJnZXRf
-c3lzdGVtX3N0YXRlKCkgIT0gQUNQSV9TVEFURV9TMCkNCj4gIAkJcmV0dXJuIHRydWU7DQo+ICAN
-Cj4gIAlpZiAoIWFkZXYgfHwgIWFjcGlfZGV2aWNlX3Bvd2VyX21hbmFnZWFibGUoYWRldikpDQo+
-IA0K
+This adds a pci_dev mutex which will be used to fix a number
+of races related to the various state bits maintained in
+that structure.
+
+We call it "state_lock" with similarly named accessors to avoid
+confusion with the pci_dev_lock() which uses the device_lock().
+
+This is a low level mutex meant to protect the mapping between
+the state fields and the hardware state, for example enabling
+disabling, setting/clearing bus master etc...
+
+These operations can happen while the device_lock() is already
+held (but don't have to) so a separate mutex is preferable.
+
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+---
+ drivers/pci/probe.c |  1 +
+ include/linux/pci.h | 17 +++++++++++++++++
+ 2 files changed, 18 insertions(+)
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 440445ac7dfa..3ce287ab6150 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -2155,6 +2155,7 @@ struct pci_dev *pci_alloc_dev(struct pci_bus *bus)
+ 	INIT_LIST_HEAD(&dev->bus_list);
+ 	dev->dev.type = &pci_dev_type;
+ 	dev->bus = pci_bus_get(bus);
++	mutex_init(&dev->state_lock);
+ 
+ 	return dev;
+ }
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index f58bda204f09..0d4fc22df190 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -33,6 +33,7 @@
+ #include <linux/io.h>
+ #include <linux/resource_ext.h>
+ #include <uapi/linux/pci.h>
++#include <linux/mutex.h>
+ 
+ #include <linux/pci_ids.h>
+ 
+@@ -443,8 +444,24 @@ struct pci_dev {
+ 	phys_addr_t	rom;		/* Physical address if not from BAR */
+ 	size_t		romlen;		/* Length if not from BAR */
+ 	char		*driver_override; /* Driver name to force a match */
++
++	unsigned long	priv_flags;	/* Private flags for the PCI driver */
++
++	struct mutex	state_lock;	/* Protect local state bits */
++
++	/* --- Fields below this line are protected by the state_lock mutex */
+ };
+ 
++static inline void pci_dev_state_lock(struct pci_dev *dev)
++{
++	mutex_lock(&dev->state_lock);
++}
++
++static inline void pci_dev_state_unlock(struct pci_dev *dev)
++{
++	mutex_unlock(&dev->state_lock);
++}
++
+ static inline struct pci_dev *pci_physfn(struct pci_dev *dev)
+ {
+ #ifdef CONFIG_PCI_IOV
+-- 
+2.17.1
+
