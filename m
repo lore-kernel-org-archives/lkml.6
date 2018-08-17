@@ -2,140 +2,131 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7288C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 518E6C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:56:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7541321A86
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:46:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7541321A86
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id D9259223AA
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:56:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0aEMe4iv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9259223AA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbeHQVvQ (ORCPT
+        id S1728110AbeHQWBP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 17:51:16 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:33869 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726888AbeHQVvQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 17:51:16 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fqjlm-0006fR-ID; Fri, 17 Aug 2018 12:46:46 -0600
-Received: from [97.119.167.31] (helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fqjll-0006px-7F; Fri, 17 Aug 2018 12:46:46 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Wen Yang <wen.yang99@zte.com.cn>,
-        majiang <ma.jiang@zte.com.cn>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Andrey Vagin <avagin@virtuozzo.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>
-References: <87efft5ncd.fsf_-_@xmission.com>
-        <20180724032419.20231-7-ebiederm@xmission.com>
-        <87k1orgdoo.fsf_-_@xmission.com>
-        <CACT4Y+bYFatW=CMgH4M6AjtjO297gbQ8xwnEV0_f7J64FLQ4QQ@mail.gmail.com>
-Date:   Fri, 17 Aug 2018 13:46:36 -0500
-In-Reply-To: <CACT4Y+bYFatW=CMgH4M6AjtjO297gbQ8xwnEV0_f7J64FLQ4QQ@mail.gmail.com>
-        (Dmitry Vyukov's message of "Fri, 17 Aug 2018 10:34:12 -0700")
-Message-ID: <87pnyg7rw3.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Fri, 17 Aug 2018 18:01:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32890 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727509AbeHQWBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 18:01:15 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F99721A2E;
+        Fri, 17 Aug 2018 18:56:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534532204;
+        bh=rkZZqhpqXWhzcIyHpnzMn1e0pGzwhR+m0SZE2BdNbqc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0aEMe4ivsIfqo9OjJBCyBQ4EZ2a90RM0nmGtzCXNnZAczZNLXhHIghxM7JgpEiGMm
+         TkxMNptNt3iGjzEINEwtR26xa6xm9EX26mRSAu7fllclLIuQfMHHn7xn9bE6794jos
+         4ZV54wcsvlRr01XT9jiNYI9RcnMeCY9/4DYPbl4M=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 5DD6E141C3A; Fri, 17 Aug 2018 15:56:41 -0300 (-03)
+Date:   Fri, 17 Aug 2018 15:56:41 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>
+Subject: Re: [PATCH 06/13] perf tools: Add compression id into struct
+ kmod_path
+Message-ID: <20180817185641.GF22443@kernel.org>
+References: <20180817094813.15086-1-jolsa@kernel.org>
+ <20180817094813.15086-7-jolsa@kernel.org>
+ <20180817182315.GD22443@kernel.org>
+ <20180817182849.GE22443@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fqjll-0006px-7F;;;mid=<87pnyg7rw3.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/G6gJzgJ9OZ+GFm/1aKyyCeW3WriSnBZ4=
-X-SA-Exim-Connect-IP: 97.119.167.31
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH] signal: Don't send signals to tasks that don't exist
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180817182849.GE22443@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Vyukov <dvyukov@google.com> writes:
+Em Fri, Aug 17, 2018 at 03:28:49PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Fri, Aug 17, 2018 at 03:23:15PM -0300, Arnaldo Carvalho de Melo escreveu:
+> > Em Fri, Aug 17, 2018 at 11:48:06AM +0200, Jiri Olsa escreveu:
+> > >  static const struct {
+> > >  	const char *fmt;
+> > >  	int (*decompress)(const char *input, int output);
+> > >  } compressions[] = {
+> > > +	[COMP_ID__NONE] = { 0 },
+> > 
+> > 
+> > This broke the build in many places, problems of this kind:
+> > 
+> >   CC       /tmp/build/perf/util/dso.o
+> >   LD       /tmp/build/perf/scripts/python/Perf-Trace-Util/libperf-in.o
+> >   LD       /tmp/build/perf/scripts/libperf-in.o
+> >   CC       /tmp/build/perf/trace/beauty/clone.o
+> >   CC       /tmp/build/perf/util/symbol.o
+> > util/dso.c:201:24: error: missing field 'decompress' initializer [-Werror,-Wmissing-field-initializers]
+> >         [COMP_ID__NONE] = { 0 },
+> >                               ^
+> > 1 error generated.
+> >   CC       /tmp/build/perf/trace/beauty/fcntl.o
+> > mv: cannot stat '/tmp/build/perf/util/.dso.o.tmp': No such file or directory
+> > /git/linux/tools/build/Makefile.build:96: recipe for target '/tmp/build/perf/util/dso.o' failed
+> > 
+> > If we look just at those that failed, its several gcc versions:
+> > 
+> >   11     9.91 centos:5                      : FAIL gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
+> >   12    14.34 centos:6                      : FAIL gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-23)
+> >   16    47.50 debian:9                      : FAIL gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
+> >   28    53.92 fedora:25                     : FAIL gcc (GCC) 6.4.1 20170727 (Red Hat 6.4.1-1)
+> >   29    60.75 fedora:26                     : FAIL gcc (GCC) 7.3.1 20180130 (Red Hat 7.3.1-2)
+> >   30    90.76 fedora:27                     : FAIL gcc (GCC) 7.3.1 20180712 (Red Hat 7.3.1-6)
+> >   41    12.78 oraclelinux:6                 : FAIL gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-23.0.1)
+> >   43    12.85 ubuntu:12.04.5                : FAIL gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
+> >   46    45.56 ubuntu:16.04                  : FAIL gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609
+> >   54    49.60 ubuntu:17.10                  : FAIL gcc (Ubuntu 7.2.0-8ubuntu3.2) 7.2.0
+> 
+> Sorry, gcc eats this with gusto, its just clang that is not taking it,
+> for instance, this is the one in fedora:27:
+> 
+> clang version 5.0.2 (tags/RELEASE_502/final)
 
-> On Wed, Aug 15, 2018 at 9:04 PM, Eric W. Biederman
-> <ebiederm@xmission.com> wrote:
->>
->> Recently syzbot reported crashes in send_sigio_to_task and
->> send_sigurg_to_task in linux-next.  Despite finding a reproducer
->> syzbot apparently did not bisected this or otherwise track down the
->> offending commit in linux-next.
->>
->> I happened to see this report and examined the code because I had
->> recently changed these functions as part of making PIDTYPE_TGID a real
->> pid type so that fork would does not need to restart when receiving a
->> signal.  By examination I see that I spotted a bug in the code
->> that could explain the reported crashes.
->>
->> When I took Oleg's suggestion and optimized send_sigurg and send_sigio
->> to only send to a single task when type is PIDTYPE_PID or PIDTYPE_TGID
->> I failed to handle pids that no longer point to tasks.  The macro
->> do_each_pid_task simply iterates for zero iterations.  With pid_task
->> an explicit NULL test is needed.
->>
->> Update the code to include the missing NULL test.
->>
->> Fixes: 019191342fec ("signal: Use PIDTYPE_TGID to clearly store where file signals will be sent")
->> Reported-by: syzkaller-bugs@googlegroups.com
->
-> Since the commit does not contain the syzbot-provided Reported-by tag,
-> we need to tell syzbot that this is fixed explicitly:
+Nah, this cures it, and its not just clang, as we don't have it in the older
+images like centos:5.
 
-Nor will my commits ever contain that information.  That is information
-only of use to syzbot.  That is not information useful to anyone else.
+Patch below seems to cure in all cases, I'll do what is usual, use
+designated initializers everywhere...
 
-Further syzbot did not track this down and report this.  Syzbot said
-something is fishy here and happened to CC a public mailing list.  Only
-by chance did I see the report.  There was enough information to start
-an investigation but it certainly was not any kind of useful bug report.
+- Arnaldo
 
-It is very annoying that despite syzbot claming to have a reproducer
-syzbot completely failed to locate the problem commit or the proper
-people to repor the issue to.  I looked at the syzbot website link and
-there was no evidence that syzbot even tried to track down which branch
-in linux-next the commit came from.  Much less to identify the commit on
-that branch.
-
-Very annoyingly syzbot sent out emails and report this before it found a
-reproducer.  This is despite several people explicitly asking syzbot
-to not report issuing on linux-next where syzbot does not have a
-reproducer and it can not track down the offending commit.
-
-> #syz fix: signal: Don't send signals to tasks that don't exist
-
-Private internal communication on a public mailing list is rude.  Please
-cut it out.
-
-I appreciate the eagerness to report bugs.  But to play well with others
-and not waste developers valuable time syzbot needs to track down the
-offending commits and track fixes tags like everyone else.  Special
-magic syzbot tags are annoying noise.
-
-I will give credit where credit is due.  But syzbot is not so valuable
-it can set rules for everyone else.  Automation is valuable when it
-removes work.  Syzbot is not doing a good job at making the most of
-developers limited time.
-
-Cyrill Gorconov and Andrey Vagin did a much better job in tracking this
-down and reporting this.  They just took a little bit longer.  Please
-look at what they sent if you need an example of a useful bug report
-looks like.
-
-Eric
+diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
+index 8ce3de665993..bbed90e5d9bb 100644
+--- a/tools/perf/util/dso.c
++++ b/tools/perf/util/dso.c
+@@ -198,7 +198,7 @@ static const struct {
+ 	int (*decompress)(const char *input, int output);
+ 	bool (*is_compressed)(const char *input);
+ } compressions[] = {
+-	[COMP_ID__NONE] = { 0 },
++	[COMP_ID__NONE] = { .fmt = NULL, },
+ #ifdef HAVE_ZLIB_SUPPORT
+ 	{ "gz", gzip_decompress_to_file, gzip_is_compressed },
+ #endif
