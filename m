@@ -2,80 +2,72 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFACC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 11:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8990EC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 11:46:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5814821893
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 11:37:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5814821893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id 38EF5208EB
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 11:46:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38EF5208EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbeHQOkW (ORCPT
+        id S1727016AbeHQOtJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 10:40:22 -0400
-Received: from ms.lwn.net ([45.79.88.28]:52438 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726436AbeHQOkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 10:40:22 -0400
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 17 Aug 2018 10:49:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35534 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726134AbeHQOtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 10:49:09 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id B6F8E2EF;
-        Fri, 17 Aug 2018 11:37:13 +0000 (UTC)
-Date:   Fri, 17 Aug 2018 05:37:11 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Joe Perches <joe@perches.com>
-Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Rob Herring <rob.herring@linaro.org>,
-        Jonas Oberg <jonas@fsfe.org>,
-        Andrew Morton <akpm@linuxfoundation.org>,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH] license-rules.rst and LICENSES: Use only spdx version 3
- with -only and -or-later
-Message-ID: <20180817053711.1f7ef05b@lwn.net>
-In-Reply-To: <f9a4cd2b1c1cd7938a4e0b8aa9489a0ad96669ca.1534443693.git.joe@perches.com>
-References: <f9a4cd2b1c1cd7938a4e0b8aa9489a0ad96669ca.1534443693.git.joe@perches.com>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+        by mx1.redhat.com (Postfix) with ESMTPS id 762FF7A7EE;
+        Fri, 17 Aug 2018 11:46:00 +0000 (UTC)
+Received: from krava.brq.redhat.com (unknown [10.43.17.209])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 620242142F20;
+        Fri, 17 Aug 2018 11:45:57 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        =?UTF-8?q?Jaroslav=20=C5=A0karvada?= <jskarvad@redhat.com>,
+        Joe Mario <jmario@redhat.com>
+Subject: [PATCH 0/2] perf tools: Fix pyrf_evlist__read_on_cpu interface
+Date:   Fri, 17 Aug 2018 13:45:54 +0200
+Message-Id: <20180817114556.28000-1-jolsa@kernel.org>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 17 Aug 2018 11:46:00 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 17 Aug 2018 11:46:00 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Aug 2018 11:26:03 -0700
-Joe Perches <joe@perches.com> wrote:
+hi,
+Jaroslav reported errors from valgrind over perf python script,
+which led us to discover serious issue with python interface.
 
-> The current linux-kernel source git tree has a mixture of the deprecated
-> spdx version 2 and the newer version 3 uses.
-> 
-> Update the process/license-rules.rst file to show only the version 3 style
-> and use only the version 3 styles in LICENSES.
-> 
-> Add a script to update all old versions in the tree as well.
-> 
-> I suggest this be applied and the script be run and applied immediately
-> after an -rc1.  The script could also be used at any time after the initial
-> use to update any other deprecated spdx license uses.
+It affects tuned daemon, which depends on this interface,
+and makes it hang.
 
-All seems OK to me, with one question: if we're going to run the script
-and fix everything up, do we really need to add that script to the tree
-as well?  It seems like something we shouldn't need again.
+thanks,
+jirka
 
-If we *do* keep it for some reason, it needs a comment saying what it
-does and why it exists.
 
-Thanks,
+---
+Jiri Olsa (2):
+      perf tools: Store real cpu number in the struct perf_mmap
+      perf python: Fix pyrf_evlist__read_on_cpu interface
 
-jon
+ tools/perf/util/evlist.c |  2 +-
+ tools/perf/util/mmap.c   |  4 +++-
+ tools/perf/util/mmap.h   |  4 +++-
+ tools/perf/util/python.c | 20 +++++++++++++++++++-
+ 4 files changed, 26 insertions(+), 4 deletions(-)
