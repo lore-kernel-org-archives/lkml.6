@@ -2,96 +2,98 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1A28C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2927BC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D92321A2D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:15:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD5C621A2E
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:16:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=exactcode.de header.i=@exactcode.de header.b="iRbk/CtU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D92321A2D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dx+PH7jz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD5C621A2E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbeHQUTo (ORCPT
+        id S1727781AbeHQUU7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 16:19:44 -0400
-Received: from mx.exactcode.de ([144.76.154.42]:60270 "EHLO mx.exactcode.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727181AbeHQUTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 16:19:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=exactcode.de; s=x;
-        h=To:References:Message-Id:Content-Transfer-Encoding:Cc:Date:In-Reply-To:From:Subject:Mime-Version:Content-Type; bh=S+3LG6dPZDSvOF2NUZqp448QUEcnG5NsvHdYmkS1Y5k=;
-        b=iRbk/CtUQ2F45lQtPvdBxYH6HyWvUjkmo6TuPhDldWVGgSgGGGuscAuRDYtixI8BTSjTZmquKNmmCLsxTlbwVfO30y6aW6sg1wV1rAKG0jiPyoqnFPfceZfvfpyE6EP/dVA/EwRz2fg+2tKKz46+7V0/D5qiJ5PKpKcB0s+OKnA=;
-Received: from exactco.de ([90.187.5.221])
-        by mx.exactcode.de with esmtp (Exim 4.82)
-        (envelope-from <rene@exactcode.com>)
-        id 1fqiLw-0008TP-Q4; Fri, 17 Aug 2018 17:16:00 +0000
-Received: from 54.203.140.77.rev.sfr.net ([77.140.203.54] helo=[192.168.0.34])
-        by exactco.de with esmtpsa (TLSv1:AES128-SHA:128)
-        (Exim 4.54)
-        id 1fqiOx-0006uy-7E; Fri, 17 Aug 2018 17:19:17 +0000
-Content-Type: text/plain; charset=windows-1252
-Mime-Version: 1.0 (Mac OS X Mail 7.3 \(1878.6\))
-Subject: Re: [RESEND PATCH v2 0/2] Add support for ZSTD-compressed kernel
-From:   =?windows-1252?Q?Ren=E9_Rebe?= <rene@exactcode.com>
-In-Reply-To: <20180817165403.GC12066@tassilo.jf.intel.com>
-Date:   Fri, 17 Aug 2018 19:15:06 +0200
-Cc:     Nick Terrell <terrelln@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Kernel Team <Kernel-team@fb.com>, Chris Mason <clm@fb.com>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Julian Andres Klode <julian.klode@canonical.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <22E07EBB-CDC2-4EFF-B30F-61B848332BE4@exactcode.com>
-References: <20180322012943.4145794-1-terrelln@fb.com> <5B282FAD-EDCF-44C8-A131-A3C6FF3EA84F@fb.com> <3F598446-EA1D-47CE-B7A1-4D3002DA3972@exactcode.com> <8DE2BD14-0C9C-43AF-B9B7-F760F8434B6B@exactcode.com> <20180817165403.GC12066@tassilo.jf.intel.com>
-To:     Andi Kleen <ak@linux.intel.com>
-X-Mailer: Apple Mail (2.1878.6)
+        Fri, 17 Aug 2018 16:20:59 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46529 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727160AbeHQUU6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 16:20:58 -0400
+Received: by mail-pf1-f196.google.com with SMTP id u24-v6so3768453pfn.13;
+        Fri, 17 Aug 2018 10:16:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LY91YVzJoYaPVFuDgYZYWD3kjeYpl1AeWnm2w6GcylE=;
+        b=dx+PH7jzkFoLsi6O3JzScGOSJmf6JzX9LQRm469Tf/x1yEa4e8FNWR1SpnSCq0HSTl
+         d1eK6y2MA3AkRqqHHb14L4qGY76W/YYISmQJY3O5gTkGzhvk1Wrmwl7xaDQLt8y6ymww
+         6GUXnTsw54QIvEPax7A8y8zZn6bl2J3YwEY6G21wWvZRrVrfl4EfrOYsmsXhiOGlwmfc
+         oyvMbaP3pHp0JQg7pOeArUzE/dYS6y5/Nrj/3ns0DKNqBCA65b7Q7WCwr7jke1H/LAs/
+         jNSo1dJQpRQaNBgC60/uRiTjIirT/IlrvlRt24XbV+0oMSBzbYfA+vULOLCnfNX7a2ee
+         3NDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LY91YVzJoYaPVFuDgYZYWD3kjeYpl1AeWnm2w6GcylE=;
+        b=opemNBJKCeOPIDbM9DYBet2ZpoYMQthNR6/YtQwiOeWuZVLO0MBNHsmMOipHsAlsul
+         SHXxDYXbXK+z+cHk1byZVYwEhoEbUy57rlMXTwP6Y+w8DpYMCZ3iiRdRe6GRsK6IgqJd
+         zlQE44kEJ9AhTb8ncfPKXq3HZrXfS19LesjBxrAPUW22WkzgHfXRq4kxRjA3r96qDoy1
+         fiyWdJ+SODB5xDGKcBFuaPRZrdzOS1lsjCfFUxsKrZNn8+jmUAg6z8OBxMPulb2Rf6y/
+         ZdOfhB5r1CgkIQ1LshOUV2vdoSeVwztKZ+Sk1xUNR2fCwKg9CHtXca4F1YlYqjuDM0qH
+         j34Q==
+X-Gm-Message-State: AOUpUlEHIjTIIfc2qQ0dvp0nRtH0Li37NHCiDZmtPdRb0qq3y5cvKnUN
+        BHdwNdqi0GhrkLIYTsLG3O4=
+X-Google-Smtp-Source: AA+uWPx5uPfiTdByAUKqX2U7SHvyDRvi3CgwGvGBx4JQqwufapvZQtcTCDMK6fTBU/xiTwuHCRro0g==
+X-Received: by 2002:a63:1c5f:: with SMTP id c31-v6mr34340809pgm.321.1534526208224;
+        Fri, 17 Aug 2018 10:16:48 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id k12-v6sm4480978pfj.30.2018.08.17.10.16.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 Aug 2018 10:16:47 -0700 (PDT)
+Date:   Fri, 17 Aug 2018 10:16:45 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 3.18 00/15] 3.18.119-stable review
+Message-ID: <20180817171645.GA11442@roeck-us.net>
+References: <20180816171633.546734046@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180816171633.546734046@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Aug 16, 2018 at 08:41:37PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 3.18.119 release.
+> There are 15 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Aug 18 17:16:20 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-On 17 Aug 2018, at 18:54, Andi Kleen <ak@linux.intel.com> wrote:
+Build results:
+	total: 138 pass: 138 fail: 0
+Qemu test results:
+	total: 207 pass: 207 fail: 0
 
-> On Fri, Aug 17, 2018 at 06:15:45PM +0200, Ren=E9 Rebe wrote:
->> Hey,
->>=20
->> is there any mainline future for this zstd support? Currently my most =
-favourite compressor for this, and for what it=92s worth zstd/initrd now =
-even tested on #t2sde / hp/pa-risc, =85 =
-https://www.youtube.com/watch?v=3DMHplOJxnIHk
->=20
-> Can you remove some other compressor for the kernel image if you merge =
-this?
->=20
-> The "favourite compressor" seems to roughly change every year, so if
-> we keep adding new ones things will get more and more convoluted.
+Details are available at http://kerneltests.org/builders/.
 
-Well, we (t2 formerly known as rocklinux) only changed our pkg archive =
-compression from bzip2 to zstd once in 20 years ,-)
-
-> Surely zstd is universally better than some existing compressor
-> the kernel already uses for itself for a particular sweet spot?
-> If it isn't it's likely not needed.
-
-Well, IMHO this is not that much code, but if you want to remove =
-something I guess bzip2 or LZMA may be candidates.
-
-	http://zstd.net
-
---=20
- ExactCODE GmbH, Lietzenburger Str. 42, DE-10789 Berlin
- http://exactcode.com | http://exactscan.com | http://ocrkit.com | =
-http://t2-project.org | http://rene.rebe.de
-
+Guenter
