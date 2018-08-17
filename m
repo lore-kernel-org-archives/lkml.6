@@ -2,220 +2,86 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	TVD_PH_BODY_ACCOUNTS_PRE,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D94C0C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6008BC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:58:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7209B2187A
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:58:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="qDm/bxQk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7209B2187A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	by mail.kernel.org (Postfix) with ESMTP id 21D362187A
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:58:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21D362187A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbeHQSBr (ORCPT
+        id S1727641AbeHQSCZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 14:01:47 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:54348 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726544AbeHQSBr (ORCPT
+        Fri, 17 Aug 2018 14:02:25 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:10409 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726544AbeHQSCZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 14:01:47 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 8F8948EE171;
-        Fri, 17 Aug 2018 07:58:05 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id gtGf4AzRGPIv; Fri, 17 Aug 2018 07:58:05 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id C59528EE0C6;
-        Fri, 17 Aug 2018 07:58:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1534517885;
-        bh=4GhoDxLPCxI2Yl3fv2itEJwWv7q5lHDJl3GyinT/Bmc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=qDm/bxQkhZnVCu6mXkpgCh2X2kJ8soVscbg12jk5VQZof3k+Ajc88swYbcJNIWj0T
-         alWukrS5KSOUrK3ST/yttDlHdnE56BtGYral+vELuUZ/IM3gGgCt7VUABImBiB9tRC
-         d9ZaoCj4jyWmGWrkQtvQc+ddMn61x5dMtB/Sbng4=
-Message-ID: <1534517883.3994.9.camel@HansenPartnership.com>
-Subject: Re: [PATCH] Fix kexec forbidding kernels signed with custom
- platform keys to boot
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Vivek Goyal <vgoyal@redhat.com>, yannik@sembritzki.me,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Date:   Fri, 17 Aug 2018 07:58:03 -0700
-In-Reply-To: <28088.1534494293@warthog.procyon.org.uk>
-References: <1534464451.22442.1.camel@HansenPartnership.com>
-         <1534435000.3166.9.camel@HansenPartnership.com>
-         <1534432615.3166.5.camel@HansenPartnership.com>
-         <CA+55aFzRHVXP4Ag4aygao1dTGaaMJZSOisHT2ks3_WP97kLLhQ@mail.gmail.com>
-         <20180815100053.13609-1-yannik@sembritzki.me>
-         <CA+55aFx2goMXj7rQg-qx-puiiWYJmkDMU1xniWEu6ikDBNgfdQ@mail.gmail.com>
-         <654fbafb-69da-cd9a-b176-7b03401e71c5@sembritzki.me>
-         <20180815174247.GB29541@redhat.com> <20180815185812.GC29541@redhat.com>
-         <b2649b70-37b6-3929-a9d0-3d82033b2686@sembritzki.me>
-         <20180815194932.GD29541@redhat.com>
-         <20628.1534427487@warthog.procyon.org.uk>
-         <30607.1534434597@warthog.procyon.org.uk>
-         <18926.1534451480@warthog.procyon.org.uk>
-         <28088.1534494293@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 17 Aug 2018 14:02:25 -0400
+Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
+  by relmlie2.idc.renesas.com with ESMTP; 17 Aug 2018 23:58:42 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 769107C373;
+        Fri, 17 Aug 2018 23:58:42 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.53,251,1531753200"; 
+   d="scan'208";a="289880029"
+Received: from unknown (HELO fabrizio-dev.ree.adwin.renesas.com) ([10.226.36.250])
+  by relmlii2.idc.renesas.com with ESMTP; 17 Aug 2018 23:58:39 +0900
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] spi: sh-msiof: Add r8a774a1 support
+Date:   Fri, 17 Aug 2018 15:58:34 +0100
+Message-Id: <1534517914-15406-1-git-send-email-fabrizio.castro@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-08-17 at 09:24 +0100, David Howells wrote:
-> James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-> 
-> > > > As a step by step process, I agree.  However, I think we can
-> > > > automate it to the point where you install a package and it
-> > > > says "insert your yubikey" every time you upgrade the kernel
-> > > 
-> > > That's a very bad idea.  You train people to unlock their private
-> > > key on request.  It can be abused like one of those emails that
-> > > tells you that your account has been suspended - just follow the
-> > > link and put in your password please.
-> > 
-> > It's exactly the same process those of us who use yubikeys for gpg
-> > or ssh keys follow.  You insert your key, you activate the process
-> > that needs the key, it asks for you to confirm your key, you press
-> > the button and the operation gets performed.  Since it's what we as
-> > kernel developers do, I don't see why it's a bad idea for others.
-> 
-> You've completely missed the point.
-> 
-> You need to think from the PoV of an ordinary user.  Imagine the
-> system does an automatic upgrade and wants to upgrade the kernel.  It
-> pops up a dialogue box saying "please put in your yubikey and enter
-> your password here"[**].  It might do this on a regular basis - and
-> you can be sure that some users at least will become accustomed to
-> just doing this when their computer tells them too.  *That* is the
-> problem.
+Document RZ/G2M (R8A774A1) SoC bindings.
 
-I was assuming the kernel would get pinned, so when the system
-automatically updates it installs everything else but tells you you
-have to do the kernel manually.  Presumably installing the add your own
-key package would do this.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+This patch applies on top of next-20180817
 
-The point I'm making isn't that everything will just magically work,
-it's that we can design a process for a user to update a distro kernel
-while installing their own key.  I'm sure you can imagine hundreds of
-bad processes that encourage wrong behaviour, but the realistic answer
-is we just wouldn't use them.
+ Documentation/devicetree/bindings/spi/sh-msiof.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-
-> Now they follow a link to a dodgy website that causes some code to be
-> downloaded and run.  *It* now pops up a dialogue box that looks
-> exactly like the kernel installer's dialogue that says "please put in
-> your yubikey and enter your password here".  But now we've trained
-> those users to do this on demand...
-> 
-> PEBKAC[*].
-> 
-> [*] Note that I'm not trying to slight ordinary users here, it's more
-> a fact
->     of psychology.  As a distribution, it's our responsibility to try
-> and
->     protect them as best we can - and training them to unthinkingly
-> bypass the
->     security mechanisms isn't in anyone's best interests.
-> 
-> [**] Note also that I've never actually used a yubikey[***], so I'm
-> not sure
->      whether it takes a password or has some other mechanism to
-> unlock the
->      key.
-> 
-> [***] We also don't want to require that someone buys and keeps track
-> of a
->       yubikey to be able to use, say, the NVidia driver with
-> Fedora/RHEL.
->       Using the TPM if installed would be preferable because it's
-> harder to
->       lose.
-
-I'm perfectly happy to use the TPM as well, and to help design
-processes around it (although I think we'll need both yubikey and TPM).
- I also have to confess whenever I say yubikey in the context of kernel
-processes I'm making the caveat that everyone else uses a yubikey but I
-use my TPM based keys.
-
-> We also don't necessarily want to encourage ordinary users to fiddle
-> with the system key databases unless they really know what they are
-> doing.  There've been cases where doing this has bricked a machine
-> because the BIOS is buggy. Now I will grant, since you'll probably
-> raise it if I don't;-), that this might be a good reason *for* having
-> our own third party signing key as we could then build the key into
-> our kernels.
-> 
-> But if they use a yubikey, they have to get the public key from there
-> into the system key list or possibly the yubikey has to be accessed
-> by the bootloader. The same for the TPM.
-
-For security reasons, a Yubikey should only be connected when you need
-it to sign something.  The TPM you can assume is always available.
-
-> > > Further, you expose the unlocked key on a machine that might be
-> > > compromised.
-> > 
-> > No it doesn't; the point about using a yubikey (or any other HSM
-> > type thing) is that the key is shielded inside the module so you
-> > get a signature back and the key can't be compromised even if the
-> > machine is.
-> 
-> Yes, you do.  Note that I don't mean necessarily exposing the actual
-> key material, but you do have to make it available for use - which
-> means someone can then use it and there's a window in which it is
-> available for that use. If there wasn't, it would be useless.
-
-Right so it's the byzantine exploit window shared by all HSMs
-(interception between authorization and use).  We take that risk in our
-kernel development security model because we think it's reasonably low
-... the same is true for this use case.
-
-> > > No, you can't.  You might *think* that it is, but the signature
-> > > you're checking is after the image has being fiddled with by the
-> > > key-adder
-> > 
-> > Well, yes, you have to add a new signature to the combination. 
-> > However, you can always verify that the hash without the added key
-> > is the hash of the Red Hat supplied bzImage.
-> 
-> At what point would you do this?  You have to assume that your
-> userspace tools can be compromised unless they are also verified
-> (signature/IMA).  No, this needs to be done by the bootloader.
-
-? THe kernel is verified by the signature over the whole, which is
-bzImage plus new key; that's all the security the system needs.  The
-only verification needed of the original RH bzImage is presumably for
-Red Hat to confirm support or some forensic diagnostic ... it's not a
-security relevant thing.
-
-> Sometimes I feel I've spent too much time talking to people about
-> security and their paranoia is rubbing off... ;-)
-
-When dealing with security people the trick is to separate reasonable
-from unreasonable paranoia ...
-
-James
+diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+index bfbc203..8f7bb6a 100644
+--- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
++++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+@@ -3,6 +3,7 @@ Renesas MSIOF spi controller
+ Required properties:
+ - compatible           : "renesas,msiof-r8a7743" (RZ/G1M)
+ 			 "renesas,msiof-r8a7745" (RZ/G1E)
++			 "renesas,msiof-r8a774a1" (RZ/G2M)
+ 			 "renesas,msiof-r8a7790" (R-Car H2)
+ 			 "renesas,msiof-r8a7791" (R-Car M2-W)
+ 			 "renesas,msiof-r8a7792" (R-Car V2H)
+@@ -14,7 +15,7 @@ Required properties:
+ 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
+ 			 "renesas,sh-mobile-msiof" (generic SH-Mobile compatibile device)
+ 			 "renesas,rcar-gen2-msiof" (generic R-Car Gen2 and RZ/G1 compatible device)
+-			 "renesas,rcar-gen3-msiof" (generic R-Car Gen3 compatible device)
++			 "renesas,rcar-gen3-msiof" (generic R-Car Gen3 and RZ/G2 compatible device)
+ 			 "renesas,sh-msiof"      (deprecated)
+ 
+ 			 When compatible with the generic version, nodes
+-- 
+2.7.4
 
