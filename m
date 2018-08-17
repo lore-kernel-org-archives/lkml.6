@@ -2,159 +2,111 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29406C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 11:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C93C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 11:07:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D11182191C
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 11:07:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D11182191C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5DF0B2188D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 11:07:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JtCxRJtk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DF0B2188D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbeHQOKC (ORCPT
+        id S1726867AbeHQOKl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 10:10:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57986 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725992AbeHQOKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 10:10:02 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 60CF040201C6;
-        Fri, 17 Aug 2018 11:06:59 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EC9F710EE6CD;
-        Fri, 17 Aug 2018 11:06:56 +0000 (UTC)
-Subject: Re: [PATCH v2] console: Add console=auto option
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Mark Salter <msalter@redhat.com>,
-        Al Stone <ahs3@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        x86@kernel.org, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pm@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
-References: <728a8e68-ea4b-4040-a0fc-217df4f1928d@redhat.com>
- <20180816173902.18971-1-prarit@redhat.com>
- <20180817093828.GA10337@jagdpanzerIV>
- <a530a430-70ce-c1e1-ccba-bf5df107c5ad@redhat.com>
- <20180817105046.GB10337@jagdpanzerIV>
-From:   Prarit Bhargava <prarit@redhat.com>
-Message-ID: <9d164aa0-bc61-1bbf-f888-a24aeaf7dec0@redhat.com>
-Date:   Fri, 17 Aug 2018 07:06:56 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 17 Aug 2018 10:10:41 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:36792 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbeHQOKl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 10:10:41 -0400
+Received: by mail-qk0-f194.google.com with SMTP id 93-v6so4614395qks.3;
+        Fri, 17 Aug 2018 04:07:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=CUsC62g54doCArXu/DfL3KpmKexz6XW1nK3ogLhAdR8=;
+        b=JtCxRJtkV2osiw2+4rMcuABL/imLjv38PW3cPZoB/ldA8+gW597cJ8Al0m6linAv6E
+         bbtwvy/U2oCO9N33QeE4PBG/iBIHKf+BHFR+AwttLRfytxGiN1svnfLDPQoVXuglxtBU
+         xyJfehcl4LnKatQIWWfiJM4Z0ww/ePv7w8sqcmj6J3t1ggkhejL++x1YlpU4SNLpBt3p
+         8UdluolUShclb9OcSRumX+p1OjwXS6axXiy0O4o773EkGMwQUah5gwoWst0VYxl/c5df
+         Cy+MPHPBuAs8bp9uR/eWfFp4J7D90L4behYtN5Oq1aklz92QMXFznTV+AU+DU1qzJNtq
+         ka7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=CUsC62g54doCArXu/DfL3KpmKexz6XW1nK3ogLhAdR8=;
+        b=ffQJVAFW2Ue4pN9cOl/44JLh3ewy803zGqXQQCNJZnxjZfDCg9jIVG/K1fHqC9MqVQ
+         vMZ0vvhKLWJvI7sQDhMcdD8/QseGZIV5DwnroZtXKq5SlUv6pnqAeNd/stLx4djx3qm2
+         ZgB0E2msUOS1wigfLAFEoxtReRTQKKgYtIyipT/XCHl1uXlZ7aNkUdx/fIQrCuRGxF/x
+         5iEtyNBc6KzE+82ZTZCe+QngQ+uLeKt5+GhSSfM4/GOlmn/R+K8XvzLPCz1Ia5Vw0k+l
+         hpSNnJ3QNHteAZlp5nF4qIlPie1NhytyPLNYo8hJuPDkCCh45eFzZpq+5SYVT3rt257W
+         EQRQ==
+X-Gm-Message-State: AOUpUlEpZODPnz2O/CszrJdXHF2ms07c5lakfVP3YZ3tJcb4cPjn/6a8
+        2R/XrXdaKfM9Gp37jMx6XFUQojPELTqDv6v1lSg=
+X-Google-Smtp-Source: AA+uWPxCslBEBjLVVrAmZD5fhJyhOjcVGXcrNSGnDuFVyYs46stSGIdMdgfKQ8KgSQG5/mChRREC67w4kohvix9k8d8=
+X-Received: by 2002:a37:7004:: with SMTP id l4-v6mr29813198qkc.83.1534504058839;
+ Fri, 17 Aug 2018 04:07:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180817105046.GB10337@jagdpanzerIV>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 17 Aug 2018 11:06:59 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 17 Aug 2018 11:06:59 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
+Received: by 2002:a0c:9c4a:0:0:0:0:0 with HTTP; Fri, 17 Aug 2018 04:07:38
+ -0700 (PDT)
+In-Reply-To: <7ccdc39d7e255547e851497ef9f449715b45f8bd.camel@kernel.crashing.org>
+References: <7ccdc39d7e255547e851497ef9f449715b45f8bd.camel@kernel.crashing.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 17 Aug 2018 14:07:38 +0300
+Message-ID: <CAHp75Vd1ZZDJtASfFpr=eE+zaEiOxH3ohdSOe1aTcE3qEMd_QA@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: acer-wmi: Silence "unsupported" message a bit
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     "Lee, Chun-Yi" <jlee@suse.com>, Darren Hart <dvhart@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Aug 16, 2018 at 2:27 AM, Benjamin Herrenschmidt
+<benh@kernel.crashing.org> wrote:
+> This driver prints that "Unsupported machine..." message on every boot on
+> ThinkPad X1 Carbon laptops (and I assume a number of other systems), which
+> causes graphical boots to "glitch" a bit and is rather annoying ...
+>
+> Make it a pr_debug instead.
+
+Thanks for the patch. Unfortunately it doesn't apply.
+Please, check your mail clients and tools for formatting patch (it
+produced at the end spaces instead of tabs)
+
+>
+> Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> ---
+>
+> diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
+> index 8952173dd380..7f7192e8fdab 100644
+> --- a/drivers/platform/x86/acer-wmi.c
+> +++ b/drivers/platform/x86/acer-wmi.c
+> @@ -2216,7 +2216,7 @@ static int __init acer_wmi_init(void)
+>         if (wmi_has_guid(AMW0_GUID1) &&
+>             !dmi_check_system(amw0_whitelist) &&
+>             quirks == &quirk_unknown) {
+> -               pr_err("Unsupported machine has AMW0_GUID1, unable to load\n");
+> +               pr_debug("Unsupported machine has AMW0_GUID1, unable to load\n");
+>                 return -ENODEV;
+>         }
+>
+>
 
 
-On 08/17/2018 06:50 AM, Sergey Senozhatsky wrote:
-> Hello,
-> 
-> Cc-ing Peter Zijlstra
-> 
->   lkml.kernel.org/r/728a8e68-ea4b-4040-a0fc-217df4f1928d@redhat.com
->   lkml.kernel.org/r/20180817081947.m425gok2ugt7tglp@pathway.suse.cz
->   lkml.kernel.org/r/00c60dca-60bc-8568-eaa3-d4b0c326cab4@redhat.com
-> 
-> On (08/17/18 06:36), Prarit Bhargava wrote:
->> On 08/17/2018 05:38 AM, Sergey Senozhatsky wrote:
->>> On (08/16/18 13:39), Prarit Bhargava wrote:
->>>>
->>>> +		auto	[X86] Enable ACPI SPCR console
->>> 			^^^^
->>> 			And arm64?
->>
->> Hi Sergey, on arm64 if an SPCR is present the early console and console are
->> initialized by default.  IOW no kernel parameter is necessary to initialize the
->> console in that case.
-> 
-> OK, thanks.
-> 
->>> Any chance we can rename param to "spcr" or something more clear?
->>> To explicitly state what exactly it's going to do. `auto' sounds
->>> too general and doesn't tell me that much. I'm probably the only
->>> here who can't see a connection between "auto" and "SPCR", but
->>> still.
->>
->> I came up with "auto" because I think it is generic.  I also thought about
->> "console=fw", or just "console".  If in the future another arch wants to
->> optionally bring up a firmware or hardware defined console then they could use
->> auto too.
-> 
-> Hmm, I see your point.
-> My [sort of a] problem with "auto" is that it tells me as much as "magic"
-> [and "magic" tells me almost nothing]. By the way, would be fun if we had
-> "magic" instead of "auto" all over the kernel
-> 
-> 	echo "magic" > /sys/bus/usb/...../power/control
-> 
->>> 	void arch_console_setup(void)
->>> 	{
->>> 		if (acpi_parse_spcr(false, true))
->>> 			pr_err(.........);
->>> 	}
->>>
->>> There can be other consoles in the system, logging an error is not
->>> such a useless thing.
->>
->> I can make the second change.  The problem (IIRC) with returning an error in an
->> setup fn is that the rest of the setup functions will not execute.  I don't want
->> to fail the setup callbacks because of an incorrect SPCR table.
-> 
-> OK, fair enough.
-> Letting users know that SPCR is incorrect also makes sense, so option #2
-> I guess is what we want after all.
-> 
->> Like I mentioned to Petr, I'd like to know if you (or anyone else) has strong
->> feelings about changing the behaviour of earlycon on x86?  I could make it so
->> that specifying just earlycon would also initialize the console.
-> 
-> x86 people and/or scheduler people might have strong opinions on this.
-> I Cc-ed Peter Zijlstra; he represents both groups and is known to be
-> a hardcore earlycon user.
 
-Thanks, I'm a user of earlycon too, but only moderately.
-
-peterz, to give you an overview:  Currently on x86, the SPCR information is only
-interpreted by the early console code, and can be enabled with kernel parameter
-"earlycon" (no arguments).  In this patch I'm proposing adding "console=auto"
-that would enable the console based on the SPCR data.
-
-There are two options on the table.  One, we could go with this patch which
-would make users do "earlycon console=auto" or, I could just change the
-behaviour of earlycon (no arguments) to also bring up the console.  In the
-second case the kernel parameter would just be "earlycon".  There is precedent
-for the second option as arm64 enables both the earlycon and console by default
-if SPCR is present.  However, on x86, I know many users do not want the console
-enabled by default so we should keep it on demand.
-
-tl;dr: Pick one
-
-Option 1: earlycon enables both the early console and console.
-Option 2: earlycon only enables the early console, and console=auto enables the
-console.
-
-P.
-
-> 
-> 	-ss
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
