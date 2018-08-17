@@ -2,127 +2,109 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91429C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B883C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:28:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37FD4208FA
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:28:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E89F208FA
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:28:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OY9yepES"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37FD4208FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w1sBMN0o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E89F208FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727824AbeHQVco (ORCPT
+        id S1728011AbeHQVdR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 17:32:44 -0400
-Received: from mail-oi0-f73.google.com ([209.85.218.73]:47183 "EHLO
-        mail-oi0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726888AbeHQVcn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 17:32:43 -0400
-Received: by mail-oi0-f73.google.com with SMTP id w128-v6so7921537oiw.14
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 11:28:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=/3Uu972U/RgSEz+2T2FBIwg2AdeaO7TwqX4vV6NphQE=;
-        b=OY9yepES1Myt+VRCqTO9fTea8yyJU9xfjFzGQsidzzQibbHwfcSASPgH5s44PSxdk6
-         SutDjO5LT/jNXaKNVF+5NqfwB0PqJRLQ0qW3FKMLx+gXRdJc/G58TnMKlzACFM0Pk+rq
-         wnbO4uaDT/KU/fCajw49OS0PI5zexzlVsdiOkw/LvEQmrtjN3Wu6EsGrs6HuwjwHIUye
-         P07ADrzqgIBvyn/DFu807kIXIQmBTiG0C6PF+E3HkC5jiVhu8ky2+p7tUKwo4ShxGhT5
-         76lA90VYZJRC4EYvn4JUcPA8ro4RkSg0QuIaCFpo6IaDpUART084cih4h+zrFdzX0x0a
-         Sz4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=/3Uu972U/RgSEz+2T2FBIwg2AdeaO7TwqX4vV6NphQE=;
-        b=pa4CukHHI5n5UmnParpm+URNBUvWN/ORBjSEbm6xAOcH2jL8aFzEOCEJ0gEafc5AdJ
-         MSKnTSa6p5SGpm5NzDy03ESmdLmAb9MB1TMh8HyvLJBTNRzfSWkaZyXkaMEUUmGvQul3
-         RVbhuwW1VOquFejp00uL613/scaKCpfmhVtKVxRUOFKZBklReFOxbCbTbzdb3gkKhiei
-         lFX+4pvl9grjIZQ5nC7cKHfIBN1SXDtHGR9IaPooX28cTYtwXN9APAP+ErRtym+6Moez
-         tfAQSbtI09eB3pJcb1IK8oRlOXPdpgsunpq+4bS8pMeDrr79eA3Q/pXxvLF51Uav7LBQ
-         SJhw==
-X-Gm-Message-State: AOUpUlHm5mnPK9MuTO2E6PKv8hFY0NI3ArZyORtlHo+v2f9nOKQJpWi/
-        Kbtg/leBznLN5pVWzeqciVzaNV5XfHEp
-X-Google-Smtp-Source: AA+uWPx33hXgSD11XtEZw0bPkPerMWPKCjt4i9XWJj9WdFj9PVBH7geLh7rcDw7KS3Bt/cxGD0JUDUxHHonu
-X-Received: by 2002:aca:bcd5:: with SMTP id m204-v6mr22473825oif.101.1534530499179;
- Fri, 17 Aug 2018 11:28:19 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 11:27:28 -0700
-Message-Id: <20180817182728.76129-1-smuckle@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.18.0.865.gffc8e1a3cd6-goog
-Subject: [PATCH] sched/fair: vruntime should normalize when switching from fair
-From:   Steve Muckle <smuckle@google.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Todd Kjos <tkjos@google.com>, Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Patrick Bellasi <Patrick.Bellasi@arm.com>,
-        Chris Redpath <Chris.Redpath@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        John Dias <joaodias@google.com>,
-        Steve Muckle <smuckle@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 17 Aug 2018 17:33:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54062 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726888AbeHQVdQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 17:33:16 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 446EA208FA;
+        Fri, 17 Aug 2018 18:28:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534530532;
+        bh=hPVW0l+TlRTb28axWJBeUN+w3rCJtUiX3cR75urmw0I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=w1sBMN0oFdp1xXgIGE4RzboyTrCy6etgAgJLItZvyd0Wc2JZLCDQamROe5UkTuAWN
+         CY64HqdiE9zSYCmpyKG6BzHuhHpEqx+CuODl1GYUfuQ+1DRTyhzXAgLB8A8ySc9ZRH
+         ZSjHjC8t/jBqxag97l3ImlYA1uzJkFk7weUML8jc=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id DE581141C3A; Fri, 17 Aug 2018 15:28:49 -0300 (-03)
+Date:   Fri, 17 Aug 2018 15:28:49 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>
+Subject: Re: [PATCH 06/13] perf tools: Add compression id into struct
+ kmod_path
+Message-ID: <20180817182849.GE22443@kernel.org>
+References: <20180817094813.15086-1-jolsa@kernel.org>
+ <20180817094813.15086-7-jolsa@kernel.org>
+ <20180817182315.GD22443@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180817182315.GD22443@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Dias <joaodias@google.com>
+Em Fri, Aug 17, 2018 at 03:23:15PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Fri, Aug 17, 2018 at 11:48:06AM +0200, Jiri Olsa escreveu:
+> >  static const struct {
+> >  	const char *fmt;
+> >  	int (*decompress)(const char *input, int output);
+> >  } compressions[] = {
+> > +	[COMP_ID__NONE] = { 0 },
+> 
+> 
+> This broke the build in many places, problems of this kind:
+> 
+>   CC       /tmp/build/perf/util/dso.o
+>   LD       /tmp/build/perf/scripts/python/Perf-Trace-Util/libperf-in.o
+>   LD       /tmp/build/perf/scripts/libperf-in.o
+>   CC       /tmp/build/perf/trace/beauty/clone.o
+>   CC       /tmp/build/perf/util/symbol.o
+> util/dso.c:201:24: error: missing field 'decompress' initializer [-Werror,-Wmissing-field-initializers]
+>         [COMP_ID__NONE] = { 0 },
+>                               ^
+> 1 error generated.
+>   CC       /tmp/build/perf/trace/beauty/fcntl.o
+> mv: cannot stat '/tmp/build/perf/util/.dso.o.tmp': No such file or directory
+> /git/linux/tools/build/Makefile.build:96: recipe for target '/tmp/build/perf/util/dso.o' failed
+> 
+> If we look just at those that failed, its several gcc versions:
+> 
+>   11     9.91 centos:5                      : FAIL gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
+>   12    14.34 centos:6                      : FAIL gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-23)
+>   16    47.50 debian:9                      : FAIL gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
+>   28    53.92 fedora:25                     : FAIL gcc (GCC) 6.4.1 20170727 (Red Hat 6.4.1-1)
+>   29    60.75 fedora:26                     : FAIL gcc (GCC) 7.3.1 20180130 (Red Hat 7.3.1-2)
+>   30    90.76 fedora:27                     : FAIL gcc (GCC) 7.3.1 20180712 (Red Hat 7.3.1-6)
+>   41    12.78 oraclelinux:6                 : FAIL gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-23.0.1)
+>   43    12.85 ubuntu:12.04.5                : FAIL gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
+>   46    45.56 ubuntu:16.04                  : FAIL gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609
+>   54    49.60 ubuntu:17.10                  : FAIL gcc (Ubuntu 7.2.0-8ubuntu3.2) 7.2.0
 
-When rt_mutex_setprio changes a task's scheduling class to RT,
-we're seeing cases where the task's vruntime is not updated
-correctly upon return to the fair class.
-Specifically, the following is being observed:
-- task is deactivated while still in the fair class
-- task is boosted to RT via rt_mutex_setprio, which changes
-  the task to RT and calls check_class_changed.
-- check_class_changed leads to detach_task_cfs_rq, at which point
-  the vruntime_normalized check sees that the task's state is TASK_WAKING,
-  which results in skipping the subtraction of the rq's min_vruntime
-  from the task's vruntime
-- later, when the prio is deboosted and the task is moved back
-  to the fair class, the fair rq's min_vruntime is added to
-  the task's vruntime, even though it wasn't subtracted earlier.
-The immediate result is inflation of the task's vruntime, giving
-it lower priority (starving it if there's enough available work).
-The longer-term effect is inflation of all vruntimes because the
-task's vruntime becomes the rq's min_vruntime when the higher
-priority tasks go idle. That leads to a vicious cycle, where
-the vruntime inflation repeatedly doubled.
+Sorry, gcc eats this with gusto, its just clang that is not taking it,
+for instance, this is the one in fedora:27:
 
-The change here is to detect when vruntime_normalized is being
-called when the task is waking but is waking in another class,
-and to conclude that this is a case where vruntime has not
-been normalized.
+clang version 5.0.2 (tags/RELEASE_502/final)
 
-Signed-off-by: John Dias <joaodias@google.com>
-Signed-off-by: Steve Muckle <smuckle@google.com>
----
- kernel/sched/fair.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b39fb596f6c1..14011d7929d8 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9638,7 +9638,8 @@ static inline bool vruntime_normalized(struct task_struct *p)
- 	 * - A task which has been woken up by try_to_wake_up() and
- 	 *   waiting for actually being woken up by sched_ttwu_pending().
- 	 */
--	if (!se->sum_exec_runtime || p->state == TASK_WAKING)
-+	if (!se->sum_exec_runtime ||
-+	    (p->state == TASK_WAKING && p->sched_class == &fair_sched_class))
- 		return true;
- 
- 	return false;
--- 
-2.18.0.865.gffc8e1a3cd6-goog
-
+- Arnaldo
