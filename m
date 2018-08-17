@@ -3,262 +3,157 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AED4AC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 13:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D45C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 13:19:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62C95208A6
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 13:19:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62C95208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id D2B5E208A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 13:19:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2B5E208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbeHQQWZ (ORCPT
+        id S1727353AbeHQQWk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 12:22:25 -0400
-Received: from mail-sz2.amlogic.com ([211.162.65.114]:62753 "EHLO
-        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbeHQQWZ (ORCPT
+        Fri, 17 Aug 2018 12:22:40 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37136 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727037AbeHQQWj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 12:22:25 -0400
-X-Greylist: delayed 910 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 Aug 2018 12:22:14 EDT
-Received: from [10.28.18.196] (10.28.18.196) by mail-sz2.amlogic.com
- (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 17 Aug
- 2018 21:04:00 +0800
-Subject: Re: [RFC PATCH v2 2/2] mtd: rawnand: meson: add support for Amlogic
- NAND flash controller
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Yixun Lan <yixun.lan@amlogic.com>
-CC:     <linux-mtd@lists.infradead.org>, Rob Herring <robh@kernel.org>,
-        "Neil Armstrong" <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Richard Weinberger <richard@nod.at>,
-        <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        <linux-amlogic@lists.infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-References: <20180719094612.5833-1-yixun.lan@amlogic.com>
- <20180719094612.5833-3-yixun.lan@amlogic.com>
- <20180801235045.5b4d8211@bbrezillon>
-From:   Liang Yang <liang.yang@amlogic.com>
-Message-ID: <42877a0d-9830-0626-3f64-e49a326eaa3c@amlogic.com>
-Date:   Fri, 17 Aug 2018 21:03:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 17 Aug 2018 12:22:39 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7HDJBUp046869
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 09:19:16 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kwwj83wy4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 09:19:12 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Fri, 17 Aug 2018 07:19:01 -0600
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 17 Aug 2018 07:18:58 -0600
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7HDIt4O1769838
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 17 Aug 2018 06:18:55 -0700
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7A9B7136059;
+        Fri, 17 Aug 2018 07:18:55 -0600 (MDT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 958BC13604F;
+        Fri, 17 Aug 2018 07:18:52 -0600 (MDT)
+Received: from oc8043147753.ibm.com (unknown [9.80.206.50])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri, 17 Aug 2018 07:18:52 -0600 (MDT)
+Subject: Re: [PATCH v9 04/22] s390/zcrypt: Integrate ap_asm.h into
+ include/asm/ap.h.
+To:     Cornelia Huck <cohuck@redhat.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180814104335.4bc3630a.cohuck@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Fri, 17 Aug 2018 09:18:51 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180801235045.5b4d8211@bbrezillon>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <20180814104335.4bc3630a.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.18.196]
-X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
- (10.28.11.6)
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18081713-0012-0000-0000-000016A03039
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009561; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01074831; UDB=6.00553931; IPR=6.00854789;
+ MB=3.00022773; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-17 13:19:01
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081713-0013-0000-0000-00005412D011
+Message-Id: <49e99e8a-7de8-abde-6775-af11680db13d@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-17_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808170146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
-On 2018/8/2 5:50, Boris Brezillon wrote:
-
-> Hi Yixun,
+On 08/14/2018 04:43 AM, Cornelia Huck wrote:
+> On Mon, 13 Aug 2018 17:48:01 -0400
+> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 >
-> On Thu, 19 Jul 2018 17:46:12 +0800
-> Yixun Lan <yixun.lan@amlogic.com> wrote:
->
-> I haven't finished reviewing the driver yet (I'll try to do that later
-> this week), but I already pointed a few things to fix/improve.
->
->> +
->> +static int meson_nfc_exec_op(struct nand_chip *chip,
->> +			     const struct nand_operation *op, bool check_only)
+>> From: Harald Freudenberger <freude@de.ibm.com>
+>>
+>> Move all the inline functions from the ap bus header
+>> file ap_asm.h into the in-kernel api header file
+>> arch/s390/include/asm/ap.h so that KVM can make use
+>> of all the low level AP functions.
+>>
+>> Signed-off-by: Harald Freudenberger <freude@de.ibm.com>
+>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> ---
+>>   arch/s390/include/asm/ap.h     |  284 ++++++++++++++++++++++++++++++++++++----
+>>   drivers/s390/crypto/ap_bus.c   |   23 +---
+>>   drivers/s390/crypto/ap_bus.h   |    1 +
+>>   drivers/s390/crypto/ap_card.c  |    1 -
+>>   drivers/s390/crypto/ap_queue.c |    1 -
+>>   5 files changed, 260 insertions(+), 50 deletions(-)
+>>
+>> diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
+>> index c1bedb4..887494a 100644
+>> --- a/arch/s390/include/asm/ap.h
+>> +++ b/arch/s390/include/asm/ap.h
+>> @@ -47,6 +47,50 @@ struct ap_queue_status {
+>>   };
+>>   
+>>   /**
+>> + * ap_intructions_available() - Test if AP instructions are available.
+>> + *
+>> + * Returns 1 if the AP instructions are installed, otherwise 0.
+>> + */
+>> +static inline int ap_instructions_available(void)
 >> +{
->> +	struct mtd_info *mtd = nand_to_mtd(chip);
->> +	struct meson_nfc *nfc = nand_get_controller_data(chip);
->> +	const struct nand_op_instr *instr = NULL;
->> +	int ret = 0, cmd;
->> +	unsigned int op_id;
->> +	int i;
+>> +	register unsigned long reg0 asm ("0") = AP_MKQID(0, 0);
+>> +	register unsigned long reg1 asm ("1") = 0;
+>> +	register unsigned long reg2 asm ("2") = 0;
 >> +
->> +	for (op_id = 0; op_id < op->ninstrs; op_id++) {
->> +		instr = &op->instrs[op_id];
->> +		switch (instr->type) {
->> +		case NAND_OP_CMD_INSTR:
->> +			cmd = nfc->param.chip_select | NFC_CMD_CLE;
->> +			cmd |= instr->ctx.cmd.opcode & 0xff;
->> +			writel(cmd, nfc->reg_base + NFC_REG_CMD);
->> +			meson_nfc_cmd_idle(nfc, NAND_TWB_TIME_CYCLE);
-> This is not necessarily TWB you have to wait after a CMD cycle. It can
-> be tWHR. And you should definitely not hardcode the value, since,
-> AFAIR, it depends on the selected SDR timings. Probably something you
-> should calculate in ->setup_data_interface().
-
-Indeed. TWB is not necessarily. And tWHR will be promised by NFC.
-so I will delete it.
-
->> +			meson_nfc_drain_cmd(nfc);
-> I don't know exactly how the NAND controller works, but it's usually
-> not a good idea to execute the operation right away, especially if you
-> have address/cmd/data cycles following this cmd and those can be
-> packed in the same controller operation.
-
-it doesn't need meson_nfc_drain_cmd(nfc) here. i will delete it next version
-
->> +			break;
->> +
->> +		case NAND_OP_ADDR_INSTR:
->> +			for (i = 0; i < instr->ctx.addr.naddrs; i++) {
->> +				cmd = nfc->param.chip_select | NFC_CMD_ALE;
->> +				cmd |= instr->ctx.addr.addrs[i] & 0xff;
->> +				writel(cmd, nfc->reg_base + NFC_REG_CMD);
->> +			}
->> +			break;
->> +
->> +		case NAND_OP_DATA_IN_INSTR:
->> +			meson_nfc_read_buf(mtd, instr->ctx.data.buf.in,
->> +					   instr->ctx.data.len);
->> +			break;
->> +
->> +		case NAND_OP_DATA_OUT_INSTR:
->> +			meson_nfc_write_buf(mtd, instr->ctx.data.buf.out,
->> +					    instr->ctx.data.len);
-> Well, I'm not entirely sure what happens when you call
-> read/write_buf(), but it seems you're doing that one byte at a time,
-> and that sounds not so efficient given the operation you do for each
-> byte read/written. Don't you have a way to tell the engine that you
-> want to read/write X bytes?
-
-As i known, there is no way to read/write X bytes once.
-
->> +			break;
->> +
->> +		case NAND_OP_WAITRDY_INSTR:
->> +			mdelay(instr->ctx.waitrdy.timeout_ms);
->> +			ret = nand_soft_waitrdy(chip,
->> +						instr->ctx.waitrdy.timeout_ms);
-> Hm, i'd be surprised if the controller does not have a way to optimize
-> waits on R/B transitions.
-
-When i delete the delay here, erasing operation will be failed.
-Does it mean NFC send 0x70 to nand device when rb is busy(low)?
-If so, i will ask our NFC designer for comfirmation or grasping the waveform.
-
->> +			break;
->> +		}
->> +	}
->> +	return ret;
+>> +	asm volatile(
+>> +		"   .long 0xb2af0000\n"		/* PQAP(TAPQ) */
+>> +		"0: la    %0,1\n"
+>> +		"1:\n"
+>> +		EX_TABLE(0b, 1b)
+>> +		: "+d" (reg1), "+d" (reg2)
+>> +		: "d" (reg0)
+>> +		: "cc");
+>> +	return reg1;
 >> +}
->> +
->> +static int meson_ooblayout_ecc(struct mtd_info *mtd, int section,
->> +			       struct mtd_oob_region *oobregion)
->> +{
->> +	struct nand_chip *chip = mtd_to_nand(mtd);
->> +	int free_oob;
->> +
->> +	if (section >= chip->ecc.steps)
->> +		return -ERANGE;
->> +
->> +	free_oob = (section + 1) * 2;
->> +	oobregion->offset = section * chip->ecc.bytes + free_oob;
-> Hm, this offset calculation looks weird. Are you sure it's correct?
-> I'd bet on something like:
+> I think upstream this change (have this function return !0 when the
+> instructions are installed) will be an addon patch to the one which has
+> already made its way into master. Not really relevant for the remainder
+> of this patch series, though.
+
+I noticed that Harald's patches showed up in our master branch yesterday
+without this change.
+
 >
-> 	oobregion->offset = 2 + (section * (chip->ecc.bytes + 4));
-
-Each ecc page have 2 user bytes. Assume one 2KB+64B page size nand
-flash using ECC8/1KB which ecc parity bytes is 14B.
-     _ _ _ _ _ _ _ _ _ _ _ _  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-    |             |  |      |             |  |     |  not  |
-    |	1KB      |2B| 14B  |     1KB     |2B| 14B | used  |  (layout on nand)
-    |_ _ _ _ _ _ _|_ |_ _ _ | _ _ _ _ _ _ |_ |_ _ _|_ _ _ _|
-		    (2KB + 64B)
-when reading from nand, I will format the page as follow:
-     _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _  _ _ _ _
-    |             |             |  |     |  |      |  not  |
-    |	1KB      |    1KB      |2B| 14B |2B|  14B | used  |(layout on ddr)
-    |_ _ _ _ _ _ _|_ _ _ _ _ _ _|_ |_ _ _|_ |_ _ _ |_ _ _ _|
-		    (2KB + 64B)
-So i get "oobregion->offset = section * chip->ecc.bytes + free_oob".
-Maybe i don't get what does 'section' mean. i think it means the ecc page number.
-
->> +	oobregion->length = chip->ecc.bytes;
->> +
->> +	return 0;
->> +}
->> +
->> +static int meson_ooblayout_free(struct mtd_info *mtd, int section,
->> +				struct mtd_oob_region *oobregion)
->> +{
->> +	struct nand_chip *chip = mtd_to_nand(mtd);
->> +
->> +	if (section >= chip->ecc.steps)
->> +		return -ERANGE;
->> +
->> +	oobregion->offset = section * (2 + chip->ecc.bytes);
->> +	oobregion->length = 2;
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct mtd_ooblayout_ops meson_ooblayout_ops = {
->> +	.ecc = meson_ooblayout_ecc,
->> +	.free = meson_ooblayout_free,
->> +};
->> +
->> +static int meson_nfc_ecc_init(struct device *dev, struct mtd_info *mtd)
->> +{
->> +	struct nand_chip *nand = mtd_to_nand(mtd);
->> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
->> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
->> +	const struct meson_nand_ecc *meson_ecc = nfc->data->ecc;
->> +	int num = nfc->data->ecc_num;
->> +	int nsectors, i, bytes;
->> +
->> +	/* support only ecc hw mode */
->> +	if (nand->ecc.mode != NAND_ECC_HW) {
->> +		dev_err(dev, "ecc.mode not supported\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (!nand->ecc.size || !nand->ecc.strength) {
->> +		/* use datasheet requirements */
->> +		nand->ecc.strength = nand->ecc_strength_ds;
->> +		nand->ecc.size = nand->ecc_step_ds;
->> +	}
->> +
->> +	if (nand->ecc.options & NAND_ECC_MAXIMIZE) {
->> +		nand->ecc.size = 1024;
->> +		nsectors = mtd->writesize / nand->ecc.size;
->> +		bytes = mtd->oobsize - 2 * nsectors;
->> +		bytes /= nsectors;
->> +
->> +		/* and bytes has to be even. */
->> +		if (bytes % 2)
->> +			bytes--;
->> +
->> +		nand->ecc.strength = bytes * 8 / fls(8 * nand->ecc.size);
->> +	} else {
->> +		if (nand->ecc.strength > meson_ecc[num - 1].strength) {
->> +			dev_err(dev, "not support ecc strength\n");
->> +			return -EINVAL;
->> +		}
->> +	}
->> +
->> +	for (i = 0; i < num; i++) {
->> +		if (meson_ecc[i].strength == 0xff ||
->> +		    nand->ecc.strength < meson_ecc[i].strength)
->> +			break;
->> +	}
-> I'd suggest that you look at nand_match_ecc_req(). It's likely that the
-> selection logic you have here can be replaced by the generic function.
-
-em, I will try it next version.
-
 
