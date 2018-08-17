@@ -2,92 +2,81 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF4EC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:54:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0536C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84B11218DB
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:54:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84B11218DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 763EB218EB
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:54:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="QaIYBTHd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 763EB218EB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbeHQM5T (ORCPT
+        id S1726883AbeHQM5Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 08:57:19 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:55409 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbeHQM5T (ORCPT
+        Fri, 17 Aug 2018 08:57:25 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:49197 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbeHQM5Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 08:57:19 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0M3C4d-1g6lAT3Vgt-00sxY5; Fri, 17 Aug 2018 11:54:26 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Todor Tomov <todor.tomov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Hans Verkuil <hansverk@cisco.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: camss: mark PM functions as __maybe_unused
-Date:   Fri, 17 Aug 2018 11:53:42 +0200
-Message-Id: <20180817095425.2630974-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:NVWjhwEohuSREh9AzGELW0acIAbZGvhs9AfgO9C8HIDjhot+A1R
- ZDCn9rrTthwsPgQYCgVoEs1x3g0wUq0Dp9s/bbvqnjli64mvpHaFXbZnIU9Rof34LVIAUpj
- d6yNXgxBc6MDWjQBBRGZ6Xc4shnsr0+px5oD2IyNu+x18SSmBAHKX+u7WAABJbIGHcTOZfh
- pq4aEHd3qlYafLqY713nw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:6IX4tnfdgf0=:nWNIEmvd8alZ2HAZdJWQc3
- iLVnj4z+n6G/0CHT1fMq9td/Ptxqz1feeRecjycr8TpLSoEAKAD1aiu3Jpvnuwouw50aXjUg2
- /QSK5BJJGPZ/1uWcDwfE7o075k6xkKQEwkRVcoyJJLlO4VvSZpdN2JMu3B2cVKA2Bq9/BX5za
- ICiLDIuPmOAqJqPf5DuOecykJfzh9N46dxqeiCcdKKLruU62h9zwzKctw4tqjvzSdJtX0hRwc
- Yey3r8rpUnY15DspXEX2rvTve4AF/f6RzpP9+k8SOulCgrt6CUC6GfdGNbfOD8iYA+XuZQb2W
- 9ixth39eYCHRXJa6iCwAM3uQU3sVrOeGr8TFj25Yi/9rE2beQlXWWeIpDzB7fGgWy732kJpCr
- uuETKk9yNsa1lWkb9hT6jIgO9T2MQXu0LCjNo2Rm/FrXWz4BIFwJQbcCbjiqwUl3EwBybv+XV
- Ufzj8T27WGwwW2LBMwQD9oUKWoU4jt2oNwvXWIBQKuv4hF4Zi1DiHl89xq3SfLJ+hi6kE1V0a
- tLv22wr4aGqabsNjzygeLBVCuIkepIif12rxu+OLnZq+w6vd1+egZq2+WpDteik4OV9HNov+O
- iIatWj9Rdkmtk0+q3tKBORQvf2T4bQmg5k3SDhJxAKZjeB7LGNLbaDWWkOhAcZ7sscE4n70o6
- nL1iGaGsToTLCAD/+5m9q2msNLUUjrTEIfof+OjljfHMjU/v9eCObZAaPTQ02nKakTb4=
+        Fri, 17 Aug 2018 08:57:25 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 1C33725BEE1;
+        Fri, 17 Aug 2018 19:54:37 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1534499677; bh=99mLwNz5yM8MmJX1q1UgGIBqTtQso8y/RnkpcxHcgdg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QaIYBTHdOIqCKq84pOtin7xC33DDxfFNq2QDXDqPF9Et67Ntg/f2X1KwPyISni8QT
+         mZdWaOiJi21PSp6NqFS7P942P+FkhEXiMCOZULsr+TZ9myZB8JIzgxslBpOwI/rCW7
+         SbOnGJNEcmqVFIMppTOmgbTaKiBzSrjegmTgeNoA=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 1CC3A940453; Fri, 17 Aug 2018 11:54:35 +0200 (CEST)
+Date:   Fri, 17 Aug 2018 11:54:35 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: gpio: rcar: Add r8a774a1 (RZ/G2M) support
+Message-ID: <20180817095434.n4ly5h4gr55a7rzg@verge.net.au>
+References: <1534249957-15543-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180815201301.GA27866@rob-hp-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180815201301.GA27866@rob-hp-laptop>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The empty suspend/resume functions cause a build warning
-when they are unused:
+On Wed, Aug 15, 2018 at 02:13:01PM -0600, Rob Herring wrote:
+> On Tue, 14 Aug 2018 13:32:37 +0100, Fabrizio Castro wrote:
+> > Document Renesas' RZ/G2M (R8A774A1) GPIO blocks compatibility within the
+> > relevant dt-bindings.
+> > 
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> > ---
+> >  Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-drivers/media/platform/qcom/camss/camss.c:1001:12: error: 'camss_runtime_resume' defined but not used [-Werror=unused-function]
-drivers/media/platform/qcom/camss/camss.c:996:12: error: 'camss_runtime_suspend' defined but not used [-Werror=unused-function]
-
-Mark them as __maybe_unused so the compiler can silently drop them.
-
-Fixes: 02afa816dbbf ("media: camss: Add basic runtime PM support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/media/platform/qcom/camss/camss.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index dcc0c30ef1b1..9f19d5f5966b 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -993,12 +993,12 @@ static const struct of_device_id camss_dt_match[] = {
- 
- MODULE_DEVICE_TABLE(of, camss_dt_match);
- 
--static int camss_runtime_suspend(struct device *dev)
-+static int __maybe_unused camss_runtime_suspend(struct device *dev)
- {
- 	return 0;
- }
- 
--static int camss_runtime_resume(struct device *dev)
-+static int __maybe_unused camss_runtime_resume(struct device *dev)
- {
- 	return 0;
- }
--- 
-2.18.0
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
