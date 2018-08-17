@@ -2,160 +2,135 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA05C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:24:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDAA4C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:25:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62FE221567
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:24:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62FE221567
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 84951218F9
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:25:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0Ez/34gQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84951218F9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbeHQR1y (ORCPT
+        id S1727484AbeHQR3F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 13:27:54 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47870 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725816AbeHQR1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 13:27:54 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A1CC180D;
-        Fri, 17 Aug 2018 07:24:20 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 005633F5B3;
-        Fri, 17 Aug 2018 07:24:17 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 15:24:15 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v3 08/14] sched/core: uclamp: extend cpu's cgroup
- controller
-Message-ID: <20180817142415.GK2960@e110439-lin>
-References: <20180806163946.28380-1-patrick.bellasi@arm.com>
- <20180806163946.28380-9-patrick.bellasi@arm.com>
- <82db1123-339f-0dbf-9332-7e37ee9e4f20@arm.com>
+        Fri, 17 Aug 2018 13:29:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40708 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725816AbeHQR3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 13:29:05 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A28D21878;
+        Fri, 17 Aug 2018 14:25:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534515930;
+        bh=6e8hAbgLCG2gzIj+yuNQhjhmnXgBk+nUDA8C5qVn0wE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0Ez/34gQogO0/jjQ8FJMan2zpwxveqlYFJtzmDBfIQZIpmUR9vOaes5ZaYce9ic6g
+         pfbU4uUuRdWbx8Ru1DdMamfHjjhMV4/qw6DOCnmwYC2CLBzau9p2IyBt9pn0DiQ0Er
+         biHC2WlYztXv7aTb4moPbso1JTuxDWCbFfgvaT5Y=
+Date:   Fri, 17 Aug 2018 09:25:29 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     "Derrick, Jonathan" <jonathan.derrick@intel.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "okaya@kernel.org" <okaya@kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "liudongdong3@huawei.com" <liudongdong3@huawei.com>,
+        "poza@codeaurora.org" <poza@codeaurora.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "Busch, Keith" <keith.busch@intel.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH 1/2] PCI/DPC: Add 'nodpc' parameter
+Message-ID: <20180817142529.GA128050@bhelgaas-glaptop.roam.corp.google.com>
+References: <1534368400-2807-1-git-send-email-jonathan.derrick@intel.com>
+ <20180816154940.GD5762@bombadil.infradead.org>
+ <1534434641.17819.27.camel@intel.com>
+ <20180816203111.GB10316@bhelgaas-glaptop.roam.corp.google.com>
+ <1534452635.17819.53.camel@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <82db1123-339f-0dbf-9332-7e37ee9e4f20@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1534452635.17819.53.camel@intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-Aug 14:21, Dietmar Eggemann wrote:
-> On 08/06/2018 06:39 PM, Patrick Bellasi wrote:
+On Thu, Aug 16, 2018 at 08:50:42PM +0000, Derrick, Jonathan wrote:
+> On Thu, 2018-08-16 at 15:31 -0500, Bjorn Helgaas wrote:
+> > On Thu, Aug 16, 2018 at 03:50:47PM +0000, Derrick, Jonathan wrote:
+> > > On Thu, 2018-08-16 at 08:49 -0700, Matthew Wilcox wrote:
+> > > > On Wed, Aug 15, 2018 at 03:26:39PM -0600, Jon Derrick wrote:
+> > > > > Some users may want to disable downstream port containment
+> > > > > (DPC),
+> > > > > so
+> > > > > give them this option
+> > > > 
+> > > > Is it possible they might only want to disable DPC on a subset of
+> > > > the
+> > > > hierarchy rather than globally?
+> > > 
+> > > Absolutely. I was hoping Logan's pci dev_str would land because I
+> > > have
+> > > a few others I want to convert to that api for granular tuning
+> > 
+> > What's the use case here?  I acknowledge there are cases where we
+> > need
+> > them, but I'm not a fan of kernel parameters in general because
+> > they're a real hassle for users.
+> > 
+> > Is there something wrong with DPC?  Is there some way we can make it
+> > smarter so it does the right thing automatically?
+> I've encountered some BIOS or switches (not sure who) who've appeared
+> to have enabled DPC by default, prior to kernel setup. Some users may
+> just not want this, but it was primarily intended for debugging when I
+> conceived it.
 > 
-> [...]
-> 
-> >Give the above mechanisms, it is now possible to extend the cpu
-> >controller to specify what is the minimum (or maximum) utilization which
-> >a task is expected (or allowed) to generate.
-> >Constraints on minimum and maximum utilization allowed for tasks in a
-> >CPU cgroup can improve the control on the actual amount of CPU bandwidth
-> >consumed by tasks.
-> 
-> I assume this is covered by the s/bandwidth/capacity/ you had w/ Juri on
-> 01/14.
+> There's also the ongoing thread in linux-pci about err handling in PPC
+> EEH, who may also desire to disable DPC until those issues are
+> resolved.
 
-Yes... I need to update this changelog too.
+I haven't caught up on that thread yet.  If DPC is incompatible with
+PPC EEH, there's always the possibility of a switch in the code to
+disable DPC automatically on PPC.
 
-> [...]
-> 
-> >diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> >index ff76b000bbe8..2ba55a4afffb 100644
-> >--- a/kernel/sched/core.c
-> >+++ b/kernel/sched/core.c
-> >@@ -1211,6 +1211,74 @@ static inline void uclamp_group_get(struct task_struct *p,
-> >  	uclamp_group_put(clamp_id, prev_group_id);
-> >  }
-> >+#ifdef CONFIG_UCLAMP_TASK_GROUP
-> >+/**
-> >+ * init_uclamp_sched_group: initialize data structures required for TG's
-> >+ *                          utilization clamping
-> >+ */
-> >+static inline void init_uclamp_sched_group(void)
-> >+{
-> >+	struct uclamp_map *uc_map;
-> >+	struct uclamp_se *uc_se;
-> >+	int group_id;
-> >+	int clamp_id;
-> >+
-> >+	/* Root TG's is statically assigned to the first clamp group */
-> >+	group_id = 0;
-> >+
-> >+	/* Initialize root TG's to default (none) clamp values */
-> >+	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
-> >+		uc_map = &uclamp_maps[clamp_id][0];
-> >+
-> >+		/* Map root TG's clamp value */
-> >+		uclamp_group_init(clamp_id, group_id, uclamp_none(clamp_id));
-> >+
-> >+		/* Init root TG's clamp group */
-> >+		uc_se = &root_task_group.uclamp[clamp_id];
-> >+		uc_se->value = uclamp_none(clamp_id);
-> >+		uc_se->group_id = group_id;
-> >+
-> >+		/* Attach root TG's clamp group */
-> >+		uc_map[group_id].se_count = 1;
-> >+	}
-> >+}
-> 
-> Can you not save some lines here:
-> 
->  static inline void init_uclamp_sched_group(void)
->  {
-> -       struct uclamp_map *uc_map;
->         struct uclamp_se *uc_se;
->         int group_id;
->         int clamp_id;
-> @@ -1228,8 +1227,6 @@ static inline void init_uclamp_sched_group(void)
-> 
->         /* Initialize root TG's to default (none) clamp values */
->         for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
-> -               uc_map = &uclamp_maps[clamp_id][0];
-> -
->                 /* Map root TG's clamp value */
->                 uclamp_group_init(clamp_id, group_id,
-> uclamp_none(clamp_id));
-> 
-> @@ -1239,7 +1236,7 @@ static inline void init_uclamp_sched_group(void)
->                 uc_se->group_id = group_id;
-> 
->                 /* Attach root TG's clamp group */
-> -               uc_map[group_id].se_count = 1;
-> +               uclamp_maps[clamp_id][group_id].se_count = 1;
->         }
-> 
-> This would also make uclamp_group_available() smaller.
+> It can also be disabled with setpci, but is that any less of a hassle?
+> Genuine question to understand your point of view.
 
-Unfortunately this var name and its matrix indexes tends to become
-quite long easily and in some usages we exceed the 80 columns sometimes.
+Keith already answered here; setpci is primarily for debugging and
+shouldn't be recommended as normal practice.
 
-That's why, for consistency, I always shortcut to *uc_map a reference
-to a clamp group and use that variable name consistently in the code.
+> > I'm more OK with a blanket "nodpc" switch intended for debugging.
+> > If we add the complexity of subsets of the hierarchy it starts
+> > sounding like an administrative thing that makes me more hesitant. 
+> ...
+> To again understand your point of view, is there anything wrong with
+> administrative things in kernel boot parameters? There will be cases
+> where we may want to deviate from default or global pci=* parameters
+> for certain hierarchies and they can't necessarily be set after the
+> fact (ex, hpmemsize).
 
-I'll see if it's possible to get rid of the shortcut in the next version.
+"There will be cases" sounds like we're doing something that *might*
+be useful in the future.  It's better if we wait until we actually
+discover a need for something.
 
--- 
-#include <best/regards.h>
+There's also a tendency among users to trip over a problem, discover a
+boot parameter like "pci=nomsi", and conclude that the problem is
+"fixed".  In fact, we want the bug report so we can fix the kernel so
+no boot parameter is needed.
 
-Patrick Bellasi
+I agree there are things that can't be set after boot.  Is this one of
+them?  This seems like something that could be controlled at run-time.
+But even there, I will ask what the requirement for it is, because we
+don't want to clutter sysfs with things only needed for debugging.
+
+Boot parameters are a hassle because it's hard to build a user
+interface on top of them, and they require a reboot to take effect.
