@@ -2,101 +2,85 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D558DC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:38:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1B7C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:39:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93FFA21933
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:38:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93FFA21933
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 35581204EC
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:39:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35581204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727668AbeHQRmL (ORCPT
+        id S1727580AbeHQRnM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 13:42:11 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:28065 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726497AbeHQRmL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 13:42:11 -0400
-Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
-  by relmlie3.idc.renesas.com with ESMTP; 17 Aug 2018 23:38:33 +0900
-Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 282447ADDF;
-        Fri, 17 Aug 2018 23:38:33 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.53,251,1531753200"; 
-   d="scan'208";a="288345846"
-Received: from unknown (HELO fabrizio-dev.ree.adwin.renesas.com) ([10.226.36.250])
-  by relmlii1.idc.renesas.com with ESMTP; 17 Aug 2018 23:38:29 +0900
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: can: rcar_can: Add r8a774a1 support
-Date:   Fri, 17 Aug 2018 15:38:23 +0100
-Message-Id: <1534516703-11448-1-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 17 Aug 2018 13:43:12 -0400
+Received: from mga09.intel.com ([134.134.136.24]:44008 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725879AbeHQRnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 13:43:12 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Aug 2018 07:39:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,251,1531810800"; 
+   d="scan'208";a="76173972"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by orsmga003.jf.intel.com with ESMTP; 17 Aug 2018 07:39:35 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id E4744301B7C; Fri, 17 Aug 2018 07:39:34 -0700 (PDT)
+Date:   Fri, 17 Aug 2018 07:39:34 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org
+Subject: Re: [PATCH] x86/speculation/l1tf: Exempt zeroed PTEs from XOR
+ conversion
+Message-ID: <20180817143934.GB12066@tassilo.jf.intel.com>
+References: <20180816204638.4046-1-sean.j.christopherson@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180816204638.4046-1-sean.j.christopherson@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document RZ/G2M (r8a774a1) SoC bindings.
+On Thu, Aug 16, 2018 at 01:46:38PM -0700, Sean Christopherson wrote:
+> clear_page() does not undergo the XOR logic to invert the address
+> bits, i.e. PTE, PMD and PUD entries that have not been individually
+> written will have val=0 and so will trigger __pte_needs_invert().
+> As a result, {pte,pmd,pud}_pfn() will return the wrong PFN value,
+> i.e. all ones (adjusted by the max PFN mask) instead of zero.
+> A zeroed entry is ok because the page at physical address 0 is
+> reserved early in boot specifically to mitigate L1TF, so explicitly
+> exempt them from the inversion when reading the PFN.
+> 
+> Manifested as an unexpected mprotect(..., PROT_NONE) failure when
+> called on a VMA that has VM_PFNMAP and was mmap'd to as something
+> other than PROT_NONE but never used.  mprotect() sends the PROT_NONE
+> request down prot_none_walk(), which walks the PTEs to check the PFNs.
+> prot_none_pte_entry() gets the bogus PFN from pte_pfn() and returns
+> -EACCES because it thinks mprotect() is trying to adjust a high MMIO
+> address.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
-This patch applies on top of next-20180817
+Looks good to me. You're right that case was missed.
 
- Documentation/devicetree/bindings/net/can/rcar_can.txt | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
 
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-index 94a7f33..84afc78 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-@@ -4,6 +4,7 @@ Renesas R-Car CAN controller Device Tree Bindings
- Required properties:
- - compatible: "renesas,can-r8a7743" if CAN controller is a part of R8A7743 SoC.
- 	      "renesas,can-r8a7745" if CAN controller is a part of R8A7745 SoC.
-+	      "renesas,can-r8a774a1" if CAN controller is a part of R8A774A1 SoC.
- 	      "renesas,can-r8a7778" if CAN controller is a part of R8A7778 SoC.
- 	      "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
- 	      "renesas,can-r8a7790" if CAN controller is a part of R8A7790 SoC.
-@@ -16,7 +17,8 @@ Required properties:
- 	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device.
- 	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 or RZ/G1
- 	      compatible device.
--	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 compatible device.
-+	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 or RZ/G2
-+	      compatible device.
- 	      When compatible with the generic version, nodes must list the
- 	      SoC-specific version corresponding to the platform first
- 	      followed by the generic version.
-@@ -24,7 +26,9 @@ Required properties:
- - reg: physical base address and size of the R-Car CAN register map.
- - interrupts: interrupt specifier for the sole interrupt.
- - clocks: phandles and clock specifiers for 3 CAN clock inputs.
--- clock-names: 3 clock input name strings: "clkp1", "clkp2", "can_clk".
-+- clock-names: 2 clock input name strings for RZ/G2: "clkp1", "can_clk", and
-+	       3 clock input name strings for every other SoC: "clkp1", "clkp2",
-+	       "can_clk".
- - pinctrl-0: pin control group to be used for this controller.
- - pinctrl-names: must be "default".
- 
--- 
-2.7.4
+I think Thomas is still on vacation, copying Linus.
 
+-Andi
