@@ -2,140 +2,147 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 840E8C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C09C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:44:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D03C221914
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:37:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="oB+t2JlS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D03C221914
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	by mail.kernel.org (Postfix) with ESMTP id 4185F21878
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:44:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4185F21878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbeHQNkD (ORCPT
+        id S1726608AbeHQNrN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 09:40:03 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41160 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbeHQNkD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 09:40:03 -0400
-Received: by mail-pg1-f193.google.com with SMTP id s15-v6so656656pgv.8
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 03:37:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8TKfAW2T/4PTYZ2VZ2BQ2RUhFB66lw9H+B02oa5Oxh4=;
-        b=oB+t2JlSpGmN0/vUUL6pBZXTf+OgWb5iuBnp1TzUITcZcIJtaeKto+18YMie3i2TcQ
-         BfT41EWjUnm0YQvfKKYXiaXBrZn6JoBwz8Dg2MWJYXxpHIrheCjb3N563j7yaqv01w4q
-         onna90rv977DVY7IwviUjRo6TuKNcII/Vr4eMo1d0QnAGObDiJs/wANrPCJZKX//4DFH
-         qB4jScjZRz3JPhirNgnglA4VFUJRAFxar9u2QZmE47k62efS3xM3y8D55w8O3MATbl8j
-         mEw+XK4RCktx3e0bwPs3F/JY6L+3hgmGaaupjVjiyiXmlTDIQ6h+N8knlVR0o8J7Fodj
-         /MZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8TKfAW2T/4PTYZ2VZ2BQ2RUhFB66lw9H+B02oa5Oxh4=;
-        b=lAO5TjWfTvWGBTAUG3OeOsjHMYEXOtmcPJU5q9cTa+DDD+gWiRcVzo2q/D2ldl7J2J
-         PdaMPvynXhghHpSmnwAphCwQa5IqAuz5A6BDcvAU+ePTWqRVjY8C6UfFjQHYgWRUrRlF
-         9juck7n0XgQnVUSeTUPw7dSv80La2DRafP9qNLbcZE8yMQ4KBHLhNnNVw7tBZeoiNO+i
-         BtA5C8iFubEM2pYFPayAnQV4ZnmGEdw9sQziQAGFFc34zn7wwH+v4J5s28hMk0wYVG6a
-         cKe6ThMeSefkBbr0dqe2Kt5fwwZpRH4c983pMm1GknvX3R5RUquTLXfPB8qx0PReZoLy
-         KFsQ==
-X-Gm-Message-State: AOUpUlFXzCHEQXDA4mCq+Kdwj4P9qqyxAqs7+L8XvvEnicm3Pd9A2uNB
-        Sv7dSsqdHpwoPvjl7SmYsN/fEg==
-X-Google-Smtp-Source: AA+uWPxk2+Yg5kKk4dqq8CTYlmEajq1H2ns1kdvsag5SDIzaYTW2SJFDpQDtulyOy9+Tk0aG7hBrFA==
-X-Received: by 2002:a63:8e41:: with SMTP id k62-v6mr32008014pge.187.1534502226719;
-        Fri, 17 Aug 2018 03:37:06 -0700 (PDT)
-Received: from [10.86.58.199] (rap-us.hgst.com. [199.255.44.250])
-        by smtp.googlemail.com with ESMTPSA id a81-v6sm3965825pfa.152.2018.08.17.03.37.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 Aug 2018 03:37:05 -0700 (PDT)
-Subject: Re: [PATCH] lightnvm: pblk: fix race condition on metadata I/O
-To:     javier@javigon.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        javier@cnexlabs.com
-References: <1534501324-13693-1-git-send-email-javier@cnexlabs.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <fbe93d3b-31d5-608c-e9fc-c77510763462@lightnvm.io>
-Date:   Fri, 17 Aug 2018 12:37:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Fri, 17 Aug 2018 09:47:13 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:29548 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726226AbeHQNrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 09:47:13 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41sKZL01y9z9tvq1;
+        Fri, 17 Aug 2018 12:44:10 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id u7-3eVbZJPvq; Fri, 17 Aug 2018 12:44:09 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41sKZK6ST4z9tvpn;
+        Fri, 17 Aug 2018 12:44:09 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id B37048B80A;
+        Fri, 17 Aug 2018 12:44:14 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id PRbWWWnaCZDS; Fri, 17 Aug 2018 12:44:14 +0200 (CEST)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4E9B38B809;
+        Fri, 17 Aug 2018 12:44:14 +0200 (CEST)
+Subject: Re: [PATCH v2 3/4] powerpc/mm: fix a warning when a cache is common
+ to PGD and hugepages
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        aneesh.kumar@linux.vnet.ibm.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <2f96bf1a8df1091c642de099ed07c34b5ab9b90a.1534258290.git.christophe.leroy@c-s.fr>
+ <4aaca2d27429e6bdadc340fd3b96e7c350c4b2f4.1534258290.git.christophe.leroy@c-s.fr>
+ <6dea8d0c-c4ab-49aa-da26-a729c18fa818@linux.ibm.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <006e5f33-b816-7508-faac-da26a860659c@c-s.fr>
+Date:   Fri, 17 Aug 2018 12:44:10 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1534501324-13693-1-git-send-email-javier@cnexlabs.com>
+In-Reply-To: <6dea8d0c-c4ab-49aa-da26-a729c18fa818@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/17/2018 12:22 PM, Javier González wrote:
-> In pblk, when a new line is allocated, metadata for the previously
-> written line is scheduled. This is done through a fixed memory region
-> that is shared through time and contexts across different lines and
-> therefore protected by a lock. Unfortunately, this lock is not properly
-> covering all the metadata used for sharing this memory regions,
-> resulting on a race condition.
-> 
-> This patch fixes this race condition by protecting this metadata
-> properly.
-> 
-> Fixes: dd2a43437337 ("lightnvm: pblk: sched. metadata on write thread")
-> 
-> Signed-off-by: Javier González <javier@cnexlabs.com>
-> ---
->   drivers/lightnvm/pblk-write.c | 14 +++++++-------
->   1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
-> index 508c63701eda..df99c45778d4 100644
-> --- a/drivers/lightnvm/pblk-write.c
-> +++ b/drivers/lightnvm/pblk-write.c
-> @@ -417,12 +417,11 @@ int pblk_submit_meta_io(struct pblk *pblk, struct pblk_line *meta_line)
->   			rqd->ppa_list[i] = addr_to_gen_ppa(pblk, paddr, id);
->   	}
->   
-> +	spin_lock(&l_mg->close_lock);
->   	emeta->mem += rq_len;
-> -	if (emeta->mem >= lm->emeta_len[0]) {
-> -		spin_lock(&l_mg->close_lock);
-> +	if (emeta->mem >= lm->emeta_len[0])
->   		list_del(&meta_line->list);
-> -		spin_unlock(&l_mg->close_lock);
-> -	}
-> +	spin_unlock(&l_mg->close_lock);
->   
->   	pblk_down_page(pblk, rqd->ppa_list, rqd->nr_ppas);
->   
-> @@ -491,14 +490,15 @@ static struct pblk_line *pblk_should_submit_meta_io(struct pblk *pblk,
->   	struct pblk_line *meta_line;
->   
->   	spin_lock(&l_mg->close_lock);
-> -retry:
->   	if (list_empty(&l_mg->emeta_list)) {
->   		spin_unlock(&l_mg->close_lock);
->   		return NULL;
->   	}
->   	meta_line = list_first_entry(&l_mg->emeta_list, struct pblk_line, list);
-> -	if (meta_line->emeta->mem >= lm->emeta_len[0])
-> -		goto retry;
-> +	if (meta_line->emeta->mem >= lm->emeta_len[0]) {
-> +		spin_unlock(&l_mg->close_lock);
-> +		return NULL;
-> +	} >   	spin_unlock(&l_mg->close_lock);
->   
->   	if (!pblk_valid_meta_ppa(pblk, meta_line, data_rqd))
-> 
 
-Thanks. Applied for 4.20.
 
+Le 17/08/2018 à 05:32, Aneesh Kumar K.V a écrit :
+> On 08/14/2018 08:24 PM, Christophe Leroy wrote:
+>> While implementing TLB miss HW assistance on the 8xx, the following
+>> warning was encountered:
+>>
+>> [  423.732965] WARNING: CPU: 0 PID: 345 at mm/slub.c:2412 
+>> ___slab_alloc.constprop.30+0x26c/0x46c
+>> [  423.733033] CPU: 0 PID: 345 Comm: mmap Not tainted 
+>> 4.18.0-rc8-00664-g2dfff9121c55 #671
+>> [  423.733075] NIP:  c0108f90 LR: c0109ad0 CTR: 00000004
+>> [  423.733121] REGS: c455bba0 TRAP: 0700   Not tainted  
+>> (4.18.0-rc8-00664-g2dfff9121c55)
+>> [  423.733147] MSR:  00021032 <ME,IR,DR,RI>  CR: 24224848  XER: 20000000
+>> [  423.733319]
+>> [  423.733319] GPR00: c0109ad0 c455bc50 c4521910 c60053c0 007080c0 
+>> c0011b34 c7fa41e0 c455be30
+>> [  423.733319] GPR08: 00000001 c00103a0 c7fa41e0 c49afcc4 24282842 
+>> 10018840 c079b37c 00000040
+>> [  423.733319] GPR16: 73f00000 00210d00 00000000 00000001 c455a000 
+>> 00000100 00000200 c455a000
+>> [  423.733319] GPR24: c60053c0 c0011b34 007080c0 c455a000 c455a000 
+>> c7fa41e0 00000000 00009032
+>> [  423.734190] NIP [c0108f90] ___slab_alloc.constprop.30+0x26c/0x46c
+>> [  423.734257] LR [c0109ad0] kmem_cache_alloc+0x210/0x23c
+>> [  423.734283] Call Trace:
+>> [  423.734326] [c455bc50] [00000100] 0x100 (unreliable)
+>> [  423.734430] [c455bcc0] [c0109ad0] kmem_cache_alloc+0x210/0x23c
+>> [  423.734543] [c455bcf0] [c0011b34] huge_pte_alloc+0xc0/0x1dc
+>> [  423.734633] [c455bd20] [c01044dc] hugetlb_fault+0x408/0x48c
+>> [  423.734720] [c455bdb0] [c0104b20] follow_hugetlb_page+0x14c/0x44c
+>> [  423.734826] [c455be10] [c00e8e54] __get_user_pages+0x1c4/0x3dc
+>> [  423.734919] [c455be80] [c00e9924] __mm_populate+0xac/0x140
+>> [  423.735020] [c455bec0] [c00db14c] vm_mmap_pgoff+0xb4/0xb8
+>> [  423.735127] [c455bf00] [c00f27c0] ksys_mmap_pgoff+0xcc/0x1fc
+>> [  423.735222] [c455bf40] [c000e0f8] ret_from_syscall+0x0/0x38
+>> [  423.735271] Instruction dump:
+>> [  423.735321] 7cbf482e 38fd0008 7fa6eb78 7fc4f378 4bfff5dd 7fe3fb78 
+>> 4bfffe24 81370010
+>> [  423.735536] 71280004 41a2ff88 4840c571 4bffff80 <0fe00000> 4bfffeb8 
+>> 81340010 712a0004
+>> [  423.735757] ---[ end trace e9b222919a470790 ]---
+>>
+>> This warning occurs when calling kmem_cache_zalloc() on a
+>> cache having a constructor.
+>>
+>> In this case it happens because PGD cache and 512k hugepte cache are
+>> the same size (4k). While a cache with constructor is created for
+>> the PGD, hugepages create cache without constructor and uses
+>> kmem_cache_zalloc(). As both expect a cache with the same size,
+>> the hugepages reuse the cache created for PGD, hence the conflict.
+>>
+>> In order to avoid this conflict, this patch:
+>> - modifies pgtable_cache_add() so that a zeroising constructor is
+>> added for any cache size.
+>> - replaces calls to kmem_cache_zalloc() by kmem_cache_alloc()
+>>
+> 
+> Can't we just do kmem_cache_alloc with gfp flags __GFP_ZERO? and remove 
+> the constructor completely?
+
+I don't understand what you mean. That's exactly what I did in v1 (by 
+using kmem_cache_zalloc()), and you commented that doing this we would 
+zeroise at allocation whereas the constructors are called when adding 
+memory to the slab and when freeing the allocated block. Or did I 
+misunderstood your comment ?
+
+static inline void *kmem_cache_zalloc(struct kmem_cache *k, gfp_t flags)
+{
+	return kmem_cache_alloc(k, flags | __GFP_ZERO);
+}
+
+Christophe
+
+
+> 
+> 
+> -aneesh
