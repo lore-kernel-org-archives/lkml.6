@@ -6,101 +6,99 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE80C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 434A4C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:27:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9255F20852
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:21:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E45102086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:27:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MWOQBzx5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9255F20852
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="j7seAhoc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E45102086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbeHQGX0 (ORCPT
+        id S1726127AbeHQG32 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 02:23:26 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:14216 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726377AbeHQGX0 (ORCPT
+        Fri, 17 Aug 2018 02:29:28 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:12009 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbeHQG32 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 02:23:26 -0400
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20180817032144epoutp020c11eeb42a0dbe9cd9d60454a2b7c09a~LjeMtFoeB2646726467epoutp02j
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 03:21:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180817032144epoutp020c11eeb42a0dbe9cd9d60454a2b7c09a~LjeMtFoeB2646726467epoutp02j
+        Fri, 17 Aug 2018 02:29:28 -0400
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20180817032745epoutp039990def0a09ef235a406def4be89eb0e~LjjckYhMv0180901809epoutp035
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 03:27:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180817032745epoutp039990def0a09ef235a406def4be89eb0e~LjjckYhMv0180901809epoutp035
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1534476104;
-        bh=lnKmwkqyR/cXESlbEZoxKYvASV19Kjnouy381ShIhOo=;
+        s=mail20170921; t=1534476465;
+        bh=gyK0CmDi+128aP0+H8woV758jZRgiopkL9ZjGnOVPx4=;
         h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=MWOQBzx5KjHKaoswhhat+PFsbXFfIfbStjHmm3vzXdU5E3IJoUn93kDkRZwByy7yr
-         X0dARX+IPC02r8KAULpQiLxd7oMcMby0lKSi71r3guiKBkxCXEJUETyUZqZq9zy1ql
-         ntZ34i+S50FlYv1EI0YSM4NwIkeARvMmBQ8vTir8=
-Received: from epsmges5p2new.samsung.com (unknown [182.195.40.195]) by
+        b=j7seAhocT1yDAgK1wWz7CJwUFIlYqUUsVzDMvlYdOgQXHigunUbznPjJ7hXGN6eOt
+         KU17SvnXRNF6JHVkfrsK8kLNojfdF+sxhfoYgVlYVBNCAl6YTwXQDrvrQlHWq92Oqt
+         LToMu33cnx0o76ZkVWmH7cRnIGLmIdrhl793yn84=
+Received: from epsmges5p2new.samsung.com (unknown [182.195.40.196]) by
         epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20180817032142epcas5p4b8b9f929274fdb66078730e3276715ac~LjeK14q3M2087220872epcas5p49;
-        Fri, 17 Aug 2018 03:21:42 +0000 (GMT)
-X-AuditID: b6c32a4a-9b3ff700000010d5-86-5b763f467d50
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        20180817032743epcas5p49542167d7083dddd2508f70a43eb7a4b~LjjbA41Jf2468124681epcas5p44;
+        Fri, 17 Aug 2018 03:27:43 +0000 (GMT)
+X-AuditID: b6c32a4a-9b3ff700000010d5-34-5b7640afe53a
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
         epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C9.02.04309.64F367B5; Fri, 17 Aug 2018 12:21:42 +0900 (KST)
+        9C.23.04309.FA0467B5; Fri, 17 Aug 2018 12:27:43 +0900 (KST)
 Mime-Version: 1.0
 Subject: RE: Re: [PATCH 1/1] Preventive patch in the proc file-system to
  handle NULL check.
 Reply-To: srikanth.h@samsung.com
 From:   Srikanth Korangala Hari <srikanth.h@samsung.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-CC:     "keescook@chromium.org" <keescook@chromium.org>,
-        "adobriyan@gmail.com" <adobriyan@gmail.com>,
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+CC:     "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         Srikanth Korangala Hari <srikanth.h@samsung.com>
 X-Priority: 3
 X-Content-Kind-Code: NORMAL
-In-Reply-To: <20180816131731.GB1457@garbanzo.do-not-panic.com>
+In-Reply-To: <20180816123223.GA15817@avx2>
 X-Drm-Type: N,general
 X-Msg-Generator: Mail
 X-Msg-Type: PERSONAL
 X-Reply-Demand: N
-Message-ID: <20180817032142epcms5p875c72643ea624e3b2d8f10e4abaf5182@epcms5p8>
-Date:   Fri, 17 Aug 2018 08:51:42 +0530
-X-CMS-MailID: 20180817032142epcms5p875c72643ea624e3b2d8f10e4abaf5182
+Message-ID: <20180817032743epcms5p1f185381607d99cb8509c174dcadeb754@epcms5p1>
+Date:   Fri, 17 Aug 2018 08:57:43 +0530
+X-CMS-MailID: 20180817032743epcms5p1f185381607d99cb8509c174dcadeb754
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 X-CPGSPASS: Y
 X-CPGSPASS: Y
 CMS-TYPE: 105P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphk+LIzCtJLcpLzFFi42LZdlhTU9fNvizaYNlaU4vpjV4WLw9pWpzp
-        zrXYs/cki8XlXXPYLG5MeMposePFKyYHdo/ZDRdZPHbOusvusWlVJ5tH35ZVjB6fN8kFsEal
-        2mSkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA3aCkUJaY
-        UwoUCkgsLlbSt7Mpyi8tSVXIyC8usVWKNjQ00jM0MNczMgLSprFWRqZAJQmpGT3X37IX9LFU
-        vDh0lbWB8T9zFyMHh4SAiUTjx7QuRi4OIYHdjBL7Ly9hAYnzCghK/N0h3MXIySEsECvx6/pu
-        RpCwkICCxK1V0RBhC4lJMzqZQWw2ATOJnu97mEBsEQENiX0TeplARjILzGKS2P7+FitIQkKA
-        V2JG+1MWCFtaYvvyrYwgNqeAncSi05/YIOKiEjdXv2WHsd8fm88IYYtItN47ywxhC0o8+Lmb
-        EWbO+2NTwJZJCExmlPj6cycLhLMa6JlDL6C2mUs8vrkZ7DxeAV+JGzPXgG1jEVCVeL56E9Q2
-        F4kl5x6BxZkFtCWWLXwNDiBmAU2J9bv0YR5o2PibHZ3NLMAn0fv7CRNMfMc8EBsUtioSD/aX
-        QZhSEr2f7CAqPCRe3+pknsCoOAsR0LOQrJ2FsHYBI/MqRsnUguLc9NRi0wKjvNRyveLE3OLS
-        vHS95PzcTYzglKjltYNx2TmfQ4wCHIxKPLwT1pZGC7EmlhVX5h5ilOBgVhLhnXkeKMSbklhZ
-        lVqUH19UmpNafIjRFBgAE5mlRJPzgek6ryTe0NTIzMzA0sDU2MLMUEmc94NfcLSQQHpiSWp2
-        ampBahFMHxMHp1QDY0PHE7WUSb8U2SwT+FyZN1iGu3Z52q+4b3TmZsa0HQa7a7Zzqziu/BTt
-        zresp1X8bezpeCXGiwUXDlb9cmCx9Tg2p/oNX4Lx05LIzW9T/n7ZkLeO/aJCb1CubkDZk7sd
-        Us1FQYdcvKr0O9yWB5zLPvVz965Qp99dzKXrEyRv+FXGHbbvCzNTYinOSDTUYi4qTgQA1jg3
-        Np8DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupik+LIzCtJLcpLzFFi42LZdlhTXXe9Q1m0wdT7BhbTG70sXh7StDjT
+        nWuxZ+9JFovLu+awWdyY8JTRYseLV0wO7B6zGy6yeOycdZfdY9OqTjaPvi2rGD0+b5ILYI1K
+        tclITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBukFJoSwx
+        pxQoFJBYXKykb2dTlF9akqqQkV9cYqsUbWhopGdoYK5nZASkTWOtjEyBShJSM/5eri44zVSx
+        ce8DxgbGA0xdjJwcEgImEse3TmPsYuTiEBLYzSjx4fYJti5GDg5eAUGJvzuEQWqEBWIlfl3f
+        zQgSFhJQkLi1KhoibCExaUYnM4jNJmAm0fN9D9hIEQFNiWN3N7GBjGQWmMYksefxbqhdvBIz
+        2p+yQNjSEtuXb2UEsTkFtCTefupghoiLStxc/ZYdxn5/bD4jhC0i0XrvLFSNoMSDn7sZYea8
+        PzaFCWSZhMBkRomvP3eyQDirGSX2H3oBtc1c4vHNzUwQj/lKLJkVCBJmEVCV+NvazQwSlhBw
+        kTjQYQASZhbQlli28DVYmBnomfW79GHOb9j4mx2dzSzAJ9H7+wncizvmPWGCmKgi8WB/GYQp
+        JdH7yQ6iwkPi9a1O5gmMirMQwTwLydpZCGsXMDKvYpRMLSjOTU8tNi0wykst1ytOzC0uzUvX
+        S87P3cQITodaXjsYl53zOcQowMGoxMM7YW1ptBBrYllxZe4hRgkOZiUR3pnngUK8KYmVValF
+        +fFFpTmpxYcYTYH+n8gsJZqcD0zVeSXxhqZGZmYGlgamxhZmhkrivB/8gqOFBNITS1KzU1ML
+        Uotg+pg4OKUaGMtPxj2Tjvy5b12PfPOK2+umO8Ql86bf0OUK6Etd47m79mHPNo2N61i4dgVO
+        FGupC1x9a+qHu4uZd+ev+dFi/XhTM0/Wi5Sas1ohJ4INyk127HsrFFlYJOt1+XFo+bdv8puO
+        52+qD/j1XH9HHffzb43BLVtlOz3LXFwEhVlXtGZmTkv2C6uZrcRSnJFoqMVcVJwIAHQHC6Cd
+        AwAA
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
 X-CMS-RootMailID: 20180816093424epcas2p25ede075fec715ad31108360ddca9cce8
-References: <20180816131731.GB1457@garbanzo.do-not-panic.com>
+References: <20180816123223.GA15817@avx2>
         <1534412053-22457-1-git-send-email-srikanth.h@samsung.com>
-        <CGME20180816093424epcas2p25ede075fec715ad31108360ddca9cce8@epcms5p8>
+        <CGME20180816093424epcas2p25ede075fec715ad31108360ddca9cce8@epcms5p1>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Thanks=C2=A0for=C2=A0the=C2=A0patch=21=C2=A0Do=C2=A0you=C2=A0have=C2=A0a=
-=C2=A0reproducer=C2=A0or=C2=A0is=C2=A0this=C2=A0theoretical?=0D=0A>=20This=
-=C2=A0will=C2=A0affect=C2=A0if=C2=A0it=C2=A0should=C2=A0go=C2=A0to=C2=A0sta=
-ble=C2=A0or=C2=A0not.=0D=0A=0D=0ADear=20Luis,=20this=20is=20theoretical=20a=
-s=20I=20observed=20in=20most=20of=20the=20call's=20to=20api=20-=20=22proc_m=
-kdir=22=20the=20NULL=20check=20is=20being=20done.=20Hence=20I=20thought=20o=
-f=20adding=20one=20here.=0D=0A=0D=0ARegards,=0D=0ASrikanth
+> It=C2=A0is=C2=A0fine=C2=A0to=C2=A0crash=C2=A0because=C2=A0/proc=C2=A0is=
+=C2=A0not=C2=A0modular.=0D=0A=0D=0ADear=20Alexey,=20this=20was=20theoretica=
+l=20solution.=20If=20you=20feel=20this=20should=20crash=20instead=20if=20th=
+e=20call=20fail's=20then=20ignore=20the=20patch.=0D=0A=0D=0ARegards,=0D=0AS=
+rikanth=0D=0A=C2=A0
