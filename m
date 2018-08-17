@@ -2,156 +2,146 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A772C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EDBC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37C202188F
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:35:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37C202188F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EF70E218AA
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:36:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N1WRyy0N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF70E218AA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbeHQMhm (ORCPT
+        id S1726546AbeHQMjD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 08:37:42 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48766 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726213AbeHQMhm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 08:37:42 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A96468182D3A;
-        Fri, 17 Aug 2018 09:34:59 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1C3EC2166BA5;
-        Fri, 17 Aug 2018 09:34:55 +0000 (UTC)
-Date:   Fri, 17 Aug 2018 11:34:52 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-Subject: Re: [PATCH v9 17/22] s390: vfio-ap: zeroize the AP queues.
-Message-ID: <20180817113452.5cee98e2.cohuck@redhat.com>
-In-Reply-To: <59fddbc0-49f5-c83b-144f-7390b80dfc9f@linux.ibm.com>
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1534196899-16987-18-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <20180815182401.4cfa0a78.cohuck@redhat.com>
-        <59fddbc0-49f5-c83b-144f-7390b80dfc9f@linux.ibm.com>
-Organization: Red Hat GmbH
+        Fri, 17 Aug 2018 08:39:03 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39208 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726213AbeHQMjD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 08:39:03 -0400
+Received: by mail-wm0-f65.google.com with SMTP id q8-v6so6834345wmq.4;
+        Fri, 17 Aug 2018 02:36:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=wMwWlVrlKHKYNMUD3CZPTXR6rK2niEOr2FBgmRLjO28=;
+        b=N1WRyy0Nx1FgZEAJK/gWxvqq4TEOWQV/M8UKYQEnNfdVtMoTq50OAhBmX2Asd8tGJa
+         fut3GENl+hoLaKCCcLTsnRbBezYEDtOZ96WAC1uW33R4C+ztXuOeTXLDYd+r4GrqEbxm
+         derlYdnfW88W62iyJf/e9QNunCuRdffDSCHQ1P9uNGgqrqpQ8e1X8qCnT6MlZP5793HW
+         ndlIF2V+yNUtg9b3v7HLp8QgyHfMSgTgnTD/+6T8Iu5BD6MVH11fsjjqQGNhO3TlgUSq
+         2wD4tUlvM9Au/XdJF58xu3DRbfgiYcsfIW+GCKTg/4Emm/LusUYl/Z8tI9i1RB46kgOA
+         45hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=wMwWlVrlKHKYNMUD3CZPTXR6rK2niEOr2FBgmRLjO28=;
+        b=m0I5D/uGzCsM/isOu2QS2catua0O1hZeri2jingKp0YRlQMBGodEpC/1x9mJUExVtb
+         gUFGwG2qTDk17BxOhKtsKZurgevRXd6qP8KNhTkv3cfwQ7TMh/gpDe7ttthvFfnVXVM2
+         acxKDOxkVKGtvv8HidujBNFJefe3oLDPJu8vBzDHNP1MLj92a2rw1sSaggStYipWQ0kI
+         /lGxniraMxOY0iotGibZ/fIkOR63I5MHTkLk/5wIVoopf0jci1b4lDiPM8lDFBOFURze
+         yR5BvgJtpJ/ptteBkPxvsQeC29CrlZSeDuKsHwZNW15WK9JJ6gsHKYRTjmoDazCSyvFP
+         zJRg==
+X-Gm-Message-State: AOUpUlEiWLTTNBzHOHvn1wgHXIn7jZtPvgxN5BJVahx32WQ5OtIpYu/p
+        7o5rjIuWFbeHlu42GYwMbK11rlTH3AnbGPouwe8=
+X-Google-Smtp-Source: AA+uWPzGxJxm7f8WJx38q55pUF5o1m7xvdXfQ7feofQYoEzKL05cUeAz7zFwIYPDFhLZZ5kxS2BbFf4XTBCE1P2qnoA=
+X-Received: by 2002:a1c:aa8f:: with SMTP id t137-v6mr17577907wme.54.1534498579807;
+ Fri, 17 Aug 2018 02:36:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 17 Aug 2018 09:34:59 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 17 Aug 2018 09:34:59 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+Received: by 2002:a1c:32c1:0:0:0:0:0 with HTTP; Fri, 17 Aug 2018 02:36:19
+ -0700 (PDT)
+In-Reply-To: <1534478043-7170-3-git-send-email-jianchao.w.wang@oracle.com>
+References: <1534478043-7170-1-git-send-email-jianchao.w.wang@oracle.com> <1534478043-7170-3-git-send-email-jianchao.w.wang@oracle.com>
+From:   Ming Lei <tom.leiming@gmail.com>
+Date:   Fri, 17 Aug 2018 17:36:19 +0800
+Message-ID: <CACVXFVMBFwGngLWjf=oT+2=57xWgF38ozf0D3hc_RKOTXbRWVA@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] blk-mq: sync the update nr_hw_queues with part_in_flight
+To:     Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Keith Busch <keith.busch@linux.intel.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 15 Aug 2018 16:36:32 -0400
-Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+On Fri, Aug 17, 2018 at 11:54 AM, Jianchao Wang
+<jianchao.w.wang@oracle.com> wrote:
+> For blk-mq, part_in_flight/rw will invoke blk_mq_in_flight/rw to
+> account the inflight requests. It will access the queue_hw_ctx and
+> nr_hw_queues w/o any protection. When updating nr_hw_queues and
+> blk_mq_in_flight/rw occur concurrently, panic comes up.
+>
+> Before update nr_hw_queues, the q will be frozen. So we could use
+> q_usage_counter to avoid the race. percpu_ref_is_zero is used here
+> so that we will not miss any in-flight request. And also both the
+> check and blk_mq_queue_tag_busy_iter are under rcu critical section,
+> then __blk_mq_update_nr_hw_queues could ensure the zeroed q_usage_counter
+> to be globally visible.
+>
+> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+> ---
+>  block/blk-mq.c | 31 ++++++++++++++++++++++++++++++-
+>  1 file changed, 30 insertions(+), 1 deletion(-)
+>
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index de7027f..9ec98bd 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -112,7 +112,22 @@ void blk_mq_in_flight(struct request_queue *q, struct hd_struct *part,
+>         struct mq_inflight mi = { .part = part, .inflight = inflight, };
+>
+>         inflight[0] = inflight[1] = 0;
+> +
+> +       /*
+> +        * __blk_mq_update_nr_hw_queues will update the nr_hw_queues and
+> +        * queue_hw_ctx after freeze the queue. So we could use q_usage_counter
+> +        * to avoid race with it. __blk_mq_update_nr_hw_queues will use
+> +        * synchronize_rcu to ensure all of the users of blk_mq_in_flight
+> +        * go out of the critical section and see zeroed q_usage_counter.
+> +        */
+> +       rcu_read_lock();
+> +       if (percpu_ref_is_zero(&q->q_usage_counter)) {
+> +               rcu_read_unlock();
+> +               return;
+> +       }
+> +
+>         blk_mq_queue_tag_busy_iter(q, blk_mq_check_inflight, &mi);
+> +       rcu_read_unlock();
+>  }
+>
+>  static void blk_mq_check_inflight_rw(struct blk_mq_hw_ctx *hctx,
+> @@ -131,7 +146,18 @@ void blk_mq_in_flight_rw(struct request_queue *q, struct hd_struct *part,
+>         struct mq_inflight mi = { .part = part, .inflight = inflight, };
+>
+>         inflight[0] = inflight[1] = 0;
+> +
+> +       /*
+> +        * See comment of blk_mq_in_flight.
+> +        */
+> +       rcu_read_lock();
+> +       if (percpu_ref_is_zero(&q->q_usage_counter)) {
+> +               rcu_read_unlock();
+> +               return;
+> +       }
+> +
+>         blk_mq_queue_tag_busy_iter(q, blk_mq_check_inflight_rw, &mi);
+> +       rcu_read_unlock();
 
-> On 08/15/2018 12:24 PM, Cornelia Huck wrote:
-> > On Mon, 13 Aug 2018 17:48:14 -0400
-> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-> >
-> > Nit: please drop the leading period in the subject.  
-> 
-> I assume you mean the ending period?
+I'd suggest to put the rcu_* and percpu_ref_is_zero() into
+blk_mq_queue_tag_busy_iter().
 
-Err, of course.
 
-> 
-> >  
-> >> From: Tony Krowiak <akrowiak@linux.ibm.com>
-> >>
-> >> Let's call PAPQ(ZAPQ) to zeroize a queue:
-> >>
-> >> * For each queue configured for a mediated matrix device
-> >>    when it is released.
-> >>
-> >> Zeroizing a queue resets the queue, clears all pending
-> >> messages for the queue entries and disables adapter interruptions
-> >> associated with the queue.
-> >>
-> >> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> >> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-> >> Tested-by: Michael Mueller <mimu@linux.ibm.com>
-> >> Tested-by: Farhan Ali <alifm@linux.ibm.com>
-> >> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> >> ---
-> >>   drivers/s390/crypto/vfio_ap_ops.c     |   25 +++++++++++++++++++++++++
-> >>   drivers/s390/crypto/vfio_ap_private.h |   25 +++++++++++++++++++++++++
-> >>   2 files changed, 50 insertions(+), 0 deletions(-)
-> >>
-> >> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
-> >> index 3e8534b..34f982a 100644
-> >> --- a/drivers/s390/crypto/vfio_ap_private.h
-> >> +++ b/drivers/s390/crypto/vfio_ap_private.h
-> >> @@ -74,4 +74,29 @@ struct ap_matrix_mdev {
-> >>   extern int vfio_ap_mdev_register(void);
-> >>   extern void vfio_ap_mdev_unregister(void);
-> >>   
-> >> +static inline int vfio_ap_reset_queue(unsigned int apid, unsigned int apqi,
-> >> +				      unsigned int retry)
-> >> +{
-> >> +	struct ap_queue_status status;
-> >> +
-> >> +	do {
-> >> +		status = ap_zapq(AP_MKQID(apid, apqi));
-> >> +		switch (status.response_code) {
-> >> +		case AP_RESPONSE_NORMAL:
-> >> +			return 0;
-> >> +		case AP_RESPONSE_RESET_IN_PROGRESS:
-> >> +		case AP_RESPONSE_BUSY:
-> >> +			msleep(20);
-> >> +			break;
-> >> +		default:
-> >> +			pr_warn("%s: error zeroizing %02x.%04x: response code %d\n",
-> >> +				VFIO_AP_MODULE_NAME, apid, apqi,
-> >> +				status.response_code);  
-> > How can we end up here? Does this mean that we just don't know what to
-> > do with this response, or is this something that should never happen?
-> > (How much sense does it make to print an error?)  
-> 
-> There are additional response codes that could be returned; for example,
-> in the case of a catastrophic failure such as: The function can not be
-> performed because the AP was somehow deconfigured or the functiona
-> cannot be performed due to a machine check failure that caused the AP
-> path to be removed. It shouldn't happen, but all are possibilities.
-> I can get rid of the message and just return -EIO if you prefer.
-
-These sound like "ugh, we're broken anyway". Not sure if an additional
-message would help here much; I'd expect other code to just handle the
-failure (especially things like machine checks). I would not oppose
-removing the message :)
-
-Maybe add a comment /* things are really broken, give up */ instead?
-
-> 
-> >  
-> >> +			return -EIO;
-> >> +		}
-> >> +	} while (retry--);
-> >> +
-> >> +	return -EBUSY;
-> >> +}
-> >> +
-> >>   #endif /* _VFIO_AP_PRIVATE_H_ */  
-> 
-> 
-
+Thanks,
+Ming Lei
