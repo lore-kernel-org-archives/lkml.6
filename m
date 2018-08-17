@@ -2,193 +2,181 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C4EC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0191C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7F50218EB
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:41:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7F50218EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 71E3A218AA
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:42:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="i7qM56wj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71E3A218AA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbeHQMoO (ORCPT
+        id S1726761AbeHQMpK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 08:44:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42052 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726447AbeHQMoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 08:44:14 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0AF3D406222D;
-        Fri, 17 Aug 2018 09:41:30 +0000 (UTC)
-Received: from [10.36.117.9] (ovpn-117-9.ams2.redhat.com [10.36.117.9])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 891C11049475;
-        Fri, 17 Aug 2018 09:41:25 +0000 (UTC)
-Subject: Re: [PATCH RFC 1/2] drivers/base: export
- lock_device_hotplug/unlock_device_hotplug
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        devel@linuxdriverproject.org, linux-s390@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>, osalvador@suse.de,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        David Rientjes <rientjes@google.com>
-References: <20180817075901.4608-1-david@redhat.com>
- <20180817075901.4608-2-david@redhat.com> <20180817084146.GB14725@kroah.com>
- <5a5d73e9-e4aa-ffed-a2e3-8aef64e61923@redhat.com>
- <CAJZ5v0gkYV8o2Eq+EcGT=OP1tQGPGVVe3n9VGD6z7KAVVqhv9w@mail.gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <42df9062-f647-3ad6-5a07-be2b99531119@redhat.com>
-Date:   Fri, 17 Aug 2018 11:41:24 +0200
+        Fri, 17 Aug 2018 08:45:10 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:33158 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726493AbeHQMpK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 08:45:10 -0400
+Received: by mail-pl0-f68.google.com with SMTP id b90-v6so3491989plb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 02:42:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0cMgd+htuoGLq7omwmgNGXTWYbQ617Fms4XSkZvK1+4=;
+        b=i7qM56wjkTxY66G8xRAfuCVSMSILkedWeOOlEZXvAraaKiabYcBFRLX1zU0UfzGdBp
+         XBkCJuIy8JYtfVJ5TnA9rCTUorIUQ5Y4uTE2RUytB5SKlcXLk5cWEqTcqdAUdQZ57NhF
+         hsbCe1zKtf94/uyQPboT3YcwU0h+KI+eIXsGebd0ZC7/9xyUUuD4/a5zX3KUcsO31nN0
+         vn/3yhZbwW3MNXju5CsBKncpUacmfNbbr+4CnbM9DB3um+WED+G8lvHei/q61ZxQXnmy
+         SO2U0kFQMem/m4HW89NMyYZtNPFRYjJf9knmmQJMc3teKV8EkRjVZsP81NTGHtc0NX8j
+         +T5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0cMgd+htuoGLq7omwmgNGXTWYbQ617Fms4XSkZvK1+4=;
+        b=PdUfyS14cQmqrdf2OANjW0OWvYMNUj6Ji1l1myUtC5B2YtESC1bkFRLCXwhFKkKMm+
+         b/TmHShiDJUqEn5/Wnwm/d2SmA/JKVzzhkJAhBrC7TUa42yrxs2m38/XeG8vZ/tGeq/P
+         JI1Qr6G8Fue+vCqBr9I58M23YxcyJiV3Tmp1slbAQ3+HpAZ/8saJu+eMjlx5IpIRASAp
+         BQZJGy7RyfMcWKmN6oFLTmtfaqdaZ5aYP2Pg69I+rdtSBNol69pKLlDrK6rOPlu0gwck
+         +GCNiIXMnKRtD7x1/TFrV18HKFRGScUm7iPVaQDYJVN4dR2/p7t23sakqQfsNn1YbF/N
+         jTew==
+X-Gm-Message-State: AOUpUlH6zk0SRGJCeb4Z2I1tFAH+LAI6Lru04PdVatMfeSD41JECW34h
+        Ol64kPVhyMZh9EF0Sn2+PBnLsw5yDr9wIQ==
+X-Google-Smtp-Source: AA+uWPx9HkYQf3AHDain4AHzRs3goIx7DVbgnsnVA3kUAgtA+kFZ90liY1cJWzCpAgMN+WsMRjM6OQ==
+X-Received: by 2002:a17:902:8604:: with SMTP id f4-v6mr33359086plo.225.1534498945919;
+        Fri, 17 Aug 2018 02:42:25 -0700 (PDT)
+Received: from [10.86.58.199] (rap-us.hgst.com. [199.255.44.250])
+        by smtp.googlemail.com with ESMTPSA id g85-v6sm4085175pfk.39.2018.08.17.02.42.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 Aug 2018 02:42:24 -0700 (PDT)
+Subject: Re: [RFC PATCH v2 0/1] lightnvm: move bad block and chunk state logic
+ to core
+To:     javier@cnexlabs.com
+Cc:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
+        hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
+        youngtack.jin@circuitblvd.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180816113417.3641-1-mb@lightnvm.io>
+ <00698BD3-4382-4033-908F-BEB63E7FAD57@cnexlabs.com>
+ <2ed73237-2657-17a8-7134-2267ffb7e35d@lightnvm.io>
+ <956344E2-D7B3-480D-9C1D-7C385B2EFA14@cnexlabs.com>
+ <f7413a26-97bc-6c38-b365-ad824375ca96@lightnvm.io>
+ <05339052-F338-45A5-B3E2-43152A4A0DF6@cnexlabs.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <d17ce375-6ddb-8fd2-a8c1-f1e7d3572b37@lightnvm.io>
+Date:   Fri, 17 Aug 2018 11:42:20 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0gkYV8o2Eq+EcGT=OP1tQGPGVVe3n9VGD6z7KAVVqhv9w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 17 Aug 2018 09:41:30 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 17 Aug 2018 09:41:30 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+In-Reply-To: <05339052-F338-45A5-B3E2-43152A4A0DF6@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.08.2018 11:03, Rafael J. Wysocki wrote:
-> On Fri, Aug 17, 2018 at 10:56 AM David Hildenbrand <david@redhat.com> wrote:
+On 08/17/2018 11:34 AM, Javier Gonzalez wrote:
+>> On 17 Aug 2018, at 11.29, Matias Bjørling <mb@lightnvm.io> wrote:
 >>
->> On 17.08.2018 10:41, Greg Kroah-Hartman wrote:
->>> On Fri, Aug 17, 2018 at 09:59:00AM +0200, David Hildenbrand wrote:
->>>> From: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> On 08/17/2018 10:44 AM, Javier Gonzalez wrote:
+>>>> On 17 Aug 2018, at 10.21, Matias Bjørling <mb@lightnvm.io> wrote:
 >>>>
->>>> Well require to call add_memory()/add_memory_resource() with
->>>> device_hotplug_lock held, to avoid a lock inversion. Allow external modules
->>>> (e.g. hv_balloon) that make use of add_memory()/add_memory_resource() to
->>>> lock device hotplug.
+>>>> On 08/16/2018 05:53 PM, Javier Gonzalez wrote:
+>>>>>> On 16 Aug 2018, at 13.34, Matias Bjørling <mb@lightnvm.io> wrote:
+>>>>>>
+>>>>>> This patch moves the 1.2 and 2.0 block/chunk metadata retrieval to
+>>>>>> core.
+>>>>>>
+>>>>>> Hi Javier, I did not end up using your patch. I had misunderstood what
+>>>>>> was implemented. Instead I implemented the detection of the each chunk by
+>>>>>> first sensing the first page, then the last page, and if the chunk
+>>>>>> is sensed as open, a per page scan will be executed to update the write
+>>>>>> pointer appropriately.
+>>>>> I see why you want to do it this way for maintaining the chunk
+>>>>> abstraction, but this is potentially very inefficient as blocks not used
+>>>>> by any target will be recovered unnecessarily.
 >>>>
->>>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->>>> [modify patch description]
->>>> Signed-off-by: David Hildenbrand <david@redhat.com>
->>>> ---
->>>>  drivers/base/core.c | 2 ++
->>>>  1 file changed, 2 insertions(+)
+>>>> True. It will up to the target to not ask for more metadata than necessary (similarly for 2.0)
 >>>>
->>>> diff --git a/drivers/base/core.c b/drivers/base/core.c
->>>> index 04bbcd779e11..9010b9e942b5 100644
->>>> --- a/drivers/base/core.c
->>>> +++ b/drivers/base/core.c
->>>> @@ -700,11 +700,13 @@ void lock_device_hotplug(void)
->>>>  {
->>>>      mutex_lock(&device_hotplug_lock);
->>>>  }
->>>> +EXPORT_SYMBOL_GPL(lock_device_hotplug);
+>>>> Note that in 1.2, it is
+>>>>> expected that targets will need to recover the write pointer themselves.
+>>>>> What is more, in the normal path, this will be part of the metadata
+>>>>> being stored so no wp recovery is needed. Still, this approach forces
+>>>>> recovery on each 1.2 instance creation (also on factory reset). In this
+>>>>> context, you are right, the patch I proposed only addresses the double
+>>>>> erase issue, which was the original motivator, and left the actual
+>>>>> pointer recovery to the normal pblk recovery process.
+>>>>> Besides this, in order to consider this as a real possibility, we need
+>>>>> to measure the impact on startup time. For this, could you implement
+>>>>> nvm_bb_scan_chunk() and nvm_bb_chunk_sense() more efficiently by
+>>>>> recovering (i) asynchronously and (ii) concurrently across luns so that
+>>>>> we can establish the recovery cost more fairly? We can look at a
+>>>>> specific penalty ranges afterwards.
 >>>>
->>>>  void unlock_device_hotplug(void)
->>>>  {
->>>>      mutex_unlock(&device_hotplug_lock);
->>>>  }
->>>> +EXPORT_SYMBOL_GPL(unlock_device_hotplug);
->>>
->>> If these are going to be "global" symbols, let's properly name them.
->>> device_hotplug_lock/unlock would be better.  But I am _really_ nervous
->>> about letting stuff outside of the driver core mess with this, as people
->>> better know what they are doing.
+>>>> Honestly, 1.2 is deprecated.
+>>> For some...
+>> No. OCSSD 1.2 is deprecated. Others that have a derivative of 1.2 have
+>> their own storage stack and spec that they will continue development
+>> on, which can not be expected to be compatible with the OCSSD 1.2 that
+>> is implemented in the lightnvm subsystem.
 >>
->> The only "problem" is that we have kernel modules (for paravirtualized
->> devices) that call add_memory(). This is Hyper-V right now, but we might
->> have other ones in the future. Without them we would not have to export
->> it. We might also get kernel modules that want to call remove_memory() -
->> which will require the device_hotplug_lock as of now.
->>
->> What we could do is
->>
->> a) add_memory() -> _add_memory() and don't export it
->> b) add_memory() takes the device_hotplug_lock and calls _add_memory() .
->> We export that one.
->> c) Use add_memory() in external modules only
->>
->> Similar wrapper would be needed e.g. for remove_memory() later on.
 > 
-> That would be safer IMO, as it would prevent developers from using
-> add_memory() without the lock, say.
+> There are 1.2 devices out there using the current stack with no changes. >
+
+Yes, obviously, and they should continue to work. Which this patch 
+doesn't change.
+
+>>>> I don't care about the performance, I
+>>>> care about being easy to maintain, so it doesn't borg me down in the
+>>>> future.
+>>> This should be stated clear in the commit message.
+>>>> Back of the envelope calculation for a 64 die SSD with 1024 blocks per
+>>>> die, and 60us read time, will take 4 seconds to scan if all chunks are
+>>>> free, a worst case something like ~10 seconds. -> Not a problem for
+>>>> me.
+>>> Worst case is _much_ worse than 10s if you need to scan the block to
+>>> find the write pointer. We are talking minutes.
+>>
+>> I think you may be assuming that all blocks are open. My assumption is
+>> that this is very rare (given the NAND characteristics). At most a
+>> couple of blocks may be open per die. That leads me to the time
+>> quoted.
+>>
 > 
-> If the lock is always going to be required for add_memory(), make it
-> hard (or event impossible) to use the latter without it.
+> Worst case is worst case, no assumptions.
+> 
+>>> At least make the recovery reads asynchronous. It is low hanging fruit
+>>> and will help the average case significantly.
+>>>>> Also, the recovery scheme in pblk will change significantly by doing
+>>>>> this, so I assume you will send a followup patchset reimplementing
+>>>>> recovery for the 1.2 path?
+>>>>
+>>>> The 1.2 path shouldn't be necessary after this. That is the idea of
+>>>> this work. Obviously, the set bad block interface will have to
+>>>> preserved and called.
+>>> If we base this patch on top of my 2.0 recovery, we will still need to
+>>> make changes to support all 1.2 corner cases.
+>>> How do you want to do it? We get this patch in shape and I rebase on top
+>>> or the other way around?
+>>
+>> I'll pull this in when you're tested it with your 1.2 implementation.
+> 
+> Please, address the asynchronous read comment before considering pulling
+> this path. There is really no reason not to improve this.
 > 
 
-If there are no objections, I'll go into that direction. But I'll wait
-for more comments regarding the general concept first.
+I'll accept patches, but I won't spend time on it. Please let me know if 
+you have other comments.
 
-Thanks!
-
--- 
-
-Thanks,
-
-David / dhildenb
