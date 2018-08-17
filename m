@@ -5,170 +5,131 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2EDC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D1EC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F8D3208DB
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:26:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F8D3208DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 4EAC5208DB
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:26:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EAC5208DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbeHQN3Y (ORCPT
+        id S1726884AbeHQN3g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 09:29:24 -0400
-Received: from verein.lst.de ([213.95.11.211]:36097 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726280AbeHQN3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 09:29:24 -0400
-Received: by newverein.lst.de (Postfix, from userid 2005)
-        id B777568EF6; Fri, 17 Aug 2018 12:27:33 +0200 (CEST)
-To:     Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
+        Fri, 17 Aug 2018 09:29:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33404 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725845AbeHQN3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 09:29:36 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B1EB172645;
+        Fri, 17 Aug 2018 10:26:41 +0000 (UTC)
+Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C6E951745B;
+        Fri, 17 Aug 2018 10:26:38 +0000 (UTC)
+Subject: Re: [PATCH v2] console: Add console=auto option
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     linux-kernel@vger.kernel.org, Mark Salter <msalter@redhat.com>,
+        Al Stone <ahs3@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        x86@kernel.org, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org
-Subject: [PATCH v2 3/3] arm64: reliable stacktraces
-In-Reply-To: <20180817102544.C628D68EF4@newverein.lst.de>
-References: <20180817102544.C628D68EF4@newverein.lst.de>
-Message-Id: <20180817102733.B777568EF6@newverein.lst.de>
-Date:   Fri, 17 Aug 2018 12:27:33 +0200 (CEST)
-From:   duwe@lst.de (Torsten Duwe)
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pm@vger.kernel.org
+References: <728a8e68-ea4b-4040-a0fc-217df4f1928d@redhat.com>
+ <20180816173902.18971-1-prarit@redhat.com>
+ <20180817081947.m425gok2ugt7tglp@pathway.suse.cz>
+From:   Prarit Bhargava <prarit@redhat.com>
+Message-ID: <00c60dca-60bc-8568-eaa3-d4b0c326cab4@redhat.com>
+Date:   Fri, 17 Aug 2018 06:26:38 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180817081947.m425gok2ugt7tglp@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 17 Aug 2018 10:26:41 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 17 Aug 2018 10:26:41 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is more an RFC in the original sense: is this basically
-the correct approach? (as I had to tweak the save_stack API a bit).
 
-In particular the code does not detect interrupts and exception
-frames, and does not yet check whether the code address is valid.
-The latter check would also have to be omitted for the latest frame
-on other tasks' stacks. This would require some more tweaking.
 
-unwind_frame() now reports whether we had to stop normally or due to
-an error condition; walk_stackframe() will pass that info.
-__save_stack_trace() is used for a start to check the validity of a
-frame; maybe save_stack_trace_tsk_reliable() will need its own callback.
+On 08/17/2018 04:19 AM, Petr Mladek wrote:
+> On Thu 2018-08-16 13:39:01, Prarit Bhargava wrote:
+>> ACPI may contain an SPCR table that defines a default system console.
+>> On ARM if the table is present then the SPCR console is enabled by default.
+>> On x86 the SPCR console is used if 'earlycon' (no parameters) is
+>> specified as a kernel parameter and is used only as the early console.
+>> To use the SPCR data as a console a user must boot with 'earlycon',
+>> grep logs & specify a console= kernel parameter, and then reboot again.
+>>
+>> Add 'console=auto' that enables a firmware or hardware console, and on
+>> x86 enable the SPCR console if 'console=auto' is specified.
+> 
+> I basically like the idea. Just one or two nits below.
+> 
+> 
+>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>> index a32f2a126791..dd057224f33b 100644
+>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>> @@ -635,6 +635,7 @@
+>>  
+>>  		hvc<n>	Use the hypervisor console device <n>. This is for
+>>  			both Xen and PowerPC hypervisors.
+>> +		auto	[X86] Enable ACPI SPCR console
+> 
+> The "auto" option sounds reasonable. But earlycon does exactly this
+> when used without no extra options. I prefer to stay consistent
+> with the existing earlycon behavior.
 
-The question is whether this change, once complete, is sufficient
-(as on powerpc) or whether a port of objtool is needed, like x86.
+Hi Petr, on x86 earlycon still only enables the early console but does not
+enable the console.
 
-I can dig into this myself and draw conclusions, but I'd prefer
-to have some input from ARM people here...
+> 
+> 
+>>  		If the device connected to the port is not a TTY but a braille
+>>  		device, prepend "brl," before the device type, for instance
+>> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+>> index 3b20607d581b..fb2616ba3b21 100644
+>> --- a/arch/x86/kernel/acpi/boot.c
+>> +++ b/arch/x86/kernel/acpi/boot.c
+>> @@ -1771,3 +1771,8 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
+>>  	e820__range_add(addr, size, E820_TYPE_ACPI);
+>>  	e820__update_table_print();
+>>  }
+>> +
+>> +void __init arch_console_setup(void)
+>> +{
+>> +	acpi_parse_spcr(false, true);
+> 
+> Just for record. I was curious that this might be called twice
+> (also from acpi_boot_init(). But it looks safe after all.
+> 
 
-Signed-off-by: Torsten Duwe <duwe@suse.de>
+Yes, the console code prevents the same console from being registered twice.
 
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -127,8 +127,9 @@ config ARM64
- 	select HAVE_PERF_EVENTS
- 	select HAVE_PERF_REGS
- 	select HAVE_PERF_USER_STACK_DUMP
--	select HAVE_REGS_AND_STACK_ACCESS_API
- 	select HAVE_RCU_TABLE_FREE
-+	select HAVE_REGS_AND_STACK_ACCESS_API
-+	select HAVE_RELIABLE_STACKTRACE
- 	select HAVE_STACKPROTECTOR
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_KPROBES
---- a/arch/arm64/include/asm/stacktrace.h
-+++ b/arch/arm64/include/asm/stacktrace.h
-@@ -33,7 +33,7 @@ struct stackframe {
- };
- 
- extern int unwind_frame(struct task_struct *tsk, struct stackframe *frame);
--extern void walk_stackframe(struct task_struct *tsk, struct stackframe *frame,
-+extern int walk_stackframe(struct task_struct *tsk, struct stackframe *frame,
- 			    int (*fn)(struct stackframe *, void *), void *data);
- extern void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk);
- 
-diff --git a/arch/arm64/kernel/stacktrace.c b/arch/arm64/kernel/stacktrace.c
-index d5718a060672..fe0dd4745ff3 100644
---- a/arch/arm64/kernel/stacktrace.c
-+++ b/arch/arm64/kernel/stacktrace.c
-@@ -81,23 +81,27 @@ int notrace unwind_frame(struct task_struct *tsk, struct stackframe *frame)
- 	 * both are NULL.
- 	 */
- 	if (!frame->fp && !frame->pc)
--		return -EINVAL;
-+		return 1;
- 
- 	return 0;
- }
- 
--void notrace walk_stackframe(struct task_struct *tsk, struct stackframe *frame,
-+int notrace walk_stackframe(struct task_struct *tsk, struct stackframe *frame,
- 		     int (*fn)(struct stackframe *, void *), void *data)
- {
- 	while (1) {
- 		int ret;
- 
--		if (fn(frame, data))
--			break;
-+		ret = fn(frame, data);
-+		if (ret)
-+			return ret;
- 		ret = unwind_frame(tsk, frame);
- 		if (ret < 0)
-+			return ret;
-+		if (ret > 0)
- 			break;
- 	}
-+	return 0;
- }
- 
- #ifdef CONFIG_STACKTRACE
-@@ -145,14 +149,15 @@ void save_stack_trace_regs(struct pt_regs *regs, struct stack_trace *trace)
- 		trace->entries[trace->nr_entries++] = ULONG_MAX;
- }
- 
--static noinline void __save_stack_trace(struct task_struct *tsk,
-+static noinline int __save_stack_trace(struct task_struct *tsk,
- 	struct stack_trace *trace, unsigned int nosched)
- {
- 	struct stack_trace_data data;
- 	struct stackframe frame;
-+	int ret;
- 
- 	if (!try_get_task_stack(tsk))
--		return;
-+		return -EBUSY;
- 
- 	data.trace = trace;
- 	data.skip = trace->skip;
-@@ -171,11 +176,12 @@ static noinline void __save_stack_trace(struct task_struct *tsk,
- 	frame.graph = tsk->curr_ret_stack;
- #endif
- 
--	walk_stackframe(tsk, &frame, save_trace, &data);
-+	ret = walk_stackframe(tsk, &frame, save_trace, &data);
- 	if (trace->nr_entries < trace->max_entries)
- 		trace->entries[trace->nr_entries++] = ULONG_MAX;
- 
- 	put_task_stack(tsk);
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(save_stack_trace_tsk);
- 
-@@ -190,4 +196,12 @@ void save_stack_trace(struct stack_trace *trace)
- }
- 
- EXPORT_SYMBOL_GPL(save_stack_trace);
-+
-+int save_stack_trace_tsk_reliable(struct task_struct *tsk,
-+				  struct stack_trace *trace)
-+{
-+	return __save_stack_trace(tsk, trace, 1);
-+}
-+EXPORT_SYMBOL_GPL(save_stack_trace_tsk_reliable);
-+
- #endif
+> The trick is in the two bool parameters. One call allows to
+> register/enable earlycon and ignores normal console. This other
+> call does exactly the opposite. I do not see any unwanted side
+> effects.
 
+Thanks.  I'd like to know if you (or anyone else) has strong feelings about
+changing the behaviour of earlycon on x86?  I could make it so that specifying
+just earlycon would also initialize the console.
+
+P.
+
+> 
+> Best Regards,
+> Petr
+> 
