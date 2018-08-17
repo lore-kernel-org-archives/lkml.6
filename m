@@ -3,28 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F742C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B931C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5521D218A7
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:28:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5521D218A7
+	by mail.kernel.org (Postfix) with ESMTP id 4D36B20671
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:29:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D36B20671
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbeHQUc7 (ORCPT
+        id S1727979AbeHQUds (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 16:32:59 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:48236 "EHLO vps-vb.mhejs.net"
+        Fri, 17 Aug 2018 16:33:48 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:49566 "EHLO vps-vb.mhejs.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727218AbeHQUc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 16:32:59 -0400
+        id S1727181AbeHQUds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 16:33:48 -0400
 Received: by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.90_1)
         (envelope-from <mail@maciej.szmigiero.name>)
-        id 1fqiYC-0007h2-JD; Fri, 17 Aug 2018 19:28:40 +0200
+        id 1fqiZ0-0007hU-Dm; Fri, 17 Aug 2018 19:29:30 +0200
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     linux-block@vger.kernel.org,
         linux-kernel <linux-kernel@vger.kernel.org>,
@@ -32,8 +33,8 @@ Cc:     linux-block@vger.kernel.org,
         Tejun Heo <tj@kernel.org>, jiufei.xue@linux.alibaba.com,
         Caspar Zhang <caspar@linux.alibaba.com>
 From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Subject: [PATCH] cfq: clear queue pointers from cfqg after unpinning them in
- cfq_pd_offline
+Subject: [PATCH] blkcg: retry in case of locking failure in
+ blkcg_css_offline()
 Openpgp: preference=signencrypt
 Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
  xsFNBFpGusUBEADXUMM2t7y9sHhI79+2QUnDdpauIBjZDukPZArwD+sDlx5P+jxaZ13XjUQc
@@ -76,8 +77,8 @@ Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
  afYHkuEjMo0Xps3o3uvKg7coooH521nNsv4ci+KeBq3mgMCRAy0g/Ef+Ql7mt900RCBHu4tk
  tOhPc3J1ep/e2WAJ4ngUqJhilzyCJnzVJ4cT79VK/uPtlfUCZdUz+jTC88TmP1p5wlucS31k
  Thy/CV4cqDFB8yzEujTSiRzd7neG3sH0vcxBd69uvSxLZPLGID840k0v5sftPA==
-Message-ID: <ba086112-65b1-c20f-0694-35d1ca0415d9@maciej.szmigiero.name>
-Date:   Fri, 17 Aug 2018 19:28:39 +0200
+Message-ID: <022a73bc-86e1-f242-09d8-490c3e2462f9@maciej.szmigiero.name>
+Date:   Fri, 17 Aug 2018 19:29:29 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.0
 MIME-Version: 1.0
@@ -89,75 +90,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current linux-block, 4.18 and 4.17 can reliably be crashed within few
-minutes by running the following bash snippet:
+Commit 4c6994806f70 ("blk-throttle: fix race between blkcg_bio_issue_check() and cgroup_rmdir()")
+changed a loop inside blkcg_css_offline() from "while (!hlist_empty(list))"
+to "hlist_for_each_entry(list)" as the old condition wouldn't work anymore
+due to list elements no longer being removed inside the loop.
 
-mkfs.ext4 -v /dev/sda3 && mount /dev/sda3 /mnt/test/ -t ext4;
-while true; do
-	mkdir /sys/fs/cgroup/unified/test/;
-	echo $$ >/sys/fs/cgroup/unified/test/cgroup.procs;
-	dd if=/dev/zero of=/mnt/test/test-$(( RANDOM * 10 / 32768 )) bs=1M count=1024 &
-	echo $$ >/sys/fs/cgroup/unified/cgroup.procs;
-	sleep 1;
-	kill -KILL $!; wait $!;
-	rmdir /sys/fs/cgroup/unified/test;
-done
-
-# cat /sys/block/sda/queue/scheduler
-noop [cfq]
-# cat /sys/block/sda/queue/rotational
-1
-# cat /sys/fs/cgroup/unified/cgroup.subtree_control
-cpu io memory pids
-
-The backtraces vary but often they are NULL pointer dereferences due to
-various cfqq fields being NULL.
-Or BUG_ON(cfqq->ref <= 0) in cfq_put_queue() triggers due to cfqq reference
-count being zero.
-
-Bisection points at
-commit 4c6994806f70 ("blk-throttle: fix race between blkcg_bio_issue_check() and cgroup_rmdir()").
-The prime suspect looked like .pd_offline_fn() method being called multiple
-times, but from analyzing the mentioned commit this didn't seem possible
-and runtime trials have confirmed that.
-
-However, CFQ's cfq_pd_offline() implementation of the above method were
-leaving queue pointers intact in cfqg after unpinning them.
-After making sure that they are cleared to NULL in this function I can no
-longer reproduce the crash.
+However, this means that the code effectively lost an automatic retry in
+case of queue_lock locking failure.
+Let's put the lock retry back there.
 
 Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
 Fixes: 4c6994806f70 ("blk-throttle: fix race between blkcg_bio_issue_check() and cgroup_rmdir()").
 Cc: stable@vger.kernel.org
 ---
- block/cfq-iosched.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ block/blk-cgroup.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/block/cfq-iosched.c b/block/cfq-iosched.c
-index 2eb87444b157..ed41aa978c4a 100644
---- a/block/cfq-iosched.c
-+++ b/block/cfq-iosched.c
-@@ -1644,14 +1644,20 @@ static void cfq_pd_offline(struct blkg_policy_data *pd)
- 	int i;
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 694595b29b8f..db4b3331d01a 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -1073,16 +1073,23 @@ static void blkcg_css_offline(struct cgroup_subsys_state *css)
+ 	spin_lock_irq(&blkcg->lock);
  
- 	for (i = 0; i < IOPRIO_BE_NR; i++) {
--		if (cfqg->async_cfqq[0][i])
-+		if (cfqg->async_cfqq[0][i]) {
- 			cfq_put_queue(cfqg->async_cfqq[0][i]);
--		if (cfqg->async_cfqq[1][i])
-+			cfqg->async_cfqq[0][i] = NULL;
-+		}
-+		if (cfqg->async_cfqq[1][i]) {
- 			cfq_put_queue(cfqg->async_cfqq[1][i]);
-+			cfqg->async_cfqq[1][i] = NULL;
-+		}
+ 	hlist_for_each_entry(blkg, &blkcg->blkg_list, blkcg_node) {
++		bool retry;
+ 		struct request_queue *q = blkg->q;
+ 
++again:
+ 		if (spin_trylock(q->queue_lock)) {
+ 			blkg_pd_offline(blkg);
+ 			spin_unlock(q->queue_lock);
++			retry = false;
+ 		} else {
+ 			spin_unlock_irq(&blkcg->lock);
+ 			cpu_relax();
+ 			spin_lock_irq(&blkcg->lock);
++			retry = true;
+ 		}
++
++		if (retry)
++			goto again;
  	}
  
--	if (cfqg->async_idle_cfqq)
-+	if (cfqg->async_idle_cfqq) {
- 		cfq_put_queue(cfqg->async_idle_cfqq);
-+		cfqg->async_idle_cfqq = NULL;
-+	}
- 
- 	/*
- 	 * @blkg is going offline and will be ignored by
+ 	spin_unlock_irq(&blkcg->lock);
