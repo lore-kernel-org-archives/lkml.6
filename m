@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB2DC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 19:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE1A4C43615
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 19:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4CEB208C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 19:11:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70FD9208DA
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 19:11:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IyGopoFZ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XX+bhLB5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4CEB208C0
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jjOgUmzz";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LH3zCQgV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70FD9208DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728315AbeHQWQM (ORCPT
+        id S1728394AbeHQWQN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 18:16:12 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36562 "EHLO
+        Fri, 17 Aug 2018 18:16:13 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36764 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728213AbeHQWPL (ORCPT
+        with ESMTP id S1728214AbeHQWPP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 18:15:11 -0400
+        Fri, 17 Aug 2018 18:15:15 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 679DD6256A; Fri, 17 Aug 2018 19:10:38 +0000 (UTC)
+        id 67A07625AA; Fri, 17 Aug 2018 19:10:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1534533038;
-        bh=ENAVc3R5FTrYnDKyvx6U7tW772rhwQ86OJD8wGGgBIE=;
+        s=default; t=1534533041;
+        bh=bQETiLhZqSKTJmg/844rsftxBCVPpj2SQb/j29Mvqxo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IyGopoFZsWHjOn7pRafak4FySrUX/G5X1GoBmixRlz83nC2iOr5Qwrki5lqJ0xhkB
-         IBGVSJk9GgmtvR2IBW5QtE5++T71mLV/n5nVQdV38xWsI7zVo33XoZDZNYbtzz0/nI
-         q8HNTBQzYSKV2NBZ5aXdZeGWAP4pMjcuM/GodEpA=
+        b=jjOgUmzz+ALzAMf9KdkqpLr8MCfs3g5jG+8M3FJ/vZDjEFOwMFOA1QVkOaSv7Qw4T
+         ZpOSpR7PMyIx+wTMiFijJ/e5L33IQ7eYZDiEB7ZxK/Nc/ECJNkUMvfZalDJ+zapP6U
+         8iwj7hzqVwz8RrjXVCZidP0LFXPKWVysVI81y7Lw=
 Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D2AAB62578;
-        Fri, 17 Aug 2018 19:10:36 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 67138625AA;
+        Fri, 17 Aug 2018 19:10:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1534533037;
-        bh=ENAVc3R5FTrYnDKyvx6U7tW772rhwQ86OJD8wGGgBIE=;
+        s=default; t=1534533040;
+        bh=bQETiLhZqSKTJmg/844rsftxBCVPpj2SQb/j29Mvqxo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XX+bhLB5VRFM1u5UXDjthDxsWXpUcvSQ29LfWGigoSdF19tG6k7dfwfnmUR4Lp9BX
-         T96bcxqR8klnOgrXPBuguI9YX3LOcq97Do6NVcpuFIKHtK5VAmk4yzCirZGmtHAnV8
-         pUjYRXSrDDH2tbrBPG7umSO9qoQ97AAoveS3+zQ8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D2AAB62578
+        b=LH3zCQgVw9WchAZoQMytQMEsl5nAs5sadxvpyInqB81n55HznV3aZcW8FOxJnPR6F
+         qNh0j+F7JZLZZ1L8cnXT6hvvnospLNOSGYTNxRO2nZxx9/U56uHr5ig1p4Y+WYkDDd
+         vfAMI1MzSa9Z5gz010L/ayWwY5HLDtLxlydvq5bE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 67138625AA
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
 From:   Lina Iyer <ilina@codeaurora.org>
@@ -58,9 +58,9 @@ Cc:     rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
         devicetree@vger.kernel.org, andy.gross@linaro.org,
         dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH RESEND v1 2/5] drivers: pinctrl: msm: enable PDC interrupt only during suspend
-Date:   Fri, 17 Aug 2018 13:10:23 -0600
-Message-Id: <20180817191026.32245-3-ilina@codeaurora.org>
+Subject: [PATCH RESEND v1 4/5] arm64: dts: qcom: add wake up interrupts for GPIOs for SDM845
+Date:   Fri, 17 Aug 2018 13:10:25 -0600
+Message-Id: <20180817191026.32245-5-ilina@codeaurora.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180817191026.32245-1-ilina@codeaurora.org>
 References: <20180817191026.32245-1-ilina@codeaurora.org>
@@ -69,146 +69,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During suspend the system may power down some of the system rails. As a
-result, the TLMM hw block may not be operational anymore and wakeup
-capable GPIOs will not be detected. The PDC however will be operational
-and the GPIOs that are routed to the PDC as IRQs can wake the system up.
-
-To avoid being interrupted twice (for TLMM and once for PDC IRQ) when a
-GPIO trips, use TLMM for active and switch to PDC for suspend. When
-entering suspend, disable the TLMM wakeup interrupt and instead enable
-the PDC IRQ and revert upon resume.
+GPIOs that are wakeup capable have interrupt lines that are routed to
+the always-on interrupt controller (PDC) in parallel to the pinctrl. The
+interrupts listed here are the wake up lines corresponding to GPIOs.
 
 Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 ---
- drivers/pinctrl/qcom/pinctrl-msm.c | 60 +++++++++++++++++++++++++++++-
- drivers/pinctrl/qcom/pinctrl-msm.h |  3 ++
- 2 files changed, 62 insertions(+), 1 deletion(-)
+Changes in v1:
+	- Use interrupt-extended for all TLMM interrupts
+	- Define GPIO-PDC map using interrupt-names
+---
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 57 +++++++++++++++++++++++++++-
+ 1 file changed, 56 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 03ef1d29d078..17e541f8f09d 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -37,6 +37,7 @@
- #include "../pinctrl-utils.h"
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 87ffc32dc597..2379684373d3 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -712,11 +712,66 @@
+ 		tlmm: pinctrl@3400000 {
+ 			compatible = "qcom,sdm845-pinctrl";
+ 			reg = <0x03400000 0xc00000>;
+-			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
++			interrupts-extended = <&intc GIC_SPI 208 0>,
++				<&pdc 510 0>, <&pdc 511 0>, <&pdc 512 0>,
++				<&pdc 513 0>, <&pdc 514 0>, <&pdc 515 0>,
++				<&pdc 516 0>, <&pdc 517 0>, <&pdc 518 0>,
++				<&pdc 519 0>, <&pdc 632 0>, <&pdc 639 0>,
++				<&pdc 521 0>, <&pdc 522 0>, <&pdc 523 0>,
++				<&pdc 524 0>, <&pdc 525 0>, <&pdc 526 0>,
++				<&pdc 527 0>, <&pdc 630 0>, <&pdc 637 0>,
++				<&pdc 529 0>, <&pdc 530 0>, <&pdc 531 0>,
++				<&pdc 532 0>, <&pdc 633 0>, <&pdc 640 0>,
++				<&pdc 534 0>, <&pdc 535 0>, <&pdc 536 0>,
++				<&pdc 537 0>, <&pdc 538 0>, <&pdc 539 0>,
++				<&pdc 540 0>, <&pdc 541 0>, <&pdc 542 0>,
++				<&pdc 543 0>, <&pdc 544 0>, <&pdc 545 0>,
++				<&pdc 546 0>, <&pdc 547 0>, <&pdc 548 0>,
++				<&pdc 549 0>, <&pdc 550 0>, <&pdc 551 0>,
++				<&pdc 552 0>, <&pdc 553 0>, <&pdc 554 0>,
++				<&pdc 555 0>, <&pdc 556 0>, <&pdc 557 0>,
++				<&pdc 631 0>, <&pdc 638 0>, <&pdc 559 0>,
++				<&pdc 560 0>, <&pdc 561 0>, <&pdc 562 0>,
++				<&pdc 563 0>, <&pdc 564 0>, <&pdc 565 0>,
++				<&pdc 566 0>, <&pdc 570 0>, <&pdc 571 0>,
++				<&pdc 572 0>, <&pdc 573 0>, <&pdc 609 0>,
++				<&pdc 610 0>, <&pdc 611 0>, <&pdc 612 0>,
++				<&pdc 613 0>, <&pdc 614 0>, <&pdc 615 0>,
++				<&pdc 617 0>, <&pdc 618 0>, <&pdc 619 0>,
++				<&pdc 620 0>, <&pdc 621 0>, <&pdc 622 0>,
++				<&pdc 623 0>;
++			interrupt-names = "summary-irq",
++				"gpio1", "gpio3", "gpio5",
++				"gpio10", "gpio11", "gpio20",
++				"gpio22", "gpio24", "gpio26",
++				"gpio30", "gpio31", "gpio31",
++				"gpio32", "gpio34", "gpio36",
++				"gpio37", "gpio38", "gpio39",
++				"gpio40", "gpio41", "gpio41",
++				"gpio43", "gpio44", "gpio46",
++				"gpio48", "gpio49", "gpio49",
++				"gpio52", "gpio53", "gpio54",
++				"gpio56", "gpio57", "gpio58",
++				"gpio59", "gpio60", "gpio61",
++				"gpio62", "gpio63", "gpio64",
++				"gpio66", "gpio68", "gpio71",
++				"gpio73", "gpio77", "gpio78",
++				"gpio79", "gpio80", "gpio84",
++				"gpio85", "gpio86", "gpio88",
++				"gpio89", "gpio89", "gpio91",
++				"gpio92", "gpio95", "gpio96",
++				"gpio97", "gpio101", "gpio103",
++				"gpio104", "gpio115", "gpio116",
++				"gpio117", "gpio118", "gpio119",
++				"gpio120", "gpio121", "gpio122",
++				"gpio123", "gpio124", "gpio125",
++				"gpio127", "gpio128", "gpio129",
++				"gpio130", "gpio132", "gpio133",
++				"gpio145";
  
- #define MAX_NR_GPIO 300
-+#define MAX_PDC_IRQ 1024
- #define PS_HOLD_OFFSET 0x820
- 
- /**
-@@ -51,6 +52,7 @@
-  * @enabled_irqs:   Bitmap of currently enabled irqs.
-  * @dual_edge_irqs: Bitmap of irqs that need sw emulated dual edge
-  *                  detection.
-+ * @pdc_irqs:       Bitmap of wakeup capable irqs.
-  * @soc;            Reference to soc_data of platform specific data.
-  * @regs:           Base address for the TLMM register map.
-  */
-@@ -68,11 +70,14 @@ struct msm_pinctrl {
- 
- 	DECLARE_BITMAP(dual_edge_irqs, MAX_NR_GPIO);
- 	DECLARE_BITMAP(enabled_irqs, MAX_NR_GPIO);
-+	DECLARE_BITMAP(pdc_irqs, MAX_PDC_IRQ);
- 
- 	const struct msm_pinctrl_soc_data *soc;
- 	void __iomem *regs;
- };
- 
-+static bool in_suspend;
-+
- static int msm_get_groups_count(struct pinctrl_dev *pctldev)
- {
- 	struct msm_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-@@ -787,8 +792,11 @@ static int msm_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
- 
- 	raw_spin_lock_irqsave(&pctrl->lock, flags);
- 
--	if (pdc_irqd)
-+	if (pdc_irqd && !in_suspend) {
- 		irq_set_irq_wake(pdc_irqd->irq, on);
-+		on ? set_bit(pdc_irqd->irq, pctrl->pdc_irqs) :
-+		     clear_bit(pdc_irqd->irq, pctrl->pdc_irqs);
-+	}
- 
- 	irq_set_irq_wake(pctrl->irq, on);
- 
-@@ -920,6 +928,8 @@ static int msm_gpio_pdc_pin_request(struct irq_data *d)
- 	}
- 
- 	irq_set_handler_data(d->irq, irq_get_irq_data(irq));
-+	irq_set_handler_data(irq, d);
-+	irq_set_status_flags(irq, IRQ_DISABLE_UNLAZY);
- 	disable_irq(irq);
- 
- 	return 0;
-@@ -1070,6 +1080,54 @@ static void msm_pinctrl_setup_pm_reset(struct msm_pinctrl *pctrl)
- 		}
- }
- 
-+int __maybe_unused msm_pinctrl_suspend_late(struct device *dev)
-+{
-+	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
-+	struct irq_data *irqd;
-+	int i;
-+
-+	in_suspend = true;
-+	for_each_set_bit(i, pctrl->pdc_irqs, MAX_PDC_IRQ) {
-+		irqd = irq_get_handler_data(i);
-+		/*
-+		 * We don't know if the TLMM will be functional
-+		 * or not, during the suspend. If its functional,
-+		 * we do not want duplicate interrupts from PDC.
-+		 * Hence disable the GPIO IRQ and enable PDC IRQ.
-+		 */
-+		if (irqd_is_wakeup_set(irqd)) {
-+			irq_set_irq_wake(irqd->irq, false);
-+			disable_irq(irqd->irq);
-+			enable_irq(i);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+int __maybe_unused msm_pinctrl_resume_late(struct device *dev)
-+{
-+	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
-+	struct irq_data *irqd;
-+	int i;
-+
-+	for_each_set_bit(i, pctrl->pdc_irqs, MAX_PDC_IRQ) {
-+		irqd = irq_get_handler_data(i);
-+		/*
-+		 * The TLMM will be operational now, so disable
-+		 * the PDC IRQ.
-+		 */
-+		if (irqd_is_wakeup_set(irq_get_irq_data(i))) {
-+			disable_irq_nosync(i);
-+			irq_set_irq_wake(irqd->irq, true);
-+			enable_irq(irqd->irq);
-+		}
-+	}
-+	in_suspend = false;
-+
-+	return 0;
-+}
-+
- int msm_pinctrl_probe(struct platform_device *pdev,
- 		      const struct msm_pinctrl_soc_data *soc_data)
- {
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
-index 9b9feea540ff..21b56fb5dae9 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.h
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.h
-@@ -123,4 +123,7 @@ int msm_pinctrl_probe(struct platform_device *pdev,
- 		      const struct msm_pinctrl_soc_data *soc_data);
- int msm_pinctrl_remove(struct platform_device *pdev);
- 
-+int msm_pinctrl_suspend_late(struct device *dev);
-+int msm_pinctrl_resume_late(struct device *dev);
-+
- #endif
+ 			qup_i2c0_default: qup-i2c0-default {
+ 				pinmux {
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
