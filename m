@@ -4,152 +4,175 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E8C5C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 12:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D43ECC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 12:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0E9C2146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 12:31:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79DB42146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 12:31:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="mp6fg3eD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0E9C2146E
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="F7+v/PtP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79DB42146E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbeHQPe5 (ORCPT
+        id S1727274AbeHQPfB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 11:34:57 -0400
-Received: from mail-cys01nam02on0062.outbound.protection.outlook.com ([104.47.37.62]:37343
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        Fri, 17 Aug 2018 11:35:01 -0400
+Received: from mail-bn3nam01on0074.outbound.protection.outlook.com ([104.47.33.74]:10528
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726478AbeHQPe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 11:34:57 -0400
+        id S1726544AbeHQPfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 11:35:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LgXXh8BEG2mQ09zzfL4EhFalcNoo/gAhP3vOcGUe9Gs=;
- b=mp6fg3eDFMN8ogGLqYx1x8tNsuJHOEjxKJKeTSzCtzbkFpUeRXOWRep2zQsBGpDqkhgEZKdo2PLCcC/gnc+yjl7ZzUfRivUhkI/xFiwK3SG0sBYskqq+YOxvaAyiTg/qGdEFFl1+YBOu2R8S/B1ZBcnEzOQFmbyAqTGy7RydlHM=
-Received: from DM6PR07CA0009.namprd07.prod.outlook.com (2603:10b6:5:94::22) by
- CY1PR07MB2297.namprd07.prod.outlook.com (2a01:111:e400:c5b3::26) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1059.21; Fri, 17 Aug
+ bh=3UnLGoHu/mbcqL2hjfpOfEJmgYbzBksAcJMOBTOCwNc=;
+ b=F7+v/PtPDT8i2rANSJxM3We7h5KEy4MwE7Qk+v6WQP+EK+gNc5c2WudWj99+qnXkonSW4hW8Kd7IaauX1WS39T8qigkBXO1PQ5N8TPUEVNwuS1v5eYM5V6nYmbDzFvpOVWE8cL7Bjt2qCZkgsNml2fBaUyXr+3xq94Yioa1P+s0=
+Received: from CY1PR07CA0032.namprd07.prod.outlook.com
+ (2a01:111:e400:c60a::42) by SN1PR07MB2304.namprd07.prod.outlook.com
+ (2a01:111:e400:7a45::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1038.25; Fri, 17 Aug
  2018 12:31:38 +0000
-Received: from CO1NAM05FT056.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e50::209) by DM6PR07CA0009.outlook.office365.com
- (2603:10b6:5:94::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1059.19 via Frontend
- Transport; Fri, 17 Aug 2018 12:31:37 +0000
+Received: from BY2NAM05FT025.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e52::205) by CY1PR07CA0032.outlook.office365.com
+ (2a01:111:e400:c60a::42) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1059.20 via Frontend
+ Transport; Fri, 17 Aug 2018 12:31:38 +0000
+Authentication-Results: spf=softfail (sender IP is 158.140.1.28)
+ smtp.mailfrom=cadence.com; ti.com; dkim=none (message not signed)
+ header.d=none;ti.com; dmarc=fail action=none header.from=cadence.com;
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 158.140.1.28 as permitted sender)
 Received: from sjmaillnx1.cadence.com (158.140.1.28) by
- CO1NAM05FT056.mail.protection.outlook.com (10.152.96.172) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id
- 15.20.1080.6 via Frontend Transport; Fri, 17 Aug 2018 12:31:37 +0000
+ BY2NAM05FT025.mail.protection.outlook.com (10.152.100.162) with Microsoft
+ SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.20.1080.6 via
+ Frontend Transport; Fri, 17 Aug 2018 12:31:37 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id w7HCVZDq002417
+        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id w7HCVZDr002417
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Fri, 17 Aug 2018 05:31:36 -0700
+        Fri, 17 Aug 2018 05:31:37 -0700
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Fri, 17 Aug 2018 14:31:26 +0200
+ 15.0.1367.3; Fri, 17 Aug 2018 14:31:47 +0200
 Received: from lvloginb.cadence.com (10.165.177.11) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Fri, 17 Aug 2018 14:31:26 +0200
+ 15.0.1367.3 via Frontend Transport; Fri, 17 Aug 2018 14:31:47 +0200
 Received: from lvloginb.cadence.com (localhost [127.0.0.1])
-        by lvloginb.cadence.com (8.14.4/8.14.4) with ESMTP id w7HCVDMb012680;
-        Fri, 17 Aug 2018 13:31:13 +0100
+        by lvloginb.cadence.com (8.14.4/8.14.4) with ESMTP id w7HCVXVX013145;
+        Fri, 17 Aug 2018 13:31:33 +0100
 Received: (from adouglas@localhost)
-        by lvloginb.cadence.com (8.14.4/8.14.4/Submit) id w7HCVCZs012665;
-        Fri, 17 Aug 2018 13:31:12 +0100
+        by lvloginb.cadence.com (8.14.4/8.14.4/Submit) id w7HCVXDn013144;
+        Fri, 17 Aug 2018 13:31:33 +0100
 From:   Alan Douglas <adouglas@cadence.com>
 To:     <kishon@ti.com>, <linux-kernel@vger.kernel.org>
 CC:     <stelford@cadence.com>, Alan Douglas <adouglas@cadence.com>
-Subject: [RFC PATCH 0/2] phy: cadence: Add driver and dt-bindings for Sierra PHY
-Date:   Fri, 17 Aug 2018 13:31:08 +0100
-Message-ID: <1534509068-12515-1-git-send-email-adouglas@cadence.com>
+Subject: [RFC PATCH 1/2] dt-bindings: phy: Document cadence Sierra PHY bindings
+Date:   Fri, 17 Aug 2018 13:31:20 +0100
+Message-ID: <1534509080-12821-1-git-send-email-adouglas@cadence.com>
 X-Mailer: git-send-email 1.9.0
 MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(39850400004)(346002)(376002)(136003)(2980300002)(36092001)(199004)(189003)(51416003)(16586007)(54906003)(110136005)(42186006)(316002)(8676002)(246002)(47776003)(217873002)(5660300001)(6666003)(478600001)(4326008)(26826003)(87636003)(107886003)(2906002)(48376002)(50466002)(50226002)(86362001)(8936002)(105596002)(106466001)(6346003)(36756003)(356003)(7636002)(26005)(336012)(486006)(126002)(186003)(305945005)(426003)(476003)(2616005);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR07MB2297;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;CO1NAM05FT056;1:xw9cWlZS6AmwaLdtYd+HwRyV4eRy7HSKKpAS5rm1zyF10EcgQO565Wuzpu8aezCyohhzDfXjM8K8BQ8lStG1btxEOwxATGS8CJ14WK/e1Ykm3aOJ0g20S0tkc2yj6VOt
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(136003)(39860400002)(346002)(396003)(2980300002)(36092001)(189003)(199004)(305945005)(7636002)(87636003)(246002)(26826003)(478600001)(356003)(126002)(486006)(48376002)(426003)(476003)(50466002)(86362001)(2906002)(217873002)(2616005)(8676002)(6666003)(4326008)(336012)(186003)(105596002)(106466001)(26005)(107886003)(8936002)(36756003)(47776003)(50226002)(42186006)(316002)(16586007)(110136005)(54906003)(51416003)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR07MB2304;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2NAM05FT025;1:vVUg8irZbr+Zz1tzNcaBtgSyrxp9o4KHYEbXJA7hlkvpsYMdch3SmX99lYGRcoN23o27+TLa8Enul8FWrz3iYCqP6KspN0BJPpC1HtKqYWwjRa54MaYUpL9rxyPg3Eqj
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b2a4a7fb-e877-4581-7bb4-08d6043d6064
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060);SRVR:CY1PR07MB2297;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2297;3:hSjegqRHE1oIxS6zeoV93Izil4ObUDUPwU6kyCWE/gUPY95Kv0uTCEtUsf9DetRsOH1xxYjMeLe4/mDpSFDIpGhpVzLtXYcGLbFky4eWv6z5XTU3s7CEFILvik09nQuagtExdz7yaBsidDFba8fDffnCkl5kA83S4DrVErhRbPc/LRbjpnbTeIO7R2eAWK9CAj94u3FTi9dDpb16TISE2ATqr2XkSMYEMcdcHFhWNpaS5lrbWvCFxN8fc4NeN3dnRGbMhTJqFIjZgN0zicN3nXzHVMiePkGuYz86Q4D9bns7kOAvGccLNxYL+frKjAeBDYdjp4GlyJpoaN+sfrz1NE0Le2JVV33GLA5JdOvkJq8=;25:6tX25wH5jDng/eeD2eJTOgS8mX15yVyJA252Wwh5TjhcZOzPkcEczxH/zOdqd4fA8F+9wS3rAh6nTaOcbQB6OuzTaNHqozhEHkXne5A5FuyFgG7ECPeM0p6arJYIL3G9G488gL5fNDDHscANr/58/w7EQhcu6IVMlxx8KPkBXE49e5JD4vokWPPgFPwr8sjmad13fGYQRqili7+2KxKIM5F0VA6+HWEPMY0KEWL9UT1ZzMrxapB07ym2JJCU5vwv4ZSvMG/HBwrqNIc2Ck+wZN+wYwC1jB4gNAy0RWLzDZ/ZCPymV6y9new9oW/tO/C0I8E1+4JbeqQBV0gst3h3ww==
-X-MS-TrafficTypeDiagnostic: CY1PR07MB2297:
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2297;31:5ZU2L93dtatbeJ0PFMCemZlrzrvk0izEiiGIr29cA5iaEW5ggVPqHq2V9H9eEpNrZJv5F+nY+U3lEScZRBDf2uipLsDN9g92Ci9iLDPKzMI0vQXDQtb64BY+EE+Jhu+fFS5Q0d/OyVEA9lnJt/Q/GEgxPSixYzlNmpJq5hbW6IXnIyUZ3xuvYHYFDX9adhIrT615l/jrmIUvCVRqDU9UU0J5hz2+nwZQQdz54R4q2Uc=;20:s8oyC+mbZsJA5wMUMCxpc9LNdkKD2zRaKAVv3GW+G61ihgpieK90csvORChbrw8PGWY4qHeJjJgXM4jKqL884XWEksZLZMok+X+dveFRGdtpfxZ363C46EiOqq+r4iIuWPH9LMOjI2Y2xU2mKQ3iV02mfPo/3YyTfaLdEKpuDCWmf1KxPK0RXlBgecJ8nPB0qDtCxzxR2W7mNynz0hd2KU7WmUYquZnXFwVnwPhAZ+sCscAJLRhSLvp4397F7ar/VtLkxxB69/P/sGTdj4OojrJM9x2StlF2FAxBsJqQT2hfYMKC3oTKIYOz+WXj3c6CX3edC62eAYB31EZrpXLAa8K5cOMbwTiU4nZjAXMoSyerJEg4tASuUB+IeFyg5mE19GQeb/XcY/1LrdVsVcvS9emjGBlNo+yZYXqKvP7QYTHvkAKd2hvM4IJrq++PIg2Ac7XBHj8LntGAACcqp/VrI+NOy8MgBWVHDj59VkazAVq8b6r/oO5jEQpFfK4hsjEA
-X-Microsoft-Antispam-PRVS: <CY1PR07MB22979BD5852115A33C23CB74D83D0@CY1PR07MB2297.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Office365-Filtering-Correlation-Id: 8b67d2c6-b4cb-4765-3b2d-08d6043d608f
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:SN1PR07MB2304;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2304;3:CuLAS8n0EDAB4Eqsar3Oy6fQap82T+1s31ZkU9CHnpBvzMZved5s9MkKRG15egUyqRXhB+ZBUlcQhxOY9YFC4KA3OEbr7jFBzrWgUrKjvkcpvvmbjBAiLAe6jfdX6lZV88j1sGxQK5EvjCcx2yZutntDfk9on5RzCxcdvVKsU3Qv13AWmSKv6Qv6/fTznVQTXCRlH966S3BhgDVMR9qmF2BNVx77tKYJlFOkf697VKylTTcdQmM4H+TvzNa/xUs17TYbBMw6K5IrnwRCOV6dmhz2eCHFkVBjlgZhyR9hK74lJ5KANkYZj7JidJKaQuoakkmRdk5kzo3GZuwlMdxWheUH5InIrGYqrp1lSpM6ETI=;25:AwDVfsk79T0EEetcU55frJvpHHonUeRTqQ6QRpZ88Xf1Dq0Y/F4jR4628d0E6LoYKMHcpoavXy+zr/vXVJ0/YfFosl5uTgCl11ZLgXAVd10kTjEUl1DkMz/ys9t2NIsuGWdwrVAm1ybfhhRs6OY+6bQMNrhWdTGKY8wkOwr/VBQMvJkKtIdfKPzLrpywJhjIEshIZSGyY++m1yGjvF/PEOEaRzr4Hlmv07RxLWBLqn0jfCzfvJRe6qnJoo+MJY19o4PlCCEIGypCMopumgKc2pM0q7eek4uHkNDvnMXXvn1WxASoJmgxaCYpXgQqHFm9mx13BkY3wYwedvOs7CdhRw==
+X-MS-TrafficTypeDiagnostic: SN1PR07MB2304:
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2304;31:ovHKjmkukghRtHuvXK0s/5iCcJAPumKwxggzY/6Jk1+fYX+/BQvG0e2TGnx2GiA0x9F+zl4apCCYXcxILSHpYapT7KSRym7cz9HRWRDKaH4uv43Fcl4ADOVPlbIDLWDsE1i+x7MCihqXNsjGz7BCdBwAREZCUc4YXIWqqqZd7gQPkCBQXeuC4rpWnFDxXYDQJlT9KM4zEWtJIgNhtn//FZBf4UyUfdk4kyI3Kt3H8qY=;20:dHi2wWnPv1Q8J1jc0+idOtFY4xAVKqoLeB0NMjK6nArPY8nmKfj3dNfidm3o48NQR0vHc89UDZmNecHkx96rellDewwrHtkwrk+sdj6pNMJGzNJdq+6amTAHs6Ek0zM+agEeo0PNtwsarLgswB0O/gHgAFvElca4kKe4rTg0biGLj5B83PefD/0o+NYNOdk1y5r2eDQ1u3H6axMfK2WNtkJJ12CtoVoGgZ+GZmmQqSIKaY3VIMacn3SZ0TvXnTYzU/uMrekV6DchgYyZUl7VFy1ZQHkNTxdC2gQSHZIgnMmoWca+xKgDIj6iA7xrloKBNEtQwwWD4RfznmwNkUOV6ILmSIJf8uElP534oUldWYxC4ATUPjlVxaUv9MF6Z50yKB6fcEsK8KCUMJ7A1N3+VAADqXL9aAmuO2TABeNQSIukhMi7sK0Psp7gLQXVf+Frgz1ZKD4a+X6xJDa04kFJmyi9c+pFe6lshoK7myJUgGGmLMOitzZV/2Yyi9tFNFEM
+X-Microsoft-Antispam-PRVS: <SN1PR07MB2304080C308D11763EAF57A3D83D0@SN1PR07MB2304.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(72806322054110);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(10201501046)(3002001)(93006095)(93003095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699016);SRVR:CY1PR07MB2297;BCL:0;PCL:0;RULEID:;SRVR:CY1PR07MB2297;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2297;4:lsUzlMh5F6hfko42wCoqBfeaqi+9X5Zv4fbj5pdfc2BIeIN8ee2pEV1fu+OxJ6UqFY3ySMTLh/4EDjKWwZ6xmLQQNgViFy5YTb/VodCbNYduEKKntdgAZ2nkQcuTHrAdfuSxMtYTDjsF579oq4kQpXZUCu1lhRfQz/0CnaEMVnEo9yiJ3IWaxzYzHxYUahyuy+UFkd4tOrrKn9fUdt73IC0ikAttOP4e7d9pEUr/95aJaHBXGmaROiW5xcUxYa9h1g1T/N5fp+YPx5wi5HQWUA==
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93003095)(10201501046)(149027)(150027)(6041310)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699016);SRVR:SN1PR07MB2304;BCL:0;PCL:0;RULEID:;SRVR:SN1PR07MB2304;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2304;4:P6OLQJHF5DMUt5+HqTtIY5+DRlVzj2WH7SBKqEmqZhDXRtxdEMEEedGoUC2g6mCjmDzseK2MW5FcvI9SWXABpBhmvHE2ySOwD8BQM1d3+F06mXqwcXBZqksTnP2hoK7bv385ouG+Q0gVhJmSn34sSVTPnYI1EHREq4AXBk3NrREkZDaGNSdMjgCg2d6aq7GatAmJYXRTXPc6dWaty5n8K2pSXpASTZWqx4XH4sJPeseZHkd26Vjl3WrZieK6QoVujgoXiCY+ZyP4VpK6ZAbDayk+BB/mY99595OcT0LWogoqJEx6EYYSWVH//HDnG0Jr
 X-Forefront-PRVS: 076777155F
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR07MB2297;23:3aQHjPNdAS0FG0GutDnhVhxxVB9cndz8+GW0IQWz0?=
- =?us-ascii?Q?aODsRbW2szjyPNH82h9bsxpO/JtF8jbqdPx4VP7qzjp8iekX9E7PU2JJxS2S?=
- =?us-ascii?Q?hkif9/JhhunayHSsAtGo6KUGLaJwG/VD5WNcNygF2fsVtEHaaPpxxHfoloCL?=
- =?us-ascii?Q?ce7WS4bD5IXBjv0utmkUu/61MfeJGABR+n8dTNXPNCdjaIiKWYkdbiB7/f8R?=
- =?us-ascii?Q?a1SbjRbvKD61j0UKN9zCw/8sC07pMzIXXWckKAeUNmMTjQU46sDoY+kkOxLh?=
- =?us-ascii?Q?d9xMEIFn2G23VGRB7+vuNlH6DxVvGqTJTyX9UUkX0NCEUH4u6js+Kkj99EbA?=
- =?us-ascii?Q?b3WP3xAriotoaHrw6J/ZJFKhKSmED1fmADDythUw6vudHiHb8ZX9J0f/vh/m?=
- =?us-ascii?Q?4iwZY+HYKPCXk/iGmUM51yg1G+mSqgU33Dt6keDqEtuozr4963jHAn7vAYzU?=
- =?us-ascii?Q?vqykUJCOZPGXGl3K+fZYVqtUOM67El7xP2sW4FBGiR7M18nZMcRLmGEJrNby?=
- =?us-ascii?Q?YDEHUgkPNmW+dYjiJF8QG27ki7fE/JiKsgoGwRluMqqiTEKeMn7JY1QOWX4s?=
- =?us-ascii?Q?3wg6sn665nKZguLSutQH/MJciWoiEvUtCjoc4juM2AIenjKlOSQ73v19Mtzb?=
- =?us-ascii?Q?7sZzf7J/InQgX4alO274FLdS8QhPeHGLA7Nd5s/cnxsKJU+EZzZ7jvzAo6Kh?=
- =?us-ascii?Q?ugzYLu5IKp1y7iRlZ5hg4lpcqw8n3LVr7/RIyuHIdYYpAnsp43r0UAhhsK8d?=
- =?us-ascii?Q?67kpxmqSXCbgkJmGTc4t3qP59b3vA8lyMaWvKLFo7/gyotPWP9GtaxTwzMsv?=
- =?us-ascii?Q?MWGqiKVFaBpVki69UxrqIpkwxP4vjJ5rfHeGeGY9MT8ozixrR1tJuWRUf6Ah?=
- =?us-ascii?Q?onShKXVHwBEkZUf9HsbewOO8dEZys54GmcqQ/pT2HJOG3cW+9csaKe7nmWLR?=
- =?us-ascii?Q?nd1TYtZ9PXZbGCHyMV3t/60Df6scmB7cs91twgV0Gi4HFNMQkNjpuh5SlN7b?=
- =?us-ascii?Q?lk3DulPyYyhGsiSqEA0QacOt+AbOd9J7RvK4btXhXEZgseFkdoTdUKmu6aq8?=
- =?us-ascii?Q?1661a8=3D?=
-X-Microsoft-Antispam-Message-Info: EOFR1R61OfMeZcEXM6XLD6vusgIH2jXaMEPYybEpkTjMq5McwxZib6Zfezyet1KWiuFqT+K2AB4iYF/9q5prRPCe39MWbcYAaUNw5lo+Pfq6gj3N/EFqYTypleDHNdsX7HnSCL1Ahvm6zVpZUg8jnfrt23O66KekmeAaKseuUiCGZaUU1jePfFI9YP9XYEPrVTpfBXQDVdA1d22+fS3bgkvrePwnFeFd5b4aEgUB69ucAVo2j/GXgA6FsoBC+PkSaIh3LmO4J+cbGJhMONxLwgw/yW64lmgM10G46wJBxa2nXDdtTyRj2g8rFeJfHWsRPePwWdZzT9oDgVtq/rnH1n60oeNp8P3krZ//U8NZMwTOveSfhbpJ9feYgyBsPlRvFiE3FBwjyWxhkLfGifhbeg==
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2297;6:Fg5zdfJTrYesrNlDVnAiF8CgSz+QFMpWB5O55MEWPEIZHPYKmHVNDmPE9a2hOMI5sA/gDesfkbJYtqgUHhK3ZLezTCjX9YCCx72wI0OMRen1nsd04B6W0UM86Lov8r4nuSVF6+f4Vbr/uDasTGB3Bsn/Kbbrh+N/tlNnULpYqG58xK+gMvP39mqt4UM80zJZOaLEp/dNr4LALi3VSqH4oFytobCXmBlXo3V51iZXJw9ir0wg0DGA7oALUGSv3RFFjM5xFlaTptxVLsc1/OoI9pfUB+l9YHVROUUfzSUvjGIt66xO9ew03aPpY5i3ALzgDgMdTPh5dQM/y2RLjE+wP2iPhN6E6PIEc19c687QsIjLRlZ4V2okU0P+YrtzZeHMiIIObBtITOCPLN8G98pMZtX+w0MhUFaVFeNo/ZhMTuO+33KEv9cuPQhq6JRPj9cfOwfQWz8YzM8rtaASgcLdvA==;5:urIY6dJ2yAnyKCiuD9kQ345V2eA2PlkjBugfavtk+h8D3Ilw44en34e5KEFJYHS5+UQTCqbyiEC/KOS9CPkFXdL53I+yRbCLoXgo7YLafOC8iyPF7V8xO5um6NGUFfrJ8M05D+0d3l3detY3cWZ+dZ7xOGgVXzntRNqUBNLT2Ow=;7:3KPb5rEu6t2UxBMcRb/Z+A73vbo7qzpVQQNwBdx93Lrd/MyWqjPmp0FP97AvlYUkKFDWNHvrNgnb6723Q1Ln7pn8NT9BoXcZsX3G5FTQFcxkvkHuekFCdIXVPjuukjkfvh3Y9fCl1Yz5HuIQkeZxk95g2khXGwm6OCX2nsUHYCIHeDj6TZOtN1lZ7JjKux17fH7GUzeGlKh9Ya510bImR3UF7ld886rs13EPYBqGISytGvOQfQCCrlIs0o++NTeM
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR07MB2304;23:a4lpN2afcmcafu3EhBoy48U6kYboEO95UYYaYf4Cm?=
+ =?us-ascii?Q?GXKVAtx3/fmjOnfMosYXhGDXY2yT6JrFFZF3iChQ9LS52qx64dOWOn/L3/Cb?=
+ =?us-ascii?Q?ddyRDSHkJKuP+ahMUZEcZTX7w7X+wPuHOeVo8kAbSXCtZ7gipYxJP+zMexXO?=
+ =?us-ascii?Q?AWi2YKBn02VdfBtFAiUzuZprvm39tNiphujc/ThQnyYL54NtEFLvZHAsQdvH?=
+ =?us-ascii?Q?wj1cvZIHm6Z8ZaOWe3NnqbqZGcrDde81sQWnSX0T58XTm8qJf5thp0RtCg0L?=
+ =?us-ascii?Q?J46NhNmGHPy5ef4kGu0syXT7J+BMDgSzR4T6Wsb7hYr66t9OoBNlGQLADvwy?=
+ =?us-ascii?Q?bUQGHz4hy1FZwVGY3D5YBZuQh/KO6VdTERxKh0U5/6TMvRL1T0PqB7TRyOVh?=
+ =?us-ascii?Q?p2wM4dVzf6WQrNM1HSgRzN0Z0HQyv4V2YP/ULMETRXPLlU5eFtTv3QAG/gnx?=
+ =?us-ascii?Q?4KjsqF6So8mhk8CZzVImDCvY735N2PhoL7H3Gbr4zBdXecFAGpr+gKe5m/V4?=
+ =?us-ascii?Q?6qL73S6tdNtZuJMTPEAfYSovhslD93YvpkqK8FrHKDdz498Zun95RH9zjkUt?=
+ =?us-ascii?Q?p5jiH+y4pDefkxqtyOLzqOnK7XGe7K2mUmDGHEBx+13Jumekqx+zmd7TBmmm?=
+ =?us-ascii?Q?hCfTPzNd45Y9vYWkbNujDVwlDQwRtp39PQDIZ3MheOupjxuoo+PnG9ikTAC3?=
+ =?us-ascii?Q?PMMwiropR3udy+kMcPmkus/mpHeye1iaz/RoDZk1K/oFwfaI3NpNlej/tuZK?=
+ =?us-ascii?Q?yv8/4Q+OodQfyYsSJrdKBPSNv4jN+TLxMIfbeNcYKaQcDUS4QSDmIA6w46k/?=
+ =?us-ascii?Q?7R71kxA3lP9ZrAP+IZR9kAs56GRAtIljQ36RX2U4Qrl12D28mZu6Nenfj/FW?=
+ =?us-ascii?Q?U5VDR/J5KZYTmbobnJgeo3RJhx7NYznDTUtpwgAiXqUW35FObpn9f+wQMyNr?=
+ =?us-ascii?Q?fBkffNAdm9D0/lwO2Fv2K0GK+jhIIEoaqaTDknBQ9vYjnprx/F5GNTirHBbg?=
+ =?us-ascii?Q?wN4OLzGNvOUvBhL90CoD1mBlGQcZjDQ6mZume1cX2Y2vA=3D=3D?=
+X-Microsoft-Antispam-Message-Info: wWucY55PQDTf5A8Jdj35ChtvUf6ZuR9P/cDoUz6Zqce0U8rVoId+X761ZtmdIAJpCEeQVeCcRewsHuJCfvWqOFuqjs+1WKu/+uNCIrPeVaOycQ7suUzQsf8TmtMGpNRisFWCCg2mtaH4sZtoni0ejaTyuFnA/jGwp6UiAgGZeyYSfD3Ke2B1HUFWXpSARbmQUjyFozP6dv2H3iZRSgmJ115f9EingJWAgVe72fcSrsGV6qRt0TO/YW5MQwJk875i80dekFTuIeIhN53vV1+fTOiRKrftxeL9ID5mNNVC24tlALNj2IS6QkR5rWeUQmZ4tN09KGKppQDu1maluXt7dgdq9WqkXjOth+6VgWWoxX3MrJOPiAZ+8T5tU2z354k3ErGc7Dda3OfDfsSkVqFJjg==
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2304;6:qMHv8zbIKlI+lJe3fxcH6N0CIFLwH7CtPwm2QAuywOAT2ieu67bpzLRuFumkpisvY9F3KYW91RXL5a9U4vQUD0Y9Or3+NQzg/5NXus06wf8D3yugAuXiNCnIc1AR4HDfGT2E2AtVZNvx01yWvR7gS37H7neBalLg2VXGvgXQOrlsktbWhdHjMFGiWidCToVIz667/tAPiOPFgt9r0K6Zc+A5Oxcw5z3WsLyPH/uv5RG9CJLnDxSzJ6Td/CxOIAimqWGMH8eOYNyPGjJuenMx9P274PCXGDVreH7/0z1r1gldTlaMU3MCDrNGTWAfIdqe1sFlca84z2+xbcyeFWiIKO/m/E/mXKFDHT1Uhf9PhbSkCAqsRoc6FX3Qgo6I4YU0wbW0ybTgtyd9lfUYWp1wTDCF8Vaxu6ZeDtkq9z1Dw65kWK3KJ9tGims/D+JhTw/iyCTvfVwriKuHBTyG7NW42Q==;5:+TcULg9ZQRyEu9gPjF2Ga90avo3WJINl4zO8uRRK5uxHGeoBm08vaHLTBsoNR5hpLfs4EaOXLH80mvsNLqpG5SFKvcT+dzPzMklsEwqhITMTShMEdOIMcqS37JJSbkismS3Xix/Tk8HiBim2h13+iP43nq56sp6Y/AP73UlXMjI=;7:JiaoN5UoBqt9EfyxLxVIKue1uVAkH5q9/Ez3zooTyUkZUBa9amX4Pin0OblmbhYCqOdPzyJR5t1zLJY3P06UnXse+jOYOKha/U/FBDs65ZbHFdsmc0aOjUS+Kc2k9Jl0Ab4qr6HMJ8EthsMUPKE0baxpYbk9/UhDNsMKSLIJt4DOo6FV/SWiy7yXF3da9b9JzW01IjO32W1IrrbXuEfOadsSGoa0QVYfRqyBKrW6Jol/zO4NQEALTinvE+01N232
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2297;20:SEKYr5xE9JDsABZFqN44InKxr46L7uc+iAVi92S/gTH9sr+ZBOKUJ1Vm3fWJY+k5CevPE5D7wxki05EYVqROENTxLaXgQfwH4m9iXLyfm39Iqn91928t36j9yADsL+YqtIz4XSwT0USUASCjVf1blP9iqnlU26ruScwczX2ZbDyGljDN8gLEkrkWVkLKh3z0t6Xweq6MVDZqyUHOQxatyCh5GBm7KHdraYhKHiJvz6PO/UWwwPK7EN8YTLzeXeaM
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2304;20:v3BkdmALwnbnJdKKo9/r7I6zSnMHSSt/p2bw9YNuu7sH4yZvTk3Io8Is+he1BUD4hTufhanskPKahhnn30KlswHJJgw2/nuZJYWjeaZAbAFJOo5rqxPnEe0uCpYb3Rgj3zrduFI0aT8L0Po28To+wfDSAAPTuAuTQjAGfGZWIaVQxfZZZM5NjjKKT3+WSA+kKlH2I3V3EVUMG4RQUOa8JpgDQnOHZUHsOJqDZyLFfZPuGu4EbKBQowdZ/mUVykYG
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Aug 2018 12:31:37.4811
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Aug 2018 12:31:37.8550
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2a4a7fb-e877-4581-7bb4-08d6043d6064
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b67d2c6-b4cb-4765-3b2d-08d6043d608f
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR07MB2297
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR07MB2304
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Sierra PHY supports a number of different protocol.  This series adds
-a driver with support for USB3 and PCIe modes.
+Add DT binding documentation for Sierra PHY.  The PHY supports
+a number of different protocols, including PCIe and USB.  The
+number of lanes can also be configured.
 
-Two phy-cells are required in device tree bindings, one to specify the
-protocol to be supported, and the second to specify the number of lanes.
-
-Only one clock frequency is currently supported, so the value of clock
-provided in device tree is ignored.
-
-Alan Douglas (2):
-  dt-bindings: phy: Document cadence Sierra PHY bindings
-  phy: cadence: Add driver for Sierra PHY
-
- .../devicetree/bindings/phy/cdns-sierra-phy.txt    |  29 ++
- drivers/phy/Kconfig                                |   1 +
- drivers/phy/Makefile                               |   1 +
- drivers/phy/cadence/Kconfig                        |   9 +
- drivers/phy/cadence/Makefile                       |   3 +
- drivers/phy/cadence/cdns-sierra.c                  | 326 +++++++++++++++++++++
- 6 files changed, 369 insertions(+)
+Signed-off-by: Alan Douglas <adouglas@cadence.com>
+---
+ .../devicetree/bindings/phy/cdns-sierra-phy.txt    | 29 ++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/phy/cdns-sierra-phy.txt
- create mode 100644 drivers/phy/cadence/Kconfig
- create mode 100644 drivers/phy/cadence/Makefile
- create mode 100644 drivers/phy/cadence/cdns-sierra.c
 
+diff --git a/Documentation/devicetree/bindings/phy/cdns-sierra-phy.txt b/Documentation/devicetree/bindings/phy/cdns-sierra-phy.txt
+new file mode 100644
+index 0000000..846bdfc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/cdns-sierra-phy.txt
+@@ -0,0 +1,29 @@
++Cadence Sierra PHY
++-----------------------
++
++Required properties:
++ - compatible: cdns,sierra-phy
++ - clocks: Must contain an entry in clock-names.
++	See ../clocks/clock-bindings.txt for details.
++ - clock-names: Must be "phy_clk"
++ - resets: Must contain an entry for each in reset-names.
++	See ../reset/reset.txt for details.
++ - reset-names: Must include "sierra_reset" and "sierra_apb"
++	"sierra_reset" must control the reset line to the PHY
++   	"sierra_apb" must control the reset line to the APB PHY interface
++ - #phy-cells: must be 2
++ - reg : register range for the PHY
++ - reg-names: Must be "reg"
++
++
++Example:
++	pcie_phy4: pcie-phy4@fd240000 {
++		compatible = "cdns,sierra-phy";
++		reg = <0x0 0xfd240000 0x0 0x40000>;
++		reg-names = "reg";
++		#phy-cells = <2>;
++		resets = <&dummyrst2 0>, <&dummyrst3 0>;
++		reset-names = "sierra_reset","sierra_apb";
++		clocks = <&phyclock>;
++		clock-names = "phy_clk";
++	};
 -- 
 1.9.0
 
