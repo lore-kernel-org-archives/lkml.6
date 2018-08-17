@@ -2,186 +2,111 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24063C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 07:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0AD9C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 07:39:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C287921868
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 07:31:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C287921868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cr.yp.to
+	by mail.kernel.org (Postfix) with ESMTP id 24B01204EC
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 07:39:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="XxwIoI3B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24B01204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726639AbeHQKdS (ORCPT
+        id S1726634AbeHQKlz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 06:33:18 -0400
-Received: from salsa.cs.uic.edu ([131.193.32.108]:34418 "HELO salsa.cs.uic.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-        id S1726504AbeHQKdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 06:33:18 -0400
-Received: (qmail 4121 invoked by uid 1010); 17 Aug 2018 07:30:58 -0000
-Received: from unknown (unknown)
-  by unknown with QMTP; 17 Aug 2018 07:30:58 -0000
-Received: (qmail 12641 invoked by uid 1000); 17 Aug 2018 07:31:20 -0000
-Date:   17 Aug 2018 07:31:20 -0000
-Message-ID: <20180817073120.12640.qmail@cr.yp.to>
-Automatic-Legal-Notices: See https://cr.yp.to/mailcopyright.html.
-From:   "D. J. Bernstein" <djb@cr.yp.to>
-To:     Eric Biggers <ebiggers@kernel.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Tanja Lange <tanja@hyperelliptic.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Karthikeyan Bhargavan <karthik.bhargavan@gmail.com>
-Subject: Re: [PATCH v1 2/3] zinc: Introduce minimal cryptography library
-References: <20180801072246.GA15677@sol.localdomain>
- <CAHmME9pbwj0RaX4YM9epGOSgDRNUt=GA4UzO_iKcW=Md7kG6JQ@mail.gmail.com>
- <20180814211229.GB24575@gmail.com>
- <20180815162819.22765.qmail@cr.yp.to>
- <20180815195732.GA79500@gmail.com>
- <20180816042454.15529.qmail@cr.yp.to>
- <20180816194620.GA185651@gmail.com>
+        Fri, 17 Aug 2018 06:41:55 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:39831 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbeHQKlz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 06:41:55 -0400
+Received: by mail-it0-f67.google.com with SMTP id g141-v6so10674834ita.4
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 00:39:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=LEMMN9BoOU6U1CSn8ssmF42PRvc2rYOcVMlTR21RifA=;
+        b=XxwIoI3BLWhHRVOpuDGaMdirwwZPBILsjJ8Y085acts6x5slUjE4+S+kardFqvfGhT
+         FGglSmejgKN4OmswotsjQ5Kw4FJSAsYc00AKEIBbduJW1e6ejSs6awTiI0dgJ4aFsR7T
+         vVg0wYlSYhvDBcCn2MFk+n8T1+53c2J9vChARoOL1drS0k4JD8U/QYffMxiCU3xfd0BF
+         +iAKsKXycnyT8rmVjPAzx9VHB2bPvCI0LCwK2XIUI17sd1ced9oAcpzafg1dwZLJOfTf
+         InJW7YB/Wh2oF57sfiY3bud7f89n7k7MibHe3W5MtiL9q5SmKDeDXAfPUslymwGirqoJ
+         flgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=LEMMN9BoOU6U1CSn8ssmF42PRvc2rYOcVMlTR21RifA=;
+        b=cu0cjFBFWoUBfoOZaSeBqeseZaZCo8e8Pv+ncJnoF4gJ/7nD7EC+evrPCtjo/jPotv
+         BBngnHSFsr8I9mNSTfBczVyla4f+UcWWu0/E0zCr41AlN4KZ4ZYiUGndgNvIsocmNsIv
+         fIr2dhg9MEzNeg/XHK0uEipJCaJZalCJVoDjl0yBzJxIs/7rC8qntqp5OVUiVmgxkHSz
+         PoQL4b9Y/kCJR1qcYm4wC3PM6oJuhfCkm2fZ2jMO04CO8mVI5TmtLcstAIyT9zPnF/Z4
+         elQuUBe6eYtDXJ9KsrFnTFPuRmk1qhqbjFNy2Z2tDAMmGWVfag+Gk1U2sldv4s+heBLt
+         W6zQ==
+X-Gm-Message-State: AOUpUlFH3/Tj0zOVszUOQgBCMbxRyZkKLFDo27NImggyN2TC+FzkvFSr
+        Riyl4/Np0GBd4PWQK45CZwkQ0Rs57sT3PchvaX1COA==
+X-Google-Smtp-Source: AA+uWPw3VkZfwNQ9asoc2Ak/Xim+okB++/oGzkOQcLifHQL4KUTLrCGWHbxJivHN5GPNwk199qdMAo8eEiK20nev04g=
+X-Received: by 2002:a02:b70b:: with SMTP id g11-v6mr30535802jam.34.1534491574836;
+ Fri, 17 Aug 2018 00:39:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
-Content-Disposition: inline
+Received: by 2002:a5e:9405:0:0:0:0:0 with HTTP; Fri, 17 Aug 2018 00:39:34
+ -0700 (PDT)
+In-Reply-To: <20180817004919.10805-1-bjorn.andersson@linaro.org>
+References: <20180817004919.10805-1-bjorn.andersson@linaro.org>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 17 Aug 2018 09:39:34 +0200
+Message-ID: <CAMRc=Mcz9Ha_Jj=236d7Mp=abCUKs6oh9b9sW0uOGzQu1ROJ2g@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc/davinci: Use %zx for formating size_t
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Suman Anna <s-anna@ti.com>,
+        David Lechner <david@lechnology.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+2018-08-17 2:49 GMT+02:00 Bjorn Andersson <bjorn.andersson@linaro.org>:
+> da8xx_rproc_mem size is of type size_t, so use %zx to format the debug
+> print of it to avoid a compile warning.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/remoteproc/da8xx_remoteproc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+> index e230bef71be1..d200334577f6 100644
+> --- a/drivers/remoteproc/da8xx_remoteproc.c
+> +++ b/drivers/remoteproc/da8xx_remoteproc.c
+> @@ -226,7 +226,7 @@ static int da8xx_rproc_get_internal_memories(struct platform_device *pdev,
+>                                 res->start & DA8XX_RPROC_LOCAL_ADDRESS_MASK;
+>                 drproc->mem[i].size = resource_size(res);
+>
+> -               dev_dbg(dev, "memory %8s: bus addr %pa size 0x%x va %p da 0x%x\n",
+> +               dev_dbg(dev, "memory %8s: bus addr %pa size 0x%zx va %p da 0x%x\n",
+>                         mem_names[i], &drproc->mem[i].bus_addr,
+>                         drproc->mem[i].size, drproc->mem[i].cpu_addr,
+>                         drproc->mem[i].dev_addr);
+> --
+> 2.18.0
+>
 
---ibTvN161/egqYuK8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Eric Biggers writes:
-> If (more likely) you're talking about things like "use this NEON implementation
-> on Cortex-A7 but this other NEON implementation on Cortex-A53", it's up the
-> developers and community to test different CPUs and make appropriate decisions,
-> and yes it can be very useful to have external benchmarks like SUPERCOP to refer
-> to, and I appreciate your work in that area.
+Can you also pick up this patch[1] for v4.19? David Lechner already
+has a patch queued for v4.20 that depends on this one.
 
-You seem to be talking about a process that selects (e.g.) ChaCha20
-implementations as follows: manually inspect benchmarks of various
-implementations on various CPUs, manually write code to map CPUs to
-implementations, manually update the code as necessary for new CPUs, and
-of course manually do the same for every other primitive that can see
-differences between microarchitectures (which isn't something weird---
-it's the normal situation after enough optimization effort).
+Thanks,
+Bartosz
 
-This is quite a bit of manual work, so the kernel often doesn't do it,
-so we end up with unhappy people talking about performance regressions.
-
-For comparison, imagine one simple central piece of code in the kernel
-to automatically do the following:
-
-   When a CPU core is booted:
-     For each primitive:
-       Benchmark all implementations of the primitive on the core.
-       Select the fastest for subsequent use on the core.
-
-If this is a general-purpose mechanism (as in SUPERCOP, NaCl, and
-libpqcrypto) rather than something ad-hoc (as in raid6), then there's no
-manual work per primitive, and no work per implementation. Each CPU, old
-or new, automatically obtains the fastest available code for that CPU.
-
-The only cost is a moment of benchmarking at boot time. _If_ this is a
-noticeable cost then there are many ways to speed it up: for example,
-automatically copy the results across identical cores, automatically
-copy the results across boots if the cores are unchanged, automatically
-copy results from a central database indexed by CPU identifiers, etc.
-The SUPERCOP database is evolving towards enabling this type of sharing.
-
-> A lot of code can be shared, but in practice different environments have
-> different constraints, and kernel programming in particular has some distinct
-> differences from userspace programming.  For example, you cannot just use the
-> FPU (including SSE, AVX, NEON, etc.) registers whenever you want to, since on
-> most architectures they can't be used in some contexts such as hardirq context,
-> and even when they *can* be used you have to run special code before and after
-> which does things like saving all the FPU registers to the task_struct,
-> disabling preemption, and/or enabling the FPU.
-
-Is there some reason that each implementor is being pestered to handle
-all this? Detecting FPU usage is a simple static-analysis exercise, and
-the rest sounds like straightforward boilerplate that should be handled
-centrally.
-
-> But disabling preemption for
-> long periods of time hurts responsiveness, so it's also desirable to yield the
-> processor occasionally, which means that assembly implementations should be
-> incremental rather than having a single entry point that does everything.
-
-Doing this rewrite automatically is a bit more of a code-analysis
-challenge, but the alternative approach of doing it by hand is insanely
-error-prone. See, e.g., https://eprint.iacr.org/2017/891.
-
-> Many people may have contributed to SUPERCOP already, but that doesn't mean
-> there aren't things you could do to make it more appealing to contributors and
-> more of a community project,
-
-The logic in this sentence is impeccable, and is already illustrated by
-many SUPERCOP improvements through the years from an increasing number
-of contributors, as summarized in the 87 release announcements so far on
-the relevant public mailing list, which you're welcome to study in
-detail along with the 400 megabytes of current code and as many previous
-versions as you're interested in. That's also the mailing list where
-people are told to send patches, as you'll see if you RTFM.
-
-> So Linux distributions may not want to take on the legal risk of
-> distributing it
-
-This is a puzzling comment. A moment ago we were talking about the
-possibility of useful sharing of (e.g.) ChaCha20 implementations between
-SUPERCOP and the Linux kernel, avoiding pointless fracturing of the
-community's development process for these implementations. This doesn't
-mean that the kernel should be grabbing implementations willy-nilly from
-SUPERCOP---surely the kernel should be doing security audits, and the
-kernel already has various coding requirements, and the kernel requires
-GPL compatibility, while putting any of these requirements into SUPERCOP
-would be counterproductive.
-
-If you mean having the entire SUPERCOP benchmarking package distributed
-through Linux distributions, I have no idea what your motivation is or
-how this is supposed to be connected to anything else we're discussing.
-Obviously SUPERCOP's broad code-inclusion policies make this idea a
-non-starter.
-
-> nor may companies want to take on the risk of contributing.
-
-RTFM. People who submit code are authorizing public redistribution for
-benchmarking. It's up to them to decide if they want to allow more.
-
----Dan
-
---ibTvN161/egqYuK8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJbdnnIAAoJELDADU47DlRZROAP/0SxUKbr7jw7SAswEEtNMD4V
-Oz5SCoBygaCBpG+2X1+1pJ76v7osFmQ1dU73jE87bxTVsiu+1YciG5jSKrNBLjrG
-WzBTK/NB4Owerpqq3+SRzJL6Zy+XI7ROIxDcVE/05WvpezLNK7jpTP5o9PUo5sB7
-G+O2jBY6q7/u7uXfwNQewvLTNZHq802tIl+JcaFY2DH6Yh5/RLtmdxLTGpB61KdK
-0pbFUUkNZljQhsiwlwl/Dd1U9HarYfGOZ5MWf70V30M2qu1znzGrYFLe9Kkhtbrn
-NfNkmdv6WzgUI5Ld7OyaSWuZ9pA7GjFU3qyhgg81aVEChMBPZxwAB0twYeRPIAxp
-XFyX5pLcqlVfqvbh2LWaKXvXLO1LJF8CPEV8w+t136mrprre51Yf+lK2y/ySXsVn
-JooyXIbYkOkZxTCPe+u3ChS99D8BA+SdE0AUuHwAzyQ+b7JdsQz3Uzx6hITCzkYu
-5MDLYf44/ANaiO/EWmtOIl8GgnqGEU/0cuIO8luAr3BA3prsQhOSP4ICldgP6+O8
-zSvf5QwGmFX9RsLt/0myqnKOySF/u8pCHNudIVqRCgrSh9aRM1+ngqjIgSI+lU0G
-O+DlOqJfDQIo80ya8gOr60jp6LLoQkPGEgSJuZWAhxotARVmeNDLK2PVW/RygIHX
-M30mbrOyTkTsuTq9wZjI
-=DlV9
------END PGP SIGNATURE-----
-
---ibTvN161/egqYuK8--
+[1] https://patchwork.kernel.org/patch/10479365/
