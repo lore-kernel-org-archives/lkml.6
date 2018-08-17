@@ -7,56 +7,58 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D09EBC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C66AAC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:57:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BBFC218DB
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:57:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 815AE218DB
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:57:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="OXJuSa//"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BBFC218DB
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="mlID1/BP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 815AE218DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbeHQM76 (ORCPT
+        id S1726798AbeHQNA1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 08:59:58 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:49264 "EHLO
+        Fri, 17 Aug 2018 09:00:27 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:49284 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbeHQM76 (ORCPT
+        with ESMTP id S1726329AbeHQNA1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 08:59:58 -0400
+        Fri, 17 Aug 2018 09:00:27 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 8EF2625BE87;
-        Fri, 17 Aug 2018 19:57:09 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id D4F0925BE87;
+        Fri, 17 Aug 2018 19:57:38 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1534499829; bh=Ng9zPsJshS3IuJH7TojlHDrjcrDUpXGY9oZsnqbnevo=;
+        t=1534499859; bh=9d3j99vVrZDAvRbRu81yTd46E2v+NssFT55FBfhwb2c=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OXJuSa//4DZZyYJYvw7ZAnDOJUneNUQeS+VB8AnCLrT4OxJfhh9gLx1NaBo+uEAFa
-         abGXZmzCuTatZYCLDQcv425bp2jRFEaO25p8FABMhCD7W97FfNx1oieCEwvBJ2FMk2
-         UgU6aoPp3KpCRZVSTqelHjhrnlsXXT1GTznl8teQ=
+        b=mlID1/BPpGEcYnIwEdgrfC2xj0p7W5JEJd8YKCQurVCM4czFe9MHIPetLD3xnaNl7
+         +i1f5lXA7o+54trXc7257YJxksoG4UY4+TiGbsLF+O8B69s+5GIqO7wq3aBAfitugl
+         DqttJ2olFkgKutkFgGJQgqVhMR7mk7tK4/d+MTzg=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 8FA63940453; Fri, 17 Aug 2018 11:57:07 +0200 (CEST)
-Date:   Fri, 17 Aug 2018 11:57:07 +0200
+        id C8FC3940453; Fri, 17 Aug 2018 11:57:36 +0200 (CEST)
+Date:   Fri, 17 Aug 2018 11:57:36 +0200
 From:   Simon Horman <horms@verge.net.au>
 To:     Rob Herring <robh@kernel.org>
 Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Biju Das <biju.das@bp.renesas.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: i2c: sh_mobile: Add r8a774a1 support
-Message-ID: <20180817095707.e5jehzp4dp32xayk@verge.net.au>
-References: <1534249988-15635-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <20180815201520.GA32035@rob-hp-laptop>
+Subject: Re: [PATCH] dt-bindings: irqchip: renesas-irqc: Document r8a774a1
+ support
+Message-ID: <20180817095736.32w3r56k7h3gfj3j@verge.net.au>
+References: <1534250008-15680-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180815201543.GA32632@rob-hp-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180815201520.GA32035@rob-hp-laptop>
+In-Reply-To: <20180815201543.GA32632@rob-hp-laptop>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,15 +66,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 02:15:20PM -0600, Rob Herring wrote:
-> On Tue, 14 Aug 2018 13:33:08 +0100, Fabrizio Castro wrote:
+On Wed, Aug 15, 2018 at 02:15:43PM -0600, Rob Herring wrote:
+> On Tue, 14 Aug 2018 13:33:28 +0100, Fabrizio Castro wrote:
 > > Document RZ/G2M (R8A774A1) SoC bindings.
 > > 
 > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 > > ---
-> >  Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >  Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
+> >  1 file changed, 1 insertion(+)
 > > 
 > 
 > Reviewed-by: Rob Herring <robh@kernel.org>
