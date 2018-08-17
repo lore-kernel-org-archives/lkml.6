@@ -2,421 +2,129 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72528C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 560CDC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 068BF21A2E
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:17:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DSgE+4WH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 068BF21A2E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id E786D21A2F
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:22:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E786D21A2F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727980AbeHQVWQ (ORCPT
+        id S1727783AbeHQV1U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 17:22:16 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33818 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727445AbeHQVWP (ORCPT
+        Fri, 17 Aug 2018 17:27:20 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:55724 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726888AbeHQV1T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 17:22:15 -0400
-Received: by mail-lf1-f66.google.com with SMTP id g9-v6so1273882lfh.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 11:17:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=doYCQI9L07Pc84e71S2JLZVxYevFygaKIjlaFuqPC+A=;
-        b=DSgE+4WHLhD7YPx2ik2m3iXwodxCcaIRKtE2uUQzzsNIEaDzvTrslj22LlhhT1h9IS
-         NFxXOtV6Ryrd7lFb7QawRURLCUzzSpvJo0xa7J/IRWzNXNQtCENecxap4MIKCPKLqE76
-         ny6Z8vIcDEYRLK5uH5AJBOgGImbZKjUXho0lo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=doYCQI9L07Pc84e71S2JLZVxYevFygaKIjlaFuqPC+A=;
-        b=JBDTzd07M7iyblmMXm9031L6cFoL9VKagsfYQq+Ta0c9OT6sLPFTrNw9ar3IdUDIQB
-         qbXCR/KgN4sOx1D2HeFdTMtrjngCnRFKaM/mlUaPMDzYQijed2tvCAhcvKnPAjU721e7
-         bL+nroGrPLs8TmNUHPtop8jBeWLrbkUY+1/nKXeIEPjwQwUH/n5HtmDlv1zwsPUZ8Mz9
-         SPj3mBZUa6/u1BiQEpuMFch2tlCglYwGEH/Wwbqe6cNWBJmQ10vFy73Chvsnt0A5cg/G
-         yb5vldV9+OT2y0CZfmys4+9Dej/4Sg5hpz1+ZpQQRPBeTwXq/xMSgB979yGTu9mwumpB
-         QORg==
-X-Gm-Message-State: AOUpUlHUozXB3JaVufP2Qrpxyz8MZhJx9pbDR2DXaZT2uKgcy2xvW/KN
-        Y9tRmb6jENu/Q8LYPS7sTYWAUyopTzk=
-X-Google-Smtp-Source: AA+uWPyyIAv3SgFDvA0RDbAZAzDNVJ2QzGcmCNoAOl2YDj8PzEfM/sji4KdoWYo/yrlNcnODOh3dwA==
-X-Received: by 2002:ac2:428f:: with SMTP id m15-v6mr7392538lfh.52.1534529871237;
-        Fri, 17 Aug 2018 11:17:51 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id w14-v6sm400313ljh.71.2018.08.17.11.17.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 Aug 2018 11:17:49 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id a4-v6so6518349lff.5
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 11:17:48 -0700 (PDT)
-X-Received: by 2002:a19:a8d2:: with SMTP id r201-v6mr22850351lfe.147.1534529868470;
- Fri, 17 Aug 2018 11:17:48 -0700 (PDT)
+        Fri, 17 Aug 2018 17:27:19 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fqjOg-0000Bf-GN; Fri, 17 Aug 2018 12:22:54 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fqjOQ-0004qD-Ts; Fri, 17 Aug 2018 12:22:54 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        syzbot <syzbot+1f371ca19b341a276761@syzkaller.appspotmail.com>,
+        jlayton@kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <0000000000007f59610573509684@google.com>
+        <000000000000f4136d0573512103@google.com>
+        <20180814191129.GN7906@fieldses.org>
+        <CACT4Y+YujnbvrgRU6xc+=8rHLctrjQbRP+wq-08UmbH_oOfAKA@mail.gmail.com>
+        <87o9e3gdtg.fsf@xmission.com>
+        <CACT4Y+Yjj-n5BQvZhhM41fxxm57ABP1azEnrodmjZ65VrOcoxA@mail.gmail.com>
+Date:   Fri, 17 Aug 2018 13:22:31 -0500
+In-Reply-To: <CACT4Y+Yjj-n5BQvZhhM41fxxm57ABP1azEnrodmjZ65VrOcoxA@mail.gmail.com>
+        (Dmitry Vyukov's message of "Fri, 17 Aug 2018 10:26:58 -0700")
+Message-ID: <87d0ugc0pk.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-References: <1533805799-5831-1-git-send-email-sayalil@codeaurora.org> <1533805799-5831-3-git-send-email-sayalil@codeaurora.org>
-In-Reply-To: <1533805799-5831-3-git-send-email-sayalil@codeaurora.org>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Fri, 17 Aug 2018 11:17:12 -0700
-X-Gmail-Original-Message-ID: <CAE=gft6RFCe5cfOZkwMpaKD71yiL1m1oActbax3Hx8+jXDPvVQ@mail.gmail.com>
-Message-ID: <CAE=gft6RFCe5cfOZkwMpaKD71yiL1m1oActbax3Hx8+jXDPvVQ@mail.gmail.com>
-Subject: Re: [PATCH V8 2/2] scsi: ufs: Add configfs support for UFS provisioning
-To:     sayalil@codeaurora.org
-Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        asutoshd@codeaurora.org, riteshh@codeaurora.org,
-        adrian.hunter@intel.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1fqjOQ-0004qD-Ts;;;mid=<87d0ugc0pk.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19RM6ezQkXV4F6Ej3djQ7NVGUxG2Nk5/q0=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: general protection fault in send_sigurg_to_task
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 9, 2018 at 2:10 AM Sayali Lokhande <sayalil@codeaurora.org> wrote:
->
-> This patch adds configfs support to provision UFS device at
-> runtime. This feature can be primarily useful in factory or
-> assembly line as some devices may be required to be configured
-> multiple times during initial system development phase.
-> Configuration Descriptors can be written multiple times until
-> bConfigDescrLock attribute is zero.
->
-> Configuration descriptor buffer consists of Device and Unit
-> descriptor configurable parameters which are parsed from vendor
-> specific provisioning file and then passed via configfs node at
-> runtime to provision ufs device.
-> CONFIG_CONFIGFS_FS needs to be enabled for using this feature.
->
-> Usage:
-> 1) To read current configuration descriptor :
->    cat /config/XXXX.ufshc/ufs_provision
-> 2) To provision ufs device:
->    echo <config_desc_buf> > /config/XXXX.ufshc/ufs_provision
->
-> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
-> ---
->  Documentation/ABI/testing/configfs-driver-ufs |  18 +++
->  drivers/scsi/ufs/Kconfig                      |  10 ++
->  drivers/scsi/ufs/Makefile                     |   1 +
->  drivers/scsi/ufs/ufs-configfs.c               | 159 ++++++++++++++++++++++++++
->  drivers/scsi/ufs/ufshcd.c                     |   7 +-
->  drivers/scsi/ufs/ufshcd.h                     |  10 ++
->  6 files changed, 204 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
->  create mode 100644 drivers/scsi/ufs/ufs-configfs.c
->
-> diff --git a/Documentation/ABI/testing/configfs-driver-ufs b/Documentation/ABI/testing/configfs-driver-ufs
-> new file mode 100644
-> index 0000000..eeee499c
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/configfs-driver-ufs
-> @@ -0,0 +1,18 @@
-> +What:          /config/ufshcd/ufs_provision
-> +Date:          Jun 2018
-> +KernelVersion: 4.14
-> +Description:
-> +               This file shows the current ufs configuration descriptor set in device.
-> +               This can be used to provision ufs device if bConfigDescrLock is 0.
-> +               For more details, refer 14.1.6.3 Configuration Descriptor and
-> +               Table 14-12 - Unit Descriptor configurable parameters from specs for
-> +               description of each configuration descriptor parameter.
-> +               Configuration descriptor buffer needs to be passed in space separated
-> +               format specificied as below:
-> +               echo <bLength> <bDescriptorIDN> <bConfDescContinue> <bBootEnable>
-> +               <bDescrAccessEn> <bInitPowerMode> <bHighPriorityLUN>
-> +               <bSecureRemovalType> <bInitActiveICCLevel> <wPeriodicRTCUpdate>
-> +               <0Bh:0Fh_ReservedAs_0> <bLUEnable> <bBootLunID> <bLUWriteProtect>
-> +               <bMemoryType> <dNumAllocUnits> <bDataReliability> <bLogicalBlockSize>
-> +               <bProvisioningType> <wContextCapabilities> <0Dh:0Fh_ReservedAs_0>
-> +               > /config/XXXX.ufshc/ufs_provision
-> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
-> index e27b4d4..a9a0a58 100644
-> --- a/drivers/scsi/ufs/Kconfig
-> +++ b/drivers/scsi/ufs/Kconfig
-> @@ -100,3 +100,13 @@ config SCSI_UFS_QCOM
->
->           Select this if you have UFS controller on QCOM chipset.
->           If unsure, say N.
-> +
-> +config UFS_PROVISION
-> +       tristate "Runtime UFS Provisioning support"
-> +       depends on SCSI_UFSHCD && CONFIGFS_FS
-> +       help
-> +         This enables runtime UFS provisioning support. This can be used
-> +         primarily during assembly line as some devices may be required to
-> +         be configured multiple times during initial development phase.
-> +
-> +         If unsure, say N.
-> diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
-> index 918f579..00110ea 100644
-> --- a/drivers/scsi/ufs/Makefile
-> +++ b/drivers/scsi/ufs/Makefile
-> @@ -5,5 +5,6 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-d
->  obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
->  obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
->  ufshcd-core-objs := ufshcd.o ufs-sysfs.o
-> +obj-$(CONFIG_UFS_PROVISION) += ufs-configfs.o
->  obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
->  obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
-> diff --git a/drivers/scsi/ufs/ufs-configfs.c b/drivers/scsi/ufs/ufs-configfs.c
-> new file mode 100644
-> index 0000000..cd1a227
-> --- /dev/null
-> +++ b/drivers/scsi/ufs/ufs-configfs.c
-> @@ -0,0 +1,159 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +// Copyright (c) 2018, Linux Foundation.
-> +
-> +#include <linux/configfs.h>
-> +#include <linux/err.h>
-> +#include <linux/string.h>
-> +
-> +#include "ufs.h"
-> +#include "ufshcd.h"
-> +
-> +static inline struct ufs_hba *config_item_to_hba(struct config_item *item)
-> +{
-> +       struct config_group *group = to_config_group(item);
-> +       struct configfs_subsystem *subsys = to_configfs_subsystem(group);
-> +       struct ufs_hba *hba = container_of(subsys, struct ufs_hba, subsys);
-> +
-> +       return subsys ? hba : NULL;
-> +}
-> +
-> +static ssize_t ufs_provision_show(struct config_item *item, char *buf)
-> +{
-> +       u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
-> +       int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
-> +       int i, ret, curr_len = 0;
-> +       struct ufs_hba *hba = config_item_to_hba(item);
-> +
-> +       if (!hba)
-> +               return -EINVAL;
+Dmitry Vyukov <dvyukov@google.com> writes:
 
-I don't think this is actually possible. Is a configfs show function
-ever called with a null item?
-
-> +
-> +       ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_READ_DESC,
-> +               QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
-> +
-> +       if (ret)
-> +               return ret;
-> +
-> +       for (i = 0; i < buff_len; i++)
-> +               curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
-> +                               "0x%x ", desc_buf[i]);
-> +
-> +       return curr_len;
-> +}
-> +
-> +ssize_t ufshcd_desc_configfs_store(struct ufs_hba *hba,
-> +               const char *buf, size_t count)
-> +{
-> +       char *strbuf;
-> +       char *strbuf_copy;
-> +       u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
-> +       int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
-> +       char *token;
-> +       int i, ret, value;
-> +       u32 bConfigDescrLock = 0;
-
-I haven't seen many examples of variables named this way. I know it
-follows what the UFS spec does, but I haven't noticed examples of
-people naming their locals outside of normal Linux conventions.
-
-> +
-> +       /* reserve one byte for null termination */
-> +       strbuf = kmalloc(count + 1, GFP_KERNEL);
-> +       if (!strbuf)
-> +               return -ENOMEM;
-> +
-> +       strbuf_copy = strbuf;
-> +       strlcpy(strbuf, buf, count + 1);
-> +
-> +       if (!hba)
-> +               goto out;
-
-Again, is this possible?
-
-> +
-> +       /* Just return if bConfigDescrLock is already set */
-> +       ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-> +               QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &bConfigDescrLock);
-> +       if (ret)
-> +               goto out;
-> +
-> +       if (bConfigDescrLock) {
-> +               dev_err(hba->dev, "%s: bConfigDescrLock already set to %u, cannot re-provision device!\n",
-> +               __func__, bConfigDescrLock);
-> +               goto out;
-
-You're succeeding here, shouldn't you fail the write? In fact, you
-succeed the write in a whole bunch of failure cases. Please fail the
-write in error cases.
-
-> +       }
-> +
-> +       for (i = 0; i < QUERY_DESC_CONFIGURATION_DEF_SIZE; i++) {
-> +               token = strsep(&strbuf, " ");
-> +               if (!token && i)
-> +                       break;
-> +
-> +               ret = kstrtoint(token, 0, &value);
-> +               if (ret) {
-> +                       dev_err(hba->dev, "%s: kstrtoint failed %d %s\n",
-> +                               __func__, ret, token);
-> +                       goto out;
-> +               }
-> +               desc_buf[i] = (u8)value;
-> +       }
-> +
-> +       /* Write configuration descriptor to provision ufs */
-> +       ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
-> +               QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
-> +
-> +       if (!ret)
-> +               dev_err(hba->dev, "%s: UFS Provisioning done, reboot now!\n",
-> +               __func__);
-> +
-> +out:
-> +       kfree(strbuf_copy);
-> +       return count;
-> +}
-> +
-> +static ssize_t ufs_provision_store(struct config_item *item,
-> +               const char *buf, size_t count)
-> +{
-> +       struct ufs_hba *hba = config_item_to_hba(item);
-> +
-> +       return ufshcd_desc_configfs_store(hba, buf, count);
-> +}
-> +
-> +static struct configfs_attribute ufshcd_attr_provision = {
-> +       .ca_name        = "ufs_provision",
-> +       .ca_mode        = 0644,
-> +       .ca_owner       = THIS_MODULE,
-> +       .show           = ufs_provision_show,
-> +       .store          = ufs_provision_store,
-> +};
-> +
-> +static struct configfs_attribute *ufshcd_attrs[] = {
-> +       &ufshcd_attr_provision,
-> +       NULL,
-> +};
-> +
-> +static struct config_item_type ufscfg_type = {
-> +       .ct_attrs       = ufshcd_attrs,
-> +       .ct_owner       = THIS_MODULE,
-> +};
-> +
-> +static struct configfs_subsystem ufscfg_subsys = {
-> +       .su_group = {
-> +               .cg_item = {
-> +                       .ci_type = &ufscfg_type,
-> +               },
-> +       },
-> +};
-> +
-> +int ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
-> +{
-> +       int ret;
-> +       struct configfs_subsystem *subsys = &hba->subsys;
-> +
-> +       strncpy(ufscfg_subsys.su_group.cg_item.ci_namebuf, name, strlen(name));
-> +       subsys->su_group = ufscfg_subsys.su_group;
-> +       config_group_init(&subsys->su_group);
-> +       mutex_init(&subsys->su_mutex);
-> +       ret = configfs_register_subsystem(subsys);
-> +       if (ret)
-> +               pr_err("Error %d while registering subsystem %s\n",
-> +                      ret,
-> +                      subsys->su_group.cg_item.ci_namebuf);
-> +
-> +       return ret;
-> +}
-> +
-> +void ufshcd_configfs_exit(void)
-> +{
-> +       configfs_unregister_subsystem(&ufscfg_subsys);
-> +}
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 0cbdde7..bc7bffc 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -7711,6 +7711,9 @@ int ufshcd_shutdown(struct ufs_hba *hba)
->  void ufshcd_remove(struct ufs_hba *hba)
->  {
->         ufs_sysfs_remove_nodes(hba->dev);
-> +#ifdef CONFIG_UFS_PROVISION
-> +       ufshcd_configfs_exit();
-> +#endif
->         scsi_remove_host(hba->host);
->         /* disable interrupts */
->         ufshcd_disable_intr(hba, hba->intr_mask);
-> @@ -7964,7 +7967,9 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+> On Wed, Aug 15, 2018 at 9:01 PM, Eric W. Biederman
+> <ebiederm@xmission.com> wrote:
+>> Dmitry Vyukov <dvyukov@google.com> writes:
+>>
+>>> On Tue, Aug 14, 2018 at 12:11 PM, J. Bruce Fields <bfields@fieldses.org> wrote:
+>>>> On Mon, Aug 13, 2018 at 06:33:02AM -0700, syzbot wrote:
+>>>>> syzbot has found a reproducer for the following crash on:
+>>>>>
+>>>>> HEAD commit:    5ed5da74de9e Add linux-next specific files for 20180813
+>>>>> git tree:       linux-next
+>>>>
+>>>> I fetched linux-next but don't have 5ed5da74de9e.
+>>>
+>>> Hi Bruce,
+>>>
+>>> +Stephen for the disappeared linux-next commit.
+>>>
+>>> On the dashboard link you can see that it also happened on a more
+>>> recent commit 4e8b38549b50459a22573d756dd1f4e1963c2a8d that I do see
+>>> now in linux-next.
+>>>
+>>>> I'm also not sure why I'm on the cc for this.
+>>>
+>>> You've been pointed to by "./scripts/get_maintainer.pl -f fs/fcntl.c"
+>>> as maintainer of the file, which is the file where the crash happened.
+>>
+>> You need to use your reproducer to bisect and find the commit that
+>> caused this.  Otherwise you will continue to confuse people.
+>>
+>> get_maintainer.pl is not a good target for automated reporting
+>> especially against linux-next.
 >
->         async_schedule(ufshcd_async_scan, hba);
->         ufs_sysfs_add_nodes(hba->dev);
-> -
-> +#ifdef CONFIG_UFS_PROVISION
-> +       ufshcd_configfs_init(hba, dev_name(hba->dev));
-> +#endif
+> Hi Eric,
+>
+> We will do bisection.
+> But I afraid it will not give perfect attribution for a number of reasons:
+>  - broken build/boot which happens sometimes for prolonged periods and
+> prohibits bisection
+>  - elusive races that can't be reproduced reliably and thus bisection
+> can give wrong results
+>  - bugs introduced too long ago (e.g. author email is not even valid today)
+>  - reproducers triggering more than 1 bug, so base bisection commit
+> can actually be for another bug, or bisection can switch from one bug
+> to another
+>  - last but not least, bugs without reproducers
+> Bisection will add useful information to the bug report, but it will
+> not necessary make attribution better than it is now.
+>
+> Do you have more examples where bugs were misreported? From what I see
+> current attrition works well. There are episodic fallouts, but well,
+> nothing is perfect in this world. Humans don't bisect frequently and
+> misreport sometimes. I think we just need to re-route bugs in such
+> cases.
 
-Normally the way I see this done is to define stub functions up in the
-header when !CONFIG_UFS_PROVISION, rather than ifdefs in the code. Can
-you do it that way?
+I have yet to see syzbot make a good report.  Especially against
+linux-next.
 
->         return 0;
->
->  out_remove_scsi_host:
-> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-> index 101a75c..7b6cc88 100644
-> --- a/drivers/scsi/ufs/ufshcd.h
-> +++ b/drivers/scsi/ufs/ufshcd.h
-> @@ -37,6 +37,7 @@
->  #ifndef _UFSHCD_H
->  #define _UFSHCD_H
->
-> +#include <linux/configfs.h>
->  #include <linux/module.h>
->  #include <linux/kernel.h>
->  #include <linux/init.h>
-> @@ -515,6 +516,9 @@ struct ufs_hba {
->
->         struct Scsi_Host *host;
->         struct device *dev;
-> +#ifdef CONFIG_UFS_PROVISION
-> +       struct configfs_subsystem subsys;
-> +#endif
->         /*
->          * This field is to keep a reference to "scsi_device" corresponding to
->          * "UFS device" W-LU.
-> @@ -868,6 +872,12 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
->  int ufshcd_hold(struct ufs_hba *hba, bool async);
->  void ufshcd_release(struct ufs_hba *hba);
->
-> +/* Expose UFS configfs API's */
-> +#ifdef CONFIG_UFS_PROVISION
-> +extern int ufshcd_configfs_init(struct ufs_hba *hba, const char *name);
-> +extern void ufshcd_configfs_exit(void);
-> +#endif
-> +
->  int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn desc_id,
->         int *desc_length);
->
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
+Eric
+
