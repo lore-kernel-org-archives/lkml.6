@@ -2,107 +2,104 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B6E6C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA26AC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:58:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBB6921A1C
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:48:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XjfQM5BO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBB6921A1C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8A08F21A1D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:58:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A08F21A1D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbeHQUwS (ORCPT
+        id S1727666AbeHQVCp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 16:52:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42502 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727612AbeHQUwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 16:52:18 -0400
-Received: from mail-qt0-f174.google.com (mail-qt0-f174.google.com [209.85.216.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 674A521A28;
-        Fri, 17 Aug 2018 17:48:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534528080;
-        bh=z/5ZXNrx3/HqKYWq60LZsUq86ZQ/t3YeMwxVJwm0pXA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=XjfQM5BOb7INTZ7poHHVl1gHfPh+8AFiH1YGHXj22aZs19uLPOSzZK0nneewCl+HJ
-         jM4ONfHE0RjsDkSRuW4sHS5mRBS2G5v1jcgl/H1JLJW7mPJyzqPjIoe2fiZI8rf4Tg
-         yQ6MmnBssxvOjd3BfxmjK8PUrv1rU5Zha26ilGlI=
-Received: by mail-qt0-f174.google.com with SMTP id n6-v6so9626803qtl.4;
-        Fri, 17 Aug 2018 10:48:00 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGMOFnA1DZjqaFcjMfXfyJwNlXyB9aRzY9Xa2jx93jJuAio6PV5
-        QFeBtKi5NKuW01gK2EeOgHusHsgVN73EKzCJxQ==
-X-Google-Smtp-Source: AA+uWPxDBirz7aCXNQYezqBV9zey4a44bL4qEeeaOLJzrSZXSXuAmMB8AIBYSOqbvtQAMD6k6Wi7+B4OuKKky8lDsAE=
-X-Received: by 2002:ac8:2c72:: with SMTP id e47-v6mr36502752qta.60.1534528079599;
- Fri, 17 Aug 2018 10:47:59 -0700 (PDT)
+        Fri, 17 Aug 2018 17:02:45 -0400
+Received: from tartarus.angband.pl ([89.206.35.136]:47202 "EHLO
+        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727160AbeHQVCp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 17:02:45 -0400
+Received: from kilobyte by tartarus.angband.pl with local (Exim 4.89)
+        (envelope-from <kilobyte@angband.pl>)
+        id 1fqj0M-0006Wj-W3; Fri, 17 Aug 2018 19:57:47 +0200
+Date:   Fri, 17 Aug 2018 19:57:46 +0200
+From:   Adam Borowski <kilobyte@angband.pl>
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     =?iso-8859-1?Q?Ren=E9?= Rebe <rene@exactcode.com>,
+        Nick Terrell <terrelln@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Kernel Team <Kernel-team@fb.com>, Chris Mason <clm@fb.com>,
+        Julian Andres Klode <julian.klode@canonical.com>
+Subject: Re: [RESEND PATCH v2 0/2] Add support for ZSTD-compressed kernel
+Message-ID: <20180817175746.d2brxipp7xa4y2uw@angband.pl>
+References: <20180322012943.4145794-1-terrelln@fb.com>
+ <5B282FAD-EDCF-44C8-A131-A3C6FF3EA84F@fb.com>
+ <3F598446-EA1D-47CE-B7A1-4D3002DA3972@exactcode.com>
+ <8DE2BD14-0C9C-43AF-B9B7-F760F8434B6B@exactcode.com>
+ <20180817165403.GC12066@tassilo.jf.intel.com>
 MIME-Version: 1.0
-References: <CADUUTHBZ---U7YNYYry7qJY=vt_QpXpytymqJQc9xLFE_NjsAg@mail.gmail.com>
- <c342562e-f915-a853-c2a8-eecefd94b88d@gmail.com>
-In-Reply-To: <c342562e-f915-a853-c2a8-eecefd94b88d@gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 17 Aug 2018 11:47:48 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLV5d5cL3o3Dx=--zGD37c5O09rL9AXyRFmceTfBHt3Zg@mail.gmail.com>
-Message-ID: <CAL_JsqLV5d5cL3o3Dx=--zGD37c5O09rL9AXyRFmceTfBHt3Zg@mail.gmail.com>
-Subject: Re: How delete node or property in overlayd dts?
-To:     zbsdta@gmail.com, Frank Rowand <frowand.list@gmail.com>
-Cc:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180817165403.GC12066@tassilo.jf.intel.com>
+X-Junkbait: aaron@angband.pl, zzyx@angband.pl
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: kilobyte@angband.pl
+X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 7:26 PM Frank Rowand <frowand.list@gmail.com> wrote=
-:
->
-> On 08/14/18 07:46, =E5=BC=A0=E6=B3=A2 wrote:
-> > /delete-node/ /delete-prop/ could be used in dtsi files without device
-> > tree overlay.
-> >
-> > but with device tree overlay,  /delete-node/ and  /delete-prop/ are not=
- work.
-> > How to delete property and node in overlay dts?
-> >
-> > for example,
-> > in basel.dts have following node
-> > node1 {
-> >     property1;
-> >     property3;
-> >     node2 {
-> >         property2;
-> >     }
-> > }
-> >
-> > in overlay.dts as following
-> >  node1 {
-> >     /delete-property/ property1;
-> >     /delete-node/ node2;
-> > }
-> >
-> > after overlay, property1 and node2 is not deleted.
-> >
->
-> The /delete-node/ and /delete-prop/ directives are only used by the
-> dtc compiler within a single compilation.
->
-> There is nothing in the format of a devicetree blob to represent the
-> notion of deleting a property or a node.
->
-> You can not delete a property or a node in an overlay dtb.
+On Fri, Aug 17, 2018 at 09:54:03AM -0700, Andi Kleen wrote:
+> On Fri, Aug 17, 2018 at 06:15:45PM +0200, René Rebe wrote:
+> > Hey,
+> > 
+> > is there any mainline future for this zstd support?
+> > Currently my most favourite compressor for this, and for what it’s worth
+> > zstd/initrd now even tested on #t2sde / hp/pa-risc
+> 
+> Can you remove some other compressor for the kernel image if you merge this?
 
-Though you can add/override 'status' with 'status =3D "disabled";' which
-should be treated very similar to a node not being present. I say
-similar because it's a source of bugs for the OS to fail to pay
-attention to status property.
+Funny you say this.  I want to post this after the merge window is over:
+https://github.com/kilobyte/linux/commits/nobz2-next-20180731
 
-Rob
+Sorry for a tree atop next, but there are conflicts that needed to be
+adressed.  The patchset is also undertested (works for me, but not even
+compile-tested on archs I don't have a toolchain for at hand).
+
+> The "favourite compressor" seems to roughly change every year, so if
+> we keep adding new ones things will get more and more convoluted.
+
+The above patchset drops just bzip2.  It is the only one that's strictly
+beaten in every way (ratio, time, memory usage), there are also no other
+uses of bzip2 anywhere in the kernel so we'd get to drop its code
+completely: 900 lines of Linus' happiness.
+
+Other candidates are lzo and bare lzma (you want lz4, zstd or xz instead),
+but those are used elsewhere thus there's hardly any gain.  If you want them
+gone, please say so -- I'll include their droppage.
+
+> Surely zstd is universally better than some existing compressor
+> the kernel already uses for itself for a particular sweet spot?
+> If it isn't it's likely not needed.
+
+zstd is better in the balanced niche: unless you want extreme speed (lz4) or
+best compression (xz), zstd handily beats algorithms in the middle.
+
+
+Meow!
+-- 
+⢀⣴⠾⠻⢶⣦⠀ What Would Jesus Do, MUD/MMORPG edition:
+⣾⠁⢰⠒⠀⣿⡁ • multiplay with an admin char to benefit your mortal [Mt3:16-17]
+⢿⡄⠘⠷⠚⠋⠀ • abuse item cloning bugs [Mt14:17-20, Mt15:34-37]
+⠈⠳⣄⠀⠀⠀⠀ • use glitches to walk on water [Mt14:25-26]
