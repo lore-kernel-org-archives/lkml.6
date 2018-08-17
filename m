@@ -2,78 +2,78 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 172C7C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 15:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D152AC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 15:44:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C99BB21890
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 15:44:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C99BB21890
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 864462188F
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 15:44:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpDVdHiW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 864462188F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727669AbeHQSsA (ORCPT
+        id S1727755AbeHQSsY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 14:48:00 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41443 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727529AbeHQSsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 14:48:00 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 6D30F9C5D33BD;
-        Fri, 17 Aug 2018 23:44:03 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.399.0; Fri, 17 Aug 2018 23:43:55 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <will.deacon@arm.com>, <robin.murphy@arm.com>
-CC:     <joro@8bytes.org>, <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>
-Subject: [PATCH] iommu/arm-smmu-v3: Fix a couple of minor comment typos
-Date:   Fri, 17 Aug 2018 23:42:22 +0800
-Message-ID: <1534520542-92851-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
+        Fri, 17 Aug 2018 14:48:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39002 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727398AbeHQSsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 14:48:24 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC415208A6;
+        Fri, 17 Aug 2018 15:44:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534520673;
+        bh=FNceucLDzp77F4Kl4M3acLkCV+jFAwmtV2jOYU9AXss=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rpDVdHiW7UU0+2kXuNYTN74JzSXhzDJwAEjolwIORrkUISn7VA19NxVXuLOEMb+Vp
+         rN3JmJYPnT+ggTXHisz8iGdlyPtIhfihgNbrFwzsrMdKIrxd11Za9jWdm6pNGuEpNK
+         +sBNq6ZP/Wes7DMoVzEOPPs7IWmOseiyGjqlSSl0=
+Date:   Fri, 17 Aug 2018 10:44:31 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     linux-pci@vger.kernel.org, Hari Vyas <hari.vyas@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jens Axboe <axboe@kernel.dk>, Lukas Wunner <lukas@wunner.de>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Marta Rybczynska <mrybczyn@kalray.eu>,
+        Pierre-Yves Kerbrat <pkerbrat@kalray.eu>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/6] Revert "PCI: Fix is_added/is_busmaster race
+ condition"
+Message-ID: <20180817154431.GC128050@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180817044902.31420-1-benh@kernel.crashing.org>
+ <20180817044902.31420-2-benh@kernel.crashing.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180817044902.31420-2-benh@kernel.crashing.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix some comment typos spotted.
+On Fri, Aug 17, 2018 at 02:48:57PM +1000, Benjamin Herrenschmidt wrote:
+> This reverts commit 44bda4b7d26e9fffed6d7152d98a2e9edaeb2a76.
 
-Signed-off-by: John Garry <john.garry@huawei.com>
+Just to be clear, if I understand correctly, this is a pure revert of
+44bda4b7d26e and as such it reintroduces the problem solved by that
+commit.
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 5059d09..feef122 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -708,7 +708,7 @@ static void queue_inc_prod(struct arm_smmu_queue *q)
- }
- 
- /*
-- * Wait for the SMMU to consume items. If drain is true, wait until the queue
-+ * Wait for the SMMU to consume items. If sync is true, wait until the queue
-  * is empty. Otherwise, wait until there is at least one free slot.
-  */
- static int queue_poll_cons(struct arm_smmu_queue *q, bool sync, bool wfe)
-@@ -2353,8 +2353,8 @@ static int arm_smmu_setup_irqs(struct arm_smmu_device *smmu)
- 	irq = smmu->combined_irq;
- 	if (irq) {
- 		/*
--		 * Cavium ThunderX2 implementation doesn't not support unique
--		 * irq lines. Use single irq line for all the SMMUv3 interrupts.
-+		 * Cavium ThunderX2 implementation doesn't support unique irq
-+		 * lines. Use a single irq line for all the SMMUv3 interrupts.
- 		 */
- 		ret = devm_request_threaded_irq(smmu->dev, irq,
- 					arm_smmu_combined_irq_handler,
--- 
-1.9.1
+If your solution turns out to be better, that's great, but it would be
+nice to avoid the bisection hole of reintroducing the problem, then
+fixing it again later.
 
+> The new pci state mutex provides a simpler way of addressing
+> this race and avoids the relative includes added to the powerpc
+> code.
