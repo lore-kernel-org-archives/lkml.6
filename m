@@ -2,85 +2,108 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1B7C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:39:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 891A0C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:42:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35581204EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:39:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35581204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3633F2188F
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:42:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3633F2188F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbeHQRnM (ORCPT
+        id S1727460AbeHQRqW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 13:43:12 -0400
-Received: from mga09.intel.com ([134.134.136.24]:44008 "EHLO mga09.intel.com"
+        Fri, 17 Aug 2018 13:46:22 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:34694 "EHLO mail5.wrs.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725879AbeHQRnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 13:43:12 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Aug 2018 07:39:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,251,1531810800"; 
-   d="scan'208";a="76173972"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by orsmga003.jf.intel.com with ESMTP; 17 Aug 2018 07:39:35 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id E4744301B7C; Fri, 17 Aug 2018 07:39:34 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 07:39:34 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH] x86/speculation/l1tf: Exempt zeroed PTEs from XOR
- conversion
-Message-ID: <20180817143934.GB12066@tassilo.jf.intel.com>
-References: <20180816204638.4046-1-sean.j.christopherson@intel.com>
+        id S1725879AbeHQRqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 13:46:22 -0400
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id w7HEgVUA008937
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Fri, 17 Aug 2018 07:42:31 -0700
+Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
+ ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
+ 14.3.399.0; Fri, 17 Aug 2018 07:42:31 -0700
+From:   <zhe.he@windriver.com>
+To:     <jason.wessel@windriver.com>, <gregkh@linuxfoundation.org>,
+        <jslaby@suse.com>, <kgdb-bugreport@lists.sourceforge.net>,
+        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 1/2] kgdboc: Passing ekgdboc to command line causes panic
+Date:   Fri, 17 Aug 2018 22:42:28 +0800
+Message-ID: <1534516949-420150-1-git-send-email-zhe.he@windriver.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180816204638.4046-1-sean.j.christopherson@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 01:46:38PM -0700, Sean Christopherson wrote:
-> clear_page() does not undergo the XOR logic to invert the address
-> bits, i.e. PTE, PMD and PUD entries that have not been individually
-> written will have val=0 and so will trigger __pte_needs_invert().
-> As a result, {pte,pmd,pud}_pfn() will return the wrong PFN value,
-> i.e. all ones (adjusted by the max PFN mask) instead of zero.
-> A zeroed entry is ok because the page at physical address 0 is
-> reserved early in boot specifically to mitigate L1TF, so explicitly
-> exempt them from the inversion when reading the PFN.
-> 
-> Manifested as an unexpected mprotect(..., PROT_NONE) failure when
-> called on a VMA that has VM_PFNMAP and was mmap'd to as something
-> other than PROT_NONE but never used.  mprotect() sends the PROT_NONE
-> request down prot_none_walk(), which walks the PTEs to check the PFNs.
-> prot_none_pte_entry() gets the bogus PFN from pte_pfn() and returns
-> -EACCES because it thinks mprotect() is trying to adjust a high MMIO
-> address.
+From: He Zhe <zhe.he@windriver.com>
 
-Looks good to me. You're right that case was missed.
+kgdboc_option_setup does not check input argument before passing it
+to strlen. The argument would be a NULL pointer if "ekgdboc", without
+its value, is set in command line and thus cause the following panic.
 
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
+PANIC: early exception 0xe3 IP 10:ffffffff8fbbb620 error 0 cr2 0x0
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #1
+[    0.000000] RIP: 0010:strlen+0x0/0x20
+...
+[    0.000000] Call Trace
+[    0.000000]  ? kgdboc_option_setup+0x9/0xa0
+[    0.000000]  ? kgdboc_early_init+0x6/0x1b
+[    0.000000]  ? do_early_param+0x4d/0x82
+[    0.000000]  ? parse_args+0x212/0x330
+[    0.000000]  ? rdinit_setup+0x26/0x26
+[    0.000000]  ? parse_early_options+0x20/0x23
+[    0.000000]  ? rdinit_setup+0x26/0x26
+[    0.000000]  ? parse_early_param+0x2d/0x39
+[    0.000000]  ? setup_arch+0x2f7/0xbf4
+[    0.000000]  ? start_kernel+0x5e/0x4c2
+[    0.000000]  ? load_ucode_bsp+0x113/0x12f
+[    0.000000]  ? secondary_startup_64+0xa5/0xb0
 
-I think Thomas is still on vacation, copying Linus.
+This patch adds a check to prevent the panic.
 
--Andi
+Cc: stable@vger.kernel.org
+Cc: jason.wessel@windriver.com
+Cc: gregkh@linuxfoundation.org
+Cc: jslaby@suse.com
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+---
+v2:
+- Split out printk cleanups
+- Add cc to stable@vger.kernel.org
+v3:
+- Use more meaningful error message
+v4:
+- Add cc to maintainers and supporters
+
+ drivers/tty/serial/kgdboc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/tty/serial/kgdboc.c b/drivers/tty/serial/kgdboc.c
+index b4ba2b1..f4d0ef6 100644
+--- a/drivers/tty/serial/kgdboc.c
++++ b/drivers/tty/serial/kgdboc.c
+@@ -130,6 +130,11 @@ static void kgdboc_unregister_kbd(void)
+ 
+ static int kgdboc_option_setup(char *opt)
+ {
++	if (!opt) {
++		pr_err("kgdboc: config string not provided\n");
++		return -EINVAL;
++	}
++
+ 	if (strlen(opt) >= MAX_CONFIG_LEN) {
+ 		printk(KERN_ERR "kgdboc: config string too long\n");
+ 		return -ENOSPC;
+-- 
+2.7.4
+
