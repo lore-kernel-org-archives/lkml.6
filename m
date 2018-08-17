@@ -2,150 +2,109 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E58C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5250C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:39:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 881CB21A28
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:38:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 881CB21A28
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
+	by mail.kernel.org (Postfix) with ESMTP id 7A2172145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:39:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="pJOCvp76"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A2172145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728019AbeHQUm1 (ORCPT
+        id S1728072AbeHQUnS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 16:42:27 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:33946 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727645AbeHQUm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 16:42:26 -0400
-Received: by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <mail@maciej.szmigiero.name>)
-        id 1fqihK-0007lO-F1; Fri, 17 Aug 2018 19:38:06 +0200
-Subject: Re: [PATCH] cfq: clear queue pointers from cfqg after unpinning them
- in cfq_pd_offline
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Fri, 17 Aug 2018 16:43:18 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38405 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727612AbeHQUnR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 16:43:17 -0400
+Received: by mail-pf1-f194.google.com with SMTP id x17-v6so3798284pfh.5
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 10:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/LlIEftYtD7GxPnLyw24zjttcZQ0OW8ZCqBx9AhaZ6A=;
+        b=pJOCvp76qebF1rM/LHB8LfrjrXvgFx+iGw2gQU26qNW1Vw4Yo0tvJQDvI9Syj7M5TG
+         7pK7iXDOFBFNJn0v2vb+ALegIRgcgOlsoaA9scKcBAYP1cfLszVg7USruuow5Oq79olh
+         pyduT482RgkC9t+kXJi/f8+U1qRwlroOJhYSgR/KmYXWVBMXCmh6eo1MghHpagRuGem1
+         axq60APnJsnjecVqrrCJcobhe2UGVvD2PReCUM1g9Gz61jH79YiHKu8yZAmmu07VNKQ6
+         ajwS7j/UKfUcCuv2Ml9MuOi0h9a0g2yxfVDbjxtjFU124+wqDy1PZ8SKD5vhH93z89QF
+         Ft2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/LlIEftYtD7GxPnLyw24zjttcZQ0OW8ZCqBx9AhaZ6A=;
+        b=CDOp2VvzglGIgBAklx8ZQSbquR91xmRUxZp/EsTsRj63KscfvBo6ndjNhmTs9sBn7q
+         NQ2ndyn1ClOnbrLh+rUBU38z9pBiqrvTFK/eGd6i+NTbFEvNVqIQL5iQFmEk1AiuN6Jp
+         JuugFyaY/BDV1ntvWQHE0v87v92jgaBOD4qiNQVY1zDULEpIUtobjALDbgU+kiWs4hXf
+         ORAHk9QaCdHkBndWkdZ4Un+uoC9ZHqwCRvWmn13KPI1O3bjevRadzR5qCl/U/AIqvSCo
+         Ol5BTctCd+kZlx+cE8seFOvZgzOR17hK5xAkR2lBF+MzQn2HgPeCazwKvGy0Kp2z2Orm
+         tywQ==
+X-Gm-Message-State: AOUpUlFROn0HGRXUq+kAm6Oy7/LV4A/bD/ozcV/t/4uYCdlybVInob9i
+        cIXvX5g6aTZ5BK/BktacrSfrww==
+X-Google-Smtp-Source: AA+uWPwqmNpfb4BNZIwwDA/GhMGgZ7WWnsjo9ZRvBUgvzsq1avO2g1yScQWq/swnGOB7EOW9wqFpWg==
+X-Received: by 2002:a62:3952:: with SMTP id g79-v6mr37536337pfa.133.1534527541935;
+        Fri, 17 Aug 2018 10:39:01 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c081:1133::1308? ([2620:10d:c090:180::1:7c2f])
+        by smtp.gmail.com with ESMTPSA id n24-v6sm4319169pfi.161.2018.08.17.10.38.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 Aug 2018 10:39:00 -0700 (PDT)
+Subject: Re: [PATCH] block, bfq: return nbytes and not zero from struct cftype
+ .write() method
+To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc:     Paolo Valente <paolo.valente@linaro.org>,
+        linux-block@vger.kernel.org,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Tejun Heo <tj@kernel.org>, jiufei.xue@linux.alibaba.com,
-        Caspar Zhang <caspar@linux.alibaba.com>
-References: <ba086112-65b1-c20f-0694-35d1ca0415d9@maciej.szmigiero.name>
- <4FF39F18-108B-43BD-85A2-A09DB7755865@linaro.org>
-From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <11f9f800-f7d8-288d-4b17-f026170d5eba@maciej.szmigiero.name>
-Date:   Fri, 17 Aug 2018 19:38:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        Arianna Avanzini <avanzini.arianna@gmail.com>
+References: <f574e019-00f2-96c3-fc32-541c6584ca96@maciej.szmigiero.name>
+ <19c68f93-017d-cda1-632f-039ca3ca0158@kernel.dk>
+ <1f2ca124-bb7c-d02c-07cd-4afe6a634ee6@maciej.szmigiero.name>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <cb3a6209-9474-2b4d-1ff8-2e2f7c3367fb@kernel.dk>
+Date:   Fri, 17 Aug 2018 11:38:57 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <4FF39F18-108B-43BD-85A2-A09DB7755865@linaro.org>
+In-Reply-To: <1f2ca124-bb7c-d02c-07cd-4afe6a634ee6@maciej.szmigiero.name>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.08.2018 19:30, Paolo Valente wrote:
+On 8/17/18 11:27 AM, Maciej S. Szmigiero wrote:
+> On 16.08.2018 21:11, Jens Axboe wrote:
+>> On 8/15/18 3:56 PM, Maciej S. Szmigiero wrote:
+>>> The value that struct cftype .write() method returns is then directly
+>>> returned to userspace as the value returned by write() syscall, so it
+>>> should be the number of bytes actually written (or consumed) and not zero.
+>>>
+>>> Returning zero from write() syscall makes programs like /bin/echo or bash
+>>> spin.
+>>
+>> Applied, thanks.
 > 
+> Thanks.
 > 
->> Il giorno 17 ago 2018, alle ore 19:28, Maciej S. Szmigiero <mail@maciej.szmigiero.name> ha scritto:
->>
->> The current linux-block, 4.18 and 4.17 can reliably be crashed within few
->> minutes by running the following bash snippet:
->>
->> mkfs.ext4 -v /dev/sda3 && mount /dev/sda3 /mnt/test/ -t ext4;
->> while true; do
->> 	mkdir /sys/fs/cgroup/unified/test/;
->> 	echo $$ >/sys/fs/cgroup/unified/test/cgroup.procs;
->> 	dd if=/dev/zero of=/mnt/test/test-$(( RANDOM * 10 / 32768 )) bs=1M count=1024 &
->> 	echo $$ >/sys/fs/cgroup/unified/cgroup.procs;
->> 	sleep 1;
->> 	kill -KILL $!; wait $!;
->> 	rmdir /sys/fs/cgroup/unified/test;
->> done
->>
->> # cat /sys/block/sda/queue/scheduler
->> noop [cfq]
->> # cat /sys/block/sda/queue/rotational
->> 1
->> # cat /sys/fs/cgroup/unified/cgroup.subtree_control
->> cpu io memory pids
->>
->> The backtraces vary but often they are NULL pointer dereferences due to
->> various cfqq fields being NULL.
->> Or BUG_ON(cfqq->ref <= 0) in cfq_put_queue() triggers due to cfqq reference
->> count being zero.
->>
->> Bisection points at
->> commit 4c6994806f70 ("blk-throttle: fix race between blkcg_bio_issue_check() and cgroup_rmdir()").
->> The prime suspect looked like .pd_offline_fn() method being called multiple
->> times, but from analyzing the mentioned commit this didn't seem possible
->> and runtime trials have confirmed that.
->>
->> However, CFQ's cfq_pd_offline() implementation of the above method were
->> leaving queue pointers intact in cfqg after unpinning them.
->> After making sure that they are cleared to NULL in this function I can no
->> longer reproduce the crash.
->>
+>> Just a heads-up that gmail thinks your email is spam.
 > 
-> By chance, did you check whether is BFQ is ok in this respect?
+> Thanks for the information - it looks like gmail just doesn't like my
+> email server for some reason.
 
-I wasn't able to crash BFQ with the above test and in fact had run my
-machines on BFQ until I was able to find a fix for this in CFQ.
+This one came through fine, jfyi.
 
-Also, BFQ has a bit similar code in bfq_put_async_queues() that is
-called from bfq_pd_offline() that is already NULL-ing the passed
-pointer.
+-- 
+Jens Axboe
 
-> Thanks,
-> Paolo
-
-Regards,
-Maciej
