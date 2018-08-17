@@ -3,81 +3,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76EDCC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B6E6C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:48:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3087821A1C
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:45:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBB6921A1C
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:48:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tYIbQz41"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3087821A1C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XjfQM5BO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBB6921A1C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbeHQUtS (ORCPT
+        id S1728001AbeHQUwS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 16:49:18 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:45840 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727365AbeHQUtS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 16:49:18 -0400
-Received: by mail-oi0-f68.google.com with SMTP id q11-v6so15316413oic.12;
-        Fri, 17 Aug 2018 10:45:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=47bva1FwOvZha3+c6EC0lnETgaFc5rRSsy1ialbGhBQ=;
-        b=tYIbQz414mOGf2qqXpQVtfWJRjVPqTnFcB5hRqsnJxCVaeydHmpXwTBXhXVBdjAN5R
-         RYUSTJPgMwMfWVIxFt6RMkvHi8ejmwSTBtmvsxRulHo53HxzRc9KsSCYuI2LTkkyjC54
-         rA9lRwyYvSSrNDj8VI/ZAG0J4pTi/6MvnVR5iPFyikEj4gUifmTBfWhUYzgVWApy6n9w
-         ObzDPQnWUk2x1u8WVgCygVw0pBMceI2d8iBRcK+GUkG2UG1/ABICEv4xVqx8XyFYqtxi
-         f+0UwiUlzhZRBJmo1+xYrSRaPrqapgAZwnaNkQ34M9XLffCboZR9NXHwRogOzzquyR2o
-         NtBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=47bva1FwOvZha3+c6EC0lnETgaFc5rRSsy1ialbGhBQ=;
-        b=lmMRBSHB1+etmfO3YnVjxvnC5TPZhiw8GlAbzcNqcoU2B1aSuNKrdTFd3OEQOqqtLN
-         wl8X41GdvpKDN/jhC7WXpmzWAYCqeJIG2c/oU6OEbY/6Qbn6/654mOqXL+wd36pMHl/9
-         PGXTR9IT6Y9kJqTDL/lNd+RmfuZhVakb+JQ55eT6zrfXaECyQ67XnC+BWHhN9iWJQi5o
-         9rjCeThzPoFiw1+NNREZL7eirhFm/tD9259Zi5HO5eecRQ1Zlz8IaXW+EBxRKi8iOAAL
-         bu9iLrN27lJvtZyzMN4uoxa/FHZ9F5plOBtWabTQaheFi7sIWeJz3XZAt58KZA5GMHTj
-         eCIQ==
-X-Gm-Message-State: AOUpUlGy6+UDa3gBQasSpb3RH5++0kNAfqEOa4+ZRZfMjt9nkchHttr+
-        qWAD7HvO/OUWU+yIEoyWBEb04eyi2RTsTiccDZo=
-X-Google-Smtp-Source: AA+uWPxgHwXgXlUFNX8BMoF/IRrCPj59IAsh+2dP07HxITYMZByEBtuw9g5KZmWzeD2R8mdaXcHQLjYk+SHEn8hsvoI=
-X-Received: by 2002:aca:56d1:: with SMTP id k200-v6mr3553944oib.319.1534527901096;
- Fri, 17 Aug 2018 10:45:01 -0700 (PDT)
+        Fri, 17 Aug 2018 16:52:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42502 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727612AbeHQUwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 16:52:18 -0400
+Received: from mail-qt0-f174.google.com (mail-qt0-f174.google.com [209.85.216.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 674A521A28;
+        Fri, 17 Aug 2018 17:48:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534528080;
+        bh=z/5ZXNrx3/HqKYWq60LZsUq86ZQ/t3YeMwxVJwm0pXA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=XjfQM5BOb7INTZ7poHHVl1gHfPh+8AFiH1YGHXj22aZs19uLPOSzZK0nneewCl+HJ
+         jM4ONfHE0RjsDkSRuW4sHS5mRBS2G5v1jcgl/H1JLJW7mPJyzqPjIoe2fiZI8rf4Tg
+         yQ6MmnBssxvOjd3BfxmjK8PUrv1rU5Zha26ilGlI=
+Received: by mail-qt0-f174.google.com with SMTP id n6-v6so9626803qtl.4;
+        Fri, 17 Aug 2018 10:48:00 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGMOFnA1DZjqaFcjMfXfyJwNlXyB9aRzY9Xa2jx93jJuAio6PV5
+        QFeBtKi5NKuW01gK2EeOgHusHsgVN73EKzCJxQ==
+X-Google-Smtp-Source: AA+uWPxDBirz7aCXNQYezqBV9zey4a44bL4qEeeaOLJzrSZXSXuAmMB8AIBYSOqbvtQAMD6k6Wi7+B4OuKKky8lDsAE=
+X-Received: by 2002:ac8:2c72:: with SMTP id e47-v6mr36502752qta.60.1534528079599;
+ Fri, 17 Aug 2018 10:47:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <66694963.VB7x4V86dC@avalon> <Pine.LNX.4.44L0.1808101019550.1425-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1808101019550.1425-100000@iolanthe.rowland.org>
-From:   "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
-Date:   Fri, 17 Aug 2018 20:44:49 +0300
-Message-ID: <CAJs94EYH2BrHseveJV_xqYs5zK0NxrdQ8NhjrCp7tytK=KsF0g@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] media: usb: pwc: Don't use coherent DMA buffers
- for ISO transfer
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        keiichiw@chromium.org
+References: <CADUUTHBZ---U7YNYYry7qJY=vt_QpXpytymqJQc9xLFE_NjsAg@mail.gmail.com>
+ <c342562e-f915-a853-c2a8-eecefd94b88d@gmail.com>
+In-Reply-To: <c342562e-f915-a853-c2a8-eecefd94b88d@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 17 Aug 2018 11:47:48 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLV5d5cL3o3Dx=--zGD37c5O09rL9AXyRFmceTfBHt3Zg@mail.gmail.com>
+Message-ID: <CAL_JsqLV5d5cL3o3Dx=--zGD37c5O09rL9AXyRFmceTfBHt3Zg@mail.gmail.com>
+Subject: Re: How delete node or property in overlayd dts?
+To:     zbsdta@gmail.com, Frank Rowand <frowand.list@gmail.com>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -85,74 +62,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=D0=BF=D1=82, 10 =D0=B0=D0=B2=D0=B3. 2018 =D0=B3. =D0=B2 17:27, Alan Stern =
-<stern@rowland.harvard.edu>:
+On Tue, Aug 14, 2018 at 7:26 PM Frank Rowand <frowand.list@gmail.com> wrote=
+:
 >
-> On Fri, 10 Aug 2018, Laurent Pinchart wrote:
->
-> > > > Aren't you're missing a dma_sync_single_for_device() call before
-> > > > submitting the URB ? IIRC that's required for correct operation of =
-the DMA
-> > > > mapping API on some platforms, depending on the cache architecture.=
- The
-> > > > additional sync can affect performances, so it would be useful to r=
-e-run
-> > > > the perf test.
-> > >
-> > > This was already discussed:
-> > >
-> > > https://lkml.org/lkml/2018/7/23/1051
-> > >
-> > > I rely on Alan's reply:
-> > >
-> > > > According to Documentation/DMA-API-HOWTO.txt, the CPU should not wr=
-ite
-> > > > to a DMA_FROM_DEVICE-mapped area, so dma_sync_single_for_device() i=
-s
-> > > > not needed.
+> On 08/14/18 07:46, =E5=BC=A0=E6=B3=A2 wrote:
+> > /delete-node/ /delete-prop/ could be used in dtsi files without device
+> > tree overlay.
 > >
-> > I fully agree that the CPU should not write to the buffer. However, I t=
-hink
-> > the sync call is still needed. It's been a long time since I touched th=
-is
-> > area, but IIRC, some cache architectures (VIVT ?) require both cache cl=
-ean
-> > before the transfer and cache invalidation after the transfer. On platf=
-orms
-> > where no cache management operation is needed before the transfer in th=
-e
-> > DMA_FROM_DEVICE direction, the dma_sync_*_for_device() calls should be =
-no-ops
-> > (and if they're not, it's a bug of the DMA mapping implementation).
+> > but with device tree overlay,  /delete-node/ and  /delete-prop/ are not=
+ work.
+> > How to delete property and node in overlay dts?
+> >
+> > for example,
+> > in basel.dts have following node
+> > node1 {
+> >     property1;
+> >     property3;
+> >     node2 {
+> >         property2;
+> >     }
+> > }
+> >
+> > in overlay.dts as following
+> >  node1 {
+> >     /delete-property/ property1;
+> >     /delete-node/ node2;
+> > }
+> >
+> > after overlay, property1 and node2 is not deleted.
+> >
 >
-> In general, I agree that the cache has to be clean before a transfer
-> starts.  This means some sort of mapping operation (like
-> dma_sync_*_for-device) is indeed required at some point between the
-> allocation and the first transfer.
+> The /delete-node/ and /delete-prop/ directives are only used by the
+> dtc compiler within a single compilation.
 >
-> For subsequent transfers, however, the cache is already clean and it
-> will remain clean because the CPU will not do any writes to the buffer.
-> (Note: clean !=3D empty.  Rather, clean =3D=3D !dirty.)  Therefore transf=
-ers
-> following the first should not need any dma_sync_*_for_device.
+> There is nothing in the format of a devicetree blob to represent the
+> notion of deleting a property or a node.
 >
-> If you don't accept this reasoning then you should ask the people who
-> wrote DMA-API-HOWTO.txt.  They certainly will know more about this
-> issue than I do.
+> You can not delete a property or a node in an overlay dtb.
 
-Laurent,
+Though you can add/override 'status' with 'status =3D "disabled";' which
+should be treated very similar to a node not being present. I say
+similar because it's a source of bugs for the OS to fail to pay
+attention to status property.
 
-I have not seen any data corruption or glitches without
-dma_sync_single_for_device() on ARM and x86.
-It takes additional ~20usec for dma_sync_single_for_device() to run on
-ARM. So It would be great to ensure that we can reliable save another
-15% running time.
-
->
-> Alan Stern
->
-
-
---
-With best regards,
-Matwey V. Kornilov
+Rob
