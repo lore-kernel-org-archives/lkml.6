@@ -2,126 +2,195 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BC5C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD92C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:31:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EB1C21A28
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:31:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EB1C21A28
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id EB8EF21A2E
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:31:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ettus-com.20150623.gappssmtp.com header.i=@ettus-com.20150623.gappssmtp.com header.b="cTV3QAfZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB8EF21A2E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ettus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbeHQTfu (ORCPT
+        id S1727845AbeHQTf6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 15:35:50 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:61717 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727037AbeHQTft (ORCPT
+        Fri, 17 Aug 2018 15:35:58 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:38204 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727801AbeHQTf5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 15:35:49 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7HGU359077587
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 12:31:47 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kx133t88b-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 12:31:47 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 17 Aug 2018 12:31:46 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 17 Aug 2018 12:31:44 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7HGVhOW4456938
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 17 Aug 2018 16:31:43 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B3075B2065;
-        Fri, 17 Aug 2018 12:30:55 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9461FB205F;
-        Fri, 17 Aug 2018 12:30:55 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 17 Aug 2018 12:30:55 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id BA4CA16C0FD2; Fri, 17 Aug 2018 09:31:43 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 09:31:43 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, joel@joelfernandes.org,
-        mathieu.desnoyers@efficios.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] Make call_srcu() available during very early boot
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180814162448.GA20414@linux.vnet.ibm.com>
- <20180814124945.5cf1753f@gandalf.local.home>
- <20180814170618.GA24813@linux.vnet.ibm.com>
- <20180817160842.GK3978217@devbig004.ftw2.facebook.com>
+        Fri, 17 Aug 2018 15:35:57 -0400
+Received: by mail-yb0-f194.google.com with SMTP id c1-v6so482625ybq.5
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 09:31:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ettus-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=fZw2X/38ghpsGK069mXTDTlh8k6bvpsaz6gPRmD2hm8=;
+        b=cTV3QAfZreykf6FPe9iXvfG/yGk05Q5TgLO2mPrSle/XsEjj8IRuYpt6YHc3C7kNTS
+         dr2kCcPqztl20uP2JlEblsSce/is9J8e5or0n0cASBEFa/DMK5/mASx0aS15y1UH6W4S
+         pUUdoQaIWcmTg9Mb5Fh4eXXVUoZ6l2VvTH7L87f3Q+tPJohbRUJoRhKnXahi0twY3V+t
+         XlzRD6z76FUmBgA/CXjPX3b0b6pC3LXOQDI6cS9zwasgyEk3da48PjY75CtAml8FsAvk
+         CKRiX6poqOMtW2fNroHpXgEfwdDmU08F/aTEoQYlmo0jbmcRmliheE1PbiZsZnTUHgty
+         j0mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=fZw2X/38ghpsGK069mXTDTlh8k6bvpsaz6gPRmD2hm8=;
+        b=S+TjL9ySp09aeUXLcEvHTBLSuNoHgTNtAJRjBobue9M/fzjJxtwbdDf7MINVHZxM7w
+         et+EuA2ijNTQSZ3BfNiKxCldhinhKzunhdcRyI9mys4CWtYMK0D/zpo7kjr7MHP5Ac91
+         cO3ZrZkiiiLX5NaOSqJ2e181Kiv9lda4xqymTJf9EMs/FLkwA4FJY7pLGQjotEDUUxLb
+         b0WNlMS9VD+PNirqYKnj2oDLrbveGh0jBc62/OJo8mybVmcgkZI2Rg7cDO8NOw2As5mi
+         vIUetoet9FXqBaO+qClw/rpeAwlY8OorsrVS3Q8GJhF7guu2gVXJCTbqE1mJADrE8VuR
+         /RMA==
+X-Gm-Message-State: AOUpUlFWs5zR6yFNEZYcIcoNhUXcx462fK81RdoR8H8PPgzIvzzaBTlu
+        i4zWqz3FJUMIljnlq67mXtCXGHGwh4tHMdR/pPJM9w==
+X-Google-Smtp-Source: AA+uWPwpw8UYLlDC6kLG2sgVIaaQJ8ccq6Gr1+L8a+30c7OpP2sKTeTc+4hE5eI6NajATtM2PJkyOtBhsyuLz2UNPKQ=
+X-Received: by 2002:a25:2548:: with SMTP id l69-v6mr19296572ybl.230.1534523515821;
+ Fri, 17 Aug 2018 09:31:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180817160842.GK3978217@devbig004.ftw2.facebook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18081716-0052-0000-0000-00000320E113
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009561; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01074895; UDB=6.00553970; IPR=6.00854853;
- MB=3.00022776; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-17 16:31:46
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081716-0053-0000-0000-00005DC25C75
-Message-Id: <20180817163143.GX24813@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-17_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=826 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808170178
+Received: by 2002:a81:3c0a:0:0:0:0:0 with HTTP; Fri, 17 Aug 2018 09:31:55
+ -0700 (PDT)
+In-Reply-To: <1534403190-28523-8-git-send-email-jliang@xilinx.com>
+References: <1534403190-28523-1-git-send-email-jliang@xilinx.com> <1534403190-28523-8-git-send-email-jliang@xilinx.com>
+From:   Moritz Fischer <moritz.fischer@ettus.com>
+Date:   Fri, 17 Aug 2018 09:31:55 -0700
+Message-ID: <CAAtXAHd0jmV32bSyxCyMSh9fcP63sM+6-SkTMS=gA1fJKGKtig@mail.gmail.com>
+Subject: Re: [PATCH 7/7] Documentation: devicetree: Add Xilinx R5 rproc binding
+To:     Wendy Liang <wendy.liang@xilinx.com>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, rajan.vaja@xilinx.com,
+        jollys@xilinx.com, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wendy Liang <jliang@xilinx.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 09:08:42AM -0700, Tejun Heo wrote:
-> Hello,
-> 
-> On Tue, Aug 14, 2018 at 10:06:18AM -0700, Paul E. McKenney wrote:
-> > > Is there a way we could make a union, or reuse one of the other fields,
-> > > as we know that synchronize_srcu() can't be used yet (and if it is,
-> > > either warn, or just make it a nop). And when we call srcu_init() and
-> > > remove the srcu_struct from the list, we can then initialize whatever
-> > > we used as the temporary boot up list field.
-> > 
-> > I will take a look.  If nothing else, I could union it with the
-> > struct work_struct, since it cannot be used that early anyway.  ;-)
-> > 
-> > Or I could just use the work_struct that is already inside the struct
-> > work_struct.  Tejun, would you be OK with that?
-> 
-> Hmm... not super against it given how specialized the whole thing is
-> but maybe just making it a union is cleaner?
+Hi Wendy,
 
-The problem with making it be a union is that I cannnot determine how
-to initialize it due to the possibility that someone will initialize it
-early, but not use it until much later.  For example, if I initialize my
-side of the union, but they don't actually use it until after rcu_init()
-is invoked, I will end up passing a bogus work_struct to you.
+couple of minor stuff inline.
 
-In theory, I could straighten all this out at rcu_init() time, but that
-would require linking all srcu_struct instances initialized at that
-point, including the compile-time-initialized instances.  This can of
-course be done, but not simply.
+On Thu, Aug 16, 2018 at 12:06 AM, Wendy Liang <wendy.liang@xilinx.com> wrote:
+> Add device tree binding for Xilinx Cortex-r5 remoteproc.
+>
+> Signed-off-by: Wendy Liang <jliang@xilinx.com>
+> ---
+>  .../remoteproc/xlnx,zynqmp-r5-remoteproc.txt       | 81 ++++++++++++++++++++++
+>  1 file changed, 81 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt
+>
+> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt
+> new file mode 100644
+> index 0000000..3940019
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt
+> @@ -0,0 +1,81 @@
+> +Xilinx ARM Cortex A53-R5 remoteproc driver
+> +==========================================
+> +
+> +ZynqMP family of devices use two Cortex R5 processors to help with various
+> +low power / real time tasks.
 
-Or am I missing a trick here somewhere?
+The ZynqMP family [..] uses [..]
+> +
+> +This driver requires specific ZynqMP hardware design.
 
-							Thanx, Paul
+*a* specific ZynqMP hardware design. What does that mean?
+> +
+> +ZynqMP R5 RemoteProc Device Node:
+> +=================================
+> +A zynqmp_r5_remoteproc device node is used to represent a R5 IP instance
+> +within ZynqMP SoC.
+> +
+> +Required properties:
+> +--------------------
+> + - compatible : Should be "xlnx,zynqmp-r5-remoteproc-1.0"
+> + - reg : Address and length of the register set for the device. It
+> +        contains in the same order as described reg-names
 
+?
+> + - reg-names: Contain the register set names.
+
+Contains
+
+> +              "tcm_a" and "tcm_b" for TCM memories.
+> +              If the user uses the remoteproc driver with the RPMsg kernel
+> +              driver,"ipi" for the IPI register used to communicate with RPU
+> +              is also required.
+> +              Otherwise, if user only uses the remoteproc driver to boot RPU
+> +              firmware, "ipi" is not required.
+> + - tcm-pnode-id: TCM resources power nodes IDs which are used to request TCM
+> +                 resources for the remoteproc driver to access.
+> + - rpu-pnode-id : RPU power node id which is used by the remoteproc driver
+> +                  to start RPU or shut it down.
+> +
+> +Optional properties:
+> +--------------------
+> + - core_conf : R5 core configuration (valid string - split0 or split1 or
+> +               lock-step), default is lock-step.
+> + - memory-region: memories regions for RPU executable and DMA memory.
+> + - interrupts : Interrupt mapping for remoteproc IPI. It is required if the
+> +                user uses the remoteproc driver with the RPMsg kernel driver.
+> + - interrupt-parent : Phandle for the interrupt controller. It is required if
+> +                      the user uses the remoteproc driver with the RPMsg kernel
+> +                      kernel driver.
+> +
+> +Example:
+> +--------
+> +       reserved-memory {
+> +               #address-cells = <2>;
+> +               #size-cells = <2>;
+> +               ranges;
+> +               rproc_0_fw_reserved: rproc@3ed000000 {
+> +                       compatible = "rproc-prog-memory";
+> +                       no-map;
+> +                       reg = <0x0 0x3ed00000 0x0 0x40000>;
+> +               };
+> +               rproc_0_dma_reserved: rproc@3ed400000 {
+> +                       compatible = "shared-dma-pool";
+> +                       no-map;
+> +                       reg = <0x0 0x3ed40000 0x0 0x80000>;
+> +               };
+> +       };
+> +
+> +       firmware {
+> +               zynqmp_firmware: zynqmp-firmware {
+> +                       compatible = "xlnx,zynqmp-firmware";
+> +                       method = "smc";
+> +               };
+> +       };
+> +
+> +       zynqmp-r5-remoteproc@0 {
+> +               compatible = "xlnx,zynqmp-r5-remoteproc-1.0";
+> +               reg = <0x0 0xFFE00000 0x0 0x10000>,
+> +                       <0x0 0xFFE20000 0x0 0x10000>,
+> +                       <0x0 0xff340000 0x0 0x100>;
+> +               reg-names = "tcm_a", "tcm_b", "ipi";
+> +               dma-ranges;
+> +               core_conf = "split0";
+> +               memory-region = <&rproc_0_fw_reserved>,
+> +                               <&rproc_0_dma_reserved>;
+> +               tcm-pnode-id = <0xf>, <0x10>;
+> +               rpu-pnode-id = <0x7>;
+> +               interrupt-parent = <&gic>;
+> +               interrupts = <0 29 4>;
+> +       } ;
+> --
+> 2.7.4
+>
+
+Cheers,
+Moritz
