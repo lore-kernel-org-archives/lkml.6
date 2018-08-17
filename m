@@ -2,122 +2,140 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4A9C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:43:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A402C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:44:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9480821893
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:43:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9480821893
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BE3A21896
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:44:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LChmcydZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BE3A21896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726395AbeHQLqN (ORCPT
+        id S1726463AbeHQLqk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 07:46:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35740 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725845AbeHQLqN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 07:46:13 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 39608401EF1B;
-        Fri, 17 Aug 2018 08:43:40 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BEB432026D6C;
-        Fri, 17 Aug 2018 08:43:33 +0000 (UTC)
-Date:   Fri, 17 Aug 2018 10:43:31 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-Subject: Re: [PATCH v9 09/22] s390: vfio-ap: register matrix device with
- VFIO mdev framework
-Message-ID: <20180817104331.378fa130.cohuck@redhat.com>
-In-Reply-To: <5b77a5e9-6d91-c7a3-5ada-d888735f0488@linux.ibm.com>
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1534196899-16987-10-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <20180814131929.37d4b530.cohuck@redhat.com>
-        <5b77a5e9-6d91-c7a3-5ada-d888735f0488@linux.ibm.com>
-Organization: Red Hat GmbH
+        Fri, 17 Aug 2018 07:46:40 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54120 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbeHQLqk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 07:46:40 -0400
+Received: by mail-wm0-f65.google.com with SMTP id s9-v6so6852340wmh.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 01:44:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CrY+KJctFbw4AVPhHRgoye4LLjyBDIvZauxXJpZhsfQ=;
+        b=LChmcydZ7CbFnmSDmkbM7JRTPXxp1KeeKa+8PhxBHigAjVFmwq0uC4uSxd84FkdU8b
+         waeuaTFj8Y/v+RLJRT3CMF6lfPkjvAQRCjuvMkn02fgQu4e5HbBCSbkUlzQbqYGUKiIB
+         0UoUT+d1zPZV1TtWz03ZtGKKQYTUPRzHBfyqU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CrY+KJctFbw4AVPhHRgoye4LLjyBDIvZauxXJpZhsfQ=;
+        b=A0cCys4QEpj+aawqCbBkBkbnYkQkxnsJLiQDujUbRv/uvrTe0xL9t4DGyqdXnoz4Eu
+         wiRqM4TvbKh/WOrevFraqyreWflw/dmpqAPXJrhAXk0GsdRQQcA2klRwMySQ+ERwPCYI
+         usOJ5hhobiCozv0XX8xHrBULrKI6Gu+Xi/6GETWdTOq6TOAg4QRXIrJvn73dlGP8ZyIa
+         Ez//MeHKHyDQ3FfFxSC2AnY1tEE/jqEtwJ5k9O5Aa/jHyjKW0CyyIvGOp2szhuQ1ESa2
+         9yPXkEenONNPwsaNCaglkBLNXPLdv8pwt3kU5Xs+se/ncnH7t/DWmZu1wFrzTqSFFOet
+         hSsA==
+X-Gm-Message-State: AOUpUlHeWyJaroprw08duwIJHlU/gVTlMCHJ3DRfyXw6hDr3Ww1GoBoQ
+        ppJBEoqZK9T31OPBA4q2VkfOig==
+X-Google-Smtp-Source: AA+uWPxIGNvnD9/qEKLwkpp9KqezSM/PQmAKG2KVWTvicltvSGkuC+DrH/jqI5mgqjRMUE6n46+OUA==
+X-Received: by 2002:a1c:c7c1:: with SMTP id x184-v6mr17749891wmf.134.1534495446801;
+        Fri, 17 Aug 2018 01:44:06 -0700 (PDT)
+Received: from holly.lan (89-145-231-170.xdsl.murphx.net. [89.145.231.170])
+        by smtp.gmail.com with ESMTPSA id s5-v6sm1290880wro.33.2018.08.17.01.44.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 17 Aug 2018 01:44:05 -0700 (PDT)
+Date:   Fri, 17 Aug 2018 09:44:02 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kdb: kdb_main: refactor code in kdb_md_line
+Message-ID: <20180817084402.ccqulr3mei6mjxgs@holly.lan>
+References: <20180816140141.GA28913@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 17 Aug 2018 08:43:40 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 17 Aug 2018 08:43:40 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180816140141.GA28913@embeddedor.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Aug 2018 12:24:16 -0400
-Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+On Thu, Aug 16, 2018 at 09:01:41AM -0500, Gustavo A. R. Silva wrote:
+> Replace the whole switch statement with a for loop.
+> This makes the code much clear and easy to read.
+> 
+> This also addresses the following Coverity warnings:
+> 
+> Addresses-Coverity-ID: 115090 ("Missing break in switch")
+> Addresses-Coverity-ID: 115091 ("Missing break in switch")
+> Addresses-Coverity-ID: 114700 ("Missing break in switch")
+> 
+> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-> On 08/14/2018 07:19 AM, Cornelia Huck wrote:
-> > On Mon, 13 Aug 2018 17:48:06 -0400
-> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
 
-> >> +static int vfio_ap_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
-> >> +{
-> >> +	struct ap_matrix_mdev *matrix_mdev;
-> >> +
-> >> +	matrix_mdev = kzalloc(sizeof(*matrix_mdev), GFP_KERNEL);
-> >> +	if (!matrix_mdev)
-> >> +		return -ENOMEM;
-> >> +
-> >> +	matrix_mdev->name = dev_name(mdev_dev(mdev));
-> >> +	vfio_ap_matrix_init(&matrix_dev.info, &matrix_mdev->matrix);
-> >> +	mdev_set_drvdata(mdev, matrix_mdev);
-> >> +
-> >> +	if (atomic_dec_if_positive(&matrix_dev.available_instances) < 0) {
-> >> +		kfree(matrix_mdev);
-> >> +		return -EPERM;
-> >> +	}  
-> > Maybe move this check to the top of the function?  
+> ---
+> Changes in v2:
+>  - Add new variable j and use it for the for loop.
 > 
-> Please ignore my previous response to your comment. I can't move the call to
-> atomic_dec_if_positive() to the top of the function because it 
-> decrements the
-> available_instances and if the kzalloc() of matrix_mdev fails, then the 
-> value
-> would have to then be incremented to remain valid. What I can do is this:
+>  kernel/debug/kdb/kdb_main.c | 21 +++------------------
+>  1 file changed, 3 insertions(+), 18 deletions(-)
 > 
-> 1. Check the value of available_instances using atomic_read() at the top of
->     the function and if it is zero, return an error.
+> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+> index 2ddfce8..a9ad288 100644
+> --- a/kernel/debug/kdb/kdb_main.c
+> +++ b/kernel/debug/kdb/kdb_main.c
+> @@ -1493,6 +1493,7 @@ static void kdb_md_line(const char *fmtstr, unsigned long addr,
+>  	char cbuf[32];
+>  	char *c = cbuf;
+>  	int i;
+> +	int j;
+>  	unsigned long word;
+>  
+>  	memset(cbuf, '\0', sizeof(cbuf));
+> @@ -1538,25 +1539,9 @@ static void kdb_md_line(const char *fmtstr, unsigned long addr,
+>  			wc.word = word;
+>  #define printable_char(c) \
+>  	({unsigned char __c = c; isascii(__c) && isprint(__c) ? __c : '.'; })
+> -			switch (bytesperword) {
+> -			case 8:
+> +			for (j = 0; j < bytesperword; j++)
+>  				*c++ = printable_char(*cp++);
+> -				*c++ = printable_char(*cp++);
+> -				*c++ = printable_char(*cp++);
+> -				*c++ = printable_char(*cp++);
+> -				addr += 4;
+> -			case 4:
+> -				*c++ = printable_char(*cp++);
+> -				*c++ = printable_char(*cp++);
+> -				addr += 2;
+> -			case 2:
+> -				*c++ = printable_char(*cp++);
+> -				addr++;
+> -			case 1:
+> -				*c++ = printable_char(*cp++);
+> -				addr++;
+> -				break;
+> -			}
+> +			addr += bytesperword;
+>  #undef printable_char
+>  		}
+>  	}
+> -- 
+> 2.7.4
 > 
-> 2. Replace the call to atomic_dec_if_positive() with a call to atomic_dec()
->     to decrement the available_instances.
-> 
-> I agree that it makes sense to return before attempting to allocate the
-> matrix_mdev if available_instances is zero.
-
-Wouldn't that be racy, though?
-
-I don't think re-incrementing the counter is too bad, and it's
-certainly better than going through allocation/freeing of structures.
-
-> 
-> >  
-> >> +
-> >> +	mutex_lock(&matrix_dev.lock);
-> >> +	list_add(&matrix_mdev->list, &matrix_dev.mdev_list);
-> >> +	mutex_unlock(&matrix_dev.lock);
-> >> +
-> >> +	return 0;
-> >> +}  
-> 
-> 
-
