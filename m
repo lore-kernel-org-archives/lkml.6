@@ -2,117 +2,210 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF87FC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA93C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:38:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6548221894
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:34:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QF++/AMr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6548221894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F21021868
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:38:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F21021868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbeHQLg2 (ORCPT
+        id S1726743AbeHQLkg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 07:36:28 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:40502 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbeHQLg2 (ORCPT
+        Fri, 17 Aug 2018 07:40:36 -0400
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:47007 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbeHQLkg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 07:36:28 -0400
-Received: by mail-wm0-f54.google.com with SMTP id y9-v6so6688501wma.5
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 01:33:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=wovn9MBxuOUBfVTb6YKy7wBqfRENNLLOE/mwW6Xl3ts=;
-        b=QF++/AMrUFZNB+4a/o52IHB1F8lrctVwZcXjJv9leFlTTUEWrZujblhoT4762YCgj8
-         DvUM96+hDbwB/9w2Ho21Dhv8jPy5ZVrCj3ZslroMfzri6j7d70rooWcFZ7MJf3rt7Vv3
-         ixc2ToftuTgGDO8X+onfJj/OSSMnwHArKs2xbqG6AZx1LZeI1KdadHzCnqXUKgDBogS7
-         iP1lfqmislFQoKVJ4HnHnpgIt5KGJm15pbX9k6bIWvOZnygQY0Sz9wl5hOVkWqt4cr2c
-         Ywb7gjWTbPAu8+JYw9J//1+ONe3NdVkLslXwYolshhf4BdjZ6fToki/eJtPpGfF3XN5s
-         p4Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=wovn9MBxuOUBfVTb6YKy7wBqfRENNLLOE/mwW6Xl3ts=;
-        b=FyZou/yCTK92t6iyXQRfy+zwQpu2G/tqLSuqP1AloCDhLfeNlsiu96M5l0uycTZ33L
-         ai3yKH84hXwqewr/b4FOjUepC4J9x1EdH/9z8RThdN+j5axO9OI3eFMLn5yHrfBAjX5h
-         3k/9DTsb/9aTCLlTW0wrcERo01eNzB1z7djMlTvyC2jiJvRLFl3b//w4Ie4FJZxIAavG
-         9xoRQ8pv10RQEW2fWdAPjzLedLdC2XeA/8ropkSm0iPWnWr9T5dnVm++vhviZzvS38o0
-         9hMoZ619sfJ8JCSDUSFuHsmH7Ou93+jgsGOwe8gYkC+9cfs4HASqg92M1aKlaZaC74kX
-         MCdA==
-X-Gm-Message-State: AOUpUlGLMNfeYdSUfL6Mq+pchM5VVHwckBJjabKv4ee9n/G/HsLUYg55
-        fDsNtMYHopXcyzehc50/wNGpF24hTWRdiTZXwMI=
-X-Google-Smtp-Source: AA+uWPz9gcF4hCMaScX6Q41xCqk5Z4y1pDnQl3wUjFmYtYHYcEvHltNKx9A5PkXpSCYpy9HdvXnNRhrWAoD2iSR79wY=
-X-Received: by 2002:a1c:d702:: with SMTP id o2-v6mr17964938wmg.115.1534494837019;
- Fri, 17 Aug 2018 01:33:57 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a5d:4302:0:0:0:0:0 with HTTP; Fri, 17 Aug 2018 01:33:55
- -0700 (PDT)
-In-Reply-To: <CAFLxGvxhUyqs3_esJwBjHrTY0Ba=bPB=425hWr0rz-BySTjzoA@mail.gmail.com>
-References: <CA+icZUW9Cg0G41ZSwjUBaJ+F9qCc23GGMp8aCgfNQejstKJmmQ@mail.gmail.com>
- <CAFLxGvxhUyqs3_esJwBjHrTY0Ba=bPB=425hWr0rz-BySTjzoA@mail.gmail.com>
-From:   Vegard Nossum <vegard.nossum@gmail.com>
-Date:   Fri, 17 Aug 2018 10:33:55 +0200
-Message-ID: <CAOMGZ=G-MU7qTSeA4VFK+-nx2jFAM2fGL8WpQ6eBRvovEhaneQ@mail.gmail.com>
-Subject: Re: Merge branch 'l1tf-final' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-To:     Richard Weinberger <richard.weinberger@gmail.com>
-Cc:     sedat.dilek@gmail.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        x86 maintainers <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 17 Aug 2018 07:40:36 -0400
+Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
+        by 156.147.23.51 with ESMTP; 17 Aug 2018 17:38:04 +0900
+X-Original-SENDERIP: 156.147.1.126
+X-Original-MAILFROM: kyeongdon.kim@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.168.176.142)
+        by 156.147.1.126 with ESMTP; 17 Aug 2018 17:38:03 +0900
+X-Original-SENDERIP: 10.168.176.142
+X-Original-MAILFROM: kyeongdon.kim@lge.com
+From:   Kyeongdon Kim <kyeongdon.kim@lge.com>
+To:     aryabinin@virtuozzo.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, glider@google.com, dvyukov@google.com
+Cc:     Jason@zx2c4.com, robh@kernel.org, ard.biesheuvel@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kasan-dev@googlegroups.com, linux-mm@kvack.org,
+        kyeongdon.kim@lge.com
+Subject: [PATCH] arm64: kasan: add interceptors for strcmp/strncmp functions
+Date:   Fri, 17 Aug 2018 17:37:55 +0900
+Message-Id: <1534495075-82167-1-git-send-email-kyeongdon.kim@lge.com>
+X-Mailer: git-send-email 2.6.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16 August 2018 at 17:42, Richard Weinberger
-<richard.weinberger@gmail.com> wrote:
-> On Thu, Aug 16, 2018 at 2:58 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
->>
->> Hi Linus,
->>
->> I am here on Linux v4.18 and tried first to merge the l1tf-final Git-branch.
->> Unfortunately, this is no more available in the tip Git-tree.
->>
->> Then I saw Linux v4.18.1 which includes all the above stuff.
->>
->> I tried to 'git cherry-pick -m 1 958f338e96f874a0d29442396d6adf9c1e17aa2d'.
->> I know the commit-id is the hash of a merge.
->> Luckily, I could get the "diff" and applied it.
->> But the history misses.
->>
->> How can I get the history and subjects of all commits in your tree to
->> cherry-pick the single commits?
->>
->> Do you happen to know another solution to get easily all L1TF commits
->> with any other tricks?
->
-> That should help:
-> git log --oneline
-> 958f338e96f874a0d29442396d6adf9c1e17aa2d^..958f338e96f874a0d29442396d6adf9c1e17aa2d
+This patch declares strcmp/strncmp as weak symbols.
+(2 of them are the most used string operations)
 
-Hey,
+Original functions declared as weak symbols and
+strong ones in mm/kasan/kasan.c could replace them.
 
-As a shorthand for this, you can also use just:
+Assembly optimized strcmp/strncmp functions cannot detect KASan bug.
+But, now we can detect them.
 
-git log --oneline 958f338e96f87^-
+==================================================================
+BUG: KASAN: use-after-free in platform_match+0x1c/0x5c at addr ffffffc0ad313500
+Read of size 1 by task swapper/0/1
+CPU: 3 PID: 1 Comm: swapper/0 Tainted: G    B           4.9.77+ #1
+Hardware name: Generic (DT) based system
+Call trace:
+ dump_backtrace+0x0/0x2e0
+ show_stack+0x14/0x1c
+ dump_stack+0x88/0xb0
+ kasan_object_err+0x24/0x7c
+ kasan_report+0x2f0/0x484
+ check_memory_region+0x20/0x14c
+ strcmp+0x1c/0x5c
+ platform_match+0x40/0xe4
+ __driver_attach+0x40/0x130
+ bus_for_each_dev+0xc4/0xe0
+ driver_attach+0x30/0x3c
+ bus_add_driver+0x2dc/0x328
+ driver_register+0x118/0x160
+ __platform_driver_register+0x7c/0x88
+ alarmtimer_init+0x154/0x1e4
+ do_one_initcall+0x184/0x1a4
+ kernel_init_freeable+0x2ec/0x2f0
+ kernel_init+0x18/0x10c
+ ret_from_fork+0x10/0x50
 
-The syntax was made especially so that you can see all the commits
-that arrived via a merge commit without having to write the rev of the
-merge twice but is otherwise exactly equivalent to "rev^..rev".
+Signed-off-by: Kyeongdon Kim <kyeongdon.kim@lge.com>
+---
+ arch/arm64/include/asm/string.h |  4 ++++
+ arch/arm64/kernel/arm64ksyms.c  |  2 ++
+ arch/arm64/kernel/image.h       |  2 ++
+ arch/arm64/lib/strcmp.S         |  3 +++
+ arch/arm64/lib/strncmp.S        |  3 +++
+ mm/kasan/kasan.c                | 15 +++++++++++++++
+ 6 files changed, 29 insertions(+)
 
-It should work from git v2.13. Just a tip :-)
+diff --git a/arch/arm64/include/asm/string.h b/arch/arm64/include/asm/string.h
+index dd95d33..d546605 100644
+--- a/arch/arm64/include/asm/string.h
++++ b/arch/arm64/include/asm/string.h
+@@ -24,9 +24,11 @@ extern char *strchr(const char *, int c);
+ 
+ #define __HAVE_ARCH_STRCMP
+ extern int strcmp(const char *, const char *);
++extern int __strcmp(const char *, const char *);
+ 
+ #define __HAVE_ARCH_STRNCMP
+ extern int strncmp(const char *, const char *, __kernel_size_t);
++extern int __strncmp(const char *, const char *, __kernel_size_t);
+ 
+ #define __HAVE_ARCH_STRLEN
+ extern __kernel_size_t strlen(const char *);
+@@ -67,6 +69,8 @@ void memcpy_flushcache(void *dst, const void *src, size_t cnt);
+ #define memcpy(dst, src, len) __memcpy(dst, src, len)
+ #define memmove(dst, src, len) __memmove(dst, src, len)
+ #define memset(s, c, n) __memset(s, c, n)
++#define strcmp(cs, ct) __strcmp(cs, ct)
++#define strncmp(cs, ct, n) __strncmp(cs, ct, n)
+ 
+ #ifndef __NO_FORTIFY
+ #define __NO_FORTIFY /* FORTIFY_SOURCE uses __builtin_memcpy, etc. */
+diff --git a/arch/arm64/kernel/arm64ksyms.c b/arch/arm64/kernel/arm64ksyms.c
+index d894a20..10b1164 100644
+--- a/arch/arm64/kernel/arm64ksyms.c
++++ b/arch/arm64/kernel/arm64ksyms.c
+@@ -50,6 +50,8 @@ EXPORT_SYMBOL(strcmp);
+ EXPORT_SYMBOL(strncmp);
+ EXPORT_SYMBOL(strlen);
+ EXPORT_SYMBOL(strnlen);
++EXPORT_SYMBOL(__strcmp);
++EXPORT_SYMBOL(__strncmp);
+ EXPORT_SYMBOL(memset);
+ EXPORT_SYMBOL(memcpy);
+ EXPORT_SYMBOL(memmove);
+diff --git a/arch/arm64/kernel/image.h b/arch/arm64/kernel/image.h
+index a820ed0..5ef7a57 100644
+--- a/arch/arm64/kernel/image.h
++++ b/arch/arm64/kernel/image.h
+@@ -110,6 +110,8 @@ __efistub___flush_dcache_area	= KALLSYMS_HIDE(__pi___flush_dcache_area);
+ __efistub___memcpy		= KALLSYMS_HIDE(__pi_memcpy);
+ __efistub___memmove		= KALLSYMS_HIDE(__pi_memmove);
+ __efistub___memset		= KALLSYMS_HIDE(__pi_memset);
++__efistub___strcmp		= KALLSYMS_HIDE(__pi_strcmp);
++__efistub___strncmp		= KALLSYMS_HIDE(__pi_strncmp);
+ #endif
+ 
+ __efistub__text			= KALLSYMS_HIDE(_text);
+diff --git a/arch/arm64/lib/strcmp.S b/arch/arm64/lib/strcmp.S
+index 471fe61..0dffef7 100644
+--- a/arch/arm64/lib/strcmp.S
++++ b/arch/arm64/lib/strcmp.S
+@@ -60,6 +60,8 @@ tmp3		.req	x9
+ zeroones	.req	x10
+ pos		.req	x11
+ 
++.weak strcmp
++ENTRY(__strcmp)
+ ENTRY(strcmp)
+ 	eor	tmp1, src1, src2
+ 	mov	zeroones, #REP8_01
+@@ -232,3 +234,4 @@ CPU_BE(	orr	syndrome, diff, has_nul )
+ 	sub	result, data1, data2, lsr #56
+ 	ret
+ ENDPIPROC(strcmp)
++ENDPROC(__strcmp)
+diff --git a/arch/arm64/lib/strncmp.S b/arch/arm64/lib/strncmp.S
+index e267044..b2648c7 100644
+--- a/arch/arm64/lib/strncmp.S
++++ b/arch/arm64/lib/strncmp.S
+@@ -64,6 +64,8 @@ limit_wd	.req	x13
+ mask		.req	x14
+ endloop		.req	x15
+ 
++.weak strncmp
++ENTRY(__strncmp)
+ ENTRY(strncmp)
+ 	cbz	limit, .Lret0
+ 	eor	tmp1, src1, src2
+@@ -308,3 +310,4 @@ CPU_BE( orr	syndrome, diff, has_nul )
+ 	mov	result, #0
+ 	ret
+ ENDPIPROC(strncmp)
++ENDPROC(__strncmp)
+diff --git a/mm/kasan/kasan.c b/mm/kasan/kasan.c
+index c3bd520..eae43e6 100644
+--- a/mm/kasan/kasan.c
++++ b/mm/kasan/kasan.c
+@@ -304,7 +304,22 @@ void *memcpy(void *dest, const void *src, size_t len)
+ 
+ 	return __memcpy(dest, src, len);
+ }
++#undef strcmp
++int strcmp(const char *cs, const char *ct)
++{
++	check_memory_region((unsigned long)cs, 1, false, _RET_IP_);
++	check_memory_region((unsigned long)ct, 1, false, _RET_IP_);
+ 
++	return __strcmp(cs, ct);
++}
++#undef strncmp
++int strncmp(const char *cs, const char *ct, size_t len)
++{
++	check_memory_region((unsigned long)cs, len, false, _RET_IP_);
++	check_memory_region((unsigned long)ct, len, false, _RET_IP_);
++
++	return __strncmp(cs, ct, len);
++}
+ void kasan_alloc_pages(struct page *page, unsigned int order)
+ {
+ 	if (likely(!PageHighMem(page)))
+-- 
+2.6.2
 
-
-Vegard
