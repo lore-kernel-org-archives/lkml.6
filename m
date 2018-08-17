@@ -2,144 +2,196 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E205C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 01:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C901C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 01:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA7F20898
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 01:38:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aj4MVkXb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FA7F20898
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E1BC0208A5
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 01:42:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1BC0208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=diasemi.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbeHQEjl (ORCPT
+        id S1726072AbeHQEoF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 00:39:41 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:35172 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725769AbeHQEjk (ORCPT
+        Fri, 17 Aug 2018 00:44:05 -0400
+Received: from mail1.bemta26.messagelabs.com ([85.158.142.117]:36242 "EHLO
+        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725756AbeHQEoF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 00:39:40 -0400
-Received: by mail-yb0-f193.google.com with SMTP id o17-v6so1394756yba.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 18:38:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=drs5m/Z7it3VsVydjSOV5B8rjYYc2WvfDiZhnSn+YGM=;
-        b=aj4MVkXbf5V3Ra9A1JFwanXjKcqBT5LioL3X75ypz70VRwUZy8HJvY5njUn9tAbi5H
-         0zWmbY01a56XbN5pwcgXRv26sEmRvT0ux6phrFhX2X603M5zyoB9CEFHOqNLHIOKkPFm
-         ZoMAFNDr5puTJmwmASEs5u+vgaraZvRYnKLNUtk99kCOMo5XKeB54znX9kaSSrrS6rtN
-         KIhVoLnl/kmK+VVNGoQhS11Ll+2/UktrxszoqMBgL1PaibqV75+DJ79rb7Ydm2P4SquD
-         qkblXhukP6Vxm0Y+j37TWiBMAyR6059pr6nn+YvKkdi1ogAPuHXkfBg0qID1QqI1r+30
-         SKEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=drs5m/Z7it3VsVydjSOV5B8rjYYc2WvfDiZhnSn+YGM=;
-        b=qmPCzMH9P18d9Q1a3NaU1C6hOAj92S6LV2iJxkjS4nxh+86KyTzUURkj7HSg2u1HTj
-         t/ZRq6ylPQadb2J7zhWuBeTQijGaTYANtcO+ZxKrcVRTREk7y7oUIcClJiaGXka9zCDb
-         oyTGhCVUcAN6RLU3tcIhGrv/owuieyDHul5RZl3vZDD9DI9s730BvfkWt7oZm+J6W6Ru
-         uD/bE/3HEQwRWerOSUd2dnrmBjoUU+qRYiUNUOxo+cXVuL0NTM7j2B40eFik13W/safz
-         9foMudD7uF+bzMO5gOz6tzmihD3uXcbKj9k0WoHmoRxk7mqH93mwMLK3AtNhEcVd+gCn
-         o7zg==
-X-Gm-Message-State: AOUpUlEm/EqIPpwTXU/IVgxEMgJGOFwrK3I+kBwhDOtYt4dx/d9396GS
-        g2Zqstfg9c3ylJ+ptzEWcCY=
-X-Google-Smtp-Source: AA+uWPyfhhVUqYYNrK7lRnC3gmgdygauLLwpIeRQicPf1pRhoZF7vdSLVBr6+rrWo5erswEtfXoj8Q==
-X-Received: by 2002:a25:b106:: with SMTP id g6-v6mr7793033ybj.42.1534469898733;
-        Thu, 16 Aug 2018 18:38:18 -0700 (PDT)
-Received: from [192.168.1.10] (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id x19-v6sm1420286ywg.72.2018.08.16.18.38.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Aug 2018 18:38:18 -0700 (PDT)
-Subject: Re: [RESEND PATCH v10 6/6] mm: page_alloc: reduce unnecessary binary
- search in early_pfn_valid()
-To:     Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
-        Jia He <hejianet@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>
-Cc:     Wei Yang <richard.weiyang@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Philip Derrin <philip@cog.systems>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>,
-        Steve Capper <steve.capper@arm.com>,
-        pavel.tatashin@microsoft.com,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Jia He <jia.he@hxt-semitech.com>
-References: <1530867675-9018-1-git-send-email-hejianet@gmail.com>
- <1530867675-9018-7-git-send-email-hejianet@gmail.com>
- <c6ed43ee-b09e-1f75-43b3-6cd2808d13f3@microsoft.com>
-From:   Pavel Tatashin <pasha.tatashin@gmail.com>
-Message-ID: <831be9a1-6401-3af0-b68b-b3e25db806f9@gmail.com>
-Date:   Thu, 16 Aug 2018 21:38:15 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 17 Aug 2018 00:44:05 -0400
+Received: from [85.158.142.201] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-6.bemta.az-b.eu-central-1.aws.symcld.net id C8/7E-09760-018267B5; Fri, 17 Aug 2018 01:42:40 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIKsWRWlGSWpSXmKPExsUS3ulwWJdfoyz
+  a4Mp5Y4v5R86xWhxe9ILR4uanb6wWl3fNYbNYev0ik0Xr3iPsDmwea+atYfTYOesuu8emVZ1s
+  Hp83yQWwRLFm5iXlVySwZuyZdoKloEelon+PfAPjHrkuRi4OIYG1jBK/N+xk62LkBHIqJP713
+  2UCsXkFIiSOzNsMZnMKmElM/NDCAlFjKnG89SoriM0moCPxaOZ6sBoWAVWJQ62rweLCAoES6z
+  uamEFsEYEgicePzrKALGMW2M0o8eHCAWaIBYISJ2c+ARvKLCAhcfDFC2aIBVoS59asYgSxJQT
+  sJaa/v8oMYetLvPy6kQnCNpT4PusbUC8HkG0usX9VCkTYWuL6h1lsExiFZiHZMAvJhgWMTKsY
+  LZOKMtMzSnITM3N0DQ0MdA0NjXVNdQ0tLfQSq3ST9FJLdZNT80qKEoGyeonlxXrFlbnJOSl6e
+  aklmxiBUcIABDsY38xNPcQoycGkJMrL/rs0WogvKT+lMiOxOCO+qDQntfgQowwHh5IEr496Wb
+  SQYFFqempFWmYOMF5h0hIcPEoivO/VgNK8xQWJucWZ6RCpU4yWHJ+e9kxi5lh1fwqQ/PN+6iR
+  mIZa8/LxUKXFeN5B5AiANGaV5cONgKeUSo6yUMC8j0IFCPAWpRbmZJajyrxjFORiVhHm1QKbw
+  ZOaVwG19BXQQE9BB0wRKQQ4qSURISTUwCgt65V5v0D96SoJLsFTy7EZFE1vxi6ulV/yZcrAzd
+  vG1jC0pEq9zNnhZiLQf5t3mnC1io8i15GN554Y9G73DOOKj/I0P6JxZtIDtUc++xO1qN2f0uv
+  zqEMr9L3X671aP3xek5GbPd58yzyZsmSzb90m1nNyvMrx+WKy+Elf7tet5kFZ5+IsPSizFGYm
+  GWsxFxYkAE8icXSQDAAA=
+X-Env-Sender: roy.im.opensource@diasemi.com
+X-Msg-Ref: server-3.tower-246.messagelabs.com!1534470159!4140782!1
+X-Originating-IP: [87.137.64.195]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.9.15; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 26866 invoked from network); 17 Aug 2018 01:42:39 -0000
+Received: from unknown (HELO NB-EX-CASHUB01.diasemi.com) (87.137.64.195)
+  by server-3.tower-246.messagelabs.com with AES128-SHA encrypted SMTP; 17 Aug 2018 01:42:39 -0000
+Received: from krsrvapps-01.diasemi.com (10.95.17.50) by
+ NB-EX-CASHUB01.diasemi.com (10.1.16.140) with Microsoft SMTP Server id
+ 14.3.382.0; Fri, 17 Aug 2018 03:42:38 +0200
+Received: by krsrvapps-01.diasemi.com (Postfix, from userid 22266)      id
+ E6B1D5F7FB; Fri, 17 Aug 2018 10:42:37 +0900 (KST)
+Message-ID: <6fe6130443ab72ef8fa0e95da6a2e0d63c2ec1d7.1534468025.git.Roy.Im@diasemi.com>
+In-Reply-To: <cover.1534468025.git.Roy.Im@diasemi.com>
+References: <cover.1534468025.git.Roy.Im@diasemi.com>
+From:   Roy Im <roy.im.opensource@diasemi.com>
+Date:   Fri, 17 Aug 2018 10:07:04 +0900
+Subject: [PATCH V2 2/3] Documentation: devicetree: input: new binding for
+ da7280
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        <devicetree@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <c6ed43ee-b09e-1f75-43b3-6cd2808d13f3@microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-ServerInfo: NB-EX-CASHUB01.diasemi.com, 9
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 16.08.2018 21:39:00
+X-EXCLAIMER-MD-CONFIG: 8d172408-bd6a-42b1-8e53-daaedf35a5af
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+from: Roy Im <roy.im.opensource@diasemi.com>
 
-On 8/16/18 9:35 PM, Pasha Tatashin wrote:
-> 
-> 
-> On 7/6/18 5:01 AM, Jia He wrote:
->> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
->> where possible") optimized the loop in memmap_init_zone(). But there is
->> still some room for improvement. E.g. in early_pfn_valid(), if pfn and
->> pfn+1 are in the same memblock region, we can record the last returned
->> memblock region index and check whether pfn++ is still in the same
->> region.
->>
->> Currently it only improve the performance on arm/arm64 and will have no
->> impact on other arches.
->>
->> For the performance improvement, after this set, I can see the time
->> overhead of memmap_init() is reduced from 27956us to 13537us in my
->> armv8a server(QDF2400 with 96G memory, pagesize 64k).
-> 
-> This series would be a lot simpler if patches 4, 5, and 6 were dropped.
-> The extra complexity does not make sense to save 0.0001s/T during not.
-s/not/boot
+Add device tree binding information for DA7280 haptic driver.
+Example bindings for DA7280 are added.
 
-> 
-> Patches 1-3, look OK, but without patches 4-5 __init_memblock should be
-> made local static as I suggested earlier.
-s/__init_memblock/early_region_idx
+Signed-off-by: Roy Im <roy.im.opensource@diasemi.com>
+
+---
+v2: No changes
+
+
+ .../devicetree/bindings/input/dlg,da7280.txt       |   91 ++++++++++++++++++++
+ 1 file changed, 91 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/dlg,da7280.txt
+
+diff --git a/Documentation/devicetree/bindings/input/dlg,da7280.txt b/Documentation/devicetree/bindings/input/dlg,da7280.txt
+new file mode 100644
+index 0000000..759bcfe
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/dlg,da7280.txt
+@@ -0,0 +1,91 @@
++Dialog Semiconductor DA7280 Haptics bindings
++
++Required properties:
++- compatible: Should be "dlg,da7280".
++- reg: Specifies the I2C slave address.
++
++- interrupt-parent : Specifies the phandle of the interrupt controller to
++  which the IRQs from DA7280 are delivered to.
++- interrupts: IRQ line info for DA7280.
++  (See Documentation/devicetree/bindings/interrupt-controller/
++   interrupts.txt for further information relating to interrupt properties)
++- dlg,vib-mode:
++  "LRA-MODE" - Linear Resonance Actuator mode.
++  "ERM-BAR" - Bar type Eccentric Rotating Mass mode.
++  "ERM-COIN" - Coin type Eccentric Rotating Mass mode.
++- dlg,play-mode: choose one in below five modes.
++  "DRO-MODE" - Direct register override mode.
++  "PWM-MODE" - PWM data source mode.
++	In this case, user is able to set duty to 0 ~ 0xffff(0% ~ 100%)
++  "RTWM-MODE" - Register triggered waveform memory mode.
++	In this case, when enable this mode the pattern assigned
++	to the PS_SEQ_ID will be played as much times as PS_SEQ_LOOP.
++  "ETWM-MODE" - Edge triggered waveform memory mode.
++	In this case, external GPI(N) control are required to enable/disable
++	and it needs to keep device enabled by sending magnitude (X > 0)
++	the pattern assigned to the GPI(N)_SEQUENCE_ID below.
++	For more details, please see the datasheet.
++- dlg,nom-microvolt: Nominal actuator voltage rating.
++- dlg,abs-max-microvolt: Absolute actuator maximum voltage rating.
++- dlg,imax-microamp: Actuator max current rating.
++- dlg,impd-micro-ohms: the impedance of the actuator in micro ohm,
++  as read from its datasheet.
++
++Optional properties:
++- pwms : phandle to the physical PWM(Pulse Width Modulation) device.
++  PWM properties should be named "pwms". And number of cell is different
++  for each pwm device.
++  (See Documentation/devicetree/bindings/pwm/pwm.txt
++   for further information relating to pwm properties)
++- dlg,ps-seq-id: the PS_SEQ_ID(pattern ID in waveform memory inside chip)
++  to play back when RTWM-MODE is enabled.
++- dlg,ps-seq-loop: the PS_SEQ_LOOP, Number of times the pre-stored sequence
++  pointed to	by PS_SEQ_ID or GPI(N)_SEQUENCE_ID is repeated.
++- dlg,gpiN-seq-id: the GPI(N)_SEQUENCE_ID, pattern to play
++  when gpi0 is triggered, 'N' must be 0~2.
++- dlg,gpiN-mode: the pattern mode which can select either
++  "Single-pattern" or "Multi-pattern", 'N' must be 0~2.
++- dlg,gpiN-polarity: gpiN polarity which can be chosen among "Rising-edge",
++  "Falling-edge" and "Both-edge", 'N' must be 0~2.
++  Haptic will work by this edge option in case of ETWM-MODE.
++
++- dlg,resonant-freq-hz: use in case of LRA-MODE, default 205Hz.
++  the freq range: 50Hz ~ 300Hz.
++  It will be set to 205Hz if the value is out of range.
++- dlg,bemf-sens-enable: Enable for internal loop computations.
++- dlg,freq-track-enable: Enable for resonant frequency tracking.
++- dlg,acc-enable: Enable for active acceleration.
++- dlg,rapid-stop-enable: Enable for rapid stop.
++- dlg,amp-pid-enable: Enable for the amplitude PID.
++- dlg,mem-array: use in case that memory registers should be updated,
++  Please fill the whole buffers(100 bytes) to avoid any error in driver.
++  For example,
++	dlg,mem-array = <
++		0x01 0x02 0x03 0x04 0x05 0x06 0x07 0x08 0x09 0x0A
++		...
++		0x71 0x72 0x73 0x74 0x75 0x76 0x77 0x78 0x79 0x7A
++		0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
++		0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
++	>;
++
++For further information, see device datasheet.
++
++======
++
++Example:
++
++	haptics: da7280-haptics@4A {
++		compatible = "dlg,da7280";
++		reg = <0x4A>;
++		interrupt-parent = <&gpio6>;
++		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
++		dlg,vib-mode = "LRA-MODE";
++		dlg,play-mode = "DRO-MODE";
++		dlg,nom-microvolt = <2000000>;
++		dlg,abs-max-microvolt = <2000000>;
++		dlg,imax-microamp = <170000>;
++		dlg,resonant-freq-hz = <180>;
++		dlg,impd-micro-ohms = <10500000>;
++		dlg,freq-track-enable;
++		dlg,rapid-stop-enable;
++	};
+-- 
+end-of-patch for PATCH V2
 
