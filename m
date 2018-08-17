@@ -2,204 +2,136 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D48D8C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C33C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:03:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B9B9218A8
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:01:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Lk8sUNcX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B9B9218A8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 74964218A8
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:03:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74964218A8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbeHQMDo (ORCPT
+        id S1726458AbeHQMF5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 08:03:44 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:45791 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbeHQMDo (ORCPT
+        Fri, 17 Aug 2018 08:05:57 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:42339 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbeHQMF5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 08:03:44 -0400
-Received: by mail-io0-f196.google.com with SMTP id y24-v6so2602412iob.12
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 02:01:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=OhvFaXyTU7uTX/zK+X62xvQPCrwNdqhRsrxXRhWImyw=;
-        b=Lk8sUNcXSNaSJvtxhBtzRUWXXTJexkiqpir6wyPfzo0lJ6aKGd4BgOnJQRvZYrV3XK
-         Y9OLPXpqbPTAKX9TB8y1kTn0tS6z+LdMFRFeHBGw11jDw3nZQe3hVM+haFlPiTRPU8pW
-         7GpCBSEc7luO303JKsBNkuUbSSTXbcgPfhkZ588TrJ++iGYOjtTgiEm2u7sh21UOnazt
-         CKlCgs/CHtgWvsR54iV4YAeo8cMTRoAjWvVEztAKn+i4kxFUY793PA2zRS6WkT7oKcMM
-         b7HRCUkWDDqHiaA/sVW6On/08jVP+n41d+xRupWIYImx6rz7REuIldl4ibJ5zDigrs93
-         nZAQ==
+        Fri, 17 Aug 2018 08:05:57 -0400
+Received: by mail-oi0-f65.google.com with SMTP id b16-v6so12844681oic.9;
+        Fri, 17 Aug 2018 02:03:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=OhvFaXyTU7uTX/zK+X62xvQPCrwNdqhRsrxXRhWImyw=;
-        b=SJzRLCPIDsNI1EVLgdVUCA2xQG63vAXqILEqlUAX727RANtWV9sUCgeew3XxdDZ6CX
-         xS1VyTCPSzi0psaCpyMcATGojxiK6JxH5gvhu9PO5Yl3JNzWEhlCtQmZVs3i34cBi06/
-         8ArqZ4+8JblnX8hnqwy1brZ7E7AyhXwiCNMtvXRKEloZ8WbVlPmuyXjomva905VHuXYe
-         K8oDXdgnE4LLWXqlA2jRDk9rEZHjomCl0bODSwGXlQMcJezN49JwE3q02NyVEC02ER3U
-         MCj4GPRn2UTtD0GtNHV0//D+OlnlIsVprE6VYD22g/E1OStJd28j4Vy/vHB+pyCUswjR
-         vRMg==
-X-Gm-Message-State: APzg51CeSFs/CigrXOSzgBAFGn1MbIurS+rAmzv++W9laS3FFu34Oe5U
-        61YH2weNCtiO8fG+Q+arLpew7m7vTiVnVssJA9XZOA==
-X-Google-Smtp-Source: ANB0VdbMVIgvJIKcxl2tjI5M8fyzuU6CCJP7I6+dLdTjnPAK1SP0kzyRIbnNmiqquq7g+EEB0MvmY/eHy738OXagD+c=
-X-Received: by 2002:a6b:c807:: with SMTP id y7-v6mr2131915iof.187.1534496468402;
- Fri, 17 Aug 2018 02:01:08 -0700 (PDT)
+        bh=VtDX5JxVZ6bf4rTy9IoKQmn4dHYklQcfEiYjvV/oYFk=;
+        b=T17qwFa/Acs3B7YhaquHi88FUzClsiG6KkA4BAN91jtrfqtYWxvPiH07YibXDUja0F
+         7nwIM3ZDPHfxIQmwBkW5tgyN0oTtQ0hAXfirEI5IpIVetq0txfIU0mBwPZVAkPj3gsXA
+         vVdM30vlzHmgBUfYlZt/EvvhlxUy6JobaqKxVszamP3MsRJs8qkcBSOKLVHK8CBDhWXg
+         rPuok3U5OQAXLHDtdzCU/nJO4i/dO29ltOmKsBnxUoCGB8pdLpk/738s5roKFvG1fykr
+         +1CtEv3+70hnmjj553OzfDTjoK7ZU9eR1eX7kyJFMWVGLM2h7mahyaZYX+hSW9wyc1Sy
+         HYfg==
+X-Gm-Message-State: AOUpUlGl+THlkkw80OPWUXpGiXR4bbFLsXiuGMXuMID2RJdBbwnh4eK5
+        P4VpAehH4Hi5O9kKF4JqsTVrZXr/BMaXUrMfuw8=
+X-Google-Smtp-Source: AA+uWPxfBz8WfJAKMM8BqisMw65xNYnYNjqKHzbp1xCOEqe2FN+CXDp637jxLiqcnmWDaVY0pRjTpjtAAHakS7rJ7Oc=
+X-Received: by 2002:aca:b885:: with SMTP id i127-v6mr1653792oif.180.1534496601283;
+ Fri, 17 Aug 2018 02:03:21 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a5e:9405:0:0:0:0:0 with HTTP; Fri, 17 Aug 2018 02:01:07
- -0700 (PDT)
-In-Reply-To: <1534441534-6357-1-git-send-email-mark.jonas@de.bosch.com>
-References: <1533404620-18536-1-git-send-email-mark.jonas@de.bosch.com> <1534441534-6357-1-git-send-email-mark.jonas@de.bosch.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 17 Aug 2018 11:01:07 +0200
-Message-ID: <CAMRc=MfMZ7pDJ-ULn5JSQq2jYVMgrefk9vmqUinFs=wzZ4rJ3w@mail.gmail.com>
-Subject: Re: [PATCH v2] eeprom: at24: Fix unexpected timeout under high load
-To:     Mark Jonas <mark.jonas@de.bosch.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
+References: <20180817075901.4608-1-david@redhat.com> <20180817075901.4608-2-david@redhat.com>
+ <20180817084146.GB14725@kroah.com> <5a5d73e9-e4aa-ffed-a2e3-8aef64e61923@redhat.com>
+In-Reply-To: <5a5d73e9-e4aa-ffed-a2e3-8aef64e61923@redhat.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 17 Aug 2018 11:03:09 +0200
+Message-ID: <CAJZ5v0gkYV8o2Eq+EcGT=OP1tQGPGVVe3n9VGD6z7KAVVqhv9w@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/2] drivers/base: export lock_device_hotplug/unlock_device_hotplug
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Wang Xin <xin.wang7@cn.bosch.com>
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        devel@linuxdriverproject.org, linux-s390@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, osalvador@suse.de,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>, kys@microsoft.com,
+        haiyangz@microsoft.com, sthemmin@microsoft.com,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        David Rientjes <rientjes@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-08-16 19:45 GMT+02:00 Mark Jonas <mark.jonas@de.bosch.com>:
-> From: Wang Xin <xin.wang7@cn.bosch.com>
+On Fri, Aug 17, 2018 at 10:56 AM David Hildenbrand <david@redhat.com> wrote:
 >
-> Within at24_loop_until_timeout the timestamp used for timeout checking
-> is recorded after the I2C transfer and sleep_range(). Under high CPU
-> load either the execution time for I2C transfer or sleep_range() could
-> actually be larger than the timeout value. Worst case the I2C transfer
-> is only tried once because the loop will exit due to the timeout
-> although the EEPROM is now ready.
+> On 17.08.2018 10:41, Greg Kroah-Hartman wrote:
+> > On Fri, Aug 17, 2018 at 09:59:00AM +0200, David Hildenbrand wrote:
+> >> From: Vitaly Kuznetsov <vkuznets@redhat.com>
+> >>
+> >> Well require to call add_memory()/add_memory_resource() with
+> >> device_hotplug_lock held, to avoid a lock inversion. Allow external modules
+> >> (e.g. hv_balloon) that make use of add_memory()/add_memory_resource() to
+> >> lock device hotplug.
+> >>
+> >> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> >> [modify patch description]
+> >> Signed-off-by: David Hildenbrand <david@redhat.com>
+> >> ---
+> >>  drivers/base/core.c | 2 ++
+> >>  1 file changed, 2 insertions(+)
+> >>
+> >> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> >> index 04bbcd779e11..9010b9e942b5 100644
+> >> --- a/drivers/base/core.c
+> >> +++ b/drivers/base/core.c
+> >> @@ -700,11 +700,13 @@ void lock_device_hotplug(void)
+> >>  {
+> >>      mutex_lock(&device_hotplug_lock);
+> >>  }
+> >> +EXPORT_SYMBOL_GPL(lock_device_hotplug);
+> >>
+> >>  void unlock_device_hotplug(void)
+> >>  {
+> >>      mutex_unlock(&device_hotplug_lock);
+> >>  }
+> >> +EXPORT_SYMBOL_GPL(unlock_device_hotplug);
+> >
+> > If these are going to be "global" symbols, let's properly name them.
+> > device_hotplug_lock/unlock would be better.  But I am _really_ nervous
+> > about letting stuff outside of the driver core mess with this, as people
+> > better know what they are doing.
 >
-> To fix this issue the timestamp is recorded at the beginning of each
-> iteration. That is, before I2C transfer and sleep. Then the timeout
-> is actually checked against the timestamp of the previous iteration.
-> This makes sure that even if the timeout is reached, there is still one
-> more chance to try the I2C transfer in case the EEPROM is ready.
+> The only "problem" is that we have kernel modules (for paravirtualized
+> devices) that call add_memory(). This is Hyper-V right now, but we might
+> have other ones in the future. Without them we would not have to export
+> it. We might also get kernel modules that want to call remove_memory() -
+> which will require the device_hotplug_lock as of now.
 >
-> Example:
+> What we could do is
 >
-> If you have a system which combines high CPU load with repeated EEPROM
-> writes you will run into the following scenario.
+> a) add_memory() -> _add_memory() and don't export it
+> b) add_memory() takes the device_hotplug_lock and calls _add_memory() .
+> We export that one.
+> c) Use add_memory() in external modules only
 >
->  - System makes a successful regmap_bulk_write() to EEPROM.
->  - System wants to perform another write to EEPROM but EEPROM is still
->    busy with the last write.
->  - Because of high CPU load the usleep_range() will sleep more than
->    25 ms (at24_write_timeout).
->  - Within the over-long sleeping the EEPROM finished the previous write
->    operation and is ready again.
->  - at24_loop_until_timeout() will detect timeout and won't try to write.
->
-> Signed-off-by: Wang Xin <xin.wang7@cn.bosch.com>
-> Signed-off-by: Mark Jonas <mark.jonas@de.bosch.com>
-> ---
-> Changes in v2:
->  - Remove loop macro
->  - Accept superfluous sleep in case of timeout
->  - Add concrete example to commit message
-> ---
->  drivers/misc/eeprom/at24.c | 43 ++++++++++++++++++++++---------------------
->  1 file changed, 22 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-> index f5cc517..37a5c8b 100644
-> --- a/drivers/misc/eeprom/at24.c
-> +++ b/drivers/misc/eeprom/at24.c
-> @@ -106,23 +106,6 @@ static unsigned int at24_write_timeout = 25;
->  module_param_named(write_timeout, at24_write_timeout, uint, 0);
->  MODULE_PARM_DESC(at24_write_timeout, "Time (in ms) to try writes (default 25)");
->
-> -/*
-> - * Both reads and writes fail if the previous write didn't complete yet. This
-> - * macro loops a few times waiting at least long enough for one entire page
-> - * write to work while making sure that at least one iteration is run before
-> - * checking the break condition.
-> - *
-> - * It takes two parameters: a variable in which the future timeout in jiffies
-> - * will be stored and a temporary variable holding the time of the last
-> - * iteration of processing the request. Both should be unsigned integers
-> - * holding at least 32 bits.
-> - */
-> -#define at24_loop_until_timeout(tout, op_time)                         \
-> -       for (tout = jiffies + msecs_to_jiffies(at24_write_timeout),     \
-> -            op_time = 0;                                               \
-> -            op_time ? time_before(op_time, tout) : true;               \
-> -            usleep_range(1000, 1500), op_time = jiffies)
-> -
->  struct at24_chip_data {
->         /*
->          * these fields mirror their equivalents in
-> @@ -308,13 +291,22 @@ static ssize_t at24_regmap_read(struct at24_data *at24, char *buf,
->         /* adjust offset for mac and serial read ops */
->         offset += at24->offset_adj;
->
-> -       at24_loop_until_timeout(timeout, read_time) {
-> +       timeout = jiffies + msecs_to_jiffies(at24_write_timeout);
-> +       do {
-> +               /*
-> +                * The timestamp shall be taken before the actual operation
-> +                * to avoid a premature timeout in case of high CPU load.
-> +                */
-> +               read_time = jiffies;
-> +
->                 ret = regmap_bulk_read(regmap, offset, buf, count);
->                 dev_dbg(&client->dev, "read %zu@%d --> %d (%ld)\n",
->                         count, offset, ret, jiffies);
->                 if (!ret)
->                         return count;
-> -       }
-> +
-> +               usleep_range(1000, 1500);
-> +       } while (time_before(read_time, timeout));
->
->         return -ETIMEDOUT;
->  }
-> @@ -358,14 +350,23 @@ static ssize_t at24_regmap_write(struct at24_data *at24, const char *buf,
->         regmap = at24_client->regmap;
->         client = at24_client->client;
->         count = at24_adjust_write_count(at24, offset, count);
-> +       timeout = jiffies + msecs_to_jiffies(at24_write_timeout);
-> +
-> +       do {
-> +               /*
-> +                * The timestamp shall be taken before the actual operation
-> +                * to avoid a premature timeout in case of high CPU load.
-> +                */
-> +               write_time = jiffies;
->
-> -       at24_loop_until_timeout(timeout, write_time) {
->                 ret = regmap_bulk_write(regmap, offset, buf, count);
->                 dev_dbg(&client->dev, "write %zu@%d --> %d (%ld)\n",
->                         count, offset, ret, jiffies);
->                 if (!ret)
->                         return count;
-> -       }
-> +
-> +               usleep_range(1000, 1500);
-> +       } while (time_before(write_time, timeout));
->
->         return -ETIMEDOUT;
->  }
-> --
-> 2.7.4
->
+> Similar wrapper would be needed e.g. for remove_memory() later on.
 
-Looks good to me, I'll test it after v4.19-rc1 is tagged.
+That would be safer IMO, as it would prevent developers from using
+add_memory() without the lock, say.
 
-Bart
+If the lock is always going to be required for add_memory(), make it
+hard (or event impossible) to use the latter without it.
