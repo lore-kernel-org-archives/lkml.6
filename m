@@ -2,146 +2,118 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A7B3C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A79C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19A2D215EB
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:45:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19A2D215EB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 38DCB218A7
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:47:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38DCB218A7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727615AbeHQRtY (ORCPT
+        id S1727485AbeHQRvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 13:49:24 -0400
-Received: from foss.arm.com ([217.140.101.70]:48088 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726377AbeHQRtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 13:49:23 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4DD7E80D;
-        Fri, 17 Aug 2018 07:45:45 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A234D3F5B3;
-        Fri, 17 Aug 2018 07:45:42 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 15:45:40 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v3 09/14] sched/core: uclamp: propagate parent clamps
-Message-ID: <20180817144540.GL2960@e110439-lin>
-References: <20180806163946.28380-1-patrick.bellasi@arm.com>
- <20180806163946.28380-10-patrick.bellasi@arm.com>
- <804c7937-2c47-0781-9c53-a8ef8eb04530@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <804c7937-2c47-0781-9c53-a8ef8eb04530@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 17 Aug 2018 13:51:07 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47816 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726377AbeHQRvH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 13:51:07 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7HEiAmt005512
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 10:47:27 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kwvcjt1ak-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 10:47:27 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Fri, 17 Aug 2018 15:47:25 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 17 Aug 2018 15:47:21 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7HElK8Z24510492
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 17 Aug 2018 14:47:20 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CF29D42047;
+        Fri, 17 Aug 2018 17:47:24 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B21B34203F;
+        Fri, 17 Aug 2018 17:47:22 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.205.113])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 17 Aug 2018 17:47:22 +0100 (BST)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Fri, 17 Aug 2018 17:47:17 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: [PATCH v3 0/3] docs/core-api: add memory allocation guide
+Date:   Fri, 17 Aug 2018 17:47:13 +0300
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18081714-0008-0000-0000-000002633A12
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081714-0009-0000-0000-000021CB6A31
+Message-Id: <1534517236-16762-1-git-send-email-rppt@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-17_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=769 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808170160
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-Aug 15:43, Dietmar Eggemann wrote:
-> On 08/06/2018 06:39 PM, Patrick Bellasi wrote:
-> >In order to properly support hierarchical resources control, the cgroup
-> >delegation model requires that attribute writes from a child group never
-> >fail but still are (potentially) constrained based on parent's assigned
-> >resources. This requires to properly propagate and aggregate parent
-> >attributes down to its descendants.
-> 
-> I don't understand the reason mentioned here:
-> 
-> IMHO, a write to a child's (tg1/tg11) cpu.rt_runtime_us can fail if the
-> value is restricted by the parents value:
+Hi,
 
-Well... that's my interpretation after this discussion:
+As Vlastimil mentioned at [1], it would be nice to have some guide about
+memory allocation. This set adds such guide that summarizes the "best
+practices". 
 
-  https://lore.kernel.org/lkml/20180410200514.GA793541@devbig577.frc2.facebook.com/
+The changes from the RFC include additions and corrections from Michal and
+Randy. I've also added markup to cross-reference the kernel-doc
+documentation.
 
-AFAIU, what has not to fail is a write to a parent, which wants to enforce
-more restrictive constraints to child groups. Thus, if we have for example:
+I've split the patch into three to separate labels addition to the exiting
+files from the new contents.
 
-   tg1:         util_max=100%
-   tg1/tg11:    util_max=80%
+Note that the second patch depends on the mm docs update [2] that Andrew
+took to the -mm tree.
 
-It should be possible without errors to set:
+v2 -> v3:
+  * s/HW/hardware
 
-   tg1:         util_max=50%
+[1] https://www.spinics.net/lists/netfilter-devel/msg55542.html
+[2] https://lkml.org/lkml/2018/7/26/684
 
-and then enforce a 50% util_max to tg1/tg11 tasks too and eventually
-use "effective" attributes to expose the effective value used at each
-level of the hierarchy.
+Mike Rapoport (3):
+  docs: core-api/gfp_mask-from-fs-io: add a label for cross-referencing
+  docs: core-api/mm-api: add a lable for GFP flags section
+  docs: core-api: add memory allocation guide
 
-> root@juno:/sys/fs/cgroup/cpu# cat cpu.rt_*
-> 1000000
-> 950000
-> root@juno:/sys/fs/cgroup/cpu# cat tg1/cpu.rt_*
-> 1000000
-> 0
-> root@juno:/sys/fs/cgroup/cpu# cat tg1/tg11/cpu.rt_*
-> 1000000
-> 0
-> root@juno:/sys/fs/cgroup/cpu# echo 950000 > tg1/tg11/cpu.rt_runtime_us
-> -bash: echo: write error: Invalid argument
-> root@juno:/sys/fs/cgroup/cpu# echo 950000 > tg1/cpu.rt_runtime_us
-> root@juno:/sys/fs/cgroup/cpu# echo 950000 > tg1/tg11/cpu.rt_runtime_us
-> root@juno:/sys/fs/cgroup/cpu#
-
-This example is using the legacy hierarcy (cgroups v1).
-
-AFAIK the default hierarcy (cgroups v2) has a much more stricy set of
-requirements for the "delegation model".
-
-> >Let's implement this mechanism by adding a new "effective" clamp value
-> >for each task group. The effective clamp value is defined as the smaller
-> >value between the clamp value of a group and the effective clamp value
-> >of its parent. This represent also the clamp value which is actually
-> >used to clamp tasks in each task group.
-> >
-> >Since it can be interesting for tasks in a cgroup to know exactly what
-> >is the currently propagated/enforced configuration, the effective clamp
-> >values are exposed to user-space by means of a new pair of read-only
-> >attributes: cpu.util.{min,max}.effective.
-> 
-> I assume here that the cpu.util.{min,max} of the child will not be used any
-> more because the 'effective' counterparts are taken instead.
-
-Yes, the "effective" attributes are the one used in kernel space for
-the actual clamping.
-
-However, the cpu.util.{min,max} of a child are still required as soon
-as the parent relax its constraints... when we use their value to
-set the "effective" value.
-
-> I wonder if this propagation not been provided with only cpu.util.{min,max}?
-
-In the example before, if we use the same variables we miss the
-opportunity to reset:
-
-   tg1/tg11:    util_max=80%
-
-as soon as tg1's util_max goes back to 100%.
+ Documentation/core-api/gfp_mask-from-fs-io.rst |   2 +
+ Documentation/core-api/index.rst               |   1 +
+ Documentation/core-api/memory-allocation.rst   | 124 +++++++++++++++++++++++++
+ Documentation/core-api/mm-api.rst              |   2 +
+ 4 files changed, 129 insertions(+)
+ create mode 100644 Documentation/core-api/memory-allocation.rst
 
 -- 
-#include <best/regards.h>
+2.7.4
 
-Patrick Bellasi
