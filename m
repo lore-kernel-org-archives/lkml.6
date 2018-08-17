@@ -2,97 +2,213 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C852C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F14C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:27:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9A6C21A2E
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:26:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XXTZ4MQK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9A6C21A2E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 680D02154F
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:27:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 680D02154F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727818AbeHQTaB (ORCPT
+        id S1727856AbeHQTbe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 15:30:01 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:39193 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727398AbeHQTaB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 15:30:01 -0400
-Received: by mail-qt0-f196.google.com with SMTP id o15-v6so3334491qtk.6;
-        Fri, 17 Aug 2018 09:26:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fkQFVhgTltxDl+TeBxUrWFBKcMxRRANxGgwGybCRXqE=;
-        b=XXTZ4MQKEThq5teifq81mJajKnhq8ST797Gl5iLZMVTjiprlWOAlJaytsF5awj6+48
-         BB768mdxjxfTW++KmDyhIMjBxHgIqjDxH+2R5hA/8Aa1ITA7Ce1uLBBZHenottIrGg/o
-         QOtw9J884GKb6UE7m3FCUpDIFq5tjkNh36xRcBo18U7Ep6bEEV5+UbppUl2n5YGxkiFj
-         OlqjrqWLEdW+KLbgZ1Y+wEh2GSN8dFiAD6m94V2GarMogxY/+u71zr3MW1QoHEXmyRnZ
-         CmShZFovOSu95KBoaPg9sxoFKOVISxbgN2FyK2WW8iDNqOtzKd5EU922dVEGyWvZt1uB
-         cxZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fkQFVhgTltxDl+TeBxUrWFBKcMxRRANxGgwGybCRXqE=;
-        b=QVbVOzmvoH3MauUBPtmClBgd9mWdupLOE36m7U5LKh7JbVu6Z+N5HDJ8HCFTtRMlD9
-         zaKDqxoOxs5Md22I96Mal2lk6RWH+wH986TSIg95XX8D+3dmZPTYI8hetbM/GXVyWDp4
-         dIk19wQju3leuX94jgkdySgzHavs/mggBPXCGF8RGbBqOvqclIT6gs02wp9X/tng+0pB
-         iXzngx+PlSaZ5tdNrbasPEJfuy6bxbqBcVRB0oZnHuTDfd485uyEVmAHDxRQRxKUlQ51
-         lHLbDp0ko1JIQ0r00m5ug3I42odhWEMrYGgts71TPNuNEc+zAuldMPvFWU6kNjs/jCgq
-         yQGg==
-X-Gm-Message-State: AOUpUlHkljH1FOz1lYJLdDAXVYmYXu74yUuxMG/hpKZQyt+2eWDOuWgN
-        Sw1QFn5Oep1un3smXG/v8ZY=
-X-Google-Smtp-Source: AA+uWPw0r+l60eeelTN4P1gG2aSxQjyxgGPF7bXWeJBYweqe6eh8pa3dKnwivUFNmqZ7WcICE22x8w==
-X-Received: by 2002:ac8:110c:: with SMTP id c12-v6mr34619234qtj.269.1534523160882;
-        Fri, 17 Aug 2018 09:26:00 -0700 (PDT)
-Received: from eeboy (pool-108-26-184-53.bstnma.fios.verizon.net. [108.26.184.53])
-        by smtp.gmail.com with ESMTPSA id e18-v6sm1320438qki.33.2018.08.17.09.25.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 Aug 2018 09:26:00 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 12:25:58 -0400
-From:   Richard Cochran <richardcochran@gmail.com>
-To:     Bryan.Whitehead@microchip.com
-Cc:     arnd@arndb.de,
-        UNGLinuxDriver@MicrochipTechnology.Mail.Onmicrosoft.com,
-        davem@davemloft.net, yuehaibing@huawei.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: lan743x_ptp: convert to ktime_get_clocktai_ts64
-Message-ID: <20180817162558.GB22210@eeboy>
-References: <20180815175040.3736548-1-arnd@arndb.de>
- <90A7E81AE28BAE4CBDDB3B35F187D2644073E9C4@CHN-SV-EXMX02.mchp-main.com>
- <CAK8P3a0f38ev5E4Zvg_3BS+1UN2NzYSw+dyRHXDwLCWgREXJ6g@mail.gmail.com>
- <90A7E81AE28BAE4CBDDB3B35F187D2644073EA26@CHN-SV-EXMX02.mchp-main.com>
- <CAK8P3a3guebtDLNhbQwNmA2nq=raKiP8ztGRpb03r0XD8h+ZNA@mail.gmail.com>
- <90A7E81AE28BAE4CBDDB3B35F187D2644073EA3B@CHN-SV-EXMX02.mchp-main.com>
+        Fri, 17 Aug 2018 15:31:34 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56373 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727160AbeHQTbe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 15:31:34 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8DE61215D9; Fri, 17 Aug 2018 18:27:31 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B7AAD215D6;
+        Fri, 17 Aug 2018 18:27:20 +0200 (CEST)
+Date:   Fri, 17 Aug 2018 18:27:20 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Naren <naren.kernel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
+        Rob Herring <robh@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 06/29] mtd: Add support for reading MTD devices via
+ the nvmem API
+Message-ID: <20180817182720.6a6e5e8e@bbrezillon>
+In-Reply-To: <20180810080526.27207-7-brgl@bgdev.pl>
+References: <20180810080526.27207-1-brgl@bgdev.pl>
+        <20180810080526.27207-7-brgl@bgdev.pl>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <90A7E81AE28BAE4CBDDB3B35F187D2644073EA3B@CHN-SV-EXMX02.mchp-main.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 08:50:03PM +0000, Bryan.Whitehead@microchip.com wrote:
-> Sounds reasonable to me. I will yield to Richard's insight.
-> But it would be nice if requirements like these were documented.
+Hi Bartosz,
 
-I think the only reason for initializing to the system UTC (as most
-drivers do) is historical.  The first Intel driver was simply copied.
-I've been thinking recently that we should standardize this.  I'm open
-for suggestions on how to do this. Remember that the system time is
-likely wrong at driver initialization time.
+On Fri, 10 Aug 2018 10:05:03 +0200
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-Thanks,
-Richard
+> From: Alban Bedel <albeu@free.fr>
+> 
+> Allow drivers that use the nvmem API to read data stored on MTD devices.
+> For this the mtd devices are registered as read-only NVMEM providers.
+> 
+> Signed-off-by: Alban Bedel <albeu@free.fr>
+> [Bartosz:
+>   - use the managed variant of nvmem_register(),
+>   - set the nvmem name]
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+
+What happened to the 2 other patches of Alban's series? I'd really like
+the DT case to be handled/agreed on in the same patchset, but IIRC,
+Alban and Srinivas disagreed on how this should be represented. I
+hope this time we'll come to an agreement, because the MTD <-> NVMEM
+glue has been floating around for quite some time...
+
+Regards,
+
+Boris
+
+> ---
+>  drivers/mtd/Kconfig     |  1 +
+>  drivers/mtd/mtdcore.c   | 50 +++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mtd/mtd.h |  2 ++
+>  3 files changed, 53 insertions(+)
+> 
+> diff --git a/drivers/mtd/Kconfig b/drivers/mtd/Kconfig
+> index 46ab7feec6b6..f5549482d0df 100644
+> --- a/drivers/mtd/Kconfig
+> +++ b/drivers/mtd/Kconfig
+> @@ -1,5 +1,6 @@
+>  menuconfig MTD
+>  	tristate "Memory Technology Device (MTD) support"
+> +	imply NVMEM
+>  	help
+>  	  Memory Technology Devices are flash, RAM and similar chips, often
+>  	  used for solid state file systems on embedded devices. This option
+> diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
+> index 42395df06be9..a57302eaceb5 100644
+> --- a/drivers/mtd/mtdcore.c
+> +++ b/drivers/mtd/mtdcore.c
+> @@ -488,6 +488,49 @@ int mtd_pairing_groups(struct mtd_info *mtd)
+>  }
+>  EXPORT_SYMBOL_GPL(mtd_pairing_groups);
+>  
+> +static int mtd_nvmem_reg_read(void *priv, unsigned int offset,
+> +			      void *val, size_t bytes)
+> +{
+> +	struct mtd_info *mtd = priv;
+> +	size_t retlen;
+> +	int err;
+> +
+> +	err = mtd_read(mtd, offset, bytes, &retlen, val);
+> +	if (err && err != -EUCLEAN)
+> +		return err;
+> +
+> +	return retlen == bytes ? 0 : -EIO;
+> +}
+> +
+> +static int mtd_nvmem_add(struct mtd_info *mtd)
+> +{
+> +	struct nvmem_config config = { };
+> +
+> +	config.dev = &mtd->dev;
+> +	config.owner = THIS_MODULE;
+> +	config.name = mtd->name;
+> +	config.reg_read = mtd_nvmem_reg_read;
+> +	config.size = mtd->size;
+> +	config.word_size = 1;
+> +	config.stride = 1;
+> +	config.read_only = true;
+> +	config.root_only = true;
+> +	config.priv = mtd;
+> +
+> +	mtd->nvmem = devm_nvmem_register(&mtd->dev, &config);
+> +	if (IS_ERR(mtd->nvmem)) {
+> +		/* Just ignore if there is no NVMEM support in the kernel */
+> +		if (PTR_ERR(mtd->nvmem) == -ENOSYS) {
+> +			mtd->nvmem = NULL;
+> +		} else {
+> +			dev_err(&mtd->dev, "Failed to register NVMEM device\n");
+> +			return PTR_ERR(mtd->nvmem);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static struct dentry *dfs_dir_mtd;
+>  
+>  /**
+> @@ -570,6 +613,11 @@ int add_mtd_device(struct mtd_info *mtd)
+>  	if (error)
+>  		goto fail_added;
+>  
+> +	/* Add the nvmem provider */
+> +	error = mtd_nvmem_add(mtd);
+> +	if (error)
+> +		goto fail_nvmem_add;
+> +
+>  	if (!IS_ERR_OR_NULL(dfs_dir_mtd)) {
+>  		mtd->dbg.dfs_dir = debugfs_create_dir(dev_name(&mtd->dev), dfs_dir_mtd);
+>  		if (IS_ERR_OR_NULL(mtd->dbg.dfs_dir)) {
+> @@ -595,6 +643,8 @@ int add_mtd_device(struct mtd_info *mtd)
+>  	__module_get(THIS_MODULE);
+>  	return 0;
+>  
+> +fail_nvmem_add:
+> +	device_unregister(&mtd->dev);
+>  fail_added:
+>  	of_node_put(mtd_get_of_node(mtd));
+>  	idr_remove(&mtd_idr, i);
+> diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
+> index a86c4fa93115..8121c6582285 100644
+> --- a/include/linux/mtd/mtd.h
+> +++ b/include/linux/mtd/mtd.h
+> @@ -25,6 +25,7 @@
+>  #include <linux/notifier.h>
+>  #include <linux/device.h>
+>  #include <linux/of.h>
+> +#include <linux/nvmem-provider.h>
+>  
+>  #include <mtd/mtd-abi.h>
+>  
+> @@ -339,6 +340,7 @@ struct mtd_info {
+>  	struct device dev;
+>  	int usecount;
+>  	struct mtd_debug_info dbg;
+> +	struct nvmem_device *nvmem;
+>  };
+>  
+>  int mtd_ooblayout_ecc(struct mtd_info *mtd, int section,
+
