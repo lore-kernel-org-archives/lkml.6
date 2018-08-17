@@ -2,106 +2,140 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C067AC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7288C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:46:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61B8B21A94
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:46:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BRvxwMO0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61B8B21A94
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 7541321A86
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:46:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7541321A86
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbeHQVux (ORCPT
+        id S1728150AbeHQVvQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 17:50:53 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34742 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726888AbeHQVux (ORCPT
+        Fri, 17 Aug 2018 17:51:16 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:33869 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726888AbeHQVvQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 17:50:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MeXStQC8D1dP4QVjGAnzFW7zHMI70peWTw2TiubU0tw=; b=BRvxwMO0ekI0t9KDE3Gw1dxiE
-        rqwsJnbCWLlmbVfXNrxVR4oWuA2safonPsN3aIOncPlCZx+DmkrLRm8GKT0iSyXoQKuV/PhHtS54j
-        207WuqpQ6oRRcTaEospLmQT5JAvrSTzQB9XWHfNX0Qz92woaGzJoVEYpE4l3sGJpKjyOxHaImo5uZ
-        CcWYTIURTMeKvskMRbW+bN/GS4J+NzBxqO0XcOES0QUbjqNUjMxKl4Lpvy6jlzsyqFkW/W0Y5ccKq
-        t+8r3Xe8DHYLcZ+GIdJ0JeiVmFZ+h5srbtUm/0jCzFMwa9+TPG1jJlTECoslzyhTjTmBEahCk1sLy
-        R7P18mwFQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fqjlO-00073y-CW; Fri, 17 Aug 2018 18:46:22 +0000
-Subject: Re: [PATCH] drm/amd/display: fix a compile warning
-To:     Wen Yang <wen.yang99@zte.com.cn>, airlied@linux.ie
-Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        David1.Zhou@amd.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn
-References: <1534475388-40036-1-git-send-email-wen.yang99@zte.com.cn>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <783744d1-29a2-c601-7d1f-b937308d407c@infradead.org>
-Date:   Fri, 17 Aug 2018 11:46:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 17 Aug 2018 17:51:16 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fqjlm-0006fR-ID; Fri, 17 Aug 2018 12:46:46 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fqjll-0006px-7F; Fri, 17 Aug 2018 12:46:46 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        majiang <ma.jiang@zte.com.cn>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Andrey Vagin <avagin@virtuozzo.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>
+References: <87efft5ncd.fsf_-_@xmission.com>
+        <20180724032419.20231-7-ebiederm@xmission.com>
+        <87k1orgdoo.fsf_-_@xmission.com>
+        <CACT4Y+bYFatW=CMgH4M6AjtjO297gbQ8xwnEV0_f7J64FLQ4QQ@mail.gmail.com>
+Date:   Fri, 17 Aug 2018 13:46:36 -0500
+In-Reply-To: <CACT4Y+bYFatW=CMgH4M6AjtjO297gbQ8xwnEV0_f7J64FLQ4QQ@mail.gmail.com>
+        (Dmitry Vyukov's message of "Fri, 17 Aug 2018 10:34:12 -0700")
+Message-ID: <87pnyg7rw3.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1534475388-40036-1-git-send-email-wen.yang99@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1fqjll-0006px-7F;;;mid=<87pnyg7rw3.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/G6gJzgJ9OZ+GFm/1aKyyCeW3WriSnBZ4=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH] signal: Don't send signals to tasks that don't exist
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/16/2018 08:09 PM, Wen Yang wrote:
-> Fix comile warning like,
->   CC [M]  drivers/gpu/drm/i915/gvt/execlist.o
->   CC [M]  drivers/gpu/drm/nouveau/nvkm/subdev/instmem/nv50.o
->   CC [M]  drivers/gpu/drm/radeon/btc_dpm.o
->   CC [M]  drivers/isdn/hisax/avm_a1p.o
->   CC [M]  drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_dpp.o
-> drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c: In function ‘dcn10_update_mpcc’:
-> drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:1903:9: warning: missing braces around initializer [-Wmissing-braces]
->   struct mpcc_blnd_cfg blnd_cfg = {0};
->          ^
-> drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:1903:9: warning: (near initialization for ‘blnd_cfg.black_color’) [-Wmissing-braces]
-> 
-> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+Dmitry Vyukov <dvyukov@google.com> writes:
 
-works for me.  Thanks.
+> On Wed, Aug 15, 2018 at 9:04 PM, Eric W. Biederman
+> <ebiederm@xmission.com> wrote:
+>>
+>> Recently syzbot reported crashes in send_sigio_to_task and
+>> send_sigurg_to_task in linux-next.  Despite finding a reproducer
+>> syzbot apparently did not bisected this or otherwise track down the
+>> offending commit in linux-next.
+>>
+>> I happened to see this report and examined the code because I had
+>> recently changed these functions as part of making PIDTYPE_TGID a real
+>> pid type so that fork would does not need to restart when receiving a
+>> signal.  By examination I see that I spotted a bug in the code
+>> that could explain the reported crashes.
+>>
+>> When I took Oleg's suggestion and optimized send_sigurg and send_sigio
+>> to only send to a single task when type is PIDTYPE_PID or PIDTYPE_TGID
+>> I failed to handle pids that no longer point to tasks.  The macro
+>> do_each_pid_task simply iterates for zero iterations.  With pid_task
+>> an explicit NULL test is needed.
+>>
+>> Update the code to include the missing NULL test.
+>>
+>> Fixes: 019191342fec ("signal: Use PIDTYPE_TGID to clearly store where file signals will be sent")
+>> Reported-by: syzkaller-bugs@googlegroups.com
+>
+> Since the commit does not contain the syzbot-provided Reported-by tag,
+> we need to tell syzbot that this is fixed explicitly:
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Nor will my commits ever contain that information.  That is information
+only of use to syzbot.  That is not information useful to anyone else.
 
+Further syzbot did not track this down and report this.  Syzbot said
+something is fishy here and happened to CC a public mailing list.  Only
+by chance did I see the report.  There was enough information to start
+an investigation but it certainly was not any kind of useful bug report.
 
-> ---
->  drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-> index cfcc54f..a06a035 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-> @@ -1900,7 +1900,7 @@ static void update_dpp(struct dpp *dpp, struct dc_plane_state *plane_state)
->  static void dcn10_update_mpcc(struct dc *dc, struct pipe_ctx *pipe_ctx)
->  {
->  	struct hubp *hubp = pipe_ctx->plane_res.hubp;
-> -	struct mpcc_blnd_cfg blnd_cfg = {0};
-> +	struct mpcc_blnd_cfg blnd_cfg = {{0}};
->  	bool per_pixel_alpha = pipe_ctx->plane_state->per_pixel_alpha && pipe_ctx->bottom_pipe;
->  	int mpcc_id;
->  	struct mpcc *new_mpcc;
-> 
+It is very annoying that despite syzbot claming to have a reproducer
+syzbot completely failed to locate the problem commit or the proper
+people to repor the issue to.  I looked at the syzbot website link and
+there was no evidence that syzbot even tried to track down which branch
+in linux-next the commit came from.  Much less to identify the commit on
+that branch.
 
+Very annoyingly syzbot sent out emails and report this before it found a
+reproducer.  This is despite several people explicitly asking syzbot
+to not report issuing on linux-next where syzbot does not have a
+reproducer and it can not track down the offending commit.
 
--- 
-~Randy
+> #syz fix: signal: Don't send signals to tasks that don't exist
+
+Private internal communication on a public mailing list is rude.  Please
+cut it out.
+
+I appreciate the eagerness to report bugs.  But to play well with others
+and not waste developers valuable time syzbot needs to track down the
+offending commits and track fixes tags like everyone else.  Special
+magic syzbot tags are annoying noise.
+
+I will give credit where credit is due.  But syzbot is not so valuable
+it can set rules for everyone else.  Automation is valuable when it
+removes work.  Syzbot is not doing a good job at making the most of
+developers limited time.
+
+Cyrill Gorconov and Andrey Vagin did a much better job in tracking this
+down and reporting this.  They just took a little bit longer.  Please
+look at what they sent if you need an example of a useful bug report
+looks like.
+
+Eric
