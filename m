@@ -2,94 +2,78 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30AC1C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC5DC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC2522188F
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:52:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="09wR3i9S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC2522188F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CFC1D2188F
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:53:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFC1D2188F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbeHQRzp (ORCPT
+        id S1727610AbeHQR4w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 13:55:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48968 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727037AbeHQRzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 13:55:45 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FBD121536;
-        Fri, 17 Aug 2018 14:52:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534517525;
-        bh=GRVbY5EqwJ/2M0NaMhxB8s88/l/loaNmsIUlfPCmtdE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=09wR3i9S4ivu56w2sQCIHfiU5vqTysPRUeszp1YykVnrY7XCq//6rE62issux5h1a
-         8Gh7aL0Ht6Nwuv3dCWWcMkV49kRwHaNgMeks0uevfxE00Sv43VE/k9RoY2T7K+8fnm
-         xZHzBtiSJOZkpQvY7D7ynDeYuagmo40dzi/2moyA=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 7D3DF141C3A; Fri, 17 Aug 2018 11:52:02 -0300 (-03)
-Date:   Fri, 17 Aug 2018 11:52:02 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: Re: [PATCH 00/13] perf tools: Use plain debug files for compressed
- objects
-Message-ID: <20180817145202.GB22443@kernel.org>
-References: <20180817094813.15086-1-jolsa@kernel.org>
+        Fri, 17 Aug 2018 13:56:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60722 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726888AbeHQR4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 13:56:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9E802ADC0;
+        Fri, 17 Aug 2018 14:53:10 +0000 (UTC)
+Date:   Fri, 17 Aug 2018 16:53:10 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Evgenii Shatokhin <eshatokhin@virtuozzo.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 00/10] livepatch: Atomic replace feature
+Message-ID: <20180817145309.a2lqv5borwi5wrej@pathway.suse.cz>
+References: <20180307082039.10196-1-pmladek@suse.com>
+ <d40cb118-97d7-4d2f-4b39-265341bd9dac@virtuozzo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180817094813.15086-1-jolsa@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <d40cb118-97d7-4d2f-4b39-265341bd9dac@virtuozzo.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Aug 17, 2018 at 11:48:00AM +0200, Jiri Olsa escreveu:
-> hi,
-> currently we don't allow to open plain debug files for
-> compressed kernel module objects, ending up with following
-> warning:
+On Fri 2018-08-17 13:17:27, Evgenii Shatokhin wrote:
+> Hi,
 > 
->   $ perf report --stdio
->   lzma: failed The input is not in the .xz format
->   lzma: failed The input is not in the .xz format
->   lzma: failed The input is not in the .xz format
->   lzma: failed The input is not in the .xz format
->   # To display the perf.data header info, please use --header/--header-only options.
+> On 07.03.2018 11:20, Petr Mladek wrote:
+> > The atomic replace allows to create cumulative patches. They
+> > are useful when you maintain many livepatches and want to remove
+> > one that is lower on the stack. In addition it is very useful when
+> > more patches touch the same function and there are dependencies
+> > between them.
 > 
-> The reason is behind the logic we open the DSO object files,
-> when we try all possible 'debug' objects until we find the
-> data. So even if the DSO is represented by 'krava.xz' module,
-> we can end up opening ~/.debug/....23432432/debug' file which
-> is not compressed and we fail with above error.
+> Could you tell me what is the current status of this series? Looks like I
+> lost track of it.
 > 
-> This patchset adds the code to detect un/compressed files and
-> return plain debug file when available even for compressed
-> kernel modules.
-> 
-> Also available in here:
->   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
->   perf/fixes
+> Is there anything else that should be done here before this series could be
+> merged?
 
-Thanks, applied.
+I have almost ready the rework suggested by Josh. I still need to
+port the new tests and send.
 
-- Arnaldo
+Unfortunately I had to put it temporary on hold because of other
+important tasks.
+
+I am about to leave for vacation (one week off). I will try to
+find some cycles, finish and send it once I am back.
+
+Best Regards,
+Petr
