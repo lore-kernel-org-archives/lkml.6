@@ -3,205 +3,527 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F66C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01FF9C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 508D021534
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:29:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 874D621A2F
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:30:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z6Ybwzqj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 508D021534
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mrPWD2VT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 874D621A2F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728073AbeHQVeK (ORCPT
+        id S1728099AbeHQVe4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 17:34:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54426 "EHLO mail.kernel.org"
+        Fri, 17 Aug 2018 17:34:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727467AbeHQVeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 17:34:10 -0400
+        id S1727509AbeHQVez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 17:34:55 -0400
 Received: from localhost (unknown [104.132.1.88])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B0BA208AD;
-        Fri, 17 Aug 2018 18:29:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A74A7208AD;
+        Fri, 17 Aug 2018 18:30:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534530585;
-        bh=FeQo/xWHKj0c77yG2gp2s3XlaVdMnIHmomUIuHHCBx8=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=z6Ybwzqj6VGsVYbxuMj4tB5k+LD0O1n++cCj07XA4LVc+5M5FucKIB5M2K5p8k8WL
-         ijnv1uupTPivtcZFPPDlhb48LaVsTGpIORFOzrKH6cwhJBhpQe7REGzR7gJAF/ZZvQ
-         nQegZW3fStf5s81ty305IHjFZZ8yZJ10vx1SPDLQ=
-Date:   Fri, 17 Aug 2018 11:29:44 -0700
+        s=default; t=1534530629;
+        bh=xA+m9yW6UsAQ2QGW1qM7BaZ631HHjT/S+npWTgalfZc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mrPWD2VTWtC+h9pMlkdb6bwXWegcUHaA96LjXo5NN5AMt0ra1NCpdBhv++Rva5ZjC
+         73lFlEWKk0y8Hd99uzKq2nHBXteEoOtCcmHmc+zjVMBkzBjhOEM4Esjl5Vh+OgRctZ
+         bIgEZz3nP9Ly3isUUXMZRqvHkbo0hrOKf62sNm04=
+Date:   Fri, 17 Aug 2018 11:30:29 -0700
 From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     linux-kernel@vger.kernel.org,
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Ju Hyung Park <qkrwngud825@gmail.com>,
+        linux-kernel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH v4] f2fs: fix performance issue observed with
- multi-thread sequential read
-Message-ID: <20180817182944.GA58612@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180810023758.46974-1-jaegeuk@kernel.org>
- <20180810024859.GA48219@jaegeuk-macbookpro.roam.corp.google.com>
- <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: tune discard speed with storage
+ usage rate
+Message-ID: <20180817183029.GB58612@jaegeuk-macbookpro.roam.corp.google.com>
+References: <cf3e27a2-de20-13e7-eb5e-f0ad2781cf0f@huawei.com>
+ <20180815023326.GB84720@jaegeuk-macbookpro.roam.corp.google.com>
+ <17aa1e09-6bfd-eb67-0f28-e13d8bbb17ff@huawei.com>
+ <20180815025612.GC84720@jaegeuk-macbookpro.roam.corp.google.com>
+ <03eec946-0cdb-7767-b5d9-9830072a3e71@huawei.com>
+ <20180815032002.GE84720@jaegeuk-macbookpro.roam.corp.google.com>
+ <73644ed5-7f66-3c03-c5ac-5b8b10b0e472@huawei.com>
+ <CAD14+f1MoAjEuXwGSmL3=0ROX_f=9jZVmvNsU9gnTP=UNxsTrg@mail.gmail.com>
+ <20180816012340.GA11896@jaegeuk-macbookpro.roam.corp.google.com>
+ <64465b80-c0a6-10e2-91cd-b8288ecbd11d@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <64465b80-c0a6-10e2-91cd-b8288ecbd11d@huawei.com>
 User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts the commit - "b93f771 - f2fs: remove writepages lock"
-to fix the drop in sequential read throughput.
+On 08/16, Chao Yu wrote:
+> On 2018/8/16 9:23, Jaegeuk Kim wrote:
+> > On 08/15, Ju Hyung Park wrote:
+> >> btrfs also distinguishes high/low end SSDs with mount option "ssd" and
+> >> "ssd_spread".
+> >> I believe there is no implementation inside btrfs to do it automatically.
+> >>
+> >> Providing users an option with a well made documentation is acceptable imo.
+> > 
+> > Yeah, I was thinking about this as well. How about adding "-o disk=%s" where
+> > %s can be ufs/emmc/ssd/low_ssd/nvme/...?
+> 
+> Agreed,
+> 
+> > And, we also can decide the device type automatically w/ kmsg by default.
+> 
+> You mean by scanning kmsg to see the device type?
 
-Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
-device: UFS
+No, I was seeking for a way to find in block device structure, if exists.
 
-Before -
-read throughput: 185 MB/s
-total read requests: 85177 (of these ~80000 are 4KB size requests).
-total write requests: 2546 (of these ~2208 requests are written in 512KB).
-
-After -
-read throughput: 758 MB/s
-total read requests: 2417 (of these ~2042 are 512KB reads).
-total write requests: 2701 (of these ~2034 requests are written in 512KB).
-
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
-
-Change log from v3:
- - add more conditions to serialize the allocation
-
- Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
- fs/f2fs/data.c                          | 10 ++++++++++
- fs/f2fs/f2fs.h                          |  2 ++
- fs/f2fs/segment.c                       |  1 +
- fs/f2fs/super.c                         |  1 +
- fs/f2fs/sysfs.c                         |  2 ++
- 6 files changed, 24 insertions(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 9b0123388f18..94a24aedcdb2 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -51,6 +51,14 @@ Description:
- 		 Controls the dirty page count condition for the in-place-update
- 		 policies.
- 
-+What:		/sys/fs/f2fs/<disk>/min_seq_blocks
-+Date:		August 2018
-+Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
-+Description:
-+		 Controls the dirty page count condition for batched sequential
-+		 writes in ->writepages.
-+
-+
- What:		/sys/fs/f2fs/<disk>/min_hot_blocks
- Date:		March 2017
- Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 43d3723dc886..fb63425ea242 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2130,6 +2130,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct blk_plug plug;
- 	int ret;
-+	bool locked = false;
- 
- 	/* deal with chardevs and other special file */
- 	if (!mapping->a_ops->writepage)
-@@ -2160,10 +2161,19 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
- 	else if (atomic_read(&sbi->wb_sync_req[DATA]))
- 		goto skip_write;
- 
-+	if (!S_ISDIR(inode->i_mode) && (wbc->sync_mode != WB_SYNC_ALL ||
-+			get_dirty_pages(inode) <= SM_I(sbi)->min_seq_blocks)) {
-+		mutex_lock(&sbi->writepages);
-+		locked = true;
-+	}
-+
- 	blk_start_plug(&plug);
- 	ret = f2fs_write_cache_pages(mapping, wbc, io_type);
- 	blk_finish_plug(&plug);
- 
-+	if (locked)
-+		mutex_unlock(&sbi->writepages);
-+
- 	if (wbc->sync_mode == WB_SYNC_ALL)
- 		atomic_dec(&sbi->wb_sync_req[DATA]);
- 	/*
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9a6ba4a8d338..170573f8a04a 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -913,6 +913,7 @@ struct f2fs_sm_info {
- 	unsigned int ipu_policy;	/* in-place-update policy */
- 	unsigned int min_ipu_util;	/* in-place-update threshold */
- 	unsigned int min_fsync_blocks;	/* threshold for fsync */
-+	unsigned int min_seq_blocks;	/* threshold for sequential blocks */
- 	unsigned int min_hot_blocks;	/* threshold for hot block allocation */
- 	unsigned int min_ssr_sections;	/* threshold to trigger SSR allocation */
- 
-@@ -1133,6 +1134,7 @@ struct f2fs_sb_info {
- 	struct rw_semaphore sb_lock;		/* lock for raw super block */
- 	int valid_super_block;			/* valid super block no */
- 	unsigned long s_flag;				/* flags for sbi */
-+	struct mutex writepages;		/* mutex for writepages() */
- 
- #ifdef CONFIG_BLK_DEV_ZONED
- 	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index b136e39e1e9e..20650e25117b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -4127,6 +4127,7 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
- 		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
- 	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
- 	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
-+	sm_info->min_seq_blocks = sbi->blocks_per_seg * sbi->segs_per_sec;
- 	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
- 	sm_info->min_ssr_sections = reserved_sections(sbi);
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index c6e4750a9187..6b6cb4eb8439 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2864,6 +2864,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	/* init f2fs-specific super block info */
- 	sbi->valid_super_block = valid_super_block;
- 	mutex_init(&sbi->gc_mutex);
-+	mutex_init(&sbi->writepages);
- 	mutex_init(&sbi->cp_mutex);
- 	init_rwsem(&sbi->node_write);
- 	init_rwsem(&sbi->node_change);
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index cd2e030e47b8..81c0e5337443 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -397,6 +397,7 @@ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
-+F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_seq_blocks, min_seq_blocks);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_hot_blocks, min_hot_blocks);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ssr_sections, min_ssr_sections);
- F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
-@@ -449,6 +450,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(ipu_policy),
- 	ATTR_LIST(min_ipu_util),
- 	ATTR_LIST(min_fsync_blocks),
-+	ATTR_LIST(min_seq_blocks),
- 	ATTR_LIST(min_hot_blocks),
- 	ATTR_LIST(min_ssr_sections),
- 	ATTR_LIST(max_victim_search),
--- 
-2.17.0.441.gb46fe60e1d-goog
-
+> 
+> Thanks,
+> 
+> > 
+> >>
+> >> And I personally think, if the default goes to a dynamically deciding
+> >> method, it should tell it to kmsg.
+> >>
+> >> Thanks,
+> >>
+> >> On Wed, Aug 15, 2018, 12:31 PM Chao Yu <yuchao0@huawei.com> wrote:
+> >>
+> >>> On 2018/8/15 11:20, Jaegeuk Kim wrote:
+> >>>> On 08/15, Chao Yu wrote:
+> >>>>> On 2018/8/15 10:56, Jaegeuk Kim wrote:
+> >>>>>> On 08/15, Chao Yu wrote:
+> >>>>>>> On 2018/8/15 10:33, Jaegeuk Kim wrote:
+> >>>>>>>> On 08/15, Chao Yu wrote:
+> >>>>>>>>> On 2018/8/15 1:23, Jaegeuk Kim wrote:
+> >>>>>>>>>> On 08/14, Chao Yu wrote:
+> >>>>>>>>>>> On 2018/8/14 12:19, Jaegeuk Kim wrote:
+> >>>>>>>>>>>> On 08/10, Chao Yu wrote:
+> >>>>>>>>>>>>> Previously, discard speed was fixed mostly, and in high usage
+> >>> rate
+> >>>>>>>>>>>>> device, we will speed up issuing discard, but it doesn't make
+> >>> sense
+> >>>>>>>>>>>>> that in a non-full filesystem, we still issue discard with slow
+> >>> speed.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Could you please elaborate the problem in more detail? The speed
+> >>> depends
+> >>>>>>>>>>>> on how many candidates?
+> >>>>>>>>>>>
+> >>>>>>>>>>> undiscard blocks are all 4k granularity.
+> >>>>>>>>>>> a) utility: filesystem: 20% + undiscard blocks: 20% = flash
+> >>> storage: 40%
+> >>>>>>>>>>> b) utility: filesystem: 40% + undiscard blocks: 25% = flash
+> >>> storage: 65%
+> >>>>>>>>>>> c) utility: filesystem: 60% + undiscard blocks: 30% = flash
+> >>> storage: 100%
+> >>>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>> 1. for case c), we need to speed up issuing discard based on
+> >>> utilization of
+> >>>>>>>>>>> "filesystem + undiscard" instead of just utilization of
+> >>> filesystem.
+> >>>>>>>>>>>
+> >>>>>>>>>>> -              if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
+> >>>>>>>>>>> -                      dpolicy->granularity = 1;
+> >>>>>>>>>>> -                      dpolicy->max_interval =
+> >>> DEF_MIN_DISCARD_ISSUE_TIME;
+> >>>>>>>>>>> -              }
+> >>>>>>>>>>>
+> >>>>>>>>>>> 2. If free space in storage touches therein threshold,
+> >>> performance will be very
+> >>>>>>>>>>> sensitive. In low-end storage, with high usage in space, even
+> >>> free space is
+> >>>>>>>>>>> reduced by 1%, performance will decrease a lot.
+> >>>>>>>>>>
+> >>>>>>>>>> So, we may need to distinguish low-end vs. high-end storage. In
+> >>> high-end case,
+> >>>>>>>>>> it'd be better to avoid IO contention, while low-end device wants
+> >>> to get more
+> >>>>>>>>>> discard commands as much as possible. So, how about adding an
+> >>> option for this
+> >>>>>>>>>> as a tunable point?
+> >>>>>>>>>
+> >>>>>>>>> Agreed, how about adding a sysfs entry discard_tunning:
+> >>>>>>>>> 1: enabled, use 4k granularity, self-adapted speed based on real
+> >>> device free space.
+> >>>>>>>>> 0: disabled, use dcc->discard_granularity, fixed speed.
+> >>>>>>>>>
+> >>>>>>>>> By default: enabled
+> >>>>>>>>>
+> >>>>>>>>> How do you think?
+> >>>>>>>>
+> >>>>>>>> I don't think this is proper with a sysfs entry, since we already
+> >>> know the
+> >>>>>>>
+> >>>>>>> You mean by storage capacity? <= 32GB means low-end?
+> >>>>>>
+> >>>>>> Yes, that's current condition to judge it. If there is any other
+> >>> method, it'd be
+> >>>>>
+> >>>>> That would be hard code...
+> >>>>>
+> >>>>> Still I have not got any other method to do the judgment except
+> >>> capacity.
+> >>>>
+> >>>> Maybe ufs or emmc?
+> >>>
+> >>> Yeah, that's may be a good way.
+> >>>
+> >>> I remember very initial version UFS has very poor discard performance, for
+> >>> that
+> >>> kind of storage, it will be not accurate?
+> >>>
+> >>> Let me check whether there is a flag to distinguish ufs/emmc.
+> >>>
+> >>> Thanks,
+> >>>
+> >>>>
+> >>>>>
+> >>>>> Thanks,
+> >>>>>
+> >>>>>> better to change it.
+> >>>>>>
+> >>>>>>>
+> >>>>>>> Thanks,
+> >>>>>>>
+> >>>>>>>> device type when mounting the partition. We won't require to change
+> >>> the policy
+> >>>>>>>> on the fly. And, I still don't get to change the default.
+> >>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> Thanks,
+> >>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>> IMO, in above cases, we'd better to issue discard with high speed
+> >>> for c), middle
+> >>>>>>>>>>> speed for b), and low speed for a).
+> >>>>>>>>>>>
+> >>>>>>>>>>> How do you think?
+> >>>>>>>>>>>
+> >>>>>>>>>>> Thanks,
+> >>>>>>>>>>>
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Thanks,
+> >>>>>>>>>>>>
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Anyway, it comes out undiscarded block makes FTL GC be lower
+> >>> efficient
+> >>>>>>>>>>>>> and causing high lifetime overhead.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Let's tune discard speed as below:
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> a. adjust default issue interval:
+> >>>>>>>>>>>>>              original        after
+> >>>>>>>>>>>>> min_interval:        50ms            100ms
+> >>>>>>>>>>>>> mid_interval:        500ms           1000ms
+> >>>>>>>>>>>>> max_interval:        60000ms         10000ms
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> b. if last time we stop issuing discard due to IO interruption
+> >>> of user,
+> >>>>>>>>>>>>> let's reset all {min,mid,max}_interval to default one.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> c. tune {min,mid,max}_interval with below calculation method:
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> base_interval = default_interval / 10;
+> >>>>>>>>>>>>> total_interval = default_interval - base_interval;
+> >>>>>>>>>>>>> interval = base_interval + total_interval * (100 - dev_util) /
+> >>> 100;
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> For example:
+> >>>>>>>>>>>>> min_interval (:100ms)
+> >>>>>>>>>>>>> dev_util (%) interval (ms)
+> >>>>>>>>>>>>> 0            100
+> >>>>>>>>>>>>> 10           91
+> >>>>>>>>>>>>> 20           82
+> >>>>>>>>>>>>> 30           73
+> >>>>>>>>>>>>> ...
+> >>>>>>>>>>>>> 80           28
+> >>>>>>>>>>>>> 90           19
+> >>>>>>>>>>>>> 100          10
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >>>>>>>>>>>>> ---
+> >>>>>>>>>>>>>  fs/f2fs/f2fs.h    | 11 ++++----
+> >>>>>>>>>>>>>  fs/f2fs/segment.c | 64
+> >>> +++++++++++++++++++++++++++++++++++++----------
+> >>>>>>>>>>>>>  fs/f2fs/segment.h |  9 +++++++
+> >>>>>>>>>>>>>  fs/f2fs/super.c   |  2 +-
+> >>>>>>>>>>>>>  4 files changed, 67 insertions(+), 19 deletions(-)
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >>>>>>>>>>>>> index 273ffdaf4891..a1dd2e1c3cb9 100644
+> >>>>>>>>>>>>> --- a/fs/f2fs/f2fs.h
+> >>>>>>>>>>>>> +++ b/fs/f2fs/f2fs.h
+> >>>>>>>>>>>>> @@ -185,10 +185,9 @@ enum {
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>  #define MAX_DISCARD_BLOCKS(sbi)             BLKS_PER_SEC(sbi)
+> >>>>>>>>>>>>>  #define DEF_MAX_DISCARD_REQUEST             8       /* issue 8
+> >>> discards per round */
+> >>>>>>>>>>>>> -#define DEF_MIN_DISCARD_ISSUE_TIME  50      /* 50 ms, if
+> >>> exists */
+> >>>>>>>>>>>>> -#define DEF_MID_DISCARD_ISSUE_TIME  500     /* 500 ms, if
+> >>> device busy */
+> >>>>>>>>>>>>> -#define DEF_MAX_DISCARD_ISSUE_TIME  60000   /* 60 s, if no
+> >>> candidates */
+> >>>>>>>>>>>>> -#define DEF_DISCARD_URGENT_UTIL             80      /* do more
+> >>> discard over 80% */
+> >>>>>>>>>>>>> +#define DEF_MIN_DISCARD_ISSUE_TIME  100     /* 100 ms, if
+> >>> exists */
+> >>>>>>>>>>>>> +#define DEF_MID_DISCARD_ISSUE_TIME  1000    /* 1000 ms, if
+> >>> device busy */
+> >>>>>>>>>>>>> +#define DEF_MAX_DISCARD_ISSUE_TIME  10000   /* 10000 ms, if no
+> >>> candidates */
+> >>>>>>>>>>>>>  #define DEF_CP_INTERVAL                     60      /* 60 secs
+> >>> */
+> >>>>>>>>>>>>>  #define DEF_IDLE_INTERVAL           5       /* 5 secs */
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> @@ -248,7 +247,8 @@ struct discard_entry {
+> >>>>>>>>>>>>>  };
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>  /* default discard granularity of inner discard thread, unit:
+> >>> block count */
+> >>>>>>>>>>>>> -#define DEFAULT_DISCARD_GRANULARITY         1
+> >>>>>>>>>>>>> +#define MID_DISCARD_GRANULARITY                     16
+> >>>>>>>>>>>>> +#define MIN_DISCARD_GRANULARITY                     1
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>  /* max discard pend list number */
+> >>>>>>>>>>>>>  #define MAX_PLIST_NUM               512
+> >>>>>>>>>>>>> @@ -330,6 +330,7 @@ struct discard_cmd_control {
+> >>>>>>>>>>>>>      atomic_t discard_cmd_cnt;               /* # of cached cmd
+> >>> count */
+> >>>>>>>>>>>>>      struct rb_root root;                    /* root of discard
+> >>> rb-tree */
+> >>>>>>>>>>>>>      bool rbtree_check;                      /* config for
+> >>> consistence check */
+> >>>>>>>>>>>>> +    bool io_interrupted;                    /* last state of
+> >>> io interrupted */
+> >>>>>>>>>>>>>  };
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>  /* for the list of fsync inodes, used only during recovery */
+> >>>>>>>>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >>>>>>>>>>>>> index 8b52e8dfb12f..9564aaf1f27b 100644
+> >>>>>>>>>>>>> --- a/fs/f2fs/segment.c
+> >>>>>>>>>>>>> +++ b/fs/f2fs/segment.c
+> >>>>>>>>>>>>> @@ -968,6 +968,44 @@ static void __check_sit_bitmap(struct
+> >>> f2fs_sb_info *sbi,
+> >>>>>>>>>>>>>  #endif
+> >>>>>>>>>>>>>  }
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> +static void __adjust_discard_speed(unsigned int *interval,
+> >>>>>>>>>>>>> +                            unsigned int def_interval, int
+> >>> dev_util)
+> >>>>>>>>>>>>> +{
+> >>>>>>>>>>>>> +    unsigned int base_interval, total_interval;
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>> +    base_interval = def_interval / 10;
+> >>>>>>>>>>>>> +    total_interval = def_interval - base_interval;
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>> +    /*
+> >>>>>>>>>>>>> +     * if def_interval = 100, adjusted interval should be in
+> >>> range of
+> >>>>>>>>>>>>> +     * [10, 100].
+> >>>>>>>>>>>>> +     */
+> >>>>>>>>>>>>> +    *interval = base_interval + total_interval * (100 -
+> >>> dev_util) / 100;
+> >>>>>>>>>>>>> +}
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>> +static void __tune_discard_policy(struct f2fs_sb_info *sbi,
+> >>>>>>>>>>>>> +                                    struct discard_policy
+> >>> *dpolicy)
+> >>>>>>>>>>>>> +{
+> >>>>>>>>>>>>> +    struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> >>>>>>>>>>>>> +    int dev_util;
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>> +    if (dcc->io_interrupted) {
+> >>>>>>>>>>>>> +            dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+> >>>>>>>>>>>>> +            dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
+> >>>>>>>>>>>>> +            dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+> >>>>>>>>>>>>> +            return;
+> >>>>>>>>>>>>> +    }
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>> +    dev_util = dev_utilization(sbi);
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>> +    __adjust_discard_speed(&dpolicy->min_interval,
+> >>>>>>>>>>>>> +                            DEF_MIN_DISCARD_ISSUE_TIME,
+> >>> dev_util);
+> >>>>>>>>>>>>> +    __adjust_discard_speed(&dpolicy->mid_interval,
+> >>>>>>>>>>>>> +                            DEF_MID_DISCARD_ISSUE_TIME,
+> >>> dev_util);
+> >>>>>>>>>>>>> +    __adjust_discard_speed(&dpolicy->max_interval,
+> >>>>>>>>>>>>> +                            DEF_MAX_DISCARD_ISSUE_TIME,
+> >>> dev_util);
+> >>>>>>>>>>>>> +}
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>>  static void __init_discard_policy(struct f2fs_sb_info *sbi,
+> >>>>>>>>>>>>>                              struct discard_policy *dpolicy,
+> >>>>>>>>>>>>>                              int discard_type, unsigned int
+> >>> granularity)
+> >>>>>>>>>>>>> @@ -982,20 +1020,11 @@ static void __init_discard_policy(struct
+> >>> f2fs_sb_info *sbi,
+> >>>>>>>>>>>>>      dpolicy->io_aware_gran = MAX_PLIST_NUM;
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>      if (discard_type == DPOLICY_BG) {
+> >>>>>>>>>>>>> -            dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+> >>>>>>>>>>>>> -            dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
+> >>>>>>>>>>>>> -            dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+> >>>>>>>>>>>>>              dpolicy->io_aware = true;
+> >>>>>>>>>>>>>              dpolicy->sync = false;
+> >>>>>>>>>>>>>              dpolicy->ordered = true;
+> >>>>>>>>>>>>> -            if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
+> >>>>>>>>>>>>> -                    dpolicy->granularity = 1;
+> >>>>>>>>>>>>> -                    dpolicy->max_interval =
+> >>> DEF_MIN_DISCARD_ISSUE_TIME;
+> >>>>>>>>>>>>> -            }
+> >>>>>>>>>>>>> +            __tune_discard_policy(sbi, dpolicy);
+> >>>>>>>>>>>>>      } else if (discard_type == DPOLICY_FORCE) {
+> >>>>>>>>>>>>> -            dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+> >>>>>>>>>>>>> -            dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
+> >>>>>>>>>>>>> -            dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+> >>>>>>>>>>>>>              dpolicy->io_aware = false;
+> >>>>>>>>>>>>>      } else if (discard_type == DPOLICY_FSTRIM) {
+> >>>>>>>>>>>>>              dpolicy->io_aware = false;
+> >>>>>>>>>>>>> @@ -1353,6 +1382,8 @@ static unsigned int
+> >>> __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+> >>>>>>>>>>>>>      if (!issued && io_interrupted)
+> >>>>>>>>>>>>>              issued = -1;
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> +    dcc->io_interrupted = io_interrupted;
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>>      return issued;
+> >>>>>>>>>>>>>  }
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> @@ -1370,7 +1401,7 @@ static int __issue_discard_cmd(struct
+> >>> f2fs_sb_info *sbi,
+> >>>>>>>>>>>>>              if (i + 1 < dpolicy->granularity)
+> >>>>>>>>>>>>>                      break;
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> -            if (i < DEFAULT_DISCARD_GRANULARITY &&
+> >>> dpolicy->ordered)
+> >>>>>>>>>>>>> +            if (i < MID_DISCARD_GRANULARITY &&
+> >>> dpolicy->ordered)
+> >>>>>>>>>>>>>                      return __issue_discard_cmd_orderly(sbi,
+> >>> dpolicy);
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>              pend_list = &dcc->pend_list[i];
+> >>>>>>>>>>>>> @@ -1407,6 +1438,8 @@ static int __issue_discard_cmd(struct
+> >>> f2fs_sb_info *sbi,
+> >>>>>>>>>>>>>      if (!issued && io_interrupted)
+> >>>>>>>>>>>>>              issued = -1;
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> +    dcc->io_interrupted = io_interrupted;
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>>      return issued;
+> >>>>>>>>>>>>>  }
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> @@ -1576,7 +1609,11 @@ static int issue_discard_thread(void
+> >>> *data)
+> >>>>>>>>>>>>>      struct f2fs_sb_info *sbi = data;
+> >>>>>>>>>>>>>      struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> >>>>>>>>>>>>>      wait_queue_head_t *q = &dcc->discard_wait_queue;
+> >>>>>>>>>>>>> -    struct discard_policy dpolicy;
+> >>>>>>>>>>>>> +    struct discard_policy dpolicy = {
+> >>>>>>>>>>>>> +            .min_interval = DEF_MIN_DISCARD_ISSUE_TIME,
+> >>>>>>>>>>>>> +            .mid_interval = DEF_MID_DISCARD_ISSUE_TIME,
+> >>>>>>>>>>>>> +            .max_interval = DEF_MAX_DISCARD_ISSUE_TIME,
+> >>>>>>>>>>>>> +    };
+> >>>>>>>>>>>>>      unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
+> >>>>>>>>>>>>>      int issued;
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> @@ -1929,7 +1966,7 @@ static int
+> >>> create_discard_cmd_control(struct f2fs_sb_info *sbi)
+> >>>>>>>>>>>>>      if (!dcc)
+> >>>>>>>>>>>>>              return -ENOMEM;
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> -    dcc->discard_granularity = DEFAULT_DISCARD_GRANULARITY;
+> >>>>>>>>>>>>> +    dcc->discard_granularity = MIN_DISCARD_GRANULARITY;
+> >>>>>>>>>>>>>      INIT_LIST_HEAD(&dcc->entry_list);
+> >>>>>>>>>>>>>      for (i = 0; i < MAX_PLIST_NUM; i++)
+> >>>>>>>>>>>>>              INIT_LIST_HEAD(&dcc->pend_list[i]);
+> >>>>>>>>>>>>> @@ -1945,6 +1982,7 @@ static int
+> >>> create_discard_cmd_control(struct f2fs_sb_info *sbi)
+> >>>>>>>>>>>>>      dcc->next_pos = 0;
+> >>>>>>>>>>>>>      dcc->root = RB_ROOT;
+> >>>>>>>>>>>>>      dcc->rbtree_check = false;
+> >>>>>>>>>>>>> +    dcc->io_interrupted = false;
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>      init_waitqueue_head(&dcc->discard_wait_queue);
+> >>>>>>>>>>>>>      SM_I(sbi)->dcc_info = dcc;
+> >>>>>>>>>>>>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> >>>>>>>>>>>>> index 422b0ceb1eaa..63b4da72cd34 100644
+> >>>>>>>>>>>>> --- a/fs/f2fs/segment.h
+> >>>>>>>>>>>>> +++ b/fs/f2fs/segment.h
+> >>>>>>>>>>>>> @@ -616,6 +616,15 @@ static inline int utilization(struct
+> >>> f2fs_sb_info *sbi)
+> >>>>>>>>>>>>>                                      sbi->user_block_count);
+> >>>>>>>>>>>>>  }
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> +static inline int dev_utilization(struct f2fs_sb_info *sbi)
+> >>>>>>>>>>>>> +{
+> >>>>>>>>>>>>> +    unsigned int dev_blks;
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>> +    dev_blks = valid_user_blocks(sbi) +
+> >>> SM_I(sbi)->dcc_info->undiscard_blks;
+> >>>>>>>>>>>>> +    return div_u64((u64)dev_blks * 100,
+> >>>>>>>>>>>>> +                    MAIN_SEGS(sbi) << sbi->log_blocks_per_seg);
+> >>>>>>>>>>>>> +}
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>>  /*
+> >>>>>>>>>>>>>   * Sometimes f2fs may be better to drop out-of-place update
+> >>> policy.
+> >>>>>>>>>>>>>   * And, users can control the policy through sysfs entries.
+> >>>>>>>>>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> >>>>>>>>>>>>> index b055f2ea77c5..55ed76daad23 100644
+> >>>>>>>>>>>>> --- a/fs/f2fs/super.c
+> >>>>>>>>>>>>> +++ b/fs/f2fs/super.c
+> >>>>>>>>>>>>> @@ -2862,7 +2862,7 @@ static void f2fs_tuning_parameters(struct
+> >>> f2fs_sb_info *sbi)
+> >>>>>>>>>>>>>      /* adjust parameters according to the volume size */
+> >>>>>>>>>>>>>      if (sm_i->main_segments <= SMALL_VOLUME_SEGMENTS) {
+> >>>>>>>>>>>>>              F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_REUSE;
+> >>>>>>>>>>>>> -            sm_i->dcc_info->discard_granularity = 1;
+> >>>>>>>>>>>>> +            sm_i->dcc_info->discard_granularity =
+> >>> MIN_DISCARD_GRANULARITY;
+> >>>>>>>>>>>>>              sm_i->ipu_policy = 1 << F2FS_IPU_FORCE;
+> >>>>>>>>>>>>>      }
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> --
+> >>>>>>>>>>>>> 2.18.0.rc1
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> .
+> >>>>>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>> .
+> >>>>>>>>>>
+> >>>>>>>>
+> >>>>>>>> .
+> >>>>>>>>
+> >>>>>>
+> >>>>>> .
+> >>>>>>
+> >>>>
+> >>>> .
+> >>>>
+> >>>
+> >>>
+> >>>
+> >>> ------------------------------------------------------------------------------
+> >>> Check out the vibrant tech community on one of the world's most
+> >>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> >>> _______________________________________________
+> >>> Linux-f2fs-devel mailing list
+> >>> Linux-f2fs-devel@lists.sourceforge.net
+> >>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >>>
+> > 
+> > .
+> > 
