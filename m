@@ -2,86 +2,104 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6008BC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6ECC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21D362187A
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:58:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21D362187A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D8BF2187A
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:59:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="fYgjTyIr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D8BF2187A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbeHQSCZ (ORCPT
+        id S1727709AbeHQSC7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 14:02:25 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:10409 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726544AbeHQSCZ (ORCPT
+        Fri, 17 Aug 2018 14:02:59 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36490 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726888AbeHQSC6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 14:02:25 -0400
-Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
-  by relmlie2.idc.renesas.com with ESMTP; 17 Aug 2018 23:58:42 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 769107C373;
-        Fri, 17 Aug 2018 23:58:42 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.53,251,1531753200"; 
-   d="scan'208";a="289880029"
-Received: from unknown (HELO fabrizio-dev.ree.adwin.renesas.com) ([10.226.36.250])
-  by relmlii2.idc.renesas.com with ESMTP; 17 Aug 2018 23:58:39 +0900
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] spi: sh-msiof: Add r8a774a1 support
-Date:   Fri, 17 Aug 2018 15:58:34 +0100
-Message-Id: <1534517914-15406-1-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 17 Aug 2018 14:02:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=c5+qQ/pO4jxuZOv2iHsM6szrghWCFEdESXXB+xSqBUY=; b=fYgjTyIrABe2aZlibkaiUTmnT
+        CLOWfJIU8C1VrB8SGUvZOvAvc2RRbLqFjdksKPViMwIl82d90/0rcaq/bUN8MovJBEJWaWLWwvGXt
+        rQBlXeHlslSiYSllmtrwHszLBwN3ZSiXgI/ppfa2ppyVBlECoA7bDxR9odUenrWdJ1mZk=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fqgDa-0003y8-Rt; Fri, 17 Aug 2018 14:59:14 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 8B1FB112442B; Fri, 17 Aug 2018 15:59:14 +0100 (BST)
+Date:   Fri, 17 Aug 2018 15:59:14 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     dkota@codeaurora.org
+Cc:     Doug Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "Mahadevan, Girish" <girishm@codeaurora.org>
+Subject: Re: [PATCH] spi: spi-geni-qcom: Add SPI driver support for GENI
+ based QUP
+Message-ID: <20180817145914.GA6885@sirena.org.uk>
+References: <61f2e1fb394bfe47ace42352f2e1b3a6@codeaurora.org>
+ <CAD=FV=X-fGukBpSOYCO=rv94_3gorL=9qmttsvZk21=m6mwUgA@mail.gmail.com>
+ <20180810105205.GC20971@sirena.org.uk>
+ <CAD=FV=XXyL5q1quxUtBohn2GrcadbY9hr6sdw+4qShQnYTgVwA@mail.gmail.com>
+ <20180810161329.GF20971@sirena.org.uk>
+ <c1bc416ba407b5a3cc098e78a529752e@codeaurora.org>
+ <20180810164636.GI20971@sirena.org.uk>
+ <b32c205955e0f42182b16e90f539a919@codeaurora.org>
+ <20180814150340.GE5810@sirena.org.uk>
+ <caea8294d20c515a33c090c4fddb15c3@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="KsGdsel6WgEHnImy"
+Content-Disposition: inline
+In-Reply-To: <caea8294d20c515a33c090c4fddb15c3@codeaurora.org>
+X-Cookie: "But I don't like Spam!!!!"
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document RZ/G2M (R8A774A1) SoC bindings.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
-This patch applies on top of next-20180817
+--KsGdsel6WgEHnImy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- Documentation/devicetree/bindings/spi/sh-msiof.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Fri, Aug 17, 2018 at 04:06:06PM +0530, dkota@codeaurora.org wrote:
 
-diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-index bfbc203..8f7bb6a 100644
---- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
-+++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-@@ -3,6 +3,7 @@ Renesas MSIOF spi controller
- Required properties:
- - compatible           : "renesas,msiof-r8a7743" (RZ/G1M)
- 			 "renesas,msiof-r8a7745" (RZ/G1E)
-+			 "renesas,msiof-r8a774a1" (RZ/G2M)
- 			 "renesas,msiof-r8a7790" (R-Car H2)
- 			 "renesas,msiof-r8a7791" (R-Car M2-W)
- 			 "renesas,msiof-r8a7792" (R-Car V2H)
-@@ -14,7 +15,7 @@ Required properties:
- 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
- 			 "renesas,sh-mobile-msiof" (generic SH-Mobile compatibile device)
- 			 "renesas,rcar-gen2-msiof" (generic R-Car Gen2 and RZ/G1 compatible device)
--			 "renesas,rcar-gen3-msiof" (generic R-Car Gen3 compatible device)
-+			 "renesas,rcar-gen3-msiof" (generic R-Car Gen3 and RZ/G2 compatible device)
- 			 "renesas,sh-msiof"      (deprecated)
- 
- 			 When compatible with the generic version, nodes
--- 
-2.7.4
+> Could you please clarify on below query.
 
+I'm not seeing any further questions in your e-mail?
+
+--KsGdsel6WgEHnImy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlt24r8ACgkQJNaLcl1U
+h9CRrQf/QY2VEoFZ8MVOx54OTnkKwUUdcFT2wstHs9r1U40lnp6BfYdsH9a9fSnL
+exMxIRIcdJ0Z/oJcXhbMS8y+bSRfyIww0KAU11R6u7LXihtugcBxLA+F1g6wa9zo
+5UrWRU1ePRdy8k5xQ9Wg/Kx2LcD8JlwA0ILpr1P2k0wlUOkEnbKddu5aG9KhsPLy
+dZ3UNzmA6JqgFt5NwmCEz/cjlINsq/N2Oc52lSSf36qgcOXzmvTmgSarhWys3sE5
+vFASKAOIJJtNOn2Q7ZiN8Tj9wwwHlFaPfD3VkcykNkCNNSreXdei4nVnh6jMyubQ
+eT1L/E1Ok7WsRWD82xFfSYSUb/Mvsg==
+=c13b
+-----END PGP SIGNATURE-----
+
+--KsGdsel6WgEHnImy--
