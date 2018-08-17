@@ -2,213 +2,126 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F14C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BC5C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:31:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 680D02154F
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:27:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 680D02154F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 1EB1C21A28
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:31:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EB1C21A28
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbeHQTbe (ORCPT
+        id S1727798AbeHQTfu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 15:31:34 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56373 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727160AbeHQTbe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 15:31:34 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8DE61215D9; Fri, 17 Aug 2018 18:27:31 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B7AAD215D6;
-        Fri, 17 Aug 2018 18:27:20 +0200 (CEST)
-Date:   Fri, 17 Aug 2018 18:27:20 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Naren <naren.kernel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
-        Rob Herring <robh@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 06/29] mtd: Add support for reading MTD devices via
- the nvmem API
-Message-ID: <20180817182720.6a6e5e8e@bbrezillon>
-In-Reply-To: <20180810080526.27207-7-brgl@bgdev.pl>
-References: <20180810080526.27207-1-brgl@bgdev.pl>
-        <20180810080526.27207-7-brgl@bgdev.pl>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Fri, 17 Aug 2018 15:35:50 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:61717 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727037AbeHQTft (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 15:35:49 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7HGU359077587
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 12:31:47 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kx133t88b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 12:31:47 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 17 Aug 2018 12:31:46 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 17 Aug 2018 12:31:44 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7HGVhOW4456938
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 17 Aug 2018 16:31:43 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B3075B2065;
+        Fri, 17 Aug 2018 12:30:55 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9461FB205F;
+        Fri, 17 Aug 2018 12:30:55 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 17 Aug 2018 12:30:55 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id BA4CA16C0FD2; Fri, 17 Aug 2018 09:31:43 -0700 (PDT)
+Date:   Fri, 17 Aug 2018 09:31:43 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, joel@joelfernandes.org,
+        mathieu.desnoyers@efficios.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] Make call_srcu() available during very early boot
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180814162448.GA20414@linux.vnet.ibm.com>
+ <20180814124945.5cf1753f@gandalf.local.home>
+ <20180814170618.GA24813@linux.vnet.ibm.com>
+ <20180817160842.GK3978217@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180817160842.GK3978217@devbig004.ftw2.facebook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18081716-0052-0000-0000-00000320E113
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009561; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01074895; UDB=6.00553970; IPR=6.00854853;
+ MB=3.00022776; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-17 16:31:46
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081716-0053-0000-0000-00005DC25C75
+Message-Id: <20180817163143.GX24813@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-17_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=826 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808170178
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bartosz,
-
-On Fri, 10 Aug 2018 10:05:03 +0200
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-
-> From: Alban Bedel <albeu@free.fr>
+On Fri, Aug 17, 2018 at 09:08:42AM -0700, Tejun Heo wrote:
+> Hello,
 > 
-> Allow drivers that use the nvmem API to read data stored on MTD devices.
-> For this the mtd devices are registered as read-only NVMEM providers.
+> On Tue, Aug 14, 2018 at 10:06:18AM -0700, Paul E. McKenney wrote:
+> > > Is there a way we could make a union, or reuse one of the other fields,
+> > > as we know that synchronize_srcu() can't be used yet (and if it is,
+> > > either warn, or just make it a nop). And when we call srcu_init() and
+> > > remove the srcu_struct from the list, we can then initialize whatever
+> > > we used as the temporary boot up list field.
+> > 
+> > I will take a look.  If nothing else, I could union it with the
+> > struct work_struct, since it cannot be used that early anyway.  ;-)
+> > 
+> > Or I could just use the work_struct that is already inside the struct
+> > work_struct.  Tejun, would you be OK with that?
 > 
-> Signed-off-by: Alban Bedel <albeu@free.fr>
-> [Bartosz:
->   - use the managed variant of nvmem_register(),
->   - set the nvmem name]
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Hmm... not super against it given how specialized the whole thing is
+> but maybe just making it a union is cleaner?
 
-What happened to the 2 other patches of Alban's series? I'd really like
-the DT case to be handled/agreed on in the same patchset, but IIRC,
-Alban and Srinivas disagreed on how this should be represented. I
-hope this time we'll come to an agreement, because the MTD <-> NVMEM
-glue has been floating around for quite some time...
+The problem with making it be a union is that I cannnot determine how
+to initialize it due to the possibility that someone will initialize it
+early, but not use it until much later.  For example, if I initialize my
+side of the union, but they don't actually use it until after rcu_init()
+is invoked, I will end up passing a bogus work_struct to you.
 
-Regards,
+In theory, I could straighten all this out at rcu_init() time, but that
+would require linking all srcu_struct instances initialized at that
+point, including the compile-time-initialized instances.  This can of
+course be done, but not simply.
 
-Boris
+Or am I missing a trick here somewhere?
 
-> ---
->  drivers/mtd/Kconfig     |  1 +
->  drivers/mtd/mtdcore.c   | 50 +++++++++++++++++++++++++++++++++++++++++
->  include/linux/mtd/mtd.h |  2 ++
->  3 files changed, 53 insertions(+)
-> 
-> diff --git a/drivers/mtd/Kconfig b/drivers/mtd/Kconfig
-> index 46ab7feec6b6..f5549482d0df 100644
-> --- a/drivers/mtd/Kconfig
-> +++ b/drivers/mtd/Kconfig
-> @@ -1,5 +1,6 @@
->  menuconfig MTD
->  	tristate "Memory Technology Device (MTD) support"
-> +	imply NVMEM
->  	help
->  	  Memory Technology Devices are flash, RAM and similar chips, often
->  	  used for solid state file systems on embedded devices. This option
-> diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-> index 42395df06be9..a57302eaceb5 100644
-> --- a/drivers/mtd/mtdcore.c
-> +++ b/drivers/mtd/mtdcore.c
-> @@ -488,6 +488,49 @@ int mtd_pairing_groups(struct mtd_info *mtd)
->  }
->  EXPORT_SYMBOL_GPL(mtd_pairing_groups);
->  
-> +static int mtd_nvmem_reg_read(void *priv, unsigned int offset,
-> +			      void *val, size_t bytes)
-> +{
-> +	struct mtd_info *mtd = priv;
-> +	size_t retlen;
-> +	int err;
-> +
-> +	err = mtd_read(mtd, offset, bytes, &retlen, val);
-> +	if (err && err != -EUCLEAN)
-> +		return err;
-> +
-> +	return retlen == bytes ? 0 : -EIO;
-> +}
-> +
-> +static int mtd_nvmem_add(struct mtd_info *mtd)
-> +{
-> +	struct nvmem_config config = { };
-> +
-> +	config.dev = &mtd->dev;
-> +	config.owner = THIS_MODULE;
-> +	config.name = mtd->name;
-> +	config.reg_read = mtd_nvmem_reg_read;
-> +	config.size = mtd->size;
-> +	config.word_size = 1;
-> +	config.stride = 1;
-> +	config.read_only = true;
-> +	config.root_only = true;
-> +	config.priv = mtd;
-> +
-> +	mtd->nvmem = devm_nvmem_register(&mtd->dev, &config);
-> +	if (IS_ERR(mtd->nvmem)) {
-> +		/* Just ignore if there is no NVMEM support in the kernel */
-> +		if (PTR_ERR(mtd->nvmem) == -ENOSYS) {
-> +			mtd->nvmem = NULL;
-> +		} else {
-> +			dev_err(&mtd->dev, "Failed to register NVMEM device\n");
-> +			return PTR_ERR(mtd->nvmem);
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static struct dentry *dfs_dir_mtd;
->  
->  /**
-> @@ -570,6 +613,11 @@ int add_mtd_device(struct mtd_info *mtd)
->  	if (error)
->  		goto fail_added;
->  
-> +	/* Add the nvmem provider */
-> +	error = mtd_nvmem_add(mtd);
-> +	if (error)
-> +		goto fail_nvmem_add;
-> +
->  	if (!IS_ERR_OR_NULL(dfs_dir_mtd)) {
->  		mtd->dbg.dfs_dir = debugfs_create_dir(dev_name(&mtd->dev), dfs_dir_mtd);
->  		if (IS_ERR_OR_NULL(mtd->dbg.dfs_dir)) {
-> @@ -595,6 +643,8 @@ int add_mtd_device(struct mtd_info *mtd)
->  	__module_get(THIS_MODULE);
->  	return 0;
->  
-> +fail_nvmem_add:
-> +	device_unregister(&mtd->dev);
->  fail_added:
->  	of_node_put(mtd_get_of_node(mtd));
->  	idr_remove(&mtd_idr, i);
-> diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
-> index a86c4fa93115..8121c6582285 100644
-> --- a/include/linux/mtd/mtd.h
-> +++ b/include/linux/mtd/mtd.h
-> @@ -25,6 +25,7 @@
->  #include <linux/notifier.h>
->  #include <linux/device.h>
->  #include <linux/of.h>
-> +#include <linux/nvmem-provider.h>
->  
->  #include <mtd/mtd-abi.h>
->  
-> @@ -339,6 +340,7 @@ struct mtd_info {
->  	struct device dev;
->  	int usecount;
->  	struct mtd_debug_info dbg;
-> +	struct nvmem_device *nvmem;
->  };
->  
->  int mtd_ooblayout_ecc(struct mtd_info *mtd, int section,
+							Thanx, Paul
 
