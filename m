@@ -3,125 +3,147 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 532DEC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 12:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B88BC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 12:21:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19B9E20C0C
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 12:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19B9E20C0C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=softrans.com.au
+	by mail.kernel.org (Postfix) with ESMTP id A2A372146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 12:21:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2A372146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbeHQPM6 (ORCPT
+        id S1726922AbeHQPYu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 11:12:58 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:43451 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726280AbeHQPM6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 11:12:58 -0400
-Received: from smtp.starsoftware.com.au (n175-33-133-183.meb2.vic.optusnet.com.au [175.33.133.183])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTP id 72FFA104D72D
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 22:09:44 +1000 (AEST)
-Received: from virtux64.softrans.com.au (unknown [192.168.0.6])
-        by smtp.starsoftware.com.au (Postfix) with ESMTP id 3600F677E164;
-        Fri, 17 Aug 2018 22:09:44 +1000 (AEST)
-Received: by virtux64.softrans.com.au (Postfix, from userid 1000)
-        id 2A36A18E01A1; Fri, 17 Aug 2018 22:09:44 +1000 (AEST)
-From:   Matt Rickard <matt@softrans.com.au>
-Subject: [RESEND PATCH] x86/vdso: Handle clock_gettime(CLOCK_TAI) in vDSO
-To:     Matt Rickard <matt@softrans.com.au>
-CC:     LKML <linux-kernel@vger.kernel.org>
-Message-Id: <20180817120944.2A36A18E01A1@virtux64.softrans.com.au>
-Date:   Fri, 17 Aug 2018 22:09:44 +1000 (AEST)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
-        a=0SUgGFgJIhXJJGNlngNSLg==:117 a=0SUgGFgJIhXJJGNlngNSLg==:17
-        a=dapMudl6Dx4A:10 a=PIVNZ80yAAAA:8 a=qvPKsAL-236YqDqrpyAA:9
-        a=3YJQTRF3V1zcZZCg0gjL:22
+        Fri, 17 Aug 2018 11:24:50 -0400
+Received: from foss.arm.com ([217.140.101.70]:46724 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726520AbeHQPYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 11:24:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 437427A9;
+        Fri, 17 Aug 2018 05:21:35 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.emea.arm.com [10.4.12.239])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F30083F5BD;
+        Fri, 17 Aug 2018 05:21:26 -0700 (PDT)
+Subject: Re: [PATCH v3 08/14] sched/core: uclamp: extend cpu's cgroup
+ controller
+To:     Patrick Bellasi <patrick.bellasi@arm.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+References: <20180806163946.28380-1-patrick.bellasi@arm.com>
+ <20180806163946.28380-9-patrick.bellasi@arm.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <82db1123-339f-0dbf-9332-7e37ee9e4f20@arm.com>
+Date:   Fri, 17 Aug 2018 14:21:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180806163946.28380-9-patrick.bellasi@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Process clock_gettime(CLOCK_TAI) in vDSO. This makes the call about as fast as
-CLOCK_REALTIME instead of taking about four times as long.
+On 08/06/2018 06:39 PM, Patrick Bellasi wrote:
 
-Signed-off-by: Matt Rickard <matt@softrans.com.au>
----
- arch/x86/entry/vdso/vclock_gettime.c    | 25 +++++++++++++++++++++++++
- arch/x86/entry/vsyscall/vsyscall_gtod.c |  2 ++
- arch/x86/include/asm/vgtod.h            |  1 +
- 3 files changed, 28 insertions(+)
+[...]
 
-diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
-index f19856d95c60..91ed1bb2a3bb 100644
---- a/arch/x86/entry/vdso/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vclock_gettime.c
-@@ -246,6 +246,27 @@ notrace static int __always_inline do_monotonic(struct timespec *ts)
- 	return mode;
- }
- 
-+notrace static int __always_inline do_tai(struct timespec *ts)
-+{
-+	unsigned long seq;
-+	u64 ns;
-+	int mode;
-+
-+	do {
-+		seq = gtod_read_begin(gtod);
-+		mode = gtod->vclock_mode;
-+		ts->tv_sec = gtod->tai_time_sec;
-+		ns = gtod->wall_time_snsec;
-+		ns += vgetsns(&mode);
-+		ns >>= gtod->shift;
-+	} while (unlikely(gtod_read_retry(gtod, seq)));
-+
-+	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
-+	ts->tv_nsec = ns;
-+
-+	return mode;
-+}
-+
- notrace static void do_realtime_coarse(struct timespec *ts)
- {
- 	unsigned long seq;
-@@ -277,6 +298,10 @@ notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
- 		if (do_monotonic(ts) == VCLOCK_NONE)
- 			goto fallback;
- 		break;
-+	case CLOCK_TAI:
-+		if (do_tai(ts) == VCLOCK_NONE)
-+			goto fallback;
-+		break;
- 	case CLOCK_REALTIME_COARSE:
- 		do_realtime_coarse(ts);
- 		break;
-diff --git a/arch/x86/entry/vsyscall/vsyscall_gtod.c b/arch/x86/entry/vsyscall/vsyscall_gtod.c
-index e1216dd95c04..d61392fe17f6 100644
---- a/arch/x86/entry/vsyscall/vsyscall_gtod.c
-+++ b/arch/x86/entry/vsyscall/vsyscall_gtod.c
-@@ -53,6 +53,8 @@ void update_vsyscall(struct timekeeper *tk)
- 	vdata->monotonic_time_snsec	= tk->tkr_mono.xtime_nsec
- 					+ ((u64)tk->wall_to_monotonic.tv_nsec
- 						<< tk->tkr_mono.shift);
-+	vdata->tai_time_sec	        = tk->xtime_sec
-+					+ tk->tai_offset;
- 	while (vdata->monotonic_time_snsec >=
- 					(((u64)NSEC_PER_SEC) << tk->tkr_mono.shift)) {
- 		vdata->monotonic_time_snsec -=
-diff --git a/arch/x86/include/asm/vgtod.h b/arch/x86/include/asm/vgtod.h
-index fb856c9f0449..adc9f7b20b9c 100644
---- a/arch/x86/include/asm/vgtod.h
-+++ b/arch/x86/include/asm/vgtod.h
-@@ -32,6 +32,7 @@ struct vsyscall_gtod_data {
- 	gtod_long_t	wall_time_coarse_nsec;
- 	gtod_long_t	monotonic_time_coarse_sec;
- 	gtod_long_t	monotonic_time_coarse_nsec;
-+	gtod_long_t	tai_time_sec;
- 
- 	int		tz_minuteswest;
- 	int		tz_dsttime;
+> Give the above mechanisms, it is now possible to extend the cpu
+> controller to specify what is the minimum (or maximum) utilization which
+> a task is expected (or allowed) to generate.
+> Constraints on minimum and maximum utilization allowed for tasks in a
+> CPU cgroup can improve the control on the actual amount of CPU bandwidth
+> consumed by tasks.
+
+I assume this is covered by the s/bandwidth/capacity/ you had w/ Juri on 
+01/14.
+
+[...]
+
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index ff76b000bbe8..2ba55a4afffb 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1211,6 +1211,74 @@ static inline void uclamp_group_get(struct task_struct *p,
+>   	uclamp_group_put(clamp_id, prev_group_id);
+>   }
+>   
+> +#ifdef CONFIG_UCLAMP_TASK_GROUP
+> +/**
+> + * init_uclamp_sched_group: initialize data structures required for TG's
+> + *                          utilization clamping
+> + */
+> +static inline void init_uclamp_sched_group(void)
+> +{
+> +	struct uclamp_map *uc_map;
+> +	struct uclamp_se *uc_se;
+> +	int group_id;
+> +	int clamp_id;
+> +
+> +	/* Root TG's is statically assigned to the first clamp group */
+> +	group_id = 0;
+> +
+> +	/* Initialize root TG's to default (none) clamp values */
+> +	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
+> +		uc_map = &uclamp_maps[clamp_id][0];
+> +
+> +		/* Map root TG's clamp value */
+> +		uclamp_group_init(clamp_id, group_id, uclamp_none(clamp_id));
+> +
+> +		/* Init root TG's clamp group */
+> +		uc_se = &root_task_group.uclamp[clamp_id];
+> +		uc_se->value = uclamp_none(clamp_id);
+> +		uc_se->group_id = group_id;
+> +
+> +		/* Attach root TG's clamp group */
+> +		uc_map[group_id].se_count = 1;
+> +	}
+> +}
+
+Can you not save some lines here:
+
+  static inline void init_uclamp_sched_group(void)
+  {
+-       struct uclamp_map *uc_map;
+         struct uclamp_se *uc_se;
+         int group_id;
+         int clamp_id;
+@@ -1228,8 +1227,6 @@ static inline void init_uclamp_sched_group(void)
+
+         /* Initialize root TG's to default (none) clamp values */
+         for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
+-               uc_map = &uclamp_maps[clamp_id][0];
+-
+                 /* Map root TG's clamp value */
+                 uclamp_group_init(clamp_id, group_id, 
+uclamp_none(clamp_id));
+
+@@ -1239,7 +1236,7 @@ static inline void init_uclamp_sched_group(void)
+                 uc_se->group_id = group_id;
+
+                 /* Attach root TG's clamp group */
+-               uc_map[group_id].se_count = 1;
++               uclamp_maps[clamp_id][group_id].se_count = 1;
+         }
+
+This would also make uclamp_group_available() smaller.
+
+[...]
+
