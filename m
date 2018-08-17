@@ -2,135 +2,101 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43DC1C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 13:23:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0452C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 13:24:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0400221935
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 13:23:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0400221935
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 98E3520C10
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 13:24:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOuSBdxs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98E3520C10
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbeHQQ1P (ORCPT
+        id S1727474AbeHQQ1g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 12:27:15 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58226 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726495AbeHQQ1P (ORCPT
+        Fri, 17 Aug 2018 12:27:36 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40152 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725879AbeHQQ1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 12:27:15 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7HDNph9100318
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 09:23:52 -0400
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kwvb5xxaw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 09:23:51 -0400
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Fri, 17 Aug 2018 07:23:37 -0600
-Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 17 Aug 2018 07:23:33 -0600
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7HDNVc966846972
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 17 Aug 2018 06:23:31 -0700
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E4C3B136051;
-        Fri, 17 Aug 2018 07:23:30 -0600 (MDT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CE3DB136053;
-        Fri, 17 Aug 2018 07:23:26 -0600 (MDT)
-Received: from oc8043147753.ibm.com (unknown [9.80.206.50])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri, 17 Aug 2018 07:23:26 -0600 (MDT)
-Subject: Re: [PATCH v9 10/22] s390: vfio-ap: sysfs interfaces to configure
- adapters
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-11-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180815115242.35a2a1ce.cohuck@redhat.com>
- <4bf27c7a-34c6-9160-cdc6-19022b86202b@linux.ibm.com>
- <20180816093015.19e54936.cohuck@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Fri, 17 Aug 2018 09:23:26 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Fri, 17 Aug 2018 12:27:36 -0400
+Received: by mail-pf1-f196.google.com with SMTP id e13-v6so3521914pff.7
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 06:24:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=p+Qk4lvw9mq7dvmc8zt4QzUeXCLEf2fCnrwXKoOwotA=;
+        b=QOuSBdxsCP9P140HW4M8/7JDVxfsibPfKYd3uIkXFUfjE7/cvGWr3tvQM6q0Wg15Ua
+         NNPSWe/+pqGlLP/eJrkk5TPVKWrseIHHPh2G9jxsLUv33/ZSLVYNEQ/wANRKRrN/2x9D
+         wlbRoGfLkFShpZajjIoVDbGjDQ2O+En3MVZ0tKnw1LfLdwSvm2c6Y0VLUa+lU3GreEoc
+         GpfKNhdVWzFNvhIhB/T02gVjIPL/qNpw1IybrzmGqUCqLAJjQ7X1S1v03ruOluCK480w
+         0ekv4oBRgTx5WnMfoW2y7qcjpRXCd3fIGA3E0D3dlmdRAoWA4NTAQdV0VFDDR5l5FdoZ
+         1aKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=p+Qk4lvw9mq7dvmc8zt4QzUeXCLEf2fCnrwXKoOwotA=;
+        b=dlUb0mIIKZ56esUwchvl4osqpCUbBHuGzscO7r6joICdY9NZVN2tU/xus8/BB7hcrR
+         DO62+eexzuK5KP0t/EEq7YFoznLEXVv4ZcSHnqkFqoUwXmf3NPjyWWO264sCV3W/IbCi
+         /vY/zQc16wONvYxmMff+K3spN9Xjuyx7wgHIbISX9YkULSfkDCWwgplUgnGBZNIueTx4
+         WMJVqGudiUmZ83IjjiI51wj8sKfa9ZZS+wAq+DChD8V1dB+zzhi9BsaPqW3hs2bqGvId
+         n0rax7KYNMPEU1bYaExk4Tz4oCHSFqPzHd+sMO+XtDxaDO0UnK7aBGb5zRGmbj7OZcNO
+         yWug==
+X-Gm-Message-State: AOUpUlErJVeQxlSqwsg1c3pm3/nlwlnUpLZ6aP9njeyTU3sTGVmsMZ0F
+        TA5zp7jCuC0KmAwGEav2fqs=
+X-Google-Smtp-Source: AA+uWPyv4b12PAkk/3fFDRt2J1isBx/WQ8cyIzr7Zy/Yh5dK8SRZgpcTPrGq/+RazO1oAnMuT1Bt7w==
+X-Received: by 2002:a63:e457:: with SMTP id i23-v6mr33146152pgk.127.1534512252671;
+        Fri, 17 Aug 2018 06:24:12 -0700 (PDT)
+Received: from Gentoo-PC ([117.204.240.63])
+        by smtp.gmail.com with ESMTPSA id s195-v6sm7789302pgs.76.2018.08.17.06.24.10
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 17 Aug 2018 06:24:11 -0700 (PDT)
+Date:   Fri, 17 Aug 2018 18:53:48 +0530
+From:   Bhaskar Singh <bhaskar.kernel@gmail.com>
+To:     mark.rutland@arm.com
+Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, bhaskar.kernel@gmail.com
+Subject: [PATCH] kernel: Add spaces around '=' operator
+Message-ID: <20180817132348.GA5326@Gentoo-PC>
 MIME-Version: 1.0
-In-Reply-To: <20180816093015.19e54936.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18081713-0016-0000-0000-0000091C3371
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009561; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01074832; UDB=6.00553932; IPR=6.00854790;
- MB=3.00022773; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-17 13:23:36
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18081713-0017-0000-0000-00004007D348
-Message-Id: <6e933696-515c-0533-796b-ef75b8627c84@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-17_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=896 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808170147
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/16/2018 03:30 AM, Cornelia Huck wrote:
-> On Wed, 15 Aug 2018 12:59:35 -0400
-> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
->
->> On 08/15/2018 05:52 AM, Cornelia Huck wrote:
->>> On Mon, 13 Aug 2018 17:48:07 -0400
->>> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
->>>> +/**
->>>> + * unassign_adapter_store
->>>> + *
->>>> + * @dev: the matrix device
->>>> + * @attr: a mediated matrix device attribute
->>>> + * @buf: a buffer containing the adapter ID (APID) to be assigned
->>>> + * @count: the number of bytes in @buf
->>>> + *
->>>> + * Parses the APID from @buf and unassigns it from the mediated matrix device.
->>>> + * The APID must be a valid value
->>> A valid value, but not necessarily assigned, right?
->> You are correct, if the APID is not assigned, then the corresponding bit
->> will be
->> cleared regardless. In a previous version, the functions failed if the
->> APID is
->> not assigned, but a colleague removed that check. I guess it makes sense
->> given
->> it really does not hurt anything to ask to unassign an APID that isn't
->> assigned
->> to begin with. Would you prefer I update the comment, or do you feel the
->> user
->> should be made aware of an attempt to unassign an APID that is not assigned?
-> I think the code is fine; updating the comment would be good.
+This patch fixes the checkpatch.pl ERROR:
 
-Will do.
+ERROR: spaces required around that '==' (ctx:VxV)
 
->
+Signed-off-by: Bhaskar Singh <bhaskar.kernel@gmail.com>
+---
+ kernel/acct.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/acct.c b/kernel/acct.c
+index addf7732fb56..6dc0a55b575c 100644
+--- a/kernel/acct.c
++++ b/kernel/acct.c
+@@ -449,7 +449,7 @@ static void fill_ac(acct_t *ac)
+ #endif
+ 	do_div(elapsed, AHZ);
+ 	ac->ac_btime = get_seconds() - elapsed;
+-#if ACCT_VERSION==2
++#if ACCT_VERSION == 2
+ 	ac->ac_ahz = AHZ;
+ #endif
+ 
+-- 
+2.16.4
 
