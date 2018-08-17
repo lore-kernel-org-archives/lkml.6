@@ -2,98 +2,414 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B450DC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4561C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B06121A62
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:18:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSwI9CZy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B06121A62
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 6871221A86
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:20:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6871221A86
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728066AbeHQUXA (ORCPT
+        id S1727865AbeHQUZJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 16:23:00 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:45555 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727445AbeHQUXA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 16:23:00 -0400
-Received: by mail-oi0-f65.google.com with SMTP id q11-v6so15185769oic.12;
-        Fri, 17 Aug 2018 10:18:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ttMv68j21L+A8QTS5+nvo1SY3KMrI9G3t2OQLxOKBHE=;
-        b=XSwI9CZy4EF9vTDnyciGjtQmCT5yg+sdgbQw25ydxEb5I426aY0P4DRr6/VHyMOlr5
-         17hD80jnnR5g+zbghNmqUswcWd/xgq/Tk2xg5AjyFLiZmPsBXLWHJ0OLoTddH78nUztS
-         tr6CP+WVVMxpj0+Ycn2W2fVx5CUWidTT7LJbH5y3vbce7w/T7gOvHeFDaNhgsB98ZQsg
-         oMOO2ZXWIKDv5Fpq/C/LOJSbmkDNBGwnjVejn+WaA3zh7USSx+jKXZUrlpdB89eBqarK
-         zt2B3xZc5KzW4bUF08meqrihviHzvlwmDhu5Jp3fHRP30vVURgw1TapPT/XOmgnPhh3w
-         JiSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ttMv68j21L+A8QTS5+nvo1SY3KMrI9G3t2OQLxOKBHE=;
-        b=taUl29hnvciq0FkWdjNTbp+wIGq17RChvamFFf7rvQAdP/QJ7vIpQtw9GSfj9MC8ON
-         41ORsBFE7JKMBg5ar67Pdhhpxyl9Nj1CdVLVKh/tTk5eNBHK3u/lJzT0S7TA9oL1Bf38
-         GV4/vGhVn1jBBElN/zEMo3NlWk8mpXf2ToOqYm4eAG/NipFoOzPUCzIaMezX34FTTM5i
-         rrsZC/OjfT7BPkjLVTp4JvNAMp3HRCB5+GcSNzVgNLkqOhg2X662pGbI41R2jEt9F8cT
-         tssA1Y5ekEjj2fEFhKVaPP3Rr02UT3Ucq3XsA3N2wueZ9fcG3IxYY1P2Sa+EjDBLCeUj
-         Qu9A==
-X-Gm-Message-State: AOUpUlH+rt9C/4ku6yQ5fq8Uxl6eg5F0g7znRcPUxY1ta2Dw1pmGtP8y
-        V2KPfvivulfP14qgsjhigTni3Qhq
-X-Google-Smtp-Source: AA+uWPwXx10pIwGRrYJdI0qU/6qUhF23Fo0IsgQKSq781wvHVHu5m82M80ALIVhyxbyQ1UkqaAIg2A==
-X-Received: by 2002:aca:c601:: with SMTP id w1-v6mr3586856oif.27.1534526328815;
-        Fri, 17 Aug 2018 10:18:48 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id 22-v6sm1222016oix.58.2018.08.17.10.18.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 Aug 2018 10:18:48 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 10:18:47 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.18 00/22] 4.18.2-stable review
-Message-ID: <20180817171847.GF11442@roeck-us.net>
-References: <20180816171556.502583508@linuxfoundation.org>
+        Fri, 17 Aug 2018 16:25:09 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49538 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727509AbeHQUZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 16:25:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF1697A9;
+        Fri, 17 Aug 2018 10:20:56 -0700 (PDT)
+Received: from [10.4.13.92] (e112298-lin.emea.arm.com [10.4.13.92])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B37CB3F5BC;
+        Fri, 17 Aug 2018 10:20:54 -0700 (PDT)
+Subject: Re: [PATCH v2 1/3] arm64: implement ftrace with regs
+To:     Torsten Duwe <duwe@lst.de>, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+References: <20180817102544.C628D68EF4@newverein.lst.de>
+ <20180817102724.022FB68EF4@newverein.lst.de>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <f6b441b4-4fa4-9a52-e4ba-04b63201278d@arm.com>
+Date:   Fri, 17 Aug 2018 18:20:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180816171556.502583508@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180817102724.022FB68EF4@newverein.lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 08:45:16PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.18.2 release.
-> There are 22 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi Torsten,
+
+On 17/08/18 11:27, Torsten Duwe wrote:
+> Check for compiler support of -fpatchable-function-entry and use it
+> to intercept functions immediately on entry, saving the LR in x9.
+> Disable ftracing in efi/libstub, because this triggers cross-section
+> linker errors now (-pg is disabled already for those files).
+> Add an ftrace_caller which can handle LR in x9, as well as an
+> ftrace_regs_caller that additionally writes out a set of pt_regs
+> for inspection.
 > 
-> Responses should be made by Sat Aug 18 17:15:44 UTC 2018.
-> Anything received after that time might be too late.
+> Signed-off-by: Torsten Duwe <duwe@suse.de>
+> 
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -110,6 +110,7 @@ config ARM64
+>   	select HAVE_DEBUG_KMEMLEAK
+>   	select HAVE_DMA_CONTIGUOUS
+>   	select HAVE_DYNAMIC_FTRACE
+> +	select HAVE_DYNAMIC_FTRACE_WITH_REGS
+
+Actually there's an issue here. CONFIG_DYNAMIC_FTRACE_WITH_REGS is 
+automatically selected if the arch has HAVE_DYNAMIC_FTRACE_WITH_REGS and 
+DYNAMIC_FTRACE. Meaning we can no longer enable DYNAMIC_FTRACE without 
+CONFIG_DYNAMIC_FTRACE_WITH_REGS.
+
+So we wouldn't build an arm64 kernel with dynamic function tracing 
+anymore without a recent enough compiler :( .
+
+Is there a way to have "HAVE_DYNAMIC_FTRACE_WITH_REGS" depending on 
+whether the compiler supports the patchable function entry or not?
+
+(Not familiar enough with the build system to suggest something here).
+
+>   	select HAVE_EFFICIENT_UNALIGNED_ACCESS
+>   	select HAVE_FTRACE_MCOUNT_RECORD
+>   	select HAVE_FUNCTION_TRACER
+> --- a/arch/arm64/Makefile
+> +++ b/arch/arm64/Makefile
+> @@ -78,6 +78,15 @@ ifeq ($(CONFIG_ARM64_MODULE_PLTS),y)
+>   KBUILD_LDFLAGS_MODULE	+= -T $(srctree)/arch/arm64/kernel/module.lds
+>   endif
+>   
+> +ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
+
+use "ifeq($(CONFIG_DYNAMIC_FTRACE_WITH_REGS),y)", 
+CONFIG_DYNAMIC_FTRACE_WITH_REGS is defined even if it is set to 'n' and 
+will still try to use the compiler option.
+
+> +  CC_FLAGS_FTRACE := -fpatchable-function-entry=2
+> +  KBUILD_CPPFLAGS += -DCC_USING_PATCHABLE_FUNCTION_ENTRY
+> +  ifeq ($(call cc-option,-fpatchable-function-entry=2),)
+> +    $(error Cannot use CONFIG_DYNAMIC_FTRACE_WITH_REGS: \
+> +             -fpatchable-function-entry not supported by compiler)
+> +  endif
+> +endif
+> +
+>   # Default value
+>   head-y		:= arch/arm64/kernel/head.o
+>   
+> --- a/arch/arm64/include/asm/ftrace.h
+> +++ b/arch/arm64/include/asm/ftrace.h
+> @@ -16,6 +16,13 @@
+>   #define MCOUNT_ADDR		((unsigned long)_mcount)
+>   #define MCOUNT_INSN_SIZE	AARCH64_INSN_SIZE
+>   
+> +#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
+> +#define ARCH_SUPPORTS_FTRACE_OPS 1
+> +#define REC_IP_BRANCH_OFFSET 4
+> +#else
+> +#define REC_IP_BRANCH_OFFSET 0
+> +#endif
+> +
+>   #ifndef __ASSEMBLY__
+>   #include <linux/compat.h>
+>   
+> --- a/arch/arm64/kernel/Makefile
+> +++ b/arch/arm64/kernel/Makefile
+> @@ -7,9 +7,9 @@ CPPFLAGS_vmlinux.lds	:= -DTEXT_OFFSET=$(
+>   AFLAGS_head.o		:= -DTEXT_OFFSET=$(TEXT_OFFSET)
+>   CFLAGS_armv8_deprecated.o := -I$(src)
+>   
+> -CFLAGS_REMOVE_ftrace.o = -pg
+> -CFLAGS_REMOVE_insn.o = -pg
+> -CFLAGS_REMOVE_return_address.o = -pg
+> +CFLAGS_REMOVE_ftrace.o = -pg $(CC_FLAGS_FTRACE)
+> +CFLAGS_REMOVE_insn.o = -pg $(CC_FLAGS_FTRACE)
+> +CFLAGS_REMOVE_return_address.o = -pg $(CC_FLAGS_FTRACE)
+>   
+>   # Object file lists.
+>   arm64-obj-y		:= debug-monitors.o entry.o irq.o fpsimd.o		\
+> --- a/drivers/firmware/efi/libstub/Makefile
+> +++ b/drivers/firmware/efi/libstub/Makefile
+> @@ -11,7 +11,8 @@ cflags-$(CONFIG_X86)		+= -m$(BITS) -D__K
+>   				   -fPIC -fno-strict-aliasing -mno-red-zone \
+>   				   -mno-mmx -mno-sse -fshort-wchar
+>   
+> -cflags-$(CONFIG_ARM64)		:= $(subst -pg,,$(KBUILD_CFLAGS)) -fpie
+> +cflags-$(CONFIG_ARM64)		:= $(filter-out -pg $(CC_FLAGS_FTRACE)\
+> +				  ,$(KBUILD_CFLAGS)) -fpie
+>   cflags-$(CONFIG_ARM)		:= $(subst -pg,,$(KBUILD_CFLAGS)) \
+>   				   -fno-builtin -fpic -mno-single-pic-base
+>   
+> --- a/arch/arm64/kernel/entry-ftrace.S
+> +++ b/arch/arm64/kernel/entry-ftrace.S
+> @@ -13,6 +13,8 @@
+>   #include <asm/assembler.h>
+>   #include <asm/ftrace.h>
+>   #include <asm/insn.h>
+> +#include <asm/asm-offsets.h>
+> +#include <asm/assembler.h>
+>   
+>   /*
+>    * Gcc with -pg will put the following code in the beginning of each function:
+> @@ -123,6 +125,7 @@ skip_ftrace_call:			// }
+>   ENDPROC(_mcount)
+>   
+>   #else /* CONFIG_DYNAMIC_FTRACE */
+> +#ifndef CC_USING_PATCHABLE_FUNCTION_ENTRY
+>   /*
+>    * _mcount() is used to build the kernel with -pg option, but all the branch
+>    * instructions to _mcount() are replaced to NOP initially at kernel start up,
+> @@ -162,6 +165,88 @@ ftrace_graph_call:			// ftrace_graph_cal
+>   
+>   	mcount_exit
+>   ENDPROC(ftrace_caller)
+> +#else /* CC_USING_PATCHABLE_FUNCTION_ENTRY */
+> +ENTRY(_mcount)
+> +	mov     x10, lr
+> +	mov     lr, x9
+> +	ret     x10
+> +ENDPROC(_mcount)
+> +
+> +ENTRY(ftrace_regs_caller)
+> +	stp	x29, x9, [sp, #-16]!
+> +	sub	sp, sp, #S_FRAME_SIZE
+> +
+> +	stp	x10, x11, [sp, #80]
+> +	stp	x12, x13, [sp, #96]
+> +	stp	x14, x15, [sp, #112]
+> +	stp	x16, x17, [sp, #128]
+> +	stp	x18, x19, [sp, #144]
+> +	stp	x20, x21, [sp, #160]
+> +	stp	x22, x23, [sp, #176]
+> +	stp	x24, x25, [sp, #192]
+> +	stp	x26, x27, [sp, #208]
+> +
+> +	b	ftrace_common
+> +ENDPROC(ftrace_regs_caller)
+> +
+> +ENTRY(ftrace_caller)
+> +	stp	x29, x9, [sp, #-16]!
+> +	sub	sp, sp, #S_FRAME_SIZE
+> +
+> +ftrace_common:
+> +	stp	x28, x29, [sp, #224]
+> +
+> +	/* save function arguments */
+> +	stp	x0, x1, [sp]
+> +	stp	x2, x3, [sp, #16]
+> +	stp	x4, x5, [sp, #32]
+> +	stp	x6, x7, [sp, #48]
+> +	stp	x8, x9, [sp, #64]
+> +
+> +	/* The link Register at callee entry */
+> +	str	x9, [sp, #S_LR]
+> +	/* The program counter just after the ftrace call site */
+> +	str	lr, [sp, #S_PC]
+> +	/* The stack pointer as it was on ftrace_caller entry... */
+> +	add	x29, sp, #S_FRAME_SIZE+16	/* ...is also our new FP */
+> +	str	x29, [sp, #S_SP]
+> +
+> +	adrp    x0, function_trace_op
+> +	ldr     x2, [x0, #:lo12:function_trace_op]
+> +	mov	x1, x9		/* saved LR == parent IP */
+> +	sub	x0, lr, #8	/* function entry == IP */
+> +	mov	x3, sp		/* pt_regs are @sp */
+> +
+> +	.global ftrace_call
+> +ftrace_call:
+> +
+> +	bl	ftrace_stub
+
+I should've asked this in my initial review. But why are we always 
+calling ftrace_stub rather than have a patchable "nop" like in the 
+!CC_USING_PATCHABLE_FUNCTION_ENTRY version?
+
+> +
+> +#ifdef CONFIG_FUNCTION_GRAPH_TRACER
+> +	.global ftrace_graph_call
+> +ftrace_graph_call:			// ftrace_graph_caller();
+> +	nop				// If enabled, this will be replaced
+> +					// "b ftrace_graph_caller"
+> +#endif
+> +
+> +ftrace_common_return:
+> +	ldp	x0, x1, [sp]
+> +	ldp	x2, x3, [sp, #16]
+> +	ldp	x4, x5, [sp, #32]
+> +	ldp	x6, x7, [sp, #48]
+> +	ldp	x8, x9, [sp, #64]
+> +
+> +	ldp	x28, x29, [sp, #224]
+> +
+> +	ldr	x9, [sp, #S_PC]
+> +	ldr	lr, [sp, #S_LR]
+> +	add	sp, sp, #S_FRAME_SIZE+16
+> +
+> +	ret	x9
+> +
+> +ENDPROC(ftrace_caller)
+> +
+> +#endif /* CC_USING_PATCHABLE_FUNCTION_ENTRY */
+>   #endif /* CONFIG_DYNAMIC_FTRACE */
+>   
+>   ENTRY(ftrace_stub)
+> @@ -197,12 +284,20 @@ ENDPROC(ftrace_stub)
+>    * and run return_to_handler() later on its exit.
+>    */
+>   ENTRY(ftrace_graph_caller)
+> +#ifndef CC_USING_PATCHABLE_FUNCTION_ENTRY
+>   	mcount_get_lr_addr	  x0	//     pointer to function's saved lr
+>   	mcount_get_pc		  x1	//     function's pc
+>   	mcount_get_parent_fp	  x2	//     parent's fp
+>   	bl	prepare_ftrace_return	// prepare_ftrace_return(&lr, pc, fp)
+>   
+>   	mcount_exit
+> +#else
+> +	add	x0, sp, #S_LR	/* address of (LR pointing into caller) */
+> +	ldr	x1, [sp, #S_PC]
+> +	ldr	x2, [sp, #S_X28 + 8]	/* caller's frame pointer */
+> +	bl	prepare_ftrace_return
+> +	b	ftrace_common_return
+> +#endif
+>   ENDPROC(ftrace_graph_caller)
+>   
+>   /*
+> --- a/arch/arm64/kernel/ftrace.c
+> +++ b/arch/arm64/kernel/ftrace.c
+> @@ -70,7 +70,8 @@ int ftrace_update_ftrace_func(ftrace_fun
+>    */
+>   int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
+>   {
+> -	unsigned long pc = rec->ip;
+> +	unsigned long pc = rec->ip+REC_IP_BRANCH_OFFSET;
+> +	int ret;
+>   	u32 old, new;
+>   	long offset = (long)pc - (long)addr;
+>   
+> @@ -128,22 +129,54 @@ int ftrace_make_call(struct dyn_ftrace *
+>   	}
+>   
+>   	old = aarch64_insn_gen_nop();
+> +#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
+> +#define INSN_MOV_X9_X30 aarch64_insn_gen_add_sub_imm(AARCH64_INSN_REG_9, \
+> +		AARCH64_INSN_REG_30, 0, \
+> +		AARCH64_INSN_VARIANT_64BIT, AARCH64_INSN_ADSB_ADD)
+
+It might just be me, but since this macro is used in two different 
+functions I'm not overly fond of defining in the middle of the function 
+code.
+
+Thanks,
+
+> +	new = INSN_MOV_X9_X30;
+> +	ret = ftrace_modify_code(pc-REC_IP_BRANCH_OFFSET, old, new, true);
+> +	if (ret)
+> +		return ret;
+> +	smp_wmb();	/* ensure LR saver is in place before ftrace call */
+> +#endif
+>   	new = aarch64_insn_gen_branch_imm(pc, addr, AARCH64_INSN_BRANCH_LINK);
+>   
+>   	return ftrace_modify_code(pc, old, new, true);
+>   }
+>   
+> +int ftrace_modify_call(struct dyn_ftrace *rec, unsigned long old_addr,
+> +			unsigned long addr)
+> +{
+> +	unsigned long pc = rec->ip+REC_IP_BRANCH_OFFSET;
+> +	u32 old, new;
+> +
+> +	old = aarch64_insn_gen_branch_imm(pc, old_addr, true);
+> +	new = aarch64_insn_gen_branch_imm(pc, addr, true);
+> +
+> +	return ftrace_modify_code(pc, old, new, true);
+> +}
+> +
+> +
+>   /*
+>    * Turn off the call to ftrace_caller() in instrumented function
+>    */
+>   int ftrace_make_nop(struct module *mod, struct dyn_ftrace *rec,
+>   		    unsigned long addr)
+>   {
+> -	unsigned long pc = rec->ip;
+> +	unsigned long pc = rec->ip+REC_IP_BRANCH_OFFSET;
+>   	bool validate = true;
+> +	int ret;
+>   	u32 old = 0, new;
+>   	long offset = (long)pc - (long)addr;
+>   
+> +#ifdef CC_USING_PATCHABLE_FUNCTION_ENTRY
+> +	/* -fpatchable-function-entry= does not generate a profiling call
+> +	 *  initially; the NOPs are already there.
+> +	 */
+> +	if (addr == MCOUNT_ADDR)
+> +		return 0;
+> +#endif
+> +
+>   	if (offset < -SZ_128M || offset >= SZ_128M) {
+>   #ifdef CONFIG_ARM64_MODULE_PLTS
+>   		u32 replaced;
+> @@ -188,7 +221,15 @@ int ftrace_make_nop(struct module *mod,
+>   
+>   	new = aarch64_insn_gen_nop();
+>   
+> -	return ftrace_modify_code(pc, old, new, validate);
+> +	ret = ftrace_modify_code(pc, old, new, validate);
+> +	if (ret)
+> +		return ret;
+> +#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
+> +	smp_wmb();	/* ftrace call must not remain without LR saver. */
+> +	old = INSN_MOV_X9_X30;
+> +	ret = ftrace_modify_code(pc-REC_IP_BRANCH_OFFSET, old, new, true);
+> +#endif
+> +	return ret;
+>   }
+>   
+>   void arch_ftrace_update_code(int command)
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@ -115,6 +115,7 @@
+>   #define MCOUNT_REC()	. = ALIGN(8);				\
+>   			__start_mcount_loc = .;			\
+>   			KEEP(*(__mcount_loc))			\
+> +			KEEP(*(__patchable_function_entries))	\
+>   			__stop_mcount_loc = .;
+>   #else
+>   #define MCOUNT_REC()
+> --- a/include/linux/compiler_types.h
+> +++ b/include/linux/compiler_types.h
+> @@ -61,8 +61,12 @@ extern void __chk_io_ptr(const volatile
+>   #if defined(CC_USING_HOTPATCH) && !defined(__CHECKER__)
+>   #define notrace __attribute__((hotpatch(0,0)))
+>   #else
+> +#ifdef CC_USING_PATCHABLE_FUNCTION_ENTRY
+> +#define notrace __attribute__((patchable_function_entry(0)))
+> +#else
+>   #define notrace __attribute__((no_instrument_function))
+>   #endif
+> +#endif
+>   
+>   /* Intel compiler defines __GNUC__. So we will overwrite implementations
+>    * coming from above header files here
 > 
 
-Build results:
-	total: 134 pass: 134 fail: 0
-Qemu test results:
-	total: 302 pass: 302 fail: 0
-
-Details are available at http://kerneltests.org/builders/.
-
-Guenter
+-- 
+Julien Thierry
