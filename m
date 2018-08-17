@@ -2,92 +2,145 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F944C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96429C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:17:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B50121567
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:11:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B50121567
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 2A01821867
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:17:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A01821867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=softrans.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726374AbeHQGNC convert rfc822-to-8bit (ORCPT
+        id S1726340AbeHQGSr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 02:13:02 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:56586 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726094AbeHQGNC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 02:13:02 -0400
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id A8C8CB51FB84DF267005;
-        Fri, 17 Aug 2018 11:11:22 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w7H3BDmC066519;
-        Fri, 17 Aug 2018 11:11:13 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from localhost.localdomain ([10.75.10.200])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018081711112178-4868553 ;
-          Fri, 17 Aug 2018 11:11:21 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     airlied@linux.ie
-Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        David1.Zhou@amd.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        wen.yang99@zte.com.cn, jiang.biao2@zte.com.cn,
-        zhong.weidong@zte.com.cn
-Subject: [PATCH] drm/amd/display: fix a compile warning
-Date:   Fri, 17 Aug 2018 11:09:48 +0800
-Message-Id: <1534475388-40036-1-git-send-email-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
+        Fri, 17 Aug 2018 02:18:47 -0400
+Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:50343 "EHLO
+        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726094AbeHQGSr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 02:18:47 -0400
+X-Greylist: delayed 1870 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 Aug 2018 02:18:45 EDT
+Received: from smtp.starsoftware.com.au (n175-33-133-183.meb2.vic.optusnet.com.au [175.33.133.183])
+        by mail110.syd.optusnet.com.au (Postfix) with ESMTP id 04B34106617;
+        Fri, 17 Aug 2018 12:45:58 +1000 (AEST)
+Received: from [192.168.0.7] (unknown [192.168.0.1])
+        by smtp.starsoftware.com.au (Postfix) with ESMTP id 49D3D677E164;
+        Fri, 17 Aug 2018 12:45:58 +1000 (AEST)
+Subject: Re: [PATCH] x86/vdso: Fix vDSO build if a retpoline is emitted
+To:     Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Jason Vas Dias <jason.vas.dias@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>
+References: <c76538cd3afbe19c6246c2d1715bc6a60bd63985.1534448381.git.luto@kernel.org>
+From:   Matthew Rickard <matt@softrans.com.au>
+Message-ID: <8ab1691e-64a1-66a4-f7e8-877affa68751@softrans.com.au>
+Date:   Fri, 17 Aug 2018 12:45:51 +1000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-08-17 11:11:21,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-08-17 11:10:58
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-MAIL: mse01.zte.com.cn w7H3BDmC066519
+In-Reply-To: <c76538cd3afbe19c6246c2d1715bc6a60bd63985.1534448381.git.luto@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=DZtnkrlW c=1 sm=1 tr=0
+        a=0SUgGFgJIhXJJGNlngNSLg==:117 a=0SUgGFgJIhXJJGNlngNSLg==:17
+        a=IkcTkHD0fZMA:10 a=dapMudl6Dx4A:10 a=PIVNZ80yAAAA:8 a=pGLkceISAAAA:8
+        a=JfrnYn6hAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=FGZurq2FBI-lWE-zRfwA:9
+        a=QEXdDO2ut3YA:10 a=3YJQTRF3V1zcZZCg0gjL:22 a=1CNFftbPRP8L7MoqJWF3:22
+        a=AjGcO6oz07-iQ99wixmX:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix comile warning like,
-  CC [M]  drivers/gpu/drm/i915/gvt/execlist.o
-  CC [M]  drivers/gpu/drm/nouveau/nvkm/subdev/instmem/nv50.o
-  CC [M]  drivers/gpu/drm/radeon/btc_dpm.o
-  CC [M]  drivers/isdn/hisax/avm_a1p.o
-  CC [M]  drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_dpp.o
-drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c: In function ‘dcn10_update_mpcc’:
-drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:1903:9: warning: missing braces around initializer [-Wmissing-braces]
-  struct mpcc_blnd_cfg blnd_cfg = {0};
-         ^
-drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:1903:9: warning: (near initialization for ‘blnd_cfg.black_color’) [-Wmissing-braces]
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
----
- drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-index cfcc54f..a06a035 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-@@ -1900,7 +1900,7 @@ static void update_dpp(struct dpp *dpp, struct dc_plane_state *plane_state)
- static void dcn10_update_mpcc(struct dc *dc, struct pipe_ctx *pipe_ctx)
- {
- 	struct hubp *hubp = pipe_ctx->plane_res.hubp;
--	struct mpcc_blnd_cfg blnd_cfg = {0};
-+	struct mpcc_blnd_cfg blnd_cfg = {{0}};
- 	bool per_pixel_alpha = pipe_ctx->plane_state->per_pixel_alpha && pipe_ctx->bottom_pipe;
- 	int mpcc_id;
- 	struct mpcc *new_mpcc;
--- 
-1.8.3.1
+On 17/08/2018 5:41 AM, Andy Lutomirski wrote:
+> Currently, if the vDSO ends up containing an indirect branch or
+> call, GCC will emit the "external thunk" style of retpoline, and it
+> will fail to link.
+> 
+> Fix it by building the vDSO with inline retpoline thunks.
+> 
+> I haven't seen any reports of this triggering on an unpatched
+> kernel.
+> 
+> Cc: Matt Rickard <matt@softrans.com.au>
+> Cc: Jason Vas Dias <jason.vas.dias@gmail.com>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Fixes: commit 76b043848fd2 ("x86/retpoline: Add initial retpoline support")
+> Signed-off-by: Andy Lutomirski <luto@kernel.org>
+> ---
+> 
+> This is a bit of a marginal candidate for the merge window.  There are
+> a couple of reports of people hitting this while hacking on the vDSO,
+> but I haven't seen any report of anyone hitting this on a stock kernel.
+> 
+> Feel free to tell me to buzz of and send it later :)
+> 
+>   Makefile                     | 4 ++++
+>   arch/x86/entry/vdso/Makefile | 6 ++++--
+>   2 files changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Makefile b/Makefile
+> index a0650bf79606..7bab2e90e4e1 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -507,9 +507,13 @@ KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+>   endif
+>   
+>   RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
+> +RETPOLINE_VDSO_CFLAGS_GCC := -mindirect-branch=thunk-inline -mindirect-branch-register
+>   RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
+> +RETPOLINE_VDSO_CFLAGS_CLANG := -mretpoline
+>   RETPOLINE_CFLAGS := $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
+> +RETPOLINE_VDSO_CFLAGS := $(call cc-option,$(RETPOLINE_VDSO_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_VDSO_CFLAGS_CLANG)))
+>   export RETPOLINE_CFLAGS
+> +export RETPOLINE_VDSO_CFLAGS
+>   
+>   KBUILD_CFLAGS	+= $(call cc-option,-fno-PIE)
+>   KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
+> diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+> index 9f695f517747..fa3f439f0a92 100644
+> --- a/arch/x86/entry/vdso/Makefile
+> +++ b/arch/x86/entry/vdso/Makefile
+> @@ -68,9 +68,9 @@ $(obj)/vdso-image-%.c: $(obj)/vdso%.so.dbg $(obj)/vdso%.so $(obj)/vdso2c FORCE
+>   CFL := $(PROFILING) -mcmodel=small -fPIC -O2 -fasynchronous-unwind-tables -m64 \
+>          $(filter -g%,$(KBUILD_CFLAGS)) $(call cc-option, -fno-stack-protector) \
+>          -fno-omit-frame-pointer -foptimize-sibling-calls \
+> -       -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO
+> +       -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO $(RETPOLINE_VDSO_CFLAGS)
+>   
+> -$(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
+> +$(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
+>   
+>   #
+>   # vDSO code runs in userspace and -pg doesn't help with profiling anyway.
+> @@ -132,11 +132,13 @@ KBUILD_CFLAGS_32 := $(filter-out -mcmodel=kernel,$(KBUILD_CFLAGS_32))
+>   KBUILD_CFLAGS_32 := $(filter-out -fno-pic,$(KBUILD_CFLAGS_32))
+>   KBUILD_CFLAGS_32 := $(filter-out -mfentry,$(KBUILD_CFLAGS_32))
+>   KBUILD_CFLAGS_32 := $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS_32))
+> +KBUILD_CFLAGS_32 := $(filter-out $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS_32))
+>   KBUILD_CFLAGS_32 += -m32 -msoft-float -mregparm=0 -fpic
+>   KBUILD_CFLAGS_32 += $(call cc-option, -fno-stack-protector)
+>   KBUILD_CFLAGS_32 += $(call cc-option, -foptimize-sibling-calls)
+>   KBUILD_CFLAGS_32 += -fno-omit-frame-pointer
+>   KBUILD_CFLAGS_32 += -DDISABLE_BRANCH_PROFILING
+> +KBUILD_CFLAGS_32 += $(RETPOLINE_VDSO_CFLAGS)
+>   $(obj)/vdso32.so.dbg: KBUILD_CFLAGS = $(KBUILD_CFLAGS_32)
+>   
+>   $(obj)/vdso32.so.dbg: FORCE \
+> 
 
+That solves my issue, thanks.
+Acked-by: Matt Rickard <matt@softrans.com.au>
