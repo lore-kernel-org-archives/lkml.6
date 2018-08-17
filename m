@@ -3,139 +3,185 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2337C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 07:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24063C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 07:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 912112145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 07:27:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 912112145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
+	by mail.kernel.org (Postfix) with ESMTP id C287921868
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 07:31:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C287921868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cr.yp.to
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726615AbeHQK2B (ORCPT
+        id S1726639AbeHQKdS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 06:28:01 -0400
-Received: from mail.netline.ch ([148.251.143.178]:50323 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726450AbeHQK2A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 06:28:00 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 7F9472A604B;
-        Fri, 17 Aug 2018 09:25:38 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id z_pZa2-pR9vz; Fri, 17 Aug 2018 09:25:38 +0200 (CEST)
-Received: from thor (67.124.127.176.dynamic.wline.res.cust.swisscom.ch [176.127.124.67])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id F26C92A6042;
-        Fri, 17 Aug 2018 09:25:36 +0200 (CEST)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.91)
-        (envelope-from <michel@daenzer.net>)
-        id 1fqZ8a-0002BZ-KE; Fri, 17 Aug 2018 09:25:36 +0200
-Subject: Re: [PATCH 2/2] drm/amd/display: Don't build DCN1 when kcov is
- enabled
-To:     sunpeng.li@amd.com, alexander.deucher@amd.com,
-        christian.koenig@amd.com, arnd@arndb.de
-Cc:     airlied@linux.ie, Jordan.Lazare@amd.com,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        harry.wentland@amd.com
-References: <1534448679-13823-1-git-send-email-sunpeng.li@amd.com>
- <1534448679-13823-2-git-send-email-sunpeng.li@amd.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <f94f6cc2-a743-ce30-9c5f-ac934f3fe61e@daenzer.net>
-Date:   Fri, 17 Aug 2018 09:25:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 17 Aug 2018 06:33:18 -0400
+Received: from salsa.cs.uic.edu ([131.193.32.108]:34418 "HELO salsa.cs.uic.edu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+        id S1726504AbeHQKdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 06:33:18 -0400
+Received: (qmail 4121 invoked by uid 1010); 17 Aug 2018 07:30:58 -0000
+Received: from unknown (unknown)
+  by unknown with QMTP; 17 Aug 2018 07:30:58 -0000
+Received: (qmail 12641 invoked by uid 1000); 17 Aug 2018 07:31:20 -0000
+Date:   17 Aug 2018 07:31:20 -0000
+Message-ID: <20180817073120.12640.qmail@cr.yp.to>
+Automatic-Legal-Notices: See https://cr.yp.to/mailcopyright.html.
+From:   "D. J. Bernstein" <djb@cr.yp.to>
+To:     Eric Biggers <ebiggers@kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Tanja Lange <tanja@hyperelliptic.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Karthikeyan Bhargavan <karthik.bhargavan@gmail.com>
+Subject: Re: [PATCH v1 2/3] zinc: Introduce minimal cryptography library
+References: <20180801072246.GA15677@sol.localdomain>
+ <CAHmME9pbwj0RaX4YM9epGOSgDRNUt=GA4UzO_iKcW=Md7kG6JQ@mail.gmail.com>
+ <20180814211229.GB24575@gmail.com>
+ <20180815162819.22765.qmail@cr.yp.to>
+ <20180815195732.GA79500@gmail.com>
+ <20180816042454.15529.qmail@cr.yp.to>
+ <20180816194620.GA185651@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1534448679-13823-2-git-send-email-sunpeng.li@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-16 09:44 PM, sunpeng.li@amd.com wrote:
-> From: "Leo (Sunpeng) Li" <sunpeng.li@amd.com>
-> 
-> DCN1 contains code that utilizes fp math. When
-> CONFIG_KCOV_INSTRUMENT_ALL and CONFIG_KCOV_ENABLE_COMPARISONS are
-> enabled, build errors are found. See this earlier patch for details:
-> 
-> https://lists.freedesktop.org/archives/dri-devel/2018-August/186131.html
-> 
-> As a short term solution, disable CONFIG_DRM_AMD_DC_DCN1_0 when
-> KCOV_INSTRUMENT_ALL and KCOV_ENABLE_COMPARISONS are enabled. In
-> addition, make it a fully derived config, taking into account
-> CONFIG_X86.
-> 
-> Signed-off-by: Leo (Sunpeng) Li <sunpeng.li@amd.com>
-> ---
->  drivers/gpu/drm/amd/display/Kconfig | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/Kconfig b/drivers/gpu/drm/amd/display/Kconfig
-> index 4c35625..ed654a7 100644
-> --- a/drivers/gpu/drm/amd/display/Kconfig
-> +++ b/drivers/gpu/drm/amd/display/Kconfig
-> @@ -4,18 +4,16 @@ menu "Display Engine Configuration"
->  config DRM_AMD_DC
->  	bool "AMD DC - Enable new display engine"
->  	default y
-> +	select DRM_AMD_DC_DCN1_0 if X86 && !(KCOV_INSTRUMENT_ALL && KCOV_ENABLE_COMPARISONS)
->  	help
->  	  Choose this option if you want to use the new display engine
->  	  support for AMDGPU. This adds required support for Vega and
->  	  Raven ASICs.
->  
->  config DRM_AMD_DC_DCN1_0
-> -	bool "DCN 1.0 Raven family"
-> -	depends on DRM_AMD_DC && X86
-> -	default y
-> +	def_bool n
->  	help
-> -	  Choose this option if you want to have
-> -	  RV family for display engine
-> +	  RV family support for display engine
->  
->  config DEBUG_KERNEL_DC
->  	bool "Enable kgdb break in DC"
-> 
 
-Thanks Leo, Alex, Arnd et al for taking care of this! Apologies for the
-trouble caused by my change, and for not helping much with the solution
-(I was on vacation).
+--ibTvN161/egqYuK8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This series is
+Eric Biggers writes:
+> If (more likely) you're talking about things like "use this NEON implementation
+> on Cortex-A7 but this other NEON implementation on Cortex-A53", it's up the
+> developers and community to test different CPUs and make appropriate decisions,
+> and yes it can be very useful to have external benchmarks like SUPERCOP to refer
+> to, and I appreciate your work in that area.
 
-Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
+You seem to be talking about a process that selects (e.g.) ChaCha20
+implementations as follows: manually inspect benchmarks of various
+implementations on various CPUs, manually write code to map CPUs to
+implementations, manually update the code as necessary for new CPUs, and
+of course manually do the same for every other primitive that can see
+differences between microarchitectures (which isn't something weird---
+it's the normal situation after enough optimization effort).
 
+This is quite a bit of manual work, so the kernel often doesn't do it,
+so we end up with unhappy people talking about performance regressions.
 
--- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+For comparison, imagine one simple central piece of code in the kernel
+to automatically do the following:
+
+   When a CPU core is booted:
+     For each primitive:
+       Benchmark all implementations of the primitive on the core.
+       Select the fastest for subsequent use on the core.
+
+If this is a general-purpose mechanism (as in SUPERCOP, NaCl, and
+libpqcrypto) rather than something ad-hoc (as in raid6), then there's no
+manual work per primitive, and no work per implementation. Each CPU, old
+or new, automatically obtains the fastest available code for that CPU.
+
+The only cost is a moment of benchmarking at boot time. _If_ this is a
+noticeable cost then there are many ways to speed it up: for example,
+automatically copy the results across identical cores, automatically
+copy the results across boots if the cores are unchanged, automatically
+copy results from a central database indexed by CPU identifiers, etc.
+The SUPERCOP database is evolving towards enabling this type of sharing.
+
+> A lot of code can be shared, but in practice different environments have
+> different constraints, and kernel programming in particular has some distinct
+> differences from userspace programming.  For example, you cannot just use the
+> FPU (including SSE, AVX, NEON, etc.) registers whenever you want to, since on
+> most architectures they can't be used in some contexts such as hardirq context,
+> and even when they *can* be used you have to run special code before and after
+> which does things like saving all the FPU registers to the task_struct,
+> disabling preemption, and/or enabling the FPU.
+
+Is there some reason that each implementor is being pestered to handle
+all this? Detecting FPU usage is a simple static-analysis exercise, and
+the rest sounds like straightforward boilerplate that should be handled
+centrally.
+
+> But disabling preemption for
+> long periods of time hurts responsiveness, so it's also desirable to yield the
+> processor occasionally, which means that assembly implementations should be
+> incremental rather than having a single entry point that does everything.
+
+Doing this rewrite automatically is a bit more of a code-analysis
+challenge, but the alternative approach of doing it by hand is insanely
+error-prone. See, e.g., https://eprint.iacr.org/2017/891.
+
+> Many people may have contributed to SUPERCOP already, but that doesn't mean
+> there aren't things you could do to make it more appealing to contributors and
+> more of a community project,
+
+The logic in this sentence is impeccable, and is already illustrated by
+many SUPERCOP improvements through the years from an increasing number
+of contributors, as summarized in the 87 release announcements so far on
+the relevant public mailing list, which you're welcome to study in
+detail along with the 400 megabytes of current code and as many previous
+versions as you're interested in. That's also the mailing list where
+people are told to send patches, as you'll see if you RTFM.
+
+> So Linux distributions may not want to take on the legal risk of
+> distributing it
+
+This is a puzzling comment. A moment ago we were talking about the
+possibility of useful sharing of (e.g.) ChaCha20 implementations between
+SUPERCOP and the Linux kernel, avoiding pointless fracturing of the
+community's development process for these implementations. This doesn't
+mean that the kernel should be grabbing implementations willy-nilly from
+SUPERCOP---surely the kernel should be doing security audits, and the
+kernel already has various coding requirements, and the kernel requires
+GPL compatibility, while putting any of these requirements into SUPERCOP
+would be counterproductive.
+
+If you mean having the entire SUPERCOP benchmarking package distributed
+through Linux distributions, I have no idea what your motivation is or
+how this is supposed to be connected to anything else we're discussing.
+Obviously SUPERCOP's broad code-inclusion policies make this idea a
+non-starter.
+
+> nor may companies want to take on the risk of contributing.
+
+RTFM. People who submit code are authorizing public redistribution for
+benchmarking. It's up to them to decide if they want to allow more.
+
+---Dan
+
+--ibTvN161/egqYuK8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbdnnIAAoJELDADU47DlRZROAP/0SxUKbr7jw7SAswEEtNMD4V
+Oz5SCoBygaCBpG+2X1+1pJ76v7osFmQ1dU73jE87bxTVsiu+1YciG5jSKrNBLjrG
+WzBTK/NB4Owerpqq3+SRzJL6Zy+XI7ROIxDcVE/05WvpezLNK7jpTP5o9PUo5sB7
+G+O2jBY6q7/u7uXfwNQewvLTNZHq802tIl+JcaFY2DH6Yh5/RLtmdxLTGpB61KdK
+0pbFUUkNZljQhsiwlwl/Dd1U9HarYfGOZ5MWf70V30M2qu1znzGrYFLe9Kkhtbrn
+NfNkmdv6WzgUI5Ld7OyaSWuZ9pA7GjFU3qyhgg81aVEChMBPZxwAB0twYeRPIAxp
+XFyX5pLcqlVfqvbh2LWaKXvXLO1LJF8CPEV8w+t136mrprre51Yf+lK2y/ySXsVn
+JooyXIbYkOkZxTCPe+u3ChS99D8BA+SdE0AUuHwAzyQ+b7JdsQz3Uzx6hITCzkYu
+5MDLYf44/ANaiO/EWmtOIl8GgnqGEU/0cuIO8luAr3BA3prsQhOSP4ICldgP6+O8
+zSvf5QwGmFX9RsLt/0myqnKOySF/u8pCHNudIVqRCgrSh9aRM1+ngqjIgSI+lU0G
+O+DlOqJfDQIo80ya8gOr60jp6LLoQkPGEgSJuZWAhxotARVmeNDLK2PVW/RygIHX
+M30mbrOyTkTsuTq9wZjI
+=DlV9
+-----END PGP SIGNATURE-----
+
+--ibTvN161/egqYuK8--
