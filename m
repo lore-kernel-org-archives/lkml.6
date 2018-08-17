@@ -2,89 +2,124 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94995C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 19:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DAB6C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 19:24:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AACA20852
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 19:22:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AACA20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F47421473
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 19:24:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F47421473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbeHQW1Y (ORCPT
+        id S1728255AbeHQW2w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 18:27:24 -0400
-Received: from mga17.intel.com ([192.55.52.151]:15432 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727965AbeHQW1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 18:27:24 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Aug 2018 12:22:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,251,1531810800"; 
-   d="scan'208";a="73650880"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by FMSMGA003.fm.intel.com with ESMTP; 17 Aug 2018 12:22:44 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id A6706301B7C; Fri, 17 Aug 2018 12:22:44 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 12:22:44 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Adam Borowski <kilobyte@angband.pl>
-Cc:     =?iso-8859-1?Q?Ren=E9?= Rebe <rene@exactcode.com>,
-        Nick Terrell <terrelln@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Kernel Team <Kernel-team@fb.com>, Chris Mason <clm@fb.com>,
-        Julian Andres Klode <julian.klode@canonical.com>
-Subject: Re: [RESEND PATCH v2 0/2] Add support for ZSTD-compressed kernel
-Message-ID: <20180817192244.GF12066@tassilo.jf.intel.com>
-References: <20180322012943.4145794-1-terrelln@fb.com>
- <5B282FAD-EDCF-44C8-A131-A3C6FF3EA84F@fb.com>
- <3F598446-EA1D-47CE-B7A1-4D3002DA3972@exactcode.com>
- <8DE2BD14-0C9C-43AF-B9B7-F760F8434B6B@exactcode.com>
- <20180817165403.GC12066@tassilo.jf.intel.com>
- <20180817175746.d2brxipp7xa4y2uw@angband.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180817175746.d2brxipp7xa4y2uw@angband.pl>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 17 Aug 2018 18:28:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46104 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727218AbeHQW2w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 18:28:52 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9C2C0CD5;
+        Fri, 17 Aug 2018 19:24:15 +0000 (UTC)
+Date:   Fri, 17 Aug 2018 12:24:14 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     ebiederm@xmission.com (Eric W. Biederman)
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        majiang <ma.jiang@zte.com.cn>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Andrey Vagin <avagin@virtuozzo.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>
+Subject: Re: [PATCH] signal: Don't send signals to tasks that don't exist
+Message-Id: <20180817122414.df0eee974434d170b1a54c31@linux-foundation.org>
+In-Reply-To: <87pnyg7rw3.fsf@xmission.com>
+References: <87efft5ncd.fsf_-_@xmission.com>
+        <20180724032419.20231-7-ebiederm@xmission.com>
+        <87k1orgdoo.fsf_-_@xmission.com>
+        <CACT4Y+bYFatW=CMgH4M6AjtjO297gbQ8xwnEV0_f7J64FLQ4QQ@mail.gmail.com>
+        <87pnyg7rw3.fsf@xmission.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 07:57:46PM +0200, Adam Borowski wrote:
-> > The "favourite compressor" seems to roughly change every year, so if
-> > we keep adding new ones things will get more and more convoluted.
+On Fri, 17 Aug 2018 13:46:36 -0500 ebiederm@xmission.com (Eric W. Biederman) wrote:
+
+> Dmitry Vyukov <dvyukov@google.com> writes:
 > 
-> The above patchset drops just bzip2.  It is the only one that's strictly
-> beaten in every way (ratio, time, memory usage), there are also no other
-
-Does time include build time? I've been reverting back to gzip recently
-because I care very much about that.
-
-> uses of bzip2 anywhere in the kernel so we'd get to drop its code
-> completely: 900 lines of Linus' happiness.
-
-Great!
-
+> > On Wed, Aug 15, 2018 at 9:04 PM, Eric W. Biederman
+> > <ebiederm@xmission.com> wrote:
+> >>
+> >> Recently syzbot reported crashes in send_sigio_to_task and
+> >> send_sigurg_to_task in linux-next.  Despite finding a reproducer
+> >> syzbot apparently did not bisected this or otherwise track down the
+> >> offending commit in linux-next.
+> >>
+> >> I happened to see this report and examined the code because I had
+> >> recently changed these functions as part of making PIDTYPE_TGID a real
+> >> pid type so that fork would does not need to restart when receiving a
+> >> signal.  By examination I see that I spotted a bug in the code
+> >> that could explain the reported crashes.
+> >>
+> >> When I took Oleg's suggestion and optimized send_sigurg and send_sigio
+> >> to only send to a single task when type is PIDTYPE_PID or PIDTYPE_TGID
+> >> I failed to handle pids that no longer point to tasks.  The macro
+> >> do_each_pid_task simply iterates for zero iterations.  With pid_task
+> >> an explicit NULL test is needed.
+> >>
+> >> Update the code to include the missing NULL test.
+> >>
+> >> Fixes: 019191342fec ("signal: Use PIDTYPE_TGID to clearly store where file signals will be sent")
+> >> Reported-by: syzkaller-bugs@googlegroups.com
+> >
+> > Since the commit does not contain the syzbot-provided Reported-by tag,
+> > we need to tell syzbot that this is fixed explicitly:
 > 
-> Other candidates are lzo and bare lzma (you want lz4, zstd or xz instead),
-> but those are used elsewhere thus there's hardly any gain.  If you want them
-> gone, please say so -- I'll include their droppage.
+> Nor will my commits ever contain that information.  That is information
+> only of use to syzbot.  That is not information useful to anyone else.
+> 
+> Further syzbot did not track this down and report this.  Syzbot said
+> something is fishy here and happened to CC a public mailing list.  Only
+> by chance did I see the report.  There was enough information to start
+> an investigation but it certainly was not any kind of useful bug report.
+> 
+> It is very annoying that despite syzbot claming to have a reproducer
+> syzbot completely failed to locate the problem commit or the proper
+> people to repor the issue to.  I looked at the syzbot website link and
+> there was no evidence that syzbot even tried to track down which branch
+> in linux-next the commit came from.  Much less to identify the commit on
+> that branch.
 
-Yes would be good to remove the kernel image support for those too
-just to simplify the config process, even if it doesn't save much code.
+Dude, lighten up.
 
--Andi
+These reports are useful.  Even if they don't have a reproducer, we
+have a backtrace and we can go look and we have a good chance of fixing
+the bug.  And as adding a single-line tag to the commit message helps
+the syzbot people keep track of things, why not do it?  It's hardly a big
+effort.
+
+They're doing useful things - please don't get all bent out of shape
+because things aren't 100% perfect.
+
+> Very annoyingly syzbot sent out emails and report this before it found a
+> reproducer.  This is despite several people explicitly asking syzbot
+> to not report issuing on linux-next where syzbot does not have a
+> reproducer and it can not track down the offending commit.
+
+Dear syzbot, please report linux-next issues when you do not have a
+reproducer and/or cannot track down the offending commit.
+
+
