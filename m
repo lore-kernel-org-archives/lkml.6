@@ -2,106 +2,421 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1AB7C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72528C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:17:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 918CD21A2E
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:15:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 918CD21A2E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id 068BF21A2E
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 18:17:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DSgE+4WH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 068BF21A2E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727853AbeHQVT0 (ORCPT
+        id S1727980AbeHQVWQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 17:19:26 -0400
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:46673 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726888AbeHQVTZ (ORCPT
+        Fri, 17 Aug 2018 17:22:16 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:33818 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727445AbeHQVWP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 17:19:25 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 051F730000F3C;
-        Fri, 17 Aug 2018 20:15:01 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id AB65D15647C; Fri, 17 Aug 2018 20:15:01 +0200 (CEST)
-Date:   Fri, 17 Aug 2018 20:15:01 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-pci@vger.kernel.org, Hari Vyas <hari.vyas@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>,
-        Srinath Mannam <srinath.mannam@broadcom.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jens Axboe <axboe@kernel.dk>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Marta Rybczynska <mrybczyn@kalray.eu>,
-        Pierre-Yves Kerbrat <pkerbrat@kalray.eu>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/6] pci: Set pci_dev->is_added before calling
- device_add
-Message-ID: <20180817181501.m4j7jibzsrgljmlj@wunner.de>
-References: <20180817044902.31420-1-benh@kernel.crashing.org>
- <20180817044902.31420-3-benh@kernel.crashing.org>
- <20180817162534.GD128050@bhelgaas-glaptop.roam.corp.google.com>
+        Fri, 17 Aug 2018 17:22:15 -0400
+Received: by mail-lf1-f66.google.com with SMTP id g9-v6so1273882lfh.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 11:17:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=doYCQI9L07Pc84e71S2JLZVxYevFygaKIjlaFuqPC+A=;
+        b=DSgE+4WHLhD7YPx2ik2m3iXwodxCcaIRKtE2uUQzzsNIEaDzvTrslj22LlhhT1h9IS
+         NFxXOtV6Ryrd7lFb7QawRURLCUzzSpvJo0xa7J/IRWzNXNQtCENecxap4MIKCPKLqE76
+         ny6Z8vIcDEYRLK5uH5AJBOgGImbZKjUXho0lo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=doYCQI9L07Pc84e71S2JLZVxYevFygaKIjlaFuqPC+A=;
+        b=JBDTzd07M7iyblmMXm9031L6cFoL9VKagsfYQq+Ta0c9OT6sLPFTrNw9ar3IdUDIQB
+         qbXCR/KgN4sOx1D2HeFdTMtrjngCnRFKaM/mlUaPMDzYQijed2tvCAhcvKnPAjU721e7
+         bL+nroGrPLs8TmNUHPtop8jBeWLrbkUY+1/nKXeIEPjwQwUH/n5HtmDlv1zwsPUZ8Mz9
+         SPj3mBZUa6/u1BiQEpuMFch2tlCglYwGEH/Wwbqe6cNWBJmQ10vFy73Chvsnt0A5cg/G
+         yb5vldV9+OT2y0CZfmys4+9Dej/4Sg5hpz1+ZpQQRPBeTwXq/xMSgB979yGTu9mwumpB
+         QORg==
+X-Gm-Message-State: AOUpUlHUozXB3JaVufP2Qrpxyz8MZhJx9pbDR2DXaZT2uKgcy2xvW/KN
+        Y9tRmb6jENu/Q8LYPS7sTYWAUyopTzk=
+X-Google-Smtp-Source: AA+uWPyyIAv3SgFDvA0RDbAZAzDNVJ2QzGcmCNoAOl2YDj8PzEfM/sji4KdoWYo/yrlNcnODOh3dwA==
+X-Received: by 2002:ac2:428f:: with SMTP id m15-v6mr7392538lfh.52.1534529871237;
+        Fri, 17 Aug 2018 11:17:51 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id w14-v6sm400313ljh.71.2018.08.17.11.17.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 Aug 2018 11:17:49 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id a4-v6so6518349lff.5
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 11:17:48 -0700 (PDT)
+X-Received: by 2002:a19:a8d2:: with SMTP id r201-v6mr22850351lfe.147.1534529868470;
+ Fri, 17 Aug 2018 11:17:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180817162534.GD128050@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <1533805799-5831-1-git-send-email-sayalil@codeaurora.org> <1533805799-5831-3-git-send-email-sayalil@codeaurora.org>
+In-Reply-To: <1533805799-5831-3-git-send-email-sayalil@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Fri, 17 Aug 2018 11:17:12 -0700
+X-Gmail-Original-Message-ID: <CAE=gft6RFCe5cfOZkwMpaKD71yiL1m1oActbax3Hx8+jXDPvVQ@mail.gmail.com>
+Message-ID: <CAE=gft6RFCe5cfOZkwMpaKD71yiL1m1oActbax3Hx8+jXDPvVQ@mail.gmail.com>
+Subject: Re: [PATCH V8 2/2] scsi: ufs: Add configfs support for UFS provisioning
+To:     sayalil@codeaurora.org
+Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        asutoshd@codeaurora.org, riteshh@codeaurora.org,
+        adrian.hunter@intel.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 11:25:34AM -0500, Bjorn Helgaas wrote:
-> The "bind driver, then set dev->added = 1" order seems to have been
-> there since the beginning of dev->is_added:
-> 
-> http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=8a1bc9013a03
-> 
-> This patch seems reasonable, but I'm a little dubious about the
-> existence of "is_added" in the first place.  As far as I can tell, the
-> only other buses with something similar are the MEN Chameleon bus and
-> the Intel Management Engine Interface.
-> 
-> The PCI uses of "is_added" don't seem *that* critical or unique to
-> PCI, so I'm not 100% convinced we need it at all.  But I haven't
-> looked into it enough to be able to propose an alternative.
+On Thu, Aug 9, 2018 at 2:10 AM Sayali Lokhande <sayalil@codeaurora.org> wrote:
+>
+> This patch adds configfs support to provision UFS device at
+> runtime. This feature can be primarily useful in factory or
+> assembly line as some devices may be required to be configured
+> multiple times during initial system development phase.
+> Configuration Descriptors can be written multiple times until
+> bConfigDescrLock attribute is zero.
+>
+> Configuration descriptor buffer consists of Device and Unit
+> descriptor configurable parameters which are parsed from vendor
+> specific provisioning file and then passed via configfs node at
+> runtime to provision ufs device.
+> CONFIG_CONFIGFS_FS needs to be enabled for using this feature.
+>
+> Usage:
+> 1) To read current configuration descriptor :
+>    cat /config/XXXX.ufshc/ufs_provision
+> 2) To provision ufs device:
+>    echo <config_desc_buf> > /config/XXXX.ufshc/ufs_provision
+>
+> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+> ---
+>  Documentation/ABI/testing/configfs-driver-ufs |  18 +++
+>  drivers/scsi/ufs/Kconfig                      |  10 ++
+>  drivers/scsi/ufs/Makefile                     |   1 +
+>  drivers/scsi/ufs/ufs-configfs.c               | 159 ++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.c                     |   7 +-
+>  drivers/scsi/ufs/ufshcd.h                     |  10 ++
+>  6 files changed, 204 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
+>  create mode 100644 drivers/scsi/ufs/ufs-configfs.c
+>
+> diff --git a/Documentation/ABI/testing/configfs-driver-ufs b/Documentation/ABI/testing/configfs-driver-ufs
+> new file mode 100644
+> index 0000000..eeee499c
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/configfs-driver-ufs
+> @@ -0,0 +1,18 @@
+> +What:          /config/ufshcd/ufs_provision
+> +Date:          Jun 2018
+> +KernelVersion: 4.14
+> +Description:
+> +               This file shows the current ufs configuration descriptor set in device.
+> +               This can be used to provision ufs device if bConfigDescrLock is 0.
+> +               For more details, refer 14.1.6.3 Configuration Descriptor and
+> +               Table 14-12 - Unit Descriptor configurable parameters from specs for
+> +               description of each configuration descriptor parameter.
+> +               Configuration descriptor buffer needs to be passed in space separated
+> +               format specificied as below:
+> +               echo <bLength> <bDescriptorIDN> <bConfDescContinue> <bBootEnable>
+> +               <bDescrAccessEn> <bInitPowerMode> <bHighPriorityLUN>
+> +               <bSecureRemovalType> <bInitActiveICCLevel> <wPeriodicRTCUpdate>
+> +               <0Bh:0Fh_ReservedAs_0> <bLUEnable> <bBootLunID> <bLUWriteProtect>
+> +               <bMemoryType> <dNumAllocUnits> <bDataReliability> <bLogicalBlockSize>
+> +               <bProvisioningType> <wContextCapabilities> <0Dh:0Fh_ReservedAs_0>
+> +               > /config/XXXX.ufshc/ufs_provision
+> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
+> index e27b4d4..a9a0a58 100644
+> --- a/drivers/scsi/ufs/Kconfig
+> +++ b/drivers/scsi/ufs/Kconfig
+> @@ -100,3 +100,13 @@ config SCSI_UFS_QCOM
+>
+>           Select this if you have UFS controller on QCOM chipset.
+>           If unsure, say N.
+> +
+> +config UFS_PROVISION
+> +       tristate "Runtime UFS Provisioning support"
+> +       depends on SCSI_UFSHCD && CONFIGFS_FS
+> +       help
+> +         This enables runtime UFS provisioning support. This can be used
+> +         primarily during assembly line as some devices may be required to
+> +         be configured multiple times during initial development phase.
+> +
+> +         If unsure, say N.
+> diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
+> index 918f579..00110ea 100644
+> --- a/drivers/scsi/ufs/Makefile
+> +++ b/drivers/scsi/ufs/Makefile
+> @@ -5,5 +5,6 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-d
+>  obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
+>  obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
+>  ufshcd-core-objs := ufshcd.o ufs-sysfs.o
+> +obj-$(CONFIG_UFS_PROVISION) += ufs-configfs.o
+>  obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
+>  obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
+> diff --git a/drivers/scsi/ufs/ufs-configfs.c b/drivers/scsi/ufs/ufs-configfs.c
+> new file mode 100644
+> index 0000000..cd1a227
+> --- /dev/null
+> +++ b/drivers/scsi/ufs/ufs-configfs.c
+> @@ -0,0 +1,159 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +// Copyright (c) 2018, Linux Foundation.
+> +
+> +#include <linux/configfs.h>
+> +#include <linux/err.h>
+> +#include <linux/string.h>
+> +
+> +#include "ufs.h"
+> +#include "ufshcd.h"
+> +
+> +static inline struct ufs_hba *config_item_to_hba(struct config_item *item)
+> +{
+> +       struct config_group *group = to_config_group(item);
+> +       struct configfs_subsystem *subsys = to_configfs_subsystem(group);
+> +       struct ufs_hba *hba = container_of(subsys, struct ufs_hba, subsys);
+> +
+> +       return subsys ? hba : NULL;
+> +}
+> +
+> +static ssize_t ufs_provision_show(struct config_item *item, char *buf)
+> +{
+> +       u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
+> +       int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
+> +       int i, ret, curr_len = 0;
+> +       struct ufs_hba *hba = config_item_to_hba(item);
+> +
+> +       if (!hba)
+> +               return -EINVAL;
 
-Addition of new PCI devices, e.g. on boot or on hotplug, consists of two
-stages:  First, new devices are created by pci_scan_slot(), afterwards
-they're bound to a driver by pci_bus_add_devices().  The idea is that
-the bus is scanned in full before drivers are attached to devices.
+I don't think this is actually possible. Is a configfs show function
+ever called with a null item?
 
-In the second step, i.e. in pci_bus_add_devices(), the is_added flag is
-set on devices.  The flag is significant because pci_scan_slot() returns
-the number of newly discovered PCI functions in the given slot, and it
-calculates that number based on the is_added flag.
+> +
+> +       ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_READ_DESC,
+> +               QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
+> +
+> +       if (ret)
+> +               return ret;
+> +
+> +       for (i = 0; i < buff_len; i++)
+> +               curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
+> +                               "0x%x ", desc_buf[i]);
+> +
+> +       return curr_len;
+> +}
+> +
+> +ssize_t ufshcd_desc_configfs_store(struct ufs_hba *hba,
+> +               const char *buf, size_t count)
+> +{
+> +       char *strbuf;
+> +       char *strbuf_copy;
+> +       u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
+> +       int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
+> +       char *token;
+> +       int i, ret, value;
+> +       u32 bConfigDescrLock = 0;
 
-More specifically, it invokes pci_scan_single_device() which either
-returns an existing device or a newly created device.  The is_added flag
-is basically a way for pci_scan_single_device() to communicate back to
-pci_scan_slot() which of the two code paths it took.
+I haven't seen many examples of variables named this way. I know it
+follows what the UFS spec does, but I haven't noticed examples of
+people naming their locals outside of normal Linux conventions.
 
-The two steps (enumeration and driver attachment) are protected by
-pci_lock_rescan_remove().  Initially, when a pci_dev is newly allocated
-with kzalloc(), is_added is 0.  The transition from 0 to 1 happens while
-under pci_lock_rescan_remove().  When that lock is released, is_added is
-always 1, barring a device_attach() error, in which case it will remain
-at 0.
+> +
+> +       /* reserve one byte for null termination */
+> +       strbuf = kmalloc(count + 1, GFP_KERNEL);
+> +       if (!strbuf)
+> +               return -ENOMEM;
+> +
+> +       strbuf_copy = strbuf;
+> +       strlcpy(strbuf, buf, count + 1);
+> +
+> +       if (!hba)
+> +               goto out;
 
-AFAICS, there is no second mutex needed to ensure synchronization of
-is_added, the existing mutex should be sufficient and the only problem
-are RMW races when accessing adjacent flags. Those were correctly addressed
-by Hari's patch.  Benjamin seems to be alleging that concurrency issues
-exist beyond the RMW races, I fail to see them, sorry.
+Again, is this possible?
 
-Thanks,
+> +
+> +       /* Just return if bConfigDescrLock is already set */
+> +       ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
+> +               QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &bConfigDescrLock);
+> +       if (ret)
+> +               goto out;
+> +
+> +       if (bConfigDescrLock) {
+> +               dev_err(hba->dev, "%s: bConfigDescrLock already set to %u, cannot re-provision device!\n",
+> +               __func__, bConfigDescrLock);
+> +               goto out;
 
-Lukas
+You're succeeding here, shouldn't you fail the write? In fact, you
+succeed the write in a whole bunch of failure cases. Please fail the
+write in error cases.
+
+> +       }
+> +
+> +       for (i = 0; i < QUERY_DESC_CONFIGURATION_DEF_SIZE; i++) {
+> +               token = strsep(&strbuf, " ");
+> +               if (!token && i)
+> +                       break;
+> +
+> +               ret = kstrtoint(token, 0, &value);
+> +               if (ret) {
+> +                       dev_err(hba->dev, "%s: kstrtoint failed %d %s\n",
+> +                               __func__, ret, token);
+> +                       goto out;
+> +               }
+> +               desc_buf[i] = (u8)value;
+> +       }
+> +
+> +       /* Write configuration descriptor to provision ufs */
+> +       ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
+> +               QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
+> +
+> +       if (!ret)
+> +               dev_err(hba->dev, "%s: UFS Provisioning done, reboot now!\n",
+> +               __func__);
+> +
+> +out:
+> +       kfree(strbuf_copy);
+> +       return count;
+> +}
+> +
+> +static ssize_t ufs_provision_store(struct config_item *item,
+> +               const char *buf, size_t count)
+> +{
+> +       struct ufs_hba *hba = config_item_to_hba(item);
+> +
+> +       return ufshcd_desc_configfs_store(hba, buf, count);
+> +}
+> +
+> +static struct configfs_attribute ufshcd_attr_provision = {
+> +       .ca_name        = "ufs_provision",
+> +       .ca_mode        = 0644,
+> +       .ca_owner       = THIS_MODULE,
+> +       .show           = ufs_provision_show,
+> +       .store          = ufs_provision_store,
+> +};
+> +
+> +static struct configfs_attribute *ufshcd_attrs[] = {
+> +       &ufshcd_attr_provision,
+> +       NULL,
+> +};
+> +
+> +static struct config_item_type ufscfg_type = {
+> +       .ct_attrs       = ufshcd_attrs,
+> +       .ct_owner       = THIS_MODULE,
+> +};
+> +
+> +static struct configfs_subsystem ufscfg_subsys = {
+> +       .su_group = {
+> +               .cg_item = {
+> +                       .ci_type = &ufscfg_type,
+> +               },
+> +       },
+> +};
+> +
+> +int ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
+> +{
+> +       int ret;
+> +       struct configfs_subsystem *subsys = &hba->subsys;
+> +
+> +       strncpy(ufscfg_subsys.su_group.cg_item.ci_namebuf, name, strlen(name));
+> +       subsys->su_group = ufscfg_subsys.su_group;
+> +       config_group_init(&subsys->su_group);
+> +       mutex_init(&subsys->su_mutex);
+> +       ret = configfs_register_subsystem(subsys);
+> +       if (ret)
+> +               pr_err("Error %d while registering subsystem %s\n",
+> +                      ret,
+> +                      subsys->su_group.cg_item.ci_namebuf);
+> +
+> +       return ret;
+> +}
+> +
+> +void ufshcd_configfs_exit(void)
+> +{
+> +       configfs_unregister_subsystem(&ufscfg_subsys);
+> +}
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 0cbdde7..bc7bffc 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -7711,6 +7711,9 @@ int ufshcd_shutdown(struct ufs_hba *hba)
+>  void ufshcd_remove(struct ufs_hba *hba)
+>  {
+>         ufs_sysfs_remove_nodes(hba->dev);
+> +#ifdef CONFIG_UFS_PROVISION
+> +       ufshcd_configfs_exit();
+> +#endif
+>         scsi_remove_host(hba->host);
+>         /* disable interrupts */
+>         ufshcd_disable_intr(hba, hba->intr_mask);
+> @@ -7964,7 +7967,9 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+>
+>         async_schedule(ufshcd_async_scan, hba);
+>         ufs_sysfs_add_nodes(hba->dev);
+> -
+> +#ifdef CONFIG_UFS_PROVISION
+> +       ufshcd_configfs_init(hba, dev_name(hba->dev));
+> +#endif
+
+Normally the way I see this done is to define stub functions up in the
+header when !CONFIG_UFS_PROVISION, rather than ifdefs in the code. Can
+you do it that way?
+
+>         return 0;
+>
+>  out_remove_scsi_host:
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> index 101a75c..7b6cc88 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -37,6 +37,7 @@
+>  #ifndef _UFSHCD_H
+>  #define _UFSHCD_H
+>
+> +#include <linux/configfs.h>
+>  #include <linux/module.h>
+>  #include <linux/kernel.h>
+>  #include <linux/init.h>
+> @@ -515,6 +516,9 @@ struct ufs_hba {
+>
+>         struct Scsi_Host *host;
+>         struct device *dev;
+> +#ifdef CONFIG_UFS_PROVISION
+> +       struct configfs_subsystem subsys;
+> +#endif
+>         /*
+>          * This field is to keep a reference to "scsi_device" corresponding to
+>          * "UFS device" W-LU.
+> @@ -868,6 +872,12 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
+>  int ufshcd_hold(struct ufs_hba *hba, bool async);
+>  void ufshcd_release(struct ufs_hba *hba);
+>
+> +/* Expose UFS configfs API's */
+> +#ifdef CONFIG_UFS_PROVISION
+> +extern int ufshcd_configfs_init(struct ufs_hba *hba, const char *name);
+> +extern void ufshcd_configfs_exit(void);
+> +#endif
+> +
+>  int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn desc_id,
+>         int *desc_length);
+>
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
