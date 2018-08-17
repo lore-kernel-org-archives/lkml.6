@@ -2,195 +2,107 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD92C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A322C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:32:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB8EF21A2E
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:31:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAFB221A28
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:32:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ettus-com.20150623.gappssmtp.com header.i=@ettus-com.20150623.gappssmtp.com header.b="cTV3QAfZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB8EF21A2E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ettus.com
+	dkim=pass (1024-bit key) header.d=impinj.com header.i=@impinj.com header.b="NiNr/Zvg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAFB221A28
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=impinj.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbeHQTf6 (ORCPT
+        id S1727867AbeHQTgg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 15:35:58 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:38204 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727801AbeHQTf5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 15:35:57 -0400
-Received: by mail-yb0-f194.google.com with SMTP id c1-v6so482625ybq.5
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 09:31:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ettus-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=fZw2X/38ghpsGK069mXTDTlh8k6bvpsaz6gPRmD2hm8=;
-        b=cTV3QAfZreykf6FPe9iXvfG/yGk05Q5TgLO2mPrSle/XsEjj8IRuYpt6YHc3C7kNTS
-         dr2kCcPqztl20uP2JlEblsSce/is9J8e5or0n0cASBEFa/DMK5/mASx0aS15y1UH6W4S
-         pUUdoQaIWcmTg9Mb5Fh4eXXVUoZ6l2VvTH7L87f3Q+tPJohbRUJoRhKnXahi0twY3V+t
-         XlzRD6z76FUmBgA/CXjPX3b0b6pC3LXOQDI6cS9zwasgyEk3da48PjY75CtAml8FsAvk
-         CKRiX6poqOMtW2fNroHpXgEfwdDmU08F/aTEoQYlmo0jbmcRmliheE1PbiZsZnTUHgty
-         j0mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=fZw2X/38ghpsGK069mXTDTlh8k6bvpsaz6gPRmD2hm8=;
-        b=S+TjL9ySp09aeUXLcEvHTBLSuNoHgTNtAJRjBobue9M/fzjJxtwbdDf7MINVHZxM7w
-         et+EuA2ijNTQSZ3BfNiKxCldhinhKzunhdcRyI9mys4CWtYMK0D/zpo7kjr7MHP5Ac91
-         cO3ZrZkiiiLX5NaOSqJ2e181Kiv9lda4xqymTJf9EMs/FLkwA4FJY7pLGQjotEDUUxLb
-         b0WNlMS9VD+PNirqYKnj2oDLrbveGh0jBc62/OJo8mybVmcgkZI2Rg7cDO8NOw2As5mi
-         vIUetoet9FXqBaO+qClw/rpeAwlY8OorsrVS3Q8GJhF7guu2gVXJCTbqE1mJADrE8VuR
-         /RMA==
-X-Gm-Message-State: AOUpUlFWs5zR6yFNEZYcIcoNhUXcx462fK81RdoR8H8PPgzIvzzaBTlu
-        i4zWqz3FJUMIljnlq67mXtCXGHGwh4tHMdR/pPJM9w==
-X-Google-Smtp-Source: AA+uWPwpw8UYLlDC6kLG2sgVIaaQJ8ccq6Gr1+L8a+30c7OpP2sKTeTc+4hE5eI6NajATtM2PJkyOtBhsyuLz2UNPKQ=
-X-Received: by 2002:a25:2548:: with SMTP id l69-v6mr19296572ybl.230.1534523515821;
- Fri, 17 Aug 2018 09:31:55 -0700 (PDT)
+        Fri, 17 Aug 2018 15:36:36 -0400
+Received: from mail-bn3nam01on0124.outbound.protection.outlook.com ([104.47.33.124]:37266
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727445AbeHQTgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 15:36:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DrenqZC3+P5V94P5PH9dC8JaK5BrL/S235bXU1ecWnA=;
+ b=NiNr/ZvgoiybmizTTyS/4I1FNPtKVGBocJvfm6tZclKx1htDhlfRopJGZ2So6H3mWnUqV6nZPgmJaxpAqj9v1Re4uSbCoP4EZsmHyElt2SkNGjSjcxrbKAtHBRtB/yn7ekDj1vNZK2KraRaqYfqlRYthKEEUh/cKLhZlopMwY5o=
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com (10.167.236.38) by
+ MWHPR0601MB3596.namprd06.prod.outlook.com (10.167.236.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1059.21; Fri, 17 Aug 2018 16:32:31 +0000
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::c41d:e8d9:b123:5864]) by MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::c41d:e8d9:b123:5864%2]) with mapi id 15.20.1038.026; Fri, 17 Aug 2018
+ 16:32:31 +0000
+From:   Trent Piepho <tpiepho@impinj.com>
+To:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "simon.k.r.goldschmidt@gmail.com" <simon.k.r.goldschmidt@gmail.com>,
+        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>
+Subject: Re: [PATCH v2] spi: dw: support 4-16 bits per word
+Thread-Topic: [PATCH v2] spi: dw: support 4-16 bits per word
+Thread-Index: AQHUNfg4nuLA2ae5sUaOX3MuOsQKJKTEI9cA
+Date:   Fri, 17 Aug 2018 16:32:31 +0000
+Message-ID: <1534523550.2283.397.camel@impinj.com>
+References: <20180808071421.32707-1-simon.k.r.goldschmidt@gmail.com>
+         <20180817070105.1725-1-simon.k.r.goldschmidt@gmail.com>
+In-Reply-To: <20180817070105.1725-1-simon.k.r.goldschmidt@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=tpiepho@impinj.com; 
+x-originating-ip: [216.207.205.253]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR0601MB3596;6:FgVWyrnznJuaJtjJvC5GHQ9rVHa9zfP5eYU9b48pYTA/QEdP++XVpQ9Kkk4MNztmv6dO6Ig1+tWcMdvL/Yi/wTazlwgYvWxzN2Eq27gvxHjBqUzRmBbRDpW74s5CxEmnIMqOfsQSgKwSWFDXQ51CrHG3vuZHFMfhrwhArvErMoj4prZXq5MMrOSA8Zwdep4j/TVDhfAr1r4Rw21cImUYlKwMDFE4V74typkijknLdBG9/CqfnqxAfnEp80I/ucRcrNqEAeryq5hmMDr02cdsjXs4ldmwGUlM335JrFtNxjmj9lxTRsMz8O8sWaOnLSslV4mQt2WE44DM8cWPQavwpE0LZoifOnX70QGnFtsK3+3Lavxy4RpJd8cQ1XSAuqu7pL2s8mY5bapZAwrBzfgYge/paz2/kWcwg5ixfZmoMmm/fFOKGF6iopwX0z2Ywpi/je+OWrv2KnBUfZAkihMiYQ==;5:Oc4YUL3Xy0wZEPQGgetap04DMU0Uk8e6AzzUqshUJ/YfXChRTDMhFShj0gMR9uZUntTzoEqSS9Le+Bycfrj+MHQvNbs6M1h6rmFsuDighZgk0ZeC/y4e2DklwUe2G7AgCGEglYdEWhK9SOVr/iWGfcZvai7TQHLtwqa4p2l2ees=;7:Q1Rnoxviz94l2KhjfgGtqWe/zTAA09uOwLLGULZmLUtb9e2YBzoD8Yt/mMcJCSoDnLbAN5taEN+x3Do/e0fKqtBL1QdMSoQ1uKvvjucahtXztU2Ar5u0LTiS9V8UCO7UMDB0yCcUYboEPB2XUEiX8OYg0GYykaxDhKFYW/f8AsMGIw1OrZClTjt0l1vt9n4zI8iIDxh3eieswgALECzTAOvkoM8qFoCft0gzGar/HfhvNmQ5529YqpEm9WiAoXA7
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: fcb272aa-b21e-48c5-4a76-08d6045f0776
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR0601MB3596;
+x-ms-traffictypediagnostic: MWHPR0601MB3596:
+x-microsoft-antispam-prvs: <MWHPR0601MB35969E55E349C24DFED60C03D33D0@MWHPR0601MB3596.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699016);SRVR:MWHPR0601MB3596;BCL:0;PCL:0;RULEID:;SRVR:MWHPR0601MB3596;
+x-forefront-prvs: 076777155F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(39850400004)(366004)(396003)(346002)(376002)(136003)(189003)(199004)(102836004)(106356001)(26005)(2900100001)(86362001)(105586002)(8936002)(68736007)(2501003)(5250100002)(2201001)(36756003)(2906002)(256004)(6506007)(66066001)(6246003)(186003)(39060400002)(486006)(11346002)(25786009)(446003)(476003)(2616005)(14454004)(8676002)(6512007)(6436002)(6486002)(6116002)(3846002)(478600001)(53936002)(305945005)(316002)(99286004)(97736004)(229853002)(103116003)(76176011)(5660300001)(110136005)(81166006)(81156014)(7736002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR0601MB3596;H:MWHPR0601MB3708.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: impinj.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: lCjMNoPcQXMQ8Zn9vcwyaNYv5BfByIxeQM+EWuHJRUn5wDoqkIPTwpyysp1FtIkLlw/bYpVpkyt6Sxu3ZTZl8ZHgPcAnMiwCCgCytTdUXHlfNyHyqYnDeh8kzYKsZ/G/81GwJ62QAuIONMJhjocdFxeqLTpUrBKRO8t/izlZQNDanQy8Ov6CHe46zgATh23Z3vjZEn/NGTH52sj1yRFxuY9pMisaNtobvR/SHnsyluhQR2SQlukrlDKZIaK9a+WpheozhvZS4iG0STc+ZrOBTdLEXYDSN7DvQ8EuDwzCA5yVkPwTecGFk49oBv0hKM0QGuDpB+vG47OopymdXl3Kf44oD9Dcvw3TnKFMR3LCltU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <1E96AE1C0D7E3F4F9072F9FBF5E5E939@namprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Received: by 2002:a81:3c0a:0:0:0:0:0 with HTTP; Fri, 17 Aug 2018 09:31:55
- -0700 (PDT)
-In-Reply-To: <1534403190-28523-8-git-send-email-jliang@xilinx.com>
-References: <1534403190-28523-1-git-send-email-jliang@xilinx.com> <1534403190-28523-8-git-send-email-jliang@xilinx.com>
-From:   Moritz Fischer <moritz.fischer@ettus.com>
-Date:   Fri, 17 Aug 2018 09:31:55 -0700
-Message-ID: <CAAtXAHd0jmV32bSyxCyMSh9fcP63sM+6-SkTMS=gA1fJKGKtig@mail.gmail.com>
-Subject: Re: [PATCH 7/7] Documentation: devicetree: Add Xilinx R5 rproc binding
-To:     Wendy Liang <wendy.liang@xilinx.com>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        Michal Simek <michal.simek@xilinx.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, rajan.vaja@xilinx.com,
-        jollys@xilinx.com, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Wendy Liang <jliang@xilinx.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: impinj.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fcb272aa-b21e-48c5-4a76-08d6045f0776
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Aug 2018 16:32:31.2319
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0601MB3596
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wendy,
-
-couple of minor stuff inline.
-
-On Thu, Aug 16, 2018 at 12:06 AM, Wendy Liang <wendy.liang@xilinx.com> wrote:
-> Add device tree binding for Xilinx Cortex-r5 remoteproc.
->
-> Signed-off-by: Wendy Liang <jliang@xilinx.com>
-> ---
->  .../remoteproc/xlnx,zynqmp-r5-remoteproc.txt       | 81 ++++++++++++++++++++++
->  1 file changed, 81 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt
->
-> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt
-> new file mode 100644
-> index 0000000..3940019
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt
-> @@ -0,0 +1,81 @@
-> +Xilinx ARM Cortex A53-R5 remoteproc driver
-> +==========================================
-> +
-> +ZynqMP family of devices use two Cortex R5 processors to help with various
-> +low power / real time tasks.
-
-The ZynqMP family [..] uses [..]
-> +
-> +This driver requires specific ZynqMP hardware design.
-
-*a* specific ZynqMP hardware design. What does that mean?
-> +
-> +ZynqMP R5 RemoteProc Device Node:
-> +=================================
-> +A zynqmp_r5_remoteproc device node is used to represent a R5 IP instance
-> +within ZynqMP SoC.
-> +
-> +Required properties:
-> +--------------------
-> + - compatible : Should be "xlnx,zynqmp-r5-remoteproc-1.0"
-> + - reg : Address and length of the register set for the device. It
-> +        contains in the same order as described reg-names
-
-?
-> + - reg-names: Contain the register set names.
-
-Contains
-
-> +              "tcm_a" and "tcm_b" for TCM memories.
-> +              If the user uses the remoteproc driver with the RPMsg kernel
-> +              driver,"ipi" for the IPI register used to communicate with RPU
-> +              is also required.
-> +              Otherwise, if user only uses the remoteproc driver to boot RPU
-> +              firmware, "ipi" is not required.
-> + - tcm-pnode-id: TCM resources power nodes IDs which are used to request TCM
-> +                 resources for the remoteproc driver to access.
-> + - rpu-pnode-id : RPU power node id which is used by the remoteproc driver
-> +                  to start RPU or shut it down.
-> +
-> +Optional properties:
-> +--------------------
-> + - core_conf : R5 core configuration (valid string - split0 or split1 or
-> +               lock-step), default is lock-step.
-> + - memory-region: memories regions for RPU executable and DMA memory.
-> + - interrupts : Interrupt mapping for remoteproc IPI. It is required if the
-> +                user uses the remoteproc driver with the RPMsg kernel driver.
-> + - interrupt-parent : Phandle for the interrupt controller. It is required if
-> +                      the user uses the remoteproc driver with the RPMsg kernel
-> +                      kernel driver.
-> +
-> +Example:
-> +--------
-> +       reserved-memory {
-> +               #address-cells = <2>;
-> +               #size-cells = <2>;
-> +               ranges;
-> +               rproc_0_fw_reserved: rproc@3ed000000 {
-> +                       compatible = "rproc-prog-memory";
-> +                       no-map;
-> +                       reg = <0x0 0x3ed00000 0x0 0x40000>;
-> +               };
-> +               rproc_0_dma_reserved: rproc@3ed400000 {
-> +                       compatible = "shared-dma-pool";
-> +                       no-map;
-> +                       reg = <0x0 0x3ed40000 0x0 0x80000>;
-> +               };
-> +       };
-> +
-> +       firmware {
-> +               zynqmp_firmware: zynqmp-firmware {
-> +                       compatible = "xlnx,zynqmp-firmware";
-> +                       method = "smc";
-> +               };
-> +       };
-> +
-> +       zynqmp-r5-remoteproc@0 {
-> +               compatible = "xlnx,zynqmp-r5-remoteproc-1.0";
-> +               reg = <0x0 0xFFE00000 0x0 0x10000>,
-> +                       <0x0 0xFFE20000 0x0 0x10000>,
-> +                       <0x0 0xff340000 0x0 0x100>;
-> +               reg-names = "tcm_a", "tcm_b", "ipi";
-> +               dma-ranges;
-> +               core_conf = "split0";
-> +               memory-region = <&rproc_0_fw_reserved>,
-> +                               <&rproc_0_dma_reserved>;
-> +               tcm-pnode-id = <0xf>, <0x10>;
-> +               rpu-pnode-id = <0x7>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <0 29 4>;
-> +       } ;
-> --
-> 2.7.4
->
-
-Cheers,
-Moritz
+T24gRnJpLCAyMDE4LTA4LTE3IGF0IDA5OjAxICswMjAwLCBTaW1vbiBHb2xkc2NobWlkdCB3cm90
+ZToNCj4gVGhlIHNwaS1kdyBkcml2ZXIgY3VycmVudGx5IG9ubHkgc3VwcG9ydHMgOCBvciAxNiBi
+aXRzIHBlciB3b3JkLg0KPiANCj4gU2luY2UgdGhlIGhhcmR3YXJlIHN1cHBvcnRzIDQtMTYgYml0
+cyBwZXIgd29yZCwgYWRhcHQgdGhlIGRyaXZlcg0KPiB0byBhbHNvIHN1cHBvcnQgdGhpcy4NCj4g
+DQo+IA0KDQo+IEBAIC0zMDcsMTUgKzMwNywxMyBAQCBzdGF0aWMgaW50IGR3X3NwaV90cmFuc2Zl
+cl9vbmUoc3RydWN0IHNwaV9jb250cm9sbGVyICptYXN0ZXIsDQo+ICsNCj4gKwlpZiAoKHRyYW5z
+ZmVyLT5iaXRzX3Blcl93b3JkIDwgNCkgfHwgKHRyYW5zZmVyLT5iaXRzX3Blcl93b3JkID4gMTYp
+KQ0KPiAgCQlyZXR1cm4gLUVJTlZBTDsNCj4gLQl9DQoNCllvdSBkb24ndCBuZWVkIHRoaXMgY2hl
+Y2sgYXMgdGhlIHNwaSBjb3JlIHZhbGlkYXRlcyB0aGUgdHJhbnNmZXINCmFnYWluc3QgbWFzdGVy
+LT5iaXRzX3Blcl93b3JkX21hc2suDQoNCj4gIAltYXN0ZXItPm1vZGVfYml0cyA9IFNQSV9DUE9M
+IHwgU1BJX0NQSEEgfCBTUElfTE9PUDsNCj4gLQltYXN0ZXItPmJpdHNfcGVyX3dvcmRfbWFzayA9
+IFNQSV9CUFdfTUFTSyg4KSB8IFNQSV9CUFdfTUFTSygxNik7DQo+ICsJbWFzdGVyLT5iaXRzX3Bl
+cl93b3JkX21hc2sgPSAgU1BJX0JQV19SQU5HRV9NQVNLKDQsIDE2KTsNCj4gIAltYXN0ZXItPmJ1
+c19udW0gPSBkd3MtPmJ1c19udW07DQo+IA==
