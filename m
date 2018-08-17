@@ -6,120 +6,108 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA586C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CF6C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:01:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9410C208E4
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:01:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9410C208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 84ACD208E4
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 17:01:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84ACD208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbeHQUFm (ORCPT
+        id S1728051AbeHQUF4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 16:05:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55780 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727828AbeHQUFl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 16:05:41 -0400
-Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BD17ACBF;
-        Fri, 17 Aug 2018 17:01:32 +0000 (UTC)
-Date:   Fri, 17 Aug 2018 19:01:29 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jinpu Wang <jinpu.wang@profitbricks.com>
+        Fri, 17 Aug 2018 16:05:56 -0400
+Received: from mga03.intel.com ([134.134.136.65]:26230 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728027AbeHQUF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 16:05:56 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Aug 2018 10:01:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,251,1531810800"; 
+   d="scan'208";a="73619333"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.132])
+  by FMSMGA003.fm.intel.com with ESMTP; 17 Aug 2018 10:01:48 -0700
+Date:   Fri, 17 Aug 2018 10:01:48 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        stable <stable@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, konrad.wilk@oracle.com
-Subject: Re: [BUG]smt sysfs dir missing on 4.4.148 and 4.14.63
-Message-ID: <20180817170129.GE24945@kroah.com>
-References: <CAMGffEnzVo5VVSVBjCOBMhcoV1qXf0XXqJqr3C01xQn-aUiZFQ@mail.gmail.com>
- <20180816155126.GA18296@kroah.com>
- <CAMGffEmJR310NKHO1JpwE8yTg1Oeu_oaTaJ1D2_T_UHKCnHwKA@mail.gmail.com>
- <20180816163937.GA5105@kroah.com>
- <CAMGffEk2FqRn0av7T-aF-TKvRAKeinm96NYjJju_T4CmUrYPkQ@mail.gmail.com>
- <CAMGffEnKt0xcc6LhNdZQGRmckJ3qCFxCOnQ3owZmWWiaKYdYuw@mail.gmail.com>
+        Ingo Molnar <mingo@redhat.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Peter Anvin <hpa@zytor.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] x86/speculation/l1tf: Exempt zeroed PTEs from XOR
+ conversion
+Message-ID: <20180817170148.GA29466@linux.intel.com>
+References: <20180816204638.4046-1-sean.j.christopherson@intel.com>
+ <CA+55aFweC_ja8pLOHv2dbokChaJej2bhhDyeO5ZxiQ+64C-Xog@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMGffEnKt0xcc6LhNdZQGRmckJ3qCFxCOnQ3owZmWWiaKYdYuw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CA+55aFweC_ja8pLOHv2dbokChaJej2bhhDyeO5ZxiQ+64C-Xog@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 02:39:00PM +0200, Jinpu Wang wrote:
-> On Thu, Aug 16, 2018 at 6:48 PM Jinpu Wang <jinpu.wang@profitbricks.com> wrote:
+On Fri, Aug 17, 2018 at 09:13:51AM -0700, Linus Torvalds wrote:
+> On Thu, Aug 16, 2018 at 1:47 PM Sean Christopherson
+> <sean.j.christopherson@intel.com> wrote:
 > >
-> > On Thu, Aug 16, 2018 at 6:39 PM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Thu, Aug 16, 2018 at 06:28:59PM +0200, Jinpu Wang wrote:
-> > > > On Thu, Aug 16, 2018 at 5:51 PM Greg Kroah-Hartman
-> > > > <gregkh@linuxfoundation.org> wrote:
-> > > > >
-> > > > > On Thu, Aug 16, 2018 at 05:43:23PM +0200, Jinpu Wang wrote:
-> > > > > > Hi Greg, hi Thomas,
-> > > > > >
-> > > > > > I noticed /sys/devices/system/cpu/smt dir is missing on 4.4.148 and
-> > > > > > 4.14.63, default setting.
-> > > > >
-> > > > > For 4.4, I would be amazed if anything was there, the backport was done
-> > > > > only to handle the local user issue, not the "full" protection.  So
-> > > > > please try 4.9 or 4.14.
-> > > > Thanks for quick reply. Right, just checked. the patch for create the
-> > > > sysfs entry is missing.
-> > >
-> > > What patch is that?  What is the git commit id that we missed?
-> > >
-> > > > > How about 4.17 and 4.18, do those trees work properly for you?
-> > > > I guess it's the same.
-> > > > >
-> > > > > > Tried stable/master branch 31130a16d459 ("Merge tag
-> > > > > > 'for-linus-4.19-rc1-tag' of
-> > > > > > git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip")
-> > > > > > It's the same there.
-> > > > >
-> > > > > Ah, so we are bug compatible, good :)
-> > > > I will try test stable master a bit more to gather the full log.
-> > > > >
-> > > > > > When boot with 'nosmt' kernel paramter kernel 4.14.63 panic during
-> > > > > > boot, 4.4.148 boot fine.
-> > > > > > The call trace seem irq related, is it known bug?
-> > > > >
-> > > > > You are not giving us much to go on here sorry.  We need full details,
-> > > > > and also please cc: lkml and the other developers who worked on this.
-> > > > > THomas is on vacation this week.
-> > > > Now, add more developers to cc, also lkml.
-> > > >
-> > > > I have the config and boot dmesg attached for default setting.
-> > >
-> > > I see no error in your boot log, what exactly are you worried about?
-> > 2 problems here:
-> > 1 According to https://www.kernel.org/doc/html/latest/admin-guide/l1tf.html
-> >   I expect /sys/devices/system/cpu/smt/, but it's not.
-> > 2 kernel 4.14.63 panic when I boot with 'nosmt' or 'l1tf=full', I
-> > attached the picture here again,
-> >   I will try to get the full log tomorrow, also test with linus tree.
-> > >
-> > > confused,
-> > >
-> > > greg k-h
-> >
-> > Thanks
-> I found the problem, CONFIG_HOTPLUG_SMT is enable due to CONFIG_SMP,
-> but I did explicitly enable CONFIG_HOTPLUG_CPU.
+> > Fixes: 6b28baca9b1f ("x86/speculation/l1tf: Protect PROT_NONE PTEs against speculation")
 > 
-> That's why the smt dir is missing, and kernel panic when I boot with
-> 'nosmt' or 'l1tf=full' probably also other combination.
+> This seems wrong.
 > 
-> With CONFIG_HOTPLUG_CPU=y, it works fine so far.
+> That commit doesn't invert a cleared page table entry, because that
+> commit still required _PAGE_PROTNONE being set for a pte to be
+> inverted.
+> 
+> I'm assuming the real culprit is commit f22cc87f6c1f
+> ("x86/speculation/l1tf: Invert all not present mappings") which made
+> it look at _just_ the present bit.
+> 
+> And yeah, that was wrong.
+> 
+> So I really think a much better patch would be the appended one-liner.
+> 
+> Note - it's whitespace-damaged by cut-and-paste, but it should be
+> obvious enough to apply by hand.
+> 
+> Can you test this one instead?
 
-So do we need a new configuration dependancy here to resolve this
-problem?  Why is this not an issue in Linus's tree?
+Checking for a non-zero val in __pte_needs_invert() also resolves the
+issue.  I shied away from that change because prot_none_walk() doesn't
+pass the full PTE to __pte_needs_invert(), it only passes the pgprot_t
+bits.  This works because PAGE_NONE sets the global and accessed bits,
+but it made me nervous nonetheless.
 
-confused,
-
-greg k-h
+>              Linus
+> ---
+> 
+>  arch/x86/include/asm/pgtable-invert.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/pgtable-invert.h
+> b/arch/x86/include/asm/pgtable-invert.h
+> index 44b1203ece12..821438e91b77 100644
+> --- a/arch/x86/include/asm/pgtable-invert.h
+> +++ b/arch/x86/include/asm/pgtable-invert.h
+> @@ -6,7 +6,7 @@
+> 
+>  static inline bool __pte_needs_invert(u64 val)
+>  {
+> -       return !(val & _PAGE_PRESENT);
+> +       return val && !(val & _PAGE_PRESENT);
+>  }
+> 
+>  /* Get a mask to xor with the page table entry to get the correct pfn. */
