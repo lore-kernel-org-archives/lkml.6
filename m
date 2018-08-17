@@ -2,137 +2,109 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A3FC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C7AC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:18:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99D5921473
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:18:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kalray.eu header.i=@kalray.eu header.b="bcIR/uj8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99D5921473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kalray.eu
+	by mail.kernel.org (Postfix) with ESMTP id 24A1221473
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:18:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24A1221473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbeHQLUm (ORCPT
+        id S1726737AbeHQLVX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 07:20:42 -0400
-Received: from zimbra1.kalray.eu ([92.103.151.219]:49350 "EHLO
-        zimbra2.kalray.eu" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbeHQLUl (ORCPT
+        Fri, 17 Aug 2018 07:21:23 -0400
+Received: from mail-wr1-f52.google.com ([209.85.221.52]:41432 "EHLO
+        mail-wr1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbeHQLVX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 07:20:41 -0400
-X-Greylist: delayed 504 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 Aug 2018 07:20:40 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id DA3E427E02EF;
-        Fri, 17 Aug 2018 10:09:50 +0200 (CEST)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id uZn_rMdbLe72; Fri, 17 Aug 2018 10:09:50 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 6A5F327E02F0;
-        Fri, 17 Aug 2018 10:09:50 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 zimbra2.kalray.eu 6A5F327E02F0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalray.eu;
-        s=32AE1B44-9502-11E5-BA35-3734643DEF29; t=1534493390;
-        bh=jGfxbTGJ/dKQwnGDcvNSMBgkYF5uLMA32G3+ccRAUZw=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=bcIR/uj8GaScV4fap5sS0/RO4+1JfI+oAjY7WJnQEZHBlPn09zrltVoRG0YI5Mh9z
-         xmqwRrU8QCcEoFzSHq/VjV7VDeXHC9YIFJhie0OF8Y0V6wOmJgpD3Rzft2xo0KasdI
-         oVROrDVOX5Xj3HA6yamVRZOVnfh+lQecAU3bONao=
-X-Virus-Scanned: amavisd-new at zimbra2.kalray.eu
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id zCJgA2p3INuH; Fri, 17 Aug 2018 10:09:50 +0200 (CEST)
-Received: from zimbra2.kalray.eu (zimbra2.kalray.eu [192.168.40.202])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 4C63827E02EF;
-        Fri, 17 Aug 2018 10:09:50 +0200 (CEST)
-Date:   Fri, 17 Aug 2018 10:09:50 +0200 (CEST)
-From:   Marta Rybczynska <mrybczyn@kalray.eu>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
-        Hari Vyas <hari.vyas@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>,
-        Srinath Mannam <srinath.mannam@broadcom.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jens Axboe <axboe@kernel.dk>, Lukas Wunner <lukas@wunner.de>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Pierre-Yves Kerbrat <pkerbrat@kalray.eu>,
-        linux-kernel@vger.kernel.org
-Message-ID: <66577784.13494160.1534493390262.JavaMail.zimbra@kalray.eu>
-In-Reply-To: <20180817044902.31420-6-benh@kernel.crashing.org>
-References: <20180817044902.31420-1-benh@kernel.crashing.org> <20180817044902.31420-6-benh@kernel.crashing.org>
-Subject: Re: [RFC PATCH 5/6] pci: Protect the enable/disable state of
- pci_dev using the state mutex
+        Fri, 17 Aug 2018 07:21:23 -0400
+Received: by mail-wr1-f52.google.com with SMTP id j5-v6so6344120wrr.8
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 01:18:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=h2/EyHCBjvSgoAA8rSu4LMziSKWtsd85lo6X3gAjej4=;
+        b=KJLqIoZwEpnyF1SkE06hsi/eEIXALRzn4mSMhvjSFPP7Wnq6FusVgOgwj7MJzG7EF7
+         j0BpfNltA5pQ6QBGN8ArnuZW/9Caw3rLMdKP7Vw+DUyTm97f4wO1A+A6al/jDJjcrIIw
+         78tvUtWuSqJNmwsrJfZQ5iBPt9KoIJom2sUCa59uOmMMD/OWLhiQkWHzyfxfLrkL68bs
+         Nc2T+ETWFf9Vsc1makslH1pGHJPOlhce2grAjhYRG2NZYzUPhSRO/seIMoPBzEfgAJ5Q
+         ZtPHMTpx0BwfDpbg/7Thq7/FMUvuucZj7l/OmLoNr/7t1TWraEGGcYn4jw391swBDSS6
+         mINg==
+X-Gm-Message-State: AOUpUlFltvJ8Kg5xbI99/ZpFHbakfeSE2wZk0pOQD4mu1vFAYRimYvH4
+        QtGZOoT5aPA3Z4X9QPRZ70I=
+X-Google-Smtp-Source: AA+uWPxZEAsWMN4RMCuLeLd9j6+5WUR9jpIuvtHadXHY3mjWx2hxdeJanSjSvWyT7eBZTQm+D4ZOPw==
+X-Received: by 2002:adf:f906:: with SMTP id b6-v6mr18213012wrr.28.1534493935451;
+        Fri, 17 Aug 2018 01:18:55 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id y5-v6sm4012014wrd.5.2018.08.17.01.18.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 Aug 2018 01:18:54 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id E0F1012492E; Fri, 17 Aug 2018 10:18:53 +0200 (CEST)
+Date:   Fri, 17 Aug 2018 10:18:53 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Kemi Wang <kemi.wang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Jia He <jia.he@hxt-semitech.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Petr Tesarik <ptesarik@suse.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Baoquan He <bhe@redhat.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v1 5/5] mm/memory_hotplug: print only with DEBUG_VM in
+ online/offline_pages()
+Message-ID: <20180817081853.GB17638@techadventures.net>
+References: <20180816100628.26428-1-david@redhat.com>
+ <20180816100628.26428-6-david@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.40.202]
-X-Mailer: Zimbra 8.8.8_GA_3008 (ZimbraWebClient - FF57 (Linux)/8.8.8_GA_1703)
-Thread-Topic: Protect the enable/disable state of pci_dev using the state mutex
-Thread-Index: QDBJGu64Fqg2Igvbl8Y4Q13tS1Paiw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180816100628.26428-6-david@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+>  failed_addition:
+> +#ifdef CONFIG_DEBUG_VM
+>  	pr_debug("online_pages [mem %#010llx-%#010llx] failed\n",
+>  		 (unsigned long long) pfn << PAGE_SHIFT,
+>  		 (((unsigned long long) pfn + nr_pages) << PAGE_SHIFT) - 1);
+> +#endif
 
+I have never been sure about this.
+IMO, if I fail to online pages, I want to know I failed.
+I think that pr_err would be better than pr_debug and without CONFIG_DEBUG_VM.
 
------ On 17 Aug, 2018, at 06:49, Benjamin Herrenschmidt benh@kernel.crashing.org wrote:
+But at least, if not, envolve it with a CONFIG_DEBUG_VM, but change pr_debug to pr_info.
 
-> This protects enable/disable operations using the state mutex to
-> avoid races with, for example, concurrent enables on a bridge.
-> 
-> The bus hierarchy is walked first before taking the lock to
-> avoid lock nesting (though it would be ok if we ensured that
-> we always nest them bottom-up, it is better to just avoid the
-> issue alltogether, especially as we might find cases where
-> we want to take it top-down later).
-> 
-> Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> +#ifdef CONFIG_DEBUG_VM
+>  	pr_debug("memory offlining [mem %#010llx-%#010llx] failed\n",
+>  		 (unsigned long long) start_pfn << PAGE_SHIFT,
+>  		 ((unsigned long long) end_pfn << PAGE_SHIFT) - 1);
+> +#endif
 
+Same goes here.
 
-> 
-> static void pci_enable_bridge(struct pci_dev *dev)
-> {
-> 	struct pci_dev *bridge;
-> -	int retval;
-> +	int retval, enabled;
-> 
-> 	bridge = pci_upstream_bridge(dev);
-> 	if (bridge)
-> 		pci_enable_bridge(bridge);
-> 
-> -	if (pci_is_enabled(dev)) {
-> -		if (!dev->is_busmaster)
-> -			pci_set_master(dev);
-> +	/* Already enabled ? */
-> +	pci_dev_state_lock(dev);
-> +	enabled = pci_is_enabled(dev);
-> +	if (enabled && !dev->is_busmaster)
-> +		pci_set_master(dev);
-> +	pci_dev_state_unlock(dev);
-> +	if (enabled)
-> 		return;
-> -	}
-> 
-
-This looks complicated too me especially with the double locking. What do you
-think about a function doing that check that used an unlocked version of
-pcie_set_master?
-
-Like:
-
-        dev_state_lock(dev);
-        enabled = pci_is_enabled(dev);
-        if (enabled &&  !dev->is_busmaster)
-                pci_set_master_unlocked();
-        pci_dev_state_unlock(dev);
-
-BTW If I remember correctly the code today can set bus mastering multiple
-times without checking if already done.
-
-Marta
+Thanks
+-- 
+Oscar Salvador
+SUSE L3
