@@ -2,150 +2,210 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC6FC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 11:23:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EACF5C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 11:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 519802187A
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 11:23:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z4s7lNmq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 519802187A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id ABACF20666
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 11:24:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABACF20666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbeHQO0g (ORCPT
+        id S1727043AbeHQO1k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 10:26:36 -0400
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:39212 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbeHQO0g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 10:26:36 -0400
-Received: by mail-wm0-f53.google.com with SMTP id q8-v6so7099532wmq.4
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 04:23:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wt+9dAnOVTDvEUaG8cEIt38uWkNZ2qVlLjM9d6XPZms=;
-        b=Z4s7lNmqj/SDEhKEq6cJkZ2+Omndm4NduB91EQjfCW7vqtM7HGmGC1w54iAXGckRYZ
-         ZU8+rnumhjIhF34eHMvEg3K+uSODZdpsjR/zoxtMJdgmEQIdD3j+GKhmWO5Qx5hArypr
-         8FrljYvJ60JoKL25N87ExXfZ1srwN0yv456lk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wt+9dAnOVTDvEUaG8cEIt38uWkNZ2qVlLjM9d6XPZms=;
-        b=hGWJVxVgmmeG3yeETVLiqiQ1k6l0ckNUEAjELGJk0ZWKVQe/qu+e0BnQkn2KNj6UhH
-         wDSv0af/rQgHigQAQm7Uyzvp69rXJIRYaer7XodFpcLuFsvL1XbKWwdNPDg7Sbyz60ho
-         hPHlwTTMDa5vj3IzhUIS0hkwRBuVA49dre7ERDwmJPdVSYKkz39aYbf+mruS9ANEYm6f
-         4QjIE7E6y+DOcNJCwXzhs/5ixoQIvwZNq4cpRLRMxaMymGFU6A1HgyK9zQOVuf/DSE0H
-         qXtQfc1o08Uxzwsq8JjH4DS9Tu6EvSJVhmsuTQw4ceL2Jpy+1wokDDQltiYd9M25+aUH
-         cRcg==
-X-Gm-Message-State: AOUpUlHrvrjMqvYDSp8HgPww0PDbWfu1o7jvJ13Aqp5vEMTDRnMRhN6M
-        glnfB3+/348+7fDeYfRr6kZzLg==
-X-Google-Smtp-Source: AA+uWPxEqFoIyekvJ5pminDFTPXj055cxDoWMSXP1Bwfz25SCud6bMJQIlMBuU1fEz889U2bULTtDw==
-X-Received: by 2002:a1c:cecf:: with SMTP id e198-v6mr17934736wmg.83.1534505008973;
-        Fri, 17 Aug 2018 04:23:28 -0700 (PDT)
-Received: from holly.lan (82-132-216-154.dab.02.net. [82.132.216.154])
-        by smtp.gmail.com with ESMTPSA id m8-v6sm3858768wrf.93.2018.08.17.04.23.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 17 Aug 2018 04:23:28 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 12:23:19 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     zhe.he@windriver.com
-Cc:     jason.wessel@windriver.com, gregkh@linuxfoundation.org,
-        jslaby@suse.com, kgdb-bugreport@lists.sourceforge.net,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] kgdboc: Change printk to the right fashion
-Message-ID: <20180817112319.ouwd3ehm4opeqbee@holly.lan>
-References: <1534258660-80070-1-git-send-email-zhe.he@windriver.com>
- <1534258660-80070-2-git-send-email-zhe.he@windriver.com>
+        Fri, 17 Aug 2018 10:27:40 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46266 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726134AbeHQO1k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 10:27:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3201F7A9;
+        Fri, 17 Aug 2018 04:24:35 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 898073F5BD;
+        Fri, 17 Aug 2018 04:24:33 -0700 (PDT)
+Date:   Fri, 17 Aug 2018 12:24:24 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+        Jayachandran C <jchandra@broadcom.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Tomasz Nowicki <tn@semihalf.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: how to fix acpi_pci_root_remap_iospace?
+Message-ID: <20180817112424.GA31375@e107981-ln.cambridge.arm.com>
+References: <20180816204506.GA21144@agluck-desk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1534258660-80070-2-git-send-email-zhe.he@windriver.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20180816204506.GA21144@agluck-desk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 10:57:40PM +0800, zhe.he@windriver.com wrote:
-> From: He Zhe <zhe.he@windriver.com>
+On Thu, Aug 16, 2018 at 01:45:07PM -0700, Luck, Tony wrote:
+> Bjorn,
 > 
-> pr_* is preferred according to scripts/checkpatch.pl.
+> Back in commit:
 > 
-> Signed-off-by: He Zhe <zhe.he@windriver.com>
-
-I thought I'd already done this but it looks like maybe I didn't get
-round to it...
-
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-
-> ---
-> v2:
-> - Split printk cleanups into a single patch
-> - Add cc to stable@vger.kernel.org
-> v3:
-> - Add pr_fmt for mod name
+>   0a70abb38062 ("PCI/ACPI: Support I/O resources when parsing host bridge resources")
 > 
->  drivers/tty/serial/kgdboc.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
+> we added acpi_pci_root_remap_iospace().  On ia64 this was a no-op because ia64
+> didn't define PCI_IOBASE, so the entire body of the function was skipped.
 > 
-> diff --git a/drivers/tty/serial/kgdboc.c b/drivers/tty/serial/kgdboc.c
-> index f4d0ef6..371357d 100644
-> --- a/drivers/tty/serial/kgdboc.c
-> +++ b/drivers/tty/serial/kgdboc.c
-> @@ -8,6 +8,9 @@
->   *
->   * 2007-2008 (c) Jason Wessel - Wind River Systems, Inc.
->   */
-> +
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +
->  #include <linux/kernel.h>
->  #include <linux/ctype.h>
->  #include <linux/kgdb.h>
-> @@ -131,12 +134,12 @@ static void kgdboc_unregister_kbd(void)
->  static int kgdboc_option_setup(char *opt)
+> But in the current merge window commit:
+> 
+>   0bbf47eab469 ("ia64: use asm-generic/io.h")
+> 
+> ended up defining PCI_IOBASE for us, and now we die horribly
+> in early boot with:
+> 
+>   kernel BUG at lib/ioremap.c:72!
+> 
+> 
+> Is PCI_IOBASE the right thing to check for to decide whether
+> acpi_pci_root_remap_iospace() needs to do anything?
+> 
+> The ugly fix would be:
+> 
+> 
+> diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
+> index 7433035ded95..de06377de13b 100644
+> --- a/drivers/acpi/pci_root.c
+> +++ b/drivers/acpi/pci_root.c
+> @@ -741,7 +741,7 @@ static void acpi_pci_root_validate_resources(struct device *dev,
+>  static void acpi_pci_root_remap_iospace(struct fwnode_handle *fwnode,
+>  			struct resource_entry *entry)
 >  {
->  	if (!opt) {
-> -		pr_err("kgdboc: config string not provided\n");
-> +		pr_err("config string not provided\n");
->  		return -EINVAL;
->  	}
->  
->  	if (strlen(opt) >= MAX_CONFIG_LEN) {
-> -		printk(KERN_ERR "kgdboc: config string too long\n");
-> +		pr_err("config string too long\n");
->  		return -ENOSPC;
->  	}
->  	strcpy(config, opt);
-> @@ -253,7 +256,7 @@ static int param_set_kgdboc_var(const char *kmessage,
->  	int len = strlen(kmessage);
->  
->  	if (len >= MAX_CONFIG_LEN) {
-> -		printk(KERN_ERR "kgdboc: config string too long\n");
-> +		pr_err("config string too long\n");
->  		return -ENOSPC;
->  	}
->  
-> @@ -264,8 +267,7 @@ static int param_set_kgdboc_var(const char *kmessage,
->  	}
->  
->  	if (kgdb_connected) {
-> -		printk(KERN_ERR
-> -		       "kgdboc: Cannot reconfigure while KGDB is connected.\n");
-> +		pr_err("Cannot reconfigure while KGDB is connected.\n");
->  
->  		return -EBUSY;
->  	}
-> -- 
-> 2.7.4
+> -#ifdef PCI_IOBASE
+> +#if defined(PCI_IOBASE) && !defined(CONFIG_IA64)
+>  	struct resource *res = entry->res;
+>  	resource_size_t cpu_addr = res->start;
+>  	resource_size_t pci_addr = cpu_addr - entry->offset;
 > 
+> or we can do some other juggling with defines to get the
+> same outcome.
+> 
+> -Tony
+
+If that gives too much trouble we could move
+acpi_pci_root_remap_iospace() to arch/arm64 too (patch compile tested
+below) given that at the moment it is generic in theory, just let me
+know what's the best course of action.
+
+Lorenzo
+
+-- >8 --
+diff --git a/arch/arm64/kernel/pci.c b/arch/arm64/kernel/pci.c
+index 0e2ea1c78542..06e27879087b 100644
+--- a/arch/arm64/kernel/pci.c
++++ b/arch/arm64/kernel/pci.c
+@@ -98,13 +98,46 @@ int pcibios_root_bridge_prepare(struct pci_host_bridge *bridge)
+ 	return 0;
+ }
+ 
++static void acpi_pci_root_remap_iospace(struct fwnode_handle *fwnode,
++			struct resource_entry *entry)
++{
++	struct resource *res = entry->res;
++	resource_size_t cpu_addr = res->start;
++	resource_size_t pci_addr = cpu_addr - entry->offset;
++	resource_size_t length = resource_size(res);
++	unsigned long port;
++
++	if (pci_register_io_range(fwnode, cpu_addr, length))
++		goto err;
++
++	port = pci_address_to_pio(cpu_addr);
++	if (port == (unsigned long)-1)
++		goto err;
++
++	res->start = port;
++	res->end = port + length - 1;
++	entry->offset = port - pci_addr;
++
++	if (pci_remap_iospace(res, cpu_addr) < 0)
++		goto err;
++
++	pr_info("Remapped I/O %pa to %pR\n", &cpu_addr, res);
++	return;
++err:
++	res->flags |= IORESOURCE_DISABLED;
++}
++
+ static int pci_acpi_root_prepare_resources(struct acpi_pci_root_info *ci)
+ {
+ 	struct resource_entry *entry, *tmp;
++	struct acpi_device *device = ci->bridge;
+ 	int status;
+ 
+ 	status = acpi_pci_probe_root_resources(ci);
+ 	resource_list_for_each_entry_safe(entry, tmp, &ci->resources) {
++		if (entry->res->flags & IORESOURCE_IO)
++			acpi_pci_root_remap_iospace(&device->fwnode, entry);
++
+ 		if (!(entry->res->flags & IORESOURCE_WINDOW))
+ 			resource_list_destroy_entry(entry);
+ 	}
+diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
+index 7433035ded95..0f9fb87b6e26 100644
+--- a/drivers/acpi/pci_root.c
++++ b/drivers/acpi/pci_root.c
+@@ -738,37 +738,6 @@ static void acpi_pci_root_validate_resources(struct device *dev,
+ 	}
+ }
+ 
+-static void acpi_pci_root_remap_iospace(struct fwnode_handle *fwnode,
+-			struct resource_entry *entry)
+-{
+-#ifdef PCI_IOBASE
+-	struct resource *res = entry->res;
+-	resource_size_t cpu_addr = res->start;
+-	resource_size_t pci_addr = cpu_addr - entry->offset;
+-	resource_size_t length = resource_size(res);
+-	unsigned long port;
+-
+-	if (pci_register_io_range(fwnode, cpu_addr, length))
+-		goto err;
+-
+-	port = pci_address_to_pio(cpu_addr);
+-	if (port == (unsigned long)-1)
+-		goto err;
+-
+-	res->start = port;
+-	res->end = port + length - 1;
+-	entry->offset = port - pci_addr;
+-
+-	if (pci_remap_iospace(res, cpu_addr) < 0)
+-		goto err;
+-
+-	pr_info("Remapped I/O %pa to %pR\n", &cpu_addr, res);
+-	return;
+-err:
+-	res->flags |= IORESOURCE_DISABLED;
+-#endif
+-}
+-
+ int acpi_pci_probe_root_resources(struct acpi_pci_root_info *info)
+ {
+ 	int ret;
+@@ -789,10 +758,6 @@ int acpi_pci_probe_root_resources(struct acpi_pci_root_info *info)
+ 			"no IO and memory resources present in _CRS\n");
+ 	else {
+ 		resource_list_for_each_entry_safe(entry, tmp, list) {
+-			if (entry->res->flags & IORESOURCE_IO)
+-				acpi_pci_root_remap_iospace(&device->fwnode,
+-						entry);
+-
+ 			if (entry->res->flags & IORESOURCE_DISABLED)
+ 				resource_list_destroy_entry(entry);
+ 			else
+
