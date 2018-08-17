@@ -2,79 +2,103 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C9BCC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93837C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 417D3218DB
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:31:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 417D3218DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E59A2154F
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:36:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="CmZwhwaA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E59A2154F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbeHQRfR (ORCPT
+        id S1727440AbeHQRkY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 13:35:17 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:34221 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725816AbeHQRfR (ORCPT
+        Fri, 17 Aug 2018 13:40:24 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42045 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726815AbeHQRkX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 13:35:17 -0400
-Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
-  by relmlie2.idc.renesas.com with ESMTP; 17 Aug 2018 23:31:41 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir1.idc.renesas.com (Postfix) with ESMTP id 1FD1F84704;
-        Fri, 17 Aug 2018 23:31:41 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.53,251,1531753200"; 
-   d="scan'208";a="289879049"
-Received: from unknown (HELO fabrizio-dev.ree.adwin.renesas.com) ([10.226.36.250])
-  by relmlii2.idc.renesas.com with ESMTP; 17 Aug 2018 23:31:37 +0900
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] dt-bindings: iommu: ipmmu-vmsa: Add r8a774a1 support
-Date:   Fri, 17 Aug 2018 15:31:05 +0100
-Message-Id: <1534516265-10059-3-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1534516265-10059-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1534516265-10059-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fri, 17 Aug 2018 13:40:23 -0400
+Received: by mail-lj1-f193.google.com with SMTP id f1-v6so6530586ljc.9
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 07:36:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KCDE1ZF45ByvaJtahq21Emr53yAzkpYEpRNwVGdLgZ0=;
+        b=CmZwhwaA5y2FQ4x6XrWG031v7CE7l9hbM61vACly9YNSKeVEhbuvhib9QjiaHjPCEg
+         MCLdzwjenLxLz+vg7dj6ivUt8hmyhWs8w/w/etgQ0Aj049SwTjCCAOuxOvJ6uJbPLChD
+         C1qJSWTicv67YGmEbEqqI1PLjpn/J4ZQ7B2tL49GdYUtenUXV1jcVZmwGkj/nInTF9Sp
+         bofPGTxLt9v7DUNZ2Cn6sIQZhP1fL6ubnZ0lpJpjlX0iW/VHFiR/xWLUBesSlMBUP0D8
+         vWk+sH9VUVvUA8NLMKs4CB0H07nBJ/A0wdL4eFSNat8DxHmT272ZxotgGtWKOZ6mqIWW
+         2dKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KCDE1ZF45ByvaJtahq21Emr53yAzkpYEpRNwVGdLgZ0=;
+        b=f57Uxr/mQ14zNanDYId/mRtxC9R/Iq0te1+acBPpV4cW/kGlAfG2m85s1KLJHub3nf
+         bG/LMdZh0YtkgEArq4VwANtrkkX85fEQrxl0NjKoEtMe8KzNewXQK1URayBsQSauUA34
+         JBDaWSALtscTOiJOSbxXKZeXYxHEptimganJzxpoAzoql5jxEx38bUgObfs0AHXXv/RQ
+         jn0g4wYnQ0NiyZHs8nFVxnSVDYvS45ISTK2tlBWzsnzkvxmoloNIN8Ow38Lks++cVMGb
+         5Hy9322wDNeauZWFLalsdHfCmnaB0UZVf6MO4zrLZzkYmaGgX0+bP8wHSDLK0zS/tB36
+         vbIg==
+X-Gm-Message-State: AOUpUlFC0e9N6/QxNAhUwFj8pkNKU++ySagQZ1u8+IJgYh1BzPM8F3Uf
+        w0Nk/IZhbf5CukjYzlu5pXVQKQ==
+X-Google-Smtp-Source: AA+uWPx/mLuiCom3FG9qcCvx+Fw6zTwYITKDWTmqzMHZaD35vNviLjm6GojzwNpB6AvIbqvC3xNbRQ==
+X-Received: by 2002:a2e:8950:: with SMTP id b16-v6mr20287729ljk.111.1534516606243;
+        Fri, 17 Aug 2018 07:36:46 -0700 (PDT)
+Received: from localhost.localdomain (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
+        by smtp.gmail.com with ESMTPSA id i1-v6sm337375ljg.43.2018.08.17.07.36.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 Aug 2018 07:36:45 -0700 (PDT)
+From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
+        javier@cnexlabs.com, hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
+        youngtack.jin@circuitblvd.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [PATCH] lightnvm: pblk: fix incorrect min_write_pgs
+Date:   Fri, 17 Aug 2018 16:36:37 +0200
+Message-Id: <20180817143637.15943-1-mb@lightnvm.io>
+X-Mailer: git-send-email 2.11.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document RZ/G2M (R8A774A1) SoC bindings.
+The calculation of pblk->min_write_pgs should only use the optimal
+write size attribute provided by the drive, it does not correlate to
+the memory page size of the system, which can be smaller or larger
+than the LBA size reported.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
-This patch applies on top of next-20180817
+ drivers/lightnvm/pblk-init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-index ffadb7c..68446dd 100644
---- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-+++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-@@ -13,6 +13,7 @@ Required Properties:
-     - "renesas,ipmmu-r8a73a4" for the R8A73A4 (R-Mobile APE6) IPMMU.
-     - "renesas,ipmmu-r8a7743" for the R8A7743 (RZ/G1M) IPMMU.
-     - "renesas,ipmmu-r8a7745" for the R8A7745 (RZ/G1E) IPMMU.
-+    - "renesas,ipmmu-r8a774a1" for the R8A774A1 (RZ/G2M) IPMMU.
-     - "renesas,ipmmu-r8a7790" for the R8A7790 (R-Car H2) IPMMU.
-     - "renesas,ipmmu-r8a7791" for the R8A7791 (R-Car M2-W) IPMMU.
-     - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 9119c64d6f62..8adc8ac8b03c 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -371,7 +371,7 @@ static int pblk_core_init(struct pblk *pblk)
+ 	atomic64_set(&pblk->nr_flush, 0);
+ 	pblk->nr_flush_rst = 0;
+ 
+-	pblk->min_write_pgs = geo->ws_opt * (geo->csecs / PAGE_SIZE);
++	pblk->min_write_pgs = geo->ws_opt;
+ 	max_write_ppas = pblk->min_write_pgs * geo->all_luns;
+ 	pblk->max_write_pgs = min_t(int, max_write_ppas, NVM_MAX_VLBA);
+ 	pblk_set_sec_per_write(pblk, pblk->min_write_pgs);
 -- 
-2.7.4
+2.11.0
 
