@@ -2,102 +2,126 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D261C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 07:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B636C41536
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 07:27:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34BE620C03
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 07:16:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="phP0yv54"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34BE620C03
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BF5112185B
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 07:27:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF5112185B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbeHQKS5 (ORCPT
+        id S1726650AbeHQK2G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 06:18:57 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40579 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726447AbeHQKS4 (ORCPT
+        Fri, 17 Aug 2018 06:28:06 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:42541 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726450AbeHQK2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 06:18:56 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h15-v6so6195304wrs.7
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 00:16:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=reply-to:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=9HOGgaBBKntNDyFaDgYUOpwTNyVoCsQZifAjMq13KNo=;
-        b=phP0yv54g/ezlixvwQ919NkzUrRNu5pa/JZjtTtbKxIV6pGvOPlchOXN5mnSX7j4YP
-         sq5DbyMRL65asO3YEr40XX8KsMsCmFx47adDzdPExG0GZ+VDzYHbkM7xDpAOcrl/Kbl9
-         3YDrS8ZO0HgOmx4ctir+UBlkbblyYJzsrtgOC2b6QsOgatnpb5dtge8iv2rQ8xTnJ2T5
-         A6k5iSOGWIGxBObKjyxHsKDfEVb14KDmjJeAu6MLN6gY8yhLSmlzz4qNdd5suJ1LQCzi
-         UmD4aent+27/ykBz+v3JWHtG5YJKffrY/ckPw3yoKTEz8t50wnhM45mN3mgkOPHux7hK
-         gVIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=9HOGgaBBKntNDyFaDgYUOpwTNyVoCsQZifAjMq13KNo=;
-        b=bim7ChOR5VvNQc2/kRYdPztFoLGG4FgXq4OUr12DnH4kZ/rFKZiiMbQQNltqOy90Sm
-         JL29Dc5w7rsQTNtEskbN3biHmUebrK1C3a8YEbKobxvCZVFjV27l7PZN4o6xIgucWv7a
-         wyQJFzgVZYuomVUUA/5Ra7VUpRDfj4mfBoTTHNU1xcR/L7bA6F6Xmc8HNwL55Qawrpos
-         GVj3uGXrjPes0h9SN0bO7hlrIkPKlytmuoz9aI/fUiHb55KNWRvCSm+GN6bk+1VG2Vmz
-         99ioraDaFU3B8O1zXK8iTGunBQfG0pylqNN+9SGsOyEoEZ5HlVgg7/+ixWlVW5C9Ng+D
-         BtYA==
-X-Gm-Message-State: AOUpUlEH4nedfbm5yuOkPiiI8+eJM1UiTRI9CD4Bu64NRg95j6dxMDZB
-        2m7/Cy6PV5/LiqGOx/mZeKE=
-X-Google-Smtp-Source: AA+uWPxL0x9aOPpRbQiAAn81o0UK79z+T9l/t6fhAZy32mDs+B+k2NVy1VKSDgIpLCTK0dSETe0jWw==
-X-Received: by 2002:adf:9d46:: with SMTP id o6-v6mr21140928wre.51.1534490199601;
-        Fri, 17 Aug 2018 00:16:39 -0700 (PDT)
-Received: from ?IPv6:2a02:908:1257:4460:1ab8:55c1:a639:6740? ([2a02:908:1257:4460:1ab8:55c1:a639:6740])
-        by smtp.gmail.com with ESMTPSA id l72-v6sm9895644wma.17.2018.08.17.00.16.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 Aug 2018 00:16:38 -0700 (PDT)
-Reply-To: christian.koenig@amd.com
-Subject: Re: [PATCH 1/2] Revert "drm/amdgpu/display: Replace
- CONFIG_DRM_AMD_DC_DCN1_0 with CONFIG_X86"
-To:     sunpeng.li@amd.com, alexander.deucher@amd.com,
-        christian.koenig@amd.com, arnd@arndb.de, michel.daenzer@amd.com
-Cc:     airlied@linux.ie, Jordan.Lazare@amd.com,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        harry.wentland@amd.com
-References: <1534448679-13823-1-git-send-email-sunpeng.li@amd.com>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-Message-ID: <8d7c294c-6585-01f1-cd78-5c30cd30142d@gmail.com>
-Date:   Fri, 17 Aug 2018 09:16:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 17 Aug 2018 06:28:06 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fqZ8i-0000N3-VL; Fri, 17 Aug 2018 09:25:44 +0200
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fqZ8i-0003Ju-28; Fri, 17 Aug 2018 09:25:44 +0200
+Date:   Fri, 17 Aug 2018 09:25:44 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, Abel Vesa <abelvesa@linux.com>,
+        linux-gpio@vger.kernel.org, linux-imx@nxp.com,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v4 4/5] clk: imx: add imx composite clock
+Message-ID: <20180817072544.izryvqlqpaihs7kl@pengutronix.de>
+References: <1534433236-8925-1-git-send-email-abel.vesa@nxp.com>
+ <1534433236-8925-5-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1534448679-13823-1-git-send-email-sunpeng.li@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1534433236-8925-5-git-send-email-abel.vesa@nxp.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 09:07:14 up 65 days, 16:16, 60 users,  load average: 0.04, 0.10,
+ 0.09
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 16.08.2018 um 21:44 schrieb sunpeng.li@amd.com:
-> [SNIP]
-> +config DRM_AMD_DC_DCN1_0
-> +	bool "DCN 1.0 Raven family"
-> +	depends on DRM_AMD_DC && X86
-> +	default y
-> +	help
-> +	  Choose this option if you want to have
-> +	  RV family for display engine
-> +
+Hi Abel,
 
-Probably better to follow Michel's suggestion and not make that an use 
-configurable option.
+On Thu, Aug 16, 2018 at 06:27:15PM +0300, Abel Vesa wrote:
+> Since a lot of clocks on imx8 are formed by a mux, gate, predivider and
+> divider, the idea here is to combine all of those into one more complex
+> clock type, therefore moving the complexity inside the composite clock and
+> outside of the SoC specific clock driver.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> ---
+>  drivers/clk/imx/Makefile        |   1 +
+>  drivers/clk/imx/clk-composite.c | 471 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/imx/clk.h           |   9 +
+>  3 files changed, 481 insertions(+)
+>  create mode 100644 drivers/clk/imx/clk-composite.c
+> 
+> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+> index b87513c..4fabb0a 100644
+> --- a/drivers/clk/imx/Makefile
+> +++ b/drivers/clk/imx/Makefile
+> @@ -3,6 +3,7 @@
+>  obj-y += \
+>  	clk.o \
+>  	clk-busy.o \
+> +	clk-composite.o \
+>  	clk-cpu.o \
+>  	clk-fixup-div.o \
+>  	clk-fixup-mux.o \
+> diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
 
-Instead just select it based on the dependencies.
+You nearly duplicate drivers/clk/clk-composite.c. This seems necessary
+because in the hardware we have two dividers instead of a single one as
+the generic composite clock type support.
 
-Christian.
+Instead of duplicating the composite clk code you could create your own
+clk_ops for the divider which handles both dividers in a single
+callback. You could then use the generic composite clk.
+
+When I made the suggestion that we should a create a composite clk I had
+assumed you'd come up with a patch which has a single private struct clk_ops
+filled in with the gate/mux/rate callbacks which are then open coded in
+your driver. I am not convinced this splitting up in three different
+(gate/mux/rate) struct clk_ops brings us anything. For example the open
+coded gate code is really trivial compared to all this boilerplate code
+we need for the generic composite clk. But maybe the maintainers have a
+different opinion?
+
+Sascha
+
+
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
