@@ -5,46 +5,46 @@ X-Spam-Level:
 X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1F5C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 15:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D8CC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 15:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E06121878
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 15:09:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E06121878
+	by mail.kernel.org (Postfix) with ESMTP id D4CD121878
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 15:09:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4CD121878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727584AbeHQSMs (ORCPT
+        id S1727687AbeHQSNM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 14:12:48 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35833 "EHLO
+        Fri, 17 Aug 2018 14:13:12 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:42499 "EHLO
         mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727333AbeHQSMr (ORCPT
+        with ESMTP id S1727607AbeHQSNM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 14:12:47 -0400
-Received: by mail-io0-f194.google.com with SMTP id w11-v6so7178653iob.2;
-        Fri, 17 Aug 2018 08:09:04 -0700 (PDT)
+        Fri, 17 Aug 2018 14:13:12 -0400
+Received: by mail-io0-f194.google.com with SMTP id n18-v6so7164541ioa.9;
+        Fri, 17 Aug 2018 08:09:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QsN1P37kMRVUuTKff+S8sglejH6PFBfE3rNp1p/knB0=;
-        b=nhnQeyFKAXGd1zi9NYK+GRove9UboF5/MJ9a8QBlKYsKrKmEqs4tTVe+QEQ/GTQ20B
-         Q8S45xNNih3duRfy9OFB+uonC13Bqq6eq6a1OQeyhOxNpTAssyDFJXEeN8rk+5IFUqw/
-         7scDVIEXhiIcaIk8ry8GhNExOPgsvaCfOC8egHzVW00s/IcagpcQvNJq1tfxF+6SnrUq
-         eOPNg/lyIAl+B2ig+qc4b9TJYY65J+l9RqMy6SBLZ5JFkVB4pNY2FCoEBkMpvGDFX+vO
-         CfAyBMJ9pnBAdqKFK2U+dqsKJecT+1RIdTrsUJVHr1panMQhcHcBB3R1+l8/xw05eHyl
-         xTsw==
-X-Gm-Message-State: AOUpUlGtGi0KI89UpDTIfYROzCFd4CdwWOJ1n3Jd4OrAnzQDVj5/BTmN
-        V6tBPH12wDJC4PkatbSXQcgzUUs=
-X-Google-Smtp-Source: AA+uWPxjRVqcrL39XcoclN72UslsHGtHauQluAgBapuQ2xIzH08WZaHXJ63rnzKyktBR3hKgvzyDfg==
-X-Received: by 2002:a6b:de09:: with SMTP id v9-v6mr29806186iog.10.1534518543698;
-        Fri, 17 Aug 2018 08:09:03 -0700 (PDT)
+        bh=vTL2ybjkKQBIZUu9Qdv85wPYfLrndjnFu0dUKf0QkkM=;
+        b=pZGWjvnO8k9wJM/qzmlN7LQtdURLIhQyzKoqmUDcK5H7vg1I72S7JqdZUyVCoCK2hR
+         JmWmEeu6Gg9jKw6L9ynuf0E35cc9Mwynsht4L9MIXCJzEN7Ro/rLsNFZ/9rvqShNsedc
+         66diGPywnLo3fAMif8gWVUkFFkvEs66nZjLX4p2jMB5q1Vsr6JhBOtPZi8i8vlt/rAeq
+         9kWUCS5o9WNj80QQnjvUL8d+JgydHFlin72IOJCxKgonxP4m3xaM6irOQoGLDE4wAqnS
+         AlIjfFp1pht0XHtFpOweh+rlu2QG2maoCJUdP3dv3g5KzM/qSaJm0lN6a+zSt68HP2vH
+         zhlQ==
+X-Gm-Message-State: AOUpUlEEB4kxyeEomSBjOv8xnTtghJTQn5/MZ+HxtqQ81+3O50qcofrY
+        ZEqVrNBU1/XBe17lysTqnA==
+X-Google-Smtp-Source: AA+uWPz3fZrNfSr+PBrKbkXBp6MDcKqt3T2GvZIQKk4OxOmhwkrBx8g11JisSEBTIiFSvTegVzsipA==
+X-Received: by 2002:a6b:9a50:: with SMTP id c77-v6mr29548615ioe.148.1534518568452;
+        Fri, 17 Aug 2018 08:09:28 -0700 (PDT)
 Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id f12-v6sm909872iog.32.2018.08.17.08.09.02
+        by smtp.gmail.com with ESMTPSA id a79-v6sm1932934itc.33.2018.08.17.08.09.27
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 17 Aug 2018 08:09:02 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 09:09:02 -0600
+        Fri, 17 Aug 2018 08:09:27 -0700 (PDT)
+Date:   Fri, 17 Aug 2018 09:09:27 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Sricharan R <sricharan@codeaurora.org>
 Cc:     mark.rutland@arm.com, robh@kernel.org, sudeep.holla@arm.com,
@@ -57,15 +57,14 @@ Cc:     mark.rutland@arm.com, robh@kernel.org, sudeep.holla@arm.com,
         andy.gross@linaro.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         niklas.cassel@linaro.org, sricharan@codeaurora.org
-Subject: Re: [PATCH v12 13/14] cpufreq: qcom: Re-organise kryo cpufreq to use
- it for other nvmem based qcom socs
-Message-ID: <20180817150902.GA19164@rob-hp-laptop>
+Subject: Re: [PATCH v12 14/14] cpufreq: qcom: Add support for krait based socs
+Message-ID: <20180817150927.GA20248@rob-hp-laptop>
 References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
- <1534248753-2440-14-git-send-email-sricharan@codeaurora.org>
+ <1534248753-2440-15-git-send-email-sricharan@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1534248753-2440-14-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1534248753-2440-15-git-send-email-sricharan@codeaurora.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -75,25 +74,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hi, this email is from Rob's (experimental) review bot. I found a couple
 of common problems with your patch. Please see below.
 
-On Tue, 14 Aug 2018 17:42:32 +0530, Sricharan R wrote:
-> The kryo cpufreq driver reads the nvmem cell and uses that data to
-> populate the opps. There are other qcom cpufreq socs like krait which
-> does similar thing. Except for the interpretation of the read data,
-> rest of the driver is same for both the cases. So pull the common things
-> out for reuse.
+On Tue, 14 Aug 2018 17:42:33 +0530, Sricharan R wrote:
+> In Certain QCOM SoCs like ipq8064, apq8064, msm8960, msm8974
+> that has KRAIT processors the voltage/current value of each OPP
+> varies based on the silicon variant in use.
+> 
+> The required OPP related data is determined based on
+> the efuse value. This is similar to the existing code for
+> kryo cores. So adding support for krait cores here.
 > 
 > Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 
 The preferred subject prefix is "dt-bindings: <binding dir>: ...".
 
 > ---
->  .../{kryo-cpufreq.txt => qcom-nvmem-cpufreq.txt}   |   6 +-
->  drivers/cpufreq/Kconfig.arm                        |   4 +-
->  drivers/cpufreq/Makefile                           |   2 +-
->  .../{qcom-cpufreq-kryo.c => qcom-cpufreq-nvmem.c}  | 124 ++++++++++++---------
->  4 files changed, 80 insertions(+), 56 deletions(-)
->  rename Documentation/devicetree/bindings/opp/{kryo-cpufreq.txt => qcom-nvmem-cpufreq.txt} (99%)
->  rename drivers/cpufreq/{qcom-cpufreq-kryo.c => qcom-cpufreq-nvmem.c} (65%)
+>  .../devicetree/bindings/opp/qcom-nvmem-cpufreq.txt |   3 +-
+>  drivers/cpufreq/Kconfig.arm                        |   2 +-
+>  drivers/cpufreq/cpufreq-dt-platdev.c               |   5 +
+>  drivers/cpufreq/qcom-cpufreq-nvmem.c               | 151 +++++++++++++++++++--
+>  4 files changed, 149 insertions(+), 12 deletions(-)
 > 
 
 DT bindings (including binding headers) should be a separate patch. See
