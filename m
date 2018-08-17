@@ -2,137 +2,100 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E1DC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 420B9C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7971C219CA
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:27:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="DLRTnFqr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7971C219CA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	by mail.kernel.org (Postfix) with ESMTP id C95A7218F9
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:37:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C95A7218F9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbeHRAcY (ORCPT
+        id S1728401AbeHRAmH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 20:32:24 -0400
-Received: from mail-it0-f47.google.com ([209.85.214.47]:53409 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbeHRAcY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 20:32:24 -0400
-Received: by mail-it0-f47.google.com with SMTP id 72-v6so13209710itw.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 14:27:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=96RUkf2/RVCHU/GurWkqgmy0IQTwvPUAge529uECmwI=;
-        b=DLRTnFqr6enNtNTu8r9mEJb/tXaZmVRsn49NaIUuIUg1MQ0bSyMQaePyR4i8InN/N8
-         B32/BlGCGa0P1CHbyShwS62RzdJuAYt2h6ZhBIcgK2TeB/yQalftfzafNp4ZbEnqtfIk
-         uf725i6riLIdSX5ZeoLBOO+dcdSkS4bG3qd4YSVvFVmbKI1whmbxrWaZxgQUUAKayfd/
-         5Ta2I1idNU5A75vp4ACe7cmxeFoxu6c1pN0SUOr20my/Qw8/sI27qRyD/RfI6+GBOK8D
-         9q20GdbFBww0JvirrwT7CEOcO8cOOz5Vl1WXE5u4rPVurNKkaD4Vjer1QWw/jnBHWYGj
-         cn2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=96RUkf2/RVCHU/GurWkqgmy0IQTwvPUAge529uECmwI=;
-        b=QqAJ9d4bioxytUtl6sfkRKXrXmOTClIq/5lyZuhZWjl1v8cQnmuYIibOzE9FXfrLQG
-         3YHSMNIevYytvTUhWDyRnnH42dNe+xxDLmfC6rB4e9gEHkidIw402CzNpZRL9OtKJSGA
-         QTfnNOtxAMYIaxJWyOOdaI44+r6jfSEcvwf7BHNoGVE6WPSxfQr0ys7Ci3BkAoTue7R3
-         R9UCdM6xyTYlmlHE9hd7MqLRGX7sKth6mXkVDrKnv1njP4AYtRbLtxESqT+NB/xpCIkI
-         7EZVikSKvUjemkew5I66ISn4pvkdZA65iEoVG5lGRK+NfWxV4JN3kciYj4xA0D8gHb0V
-         /1VQ==
-X-Gm-Message-State: AOUpUlG6+uvwk6htsxBZcIMeNLE44/rgsLM3EBPO63bTPXRtTdcgdVkd
-        iPuwokAGo+5b6WL3rUgt3VmMpA==
-X-Google-Smtp-Source: AA+uWPzmWbjmEjDy4yKh5VFuvErcSgLCMwi7/pYcsUeLk95UM9Y4VOeyv+Z4qzQxMODO9O4Xgc/LPQ==
-X-Received: by 2002:a02:2b12:: with SMTP id h18-v6mr32736112jaa.10.1534541243739;
-        Fri, 17 Aug 2018 14:27:23 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id f1-v6sm1187748ioq.10.2018.08.17.14.27.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 17 Aug 2018 14:27:23 -0700 (PDT)
-Received: from jgg by mlx with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1fqmHC-0001bT-8F; Fri, 17 Aug 2018 15:27:22 -0600
-Date:   Fri, 17 Aug 2018 15:27:22 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
+        Fri, 17 Aug 2018 20:42:07 -0400
+Received: from nautica.notk.org ([91.121.71.147]:37198 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726434AbeHRAmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 20:42:07 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 9C795C009; Fri, 17 Aug 2018 23:37:03 +0200 (CEST)
+Date:   Fri, 17 Aug 2018 23:36:48 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Doug Ledford <dledford@redhat.com>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] Please pull RDMA subsystem changes
-Message-ID: <20180817212722.GB28777@ziepe.ca>
-References: <20180816215726.GA20526@ziepe.ca>
- <CA+55aFxgT8Hipm6bDrHMZ-nmdk3KZTP=J6D5k10UHTcajXAEHA@mail.gmail.com>
- <20180817201535.GI28676@mellanox.com>
- <CA+55aFzcp=a2sNOVR7DTEY9dehYamXaJ1bpSfF0FZir_9MhsVg@mail.gmail.com>
+Cc:     V9FS Developers <v9fs-developer@lists.sourceforge.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>
+Subject: Re: [GIT PULL] 9p updates for 4.19
+Message-ID: <20180817213648.GA31406@nautica>
+References: <20180813012347.GA32555@nautica>
+ <20180817023307.GA32726@nautica>
+ <CA+55aFzLe7C03-53=0WrXXfZcfsJfTsvRqrrBNqnLvOxUiCJqQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CA+55aFzcp=a2sNOVR7DTEY9dehYamXaJ1bpSfF0FZir_9MhsVg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CA+55aFzLe7C03-53=0WrXXfZcfsJfTsvRqrrBNqnLvOxUiCJqQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 01:27:02PM -0700, Linus Torvalds wrote:
-> On Fri, Aug 17, 2018 at 1:15 PM Jason Gunthorpe <jgg@mellanox.com> wrote:
+Linus Torvalds wrote on Fri, Aug 17, 2018:
+> So this pull request confuses me, and that's not a good thing.
+
+I'll hopefully do better next time! Thank you for taking the time to
+explain.
+
+
+> On Thu, Aug 16, 2018 at 7:33 PM Dominique Martinet
+> <asmadeus@codewreck.org> wrote:
 > >
-> > We often have merge conflicts with RDMA, how do you prefer to get the
-> > PR? I'm actually not very clear on this part of the process.
+> > Pull request for inclusion in 4.19 for 9p
 > 
-> I  generally prefer the non-merged version, but with comments about
-> the conflicts.
+> So when I pull the tag, I get a different message, talking about
 > 
-> In fact, the really preferred model is generally to send me a
-> non-merged pull request (say "tags/for-linus") but if the conflicts
-> look even half-way nasty - or simply because you did the merge anyway
-> just to get the proper diffstat because history is complex - mention
-> that you have a merged branch for verification (say
-> "branch/for-linus-merged").
+>   This tag is the same as 9p-for-4.19 without the two MAINTAINERS patches
 > 
-> When I get that kind of pull request, I'll just do the merge
-> resolution myself, and after I've done it I'll generally then do
-> 
->    git checkout -b test-merge
->    git pull <repoaddress> for-linus-merged
-> 
-> and then just compare the end result with my resolution as an extra
-> verification step.
-> 
-> I may end up skipping the verification step if everything looks
-> entirely trivial (and really, if you have no real reason for the
-> pre-merged branch, don't bother even mentioning it even if you did it
-> for the diffstat), but in practice whenever somebody does that, I have
-> no reason not to just do that simple extra verification.
-> 
-> Most of the time the merges are exactly the same, possibly with
-> whitespace or trivial ordering differences (things like Makefiles and
-> Kconfig files often have add-add conflicts where the ordering really
-> doesn't matter between two config options).
-> 
-> And then sometimes it shows that I missed something in my mmerge.
-> 
-> And sometimes it shows that  I do so many merges that I actually ended
-> up noticing something that the submaintainer didn't.
-> 
-> So it can be uninteresting, and when it isn't uninteresting it can go
-> either way, but so far for the people who do this, I've never been in
-> the situation where I was *sorry* for the double merge and extra
-> verification step.
-> 
-> Because when mis-merges happen (they are happily pretty rare) they are
-> _so_ annoying and can be so hard to figure out later, that I'd rather
-> spend a bit more time on the merge than have a dodgy one.
+> but I never saw a first version.
 
-Thanks for the explanation. Doug and I will do this in future.
+I thought the the same thing (that you never saw the first version) when
+I wrote the request-pull email and adjusted the text -- I wasn't aware
+the tag should have the same text as the mail but will pay attention to
+that in the future, it does make sense.
 
-Jason
+For the background, I had used 9p-for-4.19 in a mail to v9fs-developer
+asking for testing earlier this week, it is still in the repo as another
+signed tag if you'd like to confirm.
+I removed the "MAINTAINERS patches" when Andrew picked them up shortly
+after the original mail and made the second tag back then.
+
+
+> And it comes from a github address, with a pgp key that I've not seen
+> before, and without me having been told about said maintainership
+> updates. And while the  key has a lot of signatures, none of them are
+> any that I have recognized previously from kernel development.
+
+I agree on this point, and will have a different key with at least some
+kernel developers signatures for 4.20 (which will be confusing again as
+my key changes, but at least it shold have people you recognize).
+I cannot say anything other than "I was not sufficiently prepared" for
+4.19 and used whatever key I normally use after checking on pathfinder
+that it was still "closeish" to you.
+
+On the maintainership update, while it wasn't direct I believe Andrew
+brought it up when adding me to the Cc of a 9p security report after you
+added the current maintainers recently -- but, well, yes, it's not like
+being told directly.
+He has the MAINTAINER file update and am sure will send it to you
+shortly so if preferable I can wait until he sends them to you and send
+this PR (with a better tag) again at this point?
+
+
+Thank you,
+-- 
+Dominique Martinet
