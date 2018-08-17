@@ -2,74 +2,101 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8ED4C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 777C5C43615
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63AB12188F
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:47:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5ukd1OJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63AB12188F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3AC4221890
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:47:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AC4221890
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbeHQRvK (ORCPT
+        id S1727648AbeHQRvL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 13:51:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47292 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726377AbeHQRvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 13:51:10 -0400
-Received: from localhost (LFbn-NCY-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B242A2188F;
-        Fri, 17 Aug 2018 14:47:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534517251;
-        bh=7JLYyD0D5MUgDOHksZocbYSKZNAR0buHHlYqoCuZ9po=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=P5ukd1OJ6KA3g5pdqgWvxQw+n2sl/5J7iLGi247Q4e7yyIVHSi1pnmdvcgDpFhWeq
-         0/ld5dbDswqJ5bIYSSwPp98P/8EoSVH4/YbZWbkTqkiWioz8GNBo7U3FQyctt3UmrU
-         wlLlKWLq8cCGARWuX42o+O9+iPPyCPXxnm/JkSag=
-Date:   Fri, 17 Aug 2018 16:47:28 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Milind Chabbi <chabbi.milind@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH 3/5] perf/hw_breakpoint: Remove superfluous
- bp->attr.disabled = 0
-Message-ID: <20180817144727.GC12426@lerouge>
-References: <20180810104730.3293-1-jolsa@kernel.org>
- <20180810104730.3293-4-jolsa@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180810104730.3293-4-jolsa@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 17 Aug 2018 13:51:11 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39662 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727499AbeHQRvL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 13:51:11 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7HEiCou139484
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 10:47:32 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kwxc356qs-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 10:47:32 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Fri, 17 Aug 2018 15:47:29 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 17 Aug 2018 15:47:26 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7HElPxq37093424
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 17 Aug 2018 14:47:25 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D007A11C052;
+        Fri, 17 Aug 2018 17:47:27 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF37A11C04A;
+        Fri, 17 Aug 2018 17:47:25 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.205.113])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 17 Aug 2018 17:47:25 +0100 (BST)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Fri, 17 Aug 2018 17:47:22 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: [PATCH v3 1/3] docs: core-api/gfp_mask-from-fs-io: add a label for cross-referencing
+Date:   Fri, 17 Aug 2018 17:47:14 +0300
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1534517236-16762-1-git-send-email-rppt@linux.vnet.ibm.com>
+References: <1534517236-16762-1-git-send-email-rppt@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18081714-0012-0000-0000-0000029B3593
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081714-0013-0000-0000-000020CE663F
+Message-Id: <1534517236-16762-2-git-send-email-rppt@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-17_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=991 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808170160
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 12:47:28PM +0200, Jiri Olsa wrote:
-> Once the breakpoint was succesfully modified, the attr->disabled
-> value is in bp->attr.disabled. So there's no reason to set it
-> again, removing that.
-> 
-> Acked-by: Oleg Nesterov <oleg@redhat.com>
-> Link: http://lkml.kernel.org/n/tip-v5oaellzsmyszv3rfucuxkp0@git.kernel.org
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+---
+ Documentation/core-api/gfp_mask-from-fs-io.rst | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+diff --git a/Documentation/core-api/gfp_mask-from-fs-io.rst b/Documentation/core-api/gfp_mask-from-fs-io.rst
+index e0df8f4..e7c32a8 100644
+--- a/Documentation/core-api/gfp_mask-from-fs-io.rst
++++ b/Documentation/core-api/gfp_mask-from-fs-io.rst
+@@ -1,3 +1,5 @@
++.. _gfp_mask_from_fs_io:
++
+ =================================
+ GFP masks used from FS/IO context
+ =================================
+-- 
+2.7.4
+
