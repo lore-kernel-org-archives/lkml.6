@@ -3,77 +3,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC5DC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B91C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFC1D2188F
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:53:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFC1D2188F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A0E421536
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:53:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A0E421536
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbeHQR4w (ORCPT
+        id S1727651AbeHQR4y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 13:56:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60722 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726888AbeHQR4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 13:56:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9E802ADC0;
-        Fri, 17 Aug 2018 14:53:10 +0000 (UTC)
-Date:   Fri, 17 Aug 2018 16:53:10 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Evgenii Shatokhin <eshatokhin@virtuozzo.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Jessica Yu <jeyu@kernel.org>, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 00/10] livepatch: Atomic replace feature
-Message-ID: <20180817145309.a2lqv5borwi5wrej@pathway.suse.cz>
-References: <20180307082039.10196-1-pmladek@suse.com>
- <d40cb118-97d7-4d2f-4b39-265341bd9dac@virtuozzo.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d40cb118-97d7-4d2f-4b39-265341bd9dac@virtuozzo.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        Fri, 17 Aug 2018 13:56:54 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:6846 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727037AbeHQR4x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 13:56:53 -0400
+Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
+  by relmlie2.idc.renesas.com with ESMTP; 17 Aug 2018 23:53:11 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir1.idc.renesas.com (Postfix) with ESMTP id 7ABA884BE9;
+        Fri, 17 Aug 2018 23:53:11 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.53,251,1531753200"; 
+   d="scan'208";a="289879886"
+Received: from unknown (HELO fabrizio-dev.ree.adwin.renesas.com) ([10.226.36.250])
+  by relmlii2.idc.renesas.com with ESMTP; 17 Aug 2018 23:53:07 +0900
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Add Thermal compatibility for r8a774a1
+Date:   Fri, 17 Aug 2018 15:53:02 +0100
+Message-Id: <1534517584-14434-1-git-send-email-fabrizio.castro@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2018-08-17 13:17:27, Evgenii Shatokhin wrote:
-> Hi,
-> 
-> On 07.03.2018 11:20, Petr Mladek wrote:
-> > The atomic replace allows to create cumulative patches. They
-> > are useful when you maintain many livepatches and want to remove
-> > one that is lower on the stack. In addition it is very useful when
-> > more patches touch the same function and there are dependencies
-> > between them.
-> 
-> Could you tell me what is the current status of this series? Looks like I
-> lost track of it.
-> 
-> Is there anything else that should be done here before this series could be
-> merged?
+Dear All,
 
-I have almost ready the rework suggested by Josh. I still need to
-port the new tests and send.
+this series adds Thermal compatibility for RZ/G2M (a.k.a. R8A774A1).
 
-Unfortunately I had to put it temporary on hold because of other
-important tasks.
+Cheers,
+Fab
 
-I am about to leave for vacation (one week off). I will try to
-find some cycles, finish and send it once I am back.
+Fabrizio Castro (2):
+  thermal: rcar_gen3_thermal: Add r8a774a1 support
+  dt-bindings: thermal: rcar-gen3-thermal: Add r8a774a1 support
 
-Best Regards,
-Petr
+ Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt | 1 +
+ drivers/thermal/rcar_gen3_thermal.c                             | 1 +
+ 2 files changed, 2 insertions(+)
+
+-- 
+2.7.4
+
