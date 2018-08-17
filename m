@@ -2,74 +2,81 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82015C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F5EC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 04:09:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EF8C2146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:55:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EF8C2146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 1013521523
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 04:09:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BQAq8G3D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1013521523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbeHQG46 (ORCPT
+        id S1726366AbeHQHKu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 02:56:58 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11128 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725833AbeHQG46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 02:56:58 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1456DDDA987ED;
-        Fri, 17 Aug 2018 11:55:10 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.399.0; Fri, 17 Aug 2018
- 11:55:11 +0800
-Message-ID: <5B76471D.1070504@huawei.com>
-Date:   Fri, 17 Aug 2018 11:55:09 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Fri, 17 Aug 2018 03:10:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33340 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725833AbeHQHKu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 03:10:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=cxqgqBH5HQeMEDXqTjWL5mdZdRcS0bCSs6jjj9gkJ3Y=; b=BQAq8G3DzDu/KjS0v3eo3AJuY
+        tF/rRVwzvhG3WNcct9nh5O2efnqgYtgpJm6I/TQjiykKWGvlqWwF4qkzvL5aHUCFf6g+iIXGNRTsP
+        WkGIPZXpUDToY2HQ7dsg1uVSEfUWsdQ6CXdiLgybYUNlXrhznfAZD+Z/xHmvEU/MAufQH7X1znxGO
+        Dt5I7BxLWt8MsDE4TFs0sm8DcBOVlhHXBeD+kKqI/hNOpOOQfIk4a6vm2UTNzkb7BC30L+elgNqST
+        4wDpgpb3wsMAYnhIro4JN57Baood97NTUEyqoEKYCrZMR7B6a0LcxzQzjjnHzvTsE9MPCLJ4VmHDJ
+        EO5RFnATg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fqW4M-0008Tx-9f; Fri, 17 Aug 2018 04:09:02 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] faddr2line: fix path name comment
+Message-ID: <a2aa8e29-a551-8e53-b9e5-80925b6f6428@infradead.org>
+Date:   Thu, 16 Aug 2018 21:09:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-To:     <cpw@sgi.com>, <robinmholt@gmail.com>
-CC:     <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] misc: remove meanless null check before kfree
-References: <1534476285-13097-1-git-send-email-zhongjiang@huawei.com>
-In-Reply-To: <1534476285-13097-1-git-send-email-zhongjiang@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/17 11:24, zhong jiang wrote:
-> kfree has taken null pointer into account. so check the null pointer
-> before kfree is meanless.
- meanless/meaningless.  will repost. please ignore the patch, thanks.
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  drivers/misc/sgi-xp/xpc_partition.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/misc/sgi-xp/xpc_partition.c b/drivers/misc/sgi-xp/xpc_partition.c
-> index 0c3ef6f..3eba1c4 100644
-> --- a/drivers/misc/sgi-xp/xpc_partition.c
-> +++ b/drivers/misc/sgi-xp/xpc_partition.c
-> @@ -98,8 +98,7 @@
->  			len = L1_CACHE_ALIGN(len);
->  
->  		if (len > buf_len) {
-> -			if (buf_base != NULL)
-> -				kfree(buf_base);
-> +			kfree(buf_base);
->  			buf_len = L1_CACHE_ALIGN(len);
->  			buf = xpc_kmalloc_cacheline_aligned(buf_len, GFP_KERNEL,
->  							    &buf_base);
+From: Randy Dunlap <rdunlap@infradead.org>
+
+Fix a source file reference location to the correct path name.
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+---
+ scripts/faddr2line |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- lnx-418.orig/scripts/faddr2line
++++ lnx-418/scripts/faddr2line
+@@ -71,7 +71,7 @@ die() {
+ 
+ # Try to figure out the source directory prefix so we can remove it from the
+ # addr2line output.  HACK ALERT: This assumes that start_kernel() is in
+-# kernel/init.c!  This only works for vmlinux.  Otherwise it falls back to
++# init/main.c!  This only works for vmlinux.  Otherwise it falls back to
+ # printing the absolute path.
+ find_dir_prefix() {
+ 	local objfile=$1
 
 
