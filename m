@@ -2,75 +2,323 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F24A4C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A46C4C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABF9D2185D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:52:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABF9D2185D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B82D20852
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:52:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jwUkKb3t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B82D20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726331AbeHQGxm (ORCPT
+        id S1726378AbeHQGyl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 02:53:42 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:40308 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725833AbeHQGxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 02:53:42 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id B6CF0A4FE694E;
-        Fri, 17 Aug 2018 11:51:53 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Fri, 17 Aug 2018
- 11:51:50 +0800
-Message-ID: <5B764655.7000803@huawei.com>
-Date:   Fri, 17 Aug 2018 11:51:49 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
-MIME-Version: 1.0
-To:     <dvhart@infradead.org>, <andy@infradead.org>
-CC:     <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drviers: intel_ips: remove the unneeded null pointer
- check before debugfs_remove_recursive
-References: <1534476719-13480-1-git-send-email-zhongjiang@huawei.com>
-In-Reply-To: <1534476719-13480-1-git-send-email-zhongjiang@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+        Fri, 17 Aug 2018 02:54:41 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:42844 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725833AbeHQGyl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 02:54:41 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7H3oIsK094624;
+        Fri, 17 Aug 2018 03:52:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=LHTw49hZPws2BMLMwLFISArr+QYDDO3g7PSvuuR8tuY=;
+ b=jwUkKb3t+dIoHsa1zhGEq4pNp6iH2OEl+Q2Z6OxpJdDDNcAJ1/o/3BqofsUoZVy+s5+G
+ puj2PGQ2twlwZ7j9OdWLuLiOpw7GvrtcE9CWqMfPYmzkfAcIw9VOZnk8Y1YeL4IqkFmz
+ YmTIsGlHaexcfxjxqxD2g2DMul9g2ZNPIkYYGlCqi9n6UiwEO1EFFirY2zS0xLez0r7Q
+ j/je6T7Id8Is8JjouoHQuDvgzQLyvt0i/mv8J0GmUrjr/9kz/nsPP6xbaDWXcdOMCI7q
+ RmSZl1vMmsaAVDLcnD/UyAqXBK519ryu8A1g/emv6huz/5kXsWRE6fydxh+7aPXxTaLO UQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2ksreqddnf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Aug 2018 03:52:51 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7H3qoJf017157
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Aug 2018 03:52:50 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7H3qnZu024158;
+        Fri, 17 Aug 2018 03:52:49 GMT
+Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 16 Aug 2018 20:52:48 -0700
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     axboe@kernel.dk
+Cc:     tom.leiming@gmail.com, bart.vanassche@wdc.com,
+        keith.busch@linux.intel.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V2 1/2] blk-mq: init hctx sched after update ctx and hctx mapping
+Date:   Fri, 17 Aug 2018 11:54:02 +0800
+Message-Id: <1534478043-7170-2-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1534478043-7170-1-git-send-email-jianchao.w.wang@oracle.com>
+References: <1534478043-7170-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8987 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808170040
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-subect:  drviers/drivers   will repost, please ingore the patch. Thanks
-On 2018/8/17 11:31, zhong jiang wrote:
-> debugfs_remove_recursive has taken the null pointer into account.
-> just remove the null check before debugfs_remove_recursive.
->
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  drivers/platform/x86/intel_ips.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/platform/x86/intel_ips.c b/drivers/platform/x86/intel_ips.c
-> index c5ece7e..1c3127c 100644
-> --- a/drivers/platform/x86/intel_ips.c
-> +++ b/drivers/platform/x86/intel_ips.c
-> @@ -1311,8 +1311,7 @@ static int ips_debugfs_open(struct inode *inode, struct file *file)
->  
->  static void ips_debugfs_cleanup(struct ips_driver *ips)
->  {
-> -	if (ips->debug_root)
-> -		debugfs_remove_recursive(ips->debug_root);
-> +	debugfs_remove_recursive(ips->debug_root);
->  	return;
->  }
->  
+Currently, when update nr_hw_queues, io scheduler's init_hctx will
+be invoked before the mapping between ctx and hctx is adapted
+correctly by blk_mq_map_swqueue. The io scheduler init_hctx (kyber)
+may depend on this mapping and get wrong result and panic finally.
+A simply way to fix this is switch the io scheduler to none before
+update the nr_hw_queues, and then get it back after update nr_hw_queues.
+To achieve this, we add a new member elv_type in request_queue to
+save the original elevator and adapt and export elevator_switch_mq.
+And also blk_mq_sched_init_/exit_hctx are removed due to nobody use
+them any more.
 
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+ block/blk-mq-sched.c   | 44 --------------------------------------------
+ block/blk-mq-sched.h   |  5 -----
+ block/blk-mq.c         | 36 ++++++++++++++++++++++++++++--------
+ block/blk.h            |  2 ++
+ block/elevator.c       | 20 ++++++++++++--------
+ include/linux/blkdev.h |  3 +++
+ 6 files changed, 45 insertions(+), 65 deletions(-)
+
+diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
+index cf9c66c..29bfe80 100644
+--- a/block/blk-mq-sched.c
++++ b/block/blk-mq-sched.c
+@@ -462,50 +462,6 @@ static void blk_mq_sched_tags_teardown(struct request_queue *q)
+ 		blk_mq_sched_free_tags(set, hctx, i);
+ }
+ 
+-int blk_mq_sched_init_hctx(struct request_queue *q, struct blk_mq_hw_ctx *hctx,
+-			   unsigned int hctx_idx)
+-{
+-	struct elevator_queue *e = q->elevator;
+-	int ret;
+-
+-	if (!e)
+-		return 0;
+-
+-	ret = blk_mq_sched_alloc_tags(q, hctx, hctx_idx);
+-	if (ret)
+-		return ret;
+-
+-	if (e->type->ops.mq.init_hctx) {
+-		ret = e->type->ops.mq.init_hctx(hctx, hctx_idx);
+-		if (ret) {
+-			blk_mq_sched_free_tags(q->tag_set, hctx, hctx_idx);
+-			return ret;
+-		}
+-	}
+-
+-	blk_mq_debugfs_register_sched_hctx(q, hctx);
+-
+-	return 0;
+-}
+-
+-void blk_mq_sched_exit_hctx(struct request_queue *q, struct blk_mq_hw_ctx *hctx,
+-			    unsigned int hctx_idx)
+-{
+-	struct elevator_queue *e = q->elevator;
+-
+-	if (!e)
+-		return;
+-
+-	blk_mq_debugfs_unregister_sched_hctx(hctx);
+-
+-	if (e->type->ops.mq.exit_hctx && hctx->sched_data) {
+-		e->type->ops.mq.exit_hctx(hctx, hctx_idx);
+-		hctx->sched_data = NULL;
+-	}
+-
+-	blk_mq_sched_free_tags(q->tag_set, hctx, hctx_idx);
+-}
+-
+ int blk_mq_init_sched(struct request_queue *q, struct elevator_type *e)
+ {
+ 	struct blk_mq_hw_ctx *hctx;
+diff --git a/block/blk-mq-sched.h b/block/blk-mq-sched.h
+index 0cb8f93..4e028ee 100644
+--- a/block/blk-mq-sched.h
++++ b/block/blk-mq-sched.h
+@@ -28,11 +28,6 @@ void blk_mq_sched_dispatch_requests(struct blk_mq_hw_ctx *hctx);
+ int blk_mq_init_sched(struct request_queue *q, struct elevator_type *e);
+ void blk_mq_exit_sched(struct request_queue *q, struct elevator_queue *e);
+ 
+-int blk_mq_sched_init_hctx(struct request_queue *q, struct blk_mq_hw_ctx *hctx,
+-			   unsigned int hctx_idx);
+-void blk_mq_sched_exit_hctx(struct request_queue *q, struct blk_mq_hw_ctx *hctx,
+-			    unsigned int hctx_idx);
+-
+ static inline bool
+ blk_mq_sched_bio_merge(struct request_queue *q, struct bio *bio)
+ {
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 5efd789..de7027f 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2147,8 +2147,6 @@ static void blk_mq_exit_hctx(struct request_queue *q,
+ 	if (set->ops->exit_request)
+ 		set->ops->exit_request(set, hctx->fq->flush_rq, hctx_idx);
+ 
+-	blk_mq_sched_exit_hctx(q, hctx, hctx_idx);
+-
+ 	if (set->ops->exit_hctx)
+ 		set->ops->exit_hctx(hctx, hctx_idx);
+ 
+@@ -2216,12 +2214,9 @@ static int blk_mq_init_hctx(struct request_queue *q,
+ 	    set->ops->init_hctx(hctx, set->driver_data, hctx_idx))
+ 		goto free_bitmap;
+ 
+-	if (blk_mq_sched_init_hctx(q, hctx, hctx_idx))
+-		goto exit_hctx;
+-
+ 	hctx->fq = blk_alloc_flush_queue(q, hctx->numa_node, set->cmd_size);
+ 	if (!hctx->fq)
+-		goto sched_exit_hctx;
++		goto exit_hctx;
+ 
+ 	if (blk_mq_init_request(set, hctx->fq->flush_rq, hctx_idx, node))
+ 		goto free_fq;
+@@ -2235,8 +2230,6 @@ static int blk_mq_init_hctx(struct request_queue *q,
+ 
+  free_fq:
+ 	kfree(hctx->fq);
+- sched_exit_hctx:
+-	blk_mq_sched_exit_hctx(q, hctx, hctx_idx);
+  exit_hctx:
+ 	if (set->ops->exit_hctx)
+ 		set->ops->exit_hctx(hctx, hctx_idx);
+@@ -2913,6 +2906,25 @@ static void __blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set,
+ 	list_for_each_entry(q, &set->tag_list, tag_set_list)
+ 		blk_mq_freeze_queue(q);
+ 
++	/*
++	 * switch io scheduler to NULL to clean up the data in it.
++	 * will get it back after update mapping between cpu and hw queues.
++	 */
++	list_for_each_entry(q, &set->tag_list, tag_set_list) {
++		if (!q->elevator) {
++			q->elv_type = NULL;
++			continue;
++		}
++		q->elv_type = q->elevator->type;
++		mutex_lock(&q->sysfs_lock);
++		/*
++		 * elevator_release will put it.
++		 */
++		__module_get(q->elv_type->elevator_owner);
++		elevator_switch_mq(q, NULL);
++		mutex_unlock(&q->sysfs_lock);
++	}
++
+ 	set->nr_hw_queues = nr_hw_queues;
+ 	blk_mq_update_queue_map(set);
+ 	list_for_each_entry(q, &set->tag_list, tag_set_list) {
+@@ -2920,6 +2932,14 @@ static void __blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set,
+ 		blk_mq_queue_reinit(q);
+ 	}
+ 
++	list_for_each_entry(q, &set->tag_list, tag_set_list) {
++		if (!q->elv_type)
++			continue;
++
++		mutex_lock(&q->sysfs_lock);
++		elevator_switch_mq(q, q->elv_type);
++		mutex_unlock(&q->sysfs_lock);
++	}
+ 	list_for_each_entry(q, &set->tag_list, tag_set_list)
+ 		blk_mq_unfreeze_queue(q);
+ }
+diff --git a/block/blk.h b/block/blk.h
+index d4d67e9..0c9bc8d 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -234,6 +234,8 @@ static inline void elv_deactivate_rq(struct request_queue *q, struct request *rq
+ 
+ int elevator_init(struct request_queue *);
+ int elevator_init_mq(struct request_queue *q);
++int elevator_switch_mq(struct request_queue *q,
++			      struct elevator_type *new_e);
+ void elevator_exit(struct request_queue *, struct elevator_queue *);
+ int elv_register_queue(struct request_queue *q);
+ void elv_unregister_queue(struct request_queue *q);
+diff --git a/block/elevator.c b/block/elevator.c
+index fa828b5..5ea6e7d 100644
+--- a/block/elevator.c
++++ b/block/elevator.c
+@@ -933,16 +933,13 @@ void elv_unregister(struct elevator_type *e)
+ }
+ EXPORT_SYMBOL_GPL(elv_unregister);
+ 
+-static int elevator_switch_mq(struct request_queue *q,
++int elevator_switch_mq(struct request_queue *q,
+ 			      struct elevator_type *new_e)
+ {
+ 	int ret;
+ 
+ 	lockdep_assert_held(&q->sysfs_lock);
+ 
+-	blk_mq_freeze_queue(q);
+-	blk_mq_quiesce_queue(q);
+-
+ 	if (q->elevator) {
+ 		if (q->elevator->registered)
+ 			elv_unregister_queue(q);
+@@ -968,8 +965,6 @@ static int elevator_switch_mq(struct request_queue *q,
+ 		blk_add_trace_msg(q, "elv switch: none");
+ 
+ out:
+-	blk_mq_unquiesce_queue(q);
+-	blk_mq_unfreeze_queue(q);
+ 	return ret;
+ }
+ 
+@@ -1021,8 +1016,17 @@ static int elevator_switch(struct request_queue *q, struct elevator_type *new_e)
+ 
+ 	lockdep_assert_held(&q->sysfs_lock);
+ 
+-	if (q->mq_ops)
+-		return elevator_switch_mq(q, new_e);
++	if (q->mq_ops) {
++		blk_mq_freeze_queue(q);
++		blk_mq_quiesce_queue(q);
++
++		err = elevator_switch_mq(q, new_e);
++
++		blk_mq_unquiesce_queue(q);
++		blk_mq_unfreeze_queue(q);
++
++		return err;
++	}
+ 
+ 	/*
+ 	 * Turn on BYPASS and drain all requests w/ elevator private data.
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index d6869e0..ee930c4 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -437,6 +437,9 @@ struct request_queue {
+ 	struct list_head	queue_head;
+ 	struct request		*last_merge;
+ 	struct elevator_queue	*elevator;
++
++	/* used when update nr_hw_queues */
++	struct elevator_type	*elv_type;
+ 	int			nr_rqs[2];	/* # allocated [a]sync rqs */
+ 	int			nr_rqs_elvpriv;	/* # allocated rqs w/ elvpriv */
+ 
+-- 
+2.7.4
 
