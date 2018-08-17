@@ -4,68 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 538C6C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:41:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30532C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A714218F9
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:40:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA928218F9
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:41:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mo+liTx+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A714218F9
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fy3BP0X6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA928218F9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbeHRAqA (ORCPT
+        id S1728517AbeHRAqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 20:46:00 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35466 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727318AbeHRAp7 (ORCPT
+        Fri, 17 Aug 2018 20:46:34 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35495 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727206AbeHRAqe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 20:45:59 -0400
-Received: by mail-pg1-f194.google.com with SMTP id w10-v6so4128669pgv.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 14:40:57 -0700 (PDT)
+        Fri, 17 Aug 2018 20:46:34 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w10-v6so4129143pgv.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 14:41:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=Pg36XBKoZm1we4ods0Zzt48tJGC39crqSnN/rNKiVnw=;
-        b=Mo+liTx+64UDfw5E5KEIQj4P7PkZAF3rB10qi87fC2K+T4RO3fncI/ty77PP2Nou2q
-         1/Osdghe5e2cUG1b5QEBxUB59rIz/WBzqdfBNSVktTIj7AzdVhEjo4vccMwL8lQYvHgP
-         4J8ZKrgJO7YuQRZWgltItBec2Cm3VKazC4idM=
+        bh=CD+I3EtfjTVRv8UGAr0JBdr/LVr4o/w1tSfB1TQz9QY=;
+        b=Fy3BP0X6fXRyfNLeWV9Rdvby1vXCjkmao0ydAuZuxWE2yryaPMBUj/sCCdgL1hyKFl
+         RnCjKscT10wmP2kiT+95kdd9rjBtVi+nosLdj7CKryyDDkSsZiJQ70nsVDSyMMZUxg/z
+         7H5qrBo+QZPsAcqwKuXSxYxA2YHne5koeO3mw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=Pg36XBKoZm1we4ods0Zzt48tJGC39crqSnN/rNKiVnw=;
-        b=U0/qXoPtIVeVjqDTG1huYoVdayE+9tc3kw8q9oGxKRvC/UILD7fCvfgAw+O5rL9HCZ
-         ycsdo10jGhycwYAaM168CLFfpppB2ZGmJl7xE0YclIkdrpJnVvV9N348mnpePKyy1dBe
-         DHfSPcMFAvMM2B6BYwKXza31i5AwpXPOUN8eGrdCQAFVbcRbtyRHecsO+6Bjcc0fJ1bz
-         ss21iY//c0fiSoQaPL0Md6VDVsqw6idkGGRt2SnGQzI1lSOj1tH8Cd4bnhQT5m28EKAR
-         5txXdOgUBY/zIEh7ovpZ/OckHwGcgc1RQM3RISRtfZVSR42VHakWUGLtsw/ruZPqR/bE
-         3krg==
-X-Gm-Message-State: AOUpUlECN9pXbBWaysYrYqaPZxQI3QZ0uz16FY5MZZHmpA5sLvalMcIu
-        zNT+KS/rZYwIwbmesrF6KNM7QQ==
-X-Google-Smtp-Source: AA+uWPxiNsja+mSIIHgjC5xQ6Mvoau0jMoYQTNypxy6WUPxF04yeq7TfjAUGMVohQr3B5Zfc1GAMxQ==
-X-Received: by 2002:a62:41d6:: with SMTP id g83-v6mr38048260pfd.219.1534542057272;
-        Fri, 17 Aug 2018 14:40:57 -0700 (PDT)
+        bh=CD+I3EtfjTVRv8UGAr0JBdr/LVr4o/w1tSfB1TQz9QY=;
+        b=UsKhrJ5aC4hA1Nl4rsDxdIJJdjL8EiGIhSAk7xQKagikTHDGQTln4gMgfBgktqW/Pu
+         vLOArqx9OaMYo84mnM25RNjNbMYTpUkAwb6t44H7IDyV21N8aN0+FCFW4CEkvHSAu0R/
+         8NEPDdKoGQ2eoopBekXP6j+aXW0AKP8qP5gq1RDW/YbhWImyQ0Nloq/drDzYnUF+IQmm
+         4ZPSKhxxebPWpYn8uX7C8X+dOu2tdJIASnC5gV15FyDLfRTsAecTP6084zTBGueAadTC
+         ZxVsgDVSq8jgsbH4VG+xTL/sU1UrYWHoJm7dpjS46kJYMciGMxwybUJxJnaOQhxvfObX
+         3AGg==
+X-Gm-Message-State: AOUpUlEqu3pFn5oEp4cyqHFY8PeFfGwdkR53Cx+cjnkPz+UhFoEuTuhw
+        KBqDFfRq+G27BaE7rN81CK0bng==
+X-Google-Smtp-Source: AA+uWPzaq8zez/8gZn2MSqhxdKFq8gg97l9IpvSKTAdkMira9MGGOcInCeN/gaGz6E2VNI6nbx40lg==
+X-Received: by 2002:a62:398c:: with SMTP id u12-v6mr38401264pfj.9.1534542092154;
+        Fri, 17 Aug 2018 14:41:32 -0700 (PDT)
 Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 16-v6sm5764188pfo.164.2018.08.17.14.40.56
+        by smtp.gmail.com with ESMTPSA id l84-v6sm6087863pfg.3.2018.08.17.14.41.31
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 17 Aug 2018 14:40:56 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 14:44:47 -0700
+        Fri, 17 Aug 2018 14:41:31 -0700 (PDT)
+Date:   Fri, 17 Aug 2018 14:45:22 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Chris Lew <clew@codeaurora.org>,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>
-Subject: [GIT PULL] rpmsg updates for v4.19
-Message-ID: <20180817214447.GB3941@tuxbook-pro>
+        linux-kernel@vger.kernel.org, Baolin Wang <baolin.wang@linaro.org>
+Subject: [GIT PULL] hwspinlock updates for v4.19
+Message-ID: <20180817214522.GC3941@tuxbook-pro>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -81,39 +77,30 @@ The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
 
 are available in the Git repository at:
 
-  git://github.com/andersson/remoteproc tags/rpmsg-v4.19
+  git://github.com/andersson/remoteproc tags/hwlock-v4.19
 
-for you to fetch changes up to 00b645e0b4e4a3e5f8d88a4e9acf7e80045c34b4:
+for you to fetch changes up to ddb34f480d1b8051bc18e6ff22e93a6c9a33f94f:
 
-  rpmsg: Add compat ioctl for rpmsg char driver (2018-07-30 23:40:23 -0700)
-
-----------------------------------------------------------------
-rpmsg updates for v4.19
-
-This fixes a few compile and kerneldoc warnings, allows rpmsg devices to
-handle power domains, allow for labeling GLINK edges and supports compat
-for rpmsg_char.
+  hwspinlock: Fix incorrect return pointers (2018-07-30 20:54:51 -0700)
 
 ----------------------------------------------------------------
-Arun Kumar Neelakantam (1):
-      rpmsg: Add compat ioctl for rpmsg char driver
+hwspinlock updates for v4.19
 
-Chris Lew (2):
-      dt-bindings: soc: qcom: Add label for GLINK bindings
-      rpmsg: glink: Store edge name for glink device
+This introduces devres helpers and an API to request a lock by name,
+then migrates the sprd SPI driver to use these.
 
-Niklas Cassel (1):
-      rpmsg: smd: Add missing include of sizes.h
+----------------------------------------------------------------
+Baolin Wang (8):
+      hwspinlock: Add one new API to support getting a specific hwlock by the name
+      hwspinlock: Add devm_xxx() APIs to request/free hwlock
+      hwspinlock: Add devm_xxx() APIs to register/unregister one hwlock controller
+      hwspinlock: Remove redundant config
+      hwspinlock: Fix one comment mistake
+      spi: sprd: Replace of_hwspin_lock_get_id() with of_hwspin_lock_get_id_byname()
+      spi: sprd: Change to use devm_hwspin_lock_request_specific()
+      hwspinlock: Fix incorrect return pointers
 
-Srinivas Kandagatla (4):
-      rpmsg: glink: correctly annotate intent members
-      rpmsg: glink: Fix various kerneldoc warnings.
-      rpmsg: smd: fix kerneldoc warnings
-      rpmsg: core: add support to power domains for devices
-
- .../devicetree/bindings/soc/qcom/qcom,glink.txt    |  5 +++
- drivers/rpmsg/qcom_glink_native.c                  | 51 +++++++++++++---------
- drivers/rpmsg/qcom_smd.c                           | 10 ++++-
- drivers/rpmsg/rpmsg_char.c                         |  2 +
- drivers/rpmsg/rpmsg_core.c                         |  7 +++
- 5 files changed, 53 insertions(+), 22 deletions(-)
+ drivers/hwspinlock/hwspinlock_core.c | 223 ++++++++++++++++++++++++++++++++++-
+ drivers/spi/spi-sprd-adi.c           |  11 +-
+ include/linux/hwspinlock.h           |  37 +++++-
+ 3 files changed, 262 insertions(+), 9 deletions(-)
