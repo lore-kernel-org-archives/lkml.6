@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9CF0C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7131FC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98F622185B
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:45:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98F622185B
+	by mail.kernel.org (Postfix) with ESMTP id 2506F2185B
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:49:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2506F2185B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726222AbeHQGrK (ORCPT
+        id S1726255AbeHQGvG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 02:47:10 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11126 "EHLO huawei.com"
+        Fri, 17 Aug 2018 02:51:06 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47534 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725766AbeHQGrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 02:47:10 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id BE82EB0F22271;
-        Fri, 17 Aug 2018 11:45:21 +0800 (CST)
+        id S1725766AbeHQGvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 02:51:05 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 338264FE991B5;
+        Fri, 17 Aug 2018 11:49:18 +0800 (CST)
 Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.399.0; Fri, 17 Aug 2018 11:45:18 +0800
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.399.0; Fri, 17 Aug 2018 11:49:17 +0800
 From:   zhong jiang <zhongjiang@huawei.com>
-To:     <dvhart@infradead.org>, <andy@infradead.org>
+To:     <laurent.pinchart@ideasonboard.com>, <mchehab@kernel.org>
 CC:     <linux-kernel@vger.kernel.org>
-Subject: [PATCH] drivers: intel_ips: remove the unneeded null pointer check before debugfs_remove_recursive
-Date:   Fri, 17 Aug 2018 11:33:28 +0800
-Message-ID: <1534476808-13574-1-git-send-email-zhongjiang@huawei.com>
+Subject: [PATCH] media: NULL check is meaningless before debugfs_remove_recursive
+Date:   Fri, 17 Aug 2018 11:37:26 +0800
+Message-ID: <1534477046-13795-1-git-send-email-zhongjiang@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -44,28 +44,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-debugfs_remove_recursive has taken the null pointer into account.
-just remove the null check before debugfs_remove_recursive.
+debugfs_remove_recursive has taken null pointer into account. so
+remove the unneeded check.
 
 Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 ---
- drivers/platform/x86/intel_ips.c | 3 +--
+ drivers/media/usb/uvc/uvc_debugfs.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_ips.c b/drivers/platform/x86/intel_ips.c
-index c5ece7e..1c3127c 100644
---- a/drivers/platform/x86/intel_ips.c
-+++ b/drivers/platform/x86/intel_ips.c
-@@ -1311,8 +1311,7 @@ static int ips_debugfs_open(struct inode *inode, struct file *file)
+diff --git a/drivers/media/usb/uvc/uvc_debugfs.c b/drivers/media/usb/uvc/uvc_debugfs.c
+index 368f8f8..6995aeb 100644
+--- a/drivers/media/usb/uvc/uvc_debugfs.c
++++ b/drivers/media/usb/uvc/uvc_debugfs.c
+@@ -128,6 +128,5 @@ void uvc_debugfs_init(void)
  
- static void ips_debugfs_cleanup(struct ips_driver *ips)
+ void uvc_debugfs_cleanup(void)
  {
--	if (ips->debug_root)
--		debugfs_remove_recursive(ips->debug_root);
-+	debugfs_remove_recursive(ips->debug_root);
- 	return;
+-	if (uvc_debugfs_root_dir != NULL)
+-		debugfs_remove_recursive(uvc_debugfs_root_dir);
++	debugfs_remove_recursive(uvc_debugfs_root_dir);
  }
- 
 -- 
 1.7.12.4
 
