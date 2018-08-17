@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 466E9C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 414F9C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:48:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09D22218EB
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:48:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09D22218EB
+	by mail.kernel.org (Postfix) with ESMTP id 041F8218AA
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:48:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 041F8218AA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbeHQMvN (ORCPT
+        id S1727334AbeHQMvR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 08:51:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60428 "EHLO mx1.redhat.com"
+        Fri, 17 Aug 2018 08:51:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55960 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727026AbeHQMvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 08:51:13 -0400
+        id S1727181AbeHQMvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 08:51:16 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EB04F26377;
-        Fri, 17 Aug 2018 09:48:27 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5AB1A40201C6;
+        Fri, 17 Aug 2018 09:48:31 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7EEB11746E;
-        Fri, 17 Aug 2018 09:48:26 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E1CA91746E;
+        Fri, 17 Aug 2018 09:48:29 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -38,82 +38,93 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH 07/13] perf tools: Store compression id into struct dso
-Date:   Fri, 17 Aug 2018 11:48:07 +0200
-Message-Id: <20180817094813.15086-8-jolsa@kernel.org>
+Subject: [PATCH 09/13] perf tools: Move the temp file processing into decompress_kmodule
+Date:   Fri, 17 Aug 2018 11:48:09 +0200
+Message-Id: <20180817094813.15086-10-jolsa@kernel.org>
 In-Reply-To: <20180817094813.15086-1-jolsa@kernel.org>
 References: <20180817094813.15086-1-jolsa@kernel.org>
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 17 Aug 2018 09:48:28 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 17 Aug 2018 09:48:28 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 17 Aug 2018 09:48:31 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 17 Aug 2018 09:48:31 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding comp into struct dso to hold the compression index.
-It will be used in following patches.
+We will add compression check in following patch and it
+makes it easier if the tem file processing is done in the
+single place. It also makes the current code simpler.
 
-Link: http://lkml.kernel.org/n/tip-84cxf8bbc0etndwzrzqxxi2d@git.kernel.org
+The decompress_kmodule function now returns the fd of the
+uncompressed file and the file name in pathname arg, if it's
+provided.
+
+Link: http://lkml.kernel.org/n/tip-n8ul4r0tny6n16012uncxe6q@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/util/dso.c     | 5 ++++-
- tools/perf/util/dso.h     | 1 +
- tools/perf/util/machine.c | 4 +++-
- 3 files changed, 8 insertions(+), 2 deletions(-)
+ tools/perf/util/dso.c | 29 ++++++++++++-----------------
+ 1 file changed, 12 insertions(+), 17 deletions(-)
 
 diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
-index f5f8babea17c..f0e4cc43c97e 100644
+index 1cee958c9a2a..0f07aab30ffe 100644
 --- a/tools/perf/util/dso.c
 +++ b/tools/perf/util/dso.c
-@@ -418,8 +418,10 @@ void dso__set_module_info(struct dso *dso, struct kmod_path *m,
- 		dso->symtab_type = DSO_BINARY_TYPE__GUEST_KMODULE;
- 
- 	/* _KMODULE_COMP should be next to _KMODULE */
--	if (m->kmod && m->comp)
-+	if (m->kmod && m->comp) {
- 		dso->symtab_type++;
-+		dso->comp = m->comp;
-+	}
- 
- 	dso__set_short_name(dso, strdup(m->name), true);
+@@ -250,8 +250,10 @@ bool dso__needs_decompress(struct dso *dso)
+ 		dso->symtab_type == DSO_BINARY_TYPE__GUEST_KMODULE_COMP;
  }
-@@ -1225,6 +1227,7 @@ struct dso *dso__new(const char *name)
- 		dso->a2l_fails = 1;
- 		dso->kernel = DSO_TYPE_USER;
- 		dso->needs_swap = DSO_SWAP__UNSET;
-+		dso->comp = COMP_ID__NONE;
- 		RB_CLEAR_NODE(&dso->rb_node);
- 		dso->root = NULL;
- 		INIT_LIST_HEAD(&dso->node);
-diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
-index 7bde23f6e5a9..a6c7af52115f 100644
---- a/tools/perf/util/dso.h
-+++ b/tools/perf/util/dso.h
-@@ -175,6 +175,7 @@ struct dso {
- 	u16		 short_name_len;
- 	void		*dwfl;			/* DWARF debug info */
- 	struct auxtrace_cache *auxtrace_cache;
-+	int		 comp;
  
- 	/* dso data file */
- 	struct {
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index b300a3973448..c4acd2001db0 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1212,8 +1212,10 @@ static int map_groups__set_module_path(struct map_groups *mg, const char *path,
- 	 * Full name could reveal us kmod compression, so
- 	 * we need to update the symtab_type if needed.
- 	 */
--	if (m->comp && is_kmod_dso(map->dso))
-+	if (m->comp && is_kmod_dso(map->dso)) {
- 		map->dso->symtab_type++;
-+		map->dso->comp = m->comp;
-+	}
+-static int decompress_kmodule(struct dso *dso, const char *name, char *tmpbuf)
++static int decompress_kmodule(struct dso *dso, const char *name,
++			      char *pathname, size_t len)
+ {
++	char tmpbuf[] = KMOD_DECOMP_NAME;
+ 	int fd = -1;
  
- 	return 0;
+ 	if (!dso__needs_decompress(dso))
+@@ -272,34 +274,27 @@ static int decompress_kmodule(struct dso *dso, const char *name, char *tmpbuf)
+ 		fd = -1;
+ 	}
+ 
++	if (!pathname || (fd < 0))
++		unlink(tmpbuf);
++
++	if (pathname && (fd >= 0))
++		strncpy(pathname, tmpbuf, len);
++
+ 	return fd;
  }
+ 
+ int dso__decompress_kmodule_fd(struct dso *dso, const char *name)
+ {
+-	char tmpbuf[] = KMOD_DECOMP_NAME;
+-	int fd;
+-
+-	fd = decompress_kmodule(dso, name, tmpbuf);
+-	unlink(tmpbuf);
+-	return fd;
++	return decompress_kmodule(dso, name, NULL, 0);
+ }
+ 
+ int dso__decompress_kmodule_path(struct dso *dso, const char *name,
+ 				 char *pathname, size_t len)
+ {
+-	char tmpbuf[] = KMOD_DECOMP_NAME;
+-	int fd;
+-
+-	fd = decompress_kmodule(dso, name, tmpbuf);
+-	if (fd < 0) {
+-		unlink(tmpbuf);
+-		return -1;
+-	}
++	int fd = decompress_kmodule(dso, name, pathname, len);
+ 
+-	strncpy(pathname, tmpbuf, len);
+ 	close(fd);
+-	return 0;
++	return fd >= 0 ? 0 : -1;
+ }
+ 
+ /*
 -- 
 2.17.1
 
