@@ -4,96 +4,155 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E5BC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D111C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:40:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5941218F9
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:38:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D074218F9
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:40:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TNHdzF4+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5941218F9
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S0atfTZR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D074218F9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728449AbeHRAne (ORCPT
+        id S1728460AbeHRApf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 20:43:34 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:42058 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbeHRAne (ORCPT
+        Fri, 17 Aug 2018 20:45:35 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46950 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727318AbeHRApe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 20:43:34 -0400
-Received: by mail-pl0-f67.google.com with SMTP id g23-v6so1300646plq.9
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 14:38:32 -0700 (PDT)
+        Fri, 17 Aug 2018 20:45:34 -0400
+Received: by mail-pf1-f196.google.com with SMTP id u24-v6so4018466pfn.13
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 14:40:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=K8DxOqKOMR195VGzDvMwTuEKXaF8lZ6PT7Pf09W7Kzk=;
-        b=TNHdzF4+s0ZkwfSM61qq8ZcNaMSoySOEmzVGkbXwqJ3fCePSI4mktskjFuPMWRjUbq
-         S/VvW2J47bsCHDzc1fn0A4zwOr4RjWU83XerdnoQFsfv2oN1OFJHeuv5S9H4sAyGfW3x
-         QqUMZP1MqHn1wHFbaY0Oc5nQHuk9YxOR0y0xc=
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=SH7SU68bJ3aykT9kkPdjdUqn5j5c3dYXqR5XQuZQ6ow=;
+        b=S0atfTZRkDOsifs7mc+lT9PRSZkFyxKDgbh6HPrlRCJZYKLF2ZYiUdhGit9uX81j/w
+         79PBiJ2qXzFtHLlYk1569hJ1L8BWDklHzWgJ6DR4QqB2hJhF1hUz/h3Vtoa3whGz2gqr
+         neUAs9lq6jJEcpEl4jQDjTPHaTYgpZ68QKumo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=K8DxOqKOMR195VGzDvMwTuEKXaF8lZ6PT7Pf09W7Kzk=;
-        b=XsxcLD9kW8fEhj4TI2mTrUELgQeBfxp1y1L1QkMJh30uddefb19FO0uRCZPrrAeVrO
-         98f43n+CIQaxrUo+lS7ZkOIcuHO3kvwpuI1hL29Zrk3YatggowvqpAWxDuX5jdxrUWqA
-         VngKFsc68x9QYwaanCs3iqdnrLNHJAdM7bxJy8xZIdp71TxpDO7AtJF/QsRQ71oF0bPK
-         7yS56Iu3H34iXRCU6ViItf5VA+rfC1EERFTsrrq1oUF5QQjGOtf3VapH5Sn0vcaxw08B
-         0ZbZlNj0qnNHofGQBrk8ABsOPOflNOI/2A3C+jjn78EaiF/d78fghr4AycOuG5wSYbFs
-         +lHg==
-X-Gm-Message-State: AOUpUlFzv+SVjpB82rdpGuw3nGaKckbs3VWb7d4r+rc8TDvkopSkamCG
-        ULmDVLtnxHNNaiHMK8VopcjFgw==
-X-Google-Smtp-Source: AA+uWPwfPJEum5FAThKLEnFP7DXoez1hcofe0cYTZW7p4yjeqNBrE4vgtee3zoJYUTuu+3oFK0OcVA==
-X-Received: by 2002:a17:902:1101:: with SMTP id d1-v6mr35074768pla.131.1534541912250;
-        Fri, 17 Aug 2018 14:38:32 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id k73-v6sm3271939pge.18.2018.08.17.14.38.30
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=SH7SU68bJ3aykT9kkPdjdUqn5j5c3dYXqR5XQuZQ6ow=;
+        b=IhOYcIp2NcSEVr73HzfRb8SyMF1/cRIkJOhQX8PED0evAE9CHDiyIgrNy1Yq83rKr3
+         1SMCqaAveSQN8g/0s/yFliQp3TGPTw5kQ2zvYNhpe77v3fyU/P8q/Q4uQqQ7PniI6Juc
+         a3FFWsFU5BAya3FSBXu4cnURAvAzn8OrObWZ9Pgs8cBGOVgUA6cvfKKKgCyNdDyLY8Q+
+         ZQmQJbA3f9OlvrpOB6RBOCm6FruTWPVGA1C70C0eSUU6KOLGgdnpZkrVRjYz/DCYZEJh
+         tGP2iBN36TW6/v4NBmVACp4CGyJ0M6BRhp2Mddh5f/5TZZ9xiJEMMOrbT0GskkXCGeHV
+         iEZQ==
+X-Gm-Message-State: AOUpUlE6my7QjBux6L55vuDgdtPdLyk33m3S9FQWXc5jJNOsUVbWA3yp
+        C/R5OgLPQaGCMakyI/dS3yeMug==
+X-Google-Smtp-Source: AA+uWPx0svfWUWinW5v+tZKu6E9NBKBLU/sEvQvw9xdRKf2Kgf8m4U/OaI0Vj55VtLe7kTkUusGdbQ==
+X-Received: by 2002:a63:3246:: with SMTP id y67-v6mr34212903pgy.399.1534542032380;
+        Fri, 17 Aug 2018 14:40:32 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id s85-v6sm5181045pfa.116.2018.08.17.14.40.31
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 17 Aug 2018 14:38:31 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 14:36:01 -0700
+        Fri, 17 Aug 2018 14:40:31 -0700 (PDT)
+Date:   Fri, 17 Aug 2018 14:44:22 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     broonie@kernel.org, linux-arm-msm@vger.kernel.org,
-        collinsd@codeaurora.org, swboyd@chromium.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] regulator: core: If consumers don't call
- regulator_set_load() assume max
-Message-ID: <20180817213601.GT30024@minitux>
-References: <20180814170617.100087-1-dianders@chromium.org>
- <20180814170617.100087-2-dianders@chromium.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Suman Anna <s-anna@ti.com>, Alex Elder <elder@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: [GIT PULL] remoteproc updates for v4.19
+Message-ID: <20180817214422.GA3941@tuxbook-pro>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180814170617.100087-2-dianders@chromium.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 14 Aug 10:06 PDT 2018, Douglas Anderson wrote:
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
 
-> Not all regulator consumers call regulator_set_load().  On some
-> regulators (like on RPMh-regulator) this could be bad since the
-> regulator framework will treat this as if consumer needs no load.
-> It's much better to assume that a dumb client needs the maximum
-> possible load so we get correctness first.
-> 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
 
-FWIW, we've had this problem on other devices as well; where the eMMC
-won't operate properly unless the supply operates in HPM. We've worked
-around this by specifying regulator-system-load for said regulators.
+are available in the Git repository at:
 
-Only drawback with that is that we use DT to work around missing
-features in the code. But at least the improved implementation will be
-backwards compatible with existing DT.
+  git://github.com/andersson/remoteproc tags/rproc-v4.19
 
-Regards,
-Bjorn
+for you to fetch changes up to b2201ee554a5811f569f31280b0079e7d6177606:
+
+  remoteproc/davinci: use the reset framework (2018-08-16 17:39:55 -0700)
+
+----------------------------------------------------------------
+remoteproc updates for v4.19
+
+This adds support for pre-start and post-shutdown hooks for remoteproc
+subdevices, refactors the Qualcomm Hexagon support to allow reuse
+between several drivers, makes authentication in the MDT file loader
+optional, migrates a few format strings to use %pK and migrates the
+Davinci driver to use the reset framework.
+
+----------------------------------------------------------------
+Alex Elder (1):
+      remoteproc: rename subdev probe and remove functions
+
+Arnd Bergmann (2):
+      remoteproc: qcom q6v5: fix modular build
+      remoteproc: qcom: fix Q6V5_WCSS dependencies
+
+Bartosz Golaszewski (1):
+      remoteproc/davinci: use the reset framework
+
+Bjorn Andersson (7):
+      remoteproc: q6v5: Extract common resource handling
+      remoteproc: qcom: adsp: Use common q6v5 helpers
+      remoteproc: qcom: q6v5-pil: Use common q6v5 helpers
+      remoteproc: Rename subdev functions to start/stop
+      remoteproc: Make start and stop in subdev optional
+      remoteproc: Make client initialize ops in rproc_subdev
+      remoteproc: Introduce prepare and unprepare for subdevices
+
+Loic Pallardy (2):
+      remoteproc: replace "%p" with "%pK"
+      remoteproc: st_slim: replace "%p" with "%pK"
+
+Sibi Sankar (1):
+      remoteproc: qcom: q6v5-pil: fix modem hang on SDM845 after axis2 clk unvote
+
+Sricharan R (2):
+      remoteproc: qcom: mdt_loader: Make the firmware authentication optional
+      remoteproc: qcom: Introduce Hexagon V5 based WCSS driver
+
+Suman Anna (2):
+      remoteproc: Reset table_ptr in rproc_start() failure paths
+      remoteproc/davinci: Mark error recovery as disabled
+
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   7 +-
+ drivers/remoteproc/Kconfig                         |  23 +
+ drivers/remoteproc/Makefile                        |   2 +
+ drivers/remoteproc/da8xx_remoteproc.c              |  37 +-
+ drivers/remoteproc/qcom_adsp_pil.c                 | 156 +-----
+ drivers/remoteproc/qcom_common.c                   |  26 +-
+ drivers/remoteproc/qcom_q6v5.c                     | 252 +++++++++
+ drivers/remoteproc/qcom_q6v5.h                     |  46 ++
+ drivers/remoteproc/qcom_q6v5_pil.c                 | 158 +-----
+ drivers/remoteproc/qcom_q6v5_wcss.c                | 601 +++++++++++++++++++++
+ drivers/remoteproc/qcom_sysmon.c                   |   5 +-
+ drivers/remoteproc/remoteproc_core.c               | 117 ++--
+ drivers/remoteproc/remoteproc_debugfs.c            |   4 +-
+ drivers/remoteproc/remoteproc_virtio.c             |   2 +-
+ drivers/remoteproc/st_slim_rproc.c                 |   3 +-
+ drivers/soc/qcom/mdt_loader.c                      |  87 ++-
+ include/linux/remoteproc.h                         |  19 +-
+ include/linux/soc/qcom/mdt_loader.h                |   4 +
+ 18 files changed, 1188 insertions(+), 361 deletions(-)
+ create mode 100644 drivers/remoteproc/qcom_q6v5.c
+ create mode 100644 drivers/remoteproc/qcom_q6v5.h
+ create mode 100644 drivers/remoteproc/qcom_q6v5_wcss.c
