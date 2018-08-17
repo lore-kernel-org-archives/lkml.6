@@ -2,81 +2,123 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5FEC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A08B3C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 669D3215EB
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:50:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u87DRgXT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 669D3215EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5EA232188F
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:51:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EA232188F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727437AbeHQRxu (ORCPT
+        id S1727565AbeHQRyk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 13:53:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48586 "EHLO mail.kernel.org"
+        Fri, 17 Aug 2018 13:54:40 -0400
+Received: from foss.arm.com ([217.140.101.70]:48170 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726664AbeHQRxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 13:53:50 -0400
-Received: from localhost (LFbn-NCY-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E0E8215EB;
-        Fri, 17 Aug 2018 14:50:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534517410;
-        bh=0aAZxpYH6muouKr2Dh0ZQT52JKIb0vVxS5IvmeAwjqA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=u87DRgXTLyB3ayiA4chEzNeGfwd+zgmqkOkkn84ctRs7oLHpLJgxRHQIkbvv06uCt
-         oKes7xVOr/ThCIvstYHYhjiaGaTEd1KaqWdNS2wQ4lx7HZ/b10jMx2A9ty04hGn/QJ
-         RE3X004A3JINiGs97X96buYkFrQ8u3gecfJc/NSE=
-Date:   Fri, 17 Aug 2018 16:50:08 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Milind Chabbi <chabbi.milind@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH 4/5] perf/hw_breakpoint: Enable breakpoint in
- modify_user_hw_breakpoint
-Message-ID: <20180817145007.GD12426@lerouge>
-References: <20180810104730.3293-1-jolsa@kernel.org>
- <20180810104730.3293-5-jolsa@kernel.org>
+        id S1727365AbeHQRyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 13:54:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A3C3480D;
+        Fri, 17 Aug 2018 07:51:00 -0700 (PDT)
+Received: from armageddon.cambridge.arm.com (armageddon.emea.arm.com [10.4.13.16])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAD7D3F5B3;
+        Fri, 17 Aug 2018 07:50:55 -0700 (PDT)
+Date:   Fri, 17 Aug 2018 15:50:53 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Jia He <hejianet@gmail.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Daniel Vacek <neelx@redhat.com>, Mel Gorman <mgorman@suse.de>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Philip Derrin <philip@cog.systems>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Jia He <jia.he@hxt-semitech.com>,
+        Kemi Wang <kemi.wang@intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Steve Capper <steve.capper@arm.com>,
+        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [RESEND PATCH v10 1/6] arm: arm64: introduce
+ CONFIG_HAVE_MEMBLOCK_PFN_VALID
+Message-ID: <20180817145052.aizhi6n66vxblriq@armageddon.cambridge.arm.com>
+References: <1530867675-9018-1-git-send-email-hejianet@gmail.com>
+ <1530867675-9018-2-git-send-email-hejianet@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180810104730.3293-5-jolsa@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1530867675-9018-2-git-send-email-hejianet@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 12:47:29PM +0200, Jiri Olsa wrote:
-> Currently we enable the breakpoint back only if the breakpoint
-> modification was successful. If it fails we can leave the
-> breakpoint in disabled state with attr->disabled == 0.
-> 
-> We can safely enable the breakpoint back for both the fail
-> and success paths by checking the bp->attr.disabled, which
-> either holds the new 'requested' disabled state or the
-> original breakpoint state.
-> 
-> Suggested-by: Oleg Nesterov <oleg@redhat.com>
-> Link: http://lkml.kernel.org/n/tip-79p9ttocwy2ju2s6qh25dvre@git.kernel.org
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+On Fri, Jul 06, 2018 at 05:01:10PM +0800, Jia He wrote:
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 42c090c..26d75f4 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -778,6 +778,10 @@ config ARCH_SELECT_MEMORY_MODEL
+>  config HAVE_ARCH_PFN_VALID
+>  	def_bool ARCH_HAS_HOLES_MEMORYMODEL || !SPARSEMEM
+>  
+> +config HAVE_MEMBLOCK_PFN_VALID
+> +	def_bool y
+> +	depends on HAVE_ARCH_PFN_VALID
+> +
+>  config HW_PERF_EVENTS
+>  	def_bool y
+>  	depends on ARM_PMU
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 94af022..28fcf54 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -137,6 +137,9 @@ config HAVE_MEMBLOCK_NODE_MAP
+>  config HAVE_MEMBLOCK_PHYS_MAP
+>  	bool
+>  
+> +config HAVE_MEMBLOCK_PFN_VALID
+> +	bool
 
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Since you defined HAVE_MEMBLOCK_PFN_VALID here, do we need to define it
+in the arch code as well? If kept it in the mm/Kconfig only, you could
+just select it in the arch HAVE_ARCH_PFN_VALID entry:
 
-Thanks a lot!
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index d0a53cc6293a..cd230c77e122 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -787,6 +787,7 @@ config ARCH_FLATMEM_ENABLE
+ 
+ config HAVE_ARCH_PFN_VALID
+ 	def_bool ARCH_HAS_HOLES_MEMORYMODEL || !SPARSEMEM
++	select HAVE_MEMBLOCK_PFN_VALID
+ 
+ config HW_PERF_EVENTS
+ 	def_bool y
+
+(similarly for arch/arm)
+
+-- 
+Catalin
