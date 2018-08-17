@@ -2,117 +2,112 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DATE_IN_FUTURE_03_06,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D923BC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 02:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 779D2C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 02:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9682921526
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 02:44:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9682921526
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sympatico.ca
+	by mail.kernel.org (Postfix) with ESMTP id 2CDA62147D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 02:54:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CDA62147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726416AbeHQFqV (ORCPT
+        id S1726341AbeHQF43 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 01:46:21 -0400
-Received: from belmont79srvr.owm.bell.net ([184.150.200.79]:41139 "EHLO
-        mtlfep01.bell.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726094AbeHQFqV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 01:46:21 -0400
-Received: from bell.net mtlfep01 184.150.200.30 by mtlfep01.bell.net
-          with ESMTP
-          id <20180817024448.VAV10498.mtlfep01.bell.net@mtlspm02.bell.net>
-          for <linux-kernel@vger.kernel.org>;
-          Thu, 16 Aug 2018 22:44:48 -0400
-Received: from arcusix ([70.55.50.38]) by mtlspm02.bell.net with ESMTP
-          id <20180817024448.JMEI6415.mtlspm02.bell.net@arcusix>;
-          Thu, 16 Aug 2018 22:44:48 -0400
-Message-ID: <0055c50937cff963e243bba815947cfcdd8b3d0b.camel@sympatico.ca>
-Subject: Re: [PATCH 0/3] PTI for x86-32 Fixes
-From:   "David H. Gutteridge" <dhgutteridge@sympatico.ca>
-To:     Joerg Roedel <joro@8bytes.org>,
+        Fri, 17 Aug 2018 01:56:29 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57262 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726097AbeHQF43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 01:56:29 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4833167BF75F7;
+        Fri, 17 Aug 2018 10:54:51 +0800 (CST)
+Received: from dessert.huawei.com (10.69.192.158) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.399.0; Fri, 17 Aug 2018 10:54:43 +0800
+From:   Zeng Tao <prime.zeng@hisilicon.com>
+To:     <gregkh@linuxfoundation.org>, <stern@rowland.harvard.edu>,
+        <mathias.nyman@linux.intel.com>, <drinkcat@chromium.org>,
+        <felipe.balbi@linux.intel.com>, <drake@endlessm.com>,
+        <mike.looijmans@topic.nl>, <joe@perches.com>
+CC:     Zeng Tao <prime.zeng@hisilicon.com>,
+        Jonathan Corbet <corbet@lwn.net>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        jroedel@suse.de
-Date:   Thu, 16 Aug 2018 22:44:47 -0400
-In-Reply-To: <1533637471-30953-1-git-send-email-joro@8bytes.org>
-References: <1533637471-30953-1-git-send-email-joro@8bytes.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Cloudmark-Analysis: v=2.2 cv=IaFoYSia c=1 sm=0 tr=0 a=e5NqWeyudnn36+hvbsSv9g==:17 a=IkcTkHD0fZMA:10 a=dapMudl6Dx4A:10 a=k_m-kdumAAAA:8 a=W_vHiYWUJ7UVWE1JRxsA:9 a=QEXdDO2ut3YA:10 a=2aFmp3DG3lfw9CblUY6y:22
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        "Thymo van Beers" <thymovanbeers@gmail.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        "David Rientjes" <rientjes@google.com>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>
+Subject: [PATCH v2] usb: hub: try old enumeration scheme first for high speed devices
+Date:   Fri, 17 Aug 2018 18:51:52 +0800
+Message-ID: <1534503120-1226-1-git-send-email-prime.zeng@hisilicon.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.158]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-08-07 at 12:24 +0200, Joerg Roedel wrote:
-> Hi,
-> 
-> here is a small patch-set to fix two small issues in the
-> PTI implementation for 32 bit x86. The issues are:
-> 
-> 	1) Fix the 32 bit PCID check. I used the wrong
-> 	   operator there and this caused false-positive
-> 	   warnings.
-> 
-> 	2) The other two patches make sure the init-hole is
-> 	   not mapped into the user page-table. It is the
-> 	   32 bit counterpart to commit
-> 
-> 	   c40a56a7818c ('x86/mm/init: Remove freed kernel image areas
-> from alias mapping')
-> 
-> 	   for the 64 bit PTI implementation.
-> 
-> I tested that no-PAE, PAE and 64 bit kernel all boot and
-> have correct user page-tables with identical global mappings
-> between user and kernel.
-> 
-> Regards,
-> 
-> 	Joerg
-> 
-> Joerg Roedel (3):
->   x86/mm/pti: Fix 32 bit PCID check
->   x86/mm/pti: Don't clear permissions in pti_clone_pmd()
->   x86/mm/pti: Clone kernel-image on PTE level for 32 bit
-> 
->  arch/x86/mm/pti.c | 143 ++++++++++++++++++++++++++++++++++++++-------
-> ---------
->  1 file changed, 100 insertions(+), 43 deletions(-)
+The new scheme is required just to support legacy low and full-speed
+devices. For high speed devices, it will slower the enumeration speed.
+So in this patch we try the "old" enumeration scheme first for high speed
+devices, and this is what Windows does since Windows 8.
 
-I've tested this in a VM and on an Atom laptop, as usual. No
-regressions noted.
+Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
+---
+Changes in v2:
+1. As suggested by Alan, mention in the commit log that this change is
+follow what the Window does.
+2. As suggested by Roger, update the kernel-parameter description.
+---
+ Documentation/admin-guide/kernel-parameters.txt | 3 ++-
+ drivers/usb/core/hub.c                          | 5 ++++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-Tested-by: David H. Gutteridge <dhgutteridge@sympatico.ca>
-
-Regards,
-
-Dave
-
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 533ff5c..95db23c 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4453,7 +4453,8 @@
+ 
+ 	usbcore.old_scheme_first=
+ 			[USB] Start with the old device initialization
+-			scheme (default 0 = off).
++			scheme,  applies only to low and full-speed devices
++			 (default 0 = off).
+ 
+ 	usbcore.usbfs_memory_mb=
+ 			[USB] Memory limit (in MB) for buffers allocated by
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index 1fb2668..d265b19 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -2661,10 +2661,13 @@ static bool use_new_scheme(struct usb_device *udev, int retry,
+ 	int old_scheme_first_port =
+ 		port_dev->quirks & USB_PORT_QUIRK_OLD_SCHEME;
+ 
++	int quick_enumeration = (udev->speed == USB_SPEED_HIGH);
++
+ 	if (udev->speed >= USB_SPEED_SUPER)
+ 		return false;
+ 
+-	return USE_NEW_SCHEME(retry, old_scheme_first_port || old_scheme_first);
++	return USE_NEW_SCHEME(retry, old_scheme_first_port || old_scheme_first
++			      || quick_enumeration);
+ }
+ 
+ /* Is a USB 3.0 port in the Inactive or Compliance Mode state?
+-- 
+2.7.4
 
