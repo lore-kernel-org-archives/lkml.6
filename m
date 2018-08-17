@@ -4,71 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D111C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 538C6C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:41:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D074218F9
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:40:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A714218F9
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:40:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S0atfTZR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D074218F9
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mo+liTx+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A714218F9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728460AbeHRApf (ORCPT
+        id S1728500AbeHRAqA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 20:45:35 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46950 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727318AbeHRApe (ORCPT
+        Fri, 17 Aug 2018 20:46:00 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35466 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727318AbeHRAp7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 20:45:34 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u24-v6so4018466pfn.13
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 14:40:32 -0700 (PDT)
+        Fri, 17 Aug 2018 20:45:59 -0400
+Received: by mail-pg1-f194.google.com with SMTP id w10-v6so4128669pgv.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 14:40:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=SH7SU68bJ3aykT9kkPdjdUqn5j5c3dYXqR5XQuZQ6ow=;
-        b=S0atfTZRkDOsifs7mc+lT9PRSZkFyxKDgbh6HPrlRCJZYKLF2ZYiUdhGit9uX81j/w
-         79PBiJ2qXzFtHLlYk1569hJ1L8BWDklHzWgJ6DR4QqB2hJhF1hUz/h3Vtoa3whGz2gqr
-         neUAs9lq6jJEcpEl4jQDjTPHaTYgpZ68QKumo=
+        bh=Pg36XBKoZm1we4ods0Zzt48tJGC39crqSnN/rNKiVnw=;
+        b=Mo+liTx+64UDfw5E5KEIQj4P7PkZAF3rB10qi87fC2K+T4RO3fncI/ty77PP2Nou2q
+         1/Osdghe5e2cUG1b5QEBxUB59rIz/WBzqdfBNSVktTIj7AzdVhEjo4vccMwL8lQYvHgP
+         4J8ZKrgJO7YuQRZWgltItBec2Cm3VKazC4idM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=SH7SU68bJ3aykT9kkPdjdUqn5j5c3dYXqR5XQuZQ6ow=;
-        b=IhOYcIp2NcSEVr73HzfRb8SyMF1/cRIkJOhQX8PED0evAE9CHDiyIgrNy1Yq83rKr3
-         1SMCqaAveSQN8g/0s/yFliQp3TGPTw5kQ2zvYNhpe77v3fyU/P8q/Q4uQqQ7PniI6Juc
-         a3FFWsFU5BAya3FSBXu4cnURAvAzn8OrObWZ9Pgs8cBGOVgUA6cvfKKKgCyNdDyLY8Q+
-         ZQmQJbA3f9OlvrpOB6RBOCm6FruTWPVGA1C70C0eSUU6KOLGgdnpZkrVRjYz/DCYZEJh
-         tGP2iBN36TW6/v4NBmVACp4CGyJ0M6BRhp2Mddh5f/5TZZ9xiJEMMOrbT0GskkXCGeHV
-         iEZQ==
-X-Gm-Message-State: AOUpUlE6my7QjBux6L55vuDgdtPdLyk33m3S9FQWXc5jJNOsUVbWA3yp
-        C/R5OgLPQaGCMakyI/dS3yeMug==
-X-Google-Smtp-Source: AA+uWPx0svfWUWinW5v+tZKu6E9NBKBLU/sEvQvw9xdRKf2Kgf8m4U/OaI0Vj55VtLe7kTkUusGdbQ==
-X-Received: by 2002:a63:3246:: with SMTP id y67-v6mr34212903pgy.399.1534542032380;
-        Fri, 17 Aug 2018 14:40:32 -0700 (PDT)
+        bh=Pg36XBKoZm1we4ods0Zzt48tJGC39crqSnN/rNKiVnw=;
+        b=U0/qXoPtIVeVjqDTG1huYoVdayE+9tc3kw8q9oGxKRvC/UILD7fCvfgAw+O5rL9HCZ
+         ycsdo10jGhycwYAaM168CLFfpppB2ZGmJl7xE0YclIkdrpJnVvV9N348mnpePKyy1dBe
+         DHfSPcMFAvMM2B6BYwKXza31i5AwpXPOUN8eGrdCQAFVbcRbtyRHecsO+6Bjcc0fJ1bz
+         ss21iY//c0fiSoQaPL0Md6VDVsqw6idkGGRt2SnGQzI1lSOj1tH8Cd4bnhQT5m28EKAR
+         5txXdOgUBY/zIEh7ovpZ/OckHwGcgc1RQM3RISRtfZVSR42VHakWUGLtsw/ruZPqR/bE
+         3krg==
+X-Gm-Message-State: AOUpUlECN9pXbBWaysYrYqaPZxQI3QZ0uz16FY5MZZHmpA5sLvalMcIu
+        zNT+KS/rZYwIwbmesrF6KNM7QQ==
+X-Google-Smtp-Source: AA+uWPxiNsja+mSIIHgjC5xQ6Mvoau0jMoYQTNypxy6WUPxF04yeq7TfjAUGMVohQr3B5Zfc1GAMxQ==
+X-Received: by 2002:a62:41d6:: with SMTP id g83-v6mr38048260pfd.219.1534542057272;
+        Fri, 17 Aug 2018 14:40:57 -0700 (PDT)
 Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id s85-v6sm5181045pfa.116.2018.08.17.14.40.31
+        by smtp.gmail.com with ESMTPSA id 16-v6sm5764188pfo.164.2018.08.17.14.40.56
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 17 Aug 2018 14:40:31 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 14:44:22 -0700
+        Fri, 17 Aug 2018 14:40:56 -0700 (PDT)
+Date:   Fri, 17 Aug 2018 14:44:47 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Suman Anna <s-anna@ti.com>, Alex Elder <elder@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [GIT PULL] remoteproc updates for v4.19
-Message-ID: <20180817214422.GA3941@tuxbook-pro>
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Chris Lew <clew@codeaurora.org>,
+        Arun Kumar Neelakantam <aneela@codeaurora.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>
+Subject: [GIT PULL] rpmsg updates for v4.19
+Message-ID: <20180817214447.GB3941@tuxbook-pro>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -84,75 +81,39 @@ The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
 
 are available in the Git repository at:
 
-  git://github.com/andersson/remoteproc tags/rproc-v4.19
+  git://github.com/andersson/remoteproc tags/rpmsg-v4.19
 
-for you to fetch changes up to b2201ee554a5811f569f31280b0079e7d6177606:
+for you to fetch changes up to 00b645e0b4e4a3e5f8d88a4e9acf7e80045c34b4:
 
-  remoteproc/davinci: use the reset framework (2018-08-16 17:39:55 -0700)
-
-----------------------------------------------------------------
-remoteproc updates for v4.19
-
-This adds support for pre-start and post-shutdown hooks for remoteproc
-subdevices, refactors the Qualcomm Hexagon support to allow reuse
-between several drivers, makes authentication in the MDT file loader
-optional, migrates a few format strings to use %pK and migrates the
-Davinci driver to use the reset framework.
+  rpmsg: Add compat ioctl for rpmsg char driver (2018-07-30 23:40:23 -0700)
 
 ----------------------------------------------------------------
-Alex Elder (1):
-      remoteproc: rename subdev probe and remove functions
+rpmsg updates for v4.19
 
-Arnd Bergmann (2):
-      remoteproc: qcom q6v5: fix modular build
-      remoteproc: qcom: fix Q6V5_WCSS dependencies
+This fixes a few compile and kerneldoc warnings, allows rpmsg devices to
+handle power domains, allow for labeling GLINK edges and supports compat
+for rpmsg_char.
 
-Bartosz Golaszewski (1):
-      remoteproc/davinci: use the reset framework
+----------------------------------------------------------------
+Arun Kumar Neelakantam (1):
+      rpmsg: Add compat ioctl for rpmsg char driver
 
-Bjorn Andersson (7):
-      remoteproc: q6v5: Extract common resource handling
-      remoteproc: qcom: adsp: Use common q6v5 helpers
-      remoteproc: qcom: q6v5-pil: Use common q6v5 helpers
-      remoteproc: Rename subdev functions to start/stop
-      remoteproc: Make start and stop in subdev optional
-      remoteproc: Make client initialize ops in rproc_subdev
-      remoteproc: Introduce prepare and unprepare for subdevices
+Chris Lew (2):
+      dt-bindings: soc: qcom: Add label for GLINK bindings
+      rpmsg: glink: Store edge name for glink device
 
-Loic Pallardy (2):
-      remoteproc: replace "%p" with "%pK"
-      remoteproc: st_slim: replace "%p" with "%pK"
+Niklas Cassel (1):
+      rpmsg: smd: Add missing include of sizes.h
 
-Sibi Sankar (1):
-      remoteproc: qcom: q6v5-pil: fix modem hang on SDM845 after axis2 clk unvote
+Srinivas Kandagatla (4):
+      rpmsg: glink: correctly annotate intent members
+      rpmsg: glink: Fix various kerneldoc warnings.
+      rpmsg: smd: fix kerneldoc warnings
+      rpmsg: core: add support to power domains for devices
 
-Sricharan R (2):
-      remoteproc: qcom: mdt_loader: Make the firmware authentication optional
-      remoteproc: qcom: Introduce Hexagon V5 based WCSS driver
-
-Suman Anna (2):
-      remoteproc: Reset table_ptr in rproc_start() failure paths
-      remoteproc/davinci: Mark error recovery as disabled
-
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   7 +-
- drivers/remoteproc/Kconfig                         |  23 +
- drivers/remoteproc/Makefile                        |   2 +
- drivers/remoteproc/da8xx_remoteproc.c              |  37 +-
- drivers/remoteproc/qcom_adsp_pil.c                 | 156 +-----
- drivers/remoteproc/qcom_common.c                   |  26 +-
- drivers/remoteproc/qcom_q6v5.c                     | 252 +++++++++
- drivers/remoteproc/qcom_q6v5.h                     |  46 ++
- drivers/remoteproc/qcom_q6v5_pil.c                 | 158 +-----
- drivers/remoteproc/qcom_q6v5_wcss.c                | 601 +++++++++++++++++++++
- drivers/remoteproc/qcom_sysmon.c                   |   5 +-
- drivers/remoteproc/remoteproc_core.c               | 117 ++--
- drivers/remoteproc/remoteproc_debugfs.c            |   4 +-
- drivers/remoteproc/remoteproc_virtio.c             |   2 +-
- drivers/remoteproc/st_slim_rproc.c                 |   3 +-
- drivers/soc/qcom/mdt_loader.c                      |  87 ++-
- include/linux/remoteproc.h                         |  19 +-
- include/linux/soc/qcom/mdt_loader.h                |   4 +
- 18 files changed, 1188 insertions(+), 361 deletions(-)
- create mode 100644 drivers/remoteproc/qcom_q6v5.c
- create mode 100644 drivers/remoteproc/qcom_q6v5.h
- create mode 100644 drivers/remoteproc/qcom_q6v5_wcss.c
+ .../devicetree/bindings/soc/qcom/qcom,glink.txt    |  5 +++
+ drivers/rpmsg/qcom_glink_native.c                  | 51 +++++++++++++---------
+ drivers/rpmsg/qcom_smd.c                           | 10 ++++-
+ drivers/rpmsg/rpmsg_char.c                         |  2 +
+ drivers/rpmsg/rpmsg_core.c                         |  7 +++
+ 5 files changed, 53 insertions(+), 22 deletions(-)
