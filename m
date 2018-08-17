@@ -4,128 +4,165 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C26C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 12:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91711C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 12:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED99320E20
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 12:04:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 360C1218EB
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 12:07:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qEs9627b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED99320E20
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DCv4Cy4N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 360C1218EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbeHQPID (ORCPT
+        id S1726852AbeHQPKW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 11:08:03 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:54699 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbeHQPIC (ORCPT
+        Fri, 17 Aug 2018 11:10:22 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48932 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbeHQPKW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 11:08:02 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180817120448euoutp02d3c342b094f524fb783fd731b5d908a5~Lqm49GSY90437604376euoutp020;
-        Fri, 17 Aug 2018 12:04:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180817120448euoutp02d3c342b094f524fb783fd731b5d908a5~Lqm49GSY90437604376euoutp020
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1534507488;
-        bh=qLz2oUpRq2+r4Wx/qwFB3duaoch/bmf/QexzJhUjFfM=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=qEs9627b2eCfVzM1DcrVr5Yz2NHZirIOMrSshDF0aIsrmVshOx7tL8tj+5uD1ASpd
-         AmeVQwjApbSjznz14NZnYzjyLHs6XCP59TjXqPp4B23wygXN0zQziDIcQEt6If04pt
-         CnIXGTH3v6wxSG3fZe/LBDQ0GiUqXG8qB0J8RvDU=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180817120448eucas1p1c0d49d2dd2dbdbcdcffe160a841fee80~Lqm4lQ-IZ2496724967eucas1p1T;
-        Fri, 17 Aug 2018 12:04:48 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 6A.9D.04294.FD9B67B5; Fri, 17
-        Aug 2018 13:04:47 +0100 (BST)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180817120447eucas1p1dde0176cf7d824e8a42e2d39ac5531f9~Lqm38tsUN1904019040eucas1p1M;
-        Fri, 17 Aug 2018 12:04:47 +0000 (GMT)
-X-AuditID: cbfec7f4-84fff700000010c6-a3-5b76b9df9cce
-Received: from eusync1.samsung.com ( [203.254.199.211]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 80.98.04128.FD9B67B5; Fri, 17
-        Aug 2018 13:04:47 +0100 (BST)
-Received: from mcdsrvbld02.digital.local ([106.116.37.23]) by
-        eusync1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
-        (built May  5 2014)) with ESMTPA id <0PDL003VITI7WI30@eusync1.samsung.com>;
-        Fri, 17 Aug 2018 13:04:47 +0100 (BST)
-From:   Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        =?UTF-8?q?Bj=C3=B8rn=20Forsman?= <bjorn.forsman@gmail.com>
-Subject: [PATCH] kbuild: make sorting initramfs contents independent of
- locale
-Date:   Fri, 17 Aug 2018 14:03:19 +0200
-Message-id: <20180817120319.21002-1-andrzej.p@samsung.com>
-X-Mailer: git-send-email 2.11.0
-In-reply-to: <CAK7LNASUsZB--DWMB4hpw74OnTiz+d2jrdp+CA9L=AOdkbEmhg@mail.gmail.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKIsWRmVeSWpSXmKPExsWy7djPc7r3d5ZFG0w5r28x62U7i0XHzMXs
-        Fpd3zWGz2HvvM6MDi8fOWXfZPfq2rGL0ODH9O4vH501yASxRXDYpqTmZZalF+nYJXBnX7h1h
-        L2jjrDi04xpTA+Nu9i5GTg4JAROJT29PgNlCAisYJZ7e0uti5AKyPzNKLJx2mA2maPrzJywQ
-        iWWMEr8PPGCHcJqYJH71TwFrZxMwlth7sIMRxBYRUJDY3PuMFaSIWWARo8ScuTNYQBLCAgES
-        m55uZQKxWQRUJU71vGIGsXkFrCQafk5kgVgnL7Gr7SIriM0pECxxZ0E32CAJgZesEt2tPxkh
-        ilwkWnetgLpPWOLV8S1QD8lIXJ7cDTWoXmLTlz1QNVMYJe7N9YawrSUOH4dYwCzAJzFp23Sg
-        IziA4rwSHW1CECUeEpvnX2CE+HIJo8Sz2ReYJjBKLmBkWMUonlpanJueWmyUl1quV5yYW1ya
-        l66XnJ+7iREYWaf/Hf+yg3HXn6RDjAIcjEo8vBPWlkYLsSaWFVfmHmKU4GBWEuGNXF4WLcSb
-        klhZlVqUH19UmpNafIhRmoNFSZyXTystWkggPbEkNTs1tSC1CCbLxMEp1cA4R+5Nim/pu70r
-        64/PP3IwYd5z9q8JNpsWH5XXN8t2e3SrdeW9zMkuHUukXLrv+Je9quBiltveoG/yRUr2qov/
-        nf9VP0+eSK1I3t8dwl/lXmARsVQ76HS3h+uW27o71QV4d86vKSxYIO0zc16TymUW14sH/r9+
-        5OTzSeboN9njtg+eLOrYZ3NUiaU4I9FQi7moOBEAnpS21qgCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCJMWRmVeSWpSXmKPExsVy+t/xy7r3d5ZFG0w/I24x62U7i0XHzMXs
-        Fpd3zWGz2HvvM6MDi8fOWXfZPfq2rGL0ODH9O4vH501yASxRXDYpqTmZZalF+nYJXBnX7h1h
-        L2jjrDi04xpTA+Nu9i5GTg4JAROJ6c+fsHQxcnEICSxhlPhwYAaU08Iksez0LbAqNgFjib0H
-        OxhBbBEBBYnNvc9YQYqYBRYxSkx/NYsZJCEs4CexvesRC4jNIqAqcarnFVicV8BKouHnRBaI
-        dfISu9ousoLYnALBEtu3XWICsYUEAiQ+9t5in8DIs4CRYRWjSGppcW56brGRXnFibnFpXrpe
-        cn7uJkZgWGw79nPLDsaud8GHGAU4GJV4eCesLY0WYk0sK67MPcQowcGsJMIbubwsWog3JbGy
-        KrUoP76oNCe1+BCjNAeLkjjveYPKKCGB9MSS1OzU1ILUIpgsEwenVAPjhbkTPx7xWCu7228r
-        65Fdiw5s9Nso9SOKqXVJ82mlrKN2pbO3lXk8z/iw9KlEYu6/4495Kh672oRcu1i2bhvnydNS
-        tv49U7crXvGx9U9Zce7GBbnDdy6GnFv//G47x5mZs+cZijI7sykHMEbYrIj4+G/iG+ZGGdX/
-        lStEJnA+rE/lFpnws6dygxJLcUaioRZzUXEiAHuoZGMHAgAA
-X-CMS-MailID: 20180817120447eucas1p1dde0176cf7d824e8a42e2d39ac5531f9
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180817120447eucas1p1dde0176cf7d824e8a42e2d39ac5531f9
-References: <CAK7LNASUsZB--DWMB4hpw74OnTiz+d2jrdp+CA9L=AOdkbEmhg@mail.gmail.com>
-        <CGME20180817120447eucas1p1dde0176cf7d824e8a42e2d39ac5531f9@eucas1p1.samsung.com>
+        Fri, 17 Aug 2018 11:10:22 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7HC4Sb3055783;
+        Fri, 17 Aug 2018 12:07:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=FPUlUKDB3ODcLNLFcu/zKrqH6md56lXSnU/86EH4SCo=;
+ b=DCv4Cy4NaPl+Ju0a0vklEJyPpwbVTRFWqLPWA/NC4of6cs7xCMVhNfRRZWd3+dB7lLzc
+ yvTSqg3TSRqV4Fy/pm2Z5k7L/sQ6Xd9Ql+TkDxeoY08VRQJ9rOFbgoPyp8SAOftHh/me
+ wkwGJ2EX/zuPI7Jp7jELtsUw4kHRZru2VQ8kXKc4kNXQyCdl2rIUgLXPvAaDL3GW7+gJ
+ YBEGjAKvh5gtA832+ImBQesIL80XqKEzIkTol3pd7tAx7AdyWtUvkLgXsnqi1+bsN6QM
+ XX4/EdFxeVUEcbvELeNaP4oSQk5NLJJlfqammv+3GgKa9veB7mGrquJwatRpfAMyz0Vd lA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2ksreqf2ba-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Aug 2018 12:07:02 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7HC70p0032175
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Aug 2018 12:07:00 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7HC6xpG021115;
+        Fri, 17 Aug 2018 12:06:59 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 17 Aug 2018 05:06:58 -0700
+Date:   Fri, 17 Aug 2018 15:06:50 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Security Officers <security@kernel.org>,
+        Kevin Deus <kdeus@google.com>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Allen Pais <allen.pais@oracle.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] NFC: Fix possible memory corruption when handling
+ SHDLC I-Frame commands
+Message-ID: <20180817120650.6mx6icxif2o52qyx@mwanda>
+References: <20180814095413.vbjkcjkmytkffyaz@mwanda>
+ <CAJuCfpF0Y6wc1z-rbn2wdWROgc_FkD2EX5HzDMcZ1oB5Z=dXSw@mail.gmail.com>
+ <CAJuCfpHSZuabLr6+t_n7UDamJCAP6EPTNEZ6kNqWOhk2mpYADg@mail.gmail.com>
+ <CAGXu5jKqcpbpG0Ky4-yXV4d5q10HtGwJtdyPKcrwkJUPhA_Mpg@mail.gmail.com>
+ <CAJuCfpEX69Sbd=0i0ismP6q2NsZGUF4gMSCr1G5NdXd3n1NyZA@mail.gmail.com>
+ <CAGXu5jJB9wMDJnfsurpxsXm6_0WsWWCaTuWBfy+3aMSE_LL9Rw@mail.gmail.com>
+ <CAJuCfpEX+F-EPxQYXNdUg-uT9ecwYYdxBsr9y_69zQ0Fq50GeA@mail.gmail.com>
+ <CAJuCfpGSPkB-tk4GHaJeStRph-ibVhUZ119Sfd16xgf9x=qUwQ@mail.gmail.com>
+ <20180815082956.u6grueiyshwgqt3a@mwanda>
+ <CAJuCfpH9n2vVjBF7RoMNng3T=URY1eusKfbVGyq44LWcjwNTPw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJuCfpH9n2vVjBF7RoMNng3T=URY1eusKfbVGyq44LWcjwNTPw@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8987 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808170133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some LANG values (e.g. pl_PL.UTF-8) cause the sort command to output
-files before their parent directories, which makes them inaccessible for
-the kernel. In other words, when the kernel populates the rootfs, it is
-unable to create files whose parent directories have not been yet created.
+On Wed, Aug 15, 2018 at 09:40:13AM -0700, Suren Baghdasaryan wrote:
+> On Wed, Aug 15, 2018 at 1:29 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > On Tue, Aug 14, 2018 at 03:38:14PM -0700, Suren Baghdasaryan wrote:
+> >> The separate fix for the size of pipes[] array is posted here:
+> >> https://lkml.org/lkml/2018/8/14/1034
+> >> Thanks!
+> >>
+> >
+> > That's great!  Let's add some bounds checking to nfc_hci_msg_rx_work()
+> > and nfc_hci_recv_from_llc() as well and then we can close the chapter on
+> > these bugs.
+> 
+> Dan, I don't think we need additional checks there. Here are the
+> relevant parts of the code in nfc_hci_recv_from_llc():
+>
 
-This patch makes sorting use the default (LANG=C) locale, which results in
-correctly laid out initramfs images (parent directories before files).
+Sorry, I meant after that at the end of the function:
 
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
----
- scripts/gen_initramfs_list.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+net/nfc/hci/core.c
+   902          /* if this is a response, dispatch immediately to
+   903           * unblock waiting cmd context. Otherwise, enqueue to dispatch
+   904           * in separate context where handler can also execute command.
+   905           */
+   906          packet = (struct hcp_packet *)hcp_skb->data;
+   907          type = HCP_MSG_GET_TYPE(packet->message.header);
+   908          if (type == NFC_HCI_HCP_RESPONSE) {
+   909                  pipe = packet->header;
+                        ^^^^^^^^^^^^^^^^^^^^^
+Pipe can go up to 255.
 
-diff --git a/scripts/gen_initramfs_list.sh b/scripts/gen_initramfs_list.sh
-index 10e528b..0aad760 100755
---- a/scripts/gen_initramfs_list.sh
-+++ b/scripts/gen_initramfs_list.sh
-@@ -174,7 +174,7 @@ dir_filelist() {
- 	${dep_list}header "$1"
- 
- 	srcdir=$(echo "$1" | sed -e 's://*:/:g')
--	dirlist=$(find "${srcdir}" -printf "%p %m %U %G\n" | sort)
-+	dirlist=$(find "${srcdir}" -printf "%p %m %U %G\n" | LANG=C sort)
- 
- 	# If $dirlist is only one line, then the directory is empty
- 	if [  "$(echo "${dirlist}" | wc -l)" -gt 1 ]; then
--- 
-2.7.4
+   910                  instruction = HCP_MSG_GET_CMD(packet->message.header);
+   911                  skb_pull(hcp_skb, NFC_HCI_HCP_PACKET_HEADER_LEN +
+   912                           NFC_HCI_HCP_MESSAGE_HEADER_LEN);
+   913                  nfc_hci_hcp_message_rx(hdev, pipe, type, instruction, hcp_skb);
+                                                     ^^^^
+Then inside the nfc_hci_hcp_message_rx() function we call
+nfc_hci_cmd_received() and nfc_hci_event_received() which use it as an
+array index.
 
+   914          } else {
+   915                  skb_queue_tail(&hdev->msg_rx_queue, hcp_skb);
+   916                  schedule_work(&hdev->msg_rx_work);
+   917          }
+   918  }
+
+It's the same thing when nfc_hci_hcp_message_rx() is called from
+nfc_hci_msg_rx_work():
+
+   138  static void nfc_hci_msg_rx_work(struct work_struct *work)
+   139  {
+   140          struct nfc_hci_dev *hdev = container_of(work, struct nfc_hci_dev,
+   141                                                  msg_rx_work);
+   142          struct sk_buff *skb;
+   143          struct hcp_message *message;
+   144          u8 pipe;
+   145          u8 type;
+   146          u8 instruction;
+   147  
+   148          while ((skb = skb_dequeue(&hdev->msg_rx_queue)) != NULL) {
+   149                  pipe = skb->data[0];
+                        ^^^^^^^^^^^^^^^^^^^
+   150                  skb_pull(skb, NFC_HCI_HCP_PACKET_HEADER_LEN);
+   151                  message = (struct hcp_message *)skb->data;
+   152                  type = HCP_MSG_GET_TYPE(message->header);
+   153                  instruction = HCP_MSG_GET_CMD(message->header);
+   154                  skb_pull(skb, NFC_HCI_HCP_MESSAGE_HEADER_LEN);
+   155  
+   156                  nfc_hci_hcp_message_rx(hdev, pipe, type, instruction, skb);
+                                                     ^^^^
+   157          }
+   158  }
+
+regards,
+dan carpenter
