@@ -3,119 +3,119 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4998BC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 15:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C91D4C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:00:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E22CC208EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 15:59:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D936208EC
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:00:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jsy3ErxE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E22CC208EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MrDzMezJ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MrDzMezJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D936208EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbeHQTDp (ORCPT
+        id S1727772AbeHQTD6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 15:03:45 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:47073 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726815AbeHQTDp (ORCPT
+        Fri, 17 Aug 2018 15:03:58 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48342 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726815AbeHQTD6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 15:03:45 -0400
-Received: by mail-yb0-f194.google.com with SMTP id n10-v6so2098832yba.13;
-        Fri, 17 Aug 2018 08:59:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4fcruF0wHWAiuq7TBuf0S7S9RugixbQxRSP48LAR0zc=;
-        b=Jsy3ErxEW5czngd306aCb2YJmiW2wT36rr2cN+fWybPa7H2AfX1lkF5OvYJ6kkPV8v
-         ZNwthLC3UktUqSduS9PFjdfFeY/bqhwcmIPxb4VFZPOEiwNv/OTIqVxONezaDBhDgzIG
-         MGb70uQXjMqkOyCuRvVHu6C66Q9fdmB1uxT8uMK9uxAOwDdtkhZ/ZjQiwo5NVVZvwPIh
-         XXcfM/l+IpFcxCpDzOLOFYcld6hOIL2wykT07YgEd5a04nmvfpPz6bP6pXcS9gvbb9ul
-         Zl1BmPSgsBPWXvUsREaoKwD3XwkRd/Bm0dK+0BNZi04CYdliQImVEr7LbEd7bUykC3OD
-         A1Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4fcruF0wHWAiuq7TBuf0S7S9RugixbQxRSP48LAR0zc=;
-        b=P4YMe7I0LgMuPchg1e/EfqXuE2al2wrGwg4+HdNoDt7kqtKDMORnD/RLM7Jx+daVms
-         Jzzu91HD1tDlObD7sl3HR35nSl/BgQsL/sb1aq6/Jtc+YxYzjtA6MhSms666pAyDPdp6
-         an5H8oCGhpmJEOuUutgF06kKOjHW9KPVIdDKg8GD8BQryS4D2JJo4y0ICUx3kbb12WWv
-         +xfMM1NXScaDV1aR0aIp09Q/Tw781iW4XZS8OdrOMKERQ0lSM0x6mvMdHyofRBqFJr7E
-         3AWk2V+5fXMtZO0ZpNLCH0jnXYTQcy/aqlhmQ2bXHLgM7nCC+u8UClqiqIO/tD9apxJA
-         uCmA==
-X-Gm-Message-State: AOUpUlHghhEG62nuNE6QakJKEllfRyLHbYt8x56jABXc+clyia7R5GfA
-        jKthbV2irycEaUWQ9nzlKVyKWGW3
-X-Google-Smtp-Source: AA+uWPxuBnCTkurGiw4xAlIx74FYSy2kGGhSjzdSlBH3oDOxTs3I+o2/9wrNZTeu+Bawv2FW0f5isQ==
-X-Received: by 2002:a25:2042:: with SMTP id g63-v6mr3402955ybg.123.1534521590174;
-        Fri, 17 Aug 2018 08:59:50 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::2:9b8b])
-        by smtp.gmail.com with ESMTPSA id t4-v6sm1071556ywa.51.2018.08.17.08.59.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 Aug 2018 08:59:49 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 08:59:46 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
- on cgroup v2 root
-Message-ID: <20180817155946.GJ3978217@devbig004.ftw2.facebook.com>
-References: <20180719165201.GU72677@devbig577.frc2.facebook.com>
- <20180720113121.GJ2476@hirez.programming.kicks-ass.net>
- <20180720114549.GY72677@devbig577.frc2.facebook.com>
- <20180720154454.GR2494@hirez.programming.kicks-ass.net>
- <20180720155613.GB1934745@devbig577.frc2.facebook.com>
- <4857a9db-ebf5-24f8-c42d-d795f5c75854@redhat.com>
- <20180720163712.GU2494@hirez.programming.kicks-ass.net>
- <8c655adc-6d9e-b767-1024-5d6941c995a9@redhat.com>
- <20180720174100.GC1934745@devbig577.frc2.facebook.com>
- <446ab203-85cd-32ff-40a9-0ba22d5a2534@redhat.com>
+        Fri, 17 Aug 2018 15:03:58 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9C787625EF; Fri, 17 Aug 2018 16:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534521603;
+        bh=iSjImKyPVi9pPwPoyujt09XMtiPU9ScKghiTzZD8HLc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MrDzMezJ9xOUjLf6HXJAlspbbLt4LK96sdLZxm2nzrb9kI27A/SA6D5O74VGNK1Ir
+         eGbwNtNDmat7NNxSRWyuColIT1gP+V6KKZ5wz0dMr+/tD4U+iagsZn2KS2dnGcETQI
+         3OFyEGx0/Qdg3DIh41CvOOilirda5EXyP45i8a80=
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CCC1F625E1;
+        Fri, 17 Aug 2018 16:00:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534521603;
+        bh=iSjImKyPVi9pPwPoyujt09XMtiPU9ScKghiTzZD8HLc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MrDzMezJ9xOUjLf6HXJAlspbbLt4LK96sdLZxm2nzrb9kI27A/SA6D5O74VGNK1Ir
+         eGbwNtNDmat7NNxSRWyuColIT1gP+V6KKZ5wz0dMr+/tD4U+iagsZn2KS2dnGcETQI
+         3OFyEGx0/Qdg3DIh41CvOOilirda5EXyP45i8a80=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CCC1F625E1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Fri, 17 Aug 2018 10:00:02 -0600
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH] irqchip/gic-v3: Allow interrupt to be configured as
+ wake-up sources
+Message-ID: <20180817160002.GP5081@codeaurora.org>
+References: <20180817091804.993-1-marc.zyngier@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <446ab203-85cd-32ff-40a9-0ba22d5a2534@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180817091804.993-1-marc.zyngier@arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Waiman.
+On Fri, Aug 17 2018 at 03:18 -0600, Marc Zyngier wrote:
+>Although GICv3 doesn't directly offers support for wake-up interrupts
+>and relies on external HW for this, it shouldn't prevent the driver
+>for such HW from doing it work.
+>
+>Let's set the required flags on the irq_chip structures.
+>
+>Reported-by: Lina Iyer <ilina@codeaurora.org>
+>Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>---
+>Lina, please let me know how this goes. If that fixes your issues,
+>I'll queue it as a fix for the current cycle.
+>
+Thanks for the quick turn around, Marc.
 
-On Mon, Aug 13, 2018 at 01:56:15PM -0400, Waiman Long wrote:
-> The following restrictions are still imposed on a partition root wrt
-> allowable changes in cpuset.cpus:
-> 1) cpuset.cpus cannot be set to "". There must be at least 1 cpu there.
-> 2) Adding cpus that are not in parent's cpuset.cpus (as well as
-> cpuset.cpus.effective) or that will take all the parent's effective cpus
-> away is not allowed.
-> 
-> So are these limitations acceptable?
-> 
-> The easiest way to remove those restrictions is to forcefully turn off
-> the cpuset.sched.partition flag in the cpuset as well as any
-> sub-partitions when the user try to do that. With that change, there
-> will be no more new restriction on what you can do on cpuset.cpus.
+Tested-by: Lina Iyer <ilina@codeaurora.org>
 
-I think that'd be the right thing to do.  That's what we do with
-cpuset.cpus and cpuset.mems too.  If there's nothing available, we
-ignore the config and show the settings which are currently in effect.
-
-Thanks.
-
--- 
-tejun
+> drivers/irqchip/irq-gic-v3.c | 8 ++++++--
+> 1 file changed, 6 insertions(+), 2 deletions(-)
+>
+>diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+>index 76ea56d779a1..2d71c79bc698 100644
+>--- a/drivers/irqchip/irq-gic-v3.c
+>+++ b/drivers/irqchip/irq-gic-v3.c
+>@@ -861,7 +861,9 @@ static struct irq_chip gic_chip = {
+> 	.irq_set_affinity	= gic_set_affinity,
+> 	.irq_get_irqchip_state	= gic_irq_get_irqchip_state,
+> 	.irq_set_irqchip_state	= gic_irq_set_irqchip_state,
+>-	.flags			= IRQCHIP_SET_TYPE_MASKED,
+>+	.flags			= IRQCHIP_SET_TYPE_MASKED |
+>+				  IRQCHIP_SKIP_SET_WAKE |
+>+				  IRQCHIP_MASK_ON_SUSPEND,
+> };
+>
+> static struct irq_chip gic_eoimode1_chip = {
+>@@ -874,7 +876,9 @@ static struct irq_chip gic_eoimode1_chip = {
+> 	.irq_get_irqchip_state	= gic_irq_get_irqchip_state,
+> 	.irq_set_irqchip_state	= gic_irq_set_irqchip_state,
+> 	.irq_set_vcpu_affinity	= gic_irq_set_vcpu_affinity,
+>-	.flags			= IRQCHIP_SET_TYPE_MASKED,
+>+	.flags			= IRQCHIP_SET_TYPE_MASKED |
+>+				  IRQCHIP_SKIP_SET_WAKE |
+>+				  IRQCHIP_MASK_ON_SUSPEND,
+> };
+>
+> #define GIC_ID_NR		(1U << gic_data.rdists.id_bits)
+>--
+>2.18.0
+>
