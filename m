@@ -2,117 +2,134 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B0FC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 19:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B6EC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 20:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17B4D21933
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 19:55:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="At501Eyo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17B4D21933
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id DAD542199E
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 20:01:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAD542199E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbeHQXAW (ORCPT
+        id S1726265AbeHQXGJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 19:00:22 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:56768 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbeHQXAW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 19:00:22 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7HJtYGx011621;
-        Fri, 17 Aug 2018 14:55:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1534535734;
-        bh=llMuZ94WEvEOXh2oSmwwifQDh1hx8UyhZVa4/msQHPE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=At501Eyojjnh9iF9YnMD1E5GOHu3kGTxbE7CvXFdGzWcmzAhJnZFIAHKCHVWyIFdc
-         62u6C3OWJljJIrcmc1PfmkOkzPwp8wApmV6JWaB6mTLxziFa1OFJT2F8Yui1j6HFBJ
-         Yn8Otp2tvTYTrRYkIYI/fk85I/QKJ8Vk6KdFuf4g=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7HJtYZD032181;
-        Fri, 17 Aug 2018 14:55:34 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 17
- Aug 2018 14:55:34 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 17 Aug 2018 14:55:34 -0500
-Received: from [172.22.190.122] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7HJtXKk007133;
-        Fri, 17 Aug 2018 14:55:33 -0500
-Subject: Re: [PATCH v4 2/2] leds: lm3697: Introduce the lm3697 driver
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        <robh+dt@kernel.org>, <pavel@ucw.cz>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>
-References: <20180816172058.31700-1-dmurphy@ti.com>
- <20180816172058.31700-2-dmurphy@ti.com>
- <9ef9cd25-5c73-964c-ac09-55c0c78e5dc9@gmail.com>
- <c751759a-d0c2-4ee7-2299-99d83538bdc4@ti.com>
- <24e05753-8ec7-e1b0-8671-8443bc20130a@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <9b82ae9f-330b-0150-f768-0c1955ab4582@ti.com>
-Date:   Fri, 17 Aug 2018 14:55:25 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 17 Aug 2018 19:06:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54616 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725825AbeHQXGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 19:06:09 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 548BA406C790;
+        Fri, 17 Aug 2018 20:01:25 +0000 (UTC)
+Received: from krava (ovpn-204-21.brq.redhat.com [10.40.204.21])
+        by smtp.corp.redhat.com (Postfix) with SMTP id CF2447C4F;
+        Fri, 17 Aug 2018 20:01:22 +0000 (UTC)
+Date:   Fri, 17 Aug 2018 22:01:21 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>
+Subject: Re: [PATCH 06/13] perf tools: Add compression id into struct
+ kmod_path
+Message-ID: <20180817200121.GE24121@krava>
+References: <20180817094813.15086-1-jolsa@kernel.org>
+ <20180817094813.15086-7-jolsa@kernel.org>
+ <20180817182315.GD22443@kernel.org>
+ <20180817182849.GE22443@kernel.org>
+ <20180817185641.GF22443@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <24e05753-8ec7-e1b0-8671-8443bc20130a@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180817185641.GF22443@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 17 Aug 2018 20:01:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 17 Aug 2018 20:01:25 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
-
-On 08/17/2018 02:37 PM, Jacek Anaszewski wrote:
-> Dan,
+On Fri, Aug 17, 2018 at 03:56:41PM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Fri, Aug 17, 2018 at 03:28:49PM -0300, Arnaldo Carvalho de Melo escreveu:
+> > Em Fri, Aug 17, 2018 at 03:23:15PM -0300, Arnaldo Carvalho de Melo escreveu:
+> > > Em Fri, Aug 17, 2018 at 11:48:06AM +0200, Jiri Olsa escreveu:
+> > > >  static const struct {
+> > > >  	const char *fmt;
+> > > >  	int (*decompress)(const char *input, int output);
+> > > >  } compressions[] = {
+> > > > +	[COMP_ID__NONE] = { 0 },
+> > > 
+> > > 
+> > > This broke the build in many places, problems of this kind:
+> > > 
+> > >   CC       /tmp/build/perf/util/dso.o
+> > >   LD       /tmp/build/perf/scripts/python/Perf-Trace-Util/libperf-in.o
+> > >   LD       /tmp/build/perf/scripts/libperf-in.o
+> > >   CC       /tmp/build/perf/trace/beauty/clone.o
+> > >   CC       /tmp/build/perf/util/symbol.o
+> > > util/dso.c:201:24: error: missing field 'decompress' initializer [-Werror,-Wmissing-field-initializers]
+> > >         [COMP_ID__NONE] = { 0 },
+> > >                               ^
+> > > 1 error generated.
+> > >   CC       /tmp/build/perf/trace/beauty/fcntl.o
+> > > mv: cannot stat '/tmp/build/perf/util/.dso.o.tmp': No such file or directory
+> > > /git/linux/tools/build/Makefile.build:96: recipe for target '/tmp/build/perf/util/dso.o' failed
+> > > 
+> > > If we look just at those that failed, its several gcc versions:
+> > > 
+> > >   11     9.91 centos:5                      : FAIL gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
+> > >   12    14.34 centos:6                      : FAIL gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-23)
+> > >   16    47.50 debian:9                      : FAIL gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
+> > >   28    53.92 fedora:25                     : FAIL gcc (GCC) 6.4.1 20170727 (Red Hat 6.4.1-1)
+> > >   29    60.75 fedora:26                     : FAIL gcc (GCC) 7.3.1 20180130 (Red Hat 7.3.1-2)
+> > >   30    90.76 fedora:27                     : FAIL gcc (GCC) 7.3.1 20180712 (Red Hat 7.3.1-6)
+> > >   41    12.78 oraclelinux:6                 : FAIL gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-23.0.1)
+> > >   43    12.85 ubuntu:12.04.5                : FAIL gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
+> > >   46    45.56 ubuntu:16.04                  : FAIL gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609
+> > >   54    49.60 ubuntu:17.10                  : FAIL gcc (Ubuntu 7.2.0-8ubuntu3.2) 7.2.0
+> > 
+> > Sorry, gcc eats this with gusto, its just clang that is not taking it,
+> > for instance, this is the one in fedora:27:
+> > 
+> > clang version 5.0.2 (tags/RELEASE_502/final)
 > 
-> On 08/16/2018 10:44 PM, Dan Murphy wrote:
->> Jacek
->>
->> On 08/16/2018 02:58 PM, Jacek Anaszewski wrote:
->>> Dan,
->>>
->>> Thank you for the patch.
->>>
->>> I didn't review DT parsing details in v3, but now I've produced
->>> diff between v3 and v4 to check what has changed.
->>>
->>> I'm quite surprised realizing that you're not validating
->>> HVLED and control banks assignment, having in mind earlier
->>> discussions and your concerns about numerous DT configurations
->>> to check.
->>>
->>> Is it on purpose?
->>>
->>
->> Yes.  It was on purpose.  After sleeping on it and going through the overall
->> control to HVLED assignments I realized the user will know quite quickly
->> that their configuration is messed up.
->>
->> The suggestions actually simplified the code quite nicely which I am happier to have
+> Nah, this cures it, and its not just clang, as we don't have it in the older
+> images like centos:5.
+
+ugh.. for some reason I thought this one is failing '= { }' , so I used this one '= { 0 }',
+so it's this one then ' = { .xxx = 0 }' :-\ nice
+
+thanks,
+jirka
+
 > 
-> Ack. Thanks for the v5 - I'll let it sit on the lists for a week anyway,
-> until the merge window gets closed.
+> Patch below seems to cure in all cases, I'll do what is usual, use
+> designated initializers everywhere...
 > 
-
-Sounds good to me.
-
-Dan
-
--- 
-------------------
-Dan Murphy
+> - Arnaldo
+> 
+> diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
+> index 8ce3de665993..bbed90e5d9bb 100644
+> --- a/tools/perf/util/dso.c
+> +++ b/tools/perf/util/dso.c
+> @@ -198,7 +198,7 @@ static const struct {
+>  	int (*decompress)(const char *input, int output);
+>  	bool (*is_compressed)(const char *input);
+>  } compressions[] = {
+> -	[COMP_ID__NONE] = { 0 },
+> +	[COMP_ID__NONE] = { .fmt = NULL, },
+>  #ifdef HAVE_ZLIB_SUPPORT
+>  	{ "gz", gzip_decompress_to_file, gzip_is_compressed },
+>  #endif
