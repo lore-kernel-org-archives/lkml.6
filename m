@@ -2,102 +2,121 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13BF6C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEFD1C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:14:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C115F21788
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:08:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6936021A2D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:14:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="go0xzKAC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C115F21788
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SVi9Lp4n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6936021A2D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbeHQTMm (ORCPT
+        id S1727529AbeHQTSB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 15:12:42 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:39234 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727160AbeHQTMl (ORCPT
+        Fri, 17 Aug 2018 15:18:01 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35533 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727160AbeHQTSB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 15:12:41 -0400
-Received: by mail-yw1-f67.google.com with SMTP id r184-v6so4552606ywg.6
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 09:08:45 -0700 (PDT)
+        Fri, 17 Aug 2018 15:18:01 -0400
+Received: by mail-io0-f193.google.com with SMTP id w11-v6so7348677iob.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 09:14:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vcbqEx7UFdEFmAEgSGZ271EXkgERQAEZnIF3GSD3LOU=;
-        b=go0xzKACUlP7N2xKSOBNC7n1f82WAbVqwbzwVzbtQmNeqAwAnlNATLNEk2xmNKG421
-         djKUfM27wn6gHEFQQwVXyOmqy4GzHwIKOYKiIvwp90LwrSiozURsSs+mKz6OiYCt3nWz
-         GT/briDv5OaDKo42q/bLwlktIEcN7Es+ASw06nJv9LBLaYhZtd0H3ouBwERODKkuINHW
-         ViSYNxZcJJToB+nfROBhe0wDeU/sy3cQWp9EMVwED4CftkUtXX5D6JBJU27Vgkff3m5z
-         p+T75aFJzQew8MrhpvqAHwvaFhzNedRy5cpIvdh0An41ryPRIe+NNAK1Wfe8JiA1MwM3
-         at0A==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Oa4cmjPQrZKTFjTXonq05ZB4+IBYrLhNjc4Bp42udZI=;
+        b=SVi9Lp4nva62/9UBisiRPtG99QCZlfieTpEgrokWZGFLf5eHxFiunagkQuR8wHFEGp
+         OSGbJwV1CnAxGyXRNx47WkPUBg06zFV2JNMSHnpGHfodtAFGPjafS7RKd+PfP92Hx9cb
+         rlY6LwOkfgqeSyY9J2hbBM8jNx47XAB6V3fFw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vcbqEx7UFdEFmAEgSGZ271EXkgERQAEZnIF3GSD3LOU=;
-        b=b/BPFEH1bIOQYNJez4/C6YHXzq42QtJoruGBQH1cq8NIevJTaiaOJTtyK3rt1rLp+D
-         sLtvJw7bU8H7BqH1lrge6E+cpAfZh0E+/MB6Fjr7OnOHfOn8XdVq9CdVD097w/BRxWU1
-         hIkqslAEK91pCUMIZ7dmf4B/2i6ubnrLRj7kgGcmznLng/hR5afzfVOULAn3WH5ITtwA
-         EeTPkRXGn8gJJWJfuObTmMElpQwDeTdWpX34V8u+YWqI312M/u4yY7X6ATzZLD6ga5GF
-         som0V9uyVSB27Da+YCfcLSpkR8VLQjJu+LdYvnUlFxt1V+wUAPa9Q4xd9MjSkJ+SI6ch
-         SDIg==
-X-Gm-Message-State: AOUpUlFqpuohJAmDd6PAg3Ch9hMW8ckk7NADM5cw7YjaZ8GiJYctx0OA
-        MXQqjiwaAjJlWSdfWuQQ+lI=
-X-Google-Smtp-Source: AA+uWPwlZwpg83Bnyw5WWb9id9LmbhOBgeOEPp9Qls2biCO+HFyBlA9w0fCfDAEqKGb5DwzOKQG4fA==
-X-Received: by 2002:a81:af23:: with SMTP id n35-v6mr18561337ywh.468.1534522125082;
-        Fri, 17 Aug 2018 09:08:45 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::2:9b8b])
-        by smtp.gmail.com with ESMTPSA id f5-v6sm1304037ywa.39.2018.08.17.09.08.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 Aug 2018 09:08:44 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 09:08:42 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, joel@joelfernandes.org,
-        mathieu.desnoyers@efficios.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] Make call_srcu() available during very early boot
-Message-ID: <20180817160842.GK3978217@devbig004.ftw2.facebook.com>
-References: <20180814162448.GA20414@linux.vnet.ibm.com>
- <20180814124945.5cf1753f@gandalf.local.home>
- <20180814170618.GA24813@linux.vnet.ibm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Oa4cmjPQrZKTFjTXonq05ZB4+IBYrLhNjc4Bp42udZI=;
+        b=lBUgdQi6dBOkNQbI/QZtm8HjybW/tvzHv56Q9pG/nZLaUUy7roXuGXZ2ff2bLwp7hI
+         rwSOOMYAzQBV7qIAKLyIwBMHHUSRlg2gUA6N0qk4u3hmK/30dmrIPc+X7b2wqv35jxDV
+         r/1GjiLHTP5BNOTl6B+Z0t7+rx/FHQAUCiTmOYVQdxNiQtE/ddvuDam4gCp7VdrHD9FN
+         pu/Wa/h0VcF0wZX72fg0u/PfFtFoHrzmfgvf0qOhP/c57lA0c9REbRbFXWjTsBbOa4rb
+         K7+CxVJiyVQTx+O+CFa0dnhopeDW1l2g2q1DY3sLvvOceRgG0dVqjohNRh+bqw/dTJ3t
+         fCLg==
+X-Gm-Message-State: AOUpUlHOZvYG51eQIuvIYbxuCb0tUjI6WtVEG3zJ+bnnJwB1nxcb0UJX
+        V/oeKTuTJaeN9iayZDBZcZ4L+7sYlOuc5iLjAfk=
+X-Google-Smtp-Source: AA+uWPzsHNrflpHc2NcFqlv5n1DR3W4rqY54dldKIibNhrxy4DsjsJdb9mrD3zyVcG7Vwln1OyLLLuVyL6qrRjoe9Gk=
+X-Received: by 2002:a6b:f609:: with SMTP id n9-v6mr13713887ioh.259.1534522443366;
+ Fri, 17 Aug 2018 09:14:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180814170618.GA24813@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20180816204638.4046-1-sean.j.christopherson@intel.com>
+In-Reply-To: <20180816204638.4046-1-sean.j.christopherson@intel.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 17 Aug 2018 09:13:51 -0700
+Message-ID: <CA+55aFweC_ja8pLOHv2dbokChaJej2bhhDyeO5ZxiQ+64C-Xog@mail.gmail.com>
+Subject: Re: [PATCH] x86/speculation/l1tf: Exempt zeroed PTEs from XOR conversion
+To:     sean.j.christopherson@intel.com
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Peter Anvin <hpa@zytor.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Aug 16, 2018 at 1:47 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> Fixes: 6b28baca9b1f ("x86/speculation/l1tf: Protect PROT_NONE PTEs against speculation")
 
-On Tue, Aug 14, 2018 at 10:06:18AM -0700, Paul E. McKenney wrote:
-> > Is there a way we could make a union, or reuse one of the other fields,
-> > as we know that synchronize_srcu() can't be used yet (and if it is,
-> > either warn, or just make it a nop). And when we call srcu_init() and
-> > remove the srcu_struct from the list, we can then initialize whatever
-> > we used as the temporary boot up list field.
-> 
-> I will take a look.  If nothing else, I could union it with the
-> struct work_struct, since it cannot be used that early anyway.  ;-)
-> 
-> Or I could just use the work_struct that is already inside the struct
-> work_struct.  Tejun, would you be OK with that?
+This seems wrong.
 
-Hmm... not super against it given how specialized the whole thing is
-but maybe just making it a union is cleaner?
+That commit doesn't invert a cleared page table entry, because that
+commit still required _PAGE_PROTNONE being set for a pte to be
+inverted.
 
-Thanks.
+I'm assuming the real culprit is commit f22cc87f6c1f
+("x86/speculation/l1tf: Invert all not present mappings") which made
+it look at _just_ the present bit.
 
--- 
-tejun
+And yeah, that was wrong.
+
+So I really think a much better patch would be the appended one-liner.
+
+Note - it's whitespace-damaged by cut-and-paste, but it should be
+obvious enough to apply by hand.
+
+Can you test this one instead?
+
+             Linus
+---
+
+ arch/x86/include/asm/pgtable-invert.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/pgtable-invert.h
+b/arch/x86/include/asm/pgtable-invert.h
+index 44b1203ece12..821438e91b77 100644
+--- a/arch/x86/include/asm/pgtable-invert.h
++++ b/arch/x86/include/asm/pgtable-invert.h
+@@ -6,7 +6,7 @@
+
+ static inline bool __pte_needs_invert(u64 val)
+ {
+-       return !(val & _PAGE_PRESENT);
++       return val && !(val & _PAGE_PRESENT);
+ }
+
+ /* Get a mask to xor with the page table entry to get the correct pfn. */
