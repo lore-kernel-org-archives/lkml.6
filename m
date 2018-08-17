@@ -2,92 +2,76 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D48C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 15:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8585AC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 15:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B5222188D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 15:56:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B5222188D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C6D821868
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 15:59:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C6D821868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbeHQTA3 convert rfc822-to-8bit (ORCPT
+        id S1727557AbeHQTDO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 15:00:29 -0400
-Received: from mga17.intel.com ([192.55.52.151]:56007 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726815AbeHQTA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 15:00:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Aug 2018 08:56:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,251,1531810800"; 
-   d="scan'208";a="81151546"
-Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
-  by fmsmga004.fm.intel.com with ESMTP; 17 Aug 2018 08:56:24 -0700
-Received: from orsmsx152.amr.corp.intel.com (10.22.226.39) by
- ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Fri, 17 Aug 2018 08:56:24 -0700
-Received: from orsmsx110.amr.corp.intel.com ([169.254.10.41]) by
- ORSMSX152.amr.corp.intel.com ([169.254.8.164]) with mapi id 14.03.0319.002;
- Fri, 17 Aug 2018 08:56:23 -0700
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Arnd Bergmann <arnd@arndb.de>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "jchandra@broadcom.com" <jchandra@broadcom.com>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Tomasz Nowicki <tn@semihalf.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Miquel Raynal" <miquel.raynal@bootlin.com>
-Subject: RE: how to fix acpi_pci_root_remap_iospace?
-Thread-Topic: how to fix acpi_pci_root_remap_iospace?
-Thread-Index: AdQ1ogY0Ns2AKmc+RseoCIXE9twQpAAPjfSA//+wrwCAARIPAIAAAlCAgAABJfA=
-Date:   Fri, 17 Aug 2018 15:56:23 +0000
-Message-ID: <3908561D78D1C84285E8C5FCA982C28F7D3B3159@ORSMSX110.amr.corp.intel.com>
-References: <20180816204506.GA21144@agluck-desk>
-        <CAK8P3a2vAMzL22ds=kM1WRZgATzOrAz_y8Yk6edqJTVRJJFydw@mail.gmail.com>
-        <20180816232639.GA25889@agluck-desk>
-        <CAK8P3a0hFDv2kvVN=QobTVaZxAX-M+YZzkBU_b=vDGLbCLziNg@mail.gmail.com>
- <20180817105551.100d6e0a@bbrezillon>
-In-Reply-To: <20180817105551.100d6e0a@bbrezillon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTE1NmQ0ZmQtN2Q4Yi00ZmM4LTg4ZGQtZGE4MDBlNGM1N2E0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiUjhCZXFtNjg3aE03dzZVVUV3V05obzVyeXlrSGZEblJxbkJkNGJCY1dMQ3Iwc09wc21FMm15MGp2UXRhZk96ciJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Fri, 17 Aug 2018 15:03:14 -0400
+Received: from smtp.eu.citrix.com ([185.25.65.24]:59779 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726888AbeHQTDO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 15:03:14 -0400
+X-IronPort-AV: E=Sophos;i="5.53,251,1531785600"; 
+   d="scan'208";a="77776861"
+Date:   Fri, 17 Aug 2018 17:59:09 +0200
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Juergen Gross <jgross@suse.com>
+CC:     <linux-kernel@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
+        <linux-block@vger.kernel.org>, <konrad.wilk@oracle.com>,
+        <axboe@kernel.dk>, <boris.ostrovsky@oracle.com>
+Subject: Re: [PATCH v3 0/5] xen/blk: persistent grant rework
+Message-ID: <20180817155909.4cwiy6bhhgiala5m@mac>
+References: <20180813140114.20126-1-jgross@suse.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180813140114.20126-1-jgross@suse.com>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> - Some targets don't have any support for I/O space on their PCI bus and just
->>    want to get things to compile by setting PCI_IOBASE to zero, this still opens
->>     up some of the same problems as above, but doesn't really help otherwise.
+On Mon, Aug 13, 2018 at 04:01:09PM +0200, Juergen Gross wrote:
+> Persistent grants are used in the Xen's blkfront/blkback drivers to
+> avoid mapping/unmapping of I/O buffers in the backend for each I/O.
+> 
+> While this speeds up processing quite a bit there are problems related
+> to persistent grants in some configurations: domains with multiple
+> block devices making use of persistent grants might suffer from a lack
+> of grants if each of the block devices experienced a high I/O load at
+> some time. This is due to the number of persistent grants per device
+> only to be limited by a rather high maximum value, but never being
+> released even in case of longer times without any I/O.
+> 
+> This series modifies xen-blkback to unmap any domU page mapped via a
+> persistent grant after a timeout (default: 60 seconds). The timeout
+> is set to its default value again when a persistent grant has been
+> used for an I/O.
+> 
+> xen-blkfront is modified to scan every 10 seconds for persistent grants
+> not in use by blkback any more and to remove such grants.
+> 
+> The last 3 patches are small cleanups of blkfront and blkback drivers.
+> 
+> V3:
+> - patch 1: make timeout parameter static
 
-That sounds horrible. Why would you want to have a driver that can't possibly
-work on your platform compile cleanly? That's just asking for trouble. Sombody
-might load that driver, and ... all the outb/outw/outl calls just corrupt low memory.
+Konrad if you are OK with this series, could you please send a pull
+request to Jens?
 
-> Hm, maybe it's just easier to revert the patch since we got rid of
-> patches adding COMPILE_TEST to drivers which were using read/writesl()
-> (it turned out ia64 and sparc were not the only archs to not implement
-> readsx/writesx() variants, and fixing them is not that easy).
-
-That sounds like a better course of action.
-
--Tony
+Thanks, Roger.
