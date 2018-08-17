@@ -4,64 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F1E5C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 23:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1141CC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 23:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA20F2187A
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 23:52:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE6682075E
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 23:55:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j6V5+wwb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA20F2187A
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d6c2Yx4M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE6682075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbeHRC6Y (ORCPT
+        id S1726326AbeHRDA4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 22:58:24 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:37025 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726139AbeHRC6X (ORCPT
+        Fri, 17 Aug 2018 23:00:56 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:41526 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725967AbeHRDAz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 22:58:23 -0400
-Received: by mail-oi0-f67.google.com with SMTP id j205-v6so16840862oib.4
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 16:52:57 -0700 (PDT)
+        Fri, 17 Aug 2018 23:00:55 -0400
+Received: by mail-oi0-f66.google.com with SMTP id k12-v6so16807048oiw.8
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 16:55:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vgqbi5vy3vrcTrukIlCO9JzHe8eRIEvgOuDE8qIboSA=;
-        b=j6V5+wwb76MrDcX9LXytAdgDBqHl4yawKwuVPQIo6YbnxrZaNmBR5n4nk1oKvwRgvi
-         NZXIzuMtrjAC0r7aDYxIO7N2xSJoufNFjaF4mtadlrUrxXVGN9/dfukeCEH7wIYVwCUl
-         91kffffscUaA6Orly0BheBw4dHhP+ohGMof6zkSSz78G94M/OymGnfNncIpfs0l2KRxb
-         Lty0PKcwkvG/J2ZJiNfqaYdiku4FUOfdPKzfDcJ4GjmupYqXqpUSsNFSYkN4ou8n6fO3
-         GcnMnvvw91gAtK33NXEySHshKdVmO52FqejtpesZk+dbQWQBdb30CvG5NydsVi9uFEio
-         AymQ==
+        bh=Ds396LVoVtBCaofAqS7RtuLP2vc9hietrCDCgYaSKw4=;
+        b=d6c2Yx4MSwCHCupcyE1cFwXDnrAiEVYFvfsKXnd5MjYxzqNRV3fHrYPESvGdLJ02uF
+         eH89ksYancvIy9M4y+Slt32DbDpNoDCjvBEO+r0ldMfvZ1SEixV+BEywKYSDt92oeAiO
+         5aJVcJtz6cSInEgM6NmPd3DpPOLsI0PGo/L0OTJg4M8TN9SncQOkMaXIZZQHmLPXt7LF
+         lIhhOwLO76lJpj0QTalgE/MqFXMtRK5HyuJhHnpgbQuxp3XBjSFJNj+nDI8TobWaun30
+         nLNTCcchzMdV+EJ510pdusJkRalP18z1kSbVc7k1ox9+hD4zlQMT2EUozVUVOAqSJ1dn
+         YYTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vgqbi5vy3vrcTrukIlCO9JzHe8eRIEvgOuDE8qIboSA=;
-        b=GjyG31uj65UZ6IrwT55rfknjMiJydFUTzBWO0fJFDFPLgYc0XhMcu1lEVwDdcAolrY
-         FXKXlTHHH4mGigQ0rFysRUw6jMR/z9EBD/zl01iwSZCHg9kUcK8Et+dnEgwVFRn75nV4
-         Ch5tW7iU14A+qal4ll0ZUxZDBqj76ECt2F0bSeMDyJEe64iANLPMZ7IGbXKEm3T+e9hp
-         txzRK4rQEFiIJe5gum8u/pc7autVTzzV7ppo5FLt4x0HsWly3wBTMNH36qRPEtYavzYl
-         BUY6FQAruvqYThVQOPBFaDMWKRUGasj/wGc/FSZBjPndlBX33hpaPXSPiLH+030ZZBvR
-         uJwg==
-X-Gm-Message-State: APzg51BM8kW8fOLBTFSrrHqcZg3Vk9vy1B6SKqs24KTBpr5jhqzERxki
-        yYJdh8BNPW6hbxhlpI2uCtQUVvQWG9c2TufIAe/e7EEWESYYtA==
-X-Google-Smtp-Source: AA+uWPwyRwT/rE2MCuOlabUA/e9vqSqoffeJyRl3uClSffnFBBsM5fi4Qb45RJJqn8cNGx6K01Xovw6Wxpjbc9RfEx4=
-X-Received: by 2002:aca:e504:: with SMTP id c4-v6mr4404435oih.246.1534549976789;
- Fri, 17 Aug 2018 16:52:56 -0700 (PDT)
+        bh=Ds396LVoVtBCaofAqS7RtuLP2vc9hietrCDCgYaSKw4=;
+        b=aX1Pezinrucs5GXYS9BmQv+5XTubwJD012HaXK+DX3AQA+ejPQTXTmj56Z2pcPfvzD
+         ziPDTcre0C/7Cg9kWBeX3Y22hxuwc9GbSZ32Q7dUkAPn22szqywZ2b/3mpGvBUqvg7Fs
+         aZgoGlm7D1x9XJH23KresuSYe5ydqldjBv24zPx0SkHqkaH5DKfWT7hPP8V+sOgkFVKJ
+         JzncZKg7wxMYG7dmXEa6Pbfd6uwoyjPsbqPMCXLFFhLG6+hED4l9u7h7IX1jiJbJu2vn
+         bQr3c8YADTFdxdDh1HRIlLbYgP+87kcxWC6E3EaeO32eCx+J772EBrvFIWn4+A9dxrgX
+         /HAw==
+X-Gm-Message-State: AOUpUlEYr9sTGBEF3kWf1xZhqXWPL1pnPkJ6hYTDpsqyzRxVsT/XL+5e
+        WPU4iVztJWpMSoBedLC/B64qSjIp5JWoi5DfvrBt4hkcEzS/LQ==
+X-Google-Smtp-Source: AA+uWPwoBrs5jZD697eAyoyZs2cwFT2RyHA9sJeZiBMSPbJIn3pKMU8bt/hrP0o8/j1a3XaJc/q/ybFlJzvFALBCebM=
+X-Received: by 2002:aca:c585:: with SMTP id v127-v6mr4769841oif.348.1534550128363;
+ Fri, 17 Aug 2018 16:55:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180817221624.10232-1-casey.schaufler@intel.com> <20180817221624.10232-4-casey.schaufler@intel.com>
-In-Reply-To: <20180817221624.10232-4-casey.schaufler@intel.com>
+References: <20180817221624.10232-1-casey.schaufler@intel.com> <20180817221624.10232-3-casey.schaufler@intel.com>
+In-Reply-To: <20180817221624.10232-3-casey.schaufler@intel.com>
 From:   Jann Horn <jannh@google.com>
-Date:   Sat, 18 Aug 2018 01:52:30 +0200
-Message-ID: <CAG48ez3aB5X9=hqepovG6L4vQYZjzHZ6fWqdd4Vtzh92u2J5fQ@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 3/5] LSM: Security module checking for side-channel dangers
+Date:   Sat, 18 Aug 2018 01:55:02 +0200
+Message-ID: <CAG48ez23G+wcnkCMNZV_mxYMS=h+pZkpx1451Wz5GB9_tcDv3Q@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 2/5] X86: Support LSM determination of side-channel vulnerability
 To:     Casey Schaufler <casey.schaufler@intel.com>
 Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
         kernel list <linux-kernel@vger.kernel.org>,
@@ -80,37 +80,53 @@ On Sat, Aug 18, 2018 at 12:17 AM Casey Schaufler
 >
 > From: Casey Schaufler <cschaufler@localhost.localdomain>
 >
-> The sidechannel LSM checks for cases where a side-channel
-> attack may be dangerous based on security attributes of tasks.
-> This includes:
->         Effective UID of the tasks is different
->         Capablity sets are different
->         Tasks are in different namespaces
-> An option is also provided to assert that task are never
-> to be considered safe. This is high paranoia, and expensive
-> as well.
+> When switching between tasks it may be necessary
+> to set an indirect branch prediction barrier if the
+> tasks are potentially vulnerable to side-channel
+> attacks. This adds a call to security_task_safe_sidechannel
+> so that security modules can weigh in on the decision.
 >
 > Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
-[...]
-> +#ifdef CONFIG_SECURITY_SIDECHANNEL_UIDS
-> +static int safe_by_uid(struct task_struct *p)
-> +{
-> +       const struct cred *ccred = current_real_cred();
-> +       const struct cred *pcred = get_task_cred(p);
-> +
-> +       /*
-> +        * Credential checks. Considered safe if:
-> +        *      UIDs are the same
-> +        */
-> +       if (ccred != pcred && ccred->euid.val != pcred->euid.val)
-> +               return -EACCES;
-> +       return 0;
-> +}
+> ---
+>  arch/x86/mm/tlb.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+> index 6eb1f34c3c85..8714d4af06aa 100644
+> --- a/arch/x86/mm/tlb.c
+> +++ b/arch/x86/mm/tlb.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/export.h>
+>  #include <linux/cpu.h>
+>  #include <linux/debugfs.h>
+> +#include <linux/security.h>
+>
+>  #include <asm/tlbflush.h>
+>  #include <asm/mmu_context.h>
+> @@ -270,11 +271,14 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+>                  * threads. It will also not flush if we switch to idle
+>                  * thread and back to the same process. It will flush if we
+>                  * switch to a different non-dumpable process.
+> +                * If a security module thinks that the transition
+> +                * is unsafe do the flush.
+>                  */
+> -               if (tsk && tsk->mm &&
+> -                   tsk->mm->context.ctx_id != last_ctx_id &&
+> -                   get_dumpable(tsk->mm) != SUID_DUMP_USER)
+> -                       indirect_branch_prediction_barrier();
+> +               if (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id) {
+> +                       if (get_dumpable(tsk->mm) != SUID_DUMP_USER ||
+> +                           security_task_safe_sidechannel(tsk) != 0)
+> +                               indirect_branch_prediction_barrier();
+> +               }
 
-This function looks bogus. get_task_cred() bumps the refcount on the
-returned cred struct pointer, but you don't drop it. You probably want
-to use something that doesn't fiddle with the refcount at all here to
-avoid cacheline bouncing - possibly a raw rcu_dereference_protected()
-if there are no better helpers.
+When you posted v1 of this series, I asked:
 
-Same thing for the other get_task_cred() calls further down in the patch.
+| Does this enforce transitivity? What happens if we first switch from
+| an attacker task to a task without ->mm, and immediately afterwards
+| from the task without ->mm to a victim task? In that case, whether a
+| flush happens between the attacker task and the victim task depends on
+| whether the LSM thinks that the mm-less task should have access to the
+| victim task, right?
+
+Have you addressed that? I don't see it...
