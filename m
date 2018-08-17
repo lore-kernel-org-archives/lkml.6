@@ -2,107 +2,197 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CA5C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA656C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:27:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF678208DB
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:27:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeblueprint-co-uk.20150623.gappssmtp.com header.i=@codeblueprint-co-uk.20150623.gappssmtp.com header.b="kHgrYAMI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF678208DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeblueprint.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 93BB6208DB
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:27:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93BB6208DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727167AbeHQNab (ORCPT
+        id S1727273AbeHQNad (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 09:30:31 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38026 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbeHQNaa (ORCPT
+        Fri, 17 Aug 2018 09:30:33 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:49229 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbeHQNab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 09:30:30 -0400
-Received: by mail-ed1-f68.google.com with SMTP id t2-v6so4263303edr.5
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 03:27:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=codeblueprint-co-uk.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+vZk7C/cvTmaqiJT52wjY54OISBHhnjBYNXgUMZjnxw=;
-        b=kHgrYAMIESJL1ZnamAad4Uu5XsUDvwR5bxa1aqwrR+U+ChNAoOxia0Gx6VzzGn+LcN
-         kLhO1pXZQi+gcgqkxW81/Dvd8i19fCO1ipbmrUwWDnyESI27AiRMnSh14Zhy4Go6aRPV
-         KO1R6t9zoNCcfI0/5IXdw1wflTZIUE/ZRuITKl5hixWRsuml07pf9gQ/60tbkzKER3eV
-         ZJjof1q1JLBSsUuCxQLjE9lVBzjc98GI4bZ7Cu/HU0PPtQ1bd8CzHIr3M2gJQWkRCVwq
-         m/8nHI90owuKx6CHo29/czeNoGMG2cMgKewxESNGfpFJJML2SiDKje12HqHrmuNEmmCc
-         lWZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+vZk7C/cvTmaqiJT52wjY54OISBHhnjBYNXgUMZjnxw=;
-        b=eXqehS2ho4xrkNHWny4t4FGurTfQ6wjvwsRF/XpQgbameLttYDyWDn3CKMzPX0bASa
-         Oj3KqJO2PWjXKI8LwpvJLRKpZ2CmxoZXoybobdFf733q14Ulc41IRmJbsULXrXyy2mo/
-         8zOPgtv4x4ir9o7DCLAaa1kdZuHb6nTXewBynS1oDXRD59HSEzTaw+NkpyolE1MitaMg
-         ZM8EPMvVBOk80fJNvsRcSerF5gq6+788jqzLrFu7F8zxBkd+4qCPqic1+/kg8RtqyDkr
-         QjVEWIP+Ve7erw7e6xdWXrCt0kX1o0fbcP7gIpE9TTffZLdiD6OtH+ZCEnOVJkGk+CTB
-         QiuQ==
-X-Gm-Message-State: AOUpUlFeMV2qWrn79ruXKij3ZCrw7HfcPOnhWgtDHQtfiXNjV2+XhKze
-        nYoPYRf4RebBAHfWKEg7XmtoO1zASqM=
-X-Google-Smtp-Source: AA+uWPwaQrgffGp8jsFRKEj4xG+54XqKXScVJraj8laWfDiTamDGPR99gVGwD+VIzaaJHEncGqFiNA==
-X-Received: by 2002:a50:d689:: with SMTP id r9-v6mr41959256edi.259.1534501655669;
-        Fri, 17 Aug 2018 03:27:35 -0700 (PDT)
-Received: from localhost ([94.13.61.204])
-        by smtp.gmail.com with ESMTPSA id d26-v6sm3383121ede.50.2018.08.17.03.27.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 Aug 2018 03:27:35 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 11:27:34 +0100
-From:   Matt Fleming <matt@codeblueprint.co.uk>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Mike Galbraith <umgwanakikbuti@gmail.com>
-Subject: Re: [PATCH] sched/fair: Avoid divide by zero when rebalancing domains
-Message-ID: <20180817102734.GA4253@codeblueprint.co.uk>
-References: <20180704142455.16035-1-matt@codeblueprint.co.uk>
- <55afee27-4143-e08c-b254-0d68a05d5ee6@arm.com>
- <20180705132726.GB3864@codeblueprint.co.uk>
- <94149109-a54c-fc5d-7b56-e786c8de5b94@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <94149109-a54c-fc5d-7b56-e786c8de5b94@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 17 Aug 2018 09:30:31 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0LbrfA-1gFk7r2rG0-00jIgT; Fri, 17 Aug 2018 12:27:15 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [RFC 01/15] PCI: clean up legacy host bridge scan functions
+Date:   Fri, 17 Aug 2018 12:26:31 +0200
+Message-Id: <20180817102645.3839621-2-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180817102645.3839621-1-arnd@arndb.de>
+References: <20180817102645.3839621-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:qDqhbuzSX8z08T2QJlMsg/+ruOlcqG1c6ro78J/5MxdL56nnRad
+ yO5HhKo3efL2siEaAAY7qOiJJ3tKLIqKd6DJd1500VXoRHZnzIU11B5eNkG3bBfbRbiMaOC
+ 7sIxy4pZO0kdRg2lK5a97hD/1JtCLT9+XU9Bhcz8Phl5VVvzt8s/T5OnHN6eXScNldLezo9
+ 2xaQ1mtfde4n2i8BI3gDQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:jfQRhFGulKg=:XukBP/UhVY4BRzkO84yddY
+ qQprVATs/qCyceQTQaz+NSylj38T+4mtihVDs3Lu2LdCa1KYaNdq3gRlgvmqPRcs8HvdHy6Oi
+ 9gEnQJaQJTT28Na47z6gb3ssYaSqkriElVDkOJ6POo3RjjkpCPEf+02/pTfuqK3E4fvzcxwD0
+ BsvGfrcRv1rBlbcLybB4/WrFXvSLSgbapLU9ENLSsVJRMKh9bgR5IJtNotnR14UkHxxJl3X5k
+ 9pIUmf11wUVON5jlM9WT8wJBOFmcmsKfAxcQ5/dhB8fnzqtofDUYi8ghIisUjtYpusFeyI+lP
+ XCOQ5IRbxIL1Mv+LBQ/O/jqMQ0hJwza3VFRwmrsFihyPai9gybRhVVear1GmMLGvHu1rpMjXP
+ PkfaKh/Nche6GRkGXkltaZsVuMqrlDwFxTWN/qVCg92pRQk1VMSUQLvbWZYhelAs3GKgcKBRm
+ uXLFTlGeXM3t3x6/3HyDjg4GBGEfs7MxcbUlJfhSkI1niAgMYb5TTB6fkbBex2PXKOah0tDE3
+ NLbO9MPHnbrM88zKxCyN4CziOFndAmJTEH42nME+FcgVqAJc2gJkOGzJL9DwcC+zDTSule+RG
+ lvvEzhnosFOE+1Phg9bv8wgPAmbyGBaoDqUia7FHDe0LutTZgvUruaDaa25nfzFZGGqRV8d4S
+ GnUtdvrrcKhF2BVCA+dU2Gnpmp0a6aap6Q0M8QFyLPMA3HDxd2vt8msowj/dDlKIVlzE=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 05 Jul, at 05:54:02PM, Valentin Schneider wrote:
-> On 05/07/18 14:27, Matt Fleming wrote:
-> > On Thu, 05 Jul, at 11:10:42AM, Valentin Schneider wrote:
-> >> Hi,
-> >>
-> >> On 04/07/18 15:24, Matt Fleming wrote:
-> >>> It's possible that the CPU doing nohz idle balance hasn't had its own
-> >>> load updated for many seconds. This can lead to huge deltas between
-> >>> rq->avg_stamp and rq->clock when rebalancing, and has been seen to
-> >>> cause the following crash:
-> >>>
-> >>>  divide error: 0000 [#1] SMP
-> >>>  Call Trace:
-> >>>   [<ffffffff810bcba8>] update_sd_lb_stats+0xe8/0x560
-> 
-> My confusion comes from not seeing where that crash happens. Would you mind
-> sharing the associated line number? I can feel the "how did I not see this"
-> from there but it can't be helped :(
+Aside from the modern pci_host_bridge based interfaces, we have a couple
+of interfaces from old times that are still used in a couple of platforms:
+pci_create_root_bus(), pci_scan_bus() and pci_scan_root_bus().
 
-The divide by zero comes from scale_rt_capacity() where 'total' is a
-u64 but gets truncated when passed to div_u64() since the divisor
-parameter is u32.
+As a first step towards getting everybody to use the new interfaces,
+this simplifies the latter two to call the pci_alloc_host_bridge() and
+pci_register_host_bridge()/pci_scan_root_bus_bridge() interfaces directly.
 
-Sure, you could use div64_u64() instead, but the real issue is that
-the load hasn't been updated for a very long time and that we're
-trying to balance the domains with stale data.
+The behavior should be entirely unchanged here, but we can then push
+down the functions into the individual host implementations.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/pci/probe.c | 86 ++++++++++++++++++++++++---------------------
+ 1 file changed, 45 insertions(+), 41 deletions(-)
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index ec784009a36b..b0f666271245 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -23,13 +23,6 @@
+ #define CARDBUS_LATENCY_TIMER	176	/* secondary latency timer */
+ #define CARDBUS_RESERVE_BUSNR	3
+ 
+-static struct resource busn_resource = {
+-	.name	= "PCI busn",
+-	.start	= 0,
+-	.end	= 255,
+-	.flags	= IORESOURCE_BUS,
+-};
+-
+ /* Ugh.  Need to stop exporting this to modules. */
+ LIST_HEAD(pci_root_buses);
+ EXPORT_SYMBOL(pci_root_buses);
+@@ -3060,53 +3053,64 @@ EXPORT_SYMBOL(pci_scan_root_bus_bridge);
+ struct pci_bus *pci_scan_root_bus(struct device *parent, int bus,
+ 		struct pci_ops *ops, void *sysdata, struct list_head *resources)
+ {
+-	struct resource_entry *window;
+-	bool found = false;
+-	struct pci_bus *b;
+-	int max;
+-
+-	resource_list_for_each_entry(window, resources)
+-		if (window->res->flags & IORESOURCE_BUS) {
+-			found = true;
+-			break;
+-		}
++	struct pci_host_bridge *bridge;
++	int error;
+ 
+-	b = pci_create_root_bus(parent, bus, ops, sysdata, resources);
+-	if (!b)
++	bridge = pci_alloc_host_bridge(0);
++	if (!bridge)
+ 		return NULL;
+ 
+-	if (!found) {
+-		dev_info(&b->dev,
+-		 "No busn resource found for root bus, will use [bus %02x-ff]\n",
+-			bus);
+-		pci_bus_insert_busn_res(b, bus, 255);
+-	}
++	list_splice_init(resources, &bridge->windows);
++	bridge->dev.parent = parent;
++	bridge->sysdata = sysdata;
++	bridge->busnr = bus;
++	bridge->ops = ops;
+ 
+-	max = pci_scan_child_bus(b);
++	error = pci_scan_root_bus_bridge(bridge);
++	if (error < 0)
++		goto err_out;
+ 
+-	if (!found)
+-		pci_bus_update_busn_res_end(b, max);
++	return bridge->bus;
+ 
+-	return b;
++err_out:
++	kfree(bridge);
++	return NULL;
+ }
+ EXPORT_SYMBOL(pci_scan_root_bus);
+ 
++static struct resource busn_resource = {
++	.name	= "PCI busn",
++	.start	= 0,
++	.end	= 255,
++	.flags	= IORESOURCE_BUS,
++};
++
+ struct pci_bus *pci_scan_bus(int bus, struct pci_ops *ops,
+ 					void *sysdata)
+ {
+-	LIST_HEAD(resources);
+-	struct pci_bus *b;
++	struct pci_host_bridge *bridge;
++	int error;
+ 
+-	pci_add_resource(&resources, &ioport_resource);
+-	pci_add_resource(&resources, &iomem_resource);
+-	pci_add_resource(&resources, &busn_resource);
+-	b = pci_create_root_bus(NULL, bus, ops, sysdata, &resources);
+-	if (b) {
+-		pci_scan_child_bus(b);
+-	} else {
+-		pci_free_resource_list(&resources);
+-	}
+-	return b;
++	bridge = pci_alloc_host_bridge(0);
++	if (!bridge)
++		goto err;
++
++	pci_add_resource(&bridge->windows, &ioport_resource);
++	pci_add_resource(&bridge->windows, &iomem_resource);
++	pci_add_resource(&bridge->windows, &busn_resource);
++	bridge->sysdata = sysdata;
++	bridge->busnr = bus;
++	bridge->ops = ops;
++
++	error = pci_scan_root_bus_bridge(bridge);
++	if (error < 0)
++		goto err;
++
++	return bridge->bus;
++
++err:
++	pci_free_host_bridge(bridge);
++	return NULL;
+ }
+ EXPORT_SYMBOL(pci_scan_bus);
+ 
+-- 
+2.18.0
+
