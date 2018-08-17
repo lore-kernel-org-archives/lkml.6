@@ -2,123 +2,94 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A08B3C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30AC1C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:52:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EA232188F
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:51:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EA232188F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DC2522188F
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:52:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="09wR3i9S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC2522188F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727565AbeHQRyk (ORCPT
+        id S1727590AbeHQRzp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 13:54:40 -0400
-Received: from foss.arm.com ([217.140.101.70]:48170 "EHLO foss.arm.com"
+        Fri, 17 Aug 2018 13:55:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727365AbeHQRyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 13:54:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A3C3480D;
-        Fri, 17 Aug 2018 07:51:00 -0700 (PDT)
-Received: from armageddon.cambridge.arm.com (armageddon.emea.arm.com [10.4.13.16])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAD7D3F5B3;
-        Fri, 17 Aug 2018 07:50:55 -0700 (PDT)
-Date:   Fri, 17 Aug 2018 15:50:53 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Jia He <hejianet@gmail.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Daniel Vacek <neelx@redhat.com>, Mel Gorman <mgorman@suse.de>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Philip Derrin <philip@cog.systems>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Jia He <jia.he@hxt-semitech.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Steve Capper <steve.capper@arm.com>,
-        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [RESEND PATCH v10 1/6] arm: arm64: introduce
- CONFIG_HAVE_MEMBLOCK_PFN_VALID
-Message-ID: <20180817145052.aizhi6n66vxblriq@armageddon.cambridge.arm.com>
-References: <1530867675-9018-1-git-send-email-hejianet@gmail.com>
- <1530867675-9018-2-git-send-email-hejianet@gmail.com>
+        id S1727037AbeHQRzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 13:55:45 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FBD121536;
+        Fri, 17 Aug 2018 14:52:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534517525;
+        bh=GRVbY5EqwJ/2M0NaMhxB8s88/l/loaNmsIUlfPCmtdE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=09wR3i9S4ivu56w2sQCIHfiU5vqTysPRUeszp1YykVnrY7XCq//6rE62issux5h1a
+         8Gh7aL0Ht6Nwuv3dCWWcMkV49kRwHaNgMeks0uevfxE00Sv43VE/k9RoY2T7K+8fnm
+         xZHzBtiSJOZkpQvY7D7ynDeYuagmo40dzi/2moyA=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 7D3DF141C3A; Fri, 17 Aug 2018 11:52:02 -0300 (-03)
+Date:   Fri, 17 Aug 2018 11:52:02 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>
+Subject: Re: [PATCH 00/13] perf tools: Use plain debug files for compressed
+ objects
+Message-ID: <20180817145202.GB22443@kernel.org>
+References: <20180817094813.15086-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1530867675-9018-2-git-send-email-hejianet@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180817094813.15086-1-jolsa@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 05:01:10PM +0800, Jia He wrote:
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 42c090c..26d75f4 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -778,6 +778,10 @@ config ARCH_SELECT_MEMORY_MODEL
->  config HAVE_ARCH_PFN_VALID
->  	def_bool ARCH_HAS_HOLES_MEMORYMODEL || !SPARSEMEM
->  
-> +config HAVE_MEMBLOCK_PFN_VALID
-> +	def_bool y
-> +	depends on HAVE_ARCH_PFN_VALID
-> +
->  config HW_PERF_EVENTS
->  	def_bool y
->  	depends on ARM_PMU
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 94af022..28fcf54 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -137,6 +137,9 @@ config HAVE_MEMBLOCK_NODE_MAP
->  config HAVE_MEMBLOCK_PHYS_MAP
->  	bool
->  
-> +config HAVE_MEMBLOCK_PFN_VALID
-> +	bool
+Em Fri, Aug 17, 2018 at 11:48:00AM +0200, Jiri Olsa escreveu:
+> hi,
+> currently we don't allow to open plain debug files for
+> compressed kernel module objects, ending up with following
+> warning:
+> 
+>   $ perf report --stdio
+>   lzma: failed The input is not in the .xz format
+>   lzma: failed The input is not in the .xz format
+>   lzma: failed The input is not in the .xz format
+>   lzma: failed The input is not in the .xz format
+>   # To display the perf.data header info, please use --header/--header-only options.
+> 
+> The reason is behind the logic we open the DSO object files,
+> when we try all possible 'debug' objects until we find the
+> data. So even if the DSO is represented by 'krava.xz' module,
+> we can end up opening ~/.debug/....23432432/debug' file which
+> is not compressed and we fail with above error.
+> 
+> This patchset adds the code to detect un/compressed files and
+> return plain debug file when available even for compressed
+> kernel modules.
+> 
+> Also available in here:
+>   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+>   perf/fixes
 
-Since you defined HAVE_MEMBLOCK_PFN_VALID here, do we need to define it
-in the arch code as well? If kept it in the mm/Kconfig only, you could
-just select it in the arch HAVE_ARCH_PFN_VALID entry:
+Thanks, applied.
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index d0a53cc6293a..cd230c77e122 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -787,6 +787,7 @@ config ARCH_FLATMEM_ENABLE
- 
- config HAVE_ARCH_PFN_VALID
- 	def_bool ARCH_HAS_HOLES_MEMORYMODEL || !SPARSEMEM
-+	select HAVE_MEMBLOCK_PFN_VALID
- 
- config HW_PERF_EVENTS
- 	def_bool y
-
-(similarly for arch/arm)
-
--- 
-Catalin
+- Arnaldo
