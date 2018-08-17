@@ -2,90 +2,91 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE28C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB51C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C9D321536
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:36:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C9D321536
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E897521536
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:37:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KFqpsRSZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E897521536
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbeHQTkg (ORCPT
+        id S1727881AbeHQTlU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 15:40:36 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49242 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727037AbeHQTkg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 15:40:36 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 88B0215A2;
-        Fri, 17 Aug 2018 09:36:34 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5A8F33F5B3;
-        Fri, 17 Aug 2018 09:36:34 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 0AC4F1AE2DE4; Fri, 17 Aug 2018 17:36:42 +0100 (BST)
-Date:   Fri, 17 Aug 2018 17:36:42 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        catalin.marinas@arm.com
-Subject: [GIT PULL] arm64: merge window fixes for -rc1
-Message-ID: <20180817163641.GC12205@arm.com>
+        Fri, 17 Aug 2018 15:41:20 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36045 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727037AbeHQTlU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 15:41:20 -0400
+Received: by mail-it0-f65.google.com with SMTP id p81-v6so12531887itp.1;
+        Fri, 17 Aug 2018 09:37:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VieFQTmhvM46SjyzHAHzc6yNNxLIRtqamCHY3sBeXiw=;
+        b=KFqpsRSZ9GDpAwNyK5HhPqdJcK4+3oKQy+RhgmhXXMY1r8tr7OjsNEovp4atCqYUte
+         5MTEh1yjRSD30mkgUmDqZZFDFvlCwYWHU3xMXcVSl32L7Ko8gZmitmvfkOjWgXq2jPKu
+         C0WuVmL2ad33xJfB/YaRYJCj/Bxyaf8zSmT1g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VieFQTmhvM46SjyzHAHzc6yNNxLIRtqamCHY3sBeXiw=;
+        b=grIM3DmIdD/T1gutaEp9FjjlkJCvMUu0Uv++wyZkPC7nOkvggmK7BZaPDPLI/PyN1L
+         b4fHsfJCRVyGx/IOgHA6Z0ryw4iC9+OT5N7v0HGEM8Qn2xYFrKgvKstZBxRKOW/TTmzD
+         F8JNBNbVO3zQ+SqrFzQuP/nFEfFKkvV5hJRlAaMyoDgi8tkGOvAf1uU+JeU0bDDIqkTB
+         256MM6E3cMJYDUep5IUtxrD5F0al1Bmk1bmJ0GC3M9QtkCtaiVVl36a3mr3PxibamcE7
+         0LkqeKWxvHXW9eLqFnmVs+hHfstd+zRViC3ICN6UwW/NvGgy07Ikp7sORFLKuhCqpWhm
+         Vidg==
+X-Gm-Message-State: AOUpUlFlHORB3x6oOuS/JggfpqPCbdBFQ2dZZiL7wPq3dDRH0dXhmwOu
+        1SqU0pZod9oXPzt76zgQFRdHQ687yTRlG69R+9s=
+X-Google-Smtp-Source: AA+uWPyk5YI3mGl8hWhwa7xRciXq9yTHfSnkBwY9tJ4tKOIm6a7l4fuMnUVRM6wHnJgHJdtr6Aiv2NlVVyu4VDYKS7g=
+X-Received: by 2002:a24:4c0b:: with SMTP id a11-v6mr25201542itb.123.1534523837333;
+ Fri, 17 Aug 2018 09:37:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20180813012347.GA32555@nautica> <20180817023307.GA32726@nautica>
+In-Reply-To: <20180817023307.GA32726@nautica>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 17 Aug 2018 09:37:05 -0700
+Message-ID: <CA+55aFzLe7C03-53=0WrXXfZcfsJfTsvRqrrBNqnLvOxUiCJqQ@mail.gmail.com>
+Subject: Re: [GIT PULL] 9p updates for 4.19
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     V9FS Developers <v9fs-developer@lists.sourceforge.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+So this pull request confuses me, and that's not a good thing.
 
-I'm travelling next week and a couple of fixes came in since our main
-pull request on Tuesday. Since one of them fixes a boot failure on
-Hikey-960, I figured there was no point holding them off until -rc1 is
-released, so please consider pulling them beforehand.
+On Thu, Aug 16, 2018 at 7:33 PM Dominique Martinet
+<asmadeus@codewreck.org> wrote:
+>
+> Pull request for inclusion in 4.19 for 9p
 
-Details in the tag.
+So when I pull the tag, I get a different message, talking about
 
-Cheers,
+  This tag is the same as 9p-for-4.19 without the two MAINTAINERS patches
 
-Will
+but I never saw a first version.
 
---->8
+And it comes from a github address, with a pgp key that I've not seen
+before, and without me having been told about said maintainership
+updates. And while the  key has a lot of signatures, none of them are
+any that I have recognized previously from kernel development.
 
-The following changes since commit 3c4d9137eefecf273a520d392071ffc9df0a9a7a:
+I'm sure it's all ok, but honestly, there's no way I can pull this
+without a bit more clarification.
 
-  arm64: alternative: Use true and false for boolean values (2018-08-08 11:20:54 +0100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
-
-for you to fetch changes up to 5ad356eabc47d26a92140a0c4b20eba471c10de3:
-
-  arm64: mm: check for upper PAGE_SHIFT bits in pfn_valid() (2018-08-17 10:27:14 +0100)
-
-----------------------------------------------------------------
-A couple of arm64 fixes
-
-- Fix boot on Hikey-960 by avoiding an IPI with interrupts disabled
-- Fix address truncation in pfn_valid() implementation
-
-----------------------------------------------------------------
-Greg Hackmann (1):
-      arm64: mm: check for upper PAGE_SHIFT bits in pfn_valid()
-
-Will Deacon (1):
-      arm64: Avoid calling stop_machine() when patching jump labels
-
- arch/arm64/kernel/jump_label.c | 2 +-
- arch/arm64/mm/init.c           | 6 +++++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
+             Linus
