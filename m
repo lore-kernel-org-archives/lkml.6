@@ -2,130 +2,186 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DD5C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E87FC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:00:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43883218A7
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:57:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43883218A7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AD350218A7
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 09:00:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="FBp8Tbwc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD350218A7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbeHQMAL (ORCPT
+        id S1726441AbeHQMCw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 08:00:11 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:38762 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726213AbeHQMAL (ORCPT
+        Fri, 17 Aug 2018 08:02:52 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:43947 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbeHQMCw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 08:00:11 -0400
-Received: by mail-oi0-f68.google.com with SMTP id v8-v6so12828637oie.5;
-        Fri, 17 Aug 2018 01:57:37 -0700 (PDT)
+        Fri, 17 Aug 2018 08:02:52 -0400
+Received: by mail-oi0-f66.google.com with SMTP id b15-v6so12804690oib.10
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 02:00:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=OSlw27W3IJFfmN4oXWkSOyRrGacr6r0Rj5e+Gh+cYVE=;
+        b=FBp8TbwcxhJsemULE+UZ/WDvCBCBOJ2cbUNk2Z06zlWHj4kWFBSTE4VuULPFu67OOb
+         pTKnnIMGpP8x8HsKNNCUCMk4aKNjCCeHAgiUJiEp9TKdHeMPFjN8jhTO1q62q9Vh9Vai
+         pfeNnFb632vrL6+lanqyt6imtqAWxFFXnOK8o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=qN7LXQBlLNpyqGffdPWbl3TeOZdOe0gwIS3nQf9dr40=;
-        b=SM3TQOqKbNwNU+z00gFi++fa4BACJkcvSFA5Jo+anKKFLxKVLkurko3qAAS5Bb9a8a
-         k680PhRr1LFydV/PAECfHdqrwCVIgaLEXFodpjEIezzcBMZ01w3VUgNh3/a3mr521pFf
-         tpEbBspVw51yEcvnQyjeoGhwISZh34FccP8KGNXspY3tZdoDkNp286ftEjM+j2NRz8cr
-         B1Yy1JZMf1h7wfF67axEs743+fku/09VJM79yTkHUQXws40QGwns58bWp7qXDpatVNu6
-         vA8jaiA/lp3XVigI/PhFaAlrdz+GkQ1A5A41zaopUTRAfX9SKH69U/Zu1aNo/d8EMoYS
-         jp+g==
-X-Gm-Message-State: AOUpUlGN3M1PfaapqkoaDwAjBIObSe6+o6qnf6WEOxA/SB8riebn/ccv
-        VrPXdonWc1xpcQJGqxN3SJ6tfHASSxU1sm9a+Dg=
-X-Google-Smtp-Source: AA+uWPwf84lPpuUVuPoHTP0inzPPE37dA1EdzhWmysIWT5KgV5z0rNV2e76u32GidexLDrITVEjAJawO03j5Y5y1ICo=
-X-Received: by 2002:aca:b885:: with SMTP id i127-v6mr1634635oif.180.1534496256599;
- Fri, 17 Aug 2018 01:57:36 -0700 (PDT)
+        bh=OSlw27W3IJFfmN4oXWkSOyRrGacr6r0Rj5e+Gh+cYVE=;
+        b=oQOc19PcB7qOXE1WghCk83xZ0LI9jjejxSly2kqoZuKn/n0a9ubD3gKtJO1U85kxbS
+         yeeKMd1KdulJRiqZk2CtTBd1LNYcQMd5vjS5V6wagnygp+2D+z3TovUmFdFvFOEhf+R8
+         5JLUdirPmeMEkJU3Eze73UndGNWT8IbiBbxc8AUMFCjyIChSe60nVyPW3sDVccTfOka7
+         I40FkpL+ecCColxer6ARH44RIVbhLjAvKeYF538aOf0p6Gmbh12n7TljHZqfMfc8guMp
+         wPCg5yQ2TrwwUQxCw8wngDp/p6uRnKMiq3ArzQnqO3ozdhIHjfXx+2j1vD5M6w89mTl+
+         dkWg==
+X-Gm-Message-State: AOUpUlFkSM0xBODCbYQLwnXkxMtBYjUWw4b+J1tThDeebyId3SpKR4bW
+        fovnmV3bE/Z800L7Odq27wPAlL81Ee6sMz2zeth4xA==
+X-Google-Smtp-Source: AA+uWPw4rnNMp6MiEfQ62IRk0jiuQLuTRblN0HBwwpEvzB5UrwY1cmCuq+2Nn/ZOak1zPcZGmwArVumxm9EbfHUblPc=
+X-Received: by 2002:aca:3f41:: with SMTP id m62-v6mr1722007oia.18.1534496416673;
+ Fri, 17 Aug 2018 02:00:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180817075901.4608-1-david@redhat.com> <20180817075901.4608-2-david@redhat.com>
- <20180817084146.GB14725@kroah.com>
-In-Reply-To: <20180817084146.GB14725@kroah.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 17 Aug 2018 10:57:25 +0200
-Message-ID: <CAJZ5v0ja2wrwQ_X=8WW0Lvio+jE7nyqM_WSy1C+tzuKj6RsMdA@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/2] drivers/base: export lock_device_hotplug/unlock_device_hotplug
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        devel@linuxdriverproject.org, linux-s390@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>, osalvador@suse.de,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        David Rientjes <rientjes@google.com>
+Received: by 2002:a4a:244d:0:0:0:0:0 with HTTP; Fri, 17 Aug 2018 02:00:16
+ -0700 (PDT)
+In-Reply-To: <1ffafe01887e3b760f84488b06339aba64f586e5.camel@kernel.crashing.org>
+References: <20180817044902.31420-1-benh@kernel.crashing.org>
+ <20180817044902.31420-6-benh@kernel.crashing.org> <66577784.13494160.1534493390262.JavaMail.zimbra@kalray.eu>
+ <1ffafe01887e3b760f84488b06339aba64f586e5.camel@kernel.crashing.org>
+From:   Hari Vyas <hari.vyas@broadcom.com>
+Date:   Fri, 17 Aug 2018 14:30:16 +0530
+Message-ID: <CAM5rFu-h25j-vfvybKbKr4huhBgpV3Rusj8E2JyaoG1YnokeMw@mail.gmail.com>
+Subject: Re: [RFC PATCH 5/6] pci: Protect the enable/disable state of pci_dev
+ using the state mutex
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Marta Rybczynska <mrybczyn@kalray.eu>,
+        Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
+        Ray Jui <ray.jui@broadcom.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jens Axboe <axboe@kernel.dk>, Lukas Wunner <lukas@wunner.de>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Pierre-Yves Kerbrat <pkerbrat@kalray.eu>,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 10:41 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Fri, Aug 17, 2018 at 2:00 PM, Benjamin Herrenschmidt
+<benh@kernel.crashing.org> wrote:
+> On Fri, 2018-08-17 at 10:09 +0200, Marta Rybczynska wrote:
+>>
+>> ----- On 17 Aug, 2018, at 06:49, Benjamin Herrenschmidt benh@kernel.crashing.org wrote:
+>>
+>> > This protects enable/disable operations using the state mutex to
+>> > avoid races with, for example, concurrent enables on a bridge.
+>> >
+>> > The bus hierarchy is walked first before taking the lock to
+>> > avoid lock nesting (though it would be ok if we ensured that
+>> > we always nest them bottom-up, it is better to just avoid the
+>> > issue alltogether, especially as we might find cases where
+>> > we want to take it top-down later).
+>> >
+>> > Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+>>
+>>
+>> >
+>> > static void pci_enable_bridge(struct pci_dev *dev)
+>> > {
+>> >     struct pci_dev *bridge;
+>> > -   int retval;
+>> > +   int retval, enabled;
+>> >
+>> >     bridge = pci_upstream_bridge(dev);
+>> >     if (bridge)
+>> >             pci_enable_bridge(bridge);
+>> >
+>> > -   if (pci_is_enabled(dev)) {
+>> > -           if (!dev->is_busmaster)
+>> > -                   pci_set_master(dev);
+>> > +   /* Already enabled ? */
+>> > +   pci_dev_state_lock(dev);
+>> > +   enabled = pci_is_enabled(dev);
+>> > +   if (enabled && !dev->is_busmaster)
+>> > +           pci_set_master(dev);
+>> > +   pci_dev_state_unlock(dev);
+>> > +   if (enabled)
+>> >             return;
+>> > -   }
+>> >
+>>
+>> This looks complicated too me especially with the double locking. What do you
+>> think about a function doing that check that used an unlocked version of
+>> pcie_set_master?
+>>
+>> Like:
+>>
+>>         dev_state_lock(dev);
+>>         enabled = pci_is_enabled(dev);
+>>         if (enabled &&  !dev->is_busmaster)
+>>                 pci_set_master_unlocked();
+>>         pci_dev_state_unlock(dev);
+>>
+>> BTW If I remember correctly the code today can set bus mastering multiple
+>> times without checking if already done.
 >
-> On Fri, Aug 17, 2018 at 09:59:00AM +0200, David Hildenbrand wrote:
-> > From: Vitaly Kuznetsov <vkuznets@redhat.com>
-> >
-> > Well require to call add_memory()/add_memory_resource() with
-> > device_hotplug_lock held, to avoid a lock inversion. Allow external modules
-> > (e.g. hv_balloon) that make use of add_memory()/add_memory_resource() to
-> > lock device hotplug.
-> >
-> > Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> > [modify patch description]
-> > Signed-off-by: David Hildenbrand <david@redhat.com>
-> > ---
-> >  drivers/base/core.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > index 04bbcd779e11..9010b9e942b5 100644
-> > --- a/drivers/base/core.c
-> > +++ b/drivers/base/core.c
-> > @@ -700,11 +700,13 @@ void lock_device_hotplug(void)
-> >  {
-> >       mutex_lock(&device_hotplug_lock);
-> >  }
-> > +EXPORT_SYMBOL_GPL(lock_device_hotplug);
-> >
-> >  void unlock_device_hotplug(void)
-> >  {
-> >       mutex_unlock(&device_hotplug_lock);
-> >  }
-> > +EXPORT_SYMBOL_GPL(unlock_device_hotplug);
+> I don't mind but I tend to dislike all those _unlocked() suffixes, I
+> suppose my generation is typing adverse enough that we call these
+> __something instead :)
 >
-> If these are going to be "global" symbols, let's properly name them.
-> device_hotplug_lock/unlock would be better.
-
-Well, device_hotplug_lock is the name of the lock itself. :-)
-
-> But I am _really_ nervous about letting stuff outside of the driver core mess
-> with this, as people better know what they are doing.
+> As for setting multiple times, yes pci_set_master() doesn't check but
+> look at the "-" hunks of my patch, I'm not changing the existing test
+> here. Not that it matters much, it's an optimization.
 >
-> Can't we just "lock" the memory stuff instead?  Why does the entirety of
-> the driver core need to be messed with here?
+> In fact my original version just completely removed the whole lot
+> and just unconditionally did pci_enable_device() + pci_set_master(),
+> just ignoring the existing state :-)
+>
+> But I decided to keep the patch functionally equivalent so I added it
+> back.
+>
+> Cheers,
+> Ben.
+>
+>
+So many mail threads for common issues going so just trying to
+summarize concern from my side.
+1) HW level
+PCI Config data overwritten (ex: PCI_COMMAND bits etc) was happening
+at lower layer so from my
+perspective, it is best to handle concern at lower level with locking
+mechanism and that is what
+I proposed in my upcoming patch. Without that, I guess, we may end up
+in issues later with some weird scenario
+which may not be known today  and we will again be fine tuning stuff
+here and there.
+2) SW level(internal data structure):
+About is_added,is_busmaster: These all are bit fields so infact I too
+suggested to remove those bit fields and
+make separate variables in pci_dev structure. This will avoid all
+data-overwritten,concurrency issues but ofcourse
+at the level of space cost.
+Other possibility will be either to use atomic or locking mechanism
+for these. My point here is also same, better
+avoid fine tuning later stage.
+Moving is_added up and down doesn't look like good as we are just
+shifting issue up and down.
 
-Because, in general, memory hotplug and hotplug of devices are not
-independent.  CPUs and memory may only be possible to take away
-together and that may be the case for other devices too (say, it
-wouldn't be a good idea to access a memory block that has just gone
-away from a device, for DMA and the like).  That's why
-device_hotplug_lock was introduced in the first place.
+Please check and decide accordingly. I will hold my to-be-submitted
+modify() patch about handling hw level
+over-written case with locking around read-write operation.
 
-That said I agree that exporting this to drivers doesn't feel particularly safe.
+Regards,
+hari
