@@ -2,156 +2,115 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F14B8C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E802EC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:19:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA5B6218DB
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:13:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GdCQVGgn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA5B6218DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A91BF218DB
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 14:19:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A91BF218DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727678AbeHQRQ3 (ORCPT
+        id S1727366AbeHQRWx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 13:16:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37580 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725879AbeHQRQ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 13:16:29 -0400
-Received: from localhost (LFbn-NCY-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57A232185A;
-        Fri, 17 Aug 2018 14:12:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534515176;
-        bh=HJmL29St/mHSM6P+CFgoRIekoTpw97xpECKpi+mpA8c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GdCQVGgn6rP4RCdGZw0/MTUaNW1EZVOe/pyZx4M1EZhtmbvFAbNG0+Sz1DFQVa+Yw
-         T9puvJwQQYJiaQcdpcYGKQILYK6F1oo+1mIfsbADYYR65Kr74P5opr8vLFklWqaRax
-         zV6Krhot5JzeIUmICgnXmwH/UImy3766H6jLmrrk=
-Date:   Fri, 17 Aug 2018 16:12:54 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Leo Yan <leo.yan@linaro.org>
-Subject: Re: [PATCH] sched: idle: Avoid retaining the tick when it has been
- stopped
-Message-ID: <20180817141252.GA12426@lerouge>
-References: <2161372.IsD4PDzmmY@aspire.rjw.lan>
- <20180816132723.GA6010@lerouge>
- <10817203.8q7neLTJVD@aspire.rjw.lan>
+        Fri, 17 Aug 2018 13:22:53 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:60928 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726356AbeHQRWx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 13:22:53 -0400
+Received: (qmail 1614 invoked by uid 2102); 17 Aug 2018 10:19:19 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 17 Aug 2018 10:19:19 -0400
+Date:   Fri, 17 Aug 2018 10:19:19 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Zeng Tao <prime.zeng@hisilicon.com>
+cc:     gregkh@linuxfoundation.org, <mathias.nyman@linux.intel.com>,
+        <drinkcat@chromium.org>, <felipe.balbi@linux.intel.com>,
+        <drake@endlessm.com>, <mike.looijmans@topic.nl>, <joe@perches.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Thymo van Beers <thymovanbeers@gmail.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>
+Subject: Re: [PATCH v2] usb: hub: try old enumeration scheme first for high
+ speed devices
+In-Reply-To: <1534503120-1226-1-git-send-email-prime.zeng@hisilicon.com>
+Message-ID: <Pine.LNX.4.44L0.1808171018220.1451-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <10817203.8q7neLTJVD@aspire.rjw.lan>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 11:32:07AM +0200, Rafael J. Wysocki wrote:
-> On Thursday, August 16, 2018 3:27:24 PM CEST Frederic Weisbecker wrote:
-> > On Thu, Aug 09, 2018 at 07:08:34PM +0200, Rafael J. Wysocki wrote:
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > 
-> > > If the tick has been stopped already, but the governor has not asked to
-> > > stop it (which it can do sometimes), the idle loop should invoke
-> > > tick_nohz_idle_stop_tick(), to let tick_nohz_stop_tick() take care
-> > > of this case properly.
-> > > 
-> > > Fixes: 554c8aa8ecad (sched: idle: Select idle state before stopping the tick)
-> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > ---
-> > >  kernel/sched/idle.c |    2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > Index: linux-pm/kernel/sched/idle.c
-> > > ===================================================================
-> > > --- linux-pm.orig/kernel/sched/idle.c
-> > > +++ linux-pm/kernel/sched/idle.c
-> > > @@ -190,7 +190,7 @@ static void cpuidle_idle_call(void)
-> > >  		 */
-> > >  		next_state = cpuidle_select(drv, dev, &stop_tick);
-> > >  
-> > > -		if (stop_tick)
-> > > +		if (stop_tick || tick_nohz_tick_stopped())
-> > >  			tick_nohz_idle_stop_tick();
-> > >  		else
-> > >  			tick_nohz_idle_retain_tick();
-> > 
-> > So what if tick_nohz_idle_stop_tick() sees no timer to schedule and
-> > cancels it, we may remain idle in a shallow state for a long while?
+On Fri, 17 Aug 2018, Zeng Tao wrote:
+
+> The new scheme is required just to support legacy low and full-speed
+> devices. For high speed devices, it will slower the enumeration speed.
+> So in this patch we try the "old" enumeration scheme first for high speed
+> devices, and this is what Windows does since Windows 8.
 > 
-> Yes, but the governor is expected to avoid using shallow states when the
-> tick is stopped already.
-
-So what kind of sleep do we enter to when an idle tick fires and we go
-back to idle? Is it always deep?
-
-I believe that ts->tick_stopped == 1 shouldn't be too relevant for the governor.
-We can definetly have scenarios where the idle tick is stopped for a long while,
-then it fires and schedules the next timer at NOW() + TICK_NSEC (as if the tick
-had been restarted). This can even repeat that way for some time, because
-ts->tick_stopped == 1 only implies that the tick has been stopped once since
-we entered the idle loop. After that we may well have a periodic tick behaviour.
-In that case we probably don't want deep idle state. Especially if we have:
-
-              idle_loop() {
-                  tick_stop (scheduled several seconds forward)
-                  deep_idle_sleep()
-                  //several seconds later
-                  tick()
-                  tick_stop (scheduled TICK_NSEC forward)
-                  deep_idle_sleep()
-                  tick() {
-                      set_need_resched()
-                  }
-                  exit idle loop
-              }
-
-Here the last deep idle state isn't necessary.
-
+> Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
+> ---
+> Changes in v2:
+> 1. As suggested by Alan, mention in the commit log that this change is
+> follow what the Window does.
+> 2. As suggested by Roger, update the kernel-parameter description.
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt | 3 ++-
+>  drivers/usb/core/hub.c                          | 5 ++++-
+>  2 files changed, 6 insertions(+), 2 deletions(-)
 > 
-> > Otherwise we can have something like this:
-> > 
-> > diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-> > index da9455a..408c985 100644
-> > --- a/kernel/time/tick-sched.c
-> > +++ b/kernel/time/tick-sched.c
-> > @@ -806,6 +806,9 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
-> >  static void tick_nohz_retain_tick(struct tick_sched *ts)
-> >  {
-> >  	ts->timer_expires_base = 0;
-> > +
-> > +	if (ts->tick_stopped)
-> > +		tick_nohz_restart(ts, ktime_get());
-> >  }
-> >  
-> >  #ifdef CONFIG_NO_HZ_FULL
-> > 
-> 
-> We could do that, but my concern with that approach is that we may end up
-> stopping and starting the tick back and forth without exiting the loop
-> in do_idle() just because somebody uses a periodic timer behind our
-> back and the governor gets confused.
-> 
-> Besides, that would be a change in behavior, while the $subject patch
-> simply fixes a mistake in the original design.
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 533ff5c..95db23c 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4453,7 +4453,8 @@
+>  
+>  	usbcore.old_scheme_first=
+>  			[USB] Start with the old device initialization
+> -			scheme (default 0 = off).
+> +			scheme,  applies only to low and full-speed devices
+> +			 (default 0 = off).
+>  
+>  	usbcore.usbfs_memory_mb=
+>  			[USB] Memory limit (in MB) for buffers allocated by
+> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> index 1fb2668..d265b19 100644
+> --- a/drivers/usb/core/hub.c
+> +++ b/drivers/usb/core/hub.c
+> @@ -2661,10 +2661,13 @@ static bool use_new_scheme(struct usb_device *udev, int retry,
+>  	int old_scheme_first_port =
+>  		port_dev->quirks & USB_PORT_QUIRK_OLD_SCHEME;
+>  
+> +	int quick_enumeration = (udev->speed == USB_SPEED_HIGH);
 
-Ok, let's take the safe approach for now as this is a fix and it should even be
-routed to stable.
+Minor style point: the preceding blank line should be eliminated.
 
-But then in the longer term, perhaps cpuidle_select() should think that
-through.
+> +
+>  	if (udev->speed >= USB_SPEED_SUPER)
+>  		return false;
+>  
+> -	return USE_NEW_SCHEME(retry, old_scheme_first_port || old_scheme_first);
+> +	return USE_NEW_SCHEME(retry, old_scheme_first_port || old_scheme_first
+> +			      || quick_enumeration);
+>  }
+>  
+>  /* Is a USB 3.0 port in the Inactive or Compliance Mode state?
 
-Thanks.
+Aside from that:
+
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+
