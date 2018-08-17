@@ -2,143 +2,107 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C26A3C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CA5C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:27:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 817172124D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:27:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 817172124D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id BF678208DB
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:27:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=codeblueprint-co-uk.20150623.gappssmtp.com header.i=@codeblueprint-co-uk.20150623.gappssmtp.com header.b="kHgrYAMI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF678208DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeblueprint.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727038AbeHQNaa (ORCPT
+        id S1727167AbeHQNab (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 09:30:30 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:50617 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbeHQNa3 (ORCPT
+        Fri, 17 Aug 2018 09:30:31 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:38026 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbeHQNaa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 09:30:29 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0LnSVK-1gLqnN1ClK-00haWR; Fri, 17 Aug 2018 12:27:15 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [RFC 00/15] PCI: turn some __weak functions into callbacks
-Date:   Fri, 17 Aug 2018 12:26:30 +0200
-Message-Id: <20180817102645.3839621-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:dWl+hzcJroIhS3/jGbVkLP4YuN1iaMm1kiokR+JWz1c8kXoip1x
- WiL9n7z0xcIn+dIlrCPcb4lwLtwRSjzq7b7I3TrR++GaTKkY7QzBS4x1M+Is3MkdtcmmytP
- rMOMOo2lyhTKf2nO2cYd09N7IAubXneAPaa9IbX5rR6DHfZfBRKsDcEhaDKyVgAgNn70Aw7
- bQrmMZdYVZgabyMU89ZRw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:374uKI/eH50=:/brEApJ45kswqUCVVqQRN/
- C/RgIDajIouVdL2I2bYXVia6dsp2qbt57fv1adPrhV34B+G73TTgHO1JYlIGdzpBWsvVKtZli
- LrVJbt8y9ebPmXr0nAjNsuwjVqG2aoFjyLQEEuH/gRvvwAOk/tJnvb4iYlLeo9eqNteKeJtDa
- Skl+zGBraYO8vdH7Jf4JxG8PNhhiSE8SabTJBIYVYKMPLbOtC5dh/4HfP2EAjmAnfHesGPyar
- qR/N6IHDdNimkavARF8yEjzQqSjHvjG/kPKej8eOKpY0Ka/NP9EwybRagLFs9TdVlTB1VhIs9
- CYpQO8UyCv7pf1aswd9jT53Y6T7KiL86czeEw1rzVZ8j4ofn6maQgvPrB4OGi0sAuFn6clxkI
- Y9AYEKm7uKlYmmp9uBWIejmZxqpUhKxjFOOA8WIZvHthNS0ZJT1LgmyDm0T56POPEYFkXYQH5
- HjmOQ0XGf17t0WphUybYoud3GM2/w7MOwWLdjXJIlhef8oqw+w9fbtp7eT3FiTO6DqlPEN53B
- QUlFxAdhwt+4pqDu16XgsfZY5iZQ4x3c4bqNVRSgqIioIDiIqEBjo21qenoXzhYbN90+nBkC5
- IWNZWpyV0Qsx5BIMbRTTvq81sjtPunWRAo5/7JYhf+BAfkzjQB7hpzwtcIcJebvvUir6JmFv1
- z31OYtUfPkkV/xO3343wqxnJ1Ioil/lVExXxEVMt0PkbQU4vWsPujYl8cu2BgiU0qWHo=
+        Fri, 17 Aug 2018 09:30:30 -0400
+Received: by mail-ed1-f68.google.com with SMTP id t2-v6so4263303edr.5
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 03:27:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=codeblueprint-co-uk.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+vZk7C/cvTmaqiJT52wjY54OISBHhnjBYNXgUMZjnxw=;
+        b=kHgrYAMIESJL1ZnamAad4Uu5XsUDvwR5bxa1aqwrR+U+ChNAoOxia0Gx6VzzGn+LcN
+         kLhO1pXZQi+gcgqkxW81/Dvd8i19fCO1ipbmrUwWDnyESI27AiRMnSh14Zhy4Go6aRPV
+         KO1R6t9zoNCcfI0/5IXdw1wflTZIUE/ZRuITKl5hixWRsuml07pf9gQ/60tbkzKER3eV
+         ZJjof1q1JLBSsUuCxQLjE9lVBzjc98GI4bZ7Cu/HU0PPtQ1bd8CzHIr3M2gJQWkRCVwq
+         m/8nHI90owuKx6CHo29/czeNoGMG2cMgKewxESNGfpFJJML2SiDKje12HqHrmuNEmmCc
+         lWZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+vZk7C/cvTmaqiJT52wjY54OISBHhnjBYNXgUMZjnxw=;
+        b=eXqehS2ho4xrkNHWny4t4FGurTfQ6wjvwsRF/XpQgbameLttYDyWDn3CKMzPX0bASa
+         Oj3KqJO2PWjXKI8LwpvJLRKpZ2CmxoZXoybobdFf733q14Ulc41IRmJbsULXrXyy2mo/
+         8zOPgtv4x4ir9o7DCLAaa1kdZuHb6nTXewBynS1oDXRD59HSEzTaw+NkpyolE1MitaMg
+         ZM8EPMvVBOk80fJNvsRcSerF5gq6+788jqzLrFu7F8zxBkd+4qCPqic1+/kg8RtqyDkr
+         QjVEWIP+Ve7erw7e6xdWXrCt0kX1o0fbcP7gIpE9TTffZLdiD6OtH+ZCEnOVJkGk+CTB
+         QiuQ==
+X-Gm-Message-State: AOUpUlFeMV2qWrn79ruXKij3ZCrw7HfcPOnhWgtDHQtfiXNjV2+XhKze
+        nYoPYRf4RebBAHfWKEg7XmtoO1zASqM=
+X-Google-Smtp-Source: AA+uWPwaQrgffGp8jsFRKEj4xG+54XqKXScVJraj8laWfDiTamDGPR99gVGwD+VIzaaJHEncGqFiNA==
+X-Received: by 2002:a50:d689:: with SMTP id r9-v6mr41959256edi.259.1534501655669;
+        Fri, 17 Aug 2018 03:27:35 -0700 (PDT)
+Received: from localhost ([94.13.61.204])
+        by smtp.gmail.com with ESMTPSA id d26-v6sm3383121ede.50.2018.08.17.03.27.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 Aug 2018 03:27:35 -0700 (PDT)
+Date:   Fri, 17 Aug 2018 11:27:34 +0100
+From:   Matt Fleming <matt@codeblueprint.co.uk>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Mike Galbraith <umgwanakikbuti@gmail.com>
+Subject: Re: [PATCH] sched/fair: Avoid divide by zero when rebalancing domains
+Message-ID: <20180817102734.GA4253@codeblueprint.co.uk>
+References: <20180704142455.16035-1-matt@codeblueprint.co.uk>
+ <55afee27-4143-e08c-b254-0d68a05d5ee6@arm.com>
+ <20180705132726.GB3864@codeblueprint.co.uk>
+ <94149109-a54c-fc5d-7b56-e786c8de5b94@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <94149109-a54c-fc5d-7b56-e786c8de5b94@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn and others,
+On Thu, 05 Jul, at 05:54:02PM, Valentin Schneider wrote:
+> On 05/07/18 14:27, Matt Fleming wrote:
+> > On Thu, 05 Jul, at 11:10:42AM, Valentin Schneider wrote:
+> >> Hi,
+> >>
+> >> On 04/07/18 15:24, Matt Fleming wrote:
+> >>> It's possible that the CPU doing nohz idle balance hasn't had its own
+> >>> load updated for many seconds. This can lead to huge deltas between
+> >>> rq->avg_stamp and rq->clock when rebalancing, and has been seen to
+> >>> cause the following crash:
+> >>>
+> >>>  divide error: 0000 [#1] SMP
+> >>>  Call Trace:
+> >>>   [<ffffffff810bcba8>] update_sd_lb_stats+0xe8/0x560
+> 
+> My confusion comes from not seeing where that crash happens. Would you mind
+> sharing the associated line number? I can feel the "how did I not see this"
+> from there but it can't be helped :(
 
-Triggered by Christoph's patches, I had another go at converting
-all of the remaining pci host bridge implementations to be based
-on pci_alloc_host_bridge and a separate registration function.
+The divide by zero comes from scale_rt_capacity() where 'total' is a
+u64 but gets truncated when passed to div_u64() since the divisor
+parameter is u32.
 
-This is made possible through work from Lorenzo and others to
-convert many of the existing drivers, as well as the removal
-of some of the older architectures that nobody used.
-
-I'm adding a bit of duplication into the less maintained code
-here, but it makes everything more consistent, and gives an
-easy place to hook up callback functions etc.
-
-The three parts of this series are:
-
-a) push up the registration into the callers (this is where
-   code gets added)
-b) clean up some of the more common host bridge
-   implementations again to integrate that code better.
-   This could be done for the rest as well, or we could just
-   leave them alone.
-c) start moving the __weak functions into callbacks in
-   pci_host_bridge. This is intentionally incomplete, since
-   it is a lot of work to do it for all those functions,
-   and I want to get consensus on the approach first, as well
-   as maybe get other developers to help out with the rest.
-
-Please have a look.
-
-       Arnd
-
-[1] https://lore.kernel.org/lkml/4288331.jNpl6KXlNO@wuerfel/
-[2] https://patchwork.kernel.org/patch/10555657/
-
-Arnd Bergmann (15):
-  PCI: clean up legacy host bridge scan functions
-  PCI: move pci_scan_bus into callers
-  PCI: move pci_scan_root_bus into callers
-  PCI: export pci_register_host_bridge
-  PCI: move pci_create_root_bus into callers
-  powerpc/pci: fold pci_create_root_bus into pcibios_scan_phb
-  PCI/ACPI: clean up acpi_pci_root_create()
-  x86: PCI: clean up pcibios_scan_root()
-  PCI: xenfront: clean up pcifront_scan_root()
-  sparc/PCI: simplify pci_scan_one_pbm
-  PCI: hyperv: convert to pci_scan_root_bus_bridge
-  PCI: make pcibios_bus_add_device() a callback function
-  PCI: turn pcibios_alloc_irq into a callback
-  PCI: make pcibios_root_bridge_prepare a callback
-  PCI: make pcibios_add_bus/remove_bus callbacks
-
- arch/arm64/kernel/pci.c               |  40 ++-----
- arch/ia64/pci/pci.c                   |  25 +----
- arch/ia64/sn/kernel/io_init.c         |  27 +++++
- arch/microblaze/pci/pci-common.c      |  27 +++++
- arch/powerpc/include/asm/pci-bridge.h |   3 +
- arch/powerpc/kernel/pci-common.c      |  60 +++++------
- arch/s390/pci/pci.c                   |  30 +++++-
- arch/sh/drivers/pci/pci.c             |   1 +
- arch/sh/drivers/pci/pcie-sh7786.c     |   3 +-
- arch/sh/include/asm/pci.h             |   2 +
- arch/sparc/kernel/pci.c               |  40 ++++---
- arch/sparc/kernel/pcic.c              |  35 ++++++
- arch/x86/pci/acpi.c                   |  15 +--
- arch/x86/pci/common.c                 |  42 ++++----
- arch/xtensa/kernel/pci.c              |  27 +++++
- drivers/acpi/pci_root.c               |  43 +++++---
- drivers/parisc/dino.c                 |  28 +++++
- drivers/parisc/lba_pci.c              |  28 +++++
- drivers/pci/bus.c                     |   8 +-
- drivers/pci/controller/pci-hyperv.c   |  47 ++++----
- drivers/pci/controller/vmd.c          |  30 +++++-
- drivers/pci/hotplug/ibmphp_core.c     |  35 ++++++
- drivers/pci/pci-driver.c              |  13 ++-
- drivers/pci/probe.c                   | 150 +++++++++-----------------
- drivers/pci/xen-pcifront.c            |  40 +++----
- include/linux/acpi.h                  |   2 +
- include/linux/pci.h                   |  17 ++-
- 27 files changed, 514 insertions(+), 304 deletions(-)
-
--- 
-2.18.0
-
+Sure, you could use div64_u64() instead, but the real issue is that
+the load hasn't been updated for a very long time and that we're
+trying to balance the domains with stale data.
