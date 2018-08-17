@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C18AC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:44:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9CF0C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:45:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3307A2185B
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:44:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3307A2185B
+	by mail.kernel.org (Postfix) with ESMTP id 98F622185B
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:45:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98F622185B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbeHQGpg (ORCPT
+        id S1726222AbeHQGrK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 02:45:36 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11174 "EHLO huawei.com"
+        Fri, 17 Aug 2018 02:47:10 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11126 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725789AbeHQGpg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 02:45:36 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 786A42CA1549C;
-        Fri, 17 Aug 2018 11:43:50 +0800 (CST)
+        id S1725766AbeHQGrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 02:47:10 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id BE82EB0F22271;
+        Fri, 17 Aug 2018 11:45:21 +0800 (CST)
 Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.399.0; Fri, 17 Aug 2018 11:43:49 +0800
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.399.0; Fri, 17 Aug 2018 11:45:18 +0800
 From:   zhong jiang <zhongjiang@huawei.com>
 To:     <dvhart@infradead.org>, <andy@infradead.org>
 CC:     <linux-kernel@vger.kernel.org>
-Subject: [PATCH] drviers: intel_ips: remove the unneeded null pointer check before debugfs_remove_recursive
-Date:   Fri, 17 Aug 2018 11:31:59 +0800
-Message-ID: <1534476719-13480-1-git-send-email-zhongjiang@huawei.com>
+Subject: [PATCH] drivers: intel_ips: remove the unneeded null pointer check before debugfs_remove_recursive
+Date:   Fri, 17 Aug 2018 11:33:28 +0800
+Message-ID: <1534476808-13574-1-git-send-email-zhongjiang@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
 Content-Type: text/plain
