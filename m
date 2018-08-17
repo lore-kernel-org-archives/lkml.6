@@ -2,114 +2,264 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C21C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E85C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:46:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B037921536
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:43:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=exactcode.de header.i=@exactcode.de header.b="idcQKXTG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B037921536
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.com
+	by mail.kernel.org (Postfix) with ESMTP id B0BB52185A
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:46:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0BB52185A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbeHQTr5 (ORCPT
+        id S1727864AbeHQTuJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 15:47:57 -0400
-Received: from mx.exactcode.de ([144.76.154.42]:59646 "EHLO mx.exactcode.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727037AbeHQTr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 15:47:57 -0400
-X-Greylist: delayed 1649 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 Aug 2018 15:47:57 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=exactcode.de; s=x;
-        h=To:References:Message-Id:Content-Transfer-Encoding:Cc:Date:In-Reply-To:From:Subject:Mime-Version:Content-Type; bh=J6RRJB5RpBWyq7tZv7AIp4LcDivL1HDD3TQROCGIinU=;
-        b=idcQKXTGw626SvST+5bB4zRREKSkRWwxZLoLZdWwy59n6K5Qh2d6g+IDw9RjlBR0e9yvqZGx+2cHcrInY/XPPJVoji85KxpfJfG3Y28xnWE/EZb1Eul4IYYmOrQQfmR4HZIBDYWB3VN7l+gxpuhts51Ll53XRdak7JKiZkDkl5M=;
-Received: from exactco.de ([90.187.5.221])
-        by mx.exactcode.de with esmtp (Exim 4.82)
-        (envelope-from <rene@exactcode.com>)
-        id 1fqhQj-0005N1-Ta; Fri, 17 Aug 2018 16:16:54 +0000
-Received: from 54.203.140.77.rev.sfr.net ([77.140.203.54] helo=[192.168.0.34])
-        by exactco.de with esmtpsa (TLSv1:AES128-SHA:128)
-        (Exim 4.54)
-        id 1fqhTb-0005mc-GV; Fri, 17 Aug 2018 16:20:10 +0000
-Content-Type: text/plain; charset=windows-1252
-Mime-Version: 1.0 (Mac OS X Mail 7.3 \(1878.6\))
-Subject: Re: [RESEND PATCH v2 0/2] Add support for ZSTD-compressed kernel
-From:   =?windows-1252?Q?Ren=E9_Rebe?= <rene@exactcode.com>
-In-Reply-To: <3F598446-EA1D-47CE-B7A1-4D3002DA3972@exactcode.com>
-Date:   Fri, 17 Aug 2018 18:15:45 +0200
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Kernel Team <Kernel-team@fb.com>, Chris Mason <clm@fb.com>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Julian Andres Klode <julian.klode@canonical.com>,
-        Andi Kleen <ak@linux.intel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8DE2BD14-0C9C-43AF-B9B7-F760F8434B6B@exactcode.com>
-References: <20180322012943.4145794-1-terrelln@fb.com> <5B282FAD-EDCF-44C8-A131-A3C6FF3EA84F@fb.com> <3F598446-EA1D-47CE-B7A1-4D3002DA3972@exactcode.com>
-To:     Nick Terrell <terrelln@fb.com>
-X-Mailer: Apple Mail (2.1878.6)
+        Fri, 17 Aug 2018 15:50:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49886 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727218AbeHQTuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 15:50:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7E227AD98;
+        Fri, 17 Aug 2018 16:46:01 +0000 (UTC)
+Date:   Fri, 17 Aug 2018 09:45:48 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Waiman Long <longman@redhat.com>
+Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Takashi Iwai <tiwai@suse.de>, Davidlohr Bueso <dbueso@suse.de>,
+        manfred@colorfullife.com
+Subject: Re: [PATCH v8 3/5] ipc: Allow boot time extension of IPCMNI from 32k
+ to 2M
+Message-ID: <20180817164548.GA32382@linux-r8p5>
+References: <1529317698-16575-1-git-send-email-longman@redhat.com>
+ <1529317698-16575-4-git-send-email-longman@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1529317698-16575-4-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey,
+Cc'ing Manfred.
 
-is there any mainline future for this zstd support? Currently my most =
-favourite compressor for this, and for what it=92s worth zstd/initrd now =
-even tested on #t2sde / hp/pa-risc, =85 =
-https://www.youtube.com/watch?v=3DMHplOJxnIHk
+On Mon, 18 Jun 2018, Waiman Long wrote:
 
-	Ren=E9
+>The maximum number of unique System V IPC identifiers was limited to
+>32k.  That limit should be big enough for most use cases.
+>
+>However, there are some users out there requesting for more. To satisfy
+>the need of those users, a new boot time kernel option "ipcmni_extend"
+>is added to extend the IPCMNI value to 2M. This is a 64X increase which
+>hopefully is big enough for them.
 
-On 10 Jul 2018, at 00:13, Ren=E9 Rebe <rene@exactcode.com> wrote:
+Could you please provide more info on the need of these users and how
+you came up with this new value (which just seems quite arbitrary)?
 
-> Hi Nick,
->=20
-> On 09 Jul 2018, at 20:04, Nick Terrell <terrelln@fb.com> wrote:
->=20
->>> On Mar 21, 2018, at 6:29 PM, Nick Terrell <terrelln@fb.com> wrote:
->>> This patch set adds support for a ZSTD-compressed kernel and ramdisk
->>> images in the kernel boot process. It only integrates the support =
-with
->>> x86, though the first patch is generic to all architectures.
->>=20
->> Hi all,
->>=20
->> Is there anything blocking this from getting merged?
->> Please let me know if there is anything I can do to help move this =
-patch forward.
->=20
-> works fine on my side, initrd test booted on i486, x86-64, ppc, ppc64 =
-and
-> sparc64. For testing on mips64 I would first need to re-base the =
-Octane^1
-> patch-set ;-)
->=20
-> Greetings,
-> 	Ren=E9
->=20
-> ^1) https://www.youtube.com/watch?v=3DAU_RV8uoTIo
->=20
-> --=20
-> ExactCODE GmbH, Lietzenburger Str. 42, DE-10789 Berlin
-> http://exactcode.com | http://exactscan.com | http://ocrkit.com | =
-http://t2-project.org | http://rene.rebe.de
->=20
+Thanks,
+Davidlohr
 
---=20
- ExactCODE GmbH, Lietzenburger Str. 42, DE-10789 Berlin
- DE Legal: Amtsgericht Berlin (Charlottenburg) HRB 105123B, Tax-ID#: =
-DE251602478
- Managing Director: Ren=E9 Rebe
- http://exactcode.com | http://exactscan.com | http://ocrkit.com | =
-http://t2-project.org | http://rene.rebe.de
-
+>
+>This new option does have the side effect of reducing the maximum
+>number of unique sequence numbers from 64k down to 1k. So it is
+>a trade-off.
+>
+>Signed-off-by: Waiman Long <longman@redhat.com>
+>---
+> Documentation/admin-guide/kernel-parameters.txt |  3 ++
+> ipc/ipc_sysctl.c                                | 12 ++++++-
+> ipc/util.c                                      | 12 +++----
+> ipc/util.h                                      | 42 +++++++++++++++++++------
+> 4 files changed, 52 insertions(+), 17 deletions(-)
+>
+>diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>index efc7aa7..6712a42 100644
+>--- a/Documentation/admin-guide/kernel-parameters.txt
+>+++ b/Documentation/admin-guide/kernel-parameters.txt
+>@@ -1744,6 +1744,9 @@
+> 	ip=		[IP_PNP]
+> 			See Documentation/filesystems/nfs/nfsroot.txt.
+>
+>+	ipcmni_extend	[KNL] Extend the maximum number of unique System V
+>+			IPC identifiers from 32768 to 2097152.
+>+
+> 	irqaffinity=	[SMP] Set the default irq affinity mask
+> 			The argument is a cpu list, as described above.
+>
+>diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
+>index 49f9bf4..73b7782 100644
+>--- a/ipc/ipc_sysctl.c
+>+++ b/ipc/ipc_sysctl.c
+>@@ -120,7 +120,8 @@ static int proc_ipc_sem_dointvec(struct ctl_table *table, int write,
+> static int zero;
+> static int one = 1;
+> static int int_max = INT_MAX;
+>-static int ipc_mni = IPCMNI;
+>+int ipc_mni = IPCMNI;
+>+int ipc_mni_shift = IPCMNI_SHIFT;
+>
+> static struct ctl_table ipc_kern_table[] = {
+> 	{
+>@@ -246,3 +247,12 @@ static int __init ipc_sysctl_init(void)
+> }
+>
+> device_initcall(ipc_sysctl_init);
+>+
+>+static int __init ipc_mni_extend(char *str)
+>+{
+>+	ipc_mni = IPCMNI_EXTEND;
+>+	ipc_mni_shift = IPCMNI_EXTEND_SHIFT;
+>+	pr_info("IPCMNI extended to %d.\n", ipc_mni);
+>+	return 0;
+>+}
+>+early_param("ipcmni_extend", ipc_mni_extend);
+>diff --git a/ipc/util.c b/ipc/util.c
+>index 4e81182..782a8d0 100644
+>--- a/ipc/util.c
+>+++ b/ipc/util.c
+>@@ -113,7 +113,7 @@ static int __init ipc_init(void)
+>  * @ids: ipc identifier set
+>  *
+>  * Set up the sequence range to use for the ipc identifier range (limited
+>- * below IPCMNI) then initialise the keys hashtable and ids idr.
+>+ * below ipc_mni) then initialise the keys hashtable and ids idr.
+>  */
+> int ipc_init_ids(struct ipc_ids *ids)
+> {
+>@@ -214,7 +214,7 @@ static inline int ipc_buildid(int id, struct ipc_ids *ids,
+> 		ids->next_id = -1;
+> 	}
+>
+>-	return SEQ_MULTIPLIER * new->seq + id;
+>+	return (new->seq << SEQ_SHIFT) + id;
+> }
+>
+> #else
+>@@ -228,7 +228,7 @@ static inline int ipc_buildid(int id, struct ipc_ids *ids,
+> 	if (ids->seq > IPCID_SEQ_MAX)
+> 		ids->seq = 0;
+>
+>-	return SEQ_MULTIPLIER * new->seq + id;
+>+	return (new->seq << SEQ_SHIFT) + id;
+> }
+>
+> #endif /* CONFIG_CHECKPOINT_RESTORE */
+>@@ -252,8 +252,8 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+> 	kgid_t egid;
+> 	int id, err;
+>
+>-	if (limit > IPCMNI)
+>-		limit = IPCMNI;
+>+	if (limit > ipc_mni)
+>+		limit = ipc_mni;
+>
+> 	if (!ids->tables_initialized || ids->in_use >= limit)
+> 		return -ENOSPC;
+>@@ -777,7 +777,7 @@ static struct kern_ipc_perm *sysvipc_find_ipc(struct ipc_ids *ids, loff_t pos,
+> 	if (total >= ids->in_use)
+> 		return NULL;
+>
+>-	for (; pos < IPCMNI; pos++) {
+>+	for (; pos < ipc_mni; pos++) {
+> 		ipc = idr_find(&ids->ipcs_idr, pos);
+> 		if (ipc != NULL) {
+> 			*new_pos = pos + 1;
+>diff --git a/ipc/util.h b/ipc/util.h
+>index 8e9c52c..d103630 100644
+>--- a/ipc/util.h
+>+++ b/ipc/util.h
+>@@ -15,8 +15,30 @@
+> #include <linux/err.h>
+> #include <linux/ipc_namespace.h>
+>
+>-#define IPCMNI 32768  /* <= MAX_INT limit for ipc arrays (including sysctl changes) */
+>-#define SEQ_MULTIPLIER	(IPCMNI)
+>+/*
+>+ * By default, the ipc arrays can have up to 32k (15 bits) entries.
+>+ * When IPCMNI extension mode is turned on, the ipc arrays can have up
+>+ * to 2M (21 bits) entries. However, the space for sequence number will
+>+ * be shrunk from 16 bits to 10 bits.
+>+ */
+>+#define IPCMNI_SHIFT		15
+>+#define IPCMNI_EXTEND_SHIFT	21
+>+#define IPCMNI			(1 << IPCMNI_SHIFT)
+>+#define IPCMNI_EXTEND		(1 << IPCMNI_EXTEND_SHIFT)
+>+
+>+#ifdef CONFIG_SYSVIPC_SYSCTL
+>+extern int ipc_mni;
+>+extern int ipc_mni_shift;
+>+
+>+#define SEQ_SHIFT		ipc_mni_shift
+>+#define SEQ_MASK		((1 << ipc_mni_shift) - 1)
+>+
+>+#else /* CONFIG_SYSVIPC_SYSCTL */
+>+
+>+#define ipc_mni 		IPCMNI
+>+#define SEQ_SHIFT		IPCMNI_SHIFT
+>+#define SEQ_MASK		((1 << IPCMNI_SHIFT) - 1)
+>+#endif /* CONFIG_SYSVIPC_SYSCTL */
+>
+> int sem_init(void);
+> int msg_init(void);
+>@@ -96,9 +118,9 @@ void __init ipc_init_proc_interface(const char *path, const char *header,
+> #define IPC_MSG_IDS	1
+> #define IPC_SHM_IDS	2
+>
+>-#define ipcid_to_idx(id) ((id) % SEQ_MULTIPLIER)
+>-#define ipcid_to_seqx(id) ((id) / SEQ_MULTIPLIER)
+>-#define IPCID_SEQ_MAX min_t(int, INT_MAX/SEQ_MULTIPLIER, USHRT_MAX)
+>+#define ipcid_to_idx(id)  ((id) & SEQ_MASK)
+>+#define ipcid_to_seqx(id) ((id) >> SEQ_SHIFT)
+>+#define IPCID_SEQ_MAX	  (INT_MAX >> SEQ_SHIFT)
+>
+> /* must be called with ids->rwsem acquired for writing */
+> int ipc_addid(struct ipc_ids *, struct kern_ipc_perm *, int);
+>@@ -123,8 +145,8 @@ static inline int ipc_get_maxid(struct ipc_ids *ids)
+> 	if (ids->in_use == 0)
+> 		return -1;
+>
+>-	if (ids->in_use == IPCMNI)
+>-		return IPCMNI - 1;
+>+	if (ids->in_use == ipc_mni)
+>+		return ipc_mni - 1;
+>
+> 	return ids->max_id;
+> }
+>@@ -175,7 +197,7 @@ static inline void ipc_update_pid(struct pid **pos, struct pid *pid)
+>
+> static inline int ipc_checkid(struct kern_ipc_perm *ipcp, int uid)
+> {
+>-	return uid / SEQ_MULTIPLIER != ipcp->seq;
+>+	return (uid >> SEQ_SHIFT) != ipcp->seq;
+> }
+>
+> static inline void ipc_lock_object(struct kern_ipc_perm *perm)
+>@@ -220,10 +242,10 @@ void free_ipcs(struct ipc_namespace *ns, struct ipc_ids *ids,
+>
+> static inline int sem_check_semmni(struct ipc_namespace *ns) {
+> 	/*
+>-	 * Check semmni range [0, IPCMNI]
+>+	 * Check semmni range [0, ipc_mni]
+> 	 * semmni is the last element of sem_ctls[4] array
+> 	 */
+>-	return ((ns->sem_ctls[3] < 0) || (ns->sem_ctls[3] > IPCMNI))
+>+	return ((ns->sem_ctls[3] < 0) || (ns->sem_ctls[3] > ipc_mni))
+> 		? -ERANGE : 0;
+> }
+>
+>-- 
+>1.8.3.1
+>
