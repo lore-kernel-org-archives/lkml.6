@@ -3,162 +3,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCE1C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF58CC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8CE920845
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:09:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D908121473
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:15:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="AVe4LBjz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8CE920845
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="C0VKNSzD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D908121473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726609AbeHQLMF (ORCPT
+        id S1726682AbeHQLRz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 07:12:05 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39168 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbeHQLMF (ORCPT
+        Fri, 17 Aug 2018 07:17:55 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:41926 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726520AbeHQLRz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 07:12:05 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h10-v6so6314097wre.6
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 01:09:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ld/055jrWeDNT2eNraWlZK1t9CGIyWAbQaXSGqlFHcI=;
-        b=AVe4LBjzfmyWcMqJdydHTTf/IAJkG8i9c5qfFaW9O53aesyGwWFieZbtzpzmbHzoF7
-         CvmzodLkT85QZsNaID7ogM7xmaNBlPKh+7KQSn3vS4CGCJzOv/PlJCzIiFXnL9HiuQ1n
-         QUYH7P6j1+h/X612i8RVQrCtI8esuxmhBBYmjkRXk28fNbA6m9YZS5dQFj6+EZ6zda75
-         ayQC5C8z1ZgZlVt9VFV2LsEtXguGqxHsu+qaKtDZfbgzVftWjr2LKdUL8c+XhHc2UH7M
-         Ed5ZuUr+P1ud171/Kmz9KkwS8SA+8SLl7WUptbPS6eOGoBVEYuSnb2E2kpt4zzx266dh
-         hySg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ld/055jrWeDNT2eNraWlZK1t9CGIyWAbQaXSGqlFHcI=;
-        b=ssyXmQ6dIEn17DvPqsNIaGphbSxZ4WdgP+htCNlA7bEp2kYDYcPFtD6jgFbUJU6CI4
-         OgCvqDhBkEQucGhH4dzY/+h0PhIhRCvJfNcqvhyhaBvP4Z3ax6QsTllDoxb1H6hvaWPU
-         75a1nO7Qs+5phCgFC+7hQkQRVAO+10nShKof2V45jJBfGmza1N4hn0WUCOqSubGUaxQh
-         FmtAct0sMuI7+D4UAD8Feyaq/NactHx/geM2cIG0XaD0AfeQ9FBKTpDs6a2pIrabPBQI
-         RRDGktAL2b4b5/aMz2LVhNP/H5+La61EvcgkDeW0+6VC54UAdRciwXhxdu54srOpFCj3
-         InOA==
-X-Gm-Message-State: AOUpUlHSKOrPGROcB+oTHBWO55xyfQZtHpiy6viyRf2/ffDlpxNUDsBJ
-        cjBtdRqu2FFRyX1+WDkOQFBtJA==
-X-Google-Smtp-Source: AA+uWPwXtbtgs+FQyjRDpUbaN4Zqez7d0ILAYxm/mnmwkiUe4ltWGBTIo6udhoCyeElzoB/aKR9oGg==
-X-Received: by 2002:adf:f58f:: with SMTP id f15-v6mr3057414wro.59.1534493378886;
-        Fri, 17 Aug 2018 01:09:38 -0700 (PDT)
-Received: from boomer ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id y11-v6sm1706575wrt.4.2018.08.17.01.09.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 17 Aug 2018 01:09:38 -0700 (PDT)
-Message-ID: <8eb76c5b173a8e8f8f90b9d2204c1b3b0de06c51.camel@baylibre.com>
-Subject: Re: [PATCH 2/2] PCI: meson: add the Amlogic Meson PCIe phy driver
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Hanjie Lin <hanjie.lin@amlogic.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Yue Wang <yue.wang@amlogic.com>, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
-        shawn.lin@rock-chips.com
-Date:   Fri, 17 Aug 2018 10:09:37 +0200
-In-Reply-To: <91658f21-6934-6085-8deb-b85a1f6b7815@amlogic.com>
-References: <1534227134-151584-1-git-send-email-hanjie.lin@amlogic.com>
-         <1534227134-151584-3-git-send-email-hanjie.lin@amlogic.com>
-         <486e8ab477cc22ff231d2e18d7de22efba2c5abd.camel@baylibre.com>
-         <2b87e834-41e3-e418-95f0-c6d695cd8b3f@amlogic.com>
-         <e5d9d89e79f8ec37b6337e54912f49a0b0856874.camel@baylibre.com>
-         <91658f21-6934-6085-8deb-b85a1f6b7815@amlogic.com>
+        Fri, 17 Aug 2018 07:17:55 -0400
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id w7H8F7GJ008407
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 17:15:08 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w7H8F7GJ008407
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1534493708;
+        bh=aaOf1Qn1Ur85xeijtULGDzZzMLuKA+HC5qhcoRyye/A=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=C0VKNSzDeA0/JwqsJvo8p/KCh4+rjNyOFxh5tNK4Pii5aiVALaRVweQIFOJ2QDkWU
+         FwFuI6iFGOmZUAH80ZIXNcXNRUGgsChJ/ug8k7QQ+lM/O4oZxfndMGHRrbaR2ukIkh
+         t/Zy5rIte+2oXnL21FcHsmJoSDlaNiaPKz/lDPonJiyws+fYlUr+pQwZG+VtSFuNg5
+         3hA5dQKcsJ2sNNrlPZNWRcl/EOv33jnkGH/+vA/g6kZgQ5E9NkRATeHf6/z4jotOOi
+         yP9bsx9l4iuZEbz91Yr6Yo3LK5Di0v4hLJUjIqjB1YPrppHt1cYkXwvm+4NQ5OrKs2
+         VkcQTyLBHJy7Q==
+X-Nifty-SrcIP: [209.85.222.48]
+Received: by mail-ua1-f48.google.com with SMTP id k25-v6so5231716uao.11
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 01:15:08 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFxZ+vyWVu0/44StFmEztqU6C3JgqZk/p/5GMAnLeb6XHjdtedr
+        TAUk7w7la69Lu/jnW8mnWGpYr/itbO2fBTf6lQk=
+X-Google-Smtp-Source: AA+uWPze5GeFIXjO/vNNEIdm2QpfRDX8ebcubByQVq10T2qZhZfoOUhwkRvd9Mmvu2zdNbmJQLzZsIGShxFIV+tCLsE=
+X-Received: by 2002:ab0:30ce:: with SMTP id c14-v6mr22274637uam.58.1534493707419;
+ Fri, 17 Aug 2018 01:15:07 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Fri, 17 Aug 2018 01:14:26
+ -0700 (PDT)
+In-Reply-To: <20180817074747eucas1p1a70969aac4238b0c8db0d8e59f4af078~LnGev9y9l2871228712eucas1p1X@eucas1p1.samsung.com>
+References: <CGME20180816161825eucas1p11be9cea5d622b905154590bae90a47a4@eucas1p1.samsung.com>
+ <20180816161817.12267-1-andrzej.p@samsung.com> <CAEYzJUHghs+2p4n1TesL3=VkCJcvs1TevjeFhqiQHdX+cqfqiQ@mail.gmail.com>
+ <20180817074747eucas1p1a70969aac4238b0c8db0d8e59f4af078~LnGev9y9l2871228712eucas1p1X@eucas1p1.samsung.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 17 Aug 2018 17:14:26 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASUsZB--DWMB4hpw74OnTiz+d2jrdp+CA9L=AOdkbEmhg@mail.gmail.com>
+Message-ID: <CAK7LNASUsZB--DWMB4hpw74OnTiz+d2jrdp+CA9L=AOdkbEmhg@mail.gmail.com>
+Subject: Re: [PATCH] Revert "kbuild: create deterministic initramfs directory listings"
+To:     Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Cc:     =?UTF-8?Q?Bj=C3=B8rn_Forsman?= <bjorn.forsman@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, forney@google.com
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-08-17 at 14:12 +0800, Hanjie Lin wrote:
-> 
-> On 2018/8/16 16:33, Jerome Brunet wrote:
-> > On Thu, 2018-08-16 at 11:05 +0800, Hanjie Lin wrote:
-> > > 
-> > > On 2018/8/14 18:41, Jerome Brunet wrote:
-> > > > On Tue, 2018-08-14 at 02:12 -0400, Hanjie Lin wrote:
-> > > > > From: Yue Wang <yue.wang@amlogic.com>
-> > > > > 
-> > > > > The Meson-PCIE-PHY controller supports the 5-Gbps data rate
-> > > > > of the PCI Express Gen 2 specification and is backwardcompatible
-> > > > > with the 2.5-Gbps Gen 1.1 specification with only
-> > > > > inferred idle detection supported on AMLOGIC SoCs.
-> > > > 
-> > > > It looks like the sole purpose of this driver is to provide the reset lines to
-> > > > pcie driver.
-> > > > 
-> > > > I wonder why we need this ? Can't the pcie driver claim the reset lines itself.
-> > > > 
-> > > > Also, an init of this phy will always reset both port. What will happen if the
-> > > > first port is in use and the 2nd port comes up ?? 
-> > > > 
-> > > > Looks the the pcie driver should claim 'apb' and 'phy' reset lines as "shared"
-> > > > reset and the required 'port' as 'exclusive'
-> > > > 
-> > > 
-> > > Thank you for your response.
-> > > 
-> > > Yes, 'apb' and 'phy' reset lines are shared, and ‘port' reset line is exclusive.
-> > > If we handle all reset lines during the first port initial sequence, 
-> > > and when the second port comes up, we will do nothing about the rest lines, 
-> > > and don't need a extra API to do ‘port' reset;
-> > 
-> > With which other driver are your control shared ?
-> > 
-> > Looks it is the answer is none since this phy driver will reset both port
-> > already, even if one is used.
-> > 
-> > In this case the fact that you are using shared control is just abusing the
-> > framework to reset once.
-> > 
-> > As far as I can tell, this driver makes no sense. The appropriate reset lines
-> > should be given directly to your pcie driver. 
-> > 
-> > 
-> > 
-> > .
-> > 
-> 
-> Amlogic AXG SOC includes two pcie controllers and pipes when only one pcie phy: 
-> 
->                                     (port_a reset)
->                       |PCIE_RC_A---->PCIE_PIPE_A------| 
->     (apb_reset)       |                               |  (phy reset)
->     APB BUS--->       |                               |   PCIE_PHY
->                       |                               |
->                       |             (port_b_reset)    |
->                       |PCIE_RC_B---->PCIE_PIPE_B------|
-> 
-> The phy_reset affect the PCIE_PHY.
-> The port_a_reset affect the PCIE_PIPE_A, port_b_reset affect the PCIE_PIPE_B. 
-> 
-> As your suggestion we will move the 'port' reset to controller driver,
-> and keeping the phy driver to process the 'apb' and 'phy' reset or any
-> more changes of the phy in future.
-
-As far as I can tell from this diagram, It would only make sense for the "phy"
-reset line to be controlled by your phy driver.
-
-The apb and port is obviously related to the pcie device/driver itself, not the
-PHY. And whether you 1 or 2 reset lines in it, IMO it is overkill and
-unnecessary to make a phy driver for this. 
-
-> 
+2018-08-17 16:47 GMT+09:00 Andrzej Pietrasiewicz <andrzej.p@samsung.com>:
+> Hi Bj=C3=B8rn,
+>
+> W dniu 17.08.2018 o 01:34, Bj=C3=B8rn Forsman pisze:
+>> On Thu, 16 Aug 2018 at 18:18, Andrzej Pietrasiewicz
+>> <andrzej.p@samsung.com> wrote:
+>>>
+>>> This reverts commit 9e6e0d5f2a2713402cf9dce69b9f9b516e4185d2.
+>>>
+>>> The reverted commit introduces broken builds. Even though the cpio arch=
+ive
+>>> does contain all the specified files, it seems that the kernel, while
+>>> populating rootfs, scans the cpio buffer linearly and fails to create
+>>> files whose parent directories are nonexistent at the moment of this fa=
+iled
+>>> creation. As a result, such files are not accessible when kernel boots =
+into
+>>> initramfs.
+>>>
+>
+> <snip>
+>
+>>
+>> I'm unable to reproduce it. On my system the listing is sorted so that
+>> it works (parent directories appear before files). I tried to run with
+>> LANG=3DC and it also sorts correctly. What is your LANG=3D? I think we
+>> better add a LANG=3DC somewhere in the kernel build system, because I
+>> think you have a LANG=3D that makes it sort differently. A quick fix
+>> would of course be to insert it right next to sort, but there may be
+>> other places that may break due to LANG=3D settings.
+>>
+>
+> Thanks for the tip. My LANG is pl_PL.UTF-8. Indeed, prefixing the "sort"
+> invocation in question with LANG=3DC does solve the problem. I don't feel
+> competent enough to say whether this is the correct place for the fix,
+> or if the fix should be made elsewhere. Another option is that it is the
+> "sort" itself that should be fixed (or the locale, or both).
+>
+> Would you be able (as the author of the patch in question) to check if
+> there are other locales which cause the problem?
+>
+> Thanks,
+>
+> Andrzej
 
 
+I cannot add LANG=3DC to the high-level of the build system at least
+since it would break the localization.
+
+
+--=20
+Best Regards
+Masahiro Yamada
