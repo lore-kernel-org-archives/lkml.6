@@ -3,50 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F97C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 01:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E205C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 01:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 266C02147D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 01:37:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FA7F20898
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 01:38:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="IueTfL2h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 266C02147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aj4MVkXb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FA7F20898
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725967AbeHQEi0 (ORCPT
+        id S1726139AbeHQEjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 00:38:26 -0400
-Received: from mail-dm3nam03on0091.outbound.protection.outlook.com ([104.47.41.91]:39663
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725769AbeHQEiZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 00:38:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZAwms1zLWD50zThmJznj6ABUhyU351sAXlhcEpHdYOQ=;
- b=IueTfL2heLkEHvF5uB47fVWUt9eVhVWNqXt75RCUyqtrtesybKQVDFWpIJLcvIoNyeSosv3AmZnbxFr0GhtJOw+fG6XZD4l4kYCLDbuT0BexASI/aJhKKXeDXFdeIKADevkdPtznUgRNB6JgRzjQwuT13MAZw+iycojWAGXtYYo=
-Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
- DM5PR21MB0140.namprd21.prod.outlook.com (10.173.173.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1080.5; Fri, 17 Aug 2018 01:35:22 +0000
-Received: from DM5PR21MB0508.namprd21.prod.outlook.com
- ([fe80::65dd:b17f:eb0d:2eee]) by DM5PR21MB0508.namprd21.prod.outlook.com
- ([fe80::65dd:b17f:eb0d:2eee%8]) with mapi id 15.20.1080.009; Fri, 17 Aug 2018
- 01:35:22 +0000
-From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
-To:     Jia He <hejianet@gmail.com>, Russell King <linux@armlinux.org.uk>,
+        Fri, 17 Aug 2018 00:39:41 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:35172 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbeHQEjk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 00:39:40 -0400
+Received: by mail-yb0-f193.google.com with SMTP id o17-v6so1394756yba.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 18:38:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=drs5m/Z7it3VsVydjSOV5B8rjYYc2WvfDiZhnSn+YGM=;
+        b=aj4MVkXbf5V3Ra9A1JFwanXjKcqBT5LioL3X75ypz70VRwUZy8HJvY5njUn9tAbi5H
+         0zWmbY01a56XbN5pwcgXRv26sEmRvT0ux6phrFhX2X603M5zyoB9CEFHOqNLHIOKkPFm
+         ZoMAFNDr5puTJmwmASEs5u+vgaraZvRYnKLNUtk99kCOMo5XKeB54znX9kaSSrrS6rtN
+         KIhVoLnl/kmK+VVNGoQhS11Ll+2/UktrxszoqMBgL1PaibqV75+DJ79rb7Ydm2P4SquD
+         qkblXhukP6Vxm0Y+j37TWiBMAyR6059pr6nn+YvKkdi1ogAPuHXkfBg0qID1QqI1r+30
+         SKEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=drs5m/Z7it3VsVydjSOV5B8rjYYc2WvfDiZhnSn+YGM=;
+        b=qmPCzMH9P18d9Q1a3NaU1C6hOAj92S6LV2iJxkjS4nxh+86KyTzUURkj7HSg2u1HTj
+         t/ZRq6ylPQadb2J7zhWuBeTQijGaTYANtcO+ZxKrcVRTREk7y7oUIcClJiaGXka9zCDb
+         oyTGhCVUcAN6RLU3tcIhGrv/owuieyDHul5RZl3vZDD9DI9s730BvfkWt7oZm+J6W6Ru
+         uD/bE/3HEQwRWerOSUd2dnrmBjoUU+qRYiUNUOxo+cXVuL0NTM7j2B40eFik13W/safz
+         9foMudD7uF+bzMO5gOz6tzmihD3uXcbKj9k0WoHmoRxk7mqH93mwMLK3AtNhEcVd+gCn
+         o7zg==
+X-Gm-Message-State: AOUpUlEm/EqIPpwTXU/IVgxEMgJGOFwrK3I+kBwhDOtYt4dx/d9396GS
+        g2Zqstfg9c3ylJ+ptzEWcCY=
+X-Google-Smtp-Source: AA+uWPyfhhVUqYYNrK7lRnC3gmgdygauLLwpIeRQicPf1pRhoZF7vdSLVBr6+rrWo5erswEtfXoj8Q==
+X-Received: by 2002:a25:b106:: with SMTP id g6-v6mr7793033ybj.42.1534469898733;
+        Thu, 16 Aug 2018 18:38:18 -0700 (PDT)
+Received: from [192.168.1.10] (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
+        by smtp.gmail.com with ESMTPSA id x19-v6sm1420286ywg.72.2018.08.16.18.38.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Aug 2018 18:38:18 -0700 (PDT)
+Subject: Re: [RESEND PATCH v10 6/6] mm: page_alloc: reduce unnecessary binary
+ search in early_pfn_valid()
+To:     Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
+        Jia He <hejianet@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Michal Hocko <mhocko@suse.com>
-CC:     Wei Yang <richard.weiyang@gmail.com>,
+Cc:     Wei Yang <richard.weiyang@gmail.com>,
         Kees Cook <keescook@chromium.org>,
         Laura Abbott <labbott@redhat.com>,
         Vladimir Murzin <vladimir.murzin@arm.com>,
@@ -54,7 +79,7 @@ CC:     Wei Yang <richard.weiyang@gmail.com>,
         AKASHI Takahiro <takahiro.akashi@linaro.org>,
         James Morse <james.morse@arm.com>,
         Steve Capper <steve.capper@arm.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        pavel.tatashin@microsoft.com,
         Gioh Kim <gi-oh.kim@profitbricks.com>,
         Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -71,73 +96,50 @@ CC:     Wei Yang <richard.weiyang@gmail.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>,
         Jia He <jia.he@hxt-semitech.com>
-Subject: Re: [RESEND PATCH v10 6/6] mm: page_alloc: reduce unnecessary binary
- search in early_pfn_valid()
-Thread-Topic: [RESEND PATCH v10 6/6] mm: page_alloc: reduce unnecessary binary
- search in early_pfn_valid()
-Thread-Index: AQHUNcqPgcbvuaLpQECjXKndQXyJeA==
-Date:   Fri, 17 Aug 2018 01:35:22 +0000
-Message-ID: <c6ed43ee-b09e-1f75-43b3-6cd2808d13f3@microsoft.com>
 References: <1530867675-9018-1-git-send-email-hejianet@gmail.com>
  <1530867675-9018-7-git-send-email-hejianet@gmail.com>
-In-Reply-To: <1530867675-9018-7-git-send-email-hejianet@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR21MB0140;6:Ee4aKeHUqAzkDrxuaCKbQ+yKqn/XR3NCrD+ekX8AemXGiPXRPTZiROjE0og4O7Ve1y3iBLztYZ0Rl8FYxKK0aoDgvUOmKLyYBLHdHTG239hlUnY8k/r/wIVpqI/un5gEISal9VgK0MV5NU8g/S4ZtemgQ+F/gZbjTo6qj8YvbKStZtgZI3OtVDPrPgUibjQlzeDaEUR6UUDDH6jVghPiAWmRvsX3m6Ks/XoR8yC+FAK9+J72GwZ8syAfm90JwiZw5hBiX6SES7tVRGihuV+A7FxWJbamc55okm5GHiFYWa4dOTkSq90U4RVXBolOJSfO9Nmqmzi/QEnulja/faKci/a6dk4IATJ8glr6qzRM9p3HDI/Jz3z0RNGoOTfDhAL/5YH+yTrcisXmCsAmO948k0jz9/IV99WVp2onvvzgYxYF5Ji48sByyMhKsCOKJ/VvyYyboJCxiQsXsKVtPrs4UA==;5:8wBIVCDbiIhYmeS3AfdI/B5d17H2JHA+5nlv2S6JiZJixlJXsRCEZG4hHFvvlTcC2Reziw2uFJ7bfh+g2sjnvRLNqi3EzSLsDkp+hQ8s1Lw/5O9q5hq+aGb1Ixhghi6dkl14eQevBkZtyVbRBWX5DA9nK+bbEskZW1/LvuzW304=;7:mxC4dXb3cQvXb7HNDtrd+Qpzll7J40JlUqGWt4GHsK9UuWq27dWnx/7npgONuCmlt83/k9npKJKPpGdEjVr1KJ2gy7suQB9Ddaeq2K52ClAOSv7f5V0vRG2Ranl77lJ2dXRk4CsZPE94WB2QYxQ4BvHiTaTjUY2FWvyFktEsw6wLb1SOTWoQYKvCHP+Gad4HaAaFsAcKB8QYWBPbHpTNve9hZ4dT/XA+fSyFM1jGcnFwPv63UeuONy1TqnvWwadQ
-x-ms-office365-filtering-correlation-id: 62d0278f-7f5d-493e-fe71-08d603e1b319
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0140;
-x-ms-traffictypediagnostic: DM5PR21MB0140:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
-x-microsoft-antispam-prvs: <DM5PR21MB014054106AC326C98272B9079D3D0@DM5PR21MB0140.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(158342451672863);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(20180801012)(6040522)(2401047)(8121501046)(5005006)(3231336)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699016);SRVR:DM5PR21MB0140;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0140;
-x-forefront-prvs: 076777155F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(346002)(39860400002)(366004)(396003)(189003)(199004)(10090500001)(31686004)(31696002)(8676002)(86612001)(81156014)(81166006)(476003)(2616005)(22452003)(14454004)(54906003)(110136005)(316002)(486006)(7416002)(7406005)(478600001)(10290500003)(5660300001)(256004)(86362001)(76176011)(217873002)(105586002)(305945005)(7736002)(99286004)(106356001)(11346002)(39060400002)(6512007)(6436002)(4326008)(53936002)(68736007)(229853002)(25786009)(6486002)(5250100002)(6506007)(3846002)(2900100001)(26005)(72206003)(97736004)(53546011)(36756003)(102836004)(6116002)(446003)(8936002)(186003)(6246003)(66066001)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0140;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: uulbYGsiV1qKuSDJaGMugXKTCXU6tqKaB5bp9E33zxrol3Zin1VwGE5E+G7or5BAbv+akwsC8+BHiKqHSVYXYSZK8/pJZVqu4uABIOGuU7kTUv4Mp2fY5Prtk60VZ6duTiiDse6uC/eNeknnSLkbJQuCgLqIHCOYOTJ6WJaPZrBpdBvvI8LN7TCdagrDxcY7vFw74DPxYcde+Wc60pQQPs8t0TK3EUdbd7ySn3oCBfpbqsdNxppvzcX9wDSJZrlSflQwa1WQeDuG+to4B80zLt/QxTmblqaAzI4jZ9O25cp+gdYlNwtEBXQbnD0NyFZBDJOYfyZxakGQhZ7aMWm95lWPMXgPQLjM5k7qKzePV90=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7278A4BF60453842886E1096077C73BD@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ <c6ed43ee-b09e-1f75-43b3-6cd2808d13f3@microsoft.com>
+From:   Pavel Tatashin <pasha.tatashin@gmail.com>
+Message-ID: <831be9a1-6401-3af0-b68b-b3e25db806f9@gmail.com>
+Date:   Thu, 16 Aug 2018 21:38:15 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 62d0278f-7f5d-493e-fe71-08d603e1b319
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Aug 2018 01:35:22.4451
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0140
+In-Reply-To: <c6ed43ee-b09e-1f75-43b3-6cd2808d13f3@microsoft.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDcvNi8xOCA1OjAxIEFNLCBKaWEgSGUgd3JvdGU6DQo+IENvbW1pdCBiOTJkZjFkZTVk
-MjggKCJtbTogcGFnZV9hbGxvYzogc2tpcCBvdmVyIHJlZ2lvbnMgb2YgaW52YWxpZCBwZm5zDQo+
-IHdoZXJlIHBvc3NpYmxlIikgb3B0aW1pemVkIHRoZSBsb29wIGluIG1lbW1hcF9pbml0X3pvbmUo
-KS4gQnV0IHRoZXJlIGlzDQo+IHN0aWxsIHNvbWUgcm9vbSBmb3IgaW1wcm92ZW1lbnQuIEUuZy4g
-aW4gZWFybHlfcGZuX3ZhbGlkKCksIGlmIHBmbiBhbmQNCj4gcGZuKzEgYXJlIGluIHRoZSBzYW1l
-IG1lbWJsb2NrIHJlZ2lvbiwgd2UgY2FuIHJlY29yZCB0aGUgbGFzdCByZXR1cm5lZA0KPiBtZW1i
-bG9jayByZWdpb24gaW5kZXggYW5kIGNoZWNrIHdoZXRoZXIgcGZuKysgaXMgc3RpbGwgaW4gdGhl
-IHNhbWUNCj4gcmVnaW9uLg0KPiANCj4gQ3VycmVudGx5IGl0IG9ubHkgaW1wcm92ZSB0aGUgcGVy
-Zm9ybWFuY2Ugb24gYXJtL2FybTY0IGFuZCB3aWxsIGhhdmUgbm8NCj4gaW1wYWN0IG9uIG90aGVy
-IGFyY2hlcy4NCj4gDQo+IEZvciB0aGUgcGVyZm9ybWFuY2UgaW1wcm92ZW1lbnQsIGFmdGVyIHRo
-aXMgc2V0LCBJIGNhbiBzZWUgdGhlIHRpbWUNCj4gb3ZlcmhlYWQgb2YgbWVtbWFwX2luaXQoKSBp
-cyByZWR1Y2VkIGZyb20gMjc5NTZ1cyB0byAxMzUzN3VzIGluIG15DQo+IGFybXY4YSBzZXJ2ZXIo
-UURGMjQwMCB3aXRoIDk2RyBtZW1vcnksIHBhZ2VzaXplIDY0aykuDQoNClRoaXMgc2VyaWVzIHdv
-dWxkIGJlIGEgbG90IHNpbXBsZXIgaWYgcGF0Y2hlcyA0LCA1LCBhbmQgNiB3ZXJlIGRyb3BwZWQu
-DQpUaGUgZXh0cmEgY29tcGxleGl0eSBkb2VzIG5vdCBtYWtlIHNlbnNlIHRvIHNhdmUgMC4wMDAx
-cy9UIGR1cmluZyBub3QuDQoNClBhdGNoZXMgMS0zLCBsb29rIE9LLCBidXQgd2l0aG91dCBwYXRj
-aGVzIDQtNSBfX2luaXRfbWVtYmxvY2sgc2hvdWxkIGJlDQptYWRlIGxvY2FsIHN0YXRpYyBhcyBJ
-IHN1Z2dlc3RlZCBlYXJsaWVyLg0KDQpTbywgSSB0aGluayBKaWEgc2hvdWxkIHJlLXNwaW4gdGhp
-cyBzZXJpZXMgd2l0aCBvbmx5IDMgcGF0Y2hlcy4gT3IsDQpBbmRyZXcgY291bGQgcmVtb3ZlIHRo
-ZSBmcm9tIGxpbnV4LW5leHQgYmVmb3JlIG1lcmdlLg0KDQpUaGFuayB5b3UsDQpQYXZlbA==
+
+
+On 8/16/18 9:35 PM, Pasha Tatashin wrote:
+> 
+> 
+> On 7/6/18 5:01 AM, Jia He wrote:
+>> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+>> where possible") optimized the loop in memmap_init_zone(). But there is
+>> still some room for improvement. E.g. in early_pfn_valid(), if pfn and
+>> pfn+1 are in the same memblock region, we can record the last returned
+>> memblock region index and check whether pfn++ is still in the same
+>> region.
+>>
+>> Currently it only improve the performance on arm/arm64 and will have no
+>> impact on other arches.
+>>
+>> For the performance improvement, after this set, I can see the time
+>> overhead of memmap_init() is reduced from 27956us to 13537us in my
+>> armv8a server(QDF2400 with 96G memory, pagesize 64k).
+> 
+> This series would be a lot simpler if patches 4, 5, and 6 were dropped.
+> The extra complexity does not make sense to save 0.0001s/T during not.
+s/not/boot
+
+> 
+> Patches 1-3, look OK, but without patches 4-5 __init_memblock should be
+> made local static as I suggested earlier.
+s/__init_memblock/early_region_idx
+
