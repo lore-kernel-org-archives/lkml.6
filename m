@@ -2,134 +2,143 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D1EC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C26A3C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:27:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EAC5208DB
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:26:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EAC5208DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 817172124D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:27:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 817172124D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbeHQN3g (ORCPT
+        id S1727038AbeHQNaa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 09:29:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33404 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725845AbeHQN3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 09:29:36 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B1EB172645;
-        Fri, 17 Aug 2018 10:26:41 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C6E951745B;
-        Fri, 17 Aug 2018 10:26:38 +0000 (UTC)
-Subject: Re: [PATCH v2] console: Add console=auto option
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     linux-kernel@vger.kernel.org, Mark Salter <msalter@redhat.com>,
-        Al Stone <ahs3@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        x86@kernel.org, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pm@vger.kernel.org
-References: <728a8e68-ea4b-4040-a0fc-217df4f1928d@redhat.com>
- <20180816173902.18971-1-prarit@redhat.com>
- <20180817081947.m425gok2ugt7tglp@pathway.suse.cz>
-From:   Prarit Bhargava <prarit@redhat.com>
-Message-ID: <00c60dca-60bc-8568-eaa3-d4b0c326cab4@redhat.com>
-Date:   Fri, 17 Aug 2018 06:26:38 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180817081947.m425gok2ugt7tglp@pathway.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 17 Aug 2018 10:26:41 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 17 Aug 2018 10:26:41 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
+        Fri, 17 Aug 2018 09:30:30 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:50617 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbeHQNa3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 09:30:29 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0LnSVK-1gLqnN1ClK-00haWR; Fri, 17 Aug 2018 12:27:15 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [RFC 00/15] PCI: turn some __weak functions into callbacks
+Date:   Fri, 17 Aug 2018 12:26:30 +0200
+Message-Id: <20180817102645.3839621-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:dWl+hzcJroIhS3/jGbVkLP4YuN1iaMm1kiokR+JWz1c8kXoip1x
+ WiL9n7z0xcIn+dIlrCPcb4lwLtwRSjzq7b7I3TrR++GaTKkY7QzBS4x1M+Is3MkdtcmmytP
+ rMOMOo2lyhTKf2nO2cYd09N7IAubXneAPaa9IbX5rR6DHfZfBRKsDcEhaDKyVgAgNn70Aw7
+ bQrmMZdYVZgabyMU89ZRw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:374uKI/eH50=:/brEApJ45kswqUCVVqQRN/
+ C/RgIDajIouVdL2I2bYXVia6dsp2qbt57fv1adPrhV34B+G73TTgHO1JYlIGdzpBWsvVKtZli
+ LrVJbt8y9ebPmXr0nAjNsuwjVqG2aoFjyLQEEuH/gRvvwAOk/tJnvb4iYlLeo9eqNteKeJtDa
+ Skl+zGBraYO8vdH7Jf4JxG8PNhhiSE8SabTJBIYVYKMPLbOtC5dh/4HfP2EAjmAnfHesGPyar
+ qR/N6IHDdNimkavARF8yEjzQqSjHvjG/kPKej8eOKpY0Ka/NP9EwybRagLFs9TdVlTB1VhIs9
+ CYpQO8UyCv7pf1aswd9jT53Y6T7KiL86czeEw1rzVZ8j4ofn6maQgvPrB4OGi0sAuFn6clxkI
+ Y9AYEKm7uKlYmmp9uBWIejmZxqpUhKxjFOOA8WIZvHthNS0ZJT1LgmyDm0T56POPEYFkXYQH5
+ HjmOQ0XGf17t0WphUybYoud3GM2/w7MOwWLdjXJIlhef8oqw+w9fbtp7eT3FiTO6DqlPEN53B
+ QUlFxAdhwt+4pqDu16XgsfZY5iZQ4x3c4bqNVRSgqIioIDiIqEBjo21qenoXzhYbN90+nBkC5
+ IWNZWpyV0Qsx5BIMbRTTvq81sjtPunWRAo5/7JYhf+BAfkzjQB7hpzwtcIcJebvvUir6JmFv1
+ z31OYtUfPkkV/xO3343wqxnJ1Ioil/lVExXxEVMt0PkbQU4vWsPujYl8cu2BgiU0qWHo=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Bjorn and others,
 
+Triggered by Christoph's patches, I had another go at converting
+all of the remaining pci host bridge implementations to be based
+on pci_alloc_host_bridge and a separate registration function.
 
-On 08/17/2018 04:19 AM, Petr Mladek wrote:
-> On Thu 2018-08-16 13:39:01, Prarit Bhargava wrote:
->> ACPI may contain an SPCR table that defines a default system console.
->> On ARM if the table is present then the SPCR console is enabled by default.
->> On x86 the SPCR console is used if 'earlycon' (no parameters) is
->> specified as a kernel parameter and is used only as the early console.
->> To use the SPCR data as a console a user must boot with 'earlycon',
->> grep logs & specify a console= kernel parameter, and then reboot again.
->>
->> Add 'console=auto' that enables a firmware or hardware console, and on
->> x86 enable the SPCR console if 'console=auto' is specified.
-> 
-> I basically like the idea. Just one or two nits below.
-> 
-> 
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->> index a32f2a126791..dd057224f33b 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -635,6 +635,7 @@
->>  
->>  		hvc<n>	Use the hypervisor console device <n>. This is for
->>  			both Xen and PowerPC hypervisors.
->> +		auto	[X86] Enable ACPI SPCR console
-> 
-> The "auto" option sounds reasonable. But earlycon does exactly this
-> when used without no extra options. I prefer to stay consistent
-> with the existing earlycon behavior.
+This is made possible through work from Lorenzo and others to
+convert many of the existing drivers, as well as the removal
+of some of the older architectures that nobody used.
 
-Hi Petr, on x86 earlycon still only enables the early console but does not
-enable the console.
+I'm adding a bit of duplication into the less maintained code
+here, but it makes everything more consistent, and gives an
+easy place to hook up callback functions etc.
 
-> 
-> 
->>  		If the device connected to the port is not a TTY but a braille
->>  		device, prepend "brl," before the device type, for instance
->> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
->> index 3b20607d581b..fb2616ba3b21 100644
->> --- a/arch/x86/kernel/acpi/boot.c
->> +++ b/arch/x86/kernel/acpi/boot.c
->> @@ -1771,3 +1771,8 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
->>  	e820__range_add(addr, size, E820_TYPE_ACPI);
->>  	e820__update_table_print();
->>  }
->> +
->> +void __init arch_console_setup(void)
->> +{
->> +	acpi_parse_spcr(false, true);
-> 
-> Just for record. I was curious that this might be called twice
-> (also from acpi_boot_init(). But it looks safe after all.
-> 
+The three parts of this series are:
 
-Yes, the console code prevents the same console from being registered twice.
+a) push up the registration into the callers (this is where
+   code gets added)
+b) clean up some of the more common host bridge
+   implementations again to integrate that code better.
+   This could be done for the rest as well, or we could just
+   leave them alone.
+c) start moving the __weak functions into callbacks in
+   pci_host_bridge. This is intentionally incomplete, since
+   it is a lot of work to do it for all those functions,
+   and I want to get consensus on the approach first, as well
+   as maybe get other developers to help out with the rest.
 
-> The trick is in the two bool parameters. One call allows to
-> register/enable earlycon and ignores normal console. This other
-> call does exactly the opposite. I do not see any unwanted side
-> effects.
+Please have a look.
 
-Thanks.  I'd like to know if you (or anyone else) has strong feelings about
-changing the behaviour of earlycon on x86?  I could make it so that specifying
-just earlycon would also initialize the console.
+       Arnd
 
-P.
+[1] https://lore.kernel.org/lkml/4288331.jNpl6KXlNO@wuerfel/
+[2] https://patchwork.kernel.org/patch/10555657/
 
-> 
-> Best Regards,
-> Petr
-> 
+Arnd Bergmann (15):
+  PCI: clean up legacy host bridge scan functions
+  PCI: move pci_scan_bus into callers
+  PCI: move pci_scan_root_bus into callers
+  PCI: export pci_register_host_bridge
+  PCI: move pci_create_root_bus into callers
+  powerpc/pci: fold pci_create_root_bus into pcibios_scan_phb
+  PCI/ACPI: clean up acpi_pci_root_create()
+  x86: PCI: clean up pcibios_scan_root()
+  PCI: xenfront: clean up pcifront_scan_root()
+  sparc/PCI: simplify pci_scan_one_pbm
+  PCI: hyperv: convert to pci_scan_root_bus_bridge
+  PCI: make pcibios_bus_add_device() a callback function
+  PCI: turn pcibios_alloc_irq into a callback
+  PCI: make pcibios_root_bridge_prepare a callback
+  PCI: make pcibios_add_bus/remove_bus callbacks
+
+ arch/arm64/kernel/pci.c               |  40 ++-----
+ arch/ia64/pci/pci.c                   |  25 +----
+ arch/ia64/sn/kernel/io_init.c         |  27 +++++
+ arch/microblaze/pci/pci-common.c      |  27 +++++
+ arch/powerpc/include/asm/pci-bridge.h |   3 +
+ arch/powerpc/kernel/pci-common.c      |  60 +++++------
+ arch/s390/pci/pci.c                   |  30 +++++-
+ arch/sh/drivers/pci/pci.c             |   1 +
+ arch/sh/drivers/pci/pcie-sh7786.c     |   3 +-
+ arch/sh/include/asm/pci.h             |   2 +
+ arch/sparc/kernel/pci.c               |  40 ++++---
+ arch/sparc/kernel/pcic.c              |  35 ++++++
+ arch/x86/pci/acpi.c                   |  15 +--
+ arch/x86/pci/common.c                 |  42 ++++----
+ arch/xtensa/kernel/pci.c              |  27 +++++
+ drivers/acpi/pci_root.c               |  43 +++++---
+ drivers/parisc/dino.c                 |  28 +++++
+ drivers/parisc/lba_pci.c              |  28 +++++
+ drivers/pci/bus.c                     |   8 +-
+ drivers/pci/controller/pci-hyperv.c   |  47 ++++----
+ drivers/pci/controller/vmd.c          |  30 +++++-
+ drivers/pci/hotplug/ibmphp_core.c     |  35 ++++++
+ drivers/pci/pci-driver.c              |  13 ++-
+ drivers/pci/probe.c                   | 150 +++++++++-----------------
+ drivers/pci/xen-pcifront.c            |  40 +++----
+ include/linux/acpi.h                  |   2 +
+ include/linux/pci.h                   |  17 ++-
+ 27 files changed, 514 insertions(+), 304 deletions(-)
+
+-- 
+2.18.0
+
