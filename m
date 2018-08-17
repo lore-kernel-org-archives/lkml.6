@@ -2,139 +2,120 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A77FC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 20:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6971CC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 20:27:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 447C621788
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 20:24:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 447C621788
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 098A9219CB
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 20:27:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KpYTT5iy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 098A9219CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbeHQX2y (ORCPT
+        id S1726451AbeHQXcD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 19:28:54 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:37995 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726342AbeHQX2y (ORCPT
+        Fri, 17 Aug 2018 19:32:03 -0400
+Received: from mail-it0-f41.google.com ([209.85.214.41]:55109 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726292AbeHQXcD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 19:28:54 -0400
-Received: by mail-qt0-f193.google.com with SMTP id x7-v6so848692qtk.5;
-        Fri, 17 Aug 2018 13:24:06 -0700 (PDT)
+        Fri, 17 Aug 2018 19:32:03 -0400
+Received: by mail-it0-f41.google.com with SMTP id s7-v6so12982328itb.4;
+        Fri, 17 Aug 2018 13:27:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=K19uSTi5oPInQtM9LSDQyTC872d21K02gb4iQ3tw1kw=;
+        b=KpYTT5iy17gdMAkfmKRSLETWO4j8sE1Tv0jxybX2UI8P/CvoUEYsqBdcOrErjiD/2C
+         Mb8Awkjnf8iCUHKqyexLi5zBYOlDQ/ZYLOKo9xQ/V0i1nCG4xm9Nv5xU5z6D5xLtFZEa
+         amhPrHR1ffrNZ66sdLYoair2zmON7okPVH4v8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=GggbUWRL0hidBFZgFvgs58ekcHBf4Rf58pwXd/MN2ko=;
-        b=uK6s+BE8bTUNvvso+Ra6Ltdk5gXpytlrn+qfNB5OpT0dAqYzO5btuYln5a1Qoxcsh9
-         XIZKU9480AlS8LkcQ4sa2G8L9O7z19PXgX6QNeMxEu4/RHW6v32QUetjGqSwp2TmzNOx
-         dMWivDO92a6kTzOgIIQa/sbJMNKWGwMyhyCeZwmNQBfcPqXglZ1etk3QMh9vb2JIY2iS
-         JsKKGUYkDdAh35L1KSSWKe9svLl1QUQnPQ2PEwgJ/wfp+yfyQKva2f6JxoLj4rulPwHw
-         oXnRD0w2ZINJSvVllLS6D5B1O7pGnnMyziJRtf1l4z12jadnd7fkUYtddIERGWw8gXr6
-         tQIw==
-X-Gm-Message-State: AOUpUlHdTe94CSHdId1BA0/km+T9YQnNLPuUlaVrMAlAeEK1B3m7fSaV
-        6fyIoLBWGy3vKXVUAc5jwIOaPYPVIeqaUYtGRz4=
-X-Google-Smtp-Source: AA+uWPw21i+wkCg5P4N/q5Emw3CfKL7kxPgZe1OIALQRb4d0Y1c3VcH2FGTegFS7Wyp0NHaKGbCFTFCpeLe+eA0ByS0=
-X-Received: by 2002:ac8:1645:: with SMTP id x5-v6mr3227993qtk.389.1534537445544;
- Fri, 17 Aug 2018 13:24:05 -0700 (PDT)
+        bh=K19uSTi5oPInQtM9LSDQyTC872d21K02gb4iQ3tw1kw=;
+        b=HdIi3pzu64MXL30zqnBGE9o4Rm9SUHvCK+JWlLVsdhPy2vveiU5rnWqrel21Nq3qvC
+         nfM1+xnsCWUhvzjhQlGc96jVAzD8ZPlh+Tp71qlnIb4k96lhQ9I0zJ+ebl6b+VwPffl2
+         04lQXnssZiepZtjR5NQkwOUzyMeKtoWUsB7aCxIh8qVppVEs49DlFX4MySaCstyh45PX
+         2sOPukc9tak46YK7ZSFvnp6iEWvOv8UVFNQSSM95OE0BbiF9bJ9bLfm7TRq87EjuHMoZ
+         wJkJwCcB0isMVdDVYcs0HYypXHExvTZMxgcmp4ZoQ67dSP2CafOOrlE3QU0vzP4nLjRU
+         2VQg==
+X-Gm-Message-State: AOUpUlFE0CYm6751VdfjYAj0mYtwW1QZaFY2Ft8a9h3X8h8sfskei1JL
+        mV4Bv2lG71nZ5/81aQhYBTTCQ/PA8KB6+rhJoQU=
+X-Google-Smtp-Source: AA+uWPxMu0hDHXLy100zD2BcNFmYKI7rUhmS3l5onYY+ruZfronTUg5F3AHK0HOsvjETmkHqelA12NlwrBsltwZIpps=
+X-Received: by 2002:a24:4c0b:: with SMTP id a11-v6mr25879012itb.123.1534537634262;
+ Fri, 17 Aug 2018 13:27:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180724120147.15096-1-hch@lst.de> <20180724202115.GA4685@lst.de>
- <18df6608-61c1-963d-bb1a-d46320232f40@landley.net> <CAK8P3a3bwFupzM14eigXfoQsLtj3cq_xv_p3=O924cgSceLE0g@mail.gmail.com>
- <418f3fa1-036f-d775-f1bc-e96778b4a4d8@landley.net>
-In-Reply-To: <418f3fa1-036f-d775-f1bc-e96778b4a4d8@landley.net>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 17 Aug 2018 22:23:49 +0200
-Message-ID: <CAK8P3a3x0f_op8PxOaWGNHQ3udg05T6NZggFAd7awns-FoL4yA@mail.gmail.com>
-Subject: Re: dmaengine for sh7760 (was Re: use the generic dma-noncoherent
- code for sh V2)
-To:     Rob Landley <rob@landley.net>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>
+References: <20180816215726.GA20526@ziepe.ca> <CA+55aFxgT8Hipm6bDrHMZ-nmdk3KZTP=J6D5k10UHTcajXAEHA@mail.gmail.com>
+ <20180817201535.GI28676@mellanox.com>
+In-Reply-To: <20180817201535.GI28676@mellanox.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 17 Aug 2018 13:27:02 -0700
+Message-ID: <CA+55aFzcp=a2sNOVR7DTEY9dehYamXaJ1bpSfF0FZir_9MhsVg@mail.gmail.com>
+Subject: Re: [GIT PULL] Please pull RDMA subsystem changes
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Doug Ledford <dledford@redhat.com>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 7:04 PM Rob Landley <rob@landley.net> wrote:
-> On 07/31/2018 07:56 AM, Arnd Bergmann wrote:
-> > On Fri, Jul 27, 2018 at 6:20 PM, Rob Landley <rob@landley.net> wrote:
-> >> On 07/24/2018 03:21 PM, Christoph Hellwig wrote:
-> >>> On Tue, Jul 24, 2018 at 02:01:42PM +0200, Christoph Hellwig wrote:
-> >>>> Hi all,
-> > If you hack on it, please convert the dmaengine platform data to use
-> > a dma_slave_map array to pass the data into the dmaengine driver,
+On Fri, Aug 17, 2018 at 1:15 PM Jason Gunthorpe <jgg@mellanox.com> wrote:
 >
-> The dmatest module didn't need it? I don't see why the ethernet driver would?
-> (Isn't the point of an allocator to allocate from a request?)
+> We often have merge conflicts with RDMA, how do you prefer to get the
+> PR? I'm actually not very clear on this part of the process.
 
-I guess you have hit two of the special cases here:
+I  generally prefer the non-merged version, but with comments about
+the conflicts.
 
-- dmatest uses the memory-to-memory DMA engine interface, not the slave
-  API, so you don't have to configure a slave at all
+In fact, the really preferred model is generally to send me a
+non-merged pull request (say "tags/for-linus") but if the conflicts
+look even half-way nasty - or simply because you did the merge anyway
+just to get the proper diffstat because history is complex - mention
+that you have a merged branch for verification (say
+"branch/for-linus-merged").
 
-- smc91x (and its smc911x.c relative) are apparently special in that they
-  use they use the DMA slave API but (AFAICT) require programming
-  the dmaengine hardware into a memory-to-memory transfer with no
-  DMA slave request signal and completely synchronous operation
-  (the IRQ handler polls for the DMA descriptor to be complete),
-  see also https://lkml.org/lkml/2018/4/3/464 for the discussion about
-  the recent rework of that driver's implementation.
+When I get that kind of pull request, I'll just do the merge
+resolution myself, and after I've done it I'll generally then do
 
-> > mapping the settings from a (pdev-name, channel-id) tuple to a pointer
-> > that describes the channel configuration rather than having the
-> > mapping from an numerical slave_id to a struct sh_dmae_slave_config
-> > in the setup files. It should be a fairly mechanical conversion.
->
-> I think all 8 channels are generic. Drivers should be able to grab them and
-> release them at will, why does it need a table?
->
-> (I say this not having made the smc91x.c driver use this yet, its "conversion"
-> to device tree left it full of PXA #ifdefs and constants, and I've tried the
+   git checkout -b test-merge
+   git pull <repoaddress> for-linus-merged
 
-Another point about smc91x is that it only uses DMA on the PXA platform,
-which is not part of the "multiplatform" ARM setup. It's likely that no
-other platform actually has a DMA engine that can talk to this device in
-the absence of a request signal, or that on more modern CPU cores,
-a readsl() is actually just as fast, but it avoids the setup cost of talking
-to the dma engine. Possibly both of the above.
+and then just compare the end result with my resolution as an extra
+verification step.
 
-> last half-dozen kernel releases and qemu releases and have yet to find an arm
-> mainstone board under qemu that _doesn't_ time out trying to use DMA with this
-> card. But that's another post...)
+I may end up skipping the verification step if everything looks
+entirely trivial (and really, if you have no real reason for the
+pre-merged branch, don't bother even mentioning it even if you did it
+for the diffstat), but in practice whenever somebody does that, I have
+no reason not to just do that simple extra verification.
 
-Is smc91x the only driver that you want to make use of the DMA engine?
-I suspect that every other one currently relies on passing a slave ID
-shdma_chan_filter into dma_request_slave_channel_compat() or
-dma_request_channel() , which are some of the interfaces we want to
-remove in the future, to make everything work the same across
-all platforms.
+Most of the time the merges are exactly the same, possibly with
+whitespace or trivial ordering differences (things like Makefiles and
+Kconfig files often have add-add conflicts where the ordering really
+doesn't matter between two config options).
 
-shdma_chan_filter() is one of those that expect its pointer argument to
-be a number that is in turn associated with an sh_dmae_slave_config
-structure in the platform data of the dma engine. What the newer
-dma_request_chan() interface does is to pass a pointer to the
-slave device and a string as identifier for the same data, which then
-gets associated through the dma_slave_map. On smc91x, both
-the device and name argument are NULL, which triggers the special
-case in the pxa dmaengine driver.
+And then sometimes it shows that I missed something in my mmerge.
 
-> > The other part I noticed is arch/sh/drivers/dma/*, which appears to
-> > be entirely unused, and should probably removed.
->
-> I had to switch that off to get this to work, yes. I believe it predates
-> dmaengine and was obsoleted by it.
+And sometimes it shows that  I do so many merges that I actually ended
+up noticing something that the submaintainer didn't.
 
-Ok. Have you found any reason to keep it around though?
+So it can be uninteresting, and when it isn't uninteresting it can go
+either way, but so far for the people who do this, I've never been in
+the situation where I was *sorry* for the double merge and extra
+verification step.
 
-       Arnd
+Because when mis-merges happen (they are happily pretty rare) they are
+_so_ annoying and can be so hard to figure out later, that I'd rather
+spend a bit more time on the merge than have a dodgy one.
+
+               Linus
