@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC8DC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 02:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D923BC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 02:44:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0A1D2148D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 02:42:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0A1D2148D
+	by mail.kernel.org (Postfix) with ESMTP id 9682921526
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 02:44:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9682921526
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sympatico.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726326AbeHQFo1 (ORCPT
+        id S1726416AbeHQFqV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 01:44:27 -0400
-Received: from belmont79srvr.owm.bell.net ([184.150.200.79]:40896 "EHLO
+        Fri, 17 Aug 2018 01:46:21 -0400
+Received: from belmont79srvr.owm.bell.net ([184.150.200.79]:41139 "EHLO
         mtlfep01.bell.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725833AbeHQFo1 (ORCPT
+        with ESMTP id S1726094AbeHQFqV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 01:44:27 -0400
+        Fri, 17 Aug 2018 01:46:21 -0400
 Received: from bell.net mtlfep01 184.150.200.30 by mtlfep01.bell.net
           with ESMTP
-          id <20180817024253.UDH10498.mtlfep01.bell.net@mtlspm01.bell.net>
+          id <20180817024448.VAV10498.mtlfep01.bell.net@mtlspm02.bell.net>
           for <linux-kernel@vger.kernel.org>;
-          Thu, 16 Aug 2018 22:42:53 -0400
-Received: from arcusix ([70.55.50.38]) by mtlspm01.bell.net with ESMTP
-          id <20180817024253.KFNI28394.mtlspm01.bell.net@arcusix>;
-          Thu, 16 Aug 2018 22:42:53 -0400
-Message-ID: <a5d99f4f367cfa553471e4cad1d0c80e52ac0a9f.camel@sympatico.ca>
-Subject: Re: [PATCH] x86/mm/pti: Move user W+X check into pti_finalize()
+          Thu, 16 Aug 2018 22:44:48 -0400
+Received: from arcusix ([70.55.50.38]) by mtlspm02.bell.net with ESMTP
+          id <20180817024448.JMEI6415.mtlspm02.bell.net@arcusix>;
+          Thu, 16 Aug 2018 22:44:48 -0400
+Message-ID: <0055c50937cff963e243bba815947cfcdd8b3d0b.camel@sympatico.ca>
+Subject: Re: [PATCH 0/3] PTI for x86-32 Fixes
 From:   "David H. Gutteridge" <dhgutteridge@sympatico.ca>
 To:     Joerg Roedel <joro@8bytes.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -57,106 +57,57 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Andrea Arcangeli <aarcange@redhat.com>,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         jroedel@suse.de
-Date:   Thu, 16 Aug 2018 22:42:48 -0400
-In-Reply-To: <1533727000-9172-1-git-send-email-joro@8bytes.org>
-References: <1533727000-9172-1-git-send-email-joro@8bytes.org>
+Date:   Thu, 16 Aug 2018 22:44:47 -0400
+In-Reply-To: <1533637471-30953-1-git-send-email-joro@8bytes.org>
+References: <1533637471-30953-1-git-send-email-joro@8bytes.org>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Cloudmark-Analysis: v=2.2 cv=IaFoYSia c=1 sm=0 tr=0 a=e5NqWeyudnn36+hvbsSv9g==:17 a=IkcTkHD0fZMA:10 a=dapMudl6Dx4A:10 a=k_m-kdumAAAA:8 a=_Z2vyQx0aRbNF4byCkgA:9 a=QEXdDO2ut3YA:10 a=2aFmp3DG3lfw9CblUY6y:22
+X-Cloudmark-Analysis: v=2.2 cv=IaFoYSia c=1 sm=0 tr=0 a=e5NqWeyudnn36+hvbsSv9g==:17 a=IkcTkHD0fZMA:10 a=dapMudl6Dx4A:10 a=k_m-kdumAAAA:8 a=W_vHiYWUJ7UVWE1JRxsA:9 a=QEXdDO2ut3YA:10 a=2aFmp3DG3lfw9CblUY6y:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-08 at 13:16 +0200, Joerg Roedel wrote:
-> From: Joerg Roedel <jroedel@suse.de>
+On Tue, 2018-08-07 at 12:24 +0200, Joerg Roedel wrote:
+> Hi,
 > 
-> The user page-table gets the updated kernel mappings in
-> pti_finalize(), which runs after the RO+X permissions got
-> applied to the kernel page-table in mark_readonly().
+> here is a small patch-set to fix two small issues in the
+> PTI implementation for 32 bit x86. The issues are:
 > 
-> But with CONFIG_DEBUG_WX enabled, the user page-table is
-> already checked in mark_readonly() for insecure mappings.
-> This causes false-positive warnings, because the user
-> page-table did not get the updated mappings yet.
+> 	1) Fix the 32 bit PCID check. I used the wrong
+> 	   operator there and this caused false-positive
+> 	   warnings.
 > 
-> Move the W+X check for the user page-table into
-> pti_finalize() after it updated all required mappings.
+> 	2) The other two patches make sure the init-hole is
+> 	   not mapped into the user page-table. It is the
+> 	   32 bit counterpart to commit
 > 
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> ---
->  arch/x86/include/asm/pgtable.h | 7 +++++--
->  arch/x86/mm/dump_pagetables.c  | 3 +--
->  arch/x86/mm/pti.c              | 2 ++
->  3 files changed, 8 insertions(+), 4 deletions(-)
+> 	   c40a56a7818c ('x86/mm/init: Remove freed kernel image areas
+> from alias mapping')
 > 
-> diff --git a/arch/x86/include/asm/pgtable.h
-> b/arch/x86/include/asm/pgtable.h
-> index e39088cb..a1cb333 100644
-> --- a/arch/x86/include/asm/pgtable.h
-> +++ b/arch/x86/include/asm/pgtable.h
-> @@ -30,11 +30,14 @@ int __init __early_make_pgtable(unsigned long
-> address, pmdval_t pmd);
->  void ptdump_walk_pgd_level(struct seq_file *m, pgd_t *pgd);
->  void ptdump_walk_pgd_level_debugfs(struct seq_file *m, pgd_t *pgd,
-> bool user);
->  void ptdump_walk_pgd_level_checkwx(void);
-> +void ptdump_walk_user_pgd_level_checkwx(void);
->  
->  #ifdef CONFIG_DEBUG_WX
-> -#define debug_checkwx() ptdump_walk_pgd_level_checkwx()
-> +#define debug_checkwx()		ptdump_walk_pgd_level_checkwx()
-> +#define debug_checkwx_user()	ptdump_walk_user_pgd_level_checkwx()
->  #else
-> -#define debug_checkwx() do { } while (0)
-> +#define debug_checkwx()		do { } while (0)
-> +#define debug_checkwx_user()	do { } while (0)
->  #endif
->  
->  /*
-> diff --git a/arch/x86/mm/dump_pagetables.c
-> b/arch/x86/mm/dump_pagetables.c
-> index ccd92c4..b8ab901 100644
-> --- a/arch/x86/mm/dump_pagetables.c
-> +++ b/arch/x86/mm/dump_pagetables.c
-> @@ -569,7 +569,7 @@ void ptdump_walk_pgd_level_debugfs(struct seq_file
-> *m, pgd_t *pgd, bool user)
->  }
->  EXPORT_SYMBOL_GPL(ptdump_walk_pgd_level_debugfs);
->  
-> -static void ptdump_walk_user_pgd_level_checkwx(void)
-> +void ptdump_walk_user_pgd_level_checkwx(void)
->  {
->  #ifdef CONFIG_PAGE_TABLE_ISOLATION
->  	pgd_t *pgd = INIT_PGD;
-> @@ -586,7 +586,6 @@ static void
-> ptdump_walk_user_pgd_level_checkwx(void)
->  void ptdump_walk_pgd_level_checkwx(void)
->  {
->  	ptdump_walk_pgd_level_core(NULL, NULL, true, false);
-> -	ptdump_walk_user_pgd_level_checkwx();
->  }
->  
->  static int __init pt_dump_init(void)
-> diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-> index 69a9d60..026a89a 100644
-> --- a/arch/x86/mm/pti.c
-> +++ b/arch/x86/mm/pti.c
-> @@ -628,4 +628,6 @@ void pti_finalize(void)
->  	 */
->  	pti_clone_entry_text();
->  	pti_clone_kernel_text();
-> +
-> +	debug_checkwx_user();
->  }
+> 	   for the 64 bit PTI implementation.
+> 
+> I tested that no-PAE, PAE and 64 bit kernel all boot and
+> have correct user page-tables with identical global mappings
+> between user and kernel.
+> 
+> Regards,
+> 
+> 	Joerg
+> 
+> Joerg Roedel (3):
+>   x86/mm/pti: Fix 32 bit PCID check
+>   x86/mm/pti: Don't clear permissions in pti_clone_pmd()
+>   x86/mm/pti: Clone kernel-image on PTE level for 32 bit
+> 
+>  arch/x86/mm/pti.c | 143 ++++++++++++++++++++++++++++++++++++++-------
+> ---------
+>  1 file changed, 100 insertions(+), 43 deletions(-)
 
 I've tested this in a VM and on an Atom laptop, as usual. No
 regressions noted.
-
-(The version I tested was the latter pulled into tip:
-[ tglx: Folded !NX supported fix ])
 
 Tested-by: David H. Gutteridge <dhgutteridge@sympatico.ca>
 
