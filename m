@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C25C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:28:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2ADC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C554208DB
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:28:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C554208DB
+	by mail.kernel.org (Postfix) with ESMTP id 4DF3E2124D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:28:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DF3E2124D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbeHQNax (ORCPT
+        id S1727407AbeHQNax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 17 Aug 2018 09:30:53 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:44097 "EHLO
+Received: from mout.kundenserver.de ([217.72.192.73]:48209 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727119AbeHQNac (ORCPT
+        with ESMTP id S1727058AbeHQNac (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 17 Aug 2018 09:30:32 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
  (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0LfAVs-1gEfGg3Ql6-00olnh; Fri, 17 Aug 2018 12:27:18 +0200
+ 0M40t0-1g7af110mg-00rZtP; Fri, 17 Aug 2018 12:27:17 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
 Cc:     linux-kernel@vger.kernel.org,
@@ -34,77 +34,371 @@ Cc:     linux-kernel@vger.kernel.org,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [RFC 09/15] PCI: xenfront: clean up pcifront_scan_root()
-Date:   Fri, 17 Aug 2018 12:26:39 +0200
-Message-Id: <20180817102645.3839621-10-arnd@arndb.de>
+Subject: [RFC 05/15] PCI: move pci_create_root_bus into callers
+Date:   Fri, 17 Aug 2018 12:26:35 +0200
+Message-Id: <20180817102645.3839621-6-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180817102645.3839621-1-arnd@arndb.de>
 References: <20180817102645.3839621-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:imp36udsrO2nyS8JPjqHA5Ds3hFhxVLPHpRGVSWPBGXVbL9/rNV
- imiE1c81Sfttwp+bT8f8tuK+epvIVP0/tH2n09iCfqvqjLRLlFBwdbr6U+nTVjL+eKbRy82
- /29LhtzYPzABNffKaggHUp+zeicohWvtT/S8mD+XO+rHW/DejrjMQq9cGaJyd1HBBEumpqw
- plfhY45irAx+gsxE+znig==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:FL2ZqB/032s=:1A5r01tQmTrILHRXQDy23a
- KFl3ApCPT8sFp2nlafvObwMRHbliIqVL2rMDndnA07kCYvYEizbMGt3o0wJZAFdpNz3kS7ln6
- doQt8lxk5AjbiyNPeSPVypLaLKBL+9ecrGYPefgriCFVt9Ddh617MIlRnTb/RM4FjvZzpdzk2
- aW8MbQIuJtfC+B2Q15BroI+/75njcF7WXHu6vf9kZu1mYXNPAoq4nS/qN+BBq1q10kF/qZiSB
- 4ElYO57rst6Jvl7XlbRKy1D9O+uqCHLl1NiZZeWHGuAh7LvkLCBB6sQL1mgERYY1HPInoadrM
- NaNGhb6gpNJAaJ+aOhqBqZTwSEz905wppbKg8my0ZgosbExtpjhGJBpDrImOpXkrw9Sb85cZT
- PhYnGbAjh+HxCXfyWW8G3raZzukxI7xGnFVlaaxLXgYduuV7CMu/Qll6tQQCQIGokEipROWKF
- Zk9BsAVXb5wdT7saIcAAplUs0nccZd6gYsyLcEnHSur1Z6OIsevthXjOvaReUUF1XggWq4Ze/
- Q4LljBdzAVS14y6HHjFLmP7+dsqXO6uLSPiicMrc/2jS+mzp4QV3fFuzubU2V1pV+mVeG8DxR
- iPsP7lfV+geEoBhHreBzfk9KOHzn00fI60UbvvvOEj6R0j3U5WLp2DZV58EHejQqaTxd40NGA
- nLme5S/oqqT7vNaz8ku8EyO+SZ1KgTzYgkvH3VlEQQaBAxuKnuzI9PXk/u92Ay6Ic9vw=
+X-Provags-ID: V03:K1:vNkQe7G80rrJcSh/6xIdR1XKwwCej6w5is+lloFStD924Tqfn0L
+ yGVewaIh1+4Vgki1oP1wIOx6XkkD8GqaEGxmZE/7FaVmqAKP6giye+TP/hkfc6OKPffr61n
+ BKj4FMOs1JjhhEoTVwABpSAUn4IGk9rSZ4N6mT4NrMHQ6maNd+haxnEQ2CqoGVIgcApxPg0
+ JhwKxIDMDp3jSLLSD7sug==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:XHSfvXBRCKU=:r58iToc42PeA5q2a7Kt6oq
+ 6VlaRcPJclx97z1Jv6s1RQc7jr29NLhEHSyFjQLdKbtVuTjqprA7cNjLMZoDdmcoTtQ4Jd3/p
+ X2UGiWXAOL8bjI9Aw4JbLcTGFToUMDS6NZ2Fw5+xkVWVAGa7HtXLe48DCTi37wWrTviu8xsIF
+ Won9k1ZcAlTV+3P/X7fdqbWSZYaFVOGVYk3qqZBwMLDHBwggFqHdNJlY8bcBK16BFyHsrxGtk
+ FTw0zLa2JxW7wPKoWg6r2pWPMf+QVeo0TgoYchxwH+2/HEJonT/y81adZr4o29pAQaTTfZlIj
+ TMNzdytb5wtfI8/0wp0GuDNgF6uw8oBDX6O4a3W9s7myMxk8e/xENDdRZ4r+/n+WsTjFo25wg
+ oqltuqbiP5+Y6pWZMVuZ59/FSxAhZSF3gu5GBCtKRFCmduyhdFx6WI88coxOIgxZFLBJCFVfE
+ SWKQOTUBZ8chFX2lO9l862T3zvMwuMno94GC5LJ4d++t+IeIvQmVDy4wWdWv1lbFqJBb6WCzn
+ 0I8O0euMhPFqywJVhFDz3opUkBO9ZE4x2r4sQFp+i2Ywku/1L2PSk5tpnAEUyR5h01v6Zg/P9
+ hG0vfNQyOfjDgXZiku0to7vkxWcVUSpP/IPE30CLegGuaVIiwKw72RCBmHqvYe4CAXjM5qY9B
+ GKxebiB7ng9TNi2dRfLqd2I0Io9btA2NgJBHrk4eccGwnwzm5ukK5KTUCXkpkHX90ybY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Merging pci_scan_root_bus() into pcifront_scan_root() simplifies
-the implementation and makes it more readable. We can allocate
-the pcifront_sd structure along with the bridge structure, which
-helps manage its lifetime rules so we don't free it before the
-device has been released.
+There are only seven remaining callers of the old pci_scan_root_bus()
+interface. Since we want to expose the pci_host_bridge structure
+everywhere and discourage users from calling the old interfaces, let's
+move the implementation into the respective callsites.
 
-There are two small issues that I noticed that could be improved:
-
-- It seems we unregister the 'bus' device that is a child of the
-  'pci_host_bridge' device after we unregister its parent in
-  pcifront_free_roots(), which seems odd.
-- We probably don't need an extra pci_bus_entry list at all,
-  but could instead walk the children of the pcifront_device,
-  which are all pci_host_bridge devices.
+While this duplicates the source code, it makes the object code smaller
+for almost all users by avoiding the global implementation, and it allows
+further cleanup of the callers.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/pci/xen-pcifront.c | 67 ++++++++++++--------------------------
- 1 file changed, 21 insertions(+), 46 deletions(-)
+ arch/powerpc/kernel/pci-common.c    | 28 +++++++++++++++++++++++++++
+ arch/sparc/kernel/pci.c             | 28 +++++++++++++++++++++++++++
+ drivers/acpi/pci_root.c             | 30 ++++++++++++++++++++++++++++-
+ drivers/parisc/dino.c               | 28 +++++++++++++++++++++++++++
+ drivers/parisc/lba_pci.c            | 28 +++++++++++++++++++++++++++
+ drivers/pci/controller/pci-hyperv.c | 28 +++++++++++++++++++++++++++
+ drivers/pci/controller/vmd.c        | 30 ++++++++++++++++++++++++++++-
+ drivers/pci/probe.c                 | 29 ----------------------------
+ include/linux/pci.h                 |  3 ---
+ 9 files changed, 198 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/pci/xen-pcifront.c b/drivers/pci/xen-pcifront.c
-index 24070e1c5f22..a5eb6cb02bec 100644
---- a/drivers/pci/xen-pcifront.c
-+++ b/drivers/pci/xen-pcifront.c
-@@ -443,40 +443,12 @@ static int pcifront_scan_bus(struct pcifront_device *pdev,
- 	return 0;
+diff --git a/arch/powerpc/kernel/pci-common.c b/arch/powerpc/kernel/pci-common.c
+index 88e4f69a09e5..57ca621a32f4 100644
+--- a/arch/powerpc/kernel/pci-common.c
++++ b/arch/powerpc/kernel/pci-common.c
+@@ -1587,6 +1587,34 @@ struct device_node *pcibios_get_phb_of_node(struct pci_bus *bus)
+ 	return of_node_get(hose->dn);
  }
  
--static struct pci_bus *pci_scan_root_bus(struct device *parent, int bus,
++static struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
++		struct pci_ops *ops, void *sysdata, struct list_head *resources)
++{
++	int error;
++	struct pci_host_bridge *bridge;
++
++	bridge = pci_alloc_host_bridge(0);
++	if (!bridge)
++		return NULL;
++
++	bridge->dev.parent = parent;
++
++	list_splice_init(resources, &bridge->windows);
++	bridge->sysdata = sysdata;
++	bridge->busnr = bus;
++	bridge->ops = ops;
++
++	error = pci_register_host_bridge(bridge);
++	if (error < 0)
++		goto err_out;
++
++	return bridge->bus;
++
++err_out:
++	kfree(bridge);
++	return NULL;
++}
++
+ /**
+  * pci_scan_phb - Given a pci_controller, setup and scan the PCI bus
+  * @hose: Pointer to the PCI host controller instance structure
+diff --git a/arch/sparc/kernel/pci.c b/arch/sparc/kernel/pci.c
+index 17ea16a1337c..afbce59d9231 100644
+--- a/arch/sparc/kernel/pci.c
++++ b/arch/sparc/kernel/pci.c
+@@ -691,6 +691,34 @@ static void pci_claim_bus_resources(struct pci_bus *bus)
+ 		pci_claim_bus_resources(child_bus);
+ }
+ 
++static struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
++		struct pci_ops *ops, void *sysdata, struct list_head *resources)
++{
++	int error;
++	struct pci_host_bridge *bridge;
++
++	bridge = pci_alloc_host_bridge(0);
++	if (!bridge)
++		return NULL;
++
++	bridge->dev.parent = parent;
++
++	list_splice_init(resources, &bridge->windows);
++	bridge->sysdata = sysdata;
++	bridge->busnr = bus;
++	bridge->ops = ops;
++
++	error = pci_register_host_bridge(bridge);
++	if (error < 0)
++		goto err_out;
++
++	return bridge->bus;
++
++err_out:
++	kfree(bridge);
++	return NULL;
++}
++
+ struct pci_bus *pci_scan_one_pbm(struct pci_pbm_info *pbm,
+ 				 struct device *parent)
+ {
+diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
+index 7433035ded95..85dbcf47015b 100644
+--- a/drivers/acpi/pci_root.c
++++ b/drivers/acpi/pci_root.c
+@@ -873,6 +873,34 @@ static void acpi_pci_root_release_info(struct pci_host_bridge *bridge)
+ 	__acpi_pci_root_release_info(bridge->release_data);
+ }
+ 
++static struct pci_bus *acpi_pci_create_root_bus(struct device *parent, int bus,
++		struct pci_ops *ops, void *sysdata, struct list_head *resources)
++{
++	int error;
++	struct pci_host_bridge *bridge;
++
++	bridge = pci_alloc_host_bridge(0);
++	if (!bridge)
++		return NULL;
++
++	bridge->dev.parent = parent;
++
++	list_splice_init(resources, &bridge->windows);
++	bridge->sysdata = sysdata;
++	bridge->busnr = bus;
++	bridge->ops = ops;
++
++	error = pci_register_host_bridge(bridge);
++	if (error < 0)
++		goto err_out;
++
++	return bridge->bus;
++
++err_out:
++	kfree(bridge);
++	return NULL;
++}
++
+ struct pci_bus *acpi_pci_root_create(struct acpi_pci_root *root,
+ 				     struct acpi_pci_root_ops *ops,
+ 				     struct acpi_pci_root_info *info,
+@@ -902,7 +930,7 @@ struct pci_bus *acpi_pci_root_create(struct acpi_pci_root *root,
+ 
+ 	pci_acpi_root_add_resources(info);
+ 	pci_add_resource(&info->resources, &root->secondary);
+-	bus = pci_create_root_bus(NULL, busnum, ops->pci_ops,
++	bus = acpi_pci_create_root_bus(NULL, busnum, ops->pci_ops,
+ 				  sysdata, &info->resources);
+ 	if (!bus)
+ 		goto out_release_info;
+diff --git a/drivers/parisc/dino.c b/drivers/parisc/dino.c
+index 7390fb8ca9d1..91c837de7616 100644
+--- a/drivers/parisc/dino.c
++++ b/drivers/parisc/dino.c
+@@ -882,6 +882,34 @@ static const char *cujo_vers[] = {
+ 
+ void ccio_cujo20_fixup(struct parisc_device *dev, u32 iovp);
+ 
++static struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
++		struct pci_ops *ops, void *sysdata, struct list_head *resources)
++{
++	int error;
++	struct pci_host_bridge *bridge;
++
++	bridge = pci_alloc_host_bridge(0);
++	if (!bridge)
++		return NULL;
++
++	bridge->dev.parent = parent;
++
++	list_splice_init(resources, &bridge->windows);
++	bridge->sysdata = sysdata;
++	bridge->busnr = bus;
++	bridge->ops = ops;
++
++	error = pci_register_host_bridge(bridge);
++	if (error < 0)
++		goto err_out;
++
++	return bridge->bus;
++
++err_out:
++	kfree(bridge);
++	return NULL;
++}
++
+ /*
+ ** Determine if dino should claim this chip (return 0) or not (return 1).
+ ** If so, initialize the chip appropriately (card-mode vs bridge mode).
+diff --git a/drivers/parisc/lba_pci.c b/drivers/parisc/lba_pci.c
+index 69bd98421eb1..901b7f07fe91 100644
+--- a/drivers/parisc/lba_pci.c
++++ b/drivers/parisc/lba_pci.c
+@@ -1464,6 +1464,34 @@ lba_hw_init(struct lba_device *d)
+  */
+ static unsigned int lba_next_bus = 0;
+ 
++static struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
++		struct pci_ops *ops, void *sysdata, struct list_head *resources)
++{
++	int error;
++	struct pci_host_bridge *bridge;
++
++	bridge = pci_alloc_host_bridge(0);
++	if (!bridge)
++		return NULL;
++
++	bridge->dev.parent = parent;
++
++	list_splice_init(resources, &bridge->windows);
++	bridge->sysdata = sysdata;
++	bridge->busnr = bus;
++	bridge->ops = ops;
++
++	error = pci_register_host_bridge(bridge);
++	if (error < 0)
++		goto err_out;
++
++	return bridge->bus;
++
++err_out:
++	kfree(bridge);
++	return NULL;
++}
++
+ /*
+  * Determine if lba should claim this chip (return 0) or not (return 1).
+  * If so, initialize the chip and tell other partners in crime they
+diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+index c00f82cc54aa..df7cddea8e30 100644
+--- a/drivers/pci/controller/pci-hyperv.c
++++ b/drivers/pci/controller/pci-hyperv.c
+@@ -1457,6 +1457,34 @@ static void prepopulate_bars(struct hv_pcibus_device *hbus)
+ 	spin_unlock_irqrestore(&hbus->device_list_lock, flags);
+ }
+ 
++static struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
++		struct pci_ops *ops, void *sysdata, struct list_head *resources)
++{
++	int error;
++	struct pci_host_bridge *bridge;
++
++	bridge = pci_alloc_host_bridge(0);
++	if (!bridge)
++		return NULL;
++
++	bridge->dev.parent = parent;
++
++	list_splice_init(resources, &bridge->windows);
++	bridge->sysdata = sysdata;
++	bridge->busnr = bus;
++	bridge->ops = ops;
++
++	error = pci_register_host_bridge(bridge);
++	if (error < 0)
++		goto err_out;
++
++	return bridge->bus;
++
++err_out:
++	kfree(bridge);
++	return NULL;
++}
++
+ /**
+  * create_root_hv_pci_bus() - Expose a new root PCI bus
+  * @hbus:	Root PCI bus, as understood by this driver
+diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+index fd2dbd7eed7b..311c9f6761ae 100644
+--- a/drivers/pci/controller/vmd.c
++++ b/drivers/pci/controller/vmd.c
+@@ -579,6 +579,34 @@ static int vmd_find_free_domain(void)
+ 	return domain + 1;
+ }
+ 
++static struct pci_bus *vmd_create_root_bus(struct device *parent, int bus,
++		struct pci_ops *ops, void *sysdata, struct list_head *resources)
++{
++	int error;
++	struct pci_host_bridge *bridge;
++
++	bridge = pci_alloc_host_bridge(0);
++	if (!bridge)
++		return NULL;
++
++	bridge->dev.parent = parent;
++
++	list_splice_init(resources, &bridge->windows);
++	bridge->sysdata = sysdata;
++	bridge->busnr = bus;
++	bridge->ops = ops;
++
++	error = pci_register_host_bridge(bridge);
++	if (error < 0)
++		goto err_out;
++
++	return bridge->bus;
++
++err_out:
++	kfree(bridge);
++	return NULL;
++}
++
+ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
+ {
+ 	struct pci_sysdata *sd = &vmd->sysdata;
+@@ -705,7 +733,7 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
+ 	pci_add_resource_offset(&resources, &vmd->resources[1], offset[0]);
+ 	pci_add_resource_offset(&resources, &vmd->resources[2], offset[1]);
+ 
+-	vmd->bus = pci_create_root_bus(&vmd->dev->dev, busn_start, &vmd_ops,
++	vmd->bus = vmd_create_root_bus(&vmd->dev->dev, busn_start, &vmd_ops,
+ 				       sd, &resources);
+ 	if (!vmd->bus) {
+ 		pci_free_resource_list(&resources);
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 5ca7d5941ad0..eaedb4fe143a 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -2909,35 +2909,6 @@ void __weak pcibios_remove_bus(struct pci_bus *bus)
+ {
+ }
+ 
+-struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
 -		struct pci_ops *ops, void *sysdata, struct list_head *resources)
 -{
--	struct pci_host_bridge *bridge;
 -	int error;
+-	struct pci_host_bridge *bridge;
 -
 -	bridge = pci_alloc_host_bridge(0);
 -	if (!bridge)
 -		return NULL;
 -
--	list_splice_init(resources, &bridge->windows);
 -	bridge->dev.parent = parent;
+-
+-	list_splice_init(resources, &bridge->windows);
 -	bridge->sysdata = sysdata;
 -	bridge->busnr = bus;
 -	bridge->ops = ops;
 -
--	error = pci_scan_root_bus_bridge(bridge);
+-	error = pci_register_host_bridge(bridge);
 -	if (error < 0)
 -		goto err_out;
 -
@@ -114,98 +408,25 @@ index 24070e1c5f22..a5eb6cb02bec 100644
 -	kfree(bridge);
 -	return NULL;
 -}
+-EXPORT_SYMBOL_GPL(pci_create_root_bus);
 -
- static int pcifront_scan_root(struct pcifront_device *pdev,
- 				 unsigned int domain, unsigned int bus)
+ int pci_host_probe(struct pci_host_bridge *bridge)
  {
--	struct pci_bus *b;
--	LIST_HEAD(resources);
- 	struct pcifront_sd *sd = NULL;
- 	struct pci_bus_entry *bus_entry = NULL;
-+	struct pci_host_bridge *bridge;
- 	int err = 0;
- 	static struct resource busn_res = {
- 		.start = 0,
-@@ -498,50 +470,55 @@ static int pcifront_scan_root(struct pcifront_device *pdev,
- 	dev_info(&pdev->xdev->dev, "Creating PCI Frontend Bus %04x:%02x\n",
- 		 domain, bus);
- 
-+	bridge = pci_alloc_host_bridge(sizeof(*sd));
-+	if (!bridge)
-+		return -ENOMEM;
-+
- 	bus_entry = kzalloc(sizeof(*bus_entry), GFP_KERNEL);
--	sd = kzalloc(sizeof(*sd), GFP_KERNEL);
--	if (!bus_entry || !sd) {
-+	sd = pci_host_bridge_priv(bridge);
-+	if (!bus_entry) {
- 		err = -ENOMEM;
- 		goto err_out;
- 	}
--	pci_add_resource(&resources, &ioport_resource);
--	pci_add_resource(&resources, &iomem_resource);
--	pci_add_resource(&resources, &busn_res);
-+	pci_add_resource(&bridge->windows, &ioport_resource);
-+	pci_add_resource(&bridge->windows, &iomem_resource);
-+	pci_add_resource(&bridge->windows, &busn_res);
- 	pcifront_init_sd(sd, domain, bus, pdev);
-+	bridge->dev.parent = &pdev->xdev->dev;
-+	bridge->sysdata = sd;
-+	bridge->busnr = bus;
-+	bridge->ops = &pcifront_bus_ops;
- 
- 	pci_lock_rescan_remove();
- 
--	b = pci_scan_root_bus(&pdev->xdev->dev, bus,
--				  &pcifront_bus_ops, sd, &resources);
--	if (!b) {
-+	err = pci_scan_root_bus_bridge(bridge);
-+	if (err < 0) {
- 		dev_err(&pdev->xdev->dev,
- 			"Error creating PCI Frontend Bus!\n");
--		err = -ENOMEM;
- 		pci_unlock_rescan_remove();
--		pci_free_resource_list(&resources);
- 		goto err_out;
- 	}
- 
--	bus_entry->bus = b;
-+	bus_entry->bus = bridge->bus;
- 
- 	list_add(&bus_entry->list, &pdev->root_buses);
- 
- 	/* pci_scan_root_bus skips devices which do not have a
- 	* devfn==0. The pcifront_scan_bus enumerates all devfn. */
--	err = pcifront_scan_bus(pdev, domain, bus, b);
-+	err = pcifront_scan_bus(pdev, domain, bus, bridge->bus);
- 
- 	/* Claim resources before going "live" with our devices */
--	pci_walk_bus(b, pcifront_claim_resource, pdev);
-+	pci_walk_bus(bridge->bus, pcifront_claim_resource, pdev);
- 
- 	/* Create SysFS and notify udev of the devices. Aka: "going live" */
--	pci_bus_add_devices(b);
-+	pci_bus_add_devices(bridge->bus);
- 
- 	pci_unlock_rescan_remove();
- 	return err;
- 
- err_out:
-+	pci_free_host_bridge(bridge);
- 	kfree(bus_entry);
--	kfree(sd);
- 
- 	return err;
- }
-@@ -605,8 +582,6 @@ static void pcifront_free_roots(struct pcifront_device *pdev)
- 
- 		free_root_bus_devs(bus_entry->bus);
- 
--		kfree(bus_entry->bus->sysdata);
--
- 		device_unregister(bus_entry->bus->bridge);
- 		pci_remove_bus(bus_entry->bus);
- 
+ 	struct pci_bus *bus, *child;
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index e1337148cf9f..1dd8a3ecf753 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -905,9 +905,6 @@ void pcibios_bus_to_resource(struct pci_bus *bus, struct resource *res,
+ void pcibios_scan_specific_bus(int busn);
+ struct pci_bus *pci_find_bus(int domain, int busnr);
+ void pci_bus_add_devices(const struct pci_bus *bus);
+-struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
+-				    struct pci_ops *ops, void *sysdata,
+-				    struct list_head *resources);
+ int pci_host_probe(struct pci_host_bridge *bridge);
+ int pci_register_host_bridge(struct pci_host_bridge *);
+ int pci_bus_insert_busn_res(struct pci_bus *b, int bus, int busmax);
 -- 
 2.18.0
 
