@@ -2,159 +2,114 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 715FEC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C21C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2515D21536
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:39:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B037921536
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 16:43:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="T8sfgjGb";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OcymF/q3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2515D21536
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=exactcode.de header.i=@exactcode.de header.b="idcQKXTG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B037921536
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728076AbeHQTn2 (ORCPT
+        id S1727822AbeHQTr5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 15:43:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48282 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727995AbeHQTn2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 15:43:28 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 33810624DD; Fri, 17 Aug 2018 16:39:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1534523964;
-        bh=bQETiLhZqSKTJmg/844rsftxBCVPpj2SQb/j29Mvqxo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T8sfgjGb9/0ZXfbMRbPbxbY/hb7kOtyARNJcrvf8g5pwE/TD/OMzKjROZ3MMVaQWz
-         AU2HGznS7QXnCiGtNIsOb0GlvzHYxMbtpxoIpZl7BAIpO33wFaJx80v9UTQtfUX3n/
-         ESWDO5jvFhdH922+hRdDOiqJPDgCG7Sb6SPWCT+0=
-Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id DBE2C622D0;
-        Fri, 17 Aug 2018 16:39:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1534523960;
-        bh=bQETiLhZqSKTJmg/844rsftxBCVPpj2SQb/j29Mvqxo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OcymF/q3m5w+FqD6acfB13pofqUtZXgZjxDNj89l8eCv6jAesXJGHkMhMMOr3DfqO
-         CpWp5OV3Uxkn/yMeLP0Kxh8weySQSHvZMPXyUYGsZ0HMHphQxoVZTvK5LUT/L57M4A
-         SW/VTi2gVFFZjOeJrapS+R7CsKFLhlhzugAMiRMU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DBE2C622D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     marc.zyngier@arm.com, bjorn.andersson@linaro.org, sboyd@kernel.org,
-        evgreen@chromium.org, linus.walleij@linaro.org
-Cc:     rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
-        devicetree@vger.kernel.org, andy.gross@linaro.org,
-        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH v2 5/5] arm64: dts: qcom: add wake up interrupts for GPIOs for SDM845
-Date:   Fri, 17 Aug 2018 10:38:49 -0600
-Message-Id: <20180817163849.30750-6-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180817163849.30750-1-ilina@codeaurora.org>
-References: <20180817163849.30750-1-ilina@codeaurora.org>
+        Fri, 17 Aug 2018 15:47:57 -0400
+Received: from mx.exactcode.de ([144.76.154.42]:59646 "EHLO mx.exactcode.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727037AbeHQTr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 15:47:57 -0400
+X-Greylist: delayed 1649 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 Aug 2018 15:47:57 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=exactcode.de; s=x;
+        h=To:References:Message-Id:Content-Transfer-Encoding:Cc:Date:In-Reply-To:From:Subject:Mime-Version:Content-Type; bh=J6RRJB5RpBWyq7tZv7AIp4LcDivL1HDD3TQROCGIinU=;
+        b=idcQKXTGw626SvST+5bB4zRREKSkRWwxZLoLZdWwy59n6K5Qh2d6g+IDw9RjlBR0e9yvqZGx+2cHcrInY/XPPJVoji85KxpfJfG3Y28xnWE/EZb1Eul4IYYmOrQQfmR4HZIBDYWB3VN7l+gxpuhts51Ll53XRdak7JKiZkDkl5M=;
+Received: from exactco.de ([90.187.5.221])
+        by mx.exactcode.de with esmtp (Exim 4.82)
+        (envelope-from <rene@exactcode.com>)
+        id 1fqhQj-0005N1-Ta; Fri, 17 Aug 2018 16:16:54 +0000
+Received: from 54.203.140.77.rev.sfr.net ([77.140.203.54] helo=[192.168.0.34])
+        by exactco.de with esmtpsa (TLSv1:AES128-SHA:128)
+        (Exim 4.54)
+        id 1fqhTb-0005mc-GV; Fri, 17 Aug 2018 16:20:10 +0000
+Content-Type: text/plain; charset=windows-1252
+Mime-Version: 1.0 (Mac OS X Mail 7.3 \(1878.6\))
+Subject: Re: [RESEND PATCH v2 0/2] Add support for ZSTD-compressed kernel
+From:   =?windows-1252?Q?Ren=E9_Rebe?= <rene@exactcode.com>
+In-Reply-To: <3F598446-EA1D-47CE-B7A1-4D3002DA3972@exactcode.com>
+Date:   Fri, 17 Aug 2018 18:15:45 +0200
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Kernel Team <Kernel-team@fb.com>, Chris Mason <clm@fb.com>,
+        Adam Borowski <kilobyte@angband.pl>,
+        Julian Andres Klode <julian.klode@canonical.com>,
+        Andi Kleen <ak@linux.intel.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <8DE2BD14-0C9C-43AF-B9B7-F760F8434B6B@exactcode.com>
+References: <20180322012943.4145794-1-terrelln@fb.com> <5B282FAD-EDCF-44C8-A131-A3C6FF3EA84F@fb.com> <3F598446-EA1D-47CE-B7A1-4D3002DA3972@exactcode.com>
+To:     Nick Terrell <terrelln@fb.com>
+X-Mailer: Apple Mail (2.1878.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GPIOs that are wakeup capable have interrupt lines that are routed to
-the always-on interrupt controller (PDC) in parallel to the pinctrl. The
-interrupts listed here are the wake up lines corresponding to GPIOs.
+Hey,
 
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
----
-Changes in v1:
-	- Use interrupt-extended for all TLMM interrupts
-	- Define GPIO-PDC map using interrupt-names
----
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 57 +++++++++++++++++++++++++++-
- 1 file changed, 56 insertions(+), 1 deletion(-)
+is there any mainline future for this zstd support? Currently my most =
+favourite compressor for this, and for what it=92s worth zstd/initrd now =
+even tested on #t2sde / hp/pa-risc, =85 =
+https://www.youtube.com/watch?v=3DMHplOJxnIHk
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 87ffc32dc597..2379684373d3 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -712,11 +712,66 @@
- 		tlmm: pinctrl@3400000 {
- 			compatible = "qcom,sdm845-pinctrl";
- 			reg = <0x03400000 0xc00000>;
--			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
-+			interrupts-extended = <&intc GIC_SPI 208 0>,
-+				<&pdc 510 0>, <&pdc 511 0>, <&pdc 512 0>,
-+				<&pdc 513 0>, <&pdc 514 0>, <&pdc 515 0>,
-+				<&pdc 516 0>, <&pdc 517 0>, <&pdc 518 0>,
-+				<&pdc 519 0>, <&pdc 632 0>, <&pdc 639 0>,
-+				<&pdc 521 0>, <&pdc 522 0>, <&pdc 523 0>,
-+				<&pdc 524 0>, <&pdc 525 0>, <&pdc 526 0>,
-+				<&pdc 527 0>, <&pdc 630 0>, <&pdc 637 0>,
-+				<&pdc 529 0>, <&pdc 530 0>, <&pdc 531 0>,
-+				<&pdc 532 0>, <&pdc 633 0>, <&pdc 640 0>,
-+				<&pdc 534 0>, <&pdc 535 0>, <&pdc 536 0>,
-+				<&pdc 537 0>, <&pdc 538 0>, <&pdc 539 0>,
-+				<&pdc 540 0>, <&pdc 541 0>, <&pdc 542 0>,
-+				<&pdc 543 0>, <&pdc 544 0>, <&pdc 545 0>,
-+				<&pdc 546 0>, <&pdc 547 0>, <&pdc 548 0>,
-+				<&pdc 549 0>, <&pdc 550 0>, <&pdc 551 0>,
-+				<&pdc 552 0>, <&pdc 553 0>, <&pdc 554 0>,
-+				<&pdc 555 0>, <&pdc 556 0>, <&pdc 557 0>,
-+				<&pdc 631 0>, <&pdc 638 0>, <&pdc 559 0>,
-+				<&pdc 560 0>, <&pdc 561 0>, <&pdc 562 0>,
-+				<&pdc 563 0>, <&pdc 564 0>, <&pdc 565 0>,
-+				<&pdc 566 0>, <&pdc 570 0>, <&pdc 571 0>,
-+				<&pdc 572 0>, <&pdc 573 0>, <&pdc 609 0>,
-+				<&pdc 610 0>, <&pdc 611 0>, <&pdc 612 0>,
-+				<&pdc 613 0>, <&pdc 614 0>, <&pdc 615 0>,
-+				<&pdc 617 0>, <&pdc 618 0>, <&pdc 619 0>,
-+				<&pdc 620 0>, <&pdc 621 0>, <&pdc 622 0>,
-+				<&pdc 623 0>;
-+			interrupt-names = "summary-irq",
-+				"gpio1", "gpio3", "gpio5",
-+				"gpio10", "gpio11", "gpio20",
-+				"gpio22", "gpio24", "gpio26",
-+				"gpio30", "gpio31", "gpio31",
-+				"gpio32", "gpio34", "gpio36",
-+				"gpio37", "gpio38", "gpio39",
-+				"gpio40", "gpio41", "gpio41",
-+				"gpio43", "gpio44", "gpio46",
-+				"gpio48", "gpio49", "gpio49",
-+				"gpio52", "gpio53", "gpio54",
-+				"gpio56", "gpio57", "gpio58",
-+				"gpio59", "gpio60", "gpio61",
-+				"gpio62", "gpio63", "gpio64",
-+				"gpio66", "gpio68", "gpio71",
-+				"gpio73", "gpio77", "gpio78",
-+				"gpio79", "gpio80", "gpio84",
-+				"gpio85", "gpio86", "gpio88",
-+				"gpio89", "gpio89", "gpio91",
-+				"gpio92", "gpio95", "gpio96",
-+				"gpio97", "gpio101", "gpio103",
-+				"gpio104", "gpio115", "gpio116",
-+				"gpio117", "gpio118", "gpio119",
-+				"gpio120", "gpio121", "gpio122",
-+				"gpio123", "gpio124", "gpio125",
-+				"gpio127", "gpio128", "gpio129",
-+				"gpio130", "gpio132", "gpio133",
-+				"gpio145";
- 
- 			qup_i2c0_default: qup-i2c0-default {
- 				pinmux {
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+	Ren=E9
+
+On 10 Jul 2018, at 00:13, Ren=E9 Rebe <rene@exactcode.com> wrote:
+
+> Hi Nick,
+>=20
+> On 09 Jul 2018, at 20:04, Nick Terrell <terrelln@fb.com> wrote:
+>=20
+>>> On Mar 21, 2018, at 6:29 PM, Nick Terrell <terrelln@fb.com> wrote:
+>>> This patch set adds support for a ZSTD-compressed kernel and ramdisk
+>>> images in the kernel boot process. It only integrates the support =
+with
+>>> x86, though the first patch is generic to all architectures.
+>>=20
+>> Hi all,
+>>=20
+>> Is there anything blocking this from getting merged?
+>> Please let me know if there is anything I can do to help move this =
+patch forward.
+>=20
+> works fine on my side, initrd test booted on i486, x86-64, ppc, ppc64 =
+and
+> sparc64. For testing on mips64 I would first need to re-base the =
+Octane^1
+> patch-set ;-)
+>=20
+> Greetings,
+> 	Ren=E9
+>=20
+> ^1) https://www.youtube.com/watch?v=3DAU_RV8uoTIo
+>=20
+> --=20
+> ExactCODE GmbH, Lietzenburger Str. 42, DE-10789 Berlin
+> http://exactcode.com | http://exactscan.com | http://ocrkit.com | =
+http://t2-project.org | http://rene.rebe.de
+>=20
+
+--=20
+ ExactCODE GmbH, Lietzenburger Str. 42, DE-10789 Berlin
+ DE Legal: Amtsgericht Berlin (Charlottenburg) HRB 105123B, Tax-ID#: =
+DE251602478
+ Managing Director: Ren=E9 Rebe
+ http://exactcode.com | http://exactscan.com | http://ocrkit.com | =
+http://t2-project.org | http://rene.rebe.de
 
