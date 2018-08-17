@@ -2,89 +2,166 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E16C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 02:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC8DC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 02:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6AD82148D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 02:38:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="dNCerd7R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6AD82148D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id D0A1D2148D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 02:42:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0A1D2148D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sympatico.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726351AbeHQFji (ORCPT
+        id S1726326AbeHQFo1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 01:39:38 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:47223 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725833AbeHQFji (ORCPT
+        Fri, 17 Aug 2018 01:44:27 -0400
+Received: from belmont79srvr.owm.bell.net ([184.150.200.79]:40896 "EHLO
+        mtlfep01.bell.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725833AbeHQFo1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 01:39:38 -0400
-Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id w7H2brZA019439;
-        Fri, 17 Aug 2018 11:37:54 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w7H2brZA019439
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1534473474;
-        bh=CLHxfs9DDX537EEkR1oMSYYl+77vjTZ36vklS8rORjY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=dNCerd7RZ3j3LER2QKCdaT9ZxhE3q8GC8pqypmxxlY6IeiSJRpsH3aZuC9QHA8Uw+
-         KXaOaPEAMT3mpvZWXL1RnNQFsNYiSKQHusYTzWR0yeV773lVnMtUZ1m7Me7Fpu8uW2
-         dbIHBJj8mBrGb0k5D0Bc8Is24PIR5nSeicDkEXGJoDprSyLMRoOPwe9c0tQxOSJWrg
-         s7RP2DtGJR/kCim9wDuPUDIx29/Mhri5gJH5+IdOesJNA0g+tKyMTAm+m17DrtDDt+
-         RoypAGKbjhDe2SyMvUBhBNbq6+3YBbucxoaGpzZlFsy9IHcKe5JptQFvRnDBXe0jeE
-         7qYA60RcO4FMQ==
-X-Nifty-SrcIP: [218.220.227.105]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] kbuild: remove "rpm" target, which is alias of "rpm-pkg"
-Date:   Fri, 17 Aug 2018 11:37:21 +0900
-Message-Id: <1534473441-16755-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 17 Aug 2018 01:44:27 -0400
+Received: from bell.net mtlfep01 184.150.200.30 by mtlfep01.bell.net
+          with ESMTP
+          id <20180817024253.UDH10498.mtlfep01.bell.net@mtlspm01.bell.net>
+          for <linux-kernel@vger.kernel.org>;
+          Thu, 16 Aug 2018 22:42:53 -0400
+Received: from arcusix ([70.55.50.38]) by mtlspm01.bell.net with ESMTP
+          id <20180817024253.KFNI28394.mtlspm01.bell.net@arcusix>;
+          Thu, 16 Aug 2018 22:42:53 -0400
+Message-ID: <a5d99f4f367cfa553471e4cad1d0c80e52ac0a9f.camel@sympatico.ca>
+Subject: Re: [PATCH] x86/mm/pti: Move user W+X check into pti_finalize()
+From:   "David H. Gutteridge" <dhgutteridge@sympatico.ca>
+To:     Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
+        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        jroedel@suse.de
+Date:   Thu, 16 Aug 2018 22:42:48 -0400
+In-Reply-To: <1533727000-9172-1-git-send-email-joro@8bytes.org>
+References: <1533727000-9172-1-git-send-email-joro@8bytes.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Cloudmark-Analysis: v=2.2 cv=IaFoYSia c=1 sm=0 tr=0 a=e5NqWeyudnn36+hvbsSv9g==:17 a=IkcTkHD0fZMA:10 a=dapMudl6Dx4A:10 a=k_m-kdumAAAA:8 a=_Z2vyQx0aRbNF4byCkgA:9 a=QEXdDO2ut3YA:10 a=2aFmp3DG3lfw9CblUY6y:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As commit ebaad7d36406 ("kbuild: rpm: prompt to use "rpm-pkg" if "rpm"
-target is used") noticed, the "rpm" target is now removed.
-I assume people have already migrated to "rpm-pkg".
+On Wed, 2018-08-08 at 13:16 +0200, Joerg Roedel wrote:
+> From: Joerg Roedel <jroedel@suse.de>
+> 
+> The user page-table gets the updated kernel mappings in
+> pti_finalize(), which runs after the RO+X permissions got
+> applied to the kernel page-table in mark_readonly().
+> 
+> But with CONFIG_DEBUG_WX enabled, the user page-table is
+> already checked in mark_readonly() for insecure mappings.
+> This causes false-positive warnings, because the user
+> page-table did not get the updated mappings yet.
+> 
+> Move the W+X check for the user page-table into
+> pti_finalize() after it updated all required mappings.
+> 
+> Signed-off-by: Joerg Roedel <jroedel@suse.de>
+> ---
+>  arch/x86/include/asm/pgtable.h | 7 +++++--
+>  arch/x86/mm/dump_pagetables.c  | 3 +--
+>  arch/x86/mm/pti.c              | 2 ++
+>  3 files changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/pgtable.h
+> b/arch/x86/include/asm/pgtable.h
+> index e39088cb..a1cb333 100644
+> --- a/arch/x86/include/asm/pgtable.h
+> +++ b/arch/x86/include/asm/pgtable.h
+> @@ -30,11 +30,14 @@ int __init __early_make_pgtable(unsigned long
+> address, pmdval_t pmd);
+>  void ptdump_walk_pgd_level(struct seq_file *m, pgd_t *pgd);
+>  void ptdump_walk_pgd_level_debugfs(struct seq_file *m, pgd_t *pgd,
+> bool user);
+>  void ptdump_walk_pgd_level_checkwx(void);
+> +void ptdump_walk_user_pgd_level_checkwx(void);
+>  
+>  #ifdef CONFIG_DEBUG_WX
+> -#define debug_checkwx() ptdump_walk_pgd_level_checkwx()
+> +#define debug_checkwx()		ptdump_walk_pgd_level_checkwx()
+> +#define debug_checkwx_user()	ptdump_walk_user_pgd_level_checkwx()
+>  #else
+> -#define debug_checkwx() do { } while (0)
+> +#define debug_checkwx()		do { } while (0)
+> +#define debug_checkwx_user()	do { } while (0)
+>  #endif
+>  
+>  /*
+> diff --git a/arch/x86/mm/dump_pagetables.c
+> b/arch/x86/mm/dump_pagetables.c
+> index ccd92c4..b8ab901 100644
+> --- a/arch/x86/mm/dump_pagetables.c
+> +++ b/arch/x86/mm/dump_pagetables.c
+> @@ -569,7 +569,7 @@ void ptdump_walk_pgd_level_debugfs(struct seq_file
+> *m, pgd_t *pgd, bool user)
+>  }
+>  EXPORT_SYMBOL_GPL(ptdump_walk_pgd_level_debugfs);
+>  
+> -static void ptdump_walk_user_pgd_level_checkwx(void)
+> +void ptdump_walk_user_pgd_level_checkwx(void)
+>  {
+>  #ifdef CONFIG_PAGE_TABLE_ISOLATION
+>  	pgd_t *pgd = INIT_PGD;
+> @@ -586,7 +586,6 @@ static void
+> ptdump_walk_user_pgd_level_checkwx(void)
+>  void ptdump_walk_pgd_level_checkwx(void)
+>  {
+>  	ptdump_walk_pgd_level_core(NULL, NULL, true, false);
+> -	ptdump_walk_user_pgd_level_checkwx();
+>  }
+>  
+>  static int __init pt_dump_init(void)
+> diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+> index 69a9d60..026a89a 100644
+> --- a/arch/x86/mm/pti.c
+> +++ b/arch/x86/mm/pti.c
+> @@ -628,4 +628,6 @@ void pti_finalize(void)
+>  	 */
+>  	pti_clone_entry_text();
+>  	pti_clone_kernel_text();
+> +
+> +	debug_checkwx_user();
+>  }
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+I've tested this in a VM and on an Atom laptop, as usual. No
+regressions noted.
 
- Makefile | 4 ----
- 1 file changed, 4 deletions(-)
+(The version I tested was the latter pulled into tip:
+[ tglx: Folded !NX supported fix ])
 
-diff --git a/Makefile b/Makefile
-index a0650bf..6833b96 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1338,16 +1338,12 @@ distclean: mrproper
- 
- # Packaging of the kernel to various formats
- # ---------------------------------------------------------------------------
--# rpm target kept for backward compatibility
- package-dir	:= scripts/package
- 
- %src-pkg: FORCE
- 	$(Q)$(MAKE) $(build)=$(package-dir) $@
- %pkg: include/config/kernel.release FORCE
- 	$(Q)$(MAKE) $(build)=$(package-dir) $@
--rpm: rpm-pkg
--	@echo "  WARNING: \"rpm\" target will be removed after Linux 4.18"
--	@echo "           Please use \"rpm-pkg\" instead."
- 
- 
- # Brief documentation of the typical targets used
--- 
-2.7.4
+Tested-by: David H. Gutteridge <dhgutteridge@sympatico.ca>
+
+Regards,
+
+Dave
+
 
