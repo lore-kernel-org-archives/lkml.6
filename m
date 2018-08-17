@@ -3,119 +3,199 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6971CC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 20:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF1CC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 20:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 098A9219CB
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 20:27:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01409219CA
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 20:28:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KpYTT5iy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 098A9219CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="P/iqhuET"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01409219CA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726451AbeHQXcD (ORCPT
+        id S1726490AbeHQXdC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 19:32:03 -0400
-Received: from mail-it0-f41.google.com ([209.85.214.41]:55109 "EHLO
-        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726292AbeHQXcD (ORCPT
+        Fri, 17 Aug 2018 19:33:02 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41650 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726292AbeHQXdC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 19:32:03 -0400
-Received: by mail-it0-f41.google.com with SMTP id s7-v6so12982328itb.4;
-        Fri, 17 Aug 2018 13:27:14 -0700 (PDT)
+        Fri, 17 Aug 2018 19:33:02 -0400
+Received: by mail-pg1-f194.google.com with SMTP id s15-v6so1290579pgv.8
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 13:28:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K19uSTi5oPInQtM9LSDQyTC872d21K02gb4iQ3tw1kw=;
-        b=KpYTT5iy17gdMAkfmKRSLETWO4j8sE1Tv0jxybX2UI8P/CvoUEYsqBdcOrErjiD/2C
-         Mb8Awkjnf8iCUHKqyexLi5zBYOlDQ/ZYLOKo9xQ/V0i1nCG4xm9Nv5xU5z6D5xLtFZEa
-         amhPrHR1ffrNZ66sdLYoair2zmON7okPVH4v8=
+        d=sifive.com; s=google;
+        h=date:subject:message-id:cc:from:to;
+        bh=oVW+uVn8wt6CKOG6N6xVoTnv5MsHEywuePRlhFkbOdI=;
+        b=P/iqhuETmVxmvI1F7UbHBMpTx9+xABr4Ka+gptreR9L0+w+PivRKs1bGKSj+cc/mlf
+         9N3W9Ba2nb9sgLQpf9QjyP/oZFqfZvJ7KcjkRYIj4CimqrAkruI9MvRSVl+oR9DO3S6g
+         85xTOHrEa3kFoxpCeDF3PHGUkIbUiDt3EJIs0DgFFnqWIVsT5NoqNZAfOBfTfQ0jKMZG
+         B+yt8O+IsuoNEcn0eHT3YX2cqX+TTVPrBwfLhFAPAK4mwf1ja04pvIomO/7RLcMynT/a
+         SsVUC0N+m+HuTTJ0dlyShdNySZLcagUdosLBK7bhBMZVFeni1poBprS9HLxmXz0cF0qI
+         TOKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K19uSTi5oPInQtM9LSDQyTC872d21K02gb4iQ3tw1kw=;
-        b=HdIi3pzu64MXL30zqnBGE9o4Rm9SUHvCK+JWlLVsdhPy2vveiU5rnWqrel21Nq3qvC
-         nfM1+xnsCWUhvzjhQlGc96jVAzD8ZPlh+Tp71qlnIb4k96lhQ9I0zJ+ebl6b+VwPffl2
-         04lQXnssZiepZtjR5NQkwOUzyMeKtoWUsB7aCxIh8qVppVEs49DlFX4MySaCstyh45PX
-         2sOPukc9tak46YK7ZSFvnp6iEWvOv8UVFNQSSM95OE0BbiF9bJ9bLfm7TRq87EjuHMoZ
-         wJkJwCcB0isMVdDVYcs0HYypXHExvTZMxgcmp4ZoQ67dSP2CafOOrlE3QU0vzP4nLjRU
-         2VQg==
-X-Gm-Message-State: AOUpUlFE0CYm6751VdfjYAj0mYtwW1QZaFY2Ft8a9h3X8h8sfskei1JL
-        mV4Bv2lG71nZ5/81aQhYBTTCQ/PA8KB6+rhJoQU=
-X-Google-Smtp-Source: AA+uWPxMu0hDHXLy100zD2BcNFmYKI7rUhmS3l5onYY+ruZfronTUg5F3AHK0HOsvjETmkHqelA12NlwrBsltwZIpps=
-X-Received: by 2002:a24:4c0b:: with SMTP id a11-v6mr25879012itb.123.1534537634262;
- Fri, 17 Aug 2018 13:27:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180816215726.GA20526@ziepe.ca> <CA+55aFxgT8Hipm6bDrHMZ-nmdk3KZTP=J6D5k10UHTcajXAEHA@mail.gmail.com>
- <20180817201535.GI28676@mellanox.com>
-In-Reply-To: <20180817201535.GI28676@mellanox.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 17 Aug 2018 13:27:02 -0700
-Message-ID: <CA+55aFzcp=a2sNOVR7DTEY9dehYamXaJ1bpSfF0FZir_9MhsVg@mail.gmail.com>
-Subject: Re: [GIT PULL] Please pull RDMA subsystem changes
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Doug Ledford <dledford@redhat.com>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:subject:message-id:cc:from:to;
+        bh=oVW+uVn8wt6CKOG6N6xVoTnv5MsHEywuePRlhFkbOdI=;
+        b=KkQ8lNd2KCKBn78x4UA1UDxStRu9I99cDRXoPBdLLA7J1mbVG4Vm7AqK3cGCFQ941v
+         cj5Vm3iESvsqsOdLx8t5fUj13HuEj7tjBiN3sYaq3qmyrcJM1MmFuf0h2wzBSz3b3uSw
+         AJR11FSl8ZJ7NIbBH/Wj3yQKhyvN7E35Oy8iPo9dNvWHWirRCstme4/Ca48iih8BSaLU
+         MYZEijtM0VmuUnUOXAvzzCS+hU8gPWgTOu5yMSok+hGcEycgRJYTv3nHlXWVwRh0f5+6
+         SXlYNTljQKL0zcZt+5YtkH/ys8tSNHpDSg7aDxt27sZf34SMS0qcY1INkXVYqFh2146Z
+         9vxw==
+X-Gm-Message-State: AOUpUlHt2V3kaUkXen+yFlpdUpGvps+99voel/7j/DfnYw4SnPw1xsNQ
+        MwSt4D9sqV6nXodP9y4950+zlQ==
+X-Google-Smtp-Source: AA+uWPxkTvqPPf1fmLotj8m5UQ1Q1UoEJmh5ahHqILVfMSU4WlrWhZh4kTe9TBYblKJHdL85+mNKpA==
+X-Received: by 2002:a62:68c3:: with SMTP id d186-v6mr38184991pfc.70.1534537692840;
+        Fri, 17 Aug 2018 13:28:12 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id f67-v6sm4472144pfe.75.2018.08.17.13.28.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 Aug 2018 13:28:11 -0700 (PDT)
+Date:   Fri, 17 Aug 2018 13:28:11 -0700 (PDT)
+X-Google-Original-Date: Fri, 17 Aug 2018 13:25:44 PDT (-0700)
+Subject: [GIT PULL] RISC-V Updates for the 4.19 Merge Window
+Message-ID: <mhng-4afb9897-29ed-4eb4-88d7-6cfb09a0a65c@palmer-si-x1c4>
+CC:      linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 1:15 PM Jason Gunthorpe <jgg@mellanox.com> wrote:
->
-> We often have merge conflicts with RDMA, how do you prefer to get the
-> PR? I'm actually not very clear on this part of the process.
+I remember having sent this on Wednesday, but for some reason I don't see it in
+your tree or my outbox so I might be crazy.  I was planning submitting some
+more patches next week anyway, so while I'm OK just rolling these up as well
+it'd be slightly easier if we can get these into -rc1 so we can test them.
 
-I  generally prefer the non-merged version, but with comments about
-the conflicts.
+Sorry!
 
-In fact, the really preferred model is generally to send me a
-non-merged pull request (say "tags/for-linus") but if the conflicts
-look even half-way nasty - or simply because you did the merge anyway
-just to get the proper diffstat because history is complex - mention
-that you have a merged branch for verification (say
-"branch/for-linus-merged").
 
-When I get that kind of pull request, I'll just do the merge
-resolution myself, and after I've done it I'll generally then do
 
-   git checkout -b test-merge
-   git pull <repoaddress> for-linus-merged
 
-and then just compare the end result with my resolution as an extra
-verification step.
+The following changes since commit 94710cac0ef4ee177a63b5227664b38c95bbf703:
 
-I may end up skipping the verification step if everything looks
-entirely trivial (and really, if you have no real reason for the
-pre-merged branch, don't bother even mentioning it even if you did it
-for the diffstat), but in practice whenever somebody does that, I have
-no reason not to just do that simple extra verification.
+  Linux 4.18 (2018-08-12 13:41:04 -0700)
 
-Most of the time the merges are exactly the same, possibly with
-whitespace or trivial ordering differences (things like Makefiles and
-Kconfig files often have add-add conflicts where the ordering really
-doesn't matter between two config options).
+are available in the Git repository at:
 
-And then sometimes it shows that I missed something in my mmerge.
+  git://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux.git tags/riscv-for-linus-4.19-mw0
 
-And sometimes it shows that  I do so many merges that I actually ended
-up noticing something that the submaintainer didn't.
+for you to fetch changes up to 627672cf431b0379c07cc8d146f907cda6797222:
 
-So it can be uninteresting, and when it isn't uninteresting it can go
-either way, but so far for the people who do this, I've never been in
-the situation where I was *sorry* for the double merge and extra
-verification step.
+  dt-bindings: interrupt-controller: SiFive Plaform Level Interrupt Controller (2018-08-13 09:39:11 -0700)
 
-Because when mis-merges happen (they are happily pretty rare) they are
-_so_ annoying and can be so hard to figure out later, that I'd rather
-spend a bit more time on the merge than have a dodgy one.
+----------------------------------------------------------------
+RISC-V Updates for the 4.19 Merge Window
 
-               Linus
+This tag contains some major improvements to the RISC-V port, including
+the necessary interrupt controller and timer support to actually make it
+to userspace.  Support for three devices has been added:
+
+* Support for the ISA-mandated timers on RISC-V systems.
+* Support for the ISA-mandated first-level interrupt controller on
+  RISC-V systems, which is handled as part of our core arch code because
+  it's very small and tightly tied to the ISA.
+* Support for SiFive's platform-level interrupt controller, which talks
+  to the actual devices.
+
+In addition to these new devices, there are a handful of cleanups all
+over the RISC-V tree:
+
+* Build fixes for various configurations
+    * A fix to the vDSO build's makefile so it respects CFLAGS.
+    * The addition of __lshrti3, a libgcc derived function necessary for
+      some 32-bit configurations.
+    * !SMP && PERF_EVENTS
+* Cleanups to the arch code to remove the remnants of old versions of
+  the drivers that were just properly submitted.
+    * Some dead code from the timer driver, most of which wasn't ever
+      even compiled.
+    * Cleanups of some interrupt #defines, which are now local to the
+      interrupt handling code.
+* Fixes to ptrace(), which while not being sufficient to fully make GDB
+  work are at least sufficient to get simple GDB tasks to work.
+* Early printk support via RISC-V's architecturally mandated SBI console
+  device.
+* A fix to our early debug trap handler to ensure it's always aligned.
+
+These patches have all been through a fairly extensive review process,
+but as this enables a whole pile of functionality (ie, userspace) I'm
+confident we'll need to submit a few more patches.  The only concrete
+issues I know about are the sys_riscv_flush_icache patches, but as I
+managed to screw those up on Friday I figured it'd be best to let them
+bake another week.
+
+This tag boots a Fedora root filesystem on QEMU's master branch for me,
+and before this morning's rebase (from 4.18-rc8 to 4.18) it booted on
+the HiFive Unleashed.
+
+Thanks to Christoph Hellwig and the other guys at WD for getting the new
+drivers in shape!
+
+----------------------------------------------------------------
+Alex Guo (1):
+      RISC-V: implement __lshrti3.
+
+Atish Patra (1):
+      RISC-V: Fix !CONFIG_SMP compilation error
+
+Christoph Hellwig (6):
+      RISC-V: remove timer leftovers
+      RISC-V: simplify software interrupt / IPI code
+      RISC-V: remove INTERRUPT_CAUSE_* defines from asm/irq.h
+      RISC-V: add a definition for the SIE SEIE bit
+      RISC-V: implement low-level interrupt handling
+      irqchip: add a SiFive PLIC driver
+
+Jim Wilson (1):
+      RISC-V: Don't increment sepc after breakpoint.
+
+Palmer Dabbelt (5):
+      RISC-V: Use KBUILD_CFLAGS instead of KCFLAGS when building the vDSO
+      RISC-V: Add early printk support via the SBI console
+      clocksource: new RISC-V SBI timer driver
+      dt-bindings: interrupt-controller: RISC-V local interrupt controller
+      dt-bindings: interrupt-controller: SiFive Plaform Level Interrupt Controller
+
+Zong Li (1):
+      RISC-V: Add the directive for alignment of stvec's value
+
+ .../interrupt-controller/riscv,cpu-intc.txt        |  44 ++++
+ .../interrupt-controller/sifive,plic-1.0.0.txt     |  58 +++++
+ arch/riscv/Makefile                                |   3 +
+ arch/riscv/configs/defconfig                       |   1 +
+ arch/riscv/include/asm/csr.h                       |   1 +
+ arch/riscv/include/asm/irq.h                       |   5 +-
+ arch/riscv/include/asm/perf_event.h                |   1 +
+ arch/riscv/include/asm/smp.h                       |   6 -
+ arch/riscv/kernel/entry.S                          |   4 +-
+ arch/riscv/kernel/head.S                           |   2 +
+ arch/riscv/kernel/irq.c                            |  55 ++++-
+ arch/riscv/kernel/perf_event.c                     |   1 -
+ arch/riscv/kernel/setup.c                          |  27 +++
+ arch/riscv/kernel/smp.c                            |   6 +-
+ arch/riscv/kernel/smpboot.c                        |   1 -
+ arch/riscv/kernel/time.c                           |  30 +--
+ arch/riscv/kernel/traps.c                          |   1 -
+ arch/riscv/kernel/vdso/Makefile                    |   4 +-
+ arch/riscv/lib/Makefile                            |   1 +
+ arch/riscv/lib/tishift.S                           |  42 ++++
+ drivers/clocksource/Kconfig                        |  11 +
+ drivers/clocksource/Makefile                       |   1 +
+ drivers/clocksource/riscv_timer.c                  | 105 +++++++++
+ drivers/irqchip/Kconfig                            |  12 +
+ drivers/irqchip/Makefile                           |   1 +
+ drivers/irqchip/irq-sifive-plic.c                  | 260 +++++++++++++++++++++
+ include/linux/cpuhotplug.h                         |   1 +
+ 27 files changed, 625 insertions(+), 59 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.txt
+ create mode 100644 arch/riscv/lib/tishift.S
+ create mode 100644 drivers/clocksource/riscv_timer.c
+ create mode 100644 drivers/irqchip/irq-sifive-plic.c
