@@ -6,40 +6,38 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB76BC04ABB
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 12:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C527C43615
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 12:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1520218A7
+	by mail.kernel.org (Postfix) with ESMTP id EC590218F1
 	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 12:44:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1520218A7
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC590218F1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbeHQPsM (ORCPT
+        id S1727515AbeHQPsN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 11:48:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46172 "EHLO mail.kernel.org"
+        Fri, 17 Aug 2018 11:48:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726530AbeHQPsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726478AbeHQPsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 17 Aug 2018 11:48:12 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 678FF21938;
-        Fri, 17 Aug 2018 12:44:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37DD72191E;
+        Fri, 17 Aug 2018 12:44:54 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1fqe7Y-0004tM-Ez; Fri, 17 Aug 2018 08:44:52 -0400
-Message-Id: <20180817124452.362459553@goodmis.org>
+        id 1fqe7Z-0004vU-2Z; Fri, 17 Aug 2018 08:44:53 -0400
+Message-Id: <20180817124452.976087171@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 17 Aug 2018 08:44:22 -0400
+Date:   Fri, 17 Aug 2018 08:44:26 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [for-next][PATCH 4/8] s390/ftrace: Add -mfentry and -mnop-mcount support
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 8/8] tracing: Fix SPDX format headers to use C++ style comments
 References: <20180817124418.038744612@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -48,131 +46,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Gorbik <gor@linux.ibm.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Utilize -mfentry and -mnop-mcount gcc options together with
--mrecord-mcount to get compiler generated calls to the profiling functions
-as nops which are compatible with current -mhotpatch=0,3 approach.  At the
-same time -mrecord-mcount enables __mcount_loc section generation by
-the compiler which allows to avoid using scripts/recordmcount.pl script.
+The Linux kernel adopted the SPDX License format headers to ease license
+compliance management, and uses the C++ '//' style comments for the SPDX
+header tags. Some files in the tracing directory used the C style /* */
+comments for them. To be consistent across all files, replace the /* */
+C style SPDX tags with the C++ // SPDX tags.
 
-Link: http://lkml.kernel.org/r/patch-4.thread-aa7b8d.git-aa7b8dbf236f.your-ad-here.call-01533557518-ext-9465@work.hours
-
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- arch/s390/Kconfig              |  2 ++
- arch/s390/Makefile             | 16 +++++++++-------
- arch/s390/include/asm/ftrace.h |  6 +++---
- arch/s390/kernel/ftrace.c      |  2 +-
- arch/s390/kernel/mcount.S      |  2 +-
- 5 files changed, 16 insertions(+), 12 deletions(-)
+ kernel/trace/trace.h                    | 2 +-
+ kernel/trace/trace_benchmark.h          | 2 +-
+ kernel/trace/trace_entries.h            | 2 +-
+ kernel/trace/trace_events_filter_test.h | 2 +-
+ kernel/trace/trace_kprobe_selftest.h    | 2 +-
+ kernel/trace/trace_output.h             | 2 +-
+ kernel/trace/trace_stat.h               | 2 +-
+ kernel/trace/tracing_map.h              | 2 +-
+ 8 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index e44bb2b2873e..4e914445553e 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -136,6 +136,7 @@ config S390
- 	select HAVE_DYNAMIC_FTRACE
- 	select HAVE_DYNAMIC_FTRACE_WITH_REGS
- 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
-+	select HAVE_FENTRY
- 	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FUNCTION_TRACER
-@@ -157,6 +158,7 @@ config S390
- 	select HAVE_MEMBLOCK_NODE_MAP
- 	select HAVE_MEMBLOCK_PHYS_MAP
- 	select HAVE_MOD_ARCH_SPECIFIC
-+	select HAVE_NOP_MCOUNT
- 	select HAVE_OPROFILE
- 	select HAVE_PERF_EVENTS
- 	select HAVE_REGS_AND_STACK_ACCESS_API
-diff --git a/arch/s390/Makefile b/arch/s390/Makefile
-index 68a690442be0..8498babb5dad 100644
---- a/arch/s390/Makefile
-+++ b/arch/s390/Makefile
-@@ -86,13 +86,15 @@ ifdef CONFIG_EXPOLINE
- endif
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index a62b678731e3..3b8c0e24ab30 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++// SPDX-License-Identifier: GPL-2.0
  
- ifdef CONFIG_FUNCTION_TRACER
--# make use of hotpatch feature if the compiler supports it
--cc_hotpatch	:= -mhotpatch=0,3
--ifeq ($(call cc-option-yn,$(cc_hotpatch)),y)
--CC_FLAGS_FTRACE := $(cc_hotpatch)
--KBUILD_AFLAGS	+= -DCC_USING_HOTPATCH
--KBUILD_CFLAGS	+= -DCC_USING_HOTPATCH
--endif
-+  ifeq ($(call cc-option-yn,-mfentry -mnop-mcount),n)
-+    # make use of hotpatch feature if the compiler supports it
-+    cc_hotpatch	:= -mhotpatch=0,3
-+    ifeq ($(call cc-option-yn,$(cc_hotpatch)),y)
-+      CC_FLAGS_FTRACE := $(cc_hotpatch)
-+      KBUILD_AFLAGS	+= -DCC_USING_HOTPATCH
-+      KBUILD_CFLAGS	+= -DCC_USING_HOTPATCH
-+    endif
-+  endif
- endif
+ #ifndef _LINUX_KERNEL_TRACE_H
+ #define _LINUX_KERNEL_TRACE_H
+diff --git a/kernel/trace/trace_benchmark.h b/kernel/trace/trace_benchmark.h
+index be1d86ff753d..79e6fbe5b365 100644
+--- a/kernel/trace/trace_benchmark.h
++++ b/kernel/trace/trace_benchmark.h
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++// SPDX-License-Identifier: GPL-2.0
+ #undef TRACE_SYSTEM
+ #define TRACE_SYSTEM benchmark
  
- # Test CFI features of binutils
-diff --git a/arch/s390/include/asm/ftrace.h b/arch/s390/include/asm/ftrace.h
-index cfccc0edd00d..8ea270fdc7fb 100644
---- a/arch/s390/include/asm/ftrace.h
-+++ b/arch/s390/include/asm/ftrace.h
-@@ -4,7 +4,7 @@
+diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+index 1d67464ed95e..06bb2fd9a56c 100644
+--- a/kernel/trace/trace_entries.h
++++ b/kernel/trace/trace_entries.h
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file defines the trace event structures that go into the ring
+  * buffer directly. They are created via macros so that changes for them
+diff --git a/kernel/trace/trace_events_filter_test.h b/kernel/trace/trace_events_filter_test.h
+index 39d7ef4f57cb..e651dfbd345e 100644
+--- a/kernel/trace/trace_events_filter_test.h
++++ b/kernel/trace/trace_events_filter_test.h
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++// SPDX-License-Identifier: GPL-2.0
+ #undef TRACE_SYSTEM
+ #define TRACE_SYSTEM test
  
- #define ARCH_SUPPORTS_FTRACE_OPS 1
+diff --git a/kernel/trace/trace_kprobe_selftest.h b/kernel/trace/trace_kprobe_selftest.h
+index 4e10ec41c013..c4fc7268ba7c 100644
+--- a/kernel/trace/trace_kprobe_selftest.h
++++ b/kernel/trace/trace_kprobe_selftest.h
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Function used during the kprobe self test. This function is in a separate
+  * compile unit so it can be compile with CC_FLAGS_FTRACE to ensure that it
+diff --git a/kernel/trace/trace_output.h b/kernel/trace/trace_output.h
+index dbba03ed96de..2f742b74e7e6 100644
+--- a/kernel/trace/trace_output.h
++++ b/kernel/trace/trace_output.h
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++// SPDX-License-Identifier: GPL-2.0
+ #ifndef __TRACE_EVENTS_H
+ #define __TRACE_EVENTS_H
  
--#ifdef CC_USING_HOTPATCH
-+#if defined(CC_USING_HOTPATCH) || defined(CC_USING_NOP_MCOUNT)
- #define MCOUNT_INSN_SIZE	6
- #else
- #define MCOUNT_INSN_SIZE	24
-@@ -42,7 +42,7 @@ struct ftrace_insn {
- static inline void ftrace_generate_nop_insn(struct ftrace_insn *insn)
- {
- #ifdef CONFIG_FUNCTION_TRACER
--#ifdef CC_USING_HOTPATCH
-+#if defined(CC_USING_HOTPATCH) || defined(CC_USING_NOP_MCOUNT)
- 	/* brcl 0,0 */
- 	insn->opc = 0xc004;
- 	insn->disp = 0;
-@@ -57,7 +57,7 @@ static inline void ftrace_generate_nop_insn(struct ftrace_insn *insn)
- static inline int is_ftrace_nop(struct ftrace_insn *insn)
- {
- #ifdef CONFIG_FUNCTION_TRACER
--#ifdef CC_USING_HOTPATCH
-+#if defined(CC_USING_HOTPATCH) || defined(CC_USING_NOP_MCOUNT)
- 	if (insn->disp == 0)
- 		return 1;
- #else
-diff --git a/arch/s390/kernel/ftrace.c b/arch/s390/kernel/ftrace.c
-index dc76d813e420..84be7f02d0c2 100644
---- a/arch/s390/kernel/ftrace.c
-+++ b/arch/s390/kernel/ftrace.c
-@@ -61,7 +61,7 @@ unsigned long ftrace_plt;
+diff --git a/kernel/trace/trace_stat.h b/kernel/trace/trace_stat.h
+index 76d30b4ebe83..8786d17caf49 100644
+--- a/kernel/trace/trace_stat.h
++++ b/kernel/trace/trace_stat.h
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++// SPDX-License-Identifier: GPL-2.0
+ #ifndef __TRACE_STAT_H
+ #define __TRACE_STAT_H
  
- static inline void ftrace_generate_orig_insn(struct ftrace_insn *insn)
- {
--#ifdef CC_USING_HOTPATCH
-+#if defined(CC_USING_HOTPATCH) || defined(CC_USING_NOP_MCOUNT)
- 	/* brcl 0,0 */
- 	insn->opc = 0xc004;
- 	insn->disp = 0;
-diff --git a/arch/s390/kernel/mcount.S b/arch/s390/kernel/mcount.S
-index 27110f3294ed..e93fbf02490c 100644
---- a/arch/s390/kernel/mcount.S
-+++ b/arch/s390/kernel/mcount.S
-@@ -35,7 +35,7 @@ ENTRY(ftrace_caller)
- 	.globl	ftrace_regs_caller
- 	.set	ftrace_regs_caller,ftrace_caller
- 	lgr	%r1,%r15
--#ifndef CC_USING_HOTPATCH
-+#if !(defined(CC_USING_HOTPATCH) || defined(CC_USING_NOP_MCOUNT))
- 	aghi	%r0,MCOUNT_RETURN_FIXUP
- #endif
- 	aghi	%r15,-STACK_FRAME_SIZE
+diff --git a/kernel/trace/tracing_map.h b/kernel/trace/tracing_map.h
+index 053eb92b2d31..a6de61fc22de 100644
+--- a/kernel/trace/tracing_map.h
++++ b/kernel/trace/tracing_map.h
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++// SPDX-License-Identifier: GPL-2.0
+ #ifndef __TRACING_MAP_H
+ #define __TRACING_MAP_H
+ 
 -- 
 2.18.0
 
