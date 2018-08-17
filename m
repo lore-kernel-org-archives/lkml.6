@@ -2,144 +2,124 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F17FC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 11:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3848AC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 11:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2CF8218F9
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 11:28:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nB/9WBTm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2CF8218F9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id ECD7D21896
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 11:29:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECD7D21896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbeHQObF (ORCPT
+        id S1727018AbeHQOcL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 10:31:05 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:39587 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbeHQObE (ORCPT
+        Fri, 17 Aug 2018 10:32:11 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56396 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726134AbeHQOcL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 10:31:04 -0400
-Received: by mail-qk0-f193.google.com with SMTP id b5-v6so5973578qkg.6;
-        Fri, 17 Aug 2018 04:27:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=R7Cq1AyihqijtNIh+v9vNBKeOWDaBGIteH9zWfeiUd0=;
-        b=nB/9WBTmYdY2Wuvx5WBzZGz1YMnLQI5DZoNQvEeKdY6T3lJCTuUFb6h/PbgihzmcRq
-         QjXPAxjkU1IKnV1YWQHcNNSwHHGYWCOM1Lrwd0XtqwfhI85jU3HTQxhgRVWXd26qV4Kg
-         LdDqYQ0VHhuZnUJIxjtF6xziCV/4EgGvP9vk1bHXJ9LmJ6QBHY7iXvS73+3b2c2Y0s5p
-         hNJjar9nvr0wOwYQI5OIM+rwUKX2EpaFbcFbOhLwfHfjIiplMroDgKB9g950rQPPiZa3
-         oA3+QVsify+Jld5ztGtylSBNPDezzKmaBr3uWv0yif0Zepu985DVmE1wzfJpcENrx2hi
-         c9RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=R7Cq1AyihqijtNIh+v9vNBKeOWDaBGIteH9zWfeiUd0=;
-        b=EYl1EwzkPz29hL7vTD5sRuHxFRqS3ug0L849LeWtuJwMiUQMvW3kW1rrNAxvlMkauF
-         3+OOUGBcLSNlFfF56n3qmFktk4Mbatbi6igN0u1TMq3mLsETneVyTiFi/AdqeXc6YAsC
-         4oiOoK9zqDhRllGepRu2ZQCI6Bd+/1wu7Wm6dW7TF/A2cmel5bPA6y3OnudWXs95iPv+
-         Zc7m8X3n51XcUBaTa4qyifI67SeBZ+60oApUv+zEZrSJMelHMGqZPKd7o//0Cw0kC1+N
-         hEe+ttM35mS+ahkyT1xJ7XODA/DNkQ06eYLT/thhTzlzaQL2m65lOcdQbgvP8v3TZrkK
-         QcAQ==
-X-Gm-Message-State: AOUpUlFkplLUUuNM70C1tAxD2L3F6AW901u+mDzpfPai9bKul8yoIQJF
-        aTg2N3ktDlrN2A/ELL0q6fyw9uTTYGWPJ+IhgYg=
-X-Google-Smtp-Source: AA+uWPzqOFHwOPAKCpU67NFJxh187PVqZJ8pGJZyt1eJDARaFb6Gt5NPiqJPFh4pWAc/YzstM8YvpUzVeVcwA9ro3t8=
-X-Received: by 2002:a37:7004:: with SMTP id l4-v6mr29871068qkc.83.1534505278178;
- Fri, 17 Aug 2018 04:27:58 -0700 (PDT)
+        Fri, 17 Aug 2018 10:32:11 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7HBNxJD135759
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 07:29:04 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kwtv4x18c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 07:29:03 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Fri, 17 Aug 2018 12:29:01 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 17 Aug 2018 12:28:53 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7HBSqAx35782854
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 17 Aug 2018 11:28:52 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DCB0A4203F;
+        Fri, 17 Aug 2018 14:28:56 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3F8264204B;
+        Fri, 17 Aug 2018 14:28:56 +0100 (BST)
+Received: from osiris (unknown [9.152.212.24])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 17 Aug 2018 14:28:56 +0100 (BST)
+Date:   Fri, 17 Aug 2018 13:28:50 +0200
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Paul Mackerras <paulus@samba.org>, linux-s390@vger.kernel.org,
+        sthemmin@microsoft.com, Pavel Tatashin <pasha.tatashin@oracle.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        xen-devel@lists.xenproject.org, Len Brown <lenb@kernel.org>,
+        haiyangz@microsoft.com, Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>, osalvador@suse.de,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        devel@linuxdriverproject.org,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH RFC 1/2] drivers/base: export
+ lock_device_hotplug/unlock_device_hotplug
+References: <20180817075901.4608-1-david@redhat.com>
+ <20180817075901.4608-2-david@redhat.com>
+ <20180817084146.GB14725@kroah.com>
+ <5a5d73e9-e4aa-ffed-a2e3-8aef64e61923@redhat.com>
+ <CAJZ5v0gkYV8o2Eq+EcGT=OP1tQGPGVVe3n9VGD6z7KAVVqhv9w@mail.gmail.com>
+ <42df9062-f647-3ad6-5a07-be2b99531119@redhat.com>
+ <20180817100604.GA18164@kroah.com>
+ <4ac624be-d2d6-5975-821f-b20a475781dc@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:a0c:9c4a:0:0:0:0:0 with HTTP; Fri, 17 Aug 2018 04:27:57
- -0700 (PDT)
-In-Reply-To: <6a2826055a33cbca45c3e8e03b1b0935b9f1d1af.camel@kernel.crashing.org>
-References: <7ccdc39d7e255547e851497ef9f449715b45f8bd.camel@kernel.crashing.org>
- <CAHp75Vd1ZZDJtASfFpr=eE+zaEiOxH3ohdSOe1aTcE3qEMd_QA@mail.gmail.com>
- <CAHp75VfjZe7XqJjv0CYFHXi95_v7R9B9E9eix+0xRwqn2tq6nQ@mail.gmail.com> <6a2826055a33cbca45c3e8e03b1b0935b9f1d1af.camel@kernel.crashing.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 17 Aug 2018 14:27:57 +0300
-Message-ID: <CAHp75VfeLf39vVd37W=2V-fJiSs=5zoKMxYS2g4o_mTn3GBjiQ@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: acer-wmi: Silence "unsupported" message a bit
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     "Lee, Chun-Yi" <jlee@suse.com>, Darren Hart <dvhart@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <4ac624be-d2d6-5975-821f-b20a475781dc@redhat.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18081711-0028-0000-0000-000002EC2435
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081711-0029-0000-0000-000023A552FC
+Message-Id: <20180817112850.GB3565@osiris>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-17_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808170125
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 2:22 PM, Benjamin Herrenschmidt
-<benh@kernel.crashing.org> wrote:
-> On Fri, 2018-08-17 at 14:09 +0300, Andy Shevchenko wrote:
->> On Fri, Aug 17, 2018 at 2:07 PM, Andy Shevchenko
->> <andy.shevchenko@gmail.com> wrote:
->> > On Thu, Aug 16, 2018 at 2:27 AM, Benjamin Herrenschmidt
->> > <benh@kernel.crashing.org> wrote:
->> > > This driver prints that "Unsupported machine..." message on every boot on
->> > > ThinkPad X1 Carbon laptops (and I assume a number of other systems), which
->> > > causes graphical boots to "glitch" a bit and is rather annoying ...
->> > >
->> > > Make it a pr_debug instead.
->> >
->> > Thanks for the patch. Unfortunately it doesn't apply.
->> > Please, check your mail clients and tools for formatting patch (it
->> > produced at the end spaces instead of tabs)
->>
->> No need to resend _this_ time. I have pushed to my review and testing queue.
->
-> Thanks, odd. Not sure what's going on with the latest evolution, it's
-> the second time it's done this. I'll try to investigate. Small patch
-> like that I tend to just copy/paste in an email in "preformat" style
-> ;-)
+On Fri, Aug 17, 2018 at 01:04:58PM +0200, David Hildenbrand wrote:
+> >> If there are no objections, I'll go into that direction. But I'll wait
+> >> for more comments regarding the general concept first.
+> > 
+> > It is the middle of the merge window, and maintainers are really busy
+> > right now.  I doubt you will get many review comments just yet...
+> > 
+> 
+> This has been broken since 2015, so I guess it can wait a bit :)
 
-Evolution is totally broken for years already (yes, I'm still using it
-due to Outlook Web Services support, but it's utter PITA).
-I could just easily come up with couple of dozens of bugs that are
-present there for more than 3 years.
+I hope you figured out what needs to be locked why. Your patch description
+seems to be "only" about locking order ;)
 
->
-> Cheers,
-> Ben.
->>
->> > >
->> > > Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
->> > > ---
->> > >
->> > > diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
->> > > index 8952173dd380..7f7192e8fdab 100644
->> > > --- a/drivers/platform/x86/acer-wmi.c
->> > > +++ b/drivers/platform/x86/acer-wmi.c
->> > > @@ -2216,7 +2216,7 @@ static int __init acer_wmi_init(void)
->> > >         if (wmi_has_guid(AMW0_GUID1) &&
->> > >             !dmi_check_system(amw0_whitelist) &&
->> > >             quirks == &quirk_unknown) {
->> > > -               pr_err("Unsupported machine has AMW0_GUID1, unable to load\n");
->> > > +               pr_debug("Unsupported machine has AMW0_GUID1, unable to load\n");
->> > >                 return -ENODEV;
->> > >         }
->> > >
->> > >
->> >
->> >
->> >
->> > --
->> > With Best Regards,
->> > Andy Shevchenko
->>
->>
->>
->
+I tried to figure out and document that partially with 55adc1d05dca ("mm:
+add private lock to serialize memory hotplug operations"), and that wasn't
+easy to figure out. I was especially concerned about sprinkling
+lock/unlock_device_hotplug() calls, which has the potential to make it the
+next BKL thing.
 
-
-
--- 
-With Best Regards,
-Andy Shevchenko
