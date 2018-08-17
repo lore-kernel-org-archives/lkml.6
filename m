@@ -3,126 +3,202 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B753C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3042C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:56:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D30AB21581
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:56:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D30AB21581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 74E8D21581
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:56:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74E8D21581
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726470AbeHQL6h (ORCPT
+        id S1726535AbeHQL7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 07:58:37 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46205 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725845AbeHQL6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 07:58:37 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6BC1820730; Fri, 17 Aug 2018 10:56:01 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2024F20787;
-        Fri, 17 Aug 2018 10:55:51 +0200 (CEST)
-Date:   Fri, 17 Aug 2018 10:55:51 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Tony Luck <tony.luck@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jchandra@broadcom.com, Sinan Kaya <okaya@codeaurora.org>,
-        Tomasz Nowicki <tn@semihalf.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: how to fix acpi_pci_root_remap_iospace?
-Message-ID: <20180817105551.100d6e0a@bbrezillon>
-In-Reply-To: <CAK8P3a0hFDv2kvVN=QobTVaZxAX-M+YZzkBU_b=vDGLbCLziNg@mail.gmail.com>
-References: <20180816204506.GA21144@agluck-desk>
-        <CAK8P3a2vAMzL22ds=kM1WRZgATzOrAz_y8Yk6edqJTVRJJFydw@mail.gmail.com>
-        <20180816232639.GA25889@agluck-desk>
-        <CAK8P3a0hFDv2kvVN=QobTVaZxAX-M+YZzkBU_b=vDGLbCLziNg@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Fri, 17 Aug 2018 07:59:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59238 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726218AbeHQL7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 07:59:16 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AF64287AFC;
+        Fri, 17 Aug 2018 08:56:40 +0000 (UTC)
+Received: from [10.36.117.9] (ovpn-117-9.ams2.redhat.com [10.36.117.9])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B49762026D6C;
+        Fri, 17 Aug 2018 08:56:36 +0000 (UTC)
+Subject: Re: [PATCH RFC 1/2] drivers/base: export
+ lock_device_hotplug/unlock_device_hotplug
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
+        devel@linuxdriverproject.org, linux-s390@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "K . Y . Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        David Rientjes <rientjes@google.com>
+References: <20180817075901.4608-1-david@redhat.com>
+ <20180817075901.4608-2-david@redhat.com> <20180817084146.GB14725@kroah.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <5a5d73e9-e4aa-ffed-a2e3-8aef64e61923@redhat.com>
+Date:   Fri, 17 Aug 2018 10:56:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180817084146.GB14725@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 17 Aug 2018 08:56:40 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 17 Aug 2018 08:56:40 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 Aug 2018 10:47:34 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
+On 17.08.2018 10:41, Greg Kroah-Hartman wrote:
+> On Fri, Aug 17, 2018 at 09:59:00AM +0200, David Hildenbrand wrote:
+>> From: Vitaly Kuznetsov <vkuznets@redhat.com>
+>>
+>> Well require to call add_memory()/add_memory_resource() with
+>> device_hotplug_lock held, to avoid a lock inversion. Allow external modules
+>> (e.g. hv_balloon) that make use of add_memory()/add_memory_resource() to
+>> lock device hotplug.
+>>
+>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> [modify patch description]
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> ---
+>>  drivers/base/core.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/base/core.c b/drivers/base/core.c
+>> index 04bbcd779e11..9010b9e942b5 100644
+>> --- a/drivers/base/core.c
+>> +++ b/drivers/base/core.c
+>> @@ -700,11 +700,13 @@ void lock_device_hotplug(void)
+>>  {
+>>  	mutex_lock(&device_hotplug_lock);
+>>  }
+>> +EXPORT_SYMBOL_GPL(lock_device_hotplug);
+>>  
+>>  void unlock_device_hotplug(void)
+>>  {
+>>  	mutex_unlock(&device_hotplug_lock);
+>>  }
+>> +EXPORT_SYMBOL_GPL(unlock_device_hotplug);
+> 
+> If these are going to be "global" symbols, let's properly name them.
+> device_hotplug_lock/unlock would be better.  But I am _really_ nervous
+> about letting stuff outside of the driver core mess with this, as people
+> better know what they are doing.
 
-> On Fri, Aug 17, 2018 at 1:27 AM Luck, Tony <tony.luck@intel.com> wrote:
-> >
-> > On Thu, Aug 16, 2018 at 11:10:33PM +0200, Arnd Bergmann wrote:  
-> > > Another way would be to add
-> > >
-> > >  #include <asm-generic/io.h>
-> > > +#undef PCI_IOBASE
-> > >
-> > > in your asm/io.h. This is about as ugly as the your version, but
-> > > it would be local to ia64 ;-)  
-> >
-> > Third way ...
-> >
-> >
-> > Is "0" actually the right value for PCI_IOBASE for some platform?
-> >
-> > #ifndef PCI_IOBASE
-> > #define PCI_IOBASE ((void __iomem *)0)
-> > #endif
-> >
-> > Or is this just here to make sure that:
-> >
-> > static inline u8 inb(unsigned long addr)
-> > {
-> >         u8 val;
-> >
-> >         __io_pbr();
-> >         val = __raw_readb(PCI_IOBASE + addr);
-> >         __io_par();
-> >         return val;
-> > }
-> >
-> > etc. Do not throw errors?  
-> 
-> Defining it to zero is the traditional approach on some systems, and it's used
-> for at least two different reasons, both of which I don't particularly like:
-> 
-> - Some (particularly older) targets that have its I/O space mapped
-> into its linear
->   virtual memory define inb() to be effectively an alias for readb() with the
->   same numeric arguments. This kind of works in most cases but breaks in
->   many corner cases such as
->   * user space using /dev/ioport, which now grants access to all of
-> kernel memory
->   * ISA device drivers using fixed 16-bit addresses on inb/outb, which
-> now points
->     into user space memory
->   * drivers that get the correct address from a resource but then truncate it by
->     storing it in a 16-bit or 32-bit (on 64-bit machines) local variable.
-> 
-> - Some targets don't have any support for I/O space on their PCI bus and just
->    want to get things to compile by setting PCI_IOBASE to zero, this still opens
->     up some of the same problems as above, but doesn't really help otherwise.
-> 
-> > Should we really just enclose all of inb, inw, inl, ...
-> > inside of:
-> >
-> > #ifdef PCI_IOBASE
-> >
-> > ... all those static functions that use PCI_IOBASE ...  
-> 
-> This breaks compilation of a couple of important drivers such as serial-8250
-> which support either I/O or memory space, so it requires some cleanup
-> first, or the definition of an alternative nop inb/outb family that does not
-> try to access the bus.
+The only "problem" is that we have kernel modules (for paravirtualized
+devices) that call add_memory(). This is Hyper-V right now, but we might
+have other ones in the future. Without them we would not have to export
+it. We might also get kernel modules that want to call remove_memory() -
+which will require the device_hotplug_lock as of now.
 
-Hm, maybe it's just easier to revert the patch since we got rid of
-patches adding COMPILE_TEST to drivers which were using read/writesl()
-(it turned out ia64 and sparc were not the only archs to not implement
-readsx/writesx() variants, and fixing them is not that easy).
+What we could do is
+
+a) add_memory() -> _add_memory() and don't export it
+b) add_memory() takes the device_hotplug_lock and calls _add_memory() .
+We export that one.
+c) Use add_memory() in external modules only
+
+Similar wrapper would be needed e.g. for remove_memory() later on.
+
+> 
+> Can't we just "lock" the memory stuff instead?  Why does the entirety of
+> the driver core need to be messed with here?
+
+The main problem is that add_memory() will first take the
+mem_hotplug_lock, to later on create and attach the memory block devices
+(to a bus without any drivers) via bus_probe_device(). Here, we will
+take the device_lock() of these devices.
+
+Setting a device online from user space (.online = true) will first take
+the device_hotplug_lock, then the device_lock(), and _right now_ not the
+mem_hotplug_lock (see cover letter/patch 2).
+
+We have to take mem_hotplug_lock here, but doing it down in e.g.
+online_pages() will right now create the possibility for a lock
+inversion. So one alternative is to take the mem_hotplug_lock in core.c
+before calling device_online()/device_offline(). But this feels very wrong.
+
+Thanks!
+
+> 
+> thanks,
+> 
+> greg k-h
+> 
+
+
+-- 
+
+Thanks,
+
+David / dhildenb
