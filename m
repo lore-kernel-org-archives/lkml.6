@@ -3,260 +3,143 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F383FC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:31:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8C0C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:32:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98C012185B
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:31:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98C012185B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3A8A02185B
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 03:32:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A8A02185B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726200AbeHQGcp (ORCPT
+        id S1726288AbeHQGdz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 02:32:45 -0400
-Received: from mga14.intel.com ([192.55.52.115]:50643 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725769AbeHQGcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 02:32:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2018 20:31:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,249,1531810800"; 
-   d="scan'208";a="77553008"
-Received: from tthayer-hp-z620-workstation.an.intel.com (HELO [10.122.105.144]) ([10.122.105.144])
-  by fmsmga002.fm.intel.com with ESMTP; 16 Aug 2018 20:31:02 -0700
-From:   Thor Thayer <thor.thayer@linux.intel.com>
-Subject: Re: [PATCH 1/2] arm64: dts: stratix10: Add Stratix10 SMMU support
-Reply-To: thor.thayer@linux.intel.com
-To:     Robin Murphy <robin.murphy@arm.com>, joro@8bytes.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, dinguyen@kernel.org,
-        will.deacon@arm.com, sricharan@codeaurora.org
-Cc:     iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1532543077-8933-1-git-send-email-thor.thayer@linux.intel.com>
- <1532543077-8933-2-git-send-email-thor.thayer@linux.intel.com>
- <db4d8290-c015-aa8b-6058-11fd3d25464b@arm.com>
-Message-ID: <cfe958b8-2711-4dbf-5f32-d777166c305a@linux.intel.com>
-Date:   Thu, 16 Aug 2018 22:33:31 -0500
+        Fri, 17 Aug 2018 02:33:55 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58080 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725769AbeHQGdy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 02:33:54 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7H3TFnq148221
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 23:32:13 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kwgnekfj2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 23:32:13 -0400
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Thu, 16 Aug 2018 23:32:12 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 16 Aug 2018 23:32:09 -0400
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7H3W8SR16974174
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 17 Aug 2018 03:32:08 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C1C2F112062;
+        Thu, 16 Aug 2018 23:31:46 -0400 (EDT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 39766112061;
+        Thu, 16 Aug 2018 23:31:44 -0400 (EDT)
+Received: from [9.102.0.167] (unknown [9.102.0.167])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 16 Aug 2018 23:31:43 -0400 (EDT)
+Subject: Re: [PATCH v2 3/4] powerpc/mm: fix a warning when a cache is common
+ to PGD and hugepages
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        aneesh.kumar@linux.vnet.ibm.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <2f96bf1a8df1091c642de099ed07c34b5ab9b90a.1534258290.git.christophe.leroy@c-s.fr>
+ <4aaca2d27429e6bdadc340fd3b96e7c350c4b2f4.1534258290.git.christophe.leroy@c-s.fr>
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Date:   Fri, 17 Aug 2018 09:02:03 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <db4d8290-c015-aa8b-6058-11fd3d25464b@arm.com>
+In-Reply-To: <4aaca2d27429e6bdadc340fd3b96e7c350c4b2f4.1534258290.git.christophe.leroy@c-s.fr>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18081703-0072-0000-0000-000003926985
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009558; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01074635; UDB=6.00553814; IPR=6.00854593;
+ MB=3.00022766; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-17 03:32:10
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18081703-0073-0000-0000-0000491A9664
+Message-Id: <6dea8d0c-c4ab-49aa-da26-a729c18fa818@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-16_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=421 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808170036
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
-
-On 08/08/2018 12:38 PM, Robin Murphy wrote:
-> On 25/07/18 19:24, thor.thayer@linux.intel.com wrote:
->> From: Thor Thayer <thor.thayer@linux.intel.com>
->>
->> Add SMMU support to the Stratix10 Device Tree which
->> includes adding the SMMU node and adding IOMMU stream
->> ids to the SMMU peripherals. Update bindings.
->>
->> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
->> ---
->> This patch is dependent on the patch series
->> "iommu/arm-smmu: Add runtime pm/sleep support"
->> (https://patchwork.ozlabs.org/cover/946160/)
->> ---
->>   .../devicetree/bindings/iommu/arm,smmu.txt         | 25 
->> ++++++++++++++++++
->>   arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  | 30 
->> ++++++++++++++++++++++
->>   2 files changed, 55 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt 
->> b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
->> index 7c71a6ed465a..8e3fe0594e3e 100644
->> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
->> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
->> @@ -18,6 +18,7 @@ conditions.
->>                           "arm,mmu-500"
->>                           "cavium,smmu-v2"
->>                           "qcom,<soc>-smmu-v2", "qcom,smmu-v2"
->> +                        "altr,smmu-v2"
+On 08/14/2018 08:24 PM, Christophe Leroy wrote:
+> While implementing TLB miss HW assistance on the 8xx, the following
+> warning was encountered:
 > 
-> Can we guarantee that no Altera SoC will ever exist with a different 
-> SMMU implementation, configuration, or clock tree? If we must have 
-> compatibles for SoC-specific integrations, I'd be a lot happier if they 
-> were actually SoC-specific, i.e. at least "altr,stratix10-smmu", or even 
-> something like "altr,gx5500-smmu" if there's a chance of new 
-> incompatible designs being added to the Stratix 10 family in future.
+> [  423.732965] WARNING: CPU: 0 PID: 345 at mm/slub.c:2412 ___slab_alloc.constprop.30+0x26c/0x46c
+> [  423.733033] CPU: 0 PID: 345 Comm: mmap Not tainted 4.18.0-rc8-00664-g2dfff9121c55 #671
+> [  423.733075] NIP:  c0108f90 LR: c0109ad0 CTR: 00000004
+> [  423.733121] REGS: c455bba0 TRAP: 0700   Not tainted  (4.18.0-rc8-00664-g2dfff9121c55)
+> [  423.733147] MSR:  00021032 <ME,IR,DR,RI>  CR: 24224848  XER: 20000000
+> [  423.733319]
+> [  423.733319] GPR00: c0109ad0 c455bc50 c4521910 c60053c0 007080c0 c0011b34 c7fa41e0 c455be30
+> [  423.733319] GPR08: 00000001 c00103a0 c7fa41e0 c49afcc4 24282842 10018840 c079b37c 00000040
+> [  423.733319] GPR16: 73f00000 00210d00 00000000 00000001 c455a000 00000100 00000200 c455a000
+> [  423.733319] GPR24: c60053c0 c0011b34 007080c0 c455a000 c455a000 c7fa41e0 00000000 00009032
+> [  423.734190] NIP [c0108f90] ___slab_alloc.constprop.30+0x26c/0x46c
+> [  423.734257] LR [c0109ad0] kmem_cache_alloc+0x210/0x23c
+> [  423.734283] Call Trace:
+> [  423.734326] [c455bc50] [00000100] 0x100 (unreliable)
+> [  423.734430] [c455bcc0] [c0109ad0] kmem_cache_alloc+0x210/0x23c
+> [  423.734543] [c455bcf0] [c0011b34] huge_pte_alloc+0xc0/0x1dc
+> [  423.734633] [c455bd20] [c01044dc] hugetlb_fault+0x408/0x48c
+> [  423.734720] [c455bdb0] [c0104b20] follow_hugetlb_page+0x14c/0x44c
+> [  423.734826] [c455be10] [c00e8e54] __get_user_pages+0x1c4/0x3dc
+> [  423.734919] [c455be80] [c00e9924] __mm_populate+0xac/0x140
+> [  423.735020] [c455bec0] [c00db14c] vm_mmap_pgoff+0xb4/0xb8
+> [  423.735127] [c455bf00] [c00f27c0] ksys_mmap_pgoff+0xcc/0x1fc
+> [  423.735222] [c455bf40] [c000e0f8] ret_from_syscall+0x0/0x38
+> [  423.735271] Instruction dump:
+> [  423.735321] 7cbf482e 38fd0008 7fa6eb78 7fc4f378 4bfff5dd 7fe3fb78 4bfffe24 81370010
+> [  423.735536] 71280004 41a2ff88 4840c571 4bffff80 <0fe00000> 4bfffeb8 81340010 712a0004
+> [  423.735757] ---[ end trace e9b222919a470790 ]---
 > 
-
-Good point. I'll get a better compatible string if I pursue this.
-
-> I'm still dubious that we actually need this for MMU-500, though, since 
-> we will always need the TCU clock enabled to do anything, and given the 
-> difficulty in associating particular TBU clocks with whichever domains 
-> might cause allocations into which TBU's TLBs, it seems highly unlikely 
-> that it'll ever be feasible to work at a granularity finer than "all of 
-> the clocks". And at that point the names don't really matter, and we 
-> merely need something like the proposed of_clk_bulk_get()[1], which 
-> works fine regardless of how many TBUs and distinct clocks exist for a 
-> particular MMU-500 configuration and integration.
+> This warning occurs when calling kmem_cache_zalloc() on a
+> cache having a constructor.
+> 
+> In this case it happens because PGD cache and 512k hugepte cache are
+> the same size (4k). While a cache with constructor is created for
+> the PGD, hugepages create cache without constructor and uses
+> kmem_cache_zalloc(). As both expect a cache with the same size,
+> the hugepages reuse the cache created for PGD, hence the conflict.
+> 
+> In order to avoid this conflict, this patch:
+> - modifies pgtable_cache_add() so that a zeroising constructor is
+> added for any cache size.
+> - replaces calls to kmem_cache_zalloc() by kmem_cache_alloc()
 > 
 
-Yes, I would prefer to use the standard arm,mmu-500 but with the changes 
-proposed by [2] that this patch was dependent on, it seemed I would need 
-to make a new structure and type.
+Can't we just do kmem_cache_alloc with gfp flags __GFP_ZERO? and remove 
+the constructor completely?
 
-I like the patch series for devm_clk_bulk_get_all() that includes 
-of_clk_bulk_get(). That would enable my patch to work with minor changes 
-to add bulk_clk to arm-smmu.c. However, the patchset doesn't seem to 
-have been accepted yet.
 
->>                     depending on the particular implementation and/or the
->>                     version of the architecture implemented.
->> @@ -179,3 +180,27 @@ conditions.
->>                <&mmcc SMMU_MDP_AHB_CLK>;
->>           clock-names = "bus", "iface";
->>       };
->> +
->> +    /* Stratix10 arm,smmu-v2 implementation */
->> +    smmu5: iommu@fa000000 {
->> +        compatible = "altr,smmu-v2", "arm,mmu-500",
->> +                 "arm,smmu-v2";
->> +        reg = <0xfa000000 0x40000>;
->> +        #global-interrupts = <2>;
->> +        #iommu-cells = <1>;
->> +        clocks = <&clkmgr STRATIX10_L4_MAIN_CLK>;
->> +        clock-names = "masters";
-> 
-> This isn't documented as an actual property, and if it also clocks the 
-> TCU then I'm not sure it's really the most accurate name.
-> 
-> Robin.
-> 
-> [1] https://patchwork.kernel.org/patch/10427095/
-
-In the patch I'll remove the clock-names.
-
-I'll keep track of the status of this patch (and [3] from the same 
-patchset). I tested a simple patch that uses devm_clk_bulk_get_all() 
-from these bulk_clk patches and it works well with the standard 
-"arm,mmu-500" compatible.
-
-This patch has dependencies on [2]. It seems like [2] could use the 
-bulk_clk patches in [1] above (in particular [2]'s patch 1/4).  The 
-function arm_smmu_fill_clk_data() wouldn't be needed because everything 
-happens in devm_clk_bulk_get_all(). However, those bulk_clk patches have 
-been hanging out there since May.
-
-I'm unclear on how to proceed. Do I continue with dependency on [2] or 
-create a new patch adding the bulk clocks changes in [1] (and [3])?
-
-Thanks for reviewing!
-
-Thor
-
-[2] https://patchwork.kernel.org/patch/10546677/
-[3] https://patchwork.kernel.org/patch/10427079/
-> 
->> +        interrupt-parent = <&intc>;
->> +        interrupts = <0 128 4>,    /* Global Secure Fault */
->> +            <0 129 4>, /* Global Non-secure Fault */
->> +            /* Non-secure Context Interrupts (32) */
->> +            <0 138 4>, <0 139 4>, <0 140 4>, <0 141 4>,
->> +            <0 142 4>, <0 143 4>, <0 144 4>, <0 145 4>,
->> +            <0 146 4>, <0 147 4>, <0 148 4>, <0 149 4>,
->> +            <0 150 4>, <0 151 4>, <0 152 4>, <0 153 4>,
->> +            <0 154 4>, <0 155 4>, <0 156 4>, <0 157 4>,
->> +            <0 158 4>, <0 159 4>, <0 160 4>, <0 161 4>,
->> +            <0 162 4>, <0 163 4>, <0 164 4>, <0 165 4>,
->> +            <0 166 4>, <0 167 4>, <0 168 4>, <0 169 4>;
->> +        stream-match-mask = <0x7ff0>;
->> +    };
->> diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi 
->> b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
->> index d033da401c26..e38ca86d48f6 100644
->> --- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
->> +++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
->> @@ -137,6 +137,7 @@
->>               reset-names = "stmmaceth", "stmmaceth-ocp";
->>               clocks = <&clkmgr STRATIX10_EMAC0_CLK>;
->>               clock-names = "stmmaceth";
->> +            iommus = <&smmu 1>;
->>               status = "disabled";
->>           };
->> @@ -150,6 +151,7 @@
->>               reset-names = "stmmaceth", "stmmaceth-ocp";
->>               clocks = <&clkmgr STRATIX10_EMAC1_CLK>;
->>               clock-names = "stmmaceth";
->> +            iommus = <&smmu 2>;
->>               status = "disabled";
->>           };
->> @@ -163,6 +165,7 @@
->>               reset-names = "stmmaceth", "stmmaceth-ocp";
->>               clocks = <&clkmgr STRATIX10_EMAC2_CLK>;
->>               clock-names = "stmmaceth";
->> +            iommus = <&smmu 3>;
->>               status = "disabled";
->>           };
->> @@ -273,6 +276,7 @@
->>               clocks = <&clkmgr STRATIX10_L4_MP_CLK>,
->>                    <&clkmgr STRATIX10_SDMMC_CLK>;
->>               clock-names = "biu", "ciu";
->> +            iommus = <&smmu 5>;
->>               status = "disabled";
->>           };
->> @@ -307,6 +311,30 @@
->>               altr,modrst-offset = <0x20>;
->>           };
->> +        smmu: iommu@fa000000 {
->> +            compatible = "altr,smmu-v2", "arm,mmu-500",
->> +                     "arm,smmu-v2";
->> +            reg = <0xfa000000 0x40000>;
->> +            #global-interrupts = <2>;
->> +            #iommu-cells = <1>;
->> +            clocks = <&clkmgr STRATIX10_L4_MAIN_CLK>;
->> +            clock-names = "masters";
->> +            interrupt-parent = <&intc>;
->> +            interrupts = <0 128 4>,    /* Global Secure Fault */
->> +                <0 129 4>, /* Global Non-secure Fault */
->> +                /* Non-secure Context Interrupts (32) */
->> +                <0 138 4>, <0 139 4>, <0 140 4>, <0 141 4>,
->> +                <0 142 4>, <0 143 4>, <0 144 4>, <0 145 4>,
->> +                <0 146 4>, <0 147 4>, <0 148 4>, <0 149 4>,
->> +                <0 150 4>, <0 151 4>, <0 152 4>, <0 153 4>,
->> +                <0 154 4>, <0 155 4>, <0 156 4>, <0 157 4>,
->> +                <0 158 4>, <0 159 4>, <0 160 4>, <0 161 4>,
->> +                <0 162 4>, <0 163 4>, <0 164 4>, <0 165 4>,
->> +                <0 166 4>, <0 167 4>, <0 168 4>, <0 169 4>;
->> +            stream-match-mask = <0x7ff0>;
->> +            status = "disabled";
->> +        };
->> +
->>           spi0: spi@ffda4000 {
->>               compatible = "snps,dw-apb-ssi";
->>               #address-cells = <1>;
->> @@ -416,6 +444,7 @@
->>               resets = <&rst USB0_RESET>, <&rst USB0_OCP_RESET>;
->>               reset-names = "dwc2", "dwc2-ecc";
->>               clocks = <&clkmgr STRATIX10_USB_CLK>;
->> +            iommus = <&smmu 6>;
->>               status = "disabled";
->>           };
->> @@ -428,6 +457,7 @@
->>               resets = <&rst USB1_RESET>, <&rst USB1_OCP_RESET>;
->>               reset-names = "dwc2", "dwc2-ecc";
->>               clocks = <&clkmgr STRATIX10_USB_CLK>;
->> +            iommus = <&smmu 7>;
->>               status = "disabled";
->>           };
->>
-> 
+-aneesh
 
