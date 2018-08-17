@@ -2,135 +2,113 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10EFBC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E5EC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A557421890
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:21:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A71462188F
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:24:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="v1F2wgek"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A557421890
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O7Gc/Ozp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A71462188F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbeHQLXx (ORCPT
+        id S1726758AbeHQL1T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 07:23:53 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45302 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbeHQLXw (ORCPT
+        Fri, 17 Aug 2018 07:27:19 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33905 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbeHQL1T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 07:23:52 -0400
-Received: by mail-pl0-f67.google.com with SMTP id j8-v6so3375403pll.12
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 01:21:25 -0700 (PDT)
+        Fri, 17 Aug 2018 07:27:19 -0400
+Received: by mail-lf1-f67.google.com with SMTP id g9-v6so74677lfh.1;
+        Fri, 17 Aug 2018 01:24:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=soua0aq5DAE7ZZi34SuiTN74usIbQuLl9+DNm+vcxmg=;
-        b=v1F2wgekrMPfgFahIFg9l9u9qa+1MlqW96y0k/4Eb1us7G2AVGzLWOxeqzSFCM/mkB
-         b4nE2SSXzGK/ptG/R6UQxZYiXt9s2LEzZbmMEAPWkwib5Hu2o5DVoDO5RwDfxQ+w9tR5
-         0MBhsPyBpec6Dzd4o7AV8O78uK8pjPe2VVMCwvsDPALimOPZI1j9iRJh6UWhWltrkcNG
-         6pQPWxcGGD9LpweXJ/NFcVqg1Umhk7wLWCiiJ60Gd1R/QIopKqHoQkR83uKVgQQM+KTz
-         u1Nk+tVRsN1LzYIEXc+nVgS1uknlwnx1HkiUVZuQYUZrWXhFcxNHMhxEolxsIz3bNoGm
-         UFkA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=MxUgcdaTG5NxTX6uGKmegdZq0YDuh2K0IpLA0pmb2QM=;
+        b=O7Gc/OzpsF5eH6V+gvcFZGoLrCsCjOJ+LaUoN4PcET1ZoaSS1nQO4WEwEuT/xmVSJ6
+         WoLffyJ0pxWmnsskenSfSa8Ch/ZQ353H5gYWgszOx4FoKAAFinROcFTekARvRKnmJcX9
+         bk7op3j6kJXI/WXyIb2NhoorO9x3cKLc3Si1yBLq5ydXaacu06tCIlztUGH7mjxachbY
+         uROs/EA8PR8Q8xFMlJ71XAU0+fBTDsRirAeJ4FQ6JvjT7lI89CVbvmJdNYmCiUQ3gVnQ
+         ilUCqCJ1/A00lE/VmriUr1Yv76b9Imjqav4xVBYnYG8j6FAlSKl0ZrySOeOI5rRQaDvL
+         XmXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=soua0aq5DAE7ZZi34SuiTN74usIbQuLl9+DNm+vcxmg=;
-        b=JGnR8PS6yDpo/T7qobKI/PyX5g5aQGVBIvHaEtYaCcabuiqxhm9WU/3llxf6bZR62K
-         FdEzhZFIpuBnIuU3+BeXHHdoFaIAkFBwAn7fy6OL928fkWEOjsoNAk5iQGP+MdNl0aUa
-         MM5JXobRX/U+7H452LTYTsEs3wAa4Qn6643YtyBeNdVfwF5WHMk3ZGKCRH+CSzITHpPy
-         6gwthz/i1SQO1+qbfSegqau8nAjzrqKH+3lorb307L02WuRVEa+wCeB6YNv3cxBDBEE2
-         zPVgagwAaO+9Xjx8s4160lCA51mhga0GxcSkb4HeY8Jq4Sx+qwnp7oP39lugDPnRSw13
-         iVqQ==
-X-Gm-Message-State: AOUpUlHE3ib0md+b53yTSSZx6JTEAEX1NCw6BV3eO1w+fTkXXd463VlI
-        J8nqq8qjajcYzQ+ud3+4q4K/aqrAbnVhNw==
-X-Google-Smtp-Source: AA+uWPzFWIgwpQ9nAB8NKUWd4VpGKx1CjV8j7iBaom7sFgIhPktJUdC4o8Vd6D7bZ3Dc4etCtFsdmw==
-X-Received: by 2002:a17:902:6845:: with SMTP id f5-v6mr1896366pln.17.1534494084613;
-        Fri, 17 Aug 2018 01:21:24 -0700 (PDT)
-Received: from [10.86.58.199] (rap-us.hgst.com. [199.255.44.250])
-        by smtp.googlemail.com with ESMTPSA id o84-v6sm1940307pfi.165.2018.08.17.01.21.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 Aug 2018 01:21:23 -0700 (PDT)
-Subject: Re: [RFC PATCH v2 0/1] lightnvm: move bad block and chunk state logic
- to core
-To:     javier@cnexlabs.com
-Cc:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
-        hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
-        youngtack.jin@circuitblvd.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180816113417.3641-1-mb@lightnvm.io>
- <00698BD3-4382-4033-908F-BEB63E7FAD57@cnexlabs.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <2ed73237-2657-17a8-7134-2267ffb7e35d@lightnvm.io>
-Date:   Fri, 17 Aug 2018 10:21:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=MxUgcdaTG5NxTX6uGKmegdZq0YDuh2K0IpLA0pmb2QM=;
+        b=p4Pv7Rn8QC/FIovxtg3X2ml9o0GS6SMvVo0CnLjKFnsYSpoGxK5ayjydD/94V0fLP6
+         AWeTCSTJ+pZ08qY8DMponmb4elB8I4IJGLoOmA6sWRexycIy49+oShWwsF5jawloLHjt
+         iJ4CXInd0cmL+ZgPw0EE8lbEdqRNBs7wCDwbyYcIo1Ju+sfDme1L+fDvStUTIByxx15K
+         cSy1z9vkKOzP6C0///+IZ3IHfdVvF7DlMGELUMI3mHn0YaFXgmGgPsR2X9yCaoOa4T9T
+         lEIWk8NyRA9wl1Fk6p0HxWj63yFLTNpGrwa96RoT5jQlIP2d/uyyvBXlT0b9sYJ3gd0B
+         wkNQ==
+X-Gm-Message-State: AOUpUlH1+6C467Odd/MILE6EIhEXZgipH0HrLyiH0dKa4UAZ7Bw4jafM
+        Fm5DkaqNfadrI2cpLzQKmlL2thpTA0x1ghoJjyU=
+X-Google-Smtp-Source: AA+uWPwuygpu03AWzbwCBnFUh+BppQqP8fxCrAbc1uRLU4L9aUyfafMlwiYUcs/khulTyCPoI29+5rU8je2/KcaGjF8=
+X-Received: by 2002:a19:d8e8:: with SMTP id r101-v6mr21248122lfi.121.1534494289362;
+ Fri, 17 Aug 2018 01:24:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <00698BD3-4382-4033-908F-BEB63E7FAD57@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+References: <CAP4sYWUDb8wtNVvgPO+3a5MWoiBGuafQpvG6KR30RWinf36Msw@mail.gmail.com>
+ <20180816.123002.844201503080913720.davem@davemloft.net> <d3c380fc-cebd-0a91-1acc-916a453c9f11@redhat.com>
+In-Reply-To: <d3c380fc-cebd-0a91-1acc-916a453c9f11@redhat.com>
+From:   Wang Jian <jianjian.wang1@gmail.com>
+Date:   Fri, 17 Aug 2018 16:24:37 +0800
+Message-ID: <CAP4sYWWBgyz39xUH7y8UVPWoNJWGMN8ToHx0W9ax6qJ9QgZ22g@mail.gmail.com>
+Subject: Re: [PATCH 1/1] tap: comment fix
+To:     Jason <jasowang@redhat.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        girish.moodalbail@oracle.com, mst@redhat.com,
+        Willem de Bruijn <willemb@google.com>,
+        viro@zeniv.linux.org.uk, wexu@redhat.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/16/2018 05:53 PM, Javier Gonzalez wrote:
->> On 16 Aug 2018, at 13.34, Matias Bjørling <mb@lightnvm.io> wrote:
->>
->> This patch moves the 1.2 and 2.0 block/chunk metadata retrieval to
->> core.
->>
->> Hi Javier, I did not end up using your patch. I had misunderstood what
->> was implemented. Instead I implemented the detection of the each chunk by
->> first sensing the first page, then the last page, and if the chunk
->> is sensed as open, a per page scan will be executed to update the write
->> pointer appropriately.
->>
-> 
-> I see why you want to do it this way for maintaining the chunk
-> abstraction, but this is potentially very inefficient as blocks not used
-> by any target will be recovered unnecessarily. 
+Thanks for the reminder.
+Because this change is trivial, I change the subject.
+On Fri, Aug 17, 2018 at 12:29 PM Jason Wang <jasowang@redhat.com> wrote:
+>
+>
+>
+> On 2018=E5=B9=B408=E6=9C=8817=E6=97=A5 03:30, David Miller wrote:
+> > From: Wang Jian <jianjian.wang1@gmail.com>
+> > Date: Thu, 16 Aug 2018 21:01:27 +0800
+> >
+> >> The tap_queue and the "tap_dev" are loosely coupled, not "macvlan_dev"=
+.
+> >>
+> >> And I also change one rcu_read_lock's place, seems can reduce rcu
+> >> critical section a little.
+> >>
+> >> Signed-off-by: Wang Jian <jianjian.wang1@gmail.com>
+> > This patch was corrupted by your email client, for example it turned
+> > TAB characters into sequences of spaces.
+> >
+> > Please fix this, email a test patch to yourself, and do not resend the
+> > patch to this mailing list until you can successfully extract and
+> > cleanly apply the test patch you email to yourself.
+> >
+> > Thank you.
+>
+> Besides this, please split it into two patches. The RCU change does not
+> belong to "comment fix" for sure.
+>
+> Thanks
+>
 
-True. It will up to the target to not ask for more metadata than 
-necessary (similarly for 2.0)
 
-Note that in 1.2, it is
-> expected that targets will need to recover the write pointer themselves.
-> What is more, in the normal path, this will be part of the metadata
-> being stored so no wp recovery is needed. Still, this approach forces
-> recovery on each 1.2 instance creation (also on factory reset). In this
-> context, you are right, the patch I proposed only addresses the double
-> erase issue, which was the original motivator, and left the actual
-> pointer recovery to the normal pblk recovery process.
-> 
-> Besides this, in order to consider this as a real possibility, we need
-> to measure the impact on startup time. For this, could you implement
-> nvm_bb_scan_chunk() and nvm_bb_chunk_sense() more efficiently by
-> recovering (i) asynchronously and (ii) concurrently across luns so that
-> we can establish the recovery cost more fairly? We can look at a
-> specific penalty ranges afterwards.
-
-Honestly, 1.2 is deprecated. I don't care about the performance, I care 
-about being easy to maintain, so it doesn't borg me down in the future.
-
-Back of the envelope calculation for a 64 die SSD with 1024 blocks per 
-die, and 60us read time, will take 4 seconds to scan if all chunks are 
-free, a worst case something like ~10 seconds. -> Not a problem for me.
-
-> 
-> Also, the recovery scheme in pblk will change significantly by doing
-> this, so I assume you will send a followup patchset reimplementing
-> recovery for the 1.2 path? 
-
-The 1.2 path shouldn't be necessary after this. That is the idea of this 
-work. Obviously, the set bad block interface will have to preserved and 
-called.
+--=20
+Regards,
+Wang Jian
