@@ -1,115 +1,101 @@
-Return-Path: <SRS0=aTzB=K7=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A68C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 23:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E9FC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 00:01:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D96C20898
-	for <linux-kernel@archiver.kernel.org>; Thu, 16 Aug 2018 23:55:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25C1920C0E
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 00:01:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Xw1YT5m/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D96C20898
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="G0ipfVEM";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="G0ipfVEM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25C1920C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726232AbeHQC4E (ORCPT
+        id S1726273AbeHQDC2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 16 Aug 2018 22:56:04 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:36600 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbeHQC4E (ORCPT
+        Thu, 16 Aug 2018 23:02:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33100 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726134AbeHQDC2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Aug 2018 22:56:04 -0400
-Received: by mail-pl0-f68.google.com with SMTP id e11-v6so2846656plb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Aug 2018 16:54:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=wooRs1j7GGKe1/E1z7EJoM0S7cq2/FARBc1id7t/uTw=;
-        b=Xw1YT5m/FeMPxFmvafTv7TtXchuh0eNdPBMyIkRdK613VhOO7hvsEnx6uawxWOLrw0
-         XU0jvE8MzBFuUGApoYllEvIZDukUskzcHhHnAdhfKyFVcK0mpsOGtALBfafNVh9KEpzn
-         Sjp6meSSfD3lPX3IdlbgE/c+WbCGZ+uEOFkFI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=wooRs1j7GGKe1/E1z7EJoM0S7cq2/FARBc1id7t/uTw=;
-        b=AurxIqpdp728DoR955gAeKQI8YfNsKB9o7vq64obv2dvOSQxO9RMon3tyj/w3O8BwE
-         WWOw3JlqNlhpqqQ4oyaqcQA0f1b5iElb2tKIxMgNb1E1OuL+U5tqaiOzV7rrNFDbQlwV
-         rdSV3z9gCrRGDEREVfIUZuFONeCcLcvPgCgCwRnzGNrtf9YzI3tqA9zpAUXJ+MVR+7Vj
-         UX0QvZMtbRoCMSdTeFh/uYcIOC2EPLYIdUfk2MoHgXjrKy8DaX4meJA9IYlGBMcvT3OT
-         fmPEAcM2ao1rxI+lNpEZWeevMsQPYYQ0qcuqJ0GQZl35ZCkXdNlDGmo+9kszR782Sg8u
-         pgjg==
-X-Gm-Message-State: AOUpUlGxS37mTfGoVTnk4+WKFo9W2YqBRCkb9g1BHBW2P53MyBPqpKhg
-        wKSd3bEB5H/0RYWVrzOuCbDuyA==
-X-Google-Smtp-Source: AA+uWPxkigSvoPUtBeAd9olrCiffKmISJrchtTpJwE75bRn2ADEtHdPxsBnExDPv+3kYJbOlS3n6EQ==
-X-Received: by 2002:a17:902:22:: with SMTP id 31-v6mr31155663pla.190.1534463699214;
-        Thu, 16 Aug 2018 16:54:59 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id e7-v6sm439328pgc.55.2018.08.16.16.54.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 Aug 2018 16:54:58 -0700 (PDT)
-Date:   Thu, 16 Aug 2018 16:54:57 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: [GIT PULL] VLA removal leftovers for v4.19-rc1
-Message-ID: <20180816235457.GA14528@beast>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Thu, 16 Aug 2018 23:02:28 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BE44761E84; Fri, 17 Aug 2018 00:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534464082;
+        bh=vqQEHmO/bNkoBUt732K7KSgkoc5+zFaobDb+L8J1Oag=;
+        h=From:To:Cc:Subject:Date:From;
+        b=G0ipfVEM3M+Z8XNnHFS313BaTPar1rSaivUP8n9QNGcMhTIFD/dxxS3fibPTzUMRd
+         NF4xvYN3y8EFzSJEoj6vm+qP8b6tno9LPtG0o5N1+uLsRFiCA/T0ns4YbCuOUFHiaE
+         zmnNAj4LA8hEV4AqUmOoF4VAYSmyev1N9kD6vluc=
+Received: from pheragu-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pheragu@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2270261E66;
+        Fri, 17 Aug 2018 00:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534464082;
+        bh=vqQEHmO/bNkoBUt732K7KSgkoc5+zFaobDb+L8J1Oag=;
+        h=From:To:Cc:Subject:Date:From;
+        b=G0ipfVEM3M+Z8XNnHFS313BaTPar1rSaivUP8n9QNGcMhTIFD/dxxS3fibPTzUMRd
+         NF4xvYN3y8EFzSJEoj6vm+qP8b6tno9LPtG0o5N1+uLsRFiCA/T0ns4YbCuOUFHiaE
+         zmnNAj4LA8hEV4AqUmOoF4VAYSmyev1N9kD6vluc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2270261E66
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pheragu@codeaurora.org
+From:   Prakruthi Deepak Heragu <pheragu@codeaurora.org>
+To:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, tsoni@codeaurora.org,
+        ckadabi@codeaurora.org, bryanh@codeaurora.org,
+        psodagud@codeaurora.org, rnayak@codeaurora.org
+Subject: [PATCH v1 0/2] Add Embedded USB Debugger (EUD) driver
+Date:   Thu, 16 Aug 2018 17:01:11 -0700
+Message-Id: <1534464073-8154-1-git-send-email-pheragu@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+This is a series of patches that implements a driver for the control
+peripheral, EUD (Embedded USB Debugger). The EUD is a mini-USB hub 
+implemented on chip to support the USB-based debug and trace capabilities.
+Apart from debug capabilities, EUD has a control peripheral. Control 
+Peripheral is on when EUD is on and gets signals like USB attach, pet EUD,
+charge phone etc. EUD driver listens to events like USB attach or detach 
+and charger enable or disable and then notifies the USB driver or PMIC 
+driver respectively about these events via EXTCON. At regular intervals, 
+the EUD driver receives an interrupt to pet the driver indicating that 
+the software is functional.
 
-Please pull these two VLA removals for v4.19-rc1. It didn't seem
-sensible to me to wait to add these: they're both trivial and have been
-sitting in -next while I tried to get them picked up by their respective
-maintainers. Instead, I can just be that maintainer. :) After these,
-only some core crypto VLA removals remain, as the series that fixes them
-is still under review.
+Changes since v0:
+- Remove select SERIAL_CORE from Kconfig as this patch doesn't involve
+  anything related to serial console
+- Changed the dt-bindings to remove extcon and replace it with graphs
+  to represent a connection with client
 
-Thanks!
+Prakruthi Deepak Heragu (2):
+  dt-bindings: Documentation for qcom,eud
+  Embedded USB Debugger (EUD) driver
 
--Kees
-
-The following changes since commit 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
-
-  Linux 4.18-rc2 (2018-06-24 20:54:29 +0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/vla-leftovers-v4.19-rc1
-
-for you to fetch changes up to d8dfa59f5a512a536b80a4a8f12fa993683f48df:
-
-  bus: imx-weim: Remove VLA usage (2018-08-13 13:40:52 -0700)
-
-----------------------------------------------------------------
-VLA leftovers pull summary:
-
-- bus/imx-weim: Use maximum register count to avoid VLA
-
-- drm/i2c/tda9950: Use maximum CEC message size to avoid VLA
-
-----------------------------------------------------------------
-Kees Cook (2):
-      drm/i2c: tda9950: Remove VLA usage
-      bus: imx-weim: Remove VLA usage
-
- drivers/bus/imx-weim.c        | 7 ++++++-
- drivers/gpu/drm/i2c/tda9950.c | 5 ++++-
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/soc/qcom/qcom,msm-eud.txt  |  28 ++
+ drivers/soc/qcom/Kconfig                           |  12 +
+ drivers/soc/qcom/Makefile                          |   1 +
+ drivers/soc/qcom/eud.c                             | 340 +++++++++++++++++++++
+ 4 files changed, 381 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,msm-eud.txt
+ create mode 100644 drivers/soc/qcom/eud.c
 
 -- 
-Kees Cook
-Pixel Security
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
