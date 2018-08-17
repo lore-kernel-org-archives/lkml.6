@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9655AC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0DACC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BC63208DB
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:28:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BC63208DB
+	by mail.kernel.org (Postfix) with ESMTP id 94E1D2124D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 10:28:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94E1D2124D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbeHQNbK (ORCPT
+        id S1726919AbeHQNa3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 09:31:10 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:59335 "EHLO
+        Fri, 17 Aug 2018 09:30:29 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:54093 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727032AbeHQNab (ORCPT
+        with ESMTP id S1725845AbeHQNa3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 09:30:31 -0400
+        Fri, 17 Aug 2018 09:30:29 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
  (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0MAdid-1fjhxn3cuR-00BsPO; Fri, 17 Aug 2018 12:27:16 +0200
+ 0MF3Yx-1ffKFY0w9b-00GG86; Fri, 17 Aug 2018 12:27:19 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
 Cc:     linux-kernel@vger.kernel.org,
@@ -34,102 +34,142 @@ Cc:     linux-kernel@vger.kernel.org,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [RFC 04/15] PCI: export pci_register_host_bridge
-Date:   Fri, 17 Aug 2018 12:26:34 +0200
-Message-Id: <20180817102645.3839621-5-arnd@arndb.de>
+Subject: [RFC 10/15] sparc/PCI: simplify pci_scan_one_pbm
+Date:   Fri, 17 Aug 2018 12:26:40 +0200
+Message-Id: <20180817102645.3839621-11-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180817102645.3839621-1-arnd@arndb.de>
 References: <20180817102645.3839621-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:qV+QiFpoLBNDT+pnsfxk7Q12Wr+Zfztf79RikKLfT1kBpbTwKUM
- iZEEf/AFkASGLvQTzHO6lI+OsNf423ev36D4uMlANybis7iSjomPpFGobYlMVXCwQdTCqSd
- ugZbMhW+33xetnzQSUdMeicQ786GrhuoT6iTK6eAwaMormNmf16uMK5AaJlveZ1uMEi0UOl
- d7rj/WjNLBnDisKLuP0zg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:6viyPx4Qb74=:ccCWwxVG4h9e67s1aeOEA5
- DSD5frqpk3rf+CElY2taeu1iNYf0RDqjWPk1AQkQlRZIT8V6ygBWKhYW8+niK8SPrhzEefQoN
- MTAzJhGQjUG5mJz4neuPJrfWfvoRyWWno3raPfFD4IBjJzeE+wQ5wSD5PVhe19BsXlubY02g8
- 5MO+LdODz2tWxlOkI+FGaNMHD3AUyYbfeZFVfCVihpH50sWaTbfhg9dfHCMQlN3Ux8fH+iDcz
- CzK2NJmTJLXfvDYvkbuBwOQsXeMCOMgWI0S787/Hu3SxiX6sgA0WyOQsvPnufZss/8nagJgzF
- pmhXqG5ei/dM3MxDDeER5wKJlSfFLLZV9YBysTjF+RyUu0srfhAgAK/0VoLg/xLf8+W+ss8S6
- cT6Eop6PKWq7TliAkzqtHUgUqQKfTg63eGJ+bxelz36NgAJhtrdwfjUrvcK8GvIo9n6ofst7f
- M+ZpnwtofMJalysbiNMd0/U5C+LZvQIDyhBnjN+ztTMX161kKMmQQRMGt9bU5zlGebSHJML9t
- uxwQ3exwP8EM1g/36YZc/Juqs5Obu3SVHVwOM1GmpgDg6RViN0CBJ9wm0T9fA1B4qvj9y5YX3
- okKhgiwMMZCJUT1fjABTxHH38aHmgTpoprIuHZ9tZSVc1oJT/y7nNxmLlGE+AtLIOIUiyAUVu
- 8M9riaC7jjFCIl60jk8C9N1eE/iRsPX3qGaPVVog7/SbWPtLeyy25TBnk4ZFk760HgD0=
+X-Provags-ID: V03:K1:tqfqrJow5W4imcQdki9mGzYbBLDxofa09sQuKVVmcKPe9NKicQu
+ 8BCFKR5x8HHGblInvnpgfM0Om9m61dXNuEzCIJ49sP//cfH3KTR8BqOqORdz4p1h7JROjqJ
+ CiXbMgNkdpblfAYzq1OUFR9CqgorJFNPchgd2Qp4LZRLY2gq8SB2mQD0V3AQBL6R9BKkfBV
+ T5dOLAgJhkzmztez96I5g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:HIAfquh0tdI=:0dA2U75J9e6Y7bRAeRLDpU
+ fiYaLHOH0AVd2s9rov8WWEfjDdY97CTXbyas7dLBOmGUy3alOcAjpKpHC23tgOnaVQ+KqEI6h
+ SY9mf4k7l5qaPraBVNvUcijJ5fmnEtBnPKgZ61VULSXOUZB5C/Ae7EZvleU8GoWQOaYqho0Wd
+ uv/8+l54vLvdm+i5rPtjRntUa0wDwIEyviUXWwEMjn2CXS3RUp6te6SkpZAk/YRuhDiuAPAyn
+ qS3vZeDS+n5QC9CSNsDkv/SZ+RjR/eqV5DgKB1PKXzj2nUybL8qQv/RkGazoc04kHmvd+GF6R
+ pTM19Xq8siVJoyeODtmjIkZ0Ttt6uew7BA7y+E4RdhS0D4pgV2L9y4U9V4VxKgU2HjujjxexW
+ Uw6KKZh3BTyN0rov5fERh2p1R5nunp9qffBcEle8v5LH2pInZmdZOMSZzDYRHk29LkoYJ7qFU
+ Ba0xUQlY2OcL9tOKbHMps8HhKxVob6TtX+/MCqIRHQ07673JUS92Fnbu7MYYBBp8JHzjJTE96
+ xlfE87rK553fEbwQ3WXiwNpYx+zmtNhznqU/mX/rLks1rS4WTfc5rEPfPn1fPOH4+xrf9FvkG
+ OxcDpE4M86hDsuMcxq9q/dlgAfu34AMyTyIXeh0xv2ZFXedd8Z5m7vqzzTxVmz8oOCGMN9HVo
+ /oqizZtfSKo7q+qqQIjvQG9mW/eRsqNid04WKSzays1sWwEwevVrC6W8SHm7Wl9Edo3I=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a couple of users of the old pci_create_root_bus() interface,
-which calls pci_register_host_bridge() without actually scanning the bus.
+We no longer need a separate pci_create_root_bus() function, and
+merging it into pci_scan_one_pbm() makes the implementation easier
+to understand.
 
-In order to get those callers a little closer to the current method
-of separating the allocation and probing of the host bridge, this
-exports the internal interface to modules. If all the callers can
-get moved over to pci_host_probe() or pci_scan_root_bus_bridge()
-later, the export can be removed again.
+A possible future cleanup would move the allocation of the
+pci_host_bridge structure into the callers of pci_scan_one_pbm,
+and avoid duplication between pci_host_bridge and pci_pbm_info
+fields.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/pci/probe.c | 25 ++++++++++++++++++++++++-
- include/linux/pci.h |  1 +
- 2 files changed, 25 insertions(+), 1 deletion(-)
+ arch/sparc/kernel/pci.c | 62 ++++++++++++++---------------------------
+ 1 file changed, 21 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index cf169742c03e..5ca7d5941ad0 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -762,7 +762,29 @@ static void pci_set_bus_msi_domain(struct pci_bus *bus)
- 	dev_set_msi_domain(&bus->dev, d);
+diff --git a/arch/sparc/kernel/pci.c b/arch/sparc/kernel/pci.c
+index afbce59d9231..0d34fb2ac55b 100644
+--- a/arch/sparc/kernel/pci.c
++++ b/arch/sparc/kernel/pci.c
+@@ -691,70 +691,50 @@ static void pci_claim_bus_resources(struct pci_bus *bus)
+ 		pci_claim_bus_resources(child_bus);
  }
  
--static int pci_register_host_bridge(struct pci_host_bridge *bridge)
-+/*
-+ * pci_register_host_bridge() - Register a host bridge without scanning
-+ *
-+ * @bridge: a newly allocated host bridge structure
-+ *
-+ * This is the core part of bringing up a new PCI host bridge,
-+ * before we scan for attached devices and register them as
-+ * pci_dev.
-+ *
-+ * For the most part, this is an implementation detail of the
-+ * pci_host_probe() interface, which brings up the entire bus,
-+ * bus some older platforms still call it directly and manually
-+ * scan for devices.
-+ *
-+ * If your driver uses this, try to convert it to using
-+ * pci_host_probe() instead.
-+ *
-+ * Return: zero on suggess, or a negative error code.
-+ * Note: after pci_register_host_bridge() successfully returns,
-+ * the pci_host_bridge device is alive in driver core, and must
-+ * not be freed directly.
-+ */
-+int pci_register_host_bridge(struct pci_host_bridge *bridge)
+-static struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
+-		struct pci_ops *ops, void *sysdata, struct list_head *resources)
++struct pci_bus *pci_scan_one_pbm(struct pci_pbm_info *pbm,
++				 struct device *parent)
  {
- 	struct device *parent = bridge->dev.parent;
- 	struct resource_entry *window, *n;
-@@ -877,6 +899,7 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
- 	kfree(bus);
- 	return err;
- }
-+EXPORT_SYMBOL_GPL(pci_register_host_bridge);
+-	int error;
++	struct device_node *node = pbm->op->dev.of_node;
+ 	struct pci_host_bridge *bridge;
++	int ret;
  
- static bool pci_bridge_child_ext_cfg_accessible(struct pci_dev *bridge)
- {
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index d226e06fb5e5..e1337148cf9f 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -909,6 +909,7 @@ struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
- 				    struct pci_ops *ops, void *sysdata,
- 				    struct list_head *resources);
- int pci_host_probe(struct pci_host_bridge *bridge);
-+int pci_register_host_bridge(struct pci_host_bridge *);
- int pci_bus_insert_busn_res(struct pci_bus *b, int bus, int busmax);
- int pci_bus_update_busn_res_end(struct pci_bus *b, int busmax);
- void pci_bus_release_busn_res(struct pci_bus *b);
+ 	bridge = pci_alloc_host_bridge(0);
+ 	if (!bridge)
+ 		return NULL;
+ 
+ 	bridge->dev.parent = parent;
++	bridge->sysdata = pbm;
++	bridge->busnr = pbm->pci_first_busno;
++	bridge->ops = pbm->pci_ops;
+ 
+-	list_splice_init(resources, &bridge->windows);
+-	bridge->sysdata = sysdata;
+-	bridge->busnr = bus;
+-	bridge->ops = ops;
+-
+-	error = pci_register_host_bridge(bridge);
+-	if (error < 0)
+-		goto err_out;
+-
+-	return bridge->bus;
+-
+-err_out:
+-	kfree(bridge);
+-	return NULL;
+-}
+-
+-struct pci_bus *pci_scan_one_pbm(struct pci_pbm_info *pbm,
+-				 struct device *parent)
+-{
+-	LIST_HEAD(resources);
+-	struct device_node *node = pbm->op->dev.of_node;
+-	struct pci_bus *bus;
+-
+-	printk("PCI: Scanning PBM %s\n", node->full_name);
+-
+-	pci_add_resource_offset(&resources, &pbm->io_space,
++	pci_add_resource_offset(&bridge->windows, &pbm->io_space,
+ 				pbm->io_offset);
+-	pci_add_resource_offset(&resources, &pbm->mem_space,
++	pci_add_resource_offset(&bridge->windows, &pbm->mem_space,
+ 				pbm->mem_offset);
+ 	if (pbm->mem64_space.flags)
+-		pci_add_resource_offset(&resources, &pbm->mem64_space,
++		pci_add_resource_offset(&bridge->windows, &pbm->mem64_space,
+ 					pbm->mem64_offset);
+ 	pbm->busn.start = pbm->pci_first_busno;
+ 	pbm->busn.end	= pbm->pci_last_busno;
+ 	pbm->busn.flags	= IORESOURCE_BUS;
+-	pci_add_resource(&resources, &pbm->busn);
+-	bus = pci_create_root_bus(parent, pbm->pci_first_busno, pbm->pci_ops,
+-				  pbm, &resources);
+-	if (!bus) {
++	pci_add_resource(&bridge->windows, &pbm->busn);
++
++	printk("PCI: Scanning PBM %s\n", node->full_name);
++	ret = pci_register_host_bridge(bridge);
++	if (!ret) {
+ 		printk(KERN_ERR "Failed to create bus for %s\n",
+ 		       node->full_name);
+-		pci_free_resource_list(&resources);
++		pci_free_host_bridge(bridge);
+ 		return NULL;
+ 	}
+ 
+-	pci_of_scan_bus(pbm, node, bus);
+-	pci_bus_register_of_sysfs(bus);
++	pci_of_scan_bus(pbm, node, bridge->bus);
++	pci_bus_register_of_sysfs(bridge->bus);
+ 
+-	pci_claim_bus_resources(bus);
++	pci_claim_bus_resources(bridge->bus);
+ 
+-	pci_bus_add_devices(bus);
+-	return bus;
++	pci_bus_add_devices(bridge->bus);
++	return bridge->bus;
+ }
+ 
+ int pcibios_enable_device(struct pci_dev *dev, int mask)
 -- 
 2.18.0
 
