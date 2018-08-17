@@ -2,122 +2,137 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA521C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E1DC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:27:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F9B3219CA
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:23:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7971C219CA
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 21:27:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lTzMZVIk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F9B3219CA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="DLRTnFqr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7971C219CA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbeHRA2p (ORCPT
+        id S1728396AbeHRAcY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 20:28:45 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37293 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbeHRA2p (ORCPT
+        Fri, 17 Aug 2018 20:32:24 -0400
+Received: from mail-it0-f47.google.com ([209.85.214.47]:53409 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbeHRAcY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 20:28:45 -0400
-Received: by mail-wm0-f67.google.com with SMTP id n11-v6so8486028wmc.2;
-        Fri, 17 Aug 2018 14:23:45 -0700 (PDT)
+        Fri, 17 Aug 2018 20:32:24 -0400
+Received: by mail-it0-f47.google.com with SMTP id 72-v6so13209710itw.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 14:27:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=sfWb3jqRe3NudcSY6Gq6qwsSrrJaCFNdrRUWVZgmJLU=;
-        b=lTzMZVIk7Nuvv9M8+g1UJyaRcJCelF48atz/zN4jw31QF4ifB0YMUngadhy5v71zTR
-         DmqzCrPPqiwP3q9/LBhxosa5n/u2CbCFgoa45TPrHpYXBi/9XZqBC2vwCNELHxcGXy3k
-         BjeaO2+UQwOOFLZjpaKTW5OCBqwUgeVEDMiQqkNSKJEnhHl/QXQlm/82Uwe1nniirmWn
-         hxGAMCHmCu5kRQAY3QV62bmdHFReXHcj8Q+0u3W9CL+4UzrL4hzpdC6ko8Qn5Ld497kr
-         N9MidK0TisPvzwAthle558TaIa129Jqb829EWgOmuAWrT3S2A89byPzETE27Ozlvwah9
-         OOpg==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=96RUkf2/RVCHU/GurWkqgmy0IQTwvPUAge529uECmwI=;
+        b=DLRTnFqr6enNtNTu8r9mEJb/tXaZmVRsn49NaIUuIUg1MQ0bSyMQaePyR4i8InN/N8
+         B32/BlGCGa0P1CHbyShwS62RzdJuAYt2h6ZhBIcgK2TeB/yQalftfzafNp4ZbEnqtfIk
+         uf725i6riLIdSX5ZeoLBOO+dcdSkS4bG3qd4YSVvFVmbKI1whmbxrWaZxgQUUAKayfd/
+         5Ta2I1idNU5A75vp4ACe7cmxeFoxu6c1pN0SUOr20my/Qw8/sI27qRyD/RfI6+GBOK8D
+         9q20GdbFBww0JvirrwT7CEOcO8cOOz5Vl1WXE5u4rPVurNKkaD4Vjer1QWw/jnBHWYGj
+         cn2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sfWb3jqRe3NudcSY6Gq6qwsSrrJaCFNdrRUWVZgmJLU=;
-        b=ieKMTumUvTewZ+YQWrOyl4rBByRCJPaWOfgmMDg7d+WPL9QFxU+G0rbypwe9iPhgca
-         2eQj4tKMsCVsjbkhn7KE+wtzGiwmnraTYNiVCwaIGl+wdMPBx5A/nXtsxRGdZkbK84u+
-         T5Ha4nbIGHHBpZgvU93So68aZ9BcZZUHuomWlKt1U7ZE5J9stYXEYkiINnEGtKt6uZ7H
-         yfYbr+KPizMT8A96PGQKthlEbqdNF1x5eEGvx7GH/S75DLF34vNPxpliBSkD+gxN8MK6
-         5nhpr+4C9BPEf15uFb5kU+Qap8iEHX1bjs39LN035zahInRJW5C2JJh2g23cBaXvoKOU
-         eMvg==
-X-Gm-Message-State: AOUpUlHEje7N6y6OgBn6vtNkqy4d8O4JAYq/wvh/wn8IP3/JsLR/helW
-        wOkU99yYH5atF8xEh+rPu8s=
-X-Google-Smtp-Source: AA+uWPx/oafz4wJHKGohWyU5yKL6gOIDk6hsygg4e+AKKfBdxMGzi0Y5WuwFJucLBxPxrdwm2TZHrg==
-X-Received: by 2002:a1c:c3c4:: with SMTP id t187-v6mr21034557wmf.123.1534541024834;
-        Fri, 17 Aug 2018 14:23:44 -0700 (PDT)
-Received: from menoah.home ([2a01:cb19:190:c500:69e4:8fe8:bd57:3de2])
-        by smtp.gmail.com with ESMTPSA id f17-v6sm2088196wrs.1.2018.08.17.14.23.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 17 Aug 2018 14:23:43 -0700 (PDT)
-From:   Pierre-Jean Texier <texier.pj2@gmail.com>
-Cc:     texier.pj2@gmail.com, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: imx7s-warp: enable i2c3 device support
-Date:   Fri, 17 Aug 2018 23:23:17 +0200
-Message-Id: <1534540997-20094-1-git-send-email-texier.pj2@gmail.com>
-X-Mailer: git-send-email 2.7.4
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=96RUkf2/RVCHU/GurWkqgmy0IQTwvPUAge529uECmwI=;
+        b=QqAJ9d4bioxytUtl6sfkRKXrXmOTClIq/5lyZuhZWjl1v8cQnmuYIibOzE9FXfrLQG
+         3YHSMNIevYytvTUhWDyRnnH42dNe+xxDLmfC6rB4e9gEHkidIw402CzNpZRL9OtKJSGA
+         QTfnNOtxAMYIaxJWyOOdaI44+r6jfSEcvwf7BHNoGVE6WPSxfQr0ys7Ci3BkAoTue7R3
+         R9UCdM6xyTYlmlHE9hd7MqLRGX7sKth6mXkVDrKnv1njP4AYtRbLtxESqT+NB/xpCIkI
+         7EZVikSKvUjemkew5I66ISn4pvkdZA65iEoVG5lGRK+NfWxV4JN3kciYj4xA0D8gHb0V
+         /1VQ==
+X-Gm-Message-State: AOUpUlG6+uvwk6htsxBZcIMeNLE44/rgsLM3EBPO63bTPXRtTdcgdVkd
+        iPuwokAGo+5b6WL3rUgt3VmMpA==
+X-Google-Smtp-Source: AA+uWPzmWbjmEjDy4yKh5VFuvErcSgLCMwi7/pYcsUeLk95UM9Y4VOeyv+Z4qzQxMODO9O4Xgc/LPQ==
+X-Received: by 2002:a02:2b12:: with SMTP id h18-v6mr32736112jaa.10.1534541243739;
+        Fri, 17 Aug 2018 14:27:23 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id f1-v6sm1187748ioq.10.2018.08.17.14.27.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 17 Aug 2018 14:27:23 -0700 (PDT)
+Received: from jgg by mlx with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fqmHC-0001bT-8F; Fri, 17 Aug 2018 15:27:22 -0600
+Date:   Fri, 17 Aug 2018 15:27:22 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Doug Ledford <dledford@redhat.com>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] Please pull RDMA subsystem changes
+Message-ID: <20180817212722.GB28777@ziepe.ca>
+References: <20180816215726.GA20526@ziepe.ca>
+ <CA+55aFxgT8Hipm6bDrHMZ-nmdk3KZTP=J6D5k10UHTcajXAEHA@mail.gmail.com>
+ <20180817201535.GI28676@mellanox.com>
+ <CA+55aFzcp=a2sNOVR7DTEY9dehYamXaJ1bpSfF0FZir_9MhsVg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFzcp=a2sNOVR7DTEY9dehYamXaJ1bpSfF0FZir_9MhsVg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The WaRP7 has one mikroBUS socket on the back to plug click boards.
-This patch allows to interact with some of these
-i2c modules (EEPROM, RTC and so on).
+On Fri, Aug 17, 2018 at 01:27:02PM -0700, Linus Torvalds wrote:
+> On Fri, Aug 17, 2018 at 1:15 PM Jason Gunthorpe <jgg@mellanox.com> wrote:
+> >
+> > We often have merge conflicts with RDMA, how do you prefer to get the
+> > PR? I'm actually not very clear on this part of the process.
+> 
+> I  generally prefer the non-merged version, but with comments about
+> the conflicts.
+> 
+> In fact, the really preferred model is generally to send me a
+> non-merged pull request (say "tags/for-linus") but if the conflicts
+> look even half-way nasty - or simply because you did the merge anyway
+> just to get the proper diffstat because history is complex - mention
+> that you have a merged branch for verification (say
+> "branch/for-linus-merged").
+> 
+> When I get that kind of pull request, I'll just do the merge
+> resolution myself, and after I've done it I'll generally then do
+> 
+>    git checkout -b test-merge
+>    git pull <repoaddress> for-linus-merged
+> 
+> and then just compare the end result with my resolution as an extra
+> verification step.
+> 
+> I may end up skipping the verification step if everything looks
+> entirely trivial (and really, if you have no real reason for the
+> pre-merged branch, don't bother even mentioning it even if you did it
+> for the diffstat), but in practice whenever somebody does that, I have
+> no reason not to just do that simple extra verification.
+> 
+> Most of the time the merges are exactly the same, possibly with
+> whitespace or trivial ordering differences (things like Makefiles and
+> Kconfig files often have add-add conflicts where the ordering really
+> doesn't matter between two config options).
+> 
+> And then sometimes it shows that I missed something in my mmerge.
+> 
+> And sometimes it shows that  I do so many merges that I actually ended
+> up noticing something that the submaintainer didn't.
+> 
+> So it can be uninteresting, and when it isn't uninteresting it can go
+> either way, but so far for the people who do this, I've never been in
+> the situation where I was *sorry* for the double merge and extra
+> verification step.
+> 
+> Because when mis-merges happen (they are happily pretty rare) they are
+> _so_ annoying and can be so hard to figure out later, that I'd rather
+> spend a bit more time on the merge than have a dodgy one.
 
-Signed-off-by: Pierre-Jean Texier <texier.pj2@gmail.com>
----
- arch/arm/boot/dts/imx7s-warp.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Thanks for the explanation. Doug and I will do this in future.
 
-diff --git a/arch/arm/boot/dts/imx7s-warp.dts b/arch/arm/boot/dts/imx7s-warp.dts
-index fa390da..b3d0951 100644
---- a/arch/arm/boot/dts/imx7s-warp.dts
-+++ b/arch/arm/boot/dts/imx7s-warp.dts
-@@ -216,6 +216,13 @@
- 	status = "okay";
- };
- 
-+&i2c3 {
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c3>;
-+	status = "okay";
-+};
-+
- &i2c4 {
- 	clock-frequency = <100000>;
- 	pinctrl-names = "default";
-@@ -346,6 +353,13 @@
- 		>;
- 	};
- 
-+	pinctrl_i2c3: i2c3grp {
-+		fsl,pins = <
-+			MX7D_PAD_I2C3_SDA__I2C3_SDA	0x4000007f
-+			MX7D_PAD_I2C3_SCL__I2C3_SCL	0x4000007f
-+		>;
-+	};
-+
- 	pinctrl_i2c4: i2c4grp {
- 		fsl,pins = <
- 			MX7D_PAD_I2C4_SCL__I2C4_SCL	0x4000007f
--- 
-2.7.4
-
+Jason
