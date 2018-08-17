@@ -2,109 +2,107 @@ Return-Path: <SRS0=dgVt=LA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C7AC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5FEEC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:19:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24A1221473
-	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:18:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24A1221473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 7B25A2146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 17 Aug 2018 08:19:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B25A2146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726737AbeHQLVX (ORCPT
+        id S1726766AbeHQLWR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 07:21:23 -0400
-Received: from mail-wr1-f52.google.com ([209.85.221.52]:41432 "EHLO
-        mail-wr1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbeHQLVX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 07:21:23 -0400
-Received: by mail-wr1-f52.google.com with SMTP id j5-v6so6344120wrr.8
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 01:18:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=h2/EyHCBjvSgoAA8rSu4LMziSKWtsd85lo6X3gAjej4=;
-        b=KJLqIoZwEpnyF1SkE06hsi/eEIXALRzn4mSMhvjSFPP7Wnq6FusVgOgwj7MJzG7EF7
-         j0BpfNltA5pQ6QBGN8ArnuZW/9Caw3rLMdKP7Vw+DUyTm97f4wO1A+A6al/jDJjcrIIw
-         78tvUtWuSqJNmwsrJfZQ5iBPt9KoIJom2sUCa59uOmMMD/OWLhiQkWHzyfxfLrkL68bs
-         Nc2T+ETWFf9Vsc1makslH1pGHJPOlhce2grAjhYRG2NZYzUPhSRO/seIMoPBzEfgAJ5Q
-         ZtPHMTpx0BwfDpbg/7Thq7/FMUvuucZj7l/OmLoNr/7t1TWraEGGcYn4jw391swBDSS6
-         mINg==
-X-Gm-Message-State: AOUpUlFltvJ8Kg5xbI99/ZpFHbakfeSE2wZk0pOQD4mu1vFAYRimYvH4
-        QtGZOoT5aPA3Z4X9QPRZ70I=
-X-Google-Smtp-Source: AA+uWPxZEAsWMN4RMCuLeLd9j6+5WUR9jpIuvtHadXHY3mjWx2hxdeJanSjSvWyT7eBZTQm+D4ZOPw==
-X-Received: by 2002:adf:f906:: with SMTP id b6-v6mr18213012wrr.28.1534493935451;
-        Fri, 17 Aug 2018 01:18:55 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id y5-v6sm4012014wrd.5.2018.08.17.01.18.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 Aug 2018 01:18:54 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id E0F1012492E; Fri, 17 Aug 2018 10:18:53 +0200 (CEST)
-Date:   Fri, 17 Aug 2018 10:18:53 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Jia He <jia.he@hxt-semitech.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Petr Tesarik <ptesarik@suse.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Baoquan He <bhe@redhat.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v1 5/5] mm/memory_hotplug: print only with DEBUG_VM in
- online/offline_pages()
-Message-ID: <20180817081853.GB17638@techadventures.net>
-References: <20180816100628.26428-1-david@redhat.com>
- <20180816100628.26428-6-david@redhat.com>
+        Fri, 17 Aug 2018 07:22:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49004 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726570AbeHQLWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Aug 2018 07:22:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id ADD0BAD6A;
+        Fri, 17 Aug 2018 08:19:48 +0000 (UTC)
+Date:   Fri, 17 Aug 2018 10:19:47 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Prarit Bhargava <prarit@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Mark Salter <msalter@redhat.com>,
+        Al Stone <ahs3@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        x86@kernel.org, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2] console: Add console=auto option
+Message-ID: <20180817081947.m425gok2ugt7tglp@pathway.suse.cz>
+References: <728a8e68-ea4b-4040-a0fc-217df4f1928d@redhat.com>
+ <20180816173902.18971-1-prarit@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180816100628.26428-6-david@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180816173902.18971-1-prarit@redhat.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->  failed_addition:
-> +#ifdef CONFIG_DEBUG_VM
->  	pr_debug("online_pages [mem %#010llx-%#010llx] failed\n",
->  		 (unsigned long long) pfn << PAGE_SHIFT,
->  		 (((unsigned long long) pfn + nr_pages) << PAGE_SHIFT) - 1);
-> +#endif
+On Thu 2018-08-16 13:39:01, Prarit Bhargava wrote:
+> ACPI may contain an SPCR table that defines a default system console.
+> On ARM if the table is present then the SPCR console is enabled by default.
+> On x86 the SPCR console is used if 'earlycon' (no parameters) is
+> specified as a kernel parameter and is used only as the early console.
+> To use the SPCR data as a console a user must boot with 'earlycon',
+> grep logs & specify a console= kernel parameter, and then reboot again.
+> 
+> Add 'console=auto' that enables a firmware or hardware console, and on
+> x86 enable the SPCR console if 'console=auto' is specified.
 
-I have never been sure about this.
-IMO, if I fail to online pages, I want to know I failed.
-I think that pr_err would be better than pr_debug and without CONFIG_DEBUG_VM.
+I basically like the idea. Just one or two nits below.
 
-But at least, if not, envolve it with a CONFIG_DEBUG_VM, but change pr_debug to pr_info.
 
-> +#ifdef CONFIG_DEBUG_VM
->  	pr_debug("memory offlining [mem %#010llx-%#010llx] failed\n",
->  		 (unsigned long long) start_pfn << PAGE_SHIFT,
->  		 ((unsigned long long) end_pfn << PAGE_SHIFT) - 1);
-> +#endif
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index a32f2a126791..dd057224f33b 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -635,6 +635,7 @@
+>  
+>  		hvc<n>	Use the hypervisor console device <n>. This is for
+>  			both Xen and PowerPC hypervisors.
+> +		auto	[X86] Enable ACPI SPCR console
 
-Same goes here.
+The "auto" option sounds reasonable. But earlycon does exactly this
+when used without no extra options. I prefer to stay consistent
+with the existing earlycon behavior.
 
-Thanks
--- 
-Oscar Salvador
-SUSE L3
+
+>  		If the device connected to the port is not a TTY but a braille
+>  		device, prepend "brl," before the device type, for instance
+> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+> index 3b20607d581b..fb2616ba3b21 100644
+> --- a/arch/x86/kernel/acpi/boot.c
+> +++ b/arch/x86/kernel/acpi/boot.c
+> @@ -1771,3 +1771,8 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
+>  	e820__range_add(addr, size, E820_TYPE_ACPI);
+>  	e820__update_table_print();
+>  }
+> +
+> +void __init arch_console_setup(void)
+> +{
+> +	acpi_parse_spcr(false, true);
+
+Just for record. I was curious that this might be called twice
+(also from acpi_boot_init(). But it looks safe after all.
+
+The trick is in the two bool parameters. One call allows to
+register/enable earlycon and ignores normal console. This other
+call does exactly the opposite. I do not see any unwanted side
+effects.
+
+Best Regards,
+Petr
