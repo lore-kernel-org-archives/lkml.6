@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1730C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 12:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0EDC4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 12:00:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A790218A8
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 12:00:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A790218A8
+	by mail.kernel.org (Postfix) with ESMTP id 31D0B218A8
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 12:00:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31D0B218A8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbeHRPIO (ORCPT
+        id S1726856AbeHRPIR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 11:08:14 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:47345 "EHLO
+        Sat, 18 Aug 2018 11:08:17 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:55465 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbeHRPIO (ORCPT
+        with ESMTP id S1726272AbeHRPIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 11:08:14 -0400
+        Sat, 18 Aug 2018 11:08:16 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7IC0NW31292024
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7IBxMKW1291783
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 18 Aug 2018 05:00:23 -0700
+        Sat, 18 Aug 2018 04:59:22 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7IC0MXY1292021;
-        Sat, 18 Aug 2018 05:00:22 -0700
-Date:   Sat, 18 Aug 2018 05:00:22 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7IBxL6g1291780;
+        Sat, 18 Aug 2018 04:59:21 -0700
+Date:   Sat, 18 Aug 2018 04:59:21 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-6855dc41b24619c3d1de3dbd27dd0546b0e45272@git.kernel.org>
-Cc:     adrian.hunter@intel.com, acme@redhat.com, mingo@kernel.org,
-        jolsa@redhat.com, alexander.shishkin@linux.intel.com,
+Message-ID: <tip-b96679422007c3fa04625be14977904c27c722eb@git.kernel.org>
+Cc:     luto@kernel.org, jolsa@redhat.com, peterz@infradead.org,
+        rostedt@goodmis.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
+        tglx@linutronix.de, alexander.shishkin@linux.intel.com,
         joro@8bytes.org, ak@linux.intel.com, hpa@zytor.com,
-        luto@kernel.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, dave.hansen@linux.intel.com,
-        tglx@linutronix.de
-Reply-To: adrian.hunter@intel.com, jolsa@redhat.com, mingo@kernel.org,
-          acme@redhat.com, alexander.shishkin@linux.intel.com,
-          joro@8bytes.org, ak@linux.intel.com, hpa@zytor.com,
-          luto@kernel.org, linux-kernel@vger.kernel.org,
-          peterz@infradead.org, tglx@linutronix.de,
-          dave.hansen@linux.intel.com
-In-Reply-To: <1528289651-4113-4-git-send-email-adrian.hunter@intel.com>
-References: <1528289651-4113-4-git-send-email-adrian.hunter@intel.com>
+        acme@redhat.com, adrian.hunter@intel.com
+Reply-To: acme@redhat.com, hpa@zytor.com, joro@8bytes.org,
+          ak@linux.intel.com, adrian.hunter@intel.com,
+          dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, alexander.shishkin@linux.intel.com,
+          rostedt@goodmis.org, mingo@kernel.org, luto@kernel.org,
+          peterz@infradead.org, jolsa@redhat.com
+In-Reply-To: <1528289651-4113-2-git-send-email-adrian.hunter@intel.com>
+References: <1528289651-4113-2-git-send-email-adrian.hunter@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] x86: Add entry trampolines to kcore
-Git-Commit-ID: 6855dc41b24619c3d1de3dbd27dd0546b0e45272
+Subject: [tip:perf/urgent] kallsyms: Simplify update_iter_mod()
+Git-Commit-ID: b96679422007c3fa04625be14977904c27c722eb
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,76 +64,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6855dc41b24619c3d1de3dbd27dd0546b0e45272
-Gitweb:     https://git.kernel.org/tip/6855dc41b24619c3d1de3dbd27dd0546b0e45272
+Commit-ID:  b96679422007c3fa04625be14977904c27c722eb
+Gitweb:     https://git.kernel.org/tip/b96679422007c3fa04625be14977904c27c722eb
 Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Wed, 6 Jun 2018 15:54:11 +0300
+AuthorDate: Wed, 6 Jun 2018 15:54:09 +0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 14 Aug 2018 19:13:26 -0300
+CommitDate: Tue, 14 Aug 2018 19:10:23 -0300
 
-x86: Add entry trampolines to kcore
+kallsyms: Simplify update_iter_mod()
 
-Without program headers for PTI entry trampoline pages, the trampoline
-virtual addresses do not map to anything.
+The logic in update_iter_mod() is overcomplicated and gets worse every
+time another get_ksymbol_* function is added.
 
-Example before:
-
- sudo gdb --quiet vmlinux /proc/kcore
- Reading symbols from vmlinux...done.
- [New process 1]
- Core was generated by `BOOT_IMAGE=/boot/vmlinuz-4.16.0 root=UUID=a6096b83-b763-4101-807e-f33daff63233'.
- #0  0x0000000000000000 in irq_stack_union ()
- (gdb) x /21ib 0xfffffe0000006000
-    0xfffffe0000006000:  Cannot access memory at address 0xfffffe0000006000
- (gdb) quit
-
-After:
-
- sudo gdb --quiet vmlinux /proc/kcore
- [sudo] password for ahunter:
- Reading symbols from vmlinux...done.
- [New process 1]
- Core was generated by `BOOT_IMAGE=/boot/vmlinuz-4.16.0-fix-4-00005-gd6e65a8b4072 root=UUID=a6096b83-b7'.
- #0  0x0000000000000000 in irq_stack_union ()
- (gdb) x /21ib 0xfffffe0000006000
-    0xfffffe0000006000:  swapgs
-    0xfffffe0000006003:  mov    %rsp,-0x3e12(%rip)        # 0xfffffe00000021f8
-    0xfffffe000000600a:  xchg   %ax,%ax
-    0xfffffe000000600c:  mov    %cr3,%rsp
-    0xfffffe000000600f:  bts    $0x3f,%rsp
-    0xfffffe0000006014:  and    $0xffffffffffffe7ff,%rsp
-    0xfffffe000000601b:  mov    %rsp,%cr3
-    0xfffffe000000601e:  mov    -0x3019(%rip),%rsp        # 0xfffffe000000300c
-    0xfffffe0000006025:  pushq  $0x2b
-    0xfffffe0000006027:  pushq  -0x3e35(%rip)        # 0xfffffe00000021f8
-    0xfffffe000000602d:  push   %r11
-    0xfffffe000000602f:  pushq  $0x33
-    0xfffffe0000006031:  push   %rcx
-    0xfffffe0000006032:  push   %rdi
-    0xfffffe0000006033:  mov    $0xffffffff91a00010,%rdi
-    0xfffffe000000603a:  callq  0xfffffe0000006046
-    0xfffffe000000603f:  pause
-    0xfffffe0000006041:  lfence
-    0xfffffe0000006044:  jmp    0xfffffe000000603f
-    0xfffffe0000006046:  mov    %rdi,(%rsp)
-    0xfffffe000000604a:  retq
- (gdb) quit
-
-In addition, entry trampolines all map to the same page.  Represent that
-by giving the corresponding program headers in kcore the same offset.
-
-This has the benefit that, when perf tools uses /proc/kcore as a source
-for kernel object code, samples from different CPU trampolines are
-aggregated together.  Note, such aggregation is normal for profiling
-i.e. people want to profile the object code, not every different virtual
-address the object code might be mapped to (across different processes
-for example).
-
-Notes by PeterZ:
-
-This also adds the KCORE_REMAP functionality.
+In preparation for adding another get_ksymbol_* function, simplify logic
+in update_iter_mod().
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Tested-by: (ftrace changes only) Steven Rostedt (VMware) <rostedt@goodmis.org>
 Acked-by: Andi Kleen <ak@linux.intel.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -144,105 +91,52 @@ Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Joerg Roedel <joro@8bytes.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: x86@kernel.org
-Link: http://lkml.kernel.org/r/1528289651-4113-4-git-send-email-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/1528289651-4113-2-git-send-email-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- arch/x86/mm/cpu_entry_area.c | 10 ++++++++++
- fs/proc/kcore.c              |  7 +++++--
- include/linux/kcore.h        | 13 +++++++++++++
- 3 files changed, 28 insertions(+), 2 deletions(-)
+ kernel/kallsyms.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/mm/cpu_entry_area.c b/arch/x86/mm/cpu_entry_area.c
-index fab49fd5190f..076ebdce9bd4 100644
---- a/arch/x86/mm/cpu_entry_area.c
-+++ b/arch/x86/mm/cpu_entry_area.c
-@@ -3,6 +3,7 @@
- #include <linux/spinlock.h>
- #include <linux/percpu.h>
- #include <linux/kallsyms.h>
-+#include <linux/kcore.h>
- 
- #include <asm/cpu_entry_area.h>
- #include <asm/pgtable.h>
-@@ -14,6 +15,7 @@ static DEFINE_PER_CPU_PAGE_ALIGNED(struct entry_stack_page, entry_stack_storage)
- #ifdef CONFIG_X86_64
- static DEFINE_PER_CPU_PAGE_ALIGNED(char, exception_stacks
- 	[(N_EXCEPTION_STACKS - 1) * EXCEPTION_STKSZ + DEBUG_STKSZ]);
-+static DEFINE_PER_CPU(struct kcore_list, kcore_entry_trampoline);
- #endif
- 
- struct cpu_entry_area *get_cpu_entry_area(int cpu)
-@@ -147,6 +149,14 @@ static void __init setup_cpu_entry_area(int cpu)
- 
- 	cea_set_pte(&get_cpu_entry_area(cpu)->entry_trampoline,
- 		     __pa_symbol(_entry_trampoline), PAGE_KERNEL_RX);
-+	/*
-+	 * The cpu_entry_area alias addresses are not in the kernel binary
-+	 * so they do not show up in /proc/kcore normally.  This adds entries
-+	 * for them manually.
-+	 */
-+	kclist_add_remap(&per_cpu(kcore_entry_trampoline, cpu),
-+			 _entry_trampoline,
-+			 &get_cpu_entry_area(cpu)->entry_trampoline, PAGE_SIZE);
- #endif
- 	percpu_setup_debug_store(cpu);
+diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+index a23e21ada81b..aa31aa07f2ef 100644
+--- a/kernel/kallsyms.c
++++ b/kernel/kallsyms.c
+@@ -506,27 +506,24 @@ static void reset_iter(struct kallsym_iter *iter, loff_t new_pos)
+ 	}
  }
-diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index e64ecb9f2720..00282f134336 100644
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -383,8 +383,11 @@ static void elf_kcore_store_hdr(char *bufp, int nphdr, int dataoff)
- 		phdr->p_type	= PT_LOAD;
- 		phdr->p_flags	= PF_R|PF_W|PF_X;
- 		phdr->p_offset	= kc_vaddr_to_offset(m->addr) + dataoff;
--		phdr->p_vaddr	= (size_t)m->addr;
--		if (m->type == KCORE_RAM || m->type == KCORE_TEXT)
-+		if (m->type == KCORE_REMAP)
-+			phdr->p_vaddr	= (size_t)m->vaddr;
-+		else
-+			phdr->p_vaddr	= (size_t)m->addr;
-+		if (m->type == KCORE_RAM || m->type == KCORE_TEXT || m->type == KCORE_REMAP)
- 			phdr->p_paddr	= __pa(m->addr);
- 		else
- 			phdr->p_paddr	= (elf_addr_t)-1;
-diff --git a/include/linux/kcore.h b/include/linux/kcore.h
-index 8de55e4b5ee9..bc088ef96358 100644
---- a/include/linux/kcore.h
-+++ b/include/linux/kcore.h
-@@ -12,11 +12,13 @@ enum kcore_type {
- 	KCORE_VMEMMAP,
- 	KCORE_USER,
- 	KCORE_OTHER,
-+	KCORE_REMAP,
- };
  
- struct kcore_list {
- 	struct list_head list;
- 	unsigned long addr;
-+	unsigned long vaddr;
- 	size_t size;
- 	int type;
- };
-@@ -36,11 +38,22 @@ struct vmcoredd_node {
- 
- #ifdef CONFIG_PROC_KCORE
- extern void kclist_add(struct kcore_list *, void *, size_t, int type);
-+static inline
-+void kclist_add_remap(struct kcore_list *m, void *addr, void *vaddr, size_t sz)
-+{
-+	m->vaddr = (unsigned long)vaddr;
-+	kclist_add(m, addr, sz, KCORE_REMAP);
-+}
- #else
- static inline
- void kclist_add(struct kcore_list *new, void *addr, size_t size, int type)
++/*
++ * The end position (last + 1) of each additional kallsyms section is recorded
++ * in iter->pos_..._end as each section is added, and so can be used to
++ * determine which get_ksymbol_...() function to call next.
++ */
+ static int update_iter_mod(struct kallsym_iter *iter, loff_t pos)
  {
- }
-+
-+static inline
-+void kclist_add_remap(struct kcore_list *m, void *addr, void *vaddr, size_t sz)
-+{
-+}
- #endif
+ 	iter->pos = pos;
  
- #endif /* _LINUX_KCORE_H */
+-	if (iter->pos_ftrace_mod_end > 0 &&
+-	    iter->pos_ftrace_mod_end < iter->pos)
+-		return get_ksymbol_bpf(iter);
+-
+-	if (iter->pos_mod_end > 0 &&
+-	    iter->pos_mod_end < iter->pos) {
+-		if (!get_ksymbol_ftrace_mod(iter))
+-			return get_ksymbol_bpf(iter);
++	if ((!iter->pos_mod_end || iter->pos_mod_end > pos) &&
++	    get_ksymbol_mod(iter))
+ 		return 1;
+-	}
+ 
+-	if (!get_ksymbol_mod(iter)) {
+-		if (!get_ksymbol_ftrace_mod(iter))
+-			return get_ksymbol_bpf(iter);
+-	}
++	if ((!iter->pos_ftrace_mod_end || iter->pos_ftrace_mod_end > pos) &&
++	    get_ksymbol_ftrace_mod(iter))
++		return 1;
+ 
+-	return 1;
++	return get_ksymbol_bpf(iter);
+ }
+ 
+ /* Returns false if pos at or past end of file. */
