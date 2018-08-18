@@ -3,231 +3,100 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E33B1C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 08:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E39C4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 08:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8376E217A6
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 08:14:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4157B21581
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 08:37:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="a3NaKP7f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8376E217A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ur0OL4E+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4157B21581
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726389AbeHRLUv (ORCPT
+        id S1726388AbeHRLoW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 07:20:51 -0400
-Received: from mail-wr1-f49.google.com ([209.85.221.49]:41087 "EHLO
-        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbeHRLUu (ORCPT
+        Sat, 18 Aug 2018 07:44:22 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33814 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbeHRLoW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 07:20:50 -0400
-Received: by mail-wr1-f49.google.com with SMTP id z96-v6so234812wrb.8
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Aug 2018 01:14:01 -0700 (PDT)
+        Sat, 18 Aug 2018 07:44:22 -0400
+Received: by mail-lj1-f196.google.com with SMTP id f8-v6so8092980ljk.1;
+        Sat, 18 Aug 2018 01:37:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=Tot/1pyhPv1YvMZIdNlMNI0AWPgseo3Nfj04IhB98k4=;
-        b=a3NaKP7fU0u0AdJ2eUVP4LJUQWIOeB4teV/20rZ9bVPcBAisj5brMjzJrbcxXD5/L2
-         1xW9/KfbKPLfSFRoi7i+ycxvjUX+W1JsivDrkM+4x+DpaIGZqS1WMfF33x3+MoSu9+/o
-         IgU2O7hCWSrrA573Y2juXAbuOA0h06XumVqME=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rOmliarxb5K2sWe6ilv9hzTwybhTm96ipEQZC4s3Bxw=;
+        b=ur0OL4E+VBBadMT3Rq0qnygbgJwfVYk4w6D0XOvOZ/yXHlS80J15wW0AyZOTtLRQt5
+         6r23F9JZ9KUkRk4vn4brb2XZP/b2ElfbT/wDI+MulROVTz4sYSV5osT59blXUqHG1Tlm
+         sZfWWdhWHD2gBpDfrueMr3WPh7b0A+Cm70OGEGZShh9CIBKgLVqPDjvXpfi39qRlkk6I
+         F0t+QK1Rq3qE4u3bMSEV2PMqLFgOPVEphuMjxBOl3V1VHlH7tmmm0oCwef3jwwf30UJP
+         VKdBosRqFQ6ZLz7cqSpuvqOa5qVkbsKw985FvlcRwLsq9ZRqLohKna5M1YLHFz08BiIj
+         W+WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=Tot/1pyhPv1YvMZIdNlMNI0AWPgseo3Nfj04IhB98k4=;
-        b=przDxmTRvb6ijrvSJM6mC+OF5Dw9a+YveDnS7B3HpSh5tQ4zOuqd75D5GnbE7M+y6v
-         Cj/BpJuZU40401JKlKJgfNywmGZxGktSoqtA+mnVHmAui9uXbqKt/jwtmPR5g1V7q/jw
-         YDojeiDobAAHW8CpLZqOpeIs4tqFwF38LjZ7jxskTPaLVCAFlf0TT3jJJ3+deT8r5WQc
-         s/aXQRSO/9lfDUlYntC1VigVz26XHFySoSV31kaAqxmJdrpf8JLWue175UxOehWTeKRt
-         mja0Ppv2WofUuqfuQfTWyJCibq3/kiRgDSmqD6H8bm1noQwe7221GfjwGKabJZSOr2us
-         6DPA==
-X-Gm-Message-State: APzg51CKBRplteriUGiKTE7KPtkk7HsKQTWhJmo70uY0/Tj4iwT2tgNQ
-        LXhaa6FlssrVq7WpQXXcWYM+vw==
-X-Google-Smtp-Source: ANB0Vdbs9X+KpBUxF3SwtCwOAf05GdtXY2aBGiz8UQNWsQCrcoxuJbhQ10KoqLE6tHW9EyNM/VJIZg==
-X-Received: by 2002:adf:82b4:: with SMTP id 49-v6mr3533825wrc.252.1534580040829;
-        Sat, 18 Aug 2018 01:14:00 -0700 (PDT)
-Received: from [192.168.2.3] (ppp079166178117.access.hol.gr. [79.166.178.117])
-        by smtp.gmail.com with ESMTPSA id j8-v6sm3038286wrn.50.2018.08.18.01.13.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 18 Aug 2018 01:13:59 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v1 2/3] zinc: Introduce minimal cryptography library
-Date:   Sat, 18 Aug 2018 11:13:28 +0300
-Message-Id: <47A76A96-3B58-4A42-B55A-5D1D6068CEE4@linaro.org>
-References: <20180801072246.GA15677@sol.localdomain> <CAHmME9pbwj0RaX4YM9epGOSgDRNUt=GA4UzO_iKcW=Md7kG6JQ@mail.gmail.com> <20180814211229.GB24575@gmail.com> <20180815162819.22765.qmail@cr.yp.to> <20180815195732.GA79500@gmail.com> <20180816042454.15529.qmail@cr.yp.to> <20180816194620.GA185651@gmail.com> <20180817073120.12640.qmail@cr.yp.to>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Tanja Lange <tanja@hyperelliptic.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Karthikeyan Bhargavan <karthik.bhargavan@gmail.com>
-In-Reply-To: <20180817073120.12640.qmail@cr.yp.to>
-To:     "D. J. Bernstein" <djb@cr.yp.to>
-X-Mailer: iPhone Mail (15F79)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rOmliarxb5K2sWe6ilv9hzTwybhTm96ipEQZC4s3Bxw=;
+        b=LUAJlxi/aCgdufOu0KRIOeF1dq4fR/bXMU6huxMbYi1wROpLs7UET/IFTvdaKJA7zm
+         kr2ydom3WKO3OjBX7E4g/KMOSu/VckFYDM3V83ll4Y/Pfdyo5fKpHm6FJsbLHQySys1k
+         U6LsxLYGrFwGG2mrSdt/u8e0D2x5gu7/d9RxRZ4hPREM6sJgltb9J1M7ppKRsWG01ra9
+         iuQaggmhS97c6qx9jUwkpOGSe5Qv49C5mn8Abox2FbA3Jf+py93LQypqP5cVb8snLgSJ
+         y7nMvsY51poX5ZrEAoJzUtkeiw/cEmXY3MHiueOKRn1zVeYtbhjLq7ggkzPGBRNUf7rC
+         30FQ==
+X-Gm-Message-State: AOUpUlFX4pyRqp5BTNS4/BOCL51rigWcqKFYmVkezJXo5WEe02HtlU6/
+        di8Espnjrf/TxIbvWNZaLPgKUFWn42sf4Pc6O/Y=
+X-Google-Smtp-Source: AA+uWPxea4KKNZ9TdgLFS1Sbuswtx0qRxH3F7rNZaFfl/674DqUgmpAfxELJAKOEhjPvn5wOkGgv9TCYmxHck+5h+sc=
+X-Received: by 2002:a2e:990b:: with SMTP id v11-v6mr25700095lji.87.1534581449406;
+ Sat, 18 Aug 2018 01:37:29 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180808071421.32707-1-simon.k.r.goldschmidt@gmail.com>
+ <20180817070105.1725-1-simon.k.r.goldschmidt@gmail.com> <1534523550.2283.397.camel@impinj.com>
+In-Reply-To: <1534523550.2283.397.camel@impinj.com>
+From:   Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+Date:   Sat, 18 Aug 2018 10:37:01 +0200
+Message-ID: <CAAh8qszwWsSTPhK_aLziy8px9hOyixGN50m6YMA_5Rb2w23zaw@mail.gmail.com>
+Subject: Re: [PATCH v2] spi: dw: support 4-16 bits per word
+To:     tpiepho@impinj.com
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Aug 17, 2018 at 6:32 PM Trent Piepho <tpiepho@impinj.com> wrote:
+>
+> On Fri, 2018-08-17 at 09:01 +0200, Simon Goldschmidt wrote:
+> > The spi-dw driver currently only supports 8 or 16 bits per word.
+> >
+> > Since the hardware supports 4-16 bits per word, adapt the driver
+> > to also support this.
+> >
+> >
+>
+> > @@ -307,15 +307,13 @@ static int dw_spi_transfer_one(struct spi_controller *master,
+> > +
+> > +     if ((transfer->bits_per_word < 4) || (transfer->bits_per_word > 16))
+> >               return -EINVAL;
+> > -     }
+>
+> You don't need this check as the spi core validates the transfer
+> against master->bits_per_word_mask.
 
+Ok.
 
-> On 17 Aug 2018, at 10:31, D. J. Bernstein <djb@cr.yp.to> wrote:
->=20
-> Eric Biggers writes:
->> If (more likely) you're talking about things like "use this NEON implemen=
-tation
->> on Cortex-A7 but this other NEON implementation on Cortex-A53", it's up t=
-he
->> developers and community to test different CPUs and make appropriate deci=
-sions,
->> and yes it can be very useful to have external benchmarks like SUPERCOP t=
-o refer
->> to, and I appreciate your work in that area.
->=20
-> You seem to be talking about a process that selects (e.g.) ChaCha20
-> implementations as follows: manually inspect benchmarks of various
-> implementations on various CPUs, manually write code to map CPUs to
-> implementations, manually update the code as necessary for new CPUs, and
-> of course manually do the same for every other primitive that can see
-> differences between microarchitectures (which isn't something weird---
-> it's the normal situation after enough optimization effort).
->=20
-> This is quite a bit of manual work, so the kernel often doesn't do it,
-> so we end up with unhappy people talking about performance regressions.
->=20
-> For comparison, imagine one simple central piece of code in the kernel
-> to automatically do the following:
->=20
->   When a CPU core is booted:
->     For each primitive:
->       Benchmark all implementations of the primitive on the core.
->       Select the fastest for subsequent use on the core.
->=20
-> If this is a general-purpose mechanism (as in SUPERCOP, NaCl, and
-> libpqcrypto) rather than something ad-hoc (as in raid6), then there's no
-> manual work per primitive, and no work per implementation. Each CPU, old
-> or new, automatically obtains the fastest available code for that CPU.
->=20
-> The only cost is a moment of benchmarking at boot time. _If_ this is a
-> noticeable cost then there are many ways to speed it up: for example,
-> automatically copy the results across identical cores, automatically
-> copy the results across boots if the cores are unchanged, automatically
-> copy results from a central database indexed by CPU identifiers, etc.
-> The SUPERCOP database is evolving towards enabling this type of sharing.
->=20
-
-=E2=80=98Fastest=E2=80=99 does not imply =E2=80=98preferred=E2=80=99. For in=
-stance, running the table based cache thrashing generic AES implementation m=
-ay be fast, but may put a disproportionate load on, e.g., a hyperthreading s=
-ystem, and as you have pointed out yourself, it is time variant as well. The=
-n, there is the power consumption aspect: NEON bit sliced AES may be faster,=
- but does a lot more work, and does it on the SIMD unit which could potentia=
-lly be turned off entirely otherwise. Only the implementations based on h/w i=
-nstructions can generally be assumed optimal in all senses, and there is no r=
-eal point in benchmarking those against pure software implementations.
-
-Then, there is the aspect of accelerators: the kernel=E2=80=99s crypto API s=
-eamlessly supports crypto peripherals, which may be slower or faster, have m=
-ore or fewer queues than the number of CPUs, may offer additional benefits s=
-uch as protected AES keys etc etc.
-
-In the linux kernel, we generally try to stay away from policy decisions, an=
-d offer the controls to allow userland to take charge of this. The modulariz=
-ed crypto code can be blacklisted per algo implementation if desired, and be=
-yond that, we simply try to offer functionality that covers the common case.=
-
-
->> A lot of code can be shared, but in practice different environments have
->> different constraints, and kernel programming in particular has some dist=
-inct
->> differences from userspace programming.  For example, you cannot just use=
- the
->> FPU (including SSE, AVX, NEON, etc.) registers whenever you want to, sinc=
-e on
->> most architectures they can't be used in some contexts such as hardirq co=
-ntext,
->> and even when they *can* be used you have to run special code before and a=
-fter
->> which does things like saving all the FPU registers to the task_struct,
->> disabling preemption, and/or enabling the FPU.
->=20
-> Is there some reason that each implementor is being pestered to handle
-> all this? Detecting FPU usage is a simple static-analysis exercise, and
-> the rest sounds like straightforward boilerplate that should be handled
-> centrally.
->=20
-
-Detecting it is easy but that does not mean that you can use SIMD in any con=
-text, and whether a certain function may ever be called from such a context c=
-annot be decided by static analysis. Also, there are performance and latency=
- concerns which need to be taken into account.
-
-In the kernel, we simply cannot write our algorithm as if our code is the on=
-ly thing running on the system.
-
->> But disabling preemption for
->> long periods of time hurts responsiveness, so it's also desirable to yiel=
-d the
->> processor occasionally, which means that assembly implementations should b=
-e
->> incremental rather than having a single entry point that does everything.=
-
->=20
-> Doing this rewrite automatically is a bit more of a code-analysis
-> challenge, but the alternative approach of doing it by hand is insanely
-> error-prone. See, e.g., https://eprint.iacr.org/2017/891.
->=20
->> Many people may have contributed to SUPERCOP already, but that doesn't me=
-an
->> there aren't things you could do to make it more appealing to contributor=
-s and
->> more of a community project,
->=20
-> The logic in this sentence is impeccable, and is already illustrated by
-> many SUPERCOP improvements through the years from an increasing number
-> of contributors, as summarized in the 87 release announcements so far on
-> the relevant public mailing list, which you're welcome to study in
-> detail along with the 400 megabytes of current code and as many previous
-> versions as you're interested in. That's also the mailing list where
-> people are told to send patches, as you'll see if you RTFM.
->=20
->> So Linux distributions may not want to take on the legal risk of
->> distributing it
->=20
-> This is a puzzling comment. A moment ago we were talking about the
-> possibility of useful sharing of (e.g.) ChaCha20 implementations between
-> SUPERCOP and the Linux kernel, avoiding pointless fracturing of the
-> community's development process for these implementations. This doesn't
-> mean that the kernel should be grabbing implementations willy-nilly from
-> SUPERCOP---surely the kernel should be doing security audits, and the
-> kernel already has various coding requirements, and the kernel requires
-> GPL compatibility, while putting any of these requirements into SUPERCOP
-> would be counterproductive.
->=20
-> If you mean having the entire SUPERCOP benchmarking package distributed
-> through Linux distributions, I have no idea what your motivation is or
-> how this is supposed to be connected to anything else we're discussing.
-> Obviously SUPERCOP's broad code-inclusion policies make this idea a
-> non-starter.
->=20
->> nor may companies want to take on the risk of contributing.
->=20
-> RTFM. People who submit code are authorizing public redistribution for
-> benchmarking. It's up to them to decide if they want to allow more.
->=20
-> ---Dan
+>
+> >       master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP;
+> > -     master->bits_per_word_mask = SPI_BPW_MASK(8) | SPI_BPW_MASK(16);
+> > +     master->bits_per_word_mask =  SPI_BPW_RANGE_MASK(4, 16);
+> >       master->bus_num = dws->bus_num;
+> >
