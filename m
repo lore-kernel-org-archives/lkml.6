@@ -6,49 +6,50 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A035CC4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C7FC4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:58:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64708218A8
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:57:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64708218A8
+	by mail.kernel.org (Postfix) with ESMTP id 889FF218A8
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:58:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 889FF218A8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbeHRPFF (ORCPT
+        id S1726854AbeHRPFn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 11:05:05 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45981 "EHLO
+        Sat, 18 Aug 2018 11:05:43 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59937 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbeHRPFF (ORCPT
+        with ESMTP id S1726334AbeHRPFn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 11:05:05 -0400
+        Sat, 18 Aug 2018 11:05:43 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7IBvH4n1291598
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7IBvnpJ1291648
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 18 Aug 2018 04:57:17 -0700
+        Sat, 18 Aug 2018 04:57:49 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7IBvHBP1291595;
-        Sat, 18 Aug 2018 04:57:17 -0700
-Date:   Sat, 18 Aug 2018 04:57:17 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7IBvmiV1291645;
+        Sat, 18 Aug 2018 04:57:48 -0700
+Date:   Sat, 18 Aug 2018 04:57:48 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-c9b51a017065bf514ab5a380f2fb3b0dada5bc68@git.kernel.org>
-Cc:     mingo@kernel.org, jolsa@kernel.org, alexander.kapshuk@gmail.com,
-        hpa@zytor.com, peterz@infradead.org, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
-        dsahern@gmail.com, acme@redhat.com, tglx@linutronix.de
-Reply-To: dsahern@gmail.com, linux-kernel@vger.kernel.org,
-          alexander.shishkin@linux.intel.com, acme@redhat.com,
-          tglx@linutronix.de, alexander.kapshuk@gmail.com,
-          mingo@kernel.org, jolsa@kernel.org, hpa@zytor.com,
-          namhyung@kernel.org, peterz@infradead.org
-In-Reply-To: <20180813111504.3568-2-jolsa@kernel.org>
-References: <20180813111504.3568-2-jolsa@kernel.org>
+From:   tip-bot for Kim Phillips <tipbot@zytor.com>
+Message-ID: <tip-344353366591acf659a0d0dea498611da78d67e2@git.kernel.org>
+Cc:     alexander.shishkin@linux.intel.com, gengdongjiu@huawei.com,
+        namhyung@kernel.org, jolsa@redhat.com,
+        linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
+        tglx@linutronix.de, acme@redhat.com, kim.phillips@arm.com,
+        mingo@kernel.org, hpa@zytor.com, peterz@infradead.org
+Reply-To: gengdongjiu@huawei.com, alexander.shishkin@linux.intel.com,
+          namhyung@kernel.org, adrian.hunter@intel.com, jolsa@redhat.com,
+          linux-kernel@vger.kernel.org, kim.phillips@arm.com,
+          acme@redhat.com, tglx@linutronix.de, peterz@infradead.org,
+          hpa@zytor.com, mingo@kernel.org
+In-Reply-To: <20180810174512.52900813e57cbccf18ce99a2@arm.com>
+References: <20180810174512.52900813e57cbccf18ce99a2@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf tools: Move syscall_64.tbl check into
- check-headers.sh
-Git-Commit-ID: c9b51a017065bf514ab5a380f2fb3b0dada5bc68
+Subject: [tip:perf/urgent] perf arm spe: Fix uninitialized record error
+ variable
+Git-Commit-ID: 344353366591acf659a0d0dea498611da78d67e2
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -62,79 +63,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c9b51a017065bf514ab5a380f2fb3b0dada5bc68
-Gitweb:     https://git.kernel.org/tip/c9b51a017065bf514ab5a380f2fb3b0dada5bc68
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Mon, 13 Aug 2018 13:15:04 +0200
+Commit-ID:  344353366591acf659a0d0dea498611da78d67e2
+Gitweb:     https://git.kernel.org/tip/344353366591acf659a0d0dea498611da78d67e2
+Author:     Kim Phillips <kim.phillips@arm.com>
+AuthorDate: Fri, 10 Aug 2018 17:45:12 -0500
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 14 Aug 2018 15:10:40 -0300
+CommitDate: Tue, 14 Aug 2018 15:10:44 -0300
 
-perf tools: Move syscall_64.tbl check into check-headers.sh
+perf arm spe: Fix uninitialized record error variable
 
-Probably leftover from the time we introducd the check-headers.sh script.
+The auxtrace init variable 'err' was not being initialized, leading perf
+to abort early in an SPE record command when there was no explicit
+error, rather only based whatever memory contents were on the stack.
+Initialize it explicitly on getting an SPE successfully, the same way
+cs-etm does.
 
-Committer testing:
-
-Remove the 'rseq' syscall from tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
-to fake a diff:
-
-make: Entering directory '/home/acme/git/perf/tools/perf'
-  BUILD:   Doing 'make -j4' parallel build
-Warning: Kernel ABI header at 'tools/perf/arch/x86/entry/syscalls/syscall_64.tbl' differs from latest version at 'arch/x86/entry/syscalls/syscall_64.tbl'
-diff -u tools/perf/arch/x86/entry/syscalls/syscall_64.tbl arch/x86/entry/syscalls/syscall_64.tbl
-  CC       /tmp/build/perf/util/syscalltbl.o
-  INSTALL  trace_plugins
-<SNIP>
-  $ diff -u tools/perf/arch/x86/entry/syscalls/syscall_64.tbl arch/x86/entry/syscalls/syscall_64.tbl
-  --- tools/perf/arch/x86/entry/syscalls/syscall_64.tbl	2018-08-13 15:49:50.896585176 -0300
-  +++ arch/x86/entry/syscalls/syscall_64.tbl	2018-07-20 12:04:04.536858304 -0300
-  @@ -342,6 +342,7 @@
-   331	common	pkey_free		__x64_sys_pkey_free
-   332	common	statx			__x64_sys_statx
-   333	common	io_pgetevents		__x64_sys_io_pgetevents
-  +334	common	rseq			__x64_sys_rseq
-
-  #
-  # x32-specific system call numbers start at 512 to avoid cache impact
-  $
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Kapshuk <alexander.kapshuk@gmail.com>
+Signed-off-by: Kim Phillips <kim.phillips@arm.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
+Cc: Dongjiu Geng <gengdongjiu@huawei.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180813111504.3568-2-jolsa@kernel.org
+Fixes: ffd3d18c20b8 ("perf tools: Add ARM Statistical Profiling Extensions (SPE) support")
+Link: http://lkml.kernel.org/r/20180810174512.52900813e57cbccf18ce99a2@arm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/x86/Makefile | 3 ---
- tools/perf/check-headers.sh  | 3 +++
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/arch/arm64/util/arm-spe.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/arch/x86/Makefile b/tools/perf/arch/x86/Makefile
-index 1a38e78117ce..8cc6642fce7a 100644
---- a/tools/perf/arch/x86/Makefile
-+++ b/tools/perf/arch/x86/Makefile
-@@ -19,9 +19,6 @@ systbl := $(sys)/syscalltbl.sh
- _dummy := $(shell [ -d '$(out)' ] || mkdir -p '$(out)')
+diff --git a/tools/perf/arch/arm64/util/arm-spe.c b/tools/perf/arch/arm64/util/arm-spe.c
+index 1120e39c1b00..5ccfce87e693 100644
+--- a/tools/perf/arch/arm64/util/arm-spe.c
++++ b/tools/perf/arch/arm64/util/arm-spe.c
+@@ -194,6 +194,7 @@ struct auxtrace_record *arm_spe_recording_init(int *err,
+ 	sper->itr.read_finish = arm_spe_read_finish;
+ 	sper->itr.alignment = 0;
  
- $(header): $(sys)/syscall_64.tbl $(systbl)
--	@(test -d ../../kernel -a -d ../../tools -a -d ../perf && ( \
--        (diff -B arch/x86/entry/syscalls/syscall_64.tbl ../../arch/x86/entry/syscalls/syscall_64.tbl >/dev/null) \
--        || echo "Warning: Kernel ABI header at 'tools/perf/arch/x86/entry/syscalls/syscall_64.tbl' differs from latest version at 'arch/x86/entry/syscalls/syscall_64.tbl'" >&2 )) || true
- 	$(Q)$(SHELL) '$(systbl)' $(sys)/syscall_64.tbl 'x86_64' > $@
++	*err = 0;
+ 	return &sper->itr;
+ }
  
- clean::
-diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
-index b61f8a4dfca3..466540ee8ea7 100755
---- a/tools/perf/check-headers.sh
-+++ b/tools/perf/check-headers.sh
-@@ -101,4 +101,7 @@ check arch/x86/lib/memset_64.S        '-I "^EXPORT_SYMBOL" -I "^#include <asm/ex
- check include/uapi/asm-generic/mman.h '-I "^#include <\(uapi/\)*asm-generic/mman-common.h>"'
- check include/uapi/linux/mman.h       '-I "^#include <\(uapi/\)*asm/mman.h>"'
- 
-+# diff non-symmetric files
-+check_2 tools/perf/arch/x86/entry/syscalls/syscall_64.tbl arch/x86/entry/syscalls/syscall_64.tbl
-+
- cd tools/perf
