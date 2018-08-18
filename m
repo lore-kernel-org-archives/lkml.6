@@ -2,632 +2,179 @@ Return-Path: <SRS0=Se0q=LB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 790B0C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 18:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C01B0C4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 18:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A41221746
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 18:01:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61D8B21746
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 18:11:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CJV9Tovv";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GvHt9JGl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A41221746
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="JFdm+xrw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61D8B21746
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbeHRVJq (ORCPT
+        id S1726354AbeHRVTu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 17:09:46 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34458 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726219AbeHRVJq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 17:09:46 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7F5EF61DA9; Sat, 18 Aug 2018 18:01:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1534615273;
-        bh=Y4jp/Y+na/d+xAl5MH9RGFv6ERab8sqFtowRivg4m64=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=CJV9Tovvj8k/wKNRYNW7s9lQU9IwdigtCkAdvP70/m6PoqPUeu2wqqfEj/BFMqkWL
-         0BhpGwnmWHicNjuKICAwCbGA4zWB+y1ZiTquEwLYkWXvBUurM1ocxylE2/RQMTh2N2
-         qAJ+TYrdZNPSwZ++R/hkjX3+BpfcNTX2Nu1ynVWk=
-Received: from [192.168.225.247] (unknown [49.33.163.120])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1310A61D9A;
-        Sat, 18 Aug 2018 18:01:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1534615271;
-        bh=Y4jp/Y+na/d+xAl5MH9RGFv6ERab8sqFtowRivg4m64=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=GvHt9JGlI155tvlotGjmWK58UEy6AAUv2uH0tSU7OHDTcOwOtLABDHwx5P12rnSW5
-         P/oVZFr6P/fkhHO8nKQl2xr5c8Mmowpjke36V2NKPi1kr/pGQTPOaPn55tnBNHDMo7
-         7gSCT0XXESonQQbg8E7DdEiFQpU+YUhN7EHVmC9c=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1310A61D9A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v4 0/2] clk: qcom: Add support for RCG to register for DFS
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1533952436-17221-1-git-send-email-tdas@codeaurora.org>
- <153455835372.28926.7641705907931269497@swboyd.mtv.corp.google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <693d9cf4-4a6f-feb5-0c3f-ded842bbdf0a@codeaurora.org>
-Date:   Sat, 18 Aug 2018 23:31:02 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 18 Aug 2018 17:19:50 -0400
+Received: from mail-cys01nam02on0134.outbound.protection.outlook.com ([104.47.37.134]:49386
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726265AbeHRVTt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Aug 2018 17:19:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=W4s/coGwrNva37hdnDh7+QznJCWVO4WL7qOfj5oNyjA=;
+ b=JFdm+xrw0UzJsdnbbGipBfdjfpsztU49+FFUB4nXk41hb9fN6Qv3w12MSOu+HfShWaXHk7HrPaEaa0WSi1eh/zK68w/VMYu5xZwDHpjqxp9gTFFOjd0LKPZY92wkk9ZVC/N2byAk19tUEm70XLZ24vSwCfLLN6vjLOJ90qtCzJM=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+Received: from pburton-laptop.mipstec.com (4.16.204.77) by
+ BYAPR08MB4935.namprd08.prod.outlook.com (2603:10b6:a03:6a::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1059.22; Sat, 18 Aug 2018 18:11:11 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     linux-mips@linux-mips.org
+Cc:     linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        James Hogan <jhogan@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: [PATCH v8 0/2] MIPS: Override barrier_before_unreachable() to fix microMIPS
+Date:   Sat, 18 Aug 2018 11:10:15 -0700
+Message-Id: <20180818181017.1246-1-paul.burton@mips.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-In-Reply-To: <153455835372.28926.7641705907931269497@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [4.16.204.77]
+X-ClientProxiedBy: DM5PR21CA0035.namprd21.prod.outlook.com
+ (2603:10b6:3:ed::21) To BYAPR08MB4935.namprd08.prod.outlook.com
+ (2603:10b6:a03:6a::16)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 82cef1f8-6f0b-4e21-7009-08d60535faff
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR08MB4935;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4935;3:YB3rHBqIrRtGe93dopf9OzBbVAynj6wphhNb5vd2AcBz9crl4xBspuXvQ/xRIReNCNsjHQ6DziyH3SjKI2SecYbuVywF6Ny9S1si5qioqjRjaUQ1CcSiqVSDymxBkSUQDPIhEAW6jqcgQZBp0b9yySCokER7cbJ5vMPo+YKoYsWUZ2aDGXHCBpBHCzhk/o9bHzZw/nHpeLjd9qdkPttqwrVSZn8hT3XSID+NUl0wz6mLYRYTT829TJn6w9nAmGCq;25:5MpNeN3fpN4xkGqL5L9wkwMGVmR4YQ1KvMlsto+ALXSX4zigSixlUhdKWBlRQ6hA2u/JKFiFYj728Ebntsi5viuluFe3EoIQNgxN5ICV4cpCkhi02DC3AxeMyztZxb6C7xgImZoANMx3+4VEo6j8LQwhui7pbYydDL4l7k6MvMT0kuXplNDODbjZVqHZcXG90of1Q9d5HcO5R9/mj/Q+RqXnQDj3Tj+H2DIk5kyMMewXBjj1i2slskz72gEdkACqB+l7AIC0qkE9NND+tMV/lHfdn3Wypetcb3cgPFm1jVY5SCOJzCnQey/8HX9sREr4BmOS/dkcsS25ut08A7H2AA==;31:V9+GhbeA7exn3Ic2tqsYZH8S6wEZNCaKuKuxEzzLboN0u004uD1+/KA+h8ZdgYAm48TWoLRKSnxrczphM85XDcGfZhGGiivq/iwlyC70VuyEnkmUZK6WjnhWEMGJVERnDwWRDOjmm28KsSq0nmBFulrm7AoIQGrqBBLC27LhbX5Sk1HUazVzgijG2FvabQMJNYC2fZyALyraulK2GuMHGYjmPPLaZjD0wxv9oIUWDZw=
+X-MS-TrafficTypeDiagnostic: BYAPR08MB4935:
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4935;20:tVUT9pxfRttr7jzVBZ7hMz+aAOiG5YDNCIyz4+BdLr/ixcucl8SdAbWZpoBnDhIxeFhnZ1+xKsj+66q3wKoRfGytTZw2rHn267NaeHjeN313GGP/dKjzp1scmJZ/iz+4AIP+p94mZr82MHZ/G9uEaKerPuSjx2pBD49gsqqY3S9/7ZA1DWkgWDp8jGMMsoKtQ+Fq7mC5rw0Nwn8IpfROzVQqXQpHhcF1YJo+989lqfSbAUiz78BJjgNx1DwhTb62;4:Bl0GXYTHJ+aCCh5pHuW7CNo2zyOjTOMdFPa9x1329qucmA7mX6ciq2a8g5Zd44pkSWUh5eAUMwuLSiVY5zpQHNYshqfn1GdX1uQ7v5Q2j8KT4aiDkMuzWDfXVzWJF2Kk2uaANEhlnBvPl5Nfj5PgbG400A89aDR56u8viF1n1QDc4p4zcVeg9A+JdDDIAR2H/EyjN2MqLne5Jakjc0uqHPwJpp01qA/AoI7OwJVheMOCV/F4NfUZwGT06jXOZjWPhC91CitRxjgIJwNksg/WWw==
+X-Microsoft-Antispam-PRVS: <BYAPR08MB49358CD0204F0A80E44C6C0FC13C0@BYAPR08MB4935.namprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231311)(944501410)(52105095)(93006095)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699016);SRVR:BYAPR08MB4935;BCL:0;PCL:0;RULEID:;SRVR:BYAPR08MB4935;
+X-Forefront-PRVS: 076804FE30
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(136003)(366004)(39840400004)(199004)(189003)(53416004)(47776003)(106356001)(105586002)(14444005)(50466002)(6486002)(6916009)(48376002)(386003)(6506007)(956004)(476003)(2906002)(2616005)(8936002)(42882007)(16586007)(486006)(316002)(2351001)(36756003)(68736007)(66066001)(54906003)(966005)(50226002)(186003)(16526019)(478600001)(26005)(1076002)(51416003)(52116002)(53936002)(97736004)(69596002)(6306002)(6512007)(81166006)(8676002)(81156014)(305945005)(44832011)(3846002)(6116002)(7736002)(4326008)(2361001)(5660300001)(25786009)(6606295002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR08MB4935;H:pburton-laptop.mipstec.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR08MB4935;23:q914A92ths5sNfeJHTTzlmKfu/YqM+4FZzJZs3Xa2?=
+ =?us-ascii?Q?uJ+C5QjlYM+d3sdns/AOaQ6MZA3FpKj95zmcjABA45dRlOH9Mbdh6IQ5MaQp?=
+ =?us-ascii?Q?MAXKheZLudorH1+Mg/9QUKDtd3DSS3oT+zqWUI2PvmiROtEk5xsBC9yOJuoE?=
+ =?us-ascii?Q?C7YtZrsbUPHl3wPQSbUmluSwKjOhCHbWEKUYAbRlbFBBvqhIva1yHsVM9FRL?=
+ =?us-ascii?Q?52c8MT7tN46DGZtE7xQcdFq/5Y9Kz+93e1rvcMneLUAj1UsQt9cxuTgfXcOL?=
+ =?us-ascii?Q?pyYNQDG3E8bh9OhBd9qwiff0aDLJAGqcoKYLnvedCgXuFY0yaiNuUQYU3sV+?=
+ =?us-ascii?Q?QcqgoWlA+sb/jkgNKJczzCCKp2uQJS3Tm/r9gRk1bsq17pKNOsJirv7qZb1J?=
+ =?us-ascii?Q?+Bs6T6cg9XanCJqgv0sQs1rT4ZHSRfeU19wjm6q1H5pN7SK9CYHHt5Ldo2n3?=
+ =?us-ascii?Q?PSnnV6WbLETQby8XgN+kLcnKeG0Mc8TS+YasnuWc1CBMM9qD1SZB2bUZfOkm?=
+ =?us-ascii?Q?pm/icPOMvZgcsAq5aloncgr2enh878es9cXFaSHEmx5KqoSbZ2/k3S12/AM1?=
+ =?us-ascii?Q?k4088fmzjQgAgU9GoET+ZBIho1BRSO5E3TKwDEjIu4ryJ0FlNCF3ALRI91L4?=
+ =?us-ascii?Q?J6hgq+BhdTMx07iURwTkWrwdx/luHXwW0F+xk6mwjNfEl3WZLMsZBSVtdhxc?=
+ =?us-ascii?Q?PNIjLWVm8urW57oNFnIYlJnqfZXK9T6ixaP8ONmNq6HjZKnCQ5bPNRLk2ShO?=
+ =?us-ascii?Q?a0aeZUKSPbAYNC/oE9XPxi88UvL5iNXdKzy9nNpJfeNDNUCfpnUXQKCcSKRW?=
+ =?us-ascii?Q?E/9V4ivnwviktUorgfuM0PNYseBZXTAtj8KmFn4PlXHCFYdm55/hli2GUcCl?=
+ =?us-ascii?Q?CP27AegZzGP2s92cSsH5XyI+jKe+pDJB7ERAgytANKOYTTOLnc410MDhEOuh?=
+ =?us-ascii?Q?8l/uaMI2kuGi3R2N9gS3QpE/EJSpUp/0MOpJYR2lbmQh1rIOygKSxGqNXlSF?=
+ =?us-ascii?Q?iOBq+BncpReLGwj065DOGLCYV9pmHhQJFGrbnTLvqAHiLDVhyI4ZnyClNe7x?=
+ =?us-ascii?Q?bRIZ9FuLQef6RaQ/kREnDz9QFhtuKGYxlriLMAquWG/oSwlqKykRUTp3tLRp?=
+ =?us-ascii?Q?mbzaktTK9AJAQ0tr89OlMvlyuuat+iXuH8EMwAVC96CwvADC0EEVwvcIJmBO?=
+ =?us-ascii?Q?77njSioeGBqZJ3Giap9lEI7ek/2sAdeOnyG+2/lcXfgpZN/m3K5uFSFmSJ+l?=
+ =?us-ascii?Q?fs2kz+Pt2PApRzyLwJXvM4MzGVj7/0LGKY4cYjDDWUwc79xOQJr+S1h3VJ++?=
+ =?us-ascii?Q?CmFLzFAofTNdnuu1ZiboJ4=3D?=
+X-Microsoft-Antispam-Message-Info: bXL27h52zohs4U6U+Fwd9ulmsSb28xgqEONXmuI3l8Ja7iDoBq2+Aw8ftuqX19MKstRQ8S94DVtvctEdQ1g776v6ZYHt5NBPVmxyD2k76JF/Judq/l5Fq8REiOcgNLYGK0ZbvP9pyDG/Em6AnNA0DO6WGNVVlhyNACCVNVP9nM2GAv8NxGEpS+YkiLL2POXaG63hzTo5QYtTNwNLQgIhUho6oKcBsD6bmU2LKcKvjONNrkkjz8ZlcI13QMYkn0iHnKkF1s5DB0V6E9EHTH4LZAbIZYR9MRCA/bHRXELgUujImp0lhxO0xKaBGqqSa57KUgNcxWXw5spNVsysQme/HN7k/U2B6ncS/LQum8RWpKA=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4935;6:izvElteu8grYOsz5tKaZ0EZjuZzJefn5TocKJeuCWRYXU6052D8NB35QVabr32BQIeyEdUrhTm4Lo3xq2rNF2rM7C1TLbINiHvvu7JSdp3rlL4LNqm8SI6U/KN8AY3pvZPFnXoE3PVtZ8hJvvVSOTNvgPznL8PR5EOBlwjWcy5qErjDacMwqyGpoCk0qXcSYy8cKkGuwQ839SKWvw47b7IkWf9MHBQ5s1n71m+P8+mX5o2LpoQtO+5lMU76o2yuJimCQgHqfslQTolR6DOHNLjexysDEQ3t1g/gj3VlJ/AJSVuTedTvObgKOPW8cdK/vtrsuUrDiecp5Qbta7Abfog/zJkl3kqbaKCMovI/RV8n1oyaTKTY+dyqpRmea7/d31wAC3eki0BtcRdVhcJ2nQzFjTBdNNMuBS1JrYH+4OduqW3fWDt7vNPg1v2wrM5Bt0MFwubRXFp/PjFu28JPEtw==;5:H9EYJKxzZGxH3X4GEIWaJW8QhHWWNMEB2advSr/gTYFnxk4HkThMwwwUWEvum5wFFqhd6+LDhiCgcm646J+TFz8Kg2CHkuK5aRViZgC6BcEfuAxRGNJ1/GYwC//N/UYEo5i9v8qv17ZSZZc28sJB3j6hb4ZAYynUa9fagBLIve0=;7:OxsbE02yp1Bg4RfM1DUr3LPpiIVJGR+6mNAMjcWso4kINYEQQ+0+k4dqIbiafEFa2e0pavW9oW5X+ntXSlfBk1a+zDqYdroa7Jdqj0Go3ctk2ArclxAfKgbpdMrzm/SfEl7YM0vRQrod46LGjMaVqGhvPLxZzaO5aS5YCiOQNwc5M1UXWe5IRCDhrc4Ieot6ud2RGNbkRck36aWcimsqnpz8lqq6X+RGQYX8Mvg6L7pYbEGrTanjwgfMJ/vt2+LU
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2018 18:11:11.2266 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82cef1f8-6f0b-4e21-7009-08d60535faff
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR08MB4935
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stephen,
+This series overrides barrier_before_unreachable() for MIPS to add a
+.insn assembler directive.
 
-I will test these changes and get back.
+Due to the subsequent __builtin_unreachable(), the assembler can't tell
+that a label on the empty inline asm is code rather than data, so any
+microMIPS branches targeting it (which sadly can't be removed) raise
+errors due to the mismatching ISA mode, Adding the .insn in patch 2
+tells the assembler that it should be treated as code.
 
-On 8/18/2018 7:42 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-08-10 18:53:54)
->>   [v4]
->>    * Add recalc_clk_ops to calculate the clock frequency reading the current
->>      perf state, also add CLK_GET_RATE_NOCACHE flag.
->>    * Cleanup 'goto' during mode check in 'clk_rcg2_calculate_freq'.
->>    * cleanup return from function 'com_cc_register_rcg_dfs'.
-> 
-> I want to squash this in. I have only compile tested it. Let me know
-> what you think.
-> 
-> ----8<---
-> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> index e6300e05d5df..e5eca8a1abe4 100644
-> --- a/drivers/clk/qcom/clk-rcg.h
-> +++ b/drivers/clk/qcom/clk-rcg.h
-> @@ -163,6 +163,15 @@ extern const struct clk_ops clk_pixel_ops;
->   extern const struct clk_ops clk_gfx3d_ops;
->   extern const struct clk_ops clk_rcg2_shared_ops;
->   
-> +struct clk_rcg_dfs_data {
-> +	struct clk_rcg2 *rcg;
-> +	struct clk_init_data *init;
-> +};
-> +
-> +#define DEFINE_RCG_DFS(r) \
-> +	{ .rcg = &r##_src, .init = &r##_init }
-> +
->   extern int qcom_cc_register_rcg_dfs(struct regmap *regmap,
-> -			     struct clk_rcg2 **rcgs, int num_clks);
-> +				    const struct clk_rcg_dfs_data *rcgs,
-> +				    size_t len);
->   #endif
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index 55a5b58cbb15..bbe2a1916296 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -1051,48 +1051,24 @@ static unsigned long
->   clk_rcg2_dfs_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
->   {
->   	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> -	u32 cfg, hid_div, m = 0, n = 0, mode = 0, mask, level;
-> -	int num_parents, i;
-> -	unsigned long prate;
-> -
-> -	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
-> -				SE_CMD_DFSR_OFFSET, &cfg);
-> -	level = (GENMASK(4, 1) & cfg) >> 1;
-> -
-> -	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
-> -				SE_PERF_DFSR(level), &cfg);
-> -	if (rcg->mnd_width) {
-> -		mask = BIT(rcg->mnd_width) - 1;
-> -		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
-> -				SE_PERF_M_DFSR(level), &m);
-> -		m &= mask;
-> -		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
-> -				SE_PERF_N_DFSR(level), &n);
-> -		n =  ~n;
-> -		n &= mask;
-> -		n += m;
-> -		mode = cfg & CFG_MODE_MASK;
-> -		mode >>= CFG_MODE_SHIFT;
-> -	}
-> +	int ret;
-> +	u32 level;
->   
-> -	mask = BIT(rcg->hid_width) - 1;
-> -	hid_div = cfg >> CFG_SRC_DIV_SHIFT;
-> -	hid_div &= mask;
-> -	cfg &= CFG_SRC_SEL_MASK;
-> -	cfg >>= CFG_SRC_SEL_SHIFT;
-> +	regmap_read(rcg->clkr.regmap,
-> +		    rcg->cmd_rcgr + SE_CMD_DFSR_OFFSET, &level);
-> +	level &= GENMASK(4, 1);
-> +	level >>= 1;
->   
-> -	num_parents = clk_hw_get_num_parents(hw);
-> -	for (i = 0; i < num_parents; i++) {
-> -		if (cfg == rcg->parent_map[i].cfg) {
-> -			prate = clk_hw_get_rate(
-> -				clk_hw_get_parent_by_index(&rcg->clkr.hw, i));
-> -			if (parent_rate != prate)
-> -				parent_rate = prate;
-> +	if (!rcg->freq_tbl) {
-> +		ret = clk_rcg2_dfs_populate_freq_table(rcg);
-> +		if (ret) {
-> +			pr_err("Failed to update DFS tables for %s\n",
-> +					clk_hw_get_name(hw));
-> +			return ret;
->   		}
->   	}
->   
-> -
-> -	return calc_rate(parent_rate, m, n, mode, hid_div);
-> +	return rcg->freq_tbl[level].freq;
->   }
->   
->   static const struct clk_ops clk_rcg2_dfs_ops = {
-> @@ -1102,9 +1078,11 @@ static const struct clk_ops clk_rcg2_dfs_ops = {
->   	.recalc_rate = clk_rcg2_dfs_recalc_rate,
->   };
->   
-> -static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg, struct regmap *regmap)
-> +static int clk_rcg2_enable_dfs(const struct clk_rcg_dfs_data *data,
-> +			       struct regmap *regmap)
->   {
-> -	struct clk_init_data *init;
-> +	struct clk_rcg2 *rcg = data->rcg;
-> +	struct clk_init_data *init = data->init;
->   	u32 val;
->   	int ret;
->   
-> @@ -1116,18 +1094,13 @@ static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg, struct regmap *regmap)
->   	if (!(val & SE_CMD_DFS_EN))
->   		return 0;
->   
-> -	init = kzalloc(sizeof(*init), GFP_KERNEL);
-> -	if (!init)
-> -		return -ENOMEM;
-> -
-> -	init->name = rcg->clkr.hw.init->name;
-> -	init->flags = rcg->clkr.hw.init->flags;
-> -	init->parent_names = rcg->clkr.hw.init->parent_names;
-> -	init->num_parents = rcg->clkr.hw.init->num_parents;
-> -	init->flags = CLK_GET_RATE_NOCACHE;
-> +	/*
-> +	 * Rate changes with consumer writing a register in
-> +	 * their own I/O region
-> +	 */
-> +	init->flags |= CLK_GET_RATE_NOCACHE;
->   	init->ops = &clk_rcg2_dfs_ops;
->   
-> -	rcg->clkr.hw.init = init;
->   	rcg->freq_tbl = NULL;
->   
->   	pr_debug("DFS registered for clk %s\n", init->name);
-> @@ -1136,14 +1109,14 @@ static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg, struct regmap *regmap)
->   }
->   
->   int qcom_cc_register_rcg_dfs(struct regmap *regmap,
-> -			    struct clk_rcg2 **rcgs, int num_clks)
-> +			     const struct clk_rcg_dfs_data *rcgs, size_t len)
->   {
->   	int i, ret;
->   
-> -	for (i = 0; i < num_clks; i++) {
-> -		ret = clk_rcg2_enable_dfs(rcgs[i], regmap);
-> +	for (i = 0; i < len; i++) {
-> +		ret = clk_rcg2_enable_dfs(&rcgs[i], regmap);
->   		if (ret) {
-> -			const char *name = rcgs[i]->clkr.hw.init->name;
-> +			const char *name = rcgs[i].init->name;
->   
->   			pr_err("DFS register failed for clk %s\n", name);
->   			return ret;
-> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> index fef6732bd7d8..42ab01d33b52 100644
-> --- a/drivers/clk/qcom/gcc-sdm845.c
-> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> @@ -396,18 +396,27 @@ static const struct freq_tbl ftbl_gcc_qupv3_wrap0_s0_clk_src[] = {
->   	{ }
->   };
->   
-> +static struct clk_init_data gcc_qupv3_wrap0_s0_clk_init = {
-> +	.name = "gcc_qupv3_wrap0_s0_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
-> +};
-> +
->   static struct clk_rcg2 gcc_qupv3_wrap0_s0_clk_src = {
->   	.cmd_rcgr = 0x17034,
->   	.mnd_width = 16,
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap0_s0_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap0_s0_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap0_s1_clk_init = {
-> +	.name = "gcc_qupv3_wrap0_s1_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap0_s1_clk_src = {
-> @@ -416,12 +425,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s1_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap0_s1_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap0_s1_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap0_s2_clk_init = {
-> +	.name = "gcc_qupv3_wrap0_s2_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap0_s2_clk_src = {
-> @@ -430,12 +441,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s2_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap0_s2_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap0_s2_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap0_s3_clk_init = {
-> +	.name = "gcc_qupv3_wrap0_s3_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap0_s3_clk_src = {
-> @@ -444,12 +457,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s3_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap0_s3_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap0_s3_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap0_s4_clk_init = {
-> +	.name = "gcc_qupv3_wrap0_s4_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap0_s4_clk_src = {
-> @@ -458,12 +473,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s4_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap0_s4_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap0_s4_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap0_s5_clk_init = {
-> +	.name = "gcc_qupv3_wrap0_s5_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src = {
-> @@ -472,12 +489,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap0_s5_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap0_s5_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap0_s6_clk_init = {
-> +	.name = "gcc_qupv3_wrap0_s6_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap0_s6_clk_src = {
-> @@ -486,12 +505,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s6_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap0_s6_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap0_s6_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap0_s7_clk_init = {
-> +	.name = "gcc_qupv3_wrap0_s7_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap0_s7_clk_src = {
-> @@ -500,12 +521,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s7_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap0_s7_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap0_s7_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap1_s0_clk_init = {
-> +	.name = "gcc_qupv3_wrap1_s0_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src = {
-> @@ -514,12 +537,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap1_s0_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap1_s0_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap1_s1_clk_init = {
-> +	.name = "gcc_qupv3_wrap1_s1_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src = {
-> @@ -528,12 +553,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap1_s1_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap1_s1_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap1_s2_clk_init = {
-> +	.name = "gcc_qupv3_wrap1_s2_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src = {
-> @@ -542,12 +569,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap1_s2_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap1_s2_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap1_s3_clk_init = {
-> +	.name = "gcc_qupv3_wrap1_s3_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src = {
-> @@ -556,12 +585,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap1_s3_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap1_s3_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap1_s4_clk_init = {
-> +	.name = "gcc_qupv3_wrap1_s4_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src = {
-> @@ -570,12 +601,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap1_s4_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap1_s4_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap1_s5_clk_init = {
-> +	.name = "gcc_qupv3_wrap1_s5_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src = {
-> @@ -584,12 +617,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap1_s5_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap1_s5_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap1_s6_clk_init = {
-> +	.name = "gcc_qupv3_wrap1_s6_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src = {
-> @@ -598,12 +633,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap1_s6_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap1_s6_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap1_s7_clk_init = {
-> +	.name = "gcc_qupv3_wrap1_s7_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s7_clk_src = {
-> @@ -612,12 +649,7 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s7_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap1_s7_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap1_s7_clk_init,
->   };
->   
->   static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] = {
-> @@ -3458,23 +3490,23 @@ static const struct of_device_id gcc_sdm845_match_table[] = {
->   };
->   MODULE_DEVICE_TABLE(of, gcc_sdm845_match_table);
->   
-> -static struct clk_rcg2 *gcc_dfs_clocks[] = {
-> -	&gcc_qupv3_wrap0_s0_clk_src,
-> -	&gcc_qupv3_wrap0_s1_clk_src,
-> -	&gcc_qupv3_wrap0_s2_clk_src,
-> -	&gcc_qupv3_wrap0_s3_clk_src,
-> -	&gcc_qupv3_wrap0_s4_clk_src,
-> -	&gcc_qupv3_wrap0_s5_clk_src,
-> -	&gcc_qupv3_wrap0_s6_clk_src,
-> -	&gcc_qupv3_wrap0_s7_clk_src,
-> -	&gcc_qupv3_wrap1_s0_clk_src,
-> -	&gcc_qupv3_wrap1_s1_clk_src,
-> -	&gcc_qupv3_wrap1_s2_clk_src,
-> -	&gcc_qupv3_wrap1_s3_clk_src,
-> -	&gcc_qupv3_wrap1_s4_clk_src,
-> -	&gcc_qupv3_wrap1_s5_clk_src,
-> -	&gcc_qupv3_wrap1_s6_clk_src,
-> -	&gcc_qupv3_wrap1_s7_clk_src,
-> +static const struct clk_rcg_dfs_data gcc_dfs_clocks[] = {
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s0_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s1_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s2_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s3_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s4_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s5_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s6_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s7_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s0_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s1_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s2_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s3_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s4_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s5_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s6_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s7_clk),
->   };
->   
->   static int gcc_sdm845_probe(struct platform_device *pdev)
-> 
+Applies cleanly atop v4.18.
+
+Changes in v8 (Paul):
+- Try something different... including a header that might be an
+  asm-generic wrapper in linux/compiler_types.h creates build ordering
+  problems for any C file which can be built before the asm-generic
+  target. Patch 1 changes tact to avoid asm-generic & the ordering
+  problem.
+- Commit message improvements in patch 2.
+
+Changes in v7 (Paul):
+- Elaborate on affected GCC versions in patch 4.
+
+Changes in v6 (Paul):
+- Fix patch 2 to find the generated headers in $(objtree).
+- Remove CC's for defunct MIPS email addresses (Matthew & Robert).
+- CC linux-um@lists.infradead.org.
+
+Changes in v5 (Paul):
+- Rebase atop v4.18-rc8.
+- Comment & commit message tweaks.
+- Add SPDX-License-Identifier to asm-generic/compiler.h.
+
+Changes in v4 (James):
+- Fix asm-generic/compiler.h include from check, compiler_types.h is
+  included on the command line so linux/compiler.h may not be included
+  (kbuild test robot).
+- New patch 2 to fix um (kbuild test robot).
+
+Changes in v3 (James):
+- New patch 1.
+- Rebase after 4.17 arch removal and update commit messages.
+- Use asm/compiler.h instead of compiler-gcc.h (Arnd).
+- Drop stable tag for now.
+
+Changes in v2 (Paul):
+- Add generic-y entries to arch Kbuild files. Oops!
+
+Previous versions:
+v1: https://www.linux-mips.org/archives/linux-mips/2016-05/msg00399.html
+v2: https://www.linux-mips.org/archives/linux-mips/2016-05/msg00401.html
+v3: https://lkml.org/lkml/2018/4/17/228
+v4: https://www.linux-mips.org/archives/linux-mips/2018-05/msg00069.html
+v5: https://www.spinics.net/lists/mips/msg74408.html
+v6: https://www.spinics.net/lists/mips/msg74425.html
+v7: https://www.spinics.net/lists/linux-arch/msg47934.html
+
+Older #ifdef-based attempt:
+https://marc.info/?l=linux-mips&m=145555921408274&w=2
+
+Paul Burton (2):
+  kbuild: Allow asm-specific compiler_types.h
+  MIPS: Workaround GCC __builtin_unreachable reordering bug
+
+ arch/mips/include/asm/compiler_types.h | 39 ++++++++++++++++++++++++++
+ include/linux/compiler-gcc.h           |  2 ++
+ scripts/Makefile.lib                   |  5 +++-
+ 3 files changed, 45 insertions(+), 1 deletion(-)
+ create mode 100644 arch/mips/include/asm/compiler_types.h
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+2.18.0
 
---
