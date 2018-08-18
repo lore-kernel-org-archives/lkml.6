@@ -6,64 +6,63 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D760C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 13:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6024C4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 13:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B87042176D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 13:16:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 624132184F
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 13:16:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="GT6Z//4A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B87042176D
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Fp5QBosY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 624132184F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbeHRQYR (ORCPT
+        id S1726598AbeHRQYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 12:24:17 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44819 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726219AbeHRQYQ (ORCPT
+        Sat, 18 Aug 2018 12:24:33 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35637 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726394AbeHRQYO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 12:24:16 -0400
-Received: by mail-ed1-f68.google.com with SMTP id f23-v6so5961223edr.11
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Aug 2018 06:16:34 -0700 (PDT)
+        Sat, 18 Aug 2018 12:24:14 -0400
+Received: by mail-ed1-f67.google.com with SMTP id e6-v6so5965982edr.2
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Aug 2018 06:16:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=M63R+bwjcWLJCYg9UZRlu8yvl1lNEOBNwlXK22wst8Y=;
-        b=GT6Z//4A70u6ifsgqQUbz5Ylydxlz2PExDlJT6W12niNd+5ceEpiv7jFG4o3/apcHj
-         2IFO647MeoNJublCmsA+5SGHKYL2hGES5IUULjIKDq/pZSefjOIfU4O5K3EbpTBoGSGK
-         7Vt9/BG0VuACOGA8wkx09rGjO9fRr59NF65hU=
+        bh=lmTWYIQQOtE4/5RY0etly6z3cOLAqH7ynCF1mxwixHA=;
+        b=Fp5QBosYnh+BPVlpc484bgRtqNY5VALr9ETlM7jIGnQI9H+OHBBjzykXubzaQlUqwu
+         q/SVQRTTrS5WG1MsnmRVWp5KSjzZ0Y7jLkz2yX5/CtETaLb8QbJJQ2afc6v73agMHcbj
+         aiA9Y7ZYwZLLwWIIEG+BXnI4UF8KwlLzDJPUM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=M63R+bwjcWLJCYg9UZRlu8yvl1lNEOBNwlXK22wst8Y=;
-        b=GZoBy/TuVM4+sUZlqXGg27xtGEFNdWKBlcuYdZy4iiMUCDREowZvdX0qWwBUJOcsgl
-         gVxgwS+3HOsUri2J07U5vIKrmvS6pi7UR5s6kG7ZgprY0TnjpYeo1k2dQcIt5rA1Zym/
-         UjtI5QSAjrKsSH3HO1Z15TuB7vP633lqCCY16L6At8M9DeDNQEMGR1wo0OJ+3hLwUith
-         vRiWMETcYaTA0VO5ZrrVUbvv2J8tObRKoZ7JldZ8sqMQ04JBn7hIsK2aihly8SzEAAlg
-         j2Fd3+A2nhjBkSliV6F4vpiDB5+vd4AEls4f2e+OZqJ5UkT10A8DRvqVZdI3hylTB/o/
-         L3DQ==
-X-Gm-Message-State: AOUpUlFKJWhNyKDNhdYetqayfr3Vuvd+MEer9MuOtQjkJ9IukUGGhpnS
-        zOP1Drpih2NMyazt3mYZNeZx7Q==
-X-Google-Smtp-Source: AA+uWPxKzre4XyIVhQvAk0YjbCPxDGcEsjZBW+HJmzOytJARM4ka8u5xO4SNZ3lcY+x9OwtC+0hHUQ==
-X-Received: by 2002:a50:d54a:: with SMTP id f10-v6mr28315372edj.151.1534598194290;
-        Sat, 18 Aug 2018 06:16:34 -0700 (PDT)
+        bh=lmTWYIQQOtE4/5RY0etly6z3cOLAqH7ynCF1mxwixHA=;
+        b=UW3DNX82zPxBUNlqTjP4aYZuYhii4leyPXhVl+5sXVnYTjUMjbbWA7YlukPnAIE2Y8
+         OxJI4DZiPQ80cqgXxrLYKgqAwtsknwmN9ADZaFecJs+U2ijRtwNc1PdmeQi0+6QijKOU
+         jKaRpQHP9CbsQ67Wk8huqZquEQrqcEo/Cd2Hy7M5A9J880nbRQSmDSXQRGXn2evigT58
+         u+7OPCXU04gm9w7sG7qaEyXiipW8KK2q4CxifZb+B+c59sn0qvfZ7quBwgAOnSFuvPeG
+         tJl/UIrY66YLZVxDm3Yn1dzy/ALYBGCv54jetEAujGThS/h2/CVpJyy/8FxxP4chIN+g
+         dKBg==
+X-Gm-Message-State: AOUpUlFm00Wj55d69rpZLXztMYHaLsMH9TeMCj3Uw1jxiE/jdOIoSi6y
+        rUSL1T/a9GZfP9iHgsX6jSy+AA==
+X-Google-Smtp-Source: AA+uWPxXfYn5Eh8xxqfCYA6Zdan/h7WlTvK8NP4OzDvGBX/Nd2Hpz6TcxaKBPFb1C6ttYQNDExGtDw==
+X-Received: by 2002:a50:8921:: with SMTP id e30-v6mr46828364ede.213.1534598192287;
+        Sat, 18 Aug 2018 06:16:32 -0700 (PDT)
 Received: from prevas-ravi.waoo.dk (dhcp-5-186-114-212.cgn.ip.fibianet.dk. [5.186.114.212])
-        by smtp.gmail.com with ESMTPSA id r11-v6sm2821403edp.60.2018.08.18.06.16.33
+        by smtp.gmail.com with ESMTPSA id r11-v6sm2821403edp.60.2018.08.18.06.16.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 18 Aug 2018 06:16:33 -0700 (PDT)
+        Sat, 18 Aug 2018 06:16:31 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Yury Norov <ynorov@caviumnetworks.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Sudeep Holla <sudeep.holla@arm.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 6/7] lib/bitmap.c: fix remaining space computation in bitmap_print_to_pagebuf
-Date:   Sat, 18 Aug 2018 15:16:22 +0200
-Message-Id: <20180818131623.8755-7-linux@rasmusvillemoes.dk>
+Subject: [PATCH 4/7] linux/bitmap.h: fix type of nbits in bitmap_shift_right()
+Date:   Sat, 18 Aug 2018 15:16:20 +0200
+Message-Id: <20180818131623.8755-5-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180818131623.8755-1-linux@rasmusvillemoes.dk>
 References: <20180818131623.8755-1-linux@rasmusvillemoes.dk>
@@ -72,52 +71,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For various alignments of buf, the current expression computes
+Most other bitmap API, including the OOL version __bitmap_shift_right,
+take unsigned nbits. This was accidentally left out from 2fbad29917c98.
 
-4096 ok
-4095 ok
-8190
-8189
-...
-4097
-
-i.e., if the caller has already written two bytes into the page buffer,
-len is 8190 rather than 4094, because PTR_ALIGN aligns up to the next
-boundary. So if the printed version of the bitmap is huge, scnprintf()
-ends up writing beyond the page boundary.
-
-I don't think any current callers actually write anything before
-bitmap_print_to_pagebuf, but the API seems to be designed to allow it.
-
+Fixes: 2fbad29917c98 (lib: bitmap: change bitmap_shift_right to take unsigned parameters)
+Reported-by: Yury Norov <ynorov@caviumnetworks.com>
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- lib/bitmap.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ include/linux/bitmap.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/bitmap.c b/lib/bitmap.c
-index 1f73b2e52186..277c9a63a5ab 100644
---- a/lib/bitmap.c
-+++ b/lib/bitmap.c
-@@ -460,14 +460,15 @@ EXPORT_SYMBOL(bitmap_parse_user);
-  * ranges if list is specified or hex digits grouped into comma-separated
-  * sets of 8 digits/set. Returns the number of characters written to buf.
-  *
-- * It is assumed that @buf is a pointer into a PAGE_SIZE area and that
-- * sufficient storage remains at @buf to accommodate the
-- * bitmap_print_to_pagebuf() output.
-+ * It is assumed that @buf is a pointer into a PAGE_SIZE, page-aligned
-+ * area and that sufficient storage remains at @buf to accommodate the
-+ * bitmap_print_to_pagebuf() output. Returns the number of characters
-+ * actually printed to @buf, excluding terminating '\0'.
-  */
- int bitmap_print_to_pagebuf(bool list, char *buf, const unsigned long *maskp,
- 			    int nmaskbits)
- {
--	ptrdiff_t len = PTR_ALIGN(buf + PAGE_SIZE - 1, PAGE_SIZE) - buf;
-+	ptrdiff_t len = PAGE_SIZE - ((unsigned long)buf & (PAGE_SIZE-1));
- 	int n = 0;
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index a7a8b5017d62..e34c361f4a92 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -383,7 +383,7 @@ static __always_inline void bitmap_clear(unsigned long *map, unsigned int start,
+ }
  
- 	if (len > 1)
+ static inline void bitmap_shift_right(unsigned long *dst, const unsigned long *src,
+-				unsigned int shift, int nbits)
++				unsigned int shift, unsigned int nbits)
+ {
+ 	if (small_const_nbits(nbits))
+ 		*dst = (*src & BITMAP_LAST_WORD_MASK(nbits)) >> shift;
 -- 
 2.16.4
 
