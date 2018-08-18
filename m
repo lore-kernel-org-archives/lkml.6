@@ -6,93 +6,79 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED158C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 09:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD0EC4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 09:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7208A21877
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 09:25:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7208A21877
+	by mail.kernel.org (Postfix) with ESMTP id 546C521877
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 09:25:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 546C521877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726529AbeHRMcV (ORCPT
+        id S1726597AbeHRMcy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 08:32:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59824 "EHLO
+        Sat, 18 Aug 2018 08:32:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59828 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbeHRMcU (ORCPT
+        with ESMTP id S1726242AbeHRMcx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 08:32:20 -0400
+        Sat, 18 Aug 2018 08:32:53 -0400
 Received: from localhost (unknown [194.244.16.108])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 658CB941;
-        Sat, 18 Aug 2018 09:25:20 +0000 (UTC)
-Date:   Sat, 18 Aug 2018 11:25:16 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7AE93941;
+        Sat, 18 Aug 2018 09:25:53 +0000 (UTC)
+Date:   Sat, 18 Aug 2018 11:25:50 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 4.18.3
-Message-ID: <20180818092516.GA5382@kroah.com>
+Subject: Re: Linux 4.18.3
+Message-ID: <20180818092550.GB5382@kroah.com>
+References: <20180818092516.GA5382@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180818092516.GA5382@kroah.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---ew6BAiZeqk4r7MaW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-I'm announcing the release of the 4.18.3 kernel.
-
-All x86 users of the 4.18 kernel series must upgrade.
-
-The updated 4.18.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-4.18.y
-and can be browsed at the normal kernel.org git web browser:
-	http://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
-
-thanks,
-
-greg k-h
-
-------------
-
- Makefile                              |    2 +-
- arch/x86/include/asm/pgtable-invert.h |   11 ++++++++++-
- 2 files changed, 11 insertions(+), 2 deletions(-)
-
-Greg Kroah-Hartman (1):
-      Linux 4.18.3
-
-Sean Christopherson (1):
-      x86/speculation/l1tf: Exempt zeroed PTEs from inversion
-
-
---ew6BAiZeqk4r7MaW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlt35fkACgkQONu9yGCS
-aT78MhAAjZtXoD7x3bxFv7SeCmnoRvWefFIYiNpTlvC6htt3GIh9fPfnyAevncjz
-e4byNaUasYsGM66YWa6abwaoDg3wouREORcCxkCVanL5TwqjEduj3w4pprC5JQIM
-0oFIKOY6CG9GVGOBAHHUTjUS9b2tqbg2Af0MfaJnrCnUdAoReDaVE2cF9/DoQQIN
-YQjhWcrZEd0/dMEuqDXm7nUOd52k1lWJa1ro5k1YOWjMHvMb5Oar0G8hwPYfeo57
-/2Hz20IDMllkwVcGSYr6c2sEERH1RJ5RdxJIkSsi/PuwsEzPWWoWG4wUSfqjQpAn
-a0//MfLSCpN6A/dKuK0Qr+AhT4u0VOBYafquteEOSQbWfBc6GKblSN7IoyRU1wzJ
-iujQsvvHbDt+ZnpT0fNZf/NHRUT5TVa0VPoxjC0rKCC8efBoPvQ7U+N6N7wzewMS
-I5fZhE7LDTHMyMYEGTgeTUCRr9mDE0OcFSMsoMFibkrRAMuuX1S6SVdXxLX0WjXU
-eESPLDyuuLnC6yKrv1nzHA/qitOVC3qEJq/Wm/mbT6jbWdjZXuGz3yYDCaWe5z7H
-mgrfGHSHU23vB0Of8krLM0A8X7HctiUTFKGPo+0c3AAHWKT+yyDtZaONHC0HLtCy
-dL1sqp+QaaaSNJBQupBLyXvzIYLC6dgCMLAF8neqO+9/Cs1TSXk=
-=gqxb
------END PGP SIGNATURE-----
-
---ew6BAiZeqk4r7MaW--
+diff --git a/Makefile b/Makefile
+index fd409a0fd4e1..e2bd815f24eb 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 18
+-SUBLEVEL = 2
++SUBLEVEL = 3
+ EXTRAVERSION =
+ NAME = Merciless Moray
+ 
+diff --git a/arch/x86/include/asm/pgtable-invert.h b/arch/x86/include/asm/pgtable-invert.h
+index 44b1203ece12..a0c1525f1b6f 100644
+--- a/arch/x86/include/asm/pgtable-invert.h
++++ b/arch/x86/include/asm/pgtable-invert.h
+@@ -4,9 +4,18 @@
+ 
+ #ifndef __ASSEMBLY__
+ 
++/*
++ * A clear pte value is special, and doesn't get inverted.
++ *
++ * Note that even users that only pass a pgprot_t (rather
++ * than a full pte) won't trigger the special zero case,
++ * because even PAGE_NONE has _PAGE_PROTNONE | _PAGE_ACCESSED
++ * set. So the all zero case really is limited to just the
++ * cleared page table entry case.
++ */
+ static inline bool __pte_needs_invert(u64 val)
+ {
+-	return !(val & _PAGE_PRESENT);
++	return val && !(val & _PAGE_PRESENT);
+ }
+ 
+ /* Get a mask to xor with the page table entry to get the correct pfn. */
