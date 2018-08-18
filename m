@@ -2,281 +2,151 @@ Return-Path: <SRS0=Se0q=LB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E1AC4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8D6C4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1632421878
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:29:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1632421878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 51C4321877
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:29:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZvEDsNfg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51C4321877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbeHROhJ (ORCPT
+        id S1726750AbeHROhN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 10:37:09 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56635 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbeHROhI (ORCPT
+        Sat, 18 Aug 2018 10:37:13 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36888 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726272AbeHROhM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 10:37:08 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7IBTPZi1286073
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 18 Aug 2018 04:29:25 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7IBTPbT1286070;
-        Sat, 18 Aug 2018 04:29:25 -0700
-Date:   Sat, 18 Aug 2018 04:29:25 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-6d9f0c2d5ef7568c29fa5927748c4915a9c7760a@git.kernel.org>
-Cc:     eranian@google.com, alexander.shishkin@linux.intel.com,
-        tglx@linutronix.de, dsahern@gmail.com, mingo@kernel.org,
-        hpa@zytor.com, peterz@infradead.org, acme@redhat.com,
-        jolsa@kernel.org, namhyung@kernel.org, linux-kernel@vger.kernel.org
-Reply-To: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-          eranian@google.com, alexander.shishkin@linux.intel.com,
-          dsahern@gmail.com, linux-kernel@vger.kernel.org,
-          peterz@infradead.org, jolsa@kernel.org, namhyung@kernel.org,
-          acme@redhat.com
-In-Reply-To: <20180804130521.11408-9-jolsa@kernel.org>
-References: <20180804130521.11408-9-jolsa@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf annotate: Switch struct
- annotation_data::percent to array
-Git-Commit-ID: 6d9f0c2d5ef7568c29fa5927748c4915a9c7760a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 18 Aug 2018 10:37:12 -0400
+Received: by mail-pg1-f195.google.com with SMTP id n7-v6so4686527pgq.4
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Aug 2018 04:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BAksXcuQ/kGTeH24LqDoJI5JpPCoj/eg7V/zcW5P91o=;
+        b=ZvEDsNfgJUzQ52uZQEnOtIBZT5EP151HHAfDdqwbxEdj2X800q/E97kfAzwYUvIzvO
+         qrp5PaAVU0FcO9mpsCEIuwOsPYJ4lOUbe2ZhS+/9hotYnR6f9Q8vJbkWryLcXZeROs1d
+         Vk+W9k8VQCqOxQDT4ABROm5GnnZcQbjZtQMjSmql8OXdvB7MxlWmhQeIAr/ZQaWxhiSO
+         lNAcLE2Z8ESQFLOH8dmiD/WyhXtp5Oc2i5pctJ1LuYnla0px71HZWnPwa+nHMDjyKOQU
+         1RY5aVsqBsXdXKOBAfCH7+7IBXmOj/DEeuUEVHMeR1lCdw9g2gzR9/DZ1scvD+nOFkzR
+         utFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BAksXcuQ/kGTeH24LqDoJI5JpPCoj/eg7V/zcW5P91o=;
+        b=kIapmPrQF4MPgMdNbTjXoDji1KIezxpb3DAfOnGXmz2BEHPNfj+pUqpUZJxQ1N6rrf
+         WdmiwuFKKK9X9O2vYercSUY27D5xOn1XwwrloJr/bOotzSKdKit11KHdHS/2ig+VPDRA
+         RUwSpp3dmopQ6/FRLTJHBbB6TKXuptbZkt76YoyfnVPhWSlH9knNJWd3U0QmrYtkehUa
+         P4ppJuYyEnKznnj+eOw7Mlfinq4WXPDp/9R4pdi7gPt9YFrN5YFeJB+ZctSCCbu3hIfY
+         7nHsZ/0eIPk4czhxZAfYA1UUfGOeaebxcThA5opsnCpnnZuNNIUax6ApQohZy+rT8Y4F
+         +pRw==
+X-Gm-Message-State: AOUpUlF1Wqaja/XKhltRwBi56iw/7SDvZvOkfoTAbiTny5M2xIwUoo7H
+        5XWFCkmNJfdRY+C7lc3XJMg=
+X-Google-Smtp-Source: AA+uWPyDVZlvdm23StST0RgPaA4OBSOjKbZ/1axj+OdD0W9wZrcPtKlS49CYuriHRq+1Dc09qgSC/Q==
+X-Received: by 2002:a62:bd4:: with SMTP id 81-v6mr40424610pfl.67.1534591792663;
+        Sat, 18 Aug 2018 04:29:52 -0700 (PDT)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id p19-v6sm5718265pgk.28.2018.08.18.04.29.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 18 Aug 2018 04:29:51 -0700 (PDT)
+Date:   Sat, 18 Aug 2018 16:59:45 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Joe Perches <joe@perches.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
+        NeilBrown <neil@brown.name>, John Crispin <blogic@openwrt.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: mt7621-mmc: Use __func__ instead of
+ __FUNCTION__ in dbg.h
+Message-ID: <20180818112943.GA560@nishad>
+References: <20180816194943.GA25895@nishad>
+ <60b91f3fc3dce48e2da0c9f2a7896d84829e1d25.camel@perches.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <60b91f3fc3dce48e2da0c9f2a7896d84829e1d25.camel@perches.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6d9f0c2d5ef7568c29fa5927748c4915a9c7760a
-Gitweb:     https://git.kernel.org/tip/6d9f0c2d5ef7568c29fa5927748c4915a9c7760a
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Sat, 4 Aug 2018 15:05:09 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 8 Aug 2018 15:55:48 -0300
+On Thu, Aug 16, 2018 at 01:07:41PM -0700, Joe Perches wrote:
+> On Fri, 2018-08-17 at 01:19 +0530, Nishad Kamdar wrote:
+> > Use the identifier __func__ instead of gcc specific __FUNCTION__
+> > in dbg.h. Limit these lines to 80 characters. Issues found by
+> > checkpatch.
+> 
+> It looks like there are 4 uses in -next
+> 
+> drivers/staging/mt7621-mmc/dbg.h:110:            host->id,  ##args , __FUNCTION__, __LINE__, current->comm, current->pid);      \
+> drivers/staging/mt7621-mmc/dbg.h:118:          host->id,  ##args, __FUNCTION__, __LINE__, current->comm, current->pid); \
+> drivers/staging/mt7621-mmc/dbg.h:129:          host->id,  ##args, __FUNCTION__, __LINE__, current->comm, current->pid); \
+> drivers/staging/mt7621-mmc/dbg.h:136:          host->id,  ##args, __FUNCTION__, __LINE__);      \
+> 
+> If you are going to fix this by substitution,
+> please fix all of them, even if commented out.
+> 
+> And likely, all these uses should all be converted
+> to dev_<level> instead without __func__ or __LINE__
+> or current->comm and current->pid.
+> 
+> And relatedly, these are single statement macros and
+> don't need do while (0);
+> 
+> And the ; after while (0) is unnecessary.
+> 
+> > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> > ---
+> >  drivers/staging/mt7621-mmc/dbg.h | 8 +++++---
+> >  1 file changed, 5 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/staging/mt7621-mmc/dbg.h b/drivers/staging/mt7621-mmc/dbg.h
+> > index 2f2c56b73987..5da275239d7c 100644
+> > --- a/drivers/staging/mt7621-mmc/dbg.h
+> > +++ b/drivers/staging/mt7621-mmc/dbg.h
+> > @@ -115,7 +115,8 @@ do {    \
+> >  #define ERR_MSG(fmt, args...) \
+> >  do { \
+> >  	printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
+> > -	       host->id,  ##args, __FUNCTION__, __LINE__, current->comm, current->pid); \
+> > +	       host->id,  ##args, __func__, __LINE__, current->comm, \
+> > +	       current->pid); \
+> >  } while (0);
+> >  
+> >  #if 1
+> > @@ -126,14 +127,15 @@ do { \
+> >  #define INIT_MSG(fmt, args...) \
+> >  do { \
+> >  	printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
+> > -	       host->id,  ##args, __FUNCTION__, __LINE__, current->comm, current->pid); \
+> > +	       host->id,  ##args, __func__, __LINE__, current->comm, \
+> > +	       current->pid); \
+> >  } while (0);
+> >  
+> >  /* PID in ISR in not corrent */
+> >  #define IRQ_MSG(fmt, args...) \
+> >  do { \
+> >  	printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d>\n",	\
+> > -	       host->id,  ##args, __FUNCTION__, __LINE__);	\
+> > +	       host->id,  ##args, __func__, __LINE__);	\
+> >  } while (0);
+> >  #endif
+> >  
 
-perf annotate: Switch struct annotation_data::percent to array
+Ok, I'll include the changes in the next version.
 
-So we can hold multiple percent values for annotation line.
+Thanks for the review.
 
-The first member of this array is current local hits percent value
-(PERCENT_HITS_LOCAL index), so no functional change is expected.
-
-Adding annotation_data__percent function to return requested percent
-value from struct annotation_data.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Link: http://lkml.kernel.org/r/20180804130521.11408-9-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/ui/browsers/annotate.c |  9 ++++---
- tools/perf/util/annotate.c        | 57 ++++++++++++++++++++++++++-------------
- tools/perf/util/annotate.h        | 13 ++++++++-
- 3 files changed, 56 insertions(+), 23 deletions(-)
-
-diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index d648d1e153f3..81876c3923d2 100644
---- a/tools/perf/ui/browsers/annotate.c
-+++ b/tools/perf/ui/browsers/annotate.c
-@@ -315,10 +315,13 @@ static void annotate_browser__calc_percent(struct annotate_browser *browser,
- 		}
- 
- 		for (i = 0; i < pos->al.data_nr; i++) {
--			struct annotation_data *sample = &pos->al.data[i];
-+			double percent;
- 
--			if (max_percent < sample->percent)
--				max_percent = sample->percent;
-+			percent = annotation_data__percent(&pos->al.data[i],
-+							   PERCENT_HITS_LOCAL);
-+
-+			if (max_percent < percent)
-+				max_percent = percent;
- 		}
- 
- 		if (max_percent < 0.01 && pos->al.ipc == 0) {
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 34d4bb73aa84..074adb2a831e 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1310,10 +1310,13 @@ annotation_line__print(struct annotation_line *al, struct symbol *sym, u64 start
- 		struct annotation *notes = symbol__annotation(sym);
- 
- 		for (i = 0; i < al->data_nr; i++) {
--			struct annotation_data *data = &al->data[i];
-+			double percent;
-+
-+			percent = annotation_data__percent(&al->data[i],
-+							   PERCENT_HITS_LOCAL);
- 
--			if (data->percent > max_percent)
--				max_percent = data->percent;
-+			if (percent > max_percent)
-+				max_percent = percent;
- 		}
- 
- 		if (al->data_nr > nr_percent)
-@@ -1352,8 +1355,10 @@ annotation_line__print(struct annotation_line *al, struct symbol *sym, u64 start
- 
- 		for (i = 0; i < nr_percent; i++) {
- 			struct annotation_data *data = &al->data[i];
-+			double percent;
- 
--			color = get_percent_color(data->percent);
-+			percent = annotation_data__percent(data, PERCENT_HITS_LOCAL);
-+			color = get_percent_color(percent);
- 
- 			if (symbol_conf.show_total_period)
- 				color_fprintf(stdout, color, " %11" PRIu64,
-@@ -1362,7 +1367,7 @@ annotation_line__print(struct annotation_line *al, struct symbol *sym, u64 start
- 				color_fprintf(stdout, color, " %7" PRIu64,
- 					      data->he.nr_samples);
- 			else
--				color_fprintf(stdout, color, " %7.2f", data->percent);
-+				color_fprintf(stdout, color, " %7.2f", percent);
- 		}
- 
- 		printf(" : ");
-@@ -1769,7 +1774,7 @@ static void calc_percent(struct sym_hist *sym_hist,
- 	if (sym_hist->nr_samples) {
- 		data->he.period     = period;
- 		data->he.nr_samples = hits;
--		data->percent = 100.0 * hits / sym_hist->nr_samples;
-+		data->percent[PERCENT_HITS_LOCAL] = 100.0 * hits / sym_hist->nr_samples;
- 	}
- }
- 
-@@ -1862,8 +1867,10 @@ static void insert_source_line(struct rb_root *root, struct annotation_line *al)
- 
- 		ret = strcmp(iter->path, al->path);
- 		if (ret == 0) {
--			for (i = 0; i < al->data_nr; i++)
--				iter->data[i].percent_sum += al->data[i].percent;
-+			for (i = 0; i < al->data_nr; i++) {
-+				iter->data[i].percent_sum += annotation_data__percent(&al->data[i],
-+										      PERCENT_HITS_LOCAL);
-+			}
- 			return;
- 		}
- 
-@@ -1873,8 +1880,10 @@ static void insert_source_line(struct rb_root *root, struct annotation_line *al)
- 			p = &(*p)->rb_right;
- 	}
- 
--	for (i = 0; i < al->data_nr; i++)
--		al->data[i].percent_sum = al->data[i].percent;
-+	for (i = 0; i < al->data_nr; i++) {
-+		al->data[i].percent_sum = annotation_data__percent(&al->data[i],
-+								   PERCENT_HITS_LOCAL);
-+	}
- 
- 	rb_link_node(&al->rb_node, parent, p);
- 	rb_insert_color(&al->rb_node, root);
-@@ -2359,12 +2368,13 @@ static void annotation__calc_lines(struct annotation *notes, struct map *map,
- 		int i;
- 
- 		for (i = 0; i < al->data_nr; i++) {
--			struct annotation_data *data;
-+			double percent;
- 
--			data = &al->data[i];
-+			percent = annotation_data__percent(&al->data[i],
-+							   PERCENT_HITS_LOCAL);
- 
--			if (data->percent > percent_max)
--				percent_max = data->percent;
-+			if (percent > percent_max)
-+				percent_max = percent;
- 		}
- 
- 		if (percent_max <= 0.5)
-@@ -2451,8 +2461,13 @@ static double annotation_line__max_percent(struct annotation_line *al,
- 	int i;
- 
- 	for (i = 0; i < notes->nr_events; i++) {
--		if (al->data[i].percent > percent_max)
--			percent_max = al->data[i].percent;
-+		double percent;
-+
-+		percent = annotation_data__percent(&al->data[i],
-+						   PERCENT_HITS_LOCAL);
-+
-+		if (percent > percent_max)
-+			percent_max = percent;
- 	}
- 
- 	return percent_max;
-@@ -2518,15 +2533,19 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
- 		int i;
- 
- 		for (i = 0; i < notes->nr_events; i++) {
--			obj__set_percent_color(obj, al->data[i].percent, current_entry);
-+			double percent;
-+
-+			percent = annotation_data__percent(&al->data[i],
-+							   PERCENT_HITS_LOCAL);
-+
-+			obj__set_percent_color(obj, percent, current_entry);
- 			if (notes->options->show_total_period) {
- 				obj__printf(obj, "%11" PRIu64 " ", al->data[i].he.period);
- 			} else if (notes->options->show_nr_samples) {
- 				obj__printf(obj, "%6" PRIu64 " ",
- 						   al->data[i].he.nr_samples);
- 			} else {
--				obj__printf(obj, "%6.2f ",
--						   al->data[i].percent);
-+				obj__printf(obj, "%6.2f ", percent);
- 			}
- 		}
- 	} else {
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 58aa14c55bab..0afbf8075fca 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -101,8 +101,13 @@ struct sym_hist_entry {
- 	u64		period;
- };
- 
-+enum {
-+	PERCENT_HITS_LOCAL,
-+	PERCENT_MAX,
-+};
-+
- struct annotation_data {
--	double			 percent;
-+	double			 percent[PERCENT_MAX];
- 	double			 percent_sum;
- 	struct sym_hist_entry	 he;
- };
-@@ -134,6 +139,12 @@ struct disasm_line {
- 	struct annotation_line	 al;
- };
- 
-+static inline double annotation_data__percent(struct annotation_data *data,
-+					      unsigned int which)
-+{
-+	return which < PERCENT_MAX ? data->percent[which] : -1;
-+}
-+
- static inline struct disasm_line *disasm_line(struct annotation_line *al)
- {
- 	return al ? container_of(al, struct disasm_line, al) : NULL;
+regards,
+nishad
