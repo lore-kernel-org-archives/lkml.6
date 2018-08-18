@@ -2,91 +2,238 @@ Return-Path: <SRS0=Se0q=LB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 162D2C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 13:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FAC8C4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 13:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7BE021767
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 13:13:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7BE021767
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id C778221767
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 13:13:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C778221767
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbeHRQVI (ORCPT
+        id S1726341AbeHRQVc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 12:21:08 -0400
-Received: from mout.gmx.net ([212.227.17.21]:50073 "EHLO mout.gmx.net"
+        Sat, 18 Aug 2018 12:21:32 -0400
+Received: from foss.arm.com ([217.140.101.70]:54136 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725897AbeHRQVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 12:21:08 -0400
-Received: from homer.simpson.net ([185.146.51.55]) by mail.gmx.com (mrgmx103
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0LfTC1-1gBEd13fPV-00p8IQ; Sat, 18
- Aug 2018 15:13:15 +0200
-Message-ID: <1534597992.15909.17.camel@gmx.de>
-Subject: Re: [BUG v4.14-rt] kernel BUG at
- /work/rt/stable-rt.git/kernel/sched/core.c:1639!
-From:   Mike Galbraith <efault@gmx.de>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Julia Cartwright <julia@ni.com>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Sat, 18 Aug 2018 15:13:12 +0200
-In-Reply-To: <1534588142.2516.10.camel@gmx.de>
-References: <20180817162340.6e8482fd@gandalf.local.home>
-         <1534588142.2516.10.camel@gmx.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:3lHXdElgQkuUTDdhQ2qMAJZfiiUl5mmRb1h7VCibaLoTcIwyOfi
- Ywz5Qv/asE3XWQu1YS6xaAXaWJ7FRmeUrA7EsIacpm7sVYLXh7cT1J1bEhHRJbsluNqFnLO
- Sym77RMTyhEGna/azzHegmfKmMs55WMDbX9wiq2JaLwivv7M5l3M5kKGmr9DdKSozzuPyEj
- DWytqUH4YHcEwG+GIWynA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:OSh4xTZxyG0=:uYIGc1jwgX4RHGci079CL3
- pOSwIcMg3lGrJoRvZGubD3C9clKj696vwVD5sY2ChKpDTN8TNmpmZpZAFxHsgkiyBI/Dgv2Ne
- EimsFax90nEE5zvlV62B0XTFNADhU7h8KPUvhBf5Ue4fGXOG80hKcefABgwCnG3ui9AdPyedI
- oZo9b35jacb7ei25QPwkVEIAHVRdrmgvST+rB7r+5q+gMkj8bNN/nokAW+Cd1KpG0syDHdF2S
- DOEpSRbU9Z0W7YUO4GTTNjC4+YlGSCvmTDrf78MBWdscvVJEtLQkalvipBzgCkqZGu+bXXiNl
- nM+ShHcj+4X5upGZekmGCsIUL+5dk+5gbjB0qR32fJixHlsv38smpd1Bm0NgcTHOHz0mvevLS
- GpuQz20e7PxTauEF10l3sz0TmJ4VSB8BEKbyPRzguYW/udqvGieNHleQBuY8fLz1iOwZS0ooq
- TAkU/ap2u1VOaO894yaa9pfBD9H3iTnBuPkpC+Q68bdZXkrv194FgEn2GwYnhsjAKKUQWfRUg
- +VkxUSTcLX5UZGfGzFBV4YnTxk6iL9RMP6N4XJV1b198we/x0NOhEiMB/S18PTtFyts+2z+dM
- LoykMD46MYID0bCe53lhrF3rHSOHyPVm1ZZ8A8p3gxK7hxoBhQAJD58C4b592n/RjqILB8+yu
- kuZH6hOCYoo9mXi02ayR/IOYmbO+BUhMGN/J+Bp1N0jJn8Zj2COERVZk90bg3qzEC6TsW4S8i
- w90UvPkeObq+V7MPMPUQDW5JOHr1pzG9G9O3RNeL52JZejiHOTEHlKunZZ2g66gpacybrLG+w
- 6D0LxZf
+        id S1726299AbeHRQVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Aug 2018 12:21:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09FD87A9;
+        Sat, 18 Aug 2018 06:13:52 -0700 (PDT)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C0363F5B3;
+        Sat, 18 Aug 2018 06:13:48 -0700 (PDT)
+Date:   Sat, 18 Aug 2018 14:13:46 +0100
+Message-ID: <86a7pjq0l1.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, sboyd@kernel.org, evgreen@chromium.org,
+        linus.walleij@linaro.org, rplsssn@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        rnayak@codeaurora.org, devicetree@vger.kernel.org,
+        andy.gross@linaro.org, dianders@chromium.org
+Subject: Re: [PATCH RESEND v1 2/5] drivers: pinctrl: msm: enable PDC interrupt only during suspend
+In-Reply-To: <20180817191026.32245-3-ilina@codeaurora.org>
+References: <20180817191026.32245-1-ilina@codeaurora.org>
+        <20180817191026.32245-3-ilina@codeaurora.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-08-18 at 12:29 +0200, Mike Galbraith wrote:
-> On Fri, 2018-08-17 at 16:23 -0400, Steven Rostedt wrote:
-> > Pulling in stable releases into v4.14-rt I triggered this with my CPU
-> > hotplug test:
-> > 
-> > ------------[ cut here ]------------
-> > kernel BUG at /work/rt/stable-rt.git/kernel/sched/core.c:1639!
-> > invalid opcode: 0000 [#1] PREEMPT SMP PTI
-> > Modules linked in: sunrpc ip6t_REJECT nf_reject_ipv6 nf_conntrack_ipv6 nf_defrag_ipv6 ip6table_filter ip6_tables uinput snd_hda_codec_idt snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hda_core snd_hwdep snd_seq snd_seq_device snd_pcm snd_timer snd shpchp i2c_i801 soundcore floppy i915 drm_kms_helper drm fb_sys_fops sysimgblt sysfillrect syscopyarea i2c_algo_bit iosf_mbi video [last unloaded: speedstep_lib]
-> > CPU: 1 PID: 2944 Comm: mkdumprd Not tainted 4.14.63-test-rt40+ #782
-> > Hardware name: To Be Filled By O.E.M. To Be Filled By O.E.M./To be filled by O.E.M., BIOS SDBLI944.86P 05/08/2007
-> > task: ffff880037888d80 task.stack: ffffc90000538000
-> > RIP: 0010:select_fallback_rq+0xc3/0x122
+Hi Lina,
+
+On Fri, 17 Aug 2018 20:10:23 +0100,
+Lina Iyer <ilina@codeaurora.org> wrote:
 > 
-> I noticed this upstream, and had started hunting for the origin, but
-> had thought that 4.14-rt was OK.  Clearly not the case, but it's not
-> 4.14.60.. stable changes interacting badly either, virgin 4.14.59-rt37
-> just reproduced in a vm clone of my workstation.
+> During suspend the system may power down some of the system rails. As a
+> result, the TLMM hw block may not be operational anymore and wakeup
+> capable GPIOs will not be detected. The PDC however will be operational
+> and the GPIOs that are routed to the PDC as IRQs can wake the system up.
+> 
+> To avoid being interrupted twice (for TLMM and once for PDC IRQ) when a
+> GPIO trips, use TLMM for active and switch to PDC for suspend. When
+> entering suspend, disable the TLMM wakeup interrupt and instead enable
+> the PDC IRQ and revert upon resume.
+> 
+> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+> ---
+>  drivers/pinctrl/qcom/pinctrl-msm.c | 60 +++++++++++++++++++++++++++++-
+>  drivers/pinctrl/qcom/pinctrl-msm.h |  3 ++
+>  2 files changed, 62 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> index 03ef1d29d078..17e541f8f09d 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -37,6 +37,7 @@
+>  #include "../pinctrl-utils.h"
+>  
+>  #define MAX_NR_GPIO 300
+> +#define MAX_PDC_IRQ 1024
 
-4.15.18-rt37 (4.14-rt rolled forward) does not reproduce, nor does
-4.16.18-rt12, but 4.17.0-rt5 (v4.16.12-rt5 rolled forward) does, so
-seems it has be something from the 4.17 cycle that went back to 4.14-
-stable after 4.1[56]-stable trees went extinct.
+Where is this value coming from? Is it guaranteed to be an
+architectural maximum? Or something that is likely to vary in future
+implementations?
 
-	-Mike
+>  #define PS_HOLD_OFFSET 0x820
+>  
+>  /**
+> @@ -51,6 +52,7 @@
+>   * @enabled_irqs:   Bitmap of currently enabled irqs.
+>   * @dual_edge_irqs: Bitmap of irqs that need sw emulated dual edge
+>   *                  detection.
+> + * @pdc_irqs:       Bitmap of wakeup capable irqs.
+>   * @soc;            Reference to soc_data of platform specific data.
+>   * @regs:           Base address for the TLMM register map.
+>   */
+> @@ -68,11 +70,14 @@ struct msm_pinctrl {
+>  
+>  	DECLARE_BITMAP(dual_edge_irqs, MAX_NR_GPIO);
+>  	DECLARE_BITMAP(enabled_irqs, MAX_NR_GPIO);
+> +	DECLARE_BITMAP(pdc_irqs, MAX_PDC_IRQ);
+>  
+>  	const struct msm_pinctrl_soc_data *soc;
+>  	void __iomem *regs;
+>  };
+>  
+> +static bool in_suspend;
+> +
+>  static int msm_get_groups_count(struct pinctrl_dev *pctldev)
+>  {
+>  	struct msm_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+> @@ -787,8 +792,11 @@ static int msm_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
+>  
+>  	raw_spin_lock_irqsave(&pctrl->lock, flags);
+>  
+> -	if (pdc_irqd)
+> +	if (pdc_irqd && !in_suspend) {
+>  		irq_set_irq_wake(pdc_irqd->irq, on);
+> +		on ? set_bit(pdc_irqd->irq, pctrl->pdc_irqs) :
+> +		     clear_bit(pdc_irqd->irq, pctrl->pdc_irqs);
+
+I think we'll all survive the two extra lines if you write this as an
+'if' statement (unless you're competing for the next IOCCC, and then
+you need to up your game a bit).
+
+Also, are you indexing the bitmap using a Linux irq number? If so,
+that's an absolute NACK. Out of the box, a Linux IRQ can be up to
+NR_IRQS+8196 on arm64, and there are plans to push that to be a much
+larger space.
+
+> +	}
+>  
+>  	irq_set_irq_wake(pctrl->irq, on);
+
+I'm a bit worried by the way you call into the irq subsystem with this
+spinlock held. Have you run that code with lockdep enabled?
+
+>  
+> @@ -920,6 +928,8 @@ static int msm_gpio_pdc_pin_request(struct irq_data *d)
+>  	}
+>  
+>  	irq_set_handler_data(d->irq, irq_get_irq_data(irq));
+> +	irq_set_handler_data(irq, d);
+> +	irq_set_status_flags(irq, IRQ_DISABLE_UNLAZY);
+
+Could you explain what this is trying to do? I'm trying to understand
+this code, but this function isn't in 4.18...
+
+>  	disable_irq(irq);
+>  
+>  	return 0;
+> @@ -1070,6 +1080,54 @@ static void msm_pinctrl_setup_pm_reset(struct msm_pinctrl *pctrl)
+>  		}
+>  }
+>  
+> +int __maybe_unused msm_pinctrl_suspend_late(struct device *dev)
+> +{
+> +	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
+> +	struct irq_data *irqd;
+> +	int i;
+> +
+> +	in_suspend = true;
+> +	for_each_set_bit(i, pctrl->pdc_irqs, MAX_PDC_IRQ) {
+> +		irqd = irq_get_handler_data(i);
+
+So this is what I though. You're using the Linux IRQ, and not the pin
+number (or whatever HW-dependent index that would otherwise make
+sense). Please fix it.
+
+> +		/*
+> +		 * We don't know if the TLMM will be functional
+> +		 * or not, during the suspend. If its functional,
+> +		 * we do not want duplicate interrupts from PDC.
+> +		 * Hence disable the GPIO IRQ and enable PDC IRQ.
+> +		 */
+> +		if (irqd_is_wakeup_set(irqd)) {
+> +			irq_set_irq_wake(irqd->irq, false);
+> +			disable_irq(irqd->irq);
+> +			enable_irq(i);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +int __maybe_unused msm_pinctrl_resume_late(struct device *dev)
+> +{
+> +	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
+> +	struct irq_data *irqd;
+> +	int i;
+> +
+> +	for_each_set_bit(i, pctrl->pdc_irqs, MAX_PDC_IRQ) {
+> +		irqd = irq_get_handler_data(i);
+> +		/*
+> +		 * The TLMM will be operational now, so disable
+> +		 * the PDC IRQ.
+> +		 */
+> +		if (irqd_is_wakeup_set(irq_get_irq_data(i))) {
+> +			disable_irq_nosync(i);
+> +			irq_set_irq_wake(irqd->irq, true);
+> +			enable_irq(irqd->irq);
+> +		}
+> +	}
+> +	in_suspend = false;
+> +
+> +	return 0;
+> +}
+> +
+>  int msm_pinctrl_probe(struct platform_device *pdev,
+>  		      const struct msm_pinctrl_soc_data *soc_data)
+>  {
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
+> index 9b9feea540ff..21b56fb5dae9 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.h
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.h
+> @@ -123,4 +123,7 @@ int msm_pinctrl_probe(struct platform_device *pdev,
+>  		      const struct msm_pinctrl_soc_data *soc_data);
+>  int msm_pinctrl_remove(struct platform_device *pdev);
+>  
+> +int msm_pinctrl_suspend_late(struct device *dev);
+> +int msm_pinctrl_resume_late(struct device *dev);
+> +
+>  #endif
+
+I can't really review this code any further, as it seems that I'm
+missing some crucial dependencies. But there is a number of things
+that feel quite wrong in this code, and that need to be addressed
+anyway.
+
+Thanks,
+
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
