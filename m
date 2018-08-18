@@ -2,654 +2,245 @@ Return-Path: <SRS0=Se0q=LB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3852AC4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 02:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED04AC4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 02:17:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBDE5219D2
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 02:12:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64C7E219D2
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 02:17:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhCjZqmF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBDE5219D2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="Ljh+nQL6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64C7E219D2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726309AbeHRFS1 (ORCPT
+        id S1726404AbeHRFXQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 01:18:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36780 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725853AbeHRFS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 01:18:27 -0400
-Received: from localhost (unknown [104.132.0.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7336E219D2;
-        Sat, 18 Aug 2018 02:12:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534558354;
-        bh=3UgnDN8EXUdXVfrLOvqFCoru3iSZwUjRMnA7bZpJC/Y=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=fhCjZqmFCdBG43L4TgkV05VkzUxXnTtZ5a5UQFaaj26HI+dgK9M3H4n4NXygsvcfi
-         uNVG/AHf0+fPVEr6k6uH0T2j2u5fCj1iO9d3N4D53bsVCDXh4giGfoyfL3M94WWT2P
-         prQKDnh34yE6TCq+VxiWgZoMjj5zGu4z5Z89Zvlw=
-Content-Type: text/plain; charset="utf-8"
+        Sat, 18 Aug 2018 01:23:16 -0400
+Received: from mail-he1eur01on0070.outbound.protection.outlook.com ([104.47.0.70]:7913
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725853AbeHRFXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Aug 2018 01:23:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M/SwHVc4TxjmfGtF1fIlFnpT9MxasPvUb+BP10/dj0U=;
+ b=Ljh+nQL6NuLVRgYxquy7nK5k4lhYcFfuZ/muVoEQN7s883IANWc+im3lYLDvUxSRRjrRQ3sRaRAQM1BfFk+H550N8fzZ25xEV3yosa+L1VDsmFfJTVlN8b16fiqI0emGVP8H8Ys4Pkm+cdlexQTKHWlTEV47WqDI8DnVpM4b5zk=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+Received: from mlx.ziepe.ca (174.3.196.123) by
+ AM0PR05MB4451.eurprd05.prod.outlook.com (2603:10a6:208:5a::24) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1059.20; Sat, 18 Aug 2018 02:17:18 +0000
+Received: from jgg by mlx with local (Exim 4.90_1)
+        (envelope-from <jgg@mellanox.com>)
+        id 1fqqnb-0006Wv-AU; Fri, 17 Aug 2018 20:17:07 -0600
+Date:   Fri, 17 Aug 2018 20:17:07 -0600
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Ursula Braun <ubraun@linux.ibm.com>
+Cc:     linux-rdma@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] RDMA/smc: Replace ib_query_gid with rdma_get_gid_attr
+Message-ID: <20180818021707.GA25026@ziepe.ca>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1533952436-17221-1-git-send-email-tdas@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-References: <1533952436-17221-1-git-send-email-tdas@codeaurora.org>
-Message-ID: <153455835372.28926.7641705907931269497@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v4 0/2] clk: qcom: Add support for RCG to register for DFS
-Date:   Fri, 17 Aug 2018 19:12:33 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [174.3.196.123]
+X-ClientProxiedBy: YTOPR0101CA0033.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b00:15::46) To AM0PR05MB4451.eurprd05.prod.outlook.com
+ (2603:10a6:208:5a::24)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 123ffb9c-959e-4800-96f2-08d604b0b8f6
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR05MB4451;
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR05MB4451;3:n7apmKsfuPMxjXDpEKTJkWSLn4DmFukEbB/qRsERjCZmr6qxDUxnFldPp2NgFWXP/O/MZq4qv/jE52vSm+ijqNXiT6q78LTWXpKKXPe8OSudXh4P1R67DDuFWoslNxy3o+1sO8HqBkflhX0VNLLKU4yGRy7fHihwRMmmo+/JmHRkMXUikLlG1Ujxd3Y06KoA0H6UGcBl0Rw69LoOlxv35diAXpJpwFO0a6nFllLJPhWbzxgz6inA88gAwQ3zCBev;25:vCWEQrrO0yyQqZjL7xxu1RsscRSybwqDbOpVSui7PxrTlgi3ygyZZGhAGWnnos64fvuP8ASAwILuSqrBsGnK2+XvZPpN9YUuNPnu5PeAxpn57/2PXhqa0O8pakDS3qy9LwzWu13lIfcF5iFUcF4Ei6XCqnwWfzj6gh5vh+hoPROALh0dT9u5wGfrdnMRHs2O73zvhQ8FlMLnhBWy305UjIRPsEw2/Oyj0mznrbIbux9pZYQNkb2uKwcN7p27PYIT3VHb5Mjoj6OkgkCvN5++aU2QQ1Xcx/lNN7SmuZfMwcWfmM+yD3Uv5UBNQda6wHGatD7V++YMwQHZdX/eJTIVjg==;31:P7EVGGburWMf9syhHg97mwfyA+ojUgRvzHWJrbl2vA2aq90hKWQortT1F8/vgHUa8YIgWVZZL9tf2jOR6Se30KuIzhSJcTi+qxZwoIhMR9bJMX5L/OvV6egpAi8XJalaFS6odgtorb3e0jwJtKSKYOnTwyEvhe4GkonqVEcD0lqGmltWg+EMh8g2y3b5obL8hJ26/000R/PCf54ISs9gUR8rOcd9XU1s2Rt5YH3DH7c=
+X-MS-TrafficTypeDiagnostic: AM0PR05MB4451:
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR05MB4451;20:qBvBkP6OYNuPSv1oANbwj/5GsLdMp1GLX6Rs7LeM0EUxvWWp9z13BvjUgx6xOaON3S/85VXg97BpKVnGZkMGoEsQ7YuoUXWlhbKKh023GNyyQKddJusBijyeoqofpN5PM4cZupm4lUQ9vCxxlT/15l0X/qNE3T47E8+jLcv5ScDmq6lnkJjJ5KpHlPAWin3PRJzgaPXCnyzeBwvIc5KqAPL7Eo1kRt43N7sl6cHZpUKB87o/py5uXbrjXEycqfA/kaAbWBYQVOLYKU8cavSQ4gWlkSZRw43YPaASPjCD9oWpWIhOpmBxiD2hloDIzhrJ3IRCT1YmgsWQhOGL/PyFr5bs2p8yzFrL65eE0AhpgYC+a4kWbn1ikbaBA1GMq4M62UEX31WD9x5SrxiPzEBK3AoDE1cMR+sNdtgjUOZMid3crFHY4ZXB9U/hjG57lCX8++hjO5mMUVBZnXmIcbcB98f0QOCeDHM+18WS7ypUPGJPwK79B3/bhhQNRypaNBYj;4:URUyaRHTcyFUa3Ow5F38LiusRuyyaqF0DriVCgIWlnOo2pz6b6Ravtz22OPEnffBHdnuS6xnz9jsScY192BWZK1aitxw02Ol/VswS6iILOHnZJ1zbGxJI01F92ZcA8TGESZ9gZWyi2O3OLO8cqpIzD4rMnkkKjQ5qkxdHh0sYe252GGCgqBG9t5cWx/OkjKRB4dSqs2eyIjT04BHyKX1jIP0qRmaLGHUrV1I1UCmcUCCpIo/cX4XrCaY46mZQFGs/cSfLBoHwbuBDH8kwHr0e/GhgWSh1B2D06EffdlPcKb0YRDNQVlGi+zjWjAJNqmM
+X-Microsoft-Antispam-PRVS: <AM0PR05MB445161208C6485D7AC84CCAACF3C0@AM0PR05MB4451.eurprd05.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(788757137089);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301070)(93006095)(93001095)(10201501046)(3231311)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:AM0PR05MB4451;BCL:0;PCL:0;RULEID:;SRVR:AM0PR05MB4451;
+X-Forefront-PRVS: 076804FE30
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(366004)(346002)(376002)(39860400002)(396003)(189003)(199004)(69596002)(68736007)(122856001)(57986006)(386003)(8936002)(79686004)(476003)(97736004)(14444005)(23726003)(47776003)(9746002)(486006)(1857600001)(26005)(186003)(81166006)(1076002)(83796002)(81156014)(86362001)(575784001)(9786002)(6916009)(7736002)(52116002)(16586007)(305945005)(5660300001)(8676002)(58126008)(478600001)(36756003)(33656002)(9686003)(2906002)(33896004)(53936002)(3846002)(6116002)(426003)(106356001)(105586002)(46656002)(66066001)(316002)(4326008)(50466002)(18370500001)(24400500001)(42262002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR05MB4451;H:mlx.ziepe.ca;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR05MB4451;23:JD94195XTrG7iueyppYavJ2T32XhMNNhqlnhL6fYU?=
+ =?us-ascii?Q?8MciYcYP4NbngijPKFCCWtdRqjQQbDllAyFW8BJc8JEkSecvpHWqaTZsMgh/?=
+ =?us-ascii?Q?P/KDVYAJRpI9axUsLpcuxLZVG4urBuQwyL5K+dMKnluc0U4kizE/ihdgKcR5?=
+ =?us-ascii?Q?Z//NAgZBSf7FXGRX70JrZ6jgrZlWYuxOcROOAQqeb7/UmOJaz8VsC1yXlX9u?=
+ =?us-ascii?Q?6Bi5YCgeU7VIjndAoTJppvYHiekl5S+ZP3bQvMQ0aBHmZNgkUimN1hQTb7ER?=
+ =?us-ascii?Q?5HMNRb9Lv6OiRDuwftLD05n3fUgUfFa9W5wXgJzmtCV+iqSgGmaz+TIkQo4s?=
+ =?us-ascii?Q?xi0J4JYOeDLX/N3XvIc2uww9ATxs+KK5vt3k41Lb2CgF6QrGE/3UbvLOUc7S?=
+ =?us-ascii?Q?7UAZdaiP4hxxfMBegGH6Lw2SPr+RWi1v15tX5np3R/kF414JEo12g6/v0WQF?=
+ =?us-ascii?Q?I3jHkIYBs7HYUIh3+DybopaInD0Okl6o6gQ+7B1R77rr/RHLGWtpu0b1wlZP?=
+ =?us-ascii?Q?tBBB+lj/0D/SSx1VbauM8eezstvNhfp9MYMRMfEoULJeSUtJ49hdvgUX3RdV?=
+ =?us-ascii?Q?KYqAi57uqyvq2FeYiK9PrOkiOwm4j/jezJQEgG1EG2MiOLfujRVIEo/b7062?=
+ =?us-ascii?Q?TvB1Tr4p0EWIluYndNyLhs5XcREyfbz0vRnK8y8i+VXGVtVB+880kWFUshYg?=
+ =?us-ascii?Q?JcnCuw1eXsthZLapV5aC8geQIJ1YTx2pEI7hAFX7nWGhIYL4epsnzpZUIvMc?=
+ =?us-ascii?Q?stwRY8mPjKCplhD2dzB5ODuJ+6T4Qvro48AWDi1C9gs8in0ZoJsDG8wtM7WE?=
+ =?us-ascii?Q?syDwkwcGgl/5Bpbzxtq2VeZiLG7E9rmiAD2nw0o1TguiGTnKjIp0KpqfTnrz?=
+ =?us-ascii?Q?nnPEx1gi65zewjulI2T8WhUNC8gm72NMzOoCkyFTqhNPFt9RjUDiuYRvF0Ex?=
+ =?us-ascii?Q?Rtm6kD21oLq7Va3pepen8T3fY92V+P0JixVy/WxtS5qo3AaPWjBHQldemMWQ?=
+ =?us-ascii?Q?bKPkkLU0X7UI8aorduJVtEUsmwUy2SK5uTUnN9lbBaOvDTkpvLimRQgemjes?=
+ =?us-ascii?Q?5DMxitCOxIW6TezQGOLfSwe8fgjqL+PTvw8zDN46acSG0ZjTgPYGm9oaGR8c?=
+ =?us-ascii?Q?0RQXOWMy8auRg7XGqRG+8fm2tfGR+es88iojZdpI/NdrfmJEY9V13mzi/Vw3?=
+ =?us-ascii?Q?0DnxAoL4ZHDNZND1SnNS1YOxmMVAW/PuduqbO8HkmRk7923RWZzrMlW+I/8+?=
+ =?us-ascii?Q?co1KldWP0xzVjgdAzkj+AGCwVZZfDoGdkukWcQFJTEjj3RQuudXJmf1EsMDH?=
+ =?us-ascii?Q?pDioZZpbAm1Xbzy5ZyedQwnckufs/QdANyzp2E8yxoESusxi4Y37kUz/yma9?=
+ =?us-ascii?Q?xEiLA=3D=3D?=
+X-Microsoft-Antispam-Message-Info: UixivDBFpWM8a0ndUHPHVouSYrqfbpTBkNO1XV8Ozh+BBq2pj1Deyvp6uViHvaa49enjqv9nUb+HK9B8GmDMel1EO5VtVQQkCIrjYkGfAp1edSGGdKpd3YuHda6SDQ9ZOMAKhWy7FfPh2BVaJcXyVeMUCD7wNmN4jaqhadBzC9b7OpwpKoKt9pcu7j1jlYHmRbPnl3c28VUP4TSWA+4Ak1eLx3k5Lii2lC4pktYfmEVNG6djnLAz37uuYz0GYT1tAr3wGnH7HXGV+kjIm8kNEuTff/pELl31lV1fwONF+PpWxcJl3XaYPMt+tYVpWpRV6IvWJxEngq2UsRGW1L79vFRTqva0c0PYSLe1Md+NBWc=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR05MB4451;6:BkIYTal5V8rKqnJRFYLOOtl9kvCuhdZqfkPKY9Zd434l9DzBFdm9fTRuReSaWRyz42VTwlbePCIqFROkc+ZRRdC93VMhylLVRD4TsEP6L95jtuSfQt3Hy5pNgyQTOadZ763eK4DGSWI22bzMzhl6yKKjxaBh6H5S5T0byPk+KJbIHcvxM+6j2bfEUJPwlSsvL/2OpkmNvXfhbNQLz+/mapr/NOXadchQP1QxZgN6/31NpS9XVJlvQNxLKWv8lEQao8cNgUJPHiROt4GjnSruqus0e1WAO1rgBn+5OR2JThrsFIcNjSIzXb+XPurXsx+3Q+UO6DBUvmqWgpt9l7Gltpm8fisqZhr/cEGhNSo3fEXZyWGF6RNHpSd2C6IWOd9qUwD9cayCjInB/iuVJizgQ1AI7DQCL6rO0BsHZ55ouMTm7yg/vtVu68kjVeetybmHmToe9b2XlF0ffWxlpat6Bg==;5:XoYxIkB8Pn88owWa81qaqUWXfafK/Ek33oXdbeSHK8mAmH5cxTFmv27H5bewaugkSokhImfhpKnFTZzbTj23AlPOdzuIhxK8KpFy1T2Dyk9ZQT4oExDhu9VkOqtVbyxxDUn6tec4kxGFo7iQOfDbNKb+FBMkTTAY8WTeJwe8/mA=;7:V/9YUJSqwgoAvhbTUw0HTx0JWeS1yRVAJNrs+9CD58hXCxqTUq8aotPGvxewcGXVm7UoF962k0L45lVQGpBuzabmDGvVGrbsRs06OTyDcn3ki9nmdorBgoslG2p8A+WNirikRa0SBrw7JnmTXA7tcettlWEmIFDMajSNpEoxVQY+6FpEam1q7RcyRsSSEYSYXFmgVC4wtEpD6DoiU5TdF67NBGgwmTyaTB2u4n0nYwWHtDGgzxK4O4if7/T4hxaU
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2018 02:17:18.3427
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 123ffb9c-959e-4800-96f2-08d604b0b8f6
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR05MB4451
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2018-08-10 18:53:54)
->  [v4]
->   * Add recalc_clk_ops to calculate the clock frequency reading the curre=
-nt
->     perf state, also add CLK_GET_RATE_NOCACHE flag.
->   * Cleanup 'goto' during mode check in 'clk_rcg2_calculate_freq'.
->   * cleanup return from function 'com_cc_register_rcg_dfs'.
+All RDMA ULPs should be using rdma_get_gid_attr instead of
+ib_query_gid. Convert SMC to use the new API.
 
-I want to squash this in. I have only compile tested it. Let me know
-what you think.
+In the process correct some confusion with gid_type - if attr->ndev is
+!NULL then gid_type can never be IB_GID_TYPE_IB by
+definition. IB_GID_TYPE_ROCE shares the same enum value and is probably
+what was intended here.
 
-----8<---
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index e6300e05d5df..e5eca8a1abe4 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -163,6 +163,15 @@ extern const struct clk_ops clk_pixel_ops;
- extern const struct clk_ops clk_gfx3d_ops;
- extern const struct clk_ops clk_rcg2_shared_ops;
- =
+Reviewed-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+---
+ include/rdma/ib_cache.h | 24 ---------------------
+ net/smc/smc_ib.c        | 48 +++++++++++++++++++++--------------------
+ 2 files changed, 25 insertions(+), 47 deletions(-)
 
-+struct clk_rcg_dfs_data {
-+	struct clk_rcg2 *rcg;
-+	struct clk_init_data *init;
-+};
-+
-+#define DEFINE_RCG_DFS(r) \
-+	{ .rcg =3D &r##_src, .init =3D &r##_init }
-+
- extern int qcom_cc_register_rcg_dfs(struct regmap *regmap,
--			     struct clk_rcg2 **rcgs, int num_clks);
-+				    const struct clk_rcg_dfs_data *rcgs,
-+				    size_t len);
- #endif
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 55a5b58cbb15..bbe2a1916296 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -1051,48 +1051,24 @@ static unsigned long
- clk_rcg2_dfs_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+This is intended to go this merge window (ie in the next 4 days) to
+remove the wrong-headed __deprecated warning. If there is no objection
+I'll send it via the rdma tree.
+
+Thanks,
+Jason
+
+diff --git a/include/rdma/ib_cache.h b/include/rdma/ib_cache.h
+index 3e11e7cc60b745..62e990b620aaf7 100644
+--- a/include/rdma/ib_cache.h
++++ b/include/rdma/ib_cache.h
+@@ -133,28 +133,4 @@ const struct ib_gid_attr *rdma_get_gid_attr(struct ib_device *device,
+ void rdma_put_gid_attr(const struct ib_gid_attr *attr);
+ void rdma_hold_gid_attr(const struct ib_gid_attr *attr);
+ 
+-/*
+- * This is to be removed. It only exists to make merging rdma and smc simpler.
+- */
+-static inline __deprecated int ib_query_gid(struct ib_device *device,
+-					    u8 port_num, int index,
+-					    union ib_gid *gid,
+-					    struct ib_gid_attr *attr_out)
+-{
+-	const struct ib_gid_attr *attr;
+-
+-	memset(attr_out, 0, sizeof(*attr_out));
+-	attr = rdma_get_gid_attr(device, port_num, index);
+-	if (IS_ERR(attr))
+-		return PTR_ERR(attr);
+-
+-	if (attr->ndev)
+-		dev_hold(attr->ndev);
+-	*attr_out = *attr;
+-
+-	rdma_put_gid_attr(attr);
+-
+-	return 0;
+-}
+-
+ #endif /* _IB_CACHE_H */
+diff --git a/net/smc/smc_ib.c b/net/smc/smc_ib.c
+index 9bb5274a244e83..e519ef29c0ffcb 100644
+--- a/net/smc/smc_ib.c
++++ b/net/smc/smc_ib.c
+@@ -145,17 +145,21 @@ int smc_ib_ready_link(struct smc_link *lnk)
+ 
+ static int smc_ib_fill_mac(struct smc_ib_device *smcibdev, u8 ibport)
  {
- 	struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
--	u32 cfg, hid_div, m =3D 0, n =3D 0, mode =3D 0, mask, level;
--	int num_parents, i;
--	unsigned long prate;
--
--	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
--				SE_CMD_DFSR_OFFSET, &cfg);
--	level =3D (GENMASK(4, 1) & cfg) >> 1;
--
--	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
--				SE_PERF_DFSR(level), &cfg);
--	if (rcg->mnd_width) {
--		mask =3D BIT(rcg->mnd_width) - 1;
--		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
--				SE_PERF_M_DFSR(level), &m);
--		m &=3D mask;
--		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
--				SE_PERF_N_DFSR(level), &n);
--		n =3D  ~n;
--		n &=3D mask;
--		n +=3D m;
--		mode =3D cfg & CFG_MODE_MASK;
--		mode >>=3D CFG_MODE_SHIFT;
--	}
-+	int ret;
-+	u32 level;
- =
-
--	mask =3D BIT(rcg->hid_width) - 1;
--	hid_div =3D cfg >> CFG_SRC_DIV_SHIFT;
--	hid_div &=3D mask;
--	cfg &=3D CFG_SRC_SEL_MASK;
--	cfg >>=3D CFG_SRC_SEL_SHIFT;
-+	regmap_read(rcg->clkr.regmap,
-+		    rcg->cmd_rcgr + SE_CMD_DFSR_OFFSET, &level);
-+	level &=3D GENMASK(4, 1);
-+	level >>=3D 1;
- =
-
--	num_parents =3D clk_hw_get_num_parents(hw);
--	for (i =3D 0; i < num_parents; i++) {
--		if (cfg =3D=3D rcg->parent_map[i].cfg) {
--			prate =3D clk_hw_get_rate(
--				clk_hw_get_parent_by_index(&rcg->clkr.hw, i));
--			if (parent_rate !=3D prate)
--				parent_rate =3D prate;
-+	if (!rcg->freq_tbl) {
-+		ret =3D clk_rcg2_dfs_populate_freq_table(rcg);
-+		if (ret) {
-+			pr_err("Failed to update DFS tables for %s\n",
-+					clk_hw_get_name(hw));
-+			return ret;
+-	struct ib_gid_attr gattr;
+-	union ib_gid gid;
+-	int rc;
++	const struct ib_gid_attr *attr;
++	int rc = 0;
+ 
+-	rc = ib_query_gid(smcibdev->ibdev, ibport, 0, &gid, &gattr);
+-	if (rc || !gattr.ndev)
++	attr = rdma_get_gid_attr(smcibdev->ibdev, ibport, 0);
++	if (IS_ERR(attr))
+ 		return -ENODEV;
+ 
+-	memcpy(smcibdev->mac[ibport - 1], gattr.ndev->dev_addr, ETH_ALEN);
+-	dev_put(gattr.ndev);
+-	return 0;
++	if (attr->ndev)
++		memcpy(smcibdev->mac[ibport - 1], attr->ndev->dev_addr,
++		       ETH_ALEN);
++	else
++		rc = -ENODEV;
++
++	rdma_put_gid_attr(attr);
++	return rc;
+ }
+ 
+ /* Create an identifier unique for this instance of SMC-R.
+@@ -180,29 +184,27 @@ bool smc_ib_port_active(struct smc_ib_device *smcibdev, u8 ibport)
+ int smc_ib_determine_gid(struct smc_ib_device *smcibdev, u8 ibport,
+ 			 unsigned short vlan_id, u8 gid[], u8 *sgid_index)
+ {
+-	struct ib_gid_attr gattr;
+-	union ib_gid _gid;
++	const struct ib_gid_attr *attr;
+ 	int i;
+ 
+ 	for (i = 0; i < smcibdev->pattr[ibport - 1].gid_tbl_len; i++) {
+-		memset(&_gid, 0, SMC_GID_SIZE);
+-		memset(&gattr, 0, sizeof(gattr));
+-		if (ib_query_gid(smcibdev->ibdev, ibport, i, &_gid, &gattr))
++		attr = rdma_get_gid_attr(smcibdev->ibdev, ibport, i);
++		if (IS_ERR(attr))
+ 			continue;
+-		if (!gattr.ndev)
+-			continue;
+-		if (((!vlan_id && !is_vlan_dev(gattr.ndev)) ||
+-		     (vlan_id && is_vlan_dev(gattr.ndev) &&
+-		      vlan_dev_vlan_id(gattr.ndev) == vlan_id)) &&
+-		    gattr.gid_type == IB_GID_TYPE_IB) {
++
++		if (attr->ndev &&
++		    ((!vlan_id && !is_vlan_dev(attr->ndev)) ||
++		     (vlan_id && is_vlan_dev(attr->ndev) &&
++		      vlan_dev_vlan_id(attr->ndev) == vlan_id)) &&
++		    attr->gid_type == IB_GID_TYPE_ROCE) {
+ 			if (gid)
+-				memcpy(gid, &_gid, SMC_GID_SIZE);
++				memcpy(gid, &attr->gid, SMC_GID_SIZE);
+ 			if (sgid_index)
+-				*sgid_index = i;
+-			dev_put(gattr.ndev);
++				*sgid_index = attr->index;
++			rdma_put_gid_attr(attr);
+ 			return 0;
  		}
+-		dev_put(gattr.ndev);
++		rdma_put_gid_attr(attr);
  	}
- =
-
--
--	return calc_rate(parent_rate, m, n, mode, hid_div);
-+	return rcg->freq_tbl[level].freq;
+ 	return -ENODEV;
  }
- =
+-- 
+2.18.0
 
- static const struct clk_ops clk_rcg2_dfs_ops =3D {
-@@ -1102,9 +1078,11 @@ static const struct clk_ops clk_rcg2_dfs_ops =3D {
- 	.recalc_rate =3D clk_rcg2_dfs_recalc_rate,
- };
- =
-
--static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg, struct regmap *regmap)
-+static int clk_rcg2_enable_dfs(const struct clk_rcg_dfs_data *data,
-+			       struct regmap *regmap)
- {
--	struct clk_init_data *init;
-+	struct clk_rcg2 *rcg =3D data->rcg;
-+	struct clk_init_data *init =3D data->init;
- 	u32 val;
- 	int ret;
- =
-
-@@ -1116,18 +1094,13 @@ static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg=
-, struct regmap *regmap)
- 	if (!(val & SE_CMD_DFS_EN))
- 		return 0;
- =
-
--	init =3D kzalloc(sizeof(*init), GFP_KERNEL);
--	if (!init)
--		return -ENOMEM;
--
--	init->name =3D rcg->clkr.hw.init->name;
--	init->flags =3D rcg->clkr.hw.init->flags;
--	init->parent_names =3D rcg->clkr.hw.init->parent_names;
--	init->num_parents =3D rcg->clkr.hw.init->num_parents;
--	init->flags =3D CLK_GET_RATE_NOCACHE;
-+	/*
-+	 * Rate changes with consumer writing a register in
-+	 * their own I/O region
-+	 */
-+	init->flags |=3D CLK_GET_RATE_NOCACHE;
- 	init->ops =3D &clk_rcg2_dfs_ops;
- =
-
--	rcg->clkr.hw.init =3D init;
- 	rcg->freq_tbl =3D NULL;
- =
-
- 	pr_debug("DFS registered for clk %s\n", init->name);
-@@ -1136,14 +1109,14 @@ static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg=
-, struct regmap *regmap)
- }
- =
-
- int qcom_cc_register_rcg_dfs(struct regmap *regmap,
--			    struct clk_rcg2 **rcgs, int num_clks)
-+			     const struct clk_rcg_dfs_data *rcgs, size_t len)
- {
- 	int i, ret;
- =
-
--	for (i =3D 0; i < num_clks; i++) {
--		ret =3D clk_rcg2_enable_dfs(rcgs[i], regmap);
-+	for (i =3D 0; i < len; i++) {
-+		ret =3D clk_rcg2_enable_dfs(&rcgs[i], regmap);
- 		if (ret) {
--			const char *name =3D rcgs[i]->clkr.hw.init->name;
-+			const char *name =3D rcgs[i].init->name;
- =
-
- 			pr_err("DFS register failed for clk %s\n", name);
- 			return ret;
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index fef6732bd7d8..42ab01d33b52 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -396,18 +396,27 @@ static const struct freq_tbl ftbl_gcc_qupv3_wrap0_s0_=
-clk_src[] =3D {
- 	{ }
- };
- =
-
-+static struct clk_init_data gcc_qupv3_wrap0_s0_clk_init =3D {
-+	.name =3D "gcc_qupv3_wrap0_s0_clk_src",
-+	.parent_names =3D gcc_parent_names_0,
-+	.num_parents =3D 4,
-+	.ops =3D &clk_rcg2_shared_ops,
-+};
-+
- static struct clk_rcg2 gcc_qupv3_wrap0_s0_clk_src =3D {
- 	.cmd_rcgr =3D 0x17034,
- 	.mnd_width =3D 16,
- 	.hid_width =3D 5,
- 	.parent_map =3D gcc_parent_map_0,
- 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
--	.clkr.hw.init =3D &(struct clk_init_data){
--		.name =3D "gcc_qupv3_wrap0_s0_clk_src",
--		.parent_names =3D gcc_parent_names_0,
--		.num_parents =3D 4,
--		.ops =3D &clk_rcg2_shared_ops,
--	},
-+	.clkr.hw.init =3D &gcc_qupv3_wrap0_s0_clk_init,
-+};
-+
-+static struct clk_init_data gcc_qupv3_wrap0_s1_clk_init =3D {
-+	.name =3D "gcc_qupv3_wrap0_s1_clk_src",
-+	.parent_names =3D gcc_parent_names_0,
-+	.num_parents =3D 4,
-+	.ops =3D &clk_rcg2_shared_ops,
- };
- =
-
- static struct clk_rcg2 gcc_qupv3_wrap0_s1_clk_src =3D {
-@@ -416,12 +425,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s1_clk_src =3D=
- {
- 	.hid_width =3D 5,
- 	.parent_map =3D gcc_parent_map_0,
- 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
--	.clkr.hw.init =3D &(struct clk_init_data){
--		.name =3D "gcc_qupv3_wrap0_s1_clk_src",
--		.parent_names =3D gcc_parent_names_0,
--		.num_parents =3D 4,
--		.ops =3D &clk_rcg2_shared_ops,
--	},
-+	.clkr.hw.init =3D &gcc_qupv3_wrap0_s1_clk_init,
-+};
-+
-+static struct clk_init_data gcc_qupv3_wrap0_s2_clk_init =3D {
-+	.name =3D "gcc_qupv3_wrap0_s2_clk_src",
-+	.parent_names =3D gcc_parent_names_0,
-+	.num_parents =3D 4,
-+	.ops =3D &clk_rcg2_shared_ops,
- };
- =
-
- static struct clk_rcg2 gcc_qupv3_wrap0_s2_clk_src =3D {
-@@ -430,12 +441,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s2_clk_src =3D=
- {
- 	.hid_width =3D 5,
- 	.parent_map =3D gcc_parent_map_0,
- 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
--	.clkr.hw.init =3D &(struct clk_init_data){
--		.name =3D "gcc_qupv3_wrap0_s2_clk_src",
--		.parent_names =3D gcc_parent_names_0,
--		.num_parents =3D 4,
--		.ops =3D &clk_rcg2_shared_ops,
--	},
-+	.clkr.hw.init =3D &gcc_qupv3_wrap0_s2_clk_init,
-+};
-+
-+static struct clk_init_data gcc_qupv3_wrap0_s3_clk_init =3D {
-+	.name =3D "gcc_qupv3_wrap0_s3_clk_src",
-+	.parent_names =3D gcc_parent_names_0,
-+	.num_parents =3D 4,
-+	.ops =3D &clk_rcg2_shared_ops,
- };
- =
-
- static struct clk_rcg2 gcc_qupv3_wrap0_s3_clk_src =3D {
-@@ -444,12 +457,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s3_clk_src =3D=
- {
- 	.hid_width =3D 5,
- 	.parent_map =3D gcc_parent_map_0,
- 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
--	.clkr.hw.init =3D &(struct clk_init_data){
--		.name =3D "gcc_qupv3_wrap0_s3_clk_src",
--		.parent_names =3D gcc_parent_names_0,
--		.num_parents =3D 4,
--		.ops =3D &clk_rcg2_shared_ops,
--	},
-+	.clkr.hw.init =3D &gcc_qupv3_wrap0_s3_clk_init,
-+};
-+
-+static struct clk_init_data gcc_qupv3_wrap0_s4_clk_init =3D {
-+	.name =3D "gcc_qupv3_wrap0_s4_clk_src",
-+	.parent_names =3D gcc_parent_names_0,
-+	.num_parents =3D 4,
-+	.ops =3D &clk_rcg2_shared_ops,
- };
- =
-
- static struct clk_rcg2 gcc_qupv3_wrap0_s4_clk_src =3D {
-@@ -458,12 +473,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s4_clk_src =3D=
- {
- 	.hid_width =3D 5,
- 	.parent_map =3D gcc_parent_map_0,
- 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
--	.clkr.hw.init =3D &(struct clk_init_data){
--		.name =3D "gcc_qupv3_wrap0_s4_clk_src",
--		.parent_names =3D gcc_parent_names_0,
--		.num_parents =3D 4,
--		.ops =3D &clk_rcg2_shared_ops,
--	},
-+	.clkr.hw.init =3D &gcc_qupv3_wrap0_s4_clk_init,
-+};
-+
-+static struct clk_init_data gcc_qupv3_wrap0_s5_clk_init =3D {
-+	.name =3D "gcc_qupv3_wrap0_s5_clk_src",
-+	.parent_names =3D gcc_parent_names_0,
-+	.num_parents =3D 4,
-+	.ops =3D &clk_rcg2_shared_ops,
- };
- =
-
- static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src =3D {
-@@ -472,12 +489,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src =3D=
- {
- 	.hid_width =3D 5,
- 	.parent_map =3D gcc_parent_map_0,
- 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
--	.clkr.hw.init =3D &(struct clk_init_data){
--		.name =3D "gcc_qupv3_wrap0_s5_clk_src",
--		.parent_names =3D gcc_parent_names_0,
--		.num_parents =3D 4,
--		.ops =3D &clk_rcg2_shared_ops,
--	},
-+	.clkr.hw.init =3D &gcc_qupv3_wrap0_s5_clk_init,
-+};
-+
-+static struct clk_init_data gcc_qupv3_wrap0_s6_clk_init =3D {
-+	.name =3D "gcc_qupv3_wrap0_s6_clk_src",
-+	.parent_names =3D gcc_parent_names_0,
-+	.num_parents =3D 4,
-+	.ops =3D &clk_rcg2_shared_ops,
- };
- =
-
- static struct clk_rcg2 gcc_qupv3_wrap0_s6_clk_src =3D {
-@@ -486,12 +505,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s6_clk_src =3D=
- {
- 	.hid_width =3D 5,
- 	.parent_map =3D gcc_parent_map_0,
- 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
--	.clkr.hw.init =3D &(struct clk_init_data){
--		.name =3D "gcc_qupv3_wrap0_s6_clk_src",
--		.parent_names =3D gcc_parent_names_0,
--		.num_parents =3D 4,
--		.ops =3D &clk_rcg2_shared_ops,
--	},
-+	.clkr.hw.init =3D &gcc_qupv3_wrap0_s6_clk_init,
-+};
-+
-+static struct clk_init_data gcc_qupv3_wrap0_s7_clk_init =3D {
-+	.name =3D "gcc_qupv3_wrap0_s7_clk_src",
-+	.parent_names =3D gcc_parent_names_0,
-+	.num_parents =3D 4,
-+	.ops =3D &clk_rcg2_shared_ops,
- };
- =
-
- static struct clk_rcg2 gcc_qupv3_wrap0_s7_clk_src =3D {
-@@ -500,12 +521,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s7_clk_src =3D=
- {
- 	.hid_width =3D 5,
- 	.parent_map =3D gcc_parent_map_0,
- 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
--	.clkr.hw.init =3D &(struct clk_init_data){
--		.name =3D "gcc_qupv3_wrap0_s7_clk_src",
--		.parent_names =3D gcc_parent_names_0,
--		.num_parents =3D 4,
--		.ops =3D &clk_rcg2_shared_ops,
--	},
-+	.clkr.hw.init =3D &gcc_qupv3_wrap0_s7_clk_init,
-+};
-+
-+static struct clk_init_data gcc_qupv3_wrap1_s0_clk_init =3D {
-+	.name =3D "gcc_qupv3_wrap1_s0_clk_src",
-+	.parent_names =3D gcc_parent_names_0,
-+	.num_parents =3D 4,
-+	.ops =3D &clk_rcg2_shared_ops,
- };
- =
-
- static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src =3D {
-@@ -514,12 +537,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src =3D=
- {
- 	.hid_width =3D 5,
- 	.parent_map =3D gcc_parent_map_0,
- 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
--	.clkr.hw.init =3D &(struct clk_init_data){
--		.name =3D "gcc_qupv3_wrap1_s0_clk_src",
--		.parent_names =3D gcc_parent_names_0,
--		.num_parents =3D 4,
--		.ops =3D &clk_rcg2_shared_ops,
--	},
-+	.clkr.hw.init =3D &gcc_qupv3_wrap1_s0_clk_init,
-+};
-+
-+static struct clk_init_data gcc_qupv3_wrap1_s1_clk_init =3D {
-+	.name =3D "gcc_qupv3_wrap1_s1_clk_src",
-+	.parent_names =3D gcc_parent_names_0,
-+	.num_parents =3D 4,
-+	.ops =3D &clk_rcg2_shared_ops,
- };
- =
-
- static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src =3D {
-@@ -528,12 +553,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src =3D=
- {
- 	.hid_width =3D 5,
- 	.parent_map =3D gcc_parent_map_0,
- 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
--	.clkr.hw.init =3D &(struct clk_init_data){
--		.name =3D "gcc_qupv3_wrap1_s1_clk_src",
--		.parent_names =3D gcc_parent_names_0,
--		.num_parents =3D 4,
--		.ops =3D &clk_rcg2_shared_ops,
--	},
-+	.clkr.hw.init =3D &gcc_qupv3_wrap1_s1_clk_init,
-+};
-+
-+static struct clk_init_data gcc_qupv3_wrap1_s2_clk_init =3D {
-+	.name =3D "gcc_qupv3_wrap1_s2_clk_src",
-+	.parent_names =3D gcc_parent_names_0,
-+	.num_parents =3D 4,
-+	.ops =3D &clk_rcg2_shared_ops,
- };
- =
-
- static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src =3D {
-@@ -542,12 +569,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src =3D=
- {
- 	.hid_width =3D 5,
- 	.parent_map =3D gcc_parent_map_0,
- 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
--	.clkr.hw.init =3D &(struct clk_init_data){
--		.name =3D "gcc_qupv3_wrap1_s2_clk_src",
--		.parent_names =3D gcc_parent_names_0,
--		.num_parents =3D 4,
--		.ops =3D &clk_rcg2_shared_ops,
--	},
-+	.clkr.hw.init =3D &gcc_qupv3_wrap1_s2_clk_init,
-+};
-+
-+static struct clk_init_data gcc_qupv3_wrap1_s3_clk_init =3D {
-+	.name =3D "gcc_qupv3_wrap1_s3_clk_src",
-+	.parent_names =3D gcc_parent_names_0,
-+	.num_parents =3D 4,
-+	.ops =3D &clk_rcg2_shared_ops,
- };
- =
-
- static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src =3D {
-@@ -556,12 +585,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src =3D=
- {
- 	.hid_width =3D 5,
- 	.parent_map =3D gcc_parent_map_0,
- 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
--	.clkr.hw.init =3D &(struct clk_init_data){
--		.name =3D "gcc_qupv3_wrap1_s3_clk_src",
--		.parent_names =3D gcc_parent_names_0,
--		.num_parents =3D 4,
--		.ops =3D &clk_rcg2_shared_ops,
--	},
-+	.clkr.hw.init =3D &gcc_qupv3_wrap1_s3_clk_init,
-+};
-+
-+static struct clk_init_data gcc_qupv3_wrap1_s4_clk_init =3D {
-+	.name =3D "gcc_qupv3_wrap1_s4_clk_src",
-+	.parent_names =3D gcc_parent_names_0,
-+	.num_parents =3D 4,
-+	.ops =3D &clk_rcg2_shared_ops,
- };
- =
-
- static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src =3D {
-@@ -570,12 +601,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src =3D=
- {
- 	.hid_width =3D 5,
- 	.parent_map =3D gcc_parent_map_0,
- 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
--	.clkr.hw.init =3D &(struct clk_init_data){
--		.name =3D "gcc_qupv3_wrap1_s4_clk_src",
--		.parent_names =3D gcc_parent_names_0,
--		.num_parents =3D 4,
--		.ops =3D &clk_rcg2_shared_ops,
--	},
-+	.clkr.hw.init =3D &gcc_qupv3_wrap1_s4_clk_init,
-+};
-+
-+static struct clk_init_data gcc_qupv3_wrap1_s5_clk_init =3D {
-+	.name =3D "gcc_qupv3_wrap1_s5_clk_src",
-+	.parent_names =3D gcc_parent_names_0,
-+	.num_parents =3D 4,
-+	.ops =3D &clk_rcg2_shared_ops,
- };
- =
-
- static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src =3D {
-@@ -584,12 +617,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src =3D=
- {
- 	.hid_width =3D 5,
- 	.parent_map =3D gcc_parent_map_0,
- 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
--	.clkr.hw.init =3D &(struct clk_init_data){
--		.name =3D "gcc_qupv3_wrap1_s5_clk_src",
--		.parent_names =3D gcc_parent_names_0,
--		.num_parents =3D 4,
--		.ops =3D &clk_rcg2_shared_ops,
--	},
-+	.clkr.hw.init =3D &gcc_qupv3_wrap1_s5_clk_init,
-+};
-+
-+static struct clk_init_data gcc_qupv3_wrap1_s6_clk_init =3D {
-+	.name =3D "gcc_qupv3_wrap1_s6_clk_src",
-+	.parent_names =3D gcc_parent_names_0,
-+	.num_parents =3D 4,
-+	.ops =3D &clk_rcg2_shared_ops,
- };
- =
-
- static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src =3D {
-@@ -598,12 +633,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src =3D=
- {
- 	.hid_width =3D 5,
- 	.parent_map =3D gcc_parent_map_0,
- 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
--	.clkr.hw.init =3D &(struct clk_init_data){
--		.name =3D "gcc_qupv3_wrap1_s6_clk_src",
--		.parent_names =3D gcc_parent_names_0,
--		.num_parents =3D 4,
--		.ops =3D &clk_rcg2_shared_ops,
--	},
-+	.clkr.hw.init =3D &gcc_qupv3_wrap1_s6_clk_init,
-+};
-+
-+static struct clk_init_data gcc_qupv3_wrap1_s7_clk_init =3D {
-+	.name =3D "gcc_qupv3_wrap1_s7_clk_src",
-+	.parent_names =3D gcc_parent_names_0,
-+	.num_parents =3D 4,
-+	.ops =3D &clk_rcg2_shared_ops,
- };
- =
-
- static struct clk_rcg2 gcc_qupv3_wrap1_s7_clk_src =3D {
-@@ -612,12 +649,7 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s7_clk_src =3D {
- 	.hid_width =3D 5,
- 	.parent_map =3D gcc_parent_map_0,
- 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
--	.clkr.hw.init =3D &(struct clk_init_data){
--		.name =3D "gcc_qupv3_wrap1_s7_clk_src",
--		.parent_names =3D gcc_parent_names_0,
--		.num_parents =3D 4,
--		.ops =3D &clk_rcg2_shared_ops,
--	},
-+	.clkr.hw.init =3D &gcc_qupv3_wrap1_s7_clk_init,
- };
- =
-
- static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] =3D {
-@@ -3458,23 +3490,23 @@ static const struct of_device_id gcc_sdm845_match_t=
-able[] =3D {
- };
- MODULE_DEVICE_TABLE(of, gcc_sdm845_match_table);
- =
-
--static struct clk_rcg2 *gcc_dfs_clocks[] =3D {
--	&gcc_qupv3_wrap0_s0_clk_src,
--	&gcc_qupv3_wrap0_s1_clk_src,
--	&gcc_qupv3_wrap0_s2_clk_src,
--	&gcc_qupv3_wrap0_s3_clk_src,
--	&gcc_qupv3_wrap0_s4_clk_src,
--	&gcc_qupv3_wrap0_s5_clk_src,
--	&gcc_qupv3_wrap0_s6_clk_src,
--	&gcc_qupv3_wrap0_s7_clk_src,
--	&gcc_qupv3_wrap1_s0_clk_src,
--	&gcc_qupv3_wrap1_s1_clk_src,
--	&gcc_qupv3_wrap1_s2_clk_src,
--	&gcc_qupv3_wrap1_s3_clk_src,
--	&gcc_qupv3_wrap1_s4_clk_src,
--	&gcc_qupv3_wrap1_s5_clk_src,
--	&gcc_qupv3_wrap1_s6_clk_src,
--	&gcc_qupv3_wrap1_s7_clk_src,
-+static const struct clk_rcg_dfs_data gcc_dfs_clocks[] =3D {
-+	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s0_clk),
-+	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s1_clk),
-+	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s2_clk),
-+	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s3_clk),
-+	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s4_clk),
-+	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s5_clk),
-+	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s6_clk),
-+	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s7_clk),
-+	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s0_clk),
-+	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s1_clk),
-+	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s2_clk),
-+	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s3_clk),
-+	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s4_clk),
-+	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s5_clk),
-+	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s6_clk),
-+	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s7_clk),
- };
- =
-
- static int gcc_sdm845_probe(struct platform_device *pdev)
