@@ -2,223 +2,146 @@ Return-Path: <SRS0=Se0q=LB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6684C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA22C4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 111F32188F
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:43:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 111F32188F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 30C952188F
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:43:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZsYQOWWJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30C952188F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbeHROu3 (ORCPT
+        id S1726802AbeHROus (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 10:50:29 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57105 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbeHROu3 (ORCPT
+        Sat, 18 Aug 2018 10:50:48 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:37782 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726272AbeHROur (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 10:50:29 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7IBgwd41288041
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 18 Aug 2018 04:42:58 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7IBgwbj1288038;
-        Sat, 18 Aug 2018 04:42:58 -0700
-Date:   Sat, 18 Aug 2018 04:42:58 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Sandipan Das <tipbot@zytor.com>
-Message-ID: <tip-354b064b8ebc1e1ede58550ca9e08bfa81e6af43@git.kernel.org>
-Cc:     sandipan@linux.ibm.com, tglx@linutronix.de,
-        ravi.bangoria@linux.ibm.com, hpa@zytor.com, jolsa@redhat.com,
-        aneesh.kumar@linux.vnet.ibm.com, acme@redhat.com, mingo@kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
-Reply-To: mingo@kernel.org, acme@redhat.com,
-          aneesh.kumar@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-          naveen.n.rao@linux.vnet.ibm.com, sandipan@linux.ibm.com,
-          jolsa@redhat.com, hpa@zytor.com, tglx@linutronix.de,
-          ravi.bangoria@linux.ibm.com
-In-Reply-To: <20180809161929.35058-1-sandipan@linux.ibm.com>
-References: <20180809161929.35058-1-sandipan@linux.ibm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf probe powerpc: Fix trace event
- post-processing
-Git-Commit-ID: 354b064b8ebc1e1ede58550ca9e08bfa81e6af43
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 18 Aug 2018 10:50:47 -0400
+Received: by mail-pl0-f68.google.com with SMTP id c6-v6so42045pls.4
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Aug 2018 04:43:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=CGBLGbfUCclMVvGwgkarS7gxvGVBAKn/n0nAJeDL2ZQ=;
+        b=ZsYQOWWJmF1Q3MHDr7irL3ma27RYJxHlfBLOL/SPPNbMgl3BksnzEt3+3FDyVx+dk6
+         YUL0vf98EZLBr1sakKbcCRDMlgh4EAJFDmqvYt9jKpoixw8LiGLOByFXWKa5vLD6NFLB
+         U/Ntatz17F8RLdo7DnPoZC7bbCCZd485e+qWPQiaDe+0VJ5b/cyWR3Q7CgNrm+DN09Pd
+         fSM8yy6pXHZYYluURP5yUyKkSYYvoSGNh4tTm3THRhoLOF2XLuNoumY4HMPylId84iSN
+         H8Ib01uNFO4brRhaUmxKoAMzR5s3nu1moEznw0sssOztaFVO0CpzZxBelsp61eRaoUUs
+         kjVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=CGBLGbfUCclMVvGwgkarS7gxvGVBAKn/n0nAJeDL2ZQ=;
+        b=Wr8Eg7fwv5F2YBZVelPaZuAAWxZcLyKZhzU7NPvhI5WRJPBn3ow5FEKGuYCDocykOa
+         d6R4rlhsg5RaazfHFh+W83aWh/gdyG0UvFb0wYUsTzsOiwm7LHe5HuSCOqHXX8T5dEK/
+         5QYZnTgb21zvx0zu5XdMZd5lMLwqNGKfM7A15dqnKihesCr3tqLTUHEOlWB0NSp39p69
+         hcQx+kqLIGYVZSmY5eCQZypTEatLFS/THkI23rL7t3tXUktcPSqlrEKVLigFy2k4yhi2
+         s1CSOBDOD1Gh5momlWHqGEFooZwzKmMWsjFJ2TMxgZSQ9+nfNmlFV7VplcgxwNnPYV7F
+         72DA==
+X-Gm-Message-State: AOUpUlEGLsheJ/EFdRT6Vwc4QGInYN3UYGzyZhha8ZuOE3bPGAv/mKEq
+        Haj8BYkd3S9yeIkffJ+vfnA=
+X-Google-Smtp-Source: AA+uWPwo8FryTdq1XEJDVfJ0IGp0sSbvE01ftn8HOvgRY3Ssw+ooklGbyPbNUsXkt1eOl3rmAitm5A==
+X-Received: by 2002:a17:902:e005:: with SMTP id ca5-v6mr37124140plb.224.1534592604102;
+        Sat, 18 Aug 2018 04:43:24 -0700 (PDT)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id i28-v6sm6750272pfk.108.2018.08.18.04.43.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 18 Aug 2018 04:43:23 -0700 (PDT)
+Date:   Sat, 18 Aug 2018 17:13:17 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joe Perches <joe@perches.com>
+Cc:     Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
+        NeilBrown <neil@brown.name>, John Crispin <blogic@openwrt.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] staging: mt7621-mmc: Fix debug macros in dbg.h
+Message-ID: <20180818114313.GA6608@nishad>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  354b064b8ebc1e1ede58550ca9e08bfa81e6af43
-Gitweb:     https://git.kernel.org/tip/354b064b8ebc1e1ede58550ca9e08bfa81e6af43
-Author:     Sandipan Das <sandipan@linux.ibm.com>
-AuthorDate: Thu, 9 Aug 2018 21:49:29 +0530
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 9 Aug 2018 14:40:11 -0300
+Fixed four debug macros by replacing printk with dev_<level>
+without __func__ or __LINE__ or current->comm and current->pid.
+Further removed the do {} while(0) loop for single statement
+macro. Issues found by checkpatch.
 
-perf probe powerpc: Fix trace event post-processing
-
-In some cases, a symbol may have multiple aliases. Attempting to add an
-entry probe for such symbols results in a probe being added at an
-incorrect location while it fails altogether for return probes. This is
-only applicable for binaries with debug information.
-
-During the arch-dependent post-processing, the offset from the start of
-the symbol at which the probe is to be attached is determined and added
-to the start address of the symbol to get the probe's location.  In case
-there are multiple aliases, this offset gets added multiple times for
-each alias of the symbol and we end up with an incorrect probe location.
-
-This can be verified on a powerpc64le system as shown below.
-
-  $ nm /lib/modules/$(uname -r)/build/vmlinux | grep "sys_open$"
-  ...
-  c000000000414290 T __se_sys_open
-  c000000000414290 T sys_open
-
-  $ objdump -d /lib/modules/$(uname -r)/build/vmlinux | grep -A 10 "<__se_sys_open>:"
-
-  c000000000414290 <__se_sys_open>:
-  c000000000414290:       19 01 4c 3c     addis   r2,r12,281
-  c000000000414294:       70 c4 42 38     addi    r2,r2,-15248
-  c000000000414298:       a6 02 08 7c     mflr    r0
-  c00000000041429c:       e8 ff a1 fb     std     r29,-24(r1)
-  c0000000004142a0:       f0 ff c1 fb     std     r30,-16(r1)
-  c0000000004142a4:       f8 ff e1 fb     std     r31,-8(r1)
-  c0000000004142a8:       10 00 01 f8     std     r0,16(r1)
-  c0000000004142ac:       c1 ff 21 f8     stdu    r1,-64(r1)
-  c0000000004142b0:       78 23 9f 7c     mr      r31,r4
-  c0000000004142b4:       78 1b 7e 7c     mr      r30,r3
-
-  For both the entry probe and the return probe, the probe location
-  should be _text+4276888 (0xc000000000414298). Since another alias
-  exists for 'sys_open', the post-processing code will end up adding
-  the offset (8 for powerpc64le) twice and perf will attempt to add
-  the probe at _text+4276896 (0xc0000000004142a0) instead.
-
-Before:
-
-  # perf probe -v -a sys_open
-
-  probe-definition(0): sys_open
-  symbol:sys_open file:(null) line:0 offset:0 return:0 lazy:(null)
-  0 arguments
-  Looking at the vmlinux_path (8 entries long)
-  Using /lib/modules/4.18.0-rc8+/build/vmlinux for symbols
-  Open Debuginfo file: /lib/modules/4.18.0-rc8+/build/vmlinux
-  Try to find probe point from debuginfo.
-  Symbol sys_open address found : c000000000414290
-  Matched function: __se_sys_open [2ad03a0]
-  Probe point found: __se_sys_open+0
-  Found 1 probe_trace_events.
-  Opening /sys/kernel/debug/tracing/kprobe_events write=1
-  Writing event: p:probe/sys_open _text+4276896
-  Added new event:
-    probe:sys_open       (on sys_open)
-  ...
-
-  # perf probe -v -a sys_open%return $retval
-
-  probe-definition(0): sys_open%return
-  symbol:sys_open file:(null) line:0 offset:0 return:1 lazy:(null)
-  0 arguments
-  Looking at the vmlinux_path (8 entries long)
-  Using /lib/modules/4.18.0-rc8+/build/vmlinux for symbols
-  Open Debuginfo file: /lib/modules/4.18.0-rc8+/build/vmlinux
-  Try to find probe point from debuginfo.
-  Symbol sys_open address found : c000000000414290
-  Matched function: __se_sys_open [2ad03a0]
-  Probe point found: __se_sys_open+0
-  Found 1 probe_trace_events.
-  Opening /sys/kernel/debug/tracing/README write=0
-  Opening /sys/kernel/debug/tracing/kprobe_events write=1
-  Parsing probe_events: p:probe/sys_open _text+4276896
-  Group:probe Event:sys_open probe:p
-  Writing event: r:probe/sys_open__return _text+4276896
-  Failed to write event: Invalid argument
-    Error: Failed to add events. Reason: Invalid argument (Code: -22)
-
-After:
-
-  # perf probe -v -a sys_open
-
-  probe-definition(0): sys_open
-  symbol:sys_open file:(null) line:0 offset:0 return:0 lazy:(null)
-  0 arguments
-  Looking at the vmlinux_path (8 entries long)
-  Using /lib/modules/4.18.0-rc8+/build/vmlinux for symbols
-  Open Debuginfo file: /lib/modules/4.18.0-rc8+/build/vmlinux
-  Try to find probe point from debuginfo.
-  Symbol sys_open address found : c000000000414290
-  Matched function: __se_sys_open [2ad03a0]
-  Probe point found: __se_sys_open+0
-  Found 1 probe_trace_events.
-  Opening /sys/kernel/debug/tracing/kprobe_events write=1
-  Writing event: p:probe/sys_open _text+4276888
-  Added new event:
-    probe:sys_open       (on sys_open)
-  ...
-
-  # perf probe -v -a sys_open%return $retval
-
-  probe-definition(0): sys_open%return
-  symbol:sys_open file:(null) line:0 offset:0 return:1 lazy:(null)
-  0 arguments
-  Looking at the vmlinux_path (8 entries long)
-  Using /lib/modules/4.18.0-rc8+/build/vmlinux for symbols
-  Open Debuginfo file: /lib/modules/4.18.0-rc8+/build/vmlinux
-  Try to find probe point from debuginfo.
-  Symbol sys_open address found : c000000000414290
-  Matched function: __se_sys_open [2ad03a0]
-  Probe point found: __se_sys_open+0
-  Found 1 probe_trace_events.
-  Opening /sys/kernel/debug/tracing/README write=0
-  Opening /sys/kernel/debug/tracing/kprobe_events write=1
-  Parsing probe_events: p:probe/sys_open _text+4276888
-  Group:probe Event:sys_open probe:p
-  Writing event: r:probe/sys_open__return _text+4276888
-  Added new event:
-    probe:sys_open__return (on sys_open%return)
-  ...
-
-Reported-by: Aneesh Kumar <aneesh.kumar@linux.vnet.ibm.com>
-Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
-Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Aneesh Kumar <aneesh.kumar@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Fixes: 99e608b5954c ("perf probe ppc64le: Fix probe location when using DWARF")
-Link: http://lkml.kernel.org/r/20180809161929.35058-1-sandipan@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 ---
- tools/perf/arch/powerpc/util/sym-handling.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Changes in v2:
+  - Replace printk with dev_<level>.
+  - Remove __func__, __LINE__, current->comm, current->pid from arguments.
+  - Remove the do {} while(0) loop from these macros.
+  - Modify commit message to include other changes.
+---
+ drivers/staging/mt7621-mmc/dbg.h | 26 +++++++-------------------
+ 1 file changed, 7 insertions(+), 19 deletions(-)
 
-diff --git a/tools/perf/arch/powerpc/util/sym-handling.c b/tools/perf/arch/powerpc/util/sym-handling.c
-index 53d83d7e6a09..20e7d74d86cd 100644
---- a/tools/perf/arch/powerpc/util/sym-handling.c
-+++ b/tools/perf/arch/powerpc/util/sym-handling.c
-@@ -141,8 +141,10 @@ void arch__post_process_probe_trace_events(struct perf_probe_event *pev,
- 	for (i = 0; i < ntevs; i++) {
- 		tev = &pev->tevs[i];
- 		map__for_each_symbol(map, sym, tmp) {
--			if (map->unmap_ip(map, sym->start) == tev->point.address)
-+			if (map->unmap_ip(map, sym->start) == tev->point.address) {
- 				arch__fix_tev_from_maps(pev, tev, map, sym);
-+				break;
-+			}
- 		}
- 	}
- }
+diff --git a/drivers/staging/mt7621-mmc/dbg.h b/drivers/staging/mt7621-mmc/dbg.h
+index 2f2c56b73987..e8091db3c1d6 100644
+--- a/drivers/staging/mt7621-mmc/dbg.h
++++ b/drivers/staging/mt7621-mmc/dbg.h
+@@ -104,19 +104,13 @@ do { \
+ 
+ #define N_MSG(evt, fmt, args...)
+ /*
+-do {    \
+-    if ((DBG_EVT_##evt) & sd_debug_zone[host->id]) { \
+-        printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
+-            host->id,  ##args , __FUNCTION__, __LINE__, current->comm, current->pid);	\
+-    } \
+-} while(0)
+-*/
++ *if ((DBG_EVT_##evt) & sd_debug_zone[host->id]) { \
++ *    dev_err(mmc_dev(host->mmc), "%d -> " fmt "\n", host->id, ##args) \
++ *}
++ */
+ 
+ #define ERR_MSG(fmt, args...) \
+-do { \
+-	printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
+-	       host->id,  ##args, __FUNCTION__, __LINE__, current->comm, current->pid); \
+-} while (0);
++dev_err(mmc_dev(host->mmc), "%d -> " fmt "\n", host->id, ##args)
+ 
+ #if 1
+ //defined CONFIG_MTK_MMC_CD_POLL
+@@ -124,17 +118,11 @@ do { \
+ #define IRQ_MSG(fmt, args...)
+ #else
+ #define INIT_MSG(fmt, args...) \
+-do { \
+-	printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
+-	       host->id,  ##args, __FUNCTION__, __LINE__, current->comm, current->pid); \
+-} while (0);
++dev_err(mmc_dev(host->mmc), "%d -> " fmt "\n", host->id, ##args)
+ 
+ /* PID in ISR in not corrent */
+ #define IRQ_MSG(fmt, args...) \
+-do { \
+-	printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d>\n",	\
+-	       host->id,  ##args, __FUNCTION__, __LINE__);	\
+-} while (0);
++dev_err(mmc_dev(host->mmc), "%d -> " fmt "\n", host->id, ##args)
+ #endif
+ 
+ void msdc_debug_proc_init(void);
+-- 
+2.17.1
+
