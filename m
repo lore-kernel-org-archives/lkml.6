@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 021B3C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 16:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9458CC4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 16:09:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F9732175F
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 16:09:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FD672175F
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 16:09:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X8dQ7fun"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F9732175F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bM88Lo/8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FD672175F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726369AbeHRTRU (ORCPT
+        id S1726451AbeHRTRV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 15:17:20 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:39740 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbeHRTRU (ORCPT
+        Sat, 18 Aug 2018 15:17:21 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:42807 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbeHRTRV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 15:17:20 -0400
-Received: by mail-ed1-f68.google.com with SMTP id h4-v6so6128310edi.6;
-        Sat, 18 Aug 2018 09:09:06 -0700 (PDT)
+        Sat, 18 Aug 2018 15:17:21 -0400
+Received: by mail-ed1-f65.google.com with SMTP id r4-v6so6106940edp.9;
+        Sat, 18 Aug 2018 09:09:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=eAXDA4L2XNCa7fRLWajNCHMLixTYEALdY6pJJQF87d8=;
-        b=X8dQ7funMjSS+5pJ6C05cgqkQF29S3+M78LGH/9jYmgKE2+37nF9g2KgjImz8eaiCb
-         Y46whSXWODaDHiKIDajwBwnFJlsAVKQ85zILUoUTjr1GvbvrIkFVks+I9T5LZVcY422u
-         qpBBHVRUw2gXhcpEQH6JSS7iEB0wIId1DgN556STKhEV/ZVf1mlnxkAGV1RtuSWmn2V5
-         O/cxO998w5HP8KM9TqVMeRrQxaLZfQhzEIgmpZrKezeqGeZsqU2o/PBgvReHahxibvif
-         uygDTAGRWukn8wdzGU9loa7N7YQW9ls8FDR65ksWQsibUwktWhQ9grbkhFRoZ6uoKMdY
-         t51Q==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=zud3fnRRc1A/EmHayDTnkRDCfwFTioPdxC2SN4HWKtk=;
+        b=bM88Lo/83gOC9peMRtz69fwkm0bcMN5r6/VDp/MQqAXkWWM1eC/2CM4Bxfu0KiRUdx
+         YH7zv1AEQV+kVn/OEjnuOFbI95gpj5UaPy/R+XDw5DQq/noqliAJQCqZUCjVzVXyAVDz
+         KbkvnTuknnv23ObZVBfuadCJGrgM4Ut95oUTz9s9G8z6GrmoYQQQfVw8PGs2WVlb1BO3
+         fR/71QadTXkKf9miQ0lHqRI/sT+R8nq686SYVn+hBBEHoq8zUrQSfkYLnYiMbdiOHvTB
+         jTmudhpGV4J18QMPtz2umWjk3GRVB4a8ChDRseTUWVE68DxojRjML+uC0vezkC0Ckbpc
+         ixfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=eAXDA4L2XNCa7fRLWajNCHMLixTYEALdY6pJJQF87d8=;
-        b=UqdpDHYl1z/Vb+GBqekHdf4XLuEXp9QkmcXKJSOP/XtRHX1W0S5Sn67TzlYNCmhAkG
-         T8wNNFXTaYlxdMF0InCmE+g1rtn4buyYq7IZTGDwkx3xLsBTUKYA9tths6GDRX2bYSTk
-         MIJcIujpfKifygbEkgs4ClnOvBcsUEs3063+QClM8JwUvF/Y0y786WL+Uljf7VpUjPDc
-         cH45i+9+YvztWtvMYmOvZBapmAquoGtRobkDl5CbYg7KCMV/0I2yp7UgxmkTa50dbHbO
-         NA+me2aXzmzbBp6EnwUihuRscHKsHjt0s1KOt6pxXhJPPNIgHKXm4OTegJkRl21NcQUs
-         86Sw==
-X-Gm-Message-State: AOUpUlGjNWlLqhMzXjModUEAkCH5R4tId+mF1XhuziDBW4KJr6X3tKqj
-        7bJul0OJcrm5QGyCwttgIN3LVI+V
-X-Google-Smtp-Source: AA+uWPxE4BqAJ/W8Ue6drCiOmLslp+val+m76Maktr9pvAK2Vq49SfGZpUXhtaO4OqBZ+AmS6xoPVg==
-X-Received: by 2002:aa7:d993:: with SMTP id u19-v6mr46029889eds.125.1534608545655;
-        Sat, 18 Aug 2018 09:09:05 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=zud3fnRRc1A/EmHayDTnkRDCfwFTioPdxC2SN4HWKtk=;
+        b=HP8nP9ECeVbhslp37Njr+ZmHyNXZMnG1DvGfDtKtZ4e0T5SiSPqzDz/6Vb6dP+QNVj
+         wQjXavh5rfmBxZCJfdVR53KMpGoKJhL07TkLlxEQUfBUi77zNeC3aXBr/MGEGGzNaDuW
+         8ZdbeZn/IlE1iV8E8NupXWUcwKHE8GhbV3Ir44xjG0bAiF+037LQfT7mdu9fEC3mdM1V
+         SfNreMYCVMOKNs2oUe157ku3vI0g+d/WgcPbp5l+szzntk+tczeT/ow7Ee/st3C+nPiC
+         XYS18rQ6SvXwAWfMDC71Z1QNvlcf80xl01rUSoEY2IxX1YtbFBcP9YWurRvwjk7DX7q2
+         b04A==
+X-Gm-Message-State: AOUpUlHZNnEcZREzZQojsS/RAekvw1vAyCLlPOsnW8dx1yLU68ZEvBGD
+        ApIxVewf73nw2XY1SZWZ0DE=
+X-Google-Smtp-Source: AA+uWPzNVjmYOLNN20JQ3QeMWdpqp2JMbzsbrrKXyJPVGkPm/fJC72s3vIAchKboB6nc9BxY0FI2Zg==
+X-Received: by 2002:a50:b86f:: with SMTP id k44-v6mr46264243ede.310.1534608546888;
+        Sat, 18 Aug 2018 09:09:06 -0700 (PDT)
 Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id j10-v6sm2751211eds.8.2018.08.18.09.09.04
+        by smtp.gmail.com with ESMTPSA id j10-v6sm2751211eds.8.2018.08.18.09.09.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 18 Aug 2018 09:09:05 -0700 (PDT)
+        Sat, 18 Aug 2018 09:09:06 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
         Prashant Gaikwad <pgaikwad@nvidia.com>,
@@ -66,140 +67,111 @@ To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] clk: tegra: Don't enable already enabled PLLs
-Date:   Sat, 18 Aug 2018 19:08:27 +0300
-Message-Id: <20180818160828.8198-1-digetx@gmail.com>
+Subject: [PATCH v1 2/2] clk: tegra20: Enable lock-status polling for PLLs
+Date:   Sat, 18 Aug 2018 19:08:28 +0300
+Message-Id: <20180818160828.8198-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180818160828.8198-1-digetx@gmail.com>
+References: <20180818160828.8198-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initially Common Clock Framework isn't aware of the clock-enable status,
-this results in enabling of clocks that were enabled by bootloader. This
-is not a big deal for a regular clock-gates, but for PLL's it may have
-some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
-clock) may result in extra long period of PLL re-locking.
+Currently all PLL's on Tegra20 use a hardcoded delay despite of having
+a lock-status bit. The lock-status polling was disabled ~7 years ago
+because apparently some PLL was failing to lock. That issue isn't
+observable with the modern kernel, hence let's assume it was some
+unrelated bug and enable the lock-status polling. This significantly
+reduces delay of any operation that require PLL to lock.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-pll.c | 50 +++++++++++++++++++++++++++----------
- 1 file changed, 37 insertions(+), 13 deletions(-)
+ drivers/clk/tegra/clk-tegra20.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 830d1c87fa7c..ddb431247f08 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -444,6 +444,9 @@ static int clk_pll_enable(struct clk_hw *hw)
- 	unsigned long flags = 0;
- 	int ret;
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index cc857d4d4a86..75415854ce12 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -298,7 +298,8 @@ static struct tegra_clk_pll_params pll_c_params = {
+ 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+ 	.freq_table = pll_c_freq_table,
+-	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
++		 TEGRA_PLL_USE_LOCK,
+ };
  
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
+ static struct tegra_clk_pll_params pll_m_params = {
+@@ -314,7 +315,8 @@ static struct tegra_clk_pll_params pll_m_params = {
+ 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+ 	.freq_table = pll_m_freq_table,
+-	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
++		 TEGRA_PLL_USE_LOCK,
+ };
  
-@@ -939,11 +942,16 @@ static int clk_plle_training(struct tegra_clk_pll *pll)
- static int clk_plle_enable(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 	struct tegra_clk_pll_freq_table sel;
-+	unsigned long input_rate;
- 	u32 val;
- 	int err;
+ static struct tegra_clk_pll_params pll_p_params = {
+@@ -331,7 +333,7 @@ static struct tegra_clk_pll_params pll_p_params = {
+ 	.lock_delay = 300,
+ 	.freq_table = pll_p_freq_table,
+ 	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_CPCON |
+-		 TEGRA_PLL_HAS_LOCK_ENABLE,
++		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_USE_LOCK,
+ 	.fixed_rate =  216000000,
+ };
  
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
+@@ -348,7 +350,8 @@ static struct tegra_clk_pll_params pll_a_params = {
+ 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+ 	.freq_table = pll_a_freq_table,
+-	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
++		 TEGRA_PLL_USE_LOCK,
+ };
  
-@@ -1354,6 +1362,9 @@ static int clk_pllc_enable(struct clk_hw *hw)
- 	int ret;
- 	unsigned long flags = 0;
+ static struct tegra_clk_pll_params pll_d_params = {
+@@ -364,7 +367,8 @@ static struct tegra_clk_pll_params pll_d_params = {
+ 	.lock_enable_bit_idx = PLLDU_MISC_LOCK_ENABLE,
+ 	.lock_delay = 1000,
+ 	.freq_table = pll_d_freq_table,
+-	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
++		 TEGRA_PLL_USE_LOCK,
+ };
  
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
+ static const struct pdiv_map pllu_p[] = {
+@@ -387,7 +391,8 @@ static struct tegra_clk_pll_params pll_u_params = {
+ 	.lock_delay = 1000,
+ 	.pdiv_tohw = pllu_p,
+ 	.freq_table = pll_u_freq_table,
+-	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
++		 TEGRA_PLL_USE_LOCK,
+ };
  
-@@ -1566,7 +1577,12 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret;
- 	unsigned long flags = 0;
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+	unsigned long input_rate;
-+
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ static struct tegra_clk_pll_params pll_x_params = {
+@@ -403,7 +408,8 @@ static struct tegra_clk_pll_params pll_x_params = {
+ 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+ 	.freq_table = pll_x_freq_table,
+-	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
++		 TEGRA_PLL_USE_LOCK,
+ };
  
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
-@@ -1703,6 +1719,9 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
- 		return -EINVAL;
- 	}
+ static struct tegra_clk_pll_params pll_e_params = {
+@@ -421,7 +427,7 @@ static struct tegra_clk_pll_params pll_e_params = {
+ 	.pdiv_tohw = plle_p,
+ 	.freq_table = pll_e_freq_table,
+ 	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_LOCK_MISC |
+-		 TEGRA_PLL_HAS_LOCK_ENABLE,
++		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_USE_LOCK,
+ 	.fixed_rate = 100000000,
+ };
  
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
- 	input_rate = clk_hw_get_rate(__clk_get_hw(osc));
- 
- 	if (pll->lock)
-@@ -2378,6 +2397,16 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
- 	return clk;
- }
- 
-+static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	u32 val;
-+
-+	val = pll_readl_base(pll);
-+
-+	return val & PLLE_BASE_ENABLE ? 1 : 0;
-+}
-+
- static int clk_plle_tegra210_enable(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-@@ -2385,7 +2414,12 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret = 0;
- 	unsigned long flags = 0;
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+	unsigned long input_rate;
-+
-+	if (clk_plle_tegra210_is_enabled(hw))
-+		return 0;
-+
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
-@@ -2496,16 +2530,6 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
- 		spin_unlock_irqrestore(pll->lock, flags);
- }
- 
--static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
--{
--	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	u32 val;
--
--	val = pll_readl_base(pll);
--
--	return val & PLLE_BASE_ENABLE ? 1 : 0;
--}
--
- static const struct clk_ops tegra_clk_plle_tegra210_ops = {
- 	.is_enabled =  clk_plle_tegra210_is_enabled,
- 	.enable = clk_plle_tegra210_enable,
 -- 
 2.18.0
 
