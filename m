@@ -6,100 +6,84 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33DFBC4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 05:51:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F52C4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 05:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5D2320BF2
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 05:51:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5D2320BF2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id C68DA2075E
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 05:59:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C68DA2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbeHRI5x (ORCPT
+        id S1726369AbeHRJGF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 04:57:53 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:33932 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725891AbeHRI5w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 04:57:52 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fqu8z-0002ph-11; Fri, 17 Aug 2018 23:51:25 -0600
-Received: from [97.119.167.31] (helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fqu8x-0007Ec-Cn; Fri, 17 Aug 2018 23:51:24 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Wen Yang <wen.yang99@zte.com.cn>,
-        majiang <ma.jiang@zte.com.cn>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Andrey Vagin <avagin@virtuozzo.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>
-References: <87efft5ncd.fsf_-_@xmission.com>
-        <20180724032419.20231-7-ebiederm@xmission.com>
-        <87k1orgdoo.fsf_-_@xmission.com>
-        <CACT4Y+bYFatW=CMgH4M6AjtjO297gbQ8xwnEV0_f7J64FLQ4QQ@mail.gmail.com>
-        <87pnyg7rw3.fsf@xmission.com>
-        <20180817122414.df0eee974434d170b1a54c31@linux-foundation.org>
-Date:   Sat, 18 Aug 2018 00:51:14 -0500
-In-Reply-To: <20180817122414.df0eee974434d170b1a54c31@linux-foundation.org>
-        (Andrew Morton's message of "Fri, 17 Aug 2018 12:24:14 -0700")
-Message-ID: <87bma01aul.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Sat, 18 Aug 2018 05:06:05 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45014 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726071AbeHRJGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Aug 2018 05:06:05 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 25426EF516E2C;
+        Sat, 18 Aug 2018 13:59:35 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Sat, 18 Aug 2018
+ 13:59:34 +0800
+Message-ID: <5B77B5C3.8060908@huawei.com>
+Date:   Sat, 18 Aug 2018 13:59:31 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fqu8x-0007Ec-Cn;;;mid=<87bma01aul.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+0wPqu6Un8DXrVbZLk7jbsepb7U09EAnM=
-X-SA-Exim-Connect-IP: 97.119.167.31
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH] signal: Don't send signals to tasks that don't exist
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+To:     Vladimir Zapolskiy <vz@mleia.com>
+CC:     <davem@davemloft.net>, <slemieux.tyco@gmail.com>,
+        <keescook@chromium.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] ethernet: lpc_eth: Use NULL to compare with pointer-typed
+ value rather than 0
+References: <1534511933-39236-1-git-send-email-zhongjiang@huawei.com> <1534511933-39236-3-git-send-email-zhongjiang@huawei.com> <edc2f14f-8694-3160-47b1-ccb5be8a3484@mleia.com>
+In-Reply-To: <edc2f14f-8694-3160-47b1-ccb5be8a3484@mleia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew Morton <akpm@linux-foundation.org> writes:
+On 2018/8/17 23:29, Vladimir Zapolskiy wrote:
+> Hi zhong jiang,
+>
+> On 08/17/2018 04:18 PM, zhong jiang wrote:
+>> We should use NULL to compare with pointer-typed value rather than 0.
+>> The issue is detected with the help of Coccinelle.
+>> ---
+>>  drivers/net/ethernet/nxp/lpc_eth.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/ethernet/nxp/lpc_eth.c b/drivers/net/ethernet/nxp/lpc_eth.c
+>> index 08381ef..04d9e62 100644
+>> --- a/drivers/net/ethernet/nxp/lpc_eth.c
+>> +++ b/drivers/net/ethernet/nxp/lpc_eth.c
+>> @@ -1350,7 +1350,7 @@ static int lpc_eth_drv_probe(struct platform_device *pdev)
+>>  				"IRAM not big enough for net buffers, using SDRAM instead.\n");
+>>  	}
+>>  
+>> -	if (pldat->dma_buff_base_v == 0) {
+>> +	if (pldat->dma_buff_base_v == NULL) {
+> That's a valid finding, but please use a common 0 and NULL comparison in form of
+>
+> 	if (!pldat->dma_buff_base_v)
+>
+> To the change above please feel free to add my
+>
+> Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+ Thanks, Will do in v2
+>>  		ret = dma_coerce_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+>>  		if (ret)
+>>  			goto err_out_free_irq;
+>>
+>
+> .
+>
 
-> Dude, lighten up.
-
-This was in response to being asked by a the maintainers of a bot that has
-wasted copious quanties of my time to please not waste their time.
-
-To prevent the wasting of time it was requested that when syzbot would
-be enabled on linux-next again that it only report issues when there is
-a reproducer, and it can narrow the issue down to at least the branch in
-linux-next the issue occured on.  I thought there was general agreement
-on that point.
-
-That very much did not happen in this case.  So I heard a request to not
-waste the time of a bot from people who have not taken what appear to be
-reasonable steps to not waste my time.
-
-I am especially annoyed that the bot despite having a reproducer was not
-able to at least narrow it down to the branch in linux-next.
-
-I was dismayed when I saw the syzbot report triggered someone to remove
-themselves from MAINTAINERS.
-
-Further I actually received a bug report (not found one by luck when I
-was skimming through a mailing list) from another group of people whose
-automated testing also found the issue and were able to succesfully root
-cause the issue.  So I know good but reports are possible on this issue.
-
-In short.  I have been burned by syzbot.  I don't see evidence of change.
-I am grumpy.
-
-Eric
 
