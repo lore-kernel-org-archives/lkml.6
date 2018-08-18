@@ -2,90 +2,105 @@ Return-Path: <SRS0=Se0q=LB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A03EC4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 12:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E15C4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 12:46:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC8982183D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 12:45:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC8982183D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id DBF0A2183D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 12:46:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="QewGjRzB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBF0A2183D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbeHRPxW (ORCPT
+        id S1726366AbeHRPxk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 11:53:22 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:48910 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725886AbeHRPxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 11:53:22 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id F7uOj9v5eTIC; Sat, 18 Aug 2018 14:45:27 +0200 (CEST)
-Received: from nazgul.tnic (95-42-156-121.ip.btc-net.bg [95.42.156.121])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1AE3D1EC028D;
-        Sat, 18 Aug 2018 14:45:27 +0200 (CEST)
-Date:   Sat, 18 Aug 2018 14:45:37 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Manish Narani <MNARANI@xilinx.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        Michal Simek <michals@xilinx.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "mdf@kernel.org" <mdf@kernel.org>,
-        Edgar Iglesias <edgari@xilinx.com>,
-        Shubhrajyoti Datta <shubhraj@xilinx.com>,
-        Naga Sureshkumar Relli <nagasure@xilinx.com>,
-        Bharat Kumar Gogada <bharatku@xilinx.com>,
-        "stefan.krsmanovic@aggios.com" <stefan.krsmanovic@aggios.com>,
-        Srinivas Goud <sgoud@xilinx.com>,
-        Anirudha Sarangi <anirudh@xilinx.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
-Subject: Re: [PATCH v4 1/4] edac: synps: Add platform specific structures for
- ddrc controller
-Message-ID: <20180818124537.GA24733@nazgul.tnic>
-References: <1533374735-16662-1-git-send-email-manish.narani@xilinx.com>
- <1533374735-16662-2-git-send-email-manish.narani@xilinx.com>
- <DM6PR02MB5227CBDE0742DB55F26F014CC13C0@DM6PR02MB5227.namprd02.prod.outlook.com>
+        Sat, 18 Aug 2018 11:53:40 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:59588 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbeHRPxk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Aug 2018 11:53:40 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 841E35C11DF;
+        Sat, 18 Aug 2018 14:46:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1534596362;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=1PLZDKX4y+nai0J8kxH8SIxT32iLq6KnPUhK0/HoziE=;
+        b=QewGjRzBRn2eJITBAAYwxPMpscBnz/TbJqjKpYqquhDf4X1Xe8Ct5PDhXi83tpFdNXteph
+        9FPvncbNJhiSUFGO4dwevYWbHLeInDJRSI3Re4PvO3q2/KFAVt44OfvoHJ3EqAWrTrF0m5
+        0uU8f/caPXIOdvVQceDeD8hVsukAPK8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <DM6PR02MB5227CBDE0742DB55F26F014CC13C0@DM6PR02MB5227.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Sat, 18 Aug 2018 14:45:47 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Marcel Ziswiler <marcel@ziswiler.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2] clk: tegra: probe deferral error reporting
+In-Reply-To: <20180814091805.1363-1-marcel@ziswiler.com>
+References: <20180814091805.1363-1-marcel@ziswiler.com>
+Message-ID: <bd9a8bb8c140fab18f88d383a0b7d5f1@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 18, 2018 at 10:11:54AM +0000, Manish Narani wrote:
-> Ping.
+On 14.08.2018 11:18, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> Actually report the error code from devm_regulator_get() which may as
+> well just be a probe deferral.
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-First of all, one ping is enough. If your patchset contained, say, 30
-patches, were you really going to send a ping for each one of them?!?!?!
+Reviewed-by: Stefan Agner <stefan@agner.ch>
 
-Secondly, you do know that we have merge window right now, don't you?
-
-And during the merge window, people are busy with merge window testing
-and sending stuff which is ready, upstream - not reviewing new code
-which has absolutely no chance of going in now?
-
-Jeez.
-
--- 
-Regards/Gruss,
-    Boris.
-
-ECO tip #101: Trim your mails when you reply.
---
+> 
+> ---
+> 
+> Changes in v2:
+> - Silence probe deferral as discussed between Peter, Stefan and Stephen.
+> - Fix line over 80 characters as reported by checkpatch.
+> 
+>  drivers/clk/tegra/clk-dfll.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+> index 48ee43734e05..ebb0e1b6bf01 100644
+> --- a/drivers/clk/tegra/clk-dfll.c
+> +++ b/drivers/clk/tegra/clk-dfll.c
+> @@ -1609,8 +1609,12 @@ int tegra_dfll_register(struct platform_device *pdev,
+>  
+>  	td->vdd_reg = devm_regulator_get(td->dev, "vdd-cpu");
+>  	if (IS_ERR(td->vdd_reg)) {
+> -		dev_err(td->dev, "couldn't get vdd_cpu regulator\n");
+> -		return PTR_ERR(td->vdd_reg);
+> +		ret = PTR_ERR(td->vdd_reg);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(td->dev, "couldn't get vdd_cpu regulator: %d\n",
+> +				ret);
+> +
+> +		return ret;
+>  	}
+>  
+>  	td->dvco_rst = devm_reset_control_get(td->dev, "dvco");
