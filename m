@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C742DC4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA0FC4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C59A218A8
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:58:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C59A218A8
+	by mail.kernel.org (Postfix) with ESMTP id 636B7218A8
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:58:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 636B7218A8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbeHRPFz (ORCPT
+        id S1726883AbeHRPGX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 11:05:55 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49943 "EHLO
+        Sat, 18 Aug 2018 11:06:23 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43429 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726308AbeHRPFz (ORCPT
+        with ESMTP id S1726300AbeHRPGX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 11:05:55 -0400
+        Sat, 18 Aug 2018 11:06:23 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7IBwJ0O1291690
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7IBwoub1291746
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 18 Aug 2018 04:58:19 -0700
+        Sat, 18 Aug 2018 04:58:50 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7IBwJAN1291687;
-        Sat, 18 Aug 2018 04:58:19 -0700
-Date:   Sat, 18 Aug 2018 04:58:19 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7IBwom81291743;
+        Sat, 18 Aug 2018 04:58:50 -0700
+Date:   Sat, 18 Aug 2018 04:58:50 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-7asds7yn6gzg6ns1lw17ukul@git.kernel.org>
-Cc:     namhyung@kernel.org, mingo@kernel.org, dsahern@gmail.com,
-        tglx@linutronix.de, jolsa@kernel.org, adrian.hunter@intel.com,
-        hpa@zytor.com, acme@redhat.com, linux-kernel@vger.kernel.org,
-        wangnan0@huawei.com
-Reply-To: namhyung@kernel.org, mingo@kernel.org, dsahern@gmail.com,
-          tglx@linutronix.de, jolsa@kernel.org, adrian.hunter@intel.com,
-          hpa@zytor.com, acme@redhat.com, linux-kernel@vger.kernel.org,
-          wangnan0@huawei.com
+From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
+Message-ID: <tip-99cbbe56eb8bede625f410ab62ba34673ffa7d21@git.kernel.org>
+Cc:     mingo@kernel.org, acme@redhat.com, adrian.hunter@intel.com,
+        tglx@linutronix.de, jolsa@redhat.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org, acme@redhat.com,
+          adrian.hunter@intel.com, jolsa@redhat.com, tglx@linutronix.de,
+          hpa@zytor.com
+In-Reply-To: <20180814084608.6563-1-adrian.hunter@intel.com>
+References: <20180814084608.6563-1-adrian.hunter@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf python: Remove -mcet and -fcf-protection
- when building with clang
-Git-Commit-ID: 5508672d7f4949f15c316ffd947228f130498534
+Subject: [tip:perf/urgent] perf auxtrace: Fix queue resize
+Git-Commit-ID: 99cbbe56eb8bede625f410ab62ba34673ffa7d21
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,57 +58,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5508672d7f4949f15c316ffd947228f130498534
-Gitweb:     https://git.kernel.org/tip/5508672d7f4949f15c316ffd947228f130498534
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 14 Aug 2018 18:00:40 -0300
+Commit-ID:  99cbbe56eb8bede625f410ab62ba34673ffa7d21
+Gitweb:     https://git.kernel.org/tip/99cbbe56eb8bede625f410ab62ba34673ffa7d21
+Author:     Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate: Tue, 14 Aug 2018 11:46:08 +0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 14 Aug 2018 18:50:20 -0300
+CommitDate: Tue, 14 Aug 2018 19:00:53 -0300
 
-perf python: Remove -mcet and -fcf-protection when building with clang
+perf auxtrace: Fix queue resize
 
-These options are not present in older clang versions, so when we build
-for a distro that has a gcc new enough to have these options and that
-the distro python build config settings use them but clang doesn't
-support, b00m.
+When the number of queues grows beyond 32, the array of queues is
+resized but not all members were being copied. Fix by also copying
+'tid', 'cpu' and 'set'.
 
-This is the case with fedora 28 and rawhide, so check if clang has the
-options and remove the missing ones from CFLAGS.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-7asds7yn6gzg6ns1lw17ukul@git.kernel.org
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: stable@vger.kernel.org
+Fixes: e502789302a6e ("perf auxtrace: Add helpers for queuing AUX area tracing data")
+Link: http://lkml.kernel.org/r/20180814084608.6563-1-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/setup.py | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ tools/perf/util/auxtrace.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
-index 001be4f9d3b9..97efbcad076e 100644
---- a/tools/perf/util/setup.py
-+++ b/tools/perf/util/setup.py
-@@ -1,12 +1,20 @@
- #!/usr/bin/python
- 
- from os import getenv
-+from subprocess import Popen, PIPE
-+from re import sub
-+
-+def clang_has_option(option):
-+    return [o for o in Popen(['clang', option], stderr=PIPE).stderr.readlines() if "unknown argument" in o] == [ ]
- 
- cc = getenv("CC")
- if cc == "clang":
-     from _sysconfigdata import build_time_vars
--    from re import sub
-     build_time_vars["CFLAGS"] = sub("-specs=[^ ]+", "", build_time_vars["CFLAGS"])
-+    if not clang_has_option("-mcet"):
-+        build_time_vars["CFLAGS"] = sub("-mcet", "", build_time_vars["CFLAGS"])
-+    if not clang_has_option("-fcf-protection"):
-+        build_time_vars["CFLAGS"] = sub("-fcf-protection", "", build_time_vars["CFLAGS"])
- 
- from distutils.core import setup, Extension
+diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+index ae8c37b219c9..db1511359c5e 100644
+--- a/tools/perf/util/auxtrace.c
++++ b/tools/perf/util/auxtrace.c
+@@ -203,6 +203,9 @@ static int auxtrace_queues__grow(struct auxtrace_queues *queues,
+ 	for (i = 0; i < queues->nr_queues; i++) {
+ 		list_splice_tail(&queues->queue_array[i].head,
+ 				 &queue_array[i].head);
++		queue_array[i].tid = queues->queue_array[i].tid;
++		queue_array[i].cpu = queues->queue_array[i].cpu;
++		queue_array[i].set = queues->queue_array[i].set;
+ 		queue_array[i].priv = queues->queue_array[i].priv;
+ 	}
  
