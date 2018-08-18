@@ -2,80 +2,58 @@ Return-Path: <SRS0=Se0q=LB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 273B5C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 19:59:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E242AC4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 20:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFDA62176D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 19:59:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="l6mvIQVA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFDA62176D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=onstation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8F7FC21746
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 20:47:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F7FC21746
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbeHRXIR (ORCPT
+        id S1726480AbeHRX4Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 19:08:17 -0400
-Received: from onstation.org ([52.200.56.107]:47902 "EHLO onstation.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726311AbeHRXIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 19:08:17 -0400
-Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 2CF6A1020;
-        Sat, 18 Aug 2018 19:59:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1534622365;
-        bh=e+FRXECGK4SqzbEocIibP8JfgagJNGbiwyJ9iJ+INbA=;
-        h=From:To:Subject:Date:From;
-        b=l6mvIQVALqGIwR9BPSqluX49fFzk3Kw2OGDlFjKUy5GODqC3d+bW7nfoYJcwcRZXZ
-         rurVGz5WREluheZ/y1azuy4hZgHYvVGq59gCaRDldWCA6UXz+2wPDaKdfiqlaCRZ+2
-         2m4iw1FN+Mfa6qG52uM1WDM9OBJmksQ8m0dL3dXE=
-From:   Brian Masney <masneyb@onstation.org>
-To:     dmitry.torokhov@gmail.com, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sebastian.reichel@collabora.co.uk, robh@kernel.org,
-        mark.rutland@arm.com, masneyb@onstation.org
-Subject: [PATCH] dt-bindings: input: pwm-vibrator: correct pwm-names in example
-Date:   Sat, 18 Aug 2018 15:58:55 -0400
-Message-Id: <20180818195855.13429-1-masneyb@onstation.org>
-X-Mailer: git-send-email 2.17.1
+        Sat, 18 Aug 2018 19:56:16 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:47838 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbeHRX4Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Aug 2018 19:56:16 -0400
+Received: from localhost (71-36-117-41.ptld.qwest.net [71.36.117.41])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8B81C146F98DF;
+        Sat, 18 Aug 2018 13:47:18 -0700 (PDT)
+Date:   Sat, 18 Aug 2018 13:47:15 -0700 (PDT)
+Message-Id: <20180818.134715.1843577950307502372.davem@davemloft.net>
+To:     yanhaishuang@cmss.chinamobile.com
+Cc:     steffen.klassert@secunet.com, kuznet@ms2.inr.ac.ru,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ip6_vti: simplify stats handling in vti6_xmit
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1534603428-30425-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+References: <1534603428-30425-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 18 Aug 2018 13:47:18 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the example for the pwm-vibrator bindings, pwm8 is the direction pin,
-and pwm9 is the enable pin. The pwm-names on the vibrator node has these
-two values swapped. This patch corrects the values for pwm-names.
+From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+Date: Sat, 18 Aug 2018 22:43:48 +0800
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
----
-arch/arm/boot/dts/omap4-droid4-xt894.dts is actual implementation for
-the example and it is correct.
+> Same as ip_vti, use iptunnel_xmit_stats to updates stats in tunnel xmit
+> code path.
+> 
+> Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
 
- Documentation/devicetree/bindings/input/pwm-vibrator.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/input/pwm-vibrator.txt b/Documentation/devicetree/bindings/input/pwm-vibrator.txt
-index 09145d18491d..2731cbb7e8d7 100644
---- a/Documentation/devicetree/bindings/input/pwm-vibrator.txt
-+++ b/Documentation/devicetree/bindings/input/pwm-vibrator.txt
-@@ -60,7 +60,7 @@ Example from Motorola Droid 4:
- 		compatible = "pwm-vibrator";
- 		pwms = <&pwm8 0 1000000000 0>,
- 		       <&pwm9 0 1000000000 0>;
--		pwm-names = "enable", "direction";
-+		pwm-names = "direction", "enable";
- 		direction-duty-cycle-ns = <1000000000>;
- 	};
- };
--- 
-2.17.1
-
+Applied, thanks.
