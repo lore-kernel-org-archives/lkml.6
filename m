@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A285C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 06:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B577AC4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 06:27:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B474821878
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 06:23:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B474821878
+	by mail.kernel.org (Postfix) with ESMTP id 66F392188F
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 06:27:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66F392188F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726341AbeHRJ3d (ORCPT
+        id S1726386AbeHRJe1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 05:29:33 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:49080 "EHLO huawei.com"
+        Sat, 18 Aug 2018 05:34:27 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:50450 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725891AbeHRJ3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 05:29:32 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9582BE5B7D3D7;
-        Sat, 18 Aug 2018 14:22:58 +0800 (CST)
+        id S1726072AbeHRJe1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Aug 2018 05:34:27 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 72BB6FA0CF6B2;
+        Sat, 18 Aug 2018 14:27:51 +0800 (CST)
 Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.399.0; Sat, 18 Aug 2018 14:22:56 +0800
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.399.0; Sat, 18 Aug 2018 14:27:52 +0800
 From:   zhong jiang <zhongjiang@huawei.com>
-To:     <axboe@kernel.dk>
-CC:     <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCHv2] block: Use NULL to compare with pointer-typed value rather than 0
-Date:   Sat, 18 Aug 2018 14:11:06 +0800
-Message-ID: <1534572666-16086-1-git-send-email-zhongjiang@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <benh@kernel.crashing.org>, <paulus@samba.org>,
+        <mpe@ellerman.id.au>, <linux-ide@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCHv2] ide: Use NULL to compare with pointer-typed value rather than 0
+Date:   Sat, 18 Aug 2018 14:16:01 +0800
+Message-ID: <1534572961-16423-1-git-send-email-zhongjiang@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -49,23 +51,22 @@ We should use NULL to compare with pointer-typed value rather than
 
 Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 ---
- drivers/block/ataflop.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/ide/pmac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/ataflop.c b/drivers/block/ataflop.c
-index dfb2c26..fc63ffd 100644
---- a/drivers/block/ataflop.c
-+++ b/drivers/block/ataflop.c
-@@ -1354,8 +1354,7 @@ static int floppy_revalidate(struct gendisk *disk)
- 	unsigned int drive = p - unit;
- 
- 	if (test_bit(drive, &changed_floppies) ||
--	    test_bit(drive, &fake_change) ||
--	    p->disktype == 0) {
-+	    test_bit(drive, &fake_change) || !p->disktype) { 
- 		if (UD.flags & FTD_MSG)
- 			printk(KERN_ERR "floppy: clear format %p!\n", UDT);
- 		BufferDrive = -1;
+diff --git a/drivers/ide/pmac.c b/drivers/ide/pmac.c
+index c5b902b..ca36a97 100644
+--- a/drivers/ide/pmac.c
++++ b/drivers/ide/pmac.c
+@@ -1682,7 +1682,7 @@ static int pmac_ide_init_dma(ide_hwif_t *hwif, const struct ide_port_info *d)
+ 	/* We won't need pci_dev if we switch to generic consistent
+ 	 * DMA routines ...
+ 	 */
+-	if (dev == NULL || pmif->dma_regs == 0)
++	if (!dev || !pmif->dma_regs)
+ 		return -ENODEV;
+ 	/*
+ 	 * Allocate space for the DBDMA commands.
 -- 
 1.7.12.4
 
