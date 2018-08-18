@@ -2,302 +2,654 @@ Return-Path: <SRS0=Se0q=LB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3910EC4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 01:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3852AC4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 02:12:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1167219D2
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 01:25:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBDE5219D2
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 02:12:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="BX04eSlr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1167219D2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhCjZqmF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBDE5219D2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726088AbeHREaz (ORCPT
+        id S1726309AbeHRFS1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 00:30:55 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:65199 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725853AbeHREaz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 00:30:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1534555537; x=1566091537;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=vfYImPHNz+z7Lxc5miTl9jgcPUMws29m7UV7siEO7oA=;
-  b=BX04eSlr3aGNhdDXmm9VEQhwQMh7ySGeNOBt3YO5yG211yC7UwR+G3SN
-   QSGKdRzLGI+v6MP+dZ+3Qa8x5q0hTv+NNxov4jH+VO6dorppQsjtrVPBI
-   +xB7EYGjnqrFnL4pjw2rYNqSMducU+D6xnnl7/T4ukK7JecfLliOv0eVZ
-   Qu2KdGgaGmCGvOc8Ja0bsi8g4+x1Kq9slwqEXcK/M+R3YbB/Xujhgx09v
-   /piBlcwkHEDNZaJjYhq8ZyKEnM3bg++FVBSG65PprGF+m6hje20AQh8Ra
-   gI8dYNG7h9CZ8xTHp3nqNAQSk1/YDDZuygyozZWV6BklL6dKf9DgstzSB
-   A==;
-X-IronPort-AV: E=Sophos;i="5.53,253,1531756800"; 
-   d="scan'208";a="185261564"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 18 Aug 2018 09:25:36 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP; 17 Aug 2018 18:13:06 -0700
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.196.159.148]) ([10.196.159.148])
-  by uls-op-cesaip02.wdc.com with ESMTP; 17 Aug 2018 18:25:11 -0700
-Subject: Re: [RFC PATCH 3/5] RISC-V: Add cpu_operatios structure
-To:     Anup Patel <anup@brainfault.org>
-Cc:     "palmer@sifive.com" <palmer@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>
-References: <1534377377-70108-1-git-send-email-atish.patra@wdc.com>
- <1534377377-70108-4-git-send-email-atish.patra@wdc.com>
- <CAAhSdy2TeNfjdzWPHtCwrorBu8c9v-u9Ro-eGMbzSwzapfwdjw@mail.gmail.com>
- <ce39a215-3bb1-d866-0d84-76642acb70bc@wdc.com>
- <CAAhSdy30Fz0Ki5zMws6hspgn=xwcFLj3VVixH88UWGU+oehBQg@mail.gmail.com>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <c36fab90-ddcc-da88-b959-224d3ce6b965@wdc.com>
-Date:   Fri, 17 Aug 2018 18:25:10 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Sat, 18 Aug 2018 01:18:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36780 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725853AbeHRFS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Aug 2018 01:18:27 -0400
+Received: from localhost (unknown [104.132.0.94])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7336E219D2;
+        Sat, 18 Aug 2018 02:12:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534558354;
+        bh=3UgnDN8EXUdXVfrLOvqFCoru3iSZwUjRMnA7bZpJC/Y=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=fhCjZqmFCdBG43L4TgkV05VkzUxXnTtZ5a5UQFaaj26HI+dgK9M3H4n4NXygsvcfi
+         uNVG/AHf0+fPVEr6k6uH0T2j2u5fCj1iO9d3N4D53bsVCDXh4giGfoyfL3M94WWT2P
+         prQKDnh34yE6TCq+VxiWgZoMjj5zGu4z5Z89Zvlw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CAAhSdy30Fz0Ki5zMws6hspgn=xwcFLj3VVixH88UWGU+oehBQg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1533952436-17221-1-git-send-email-tdas@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+References: <1533952436-17221-1-git-send-email-tdas@codeaurora.org>
+Message-ID: <153455835372.28926.7641705907931269497@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v4 0/2] clk: qcom: Add support for RCG to register for DFS
+Date:   Fri, 17 Aug 2018 19:12:33 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/15/18 11:21 PM, Anup Patel wrote:
-> On Thu, Aug 16, 2018 at 11:10 AM, Atish Patra <atish.patra@wdc.com> wrote:
->> On 8/15/18 10:02 PM, Anup Patel wrote:
->>>
->>> On Thu, Aug 16, 2018 at 5:26 AM, Atish Patra <atish.patra@wdc.com> wrote:
->>>>
->>>> Defining cpu_operations now helps adding cpu hotplug
->>>> support in proper manner. Moreover, it provides flexibility
->>>> in supporting other cpu enable/boot methods can be
->>>> supported in future. This patch has been largely inspired from
->>>> ARM64. However, a default boot method is defined for RISC-V unlike
->>>> ARM64.
->>>>
->>>> Signed-off-by: Atish Patra <atish.patra@wdc.com>
->>>> ---
->>>>    arch/riscv/include/asm/smp.h | 10 ++++++++++
->>>>    arch/riscv/kernel/smp.c      |  8 ++++++++
->>>>    arch/riscv/kernel/smpboot.c  | 34 ++++++++++++++++++++++++++++------
->>>>    3 files changed, 46 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/arch/riscv/include/asm/smp.h b/arch/riscv/include/asm/smp.h
->>>> index 0763337b..2bb6e6c2 100644
->>>> --- a/arch/riscv/include/asm/smp.h
->>>> +++ b/arch/riscv/include/asm/smp.h
->>>> @@ -28,6 +28,15 @@
->>>>    extern u64 __cpu_logical_map[NR_CPUS];
->>>>    #define cpu_logical_map(cpu)    __cpu_logical_map[cpu]
->>>>
->>>> +struct cpu_operations {
->>>> +       const char      *name;
->>>> +       int             (*cpu_init)(unsigned int);
->>>> +       int             (*cpu_prepare)(unsigned int);
->>>> +       int             (*cpu_boot)(unsigned int, struct task_struct *);
->>>> +};
->>>> +extern struct cpu_operations cpu_ops;
->>>> +void smp_set_cpu_ops(const struct cpu_operations *cpu_ops);
->>>> +
->>>>    #ifdef CONFIG_SMP
->>>>
->>>>    /* SMP initialization hook for setup_arch */
->>>> @@ -57,5 +66,6 @@ static inline void cpuid_to_hartid_mask(const struct
->>>> cpumask *in,
->>>>           cpumask_set_cpu(cpu_logical_map(0), out);
->>>>    }
->>>>
->>>> +
->>>>    #endif /* CONFIG_SMP */
->>>>    #endif /* _ASM_RISCV_SMP_H */
->>>> diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
->>>> index 4ab70480..5de58ced 100644
->>>> --- a/arch/riscv/kernel/smp.c
->>>> +++ b/arch/riscv/kernel/smp.c
->>>> @@ -58,6 +58,14 @@ void cpuid_to_hartid_mask(const struct cpumask *in,
->>>> struct cpumask *out)
->>>>           for_each_cpu(cpu, in)
->>>>                   cpumask_set_cpu(cpu_logical_map(cpu), out);
->>>>    }
->>>> +struct cpu_operations cpu_ops __ro_after_init;
->>>> +
->>>> +void smp_set_cpu_ops(const struct cpu_operations *ops)
->>>> +{
->>>> +       if (ops)
->>>> +               cpu_ops = *ops;
->>>> +}
->>>> +
->>>
->>>
->>> Move both cpu_ops and smp_set_cpu_ops() to smpboot.c. This way
->>> you will not require to make cpu_ops as global.
->>>
->> ok.
->>
->>> Further, I think cpu_ops should be a pointer and initial value should
->>> be &default_ops.
->>>
->>> Something like this:
->>> struct cpu_operations *cpu_ops __ro_after_init = &default_ops;
->>>
->>
->> That will work too. However, setting it through smp_set_cpu_ops provides a
->> sample implementation for any future SMP enable methods. That's why I used
->> the API. I can change it if you think otherwise.
-> 
-> Having thought about this more, I think cpu_ops should be an pointer array
-> of NR_CPUS size. This means its not necessary to have have same ops for
-> all CPUs. The ARM64 implementation of CPU operations also allows separate
-> CPU operations for each CPU.
->
+Quoting Taniya Das (2018-08-10 18:53:54)
+>  [v4]
+>   * Add recalc_clk_ops to calculate the clock frequency reading the curre=
+nt
+>     perf state, also add CLK_GET_RATE_NOCACHE flag.
+>   * Cleanup 'goto' during mode check in 'clk_rcg2_calculate_freq'.
+>   * cleanup return from function 'com_cc_register_rcg_dfs'.
 
-I initially had NR_CPUs based pointer array implementation similar to 
-arm64. However, I couldn't find a use case for it. So I removed it.
+I want to squash this in. I have only compile tested it. Let me know
+what you think.
 
+----8<---
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index e6300e05d5df..e5eca8a1abe4 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -163,6 +163,15 @@ extern const struct clk_ops clk_pixel_ops;
+ extern const struct clk_ops clk_gfx3d_ops;
+ extern const struct clk_ops clk_rcg2_shared_ops;
+ =
 
-> For example, let's us assume that we have an SOC where we 2 cores
-> per-cluster and N clusters. All CPUs of cluster0 comes up at the same time
-> whereas cluster1 onwards we have to bring-up CPUs using special HW
-> mechanism.
-> 
++struct clk_rcg_dfs_data {
++	struct clk_rcg2 *rcg;
++	struct clk_init_data *init;
++};
++
++#define DEFINE_RCG_DFS(r) \
++	{ .rcg =3D &r##_src, .init =3D &r##_init }
++
+ extern int qcom_cc_register_rcg_dfs(struct regmap *regmap,
+-			     struct clk_rcg2 **rcgs, int num_clks);
++				    const struct clk_rcg_dfs_data *rcgs,
++				    size_t len);
+ #endif
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 55a5b58cbb15..bbe2a1916296 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -1051,48 +1051,24 @@ static unsigned long
+ clk_rcg2_dfs_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ {
+ 	struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+-	u32 cfg, hid_div, m =3D 0, n =3D 0, mode =3D 0, mask, level;
+-	int num_parents, i;
+-	unsigned long prate;
+-
+-	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
+-				SE_CMD_DFSR_OFFSET, &cfg);
+-	level =3D (GENMASK(4, 1) & cfg) >> 1;
+-
+-	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
+-				SE_PERF_DFSR(level), &cfg);
+-	if (rcg->mnd_width) {
+-		mask =3D BIT(rcg->mnd_width) - 1;
+-		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
+-				SE_PERF_M_DFSR(level), &m);
+-		m &=3D mask;
+-		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
+-				SE_PERF_N_DFSR(level), &n);
+-		n =3D  ~n;
+-		n &=3D mask;
+-		n +=3D m;
+-		mode =3D cfg & CFG_MODE_MASK;
+-		mode >>=3D CFG_MODE_SHIFT;
+-	}
++	int ret;
++	u32 level;
+ =
 
-I was not aware of such a use case. If that's a valid possible future 
-use case, we should make it pointer array implementation. I will add it 
-in v2
+-	mask =3D BIT(rcg->hid_width) - 1;
+-	hid_div =3D cfg >> CFG_SRC_DIV_SHIFT;
+-	hid_div &=3D mask;
+-	cfg &=3D CFG_SRC_SEL_MASK;
+-	cfg >>=3D CFG_SRC_SEL_SHIFT;
++	regmap_read(rcg->clkr.regmap,
++		    rcg->cmd_rcgr + SE_CMD_DFSR_OFFSET, &level);
++	level &=3D GENMASK(4, 1);
++	level >>=3D 1;
+ =
 
-Regards,
-Atish
->>
->>
->>
->>>>    /* Unsupported */
->>>>    int setup_profiling_timer(unsigned int multiplier)
->>>>    {
->>>> diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
->>>> index 6ab2bb1b..045a1a45 100644
->>>> --- a/arch/riscv/kernel/smpboot.c
->>>> +++ b/arch/riscv/kernel/smpboot.c
->>>> @@ -30,6 +30,7 @@
->>>>    #include <linux/irq.h>
->>>>    #include <linux/of.h>
->>>>    #include <linux/sched/task_stack.h>
->>>> +#include <linux/smp.h>
->>>>    #include <asm/irq.h>
->>>>    #include <asm/mmu_context.h>
->>>>    #include <asm/tlbflush.h>
->>>> @@ -38,6 +39,7 @@
->>>>
->>>>    void *__cpu_up_stack_pointer[NR_CPUS];
->>>>    void *__cpu_up_task_pointer[NR_CPUS];
->>>> +struct cpu_operations default_ops;
->>>>
->>>>    void __init smp_prepare_boot_cpu(void)
->>>>    {
->>>> @@ -53,6 +55,7 @@ void __init setup_smp(void)
->>>>           int hart, found_boot_cpu = 0;
->>>>           int cpuid = 1;
->>>>
->>>> +       smp_set_cpu_ops(&default_ops);
->>>>           while ((dn = of_find_node_by_type(dn, "cpu"))) {
->>>>                   hart = riscv_of_processor_hart(dn);
->>>>
->>>> @@ -73,10 +76,8 @@ void __init setup_smp(void)
->>>>           BUG_ON(!found_boot_cpu);
->>>>    }
->>>>
->>>> -int __cpu_up(unsigned int cpu, struct task_struct *tidle)
->>>> +int default_cpu_boot(unsigned int hartid, struct task_struct *tidle)
->>>>    {
->>>> -       int hartid = cpu_logical_map(cpu);
->>>> -       tidle->thread_info.cpu = cpu;
->>>>           /*
->>>>            * On RISC-V systems, all harts boot on their own accord.  Our
->>>> _start
->>>>            * selects the first hart to boot the kernel and causes the
->>>> remainder
->>>> @@ -84,13 +85,28 @@ int __cpu_up(unsigned int cpu, struct task_struct
->>>> *tidle)
->>>>            * setup by that main hart.  Writing __cpu_up_stack_pointer
->>>> signals to
->>>>            * the spinning harts that they can continue the boot process.
->>>>            */
->>>> -       smp_mb();
->>>> +
->>>>           __cpu_up_stack_pointer[hartid] = task_stack_page(tidle) +
->>>> THREAD_SIZE;
->>>>           __cpu_up_task_pointer[hartid] = tidle;
->>>> +       return 0;
->>>> +}
->>>> +
->>>> +int __cpu_up(unsigned int cpu, struct task_struct *tidle)
->>>> +{
->>>> +       int err = -1;
->>>> +       int hartid = cpu_logical_map(cpu);
->>>>
->>>> -       while (!cpu_online(cpu))
->>>> -               cpu_relax();
->>>> +       tidle->thread_info.cpu = cpu;
->>>> +       smp_mb();
->>>>
->>>> +       if (cpu_ops.cpu_boot)
->>>> +               err = cpu_ops.cpu_boot(hartid, tidle);
->>>> +       if (!err) {
->>>> +               while (!cpu_online(cpu))
->>>> +                       cpu_relax();
->>>> +       } else {
->>>> +               pr_err("CPU %d [hartid %d]failed to boot\n", cpu,
->>>> hartid);
->>>> +       }
->>>>           return 0;
->>>>    }
->>>>
->>>> @@ -117,3 +133,9 @@ asmlinkage void __init smp_callin(void)
->>>>           preempt_disable();
->>>>           cpu_startup_entry(CPUHP_AP_ONLINE_IDLE);
->>>>    }
->>>> +
->>>> +
->>>> +struct cpu_operations default_ops = {
->>>> +       .name           = "default",
->>>> +       .cpu_boot       = default_cpu_boot,
->>>> +};
->>>
->>>
->>> I think having dedicated source file for default_ops makes more sense
->>> so that we have a clear/simple reference implementation of cpu_operations.
->>>
->>> Eventually, we might have one source file for each type of SMP enable
->>> method.
->>>
->>> Try to keep smpboot.c generic and independent of any cpu_operations.
->>> What say?
->>>
->>
->> Any other SMP enable method should definitely get its own file. I am not
->> sure about the default one though. As default_ops is truly the default
->> booting method which will always be present in absence of anything else, I
->> thought keeping it smpboot.c emphasizes that point. Moreover, it's not that
->> big even. But I am open to moving to it's own source file if you strongly
->> think we should do that.
->>
-> 
-> I am more inclined towards keeping default_ops in separate source but it's
-> not a big deal. Let's wait for more comments.
-> 
-> Regards,
-> Anup
-> 
+-	num_parents =3D clk_hw_get_num_parents(hw);
+-	for (i =3D 0; i < num_parents; i++) {
+-		if (cfg =3D=3D rcg->parent_map[i].cfg) {
+-			prate =3D clk_hw_get_rate(
+-				clk_hw_get_parent_by_index(&rcg->clkr.hw, i));
+-			if (parent_rate !=3D prate)
+-				parent_rate =3D prate;
++	if (!rcg->freq_tbl) {
++		ret =3D clk_rcg2_dfs_populate_freq_table(rcg);
++		if (ret) {
++			pr_err("Failed to update DFS tables for %s\n",
++					clk_hw_get_name(hw));
++			return ret;
+ 		}
+ 	}
+ =
 
+-
+-	return calc_rate(parent_rate, m, n, mode, hid_div);
++	return rcg->freq_tbl[level].freq;
+ }
+ =
+
+ static const struct clk_ops clk_rcg2_dfs_ops =3D {
+@@ -1102,9 +1078,11 @@ static const struct clk_ops clk_rcg2_dfs_ops =3D {
+ 	.recalc_rate =3D clk_rcg2_dfs_recalc_rate,
+ };
+ =
+
+-static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg, struct regmap *regmap)
++static int clk_rcg2_enable_dfs(const struct clk_rcg_dfs_data *data,
++			       struct regmap *regmap)
+ {
+-	struct clk_init_data *init;
++	struct clk_rcg2 *rcg =3D data->rcg;
++	struct clk_init_data *init =3D data->init;
+ 	u32 val;
+ 	int ret;
+ =
+
+@@ -1116,18 +1094,13 @@ static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg=
+, struct regmap *regmap)
+ 	if (!(val & SE_CMD_DFS_EN))
+ 		return 0;
+ =
+
+-	init =3D kzalloc(sizeof(*init), GFP_KERNEL);
+-	if (!init)
+-		return -ENOMEM;
+-
+-	init->name =3D rcg->clkr.hw.init->name;
+-	init->flags =3D rcg->clkr.hw.init->flags;
+-	init->parent_names =3D rcg->clkr.hw.init->parent_names;
+-	init->num_parents =3D rcg->clkr.hw.init->num_parents;
+-	init->flags =3D CLK_GET_RATE_NOCACHE;
++	/*
++	 * Rate changes with consumer writing a register in
++	 * their own I/O region
++	 */
++	init->flags |=3D CLK_GET_RATE_NOCACHE;
+ 	init->ops =3D &clk_rcg2_dfs_ops;
+ =
+
+-	rcg->clkr.hw.init =3D init;
+ 	rcg->freq_tbl =3D NULL;
+ =
+
+ 	pr_debug("DFS registered for clk %s\n", init->name);
+@@ -1136,14 +1109,14 @@ static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg=
+, struct regmap *regmap)
+ }
+ =
+
+ int qcom_cc_register_rcg_dfs(struct regmap *regmap,
+-			    struct clk_rcg2 **rcgs, int num_clks)
++			     const struct clk_rcg_dfs_data *rcgs, size_t len)
+ {
+ 	int i, ret;
+ =
+
+-	for (i =3D 0; i < num_clks; i++) {
+-		ret =3D clk_rcg2_enable_dfs(rcgs[i], regmap);
++	for (i =3D 0; i < len; i++) {
++		ret =3D clk_rcg2_enable_dfs(&rcgs[i], regmap);
+ 		if (ret) {
+-			const char *name =3D rcgs[i]->clkr.hw.init->name;
++			const char *name =3D rcgs[i].init->name;
+ =
+
+ 			pr_err("DFS register failed for clk %s\n", name);
+ 			return ret;
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index fef6732bd7d8..42ab01d33b52 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -396,18 +396,27 @@ static const struct freq_tbl ftbl_gcc_qupv3_wrap0_s0_=
+clk_src[] =3D {
+ 	{ }
+ };
+ =
+
++static struct clk_init_data gcc_qupv3_wrap0_s0_clk_init =3D {
++	.name =3D "gcc_qupv3_wrap0_s0_clk_src",
++	.parent_names =3D gcc_parent_names_0,
++	.num_parents =3D 4,
++	.ops =3D &clk_rcg2_shared_ops,
++};
++
+ static struct clk_rcg2 gcc_qupv3_wrap0_s0_clk_src =3D {
+ 	.cmd_rcgr =3D 0x17034,
+ 	.mnd_width =3D 16,
+ 	.hid_width =3D 5,
+ 	.parent_map =3D gcc_parent_map_0,
+ 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init =3D &(struct clk_init_data){
+-		.name =3D "gcc_qupv3_wrap0_s0_clk_src",
+-		.parent_names =3D gcc_parent_names_0,
+-		.num_parents =3D 4,
+-		.ops =3D &clk_rcg2_shared_ops,
+-	},
++	.clkr.hw.init =3D &gcc_qupv3_wrap0_s0_clk_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap0_s1_clk_init =3D {
++	.name =3D "gcc_qupv3_wrap0_s1_clk_src",
++	.parent_names =3D gcc_parent_names_0,
++	.num_parents =3D 4,
++	.ops =3D &clk_rcg2_shared_ops,
+ };
+ =
+
+ static struct clk_rcg2 gcc_qupv3_wrap0_s1_clk_src =3D {
+@@ -416,12 +425,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s1_clk_src =3D=
+ {
+ 	.hid_width =3D 5,
+ 	.parent_map =3D gcc_parent_map_0,
+ 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init =3D &(struct clk_init_data){
+-		.name =3D "gcc_qupv3_wrap0_s1_clk_src",
+-		.parent_names =3D gcc_parent_names_0,
+-		.num_parents =3D 4,
+-		.ops =3D &clk_rcg2_shared_ops,
+-	},
++	.clkr.hw.init =3D &gcc_qupv3_wrap0_s1_clk_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap0_s2_clk_init =3D {
++	.name =3D "gcc_qupv3_wrap0_s2_clk_src",
++	.parent_names =3D gcc_parent_names_0,
++	.num_parents =3D 4,
++	.ops =3D &clk_rcg2_shared_ops,
+ };
+ =
+
+ static struct clk_rcg2 gcc_qupv3_wrap0_s2_clk_src =3D {
+@@ -430,12 +441,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s2_clk_src =3D=
+ {
+ 	.hid_width =3D 5,
+ 	.parent_map =3D gcc_parent_map_0,
+ 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init =3D &(struct clk_init_data){
+-		.name =3D "gcc_qupv3_wrap0_s2_clk_src",
+-		.parent_names =3D gcc_parent_names_0,
+-		.num_parents =3D 4,
+-		.ops =3D &clk_rcg2_shared_ops,
+-	},
++	.clkr.hw.init =3D &gcc_qupv3_wrap0_s2_clk_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap0_s3_clk_init =3D {
++	.name =3D "gcc_qupv3_wrap0_s3_clk_src",
++	.parent_names =3D gcc_parent_names_0,
++	.num_parents =3D 4,
++	.ops =3D &clk_rcg2_shared_ops,
+ };
+ =
+
+ static struct clk_rcg2 gcc_qupv3_wrap0_s3_clk_src =3D {
+@@ -444,12 +457,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s3_clk_src =3D=
+ {
+ 	.hid_width =3D 5,
+ 	.parent_map =3D gcc_parent_map_0,
+ 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init =3D &(struct clk_init_data){
+-		.name =3D "gcc_qupv3_wrap0_s3_clk_src",
+-		.parent_names =3D gcc_parent_names_0,
+-		.num_parents =3D 4,
+-		.ops =3D &clk_rcg2_shared_ops,
+-	},
++	.clkr.hw.init =3D &gcc_qupv3_wrap0_s3_clk_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap0_s4_clk_init =3D {
++	.name =3D "gcc_qupv3_wrap0_s4_clk_src",
++	.parent_names =3D gcc_parent_names_0,
++	.num_parents =3D 4,
++	.ops =3D &clk_rcg2_shared_ops,
+ };
+ =
+
+ static struct clk_rcg2 gcc_qupv3_wrap0_s4_clk_src =3D {
+@@ -458,12 +473,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s4_clk_src =3D=
+ {
+ 	.hid_width =3D 5,
+ 	.parent_map =3D gcc_parent_map_0,
+ 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init =3D &(struct clk_init_data){
+-		.name =3D "gcc_qupv3_wrap0_s4_clk_src",
+-		.parent_names =3D gcc_parent_names_0,
+-		.num_parents =3D 4,
+-		.ops =3D &clk_rcg2_shared_ops,
+-	},
++	.clkr.hw.init =3D &gcc_qupv3_wrap0_s4_clk_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap0_s5_clk_init =3D {
++	.name =3D "gcc_qupv3_wrap0_s5_clk_src",
++	.parent_names =3D gcc_parent_names_0,
++	.num_parents =3D 4,
++	.ops =3D &clk_rcg2_shared_ops,
+ };
+ =
+
+ static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src =3D {
+@@ -472,12 +489,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src =3D=
+ {
+ 	.hid_width =3D 5,
+ 	.parent_map =3D gcc_parent_map_0,
+ 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init =3D &(struct clk_init_data){
+-		.name =3D "gcc_qupv3_wrap0_s5_clk_src",
+-		.parent_names =3D gcc_parent_names_0,
+-		.num_parents =3D 4,
+-		.ops =3D &clk_rcg2_shared_ops,
+-	},
++	.clkr.hw.init =3D &gcc_qupv3_wrap0_s5_clk_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap0_s6_clk_init =3D {
++	.name =3D "gcc_qupv3_wrap0_s6_clk_src",
++	.parent_names =3D gcc_parent_names_0,
++	.num_parents =3D 4,
++	.ops =3D &clk_rcg2_shared_ops,
+ };
+ =
+
+ static struct clk_rcg2 gcc_qupv3_wrap0_s6_clk_src =3D {
+@@ -486,12 +505,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s6_clk_src =3D=
+ {
+ 	.hid_width =3D 5,
+ 	.parent_map =3D gcc_parent_map_0,
+ 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init =3D &(struct clk_init_data){
+-		.name =3D "gcc_qupv3_wrap0_s6_clk_src",
+-		.parent_names =3D gcc_parent_names_0,
+-		.num_parents =3D 4,
+-		.ops =3D &clk_rcg2_shared_ops,
+-	},
++	.clkr.hw.init =3D &gcc_qupv3_wrap0_s6_clk_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap0_s7_clk_init =3D {
++	.name =3D "gcc_qupv3_wrap0_s7_clk_src",
++	.parent_names =3D gcc_parent_names_0,
++	.num_parents =3D 4,
++	.ops =3D &clk_rcg2_shared_ops,
+ };
+ =
+
+ static struct clk_rcg2 gcc_qupv3_wrap0_s7_clk_src =3D {
+@@ -500,12 +521,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s7_clk_src =3D=
+ {
+ 	.hid_width =3D 5,
+ 	.parent_map =3D gcc_parent_map_0,
+ 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init =3D &(struct clk_init_data){
+-		.name =3D "gcc_qupv3_wrap0_s7_clk_src",
+-		.parent_names =3D gcc_parent_names_0,
+-		.num_parents =3D 4,
+-		.ops =3D &clk_rcg2_shared_ops,
+-	},
++	.clkr.hw.init =3D &gcc_qupv3_wrap0_s7_clk_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap1_s0_clk_init =3D {
++	.name =3D "gcc_qupv3_wrap1_s0_clk_src",
++	.parent_names =3D gcc_parent_names_0,
++	.num_parents =3D 4,
++	.ops =3D &clk_rcg2_shared_ops,
+ };
+ =
+
+ static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src =3D {
+@@ -514,12 +537,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src =3D=
+ {
+ 	.hid_width =3D 5,
+ 	.parent_map =3D gcc_parent_map_0,
+ 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init =3D &(struct clk_init_data){
+-		.name =3D "gcc_qupv3_wrap1_s0_clk_src",
+-		.parent_names =3D gcc_parent_names_0,
+-		.num_parents =3D 4,
+-		.ops =3D &clk_rcg2_shared_ops,
+-	},
++	.clkr.hw.init =3D &gcc_qupv3_wrap1_s0_clk_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap1_s1_clk_init =3D {
++	.name =3D "gcc_qupv3_wrap1_s1_clk_src",
++	.parent_names =3D gcc_parent_names_0,
++	.num_parents =3D 4,
++	.ops =3D &clk_rcg2_shared_ops,
+ };
+ =
+
+ static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src =3D {
+@@ -528,12 +553,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src =3D=
+ {
+ 	.hid_width =3D 5,
+ 	.parent_map =3D gcc_parent_map_0,
+ 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init =3D &(struct clk_init_data){
+-		.name =3D "gcc_qupv3_wrap1_s1_clk_src",
+-		.parent_names =3D gcc_parent_names_0,
+-		.num_parents =3D 4,
+-		.ops =3D &clk_rcg2_shared_ops,
+-	},
++	.clkr.hw.init =3D &gcc_qupv3_wrap1_s1_clk_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap1_s2_clk_init =3D {
++	.name =3D "gcc_qupv3_wrap1_s2_clk_src",
++	.parent_names =3D gcc_parent_names_0,
++	.num_parents =3D 4,
++	.ops =3D &clk_rcg2_shared_ops,
+ };
+ =
+
+ static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src =3D {
+@@ -542,12 +569,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src =3D=
+ {
+ 	.hid_width =3D 5,
+ 	.parent_map =3D gcc_parent_map_0,
+ 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init =3D &(struct clk_init_data){
+-		.name =3D "gcc_qupv3_wrap1_s2_clk_src",
+-		.parent_names =3D gcc_parent_names_0,
+-		.num_parents =3D 4,
+-		.ops =3D &clk_rcg2_shared_ops,
+-	},
++	.clkr.hw.init =3D &gcc_qupv3_wrap1_s2_clk_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap1_s3_clk_init =3D {
++	.name =3D "gcc_qupv3_wrap1_s3_clk_src",
++	.parent_names =3D gcc_parent_names_0,
++	.num_parents =3D 4,
++	.ops =3D &clk_rcg2_shared_ops,
+ };
+ =
+
+ static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src =3D {
+@@ -556,12 +585,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src =3D=
+ {
+ 	.hid_width =3D 5,
+ 	.parent_map =3D gcc_parent_map_0,
+ 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init =3D &(struct clk_init_data){
+-		.name =3D "gcc_qupv3_wrap1_s3_clk_src",
+-		.parent_names =3D gcc_parent_names_0,
+-		.num_parents =3D 4,
+-		.ops =3D &clk_rcg2_shared_ops,
+-	},
++	.clkr.hw.init =3D &gcc_qupv3_wrap1_s3_clk_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap1_s4_clk_init =3D {
++	.name =3D "gcc_qupv3_wrap1_s4_clk_src",
++	.parent_names =3D gcc_parent_names_0,
++	.num_parents =3D 4,
++	.ops =3D &clk_rcg2_shared_ops,
+ };
+ =
+
+ static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src =3D {
+@@ -570,12 +601,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src =3D=
+ {
+ 	.hid_width =3D 5,
+ 	.parent_map =3D gcc_parent_map_0,
+ 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init =3D &(struct clk_init_data){
+-		.name =3D "gcc_qupv3_wrap1_s4_clk_src",
+-		.parent_names =3D gcc_parent_names_0,
+-		.num_parents =3D 4,
+-		.ops =3D &clk_rcg2_shared_ops,
+-	},
++	.clkr.hw.init =3D &gcc_qupv3_wrap1_s4_clk_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap1_s5_clk_init =3D {
++	.name =3D "gcc_qupv3_wrap1_s5_clk_src",
++	.parent_names =3D gcc_parent_names_0,
++	.num_parents =3D 4,
++	.ops =3D &clk_rcg2_shared_ops,
+ };
+ =
+
+ static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src =3D {
+@@ -584,12 +617,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src =3D=
+ {
+ 	.hid_width =3D 5,
+ 	.parent_map =3D gcc_parent_map_0,
+ 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init =3D &(struct clk_init_data){
+-		.name =3D "gcc_qupv3_wrap1_s5_clk_src",
+-		.parent_names =3D gcc_parent_names_0,
+-		.num_parents =3D 4,
+-		.ops =3D &clk_rcg2_shared_ops,
+-	},
++	.clkr.hw.init =3D &gcc_qupv3_wrap1_s5_clk_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap1_s6_clk_init =3D {
++	.name =3D "gcc_qupv3_wrap1_s6_clk_src",
++	.parent_names =3D gcc_parent_names_0,
++	.num_parents =3D 4,
++	.ops =3D &clk_rcg2_shared_ops,
+ };
+ =
+
+ static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src =3D {
+@@ -598,12 +633,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src =3D=
+ {
+ 	.hid_width =3D 5,
+ 	.parent_map =3D gcc_parent_map_0,
+ 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init =3D &(struct clk_init_data){
+-		.name =3D "gcc_qupv3_wrap1_s6_clk_src",
+-		.parent_names =3D gcc_parent_names_0,
+-		.num_parents =3D 4,
+-		.ops =3D &clk_rcg2_shared_ops,
+-	},
++	.clkr.hw.init =3D &gcc_qupv3_wrap1_s6_clk_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap1_s7_clk_init =3D {
++	.name =3D "gcc_qupv3_wrap1_s7_clk_src",
++	.parent_names =3D gcc_parent_names_0,
++	.num_parents =3D 4,
++	.ops =3D &clk_rcg2_shared_ops,
+ };
+ =
+
+ static struct clk_rcg2 gcc_qupv3_wrap1_s7_clk_src =3D {
+@@ -612,12 +649,7 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s7_clk_src =3D {
+ 	.hid_width =3D 5,
+ 	.parent_map =3D gcc_parent_map_0,
+ 	.freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init =3D &(struct clk_init_data){
+-		.name =3D "gcc_qupv3_wrap1_s7_clk_src",
+-		.parent_names =3D gcc_parent_names_0,
+-		.num_parents =3D 4,
+-		.ops =3D &clk_rcg2_shared_ops,
+-	},
++	.clkr.hw.init =3D &gcc_qupv3_wrap1_s7_clk_init,
+ };
+ =
+
+ static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] =3D {
+@@ -3458,23 +3490,23 @@ static const struct of_device_id gcc_sdm845_match_t=
+able[] =3D {
+ };
+ MODULE_DEVICE_TABLE(of, gcc_sdm845_match_table);
+ =
+
+-static struct clk_rcg2 *gcc_dfs_clocks[] =3D {
+-	&gcc_qupv3_wrap0_s0_clk_src,
+-	&gcc_qupv3_wrap0_s1_clk_src,
+-	&gcc_qupv3_wrap0_s2_clk_src,
+-	&gcc_qupv3_wrap0_s3_clk_src,
+-	&gcc_qupv3_wrap0_s4_clk_src,
+-	&gcc_qupv3_wrap0_s5_clk_src,
+-	&gcc_qupv3_wrap0_s6_clk_src,
+-	&gcc_qupv3_wrap0_s7_clk_src,
+-	&gcc_qupv3_wrap1_s0_clk_src,
+-	&gcc_qupv3_wrap1_s1_clk_src,
+-	&gcc_qupv3_wrap1_s2_clk_src,
+-	&gcc_qupv3_wrap1_s3_clk_src,
+-	&gcc_qupv3_wrap1_s4_clk_src,
+-	&gcc_qupv3_wrap1_s5_clk_src,
+-	&gcc_qupv3_wrap1_s6_clk_src,
+-	&gcc_qupv3_wrap1_s7_clk_src,
++static const struct clk_rcg_dfs_data gcc_dfs_clocks[] =3D {
++	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s0_clk),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s1_clk),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s2_clk),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s3_clk),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s4_clk),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s5_clk),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s6_clk),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s7_clk),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s0_clk),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s1_clk),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s2_clk),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s3_clk),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s4_clk),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s5_clk),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s6_clk),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s7_clk),
+ };
+ =
+
+ static int gcc_sdm845_probe(struct platform_device *pdev)
