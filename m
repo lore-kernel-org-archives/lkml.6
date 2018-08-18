@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18855C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA0FC4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:55:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3EC821788
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:55:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87B8C215EB
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:55:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G0UN2wh6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3EC821788
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lo9kCFOo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87B8C215EB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbeHRTDr (ORCPT
+        id S1726399AbeHRTDt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 15:03:47 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37203 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbeHRTDr (ORCPT
+        Sat, 18 Aug 2018 15:03:49 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40666 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbeHRTDs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 15:03:47 -0400
-Received: by mail-ed1-f68.google.com with SMTP id b10-v6so6111860eds.4;
-        Sat, 18 Aug 2018 08:55:37 -0700 (PDT)
+        Sat, 18 Aug 2018 15:03:48 -0400
+Received: by mail-ed1-f65.google.com with SMTP id e19-v6so6112920edq.7;
+        Sat, 18 Aug 2018 08:55:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=B4nh1qoBDdAlf4BAquX86kWLPz+KpHPDSJM8Y8HD+d4=;
-        b=G0UN2wh6ipnwa+yp2JeZKTS2n2WnkgbBZkjnizlCb9D1TCeLpPKUVSqjoGXIPNm/Cs
-         /QMMD7Bki8bqC+jJbefTrfcpCQPcDPGpA8/HLDSepwCduPH/o/V4hmZ5fG+tjqKIyCVR
-         GN/5bXcXviOJndhxIicc53os0TaCQStJu8YZmQ5KKnM8LjrTn5XFJvV0TvVmjfqCdM9s
-         7ZfBNRsdkMGeMmUG2XmxdcLB3nowOktTSB+MlKVRvBtxL4ZNaS3BEsd3LzOIe1VOpkbJ
-         uskV8flbesKx8rHo7ck/x3NuiOoroSylNp6PEnhmmgfh5SX0Xi6yQ9tlcN2CE0xXEJgx
-         /6lA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=EkLQys/9bz4lne9ViArBTfdU/WxgXgESOlEwrVsKz20=;
+        b=lo9kCFOouS+KRpp3R/amkYJCBTUm3Qbpsw/2Gck+cEogdxJ1z4bYF46jeybbiVt7d3
+         EHMBGCcnDvMwHzAyLdf1ZjqLSff5IXxIOXfH4dC+RScFv7S/k6qyzbJbY9Ok0Co3y483
+         ERC/qlw8JnSpsUzVQ3LUn7k47vF5QnkwDxvmh77nMyBiBv/Mk5oOGTmiEbosqHT32ym2
+         lzHttTRUEPJLespgRUyFgPrOVQ6q6ZNSLqdXgsQpQe99jzh/YN3vG22J0rNWh3uYjTd9
+         vhZ6vRaT8D8eJpJTUW7vj6dsgSglVwivrdzZc/DLURcFEGtj0NYevrMDTjbTXDQpeH8J
+         PIgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=B4nh1qoBDdAlf4BAquX86kWLPz+KpHPDSJM8Y8HD+d4=;
-        b=Gby2HlgglcFUALweH7ynPeuzyybMPPsvs+lcHjxTXl+oPo1CzBJZs/Y0hasrZCJ+AU
-         rl54Sbnhaa/qPDPCWhYX7tAQs06aqx0rz5fx3x26l2Ay9XBH5MY8wUOohalLJ8sfqASJ
-         YMWEV4XMS+bVewVrSTda5BkzqUdMKns5I0DI1TYcMPUGUBx6+gUll7uyFZmE4hdysGEJ
-         wXPt2PixzXQAbdI3NJyMn9eMEQHqeQXBrKyfj5yzZAagBorGkWVzN53/ywL7dWSa38VS
-         C6685a9T4P0nbCZLfl+aY2C+EBpQAXdX90zqugvLgYyMcZi1K4qpPEMj6BBr1/IYhRjl
-         EwsQ==
-X-Gm-Message-State: AOUpUlFW2WVg9Ss9nSPmVLPV6uU1fmoIf/mIKfPxxsy8cjnT1j6Y9Tu3
-        7JQuKg17vVoPKlzEE+UeN/U=
-X-Google-Smtp-Source: AA+uWPwBU+0OVoYsnHjpSWKukBiYjDK8l7/ObJzwx060aMfVQKmQ9r1Kn5qvKqsZvdYyGj21ycUX8Q==
-X-Received: by 2002:a50:e0c9:: with SMTP id j9-v6mr47467846edl.198.1534607736597;
-        Sat, 18 Aug 2018 08:55:36 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=EkLQys/9bz4lne9ViArBTfdU/WxgXgESOlEwrVsKz20=;
+        b=ltYTnMmA3xyYJ+ey1FMQrjkwfVUHPlyi02OHt30MNrwnS1HvSlfcELgI8UNkDBbvSJ
+         /uzCEeRNUq05PxaIluM5tvcc/ws5JZshmSPZ+/49lzt4FvuU/myWEeiiN9AuIyY9TZhl
+         Yq3p1cxiI0451ONkA6K1dvewLvgXBTYLPyykYZYGdkia7ZDp4uLlO66q1jSXlNIOeSsg
+         8+AJPz3SlK9PNGhP6tTZbFEP/PSY2MOwCthHUEGeWkmLQ++iBThBptCSfk0VM6NEKK4o
+         PiDDyx83aovSx3Hyvu2DKFsrLeKvLj/FjpMdxYrc+L0LBQX8Dlqnzv42OeOHlXjHOJKx
+         wBGA==
+X-Gm-Message-State: AOUpUlGHwO9EAhKC1mFH2oI9Q2sGGwa/mDDnjUK04oxkua4s04icCUmm
+        KZVShDpTprtS1gn4yywSKW0=
+X-Google-Smtp-Source: AA+uWPwUVplqf+jyAsM1kXb35JQOfIekC3UexK0g9jkZsloEfNlEh1gU+d9YottxxMj4ZrWdyTMIPg==
+X-Received: by 2002:a50:f5e1:: with SMTP id x30-v6mr2766653edm.132.1534607737861;
+        Sat, 18 Aug 2018 08:55:37 -0700 (PDT)
 Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id v8-v6sm2784014edr.48.2018.08.18.08.55.35
+        by smtp.gmail.com with ESMTPSA id v8-v6sm2784014edr.48.2018.08.18.08.55.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 18 Aug 2018 08:55:36 -0700 (PDT)
+        Sat, 18 Aug 2018 08:55:37 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         Robin Murphy <robin.murphy@arm.com>,
@@ -65,93 +66,57 @@ To:     Joerg Roedel <joro@8bytes.org>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 00/19] IOMMU: Tegra GART driver clean up and optimization
-Date:   Sat, 18 Aug 2018 18:54:11 +0300
-Message-Id: <20180818155430.5586-1-digetx@gmail.com>
+Subject: [PATCH v3 01/19] iommu/tegra: gart: Remove pr_fmt and clean up includes
+Date:   Sat, 18 Aug 2018 18:54:12 +0300
+Message-Id: <20180818155430.5586-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180818155430.5586-1-digetx@gmail.com>
+References: <20180818155430.5586-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Remove unneeded headers inclusion and sort the headers in alphabet order.
+Remove pr_fmt macro since there is no pr_*() in the code and it doesn't
+affect dev_*() functions.
 
-In the previous iteration Thierry Reding suggested that it is better to
-break/change GART's device-tree ABI in order to integrate it with Memory
-Controller without much churning. So this series now includes the device
-tree changes.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/iommu/tegra-gart.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
-After making GART to disallow more than one active IOMMU domain at a time,
-I realized that the domain clients managing code has a few significant bugs
-and now they are fixed. During the bugs squashing, I found that drivers code
-require a major cleanup and hence there are now couple more patches that make
-the code less tangled and easier to maintain as a result.
-
-Changelog:
-
-v3: Memory Controller integration part has been reworked and now GART's
-    device-tree binding is changed. Adding Rob Herring for the device-tree
-    changes reviewing.
-
-    GART now disallows more than one active domain at a time.
-
-    Fixed "spinlock recursion", "NULL pointer dereference" and "detaching
-    of all devices from inactive domains".
-
-    New code-refactoring patches.
-
-    The previously standalone patch "memory: tegra: Don't invoke Tegra30+
-    specific memory timing setup on Tegra20" is now included into this
-    series because there is a dependency on that patch and it wasn't applied
-    yet.
-
-v2: Addressed review comments from Robin Murphy to v1 by moving devices
-    iommu_fwspec check to gart_iommu_add_device().
-
-    Dropped the "Provide single domain and group for all devices" patch from
-    the series for now because after some more considering it became not
-    exactly apparent whether that is what we need, that was also suggested
-    by Robin Murphy in the review comment. Maybe something like a runtime
-    IOMMU usage for devices would be a better solution, allowing to implement
-    transparent context switching of virtual IOMMU domains.
-
-    Some very minor code cleanups, reworded commit messages.
-
-Dmitry Osipenko (19):
-  iommu/tegra: gart: Remove pr_fmt and clean up includes
-  iommu/tegra: gart: Clean up driver probe errors handling
-  iommu/tegra: gart: Ignore devices without IOMMU phandle in DT
-  iommu: Introduce iotlb_sync_map callback
-  iommu/tegra: gart: Optimize mapping / unmapping performance
-  dt-bindings: memory: tegra: Squash tegra20-gart into tegra20-mc
-  ARM: dts: tegra20: Update Memory Controller node to the new binding
-  memory: tegra: Don't invoke Tegra30+ specific memory timing setup on
-    Tegra20
-  memory: tegra: Adapt to Tegra20 device-tree binding changes
-  memory: tegra: Read client ID on GART page fault
-  iommu/tegra: gart: Integrate with Memory Controller driver
-  iommu/tegra: gart: Fix spinlock recursion
-  iommu/tegra: gart: Fix NULL pointer dereference
-  iommu/tegra: gart: Allow only one active domain at a time
-  iommu/tegra: gart: Don't use managed resources
-  iommu/tegra: gart: Prepend error/debug messages with "GART:"
-  iommu/tegra: gart: Don't detach devices from inactive domains
-  iommu/tegra: gart: Simplify clients-tracking code
-  iommu/tegra: gart: Perform code refactoring
-
- .../bindings/iommu/nvidia,tegra20-gart.txt    |  14 -
- .../memory-controllers/nvidia,tegra20-mc.txt  |  23 +-
- arch/arm/boot/dts/tegra20.dtsi                |  13 +-
- drivers/iommu/Kconfig                         |   1 +
- drivers/iommu/iommu.c                         |   8 +-
- drivers/iommu/tegra-gart.c                    | 466 +++++++-----------
- drivers/memory/tegra/mc.c                     |  83 +++-
- drivers/memory/tegra/mc.h                     |   6 -
- include/linux/iommu.h                         |   1 +
- include/soc/tegra/mc.h                        |  29 +-
- 10 files changed, 287 insertions(+), 357 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
-
+diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+index 7b1361d57a17..6dda7ee1d36c 100644
+--- a/drivers/iommu/tegra-gart.c
++++ b/drivers/iommu/tegra-gart.c
+@@ -17,21 +17,14 @@
+  * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
+  */
+ 
+-#define pr_fmt(fmt)	"%s(): " fmt, __func__
+-
++#include <linux/io.h>
++#include <linux/iommu.h>
++#include <linux/list.h>
+ #include <linux/module.h>
+-#include <linux/platform_device.h>
+-#include <linux/spinlock.h>
++#include <linux/of_device.h>
+ #include <linux/slab.h>
++#include <linux/spinlock.h>
+ #include <linux/vmalloc.h>
+-#include <linux/mm.h>
+-#include <linux/list.h>
+-#include <linux/device.h>
+-#include <linux/io.h>
+-#include <linux/iommu.h>
+-#include <linux/of.h>
+-
+-#include <asm/cacheflush.h>
+ 
+ /* bitmap of the page sizes currently supported */
+ #define GART_IOMMU_PGSIZES	(SZ_4K)
 -- 
 2.18.0
 
