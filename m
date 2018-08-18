@@ -2,466 +2,535 @@ Return-Path: <SRS0=Se0q=LB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE4FC4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C50CC4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 106652178F
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:56:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j4uer1i8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 106652178F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D6928215EB
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:56:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6928215EB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbeHRTEN (ORCPT
+        id S1727285AbeHRTEU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 15:04:13 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46923 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726789AbeHRTEL (ORCPT
+        Sat, 18 Aug 2018 15:04:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43402 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726789AbeHRTEU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 15:04:11 -0400
-Received: by mail-ed1-f66.google.com with SMTP id o8-v6so6099463edt.13;
-        Sat, 18 Aug 2018 08:56:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+cWHk0y6Zj1XeHwG0EqW/r+/kcKBaTDrZenmDA0+aSw=;
-        b=j4uer1i8JSNDgdjqzp93byO5T54X8MIbPhuSk9cGl2xGwi8G3Lia0Ewb+zSPYyaXqD
-         Yb1XySjnH+srKZswjgGqEAEz6aJQlcJ1WEgaNoT8YOAN7//LgAKAN5T8Eaf3ZzY7GK6d
-         2LfpFHJTHipDMjTrj3mMY6irkOWZ9ZKFPnSv8OfzN3pTAlB9aAr+iLt00Vbx1Kur3unG
-         p+HmXI5vQ7p1CI7rr45h2NmqLrMMZpnMJUEHcNCtrcuHprQ1VuPBLX5CdR00Kn4XZfBx
-         uHxGaEAvZJ1a4pT+1rs1Af6sa9zIio+GozNRGDWigCyTiDCeawsg7dhrYDoOoxnLC5ik
-         UfTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=+cWHk0y6Zj1XeHwG0EqW/r+/kcKBaTDrZenmDA0+aSw=;
-        b=hK5QGLhR29FicgZUnRYd1bKHlpg2hQBjt1LOPzRw8ESK6K8zskg5WeZSTl75NapnJx
-         L6qPskzSFPalMM3ovEt8qldFzKMbVgM+tEz1b7pyYDBJf6LSa3iOi8EB4/jQq+93rAR2
-         yxZXGB19Qen8JVh3FFParQKY3VwOdlYno8yqmxQNyj2Of8TwbyRI3JTUio9jWeKEhdEY
-         OLMrSnyYse+NJLbcLAYHhEGUnDq0LwHZ4MDbInOqvpsiQYHod1YNek5PhuBeYlw2rhPv
-         51PGPBa0KK+HTygmVo+kk3jtF/BW3k5eEZranPE+NyORKAuq/0w3pJhAl4FvfnUgksFt
-         mKpg==
-X-Gm-Message-State: AOUpUlGMj+8GxYIkSfTqkLNv7jIQiKbje77RMP0nQEFmOAbYSv/mFnEG
-        6V9wTIGqJUMdB64Kbl0fM2M=
-X-Google-Smtp-Source: AA+uWPwCVoIuuGkJHJL3kPUtVLTEo4rIIcentLnJjgi7wXMu4yWGPeuup5/SRGk8pRSYGFuKRoFUpA==
-X-Received: by 2002:a50:a93c:: with SMTP id l57-v6mr45540864edc.229.1534607760597;
-        Sat, 18 Aug 2018 08:56:00 -0700 (PDT)
-Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id v8-v6sm2784014edr.48.2018.08.18.08.55.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 18 Aug 2018 08:56:00 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 19/19] iommu/tegra: gart: Perform code refactoring
-Date:   Sat, 18 Aug 2018 18:54:30 +0300
-Message-Id: <20180818155430.5586-20-digetx@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180818155430.5586-1-digetx@gmail.com>
-References: <20180818155430.5586-1-digetx@gmail.com>
+        Sat, 18 Aug 2018 15:04:20 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1799ABE1;
+        Sat, 18 Aug 2018 15:56:04 +0000 (UTC)
+Date:   Sat, 18 Aug 2018 17:55:59 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: [GIT PULL] USB driver patches for 4.19-rc1
+Message-ID: <20180818155559.GA22411@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Perform a major code cleanup to make it more readable and as a result
-easier to maintain. I've removed some redundant safety-checks in the code
-and some debug code that isn't actually very useful for debugging, like
-enormous pagetable dump on each fault, the majority of the changes are
-code reshuffling and variables/whitespaces clean up.
+The following changes since commit acb1872577b346bd15ab3a3f8dff780d6cca4b70:
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/iommu/tegra-gart.c | 203 +++++++++++++++----------------------
- 1 file changed, 79 insertions(+), 124 deletions(-)
+  Linux 4.18-rc7 (2018-07-29 14:44:52 -0700)
 
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index 7182445c3b76..aebbb2ccc536 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -34,63 +34,59 @@
- #define GART_CONFIG		(0x24 - GART_REG_BASE)
- #define GART_ENTRY_ADDR		(0x28 - GART_REG_BASE)
- #define GART_ENTRY_DATA		(0x2c - GART_REG_BASE)
--#define GART_ENTRY_PHYS_ADDR_VALID	(1 << 31)
-+
-+#define GART_ENTRY_PHYS_ADDR_VALID	BIT(31)
- 
- #define GART_PAGE_SHIFT		12
- #define GART_PAGE_SIZE		(1 << GART_PAGE_SHIFT)
--#define GART_PAGE_MASK						\
--	(~(GART_PAGE_SIZE - 1) & ~GART_ENTRY_PHYS_ADDR_VALID)
-+#define GART_PAGE_MASK		GENMASK(30, GART_PAGE_SHIFT)
- 
- struct gart_device {
- 	void __iomem		*regs;
- 	u32			*savedata;
--	u32			page_count;	/* total remappable size */
--	dma_addr_t		iovmm_base;	/* offset to vmm_area */
-+	unsigned long		iovmm_base;	/* offset to vmm_area start */
-+	unsigned long		iovmm_end;	/* offset to vmm_area end */
- 	spinlock_t		pte_lock;	/* for pagetable */
- 	spinlock_t		dom_lock;	/* for active domain */
- 	unsigned int		active_devices;	/* number of active devices */
- 	struct iommu_domain	*active_domain;	/* current active domain */
--	struct device		*dev;
--
- 	struct iommu_device	iommu;		/* IOMMU Core handle */
-+	struct device		*dev;
- };
- 
- static struct gart_device *gart_handle; /* unique for a system */
- 
- static bool gart_debug;
- 
--#define GART_PTE(_pfn)						\
--	(GART_ENTRY_PHYS_ADDR_VALID | ((_pfn) << PAGE_SHIFT))
--
- /*
-  * Any interaction between any block on PPSB and a block on APB or AHB
-  * must have these read-back to ensure the APB/AHB bus transaction is
-  * complete before initiating activity on the PPSB block.
-  */
--#define FLUSH_GART_REGS(gart)	((void)readl((gart)->regs + GART_CONFIG))
-+#define FLUSH_GART_REGS(gart)	readl_relaxed((gart)->regs + GART_CONFIG)
- 
- #define for_each_gart_pte(gart, iova)					\
- 	for (iova = gart->iovmm_base;					\
--	     iova < gart->iovmm_base + GART_PAGE_SIZE * gart->page_count; \
-+	     iova < gart->iovmm_end;					\
- 	     iova += GART_PAGE_SIZE)
- 
- static inline void gart_set_pte(struct gart_device *gart,
--				unsigned long offs, u32 pte)
-+				unsigned long iova, u32 pte)
- {
--	writel(offs, gart->regs + GART_ENTRY_ADDR);
--	writel(pte, gart->regs + GART_ENTRY_DATA);
-+	writel_relaxed(iova, gart->regs + GART_ENTRY_ADDR);
-+	writel_relaxed(pte, gart->regs + GART_ENTRY_DATA);
- 
--	dev_dbg(gart->dev, "GART: %s %08lx:%08x\n",
--		 pte ? "map" : "unmap", offs, pte & GART_PAGE_MASK);
-+	dev_dbg(gart->dev, "GART: %s %08lx:%08lx\n",
-+		pte ? "map" : "unmap", iova, pte & GART_PAGE_MASK);
- }
- 
- static inline unsigned long gart_read_pte(struct gart_device *gart,
--					  unsigned long offs)
-+					  unsigned long iova)
- {
- 	unsigned long pte;
- 
--	writel(offs, gart->regs + GART_ENTRY_ADDR);
--	pte = readl(gart->regs + GART_ENTRY_DATA);
-+	writel_relaxed(iova, gart->regs + GART_ENTRY_ADDR);
-+	pte = readl_relaxed(gart->regs + GART_ENTRY_DATA);
- 
- 	return pte;
- }
-@@ -102,49 +98,20 @@ static void do_gart_setup(struct gart_device *gart, const u32 *data)
- 	for_each_gart_pte(gart, iova)
- 		gart_set_pte(gart, iova, data ? *(data++) : 0);
- 
--	writel(1, gart->regs + GART_CONFIG);
-+	writel_relaxed(1, gart->regs + GART_CONFIG);
- 	FLUSH_GART_REGS(gart);
- }
- 
--#ifdef DEBUG
--static void gart_dump_table(struct gart_device *gart)
--{
--	unsigned long iova;
--	unsigned long flags;
--
--	spin_lock_irqsave(&gart->pte_lock, flags);
--	for_each_gart_pte(gart, iova) {
--		unsigned long pte;
--
--		pte = gart_read_pte(gart, iova);
--
--		dev_dbg(gart->dev, "GART: %s %08lx:%08lx\n",
--			(GART_ENTRY_PHYS_ADDR_VALID & pte) ? "v" : " ",
--			iova, pte & GART_PAGE_MASK);
--	}
--	spin_unlock_irqrestore(&gart->pte_lock, flags);
--}
--#else
--static inline void gart_dump_table(struct gart_device *gart)
-+static inline bool gart_iova_range_invalid(struct gart_device *gart,
-+					   unsigned long iova, size_t bytes)
- {
-+	return unlikely(iova < gart->iovmm_base ||
-+			iova + bytes > gart->iovmm_end);
- }
--#endif
- 
--static inline bool gart_iova_range_valid(struct gart_device *gart,
--					 unsigned long iova, size_t bytes)
-+static inline bool gart_pte_valid(struct gart_device *gart, unsigned long iova)
- {
--	unsigned long iova_start, iova_end, gart_start, gart_end;
--
--	iova_start = iova;
--	iova_end = iova_start + bytes - 1;
--	gart_start = gart->iovmm_base;
--	gart_end = gart_start + gart->page_count * GART_PAGE_SIZE - 1;
--
--	if (iova_start < gart_start)
--		return false;
--	if (iova_end > gart_end)
--		return false;
--	return true;
-+	return !!(gart_read_pte(gart, iova) & GART_ENTRY_PHYS_ADDR_VALID);
- }
- 
- static int gart_iommu_attach_dev(struct iommu_domain *domain,
-@@ -187,7 +154,6 @@ static void gart_iommu_detach_dev(struct iommu_domain *domain,
- 
- static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
- {
--	struct gart_device *gart = gart_handle;
- 	struct iommu_domain *domain;
- 
- 	if (type != IOMMU_DOMAIN_UNMANAGED)
-@@ -195,9 +161,8 @@ static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
- 
- 	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
- 	if (domain) {
--		domain->geometry.aperture_start = gart->iovmm_base;
--		domain->geometry.aperture_end = gart->iovmm_base +
--					gart->page_count * GART_PAGE_SIZE - 1;
-+		domain->geometry.aperture_start = gart_handle->iovmm_base;
-+		domain->geometry.aperture_end = gart_handle->iovmm_end - 1;
- 		domain->geometry.force_aperture = true;
- 	}
- 
-@@ -209,35 +174,44 @@ static void gart_iommu_domain_free(struct iommu_domain *domain)
- 	kfree(domain);
- }
- 
-+static int __gart_iommu_map(struct gart_device *gart, unsigned long iova,
-+			    phys_addr_t pa)
-+{
-+	if (unlikely(gart_debug) && gart_pte_valid(gart, iova)) {
-+		dev_WARN(gart->dev, "GART: Page entry is in-use\n");
-+		return -EBUSY;
-+	}
-+
-+	gart_set_pte(gart, iova, GART_ENTRY_PHYS_ADDR_VALID | pa);
-+
-+	return 0;
-+}
-+
- static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
- 			  phys_addr_t pa, size_t bytes, int prot)
- {
- 	struct gart_device *gart = gart_handle;
- 	unsigned long flags;
--	unsigned long pfn;
--	unsigned long pte;
-+	int ret;
- 
--	if (!gart_iova_range_valid(gart, iova, bytes))
-+	if (gart_iova_range_invalid(gart, iova, bytes))
- 		return -EINVAL;
- 
- 	spin_lock_irqsave(&gart->pte_lock, flags);
--	pfn = __phys_to_pfn(pa);
--	if (!pfn_valid(pfn)) {
--		dev_err(gart->dev, "GART: Invalid page: %pa\n", &pa);
--		spin_unlock_irqrestore(&gart->pte_lock, flags);
--		return -EINVAL;
--	}
--	if (gart_debug) {
--		pte = gart_read_pte(gart, iova);
--		if (pte & GART_ENTRY_PHYS_ADDR_VALID) {
--			spin_unlock_irqrestore(&gart->pte_lock, flags);
--			dev_err(gart->dev, "GART: Page entry is in-use\n");
--			return -EBUSY;
--		}
--	}
--	gart_set_pte(gart, iova, GART_PTE(pfn));
-+	ret = __gart_iommu_map(gart, iova, pa);
- 	spin_unlock_irqrestore(&gart->pte_lock, flags);
--	return 0;
-+
-+	return ret;
-+}
-+
-+static void __gart_iommu_unmap(struct gart_device *gart, unsigned long iova)
-+{
-+	if (unlikely(gart_debug) && !gart_pte_valid(gart, iova)) {
-+		dev_WARN(gart->dev, "GART: Page entry is invalid\n");
-+		return;
-+	}
-+
-+	gart_set_pte(gart, iova, 0);
- }
- 
- static size_t gart_iommu_unmap(struct iommu_domain *domain, unsigned long iova,
-@@ -246,12 +220,13 @@ static size_t gart_iommu_unmap(struct iommu_domain *domain, unsigned long iova,
- 	struct gart_device *gart = gart_handle;
- 	unsigned long flags;
- 
--	if (!gart_iova_range_valid(gart, iova, bytes))
-+	if (gart_iova_range_invalid(gart, iova, bytes))
- 		return 0;
- 
- 	spin_lock_irqsave(&gart->pte_lock, flags);
--	gart_set_pte(gart, iova, 0);
-+	__gart_iommu_unmap(gart, iova);
- 	spin_unlock_irqrestore(&gart->pte_lock, flags);
-+
- 	return bytes;
- }
- 
-@@ -259,25 +234,17 @@ static phys_addr_t gart_iommu_iova_to_phys(struct iommu_domain *domain,
- 					   dma_addr_t iova)
- {
- 	struct gart_device *gart = gart_handle;
--	unsigned long pte;
--	phys_addr_t pa;
- 	unsigned long flags;
-+	unsigned long pte;
- 
--	if (!gart_iova_range_valid(gart, iova, 0))
-+	if (gart_iova_range_invalid(gart, iova, SZ_4K))
- 		return -EINVAL;
- 
- 	spin_lock_irqsave(&gart->pte_lock, flags);
- 	pte = gart_read_pte(gart, iova);
- 	spin_unlock_irqrestore(&gart->pte_lock, flags);
- 
--	pa = (pte & GART_PAGE_MASK);
--	if (!pfn_valid(__phys_to_pfn(pa))) {
--		dev_err(gart->dev, "GART: No entry for %08llx:%pa\n",
--			 (unsigned long long)iova, &pa);
--		gart_dump_table(gart);
--		return -EINVAL;
--	}
--	return pa;
-+	return pte & GART_PAGE_MASK;
- }
- 
- static bool gart_iommu_capable(enum iommu_cap cap)
-@@ -342,24 +309,19 @@ static const struct iommu_ops gart_iommu_ops = {
- 
- int tegra_gart_suspend(struct gart_device *gart)
- {
--	unsigned long iova;
- 	u32 *data = gart->savedata;
--	unsigned long flags;
-+	unsigned long iova;
- 
--	spin_lock_irqsave(&gart->pte_lock, flags);
- 	for_each_gart_pte(gart, iova)
- 		*(data++) = gart_read_pte(gart, iova);
--	spin_unlock_irqrestore(&gart->pte_lock, flags);
-+
- 	return 0;
- }
- 
- int tegra_gart_resume(struct gart_device *gart)
- {
--	unsigned long flags;
--
--	spin_lock_irqsave(&gart->pte_lock, flags);
- 	do_gart_setup(gart, gart->savedata);
--	spin_unlock_irqrestore(&gart->pte_lock, flags);
-+
- 	return 0;
- }
- 
-@@ -368,8 +330,7 @@ struct gart_device *tegra_gart_probe(struct device *dev,
- 				     struct tegra_mc *mc)
- {
- 	struct gart_device *gart;
--	struct resource *res_remap;
--	void __iomem *gart_regs;
-+	struct resource *res;
- 	int ret;
- 
- 	BUILD_BUG_ON(PAGE_SHIFT != GART_PAGE_SHIFT);
-@@ -379,9 +340,8 @@ struct gart_device *tegra_gart_probe(struct device *dev,
- 		return NULL;
- 
- 	/* the GART memory aperture is required */
--	res_remap = platform_get_resource(to_platform_device(dev),
--					  IORESOURCE_MEM, 1);
--	if (!res_remap) {
-+	res = platform_get_resource(to_platform_device(dev), IORESOURCE_MEM, 1);
-+	if (!res) {
- 		dev_err(dev, "GART: Memory aperture resource unavailable\n");
- 		return ERR_PTR(-ENXIO);
- 	}
-@@ -390,39 +350,34 @@ struct gart_device *tegra_gart_probe(struct device *dev,
- 	if (!gart)
- 		return ERR_PTR(-ENOMEM);
- 
-+	gart_handle = gart;
-+
-+	gart->dev = dev;
-+	gart->regs = mc->regs + GART_REG_BASE;
-+	gart->iovmm_base = res->start;
-+	gart->iovmm_end = res->start + resource_size(res);
-+	spin_lock_init(&gart->pte_lock);
-+	spin_lock_init(&gart->dom_lock);
-+
-+	do_gart_setup(gart, NULL);
-+
- 	ret = iommu_device_sysfs_add(&gart->iommu, dev, NULL, "gart");
--	if (ret) {
--		dev_err(dev, "GART: Failed to register IOMMU sysfs\n");
-+	if (ret)
- 		goto free_gart;
--	}
- 
- 	iommu_device_set_ops(&gart->iommu, &gart_iommu_ops);
- 	iommu_device_set_fwnode(&gart->iommu, dev->fwnode);
- 
- 	ret = iommu_device_register(&gart->iommu);
--	if (ret) {
--		dev_err(dev, "GART: Failed to register IOMMU\n");
-+	if (ret)
- 		goto remove_sysfs;
--	}
--
--	gart->dev = dev;
--	gart_regs = mc->regs + GART_REG_BASE;
--	spin_lock_init(&gart->pte_lock);
--	spin_lock_init(&gart->dom_lock);
--	gart->regs = gart_regs;
--	gart->iovmm_base = (dma_addr_t)res_remap->start;
--	gart->page_count = (resource_size(res_remap) >> GART_PAGE_SHIFT);
- 
--	gart->savedata = vmalloc(array_size(sizeof(u32), gart->page_count));
-+	gart->savedata = vmalloc(resource_size(res) >> GART_PAGE_SHIFT);
- 	if (!gart->savedata) {
- 		ret = -ENOMEM;
- 		goto unregister_iommu;
- 	}
- 
--	do_gart_setup(gart, NULL);
--
--	gart_handle = gart;
--
- 	return gart;
- 
- unregister_iommu:
--- 
-2.18.0
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-4.19-rc1
+
+for you to fetch changes up to 29c692c96b3a39cd1911fb79cd2505af8d070f07:
+
+  USB: serial: pl2303: add a new device id for ATEN (2018-08-02 10:37:04 +0200)
+
+----------------------------------------------------------------
+USB/PHY patches for 4.19-rc1
+
+Here is the big USB and phy driver patch set for 4.19-rc1.
+
+Nothing huge but there was a lot of work that happened this development
+cycle:
+	- lots of type-c work, with drivers graduating out of staging,
+	  and displayport support being added.
+	- new PHY drivers
+	- the normal collection of gadget driver updates and fixes
+	- code churn to work on the urb handling path, using irqsave()
+	  everywhere in anticipation of making this codepath a lot
+	  simpler in the future.
+	- usbserial driver fixes and reworks
+	- other misc changes
+
+Full details are in the shortlog.
+
+All of these have been in linux-next with no reported issues for a
+while.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Alan Stern (4):
+      USB: Report wakeup events on root-hub ports
+      USB: ehci-hcd: Add get_resuming_ports method
+      USB: xhci-hcd: Add get_resuming_ports method
+      USB: gadget: Document that certain ep operations can be called in interrupt context
+
+Aleksander Morgado (1):
+      USB: option: add support for DW5821e
+
+Andy Shevchenko (3):
+      usb: dwc3: Describe 'wakeup_work' field of struct dwc3_pci
+      usb: dwc3: pci: Supply device properties via driver data
+      usb: dwc3: pci: Intel Merrifield can be host
+
+Antoine Tenart (1):
+      phy: mvebu-cp110-comphy: switch to SPDX identifier
+
+Anton Vasilyev (1):
+      uwb: hwa-rc: fix memory leak at probe
+
+Anurag Kumar Vulisha (1):
+      usb: dwc3: core: Enable AutoRetry feature in the controller
+
+Arnd Bergmann (2):
+      USB: mon: use ktime_get_real_ts64 instead of getnstimeofday64
+      usb: typec: avoid format-overflow warning
+
+Avi Fishman (2):
+      USB host: Add USB ehci support for nuvoton npcm7xx platform
+      dt-bindings: usb: new ehci-npcm7xx dt
+
+Chengguang Xu (1):
+      USB: serial: cast sizeof() to int when comparing with error code
+
+Chunfeng Yun (5):
+      phy: phy-mtk-tphy: use SPDX license tag
+      dt-bindings: phy-mtk-tphy: add optional properties for u2phy
+      phy: phy-mtk-tphy: add properties for eye diagram test
+      phy: phy-mtk-tphy: add property for BC12
+      MAINTAINERS: update files of MediaTek USB3 PHYs
+
+Colin Ian King (13):
+      usb: typec: fix dereference before null check on adev
+      usb: typec: unlock dp->lock on error exit path, and also zero ret if successful
+      usb: usbip: remove redundant pointer ep
+      usb: misc: uss720: remove redundant pointer usbdev
+      usb-misc: sisusbvga: remove redundant variable modey
+      usb: isp1760: remove redundant variable 'selector'
+      usb: xhci: dbc: remove redundant pointer dbc
+      USB: host: whci: remove redundant variable t
+      usb: host: u132-hcd: remove redundant variable num_ports
+      usb: host: ehci-sched: remove redundant pointer dev
+      usb: dwc3: gadget: remove redundant variable maxpacket
+      USB: serial: mos7720: remove redundant variables iflag, mask and serial
+      usb: gadget: tcm: fix spelling mistake: "Manufactor" -> "Manufacturer"
+
+Dan Carpenter (1):
+      USB: host: ehci-npcm7xx: Fix some error codes in probe
+
+Douglas Anderson (5):
+      phy: qcom-qmp: Fix dts bindings to reflect reality
+      usb: dwc2: Turn on uframe_sched on "bcm" platforms
+      usb: dwc2: Turn on uframe_sched on "his" platforms
+      usb: dwc2: Turn on uframe_sched on "amlogic" platforms
+      usb: dwc2: Turn on uframe_sched on "stm32f4x9_fsotg" platforms
+
+Enric Balletbo i Serra (1):
+      usb: dwc3: of-simple: reset host controller at suspend/resume
+
+Erich E. Hoover (1):
+      usb: dwc3: change stream event enable bit back to 13
+
+Gevorg Sahakyan (4):
+      usb: dwc2: Move dwc2_readl/writel functions after hsotg structure
+      usb: dwc2: Modify dwc2_readl/writel functions prototype
+      usb: dwc2: replace ioread32/iowrite32_rep with dwc2_readl/writel_rep
+      usb: dwc2: Make dwc2_readl/writel functions endianness-agnostic.
+
+Greg Kroah-Hartman (7):
+      Merge 4.18-rc3 into usb-next
+      Merge 4.18-rc5 into usb-next
+      Merge tag 'usb-serial-4.19-rc1' of https://git.kernel.org/.../johan/usb-serial into usb-next
+      Merge tag 'phy-for-4.19' of git://git.kernel.org/.../kishon/linux-phy into usb-next
+      Merge tag 'usb-ci-v4.19-rc1' of git://git.kernel.org/.../peter.chen/usb into usb-next
+      Merge 4.18-rc7 into usb-next
+      Merge tag 'usb-for-v4.19' of git://git.kernel.org/.../balbi/usb into usb-next
+
+Guido Kiener (7):
+      usb: usbtmc: Support Read Status Byte with SRQ per file
+      usb: usbtmc: use consistent timeout error
+      usb: usbtmc: Add ioctls to set/get usb timeout
+      usb: usbtmc: Add ioctl for trigger
+      usb: usbtmc: Add ioctl for EOM bit
+      usb: usbtmc: Add ioctl for termination character
+      usb: usbtmc: Add support for 32 bit compat applications
+
+Gustavo A. R. Silva (3):
+      USB: musb: mark expected switch fall-throughs
+      USB: mark expected switch fall-throughs
+      phy: qcom-usb-hs: Mark expected switch fall-through
+
+Hans de Goede (4):
+      USB: typec: fsusb302: Drop empty set_current_limit implementation
+      usb: dwc3: pci: Add GPIO lookup table on platforms without ACPI GPIO resources
+      usb: dwc3: pci: Enable ULPI Refclk on platforms where the firmware does not
+      usb: dwc3: pci: Use devm functions to get the phy GPIOs
+
+Heikki Krogerus (8):
+      usb: pd: include kernel.h
+      usb: typec: function for checking cable plug orientation
+      usb: typec: mux: Get the mux identifier from function parameter
+      usb: typec: Register a device for every mode
+      usb: typec: Bus type for alternate modes
+      usb: typec: Add driver for DisplayPort alternate mode
+      usb: typec: pi3usb30532: Start using generic state values
+      usb: typec: tcpm: Support for Alternate Modes
+
+Jaejoong Kim (3):
+      usb: cdc-acm: Decrement tty port's refcount if probe() fail
+      usb: gadget: storage: Add error handling for no memory
+      usb: gadget: storage: Remove reference counting
+
+Jerry Zhang (1):
+      usb: gadget: f_fs: Only return delayed status when len is 0
+
+Jisheng Zhang (1):
+      phy: berlin: switch to SPDX license identifier
+
+Johan Hovold (11):
+      USB: serial: digi_acceleport: rename tty flag variable
+      USB: serial: kobil_sct: fix modem-status error handling
+      USB: serial: kobil_sct: add missing version error handling
+      USB: serial: kl5kusb105: remove KLSI device id
+      USB: serial: clean up kl5kusb105 documentation
+      USB: serial: iuu_phoenix: drop unused driver-data baud rate
+      USB: serial: iuu_phoenix: drop redundant input-speed re-encoding
+      USB: serial: cp210x: make line-speed quantisation data driven
+      USB: serial: cp210x: honour device-type maximum line speed
+      USB: serial: cp210x: generalise CP2102N line-speed handling
+      USB: serial: cp210x: improve line-speed handling for CP2104 and CP2105
+
+John Ogness (14):
+      USB: serial: cyberjack: use irqsave() in USB's complete callback
+      USB: serial: digi_acceleport: use irqsave() in USB's complete callback
+      USB: serial: io_edgeport: use irqsave() in USB's complete callback
+      USB: serial: io_ti: use irqsave() in USB's complete callback
+      USB: serial: mos7720: use irqsave() in USB's complete callback
+      USB: serial: mos7840: use irqsave() in USB's complete callback
+      USB: serial: quatech2: use irqsave() in USB's complete callback
+      USB: serial: sierra: fix potential deadlock at close
+      USB: serial: sierra: use irqsave() in USB's complete callback
+      USB: serial: symbolserial: use irqsave() in USB's complete callback
+      USB: serial: ti_usb_3410_5052: use irqsave() in USB's complete callback
+      USB: serial: usb_wwan: use irqsave() in USB's complete callback
+      usb: usb-skeleton: use irqsave() in USB's complete callback
+      usb: wusbcore: remove excessive irqsave
+
+Julia Lawall (1):
+      usb: wusbcore: security: cast sizeof to int for comparison
+
+Karoly Pados (2):
+      USB: serial: cp210x: improve baudrate support for CP2102N
+      USB: serial: cp210x: implement GPIO support for CP2102N
+
+Kees Cook (1):
+      usb: typec: tps6598x: Remove VLA usage
+
+Kieran Bingham (1):
+      usb: gadget: uvc: Expose configuration name through video node
+
+Kuninori Morimoto (1):
+      usb: renesas_usbhs: Kconfig: convert to SPDX identifiers
+
+Laurent Pinchart (4):
+      usb: gadget: uvc: Move userspace API definition to public header
+      usb: gadget: uvc: Minimize #include in headers
+      usb: gadget: uvc: Move trace parameter to function module
+      usb: gadget: uvc: configfs: Move function to avoid forward declaration
+
+Li Jun (13):
+      dt-bindings: connector: add properties for typec
+      dt-bindings: usb: add documentation for typec port controller(TCPCI)
+      staging: typec: tcpci: add compatible string for nxp ptn5110
+      usb: typec: add fwnode to tcpc
+      usb: typec: add API to get typec basic port power and data config
+      usb: typec: tcpm: support get typec and pd config from device properties
+      staging: typec: tcpci: remove unused tcpci_tcpc_config
+      staging: typec: tcpci: use IS_ERR() instead of PTR_ERR_OR_ZERO()
+      staging: typec: tcpci: enable vbus detection
+      typec: tcpm: add starting value for drp toggling
+      staging: typec: tcpci: keep the disconnected cc line open
+      staging: typec: tcpci: Only touch target bit when enable vconn
+      staging: typec: tcpci: move tcpci drivers out of staging
+
+Marcel Ziswiler (1):
+      usb: chipidea: tegra: Use aligned DMA on Tegra114/124
+
+Minas Harutyunyan (1):
+      usb: dwc2: gadget: ISOC's starting flow improvement
+
+Movie Song (1):
+      USB: serial: pl2303: add a new device id for ATEN
+
+Parth Y Shah (1):
+      usb: gadget: configfs: avoid spaces for indentation
+
+Pengbo Mu (3):
+      usb: dwc3: add global soc bus configuration reg0
+      usb: dwc3: Enable undefined length INCR burst type
+      arm64: dts: dwc3: description of incr burst type
+
+Peter Chen (1):
+      staging: typec: tcpci: register port before request irq
+
+Peter Senna Tschudin (1):
+      tools: usb: ffs-test: Fix build on big endian systems
+
+Randy Dunlap (1):
+      usb/phy: fix PPC64 build errors in phy-fsl-usb.c
+
+Ray Jui (2):
+      dt-bindings: phy: Add binding doc for Stingray PCIe PHY
+      phy: bcm-sr-pcie: Add Stingray PCIe PHY driver
+
+Sebastian Andrzej Siewior (13):
+      usb: cdc-acm: use irqsave() in USB's complete callback
+      usb: core: use irqsave() in sg_complete() complete callback
+      usb: usbfs: use irqsave() in USB's complete callback
+      usb: usblp: use irqsave() in USB's complete callback
+      usb: adutux: use irqsave() in USB's complete callback
+      usb: iowarrior: remove intr_idx_lock
+      usb: ldusb: use irqsave() in USB's complete callback
+      usb: legousbtower: use irqsave() in USB's complete callback
+      USB: cdc-wdm: don't enable interrupts in USB-giveback
+      NFC: nfcmrvl_usb: use irqsave() in USB's complete callback
+      usb: cdc-wdm: use irqsave() in USB's complete callback
+      usb: usbtest: use irqsave() in USB's complete callback
+      usb: usbtest: use irqsave() in USB's complete callback
+
+Sergei Shtylyov (2):
+      dt-bindings: phy: Renesas R-Car Gen3 PCIe PHY bindings
+      phy: Renesas R-Car gen3 PCIe PHY driver
+
+Shuah Khan (Samsung OSG) (1):
+      selftests: usbip: remove test_bitmap noise
+
+Stephen Rothwell (1):
+      usb: update for tcpci drivers moving out of staging
+
+Thinh Nguyen (3):
+      usb: dwc3: Add a glue driver for Synopsys HAPS platform
+      usb: dwc3: Set default mode for dwc_usb31
+      usb: dwc3: gadget: Check MaxPacketSize from descriptor
+
+Yoshihiro Shimoda (6):
+      usb: host: xhci-plat: add firmware_name for R-Car Gen3
+      usb: host: xhci-rcar: Simplify getting the firmware name for R-Car Gen3
+      usb: host: xhci-rcar: Add a condition check about PLL active
+      dt-bindings: usb-xhci: Add r8a77990 support
+      dt-bindings: rcar-gen3-phy-usb2: Add bindings for r8a77990
+      usb: gadget: udc: renesas_usb3: Add register of usb role switch
+
+ Documentation/ABI/obsolete/sysfs-class-typec       |  48 ++
+ Documentation/ABI/testing/configfs-usb-gadget-uvc  |   5 +
+ Documentation/ABI/testing/sysfs-bus-typec          |  51 ++
+ Documentation/ABI/testing/sysfs-class-typec        |  62 +--
+ .../ABI/testing/sysfs-driver-typec-displayport     |  49 ++
+ .../bindings/connector/usb-connector.txt           |  44 ++
+ .../devicetree/bindings/phy/brcm,sr-pcie-phy.txt   |  41 ++
+ .../devicetree/bindings/phy/phy-mtk-tphy.txt       |   6 +
+ .../devicetree/bindings/phy/qcom-qmp-phy.txt       |  14 +-
+ .../devicetree/bindings/phy/rcar-gen3-phy-pcie.txt |  24 +
+ .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |   2 +
+ Documentation/devicetree/bindings/usb/dwc3.txt     |   6 +
+ .../devicetree/bindings/usb/npcm7xx-usb.txt        |  18 +
+ .../devicetree/bindings/usb/typec-tcpci.txt        |  49 ++
+ Documentation/devicetree/bindings/usb/usb-xhci.txt |   1 +
+ Documentation/driver-api/usb/typec_bus.rst         | 136 +++++
+ Documentation/usb/usb-serial.txt                   |   9 -
+ MAINTAINERS                                        |  15 +-
+ drivers/nfc/nfcmrvl/usb.c                          |   5 +-
+ drivers/phy/broadcom/Kconfig                       |  10 +
+ drivers/phy/broadcom/Makefile                      |   2 +
+ drivers/phy/broadcom/phy-bcm-sr-pcie.c             | 305 +++++++++++
+ drivers/phy/marvell/phy-berlin-sata.c              |   5 +-
+ drivers/phy/marvell/phy-berlin-usb.c               |   5 +-
+ drivers/phy/marvell/phy-mvebu-cp110-comphy.c       |   5 +-
+ drivers/phy/mediatek/Makefile                      |   1 +
+ drivers/phy/mediatek/phy-mtk-tphy.c                |  85 ++-
+ drivers/phy/qualcomm/phy-qcom-usb-hs.c             |   1 +
+ drivers/phy/renesas/Kconfig                        |   7 +
+ drivers/phy/renesas/Makefile                       |   1 +
+ drivers/phy/renesas/phy-rcar-gen3-pcie.c           | 151 ++++++
+ drivers/staging/Kconfig                            |   2 -
+ drivers/staging/Makefile                           |   1 -
+ drivers/staging/typec/Kconfig                      |  23 -
+ drivers/staging/typec/Makefile                     |   2 -
+ drivers/staging/typec/TODO                         |   5 -
+ drivers/usb/chipidea/ci_hdrc_tegra.c               |   4 +-
+ drivers/usb/class/cdc-acm.c                        |  40 +-
+ drivers/usb/class/cdc-wdm.c                        |  47 +-
+ drivers/usb/class/usblp.c                          |  10 +-
+ drivers/usb/class/usbtmc.c                         | 320 ++++++++++--
+ drivers/usb/core/devio.c                           |   5 +-
+ drivers/usb/core/hub.c                             |  42 ++
+ drivers/usb/core/message.c                         |   9 +-
+ drivers/usb/dwc2/core.c                            | 241 ++++-----
+ drivers/usb/dwc2/core.h                            | 109 ++--
+ drivers/usb/dwc2/core_intr.c                       | 118 ++---
+ drivers/usb/dwc2/debugfs.c                         |  55 +-
+ drivers/usb/dwc2/gadget.c                          | 531 +++++++++----------
+ drivers/usb/dwc2/hcd.c                             | 459 ++++++++--------
+ drivers/usb/dwc2/hcd.h                             |  10 +-
+ drivers/usb/dwc2/hcd_ddma.c                        |  10 +-
+ drivers/usb/dwc2/hcd_intr.c                        |  96 ++--
+ drivers/usb/dwc2/hcd_queue.c                       |  10 +-
+ drivers/usb/dwc2/params.c                          |  24 +-
+ drivers/usb/dwc2/platform.c                        |  19 +
+ drivers/usb/dwc3/Kconfig                           |  13 +-
+ drivers/usb/dwc3/Makefile                          |   1 +
+ drivers/usb/dwc3/core.c                            | 118 +++++
+ drivers/usb/dwc3/core.h                            |  17 +
+ drivers/usb/dwc3/dwc3-haps.c                       | 137 +++++
+ drivers/usb/dwc3/dwc3-of-simple.c                  |  29 ++
+ drivers/usb/dwc3/dwc3-pci.c                        | 223 ++++----
+ drivers/usb/dwc3/gadget.c                          |   2 +-
+ drivers/usb/dwc3/gadget.h                          |   2 +-
+ drivers/usb/gadget/configfs.c                      |   4 +-
+ drivers/usb/gadget/function/f_mass_storage.c       |  31 +-
+ drivers/usb/gadget/function/f_mass_storage.h       |   4 -
+ drivers/usb/gadget/function/f_uvc.c                |  31 +-
+ drivers/usb/gadget/function/f_uvc.h                |   6 +-
+ drivers/usb/gadget/function/u_uvc.h                |   5 +-
+ drivers/usb/gadget/function/uvc.h                  |  53 +-
+ drivers/usb/gadget/function/uvc_configfs.c         |  12 +-
+ drivers/usb/gadget/function/uvc_queue.h            |  12 +-
+ drivers/usb/gadget/function/uvc_v4l2.c             |   3 +-
+ drivers/usb/gadget/function/uvc_video.h            |   2 +
+ drivers/usb/gadget/legacy/tcm_usb_gadget.c         |   2 +-
+ drivers/usb/gadget/legacy/webcam.c                 |   4 -
+ drivers/usb/gadget/udc/Kconfig                     |   1 +
+ drivers/usb/gadget/udc/core.c                      |  18 +
+ drivers/usb/gadget/udc/renesas_usb3.c              |  84 ++-
+ drivers/usb/host/Kconfig                           |   8 +
+ drivers/usb/host/Makefile                          |   1 +
+ drivers/usb/host/ehci-hcd.c                        |   1 +
+ drivers/usb/host/ehci-hub.c                        |   8 +
+ drivers/usb/host/ehci-npcm7xx.c                    | 212 ++++++++
+ drivers/usb/host/ehci-sched.c                      |   4 -
+ drivers/usb/host/u132-hcd.c                        |   2 -
+ drivers/usb/host/whci/pzl.c                        |   2 -
+ drivers/usb/host/xhci-dbgcap.c                     |   2 -
+ drivers/usb/host/xhci-hub.c                        |  11 +
+ drivers/usb/host/xhci-plat.c                       |   1 +
+ drivers/usb/host/xhci-rcar.c                       |  43 +-
+ drivers/usb/host/xhci.c                            |   1 +
+ drivers/usb/host/xhci.h                            |   2 +
+ drivers/usb/isp1760/isp1760-hcd.c                  |   2 -
+ drivers/usb/misc/adutux.c                          |  10 +-
+ drivers/usb/misc/appledisplay.c                    |   1 +
+ drivers/usb/misc/iowarrior.c                       |   5 -
+ drivers/usb/misc/ldusb.c                           |   7 +-
+ drivers/usb/misc/legousbtower.c                    |   5 +-
+ drivers/usb/misc/sisusbvga/sisusb.c                |   4 +-
+ drivers/usb/misc/usbtest.c                         |  10 +-
+ drivers/usb/misc/uss720.c                          |   2 -
+ drivers/usb/mon/mon_bin.c                          |   8 +-
+ drivers/usb/musb/musb_dsps.c                       |   2 +-
+ drivers/usb/musb/musb_host.c                       |   1 +
+ drivers/usb/renesas_usbhs/Kconfig                  |   1 +
+ drivers/usb/renesas_usbhs/mod_gadget.c             |   1 +
+ drivers/usb/serial/cp210x.c                        | 421 ++++++++++++---
+ drivers/usb/serial/cyberjack.c                     |  17 +-
+ drivers/usb/serial/digi_acceleport.c               |  35 +-
+ drivers/usb/serial/io_edgeport.c                   |  17 +-
+ drivers/usb/serial/io_ti.c                         |   5 +-
+ drivers/usb/serial/ir-usb.c                        |   2 +-
+ drivers/usb/serial/iuu_phoenix.c                   |   5 -
+ drivers/usb/serial/kl5kusb105.c                    |   1 -
+ drivers/usb/serial/kl5kusb105.h                    |   3 -
+ drivers/usb/serial/kobil_sct.c                     |  24 +-
+ drivers/usb/serial/mos7720.c                       |  14 +-
+ drivers/usb/serial/mos7840.c                       |   5 +-
+ drivers/usb/serial/option.c                        |   4 +
+ drivers/usb/serial/pl2303.c                        |   2 +
+ drivers/usb/serial/pl2303.h                        |   1 +
+ drivers/usb/serial/quatech2.c                      |   7 +-
+ drivers/usb/serial/sierra.c                        |  13 +-
+ drivers/usb/serial/ssu100.c                        |   2 +-
+ drivers/usb/serial/symbolserial.c                  |   5 +-
+ drivers/usb/serial/ti_usb_3410_5052.c              |   9 +-
+ drivers/usb/serial/usb_wwan.c                      |   5 +-
+ drivers/usb/typec/Kconfig                          |  18 +
+ drivers/usb/typec/Makefile                         |   5 +-
+ drivers/usb/typec/altmodes/Kconfig                 |  14 +
+ drivers/usb/typec/altmodes/Makefile                |   2 +
+ drivers/usb/typec/altmodes/displayport.c           | 580 +++++++++++++++++++++
+ drivers/usb/typec/bus.c                            | 402 ++++++++++++++
+ drivers/usb/typec/bus.h                            |  38 ++
+ drivers/usb/typec/class.c                          | 544 +++++++++++++------
+ drivers/usb/typec/fusb302/fusb302.c                |  12 -
+ drivers/usb/typec/mux.c                            |   6 +-
+ drivers/usb/typec/mux/pi3usb30532.c                |  13 +-
+ drivers/{staging => usb}/typec/tcpci.c             |  66 ++-
+ drivers/{staging => usb}/typec/tcpci.h             |   0
+ drivers/{staging => usb}/typec/tcpci_rt1711h.c     |   0
+ drivers/usb/typec/tcpm.c                           | 330 +++++++++---
+ drivers/usb/typec/tps6598x.c                       |  11 +-
+ drivers/usb/usb-skeleton.c                         |  10 +-
+ drivers/usb/usbip/vudc_dev.c                       |   2 -
+ drivers/usb/wusbcore/security.c                    |   2 +-
+ drivers/usb/wusbcore/wa-xfer.c                     |   8 +-
+ drivers/uwb/hwa-rc.c                               |   1 +
+ include/dt-bindings/usb/pd.h                       |  62 +++
+ include/linux/mod_devicetable.h                    |  15 +
+ include/linux/usb/hcd.h                            |   1 +
+ include/linux/usb/pd.h                             |   1 +
+ include/linux/usb/tcpm.h                           |  11 +-
+ include/linux/usb/typec.h                          |  55 +-
+ include/linux/usb/typec_altmode.h                  | 160 ++++++
+ include/linux/usb/typec_dp.h                       |  95 ++++
+ include/linux/usb/typec_mux.h                      |   2 +-
+ include/uapi/linux/usb/g_uvc.h                     |  39 ++
+ include/uapi/linux/usb/tmc.h                       |  13 +
+ scripts/mod/devicetable-offsets.c                  |   4 +
+ scripts/mod/file2alias.c                           |  13 +
+ .../selftests/drivers/usb/usbip/usbip_test.sh      |   2 -
+ 165 files changed, 5847 insertions(+), 1813 deletions(-)
+ create mode 100644 Documentation/ABI/obsolete/sysfs-class-typec
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-typec
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-typec-displayport
+ create mode 100644 Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt
+ create mode 100644 Documentation/devicetree/bindings/phy/rcar-gen3-phy-pcie.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/typec-tcpci.txt
+ create mode 100644 Documentation/driver-api/usb/typec_bus.rst
+ create mode 100644 drivers/phy/broadcom/phy-bcm-sr-pcie.c
+ create mode 100644 drivers/phy/renesas/phy-rcar-gen3-pcie.c
+ delete mode 100644 drivers/staging/typec/Kconfig
+ delete mode 100644 drivers/staging/typec/Makefile
+ delete mode 100644 drivers/staging/typec/TODO
+ create mode 100644 drivers/usb/dwc3/dwc3-haps.c
+ create mode 100644 drivers/usb/host/ehci-npcm7xx.c
+ create mode 100644 drivers/usb/typec/altmodes/Kconfig
+ create mode 100644 drivers/usb/typec/altmodes/Makefile
+ create mode 100644 drivers/usb/typec/altmodes/displayport.c
+ create mode 100644 drivers/usb/typec/bus.c
+ create mode 100644 drivers/usb/typec/bus.h
+ rename drivers/{staging => usb}/typec/tcpci.c (92%)
+ rename drivers/{staging => usb}/typec/tcpci.h (100%)
+ rename drivers/{staging => usb}/typec/tcpci_rt1711h.c (100%)
+ create mode 100644 include/dt-bindings/usb/pd.h
+ create mode 100644 include/linux/usb/typec_altmode.h
+ create mode 100644 include/linux/usb/typec_dp.h
+ create mode 100644 include/uapi/linux/usb/g_uvc.h
