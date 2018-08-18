@@ -2,78 +2,105 @@ Return-Path: <SRS0=Se0q=LB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9354DC4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41740C4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:07:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48D622075A
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:00:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48D622075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id D284F217BB
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:07:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D284F217BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726499AbeHRSIP (ORCPT
+        id S1726395AbeHRSPz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 14:08:15 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:43514 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726265AbeHRSIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 14:08:14 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 885C8E10D9A5D;
-        Sat, 18 Aug 2018 23:00:10 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.399.0; Sat, 18 Aug 2018 23:00:10 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <jeffrey.t.kirsher@intel.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] ethernet: Use dma_zalloc_coherent to replace dma_alloc_coherent + memset
-Date:   Sat, 18 Aug 2018 22:48:19 +0800
-Message-ID: <1534603699-10120-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+        Sat, 18 Aug 2018 14:15:55 -0400
+Received: from smtprelay0148.hostedemail.com ([216.40.44.148]:37428 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726265AbeHRSPz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Aug 2018 14:15:55 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id E4C8A180A813A;
+        Sat, 18 Aug 2018 15:07:53 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: shame10_7f0700412821f
+X-Filterd-Recvd-Size: 2719
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 18 Aug 2018 15:07:52 +0000 (UTC)
+Message-ID: <be9df4884fec35affd282dd2405c4333d76d2192.camel@perches.com>
+Subject: Re: [PATCH] staging: rtl8188eu: Type cast function argument
+From:   Joe Perches <joe@perches.com>
+To:     Bhaskar Singh <bhaskar.kernel@gmail.com>,
+        zhong jiang <zhongjiang@huawei.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org
+Date:   Sat, 18 Aug 2018 08:07:51 -0700
+In-Reply-To: <20180818145851.GA20128@Gentoo-PC>
+References: <20180818142409.GA17122@Gentoo-PC> <5B782E3B.7030001@huawei.com>
+         <20180818145851.GA20128@Gentoo-PC>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dma_zalloc_coherent has implemented the dma_alloc_coherent() + memset (),
-We prefer to dma_zalloc_coherent instead of open-codeing.
+On Sat, 2018-08-18 at 20:28 +0530, Bhaskar Singh wrote:
+> On Sat, Aug 18, 2018 at 10:33:31PM +0800, zhong jiang wrote:
+> > On 2018/8/18 22:24, Bhaskar Singh wrote:
+> > > This patch might suppress some warrning.
+> > > 
+> > > The function prototype of rtw_malloc2d is
+> > > 
+> > > void *rtw_malloc2d(int h, int w, int size)
+> > > 
+> > > This patch also resolves the checkpatch.pl warning
+> > > 
+> > > WARNING: line over 80 characters
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/net/ethernet/intel/ixgb/ixgb_main.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Please look deeper at the code than checkpatch.
 
-diff --git a/drivers/net/ethernet/intel/ixgb/ixgb_main.c b/drivers/net/ethernet/intel/ixgb/ixgb_main.c
-index 43664ad..d3e72d0 100644
---- a/drivers/net/ethernet/intel/ixgb/ixgb_main.c
-+++ b/drivers/net/ethernet/intel/ixgb/ixgb_main.c
-@@ -771,14 +771,13 @@ static pci_ers_result_t ixgb_io_error_detected (struct pci_dev *pdev,
- 	rxdr->size = rxdr->count * sizeof(struct ixgb_rx_desc);
- 	rxdr->size = ALIGN(rxdr->size, 4096);
- 
--	rxdr->desc = dma_alloc_coherent(&pdev->dev, rxdr->size, &rxdr->dma,
--					GFP_KERNEL);
-+	rxdr->desc = dma_zalloc_coherent(&pdev->dev, rxdr->size, &rxdr->dma,
-+					 GFP_KERNEL);
- 
- 	if (!rxdr->desc) {
- 		vfree(rxdr->buffer_info);
- 		return -ENOMEM;
- 	}
--	memset(rxdr->desc, 0, rxdr->size);
- 
- 	rxdr->next_to_clean = 0;
- 	rxdr->next_to_use = 0;
--- 
-1.7.12.4
+This function is used exactly once and could
+likely be removed and coded inline instead to
+improve readability.
 
+> > > Signed-off-by: Bhaskar Singh <bhaskar.kernel@gmail.com>
+> > > ---
+> > >  drivers/staging/rtl8188eu/core/rtw_efuse.c | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/staging/rtl8188eu/core/rtw_efuse.c b/drivers/staging/rtl8188eu/core/rtw_efuse.c
+> > > index 0fd306a808c4..735d654b2844 100644
+> > > --- a/drivers/staging/rtl8188eu/core/rtw_efuse.c
+> > > +++ b/drivers/staging/rtl8188eu/core/rtw_efuse.c
+> > > @@ -91,7 +91,8 @@ efuse_phymap_to_logical(u8 *phymap, u16 _offset, u16 _size_byte, u8  *pbuf)
+> > >  	if (!efuseTbl)
+> > >  		return;
+> > >  
+> > > -	eFuseWord = (u16 **)rtw_malloc2d(EFUSE_MAX_SECTION_88E, EFUSE_MAX_WORD_UNIT, sizeof(u16));
+> > > +	eFuseWord = (u16 **)rtw_malloc2d(EFUSE_MAX_SECTION_88E,
+> > > +			EFUSE_MAX_WORD_UNIT, (int)sizeof(u16));
+> > >  
+> > 
+> >   You should be align with left parenthesis.
+> > 
+> >  Thanks,
+> >  zhong jiang
+> > > 	if (!eFuseWord) {
+> > >  		DBG_88E("%s: alloc eFuseWord fail!\n", __func__);
+> > >  		goto eFuseWord_failed;
+> > 
+> > 
+> 
+> why post-commit doesn't give some warrning about that (because commits are checked by
+> post-commit script)?
+> Do I need to resend the patch?
+> 
