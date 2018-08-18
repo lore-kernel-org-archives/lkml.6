@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EEA3C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF2B2C4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:41:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E488421890
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:40:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E488421890
+	by mail.kernel.org (Postfix) with ESMTP id 6DEE32188F
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:41:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DEE32188F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbeHROru (ORCPT
+        id S1726718AbeHROsW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 10:47:50 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58253 "EHLO
+        Sat, 18 Aug 2018 10:48:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48883 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbeHROru (ORCPT
+        with ESMTP id S1726266AbeHROsV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 10:47:50 -0400
+        Sat, 18 Aug 2018 10:48:21 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7IBeIMj1287672
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7IBeoFe1287717
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 18 Aug 2018 04:40:18 -0700
+        Sat, 18 Aug 2018 04:40:50 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7IBeIrO1287669;
-        Sat, 18 Aug 2018 04:40:18 -0700
-Date:   Sat, 18 Aug 2018 04:40:18 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7IBeosF1287714;
+        Sat, 18 Aug 2018 04:40:50 -0700
+Date:   Sat, 18 Aug 2018 04:40:50 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-zhachv7il2n1lopt9aonwhu7@git.kernel.org>
-Cc:     hpa@zytor.com, acme@redhat.com, adrian.hunter@intel.com,
-        tglx@linutronix.de, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        wangnan0@huawei.com, dsahern@gmail.com, mingo@kernel.org
-Reply-To: tglx@linutronix.de, adrian.hunter@intel.com, namhyung@kernel.org,
-          acme@redhat.com, hpa@zytor.com, dsahern@gmail.com,
-          mingo@kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-          wangnan0@huawei.com
+Message-ID: <tip-xfjyog8oveg2fjys9r1yy1es@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, adrian.hunter@intel.com,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org, hpa@zytor.com,
+        dsahern@gmail.com, wangnan0@huawei.com, namhyung@kernel.org,
+        acme@redhat.com
+Reply-To: dsahern@gmail.com, namhyung@kernel.org, wangnan0@huawei.com,
+          hpa@zytor.com, acme@redhat.com, linux-kernel@vger.kernel.org,
+          jolsa@kernel.org, adrian.hunter@intel.com, tglx@linutronix.de,
+          mingo@kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf bpf: Make bpf__setup_output_event() return
- the bpf-output event
-Git-Commit-ID: 78e890ea8683f7d570f911637b23b23d27be4aed
+Subject: [tip:perf/urgent] perf trace: Setup the augmented syscalls
+ bpf-output event fields
+Git-Commit-ID: d3d1c4bdf5a793ab10c448f9cf5aa5b19ce026d3
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,182 +59,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  78e890ea8683f7d570f911637b23b23d27be4aed
-Gitweb:     https://git.kernel.org/tip/78e890ea8683f7d570f911637b23b23d27be4aed
+Commit-ID:  d3d1c4bdf5a793ab10c448f9cf5aa5b19ce026d3
+Gitweb:     https://git.kernel.org/tip/d3d1c4bdf5a793ab10c448f9cf5aa5b19ce026d3
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 7 Aug 2018 16:19:05 -0300
+AuthorDate: Tue, 7 Aug 2018 16:21:44 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 8 Aug 2018 15:55:58 -0300
 
-perf bpf: Make bpf__setup_output_event() return the bpf-output event
+perf trace: Setup the augmented syscalls bpf-output event fields
 
-We're calling it to setup that event, and we'll need it later to decide
-if the bpf-output event we're handling is the one setup for a specific
-purpose, return it using ERR_PTR, etc.
+The payload that is put in place by the eBPF script attached to
+syscalls:sys_enter_openat (and other syscalls with pointers, in the
+future) can be consumed by the existing sys_enter beautifiers if
+evsel->priv is setup with a struct syscall_tp with struct tp_fields for
+the 'syscall_id' and 'args' fields expected by the beautifiers, this
+patch does just that.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-zhachv7il2n1lopt9aonwhu7@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-xfjyog8oveg2fjys9r1yy1es@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c   |  9 +++++----
- tools/perf/util/bpf-loader.c | 23 ++++++++++++-----------
- tools/perf/util/bpf-loader.h |  7 ++++---
- 3 files changed, 21 insertions(+), 18 deletions(-)
+ tools/perf/builtin-trace.c | 34 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
 
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 9b4e24217c46..43a699cfcadf 100644
+index 43a699cfcadf..06215acb1481 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -3216,8 +3216,9 @@ int cmd_trace(int argc, const char **argv)
- 	};
- 	bool __maybe_unused max_stack_user_set = true;
- 	bool mmap_pages_user_set = true;
-+	struct perf_evsel *evsel;
- 	const char * const trace_subcommands[] = { "record", NULL };
--	int err;
-+	int err = -1;
- 	char bf[BUFSIZ];
+@@ -77,7 +77,8 @@ struct trace {
+ 		struct syscall  *table;
+ 		struct {
+ 			struct perf_evsel *sys_enter,
+-					  *sys_exit;
++					  *sys_exit,
++					  *augmented;
+ 		}		events;
+ 	} syscalls;
+ 	struct record_opts	opts;
+@@ -263,6 +264,30 @@ out_delete:
+ 	return -ENOENT;
+ }
  
- 	signal(SIGSEGV, sighandler_dump_stack);
-@@ -3240,9 +3241,9 @@ int cmd_trace(int argc, const char **argv)
- 				       "cgroup monitoring only available in system-wide mode");
- 	}
- 
--	err = bpf__setup_output_event(trace.evlist, "__augmented_syscalls__");
--	if (err) {
--		bpf__strerror_setup_output_event(trace.evlist, err, bf, sizeof(bf));
-+	evsel = bpf__setup_output_event(trace.evlist, "__augmented_syscalls__");
-+	if (IS_ERR(evsel)) {
-+		bpf__strerror_setup_output_event(trace.evlist, PTR_ERR(evsel), bf, sizeof(bf));
- 		pr_err("ERROR: Setup trace syscalls enter failed: %s\n", bf);
++static int perf_evsel__init_augmented_syscall_tp(struct perf_evsel *evsel)
++{
++	struct syscall_tp *sc = evsel->priv = malloc(sizeof(struct syscall_tp));
++
++	if (evsel->priv != NULL) {       /* field, sizeof_field, offsetof_field */
++		if (__tp_field__init_uint(&sc->id, sizeof(long), sizeof(long long), evsel->needs_swap))
++			goto out_delete;
++
++		return 0;
++	}
++
++	return -ENOMEM;
++out_delete:
++	zfree(&evsel->priv);
++	return -EINVAL;
++}
++
++static int perf_evsel__init_augmented_syscall_tp_args(struct perf_evsel *evsel)
++{
++	struct syscall_tp *sc = evsel->priv;
++
++	return __tp_field__init_ptr(&sc->args, sc->id.offset + sizeof(u64));
++}
++
+ static int perf_evsel__init_raw_syscall_tp(struct perf_evsel *evsel, void *handler)
+ {
+ 	evsel->priv = malloc(sizeof(struct syscall_tp));
+@@ -3248,6 +3273,13 @@ int cmd_trace(int argc, const char **argv)
  		goto out;
  	}
-diff --git a/tools/perf/util/bpf-loader.c b/tools/perf/util/bpf-loader.c
-index 80dead642719..47aac41349a2 100644
---- a/tools/perf/util/bpf-loader.c
-+++ b/tools/perf/util/bpf-loader.c
-@@ -1535,7 +1535,7 @@ int bpf__apply_obj_config(void)
- 			(strcmp(name, 			\
- 				bpf_map__name(pos)) == 0))
  
--int bpf__setup_output_event(struct perf_evlist *evlist, const char *name)
-+struct perf_evsel *bpf__setup_output_event(struct perf_evlist *evlist, const char *name)
- {
- 	struct bpf_map_priv *tmpl_priv = NULL;
- 	struct bpf_object *obj, *tmp;
-@@ -1548,7 +1548,7 @@ int bpf__setup_output_event(struct perf_evlist *evlist, const char *name)
- 		struct bpf_map_priv *priv = bpf_map__priv(map);
- 
- 		if (IS_ERR(priv))
--			return -BPF_LOADER_ERRNO__INTERNAL;
-+			return ERR_PTR(-BPF_LOADER_ERRNO__INTERNAL);
- 
- 		/*
- 		 * No need to check map type: type should have been
-@@ -1561,20 +1561,20 @@ int bpf__setup_output_event(struct perf_evlist *evlist, const char *name)
- 	}
- 
- 	if (!need_init)
--		return 0;
-+		return NULL;
- 
- 	if (!tmpl_priv) {
- 		char *event_definition = NULL;
- 
- 		if (asprintf(&event_definition, "bpf-output/no-inherit=1,name=%s/", name) < 0)
--			return -ENOMEM;
-+			return ERR_PTR(-ENOMEM);
- 
- 		err = parse_events(evlist, event_definition, NULL);
- 		free(event_definition);
- 
- 		if (err) {
- 			pr_debug("ERROR: failed to create the \"%s\" bpf-output event\n", name);
--			return -err;
-+			return ERR_PTR(-err);
- 		}
- 
- 		evsel = perf_evlist__last(evlist);
-@@ -1584,37 +1584,38 @@ int bpf__setup_output_event(struct perf_evlist *evlist, const char *name)
- 		struct bpf_map_priv *priv = bpf_map__priv(map);
- 
- 		if (IS_ERR(priv))
--			return -BPF_LOADER_ERRNO__INTERNAL;
-+			return ERR_PTR(-BPF_LOADER_ERRNO__INTERNAL);
- 		if (priv)
- 			continue;
- 
- 		if (tmpl_priv) {
- 			priv = bpf_map_priv__clone(tmpl_priv);
- 			if (!priv)
--				return -ENOMEM;
-+				return ERR_PTR(-ENOMEM);
- 
- 			err = bpf_map__set_priv(map, priv, bpf_map_priv__clear);
- 			if (err) {
- 				bpf_map_priv__clear(map, priv);
--				return err;
-+				return ERR_PTR(err);
- 			}
- 		} else if (evsel) {
- 			struct bpf_map_op *op;
- 
- 			op = bpf_map__add_newop(map, NULL);
- 			if (IS_ERR(op))
--				return PTR_ERR(op);
-+				return ERR_PTR(PTR_ERR(op));
- 			op->op_type = BPF_MAP_OP_SET_EVSEL;
- 			op->v.evsel = evsel;
- 		}
- 	}
- 
--	return 0;
-+	return evsel;
- }
- 
- int bpf__setup_stdout(struct perf_evlist *evlist)
- {
--	return bpf__setup_output_event(evlist, "__bpf_stdout__");
-+	struct perf_evsel *evsel = bpf__setup_output_event(evlist, "__bpf_stdout__");
-+	return IS_ERR(evsel) ? PTR_ERR(evsel) : 0;
- }
- 
- #define ERRNO_OFFSET(e)		((e) - __BPF_LOADER_ERRNO__START)
-diff --git a/tools/perf/util/bpf-loader.h b/tools/perf/util/bpf-loader.h
-index 8eca75145ac2..62d245a90e1d 100644
---- a/tools/perf/util/bpf-loader.h
-+++ b/tools/perf/util/bpf-loader.h
-@@ -43,6 +43,7 @@ enum bpf_loader_errno {
- 	__BPF_LOADER_ERRNO__END,
- };
- 
-+struct perf_evsel;
- struct bpf_object;
- struct parse_events_term;
- #define PERF_BPF_PROBE_GROUP "perf_bpf_probe"
-@@ -82,7 +83,7 @@ int bpf__apply_obj_config(void);
- int bpf__strerror_apply_obj_config(int err, char *buf, size_t size);
- 
- int bpf__setup_stdout(struct perf_evlist *evlist);
--int bpf__setup_output_event(struct perf_evlist *evlist, const char *name);
-+struct perf_evsel *bpf__setup_output_event(struct perf_evlist *evlist, const char *name);
- int bpf__strerror_setup_output_event(struct perf_evlist *evlist, int err, char *buf, size_t size);
- #else
- #include <errno.h>
-@@ -137,10 +138,10 @@ bpf__setup_stdout(struct perf_evlist *evlist __maybe_unused)
- 	return 0;
- }
- 
--static inline int
-+static inline struct perf_evsel *
- bpf__setup_output_event(struct perf_evlist *evlist __maybe_unused, const char *name __maybe_unused)
- {
--	return 0;
-+	return NULL;
- }
- 
- static inline int
++	if (evsel) {
++		if (perf_evsel__init_augmented_syscall_tp(evsel) ||
++		    perf_evsel__init_augmented_syscall_tp_args(evsel))
++			goto out;
++		trace.syscalls.events.augmented = evsel;
++	}
++
+ 	err = bpf__setup_stdout(trace.evlist);
+ 	if (err) {
+ 		bpf__strerror_setup_stdout(trace.evlist, err, bf, sizeof(bf));
