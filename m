@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE4DC4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F1BC4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:56:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EE19218A8
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:56:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EE19218A8
+	by mail.kernel.org (Postfix) with ESMTP id 6351F218A8
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:56:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6351F218A8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbeHRPDg (ORCPT
+        id S1726876AbeHRPED (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 11:03:36 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48547 "EHLO
+        Sat, 18 Aug 2018 11:04:03 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34657 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726300AbeHRPDg (ORCPT
+        with ESMTP id S1726300AbeHRPED (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 11:03:36 -0400
+        Sat, 18 Aug 2018 11:04:03 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7IBtkNC1291277
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7IBuGuQ1291312
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 18 Aug 2018 04:55:47 -0700
+        Sat, 18 Aug 2018 04:56:16 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7IBtkme1291274;
-        Sat, 18 Aug 2018 04:55:46 -0700
-Date:   Sat, 18 Aug 2018 04:55:46 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7IBuGSx1291309;
+        Sat, 18 Aug 2018 04:56:16 -0700
+Date:   Sat, 18 Aug 2018 04:56:16 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Benno Evers <tipbot@zytor.com>
-Message-ID: <tip-3f4417d693b43fa240ac8bde4487f67745ca23d8@git.kernel.org>
-Cc:     namhyung@kernel.org, mingo@kernel.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        kjlx@templeofstupid.com, tglx@linutronix.de, acme@redhat.com,
-        bevers@mesosphere.com, jolsa@redhat.com,
-        alexander.shishkin@linux.intel.com
-Reply-To: acme@redhat.com, tglx@linutronix.de, kjlx@templeofstupid.com,
-          alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-          bevers@mesosphere.com, mingo@kernel.org, namhyung@kernel.org,
-          peterz@infradead.org, linux-kernel@vger.kernel.org, hpa@zytor.com
-In-Reply-To: <20180810133614.9925-1-bevers@mesosphere.com>
-References: <20180810133614.9925-1-bevers@mesosphere.com>
+From:   tip-bot for Alexander Kapshuk <tipbot@zytor.com>
+Message-ID: <tip-51d8aac236493833acf60d9c3b6c42437a18da36@git.kernel.org>
+Cc:     jolsa@kernel.org, hpa@zytor.com, acme@redhat.com, mingo@kernel.org,
+        peterz@infradead.org, alexander.shishkin@linux.intel.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        namhyung@kernel.org, alexander.kapshuk@gmail.com, dsahern@gmail.com
+Reply-To: alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, namhyung@kernel.org,
+          alexander.kapshuk@gmail.com, dsahern@gmail.com, jolsa@kernel.org,
+          hpa@zytor.com, acme@redhat.com, peterz@infradead.org,
+          mingo@kernel.org
+In-Reply-To: <20180811083915.17471-1-alexander.kapshuk@gmail.com>
+References: <20180811083915.17471-1-alexander.kapshuk@gmail.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf tools: Check for null when copying nsinfo.
-Git-Commit-ID: 3f4417d693b43fa240ac8bde4487f67745ca23d8
+Subject: [tip:perf/urgent] perf tools: Fix check-headers.sh AND list path of
+ execution
+Git-Commit-ID: 51d8aac236493833acf60d9c3b6c42437a18da36
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,48 +62,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3f4417d693b43fa240ac8bde4487f67745ca23d8
-Gitweb:     https://git.kernel.org/tip/3f4417d693b43fa240ac8bde4487f67745ca23d8
-Author:     Benno Evers <bevers@mesosphere.com>
-AuthorDate: Fri, 10 Aug 2018 15:36:13 +0200
+Commit-ID:  51d8aac236493833acf60d9c3b6c42437a18da36
+Gitweb:     https://git.kernel.org/tip/51d8aac236493833acf60d9c3b6c42437a18da36
+Author:     Alexander Kapshuk <alexander.kapshuk@gmail.com>
+AuthorDate: Sat, 11 Aug 2018 11:39:15 +0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 13 Aug 2018 15:39:09 -0300
+CommitDate: Mon, 13 Aug 2018 15:46:19 -0300
 
-perf tools: Check for null when copying nsinfo.
+perf tools: Fix check-headers.sh AND list path of execution
 
-The argument to nsinfo__copy() was assumed to be valid, but some code paths
-exist that will lead to NULL being passed.
+The '||' path of execution in the 'test' block of the check_2() function
+may also be taken if file2 does not exist, in which case the warning
+message about the ABI headers being different would still be printed
+where it should not be.  See below.
 
-In particular, running 'perf script -D' on a perf.data file containing an
-PERF_RECORD_MMAP event associating the '[vdso]' dso with pid 0 earlier in
-the event stream will lead to a segfault.
+  % file1=file1; file2=file2
+  % cmd="echo diff $file1 $file2"
+  % test -f $file2 && \
+    eval $cmd || echo "Warning: Kernel ABI header at 'tools/$file1'
+                       differs from latest version at '$file2'" >&2
+                       Warning: Kernel ABI header at 'tools/file1' differs from latest
+                       version at 'file2'
 
-Since all calling code is already checking for a non-null return value,
-just return NULL for this case as well.
+The proposed patch converts the code following the '&&' operator into a
+compound list to be executed in the current process environment only if file2
+does exist. Should the files being compared differ, a diff command to compare
+the files concerned is printed on standard output. E.g.
 
-Signed-off-by: Benno Evers <bevers@mesosphere.com>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+  $ diff -u tools/arch/x86/lib/memcpy_64.S arch/x86/lib/memcpy_64.S
+
+Committer testing:
+
+Remove a line from that tools/arch/x86/lib/memcpy_64.S file to test
+this:
+
+  BUILD:   Doing 'make -j4' parallel build
+Warning: Kernel ABI header at 'tools/arch/x86/lib/memcpy_64.S' differs from latest version at 'arch/x86/lib/memcpy_64.S'
+diff -u tools/arch/x86/lib/memcpy_64.S arch/x86/lib/memcpy_64.S
+  CC       /tmp/build/perf/bench/mem-memcpy-x86-64-asm.o
+
+Signed-off-by: Alexander Kapshuk <alexander.kapshuk@gmail.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Krister Johansen <kjlx@templeofstupid.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180810133614.9925-1-bevers@mesosphere.com
+Link: http://lkml.kernel.org/r/20180811083915.17471-1-alexander.kapshuk@gmail.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/namespaces.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/check-headers.sh | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
-index 5be021701f34..cf8bd123cf73 100644
---- a/tools/perf/util/namespaces.c
-+++ b/tools/perf/util/namespaces.c
-@@ -139,6 +139,9 @@ struct nsinfo *nsinfo__copy(struct nsinfo *nsi)
- {
- 	struct nsinfo *nnsi;
+diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
+index de28466c0186..ea48aa6f8d19 100755
+--- a/tools/perf/check-headers.sh
++++ b/tools/perf/check-headers.sh
+@@ -67,8 +67,12 @@ check_2 () {
  
-+	if (nsi == NULL)
-+		return NULL;
-+
- 	nnsi = calloc(1, sizeof(*nnsi));
- 	if (nnsi != NULL) {
- 		nnsi->pid = nsi->pid;
+   cmd="diff $* $file1 $file2 > /dev/null"
+ 
+-  test -f $file2 &&
+-  eval $cmd || echo "Warning: Kernel ABI header at 'tools/$file' differs from latest version at '$file'" >&2
++  test -f $file2 && {
++    eval $cmd || {
++      echo "Warning: Kernel ABI header at 'tools/$file' differs from latest version at '$file'" >&2
++      echo diff -u tools/$file $file
++    }
++  }
+ }
+ 
+ check () {
