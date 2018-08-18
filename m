@@ -2,137 +2,150 @@ Return-Path: <SRS0=Se0q=LB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 766B3C43615
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66758C4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:58:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20515215EB
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:57:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sIgAgguX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20515215EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 26F28215EB
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:58:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26F28215EB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbeHRTDv (ORCPT
+        id S1727018AbeHRTGV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 15:03:51 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37202 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbeHRTDt (ORCPT
+        Sat, 18 Aug 2018 15:06:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49168 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726351AbeHRTGV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 15:03:49 -0400
-Received: by mail-ed1-f65.google.com with SMTP id b10-v6so6111897eds.4;
-        Sat, 18 Aug 2018 08:55:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yD2pLhYbA5LzbYbzFrw6/+GVuHxs4vnjQv6iZuDs3Hk=;
-        b=sIgAgguXOz1aHI/a3QLYlSch1w4/TdpFeprUhobw3D0st9oUFwfCWZbZ0J7NlEtH+S
-         aIDr1vTgWmHAVlxEJ8xrakxmkFUxQuW3hFEwq/fafkQgi9Ew16e1Kgb20U0dmflOdO/G
-         vSpbpFWgzN8ZQDY3dNTaVIP02wgctD6uQ7umde0CN68nmJAvQEcMiLFr7VM3D8BgH9QN
-         sqoEFQMQLHim+ur7Ggwkpw93aW6SFLZ7nEVNGX3fxpFYwYssfe8JMEvKi5Mt3uvagEG5
-         6YpM7s/8iPReGmbYbbkFr15Znl5jdEjKbtjDlWCu9VFTJ1mbc4w+LVfaXmEG/hlsCwoX
-         hyaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yD2pLhYbA5LzbYbzFrw6/+GVuHxs4vnjQv6iZuDs3Hk=;
-        b=MEUaBi/80Ub1kbbnFFVjgyvTHJi6nq8jLp7/ccO3YpCbJ8J5TD6MQ5PvswXl8xmZji
-         XSaOsZNtpamkO5bRrYmRXbKGIF7qyqDybP0mHkVK1/AdbVW6+5/P1ofZdKdE8f4Ev1wI
-         cserT3QVPgt/hO4W8cPsS6MyjgAGxZzc14Gny7IlCVzdigejYaoIUJe5Brs6g0W66vYD
-         FSdZpagwynP2oHmWNgk9bOwuCSK+SU2j8uJr5QqYufg+OquywlnH2glkgenrQytFuH0S
-         ivXRcsg+DaZ20StA2+Z4NZGMYfyacDuo2fG21prK0faaf+mK3M+NbiAWShDNjJRFeMs+
-         ftyg==
-X-Gm-Message-State: AOUpUlFWZbDSecpg4YPaoI8NPIOse1NOSfLe3PzfClxOGlJL4zM91H4C
-        V0+UCtdeP9Y1WMexWCf7y9A=
-X-Google-Smtp-Source: AA+uWPzSglpotHVhpuzF6XifzPq8qZA7KIZQ09TkBzbqbOGysA9JzOzac+CGSQ0HO9gKUhq8lCrBhg==
-X-Received: by 2002:a50:8bc5:: with SMTP id n5-v6mr4271745edn.216.1534607739132;
-        Sat, 18 Aug 2018 08:55:39 -0700 (PDT)
-Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id v8-v6sm2784014edr.48.2018.08.18.08.55.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 18 Aug 2018 08:55:38 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 02/19] iommu/tegra: gart: Clean up driver probe errors handling
-Date:   Sat, 18 Aug 2018 18:54:13 +0300
-Message-Id: <20180818155430.5586-3-digetx@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180818155430.5586-1-digetx@gmail.com>
-References: <20180818155430.5586-1-digetx@gmail.com>
+        Sat, 18 Aug 2018 15:06:21 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9FECBD4;
+        Sat, 18 Aug 2018 15:58:08 +0000 (UTC)
+Date:   Sat, 18 Aug 2018 17:57:58 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Driver core patches for 4.19-rc1
+Message-ID: <20180818155758.GA22665@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Properly clean up allocated resources on the drivers probe failure and
-remove unneeded checks.
+The following changes since commit acb1872577b346bd15ab3a3f8dff780d6cca4b70:
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/iommu/tegra-gart.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+  Linux 4.18-rc7 (2018-07-29 14:44:52 -0700)
 
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index 6dda7ee1d36c..e9524ed264cf 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -408,9 +408,6 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	int ret;
- 
--	if (gart_handle)
--		return -EIO;
--
- 	BUILD_BUG_ON(PAGE_SHIFT != GART_PAGE_SHIFT);
- 
- 	/* the GART memory aperture is required */
-@@ -445,8 +442,7 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	ret = iommu_device_register(&gart->iommu);
- 	if (ret) {
- 		dev_err(dev, "Failed to register IOMMU\n");
--		iommu_device_sysfs_remove(&gart->iommu);
--		return ret;
-+		goto remove_sysfs;
- 	}
- 
- 	gart->dev = &pdev->dev;
-@@ -460,7 +456,8 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	gart->savedata = vmalloc(array_size(sizeof(u32), gart->page_count));
- 	if (!gart->savedata) {
- 		dev_err(dev, "failed to allocate context save area\n");
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto unregister_iommu;
- 	}
- 
- 	platform_set_drvdata(pdev, gart);
-@@ -469,6 +466,13 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	gart_handle = gart;
- 
- 	return 0;
-+
-+unregister_iommu:
-+	iommu_device_unregister(&gart->iommu);
-+remove_sysfs:
-+	iommu_device_sysfs_remove(&gart->iommu);
-+
-+	return ret;
- }
- 
- static int tegra_gart_remove(struct platform_device *pdev)
--- 
-2.18.0
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git tags/driver-core-4.19-rc1
+
+for you to fetch changes up to d2fc88a61b4ea99f574bde16e92718e22f312136:
+
+  Merge 4.18-rc7 into driver-core-next (2018-07-30 10:08:09 +0200)
+
+----------------------------------------------------------------
+Driver core patches for 4.19-rc1
+
+Here are all of the driver core and related patches for 4.19-rc1.
+
+ZNothing huge here, just a number of small cleanups and the ability to
+now stop the deferred probing after init happens.
+
+All of these have been in linux-next for a while with only a merge issue
+reported.  That merge issue is in fs/sysfs/group.c and Stephen has
+posted the diff of what it should be to resolve this.  I'll follow up
+with that diff to this pull request.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Benjamin Gaignard (1):
+      base: core: Remove WARN_ON from link dependencies check
+
+Benjamin Herrenschmidt (1):
+      drivers: core: Remove glue dirs from sysfs earlier
+
+Greg Kroah-Hartman (1):
+      Merge 4.18-rc7 into driver-core-next
+
+Guenter Roeck (2):
+      kernfs: Replace strncpy with memcpy
+      kobject: Replace strncpy with memcpy
+
+Javier Martinez Canillas (1):
+      driver core: add a debugfs entry to show deferred devices
+
+Joe Perches (1):
+      device: Add #define dev_fmt similar to #define pr_fmt
+
+Luis R. Rodriguez (1):
+      Documentation: update firmware loader fallback reference
+
+Pingfan Liu (1):
+      drivers/base: stop new probing during shutdown
+
+Rajat Jain (1):
+      sysfs: Fix internal_create_group() for named group updates
+
+Randy Dunlap (2):
+      linux/device.h: fix kernel-doc notation warning
+      sysfs.h: fix non-kernel-doc comment
+
+Rob Herring (6):
+      driver core: allow stopping deferred probe after init
+      dt-bindings: pinctrl: add a 'pinctrl-use-default' property
+      pinctrl: Support stopping deferred probe after initcalls
+      iommu: Stop deferring probe at end of initcalls
+      iommu: Remove IOMMU_OF_DECLARE
+      PM / Domains: Stop deferring probe at the end of initcall
+
+Shaokun Zhang (1):
+      driver core: remove unnecessary function extern declare
+
+Sudeep Holla (1):
+      drivers: base: cacheinfo: use OF property_read_u32 instead of get_property,read_number
+
+Todd Poynor (1):
+      drivers: base: initcall_debug logs for driver probe times
+
+Wesley W. Terpstra (1):
+      base: fix order of OF initialization
+
+ Documentation/admin-guide/kernel-parameters.txt    |   9 ++
+ .../bindings/pinctrl/pinctrl-bindings.txt          |   6 +
+ .../driver-api/firmware/fallback-mechanisms.rst    |   7 +-
+ drivers/base/base.h                                |   2 -
+ drivers/base/cacheinfo.c                           |  24 ++--
+ drivers/base/core.c                                |  23 ++--
+ drivers/base/dd.c                                  | 134 +++++++++++++++++----
+ drivers/base/init.c                                |   2 +-
+ drivers/base/power/domain.c                        |   2 +-
+ drivers/iommu/arm-smmu-v3.c                        |   2 -
+ drivers/iommu/arm-smmu.c                           |   7 --
+ drivers/iommu/exynos-iommu.c                       |   2 -
+ drivers/iommu/ipmmu-vmsa.c                         |   3 -
+ drivers/iommu/msm_iommu.c                          |   2 -
+ drivers/iommu/of_iommu.c                           |  21 +---
+ drivers/iommu/qcom_iommu.c                         |   2 -
+ drivers/iommu/rockchip-iommu.c                     |   2 -
+ drivers/pinctrl/devicetree.c                       |  15 ++-
+ fs/kernfs/symlink.c                                |   2 +-
+ fs/sysfs/group.c                                   |  29 +++--
+ include/asm-generic/vmlinux.lds.h                  |   2 -
+ include/linux/device.h                             | 107 +++++++++-------
+ include/linux/kobject.h                            |  17 +++
+ include/linux/of_iommu.h                           |   4 -
+ include/linux/sysfs.h                              |   6 +-
+ lib/kobject.c                                      |   2 +-
+ 26 files changed, 273 insertions(+), 161 deletions(-)
