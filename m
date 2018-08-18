@@ -2,86 +2,94 @@ Return-Path: <SRS0=Se0q=LB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23360C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 14:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F21FC4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 14:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 948A92178A
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 14:33:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 948A92178A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 2AE8A217BB
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 14:35:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fqyHeMtf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AE8A217BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726368AbeHRRlb (ORCPT
+        id S1726255AbeHRRnV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 13:41:31 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11140 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726219AbeHRRlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 13:41:31 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0141918CB170B;
-        Sat, 18 Aug 2018 22:33:34 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.399.0; Sat, 18 Aug 2018
- 22:33:32 +0800
-Message-ID: <5B782E3B.7030001@huawei.com>
-Date:   Sat, 18 Aug 2018 22:33:31 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Sat, 18 Aug 2018 13:43:21 -0400
+Received: from ozlabs.org ([203.11.71.1]:41881 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726219AbeHRRnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Aug 2018 13:43:21 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41t2fh3k8lz9s5c;
+        Sun, 19 Aug 2018 00:35:24 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1534602924;
+        bh=RV5OfGsemNpT+zWgkiXFOQJ3afGCfCBZWNTC+ADJPtw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=fqyHeMtfp7ftv6s85PHqSINsovknh81KXmJ4Cf6FFP2EpGBfBaY9NDGoslbgIcKFw
+         0Pz61azjyK+NZBMi6pgfKO0FGhUgxgmy1zeW0hfHf2z8hLzlVkzD5QNN9Y6NFg2xrn
+         Ga+9+zZotI6IOsd8yO3ZOcAGIA4/eT/UwUXVRPQUnxLppzEjMRY+MYslENNHZ/rgRY
+         6XHOnHzLQNIv40PqNRei/Da1cT/2RjHy1NDA6ewygSgt8oqhPk02nfmpAa4z93785l
+         JAZfxfOPh6rmLSKrWyK6SynIqcWuiWTgdZ5+epy/JDI8TjkCMb0oeh6+i/qyPt4OLA
+         PxbCzYdUI45aw==
+Date:   Sun, 19 Aug 2018 00:35:23 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        youling257 <youling257@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: linux-next: Signed-off-by missing for commit in the drivers-x86
+ tree
+Message-ID: <20180819003523.398f06e4@canb.auug.org.au>
 MIME-Version: 1.0
-To:     Bhaskar Singh <bhaskar.kernel@gmail.com>
-CC:     <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] staging: rtl8188eu: Type cast function argument
-References: <20180818142409.GA17122@Gentoo-PC>
-In-Reply-To: <20180818142409.GA17122@Gentoo-PC>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/B0V2D.OBYzM.IAVaUaU.M0F"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/18 22:24, Bhaskar Singh wrote:
-> This patch might suppress some warrning.
->
-> The function prototype of rtw_malloc2d is
->
-> void *rtw_malloc2d(int h, int w, int size)
->
-> This patch also resolves the checkpatch.pl warning
->
-> WARNING: line over 80 characters
->
-> Signed-off-by: Bhaskar Singh <bhaskar.kernel@gmail.com>
-> ---
->  drivers/staging/rtl8188eu/core/rtw_efuse.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/staging/rtl8188eu/core/rtw_efuse.c b/drivers/staging/rtl8188eu/core/rtw_efuse.c
-> index 0fd306a808c4..735d654b2844 100644
-> --- a/drivers/staging/rtl8188eu/core/rtw_efuse.c
-> +++ b/drivers/staging/rtl8188eu/core/rtw_efuse.c
-> @@ -91,7 +91,8 @@ efuse_phymap_to_logical(u8 *phymap, u16 _offset, u16 _size_byte, u8  *pbuf)
->  	if (!efuseTbl)
->  		return;
->  
-> -	eFuseWord = (u16 **)rtw_malloc2d(EFUSE_MAX_SECTION_88E, EFUSE_MAX_WORD_UNIT, sizeof(u16));
-> +	eFuseWord = (u16 **)rtw_malloc2d(EFUSE_MAX_SECTION_88E,
-> +			EFUSE_MAX_WORD_UNIT, (int)sizeof(u16));
->  
-  You should be align with left parenthesis.
+--Sig_/B0V2D.OBYzM.IAVaUaU.M0F
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
- Thanks,
- zhong jiang
-> 	if (!eFuseWord) {
->  		DBG_88E("%s: alloc eFuseWord fail!\n", __func__);
->  		goto eFuseWord_failed;
+Hi all,
 
+Commit
 
+  cda5915d15d3 ("platform/x86: touchscreen_dmi: Add info for the Cube KNote=
+ i1101 tablet")
+
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/B0V2D.OBYzM.IAVaUaU.M0F
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt4LqsACgkQAVBC80lX
+0GwA1Af/ZkCVsGAV+F2zwX8iiVAgAqWM/ZLxfnIoZTdQwNTV2vhVZjzL7lflkLO7
+xTWfcY0y8AmkKRMmHiZv+eFE/Wv77gPCRhJJQUouLFQx837TioGH6x0C9s1rw+yt
+TdDhK6rqZvasvOHD9EaoARpfDDyEuVYgjyk//lqQI05mFHIneBdkKOj9LgMMv2fM
+9cAhWKuZ7+MXpUobDg7ZSEr7xpqurHxMmOySGH+VqIRt7u3oJ8G4zggwtbPcveX8
+T4wrNDAB1VYBSKryIuRTqZCBiSXU2EoSq3yK7SoXSfTEWYqnqomhKvjt/MGJWWyD
+/KlhfNw+DdfOQXIU65+IQxYY66Fp2w==
+=WDFS
+-----END PGP SIGNATURE-----
+
+--Sig_/B0V2D.OBYzM.IAVaUaU.M0F--
