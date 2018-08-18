@@ -2,143 +2,102 @@ Return-Path: <SRS0=Se0q=LB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F0CDC4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 00:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25AD6C4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 00:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE525219D2
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 00:44:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6131219D2
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 00:44:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acj4Tzfi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE525219D2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbIr7xTK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6131219D2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbeHRDts (ORCPT
+        id S1726852AbeHRDtw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 17 Aug 2018 23:49:48 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:44067 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726717AbeHRDtr (ORCPT
+        Fri, 17 Aug 2018 23:49:52 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:42622 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726717AbeHRDtw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Aug 2018 23:49:47 -0400
-Received: by mail-pl0-f67.google.com with SMTP id ba4-v6so4408804plb.11
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Aug 2018 17:44:11 -0700 (PDT)
+        Fri, 17 Aug 2018 23:49:52 -0400
+Received: by mail-qk0-f193.google.com with SMTP id p71-v6so2213071qka.9;
+        Fri, 17 Aug 2018 17:44:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cbhzoVXUYC5E83YJ3pm9rF5nz9oGF+T1q5UisTNENks=;
-        b=acj4Tzfil2yiQWFvD+Lw7w0fKzp4uwG86a5upY4hgVGyANuaWcCYl3B7bPYl/CX0MM
-         WqS51AIk7HwOrjzBq+utGZKSZbrKrrfZH8qB3Zuv0Zjqc/guAPh+6f0HLKLt6lQ+axca
-         IuUhZa5yPd/hCuG1BdlJFDXuqcgu3XBh+jyHi43LuWcacHUdUKT6yie/XqRqtp0W6FAF
-         ysAr5rvlroA8ixDwkrm8xdLUp8gNrTCmARtMmmCLeCCdm0PLQsfO7VA4Pm0XfgV6HD4+
-         RKfzOdfx4g0/xjOjPxl+vHGqKaf2Fr3H7tf6tasP+IiZ7OI+mJ3XKuxGNLKejYM3QZ7T
-         zjxA==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=GYTKYD3RRQzcDbKf46MJyfYMMOpvMxlZOySLpvS4/FU=;
+        b=bbIr7xTK1iXJKilEgKV3ENBe8wdlx1z16caWKBBotpQ0M/cnrkHJyj6NNOyxSpN5JI
+         07IjubmZr4zRk1VEl2tAB8zF/FrLvhcEsFGE6R/N0ucCtbE+8b8ZvpIkyyyxxNvdBHFJ
+         Zh6TzvdX6PfvN4qBBWMPW3folrveA2QaowKIohdkQYSO1e0MD1vRTlT00NbDTtxghH5j
+         ZAT6NH3LXIftopjCGbjZo6l6HQSRnVVSi/uMfBAg7kGOnTbOnIilRgCKaWJV3WK7ofT6
+         LRlL7CLjYECDjDhoh6Q4taEBGEv6OZJPEF5+1ho1KQv8gKBuZN6bkOYxXYFsWLgn/VLc
+         eP1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cbhzoVXUYC5E83YJ3pm9rF5nz9oGF+T1q5UisTNENks=;
-        b=mlDLn1UPzu6Cld+/n+asgKS8x23cBCKVeR2RO2sX94OvzRayIGRTV4GPbgZL8Oj+eC
-         2TvYMhXUJ296lzTtZT17fdHUeyslhgZ3sKBdDeRFUy69NerUrf2lHU9mE45eIqC6n41U
-         DqY38MKA0yJ+URpeSzy9BeSCt3AP/PifjAnj/WQe3N0uPu+AdFJzIS+JCv/S7RcVfAoT
-         yN7gxpdr2phxrBWmwGoGXK+KTwGtpnb0552wuKvXZnAYknm7zffg7FIXeX8Y9OLVmtit
-         AEtrbT7xOEawPmb0gHj6JICyQUTmA3aZwQlOKAQ9P1/sL6C86jQWcUDWCGmJz8C0AeIe
-         mEIA==
-X-Gm-Message-State: AOUpUlGpk6wm4dGqtqurdPpyh0LoM4FXTyvSh43Q428/31aAV9dwGTqS
-        A3K33Fd1Pevv5KXMQuc5uVI=
-X-Google-Smtp-Source: AA+uWPylc3LnU87AuvQsmeT0RD6b37B5uitpzuKX6LbbsSmNs14oCKXGGgnb3JR1aOn6vuoudI1/qA==
-X-Received: by 2002:a17:902:bd97:: with SMTP id q23-v6mr35967815pls.311.1534553050893;
-        Fri, 17 Aug 2018 17:44:10 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id 143-v6sm5567147pfy.156.2018.08.17.17.44.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 Aug 2018 17:44:10 -0700 (PDT)
-Subject: Re: Crash in MM code in v4.4.y, v4.9.y with TRANSPARENT_HUGEPAGE
- enabled
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-References: <20180817222733.GA18575@roeck-us.net>
- <CA+55aFw6KDEts1bk7F-HYVn_dSuFQHZZh89Ydqh1rFn-c5V+eQ@mail.gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <be29b1fe-301d-7306-863d-ce7b80d2d816@roeck-us.net>
-Date:   Fri, 17 Aug 2018 17:44:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=GYTKYD3RRQzcDbKf46MJyfYMMOpvMxlZOySLpvS4/FU=;
+        b=R5WbJfSlSBCgeqov5bhEvaTBhQouu38a794xBVMen7cqcPbS0++gpc27hVoKZmlwzA
+         NILMK/HK18k5KDm/XGdKjoYa7J47Kf3UEHLOgOrV/F2L3qxReGxjKC7sNX5+N/sAuocN
+         0dWcMYxvmXmB5HpD4wW0yJ2+D69tU7Y8GCF6SuqqkYGOTrszpDynE97bpT9LDkF7UnVV
+         rleKhTLohCeJCAcMnwVfKQt5uCO9Kh+EEWS4e7rGKh2dFWWaaU9B7VTmLyrvAWDB2qMv
+         61lHNqubrhqJQJuCGrPYcIddyktE+dRbOYuOtmeZXVzUCH+N3WDDhqYu8zfzMhyuailf
+         w+Jg==
+X-Gm-Message-State: AOUpUlFRj8abtxxYDxUCcpuNPNUuBOnC09EZqJdV7KpTPAY3+gZ6/3LZ
+        7Kp+zZKbF7E/AU7wHV2sBX1xa/jLJ380Xd6Ad+o=
+X-Google-Smtp-Source: AA+uWPx/zPg4lZ6MefF5I3/IXhKmY+DdBOeUwgCZWVgEJwBCTQGBCjMeukeWIZIv3TPMwA9R7t990HcyBycQPdQBqS0=
+X-Received: by 2002:a37:3752:: with SMTP id e79-v6mr35313380qka.131.1534553055505;
+ Fri, 17 Aug 2018 17:44:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFw6KDEts1bk7F-HYVn_dSuFQHZZh89Ydqh1rFn-c5V+eQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a0c:949c:0:0:0:0:0 with HTTP; Fri, 17 Aug 2018 17:44:14
+ -0700 (PDT)
+In-Reply-To: <20180817234049.9624-1-mdf@kernel.org>
+References: <20180817234049.9624-1-mdf@kernel.org>
+From:   Moritz Fischer <moritz.fischer.private@gmail.com>
+Date:   Fri, 17 Aug 2018 17:44:14 -0700
+Message-ID: <CAJYdmeOBWt3rdbBGfCR5OFxO8pQHn62msXb0q2ukxBFGHQQqog@mail.gmail.com>
+Subject: Re: [PATCH] fpga: dfl: region: Restory symmetry in probe()/remove()
+To:     Wu Hao <hao.wu@intel.com>
+Cc:     Alan Tull <atull@kernel.org>, linux-fpga@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Moritz Fischer <mdf@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/17/2018 05:25 PM, Linus Torvalds wrote:
-> On Fri, Aug 17, 2018 at 3:27 PM Guenter Roeck <linux@roeck-us.net> wrote:
->>
->> [    6.649970] random: crng init done
->> [    6.689002] BUG: unable to handle kernel paging request at ffffeafffa1a0020
-> 
-> Hmm. Lots of bits set.
-> 
->> [    6.689082] RIP: 0010:[<ffffffff8116ba10>]  [<ffffffff8116ba10>] page_remove_rmap+0x10/0x230
->> [    6.689082] RSP: 0018:ffffc900007abc18  EFLAGS: 00000296
->> [    6.689082] RAX: ffffea0005e58000 RBX: ffffeafffa1a0000 RCX: 0000000020200000
->> [    6.689082] RDX: 00003fffffe00000 RSI: 0000000000000001 RDI: ffffeafffa1a0000
-> 
-> Is that RDX value the same value as PHYSICAL_PMD_PAGE_MASK?
-> 
-> If I did my math right, it would be, if your CPU has 46 bits of
-> physical memory. Might that be the case?
-> 
-Yes.
+On Fri, Aug 17, 2018 at 4:40 PM, Moritz Fischer <mdf@kernel.org> wrote:
+> Replace dev_get_drvdata() with platform_get_drvdata() to
+> match the platform_set_drvdata() in the probe function of
+> the platform driver.
+>
+> Fixes commit bb61b9be3e6b ("fpga: dfl: add fpga region platform driver for
+> FME")
+> Signed-off-by: Moritz Fischer <mdf@kernel.org>
+> ---
+>  drivers/fpga/dfl-fme-region.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/fpga/dfl-fme-region.c b/drivers/fpga/dfl-fme-region.c
+> index 0b7e19c27c6d..ce7ebe4b3212 100644
+> --- a/drivers/fpga/dfl-fme-region.c
+> +++ b/drivers/fpga/dfl-fme-region.c
+> @@ -65,7 +65,7 @@ static int fme_region_probe(struct platform_device *pdev)
+>
+>  static int fme_region_remove(struct platform_device *pdev)
+>  {
+> -       struct fpga_region *region = dev_get_drvdata(&pdev->dev);
+> +       struct fpga_region *region = platform_get_drvdata(&pdev->dev);
+Blergh ... that doesn't even compile. I'll resubmit next week. Sorry
+for the noise.
+Should of course be platform_get_drvdata(pdev);
 
-> The reason I mention that is because we had the bug with spurious
-> inversion of the zero pte/pmd, fixed by
-> 
->    f19f5c49bbc3 ("x86/speculation/l1tf: Exempt zeroed PTEs from inversion")
-> 
-I applied that patch, but it didn't help. I get exactly the same crash and
-traceback.
-
-> and that would make a zeroed pmd entry be inverted by
-> PHYSICAL_PMD_PAGE_MASK, and then you get odd garbage page pointers
-> etc.
-> 
-> Maybe. I could have gotten the math wrong too, but it sounds like the
-> register contents _potentially_ might match up with something like
-> this, and then we'd zap a bogus hugepage because of some confusion.
-> 
-> Although then I'd have expected the bisection to hit
-> "x86/speculation/l1tf: Invert all not present mappings" instead of the
-> one you hit, so I don't know.
-> 
-> Plus I'd have expected the problem to have been in mainline too, and
-> apparently it's just the 4.4 and 4.9 backports.
-> 
-Personally I suspect that something went wrong or is missing in the backport
-from 4.14 to 4.9. 5-level paging was introduced in between, and thp support
-was extended to support additional architectures. With all those changes,
-it is easy to miss something. Only I have no idea what that might be.
-
-Guenter
-
+- Moritz
