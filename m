@@ -6,48 +6,47 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7966C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7484CC4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91246218A8
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:51:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91246218A8
+	by mail.kernel.org (Postfix) with ESMTP id 023C4218A8
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:51:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 023C4218A8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbeHRO62 (ORCPT
+        id S1726777AbeHRO7C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 10:58:28 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57599 "EHLO
+        Sat, 18 Aug 2018 10:59:02 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44885 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726266AbeHRO62 (ORCPT
+        with ESMTP id S1726266AbeHRO7B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 10:58:28 -0400
+        Sat, 18 Aug 2018 10:59:01 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7IBofoD1290529
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7IBpCce1290741
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 18 Aug 2018 04:50:41 -0700
+        Sat, 18 Aug 2018 04:51:12 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7IBoeeI1290526;
-        Sat, 18 Aug 2018 04:50:40 -0700
-Date:   Sat, 18 Aug 2018 04:50:40 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7IBpBqX1290738;
+        Sat, 18 Aug 2018 04:51:11 -0700
+Date:   Sat, 18 Aug 2018 04:51:11 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   "tip-bot for Tzvetomir Stoyanov (VMware)" <tipbot@zytor.com>
-Message-ID: <tip-ca2921dd90268dc37cd5096eb985da4288aa7041@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, hpa@zytor.com, peterz@infradead.org,
-        tglx@linutronix.de, y.karadz@gmail.com, rostedt@goodmis.org,
-        akpm@linux-foundation.org, tz.stoyanov@gmail.com, acme@redhat.com,
-        mingo@kernel.org
-Reply-To: tz.stoyanov@gmail.com, rostedt@goodmis.org,
-          akpm@linux-foundation.org, mingo@kernel.org, acme@redhat.com,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-          y.karadz@gmail.com, peterz@infradead.org
-In-Reply-To: <20180808180702.089951638@goodmis.org>
-References: <20180808180702.089951638@goodmis.org>
+Message-ID: <tip-64e237906963d0c26d3b25e7751b4d6aaa01f720@git.kernel.org>
+Cc:     acme@redhat.com, tz.stoyanov@gmail.com, akpm@linux-foundation.org,
+        peterz@infradead.org, tglx@linutronix.de, rostedt@goodmis.org,
+        hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        y.karadz@gmail.com
+Reply-To: acme@redhat.com, tz.stoyanov@gmail.com, peterz@infradead.org,
+          akpm@linux-foundation.org, rostedt@goodmis.org,
+          tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org,
+          y.karadz@gmail.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20180808180702.370659353@goodmis.org>
+References: <20180808180702.370659353@goodmis.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] tools lib traceevent,  perf tools: Rename
- traceevent_plugin_* APIs
-Git-Commit-ID: ca2921dd90268dc37cd5096eb985da4288aa7041
+Subject: [tip:perf/urgent] tools lib traceevent: Rename pevent_filter* APIs
+Git-Commit-ID: 64e237906963d0c26d3b25e7751b4d6aaa01f720
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,170 +60,420 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ca2921dd90268dc37cd5096eb985da4288aa7041
-Gitweb:     https://git.kernel.org/tip/ca2921dd90268dc37cd5096eb985da4288aa7041
+Commit-ID:  64e237906963d0c26d3b25e7751b4d6aaa01f720
+Gitweb:     https://git.kernel.org/tip/64e237906963d0c26d3b25e7751b4d6aaa01f720
 Author:     Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
-AuthorDate: Wed, 8 Aug 2018 14:03:00 -0400
+AuthorDate: Wed, 8 Aug 2018 14:03:01 -0400
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 13 Aug 2018 15:25:36 -0300
+CommitDate: Mon, 13 Aug 2018 15:26:31 -0300
 
-tools lib traceevent,  perf tools: Rename traceevent_plugin_* APIs
+tools lib traceevent: Rename pevent_filter* APIs
 
 In order to make libtraceevent into a proper library, variables, data
 structures and functions require a unique prefix to prevent name space
-conflicts. That prefix will be "tep_" and not "traceevent_". This changes
-APIs: traceevent_plugin_list_options, traceevent_plugin_free_options_list,
-traceevent_plugin_add_options, traceevent_plugin_remove_options,
-traceevent_print_plugins
+conflicts. That prefix will be "tep_" and not "pevent_". This changes
+APIs: PEVENT_FILTER_ERROR_BUFSZ, pevent_filter_alloc,
+pevent_filter_add_filter_str, pevent_filter_match, pevent_filter_strerror,
+pevent_event_filtered, pevent_filter_reset, pevent_filter_clear_trivial,
+pevent_filter_free, pevent_filter_make_string, pevent_filter_remove_event,
+pevent_filter_event_has_trivial, pevent_filter_copy, pevent_update_trivial,
+pevent_filter_compare
 
 Signed-off-by: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Yordan Karadzhov (VMware) <y.karadz@gmail.com>
 Cc: linux-trace-devel@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180808180702.089951638@goodmis.org
+Link: http://lkml.kernel.org/r/20180808180702.370659353@goodmis.org
 Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/traceevent/event-parse.h     | 16 ++++++++--------
- tools/lib/traceevent/event-plugin.c    | 28 ++++++++++++++--------------
- tools/lib/traceevent/plugin_function.c |  4 ++--
- 3 files changed, 24 insertions(+), 24 deletions(-)
+ tools/lib/traceevent/event-parse.h  | 50 +++++++++++-----------
+ tools/lib/traceevent/parse-filter.c | 84 ++++++++++++++++++-------------------
+ 2 files changed, 67 insertions(+), 67 deletions(-)
 
 diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-index 81f34132fc47..ec327849a7dc 100644
+index ec327849a7dc..c60329cd9463 100644
 --- a/tools/lib/traceevent/event-parse.h
 +++ b/tools/lib/traceevent/event-parse.h
-@@ -438,14 +438,14 @@ struct plugin_list;
- struct plugin_list *tep_load_plugins(struct tep_handle *pevent);
- void tep_unload_plugins(struct plugin_list *plugin_list,
- 			struct tep_handle *pevent);
--char **traceevent_plugin_list_options(void);
--void traceevent_plugin_free_options_list(char **list);
--int traceevent_plugin_add_options(const char *name,
--				  struct tep_plugin_option *options);
--void traceevent_plugin_remove_options(struct tep_plugin_option *options);
--void traceevent_print_plugins(struct trace_seq *s,
--			      const char *prefix, const char *suffix,
--			      const struct plugin_list *list);
-+char **tep_plugin_list_options(void);
-+void tep_plugin_free_options_list(char **list);
-+int tep_plugin_add_options(const char *name,
-+			   struct tep_plugin_option *options);
-+void tep_plugin_remove_options(struct tep_plugin_option *options);
-+void tep_print_plugins(struct trace_seq *s,
-+			const char *prefix, const char *suffix,
-+			const struct plugin_list *list);
+@@ -930,16 +930,16 @@ struct filter_type {
+ 	struct filter_arg	*filter;
+ };
  
- struct cmdline;
- struct cmdline_list;
-diff --git a/tools/lib/traceevent/event-plugin.c b/tools/lib/traceevent/event-plugin.c
-index c837a73c03e6..8e324ed46547 100644
---- a/tools/lib/traceevent/event-plugin.c
-+++ b/tools/lib/traceevent/event-plugin.c
-@@ -97,7 +97,7 @@ static int update_option_value(struct tep_plugin_option *op, const char *val)
+-#define PEVENT_FILTER_ERROR_BUFSZ  1024
++#define TEP_FILTER_ERROR_BUFSZ  1024
+ 
+ struct event_filter {
+ 	struct tep_handle	*pevent;
+ 	int			filters;
+ 	struct filter_type	*event_filters;
+-	char			error_buffer[PEVENT_FILTER_ERROR_BUFSZ];
++	char			error_buffer[TEP_FILTER_ERROR_BUFSZ];
+ };
+ 
+-struct event_filter *pevent_filter_alloc(struct tep_handle *pevent);
++struct event_filter *tep_filter_alloc(struct tep_handle *pevent);
+ 
+ /* for backward compatibility */
+ #define FILTER_NONE		TEP_ERRNO__NO_FILTER
+@@ -953,39 +953,39 @@ enum filter_trivial_type {
+ 	FILTER_TRIVIAL_BOTH,
+ };
+ 
+-enum tep_errno pevent_filter_add_filter_str(struct event_filter *filter,
+-					    const char *filter_str);
++enum tep_errno tep_filter_add_filter_str(struct event_filter *filter,
++					 const char *filter_str);
+ 
+-enum tep_errno pevent_filter_match(struct event_filter *filter,
+-				   struct tep_record *record);
++enum tep_errno tep_filter_match(struct event_filter *filter,
++				struct tep_record *record);
+ 
+-int pevent_filter_strerror(struct event_filter *filter, enum tep_errno err,
+-			   char *buf, size_t buflen);
++int tep_filter_strerror(struct event_filter *filter, enum tep_errno err,
++			char *buf, size_t buflen);
+ 
+-int pevent_event_filtered(struct event_filter *filter,
+-			  int event_id);
++int tep_event_filtered(struct event_filter *filter,
++		       int event_id);
+ 
+-void pevent_filter_reset(struct event_filter *filter);
++void tep_filter_reset(struct event_filter *filter);
+ 
+-int pevent_filter_clear_trivial(struct event_filter *filter,
+-				 enum filter_trivial_type type);
++int tep_filter_clear_trivial(struct event_filter *filter,
++			     enum filter_trivial_type type);
+ 
+-void pevent_filter_free(struct event_filter *filter);
++void tep_filter_free(struct event_filter *filter);
+ 
+-char *pevent_filter_make_string(struct event_filter *filter, int event_id);
++char *tep_filter_make_string(struct event_filter *filter, int event_id);
+ 
+-int pevent_filter_remove_event(struct event_filter *filter,
+-			       int event_id);
++int tep_filter_remove_event(struct event_filter *filter,
++			    int event_id);
+ 
+-int pevent_filter_event_has_trivial(struct event_filter *filter,
+-				    int event_id,
+-				    enum filter_trivial_type type);
++int tep_filter_event_has_trivial(struct event_filter *filter,
++				 int event_id,
++				 enum filter_trivial_type type);
+ 
+-int pevent_filter_copy(struct event_filter *dest, struct event_filter *source);
++int tep_filter_copy(struct event_filter *dest, struct event_filter *source);
+ 
+-int pevent_update_trivial(struct event_filter *dest, struct event_filter *source,
+-			  enum filter_trivial_type type);
++int tep_update_trivial(struct event_filter *dest, struct event_filter *source,
++			enum filter_trivial_type type);
+ 
+-int pevent_filter_compare(struct event_filter *filter1, struct event_filter *filter2);
++int tep_filter_compare(struct event_filter *filter1, struct event_filter *filter2);
+ 
+ #endif /* _PARSE_EVENTS_H */
+diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
+index 5dc474027313..f3d812676169 100644
+--- a/tools/lib/traceevent/parse-filter.c
++++ b/tools/lib/traceevent/parse-filter.c
+@@ -66,7 +66,7 @@ static void show_error(char *error_buf, const char *fmt, ...)
+ 	}
+ 
+ 	va_start(ap, fmt);
+-	vsnprintf(error_buf + len, PEVENT_FILTER_ERROR_BUFSZ - len, fmt, ap);
++	vsnprintf(error_buf + len, TEP_FILTER_ERROR_BUFSZ - len, fmt, ap);
+ 	va_end(ap);
+ }
+ 
+@@ -176,10 +176,10 @@ add_filter_type(struct event_filter *filter, int id)
  }
  
  /**
-- * traceevent_plugin_list_options - get list of plugin options
-+ * tep_plugin_list_options - get list of plugin options
-  *
-  * Returns an array of char strings that list the currently registered
-  * plugin options in the format of <plugin>:<option>. This list can be
-@@ -106,9 +106,9 @@ static int update_option_value(struct tep_plugin_option *op, const char *val)
-  * Returns NULL if there's no options registered. On error it returns
-  * INVALID_PLUGIN_LIST_OPTION
-  *
-- * Must be freed with traceevent_plugin_free_options_list().
-+ * Must be freed with tep_plugin_free_options_list().
+- * pevent_filter_alloc - create a new event filter
++ * tep_filter_alloc - create a new event filter
+  * @pevent: The pevent that this filter is associated with
   */
--char **traceevent_plugin_list_options(void)
-+char **tep_plugin_list_options(void)
+-struct event_filter *pevent_filter_alloc(struct tep_handle *pevent)
++struct event_filter *tep_filter_alloc(struct tep_handle *pevent)
  {
- 	struct registered_plugin_options *reg;
- 	struct tep_plugin_option *op;
-@@ -146,7 +146,7 @@ char **traceevent_plugin_list_options(void)
- 	return INVALID_PLUGIN_LIST_OPTION;
+ 	struct event_filter *filter;
+ 
+@@ -1259,16 +1259,16 @@ static void filter_init_error_buf(struct event_filter *filter)
  }
  
--void traceevent_plugin_free_options_list(char **list)
-+void tep_plugin_free_options_list(char **list)
+ /**
+- * pevent_filter_add_filter_str - add a new filter
++ * tep_filter_add_filter_str - add a new filter
+  * @filter: the event filter to add to
+  * @filter_str: the filter string that contains the filter
+  *
+  * Returns 0 if the filter was successfully added or a
+- * negative error code.  Use pevent_filter_strerror() to see
++ * negative error code.  Use tep_filter_strerror() to see
+  * actual error message in case of error.
+  */
+-enum tep_errno pevent_filter_add_filter_str(struct event_filter *filter,
+-					       const char *filter_str)
++enum tep_errno tep_filter_add_filter_str(struct event_filter *filter,
++					 const char *filter_str)
+ {
+ 	struct tep_handle *pevent = filter->pevent;
+ 	struct event_list *event;
+@@ -1349,7 +1349,7 @@ enum tep_errno pevent_filter_add_filter_str(struct event_filter *filter,
+ 
+ 		if (ret >= 0 && pevent->test_filters) {
+ 			char *test;
+-			test = pevent_filter_make_string(filter, event->event->id);
++			test = tep_filter_make_string(filter, event->event->id);
+ 			if (test) {
+ 				printf(" '%s: %s'\n", event->event->name, test);
+ 				free(test);
+@@ -1371,7 +1371,7 @@ static void free_filter_type(struct filter_type *filter_type)
+ }
+ 
+ /**
+- * pevent_filter_strerror - fill error message in a buffer
++ * tep_filter_strerror - fill error message in a buffer
+  * @filter: the event filter contains error
+  * @err: the error code
+  * @buf: the buffer to be filled in
+@@ -1379,8 +1379,8 @@ static void free_filter_type(struct filter_type *filter_type)
+  *
+  * Returns 0 if message was filled successfully, -1 if error
+  */
+-int pevent_filter_strerror(struct event_filter *filter, enum tep_errno err,
+-			   char *buf, size_t buflen)
++int tep_filter_strerror(struct event_filter *filter, enum tep_errno err,
++			char *buf, size_t buflen)
+ {
+ 	if (err <= __TEP_ERRNO__START || err >= __TEP_ERRNO__END)
+ 		return -1;
+@@ -1397,7 +1397,7 @@ int pevent_filter_strerror(struct event_filter *filter, enum tep_errno err,
+ }
+ 
+ /**
+- * pevent_filter_remove_event - remove a filter for an event
++ * tep_filter_remove_event - remove a filter for an event
+  * @filter: the event filter to remove from
+  * @event_id: the event to remove a filter for
+  *
+@@ -1407,8 +1407,8 @@ int pevent_filter_strerror(struct event_filter *filter, enum tep_errno err,
+  * Returns 1: if an event was removed
+  *   0: if the event was not found
+  */
+-int pevent_filter_remove_event(struct event_filter *filter,
+-			       int event_id)
++int tep_filter_remove_event(struct event_filter *filter,
++			    int event_id)
+ {
+ 	struct filter_type *filter_type;
+ 	unsigned long len;
+@@ -1437,12 +1437,12 @@ int pevent_filter_remove_event(struct event_filter *filter,
+ }
+ 
+ /**
+- * pevent_filter_reset - clear all filters in a filter
++ * tep_filter_reset - clear all filters in a filter
+  * @filter: the event filter to reset
+  *
+  * Removes all filters from a filter and resets it.
+  */
+-void pevent_filter_reset(struct event_filter *filter)
++void tep_filter_reset(struct event_filter *filter)
  {
  	int i;
  
-@@ -215,14 +215,14 @@ update_option(const char *file, struct tep_plugin_option *option)
+@@ -1454,11 +1454,11 @@ void pevent_filter_reset(struct event_filter *filter)
+ 	filter->event_filters = NULL;
+ }
+ 
+-void pevent_filter_free(struct event_filter *filter)
++void tep_filter_free(struct event_filter *filter)
+ {
+ 	pevent_unref(filter->pevent);
+ 
+-	pevent_filter_reset(filter);
++	tep_filter_reset(filter);
+ 
+ 	free(filter);
+ }
+@@ -1515,18 +1515,18 @@ static int copy_filter_type(struct event_filter *filter,
  }
  
  /**
-- * traceevent_plugin_add_options - Add a set of options by a plugin
-+ * tep_plugin_add_options - Add a set of options by a plugin
-  * @name: The name of the plugin adding the options
-  * @options: The set of options being loaded
+- * pevent_filter_copy - copy a filter using another filter
++ * tep_filter_copy - copy a filter using another filter
+  * @dest - the filter to copy to
+  * @source - the filter to copy from
   *
-  * Sets the options with the values that have been added by user.
+  * Returns 0 on success and -1 if not all filters were copied
   */
--int traceevent_plugin_add_options(const char *name,
--				  struct tep_plugin_option *options)
-+int tep_plugin_add_options(const char *name,
-+			   struct tep_plugin_option *options)
+-int pevent_filter_copy(struct event_filter *dest, struct event_filter *source)
++int tep_filter_copy(struct event_filter *dest, struct event_filter *source)
  {
- 	struct registered_plugin_options *reg;
+ 	int ret = 0;
+ 	int i;
  
-@@ -241,10 +241,10 @@ int traceevent_plugin_add_options(const char *name,
+-	pevent_filter_reset(dest);
++	tep_filter_reset(dest);
+ 
+ 	for (i = 0; i < source->filters; i++) {
+ 		if (copy_filter_type(dest, source, &source->event_filters[i]))
+@@ -1537,7 +1537,7 @@ int pevent_filter_copy(struct event_filter *dest, struct event_filter *source)
+ 
+ 
+ /**
+- * pevent_update_trivial - update the trivial filters with the given filter
++ * tep_update_trivial - update the trivial filters with the given filter
+  * @dest - the filter to update
+  * @source - the filter as the source of the update
+  * @type - the type of trivial filter to update.
+@@ -1547,8 +1547,8 @@ int pevent_filter_copy(struct event_filter *dest, struct event_filter *source)
+  * Returns 0 on success and -1 if there was a problem updating, but
+  *   events may have still been updated on error.
+  */
+-int pevent_update_trivial(struct event_filter *dest, struct event_filter *source,
+-			  enum filter_trivial_type type)
++int tep_update_trivial(struct event_filter *dest, struct event_filter *source,
++		       enum filter_trivial_type type)
+ {
+ 	struct tep_handle *src_pevent;
+ 	struct tep_handle *dest_pevent;
+@@ -1585,7 +1585,7 @@ int pevent_update_trivial(struct event_filter *dest, struct event_filter *source
+ 				return -1;
+ 		}
+ 
+-		str = pevent_filter_make_string(source, event->id);
++		str = tep_filter_make_string(source, event->id);
+ 		if (!str)
+ 			continue;
+ 
+@@ -1598,7 +1598,7 @@ int pevent_update_trivial(struct event_filter *dest, struct event_filter *source
  }
  
  /**
-- * traceevent_plugin_remove_options - remove plugin options that were registered
-- * @options: Options to removed that were registered with traceevent_plugin_add_options
-+ * tep_plugin_remove_options - remove plugin options that were registered
-+ * @options: Options to removed that were registered with tep_plugin_add_options
+- * pevent_filter_clear_trivial - clear TRUE and FALSE filters
++ * tep_filter_clear_trivial - clear TRUE and FALSE filters
+  * @filter: the filter to remove trivial filters from
+  * @type: remove only true, false, or both
+  *
+@@ -1606,8 +1606,8 @@ int pevent_update_trivial(struct event_filter *dest, struct event_filter *source
+  *
+  * Returns 0 on success and -1 if there was a problem.
   */
--void traceevent_plugin_remove_options(struct tep_plugin_option *options)
-+void tep_plugin_remove_options(struct tep_plugin_option *options)
+-int pevent_filter_clear_trivial(struct event_filter *filter,
+-				 enum filter_trivial_type type)
++int tep_filter_clear_trivial(struct event_filter *filter,
++			     enum filter_trivial_type type)
  {
- 	struct registered_plugin_options **last;
- 	struct registered_plugin_options *reg;
-@@ -260,7 +260,7 @@ void traceevent_plugin_remove_options(struct tep_plugin_option *options)
- }
+ 	struct filter_type *filter_type;
+ 	int count = 0;
+@@ -1653,14 +1653,14 @@ int pevent_filter_clear_trivial(struct event_filter *filter,
+ 		return 0;
  
- /**
-- * traceevent_print_plugins - print out the list of plugins loaded
-+ * tep_print_plugins - print out the list of plugins loaded
-  * @s: the trace_seq descripter to write to
-  * @prefix: The prefix string to add before listing the option name
-  * @suffix: The suffix string ot append after the option name
-@@ -270,9 +270,9 @@ void traceevent_plugin_remove_options(struct tep_plugin_option *options)
-  * returned by tep_load_plugins(). Use @prefix and @suffix for formating:
-  * @prefix = "  ", @suffix = "\n".
-  */
--void traceevent_print_plugins(struct trace_seq *s,
--			      const char *prefix, const char *suffix,
--			      const struct plugin_list *list)
-+void tep_print_plugins(struct trace_seq *s,
-+		       const char *prefix, const char *suffix,
-+		       const struct plugin_list *list)
- {
- 	while (list) {
- 		trace_seq_printf(s, "%s%s%s", prefix, list->name, suffix);
-diff --git a/tools/lib/traceevent/plugin_function.c b/tools/lib/traceevent/plugin_function.c
-index 342be570ee8c..57165da1bd51 100644
---- a/tools/lib/traceevent/plugin_function.c
-+++ b/tools/lib/traceevent/plugin_function.c
-@@ -168,7 +168,7 @@ int TEP_PLUGIN_LOADER(struct tep_handle *pevent)
- 	pevent_register_event_handler(pevent, -1, "ftrace", "function",
- 				      function_handler, NULL);
+ 	for (i = 0; i < count; i++)
+-		pevent_filter_remove_event(filter, ids[i]);
++		tep_filter_remove_event(filter, ids[i]);
  
--	traceevent_plugin_add_options("ftrace", plugin_options);
-+	tep_plugin_add_options("ftrace", plugin_options);
- 
+ 	free(ids);
  	return 0;
  }
-@@ -186,7 +186,7 @@ void TEP_PLUGIN_UNLOADER(struct tep_handle *pevent)
- 		free(fstack[i].stack);
- 	}
  
--	traceevent_plugin_remove_options(plugin_options);
-+	tep_plugin_remove_options(plugin_options);
+ /**
+- * pevent_filter_event_has_trivial - return true event contains trivial filter
++ * tep_filter_event_has_trivial - return true event contains trivial filter
+  * @filter: the filter with the information
+  * @event_id: the id of the event to test
+  * @type: trivial type to test for (TRUE, FALSE, EITHER)
+@@ -1668,9 +1668,9 @@ int pevent_filter_clear_trivial(struct event_filter *filter,
+  * Returns 1 if the event contains a matching trivial type
+  *  otherwise 0.
+  */
+-int pevent_filter_event_has_trivial(struct event_filter *filter,
+-				    int event_id,
+-				    enum filter_trivial_type type)
++int tep_filter_event_has_trivial(struct event_filter *filter,
++				 int event_id,
++				 enum filter_trivial_type type)
+ {
+ 	struct filter_type *filter_type;
  
- 	free(fstack);
- 	fstack = NULL;
+@@ -2015,14 +2015,14 @@ static int test_filter(struct event_format *event, struct filter_arg *arg,
+ }
+ 
+ /**
+- * pevent_event_filtered - return true if event has filter
++ * tep_event_filtered - return true if event has filter
+  * @filter: filter struct with filter information
+  * @event_id: event id to test if filter exists
+  *
+  * Returns 1 if filter found for @event_id
+  *   otherwise 0;
+  */
+-int pevent_event_filtered(struct event_filter *filter, int event_id)
++int tep_event_filtered(struct event_filter *filter, int event_id)
+ {
+ 	struct filter_type *filter_type;
+ 
+@@ -2035,7 +2035,7 @@ int pevent_event_filtered(struct event_filter *filter, int event_id)
+ }
+ 
+ /**
+- * pevent_filter_match - test if a record matches a filter
++ * tep_filter_match - test if a record matches a filter
+  * @filter: filter struct with filter information
+  * @record: the record to test against the filter
+  *
+@@ -2046,8 +2046,8 @@ int pevent_event_filtered(struct event_filter *filter, int event_id)
+  * NO_FILTER - if no filters exist
+  * otherwise - error occurred during test
+  */
+-enum tep_errno pevent_filter_match(struct event_filter *filter,
+-				   struct tep_record *record)
++enum tep_errno tep_filter_match(struct event_filter *filter,
++				struct tep_record *record)
+ {
+ 	struct tep_handle *pevent = filter->pevent;
+ 	struct filter_type *filter_type;
+@@ -2364,7 +2364,7 @@ static char *arg_to_str(struct event_filter *filter, struct filter_arg *arg)
+ }
+ 
+ /**
+- * pevent_filter_make_string - return a string showing the filter
++ * tep_filter_make_string - return a string showing the filter
+  * @filter: filter struct with filter information
+  * @event_id: the event id to return the filter string with
+  *
+@@ -2373,7 +2373,7 @@ static char *arg_to_str(struct event_filter *filter, struct filter_arg *arg)
+  *  NULL is returned if no filter is found or allocation failed.
+  */
+ char *
+-pevent_filter_make_string(struct event_filter *filter, int event_id)
++tep_filter_make_string(struct event_filter *filter, int event_id)
+ {
+ 	struct filter_type *filter_type;
+ 
+@@ -2389,7 +2389,7 @@ pevent_filter_make_string(struct event_filter *filter, int event_id)
+ }
+ 
+ /**
+- * pevent_filter_compare - compare two filters and return if they are the same
++ * tep_filter_compare - compare two filters and return if they are the same
+  * @filter1: Filter to compare with @filter2
+  * @filter2: Filter to compare with @filter1
+  *
+@@ -2397,7 +2397,7 @@ pevent_filter_make_string(struct event_filter *filter, int event_id)
+  *  1 if the two filters hold the same content.
+  *  0 if they do not.
+  */
+-int pevent_filter_compare(struct event_filter *filter1, struct event_filter *filter2)
++int tep_filter_compare(struct event_filter *filter1, struct event_filter *filter2)
+ {
+ 	struct filter_type *filter_type1;
+ 	struct filter_type *filter_type2;
