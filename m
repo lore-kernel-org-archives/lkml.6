@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF97BC4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D758FC4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D81F215EB
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:57:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90A89215EB
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 15:57:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxN3zPIk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D81F215EB
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bLCieMg9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90A89215EB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbeHRTD4 (ORCPT
+        id S1726916AbeHRTFh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 15:03:56 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:46911 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726202AbeHRTDz (ORCPT
+        Sat, 18 Aug 2018 15:05:37 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38724 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726404AbeHRTDv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 15:03:55 -0400
-Received: by mail-ed1-f65.google.com with SMTP id o8-v6so6099226edt.13;
-        Sat, 18 Aug 2018 08:55:44 -0700 (PDT)
+        Sat, 18 Aug 2018 15:03:51 -0400
+Received: by mail-ed1-f67.google.com with SMTP id t2-v6so6112113edr.5;
+        Sat, 18 Aug 2018 08:55:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3aVOrCkNI1os6TVHdY1oshlRajsFW3BR1KUv8+9Eqfo=;
-        b=DxN3zPIkOxvg3893+OeDlwI3eGZjENc7qN5krCxfyz2s5nYrWhiTlLfFyIMDNNymBv
-         efnkxrkXWLzR0e3Naoa9qwk9c+jO5EO2IN+8wOjX3WoYbIbn7Lzua69g1enpKCWbsBhJ
-         yhO50E9SRe+hqxZSVW0E+W3CwQlhkVm1A/pYscKjUshd2xztYnH/BYDsZg7RkLS6mLck
-         0Xyel3jWBqkqRYHkavDvhi7cOa/UwFyjgQ9+gA8fWZcT2Rx1/6Ynqgo4TJwIwEoKoZ1Y
-         vM0iLUCn6n+aotlBl9d41KYz1mNkiLjEzFKS0ymwlIwDbRNoRtK3bWYURnTR/Oo7gymx
-         PlDQ==
+        bh=Xr0PWg85YE0T+Ax2Rf8OzonZmno3FCtecBrtNlrITHQ=;
+        b=bLCieMg9UTOgyYx1lWeiLDWCtNoiNMFINZSXiB3EE64Zj+1TrrhKeEK8BTNuO/w2rk
+         9kW8gElrRbkjZiayl4nIwKVCoJhA9rvgDAm9IBT4A60OnU/L0XBn8B9211tOr/7KNlRo
+         07E++iQx3Vo09f0TSEKMK4ErgKOXyuYvEhHbcnSdgJAU0rJwjCSEW25O9/sLGLa9fE8A
+         daKfzwwEBB/1HtJc56sd47Oc9K8AqCUlhdeCdplwGy4P1g668+ZxZoYUEogUVaoXEnjA
+         unbD2BQLfxbSIsjzjLSzoPkVTCAEEfWZx3TIWXC952vRqOlVkvqSWKxgjVF2Iarx5uBz
+         vRLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=3aVOrCkNI1os6TVHdY1oshlRajsFW3BR1KUv8+9Eqfo=;
-        b=eLNRCm8dLKcmtBrPoGpmiLM7/Y4LGZ1s0oNl7Nh4fO8XHCqwocrimA0Y4t4VyWnyqn
-         xcYxrvP6ojB5751bDd+OBZfPrYrqzWMGbhJoWGz7T2mcH5m6JupBeFbhAshNE01NY4Ak
-         VkG8fG5fIaMT/d+QkGF4LIT4rd6c8ZWs/5lhB1CkIre1IGjMI85j7gMfqDY9dxy7O5ZT
-         Q905B8zET/prJyxVeF0uyoAMnywKfyLPrZt337IFcTBqtxwsy+ET1Jkt89MVrXk0UrKu
-         Om6z6cupo1jhZAuzeiOmM1s89NJ32v73L7bEKa+AhqzfYpdsmuXXsx2Kk16COO7sb7st
-         CSQg==
-X-Gm-Message-State: AOUpUlEabRreEI/VclEtK5QvhwYi7gnrkCA+y/Ftl6qXt1FxQSGWLafD
-        5nFunBvtxloYUU71CnajZ80=
-X-Google-Smtp-Source: AA+uWPxX64b1cmnkST1P8lhrDZsCD7OcrbAuCNVMpiS/TBCIcGKPO1N9Ryo6OqE8l9w3G3V7YxxYcw==
-X-Received: by 2002:a50:a584:: with SMTP id a4-v6mr48007342edc.289.1534607744046;
-        Sat, 18 Aug 2018 08:55:44 -0700 (PDT)
+        bh=Xr0PWg85YE0T+Ax2Rf8OzonZmno3FCtecBrtNlrITHQ=;
+        b=N/6SWCyN1yE2inFF9bF390WF0me2Wwsvdsy28JP/MtCERUSVa+YhhLB9Wavh/y2TaP
+         CEqlJBGpBa3d/tUqQ2f3yP2wH/IzGIUXC3qJQYw+hwnAC6+06zdZPwpvC4Hht57+tbcm
+         9eF3utxu1fq6hZItuW3ulLrQgc2OYXNJdTmcPO71iyR+SBoAqQgF94vP314Di4vJ8Gn1
+         ELpiC5UH7pEro+npbjkMC0RPRB0/LFeJ4fN4qPMCtaR6DeErqRll0cxAYU6nDScw13sp
+         mNsi0SWTAoXefhKSBO7pNhRaW6gBBwplmEY5K83NUYPOTB7VdGNtXIawZMycvXskZG80
+         sc9Q==
+X-Gm-Message-State: AOUpUlE3vXZwTttgh+Wkkl3K6c1Ncf60fHeqUNHcckFpqaQT5AYeeo3W
+        ieMB04Owwd7OBM74i6MYGso=
+X-Google-Smtp-Source: AA+uWPy0hhG/2+tN5XULNulmZClkbdyCZBwpRVmzljiruaO+IQ4CwNxYPEzNH+HM+wHvCJucetcg+w==
+X-Received: by 2002:a50:925c:: with SMTP id j28-v6mr48739296eda.209.1534607741597;
+        Sat, 18 Aug 2018 08:55:41 -0700 (PDT)
 Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id v8-v6sm2784014edr.48.2018.08.18.08.55.42
+        by smtp.gmail.com with ESMTPSA id v8-v6sm2784014edr.48.2018.08.18.08.55.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 18 Aug 2018 08:55:43 -0700 (PDT)
+        Sat, 18 Aug 2018 08:55:41 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         Robin Murphy <robin.murphy@arm.com>,
@@ -66,9 +66,9 @@ To:     Joerg Roedel <joro@8bytes.org>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 06/19] dt-bindings: memory: tegra: Squash tegra20-gart into tegra20-mc
-Date:   Sat, 18 Aug 2018 18:54:17 +0300
-Message-Id: <20180818155430.5586-7-digetx@gmail.com>
+Subject: [PATCH v3 04/19] iommu: Introduce iotlb_sync_map callback
+Date:   Sat, 18 Aug 2018 18:54:15 +0300
+Message-Id: <20180818155430.5586-5-digetx@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180818155430.5586-1-digetx@gmail.com>
 References: <20180818155430.5586-1-digetx@gmail.com>
@@ -77,89 +77,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Splitting GART and Memory Controller wasn't a good decision that was made
-back in the day. Given that the GART driver hasn't ever been used by
-anything in the kernel, we decided that it will be better to correct the
-mistakes of the past and merge two bindings into a single one. In a result
-there is a DT ABI change for the Memory Controller that allows not to
-break newer kernels using older DT by introducing a new required property,
-the memory clock. Adding the new clock property also puts the tegra20-mc
-binding in line with the bindings of the later Tegra generations.
+Introduce iotlb_sync_map() callback that is invoked in the end of
+iommu_map(). This new callback allows IOMMU drivers to avoid syncing
+after mapping of each contiguous chunk and sync only when the whole
+mapping is completed, optimizing performance of the mapping operation.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 ---
- .../bindings/iommu/nvidia,tegra20-gart.txt    | 14 -----------
- .../memory-controllers/nvidia,tegra20-mc.txt  | 23 ++++++++++++++-----
- 2 files changed, 17 insertions(+), 20 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
+ drivers/iommu/iommu.c | 8 ++++++--
+ include/linux/iommu.h | 1 +
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt b/Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
-deleted file mode 100644
-index 099d9362ebc1..000000000000
---- a/Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
-+++ /dev/null
-@@ -1,14 +0,0 @@
--NVIDIA Tegra 20 GART
--
--Required properties:
--- compatible: "nvidia,tegra20-gart"
--- reg: Two pairs of cells specifying the physical address and size of
--  the memory controller registers and the GART aperture respectively.
--
--Example:
--
--	gart {
--		compatible = "nvidia,tegra20-gart";
--		reg = <0x7000f024 0x00000018	/* controller registers */
--		       0x58000000 0x02000000>;	/* GART aperture */
--	};
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
-index 7d60a50a4fa1..1564df89392a 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
-@@ -2,25 +2,36 @@ NVIDIA Tegra20 MC(Memory Controller)
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 8c15c5980299..8979b16caf61 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -1545,13 +1545,14 @@ static size_t iommu_pgsize(struct iommu_domain *domain,
+ int iommu_map(struct iommu_domain *domain, unsigned long iova,
+ 	      phys_addr_t paddr, size_t size, int prot)
+ {
++	const struct iommu_ops *ops = domain->ops;
+ 	unsigned long orig_iova = iova;
+ 	unsigned int min_pagesz;
+ 	size_t orig_size = size;
+ 	phys_addr_t orig_paddr = paddr;
+ 	int ret = 0;
  
- Required properties:
- - compatible : "nvidia,tegra20-mc"
--- reg : Should contain 2 register ranges(address and length); see the
--  example below. Note that the MC registers are interleaved with the
--  GART registers, and hence must be represented as multiple ranges.
-+- reg : Should contain 2 register ranges: physical base address and length of
-+  the controller's registers and the GART aperture respectively.
-+- clocks: Must contain an entry for each entry in clock-names.
-+  See ../clocks/clock-bindings.txt for details.
-+- clock-names: Must include the following entries:
-+  - mc: the module's clock input
- - interrupts : Should contain MC General interrupt.
- - #reset-cells : Should be 1. This cell represents memory client module ID.
-   The assignments may be found in header file <dt-bindings/memory/tegra20-mc.h>
-   or in the TRM documentation.
-+- #iommu-cells: Should be 0. This cell represents the number of cells in an
-+  IOMMU specifier needed to encode an address. GART supports only a single
-+  address space that is shared by all devices, therefore no additional
-+  information needed for the address encoding.
+-	if (unlikely(domain->ops->map == NULL ||
++	if (unlikely(ops->map == NULL ||
+ 		     domain->pgsize_bitmap == 0UL))
+ 		return -ENODEV;
  
- Example:
- 	mc: memory-controller@7000f000 {
- 		compatible = "nvidia,tegra20-mc";
--		reg = <0x7000f000 0x024
--		       0x7000f03c 0x3c4>;
--		interrupts = <0 77 0x04>;
-+		reg = <0x7000f000 0x400		/* controller registers */
-+		       0x58000000 0x02000000>;	/* GART aperture */
-+		clocks = <&tegra_car TEGRA20_CLK_MC>;
-+		clock-names = "mc";
-+		interrupts = <GIC_SPI 77 0x04>;
- 		#reset-cells = <1>;
-+		#iommu-cells = <0>;
- 	};
+@@ -1580,7 +1581,7 @@ int iommu_map(struct iommu_domain *domain, unsigned long iova,
+ 		pr_debug("mapping: iova 0x%lx pa %pa pgsize 0x%zx\n",
+ 			 iova, &paddr, pgsize);
  
- 	video-codec@6001a000 {
- 		compatible = "nvidia,tegra20-vde";
- 		...
- 		resets = <&mc TEGRA20_MC_RESET_VDE>;
-+		iommus = <&mc>;
- 	};
+-		ret = domain->ops->map(domain, iova, paddr, pgsize, prot);
++		ret = ops->map(domain, iova, paddr, pgsize, prot);
+ 		if (ret)
+ 			break;
+ 
+@@ -1589,6 +1590,9 @@ int iommu_map(struct iommu_domain *domain, unsigned long iova,
+ 		size -= pgsize;
+ 	}
+ 
++	if (ops->iotlb_sync_map)
++		ops->iotlb_sync_map(domain);
++
+ 	/* unroll mapping in case something went wrong */
+ 	if (ret)
+ 		iommu_unmap(domain, orig_iova, orig_size - size);
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 87994c265bf5..4c488eb69752 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -202,6 +202,7 @@ struct iommu_ops {
+ 	void (*flush_iotlb_all)(struct iommu_domain *domain);
+ 	void (*iotlb_range_add)(struct iommu_domain *domain,
+ 				unsigned long iova, size_t size);
++	void (*iotlb_sync_map)(struct iommu_domain *domain);
+ 	void (*iotlb_sync)(struct iommu_domain *domain);
+ 	phys_addr_t (*iova_to_phys)(struct iommu_domain *domain, dma_addr_t iova);
+ 	int (*add_device)(struct device *dev);
 -- 
 2.18.0
 
