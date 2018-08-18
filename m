@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A283C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EEA3C4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E894D20BF3
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:40:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E894D20BF3
+	by mail.kernel.org (Postfix) with ESMTP id E488421890
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 11:40:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E488421890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbeHROrV (ORCPT
+        id S1726653AbeHROru (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 10:47:21 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45425 "EHLO
+        Sat, 18 Aug 2018 10:47:50 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58253 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726266AbeHROrV (ORCPT
+        with ESMTP id S1726272AbeHROru (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 10:47:21 -0400
+        Sat, 18 Aug 2018 10:47:50 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7IBdkCl1287599
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7IBeIMj1287672
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 18 Aug 2018 04:39:46 -0700
+        Sat, 18 Aug 2018 04:40:18 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7IBdkpR1287596;
-        Sat, 18 Aug 2018 04:39:46 -0700
-Date:   Sat, 18 Aug 2018 04:39:46 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7IBeIrO1287669;
+        Sat, 18 Aug 2018 04:40:18 -0700
+Date:   Sat, 18 Aug 2018 04:40:18 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-g360n1zbj6bkbk6q0qo11c28@git.kernel.org>
-Cc:     wangnan0@huawei.com, hpa@zytor.com, namhyung@kernel.org,
-        acme@redhat.com, tglx@linutronix.de, jolsa@kernel.org,
-        linux-kernel@vger.kernel.org, dsahern@gmail.com,
-        adrian.hunter@intel.com, mingo@kernel.org
-Reply-To: tglx@linutronix.de, jolsa@kernel.org, acme@redhat.com,
-          namhyung@kernel.org, hpa@zytor.com, wangnan0@huawei.com,
-          adrian.hunter@intel.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, dsahern@gmail.com
+Message-ID: <tip-zhachv7il2n1lopt9aonwhu7@git.kernel.org>
+Cc:     hpa@zytor.com, acme@redhat.com, adrian.hunter@intel.com,
+        tglx@linutronix.de, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org,
+        wangnan0@huawei.com, dsahern@gmail.com, mingo@kernel.org
+Reply-To: tglx@linutronix.de, adrian.hunter@intel.com, namhyung@kernel.org,
+          acme@redhat.com, hpa@zytor.com, dsahern@gmail.com,
+          mingo@kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+          wangnan0@huawei.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf trace: Handle "bpf-output" events associated
- with "__augmented_syscalls__" BPF map
-Git-Commit-ID: e0b6d2ef329098bd9780ec00a75db3b11922031a
+Subject: [tip:perf/urgent] perf bpf: Make bpf__setup_output_event() return
+ the bpf-output event
+Git-Commit-ID: 78e890ea8683f7d570f911637b23b23d27be4aed
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,187 +59,182 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e0b6d2ef329098bd9780ec00a75db3b11922031a
-Gitweb:     https://git.kernel.org/tip/e0b6d2ef329098bd9780ec00a75db3b11922031a
+Commit-ID:  78e890ea8683f7d570f911637b23b23d27be4aed
+Gitweb:     https://git.kernel.org/tip/78e890ea8683f7d570f911637b23b23d27be4aed
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 7 Aug 2018 15:40:13 -0300
+AuthorDate: Tue, 7 Aug 2018 16:19:05 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 8 Aug 2018 15:55:57 -0300
+CommitDate: Wed, 8 Aug 2018 15:55:58 -0300
 
-perf trace: Handle "bpf-output" events associated with "__augmented_syscalls__" BPF map
+perf bpf: Make bpf__setup_output_event() return the bpf-output event
 
-Add an example BPF script that writes syscalls:sys_enter_openat raw
-tracepoint payloads augmented with the first 64 bytes of the "filename"
-syscall pointer arg.
-
-Then catch it and print it just like with things written to the
-"__bpf_stdout__" map associated with a PERF_COUNT_SW_BPF_OUTPUT software
-event, by just letting the default tracepoint handler in 'perf trace',
-trace__event_handler(), to use bpf_output__fprintf(trace, sample), just
-like it does with all other PERF_COUNT_SW_BPF_OUTPUT events, i.e. just
-do a dump on the payload, so that we can check if what is being printed
-has at least the first 64 bytes of the "filename" arg:
-
-The augmented_syscalls.c eBPF script:
-
-  # cat tools/perf/examples/bpf/augmented_syscalls.c
-  // SPDX-License-Identifier: GPL-2.0
-
-  #include <stdio.h>
-
-  struct bpf_map SEC("maps") __augmented_syscalls__ = {
-       .type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
-       .key_size = sizeof(int),
-       .value_size = sizeof(u32),
-       .max_entries = __NR_CPUS__,
-  };
-
-  struct syscall_enter_openat_args {
-	unsigned long long common_tp_fields;
-	long		   syscall_nr;
-	long		   dfd;
-	char		   *filename_ptr;
-	long		   flags;
-	long		   mode;
-  };
-
-  struct augmented_enter_openat_args {
-	struct syscall_enter_openat_args args;
-	char				 filename[64];
-  };
-
-  int syscall_enter(openat)(struct syscall_enter_openat_args *args)
-  {
-	struct augmented_enter_openat_args augmented_args;
-
-	probe_read(&augmented_args.args, sizeof(augmented_args.args), args);
-	probe_read_str(&augmented_args.filename, sizeof(augmented_args.filename), args->filename_ptr);
-	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU,
-			  &augmented_args, sizeof(augmented_args));
-	return 1;
-  }
-
-  license(GPL);
-  #
-
-So it will just prepare a raw_syscalls:sys_enter payload for the
-"openat" syscall.
-
-This will eventually be done for all syscalls with pointer args,
-globally or just when the user asks, using some spec, which args of
-which syscalls it wants "expanded" this way, we'll probably start with
-just all the syscalls that have char * pointers with familiar names, the
-ones we already handle with the probe:vfs_getname kprobe if it is in
-place hooking the kernel getname_flags() function used to copy from user
-the paths.
-
-Running it we get:
-
-  # perf trace -e perf/tools/perf/examples/bpf/augmented_syscalls.c,openat cat /etc/passwd > /dev/null
-     0.000 (         ): __augmented_syscalls__:X?.C......................`\..................../etc/ld.so.cache..#......,....ao.k...............k......1.".........
-     0.006 (         ): syscalls:sys_enter_openat:dfd: CWD, filename: 0x5c600da8, flags: CLOEXEC
-     0.008 ( 0.005 ms): cat/31292 openat(dfd: CWD, filename: 0x5c600da8, flags: CLOEXEC                 ) = 3
-     0.036 (         ): __augmented_syscalls__:X?.C.......................\..................../lib64/libc.so.6......... .\....#........?.......=.C..../.".........
-     0.037 (         ): syscalls:sys_enter_openat:dfd: CWD, filename: 0x5c808ce0, flags: CLOEXEC
-     0.039 ( 0.007 ms): cat/31292 openat(dfd: CWD, filename: 0x5c808ce0, flags: CLOEXEC                 ) = 3
-     0.323 (         ): __augmented_syscalls__:X?.C.....................P....................../etc/passwd......>.C....@................>.C.....,....ao.>.C........
-     0.325 (         ): syscalls:sys_enter_openat:dfd: CWD, filename: 0xe8be50d6
-     0.327 ( 0.004 ms): cat/31292 openat(dfd: CWD, filename: 0xe8be50d6                                 ) = 3
-  #
-
-We need to go on optimizing this to avoid seding trash or zeroes in the
-pointer content payload, using the return from bpf_probe_read_str(), but
-to keep things simple at this stage and make incremental progress, lets
-leave it at that for now.
+We're calling it to setup that event, and we'll need it later to decide
+if the bpf-output event we're handling is the one setup for a specific
+purpose, return it using ERR_PTR, etc.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-g360n1zbj6bkbk6q0qo11c28@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-zhachv7il2n1lopt9aonwhu7@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c                   |  7 ++++
- tools/perf/examples/bpf/augmented_syscalls.c | 55 ++++++++++++++++++++++++++++
- 2 files changed, 62 insertions(+)
+ tools/perf/builtin-trace.c   |  9 +++++----
+ tools/perf/util/bpf-loader.c | 23 ++++++++++++-----------
+ tools/perf/util/bpf-loader.h |  7 ++++---
+ 3 files changed, 21 insertions(+), 18 deletions(-)
 
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 7232a7302580..9b4e24217c46 100644
+index 9b4e24217c46..43a699cfcadf 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -3240,6 +3240,13 @@ int cmd_trace(int argc, const char **argv)
+@@ -3216,8 +3216,9 @@ int cmd_trace(int argc, const char **argv)
+ 	};
+ 	bool __maybe_unused max_stack_user_set = true;
+ 	bool mmap_pages_user_set = true;
++	struct perf_evsel *evsel;
+ 	const char * const trace_subcommands[] = { "record", NULL };
+-	int err;
++	int err = -1;
+ 	char bf[BUFSIZ];
+ 
+ 	signal(SIGSEGV, sighandler_dump_stack);
+@@ -3240,9 +3241,9 @@ int cmd_trace(int argc, const char **argv)
  				       "cgroup monitoring only available in system-wide mode");
  	}
  
-+	err = bpf__setup_output_event(trace.evlist, "__augmented_syscalls__");
-+	if (err) {
-+		bpf__strerror_setup_output_event(trace.evlist, err, bf, sizeof(bf));
-+		pr_err("ERROR: Setup trace syscalls enter failed: %s\n", bf);
-+		goto out;
-+	}
-+
- 	err = bpf__setup_stdout(trace.evlist);
- 	if (err) {
- 		bpf__strerror_setup_stdout(trace.evlist, err, bf, sizeof(bf));
-diff --git a/tools/perf/examples/bpf/augmented_syscalls.c b/tools/perf/examples/bpf/augmented_syscalls.c
-new file mode 100644
-index 000000000000..69a31386d8cd
---- /dev/null
-+++ b/tools/perf/examples/bpf/augmented_syscalls.c
-@@ -0,0 +1,55 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Augment the openat syscall with the contents of the filename pointer argument.
-+ *
-+ * Test it with:
-+ *
-+ * perf trace -e tools/perf/examples/bpf/augmented_syscalls.c cat /etc/passwd > /dev/null
-+ *
-+ * It'll catch some openat syscalls related to the dynamic linked and
-+ * the last one should be the one for '/etc/passwd'.
-+ *
-+ * This matches what is marshalled into the raw_syscall:sys_enter payload
-+ * expected by the 'perf trace' beautifiers, and can be used by them unmodified,
-+ * which will be done as that feature is implemented in the next csets, for now
-+ * it will appear in a dump done by the default tracepoint handler in 'perf trace',
-+ * that uses bpf_output__fprintf() to just dump those contents, as done with
-+ * the bpf-output event associated with the __bpf_output__ map declared in
-+ * tools/perf/include/bpf/stdio.h.
-+ */
-+
-+#include <stdio.h>
-+
-+struct bpf_map SEC("maps") __augmented_syscalls__ = {
-+       .type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
-+       .key_size = sizeof(int),
-+       .value_size = sizeof(u32),
-+       .max_entries = __NR_CPUS__,
-+};
-+
-+struct syscall_enter_openat_args {
-+	unsigned long long common_tp_fields;
-+	long		   syscall_nr;
-+	long		   dfd;
-+	char		   *filename_ptr;
-+	long		   flags;
-+	long		   mode;
-+};
-+
-+struct augmented_enter_openat_args {
-+	struct syscall_enter_openat_args args;
-+	char				 filename[64];
-+};
-+
-+int syscall_enter(openat)(struct syscall_enter_openat_args *args)
-+{
-+	struct augmented_enter_openat_args augmented_args;
-+
-+	probe_read(&augmented_args.args, sizeof(augmented_args.args), args);
-+	probe_read_str(&augmented_args.filename, sizeof(augmented_args.filename), args->filename_ptr);
-+	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU,
-+			  &augmented_args, sizeof(augmented_args));
-+	return 1;
-+}
-+
-+license(GPL);
+-	err = bpf__setup_output_event(trace.evlist, "__augmented_syscalls__");
+-	if (err) {
+-		bpf__strerror_setup_output_event(trace.evlist, err, bf, sizeof(bf));
++	evsel = bpf__setup_output_event(trace.evlist, "__augmented_syscalls__");
++	if (IS_ERR(evsel)) {
++		bpf__strerror_setup_output_event(trace.evlist, PTR_ERR(evsel), bf, sizeof(bf));
+ 		pr_err("ERROR: Setup trace syscalls enter failed: %s\n", bf);
+ 		goto out;
+ 	}
+diff --git a/tools/perf/util/bpf-loader.c b/tools/perf/util/bpf-loader.c
+index 80dead642719..47aac41349a2 100644
+--- a/tools/perf/util/bpf-loader.c
++++ b/tools/perf/util/bpf-loader.c
+@@ -1535,7 +1535,7 @@ int bpf__apply_obj_config(void)
+ 			(strcmp(name, 			\
+ 				bpf_map__name(pos)) == 0))
+ 
+-int bpf__setup_output_event(struct perf_evlist *evlist, const char *name)
++struct perf_evsel *bpf__setup_output_event(struct perf_evlist *evlist, const char *name)
+ {
+ 	struct bpf_map_priv *tmpl_priv = NULL;
+ 	struct bpf_object *obj, *tmp;
+@@ -1548,7 +1548,7 @@ int bpf__setup_output_event(struct perf_evlist *evlist, const char *name)
+ 		struct bpf_map_priv *priv = bpf_map__priv(map);
+ 
+ 		if (IS_ERR(priv))
+-			return -BPF_LOADER_ERRNO__INTERNAL;
++			return ERR_PTR(-BPF_LOADER_ERRNO__INTERNAL);
+ 
+ 		/*
+ 		 * No need to check map type: type should have been
+@@ -1561,20 +1561,20 @@ int bpf__setup_output_event(struct perf_evlist *evlist, const char *name)
+ 	}
+ 
+ 	if (!need_init)
+-		return 0;
++		return NULL;
+ 
+ 	if (!tmpl_priv) {
+ 		char *event_definition = NULL;
+ 
+ 		if (asprintf(&event_definition, "bpf-output/no-inherit=1,name=%s/", name) < 0)
+-			return -ENOMEM;
++			return ERR_PTR(-ENOMEM);
+ 
+ 		err = parse_events(evlist, event_definition, NULL);
+ 		free(event_definition);
+ 
+ 		if (err) {
+ 			pr_debug("ERROR: failed to create the \"%s\" bpf-output event\n", name);
+-			return -err;
++			return ERR_PTR(-err);
+ 		}
+ 
+ 		evsel = perf_evlist__last(evlist);
+@@ -1584,37 +1584,38 @@ int bpf__setup_output_event(struct perf_evlist *evlist, const char *name)
+ 		struct bpf_map_priv *priv = bpf_map__priv(map);
+ 
+ 		if (IS_ERR(priv))
+-			return -BPF_LOADER_ERRNO__INTERNAL;
++			return ERR_PTR(-BPF_LOADER_ERRNO__INTERNAL);
+ 		if (priv)
+ 			continue;
+ 
+ 		if (tmpl_priv) {
+ 			priv = bpf_map_priv__clone(tmpl_priv);
+ 			if (!priv)
+-				return -ENOMEM;
++				return ERR_PTR(-ENOMEM);
+ 
+ 			err = bpf_map__set_priv(map, priv, bpf_map_priv__clear);
+ 			if (err) {
+ 				bpf_map_priv__clear(map, priv);
+-				return err;
++				return ERR_PTR(err);
+ 			}
+ 		} else if (evsel) {
+ 			struct bpf_map_op *op;
+ 
+ 			op = bpf_map__add_newop(map, NULL);
+ 			if (IS_ERR(op))
+-				return PTR_ERR(op);
++				return ERR_PTR(PTR_ERR(op));
+ 			op->op_type = BPF_MAP_OP_SET_EVSEL;
+ 			op->v.evsel = evsel;
+ 		}
+ 	}
+ 
+-	return 0;
++	return evsel;
+ }
+ 
+ int bpf__setup_stdout(struct perf_evlist *evlist)
+ {
+-	return bpf__setup_output_event(evlist, "__bpf_stdout__");
++	struct perf_evsel *evsel = bpf__setup_output_event(evlist, "__bpf_stdout__");
++	return IS_ERR(evsel) ? PTR_ERR(evsel) : 0;
+ }
+ 
+ #define ERRNO_OFFSET(e)		((e) - __BPF_LOADER_ERRNO__START)
+diff --git a/tools/perf/util/bpf-loader.h b/tools/perf/util/bpf-loader.h
+index 8eca75145ac2..62d245a90e1d 100644
+--- a/tools/perf/util/bpf-loader.h
++++ b/tools/perf/util/bpf-loader.h
+@@ -43,6 +43,7 @@ enum bpf_loader_errno {
+ 	__BPF_LOADER_ERRNO__END,
+ };
+ 
++struct perf_evsel;
+ struct bpf_object;
+ struct parse_events_term;
+ #define PERF_BPF_PROBE_GROUP "perf_bpf_probe"
+@@ -82,7 +83,7 @@ int bpf__apply_obj_config(void);
+ int bpf__strerror_apply_obj_config(int err, char *buf, size_t size);
+ 
+ int bpf__setup_stdout(struct perf_evlist *evlist);
+-int bpf__setup_output_event(struct perf_evlist *evlist, const char *name);
++struct perf_evsel *bpf__setup_output_event(struct perf_evlist *evlist, const char *name);
+ int bpf__strerror_setup_output_event(struct perf_evlist *evlist, int err, char *buf, size_t size);
+ #else
+ #include <errno.h>
+@@ -137,10 +138,10 @@ bpf__setup_stdout(struct perf_evlist *evlist __maybe_unused)
+ 	return 0;
+ }
+ 
+-static inline int
++static inline struct perf_evsel *
+ bpf__setup_output_event(struct perf_evlist *evlist __maybe_unused, const char *name __maybe_unused)
+ {
+-	return 0;
++	return NULL;
+ }
+ 
+ static inline int
