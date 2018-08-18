@@ -2,101 +2,147 @@ Return-Path: <SRS0=Se0q=LB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E39C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 08:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E84DC4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 08:43:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4157B21581
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 08:37:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ur0OL4E+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4157B21581
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 62C3B217A6
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 08:43:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62C3B217A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726388AbeHRLoW (ORCPT
+        id S1726507AbeHRLtz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 07:44:22 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33814 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726072AbeHRLoW (ORCPT
+        Sat, 18 Aug 2018 07:49:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55454 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726095AbeHRLty (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 07:44:22 -0400
-Received: by mail-lj1-f196.google.com with SMTP id f8-v6so8092980ljk.1;
-        Sat, 18 Aug 2018 01:37:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rOmliarxb5K2sWe6ilv9hzTwybhTm96ipEQZC4s3Bxw=;
-        b=ur0OL4E+VBBadMT3Rq0qnygbgJwfVYk4w6D0XOvOZ/yXHlS80J15wW0AyZOTtLRQt5
-         6r23F9JZ9KUkRk4vn4brb2XZP/b2ElfbT/wDI+MulROVTz4sYSV5osT59blXUqHG1Tlm
-         sZfWWdhWHD2gBpDfrueMr3WPh7b0A+Cm70OGEGZShh9CIBKgLVqPDjvXpfi39qRlkk6I
-         F0t+QK1Rq3qE4u3bMSEV2PMqLFgOPVEphuMjxBOl3V1VHlH7tmmm0oCwef3jwwf30UJP
-         VKdBosRqFQ6ZLz7cqSpuvqOa5qVkbsKw985FvlcRwLsq9ZRqLohKna5M1YLHFz08BiIj
-         W+WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rOmliarxb5K2sWe6ilv9hzTwybhTm96ipEQZC4s3Bxw=;
-        b=LUAJlxi/aCgdufOu0KRIOeF1dq4fR/bXMU6huxMbYi1wROpLs7UET/IFTvdaKJA7zm
-         kr2ydom3WKO3OjBX7E4g/KMOSu/VckFYDM3V83ll4Y/Pfdyo5fKpHm6FJsbLHQySys1k
-         U6LsxLYGrFwGG2mrSdt/u8e0D2x5gu7/d9RxRZ4hPREM6sJgltb9J1M7ppKRsWG01ra9
-         iuQaggmhS97c6qx9jUwkpOGSe5Qv49C5mn8Abox2FbA3Jf+py93LQypqP5cVb8snLgSJ
-         y7nMvsY51poX5ZrEAoJzUtkeiw/cEmXY3MHiueOKRn1zVeYtbhjLq7ggkzPGBRNUf7rC
-         30FQ==
-X-Gm-Message-State: AOUpUlFX4pyRqp5BTNS4/BOCL51rigWcqKFYmVkezJXo5WEe02HtlU6/
-        di8Espnjrf/TxIbvWNZaLPgKUFWn42sf4Pc6O/Y=
-X-Google-Smtp-Source: AA+uWPxea4KKNZ9TdgLFS1Sbuswtx0qRxH3F7rNZaFfl/674DqUgmpAfxELJAKOEhjPvn5wOkGgv9TCYmxHck+5h+sc=
-X-Received: by 2002:a2e:990b:: with SMTP id v11-v6mr25700095lji.87.1534581449406;
- Sat, 18 Aug 2018 01:37:29 -0700 (PDT)
+        Sat, 18 Aug 2018 07:49:54 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 098FE3EE;
+        Sat, 18 Aug 2018 08:43:00 +0000 (UTC)
+Date:   Sat, 18 Aug 2018 10:42:55 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 3.18.119
+Message-ID: <20180818084255.GA31251@kroah.com>
 MIME-Version: 1.0
-References: <20180808071421.32707-1-simon.k.r.goldschmidt@gmail.com>
- <20180817070105.1725-1-simon.k.r.goldschmidt@gmail.com> <1534523550.2283.397.camel@impinj.com>
-In-Reply-To: <1534523550.2283.397.camel@impinj.com>
-From:   Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
-Date:   Sat, 18 Aug 2018 10:37:01 +0200
-Message-ID: <CAAh8qszwWsSTPhK_aLziy8px9hOyixGN50m6YMA_5Rb2w23zaw@mail.gmail.com>
-Subject: Re: [PATCH v2] spi: dw: support 4-16 bits per word
-To:     tpiepho@impinj.com
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 6:32 PM Trent Piepho <tpiepho@impinj.com> wrote:
->
-> On Fri, 2018-08-17 at 09:01 +0200, Simon Goldschmidt wrote:
-> > The spi-dw driver currently only supports 8 or 16 bits per word.
-> >
-> > Since the hardware supports 4-16 bits per word, adapt the driver
-> > to also support this.
-> >
-> >
->
-> > @@ -307,15 +307,13 @@ static int dw_spi_transfer_one(struct spi_controller *master,
-> > +
-> > +     if ((transfer->bits_per_word < 4) || (transfer->bits_per_word > 16))
-> >               return -EINVAL;
-> > -     }
->
-> You don't need this check as the spi core validates the transfer
-> against master->bits_per_word_mask.
 
-Ok.
+--UugvWAfsgieZRqgk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
-> >       master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP;
-> > -     master->bits_per_word_mask = SPI_BPW_MASK(8) | SPI_BPW_MASK(16);
-> > +     master->bits_per_word_mask =  SPI_BPW_RANGE_MASK(4, 16);
-> >       master->bus_num = dws->bus_num;
-> >
+I'm announcing the release of the 3.18.119 kernel.
+
+All users of the 3.18 kernel series must upgrade.
+
+The updated 3.18.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-3.18.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Documentation/Changes          |   17 -
+ Makefile                       |    2=20
+ arch/arm/boot/dts/imx6sx.dtsi  |    2=20
+ arch/x86/kernel/kprobes/core.c |    4=20
+ crypto/ablkcipher.c            |   57 ++---
+ crypto/blkcipher.c             |   54 ++---
+ crypto/vmac.c                  |  412 ++++++++++++++++++------------------=
+-----
+ drivers/i2c/busses/i2c-ismt.c  |    2=20
+ drivers/net/xen-netfront.c     |    8=20
+ fs/dcache.c                    |    6=20
+ fs/namespace.c                 |   28 ++
+ include/crypto/vmac.h          |   63 ------
+ mm/slub.c                      |    6=20
+ net/bluetooth/hidp/core.c      |    4=20
+ scripts/depmod.sh              |    8=20
+ sound/core/info.c              |    4=20
+ 16 files changed, 296 insertions(+), 381 deletions(-)
+
+Al Viro (3):
+      root dentries need RCU-delayed freeing
+      fix mntput/mntput race
+      fix __legitimize_mnt()/mntput() race
+
+Andrey Ryabinin (1):
+      mm: slub: fix format mismatches in slab_err() callers
+
+Eric Biggers (4):
+      crypto: vmac - require a block cipher with 128-bit block size
+      crypto: vmac - separate tfm and request context
+      crypto: blkcipher - fix crash flushing dcache in error path
+      crypto: ablkcipher - fix crash flushing dcache in error path
+
+Erick Reyes (1):
+      ALSA: info: Check for integer overflow in snd_info_entry_write()
+
+Greg Kroah-Hartman (1):
+      Linux 3.18.119
+
+Juergen Gross (1):
+      xen/netfront: don't cache skb_shinfo()
+
+Liwei Song (1):
+      i2c: ismt: fix wrong device address when unmap the data buffer
+
+Mark Salyzyn (1):
+      Bluetooth: hidp: buffer overflow in hidp_process_report
+
+Masami Hiramatsu (1):
+      kprobes/x86: Fix %p uses in error messages
+
+Oleksij Rempel (1):
+      ARM: dts: imx6sx: fix irq for pcie bridge
+
+Randy Dunlap (1):
+      kbuild: verify that $DEPMOD is installed
+
+
+--UugvWAfsgieZRqgk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlt33AwACgkQONu9yGCS
+aT4Kuw/+Pvq9xI8ZpQgDBQiGQozqHdsjvwBCQ1zX5FCEWkYHyVprQvuW2FZ5xNZQ
+y2+6S0PWiEtNCsqAHWuO3qtaey59h4UoWKEdQyxWlfwSdzg+TL5OYk+pMdRnCbHA
+e1NQ94zs5cvG4yPtcNeSOgVuWILQhQz0/v0bQVeB9XJa4lGarPbDP05dSo+ZVElt
+kbumFrSnL8TEb6gfJh6UolHPlxjt2+UOZOGD9g0ryz65YSDs6VKrq1gOgpZS77m0
+yCmxYI/YJDX3KKsn6l+0CbsF07QZxPpBINMXo/HJCX5taPSTpMcpy5ScYL/dB9cp
+xl2Ig1ymOGZVMwKS8JyqfN/MGWNnzqX6YVgUNk95svauiqu0QjABQrcTV9NQaEtM
+Z+CX9NLCiqNFn/yobMRmaeLCo6hXye3De9vxkef7cLFMb9TC+tCw/VIv72xtTBi5
+BvKpy+JYqqFH3tMqfFkhKXrpY+vmJMPDkPDWfz6xSgeIwO5N0uQ1P8YqPXcgeBfI
+6n+w1Nf0Fepz1RPzNujw4iAkF0+eeMrOPbsV8313LRz+i8nfzy+07ORDLIj9nJ87
+i5aksUY2w9Ly3101jZDnAFlAB5uhm8fp3bYu6CEuHMsmXVDukP0/x0VbCUvFZd/6
+Ep8frd7+jGZyO/1ZnI4B1dNHZdozZ/uV2ycHgf1yW/nBC34PMXI=
+=bSsH
+-----END PGP SIGNATURE-----
+
+--UugvWAfsgieZRqgk--
