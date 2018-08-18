@@ -2,100 +2,188 @@ Return-Path: <SRS0=Mzg6=LC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DATE_IN_PAST_24_48,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A6FC4321D
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 23:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8993C4321D
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 23:19:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C756620C0E
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 23:17:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C756620C0E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alum.mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 65A4020E20
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 23:19:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HQj2gAWf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65A4020E20
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbeHTC3h (ORCPT
+        id S1726586AbeHTCch (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 19 Aug 2018 22:29:37 -0400
-Received: from alum-mailsec-scanner-6.mit.edu ([18.7.68.18]:45814 "EHLO
-        alum-mailsec-scanner-6.mit.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726397AbeHTC3h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Aug 2018 22:29:37 -0400
-X-Greylist: delayed 423 seconds by postgrey-1.27 at vger.kernel.org; Sun, 19 Aug 2018 22:29:37 EDT
-X-AuditID: 12074412-b03ff70000007a70-a6-5b79f8a49835
-Received: from outgoing-alum.mit.edu (OUTGOING-ALUM.MIT.EDU [18.7.68.33])
-        (using TLS with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        by alum-mailsec-scanner-6.mit.edu (Symantec Messaging Gateway) with SMTP id 6E.AE.31344.4A8F97B5; Sun, 19 Aug 2018 19:09:24 -0400 (EDT)
-Received: from email-server.localdomain (104-63-242-122.lightspeed.irvnca.sbcglobal.net [104.63.242.122])
-        (authenticated bits=0)
-        (User authenticated as rian@ALUM.MIT.EDU)
-        by outgoing-alum.mit.edu (8.13.8/8.12.4) with ESMTP id w7JN9Kbj015989
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Sun, 19 Aug 2018 19:09:22 -0400
-Received: from nori.lan.thelig.ht (localhost [127.0.0.1])
-        (Authenticated sender: rian@thelig.ht)
-        by email-server.localdomain (Postfix) with ESMTPA id D1D8A49F04A;
-        Sun, 19 Aug 2018 16:09:18 -0700 (PDT)
-From:   Rian Hunter <rian@alum.mit.edu>
-To:     linux-kernel@vger.kernel.org
-Cc:     Rian Hunter <rian@alum.mit.edu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bpetkov@suse.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Dmitry Safonov <dima@arista.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH] x86/process: Export start_thread()
-Date:   Sun, 19 Aug 2018 16:08:53 -0700
-Message-Id: <20180819230854.7275-1-rian@alum.mit.edu>
-X-Mailer: git-send-email 2.18.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBIsWRmVeSWpSXmKPExsUixO6iqLvkR2W0wdoTJhZHWiawW1z8tJLd
-        YtpGcYsDP08wWkw+NZfJ4vKuOWwW53etZbW4dGABk0Xv/h5Gi82bpjJbTGq9zGzxY8NjVgce
-        j7/vPzB57J7exOixaVUnm8e7c+fYPd7vu8rmsfl0tcfnTXIeJ1q+sAZwRHHZpKTmZJalFunb
-        JXBlrDy+lLGgk73iX+Nu5gbGf6xdjJwcEgImEoemb2LvYuTiEBLYwSRxZsERFgjnGZPE08M7
-        2CCcc4wS/SsXM4O0sAmoSmxuOQJmiwgoSGzufcYKUsQsMI9Z4uORFewgCWEBY4m/a2aD7WAB
-        aljSPhGsgVfAVOJO5yeo3fISD4+3M05g5F7AyLCKUS4xpzRXNzcxM6c4NVm3ODkxLy+1SNdM
-        LzezRC81pXQTIyQQhXYwrj8pd4hRgINRiYd3wdXKaCHWxLLiytxDjJIcTEqivOqHgUJ8Sfkp
-        lRmJxRnxRaU5qcWHGCU4mJVEeFsXAuV4UxIrq1KL8mFS0hwsSuK8zCZ7o4QE0hNLUrNTUwtS
-        i2CyMhwcShK8Od+BGgWLUtNTK9Iyc0oQ0kwcnCDDeYCGbwep4S0uSMwtzkyHyJ9i1OX4837q
-        JGYhlrz8vFQpcd4zIEUCIEUZpXlwc2AJ5BWjONBbwryaIFU8wOQDN+kV0BImoCXsbGBLShIR
-        UlINjA27vuycO1Gl3+RMHO/LeqWl/7p9TMRX9wnt+WDuZl/d+1/ySYSjgs35pU+Od2/X3bhr
-        lpxIOmP50ZPzbt8wO16gwv1HyOFEwd+H4W9vTUnbtStxt1GXWMHuhKofRszBuZ6rrrFGRdmv
-        sWdKmnv/T5yiyPRTU9vXp8YUr20o+tBisOD6/poKUyWW4oxEQy3mouJEANCYipn7AgAA
+        Sun, 19 Aug 2018 22:32:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48772 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726397AbeHTCch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Aug 2018 22:32:37 -0400
+Received: from localhost.localdomain (cpe-174-109-247-98.nc.res.rr.com [174.109.247.98])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D551B20C0E;
+        Sun, 19 Aug 2018 23:19:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534720765;
+        bh=MCW6fbfEOEa5jefK6Th7M3Bchw2CVW/sNu7qXNcXuqc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=HQj2gAWfqXFusbUdKtsjaO85s8KZ6tDCNj8Nlt/osxR4nN1Fp2waL8ccnTaugFKFP
+         l6qOFDlglxFA0Bo8n4furbY2cAlM6CZqHFoonWlFU/PyLR0/c88TMO77x+JruTLIgn
+         FBxwzBVVtS10Os1NHoLHU9OivOc8IAHTXPVoPQh4=
+From:   Sinan Kaya <okaya@kernel.org>
+To:     linux-pci@vger.kernel.org
+Cc:     Sinan Kaya <okaya@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Keith Busch <keith.busch@intel.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v8 1/2] PCI: pciehp: Ignore link events when there is a fatal error pending
+Date:   Fri, 17 Aug 2018 23:51:09 -0700
+Message-Id: <20180818065126.77912-1-okaya@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit e634d8fc792c ("x86-64: merge the standard and compat
-start_thread() functions") removed exporting for the start_thread()
-function in what seems like a typo. Add it back to
-arch/x86/kernel/process_64.c for parity with process_32.c and other
-arch.
+AER/DPC reset is known as warm-resets. HP link recovery is known as
+cold-reset via power-off and power-on command to the PCI slot.
 
-Signed-off-by: Rian Hunter <rian@alum.mit.edu>
+In the middle of a warm-reset operation (AER/DPC), we are:
+
+1. turning off the slow power. Slot power needs to be kept on in order
+for recovery to succeed.
+
+2. performing a cold reset causing Fatal Error recovery to fail.
+
+If link goes down due to a DPC event, it should be recovered by DPC
+status trigger. Injecting a cold reset in the middle can cause a HW
+lockup as it is an undefined behavior.
+
+Similarly, If link goes down due to an AER secondary bus reset issue,
+it should be recovered by HW. Injecting a cold reset in the middle of a
+secondary bus reset can cause a HW lockup as it is an undefined behavior.
+
+1. HP ISR observes link down interrupt.
+2. HP ISR checks that there is a fatal error pending, it doesn't touch
+the link.
+3. HP ISR waits until link recovery happens.
+4. HP ISR calls the read vendor id function.
+5. If all fails, try the cold-reset approach.
+
+If fatal error is pending and a fatal error service such as DPC or AER
+is running, it is the responsibility of the fatal error service to
+recover the link.
+
+Signed-off-by: Sinan Kaya <okaya@kernel.org>
 ---
- arch/x86/kernel/process_64.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/hotplug/pciehp_ctrl.c | 18 ++++++++++++++++
+ drivers/pci/pci.h                 |  2 ++
+ drivers/pci/pcie/err.c            | 34 +++++++++++++++++++++++++++++++
+ 3 files changed, 54 insertions(+)
 
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 476e3ddf8890..a451bc374b9b 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -384,6 +384,7 @@ start_thread(struct pt_regs *regs, unsigned long new_ip, unsigned long new_sp)
- 	start_thread_common(regs, new_ip, new_sp,
- 			    __USER_CS, __USER_DS, 0);
- }
-+EXPORT_SYMBOL_GPL(start_thread);
+diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
+index da7c72372ffc..22354b6850c3 100644
+--- a/drivers/pci/hotplug/pciehp_ctrl.c
++++ b/drivers/pci/hotplug/pciehp_ctrl.c
+@@ -222,9 +222,27 @@ void pciehp_handle_disable_request(struct slot *slot)
+ void pciehp_handle_presence_or_link_change(struct slot *slot, u32 events)
+ {
+ 	struct controller *ctrl = slot->ctrl;
++	struct pci_dev *pdev = ctrl->pcie->port;
+ 	bool link_active;
+ 	u8 present;
  
- #ifdef CONFIG_COMPAT
- void compat_start_thread(struct pt_regs *regs, u32 new_ip, u32 new_sp)
++	/* If a fatal error is pending, wait for AER or DPC to handle it. */
++	if (pcie_fatal_error_pending(pdev)) {
++		bool recovered;
++
++		recovered = pcie_wait_fatal_error_clear(pdev);
++
++		/* If the fatal error is gone and the link is up, return */
++		if (recovered && pcie_wait_for_link(pdev, true)) {
++			ctrl_info(ctrl, "Slot(%s): Ignoring Link event due to successful fatal error recovery\n",
++				  slot_name(slot));
++			return;
++		}
++
++		ctrl_info(ctrl, "Slot(%s): Fatal error recovery failed for Link event, trying hotplug reset\n",
++			  slot_name(slot));
++	}
++
+ 	/*
+ 	 * If the slot is on and presence or link has changed, turn it off.
+ 	 * Even if it's occupied again, we cannot assume the card is the same.
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index c358e7a07f3f..e2d98654630b 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -356,6 +356,8 @@ void pci_enable_acs(struct pci_dev *dev);
+ /* PCI error reporting and recovery */
+ void pcie_do_fatal_recovery(struct pci_dev *dev, u32 service);
+ void pcie_do_nonfatal_recovery(struct pci_dev *dev);
++bool pcie_fatal_error_pending(struct pci_dev *pdev);
++bool pcie_wait_fatal_error_clear(struct pci_dev *pdev);
+ 
+ bool pcie_wait_for_link(struct pci_dev *pdev, bool active);
+ #ifdef CONFIG_PCIEASPM
+diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+index f7ce0cb0b0b7..b1b5604cb00b 100644
+--- a/drivers/pci/pcie/err.c
++++ b/drivers/pci/pcie/err.c
+@@ -16,6 +16,7 @@
+ #include <linux/kernel.h>
+ #include <linux/errno.h>
+ #include <linux/aer.h>
++#include <linux/delay.h>
+ #include "portdrv.h"
+ #include "../pci.h"
+ 
+@@ -386,3 +387,36 @@ void pcie_do_nonfatal_recovery(struct pci_dev *dev)
+ 	/* TODO: Should kernel panic here? */
+ 	pci_info(dev, "AER: Device recovery failed\n");
+ }
++
++bool pcie_fatal_error_pending(struct pci_dev *pdev)
++{
++	u16 err_status = 0;
++	int rc;
++
++	if (!pci_is_pcie(pdev))
++		return false;
++
++	rc = pcie_capability_read_word(pdev, PCI_EXP_DEVSTA, &err_status);
++	if (rc)
++		return false;
++
++	return !!(err_status & PCI_EXP_DEVSTA_FED);
++}
++
++bool pcie_wait_fatal_error_clear(struct pci_dev *pdev)
++{
++	int timeout = 1000;
++	bool ret;
++
++	for (;;) {
++		ret = pcie_fatal_error_pending(pdev);
++		if (ret == false)
++			return true;
++		if (timeout <= 0)
++			break;
++		msleep(20);
++		timeout -= 20;
++	}
++
++	return false;
++}
 -- 
-2.16.3
+2.17.1
 
