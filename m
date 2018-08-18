@@ -2,100 +2,241 @@ Return-Path: <SRS0=Se0q=LB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C42CDC4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 16:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1FF4C4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 16:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F8C0205F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 16:51:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 660202175F
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 16:57:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u8TW9OHG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F8C0205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+nhcVJg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 660202175F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbeHRUAN (ORCPT
+        id S1726332AbeHRUFY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 16:00:13 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42679 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726219AbeHRUAN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 16:00:13 -0400
-Received: by mail-wr1-f66.google.com with SMTP id e7-v6so9550323wrs.9;
-        Sat, 18 Aug 2018 09:51:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=U/m7ucfMMFn/nJe5wUXDy5NIoCs7A8ILACF2RE9ly0M=;
-        b=u8TW9OHGQuS68ELZQQHevh1piHPzmBmD1mnlGU2ZbRBk49HvPRir1F48LMpUUakBqi
-         u+iNiPSmMUO4Lxha8EQO/Y1hZRvj0R6VTNq8SwQ9hkWgW4hE2vZwwPyGB7IPbKkIzT3m
-         OJjO4jxRLmpXbm+fqfTNTgwXtBbI7d+PRTxyV3yPyc/Wt2NXXuklCYcE2I0yGZw5ibrv
-         Dh/cAPxq/6upVqHMtyTt0dSBtMs22/VH4Fs2h2sPRPFYTCQEaQfMTL3RP2vCFsgf7vHC
-         C57wV+NjZ4Ey2tjEI6bvZvt7HOukn7bBToHouIrDSP6cHFgNwlrsckMS9azhjA3GNh/1
-         JXSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=U/m7ucfMMFn/nJe5wUXDy5NIoCs7A8ILACF2RE9ly0M=;
-        b=nGP6/aGto4BJhM/aw1TUGojkgAnN/HMTlcTXgdxWYzHr1s/zpsGKSLeJRthyVDzmnv
-         B9VuXOdw4xxK8L0znOaUewFE2UwtPoN2x/otOoY5gZNX5/Wb6nHzkESbqTQfcqTTOFDL
-         ZH0sbOeTMcoQoiyPhe7N/XiDk9VvsV8a6mP+RY7g+Oj+RuIFTLfCyXCqp6DA7Gm8uQZw
-         IlhjL92JyFwZEpIhvDhmdlTzF6F+PfOG62XwCx+JICNp5bWNP//AnjUBBmH3AYAYabrj
-         kkI9wTZAFwC9VP/iaJA6eFNXrnZzaPUIxR5MKXTaUvtHe0j7iRcuOxse32rEWzV0Ysr1
-         ExRQ==
-X-Gm-Message-State: AOUpUlG50Fd2ssG6oQjJfsDtz7SIZPrc4vhqCjP8a4NN9A7pgcQwxCzr
-        6rDw9Z8xdz3IZN4QsXYU0FvFuNy4NU1wug==
-X-Google-Smtp-Source: AA+uWPxhWabHuOHa+XCGQip3q+h3mPl+HchPOgzoWKKHKw9m4oZVEGgT34vlfk4iWYQBqLDd52S6xw==
-X-Received: by 2002:adf:f58f:: with SMTP id f15-v6mr6662696wro.59.1534611112357;
-        Sat, 18 Aug 2018 09:51:52 -0700 (PDT)
-Received: from Fulcrum ([39.40.115.2])
-        by smtp.gmail.com with ESMTPSA id 66-v6sm12046091wmw.34.2018.08.18.09.51.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 18 Aug 2018 09:51:52 -0700 (PDT)
-Date:   Sat, 18 Aug 2018 21:49:54 +0500
-From:   Faisal Mehmood <f.m3hm00d@gmail.com>
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb/dwc3: Fix spelling of 'optimizations'
-Message-ID: <20180818164954.GA5717@Fulcrum>
+        Sat, 18 Aug 2018 16:05:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49600 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726202AbeHRUFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Aug 2018 16:05:24 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 669CA21570;
+        Sat, 18 Aug 2018 16:57:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534611422;
+        bh=aWjC4YDYDrpEOOEvR4Hx14xL52IP2epJl4bC3y/KIpY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=G+nhcVJgeB6g6sK2fVlr8K5NWoXo1dDgrq8CCyMo46gUon0kC4D+cZj5Aqk0vUZYV
+         7gqezw4qG68Vi7Df7+fFvee4c7T0IcuYKtSUsoKqEGmiF+vUimx74eGVgypIoGoJTf
+         PoECsLYxWcL6hBUM+EY9dYbwUZHfxjcYiE16z8Rk=
+Date:   Sat, 18 Aug 2018 17:56:57 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Kent Gustavsson <kent@minoris.se>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/3] iio: adc: add support for mcp3911
+Message-ID: <20180818175657.2c09d987@archlinux>
+In-Reply-To: <20180804065506.GB1727@gmail.com>
+References: <20180802191554.20176-1-marcus.folkesson@gmail.com>
+        <CAHp75Vf8kMLsoFN_EK150yW_FvH8XfgjiETYAtvW63et5NNurw@mail.gmail.com>
+        <20180803230922.22d628fc@archlinux>
+        <20180804065506.GB1727@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'optimizations' was misspelled as 'optmizations'. Fixed it. It is a
-coding style change which should have no impact on runtime execution of code.
+On Sat, 4 Aug 2018 08:55:06 +0200
+Marcus Folkesson <marcus.folkesson@gmail.com> wrote:
 
-Signed-off-by: Faisal Mehmood <f.m3hm00d@gmail.com>
----
- drivers/usb/dwc3/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi Andy and Jonathan,
+> 
+> 
+> On Fri, Aug 03, 2018 at 11:09:22PM +0100, Jonathan Cameron wrote:
+> > On Thu, 2 Aug 2018 22:52:00 +0300
+> > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> >   
+> > > On Thu, Aug 2, 2018 at 10:15 PM, Marcus Folkesson
+> > > <marcus.folkesson@gmail.com> wrote:  
+> > > > MCP3911 is a dual channel Analog Front End (AFE) containing two
+> > > > synchronous sampling delta-sigma Analog-to-Digital Converters (ADC).
+> > > >
+> > > > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>    
+> > >   
+> > > > Signed-off-by: Kent Gustavsson <kent@minoris.se>    
+> > > 
+> > > What is this? Why it's here (presense and location in the message)?  
+> > To clarify... If Kent wrote the patch and you are simply acting
+> > as gatekeeper / upstreamer you should set the mail to be from Kent
+> > and put your own Signed-off after his to basically act as a submaintainer
+> > certifying you believe his sign off and all that entails.
+> > 
+> > If it is a bit of a joint effort then that's fine but for copyright
+> > purposes there should be some indication of the split.  
+> 
+> First, thank you Andy for noticing.
+> 
+> I actually intended to use Co-Developed-by (a pretty new tag)
+> in combination with Signed-off-by.
+> But the tag must have disappeared in some preparation stage..
+> 
+> From Documentation/process/submitting-patches.rst ::
+> 
+> 	A Co-Developed-by: states that the patch was also created by another developer
+> 	along with the original author.  This is useful at times when multiple people
+> 	work on a single patch.  Note, this person also needs to have a Signed-off-by:
+> 	line in the patch as well.
+> 
+> I will switch order and add the Co-Developed-by-tag.
+> Is this correct?
+> 
+> Co-Developed-by: Kent Gustavsson <kent@minoris.se>   
+> Signed-off-by: Kent Gustavsson <kent@minoris.se>  
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>  
+> 
+> > 
+> >   
+> > >   
+> > > > + * Copyright (C) 2018 Kent Gustavsson <kent@minoris.se>    
+> > >   
+> > > > + *    
+> > > 
+> > > Redundant.
+> > >   
+> > > > +static int mcp3911_read(struct mcp3911 *adc, u8 reg, u32 *val, u8 len)
+> > > > +{
+> > > > +       int ret;
+> > > > +
+> > > > +       reg = MCP3911_REG_READ(reg, adc->dev_addr);
+> > > > +       ret = spi_write_then_read(adc->spi, &reg, 1, val, len);
+> > > > +       if (ret < 0)
+> > > > +               return ret;
+> > > > +
+> > > > +       be32_to_cpus(val);
+> > > > +       *val >>= ((4 - len) * 8);
+> > > > +       dev_dbg(&adc->spi->dev, "reading 0x%x from register 0x%x\n", *val,
+> > > > +                       reg>>1);
+> > > > +       return ret;
+> > > > +}
+> > > > +
+> > > > +static int mcp3911_write(struct mcp3911 *adc, u8 reg, u32 val, u8 len)
+> > > > +{
+> > > > +       dev_dbg(&adc->spi->dev, "writing 0x%x to register 0x%x\n", val, reg);
+> > > > +
+> > > > +       val <<= (3 - len) * 8;
+> > > > +       cpu_to_be32s(&val);
+> > > > +       val |= MCP3911_REG_WRITE(reg, adc->dev_addr);
+> > > > +
+> > > > +       return spi_write(adc->spi, &val, len + 1);
+> > > > +}    
+> > > 
+> > > Can't you use REGMAP_SPI ?  
+> > My instinct is not really. The magic device-addr doesn't help.
+> > You could work around it but it's not that nice and you'd have
+> > to create the regmap mapping on the fly or carry static ones
+> > for each value of htat.
+> > 
+> > 
+> >   
+> > >   
+> > > > +       of_property_read_u32(of_node, "device-addr", &adc->dev_addr);
+> > > > +       if (adc->dev_addr > 3) {
+> > > > +               dev_err(&adc->spi->dev,
+> > > > +                               "invalid device address (%i). Must be in range 0-3.\n",
+> > > > +                               adc->dev_addr);
+> > > > +               return -EINVAL;
+> > > > +       }
+> > > > +       dev_dbg(&adc->spi->dev, "use device address %i\n", adc->dev_addr);    
+> > > 
+> > > Isn't what we called CS (chip select)?  
+> > Nope. We went around this in an earlier revision. It's an address transmitted
+> > in the control byte to allow you to 'share' a chip select line between multiple
+> > chips (crazy but true).
+> >   
+> > >   
+> > > > +       if (IS_ERR(adc->vref)) {    
+> > >   
+> > > > +    
+> > > 
+> > > Redundant.
+> > >   
+> > > > +       if (adc->clki)    
+> > > 
+> > > Seems to be redundant if clock is optional (it should be NULL and API
+> > > is NULL-aware).
+> > >   
+> > > > +               clk_disable_unprepare(adc->clki);    
+> > >   
+> > > > +       if (adc->clki)
+> > > > +               clk_disable_unprepare(adc->clki);    
+> > > 
+> > > Ditto.
+> > >   
+> > > > +#if defined(CONFIG_OF)    
+> > > 
+> > > This prevents playing with the device on ACPI enabled platforms.  
+> 
+> I will remove the defined(CONFIG_OF) and not use the of_match_ptr()
+> macro. 
+> 
+> > Yeah, that trickery is still little known (and I forget about it from
+> > time to time).
+> > 
+> > The upshot for those who have missed this is you can use a magic
+> > acpi device to instantiate based on device tree bindings :)
+> > 
+> > So we need to strip all this 'obvious' protection stuff out of drivers.  
+> 
+> Jonathan,
+> Do you want me to do the same changes for drivers in iio/ ?
+> I'm probably not the only one looking at other drivers when writing my
+> own, so I guess this is a rather frequent issue for new drivers?
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 103807587dc6..ab90f680deed 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -748,7 +748,7 @@ static void dwc3_core_setup_global_control(struct dwc3 *dwc)
- 
- 	/* check if current dwc3 is on simulation board */
- 	if (dwc->hwparams.hwparams6 & DWC3_GHWPARAMS6_EN_FPGA) {
--		dev_info(dwc->dev, "Running with FPGA optmizations\n");
-+		dev_info(dwc->dev, "Running with FPGA optimizations\n");
- 		dwc->is_fpga = true;
- 	}
- 
--- 
-2.18.0
+A good question.   Hmm. I'm a bit in two minds.  It creates a lot
+of churn for something that I don't think is actually very heavily
+used.  As you say, the biggest reason to change it will be to stop
+others from copying the existing drivers and getting it 'wrong' going
+forward.
+
+I don't have strong feelings either way, but don't really want to
+see a huge number of patches around this (I haven't checked how
+many drivers are effected).  If you want to look at this, then perhaps
+do a small set at a time rather than a mass fixup to keep things
+manageable?
+
+Thanks,
+
+Jonathan
+
+> 
+> 
+> >   
+> > >   
+> > > > +               .of_match_table = of_match_ptr(mcp3911_dt_ids),    
+> > > 
+> > > Ditto for macro.
+> > >   
+> >   
+> 
+> Best regards,
+> Marcus Folkesson
 
