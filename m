@@ -2,94 +2,76 @@ Return-Path: <SRS0=Se0q=LB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE61C4321D
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 01:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB22C4321D
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 01:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7846C21890
-	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 01:15:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7846C21890
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9825C219D2
+	for <linux-kernel@archiver.kernel.org>; Sat, 18 Aug 2018 01:22:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z8wXhcKJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9825C219D2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726126AbeHREV2 (ORCPT
+        id S1726202AbeHRE2A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 00:21:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33642 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725868AbeHREV2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 00:21:28 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 83A18B796;
-        Sat, 18 Aug 2018 01:15:45 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-120-191.rdu2.redhat.com [10.10.120.191])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F2B3510075E8;
-        Sat, 18 Aug 2018 01:15:43 +0000 (UTC)
-Subject: Re: [PATCH v8 3/5] ipc: Allow boot time extension of IPCMNI from 32k
- to 2M
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Takashi Iwai <tiwai@suse.de>, Davidlohr Bueso <dbueso@suse.de>,
-        manfred@colorfullife.com
-References: <1529317698-16575-1-git-send-email-longman@redhat.com>
- <1529317698-16575-4-git-send-email-longman@redhat.com>
- <20180817164548.GA32382@linux-r8p5>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <5ddb67bb-872b-c8c1-7838-2622195ae1fc@redhat.com>
-Date:   Fri, 17 Aug 2018 21:15:45 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Sat, 18 Aug 2018 00:28:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54546 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725763AbeHRE2A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Aug 2018 00:28:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=s9lr5/rBgfnFNqAAxR0xbQmN+jsipj97rBqkDfrabn4=; b=Z8wXhcKJoJ9YyjTOQsDC63Rn1
+        ik8aLgUyOR078ZkAkXiviZZtN+cZ9veJ0UKgw85OviJlSHhgpFfAqE7vOrgqW6vMNA0INOLgfgICs
+        CCUB+G5jJXhhCfcdK3R8QS21TXjN6hqQ9srUxsa28d+WHeJjTB5E5a3DD6bRS2OWkglPoF2pK8X+N
+        yDyud04Ua2KQWw34e40BCsRiBhpFwRwKxbUQgJpb0TgycNpM/tZbM9Q3CAU8GwrnWexJwA6ae5yVJ
+        B3KHTrcZE6Zv28O6ADr/ZrQZhSqg+j2ZcmqAKiwmNbOfE5kectokJlGlgmj61XO1Adexoy0D+70ZR
+        J/W+7IB2Q==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fqpwU-0005xi-3d; Sat, 18 Aug 2018 01:22:14 +0000
+Date:   Fri, 17 Aug 2018 18:22:13 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        Konstantin Khlebnikov <koct9i@gmail.com>
+Subject: Re: [PATCH RFC] mm: don't miss the last page because of round-off
+ error
+Message-ID: <20180818012213.GA14115@bombadil.infradead.org>
+References: <20180817231834.15959-1-guro@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <20180817164548.GA32382@linux-r8p5>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Sat, 18 Aug 2018 01:15:45 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Sat, 18 Aug 2018 01:15:45 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180817231834.15959-1-guro@fb.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/17/2018 12:45 PM, Davidlohr Bueso wrote:
-> Cc'ing Manfred.
->
-> On Mon, 18 Jun 2018, Waiman Long wrote:
->
->> The maximum number of unique System V IPC identifiers was limited to
->> 32k.  That limit should be big enough for most use cases.
->>
->> However, there are some users out there requesting for more. To satisfy
->> the need of those users, a new boot time kernel option "ipcmni_extend"
->> is added to extend the IPCMNI value to 2M. This is a 64X increase which
->> hopefully is big enough for them.
->
-> Could you please provide more info on the need of these users and how
-> you came up with this new value (which just seems quite arbitrary)?
->
-> Thanks,
-> Davidlohr 
+On Fri, Aug 17, 2018 at 04:18:34PM -0700, Roman Gushchin wrote:
+> -			scan = div64_u64(scan * fraction[file],
+> -					 denominator);
+> +			if (scan > 1)
+> +				scan = div64_u64(scan * fraction[file],
+> +						 denominator);
 
-Red Hat has a customer that is migrating from Solaris to Linux. Some of
-their applications just happen to use more than 32k of shared memory
-segments. I think Solaris allows up to 16M unique ID.
+Wouldn't we be better off doing a div_round_up?  ie:
 
-Yes, the amount of increase is a bit arbitrary. I was trying to balance
-how many bits should be left for sequence number. Maybe I should just
-take 8 more bits for ID and leave 8 bits for sequence number to match
-Solaris.
+	scan = div64_u64(scan * fraction[file] + denominator - 1, denominator);
 
--Longman
+although i'd rather hide that in a new macro in math64.h than opencode it
+here.
