@@ -3,40 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85087C4321D
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 17:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E88BC4321D
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 17:25:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F6D320E20
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 17:12:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32BCF20E20
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 17:25:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kldGZoqe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F6D320E20
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ad4dObDq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32BCF20E20
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbeHSUYd (ORCPT
+        id S1726661AbeHSUh7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 19 Aug 2018 16:24:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55878 "EHLO mail.kernel.org"
+        Sun, 19 Aug 2018 16:37:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726337AbeHSUYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Aug 2018 16:24:33 -0400
+        id S1726400AbeHSUh7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Aug 2018 16:37:59 -0400
 Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D34CC2064E;
-        Sun, 19 Aug 2018 17:12:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EAD520C09;
+        Sun, 19 Aug 2018 17:25:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534698743;
-        bh=q92wB1JjyYEyH1YpWe2s6JiqG91ckwhqhDOzF3MA87Q=;
+        s=default; t=1534699547;
+        bh=K+C2Ndg/4vq3L3vOHy/mZdZxa9CsBlWu+s3/QGHS6AM=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=kldGZoqeQEMX4zmLZA+UigrsRB1yOZqNodyGR9fETuo1psG7+XFiELmYlsqJ9Q6cO
-         hnBEMKNkjRiihOHPycf5knNvVeOByW1Dzrwa+AMDMdyVaygiByySsbO1/+xnhdJm5d
-         mcE1eplpabcLSIuLDxVUpKJDj2vpuUlqER+pAPkQ=
-Date:   Sun, 19 Aug 2018 18:12:18 +0100
+        b=Ad4dObDqJjmxWwU3GvGqz9LcN2CvP023Hwid7Upxk48xzDsjfabN3MeUpGBmAEy3z
+         XbM6AqogmYdOJx8ZmX723IEaUVC8jDQ6zn9l35aJtShWXJFEs/M/JskokMhJDGzm6E
+         6LKRoITMeJPs8QXXFXZZuys1/+F16wEAeKaGb3GQ=
+Date:   Sun, 19 Aug 2018 18:25:41 +0100
 From:   Jonathan Cameron <jic23@kernel.org>
 To:     Stefan Popa <stefan.popa@analog.com>
 Cc:     <broonie@kernel.org>, <lars@metafoo.de>,
@@ -47,7 +47,7 @@ Cc:     <broonie@kernel.org>, <lars@metafoo.de>,
         <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v6 4/6] iio:adxl372: Add FIFO and interrupts support
-Message-ID: <20180819181218.6a63a657@archlinux>
+Message-ID: <20180819182541.5cb2ea6f@archlinux>
 In-Reply-To: <1533890783-13456-5-git-send-email-stefan.popa@analog.com>
 References: <1533890783-13456-1-git-send-email-stefan.popa@analog.com>
         <1533890783-13456-5-git-send-email-stefan.popa@analog.com>
@@ -73,12 +73,33 @@ Stefan Popa <stefan.popa@analog.com> wrote:
 > 
 > Signed-off-by: Stefan Popa <stefan.popa@analog.com>
 
-one minor item I'd missed previously.  I'll fix it whilst applying.
+Hi Stefan,  I'm afraid I missed a few things on previous versions of this.
 
-Applied to the togreg branch of iio.git and pushed out as testing
-to see what we've all missed that the autobuilders might find.
+If we are going to expose a general purpose trigger or allow a driver
+to use a general purpose trigger (this currently does both as neither validate
+function is provided to limit it's usage), then the trigger 'must' correspond
+to one interrupt per reading.  It's absolutely fine to have a device specific
+trigger where that isn't true though normally we would only bother exposing it
+as a trigger if there as an alternative.
 
-Thanks,
+A classic case would be that we have a fifo and use it if the trigger is the
+devices only trigger, but in the event of a different trigger being selected
+we are happy to use it with the fifo length set to 1 (or it just turned off).
+
+That allows the use of say a sysfs of hrtimer trigger with us getting the expected
+1 sample set per trigger, and the use of the fifo for this device alone.
+To do that you have make sure you have a validate_device callback provided
+for the trigger so it rejects other devices.
+
+We can just forgo alternative triggers and have the buffer driven directly.
+I don't really like that option though as it leads to abi changes if we ever
+want to add alternatives in future though we can sort of get around that using
+default triggers.
+
+So the simple solution for now is to provide validate_trigger and validate_device
+callbacks to fix it to use them only when they are the same device.
+
+We can do clever stuff later if needed to enable other triggers.
 
 Jonathan
 
@@ -104,6 +125,9 @@ Jonathan
 >  #include <linux/iio/sysfs.h>
 > +#include <linux/iio/buffer.h>
 > +#include <linux/iio/events.h>
+
+Why events?
+
 > +#include <linux/iio/trigger.h>
 > +#include <linux/iio/trigger_consumer.h>
 > +#include <linux/iio/triggered_buffer.h>
@@ -498,12 +522,6 @@ Jonathan
 >  	indio_dev->info = &adxl372_info;
 > -	indio_dev->modes = INDIO_DIRECT_MODE;
 > +	indio_dev->modes = INDIO_DIRECT_MODE | INDIO_BUFFER_SOFTWARE;
-
-This might be wrong if we don't have an interrupt.
-I'll move it when applying to be under the if (st->spi->irq) below.
-
-
-
 >  
 >  	ret = adxl372_setup(st);
 >  	if (ret < 0) {
