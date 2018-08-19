@@ -2,108 +2,75 @@ Return-Path: <SRS0=Mzg6=LC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB7EC4321D
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 12:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4068FC4321D
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 12:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C0B520BF3
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 12:39:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CgvDtK9/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C0B520BF3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C10282146E
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 12:56:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C10282146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbeHSPun (ORCPT
+        id S1726500AbeHSQHb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 19 Aug 2018 11:50:43 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:40305 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbeHSPun (ORCPT
+        Sun, 19 Aug 2018 12:07:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56454 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726388AbeHSQHb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Aug 2018 11:50:43 -0400
-Received: by mail-qk0-f194.google.com with SMTP id c126-v6so9163453qkd.7
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Aug 2018 05:39:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U3/oEBIxi3HeTu12thnL/2kwqwPm/kiUzSMp2rXuYT0=;
-        b=CgvDtK9/lUTcUJjP+bKIwxecu6VZ2if2I5TNC61GlLRqsO+X3Dqyv3HrHenvSkxsgA
-         +bu7/+lmf0NYet8vlzka0wyCJ0bthffCbjj6S0wlAcfWMvhewCSLs/IMO+KER/DrRFS+
-         TCaxb1ZczYxyUWUAk0tnaIHt/7tqBiVTVTYch4U7tWnik4JlzYUKTDHJXgJ7uMMy9GAr
-         GauC0OabTdt1zZ4B66RmaensDDgZtWnFCtM0B9Zg8o/B5yG+ac8LezmjAqdyl7r1wzGV
-         TxRUinAfgnmb2/m5SkV64c9VS4dOs6P7s3OMn+auZsFFrvE+AJ6Wsfv4/oOfXdBvRGnK
-         LA5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U3/oEBIxi3HeTu12thnL/2kwqwPm/kiUzSMp2rXuYT0=;
-        b=cILQ49SvMqRkszyzrLQ80gOdduAuiAsrEBEnIBJz3dQ4dWlpZX45fG1JwxIJFTQLW7
-         WykQVHl7MPXo0FDZTD03cDwmyWAaf6RpmypJPvZt15Z4435VRV87u2nLVkspyGhNu7pm
-         ZctmD1pWY1/UDa0MGwydvEb8uDoYbT1JSKJ69ef29fb8cThFZtZ8/TvdUMGY1dWkerjJ
-         2TsnIMRGT6ZYsnlTmxOGz4sVtzkqGjjFORAjIuCCcExSOKkmmQ5dzT0+ydPUKMjNo/GJ
-         HoMg5fxJw/QEg2XILwb9nZeDCSlP+4i79Sdxhgshe1VyhptNKfLrP4mVYv6wL8Z+PrPW
-         qA+w==
-X-Gm-Message-State: AOUpUlE9slnZHzJSAUz4c+6wU4eGQ+kfBgERYNOxStCzDzGwuzq58LGA
-        pLwTcGbr6bU9nc/x0g9xoiv7LpnSkLWuY5HyYjE=
-X-Google-Smtp-Source: AA+uWPxmmhfqzl8Oz8o8AMmdJrNY/nguG5OccUbmO9pz7FW5LXNl40hGg4jZ8h5vgz52DrVTii2XpTnJpD6fqpMbmGg=
-X-Received: by 2002:a37:7004:: with SMTP id l4-v6mr36256964qkc.83.1534682362276;
- Sun, 19 Aug 2018 05:39:22 -0700 (PDT)
+        Sun, 19 Aug 2018 12:07:31 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5E56CBE;
+        Sun, 19 Aug 2018 12:56:06 +0000 (UTC)
+Date:   Sun, 19 Aug 2018 14:56:04 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Char/Misc driver fix for 4.19-rc1
+Message-ID: <20180819125604.GA24731@kroah.com>
 MIME-Version: 1.0
-References: <20180818131623.8755-1-linux@rasmusvillemoes.dk>
-In-Reply-To: <20180818131623.8755-1-linux@rasmusvillemoes.dk>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sun, 19 Aug 2018 15:39:11 +0300
-Message-ID: <CAHp75Vct9s4GwEk7pORy1gss3Acq61dG-F_C1M-DCka+YPtoSQ@mail.gmail.com>
-Subject: Re: [PATCH 0/7] assorted minor bitmap patches
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 18, 2018 at 4:17 PM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> A recent LKML thread had me look into bitmap.{h,c} again, and I
-> stumbled on/rediscovered a few things.
->
+The following changes since commit 9d3cce1e8b8561fed5f383d22a4d6949db4eadbe:
 
-Good fixes, thanks!
+  Linux 4.18-rc5 (2018-07-15 12:49:31 -0700)
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+are available in the Git repository at:
 
-P.S. Perhaps needs addressing my comment to patch 6.
-> Rasmus Villemoes (7):
->   lib/bitmap.c: remove wrong documentation
->   linux/bitmap.h: handle constant zero-size bitmaps correctly
->   linux/bitmap.h: remove redundant uses of small_const_nbits()
->   linux/bitmap.h: fix type of nbits in bitmap_shift_right()
->   linux/bitmap.h: relax comment on compile-time constant nbits
->   lib/bitmap.c: fix remaining space computation in
->     bitmap_print_to_pagebuf
->   lib/bitmap.c: simplify bitmap_print_to_pagebuf
->
->  include/linux/bitmap.h | 37 +++++++++++++++----------------------
->  lib/bitmap.c           | 21 +++++++--------------
->  2 files changed, 22 insertions(+), 36 deletions(-)
->
-> --
-> 2.16.4
->
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-4.19-rc1
 
+for you to fetch changes up to 3d27c4de8d4fb2d4099ff324671792aa2578c6f9:
 
---
-With Best Regards,
-Andy Shevchenko
+  Revert "uio: use request_threaded_irq instead" (2018-08-12 17:30:58 +0200)
+
+----------------------------------------------------------------
+Char/Misc fix for 4.19-rc1
+
+Here is a single UIO fix that I forgot to send before 4.18-final came
+out.  It reverts a UIO patch that went in the 4.18 development window
+that was causing problems.
+
+This patch has been in linux-next for a while with no problems, I just
+forgot to send it earlier, or as part of the larger char/misc patch
+series from yesterday, my fault.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Xiubo Li (1):
+      Revert "uio: use request_threaded_irq instead"
+
+ drivers/uio/uio.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
