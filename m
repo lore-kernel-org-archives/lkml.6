@@ -2,100 +2,84 @@ Return-Path: <SRS0=Mzg6=LC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 858EBC4321D
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 00:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C233CC4321D
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 01:11:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 269AB215E5
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 00:46:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OJO0UC7Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 269AB215E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 6E17821534
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 01:11:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E17821534
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tlinx.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbeHSDzX (ORCPT
+        id S1725885AbeHSETe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 18 Aug 2018 23:55:23 -0400
-Received: from ozlabs.org ([203.11.71.1]:35309 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726308AbeHSDzX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Aug 2018 23:55:23 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41tJBy4cnXz9s7X;
-        Sun, 19 Aug 2018 10:45:45 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1534639546;
-        bh=RtbwtQBitfxIAlbizWaIKT3n/dRqATZYyrPNXG149L8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OJO0UC7ZeZUhvLBh4lzuLl5U90gH+UkmaCyph8rfY/aC4WxFuDRN/uESPX6amsMM1
-         M4M9Wi4AXQfM6OdKuSQmkz32YmbB/row38syTexfH9lET/OA+yUg51PYmdn2xrlwIu
-         zROJ9w5WOX2l3XGGWddq45mR5l8MpAFeTPOzwT9EPNsXXagBQzQe5qtM5fcS/xX0Q1
-         PKqxTOduIE4ee4tq2Gj2by2RiCrlQnj9f1rJjOHM5Q9F1sOLO7Hnjx1ZAl0gd771Z3
-         gG/YX/DUgAOZ5kVKEXa57Nf84XcgoK4E+oTky3GGdr+OIHDHHw8y6GndUquJisNE/q
-         bnXCk/OW1haMg==
-Date:   Sun, 19 Aug 2018 10:45:45 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the h8300 tree
-Message-ID: <20180819104545.183ee1bc@canb.auug.org.au>
-In-Reply-To: <877ekneios.wl-ysato@users.sourceforge.jp>
-References: <20180819003005.4a5792e8@canb.auug.org.au>
-        <877ekneios.wl-ysato@users.sourceforge.jp>
+        Sun, 19 Aug 2018 00:19:34 -0400
+Received: from ishtar.tlinx.org ([173.164.175.65]:38498 "EHLO
+        Ishtar.sc.tlinx.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725741AbeHSETe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Aug 2018 00:19:34 -0400
+X-Greylist: delayed 1271 seconds by postgrey-1.27 at vger.kernel.org; Sun, 19 Aug 2018 00:19:34 EDT
+Received: from [192.168.3.12] (Athenae [192.168.3.12])
+        by Ishtar.sc.tlinx.org (8.14.7/8.14.4/SuSE Linux 0.8) with ESMTP id w7J0mk11069990
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Aug 2018 17:48:48 -0700
+Message-ID: <5B78BE6E.3080107@tlinx.org>
+Date:   Sat, 18 Aug 2018 17:48:46 -0700
+From:   Linda Walsh <lkml@tlinx.org>
+User-Agent: Thunderbird
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/OGbX_hASX3R6LDeXnlANMgi"; protocol="application/pgp-signature"
+To:     Linux-Kernel <linux-kernel@vger.kernel.org>
+Subject: problem in building 4.8.0: references to non-existent util CLANG
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/OGbX_hASX3R6LDeXnlANMgi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Is CLANG required for building now?
 
-Hi Yoshinori,
+when I did a "make xconfig" (or any make, for that matter), I get:
 
-On Sun, 19 Aug 2018 01:35:47 +0900 Yoshinori Sato <ysato@users.sourceforge.=
-jp> wrote:
->
-> > Commit
-> >=20
-> >   85f866b60ba7 ("h8300: switch to NO_BOOTMEM")
-> >=20
-> > is missing a Signed-off-by from its committer. =20
->=20
-> OK. Fixed it.
+>  make xconfig
+scripts/kconfig/qconf  Kconfig
+invocation line: ./scripts/clang-version.sh gcc     ## debug line I added
+./scripts/clang-version.sh: line 15: ./COPYING: Permission denied
+./scripts/clang-version.sh: line 23: printf: __clang_major__: invalid number
+./scripts/clang-version.sh: line 23: printf: __clang_minor__: invalid number
+./scripts/clang-version.sh: line 23: printf: __clang_patchlevel__: 
+invalid number
+init/Kconfig:24:warning: 'CLANG_VERSION': number is invalid
+.config:50:warning: symbol value '00000' invalid for CLANG_VERSION
 
-This last one is still missing your Signed-off-by ...
-(it is commit 09c7c64733a2, now)
+The reference to COPYING comes from me running make in the
+top dir, where there is a text file named COPYING, however it is
+not executable.
 
---=20
-Cheers,
-Stephen Rothwell
+I put in an echo to see what command line the script was being passed,
+"gcc"?
 
---Sig_/OGbX_hASX3R6LDeXnlANMgi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+I'm guessing but I don't think the clang script should be getting
+called at all.  I installed the sources by patching 4.17.0 (done via a
+script).
 
------BEGIN PGP SIGNATURE-----
+Are there instructions somewhere for what command(s) to run for patching?
+It seems to have changed from using the standard patch program to using
+a git version that isn't compatible w/the gnu version.  I adapted the
+script to the git version and that's seemed to work since I did
+the change.  But with 4.18.0, I am uncertain if it is working correctly.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt4vbkACgkQAVBC80lX
-0GyD4gf/YQRKGiOHhPCdQCyZ6iqc3gZka7AK1e6WQLPvnKACTeUwbG5c6G9GueHj
-s7tQNHuv9Umm66lDOBR5xMeG2kRMGADlO0tJwL0yHAsmuBKjpXtT8ZyIZncWERTX
-d6PrDPyC8qfpd4f2urOvdypceseGyQ4svv5SFpdT/9obV4FVfHmCNwal2ekPIwYC
-8g1JUYNV8/WPzeUeEgFOueiWdNuvFax9/ZdzUKO0bTSXvMXU6t2EKaMhVIzDjYGp
-ZSxjhE7WY1FoL21ix9aFDvjEd6M12lKJ3zjJwGWNNBQfFECnZlvvT8C8JXevBCoZ
-k0csi05n2bFL/VresgG3CuS14zbMHw==
-=Rh6t
------END PGP SIGNATURE-----
+If the above was the only problem, I'd be less concerned, but
+scripts run after the main build to build external modules failed.
+It seems unlikely the two problems are related, but I wanted to fix
+this first before going on to the compile-fails.
 
---Sig_/OGbX_hASX3R6LDeXnlANMgi--
+Please Cc me, as I'm not currently on the list.
+
+Thanks,
+Linda W.
+
