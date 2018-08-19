@@ -2,138 +2,65 @@ Return-Path: <SRS0=Mzg6=LC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28AD4C4321D
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 11:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1D2C4321D
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 11:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D33B12151C
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 11:32:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D33B12151C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
+	by mail.kernel.org (Postfix) with ESMTP id 298B02147D
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 11:34:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 298B02147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbeHSOnj (ORCPT
+        id S1726546AbeHSOpQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 19 Aug 2018 10:43:39 -0400
-Received: from smtp5-g21.free.fr ([212.27.42.5]:41244 "EHLO smtp5-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725885AbeHSOnj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Aug 2018 10:43:39 -0400
-Received: from tock (unknown [88.130.57.217])
-        (Authenticated sender: albeu)
-        by smtp5-g21.free.fr (Postfix) with ESMTPSA id 541C25FFAC;
-        Sun, 19 Aug 2018 13:31:09 +0200 (CEST)
-Date:   Sun, 19 Aug 2018 13:31:06 +0200
-From:   Alban <albeu@free.fr>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Aban Bedel <albeu@free.fr>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Naren <naren.kernel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 06/29] mtd: Add support for reading MTD devices via
- the nvmem API
-Message-ID: <20180819133106.0420df5f@tock>
-In-Reply-To: <20180817182720.6a6e5e8e@bbrezillon>
-References: <20180810080526.27207-1-brgl@bgdev.pl>
-        <20180810080526.27207-7-brgl@bgdev.pl>
-        <20180817182720.6a6e5e8e@bbrezillon>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Sun, 19 Aug 2018 10:45:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35018 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725885AbeHSOpQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Aug 2018 10:45:16 -0400
+Received: from localhost (unknown [194.244.16.108])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D4D1C92F;
+        Sun, 19 Aug 2018 11:34:05 +0000 (UTC)
+Date:   Sun, 19 Aug 2018 13:34:01 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nishad Kamdar <nishadkamdar@gmail.com>
+Cc:     Joe Perches <joe@perches.com>, NeilBrown <neil@brown.name>,
+        devel@driverdev.osuosl.org,
+        Christian =?iso-8859-1?Q?L=FCtke-Stetzkamp?= <christian@lkamp.de>,
+        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>
+Subject: Re: [PATCH v3] staging: mt7621-mmc: Fix debug macros and their usages
+Message-ID: <20180819113401.GB18715@kroah.com>
+References: <20180819100458.GA13296@nishad>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/TQqb4/k1M=FtYu85dR=ch4z"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180819100458.GA13296@nishad>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/TQqb4/k1M=FtYu85dR=ch4z
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Aug 19, 2018 at 03:35:02PM +0530, Nishad Kamdar wrote:
+> Fixed four debug macros and their usages. Replaced printk with
+> dev_<level> without __func__ or __LINE__ or current->comm and
+> current->pid. Further removed the do {} while(0) loop for single
+> statement macros.
+> Out of the four, replaced all usages of ERR_MSG and IRQ_MSG with
+> dev_err() in the code itself and dropped them from dbg.h.
+> Removed all INIT_MSG usages and dropped it from dgb.h.
+> Issues found by checkpatch.
 
-On Fri, 17 Aug 2018 18:27:20 +0200
-Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+This needs to be multiple patches.  One for each type of macro you are
+deleting/changing, not all lumped together into one big patch.
 
-> Hi Bartosz,
->=20
-> On Fri, 10 Aug 2018 10:05:03 +0200
-> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->=20
-> > From: Alban Bedel <albeu@free.fr>
-> >=20
-> > Allow drivers that use the nvmem API to read data stored on MTD devices.
-> > For this the mtd devices are registered as read-only NVMEM providers.
-> >=20
-> > Signed-off-by: Alban Bedel <albeu@free.fr>
-> > [Bartosz:
-> >   - use the managed variant of nvmem_register(),
-> >   - set the nvmem name]
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com> =20
->=20
-> What happened to the 2 other patches of Alban's series? I'd really
-> like the DT case to be handled/agreed on in the same patchset, but
-> IIRC, Alban and Srinivas disagreed on how this should be represented.
-> I hope this time we'll come to an agreement, because the MTD <-> NVMEM
-> glue has been floating around for quite some time...
+Plaese fix that up and resend.
 
-These other patches were to fix what I consider a fundamental flaw in
-the generic NVMEM bindings, however we couldn't agree on this point.
-Bartosz later contacted me to take over this series and I suggested to
-just change the MTD NVMEM binding to use a compatible string on the
-NVMEM cells as an alternative solution to fix the clash with the old
-style MTD partition.
+thanks,
 
-However all this has no impact on the code needed to add NVMEM support
-to MTD, so the above patch didn't change at all.
-
-Alban
-
---Sig_/TQqb4/k1M=FtYu85dR=ch4z
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJbeVT7AAoJEHSUmkuduC28SdMP/3+kDayzSjsABxnvDQU4p5lQ
-NA13kysUhSl4DlckghrBsgoq9/Jwg+jFjOWflojpHLDKAWpQyzZQU/pd+M99JorF
-StfVexTlBJqB0gz0wOktfK2XCspxhXSlUa5oWKPDdvVPPNNdVDhfNaQXo6m1SWPg
-DH4Dqmc58UUX0VtLVjPscQLECINAbhvb0T6axgnyev7GXhoV8BJGZs9D+Ap3MAUW
-afsXgaAOaQ8W8W14m8KJ3FsJnj78vXVKoZSbWDvhAt67gt8nN/7SMtEx/vT1ceYD
-vlaWHNMi/6Vsx4SsrdfP2OD9mjj17J61UFjtdXgJDLMgX+Xligr+/uGJSYSCXCwD
-skxKnfs9B391RVeH76q1fIFE1sTBNTO7/3uwl9zF5vDKoPrLtVEu8RpN0SDxZMHJ
-qQy05vA8FoG33IeUAUQ0URiDHH9BaYOmMT735CCtsJD2lujQWU93MXIgb7/5lb0u
-FzYH5lpWnqeP8NJnLplr9g2LG7ucE4IjUoKjp5OHEwv798HWUILmCK4TZRWDwrGx
-cV7a7p0jXiRgkw5haBA7zs3bjYo0p7k46F+6CZFznQEndOKReOsiYT9kdr53V2qK
-sjleNX8U24LXgPeTibUkCfDsk2o9vbB0qd07Afc4div8Blm3pUbd/g1XxTdJsv4a
-zX3GoEXnpt5VB6qK13EN
-=kqAD
------END PGP SIGNATURE-----
-
---Sig_/TQqb4/k1M=FtYu85dR=ch4z--
+greg k-h
