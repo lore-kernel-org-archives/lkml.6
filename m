@@ -2,97 +2,178 @@ Return-Path: <SRS0=Mzg6=LC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E70B9C4321D
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 15:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D5AAC4321D
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 16:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D8FD213A2
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 15:38:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bI2U1ryc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D8FD213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id C60642147E
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 16:09:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C60642147E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726584AbeHSStx (ORCPT
+        id S1726629AbeHSTU4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 19 Aug 2018 14:49:53 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53488 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725953AbeHSStx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Aug 2018 14:49:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jbwhBKgVvMW0+roR0Gcl3dLd4LoGTGafgVwP75EjvF4=; b=bI2U1ryc+Yarr4ew2oWCh1cE4
-        Cvf0gjQS562rDh7QoCLF7v5UW/QdWqQIcmorVYeyR+KIZQMQB2+ZM/fK7ca1Hg70fFXF8BSxXYa85
-        Fl1OSpLzVfGFxUpzoEDluPPpmCfNFgRDXmIDmgs2jVhm3UBTw/TuS6KbhbWMF4wyCz8sALPIHQTFa
-        I+oO0s1pP6iioiipQLyAHFVA1IR3eC6Ki0utnBKoB8iSZ48ru5uP5dHjhc443mdsws8WyBQ3CTNeK
-        06bOVMkmA00mkLb+s/9ZOFyUEzlTPvgm5q84nmzShZhkImnQgxyxvzXqjCnfEos7mska0R5XyolXn
-        H045HIsTQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1frPmD-0005Wc-1C; Sun, 19 Aug 2018 15:38:01 +0000
-Subject: Re: make *config regression: pkg-build
-To:     Meelis Roos <mroos@linux.ee>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org,
-        Linux Kernel list <linux-kernel@vger.kernel.org>
-References: <alpine.LRH.2.21.1808191406030.12334@math.ut.ee>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <177f25ad-de40-ce3f-987f-ac34c2559be4@infradead.org>
-Date:   Sun, 19 Aug 2018 08:37:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1808191406030.12334@math.ut.ee>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sun, 19 Aug 2018 15:20:56 -0400
+Received: from smtp20.cstnet.cn ([159.226.251.20]:44568 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726583AbeHSTU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Aug 2018 15:20:56 -0400
+Received: from localhost.localdomain (unknown [110.184.154.248])
+        by APP-10 (Coremail) with SMTP id tACowAAXHmLflXlb0WCwAg--.52S2;
+        Mon, 20 Aug 2018 00:08:06 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
+        pbonzini@redhat.com, tony.luck@intel.com, rkrcmar@redhat.com,
+        boris.ostrovsky@oracle.com, jgross@suse.com, rjw@rjwysocki.net,
+        lenb@kernel.org, viresh.kumar@linaro.org, mchehab@kernel.org,
+        trenn@suse.com, shuah@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-pm@vger.kernel.org,
+        kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
+        Pu Wen <puwen@hygon.cn>
+Subject: [PATCH v4 00/16] Add support for Hygon Dhyana Family 18h processor
+Date:   Mon, 20 Aug 2018 00:07:49 +0800
+Message-Id: <cover.1534599097.git.puwen@hygon.cn>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: tACowAAXHmLflXlb0WCwAg--.52S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAryUAr4rCFy3Ar1fuFykZrb_yoWrurWkpF
+        ZFkrZ5tF4rur9xAasrCr1kZFyfZa18uFW7Kw1UW3sxX3WYq347Xrn7J3W7Xw1qvrn5GF1S
+        yFya9FWxXFykJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUv214x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+        6r4UJwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z280aVCY1x0267AKxVW8JV
+        W8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+        2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+        W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+        Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+        xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+        MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I
+        0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAF
+        wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+        7VUb9qXPUUUUU==
+X-Originating-IP: [110.184.154.248]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/19/2018 04:15 AM, Meelis Roos wrote:
-> Just tried to run 'make menuconfig' on v4.18-10568-g08b5fa819970 and 
-> found a bad surprise:
-> 
-> 'make *config' requires 'pkg-config'. Please install it.
-> make[1]: *** [scripts/kconfig/Makefile:219: scripts/kconfig/.mconf-cfg] Error 1
-> 
-> This is clearly a regression - I have libncurses devele pakcage 
-> installed in the default system location (as do 99%+ on actuall 
-> develeopers proobably) and in this case, pkg-config is useless. 
-> pkg-config is needed only when libraries and headers are installed in 
-> non-default locations but it is bad to require installation of 
-> pkg-config on all the machines where make menuconfig would be possibly 
-> run (for example, I have a aboult 100 machine kernel testbed with 
-> self-hosted kernel compilation and machine-specific kernel 
-> configurations that ocassionally need tweaking).
-> 
-> I notice 4.18 complained it can not find pkg-config but still worked. 
-> This is clearly better than now.
->
-> If we want to support developers with libraries in non-default 
-> locations, why not - but the common case of system include path should 
-> work without any trouble or warnings. For exaple, test if compilation 
-> against ncurses works, and if not retry it with pkg-config (and error 
-> out if it does not give working result).
-> 
+As a new x86 CPU Vendor, Chengdu Haiguang IC Design Co., Ltd (Hygon)
+is a Joint Venture between AMD and Haiguang Information Technology Co.,
+Ltd., and aims at providing high performance x86 processor for China
+server market.
 
-Hi,
-This is due to my patch: 4ab3b80159d4db63b902ef635d4b5e882911b2da.
+The first generation Hygon's processor(Dhyana) originates from AMD
+technology and shares most of the architecture with AMD's family 17h,
+but with different CPU Vendor ID("HygonGenuine")/PCIE Device Vendor ID
+(0x1D94)/Family series number (Family 18h).
 
-Yamada-san, any ideas?  Feel free to just revert it.
+To enable the support of Linux kernel to Hygon's CPU, we added a new
+vendor type (X86_VENDOR_HYGON, with value of 9) in arch/x86/include/
+asm/processor.h, and shared most of kernel support codes with AMD
+family 17h.
 
-thanks,
+This patch series have been applied and tested successfully in Hygon's
+Dhyana SoC silicon. Also tested on AMD's EPYC (Family 17h) processor
+works fine and makes no harm to existing codes.
+
+
+v3->v4:
+  - Rebased on 4.18.3 and tested against it.
+  - Merge patchs 05/17 perfctr and 10/17 events in v3 to patch 05/16
+    PMU for better patch function group.
+  - Add hygon_get_topology_early() in patch 01/16.
+  - Rework vendor checking and refine coding style.
+  - Add Acked-by from Bjorn Helgaas for pci.
+  - Add Acked-by from Rafael J. Wysocki for cpufreq and acpi.
+
+v2->v3:
+  - Rebased on 4.18-rc8 and tested against it.
+  - Rework vendor checking codes to improve consistency.
+
+v1->v2:
+  - Rebased on 4.18-rc6 and tested against it.
+  - Split the patchset to small series of patches.
+  - Rework patch descriptions.
+  - Create a separated arch/x86/kernel/cpu/hygon.c for Dhyana CPU
+    initialization to reduce long-term maintenance effort.
+
+
+Pu Wen (16):
+  x86/cpu: create Dhyana init file and register new cpu_dev to system
+  x86/cache: get cache size/leaves and setup cache cpumap for Dhyana
+  x86/mtrr: get MTRR number and support TOP_MEM2
+  x86/smpboot: smp init nodelay and no flush caches before sleep
+  x86/pmu: enable Hygon support to PMU infrastructure
+  x86/nops: init ideal_nops for Hygon
+  x86/pci: add Hygon PCI vendor and northbridge support
+  x86/apic: add modern APIC support for Hygon
+  x86/bugs: add lfence mitigation to spectre v2 and no meltdown for
+    Hygon
+  x86/mce: enable Hygon support to MCE infrastructure
+  x86/kvm: enable Hygon support to KVM infrastructure
+  x86/xen: enable Hygon support to Xen
+  driver/acpi: enable Hygon support to ACPI driver
+  driver/cpufreq: enable Hygon support to cpufreq driver
+  driver/edac: enable Hygon support to AMD64 EDAC driver
+  tools/cpupower: enable Hygon support to cpupower tool
+
+ MAINTAINERS                                        |   6 +
+ arch/x86/Kconfig                                   |   2 +-
+ arch/x86/Kconfig.cpu                               |  13 +
+ arch/x86/events/amd/core.c                         |   6 +
+ arch/x86/events/amd/uncore.c                       |  15 +-
+ arch/x86/events/core.c                             |   4 +
+ arch/x86/include/asm/cacheinfo.h                   |   1 +
+ arch/x86/include/asm/kvm_emulate.h                 |   4 +
+ arch/x86/include/asm/mce.h                         |   5 +
+ arch/x86/include/asm/nospec-branch.h               |   4 +-
+ arch/x86/include/asm/processor.h                   |   3 +-
+ arch/x86/include/asm/virtext.h                     |   5 +-
+ arch/x86/kernel/alternative.c                      |   4 +
+ arch/x86/kernel/amd_nb.c                           |  51 ++-
+ arch/x86/kernel/apic/apic.c                        |  19 +-
+ arch/x86/kernel/apic/probe_32.c                    |   1 +
+ arch/x86/kernel/cpu/Makefile                       |   1 +
+ arch/x86/kernel/cpu/bugs.c                         |  28 +-
+ arch/x86/kernel/cpu/cacheinfo.c                    |  31 +-
+ arch/x86/kernel/cpu/common.c                       |   1 +
+ arch/x86/kernel/cpu/cpu.h                          |   1 +
+ arch/x86/kernel/cpu/hygon.c                        | 409 +++++++++++++++++++++
+ arch/x86/kernel/cpu/mcheck/mce-severity.c          |   3 +-
+ arch/x86/kernel/cpu/mcheck/mce.c                   |  21 +-
+ arch/x86/kernel/cpu/mtrr/cleanup.c                 |   3 +-
+ arch/x86/kernel/cpu/mtrr/generic.c                 |   5 +-
+ arch/x86/kernel/cpu/mtrr/mtrr.c                    |   2 +-
+ arch/x86/kernel/cpu/perfctr-watchdog.c             |   2 +
+ arch/x86/kernel/smpboot.c                          |   4 +-
+ arch/x86/kvm/emulate.c                             |  11 +-
+ arch/x86/pci/amd_bus.c                             |   6 +-
+ arch/x86/xen/pmu.c                                 |  12 +-
+ drivers/acpi/acpi_pad.c                            |   1 +
+ drivers/acpi/processor_idle.c                      |   1 +
+ drivers/cpufreq/acpi-cpufreq.c                     |   5 +
+ drivers/cpufreq/amd_freq_sensitivity.c             |   9 +-
+ drivers/edac/amd64_edac.c                          |  52 ++-
+ drivers/edac/amd64_edac.h                          |   5 +
+ drivers/edac/mce_amd.c                             |  15 +-
+ include/linux/pci_ids.h                            |   2 +
+ tools/power/cpupower/utils/cpufreq-info.c          |   6 +-
+ tools/power/cpupower/utils/helpers/amd.c           |   6 +-
+ tools/power/cpupower/utils/helpers/cpuid.c         |   8 +-
+ tools/power/cpupower/utils/helpers/helpers.h       |   2 +-
+ tools/power/cpupower/utils/helpers/misc.c          |   3 +-
+ .../cpupower/utils/idle_monitor/mperf_monitor.c    |   3 +-
+ 46 files changed, 732 insertions(+), 69 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/hygon.c
+
 -- 
-~Randy
+2.7.4
+
