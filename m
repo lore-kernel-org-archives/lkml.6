@@ -2,72 +2,138 @@ Return-Path: <SRS0=Mzg6=LC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A791C4321D
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 11:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28AD4C4321D
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 11:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4987E20BEC
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 11:23:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4987E20BEC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D33B12151C
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 11:32:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D33B12151C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbeHSOeK (ORCPT
+        id S1726496AbeHSOnj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 19 Aug 2018 10:34:10 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:39447 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbeHSOeK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Aug 2018 10:34:10 -0400
-Received: by mail-io0-f198.google.com with SMTP id x5-v6so10971231ioa.6
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Aug 2018 04:23:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=SXA1t5TbSpBXYpsB7H1pYbX3kz739RdMR2nW17M74AY=;
-        b=gUom57kA1pTB43IwBB5EI09WbrfWBievkJ/7Qs0WU/s/lKz5+xFbJYot0PO3k0XUhr
-         V5THt2ABn7KV1TWvX60qWljbNE1+nw8TOuS/fANX1ph4VqfPJ1QsEMWL2fpsQLD3Axyl
-         e2BqZxoH2647sAISPprP6RoDij5EKHCRiyElJfFQ0Iq19sXioicTgv9QEJ0ZT08ue45/
-         LQd5gOTm7drOhoTTwEpPTilaj6CJ7XNhswjUMuiiB9Sf+qP6VzMnds7vn8W82eWMhCsK
-         uLZpD90mb+g2fdz7rvYCjchwshgGQlWhmWgKgSE0dQyEfoRZDv3spYdq7a92Wzu5SfRh
-         63pA==
-X-Gm-Message-State: AOUpUlHhQUgCgi2dCnlSzHW3jJYyR0n4dNqCH4NYcx/gchQQgadgR0iw
-        L7TCSISSCcE/PT2LjvI6GtpPcs+GCA65Y2TU3WY2P+KbHKzP
-X-Google-Smtp-Source: AA+uWPxmNsCy5sJPgRrRuq3Rmv1klSD5f9bRxneokspaGt38cS3mAAl0ae3s1Pptzyg7Ke9WKwk/ILt1FB16/QIWWUFoDhqsFsgt
+        Sun, 19 Aug 2018 10:43:39 -0400
+Received: from smtp5-g21.free.fr ([212.27.42.5]:41244 "EHLO smtp5-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725885AbeHSOnj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Aug 2018 10:43:39 -0400
+Received: from tock (unknown [88.130.57.217])
+        (Authenticated sender: albeu)
+        by smtp5-g21.free.fr (Postfix) with ESMTPSA id 541C25FFAC;
+        Sun, 19 Aug 2018 13:31:09 +0200 (CEST)
+Date:   Sun, 19 Aug 2018 13:31:06 +0200
+From:   Alban <albeu@free.fr>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Aban Bedel <albeu@free.fr>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Naren <naren.kernel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 06/29] mtd: Add support for reading MTD devices via
+ the nvmem API
+Message-ID: <20180819133106.0420df5f@tock>
+In-Reply-To: <20180817182720.6a6e5e8e@bbrezillon>
+References: <20180810080526.27207-1-brgl@bgdev.pl>
+        <20180810080526.27207-7-brgl@bgdev.pl>
+        <20180817182720.6a6e5e8e@bbrezillon>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:1504:: with SMTP id 4-v6mr19317306iov.79.1534677782630;
- Sun, 19 Aug 2018 04:23:02 -0700 (PDT)
-Date:   Sun, 19 Aug 2018 04:23:02 -0700
-In-Reply-To: <CAOQ4uxiA2ba2EuQkgttA7rRMYgGnEPZQX-f8g12M8gDTaeht7Q@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000141d150573c80415@google.com>
-Subject: Re: WARNING in __fsnotify_recalc_mask
-From:   syzbot <syzbot+c34692a51b9a6ca93540@syzkaller.appspotmail.com>
-To:     amir73il@gmail.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/TQqb4/k1M=FtYu85dR=ch4z"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+--Sig_/TQqb4/k1M=FtYu85dR=ch4z
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-syzbot tried to test the proposed patch but build/boot failed:
+On Fri, 17 Aug 2018 18:27:20 +0200
+Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 
-patch is already applied
+> Hi Bartosz,
+>=20
+> On Fri, 10 Aug 2018 10:05:03 +0200
+> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>=20
+> > From: Alban Bedel <albeu@free.fr>
+> >=20
+> > Allow drivers that use the nvmem API to read data stored on MTD devices.
+> > For this the mtd devices are registered as read-only NVMEM providers.
+> >=20
+> > Signed-off-by: Alban Bedel <albeu@free.fr>
+> > [Bartosz:
+> >   - use the managed variant of nvmem_register(),
+> >   - set the nvmem name]
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com> =20
+>=20
+> What happened to the 2 other patches of Alban's series? I'd really
+> like the DT case to be handled/agreed on in the same patchset, but
+> IIRC, Alban and Srinivas disagreed on how this should be represented.
+> I hope this time we'll come to an agreement, because the MTD <-> NVMEM
+> glue has been floating around for quite some time...
 
+These other patches were to fix what I consider a fundamental flaw in
+the generic NVMEM bindings, however we couldn't agree on this point.
+Bartosz later contacted me to take over this series and I suggested to
+just change the MTD NVMEM binding to use a compatible string on the
+NVMEM cells as an alternative solution to fix the clash with the old
+style MTD partition.
 
-Tested on:
+However all this has no impact on the code needed to add NVMEM support
+to MTD, so the above patch didn't change at all.
 
-commit:         2df79a019776 fsnotify: fix false positive warning on inode..
-git tree:       https://github.com/amir73il/linux.git/fsnotify-fixes
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11717bf2400000
+Alban
 
+--Sig_/TQqb4/k1M=FtYu85dR=ch4z
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJbeVT7AAoJEHSUmkuduC28SdMP/3+kDayzSjsABxnvDQU4p5lQ
+NA13kysUhSl4DlckghrBsgoq9/Jwg+jFjOWflojpHLDKAWpQyzZQU/pd+M99JorF
+StfVexTlBJqB0gz0wOktfK2XCspxhXSlUa5oWKPDdvVPPNNdVDhfNaQXo6m1SWPg
+DH4Dqmc58UUX0VtLVjPscQLECINAbhvb0T6axgnyev7GXhoV8BJGZs9D+Ap3MAUW
+afsXgaAOaQ8W8W14m8KJ3FsJnj78vXVKoZSbWDvhAt67gt8nN/7SMtEx/vT1ceYD
+vlaWHNMi/6Vsx4SsrdfP2OD9mjj17J61UFjtdXgJDLMgX+Xligr+/uGJSYSCXCwD
+skxKnfs9B391RVeH76q1fIFE1sTBNTO7/3uwl9zF5vDKoPrLtVEu8RpN0SDxZMHJ
+qQy05vA8FoG33IeUAUQ0URiDHH9BaYOmMT735CCtsJD2lujQWU93MXIgb7/5lb0u
+FzYH5lpWnqeP8NJnLplr9g2LG7ucE4IjUoKjp5OHEwv798HWUILmCK4TZRWDwrGx
+cV7a7p0jXiRgkw5haBA7zs3bjYo0p7k46F+6CZFznQEndOKReOsiYT9kdr53V2qK
+sjleNX8U24LXgPeTibUkCfDsk2o9vbB0qd07Afc4div8Blm3pUbd/g1XxTdJsv4a
+zX3GoEXnpt5VB6qK13EN
+=kqAD
+-----END PGP SIGNATURE-----
+
+--Sig_/TQqb4/k1M=FtYu85dR=ch4z--
