@@ -2,129 +2,147 @@ Return-Path: <SRS0=Mzg6=LC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F9CC4321D
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 04:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6ABAC4321D
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 05:09:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A85D52170B
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 04:01:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 637AD215EB
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 05:09:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PVUA79Ht"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A85D52170B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="bR07Rq9O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 637AD215EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726031AbeHSHLo (ORCPT
+        id S1726105AbeHSITT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 19 Aug 2018 03:11:44 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:37950 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725812AbeHSHLo (ORCPT
+        Sun, 19 Aug 2018 04:19:19 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:55832 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725880AbeHSITT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Aug 2018 03:11:44 -0400
-Received: by mail-qt0-f194.google.com with SMTP id x7-v6so3656491qtk.5
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Aug 2018 21:01:39 -0700 (PDT)
+        Sun, 19 Aug 2018 04:19:19 -0400
+Received: by mail-it0-f66.google.com with SMTP id d10-v6so16481550itj.5
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Aug 2018 22:09:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=5D4YUF+p0alJRPnlxV77AWTJkir6fdQLSR8NBHJS0X4=;
-        b=PVUA79HtoOEBHBuPCziHD/XF9UX3ZpJ3vaV9h+OUl+z5lM8uwrmWSgNNcsKHPouDPC
-         v5GxFyHrruLlumfrc2dZNMggTRhxqIQZPFcLbRAWdEVqxg8nlS7YWsVEiM6Bb2raSCUT
-         c5iMbmLUIW9tlbL10hDi0MejLlpsNu5nnG+SnbD8zpiTR9ugBNvNK+hRzMEViC8sFoMH
-         LawWa9h8lziDqEIJHsfs6PudZ7XSmz8yoAwi/GYu79ZDsnruKTgJTC9DgZWg1LKaZ6uq
-         X2Gwj6ausy+mhqUXrb8TyuRnuaPpH5aT6+Qe9KL1GiDqLfpQg4+7rYMs+GUMc16Fia54
-         v16w==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1XsHtSspreRn+8La8y2Qrz0Yl5hoZv7Msw/9Dhh58Cs=;
+        b=bR07Rq9OTcQ3Mmhw9iJ2giaeMHHaUGE0YhCfcP91B2W2K09DZVUKDo0b8YmIj62zdq
+         AufqqffoPr/b9eiWtUcJ8hBLCDrzmd6CXpmzP+UC4w/mCNTRWdAuFyk++mW7MN8H3AV4
+         hc9robsYhkYJBT2oAHpLki9mOjzymXfoGDfjIPL6UIPhsVkt0hOeNYmmIk4PhxcTCxqH
+         gilQ8QjJGOlzmvQEF8fs0/gUkcegX2h1wNJOK2sq7RmcInieGf8TR1eBB7e7zlLZVi4w
+         v05G6r2r3GzqzEd/Vutte8jhZ6ssQRGKc4budiMHrUN3wI7+HRkqQhA4KLgu4h9+ob4g
+         jK2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=5D4YUF+p0alJRPnlxV77AWTJkir6fdQLSR8NBHJS0X4=;
-        b=U+E9lchX+TIzpuL80xCsQW8V1zj0NEeLQoQbuystyojhcqDNLSPbJ0+MOPm9Xu60qU
-         zZRKtSE7DfuV5+UAuBRymJ3QgLmTeznkUyiDmXxlkUUdRiWIdiNiQcAtR5CgKXprTmLZ
-         aRZnBkAL/8JCZnBkO1+ZrmE5/4fnclfz34p4bjVcxVte6p+zSXAqUNikUbn3G8OA8puA
-         DIW82RW5L+G+ExJ6bZ4wGOh+BFeH22Eo1eZ78bHHkbtqZIKk/abTq7jSewhKs4+jsnGM
-         W4uc5E6VcXkk+k7nzg5AkeMnVWHqMzJuFW1dTIoP8/CfqmYwwG7xpdq0kRZAHL0sntmD
-         4zPw==
-X-Gm-Message-State: AOUpUlGO+98dEoj0eF4nvqI9X3FAblnb0uLVgDsWsZ9DwQddsTx7rK37
-        fBNaTkNalwnVoWXbYO6atutA4f1OHfM=
-X-Google-Smtp-Source: AA+uWPy4v3qyWdV/lqnoRf4PnwCFCETwkhjLVfcO8HuJq2vXfnISdurB98EAimeSMz3RMzz08yH+Fg==
-X-Received: by 2002:a0c:a162:: with SMTP id d89-v6mr36671744qva.198.1534651299429;
-        Sat, 18 Aug 2018 21:01:39 -0700 (PDT)
-Received: from 192.168.190.131 ([104.237.86.149])
-        by smtp.gmail.com with ESMTPSA id n186-v6sm3353894qkb.32.2018.08.18.21.01.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 18 Aug 2018 21:01:38 -0700 (PDT)
-From:   Ocean He <oceanhehy@gmail.com>
-To:     dan.j.williams@intel.com, ross.zwisler@linux.intel.com,
-        vishal.l.verma@intel.com, dave.jiang@intel.com
-Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        Ocean He <hehy1@lenovo.com>
-Subject: [PATCH] libnvdimm, region_devs: stop NDD_ALIASING bit test if one test pass
-Date:   Sun, 19 Aug 2018 00:01:28 -0400
-Message-Id: <1534651288-30306-1-git-send-email-oceanhehy@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1XsHtSspreRn+8La8y2Qrz0Yl5hoZv7Msw/9Dhh58Cs=;
+        b=K+mrM/rbdUX5pyZF/6/HwWcuSr+ydjltsErI/X5legUGSjOkLhgPEwJ1Glm6saGjrL
+         KAcB+s2w5iZWn8E7vVpJqBcZhVfJTrujtEiAIZg7rLMTu1ck/QBd9l1W2N6K2Gv4gtMD
+         NndnOp+1oO0vJ0bh2JegocjpDbL7va7iKrzVUid0haXm226DMpdQVzhK/kHc2uzDc+e3
+         8jOCcotlXYWgbFpPUqazEKp4WdeRJQJkO9uOgjld+w5ds5u0Q1Bkf1yAVndukZGsS6iF
+         Ws+MN1dln5iol/T+Zeq3i67wXRelABmhtXDSWMkc0hoPHRU6VTQyiC2i4R//UHuzUtGk
+         P4xg==
+X-Gm-Message-State: AOUpUlGTtnMmlAtYia0I4xbJ1XmhoxVW7MtpmZJU3pLrNMOs5kRo2l+U
+        jgkBcrN+bIVjQ7eXGZeB374/+7P6sjn9et+Dfsg=
+X-Google-Smtp-Source: AA+uWPyfXsotzGI0eODsuMjCspLOIh/Q185LnreS3tdiC7eyEiqasyLPCRYHfdmK25WuUZyUf7uhbxJmQYYwraSrRt8=
+X-Received: by 2002:a02:4142:: with SMTP id x63-v6mr36817321jaa.127.1534655345187;
+ Sat, 18 Aug 2018 22:09:05 -0700 (PDT)
+MIME-Version: 1.0
+References: <1b332ae402bfc3806b834ee2c050dbc52b7eeb01.camel@intel.com> <CA+55aFy18-r8FM614FWo8o0T2yOSy9rvv1hX50EOij84v1n1-g@mail.gmail.com>
+In-Reply-To: <CA+55aFy18-r8FM614FWo8o0T2yOSy9rvv1hX50EOij84v1n1-g@mail.gmail.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Sat, 18 Aug 2018 22:08:53 -0700
+Message-ID: <CAA9_cmcGchAuDB-8kz34PjJeR10rAKPV4k=thahojiC5XNWY3Q@mail.gmail.com>
+Subject: Re: [GIT PULL]: libnvdimm updates for v4.19-rc1
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "dave.jiang" <dave.jiang@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ocean He <hehy1@lenovo.com>
+/me peeks in from vacation and realizes he has left his coverage with a mess
 
-There is no need to finish entire loop to execute NDD_ALIASING bit test
-against every nvdimm->flags. In practice, all the nd_mapping->nvdimm
-have the same flags.
+On Sat, Aug 18, 2018 at 4:15 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Fri, Aug 17, 2018 at 9:17 AM Jiang, Dave <dave.jiang@intel.com> wrote:
+> >
+> > Please pull to receive libnvdimm contributions for v4.19-rc1
+>
+> So I don't care about the libnvdimm code itself, but when you guys add
+> code to the core mm/ code, I start looking.
+>
+> And when I then see shit like this:
+>
+>         if (is_zone_device_page(p))
+>                 tk->size_shift = ilog2(dev_pagemap_mapping_size(p, vma));
+>
+> I go "No".
+>
+> There's two issues with this:
+>
+>  - the damn thing can return 0, which would be an error for ilog2, and
+> the result is undefined
+>
+>    You never check for errors. There's a check for tk->size_shift ==
+> 0, but is that actually the guaranteed return value of ilog2(0)? No.
+>
+>  - there is exactly one user of dev_pagemap_mapping_size(), and the above is it.
+>
+>    Why the hell didn't that function just return the number of bits to
+> begin with?
 
-Because the check of alias is "if (alias)" but not 
-"if (alias == nd_region->ndr_mappings)", there is no function change while
-just save a few cycles.  
+In an earlier version of the patch set the raw size was used, but yes,
+now we only need the number of bits.
 
-Signed-off-by: Ocean He <hehy1@lenovo.com>
----
-A test to check if all the nd_mapping->nvdimm have the same flags, using 
-Lenovo ThinkSystem SR630 and 4.18-rc6.
+> I do not care if you screw up your own particular driver that much.
+>
+> But when I see a pull request with complete and utter garbage in the
+> core mm part, I will not pull.
+>
+> This is not acceptable.
+>
+> Pulled, merge conflict fixed, and then immediately unpulled again.
+>
+> I do not want to *EVER* see these kinds of patches to core MM code.
+> And I'm not going to pull these patches or anythinig that looks like
+> it has any trace of this shit.
+>
+> I get upset, because dammit, I expect better. I don't want to go "oh,
+> this changes core code, let's just skim over the patches" and
+> immediately find something fundamentally broken like this.
 
-# ipmctl show -dimm
+Yes, that's my wreckage. I particularly should have known better
+because I have seen your ilog2() misuse review comments on other patch
+sets and was careless in this instance. I was focused on the
+dax_lock_mapping_entry() implementation and did not circle back to
+sanity check this when the test case started passing (not an excuse,
+just thinking through how I overlooked this).
 
-DimmID  Capacity        HealthState     ActionRequired  LockState       FWVersion
-0x0021  125.7 GiB       Healthy         0               Disabled        01.00.00.4888
-0x0121  125.7 GiB       Healthy         0               Disabled        01.00.00.4888
-0x1021  125.7 GiB       Healthy         0               Disabled        01.00.00.4888
-0x1121  125.7 GiB       Healthy         0               Disabled        01.00.00.4888
+This support for turning machine checks in dax mappings into SIGBUS
+unfortunately ended up touching "all the things" across mm/ and x86/
+in addition to drivers/nvdimm/ and drivers/dax/. It ran out of time
+for 4.18, and to help not miss 4.19 I offered to coordinate the series
+in libnvdimm.git with acks from Naoya, Ingo, and Jan.
 
-# ipmctl create -f -goal -socket 0x0 PersistentMemoryType=AppDirect
+If it can still make 4.19, would you except a fixed up branch?
 
-# ipmctl create -f -goal -socket 0x1 PersistentMemoryType=AppDirect
+The justification for pushing this sooner rather than later is to
+start the pipeline to the distros since enterprise in-memory-database
+developers reported this gap in the kernel memory error handling
+compared to the DRAM / page cache case.
 
-# reboot, to make goal configuration take effect.
-
-# ndctl create-namespace -r region0 -s 100m -t pmem -m fsdax
-
-# ndctl create-namespace -r region1 -s 100m -t pmem -m fsdax
-
-# reboot and find all the nd_mapping->nvdimm have the same flags.
-
- drivers/nvdimm/region_devs.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
-index ec3543b..fc3bc1c 100644
---- a/drivers/nvdimm/region_devs.c
-+++ b/drivers/nvdimm/region_devs.c
-@@ -234,8 +234,10 @@ int nd_region_to_nstype(struct nd_region *nd_region)
- 			struct nd_mapping *nd_mapping = &nd_region->mapping[i];
- 			struct nvdimm *nvdimm = nd_mapping->nvdimm;
- 
--			if (test_bit(NDD_ALIASING, &nvdimm->flags))
-+			if (test_bit(NDD_ALIASING, &nvdimm->flags)) {
- 				alias++;
-+				break;
-+			}
- 		}
- 		if (alias)
- 			return ND_DEVICE_NAMESPACE_PMEM;
--- 
-1.8.3.1
-
+I'm otherwise not in a position to help out on this with code until
+I'm back in the office mid-September, so I'd have to put this on Dave
+to clean up. Sorry Dave, and apologies Linus for the screw up.
