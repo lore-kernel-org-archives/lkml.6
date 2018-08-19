@@ -2,188 +2,126 @@ Return-Path: <SRS0=Mzg6=LC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D89C4321D
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 16:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49106C4321D
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 16:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6940220836
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 16:14:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IXyzo/q6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6940220836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 0ACB620836
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 16:14:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ACB620836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbeHST0C (ORCPT
+        id S1726844AbeHST0X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 19 Aug 2018 15:26:02 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:39050 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbeHST0B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Aug 2018 15:26:01 -0400
-Received: by mail-yb0-f195.google.com with SMTP id c4-v6so3717949ybl.6
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Aug 2018 09:14:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ojDNy5MTJo8R2b/T3LTLNvg33KfjisOj3M1Z7X6cfSQ=;
-        b=IXyzo/q6kROfMDuxID5ZPonxTwbXvGRemLKMwmnYOh7gAS1gUKdQMvuKusyKjo+Xy5
-         8Ss88h91yCOUtrmGRzOY072XhZC8vsD2qRm8KpVo/jGoPDtPgzjj4RIJ2Yyvpfn5VLyM
-         ND27MwO7EAZWPRE0FNwTxgU3IZ/sMWfAdO7wc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ojDNy5MTJo8R2b/T3LTLNvg33KfjisOj3M1Z7X6cfSQ=;
-        b=GOhZVbdb0EiAxyK98Hx3hh+4bkgnEUIBzi0dBFkcM9xviIcXGTBInp8yj1AIUSdIKO
-         L8kPxw5WFrl4HQADTVUGtS7EDJ3Qsu0IvEQbbeL0rWY+Wfd+fELTUDxdVVCS1rwKdnmV
-         JEKUwECk09vAkgl2LbtdQ8YRNawNB1pCP5xY/a/UC4x5Xf51yBnKIr3ehCYShu0YogXS
-         xsUst+jfKplPCQ/7fehJuyhDuWwBgjQUpfiq9AqAXvKtMvFIhiE3oQm+rPOahyANirZ+
-         8ZxzqZUSEimFS9gVHVMN4RR59wSDwoezjATu/nQa5LpoolMJ/FeLvMk2d7nCMV1iC5h2
-         dkeg==
-X-Gm-Message-State: AOUpUlGmYGFuOVZLABTIGCCYBBdPpacuA9omjB6+/espnJ62NYqODZC/
-        +c86eSE98saAG1xLyqbzCw8NdYV/HfE=
-X-Google-Smtp-Source: AA+uWPxFTXj9/ET86T5SnFLd2E4/M8XDHum9Dtlo7lVbItgfSt/E1oWBZMJoc1NSVApRP1cn/CxoxQ==
-X-Received: by 2002:a25:ac1b:: with SMTP id w27-v6mr22956802ybi.279.1534695242460;
-        Sun, 19 Aug 2018 09:14:02 -0700 (PDT)
-Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
-        by smtp.gmail.com with ESMTPSA id 79-v6sm3568476ywp.71.2018.08.19.09.13.59
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 19 Aug 2018 09:14:00 -0700 (PDT)
-Received: by mail-yw1-f52.google.com with SMTP id q129-v6so6024804ywg.8
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Aug 2018 09:13:59 -0700 (PDT)
-X-Received: by 2002:a0d:cf86:: with SMTP id r128-v6mr22064701ywd.353.1534695239276;
- Sun, 19 Aug 2018 09:13:59 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:aa31:0:0:0:0:0 with HTTP; Sun, 19 Aug 2018 09:13:58
- -0700 (PDT)
-In-Reply-To: <1534657880-11573-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1534657880-11573-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sun, 19 Aug 2018 09:13:58 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+t7c31xVXD+pu3Xhv10Nj0rWsGW=H1OgXh+uKGJRicnA@mail.gmail.com>
-Message-ID: <CAGXu5j+t7c31xVXD+pu3Xhv10Nj0rWsGW=H1OgXh+uKGJRicnA@mail.gmail.com>
-Subject: Re: [RFC PATCH] compiler.h: give up __compiletime_assert_fallback()
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        James Hogan <james.hogan@imgtec.com>,
-        Joe Stringer <joe@ovn.org>,
-        Daniel Santos <daniel.santos@pobox.com>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christopher Li <sparse@chrisli.org>,
-        Sparse Mailing-list <linux-sparse@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 19 Aug 2018 15:26:23 -0400
+Received: from smtp20.cstnet.cn ([159.226.251.20]:55245 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726618AbeHST0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Aug 2018 15:26:23 -0400
+Received: from localhost.localdomain (unknown [110.184.154.248])
+        by APP-10 (Coremail) with SMTP id tACowADn72NJl3lbn9GwAg--.152S2;
+        Mon, 20 Aug 2018 00:14:06 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
+        pbonzini@redhat.com, boris.ostrovsky@oracle.com, jgross@suse.com,
+        JBeulich@suse.com
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        xen-devel@lists.xenproject.org, Pu Wen <puwen@hygon.cn>
+Subject: [PATCH v4 12/16] x86/xen: enable Hygon support to Xen
+Date:   Mon, 20 Aug 2018 00:13:41 +0800
+Message-Id: <044e5e9082d57c10a36a16a9da6404f976d7ae55.1534599097.git.puwen@hygon.cn>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1534599097.git.puwen@hygon.cn>
+References: <cover.1534599097.git.puwen@hygon.cn>
+X-CM-TRANSID: tACowADn72NJl3lbn9GwAg--.152S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zr48XFyfCFW5CrWfJrW7XFb_yoW8tr45pr
+        W3AF40qFWvgwn7X3s5X3y8XryrZw1qqa15Kr9xKa1fXFs5Z3Z8XrWUCw1rJr1I9348ur10
+        va40gw1UCFZavFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+        JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+        1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+        7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
+        1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
+        628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
+        GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7
+        CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Gr0_Zr1lIxAIcVC2z280aVAF
+        wI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf
+        9x0JUD-B_UUUUU=
+X-Originating-IP: [110.184.154.248]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 18, 2018 at 10:51 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> __compiletime_assert_fallback() is supposed to stop building earlier
-> by using the negative-array-size method in case the compiler does not
-> support "error" attribute, but has never worked like that.
->
-> You can try this simple code:
->
->     #include <linux/build_bug.h>
->     void foo(void)
->     {
->             BUILD_BUG_ON(1);
->     }
->
-> GCC (precisely, GCC 4.3 or later) immediately terminates the build,
-> but Clang does not report anything because Clang does not support the
-> "error" attribute now.  It will eventually fail in the link stage,
-> but at least __compiletime_assert_fallback() is not working.
->
-> The root cause is commit 1d6a0d19c855 ("bug.h: prevent double evaluation
-> of `condition' in BUILD_BUG_ON").  Prior to that commit, BUILD_BUG_ON()
-> was checked by the negative-array-size method *and* the link-time trick.
-> Since that commit, the negative-array-size is not effective because
-> '__cond' is no longer constant.  As the comment in <linux/build_bug.h>
-> says, GCC (and Clang as well) only emits the error for obvious cases.
->
-> When '__cond' is a variable,
->
->     ((void)sizeof(char[1 - 2 * __cond]))
->
-> ... is not obvious for the compiler to know the array size is negative.
->
-> One way to fix this is to stop the variable assignment, i.e. to pass
-> '!(condition)' directly to __compiletime_error_fallback() at the cost
-> of the double evaluation of 'condition'.  However, all calls of
-> BUILD_BUG() would be turned into errors even if they are called from
-> dead-code.
->
-> This commit does not change the current behavior since it just rips
-> off the code that has not been effective for some years.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+To make Xen works functionly on Hygon platforms, reuse AMD's Xen support
+code path for Hygon.
 
-Yeah, Clang would only complain about the VLA (and not error) and then
-later fail at link time. This seems like a reasonable change to me.
+There are six core performance events counters per thread, so there are
+six MSRs for these counters(0-5). Also there are four legacy PMC MSRs,
+they are alias of the counters(0-3).
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+In this version of kernel Hygon use the lagacy and safe versions of MSR
+access. It works fine when VPMU enabled in Xen on Hygon platforms by
+testing with perf.
 
--Kees
+Signed-off-by: Pu Wen <puwen@hygon.cn>
+---
+ arch/x86/xen/pmu.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-> ---
->
->  include/linux/compiler.h | 17 +----------------
->  1 file changed, 1 insertion(+), 16 deletions(-)
->
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> index 42506e4..c062238f4 100644
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -295,29 +295,14 @@ unsigned long read_word_at_a_time(const void *addr)
->  #endif
->  #ifndef __compiletime_error
->  # define __compiletime_error(message)
-> -/*
-> - * Sparse complains of variable sized arrays due to the temporary variable in
-> - * __compiletime_assert. Unfortunately we can't just expand it out to make
-> - * sparse see a constant array size without breaking compiletime_assert on old
-> - * versions of GCC (e.g. 4.2.4), so hide the array from sparse altogether.
-> - */
-> -# ifndef __CHECKER__
-> -#  define __compiletime_error_fallback(condition) \
-> -       do { ((void)sizeof(char[1 - 2 * condition])); } while (0)
-> -# endif
-> -#endif
-> -#ifndef __compiletime_error_fallback
-> -# define __compiletime_error_fallback(condition) do { } while (0)
->  #endif
->
->  #ifdef __OPTIMIZE__
->  # define __compiletime_assert(condition, msg, prefix, suffix)          \
->         do {                                                            \
-> -               bool __cond = !(condition);                             \
->                 extern void prefix ## suffix(void) __compiletime_error(msg); \
-> -               if (__cond)                                             \
-> +               if (!(condition))                                       \
->                         prefix ## suffix();                             \
-> -               __compiletime_error_fallback(__cond);                   \
->         } while (0)
->  #else
->  # define __compiletime_assert(condition, msg, prefix, suffix) do { } while (0)
-> --
-> 2.7.4
->
-
-
-
+diff --git a/arch/x86/xen/pmu.c b/arch/x86/xen/pmu.c
+index 7d00d4a..9403854 100644
+--- a/arch/x86/xen/pmu.c
++++ b/arch/x86/xen/pmu.c
+@@ -90,6 +90,12 @@ static void xen_pmu_arch_init(void)
+ 			k7_counters_mirrored = 0;
+ 			break;
+ 		}
++	} else if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
++		amd_num_counters = F10H_NUM_COUNTERS;
++		amd_counters_base = MSR_K7_PERFCTR0;
++		amd_ctrls_base = MSR_K7_EVNTSEL0;
++		amd_msr_step = 1;
++		k7_counters_mirrored = 0;
+ 	} else {
+ 		uint32_t eax, ebx, ecx, edx;
+ 
+@@ -285,7 +291,7 @@ static bool xen_amd_pmu_emulate(unsigned int msr, u64 *val, bool is_read)
+ 
+ bool pmu_msr_read(unsigned int msr, uint64_t *val, int *err)
+ {
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL) {
+ 		if (is_amd_pmu_msr(msr)) {
+ 			if (!xen_amd_pmu_emulate(msr, val, 1))
+ 				*val = native_read_msr_safe(msr, err);
+@@ -308,7 +314,7 @@ bool pmu_msr_write(unsigned int msr, uint32_t low, uint32_t high, int *err)
+ {
+ 	uint64_t val = ((uint64_t)high << 32) | low;
+ 
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL) {
+ 		if (is_amd_pmu_msr(msr)) {
+ 			if (!xen_amd_pmu_emulate(msr, &val, 0))
+ 				*err = native_write_msr_safe(msr, low, high);
+@@ -379,7 +385,7 @@ static unsigned long long xen_intel_read_pmc(int counter)
+ 
+ unsigned long long xen_read_pmc(int counter)
+ {
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
+ 		return xen_amd_read_pmc(counter);
+ 	else
+ 		return xen_intel_read_pmc(counter);
 -- 
-Kees Cook
-Pixel Security
+2.7.4
+
