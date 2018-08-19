@@ -2,191 +2,110 @@ Return-Path: <SRS0=Mzg6=LC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 113EFC4321D
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 07:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56AD4C4321D
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 07:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C296B215EB
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 07:03:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C296B215EB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 94D96215EB
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 07:05:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94D96215EB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726399AbeHSKNl (ORCPT
+        id S1726478AbeHSKQR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 19 Aug 2018 06:13:41 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52256 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725885AbeHSKNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Aug 2018 06:13:41 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 229CAACF9269B;
-        Sun, 19 Aug 2018 15:03:06 +0800 (CST)
-Received: from [127.0.0.1] (10.177.23.164) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.399.0; Sun, 19 Aug 2018
- 15:02:59 +0800
-From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Subject: Re: [PATCH v3 1/2] iommu/arm-smmu-v3: fix unexpected CMD_SYNC timeout
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-References: <1534328582-17664-1-git-send-email-thunder.leizhen@huawei.com>
- <1534328582-17664-2-git-send-email-thunder.leizhen@huawei.com>
- <6027cd67-7c76-673c-082f-8dd0b7a575b0@arm.com> <5B7533FD.20903@huawei.com>
- <20180816091805.GB31093@arm.com>
- <ad5bd6c0-20bd-9581-a12a-4464e5ec69f6@arm.com>
-CC:     Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LinuxArm <linuxarm@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Libin <huawei.libin@huawei.com>,
-        John Garry <john.garry@huawei.com>
-Message-ID: <5B791622.4040509@huawei.com>
-Date:   Sun, 19 Aug 2018 15:02:58 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
-MIME-Version: 1.0
-In-Reply-To: <ad5bd6c0-20bd-9581-a12a-4464e5ec69f6@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.23.164]
-X-CFilter-Loop: Reflected
+        Sun, 19 Aug 2018 06:16:17 -0400
+Received: from cmccmta3.chinamobile.com ([221.176.66.81]:36628 "EHLO
+        cmccmta3.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725885AbeHSKQR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Aug 2018 06:16:17 -0400
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.7]) by rmmx-syy-dmz-app11-12011 (RichMail) with SMTP id 2eeb5b7916c0988-54444; Sun, 19 Aug 2018 15:05:40 +0800 (CST)
+X-RM-TRANSID: 2eeb5b7916c0988-54444
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from localhost (unknown[223.105.0.240])
+        by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee45b7916c295e-d86d8;
+        Sun, 19 Aug 2018 15:05:39 +0800 (CST)
+X-RM-TRANSID: 2ee45b7916c295e-d86d8
+From:   Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+To:     Steffen Klassert <steffen.klassert@secunet.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
+        Eric Dumazet <edumazet@google.com>
+Subject: [PATCH 1/2] ip_vti: fix a null pointer deferrence when create vti fallback tunnel
+Date:   Sun, 19 Aug 2018 15:05:04 +0800
+Message-Id: <1534662305-16734-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+After set fb_tunnels_only_for_init_net to 1, the itn->fb_tunnel_dev will
+be NULL and will cause following crash:
 
+[ 2742.849298] BUG: unable to handle kernel NULL pointer dereference at 0000000000000941
+[ 2742.851380] PGD 800000042c21a067 P4D 800000042c21a067 PUD 42aaed067 PMD 0
+[ 2742.852818] Oops: 0002 [#1] SMP PTI
+[ 2742.853570] CPU: 7 PID: 2484 Comm: unshare Kdump: loaded Not tainted 4.18.0-rc8+ #2
+[ 2742.855163] Hardware name: Fedora Project OpenStack Nova, BIOS seabios-1.7.5-11.el7 04/01/2014
+[ 2742.856970] RIP: 0010:vti_init_net+0x3a/0x50 [ip_vti]
+[ 2742.858034] Code: 90 83 c0 48 c7 c2 20 a1 83 c0 48 89 fb e8 6e 3b f6 ff 85 c0 75 22 8b 0d f4 19 00 00 48 8b 93 00 14 00 00 48 8b 14 ca 48 8b 12 <c6> 82 41 09 00 00 04 c6 82 38 09 00 00 45 5b c3 66 0f 1f 44 00 00
+[ 2742.861940] RSP: 0018:ffff9be28207fde0 EFLAGS: 00010246
+[ 2742.863044] RAX: 0000000000000000 RBX: ffff8a71ebed4980 RCX: 0000000000000013
+[ 2742.864540] RDX: 0000000000000000 RSI: 0000000000000013 RDI: ffff8a71ebed4980
+[ 2742.866020] RBP: ffff8a71ea717000 R08: ffffffffc083903c R09: ffff8a71ea717000
+[ 2742.867505] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8a71ebed4980
+[ 2742.868987] R13: 0000000000000013 R14: ffff8a71ea5b49c0 R15: 0000000000000000
+[ 2742.870473] FS:  00007f02266c9740(0000) GS:ffff8a71ffdc0000(0000) knlGS:0000000000000000
+[ 2742.872143] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 2742.873340] CR2: 0000000000000941 CR3: 000000042bc20006 CR4: 00000000001606e0
+[ 2742.874821] Call Trace:
+[ 2742.875358]  ops_init+0x38/0xf0
+[ 2742.876078]  setup_net+0xd9/0x1f0
+[ 2742.876789]  copy_net_ns+0xb7/0x130
+[ 2742.877538]  create_new_namespaces+0x11a/0x1d0
+[ 2742.878525]  unshare_nsproxy_namespaces+0x55/0xa0
+[ 2742.879526]  ksys_unshare+0x1a7/0x330
+[ 2742.880313]  __x64_sys_unshare+0xe/0x20
+[ 2742.881131]  do_syscall_64+0x5b/0x180
+[ 2742.881933]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-On 2018/8/16 17:27, Robin Murphy wrote:
-> On 2018-08-16 10:18 AM, Will Deacon wrote:
->> On Thu, Aug 16, 2018 at 04:21:17PM +0800, Leizhen (ThunderTown) wrote:
->>> On 2018/8/15 20:26, Robin Murphy wrote:
->>>> On 15/08/18 11:23, Zhen Lei wrote:
->>>>> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
->>>>> index 1d64710..3f5c236 100644
->>>>> --- a/drivers/iommu/arm-smmu-v3.c
->>>>> +++ b/drivers/iommu/arm-smmu-v3.c
->>>>> @@ -566,7 +566,7 @@ struct arm_smmu_device {
->>>>>
->>>>>        int                gerr_irq;
->>>>>        int                combined_irq;
->>>>> -    atomic_t            sync_nr;
->>>>> +    u32                sync_nr;
->>>>>
->>>>>        unsigned long            ias; /* IPA */
->>>>>        unsigned long            oas; /* PA */
->>>>> @@ -775,6 +775,11 @@ static int queue_remove_raw(struct arm_smmu_queue *q, u64 *ent)
->>>>>        return 0;
->>>>>    }
->>>>>
->>>>> +static inline void arm_smmu_cmdq_sync_set_msidata(u64 *cmd, u32 msidata)
->>>>
->>>> If we *are* going to go down this route then I think it would make sense
->>>> to move the msiaddr and CMDQ_SYNC_0_CS_MSI logic here as well; i.e.
->>>> arm_smmu_cmdq_build_cmd() always generates a "normal" SEV-based sync
->>>> command, then calling this guy would convert it to an MSI-based one.
->>>> As-is, having bits of mutually-dependent data handled across two
->>>> separate places just seems too messy and error-prone.
->>>
->>> Yes, How about create a new function "arm_smmu_cmdq_build_sync_msi_cmd"?
->>>
->>> static inline
->>> void arm_smmu_cmdq_build_sync_msi_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
->>> {
->>>     cmd[0]  = FIELD_PREP(CMDQ_0_OP, ent->opcode);
->>>     cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_IRQ);
->>>     cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSH, ARM_SMMU_SH_ISH);
->>>     cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSIATTR, ARM_SMMU_MEMATTR_OIWB);
+Reproduce:
+echo 1 > /proc/sys/net/core/fb_tunnels_only_for_init_net
+modprobe ip_vti
+unshare -n
 
-miss:   cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSIDATA, ent->sync.msidata);
+Fixes: 79134e6ce2c9 (net: do not create fallback tunnels for non-default
+namespaces)
+Cc: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+---
+ net/ipv4/ip_vti.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
->>>     cmd[1]  = ent->sync.msiaddr & CMDQ_SYNC_1_MSIADDR_MASK;
->>> }
->>
->> None of this seems justified given the numbers from John, so please just do
->> the simple thing and build the command with the lock held.
-
-In order to observe the optimization effect, I conducted 5 tests for each
-case. Although the test result is volatility, but we can still get which case
-is good or bad. It accords with our theoretical analysis.
-
-Test command: fio -numjobs=8 -rw=randread -runtime=30 ... -bs=4k
-Test Result: IOPS, for example: read : io=86790MB, bw=2892.1MB/s, iops=740586, runt= 30001msec
-
-Case 1: (without these patches)
-675480
-672055
-665275
-648610
-661146
-
-Case 2: (move arm_smmu_cmdq_build_cmd into lock)
-688714
-697355
-632951
-700540
-678459
-
-Case 3: (base on case 2, replace arm_smmu_cmdq_build_cmd with arm_smmu_cmdq_build_sync_msi_cmd)
-721582
-729226
-689574
-679710
-727770
-
-Case 4: (base on case 3, plus patch 2)
-734077
-742868
-738194
-682544
-740586
-
-Case 2 is better than case 1, I think the main reason is the atomic_inc_return_relaxed(&smmu->sync_nr)
-has been removed. Case 3 is better than case 2, because the assembly code is reduced, see below.
-
-
-> 
-> Agreed - sorry if my wording was unclear, but that suggestion was only for the possibility of it proving genuinely worthwhile to build the command outside the lock. Since that isn't the case, I definitely prefer the simpler approach too.
-
-Yes, I mean replace arm_smmu_cmdq_build_cmd with arm_smmu_cmdq_build_sync_msi_cmd to build the command inside the lock.
-         spin_lock_irqsave(&smmu->cmdq.lock, flags);
-+        ent.sync.msidata = ++smmu->sync_nr;
-+        arm_smmu_cmdq_build_sync_msi_cmd(cmd, &ent);
-         arm_smmu_cmdq_insert_cmd(smmu, cmd);
-         spin_unlock_irqrestore(&smmu->cmdq.lock, flags);
-
-The assembly code showed me that it's very nice.
-ffff0000085e6928:       94123207        bl      ffff000008a73144 <_raw_spin_lock_irqsave>
-ffff0000085e692c:       b9410ad5        ldr     w21, [x22,#264]
-ffff0000085e6930:       d28208c2        mov     x2, #0x1046                     // #4166
-ffff0000085e6934:       aa0003fa        mov     x26, x0
-ffff0000085e6938:       110006b5        add     w21, w21, #0x1
-ffff0000085e693c:       f2a1f802        movk    x2, #0xfc0, lsl #16
-ffff0000085e6940:       aa1603e0        mov     x0, x22
-ffff0000085e6944:       910163a1        add     x1, x29, #0x58
-ffff0000085e6948:       aa158042        orr     x2, x2, x21, lsl #32
-ffff0000085e694c:       b9010ad5        str     w21, [x22,#264]
-ffff0000085e6950:       f9002fa2        str     x2, [x29,#88]
-ffff0000085e6954:       d2994016        mov     x22, #0xca00                    // #51712
-ffff0000085e6958:       f90033b3        str     x19, [x29,#96]
-ffff0000085e695c:       97fffd5b        bl      ffff0000085e5ec8 <arm_smmu_cmdq_insert_cmd>
-ffff0000085e6960:       aa1903e0        mov     x0, x25
-ffff0000085e6964:       aa1a03e1        mov     x1, x26
-ffff0000085e6968:       f2a77356        movk    x22, #0x3b9a, lsl #16
-ffff0000085e696c:       94123145        bl      ffff000008a72e80 <_raw_spin_unlock_irqrestore>
-
-
-> 
-> Robin.
-> 
-> .
-> 
-
+diff --git a/net/ipv4/ip_vti.c b/net/ipv4/ip_vti.c
+index 3f091cc..f38cb21 100644
+--- a/net/ipv4/ip_vti.c
++++ b/net/ipv4/ip_vti.c
+@@ -438,7 +438,8 @@ static int __net_init vti_init_net(struct net *net)
+ 	if (err)
+ 		return err;
+ 	itn = net_generic(net, vti_net_id);
+-	vti_fb_tunnel_init(itn->fb_tunnel_dev);
++	if (itn->fb_tunnel_dev)
++		vti_fb_tunnel_init(itn->fb_tunnel_dev);
+ 	return 0;
+ }
+ 
 -- 
-Thanks!
-BestRegards
+1.8.3.1
+
+
 
