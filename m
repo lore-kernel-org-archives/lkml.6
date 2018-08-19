@@ -2,94 +2,93 @@ Return-Path: <SRS0=Mzg6=LC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D55C4321D
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 16:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30997C4321D
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 16:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7046520779
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 16:25:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 707F12145D
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 16:28:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eMy6d6Qo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7046520779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (4096-bit key) header.d=jpberlin.de header.i=@jpberlin.de header.b="xH+xOm/t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 707F12145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jpberlin.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbeHSThS (ORCPT
+        id S1726803AbeHSTkq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 19 Aug 2018 15:37:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48722 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726686AbeHSThS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Aug 2018 15:37:18 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        Sun, 19 Aug 2018 15:40:46 -0400
+Received: from plasma4.jpberlin.de ([80.241.57.33]:58514 "EHLO
+        plasma4.jpberlin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726597AbeHSTkq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Aug 2018 15:40:46 -0400
+X-Greylist: delayed 404 seconds by postgrey-1.27 at vger.kernel.org; Sun, 19 Aug 2018 15:40:45 EDT
+Received: from spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115])
+        by plasma.jpberlin.de (Postfix) with ESMTP id 1DF49B7B14;
+        Sun, 19 Aug 2018 18:22:01 +0200 (CEST)
+Authentication-Results: spamfilter01.heinlein-hosting.de (amavisd-new);
+        dkim=pass (4096-bit key) reason="pass (just generated, assumed good)"
+        header.d=jpberlin.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=jpberlin.de; h=
+        x-mailer:message-id:date:date:subject:subject:from:from:received
+        :received; s=mail20140220; t=1534695720; bh=ocA4r8FAWIjq+awUwO+o
+        8jP0gnXXzxve0T43t/bIcpE=; b=xH+xOm/tsYAEoSaFTaFB9oBxpVL8KSVBJR5o
+        p8m41RhHucIiAaMO0ALi2G6n4GR/4A2Up83A5yVQ2KVkeW+TvzdYIu5AqP4vL8YK
+        w/OaG1TSTxUU88VvdctveBeeBa4r3BofFP7loyWAgbr0mXtr/tmIakRcA2ISWWoJ
+        RxDFpEA23bQFEHzfNC+hjZ62fGl/6RxANk4l7lOnPDlBymGGoX+jyw5yIn1b3mnZ
+        iGMcxqdsgRP/tuDMrdBfKE4581VztE758Ni6/RSc6GMainW0U8LtTgnNa3QxPfD9
+        pPbkKEvjC3M7FHIJiFSQp7PhcubRUy2bBLGXCvHvV5UBJy0tdwDj1tjqxIqg4aeF
+        5QP5bX+GZmceDZqTWL0px1C1WhAqWQANKBZ2sN7wSueWI8h103nJENbGKeFIWeiQ
+        gOarxiXqV1eeBOu/zNtyA6A9OXwDJDNbfWnnFrHU1XhglPGjDwiylGSx5+nfRFUT
+        U+LVsDNNK6aNgP9fOVLsO9UOcNkumoa1ufI6kjl1IPKMflPfJJLKbcTK/aDM/Qwy
+        jmvBpUxbrPPABk4ezr8OBCf0XIZChYdxK0yfawqpp0jDpmmHt+/K6HvZqncVjKL+
+        5CnMXbr/P+7LT161feCfRhfFsnA5NKMuqgU5EmoiGKvQSVdb0rC0Nh/q3sHV9psB
+        CcDSGJk=
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from plasma.jpberlin.de ([80.241.56.68])
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id ni7roFRIZsSh; Sun, 19 Aug 2018 18:22:00 +0200 (CEST)
+Received: from localhost.localdomain (ip1f12ba6b.dynamic.kabel-deutschland.de [31.18.186.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42F0B20779;
-        Sun, 19 Aug 2018 16:25:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534695918;
-        bh=DZ/3L7AmLPBaTaCXAlKBD5TYNAX6eJZYWnnXpKEwwSw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=eMy6d6QoNIcsmgOKDQVmeLmPaqIzXszsI9yHIfgoEcea/Weug9it/oDrCMfotPtZW
-         krjbkiOLLQcdt1UtzXwMeS7+QNQRMbtPue3aHAvijZ2ncRB2kMnLpcI7wjOghGMf4v
-         ckJ8k8076zvSM5AWjmflL1HDc6Vmy3b2Imq+YDCc=
-Date:   Sun, 19 Aug 2018 17:25:14 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Himanshu Jha <himanshujha199640@gmail.com>
-Cc:     dpfrey@gmail.com, daniel.baluta@gmail.com,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: chemical: bme680: Add check for val2 in the
- write_raw function
-Message-ID: <20180819172514.370d34fb@archlinux>
-In-Reply-To: <20180811102636.6171-1-himanshujha199640@gmail.com>
-References: <20180811102636.6171-1-himanshujha199640@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        (Client did not present a certificate)
+        (Authenticated sender: jnaw@jpberlin.de)
+        by plasma.jpberlin.de (Postfix) with ESMTPSA id 83CB2B6374;
+        Sun, 19 Aug 2018 18:21:59 +0200 (CEST)
+From:   Jannis Nawroth <jnaw@jpberlin.de>
+To:     ruxandra.radulescu@nxp.com, ioana.ciornei@nxp.com,
+        gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        Jannis Nawroth <jnaw@jpberlin.de>
+Subject: [PATCH] Staging: fsl-dpaa2: ethsw: dpsw: Use correct SPDX-License-Identifier comment
+Date:   Sun, 19 Aug 2018 18:21:36 +0200
+Message-Id: <20180819162136.19647-1-jnaw@jpberlin.de>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 11 Aug 2018 15:56:36 +0530
-Himanshu Jha <himanshujha199640@gmail.com> wrote:
+Use correct comment for SPDX-License-Identifier
 
-> val2 is responsible for the floating part of the number to be
-> written to the device. We don't need the floating part
-> while writing the oversampling ratio for BME680 since the
-> available oversampling ratios are pure natural numbers.
-> 
-> So, add a sanity check to make sure val2 is 0.
-> 
-> Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
+Signed-off-by: Jannis Nawroth <jnaw@jpberlin.de>
+---
+ drivers/staging/fsl-dpaa2/ethsw/dpsw.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-As discussed in David's patch series v3, I think this is still relevant
-but now needs an update to cover the new code.
-
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/chemical/bme680_core.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
-> index 7d9bb62baa3f..9d5a05e054d1 100644
-> --- a/drivers/iio/chemical/bme680_core.c
-> +++ b/drivers/iio/chemical/bme680_core.c
-> @@ -852,6 +852,9 @@ static int bme680_write_raw(struct iio_dev *indio_dev,
->  {
->  	struct bme680_data *data = iio_priv(indio_dev);
->  
-> +	if (val2 != 0)
-> +		return -EINVAL;
-> +
->  	switch (mask) {
->  	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
->  		switch (chan->type) {
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/dpsw.h b/drivers/staging/fsl-dpaa2/ethsw/dpsw.h
+index db43fa3782b8..95feb7ffd575 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/dpsw.h
++++ b/drivers/staging/fsl-dpaa2/ethsw/dpsw.h
+@@ -1,5 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
++/* SPDX-License-Identifier: GPL-2.0
+  * Copyright 2014-2016 Freescale Semiconductor Inc.
+  * Copyright 2017-2018 NXP
+  *
+-- 
+2.18.0
 
