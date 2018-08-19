@@ -2,202 +2,105 @@ Return-Path: <SRS0=Mzg6=LC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4128CC4321D
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 16:16:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70034C4321D
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 16:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF8072083A
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 16:16:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF8072083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id 24AB92083A
+	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 16:16:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PUSa+ROr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24AB92083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbeHST2H (ORCPT
+        id S1726943AbeHST2P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 19 Aug 2018 15:28:07 -0400
-Received: from smtp20.cstnet.cn ([159.226.251.20]:58438 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726582AbeHST2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Aug 2018 15:28:06 -0400
-Received: from localhost.localdomain (unknown [110.184.154.248])
-        by APP-10 (Coremail) with SMTP id tACowACnrcWyl3lb7uywAg--.94S2;
-        Mon, 20 Aug 2018 00:15:51 +0800 (CST)
-From:   Pu Wen <puwen@hygon.cn>
-To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
-        pbonzini@redhat.com, trenn@suse.com, shuah@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-pm@vger.kernel.org, Pu Wen <puwen@hygon.cn>
-Subject: [PATCH v4 16/16] tools/cpupower: enable Hygon support to cpupower tool
-Date:   Mon, 20 Aug 2018 00:15:18 +0800
-Message-Id: <eb25ab4111577cbdcaff71300620b1f702c924dc.1534599097.git.puwen@hygon.cn>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1534599097.git.puwen@hygon.cn>
-References: <cover.1534599097.git.puwen@hygon.cn>
-X-CM-TRANSID: tACowACnrcWyl3lb7uywAg--.94S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Ww4DXF4DXw48ZF1fGrW5GFg_yoWxJr18p3
-        90krZ8J3y8tr98X3Wktr1UWa15CF4ku39Fgwn7Gw1rAF17Zr4vqr4DJFy5Kr9rXF97Ja1F
-        va93Kw1UXan7GaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-        JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-        1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-        7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
-        1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
-        628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
-        GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7
-        CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Gr0_Zr1lIxAIcVC2z280aVAF
-        wI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf
-        9x0JUD-B_UUUUU=
-X-Originating-IP: [110.184.154.248]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+        Sun, 19 Aug 2018 15:28:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45724 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726582AbeHST2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Aug 2018 15:28:14 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B429B2083A;
+        Sun, 19 Aug 2018 16:16:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534695376;
+        bh=jx+uiA4PKuymLnsvrYbtw9XLYkHSB1gNm8RsKunHuhU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=PUSa+ROrlHAE2/qYZjAWR15H7PAyiZCHUXL2DXBeVeLX3zyEGz0DyWT9QCA/rCcB/
+         ibvVaN14QEx7xoaMUeHONEcyJRgVbPn4neJpAQFbU1+ga2dIc3cOC74WHuWRlYdEd1
+         kslvKnt9PQSu2Xa5z+SQ8bQTBbkI9aXlfuzEm2qM=
+Date:   Sun, 19 Aug 2018 17:16:13 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Tomasz Duszynski <tduszyns@gmail.com>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: pressure: ms5611: remove deprecated compatible
+ strings
+Message-ID: <20180819171613.0f74335c@archlinux>
+In-Reply-To: <20180816184915.32138-1-tduszyns@gmail.com>
+References: <20180816184915.32138-1-tduszyns@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tool cpupower is useful to get CPU frequency information and monitor
-power stats on Hygon platforms. So enable platform support to cpupower
-for Hygon Dhyana Family 18h processors by checking vendor ID & family
-and vendor string along with AMD.
+On Thu, 16 Aug 2018 20:49:15 +0200
+Tomasz Duszynski <tduszyns@gmail.com> wrote:
 
-Signed-off-by: Pu Wen <puwen@hygon.cn>
----
- tools/power/cpupower/utils/cpufreq-info.c               | 6 ++++--
- tools/power/cpupower/utils/helpers/amd.c                | 6 ++++--
- tools/power/cpupower/utils/helpers/cpuid.c              | 8 +++++---
- tools/power/cpupower/utils/helpers/helpers.h            | 2 +-
- tools/power/cpupower/utils/helpers/misc.c               | 3 ++-
- tools/power/cpupower/utils/idle_monitor/mperf_monitor.c | 3 ++-
- 6 files changed, 18 insertions(+), 10 deletions(-)
+> Compatible strings tend to follow manufacturer,model format.
+> In case one wants to do a matching with manufacturer stripped
+> off he can still do so since SPI/I2C core will try id_table
+> based matching anyway.
+> 
+> Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+Applied to the togreg branch of iio.git and pushed out as testing
+for the autobuilders to play with it.
 
-diff --git a/tools/power/cpupower/utils/cpufreq-info.c b/tools/power/cpupower/utils/cpufreq-info.c
-index df43cd4..56e54ea 100644
---- a/tools/power/cpupower/utils/cpufreq-info.c
-+++ b/tools/power/cpupower/utils/cpufreq-info.c
-@@ -170,6 +170,7 @@ static int get_boost_mode(unsigned int cpu)
- 	unsigned long pstates[MAX_HW_PSTATES] = {0,};
- 
- 	if (cpupower_cpu_info.vendor != X86_VENDOR_AMD &&
-+	    cpupower_cpu_info.vendor != X86_VENDOR_HYGON &&
- 	    cpupower_cpu_info.vendor != X86_VENDOR_INTEL)
- 		return 0;
- 
-@@ -190,8 +191,9 @@ static int get_boost_mode(unsigned int cpu)
- 	printf(_("    Supported: %s\n"), support ? _("yes") : _("no"));
- 	printf(_("    Active: %s\n"), active ? _("yes") : _("no"));
- 
--	if (cpupower_cpu_info.vendor == X86_VENDOR_AMD &&
--	    cpupower_cpu_info.family >= 0x10) {
-+	if ((cpupower_cpu_info.vendor == X86_VENDOR_AMD &&
-+	     cpupower_cpu_info.family >= 0x10) ||
-+	     cpupower_cpu_info.vendor == X86_VENDOR_HYGON) {
- 		ret = decode_pstates(cpu, cpupower_cpu_info.family, b_states,
- 				     pstates, &pstate_no);
- 		if (ret)
-diff --git a/tools/power/cpupower/utils/helpers/amd.c b/tools/power/cpupower/utils/helpers/amd.c
-index bb41cdd..d9327ee 100644
---- a/tools/power/cpupower/utils/helpers/amd.c
-+++ b/tools/power/cpupower/utils/helpers/amd.c
-@@ -45,7 +45,8 @@ static int get_did(int family, union msr_pstate pstate)
- 
- 	if (family == 0x12)
- 		t = pstate.val & 0xf;
--	else if (family == 0x17)
-+	else if (family == 0x17 ||
-+		(cpupower_cpu_info.vendor == X86_VENDOR_HYGON && family == 0x18))
- 		t = pstate.fam17h_bits.did;
- 	else
- 		t = pstate.bits.did;
-@@ -59,7 +60,8 @@ static int get_cof(int family, union msr_pstate pstate)
- 	int fid, did, cof;
- 
- 	did = get_did(family, pstate);
--	if (family == 0x17) {
-+	if (family == 0x17 ||
-+	   (cpupower_cpu_info.vendor == X86_VENDOR_HYGON && family == 0x18)) {
- 		fid = pstate.fam17h_bits.fid;
- 		cof = 200 * fid / did;
- 	} else {
-diff --git a/tools/power/cpupower/utils/helpers/cpuid.c b/tools/power/cpupower/utils/helpers/cpuid.c
-index 732b0b4..5cc39d4 100644
---- a/tools/power/cpupower/utils/helpers/cpuid.c
-+++ b/tools/power/cpupower/utils/helpers/cpuid.c
-@@ -8,7 +8,7 @@
- #include "helpers/helpers.h"
- 
- static const char *cpu_vendor_table[X86_VENDOR_MAX] = {
--	"Unknown", "GenuineIntel", "AuthenticAMD",
-+	"Unknown", "GenuineIntel", "AuthenticAMD", "HygonGenuine",
- };
- 
- #if defined(__i386__) || defined(__x86_64__)
-@@ -109,6 +109,7 @@ int get_cpu_info(struct cpupower_cpu_info *cpu_info)
- 	fclose(fp);
- 	/* Get some useful CPU capabilities from cpuid */
- 	if (cpu_info->vendor != X86_VENDOR_AMD &&
-+	    cpu_info->vendor != X86_VENDOR_HYGON &&
- 	    cpu_info->vendor != X86_VENDOR_INTEL)
- 		return ret;
- 
-@@ -124,8 +125,9 @@ int get_cpu_info(struct cpupower_cpu_info *cpu_info)
- 	if (cpuid_level >= 6 && (cpuid_ecx(6) & 0x1))
- 		cpu_info->caps |= CPUPOWER_CAP_APERF;
- 
--	/* AMD Boost state enable/disable register */
--	if (cpu_info->vendor == X86_VENDOR_AMD) {
-+	/* AMD or Hygon Boost state enable/disable register */
-+	if (cpu_info->vendor == X86_VENDOR_AMD ||
-+	    cpu_info->vendor == X86_VENDOR_HYGON) {
- 		if (ext_cpuid_level >= 0x80000007 &&
- 		    (cpuid_edx(0x80000007) & (1 << 9)))
- 			cpu_info->caps |= CPUPOWER_CAP_AMD_CBP;
-diff --git a/tools/power/cpupower/utils/helpers/helpers.h b/tools/power/cpupower/utils/helpers/helpers.h
-index 41da392..9021396 100644
---- a/tools/power/cpupower/utils/helpers/helpers.h
-+++ b/tools/power/cpupower/utils/helpers/helpers.h
-@@ -61,7 +61,7 @@ extern int be_verbose;
- 
- /* cpuid and cpuinfo helpers  **************************/
- enum cpupower_cpu_vendor {X86_VENDOR_UNKNOWN = 0, X86_VENDOR_INTEL,
--			  X86_VENDOR_AMD, X86_VENDOR_MAX};
-+			  X86_VENDOR_AMD, X86_VENDOR_HYGON, X86_VENDOR_MAX};
- 
- #define CPUPOWER_CAP_INV_TSC		0x00000001
- #define CPUPOWER_CAP_APERF		0x00000002
-diff --git a/tools/power/cpupower/utils/helpers/misc.c b/tools/power/cpupower/utils/helpers/misc.c
-index 80fdf55..596bbb4 100644
---- a/tools/power/cpupower/utils/helpers/misc.c
-+++ b/tools/power/cpupower/utils/helpers/misc.c
-@@ -26,7 +26,8 @@ int cpufreq_has_boost_support(unsigned int cpu, int *support, int *active,
- 		 * has Hardware determined variable increments instead.
- 		 */
- 
--		if (cpu_info.family == 0x17) {
-+		if (cpu_info.family == 0x17 ||
-+		   (cpu_info.vendor == X86_VENDOR_HYGON && cpu_info.family == 0x18)) {
- 			if (!read_msr(cpu, MSR_AMD_HWCR, &val)) {
- 				if (!(val & CPUPOWER_AMD_CPBDIS))
- 					*active = 1;
-diff --git a/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c b/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
-index d7c2a6d..f2a7e9c 100644
---- a/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
-+++ b/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
-@@ -241,7 +241,8 @@ static int init_maxfreq_mode(void)
- 	if (!(cpupower_cpu_info.caps & CPUPOWER_CAP_INV_TSC))
- 		goto use_sysfs;
- 
--	if (cpupower_cpu_info.vendor == X86_VENDOR_AMD) {
-+	if (cpupower_cpu_info.vendor == X86_VENDOR_AMD ||
-+	    cpupower_cpu_info.vendor == X86_VENDOR_HYGON) {
- 		/* MSR_AMD_HWCR tells us whether TSC runs at P0/mperf
- 		 * freq.
- 		 * A test whether hwcr is accessable/available would be:
--- 
-2.7.4
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/pressure/ms5611_i2c.c | 2 --
+>  drivers/iio/pressure/ms5611_spi.c | 2 --
+>  2 files changed, 4 deletions(-)
+> 
+> diff --git a/drivers/iio/pressure/ms5611_i2c.c b/drivers/iio/pressure/ms5611_i2c.c
+> index 55fb5fc0b6ea..0469c8ae1134 100644
+> --- a/drivers/iio/pressure/ms5611_i2c.c
+> +++ b/drivers/iio/pressure/ms5611_i2c.c
+> @@ -117,9 +117,7 @@ static int ms5611_i2c_remove(struct i2c_client *client)
+>  #if defined(CONFIG_OF)
+>  static const struct of_device_id ms5611_i2c_matches[] = {
+>  	{ .compatible = "meas,ms5611" },
+> -	{ .compatible = "ms5611" },
+>  	{ .compatible = "meas,ms5607" },
+> -	{ .compatible = "ms5607" },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(of, ms5611_i2c_matches);
+> diff --git a/drivers/iio/pressure/ms5611_spi.c b/drivers/iio/pressure/ms5611_spi.c
+> index 932e05001e1a..cd11d022208e 100644
+> --- a/drivers/iio/pressure/ms5611_spi.c
+> +++ b/drivers/iio/pressure/ms5611_spi.c
+> @@ -119,9 +119,7 @@ static int ms5611_spi_remove(struct spi_device *spi)
+>  #if defined(CONFIG_OF)
+>  static const struct of_device_id ms5611_spi_matches[] = {
+>  	{ .compatible = "meas,ms5611" },
+> -	{ .compatible = "ms5611" },
+>  	{ .compatible = "meas,ms5607" },
+> -	{ .compatible = "ms5607" },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(of, ms5611_spi_matches);
 
