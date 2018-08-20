@@ -3,127 +3,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62404C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C113C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:23:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27440216FC
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:22:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27440216FC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A6B3321581
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:23:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6B3321581
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbeHTRip (ORCPT
+        id S1726884AbeHTRjQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 13:38:45 -0400
-Received: from foss.arm.com ([217.140.101.70]:38256 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726798AbeHTRip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 13:38:45 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED026ED1;
-        Mon, 20 Aug 2018 07:22:54 -0700 (PDT)
-Received: from dupont (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4AB7F3F24A;
-        Mon, 20 Aug 2018 07:22:53 -0700 (PDT)
-Date:   Mon, 20 Aug 2018 09:22:52 -0500
-From:   Kim Phillips <kim.phillips@arm.com>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        <schwidefsky@de.ibm.com>, <heiko.carstens@de.ibm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>, <ast@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, <suzuki.poulosi@arm.com>,
-        <linux-s390@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 0/7] perf: Add ioctl for PMU driver configuration
-Message-Id: <20180820092252.32dd015afcc5cbf2fe4c7ab7@arm.com>
-In-Reply-To: <18fe78a3-9a58-cecd-ddb9-d46cbc473b95@arm.com>
-References: <1531950487-24554-1-git-send-email-mathieu.poirier@linaro.org>
-        <20180813124642.3d49c082a95fc294d926016e@arm.com>
-        <CANLsYkx=tjCG-eb4qRoGz0SvG4qCMDz1ajR9Mo9VK5XTAn_WdQ@mail.gmail.com>
-        <20180814120910.ed225bbc462c58b09e5d68de@arm.com>
-        <CANLsYkxZ_Wts6k9yqJhJf_R5oh74svpcuoNxhtFf6h3mz8U4ZA@mail.gmail.com>
-        <20180815093912.GE2427@arm.com>
-        <20180815102820.3520d0c3875d2fd82300cdef@arm.com>
-        <CANLsYkz0j79+1C-Amz=3+7zw-0VZhnZ+rp5WAjHduEp+WjFs8A@mail.gmail.com>
-        <18fe78a3-9a58-cecd-ddb9-d46cbc473b95@arm.com>
-Organization: Arm
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
+        Mon, 20 Aug 2018 13:39:16 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38234 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726187AbeHTRjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 13:39:16 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2EF33814FDD2;
+        Mon, 20 Aug 2018 14:23:25 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7C6102026DEF;
+        Mon, 20 Aug 2018 14:23:19 +0000 (UTC)
+Date:   Mon, 20 Aug 2018 16:23:17 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
+ control domains
+Message-ID: <20180820162317.08bd7d23.cohuck@redhat.com>
+In-Reply-To: <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 20 Aug 2018 14:23:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 20 Aug 2018 14:23:25 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 20 Aug 2018 11:03:03 +0100
-Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+On Mon, 13 Aug 2018 17:48:09 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-> On 08/16/2018 08:28 PM, Mathieu Poirier wrote:
-> > On Wed, 15 Aug 2018 at 09:28, Kim Phillips <kim.phillips@arm.com> wrote:
-> >>
-> >> On Wed, 15 Aug 2018 10:39:13 +0100
-> >> Will Deacon <will.deacon@arm.com> wrote:
-> >>
-> >>> On Tue, Aug 14, 2018 at 01:42:27PM -0600, Mathieu Poirier wrote:
-> >>>> On Tue, 14 Aug 2018 at 11:09, Kim Phillips <kim.phillips@arm.com> wrote:
-> >>>>> The other thing that's going on here is that I'm becoming numb to the
-> >>>>> loathsome "failed to mmap with 12 (Cannot allocate memory)" being
-> >>>>> returned no matter what the error is/was. E.g., an error that would
-> >>>>> indicate a sense of non-implementation would be much better
-> >>>>> appreciated than presumably what the above is doing, i.e., returning
-> >>>>> -ENOMEM.  That, backed up with specific details in the form of human
-> >>>>> readable text in dmesg would be *most* welcome.
-> >>>>
-> >>>> As part of the refactoring of the code to support CPU-wide scenarios I
-> >>>> intend to emit better diagnostic messages from the driver.  Modifying
-> >>>> rb_alloc_aux() to propagate the error message generated by the
-> >>>> architecture specific PMUs doesn't look hard either and I _may_ get to
-> >>>> it as part of this work.
-> >>>
-> >>> For the record, I will continue to oppose PMU drivers that dump diagnostics
-> >>> about user-controlled input into dmesg, but the coresight drivers are yours
-> >>> so it's up to you and I won't get in the way!
-> >>
-> >> That sounds technically self-contradicting to me.  Why shouldn't
-> >> coresight share the same policies as those used for PMU drivers?  Or
-> >> why not allow the individual vendor PMU driver authors control the
-> >> level of user-friendliness of their own drivers?
-> >>
-> >> That being said, Matheiu, would you accept patches that make coresight
-> >> more verbose in dmesg?
-> > 
-> > It depends on the issue you're hoping to address.  I'd rather see the
-> > root cause of the problem fixed than adding temporary code.  Suzuki
-> > added the ETR perf API and I'm currently working on CPU-wide
-> > scenarios.  From there and with regards to what can happen in
-> > setup_aux(), we should have things covered.
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
 > 
-> I think the main issue is the lack of error code propagation from
-> setup_aux() back to the perf_aux_output_handle_begin(), which always
-> return -ENOMEM. If we fix that, we could get better idea of whats
-> wrong.
+> Provides the sysfs interfaces for:
+> 
+> 1. Assigning AP control domains to the mediated matrix device
+> 
+> 2. Unassigning AP control domains from a mediated matrix device
+> 
+> 3. Displaying the control domains assigned to a mediated matrix
+>    device
+> 
+> The IDs of the AP control domains assigned to the mediated matrix
+> device are stored in an AP domain mask (ADM). The bits in the ADM,
+> from most significant to least significant bit, correspond to
+> AP domain numbers 0 to 255. On some systems, the maximum allowable
+> domain number may be less than 255 - depending upon the host's
+> AP configuration - and assignment may be rejected if the input
+> domain ID exceeds the limit.
 
-Why get a better idea when we can get the exact details?
+Please remind me of the relationship between control domains and usage
+domains... IIRC, usage domains allow both requests and configuration,
+while control domains allow only configuration, and are by convention a
+superset of usage domains.
 
-> If someone is planning to add verbose messages, they may do so by adding
-> dev_dbg() / pr_debug(), which can be turned on as and when needed.
-
-I disagree:  that just adds another usage and kernel configuration
-obstacle.  Why not use pr_err straight up?
-
-Kim
+Is there a hard requirement somewhere in there, or can the admin
+cheerfully use different masks for usage domains and control domains
+without the SIE choking on it?
