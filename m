@@ -2,141 +2,125 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC8CFC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50858C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:45:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D7442172C
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:45:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7442172C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0704B21722
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:45:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="ZdxqcvB+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0704B21722
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbeHTSBI (ORCPT
+        id S1727159AbeHTSBZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 14:01:08 -0400
-Received: from mga18.intel.com ([134.134.136.126]:33241 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726641AbeHTSBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 14:01:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 07:45:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,265,1531810800"; 
-   d="scan'208";a="63796093"
-Received: from orsmsx110.amr.corp.intel.com ([10.22.240.8])
-  by fmsmga007.fm.intel.com with ESMTP; 20 Aug 2018 07:45:12 -0700
-Received: from orsmsx162.amr.corp.intel.com (10.22.240.85) by
- ORSMSX110.amr.corp.intel.com (10.22.240.8) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 20 Aug 2018 07:45:11 -0700
-Received: from orsmsx107.amr.corp.intel.com ([169.254.1.245]) by
- ORSMSX162.amr.corp.intel.com ([169.254.3.195]) with mapi id 14.03.0319.002;
- Mon, 20 Aug 2018 07:45:11 -0700
-From:   "Schaufler, Casey" <casey.schaufler@intel.com>
-To:     Jann Horn <jannh@google.com>
-CC:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "selinux@tycho.nsa.gov" <selinux@tycho.nsa.gov>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>
-Subject: RE: [PATCH RFC v2 2/5] X86: Support LSM determination of
- side-channel vulnerability
-Thread-Topic: [PATCH RFC v2 2/5] X86: Support LSM determination of
- side-channel vulnerability
-Thread-Index: AQHUNnfxqicfKrr44E68NP+tZyvMZaTFE9UAgAOi9EA=
-Date:   Mon, 20 Aug 2018 14:45:10 +0000
-Message-ID: <99FC4B6EFCEFD44486C35F4C281DC6732143F769@ORSMSX107.amr.corp.intel.com>
-References: <20180817221624.10232-1-casey.schaufler@intel.com>
- <20180817221624.10232-3-casey.schaufler@intel.com>
- <CAG48ez23G+wcnkCMNZV_mxYMS=h+pZkpx1451Wz5GB9_tcDv3Q@mail.gmail.com>
-In-Reply-To: <CAG48ez23G+wcnkCMNZV_mxYMS=h+pZkpx1451Wz5GB9_tcDv3Q@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZDVjZTU0ZmYtZDg1Yi00NmY4LTkwOTEtZDRmNTc1ZmNlNTRkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiUGJNbkRmYmRleDN3XC8zRXNuM3lBVXJwM004OFVFQTVMQUhhSGphQ2hDOUdSN1UrckMyMjVWS1hSVDNkZTVmRE4ifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 20 Aug 2018 14:01:25 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:53918 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbeHTSBZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 14:01:25 -0400
+Received: by mail-it0-f68.google.com with SMTP id 72-v6so20911469itw.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 07:45:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Nvghb6d1UHIvwtIvS1HDDKmjGbMeRZK9ngrHRje7tPY=;
+        b=ZdxqcvB+NNIlglD02DYgzJ6WAc9jkjCW9bQe+4wWpUKcQEoh/l72Y2e/JTqc2n/n3v
+         iqWlCiu43z2e6eyNImYS0Q3vL61n42qdGEZWZkUpGLgQ2P113LpA50q9hOMkW+tg4PUK
+         4wQPfg1+mnnE3bs87eRuEZXZzTn3Li6zxLALcI11ndBQ4QdgTuam0dZUdCIKgsQWoKAf
+         Ai2i4kpc2eAqmNGvsrWq2YMFJyHRcKQce/EmzEjsHDyjnLALm2WaFgpUAKtpbwv5d6bV
+         dBngNMenVgkRq5exHGEfINFrkH/IyQFCisbLDLRaHyxzVj0ULXXOP6YCNVpHtyidhdvp
+         L6fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Nvghb6d1UHIvwtIvS1HDDKmjGbMeRZK9ngrHRje7tPY=;
+        b=VqdoeRsGRyodSzVm8ZvmkS72wSB7T1w5ZQXmYzxt644YyEw0jF3IeZeE4g+LbKev9i
+         75fKsRloRRP4QjXRw+mCe9kPcwDeDvqb2h/SkZbT0ISkhDATPWn2GETFMy5TqKrIO4fe
+         XaeJcefXqtsRFTkr6GlqniDKX1v8KsUA/l7FxPsUBURDXfoxQhUtQTE4W0dfO5pQUDZK
+         zAil6j4SgfHusb83DQLVvMxPBXT7Vo44sd2e0dOXWnPwmbB5LfnucjjwnzG7AdjLB2CP
+         pYXy7o9ogrPe8zMEPQzqVfivmF5YmyZ7hDSwBM/mdEX2TrrZfpC74kxaTFwflslZhMN5
+         Ho7g==
+X-Gm-Message-State: AOUpUlEbvVDrgzzFFxjgCXBjCgBNSgwiuxXrZi5mi0B882Xx3cecUQUc
+        AoRYPTOuMERO8ojUmHD4pZ24amU4m6s=
+X-Google-Smtp-Source: AA+uWPwwdSxsLLKaVff8X/vv6x3MurMts4QU4+kpkhCz2FC0aJD/NRVSZOaz5h67amXyVSZkSB+m+Q==
+X-Received: by 2002:a24:3901:: with SMTP id l1-v6mr12597063ita.88.1534776328786;
+        Mon, 20 Aug 2018 07:45:28 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id h71-v6sm5416155ith.9.2018.08.20.07.45.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 Aug 2018 07:45:27 -0700 (PDT)
+Subject: Re: [PATCH V3 1/2] blk-mq: init hctx sched after update ctx and hctx
+ mapping
+To:     Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc:     tom.leiming@gmail.com, bart.vanassche@wdc.com,
+        keith.busch@linux.intel.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1534749606-7311-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1534749606-7311-2-git-send-email-jianchao.w.wang@oracle.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <048cdf08-6c9e-f54a-1e5c-f1d40fb2ecdb@kernel.dk>
+Date:   Mon, 20 Aug 2018 08:45:26 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
+In-Reply-To: <1534749606-7311-2-git-send-email-jianchao.w.wang@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKYW5uIEhvcm4gW21haWx0bzpq
-YW5uaEBnb29nbGUuY29tXQ0KPiBTZW50OiBGcmlkYXksIEF1Z3VzdCAxNywgMjAxOCA0OjU1IFBN
-DQo+IFRvOiBTY2hhdWZsZXIsIENhc2V5IDxjYXNleS5zY2hhdWZsZXJAaW50ZWwuY29tPg0KPiBD
-YzogS2VybmVsIEhhcmRlbmluZyA8a2VybmVsLWhhcmRlbmluZ0BsaXN0cy5vcGVud2FsbC5jb20+
-OyBrZXJuZWwgbGlzdA0KPiA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47IGxpbnV4LXNl
-Y3VyaXR5LW1vZHVsZSA8bGludXgtc2VjdXJpdHktDQo+IG1vZHVsZUB2Z2VyLmtlcm5lbC5vcmc+
-OyBzZWxpbnV4QHR5Y2hvLm5zYS5nb3Y7IEhhbnNlbiwgRGF2ZQ0KPiA8ZGF2ZS5oYW5zZW5AaW50
-ZWwuY29tPjsgRG9jaywgRGVuZWVuIFQgPGRlbmVlbi50LmRvY2tAaW50ZWwuY29tPjsNCj4ga3Jp
-c3RlbkBsaW51eC5pbnRlbC5jb207IEFyamFuIHZhbiBkZSBWZW4gPGFyamFuQGxpbnV4LmludGVs
-LmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCBSRkMgdjIgMi81XSBYODY6IFN1cHBvcnQgTFNN
-IGRldGVybWluYXRpb24gb2Ygc2lkZS0NCj4gY2hhbm5lbCB2dWxuZXJhYmlsaXR5DQo+IA0KPiBP
-biBTYXQsIEF1ZyAxOCwgMjAxOCBhdCAxMjoxNyBBTSBDYXNleSBTY2hhdWZsZXINCj4gPGNhc2V5
-LnNjaGF1ZmxlckBpbnRlbC5jb20+IHdyb3RlOg0KPiA+DQo+ID4gRnJvbTogQ2FzZXkgU2NoYXVm
-bGVyIDxjc2NoYXVmbGVyQGxvY2FsaG9zdC5sb2NhbGRvbWFpbj4NCj4gPg0KPiA+IFdoZW4gc3dp
-dGNoaW5nIGJldHdlZW4gdGFza3MgaXQgbWF5IGJlIG5lY2Vzc2FyeQ0KPiA+IHRvIHNldCBhbiBp
-bmRpcmVjdCBicmFuY2ggcHJlZGljdGlvbiBiYXJyaWVyIGlmIHRoZQ0KPiA+IHRhc2tzIGFyZSBw
-b3RlbnRpYWxseSB2dWxuZXJhYmxlIHRvIHNpZGUtY2hhbm5lbA0KPiA+IGF0dGFja3MuIFRoaXMg
-YWRkcyBhIGNhbGwgdG8gc2VjdXJpdHlfdGFza19zYWZlX3NpZGVjaGFubmVsDQo+ID4gc28gdGhh
-dCBzZWN1cml0eSBtb2R1bGVzIGNhbiB3ZWlnaCBpbiBvbiB0aGUgZGVjaXNpb24uDQo+ID4NCj4g
-PiBTaWduZWQtb2ZmLWJ5OiBDYXNleSBTY2hhdWZsZXIgPGNhc2V5LnNjaGF1ZmxlckBpbnRlbC5j
-b20+DQo+ID4gLS0tDQo+ID4gIGFyY2gveDg2L21tL3RsYi5jIHwgMTIgKysrKysrKystLS0tDQo+
-ID4gIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQo+ID4N
-Cj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYvbW0vdGxiLmMgYi9hcmNoL3g4Ni9tbS90bGIuYw0K
-PiA+IGluZGV4IDZlYjFmMzRjM2M4NS4uODcxNGQ0YWYwNmFhIDEwMDY0NA0KPiA+IC0tLSBhL2Fy
-Y2gveDg2L21tL3RsYi5jDQo+ID4gKysrIGIvYXJjaC94ODYvbW0vdGxiLmMNCj4gPiBAQCAtNyw2
-ICs3LDcgQEANCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2V4cG9ydC5oPg0KPiA+ICAjaW5jbHVkZSA8
-bGludXgvY3B1Lmg+DQo+ID4gICNpbmNsdWRlIDxsaW51eC9kZWJ1Z2ZzLmg+DQo+ID4gKyNpbmNs
-dWRlIDxsaW51eC9zZWN1cml0eS5oPg0KPiA+DQo+ID4gICNpbmNsdWRlIDxhc20vdGxiZmx1c2gu
-aD4NCj4gPiAgI2luY2x1ZGUgPGFzbS9tbXVfY29udGV4dC5oPg0KPiA+IEBAIC0yNzAsMTEgKzI3
-MSwxNCBAQCB2b2lkIHN3aXRjaF9tbV9pcnFzX29mZihzdHJ1Y3QgbW1fc3RydWN0ICpwcmV2LA0K
-PiBzdHJ1Y3QgbW1fc3RydWN0ICpuZXh0LA0KPiA+ICAgICAgICAgICAgICAgICAgKiB0aHJlYWRz
-LiBJdCB3aWxsIGFsc28gbm90IGZsdXNoIGlmIHdlIHN3aXRjaCB0byBpZGxlDQo+ID4gICAgICAg
-ICAgICAgICAgICAqIHRocmVhZCBhbmQgYmFjayB0byB0aGUgc2FtZSBwcm9jZXNzLiBJdCB3aWxs
-IGZsdXNoIGlmIHdlDQo+ID4gICAgICAgICAgICAgICAgICAqIHN3aXRjaCB0byBhIGRpZmZlcmVu
-dCBub24tZHVtcGFibGUgcHJvY2Vzcy4NCj4gPiArICAgICAgICAgICAgICAgICogSWYgYSBzZWN1
-cml0eSBtb2R1bGUgdGhpbmtzIHRoYXQgdGhlIHRyYW5zaXRpb24NCj4gPiArICAgICAgICAgICAg
-ICAgICogaXMgdW5zYWZlIGRvIHRoZSBmbHVzaC4NCj4gPiAgICAgICAgICAgICAgICAgICovDQo+
-ID4gLSAgICAgICAgICAgICAgIGlmICh0c2sgJiYgdHNrLT5tbSAmJg0KPiA+IC0gICAgICAgICAg
-ICAgICAgICAgdHNrLT5tbS0+Y29udGV4dC5jdHhfaWQgIT0gbGFzdF9jdHhfaWQgJiYNCj4gPiAt
-ICAgICAgICAgICAgICAgICAgIGdldF9kdW1wYWJsZSh0c2stPm1tKSAhPSBTVUlEX0RVTVBfVVNF
-UikNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICBpbmRpcmVjdF9icmFuY2hfcHJlZGljdGlv
-bl9iYXJyaWVyKCk7DQo+ID4gKyAgICAgICAgICAgICAgIGlmICh0c2sgJiYgdHNrLT5tbSAmJiB0
-c2stPm1tLT5jb250ZXh0LmN0eF9pZCAhPSBsYXN0X2N0eF9pZCkgew0KPiA+ICsgICAgICAgICAg
-ICAgICAgICAgICAgIGlmIChnZXRfZHVtcGFibGUodHNrLT5tbSkgIT0gU1VJRF9EVU1QX1VTRVIg
-fHwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgc2VjdXJpdHlfdGFza19zYWZlX3Np
-ZGVjaGFubmVsKHRzaykgIT0gMCkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IGluZGlyZWN0X2JyYW5jaF9wcmVkaWN0aW9uX2JhcnJpZXIoKTsNCj4gPiArICAgICAgICAgICAg
-ICAgfQ0KPiANCj4gV2hlbiB5b3UgcG9zdGVkIHYxIG9mIHRoaXMgc2VyaWVzLCBJIGFza2VkOg0K
-PiANCj4gfCBEb2VzIHRoaXMgZW5mb3JjZSB0cmFuc2l0aXZpdHk/IFdoYXQgaGFwcGVucyBpZiB3
-ZSBmaXJzdCBzd2l0Y2ggZnJvbQ0KPiB8IGFuIGF0dGFja2VyIHRhc2sgdG8gYSB0YXNrIHdpdGhv
-dXQgLT5tbSwgYW5kIGltbWVkaWF0ZWx5IGFmdGVyd2FyZHMNCj4gfCBmcm9tIHRoZSB0YXNrIHdp
-dGhvdXQgLT5tbSB0byBhIHZpY3RpbSB0YXNrPyBJbiB0aGF0IGNhc2UsIHdoZXRoZXIgYQ0KPiB8
-IGZsdXNoIGhhcHBlbnMgYmV0d2VlbiB0aGUgYXR0YWNrZXIgdGFzayBhbmQgdGhlIHZpY3RpbSB0
-YXNrIGRlcGVuZHMgb24NCj4gfCB3aGV0aGVyIHRoZSBMU00gdGhpbmtzIHRoYXQgdGhlIG1tLWxl
-c3MgdGFzayBzaG91bGQgaGF2ZSBhY2Nlc3MgdG8gdGhlDQo+IHwgdmljdGltIHRhc2ssIHJpZ2h0
-Pw0KPiANCj4gSGF2ZSB5b3UgYWRkcmVzc2VkIHRoYXQ/IEkgZG9uJ3Qgc2VlIGl0Li4uDQoNCk5v
-cGUuIFRoYXQncyBnb2luZyB0byByZXF1aXJlIG1haW50YWluaW5nIHN0YXRlIGFib3V0IGFsbCB0
-aGUNCnRhc2tzIGluIHRoZSBjaGFpbiB0aGF0IG1pZ2h0IHN0aWxsIGhhdmUgY2FjaGUgaW52b2x2
-ZW1lbnQuDQoNCglBIC0+IEIgLT4gQyAtPiBEDQoNCklmIEIgYW5kIEMgZG9uJ3QgZG8gYW55dGhp
-bmcgY2FjaGV3b3J0aHkgRCBjb3VsZCBjb25jZWl2YWJseSBhdHRhY2sgQS4NClRoZSBhbW91bnQg
-b2Ygc3RhdGUgcmVxdWlyZWQgdG8gZGV0ZWN0IHRoaXMgY2FzZSB3b3VsZCBiZSBwcm9oaWJpdGl2
-ZS4NCkkgdGhpbmsgdGhhdCBpZiB5b3UncmUgc3VmZmljaWVudGx5IGNvbmNlcm5lZCBhYm91dCB0
-aGlzIGNhc2UgeW91IHNob3VsZCBqdXN0DQpnbyBhaGVhZCBhbmQgc2V0IHRoZSBiYXJyaWVyLiBJ
-J20gd2lsbGluZyB0byBsZWFybiBzb21ldGhpbmcgdGhhdCBzYXlzIEknbQ0Kd3JvbmcuDQoNCg==
+On 8/20/18 1:20 AM, Jianchao Wang wrote:
+> @@ -2913,6 +2906,29 @@ static void __blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set,
+>  	list_for_each_entry(q, &set->tag_list, tag_set_list)
+>  		blk_mq_freeze_queue(q);
+>  
+> +	/*
+> +	 * switch io scheduler to NULL to clean up the data in it.
+> +	 * will get it back after update mapping between cpu and hw queues.
+> +	 */
+
+"Switch IO scheduler to 'none', cleaning up the data associated with
+the previous scheduler. We'll switch back once we're done updating
+the new sw to hw queue mappings.
+
+> +	list_for_each_entry(q, &set->tag_list, tag_set_list) {
+> +		if (!q->elevator) {
+> +			q->elv_type = NULL;
+> +			continue;
+> +		}
+> +		q->elv_type = q->elevator->type;
+> +		mutex_lock(&q->sysfs_lock);
+> +		/*
+> +		 * After elevator_switch_mq, the previous elevator_queue will be
+> +		 * released by elevator_release. The reference of the io scheduler
+> +		 * module get by elevator_get will also be put. So we need to get
+> +		 * a reference of the io scheduler module here to prevent it to be
+> +		 * removed.
+> +		 */
+> +		__module_get(q->elv_type->elevator_owner);
+> +		elevator_switch_mq(q, NULL);
+> +		mutex_unlock(&q->sysfs_lock);
+> +	}
+
+I don't hate this, but I also find it pretty annoying to put local state
+into the queue itself. It would be much nicer _not_ to have ->elv_type
+in the queue itself. That would need an allocation, however...
+
+Apart from those two things, looks fine to me.
+
+-- 
+Jens Axboe
+
