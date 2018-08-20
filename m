@@ -2,104 +2,151 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 830B2C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 261C1C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:50:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E27820676
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:47:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mltyzrjl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E27820676
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CC12C20896
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:50:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC12C20896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbeHTWEf (ORCPT
+        id S1726617AbeHTWHh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 18:04:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56068 "EHLO mail.kernel.org"
+        Mon, 20 Aug 2018 18:07:37 -0400
+Received: from fieldses.org ([173.255.197.46]:44852 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726197AbeHTWEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 18:04:34 -0400
-Received: from mail-qk0-f172.google.com (mail-qk0-f172.google.com [209.85.220.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FE5921756;
-        Mon, 20 Aug 2018 18:47:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534790868;
-        bh=pECQKSH5dTINSES9xni6k5VZxYne20E8JErIm5Lew/4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=MltyzrjlpZnQqMlmnCRbiK7mN0xbrfRlCXUddPm2Jz4xcW/ErV3LCUkjQz2Krw7mH
-         rLhawgw3zEbIJSaV358e9CqvEns7O7iu9VDjmHQSjfW9hyp1m7UUtvt1niOI/EWnDE
-         fenITen6UJ/kI2UEjXQD4hHza7TSmQX/WDVkIGT0=
-Received: by mail-qk0-f172.google.com with SMTP id d15-v6so4041908qkc.1;
-        Mon, 20 Aug 2018 11:47:48 -0700 (PDT)
-X-Gm-Message-State: AOUpUlEvuC0rMIQYCKoxWfnRXyrUvqJCpM+weDcmxBJi/ne17avZn1G9
-        P304YKp57ue/PoCraouaqpRFSMyErzSS0qkrCw==
-X-Google-Smtp-Source: AA+uWPxcOxFjChKk4/SfowCVLb/VmqcaNvv1yuvLtztX7ubh5In2oRd/Bs39yF+Fz+XbtwIjNxbN+1dliqpGAHckwY4=
-X-Received: by 2002:ae9:c112:: with SMTP id z18-v6mr41404291qki.96.1534790867282;
- Mon, 20 Aug 2018 11:47:47 -0700 (PDT)
+        id S1726260AbeHTWHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 18:07:36 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 67D5A7CC; Mon, 20 Aug 2018 14:50:49 -0400 (EDT)
+Date:   Mon, 20 Aug 2018 14:50:49 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "David S. Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sunrpc: Don't use stack buffer with scatterlist
+Message-ID: <20180820185049.GA5468@fieldses.org>
+References: <20180817214354.5780-1-labbott@redhat.com>
 MIME-Version: 1.0
-References: <20180804070355.14857-1-manu@freebsd.org> <20180820111755.rzg7l2lznmbpuf2e@flea>
- <CAL_JsqLVQDRH1esAXghfQdxmp+iorWVCArM2qTwjbgmQzmhzQw@mail.gmail.com> <20180820140737.xmqhu5ndqzehvkql@flea>
-In-Reply-To: <20180820140737.xmqhu5ndqzehvkql@flea>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 20 Aug 2018 13:47:35 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKzCySH0q=4Ly9tJBiDaW23Mz9Q0j-_qb55CcL2F5fYOA@mail.gmail.com>
-Message-ID: <CAL_JsqKzCySH0q=4Ly9tJBiDaW23Mz9Q0j-_qb55CcL2F5fYOA@mail.gmail.com>
-Subject: Re: [PATCH 1/7] dt-bindings: Add DT bindings documentation for
- Allwinner Thermal Sensor Controller
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Emmanuel Vadot <manu@freebsd.org>, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180817214354.5780-1-labbott@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 9:07 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Mon, Aug 20, 2018 at 07:41:22AM -0600, Rob Herring wrote:
-> > On Mon, Aug 20, 2018 at 5:17 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > On Sat, Aug 04, 2018 at 09:03:49AM +0200, Emmanuel Vadot wrote:
-> > > > This patch adds documentation for Device-Tree bindings for the Allwinner
-> > > > Thermal Sensor Controller found on the H3, H5 and A64 SoCs
-> > > >
-> > > > Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
-> > >
-> > > I'm not going to merge a binding for a device that doesn't have any
-> > > driver implemented at the moment in Linux.
-> >
-> > I'll take it then. Linux is not the only DT client.
->
-> Then don't complain if we ever have to break the ABI.
+On Fri, Aug 17, 2018 at 02:43:54PM -0700, Laura Abbott wrote:
+> Fedora got a bug report from NFS:
 
-My only complaint is when breaking ABIs and not being clear about
-doing so. Otherwise, it is up to platform maintainers to not upset
-their users (including if some of those users are FreeBSD).
+Thanks, applying (unless Trond or Anna gets it).
 
-> We never tested
-> that hardware, never had any code running on it, and it *will* cause
-> some issues. For example, the calibration data have never been used
-> and how they should be represented have never been described, since no
-> one ever actually tried to use it.
+--b.
 
-Then perhaps that part of the binding should be omitted for now. But I
-don't see how if this works for FreeBSD how it wouldn't for Linux.
-
-Rob
+> 
+> kernel BUG at include/linux/scatterlist.h:143!
+> ...
+> RIP: 0010:sg_init_one+0x7d/0x90
+> ..
+>   make_checksum+0x4e7/0x760 [rpcsec_gss_krb5]
+>   gss_get_mic_kerberos+0x26e/0x310 [rpcsec_gss_krb5]
+>   gss_marshal+0x126/0x1a0 [auth_rpcgss]
+>   ? __local_bh_enable_ip+0x80/0xe0
+>   ? call_transmit_status+0x1d0/0x1d0 [sunrpc]
+>   call_transmit+0x137/0x230 [sunrpc]
+>   __rpc_execute+0x9b/0x490 [sunrpc]
+>   rpc_run_task+0x119/0x150 [sunrpc]
+>   nfs4_run_exchange_id+0x1bd/0x250 [nfsv4]
+>   _nfs4_proc_exchange_id+0x2d/0x490 [nfsv4]
+>   nfs41_discover_server_trunking+0x1c/0xa0 [nfsv4]
+>   nfs4_discover_server_trunking+0x80/0x270 [nfsv4]
+>   nfs4_init_client+0x16e/0x240 [nfsv4]
+>   ? nfs_get_client+0x4c9/0x5d0 [nfs]
+>   ? _raw_spin_unlock+0x24/0x30
+>   ? nfs_get_client+0x4c9/0x5d0 [nfs]
+>   nfs4_set_client+0xb2/0x100 [nfsv4]
+>   nfs4_create_server+0xff/0x290 [nfsv4]
+>   nfs4_remote_mount+0x28/0x50 [nfsv4]
+>   mount_fs+0x3b/0x16a
+>   vfs_kern_mount.part.35+0x54/0x160
+>   nfs_do_root_mount+0x7f/0xc0 [nfsv4]
+>   nfs4_try_mount+0x43/0x70 [nfsv4]
+>   ? get_nfs_version+0x21/0x80 [nfs]
+>   nfs_fs_mount+0x789/0xbf0 [nfs]
+>   ? pcpu_alloc+0x6ca/0x7e0
+>   ? nfs_clone_super+0x70/0x70 [nfs]
+>   ? nfs_parse_mount_options+0xb40/0xb40 [nfs]
+>   mount_fs+0x3b/0x16a
+>   vfs_kern_mount.part.35+0x54/0x160
+>   do_mount+0x1fd/0xd50
+>   ksys_mount+0xba/0xd0
+>   __x64_sys_mount+0x21/0x30
+>   do_syscall_64+0x60/0x1f0
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> This is BUG_ON(!virt_addr_valid(buf)) triggered by using a stack
+> allocated buffer with a scatterlist. Convert the buffer for
+> rc4salt to be dynamically allocated instead.
+> 
+> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1615258
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+> Compile tested only.
+> ---
+>  net/sunrpc/auth_gss/gss_krb5_crypto.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/net/sunrpc/auth_gss/gss_krb5_crypto.c b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+> index 8654494b4d0a..834eb2b9e41b 100644
+> --- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
+> +++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+> @@ -169,7 +169,7 @@ make_checksum_hmac_md5(struct krb5_ctx *kctx, char *header, int hdrlen,
+>  	struct scatterlist              sg[1];
+>  	int err = -1;
+>  	u8 *checksumdata;
+> -	u8 rc4salt[4];
+> +	u8 *rc4salt;
+>  	struct crypto_ahash *md5;
+>  	struct crypto_ahash *hmac_md5;
+>  	struct ahash_request *req;
+> @@ -183,14 +183,18 @@ make_checksum_hmac_md5(struct krb5_ctx *kctx, char *header, int hdrlen,
+>  		return GSS_S_FAILURE;
+>  	}
+>  
+> +	rc4salt = kmalloc_array(4, sizeof(*rc4salt), GFP_NOFS);
+> +	if (!rc4salt)
+> +		return GSS_S_FAILURE;
+> +
+>  	if (arcfour_hmac_md5_usage_to_salt(usage, rc4salt)) {
+>  		dprintk("%s: invalid usage value %u\n", __func__, usage);
+> -		return GSS_S_FAILURE;
+> +		goto out_free_rc4salt;
+>  	}
+>  
+>  	checksumdata = kmalloc(GSS_KRB5_MAX_CKSUM_LEN, GFP_NOFS);
+>  	if (!checksumdata)
+> -		return GSS_S_FAILURE;
+> +		goto out_free_rc4salt;
+>  
+>  	md5 = crypto_alloc_ahash("md5", 0, CRYPTO_ALG_ASYNC);
+>  	if (IS_ERR(md5))
+> @@ -258,6 +262,8 @@ make_checksum_hmac_md5(struct krb5_ctx *kctx, char *header, int hdrlen,
+>  	crypto_free_ahash(md5);
+>  out_free_cksum:
+>  	kfree(checksumdata);
+> +out_free_rc4salt:
+> +	kfree(rc4salt);
+>  	return err ? GSS_S_FAILURE : 0;
+>  }
+>  
+> -- 
+> 2.17.1
