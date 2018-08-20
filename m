@@ -2,112 +2,65 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E8FC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F831C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:07:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAF442173A
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:05:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAF442173A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id EAEA921570
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:07:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="oXHtAtui"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAEA921570
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbeHTVVx (ORCPT
+        id S1726455AbeHTVYG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 17:21:53 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59846 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726106AbeHTVVw (ORCPT
+        Mon, 20 Aug 2018 17:24:06 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:47762 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbeHTVYG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 17:21:52 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7KI4oYJ086778
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 14:05:13 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m006xdy88-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 14:05:13 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Mon, 20 Aug 2018 19:05:11 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 20 Aug 2018 19:05:07 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7KI56KI44892188
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 20 Aug 2018 18:05:06 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 713605204E;
-        Mon, 20 Aug 2018 21:05:07 +0100 (BST)
-Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with SMTP id 6E44F52050;
-        Mon, 20 Aug 2018 21:05:05 +0100 (BST)
-Date:   Mon, 20 Aug 2018 11:05:03 -0700
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
-        Anton Blanchard <anton@samba.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/2] powerpc: Use cpu_smallcore_sibling_mask at SMT
- level on bigcores
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <1534743704-4760-1-git-send-email-ego@linux.vnet.ibm.com>
- <1534743704-4760-3-git-send-email-ego@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <1534743704-4760-3-git-send-email-ego@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18082018-4275-0000-0000-000002AC580A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082018-4276-0000-0000-000037B58B40
-Message-Id: <20180820180503.GB23117@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-20_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=800 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808200187
+        Mon, 20 Aug 2018 17:24:06 -0400
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     od@zcrc.me, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH] rtc: jz4740: Drop dependency on MACH_INGENIC
+Date:   Mon, 20 Aug 2018 20:07:16 +0200
+Message-Id: <20180820180716.1853-1-paul@crapouillou.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1534788444; bh=NgGTtVuUdy4sZdw26AV7/gPAV8I+NLNxPZuI4kkMIyU=; h=From:To:Cc:Subject:Date:Message-Id; b=oXHtAtui6erz98iGiO06BDjBLyzV+xUBJeibnIFltUSp35m5uJOuomG6oBLJK5OWU8SsPMDEI30+0Ql4GtfFGz3Gfd3DHOG9XFIuQuLIYRO+xpFTlQYWSRSB4NgmCyrQGsDjfQkI4QLlMalBUdNsFuScHy95+RVuRHNwpAxeHps=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Gautham R. Shenoy <ego@linux.vnet.ibm.com> [2018-08-20 11:11:44]:
+Depending on MACH_INGENIC prevent us from creating a generic kernel that
+works on more than one MIPS board. Instead, we just depend on MIPS being
+set.
 
-> From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-> 
-> Each of the SMT4 cores forming a big-core are more or less independent
-> units. Thus when multiple tasks are scheduled to run on the fused
-> core, we get the best performance when the tasks are spread across the
-> pair of SMT4 cores.
-> 
-> This patch achieves this by setting the SMT level mask to correspond
-> to the smallcore sibling mask on big-core systems. This patch also
-> ensures that while checked for shared-caches on big-core system, we
-> use the smallcore_sibling_mask to compare with the l2_cache_mask.
-> This ensure that the CACHE level sched-domain is created, whose groups
-> correspond to the threads of the big-core.
-> 
-> With this patch, the SMT sched-domain with SMT=8,4,2 on big-core
-> systems are as follows:
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/rtc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index a2ba5db36145..98c7f19256b1 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -1608,7 +1608,7 @@ config RTC_DRV_MPC5121
+ 
+ config RTC_DRV_JZ4740
+ 	tristate "Ingenic JZ4740 SoC"
+-	depends on MACH_INGENIC || COMPILE_TEST
++	depends on MIPS || COMPILE_TEST
+ 	help
+ 	  If you say yes here you get support for the Ingenic JZ47xx SoCs RTC
+ 	  controllers.
+-- 
+2.11.0
 
