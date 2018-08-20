@@ -2,200 +2,105 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6103AC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D83C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:34:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DF1E2170E
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:34:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DF1E2170E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 9E44F2170E
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:34:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZVNY3sJI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E44F2170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbeHTSuH (ORCPT
+        id S1727444AbeHTSua (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 14:50:07 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:43705 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726883AbeHTSuH (ORCPT
+        Mon, 20 Aug 2018 14:50:30 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38401 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726883AbeHTSua (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 14:50:07 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1frmBp-000243-VX; Mon, 20 Aug 2018 17:33:57 +0200
-Message-ID: <1534779232.5445.34.camel@pengutronix.de>
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com,
-        Tiffany Lin =?UTF-8?Q?=28=E6=9E=97=E6=85=A7=E7=8F=8A=29?= 
-        <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen =?UTF-8?Q?=28=E9=99=B3=E6=99=BA=E8=BF=AA=29?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Date:   Mon, 20 Aug 2018 17:33:52 +0200
-In-Reply-To: <CAAFQd5ACR7wQO7k6PfBg2rJEe81pQvnCzd2yp8AEkU+iLXQXPw@mail.gmail.com>
-References: <20180724140621.59624-1-tfiga@chromium.org>
-         <20180724140621.59624-2-tfiga@chromium.org>
-         <1534770242.5445.13.camel@pengutronix.de>
-         <CAAFQd5BBOh7nPZ70aaWiSuygGSOTiAQrOm0V9UPgFqqBgZf_LA@mail.gmail.com>
-         <1534774398.5445.32.camel@pengutronix.de>
-         <CAAFQd5ACR7wQO7k6PfBg2rJEe81pQvnCzd2yp8AEkU+iLXQXPw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Mon, 20 Aug 2018 14:50:30 -0400
+Received: by mail-pf1-f195.google.com with SMTP id x17-v6so6947009pfh.5
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 08:34:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:subject:date:message-id;
+        bh=qMyHORIoNYPSIueH4e/M3+17FAqMwSDrQJGLfkY3URU=;
+        b=ZVNY3sJIwO3XuHiz0cI87HyVdC1EOsAOSydFf/Kto9JVWuN4kHWFhbaNJ6z2hxpwlr
+         KcFyX/SlYZyNIdGWfJc29JiN9rmFxgNoz1FHBQ8aPdwg6EY9Fa962uHPbA2I7Ur9xJS8
+         TX1nXFv5Ia7aUirXv3/V2S4QfRuG2ncIx5fgU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=qMyHORIoNYPSIueH4e/M3+17FAqMwSDrQJGLfkY3URU=;
+        b=NLQJXFZp0kNGLjcrbBoo5kTf8xK5szo8HDT36ENaWkKq+vuRwCvmwpY+iiNydgTXEr
+         WXVxfGnFnh/IyZ0hDSISUslKDlelmVsC1G9QOxU5KxCLB3QsYeSc72IAeeJInu8X1ApO
+         uP2lCYdvAafD1f/Uf0qhgb9THVXlECFjWtg9jhK6q5Ey161NNuPVdlKTTXU9Yh+pSY0h
+         a0woh+3aNWPhnbYcBrtC0lYYp0h/c8oKY8AsQxyVQ1RkXCWbwyBEwW2b335DkL1zvowg
+         eIWzvXhxfYRxB2W5sN7aSnse9dQ0L0WIqA3CGDoLFSInr0T6NIhi1FX8v+GR6li5p8/c
+         ZCUw==
+X-Gm-Message-State: AOUpUlFAkZxZh7yahUxJluDP0nU7mBI1dMP0aC0oyKnr0TcUBX94UaXn
+        RkFD1dlJ5fX3Z5AKxwI2taEIuA==
+X-Google-Smtp-Source: AA+uWPxh6IslMtWTJi5mLBELLcLbp13F/tZiX3PzQugsOiVGo78IspHA3KmmLT/mXvViEwyrW4S02Q==
+X-Received: by 2002:a62:bd4:: with SMTP id 81-v6mr49007352pfl.67.1534779264272;
+        Mon, 20 Aug 2018 08:34:24 -0700 (PDT)
+Received: from ravisadineni0.mtv.corp.google.com ([2620:15c:202:1:9f2c:2145:3c42:4e88])
+        by smtp.gmail.com with ESMTPSA id k64-v6sm17064728pfg.141.2018.08.20.08.34.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 20 Aug 2018 08:34:23 -0700 (PDT)
+From:   RaviChandra Sadineni <ravisadineni@chromium.org>
+X-Google-Original-From: RaviChandra Sadineni <ravisadineni@google.com>
+To:     lee.jones@linaro.org, dmitry.torokhov@gmail.com,
+        ravisadineni@chromium.org, ravisadineni@google.com,
+        dtor@google.com, linux-samsung-soc@vger.kernel.org,
+        tbroch@google.com, linux-kernel@vger.kernel.org,
+        linux-input@vger.kernel.org, tfiga@chromium.org,
+        m.szyprowski@samsung.com
+Subject: mfd: cros_ec: Check for mkbp events on resume only if supported.
+Date:   Mon, 20 Aug 2018 08:34:19 -0700
+Message-Id: <20180820153419.32098-1-ravisadineni@google.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-08-20 at 23:27 +0900, Tomasz Figa wrote:
-[...]
-> +3. Start queuing buffers to ``OUTPUT`` queue containing stream data after
-> > > > > +   the seek until a suitable resume point is found.
-> > > > > +
-> > > > > +   .. note::
-> > > > > +
-> > > > > +      There is no requirement to begin queuing stream starting exactly from
-> > > > > +      a resume point (e.g. SPS or a keyframe). The driver must handle any
-> > > > > +      data queued and must keep processing the queued buffers until it
-> > > > > +      finds a suitable resume point. While looking for a resume point, the
-> > > > 
-> > > > I think the definition of a resume point is too vague in this place.
-> > > > Can the driver decide whether or not a keyframe without SPS is a
-> > > > suitable resume point? Or do drivers have to parse and store SPS/PPS if
-> > > > the hardware does not support resuming from a keyframe without sending
-> > > > SPS/PPS again?
-> > > 
-> > > The thing is that existing drivers implement and user space clients
-> > > rely on the behavior described above, so we cannot really change it
-> > > anymore.
-> > 
-> > My point is that I'm not exactly sure what that behaviour is, given the
-> > description.
-> > 
-> > Must a driver be able to resume from a keyframe even if userspace never
-> > pushes SPS/PPS again?
-> > If so, I think it should be mentioned more explicitly than just via an
-> > example in parentheses, to make it clear to all driver developers that
-> > this is a requirement that userspace is going to rely on.
-> > 
-> > Or, if that is not the case, is a driver free to define "SPS only" as
-> > its "suitable resume point" and to discard all input including keyframes
-> > until the next SPS/PPS is pushed?
-> > 
-> > It would be better to clearly define what a "suitable resume point" has
-> > to be per codec, and not let the drivers decide for themselves, if at
-> > all possible. Otherwise we'd need a away to inform userspace about the
-> > per-driver definition.
-> 
-> The intention here is that there is exactly no requirement for the
-> user space to seek to any kind of resume point
+Currently on every resume we check for mkbp events and notify the
+clients. This helps in identifying the wakeup sources. But on devices
+that do not support mkbp protocol, we might end up querying key state of
+the keyboard in a loop which blocks the resume. Instead check for events
+only if mkbp is supported.
 
-No question about this.
+Signed-off-by: RaviChandra Sadineni <ravisadineni@chromium.org>
+---
 
-> and so there is no point in defining such.
+ Note: This patch fixes the suspend/resume issue on Snow and Peach-Pit
+ Chromebooks, both on vanilla v4.18 as well as linux-next from 20 August 
+ 2018. Further info at: https://lkml.org/lkml/2018/6/5/1076
+ 
+ drivers/mfd/cros_ec.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I don't agree. Let me give an example:
+diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+index 65a9757a6d21..fe6f83766144 100644
+--- a/drivers/mfd/cros_ec.c
++++ b/drivers/mfd/cros_ec.c
+@@ -218,7 +218,8 @@ EXPORT_SYMBOL(cros_ec_suspend);
+ 
+ static void cros_ec_report_events_during_suspend(struct cros_ec_device *ec_dev)
+ {
+-	while (cros_ec_get_next_event(ec_dev, NULL) > 0)
++	while (ec_dev->mkbp_event_supported &&
++	       cros_ec_get_next_event(ec_dev, NULL) > 0)
+ 		blocking_notifier_call_chain(&ec_dev->event_notifier,
+ 					     1, ec_dev);
+ }
+-- 
+2.16.4
 
-Assume userspace wants to play back a simple h.264 stream that has
-SPS/PPS exactly once, in the beginning.
-
-If drivers are allowed to resume from SPS/PPS only, and have no way to
-communicate this to userspace, userspace always has to assume that
-resuming from keyframes alone is not possible. So it has to store
-SPS/PPS and resubmit them with every seek, even if a specific driver
-wouldn't require it: Otherwise those drivers that don't store SPS/PPS
-themselves (or in hardware) would be allowed to just drop everything
-after the first seek.
-This effectively would make resending SPS/PPS mandatory, which doesn't
-fit well with the intention of letting userspace just seek anywhere and
-start feeding data (or: NAL units) into the driver blindly.
-
-> The only requirement here is that the
-> hardware/driver keeps processing the source stream until it finds a
-> resume point suitable for it - if the hardware keeps SPS/PPS in its
-> state then just a keyframe; if it doesn't then SPS/PPS.
-
-Yes, but the difference between those two might be very relevant to
-userspace behaviour.
-
-> Note that this is a documentation of the user space API, not a driver
-> implementation guide. We may want to create the latter separately,
-> though.
-
-This is a good point, I keep switching the perspective from which I look
-at this document.
-Even for userspace it would make sense to be as specific as possible,
-though. Otherwise, doesn't userspace always have to assume the worst?
-
-> H264 is a bit special here, because one may still seek to a key frame,
-> but past the relevant SPS/PPS headers. In this case, there is no way
-> for the hardware to know that the SPS/PPS it has in its local state is
-> not the one that applies to the frame. It may be worth adding that
-> such case leads to undefined results, but must not cause crash nor a
-> fatal decode error.
-> 
-> What do you think?
-
-That sounds like a good idea. I haven't thought about seeking over a
-SPS/PPS change. Of course userspace must not expect correct results in
-this case without providing the new SPS/PPS.
-
-> > > Do we have hardware for which this wouldn't work to the point that the
-> > > driver couldn't even continue with a bunch of frames corrupted? If
-> > > only frame corruption is a problem, we can add a control to tell the
-> > > user space to seek to resume points and it can happen in an
-> > > incremental patch.
-> > 
-> > The coda driver currently can't seek at all, it always stops and
-> > restarts the sequence. So depending on the above I might have to either
-> > find and store SPS/PPS in software, or figure out how to make the
-> > firmware flush the bitstream buffer and restart without actually
-> > stopping the sequence.
-> > I'm sure the hardware is capable of this, it's more a question of what
-> > behaviour is actually intended, and whether I have enough information
-> > about the firmware interface to implement it.
-> 
-> What happens if you just keep feeding it with next frames?
-
-As long as they are well formed, it should just decode them, possibly
-with artifacts due to mismatched reference buffers. There is an I-Frame
-search mode that should be usable to skip to the next resume point, as
-well, so I'm sure coda will end up not needing the
-NEEDS_SEEK_TO_RESUME_POINT flag below. I'm just not certain at this
-point whether I'll be able to (or: whether I'll have to) keep the
-SPS/PPS state across seeks. I have seen so many decoder hangs with
-malformed input on i.MX53 that I couldn't recover from, that I'm wary
-to make any guarantees without flushing the bitstream buffer first.
-
-> If that would result only in corrupted frames, I suppose the control (say
-> V4L2_CID_MPEG_VIDEO_NEEDS_SEEK_TO_RESUME_POINT) would solve the
-> problem?
-
-For this to be useful, userspace needs to know what a resume point is in
-the first place, though.
-
-regards
-Philipp
