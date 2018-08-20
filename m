@@ -2,85 +2,154 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B8FC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58135C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA11121570
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:04:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jmzn1ipG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA11121570
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 12BFE208D4
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:10:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12BFE208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726580AbeHTOTW (ORCPT
+        id S1726307AbeHTOZO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 10:19:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43846 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbeHTOTW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 10:19:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xtHmHAVF7pnDJTgigaQXYkhAdYbKy1SNx2gDcWyB5IY=; b=Jmzn1ipGkJ+AlJ9SsFAhm4iJj
-        oX6a7Sia+ZgASiJ53sNZdHNp2W6pICkQ3swEWny3NhN5B7iu+x/eHAtDrp6jIpMnghGcrWyFTWADE
-        YBMjrZ+gu54WUMq1vGGcM5uSruSTPE6Qd+kpKVQHKgMAl26XVjZtectnufvgFegZvtX0JkjKQHASG
-        tp88bCtKnP+JwNLW97q2ZlcksjUVXxXf7UkTOzHARKr0gDuOqpd0tEZRzFwmlReNnHg9I0HT8sWDB
-        6vfu33HFg7BTKQlUGbtZt/CsjGcZThiuAaseWqKU+pcaQdUcrAbAJNBmB83415tWRt8sD66EP5YJU
-        QPh7CO8Ow==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1frhyl-0001kz-Jj; Mon, 20 Aug 2018 11:04:11 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 0A06820267B13; Mon, 20 Aug 2018 13:04:10 +0200 (CEST)
-Date:   Mon, 20 Aug 2018 13:04:10 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     leo.yan@linaro.org
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [PATCH v5] cpuidle: menu: Handle stopped tick more aggressively
-Message-ID: <20180820110410.GY2494@hirez.programming.kicks-ass.net>
-References: <1951009.1jlQfyrxio@aspire.rjw.lan>
- <1754612.IcCR94pSYR@aspire.rjw.lan>
- <1582055.9b67urWYFa@aspire.rjw.lan>
- <1572343.jWaXB8XNF1@aspire.rjw.lan>
- <20180814154441.GA13920@leoy-ThinkPad-X240s>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180814154441.GA13920@leoy-ThinkPad-X240s>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Mon, 20 Aug 2018 10:25:14 -0400
+Received: from gate.crashing.org ([63.228.1.57]:50114 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725948AbeHTOZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 10:25:14 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w7KB9UPP030991;
+        Mon, 20 Aug 2018 06:09:32 -0500
+Message-ID: <21451a6ba97eada5d4a8a49b2726edde58266817.camel@kernel.crashing.org>
+Subject: Re: [RFC PATCH 1/6] Revert "PCI: Fix is_added/is_busmaster race
+ condition"
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Hari Vyas <hari.vyas@broadcom.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
+        Ray Jui <ray.jui@broadcom.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jens Axboe <axboe@kernel.dk>, Lukas Wunner <lukas@wunner.de>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Marta Rybczynska <mrybczyn@kalray.eu>,
+        Pierre-Yves Kerbrat <pkerbrat@kalray.eu>,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 20 Aug 2018 21:09:30 +1000
+In-Reply-To: <CAM5rFu_dsfAiQtVnM58631tFUxYyzXrA5tgz8_v0=or3Lv8YbA@mail.gmail.com>
+References: <20180817044902.31420-1-benh@kernel.crashing.org>
+         <20180817044902.31420-2-benh@kernel.crashing.org>
+         <20180817154431.GC128050@bhelgaas-glaptop.roam.corp.google.com>
+         <06c1233b71dea08b1fc32334acefc48c32c46557.camel@kernel.crashing.org>
+         <20180819022440.GG128050@bhelgaas-glaptop.roam.corp.google.com>
+         <4d777ed8c17b479e59b16cc0b4e9a3f6537f9884.camel@kernel.crashing.org>
+         <CAM5rFu_dsfAiQtVnM58631tFUxYyzXrA5tgz8_v0=or3Lv8YbA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 11:44:41PM +0800, leo.yan@linaro.org wrote:
-> I agree this patch can resolve the issue you mentioned in the commit
-> log, but this patch will be fragile for below case, so it will select
-> state1 but not state2, how about you think for this case?
+On Mon, 2018-08-20 at 11:55 +0530, Hari Vyas wrote:
+> On Mon, Aug 20, 2018 at 7:40 AM, Benjamin Herrenschmidt
+> <benh@kernel.crashing.org> wrote:
+> > On Sat, 2018-08-18 at 21:24 -0500, Bjorn Helgaas wrote:
+> > > On Sat, Aug 18, 2018 at 01:24:51PM +1000, Benjamin Herrenschmidt wrote:
+> > > > On Fri, 2018-08-17 at 10:44 -0500, Bjorn Helgaas wrote:
+> > > > > On Fri, Aug 17, 2018 at 02:48:57PM +1000, Benjamin Herrenschmidt wrote:
+> > > > > > This reverts commit 44bda4b7d26e9fffed6d7152d98a2e9edaeb2a76.
+> > > > > 
+> > > > > Just to be clear, if I understand correctly, this is a pure revert of
+> > > > > 44bda4b7d26e and as such it reintroduces the problem solved by that
+> > > > > commit.
+> > > > > 
+> > > > > If your solution turns out to be better, that's great, but it would be
+> > > > > nice to avoid the bisection hole of reintroducing the problem, then
+> > > > > fixing it again later.
+> > > > 
+> > > > There is no way to do that other than merging the revert and the fix
+> > > > into one. That said, the race is sufficiently hard to hit that I
+> > > > wouldn't worry too much about it.
+> > > 
+> > > OK, then at least mention that in the changelog.
+> > 
+> > Sure will do. This is just RFC at this stage :-)
+> > 
+> > As for the race with enable, what's your take on my approach ? The
+> > basic premise is that we need some kind of mutex to make the updates to
+> > enable_cnt and the actual config space changes atomic. While at it we
+> > can fold pci_set_master vs. is_busmaster as well as those are racy too.
+> > 
+> > I chose to create a new mutex which we should be able to address other
+> > similar races if we find them. The other solutions that I dismissed
+> > were:
+> > 
+> >  - Using the device_lock. A explained previously, this is tricky, I
+> > prefer not using this for anything other than locking against
+> > concurrent add/remove. The main issue is that drivers will be sometimes
+> > called in context where that's already held, so we can't take it inside
+> > pci_enable_device() and I'd rather not add new constraints such as
+> > "pci_enable_device() must be only called from probe() unless you also
+> > take the device lock". It would be tricky to audit everybody...
+> > 
+> >  - Using a global mutex. We could move the bridge lock from AER to core
+> > code for example, and use that. But it doesn't buy us much, and
+> > slightly redecuces parallelism. It also makes it a little bit more
+> > messy to walk up the bridge chain, we'd have to do a
+> > pci_enable_device_unlocked or something, messy.
+> > 
+> > So are you ok with the approach ? Do you prefer one of the above
+> > regardless ? Something else ?
+> > 
+> > Cheers,
+> > Ben.
+> > 
+> > 
 > 
-> Idle_state0::
-> target_residency   TICK_USEC   Prediction
->     |                 |       /
->     V                 V      /
-> -----------------------------------------------------> Time length
->                                 ^                 ^
->                                 |                 |
->                             Idle_state1:       Idle_state2:
->                             target_residency   target_residency
+> Some concern was raised about race situation so just to be more clear
+> about race condition.
 
-If someone can demonstate this is an actual problem; then we need to fix
-it I suppose. But it would be very good to have a real world
-need/reproducer for it first.
+This is not what the above discussion is about.
+
+The race with is is_added is due to the fact that the bit is set too
+later as discussed previously and in my changelog.
+
+The race I'm talking about here is the race related to multiple
+subtrees trying to simultaneously enable a parent bridge.
+
+> Situation is described in Bug 200283 - PCI: Data corruption happening
+> due to a race condition.
+> Issue was discovered by our broadcom QA team.
+> Initially commit was to use one separate lock only for avoiding race
+> condition but after review, approach was slightly changed to move
+> is_added  to pci_dev private flags as it was completely
+> internal/private variable of pci core driver.
+> Powerpc legacy arch code was using is_added flag directly which looks
+> bit strange so  ../../ type of inclusion of pci.h was required. I know
+> it looks ugly but it is being used in some legacy code still.
+> Anyway, as stated earlier too, problem should be just solved in better way.
+
+The is_added race can be fixed with a 3 lines patch moving is_added up
+to before device_attach() I believe. I yet have to find a scenario
+where doing so would break something but it's possible that I missed a
+case.
+
+At this stage, I'm more intested however in us agreeing how to fix the
+other race, the one with enabling. As I wrote above, I proposed an
+approach based on a mutex in pci_dev, and this is what I would like
+discussed.
+
+This race is currently causing our large systems to randomly error out
+at boot time when probing some PCIe devices. I'm putting a band-aid in
+the powerpc code for now to pre-enable bridges at boot, but I'd rather
+have the race fixed in the generic code.
+
+Ben.
+
+
