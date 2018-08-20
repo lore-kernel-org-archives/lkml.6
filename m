@@ -2,93 +2,106 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E9C1C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF45FC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:00:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB74A21581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:58:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mfrh+dsH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB74A21581
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 68D5621581
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:00:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68D5621581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726950AbeHTTOR (ORCPT
+        id S1726730AbeHTTQj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 15:14:17 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:42066 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbeHTTOQ (ORCPT
+        Mon, 20 Aug 2018 15:16:39 -0400
+Received: from mail-qk0-f178.google.com ([209.85.220.178]:40321 "EHLO
+        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726033AbeHTTQj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 15:14:16 -0400
-Received: by mail-oi0-f65.google.com with SMTP id b16-v6so26683910oic.9;
-        Mon, 20 Aug 2018 08:58:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=gLM5Hpu6r2atWITweleRFx8OL+5iAWkmqkSSnMLBfds=;
-        b=mfrh+dsHIrtAKV+SZOuyJaKrL530dKr8DQmiSA+yOiTzc35XT5e6RDgovdRg3aVLUJ
-         4vqXTwNRxuNx2yUJJRguN8ihtsh6UC6RqtolYDBqhNwNvsh0UYbo5MPm7TYmXwSxKBkz
-         2lXJu2SFYSX/27gGwRond33khOEk+dLMR0HnEMXBlEXrIJjITplPFpUlnHRm0ve9a1ad
-         WUAUqIGEkhjSq3saJKq+yMUuWu+FhUVTNHn8o+65vCUCn/q56LoKLzw5NtK5yKtCTlpL
-         pVGMfD/PJ5tjSovHzCENHPGfC9aEa22WgE/JuNa/WhPvY/zyb2IfBylC7mGJKYSPlf9A
-         3WrA==
+        Mon, 20 Aug 2018 15:16:39 -0400
+Received: by mail-qk0-f178.google.com with SMTP id c126-v6so11164597qkd.7
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 09:00:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=gLM5Hpu6r2atWITweleRFx8OL+5iAWkmqkSSnMLBfds=;
-        b=Whm3fMPL/YICb4FlT/edsN+5fqlPVkgZaOwnAc1MURPXPoCQo2tTcWAXtRiGTUB98k
-         FJqlu2lPF2o43iP/CFwnx1qQjL6aEKxk+o6LvlnFq8fL/4nb9dEGK+0EmbWxCFm71K4B
-         fSIRSBbJd6D3VgEuzZy0JvoJnbQJz6P+2IFOgRU02yJfbN67e71C43bax9vjr6WMDZnm
-         mVy9LsWrXatJvbcrImU/RRkJx+jm5a//yW46CAS5WGEBNljnGpT5RwKCUY5Vb0Bg6fdC
-         MaEcwmqQMj5J738MTgnD7eSg7cHCKC1HswafJrZVtT+T9QW9y5rZAH0r8TqTr7Dq8R0a
-         hDYw==
-X-Gm-Message-State: AOUpUlHkVxMHFUrcV7lP/mLtY3ebZCLXKe/YCLfwE07U4eRtS7E1+oBk
-        +vkwKFvWbndFQqO+usIY0ti5k5gJLaxyYyRsys6DVQ==
-X-Google-Smtp-Source: AA+uWPyyul2WkSkJEANefrr42/0kUY25o+t43YACeOP2ScdPGrpBLHZ44BVrwkaQwqi+uRB0Uk/2u4YXvxokhaW2a+E=
-X-Received: by 2002:aca:abc6:: with SMTP id u189-v6mr14617479oie.61.1534780684914;
- Mon, 20 Aug 2018 08:58:04 -0700 (PDT)
+        bh=A0ku84hZ3cs6lLdN/8yr5XoCp3NXz1CewyVR7QbZP8A=;
+        b=IT5+031uClHVgqRR/vuSFS0fkSNBMvbk89esq8GdU8r6rVAgH1UQ4oNiCwn4ZTpJi0
+         mv0MsMylOg2Jc3iNNR1DSZPGcNFEpD9+rfX7fGxwzmFXNdFjC5ObcrS0PfI1nnh93wuw
+         RPTAkkfBUO4sHdBUq5zbcoZbW913x5ytwYFhmltXL054ijweYlP4wcgY65fDvtfdnj0F
+         vd6cs1zEItN/RE/qXwx3U6TvgM7HtHeasAlc8tIE/mhEPfoXXLtCt9Jv5bdkj3vaEU78
+         7WtVOAjX1uI/4vErxT/1zYfvD1/tHc8gRaS3TPP2JNI0IdEmerdJnsQQNIAXUghS+yw4
+         Oxmg==
+X-Gm-Message-State: AOUpUlEXSvez1WEB9GacGVGzKnm+sXD2+GTqDbUaNVrS7yeByGTqzKzg
+        ZKiwblqVKPZx1Cve0SmOyeKDXCym2WK9i6JDDCo=
+X-Google-Smtp-Source: AA+uWPyi5xr28x22s1acXsUAUvXayyooGpMgzyCms3EduniTu7pgYcMkN+EFuln3rCOIhjt7fF/X4NYFYcMcTaMlnX0=
+X-Received: by 2002:a37:7946:: with SMTP id u67-v6mr40697115qkc.283.1534780826864;
+ Mon, 20 Aug 2018 09:00:26 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:284e:0:0:0:0:0 with HTTP; Mon, 20 Aug 2018 08:58:04
- -0700 (PDT)
-In-Reply-To: <1534540997-20094-1-git-send-email-texier.pj2@gmail.com>
-References: <1534540997-20094-1-git-send-email-texier.pj2@gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 20 Aug 2018 12:58:04 -0300
-Message-ID: <CAOMZO5BGN4182yz3VO9-iddqRWPsy8BA+y81Kgdybq0O36w1ww@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: imx7s-warp: enable i2c3 device support
-To:     Pierre-Jean Texier <texier.pj2@gmail.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
+References: <20180814170904.GA12768@roeck-us.net> <20180814143655.3acd4bb211d44747f77e74f2@linux-foundation.org>
+ <20180814221559.GA15888@roeck-us.net> <20180814160208.4f4dd7ca142912f5894ddddd@linux-foundation.org>
+ <CA+55aFyU6p-da4j0TWQTEkvYDK_ymFDeTfBa9htYXrdH5gahgQ@mail.gmail.com>
+ <87ca655c-e73a-286f-e69d-30fed9d00d77@roeck-us.net> <alpine.DEB.2.21.1808201652420.1551@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1808201652420.1551@nanos.tec.linutronix.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 20 Aug 2018 18:00:10 +0200
+Message-ID: <CAK8P3a27TU0Y_2j3rR6=mxFh5pBeUjCHVzV2NHaj_WD9E1sKCw@mail.gmail.com>
+Subject: Re: Build failures with gcc 4.5 and older
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Dave Hansen <dave.hansen@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 6:23 PM, Pierre-Jean Texier
-<texier.pj2@gmail.com> wrote:
-> The WaRP7 has one mikroBUS socket on the back to plug click boards.
-> This patch allows to interact with some of these
-> i2c modules (EEPROM, RTC and so on).
+On Mon, Aug 20, 2018 at 4:58 PM Thomas Gleixner <tglx@linutronix.de> wrote:
 >
-> Signed-off-by: Pierre-Jean Texier <texier.pj2@gmail.com>
+> On Tue, 14 Aug 2018, Guenter Roeck wrote:
+> >
+> > For my part I am all for making gcc 4.6 mandatory.
+>
+> No objections from my side.
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+gcc-4.6 is also what I suggested a while ago as a good choice for a new minimum
+version, back then I met some objection, but as time passes these probably got
+less important:
+
+https://lkml.org/lkml/2016/12/16/174
+
+To recap the distros that I looked at back then using gcc older than
+4.6, I found four:
+
+ RHEL6: gcc-4.4
+ Debian 6: gcc-4.4
+ Ubuntu 10.04: gcc-4.4
+ SLES11: gcc-4.3
+
+The first three are all finally EOL as of this month, only SLES11 with gcc-4.3
+is still supported in principle:
+
+Service Pack Release                 FCS Date      General Ends    LTSS Ends
+SUSE Linux Enterprise Server 11      24 Mar 2009   31 Dec 2010     N/A
+SUSE Linux Enterprise Server 11 SP1  02 Jun 2010   31 Aug 2012     30 Aug 2015
+SUSE Linux Enterprise Server 11 SP2  29 Feb 2012   31 Jan 2014     30 Jan 2017
+SUSE Linux Enterprise Server 11 SP3  01 Jul 2013   31 Jan 2016     30 Jan 2019
+SUSE Linux Enterprise Server 11 SP4  15 Jul 2015   31 Mar 2019     31 Mar 2022
+
+However, installing the disro's SDK package on SLES11-SP3 brings it up to
+gcc-4.7, or gcc-5.2 for SP4, so this is unlikely to cause much of a problem any
+more.
+
+I also have some ideas for cleanups that can be done now, in particular
+to deal with compiler warnings.
+
+      Arnd
