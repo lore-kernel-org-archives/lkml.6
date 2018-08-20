@@ -6,48 +6,47 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5988AC43615
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34773C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1638A21731
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:16:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1C3C21733
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:16:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEWJz4iX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1638A21731
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFoTyEes"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1C3C21733
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbeHTTce (ORCPT
+        id S1727511AbeHTTcg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 15:32:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34736 "EHLO mail.kernel.org"
+        Mon, 20 Aug 2018 15:32:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726024AbeHTTcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 15:32:32 -0400
+        id S1726024AbeHTTcf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 15:32:35 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEB602172C;
-        Mon, 20 Aug 2018 16:16:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 821822172D;
+        Mon, 20 Aug 2018 16:16:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534781777;
-        bh=B3YRVqir/STv4KGVF2CPdPMg7IQUK2Pn2zkMB3VzCfo=;
+        s=default; t=1534781779;
+        bh=JXvhUeHcLZ59vMSUi4o7gbt5HXUytQdoLqyxdHxiraU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WEWJz4iXI9sBn4IffvXvK4u7TlxgiuCheTlC07AtlOvsIoG93+rJLikEsKMsHfK1J
-         i/ZlcLVbMqCgOWUTFl6CmE8ZjpFA4/HeMctqVi7aCNxQ3gKfy6aKl/Q97I4w+WoXrL
-         2Xs1FJUISkhPbFIembBmJN6MTZJG8lQIc8F3UKOE=
+        b=YFoTyEesh4haE5XdehTezL45pBJ7Vr7mme94C5qXJn2mAsiJ19YlBmEB8gyXP8dAC
+         V/iVqtUF5e0G1+13L4hLkgdpggsxmBhdQ3zcWYV/BSMgeL2WOaIQu1q/VbOBsl7cqK
+         PtHQbs3G7uD6DA5sfDs7TbLOmoSx1fr1bEXCaaoI=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jack Henschel <jackdev@mailbox.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 01/21] perf tools: Disable parallelism for 'make clean'
-Date:   Mon, 20 Aug 2018 13:15:42 -0300
-Message-Id: <20180820161602.6830-2-acme@kernel.org>
+Subject: [PATCH 02/21] perf parser: Improve error message for PMU address filters
+Date:   Mon, 20 Aug 2018 13:15:43 -0300
+Message-Id: <20180820161602.6830-3-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180820161602.6830-1-acme@kernel.org>
 References: <20180820161602.6830-1-acme@kernel.org>
@@ -56,53 +55,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+From: Jack Henschel <jackdev@mailbox.org>
 
-The Yocto build system does a 'make clean' when rebuilding due to
-changed dependencies, and that consistently fails for me (causing the
-whole BSP build to fail) with errors such as
+This is the second version of a patch that improves the error message of
+the perf events parser when the PMU hardware does not support address
+filters.
 
-| find: '[...]/perf/1.0-r9/perf-1.0/plugin_mac80211.so': No such file or directory
-| find: '[...]/perf/1.0-r9/perf-1.0/plugin_mac80211.so': No such file or directory
-| find: find: '[...]/perf/1.0-r9/perf-1.0/libtraceevent.a''[...]/perf/1.0-r9/perf-1.0/libtraceevent.a': No such file or directory: No such file or directory
-|
-[...]
-| find: cannot delete '/mnt/xfs/devel/pil/yocto/tmp-glibc/work/wandboard-oe-linux-gnueabi/perf/1.0-r9/perf-1.0/util/.pstack.o.cmd': No such file or directory
+Previously, the perf returned the following error:
 
-Apparently (despite the comment), 'make clean' ends up launching
-multiple sub-makes that all want to remove the same things - perhaps
-this only happens in combination with a O=... parameter. In any case, we
-don't lose much by explicitly disabling the parallelism for the clean
-target, and it makes automated builds much more reliable.
+  $ perf record -e intel_pt// --filter 'filter sys_write'
+  --filter option should follow a -e tracepoint or HW tracer option
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+This implies there is some syntax error present in the command line,
+which is not true. Rather, notify the user that the CPU does not have
+support for this feature.
+
+For example, Intel chips based on the Broadwell micro-archticture have
+the Intel PT PMU, but do not support address filtering.
+
+Now, perf prints the following error message:
+
+  $ perf record -e intel_pt// --filter 'filter sys_write'
+  This CPU does not support address filtering
+
+Signed-off-by: Jack Henschel <jackdev@mailbox.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180705131527.19749-1-linux@rasmusvillemoes.dk
+Link: http://lkml.kernel.org/r/20180704121345.19025-1-jackdev@mailbox.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/parse-events.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/tools/perf/Makefile b/tools/perf/Makefile
-index 225454416ed5..7902a5681fc8 100644
---- a/tools/perf/Makefile
-+++ b/tools/perf/Makefile
-@@ -84,10 +84,10 @@ endif # has_clean
- endif # MAKECMDGOALS
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index 15eec49e71a1..f8cd3e7c9186 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -1991,8 +1991,11 @@ static int set_filter(struct perf_evsel *evsel, const void *arg)
+ 	int nr_addr_filters = 0;
+ 	struct perf_pmu *pmu = NULL;
  
- #
--# The clean target is not really parallel, don't print the jobs info:
-+# Explicitly disable parallelism for the clean target.
- #
- clean:
--	$(make)
-+	$(make) -j1
+-	if (evsel == NULL)
+-		goto err;
++	if (evsel == NULL) {
++		fprintf(stderr,
++			"--filter option should follow a -e tracepoint or HW tracer option\n");
++		return -1;
++	}
  
- #
- # The build-test target is not really parallel, don't print the jobs info,
+ 	if (evsel->attr.type == PERF_TYPE_TRACEPOINT) {
+ 		if (perf_evsel__append_tp_filter(evsel, str) < 0) {
+@@ -2014,8 +2017,11 @@ static int set_filter(struct perf_evsel *evsel, const void *arg)
+ 		perf_pmu__scan_file(pmu, "nr_addr_filters",
+ 				    "%d", &nr_addr_filters);
+ 
+-	if (!nr_addr_filters)
+-		goto err;
++	if (!nr_addr_filters) {
++		fprintf(stderr,
++			"This CPU does not support address filtering\n");
++		return -1;
++	}
+ 
+ 	if (perf_evsel__append_addr_filter(evsel, str) < 0) {
+ 		fprintf(stderr,
+@@ -2024,12 +2030,6 @@ static int set_filter(struct perf_evsel *evsel, const void *arg)
+ 	}
+ 
+ 	return 0;
+-
+-err:
+-	fprintf(stderr,
+-		"--filter option should follow a -e tracepoint or HW tracer option\n");
+-
+-	return -1;
+ }
+ 
+ int parse_filter(const struct option *opt, const char *str,
 -- 
 2.14.4
 
