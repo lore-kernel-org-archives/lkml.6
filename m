@@ -2,132 +2,142 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEFF1C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4540AC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94FD121581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:00:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="EREIaQL6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94FD121581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by mail.kernel.org (Postfix) with ESMTP id F1F7821581
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:01:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1F7821581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbeHUCSI (ORCPT
+        id S1726831AbeHUCTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 22:18:08 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:37499 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726766AbeHUCSI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 22:18:08 -0400
-Received: by mail-pl0-f68.google.com with SMTP id c6-v6so2986694pls.4
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 16:00:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=subject:date:message-id:cc:from:to;
-        bh=3FBCLPv8LOT78WtewumroIhDt5+9a/MxhbD75rsuI8w=;
-        b=EREIaQL6tT6CpglwJAG0Wj0GdW5B1KArDkoGjRHM6LbdBq2bglFPPx6svpaEIhmApQ
-         XIEAZTnwD9/knMdKFD5MVIKyOGi/tdc+NQ9jXxz61gUg/Ir0wY+Pi4b8QxJTbgW7YpyN
-         5MObHAT3Me2eAQcXjlGJD6oKnfV+bSoc5NrdqecTfoXg6H6FAdkkDt82niRcWRXFloSy
-         89qJGsbqRAsgI42Xx7U32xAMZSEM08qpaNQTQC8RJyIf9GHePnytu0CS6rkAyd3S2dZq
-         g06yjNTMlaezdaxp2Qq4zSespeLfs+U1Xyc3KbqS9rperZExg5gC7Iuy2dSyzHJVM8E2
-         A8WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:date:message-id:cc:from:to;
-        bh=3FBCLPv8LOT78WtewumroIhDt5+9a/MxhbD75rsuI8w=;
-        b=bik7NETYx2M4B4n0dBKvoKZNIgDLc0AoY6pBGjccXSGLrI0Ze3ZqfzCxM8CqitTc0P
-         VkFTkHUPBpfY0fI2Nb8TMBm2FbLJJuYzGZL35QS+uyUlOUg2A//cz3zrUG2BeibuR6U2
-         TCnPFFbfjwn+E8N/xo/rUtjDOjEJFWUZ+ZOIuyUeTKfle2uP/fuh3Dwqd/38zQ0OCgKY
-         yuBKAPF4FBSNsEJyCxt10hgi+90Ko47bCuYOqf/ErvyZ0bkdsfXoNN/Pr5Uunn4v2jeI
-         rT6/4Luyppvi0BdPXv012a3ZrBDLlmccaXgYCIiLuD+5Vk/kf1FH/NjQqmQIUSzdelQX
-         O5Mg==
-X-Gm-Message-State: AOUpUlG8gLA3tPPcyb9GAIjXseITvNh/Dhums7F+DCEYkDwoCDjSAIvN
-        aakqvzKBosYx/BycFEdpGdblEA==
-X-Google-Smtp-Source: AA+uWPxPVpqonl7zE/gzKzTQuyA5jiWDRAvlvXmiaVInYk/Yhwsoe2zLWrCV+Z+ywEftjBiokbDNTw==
-X-Received: by 2002:a17:902:2e01:: with SMTP id q1-v6mr47583863plb.40.1534806034213;
-        Mon, 20 Aug 2018 16:00:34 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id v19-v6sm22222092pgn.94.2018.08.20.16.00.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 Aug 2018 16:00:33 -0700 (PDT)
-Subject: [PATCH] dt-bindings: riscv,cpu-intc: Cleanups from a missed review
-Date:   Mon, 20 Aug 2018 16:00:11 -0700
-Message-Id: <20180820230011.25368-1-palmer@sifive.com>
-X-Mailer: git-send-email 2.16.4
-Cc:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        Palmer Dabbelt <palmer@sifive.com>, aou@eecs.berkeley.edu,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, Rob Herring <robh@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Karsten Merker <merker@debian.org>
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:      linux-riscv@lists.infradead.org
+        Mon, 20 Aug 2018 22:19:08 -0400
+Received: from mga18.intel.com ([134.134.136.126]:21689 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726631AbeHUCTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 22:19:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 16:01:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,267,1531810800"; 
+   d="scan'208";a="226259514"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by orsmga004.jf.intel.com with ESMTP; 20 Aug 2018 16:01:22 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 817E2301B8D; Mon, 20 Aug 2018 16:01:22 -0700 (PDT)
+From:   Andi Kleen <andi@firstfloor.org>
+To:     stable@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, mhocko@kernel.org
+Subject: [PATCH] x86/mm: Simplify p[g4um]d_page() macros
+Date:   Mon, 20 Aug 2018 16:01:22 -0700
+Message-Id: <20180820230122.579-1-andi@firstfloor.org>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I managed to miss one of Rob's code reviews on the mailing list
-<http://lists.infradead.org/pipermail/linux-riscv/2018-August/001139.html>.
-The patch has already been merged, so I'm submitting a fixup.
+From: Tom Lendacky <thomas.lendacky@amd.com>
 
-Sorry!
+[backport of fd7e315988b78 from mainline for stable to fix stable crashes
+suggested by Michael Hocko. Should be applied to 4.9 and 4.4.]
 
-Fixes: b67bc7cb4088 ("dt-bindings: interrupt-controller: RISC-V local interrupt controller")
-Cc: Rob Herring <robh@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Karsten Merker <merker@debian.org>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+Create a pgd_pfn() macro similar to the p[4um]d_pfn() macros and then
+use the p[g4um]d_pfn() macros in the p[g4um]d_page() macros instead of
+duplicating the code.
+
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brijesh Singh <brijesh.singh@amd.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Larry Woodman <lwoodman@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Michael S. Tsirkin <mst@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Toshimitsu Kani <toshi.kani@hpe.com>
+Cc: kasan-dev@googlegroups.com
+Cc: kvm@vger.kernel.org
+Cc: linux-arch@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-efi@vger.kernel.org
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/e61eb533a6d0aac941db2723d8aa63ef6b882dee.1500319216.git.thomas.lendacky@amd.com
+[Backported to 4.9 stable by AK, suggested by Michael Hocko]
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
 ---
- .../bindings/interrupt-controller/riscv,cpu-intc.txt       | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/pgtable.h | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
-index b0a8af51c388..265b223cd978 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
-+++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
-@@ -11,7 +11,7 @@ The RISC-V supervisor ISA manual specifies three interrupt sources that are
- attached to every HLIC: software interrupts, the timer interrupt, and external
- interrupts.  Software interrupts are used to send IPIs between cores.  The
- timer interrupt comes from an architecturally mandated real-time timer that is
--controller via Supervisor Binary Interface (SBI) calls and CSR reads.  External
-+controlled via Supervisor Binary Interface (SBI) calls and CSR reads.  External
- interrupts connect all other device interrupts to the HLIC, which are routed
- via the platform-level interrupt controller (PLIC).
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 4de6c282c02a..68a55273ce0f 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -173,6 +173,11 @@ static inline unsigned long pud_pfn(pud_t pud)
+ 	return (pfn & pud_pfn_mask(pud)) >> PAGE_SHIFT;
+ }
  
-@@ -25,7 +25,15 @@ in the system.
++static inline unsigned long pgd_pfn(pgd_t pgd)
++{
++	return (pgd_val(pgd) & PTE_PFN_MASK) >> PAGE_SHIFT;
++}
++
+ #define pte_page(pte)	pfn_to_page(pte_pfn(pte))
  
- Required properties:
- - compatible : "riscv,cpu-intc"
--- #interrupt-cells : should be <1>
-+- #interrupt-cells : should be <1>.  The interrupt sources are defined by the
-+  RISC-V supervisor ISA manual, with only the following three interrupts being
-+  defined for supervisor mode:
-+    - Source 1 is the supervisor software interrupt, which can be sent by an SBI
-+      call and is reserved for use by software.
-+    - Source 5 is the supervisor timer interrupt, which can be configured by
-+      SBI calls and implements a one-shot timer.
-+    - Source 9 is the supervisor external interrupt, which chains to all other
-+      device interrupts.
- - interrupt-controller : Identifies the node as an interrupt controller
+ static inline int pmd_large(pmd_t pte)
+@@ -578,8 +583,7 @@ static inline unsigned long pmd_page_vaddr(pmd_t pmd)
+  * Currently stuck as a macro due to indirect forward reference to
+  * linux/mmzone.h's __section_mem_map_addr() definition:
+  */
+-#define pmd_page(pmd)		\
+-	pfn_to_page((pmd_val(pmd) & pmd_pfn_mask(pmd)) >> PAGE_SHIFT)
++#define pmd_page(pmd)	pfn_to_page(pmd_pfn(pmd))
  
- Furthermore, this interrupt-controller MUST be embedded inside the cpu
-@@ -38,7 +46,7 @@ An example device tree entry for a HLIC is show below.
- 		...
- 		cpu1-intc: interrupt-controller {
- 			#interrupt-cells = <1>;
--			compatible = "riscv,cpu-intc", "sifive,fu540-c000-cpu-intc";
-+			compatible = "sifive,fu540-c000-cpu-intc", "riscv,cpu-intc";
- 			interrupt-controller;
- 		};
- 	};
+ /*
+  * the pmd page can be thought of an array like this: pmd_t[PTRS_PER_PMD]
+@@ -647,8 +651,7 @@ static inline unsigned long pud_page_vaddr(pud_t pud)
+  * Currently stuck as a macro due to indirect forward reference to
+  * linux/mmzone.h's __section_mem_map_addr() definition:
+  */
+-#define pud_page(pud)		\
+-	pfn_to_page((pud_val(pud) & pud_pfn_mask(pud)) >> PAGE_SHIFT)
++#define pud_page(pud)	pfn_to_page(pud_pfn(pud))
+ 
+ /* Find an entry in the second-level page table.. */
+ static inline pmd_t *pmd_offset(pud_t *pud, unsigned long address)
+@@ -688,7 +691,7 @@ static inline unsigned long pgd_page_vaddr(pgd_t pgd)
+  * Currently stuck as a macro due to indirect forward reference to
+  * linux/mmzone.h's __section_mem_map_addr() definition:
+  */
+-#define pgd_page(pgd)		pfn_to_page(pgd_val(pgd) >> PAGE_SHIFT)
++#define pgd_page(pgd)		pfn_to_page(pgd_pfn(pgd))
+ 
+ /* to find an entry in a page-table-directory. */
+ static inline unsigned long pud_index(unsigned long address)
 -- 
-2.16.4
+2.17.1
 
