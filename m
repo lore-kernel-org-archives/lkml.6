@@ -2,225 +2,171 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B5EC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 10:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59859C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 10:46:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89AC72152D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 10:43:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cl8jw3UZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89AC72152D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id F114021581
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 10:46:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F114021581
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726145AbeHTN6o (ORCPT
+        id S1726174AbeHTOBi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 09:58:44 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38779 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbeHTN6o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 09:58:44 -0400
-Received: by mail-wm0-f66.google.com with SMTP id t25-v6so13352844wmi.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 03:43:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KVb/MNWJbuLQEZxBLsMD4p9CGoOEJHQSRenTWlAg+YU=;
-        b=Cl8jw3UZuYsSv5KvjZpcc4HmDDuw9/fBv+5N6ufrTlu1DCnP7GIN5/xV+o3JXSbIAg
-         oPrk+oPiO6bEb/LnRu+pZwyrPHNZoyA1hCGrMZ18Vjj+KqdTzLFE09mknhiiM0Pm15fb
-         IpyA5WeYMsGbzTTPaBsd05Ry15fOZKPOl3yoc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KVb/MNWJbuLQEZxBLsMD4p9CGoOEJHQSRenTWlAg+YU=;
-        b=dPhPDWZUc0tQtyEIrtzaf1IRPJDeiOXRALu3IS6cJLs3J3oNBi+1rbUVBYrtl9jk6J
-         IZ61SyMcHshRsEPHp3Mj6rtImwxAUQRFnhP8/WiJzf3MPiOjboya0PPHwv60/4wuLGip
-         zaRVZqurjL6WUq4UYpTnqhEav+C2m7JL50IyeiGRUmGLTWDYqfR87XTkMLvC3keRzNsz
-         WmsxFKDfKuuAUUEdSwcVCoxSGtjydsEzA6yKS12aXYoiOxZfwBSFWOKFSa6xpMECYkVa
-         jjTdJyPKFJ57gNondeptBoFVOWgfWboWmK7mbZhKwcRPGcjCQirta2Zr44B1GgVHHHCV
-         FOfA==
-X-Gm-Message-State: AOUpUlEEYt1qjHIkH4/CgK/iiyldzYZaf2nuwazn4fEluwe/Ltm4yx6T
-        55XOD+kfDcyZqsmo3fSD8AopLw==
-X-Google-Smtp-Source: AA+uWPxafpCw85uZ8XYyI/dz6+gbcVM1ifhT7G7c++3ftOpaBeSQRZeovecnvqvd2d06zimxMG4Gjg==
-X-Received: by 2002:a1c:1943:: with SMTP id 64-v6mr24403033wmz.89.1534761816835;
-        Mon, 20 Aug 2018 03:43:36 -0700 (PDT)
-Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id i205-v6sm12251357wmf.30.2018.08.20.03.43.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 Aug 2018 03:43:36 -0700 (PDT)
-Subject: Re: [PATCH v2 06/29] mtd: Add support for reading MTD devices via the
- nvmem API
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Alban <albeu@free.fr>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Naren <naren.kernel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180810080526.27207-1-brgl@bgdev.pl>
- <20180810080526.27207-7-brgl@bgdev.pl> <20180817182720.6a6e5e8e@bbrezillon>
- <20180819133106.0420df5f@tock> <20180819184609.6dcdbb9a@bbrezillon>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <5b8c30b8-41e1-d59e-542b-fef6c6469ff0@linaro.org>
-Date:   Mon, 20 Aug 2018 11:43:34 +0100
+        Mon, 20 Aug 2018 10:01:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48372 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726010AbeHTOBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 10:01:38 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7087E40216EA;
+        Mon, 20 Aug 2018 10:46:30 +0000 (UTC)
+Received: from [10.36.117.169] (ovpn-117-169.ams2.redhat.com [10.36.117.169])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 53BD92166BA1;
+        Mon, 20 Aug 2018 10:46:25 +0000 (UTC)
+Subject: Re: [PATCH v1 5/5] mm/memory_hotplug: print only with DEBUG_VM in
+ online/offline_pages()
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Kemi Wang <kemi.wang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Jia He <jia.he@hxt-semitech.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Petr Tesarik <ptesarik@suse.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Baoquan He <bhe@redhat.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20180816100628.26428-1-david@redhat.com>
+ <20180816100628.26428-6-david@redhat.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <7892e949-6c2c-9659-a595-177037d0e203@redhat.com>
+Date:   Mon, 20 Aug 2018 12:46:25 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180819184609.6dcdbb9a@bbrezillon>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180816100628.26428-6-david@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 20 Aug 2018 10:46:30 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 20 Aug 2018 10:46:30 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Boris, for looking into this in more detail.
-
-On 19/08/18 17:46, Boris Brezillon wrote:
-> On Sun, 19 Aug 2018 13:31:06 +0200
-> Alban <albeu@free.fr> wrote:
+On 16.08.2018 12:06, David Hildenbrand wrote:
+> Let's try to minimze the noise.
 > 
->> On Fri, 17 Aug 2018 18:27:20 +0200
->> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
->>
->>> Hi Bartosz,
->>>
->>> On Fri, 10 Aug 2018 10:05:03 +0200
->>> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>>    
->>>> From: Alban Bedel <albeu@free.fr>
->>>>
->>>> Allow drivers that use the nvmem API to read data stored on MTD devices.
->>>> For this the mtd devices are registered as read-only NVMEM providers.
->>>>
->>>> Signed-off-by: Alban Bedel <albeu@free.fr>
->>>> [Bartosz:
->>>>    - use the managed variant of nvmem_register(),
->>>>    - set the nvmem name]
->>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>
->>> What happened to the 2 other patches of Alban's series? I'd really
->>> like the DT case to be handled/agreed on in the same patchset, but
->>> IIRC, Alban and Srinivas disagreed on how this should be represented.
->>> I hope this time we'll come to an agreement, because the MTD <-> NVMEM
->>> glue has been floating around for quite some time...
->>
->> These other patches were to fix what I consider a fundamental flaw in
->> the generic NVMEM bindings, however we couldn't agree on this point.
->> Bartosz later contacted me to take over this series and I suggested to
->> just change the MTD NVMEM binding to use a compatible string on the
->> NVMEM cells as an alternative solution to fix the clash with the old
->> style MTD partition.
->>
->> However all this has no impact on the code needed to add NVMEM support
->> to MTD, so the above patch didn't change at all.
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  mm/memory_hotplug.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> It does have an impact on the supported binding though.
-> nvmem->dev.of_node is automatically assigned to mtd->dev.of_node, which
-> means people will be able to define their NVMEM cells directly under
-> the MTD device and reference them from other nodes (even if it's not
-> documented), and as you said, it conflict with the old MTD partition
-> bindings. So we'd better agree on this binding before merging this
-> patch.
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index bbbd16f9d877..6fec2dc6a73d 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -966,9 +966,11 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
+>  	return 0;
+>  
+>  failed_addition:
+> +#ifdef CONFIG_DEBUG_VM
+>  	pr_debug("online_pages [mem %#010llx-%#010llx] failed\n",
+>  		 (unsigned long long) pfn << PAGE_SHIFT,
+>  		 (((unsigned long long) pfn + nr_pages) << PAGE_SHIFT) - 1);
+> +#endif
+>  	memory_notify(MEM_CANCEL_ONLINE, &arg);
+>  	return ret;
+>  }
+> @@ -1660,7 +1662,9 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages)
+>  	offlined_pages = check_pages_isolated(start_pfn, end_pfn);
+>  	if (offlined_pages < 0)
+>  		goto repeat;
+> +#ifdef CONFIG_DEBUG_VM
+>  	pr_info("Offlined Pages %ld\n", offlined_pages);
+> +#endif
+>  	/* Ok, all of our target is isolated.
+>  	   We cannot do rollback at this point. */
+>  	offline_isolated_pages(start_pfn, end_pfn);
+> @@ -1695,9 +1699,11 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages)
+>  	return 0;
+>  
+>  failed_removal:
+> +#ifdef CONFIG_DEBUG_VM
+>  	pr_debug("memory offlining [mem %#010llx-%#010llx] failed\n",
+>  		 (unsigned long long) start_pfn << PAGE_SHIFT,
+>  		 ((unsigned long long) end_pfn << PAGE_SHIFT) - 1);
+> +#endif
+>  	memory_notify(MEM_CANCEL_OFFLINE, &arg);
+>  	/* pushback to free area */
+>  	undo_isolate_page_range(start_pfn, end_pfn, MIGRATE_MOVABLE);
 > 
 
-Yes, I agree with you!
+I'll drop this patch for now, maybe the error messages are actually
+useful when debugging a crashdump of a system without CONFIG_DEBUG_VM.
 
-> I see several options:
-> 
-> 1/ provide a way to tell the NVMEM framework not to use parent->of_node
->     even if it's != NULL. This way we really don't support defining
->     NVMEM cells in the DT, and also don't support referencing the nvmem
->     device using a phandle.
-> 
-Other options look much better than this one!
-
-> 2/ define a new binding where all nvmem-cells are placed in an
->     "nvmem" subnode (just like we have this "partitions" subnode for
->     partitions), and then add a config->of_node field so that the
->     nvmem provider can explicitly specify the DT node representing the
->     nvmem device. We'll also need to set this field to ERR_PTR(-ENOENT)
->     in case this node does not exist so that the nvmem framework knows
->     that it should not assign nvmem->dev.of_node to parent->of_node
-> 
-This one looks promising, One Question though..
-
-Do we expect that there would be nvmem cells in any of the partitions?
-or
-nvmem cell are only valid for unpartioned area?
-
-Am sure that the nvmem cells would be in multiple partitions, Is it okay 
-to have some parts of partition to be in a separate subnode?
-
-I would like this case to be considered too.
-
-> 3/ only declare partitions as nvmem providers. This would solve the
->     problem we have with partitions defined in the DT since
->     defining sub-partitions in the DT is not (yet?) supported and
->     partition nodes are supposed to be leaf nodes. Still, I'm not a big
->     fan of this solution because it will prevent us from supporting
->     sub-partitions if we ever want/need to.
-> 
-This one is going to come back so, its better we
-
-> 4/ Add a ->of_xlate() hook that would be called if present by the
->     framework instead of using the default parsing we have right now.
-This looks much cleaner! We could hook that up under 
-__nvmem_device_get() to do that translation.
-
-> 
-> 5/ Tell the nvmem framework the name of the subnode containing nvmem
->     cell definitions (if NULL that means cells are directly defined
->     under the nvmem provider node). We would set it to "nvmem-cells" (or
->     whatever you like) for the MTD case.
-Option 2 looks better than this.
-
-> 
-> There are probably other options (some were proposed by Alban and
-> Srinivas already), but I'd like to get this sorted out before we merge
-> this patch.
-> 
-> Alban, Srinivas, any opinion?
-
-Overall am still not able to clear visualize on how MTD bindings with 
-nvmem cells would look in both partition and un-partition usecases?
-An example DT would be nice here!!
-
-Option 4 looks like much generic solution to me, may be we should try 
-this once bindings on MTD side w.r.t nvmem cells are decided.
+-- 
 
 Thanks,
-Srini
 
-> 
+David / dhildenb
