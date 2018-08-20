@@ -2,202 +2,235 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEBCFC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 21:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00A0BC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 21:35:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44D0A21531
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 21:34:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9691421531
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 21:35:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="Fq8cBPDz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44D0A21531
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q6e011Vb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9691421531
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726760AbeHUAva (ORCPT
+        id S1726740AbeHUAwV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 20:51:30 -0400
-Received: from mail-bl2nam02on0080.outbound.protection.outlook.com ([104.47.38.80]:45632
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726099AbeHUAva (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 20:51:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H6/lofnNFIr5B3ocm+800RoSwVcn85h/Fx4+Cxx6cKo=;
- b=Fq8cBPDzuZMB+35WCar798YT0OAEf1HJf84IP3LFvrZ6wFtaOGJoHp6TB4ENL0H/bVS/GNSf56H56r7XThW4QQHhibHX5uq6O2Y+8p/cCJQB2QZSp1ZOf4Cu/KDifjvzlPu9OcTwLMR/uMV0GTF7LMTi7P4BTPim0iMxNF1l/aI=
-Received: from BYAPR05MB4181.namprd05.prod.outlook.com (52.135.200.140) by
- BYAPR05MB3989.namprd05.prod.outlook.com (52.135.199.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1080.11; Mon, 20 Aug 2018 21:34:08 +0000
-Received: from BYAPR05MB4181.namprd05.prod.outlook.com
- ([fe80::fd5a:fb5f:9b1f:4db6]) by BYAPR05MB4181.namprd05.prod.outlook.com
- ([fe80::fd5a:fb5f:9b1f:4db6%5]) with mapi id 15.20.1080.010; Mon, 20 Aug 2018
- 21:34:08 +0000
-From:   Deepak Singh Rawat <drawat@vmware.com>
-To:     Souptick Joarder <jrdr.linux@gmail.com>,
-        "ajitn.linux@gmail.com" <ajitn.linux@gmail.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        linux-graphics-maintainer <linux-graphics-maintainer@vmware.com>,
-        Sinclair Yeh <syeh@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>
-Subject: RE: [Linux-graphics-maintainer] [PATCH] drm/vmwgfx: Convert
-        drm_atomic_helper_suspend/resume()
-Thread-Topic: [Linux-graphics-maintainer] [PATCH] drm/vmwgfx: Convert
-        drm_atomic_helper_suspend/resume()
-Thread-Index: AQHUMa8tGVSn47onSUynMSmbeLGea6TJNnkg
-Date:   Mon, 20 Aug 2018 21:34:08 +0000
-Message-ID: <BYAPR05MB4181991EA79CE952D9F8C398BA320@BYAPR05MB4181.namprd05.prod.outlook.com>
-References: <20180811201147.GA14169@jordon-HP-15-Notebook-PC>
-In-Reply-To: <20180811201147.GA14169@jordon-HP-15-Notebook-PC>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=drawat@vmware.com; 
-x-originating-ip: [66.170.99.2]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB3989;20:MdyRj43wBwNkb0eRxsR8udyEGn4wHjYNUiemoFWehfqFyMy2Rxq92cciKw+58ubJRsI26EmjMhc5IDJGa2IRmXJ96oTUzGA9YBeTBaza2pHYrpSbKj+j4fCPlASlLfx6SiZRujb/ataKYaEMDXrn/iBrRnVpPpshim/IWNkDnMI=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 217be592-5a51-437c-9541-08d606e4a96e
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB3989;
-x-ms-traffictypediagnostic: BYAPR05MB3989:
-x-ld-processed: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0,ExtAddr
-bcl:    0
-x-microsoft-antispam-prvs: <BYAPR05MB39898C1B8EB1EC4DFDBB58D9BA320@BYAPR05MB3989.namprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(85827821059158);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(3002001)(93006095)(93001095)(10201501046)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:BYAPR05MB3989;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB3989;
-x-forefront-prvs: 0770F75EA9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(39860400002)(396003)(346002)(366004)(51914003)(189003)(199004)(39060400002)(4326008)(53936002)(305945005)(11346002)(81166006)(81156014)(7736002)(74316002)(446003)(476003)(256004)(14444005)(102836004)(55016002)(86362001)(9686003)(2900100001)(6436002)(6506007)(186003)(26005)(99286004)(105586002)(76176011)(5660300001)(54906003)(2906002)(316002)(2501003)(33656002)(5250100002)(6116002)(7696005)(68736007)(106356001)(478600001)(14454004)(3846002)(8936002)(66066001)(25786009)(97736004)(6246003)(486006)(229853002)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB3989;H:BYAPR05MB4181.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 0BPwUIiFZo46/FBogoP4H85G04lmtpZD6eai1NIku3SaRR14gAA48jqHty0T87C78TKOJ409gM8178hiU21Pfg68sLvKGkHMTNzLKMetez5Zb6C5QZEIp4anQNvywOPvYVYRdmELJOq79VtDsuaQHtiHpQ81tL+O/LeUJjnuBap4M+uliNpuB/2pYcudMelV+aFOVvyJBzFT/tDIt6sMTpLPEOpfi5abQXnASEsqFEEvLH6FSAcolDvFrhF5iUQWNSiiELX3rnPqw82r13EfyVRQEh9uEEZ7K7bexrGg57whKGqGfo+QIAQFYqkpLJpF5od0u4maGF0Ccgdq6CrrDY8jDao1cR6VOy1hYPGZ+f4=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 217be592-5a51-437c-9541-08d606e4a96e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2018 21:34:08.2549
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB3989
+        Mon, 20 Aug 2018 20:52:21 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44702 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbeHUAwV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 20:52:21 -0400
+Received: by mail-pf1-f193.google.com with SMTP id k21-v6so7406242pff.11
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 14:35:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=7mCZOOPy7OmxeEVwiIf6hbaiSaHyxkuwgNP8dwHl4x8=;
+        b=Q6e011VbutdL7HJBk9EvrWsq59Bu6ptTScOI/upBK/rjm4QpFvO8kjeYQ6I6Zo5ao2
+         IK5Io7FIdrpFsEkoIE4K8hmQZKFpsVg6qUXhd7tJSvOS2qV9t8Rmn67o42j28pYMYswV
+         NGgytzNJhA39Q+AhnhOZNwv/YQfORP6OncPQo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7mCZOOPy7OmxeEVwiIf6hbaiSaHyxkuwgNP8dwHl4x8=;
+        b=j7Uj/XgwbW9NLmflj8AQxZunzKxfH1UDI77w3N9UBmijQctvP8p7dhdg0j/EO78a/K
+         GbidnKSRWpSLSj2G/lRIdaDDhgKLj8HW8LjdJFJct+ZQJLHjfsoFO0gPHhgeBt4GAMTN
+         k+X2Jndv5UBgINZxxTEPEYwdW+mMrO3da9gF73B1jmFZVSwQ7dZGMNWNF8BcBIyLsPWA
+         Z+iuExlTXCanHzYXFziIS01EXFEtXD7TKVDJWHdkcMo+CFTt/O1tSZU0sa9rJd2J1zLH
+         WM29NOoOSho9c7J6SCiX7Gn1tuofPnpIaWnjjfaDwIkxxHUDUaf9xiM1bevkHFB8fYnT
+         LlDw==
+X-Gm-Message-State: AOUpUlEMFud6BUPBDPcKxvXgOcHih3BKyvjfPPu4EJ19P4eq2WFHbb13
+        QicaRVb+cC64DwEYJQcbQpupGw==
+X-Google-Smtp-Source: AA+uWPwFf7RvMowtBSfvn0RpaB0kf+UcAZjRDqAAzOKKGc3qi3Ok9eQXKWuCS8UJQqSYXwGQYv5gpQ==
+X-Received: by 2002:a63:5b0f:: with SMTP id p15-v6mr6599803pgb.122.1534800904265;
+        Mon, 20 Aug 2018 14:35:04 -0700 (PDT)
+Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:e418:c825:76cf:5f64])
+        by smtp.gmail.com with ESMTPSA id b76-v6sm21200315pfj.184.2018.08.20.14.35.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 20 Aug 2018 14:35:03 -0700 (PDT)
+From:   Evan Green <evgreen@chromium.org>
+To:     Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Cc:     Evan Green <evgreen@chromium.org>
+Subject: [PATCH] scsi: ufs: Make sysfs flags writable
+Date:   Mon, 20 Aug 2018 14:34:55 -0700
+Message-Id: <20180820213455.15092-1-evgreen@chromium.org>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, thanks for the patch. Perhaps can get rid of vmw_kms_resume
-and vmw_kms_suspend, otherwise looks good to me.
+This change makes the UFS controller's sysfs flags writable. This
+will enable users to provision unprovisioned devices, and experiment
+with device features.
 
->=20
-> convert drm_atomic_helper_suspend/resume() to use
-> drm_mode_config_helper_suspend/resume().
->=20
-> suspend_state can be removed from vmw_private as
-> it will not be used anymore.
->=20
-> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> ---
->  drivers/gpu/drm/vmwgfx/vmwgfx_drv.c |  6 +++---
->  drivers/gpu/drm/vmwgfx/vmwgfx_drv.h |  1 -
->  drivers/gpu/drm/vmwgfx/vmwgfx_kms.c | 25 ++-----------------------
->  3 files changed, 5 insertions(+), 27 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-> b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-> index bb6dbbe..a317cda 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-> @@ -1521,7 +1521,7 @@ static int vmw_pm_freeze(struct device *kdev)
->  		WARN_ON(vmw_request_device_late(dev_priv));
->  		dev_priv->suspend_locked =3D false;
->  		ttm_suspend_unlock(&dev_priv->reservation_sem);
-> -		if (dev_priv->suspend_state)
-> +		if (dev->mode_config.suspend_state)
->  			vmw_kms_resume(dev);
->  		if (dev_priv->enable_fb)
->  			vmw_fb_on(dev_priv);
-> @@ -1558,8 +1558,8 @@ static int vmw_pm_restore(struct device *kdev)
->  	vmw_fence_fifo_up(dev_priv->fman);
->  	dev_priv->suspend_locked =3D false;
->  	ttm_suspend_unlock(&dev_priv->reservation_sem);
-> -	if (dev_priv->suspend_state)
-> -		vmw_kms_resume(dev_priv->dev);
-> +	if (dev->mode_config.suspend_state)
-> +		vmw_kms_resume(dev);
->=20
->  	if (dev_priv->enable_fb)
->  		vmw_fb_on(dev_priv);
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-> b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-> index 1abe217..b8e200b 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-> @@ -438,7 +438,6 @@ struct vmw_private {
->  	struct vmw_framebuffer *implicit_fb;
->  	struct mutex global_kms_state_mutex;
->  	spinlock_t cursor_lock;
-> -	struct drm_atomic_state *suspend_state;
->=20
->  	/*
->  	 * Context and surface management.
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-> b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-> index 23beff5..2d011a1 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-> @@ -3028,19 +3028,7 @@ int vmw_kms_set_config(struct drm_mode_set
-> *set,
->   */
->  int vmw_kms_suspend(struct drm_device *dev)
->  {
-> -	struct vmw_private *dev_priv =3D vmw_priv(dev);
-> -
-> -	dev_priv->suspend_state =3D drm_atomic_helper_suspend(dev);
-> -	if (IS_ERR(dev_priv->suspend_state)) {
-> -		int ret =3D PTR_ERR(dev_priv->suspend_state);
-> -
-> -		DRM_ERROR("Failed kms suspend: %d\n", ret);
-> -		dev_priv->suspend_state =3D NULL;
-> -
-> -		return ret;
-> -	}
-> -
-> -	return 0;
-> +	return drm_mode_config_helper_suspend(dev);
->  }
->=20
->=20
-> @@ -3055,16 +3043,7 @@ int vmw_kms_suspend(struct drm_device *dev)
->   */
->  int vmw_kms_resume(struct drm_device *dev)
->  {
-> -	struct vmw_private *dev_priv =3D vmw_priv(dev);
-> -	int ret;
-> -
-> -	if (WARN_ON(!dev_priv->suspend_state))
-> -		return 0;
-> -
-> -	ret =3D drm_atomic_helper_resume(dev, dev_priv->suspend_state);
-> -	dev_priv->suspend_state =3D NULL;
-> -
-> -	return ret;
-> +	return drm_mode_config_helper_resume(dev);
->  }
->=20
->  /**
-> --
-> 1.9.1
+Signed-off-by: Evan Green <evgreen@chromium.org>
+---
+This is a follow-on patch to another patch [1] that makes the UFS attributes
+writable.
+
+[1] https://lore.kernel.org/patchwork/patch/972959/
+
+ Documentation/ABI/testing/sysfs-driver-ufs | 18 +++++++---
+ drivers/scsi/ufs/ufs-sysfs.c               | 54 +++++++++++++++++++++++++-----
+ 2 files changed, 58 insertions(+), 14 deletions(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
+index 016724ec26d5..6df8ccbc94f3 100644
+--- a/Documentation/ABI/testing/sysfs-driver-ufs
++++ b/Documentation/ABI/testing/sysfs-driver-ufs
+@@ -619,7 +619,6 @@ Date:		February 2018
+ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file shows the device init status. The full information
+ 		about the flag could be found at UFS specifications 2.1.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/flags/permanent_wpe
+ Date:		February 2018
+@@ -627,7 +626,8 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file shows whether permanent write protection is enabled.
+ 		The full information about the flag could be found at
+ 		UFS specifications 2.1.
+-		The file is read only.
++		Warning: This flag can only be written one time within the
++		lifetime of the device. Once set, it cannot be unset.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/flags/power_on_wpe
+ Date:		February 2018
+@@ -636,7 +636,7 @@ Description:	This file shows whether write protection is enabled on all
+ 		logical units configured as power on write protected. The
+ 		full information about the flag could be found at
+ 		UFS specifications 2.1.
+-		The file is read only.
++		Once set, this flag cannot be cleared without a device reset.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/flags/bkops_enable
+ Date:		February 2018
+@@ -644,7 +644,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file shows whether the device background operations are
+ 		enabled. The full information about the flag could be
+ 		found at UFS specifications 2.1.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/flags/life_span_mode_enable
+ Date:		February 2018
+@@ -654,13 +653,22 @@ Description:	This file shows whether the device life span mode is enabled.
+ 		UFS specifications 2.1.
+ 		The file is read only.
+ 
++What:		/sys/bus/platform/drivers/ufshcd/*/flags/purge_enable
++Date:		August 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shall only be set when the command queue of all
++		logical units are empty and purge status is idle. This flag is
++		automatically cleared by the UFS device when the operation
++		completes or an error occurs. This flag is write-only, it
++		cannot be read. Complete information about the flag can be
++		found in the UFS specification 2.20A.
++
+ What:		/sys/bus/platform/drivers/ufshcd/*/flags/phy_resource_removal
+ Date:		February 2018
+ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+ Description:	This file shows whether physical resource removal is enable.
+ 		The full information about the flag could be found at
+ 		UFS specifications 2.1.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/flags/busy_rtc
+ Date:		February 2018
+diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
+index 8d9332bb7d0c..2da927f4b7ff 100644
+--- a/drivers/scsi/ufs/ufs-sysfs.c
++++ b/drivers/scsi/ufs/ufs-sysfs.c
+@@ -616,7 +616,7 @@ static const struct attribute_group ufs_sysfs_string_descriptors_group = {
+ 	.attrs = ufs_sysfs_string_descriptors,
+ };
+ 
+-#define UFS_FLAG(_name, _uname)						\
++#define UFS_FLAG_SHOW(_name, _uname)					\
+ static ssize_t _name##_show(struct device *dev,				\
+ 	struct device_attribute *attr, char *buf)			\
+ {									\
+@@ -626,17 +626,52 @@ static ssize_t _name##_show(struct device *dev,				\
+ 		QUERY_FLAG_IDN##_uname, &flag))				\
+ 		return -EINVAL;						\
+ 	return sprintf(buf, "%s\n", flag ? "true" : "false");		\
++}
++
++#define UFS_FLAG_STORE(_name, _uname)					\
++static ssize_t _name##_store(struct device *dev,			\
++	struct device_attribute *attr, const char *buf,			\
++	size_t count)							\
++{									\
++	bool flag;							\
++	struct ufs_hba *hba = dev_get_drvdata(dev);			\
++	enum query_opcode op;						\
++	if (kstrtobool(buf, &flag))					\
++		return -EINVAL;						\
++	op = flag ? UPIU_QUERY_OPCODE_SET_FLAG :			\
++		UPIU_QUERY_OPCODE_CLEAR_FLAG;				\
++	if (ufshcd_query_flag(hba, op, QUERY_FLAG_IDN##_uname, NULL))	\
++		return -EINVAL;						\
++	return count;							\
+ }									\
++
++#define UFS_FLAG_RO(_name, _uname)	\
++UFS_FLAG_SHOW(_name, _uname)		\
+ static DEVICE_ATTR_RO(_name)
+ 
+-UFS_FLAG(device_init, _FDEVICEINIT);
+-UFS_FLAG(permanent_wpe, _PERMANENT_WPE);
+-UFS_FLAG(power_on_wpe, _PWR_ON_WPE);
+-UFS_FLAG(bkops_enable, _BKOPS_EN);
+-UFS_FLAG(life_span_mode_enable, _LIFE_SPAN_MODE_ENABLE);
+-UFS_FLAG(phy_resource_removal, _FPHYRESOURCEREMOVAL);
+-UFS_FLAG(busy_rtc, _BUSY_RTC);
+-UFS_FLAG(disable_fw_update, _PERMANENTLY_DISABLE_FW_UPDATE);
++#define UFS_FLAG_WO(_name, _uname)					\
++UFS_FLAG_STORE(_name, _uname)						\
++static ssize_t _name##_show(struct device *dev,				\
++	struct device_attribute *attr, char *buf)			\
++{									\
++	return -EOPNOTSUPP;						\
++}									\
++static DEVICE_ATTR_RW(_name)
++
++#define UFS_FLAG_RW(_name, _uname)					\
++UFS_FLAG_SHOW(_name, _uname)						\
++UFS_FLAG_STORE(_name, _uname)						\
++static DEVICE_ATTR_RW(_name)
++
++UFS_FLAG_RW(device_init, _FDEVICEINIT);
++UFS_FLAG_RW(permanent_wpe, _PERMANENT_WPE);
++UFS_FLAG_RW(power_on_wpe, _PWR_ON_WPE);
++UFS_FLAG_RW(bkops_enable, _BKOPS_EN);
++UFS_FLAG_RO(life_span_mode_enable, _LIFE_SPAN_MODE_ENABLE);
++UFS_FLAG_WO(purge_enable, _PURGE_ENABLE);
++UFS_FLAG_RW(phy_resource_removal, _FPHYRESOURCEREMOVAL);
++UFS_FLAG_RO(busy_rtc, _BUSY_RTC);
++UFS_FLAG_RO(disable_fw_update, _PERMANENTLY_DISABLE_FW_UPDATE);
+ 
+ static struct attribute *ufs_sysfs_device_flags[] = {
+ 	&dev_attr_device_init.attr,
+@@ -644,6 +679,7 @@ static struct attribute *ufs_sysfs_device_flags[] = {
+ 	&dev_attr_power_on_wpe.attr,
+ 	&dev_attr_bkops_enable.attr,
+ 	&dev_attr_life_span_mode_enable.attr,
++	&dev_attr_purge_enable.attr,
+ 	&dev_attr_phy_resource_removal.attr,
+ 	&dev_attr_busy_rtc.attr,
+ 	&dev_attr_disable_fw_update.attr,
+-- 
+2.16.4
+
