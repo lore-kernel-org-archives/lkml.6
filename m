@@ -2,122 +2,159 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1598CC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 21:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA841C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 21:29:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4EF120C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 21:26:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XTHvaRtV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4EF120C01
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B7442174D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 21:29:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B7442174D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbeHUAny (ORCPT
+        id S1726659AbeHUAq3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 20:43:54 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:47534 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726147AbeHUAny (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 20:43:54 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7KLO0LD042833;
-        Mon, 20 Aug 2018 21:26:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=92DS7IVfrqhrKgQqQXDTE2nTprc0i3J+m5MoQhxoIy4=;
- b=XTHvaRtVQf/y8DJvZYx7ENw/2RLmCJaXkT2E1TQm81Jyed53kZXC4aoyN58obHMLNnDY
- HuXjRVsLH7nRg3L5nmG/tVFZC9jDPX+FrwmAH4zZgZEDIl7F9o9Rszbt3A+OGG7r5lGH
- ZF8vEDdHS0B+gySqG7ZpeZJNeS4dMJ2puaTo1suAOybfy23750M4Cim1p0mzyYev8ljN
- VPlvIMWm5Zr3+RCDmxYhL470y+e7mNXQTXH97TAhkLlOwAnP3gB/TaCkN/7hvD76zeGU
- X4tkVgjfUuEP2OnNSY6fOHTVWUHxnDNgpbOa4OastBIL99/Zu+m3r5SDKb2liXlsYrwk kg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2kxc3qgvs7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Aug 2018 21:26:01 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7KLPxUA003535
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Aug 2018 21:26:00 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7KLPwiZ014182;
-        Mon, 20 Aug 2018 21:25:58 GMT
-Received: from char.us.oracle.com (/10.152.35.101)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 20 Aug 2018 14:25:58 -0700
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 665FA6A010B; Mon, 20 Aug 2018 17:25:56 -0400 (EDT)
-Date:   Mon, 20 Aug 2018 17:25:56 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     kernel-hardening@lists.openwall.com,
-        Liran Alon <liran.alon@oracle.com>,
-        Deepa Srinivasan <deepa.srinivasan@oracle.com>,
-        linux-mm@kvack.org, juerg.haefliger@hpe.com,
-        khalid.aziz@oracle.com, chris.hyser@oracle.com,
-        tyhicks@canonical.com, dwmw@amazon.co.uk, keescook@google.com,
-        andrew.cooper3@citrix.com, jcm@redhat.com,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Kanth <kanth.ghatraju@oracle.com>,
-        Joao Martins <joao.m.martins@oracle.com>, jmattson@google.com,
-        pradeep.vincent@oracle.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ak@linux.intel.com, john.haxby@oracle.com,
-        jsteckli@os.inf.tu-dresden.de
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de
-Subject: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs in
- mind (for KVM to isolate its guests per CPU)
-Message-ID: <20180820212556.GC2230@char.us.oracle.com>
+        Mon, 20 Aug 2018 20:46:29 -0400
+Received: from smtp1-g21.free.fr ([212.27.42.1]:50715 "EHLO smtp1-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726099AbeHUAq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 20:46:28 -0400
+Received: from tock (unknown [89.247.124.122])
+        (Authenticated sender: albeu)
+        by smtp1-g21.free.fr (Postfix) with ESMTPSA id 01E87B00548;
+        Mon, 20 Aug 2018 23:27:51 +0200 (CEST)
+Date:   Mon, 20 Aug 2018 23:27:48 +0200
+From:   Alban <albeu@free.fr>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Aban Bedel <albeu@free.fr>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Naren <naren.kernel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 06/29] mtd: Add support for reading MTD devices via
+ the nvmem API
+Message-ID: <20180820232748.608c3667@tock>
+In-Reply-To: <20180820202038.5d3dc195@bbrezillon>
+References: <20180810080526.27207-1-brgl@bgdev.pl>
+        <20180810080526.27207-7-brgl@bgdev.pl>
+        <20180817182720.6a6e5e8e@bbrezillon>
+        <20180819133106.0420df5f@tock>
+        <20180819184609.6dcdbb9a@bbrezillon>
+        <5b8c30b8-41e1-d59e-542b-fef6c6469ff0@linaro.org>
+        <20180820202038.5d3dc195@bbrezillon>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8991 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808200216
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/x7JZOIPlUQW1dRdErBSmNuH"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+--Sig_/x7JZOIPlUQW1dRdErBSmNuH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-See eXclusive Page Frame Ownership (https://lwn.net/Articles/700606/) which was posted
-way back in in 2016..
+On Mon, 20 Aug 2018 20:20:38 +0200
+Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 
-In the last couple of months there has been a slew of CPU issues that have complicated
-a lot of things. The latest - L1TF - is still fresh in folks's mind and it is
-especially acute to virtualization workloads.
+> On Mon, 20 Aug 2018 11:43:34 +0100
+> Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
+>=20
+> >=20
+> > Overall am still not able to clear visualize on how MTD bindings with=20
+> > nvmem cells would look in both partition and un-partition usecases?
+> > An example DT would be nice here!! =20
+>=20
+> Something along those lines:
 
-As such a bunch of various folks from different cloud companies (CCed) are looking
-at a way to make Linux kernel be more resistant to hardware having these sort of 
-bugs.
+We must also have a compatible string on the nvmem-cells node to make
+sure we don't clash with the old style MTD partitions, or some other
+device specific binding.
 
-In particular we are looking at a way to "remove as many mappings from the global
-kernel address space as possible. Specifically, while being in the
-context of process A, memory of process B should not be visible in the
-kernel." (email from Julian Stecklina). That is the high-level view and 
-how this could get done, well, that is why posting this on
-LKML/linux-hardening/kvm-devel/linux-mm to start the discussion.
+>=20
+> 	mtdnode {
+> 		nvmem-cells {
+                        compatible =3D "nvmem-cells";
+> 			#address-cells =3D <1>;
+> 			#size-cells =3D <1>;
+>=20
+> 			cell@0 {
+> 				reg =3D <0x0 0x14>;
+> 			};
+> 		};
+>=20
+> 		partitions {
+> 			compatible =3D "fixed-partitions";
+> 			#address-cells =3D <1>;
+> 			#size-cells =3D <1>;
+>=20
+> 			partition@0 {
+> 				reg =3D <0x0 0x20000>;
+>=20
+> 				nvmem-cells {
+                                        compatible =3D "nvmem-cells";
+> 					#address-cells =3D <1>;
+> 					#size-cells =3D <1>;
+>=20
+> 					cell@0 {
+> 						reg =3D <0x0 0x10>;
+> 					};
+> 				};
+> 			};
+> 		};
+> 	};
 
-Usually I would start with a draft of RFC patches so folks can rip it apart, but
-thanks to other people (Juerg thank you!) it already exists:
 
-(see https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1222756.html)
+Alban
 
-The idea would be to extend this to:
+--Sig_/x7JZOIPlUQW1dRdErBSmNuH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
- 1) Only do it for processes that run under CPUS which are in isolcpus list.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
- 2) Expand this to be a per-cpu page tables. That is each CPU has its own unique
-    set of pagetables - naturally _START_KERNEL -> __end would be mapped but the
-    rest would not.
+iQIcBAEBCAAGBQJbezJVAAoJEHSUmkuduC28QU4P/3pQiuQbGP9YNsymN3BmbTvP
+lreiY+6pCAVvk66pR7GcuW4RurUzlj6FunpMY5XWQOkNDQcceLn6rmS51Ga7Xz+s
+c7hwUVgd4XByw2REWTAKNo7ygY8gndcMoQ8AzpPGBjGYSN5lp2hrdhvu6FW6DzWe
+8Erm3Xdue074z9ag7LMpQnV0ZURoQeUbEsBgaXbrMCmrYabG6Ahr5/YmyaGavM5H
+O5sM2yQa3b+MfVxFvAyrDmrPm/onIAZSs8Mh6Z33CJZHeZOfofYD74iJRB7mNnCJ
+oy+xu/BYJ2e7/AX595+T0uCG+5IwG99t6oFoqMkKeqKVkv8wzSlQfYJC8t8d5j4f
+IgBydMh+sXDvYGp4ftWFTNLbe6exnISxMSiN8VJUHZPj9sC1RDGA3JFs7oMCCsPv
+ctZ7jboJ0U0T1GP3R+67KX4qOh3jgcMvFwZvzCZEvXVaIbCaeNco4Q0MVtdRL3yi
+6gD2GC0iS/lYQji3HofodBhSfB9JH4GDwDgT8u2WQ4ZT3fDrp/53pvcHwcZ5rl7o
+bxofjh4BYDBNh3eJ8nb5KQeqPvuLZhXi9StmOasBu8IsYAHf/ryGmXhcZJuO21zZ
+ywcUVHIGvmNthSrs2gdmVO6FzpjQfP6Qz9T0lhd/RMxj5/BXYf8CtP84mNq+MUge
+x387wEAOzjA+iSFiQynX
+=RS6x
+-----END PGP SIGNATURE-----
 
-Thoughts? Is this possible? Crazy? Better ideas?
+--Sig_/x7JZOIPlUQW1dRdErBSmNuH--
