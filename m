@@ -2,195 +2,166 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1610EC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E159C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:13:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5EFD2170E
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:12:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="rQV/P7bv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5EFD2170E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 517212170E
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:13:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 517212170E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbeHTT3D (ORCPT
+        id S1727409AbeHTT3X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 15:29:03 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:20133 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726585AbeHTT3D (ORCPT
+        Mon, 20 Aug 2018 15:29:23 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58953 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbeHTT3X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 15:29:03 -0400
-X-Greylist: delayed 150198 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 Aug 2018 15:29:00 EDT
-Received: from mail-vk0-f51.google.com (mail-vk0-f51.google.com [209.85.213.51]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id w7KGChkO008518;
-        Tue, 21 Aug 2018 01:12:44 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w7KGChkO008518
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1534781564;
-        bh=t1zbW3CGxlJfu3AD7cOSHCR7BIPrWK6M8vfE3Oroj1Y=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=rQV/P7bvrEhzPv6te0VDTZ731EWyGD3tHZOzosqCdJBlXGXX3H4wvP+8eMc5D6yGn
-         P30UEKa2oPg0Uv51ZPTE0OWYQeaLYVoNOghIMUn+BzJ8jqnl63wk0FzYqiT6wafaj5
-         ATTVVYzxtpIxTY3VZs0W6W5HqjKKIIpmdSWZuoLjAcopSzr6OsF3ut5h6pzJRtRL8C
-         YpD8KbbgjfuQwUY7spen9a2XaDv9MVDrYvejNQxOHvIjnVj4ZFsm8cEOUfO3dCZcg4
-         xkZnC1Mv9WFPqaW1yon7p+aUf5OMKy+fC1zWit9c6A3Sw/3F2fQpfDEvlruvjt7yXA
-         EZBCkW4Qesc1Q==
-X-Nifty-SrcIP: [209.85.213.51]
-Received: by mail-vk0-f51.google.com with SMTP id 125-v6so6776171vke.11;
-        Mon, 20 Aug 2018 09:12:44 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHCwajk6Rx+oKDdgLcHo2JZSfJh8M7dejSf+NRo31UZS6SY9+n0
-        QHZk3MF5MwPixZMlRxLgyR4QPryvH/nliAEs9EI=
-X-Google-Smtp-Source: AA+uWPwQeel8wxOJI1zlXI4wF5z/nVmm25EXx9tAGpscH7RSjl3AJ+resZOEkRINJr+zqo8bsLgk65y8CFQDX9bZjKE=
-X-Received: by 2002:a1f:3a95:: with SMTP id h143-v6mr31291812vka.42.1534781563160;
- Mon, 20 Aug 2018 09:12:43 -0700 (PDT)
+        Mon, 20 Aug 2018 15:29:23 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7KGD0QM2126367
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 20 Aug 2018 09:13:00 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7KGCxws2126364;
+        Mon, 20 Aug 2018 09:12:59 -0700
+Date:   Mon, 20 Aug 2018 09:12:59 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andrew Banman <tipbot@zytor.com>
+Message-ID: <tip-99f3965878759d36baac944df004b4dafcc272b4@git.kernel.org>
+Cc:     colin.king@canonical.com, hpa@zytor.com, mike.travis@hpe.com,
+        sivanich@hpe.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        abanman@hpe.com, tglx@linutronix.de
+Reply-To: colin.king@canonical.com, abanman@hpe.com, tglx@linutronix.de,
+          sivanich@hpe.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
+          mike.travis@hpe.com, hpa@zytor.com
+In-Reply-To: <1534168477-311448-1-git-send-email-abanman@hpe.com>
+References: <1534168477-311448-1-git-send-email-abanman@hpe.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/platform/uv/BAU: Gracefully disable BAU during
+ panic
+Git-Commit-ID: 99f3965878759d36baac944df004b4dafcc272b4
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Mon, 20 Aug 2018 09:12:02
- -0700 (PDT)
-In-Reply-To: <1534631687-18347-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1534631687-18347-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 21 Aug 2018 01:12:02 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQHcKJLahTssT8tG6i0YM_UpM2A+vKOeeuwryx2UwVWeQ@mail.gmail.com>
-Message-ID: <CAK7LNAQHcKJLahTssT8tG6i0YM_UpM2A+vKOeeuwryx2UwVWeQ@mail.gmail.com>
-Subject: Re: [PATCH] export.h: remove VMLINUX_SYMBOL() and VMLINUX_SYMBOL_STR()
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        keyrings@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-08-19 7:34 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> With the special case handling for Blackfin and Metag was removed by
-> commit 94e58e0ac312 ("export.h: remove code for prefixing symbols with
-> underscore"), VMLINUX_SYMBOL() is no-no.
->
-> Replace the remaining usages, then remove the definition of
-> VMLINUX_SYMBOL() and VMLINUX_SYMBOL_STR().
->
-> <asm-generic/vmlinux.lds.h> no longer needs to include <linux/export.h>.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+Commit-ID:  99f3965878759d36baac944df004b4dafcc272b4
+Gitweb:     https://git.kernel.org/tip/99f3965878759d36baac944df004b4dafcc272b4
+Author:     Andrew Banman <abanman@hpe.com>
+AuthorDate: Mon, 13 Aug 2018 08:54:37 -0500
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Mon, 20 Aug 2018 18:04:43 +0200
 
+x86/platform/uv/BAU: Gracefully disable BAU during panic
 
-Fixed the typo no-no -> no-op,
-then applied  to linux-kbuild.
+When a panic happens while the BAU is active, outstanding broadcasts may go
+un-acknowledged by the kernel. These broadcasts cause timeouts in the UV
+ASIC that tie up BAU resources, which may cause a fatal error that brings
+down the system, thereby crashing the kdump kexec.
 
+Add uv_bau_crash_shutdown() to bring BAU to quiescence ahead of the crash
+shutdown routine saved in smp machine_ops. Assign uv_bau_crash_shutdown
+to machine_ops during init.
 
->  certs/system_certificates.S       | 16 ++++++++--------
->  include/asm-generic/vmlinux.lds.h |  2 --
->  include/linux/export.h            |  7 -------
->  usr/initramfs_data.S              |  4 ++--
->  4 files changed, 10 insertions(+), 19 deletions(-)
->
-> diff --git a/certs/system_certificates.S b/certs/system_certificates.S
-> index 3918ff7..8f29058 100644
-> --- a/certs/system_certificates.S
-> +++ b/certs/system_certificates.S
-> @@ -5,8 +5,8 @@
->         __INITRODATA
->
->         .align 8
-> -       .globl VMLINUX_SYMBOL(system_certificate_list)
-> -VMLINUX_SYMBOL(system_certificate_list):
-> +       .globl system_certificate_list
-> +system_certificate_list:
->  __cert_list_start:
->  #ifdef CONFIG_MODULE_SIG
->         .incbin "certs/signing_key.x509"
-> @@ -15,21 +15,21 @@ __cert_list_start:
->  __cert_list_end:
->
->  #ifdef CONFIG_SYSTEM_EXTRA_CERTIFICATE
-> -       .globl VMLINUX_SYMBOL(system_extra_cert)
-> +       .globl system_extra_cert
->         .size system_extra_cert, CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE
-> -VMLINUX_SYMBOL(system_extra_cert):
-> +system_extra_cert:
->         .fill CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE, 1, 0
->
->         .align 4
-> -       .globl VMLINUX_SYMBOL(system_extra_cert_used)
-> -VMLINUX_SYMBOL(system_extra_cert_used):
-> +       .globl system_extra_cert_used
-> +system_extra_cert_used:
->         .int 0
->
->  #endif /* CONFIG_SYSTEM_EXTRA_CERTIFICATE */
->
->         .align 8
-> -       .globl VMLINUX_SYMBOL(system_certificate_list_size)
-> -VMLINUX_SYMBOL(system_certificate_list_size):
-> +       .globl system_certificate_list_size
-> +system_certificate_list_size:
->  #ifdef CONFIG_64BIT
->         .quad __cert_list_end - __cert_list_start
->  #else
-> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-> index f173b5f..7b75ff6 100644
-> --- a/include/asm-generic/vmlinux.lds.h
-> +++ b/include/asm-generic/vmlinux.lds.h
-> @@ -54,8 +54,6 @@
->  #define LOAD_OFFSET 0
->  #endif
->
-> -#include <linux/export.h>
-> -
->  /* Align . to a 8 byte boundary equals to maximum function alignment. */
->  #define ALIGN_FUNCTION()  . = ALIGN(8)
->
-> diff --git a/include/linux/export.h b/include/linux/export.h
-> index b768d6d..c363bde 100644
-> --- a/include/linux/export.h
-> +++ b/include/linux/export.h
-> @@ -10,13 +10,6 @@
->   * hackers place grumpy comments in header files.
->   */
->
-> -#define __VMLINUX_SYMBOL(x) x
-> -#define __VMLINUX_SYMBOL_STR(x) #x
-> -
-> -/* Indirect, so macros are expanded before pasting. */
-> -#define VMLINUX_SYMBOL(x) __VMLINUX_SYMBOL(x)
-> -#define VMLINUX_SYMBOL_STR(x) __VMLINUX_SYMBOL_STR(x)
-> -
->  #ifndef __ASSEMBLY__
->  struct kernel_symbol
->  {
-> diff --git a/usr/initramfs_data.S b/usr/initramfs_data.S
-> index b28da79..d07648f 100644
-> --- a/usr/initramfs_data.S
-> +++ b/usr/initramfs_data.S
-> @@ -30,8 +30,8 @@ __irf_start:
->  .incbin __stringify(INITRAMFS_IMAGE)
->  __irf_end:
->  .section .init.ramfs.info,"a"
-> -.globl VMLINUX_SYMBOL(__initramfs_size)
-> -VMLINUX_SYMBOL(__initramfs_size):
-> +.globl __initramfs_size
-> +__initramfs_size:
->  #ifdef CONFIG_64BIT
->         .quad __irf_end - __irf_start
->  #else
-> --
-> 2.7.4
->
+Signed-off-by: Andrew Banman <abanman@hpe.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Mike Travis <mike.travis@hpe.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Colin Ian King <colin.king@canonical.com>
+Cc: Dimitri Sivanich <sivanich@hpe.com>
+Link: https://lkml.kernel.org/r/1534168477-311448-1-git-send-email-abanman@hpe.com
 
+---
+ arch/x86/platform/uv/tlb_uv.c | 49 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
 
-
--- 
-Best Regards
-Masahiro Yamada
+diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
+index a4130b84d1ff..4c1e1197b82d 100644
+--- a/arch/x86/platform/uv/tlb_uv.c
++++ b/arch/x86/platform/uv/tlb_uv.c
+@@ -22,8 +22,13 @@
+ #include <asm/tsc.h>
+ #include <asm/irq_vectors.h>
+ #include <asm/timer.h>
++#include <asm/reboot.h>
+ 
+ static struct bau_operations ops __ro_after_init;
++#ifdef CONFIG_KEXEC_CORE
++static void (*crash_shutdown)(struct pt_regs *regs) __ro_after_init;
++static bool crash_in_progress;
++#endif
+ 
+ /* timeouts in nanoseconds (indexed by UVH_AGING_PRESCALE_SEL urgency7 30:28) */
+ static const int timeout_base_ns[] = {
+@@ -2196,6 +2201,44 @@ static const struct bau_operations uv4_bau_ops __initconst = {
+ 	.wait_completion         = uv4_wait_completion,
+ };
+ 
++#ifdef CONFIG_KEXEC_CORE
++/*
++ * Bring BAU to quiesence by abandoning current broadcasts and freeing up
++ * resources needed by firmware-initiated BAU broadcasts.
++ */
++void uv_bau_crash_shutdown(struct pt_regs *regs)
++{
++	int pnode = 0;
++	int uvhub = 0;
++
++	if (crash_in_progress)
++		return;
++	crash_in_progress = true;
++
++	/*
++	 * Don't bother turning off BAU in the per-cpu structs. We free up
++	 * enough INTD resources to accommodate any new broadcasts that
++	 * may (however unlikley) start up before we complete the panic,
++	 * without tying up FW-initiated General Broadcasts that must not
++	 * time out.
++	 */
++
++	for_each_possible_blade(uvhub) {
++		if (!uv_blade_nr_possible_cpus(uvhub))
++			continue;
++		pnode = uv_blade_to_pnode(uvhub);
++		/* Set STATUS registers to idle to free source cpus */
++		write_gmmr(pnode, UVH_LB_BAU_SB_ACTIVATION_STATUS_0, 0x0);
++		write_gmmr(pnode, UVH_LB_BAU_SB_ACTIVATION_STATUS_1, 0x0);
++		write_gmmr(pnode, UVH_LB_BAU_SB_ACTIVATION_STATUS_2, 0x0);
++		/* Clear TIMEOUT and PENDING bits to free up BAU resources */
++		ops.write_g_sw_ack(pnode, ops.read_g_sw_ack(pnode) & 0xFFFF);
++	}
++
++	crash_shutdown(regs);
++}
++#endif
++
+ /*
+  * Initialization of BAU-related structures
+  */
+@@ -2268,6 +2311,12 @@ static int __init uv_bau_init(void)
+ 		}
+ 	}
+ 
++#ifdef CONFIG_KEXEC_CORE
++	crash_shutdown = machine_ops.crash_shutdown;
++	machine_ops.crash_shutdown = uv_bau_crash_shutdown;
++	crash_in_progress = false;
++#endif
++
+ 	return 0;
+ 
+ err_bau_disable:
