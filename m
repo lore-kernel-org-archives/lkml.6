@@ -2,59 +2,79 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD303C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:23:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B283AC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:23:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 931342154B
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:23:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 931342154B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 673782154B
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:23:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eQfBlrsR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 673782154B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbeHTMie (ORCPT
+        id S1726734AbeHTMil (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 08:38:34 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:5327 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbeHTMid (ORCPT
+        Mon, 20 Aug 2018 08:38:41 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38986 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbeHTMik (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 08:38:33 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5b7a88850001>; Mon, 20 Aug 2018 02:23:17 -0700
-Received: from HQMAIL103.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 20 Aug 2018 02:23:42 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 20 Aug 2018 02:23:42 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 20 Aug
- 2018 09:23:41 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 20 Aug
- 2018 09:23:41 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
- Transport; Mon, 20 Aug 2018 09:23:41 +0000
-Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5b7a889b0002>; Mon, 20 Aug 2018 02:23:41 -0700
-From:   Aapo Vienamo <avienamo@nvidia.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        "Jonathan Hunter" <jonathanh@nvidia.com>
-CC:     <linux-mmc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH 2/2] mmc: tegra: Implement periodic pad calibration
-Date:   Mon, 20 Aug 2018 12:23:33 +0300
-Message-ID: <1534757013-4524-3-git-send-email-avienamo@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1534757013-4524-1-git-send-email-avienamo@nvidia.com>
-References: <1534757013-4524-1-git-send-email-avienamo@nvidia.com>
-X-NVConfidentiality: public
+        Mon, 20 Aug 2018 08:38:40 -0400
+Received: by mail-lj1-f194.google.com with SMTP id l15-v6so11016951lji.6;
+        Mon, 20 Aug 2018 02:23:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:references:date:in-reply-to:message-id
+         :user-agent:mime-version;
+        bh=ZXm5iF/ew0W0USd4GzFZ4XE7xPheM3Iug7yPC7u/xro=;
+        b=eQfBlrsR2o/JQFBEEfzsSOOHbUOZ4Psq26N/fYDTMQfJam0E9J4LVKoq/eNJt0mHQu
+         vSFScZP5xDIT/0n7aNehnogOCn4XqMqG1Io2Ino0Eu7bUS4kQyYkInch90wQolCzwx60
+         tpVHAyhMQvtHvVoSxqO2t0jMliWexasOU/6UfKa1GRTbES4J8/SN1ta/TLSuaUZgaKuW
+         ef3QYRKHzzWuEUXAZTQ8/+DlT9s9XlicQJpWuj/NX8NH2M3xUM2ZP4B72PTTpA8wpzfR
+         qjZ/3W7HkbVbRJRKfVASU0UtgWz1gNsKn2wWTILJHbDI/4F0SrHIzzQNlMUY2z+yY8mY
+         3jPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:references:date
+         :in-reply-to:message-id:user-agent:mime-version;
+        bh=ZXm5iF/ew0W0USd4GzFZ4XE7xPheM3Iug7yPC7u/xro=;
+        b=ONp7VobeMDVbTjTkTppiWD12CUWwhBnICHpPfrqHZ4rAeXBv8qzQ46qI7FKqDPvnSb
+         roNbQTbfb/aaWz5FYUYZhy5Vz9I+arPcDmGtCg6qOSbJt4FmnthK6N3J/n4QXfKIHnkC
+         1OvDx9UktKhS2QKbdns4m+30idM8OjDz02DPGHX7SmdvNUwwS/EmKG9fYxsJwrmlhiT/
+         2KDXtMhj9jg8X2HHXp1MXNmJsmwtlTgR4ARfeaMf4tqT8mkL1f9GSz2MnxCOrKYprDJu
+         Z0JCCHxUgyhH/uLyAqx62ljBAYSI2D0CGBZRFBpMTn3IA8+7bCdunwMKUg4kqCTcbBde
+         fzww==
+X-Gm-Message-State: AOUpUlFCTgcDYIIIEsHnpPASL0QJMpzVFQtMW8g5drdgp5AV7SuU3Vlm
+        iCMnwKjXAM0oIGK3uGDIQXw=
+X-Google-Smtp-Source: AA+uWPzQy+Chh0K+7XwE5kCUYXkJ2LwE40yya5gjGloy10qr/jEmOsXZikLWZrZEdjZ8rg1dnGwNPQ==
+X-Received: by 2002:a2e:2d0a:: with SMTP id t10-v6mr18609887ljt.8.1534757026702;
+        Mon, 20 Aug 2018 02:23:46 -0700 (PDT)
+Received: from localhost ([87.54.42.112])
+        by smtp.gmail.com with ESMTPSA id f18-v6sm1512998lja.85.2018.08.20.02.23.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 20 Aug 2018 02:23:46 -0700 (PDT)
+From:   Esben Haabendal <esben.haabendal@gmail.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-i2c@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+        kernel@pengutronix.de, NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] arm: dts: ls1021a: Enable I2C DMA support
+References: <20180816084315.7857-1-esben.haabendal@gmail.com>
+        <20180816084315.7857-4-esben.haabendal@gmail.com>
+        <20180820091531.komc6ypyybnq22nw@ninjato>
+Date:   Mon, 20 Aug 2018 11:23:45 +0200
+In-Reply-To: <20180820091531.komc6ypyybnq22nw@ninjato> (Wolfram Sang's message
+        of "Mon, 20 Aug 2018 11:15:31 +0200")
+Message-ID: <87zhxhgzmm.fsf@gmail.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,68 +82,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rerun the pad calibration procedure before sdhci_request() if
-the 100 ms recalibration interval has been exceeded.
+Wolfram Sang <wsa@the-dreams.de> writes:
 
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
----
- drivers/mmc/host/sdhci-tegra.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+> On Thu, Aug 16, 2018 at 10:43:14AM +0200, Esben Haabendal wrote:
+>> From: Esben Haabendal <eha@deif.com>
+>> 
+>> Gives substantial performance improvement for transfers larger than 16
+>> bytes (DMA_THRESHOLD).  Smaller transfers are unaffected.
+>> 
+>> Signed-off-by: Esben Haabendal <eha@deif.com>
+>
+> This needs to go via arm-soc. The two other patches will be in v4.19
+> with my pull request later this week.
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 94624ec..ef18a0c 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -30,6 +30,7 @@
- #include <linux/mmc/mmc.h>
- #include <linux/mmc/slot-gpio.h>
- #include <linux/gpio/consumer.h>
-+#include <linux/ktime.h>
- 
- #include "sdhci-pltfm.h"
- 
-@@ -122,6 +123,7 @@ struct sdhci_tegra {
- 	struct pinctrl_state *pinctrl_state_1v8;
- 
- 	struct sdhci_tegra_autocal_offsets autocal_offsets;
-+	ktime_t last_calib;
- 
- 	u32 default_tap;
- 	u32 default_trim;
-@@ -533,6 +535,22 @@ static void tegra_sdhci_parse_pad_autocal_dt(struct sdhci_host *host)
- 		autocal->pull_down_hs400 = autocal->pull_down_1v8;
- }
- 
-+static void tegra_sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-+	ktime_t since_calib = ktime_sub(ktime_get(), tegra_host->last_calib);
-+
-+	/* 100 ms calibration interval is specified in the TRM */
-+	if (ktime_to_ms(since_calib) > 100) {
-+		tegra_sdhci_pad_autocalib(host);
-+		tegra_host->last_calib = ktime_get();
-+	}
-+
-+	sdhci_request(mmc, mrq);
-+}
-+
- static void tegra_sdhci_parse_tap_and_trim(struct sdhci_host *host)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -1014,6 +1032,10 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 				sdhci_tegra_start_signal_voltage_switch;
- 	}
- 
-+	/* Hook to periodically rerun pad calibration */
-+	if (soc_data->nvquirks & NVQUIRK_HAS_PADCALIB)
-+		host->mmc_host_ops.request = tegra_sdhci_request;
-+
- 	host->mmc_host_ops.hs400_enhanced_strobe =
- 			tegra_sdhci_hs400_enhanced_strobe;
- 
--- 
-2.7.4
+Ok, do I need to send to additional list(s)?
+linux-arm-kernel@lists.infradead.org?
 
+/Esben
