@@ -2,191 +2,111 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D40EC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49FD7C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07D2420C0C
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7A3A20E20
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:20:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EiclI4tX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07D2420C0C
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bT2764uV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7A3A20E20
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbeHTMd5 (ORCPT
+        id S1726593AbeHTMfj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 08:33:57 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:34154 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbeHTMd4 (ORCPT
+        Mon, 20 Aug 2018 08:35:39 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40985 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbeHTMfj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 08:33:56 -0400
-Received: by mail-pl0-f65.google.com with SMTP id f6-v6so6823635plo.1;
-        Mon, 20 Aug 2018 02:19:05 -0700 (PDT)
+        Mon, 20 Aug 2018 08:35:39 -0400
+Received: by mail-lf1-f66.google.com with SMTP id v22-v6so10366964lfe.8;
+        Mon, 20 Aug 2018 02:20:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tghwBLWOV/3T54AesfMEpwuCXEdCsQ4AGc/KQoGqp0c=;
-        b=EiclI4tXnRwVOkFQr3jMKa4vXfrSvCjB3yzLF2zftXzF7gnXhNupizk0aVE/MerhTK
-         ezEPJYs7aw9O6Z0aThokSkf4K5nyY8BOk8XwbF3+q1fAJv1114v1ojQyPER8rb3/jVu4
-         QMYAQZDe4IH8eG+58d2wF07wq8v71mZm6rT4TJH4kg4AfdZ10Cz5r6V3GRhYuxgDwbKH
-         fERAqxHkpoeJl3OsVm4cFmAkeW+VMuk2+3HTr4g8rzK7dPsLCmubKk+/htynba+A2gQ8
-         hNGygCdOPMXiHPN46/ads65FiavrojwHRKzl2wdXlt4s5b7XnpfRsY9XkGVv/v8X+yF5
-         owcA==
+        h=sender:from:to:cc:subject:in-reply-to:references:user-agent:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=n74IuMkDSDZTyVw8b/r+ENWCGBPVgPV4omw9MsI7euk=;
+        b=bT2764uV2UvzuZXvwpc8treXl3fhp5wB20f5x3mZnPh98OjVIJqOpu47RUI5M0/xad
+         6kxhgB19bSf+F0WgvvrNlb6O/GbXnZdHYx8eQtuRbDEsq0a63Pq2js7VGAHr0GPoNRIQ
+         jjcV6zroJtJy21D8aJTHeVKRvmS5R81LZO7GxdxJCWw374uvaDPw7vuwLeV50sXM+EHu
+         U82UEXvTDL1NXyiNPlronYrV3oGqGNPcnzeKlytarOPSYW+K6gjcSSOkMv/JP59rYv6Q
+         spqt6D6+n6455GtxRQmUKQWaL83VmNXxsZ8NrRuPhH42AANnnxGGMaLPqc9m3/kXP6NH
+         l+Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=tghwBLWOV/3T54AesfMEpwuCXEdCsQ4AGc/KQoGqp0c=;
-        b=XL4r7pdppaxirAQ1/p76mezEPlf8ETL13kQidEl4+V3HuJLRjdlOMPCMuEX4mGsvge
-         Gw+qDIhe+4eCbmWwcshYKmPkDosa/SEtHeeAtDae0mnJ6OeeLaTkpDY19Lsw/CU4U+FV
-         4xBWZqugHPMsWeBC8aoxzXzT/nhINUV1eR7H9CXGcfVDnfjzbiAxWMxSm/+jlg6ftXgx
-         S0BV9krAFeetyvweEe7mp/PlnInlkeyl7Yn1iX4dW1H3bmv4sB5YUu+ysm9C5vVCYZzI
-         JE2fe2gD9A49XcUl6gDlXyXQprshqyamvcbAxWu2SciMpZvkaE2ljaIbsRSMac6wMKqq
-         HXPw==
-X-Gm-Message-State: AOUpUlFlbg9eWvTK4RhdIcuErwZRN1XOzkI7EGOoie8NfTEHSPeIB51Y
-        M/IEetgRL+g7HaNKw3zuQJmClk0=
-X-Google-Smtp-Source: AA+uWPyGN8Aku2pW8kUgzbanBOBapj+a7KBI2mXGngHq3+gVqqFfXfOtvx25C+3Er6bMvw3r1uqFxQ==
-X-Received: by 2002:a17:902:528a:: with SMTP id a10-v6mr44659742pli.199.1534756745190;
-        Mon, 20 Aug 2018 02:19:05 -0700 (PDT)
-Received: from mylaptop.nay.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id u11-v6sm16166340pfd.117.2018.08.20.02.19.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 Aug 2018 02:19:04 -0700 (PDT)
-From:   Pingfan Liu <kernelfans@gmail.com>
-To:     linux-pm@vger.kernel.org
-Cc:     Pingfan Liu <kernelfans@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :user-agent:date:message-id:mime-version:content-transfer-encoding;
+        bh=n74IuMkDSDZTyVw8b/r+ENWCGBPVgPV4omw9MsI7euk=;
+        b=g47UWIxQ97OE6jokfhVOTtMhw2z/ZWi69JT0ozOGJTvhLi+sSx7VzXOddof+D6KAcO
+         4bCLdZ3ezvdUp4lKWb4qrn+RruZlrECI3VeDglxDVwxupNHkALiUH3CQLCKbCoKteOde
+         AKEdUeDBwqePbkGC8V+9p7+9ceV7HHhDk/OLTdRNgIxu8k4Kwgv6B9WKUJg+atqdvgTZ
+         GH1IhQlyy28tzBSc+E1hAy3cjRbK6FfCDM03iULnFYekniibaGAw288jgK+TL3vKoCgl
+         +aeTT24iOxyc8lJ41tZrsCBE5/oA1XjiPIWI6ZKbBs7pVoWyq8gDoGIFfjl9gS3Nl2Q+
+         1Wow==
+X-Gm-Message-State: AOUpUlHAA3dx/NjPZn4rSHOyzhXNZ0AkV3JmrTwaBmpWBRHEN7KVVmTR
+        C9/2JWlYmwEdAp/SU9/BTEo6IeZS
+X-Google-Smtp-Source: AA+uWPxBxl2VAzQMFMdrgsgf8+0byeXlvwdBTZxUkiV4IGisP+BxZ2c/D/x66FLA4TDeWM4yJKxRGQ==
+X-Received: by 2002:a19:ded7:: with SMTP id i84-v6mr13080634lfl.146.1534756846762;
+        Mon, 20 Aug 2018 02:20:46 -0700 (PDT)
+Received: from localhost ([87.54.42.112])
+        by smtp.gmail.com with ESMTPSA id f9-v6sm1520382ljf.9.2018.08.20.02.20.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 20 Aug 2018 02:20:46 -0700 (PDT)
+From:   Esben Haabendal <esben.haabendal@gmail.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-i2c@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Phil Reid <preid@electromag.com.au>,
+        Peter Rosin <peda@axentia.se>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] drivers/base: clean up unused devices_kset_move_*() functions
-Date:   Mon, 20 Aug 2018 17:18:37 +0800
-Message-Id: <1534756717-25553-4-git-send-email-kernelfans@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1534756717-25553-1-git-send-email-kernelfans@gmail.com>
-References: <1534756717-25553-1-git-send-email-kernelfans@gmail.com>
+Subject: Re: [PATCH v4 2/3] i2c: imx: Simplify stopped state tracking
+In-Reply-To: <20180820091413.ranx7smh3f3swvvc@ninjato> (Wolfram Sang's message
+        of "Mon, 20 Aug 2018 11:14:13 +0200")
+References: <20180816084315.7857-1-esben.haabendal@gmail.com>
+        <20180816084315.7857-3-esben.haabendal@gmail.com>
+        <20180820091413.ranx7smh3f3swvvc@ninjato>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+Date:   Mon, 20 Aug 2018 11:20:44 +0200
+Message-ID: <874lfpiec3.fsf@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now, shutdown seq is unified with PM, and there is no need to maintain the
-"parent <- child" or "supplier <- consumer" order in devices_kset any more,
-hence removing the corresponding routines
+Wolfram Sang <wsa@the-dreams.de> writes:
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
----
- drivers/base/base.h |  1 -
- drivers/base/core.c | 56 -----------------------------------------------------
- 2 files changed, 57 deletions(-)
+> On Thu, Aug 16, 2018 at 10:43:13AM +0200, Esben Haabendal wrote:
+>> From: Esben Haabendal <eha@deif.com>
+>>=20
+>> Always update the stopped state when busy status have been checked.
+>> This is identical to what was done before, with the exception of error
+>> handling.
+>> Without this change, some errors cause the stopped state to be left in
+>> incorrect state in i2c_imx_stop(), i2c_imx_dma_read(), i2c_imx_read() and
+>> i2c_imx_xfer().
+>>=20
+>> Signed-off-by: Esben Haabendal <eha@deif.com>
+>> Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+>
+> Applied to for-next, thanks! I did not add stable because the cover
+> latter said minor issue? Not really sure here, though...
 
-diff --git a/drivers/base/base.h b/drivers/base/base.h
-index 7a419a7..fcb213b 100644
---- a/drivers/base/base.h
-+++ b/drivers/base/base.h
-@@ -133,7 +133,6 @@ extern void device_unblock_probing(void);
- 
- /* /sys/devices directory */
- extern struct kset *devices_kset;
--extern void devices_kset_move_last(struct device *dev);
- 
- #if defined(CONFIG_MODULES) && defined(CONFIG_SYSFS)
- extern void module_add_driver(struct module *mod, struct device_driver *drv);
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 7c83384..99fdc57 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -127,13 +127,6 @@ static int device_reorder_to_tail(struct device *dev, void *not_used)
- {
- 	struct device_link *link;
- 
--	/*
--	 * Devices that have not been registered yet will be put to the ends
--	 * of the lists during the registration, so skip them here.
--	 */
--	if (device_is_registered(dev))
--		devices_kset_move_last(dev);
--
- 	if (device_pm_initialized(dev))
- 		device_pm_move_last(dev);
- 
-@@ -1316,52 +1309,6 @@ static DEVICE_ATTR_RO(dev);
- struct kset *devices_kset;
- 
- /**
-- * devices_kset_move_before - Move device in the devices_kset's list.
-- * @deva: Device to move.
-- * @devb: Device @deva should come before.
-- */
--static void devices_kset_move_before(struct device *deva, struct device *devb)
--{
--	if (!devices_kset)
--		return;
--	pr_debug("devices_kset: Moving %s before %s\n",
--		 dev_name(deva), dev_name(devb));
--	spin_lock(&devices_kset->list_lock);
--	list_move_tail(&deva->kobj.entry, &devb->kobj.entry);
--	spin_unlock(&devices_kset->list_lock);
--}
--
--/**
-- * devices_kset_move_after - Move device in the devices_kset's list.
-- * @deva: Device to move
-- * @devb: Device @deva should come after.
-- */
--static void devices_kset_move_after(struct device *deva, struct device *devb)
--{
--	if (!devices_kset)
--		return;
--	pr_debug("devices_kset: Moving %s after %s\n",
--		 dev_name(deva), dev_name(devb));
--	spin_lock(&devices_kset->list_lock);
--	list_move(&deva->kobj.entry, &devb->kobj.entry);
--	spin_unlock(&devices_kset->list_lock);
--}
--
--/**
-- * devices_kset_move_last - move the device to the end of devices_kset's list.
-- * @dev: device to move
-- */
--void devices_kset_move_last(struct device *dev)
--{
--	if (!devices_kset)
--		return;
--	pr_debug("devices_kset: Moving %s to end of list\n", dev_name(dev));
--	spin_lock(&devices_kset->list_lock);
--	list_move_tail(&dev->kobj.entry, &devices_kset->list);
--	spin_unlock(&devices_kset->list_lock);
--}
--
--/**
-  * device_create_file - create sysfs attribute file for device.
-  * @dev: device.
-  * @attr: device attribute descriptor.
-@@ -2834,15 +2781,12 @@ int device_move(struct device *dev, struct device *new_parent,
- 		break;
- 	case DPM_ORDER_DEV_AFTER_PARENT:
- 		device_pm_move_after(dev, new_parent);
--		devices_kset_move_after(dev, new_parent);
- 		break;
- 	case DPM_ORDER_PARENT_BEFORE_DEV:
- 		device_pm_move_before(new_parent, dev);
--		devices_kset_move_before(new_parent, dev);
- 		break;
- 	case DPM_ORDER_DEV_LAST:
- 		device_pm_move_last(dev);
--		devices_kset_move_last(dev);
- 		break;
- 	}
- 
--- 
-2.7.4
+I agree, it does not need to go into stable.
 
+/Esben
