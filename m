@@ -2,102 +2,112 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7E2C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E8FC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1178320C03
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:05:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vDpSysdr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1178320C03
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AAF442173A
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:05:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAF442173A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726535AbeHTVVj (ORCPT
+        id S1726595AbeHTVVx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 17:21:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42290 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726106AbeHTVVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 17:21:39 -0400
-Received: from mail-yb0-f171.google.com (mail-yb0-f171.google.com [209.85.213.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C395B2173A;
-        Mon, 20 Aug 2018 18:05:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534788300;
-        bh=s50m4qIOmVl3tL/myuUTjQ5nXLnfjr9of9al0dUhJWw=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=vDpSysdrvQGvRjYSRR//92vyZLrwaoTDRqvgC21QJ7p/MN5PLV1GIqukODI3E8D7h
-         CXqIZ+uCqiik5TTo0CYdvPQmnJzKXskesjPw7bnmg57UP44b6ZPBG/3K+sVWG1OaDy
-         8A33e5axu9ZANi4W1Ftbx3KxE6jRPs54WRRPJ83k=
-Received: by mail-yb0-f171.google.com with SMTP id d34-v6so4947356yba.3;
-        Mon, 20 Aug 2018 11:05:00 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHw+WBy8A2+sCa8SlY6YfeZhje5U9A9oBhRhGVAtdUkTJl5iHlh
-        Vz8Um1UQ6/CJOT7ACTOPwYBoEH92uxx0tuVNfPA=
-X-Google-Smtp-Source: AA+uWPybximRdwcjUMlc8Ag+iS3ixTtwaHmc8kpL3EHjtTZk9lthd+oOG8R4Brg/TlW8GAbkQc6rKK5xz4Xj9bvIDKc=
-X-Received: by 2002:a25:5446:: with SMTP id i67-v6mr9247341ybb.222.1534788300050;
- Mon, 20 Aug 2018 11:05:00 -0700 (PDT)
+        Mon, 20 Aug 2018 17:21:53 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59846 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726106AbeHTVVw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 17:21:52 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7KI4oYJ086778
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 14:05:13 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m006xdy88-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 14:05:13 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Mon, 20 Aug 2018 19:05:11 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 20 Aug 2018 19:05:07 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7KI56KI44892188
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 20 Aug 2018 18:05:06 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 713605204E;
+        Mon, 20 Aug 2018 21:05:07 +0100 (BST)
+Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with SMTP id 6E44F52050;
+        Mon, 20 Aug 2018 21:05:05 +0100 (BST)
+Date:   Mon, 20 Aug 2018 11:05:03 -0700
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        Anton Blanchard <anton@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/2] powerpc: Use cpu_smallcore_sibling_mask at SMT
+ level on bigcores
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <1534743704-4760-1-git-send-email-ego@linux.vnet.ibm.com>
+ <1534743704-4760-3-git-send-email-ego@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Received: by 2002:a25:81c4:0:0:0:0:0 with HTTP; Mon, 20 Aug 2018 11:04:19
- -0700 (PDT)
-In-Reply-To: <20180820175425.zoxnbcz3ziutxaq5@derp-derp.local>
-References: <20180820171818.7710-1-mdf@kernel.org> <CANk1AXSMSLGCcaRcZo4TWKEJW+YUQqbHWEuHpz_csF5J1m-Sew@mail.gmail.com>
- <20180820175425.zoxnbcz3ziutxaq5@derp-derp.local>
-From:   Alan Tull <atull@kernel.org>
-Date:   Mon, 20 Aug 2018 13:04:19 -0500
-X-Gmail-Original-Message-ID: <CANk1AXS9qVMGfdsFGYNe08q60n1keo7FnfwgGYYR4djR+Fd-wg@mail.gmail.com>
-Message-ID: <CANk1AXS9qVMGfdsFGYNe08q60n1keo7FnfwgGYYR4djR+Fd-wg@mail.gmail.com>
-Subject: Re: [PATCH v2] fpga: dfl: region: Restory symmetry in probe()/remove()
-To:     Moritz Fischer <mdf@kernel.org>
-Cc:     Wu Hao <hao.wu@intel.com>, linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <1534743704-4760-3-git-send-email-ego@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18082018-4275-0000-0000-000002AC580A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082018-4276-0000-0000-000037B58B40
+Message-Id: <20180820180503.GB23117@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-20_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=800 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808200187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 12:54 PM, Moritz Fischer <mdf@kernel.org> wrote:
-> Hi Alan,
->
-> On Mon, Aug 20, 2018 at 12:46:32PM -0500, Alan Tull wrote:
->> On Mon, Aug 20, 2018 at 12:18 PM, Moritz Fischer <mdf@kernel.org> wrote:
->>
->> Hi Moritz,
->>
->> > Replace dev_get_drvdata() with platform_get_drvdata() to
->> > match the platform_set_drvdata() in the probe function of
->> > the platform driver.
->> >
->> > Fixes commit bb61b9be3e6b ("fpga: dfl: add fpga region platform driver for FME")
->> > Signed-off-by: Moritz Fischer <mdf@kernel.org>
->> > ---
->> >
->> > Changes from v1:
->> > - Still compile after change ...
->> >
->> > ---
->> >  drivers/fpga/dfl-fme-region.c | 2 +-
->>
->> Thanks for catching this.  of-fpga-region.c does a similar thing and
->> needs s/dev_set_drvdata/platform_set_drvdata/ in the probe.  Could you
->> fix it here too?
+* Gautham R. Shenoy <ego@linux.vnet.ibm.com> [2018-08-20 11:11:44]:
 
-Actually I should have said something more like
-s/dev_set_drvdata(dev/platform_set_drvdata(pdev/
+> From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+> 
+> Each of the SMT4 cores forming a big-core are more or less independent
+> units. Thus when multiple tasks are scheduled to run on the fused
+> core, we get the best performance when the tasks are spread across the
+> pair of SMT4 cores.
+> 
+> This patch achieves this by setting the SMT level mask to correspond
+> to the smallcore sibling mask on big-core systems. This patch also
+> ensures that while checked for shared-caches on big-core system, we
+> use the smallcore_sibling_mask to compare with the l2_cache_mask.
+> This ensure that the CACHE level sched-domain is created, whose groups
+> correspond to the threads of the big-core.
+> 
+> With this patch, the SMT sched-domain with SMT=8,4,2 on big-core
+> systems are as follows:
 
->
-> Yeah, can do in a v3 series ... Will add your Suggested-by: ...
 
-Thanks!
+Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 
->
-> Cheers,
->
-> Moritz
