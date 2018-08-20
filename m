@@ -6,95 +6,82 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02669C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D95C4C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6B7920C09
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:07:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6B7920C09
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id 8540620C09
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:10:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8540620C09
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbeHTPWY convert rfc822-to-8bit (ORCPT
+        id S1726655AbeHTP0B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 11:22:24 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:39734 "EHLO hermes.aosc.io"
+        Mon, 20 Aug 2018 11:26:01 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38915 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726549AbeHTPWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 11:22:24 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 0C737E0E6D;
-        Mon, 20 Aug 2018 12:06:42 +0000 (UTC)
-Date:   Mon, 20 Aug 2018 20:06:21 +0800
-In-Reply-To: <20180820120046.7tonxtb52q43ocfq@flea>
-References: <20180724163655.61365-1-icenowy@aosc.io> <20180726124119.dwne2sncws2p3sdi@flea> <dc8a28bcfbe082158bac5b097badb3ddf0f51ce8.camel@aosc.io> <20180820120046.7tonxtb52q43ocfq@flea>
+        id S1726197AbeHTP0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 11:26:01 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7F7E920DF2; Mon, 20 Aug 2018 14:10:36 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1C78920618;
+        Mon, 20 Aug 2018 14:10:26 +0200 (CEST)
+Date:   Mon, 20 Aug 2018 14:10:26 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
+Cc:     "richard@nod.at" <richard@nod.at>,
+        "absahu@codeaurora.org" <absahu@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>,
+        Michal Simek <michals@xilinx.com>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "peterpandong@micron.com" <peterpandong@micron.com>
+Subject: Re: [LINUX PATCH v10 2/2] mtd: rawnand: arasan: Add support for
+ Arasan NAND Flash Controller
+Message-ID: <20180820141026.0e7208ae@bbrezillon>
+In-Reply-To: <MWHPR02MB2623218B2BD3D102B07AC862AF320@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <1534511964-20342-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1534511964-20342-3-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <20180817195903.49963b25@bbrezillon>
+        <MWHPR02MB2623D48B5DBAFCE2B5D03747AF3C0@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20180820105355.11bd50a8@bbrezillon>
+        <MWHPR02MB2623218B2BD3D102B07AC862AF320@MWHPR02MB2623.namprd02.prod.outlook.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [linux-sunxi] Re: [PATCH] ARM: dts: sun8i: r40/v40: rewrite BPi M2 Berry DTS to rebase on M2 Ultra
-To:     linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-CC:     devicetree@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org
-From:   Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <2782CDF6-C36F-49EF-97AE-75382C416489@aosc.io>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 20 Aug 2018 10:49:38 +0000
+Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
 
+> 
+> Thanks for your suggestion and are you saying something like Marvell parser patterns for nfcv1 as below?
+> 
+> static const struct nand_op_parser marvell_nfcv1_op_parser = NAND_OP_PARSER(
+> 	/* Naked commands not supported, use a function for each pattern */
+> 	NAND_OP_PARSER_PATTERN(
+> 		marvell_nfc_read_id_type_exec,
+> 		NAND_OP_PARSER_PAT_CMD_ELEM(false),
+> 		NAND_OP_PARSER_PAT_ADDR_ELEM(false, MAX_ADDRESS_CYC_NFCV1),
+> 		NAND_OP_PARSER_PAT_DATA_IN_ELEM(false, 8)),
+> 	NAND_OP_PARSER_PATTERN(
+> 		marvell_nfc_erase_cmd_type_exec,
+> 		NAND_OP_PARSER_PAT_CMD_ELEM(false),
+> 		NAND_OP_PARSER_PAT_ADDR_ELEM(false, MAX_ADDRESS_CYC_NFCV1),
+> 		NAND_OP_PARSER_PAT_CMD_ELEM(false),
+> 		NAND_OP_PARSER_PAT_WAITRDY_ELEM(false)),
+> 	);
+> That means, a separate hook for each pattern, is that you are suggesting?
 
-于 2018年8月20日 GMT+08:00 下午8:00:46, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
->Hi!
->
->On Wed, Aug 08, 2018 at 06:36:56PM +0800, Icenowy Zheng wrote:
->> 在 2018-07-26四的 14:41 +0200，Maxime Ripard写道：
->> > On Wed, Jul 25, 2018 at 12:36:55AM +0800, Icenowy Zheng wrote:
->> > > Banana Pi designs the BPi M2 Berry board to be software
->compatible
->> > > with
->> > > BPi M2 Ultra,
->> > 
->> > Do you have a reference for this?
->> > 
->> > > so it's based on M2 Ultra with some function cuts, including:
->> > > 
->> > > - 2048MiB DRAM -> 1024MiB (this should be proceed by the
->> > > bootloader);
->> > > - dropped a LED;
->> > > - dropped eMMC;
->> > > - dropped USB2 and connect USB1 to a 4-port HUB.
->> > 
->> > Is it the exhaustive list?
->> 
->> I have asked Mikey from Sinovoip, and he has agreed this.
->> 
->> Here's a list provided by him, which covers some things I forgot:
->> - 2GiB -> 1GiB
->> - no eMMC
->> - no onboard microphone
->> - no IR
->> - no charging (and power jack to USB)
->> - USB change
->> - one less LED
->> 
->> Should I add this to the device tree's comment?
->
->Not really, because...
->
->> > 
->> > I'm a bit reluctant to merge that kind of patches usually, since
->that
->> > would also imply that each time someone will commit something to
->the
->> > M2-Ultra, it would automatically apply to the M2-Berry, without any
->> > easy way to tell and / or test.
->
->... this still applies.
-
-But I think few developers will have both boards at the same time.
-
->
->Maxime
+Yes.
