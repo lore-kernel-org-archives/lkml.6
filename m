@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B7A5C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 07:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AB3C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 07:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF1720BED
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 07:18:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C72320BED
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 07:18:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JS/zCAdp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AF1720BED
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bM18WWme"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C72320BED
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbeHTKdH (ORCPT
+        id S1726695AbeHTKdK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 06:33:07 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:60754 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726030AbeHTKdG (ORCPT
+        Mon, 20 Aug 2018 06:33:10 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:38104 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726030AbeHTKdJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 06:33:06 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7K7EHGv108689;
-        Mon, 20 Aug 2018 07:18:33 GMT
+        Mon, 20 Aug 2018 06:33:09 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7K7EbNC134525;
+        Mon, 20 Aug 2018 07:18:36 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=afzESMgI38/CluQcfiQgg+mx7FK8Ji7nb0rteBQqymI=;
- b=JS/zCAdp55molSLplSPLZi+rrVqS/a8b+NYyIUd6NSIPIpktRIemIqbmFiWmGfUwHp2d
- cAUI+mC4t0+iYjJXIpe6QCKJSwSXZf/EZcl2LSW/bbh9YVrIkZ7yJPNdKzdwe0NorCI6
- i9Hn3RIIPNgTX1jNO39Je7CtRVaBj1Ore2CGoFheAjJO+yJTj7C5Fu1il/hhK6dC5ASM
- ktMjIW0qHKg5P9OA7S/MRqs/OR55D96cMyYf0w1630BXChO9s2yBxLMnvdOWNFevV5nP
- cNEAUi9jxhB1l0eIuSsWsrUQdHXwjjRLZf9JUfsOCkhzDbmtCs9/rhj33AoLffBzjuTE 6A== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2kxavtcnp1-1
+ bh=/erQVj2OuLQaiOvECruaHMrCKELSOd6x2WCnj8nma8c=;
+ b=bM18WWmegryqhHVbc4OJ+rBrpFKyLfsTjp3L2/PwNKn+cZqx6Nk9umGXXqLDj8kjWn3Q
+ 1qI12r8s/1fhRPJY1DfdD3SgyXgc5olcrsesOnZ7WIj+Qop8L+l0eZRI8Q+lxcLIR6bj
+ //HQ+IVzQ7IhJ44391hnqtJmtvztfihL23hODBMel8cZULLbB4D0PRIAL3W5MyJqE8wm
+ Wi37NVFeRZbTMyQgR5QgeEbghAvGL1SrZiZRFfn2AQbTamVfdFgPacXlqpKRI3KINj9e
+ 60OONzotDSdHTY9/9BrOYedrSN65GbIjgfqv2VijnrKA/fHwFNaDbLF1W4Sf1ARST+U+ hw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2120.oracle.com with ESMTP id 2kxbdpmm4u-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Aug 2018 07:18:33 +0000
+        Mon, 20 Aug 2018 07:18:36 +0000
 Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7K7IXG1018960
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7K7IZ15027440
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Aug 2018 07:18:33 GMT
+        Mon, 20 Aug 2018 07:18:35 GMT
 Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7K7IWIF014624;
-        Mon, 20 Aug 2018 07:18:32 GMT
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7K7IYVF014639;
+        Mon, 20 Aug 2018 07:18:34 GMT
 Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 20 Aug 2018 00:18:31 -0700
+        with ESMTP ; Mon, 20 Aug 2018 00:18:34 -0700
 From:   Jianchao Wang <jianchao.w.wang@oracle.com>
 To:     axboe@kernel.dk
 Cc:     tom.leiming@gmail.com, bart.vanassche@wdc.com,
         keith.busch@linux.intel.com, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V3 1/2] blk-mq: init hctx sched after update ctx and hctx mapping
-Date:   Mon, 20 Aug 2018 15:20:05 +0800
-Message-Id: <1534749606-7311-2-git-send-email-jianchao.w.wang@oracle.com>
+Subject: [PATCH V3 2/2] blk-mq: sync the update nr_hw_queues with blk_mq_queue_tag_busy_iter
+Date:   Mon, 20 Aug 2018 15:20:06 +0800
+Message-Id: <1534749606-7311-3-git-send-email-jianchao.w.wang@oracle.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1534749606-7311-1-git-send-email-jianchao.w.wang@oracle.com>
 References: <1534749606-7311-1-git-send-email-jianchao.w.wang@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8990 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1807170000 definitions=main-1808200079
@@ -72,258 +72,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, when update nr_hw_queues, io scheduler's init_hctx will
-be invoked before the mapping between ctx and hctx is adapted
-correctly by blk_mq_map_swqueue. The io scheduler init_hctx (kyber)
-may depend on this mapping and get wrong result and panic finally.
-A simply way to fix this is switch the io scheduler to none before
-update the nr_hw_queues, and then get it back after update nr_hw_queues.
-To achieve this, we add a new member elv_type in request_queue to
-save the original elevator and adapt and export elevator_switch_mq.
-And also blk_mq_sched_init_/exit_hctx are removed due to nobody use
-them any more.
+For blk-mq, part_in_flight/rw will invoke blk_mq_in_flight/rw to
+account the inflight requests. It will access the queue_hw_ctx and
+nr_hw_queues w/o any protection. When updating nr_hw_queues and
+blk_mq_in_flight/rw occur concurrently, panic comes up.
+
+Before update nr_hw_queues, the q will be frozen. So we could use
+q_usage_counter to avoid the race. percpu_ref_is_zero is used here
+so that we will not miss any in-flight request. The access to
+nr_hw_queues and queue_hw_ctx in blk_mq_queue_tag_busy_iter are
+under rcu critical section, __blk_mq_update_nr_hw_queues could use
+synchronize_rcu to ensure the zeroed q_usage_counter to be globally
+visible.
 
 Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
 ---
- block/blk-mq-sched.c   | 44 --------------------------------------------
- block/blk-mq-sched.h   |  5 -----
- block/blk-mq.c         | 40 ++++++++++++++++++++++++++++++++--------
- block/blk.h            |  2 ++
- block/elevator.c       | 20 ++++++++++++--------
- include/linux/blkdev.h |  3 +++
- 6 files changed, 49 insertions(+), 65 deletions(-)
+ block/blk-mq-tag.c | 14 +++++++++++++-
+ block/blk-mq.c     |  5 ++++-
+ 2 files changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-index cf9c66c..29bfe80 100644
---- a/block/blk-mq-sched.c
-+++ b/block/blk-mq-sched.c
-@@ -462,50 +462,6 @@ static void blk_mq_sched_tags_teardown(struct request_queue *q)
- 		blk_mq_sched_free_tags(set, hctx, i);
- }
- 
--int blk_mq_sched_init_hctx(struct request_queue *q, struct blk_mq_hw_ctx *hctx,
--			   unsigned int hctx_idx)
--{
--	struct elevator_queue *e = q->elevator;
--	int ret;
--
--	if (!e)
--		return 0;
--
--	ret = blk_mq_sched_alloc_tags(q, hctx, hctx_idx);
--	if (ret)
--		return ret;
--
--	if (e->type->ops.mq.init_hctx) {
--		ret = e->type->ops.mq.init_hctx(hctx, hctx_idx);
--		if (ret) {
--			blk_mq_sched_free_tags(q->tag_set, hctx, hctx_idx);
--			return ret;
--		}
--	}
--
--	blk_mq_debugfs_register_sched_hctx(q, hctx);
--
--	return 0;
--}
--
--void blk_mq_sched_exit_hctx(struct request_queue *q, struct blk_mq_hw_ctx *hctx,
--			    unsigned int hctx_idx)
--{
--	struct elevator_queue *e = q->elevator;
--
--	if (!e)
--		return;
--
--	blk_mq_debugfs_unregister_sched_hctx(hctx);
--
--	if (e->type->ops.mq.exit_hctx && hctx->sched_data) {
--		e->type->ops.mq.exit_hctx(hctx, hctx_idx);
--		hctx->sched_data = NULL;
--	}
--
--	blk_mq_sched_free_tags(q->tag_set, hctx, hctx_idx);
--}
--
- int blk_mq_init_sched(struct request_queue *q, struct elevator_type *e)
- {
+diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
+index c0c4e63..8c5cc11 100644
+--- a/block/blk-mq-tag.c
++++ b/block/blk-mq-tag.c
+@@ -320,6 +320,18 @@ void blk_mq_queue_tag_busy_iter(struct request_queue *q, busy_iter_fn *fn,
  	struct blk_mq_hw_ctx *hctx;
-diff --git a/block/blk-mq-sched.h b/block/blk-mq-sched.h
-index 0cb8f93..4e028ee 100644
---- a/block/blk-mq-sched.h
-+++ b/block/blk-mq-sched.h
-@@ -28,11 +28,6 @@ void blk_mq_sched_dispatch_requests(struct blk_mq_hw_ctx *hctx);
- int blk_mq_init_sched(struct request_queue *q, struct elevator_type *e);
- void blk_mq_exit_sched(struct request_queue *q, struct elevator_queue *e);
- 
--int blk_mq_sched_init_hctx(struct request_queue *q, struct blk_mq_hw_ctx *hctx,
--			   unsigned int hctx_idx);
--void blk_mq_sched_exit_hctx(struct request_queue *q, struct blk_mq_hw_ctx *hctx,
--			    unsigned int hctx_idx);
--
- static inline bool
- blk_mq_sched_bio_merge(struct request_queue *q, struct bio *bio)
- {
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 5efd789..7b99477 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -2147,8 +2147,6 @@ static void blk_mq_exit_hctx(struct request_queue *q,
- 	if (set->ops->exit_request)
- 		set->ops->exit_request(set, hctx->fq->flush_rq, hctx_idx);
- 
--	blk_mq_sched_exit_hctx(q, hctx, hctx_idx);
--
- 	if (set->ops->exit_hctx)
- 		set->ops->exit_hctx(hctx, hctx_idx);
- 
-@@ -2216,12 +2214,9 @@ static int blk_mq_init_hctx(struct request_queue *q,
- 	    set->ops->init_hctx(hctx, set->driver_data, hctx_idx))
- 		goto free_bitmap;
- 
--	if (blk_mq_sched_init_hctx(q, hctx, hctx_idx))
--		goto exit_hctx;
--
- 	hctx->fq = blk_alloc_flush_queue(q, hctx->numa_node, set->cmd_size);
- 	if (!hctx->fq)
--		goto sched_exit_hctx;
-+		goto exit_hctx;
- 
- 	if (blk_mq_init_request(set, hctx->fq->flush_rq, hctx_idx, node))
- 		goto free_fq;
-@@ -2235,8 +2230,6 @@ static int blk_mq_init_hctx(struct request_queue *q,
- 
-  free_fq:
- 	kfree(hctx->fq);
-- sched_exit_hctx:
--	blk_mq_sched_exit_hctx(q, hctx, hctx_idx);
-  exit_hctx:
- 	if (set->ops->exit_hctx)
- 		set->ops->exit_hctx(hctx, hctx_idx);
-@@ -2913,6 +2906,29 @@ static void __blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set,
- 	list_for_each_entry(q, &set->tag_list, tag_set_list)
- 		blk_mq_freeze_queue(q);
+ 	int i;
  
 +	/*
-+	 * switch io scheduler to NULL to clean up the data in it.
-+	 * will get it back after update mapping between cpu and hw queues.
++	 * __blk_mq_update_nr_hw_queues will update the nr_hw_queues and
++	 * queue_hw_ctx after freeze the queue. So we could use q_usage_counter
++	 * to avoid race with it. __blk_mq_update_nr_hw_queues will users
++	 * synchronize_rcu to ensure all of the users go out of the critical
++	 * section below and see zeroed q_usage_counter.
 +	 */
-+	list_for_each_entry(q, &set->tag_list, tag_set_list) {
-+		if (!q->elevator) {
-+			q->elv_type = NULL;
-+			continue;
-+		}
-+		q->elv_type = q->elevator->type;
-+		mutex_lock(&q->sysfs_lock);
-+		/*
-+		 * After elevator_switch_mq, the previous elevator_queue will be
-+		 * released by elevator_release. The reference of the io scheduler
-+		 * module get by elevator_get will also be put. So we need to get
-+		 * a reference of the io scheduler module here to prevent it to be
-+		 * removed.
-+		 */
-+		__module_get(q->elv_type->elevator_owner);
-+		elevator_switch_mq(q, NULL);
-+		mutex_unlock(&q->sysfs_lock);
++	rcu_read_lock();
++	if (percpu_ref_is_zero(&q->q_usage_counter)) {
++		rcu_read_unlock();
++		return;
 +	}
-+
- 	set->nr_hw_queues = nr_hw_queues;
- 	blk_mq_update_queue_map(set);
- 	list_for_each_entry(q, &set->tag_list, tag_set_list) {
-@@ -2920,6 +2936,14 @@ static void __blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set,
- 		blk_mq_queue_reinit(q);
+ 
+ 	queue_for_each_hw_ctx(q, hctx, i) {
+ 		struct blk_mq_tags *tags = hctx->tags;
+@@ -335,7 +347,7 @@ void blk_mq_queue_tag_busy_iter(struct request_queue *q, busy_iter_fn *fn,
+ 			bt_for_each(hctx, &tags->breserved_tags, fn, priv, true);
+ 		bt_for_each(hctx, &tags->bitmap_tags, fn, priv, false);
  	}
- 
-+	list_for_each_entry(q, &set->tag_list, tag_set_list) {
-+		if (!q->elv_type)
-+			continue;
-+
-+		mutex_lock(&q->sysfs_lock);
-+		elevator_switch_mq(q, q->elv_type);
-+		mutex_unlock(&q->sysfs_lock);
-+	}
- 	list_for_each_entry(q, &set->tag_list, tag_set_list)
- 		blk_mq_unfreeze_queue(q);
- }
-diff --git a/block/blk.h b/block/blk.h
-index d4d67e9..0c9bc8d 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -234,6 +234,8 @@ static inline void elv_deactivate_rq(struct request_queue *q, struct request *rq
- 
- int elevator_init(struct request_queue *);
- int elevator_init_mq(struct request_queue *q);
-+int elevator_switch_mq(struct request_queue *q,
-+			      struct elevator_type *new_e);
- void elevator_exit(struct request_queue *, struct elevator_queue *);
- int elv_register_queue(struct request_queue *q);
- void elv_unregister_queue(struct request_queue *q);
-diff --git a/block/elevator.c b/block/elevator.c
-index fa828b5..5ea6e7d 100644
---- a/block/elevator.c
-+++ b/block/elevator.c
-@@ -933,16 +933,13 @@ void elv_unregister(struct elevator_type *e)
- }
- EXPORT_SYMBOL_GPL(elv_unregister);
- 
--static int elevator_switch_mq(struct request_queue *q,
-+int elevator_switch_mq(struct request_queue *q,
- 			      struct elevator_type *new_e)
- {
- 	int ret;
- 
- 	lockdep_assert_held(&q->sysfs_lock);
- 
--	blk_mq_freeze_queue(q);
--	blk_mq_quiesce_queue(q);
 -
- 	if (q->elevator) {
- 		if (q->elevator->registered)
- 			elv_unregister_queue(q);
-@@ -968,8 +965,6 @@ static int elevator_switch_mq(struct request_queue *q,
- 		blk_add_trace_msg(q, "elv switch: none");
- 
- out:
--	blk_mq_unquiesce_queue(q);
--	blk_mq_unfreeze_queue(q);
- 	return ret;
++	rcu_read_unlock();
  }
  
-@@ -1021,8 +1016,17 @@ static int elevator_switch(struct request_queue *q, struct elevator_type *new_e)
+ static int bt_alloc(struct sbitmap_queue *bt, unsigned int depth,
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 7b99477..fb56bae 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2905,7 +2905,10 @@ static void __blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set,
  
- 	lockdep_assert_held(&q->sysfs_lock);
- 
--	if (q->mq_ops)
--		return elevator_switch_mq(q, new_e);
-+	if (q->mq_ops) {
-+		blk_mq_freeze_queue(q);
-+		blk_mq_quiesce_queue(q);
-+
-+		err = elevator_switch_mq(q, new_e);
-+
-+		blk_mq_unquiesce_queue(q);
-+		blk_mq_unfreeze_queue(q);
-+
-+		return err;
-+	}
- 
+ 	list_for_each_entry(q, &set->tag_list, tag_set_list)
+ 		blk_mq_freeze_queue(q);
+-
++	/*
++	 * Sync with blk_mq_in_flight and blk_mq_queue_tag_busy_iter.
++	 */
++	synchronize_rcu();
  	/*
- 	 * Turn on BYPASS and drain all requests w/ elevator private data.
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index d6869e0..ee930c4 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -437,6 +437,9 @@ struct request_queue {
- 	struct list_head	queue_head;
- 	struct request		*last_merge;
- 	struct elevator_queue	*elevator;
-+
-+	/* used when update nr_hw_queues */
-+	struct elevator_type	*elv_type;
- 	int			nr_rqs[2];	/* # allocated [a]sync rqs */
- 	int			nr_rqs_elvpriv;	/* # allocated rqs w/ elvpriv */
- 
+ 	 * switch io scheduler to NULL to clean up the data in it.
+ 	 * will get it back after update mapping between cpu and hw queues.
 -- 
 2.7.4
 
