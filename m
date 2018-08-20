@@ -2,78 +2,119 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A6DC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 03:56:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEFDC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 03:58:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 452C220C09
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 03:56:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 452C220C09
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 6F50A20C09
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 03:58:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3N2+n+QP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F50A20C09
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726221AbeHTHJ7 (ORCPT
+        id S1726032AbeHTHMX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 03:09:59 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:45696 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726009AbeHTHJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 03:09:59 -0400
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 5A2D61AAAAEC28B3C5BB;
-        Mon, 20 Aug 2018 11:56:00 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w7K3tt4c092739;
-        Mon, 20 Aug 2018 11:55:55 +0800 (GMT-8)
-        (envelope-from liu.song11@zte.com.cn)
-Received: from localhost.localdomain ([10.75.10.200])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018082011555651-5216529 ;
-          Mon, 20 Aug 2018 11:55:56 +0800 
-From:   Liu Song <liu.song11@zte.com.cn>
-To:     richard@nod.at, dedekind1@gmail.com, adrian.hunter@intel.com
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        liu.song11@zte.com.cn, jiang.biao2@zte.com.cn,
-        zhong.weidong@zte.com.cn
-Subject: [PATCH] UBIFS: Fix typo of output in get_cs_sqnum
-Date:   Mon, 20 Aug 2018 11:54:30 +0800
-Message-Id: <1534737270-143176-1-git-send-email-liu.song11@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-08-20 11:55:56,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-08-20 11:55:55,
-        Serialize complete at 2018-08-20 11:55:55
-X-MAIL: mse01.zte.com.cn w7K3tt4c092739
+        Mon, 20 Aug 2018 03:12:23 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:50224 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbeHTHMX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 03:12:23 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7K3svSq145926;
+        Mon, 20 Aug 2018 03:57:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=cnfIXCAUpun4xI4VJq7A9qrwLwMNV2rhcwaGtXPzuBg=;
+ b=3N2+n+QPBvtoLe02/Ps8KUeKBjyM6PDOyTBXsZhzvr8ZcG26ZxQYIDUZKd7HJ4W1P4VO
+ GWjv3osxsK8RT/jGuzvwHMoNI5/KX/OIr0z7C6+EAi5boUsFcItSyyors5Yjd/4Xmwaz
+ T9LFh/xcgntYf57+f+CA6ZsAmBq96t5q3BUepETPFLhFOyYXAFP6j1J5N1xj6JzttU0u
+ pCENVFrvz/e6o5JNNxXr01acL9Ri/654rxZAFVp0Qx2RfXPegiFpGYAaCH5lpRyeGKmf
+ HJLOQccpREQ6NSCdxYJsB3m15sd2mUo5dGzelhzrCTQrPoVeCuL3UrX5iGtbotOeLBoJ yA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2kxc3qbwta-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 20 Aug 2018 03:57:21 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7K3vKrB013347
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 20 Aug 2018 03:57:20 GMT
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7K3vJM1026080;
+        Mon, 20 Aug 2018 03:57:19 GMT
+Received: from [10.182.70.180] (/10.182.70.180)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 19 Aug 2018 20:57:19 -0700
+Subject: Re: [PATCH V2 1/2] blk-mq: init hctx sched after update ctx and hctx
+ mapping
+To:     Ming Lei <tom.leiming@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Keith Busch <keith.busch@linux.intel.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ming Lei <ming.lei@redhat.com>
+References: <1534478043-7170-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1534478043-7170-2-git-send-email-jianchao.w.wang@oracle.com>
+ <CACVXFVPZF7ohzUib4Nr1qdHLwjpEWP4+be6h6GmZh1y9-qsVqg@mail.gmail.com>
+ <96657784-dd95-6ea9-3ffd-25737c534075@oracle.com>
+ <CACVXFVMqjiSmzL2JeLUV2Q4bXqy2WRNHahg-fusFYjHeCX3gng@mail.gmail.com>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <3ce9f249-4c2f-89a6-727f-9bc449a4fdf4@oracle.com>
+Date:   Mon, 20 Aug 2018 11:57:52 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CACVXFVMqjiSmzL2JeLUV2Q4bXqy2WRNHahg-fusFYjHeCX3gng@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8990 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808200041
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Not a CS node" makes more sense than "Node a CS node".
+Hi Ming
 
-Signed-off-by: Liu Song <liu.song11@zte.com.cn>
-Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
----
- fs/ubifs/recovery.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 08/20/2018 10:24 AM, Ming Lei wrote:
+>> The code path is:
+>>
+>> elevator_release
+>>   -> elevator_put(e->type)
+>>     -> module_put(e->elevator_owner)
+>>
+>> In normal elevator switch path, elevator_get will hold a reference counter of the
+>> elevator_owner.
+>> In this patch set, the elevator_type is saved directly. To prevent the io scheduler module
+>> is removed, we need to hold a reference of the module.
+> Yeah, I agree that the module reference need to be held, but it need to be
+> released too.
+> 
+> My concern is that this introduced getting module reference in your patch
+> isn't released. The module reference is a counter too, so the get and
+> put operation should be matched.
 
-diff --git a/fs/ubifs/recovery.c b/fs/ubifs/recovery.c
-index 3af4472061cc..400163dc7022 100644
---- a/fs/ubifs/recovery.c
-+++ b/fs/ubifs/recovery.c
-@@ -829,7 +829,7 @@ static int get_cs_sqnum(struct ubifs_info *c, int lnum, int offs,
- 		goto out_err;
- 	}
- 	if (cs_node->ch.node_type != UBIFS_CS_NODE) {
--		ubifs_err(c, "Node a CS node, type is %d", cs_node->ch.node_type);
-+		ubifs_err(c, "Not a CS node, type is %d", cs_node->ch.node_type);
- 		goto out_err;
- 	}
- 	if (le64_to_cpu(cs_node->cmt_no) != c->cmt_no) {
--- 
-2.17.1
+elevator_switch_mq
+  -> elevator_exit
+it will put a reference count of the elevator_queue associated with the request_queue.
+and the elevator_release will be invoked when the reference count of elevator_queue->kobj reaches zero.
+elevator_release will put the reference count of the io scheduler module.
 
+the elevator_queue structure will be allocated and freed every time when we switch io scheduler.
+so the elevator_release will always be invoked.
+
+This is the put ref corresponding to the get one in this patch.
+
+Thanks
+Jianchao
