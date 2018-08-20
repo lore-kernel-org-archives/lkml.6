@@ -2,80 +2,105 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C027C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82543C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49C5F21473
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:47:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E3772172D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:47:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FfDkvOPG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49C5F21473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tV0V4iAt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E3772172D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726346AbeHTVDe (ORCPT
+        id S1726534AbeHTVDt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 17:03:34 -0400
-Received: from mail-ua1-f74.google.com ([209.85.222.74]:52687 "EHLO
-        mail-ua1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726089AbeHTVDd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 17:03:33 -0400
-Received: by mail-ua1-f74.google.com with SMTP id t22-v6so6282956uap.19
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 10:46:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=1ovlQGkYHvOVXMYn2XNXpNdqox9/+NQ/7n5Lng2ePc8=;
-        b=FfDkvOPG5NCAiCET8/hpfg3g2vDMJ4uWMJwvCNREJ0IhgylMxI7L9xkXYNFsjdpJvE
-         yxtMvdC/KmT9pCUquy/zBZEzxjdiwoDuMXf6pPKiwGqkrM1QA7nrGYyBeX7rGU9kLG/9
-         KprsXw7jXsnr3QsNX/5cUQQZy28PF4TJIEhbP5KoPoRJPgNWzMRt26+lhujj6wr72KRl
-         dd4qBwSdV+BEVHy/KUgc+zsu7mX9aCkxioEM8BrVhhS1cXeWS8dZBe0ZZJL28PEmDjrB
-         W1qpqv9mGxHezCDN9WYJNTtUtiLzIN2higHrXf0No5hNEvgw6NNl2ekmg3+YyiALdFIT
-         ewOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=1ovlQGkYHvOVXMYn2XNXpNdqox9/+NQ/7n5Lng2ePc8=;
-        b=dqbQg1u3HwP6h+hpCCFhy5eLeIVfJlBK+NP2dycWmB9php2RF/P+co6knDv9ajaxko
-         kUkDYYM+n8N5yR/zSxVdbtrYTdqnh42djKRYDJD9q1WgO/aPTTIf7cBDuW+FfyojrVEF
-         g+DSbaYi1/1R7qG5hHG97Rju1ZxETVjGt3simhvwRXa42JXFNh9BwOdKS+dT+rpzzQPi
-         Oj9rkMJZDdQmATQ3KDUAKWTrg9+bgOOO7ZDnrC/oFsvwwMAbAV9WyZuyoZzbfDniLWWA
-         i9BQtYVJUZqny0Pd6hgEmCVGEX8/7BkuJ/UHUeaAPyOxzmEJ2YqgH8qVl5cj2htqUdGU
-         ikyQ==
-X-Gm-Message-State: APzg51B/wm0si5yaiH//d+QY7b2HJKtsPFNn3jV8eOPffg2ZOQeP4S4I
-        PzelmumjqE0/litTfXbZ5V8HwWJwTRXy7ScPX+E=
-X-Google-Smtp-Source: ANB0Vdb+w0o+hkOKwhWGRXgLHgaaYZa/ceUp1jJfXCDdG7yXZIDvuJSdR8MZQdAiXuOrrhySxY/eoFmSNAdJHngZ82s=
-X-Received: by 2002:a1f:b907:: with SMTP id j7-v6mr1344458vkf.39.1534787218471;
- Mon, 20 Aug 2018 10:46:58 -0700 (PDT)
-Date:   Mon, 20 Aug 2018 10:46:55 -0700
-In-Reply-To: <4cdd4ab9ddd16f1fb168266643264595782fd890.camel@perches.com>
-Message-Id: <20180820174655.75739-1-ndesaulniers@google.com>
-Mime-Version: 1.0
-References: <4cdd4ab9ddd16f1fb168266643264595782fd890.camel@perches.com>
-X-Mailer: git-send-email 2.18.0.865.gffc8e1a3cd6-goog
-Subject: Re: Build failures with gcc 4.5 and older
-From:   Nick Desaulniers <ndesaulniers@google.com>
-To:     joe@perches.com
-Cc:     akpm@linux-foundation.org, dave.hansen@intel.com, efault@gmx.de,
-        linux-kernel@vger.kernel.org, linux@roeck-us.net, riel@surriel.com,
-        torvalds@linux-foundation.org
+        Mon, 20 Aug 2018 17:03:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37240 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726089AbeHTVDs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 17:03:48 -0400
+Received: from mail-yb0-f172.google.com (mail-yb0-f172.google.com [209.85.213.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0AA521473;
+        Mon, 20 Aug 2018 17:47:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534787234;
+        bh=aY2su6ecetACGrhnTTL3bQqpoRmzHKZDkLxWMxFX1Yg=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=tV0V4iAt9LdpQ1puz2oa+LgKcKY2zK4sm7vtOGIDZ26d6ihcnGNfO+tac4fpiocpi
+         bmp0q+6mdqzB6Y7QCAWNIHSULYC5xxghZUTViQfSwUd2Qoudh3Yq8vPSK/w+DPVbKC
+         KjhovkOXJm6Rw3lKnU3n/NW41r4/BbIecuLIKVbM=
+Received: by mail-yb0-f172.google.com with SMTP id f4-v6so4925049ybp.7;
+        Mon, 20 Aug 2018 10:47:13 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHEttZ9E/nMJQ0EpkvMbeIljzDiOfSUsxm6VJeBiWuJhL1Jv0Lj
+        Gx5WLqMTPsbEGuZkWjmUNSaURquilkxkSnKGGcE=
+X-Google-Smtp-Source: AA+uWPwsGcPG/qOF11h1oN3v6srSQbD+Q1Ue8IqH5chwYDIozxCb4oZE0/o6O4t1thLIDbXoMu78DZmDw3cqk29lKSY=
+X-Received: by 2002:a25:db83:: with SMTP id g125-v6mr6373470ybf.412.1534787233066;
+ Mon, 20 Aug 2018 10:47:13 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:81c4:0:0:0:0:0 with HTTP; Mon, 20 Aug 2018 10:46:32
+ -0700 (PDT)
+In-Reply-To: <20180820171818.7710-1-mdf@kernel.org>
+References: <20180820171818.7710-1-mdf@kernel.org>
+From:   Alan Tull <atull@kernel.org>
+Date:   Mon, 20 Aug 2018 12:46:32 -0500
+X-Gmail-Original-Message-ID: <CANk1AXSMSLGCcaRcZo4TWKEJW+YUQqbHWEuHpz_csF5J1m-Sew@mail.gmail.com>
+Message-ID: <CANk1AXSMSLGCcaRcZo4TWKEJW+YUQqbHWEuHpz_csF5J1m-Sew@mail.gmail.com>
+Subject: Re: [PATCH v2] fpga: dfl: region: Restory symmetry in probe()/remove()
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     Wu Hao <hao.wu@intel.com>, linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I think we should take Joe's patch.
+On Mon, Aug 20, 2018 at 12:18 PM, Moritz Fischer <mdf@kernel.org> wrote:
 
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Hi Moritz,
 
-(sorry for the lack of context, trying out the reply instructions from:
-https://lore.kernel.org/lkml/4cdd4ab9ddd16f1fb168266643264595782fd890.camel@perches.com/)
+> Replace dev_get_drvdata() with platform_get_drvdata() to
+> match the platform_set_drvdata() in the probe function of
+> the platform driver.
+>
+> Fixes commit bb61b9be3e6b ("fpga: dfl: add fpga region platform driver for FME")
+> Signed-off-by: Moritz Fischer <mdf@kernel.org>
+> ---
+>
+> Changes from v1:
+> - Still compile after change ...
+>
+> ---
+>  drivers/fpga/dfl-fme-region.c | 2 +-
+
+Thanks for catching this.  of-fpga-region.c does a similar thing and
+needs s/dev_set_drvdata/platform_set_drvdata/ in the probe.  Could you
+fix it here too?
+
+Alan
+
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/fpga/dfl-fme-region.c b/drivers/fpga/dfl-fme-region.c
+> index 0b7e19c27c6d..11d3c23a8936 100644
+> --- a/drivers/fpga/dfl-fme-region.c
+> +++ b/drivers/fpga/dfl-fme-region.c
+> @@ -65,7 +65,7 @@ static int fme_region_probe(struct platform_device *pdev)
+>
+>  static int fme_region_remove(struct platform_device *pdev)
+>  {
+> -       struct fpga_region *region = dev_get_drvdata(&pdev->dev);
+> +       struct fpga_region *region = platform_get_drvdata(pdev);
+>
+>         fpga_region_unregister(region);
+>         fpga_mgr_put(region->mgr);
+> --
+> 2.18.0
+>
