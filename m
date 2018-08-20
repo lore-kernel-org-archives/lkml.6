@@ -2,121 +2,132 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0048CC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 989AFC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:32:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 998DF2154B
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:31:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xd9Jp1/8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 998DF2154B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 508D92154B
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:32:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 508D92154B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726547AbeHTMqD (ORCPT
+        id S1726585AbeHTMrY convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 08:46:03 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54817 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbeHTMqD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 08:46:03 -0400
-Received: by mail-wm0-f67.google.com with SMTP id c14-v6so13560354wmb.4;
-        Mon, 20 Aug 2018 02:31:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aPrjL3lQBt10Kvr/3CicCqkkIkJnb04Py8pZ4izKnN8=;
-        b=Xd9Jp1/89VJTEhHHwvBTxfrs1/sxtfV6M1KqRfUncBYU/fco14E214Gq1IUe/LTQ3W
-         Ynnb5ZiftW3SaCqgvTtLbgwWW5gEKNdKkNNNO+yeeOe9d19t5i46+vUHLsMsBlvti+4f
-         dxYarX6NM1mACvj7RyNeggVPENkbIdS22ZQDeCA3hGtwwb/AG4i0k32VgnIp1595Uftb
-         w0U75pA4qqUbuT3IUMYnq4Ypa0kfoNp33e/KninG29du3zd2dOdyVFwOIx3MNpJzIpN3
-         U5Rg0T4BF9BbuCDc7U3s8KPPwbxML3gasrjL9QmZnW/nx4firzBKMIS19NQEC52aeRpO
-         AJHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aPrjL3lQBt10Kvr/3CicCqkkIkJnb04Py8pZ4izKnN8=;
-        b=KFWgKnubuHRShHBgSziT6MYPTwI57n+lY76qM+VcL6tu6xg/ti9RyH7axOOGw7drkz
-         ZN6l3ZeH8dd15FSu0yRI0es0L3HcOEKLxNhKcJAl8XtKGZDfQ3wL5VpWIikwMakYcrKh
-         805SyYy0vyQCkv54JJ4U1ZbA6wU2EAA8YLauLqzdatuVGqVCvwAv3mbEkifRx7BLN9KH
-         0aty5kt+bhAqemILoJDwXszAYgF217hLUMpoFoPoLsCBWRO/+DAsKfFzsRLkHiz4I680
-         TodzFwuY335w3D+NZJspCXxHxKP322LTrlv9gfvOtSzeuzErfL/9Bo8bAaER8ZjXMKU/
-         cOgw==
-X-Gm-Message-State: AOUpUlHnWYbNw1GdaZ+wYtmmX7JrwFO71yXMYnsVSbDz2lpFwXDkvjX8
-        znCjlxyeMLGf4OITWExymsU=
-X-Google-Smtp-Source: AA+uWPy8X1OWt2QcM2LL6cJ6h4PO0n+8k5N+wX5CaiVkpvMxH7m6qiDU/7AdnQgm3gDw2taaZL42vw==
-X-Received: by 2002:a1c:7c0c:: with SMTP id x12-v6mr25372507wmc.58.1534757468435;
-        Mon, 20 Aug 2018 02:31:08 -0700 (PDT)
-Received: from localhost (pD9E51C80.dip0.t-ipconnect.de. [217.229.28.128])
-        by smtp.gmail.com with ESMTPSA id g2-v6sm9375230wme.20.2018.08.20.02.31.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 Aug 2018 02:31:07 -0700 (PDT)
-Date:   Mon, 20 Aug 2018 11:31:06 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc:     alexandre.torgue@st.com, mcoquelin.stm32@gmail.com,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pwm: stm32-lp: Remove useless loop in
- stm32_pwm_lp_remove()
-Message-ID: <20180820093106.GB8242@ulmo>
-References: <1532070992-16831-1-git-send-email-fabrice.gasnier@st.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z6Eq5LdranGa6ru8"
+        Mon, 20 Aug 2018 08:47:24 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:51357 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbeHTMrY (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:5:1>);
+        Mon, 20 Aug 2018 08:47:24 -0400
+X-Greylist: delayed 1223 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 Aug 2018 08:47:24 EDT
+Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
+        with Novell_GroupWise; Mon, 20 Aug 2018 03:12:12 -0600
+Message-Id: <5B7A85DF020000F90002F815@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.2 
+Date:   Mon, 20 Aug 2018 03:11:59 -0600
+From:   "Gang He" <ghe@suse.com>
+To:     <jlbec@evilplan.org>, "Lei Chen" <lchen@suse.com>,
+        <mfasheh@versity.com>
+Cc:     <ocfs2-devel@oss.oracle.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [Ocfs2-devel] [PATCH] fix crash on
+ ocfs2_duplicate_clusters_by_page
+References: <20180816112426.12218-1-lchen@suse.com>
+In-Reply-To: <20180816112426.12218-1-lchen@suse.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Content-Disposition: inline
-In-Reply-To: <1532070992-16831-1-git-send-email-fabrice.gasnier@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Larry,
 
---z6Eq5LdranGa6ru8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 20, 2018 at 09:16:32AM +0200, Fabrice Gasnier wrote:
-> LPTimer has only one pwm channel (npwm =3D 1). Remove useless for loop
-> in remove routine.
->=20
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+>>> On 2018/8/16 at 19:24, in message <20180816112426.12218-1-lchen@suse.com>,
+Larry Chen <lchen@suse.com> wrote:
+> ocfs2_duplicate_clusters_by_page may crash if an extent's page is dirty.
+> When a page has not been written back, it is still in dirty state. If at
+> that moment, ocfs2_duplicate_clusters_by_page is called against this
+> page, the crash happens.
+> 
+> To fix this bug, we can just unlock the page and wait the page until
+> it's not dirty.
+> 
+> I don't know whether the patch is appropriate, so I need comments,
+> thanks.
+> 
+> The following is the core dump:
+> 
+> kernel BUG at /root/code/ocfs2/refcounttree.c:2961!
+> __ocfs2_move_extent+0x80/0x450 [ocfs2]
+> ? __ocfs2_claim_clusters+0x130/0x250 [ocfs2]
+> ocfs2_defrag_extent+0x5b8/0x5e0 [ocfs2]
+> __ocfs2_move_extents_range+0x2a4/0x470 [ocfs2]
+> ocfs2_move_extents+0x180/0x3b0 [ocfs2]
+> ? ocfs2_wait_for_recovery+0x13/0x70 [ocfs2]
+> ocfs2_ioctl_move_extents+0x133/0x2d0 [ocfs2]
+> ocfs2_ioctl+0x253/0x640 [ocfs2]
+> do_vfs_ioctl+0x90/0x5f0
+> SyS_ioctl+0x74/0x80
+> do_syscall_64+0x74/0x140
+> entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+> 
+> To: mfasheh@versity.com,
+>     jlbec@evilplan.org 
+> Cc: linux-kernel@vger.kernel.org,
+>     ocfs2-devel@oss.oracle.com,
+>     akpm@linux-foundation.org 
+> 
+> Signed-off-by: Larry Chen <lchen@suse.com>
 > ---
->  drivers/pwm/pwm-stm32-lp.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  fs/ocfs2/refcounttree.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
+> index 7869622af22a..ee3b9dbbc310 100644
+> --- a/fs/ocfs2/refcounttree.c
+> +++ b/fs/ocfs2/refcounttree.c
+> @@ -2946,6 +2946,7 @@ int ocfs2_duplicate_clusters_by_page(handle_t *handle,
+>  		if (map_end & (PAGE_SIZE - 1))
+>  			to = map_end & (PAGE_SIZE - 1);
+>  
+> +retry:
+>  		page = find_or_create_page(mapping, page_index, GFP_NOFS);
+>  		if (!page) {
+>  			ret = -ENOMEM;
+> @@ -2957,8 +2958,13 @@ int ocfs2_duplicate_clusters_by_page(handle_t *handle,
+>  		 * In case PAGE_SIZE <= CLUSTER_SIZE, This page
+>  		 * can't be dirtied before we CoW it out.
+>  		 */
+> -		if (PAGE_SIZE <= OCFS2_SB(sb)->s_clustersize)
+> -			BUG_ON(PageDirty(page));
+> +		if (PAGE_SIZE <= OCFS2_SB(sb)->s_clustersize) {
+> +			if (PageDirty(page)) {
+> +				unlock_page(page);
+Here, if we find this page is dirty, could we write this page to the disk initiatively? rather than wait for the page become clean by VM mechanism.
 
-Applied, thanks.
+Thanks
+Gang 
 
-Thierry
+> +				cond_resched();
+> +				goto retry;
+> +			}
+> +		}
+>  
+>  		if (!PageUptodate(page)) {
+>  			ret = block_read_full_page(page, ocfs2_get_block);
+> -- 
+> 2.13.7
+> 
+> 
+> _______________________________________________
+> Ocfs2-devel mailing list
+> Ocfs2-devel@oss.oracle.com 
+> https://oss.oracle.com/mailman/listinfo/ocfs2-devel
 
---z6Eq5LdranGa6ru8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlt6iloACgkQ3SOs138+
-s6GaqQ//aqTgISn0zsi04ptSNxWztxp5lpMjQYEt1wmsK/uSTWDFT0XWB5wLk6Mw
-uAsXVkboX8mqMqsLZNYWpnPlAVjLL2Yg3T7rTHwlIS6EdFkWmNEODX4ueh+oE8SE
-c2ks5BXgEdOiuwihF+Wj0LpLcaerexZ7TjXgfC2C+a7JMOHwdRoh4VcxD9ecJYqr
-0QdzZTWn+WOkQpEYyX16X/lC7iT/wFJ9VrA8sf8JT3VWGyQSGv1k3il50iWOlxX+
-NU6TlLR6vm15Hu3KtWEvZaDZ0wJgQaLJN2pm2yaB2xAzF/f6wedrX9F/wBvXm6mp
-4Q2JK/4Mb5whm4Dd/hiNJc6l0zZ3BwJGUN3zuWk/77QcZXUerQmow8daHw3DHZs4
-hK/OTXQXAQqfkk3nuZCnwcUCBxoq1e5QGX3HYOrsYu311maH8WYygoWbSSR1GrsP
-QE0j1GoBBx07S+BEvQ437MtJVsAQlnWpw4BtRDVqBzeZrnaVN+Lo+8pBRZrMjGeH
-gOkiPhDQlG1+hy4C9Zhu258cR6bQtou/PGIhnk1tkB+uldfzdkl8cMFBHt6CjSK5
-lzc6YgmLXOkqGilbLebzKdhCC2x0DDmo/odKZeOr9raY2Jw+vSzN5RzGRyiTAI6T
-eugMAbwH2t1LKPDSbG5l9SQs5CIt4YBumvEPN4kmh6GDdBakqXM=
-=uyVX
------END PGP SIGNATURE-----
-
---z6Eq5LdranGa6ru8--
