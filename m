@@ -2,149 +2,87 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE132C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 604C3C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74C5721534
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:37:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1564C215EB
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:37:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gsHF9ZWI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74C5721534
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZbyTXb11"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1564C215EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbeHTMwD (ORCPT
+        id S1726599AbeHTMwR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 08:52:03 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:38683 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726024AbeHTMwD (ORCPT
+        Mon, 20 Aug 2018 08:52:17 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:59752 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbeHTMwR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 08:52:03 -0400
-Received: by mail-yb0-f195.google.com with SMTP id c1-v6so2677591ybq.5
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 02:37:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IpR7X0cMcSd9QTtBZD/OgxGKK+yYoZT/jF4ELA5luSg=;
-        b=gsHF9ZWIx2uS69taxUsPm0F0he2hvAUUNdDzcrpUAckls86G2EEluNWJ3eEBbDuFVd
-         kJNNDqdgshYYgYWGR24ufwIyLwaZ5LAvaQW+a55kRGB7PIenozkH5jetxPWt8rprbABn
-         pVUnVJqTXb2B/pTEx4wpmRdQqo+XWNZd/5mGQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IpR7X0cMcSd9QTtBZD/OgxGKK+yYoZT/jF4ELA5luSg=;
-        b=PvwCeeQVcKBR2qXRi65cGnbqwJrGOq/iyWVTRriyKvmmYqBBwV+AkBUY7+lE0PC2Dz
-         Y7jQePfRs9EyR//p8vawwVwompfzrZ5E2Qyg7/YXWFKcmgV6991GlkoLVdQ5zbiSobKg
-         eM8JIWXCwJ3TuWJ3/bxVZfRxS4rft4BxPFmZYlvpI4SKUIDXsqNQY65/eKSLPPel4Ve2
-         QDlEIH9Oks7gGCMR5poJfDJNty+iE56D2Gccxg4jjtLxCJs17sQDywg4BG45XmjGBpyc
-         Syo8+vxrdPGw3xqIcbxv/w7qHBKvfIplnmh+Ax6olGwY8zH0fgBMAxEEAYy02uHyqAxd
-         zPNg==
-X-Gm-Message-State: AOUpUlGKJddQdsVpGCeHetuIFUFHZGH1YQ7SEbdppcvK+uuAvzKThznr
-        LHEPsPr2ZCfZ9Jx6Mqgub9NPtBIFNnDeoA==
-X-Google-Smtp-Source: AA+uWPyn8H+NU+FCem2+kqU7SUUotVZBrPpGm8ZQBDhXinWsveslpG8poyl26KUamcH5Hy4e+VdbhQ==
-X-Received: by 2002:a25:4d89:: with SMTP id a131-v6mr24465361ybb.452.1534757828771;
-        Mon, 20 Aug 2018 02:37:08 -0700 (PDT)
-Received: from mail-yb0-f179.google.com (mail-yb0-f179.google.com. [209.85.213.179])
-        by smtp.gmail.com with ESMTPSA id o204-v6sm5318920ywd.16.2018.08.20.02.37.08
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 Aug 2018 02:37:08 -0700 (PDT)
-Received: by mail-yb0-f179.google.com with SMTP id v13-v6so2880270ybq.12
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 02:37:08 -0700 (PDT)
-X-Received: by 2002:a25:3486:: with SMTP id b128-v6mr14267850yba.373.1534757474847;
- Mon, 20 Aug 2018 02:31:14 -0700 (PDT)
+        Mon, 20 Aug 2018 08:52:17 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7K9Xjvj028981;
+        Mon, 20 Aug 2018 09:37:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=eeu32JaqIlqknw7ZI4YsAZHTcR5AuHoAPFlNIySW/Fk=;
+ b=ZbyTXb11v4aJZ6ZcVs48uWZaqjhb1ipqtgCGuvcgU+mds4FykVyLdo4Q366TsNBFy/Ij
+ h6SN8pGTlsBmcacofLI3/EIXRJjky9liGTPQyboug3MOxN1kpz2JGbrV7hPP7CWk7j9c
+ v4o0rL1IjiKaf06elPBKASfPyJmi7Xa74xuR66pX+ea0a5R30j42HrS5L61la1//IMY6
+ lRdjePUdNsZQk1xTtMkpFkGF5QO9tX4rqvaZkQV1OYCJmiVcT+i2qLBpx8Z/fI/OxIMb
+ ISDdyQelYEDdKX6t6evW/0SNsUNTuAL2BsEB/GvC/EhoAYYUmLSB+JwlAoTWTg9a/TfP cg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2kxavtdam3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 20 Aug 2018 09:37:20 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7K9bJec011685
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 20 Aug 2018 09:37:19 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7K9bJeD016347;
+        Mon, 20 Aug 2018 09:37:19 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 20 Aug 2018 02:37:18 -0700
+Date:   Mon, 20 Aug 2018 12:37:12 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Bhaskar Singh <bhaskar.kernel@gmail.com>
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8188eu: Type cast function argument
+Message-ID: <20180820093712.e5qgzyfof732n2z6@mwanda>
+References: <20180818142409.GA17122@Gentoo-PC>
 MIME-Version: 1.0
-References: <20180727070224.23966-1-vivek.gautam@codeaurora.org>
-In-Reply-To: <20180727070224.23966-1-vivek.gautam@codeaurora.org>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Mon, 20 Aug 2018 18:31:03 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5C+ctVA-ynrWy=0=pjKZj0TGmHL+bWAu2yWWjYe4Oyf8w@mail.gmail.com>
-Message-ID: <CAAFQd5C+ctVA-ynrWy=0=pjKZj0TGmHL+bWAu2yWWjYe4Oyf8w@mail.gmail.com>
-Subject: Re: [PATCH v14 0/4] iommu/arm-smmu: Add runtime pm/sleep support
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Will Deacon <will.deacon@arm.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
-        jcrouse@codeaurora.org, Sricharan R <sricharan@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180818142409.GA17122@Gentoo-PC>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8990 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=409
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808200104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+On Sat, Aug 18, 2018 at 07:54:09PM +0530, Bhaskar Singh wrote:
+> This patch might suppress some warrning.
+> 
 
-On Fri, Jul 27, 2018 at 4:02 PM Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
->
-> This series provides the support for turning on the arm-smmu's
-> clocks/power domains using runtime pm. This is done using
-> device links between smmu and client devices. The device link
-> framework keeps the two devices in correct order for power-cycling
-> across runtime PM or across system-wide PM.
->
-> With addition of a new device link flag DL_FLAG_AUTOREMOVE_SUPPLIER [8]
-> (available in linux-next of Rafael's linux-pm tree [9]), the device links
-> created between arm-smmu and its clients will be automatically purged
-> when arm-smmu driver unbinds from its device.
->
-> As not all implementations support clock/power gating, we are checking
-> for a valid 'smmu->dev's pm_domain' to conditionally enable the runtime
-> power management for such smmu implementations that can support it.
-> Otherwise, the clocks are turned to be always on in .probe until .remove.
-> With conditional runtime pm now, we avoid touching dev->power.lock
-> in fastpaths for smmu implementations that don't need to do anything
-> useful with pm_runtime.
-> This lets us to use the much-argued pm_runtime_get_sync/put_sync()
-> calls in map/unmap callbacks so that the clients do not have to
-> worry about handling any of the arm-smmu's power.
->
-> This series also adds support for Qcom's arm-smmu-v2 variant that
-> has different clocks and power requirements.
->
-> Previous version of this patch series is @ [2].
->
-> Tested this series on msm8996, and sdm845 after pulling in Rafael's linux-pm
-> linux-next[9] and Joerg's iommu next[10] branches, and related changes for
-> device tree, etc.
->
-> Hi Robin, Will,
-> I have addressed the comments for v13. If there's still a chance
-> can you please consider pulling this for v4.19.
-> Thanks.
->
-> [v14]
->    * Moved arm_smmu_device_reset() from arm_smmu_pm_resume() to
->      arm_smmu_runtime_resume() so that the pm_resume callback calls
->      only runtime_resume to resume the device.
->      This should take care of restoring the state of smmu in systems
->      in which smmu lose register state on power-domain collapse.
+Which warning?  You should find out which program is generating the
+warning and delete it from your computer because that is a nonsense
+warning.
 
-It's been a while since this series was posted and no more comments
-seem to be left anymore. Would you have some time to take a look
-again? Thanks.
+regards,
+dan carpenter
 
-Best regards,
-Tomasz
