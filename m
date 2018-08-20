@@ -2,100 +2,84 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1062DC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 22:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B0CC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 22:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEBFC2174A
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 22:28:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="F6YtvnbY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEBFC2174A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B114B21756
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 22:31:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B114B21756
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbeHUBpa (ORCPT
+        id S1726671AbeHUBsm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 21:45:30 -0400
-Received: from mail-it0-f46.google.com ([209.85.214.46]:55310 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726119AbeHUBpa (ORCPT
+        Mon, 20 Aug 2018 21:48:42 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:33007 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726498AbeHUBsm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 21:45:30 -0400
-Received: by mail-it0-f46.google.com with SMTP id d10-v6so1590776itj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 15:28:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=axRbtXcSw+cbCFzq2W3Tj97e06BaqDX69Epi2UuGI4c=;
-        b=F6YtvnbYsrr6Rhlr2gu1bgmhIyyKgxlUye3DzsxzSFM3u7HFEvWY7QZSLb1bFaKpFH
-         1Ns9XKiPsP9l6/+QB8sB6sn16NR/opqDminDQYyqPqS8MmzgOVh1O4g1FcNgsD0411c+
-         wHY52jXsm8sif2Azf7/sf7sb31FKokaT3SK4o=
+        Mon, 20 Aug 2018 21:48:42 -0400
+Received: by mail-oi0-f67.google.com with SMTP id 8-v6so28783554oip.0;
+        Mon, 20 Aug 2018 15:31:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=axRbtXcSw+cbCFzq2W3Tj97e06BaqDX69Epi2UuGI4c=;
-        b=GD3dJsG1f7fnlY/I81qfhpTDT1V0bi/ldNNhpE8ZyNvQ3Kjx7i9K4fQfNOCEyzoJiF
-         5IGB1UUQYAaXFp7Hyhv4S8bgwNnQGs4bry2V9sS4Qu0tfLY4sFPjPG3C4C5Oom5K2/XH
-         kZ+nJHQ2lxYuTm3uPUDoIJ1pjfPu/VIYqLB7bM7Kyt9XTIr16np29aXoMFJSpnfetQTh
-         YIEOwrI6+y/8ji46wsepuuCB3yZapvPFPvyrUjuZ+x4E6BCyLQnfdoXU0ptsjkm7/lfB
-         IJheN7NhMt/FQTT9J6yEKYLt3XmT6YFbaVDgphqJfAAVD2Ajb7+mRcB+xOXajWR3iDFC
-         244w==
-X-Gm-Message-State: AOUpUlGQBu7PE36zKzURx6QA8jewW36szc1Rf0m0i0OhFXAXg2c3VX62
-        IBEWubvJgc1k2pUfIykJrEG2UljcmqRTAn2mS2c=
-X-Google-Smtp-Source: AA+uWPzgQwktuFZFD4rqPyGNKnf40/cGROujMVk6SCEbzNLAj2gNEXsDcjQ48Ca1w2dFaUw1aMk7ws/g58VDwLn6Frs=
-X-Received: by 2002:a24:4c0b:: with SMTP id a11-v6mr35038165itb.123.1534804083298;
- Mon, 20 Aug 2018 15:28:03 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kKZYC95P0H9Hpu0ArNWv77tf0DeCLDupHNY5WEutHXU=;
+        b=p3ouzMaw2I+f6NuxXJ/oOsI2a6tFsxuoPv1CfhSrfvV6V6aLDWg2qyx6WZuSt3QBsT
+         SxZd05cs8gGuRfnkG622UHZjX86wJheIg9qBKwYN9n3izWpl7kYdYUKzPyHNwUcAo2kf
+         Ot9wd6kKmHjlVNixpmBE7v4smw5FOyTFaCujrKhvUDtLQa4Xsx6p/DyijQvCXGqHU7zh
+         hTGjDb/gDrXVcCTHbgDmUXVXAO7B4GL1I64NEE24YI+RQSGz5OXZR7nqKIWroIJxd7ur
+         s+HBLFvmf+Us4UBgoUlCkM2kRj8ZlwuFr+sy2XBgsDNh1R0Bg2bKa4uENsjT7uAytYqQ
+         YPww==
+X-Gm-Message-State: AOUpUlHETUTmxfeoP/u7SEI+Jx59K76cc1e4LsKleWtKIgsSMbg5uYZi
+        CZlSU3gB14zHeJLLlzc/MQ==
+X-Google-Smtp-Source: AA+uWPwpoQddsvX05d7mUP135uLZ6f/hh5NaSoOXASFG/ZwieBhiDrxKeLia7XkzhAJwOUXMv5rGRw==
+X-Received: by 2002:aca:c5d8:: with SMTP id v207-v6mr16565596oif.264.1534804275257;
+        Mon, 20 Aug 2018 15:31:15 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id w204-v6sm8075188oif.2.2018.08.20.15.31.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 20 Aug 2018 15:31:14 -0700 (PDT)
+Date:   Mon, 20 Aug 2018 17:31:14 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: iommu: ipmmu-vmsa: Add r8a774a1 support
+Message-ID: <20180820223114.GA29387@bogus>
+References: <1534516265-10059-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1534516265-10059-3-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-References: <20180820212556.GC2230@char.us.oracle.com> <CA+55aFxZCyVZc4ZpRyZ3uDyakRSOG_=2XvnwMo4oejpsieF9=A@mail.gmail.com>
- <1534801939.10027.24.camel@amazon.co.uk>
-In-Reply-To: <1534801939.10027.24.camel@amazon.co.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 20 Aug 2018 15:27:52 -0700
-Message-ID: <CA+55aFxyUdhYjnQdnmWAt8tTwn4HQ1xz3SAMZJiawkLpMiJ_+w@mail.gmail.com>
-Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs
- in mind (for KVM to isolate its guests per CPU)
-To:     David Woodhouse <dwmw@amazon.co.uk>
-Cc:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        juerg.haefliger@hpe.com, deepa.srinivasan@oracle.com,
-        Jim Mattson <jmattson@google.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-mm <linux-mm@kvack.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        joao.m.martins@oracle.com, pradeep.vincent@oracle.com,
-        Andi Kleen <ak@linux.intel.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        kanth.ghatraju@oracle.com, Liran Alon <liran.alon@oracle.com>,
-        Kees Cook <keescook@google.com>, jsteckli@os.inf.tu-dresden.de,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        chris.hyser@oracle.com, Tyler Hicks <tyhicks@canonical.com>,
-        John Haxby <john.haxby@oracle.com>,
-        Jon Masters <jcm@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1534516265-10059-3-git-send-email-fabrizio.castro@bp.renesas.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 3:02 PM Woodhouse, David <dwmw@amazon.co.uk> wrote:
->
-> It's the *kernel* we don't want being able to access those pages,
-> because of the multitude of unfixable cache load gadgets.
+On Fri, 17 Aug 2018 15:31:05 +0100, Fabrizio Castro wrote:
+> Document RZ/G2M (R8A774A1) SoC bindings.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+> This patch applies on top of next-20180817
+> 
+>  Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Ahh.
-
-I guess the proof is in the pudding. Did somebody try to forward-port
-that patch set and see what the performance is like?
-
-It used to be just 500 LOC. Was that because they took horrible
-shortcuts? Are the performance numbers for the 32-bit case that
-already had the kmap() overhead?
-
-                  Linus
+Reviewed-by: Rob Herring <robh@kernel.org>
