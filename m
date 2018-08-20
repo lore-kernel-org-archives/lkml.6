@@ -3,113 +3,154 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3407CC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B28BC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E163B21581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:43:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E163B21581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id 2472D2170B
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:55:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2472D2170B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbeHTQ7k (ORCPT
+        id S1727300AbeHTRKy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 12:59:40 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:42173 "EHLO hermes.aosc.io"
+        Mon, 20 Aug 2018 13:10:54 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41965 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726683AbeHTQ7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 12:59:40 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 941D8E0F79;
-        Mon, 20 Aug 2018 13:43:48 +0000 (UTC)
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH] clk: sunxi-ng: sun50i: h6: Add 2x fixed post-divider to MMC module clocks
-Date:   Mon, 20 Aug 2018 21:40:13 +0800
-Message-Id: <20180820134013.16527-1-icenowy@aosc.io>
+        id S1726147AbeHTRKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 13:10:53 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 41F4D2069C; Mon, 20 Aug 2018 15:55:06 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id F200B204AE;
+        Mon, 20 Aug 2018 15:54:55 +0200 (CEST)
+Date:   Mon, 20 Aug 2018 15:54:51 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     'Chuanhua Han' <chuanhua.han@nxp.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "jiafei.pan@nxp.com" <jiafei.pan@nxp.com>,
+        "zhiqiang.hou@nxp.com" <zhiqiang.hou@nxp.com>
+Subject: Re: [PATCH] mtd: m25p80: consider max message size when use the
+ spi_mem_xx() API
+Message-ID: <20180820155451.03d770eb@bbrezillon>
+In-Reply-To: <109aeb2622924f20b29743746bb77ce2@AcuMS.aculab.com>
+References: <1534769013-43449-1-git-send-email-chuanhua.han@nxp.com>
+        <109aeb2622924f20b29743746bb77ce2@AcuMS.aculab.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the H6, the MMC module clocks are fixed in the new timing mode,
-i.e. they do not have a bit to select the mode. These clocks have
-a 2x divider somewhere between the clock and the MMC module.
+On Mon, 20 Aug 2018 13:01:13 +0000
+David Laight <David.Laight@ACULAB.COM> wrote:
 
-To be consistent with other SoCs supporting the new timing mode,
-we model the 2x divider as a fixed post-divider on the MMC module
-clocks.
+> From: Chuanhua Han
+> > Sent: 20 August 2018 13:44
+> > 
 
-This patch adds the post-dividers to the MMC clocks, following the
-approach on A64.
+Still no message here, and the subject prefix is still wrong.
 
-Fixes: 542353ea ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 43 +++++++++++++++-------------
- 1 file changed, 23 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-index bdbfe78fe133..3d60f7978506 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -408,26 +408,29 @@ static SUNXI_CCU_GATE(bus_nand_clk, "bus-nand", "ahb3", 0x82c, BIT(0), 0);
- 
- static const char * const mmc_parents[] = { "osc24M", "pll-periph0-2x",
- 					    "pll-periph1-2x" };
--static SUNXI_CCU_MP_WITH_MUX_GATE(mmc0_clk, "mmc0", mmc_parents, 0x830,
--					0, 4,	/* M */
--					8, 2,	/* N */
--					24, 3,	/* mux */
--					BIT(31),/* gate */
--					0);
--
--static SUNXI_CCU_MP_WITH_MUX_GATE(mmc1_clk, "mmc1", mmc_parents, 0x834,
--					0, 4,	/* M */
--					8, 2,	/* N */
--					24, 3,	/* mux */
--					BIT(31),/* gate */
--					0);
--
--static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mmc_parents, 0x838,
--					0, 4,	/* M */
--					8, 2,	/* N */
--					24, 3,	/* mux */
--					BIT(31),/* gate */
--					0);
-+static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc0_clk, "mmc0", mmc_parents, 0x830,
-+					  0, 4,		/* M */
-+					  8, 2,		/* N */
-+					  24, 3,	/* mux */
-+					  BIT(31),	/* gate */
-+					  2,		/* post-div */
-+					  0);
-+
-+static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc1_clk, "mmc1", mmc_parents, 0x834,
-+					  0, 4,		/* M */
-+					  8, 2,		/* N */
-+					  24, 3,	/* mux */
-+					  BIT(31),	/* gate */
-+					  2,		/* post-div */
-+					  0);
-+
-+static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc2_clk, "mmc2", mmc_parents, 0x838,
-+					  0, 4,		/* M */
-+					  8, 2,		/* N */
-+					  24, 3,	/* mux */
-+					  BIT(31),	/* gate */
-+					  2,		/* post-div */
-+					  0);
- 
- static SUNXI_CCU_GATE(bus_mmc0_clk, "bus-mmc0", "ahb3", 0x84c, BIT(0), 0);
- static SUNXI_CCU_GATE(bus_mmc1_clk, "bus-mmc1", "ahb3", 0x84c, BIT(1), 0);
--- 
-2.18.0
+Fixes and Cc-stable tags should be placed here...
+
+> > Signed-off-by: Chuanhua Han <chuanhua.han@nxp.com>
+> > ---
+> > Changes in v3:
+> >     Rename variable name "val" to "opcode_addr_dummy_sum".
+> >     Place the legitimacy of the transfer size(i.e., "pi_max_message_size(mem->spi)" and
+> > "opcode_addr_dummy_sum") into "if (! ctlr - > mem_ops | |! ctlr-> mem_ops->exec_op) {"
+> > structure and add "spi_max_transfer_size(mem->spi) and opcode_addr_dummy_sum".
+> >     Adjust the formatting alignment of your code.
+> >     "(unsigned long)op->data.nbytes" was modified to "(unsigned long)(op->data.nbytes)".
+> > 
+> > Fixes: c36ff266dc82 ("spi: Extend the core to ease integration of SPI memory controllers")
+
+... not here.
+
+The changelog should also contain a "Changes in v2" section.
+
+> > ---
+> >  drivers/spi/spi-mem.c | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> > 
+> > diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
+> > index 990770d..5ec2bc9 100644
+> > --- a/drivers/spi/spi-mem.c
+> > +++ b/drivers/spi/spi-mem.c
+> > @@ -328,10 +328,24 @@ EXPORT_SYMBOL_GPL(spi_mem_exec_op);
+> >  int spi_mem_adjust_op_size(struct spi_mem *mem, struct spi_mem_op *op)
+> >  {
+> >  	struct spi_controller *ctlr = mem->spi->controller;
+> > +	unsigned long opcode_addr_dummy_sum = sizeof(op->cmd.opcode) +
+> > +					      op->addr.nbytes +
+> > +					      op->dummy.nbytes;  
+> 
+
+Yep, the var name is definitely too long.
+
+> I'd split that (and shorten the variable name) to avoid line wrap. Maybe:
+> 
+> 	unsigned long len;
+> 
+> 	len = sizeof(op->cmd.opcode) + op->addr.nbytes + op->dummy.nbytes;
+> > 
+> >  	if (ctlr->mem_ops && ctlr->mem_ops->adjust_op_size)
+> >  		return ctlr->mem_ops->adjust_op_size(mem, op);
+> > 
+> > +	if (!ctlr->mem_ops || !ctlr->mem_ops->exec_op) {
+> > +		if (spi_max_message_size(mem->spi) < opcode_addr_dummy_sum ||
+> > +		    spi_max_transfer_size(mem->spi) < opcode_addr_dummy_sum)
+> > +			return -EINVAL;  
+> 
+> Those comparisons are lexically backwards, you want 'value op constant'.
+> So:
+> 		if (len > spi_max_message_size(mem->spi) ||
+> 		    len > spi_max_transfer_size(mem->spi))
+> 			return -EINVAL.
+> Although I'm surprised you need to do both comparisons.
+
+Indeed, spi_max_transfer_size() is enough since it already does a min()
+with spi_max_message_size().
+
+> 
+> > +
+> > +		op->data.nbytes = min3((unsigned long)(op->data.nbytes),
+
+Hm, you should have a cast of size_t, I guess that's what kbuild robots
+reported.
+
+> > +				       spi_max_transfer_size(mem->spi),
+> > +				       spi_max_message_size(mem->spi) -
+> > +				       opcode_addr_dummy_sum);  
+> 
+> That looks like a strange limit...
+
+We need that to adjust the len of the 2nd transfer (called data in
+spi-mem) if it's too long to fit in a SPI message or SPI transfer.
+
+> 
+> > +	}
+> > +
+> >  	return 0;
+> >  }
+> >  EXPORT_SYMBOL_GPL(spi_mem_adjust_op_size);
+> > --
+> > 2.7.4  
+> 
+> 	David
+> 
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
+> 
 
