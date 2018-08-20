@@ -2,91 +2,139 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40809C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:57:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F55C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02AE721581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:57:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02AE721581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7C57D206B5
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:59:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C57D206B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbeHTQM5 (ORCPT
+        id S1726735AbeHTQPL convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 12:12:57 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40345 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726229AbeHTQM4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 12:12:56 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9198B20703; Mon, 20 Aug 2018 14:57:22 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-85-9.w90-88.abo.wanadoo.fr [90.88.27.9])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A3E6420DEE;
-        Mon, 20 Aug 2018 14:56:45 +0200 (CEST)
-Date:   Mon, 20 Aug 2018 14:56:46 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Tuomas Tynkkynen <tuomas@tuxera.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] ARM: dts: sunxi: Don't use cd-inverted in
- sun8i-r40-bananapi-m2-ultra
-Message-ID: <20180820125646.z5lsdczc5maf7vyu@flea>
-References: <20180807232554.16825-1-tuomas@tuxera.com>
+        Mon, 20 Aug 2018 12:15:11 -0400
+Received: from eu-smtp-delivery-211.mimecast.com ([146.101.78.211]:38598 "EHLO
+        eu-smtp-delivery-211.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726481AbeHTQPK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 12:15:10 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-63-psq3Hum6Nf-CiGHl1SCeGw-1; Mon, 20 Aug 2018 13:59:34 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon,
+ 20 Aug 2018 14:01:13 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 20 Aug 2018 14:01:13 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Chuanhua Han' <chuanhua.han@nxp.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>
+CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "jiafei.pan@nxp.com" <jiafei.pan@nxp.com>,
+        "zhiqiang.hou@nxp.com" <zhiqiang.hou@nxp.com>
+Subject: RE: [PATCH] mtd: m25p80: consider max message size when use the
+ spi_mem_xx() API
+Thread-Topic: [PATCH] mtd: m25p80: consider max message size when use the
+ spi_mem_xx() API
+Thread-Index: AQHUOIO1v0mwy7J+K0+V94NCbAoDI6TImGqw
+Date:   Mon, 20 Aug 2018 13:01:13 +0000
+Message-ID: <109aeb2622924f20b29743746bb77ce2@AcuMS.aculab.com>
+References: <1534769013-43449-1-git-send-email-chuanhua.han@nxp.com>
+In-Reply-To: <1534769013-43449-1-git-send-email-chuanhua.han@nxp.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="t2lseczjazydlsib"
-Content-Disposition: inline
-In-Reply-To: <20180807232554.16825-1-tuomas@tuxera.com>
-User-Agent: NeoMutt/20180716
+X-MC-Unique: psq3Hum6Nf-CiGHl1SCeGw-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Chuanhua Han
+> Sent: 20 August 2018 13:44
+> 
+> Signed-off-by: Chuanhua Han <chuanhua.han@nxp.com>
+> ---
+> Changes in v3:
+>     Rename variable name "val" to "opcode_addr_dummy_sum".
+>     Place the legitimacy of the transfer size(i.e., "pi_max_message_size(mem->spi)" and
+> "opcode_addr_dummy_sum") into "if (! ctlr - > mem_ops | |! ctlr-> mem_ops->exec_op) {"
+> structure and add "spi_max_transfer_size(mem->spi) and opcode_addr_dummy_sum".
+>     Adjust the formatting alignment of your code.
+>     "(unsigned long)op->data.nbytes" was modified to "(unsigned long)(op->data.nbytes)".
+> 
+> Fixes: c36ff266dc82 ("spi: Extend the core to ease integration of SPI memory controllers")
+> ---
+>  drivers/spi/spi-mem.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
+> index 990770d..5ec2bc9 100644
+> --- a/drivers/spi/spi-mem.c
+> +++ b/drivers/spi/spi-mem.c
+> @@ -328,10 +328,24 @@ EXPORT_SYMBOL_GPL(spi_mem_exec_op);
+>  int spi_mem_adjust_op_size(struct spi_mem *mem, struct spi_mem_op *op)
+>  {
+>  	struct spi_controller *ctlr = mem->spi->controller;
+> +	unsigned long opcode_addr_dummy_sum = sizeof(op->cmd.opcode) +
+> +					      op->addr.nbytes +
+> +					      op->dummy.nbytes;
 
---t2lseczjazydlsib
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'd split that (and shorten the variable name) to avoid line wrap. Maybe:
 
-On Wed, Aug 08, 2018 at 02:25:53AM +0300, Tuomas Tynkkynen wrote:
-> Another user of cd-inverted seems to have crept in. Switch it away from
-> cd-inverted to be consistent with other sunxi boards.
->=20
-> Signed-off-by: Tuomas Tynkkynen <tuomas@tuxera.com>
+	unsigned long len;
 
-Queued for 4.20, thanks!
-Maxime
+	len = sizeof(op->cmd.opcode) + op->addr.nbytes + op->dummy.nbytes;
+> 
+>  	if (ctlr->mem_ops && ctlr->mem_ops->adjust_op_size)
+>  		return ctlr->mem_ops->adjust_op_size(mem, op);
+> 
+> +	if (!ctlr->mem_ops || !ctlr->mem_ops->exec_op) {
+> +		if (spi_max_message_size(mem->spi) < opcode_addr_dummy_sum ||
+> +		    spi_max_transfer_size(mem->spi) < opcode_addr_dummy_sum)
+> +			return -EINVAL;
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Those comparisons are lexically backwards, you want 'value op constant'.
+So:
+		if (len > spi_max_message_size(mem->spi) ||
+		    len > spi_max_transfer_size(mem->spi))
+			return -EINVAL.
+Although I'm surprised you need to do both comparisons.
 
---t2lseczjazydlsib
-Content-Type: application/pgp-signature; name="signature.asc"
+> +
+> +		op->data.nbytes = min3((unsigned long)(op->data.nbytes),
+> +				       spi_max_transfer_size(mem->spi),
+> +				       spi_max_message_size(mem->spi) -
+> +				       opcode_addr_dummy_sum);
 
------BEGIN PGP SIGNATURE-----
+That looks like a strange limit...
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlt6uo0ACgkQ0rTAlCFN
-r3TiHw/9EzjEe8Oida7uxehd3cudPL4GqPV/kN8/JMBpzZ9Sc1gBcLMzutQ3pgwM
-f5QLKCvim+Qu1CjX/OsT2QVOFTX251GWhyhOR7CNZCN+VrNdrLXcfOUFbyT/8CLa
-/KToXG+T4pJi8S4Yk8qbAZN1SLI8w9f3laLhEBdNZ8IRdFavVQ9vUPblNWdazYyH
-aCHCNUjI9rsZNZKeebB4TRUXCZDZdHmcpqX/uR19rx+vOFUH3d6hLvZhp9UzSHn4
-g48QbTsjJ3dbXRwGo9O11Aa8Fu3wk3D9pfkDCVeJ4sRffp/aDpl5BE1BVzliFMWP
-unuD5YufvbzCG5HWrV0e8DS8X8OHgIXYH5NewO0dg8EArDF3iVCev9w0fOQulfB0
-SIvZ6DmDkRbG3tu0wZdoczQStsiQp9BSgbHaORkwSXJl7e7XTsCVnV20jiVfQaSb
-Np/KXXtwAaYOPwfftutmkU5se9v3mYM9cMENtAZZ1an6xEQVTg3Sn8QupP3NYcdn
-koB7RDHd8cC+Nrz128ty3XAfn+o15gs7ctAHJsuwRC1AgObQwE2InO66gTQBpyMz
-dlRMoRpCDLuUmmgBLcRcB4idR1rnbv9tJIWWsu9mqztsB0W/WZBUbGodwiuoVIxx
-/QGvFpqB43n7LYPzTPM2QFCYMrpVHjMJZunOE2yswgEkWbPIjO0=
-=2dWH
------END PGP SIGNATURE-----
+> +	}
+> +
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(spi_mem_adjust_op_size);
+> --
+> 2.7.4
 
---t2lseczjazydlsib--
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
