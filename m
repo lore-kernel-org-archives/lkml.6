@@ -2,82 +2,77 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B991FC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 02:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A143C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 02:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 682F620C0C
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 02:54:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="oqOM4cdI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 682F620C0C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 177EF20C0C
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 02:55:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 177EF20C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbeHTGHw (ORCPT
+        id S1726293AbeHTGIz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 02:07:52 -0400
-Received: from imap.thunk.org ([74.207.234.97]:54798 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725926AbeHTGHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 02:07:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=zVMnMhEWjRWIrh8dKXi55aKpvbi7h2HPMJ2pDYQBUrg=; b=oqOM4cdICW2zk0fCG7xPGLS7Y0
-        j+f79e/7LWCx9XYTDsvMH+D3hhPjV0iwVfoVjDN0QfUGDafqBJsA9kZ3mL3qViteuLYRXGICleKoC
-        GFYxUw6pxQdXZeBwd8RYi1EPr/pd7ltl9LQMSmtavU0FuB+qIL1i/213a4/OuwnEaJlw=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fraKM-0005NO-DF; Mon, 20 Aug 2018 02:53:58 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 107897A57A8; Sun, 19 Aug 2018 22:53:57 -0400 (EDT)
-Date:   Sun, 19 Aug 2018 22:53:56 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Adam Borowski <kilobyte@angband.pl>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-next <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warnings from Linus' tree
-Message-ID: <20180820025356.GF19200@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-next <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180820081323.23a47af3@canb.auug.org.au>
- <CA+55aFw4WcLcFJkoWoE2v--J3s2Hk8JBU92=Zh351FH7xY8zpw@mail.gmail.com>
- <20180820013319.slygmbleia55evtl@angband.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180820013319.slygmbleia55evtl@angband.pl>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+        Mon, 20 Aug 2018 02:08:55 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:39758 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725926AbeHTGIz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 02:08:55 -0400
+Received: from localhost (unknown [172.58.41.21])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id AF994147494BE;
+        Sun, 19 Aug 2018 19:55:08 -0700 (PDT)
+Date:   Sun, 19 Aug 2018 19:55:05 -0700 (PDT)
+Message-Id: <20180819.195505.1988137313680465320.davem@davemloft.net>
+To:     brian.brooks@linaro.org
+Cc:     antoine.tenart@bootlin.com, maxime.chevallier@bootlin.com,
+        ymarkman@marvell.com, stefanc@marvell.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bjorn.topel@intel.com,
+        brian.brooks@arm.com
+Subject: Re: [PATCH] net: mvpp2: avoid bouncing buffers
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180820024730.9147-1-brian.brooks@linaro.org>
+References: <20180820024730.9147-1-brian.brooks@linaro.org>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 19 Aug 2018 19:55:09 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 03:33:19AM +0200, Adam Borowski wrote:
-> Valid uses of strncpy() do exist (such as SCSI structs), but those deal with
-> fixed-width fields.  Thus, gcc is right for warning for at least some of
-> misuse of strncpy() for C strings.  The function wasn't designed for them.
+From: Brian Brooks <brian.brooks@linaro.org>
+Date: Sun, 19 Aug 2018 21:47:30 -0500
 
-The problem is that the kernel has a goodly share of fixed-width
-fields.  The ext4 superblock is one of them.  strncpy() is the most
-convenient function to do what is needed.  If it's a valid use, then
-we need to have a way to get gcc to shut up about them.
+> @@ -5126,6 +5126,12 @@ static int mvpp2_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	if (priv->hw_version == MVPP22) {
+> +		/* Platform code may have set dev->dma_mask to point
+> +		 * to dev->coherent_dma_mask, but we want to ensure
+> +		 * they take different values due to comment below.
+> +		 */
+> +		pdev->dev.dma_mask = &priv->dma_mask;
 
-	   	   	      	 - Ted
+The platform code might be doing this exactly because it cannot support
+different coherent and streaming DMA masks.
+
+Well, in any case, the platform code is doing it for a reason and
+overriding this in a "driver" of all places seems totally
+inappropriate and at best a layering violation.
+
+I would rather you fix this in a way that involves well defined APIs
+that set the DMA masks or whatever to the values that you need, rather
+than going behind the platform code's back and changing the DMA mask
+pointer like this.
+
+Thanks.
