@@ -2,232 +2,101 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0734EC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 095F5C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9B932172A
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:00:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B33B621581
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:01:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="pXU2AhDL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9B932172A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMkDNRBe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B33B621581
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbeHTTRF (ORCPT
+        id S1727189AbeHTTRQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 15:17:05 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45590 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbeHTTRE (ORCPT
+        Mon, 20 Aug 2018 15:17:16 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:43520 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726667AbeHTTRP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 15:17:04 -0400
-Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id B1E321AD2;
-        Mon, 20 Aug 2018 18:00:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1534780850;
-        bh=YoXwh0d+6w93ENsBT8OAZsJAuZkO18DGR0KRkOWSM+c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pXU2AhDLD1z8mKZFpSdJEKdh5OZ3F0b+GYmwf101R8BIJCl+h4N3qM1yPoUKDEttw
-         glPXLKqd7FW3SNLnwdQH3Qf6HevMshoO9nbM3Apfyb1NJFZtqCNHE0BYWv/YFfLsef
-         hQf+oGejph/8tXNQSIEQJrWzAFc8/7IHJx3g+2KY=
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 2/2] drm: rcar-du: Add interlaced feature flag
-Date:   Mon, 20 Aug 2018 17:00:44 +0100
-Message-Id: <20180820160044.15783-3-kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180820160044.15783-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180820160044.15783-1-kieran.bingham+renesas@ideasonboard.com>
+        Mon, 20 Aug 2018 15:17:15 -0400
+Received: by mail-oi0-f68.google.com with SMTP id b15-v6so26648305oib.10;
+        Mon, 20 Aug 2018 09:01:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=6DsXgaboVG5BVc2k8E6WbvT0ITYydRw3zWMWEo9acL4=;
+        b=OMkDNRBeKMDmEafMhtJJjjKKTpP3uMLvYGr2jQpbt+WN+2wnSQmD820YG+QqQjMmX4
+         u0GGwQu9Q7q5eli9LFxLrnXig+mEqnWmuxtclplvzvR7+IC0ckO+K1n40E3F54NGOu3A
+         86Vo7zP1lc4FGCwluiW0HZvP3X21+k5jt+HLDMUn7aJLIp0J/CNuElrKECi9sbuR2928
+         uTe3i+CW2k1bTWaH3kYHZM2Hc2lyXVA9RfTMMdft863jQUuXleeVgC6adDxTSlcBj8I4
+         yGZ82VDN+/eQShHdt1jhpQAm0RiOsEwtBQwV5pW1ZJJhOAnCU/x5i4fw6sJ8RATsHzvc
+         Qt5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=6DsXgaboVG5BVc2k8E6WbvT0ITYydRw3zWMWEo9acL4=;
+        b=iuvYTVum6CScLCnfyeqAP1VDsseHpzfWxuJvReiUxIPybcw8lUrtce9ajuOSpuiabI
+         uAVpCB1Qc/1pl8P0Nac/cqI8otLUglBYfTJca7piVEr1sxZ7ncU0HC5/iZuE9RLng5PF
+         aIjn8tX75bIEpQLDibtgR0MU0zDq7HMOvXyJ2XUAqrcai8Rev5vNg5EgFpmhat+71vz6
+         EgXkXHWbWJ6vvRQ776hfYBo4esgMg9eiCtYFC/HM8p1gyEJ7g2eazpAzaBIjGpS21Uco
+         7bI7ftB4Bs10A/4UObB11ctlwU64PwCtqFlDzJzg3P6Upgps/DRLNmfNs9dt8S8UlH4p
+         vZ8g==
+X-Gm-Message-State: AOUpUlFnPhJmnzBCiEtxYMoNyAD1cVdOIlYk3tdU7s0AihR0HdFRBCu/
+        6+qC+nWh7CMq1dPA9oB/K6BNrs3y7R9+bEVGm8q13mXq
+X-Google-Smtp-Source: AA+uWPzh02wWaTgM+ItFDevXWv9rEe5Fo7OSPYLk5jrU/EO5jzUeZf7VZCboNHdygnjlDO4e8UcmZGoLgvs91SXyDVQ=
+X-Received: by 2002:aca:bdc4:: with SMTP id n187-v6mr13521244oif.3.1534780862659;
+ Mon, 20 Aug 2018 09:01:02 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:284e:0:0:0:0:0 with HTTP; Mon, 20 Aug 2018 09:01:02
+ -0700 (PDT)
+In-Reply-To: <20180814204758.3049-1-tuomas@tuxera.com>
+References: <20180814204758.3049-1-tuomas@tuxera.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Mon, 20 Aug 2018 13:01:02 -0300
+Message-ID: <CAOMZO5A2U5vZkfCE7xaMfrTQCogBojBDAWUe3XDCr7-JipD2Wg@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: imx6: Add stdout-path to Wandboard
+To:     Tuomas Tynkkynen <tuomas@tuxera.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Upcoming implementations of the R-Car DU have removed support for
-interlaced display pipelines. Provide a means to determine this based on
-the feature flags of the hardware configuration structs.
+Hi Tuomas,
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Tue, Aug 14, 2018 at 5:47 PM, Tuomas Tynkkynen <tuomas@tuxera.com> wrote:
+> Setting a stdout-path in the .dtb is convenient because then the user
+> gets a serial console on the RS-232 connector without any extra effort
+> of figuring out the relevant 'console=' boot parameter.
+>
+> Signed-off-by: Tuomas Tynkkynen <tuomas@tuxera.com>
 
----
+Patch looks good.
 
-This could be a feature to designate that there is no interlaced
-support, which would then negate the need to add extra feature flags to
-the existing targets... But that's a 'non-feature' rather than a
-'feature', so this way at least reads better.
+Only a minor nit on the Subject line: I would do it like this to make
+it consistent:
 
-Tested on Salvator-XS (H3) by removing the flag and verifying interlaced
-modes are rejected.
+ARM: dts: imx6qdl-wandboard: Add stdout-path
 
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 14 +++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 32 +++++++++++++++++---------
- drivers/gpu/drm/rcar-du/rcar_du_drv.h  |  1 +
- 3 files changed, 36 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 15dc9caa128b..4b43d8329695 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -684,11 +684,25 @@ static void rcar_du_crtc_atomic_flush(struct drm_crtc *crtc,
- 		rcar_du_vsp_atomic_flush(rcrtc);
- }
- 
-+enum drm_mode_status rcar_du_crtc_mode_valid(struct drm_crtc *crtc,
-+				   const struct drm_display_mode *mode)
-+{
-+	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
-+	struct rcar_du_device *rcdu = rcrtc->group->dev;
-+	bool interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE;
-+
-+	if (interlaced && !rcar_du_has(rcdu, RCAR_DU_FEATURE_INTERLACED))
-+		return MODE_NO_INTERLACE;
-+
-+	return MODE_OK;
-+}
-+
- static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
- 	.atomic_begin = rcar_du_crtc_atomic_begin,
- 	.atomic_flush = rcar_du_crtc_atomic_flush,
- 	.atomic_enable = rcar_du_crtc_atomic_enable,
- 	.atomic_disable = rcar_du_crtc_atomic_disable,
-+	.mode_valid = rcar_du_crtc_mode_valid,
- };
- 
- static struct drm_crtc_state *
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 02aee6cb0e53..49f2ae80d0f5 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -39,7 +39,8 @@
- static const struct rcar_du_device_info rzg1_du_r8a7743_info = {
- 	.gen = 2,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
--		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-@@ -60,7 +61,8 @@ static const struct rcar_du_device_info rzg1_du_r8a7743_info = {
- static const struct rcar_du_device_info rzg1_du_r8a7745_info = {
- 	.gen = 2,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
--		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-@@ -79,7 +81,7 @@ static const struct rcar_du_device_info rzg1_du_r8a7745_info = {
- 
- static const struct rcar_du_device_info rcar_du_r8a7779_info = {
- 	.gen = 2,
--	.features = 0,
-+	.features = RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-@@ -100,7 +102,8 @@ static const struct rcar_du_device_info rcar_du_r8a7779_info = {
- static const struct rcar_du_device_info rcar_du_r8a7790_info = {
- 	.gen = 2,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
--		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.quirks = RCAR_DU_QUIRK_ALIGN_128B,
- 	.channels_mask = BIT(2) | BIT(1) | BIT(0),
- 	.routes = {
-@@ -128,7 +131,8 @@ static const struct rcar_du_device_info rcar_du_r8a7790_info = {
- static const struct rcar_du_device_info rcar_du_r8a7791_info = {
- 	.gen = 2,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
--		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-@@ -150,7 +154,8 @@ static const struct rcar_du_device_info rcar_du_r8a7791_info = {
- static const struct rcar_du_device_info rcar_du_r8a7792_info = {
- 	.gen = 2,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
--		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(1) | BIT(0),
- 	.routes = {
- 		/* R8A7792 has two RGB outputs. */
-@@ -168,7 +173,8 @@ static const struct rcar_du_device_info rcar_du_r8a7792_info = {
- static const struct rcar_du_device_info rcar_du_r8a7794_info = {
- 	.gen = 2,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
--		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-@@ -190,7 +196,8 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
- 	.gen = 3,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
- 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
--		  | RCAR_DU_FEATURE_VSP1_SOURCE,
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(3) | BIT(2) | BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-@@ -222,7 +229,8 @@ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
- 	.gen = 3,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
- 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
--		  | RCAR_DU_FEATURE_VSP1_SOURCE,
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(2) | BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-@@ -250,7 +258,8 @@ static const struct rcar_du_device_info rcar_du_r8a77965_info = {
- 	.gen = 3,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
- 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
--		  | RCAR_DU_FEATURE_VSP1_SOURCE,
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(3) | BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-@@ -278,7 +287,8 @@ static const struct rcar_du_device_info rcar_du_r8a77970_info = {
- 	.gen = 3,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
- 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
--		  | RCAR_DU_FEATURE_VSP1_SOURCE,
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(0),
- 	.routes = {
- 		/* R8A77970 has one RGB output and one LVDS output. */
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index 78ea20abfb30..c4a66130a603 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -30,6 +30,7 @@ struct rcar_du_device;
- #define RCAR_DU_FEATURE_CRTC_IRQ_CLOCK	BIT(0)	/* Per-CRTC IRQ and clock */
- #define RCAR_DU_FEATURE_EXT_CTRL_REGS	BIT(1)	/* Has extended control registers */
- #define RCAR_DU_FEATURE_VSP1_SOURCE	BIT(2)	/* Has inputs from VSP1 */
-+#define RCAR_DU_FEATURE_INTERLACED	BIT(3)	/* HW supports interlaced */
- 
- #define RCAR_DU_QUIRK_ALIGN_128B	BIT(0)	/* Align pitches to 128 bytes */
- 
--- 
-2.17.1
-
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
