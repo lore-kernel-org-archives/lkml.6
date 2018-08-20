@@ -1,95 +1,107 @@
-Return-Path: <SRS0=Mzg6=LC=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B0CC4321D
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 23:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BA8C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 00:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A65F0208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 19 Aug 2018 23:55:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A65F0208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=david-bauer.net
+	by mail.kernel.org (Postfix) with ESMTP id 82D172146E
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 00:02:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="EsivCMF2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D172146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbeHTDIZ (ORCPT
+        id S1726570AbeHTDPl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 19 Aug 2018 23:08:25 -0400
-Received: from mars.blocktrron.ovh ([51.254.112.43]:43870 "EHLO
-        mail.blocktrron.ovh" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbeHTDIY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Aug 2018 23:08:24 -0400
-Received: from [IPv6:2001:67c:2ed8:100e:d5e8:79d6:f655:b0f] (unknown [IPv6:2001:67c:2ed8:100e:d5e8:79d6:f655:b0f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.blocktrron.ovh (Postfix) with ESMTPSA id D2E781E07F;
-        Mon, 20 Aug 2018 01:55:04 +0200 (CEST)
-Subject: Re: [PATCH] gpio: 74x164: add lines-initial-states property
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180815201855.29738-1-mail@david-bauer.net>
- <CACRpkdYTxvWjLizTr8Qg-FmSPjnnU+kj2+VrUUcz5F0nkhrUrg@mail.gmail.com>
-From:   David Bauer <mail@david-bauer.net>
-Openpgp: id=D70432697B7C4C27380FCDA3BAB39714B4A4B878
-Autocrypt: addr=mail@david-bauer.net; prefer-encrypt=mutual; keydata=
- xsBNBFYkGEcBCADbRMHdOXmszxrmE9G/gWUD4/HXklOfn+hyBpEcOul+GKAet0oFxznkchJe
- hO5MbEFYsnM8TZVxjnEi70c3luF1m4JycjgQ91GJ52+xvLV0dVz+L99JBgVJNRDvvt68rLVq
- A8/LCdkXctZ+GBfrtTYQ6dOeuQf/qWuwlNTvuG92uWVZjncyWOmQX73gv+1MTRsCmIGNYQu1
- ZDVyhr3YsTgJIXTHUCxBHQBDglkb3L5lK9WHPf1puQ2grNbUg9VSmo4a9IzUpRauNtCDUFxi
- 1m1e5VnmU5O5/xZyDzwmpWog9tUfScS7X9pdVNQ+2W3zCRrotFEn6FKdD01mhIsLnczjABEB
- AAHNIkRhdmlkIEJhdWVyIDxtYWlsQGRhdmlkLWJhdWVyLm5ldD7CwJkEEwEIAEMCGwMHCwkI
- BwMCAQYVCAIJCgsEFgIDAQIeAQIXgAIZARYhBNcEMml7fEwnOA/No7qzlxS0pLh4BQJbLRhu
- BQkIy2cnAAoJELqzlxS0pLh4It8IALb1ea/ezwy8v65zmTeIepeuO5umWzWIy7fLaAsxzJbH
- rO6rCTnRN5ZLyzuxNlhYMyvXAJL7kmPuEOOzHk5xh3soV24VZLSryzGeB6TG3g8L6D0guJ72
- JMM/2HGP8g1zu/IfIM94DZJk7WEuRKG5sndZp49s/voKhrMqAvAU4G03knpEN5SbJx5RA/Wf
- i5stipz2vqS87jHgOVTL1m67Wg9jhKuzJbSlt+m8rHZCQ9dCQQLtqbHugnyOrFhKxwfGFEMB
- aV0sKwoBfjtWP/g3kb9L5wOvRj8UnDRLTB/fVnOsMD18ILEiNqc6FCh4hIb4y2QQEc0nb68f
- imjr4Hz7TOfOwE0EViQYRwEIALqz1V6kWIvCTVN/6QN9fepVSwSw+5IiiVBGtf2rtdqujCRD
- bGi96a2ZLYRQzlSQvCZ51skgoZFmIW2YhPP90qiZssSEQxgY1rf+DEYnjWmFSgi3iHqYXRk2
- cY7OI3ZT8D2tAFu9pIAxZpD5FdQznJmUhljeTJw+lGOoxctf1xjHZcRcU6GUFMpFBc4xaLC0
- hUN24HT5pDpklxskPFH91VncDaOsLesqszGaUHWx3hogRfogdADvycUp/bQB80kZO/XqexWN
- GUNJYS4axWM2ND25bWV1h9aFjPpOwFM7FwAyra0VihnnNn7dTL5vBpFztY0IFPlvqyc1Vw8y
- vgtShA0AEQEAAcLAfAQYAQgAJgIbDBYhBNcEMml7fEwnOA/No7qzlxS0pLh4BQJbLRiFBQkI
- y2c+AAoJELqzlxS0pLh4LIcH/jnL+ytxRSAh8VX3U2xrMOhBFOkJbW9fj6UgE2iFfZUEOBZl
- q6fZTYn1LOTOECrnLC6eNUQsnZ2u+/N93I5Fmof0MIICUbVabEVmbF/jCFkKjrTPFv/DbNZy
- c+X2ugyX7LsJT+CdvtPT9fObTLCS1nQc3G49syEGVEIzPNyIFzJbFLyh1AfRxmnzAwlal6xK
- S82CsKe+n2lwWg2dyyoJYqwM2G6hAg/ZFqRBZ1RH6TsACGMnwvmsfW/871mPt/mOTCDoH1s1
- tcsgxxtD87UnEqA4zL8dqi5uRA82ZznWaq3mzOGKcBkgEcxi8nnQWW+EyTiZWC+wJ9xT4kLh
- z03IzJQ=
-Message-ID: <1f8d8cd0-000a-ea46-2776-caee79ca6e01@david-bauer.net>
-Date:   Mon, 20 Aug 2018 01:55:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Sun, 19 Aug 2018 23:15:41 -0400
+Received: from imap.thunk.org ([74.207.234.97]:54660 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726486AbeHTDPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Aug 2018 23:15:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=/2ijYlux+YbKK4Pgbo7v9AAZVjfOv2k2GoIBwaOV/jE=; b=EsivCMF2EBft3W/BfmnDEQcgNO
+        Wz+9FFygXdh7of3qIru9GHLEtPP+3L6U3DZAb6dtBX24EOMhr+yB5EyAKB/nORJ+yPZvSNVD1oqQs
+        T1ALrcvYW9hhF/QMWqTwH9zoquAB15dLYQw33SIyCcYE1Mdmnw9D659pjc1+zEPSiUEI=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1frXeG-0004Ow-3V; Mon, 20 Aug 2018 00:02:20 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 4B78F7A57A8; Sun, 19 Aug 2018 20:02:18 -0400 (EDT)
+Date:   Sun, 19 Aug 2018 20:02:18 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build warnings from Linus' tree
+Message-ID: <20180820000218.GE19200@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180820081323.23a47af3@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdYTxvWjLizTr8Qg-FmSPjnnU+kj2+VrUUcz5F0nkhrUrg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180820081323.23a47af3@canb.auug.org.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Mon, Aug 20, 2018 at 08:13:23AM +1000, Stephen Rothwell wrote:
+> fs/ext4/super.c: In function '__save_error_info':
+> fs/ext4/super.c:344:2: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+>   strncpy(es->s_last_error_func, func, sizeof(es->s_last_error_func));
+>   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> fs/ext4/super.c:349:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+>    strncpy(es->s_first_error_func, func,
+>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>     sizeof(es->s_first_error_func));
+>     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On 8/16/18 10:11 AM, Linus Walleij wrote:
-> This sounds like something that should be generic, and not use
-> a bitmask, but offsets. It should work even if the number of
-> GPIOs from the chip is > 32.
-> 
-> Is the usecase different from hogs?
-> See Documentation/devicetree/bindings/gpio.txt
+All of ext4 superblock char[] fields are not necessarily null
+terminated, so this is a false positive.  I suppose we could do
+something like this:
 
-Thanks for pointing that out. Indeed for my use-case (Asserting single
-output to be high on driver probe) hogs are are sufficient solution.
+inline char *
+strncpy_I_solemnly_swear_I_know_what_I_am_doing(char *dest,
+			const char *src, size_t n)
+{
+#if __GNUC_PREREQ (8, 2)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncate"
+#endif
+	return strncpy(dest, src, n);
+#if __GNUC_PREREQ (8, 2)
+#pragma GCC diagnostic pop
+#endif
+}
 
-Best wishes
-David
+(if we really think this warning is worthwhile enough that we don't
+just want to globally disable it, of course)
+
+       		      	       - Ted
+
+P.S.  It's really, really too bad there isn't a simpler way to shut up
+gcc.  You need the #ifdef __GNUC_PREREQ nonsense because otherwise
+older versions of gcc that don't understand the particular warning
+you're trying to suppress will complain loudly.  (Ask me how I
+know....)
