@@ -2,175 +2,102 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8160FC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7E2C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:05:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 316012173A
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:04:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 316012173A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1178320C03
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:05:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vDpSysdr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1178320C03
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbeHTVUp (ORCPT
+        id S1726535AbeHTVVj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 17:20:45 -0400
-Received: from mga17.intel.com ([192.55.52.151]:35155 "EHLO mga17.intel.com"
+        Mon, 20 Aug 2018 17:21:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726174AbeHTVUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 17:20:44 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 11:04:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,266,1531810800"; 
-   d="scan'208";a="63841458"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by fmsmga007.fm.intel.com with ESMTP; 20 Aug 2018 11:03:54 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 0AA99300DDE; Mon, 20 Aug 2018 11:03:54 -0700 (PDT)
-Date:   Mon, 20 Aug 2018 11:03:53 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        David Woodhouse <dwmw@amazon.co.uk>, x86@kernel.org,
-        dvyukov@google.com, hughd@google.com,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: Crash in MM code in v4.4.y, v4.9.y with TRANSPARENT_HUGEPAGE
- enabled
-Message-ID: <20180820180353.GO12066@tassilo.jf.intel.com>
-References: <20180817222733.GA18575@roeck-us.net>
- <20180820162938.GR29735@dhcp22.suse.cz>
+        id S1726106AbeHTVVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 17:21:39 -0400
+Received: from mail-yb0-f171.google.com (mail-yb0-f171.google.com [209.85.213.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C395B2173A;
+        Mon, 20 Aug 2018 18:05:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534788300;
+        bh=s50m4qIOmVl3tL/myuUTjQ5nXLnfjr9of9al0dUhJWw=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=vDpSysdrvQGvRjYSRR//92vyZLrwaoTDRqvgC21QJ7p/MN5PLV1GIqukODI3E8D7h
+         CXqIZ+uCqiik5TTo0CYdvPQmnJzKXskesjPw7bnmg57UP44b6ZPBG/3K+sVWG1OaDy
+         8A33e5axu9ZANi4W1Ftbx3KxE6jRPs54WRRPJ83k=
+Received: by mail-yb0-f171.google.com with SMTP id d34-v6so4947356yba.3;
+        Mon, 20 Aug 2018 11:05:00 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHw+WBy8A2+sCa8SlY6YfeZhje5U9A9oBhRhGVAtdUkTJl5iHlh
+        Vz8Um1UQ6/CJOT7ACTOPwYBoEH92uxx0tuVNfPA=
+X-Google-Smtp-Source: AA+uWPybximRdwcjUMlc8Ag+iS3ixTtwaHmc8kpL3EHjtTZk9lthd+oOG8R4Brg/TlW8GAbkQc6rKK5xz4Xj9bvIDKc=
+X-Received: by 2002:a25:5446:: with SMTP id i67-v6mr9247341ybb.222.1534788300050;
+ Mon, 20 Aug 2018 11:05:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180820162938.GR29735@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a25:81c4:0:0:0:0:0 with HTTP; Mon, 20 Aug 2018 11:04:19
+ -0700 (PDT)
+In-Reply-To: <20180820175425.zoxnbcz3ziutxaq5@derp-derp.local>
+References: <20180820171818.7710-1-mdf@kernel.org> <CANk1AXSMSLGCcaRcZo4TWKEJW+YUQqbHWEuHpz_csF5J1m-Sew@mail.gmail.com>
+ <20180820175425.zoxnbcz3ziutxaq5@derp-derp.local>
+From:   Alan Tull <atull@kernel.org>
+Date:   Mon, 20 Aug 2018 13:04:19 -0500
+X-Gmail-Original-Message-ID: <CANk1AXS9qVMGfdsFGYNe08q60n1keo7FnfwgGYYR4djR+Fd-wg@mail.gmail.com>
+Message-ID: <CANk1AXS9qVMGfdsFGYNe08q60n1keo7FnfwgGYYR4djR+Fd-wg@mail.gmail.com>
+Subject: Re: [PATCH v2] fpga: dfl: region: Restory symmetry in probe()/remove()
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     Wu Hao <hao.wu@intel.com>, linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 06:29:38PM +0200, Michal Hocko wrote:
-> On Fri 17-08-18 15:27:33, Guenter Roeck wrote:
-> > Hi,
-> > 
-> > the following crash is seen in v4.4.148, v4.4.149, v4.9.120, and v4.9.121
-> > with CONFIG_TRANSPARENT_HUGEPAGE=y, CONFIG_TRANSPARENT_HUGEPAGE_MADVISE=y.
-> 
-> Could you try to apply fd7e315988b7 ("x86/mm: Simplify p[g4um]d_page()
-> macros"). I do not see it in stable 4.4 tree and it has been introduced
-> much later in 4.14. This one gave us quite some headache because it is
-> soooo easy to overlook.
+On Mon, Aug 20, 2018 at 12:54 PM, Moritz Fischer <mdf@kernel.org> wrote:
+> Hi Alan,
+>
+> On Mon, Aug 20, 2018 at 12:46:32PM -0500, Alan Tull wrote:
+>> On Mon, Aug 20, 2018 at 12:18 PM, Moritz Fischer <mdf@kernel.org> wrote:
+>>
+>> Hi Moritz,
+>>
+>> > Replace dev_get_drvdata() with platform_get_drvdata() to
+>> > match the platform_set_drvdata() in the probe function of
+>> > the platform driver.
+>> >
+>> > Fixes commit bb61b9be3e6b ("fpga: dfl: add fpga region platform driver for FME")
+>> > Signed-off-by: Moritz Fischer <mdf@kernel.org>
+>> > ---
+>> >
+>> > Changes from v1:
+>> > - Still compile after change ...
+>> >
+>> > ---
+>> >  drivers/fpga/dfl-fme-region.c | 2 +-
+>>
+>> Thanks for catching this.  of-fpga-region.c does a similar thing and
+>> needs s/dev_set_drvdata/platform_set_drvdata/ in the probe.  Could you
+>> fix it here too?
 
-Good catch!
+Actually I should have said something more like
+s/dev_set_drvdata(dev/platform_set_drvdata(pdev/
 
-I tested that with 4.9 and backporting the patch indeed fixes the
-syzcaller test case running in a KVM VM. Backported patch appended.
+>
+> Yeah, can do in a v3 series ... Will add your Suggested-by: ...
 
-Should probably go into 4.4 and 4.9.
+Thanks!
 
-Cannot explain the 4.17 report unfortunately.
-
-I'll resend it as an email too
-
----
-
-x86/mm: Simplify p[g4um]d_page() macros
-
-Create a pgd_pfn() macro similar to the p[4um]d_pfn() macros and then
-use the p[g4um]d_pfn() macros in the p[g4um]d_page() macros instead of
-duplicating the code.
-
-[Needed to fix crashes caused by earlier backports in 4.9 stable, likely 4.4 too]
-
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brijesh Singh <brijesh.singh@amd.com>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Larry Woodman <lwoodman@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Toshimitsu Kani <toshi.kani@hpe.com>
-Cc: kasan-dev@googlegroups.com
-Cc: kvm@vger.kernel.org
-Cc: linux-arch@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
-Cc: linux-efi@vger.kernel.org
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/e61eb533a6d0aac941db2723d8aa63ef6b882dee.1500319216.git.thomas.lendacky@amd.com
-[Backported to 4.9 stable by AK, suggested by Michael Hocko]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 4de6c282c02a..68a55273ce0f 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -173,6 +173,11 @@ static inline unsigned long pud_pfn(pud_t pud)
- 	return (pfn & pud_pfn_mask(pud)) >> PAGE_SHIFT;
- }
- 
-+static inline unsigned long pgd_pfn(pgd_t pgd)
-+{
-+	return (pgd_val(pgd) & PTE_PFN_MASK) >> PAGE_SHIFT;
-+}
-+
- #define pte_page(pte)	pfn_to_page(pte_pfn(pte))
- 
- static inline int pmd_large(pmd_t pte)
-@@ -578,8 +583,7 @@ static inline unsigned long pmd_page_vaddr(pmd_t pmd)
-  * Currently stuck as a macro due to indirect forward reference to
-  * linux/mmzone.h's __section_mem_map_addr() definition:
-  */
--#define pmd_page(pmd)		\
--	pfn_to_page((pmd_val(pmd) & pmd_pfn_mask(pmd)) >> PAGE_SHIFT)
-+#define pmd_page(pmd)	pfn_to_page(pmd_pfn(pmd))
- 
- /*
-  * the pmd page can be thought of an array like this: pmd_t[PTRS_PER_PMD]
-@@ -647,8 +651,7 @@ static inline unsigned long pud_page_vaddr(pud_t pud)
-  * Currently stuck as a macro due to indirect forward reference to
-  * linux/mmzone.h's __section_mem_map_addr() definition:
-  */
--#define pud_page(pud)		\
--	pfn_to_page((pud_val(pud) & pud_pfn_mask(pud)) >> PAGE_SHIFT)
-+#define pud_page(pud)	pfn_to_page(pud_pfn(pud))
- 
- /* Find an entry in the second-level page table.. */
- static inline pmd_t *pmd_offset(pud_t *pud, unsigned long address)
-@@ -688,7 +691,7 @@ static inline unsigned long pgd_page_vaddr(pgd_t pgd)
-  * Currently stuck as a macro due to indirect forward reference to
-  * linux/mmzone.h's __section_mem_map_addr() definition:
-  */
--#define pgd_page(pgd)		pfn_to_page(pgd_val(pgd) >> PAGE_SHIFT)
-+#define pgd_page(pgd)		pfn_to_page(pgd_pfn(pgd))
- 
- /* to find an entry in a page-table-directory. */
- static inline unsigned long pud_index(unsigned long address)
+>
+> Cheers,
+>
+> Moritz
