@@ -2,118 +2,207 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B68DBC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 03:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80185C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 03:28:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 677E92147E
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 03:23:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1976C2147E
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 03:28:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="Ja3BD4EB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 677E92147E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="yNFaO2WU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1976C2147E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbeHTGhb (ORCPT
+        id S1726237AbeHTGmL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 02:37:31 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39737 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725926AbeHTGhb (ORCPT
+        Mon, 20 Aug 2018 02:42:11 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:23607 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726030AbeHTGmL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 02:37:31 -0400
-Received: by mail-pl0-f67.google.com with SMTP id w14-v6so6365674plp.6
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Aug 2018 20:23:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=f93Pk77n//138uVICqkEHdCERG5DVYotTn9mhWSXD4E=;
-        b=Ja3BD4EBY0Yhuoli+EHTwnhGpungL10Tip4rxo6jC3wYScynxJQu5cjcIC2zGLHlz2
-         FRvCZyjOsJSIaWcAGz83YKVhNaE+eMV83FbmMhJXlbpmLdz0/s9+/JqFquJ+8I0M51VS
-         2XdEajCw0iM+QhQ0GFSR8Rjd9oI6js03trYpH8tK1QjyELXLniG03AEdsuIE1eXO60vL
-         kgF83wk2TksjxT0Bc56dgxe1AEfLxMaCyLbk/NxyX5z+HCz9Ajh3FqgPD47Vo9jy7w+l
-         7JdQAKVrnjDhSF3tU4oVK3ScnSpfYiZFOh58tAOTEcPHltXPhXGexZ3bHZr3wDd01voV
-         6p3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=f93Pk77n//138uVICqkEHdCERG5DVYotTn9mhWSXD4E=;
-        b=WtixYtWkFeaT/Y/gXTYROGFZ14TB7p+pqTToo/ThBvk5i4f0TjI/8pN0OONa82BHeZ
-         GJdGbCDnBSfkzrtLGEkLNB85QNqtQ5JXeTB5Gw0xzO2HS3d7nxIXZMe9JT6SqbYeLZxv
-         LAKgIhnsgXMkPpHM0B7f4mui0IRzSloOYV1TPOtiTqw0hl9FdB1DI6CkEiKUYvjrlXuz
-         7bCSt6Q63LoLX1v6k1mecq3xIYkuUsL5wPpCMyIG1OAYM/PIrfuH4v0HgHZFkLHUcEpk
-         Vj3AYX3LWXxMJQvvHQ6Y6mh47BTyj8XGiHChUdjexNUGT2ObKu7q2SHihFeQuvuohoct
-         Q/JQ==
-X-Gm-Message-State: AOUpUlFWSbKwhHwDWWyf1n/rv7QQbqUxJMmZ74U707JUDC9J4mZGf2lT
-        p4SkhbpjuuRChDh3mA0fH+GKRVN+89E=
-X-Google-Smtp-Source: AA+uWPwJYLigD8EvX3anbGpMZTJ0qN/9rSln27B5AEc4YgYh82qAQj4UmUadGYwxFTlbveVRV8pKWA==
-X-Received: by 2002:a17:902:d706:: with SMTP id w6-v6mr43570779ply.158.1534735420463;
-        Sun, 19 Aug 2018 20:23:40 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b005:f978:c1eb:4793:2546:f614? ([2600:1010:b005:f978:c1eb:4793:2546:f614])
-        by smtp.gmail.com with ESMTPSA id g2-v6sm11251029pfb.79.2018.08.19.20.23.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 19 Aug 2018 20:23:38 -0700 (PDT)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] x86/process: Export start_thread()
-Date:   Sun, 19 Aug 2018 19:29:18 -0700
-Message-Id: <53141AE9-7192-432B-8A27-25986CF442D4@amacapital.net>
-References: <20180819230854.7275-1-rian@alum.mit.edu>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bpetkov@suse.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Dmitry Safonov <dima@arista.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-In-Reply-To: <20180819230854.7275-1-rian@alum.mit.edu>
-To:     Rian Hunter <rian@alum.mit.edu>
-X-Mailer: iPhone Mail (15G77)
+        Mon, 20 Aug 2018 02:42:11 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id w7K3QcAM011579;
+        Mon, 20 Aug 2018 12:26:39 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w7K3QcAM011579
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1534735599;
+        bh=RlB/wWU/t7Xo8JtNgmqgzNLDbxhHJRwseOJB9ScQOyg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=yNFaO2WU60M83T38gcTCa4r3erPFX5Ye3NLRhqVGT+1urs5qPYvcW4IDooqyA+xru
+         RoIk4+vGZEhpIBAUH90J1MWZUJ9a29a3XBwUheUbITjytnqAiseKxaQmCJPx3K+yQJ
+         AyNb2aQ6XFDKX4C6yLL7cXTkLeaPEYxZZNYZXYSdp/DPtbk2AZJnSR8z6kTQQwBL0b
+         rY0KY8xQwXWJUjYtmAUB9394FMmvSWpbwTjgBES0+baU34/PAoK2S7DPNAS28oTJDi
+         QHr0V53Xghk+rZLEmhzsvi371DvgNhfJbodyYshdcFh9KBVHnxa1rpWH6zbW2QxkXX
+         C9f4zSa1MTPOA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Dinh Nguyen <dinguyen@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: [PATCH] mtd: nand: denali: use SPDX-License-Identifier and fix license mismatch
+Date:   Mon, 20 Aug 2018 12:26:36 +0900
+Message-Id: <1534735596-10876-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Use SPDX-License-Identifier instead of the license boilerplates.
 
+This conversion makes it easier for us to scan the license, then
+I notice license mismatch problems.
 
-> On Aug 19, 2018, at 4:08 PM, Rian Hunter <rian@alum.mit.edu> wrote:
->=20
-> Commit e634d8fc792c ("x86-64: merge the standard and compat
-> start_thread() functions") removed exporting for the start_thread()
-> function in what seems like a typo. Add it back to
-> arch/x86/kernel/process_64.c for parity with process_32.c and other
-> arch.
+The license blocks in denali* indicate GPL-2.0 "only", while the
+MODULE_LICENSE in denali.c and denali_dt.c is GPL-2.0 "or later"
+as explained in include/linux/module.h as follows:
 
-What for?  Perhaps 32-bit could remove it instead?
+  "GPL"                           [GNU Public License v2 or later]
+  "GPL v2"                        [GNU Public License v2]
 
->=20
-> Signed-off-by: Rian Hunter <rian@alum.mit.edu>
-> ---
-> arch/x86/kernel/process_64.c | 1 +
-> 1 file changed, 1 insertion(+)
->=20
-> diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-> index 476e3ddf8890..a451bc374b9b 100644
-> --- a/arch/x86/kernel/process_64.c
-> +++ b/arch/x86/kernel/process_64.c
-> @@ -384,6 +384,7 @@ start_thread(struct pt_regs *regs, unsigned long new_i=
-p, unsigned long new_sp)
->    start_thread_common(regs, new_ip, new_sp,
->                __USER_CS, __USER_DS, 0);
-> }
-> +EXPORT_SYMBOL_GPL(start_thread);
->=20
-> #ifdef CONFIG_COMPAT
-> void compat_start_thread(struct pt_regs *regs, u32 new_ip, u32 new_sp)
-> --=20
-> 2.16.3
->=20
+I fixed the MODULE_LICENSE tags, assuming the license blocks are
+the authors' intention.
+
+Also, add missing MODULE_DESCRIPTION/AUTHOR to denali.c
+
+While I am touching the license things, I added my credit to denali.c
+because this driver was largely re-written by me in 2017.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ drivers/mtd/nand/raw/denali.c     | 17 +++++++----------
+ drivers/mtd/nand/raw/denali.h     | 10 +---------
+ drivers/mtd/nand/raw/denali_dt.c  | 12 ++----------
+ drivers/mtd/nand/raw/denali_pci.c | 10 +---------
+ 4 files changed, 11 insertions(+), 38 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
+index ca18612..9f432f0 100644
+--- a/drivers/mtd/nand/raw/denali.c
++++ b/drivers/mtd/nand/raw/denali.c
+@@ -1,15 +1,10 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * NAND Flash Controller Device Driver
+  * Copyright © 2009-2010, Intel Corporation and its suppliers.
+  *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
++ * Copyright (c) 2017 Socionext Inc.
++ *   Reworked by Masahiro Yamada <yamada.masahiro@socionext.com>
+  */
+ 
+ #include <linux/bitfield.h>
+@@ -25,8 +20,6 @@
+ 
+ #include "denali.h"
+ 
+-MODULE_LICENSE("GPL");
+-
+ #define DENALI_NAND_NAME    "denali-nand"
+ 
+ /* for Indexed Addressing */
+@@ -1396,3 +1389,7 @@ void denali_remove(struct denali_nand_info *denali)
+ 	denali_disable_irq(denali);
+ }
+ EXPORT_SYMBOL(denali_remove);
++
++MODULE_DESCRIPTION("Driver core for Denali NAND controller");
++MODULE_AUTHOR("Intel Corporation and its suppliers");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/mtd/nand/raw/denali.h b/drivers/mtd/nand/raw/denali.h
+index 1f8feaf..57a5498 100644
+--- a/drivers/mtd/nand/raw/denali.h
++++ b/drivers/mtd/nand/raw/denali.h
+@@ -1,15 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * NAND Flash Controller Device Driver
+  * Copyright (c) 2009 - 2010, Intel Corporation and its suppliers.
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+  */
+ 
+ #ifndef __DENALI_H__
+diff --git a/drivers/mtd/nand/raw/denali_dt.c b/drivers/mtd/nand/raw/denali_dt.c
+index 0faaad0..7c6a8a4 100644
+--- a/drivers/mtd/nand/raw/denali_dt.c
++++ b/drivers/mtd/nand/raw/denali_dt.c
+@@ -1,16 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * NAND Flash Controller Device Driver for DT
+  *
+  * Copyright © 2011, Picochip.
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+  */
+ 
+ #include <linux/clk.h>
+@@ -202,6 +194,6 @@ static struct platform_driver denali_dt_driver = {
+ };
+ module_platform_driver(denali_dt_driver);
+ 
+-MODULE_LICENSE("GPL");
++MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Jamie Iles");
+ MODULE_DESCRIPTION("DT driver for Denali NAND controller");
+diff --git a/drivers/mtd/nand/raw/denali_pci.c b/drivers/mtd/nand/raw/denali_pci.c
+index 7c8efc4..48e9ac5 100644
+--- a/drivers/mtd/nand/raw/denali_pci.c
++++ b/drivers/mtd/nand/raw/denali_pci.c
+@@ -1,15 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * NAND Flash Controller Device Driver
+  * Copyright © 2009-2010, Intel Corporation and its suppliers.
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+  */
+ 
+ #include <linux/errno.h>
+-- 
+2.7.4
+
