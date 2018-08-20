@@ -6,80 +6,72 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA6EC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42387C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:21:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19635216FC
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:20:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19635216FC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D83CE216FC
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:21:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D83CE216FC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbeHTRgV (ORCPT
+        id S1726768AbeHTRhS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 13:36:21 -0400
-Received: from mga12.intel.com ([192.55.52.136]:28438 "EHLO mga12.intel.com"
+        Mon, 20 Aug 2018 13:37:18 -0400
+Received: from muru.com ([72.249.23.125]:54198 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726010AbeHTRgU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 13:36:20 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 07:20:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,265,1531810800"; 
-   d="scan'208";a="83316772"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by orsmga001.jf.intel.com with ESMTP; 20 Aug 2018 07:20:27 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id B8BDF300B48; Mon, 20 Aug 2018 07:20:27 -0700 (PDT)
-Date:   Mon, 20 Aug 2018 07:20:27 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Michal Hocko <mhocko@kernel.org>, stable@vger.kernel.org,
-        Adrian Schroeter <adrian@suse.de>,
-        Dominique Leuenberger <dimstar@suse.de>
-Subject: Re: [PATCH] x86/speculation/l1tf: fix overflow on l1tf_pfn_limit()
- on 32bit
-Message-ID: <20180820142027.GL12066@tassilo.jf.intel.com>
-References: <20180820095835.5298-1-vbabka@suse.cz>
+        id S1726010AbeHTRhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 13:37:18 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 580A380AE;
+        Mon, 20 Aug 2018 14:25:11 +0000 (UTC)
+Date:   Mon, 20 Aug 2018 07:21:24 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Sekhar Nori <nsekhar@ti.com>
+Cc:     Nishanth Menon <nm@ti.com>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+        Vignesh R <vigneshr@ti.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Tero Kristo <t-kristo@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [RFC PATCH 5/6] arm64: dts: ti: Add Support for AM654 SoC
+Message-ID: <20180820142124.GC7523@atomide.com>
+References: <20180605060510.32473-1-nm@ti.com>
+ <CAL_JsqJusWTvr4A_-Bk81meYddMHBMJ4=Fch6L0MFoF7HfBW2w@mail.gmail.com>
+ <20180607233853.p7iw7nlxxuyi66og@kahuna>
+ <20180614123805.GF112168@atomide.com>
+ <20180614130435.j2bmzam6corrjylx@kahuna>
+ <20180615050108.GG112168@atomide.com>
+ <a69fcb7a-f7a1-481b-8a02-1da7d1e20671@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180820095835.5298-1-vbabka@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <a69fcb7a-f7a1-481b-8a02-1da7d1e20671@ti.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 11:58:35AM +0200, Vlastimil Babka wrote:
-> On 32bit PAE kernels on 64bit hardware with enough physical bits,
-> l1tf_pfn_limit() will overflow unsigned long. This in turn affects
-> max_swapfile_size() and can lead to swapon returning -EINVAL. This has been
-> observed in a 32bit guest with 42 bits physical address size, where
-> max_swapfile_size() overflows exactly to 1 << 32, thus zero, and produces the
-> following warning to dmesg:
+* Sekhar Nori <nsekhar@ti.com> [180615 13:41]:
 > 
-> [    6.396845] Truncating oversized swap area, only using 0k out of 2047996k
-> 
-> Fix this by using unsigned long long instead.
+> How well we can reuse individual interconnect segments is something I
+> have to think about / experiment. Will have to be wary of any "short
+> paths" or "cross connections".
 
-Looks good.
+These short paths and cross connections are almost certainly just
+additional ranges from the parent interconnect. See for example
+what we have in Linux next for wdt3 in omap4.dtsi for separate
+ranges for L4 and L3 interconnects.
 
-Acked-by: Andi Kleen <ak@linux.intel.com>
+Regards,
 
-BTW our much worse problems right now are crash reports on several 
-stable kernels, especially with large pages 
-
-I'll dig into this more today, but if you have any hints from testing/fixing
-your own backports please share them.
-
--Andi
+Tony
