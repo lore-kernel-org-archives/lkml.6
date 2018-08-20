@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CDBC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42688C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:11:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E2402170E
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:11:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E2402170E
+	by mail.kernel.org (Postfix) with ESMTP id 06AAC2170E
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:11:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06AAC2170E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbeHTT1a (ORCPT
+        id S1727247AbeHTT14 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 15:27:30 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54457 "EHLO
+        Mon, 20 Aug 2018 15:27:56 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46843 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726099AbeHTT1a (ORCPT
+        with ESMTP id S1726099AbeHTT1z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 15:27:30 -0400
+        Mon, 20 Aug 2018 15:27:55 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7KGABb92126004
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7KGBMqE2126078
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 20 Aug 2018 09:10:11 -0700
+        Mon, 20 Aug 2018 09:11:22 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7KGABuC2126001;
-        Mon, 20 Aug 2018 09:10:11 -0700
-Date:   Mon, 20 Aug 2018 09:10:11 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7KGBMPr2126075;
+        Mon, 20 Aug 2018 09:11:22 -0700
+Date:   Mon, 20 Aug 2018 09:11:22 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
-Message-ID: <tip-2e549b2ee0e358bc758480e716b881f9cabedb6a@git.kernel.org>
-Cc:     mingo@kernel.org, dwmw2@infradead.org, luto@kernel.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        ak@linux.intel.com, bp@alien8.de, hpa@zytor.com,
-        matt@softrans.com.au, jason.vas.dias@gmail.com, tglx@linutronix.de
-Reply-To: tglx@linutronix.de, jason.vas.dias@gmail.com, bp@alien8.de,
-          linux-kernel@vger.kernel.org, ak@linux.intel.com,
-          peterz@infradead.org, matt@softrans.com.au, hpa@zytor.com,
-          dwmw2@infradead.org, luto@kernel.org, mingo@kernel.org
-In-Reply-To: <c76538cd3afbe19c6246c2d1715bc6a60bd63985.1534448381.git.luto@kernel.org>
-References: <c76538cd3afbe19c6246c2d1715bc6a60bd63985.1534448381.git.luto@kernel.org>
+From:   tip-bot for Rian Hunter <tipbot@zytor.com>
+Message-ID: <tip-dc76803e57cc86589c4efcb5362918f9b0c0436f@git.kernel.org>
+Cc:     rian@alum.mit.edu, hpa@zytor.com, bpetkov@suse.de,
+        tglx@linutronix.de, luto@kernel.org, vkuznets@redhat.com,
+        jpoimboe@redhat.com, linux-kernel@vger.kernel.org, jroedel@suse.de,
+        mingo@kernel.org, dima@arista.com
+Reply-To: mingo@kernel.org, dima@arista.com, linux-kernel@vger.kernel.org,
+          jroedel@suse.de, tglx@linutronix.de, luto@kernel.org,
+          vkuznets@redhat.com, jpoimboe@redhat.com, rian@alum.mit.edu,
+          hpa@zytor.com, bpetkov@suse.de
+In-Reply-To: <20180819230854.7275-1-rian@alum.mit.edu>
+References: <20180819230854.7275-1-rian@alum.mit.edu>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/vdso: Fix vDSO build if a retpoline is emitted
-Git-Commit-ID: 2e549b2ee0e358bc758480e716b881f9cabedb6a
+Subject: [tip:x86/urgent] x86/process: Re-export start_thread()
+Git-Commit-ID: dc76803e57cc86589c4efcb5362918f9b0c0436f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,86 +60,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2e549b2ee0e358bc758480e716b881f9cabedb6a
-Gitweb:     https://git.kernel.org/tip/2e549b2ee0e358bc758480e716b881f9cabedb6a
-Author:     Andy Lutomirski <luto@kernel.org>
-AuthorDate: Thu, 16 Aug 2018 12:41:15 -0700
+Commit-ID:  dc76803e57cc86589c4efcb5362918f9b0c0436f
+Gitweb:     https://git.kernel.org/tip/dc76803e57cc86589c4efcb5362918f9b0c0436f
+Author:     Rian Hunter <rian@alum.mit.edu>
+AuthorDate: Sun, 19 Aug 2018 16:08:53 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Mon, 20 Aug 2018 18:04:41 +0200
+CommitDate: Mon, 20 Aug 2018 18:04:42 +0200
 
-x86/vdso: Fix vDSO build if a retpoline is emitted
+x86/process: Re-export start_thread()
 
-Currently, if the vDSO ends up containing an indirect branch or
-call, GCC will emit the "external thunk" style of retpoline, and it
-will fail to link.
+The consolidation of the start_thread() functions removed the export
+unintentionally. This breaks binfmt handlers built as a module.
 
-Fix it by building the vDSO with inline retpoline thunks.
+Add it back.
 
-I haven't seen any reports of this triggering on an unpatched
-kernel.
-
-Fixes: commit 76b043848fd2 ("x86/retpoline: Add initial retpoline support")
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Fixes: e634d8fc792c ("x86-64: merge the standard and compat start_thread() functions")
+Signed-off-by: Rian Hunter <rian@alum.mit.edu>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Matt Rickard <matt@softrans.com.au>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Jason Vas Dias <jason.vas.dias@gmail.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andi Kleen <ak@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bpetkov@suse.de>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Joerg Roedel <jroedel@suse.de>
+Cc: Dmitry Safonov <dima@arista.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/c76538cd3afbe19c6246c2d1715bc6a60bd63985.1534448381.git.luto@kernel.org
+Link: https://lkml.kernel.org/r/20180819230854.7275-1-rian@alum.mit.edu
 
 ---
- Makefile                     | 4 ++++
- arch/x86/entry/vdso/Makefile | 6 ++++--
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ arch/x86/kernel/process_64.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Makefile b/Makefile
-index a0650bf79606..7bab2e90e4e1 100644
---- a/Makefile
-+++ b/Makefile
-@@ -507,9 +507,13 @@ KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
- endif
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index 476e3ddf8890..a451bc374b9b 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -384,6 +384,7 @@ start_thread(struct pt_regs *regs, unsigned long new_ip, unsigned long new_sp)
+ 	start_thread_common(regs, new_ip, new_sp,
+ 			    __USER_CS, __USER_DS, 0);
+ }
++EXPORT_SYMBOL_GPL(start_thread);
  
- RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
-+RETPOLINE_VDSO_CFLAGS_GCC := -mindirect-branch=thunk-inline -mindirect-branch-register
- RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
-+RETPOLINE_VDSO_CFLAGS_CLANG := -mretpoline
- RETPOLINE_CFLAGS := $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
-+RETPOLINE_VDSO_CFLAGS := $(call cc-option,$(RETPOLINE_VDSO_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_VDSO_CFLAGS_CLANG)))
- export RETPOLINE_CFLAGS
-+export RETPOLINE_VDSO_CFLAGS
- 
- KBUILD_CFLAGS	+= $(call cc-option,-fno-PIE)
- KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 9f695f517747..fa3f439f0a92 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -68,9 +68,9 @@ $(obj)/vdso-image-%.c: $(obj)/vdso%.so.dbg $(obj)/vdso%.so $(obj)/vdso2c FORCE
- CFL := $(PROFILING) -mcmodel=small -fPIC -O2 -fasynchronous-unwind-tables -m64 \
-        $(filter -g%,$(KBUILD_CFLAGS)) $(call cc-option, -fno-stack-protector) \
-        -fno-omit-frame-pointer -foptimize-sibling-calls \
--       -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO
-+       -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO $(RETPOLINE_VDSO_CFLAGS)
- 
--$(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
-+$(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
- 
- #
- # vDSO code runs in userspace and -pg doesn't help with profiling anyway.
-@@ -132,11 +132,13 @@ KBUILD_CFLAGS_32 := $(filter-out -mcmodel=kernel,$(KBUILD_CFLAGS_32))
- KBUILD_CFLAGS_32 := $(filter-out -fno-pic,$(KBUILD_CFLAGS_32))
- KBUILD_CFLAGS_32 := $(filter-out -mfentry,$(KBUILD_CFLAGS_32))
- KBUILD_CFLAGS_32 := $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS_32))
-+KBUILD_CFLAGS_32 := $(filter-out $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS_32))
- KBUILD_CFLAGS_32 += -m32 -msoft-float -mregparm=0 -fpic
- KBUILD_CFLAGS_32 += $(call cc-option, -fno-stack-protector)
- KBUILD_CFLAGS_32 += $(call cc-option, -foptimize-sibling-calls)
- KBUILD_CFLAGS_32 += -fno-omit-frame-pointer
- KBUILD_CFLAGS_32 += -DDISABLE_BRANCH_PROFILING
-+KBUILD_CFLAGS_32 += $(RETPOLINE_VDSO_CFLAGS)
- $(obj)/vdso32.so.dbg: KBUILD_CFLAGS = $(KBUILD_CFLAGS_32)
- 
- $(obj)/vdso32.so.dbg: FORCE \
+ #ifdef CONFIG_COMPAT
+ void compat_start_thread(struct pt_regs *regs, u32 new_ip, u32 new_sp)
