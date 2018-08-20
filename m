@@ -2,92 +2,113 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA74C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B77C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7225D21581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:27:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7225D21581
+	by mail.kernel.org (Postfix) with ESMTP id 2912B21722
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:27:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2912B21722
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbeHTRn2 (ORCPT
+        id S1727152AbeHTRnh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 13:43:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48070 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726765AbeHTRn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 13:43:28 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 05A21AE4F;
+        Mon, 20 Aug 2018 13:43:37 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:40005 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbeHTRnh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 13:43:37 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id CE44B416D1;
+        Mon, 20 Aug 2018 14:27:44 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id UjL-bkmuih5U; Mon, 20 Aug 2018 14:27:44 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 3A5C8410D6;
         Mon, 20 Aug 2018 14:27:34 +0000 (UTC)
-Date:   Mon, 20 Aug 2018 16:27:34 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>, stable@vger.kernel.org,
-        Adrian Schroeter <adrian@suse.de>,
-        Dominique Leuenberger <dimstar@suse.de>
-Subject: Re: [PATCH] x86/speculation/l1tf: fix overflow on l1tf_pfn_limit()
- on 32bit
-Message-ID: <20180820142734.GN29735@dhcp22.suse.cz>
-References: <20180820095835.5298-1-vbabka@suse.cz>
- <20180820104932.GI29735@dhcp22.suse.cz>
- <4580aed9-b0fa-4d07-9aac-3cfa49a26fce@suse.cz>
+Subject: Re: [PATCH 18/18] cpupower: change strncpy+truncation to strlcpy
+To:     Dominique Martinet <asmadeus@codewreck.org>,
+        =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>
+Cc:     Thomas Renninger <trenn@suse.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-pm@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>
+References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
+ <1531445169-19912-1-git-send-email-asmadeus@codewreck.org>
+ <CAEUSe78K3bxfXp8mAoxtd64ZeBFVN4v0sJ+puvffM_ZkUNsW+A@mail.gmail.com>
+ <20180814192728.GA6264@nautica>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <379ea973-0234-fbaf-12bc-7ec154833a0a@kernel.org>
+Date:   Mon, 20 Aug 2018 08:27:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4580aed9-b0fa-4d07-9aac-3cfa49a26fce@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180814192728.GA6264@nautica>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 20-08-18 13:41:03, Vlastimil Babka wrote:
-> On 08/20/2018 12:49 PM, Michal Hocko wrote:
-> > On Mon 20-08-18 11:58:35, Vlastimil Babka wrote:
-> >> On 32bit PAE kernels on 64bit hardware with enough physical bits,
-> >> l1tf_pfn_limit() will overflow unsigned long. This in turn affects
-> >> max_swapfile_size() and can lead to swapon returning -EINVAL. This has been
-> >> observed in a 32bit guest with 42 bits physical address size, where
-> >> max_swapfile_size() overflows exactly to 1 << 32, thus zero, and produces the
-> >> following warning to dmesg:
-> >>
-> >> [    6.396845] Truncating oversized swap area, only using 0k out of 2047996k
-> >>
-> >> Fix this by using unsigned long long instead.
-> >>
-> >> Reported-by: Dominique Leuenberger <dimstar@suse.de>
-> >> Reported-by: Adrian Schroeter <adrian@suse.de>
-> >> Fixes: 17dbca119312 ("x86/speculation/l1tf: Add sysfs reporting for l1tf")
-> >> Fixes: 377eeaa8e11f ("x86/speculation/l1tf: Limit swap file size to MAX_PA/2")
-> >> Cc: stable@vger.kernel.org
-> >> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> > 
-> > Looks good to me. I would probably use phys_addr_t which would be more
-> > descriptive but this is just minor thing.
+On 08/14/2018 01:27 PM, Dominique Martinet wrote:
+> Daniel Díaz wrote on Tue, Aug 14, 2018:
+>> I can't get cpupower to compile anymore now that it made its way to linux-next:
+>>   [/linux/tools/power/cpupower]$ make
+>>     CC       lib/cpufreq.o
+>>   [...]
+>>   make[1]: Entering directory '/linux/tools/power/cpupower/bench'
+>>     CC       main.o
+>>     CC       parse.o
+>>   parse.c: In function ‘prepare_config’:
+>>   parse.c:224:4: warning: implicit declaration of function ‘strlcpy’
+>> [-Wimplicit-function-declaration]
+>>       strlcpy(config->governor, val,
+>>       ^
+>>     CC       system.o
+>>     CC       benchmark.o
+>>     CC       cpufreq-bench
+>>   .//parse.o: In function `prepare_config':
+>>   /linux/tools/power/cpupower/bench/parse.c:224: undefined reference
+>> to `strlcpy'
+>>   collect2: error: ld returned 1 exit status
+>>   Makefile:25: recipe for target 'cpufreq-bench' failed
+>>   make[1]: *** [cpufreq-bench] Error 1
+>>   make[1]: Leaving directory '/linux/tools/power/cpupower/bench'
+>>   Makefile:258: recipe for target 'compile-bench' failed
+>>   make: *** [compile-bench] Error 2
+>>
+>> Does it need anything special to make?
 > 
-> Hmm phys_addr_t is still 32bit on !PAE so there the overflow could still
-> happen. I guess max_swapfile_size() should skip the whole L1TF part for
-> !PAE since there is no pte inverting done anyway.
+> Ugh, no, I am really ashamed about this patch series for insufficient
+> testing in general. It is currently "under rework" for an indefinite
+> time frame as I have had other priorities but I'll add cpupower to the
+> list...
+> More precisely, the function is defined in the linux kernel but for
+> userspace strlcpy is only available through libbsd, and I don't believe
+> we should pull that in just for this.
+> 
+> I'll send a second patch using snprintf and warning if a truncation
+> occurs (which is the proper fix that the gcc folks intended people to do
+> anyway) when I get around to it, but I would recommend to just revert
+> the patch for now.
+> 
+> 
+> Shuah, could you take the patch off please if you haven't pushed it to
+> linus yet?
+> 
+> 
+> Sorry for the time you might have spent on this,
+> 
+I will go ahead and revert it.
 
-Yeah, I misremembered that we are already doing that.
-
-> Also the value is "number of pages" which is not the same as "physical
-> address" so the phys_addr_t could be misleading anyway?
-
-right
-
--- 
-Michal Hocko
-SUSE Labs
+thanks,
+-- Shuah
