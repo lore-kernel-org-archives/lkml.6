@@ -2,85 +2,114 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E08A1C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3407CC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CD4B2173F
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:41:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="M9sopBqW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CD4B2173F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E163B21581
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:43:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E163B21581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbeHTQ5R (ORCPT
+        id S1727454AbeHTQ7k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 12:57:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58142 "EHLO mail.kernel.org"
+        Mon, 20 Aug 2018 12:59:40 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:42173 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726689AbeHTQ5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 12:57:17 -0400
-Received: from mail-qk0-f180.google.com (mail-qk0-f180.google.com [209.85.220.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B73352170E;
-        Mon, 20 Aug 2018 13:41:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534772494;
-        bh=WS0FgZLW3dsWZ49He00hp8YSr9tr6Zco+mCW6x7GWRc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=M9sopBqWUwtEJ4mXs50gmKjp2JZHh9WEIqQPCaMzwlHK8b6mwhkuOxNhhPBaYp2or
-         sWeG/sEml8YsRLluU7yuNGUYyYftggNnuEr9ny4DZTSxZVWirbIUzAg9QJR/crnCad
-         caZFzC5Oic5Wx2MWZnA/gjS2RLsSkKm/YRWcdKW0=
-Received: by mail-qk0-f180.google.com with SMTP id j7-v6so1101141qkd.13;
-        Mon, 20 Aug 2018 06:41:34 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHSIsv0RXimPz5nGLaszzlxEVOyBagsZkrHApsEe3sjXtnAPNNu
-        HsOmLlz0jgr8NKNvu4cTr6AuL/h+2txA+2kcYA==
-X-Google-Smtp-Source: AA+uWPw3YU0MhJu7QqST+BLUjDj/mz7HoCLjsBrdDINlqjQqF26LbkANs6uXwwzCH14V2e0+FC6iiA4Hk0Zpo6h7Ejc=
-X-Received: by 2002:a37:1617:: with SMTP id g23-v6mr8804043qkh.213.1534772493945;
- Mon, 20 Aug 2018 06:41:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180804070355.14857-1-manu@freebsd.org> <20180820111755.rzg7l2lznmbpuf2e@flea>
-In-Reply-To: <20180820111755.rzg7l2lznmbpuf2e@flea>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 20 Aug 2018 07:41:22 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLVQDRH1esAXghfQdxmp+iorWVCArM2qTwjbgmQzmhzQw@mail.gmail.com>
-Message-ID: <CAL_JsqLVQDRH1esAXghfQdxmp+iorWVCArM2qTwjbgmQzmhzQw@mail.gmail.com>
-Subject: Re: [PATCH 1/7] dt-bindings: Add DT bindings documentation for
- Allwinner Thermal Sensor Controller
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Emmanuel Vadot <manu@freebsd.org>, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726683AbeHTQ7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 12:59:40 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 941D8E0F79;
+        Mon, 20 Aug 2018 13:43:48 +0000 (UTC)
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH] clk: sunxi-ng: sun50i: h6: Add 2x fixed post-divider to MMC module clocks
+Date:   Mon, 20 Aug 2018 21:40:13 +0800
+Message-Id: <20180820134013.16527-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 5:17 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Sat, Aug 04, 2018 at 09:03:49AM +0200, Emmanuel Vadot wrote:
-> > This patch adds documentation for Device-Tree bindings for the Allwinner
-> > Thermal Sensor Controller found on the H3, H5 and A64 SoCs
-> >
-> > Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
->
-> I'm not going to merge a binding for a device that doesn't have any
-> driver implemented at the moment in Linux.
+On the H6, the MMC module clocks are fixed in the new timing mode,
+i.e. they do not have a bit to select the mode. These clocks have
+a 2x divider somewhere between the clock and the MMC module.
 
-I'll take it then. Linux is not the only DT client.
+To be consistent with other SoCs supporting the new timing mode,
+we model the 2x divider as a fixed post-divider on the MMC module
+clocks.
 
-Rob
+This patch adds the post-dividers to the MMC clocks, following the
+approach on A64.
+
+Fixes: 542353ea ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 43 +++++++++++++++-------------
+ 1 file changed, 23 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+index bdbfe78fe133..3d60f7978506 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+@@ -408,26 +408,29 @@ static SUNXI_CCU_GATE(bus_nand_clk, "bus-nand", "ahb3", 0x82c, BIT(0), 0);
+ 
+ static const char * const mmc_parents[] = { "osc24M", "pll-periph0-2x",
+ 					    "pll-periph1-2x" };
+-static SUNXI_CCU_MP_WITH_MUX_GATE(mmc0_clk, "mmc0", mmc_parents, 0x830,
+-					0, 4,	/* M */
+-					8, 2,	/* N */
+-					24, 3,	/* mux */
+-					BIT(31),/* gate */
+-					0);
+-
+-static SUNXI_CCU_MP_WITH_MUX_GATE(mmc1_clk, "mmc1", mmc_parents, 0x834,
+-					0, 4,	/* M */
+-					8, 2,	/* N */
+-					24, 3,	/* mux */
+-					BIT(31),/* gate */
+-					0);
+-
+-static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mmc_parents, 0x838,
+-					0, 4,	/* M */
+-					8, 2,	/* N */
+-					24, 3,	/* mux */
+-					BIT(31),/* gate */
+-					0);
++static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc0_clk, "mmc0", mmc_parents, 0x830,
++					  0, 4,		/* M */
++					  8, 2,		/* N */
++					  24, 3,	/* mux */
++					  BIT(31),	/* gate */
++					  2,		/* post-div */
++					  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc1_clk, "mmc1", mmc_parents, 0x834,
++					  0, 4,		/* M */
++					  8, 2,		/* N */
++					  24, 3,	/* mux */
++					  BIT(31),	/* gate */
++					  2,		/* post-div */
++					  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc2_clk, "mmc2", mmc_parents, 0x838,
++					  0, 4,		/* M */
++					  8, 2,		/* N */
++					  24, 3,	/* mux */
++					  BIT(31),	/* gate */
++					  2,		/* post-div */
++					  0);
+ 
+ static SUNXI_CCU_GATE(bus_mmc0_clk, "bus-mmc0", "ahb3", 0x84c, BIT(0), 0);
+ static SUNXI_CCU_GATE(bus_mmc1_clk, "bus-mmc1", "ahb3", 0x84c, BIT(1), 0);
+-- 
+2.18.0
+
