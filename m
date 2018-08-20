@@ -2,121 +2,149 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D58A8C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:15:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D774AC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38F83206B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:15:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80509206B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:19:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bofWJkmg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38F83206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UU/GcUrh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80509206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbeHUCcy (ORCPT
+        id S1726728AbeHUCgq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 22:32:54 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:39089 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726777AbeHUCcx (ORCPT
+        Mon, 20 Aug 2018 22:36:46 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48232 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726667AbeHUCgq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 22:32:53 -0400
-Received: by mail-pl0-f66.google.com with SMTP id w14-v6so7846289plp.6
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 16:15:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GUGKXAAChqCwCb0toU+XVme1Dd4ojfXDjxe1s8eRMkI=;
-        b=bofWJkmgADwHdsjRfrBscqA7yJjf8uxz6Scpm9ViCmpol6K5/GIzfBeAShw1xRv6uW
-         SA5U4ezS88BgbS2V9Cu8bzL6XawiplGsP7KOE10TqndiCz/cn6C2CkbhRXX85CrO2XLO
-         0kFOFs35uiqAqV5WPx6qXG+hTTzq8XSc8b+fQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GUGKXAAChqCwCb0toU+XVme1Dd4ojfXDjxe1s8eRMkI=;
-        b=gomV4+5tB81NmsU1f/VlPlYnFjo3xvnmmZnsUUNgnf2XjSGjCjtGKK5cx1k0rtk2Ui
-         JhtvV0qzcB7UW1ztX78L4ZYrtuHDOW9Ol5d0fFBrSd8y/S7DsfCyscP+Iot6hCBnT0Ln
-         RXyRKkZYbsGdwD17uCU43rHzBqLYGHndBhUjaTxyu5+GDYChuHPLV+67rVTA25pishJJ
-         iqLAPbsTXM60lb6PmKW+W4n+9GaYKEEu5yLgWdkkcvTHjLT8m4eMfRROUIPzUex8DzGk
-         KKN6UfT6B2YulMDLjUJozWTe27v6Z156ClAdWXsfOnUMV7Ptf/1vIGLl2aGzsRRT6KoE
-         pwLw==
-X-Gm-Message-State: AOUpUlHie+zBm+mhEraqw2lqRYXr1emUiLGkDGFfAjd1CYvArenIXLGN
-        vsmR2HE/kyke5I8Mbc1fVRaRbg==
-X-Google-Smtp-Source: AA+uWPwuvKuiVjkKN6oKt2BGNt34z6t0AKOBvdFiw9UXMyK32TXZloton7RIsM+YdmGsyRr0sUc0Qw==
-X-Received: by 2002:a17:902:227:: with SMTP id 36-v6mr48112313plc.103.1534806916320;
-        Mon, 20 Aug 2018 16:15:16 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id l27-v6sm18974533pfi.180.2018.08.20.16.15.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 Aug 2018 16:15:15 -0700 (PDT)
-Date:   Mon, 20 Aug 2018 16:19:01 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Lina Iyer <ilina@codeaurora.org>
-Cc:     marc.zyngier@arm.com, sboyd@kernel.org, evgreen@chromium.org,
-        linus.walleij@linaro.org, rplsssn@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        rnayak@codeaurora.org, devicetree@vger.kernel.org,
-        andy.gross@linaro.org, dianders@chromium.org
-Subject: Re: [PATCH RESEND v1 1/5] dt-bindings: pinctrl: add wakeup capable
- GPIOs for SDM845
-Message-ID: <20180820231901.GA5603@tuxbook-pro>
-References: <20180817191026.32245-1-ilina@codeaurora.org>
- <20180817191026.32245-2-ilina@codeaurora.org>
+        Mon, 20 Aug 2018 22:36:46 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7KNDhIp121154;
+        Mon, 20 Aug 2018 23:18:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=f2X4UNSL1R43Xm6GDOtPf+hx9s7PGGTLeB0AAr08lDg=;
+ b=UU/GcUrhyZbnfSDKNL/xn+R3M35iL7VAtJTsODZvIeHhBc5DPU+c9fz6j/F9eZrC5wuF
+ /IpzxadI+QmJHpt/H1mZvPtok5C5fdlIUVPv4P6aj0w7rpL1lJCmeFmFEwtm9MuRv8y/
+ VWWWuLrhTLnQdKR/TB7TRCGpVVTJmewAs/YdpsSd6A7RxvpIeTEDuXRAehNXFIZJFPod
+ rDkZsL7I/kA1hZcrecDTa1Eimk68/nowY6S+NlQM+vDJTU4JcCjgz9vQsrPSnCW0OoZZ
+ bRwSaa2oXwvvAj4LUCzBsmHyluiQUJZMUQ17J9iMcdMCvksObixnd9vv7+PyVIlchejv yA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2kxc3qh7p0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 20 Aug 2018 23:18:53 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7KNIqPp020608
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 20 Aug 2018 23:18:52 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7KNIqGc008718;
+        Mon, 20 Aug 2018 23:18:52 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 20 Aug 2018 16:18:52 -0700
+Subject: Re: [PATCH RESEND] x86/xen: enable early use of set_fixmap in 32-bit
+ Xen PV guest
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org
+Cc:     hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com
+References: <20180820152420.16004-1-jgross@suse.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <95bde638-877d-c9b4-0457-dfeea06fd7dc@oracle.com>
+Date:   Mon, 20 Aug 2018 19:20:17 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180817191026.32245-2-ilina@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180820152420.16004-1-jgross@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8991 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808200234
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 17 Aug 12:10 PDT 2018, Lina Iyer wrote:
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt
-[..]
-> @@ -155,11 +166,52 @@ Example:
->  	tlmm: pinctrl@3400000 {
->  		compatible = "qcom,sdm845-pinctrl";
->  		reg = <0x03400000 0xc00000>;
-> -		interrupts = <GIC_SPI 208 0>;
->  		gpio-controller;
->  		#gpio-cells = <2>;
->  		interrupt-controller;
->  		#interrupt-cells = <2>;
-> +		interrupts-extended = <&intc GIC_SPI 208 0>,
-> +			<&pdc 510 0>, <&pdc 511 0>, <&pdc 512 0>, <&pdc 513 0>,
-> +			<&pdc 514 0>, <&pdc 515 0>, <&pdc 516 0>, <&pdc 517 0>,
-> +			<&pdc 518 0>, <&pdc 519 0>, <&pdc 632 0>, <&pdc 639 0>,
-> +			<&pdc 521 0>, <&pdc 522 0>, <&pdc 523 0>, <&pdc 524 0>,
-> +			<&pdc 525 0>, <&pdc 526 0>, <&pdc 527 0>, <&pdc 630 0>,
-> +			<&pdc 637 0>, <&pdc 529 0>, <&pdc 530 0>, <&pdc 531 0>,
-> +			<&pdc 532 0>, <&pdc 633 0>, <&pdc 640 0>, <&pdc 534 0>,
-> +			<&pdc 535 0>, <&pdc 536 0>, <&pdc 537 0>, <&pdc 538 0>,
-> +			<&pdc 539 0>, <&pdc 540 0>, <&pdc 541 0>, <&pdc 542 0>,
-> +			<&pdc 543 0>, <&pdc 544 0>, <&pdc 545 0>, <&pdc 546 0>,
-> +			<&pdc 547 0>, <&pdc 548 0>, <&pdc 549 0>, <&pdc 550 0>,
-> +			<&pdc 551 0>, <&pdc 552 0>, <&pdc 553 0>, <&pdc 554 0>,
-> +			<&pdc 555 0>, <&pdc 556 0>, <&pdc 557 0>, <&pdc 631 0>,
-> +			<&pdc 638 0>, <&pdc 559 0>, <&pdc 560 0>, <&pdc 561 0>,
-> +			<&pdc 562 0>, <&pdc 563 0>, <&pdc 564 0>, <&pdc 565 0>,
-> +			<&pdc 566 0>, <&pdc 570 0>, <&pdc 571 0>, <&pdc 572 0>,
-> +			<&pdc 573 0>, <&pdc 609 0>, <&pdc 610 0>, <&pdc 611 0>,
-> +			<&pdc 612 0>, <&pdc 613 0>, <&pdc 614 0>, <&pdc 615 0>,
-> +			<&pdc 617 0>, <&pdc 618 0>, <&pdc 619 0>, <&pdc 620 0>,
-> +			<&pdc 621 0>, <&pdc 622 0>, <&pdc 623 0>;
+On 08/20/2018 11:24 AM, Juergen Gross wrote:
+> Commit 7b25b9cb0dad83 ("x86/xen/time: Initialize pv xen time in
+> init_hypervisor_platform()") moved the mapping of the shared info area
+> before pagetable_init(). This breaks booting as 32-bit PV guest as the
+> use of set_fixmap isn't possible at this time on 32-bit.
+>
+> This can be worked around by populating the needed PMD on 32-bit
+> kernel earlier.
+>
+> In order not to reimplement populate_extra_pte() using extend_brk()
+> for allocating new page tables extend alloc_low_pages() to do that in
+> case the early page table pool is not yet available.
+>
+> Fixes: 7b25b9cb0dad83 ("x86/xen/time: Initialize pv xen time in init_hypervisor_platform()")
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+> Resending with corrected Fixes: tag
+> Boris, please take this via the Xen tree (Thomas asked us to do so)
 
-I would expect that there are about 80 WARN_ON() hit in the irq code
-when you boot mainline with this. Have you tried that?
+Applied to for-linus-19b.
+
+-boris
 
 
-Looks reasonable otherwise.
 
-Regards,
-Bjorn
