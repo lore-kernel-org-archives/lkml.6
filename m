@@ -2,142 +2,305 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F7CC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97032C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:04:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F90021581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:03:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W350IINc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F90021581
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 413FC21722
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:04:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 413FC21722
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbeHTTTQ (ORCPT
+        id S1727181AbeHTTUX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 15:19:16 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:42741 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726229AbeHTTTQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 15:19:16 -0400
-Received: by mail-pl0-f65.google.com with SMTP id g23-v6so4367197plq.9
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 09:03:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=A8idF2Cv89i7GYGC9GA8JLG1CNVgNSTvxLhSB8ARhBo=;
-        b=W350IINc2WfV2K00Gex8NdcXzGYXwRAoIdl+EH1t7sakABURB2loTwHg5m8A1ao/qQ
-         PEk6vR30QS8AuyVS6mhOVGTnckvJFjMffnv87fts9AjEeAlm2+OtvdrLFzzGH0w0Jepv
-         vibx93mawZoNdv7/bsqZwkwGtkomp+ELz0BcMj5gOcLf0fPiTkF4vz9M49NFglnav6pZ
-         mVx3TBcAdsOL9uaB8rfBVvH2opfoY0P6kjay+sm7Uw9IPKbv7BbnECkv9KxcKXLqWnJN
-         UwmulXMokOpRFikK36D6xcZn1uos7XLwIeY0R/pmUFeId9+3QDswNqq4TB7TVmXdQpkT
-         9Ebg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=A8idF2Cv89i7GYGC9GA8JLG1CNVgNSTvxLhSB8ARhBo=;
-        b=GqJY5vzInDKN2Y8/i0V9w7DJb9+FUn6usizZJUEU0EFqDQHMDsqiTuCaRIq9uGRqBg
-         6GH8xSKH/qj9Onajeky16j+PDNh6hE2eawnlcSY3YTt4lfThWuOrdDkCZLie+T+pbR/r
-         p/ZKg8M7Gp++tru315AVgLMrHWzoU3L/2aKf4WcmTzkA+vOtQ39A7f7YFFHLBuUVuIv4
-         OAo3Ffpb+P8uIiesWEUJHWAMuqVS9prHfYjZL4W+hk6FAyrfUMlbVzZB8mCM7kfJhCbG
-         eNProQyPqJncpcOhrocRyKfTbR6NalswuaLI2bym9cCEUbRFafG/JfJVfkPgiuotzJws
-         efDw==
-X-Gm-Message-State: AOUpUlGKq7tZmtfS3nPUjFz9MDLajLszk7deymMsuX7r+/XnYHBbF9yk
-        SNglecG9tkkwc6fQYsaLi48wWweO
-X-Google-Smtp-Source: AA+uWPwPqJDLZaZRDRovTofITa0NpOf6w5UH9T0Agps7dc6kky5N3nWwAL3Vg6bkuWiban1lNu97DA==
-X-Received: by 2002:a17:902:280b:: with SMTP id e11-v6mr45884801plb.298.1534780983058;
-        Mon, 20 Aug 2018 09:03:03 -0700 (PDT)
-Received: from Gentoo-PC ([117.204.240.63])
-        by smtp.gmail.com with ESMTPSA id i7-v6sm12303263pgs.17.2018.08.20.09.03.01
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 Aug 2018 09:03:02 -0700 (PDT)
-Date:   Mon, 20 Aug 2018 21:33:04 +0530
-From:   Bhaskar Singh <bhaskar.kernel@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8188eu: Removed a function and coded inline
-Message-ID: <20180820160304.GA7500@Gentoo-PC>
-References: <20180818190640.GA11687@Gentoo-PC>
- <20180820093546.whlekjpoqluqfeq2@mwanda>
+        Mon, 20 Aug 2018 15:20:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33494 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726229AbeHTTUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 15:20:22 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A222D40241DF;
+        Mon, 20 Aug 2018 16:04:07 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4ED182026D66;
+        Mon, 20 Aug 2018 16:04:02 +0000 (UTC)
+Date:   Mon, 20 Aug 2018 18:03:59 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: Re: [PATCH v9 22/22] s390: doc: detailed specifications for AP
+ virtualization
+Message-ID: <20180820180359.38cc4af3.cohuck@redhat.com>
+In-Reply-To: <1534196899-16987-23-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1534196899-16987-23-git-send-email-akrowiak@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180820093546.whlekjpoqluqfeq2@mwanda>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 20 Aug 2018 16:04:07 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 20 Aug 2018 16:04:07 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 12:35:46PM +0300, Dan Carpenter wrote:
-> On Sun, Aug 19, 2018 at 12:36:40AM +0530, Bhaskar Singh wrote:
-> > This patch removed function named rtw_malloc2d.
-> > 
-> > I removed this function because this function is used exactly once and
-> > function call have some overhead also.
-> > 
-> > Maybe this will improve code runtime slightly.
-> > 
-> > Signed-off-by: Bhaskar Singh <bhaskar.kernel@gmail.com>
-> > ---
-> >  drivers/staging/rtl8188eu/core/rtw_efuse.c        | 10 +++++++++-
-> >  drivers/staging/rtl8188eu/include/osdep_service.h |  2 --
-> >  drivers/staging/rtl8188eu/os_dep/osdep_service.c  | 14 --------------
-> >  3 files changed, 9 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/drivers/staging/rtl8188eu/core/rtw_efuse.c b/drivers/staging/rtl8188eu/core/rtw_efuse.c
-> > index 0fd306a808c4..befc99c197b1 100644
-> > --- a/drivers/staging/rtl8188eu/core/rtw_efuse.c
-> > +++ b/drivers/staging/rtl8188eu/core/rtw_efuse.c
-> > @@ -86,12 +86,20 @@ efuse_phymap_to_logical(u8 *phymap, u16 _offset, u16 _size_byte, u8  *pbuf)
-> >  	u16	**eFuseWord = NULL;
-> >  	u16	efuse_utilized = 0;
-> >  	u8 u1temp = 0;
-> > +	int z;
-> 
-> z is unusual name for an iterator.  Does it stand for something?  Just
-> use "int i;".
-> 
-> > +	void **a = NULL;
-> 
-> What does "a" mean in this context?  Maybe just say "void **tmp;"
-> 
-> >  
-> >  	efuseTbl = kzalloc(EFUSE_MAP_LEN_88E, GFP_KERNEL);
-> >  	if (!efuseTbl)
-> >  		return;
-> >  
-> > -	eFuseWord = (u16 **)rtw_malloc2d(EFUSE_MAX_SECTION_88E, EFUSE_MAX_WORD_UNIT, sizeof(u16));
-> > +	a = kzalloc(EFUSE_MAX_SECTION_88E * sizeof(void *) + EFUSE_MAX_SECTION_88E * EFUSE_MAX_WORD_UNIT * sizeof(u16), GFP_KERNEL);
-> > +	if (!a)
-> > +		goto out;
-> 
-> 
-> You can simplify the math a bit:
-> 
-> 	tmp = kzalloc(EFUSE_MAX_SECTION_88E * (sizeof(void *) + EFUSE_MAX_WORD_UNIT * sizeof(u16)), GFP_KERNEL);
-> 
-> Then if it fails:
-> 
-> 	if (!tmp)
-> 		goto eFuseWord_failed;
-> 
-> 
-> regards,
-> dan carpenter
->
+On Mon, 13 Aug 2018 17:48:19 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-Here I have modified 3 files but after seeing comments of Dan Carpenter
-I have edited one file. What to do with those 2 files which I haven't
-modified while sending 2nd version of this patch because all three file
-combinedly making one logical change.
-I apologies, if this is not the right place for asking this type of questions
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
+> 
+> This patch provides documentation describing the AP architecture and
+> design concepts behind the virtualization of AP devices. It also
+> includes an example of how to configure AP devices for exclusive
+> use of KVM guests.
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> ---
+>  Documentation/s390/vfio-ap.txt |  615 ++++++++++++++++++++++++++++++++++++++++
+>  MAINTAINERS                    |    1 +
+>  2 files changed, 616 insertions(+), 0 deletions(-)
+>  create mode 100644 Documentation/s390/vfio-ap.txt
+> 
+
+> +AP Architectural Overview:
+> +=========================
+> +To facilitate the comprehension of the design, let's start with some
+> +definitions:
+> +
+> +* AP adapter
+> +
+> +  An AP adapter is an IBM Z adapter card that can perform cryptographic
+> +  functions. There can be from 0 to 256 adapters assigned to an LPAR. Adapters
+> +  assigned to the LPAR in which a linux host is running will be available to
+> +  the linux host. Each adapter is identified by a number from 0 to 255. When
+> +  installed, an AP adapter is accessed by AP instructions executed by any CPU.
+> +
+> +  The AP adapter cards are assigned to a given LPAR via the system's Activation
+> +  Profile which can be edited via the HMC. When the system is IPL'd, the AP bus
+
+There's lots of s390 jargon in here... but one hopes that someone
+trying to understand AP is already familiar with the basics...
+
+> +  module is loaded and detects the AP adapter cards assigned to the LPAR. The AP
+> +  bus creates a sysfs device for each adapter as they are detected. For example,
+> +  if AP adapters 4 and 10 (0x0a) are assigned to the LPAR, the AP bus will
+> +  create the following sysfs entries:
+> +
+> +    /sys/devices/ap/card04
+> +    /sys/devices/ap/card0a
+> +
+> +  Symbolic links to these devices will also be created in the AP bus devices
+> +  sub-directory:
+> +
+> +    /sys/bus/ap/devices/[card04]
+> +    /sys/bus/ap/devices/[card04]
+> +
+> +* AP domain
+> +
+> +  An adapter is partitioned into domains. Each domain can be thought of as
+> +  a set of hardware registers for processing AP instructions. An adapter can
+> +  hold up to 256 domains. Each domain is identified by a number from 0 to 255.
+> +  Domains can be further classified into two types:
+> +
+> +    * Usage domains are domains that can be accessed directly to process AP
+> +      commands.
+> +
+> +    * Control domains are domains that are accessed indirectly by AP
+> +      commands sent to a usage domain to control or change the domain; for
+> +      example, to set a secure private key for the domain.
+> +
+> +  The AP usage and control domains are assigned to a given LPAR via the system's
+> +  Activation Profile which can be edited via the HMC. When the system is IPL'd,
+> +  the AP bus module is loaded and detects the AP usage and control domains
+> +  assigned to the LPAR. The domain number of each usage domain will be coupled
+> +  with the adapter number of each AP adapter assigned to the LPAR to identify
+> +  the AP queues (see AP Queue section below). The domain number of each control
+> +  domain will be represented in a bitmask and stored in a sysfs file
+> +  /sys/bus/ap/ap_control_domain_mask created by the bus. The bits in the mask,
+> +  from most to least significant bit, correspond to domains 0-255.
+> +
+> +  A domain may be assigned to a system as both a usage and control domain, or
+> +  as a control domain only. Consequently, all domains assigned as both a usage
+> +  and control domain can both process AP commands as well as be changed by an AP
+> +  command sent to any usage domain assigned to the same system. Domains assigned
+> +  only as control domains can not process AP commands but can be changed by AP
+> +  commands sent to any usage domain assigned to the system.
+
+I'm struggling a bit with this paragraph. Does that mean that you can
+use control domains as the target of an instruction changing
+configuration on the system? (Or on the VM, if they are listed in the
+relevant control block?)
+
+> +
+> +* AP Queue
+> +
+> +  An AP queue is the means by which an AP command-request message is sent to a
+> +  usage domain inside a specific adapter. An AP queue is identified by a tuple
+> +  comprised of an AP adapter ID (APID) and an AP queue index (APQI). The
+> +  APQI corresponds to a given usage domain number within the adapter. This tuple
+> +  forms an AP Queue Number (APQN) uniquely identifying an AP queue. AP
+> +  instructions include a field containing the APQN to identify the AP queue to
+> +  which the AP command-request message is to be sent for processing.
+> +
+> +  The AP bus will create a sysfs device for each APQN that can be derived from
+> +  the cross product of the AP adapter and usage domain numbers detected when the
+> +  AP bus module is loaded. For example, if adapters 4 and 10 (0x0a) and usage
+> +  domains 6 and 71 (0x47) are assigned to the LPAR, the AP bus will create the
+> +  following sysfs entries:
+> +
+> +    /sys/devices/ap/card04/04.0006
+> +    /sys/devices/ap/card04/04.0047
+> +    /sys/devices/ap/card0a/0a.0006
+> +    /sys/devices/ap/card0a/0a.0047
+> +
+> +  The following symbolic links to these devices will be created in the AP bus
+> +  devices subdirectory:
+> +
+> +    /sys/bus/ap/devices/[04.0006]
+> +    /sys/bus/ap/devices/[04.0047]
+> +    /sys/bus/ap/devices/[0a.0006]
+> +    /sys/bus/ap/devices/[0a.0047]
+> +
+> +* AP Instructions:
+> +
+> +  There are three AP instructions:
+> +
+> +  * NQAP: to enqueue an AP command-request message to a queue
+> +  * DQAP: to dequeue an AP command-reply message from a queue
+> +  * PQAP: to administer the queues
+
+So, NQAP/DQAP need usage domains, while PQAP needs a control domain? Or
+is it that all of them need usage domains, but PQAP can target a control
+domain as well?
+
+[I don't want to dive deeply into the AP architecture here, just far
+enough to really understand the design implications.]
+
+> +
+> +AP and SIE:
+> +==========
+> +Let's now take a look at how AP instructions executed on a guest are interpreted
+> +by the hardware.
+> +
+> +A satellite control block called the Crypto Control Block (CRYCB) is attached to
+> +our main hardware virtualization control block. The CRYCB contains three fields
+> +to identify the adapters, usage domains and control domains assigned to the KVM
+> +guest:
+> +
+> +* The AP Mask (APM) field is a bit mask that identifies the AP adapters assigned
+> +  to the KVM guest. Each bit in the mask, from most significant to least
+> +  significant bit, corresponds to an APID from 0-255. If a bit is set, the
+> +  corresponding adapter is valid for use by the KVM guest.
+> +
+> +* The AP Queue Mask (AQM) field is a bit mask identifying the AP usage domains
+> +  assigned to the KVM guest. Each bit in the mask, from most significant to
+> +  least significant bit, corresponds to an AP queue index (APQI) from 0-255. If
+> +  a bit is set, the corresponding queue is valid for use by the KVM guest.
+> +
+> +* The AP Domain Mask field is a bit mask that identifies the AP control domains
+> +  assigned to the KVM guest. The ADM bit mask controls which domains can be
+> +  changed by an AP command-request message sent to a usage domain from the
+> +  guest. Each bit in the mask, from least significant to most significant bit,
+> +  corresponds to a domain from 0-255. If a bit is set, the corresponding domain
+> +  can be modified by an AP command-request message sent to a usage domain
+> +  configured for the KVM guest.
+
+OK, that seems to imply that you modify a control domain by sending a
+request to (any) usage domain? I do not doubt that, but the whole
+architecture is really confusing :)
+
+> +
+> +If you recall from the description of an AP Queue, AP instructions include
+> +an APQN to identify the AP adapter and AP queue to which an AP command-request
+> +message is to be sent (NQAP and PQAP instructions), or from which a
+> +command-reply message is to be received (DQAP instruction). The validity of an
+> +APQN is defined by the matrix calculated from the APM and AQM; it is the
+> +cross product of all assigned adapter numbers (APM) with all assigned queue
+> +indexes (AQM). For example, if adapters 1 and 2 and usage domains 5 and 6 are
+> +assigned to a guest, the APQNs (1,5), (1,6), (2,5) and (2,6) will be valid for
+> +the guest.
+
+How does the control domain mask interact with that? Can you send a
+command to an APQN valid for the guest to modify any control domain
+specified in the mask? Does the SIE complain if you specify a control
+domain that the host does not have access to (I'd guess so)?
+
+> +
+> +The APQNs can provide secure key functionality - i.e., a private key is stored
+> +on the adapter card for each of its domains - so each APQN must be assigned to
+> +at most one guest or to the linux host.
+> +
+> +   Example 1: Valid configuration:
+> +   ------------------------------
+> +   Guest1: adapters 1,2  domains 5,6
+> +   Guest2: adapter  1,2  domain 7
+> +
+> +   This is valid because both guests have a unique set of APQNs: Guest1 has
+> +   APQNs (1,5), (1,6), (2,5) and (2,6); Guest2 has APQNs (1,7) and (2,7).
+> +
+> +   Example 2: Invalid configuration:
+> +   Guest1: adapters 1,2  domains 5,6
+> +   Guest2: adapter  1    domains 6,7
+> +
+> +   This is an invalid configuration because both guests have access to
+> +   APQN (1,6).
+
+So, the adapters or the domains can overlap , but the cross product
+mustn't? If I had
+
+Guest1: adapters 1,2 domains 5,6
+Guest2: adapters 3,4 domains 5,6
+
+would that be fine?
+
+Is there any rule about shared control domains?
+
+(...)
+
+> +Limitations
+> +===========
+> +* The KVM/kernel interfaces do not provide a way to prevent unbinding an AP
+> +  queue that is still assigned to a mediated device. Even if the device
+> +  'remove' callback returns an error, the device core detaches the AP
+> +  queue from the VFIO AP driver. It is therefore incumbent upon the
+> +  administrator to make sure there is no mediated device to which the
+> +  APQN - for the AP queue being unbound - is assigned.
+> +
+> +* Hot plug/unplug of AP devices is not supported for guests.
+
+Not sure what that sentence means. Adding/removing devices by the
+hypervisor is not supported? Or some guest actions, respectively
+injecting notifications that would trigger some actions on the real
+hardware?
+
+Do you want to add (some of) this in the future?
+
+> +
+> +* Live guest migration is not supported for guests using AP devices.
+
+Migration and vfio is an interesting area in general :) Would be great
+if vfio-ap could benefit from any generic efforts in that area, but
+that probably requires that someone with access to documentation and
+hardware keeps an eye on developments.
+
+> \ No newline at end of file
+
+Please add one :)
