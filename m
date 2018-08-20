@@ -2,118 +2,104 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE25CC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:44:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 830B2C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:47:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87C32208A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:44:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E27820676
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:47:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tv28Qq8t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87C32208A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mltyzrjl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E27820676
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726585AbeHTWB1 (ORCPT
+        id S1726582AbeHTWEf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 18:01:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55140 "EHLO mail.kernel.org"
+        Mon, 20 Aug 2018 18:04:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726197AbeHTWB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 18:01:26 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726197AbeHTWEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 18:04:34 -0400
+Received: from mail-qk0-f172.google.com (mail-qk0-f172.google.com [209.85.220.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF82320676;
-        Mon, 20 Aug 2018 18:44:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FE5921756;
+        Mon, 20 Aug 2018 18:47:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534790680;
-        bh=Rm3TKpQFxsT/HbOwq3uS2QgQkcVBbdDJElBPH+s68kM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tv28Qq8tjta/fYDtwrsHWiA5kjytx40Wvs5QRzF78OW7GPhIWNzjouE45t9OSjI2O
-         q57VKLYmn14qDCZNFlFHqCmgVpVzsYc6u31M1VpsJUHnvwYIlef0o2qr3yq/Widkyh
-         MMQSN4pP8TPfrnrcQO/dLnfBhk1HzMKe1IL+Znbw=
-Date:   Mon, 20 Aug 2018 13:44:38 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     David Miller <davem@davemloft.net>, jian-hong@endlessm.com,
-        nic_swsd@realtek.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@endlessm.com,
-        linux-pci@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] r8169: don't use MSI-X on RTL8106e
-Message-ID: <20180820184438.GA154536@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180815062110.16155-1-jian-hong@endlessm.com>
- <20180816.122131.604270853620318143.davem@davemloft.net>
- <458efbf9-5971-653a-e7cd-8c56ba055648@gmail.com>
- <20180816.123958.750435252621963789.davem@davemloft.net>
- <ac30d4e6-6411-09e6-1205-96e3e8e29f6f@gmail.com>
+        s=default; t=1534790868;
+        bh=pECQKSH5dTINSES9xni6k5VZxYne20E8JErIm5Lew/4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=MltyzrjlpZnQqMlmnCRbiK7mN0xbrfRlCXUddPm2Jz4xcW/ErV3LCUkjQz2Krw7mH
+         rLhawgw3zEbIJSaV358e9CqvEns7O7iu9VDjmHQSjfW9hyp1m7UUtvt1niOI/EWnDE
+         fenITen6UJ/kI2UEjXQD4hHza7TSmQX/WDVkIGT0=
+Received: by mail-qk0-f172.google.com with SMTP id d15-v6so4041908qkc.1;
+        Mon, 20 Aug 2018 11:47:48 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEvuC0rMIQYCKoxWfnRXyrUvqJCpM+weDcmxBJi/ne17avZn1G9
+        P304YKp57ue/PoCraouaqpRFSMyErzSS0qkrCw==
+X-Google-Smtp-Source: AA+uWPxcOxFjChKk4/SfowCVLb/VmqcaNvv1yuvLtztX7ubh5In2oRd/Bs39yF+Fz+XbtwIjNxbN+1dliqpGAHckwY4=
+X-Received: by 2002:ae9:c112:: with SMTP id z18-v6mr41404291qki.96.1534790867282;
+ Mon, 20 Aug 2018 11:47:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ac30d4e6-6411-09e6-1205-96e3e8e29f6f@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180804070355.14857-1-manu@freebsd.org> <20180820111755.rzg7l2lznmbpuf2e@flea>
+ <CAL_JsqLVQDRH1esAXghfQdxmp+iorWVCArM2qTwjbgmQzmhzQw@mail.gmail.com> <20180820140737.xmqhu5ndqzehvkql@flea>
+In-Reply-To: <20180820140737.xmqhu5ndqzehvkql@flea>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 20 Aug 2018 13:47:35 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKzCySH0q=4Ly9tJBiDaW23Mz9Q0j-_qb55CcL2F5fYOA@mail.gmail.com>
+Message-ID: <CAL_JsqKzCySH0q=4Ly9tJBiDaW23Mz9Q0j-_qb55CcL2F5fYOA@mail.gmail.com>
+Subject: Re: [PATCH 1/7] dt-bindings: Add DT bindings documentation for
+ Allwinner Thermal Sensor Controller
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Emmanuel Vadot <manu@freebsd.org>, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Marc, Thomas, Christoph, linux-pci)
-(beginning of thread at [1])
+On Mon, Aug 20, 2018 at 9:07 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Mon, Aug 20, 2018 at 07:41:22AM -0600, Rob Herring wrote:
+> > On Mon, Aug 20, 2018 at 5:17 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > >
+> > > On Sat, Aug 04, 2018 at 09:03:49AM +0200, Emmanuel Vadot wrote:
+> > > > This patch adds documentation for Device-Tree bindings for the Allwinner
+> > > > Thermal Sensor Controller found on the H3, H5 and A64 SoCs
+> > > >
+> > > > Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
+> > >
+> > > I'm not going to merge a binding for a device that doesn't have any
+> > > driver implemented at the moment in Linux.
+> >
+> > I'll take it then. Linux is not the only DT client.
+>
+> Then don't complain if we ever have to break the ABI.
 
-On Thu, Aug 16, 2018 at 09:50:48PM +0200, Heiner Kallweit wrote:
-> On 16.08.2018 21:39, David Miller wrote:
-> > From: Heiner Kallweit <hkallweit1@gmail.com>
-> > Date: Thu, 16 Aug 2018 21:37:31 +0200
-> > 
-> >> On 16.08.2018 21:21, David Miller wrote:
-> >>> From: <jian-hong@endlessm.com>
-> >>> Date: Wed, 15 Aug 2018 14:21:10 +0800
-> >>>
-> >>>> Found the ethernet network on ASUS X441UAR doesn't come back on resume
-> >>>> from suspend when using MSI-X.  The chip is RTL8106e - version 39.
-> >>>
-> >>> Heiner, please take a look at this.
-> >>>
-> >>> You recently disabled MSI-X on RTL8168g for similar reasons.
-> >>>
-> >>> Now that we've seen two chips like this, maybe there is some other
-> >>> problem afoot.
-> >>>
-> >> Thanks for the hint. I saw it already and just contacted Realtek
-> >> whether they are aware of any MSI-X issues with particular chip
-> >> versions. With the chip versions I have access to MSI-X works fine.
-> >>
-> >> There's also the theoretical option that the issues are caused by
-> >> broken BIOS's. But so far only chip versions have been reported
-> >> which are very similar, at least with regard to version number
-> >> (2x VER_40, 1x VER_39). So they may share some buggy component.
-> >>
-> >> Let's see whether Realtek can provide some hint.
-> >> If more chip versions are reported having problems with MSI-X,
-> >> then we could switch to a whitelist or disable MSI-X in general.
-> > 
-> > It could be that we need to reprogram some register(s) on resume,
-> > which normally might not be needed, and that is what is causing the
-> > problem with some chips.
-> > 
-> Indeed. That's what I'm checking with Realtek.
-> In the register list in the r8169 driver there's one entry which
-> seems to indicate that there are MSI-X specific settings.
-> However this register isn't used, and the r8168 vendor driver
-> uses only MSI. And there are no public datasheets.
+My only complaint is when breaking ABIs and not being clear about
+doing so. Otherwise, it is up to platform maintainers to not upset
+their users (including if some of those users are FreeBSD).
 
-Do we have any information about these chip versions in other systems?
-Or other devices using MSI-X in the same ASUS system?  It seems
-possible that there's some PCI core or suspend/resume issue with MSI-X
-and this patch just avoids it without fixing the root cause.
+> We never tested
+> that hardware, never had any code running on it, and it *will* cause
+> some issues. For example, the calibration data have never been used
+> and how they should be represented have never been described, since no
+> one ever actually tried to use it.
 
-It might be useful to have a kernel.org bugzilla with the complete
-dmesg, "sudo lspci -vv" output, and /proc/interrupts contents archived
-for future reference.
+Then perhaps that part of the binding should be omitted for now. But I
+don't see how if this works for FreeBSD how it wouldn't for Linux.
 
-[1] https://lkml.kernel.org/r/20180815062110.16155-1-jian-hong@endlessm.com
+Rob
