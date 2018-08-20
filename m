@@ -2,142 +2,96 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2ECEC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57875C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:17:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82BCC21581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:14:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82BCC21581
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 051D821581
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:17:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CYAIx2+2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 051D821581
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726768AbeHTSaH (ORCPT
+        id S1726653AbeHTSdh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 14:30:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48878 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726021AbeHTSaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 14:30:07 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 855037721E;
-        Mon, 20 Aug 2018 15:14:04 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 27E6F2026D66;
-        Mon, 20 Aug 2018 15:14:04 +0000 (UTC)
-Subject: Re: [PATCH] locking: Remove an insn from spin and write locks
-To:     Matthew Wilcox <willy@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20180820150652.29482-1-willy@infradead.org>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <f24a32be-6a4f-0df8-4289-14adc1046f50@redhat.com>
-Date:   Mon, 20 Aug 2018 11:14:04 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Mon, 20 Aug 2018 14:33:37 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38458 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726021AbeHTSdg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 14:33:36 -0400
+Received: by mail-lf1-f66.google.com with SMTP id i7-v6so1606000lfh.5;
+        Mon, 20 Aug 2018 08:17:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Anh+wFBOWVHH6iB+ZaJYW4xBDPvhY8pwv8o2LOamJ2g=;
+        b=CYAIx2+2iWiQNU0E9oqxYRLpJ0DLM4s1FN7RAp3RxhTxgxWQjv/hTDLv2Vz8GyoLxj
+         SDfBkf/UFJVNsAomAsthnUrBR/gC/lCkvV0ubnIs3OG6DH+Al86Yevplfb9CUWpEqmRw
+         4sNHy+MAhtLgMivPfChG45uulif5HtbLZQTSEkf1HfywlTM0NXXa7h3heSKtplwXQV62
+         R7WR4y/YqhWWQJBg61gStufBJ742wdixl80a30Z1PtUrSJ3HTmbgeo3mijeXx7Q52Lkh
+         iIT31FszAvHDTdlzgQiFaBkLjCBRRj59fQ1DCydpWyaIgDYn0J1Mq8++Hyc8QIvhUvw8
+         U5UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Anh+wFBOWVHH6iB+ZaJYW4xBDPvhY8pwv8o2LOamJ2g=;
+        b=Y7jlOeiR/LRrm7eWBJVsuy8r6EvL3z1GZAKStg8KE7yP6zbJeOGBqrCvZfVxrirQhP
+         EKnmaqfpBfmSTkHG0jw2OWafSaFThj0rMcX5dWQ+YJIGXtxfk4aZf6u8J5qstHqGUqM5
+         7O35dVmEQicAgRw2v8u4YL2kobguWxwmW5yuc6y+WeAs9PrNs/sfay3bTdXM/Kd2wRrB
+         yE1lDoUFztRb82WxfF4qUd/FP/Y6pbtIfxplCeE43B7jssRktu2D9fUD+GqKkvuwBYOk
+         a35CFFyWrLW0KOonN+/Ku+xtc7by3qAB72p1MRNH9keZzKW+6ri8+Dxrbc26iru/ATeF
+         DLVQ==
+X-Gm-Message-State: AOUpUlGH2UHsAzM4v6WL+gda3Pf+gE+lIA0x06Bpw7z+TtQIMHY9hU9l
+        GVqNPbQIKm/oE3EQIKaPaDg6f9Q5
+X-Google-Smtp-Source: AA+uWPxNje1qVmGuP5VXyeK1methNhN0IQqDhXvBaMjLs3P8c6uCNLYcOWDBpLcgLTLBbtFj8m57HQ==
+X-Received: by 2002:a19:e991:: with SMTP id j17-v6mr12773818lfk.112.1534778252387;
+        Mon, 20 Aug 2018 08:17:32 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id r73-v6sm1655970ljb.16.2018.08.20.08.17.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 Aug 2018 08:17:31 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1frlvv-0000OV-LI; Mon, 20 Aug 2018 17:17:31 +0200
+Date:   Mon, 20 Aug 2018 17:17:31 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Keerthy <j-keerthy@ti.com>
+Cc:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, johan@kernel.org
+Subject: Re: [PATCH v6 2/2] rtc: omap: Cut down the shutdown time from 2
+ seconds to 1 sec
+Message-ID: <20180820151731.GD14967@localhost>
+References: <1534396140-1161-1-git-send-email-j-keerthy@ti.com>
+ <1534396140-1161-2-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20180820150652.29482-1-willy@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 20 Aug 2018 15:14:04 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 20 Aug 2018 15:14:04 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1534396140-1161-2-git-send-email-j-keerthy@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/20/2018 11:06 AM, Matthew Wilcox wrote:
-> Both spin locks and write locks currently do:
->
->  f0 0f b1 17             lock cmpxchg %edx,(%rdi)
->  85 c0                   test   %eax,%eax
->  75 05                   jne    [slowpath]
->
-> This 'test' insn is superfluous; the cmpxchg insn sets the Z flag
-> appropriately.  Peter pointed out that using atomic_try_cmpxchg()
-> will let the compiler know this is true.  Comparing before/after
-> disassemblies show the only effect is to remove this insn.
->
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Matthew Wilcox <willy@infradead.org>
+On Thu, Aug 16, 2018 at 10:39:00AM +0530, Keerthy wrote:
+> Cut down the shutdown time from 2 seconds to 1 sec. In case of roll
+> over try again.
+> 
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
 > ---
->  include/asm-generic/qrwlock.h   | 6 +++---
->  include/asm-generic/qspinlock.h | 9 +++++----
->  2 files changed, 8 insertions(+), 7 deletions(-)
->
-> diff --git a/include/asm-generic/qrwlock.h b/include/asm-generic/qrwlock.h
-> index 0f7062bd55e5..9a1beb7ad0de 100644
-> --- a/include/asm-generic/qrwlock.h
-> +++ b/include/asm-generic/qrwlock.h
-> @@ -71,8 +71,7 @@ static inline int queued_write_trylock(struct qrwlock *lock)
->  	if (unlikely(cnts))
->  		return 0;
->  
-> -	return likely(atomic_cmpxchg_acquire(&lock->cnts,
-> -					     cnts, cnts | _QW_LOCKED) == cnts);
-> +	return likely(atomic_try_cmpxchg(&lock->cnts, &cnts, _QW_LOCKED));
->  }
->  /**
->   * queued_read_lock - acquire read lock of a queue rwlock
-> @@ -96,8 +95,9 @@ static inline void queued_read_lock(struct qrwlock *lock)
->   */
->  static inline void queued_write_lock(struct qrwlock *lock)
->  {
-> +	u32 cnts = 0;
->  	/* Optimize for the unfair lock case where the fair flag is 0. */
-> -	if (atomic_cmpxchg_acquire(&lock->cnts, 0, _QW_LOCKED) == 0)
-> +	if (atomic_try_cmpxchg_acquire(&lock->cnts, &cnts, _QW_LOCKED))
->  		return;
->  
->  	queued_write_lock_slowpath(lock);
-> diff --git a/include/asm-generic/qspinlock.h b/include/asm-generic/qspinlock.h
-> index 95263e943fcc..d125f0c0b3d9 100644
-> --- a/include/asm-generic/qspinlock.h
-> +++ b/include/asm-generic/qspinlock.h
-> @@ -68,8 +68,10 @@ int queued_spin_is_contended(const struct qspinlock *lock)
->   */
->  static __always_inline int queued_spin_trylock(struct qspinlock *lock)
->  {
-> +	u32 val = 0;
-> +
->  	if (!atomic_read(&lock->val) &&
-> -	   (atomic_cmpxchg_acquire(&lock->val, 0, _Q_LOCKED_VAL) == 0))
-> +	    (atomic_try_cmpxchg(&lock->val, &val, _Q_LOCKED_VAL)))
 
-Should you keep the _acquire suffix?
+You forgot to include a changelog, but it looks like you've addressed
+the issues with v5, and this now looks good to me:
 
->  		return 1;
->  	return 0;
->  }
-> @@ -82,10 +84,9 @@ extern void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val);
->   */
->  static __always_inline void queued_spin_lock(struct qspinlock *lock)
->  {
-> -	u32 val;
-> +	u32 val = 0;
->  
-> -	val = atomic_cmpxchg_acquire(&lock->val, 0, _Q_LOCKED_VAL);
-> -	if (likely(val == 0))
-> +	if (likely(atomic_try_cmpxchg(&lock->val, &val, _Q_LOCKED_VAL)))
->  		return;
->  	queued_spin_lock_slowpath(lock, val);
->  }
+Reviewed-by: Johan Hovold <johan@kernel.org>
 
-Ditto.
-
-BTW, qspinlock and qrwlock are now also used by AArch64, mips and sparc.
-Have you tried to see what the effect will be for those architecture?
-
--Longman
-
+Johan
