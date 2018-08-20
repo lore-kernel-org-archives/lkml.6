@@ -2,97 +2,379 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7DAC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 05:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F5FC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 05:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 449B321473
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 05:32:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nl+DZ+H6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 449B321473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 64B5F2152D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 05:42:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64B5F2152D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbeHTIp7 (ORCPT
+        id S1726476AbeHTI4M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 04:45:59 -0400
-Received: from mail-yb0-f180.google.com ([209.85.213.180]:34978 "EHLO
-        mail-yb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbeHTIp6 (ORCPT
+        Mon, 20 Aug 2018 04:56:12 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38100 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726042AbeHTI4M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 04:45:58 -0400
-Received: by mail-yb0-f180.google.com with SMTP id o17-v6so4152435yba.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Aug 2018 22:31:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=jm9CuLkMEOV/PYXkQGMa+owebHiME2v/oGmdWcKd0yM=;
-        b=nl+DZ+H6UkRmmCKqupvTgotgh762sNoBQ5lzxNCTOCsc+QjaXZlfwchgMof08WV2j5
-         DCCv+Qet7ymfd5EvLCVtM0QKkcEh+tWR/ZnwyJiSLcaBUaSFKEEpz/WVF+1ujN7VeqnO
-         7AZw8UJTVPWfnXZq39y2WbcaT9poTGgegErbM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=jm9CuLkMEOV/PYXkQGMa+owebHiME2v/oGmdWcKd0yM=;
-        b=LjOQdDPFKqztlcnl86D3zdG48daXmMLxDbkGUD67GVQStXRAwGox+WamxZE9EZ8mNU
-         T0aTFHBKxfGtwT+DeIHC6Mw++2lg8ku3aKOcaMqOB+Ze5fRfEul4mGn/Kf0ysXJntVwa
-         IQcsg3sHtOQgYMad+i+Q1qdJSWqYhm+U8EfQ70aOHBLXHxjmQM2ohXrenOutaDZLPT/S
-         oPF1ivoBtvPMGQg3vbmsKfEeQjQ0gCzS66y/m9u819HOaFfqN4ipEe0CcOzOscoTYzgi
-         s+3OCFKE0l2mTRo4WQWat6GSrEmnoh5UOLwdXfm9OnUiRw+DCQeLrbwFkDxLZw9RpALZ
-         OH0g==
-X-Gm-Message-State: AOUpUlEnYiyGcOswNwXb9bSGJNtguKQNUlUa3Bl84Y/KzHu6tIWBuK0O
-        u7OrRamVciS0gVxdmQbUE3/HdFqsdw4=
-X-Google-Smtp-Source: AA+uWPxT99PEAQixoNPjhwY5Akd/WgPrpN1Eu5BGkwaCoAMsDOud/FJp+g34vYWWc36BrfiB0jxHBw==
-X-Received: by 2002:a25:3554:: with SMTP id c81-v6mr25098281yba.179.1534743106789;
-        Sun, 19 Aug 2018 22:31:46 -0700 (PDT)
-Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
-        by smtp.gmail.com with ESMTPSA id c69-v6sm1679476ywb.11.2018.08.19.22.31.45
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 19 Aug 2018 22:31:45 -0700 (PDT)
-Received: by mail-yw1-f52.google.com with SMTP id w76-v6so6423834ywg.4
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Aug 2018 22:31:45 -0700 (PDT)
-X-Received: by 2002:a81:357:: with SMTP id 84-v6mr24784862ywd.47.1534743105133;
- Sun, 19 Aug 2018 22:31:45 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:aa31:0:0:0:0:0 with HTTP; Sun, 19 Aug 2018 22:31:44
- -0700 (PDT)
-In-Reply-To: <20180820005204.GB31827@shao2-debian>
-References: <20180820005204.GB31827@shao2-debian>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sun, 19 Aug 2018 22:31:44 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jLHq_i-w2Tc75hkzV1VMO45vGyxsP=+670PLTiGEG7Acg@mail.gmail.com>
-Message-ID: <CAGXu5jLHq_i-w2Tc75hkzV1VMO45vGyxsP=+670PLTiGEG7Acg@mail.gmail.com>
-Subject: Re: [LKP] ab9ee8e38b [ 22.890412] WARNING: CPU: 0 PID: 632 at
- mm/usercopy.c:81 usercopy_warn
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     David Windsor <dave@nullcore.net>, linux-sctp@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, LKP <lkp@01.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 20 Aug 2018 04:56:12 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7K5cbji059990
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 01:41:58 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kymhkw9tq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 01:41:58 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
+        Sun, 19 Aug 2018 23:41:57 -0600
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 19 Aug 2018 23:41:54 -0600
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7K5frQp197046
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 19 Aug 2018 22:41:53 -0700
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0DEE46A047;
+        Sun, 19 Aug 2018 23:41:53 -0600 (MDT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 76D5E6A04D;
+        Sun, 19 Aug 2018 23:41:52 -0600 (MDT)
+Received: from sofia.ibm.com (unknown [9.124.35.106])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Sun, 19 Aug 2018 23:41:52 -0600 (MDT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 119C72E3CF4; Mon, 20 Aug 2018 11:11:49 +0530 (IST)
+From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        Anton Blanchard <anton@samba.org>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Subject: [PATCH v7 2/2] powerpc: Use cpu_smallcore_sibling_mask at SMT level on bigcores
+Date:   Mon, 20 Aug 2018 11:11:44 +0530
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1534743704-4760-1-git-send-email-ego@linux.vnet.ibm.com>
+References: <1534743704-4760-1-git-send-email-ego@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18082005-0012-0000-0000-000016A19751
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009577; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01076107; UDB=6.00554704; IPR=6.00856076;
+ MB=3.00022818; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-20 05:41:56
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082005-0013-0000-0000-0000541A633F
+Message-Id: <1534743704-4760-3-git-send-email-ego@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-20_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808200061
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 19, 2018 at 5:52 PM, kernel test robot
-<rong.a.chen@intel.com> wrote:
-> [   22.855033] Bad or missing usercopy whitelist? Kernel memory overwrite attempt detected to SLUB object 'SCTP' (offset 1332, size 4)!
+From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
 
-For this .config, pahole reports 1332 as the offset of the whitelist,
-so I'm not sure what's happening here. It's as if no whitelist was
-used when building the cache?
+Each of the SMT4 cores forming a big-core are more or less independent
+units. Thus when multiple tasks are scheduled to run on the fused
+core, we get the best performance when the tasks are spread across the
+pair of SMT4 cores.
 
-I'm still trying to build a reproducers...
+This patch achieves this by setting the SMT level mask to correspond
+to the smallcore sibling mask on big-core systems. This patch also
+ensures that while checked for shared-caches on big-core system, we
+use the smallcore_sibling_mask to compare with the l2_cache_mask.
+This ensure that the CACHE level sched-domain is created, whose groups
+correspond to the threads of the big-core.
 
--Kees
+With this patch, the SMT sched-domain with SMT=8,4,2 on big-core
+systems are as follows:
 
+1) ppc64_cpu --smt=8
+
+ CPU0 attaching sched-domain(s):
+  domain-0: span=0,2,4,6 level=SMT
+   groups: 0:{ span=0 cap=294 }, 2:{ span=2 cap=294 },
+           4:{ span=4 cap=294 }, 6:{ span=6 cap=294 }
+ CPU1 attaching sched-domain(s):
+  domain-0: span=1,3,5,7 level=SMT
+   groups: 1:{ span=1 cap=294 }, 3:{ span=3 cap=294 },
+           5:{ span=5 cap=294 }, 7:{ span=7 cap=294 }
+
+2) ppc64_cpu --smt=4
+
+ CPU0 attaching sched-domain(s):
+  domain-0: span=0,2 level=SMT
+   groups: 0:{ span=0 cap=589 }, 2:{ span=2 cap=589 }
+ CPU1 attaching sched-domain(s):
+  domain-0: span=1,3 level=SMT
+   groups: 1:{ span=1 cap=589 }, 3:{ span=3 cap=589 }
+
+3) ppc64_cpu --smt=2
+   SMT domain is a trivial domain consisting of just
+   1 CPU. Hence this domain gets collapsed leaving only CACHE, DIE and
+   NUMA domains.
+
+Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+---
+ arch/powerpc/kernel/smp.c | 136 +++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 134 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+index 4794d6b..00f60a8 100644
+--- a/arch/powerpc/kernel/smp.c
++++ b/arch/powerpc/kernel/smp.c
+@@ -76,6 +76,7 @@
+ struct thread_info *secondary_ti;
+ 
+ DEFINE_PER_CPU(cpumask_var_t, cpu_sibling_map);
++DEFINE_PER_CPU(cpumask_var_t, cpu_smallcore_map);
+ DEFINE_PER_CPU(cpumask_var_t, cpu_l2_cache_map);
+ DEFINE_PER_CPU(cpumask_var_t, cpu_core_map);
+ 
+@@ -83,6 +84,23 @@
+ EXPORT_PER_CPU_SYMBOL(cpu_l2_cache_map);
+ EXPORT_PER_CPU_SYMBOL(cpu_core_map);
+ 
++/*
++ * On big-cores system, cpu_l1_cache_map for each CPU corresponds to
++ * the set its siblings that share the l1-cache. This map is
++ * initialized the first time the CPU comes online, and subsequently
++ * remains unchanged.
++ *
++ * parse_success records if there has been an error in parsing the
++ * "ibm,thread-groups" property which tells us which set of siblings
++ * share the l1-cache with the CPU.
++ */
++struct small_core_sibling {
++	cpumask_var_t cpu_l1_cache_map;
++	bool parse_success;
++};
++
++DEFINE_PER_CPU(struct small_core_sibling, small_core);
++
+ /* SMP operations for this machine */
+ struct smp_ops_t *smp_ops;
+ 
+@@ -91,6 +109,11 @@
+ 
+ int smt_enabled_at_boot = 1;
+ 
++static inline struct cpumask *cpu_smallcore_mask(int cpu)
++{
++	return per_cpu(cpu_smallcore_map, cpu);
++}
++
+ /*
+  * Returns 1 if the specified cpu should be brought up during boot.
+  * Used to inhibit booting threads if they've been disabled or
+@@ -670,6 +693,18 @@ static void set_cpus_unrelated(int i, int j,
+ }
+ #endif
+ 
++static inline void alloc_small_core_data(int cpu)
++{
++	struct small_core_sibling *this_small_core;
++
++	zalloc_cpumask_var_node(&per_cpu(cpu_smallcore_map, cpu),
++				GFP_KERNEL, cpu_to_node(cpu));
++
++	this_small_core = &per_cpu(small_core, cpu);
++	zalloc_cpumask_var_node(&this_small_core->cpu_l1_cache_map,
++				GFP_KERNEL, cpu_to_node(cpu));
++}
++
+ void __init smp_prepare_cpus(unsigned int max_cpus)
+ {
+ 	unsigned int cpu;
+@@ -701,12 +736,19 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
+ 			set_cpu_numa_mem(cpu,
+ 				local_memory_node(numa_cpu_lookup_table[cpu]));
+ 		}
++
++		if (has_big_cores)
++			alloc_small_core_data(cpu);
+ 	}
+ 
+ 	/* Init the cpumasks so the boot CPU is related to itself */
+ 	cpumask_set_cpu(boot_cpuid, cpu_sibling_mask(boot_cpuid));
+ 	cpumask_set_cpu(boot_cpuid, cpu_l2_cache_mask(boot_cpuid));
+ 	cpumask_set_cpu(boot_cpuid, cpu_core_mask(boot_cpuid));
++	if (has_big_cores) {
++		cpumask_set_cpu(boot_cpuid,
++				cpu_smallcore_mask(boot_cpuid));
++	}
+ 
+ 	if (smp_ops && smp_ops->probe)
+ 		smp_ops->probe();
+@@ -991,10 +1033,83 @@ static void remove_cpu_from_masks(int cpu)
+ 		set_cpus_unrelated(cpu, i, cpu_core_mask);
+ 		set_cpus_unrelated(cpu, i, cpu_l2_cache_mask);
+ 		set_cpus_unrelated(cpu, i, cpu_sibling_mask);
++		if (has_big_cores)
++			set_cpus_unrelated(cpu, i, cpu_smallcore_mask);
+ 	}
+ }
+ #endif
+ 
++static inline void init_small_core_data(int cpu,
++					struct small_core_sibling *cpu_sc)
++{
++	struct device_node *dn;
++	int first_thread = cpu_first_thread_sibling(cpu);
++	int i, cpu_group_start = -1;
++	struct thread_groups tg;
++
++	cpumask_set_cpu(cpu, cpu_sc->cpu_l1_cache_map);
++
++	dn = of_get_cpu_node(cpu, NULL);
++	if (unlikely(!dn)) {
++		WARN_ON(1);
++		goto out;
++	}
++
++	if (unlikely(parse_thread_groups(dn, &tg,
++					 THREAD_GROUP_SHARE_L1))) {
++		WARN_ON(1);
++		goto out;
++	}
++
++	cpu_group_start = get_cpu_thread_group_start(cpu, &tg);
++
++	if (unlikely(cpu_group_start == -1)) {
++		WARN_ON(1);
++		goto out;
++	}
++
++	for (i = first_thread; i < first_thread + threads_per_core; i++) {
++		int i_group_start = get_cpu_thread_group_start(i, &tg);
++
++		if (unlikely(i_group_start == -1)) {
++			WARN_ON(1);
++			goto out;
++		}
++
++		if (i_group_start == cpu_group_start)
++			cpumask_set_cpu(i, cpu_sc->cpu_l1_cache_map);
++	}
++
++	cpu_sc->parse_success = true;
++out:
++	of_node_put(dn);
++}
++
++static inline void add_cpu_to_smallcore_masks(int cpu)
++{
++	struct small_core_sibling *this_small_core = &per_cpu(small_core, cpu);
++	int i, first_thread = cpu_first_thread_sibling(cpu);
++
++	if (!has_big_cores)
++		return;
++
++	if (unlikely(cpumask_empty(this_small_core->cpu_l1_cache_map)))
++		init_small_core_data(cpu, this_small_core);
++
++	cpumask_set_cpu(cpu, cpu_smallcore_mask(cpu));
++
++	for (i = first_thread; i < first_thread + threads_per_core; i++) {
++		if (unlikely(!this_small_core->parse_success)) {
++			/* Fallback to siblings of the big-core */
++			set_cpus_related(i, cpu, cpu_smallcore_mask);
++			continue;
++		}
++
++		if (cpumask_test_cpu(i, this_small_core->cpu_l1_cache_map))
++			set_cpus_related(i, cpu, cpu_smallcore_mask);
++	}
++}
++
+ static void add_cpu_to_masks(int cpu)
+ {
+ 	int first_thread = cpu_first_thread_sibling(cpu);
+@@ -1006,11 +1121,11 @@ static void add_cpu_to_masks(int cpu)
+ 	 * add it to it's own thread sibling mask.
+ 	 */
+ 	cpumask_set_cpu(cpu, cpu_sibling_mask(cpu));
+-
+ 	for (i = first_thread; i < first_thread + threads_per_core; i++)
+ 		if (cpu_online(i))
+ 			set_cpus_related(i, cpu, cpu_sibling_mask);
+ 
++	add_cpu_to_smallcore_masks(cpu);
+ 	/*
+ 	 * Copy the thread sibling mask into the cache sibling mask
+ 	 * and mark any CPUs that share an L2 with this CPU.
+@@ -1040,6 +1155,7 @@ static void add_cpu_to_masks(int cpu)
+ void start_secondary(void *unused)
+ {
+ 	unsigned int cpu = smp_processor_id();
++	struct cpumask *(*sibling_mask)(int) = cpu_sibling_mask;
+ 
+ 	mmgrab(&init_mm);
+ 	current->active_mm = &init_mm;
+@@ -1065,11 +1181,13 @@ void start_secondary(void *unused)
+ 	/* Update topology CPU masks */
+ 	add_cpu_to_masks(cpu);
+ 
++	if (has_big_cores)
++		sibling_mask = cpu_smallcore_mask;
+ 	/*
+ 	 * Check for any shared caches. Note that this must be done on a
+ 	 * per-core basis because one core in the pair might be disabled.
+ 	 */
+-	if (!cpumask_equal(cpu_l2_cache_mask(cpu), cpu_sibling_mask(cpu)))
++	if (!cpumask_equal(cpu_l2_cache_mask(cpu), sibling_mask(cpu)))
+ 		shared_caches = true;
+ 
+ 	set_numa_node(numa_cpu_lookup_table[cpu]);
+@@ -1136,6 +1254,13 @@ static const struct cpumask *shared_cache_mask(int cpu)
+ 	return cpu_l2_cache_mask(cpu);
+ }
+ 
++#ifdef CONFIG_SCHED_SMT
++static const struct cpumask *smallcore_smt_mask(int cpu)
++{
++	return cpu_smallcore_mask(cpu);
++}
++#endif
++
+ static struct sched_domain_topology_level power9_topology[] = {
+ #ifdef CONFIG_SCHED_SMT
+ 	{ cpu_smt_mask, powerpc_smt_flags, SD_INIT_NAME(SMT) },
+@@ -1158,6 +1283,13 @@ void __init smp_cpus_done(unsigned int max_cpus)
+ 
+ 	dump_numa_cpu_topology();
+ 
++#ifdef CONFIG_SCHED_SMT
++	if (has_big_cores) {
++		pr_info("Using small cores at SMT level\n");
++		power9_topology[0].mask = smallcore_smt_mask;
++		powerpc_topology[0].mask = smallcore_smt_mask;
++	}
++#endif
+ 	/*
+ 	 * If any CPU detects that it's sharing a cache with another CPU then
+ 	 * use the deeper topology that is aware of this sharing.
 -- 
-Kees Cook
-Pixel Security
+1.9.4
+
