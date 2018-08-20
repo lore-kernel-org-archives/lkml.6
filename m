@@ -2,115 +2,70 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A7C0C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E494CC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC44421534
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:17:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="pq5AJPmI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC44421534
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id A7328216C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:18:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7328216C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbeHTQcy (ORCPT
+        id S1727256AbeHTQdr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 12:32:54 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:49814 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbeHTQcy (ORCPT
+        Mon, 20 Aug 2018 12:33:47 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:55402 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726632AbeHTQdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 12:32:54 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7KDDdYx193379;
-        Mon, 20 Aug 2018 13:17:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=10utMaDlP3wRVWgdgnmhN6IsAwm3NVoWIvDwnatIHZc=;
- b=pq5AJPmIsh62LLOHfEdpk9zOl0cFYMD/h6yhr7ehO4g+O4LlNEILLuPTQL887hg6F4lu
- 6V9T34+ALgk/BVf3xvW8U3679C615FwoW28D2Ue71GJjY7uWDXwbFhKf7BVsf8ps99rk
- b39zYqHspkXeZfYigLjQ3dqgklEzrq/i/pb+2xxYJctE6V+gMQEmwYpOodzna8fVBEKM
- fsscvrSKKCO8FRh2F35ZOXsbpUTXWKFOsw3N5aCr1injkZjlVGQ777LEOYXTVphuSHPL
- TC8MgL0Ba+IfNwUa3c4Pv3PBnGcKRTE/h37ZUiAex+AYjXlf+N04Tahu/6GYPwDTIyi0 hA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2kxc3qe5xs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Aug 2018 13:17:13 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7KDHB63029024
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Aug 2018 13:17:12 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7KDHBno021588;
-        Mon, 20 Aug 2018 13:17:11 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 20 Aug 2018 06:17:10 -0700
-Date:   Mon, 20 Aug 2018 16:17:03 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Bhaskar Singh <bhaskar.kernel@gmail.com>
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8188eu: Removed code valid for 5GHz
-Message-ID: <20180820131703.jjib3ehmzs57dfni@mwanda>
-References: <20180817074729.GA16204@Gentoo-PC>
- <20180820095042.pgucu7e3i3aiu3lb@mwanda>
- <20180820125539.GA1597@Gentoo-PC>
+        Mon, 20 Aug 2018 12:33:47 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1frk4M-0005le-IK; Mon, 20 Aug 2018 15:18:06 +0200
+Date:   Mon, 20 Aug 2018 15:18:06 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Juergen Gross <jgross@suse.com>
+cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, boris.ostrovsky@oracle.com, hpa@zytor.com,
+        mingo@redhat.com, pasha.tatashin@oracle.com
+Subject: Re: [PATCH] x86/xen: enable early use of set_fixmap in 32-bit Xen
+ PV guest
+In-Reply-To: <20180817134016.19957-1-jgross@suse.com>
+Message-ID: <alpine.DEB.2.21.1808201514100.1551@nanos.tec.linutronix.de>
+References: <20180817134016.19957-1-jgross@suse.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180820125539.GA1597@Gentoo-PC>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8990 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=630
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808200145
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 06:25:39PM +0530, Bhaskar Singh wrote:
-> On Mon, Aug 20, 2018 at 12:50:43PM +0300, Dan Carpenter wrote:
-> > On Fri, Aug 17, 2018 at 01:17:29PM +0530, Bhaskar Singh wrote:
-> > > This patch removed code which are valid for IEEE 802.11a i.e. 5GHz.
-> > 
-> > I would be uncomfortable accepting this kind of change without an Ack
-> > from the maintainers.
-> > 
-> > The messes up the indenting so we can accept it anyway.
-> > 
-> > regards,
-> > dan carpenter
-> > 
+On Fri, 17 Aug 2018, Juergen Gross wrote:
+
+> Commit 7b25b9cb0dad83 ("x86/xen/time: Initialize pv xen time in
+> init_hypervisor_platform()") moved the mapping of the shared info area
+> before pagetable_init(). This breaks booting as 32-bit PV guest as the
+> use of set_fixmap isn't possible at this time on 32-bit.
 > 
-> "find and remove remaining code valid only for 5 HGz. Most of the
-> obvious ones have been removed, but things like channel > 14 still
-> exist."
-> With due respect, I want to say that, the above thing is mention on the
-> TODO list, please correct if I intrepreted that statement wrongly.
+> This can be worked around by populating the needed PMD on 32-bit
+> kernel earlier.
 > 
+> In order not to reimplement populate_extra_pte() using extend_brk()
+> for allocating new page tables extend alloc_low_pages() to do that in
+> case the early page table pool is not yet available.
+> 
+> Fixes: 7b25b9cb0dad83
 
-Yeah.  I think you interpreted it correctly.  That seems fine then.
-When I realized that we weren't going to merge the patch then I stopped
-reviewing without looking at the TODO.
+  ^^^ That's missing the subject text
 
-When you resend the patch, please quote all the relevant information
-from the TODO so that we don't have to look for it:
+Other than that:
 
-    This patch removes support for channels > 14.  That is from the
-    TODO which says:
+Reviewd-by: Thomas Gleixner <tglx@linutronix.de>
 
-	- find and remove remaining code valid only for 5 HGz. Most of
-	  the obvious ones have been removed, but things like channel >
-	  14 still exist.
-
-regards,
-dan carpenter
