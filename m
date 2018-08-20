@@ -2,292 +2,438 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5637AC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 20:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 767D4C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 20:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6BEF20C0F
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 20:15:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6BEF20C0F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id E5D9A20C0F
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 20:16:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5D9A20C0F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbeHTXcc (ORCPT
+        id S1726641AbeHTXda (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 19:32:32 -0400
-Received: from smtprelay0121.hostedemail.com ([216.40.44.121]:37383 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726089AbeHTXcc (ORCPT
+        Mon, 20 Aug 2018 19:33:30 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45744 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726585AbeHTXda (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 19:32:32 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 805FE18041932;
-        Mon, 20 Aug 2018 20:15:30 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: scent81_12b0c73fb3f00
-X-Filterd-Recvd-Size: 8568
-Received: from joe-laptop.perches.com (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 20 Aug 2018 20:15:28 +0000 (UTC)
-From:   Joe Perches <joe@perches.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rik van Riel <riel@surriel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Subject: [PATCH] Raise the minimum required gcc version to 4.6
-Date:   Mon, 20 Aug 2018 13:15:26 -0700
-Message-Id: <da5620dc7a2b9d33f2a0dd7f4dc3afdab5a66f26.1534795606.git.joe@perches.com>
-X-Mailer: git-send-email 2.15.0
+        Mon, 20 Aug 2018 19:33:30 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7KK8Z8d081307
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 16:16:28 -0400
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m00bmsvr9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 16:16:28 -0400
+Received: from localhost
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Mon, 20 Aug 2018 14:16:27 -0600
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 20 Aug 2018 14:16:23 -0600
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7KKGKhF9110012
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 20 Aug 2018 13:16:20 -0700
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2A92D6A04D;
+        Mon, 20 Aug 2018 14:16:20 -0600 (MDT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 17EF66A047;
+        Mon, 20 Aug 2018 14:16:15 -0600 (MDT)
+Received: from oc8043147753.ibm.com (unknown [9.80.233.6])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 20 Aug 2018 14:16:15 -0600 (MDT)
+Subject: Re: [PATCH v9 22/22] s390: doc: detailed specifications for AP
+ virtualization
+To:     Cornelia Huck <cohuck@redhat.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-23-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180820180359.38cc4af3.cohuck@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Mon, 20 Aug 2018 16:16:15 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180820180359.38cc4af3.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18082020-0036-0000-0000-00000A2669D9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009580; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01076397; UDB=6.00554879; IPR=6.00856367;
+ MB=3.00022832; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-20 20:16:26
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082020-0037-0000-0000-000048A6F1B2
+Message-Id: <a305a39b-1196-ae64-97fd-f970387d82d4@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-20_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808200207
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Various architectures fail to build properly with older versions
-of the gcc compiler.
+On 08/20/2018 12:03 PM, Cornelia Huck wrote:
+> On Mon, 13 Aug 2018 17:48:19 -0400
+> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+>
+>> From: Tony Krowiak <akrowiak@linux.ibm.com>
+>>
+>> This patch provides documentation describing the AP architecture and
+>> design concepts behind the virtualization of AP devices. It also
+>> includes an example of how to configure AP devices for exclusive
+>> use of KVM guests.
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>> ---
+>>   Documentation/s390/vfio-ap.txt |  615 ++++++++++++++++++++++++++++++++++++++++
+>>   MAINTAINERS                    |    1 +
+>>   2 files changed, 616 insertions(+), 0 deletions(-)
+>>   create mode 100644 Documentation/s390/vfio-ap.txt
+>>
+>> +AP Architectural Overview:
+>> +=========================
+>> +To facilitate the comprehension of the design, let's start with some
+>> +definitions:
+>> +
+>> +* AP adapter
+>> +
+>> +  An AP adapter is an IBM Z adapter card that can perform cryptographic
+>> +  functions. There can be from 0 to 256 adapters assigned to an LPAR. Adapters
+>> +  assigned to the LPAR in which a linux host is running will be available to
+>> +  the linux host. Each adapter is identified by a number from 0 to 255. When
+>> +  installed, an AP adapter is accessed by AP instructions executed by any CPU.
+>> +
+>> +  The AP adapter cards are assigned to a given LPAR via the system's Activation
+>> +  Profile which can be edited via the HMC. When the system is IPL'd, the AP bus
+> There's lots of s390 jargon in here... but one hopes that someone
+> trying to understand AP is already familiar with the basics...
 
-An example from Guenter Roeck via this thread:
-https://lore.kernel.org/lkml/20180814170904.GA12768@roeck-us.net/
+I'm not quite sure how one can describe s390-specific devices that can 
+be installed
+only on an s390 system without using s390 jargon. I would think that one 
+who is
+administering a linux host or guest running on an s390 system would have 
+some
+basic knowledge of s390. If you have any suggestions, I'd be happy to 
+entertain them.
 
-----------------------
-In file included from ./include/linux/mm.h:17:0,
-                 from ./include/linux/pid_namespace.h:7,
-                 from ./include/linux/ptrace.h:10,
-                 from arch/openrisc/kernel/asm-offsets.c:32:
-./include/linux/mm_types.h:497:16: error: flexible array member in otherwise empty struct
+>
+>> +  module is loaded and detects the AP adapter cards assigned to the LPAR. The AP
+>> +  bus creates a sysfs device for each adapter as they are detected. For example,
+>> +  if AP adapters 4 and 10 (0x0a) are assigned to the LPAR, the AP bus will
+>> +  create the following sysfs entries:
+>> +
+>> +    /sys/devices/ap/card04
+>> +    /sys/devices/ap/card0a
+>> +
+>> +  Symbolic links to these devices will also be created in the AP bus devices
+>> +  sub-directory:
+>> +
+>> +    /sys/bus/ap/devices/[card04]
+>> +    /sys/bus/ap/devices/[card04]
+>> +
+>> +* AP domain
+>> +
+>> +  An adapter is partitioned into domains. Each domain can be thought of as
+>> +  a set of hardware registers for processing AP instructions. An adapter can
+>> +  hold up to 256 domains. Each domain is identified by a number from 0 to 255.
+>> +  Domains can be further classified into two types:
+>> +
+>> +    * Usage domains are domains that can be accessed directly to process AP
+>> +      commands.
+>> +
+>> +    * Control domains are domains that are accessed indirectly by AP
+>> +      commands sent to a usage domain to control or change the domain; for
+>> +      example, to set a secure private key for the domain.
+>> +
+>> +  The AP usage and control domains are assigned to a given LPAR via the system's
+>> +  Activation Profile which can be edited via the HMC. When the system is IPL'd,
+>> +  the AP bus module is loaded and detects the AP usage and control domains
+>> +  assigned to the LPAR. The domain number of each usage domain will be coupled
+>> +  with the adapter number of each AP adapter assigned to the LPAR to identify
+>> +  the AP queues (see AP Queue section below). The domain number of each control
+>> +  domain will be represented in a bitmask and stored in a sysfs file
+>> +  /sys/bus/ap/ap_control_domain_mask created by the bus. The bits in the mask,
+>> +  from most to least significant bit, correspond to domains 0-255.
+>> +
+>> +  A domain may be assigned to a system as both a usage and control domain, or
+>> +  as a control domain only. Consequently, all domains assigned as both a usage
+>> +  and control domain can both process AP commands as well as be changed by an AP
+>> +  command sent to any usage domain assigned to the same system. Domains assigned
+>> +  only as control domains can not process AP commands but can be changed by AP
+>> +  commands sent to any usage domain assigned to the system.
+> I'm struggling a bit with this paragraph. Does that mean that you can
+> use control domains as the target of an instruction changing
+> configuration on the system? (Or on the VM, if they are listed in the
+> relevant control block?)
 
-This is just an example with gcc 4.5.1 for or32. I have seen the problem
-with gcc 4.4 (for unicore32) as well.
-----------------------
+Only usage domains can be the target of an AP command request message. 
+If an AP message
+sent to a usage domain is a request to change a domain, the number of 
+the domain to
+be changed will be contained in the command request message. That domain 
+number
+must be configured as a control domain or the AP command will fail.
 
-So update the minimum required version of gcc to 4.6.
+The fact you are struggling with understanding the last paragraph leads 
+me to believe
+it should probably be rewritten, or eliminated. Allow me to reconsider 
+this section.
 
-Miscellanea:
+>
+>> +
+>> +* AP Queue
+>> +
+>> +  An AP queue is the means by which an AP command-request message is sent to a
+>> +  usage domain inside a specific adapter. An AP queue is identified by a tuple
+>> +  comprised of an AP adapter ID (APID) and an AP queue index (APQI). The
+>> +  APQI corresponds to a given usage domain number within the adapter. This tuple
+>> +  forms an AP Queue Number (APQN) uniquely identifying an AP queue. AP
+>> +  instructions include a field containing the APQN to identify the AP queue to
+>> +  which the AP command-request message is to be sent for processing.
+>> +
+>> +  The AP bus will create a sysfs device for each APQN that can be derived from
+>> +  the cross product of the AP adapter and usage domain numbers detected when the
+>> +  AP bus module is loaded. For example, if adapters 4 and 10 (0x0a) and usage
+>> +  domains 6 and 71 (0x47) are assigned to the LPAR, the AP bus will create the
+>> +  following sysfs entries:
+>> +
+>> +    /sys/devices/ap/card04/04.0006
+>> +    /sys/devices/ap/card04/04.0047
+>> +    /sys/devices/ap/card0a/0a.0006
+>> +    /sys/devices/ap/card0a/0a.0047
+>> +
+>> +  The following symbolic links to these devices will be created in the AP bus
+>> +  devices subdirectory:
+>> +
+>> +    /sys/bus/ap/devices/[04.0006]
+>> +    /sys/bus/ap/devices/[04.0047]
+>> +    /sys/bus/ap/devices/[0a.0006]
+>> +    /sys/bus/ap/devices/[0a.0047]
+>> +
+>> +* AP Instructions:
+>> +
+>> +  There are three AP instructions:
+>> +
+>> +  * NQAP: to enqueue an AP command-request message to a queue
+>> +  * DQAP: to dequeue an AP command-reply message from a queue
+>> +  * PQAP: to administer the queues
+> So, NQAP/DQAP need usage domains, while PQAP needs a control domain? Or
+> is it that all of them need usage domains, but PQAP can target a control
+> domain as well?
 
-o Update Documentation/process/changes.rst
-o Remove and consolidate version test blocks in compiler-gcc.h
-  for versions lower than 4.6
+All AP instructions - the lone exception being the PQAP(QCI) subfunction -
+identify the usage domain that is the target of the instruction. I think
+using the term 'control domain' is the source of much confusion. It makes
+it seem as if there are two types of domains that serve different purposes.
+That is simply not true. A domain is a partition within an AP adapter that
+can process AP command request messages. All AP commands are sent to a
+domain. Configuring a domain as a usage domain means it can be used to
+process AP commands; in other words, it can be the target of an AP
+instruction. Configuring a domain as a control domain means it can be
+changed by an AP command. AP commands that change a domain are sent to
+a usage domain, but the domain to be changed is specified in the payload
+of the AP command message. The domain thus specified must be
+identified via the AP configuration as a control domain, or the AP command
+will be rejected.
 
-Signed-off-by: Joe Perches <joe@perches.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
----
- Documentation/process/changes.rst |  2 +-
- include/linux/compiler-gcc.h      | 86 ++++++++-------------------------------
- 2 files changed, 19 insertions(+), 69 deletions(-)
+>
+> [I don't want to dive deeply into the AP architecture here, just far
+> enough to really understand the design implications.]
 
-diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-index 7a92a06f90de..61f918b10a0c 100644
---- a/Documentation/process/changes.rst
-+++ b/Documentation/process/changes.rst
-@@ -29,7 +29,7 @@ you probably needn't concern yourself with isdn4k-utils.
- ====================== ===============  ========================================
-         Program        Minimal version       Command to check the version
- ====================== ===============  ========================================
--GNU C                  3.2              gcc --version
-+GNU C                  4.6              gcc --version
- GNU make               3.81             make --version
- binutils               2.20             ld -v
- flex                   2.5.35           flex --version
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 3e70b7d4e9ed..250b9b7cfd60 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -10,6 +10,10 @@
- 		     + __GNUC_MINOR__ * 100	\
- 		     + __GNUC_PATCHLEVEL__)
- 
-+#if GCC_VERSION < 40600
-+# error Sorry, your compiler is too old - please upgrade it.
-+#endif
-+
- /* Optimization barrier */
- 
- /* The "volatile" is due to gcc bugs */
-@@ -58,6 +62,12 @@
- #define OPTIMIZER_HIDE_VAR(var)						\
- 	__asm__ ("" : "=r" (var) : "0" (var))
- 
-+/*
-+ * A trick to suppress uninitialized variable warning without generating any
-+ * code
-+ */
-+#define uninitialized_var(x) x = x
-+
- #ifdef __CHECKER__
- #define __must_be_array(a)	0
- #else
-@@ -91,7 +101,7 @@
-  * A lot of inline functions can cause havoc with function tracing.
-  */
- #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) ||		\
--    !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
-+    !defined(CONFIG_OPTIMIZE_INLINING)
- #define inline \
- 	inline __attribute__((always_inline, unused)) notrace __gnu_inline
- #else
-@@ -147,47 +157,13 @@
- #define __always_unused		__attribute__((unused))
- #define __mode(x)               __attribute__((mode(x)))
- 
--/* gcc version specific checks */
--
--#if GCC_VERSION < 30200
--# error Sorry, your compiler is too old - please upgrade it.
--#endif
--
--#if GCC_VERSION < 30300
--# define __used			__attribute__((__unused__))
--#else
--# define __used			__attribute__((__used__))
--#endif
--
--#ifdef CONFIG_GCOV_KERNEL
--# if GCC_VERSION < 30400
--#   error "GCOV profiling support for gcc versions below 3.4 not included"
--# endif /* __GNUC_MINOR__ */
--#endif /* CONFIG_GCOV_KERNEL */
--
--#if GCC_VERSION >= 30400
- #define __must_check		__attribute__((warn_unused_result))
- #define __malloc		__attribute__((__malloc__))
--#endif
--
--#if GCC_VERSION >= 40000
--
--/* GCC 4.1.[01] miscompiles __weak */
--#ifdef __KERNEL__
--# if GCC_VERSION >= 40100 &&  GCC_VERSION <= 40101
--#  error Your version of gcc miscompiles the __weak directive
--# endif
--#endif
- 
- #define __used			__attribute__((__used__))
- #define __compiler_offsetof(a, b)					\
- 	__builtin_offsetof(a, b)
- 
--#if GCC_VERSION >= 40100
--# define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
--#endif
--
--#if GCC_VERSION >= 40300
- /* Mark functions as cold. gcc will assume any path leading to a call
-  * to them will be unlikely.  This means a lot of manual unlikely()s
-  * are unnecessary now for any paths leading to the usual suspects
-@@ -206,24 +182,19 @@
- 
- #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
- 
--#ifndef __CHECKER__
--# define __compiletime_warning(message) __attribute__((warning(message)))
--# define __compiletime_error(message) __attribute__((error(message)))
--#endif /* __CHECKER__ */
--#endif /* GCC_VERSION >= 40300 */
--
--#if GCC_VERSION >= 40400
- #define __optimize(level)	__attribute__((__optimize__(level)))
- #define __nostackprotector	__optimize("no-stack-protector")
--#endif /* GCC_VERSION >= 40400 */
- 
--#if GCC_VERSION >= 40500
-+#define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
- 
- #ifndef __CHECKER__
-+#define __compiletime_warning(message) __attribute__((warning(message)))
-+#define __compiletime_error(message) __attribute__((error(message)))
-+
- #ifdef LATENT_ENTROPY_PLUGIN
- #define __latent_entropy __attribute__((latent_entropy))
- #endif
--#endif
-+#endif /* __CHECKER__ */
- 
- /*
-  * calling noreturn functions, __builtin_unreachable() and __builtin_trap()
-@@ -261,10 +232,6 @@
- #define randomized_struct_fields_end	} __randomize_layout;
- #endif
- 
--#endif /* GCC_VERSION >= 40500 */
--
--#if GCC_VERSION >= 40600
--
- /*
-  * When used with Link Time Optimization, gcc can optimize away C functions or
-  * variables which are referenced only from assembly code.  __visible tells the
-@@ -273,8 +240,7 @@
-  */
- #define __visible	__attribute__((externally_visible))
- 
--#endif /* GCC_VERSION >= 40600 */
--
-+/* gcc version specific checks */
- 
- #if GCC_VERSION >= 40900 && !defined(__CHECKER__)
- /*
-@@ -308,10 +274,8 @@
-  * folding in __builtin_bswap*() (yet), so don't set these for it.
-  */
- #if defined(CONFIG_ARCH_USE_BUILTIN_BSWAP) && !defined(__CHECKER__)
--#if GCC_VERSION >= 40400
- #define __HAVE_BUILTIN_BSWAP32__
- #define __HAVE_BUILTIN_BSWAP64__
--#endif
- #if GCC_VERSION >= 40800
- #define __HAVE_BUILTIN_BSWAP16__
- #endif
-@@ -340,10 +304,9 @@
-  * https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html
-  */
- #define __designated_init __attribute__((designated_init))
-+#define COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW 1
- #endif
- 
--#endif	/* gcc version >= 40000 specific checks */
--
- #if !defined(__noclone)
- #define __noclone	/* not needed */
- #endif
-@@ -352,16 +315,6 @@
- #define __no_sanitize_address
- #endif
- 
--/*
-- * A trick to suppress uninitialized variable warning without generating any
-- * code
-- */
--#define uninitialized_var(x) x = x
--
--#if GCC_VERSION >= 50100
--#define COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW 1
--#endif
--
- /*
-  * Turn individual warnings and errors on and off locally, depending
-  * on version.
-@@ -374,12 +327,9 @@
- #define __diag_GCC_warn		warning
- #define __diag_GCC_error	error
- 
--/* Compilers before gcc-4.6 do not understand "#pragma GCC diagnostic push" */
--#if GCC_VERSION >= 40600
- #define __diag_str1(s)		#s
- #define __diag_str(s)		__diag_str1(s)
- #define __diag(s)		_Pragma(__diag_str(GCC diagnostic s))
--#endif
- 
- #if GCC_VERSION >= 80000
- #define __diag_GCC_8(s)		__diag(s)
--- 
-2.15.0
+Are you suggesting some of the above should be removed? If so, what?
+
+>
+>> +
+>> +AP and SIE:
+>> +==========
+>> +Let's now take a look at how AP instructions executed on a guest are interpreted
+>> +by the hardware.
+>> +
+>> +A satellite control block called the Crypto Control Block (CRYCB) is attached to
+>> +our main hardware virtualization control block. The CRYCB contains three fields
+>> +to identify the adapters, usage domains and control domains assigned to the KVM
+>> +guest:
+>> +
+>> +* The AP Mask (APM) field is a bit mask that identifies the AP adapters assigned
+>> +  to the KVM guest. Each bit in the mask, from most significant to least
+>> +  significant bit, corresponds to an APID from 0-255. If a bit is set, the
+>> +  corresponding adapter is valid for use by the KVM guest.
+>> +
+>> +* The AP Queue Mask (AQM) field is a bit mask identifying the AP usage domains
+>> +  assigned to the KVM guest. Each bit in the mask, from most significant to
+>> +  least significant bit, corresponds to an AP queue index (APQI) from 0-255. If
+>> +  a bit is set, the corresponding queue is valid for use by the KVM guest.
+>> +
+>> +* The AP Domain Mask field is a bit mask that identifies the AP control domains
+>> +  assigned to the KVM guest. The ADM bit mask controls which domains can be
+>> +  changed by an AP command-request message sent to a usage domain from the
+>> +  guest. Each bit in the mask, from least significant to most significant bit,
+>> +  corresponds to a domain from 0-255. If a bit is set, the corresponding domain
+>> +  can be modified by an AP command-request message sent to a usage domain
+>> +  configured for the KVM guest.
+> OK, that seems to imply that you modify a control domain by sending a
+> request to (any) usage domain?
+
+That is a true statement. I reality, you are just modifying a domain. 
+The control
+domain designation identifies a domain that can be controlled as opposed 
+to used.
+Maybe if you think of these bitmasks as access control masks it would 
+clarify
+things. The AQM specifies domains to which AP commands can be sent and the
+ADM specifies domains that can be changed by an AP command.
+
+>   I do not doubt that, but the whole
+> architecture is really confusing :)
+
+I couldn't agree more. It took me a while to wrap my head around it.
+
+>
+>> +
+>> +If you recall from the description of an AP Queue, AP instructions include
+>> +an APQN to identify the AP adapter and AP queue to which an AP command-request
+>> +message is to be sent (NQAP and PQAP instructions), or from which a
+>> +command-reply message is to be received (DQAP instruction). The validity of an
+>> +APQN is defined by the matrix calculated from the APM and AQM; it is the
+>> +cross product of all assigned adapter numbers (APM) with all assigned queue
+>> +indexes (AQM). For example, if adapters 1 and 2 and usage domains 5 and 6 are
+>> +assigned to a guest, the APQNs (1,5), (1,6), (2,5) and (2,6) will be valid for
+>> +the guest.
+> How does the control domain mask interact with that?
+
+The control domain mask does not interact with the other two masks. It
+merely specifies which domains can be modified by an AP command. In fact,
+the ADM can have bits set that are not included in the AQM; in other words,
+a guest can be used to control domains that it can not use.
+
+> Can you send a
+> command to an APQN valid for the guest to modify any control domain
+> specified in the mask?
+
+Yes.
+
+> Does the SIE complain if you specify a control
+> domain that the host does not have access to (I'd guess so)?
+
+The SIE does not complain if you specify a domain to which the host - or a
+lower level guest - does not have access. The firmware performs a logical
+AND of the guest's and hosts's - or lower level guest's - APMs, AQMs and 
+ADMs
+to create effective masks EAPM, EAQM and EADM. Only devices corresponding to
+the bits set in the EAPM, EAQM and EADM will be accessible by the guest.
+
+>
+>> +
+>> +The APQNs can provide secure key functionality - i.e., a private key is stored
+>> +on the adapter card for each of its domains - so each APQN must be assigned to
+>> +at most one guest or to the linux host.
+>> +
+>> +   Example 1: Valid configuration:
+>> +   ------------------------------
+>> +   Guest1: adapters 1,2  domains 5,6
+>> +   Guest2: adapter  1,2  domain 7
+>> +
+>> +   This is valid because both guests have a unique set of APQNs: Guest1 has
+>> +   APQNs (1,5), (1,6), (2,5) and (2,6); Guest2 has APQNs (1,7) and (2,7).
+>> +
+>> +   Example 2: Invalid configuration:
+>> +   Guest1: adapters 1,2  domains 5,6
+>> +   Guest2: adapter  1    domains 6,7
+>> +
+>> +   This is an invalid configuration because both guests have access to
+>> +   APQN (1,6).
+> So, the adapters or the domains can overlap , but the cross product
+> mustn't? If I had
+>
+> Guest1: adapters 1,2 domains 5,6
+> Guest2: adapters 3,4 domains 5,6
+>
+> would that be fine?
+
+Yes, that would be fine because Guest1 would have access to APQNs
+(1,5), (1,6), (2,5) and (2,6) while Guest2 would have access to
+(3,5), (3,6), (4,5) AND (4,6), but neither would have access to
+the same APQN.
+
+>
+> Is there any rule about shared control domains?
+
+AFAIK there isn't, but I will consult with Reinhard about that.
+
+>
+> (...)
+>
+>> +Limitations
+>> +===========
+>> +* The KVM/kernel interfaces do not provide a way to prevent unbinding an AP
+>> +  queue that is still assigned to a mediated device. Even if the device
+>> +  'remove' callback returns an error, the device core detaches the AP
+>> +  queue from the VFIO AP driver. It is therefore incumbent upon the
+>> +  administrator to make sure there is no mediated device to which the
+>> +  APQN - for the AP queue being unbound - is assigned.
+>> +
+>> +* Hot plug/unplug of AP devices is not supported for guests.
+> Not sure what that sentence means. Adding/removing devices by the
+> hypervisor is not supported? Or some guest actions, respectively
+> injecting notifications that would trigger some actions on the real
+> hardware?
+
+No means is provided to modify a guest's AP matrix - i.e., APM, AQM
+and ADM - while a guest is running. Once a guest is running, its AP
+configuration can not be changed dynamically.
+
+>
+> Do you want to add (some of) this in the future?
+
+Yes, we plan to introduce dynamic configurations in future releases.
+
+>
+>> +
+>> +* Live guest migration is not supported for guests using AP devices.
+> Migration and vfio is an interesting area in general :) Would be great
+> if vfio-ap could benefit from any generic efforts in that area, but
+> that probably requires that someone with access to documentation and
+> hardware keeps an eye on developments.
+
+I have briefly looked at some of the articles talking about live migration
+of passthrough devices, but nothing seemed applicable to AP architecture.
+ From my limited perspective, it would seem that architectural changes
+would have to be implemented to fully support live migration of in-process
+AP queues.
+
+>
+>> \ No newline at end of file
+> Please add one :)
+
+Will do.
+
+>
 
