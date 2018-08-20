@@ -2,170 +2,133 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B047C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71952C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:24:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D82692154B
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:20:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=profitbricks-com.20150623.gappssmtp.com header.i=@profitbricks-com.20150623.gappssmtp.com header.b="M/CcnVQL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D82692154B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=profitbricks.com
+	by mail.kernel.org (Postfix) with ESMTP id 21A462154B
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:24:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21A462154B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbeHTQg0 (ORCPT
+        id S1727302AbeHTQjr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 12:36:26 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50324 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726740AbeHTQgZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 12:36:25 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s12-v6so14299836wmc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 06:20:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=profitbricks-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=JsLiieC+cQBLTw5SD8oL1Qgnwzz8SoYUOjzsMtdxQck=;
-        b=M/CcnVQLPigWG5dWcw7Ywpd3mu+mUU+uoLvHjr+S/mCuXhX7eOX27DlmgmIEUiHYtr
-         llzNmA6LdzxT8hdceVDS8EPtldxC5t8jO0lXZN799yQHDqpLlPwxrZB1iJ3hF2v6yCjX
-         Bl/QdIVBlUhG2yKoHwquqj1CcYhE5Id8PGULCMNF8aq+v0Usiee8VKBmZf4wFSTJloMa
-         VjX+U2DjgvN/ueVCWsNvH8QoS8IvZTsGQQ1XLXbqb5jPBBDyV2L2bY97XAlq1UsZOhh7
-         HZ1dYw11gfl2x+lsbz1VpriG3K+qyzlF6khfjcN6vcbZhHKK1zwqzhPpAqcnZOmPGg7v
-         7Ppw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=JsLiieC+cQBLTw5SD8oL1Qgnwzz8SoYUOjzsMtdxQck=;
-        b=NLBjUSNbNKtj9c3nXmNxdLb4WN3tsWogKDrgyOYB/pHkwvamOvggEMAKv8XcJoLl3/
-         yLgISb9SqA93XndCXQWVIixnJqvDxOHSCzykrSNBegEDHHoR4/DIgWEyeMsPvlpGjiJK
-         3Pffr62opxDm/ZIZvLn/BB1YUU3A3v5B0wBHZlN8bNhMM+v+enveBhbsq84OcVXfqufq
-         8Lu0CZqCalNYiit8Vr7Q+YLbgXR8/7bQyE5n+0DFF1zXKGliT0wuHEiQiUOs+UCv5iOO
-         0sQWXcg/yuU3ozPbGkWKjRaddMvf4c56Zv1+zeUlj4SO8UYhcbEx/I5Hhx3FiUqMHpoR
-         3FDw==
-X-Gm-Message-State: AOUpUlFCnfc+rLaLCKjLEhVdYTWRDkxhui0LJsPb1bn6CgVBVOqFA8Ul
-        G40cCJAlYG0FaGqYVgfMw5DpJrYAKZUIbgWZCfGY/g==
-X-Google-Smtp-Source: AA+uWPxK+duOu+xBkEUWycUvW1KumZQU1XEUbpALOYlAw0ajCj2L5ZXowXfykJI/VsCZs/HpWl7xXQ+6KS5wr48sJiI=
-X-Received: by 2002:a1c:ea17:: with SMTP id i23-v6mr26432602wmh.29.1534771246010;
- Mon, 20 Aug 2018 06:20:46 -0700 (PDT)
+        Mon, 20 Aug 2018 12:39:47 -0400
+Received: from foss.arm.com ([217.140.101.70]:37520 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726615AbeHTQjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 12:39:47 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9245EED1;
+        Mon, 20 Aug 2018 06:24:09 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6267D3F5BC;
+        Mon, 20 Aug 2018 06:24:09 -0700 (PDT)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id BBD47680881; Mon, 20 Aug 2018 14:24:07 +0100 (BST)
+Date:   Mon, 20 Aug 2018 14:24:07 +0100
+From:   Liviu Dudau <liviu.dudau@arm.com>
+To:     Ayan Halder <ayan.halder@arm.com>
+Cc:     airlied@linux.ie, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, seanpaul@chromium.org, nd@arm.com
+Subject: Re: [PATCH] drm: Use horizontal and vertical chroma subsampling
+ factor while calculating offsets in the physical address of framebuffer
+Message-ID: <20180820132407.GY907@e110455-lin.cambridge.arm.com>
+References: <1534527184-24552-1-git-send-email-ayan.halder@arm.com>
+ <20180820110319.GV907@e110455-lin.cambridge.arm.com>
+ <20180820123859.GA2054@arm.com>
 MIME-Version: 1.0
-References: <CAMGffEnzVo5VVSVBjCOBMhcoV1qXf0XXqJqr3C01xQn-aUiZFQ@mail.gmail.com>
- <20180816155126.GA18296@kroah.com> <CAMGffEmJR310NKHO1JpwE8yTg1Oeu_oaTaJ1D2_T_UHKCnHwKA@mail.gmail.com>
- <20180816163937.GA5105@kroah.com> <CAMGffEk2FqRn0av7T-aF-TKvRAKeinm96NYjJju_T4CmUrYPkQ@mail.gmail.com>
- <CAMGffEnKt0xcc6LhNdZQGRmckJ3qCFxCOnQ3owZmWWiaKYdYuw@mail.gmail.com>
- <20180817170129.GE24945@kroah.com> <alpine.DEB.2.21.1808181330380.2151@nanos.tec.linutronix.de>
- <CAMGffEk=6eVgB=A--FyooDoVPY4mEiOdf=yNnqdX4cF6Ud_NuA@mail.gmail.com> <alpine.DEB.2.21.1808201500590.1551@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1808201500590.1551@nanos.tec.linutronix.de>
-From:   Jinpu Wang <jinpu.wang@profitbricks.com>
-Date:   Mon, 20 Aug 2018 15:20:33 +0200
-Message-ID: <CAMGffEnmp3zOXYb2cpHdLgeb0LAUac5umhK3OMUBFiJ1+7ce6w@mail.gmail.com>
-Subject: Re: [BUG]smt sysfs dir missing on 4.4.148 and 4.14.63
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable <stable@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, konrad.wilk@oracle.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180820123859.GA2054@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 3:02 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> On Mon, 20 Aug 2018, Jinpu Wang wrote:
->
-> > On Sat, Aug 18, 2018 at 2:50 PM Thomas Gleixner <tglx@linutronix.de> wr=
-ote:
-> > >
-> > > On Fri, 17 Aug 2018, Greg Kroah-Hartman wrote:
-> > > > On Fri, Aug 17, 2018 at 02:39:00PM +0200, Jinpu Wang wrote:
-> > > > >
-> > > > > I found the problem, CONFIG_HOTPLUG_SMT is enable due to CONFIG_S=
-MP,
-> > > > > but I did explicitly enable CONFIG_HOTPLUG_CPU.
-> > > > >
-> > > > > That's why the smt dir is missing, and kernel panic when I boot w=
-ith
-> > > > > 'nosmt' or 'l1tf=3Dfull' probably also other combination.
-> > > > >
-> > > > > With CONFIG_HOTPLUG_CPU=3Dy, it works fine so far.
-> > > >
-> > > > So do we need a new configuration dependancy here to resolve this
-> > > > problem?  Why is this not an issue in Linus's tree?
-> > >
-> > > That's probably the same problem on Linus tree. Have not tested it ye=
-t
-> > > though. I'll have a look.
-> > >
-> > > Thanks,
-> > >
-> > >         tglx
-> > >
-> > Yeah, it's the same problem on Linus tree.
+On Mon, Aug 20, 2018 at 01:38:59PM +0100, Ayan Halder wrote:
+> On Mon, Aug 20, 2018 at 12:03:19PM +0100, Liviu Dudau wrote:
+> > On Fri, Aug 17, 2018 at 06:33:04PM +0100, Ayan Kumar Halder wrote:
+> > > For multi-planar formats, while calculating offsets in planes with index greater than 0
+> > > (ie second plane, third plane, etc), one needs to divide (src_x * cpp) with horizontal
+> > > chroma subsampling factor and (src_y * pitch) with vertical chroma subsampling factor.
+> > > 
+> > > The reason being that the planes contain subsampled (ie reduced) data (by a factor of 2) and thus the
+> > 
+> > drop the extraneous "the" at the end of the line.
+> > 
+> > > while calculating the byte position coresponding to the x and y co-ordinates, one needs to be
+> > 
+> > and drop the extraneous "be" at the end of this line.
+> > 
+> > > divide it with the sampling factor.
+> > > 
+> > > Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
+> > 
+> > Otherwise, it looks good to me!
+> > 
+> > Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 > >
-> > Probably makes sense to do the following, I can sent a formal patch if
-> > you think it's right thing to do:
-> >
-> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > index b0312f8..8a52f0b 100644
-> > --- a/arch/x86/Kconfig
-> > +++ b/arch/x86/Kconfig
-> > @@ -188,7 +188,7 @@ config X86
-> >         select HAVE_SYSCALL_TRACEPOINTS
-> >         select HAVE_UNSTABLE_SCHED_CLOCK
-> >         select HAVE_USER_RETURN_NOTIFIER
-> > -       select HOTPLUG_SMT                      if SMP
-> > +       select HOTPLUG_SMT                      if SMP && HOTPLUG_CPU
->
-> That works, but we might as well force 'select HOTPLUG_CPU if SMP' so the
-> L1TF mitigations are functional. Sigh....
->
-> Thanks,
->
->         tglx
-right, sth like?
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index b0312f8..5852948 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -188,7 +188,8 @@ config X86
-        select HAVE_SYSCALL_TRACEPOINTS
-        select HAVE_UNSTABLE_SCHED_CLOCK
-        select HAVE_USER_RETURN_NOTIFIER
--       select HOTPLUG_SMT                      if SMP
-+       select HOTPLUG_CPU                      if SMP
-+       select HOTPLUG_SMT                      if SMP && HOTPLUG_CPU
-        select IRQ_FORCED_THREADING
-        select NEED_SG_DMA_LENGTH
-        select PCI_LOCKLESS_CONFIG
+> Thanks Liviu. I will update the commit message and push this in
+> drm-misc-next.
 
+Worth waiting for another review before pushing.
 
+Best regards,
+Liviu
 
---=20
-Thanks,
+> 
+> > Best regards,
+> > Liviu
+> > 
+> > > ---
+> > >  drivers/gpu/drm/drm_fb_cma_helper.c | 11 +++++++++--
+> > >  1 file changed, 9 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c b/drivers/gpu/drm/drm_fb_cma_helper.c
+> > > index b127061..47e0e2f 100644
+> > > --- a/drivers/gpu/drm/drm_fb_cma_helper.c
+> > > +++ b/drivers/gpu/drm/drm_fb_cma_helper.c
+> > > @@ -86,14 +86,21 @@ dma_addr_t drm_fb_cma_get_gem_addr(struct drm_framebuffer *fb,
+> > >  {
+> > >  	struct drm_gem_cma_object *obj;
+> > >  	dma_addr_t paddr;
+> > > +	u8 h_div = 1, v_div = 1;
+> > >  
+> > >  	obj = drm_fb_cma_get_gem_obj(fb, plane);
+> > >  	if (!obj)
+> > >  		return 0;
+> > >  
+> > >  	paddr = obj->paddr + fb->offsets[plane];
+> > > -	paddr += fb->format->cpp[plane] * (state->src_x >> 16);
+> > > -	paddr += fb->pitches[plane] * (state->src_y >> 16);
+> > > +
+> > > +	if (plane > 0) {
+> > > +		h_div = fb->format->hsub;
+> > > +		v_div = fb->format->vsub;
+> > > +	}
+> > > +
+> > > +	paddr += (fb->format->cpp[plane] * (state->src_x >> 16)) / h_div;
+> > > +	paddr += (fb->pitches[plane] * (state->src_y >> 16)) / v_div;
+> > >  
+> > >  	return paddr;
+> > >  }
+> > > -- 
+> > > 2.7.4
+> > > 
 
-Jack Wang
-Linux Kernel Developer
-
-ProfitBricks GmbH
-Greifswalder Str. 207
-D - 10405 Berlin
-
-Tel:       +49 30 577 008  042
-Fax:      +49 30 577 008 299
-Email:    jinpu.wang@profitbricks.com
-URL:      https://www.profitbricks.de
-
-Sitz der Gesellschaft: Berlin
-Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
-Gesch=C3=A4ftsf=C3=BChrer: Achim Weiss, Matthias Steinberg, Christoph Steff=
-ens
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
