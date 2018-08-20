@@ -2,403 +2,238 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7857C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 22:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C6AC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 22:54:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BEC321581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 22:51:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="FPtUG58o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BEC321581
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
+	by mail.kernel.org (Postfix) with ESMTP id E7AA721581
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 22:54:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7AA721581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbeHUCIk (ORCPT
+        id S1726777AbeHUCMW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 22:08:40 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:58523 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbeHUCIk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 22:08:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1534805465; x=1566341465;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MDkqb913wWDZjJaiQdhofED0jzHG6vU9V/iyxgxo5i0=;
-  b=FPtUG58oKI7A/ubu+UYxq9dovITDjFtv0n8/7haNKc1k1Jzp4LclOaAG
-   Y5CivjxEf6WAw6EOl8ghW15JBhV0mhwafOQ8FEQyV4naSLxRceqydm3hf
-   I4qQGwQA+o+gRQPAw/1uofW4y0VOaIi/MZRjrcOEmP+gNSm1ebBac4XKH
-   k=;
-X-IronPort-AV: E=Sophos;i="5.53,266,1531785600"; 
-   d="scan'208";a="693484911"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1d-2c665b5d.us-east-1.amazon.com) ([10.124.125.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 20 Aug 2018 22:44:36 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1d-2c665b5d.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w7KMgqs5087853
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Mon, 20 Aug 2018 22:42:53 GMT
-Received: from EX13D01UWB002.ant.amazon.com (10.43.161.136) by
- EX13MTAUWB001.ant.amazon.com (10.43.161.249) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 20 Aug 2018 22:42:53 +0000
-Received: from 8c8590bceeee.ant.amazon.com (10.43.162.149) by
- EX13d01UWB002.ant.amazon.com (10.43.161.136) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 20 Aug 2018 22:42:47 +0000
-Date:   Tue, 21 Aug 2018 08:42:43 +1000
-From:   Balbir Singh <sblbir@amazon.com>
-To:     Jens Axboe <axboe@kernel.dk>
-CC:     "van der Linden, Frank" <fllinden@amazon.com>,
-        "Agarwal, Anchal" <anchalag@amazon.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Wilson, Matt" <msw@amazon.com>
-Subject: Re: [PATCH] blk-wbt: Avoid lock contention and thundering herd issue
- in wbt_wait
-Message-ID: <20180820224241.GA72523@8c8590bceeee.ant.amazon.com>
-References: <20180807201247.GA21108@kaos-source-ops-60001.pdx1.amazon.com>
- <6f24ff4b-9373-2708-8342-96f190f17cbf@kernel.dk>
- <20180807211216.GA14371@kaos-source-ops-60001.pdx1.amazon.com>
- <6bab69c9-b787-b12f-7738-72e05bf74444@kernel.dk>
- <72f90be2-0b63-d3a0-e953-da9232f44d5b@kernel.dk>
- <761bb0ab416649b8bf3bac1706124456@EX13D13UWB002.ant.amazon.com>
- <7f6c399d-bda1-0bbf-4ea1-07fc510ed1eb@kernel.dk>
- <3498fbfb-e9f3-7606-1fc3-904a0e61ff57@kernel.dk>
- <168d80ac73a44a6f9242c47c164778fc@EX13D13UWB002.ant.amazon.com>
- <c5152431-6e36-6f6e-616e-1cfbd974817d@kernel.dk>
+        Mon, 20 Aug 2018 22:12:22 -0400
+Received: from smtp1-g21.free.fr ([212.27.42.1]:60459 "EHLO smtp1-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726631AbeHUCMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 22:12:22 -0400
+Received: from tock (unknown [89.247.124.122])
+        (Authenticated sender: albeu)
+        by smtp1-g21.free.fr (Postfix) with ESMTPSA id 2E6F6B004D5;
+        Tue, 21 Aug 2018 00:53:29 +0200 (CEST)
+Date:   Tue, 21 Aug 2018 00:53:27 +0200
+From:   Alban <albeu@free.fr>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Aban Bedel <albeu@free.fr>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Naren <naren.kernel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 06/29] mtd: Add support for reading MTD devices via
+ the nvmem API
+Message-ID: <20180821005327.0d312a85@tock>
+In-Reply-To: <20180819184609.6dcdbb9a@bbrezillon>
+References: <20180810080526.27207-1-brgl@bgdev.pl>
+        <20180810080526.27207-7-brgl@bgdev.pl>
+        <20180817182720.6a6e5e8e@bbrezillon>
+        <20180819133106.0420df5f@tock>
+        <20180819184609.6dcdbb9a@bbrezillon>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <c5152431-6e36-6f6e-616e-1cfbd974817d@kernel.dk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.43.162.149]
-X-ClientProxiedBy: EX13D01UWB004.ant.amazon.com (10.43.161.157) To
- EX13d01UWB002.ant.amazon.com (10.43.161.136)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fTOdtudVp=.496+uJLgFm7d"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 02:20:59PM -0600, Jens Axboe wrote:
-> On 8/20/18 2:19 PM, van der Linden, Frank wrote:
-> > On 8/20/18 12:29 PM, Jens Axboe wrote:
-> >> On 8/20/18 1:08 PM, Jens Axboe wrote:
-> >>> On 8/20/18 11:34 AM, van der Linden, Frank wrote:
-> >>>> On 8/20/18 9:37 AM, Jens Axboe wrote:
-> >>>>> On 8/7/18 3:19 PM, Jens Axboe wrote:
-> >>>>>> On 8/7/18 3:12 PM, Anchal Agarwal wrote:
-> >>>>>>> On Tue, Aug 07, 2018 at 02:39:48PM -0600, Jens Axboe wrote:
-> >>>>>>>> On 8/7/18 2:12 PM, Anchal Agarwal wrote:
-> >>>>>>>>> On Tue, Aug 07, 2018 at 08:29:44AM -0600, Jens Axboe wrote:
-> >>>>>>>>>> On 8/1/18 4:09 PM, Jens Axboe wrote:
-> >>>>>>>>>>> On 8/1/18 11:06 AM, Anchal Agarwal wrote:
-> >>>>>>>>>>>> On Wed, Aug 01, 2018 at 09:14:50AM -0600, Jens Axboe wrote:
-> >>>>>>>>>>>>> On 7/31/18 3:34 PM, Anchal Agarwal wrote:
-> >>>>>>>>>>>>>> Hi folks,
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> This patch modifies commit e34cbd307477a
-> >>>>>>>>>>>>>> (blk-wbt: add general throttling mechanism)
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> I am currently running a large bare metal instance (i3.metal)
-> >>>>>>>>>>>>>> on EC2 with 72 cores, 512GB of RAM and NVME drives, with a
-> >>>>>>>>>>>>>> 4.18 kernel. I have a workload that simulates a database
-> >>>>>>>>>>>>>> workload and I am running into lockup issues when writeback
-> >>>>>>>>>>>>>> throttling is enabled,with the hung task detector also
-> >>>>>>>>>>>>>> kicking in.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> Crash dumps show that most CPUs (up to 50 of them) are
-> >>>>>>>>>>>>>> all trying to get the wbt wait queue lock while trying to add
-> >>>>>>>>>>>>>> themselves to it in __wbt_wait (see stack traces below).
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> [    0.948118] CPU: 45 PID: 0 Comm: swapper/45 Not tainted 4.14.51-62.38.amzn1.x86_64 #1
-> >>>>>>>>>>>>>> [    0.948119] Hardware name: Amazon EC2 i3.metal/Not Specified, BIOS 1.0 10/16/2017
-> >>>>>>>>>>>>>> [    0.948120] task: ffff883f7878c000 task.stack: ffffc9000c69c000
-> >>>>>>>>>>>>>> [    0.948124] RIP: 0010:native_queued_spin_lock_slowpath+0xf8/0x1a0
-> >>>>>>>>>>>>>> [    0.948125] RSP: 0018:ffff883f7fcc3dc8 EFLAGS: 00000046
-> >>>>>>>>>>>>>> [    0.948126] RAX: 0000000000000000 RBX: ffff887f7709ca68 RCX: ffff883f7fce2a00
-> >>>>>>>>>>>>>> [    0.948128] RDX: 000000000000001c RSI: 0000000000740001 RDI: ffff887f7709ca68
-> >>>>>>>>>>>>>> [    0.948129] RBP: 0000000000000002 R08: 0000000000b80000 R09: 0000000000000000
-> >>>>>>>>>>>>>> [    0.948130] R10: ffff883f7fcc3d78 R11: 000000000de27121 R12: 0000000000000002
-> >>>>>>>>>>>>>> [    0.948131] R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
-> >>>>>>>>>>>>>> [    0.948132] FS:  0000000000000000(0000) GS:ffff883f7fcc0000(0000) knlGS:0000000000000000
-> >>>>>>>>>>>>>> [    0.948134] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >>>>>>>>>>>>>> [    0.948135] CR2: 000000c424c77000 CR3: 0000000002010005 CR4: 00000000003606e0
-> >>>>>>>>>>>>>> [    0.948136] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> >>>>>>>>>>>>>> [    0.948137] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> >>>>>>>>>>>>>> [    0.948138] Call Trace:
-> >>>>>>>>>>>>>> [    0.948139]  <IRQ>
-> >>>>>>>>>>>>>> [    0.948142]  do_raw_spin_lock+0xad/0xc0
-> >>>>>>>>>>>>>> [    0.948145]  _raw_spin_lock_irqsave+0x44/0x4b
-> >>>>>>>>>>>>>> [    0.948149]  ? __wake_up_common_lock+0x53/0x90
-> >>>>>>>>>>>>>> [    0.948150]  __wake_up_common_lock+0x53/0x90
-> >>>>>>>>>>>>>> [    0.948155]  wbt_done+0x7b/0xa0
-> >>>>>>>>>>>>>> [    0.948158]  blk_mq_free_request+0xb7/0x110
-> >>>>>>>>>>>>>> [    0.948161]  __blk_mq_complete_request+0xcb/0x140
-> >>>>>>>>>>>>>> [    0.948166]  nvme_process_cq+0xce/0x1a0 [nvme]
-> >>>>>>>>>>>>>> [    0.948169]  nvme_irq+0x23/0x50 [nvme]
-> >>>>>>>>>>>>>> [    0.948173]  __handle_irq_event_percpu+0x46/0x300
-> >>>>>>>>>>>>>> [    0.948176]  handle_irq_event_percpu+0x20/0x50
-> >>>>>>>>>>>>>> [    0.948179]  handle_irq_event+0x34/0x60
-> >>>>>>>>>>>>>> [    0.948181]  handle_edge_irq+0x77/0x190
-> >>>>>>>>>>>>>> [    0.948185]  handle_irq+0xaf/0x120
-> >>>>>>>>>>>>>> [    0.948188]  do_IRQ+0x53/0x110
-> >>>>>>>>>>>>>> [    0.948191]  common_interrupt+0x87/0x87
-> >>>>>>>>>>>>>> [    0.948192]  </IRQ>
-> >>>>>>>>>>>>>> ....
-> >>>>>>>>>>>>>> [    0.311136] CPU: 4 PID: 9737 Comm: run_linux_amd64 Not tainted 4.14.51-62.38.amzn1.x86_64 #1
-> >>>>>>>>>>>>>> [    0.311137] Hardware name: Amazon EC2 i3.metal/Not Specified, BIOS 1.0 10/16/2017
-> >>>>>>>>>>>>>> [    0.311138] task: ffff883f6e6a8000 task.stack: ffffc9000f1ec000
-> >>>>>>>>>>>>>> [    0.311141] RIP: 0010:native_queued_spin_lock_slowpath+0xf5/0x1a0
-> >>>>>>>>>>>>>> [    0.311142] RSP: 0018:ffffc9000f1efa28 EFLAGS: 00000046
-> >>>>>>>>>>>>>> [    0.311144] RAX: 0000000000000000 RBX: ffff887f7709ca68 RCX: ffff883f7f722a00
-> >>>>>>>>>>>>>> [    0.311145] RDX: 0000000000000035 RSI: 0000000000d80001 RDI: ffff887f7709ca68
-> >>>>>>>>>>>>>> [    0.311146] RBP: 0000000000000202 R08: 0000000000140000 R09: 0000000000000000
-> >>>>>>>>>>>>>> [    0.311147] R10: ffffc9000f1ef9d8 R11: 000000001a249fa0 R12: ffff887f7709ca68
-> >>>>>>>>>>>>>> [    0.311148] R13: ffffc9000f1efad0 R14: 0000000000000000 R15: ffff887f7709ca00
-> >>>>>>>>>>>>>> [    0.311149] FS:  000000c423f30090(0000) GS:ffff883f7f700000(0000) knlGS:0000000000000000
-> >>>>>>>>>>>>>> [    0.311150] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >>>>>>>>>>>>>> [    0.311151] CR2: 00007feefcea4000 CR3: 0000007f7016e001 CR4: 00000000003606e0
-> >>>>>>>>>>>>>> [    0.311152] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> >>>>>>>>>>>>>> [    0.311153] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> >>>>>>>>>>>>>> [    0.311154] Call Trace:
-> >>>>>>>>>>>>>> [    0.311157]  do_raw_spin_lock+0xad/0xc0
-> >>>>>>>>>>>>>> [    0.311160]  _raw_spin_lock_irqsave+0x44/0x4b
-> >>>>>>>>>>>>>> [    0.311162]  ? prepare_to_wait_exclusive+0x28/0xb0
-> >>>>>>>>>>>>>> [    0.311164]  prepare_to_wait_exclusive+0x28/0xb0
-> >>>>>>>>>>>>>> [    0.311167]  wbt_wait+0x127/0x330
-> >>>>>>>>>>>>>> [    0.311169]  ? finish_wait+0x80/0x80
-> >>>>>>>>>>>>>> [    0.311172]  ? generic_make_request+0xda/0x3b0
-> >>>>>>>>>>>>>> [    0.311174]  blk_mq_make_request+0xd6/0x7b0
-> >>>>>>>>>>>>>> [    0.311176]  ? blk_queue_enter+0x24/0x260
-> >>>>>>>>>>>>>> [    0.311178]  ? generic_make_request+0xda/0x3b0
-> >>>>>>>>>>>>>> [    0.311181]  generic_make_request+0x10c/0x3b0
-> >>>>>>>>>>>>>> [    0.311183]  ? submit_bio+0x5c/0x110
-> >>>>>>>>>>>>>> [    0.311185]  submit_bio+0x5c/0x110
-> >>>>>>>>>>>>>> [    0.311197]  ? __ext4_journal_stop+0x36/0xa0 [ext4]
-> >>>>>>>>>>>>>> [    0.311210]  ext4_io_submit+0x48/0x60 [ext4]
-> >>>>>>>>>>>>>> [    0.311222]  ext4_writepages+0x810/0x11f0 [ext4]
-> >>>>>>>>>>>>>> [    0.311229]  ? do_writepages+0x3c/0xd0
-> >>>>>>>>>>>>>> [    0.311239]  ? ext4_mark_inode_dirty+0x260/0x260 [ext4]
-> >>>>>>>>>>>>>> [    0.311240]  do_writepages+0x3c/0xd0
-> >>>>>>>>>>>>>> [    0.311243]  ? _raw_spin_unlock+0x24/0x30
-> >>>>>>>>>>>>>> [    0.311245]  ? wbc_attach_and_unlock_inode+0x165/0x280
-> >>>>>>>>>>>>>> [    0.311248]  ? __filemap_fdatawrite_range+0xa3/0xe0
-> >>>>>>>>>>>>>> [    0.311250]  __filemap_fdatawrite_range+0xa3/0xe0
-> >>>>>>>>>>>>>> [    0.311253]  file_write_and_wait_range+0x34/0x90
-> >>>>>>>>>>>>>> [    0.311264]  ext4_sync_file+0x151/0x500 [ext4]
-> >>>>>>>>>>>>>> [    0.311267]  do_fsync+0x38/0x60
-> >>>>>>>>>>>>>> [    0.311270]  SyS_fsync+0xc/0x10
-> >>>>>>>>>>>>>> [    0.311272]  do_syscall_64+0x6f/0x170
-> >>>>>>>>>>>>>> [    0.311274]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> In the original patch, wbt_done is waking up all the exclusive
-> >>>>>>>>>>>>>> processes in the wait queue, which can cause a thundering herd
-> >>>>>>>>>>>>>> if there is a large number of writer threads in the queue. The
-> >>>>>>>>>>>>>> original intention of the code seems to be to wake up one thread
-> >>>>>>>>>>>>>> only however, it uses wake_up_all() in __wbt_done(), and then
-> >>>>>>>>>>>>>> uses the following check in __wbt_wait to have only one thread
-> >>>>>>>>>>>>>> actually get out of the wait loop:
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> if (waitqueue_active(&rqw->wait) &&
-> >>>>>>>>>>>>>>             rqw->wait.head.next != &wait->entry)
-> >>>>>>>>>>>>>>                 return false;
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> The problem with this is that the wait entry in wbt_wait is
-> >>>>>>>>>>>>>> define with DEFINE_WAIT, which uses the autoremove wakeup function.
-> >>>>>>>>>>>>>> That means that the above check is invalid - the wait entry will
-> >>>>>>>>>>>>>> have been removed from the queue already by the time we hit the
-> >>>>>>>>>>>>>> check in the loop.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> Secondly, auto-removing the wait entries also means that the wait
-> >>>>>>>>>>>>>> queue essentially gets reordered "randomly" (e.g. threads re-add
-> >>>>>>>>>>>>>> themselves in the order they got to run after being woken up).
-> >>>>>>>>>>>>>> Additionally, new requests entering wbt_wait might overtake requests
-> >>>>>>>>>>>>>> that were queued earlier, because the wait queue will be
-> >>>>>>>>>>>>>> (temporarily) empty after the wake_up_all, so the waitqueue_active
-> >>>>>>>>>>>>>> check will not stop them. This can cause certain threads to starve
-> >>>>>>>>>>>>>> under high load.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> The fix is to leave the woken up requests in the queue and remove
-> >>>>>>>>>>>>>> them in finish_wait() once the current thread breaks out of the
-> >>>>>>>>>>>>>> wait loop in __wbt_wait. This will ensure new requests always
-> >>>>>>>>>>>>>> end up at the back of the queue, and they won't overtake requests
-> >>>>>>>>>>>>>> that are already in the wait queue. With that change, the loop
-> >>>>>>>>>>>>>> in wbt_wait is also in line with many other wait loops in the kernel.
-> >>>>>>>>>>>>>> Waking up just one thread drastically reduces lock contention, as
-> >>>>>>>>>>>>>> does moving the wait queue add/remove out of the loop.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> A significant drop in lockdep's lock contention numbers is seen when
-> >>>>>>>>>>>>>> running the test application on the patched kernel.
-> >>>>>>>>>>>>> I like the patch, and a few weeks ago we independently discovered that
-> >>>>>>>>>>>>> the waitqueue list checking was bogus as well. My only worry is that
-> >>>>>>>>>>>>> changes like this can be delicate, meaning that it's easy to introduce
-> >>>>>>>>>>>>> stall conditions. What kind of testing did you push this through?
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> -- 
-> >>>>>>>>>>>>> Jens Axboe
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>> I ran the following tests on both real HW with NVME devices attached
-> >>>>>>>>>>>> and emulated NVME too:
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> 1. The test case I used to reproduce the issue, spawns a bunch of threads 
-> >>>>>>>>>>>>    to concurrently read and write files with random size and content. 
-> >>>>>>>>>>>>    Files are randomly fsync'd. The implementation is a FIFO queue of files. 
-> >>>>>>>>>>>>    When the queue fills the test starts to verify and remove the files. This 
-> >>>>>>>>>>>>    test will fail if there's a read, write, or hash check failure. It tests
-> >>>>>>>>>>>>    for file corruption when lots of small files are being read and written 
-> >>>>>>>>>>>>    with high concurrency.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> 2. Fio for random writes with a root NVME device of 200GB
-> >>>>>>>>>>>>   
-> >>>>>>>>>>>>   fio --name=randwrite --ioengine=libaio --iodepth=1 --rw=randwrite --bs=4k 
-> >>>>>>>>>>>>   --direct=0 --size=10G --numjobs=2 --runtime=60 --group_reporting
-> >>>>>>>>>>>>   
-> >>>>>>>>>>>>   fio --name=randwrite --ioengine=libaio --iodepth=1 --rw=randwrite --bs=4k
-> >>>>>>>>>>>>   --direct=0 --size=5G --numjobs=2 --runtime=30 --fsync=64 --group_reporting
-> >>>>>>>>>>>>   
-> >>>>>>>>>>>>   I did see an improvement in the bandwidth numbers reported on the patched
-> >>>>>>>>>>>>   kernel. 
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> Do you have any test case/suite in mind that you would suggest me to 
-> >>>>>>>>>>>> run to be sure that patch does not introduce any stall conditions?
-> >>>>>>>>>>> One thing that is always useful is to run xfstest, do a full run on
-> >>>>>>>>>>> the device. If that works, then do another full run, this time limiting
-> >>>>>>>>>>> the queue depth of the SCSI device to 1. If both of those pass, then
-> >>>>>>>>>>> I'd feel pretty good getting this applied for 4.19.
-> >>>>>>>>>> Did you get a chance to run this full test?
-> >>>>>>>>>>
-> >>>>>>>>>> -- 
-> >>>>>>>>>> Jens Axboe
-> >>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>> Hi Jens,
-> >>>>>>>>> Yes I did run the tests and was in the process of compiling concrete results
-> >>>>>>>>> I tested following environments against xfs/auto group
-> >>>>>>>>> 1. Vanilla 4.18.rc kernel
-> >>>>>>>>> 2. 4.18 kernel with the blk-wbt patch
-> >>>>>>>>> 3. 4.18 kernel with the blk-wbt patch + io_queue_depth=2. I 
-> >>>>>>>>> understand you asked for queue depth for SCSI device=1 however, I have NVME 
-> >>>>>>>>> devices in my environment and 2 is the minimum value for io_queue_depth allowed 
-> >>>>>>>>> according to the NVME driver code. The results pretty much look same with no 
-> >>>>>>>>> stalls or exceptional failures. 
-> >>>>>>>>> xfs/auto ran 296 odd tests with 3 failures and 130 something "no runs". 
-> >>>>>>>>> Remaining tests passed. "Skipped tests"  were mostly due to missing features
-> >>>>>>>>> (eg: reflink support on scratch filesystem)
-> >>>>>>>>> The failures were consistent across runs on 3 different environments. 
-> >>>>>>>>> I am also running full test suite but it is taking long time as I am 
-> >>>>>>>>> hitting kernel BUG in xfs code in some generic tests. This BUG is not 
-> >>>>>>>>> related to the patch and  I see them in vanilla kernel too. I am in 
-> >>>>>>>>> the process of excluding these kind of tests as they come and 
-> >>>>>>>>> re-run the suite however, this proces is time taking. 
-> >>>>>>>>> Do you have any specific tests in mind that you would like me 
-> >>>>>>>>> to run apart from what I have already tested above?
-> >>>>>>>> Thanks, I think that looks good. I'll get your patch applied for
-> >>>>>>>> 4.19.
-> >>>>>>>>
-> >>>>>>>> -- 
-> >>>>>>>> Jens Axboe
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>> Hi Jens,
-> >>>>>>> Thanks for accepting this. There is one small issue, I don't find any emails
-> >>>>>>> send by me on the lkml mailing list. I am not sure why it didn't land there,
-> >>>>>>> all I can see is your responses. Do you want one of us to resend the patch
-> >>>>>>> or will you be able to do it?
-> >>>>>> That's odd, are you getting rejections on your emails? For reference, the
-> >>>>>> patch is here:
-> >>>>>>
-> >>>>>> http://git.kernel.dk/cgit/linux-block/commit/?h=for-4.19/block&id=2887e41b910bb14fd847cf01ab7a5993db989d88
-> >>>>> One issue with this, as far as I can tell. Right now we've switched to
-> >>>>> waking one task at the time, which is obviously more efficient. But if
-> >>>>> we do that with exclusive waits, then we have to ensure that this task
-> >>>>> makes progress. If we wake up a task, and then fail to get a queueing
-> >>>>> token, then we'll go back to sleep. We need to ensure that someone makes
-> >>>>> forward progress at this point. There are two ways I can see that
-> >>>>> happening:
-> >>>>>
-> >>>>> 1) The task woken _always_ gets to queue an IO
-> >>>>> 2) If the task woken is NOT allowed to queue an IO, then it must select
-> >>>>>    a new task to wake up. That new task is then subjected to rule 1 or 2
-> >>>>>    as well.
-> >>>>>
-> >>>>> For #1, it could be as simple as:
-> >>>>>
-> >>>>> if (slept || !rwb_enabled(rwb)) {
-> >>>>> 	atomic_inc(&rqw->inflight);
-> >>>>> 	break;
-> >>>>> }
-> >>>>>
-> >>>>> but this obviously won't always be fair. Might be good enough however,
-> >>>>> instead of having to eg replace the generic wait queues with a priority
-> >>>>> list/queue.
-> >>>>>
-> >>>>> Note that this isn't an entirely new issue, it's just so much easier to
-> >>>>> hit with the single wakeups.
-> >>>>>
-> >>>> Hi Jens,
-> >>>>
-> >>>> What is the scenario that you see under which the woken up task does not
-> >>>> get to run?
-> >>> That scenario is pretty easy to hit - let's say the next in line task
-> >>> has a queue limit of 1, and we currently have 4 pending. Task gets
-> >>> woken, goes back to sleep. Which should be totally fine. At some point
-> >>> we'll get below the limit, and allow the task to proceed. This will
-> >>> ensure forward progress.
-> >>>
-> >>>> The theory behind leaving the task on the wait queue is that the
-> >>>> waitqueue_active check in wbt_wait prevents new tasks from taking up a
-> >>>> slot in the queue (e.g. incrementing inflight). So, there should not be
-> >>>> a way for inflight to be incremented between the time the wake_up is
-> >>>> done and the task at the head of the wait queue runs. That's the idea
-> >>>> anyway :-) If we missed something, let us know.
-> >>> And that's a fine theory, I think it's a good improvement (and how it
-> >>> should have worked). I'm struggling to see where the issue is. Perhaps
-> >>> it's related to the wq active check. With fewer wakeups, we're more
-> >>> likely to hit a race there.
-> >>>
-> >>> I'll poke at it...
-> >> Trying something like this:
-> >>
-> >> http://git.kernel.dk/cgit/linux-block/log/?h=for-4.19/wbt
-> >>
-> > Ah, now I see what you mean.
-> > 
-> > This is the case where a task goes to sleep, not because the inflight
-> > limit has been reached, but simply because it needs to go to the back of
-> > the wait queue.
-> > 
-> > In that case, it should, for its first time inside the loop, not try to
-> > decrement inflight - since that means it could still race to overtake a
-> > task that got there earlier and is in the wait queue.
-> > 
-> > So what you are doing is keeping track of whether it got in to the loop
-> > only because of queueing, and then you don't try to decrement inflight
-> > the first time around the loop.
-> > 
-> > I think that should work to fix that corner case.
-> 
-> I hope so, got tests running now and we'll see...
-> 
-> Outside of that, getting the matching memory barrier for the wq check
-> could also fix a race on the completion side.
->
+--Sig_/fTOdtudVp=.496+uJLgFm7d
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I thought all the wait_* and set_current_* and atomic_* had implicit barriers.
-Are you referring to the rwb->wb_* values we consume on the completion side?
+On Sun, 19 Aug 2018 18:46:09 +0200
+Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 
-I was initially concerned about not dequeuing the task, but noticed that
-wake_up_common seems to handle that well. I looked for sources of missed wake
-up as well, notifying the same task twice and missing wakeups, but could
-not hit it.
+> On Sun, 19 Aug 2018 13:31:06 +0200
+> Alban <albeu@free.fr> wrote:
+>=20
+> > On Fri, 17 Aug 2018 18:27:20 +0200
+> > Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+> >  =20
+> > > Hi Bartosz,
+> > >=20
+> > > On Fri, 10 Aug 2018 10:05:03 +0200
+> > > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> > >    =20
+> > > > From: Alban Bedel <albeu@free.fr>
+> > > >=20
+> > > > Allow drivers that use the nvmem API to read data stored on MTD dev=
+ices.
+> > > > For this the mtd devices are registered as read-only NVMEM provider=
+s.
+> > > >=20
+> > > > Signed-off-by: Alban Bedel <albeu@free.fr>
+> > > > [Bartosz:
+> > > >   - use the managed variant of nvmem_register(),
+> > > >   - set the nvmem name]
+> > > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>     =
+=20
+> > >=20
+> > > What happened to the 2 other patches of Alban's series? I'd really
+> > > like the DT case to be handled/agreed on in the same patchset, but
+> > > IIRC, Alban and Srinivas disagreed on how this should be represented.
+> > > I hope this time we'll come to an agreement, because the MTD <-> NVMEM
+> > > glue has been floating around for quite some time...   =20
+> >=20
+> > These other patches were to fix what I consider a fundamental flaw in
+> > the generic NVMEM bindings, however we couldn't agree on this point.
+> > Bartosz later contacted me to take over this series and I suggested to
+> > just change the MTD NVMEM binding to use a compatible string on the
+> > NVMEM cells as an alternative solution to fix the clash with the old
+> > style MTD partition.
+> >=20
+> > However all this has no impact on the code needed to add NVMEM support
+> > to MTD, so the above patch didn't change at all. =20
+>=20
+> It does have an impact on the supported binding though.
+> nvmem->dev.of_node is automatically assigned to mtd->dev.of_node, which
+> means people will be able to define their NVMEM cells directly under
+> the MTD device and reference them from other nodes (even if it's not
+> documented), and as you said, it conflict with the old MTD partition
+> bindings. So we'd better agree on this binding before merging this
+> patch.
 
-FYI: We ran lock contention and the waitqueue showed up as having the
-largest contention, which disappeared after this patch.
+Unless the nvmem cell node has a compatible string, then it won't be
+considered as a partition by the MTD code. That is were the clash is,
+both bindings allow free named child nodes without a compatible string.
 
-Balbir Singh.
+> I see several options:
+>=20
+> 1/ provide a way to tell the NVMEM framework not to use parent->of_node
+>    even if it's !=3D NULL. This way we really don't support defining
+>    NVMEM cells in the DT, and also don't support referencing the nvmem
+>    device using a phandle.
 
+I really don't get what the point of this would be. Make the whole API
+useless?
 
+> 2/ define a new binding where all nvmem-cells are placed in an
+>    "nvmem" subnode (just like we have this "partitions" subnode for
+>    partitions), and then add a config->of_node field so that the
+>    nvmem provider can explicitly specify the DT node representing the
+>    nvmem device. We'll also need to set this field to ERR_PTR(-ENOENT)
+>    in case this node does not exist so that the nvmem framework knows
+>    that it should not assign nvmem->dev.of_node to parent->of_node
+
+This is not good. First the NVMEM device is only a virtual concept of
+the Linux kernel, it has no place in the DT. Secondly the NVMEM
+provider (here the MTD device) then has to manually parse its DT node to
+find this subnode, pass it to the NVMEM framework to later again
+resolve it back to the MTD device. Not very complex but still a lot of
+useless code, just registering the MTD device is a lot simpler and much
+more inline with most other kernel API that register a "service"
+available from a device.
+
+> 3/ only declare partitions as nvmem providers. This would solve the
+>    problem we have with partitions defined in the DT since
+>    defining sub-partitions in the DT is not (yet?) supported and
+>    partition nodes are supposed to be leaf nodes. Still, I'm not a big
+>    fan of this solution because it will prevent us from supporting
+>    sub-partitions if we ever want/need to.
+
+That sound like a poor workaround. Remember that this problem could
+appear with any device that has a binding that use child nodes.
+
+> 4/ Add a ->of_xlate() hook that would be called if present by the
+>    framework instead of using the default parsing we have right now.
+
+That is a bit cleaner, but I don't think it would be worse the
+complexity. Furthermore xlate functions are more about converting
+from hardware parameters to internal kernel representation than to hide
+extra DT parsing.
+
+> 5/ Tell the nvmem framework the name of the subnode containing nvmem
+>    cell definitions (if NULL that means cells are directly defined
+>    under the nvmem provider node). We would set it to "nvmem-cells" (or
+>    whatever you like) for the MTD case.
+
+If so please match on compatible and not on the node name.
+
+6/ Extend the current NVMEM cell lookup to check if the parent node of
+the cell has a compatible string set to "nvmem-cells". If it doesn't it
+mean we have the current binding and this node is the NVMEM device. If
+it does the device node is just the next parent. This is trivial to
+implement (literally 2 lines of code) and cover all the cases currently
+known.
+
+7/ Just add a compatible string to the nvmem cell. No code change is
+needed, however as the nvmem cells have an address space (the offset in
+byte in the storage) it might still clash with another address space
+used by the main device biding (for example a number of child
+functions).
+
+> There are probably other options (some were proposed by Alban and
+> Srinivas already), but I'd like to get this sorted out before we merge
+> this patch.
+>=20
+> Alban, Srinivas, any opinion?
+
+My preference goes to 6/ as it is trivial to implement, solves all
+known shortcomings and is backward compatible with the current binding.
+All other solutions have limitations and/or require too complex
+implementations compared to what they try to solve.
+
+Alban
+
+--Sig_/fTOdtudVp=.496+uJLgFm7d
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJbe0ZnAAoJEHSUmkuduC289scQAOXFzKlPD8+XMV3afPc7azN0
+mN8Gl+uZod6rFdLhNG5SKe1KV3sUULyNNbZq+NfS559CK0SG7NWrslLLmLZK2YL/
+ivPFXppo8rLCvk6U7u4LCUVbCk0X1DDgnvgt0vtvF/7QzQOxOT6Wh6DHeKQmI7pP
+x9/8Cncga2H8NFkZuBsVU91OExsLNDSBg+igIH/uat4MFBblFE42ZvBu5TPfnB4b
+8bJ663P0T0C+WcQGJzOxO82146tusPdstAZgY05TyBLoomhU6sJzmv3ouAOswOyo
+l/MYd5fVgXekGXpQOrw5VHFWRgcErfg0gdFrHlYByMiu08fc8cvARiYEjwT05M39
+rxFP/1fjoVleqdZ5WSAxme1fygbIP5LjHaJcKeNIRusYPZuz7WVid0Ht4GXA7ure
+2yr7DCrB3/HQAMBeGS7WJ3Xw+HphqPtKjZin2vSbWk6webtfUaxvwBVJRcqCGVjD
+/hFyQhtP44NxpWSRQClRrQ5+wH1kz7S1jfNrgtv7T0A8RaNJ4xZDYUliwLVM9uD2
+xrU9++6s4atq5vX93V3Iq5tXxZ5GThHY8z4kG9GX9sVIYfWEVKl64P3tB+ycjc0N
+ecJmDO/LhI9s5HzoaY0XJ2Oq1cvqO09Mc0DdADs17UlQ5HQRTKjrLq0Nd5BkUu1+
+fVmGaEuVW8MyxWMFWgs8
+=9TLP
+-----END PGP SIGNATURE-----
+
+--Sig_/fTOdtudVp=.496+uJLgFm7d--
