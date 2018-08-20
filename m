@@ -2,180 +2,102 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 340D4C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F18B4C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE8D621570
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:02:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE8D621570
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id AE2C821655
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:03:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZW1fmKnL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE2C821655
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726229AbeHTORe (ORCPT
+        id S1726476AbeHTOSM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 10:17:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39910 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725948AbeHTORd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 10:17:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E2FA0AE1F;
-        Mon, 20 Aug 2018 11:02:22 +0000 (UTC)
-Message-ID: <c9e11a27fd6cf3e7a80045ba545ae25c19b6ff76.camel@suse.de>
-Subject: Re: [PATCH 0/4] locks: avoid thundering-herd wake-ups
-From:   Martin Wilck <mwilck@suse.de>
-To:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>
-Cc:     NeilBrown <neilb@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 20 Aug 2018 13:02:21 +0200
-In-Reply-To: <20180808182959.GB23873@fieldses.org>
-References: <153369219467.12605.13472423449508444601.stgit@noble>
-         <ea503e6a6f26dfb344fda02c765ae87de65ed025.camel@kernel.org>
-         <20180808182959.GB23873@fieldses.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 20 Aug 2018 10:18:12 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:60740 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbeHTOSL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 10:18:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=pt1XV7TMguPjcBhIviy74GSY8GGerSZJ83xEDpix5Ak=; b=ZW1fmKnL+qDl+M7GntOAYn1IV
+        oCCVc3cOOO02rcPi9S6dvGHrR9h9IudZt3pXs9D52tYWks/e0eR3dZXJ3ZSoKWVar4u/KpPZyqDmR
+        a+KigeSPcHUuCBj/kgZ/LRv4OByBc8b35cv8OycpjnLPEVeeV/wzPsgE1b2+eF9pMFHejsbF0ryRN
+        HMjQamBfbHWtNLO8w7PhB55qSCDXGRfoIb9BJh9WtvmnES6os2uYaRvDsN0OyH3xdGZ9YiCLYIxNM
+        uVUyuU+GozklOVWUduYSJY48RcXJ2Z5g9sfnoqRghHxvbIVoRxaOSQR1NmK63sIxgDUWOauy07SVg
+        4EQHZf2dA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1frhxY-0003fY-Gl; Mon, 20 Aug 2018 11:02:57 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0DD6520267B13; Mon, 20 Aug 2018 13:02:54 +0200 (CEST)
+Date:   Mon, 20 Aug 2018 13:02:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH v5] cpuidle: menu: Handle stopped tick more aggressively
+Message-ID: <20180820110254.GX2494@hirez.programming.kicks-ass.net>
+References: <1951009.1jlQfyrxio@aspire.rjw.lan>
+ <1754612.IcCR94pSYR@aspire.rjw.lan>
+ <1582055.9b67urWYFa@aspire.rjw.lan>
+ <1572343.jWaXB8XNF1@aspire.rjw.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572343.jWaXB8XNF1@aspire.rjw.lan>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-08 at 14:29 -0400, J. Bruce Fields wrote:
-> On Wed, Aug 08, 2018 at 12:47:22PM -0400, Jeff Layton wrote:
-> > On Wed, 2018-08-08 at 11:51 +1000, NeilBrown wrote:
-> > > If you have a many-core machine, and have many threads all
-> > > wanting to
-> > > briefly lock a give file (udev is known to do this), you can get
-> > > quite
-> > > poor performance.
-> > > 
-> > > When one thread releases a lock, it wakes up all other threads
-> > > that
-> > > are waiting (classic thundering-herd) - one will get the lock and
-> > > the
-> > > others go to sleep.
-> > > When you have few cores, this is not very noticeable: by the time
-> > > the
-> > > 4th or 5th thread gets enough CPU time to try to claim the lock,
-> > > the
-> > > earlier threads have claimed it, done what was needed, and
-> > > released.
-> > > With 50+ cores, the contention can easily be measured.
-> > > 
-> > > This patchset creates a tree of pending lock request in which
-> > > siblings
-> > > don't conflict and each lock request does conflict with its
-> > > parent.
-> > > When a lock is released, only requests which don't conflict with
-> > > each
-> > > other a woken.
-> > > 
-> > > Testing shows that lock-acquisitions-per-second is now fairly
-> > > stable even
-> > > as number of contending process goes to 1000.  Without this
-> > > patch,
-> > > locks-per-second drops off steeply after a few 10s of processes.
-> > > 
-> > > There is a small cost to this extra complexity.
-> > > At 20 processes running a particular test on 72 cores, the lock
-> > > acquisitions per second drops from 1.8 million to 1.4 million
-> > > with
-> > > this patch.  For 100 processes, this patch still provides 1.4
-> > > million
-> > > while without this patch there are about 700,000.
-> > > 
-> > > NeilBrown
-> > > 
-> > > ---
-> > > 
-> > > NeilBrown (4):
-> > >       fs/locks: rename some lists and pointers.
-> > >       fs/locks: allow a lock request to block other requests.
-> > >       fs/locks: change all *_conflict() functions to return bool.
-> > >       fs/locks: create a tree of dependent requests.
-> > > 
-> > > 
-> > >  fs/cifs/file.c                  |    2 -
-> > >  fs/locks.c                      |  142
-> > > +++++++++++++++++++++++++--------------
-> > >  include/linux/fs.h              |    5 +
-> > >  include/trace/events/filelock.h |   16 ++--
-> > >  4 files changed, 103 insertions(+), 62 deletions(-)
-> > > 
-> > 
-> > Nice work! I looked over this and I think it looks good.
-> > 
-> > I made an attempt to fix this issue several years ago, but my
-> > method
-> > sucked as it ended up penalizing the unlocking task too much. This
-> > is
-> > much cleaner and should scale well overall, I think.
+On Tue, Aug 14, 2018 at 12:34:40PM +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> I think I also took a crack at this at one point while I was at
-> UM/CITI
-> and never got anything I was happy with.  Looks like good work!
+> Commit 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states
+> with stopped tick) missed the case when the target residencies of
+> deep idle states of CPUs are above the tick boundary which may cause
+> the CPU to get stuck in a shallow idle state for a long time.
 > 
-> I remember one main obstacle that I felt like I never had a good
-> benchmark....
+> Say there are two CPU idle states available: one shallow, with the
+> target residency much below the tick boundary and one deep, with
+> the target residency significantly above the tick boundary.  In
+> that case, if the tick has been stopped already and the expected
+> next timer event is relatively far in the future, the governor will
+> assume the idle duration to be equal to TICK_USEC and it will select
+> the idle state for the CPU accordingly.  However, that will cause the
+> shallow state to be selected even though it would have been more
+> energy-efficient to select the deep one.
 > 
-> How did you choose this workload and hardware?  Was it in fact udev
-> (booting a large machine?), or was there some other motivation?
-
-Some details can be found here:
-
-https://github.com/systemd/systemd/pull/9551
-
-https://github.com/systemd/systemd/pull/8667#issuecomment-385520335
-and comments further down. 8667 has been superseded by 9551.
-
-The original problem was that the symlink "/dev/disk/by-
-partlabel/primary" may be claimed by _many_ devices on big systems
-under certain distributions, which use older versions of parted for
-partition creation on GPT disk labels. I've seen systems with literally
-thousands of contenders for this symlink. 
-
-We found that with current systemd, this can cause a boot-time race
-where the wrong device is eventually assigned the "best" contender for
-the symlink (e.g. a partition on multipath member rather than a
-partition on the multipath map itself). I extended the udev test suite,
-creating a test that makes this race easily reproducible, at least on
-systems with many CPUs (the test host I used most had 72 cores).
-
-I created an udev patch that would use systemd's built in fcntl-based
-locking to avoid this race, but I found that it would massively slow
-down the system, and found the contention to be in the spin locks in
-posix_lock_common(). (I therefore added more the systemd patches to
-make the locking scale better, but that's irrelevant for the kernel-
-side discussion).
-
-I further created an artificial test just for the scaling of
-fcntl(F_OFD_SETLKW) and flock(), with which I could reproduce the
-scaling problem easily, and do some quantitive experiments. My tests
-didn't use any byte ranges, only "full" locking of 0-byte files.
-
-> Not that I'm likely to do it any time soon, but could you share
-> sufficient details for someone else to reproduce your results?
+> To address this issue, modify the governor to always use the time
+> till the closest timer event instead of the predicted idle duration
+> if the latter is less than the tick period length and the tick has
+> been stopped already.  Also make it extend the search for a matching
+> idle state if the tick is stopped to avoid settling on a shallow
+> state if deep states with target residencies above the tick period
+> length are available.
 > 
-> --b.
+> In addition, make it always indicate that the tick should be stopped
+> if it has been stopped already for consistency.
+> 
+> Fixes: 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states with stopped tick)
+> Reported-by: Leo Yan <leo.yan@linaro.org>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-The udev test code can be found in the above links. It adds a new
-script "test/sd-script.py" that would be run after "test/sys-script.py" 
-using a numeric argument indicating the number of contenders for the
-test link to be created, such as "python test/sd-script.py test 1000".
-Next step would be running "test/udev-test.pl 152" e.g. under perf (152
-is the test ID of the scaling test).
+Seems OK,
 
-Of course I can also share my other test program if you desire so.
-
-Regards,
-Martin
-
-
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
