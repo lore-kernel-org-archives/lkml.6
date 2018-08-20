@@ -2,333 +2,90 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E9CC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 20:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 871DEC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 20:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 161052170E
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 20:34:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 161052170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3122E216C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 20:37:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MdfD2w6W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3122E216C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbeHTXvG (ORCPT
+        id S1726620AbeHTXyL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 19:51:06 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40040 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726450AbeHTXvF (ORCPT
+        Mon, 20 Aug 2018 19:54:11 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:33637 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726450AbeHTXyL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 19:51:05 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7KKOjwj129693
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 16:34:00 -0400
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m00bmte9r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 16:34:00 -0400
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Mon, 20 Aug 2018 14:33:59 -0600
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 20 Aug 2018 14:33:55 -0600
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7KKXqSH48562220
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 20 Aug 2018 13:33:52 -0700
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B86846A047;
-        Mon, 20 Aug 2018 14:33:52 -0600 (MDT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DC2B76A054;
-        Mon, 20 Aug 2018 14:33:48 -0600 (MDT)
-Received: from oc8043147753.ibm.com (unknown [9.80.233.6])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 20 Aug 2018 14:33:48 -0600 (MDT)
-Subject: Re: [PATCH v9 07/22] KVM: s390: refactor crypto initialization
-To:     David Hildenbrand <david@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-8-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1ba9032d-963a-6ce1-0d10-11bebbaa315f@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Mon, 20 Aug 2018 16:33:47 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Mon, 20 Aug 2018 19:54:11 -0400
+Received: by mail-io0-f196.google.com with SMTP id r196-v6so6690680iod.0;
+        Mon, 20 Aug 2018 13:37:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AmDUcc8dN2uKczcluUbtIELmnh1Uq04sXCZONPeqv+E=;
+        b=MdfD2w6WBzgQdEc4eoXdVEmcEeM/LEpizZqv3k9EKUPC3Jdk2IjzimMA6j4p6MYzlH
+         4RcqD3xCGMAGrKS6ejimyFH4MsT69SYNg8/dMsfCsYLb3uwI2CRg9VXErRghNUSBF2yV
+         IaXvDs9wSNlyJVf/m52gQ0RPZslYTp/uaoORo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AmDUcc8dN2uKczcluUbtIELmnh1Uq04sXCZONPeqv+E=;
+        b=Gyapn/68pbWJKoaxLoGHJM+xiajxkiAgKttj5lapSKhJBYdcrzUHU38QqLDEiEIQhH
+         pUHIjwikBzEHLY1DeBpjB/JMma0ZtIuhGK37lH6XQHzK+iHlDSdIzrrNtNtz2uqRsMao
+         /qRHxCMq/n+ub1uAtDJTRPYSDuoY/1ig4A2QIE2O/F5QZrtaG3KA/foM4TwqyGXtbT8l
+         kje7v2JjrV1qhyRWizjt/n4MyGy7Vw0ZBI4NKb810A7erIfU1Lg/2djvOCdwPnugR5Jo
+         Fvg6p1YwrUeRNTwmxq7VCffKwgEVGrETjj/nlAC0Y7Me4G3goyVSMQPIamUGKnhnUTmv
+         XvVA==
+X-Gm-Message-State: AOUpUlFMpo+JpNkqzGMKCf4Uj4yiB4+ii2S9DvvGN6JXFDs2jDw5m4kZ
+        nIjnJ6/4HFrBxXNF3CrAkxea3B2Aulq6oDhbWSo=
+X-Google-Smtp-Source: AA+uWPwRgpzzt/+CbGp7wmk/EuOe6E52F8jOmzSwTpxCCRyQ2OIxyTImLj3b0IEY5tAOkAvwRzDFQZHUxichkkr7dZ4=
+X-Received: by 2002:a6b:f815:: with SMTP id o21-v6mr27847287ioh.203.1534797426228;
+ Mon, 20 Aug 2018 13:37:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1ba9032d-963a-6ce1-0d10-11bebbaa315f@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18082020-0012-0000-0000-000016A20900
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009580; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01076403; UDB=6.00554882; IPR=6.00856373;
- MB=3.00022833; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-20 20:33:58
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082020-0013-0000-0000-0000541C5108
-Message-Id: <9c44d7b2-792a-192d-83be-1fd636a2cd2f@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-20_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808200209
+References: <20180819135135.8801-1-sedat.dilek@credativ.de>
+ <CA+55aFxv5_8C5ApV4cDjpvAmZbn1aiKebc7yrRWBskQQbz9=Hw@mail.gmail.com>
+ <1d2a7c56cc44ff639ef2943366f4868e6e5ecdfe.camel@kernel.crashing.org> <20180820080629.i7y4cx4wewmcyqpk@ninjato>
+In-Reply-To: <20180820080629.i7y4cx4wewmcyqpk@ninjato>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 20 Aug 2018 13:36:55 -0700
+Message-ID: <CA+55aFy+vVH4Mb-unrxm72JNORdxHaCFYEhD8iXbxo-OW0f8qg@mail.gmail.com>
+Subject: Re: [PATCH v2] i2c: Remove '-Wno-deprecated-declarations' compiler warning
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        sedat.dilek@credativ.de, Jean Delvare <jdelvare@suse.de>,
+        linux-i2c@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>, pmac@au1.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/20/2018 12:41 PM, David Hildenbrand wrote:
-> On 13.08.2018 23:48, Tony Krowiak wrote:
->> From: Tony Krowiak <akrowiak@linux.ibm.com>
->>
->> This patch refactors the code that initializes and sets up the
->> crypto configuration for a guest. The following changes are
->> implemented via this patch:
->>
->> 1. Prior to the introduction of AP device virtualization, it
->>     was not necessary to provide guest access to the CRYCB
->>     unless the MSA extension 3 (MSAX3) facility was installed
->>     on the host system. With the introduction of AP device
->>     virtualization, the CRYCB must be made accessible to the
->>     guest if the AP instructions are installed on the host
->>     and are to be provided to the guest.
->>
->> 2. Introduces a flag indicating AP instructions executed on
->>     the guest shall be interpreted by the firmware. It is
->>     initialized to indicate AP instructions are to be
->>     to be interpreted and is used to set the SIE bit for
->>     each vcpu during vcpu setup.
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
->> Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> Acked-by: Janosch Frank <frankja@linux.ibm.com>
->> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> ---
->>   arch/s390/include/asm/kvm_host.h |    2 +
->>   arch/s390/include/uapi/asm/kvm.h |    1 +
->>   arch/s390/kvm/kvm-s390.c         |   81 +++++++++++++++++++-------------------
->>   3 files changed, 44 insertions(+), 40 deletions(-)
->>
->> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
->> index af39561..4a739d4 100644
->> --- a/arch/s390/include/asm/kvm_host.h
->> +++ b/arch/s390/include/asm/kvm_host.h
->> @@ -187,6 +187,7 @@ struct kvm_s390_sie_block {
->>   #define ECA_AIV		0x00200000
->>   #define ECA_VX		0x00020000
->>   #define ECA_PROTEXCI	0x00002000
->> +#define ECA_APIE	0x00000008
->>   #define ECA_SII		0x00000001
->>   	__u32	eca;			/* 0x004c */
->>   #define ICPT_INST	0x04
->> @@ -256,6 +257,7 @@ struct kvm_s390_sie_block {
->>   	__u8	reservede4[4];		/* 0x00e4 */
->>   	__u64	tecmc;			/* 0x00e8 */
->>   	__u8	reservedf0[12];		/* 0x00f0 */
->> +#define CRYCB_FORMAT_MASK 0x00000003
->>   #define CRYCB_FORMAT1 0x00000001
->>   #define CRYCB_FORMAT2 0x00000003
->>   	__u32	crycbd;			/* 0x00fc */
->> diff --git a/arch/s390/include/uapi/asm/kvm.h b/arch/s390/include/uapi/asm/kvm.h
->> index 4cdaa55..a580dec 100644
->> --- a/arch/s390/include/uapi/asm/kvm.h
->> +++ b/arch/s390/include/uapi/asm/kvm.h
->> @@ -130,6 +130,7 @@ struct kvm_s390_vm_cpu_machine {
->>   #define KVM_S390_VM_CPU_FEAT_PFMFI	11
->>   #define KVM_S390_VM_CPU_FEAT_SIGPIF	12
->>   #define KVM_S390_VM_CPU_FEAT_KSS	13
->> +#define KVM_S390_VM_CPU_FEAT_AP		14
->>   struct kvm_s390_vm_cpu_feat {
->>   	__u64 feat[16];
->>   };
->> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->> index 19f4f44..f7de123 100644
->> --- a/arch/s390/kvm/kvm-s390.c
->> +++ b/arch/s390/kvm/kvm-s390.c
->> @@ -40,6 +40,7 @@
->>   #include <asm/sclp.h>
->>   #include <asm/cpacf.h>
->>   #include <asm/timex.h>
->> +#include <asm/ap.h>
->>   #include "kvm-s390.h"
->>   #include "gaccess.h"
->>   
->> @@ -1881,49 +1882,37 @@ long kvm_arch_vm_ioctl(struct file *filp,
->>   	return r;
->>   }
->>   
->> -static int kvm_s390_query_ap_config(u8 *config)
->> -{
->> -	u32 fcn_code = 0x04000000UL;
->> -	u32 cc = 0;
->> -
->> -	memset(config, 0, 128);
->> -	asm volatile(
->> -		"lgr 0,%1\n"
->> -		"lgr 2,%2\n"
->> -		".long 0xb2af0000\n"		/* PQAP(QCI) */
->> -		"0: ipm %0\n"
->> -		"srl %0,28\n"
->> -		"1:\n"
->> -		EX_TABLE(0b, 1b)
->> -		: "+r" (cc)
->> -		: "r" (fcn_code), "r" (config)
->> -		: "cc", "0", "2", "memory"
->> -	);
->> -
->> -	return cc;
->> -}
->> -
->>   static int kvm_s390_apxa_installed(void)
->>   {
->> -	u8 config[128];
->> -	int cc;
->> +	struct ap_config_info info;
->>   
->> -	if (test_facility(12)) {
->> -		cc = kvm_s390_query_ap_config(config);
->> -
->> -		if (cc)
->> -			pr_err("PQAP(QCI) failed with cc=%d", cc);
->> -		else
->> -			return config[0] & 0x40;
->> +	if (ap_instructions_available()) {
->> +		if (ap_qci(&info) == 0)
->> +			return info.apxa;
->>   	}
->>   
->>   	return 0;
->>   }
->>   
->> +/*
->> + * The format of the crypto control block (CRYCB) is specified in the 3 low
->> + * order bits of the CRYCB designation (CRYCBD) field as follows:
->> + * Format 0: Neither the message security assist extension 3 (MSAX3) nor the
->> + *	     AP extended addressing (APXA) facility are installed.
->> + * Format 1: The APXA facility is not installed but the MSAX3 facility is.
->> + * Format 2: Both the APXA and MSAX3 facilities are installed
->> + */
->>   static void kvm_s390_set_crycb_format(struct kvm *kvm)
->>   {
->>   	kvm->arch.crypto.crycbd = (__u32)(unsigned long) kvm->arch.crypto.crycb;
->>   
->> +	/* Clear the CRYCB format bits - i.e., set format 0 by default */
->> +	kvm->arch.crypto.crycbd &= ~(CRYCB_FORMAT_MASK);
->> +
->> +	/* Check whether MSAX3 is installed */
->> +	if (!test_kvm_facility(kvm, 76))
->> +		return;
->> +
->>   	if (kvm_s390_apxa_installed())
->>   		kvm->arch.crypto.crycbd |= CRYCB_FORMAT2;
->>   	else
->> @@ -1941,12 +1930,12 @@ static u64 kvm_s390_get_initial_cpuid(void)
->>   
->>   static void kvm_s390_crypto_init(struct kvm *kvm)
->>   {
->> -	if (!test_kvm_facility(kvm, 76))
->> -		return;
->> -
->>   	kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
->>   	kvm_s390_set_crycb_format(kvm);
->>   
->> +	if (!test_kvm_facility(kvm, 76))
->> +		return;
->> +
->>   	/* Enable AES/DEA protected key functions by default */
->>   	kvm->arch.crypto.aes_kw = 1;
->>   	kvm->arch.crypto.dea_kw = 1;
->> @@ -2474,17 +2463,29 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
->>   
->>   static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
->>   {
->> -	if (!test_kvm_facility(vcpu->kvm, 76))
->> +	/*
->> +	 * If neither the AP instructions nor the MSAX3 facility are installed
->> +	 * on the host, then there is no need for a CRYCB in SIE because they
->> +	 * will not be installed on the guest either.
->> +	 */
->> +	if (!test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP) &&
->> +	    !test_facility(76))
-> I think this can just stay "test_kvm_facility(vcpu->kvm, 76)", and the
-> comment should be changed to
+On Mon, Aug 20, 2018 at 1:06 AM Wolfram Sang <wsa@the-dreams.de> wrote:
 >
-> "If neither the AP instructions nor the MSAX3 facility are configured
-> for the guest, there is nothing to set up."
->
-> Or am I missing something important here?
+> [1] http://patchwork.ozlabs.org/patch/461759/
 
-No, you're not missing anything, it can be test_kvm_facility() and I'm
-more than happy to change the comment.
+Let's just apply this.
 
->
-> After the CPU has been created, both feature can no longer change. The
-> only thing that might change is kvm->arch.crypto.aes_kw/dea_kw but only
-> with test_kvm_facility(vcpu->kvm, 76).
->
->>   		return;
->>   
->> +	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
->>   	vcpu->arch.sie_block->ecb3 &= ~(ECB3_AES | ECB3_DEA);
->>   
->> -	if (vcpu->kvm->arch.crypto.aes_kw)
->> -		vcpu->arch.sie_block->ecb3 |= ECB3_AES;
->> -	if (vcpu->kvm->arch.crypto.dea_kw)
->> -		vcpu->arch.sie_block->ecb3 |= ECB3_DEA;
->> +	vcpu->arch.sie_block->eca &= ~ECA_APIE;
-> As this feature can never flip, clearing the flag is not necessary.
+If it breaks something and somebody notices, we'll at least have found a tester.
 
-Okay.
+And if it doesn't break anything, or if nobody ever notices the
+breakage, then we will have gotten rid of that deprecated function.
 
->
->> +	if (test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP))
->> +		vcpu->arch.sie_block->eca |= ECA_APIE;
->>   
->> -	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
->> +	/* If MSAX3 is installed on the guest, set up protected key support */
->> +	if (test_kvm_facility(vcpu->kvm, 76)) {
->> +		if (vcpu->kvm->arch.crypto.aes_kw)
->> +			vcpu->arch.sie_block->ecb3 |= ECB3_AES;
->> +		if (vcpu->kvm->arch.crypto.dea_kw)
->> +			vcpu->arch.sie_block->ecb3 |= ECB3_DEA;
->> +	}
-> As the feature can never change, and aes_kw/dea_kw are only set to 1 in
-> case we have test_kvm_facility(vcpu->kvm, 76), this change is not needed.
->
-> I think this function can be pretty much left alone. Just add the
-> KVM_S390_VM_CPU_FEAT_AP handling.
+Either way we win. There's no downside.
 
-I disagree, what about the case where the KVM_S390_VM_CPU_FEAT_AP is
-configured for the guest but the MSAX3 facility (76) is not?
+Wolfram, should I just take that patch as-is and get rid of the
+deprecated atach_adapter thing, or will you send me a pull request?
 
->
->>   }
->>   
->>   void kvm_s390_vcpu_unsetup_cmma(struct kvm_vcpu *vcpu)
->>
->
-
+                 Linus
