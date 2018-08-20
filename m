@@ -2,132 +2,132 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52554C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF7DAC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:36:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E64892154B
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:32:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7386921570
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:36:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFoSaT9J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E64892154B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bnOvORT3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7386921570
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbeHTMrj (ORCPT
+        id S1726486AbeHTMu5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 08:47:39 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34944 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbeHTMrj (ORCPT
+        Mon, 20 Aug 2018 08:50:57 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:59038 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbeHTMu5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 08:47:39 -0400
-Received: by mail-wm0-f68.google.com with SMTP id o18-v6so13226599wmc.0;
-        Mon, 20 Aug 2018 02:32:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rnuB8rtF/kaZa0/OSMS/WHdyS45hq3o4yPDRq3T4G2s=;
-        b=iFoSaT9JW9R3kZWzz+qD6tL5rYzJikp3QCrQQsJkwCWfhapndWYJHiVEKFsZ62ss0N
-         FGDG+pAr4ErgUHcSLsB30XA+9zwWHREGNNJ+gj1FuL8o6Y0olps9lgM/ag00q05OqXqB
-         KocjNNc8JWJYrMCZDqpPIGCTRj9YQSTC0BfGy9oJ8/GqdUsmP5sPAx74A6Z91C86fQzI
-         Ut6n/6E1QxXMshe+V9cHoZbYsr9JVir7A11XcUNKAK7Ee5IlQDMcKmyXFM5ZOWdyXeA5
-         Ld56bbPijSlH6gzpLTQBhOBxOTF9p1vvtD9AgBPClFzz+cI05B9Ogwzh5XATrOjxSyj/
-         Idsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rnuB8rtF/kaZa0/OSMS/WHdyS45hq3o4yPDRq3T4G2s=;
-        b=dMTLfoXNBuJBhk/LcQ5hP8f5eN5h3K71+IKbWFYyVv/U5pOtdhPf4JHPqOuDWWyczY
-         R2zt8iJBCvj4eMmPOsgxDqgraymZwxlM+kw9ASPu0OFBnOsqyBGxTCf2NXOA5DOvvaU6
-         AfNejlNq41TjY14cjDIq10Y+z7NQhSmAi12t3l/GNwb0vw3Ra6NkHhPNrSHVlgbfd7AO
-         CFjyeLULKX+ptrpmKeYbfdYGSuP1ItjjbGy8fZjhFCVlld59BRrlowpGtBEkanwqDcca
-         1WUTbQZA57mJhEWtP5bFZ6huA6iwH/IB0K2r8ipN+JdY4AGXbTXhcD25yDeQTBcNh2rF
-         3/2A==
-X-Gm-Message-State: AOUpUlFOBbQdl09FrOIgUU858OrWLCX8W1cW8//xJBGZYtoRUaakhQzh
-        lc34vJ/Cz9Zvig28gfBvW8s=
-X-Google-Smtp-Source: AA+uWPyoCM3JPa7zEBnKurV9+ffW0H2kVku9DxhFd3LAGy/h8PUKMCJW5AuVSN9PMgPnB5E+chXvPQ==
-X-Received: by 2002:a1c:ea9b:: with SMTP id g27-v6mr23748896wmi.152.1534757564450;
-        Mon, 20 Aug 2018 02:32:44 -0700 (PDT)
-Received: from localhost (pD9E51C80.dip0.t-ipconnect.de. [217.229.28.128])
-        by smtp.gmail.com with ESMTPSA id i205-v6sm11997737wmf.30.2018.08.20.02.32.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 Aug 2018 02:32:43 -0700 (PDT)
-Date:   Mon, 20 Aug 2018 11:32:42 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>, linux-pwm@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pwm: meson: fix mux clock names
-Message-ID: <20180820093242.GC8242@ulmo>
-References: <20180801105720.23999-1-jbrunet@baylibre.com>
+        Mon, 20 Aug 2018 08:50:57 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7K9Xjah028977;
+        Mon, 20 Aug 2018 09:35:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=GiLK+ODd6BXpGfgm8Mkq7jOxd86Y6qvnQm2am2tkc0s=;
+ b=bnOvORT36eLfKQ5NLp4+wD3GeXdQXcniWmFHYolcKcih53763YOzL9853MWP19nc9xXb
+ d5t8y+GF/vc7VHkH1Yil20xZ/b/YGI8u1ZD7pe5d4Er5eja+3s8bD2snR85vB4XItG5S
+ +p7VZUP3P8YIw80NX/TXB+sB+icTpVPREgSwOcHiluWZjLfJDQnhrDQ78/zpSB6ECfYI
+ Lb+6uKUmCxh7jEw+VgJZ9ZWSVzyERHRVVFt3co2EcHWdMQsb7rcqTWrGNDOG+i9bzGI0
+ CV4Bgc9Nj8CaAHNdD7L2qxJCjpcsw3Xpkqa0EgRKLn6NgbbmisdYrNVhYBhhQLedrC11 nA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2kxavtdaf1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 20 Aug 2018 09:35:59 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7K9Zsth028479
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 20 Aug 2018 09:35:54 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7K9Zr32012390;
+        Mon, 20 Aug 2018 09:35:53 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 20 Aug 2018 02:35:53 -0700
+Date:   Mon, 20 Aug 2018 12:35:46 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Bhaskar Singh <bhaskar.kernel@gmail.com>
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8188eu: Removed a function and coded inline
+Message-ID: <20180820093546.whlekjpoqluqfeq2@mwanda>
+References: <20180818190640.GA11687@Gentoo-PC>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="L6iaP+gRLNZHKoI4"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180801105720.23999-1-jbrunet@baylibre.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180818190640.GA11687@Gentoo-PC>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8990 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=969
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808200104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---L6iaP+gRLNZHKoI4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Aug 01, 2018 at 12:57:20PM +0200, Jerome Brunet wrote:
-> Current clock name looks like this:
-> /soc/bus@ffd00000/pwm@1b000#mux0
->=20
-> This is bad because CCF uses the clock to create a directory in clk debug=
-fs.
-> With such name, the directory creation (silently) fails and the debugfs
-> entry end up being created at the debugfs root.
->=20
-> With this change, the clock name will now be:
-> ffd1b000.pwm#mux0
->=20
-> This matches the clock naming scheme used in the ethernet and mmc driver.
-> It also fixes the problem with debugfs.
->=20
-> Fixes: 36af66a79056 ("pwm: Convert to using %pOF instead of full_name")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+On Sun, Aug 19, 2018 at 12:36:40AM +0530, Bhaskar Singh wrote:
+> This patch removed function named rtw_malloc2d.
+> 
+> I removed this function because this function is used exactly once and
+> function call have some overhead also.
+> 
+> Maybe this will improve code runtime slightly.
+> 
+> Signed-off-by: Bhaskar Singh <bhaskar.kernel@gmail.com>
 > ---
->  drivers/pwm/pwm-meson.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  drivers/staging/rtl8188eu/core/rtw_efuse.c        | 10 +++++++++-
+>  drivers/staging/rtl8188eu/include/osdep_service.h |  2 --
+>  drivers/staging/rtl8188eu/os_dep/osdep_service.c  | 14 --------------
+>  3 files changed, 9 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8188eu/core/rtw_efuse.c b/drivers/staging/rtl8188eu/core/rtw_efuse.c
+> index 0fd306a808c4..befc99c197b1 100644
+> --- a/drivers/staging/rtl8188eu/core/rtw_efuse.c
+> +++ b/drivers/staging/rtl8188eu/core/rtw_efuse.c
+> @@ -86,12 +86,20 @@ efuse_phymap_to_logical(u8 *phymap, u16 _offset, u16 _size_byte, u8  *pbuf)
+>  	u16	**eFuseWord = NULL;
+>  	u16	efuse_utilized = 0;
+>  	u8 u1temp = 0;
+> +	int z;
 
-Applied, thanks.
+z is unusual name for an iterator.  Does it stand for something?  Just
+use "int i;".
 
-Thierry
+> +	void **a = NULL;
 
---L6iaP+gRLNZHKoI4
-Content-Type: application/pgp-signature; name="signature.asc"
+What does "a" mean in this context?  Maybe just say "void **tmp;"
 
------BEGIN PGP SIGNATURE-----
+>  
+>  	efuseTbl = kzalloc(EFUSE_MAP_LEN_88E, GFP_KERNEL);
+>  	if (!efuseTbl)
+>  		return;
+>  
+> -	eFuseWord = (u16 **)rtw_malloc2d(EFUSE_MAX_SECTION_88E, EFUSE_MAX_WORD_UNIT, sizeof(u16));
+> +	a = kzalloc(EFUSE_MAX_SECTION_88E * sizeof(void *) + EFUSE_MAX_SECTION_88E * EFUSE_MAX_WORD_UNIT * sizeof(u16), GFP_KERNEL);
+> +	if (!a)
+> +		goto out;
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlt6iroACgkQ3SOs138+
-s6Ek3w/8CJ+FuFrZL+LE/RFDTuEtukAo1boyyc1MykHQ8cHPRBBsiHXFhyKLVUsr
-hz31W9xtX98G71ROnzpDbBFyS5j/SPnZLaIGFwbwEqAzIsKDS8MhkYH2wjEH0gVC
-V9jNXqWYYiGItsGyfXkvPiSULD1OHKD6hpYDC4kQhe+WvFmCk9R/135X0myETf9S
-sEa17iLJ6HAh0AvCV930agM2wZ5tEi1TRL/sfca0XS06Vx5qXtdy9dtaFlrKU6jW
-w3cvHTf0bxCY7ShmNrzvE5esok2VV2wir5fwj6hIDUIK9crCvQ6QcOiMP2ZZHlrQ
-kZgeC3T6O2hXkGWv/q4yjS6mj5It8zNcwAsX5EUoFept+6SCFZLU+1Z7ZqHrlP33
-gknC6AHcutrK5r2Z7Q5p9eUkdRStlexpXok5LtrHoKjnPpuoIUuaIahFXZpidQ9d
-lhfNTinvaq1Eu/oPcO4/JWI8GixACkLNgH7urUfvgV3YfQj4q4wQ3nTfHOOM7PnA
-dJKk9GqsUf1f+oTgms+iBCnxGJ+AzhIeyr3wy2FiLljwicApwILe2xAXl1HqwT9R
-YfTOn7ufs3EE3q1U6TaO/0H7QDVnHva6P5CjX2O3Gs8K1vz8QnXCA8vJUH0JB2WB
-+p0trXuYlb1mkyKQb3MbB0vXuc1aRb7qsZ+qBQJq79Nx6Ia2CpU=
-=LNSJ
------END PGP SIGNATURE-----
 
---L6iaP+gRLNZHKoI4--
+You can simplify the math a bit:
+
+	tmp = kzalloc(EFUSE_MAX_SECTION_88E * (sizeof(void *) + EFUSE_MAX_WORD_UNIT * sizeof(u16)), GFP_KERNEL);
+
+Then if it fails:
+
+	if (!tmp)
+		goto eFuseWord_failed;
+
+
+regards,
+dan carpenter
+
