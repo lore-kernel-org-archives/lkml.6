@@ -2,134 +2,124 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF9EC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D660C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:50:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 634252170E
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:48:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA06C2170E
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:50:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Ij1wXBsI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 634252170E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RI8d/yzU";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hqWPMx0B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA06C2170E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726655AbeHTTE4 (ORCPT
+        id S1726683AbeHTTGL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 15:04:56 -0400
-Received: from conuserg-12.nifty.com ([210.131.2.79]:31339 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726024AbeHTTE4 (ORCPT
+        Mon, 20 Aug 2018 15:06:11 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34698 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726021AbeHTTGL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 15:04:56 -0400
-Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id w7KFlQR4005997;
-        Tue, 21 Aug 2018 00:47:26 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com w7KFlQR4005997
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1534780047;
-        bh=AssB2o4PwhUYh/pQhv8ezhCwShZXiJMfQFGSMqFsRf8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Ij1wXBsI7hM+odlggzOKSo8NsHIJEotSMwhZzuaxKRTezsOUejPsdhPih14svUbgB
-         nNaxot0UwW3GaGq1Rmtw70npT27XT9TFSTU6VNRYZLdUI5/mdihlTJ/zr1dVV/3yYT
-         rtoUdmV9C0dWJL0tGvKcFZmI+cO/ZGBUPi/+1bZruhwQpQ9hYiVQzZ/D28O5ee74tk
-         1LwLzS2T8fIegOyL9Oxxx5fIxUaHtVbAOvXkZqsqM2eYoOMyvZxopFLK015QacVEEi
-         3erzRePaX+d08/i4Ou1khnh+X6/IeUj/NGEh1kMdKe+Yuz/uyJL7RyI1+0me4s+qt/
-         H2ODzlCoUDcCw==
-X-Nifty-SrcIP: [218.220.227.105]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
-        =?UTF-8?q?Bj=8F=A9=CCrn=20Forsman?= <bjorn.forsman@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-doc@vger.kernel.org, Michael Forney <forney@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] initramfs: move gen_initramfs_list.sh from scripts/ to usr/
-Date:   Tue, 21 Aug 2018 00:47:07 +0900
-Message-Id: <1534780028-6479-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 20 Aug 2018 15:06:11 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2FBFB6147F; Mon, 20 Aug 2018 15:50:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534780201;
+        bh=g+8nx+Dyb7/VwQIyuI7+rVVx3sesOQA8DlODxwKCaDM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RI8d/yzUpgiGKKqsp4mA9e62V7cjyVV7eyviKUkjanbvxuhp7buPWCZW39xwo83ea
+         XT4BkAGs2K5X4ojLXT+5iHkERwbdJWcxdnYFpgM+qK11htjgZ6MISiLmblqbh24e3+
+         OUrnLIfZ3xUk5uU+038HjnUeMW6BpaTP71seLfdQ=
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 20E0D6144B;
+        Mon, 20 Aug 2018 15:49:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534780200;
+        bh=g+8nx+Dyb7/VwQIyuI7+rVVx3sesOQA8DlODxwKCaDM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hqWPMx0BMFtk68/jP1iNWHYSCGOC9rcIsCUUsoVQl8eZbgHvV1BmvB9kWJSk9ruUQ
+         8RPbiWiX6xeChtcKonl6X43XYSmLQIGKAZdM7y+UqCdfE3jH+ya8UC5wE8CWAdO2rL
+         SgfBeSOS0rlZMFbIjqfByJL8z7n2v2+CT5QpTBLc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 20E0D6144B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Mon, 20 Aug 2018 09:49:59 -0600
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     bjorn.andersson@linaro.org, sboyd@kernel.org, evgreen@chromium.org,
+        linus.walleij@linaro.org, rplsssn@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        rnayak@codeaurora.org, devicetree@vger.kernel.org,
+        andy.gross@linaro.org, dianders@chromium.org
+Subject: Re: [PATCH RESEND v1 2/5] drivers: pinctrl: msm: enable PDC
+ interrupt only during suspend
+Message-ID: <20180820154959.GS5081@codeaurora.org>
+References: <20180817191026.32245-1-ilina@codeaurora.org>
+ <20180817191026.32245-3-ilina@codeaurora.org>
+ <86a7pjq0l1.wl-marc.zyngier@arm.com>
+ <20180820152629.GR5081@codeaurora.org>
+ <047d37fb-1011-0650-6517-e6052ba47a18@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <047d37fb-1011-0650-6517-e6052ba47a18@arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-scripts/gen_initramfs_list.sh is only invoked from usr/Makefile.
-Move it so that all tools to create initramfs are self-contained
-in the usr/ directory.
+On Mon, Aug 20 2018 at 09:34 -0600, Marc Zyngier wrote:
+>On 20/08/18 16:26, Lina Iyer wrote:
+>> On Sat, Aug 18 2018 at 07:13 -0600, Marc Zyngier wrote:
+>>> Hi Lina,
+>>>
+>>> On Fri, 17 Aug 2018 20:10:23 +0100,
+>>> Lina Iyer <ilina@codeaurora.org> wrote:
+>
+>[...]
+>
+>>>> @@ -920,6 +928,8 @@ static int msm_gpio_pdc_pin_request(struct irq_data *d)
+>>>>  	}
+>>>>
+>>>>  	irq_set_handler_data(d->irq, irq_get_irq_data(irq));
+>>>> +	irq_set_handler_data(irq, d);
+>>>> +	irq_set_status_flags(irq, IRQ_DISABLE_UNLAZY);
+>>>
+>>> Could you explain what this is trying to do? I'm trying to understand
+>>> this code, but this function isn't in 4.18...
+>>>
+>> Oh, I have been able to test only on 4.14 so far. The flag does seem to
+>> exist at least, I didn't get a compiler error.
+>>
+>> I read this in kernel/irq/chip.c -
+>>
+>> If the interrupt chip does not implement the irq_disable callback,
+>> a driver can disable the lazy approach for a particular irq line by
+>> calling 'irq_set_status_flags(irq, IRQ_DISABLE_UNLAZY)'. This can
+>> be used for devices which cannot disable the interrupt at the
+>> device level under certain circumstances and have to use
+>> disable_irq[_nosync] instead.
+>>
+>> And interpreted this as something that this would prevent 'relaxed'
+>> disable. I am enabling and disabling the IRQ in suspend path, that I
+>> thought this would help avoid issues caused by late disable. Am I
+>> mistaken?
+>
+>Sorry, I wasn't clear enough. I'm talking about what you're trying to do
+>in this particular function (msm_gpio_pdc_pin_request), which doesn't
+>exist in 4.18. Short of having a bit of context, I can hardly review this.
+>
+Sorry, my patch generation during the resend is messed up. Seems like I
+didn't send that patch out during the resend.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- Documentation/early-userspace/README                 | 6 +++---
- Documentation/filesystems/ramfs-rootfs-initramfs.txt | 2 +-
- usr/Makefile                                         | 2 +-
- {scripts => usr}/gen_initramfs_list.sh               | 0
- 4 files changed, 5 insertions(+), 5 deletions(-)
- rename {scripts => usr}/gen_initramfs_list.sh (100%)
-
-diff --git a/Documentation/early-userspace/README b/Documentation/early-userspace/README
-index 2c00b07..1e10579 100644
---- a/Documentation/early-userspace/README
-+++ b/Documentation/early-userspace/README
-@@ -66,17 +66,17 @@ early userspace image can be built by an unprivileged user.
- 
- As a technical note, when directories and files are specified, the
- entire CONFIG_INITRAMFS_SOURCE is passed to
--scripts/gen_initramfs_list.sh.  This means that CONFIG_INITRAMFS_SOURCE
-+usr/gen_initramfs_list.sh.  This means that CONFIG_INITRAMFS_SOURCE
- can really be interpreted as any legal argument to
- gen_initramfs_list.sh.  If a directory is specified as an argument then
- the contents are scanned, uid/gid translation is performed, and
- usr/gen_init_cpio file directives are output.  If a directory is
--specified as an argument to scripts/gen_initramfs_list.sh then the
-+specified as an argument to usr/gen_initramfs_list.sh then the
- contents of the file are simply copied to the output.  All of the output
- directives from directory scanning and file contents copying are
- processed by usr/gen_init_cpio.
- 
--See also 'scripts/gen_initramfs_list.sh -h'.
-+See also 'usr/gen_initramfs_list.sh -h'.
- 
- Where's this all leading?
- =========================
-diff --git a/Documentation/filesystems/ramfs-rootfs-initramfs.txt b/Documentation/filesystems/ramfs-rootfs-initramfs.txt
-index b176928..79637d2 100644
---- a/Documentation/filesystems/ramfs-rootfs-initramfs.txt
-+++ b/Documentation/filesystems/ramfs-rootfs-initramfs.txt
-@@ -164,7 +164,7 @@ Documentation/early-userspace/README for more details.)
- The kernel does not depend on external cpio tools.  If you specify a
- directory instead of a configuration file, the kernel's build infrastructure
- creates a configuration file from that directory (usr/Makefile calls
--scripts/gen_initramfs_list.sh), and proceeds to package up that directory
-+usr/gen_initramfs_list.sh), and proceeds to package up that directory
- using the config file (by feeding it to usr/gen_init_cpio, which is created
- from usr/gen_init_cpio.c).  The kernel's build-time cpio creation code is
- entirely self-contained, and the kernel's boot-time extractor is also
-diff --git a/usr/Makefile b/usr/Makefile
-index 237a028..748f6a6 100644
---- a/usr/Makefile
-+++ b/usr/Makefile
-@@ -24,7 +24,7 @@ $(obj)/initramfs_data.o: $(obj)/$(datafile_y) FORCE
- # Generate the initramfs cpio archive
- 
- hostprogs-y := gen_init_cpio
--initramfs   := $(CONFIG_SHELL) $(srctree)/scripts/gen_initramfs_list.sh
-+initramfs   := $(CONFIG_SHELL) $(srctree)/$(src)/gen_initramfs_list.sh
- ramfs-input := $(if $(filter-out "",$(CONFIG_INITRAMFS_SOURCE)), \
- 			$(shell echo $(CONFIG_INITRAMFS_SOURCE)),-d)
- ramfs-args  := \
-diff --git a/scripts/gen_initramfs_list.sh b/usr/gen_initramfs_list.sh
-similarity index 100%
-rename from scripts/gen_initramfs_list.sh
-rename to usr/gen_initramfs_list.sh
--- 
-2.7.4
+-- Lina
 
