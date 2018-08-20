@@ -2,185 +2,103 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C15C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB532C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8723A21581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:46:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="rSY+r7mK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8723A21581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	by mail.kernel.org (Postfix) with ESMTP id 0338721570
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:55:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0338721570
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ssi.bg
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726938AbeHTQCT (ORCPT
+        id S1726914AbeHTQK5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 12:02:19 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46808 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726766AbeHTQCT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 12:02:19 -0400
-Received: by mail-lf1-f67.google.com with SMTP id e23-v6so5455596lfc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 05:46:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=R344Nn2Xpwll865CNWFEfnhjVEO7XWzhU676sHNPUFM=;
-        b=rSY+r7mKbuZkVoYZVf30uLTKVoS6fKwPZQt1VaNflMg5G6vhNRGtiRa4xGkqs3PKix
-         7EG3vNhFNBn9Vi3WDnVBnJVWoMIdTyOuYseL7/JXOV4K16ZaGPJMCyQp2XUevDgqSEfK
-         goM+1iCTtVqxH1o1Bf8yEWvC+DjWyXNBsnS1fds0ehfTRJxFNPNKKY1aE+Hnrs/F8Omq
-         IL00Xgb9W0PicUgUUo9a8kA5X+muLXNG2A8mV6CxVItvTv9QjQxI1Wad56Fuuun1X7LE
-         oY1Dxs6NMt5Pyv4UQJGuRavTdprnSs4I0qmWs9ZYtaz/b6ZkOey2v8kz/ZmXgKmyorga
-         Uo5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=R344Nn2Xpwll865CNWFEfnhjVEO7XWzhU676sHNPUFM=;
-        b=V7Yo1YHZ4ywq6UTLnP+c5m4i6jrbMhqxxZ1OPFvU/MpouRO1wFdW6a7sBCMvMYNyhI
-         x+bKIFQxVmQLtK7c7fpdBnKlIlSMbAHSSLpN2VkD5+fiieNiWxau45sB16cj8ZUdgCM1
-         MDE9m25ihkMtHN4NI+kMttKhPN3MQLYfKf1F0xYBQEJYElDSj6nURhFGAf/FuaFhE08t
-         +0Df3UDf0V4deeP0SxWYnJyJ3H5c9K4FKSr8bYe8G7lRCG/qFaiq+yPwicj3KTYtY0Lw
-         Vsqzy4bnrEGa0qaEYvnrXkFc+5prfIjbgAGxJEjkK/vw7x71bogwtm0CQXlyXqX+QXAi
-         X7fA==
-X-Gm-Message-State: AOUpUlGxTQ7jH1TysKQ6tNmWZD1UiJTH4/t2WECz9JDd/SPjJm6tJnWd
-        suBmj+Gx4KMbzf0z3PEiokBKESZPCCc=
-X-Google-Smtp-Source: AA+uWPyZWFz2fFMacEUUubCC9N/94FcJtW9D6WWqdQ26demVcnMH7pXMD6x3VbadZ8XHrMAM7VCGSA==
-X-Received: by 2002:a19:cd8c:: with SMTP id d134-v6mr25566748lfg.41.1534769206121;
-        Mon, 20 Aug 2018 05:46:46 -0700 (PDT)
-Received: from [192.168.0.10] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.googlemail.com with ESMTPSA id s23-v6sm1603461ljs.38.2018.08.20.05.46.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 Aug 2018 05:46:44 -0700 (PDT)
-Subject: Re: [PATCH] lightnvm: introduce nvm_rq_to_ppa_list
-To:     javier@cnexlabs.com
-Cc:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
-        hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
-        youngtack.jin@circuitblvd.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180820121217.11393-1-mb@lightnvm.io>
- <DA2F1D94-23DC-4739-9056-351992D972EE@cnexlabs.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <d03ed26c-cb06-d9b7-e7ee-d0b78316641a@lightnvm.io>
-Date:   Mon, 20 Aug 2018 14:46:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Mon, 20 Aug 2018 12:10:57 -0400
+Received: from ja.ssi.bg ([178.16.129.10]:38064 "EHLO ja.ssi.bg"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726712AbeHTQK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 12:10:57 -0400
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+        by ja.ssi.bg (8.15.2/8.15.2) with ESMTP id w7KCtG3J005926;
+        Mon, 20 Aug 2018 15:55:16 +0300
+Date:   Mon, 20 Aug 2018 15:55:16 +0300 (EEST)
+From:   Julian Anastasov <ja@ssi.bg>
+To:     syzbot <syzbot+30209ea299c09d8785c9@syzkaller.appspotmail.com>
+cc:     ddstreet@ieee.org, dvyukov@google.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: unregister_netdevice: waiting for DEV to become free (2)
+In-Reply-To: <0000000000007d22100573d66078@google.com>
+Message-ID: <alpine.LFD.2.20.1808201527230.2758@ja.home.ssi.bg>
+References: <0000000000007d22100573d66078@google.com>
+User-Agent: Alpine 2.20 (LFD 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <DA2F1D94-23DC-4739-9056-351992D972EE@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/20/2018 02:38 PM, Javier Gonzalez wrote:
->> On 20 Aug 2018, at 14.12, Matias Bjørling <mb@lightnvm.io> wrote:
->>
->> There is a number of places in the lightnvm subsystem where the user
->> iterates over the ppa list. Before iterating, the user must know if it
->> is a single or multiple LBAs due to vector commands using either the
->> nvm_rq ->ppa_addr or ->ppa_list fields on command submission, which
->> leads to open-coding the if/else statement.
->>
->> Instead of having multiple if/else's, move it into a function that can
->> be called by its users.
->>
->> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
->> ---
->> drivers/lightnvm/pblk-read.c  | 4 +---
->> drivers/lightnvm/pblk-write.c | 5 +----
->> drivers/lightnvm/pblk.h       | 4 +---
->> include/linux/lightnvm.h      | 5 +++++
->> 4 files changed, 8 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
->> index f275c7e5abe4..696d3a9c9cf0 100644
->> --- a/drivers/lightnvm/pblk-read.c
->> +++ b/drivers/lightnvm/pblk-read.c
->> @@ -175,11 +175,9 @@ static void __pblk_read_put_line(struct pblk *pblk, struct ppa_addr ppa)
->>
->> static void pblk_read_put_line(struct pblk *pblk, struct nvm_rq *rqd)
->> {
->> -	struct ppa_addr *ppa_list;
->> +	struct ppa_addr *ppa_list = nvm_rq_to_ppa_list(rqd);
->> 	int i;
->>
->> -	ppa_list = (rqd->nr_ppas > 1) ? rqd->ppa_list : &rqd->ppa_addr;
->> -
->> 	for (i = 0; i < rqd->nr_ppas; i++)
->> 		__pblk_read_put_line(pblk, ppa_list[i]);
->> }
->> diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
->> index df99c45778d4..a92450ec7698 100644
->> --- a/drivers/lightnvm/pblk-write.c
->> +++ b/drivers/lightnvm/pblk-write.c
->> @@ -212,10 +212,7 @@ static void pblk_submit_rec(struct work_struct *work)
->>
->> 	pblk_log_write_err(pblk, rqd);
->>
->> -	if (rqd->nr_ppas == 1)
->> -		ppa_list = &rqd->ppa_addr;
->> -	else
->> -		ppa_list = rqd->ppa_list;
->> +	ppa_list = nvm_rq_to_ppa_list(rqd);
->>
->> 	pblk_map_remaining(pblk, ppa_list);
->> 	pblk_queue_resubmit(pblk, c_ctx);
->> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
->> index 64ae0c7ed3bb..bda098c7cc3b 100644
->> --- a/drivers/lightnvm/pblk.h
->> +++ b/drivers/lightnvm/pblk.h
->> @@ -1335,9 +1335,7 @@ static inline int pblk_boundary_ppa_checks(struct nvm_tgt_dev *tgt_dev,
->> static inline int pblk_check_io(struct pblk *pblk, struct nvm_rq *rqd)
->> {
->> 	struct nvm_tgt_dev *dev = pblk->dev;
->> -	struct ppa_addr *ppa_list;
->> -
->> -	ppa_list = (rqd->nr_ppas > 1) ? rqd->ppa_list : &rqd->ppa_addr;
->> +	struct ppa_addr *ppa_list = nvm_rq_to_ppa_list(rqd);
->>
->> 	if (pblk_boundary_ppa_checks(dev, ppa_list, rqd->nr_ppas)) {
->> 		WARN_ON(1);
->> diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
->> index 0106984400bc..1497e275f90f 100644
->> --- a/include/linux/lightnvm.h
->> +++ b/include/linux/lightnvm.h
->> @@ -487,6 +487,11 @@ static inline struct ppa_addr dev_to_generic_addr(struct nvm_dev *dev,
->> 	return l;
->> }
->>
->> +static inline struct ppa_addr *nvm_rq_to_ppa_list(struct nvm_rq *rqd)
->> +{
->> +	return (rqd->nr_ppas > 1) ? rqd->ppa_list : &rqd->ppa_addr;
->> +}
->> +
->> typedef blk_qc_t (nvm_tgt_make_rq_fn)(struct request_queue *, struct bio *);
->> typedef sector_t (nvm_tgt_capacity_fn)(void *);
->> typedef void *(nvm_tgt_init_fn)(struct nvm_tgt_dev *, struct gendisk *,
->> --
->> 2.11.0
-> 
-> Hans made a similar patch some time ago. There are a number of places
-> where you want to use this helper too, also outside of pblk. You can
-> look at it here [1]
-> 
-> [1] https://github.com/OpenChannelSSD/linux/commits/for-4.20/pblk
-> 
->     fdd88185bfed
->     17609afb2db9
-> 
-> Javier
-> 
 
-I like Hans' better. Hans, could you please merge my patch with yours? I 
-prefer the nvm_rq_to_ppa_list naming, rqdata -> rqd, and if short-hand.
+	Hello,
 
+On Sun, 19 Aug 2018, syzbot wrote:
+
+> syzbot has found a reproducer for the following crash on:
+> 
+> HEAD commit:    d7857ae43dcc Add linux-next specific files for 20180817
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13c72fce400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4b10cd1ea76bb092
+> dashboard link: https://syzkaller.appspot.com/bug?extid=30209ea299c09d8785c9
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=15df679a400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15242741400000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+30209ea299c09d8785c9@syzkaller.appspotmail.com
+> 
+> IPVS: stopping master sync thread 4657 ...
+> IPVS: stopping master sync thread 4663 ...
+> IPVS: sync thread started: state = MASTER, mcast_ifn = syz_tun, syncid = 0, id
+> IPVS: = 0
+> IPVS: sync thread started: state = MASTER, mcast_ifn = syz_tun, syncid = 0, id
+> IPVS: = 0
+> IPVS: stopping master sync thread 4664 ...
+> unregister_netdevice: waiting for lo to become free. Usage count = 1
+
+	Well, only IPVS and tun in the game? But IPVS does not
+take any dev references for sync threads. Can it be a problem
+in tun? For example, a side effects from dst_cache_reset?
+May be dst_release is called too late? Here is what should happen
+on unregistration:
+
+- NETDEV_UNREGISTER event: rt_flush_dev changes dst->dev with lo
+but dst is not released
+
+- ndo_uninit/ip_tunnel_uninit: dst_cache_reset is called which
+does nothing!?! May be dst_release call is needed here.
+
+- no more references are expected here ...
+
+- netdev_run_todo -> netdev_wait_allrefs: loop here due to refcnt!=0
+
+- dev->priv_destructor (ip_tunnel_dev_free) calls dst_cache_destroy
+where dst_release is used but it is not reached because we loop in
+netdev_wait_allrefs above
+
+- dst_cache_destroy: really call dst_release
+
+	In fact, after calling rt_flush_dev and replacing the
+dst->dev we should reach dev->priv_destructor (ip_tunnel_dev_free)
+for tun device where dst_release for lo should be called. But may be 
+something prevents it, exit batching?
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
