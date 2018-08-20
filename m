@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0413C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46698C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:45:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DB262098B
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:45:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DB262098B
+	by mail.kernel.org (Postfix) with ESMTP id F29B621570
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:45:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F29B621570
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbeHTNAH (ORCPT
+        id S1726831AbeHTNAL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 09:00:07 -0400
-Received: from foss.arm.com ([217.140.101.70]:35038 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726010AbeHTNAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 09:00:07 -0400
+        Mon, 20 Aug 2018 09:00:11 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35068 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726010AbeHTNAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 09:00:11 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9DCF71684;
-        Mon, 20 Aug 2018 02:45:12 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F321E15BE;
+        Mon, 20 Aug 2018 02:45:16 -0700 (PDT)
 Received: from queper01-lin.local (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 86B553F2EA;
-        Mon, 20 Aug 2018 02:45:08 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC1773F2EA;
+        Mon, 20 Aug 2018 02:45:12 -0700 (PDT)
 From:   Quentin Perret <quentin.perret@arm.com>
 To:     peterz@infradead.org, rjw@rjwysocki.net,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
@@ -42,9 +42,9 @@ Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
         edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
         currojerez@riseup.net, javi.merino@kernel.org,
         quentin.perret@arm.com
-Subject: [PATCH v6 09/14] sched: Add over-utilization/tipping point indicator
-Date:   Mon, 20 Aug 2018 10:44:15 +0100
-Message-Id: <20180820094420.26590-10-quentin.perret@arm.com>
+Subject: [PATCH v6 10/14] sched/cpufreq: Refactor the utilization aggregation method
+Date:   Mon, 20 Aug 2018 10:44:16 +0100
+Message-Id: <20180820094420.26590-11-quentin.perret@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180820094420.26590-1-quentin.perret@arm.com>
 References: <20180820094420.26590-1-quentin.perret@arm.com>
@@ -53,198 +53,179 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Morten Rasmussen <morten.rasmussen@arm.com>
+Schedutil aggregates the PELT signals of CFS, RT, DL and IRQ in order
+to decide which frequency to request. Energy Aware Scheduling (EAS)
+needs to be able to predict those requests to assess the energy impact
+of scheduling decisions. However, the PELT signals aggregation is only
+done in schedutil for now, hence making it hard to synchronize it with
+EAS.
 
-Energy-aware scheduling is only meant to be active while the system is
-_not_ over-utilized. That is, there are spare cycles available to shift
-tasks around based on their actual utilization to get a more
-energy-efficient task distribution without depriving any tasks. When
-above the tipping point task placement is done the traditional way based
-on load_avg, spreading the tasks across as many cpus as possible based
-on priority scaled load to preserve smp_nice. Below the tipping point we
-want to use util_avg instead. We need to define a criteria for when we
-make the switch.
+To address this issue, introduce schedutil_freq_util() to perform the
+aforementioned aggregation and make it available to other parts of the
+scheduler. Since frequency selection and energy estimation still need
+to deal with RT and DL signals slightly differently, schedutil_freq_util()
+is called with a different 'type' parameter in those two contexts, and
+returns an aggregated utilization signal accordingly.
 
-The util_avg for each cpu converges towards 100% regardless of how many
-additional tasks we may put on it. If we define over-utilized as:
-
-sum_{cpus}(rq.cfs.avg.util_avg) + margin > sum_{cpus}(rq.capacity)
-
-some individual cpus may be over-utilized running multiple tasks even
-when the above condition is false. That should be okay as long as we try
-to spread the tasks out to avoid per-cpu over-utilization as much as
-possible and if all tasks have the _same_ priority. If the latter isn't
-true, we have to consider priority to preserve smp_nice.
-
-For example, we could have n_cpus nice=-10 util_avg=55% tasks and
-n_cpus/2 nice=0 util_avg=60% tasks. Balancing based on util_avg we are
-likely to end up with nice=-10 tasks sharing cpus and nice=0 tasks
-getting their own as we 1.5*n_cpus tasks in total and 55%+55% is less
-over-utilized than 55%+60% for those cpus that have to be shared. The
-system utilization is only 85% of the system capacity, but we are
-breaking smp_nice.
-
-To be sure not to break smp_nice, we have defined over-utilization
-conservatively as when any cpu in the system is fully utilized at its
-highest frequency instead:
-
-cpu_rq(any).cfs.avg.util_avg + margin > cpu_rq(any).capacity
-
-IOW, as soon as one cpu is (nearly) 100% utilized, we switch to load_avg
-to factor in priority to preserve smp_nice.
-
-With this definition, we can skip periodic load-balance as no cpu has an
-always-running task when the system is not over-utilized. All tasks will
-be periodic and we can balance them at wake-up. This conservative
-condition does however mean that some scenarios that could benefit from
-energy-aware decisions even if one cpu is fully utilized would not get
-those benefits.
-
-For systems where some cpus might have reduced capacity on some cpus
-(RT-pressure and/or big.LITTLE), we want periodic load-balance checks as
-soon a just a single cpu is fully utilized as it might one of those with
-reduced capacity and in that case we want to migrate it.
-
-cc: Ingo Molnar <mingo@redhat.com>
-cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
-[ Added a comment explaining why new tasks are not accounted during
-  overutilization detection ]
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Quentin Perret <quentin.perret@arm.com>
 ---
- kernel/sched/fair.c  | 59 ++++++++++++++++++++++++++++++++++++++++++--
- kernel/sched/sched.h |  4 +++
- 2 files changed, 61 insertions(+), 2 deletions(-)
+ kernel/sched/cpufreq_schedutil.c | 86 +++++++++++++++++++++-----------
+ kernel/sched/sched.h             | 14 ++++++
+ 2 files changed, 72 insertions(+), 28 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 23381feae4ec..00729ff55fa3 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5001,6 +5001,24 @@ static inline void hrtick_update(struct rq *rq)
- }
- #endif
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index f5206c950143..8356cb0072a6 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -198,15 +198,15 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
+  * based on the task model parameters and gives the minimal utilization
+  * required to meet deadlines.
+  */
+-static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
++unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
++				  enum schedutil_type type)
+ {
+-	struct rq *rq = cpu_rq(sg_cpu->cpu);
++	struct rq *rq = cpu_rq(cpu);
+ 	unsigned long util, irq, max;
  
-+#ifdef CONFIG_SMP
-+static inline unsigned long cpu_util(int cpu);
-+static unsigned long capacity_of(int cpu);
-+
-+static inline bool cpu_overutilized(int cpu)
-+{
-+	return (capacity_of(cpu) * 1024) < (cpu_util(cpu) * capacity_margin);
-+}
-+
-+static inline void update_overutilized_status(struct rq *rq)
-+{
-+	if (!READ_ONCE(rq->rd->overutilized) && cpu_overutilized(rq->cpu))
-+		WRITE_ONCE(rq->rd->overutilized, SG_OVERUTILIZED);
-+}
-+#else
-+static inline void update_overutilized_status(struct rq *rq) { }
-+#endif
-+
- /*
-  * The enqueue_task method is called before nr_running is
-  * increased. Here we update the fair scheduling stats and
-@@ -5058,8 +5076,26 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 		update_cfs_group(se);
- 	}
+-	sg_cpu->max = max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
+-	sg_cpu->bw_dl = cpu_bw_dl(rq);
++	max = arch_scale_cpu_capacity(NULL, cpu);
  
--	if (!se)
-+	if (!se) {
- 		add_nr_running(rq, 1);
-+		/*
-+		 * Since new tasks are assigned an initial util_avg equal to
-+		 * half of the spare capacity of their CPU, tiny tasks have the
-+		 * ability to cross the overutilized threshold, which will
-+		 * result in the load balancer ruining all the task placement
-+		 * done by EAS. As a way to mitigate that effect, do not account
-+		 * for the first enqueue operation of new tasks during the
-+		 * overutilized flag detection.
-+		 *
-+		 * A better way of solving this problem would be to wait for
-+		 * the PELT signals of tasks to converge before taking them
-+		 * into account, but that is not straightforward to implement,
-+		 * and the following generally works well enough in practice.
-+		 */
-+		if (flags & ENQUEUE_WAKEUP)
-+			update_overutilized_status(rq);
-+
-+	}
+-	if (rt_rq_is_runnable(&rq->rt))
++	if (type == FREQUENCY_UTIL && rt_rq_is_runnable(&rq->rt))
+ 		return max;
  
- 	hrtick_update(rq);
- }
-@@ -7817,6 +7853,9 @@ static inline void update_sg_lb_stats(struct lb_env *env,
- 		if (nr_running > 1)
- 			*sg_status |= SG_OVERLOAD;
- 
-+		if (cpu_overutilized(i))
-+			*sg_status |= SG_OVERUTILIZED;
-+
- #ifdef CONFIG_NUMA_BALANCING
- 		sgs->nr_numa_running += rq->nr_numa_running;
- 		sgs->nr_preferred_running += rq->nr_preferred_running;
-@@ -8047,8 +8086,15 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
- 		env->fbq_type = fbq_classify_group(&sds->busiest_stat);
- 
- 	if (!env->sd->parent) {
-+		struct root_domain *rd = env->dst_rq->rd;
-+
- 		/* update overload indicator if we are at root domain */
--		WRITE_ONCE(env->dst_rq->rd->overload, sg_status & SG_OVERLOAD);
-+		WRITE_ONCE(rd->overload, sg_status & SG_OVERLOAD);
-+
-+		/* Update over-utilization (tipping point, U >= 0) indicator */
-+		WRITE_ONCE(rd->overutilized, sg_status & SG_OVERUTILIZED);
-+	} else if (sg_status & SG_OVERUTILIZED) {
-+		WRITE_ONCE(env->dst_rq->rd->overutilized, SG_OVERUTILIZED);
- 	}
- }
- 
-@@ -8275,6 +8321,14 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
- 	 * this level.
+ 	/*
+@@ -224,20 +224,33 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+ 	 * utilization (PELT windows are synchronized) we can directly add them
+ 	 * to obtain the CPU's actual utilization.
  	 */
- 	update_sd_lb_stats(env, &sds);
+-	util = cpu_util_cfs(rq);
++	util = util_cfs;
+ 	util += cpu_util_rt(rq);
+ 
+-	/*
+-	 * We do not make cpu_util_dl() a permanent part of this sum because we
+-	 * want to use cpu_bw_dl() later on, but we need to check if the
+-	 * CFS+RT+DL sum is saturated (ie. no idle time) such that we select
+-	 * f_max when there is no idle time.
+-	 *
+-	 * NOTE: numerical errors or stop class might cause us to not quite hit
+-	 * saturation when we should -- something for later.
+-	 */
+-	if ((util + cpu_util_dl(rq)) >= max)
+-		return max;
++	if (type == FREQUENCY_UTIL) {
++		/*
++		 * For frequency selection we do not make cpu_util_dl() a
++		 * permanent part of this sum because we want to use
++		 * cpu_bw_dl() later on, but we need to check if the
++		 * CFS+RT+DL sum is saturated (ie. no idle time) such
++		 * that we select f_max when there is no idle time.
++		 *
++		 * NOTE: numerical errors or stop class might cause us
++		 * to not quite hit saturation when we should --
++		 * something for later.
++		 */
 +
-+	if (static_branch_unlikely(&sched_energy_present)) {
-+		struct root_domain *rd = env->dst_rq->rd;
-+
-+		if (rcu_dereference(rd->pd) && !READ_ONCE(rd->overutilized))
-+			goto out_balanced;
++		if ((util + cpu_util_dl(rq)) >= max)
++			return max;
++	} else {
++		/*
++		 * OTOH, for energy computation we need the estimated
++		 * running time, so include util_dl and ignore dl_bw.
++		 */
++		util += cpu_util_dl(rq);
++		if (util >= max)
++			return max;
++	}
+ 
+ 	/*
+ 	 * There is still idle time; further improve the number by using the
+@@ -251,17 +264,34 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+ 	util = scale_irq_capacity(util, irq, max);
+ 	util += irq;
+ 
+-	/*
+-	 * Bandwidth required by DEADLINE must always be granted while, for
+-	 * FAIR and RT, we use blocked utilization of IDLE CPUs as a mechanism
+-	 * to gracefully reduce the frequency when no tasks show up for longer
+-	 * periods of time.
+-	 *
+-	 * Ideally we would like to set bw_dl as min/guaranteed freq and util +
+-	 * bw_dl as requested freq. However, cpufreq is not yet ready for such
+-	 * an interface. So, we only do the latter for now.
+-	 */
+-	return min(max, util + sg_cpu->bw_dl);
++	if (type == FREQUENCY_UTIL) {
++		/*
++		 * Bandwidth required by DEADLINE must always be granted
++		 * while, for FAIR and RT, we use blocked utilization of
++		 * IDLE CPUs as a mechanism to gracefully reduce the
++		 * frequency when no tasks show up for longer periods of
++		 * time.
++		 *
++		 * Ideally we would like to set bw_dl as min/guaranteed
++		 * freq and util + bw_dl as requested freq. However,
++		 * cpufreq is not yet ready for such an interface. So,
++		 * we only do the latter for now.
++		 */
++		util += cpu_bw_dl(rq);
 +	}
 +
- 	local = &sds.local_stat;
- 	busiest = &sds.busiest_stat;
- 
-@@ -9666,6 +9720,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
- 		task_tick_numa(rq, curr);
- 
- 	update_misfit_status(curr, rq);
-+	update_overutilized_status(task_rq(curr));
++	return min(max, util);
++}
++
++static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
++{
++	struct rq *rq = cpu_rq(sg_cpu->cpu);
++	unsigned long util = cpu_util_cfs(rq);
++
++	sg_cpu->max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
++	sg_cpu->bw_dl = cpu_bw_dl(rq);
++
++	return schedutil_freq_util(sg_cpu->cpu, util, FREQUENCY_UTIL);
  }
  
- /*
+ /**
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index c6c0cf71d03b..6a0f8d1ca2d2 100644
+index 6a0f8d1ca2d2..e594a854977f 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -709,6 +709,7 @@ struct perf_domain {
+@@ -2194,7 +2194,15 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
+ # define arch_scale_freq_invariant()	false
+ #endif
  
- /* Scheduling group status flags */
- #define SG_OVERLOAD		0x1 /* More than one runnable task on a CPU. */
-+#define SG_OVERUTILIZED		0x2 /* One or more CPUs are over-utilized. */
- 
- /*
-  * We add the notion of a root-domain which will be used to define per-domain
-@@ -732,6 +733,9 @@ struct root_domain {
- 	 */
- 	int			overload;
- 
-+	/* Indicate one or more cpus over-utilized (tipping point) */
-+	int			overutilized;
++enum schedutil_type {
++	FREQUENCY_UTIL,
++	ENERGY_UTIL,
++};
 +
- 	/*
- 	 * The bit corresponding to a CPU gets set here if such CPU has more
- 	 * than one runnable -deadline task (as it is below for RT tasks).
+ #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
++unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
++				  enum schedutil_type type);
++
+ static inline unsigned long cpu_bw_dl(struct rq *rq)
+ {
+ 	return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+@@ -2221,6 +2229,12 @@ static inline unsigned long cpu_util_rt(struct rq *rq)
+ {
+ 	return READ_ONCE(rq->avg_rt.util_avg);
+ }
++#else /* CONFIG_CPU_FREQ_GOV_SCHEDUTIL */
++static inline unsigned long schedutil_freq_util(int cpu, unsigned long util,
++				  enum schedutil_type type)
++{
++	return util;
++}
+ #endif
+ 
+ #ifdef HAVE_SCHED_AVG_IRQ
 -- 
 2.17.1
 
