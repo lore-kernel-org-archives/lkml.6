@@ -2,85 +2,499 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDAFC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 20:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60859C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 20:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 973C220C0F
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 20:18:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 973C220C0F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D649F20835
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 20:19:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="AaLkxoIV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D649F20835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbeHTXfp (ORCPT
+        id S1726701AbeHTXgg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 19:35:45 -0400
-Received: from mga14.intel.com ([192.55.52.115]:8081 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726089AbeHTXfp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 19:35:45 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 13:18:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,266,1531810800"; 
-   d="scan'208";a="64633644"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by fmsmga008.fm.intel.com with ESMTP; 20 Aug 2018 13:18:43 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id A15DF300DDE; Mon, 20 Aug 2018 13:18:43 -0700 (PDT)
-Date:   Mon, 20 Aug 2018 13:18:43 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        David Woodhouse <dwmw@amazon.co.uk>, x86@kernel.org,
-        dvyukov@google.com, hughd@google.com,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: Crash in MM code in v4.4.y, v4.9.y with TRANSPARENT_HUGEPAGE
- enabled
-Message-ID: <20180820201843.GA15008@tassilo.jf.intel.com>
-References: <20180817222733.GA18575@roeck-us.net>
- <20180820162938.GR29735@dhcp22.suse.cz>
- <20180820180353.GO12066@tassilo.jf.intel.com>
+        Mon, 20 Aug 2018 19:36:36 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:33035 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbeHTXgg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 19:36:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1534796373; x=1566332373;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=2rx3bkIKMI6jASemE7k0QNyIJO2064Rmbm8FC8arRDE=;
+  b=AaLkxoIVbBzQlec9fRIiZ00tfLO/WsIJcIkoEocJ3wnk1R1OQz8HN4X6
+   niddm6nkpV3K1NyqW7qWWAr6ZuFs0o3AWBgSMhZvQxuM2kjbgpNYkZltj
+   ZkfNDqEssjZA0VYAzr4eTMrCfq5M6dqFMK/uhuAUndFqLtxgGj6xopErX
+   E=;
+X-IronPort-AV: E=Sophos;i="5.53,266,1531785600"; 
+   d="scan'208";a="352967077"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2b-8cc5d68b.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 20 Aug 2018 20:19:31 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan2.pdx.amazon.com [10.236.137.194])
+        by email-inbound-relay-2b-8cc5d68b.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w7KKJVkf005263
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Mon, 20 Aug 2018 20:19:31 GMT
+Received: from EX13D01UWB004.ant.amazon.com (10.43.161.157) by
+ EX13MTAUWB001.ant.amazon.com (10.43.161.207) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 20 Aug 2018 20:19:30 +0000
+Received: from EX13D13UWB002.ant.amazon.com (10.43.161.21) by
+ EX13d01UWB004.ant.amazon.com (10.43.161.157) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 20 Aug 2018 20:19:30 +0000
+Received: from EX13D13UWB002.ant.amazon.com ([10.43.161.21]) by
+ EX13D13UWB002.ant.amazon.com ([10.43.161.21]) with mapi id 15.00.1367.000;
+ Mon, 20 Aug 2018 20:19:30 +0000
+From:   "van der Linden, Frank" <fllinden@amazon.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        "Agarwal, Anchal" <anchalag@amazon.com>
+CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Singh, Balbir" <sblbir@amazon.com>,
+        "Wilson, Matt" <msw@amazon.com>
+Subject: Re: [PATCH] blk-wbt: Avoid lock contention and thundering herd issue
+ in wbt_wait
+Thread-Topic: [PATCH] blk-wbt: Avoid lock contention and thundering herd issue
+ in wbt_wait
+Thread-Index: AQHUKRY5/qMn8blD+E2lEmZxUfmzSA==
+Date:   Mon, 20 Aug 2018 20:19:30 +0000
+Message-ID: <168d80ac73a44a6f9242c47c164778fc@EX13D13UWB002.ant.amazon.com>
+References: <20180731213410.GA35291@kaos-source-ops-60001.pdx1.amazon.com>
+ <df2a0476-d9d1-c6c9-6553-f459e890ce8b@kernel.dk>
+ <20180801170603.GA32864@kaos-source-ops-60001.pdx1.amazon.com>
+ <a9871e54-83bf-7557-2d2f-99e006ceadcf@kernel.dk>
+ <9265896d-3f02-ff2f-8e02-3aca775f4087@kernel.dk>
+ <20180807201247.GA21108@kaos-source-ops-60001.pdx1.amazon.com>
+ <6f24ff4b-9373-2708-8342-96f190f17cbf@kernel.dk>
+ <20180807211216.GA14371@kaos-source-ops-60001.pdx1.amazon.com>
+ <6bab69c9-b787-b12f-7738-72e05bf74444@kernel.dk>
+ <72f90be2-0b63-d3a0-e953-da9232f44d5b@kernel.dk>
+ <761bb0ab416649b8bf3bac1706124456@EX13D13UWB002.ant.amazon.com>
+ <7f6c399d-bda1-0bbf-4ea1-07fc510ed1eb@kernel.dk>
+ <3498fbfb-e9f3-7606-1fc3-904a0e61ff57@kernel.dk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.162.216]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180820180353.GO12066@tassilo.jf.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 11:03:53AM -0700, Andi Kleen wrote:
-> On Mon, Aug 20, 2018 at 06:29:38PM +0200, Michal Hocko wrote:
-> > On Fri 17-08-18 15:27:33, Guenter Roeck wrote:
-> > > Hi,
-> > > 
-> > > the following crash is seen in v4.4.148, v4.4.149, v4.9.120, and v4.9.121
-> > > with CONFIG_TRANSPARENT_HUGEPAGE=y, CONFIG_TRANSPARENT_HUGEPAGE_MADVISE=y.
-> > 
-> > Could you try to apply fd7e315988b7 ("x86/mm: Simplify p[g4um]d_page()
-> > macros"). I do not see it in stable 4.4 tree and it has been introduced
-> > much later in 4.14. This one gave us quite some headache because it is
-> > soooo easy to overlook.
-> 
-> Good catch!
-> 
-> I tested that with 4.9 and backporting the patch indeed fixes the
-> syzcaller test case running in a KVM VM. Backported patch appended.
-
-Tested on 4.4 too and it fixes the syzkaller test case there too.
-
--Andi
+On 8/20/18 12:29 PM, Jens Axboe wrote:=0A=
+> On 8/20/18 1:08 PM, Jens Axboe wrote:=0A=
+>> On 8/20/18 11:34 AM, van der Linden, Frank wrote:=0A=
+>>> On 8/20/18 9:37 AM, Jens Axboe wrote:=0A=
+>>>> On 8/7/18 3:19 PM, Jens Axboe wrote:=0A=
+>>>>> On 8/7/18 3:12 PM, Anchal Agarwal wrote:=0A=
+>>>>>> On Tue, Aug 07, 2018 at 02:39:48PM -0600, Jens Axboe wrote:=0A=
+>>>>>>> On 8/7/18 2:12 PM, Anchal Agarwal wrote:=0A=
+>>>>>>>> On Tue, Aug 07, 2018 at 08:29:44AM -0600, Jens Axboe wrote:=0A=
+>>>>>>>>> On 8/1/18 4:09 PM, Jens Axboe wrote:=0A=
+>>>>>>>>>> On 8/1/18 11:06 AM, Anchal Agarwal wrote:=0A=
+>>>>>>>>>>> On Wed, Aug 01, 2018 at 09:14:50AM -0600, Jens Axboe wrote:=0A=
+>>>>>>>>>>>> On 7/31/18 3:34 PM, Anchal Agarwal wrote:=0A=
+>>>>>>>>>>>>> Hi folks,=0A=
+>>>>>>>>>>>>>=0A=
+>>>>>>>>>>>>> This patch modifies commit e34cbd307477a=0A=
+>>>>>>>>>>>>> (blk-wbt: add general throttling mechanism)=0A=
+>>>>>>>>>>>>>=0A=
+>>>>>>>>>>>>> I am currently running a large bare metal instance (i3.metal)=
+=0A=
+>>>>>>>>>>>>> on EC2 with 72 cores, 512GB of RAM and NVME drives, with a=0A=
+>>>>>>>>>>>>> 4.18 kernel. I have a workload that simulates a database=0A=
+>>>>>>>>>>>>> workload and I am running into lockup issues when writeback=
+=0A=
+>>>>>>>>>>>>> throttling is enabled,with the hung task detector also=0A=
+>>>>>>>>>>>>> kicking in.=0A=
+>>>>>>>>>>>>>=0A=
+>>>>>>>>>>>>> Crash dumps show that most CPUs (up to 50 of them) are=0A=
+>>>>>>>>>>>>> all trying to get the wbt wait queue lock while trying to add=
+=0A=
+>>>>>>>>>>>>> themselves to it in __wbt_wait (see stack traces below).=0A=
+>>>>>>>>>>>>>=0A=
+>>>>>>>>>>>>> [    0.948118] CPU: 45 PID: 0 Comm: swapper/45 Not tainted 4.=
+14.51-62.38.amzn1.x86_64 #1=0A=
+>>>>>>>>>>>>> [    0.948119] Hardware name: Amazon EC2 i3.metal/Not Specifi=
+ed, BIOS 1.0 10/16/2017=0A=
+>>>>>>>>>>>>> [    0.948120] task: ffff883f7878c000 task.stack: ffffc9000c6=
+9c000=0A=
+>>>>>>>>>>>>> [    0.948124] RIP: 0010:native_queued_spin_lock_slowpath+0xf=
+8/0x1a0=0A=
+>>>>>>>>>>>>> [    0.948125] RSP: 0018:ffff883f7fcc3dc8 EFLAGS: 00000046=0A=
+>>>>>>>>>>>>> [    0.948126] RAX: 0000000000000000 RBX: ffff887f7709ca68 RC=
+X: ffff883f7fce2a00=0A=
+>>>>>>>>>>>>> [    0.948128] RDX: 000000000000001c RSI: 0000000000740001 RD=
+I: ffff887f7709ca68=0A=
+>>>>>>>>>>>>> [    0.948129] RBP: 0000000000000002 R08: 0000000000b80000 R0=
+9: 0000000000000000=0A=
+>>>>>>>>>>>>> [    0.948130] R10: ffff883f7fcc3d78 R11: 000000000de27121 R1=
+2: 0000000000000002=0A=
+>>>>>>>>>>>>> [    0.948131] R13: 0000000000000003 R14: 0000000000000000 R1=
+5: 0000000000000000=0A=
+>>>>>>>>>>>>> [    0.948132] FS:  0000000000000000(0000) GS:ffff883f7fcc000=
+0(0000) knlGS:0000000000000000=0A=
+>>>>>>>>>>>>> [    0.948134] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050=
+033=0A=
+>>>>>>>>>>>>> [    0.948135] CR2: 000000c424c77000 CR3: 0000000002010005 CR=
+4: 00000000003606e0=0A=
+>>>>>>>>>>>>> [    0.948136] DR0: 0000000000000000 DR1: 0000000000000000 DR=
+2: 0000000000000000=0A=
+>>>>>>>>>>>>> [    0.948137] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR=
+7: 0000000000000400=0A=
+>>>>>>>>>>>>> [    0.948138] Call Trace:=0A=
+>>>>>>>>>>>>> [    0.948139]  <IRQ>=0A=
+>>>>>>>>>>>>> [    0.948142]  do_raw_spin_lock+0xad/0xc0=0A=
+>>>>>>>>>>>>> [    0.948145]  _raw_spin_lock_irqsave+0x44/0x4b=0A=
+>>>>>>>>>>>>> [    0.948149]  ? __wake_up_common_lock+0x53/0x90=0A=
+>>>>>>>>>>>>> [    0.948150]  __wake_up_common_lock+0x53/0x90=0A=
+>>>>>>>>>>>>> [    0.948155]  wbt_done+0x7b/0xa0=0A=
+>>>>>>>>>>>>> [    0.948158]  blk_mq_free_request+0xb7/0x110=0A=
+>>>>>>>>>>>>> [    0.948161]  __blk_mq_complete_request+0xcb/0x140=0A=
+>>>>>>>>>>>>> [    0.948166]  nvme_process_cq+0xce/0x1a0 [nvme]=0A=
+>>>>>>>>>>>>> [    0.948169]  nvme_irq+0x23/0x50 [nvme]=0A=
+>>>>>>>>>>>>> [    0.948173]  __handle_irq_event_percpu+0x46/0x300=0A=
+>>>>>>>>>>>>> [    0.948176]  handle_irq_event_percpu+0x20/0x50=0A=
+>>>>>>>>>>>>> [    0.948179]  handle_irq_event+0x34/0x60=0A=
+>>>>>>>>>>>>> [    0.948181]  handle_edge_irq+0x77/0x190=0A=
+>>>>>>>>>>>>> [    0.948185]  handle_irq+0xaf/0x120=0A=
+>>>>>>>>>>>>> [    0.948188]  do_IRQ+0x53/0x110=0A=
+>>>>>>>>>>>>> [    0.948191]  common_interrupt+0x87/0x87=0A=
+>>>>>>>>>>>>> [    0.948192]  </IRQ>=0A=
+>>>>>>>>>>>>> ....=0A=
+>>>>>>>>>>>>> [    0.311136] CPU: 4 PID: 9737 Comm: run_linux_amd64 Not tai=
+nted 4.14.51-62.38.amzn1.x86_64 #1=0A=
+>>>>>>>>>>>>> [    0.311137] Hardware name: Amazon EC2 i3.metal/Not Specifi=
+ed, BIOS 1.0 10/16/2017=0A=
+>>>>>>>>>>>>> [    0.311138] task: ffff883f6e6a8000 task.stack: ffffc9000f1=
+ec000=0A=
+>>>>>>>>>>>>> [    0.311141] RIP: 0010:native_queued_spin_lock_slowpath+0xf=
+5/0x1a0=0A=
+>>>>>>>>>>>>> [    0.311142] RSP: 0018:ffffc9000f1efa28 EFLAGS: 00000046=0A=
+>>>>>>>>>>>>> [    0.311144] RAX: 0000000000000000 RBX: ffff887f7709ca68 RC=
+X: ffff883f7f722a00=0A=
+>>>>>>>>>>>>> [    0.311145] RDX: 0000000000000035 RSI: 0000000000d80001 RD=
+I: ffff887f7709ca68=0A=
+>>>>>>>>>>>>> [    0.311146] RBP: 0000000000000202 R08: 0000000000140000 R0=
+9: 0000000000000000=0A=
+>>>>>>>>>>>>> [    0.311147] R10: ffffc9000f1ef9d8 R11: 000000001a249fa0 R1=
+2: ffff887f7709ca68=0A=
+>>>>>>>>>>>>> [    0.311148] R13: ffffc9000f1efad0 R14: 0000000000000000 R1=
+5: ffff887f7709ca00=0A=
+>>>>>>>>>>>>> [    0.311149] FS:  000000c423f30090(0000) GS:ffff883f7f70000=
+0(0000) knlGS:0000000000000000=0A=
+>>>>>>>>>>>>> [    0.311150] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050=
+033=0A=
+>>>>>>>>>>>>> [    0.311151] CR2: 00007feefcea4000 CR3: 0000007f7016e001 CR=
+4: 00000000003606e0=0A=
+>>>>>>>>>>>>> [    0.311152] DR0: 0000000000000000 DR1: 0000000000000000 DR=
+2: 0000000000000000=0A=
+>>>>>>>>>>>>> [    0.311153] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR=
+7: 0000000000000400=0A=
+>>>>>>>>>>>>> [    0.311154] Call Trace:=0A=
+>>>>>>>>>>>>> [    0.311157]  do_raw_spin_lock+0xad/0xc0=0A=
+>>>>>>>>>>>>> [    0.311160]  _raw_spin_lock_irqsave+0x44/0x4b=0A=
+>>>>>>>>>>>>> [    0.311162]  ? prepare_to_wait_exclusive+0x28/0xb0=0A=
+>>>>>>>>>>>>> [    0.311164]  prepare_to_wait_exclusive+0x28/0xb0=0A=
+>>>>>>>>>>>>> [    0.311167]  wbt_wait+0x127/0x330=0A=
+>>>>>>>>>>>>> [    0.311169]  ? finish_wait+0x80/0x80=0A=
+>>>>>>>>>>>>> [    0.311172]  ? generic_make_request+0xda/0x3b0=0A=
+>>>>>>>>>>>>> [    0.311174]  blk_mq_make_request+0xd6/0x7b0=0A=
+>>>>>>>>>>>>> [    0.311176]  ? blk_queue_enter+0x24/0x260=0A=
+>>>>>>>>>>>>> [    0.311178]  ? generic_make_request+0xda/0x3b0=0A=
+>>>>>>>>>>>>> [    0.311181]  generic_make_request+0x10c/0x3b0=0A=
+>>>>>>>>>>>>> [    0.311183]  ? submit_bio+0x5c/0x110=0A=
+>>>>>>>>>>>>> [    0.311185]  submit_bio+0x5c/0x110=0A=
+>>>>>>>>>>>>> [    0.311197]  ? __ext4_journal_stop+0x36/0xa0 [ext4]=0A=
+>>>>>>>>>>>>> [    0.311210]  ext4_io_submit+0x48/0x60 [ext4]=0A=
+>>>>>>>>>>>>> [    0.311222]  ext4_writepages+0x810/0x11f0 [ext4]=0A=
+>>>>>>>>>>>>> [    0.311229]  ? do_writepages+0x3c/0xd0=0A=
+>>>>>>>>>>>>> [    0.311239]  ? ext4_mark_inode_dirty+0x260/0x260 [ext4]=0A=
+>>>>>>>>>>>>> [    0.311240]  do_writepages+0x3c/0xd0=0A=
+>>>>>>>>>>>>> [    0.311243]  ? _raw_spin_unlock+0x24/0x30=0A=
+>>>>>>>>>>>>> [    0.311245]  ? wbc_attach_and_unlock_inode+0x165/0x280=0A=
+>>>>>>>>>>>>> [    0.311248]  ? __filemap_fdatawrite_range+0xa3/0xe0=0A=
+>>>>>>>>>>>>> [    0.311250]  __filemap_fdatawrite_range+0xa3/0xe0=0A=
+>>>>>>>>>>>>> [    0.311253]  file_write_and_wait_range+0x34/0x90=0A=
+>>>>>>>>>>>>> [    0.311264]  ext4_sync_file+0x151/0x500 [ext4]=0A=
+>>>>>>>>>>>>> [    0.311267]  do_fsync+0x38/0x60=0A=
+>>>>>>>>>>>>> [    0.311270]  SyS_fsync+0xc/0x10=0A=
+>>>>>>>>>>>>> [    0.311272]  do_syscall_64+0x6f/0x170=0A=
+>>>>>>>>>>>>> [    0.311274]  entry_SYSCALL_64_after_hwframe+0x42/0xb7=0A=
+>>>>>>>>>>>>>=0A=
+>>>>>>>>>>>>> In the original patch, wbt_done is waking up all the exclusiv=
+e=0A=
+>>>>>>>>>>>>> processes in the wait queue, which can cause a thundering her=
+d=0A=
+>>>>>>>>>>>>> if there is a large number of writer threads in the queue. Th=
+e=0A=
+>>>>>>>>>>>>> original intention of the code seems to be to wake up one thr=
+ead=0A=
+>>>>>>>>>>>>> only however, it uses wake_up_all() in __wbt_done(), and then=
+=0A=
+>>>>>>>>>>>>> uses the following check in __wbt_wait to have only one threa=
+d=0A=
+>>>>>>>>>>>>> actually get out of the wait loop:=0A=
+>>>>>>>>>>>>>=0A=
+>>>>>>>>>>>>> if (waitqueue_active(&rqw->wait) &&=0A=
+>>>>>>>>>>>>>             rqw->wait.head.next !=3D &wait->entry)=0A=
+>>>>>>>>>>>>>                 return false;=0A=
+>>>>>>>>>>>>>=0A=
+>>>>>>>>>>>>> The problem with this is that the wait entry in wbt_wait is=
+=0A=
+>>>>>>>>>>>>> define with DEFINE_WAIT, which uses the autoremove wakeup fun=
+ction.=0A=
+>>>>>>>>>>>>> That means that the above check is invalid - the wait entry w=
+ill=0A=
+>>>>>>>>>>>>> have been removed from the queue already by the time we hit t=
+he=0A=
+>>>>>>>>>>>>> check in the loop.=0A=
+>>>>>>>>>>>>>=0A=
+>>>>>>>>>>>>> Secondly, auto-removing the wait entries also means that the =
+wait=0A=
+>>>>>>>>>>>>> queue essentially gets reordered "randomly" (e.g. threads re-=
+add=0A=
+>>>>>>>>>>>>> themselves in the order they got to run after being woken up)=
+.=0A=
+>>>>>>>>>>>>> Additionally, new requests entering wbt_wait might overtake r=
+equests=0A=
+>>>>>>>>>>>>> that were queued earlier, because the wait queue will be=0A=
+>>>>>>>>>>>>> (temporarily) empty after the wake_up_all, so the waitqueue_a=
+ctive=0A=
+>>>>>>>>>>>>> check will not stop them. This can cause certain threads to s=
+tarve=0A=
+>>>>>>>>>>>>> under high load.=0A=
+>>>>>>>>>>>>>=0A=
+>>>>>>>>>>>>> The fix is to leave the woken up requests in the queue and re=
+move=0A=
+>>>>>>>>>>>>> them in finish_wait() once the current thread breaks out of t=
+he=0A=
+>>>>>>>>>>>>> wait loop in __wbt_wait. This will ensure new requests always=
+=0A=
+>>>>>>>>>>>>> end up at the back of the queue, and they won't overtake requ=
+ests=0A=
+>>>>>>>>>>>>> that are already in the wait queue. With that change, the loo=
+p=0A=
+>>>>>>>>>>>>> in wbt_wait is also in line with many other wait loops in the=
+ kernel.=0A=
+>>>>>>>>>>>>> Waking up just one thread drastically reduces lock contention=
+, as=0A=
+>>>>>>>>>>>>> does moving the wait queue add/remove out of the loop.=0A=
+>>>>>>>>>>>>>=0A=
+>>>>>>>>>>>>> A significant drop in lockdep's lock contention numbers is se=
+en when=0A=
+>>>>>>>>>>>>> running the test application on the patched kernel.=0A=
+>>>>>>>>>>>> I like the patch, and a few weeks ago we independently discove=
+red that=0A=
+>>>>>>>>>>>> the waitqueue list checking was bogus as well. My only worry i=
+s that=0A=
+>>>>>>>>>>>> changes like this can be delicate, meaning that it's easy to i=
+ntroduce=0A=
+>>>>>>>>>>>> stall conditions. What kind of testing did you push this throu=
+gh?=0A=
+>>>>>>>>>>>>=0A=
+>>>>>>>>>>>> -- =0A=
+>>>>>>>>>>>> Jens Axboe=0A=
+>>>>>>>>>>>>=0A=
+>>>>>>>>>>> I ran the following tests on both real HW with NVME devices att=
+ached=0A=
+>>>>>>>>>>> and emulated NVME too:=0A=
+>>>>>>>>>>>=0A=
+>>>>>>>>>>> 1. The test case I used to reproduce the issue, spawns a bunch =
+of threads =0A=
+>>>>>>>>>>>    to concurrently read and write files with random size and co=
+ntent. =0A=
+>>>>>>>>>>>    Files are randomly fsync'd. The implementation is a FIFO que=
+ue of files. =0A=
+>>>>>>>>>>>    When the queue fills the test starts to verify and remove th=
+e files. This =0A=
+>>>>>>>>>>>    test will fail if there's a read, write, or hash check failu=
+re. It tests=0A=
+>>>>>>>>>>>    for file corruption when lots of small files are being read =
+and written =0A=
+>>>>>>>>>>>    with high concurrency.=0A=
+>>>>>>>>>>>=0A=
+>>>>>>>>>>> 2. Fio for random writes with a root NVME device of 200GB=0A=
+>>>>>>>>>>>   =0A=
+>>>>>>>>>>>   fio --name=3Drandwrite --ioengine=3Dlibaio --iodepth=3D1 --rw=
+=3Drandwrite --bs=3D4k =0A=
+>>>>>>>>>>>   --direct=3D0 --size=3D10G --numjobs=3D2 --runtime=3D60 --grou=
+p_reporting=0A=
+>>>>>>>>>>>   =0A=
+>>>>>>>>>>>   fio --name=3Drandwrite --ioengine=3Dlibaio --iodepth=3D1 --rw=
+=3Drandwrite --bs=3D4k=0A=
+>>>>>>>>>>>   --direct=3D0 --size=3D5G --numjobs=3D2 --runtime=3D30 --fsync=
+=3D64 --group_reporting=0A=
+>>>>>>>>>>>   =0A=
+>>>>>>>>>>>   I did see an improvement in the bandwidth numbers reported on=
+ the patched=0A=
+>>>>>>>>>>>   kernel. =0A=
+>>>>>>>>>>>=0A=
+>>>>>>>>>>> Do you have any test case/suite in mind that you would suggest =
+me to =0A=
+>>>>>>>>>>> run to be sure that patch does not introduce any stall conditio=
+ns?=0A=
+>>>>>>>>>> One thing that is always useful is to run xfstest, do a full run=
+ on=0A=
+>>>>>>>>>> the device. If that works, then do another full run, this time l=
+imiting=0A=
+>>>>>>>>>> the queue depth of the SCSI device to 1. If both of those pass, =
+then=0A=
+>>>>>>>>>> I'd feel pretty good getting this applied for 4.19.=0A=
+>>>>>>>>> Did you get a chance to run this full test?=0A=
+>>>>>>>>>=0A=
+>>>>>>>>> -- =0A=
+>>>>>>>>> Jens Axboe=0A=
+>>>>>>>>>=0A=
+>>>>>>>>>=0A=
+>>>>>>>> Hi Jens,=0A=
+>>>>>>>> Yes I did run the tests and was in the process of compiling concre=
+te results=0A=
+>>>>>>>> I tested following environments against xfs/auto group=0A=
+>>>>>>>> 1. Vanilla 4.18.rc kernel=0A=
+>>>>>>>> 2. 4.18 kernel with the blk-wbt patch=0A=
+>>>>>>>> 3. 4.18 kernel with the blk-wbt patch + io_queue_depth=3D2. I =0A=
+>>>>>>>> understand you asked for queue depth for SCSI device=3D1 however, =
+I have NVME =0A=
+>>>>>>>> devices in my environment and 2 is the minimum value for io_queue_=
+depth allowed =0A=
+>>>>>>>> according to the NVME driver code. The results pretty much look sa=
+me with no =0A=
+>>>>>>>> stalls or exceptional failures. =0A=
+>>>>>>>> xfs/auto ran 296 odd tests with 3 failures and 130 something "no r=
+uns". =0A=
+>>>>>>>> Remaining tests passed. "Skipped tests"  were mostly due to missin=
+g features=0A=
+>>>>>>>> (eg: reflink support on scratch filesystem)=0A=
+>>>>>>>> The failures were consistent across runs on 3 different environmen=
+ts. =0A=
+>>>>>>>> I am also running full test suite but it is taking long time as I =
+am =0A=
+>>>>>>>> hitting kernel BUG in xfs code in some generic tests. This BUG is =
+not =0A=
+>>>>>>>> related to the patch and  I see them in vanilla kernel too. I am i=
+n =0A=
+>>>>>>>> the process of excluding these kind of tests as they come and =0A=
+>>>>>>>> re-run the suite however, this proces is time taking. =0A=
+>>>>>>>> Do you have any specific tests in mind that you would like me =0A=
+>>>>>>>> to run apart from what I have already tested above?=0A=
+>>>>>>> Thanks, I think that looks good. I'll get your patch applied for=0A=
+>>>>>>> 4.19.=0A=
+>>>>>>>=0A=
+>>>>>>> -- =0A=
+>>>>>>> Jens Axboe=0A=
+>>>>>>>=0A=
+>>>>>>>=0A=
+>>>>>> Hi Jens,=0A=
+>>>>>> Thanks for accepting this. There is one small issue, I don't find an=
+y emails=0A=
+>>>>>> send by me on the lkml mailing list. I am not sure why it didn't lan=
+d there,=0A=
+>>>>>> all I can see is your responses. Do you want one of us to resend the=
+ patch=0A=
+>>>>>> or will you be able to do it?=0A=
+>>>>> That's odd, are you getting rejections on your emails? For reference,=
+ the=0A=
+>>>>> patch is here:=0A=
+>>>>>=0A=
+>>>>> http://git.kernel.dk/cgit/linux-block/commit/?h=3Dfor-4.19/block&id=
+=3D2887e41b910bb14fd847cf01ab7a5993db989d88=0A=
+>>>> One issue with this, as far as I can tell. Right now we've switched to=
+=0A=
+>>>> waking one task at the time, which is obviously more efficient. But if=
+=0A=
+>>>> we do that with exclusive waits, then we have to ensure that this task=
+=0A=
+>>>> makes progress. If we wake up a task, and then fail to get a queueing=
+=0A=
+>>>> token, then we'll go back to sleep. We need to ensure that someone mak=
+es=0A=
+>>>> forward progress at this point. There are two ways I can see that=0A=
+>>>> happening:=0A=
+>>>>=0A=
+>>>> 1) The task woken _always_ gets to queue an IO=0A=
+>>>> 2) If the task woken is NOT allowed to queue an IO, then it must selec=
+t=0A=
+>>>>    a new task to wake up. That new task is then subjected to rule 1 or=
+ 2=0A=
+>>>>    as well.=0A=
+>>>>=0A=
+>>>> For #1, it could be as simple as:=0A=
+>>>>=0A=
+>>>> if (slept || !rwb_enabled(rwb)) {=0A=
+>>>> 	atomic_inc(&rqw->inflight);=0A=
+>>>> 	break;=0A=
+>>>> }=0A=
+>>>>=0A=
+>>>> but this obviously won't always be fair. Might be good enough however,=
+=0A=
+>>>> instead of having to eg replace the generic wait queues with a priorit=
+y=0A=
+>>>> list/queue.=0A=
+>>>>=0A=
+>>>> Note that this isn't an entirely new issue, it's just so much easier t=
+o=0A=
+>>>> hit with the single wakeups.=0A=
+>>>>=0A=
+>>> Hi Jens,=0A=
+>>>=0A=
+>>> What is the scenario that you see under which the woken up task does no=
+t=0A=
+>>> get to run?=0A=
+>> That scenario is pretty easy to hit - let's say the next in line task=0A=
+>> has a queue limit of 1, and we currently have 4 pending. Task gets=0A=
+>> woken, goes back to sleep. Which should be totally fine. At some point=
+=0A=
+>> we'll get below the limit, and allow the task to proceed. This will=0A=
+>> ensure forward progress.=0A=
+>>=0A=
+>>> The theory behind leaving the task on the wait queue is that the=0A=
+>>> waitqueue_active check in wbt_wait prevents new tasks from taking up a=
+=0A=
+>>> slot in the queue (e.g. incrementing inflight). So, there should not be=
+=0A=
+>>> a way for inflight to be incremented between the time the wake_up is=0A=
+>>> done and the task at the head of the wait queue runs. That's the idea=
+=0A=
+>>> anyway :-) If we missed something, let us know.=0A=
+>> And that's a fine theory, I think it's a good improvement (and how it=0A=
+>> should have worked). I'm struggling to see where the issue is. Perhaps=
+=0A=
+>> it's related to the wq active check. With fewer wakeups, we're more=0A=
+>> likely to hit a race there.=0A=
+>>=0A=
+>> I'll poke at it...=0A=
+> Trying something like this:=0A=
+>=0A=
+> http://git.kernel.dk/cgit/linux-block/log/?h=3Dfor-4.19/wbt=0A=
+>=0A=
+Ah, now I see what you mean.=0A=
+=0A=
+This is the case where a task goes to sleep, not because the inflight=0A=
+limit has been reached, but simply because it needs to go to the back of=0A=
+the wait queue.=0A=
+=0A=
+In that case, it should, for its first time inside the loop, not try to=0A=
+decrement inflight - since that means it could still race to overtake a=0A=
+task that got there earlier and is in the wait queue.=0A=
+=0A=
+So what you are doing is keeping track of whether it got in to the loop=0A=
+only because of queueing, and then you don't try to decrement inflight=0A=
+the first time around the loop.=0A=
+=0A=
+I think that should work to fix that corner case.=0A=
+=0A=
+Frank=0A=
+=0A=
