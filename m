@@ -2,114 +2,124 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC1CC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 07:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96103C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 07:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B457208FA
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 07:09:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="oBEeZzzC";
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="1MgYflPp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B457208FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=yandex-team.ru
+	by mail.kernel.org (Postfix) with ESMTP id 47EA7208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 07:13:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47EA7208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726221AbeHTKYQ (ORCPT
+        id S1726250AbeHTK1m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 06:24:16 -0400
-Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:37287 "EHLO
-        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725944AbeHTKYP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 06:24:15 -0400
-Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
-        by forwardcorp1o.cmail.yandex.net (Yandex) with ESMTP id 28FF720EC6;
-        Mon, 20 Aug 2018 10:09:45 +0300 (MSK)
-Received: from smtpcorp1o.mail.yandex.net (smtpcorp1o.mail.yandex.net [2a02:6b8:0:1a2d::30])
-        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id mWrWIfh9Ec-9i8aqtwZ;
-        Mon, 20 Aug 2018 10:09:45 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1534748985; bh=v2UiUhFBFDW+wYuJgRzxbrXopFfwTO6oBrcAWPpFxCE=;
-        h=Subject:From:To:Date:Message-ID;
-        b=oBEeZzzCDN71Zye+HL3I7FkpsnS4zUCxulvxVDY5kQxM5pa3twoT8Z7EvGUua1BnX
-         naBOgIsSjiIj1+iYmKjgLxvxmefQdLnUNbnLxvMrn8fjYz/isg3tO0aL5WOvvWHw4v
-         IbfaoLQai0R9FqFJUOHKC6yKjpau4MikSwXejlC8=
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:ac1b:4357:f84c:a04a])
-        by smtpcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id RYALdQGwKc-9iNmAwJh;
-        Mon, 20 Aug 2018 10:09:44 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1534748984; bh=v2UiUhFBFDW+wYuJgRzxbrXopFfwTO6oBrcAWPpFxCE=;
-        h=Subject:From:To:Date:Message-ID;
-        b=1MgYflPpAMOuW97ij7qwfZtupaRnzFsG+eiXldWsD8oXkS46dzo33ynOXc4UNdGhg
-         5JVzf2ANss6sbHzY2nUd4QWZ9ZQqSG7feEpKcC09KMxHQdvjpKlFaCpWY49rxZkRS6
-         57fiYJsdwA4DOqQ8+gVhYJa8CckWp8qgOuWDIuWM=
-Authentication-Results: smtpcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Subject: [PATCH] fanotify: use killable wait for waiting response for
- permission events
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
-Date:   Mon, 20 Aug 2018 10:09:42 +0300
-Message-ID: <153474898224.6806.12518115530793064797.stgit@buzz>
-User-Agent: StGit/0.17.1-dirty
+        Mon, 20 Aug 2018 06:27:42 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59426 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725944AbeHTK1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 06:27:41 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 836F5B918566;
+        Mon, 20 Aug 2018 15:13:09 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.399.0; Mon, 20 Aug 2018
+ 15:13:06 +0800
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: avoid fi->i_gc_rwsem[WRITE] lock in
+ f2fs_gc
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20180730013242.15647-1-jaegeuk@kernel.org>
+ <20180804222954.GB35077@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180805163450.GB55836@jaegeuk-macbookpro.roam.corp.google.com>
+ <16d7f719-268f-99f4-c5b2-fc893b557f11@huawei.com>
+ <20180809195917.GA27087@jaegeuk-macbookpro.roam.corp.google.com>
+ <b09cdcf8-f8cd-98b6-54c1-82b2fb0f8b81@huawei.com>
+ <20180810014614.GA44979@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <a12d7501-2156-2492-7fe2-8727f91bd5ff@huawei.com>
+Date:   Mon, 20 Aug 2018 15:13:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180810014614.GA44979@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Waiting in uninterruptible state for response from userspace
-easily produces deadlocks and hordes of unkillable tasks.
+Hi Jaegeuk,
 
-This patch makes this wait killable.
+Please add:
 
-At receiving fatal signal task will remove queued event and die.
-If event is already handled then response will be received as usual.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
----
- fs/notify/fanotify/fanotify.c |   22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+Thanks,
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index eb4e75175cfb..7a0c37790c89 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -64,7 +64,27 @@ static int fanotify_get_response(struct fsnotify_group *group,
- 
- 	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
- 
--	wait_event(group->fanotify_data.access_waitq, event->response);
-+	ret = wait_event_killable(group->fanotify_data.access_waitq,
-+				  event->response);
-+	if (ret) {
-+		/* Try to remove pending event from the queue */
-+		spin_lock(&group->notification_lock);
-+		if (!list_empty(&event->fae.fse.list))
-+			list_del_init(&event->fae.fse.list);
-+		else
-+			ret = 0;
-+		spin_unlock(&group->notification_lock);
-+
-+		if (ret)
-+			return ret;
-+
-+		/*
-+		 * We cannot return, this will destroy event while
-+		 * process_access_response() fills response.
-+		 * Just wait for wakeup and continue normal flow.
-+		 */
-+		wait_event(group->fanotify_data.access_waitq, event->response);
-+	}
- 
- 	/* userspace responded, convert to something usable */
- 	switch (event->response & ~FAN_AUDIT) {
+On 2018/8/10 9:46, Jaegeuk Kim wrote:
+> On 08/10, Chao Yu wrote:
+>> On 2018/8/10 3:59, Jaegeuk Kim wrote:
+>>> Yup, how about this?
+>>>
+>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>> index d816c328f02b..cb510fb36523 100644
+>>> --- a/fs/f2fs/gc.c
+>>> +++ b/fs/f2fs/gc.c
+>>> @@ -1052,6 +1052,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>>  		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
+>>>  	};
+>>>  	unsigned long long last_skipped = sbi->skipped_atomic_files[FG_GC];
+>>> +	unsigned long long first_skipped;
+>>>  	unsigned int skipped_round = 0, round = 0;
+>>>  
+>>>  	trace_f2fs_gc_begin(sbi->sb, sync, background,
+>>> @@ -1064,8 +1065,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>>  				prefree_segments(sbi));
+>>>  
+>>>  	cpc.reason = __get_cp_reason(sbi);
+>>> -	sbi->skipped_gc_rwsem = 0;
+>>>  gc_more:
+>>> +	sbi->skipped_gc_rwsem = 0;
+>>> +	first_skipped = last_skipped;
+>>> +
+>>>  	if (unlikely(!(sbi->sb->s_flags & SB_ACTIVE))) {
+>>>  		ret = -EINVAL;
+>>>  		goto stop;
+>>> @@ -1126,8 +1129,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>>  			goto gc_more;
+>>>  		}
+>>>  
+>>> -		if (sbi->skipped_atomic_files[FG_GC] == last_skipped &&
+>>> -				sbi->skipped_atomic_files[FG_GC] >
+>>> +		if (first_skipped < last_skipped &&
+>>> +				(last_skipped - first_skipped) >
+>>
+>> IMO, it would be better to judge the condition with skipped number in all round
+>> of FGGC instead of last round, since number in last round may not very accurate.
+> 
+> Yup, moved before gc_more.
+> 
+>>
+>> Thoughts?
+>>
+>> Thanks,
+>>
+>>>  						sbi->skipped_gc_rwsem) {
+>>>  			f2fs_drop_inmem_pages_all(sbi, true);
+>>>  			segno = NULL_SEGNO;
+>>>
+>>> .
+>>>
+> 
+> .
+> 
 
