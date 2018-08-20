@@ -2,131 +2,132 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D50C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEFF1C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:00:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1950121581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:00:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1950121581
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 94FD121581
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:00:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="EREIaQL6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94FD121581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbeHUCRz (ORCPT
+        id S1726804AbeHUCSI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 22:17:55 -0400
-Received: from mga04.intel.com ([192.55.52.120]:48116 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726620AbeHUCRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 22:17:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 16:00:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,267,1531810800"; 
-   d="scan'208";a="76955617"
-Received: from davehex.jf.intel.com (HELO [172.16.44.168]) ([10.7.198.90])
-  by orsmga003.jf.intel.com with ESMTP; 20 Aug 2018 16:00:21 -0700
-Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs
- in mind (for KVM to isolate its guests per CPU)
-To:     Tycho Andersen <tycho@tycho.ws>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <20180820212556.GC2230@char.us.oracle.com>
- <CA+55aFxZCyVZc4ZpRyZ3uDyakRSOG_=2XvnwMo4oejpsieF9=A@mail.gmail.com>
- <1534801939.10027.24.camel@amazon.co.uk>
- <CA+55aFxyUdhYjnQdnmWAt8tTwn4HQ1xz3SAMZJiawkLpMiJ_+w@mail.gmail.com>
- <20180820223557.GC16961@cisco.cisco.com>
-Cc:     David Woodhouse <dwmw@amazon.co.uk>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        juerg.haefliger@hpe.com, deepa.srinivasan@oracle.com,
-        Jim Mattson <jmattson@google.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-mm <linux-mm@kvack.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        joao.m.martins@oracle.com, pradeep.vincent@oracle.com,
-        Andi Kleen <ak@linux.intel.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        kanth.ghatraju@oracle.com, Liran Alon <liran.alon@oracle.com>,
-        Kees Cook <keescook@google.com>, jsteckli@os.inf.tu-dresden.de,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        chris.hyser@oracle.com, Tyler Hicks <tyhicks@canonical.com>,
-        John Haxby <john.haxby@oracle.com>,
-        Jon Masters <jcm@redhat.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <bd148fb6-e139-a065-1bf5-8054f932d30a@intel.com>
-Date:   Mon, 20 Aug 2018 15:59:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180820223557.GC16961@cisco.cisco.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Mon, 20 Aug 2018 22:18:08 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:37499 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726766AbeHUCSI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 22:18:08 -0400
+Received: by mail-pl0-f68.google.com with SMTP id c6-v6so2986694pls.4
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 16:00:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=subject:date:message-id:cc:from:to;
+        bh=3FBCLPv8LOT78WtewumroIhDt5+9a/MxhbD75rsuI8w=;
+        b=EREIaQL6tT6CpglwJAG0Wj0GdW5B1KArDkoGjRHM6LbdBq2bglFPPx6svpaEIhmApQ
+         XIEAZTnwD9/knMdKFD5MVIKyOGi/tdc+NQ9jXxz61gUg/Ir0wY+Pi4b8QxJTbgW7YpyN
+         5MObHAT3Me2eAQcXjlGJD6oKnfV+bSoc5NrdqecTfoXg6H6FAdkkDt82niRcWRXFloSy
+         89qJGsbqRAsgI42Xx7U32xAMZSEM08qpaNQTQC8RJyIf9GHePnytu0CS6rkAyd3S2dZq
+         g06yjNTMlaezdaxp2Qq4zSespeLfs+U1Xyc3KbqS9rperZExg5gC7Iuy2dSyzHJVM8E2
+         A8WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:date:message-id:cc:from:to;
+        bh=3FBCLPv8LOT78WtewumroIhDt5+9a/MxhbD75rsuI8w=;
+        b=bik7NETYx2M4B4n0dBKvoKZNIgDLc0AoY6pBGjccXSGLrI0Ze3ZqfzCxM8CqitTc0P
+         VkFTkHUPBpfY0fI2Nb8TMBm2FbLJJuYzGZL35QS+uyUlOUg2A//cz3zrUG2BeibuR6U2
+         TCnPFFbfjwn+E8N/xo/rUtjDOjEJFWUZ+ZOIuyUeTKfle2uP/fuh3Dwqd/38zQ0OCgKY
+         yuBKAPF4FBSNsEJyCxt10hgi+90Ko47bCuYOqf/ErvyZ0bkdsfXoNN/Pr5Uunn4v2jeI
+         rT6/4Luyppvi0BdPXv012a3ZrBDLlmccaXgYCIiLuD+5Vk/kf1FH/NjQqmQIUSzdelQX
+         O5Mg==
+X-Gm-Message-State: AOUpUlG8gLA3tPPcyb9GAIjXseITvNh/Dhums7F+DCEYkDwoCDjSAIvN
+        aakqvzKBosYx/BycFEdpGdblEA==
+X-Google-Smtp-Source: AA+uWPxPVpqonl7zE/gzKzTQuyA5jiWDRAvlvXmiaVInYk/Yhwsoe2zLWrCV+Z+ywEftjBiokbDNTw==
+X-Received: by 2002:a17:902:2e01:: with SMTP id q1-v6mr47583863plb.40.1534806034213;
+        Mon, 20 Aug 2018 16:00:34 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id v19-v6sm22222092pgn.94.2018.08.20.16.00.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 Aug 2018 16:00:33 -0700 (PDT)
+Subject: [PATCH] dt-bindings: riscv,cpu-intc: Cleanups from a missed review
+Date:   Mon, 20 Aug 2018 16:00:11 -0700
+Message-Id: <20180820230011.25368-1-palmer@sifive.com>
+X-Mailer: git-send-email 2.16.4
+Cc:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        Palmer Dabbelt <palmer@sifive.com>, aou@eecs.berkeley.edu,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, Rob Herring <robh@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Karsten Merker <merker@debian.org>
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:      linux-riscv@lists.infradead.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/20/2018 03:35 PM, Tycho Andersen wrote:
-> Since meltdown hit, I haven't worked seriously on understand and
-> implementing his suggestions, in part because it wasn't clear to me
-> what pieces of the infrastructure we might be able to re-use. Someone
-> who knows more about mm/ might be able to suggest an approach, though
+I managed to miss one of Rob's code reviews on the mailing list
+<http://lists.infradead.org/pipermail/linux-riscv/2018-August/001139.html>.
+The patch has already been merged, so I'm submitting a fixup.
 
-Unfortunately, I'm not sure there's much of KPTI we can reuse.  KPTI
-still has a very static kernel map (well, two static kernel maps) and
-XPFO really needs a much more dynamic map.
+Sorry!
 
-We do have a bit of infrastructure now to do TLB flushes near the kernel
-exit point, but it's entirely for the user address space, which isn't
-affected by XPFO.
+Fixes: b67bc7cb4088 ("dt-bindings: interrupt-controller: RISC-V local interrupt controller")
+Cc: Rob Herring <robh@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Karsten Merker <merker@debian.org>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+---
+ .../bindings/interrupt-controller/riscv,cpu-intc.txt       | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
+index b0a8af51c388..265b223cd978 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
+@@ -11,7 +11,7 @@ The RISC-V supervisor ISA manual specifies three interrupt sources that are
+ attached to every HLIC: software interrupts, the timer interrupt, and external
+ interrupts.  Software interrupts are used to send IPIs between cores.  The
+ timer interrupt comes from an architecturally mandated real-time timer that is
+-controller via Supervisor Binary Interface (SBI) calls and CSR reads.  External
++controlled via Supervisor Binary Interface (SBI) calls and CSR reads.  External
+ interrupts connect all other device interrupts to the HLIC, which are routed
+ via the platform-level interrupt controller (PLIC).
+ 
+@@ -25,7 +25,15 @@ in the system.
+ 
+ Required properties:
+ - compatible : "riscv,cpu-intc"
+-- #interrupt-cells : should be <1>
++- #interrupt-cells : should be <1>.  The interrupt sources are defined by the
++  RISC-V supervisor ISA manual, with only the following three interrupts being
++  defined for supervisor mode:
++    - Source 1 is the supervisor software interrupt, which can be sent by an SBI
++      call and is reserved for use by software.
++    - Source 5 is the supervisor timer interrupt, which can be configured by
++      SBI calls and implements a one-shot timer.
++    - Source 9 is the supervisor external interrupt, which chains to all other
++      device interrupts.
+ - interrupt-controller : Identifies the node as an interrupt controller
+ 
+ Furthermore, this interrupt-controller MUST be embedded inside the cpu
+@@ -38,7 +46,7 @@ An example device tree entry for a HLIC is show below.
+ 		...
+ 		cpu1-intc: interrupt-controller {
+ 			#interrupt-cells = <1>;
+-			compatible = "riscv,cpu-intc", "sifive,fu540-c000-cpu-intc";
++			compatible = "sifive,fu540-c000-cpu-intc", "riscv,cpu-intc";
+ 			interrupt-controller;
+ 		};
+ 	};
+-- 
+2.16.4
 
