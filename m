@@ -5,42 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36856C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 10:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18CB8C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 10:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D722A20C0C
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 10:00:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D722A20C0C
+	by mail.kernel.org (Postfix) with ESMTP id C841920C0C
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 10:01:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C841920C0C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbeHTNPa (ORCPT
+        id S1726599AbeHTNQM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 09:15:30 -0400
-Received: from foss.arm.com ([217.140.101.70]:35378 "EHLO foss.arm.com"
+        Mon, 20 Aug 2018 09:16:12 -0400
+Received: from foss.arm.com ([217.140.101.70]:35398 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbeHTNP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 09:15:29 -0400
+        id S1725948AbeHTNQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 09:16:12 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A762880D;
-        Mon, 20 Aug 2018 03:00:32 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F8DE3F2EA;
-        Mon, 20 Aug 2018 03:00:31 -0700 (PDT)
-Subject: Re: [PATCH] swiotlb: Fix uninitialized pointer on DMA ops
-To:     Esteban Zamora <estebanzacr.20@gmail.com>
-Cc:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-References: <1534619091-14258-1-git-send-email-estebanzacr.20@gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <e6f42561-e47f-ae6a-a444-da007e88459f@arm.com>
-Date:   Mon, 20 Aug 2018 11:00:29 +0100
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1FC080D;
+        Mon, 20 Aug 2018 03:01:14 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.emea.arm.com [10.4.12.239])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 591183F2EA;
+        Mon, 20 Aug 2018 03:01:11 -0700 (PDT)
+Subject: Re: [PATCH v3 09/14] sched/core: uclamp: propagate parent clamps
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+References: <20180806163946.28380-1-patrick.bellasi@arm.com>
+ <20180806163946.28380-10-patrick.bellasi@arm.com>
+ <804c7937-2c47-0781-9c53-a8ef8eb04530@arm.com>
+ <20180817144540.GL2960@e110439-lin>
+ <d6c3b6f4-b3bd-22d9-70c0-38ad587b9339@arm.com>
+Message-ID: <0a26a0de-f9e6-ef77-ceac-eb25bbf01664@arm.com>
+Date:   Mon, 20 Aug 2018 12:01:09 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1534619091-14258-1-git-send-email-estebanzacr.20@gmail.com>
+In-Reply-To: <d6c3b6f4-b3bd-22d9-70c0-38ad587b9339@arm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -49,39 +63,22 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/08/18 20:04, Esteban Zamora wrote:
-> The mmap function pointer on swiotlb_dma_ops struct is
-> uninitialized, which causes a random crash when calling
-> the dma_mmap_coherent function on platforms where no DMA
-> address translation hardware is available.
+On 08/17/2018 05:50 PM, Dietmar Eggemann wrote:
+> On 08/17/2018 04:45 PM, Patrick Bellasi wrote:
+>> On 17-Aug 15:43, Dietmar Eggemann wrote:
+>>> On 08/06/2018 06:39 PM, Patrick Bellasi wrote:
 
-Can you share any kernel logs with details of those crashes? As Konrad 
-mentions, the rules for partial structure initialisation in C are 
-well-defined, even with designated initialisers[1], and if this commit 
-message were true then half of the subsystems in the kernel would be 
-crashing left right and centre.
+[...]
 
-Robin.
-
-[1] 
-https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html#Designated-Inits
-
-> Set this pointer to NULL in order to fix the issue.
+>> AFAIK the default hierarcy (cgroups v2) has a much more stricy set of
+>> requirements for the "delegation model".
 > 
-> Signed-off-by: Esteban Zamora <estebanzacr.20@gmail.com>
-> ---
->   kernel/dma/swiotlb.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> index 4f8a6db..9a7718c 100644
-> --- a/kernel/dma/swiotlb.c
-> +++ b/kernel/dma/swiotlb.c
-> @@ -1082,5 +1082,6 @@ const struct dma_map_ops swiotlb_dma_ops = {
->   	.map_page		= swiotlb_map_page,
->   	.unmap_page		= swiotlb_unmap_page,
->   	.dma_supported		= dma_direct_supported,
-> +	.mmap                   = NULL,
->   };
->   EXPORT_SYMBOL(swiotlb_dma_ops);
-> 
+> Could be ... I guess I have to study this more.
+
+So I see that this idea with the .effective files is used in Waiman's 
+new cpuset cgroupv2 controller proposal.
+
+The cpu controller with you util clamp extension has to be usable under 
+cgroupv2 and cgroupv1, I assume?
+
+[...]
