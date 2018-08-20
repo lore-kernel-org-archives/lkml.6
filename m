@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE6FC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFFC3C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F35632173D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92AC021570
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:12:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYt7kJyS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F35632173D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bnKEazNS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92AC021570
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbeHTV3X (ORCPT
+        id S1726636AbeHTV3W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 17:29:23 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39089 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbeHTV3W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 20 Aug 2018 17:29:22 -0400
-Received: by mail-lf1-f67.google.com with SMTP id j201-v6so345525lfg.6;
-        Mon, 20 Aug 2018 11:12:40 -0700 (PDT)
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43433 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbeHTV3V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 17:29:21 -0400
+Received: by mail-lj1-f193.google.com with SMTP id m84-v6so439208lje.10;
+        Mon, 20 Aug 2018 11:12:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3dosDfoX2lLtKRM7stKlq06j/xqPONJf6rhUbBAZA3A=;
-        b=lYt7kJySiIkQG5dCEZZYyHekHe1WO3mA42KOewv7dTKhwxPZZV9YL129N8DbJTEn2y
-         IAXptQODRZ9bNzaoreSBu5Q0MWCgb+DA771iZTtiaNNXBKixt3yWs8WSx5CZ6OwgUne1
-         MJHFcaeYt28Jmm/0fXRcj5iiVqqQyMwdZheHeQ0rpXKMj3aWmlop88lKYExjVaC9iCZ9
-         gCYc9DXOMj/mpht1B5ZC3m3TlEti9qEZX4t9uhfIyZkAiXJL0dCzMTDEfrSUTw7qa/kT
-         ZbK4zPosEultQpbvhOaILKOhfeqXKpC3gO5dMqIuWBvQmsfTpt0yM12fcHUuZsxLO7k+
-         w3eA==
+        bh=7H4vp0EsPAd2Ofq3+tQ1pqiYwK34bXGlpOIDdMOQ8EE=;
+        b=bnKEazNSGuBhuivNFwYWFiISSKTJbVSAkOQ8VzMUdUYzEwGe9zG5S23gIRS0I2N2fe
+         7wKjpiXOjPlyYgLx93Knj93yvV68pW1afqHzHxv8/C7g8CiMqCYqLVoEDbGGQ4v4yVrS
+         f3imuhowG2u7FYD/7P3mAz24bcp6nTXMZhutgdxgoANsSt0eonNRTZf4cj893POHtVav
+         lpcwCfRlo3AnGWVzHYnuYseIfWVmGrN+8khZu4meMxOoKPRqmdWOm6+7zPGkaovETDyI
+         6gLUW361Us1jf5Y+pFAXRwj7ktokLHwbyvjAXQI+5p727WxievIFW6Nk6hPVnJ3L9Dn+
+         uDow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=3dosDfoX2lLtKRM7stKlq06j/xqPONJf6rhUbBAZA3A=;
-        b=qfeULCaSIwGporgMCdjipE2q2b3c0zRanYVTjrcB0aMGKWRVrlW2hEhdPzjXrjtUue
-         KJ7g/fPcrQL3gax+63Tcb60HPoYrn5e3UKXbuTDUUdOex/0FF4PlWWD3b4RJRI8hv9Ps
-         9qmeTeT74DmKtOiMGdVAGYwGNAYAw/nnuuLCaOnJ8mDC+4x+vXCkeUGk/SfBZV8W8Ow8
-         mq+TdJDrtCK8C/HmwDiWVn72kNmRYuvLt1JIke1eKicqgtVrmjHfKJMtjwNI1oYNapuv
-         KUsQ5vazZ4sViAwh9RUVNYgYOi1nR8WeWij3TqfYtNuuE2yltWWO2eRGlv5vxwl4zHnf
-         AeaA==
-X-Gm-Message-State: AOUpUlGRFU1NdVqDHun+zyp2mjrJ+tLRwkxY0q7loMP21b3KEqUM7x4/
-        DA9EYzmZNSrVlOsWISIMBCA=
-X-Google-Smtp-Source: AA+uWPwCCKr9vbqiCyZ0TV8HrKGZRAnyXByKBh8OBSxL82xY1pf4MTmwnQnBvqdjc9BdAvug9zVXmg==
-X-Received: by 2002:a19:5353:: with SMTP id h80-v6mr15760581lfb.9.1534788759832;
-        Mon, 20 Aug 2018 11:12:39 -0700 (PDT)
+        bh=7H4vp0EsPAd2Ofq3+tQ1pqiYwK34bXGlpOIDdMOQ8EE=;
+        b=mh/9M/x8X3NRrcR+8O7tmjRs2aT9Bm+89UW8/Q4Gro0/u3t0gAEXCc99uyvCi4n54I
+         I8I3mupBiDOZHeBR3Spw64qfuS7R562Ow1zOfoQ3Y15BwtAMGRlLK/tjXZ7VMG30I056
+         QNg2uRa9Ucv1btRDkxjbRAl0oBAXKwNnOiDNj2m+p5p+nO8Um947BlczZS6DOnRMoj27
+         EjytQbK6bVG1OdDsgf6ea+Xhwj8VOVDvB/1TyP3j1JAaO3aBiXknFgWSRbS57hyn5tq1
+         MrSs0IHsh6QuOLyzu1JubPBk7oZczjzs+2fzGlm+WBZfnpUej4RlaoFE6D/sWc0qjhUw
+         ANQg==
+X-Gm-Message-State: AOUpUlHE64dYroWo+2o4N0DJb3xmCp2rQn7qJGrXUO/vUNfWIykqTKJw
+        ST8Xg3EiAY+ySX46B4kBuIM=
+X-Google-Smtp-Source: AA+uWPznbBPNlimjuQ8SI4V8hIfheWIEq0pv/knHCsU6bTeq2Of1UtSnHYIgo2Z1Bs0p0nbe0cpqOQ==
+X-Received: by 2002:a2e:7406:: with SMTP id p6-v6mr17448106ljc.5.1534788758629;
+        Mon, 20 Aug 2018 11:12:38 -0700 (PDT)
 Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id g16-v6sm379918lfb.5.2018.08.20.11.12.38
+        by smtp.gmail.com with ESMTPSA id g16-v6sm379918lfb.5.2018.08.20.11.12.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 Aug 2018 11:12:39 -0700 (PDT)
+        Mon, 20 Aug 2018 11:12:38 -0700 (PDT)
 From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
 To:     Tony Lindgren <tony@atomide.com>
 Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
@@ -68,9 +68,9 @@ Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
         linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH 3/3] ARM: OMAP1: ams-delta: register MODEM device earlier
-Date:   Mon, 20 Aug 2018 20:13:33 +0200
-Message-Id: <20180820181333.2527-4-jmkrzyszt@gmail.com>
+Subject: [PATCH 2/3] ARM: OMAP1: ams-delta: initialize latch2 pins to safe values
+Date:   Mon, 20 Aug 2018 20:13:32 +0200
+Message-Id: <20180820181333.2527-3-jmkrzyszt@gmail.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180820181333.2527-1-jmkrzyszt@gmail.com>
 References: <20180820181333.2527-1-jmkrzyszt@gmail.com>
@@ -79,79 +79,146 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Amstrad Delta MODEM device used to be initialized at arch_initcall
-before it was once moved to late_initcall by commit f7519d8c8290 ("ARM:
-OMAP1: ams-delta: register latch dependent devices later"). The purpose
-of that change was to postpone initialization of devices which depended
-on latch2 pins until latch2 converted to GPIO device was ready.
+Latch2 pins control a number of on-board devices, namely LCD, NAND,
+MODEM and CODEC.  Those pins used to be initialized with safe values
+from init_machine before that operation was:
+1) moved to late_initcall in preparation for conversion of latch2 to
+GPIO device - see commit f7519d8c8290 ("ARM: OMAP1: ams-delta: register
+latch dependent devices later"),
+2) replaced with non-atomic initialization performed by means of
+gpio_request_array() - see commit 937eb4bb0058 ("ARM: OMAP1: ams-delta:
+convert latches to basic_mmio_gpio"),
+3) made completely asynchronous by delegation of GPIO request
+operations performed on subsets of pins to respective device drivers in
+subsequent commits.
 
-After recent fixes to GPIO handling, it was possible to moove
-registration of most of those device back to where they were before.
-The same can be safely done with the MODEM device as initialization
-of GPIO pins it depends on was moved to machine_init by preceding
-patch.
+One visible negative result of that disintegration was corrupt keyboard
+data reported by serio driver, recently fixed by commit 41f8fee385a0
+("ARM: OMAP1: ams-delta: Hog "keybrd_dataout" GPIO pin").
 
-Move registration of the MODEM device to arch_initcall_sync, not to
-arch_initcall, so it is never exposed to potential conflictinh
-registration order hazard against OMAP serial ports.
+Moreover, initialization of LATCH2_PIN_MODEM_CODEC still performed with
+ams_delta_latch2_write() wrapper from late_init() is now done on not
+requested GPIO pin.
+
+Reintroduce atomic initialization of latch2 pins at machine_init to
+prevent from random values potentially corrupting NAND data or maybe
+even destroing other hardware.  Also take care of MODEM/CODEC related
+pins so MODEM device probe succeeds even if latch2 GPIO device or
+dependent regulator is not ready and CODEC can be reached over the
+MODEM even if audio driver doesn't take control over
+LATCH2_PIN_MODEM_CODEC.
+
+Once done, remove the no longer needed GPIO based implementation of
+ams_delta_latch_write() and its frontend macro.
 
 Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 ---
- arch/arm/mach-omap1/board-ams-delta.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+ arch/arm/mach-omap1/board-ams-delta.c | 52 +++++++++++++++++++++++------------
+ arch/arm/mach-omap1/board-ams-delta.h |  7 -----
+ 2 files changed, 35 insertions(+), 24 deletions(-)
 
 diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
-index c865c6921af8..a98783f98f3a 100644
+index b3fe515b6f49..c865c6921af8 100644
 --- a/arch/arm/mach-omap1/board-ams-delta.c
 +++ b/arch/arm/mach-omap1/board-ams-delta.c
-@@ -896,11 +896,28 @@ static int __init modem_nreset_init(void)
- /*
-  * This function expects MODEM IRQ number already assigned to the port
-  * and fails if it's not.
-+ * The MODEM device requires its RESET# pin kept high during probe.
-+ * That requirement can be fulfilled in several ways:
-+ * - with a descriptor of already functional modem_nreset regulator
-+ *   assigned to the MODEM private data,
-+ * - with the regulator not yet controlled by modem_pm function but
-+ *   already enabled by default on probe,
-+ * - before the modem_nreset regulator is probed, with the pin already
-+ *   set high explicitly.
-+ * The last one is already guaranteed by ams_delta_latch2_init() called
-+ * from machine_init.
-+ * In order to avoid taking over ttyS0 device slot, the MODEM device
-+ * should be registered after OMAP serial ports.  Since those ports
-+ * are registered at arch_initcall, this function can be called safely
-+ * at arch_initcall_sync earliest.
-  */
- static int __init ams_delta_modem_init(void)
- {
- 	int err;
+@@ -321,20 +321,6 @@ struct modem_private_data {
  
-+	if (!machine_is_ams_delta())
-+		return -ENODEV;
+ static struct modem_private_data modem_priv;
+ 
+-void ams_delta_latch_write(int base, int ngpio, u16 mask, u16 value)
+-{
+-	int bit = 0;
+-	u16 bitpos = 1 << bit;
+-
+-	for (; bit < ngpio; bit++, bitpos = bitpos << 1) {
+-		if (!(mask & bitpos))
+-			continue;
+-		else
+-			gpio_set_value(base + bit, (value & bitpos) != 0);
+-	}
+-}
+-EXPORT_SYMBOL(ams_delta_latch_write);
+-
+ static struct resource ams_delta_nand_resources[] = {
+ 	[0] = {
+ 		.start	= OMAP1_MPUIO_BASE,
+@@ -680,6 +666,40 @@ static void __init omap_gpio_deps_init(void)
+ 	modem_assign_irq(chip);
+ }
+ 
++/*
++ * Initialize latch2 pins with values which are safe for dependent on-board
++ * devices or useful for their successull initialization even before GPIO
++ * driver takes control over the latch pins:
++ * - LATCH2_PIN_LCD_VBLEN	= 0
++ * - LATCH2_PIN_LCD_NDISP	= 0	Keep LCD device powered off before its
++ *					driver takes control over it.
++ * - LATCH2_PIN_NAND_NCE	= 0
++ * - LATCH2_PIN_NAND_NWP	= 0	Keep NAND device down and write-
++ *					protected before its driver takes
++ *					control over it.
++ * - LATCH2_PIN_KEYBRD_PWR	= 0	Keep keyboard powered off before serio
++ *					driver takes control over it.
++ * - LATCH2_PIN_KEYBRD_DATAOUT	= 0	Keep low to avoid corruption of first
++ *					byte of data received from attached
++ *					keyboard when serio device is probed;
++ *					the pin is also hogged low by the latch2
++ *					GPIO driver as soon as it is ready.
++ * - LATCH2_PIN_MODEM_NRESET	= 1	Enable voice MODEM device, allowing for
++ *					its successful probe even before a
++ *					regulator it depends on, which in turn
++ *					takes control over the pin, is set up.
++ * - LATCH2_PIN_MODEM_CODEC	= 1	Attach voice MODEM CODEC data port
++ *					to the MODEM so the CODEC is under
++ *					control even if audio driver doesn't
++ *					take it over.
++ */
++static void __init ams_delta_latch2_init(void)
++{
++	u16 latch2 = 1 << LATCH2_PIN_MODEM_NRESET | 1 << LATCH2_PIN_MODEM_CODEC;
 +
- 	if (ams_delta_modem_ports[0].irq < 0)
- 		return ams_delta_modem_ports[0].irq;
++	__raw_writew(latch2, LATCH2_VIRT);
++}
++
+ static void __init ams_delta_init(void)
+ {
+ 	/* mux pins for uarts */
+@@ -701,6 +721,7 @@ static void __init ams_delta_init(void)
+ 	omap_cfg_reg(J18_1610_CAM_D7);
  
-@@ -913,6 +930,7 @@ static int __init ams_delta_modem_init(void)
+ 	omap_gpio_deps_init();
++	ams_delta_latch2_init();
+ 	gpiod_add_hogs(ams_delta_gpio_hogs);
+ 
+ 	omap_serial_init();
+@@ -888,9 +909,6 @@ static int __init ams_delta_modem_init(void)
+ 	/* Initialize the modem_nreset regulator consumer before use */
+ 	modem_priv.regulator = ERR_PTR(-ENODEV);
+ 
+-	ams_delta_latch2_write(AMS_DELTA_LATCH2_MODEM_CODEC,
+-			AMS_DELTA_LATCH2_MODEM_CODEC);
+-
+ 	err = platform_device_register(&ams_delta_modem_device);
  
  	return err;
- }
-+arch_initcall_sync(ams_delta_modem_init);
+diff --git a/arch/arm/mach-omap1/board-ams-delta.h b/arch/arm/mach-omap1/board-ams-delta.h
+index 1fbada29431a..a74a306d7e77 100644
+--- a/arch/arm/mach-omap1/board-ams-delta.h
++++ b/arch/arm/mach-omap1/board-ams-delta.h
+@@ -59,13 +59,6 @@
+ #define AMS_DELTA_LATCH2_GPIO_BASE	AMS_DELTA_GPIO_PIN_LCD_VBLEN
+ #define AMS_DELTA_LATCH2_NGPIO		16
  
- static int __init late_init(void)
- {
-@@ -922,10 +940,6 @@ static int __init late_init(void)
- 	if (err)
- 		return err;
- 
--	err = ams_delta_modem_init();
--	if (err)
--		return err;
+-#ifndef __ASSEMBLY__
+-void ams_delta_latch_write(int base, int ngpio, u16 mask, u16 value);
+-#define ams_delta_latch2_write(mask, value) \
+-	ams_delta_latch_write(AMS_DELTA_LATCH2_GPIO_BASE, \
+-			AMS_DELTA_LATCH2_NGPIO, (mask), (value))
+-#endif
 -
- 	/*
- 	 * Once the modem device is registered, the modem_nreset
- 	 * regulator can be requested on behalf of that device.
+ #endif /* CONFIG_MACH_AMS_DELTA */
+ 
+ #endif /* __ASM_ARCH_OMAP_AMS_DELTA_H */
 -- 
 2.16.4
 
