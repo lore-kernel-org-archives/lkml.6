@@ -2,181 +2,456 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 038CAC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D01DFC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A042921570
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:15:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A042921570
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 580452173D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:16:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="uIYFTlm5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 580452173D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbeHTVb6 (ORCPT
+        id S1726681AbeHTVco (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 17:31:58 -0400
-Received: from mga03.intel.com ([134.134.136.65]:56326 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726606AbeHTVb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 17:31:57 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 11:15:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,266,1531810800"; 
-   d="scan'208";a="67678937"
-Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by orsmga006.jf.intel.com with ESMTP; 20 Aug 2018 11:15:12 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1frohs-000JB6-Cf; Tue, 21 Aug 2018 02:15:12 +0800
-Date:   Tue, 21 Aug 2018 02:14:16 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Andrew Banman <abanman@hpe.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        tipbuild@zytor.com, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Mike Travis <mike.travis@hpe.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Varsha Rao <rvarsha016@gmail.com>,
-        Nicolai Stange <nstange@suse.de>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: [tip:x86/urgent 6/6] arch/x86/platform/uv/tlb_uv.c:2209:6: sparse:
- symbol 'uv_bau_crash_shutdown' was not declared. Should it be static?
-Message-ID: <201808210250.A3etcIJg%fengguang.wu@intel.com>
+        Mon, 20 Aug 2018 17:32:44 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:39930 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726156AbeHTVcn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 17:32:43 -0400
+X-Greylist: delayed 3999 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 Aug 2018 17:32:40 EDT
+Received: from mail-vk0-f52.google.com (mail-vk0-f52.google.com [209.85.213.52]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id w7KIFrVQ027645;
+        Tue, 21 Aug 2018 03:15:54 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w7KIFrVQ027645
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1534788955;
+        bh=kgrNRe0i5ib8EmiwjZE9gOlxm957SnPGHHl+bS6ZRLU=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=uIYFTlm52jrY7EMR/g2EKO6cS2GLC4uVk/1k9P0lri5FzdlwLsy+8ASDIbb4f5dJq
+         5u5U/ZTZgU4HFyHEdwkneTOOWr67p0beypx5Vz1uUIotYfTBxSTCgQ83k7asAGfMSx
+         SEoPL/f/0UMlOzT65l3+qIsE8XzSgpGcnUAut6oz8c9fGVjlGgzmAqMEZk76PA3RzA
+         Zf6l7inPkP3OpABdqpZT0WK3ASrqEBzfzPRPJaSor1l2cD/YEQTGnsv83Xsxj2ckkI
+         ZFIFD6zAD95euu5ZUkyXbgJvWdnV4/ttFcpIl6IuskGS4OiZ186FcUyE7PGL376a6Q
+         uth2dB2Tflcvw==
+X-Nifty-SrcIP: [209.85.213.52]
+Received: by mail-vk0-f52.google.com with SMTP id b14-v6so6965117vke.13;
+        Mon, 20 Aug 2018 11:15:54 -0700 (PDT)
+X-Gm-Message-State: APzg51De0v2nxkVZriH/ZLdmEiO7kya2EunsBvCd8fBN/+dpcrNltL5s
+        QmxnMIhsWsV9MnlOWnYUK1/+LOYHJzE9BeOs/x8=
+X-Google-Smtp-Source: ANB0Vda67cafu4QAdwpgLuDoebFYd2C90xSdAQOx17LiNQ2z0QTVpqslHt8W4d28PnoUpVgv9DaRM69/yBN+WVysoL0=
+X-Received: by 2002:a1f:f8c2:: with SMTP id w185-v6mr88675vkh.135.1534788953000;
+ Mon, 20 Aug 2018 11:15:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Mon, 20 Aug 2018 11:15:12
+ -0700 (PDT)
+In-Reply-To: <20180806200725.4efa5d35@kitsune.suse.cz>
+References: <20180627143705.5a1fed1c@kitsune.suse.cz> <CAK7LNARVPNx_uC5xTrS_p9T4nMRTC79BO51T4Lytv2eU1c-ynw@mail.gmail.com>
+ <20180628111623.3807fe9b@naga.suse.cz> <CAK7LNARRKU7Mfa8ZBu1qPFYFRr-5k69sjVyERM2bYcnWoBDN8g@mail.gmail.com>
+ <20180806200725.4efa5d35@kitsune.suse.cz>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 21 Aug 2018 03:15:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATCktToMui4NYxoUXV8ZbuDK8F0JCp_CysEWaSBPUP7NQ@mail.gmail.com>
+Message-ID: <CAK7LNATCktToMui4NYxoUXV8ZbuDK8F0JCp_CysEWaSBPUP7NQ@mail.gmail.com>
+Subject: Re: due to kconfig changes kernel config file is no longer sufficient
+ for configuring the kernel
+To:     =?UTF-8?Q?Michal_Such=C3=A1nek?= <msuchanek@suse.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.de>, Andreas Schwab <schwab@suse.de>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Jeff Mahoney <jeffm@suse.com>,
+        "Peter Zijlstra," <peterz@infradead.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-um@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-head:   99f3965878759d36baac944df004b4dafcc272b4
-commit: 99f3965878759d36baac944df004b4dafcc272b4 [6/6] x86/platform/uv/BAU: Gracefully disable BAU during panic
-reproduce:
-        # apt-get install sparse
-        git checkout 99f3965878759d36baac944df004b4dafcc272b4
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+2018-08-07 3:07 GMT+09:00 Michal Such=C3=A1nek <msuchanek@suse.de>:
+> On Mon, 30 Jul 2018 17:02:42 +0900
+> Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+>
+>> 2018-06-28 18:16 GMT+09:00 Michal Such=C3=A1nek <msuchanek@suse.de>:
+>> > On Wed, 27 Jun 2018 23:07:21 +0900
+>> > Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+>> >
+>> >> Hi.
+>> >>
+>> >>
+>> >> 2018-06-27 21:37 GMT+09:00 Michal Such=C3=A1nek <msuchanek@suse.de>:
+>> >> > Hello,
+>> >> >
+>> >> > in the x86 Kconfig we have this:
+>> >> >
+>> >> > # Select 32 or 64 bit
+>> >> > config 64BIT
+>> >> >         bool "64-bit kernel" if "$(ARCH)" =3D "x86"
+>> >> >         default "$(ARCH)" !=3D "i386"
+>> >> >         ---help---
+>> >> >           Say yes to build a 64-bit kernel - formerly known as
+>> >> > x86_64 Say no to build a 32-bit kernel - formerly known as i386
+>> >> >
+>> >> > Since commit 104daea149c4 ("kconfig: reference environment
+>> >> > variables directly and remove 'option env=3D'") the value of ARCH
+>> >> > is not saved in the kernel config.
+>> >>
+>> >> I think this commit is unrelated.  It was just a syntax change.
+>> >
+>> > This does not look like syntax only change to me:
+>> >
+>> > diff --git a/init/Kconfig b/init/Kconfig
+>> > index 15aae32e0719..1217fc62ca61 100644
+>> > --- a/init/Kconfig
+>> > +++ b/init/Kconfig
+>> > @@ -1,20 +1,12 @@
+>> > -config ARCH
+>> > -       string
+>> > -       option env=3D"ARCH"
+>> > -
+>> > -config KERNELVERSION
+>> > -       string
+>> > -       option env=3D"KERNELVERSION"
+>> > -
+>>
+>> This is just syntax change.
+>>
+>> 'option env=3D' was used to reference an environment variable.
+>>
+>> Now, $(ARCH), $(KERNELVERSION) are simpler forms.
+>>
+>>
+>> >>
+>> >> Unless I am missing something,
+>> >> we have never saved ARCH in the .config in the past.
+>> >
+>> > There was a config symbol defined for it before the commit removed
+>> > it.
+>>
+>> No.
+>>
+>> CONFIG symbols with'option env=3D'
+>> are not written out to the .config file.
+>>
+>> We have never had CONFIG_ARCH or CONFIG_KERNELVERSION.
+>>
+>>
+>>
+>>
+>> >>
+>> >>
+>> >> > Since commit f467c5640c29 ("kconfig: only write '#
+>> >> > CONFIG_FOO is not set' for visible symbols") the value of 64BIT
+>> >> > is not saved if the ARCH is set i386 or x86_64 because the
+>> >> > symbol is not visible.
+>> >>
+>> >> This is correct.
+>> >>
+>> >> It was discussed a few weeks ago.
+>> >>
+>> >> https://lkml.org/lkml/2018/6/5/847
+>> >>
+>> >>
+>> >> > There is a number of ways to hack this particular case to work.
+>> >> >
+>> >> > However, there is a more general problem with this. Some config
+>> >> > options may depend on the environment, may not be saved, and the
+>> >> > environment is not saved either.
+>> >>
+>> >> Which environment variables in particular are in your mind?
+>> >
+>> > Any that is used in Kconfig.
+>>
+>> They are provided from outside of Kconfig.
+>> This is the behavior we keep since a long time ago.
+>>
+>> ARCH is given by the environment variable or the command line.
+>> KERNELVERSION is supplied by the top Makefile.
+>>
+>> >>
+>> >> As for ARCH, you need to pass the same ARCH as you used for
+>> >> building the kernel. (For native building, you do not have to pass
+>> >> ARCH explicitly, though.)
+>> >
+>> > Except if you do pass it to make config you may need to pass it to
+>> > to make later as well.
+>>
+>> Right.
+>>
+>> For exmaple 'make ARCH=3Darm config' will create the config suitable
+>> only for ARM architecture.
+>> Then, you need to do 'make ARCH=3Darm' to build the kernel.
+>>
+>> If it is tedious to give 'ARCH=3Darm' to every make command,
+>> you can do 'export ARCH=3Darm' in your shell.
+>>
+>> Again, this is the behavior we have for a long time.
+>
+> No, that's not what we had. The kernel build would fail instead of
+> reconfiguring the kernel for the current arch. At least it used to work
+> that way at some point.
+
+This is not true for most architectures.
+
+It worked for i386 prior to commit f467c5640c29 ("kconfig: only write '#
+CONFIG_FOO is not set' for visible symbols").
 
 
-sparse warnings: (new ones prefixed by >>)
+This was already discussed, and this can be solved by setting ARCH=3Di386.
 
-   include/linux/nodemask.h:265:16: sparse: expression using sizeof(void)
-   include/linux/nodemask.h:271:16: sparse: expression using sizeof(void)
-   arch/x86/include/asm/uv/uv_hub.h:687:42: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const volatile [noderef] <asn:2>*addr @@    got deref] <asn:2>*addr @@
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    expected void const volatile [noderef] <asn:2>*addr
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    got unsigned long *
-   arch/x86/include/asm/uv/uv_hub.h:687:42: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const volatile [noderef] <asn:2>*addr @@    got deref] <asn:2>*addr @@
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    expected void const volatile [noderef] <asn:2>*addr
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    got unsigned long *
-   arch/x86/include/asm/uv/uv_hub.h:687:42: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const volatile [noderef] <asn:2>*addr @@    got deref] <asn:2>*addr @@
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    expected void const volatile [noderef] <asn:2>*addr
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    got unsigned long *
-   arch/x86/include/asm/uv/uv_hub.h:687:42: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const volatile [noderef] <asn:2>*addr @@    got deref] <asn:2>*addr @@
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    expected void const volatile [noderef] <asn:2>*addr
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    got unsigned long *
-   arch/x86/include/asm/uv/uv_hub.h:692:41: sparse: incorrect type in argument 2 (different address spaces) @@    expected void volatile [noderef] <asn:2>*addr @@    got deref] <asn:2>*addr @@
-   arch/x86/include/asm/uv/uv_hub.h:692:41:    expected void volatile [noderef] <asn:2>*addr
-   arch/x86/include/asm/uv/uv_hub.h:692:41:    got unsigned long *
-   arch/x86/include/asm/uv/uv_hub.h:687:42: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const volatile [noderef] <asn:2>*addr @@    got deref] <asn:2>*addr @@
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    expected void const volatile [noderef] <asn:2>*addr
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    got unsigned long *
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:687:42: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const volatile [noderef] <asn:2>*addr @@    got deref] <asn:2>*addr @@
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    expected void const volatile [noderef] <asn:2>*addr
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    got unsigned long *
-   arch/x86/include/asm/uv/uv_hub.h:687:42: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const volatile [noderef] <asn:2>*addr @@    got deref] <asn:2>*addr @@
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    expected void const volatile [noderef] <asn:2>*addr
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    got unsigned long *
-   arch/x86/include/asm/uv/uv_hub.h:687:42: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const volatile [noderef] <asn:2>*addr @@    got deref] <asn:2>*addr @@
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    expected void const volatile [noderef] <asn:2>*addr
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    got unsigned long *
-   include/linux/slab.h:631:13: sparse: undefined identifier '__builtin_mul_overflow'
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
->> arch/x86/platform/uv/tlb_uv.c:2209:6: sparse: symbol 'uv_bau_crash_shutdown' was not declared. Should it be static?
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:687:42: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const volatile [noderef] <asn:2>*addr @@    got deref] <asn:2>*addr @@
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    expected void const volatile [noderef] <asn:2>*addr
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    got unsigned long *
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:692:41: sparse: incorrect type in argument 2 (different address spaces) @@    expected void volatile [noderef] <asn:2>*addr @@    got deref] <asn:2>*addr @@
-   arch/x86/include/asm/uv/uv_hub.h:692:41:    expected void volatile [noderef] <asn:2>*addr
-   arch/x86/include/asm/uv/uv_hub.h:692:41:    got unsigned long *
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:687:42: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const volatile [noderef] <asn:2>*addr @@    got deref] <asn:2>*addr @@
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    expected void const volatile [noderef] <asn:2>*addr
-   arch/x86/include/asm/uv/uv_hub.h:687:42:    got unsigned long *
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:692:41: sparse: incorrect type in argument 2 (different address spaces) @@    expected void volatile [noderef] <asn:2>*addr @@    got deref] <asn:2>*addr @@
-   arch/x86/include/asm/uv/uv_hub.h:692:41:    expected void volatile [noderef] <asn:2>*addr
-   arch/x86/include/asm/uv/uv_hub.h:692:41:    got unsigned long *
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   arch/x86/include/asm/uv/uv_hub.h:652:16: sparse: incorrect type in return expression (different address spaces) @@    expected void volatile [noderef] <asn:2>* @@    got sn:2>* @@
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    expected void volatile [noderef] <asn:2>*
-   arch/x86/include/asm/uv/uv_hub.h:652:16:    got void *<noident>
-   include/linux/slab.h:631:13: sparse: call with no type!
+https://lkml.org/lkml/2018/6/7/1119
+https://lkml.org/lkml/2018/6/8/149
 
-Please review and possibly fold the followup patch.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+You complaint about commit 104daea149c4 ("kconfig: reference
+environment variables
+directly and remove 'option env=3D'"), but it is unrelated.
+
+
+>>
+>>
+>>
+>> >>
+>> >> As for CC, HOSTCC, etc.
+>> >> yes, these are new 'unsaved' environments.
+>> >>
+>> >> CONFIG options now depend on the compiler.
+>> >> This is the concept suggested by Linus Torvalds.
+>> >>
+>> >>
+>> >> > So in the end all the infrastructure with symlinks
+>> >> > from module directory pointing to the kernel source and object
+>> >> > directory is useless. To interpret the config stored there you
+>> >> > need the environment and that is not saved anywhere. So if you
+>> >> > try to build out-of-tree module it might end up reconfiguring
+>> >> > your kernel and producing useless modules.
+>> >>
+>> >> No. out-of-tree module building never ever re-configures the
+>> >> kernel.
+>> >
+>> > It does implicitly because the config values depend on environment
+>> > that is not saved and the values themselves are not saved either.
+>> > If that happens to expose a new variable it is even explicitly
+>> > reconfigured.
+>>
+>>
+>> You should have a built kernel tree
+>> before building external modules.
+>>
+>> The .config is already there.
+>>
+>> The .config works for external modules, given that
+>>
+>>   - ARCH is the same
+>>   - the compiler is the same
+>
+>  - the compiler additional plugins and/or external libraries used to
+>    implement advanced features are the same
+>
+>>
+>>
+>>
+>> >>
+>> >> out-of-tree modules are built with exactly the same configuration
+>> >> as used for the kernel.
+>> >
+>> > It is not true. And that is the problem. You need the config file
+>> > and dump of the environment passed to the make command at
+>> > configuration time to get the exact same configuration. The
+>> > environment is not saved anywhere, though.
+>>
+>>
+>> Why dump of the environment?
+>>
+>>
+>> If you are building external modules natively
+>> your distribution provides /lib/modules/$(uname -r)/build,
+>> which contains files enough for building external modules.
+>>
+>> You can pass the directory path to M=3D... parameter.  That's it.
+>
+> No, that's not it. Since passing ARCH=3Di386 is the de-facto standard to
+> configure a 32bit kernel and the result of passing that was not saved
+> you need to pass it to make as well.
+
+
+If you pass ARCH=3D for the configuration phase,
+you need to pass the same ARCH=3D in the build phase.
+
+
+
+
+What I can suggest for you is:
+
+
+$ make ARCH=3Di386 defconfig
+$ make ARCH=3Di386
+
+   OR
+
+$ make i386_defconfig
+$ make
+
+
+
+
+
+
+
+> And you need to patch a number of
+> 3rd party build scripts that build a kernel module as part of a bigger
+> project.
+
+
+You do not need to patch a number of scripts.
+
+Just one liner fix.
+Add 'export ARCH=3Di386' in the top level script.
+
+
+
+>>
+>>
+>>
+>> If you are cross-building external modules,
+>> you also need to
+>>
+>>  - pass ARCH=3D
+>>  - use the same compiler with CROSS_COMPILE=3D
+>>
+>> You should know both
+>> because you have built the kernel by your self.
+>
+> No, I am not cross-compiling. I am building 32bit modules and because
+> the kconfig system did not save the information that the kernel is
+> 32bit I get 64bit modules instead.
+
+
+You are semi-cross-compiling
+if you build 32-bit modules on a 64-bit host machine.
+
+
+
+
+
+>>
+>> You do not need any other information, do you?
+>
+> I need the information what ARCH was passed to the x86 kernel at
+> configuration time when building on x86. This is new.
+>
+> To avoid this and similar surprises in the future I suggest to flag any
+> option that depends on something dynamic (compiler option, environment
+> variable) so that kconfig saves it even if it would not be saved
+> otherwise.
+
+It is saved in include/config/auto.conf.cmd
+
+
+> Then kconfig can do whatever seems sensible for oldconfig but
+> syncconfig should not change any options based on dynamic input. It
+> should verify that the option matches (ie compiler can accept -foobar
+> if the option is on and defaults to cc-option -foobar) and fail if it
+> does not.
+
+
+Kconfig already supports this.
+
+Try KCONFIG_NOSILENTUPDATE=3D1
+
+
+
+>
+>>
+>> > And it went nowhere.
+>> >
+>> > Anyway, the observed issue with CONFIG_64BIT on x86 is the tip of a
+>> > larger problem which was unnoticed for ages. The .config simply does
+>> > not contain the whole kernel configuration. ie. make oldconfig (and
+>> > make syncconfig) is *not* expected to just work. It used to work
+>> > just by luck until f467c5640c29 ("kconfig: only write '# CONFIG_FOO
+>> > is not set' for visible symbols") finally exposed the problem.
+>>
+>> If you want to build the kernel for an architecture
+>> other than the host machine architecture, you need to pass ARCH=3D.
+>>
+>> Building the i386 kernel on a x86_64 machine, it is a _kind_ of
+>> cross-compiling. So, passing ARCH=3Di386 is not so weird.
+>>
+>>
+>> > So is .config supposed to contain the kernel configuration or is it
+>> > just some byproduct of the kernel build which is meaningless
+>> > outside of your build environment (the object tree, shell
+>> > environment, etc).
+>>
+>> The .config is supposed to contain the kernel configuration,
+>> 'ARCH' and the compiler are exceptions.
+>>
+>> 'ARCH' must be passed separately.
+>>
+>> The .config now depends on the compiler.  So, if you pass your .config
+>> to somebody else, some symbols that depend on the compiler support
+>> might be configured differently.
+>>
+>> 'make syncconfig' will notice the compiler difference,
+>> and show prompts for user input as needed.
+>
+> It should not prompt. I want to build the kernel non-interactively. I
+> do not want kernel rpm build to wait for user input or silently
+> change the kernel ABI just because I installed a new gcc plugin.
+
+'make syncconfig' shows prompt.
+This is the behavior since a long time ago.
+I cannot change it to meet your requirement.
+
+
+If you really want to avoid prompt,
+run "make olddefconfig" beforehand in your script.
+
+
+
+
+> Thanks
+>
+> Michal
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" i=
+n
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
