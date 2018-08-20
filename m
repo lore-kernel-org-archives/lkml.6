@@ -2,142 +2,84 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4540AC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E1DDC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:06:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1F7821581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:01:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1F7821581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
+	by mail.kernel.org (Postfix) with ESMTP id AE6A92174D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:06:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFvK58h1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE6A92174D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbeHUCTI (ORCPT
+        id S1726796AbeHUCYA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 22:19:08 -0400
-Received: from mga18.intel.com ([134.134.136.126]:21689 "EHLO mga18.intel.com"
+        Mon, 20 Aug 2018 22:24:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726631AbeHUCTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 22:19:07 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 16:01:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,267,1531810800"; 
-   d="scan'208";a="226259514"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by orsmga004.jf.intel.com with ESMTP; 20 Aug 2018 16:01:22 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 817E2301B8D; Mon, 20 Aug 2018 16:01:22 -0700 (PDT)
-From:   Andi Kleen <andi@firstfloor.org>
-To:     stable@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, mhocko@kernel.org
-Subject: [PATCH] x86/mm: Simplify p[g4um]d_page() macros
-Date:   Mon, 20 Aug 2018 16:01:22 -0700
-Message-Id: <20180820230122.579-1-andi@firstfloor.org>
-X-Mailer: git-send-email 2.17.1
+        id S1726667AbeHUCYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 22:24:00 -0400
+Received: from localhost (20.sub-174-234-143.myvzw.com [174.234.143.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C975C2174A;
+        Mon, 20 Aug 2018 23:06:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534806386;
+        bh=Q+e7o6PNxh8z5t85+pa7ge3Q8TOhHXoS2vSUCBPDnsA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=FFvK58h1ptDo9HUsctx6wCCig0iuSuR5xqtwgovFeWZx5OougmB/8yRIhDXOV5YCN
+         Cx14nHSAHjNd5RdOT269ebrEjDMkr+mHmRGzFLgQQtQru8pUSV/5x6OUs3dpZGgYU7
+         4yg5nR1hS++JZh37mkNDCeq++3utSRc9toX6sVtU=
+Date:   Mon, 20 Aug 2018 18:06:24 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     linux-pci@vger.kernel.org
+Cc:     Lukas Wunner <lukas@wunner.de>, linux-kernel@vger.kernel.org,
+        mmyangfl@gmail.com
+Subject: Enumeration issue with QCA9005 AR9462
+Message-ID: <20180820230624.GB154536@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Lendacky <thomas.lendacky@amd.com>
+mmyangfl@gmail.com reported a problem [1]: on v4.17, a QCA9005 AR9462
+wifi device was present at boot, but disappeared after suspend/resume.
 
-[backport of fd7e315988b78 from mainline for stable to fix stable crashes
-suggested by Michael Hocko. Should be applied to 4.9 and 4.4.]
+He/she also tested a recent kernel (5c60a7389d79, from Thu Aug 16),
+where the suspend/resume problem doesn't seem to happen, but the wifi
+device isn't enumerated correctly at boot-time.
 
-Create a pgd_pfn() macro similar to the p[4um]d_pfn() macros and then
-use the p[g4um]d_pfn() macros in the p[g4um]d_page() macros instead of
-duplicating the code.
+  pci 0000:00:1c.3: PCIe Root Port to [bus 03-07]
+  pci 0000:03:00.0: [1ae9:0101] PCIe Switch Upstream Port to [bus 04-07]
+  pci 0000:04:00.0: [1ae9:0200] PCIe Switch Downstream Port to [bus 05]
+  pci 0000:05:00.0: [168c:0034] QCA9005 AR9462 wifi NIC
 
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brijesh Singh <brijesh.singh@amd.com>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Larry Woodman <lwoodman@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Toshimitsu Kani <toshi.kani@hpe.com>
-Cc: kasan-dev@googlegroups.com
-Cc: kvm@vger.kernel.org
-Cc: linux-arch@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
-Cc: linux-efi@vger.kernel.org
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/e61eb533a6d0aac941db2723d8aa63ef6b882dee.1500319216.git.thomas.lendacky@amd.com
-[Backported to 4.9 stable by AK, suggested by Michael Hocko]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
----
- arch/x86/include/asm/pgtable.h | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+These messages are extracted from [2]:
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 4de6c282c02a..68a55273ce0f 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -173,6 +173,11 @@ static inline unsigned long pud_pfn(pud_t pud)
- 	return (pfn & pud_pfn_mask(pud)) >> PAGE_SHIFT;
- }
- 
-+static inline unsigned long pgd_pfn(pgd_t pgd)
-+{
-+	return (pgd_val(pgd) & PTE_PFN_MASK) >> PAGE_SHIFT;
-+}
-+
- #define pte_page(pte)	pfn_to_page(pte_pfn(pte))
- 
- static inline int pmd_large(pmd_t pte)
-@@ -578,8 +583,7 @@ static inline unsigned long pmd_page_vaddr(pmd_t pmd)
-  * Currently stuck as a macro due to indirect forward reference to
-  * linux/mmzone.h's __section_mem_map_addr() definition:
-  */
--#define pmd_page(pmd)		\
--	pfn_to_page((pmd_val(pmd) & pmd_pfn_mask(pmd)) >> PAGE_SHIFT)
-+#define pmd_page(pmd)	pfn_to_page(pmd_pfn(pmd))
- 
- /*
-  * the pmd page can be thought of an array like this: pmd_t[PTRS_PER_PMD]
-@@ -647,8 +651,7 @@ static inline unsigned long pud_page_vaddr(pud_t pud)
-  * Currently stuck as a macro due to indirect forward reference to
-  * linux/mmzone.h's __section_mem_map_addr() definition:
-  */
--#define pud_page(pud)		\
--	pfn_to_page((pud_val(pud) & pud_pfn_mask(pud)) >> PAGE_SHIFT)
-+#define pud_page(pud)	pfn_to_page(pud_pfn(pud))
- 
- /* Find an entry in the second-level page table.. */
- static inline pmd_t *pmd_offset(pud_t *pud, unsigned long address)
-@@ -688,7 +691,7 @@ static inline unsigned long pgd_page_vaddr(pgd_t pgd)
-  * Currently stuck as a macro due to indirect forward reference to
-  * linux/mmzone.h's __section_mem_map_addr() definition:
-  */
--#define pgd_page(pgd)		pfn_to_page(pgd_val(pgd) >> PAGE_SHIFT)
-+#define pgd_page(pgd)		pfn_to_page(pgd_pfn(pgd))
- 
- /* to find an entry in a page-table-directory. */
- static inline unsigned long pud_index(unsigned long address)
--- 
-2.17.1
+[    0.928714] pciehp 0000:04:00.0:pcie204: Slot #0 AttnBtn- PwrCtrl- MRL- AttnInd- PwrInd- HotPlug+ Surprise+ Interlock- NoCompl- LLActRep+
+[    0.928752] pciehp 0000:04:00.0:pcie204: Slot(0-1): Card not present
+[    0.928811] pciehp 0000:04:00.0:pcie204: Slot(0-1): Link Up
+[    0.928815] pciehp 0000:04:00.0:pcie204: Slot(0-1): No adapter
 
+After manually executing:
+
+  echo 1 > /sys/devices/pci0000\:00/0000\:00\:1c.3/0000\:03\:00.0/0000\:04\:00.0/rescan
+
+the wifi NIC is discovered correctly:
+
+[  114.649896] pci 0000:05:00.0: [168c:0034] type 00 class 0x028000
+[  114.649977] pci 0000:05:00.0: reg 0x10: [mem 0xf7400000-0xf747ffff 64bit]
+[  114.650090] pci 0000:05:00.0: reg 0x30: [mem 0xf7480000-0xf748ffff pref]
+
+[1] https://bugzilla.kernel.org/show_bug.cgi?id=200839
+[2] https://bugzilla.kernel.org/attachment.cgi?id=277923
