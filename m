@@ -2,115 +2,110 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B2BC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4283C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A44ED21581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:27:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A44ED21581
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F99621581
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:27:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="bSC1r7BH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F99621581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbeHTRmy (ORCPT
+        id S1727001AbeHTRnF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 13:42:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44140 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726021AbeHTRmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 13:42:54 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C05454023351;
-        Mon, 20 Aug 2018 14:27:01 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DBEDF63F56;
-        Mon, 20 Aug 2018 14:26:55 +0000 (UTC)
-Date:   Mon, 20 Aug 2018 16:26:53 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: Re: [PATCH v9 21/22] KVM: s390: CPU model support for AP
- virtualization
-Message-ID: <20180820162653.28e680f3.cohuck@redhat.com>
-In-Reply-To: <1534196899-16987-22-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1534196899-16987-22-git-send-email-akrowiak@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 20 Aug 2018 14:27:01 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 20 Aug 2018 14:27:01 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+        Mon, 20 Aug 2018 13:43:05 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39614 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726748AbeHTRnF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 13:43:05 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j8-v6so6857175pff.6
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 07:27:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=QVYdT9jQH3ImANVloEKSmq8Hg5ocricVPHa2cqn+N2E=;
+        b=bSC1r7BHDkPSI2l6eIGqOm9j9+phoZgFsQznCoM4MMlDhCqBiyDoZ6OPPCoaB8TcJB
+         bU94f5FQE0ruyIqHIO8mUrL1npdI5P9z339pBFPucdVKwCRRUbzXi5WVcuUEMcARn1Ue
+         t/bWDoXV3OfjMBMF/vdW7U/8iEam5rDj14/A+kMGYt7Uplko1lLlL5GHPSXy8oOgOmd8
+         hSuprGk5KS+II7/gghPX9Bg0rMDijSsmpgCeSl+SxgtoBKjYS/jjMkoOlfArWv7iup+O
+         E+I7pkRxI+6Pl/pLFkhwwg+/vhnUT4ykC9PFc3ZThRKBdUMnqwMba9Tzq3CqSEr1DQS1
+         +Dvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=QVYdT9jQH3ImANVloEKSmq8Hg5ocricVPHa2cqn+N2E=;
+        b=Kt+8GY8LstIM2aJa4cGNq05tDzzv4UKTb4bX7zv2JAIzm9aRj2hR0un7cuu7p2999N
+         dad9nt8fWsy/WC4xOEwe6UOAL3VE7/pgFEAYwMXJ4d1l9En0KoISxQc6i02SUR2ygaf+
+         akIscqLy5FehnIpKcu4yavkgKDV6afqB6Sm1ahr4bg7+Hf7R+O09tAKnbfOlyTXosxBq
+         4dDDiWfffXZ7q4PB9KYqSspEArwdS1fhdCQNNQdzZ0gHPwsy8Qvr/xnA12j3RuuUWpkZ
+         jiQyr3fvIuY5qjEGZnqvUxzqRrCqKkpals8l3pTiZnKgXjHd+p5uyv+rC3UpEh2HAO/U
+         cNzw==
+X-Gm-Message-State: AOUpUlGONDqCwBLlccmjG7KJsCBqHpRlUABQqMi3p3krmwqB250PQO+f
+        BZe6r4YBtPBkDvEJbHFt6R3KhA==
+X-Google-Smtp-Source: AA+uWPyMVLDlsR7EJfI8hTsdsvEIh6UlZM2Oc2eIKzAcnGiuOeQpPHwrIZIg1uXAOizPlWROsXotcA==
+X-Received: by 2002:a63:1d3:: with SMTP id 202-v6mr43240563pgb.136.1534775233197;
+        Mon, 20 Aug 2018 07:27:13 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:7429:b4cc:81c8:3b3e:d8f? ([2601:646:c200:7429:b4cc:81c8:3b3e:d8f])
+        by smtp.gmail.com with ESMTPSA id w81-v6sm19506642pfk.92.2018.08.20.07.27.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 Aug 2018 07:27:12 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] x86/process: Export start_thread()
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15G77)
+In-Reply-To: <alpine.DEB.2.21.1808200927550.2151@nanos.tec.linutronix.de>
+Date:   Mon, 20 Aug 2018 07:27:11 -0700
+Cc:     Rian Hunter <rian@alum.mit.edu>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bpetkov@suse.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Dmitry Safonov <dima@arista.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D2852E34-BC10-4161-A05D-981E3A3D4098@amacapital.net>
+References: <20180819230854.7275-1-rian@alum.mit.edu> <53141AE9-7192-432B-8A27-25986CF442D4@amacapital.net> <alpine.DEB.2.21.1808200927550.2151@nanos.tec.linutronix.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 13 Aug 2018 17:48:18 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-> From: Tony Krowiak <akrowiak@linux.ibm.com>
-> 
-> Introduces a new CPU model feature and two CPU model
-> facilities to support AP virtualization for KVM guests.
-> 
-> CPU model feature:
-> 
-> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
-> AP instructions are available on the guest. This
-> feature will be enabled by the kernel only if the AP
-> instructions are installed on the linux host. This feature
-> must be specifically turned on for the KVM guest from
-> userspace to use the VFIO AP device driver for guest
-> access to AP devices.
-> 
-> CPU model facilities:
-> 
-> 1. AP Query Configuration Information (QCI) facility is installed.
-> 
->    This is indicated by setting facilities bit 12 for
->    the guest. The kernel will not enable this facility
->    for the guest if it is not set on the host.
-> 
->    If this facility is not set for the KVM guest, then only
->    APQNs with an APQI less than 16 will be used by a Linux
->    guest regardless of the matrix configuration for the virtual
->    machine. This is a limitation of the Linux AP bus.
-> 
-> 2. AP Facilities Test facility (APFT) is installed.
-> 
->    This is indicated by setting facilities bit 15 for
->    the guest. The kernel will not enable this facility for
->    the guest if it is not set on the host.
-> 
->    If this facility is not set for the KVM guest, then no
->    AP devices will be available to the guest regardless of
->    the guest's matrix configuration for the virtual
->    machine. This is a limitation of the Linux AP bus.
-> 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-> Tested-by: Michael Mueller <mimu@linux.ibm.com>
-> Tested-by: Farhan Ali <alifm@linux.ibm.com>
-> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> ---
->  arch/s390/kvm/kvm-s390.c         |    5 +++++
->  arch/s390/tools/gen_facilities.c |    2 ++
->  2 files changed, 7 insertions(+), 0 deletions(-)
 
-Looks sane to me.
+> On Aug 20, 2018, at 12:30 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>=20
+> On Sun, 19 Aug 2018, Andy Lutomirski wrote:
+>>> On Aug 19, 2018, at 4:08 PM, Rian Hunter <rian@alum.mit.edu> wrote:
+>>>=20
+>>> Commit e634d8fc792c ("x86-64: merge the standard and compat
+>>> start_thread() functions") removed exporting for the start_thread()
+>>> function in what seems like a typo. Add it back to
+>>> arch/x86/kernel/process_64.c for parity with process_32.c and other
+>>> arch.
+>>=20
+>> What for?  Perhaps 32-bit could remove it instead?
+>=20
+> No. start_thread() is called from various binfmt implementations which can=
+
+> be built as modules.
+
+Fair enough. I=E2=80=99m fine with the patch.
+
+>=20
+> Thanks,
+>=20
+>    tglx
