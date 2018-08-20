@@ -2,137 +2,140 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 879ACC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 08:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCD2C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 08:06:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F80B21473
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 08:06:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=profitbricks-com.20150623.gappssmtp.com header.i=@profitbricks-com.20150623.gappssmtp.com header.b="gYKmn+6Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F80B21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=profitbricks.com
+	by mail.kernel.org (Postfix) with ESMTP id BF12F21473
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 08:06:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF12F21473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbeHTLUn (ORCPT
+        id S1726549AbeHTLVN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 07:20:43 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33815 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726119AbeHTLUn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 07:20:43 -0400
-Received: by mail-wm0-f65.google.com with SMTP id l2-v6so6449364wme.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 01:06:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=profitbricks-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=172Pirb3PwhpIB7n0kyNAEjNpT5gZf6X6NlUEKw0HVs=;
-        b=gYKmn+6ZIah1EplWReoN3aLFG9yjRaV16sSudj+340e0rj5ckau7fOnbSxF4iakqKR
-         i7tSwXUzhVXYdXnjJUzEi1e/aCBG1i5seV91rcpoE2sjB6pSaLUMu5w8Wz2fRXSZPOWB
-         hs8znrG5VKHHtrroaupsVoPhDFycKaVHjwY0aZneU2AQj8DGf4cpsWx8iKzzHiziG216
-         z+qbnFEit4AmUa3VOR2dTAHwzs5pIuAIR2YqL9o+HPCtEbA+uUiypLlrE9jUb7FaeI/4
-         HglzYn1brojx+dNEjhFKocL2yvEWj1QJ71CQMA7i34sZZvGwuIkEac3HyvpwDGU4Q0oC
-         pZPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=172Pirb3PwhpIB7n0kyNAEjNpT5gZf6X6NlUEKw0HVs=;
-        b=qVk8MNv+xbXOgzh2QAGyob2L1yC9HduKqXUBq2Du6P+jfDu3gJK3bZT/3nqAXiLLZ1
-         P8TyoSUbZtEbV0U5iwQNSNJMOuB8OrhCxK2mbGlUIym6ko0N0BTLgIjahiwiJwjMJRo6
-         R+h2SPyonwaVO2GMykGOJdsDHBgQ09xSTu41n5HNGTnOVDsp1XSBbvqaDni5h3rBIXcb
-         5ss/3pq51uLQrlnC8AMjbMYIBHolDlRhIqZnXocQBhI1rAVgMjLUCEWhne2VI9+cq0f7
-         0Cz7HkjrgTeHWfz8TZtoMbIeXWzFcB5a/ZXTLgz9FIJ8vdTL/SC380pBXhgbX9vdiOiN
-         yqSw==
-X-Gm-Message-State: AOUpUlHXEzuVmTuzfLS63oLXZq5Efr3XZqMLDt8+4uErnW5eQP0HMoUJ
-        +Jqh2CUyz7WJH5QQusE7tzyK5VfGJLPAGnuexHwnMg==
-X-Google-Smtp-Source: AA+uWPwDbtZKpAEsxhYkQINjzcQqYGUPcht4TyEIQ3gnFez83SKOfCSDauJvYO8/vg3tly9YA42YSP2JhxKbdBXD+XU=
-X-Received: by 2002:a1c:7ed8:: with SMTP id z207-v6mr24958285wmc.139.1534752364568;
- Mon, 20 Aug 2018 01:06:04 -0700 (PDT)
+        Mon, 20 Aug 2018 07:21:13 -0400
+Received: from sauhun.de ([88.99.104.3]:57120 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726119AbeHTLVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 07:21:12 -0400
+Received: from localhost (p54B33943.dip0.t-ipconnect.de [84.179.57.67])
+        by pokefinder.org (Postfix) with ESMTPSA id D36B82D3E19;
+        Mon, 20 Aug 2018 10:06:32 +0200 (CEST)
+Date:   Mon, 20 Aug 2018 10:06:29 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        sedat.dilek@credativ.de, Jean Delvare <jdelvare@suse.de>,
+        linux-i2c@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Paul Mackerras <pmac@au1.ibm.com>
+Subject: Re: [PATCH v2] i2c: Remove '-Wno-deprecated-declarations' compiler
+ warning
+Message-ID: <20180820080629.i7y4cx4wewmcyqpk@ninjato>
+References: <20180819135135.8801-1-sedat.dilek@credativ.de>
+ <CA+55aFxv5_8C5ApV4cDjpvAmZbn1aiKebc7yrRWBskQQbz9=Hw@mail.gmail.com>
+ <1d2a7c56cc44ff639ef2943366f4868e6e5ecdfe.camel@kernel.crashing.org>
 MIME-Version: 1.0
-References: <CAMGffEnzVo5VVSVBjCOBMhcoV1qXf0XXqJqr3C01xQn-aUiZFQ@mail.gmail.com>
- <20180816155126.GA18296@kroah.com> <CAMGffEmJR310NKHO1JpwE8yTg1Oeu_oaTaJ1D2_T_UHKCnHwKA@mail.gmail.com>
- <20180816163937.GA5105@kroah.com> <CAMGffEk2FqRn0av7T-aF-TKvRAKeinm96NYjJju_T4CmUrYPkQ@mail.gmail.com>
- <CAMGffEnKt0xcc6LhNdZQGRmckJ3qCFxCOnQ3owZmWWiaKYdYuw@mail.gmail.com>
- <20180817170129.GE24945@kroah.com> <alpine.DEB.2.21.1808181330380.2151@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1808181330380.2151@nanos.tec.linutronix.de>
-From:   Jinpu Wang <jinpu.wang@profitbricks.com>
-Date:   Mon, 20 Aug 2018 10:05:49 +0200
-Message-ID: <CAMGffEk=6eVgB=A--FyooDoVPY4mEiOdf=yNnqdX4cF6Ud_NuA@mail.gmail.com>
-Subject: Re: [BUG]smt sysfs dir missing on 4.4.148 and 4.14.63
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable <stable@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, konrad.wilk@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tee3kciyjjipcgdi"
+Content-Disposition: inline
+In-Reply-To: <1d2a7c56cc44ff639ef2943366f4868e6e5ecdfe.camel@kernel.crashing.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 18, 2018 at 2:50 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> On Fri, 17 Aug 2018, Greg Kroah-Hartman wrote:
-> > On Fri, Aug 17, 2018 at 02:39:00PM +0200, Jinpu Wang wrote:
-> > >
-> > > I found the problem, CONFIG_HOTPLUG_SMT is enable due to CONFIG_SMP,
-> > > but I did explicitly enable CONFIG_HOTPLUG_CPU.
-> > >
-> > > That's why the smt dir is missing, and kernel panic when I boot with
-> > > 'nosmt' or 'l1tf=3Dfull' probably also other combination.
-> > >
-> > > With CONFIG_HOTPLUG_CPU=3Dy, it works fine so far.
-> >
-> > So do we need a new configuration dependancy here to resolve this
-> > problem?  Why is this not an issue in Linus's tree?
->
-> That's probably the same problem on Linus tree. Have not tested it yet
-> though. I'll have a look.
->
-> Thanks,
->
->         tglx
->
-Yeah, it's the same problem on Linus tree.
 
-Probably makes sense to do the following, I can sent a formal patch if
-you think it's right thing to do:
+--tee3kciyjjipcgdi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index b0312f8..8a52f0b 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -188,7 +188,7 @@ config X86
-        select HAVE_SYSCALL_TRACEPOINTS
-        select HAVE_UNSTABLE_SCHED_CLOCK
-        select HAVE_USER_RETURN_NOTIFIER
--       select HOTPLUG_SMT                      if SMP
-+       select HOTPLUG_SMT                      if SMP && HOTPLUG_CPU
-        select IRQ_FORCED_THREADING
-        select NEED_SG_DMA_LENGTH
-        select PCI_LOCKLESS_CONFIG
+On Mon, Aug 20, 2018 at 12:12:47PM +1000, Benjamin Herrenschmidt wrote:
+> On Sun, 2018-08-19 at 09:46 -0700, Linus Torvalds wrote:
+> > On Sun, Aug 19, 2018 at 6:51 AM Sedat Dilek <sedat.dilek@credativ.de> w=
+rote:
+> > >=20
+> > > This can be dropped with commit 771c035372a036f83353eef46dbb829780330=
+234
+> > > ("deprecate the '__deprecated' attribute warnings entirely and for go=
+od")
+> > > now in upstream.
+> >=20
+> > Could we please just remove the __deprecated use in i2c entirely?
+> >=20
+> > As fat as I can tell, it's used for one thing, which is the
+> > "attach_adapter" function pointer member in 'struct i2c_driver'.
+> >=20
+> > And I think there is _one_ remaining driver using it, namely the
+> > powermac "therm_windtunnel" driver.
+> >=20
+> > Could somebody who knows the i2c probing just a bit convert that *one*
+> > remaining driver, then remove the "attach_adapter" entirely, and also
+> > remove this thing?
+> >=20
+> > Alternatively, perhaps the driver should be removed? The last actual
+> > powermac change to that driver seems to be from August 2009.
+> > Everything since has been just cleanup unrelated to that driver code
+> > itself (ie spelling fixes, automated coccinelle scripts etc).
+> >=20
+> > Added a few people either because they're still officially maintainers
+> > of that file, or because they touched the code ten years ago.
+>=20
+> Some people still use those old machines, I'll give a try at fixing the
+> driver.
+
+I did this here a while ago [1] ("macintosh: therm_windtunnel: drop
+using attach adapter")...
+
+> Paul: Do you still have one of these machines ?
+
+=2E.. but this was the main problem. I couldn't find anyone to test this.
+Even asked on PPC lists of various distributions.
+
+Note that we did apply the same approach of patch [1] already in commit
+ac397c80de89 ("ALSA: ppc: keywest: drop using attach adapter"). This has
+been tested on HW. I also have a hack to make this driver probe on one
+of my ARM boards. Of course, no real HW present there, but shows that
+the new probing works at least there.
+
+This is very interesting timing, too. Because I wanted to use the
+tentative version jump to 5.0 to finally get rid of this deprecated
+feature independently of the discussion here. Which would have meant
+resending the patch and arguing we have enough indications that the
+patch [1] is sane. And then I could finally remove this callback.
+
+Thanks,
+
+   Wolfram
+
+[1] http://patchwork.ozlabs.org/patch/461759/
 
 
---=20
-Jack Wang
-Linux Kernel Developer
+--tee3kciyjjipcgdi
+Content-Type: application/pgp-signature; name="signature.asc"
 
-ProfitBricks GmbH
-Greifswalder Str. 207
-D - 10405 Berlin
+-----BEGIN PGP SIGNATURE-----
 
-Tel:       +49 30 577 008  042
-Fax:      +49 30 577 008 299
-Email:    jinpu.wang@profitbricks.com
-URL:      https://www.profitbricks.de
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt6doAACgkQFA3kzBSg
+KbZk/A//cpCMtKUwztdNTPu70z0HxMxBpdMhItbKcxDHV2VcssC57fLeNla+1Ng1
+uT/4/Xni1TZOf+srO50veerXDZadQydAwp9rVw4N0567T859tmB09aXP4PQKXTB7
+H6j/pUQOYWJek3drbWaW3jeDVOhQRQL13IwYfjeHq335NePYcD/kqWRkM7FMNaQ+
+nl1MRVDXAYfLPmXW++YQNKwEQ9dsiC62+mnAFqUjm6mlel9wHUKMMMfTdUd+fPjD
+NwpQDBRV8nCJJWs/MZMSWGVfr+8sEcNyqomfvNuTZYLMJ7Tu2TkaKAeCUyNl2BZc
+GTVqdYgsLL9cW3N92Qs0Kr+tg6E4adUEajuwn7kRgPv2Y9x1a9bNvP5NxWKV+Qm9
+TBFrr0f9PQuJAG5UyVQR61+HN4WHiV0RfVgNtO/6k3qt9kfIjnu6Wdiyt9iyHLI6
+RBKBWqVAI6p5kiaEBP2yzQmMskOODH1hTdN4FJ3joFRFKVW17/pf341DP5WeLlZT
+7Vlq1OPHMWbx5Y+iyziTkKAgLfhgLHo9qXLZP33WJlhNPDAvI3/VhN9N3MoyKoq5
+vCALiLDQkQ0LL9xQV7ntV0Dd3iXh3FH5niaLzJI3qYcO9FRh280CJtrtx1+U63Ei
+ssuGQ6Y2gRv+w7BkYiLf6v2XBAJCDAIFtP5pUUe4x0RSbyX2AI4=
+=9/e0
+-----END PGP SIGNATURE-----
 
-Sitz der Gesellschaft: Berlin
-Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
-Gesch=C3=A4ftsf=C3=BChrer: Achim Weiss, Matthias Steinberg, Christoph Steff=
-ens
+--tee3kciyjjipcgdi--
