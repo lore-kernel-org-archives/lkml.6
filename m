@@ -2,143 +2,183 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C438C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 19:31:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 225B6C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 19:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10A812174A
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 19:31:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10A812174A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DEB3F21735
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 19:32:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEB3F21735
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbeHTWsZ (ORCPT
+        id S1726710AbeHTWsw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 18:48:25 -0400
-Received: from mga01.intel.com ([192.55.52.88]:63306 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726077AbeHTWsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 18:48:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 12:31:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,266,1531810800"; 
-   d="scan'208";a="84917431"
-Received: from orsmsx103.amr.corp.intel.com ([10.22.225.130])
-  by orsmga002.jf.intel.com with ESMTP; 20 Aug 2018 12:30:59 -0700
-Received: from orsmsx162.amr.corp.intel.com (10.22.240.85) by
- ORSMSX103.amr.corp.intel.com (10.22.225.130) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 20 Aug 2018 12:30:59 -0700
-Received: from orsmsx107.amr.corp.intel.com ([169.254.1.245]) by
- ORSMSX162.amr.corp.intel.com ([169.254.3.195]) with mapi id 14.03.0319.002;
- Mon, 20 Aug 2018 12:30:59 -0700
-From:   "Schaufler, Casey" <casey.schaufler@intel.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@tycho.nsa.gov" <selinux@tycho.nsa.gov>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "arjan@linux.intel.com" <arjan@linux.intel.com>
-Subject: RE: [PATCH RFC v2 5/5] SELinux: Support SELinux determination of
- side-channel vulnerability
-Thread-Topic: [PATCH RFC v2 5/5] SELinux: Support SELinux determination of
- side-channel vulnerability
-Thread-Index: AQHUNnfzi3NO3xojlUaFqSZKkXNAjaTJRumA//+XoTCAAISJgP//oWPA
-Date:   Mon, 20 Aug 2018 19:30:57 +0000
-Message-ID: <99FC4B6EFCEFD44486C35F4C281DC6732143F8DB@ORSMSX107.amr.corp.intel.com>
-References: <20180817221624.10232-1-casey.schaufler@intel.com>
- <20180817221624.10232-6-casey.schaufler@intel.com>
- <6e70b7c7-d932-91c8-35d1-70bd6cef16a5@tycho.nsa.gov>
- <99FC4B6EFCEFD44486C35F4C281DC6732143F80E@ORSMSX107.amr.corp.intel.com>
- <f74a5824-c80a-bdb9-2d4a-e83d19ae07e8@tycho.nsa.gov>
-In-Reply-To: <f74a5824-c80a-bdb9-2d4a-e83d19ae07e8@tycho.nsa.gov>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiODMwMzJjMmItZTMzNy00ZDYzLWI2NTAtMTBlMDIyNjY3Mzc0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTjV5U1NFdlpaellWdGtTSDFveHBtemhGUk9iUTFNOUhkS09IQ01GR2pJMzMrbGRwTmRhWGtzbzVySldTVFBtbyJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Mon, 20 Aug 2018 18:48:52 -0400
+Received: from g9t5008.houston.hpe.com ([15.241.48.72]:59682 "EHLO
+        g9t5008.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbeHTWsw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 18:48:52 -0400
+Received: from g9t2301.houston.hpecorp.net (g9t2301.houston.hpecorp.net [16.220.97.129])
+        by g9t5008.houston.hpe.com (Postfix) with ESMTP id 562FB57;
+        Mon, 20 Aug 2018 19:31:59 +0000 (UTC)
+Received: from anatevka.ftc.rdlabs.hpecorp.net (anatevka.americas.hpqcorp.net [10.34.81.6])
+        by g9t2301.houston.hpecorp.net (Postfix) with ESMTP id 6AC114A;
+        Mon, 20 Aug 2018 19:31:58 +0000 (UTC)
+From:   Jerry Hoemann <jerry.hoemann@hpe.com>
+To:     wim@linux-watchdog.org, linux@roeck-us.net
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rwright@hpe.com, Jerry Hoemann <jerry.hoemann@hpe.com>
+Subject: [PATCH] watchdog: hpwdt: Update Driver Documentation.
+Date:   Mon, 20 Aug 2018 13:31:23 -0600
+Message-Id: <20180820193123.23976-1-jerry.hoemann@hpe.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIFNtYWxsZXkgW21h
-aWx0bzpzZHNAdHljaG8ubnNhLmdvdl0NCj4gU2VudDogTW9uZGF5LCBBdWd1c3QgMjAsIDIwMTgg
-MTA6NDQgQU0NCj4gVG86IFNjaGF1ZmxlciwgQ2FzZXkgPGNhc2V5LnNjaGF1ZmxlckBpbnRlbC5j
-b20+OyBrZXJuZWwtDQo+IGhhcmRlbmluZ0BsaXN0cy5vcGVud2FsbC5jb207IGxpbnV4LWtlcm5l
-bEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXNlY3VyaXR5LQ0KPiBtb2R1bGVAdmdlci5rZXJuZWwu
-b3JnOyBzZWxpbnV4QHR5Y2hvLm5zYS5nb3Y7IEhhbnNlbiwgRGF2ZQ0KPiA8ZGF2ZS5oYW5zZW5A
-aW50ZWwuY29tPjsgRG9jaywgRGVuZWVuIFQgPGRlbmVlbi50LmRvY2tAaW50ZWwuY29tPjsNCj4g
-a3Jpc3RlbkBsaW51eC5pbnRlbC5jb207IGFyamFuQGxpbnV4LmludGVsLmNvbQ0KPiBTdWJqZWN0
-OiBSZTogW1BBVENIIFJGQyB2MiA1LzVdIFNFTGludXg6IFN1cHBvcnQgU0VMaW51eCBkZXRlcm1p
-bmF0aW9uIG9mDQo+IHNpZGUtY2hhbm5lbCB2dWxuZXJhYmlsaXR5DQo+IA0KPiBPbiAwOC8yMC8y
-MDE4IDEyOjU5IFBNLCBTY2hhdWZsZXIsIENhc2V5IHdyb3RlOg0KPiA+PiAtLS0tLU9yaWdpbmFs
-IE1lc3NhZ2UtLS0tLQ0KPiA+PiBGcm9tOiBTdGVwaGVuIFNtYWxsZXkgW21haWx0bzpzZHNAdHlj
-aG8ubnNhLmdvdl0NCj4gPj4gU2VudDogTW9uZGF5LCBBdWd1c3QgMjAsIDIwMTggOTowMyBBTQ0K
-PiA+PiBUbzogU2NoYXVmbGVyLCBDYXNleSA8Y2FzZXkuc2NoYXVmbGVyQGludGVsLmNvbT47IGtl
-cm5lbC0NCj4gPj4gaGFyZGVuaW5nQGxpc3RzLm9wZW53YWxsLmNvbTsgbGludXgta2VybmVsQHZn
-ZXIua2VybmVsLm9yZzsgbGludXgtc2VjdXJpdHktDQo+ID4+IG1vZHVsZUB2Z2VyLmtlcm5lbC5v
-cmc7IHNlbGludXhAdHljaG8ubnNhLmdvdjsgSGFuc2VuLCBEYXZlDQo+ID4+IDxkYXZlLmhhbnNl
-bkBpbnRlbC5jb20+OyBEb2NrLCBEZW5lZW4gVCA8ZGVuZWVuLnQuZG9ja0BpbnRlbC5jb20+Ow0K
-PiA+PiBrcmlzdGVuQGxpbnV4LmludGVsLmNvbTsgYXJqYW5AbGludXguaW50ZWwuY29tDQo+ID4+
-IFN1YmplY3Q6IFJlOiBbUEFUQ0ggUkZDIHYyIDUvNV0gU0VMaW51eDogU3VwcG9ydCBTRUxpbnV4
-IGRldGVybWluYXRpb24gb2YNCj4gPj4gc2lkZS1jaGFubmVsIHZ1bG5lcmFiaWxpdHkNCj4gPj4N
-Cj4gPj4gT24gMDgvMTcvMjAxOCAwNjoxNiBQTSwgQ2FzZXkgU2NoYXVmbGVyIHdyb3RlOg0KPiA+
-Pj4gU0VMaW51eCBjb25zaWRlcnMgdGFza3MgdG8gYmUgc2lkZS1jaGFubmVsIHNhZmUgaWYgdGhl
-eQ0KPiA+Pj4gaGF2ZSBQUk9DRVNTX1NIQVJFIGFjY2Vzcy4NCj4gPj4NCj4gPj4gTm93IHRoZSBk
-ZXNjcmlwdGlvbiBhbmQgdGhlIGNvZGUgbm8gbG9uZ2VyIG1hdGNoLg0KPiA+DQo+ID4gWW91J3Jl
-IHJpZ2h0Lg0KPiA+DQo+ID4+Pg0KPiA+Pj4gU2lnbmVkLW9mZi1ieTogQ2FzZXkgU2NoYXVmbGVy
-IDxjYXNleS5zY2hhdWZsZXJAaW50ZWwuY29tPg0KPiA+Pj4gLS0tDQo+ID4+PiAgICBzZWN1cml0
-eS9zZWxpbnV4L2hvb2tzLmMgfCA5ICsrKysrKysrKw0KPiA+Pj4gICAgMSBmaWxlIGNoYW5nZWQs
-IDkgaW5zZXJ0aW9ucygrKQ0KPiA+Pj4NCj4gPj4+IGRpZmYgLS1naXQgYS9zZWN1cml0eS9zZWxp
-bnV4L2hvb2tzLmMgYi9zZWN1cml0eS9zZWxpbnV4L2hvb2tzLmMNCj4gPj4+IGluZGV4IGE4YmYz
-MjQxMzBmNS4uN2ZiZDdkN2FjMWNiIDEwMDY0NA0KPiA+Pj4gLS0tIGEvc2VjdXJpdHkvc2VsaW51
-eC9ob29rcy5jDQo+ID4+PiArKysgYi9zZWN1cml0eS9zZWxpbnV4L2hvb2tzLmMNCj4gPj4+IEBA
-IC00MjE5LDYgKzQyMTksMTQgQEAgc3RhdGljIHZvaWQgc2VsaW51eF90YXNrX3RvX2lub2RlKHN0
-cnVjdA0KPiA+PiB0YXNrX3N0cnVjdCAqcCwNCj4gPj4+ICAgIAlzcGluX3VubG9jaygmaXNlYy0+
-bG9jayk7DQo+ID4+PiAgICB9DQo+ID4+Pg0KPiA+Pj4gK3N0YXRpYyBpbnQgc2VsaW51eF90YXNr
-X3NhZmVfc2lkZWNoYW5uZWwoc3RydWN0IHRhc2tfc3RydWN0ICpwKQ0KPiA+Pj4gK3sNCj4gPj4+
-ICsJc3RydWN0IGF2X2RlY2lzaW9uIGF2ZDsNCj4gPj4+ICsNCj4gPj4+ICsJcmV0dXJuIGF2Y19o
-YXNfcGVybV9ub2F1ZGl0KCZzZWxpbnV4X3N0YXRlLCBjdXJyZW50X3NpZCgpLA0KPiA+PiB0YXNr
-X3NpZChwKSwNCj4gPj4+ICsJCQkJICAgIFNFQ0NMQVNTX0ZJTEUsIEZJTEVfX1JFQUQsIDAsICZh
-dmQpOw0KPiA+Pj4gK30NCj4gPj4NCj4gPj4gQW5kIG15IHF1ZXN0aW9uIGZyb20gYmVmb3JlIHN0
-aWxsIHN0YW5kczogIHdoeSBkbyB3ZSBuZWVkIGEgbmV3IGhvb2sgYW5kDQo+ID4+IG5ldyBzZWN1
-cml0eSBtb2R1bGUgaW5zdGVhZCBvZiBqdXN0IHVzaW5nIHB0cmFjZV9tYXlfYWNjZXNzKCk/DQo+
-ID4NCj4gPiBMb2NraW5nLiBUaGUgU0VMaW51eCBjaGVjaywgZm9yIGV4YW1wbGUsIHdpbGwgbG9j
-ayB1cCBzb2xpZCB3aGlsZSB0cnlpbmcNCj4gPiB0byBnZW5lcmF0ZSBhbiBhdWRpdCByZWNvcmQu
-IFRoZXJlIGlzIG5vIGdvb2QgcmVhc29uIGFzaWRlIGZyb20gY29kaW5nDQo+ID4gY29udmVuaWVu
-Y2UgdG8gYXNzdW1lIHRoYXQgdGhlIHNhbWUgcmVzdHJpY3Rpb25zIHdpbGwgYXBwbHkgZm9yIHNp
-ZGUtY2hhbm5lbA0KPiA+IGFzIGFwcGx5IHRvIHB0cmFjZS4gSSdtIGFjdHVhbGx5IGEgdG91Y2gg
-c3VycHJpc2VkIHlvdSdyZSBub3Qgc3VnZ2VzdGluZyBhDQo+ID4gc2VwYXJhdGUgU0VDQ0xBU1Mg
-b3IgYWNjZXNzIG1vZGUgZm9yIHRoZSBTRUxpbnV4IGhvb2suDQo+IA0KPiBUaGUgUFRSQUNFX01P
-REVfTk9BVURJVCBmbGFnIHRvIHB0cmFjZV9tYXlfYWNjZXNzKCkgd291bGQgYWRkcmVzcyB0aGUN
-Cj4gbG9ja2luZyBjb25jZXJuLg0KDQpPSyAuLi4NCg0KPiBEdXBsaWNhdGluZyB0aGUgcHRyYWNl
-IGFjY2VzcyBjaGVja2luZyBsb2dpYyBzZWVtcw0KPiBwcm9uZSB0byBlcnJvcnMgYW5kIGluY29u
-c2lzdGVuY2llcy4NCg0KVGhhdCdzIHRydWUgb25seSBpZiB0aGUgcHRyYWNlIGxvZ2ljIGFuZCB0
-aGUgc2FmZS1zaWRlY2hhbm5lbCBsb2dpYw0KYXJlIGlkZW50aWNhbC4gSSBkb24ndCBiZWxpZXZl
-IHRoYXQgaXMgYSBzYWZlIGFzc3VtcHRpb24uIEl0IHdvdWxkIHN1cmUNCmJlIGNvbnZlbmllbnQu
-IEJ1dCBJIHdvdWxkIGhhdGUgdG8gc2VlIGEgY2hhbmdlIG1hZGUgZm9yIGVpdGhlcg0KcHRyYWNl
-IG9yIHNhZmVfc2lkZWNoYW5uZWwgdGhhdCBpbnRlcmZlcmVkIHdpdGggdGhlIGNvcnJlY3QgYmVo
-YXZpb3INCm9mIHRoZSBvdGhlci4NCg0KPiBJIGNhbid0IGltYWdpbmUgcG9saWN5IHdyaXRlcnMN
-Cj4gdW5kZXJzdGFuZGluZyB3aGF0ICJzYWZlIHNpZGVjaGFubmVsIiBtZWFucywgbXVjaCBsZXNz
-IGRlY2lkaW5nIHdoZW4gdG8NCj4gYWxsb3cgaXQuDQoNCkkgY2FuJ3QgYXJndWUgd2l0aCB0aGF0
-LiBCdXQgdGhlbiwgSSBoYXZlIGFsd2F5cyBoYWQgdHJvdWJsZSB3aXRoIHRoZQ0KU0VMaW51eCBw
-b2xpY3kgc2NoZW1lLg0KDQo=
+Remove references to deprecated features like NMI sourcing
+and obsoleted module parameters.
+
+Add details concerning new module parameter pretimeout and tips
+to programming it.
+
+Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+---
+ Documentation/watchdog/hpwdt.txt | 93 ++++++++++++++--------------------------
+ 1 file changed, 31 insertions(+), 62 deletions(-)
+
+diff --git a/Documentation/watchdog/hpwdt.txt b/Documentation/watchdog/hpwdt.txt
+index 6d866c537127..55df692c5595 100644
+--- a/Documentation/watchdog/hpwdt.txt
++++ b/Documentation/watchdog/hpwdt.txt
+@@ -1,15 +1,12 @@
+-Last reviewed: 05/20/2016
++Last reviewed: 08/20/2018
+ 
+                      HPE iLO NMI Watchdog Driver
+-              NMI sourcing for iLO based ProLiant Servers
+-                     Documentation and Driver by
+-                         Thomas Mingarelli
++                   for iLO based ProLiant Servers
+ 
+  The HPE iLO NMI Watchdog driver is a kernel module that provides basic
+- watchdog functionality and the added benefit of NMI sourcing. Both the
+- watchdog functionality and the NMI sourcing capability need to be enabled
+- by the user. Remember that the two modes are not dependent on one another.
+- A user can have the NMI sourcing without the watchdog timer and vice-versa.
++ watchdog functionality and handler for the iLO "Generate NMI to System"
++ virtual button.
++
+  All references to iLO in this document imply it also works on iLO2 and all
+  subsequent generations.
+ 
+@@ -21,12 +18,16 @@ Last reviewed: 05/20/2016
+  not be updated in a timely fashion and a hardware system reset (also known as
+  an Automatic Server Recovery (ASR)) event will occur.
+ 
+- The hpwdt driver also has three (3) module parameters. They are the following:
++ The hpwdt driver also has the following module parameters:
+ 
+  soft_margin - allows the user to set the watchdog timer value.
+                Default value is 30 seconds.
+- allow_kdump - allows the user to save off a kernel dump image after an NMI.
+-               Default value is 1/ON
++ timeout     - an alias of soft_margin.
++ pretimeout  - allows the user to set the watchdog pretimeout value.
++               This is the number of seconds before timeout when an
++               NMI is delivered to the system. Setting the value to
++               zero disables the pretimeout NMI.
++               Default value is 9 seconds.
+  nowayout    - basic watchdog parameter that does not allow the timer to
+                be restarted or an impending ASR to be escaped.
+                Default value is set when compiling the kernel. If it is set
+@@ -37,61 +38,29 @@ Last reviewed: 05/20/2016
+        interface to /dev/watchdog can be found in
+        Documentation/watchdog/watchdog-api.txt and Documentation/IPMI.txt.
+ 
+- The NMI sourcing capability is disabled by default due to the inability to
+- distinguish between "NMI Watchdog Ticks" and "HW generated NMI events" in the
+- Linux kernel. What this means is that the hpwdt nmi handler code is called
+- each time the NMI signal fires off. This could amount to several thousands of
+- NMIs in a matter of seconds. If a user sees the Linux kernel's "dazed and
+- confused" message in the logs or if the system gets into a hung state, then
+- the hpwdt driver can be reloaded.
+-
+- 1. If the kernel has not been booted with nmi_watchdog turned off then
+-    edit and place the nmi_watchdog=0 at the end of the currently booting
+-    kernel line. Depending on your Linux distribution and platform setup:
+-    For non-UEFI systems
+-       /boot/grub/grub.conf   or
+-       /boot/grub/menu.lst
+-    For UEFI systems
+-      /boot/efi/EFI/distroname/grub.conf   or
+-      /boot/efi/efi/distroname/elilo.conf
+- 2. reboot the sever
+- 3. Once the system comes up perform a modprobe -r hpwdt
+- 4. modprobe /lib/modules/`uname -r`/kernel/drivers/watchdog/hpwdt.ko
+-
+- Now, the hpwdt can successfully receive and source the NMI and provide a log
+- message that details the reason for the NMI (as determined by the HPE BIOS).
+-
+- Below is a list of NMIs the HPE BIOS understands along with the associated
+- code (reason):
+-
+-	No source found                00h
+-
+-	Uncorrectable Memory Error     01h
+-
+-	ASR NMI                        1Bh
+-
+-	PCI Parity Error               20h
+-
+-	NMI Button Press               27h
+-
+-	SB_BUS_NMI                     28h
+-
+-	ILO Doorbell NMI               29h
+-
+-	ILO IOP NMI                    2Ah
+-
+-	ILO Watchdog NMI               2Bh
+-
+-	Proc Throt NMI                 2Ch
++ Due to limitations in the iLO hardware, the NMI pretimeout if enabled,
++ can only be set to 9 seconds.  Attempts to set pretimeout to other
++ non-zero values will be rounded, possibly to zero.  Users should verify
++ the pretimeout value after attempting to set pretimeout or timeout.
+ 
+-	Front Side Bus NMI             2Dh
++ Upon receipt of an NMI from the iLO, the hpwdt driver will initiate a
++ panic. This is to allow for a crash dump to be collected.  It is incumbent
++ upon the user to have properly configured the system for kdump.
+ 
+-	PCI Express Error              2Fh
++ The default Linux kernel behavior upon panic is to print a kernel tombstone
++ and loop forever.  This is generally not what a watchdog user wants.
+ 
+-	DMA controller NMI             30h
++ For those wishing to learn more please see:
++	Documentation/kdump/kdump.txt
++	Documentation/admin-guide/kernel-parameters.txt (panic=)
++	Your Linux Distribution specific documentation.
+ 
+-	Hypertransport/CSI Error       31h
++ If the hpwdt does not receive the NMI associated with an expiring timer,
++ the iLO will proceed to reset the system at timeout if the timer hasn't
++ been updated.
+ 
++--
+ 
++ The HPE iLO NMI Watchdog Driver and documentation were originally developed
++ by Tom Mingarelli.
+ 
+- -- Tom Mingarelli
+-- 
+2.13.6
+
