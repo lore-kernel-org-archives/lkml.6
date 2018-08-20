@@ -2,238 +2,131 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C6AC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 22:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D50C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:00:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7AA721581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 22:54:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7AA721581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
+	by mail.kernel.org (Postfix) with ESMTP id 1950121581
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:00:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1950121581
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbeHUCMW (ORCPT
+        id S1726761AbeHUCRz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 22:12:22 -0400
-Received: from smtp1-g21.free.fr ([212.27.42.1]:60459 "EHLO smtp1-g21.free.fr"
+        Mon, 20 Aug 2018 22:17:55 -0400
+Received: from mga04.intel.com ([192.55.52.120]:48116 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726631AbeHUCMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 22:12:22 -0400
-Received: from tock (unknown [89.247.124.122])
-        (Authenticated sender: albeu)
-        by smtp1-g21.free.fr (Postfix) with ESMTPSA id 2E6F6B004D5;
-        Tue, 21 Aug 2018 00:53:29 +0200 (CEST)
-Date:   Tue, 21 Aug 2018 00:53:27 +0200
-From:   Alban <albeu@free.fr>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Aban Bedel <albeu@free.fr>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Naren <naren.kernel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 06/29] mtd: Add support for reading MTD devices via
- the nvmem API
-Message-ID: <20180821005327.0d312a85@tock>
-In-Reply-To: <20180819184609.6dcdbb9a@bbrezillon>
-References: <20180810080526.27207-1-brgl@bgdev.pl>
-        <20180810080526.27207-7-brgl@bgdev.pl>
-        <20180817182720.6a6e5e8e@bbrezillon>
-        <20180819133106.0420df5f@tock>
-        <20180819184609.6dcdbb9a@bbrezillon>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1726620AbeHUCRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 22:17:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 16:00:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,267,1531810800"; 
+   d="scan'208";a="76955617"
+Received: from davehex.jf.intel.com (HELO [172.16.44.168]) ([10.7.198.90])
+  by orsmga003.jf.intel.com with ESMTP; 20 Aug 2018 16:00:21 -0700
+Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs
+ in mind (for KVM to isolate its guests per CPU)
+To:     Tycho Andersen <tycho@tycho.ws>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20180820212556.GC2230@char.us.oracle.com>
+ <CA+55aFxZCyVZc4ZpRyZ3uDyakRSOG_=2XvnwMo4oejpsieF9=A@mail.gmail.com>
+ <1534801939.10027.24.camel@amazon.co.uk>
+ <CA+55aFxyUdhYjnQdnmWAt8tTwn4HQ1xz3SAMZJiawkLpMiJ_+w@mail.gmail.com>
+ <20180820223557.GC16961@cisco.cisco.com>
+Cc:     David Woodhouse <dwmw@amazon.co.uk>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        juerg.haefliger@hpe.com, deepa.srinivasan@oracle.com,
+        Jim Mattson <jmattson@google.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-mm <linux-mm@kvack.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        joao.m.martins@oracle.com, pradeep.vincent@oracle.com,
+        Andi Kleen <ak@linux.intel.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        kanth.ghatraju@oracle.com, Liran Alon <liran.alon@oracle.com>,
+        Kees Cook <keescook@google.com>, jsteckli@os.inf.tu-dresden.de,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        chris.hyser@oracle.com, Tyler Hicks <tyhicks@canonical.com>,
+        John Haxby <john.haxby@oracle.com>,
+        Jon Masters <jcm@redhat.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <bd148fb6-e139-a065-1bf5-8054f932d30a@intel.com>
+Date:   Mon, 20 Aug 2018 15:59:54 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fTOdtudVp=.496+uJLgFm7d"; protocol="application/pgp-signature"
+In-Reply-To: <20180820223557.GC16961@cisco.cisco.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/fTOdtudVp=.496+uJLgFm7d
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 08/20/2018 03:35 PM, Tycho Andersen wrote:
+> Since meltdown hit, I haven't worked seriously on understand and
+> implementing his suggestions, in part because it wasn't clear to me
+> what pieces of the infrastructure we might be able to re-use. Someone
+> who knows more about mm/ might be able to suggest an approach, though
 
-On Sun, 19 Aug 2018 18:46:09 +0200
-Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+Unfortunately, I'm not sure there's much of KPTI we can reuse.  KPTI
+still has a very static kernel map (well, two static kernel maps) and
+XPFO really needs a much more dynamic map.
 
-> On Sun, 19 Aug 2018 13:31:06 +0200
-> Alban <albeu@free.fr> wrote:
->=20
-> > On Fri, 17 Aug 2018 18:27:20 +0200
-> > Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> >  =20
-> > > Hi Bartosz,
-> > >=20
-> > > On Fri, 10 Aug 2018 10:05:03 +0200
-> > > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> > >    =20
-> > > > From: Alban Bedel <albeu@free.fr>
-> > > >=20
-> > > > Allow drivers that use the nvmem API to read data stored on MTD dev=
-ices.
-> > > > For this the mtd devices are registered as read-only NVMEM provider=
-s.
-> > > >=20
-> > > > Signed-off-by: Alban Bedel <albeu@free.fr>
-> > > > [Bartosz:
-> > > >   - use the managed variant of nvmem_register(),
-> > > >   - set the nvmem name]
-> > > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>     =
-=20
-> > >=20
-> > > What happened to the 2 other patches of Alban's series? I'd really
-> > > like the DT case to be handled/agreed on in the same patchset, but
-> > > IIRC, Alban and Srinivas disagreed on how this should be represented.
-> > > I hope this time we'll come to an agreement, because the MTD <-> NVMEM
-> > > glue has been floating around for quite some time...   =20
-> >=20
-> > These other patches were to fix what I consider a fundamental flaw in
-> > the generic NVMEM bindings, however we couldn't agree on this point.
-> > Bartosz later contacted me to take over this series and I suggested to
-> > just change the MTD NVMEM binding to use a compatible string on the
-> > NVMEM cells as an alternative solution to fix the clash with the old
-> > style MTD partition.
-> >=20
-> > However all this has no impact on the code needed to add NVMEM support
-> > to MTD, so the above patch didn't change at all. =20
->=20
-> It does have an impact on the supported binding though.
-> nvmem->dev.of_node is automatically assigned to mtd->dev.of_node, which
-> means people will be able to define their NVMEM cells directly under
-> the MTD device and reference them from other nodes (even if it's not
-> documented), and as you said, it conflict with the old MTD partition
-> bindings. So we'd better agree on this binding before merging this
-> patch.
+We do have a bit of infrastructure now to do TLB flushes near the kernel
+exit point, but it's entirely for the user address space, which isn't
+affected by XPFO.
 
-Unless the nvmem cell node has a compatible string, then it won't be
-considered as a partition by the MTD code. That is were the clash is,
-both bindings allow free named child nodes without a compatible string.
-
-> I see several options:
->=20
-> 1/ provide a way to tell the NVMEM framework not to use parent->of_node
->    even if it's !=3D NULL. This way we really don't support defining
->    NVMEM cells in the DT, and also don't support referencing the nvmem
->    device using a phandle.
-
-I really don't get what the point of this would be. Make the whole API
-useless?
-
-> 2/ define a new binding where all nvmem-cells are placed in an
->    "nvmem" subnode (just like we have this "partitions" subnode for
->    partitions), and then add a config->of_node field so that the
->    nvmem provider can explicitly specify the DT node representing the
->    nvmem device. We'll also need to set this field to ERR_PTR(-ENOENT)
->    in case this node does not exist so that the nvmem framework knows
->    that it should not assign nvmem->dev.of_node to parent->of_node
-
-This is not good. First the NVMEM device is only a virtual concept of
-the Linux kernel, it has no place in the DT. Secondly the NVMEM
-provider (here the MTD device) then has to manually parse its DT node to
-find this subnode, pass it to the NVMEM framework to later again
-resolve it back to the MTD device. Not very complex but still a lot of
-useless code, just registering the MTD device is a lot simpler and much
-more inline with most other kernel API that register a "service"
-available from a device.
-
-> 3/ only declare partitions as nvmem providers. This would solve the
->    problem we have with partitions defined in the DT since
->    defining sub-partitions in the DT is not (yet?) supported and
->    partition nodes are supposed to be leaf nodes. Still, I'm not a big
->    fan of this solution because it will prevent us from supporting
->    sub-partitions if we ever want/need to.
-
-That sound like a poor workaround. Remember that this problem could
-appear with any device that has a binding that use child nodes.
-
-> 4/ Add a ->of_xlate() hook that would be called if present by the
->    framework instead of using the default parsing we have right now.
-
-That is a bit cleaner, but I don't think it would be worse the
-complexity. Furthermore xlate functions are more about converting
-from hardware parameters to internal kernel representation than to hide
-extra DT parsing.
-
-> 5/ Tell the nvmem framework the name of the subnode containing nvmem
->    cell definitions (if NULL that means cells are directly defined
->    under the nvmem provider node). We would set it to "nvmem-cells" (or
->    whatever you like) for the MTD case.
-
-If so please match on compatible and not on the node name.
-
-6/ Extend the current NVMEM cell lookup to check if the parent node of
-the cell has a compatible string set to "nvmem-cells". If it doesn't it
-mean we have the current binding and this node is the NVMEM device. If
-it does the device node is just the next parent. This is trivial to
-implement (literally 2 lines of code) and cover all the cases currently
-known.
-
-7/ Just add a compatible string to the nvmem cell. No code change is
-needed, however as the nvmem cells have an address space (the offset in
-byte in the storage) it might still clash with another address space
-used by the main device biding (for example a number of child
-functions).
-
-> There are probably other options (some were proposed by Alban and
-> Srinivas already), but I'd like to get this sorted out before we merge
-> this patch.
->=20
-> Alban, Srinivas, any opinion?
-
-My preference goes to 6/ as it is trivial to implement, solves all
-known shortcomings and is backward compatible with the current binding.
-All other solutions have limitations and/or require too complex
-implementations compared to what they try to solve.
-
-Alban
-
---Sig_/fTOdtudVp=.496+uJLgFm7d
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJbe0ZnAAoJEHSUmkuduC289scQAOXFzKlPD8+XMV3afPc7azN0
-mN8Gl+uZod6rFdLhNG5SKe1KV3sUULyNNbZq+NfS559CK0SG7NWrslLLmLZK2YL/
-ivPFXppo8rLCvk6U7u4LCUVbCk0X1DDgnvgt0vtvF/7QzQOxOT6Wh6DHeKQmI7pP
-x9/8Cncga2H8NFkZuBsVU91OExsLNDSBg+igIH/uat4MFBblFE42ZvBu5TPfnB4b
-8bJ663P0T0C+WcQGJzOxO82146tusPdstAZgY05TyBLoomhU6sJzmv3ouAOswOyo
-l/MYd5fVgXekGXpQOrw5VHFWRgcErfg0gdFrHlYByMiu08fc8cvARiYEjwT05M39
-rxFP/1fjoVleqdZ5WSAxme1fygbIP5LjHaJcKeNIRusYPZuz7WVid0Ht4GXA7ure
-2yr7DCrB3/HQAMBeGS7WJ3Xw+HphqPtKjZin2vSbWk6webtfUaxvwBVJRcqCGVjD
-/hFyQhtP44NxpWSRQClRrQ5+wH1kz7S1jfNrgtv7T0A8RaNJ4xZDYUliwLVM9uD2
-xrU9++6s4atq5vX93V3Iq5tXxZ5GThHY8z4kG9GX9sVIYfWEVKl64P3tB+ycjc0N
-ecJmDO/LhI9s5HzoaY0XJ2Oq1cvqO09Mc0DdADs17UlQ5HQRTKjrLq0Nd5BkUu1+
-fVmGaEuVW8MyxWMFWgs8
-=9TLP
------END PGP SIGNATURE-----
-
---Sig_/fTOdtudVp=.496+uJLgFm7d--
