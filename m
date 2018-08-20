@@ -2,228 +2,113 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69379C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5A0C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:04:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DCD221581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:03:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DCD221581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F29521581
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:04:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F29521581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbeHTQTI (ORCPT
+        id S1727152AbeHTQTp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 12:19:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58974 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726785AbeHTQTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 12:19:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B928CAFCA;
-        Mon, 20 Aug 2018 13:03:32 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Cc:     boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, Juergen Gross <jgross@suse.com>
-Subject: [PATCH] xen: remove unused hypercall functions
-Date:   Mon, 20 Aug 2018 15:03:30 +0200
-Message-Id: <20180820130330.11704-1-jgross@suse.com>
-X-Mailer: git-send-email 2.13.7
+        Mon, 20 Aug 2018 12:19:45 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52293 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726709AbeHTQTo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 12:19:44 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1frjqq-0002ZK-GA; Mon, 20 Aug 2018 15:04:08 +0200
+Message-ID: <1534770242.5445.13.camel@pengutronix.de>
+Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com,
+        Tiffany Lin =?UTF-8?Q?=28=E6=9E=97=E6=85=A7=E7=8F=8A=29?= 
+        <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen =?UTF-8?Q?=28=E9=99=B3=E6=99=BA=E8=BF=AA=29?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.org>,
+        ezequiel@collabora.com
+Date:   Mon, 20 Aug 2018 15:04:02 +0200
+In-Reply-To: <20180724140621.59624-2-tfiga@chromium.org>
+References: <20180724140621.59624-1-tfiga@chromium.org>
+         <20180724140621.59624-2-tfiga@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove Xen hypercall functions which are used nowhere in the kernel.
+On Tue, 2018-07-24 at 23:06 +0900, Tomasz Figa wrote:
+[...]
+> +Seek
+> +====
+> +
+> +Seek is controlled by the ``OUTPUT`` queue, as it is the source of
+> +bitstream data. ``CAPTURE`` queue remains unchanged/unaffected.
+> +
+> +1. Stop the ``OUTPUT`` queue to begin the seek sequence via
+> +   :c:func:`VIDIOC_STREAMOFF`.
+> +
+> +   * **Required fields:**
+> +
+> +     ``type``
+> +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
+> +
+> +   * The driver must drop all the pending ``OUTPUT`` buffers and they are
+> +     treated as returned to the client (following standard semantics).
+> +
+> +2. Restart the ``OUTPUT`` queue via :c:func:`VIDIOC_STREAMON`
+> +
+> +   * **Required fields:**
+> +
+> +     ``type``
+> +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
+> +
+> +   * The driver must be put in a state after seek and be ready to
+> +     accept new source bitstream buffers.
+> +
+> +3. Start queuing buffers to ``OUTPUT`` queue containing stream data after
+> +   the seek until a suitable resume point is found.
+> +
+> +   .. note::
+> +
+> +      There is no requirement to begin queuing stream starting exactly from
+> +      a resume point (e.g. SPS or a keyframe). The driver must handle any
+> +      data queued and must keep processing the queued buffers until it
+> +      finds a suitable resume point. While looking for a resume point, the
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- arch/x86/include/asm/xen/hypercall.h | 118 -----------------------------------
- 1 file changed, 118 deletions(-)
+I think the definition of a resume point is too vague in this place.
+Can the driver decide whether or not a keyframe without SPS is a
+suitable resume point? Or do drivers have to parse and store SPS/PPS if
+the hardware does not support resuming from a keyframe without sending
+SPS/PPS again?
 
-diff --git a/arch/x86/include/asm/xen/hypercall.h b/arch/x86/include/asm/xen/hypercall.h
-index 6b2f90a0b149..ef05bea7010d 100644
---- a/arch/x86/include/asm/xen/hypercall.h
-+++ b/arch/x86/include/asm/xen/hypercall.h
-@@ -197,17 +197,6 @@ extern struct { char _entry[32]; } hypercall_page[];
- 	(type)__res;							\
- })
- 
--#define _hypercall5(type, name, a1, a2, a3, a4, a5)			\
--({									\
--	__HYPERCALL_DECLS;						\
--	__HYPERCALL_5ARG(a1, a2, a3, a4, a5);				\
--	asm volatile (__HYPERCALL					\
--		      : __HYPERCALL_5PARAM				\
--		      : __HYPERCALL_ENTRY(name)				\
--		      : __HYPERCALL_CLOBBER5);				\
--	(type)__res;							\
--})
--
- static inline long
- xen_single_call(unsigned int call,
- 		unsigned long a1, unsigned long a2,
-@@ -267,47 +256,12 @@ HYPERVISOR_set_gdt(unsigned long *frame_list, int entries)
- }
- 
- static inline int
--HYPERVISOR_stack_switch(unsigned long ss, unsigned long esp)
--{
--	return _hypercall2(int, stack_switch, ss, esp);
--}
--
--#ifdef CONFIG_X86_32
--static inline int
--HYPERVISOR_set_callbacks(unsigned long event_selector,
--			 unsigned long event_address,
--			 unsigned long failsafe_selector,
--			 unsigned long failsafe_address)
--{
--	return _hypercall4(int, set_callbacks,
--			   event_selector, event_address,
--			   failsafe_selector, failsafe_address);
--}
--#else  /* CONFIG_X86_64 */
--static inline int
--HYPERVISOR_set_callbacks(unsigned long event_address,
--			unsigned long failsafe_address,
--			unsigned long syscall_address)
--{
--	return _hypercall3(int, set_callbacks,
--			   event_address, failsafe_address,
--			   syscall_address);
--}
--#endif  /* CONFIG_X86_{32,64} */
--
--static inline int
- HYPERVISOR_callback_op(int cmd, void *arg)
- {
- 	return _hypercall2(int, callback_op, cmd, arg);
- }
- 
- static inline int
--HYPERVISOR_fpu_taskswitch(int set)
--{
--	return _hypercall1(int, fpu_taskswitch, set);
--}
--
--static inline int
- HYPERVISOR_sched_op(int cmd, void *arg)
- {
- 	return _hypercall2(int, sched_op, cmd, arg);
-@@ -419,19 +373,6 @@ HYPERVISOR_grant_table_op(unsigned int cmd, void *uop, unsigned int count)
- }
- 
- static inline int
--HYPERVISOR_update_va_mapping_otherdomain(unsigned long va, pte_t new_val,
--					 unsigned long flags, domid_t domid)
--{
--	if (sizeof(new_val) == sizeof(long))
--		return _hypercall4(int, update_va_mapping_otherdomain, va,
--				   new_val.pte, flags, domid);
--	else
--		return _hypercall5(int, update_va_mapping_otherdomain, va,
--				   new_val.pte, new_val.pte >> 32,
--				   flags, domid);
--}
--
--static inline int
- HYPERVISOR_vm_assist(unsigned int cmd, unsigned int type)
- {
- 	return _hypercall2(int, vm_assist, cmd, type);
-@@ -465,12 +406,6 @@ HYPERVISOR_suspend(unsigned long start_info_mfn)
- 	return _hypercall3(int, sched_op, SCHEDOP_shutdown, &r, start_info_mfn);
- }
- 
--static inline int
--HYPERVISOR_nmi_op(unsigned long op, unsigned long arg)
--{
--	return _hypercall2(int, nmi_op, op, arg);
--}
--
- static inline unsigned long __must_check
- HYPERVISOR_hvm_op(int op, void *arg)
- {
-@@ -529,39 +464,6 @@ MULTI_update_va_mapping(struct multicall_entry *mcl, unsigned long va,
- }
- 
- static inline void
--MULTI_grant_table_op(struct multicall_entry *mcl, unsigned int cmd,
--		     void *uop, unsigned int count)
--{
--	mcl->op = __HYPERVISOR_grant_table_op;
--	mcl->args[0] = cmd;
--	mcl->args[1] = (unsigned long)uop;
--	mcl->args[2] = count;
--
--	trace_xen_mc_entry(mcl, 3);
--}
--
--static inline void
--MULTI_update_va_mapping_otherdomain(struct multicall_entry *mcl, unsigned long va,
--				    pte_t new_val, unsigned long flags,
--				    domid_t domid)
--{
--	mcl->op = __HYPERVISOR_update_va_mapping_otherdomain;
--	mcl->args[0] = va;
--	if (sizeof(new_val) == sizeof(long)) {
--		mcl->args[1] = new_val.pte;
--		mcl->args[2] = flags;
--		mcl->args[3] = domid;
--	} else {
--		mcl->args[1] = new_val.pte;
--		mcl->args[2] = new_val.pte >> 32;
--		mcl->args[3] = flags;
--		mcl->args[4] = domid;
--	}
--
--	trace_xen_mc_entry(mcl, sizeof(new_val) == sizeof(long) ? 4 : 5);
--}
--
--static inline void
- MULTI_update_descriptor(struct multicall_entry *mcl, u64 maddr,
- 			struct desc_struct desc)
- {
-@@ -582,16 +484,6 @@ MULTI_update_descriptor(struct multicall_entry *mcl, u64 maddr,
- }
- 
- static inline void
--MULTI_memory_op(struct multicall_entry *mcl, unsigned int cmd, void *arg)
--{
--	mcl->op = __HYPERVISOR_memory_op;
--	mcl->args[0] = cmd;
--	mcl->args[1] = (unsigned long)arg;
--
--	trace_xen_mc_entry(mcl, 2);
--}
--
--static inline void
- MULTI_mmu_update(struct multicall_entry *mcl, struct mmu_update *req,
- 		 int count, int *success_count, domid_t domid)
- {
-@@ -618,16 +510,6 @@ MULTI_mmuext_op(struct multicall_entry *mcl, struct mmuext_op *op, int count,
- }
- 
- static inline void
--MULTI_set_gdt(struct multicall_entry *mcl, unsigned long *frames, int entries)
--{
--	mcl->op = __HYPERVISOR_set_gdt;
--	mcl->args[0] = (unsigned long)frames;
--	mcl->args[1] = entries;
--
--	trace_xen_mc_entry(mcl, 2);
--}
--
--static inline void
- MULTI_stack_switch(struct multicall_entry *mcl,
- 		   unsigned long ss, unsigned long esp)
- {
--- 
-2.13.7
-
+regards
+Philipp
