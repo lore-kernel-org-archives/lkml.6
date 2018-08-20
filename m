@@ -2,201 +2,270 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A9BC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73851C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:41:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C854221531
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:36:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="QbrhAFEM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C854221531
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
+	by mail.kernel.org (Postfix) with ESMTP id 1980E2170E
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:41:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1980E2170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbeHTRwv (ORCPT
+        id S1727131AbeHTR5P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 13:52:51 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:33230 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbeHTRwv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 13:52:51 -0400
-Received: by mail-ua1-f66.google.com with SMTP id i4-v6so9860197uak.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 07:36:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=fH+i8pRfg0nbB2m88oq4W1kCxYUFJkurjeXrZA2aAZc=;
-        b=QbrhAFEMyCipI8lZIjFcKpSArNrD0KoEHg9ClO4ZTqnm6zwE73Yf+A/eKabJFs2JEZ
-         cJ0OfKZfE92pZm/JT4Te1eCpbUk1g9WfoM/27u3+wP2i9e07pC6i+k0ni3IJJwfYfhDt
-         /zeUHE7v1G+NG78VbDEwGo00FwhP/zcF/ga/hNpCREWm5yQesu1StFdQiTuKJ6fkH+wG
-         +97i/45EVuGycS3oiC6tVrYtWqitiw2sMDxV9JEtX+F3O0rmiKrUdUQPNSQwoflQpBK+
-         Nl8FXQhdT5hqMLXHN2e9Bcr1IKWO7HJ9XknzIWu/7X1LtfR95s4E+wRkHgyKx7awEN8i
-         WwNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fH+i8pRfg0nbB2m88oq4W1kCxYUFJkurjeXrZA2aAZc=;
-        b=ImEKqZlHyfTZIFO1ijOdzSs+qV/FfQ+NMRoI+L1kLUxytRjmCfRJ5ZckU2aP3aQnbN
-         Xu7kpBi/TZPun25+H4CVJklWrtqwGuYr1ND4/KZRVdalezuEk39dAlQQd780Q9Gm0teI
-         zptI7hXh48i+i3VT+1Qibq7QtlMezqGUBWR4WeEk3LZ0Pfh216gYX6nD1BxUYno93iI0
-         yC3u9qOxhKNZ4ry+lFxQzrxKSw6jzg8ZRudBX0G2i3MVq6vNYNEm/xDZKLdLylgCjTLj
-         3AMPxF8+gLLBHTHcAk2ZmVaWKett4qOokgJj6RrE7+hSRB30XZSWV/fzMn0TfAyjkegc
-         kLlA==
-X-Gm-Message-State: AOUpUlE6oVakDsu4fBzR4nmsBkq8+092ukj1+SbhPgi8nbU9u//aWj/2
-        BwwC62fKBrLTeLxL32Dv93jlTRcc53CbKXzvzTwwmQ==
-X-Google-Smtp-Source: AA+uWPypiQdsVFRrtBDFGBMTK6bH+6heOZbhi5ppBNW6C/QDd4mPoJQedu4JMbXkU6IaGcBK0hgtKN4oUf03LSwikHc=
-X-Received: by 2002:ab0:6583:: with SMTP id v3-v6mr30372803uam.107.1534775816217;
- Mon, 20 Aug 2018 07:36:56 -0700 (PDT)
+        Mon, 20 Aug 2018 13:57:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51210 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726735AbeHTR5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 13:57:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BD95BAF3E;
+        Mon, 20 Aug 2018 14:41:17 +0000 (UTC)
+Date:   Mon, 20 Aug 2018 16:41:16 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Li RongQing <lirongqing@baidu.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        darrick.wong@oracle.com
+Subject: Re: [PATCH] mm: introduce kvvirt_to_page() helper
+Message-ID: <20180820144116.GO29735@dhcp22.suse.cz>
+References: <1534596541-31393-1-git-send-email-lirongqing@baidu.com>
 MIME-Version: 1.0
-Received: by 2002:a67:984f:0:0:0:0:0 with HTTP; Mon, 20 Aug 2018 07:36:55
- -0700 (PDT)
-In-Reply-To: <d03ed26c-cb06-d9b7-e7ee-d0b78316641a@lightnvm.io>
-References: <20180820121217.11393-1-mb@lightnvm.io> <DA2F1D94-23DC-4739-9056-351992D972EE@cnexlabs.com>
- <d03ed26c-cb06-d9b7-e7ee-d0b78316641a@lightnvm.io>
-From:   Hans Holmberg <hans@owltronix.com>
-Date:   Mon, 20 Aug 2018 16:36:55 +0200
-Message-ID: <CANr-nt0_3WxmG7=8XDjkii_1KrpX1XHk2N5P3fSSCgYdF-TGJA@mail.gmail.com>
-Subject: Re: [PATCH] lightnvm: introduce nvm_rq_to_ppa_list
-To:     =?UTF-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
-Cc:     Javier Gonzalez <javier@cnexlabs.com>, igor.j.konopko@intel.com,
-        marcin.dziegielewski@intel.com,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>, hlitz@ucsc.edu,
-        youngtack.jin@circuitblvd.com, linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1534596541-31393-1-git-send-email-lirongqing@baidu.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Will do. i'll squash your patch with my two. Your commit message is
-better, so i hope you don't mind me using it :)
+On Sat 18-08-18 20:49:01, Li RongQing wrote:
+> The new helper returns address mapping page, which has several users
+> in individual subsystem, like mem_to_page in xfs_buf.c and pgv_to_page
+> in af_packet.c, unify them
 
-All the best,
-Hans
+kvvirt_to_page is a weird name. I guess you wanted it to fit into
+kv*alloc, kvfree naming, right? If yes then I guess kvmem_to_page
+would be slightly better.
 
-On Mon, Aug 20, 2018 at 2:46 PM, Matias Bj=C3=B8rling <mb@lightnvm.io> wrot=
-e:
-> On 08/20/2018 02:38 PM, Javier Gonzalez wrote:
->>>
->>> On 20 Aug 2018, at 14.12, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
->>>
->>> There is a number of places in the lightnvm subsystem where the user
->>> iterates over the ppa list. Before iterating, the user must know if it
->>> is a single or multiple LBAs due to vector commands using either the
->>> nvm_rq ->ppa_addr or ->ppa_list fields on command submission, which
->>> leads to open-coding the if/else statement.
->>>
->>> Instead of having multiple if/else's, move it into a function that can
->>> be called by its users.
->>>
->>> Signed-off-by: Matias Bj=C3=B8rling <mb@lightnvm.io>
->>> ---
->>> drivers/lightnvm/pblk-read.c  | 4 +---
->>> drivers/lightnvm/pblk-write.c | 5 +----
->>> drivers/lightnvm/pblk.h       | 4 +---
->>> include/linux/lightnvm.h      | 5 +++++
->>> 4 files changed, 8 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.=
-c
->>> index f275c7e5abe4..696d3a9c9cf0 100644
->>> --- a/drivers/lightnvm/pblk-read.c
->>> +++ b/drivers/lightnvm/pblk-read.c
->>> @@ -175,11 +175,9 @@ static void __pblk_read_put_line(struct pblk *pblk=
-,
->>> struct ppa_addr ppa)
->>>
->>> static void pblk_read_put_line(struct pblk *pblk, struct nvm_rq *rqd)
->>> {
->>> -       struct ppa_addr *ppa_list;
->>> +       struct ppa_addr *ppa_list =3D nvm_rq_to_ppa_list(rqd);
->>>         int i;
->>>
->>> -       ppa_list =3D (rqd->nr_ppas > 1) ? rqd->ppa_list : &rqd->ppa_add=
-r;
->>> -
->>>         for (i =3D 0; i < rqd->nr_ppas; i++)
->>>                 __pblk_read_put_line(pblk, ppa_list[i]);
->>> }
->>> diff --git a/drivers/lightnvm/pblk-write.c
->>> b/drivers/lightnvm/pblk-write.c
->>> index df99c45778d4..a92450ec7698 100644
->>> --- a/drivers/lightnvm/pblk-write.c
->>> +++ b/drivers/lightnvm/pblk-write.c
->>> @@ -212,10 +212,7 @@ static void pblk_submit_rec(struct work_struct
->>> *work)
->>>
->>>         pblk_log_write_err(pblk, rqd);
->>>
->>> -       if (rqd->nr_ppas =3D=3D 1)
->>> -               ppa_list =3D &rqd->ppa_addr;
->>> -       else
->>> -               ppa_list =3D rqd->ppa_list;
->>> +       ppa_list =3D nvm_rq_to_ppa_list(rqd);
->>>
->>>         pblk_map_remaining(pblk, ppa_list);
->>>         pblk_queue_resubmit(pblk, c_ctx);
->>> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
->>> index 64ae0c7ed3bb..bda098c7cc3b 100644
->>> --- a/drivers/lightnvm/pblk.h
->>> +++ b/drivers/lightnvm/pblk.h
->>> @@ -1335,9 +1335,7 @@ static inline int pblk_boundary_ppa_checks(struct
->>> nvm_tgt_dev *tgt_dev,
->>> static inline int pblk_check_io(struct pblk *pblk, struct nvm_rq *rqd)
->>> {
->>>         struct nvm_tgt_dev *dev =3D pblk->dev;
->>> -       struct ppa_addr *ppa_list;
->>> -
->>> -       ppa_list =3D (rqd->nr_ppas > 1) ? rqd->ppa_list : &rqd->ppa_add=
-r;
->>> +       struct ppa_addr *ppa_list =3D nvm_rq_to_ppa_list(rqd);
->>>
->>>         if (pblk_boundary_ppa_checks(dev, ppa_list, rqd->nr_ppas)) {
->>>                 WARN_ON(1);
->>> diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
->>> index 0106984400bc..1497e275f90f 100644
->>> --- a/include/linux/lightnvm.h
->>> +++ b/include/linux/lightnvm.h
->>> @@ -487,6 +487,11 @@ static inline struct ppa_addr
->>> dev_to_generic_addr(struct nvm_dev *dev,
->>>         return l;
->>> }
->>>
->>> +static inline struct ppa_addr *nvm_rq_to_ppa_list(struct nvm_rq *rqd)
->>> +{
->>> +       return (rqd->nr_ppas > 1) ? rqd->ppa_list : &rqd->ppa_addr;
->>> +}
->>> +
->>> typedef blk_qc_t (nvm_tgt_make_rq_fn)(struct request_queue *, struct bi=
-o
->>> *);
->>> typedef sector_t (nvm_tgt_capacity_fn)(void *);
->>> typedef void *(nvm_tgt_init_fn)(struct nvm_tgt_dev *, struct gendisk *,
->>> --
->>> 2.11.0
->>
->>
->> Hans made a similar patch some time ago. There are a number of places
->> where you want to use this helper too, also outside of pblk. You can
->> look at it here [1]
->>
->> [1] https://github.com/OpenChannelSSD/linux/commits/for-4.20/pblk
->>
->>     fdd88185bfed
->>     17609afb2db9
->>
->> Javier
->>
->
-> I like Hans' better. Hans, could you please merge my patch with yours? I
-> prefer the nvm_rq_to_ppa_list naming, rqdata -> rqd, and if short-hand.
->
+Other than that the patch makes sense to me. It would be great to add
+some documentation and be explicit that the call is only safe on
+directly mapped kernel address and vmalloc areas.
+
+> Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
+> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> ---
+>  fs/xfs/xfs_buf.c       | 13 +------------
+>  include/linux/mm.h     |  8 ++++++++
+>  net/9p/trans_virtio.c  |  5 +----
+>  net/ceph/crypto.c      |  6 +-----
+>  net/packet/af_packet.c | 31 ++++++++++++-------------------
+>  5 files changed, 23 insertions(+), 40 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> index e839907e8492..edd22b33f49e 100644
+> --- a/fs/xfs/xfs_buf.c
+> +++ b/fs/xfs/xfs_buf.c
+> @@ -866,17 +866,6 @@ xfs_buf_set_empty(
+>  	bp->b_maps[0].bm_len = bp->b_length;
+>  }
+>  
+> -static inline struct page *
+> -mem_to_page(
+> -	void			*addr)
+> -{
+> -	if ((!is_vmalloc_addr(addr))) {
+> -		return virt_to_page(addr);
+> -	} else {
+> -		return vmalloc_to_page(addr);
+> -	}
+> -}
+> -
+>  int
+>  xfs_buf_associate_memory(
+>  	xfs_buf_t		*bp,
+> @@ -909,7 +898,7 @@ xfs_buf_associate_memory(
+>  	bp->b_offset = offset;
+>  
+>  	for (i = 0; i < bp->b_page_count; i++) {
+> -		bp->b_pages[i] = mem_to_page((void *)pageaddr);
+> +		bp->b_pages[i] = kvvirt_to_page((void *)pageaddr);
+>  		pageaddr += PAGE_SIZE;
+>  	}
+>  
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 68a5121694ef..bb34a3c71df5 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -599,6 +599,14 @@ static inline void *kvcalloc(size_t n, size_t size, gfp_t flags)
+>  	return kvmalloc_array(n, size, flags | __GFP_ZERO);
+>  }
+>  
+> +static inline struct page *kvvirt_to_page(const void *addr)
+> +{
+> +	if (!is_vmalloc_addr(addr))
+> +		return virt_to_page(addr);
+> +	else
+> +		return vmalloc_to_page(addr);
+> +}
+> +
+>  extern void kvfree(const void *addr);
+>  
+>  static inline atomic_t *compound_mapcount_ptr(struct page *page)
+> diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+> index 05006cbb3361..8f1895f15593 100644
+> --- a/net/9p/trans_virtio.c
+> +++ b/net/9p/trans_virtio.c
+> @@ -368,10 +368,7 @@ static int p9_get_mapped_pages(struct virtio_chan *chan,
+>  		*need_drop = 0;
+>  		p -= (*offs = offset_in_page(p));
+>  		for (index = 0; index < nr_pages; index++) {
+> -			if (is_vmalloc_addr(p))
+> -				(*pages)[index] = vmalloc_to_page(p);
+> -			else
+> -				(*pages)[index] = kmap_to_page(p);
+> +			(*pages)[index] = kvvirt_to_page(p);
+>  			p += PAGE_SIZE;
+>  		}
+>  		return len;
+> diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
+> index 02172c408ff2..cc5f0723a44d 100644
+> --- a/net/ceph/crypto.c
+> +++ b/net/ceph/crypto.c
+> @@ -191,11 +191,7 @@ static int setup_sgtable(struct sg_table *sgt, struct scatterlist *prealloc_sg,
+>  		struct page *page;
+>  		unsigned int len = min(chunk_len - off, buf_len);
+>  
+> -		if (is_vmalloc)
+> -			page = vmalloc_to_page(buf);
+> -		else
+> -			page = virt_to_page(buf);
+> -
+> +		page = kvvirt_to_page(buf);
+>  		sg_set_page(sg, page, len, off);
+>  
+>  		off = 0;
+> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+> index 5610061e7f2e..1bec111122ad 100644
+> --- a/net/packet/af_packet.c
+> +++ b/net/packet/af_packet.c
+> @@ -359,13 +359,6 @@ static void unregister_prot_hook(struct sock *sk, bool sync)
+>  		__unregister_prot_hook(sk, sync);
+>  }
+>  
+> -static inline struct page * __pure pgv_to_page(void *addr)
+> -{
+> -	if (is_vmalloc_addr(addr))
+> -		return vmalloc_to_page(addr);
+> -	return virt_to_page(addr);
+> -}
+> -
+>  static void __packet_set_status(struct packet_sock *po, void *frame, int status)
+>  {
+>  	union tpacket_uhdr h;
+> @@ -374,15 +367,15 @@ static void __packet_set_status(struct packet_sock *po, void *frame, int status)
+>  	switch (po->tp_version) {
+>  	case TPACKET_V1:
+>  		h.h1->tp_status = status;
+> -		flush_dcache_page(pgv_to_page(&h.h1->tp_status));
+> +		flush_dcache_page(kvvirt_to_page(&h.h1->tp_status));
+>  		break;
+>  	case TPACKET_V2:
+>  		h.h2->tp_status = status;
+> -		flush_dcache_page(pgv_to_page(&h.h2->tp_status));
+> +		flush_dcache_page(kvvirt_to_page(&h.h2->tp_status));
+>  		break;
+>  	case TPACKET_V3:
+>  		h.h3->tp_status = status;
+> -		flush_dcache_page(pgv_to_page(&h.h3->tp_status));
+> +		flush_dcache_page(kvvirt_to_page(&h.h3->tp_status));
+>  		break;
+>  	default:
+>  		WARN(1, "TPACKET version not supported.\n");
+> @@ -401,13 +394,13 @@ static int __packet_get_status(struct packet_sock *po, void *frame)
+>  	h.raw = frame;
+>  	switch (po->tp_version) {
+>  	case TPACKET_V1:
+> -		flush_dcache_page(pgv_to_page(&h.h1->tp_status));
+> +		flush_dcache_page(kvvirt_to_page(&h.h1->tp_status));
+>  		return h.h1->tp_status;
+>  	case TPACKET_V2:
+> -		flush_dcache_page(pgv_to_page(&h.h2->tp_status));
+> +		flush_dcache_page(kvvirt_to_page(&h.h2->tp_status));
+>  		return h.h2->tp_status;
+>  	case TPACKET_V3:
+> -		flush_dcache_page(pgv_to_page(&h.h3->tp_status));
+> +		flush_dcache_page(kvvirt_to_page(&h.h3->tp_status));
+>  		return h.h3->tp_status;
+>  	default:
+>  		WARN(1, "TPACKET version not supported.\n");
+> @@ -462,7 +455,7 @@ static __u32 __packet_set_timestamp(struct packet_sock *po, void *frame,
+>  	}
+>  
+>  	/* one flush is safe, as both fields always lie on the same cacheline */
+> -	flush_dcache_page(pgv_to_page(&h.h1->tp_sec));
+> +	flush_dcache_page(kvvirt_to_page(&h.h1->tp_sec));
+>  	smp_wmb();
+>  
+>  	return ts_status;
+> @@ -728,7 +721,7 @@ static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
+>  
+>  	end = (u8 *)PAGE_ALIGN((unsigned long)pkc1->pkblk_end);
+>  	for (; start < end; start += PAGE_SIZE)
+> -		flush_dcache_page(pgv_to_page(start));
+> +		flush_dcache_page(kvvirt_to_page(start));
+>  
+>  	smp_wmb();
+>  #endif
+> @@ -741,7 +734,7 @@ static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
+>  
+>  #if ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE == 1
+>  	start = (u8 *)pbd1;
+> -	flush_dcache_page(pgv_to_page(start));
+> +	flush_dcache_page(kvvirt_to_page(start));
+>  
+>  	smp_wmb();
+>  #endif
+> @@ -2352,7 +2345,7 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
+>  					macoff + snaplen);
+>  
+>  		for (start = h.raw; start < end; start += PAGE_SIZE)
+> -			flush_dcache_page(pgv_to_page(start));
+> +			flush_dcache_page(kvvirt_to_page(start));
+>  	}
+>  	smp_wmb();
+>  #endif
+> @@ -2508,7 +2501,7 @@ static int tpacket_fill_skb(struct packet_sock *po, struct sk_buff *skb,
+>  			return -EFAULT;
+>  		}
+>  
+> -		page = pgv_to_page(data);
+> +		page = kvvirt_to_page(data);
+>  		data += len;
+>  		flush_dcache_page(page);
+>  		get_page(page);
+> @@ -4385,7 +4378,7 @@ static int packet_mmap(struct file *file, struct socket *sock,
+>  			int pg_num;
+>  
+>  			for (pg_num = 0; pg_num < rb->pg_vec_pages; pg_num++) {
+> -				page = pgv_to_page(kaddr);
+> +				page = kvvirt_to_page(kaddr);
+>  				err = vm_insert_page(vma, start, page);
+>  				if (unlikely(err))
+>  					goto out;
+> -- 
+> 2.16.2
+> 
+
+-- 
+Michal Hocko
+SUSE Labs
