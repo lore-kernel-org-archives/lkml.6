@@ -2,104 +2,83 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6003AC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CCBEC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A4E02173A
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:54:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A4E02173A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 390CB2173A
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:57:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 390CB2173A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbeHTVKq (ORCPT
+        id S1726476AbeHTVO2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 17:10:46 -0400
-Received: from mga02.intel.com ([134.134.136.20]:30184 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726089AbeHTVKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 17:10:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 10:54:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,266,1531810800"; 
-   d="scan'208";a="76880490"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by orsmga003.jf.intel.com with ESMTP; 20 Aug 2018 10:54:01 -0700
-Received: from fmsmsx121.amr.corp.intel.com (10.18.125.36) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 20 Aug 2018 10:54:01 -0700
-Received: from fmsmsx113.amr.corp.intel.com ([169.254.13.40]) by
- fmsmsx121.amr.corp.intel.com ([169.254.6.15]) with mapi id 14.03.0319.002;
- Mon, 20 Aug 2018 10:54:01 -0700
-From:   "Verma, Vishal L" <vishal.l.verma@intel.com>
-To:     "Zhang, Yu C" <yu.c.zhang@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "yi.z.zhang@linux.intel.com" <yi.z.zhang@linux.intel.com>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "zwisler@kernel.org" <zwisler@kernel.org>,
-        "Jiang, Dave" <dave.jiang@intel.com>, "jack@suse.cz" <jack@suse.cz>
-CC:     "Zhang, Yi Z" <yi.z.zhang@intel.com>
-Subject: Re: [PATCH V2 1/1] device-dax: check for vma range while dax_mmap.
-Thread-Topic: [PATCH V2 1/1] device-dax: check for vma range while dax_mmap.
-Thread-Index: AQHUMrVUqnGbwTSujk2GEE0hKSwAsKTJbXcA
-Date:   Mon, 20 Aug 2018 17:53:59 +0000
-Message-ID: <1534787638.13739.52.camel@intel.com>
-References: <46441800c43f029757c70d8386e3112701081503.1534160958.git.yi.z.zhang@linux.intel.com>
-In-Reply-To: <46441800c43f029757c70d8386e3112701081503.1534160958.git.yi.z.zhang@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.232.112.133]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <121A1013E5C94F42A6AA0DB9CD0A043C@intel.com>
-Content-Transfer-Encoding: base64
+        Mon, 20 Aug 2018 17:14:28 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:40176 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbeHTVO2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 17:14:28 -0400
+Received: by mail-oi0-f67.google.com with SMTP id w126-v6so27353208oie.7;
+        Mon, 20 Aug 2018 10:57:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SFJZhK168hE13YJs1HQFY/VtkKd8Cdt6xLFvq7BF8ok=;
+        b=UFafOAnwO/7ct16FN7Clu3bRiTTBQzOt1oL7TjY3w9MeY+oz4OniFFVa6Zp2DqDTiA
+         Ga4VerDSkQynlqALP3vXmNqObM5US8Bw+/N2136VDZ28o2xAvKsZ0TuIVk0H2/72VJZJ
+         NTH3ShIw5GCxSBqzLwZRM1mTEyRq0pnsxlU7UdimznV2+cUyQPd+aDFCcmzH2o344T62
+         IV734ISVuhU7VCgEP08d7eofBgIo+EFjvkUsyrvRtoMbw4Al+fo2i+6YtS+LbY2RLN5H
+         DNFdv5FH5tMnVSjDC0/rv4WMnmiTfDtD+baetykrlkALci/n/0zcJTfhM6k0YWRKjQNu
+         Rx6g==
+X-Gm-Message-State: AOUpUlHhh7GLbmyPjIDapTx1Vp21Snbkh1eUPjcF1NCgjaw+453Iwntl
+        zUdhDs0SQ6BN9cphuK7mmA==
+X-Google-Smtp-Source: AA+uWPzHRagqI3e3X6yXeDOQk8s12tRtef6fqR6npLa9/WMfVMsZB5KmWs1nK4p6N4Gu5s3HEdRU+Q==
+X-Received: by 2002:aca:3110:: with SMTP id x16-v6mr15965019oix.126.1534787870758;
+        Mon, 20 Aug 2018 10:57:50 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t131-v6sm9974772oie.34.2018.08.20.10.57.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 20 Aug 2018 10:57:49 -0700 (PDT)
+Date:   Mon, 20 Aug 2018 12:57:49 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: leds: Add bindings for lm3697 driver
+Message-ID: <20180820175749.GA13428@bogus>
+References: <20180817151528.21623-1-dmurphy@ti.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180817151528.21623-1-dmurphy@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpPbiBNb24sIDIwMTgtMDgtMTMgYXQgMjA6MDIgKzA4MDAsIFpoYW5nIFlpIHdyb3RlOg0KPiBU
-aGlzIHBhdGNoIHByZXZlbnRzIGEgdXNlciBtYXBwaW5nIGFuIGlsbGVnYWwgdm1hIHJhbmdlIHRo
-YXQgaXMgbGFyZ2VyDQo+IHRoYW4gYSBkYXggZGV2aWNlIHBoeXNpY2FsIHJlc291cmNlLg0KPiAN
-Cj4gV2hlbiBxZW11IG1hcHMgdGhlIGRheCBkZXZpY2UgZm9yIHZpcnR1YWwgbnZkaW1tJ3MgYmFj
-a2VuZCBkZXZpY2UsIHRoZQ0KPiB2LW52ZGltbSBsYWJlbCBhcmVhIGlzIGRlZmluZWQgYXQgdGhl
-IGVuZCBvZiBtYXBwZWQgcmFuZ2UuIEJ5IHVzaW5nIGFuDQo+IGlsbGVnYWwgc2l6ZSB0aGF0IGV4
-Y2VlZHMgdGhlIHJhbmdlIG9mIHRoZSBkZXZpY2UgZGF4LCBpdCB3aWxsIHRyaWdnZXIgYQ0KPiBm
-YXVsdCB3aXRoIHFlbXUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBaaGFuZyBZaSA8eWkuei56aGFu
-Z0BsaW51eC5pbnRlbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9kYXgvZGV2aWNlLmMgfCAyOSAr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDI5IGluc2Vy
-dGlvbnMoKykNCj4gDQoNCkxvb2tzIGdvb2QgdG8gbWU6DQpSZXZpZXdlZC1ieTogVmlzaGFsIFZl
-cm1hIDx2aXNoYWwubC52ZXJtYUBpbnRlbC5jb20+DQoNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-ZGF4L2RldmljZS5jIGIvZHJpdmVycy9kYXgvZGV2aWNlLmMNCj4gaW5kZXggMTA4YzM3Zi4uNmZl
-OGMzMCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9kYXgvZGV2aWNlLmMNCj4gKysrIGIvZHJpdmVy
-cy9kYXgvZGV2aWNlLmMNCj4gQEAgLTE3Nyw2ICsxNzcsMzMgQEAgc3RhdGljIGNvbnN0IHN0cnVj
-dCBhdHRyaWJ1dGVfZ3JvdXAgKmRheF9hdHRyaWJ1dGVfZ3JvdXBzW10gPSB7DQo+ICAJTlVMTCwN
-Cj4gIH07DQo+ICANCj4gK3N0YXRpYyBpbnQgY2hlY2tfdm1hX3JhbmdlKHN0cnVjdCBkZXZfZGF4
-ICpkZXZfZGF4LCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSwNCj4gKwkJY29uc3QgY2hhciAq
-ZnVuYykNCj4gK3sNCj4gKwlzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmZGV2X2RheC0+ZGV2Ow0KPiAr
-CXN0cnVjdCByZXNvdXJjZSAqcmVzOw0KPiArCXVuc2lnbmVkIGxvbmcgc2l6ZTsNCj4gKwlpbnQg
-cmV0LCBpOw0KPiArDQo+ICsJaWYgKCFkYXhfYWxpdmUoZGV2X2RheC0+ZGF4X2RldikpDQo+ICsJ
-CXJldHVybiAtRU5YSU87DQo+ICsNCj4gKwlzaXplID0gdm1hLT52bV9lbmQgLSB2bWEtPnZtX3N0
-YXJ0ICsgKHZtYS0+dm1fcGdvZmYgPDwgUEFHRV9TSElGVCk7DQo+ICsJcmV0ID0gLUVJTlZBTDsN
-Cj4gKwlmb3IgKGkgPSAwOyBpIDwgZGV2X2RheC0+bnVtX3Jlc291cmNlczsgaSsrKSB7DQo+ICsJ
-CXJlcyA9ICZkZXZfZGF4LT5yZXNbaV07DQo+ICsJCWlmIChzaXplID4gcmVzb3VyY2Vfc2l6ZShy
-ZXMpKSB7DQo+ICsJCQlkZXZfaW5mb19yYXRlbGltaXRlZChkZXYsDQo+ICsJCQkJIiVzOiAlczog
-ZmFpbCwgdm1hIHJhbmdlIG92ZXJmbG93XG4iLA0KPiArCQkJCWN1cnJlbnQtPmNvbW0sIGZ1bmMp
-Ow0KPiArCQkJcmV0ID0gLUVJTlZBTDsNCj4gKwkJCWNvbnRpbnVlOw0KPiArCQl9IGVsc2UNCj4g
-KwkJCXJldHVybiAwOw0KPiArCX0NCj4gKwlyZXR1cm4gcmV0Ow0KPiArfQ0KPiArDQo+ICBzdGF0
-aWMgaW50IGNoZWNrX3ZtYShzdHJ1Y3QgZGV2X2RheCAqZGV2X2RheCwgc3RydWN0IHZtX2FyZWFf
-c3RydWN0ICp2bWEsDQo+ICAJCWNvbnN0IGNoYXIgKmZ1bmMpDQo+ICB7DQo+IEBAIC00NjksNiAr
-NDk2LDggQEAgc3RhdGljIGludCBkYXhfbW1hcChzdHJ1Y3QgZmlsZSAqZmlscCwgc3RydWN0IHZt
-X2FyZWFfc3RydWN0ICp2bWEpDQo+ICAJICovDQo+ICAJaWQgPSBkYXhfcmVhZF9sb2NrKCk7DQo+
-ICAJcmMgPSBjaGVja192bWEoZGV2X2RheCwgdm1hLCBfX2Z1bmNfXyk7DQo+ICsJaWYgKCFyYykN
-Cj4gKwkJcmMgPSBjaGVja192bWFfcmFuZ2UoZGV2X2RheCwgdm1hLCBfX2Z1bmNfXyk7DQo+ICAJ
-ZGF4X3JlYWRfdW5sb2NrKGlkKTsNCj4gIAlpZiAocmMpDQo+ICAJCXJldHVybiByYzsNCg==
+On Fri, 17 Aug 2018 10:15:27 -0500, Dan Murphy wrote:
+> Add the device tree bindings for the lm3697
+> LED driver for backlighting and display.
+> 
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+> 
+> v5 - Fix the comment for the example - https://lore.kernel.org/patchwork/patch/975060/
+> 
+> v4 - Removed HVLED definition in favor of HVLED place definition - https://lore.kernel.org/patchwork/patch/974812/
+> v3 - Updated subject with prefered title - https://lore.kernel.org/patchwork/patch/972337/
+> v2 - Fixed subject and patch commit message - https://lore.kernel.org/patchwork/patch/971326/
+> 
+>  .../devicetree/bindings/leds/leds-lm3697.txt  | 86 +++++++++++++++++++
+>  1 file changed, 86 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+> 
+
+Reviewed-by: Rob Herring <robh@kernel.org>
