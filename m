@@ -6,80 +6,104 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C88AC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6F6C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:22:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22BE520BF3
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:20:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22BE520BF3
+	by mail.kernel.org (Postfix) with ESMTP id 27B11208D4
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:22:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27B11208D4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbeHTOfS (ORCPT
+        id S1726504AbeHTOhr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 10:35:18 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:46453 "EHLO
+        Mon, 20 Aug 2018 10:37:47 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:46749 "EHLO
         mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbeHTOfS (ORCPT
+        with ESMTP id S1726141AbeHTOhr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 10:35:18 -0400
-Received: by mail-qt0-f193.google.com with SMTP id d4-v6so15675864qtn.13;
-        Mon, 20 Aug 2018 04:20:05 -0700 (PDT)
+        Mon, 20 Aug 2018 10:37:47 -0400
+Received: by mail-qt0-f193.google.com with SMTP id d4-v6so15682261qtn.13;
+        Mon, 20 Aug 2018 04:22:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=v6zsyC2te87uF0RtJ5t0u6eQdifD8RmrlBjRFINr088=;
-        b=BIMLeG8PSVhh07OqNckROgNUoZTFSAS+2RZ2VScUrwTsqz4htdVW/SAoh8C/2ThH4V
-         HI6zZWGJwxWOMWRVrwMLLBi/glL8VW9No6iANj4ZjnRpXkPF9mrSvQHvdCvrqzDgJ6Kz
-         L4om4lkSoVazMxCJAG7WwPbUJO0BuRFe6E9J74Al0QB8wiDqjS9tGUZDQ4XE4/NmrSh7
-         G+LGkcVUudSND4ymKqe8LBAb+y7oSNqznpgcpKTKWgCDnzoycZo7kcgz7jnM3a4zq3ys
-         7ZXp3dVEHSVvJgJgUHnZF5dE4HFF8BQo5E+xrKcu3/fIndDRhy5ldchknj/r8MTWIeAQ
-         0Aag==
-X-Gm-Message-State: AOUpUlGn6x1HarYrWYVUzZPQN5C+0mmw9gfVZ+pXpJdoe94y1HJdLeQJ
-        mRF9kPuBsUxRzTd/Z5HHLdLt4GqhIPigVu/8RJI=
-X-Google-Smtp-Source: AA+uWPxFqYu8MTZg5ODa5YYedofk9y3d9xLtfJzqeASyNPw379fivmsODYiv1TmoRFe7zY7drrVxvKsX6lViBRG5mVE=
-X-Received: by 2002:a0c:8b67:: with SMTP id d39-v6mr40563417qvc.180.1534764005043;
- Mon, 20 Aug 2018 04:20:05 -0700 (PDT)
+        bh=lpbGvea2LMx0Tt9m6fPKIRZHV47OGpDAuBls2hEtCYk=;
+        b=RBXcdXPhMNFveuP2RqJalL120YaKWxHqD/cGS+DloPKY12gnp3U1Pms/Phl+338EHt
+         mvAMZafYZ0DXtujEWSRP1wztcmQKQRaI7VjGtyB0L1uiXozXWgHEwMqXsq/oK0slgqDV
+         B5bIRt+U9MJy9kmPNnjlLHSi03ODPTeTgbAtMYLiYtUONlH9LzKi8V1yoYNwb4GSdEX3
+         JPzqgw2smWeEIwx+w4AU06Fx7oHukrlY5CbD74oZRBa3yClr8U6xRNGp81kQhvGv/cmO
+         2CwAN0N3MrCBzEXFgY1PuvIr5/Q5H3iKty3bMT8qUc6IrW+IhSKYD6KNb0VbfaOYNxc0
+         EOtw==
+X-Gm-Message-State: AOUpUlHbnf7Y9p+nYNDoJ+oekfVLgflCGCfJqqVTfNI4AGLqsuFnlawC
+        Df5tiW1UnWZjz98u0V7YhWSjd/Z1lJV9D5sOMDw=
+X-Google-Smtp-Source: AA+uWPx8xVUWI3eCsQPyIew2aWIiwVyLrQgmpD35Y5fwXb6f3p2fD9Ao04707sl4+/HGMBGNSuEFNR8FQqEeR7PG9rw=
+X-Received: by 2002:a0c:a8cc:: with SMTP id h12-v6mr41161338qvc.161.1534764153267;
+ Mon, 20 Aug 2018 04:22:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180817102645.3839621-1-arnd@arndb.de> <20180817102645.3839621-8-arnd@arndb.de>
- <CAJZ5v0iCgQxxuoCB9B4-Ho3xeLwb4v99Xyw-9e-tT53mRD+YVQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0iCgQxxuoCB9B4-Ho3xeLwb4v99Xyw-9e-tT53mRD+YVQ@mail.gmail.com>
+References: <20180813214924.3567840-1-arnd@arndb.de> <Pine.LNX.4.44L0.1808140957350.1466-100000@iolanthe.rowland.org>
+ <CAK8P3a33DRBj6ZeJBeWGnw3RnpK3rTaYtrbs6jjZ8VVPOk8=qw@mail.gmail.com> <OSBPR01MB22931014287A7641FFBFBE56D8320@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB22931014287A7641FFBFBE56D8320@OSBPR01MB2293.jpnprd01.prod.outlook.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 20 Aug 2018 13:19:48 +0200
-Message-ID: <CAK8P3a31Ds14Ke1qLoMapK1Wq1M4tR6n+nL1VOKzR8+oN0eOBw@mail.gmail.com>
-Subject: Re: [RFC 07/15] PCI/ACPI: clean up acpi_pci_root_create()
-To:     Rafael Wysocki <rafael@kernel.org>
-Cc:     linux-pci <linux-pci@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Date:   Mon, 20 Aug 2018 13:22:16 +0200
+Message-ID: <CAK8P3a1eWyqp=fevH2KvbhTgRGXFXgtXpfObkEqLO2c5x6WNvA@mail.gmail.com>
+Subject: Re: [PATCH] usb: hide usb_of_get_companion_dev for CONFIG_USB=n
+To:     yoshihiro.shimoda.uh@renesas.com
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Johan Hovold <johan@kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 10:23 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Fri, Aug 17, 2018 at 12:33 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > @@ -909,8 +881,7 @@ struct pci_bus *acpi_pci_root_create(struct acpi_pci_root *root,
-> >         int ret, busnum = root->secondary.start;
-> >         struct acpi_device *device = root->device;
-> >         int node = acpi_get_node(device->handle);
-> > -       struct pci_bus *bus;
-> > -       struct pci_host_bridge *host_bridge;
-> > +       struct pci_host_bridge *bridge;
+On Mon, Aug 20, 2018 at 5:22 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> > From: Arnd Bergmann, Sent: Tuesday, August 14, 2018 11:27 PM
+> >
+> > On Tue, Aug 14, 2018 at 3:58 PM Alan Stern <stern@rowland.harvard.edu> wrote:
+> > > On Mon, 13 Aug 2018, Arnd Bergmann wrote:
+> > > > diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kconfig
+> > > > index 0a16cbd4e528..663a8bd67a7b 100644
+> > > > --- a/drivers/usb/gadget/udc/Kconfig
+> > > > +++ b/drivers/usb/gadget/udc/Kconfig
+> > > > @@ -193,6 +193,7 @@ config USB_RENESAS_USB3
+> > > >       tristate 'Renesas USB3.0 Peripheral controller'
+> > > >       depends on ARCH_RENESAS || COMPILE_TEST
+> > > >       depends on EXTCON
+> > > > +     depends on USB || !USB
+> > >
+> > > Is this some weird standard idiom?  It looks really strange.
+> >
+> > Yes, and yes.
+> >
+> > A less common way to write it is
+> >
+> >         depends on (USB != m) || m
+> >
+> > which some people prefer, but I find even weirder.
 >
-> Why "bridge" and not "host" or even something to stand for "root complex"?
+> Thank you for the patch!
 >
-> Or maybe it can still be "host_bridge"?
+> On other thread, John mentions gadget-side drivers should not depend on host-side [1].
+> So, I submitted a patch today [2]. What do you think about my submitted patch?
+>
+> [1]
+> https://marc.info/?l=linux-usb&m=153433776202861&w=2
 
-I did this for consistency with the naming in drivers/pci/probe.c,
-which always declares the local variable as 'struct pci_host_bridge *bridge'.
-It's easy to change here if you feel strongly about it (I don't).
+I don't really think this is a big issue, as you can still build the driver
+with CONFIG_USB=n, so it's not a strict dependency.
 
-        Arnd
+> [2]
+> https://patchwork.kernel.org/patch/10569847/
+
+On the other hand, your patch looks nice and is somewhat
+less confusing, so you have my Ack on that.
+
+      Arnd
