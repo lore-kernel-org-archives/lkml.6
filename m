@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF97C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C44C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4CFE20836
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:45:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4CFE20836
+	by mail.kernel.org (Postfix) with ESMTP id E7F9721534
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:45:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7F9721534
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbeHTM77 (ORCPT
+        id S1726788AbeHTNAD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 08:59:59 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34980 "EHLO
+        Mon, 20 Aug 2018 09:00:03 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35010 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726010AbeHTM76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 08:59:58 -0400
+        id S1726010AbeHTNAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 09:00:03 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E741315BE;
-        Mon, 20 Aug 2018 02:45:03 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4875115B2;
+        Mon, 20 Aug 2018 02:45:08 -0700 (PDT)
 Received: from queper01-lin.local (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D02973F2EA;
-        Mon, 20 Aug 2018 02:44:59 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 318023F2EA;
+        Mon, 20 Aug 2018 02:45:04 -0700 (PDT)
 From:   Quentin Perret <quentin.perret@arm.com>
 To:     peterz@infradead.org, rjw@rjwysocki.net,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
@@ -42,9 +42,9 @@ Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
         edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
         currojerez@riseup.net, javi.merino@kernel.org,
         quentin.perret@arm.com
-Subject: [PATCH v6 07/14] sched/topology: Introduce sched_energy_present static key
-Date:   Mon, 20 Aug 2018 10:44:13 +0100
-Message-Id: <20180820094420.26590-8-quentin.perret@arm.com>
+Subject: [PATCH v6 08/14] sched/fair: Clean-up update_sg_lb_stats parameters
+Date:   Mon, 20 Aug 2018 10:44:14 +0100
+Message-Id: <20180820094420.26590-9-quentin.perret@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180820094420.26590-1-quentin.perret@arm.com>
 References: <20180820094420.26590-1-quentin.perret@arm.com>
@@ -53,161 +53,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to ensure a minimal performance impact on non-energy-aware
-systems, introduce a static_key guarding the access to Energy-Aware
-Scheduling (EAS) code.
+In preparation for the introduction of a new root domain flag which can
+be set during load balance (the 'overutilized' flag), clean-up the set
+of parameters passed to update_sg_lb_stats(). More specifically, the
+'local_group' and 'local_idx' parameters can be removed since they can
+easily be reconstructed from within the function.
 
-The static key is set iff all the following conditions are met for at
-least one root domain:
-  1. all online CPUs of the root domain are covered by the Energy
-     Model (EM);
-  2. the complexity of the root domain's EM is low enough to keep
-     scheduling overheads low;
-  3. the root domain has an asymmetric CPU capacity topology (detected
-     by looking for the SD_ASYM_CPUCAPACITY flag in the sched_domain
-     hierarchy).
+While at it, transform the 'overload' parameter into a flag stored in
+the 'sg_status parameter hence facilitating the definition of new flags
+when needed.
 
-cc: Ingo Molnar <mingo@redhat.com>
-cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Suggested-by: Valentin Schneider <valentin.schneider@arm.com>
 Signed-off-by: Quentin Perret <quentin.perret@arm.com>
 ---
- kernel/sched/sched.h    |  1 +
- kernel/sched/topology.c | 77 ++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 77 insertions(+), 1 deletion(-)
+ kernel/sched/fair.c  | 27 +++++++++++----------------
+ kernel/sched/sched.h |  3 +++
+ 2 files changed, 14 insertions(+), 16 deletions(-)
 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index c28c7adcc7b3..23381feae4ec 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7782,16 +7782,16 @@ static bool update_nohz_stats(struct rq *rq, bool force)
+  * update_sg_lb_stats - Update sched_group's statistics for load balancing.
+  * @env: The load balancing environment.
+  * @group: sched_group whose statistics are to be updated.
+- * @load_idx: Load index of sched_domain of this_cpu for load calc.
+- * @local_group: Does group contain this_cpu.
+  * @sgs: variable to hold the statistics for this group.
+- * @overload: Indicate pullable load (e.g. >1 runnable task).
++ * @sg_status: Holds flag indicating the status of the sched_group
+  */
+ static inline void update_sg_lb_stats(struct lb_env *env,
+-			struct sched_group *group, int load_idx,
+-			int local_group, struct sg_lb_stats *sgs,
+-			bool *overload)
++				      struct sched_group *group,
++				      struct sg_lb_stats *sgs,
++				      int *sg_status)
+ {
++	int local_group = cpumask_test_cpu(env->dst_cpu, sched_group_span(group));
++	int load_idx = get_sd_load_idx(env->sd, env->idle);
+ 	unsigned long load;
+ 	int i, nr_running;
+ 
+@@ -7815,7 +7815,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+ 
+ 		nr_running = rq->nr_running;
+ 		if (nr_running > 1)
+-			*overload = true;
++			*sg_status |= SG_OVERLOAD;
+ 
+ #ifdef CONFIG_NUMA_BALANCING
+ 		sgs->nr_numa_running += rq->nr_numa_running;
+@@ -7831,7 +7831,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+ 		if (env->sd->flags & SD_ASYM_CPUCAPACITY &&
+ 		    sgs->group_misfit_task_load < rq->misfit_task_load) {
+ 			sgs->group_misfit_task_load = rq->misfit_task_load;
+-			*overload = 1;
++			*sg_status |= SG_OVERLOAD;
+ 		}
+ 	}
+ 
+@@ -7976,17 +7976,14 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+ 	struct sched_group *sg = env->sd->groups;
+ 	struct sg_lb_stats *local = &sds->local_stat;
+ 	struct sg_lb_stats tmp_sgs;
+-	int load_idx;
+-	bool overload = false;
+ 	bool prefer_sibling = child && child->flags & SD_PREFER_SIBLING;
++	int sg_status = 0;
+ 
+ #ifdef CONFIG_NO_HZ_COMMON
+ 	if (env->idle == CPU_NEWLY_IDLE && READ_ONCE(nohz.has_blocked))
+ 		env->flags |= LBF_NOHZ_STATS;
+ #endif
+ 
+-	load_idx = get_sd_load_idx(env->sd, env->idle);
+-
+ 	do {
+ 		struct sg_lb_stats *sgs = &tmp_sgs;
+ 		int local_group;
+@@ -8001,8 +7998,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+ 				update_group_capacity(env->sd, env->dst_cpu);
+ 		}
+ 
+-		update_sg_lb_stats(env, sg, load_idx, local_group, sgs,
+-						&overload);
++		update_sg_lb_stats(env, sg, sgs, &sg_status);
+ 
+ 		if (local_group)
+ 			goto next_group;
+@@ -8052,8 +8048,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+ 
+ 	if (!env->sd->parent) {
+ 		/* update overload indicator if we are at root domain */
+-		if (READ_ONCE(env->dst_rq->rd->overload) != overload)
+-			WRITE_ONCE(env->dst_rq->rd->overload, overload);
++		WRITE_ONCE(env->dst_rq->rd->overload, sg_status & SG_OVERLOAD);
+ 	}
+ }
+ 
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 4b884e467545..cb3d6afdb114 100644
+index cb3d6afdb114..c6c0cf71d03b 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -1421,6 +1421,7 @@ static const_debug __maybe_unused unsigned int sysctl_sched_features =
+@@ -707,6 +707,9 @@ struct perf_domain {
+ 	struct rcu_head rcu;
+ };
  
- extern struct static_key_false sched_numa_balancing;
- extern struct static_key_false sched_schedstats;
-+extern struct static_key_false sched_energy_present;
- 
- static inline u64 global_rt_period(void)
- {
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 4c6a36a8d7b8..1cb86a0ef00f 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -200,6 +200,14 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
- 
- 	return 1;
- }
-+/*
-+ * This static_key is set if at least one root domain meets all the following
-+ * conditions:
-+ *    1. all CPUs of the root domain are covered by the EM;
-+ *    2. the EM complexity is low enough to keep scheduling overheads low;
-+ *    3. the SD_ASYM_CPUCAPACITY flag is set in the sched_domain hierarchy.
-+ */
-+DEFINE_STATIC_KEY_FALSE(sched_energy_present);
- 
- #ifdef CONFIG_ENERGY_MODEL
- static void free_pd(struct perf_domain *pd)
-@@ -270,12 +278,34 @@ static void destroy_perf_domain_rcu(struct rcu_head *rp)
- 	free_pd(pd);
- }
- 
-+/*
-+ * The complexity of the Energy Model is defined as: nr_pd * (nr_cpus + nr_cs)
-+ * with: 'nr_pd' the number of performance domains; 'nr_cpus' the number of
-+ * CPUs; and 'nr_cs' the sum of the capacity states numbers of all performance
-+ * domains.
-+ *
-+ * It is generally not a good idea to use such a model in the wake-up path on
-+ * very complex platforms because of the associated scheduling overheads. The
-+ * arbitrary constraint below prevents that. It makes EAS usable up to 16 CPUs
-+ * with per-CPU DVFS and less than 8 capacity states each, for example.
-+ */
-+#define EM_MAX_COMPLEXITY 2048
++/* Scheduling group status flags */
++#define SG_OVERLOAD		0x1 /* More than one runnable task on a CPU. */
 +
- static void build_perf_domains(const struct cpumask *cpu_map)
- {
-+	int i, nr_pd = 0, nr_cs = 0, nr_cpus = cpumask_weight(cpu_map);
- 	struct perf_domain *pd = NULL, *tmp;
- 	int cpu = cpumask_first(cpu_map);
- 	struct root_domain *rd = cpu_rq(cpu)->rd;
--	int i;
-+
-+	/* EAS is enabled for asymmetric CPU capacity topologies. */
-+	if (!per_cpu(sd_asym_cpucapacity, cpu)) {
-+		if (sched_debug()) {
-+			pr_info("rd %*pbl: CPUs do not have asymmetric capacities\n",
-+					cpumask_pr_args(cpu_map));
-+		}
-+		goto free;
-+	}
- 
- 	for_each_cpu(i, cpu_map) {
- 		/* Skip already covered CPUs. */
-@@ -288,6 +318,21 @@ static void build_perf_domains(const struct cpumask *cpu_map)
- 			goto free;
- 		tmp->next = pd;
- 		pd = tmp;
-+
-+		/*
-+		 * Count performance domains and capacity states for the
-+		 * complexity check.
-+		 */
-+		nr_pd++;
-+		nr_cs += em_pd_nr_cap_states(pd->obj);
-+	}
-+
-+	/* Bail out if the Energy Model complexity is too high. */
-+	if (nr_pd * (nr_cs + nr_cpus) > EM_MAX_COMPLEXITY) {
-+		if (sched_debug())
-+			pr_info("rd %*pbl: EM complexity is too high\n ",
-+						cpumask_pr_args(cpu_map));
-+		goto free;
- 	}
- 
- 	perf_domain_debug(cpu_map, pd);
-@@ -307,6 +352,35 @@ static void build_perf_domains(const struct cpumask *cpu_map)
- 	if (tmp)
- 		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
- }
-+
-+static void sched_energy_start(int ndoms_new, cpumask_var_t doms_new[])
-+{
-+	/*
-+	 * The conditions for EAS to start are checked during the creation of
-+	 * root domains. If one of them meets all conditions, it will have a
-+	 * non-null list of performance domains.
-+	 */
-+	while (ndoms_new) {
-+		if (cpu_rq(cpumask_first(doms_new[ndoms_new - 1]))->rd->pd)
-+			goto enable;
-+		ndoms_new--;
-+	}
-+
-+	if (static_branch_unlikely(&sched_energy_present)) {
-+		if (sched_debug())
-+			pr_info("%s: stopping EAS\n", __func__);
-+		static_branch_disable_cpuslocked(&sched_energy_present);
-+	}
-+
-+	return;
-+
-+enable:
-+	if (!static_branch_unlikely(&sched_energy_present)) {
-+		if (sched_debug())
-+			pr_info("%s: starting EAS\n", __func__);
-+		static_branch_enable_cpuslocked(&sched_energy_present);
-+	}
-+}
- #else
- static void free_pd(struct perf_domain *pd) { }
- #endif
-@@ -2123,6 +2197,7 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
- match3:
- 		;
- 	}
-+	sched_energy_start(ndoms_new, doms_new);
- #endif
- 
- 	/* Remember the new sched domains: */
+ /*
+  * We add the notion of a root-domain which will be used to define per-domain
+  * variables. Each exclusive cpuset essentially defines an island domain by
 -- 
 2.17.1
 
