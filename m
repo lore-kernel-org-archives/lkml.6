@@ -2,93 +2,96 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 825F5C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 379AFC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38EB820BF3
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:25:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38EB820BF3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id E4741213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:26:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4741213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbeHTOlB (ORCPT
+        id S1726573AbeHTOmF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 10:41:01 -0400
-Received: from gate.crashing.org ([63.228.1.57]:54746 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbeHTOlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 10:41:00 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w7KBPOYx031995;
-        Mon, 20 Aug 2018 06:25:26 -0500
-Message-ID: <fed6012f3438f996cd2e7cb62e8eee58964fa36c.camel@kernel.crashing.org>
-Subject: Re: [PATCH v2] i2c: Remove '-Wno-deprecated-declarations' compiler
- warning
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        sedat.dilek@credativ.de, Jean Delvare <jdelvare@suse.de>,
-        linux-i2c@vger.kernel.org,
+        Mon, 20 Aug 2018 10:42:05 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:37433 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbeHTOmF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 10:42:05 -0400
+Received: by mail-oi0-f67.google.com with SMTP id j205-v6so25165956oib.4;
+        Mon, 20 Aug 2018 04:26:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+s9BNrXjQaT22ZS4ts+TSEtQ1Lld4DxSmX/GDfTts9A=;
+        b=ij0mda53TV88L0H9H/Gw5V/0IoQQgyJJ/t+Qq0hKgWpGL2sz5y0jr3oLI/LecjQAhv
+         no80dSBVmIq4XbfXsH1TtjHZtif/9RikDCCs27g3xlCxErsBdRM53ASf3nABQoQKQYEk
+         qgIWtrXpvwrWtrJltmoBAwnIdUNLrBhCXhQETHClCyo+xj6F7YtrqoDKfbKVLs11IzXe
+         90hsgp/LygzKpckfyYJZHvBFCSFGpz+o0TER18z7LGoDb6N+9rE5MjVsRB1hNXqvU/4m
+         OTGgOzB8VngyZqbQq/Cky+GyQcyoEN0EVVHdI1oIqOfej6QhKbjy/qOA9m4CYwbDgAIK
+         D/Pg==
+X-Gm-Message-State: AOUpUlGLNh0PPL/v67pFeua6KjqUVwQO6Xt9CX2ZYtJiQwwMi4ZYMQc8
+        b2OhVpXBwAICx7X1hvNTg+fyBmFp0xVLQ2bSwDM=
+X-Google-Smtp-Source: AA+uWPwDQsxbAloZ4AVZJBQzSFVqCrRcxF2AngUhXv3ClWxvKkNtEtwaTm4lYDcIj4W9ChMwC30WvGZOEeiijUCJess=
+X-Received: by 2002:aca:fd01:: with SMTP id b1-v6mr14166441oii.307.1534764410989;
+ Mon, 20 Aug 2018 04:26:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180817102645.3839621-1-arnd@arndb.de> <20180817102645.3839621-9-arnd@arndb.de>
+ <CAJZ5v0jjZx3xCbPK5vfx-OCRNtMt59WQOxCYkWNj33Js_2Xi=A@mail.gmail.com> <CAK8P3a1KWn0=xwrqZ+sF27O-WE6paDxQPg6PPZFcgCrgXGaX2A@mail.gmail.com>
+In-Reply-To: <CAK8P3a1KWn0=xwrqZ+sF27O-WE6paDxQPg6PPZFcgCrgXGaX2A@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 20 Aug 2018 13:26:39 +0200
+Message-ID: <CAJZ5v0htQ0KZ8M1BpE7H7weRS89jJWPtA0xvgAUmN53jx5DSYg@mail.gmail.com>
+Subject: Re: [RFC 08/15] x86: PCI: clean up pcibios_scan_root()
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Paul Mackerras <pmac@au1.ibm.com>
-Date:   Mon, 20 Aug 2018 21:25:24 +1000
-In-Reply-To: <20180820080629.i7y4cx4wewmcyqpk@ninjato>
-References: <20180819135135.8801-1-sedat.dilek@credativ.de>
-         <CA+55aFxv5_8C5ApV4cDjpvAmZbn1aiKebc7yrRWBskQQbz9=Hw@mail.gmail.com>
-         <1d2a7c56cc44ff639ef2943366f4868e6e5ecdfe.camel@kernel.crashing.org>
-         <20180820080629.i7y4cx4wewmcyqpk@ninjato>
+        Christoph Hellwig <hch@infradead.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-08-20 at 10:06 +0200, Wolfram Sang wrote:
-> 
-> > Some people still use those old machines, I'll give a try at fixing the
-> > driver.
-> 
-> I did this here a while ago [1] ("macintosh: therm_windtunnel: drop
-> using attach adapter")...
-> 
-> > Paul: Do you still have one of these machines ?
-> 
-> ... but this was the main problem. I couldn't find anyone to test this.
-> Even asked on PPC lists of various distributions.
+On Mon, Aug 20, 2018 at 1:17 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Mon, Aug 20, 2018 at 10:31 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > On Fri, Aug 17, 2018 at 12:32 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> > > -static struct pci_bus *pci_scan_root_bus(struct device *parent, int bus,
+> > > -               struct pci_ops *ops, void *sysdata, struct list_head *resources)
+> > > +void pcibios_scan_root(int busnum)
+> > >  {
+> > > +       struct pci_sysdata *sd;
+> > >         struct pci_host_bridge *bridge;
+> > >         int error;
+> > >
+> > > -       bridge = pci_alloc_host_bridge(0);
+> > > -       if (!bridge)
+> > > -               return NULL;
+> > > +       bridge = pci_alloc_host_bridge(sizeof(sd));
+> > > +       if (!bridge) {
+> > > +               printk(KERN_ERR "PCI: OOM, skipping PCI bus %02x\n", busnum);
+> > > +               return;
+> > > +       }
+> > > +       sd = pci_host_bridge_priv(bridge);
+> >
+> > This looks fishy, as bridge->private is not set at this point AFAICS,
+> > unless one of the previous patches changes that.
+>
+> bridge->private what comes after the bridge structure, and it's allocated
+> by pci_alloc_host_bridge() passing the size of the structure we want
+> for this private area.
 
-Yeah this one is annoying because it's only used by one specific
-machine model..
-
-> Note that we did apply the same approach of patch [1] already in commit
-> ac397c80de89 ("ALSA: ppc: keywest: drop using attach adapter"). This has
-> been tested on HW. I also have a hack to make this driver probe on one
-> of my ARM boards. Of course, no real HW present there, but shows that
-> the new probing works at least there.
-> 
-> This is very interesting timing, too. Because I wanted to use the
-> tentative version jump to 5.0 to finally get rid of this deprecated
-> feature independently of the discussion here. Which would have meant
-> resending the patch and arguing we have enough indications that the
-> patch [1] is sane. And then I could finally remove this callback.
-> 
-> Thanks,
-> 
->    Wolfram
-> 
-> [1] http://patchwork.ozlabs.org/patch/461759/
-
-Ok, worst case we can remove the driver and re-instate it back later if
-somebody complains, but I'll try to chase a machine first.
-
-Cheers,
-Ben.
-
-
+I see, sorry for the noise.
