@@ -2,85 +2,111 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EADFBC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3253EC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE3E1208D4
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:14:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE3E1208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id EBD6B208D4
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 11:15:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBD6B208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbeHTOaC (ORCPT
+        id S1726589AbeHTOat (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 10:30:02 -0400
-Received: from sauhun.de ([88.99.104.3]:58522 "EHLO pokefinder.org"
+        Mon, 20 Aug 2018 10:30:49 -0400
+Received: from foss.arm.com ([217.140.101.70]:36268 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726114AbeHTOaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 10:30:02 -0400
-Received: from localhost (p54B33943.dip0.t-ipconnect.de [84.179.57.67])
-        by pokefinder.org (Postfix) with ESMTPSA id DFFEF2D46B2;
-        Mon, 20 Aug 2018 13:14:48 +0200 (CEST)
-Date:   Mon, 20 Aug 2018 13:14:48 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Esben Haabendal <esben.haabendal@gmail.com>
-Cc:     linux-i2c@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-        kernel@pengutronix.de, NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] arm: dts: ls1021a: Enable I2C DMA support
-Message-ID: <20180820111448.5njestngbsupcpwl@ninjato>
-References: <20180816084315.7857-1-esben.haabendal@gmail.com>
- <20180816084315.7857-4-esben.haabendal@gmail.com>
- <20180820091531.komc6ypyybnq22nw@ninjato>
- <87zhxhgzmm.fsf@gmail.com>
+        id S1726030AbeHTOat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 10:30:49 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DC1C80D;
+        Mon, 20 Aug 2018 04:15:37 -0700 (PDT)
+Received: from [10.4.13.119] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E40D3F2EA;
+        Mon, 20 Aug 2018 04:15:36 -0700 (PDT)
+Subject: Re: [PATCH] arm64: KVM: rename the capability to set guest SError
+ syndrome
+To:     Dongjiu Geng <gengdongjiu@huawei.com>, christoffer.dall@arm.com,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <1534790251-15847-1-git-send-email-gengdongjiu@huawei.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <07f6c4c9-0397-7e03-ba36-1b8086dc1ccf@arm.com>
+Date:   Mon, 20 Aug 2018 12:15:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="p36gfmphq3omwcpo"
-Content-Disposition: inline
-In-Reply-To: <87zhxhgzmm.fsf@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1534790251-15847-1-git-send-email-gengdongjiu@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Dongjiu,
 
---p36gfmphq3omwcpo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 20/08/18 19:37, Dongjiu Geng wrote:
+> In the documentation description, this capability's name is
+> KVM_CAP_ARM_SET_SERROR_ESR, but in the header file this
+> capability's name is KVM_CAP_ARM_INJECT_SERROR_ESR, so it
+> is better to use a same name.
+> 
+> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+> ---
+> In the Documentation/virtual/kvm/api.txt:
+> 
+> +8.19 KVM_CAP_ARM_SET_SERROR_ESR
+> 
+> In the include/uapi/linux/kvm.h:
+> +#define KVM_CAP_ARM_INJECT_SERROR_ESR 156
+> 
+> So in above two files, the capability's name is not same, it
+> is better to use a same name.
+> ---
+>  arch/arm64/kvm/reset.c   | 2 +-
+>  include/uapi/linux/kvm.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
+> index e37c78b..57dc6be 100644
+> --- a/arch/arm64/kvm/reset.c
+> +++ b/arch/arm64/kvm/reset.c
+> @@ -77,7 +77,7 @@ int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
+>  	case KVM_CAP_ARM_PMU_V3:
+>  		r = kvm_arm_support_pmu_v3();
+>  		break;
+> -	case KVM_CAP_ARM_INJECT_SERROR_ESR:
+> +	case KVM_CAP_ARM_SET_SERROR_ESR:
+>  		r = cpus_have_const_cap(ARM64_HAS_RAS_EXTN);
+>  		break;
+>  	case KVM_CAP_SET_GUEST_DEBUG:
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index 07548de..fab7525 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -951,7 +951,7 @@ struct kvm_ppc_resize_hpt {
+>  #define KVM_CAP_HYPERV_TLBFLUSH 155
+>  #define KVM_CAP_S390_HPAGE_1M 156
+>  #define KVM_CAP_NESTED_STATE 157
+> -#define KVM_CAP_ARM_INJECT_SERROR_ESR 158
+> +#define KVM_CAP_ARM_SET_SERROR_ESR 158
+>  
+>  #ifdef KVM_CAP_IRQ_ROUTING
+>  
+> 
 
+I'd prefer you fix the documentation rather than the code, as this would
+pointlessly break existing code.
 
-> Ok, do I need to send to additional list(s)?
-> linux-arm-kernel@lists.infradead.org?
+Thanks,
 
-I'd say resend this patch after rc1 is out and the other 2 patches are
-upstream.
-
-
---p36gfmphq3omwcpo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt6oqQACgkQFA3kzBSg
-KbZTehAAkNpisXhL/VDgIfEQ734n6+rqFsegC8LNNttXaJ/7OaQYe/S/I8HeY4ZG
-BoIU8haBmHDV5Jdpv9PMDNzC7MecoVQqafo1FFO9xD8UyOUVIg40tdOuv59ux8eF
-oCn6ZFsEG9ZheutO0lx1GF3A20TorIeaLj9MlceLjbdAsst+V9hBeZA+gCp2Q5cC
-1UO74ACv1S9cO35q/qRQGq11rsaEUpqMLifAi5uH4avrH+dLROVRuVY8+VbdW29O
-MdsWTFvwilB4bU2NLwFCbGVhT5VxxXYtkFmxSX8fzeHoI0b2AAE46YAJIgzHzqz1
-7n8fF0oUtEpT2i7bUSlcep7XhMmwoX3kg0E9FgQONfRk8LL0t2egWvwWfDuua8tp
-RROD7kP83eYsjj75euG/Glmgjk371Did8JU01yFleDdzLHCbZGJ5ZoIrSlWGAtqj
-DFOj/KuGZ/v1hgrLaSLrBe5QrXGXGz0iGLk9Oig2yLp6/n4sX5qslgx6oEb4x9mq
-lnNVERxUkfwEbBewvKrYQ+TOtWol5qB7QFpqedeu+uHWVgKqBHfMmkg+e2kgAdp7
-3ut6IZacZuW9LvWZPBzljahMwJZDrVLGgIdyOWwT5UT1VyLdnyCj8DZ+67ApC7DS
-cDZosmMvmrwt4rM1ppLwqNt6sFTzoklLDI87txw6zo+6g0GWBgY=
-=6hns
------END PGP SIGNATURE-----
-
---p36gfmphq3omwcpo--
+	M.
+-- 
+Jazz is not dead. It just smells funny...
