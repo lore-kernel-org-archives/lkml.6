@@ -6,45 +6,47 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78113C43615
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CDBC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:11:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3692C2170E
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:11:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3692C2170E
+	by mail.kernel.org (Postfix) with ESMTP id 2E2402170E
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:11:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E2402170E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbeHTT1P (ORCPT
+        id S1727102AbeHTT1a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 15:27:15 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41141 "EHLO
+        Mon, 20 Aug 2018 15:27:30 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54457 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726667AbeHTT1O (ORCPT
+        with ESMTP id S1726099AbeHTT1a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 15:27:14 -0400
+        Mon, 20 Aug 2018 15:27:30 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7KGAm8D2126026
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7KGABb92126004
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 20 Aug 2018 09:10:48 -0700
+        Mon, 20 Aug 2018 09:10:11 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7KGAllk2126023;
-        Mon, 20 Aug 2018 09:10:47 -0700
-Date:   Mon, 20 Aug 2018 09:10:47 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7KGABuC2126001;
+        Mon, 20 Aug 2018 09:10:11 -0700
+Date:   Mon, 20 Aug 2018 09:10:11 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnd Bergmann <tipbot@zytor.com>
-Message-ID: <tip-704ae091b061082b37a9968621af4c290c641d50@git.kernel.org>
-Cc:     gregkh@linuxfoundation.org, arnd@arndb.de, tglx@linutronix.de,
-        hpa@zytor.com, nstange@suse.de, linux-kernel@vger.kernel.org,
-        bp@suse.de, mingo@kernel.org
-Reply-To: nstange@suse.de, linux-kernel@vger.kernel.org, bp@suse.de,
-          mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-          arnd@arndb.de, gregkh@linuxfoundation.org
-In-Reply-To: <20180817100156.3009043-1-arnd@arndb.de>
-References: <20180817100156.3009043-1-arnd@arndb.de>
+From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
+Message-ID: <tip-2e549b2ee0e358bc758480e716b881f9cabedb6a@git.kernel.org>
+Cc:     mingo@kernel.org, dwmw2@infradead.org, luto@kernel.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        ak@linux.intel.com, bp@alien8.de, hpa@zytor.com,
+        matt@softrans.com.au, jason.vas.dias@gmail.com, tglx@linutronix.de
+Reply-To: tglx@linutronix.de, jason.vas.dias@gmail.com, bp@alien8.de,
+          linux-kernel@vger.kernel.org, ak@linux.intel.com,
+          peterz@infradead.org, matt@softrans.com.au, hpa@zytor.com,
+          dwmw2@infradead.org, luto@kernel.org, mingo@kernel.org
+In-Reply-To: <c76538cd3afbe19c6246c2d1715bc6a60bd63985.1534448381.git.luto@kernel.org>
+References: <c76538cd3afbe19c6246c2d1715bc6a60bd63985.1534448381.git.luto@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/mce: Add notifier_block forward declaration
-Git-Commit-ID: 704ae091b061082b37a9968621af4c290c641d50
+Subject: [tip:x86/urgent] x86/vdso: Fix vDSO build if a retpoline is emitted
+Git-Commit-ID: 2e549b2ee0e358bc758480e716b881f9cabedb6a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,46 +60,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  704ae091b061082b37a9968621af4c290c641d50
-Gitweb:     https://git.kernel.org/tip/704ae091b061082b37a9968621af4c290c641d50
-Author:     Arnd Bergmann <arnd@arndb.de>
-AuthorDate: Fri, 17 Aug 2018 12:01:36 +0200
+Commit-ID:  2e549b2ee0e358bc758480e716b881f9cabedb6a
+Gitweb:     https://git.kernel.org/tip/2e549b2ee0e358bc758480e716b881f9cabedb6a
+Author:     Andy Lutomirski <luto@kernel.org>
+AuthorDate: Thu, 16 Aug 2018 12:41:15 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Mon, 20 Aug 2018 18:04:42 +0200
+CommitDate: Mon, 20 Aug 2018 18:04:41 +0200
 
-x86/mce: Add notifier_block forward declaration
+x86/vdso: Fix vDSO build if a retpoline is emitted
 
-Without linux/irq.h, there is no declaration of notifier_block, leading to
-a build warning:
+Currently, if the vDSO ends up containing an indirect branch or
+call, GCC will emit the "external thunk" style of retpoline, and it
+will fail to link.
 
-In file included from arch/x86/kernel/cpu/mcheck/threshold.c:10:
-arch/x86/include/asm/mce.h:151:46: error: 'struct notifier_block' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
+Fix it by building the vDSO with inline retpoline thunks.
 
-It's sufficient to declare the struct tag here, which avoids pulling in
-more header files.
+I haven't seen any reports of this triggering on an unpatched
+kernel.
 
-Fixes: 447ae3166702 ("x86: Don't include linux/irq.h from asm/hardirq.h")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: commit 76b043848fd2 ("x86/retpoline: Add initial retpoline support")
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Nicolai Stange <nstange@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/20180817100156.3009043-1-arnd@arndb.de
+Acked-by: Matt Rickard <matt@softrans.com.au>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jason Vas Dias <jason.vas.dias@gmail.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/c76538cd3afbe19c6246c2d1715bc6a60bd63985.1534448381.git.luto@kernel.org
 
 ---
- arch/x86/include/asm/mce.h | 1 +
- 1 file changed, 1 insertion(+)
+ Makefile                     | 4 ++++
+ arch/x86/entry/vdso/Makefile | 6 ++++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
-index 8c7b3e5a2d01..3a17107594c8 100644
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -148,6 +148,7 @@ enum mce_notifier_prios {
- 	MCE_PRIO_LOWEST		= 0,
- };
+diff --git a/Makefile b/Makefile
+index a0650bf79606..7bab2e90e4e1 100644
+--- a/Makefile
++++ b/Makefile
+@@ -507,9 +507,13 @@ KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+ endif
  
-+struct notifier_block;
- extern void mce_register_decode_chain(struct notifier_block *nb);
- extern void mce_unregister_decode_chain(struct notifier_block *nb);
+ RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
++RETPOLINE_VDSO_CFLAGS_GCC := -mindirect-branch=thunk-inline -mindirect-branch-register
+ RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
++RETPOLINE_VDSO_CFLAGS_CLANG := -mretpoline
+ RETPOLINE_CFLAGS := $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
++RETPOLINE_VDSO_CFLAGS := $(call cc-option,$(RETPOLINE_VDSO_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_VDSO_CFLAGS_CLANG)))
+ export RETPOLINE_CFLAGS
++export RETPOLINE_VDSO_CFLAGS
  
+ KBUILD_CFLAGS	+= $(call cc-option,-fno-PIE)
+ KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
+diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+index 9f695f517747..fa3f439f0a92 100644
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -68,9 +68,9 @@ $(obj)/vdso-image-%.c: $(obj)/vdso%.so.dbg $(obj)/vdso%.so $(obj)/vdso2c FORCE
+ CFL := $(PROFILING) -mcmodel=small -fPIC -O2 -fasynchronous-unwind-tables -m64 \
+        $(filter -g%,$(KBUILD_CFLAGS)) $(call cc-option, -fno-stack-protector) \
+        -fno-omit-frame-pointer -foptimize-sibling-calls \
+-       -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO
++       -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO $(RETPOLINE_VDSO_CFLAGS)
+ 
+-$(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
++$(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
+ 
+ #
+ # vDSO code runs in userspace and -pg doesn't help with profiling anyway.
+@@ -132,11 +132,13 @@ KBUILD_CFLAGS_32 := $(filter-out -mcmodel=kernel,$(KBUILD_CFLAGS_32))
+ KBUILD_CFLAGS_32 := $(filter-out -fno-pic,$(KBUILD_CFLAGS_32))
+ KBUILD_CFLAGS_32 := $(filter-out -mfentry,$(KBUILD_CFLAGS_32))
+ KBUILD_CFLAGS_32 := $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS_32))
++KBUILD_CFLAGS_32 := $(filter-out $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS_32))
+ KBUILD_CFLAGS_32 += -m32 -msoft-float -mregparm=0 -fpic
+ KBUILD_CFLAGS_32 += $(call cc-option, -fno-stack-protector)
+ KBUILD_CFLAGS_32 += $(call cc-option, -foptimize-sibling-calls)
+ KBUILD_CFLAGS_32 += -fno-omit-frame-pointer
+ KBUILD_CFLAGS_32 += -DDISABLE_BRANCH_PROFILING
++KBUILD_CFLAGS_32 += $(RETPOLINE_VDSO_CFLAGS)
+ $(obj)/vdso32.so.dbg: KBUILD_CFLAGS = $(KBUILD_CFLAGS_32)
+ 
+ $(obj)/vdso32.so.dbg: FORCE \
