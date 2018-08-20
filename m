@@ -2,125 +2,108 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50858C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB81C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:47:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0704B21722
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:45:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="ZdxqcvB+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0704B21722
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 4849D2172C
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:47:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4849D2172C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbeHTSBZ (ORCPT
+        id S1726891AbeHTSDG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 14:01:25 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:53918 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbeHTSBZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 14:01:25 -0400
-Received: by mail-it0-f68.google.com with SMTP id 72-v6so20911469itw.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 07:45:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Nvghb6d1UHIvwtIvS1HDDKmjGbMeRZK9ngrHRje7tPY=;
-        b=ZdxqcvB+NNIlglD02DYgzJ6WAc9jkjCW9bQe+4wWpUKcQEoh/l72Y2e/JTqc2n/n3v
-         iqWlCiu43z2e6eyNImYS0Q3vL61n42qdGEZWZkUpGLgQ2P113LpA50q9hOMkW+tg4PUK
-         4wQPfg1+mnnE3bs87eRuEZXZzTn3Li6zxLALcI11ndBQ4QdgTuam0dZUdCIKgsQWoKAf
-         Ai2i4kpc2eAqmNGvsrWq2YMFJyHRcKQce/EmzEjsHDyjnLALm2WaFgpUAKtpbwv5d6bV
-         dBngNMenVgkRq5exHGEfINFrkH/IyQFCisbLDLRaHyxzVj0ULXXOP6YCNVpHtyidhdvp
-         L6fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Nvghb6d1UHIvwtIvS1HDDKmjGbMeRZK9ngrHRje7tPY=;
-        b=VqdoeRsGRyodSzVm8ZvmkS72wSB7T1w5ZQXmYzxt644YyEw0jF3IeZeE4g+LbKev9i
-         75fKsRloRRP4QjXRw+mCe9kPcwDeDvqb2h/SkZbT0ISkhDATPWn2GETFMy5TqKrIO4fe
-         XaeJcefXqtsRFTkr6GlqniDKX1v8KsUA/l7FxPsUBURDXfoxQhUtQTE4W0dfO5pQUDZK
-         zAil6j4SgfHusb83DQLVvMxPBXT7Vo44sd2e0dOXWnPwmbB5LfnucjjwnzG7AdjLB2CP
-         pYXy7o9ogrPe8zMEPQzqVfivmF5YmyZ7hDSwBM/mdEX2TrrZfpC74kxaTFwflslZhMN5
-         Ho7g==
-X-Gm-Message-State: AOUpUlEbvVDrgzzFFxjgCXBjCgBNSgwiuxXrZi5mi0B882Xx3cecUQUc
-        AoRYPTOuMERO8ojUmHD4pZ24amU4m6s=
-X-Google-Smtp-Source: AA+uWPwwdSxsLLKaVff8X/vv6x3MurMts4QU4+kpkhCz2FC0aJD/NRVSZOaz5h67amXyVSZkSB+m+Q==
-X-Received: by 2002:a24:3901:: with SMTP id l1-v6mr12597063ita.88.1534776328786;
-        Mon, 20 Aug 2018 07:45:28 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id h71-v6sm5416155ith.9.2018.08.20.07.45.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 Aug 2018 07:45:27 -0700 (PDT)
-Subject: Re: [PATCH V3 1/2] blk-mq: init hctx sched after update ctx and hctx
- mapping
-To:     Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc:     tom.leiming@gmail.com, bart.vanassche@wdc.com,
-        keith.busch@linux.intel.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1534749606-7311-1-git-send-email-jianchao.w.wang@oracle.com>
- <1534749606-7311-2-git-send-email-jianchao.w.wang@oracle.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <048cdf08-6c9e-f54a-1e5c-f1d40fb2ecdb@kernel.dk>
-Date:   Mon, 20 Aug 2018 08:45:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 20 Aug 2018 14:03:06 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44105 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726119AbeHTSDG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 14:03:06 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4EAFB208C2; Mon, 20 Aug 2018 16:47:07 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-85-9.w90-88.abo.wanadoo.fr [90.88.27.9])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 17CDB20828;
+        Mon, 20 Aug 2018 16:46:57 +0200 (CEST)
+Date:   Mon, 20 Aug 2018 16:46:57 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     devicetree@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: allwinner: dts: h6: fix Pine H64 MMC bus width
+Message-ID: <20180820144657.pexeoupw5h5xwcc5@flea>
+References: <20180726044805.55888-1-icenowy@aosc.io>
+ <20180730082712.koiaej6dxjnnk6lb@flea>
+ <6e2df3d919b85f48c22c653124b7c2b594cb2d28.camel@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <1534749606-7311-2-git-send-email-jianchao.w.wang@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="twmsbk4y6bcyavqt"
+Content-Disposition: inline
+In-Reply-To: <6e2df3d919b85f48c22c653124b7c2b594cb2d28.camel@aosc.io>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/20/18 1:20 AM, Jianchao Wang wrote:
-> @@ -2913,6 +2906,29 @@ static void __blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set,
->  	list_for_each_entry(q, &set->tag_list, tag_set_list)
->  		blk_mq_freeze_queue(q);
->  
-> +	/*
-> +	 * switch io scheduler to NULL to clean up the data in it.
-> +	 * will get it back after update mapping between cpu and hw queues.
-> +	 */
 
-"Switch IO scheduler to 'none', cleaning up the data associated with
-the previous scheduler. We'll switch back once we're done updating
-the new sw to hw queue mappings.
+--twmsbk4y6bcyavqt
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +	list_for_each_entry(q, &set->tag_list, tag_set_list) {
-> +		if (!q->elevator) {
-> +			q->elv_type = NULL;
-> +			continue;
-> +		}
-> +		q->elv_type = q->elevator->type;
-> +		mutex_lock(&q->sysfs_lock);
-> +		/*
-> +		 * After elevator_switch_mq, the previous elevator_queue will be
-> +		 * released by elevator_release. The reference of the io scheduler
-> +		 * module get by elevator_get will also be put. So we need to get
-> +		 * a reference of the io scheduler module here to prevent it to be
-> +		 * removed.
-> +		 */
-> +		__module_get(q->elv_type->elevator_owner);
-> +		elevator_switch_mq(q, NULL);
-> +		mutex_unlock(&q->sysfs_lock);
-> +	}
+On Mon, Aug 20, 2018 at 10:24:20PM +0800, Icenowy Zheng wrote:
+> =E5=9C=A8 2018-07-30=E4=B8=80=E7=9A=84 10:27 +0200=EF=BC=8CMaxime Ripard=
+=E5=86=99=E9=81=93=EF=BC=9A
+> > On Thu, Jul 26, 2018 at 12:48:05PM +0800, Icenowy Zheng wrote:
+> > > Currently the enabled MMC controllers on Pine H64 do not have bus-
+> > > width
+> > > set, which make them fall back to 1-bit mode and become quite slow.
+> > >=20
+> > > Fix this by add the corresponding bus-width properties.
+> > >=20
+> > > Fixes: ecbd611882a1 ("arm64: allwinner: h6: enable MMC0/2 on Pine
+> > > H64")
+> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> >=20
+> > Applied, thanks!
+>=20
+> BTW why didn't I see it in next-20180820?
+>=20
+> It's 3 weeks later, and you didn't say that the patch is queued for
+> another version.
 
-I don't hate this, but I also find it pretty annoying to put local state
-into the queue itself. It would be much nicer _not_ to have ->elv_type
-in the queue itself. That would need an allocation, however...
+This has been merged to a fix branch we'll send for 4.19 once rc1 is
+out.
 
-Apart from those two things, looks fine to me.
+Maxime
 
--- 
-Jens Axboe
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--twmsbk4y6bcyavqt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlt61GAACgkQ0rTAlCFN
+r3S92A/9ESkWSTDWOv3o8zqiDdTI8CCI1Y4i9iECngE+xDJsuQ49j/raF/JSp8bV
+udPM0mRikDkVoKnzae7UQGhhU4YjFcePopC4KTsSMXac/KszIIitsd3QDLnYhqKo
+3gXNN2yt3g2pUBFcisjARVUTuKVnLbn0xWOVIeOkUA9LplCwCfF79kCmGWZOvTds
+C7u1J3gxQlXGEJoZwrvg+gFy7P3uc/BKn6J+uJYau/1MuoTgsjO4wK+9W7hHa54R
+gFYx5iWAPlg0zU7/1AFlF2XUEYOppYWl6y3kcblsvKEH92XqoidCGp1FUjrD71L6
+YPRvj0WVr/LNetnP3AZT/KDDYZPammT7+V6kNsAAthfXXiUNQggU8XNTQ1zDk0Pp
+BAWlMXjlt6ldeCVleAdcz4ObSf5+OQaYM56x9HwmgVKBlkHMx6jB0p93uBB9i/Mr
+OZcbPnNP7MJM5yUMa9tiFvGnzT+w1hz/FbzIaSZQCw+wMwlzxg/hKVjpD2ndrYPc
+IMrqwviW0Qdr7NEYdkCR+FQfq/sniVBziFBR+HR6kCKXAWghyQQPRWdKHjueTlFa
+iSAhyr30UJWVaIwLyxhXf6ZoQxbhREM6YQ+QLB+DMCjUzSIA6R5fz6/NRarhHyWF
+if6jZViGdz7yDQGGqS7Oe27sEpjTn//39Br3ojkAZRmsFC3tCAY=
+=QYFG
+-----END PGP SIGNATURE-----
+
+--twmsbk4y6bcyavqt--
