@@ -2,115 +2,123 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AC1C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 02:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB8BC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 02:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF13620C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 02:24:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F7792147E
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 02:47:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SpWBav7n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF13620C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tqc380+t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F7792147E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726147AbeHTFiK (ORCPT
+        id S1726145AbeHTGB3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 01:38:10 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33180 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725926AbeHTFiK (ORCPT
+        Mon, 20 Aug 2018 02:01:29 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:45894 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbeHTGB3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 01:38:10 -0400
-Received: by mail-wr1-f68.google.com with SMTP id v90-v6so8489355wrc.0;
-        Sun, 19 Aug 2018 19:24:28 -0700 (PDT)
+        Mon, 20 Aug 2018 02:01:29 -0400
+Received: by mail-yw1-f68.google.com with SMTP id 139-v6so6323332ywg.12
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Aug 2018 19:47:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZGqanjG3aTyMTIfD6X7vcnRSVBqfnILXJxrQHpr+m6A=;
-        b=SpWBav7noyK+eQIASNwEKY6Yxe0fAOqdbOvB0QfLwDqzYDFR2cuQZ3OIkyGdOKrAuN
-         EFwTAr54bEO5a9kmcqhXBZv0ft5+QgTlJdS/2QMVbGzbPN63ptySwwvmzsvXWgQR+CEb
-         HmxDk4BTfgB6Z/YvD/TZyJ0Vk/cu1UQb6GOMJABxKcDw1DWHeqwSQn+JaS9IETkcj6mx
-         ndAq+HhR0I7ZBtcwqLF/ppY93zZ0N6696eYa/0BT8e5ZAdyFmtBuSjL2crpkAPiPmEh5
-         N9/867lfqN9Q6I1HywTfnIWDG8+RdlHIUqKDLwF9Nf7cP3DJ3+AjLfugR4JxG7+X6V0i
-         n66w==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=b1I7dBbI/arDrANAKQX779/AMaCxS+x0jAszuzQ5uOU=;
+        b=Tqc380+thWPlWjZdC43KIH9HsvJPBgjMwmT0IBzXAVc6OY8X5GHz/CVwSMLbYos0WX
+         LOmHVBg5zoR5z0kMmMV5h2vN/8kQBD2idwExwxMltwsujCsD2KcAxbJEKoMHDEOmogvP
+         GPrE6XSuEiw+9mVNHsyMjrlj2mgdDkwsXISSc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZGqanjG3aTyMTIfD6X7vcnRSVBqfnILXJxrQHpr+m6A=;
-        b=OI2eOZvBxHBt5wAVEH97WJlTVnpn7GxveJZqCukt4rKihxILBszQaDpoUlG1XeRcPj
-         PP3wduDbcC+5QIgM9eTSc4IiZSLXV8+lAJGeE/8N+tk4EiduFd+wAAwWpNuzu7x3BoJN
-         /4vD10CO3eaA8/xS30Js7XvPvIvZLDVt+jAM5kqwGMROFfxzmtuYQx9OSmWbBN43z64l
-         inIhjjNKS2hk8MO1zN/JZ95AWHZnf3yY5t8INOmBGukndu3Eft75tB472w7gj6782Y89
-         FU1Xq24R+Ga7kwBOJ/fcDNlyHmPkTN8tJxameqx+lPRhb2l3ZYhgQ3ngC9LZ7uGHj7QC
-         mXIg==
-X-Gm-Message-State: AOUpUlGoP1hjIsTXyVVK7WfEUaxWHpKszVGg4NnNZtEoLG/eKyYyR4d1
-        UaIFbn2mmMGTHkNezlQlHsbZVnGe40OFOh5VrLs=
-X-Google-Smtp-Source: AA+uWPyN9pMFR50yPxL/ZX4rj5uk32IuzRcTCdXBjsegNyiz0SjFz/lhJpZ9YC/Q0uAqmIXNHfnPJbaBZolmaUHOCzE=
-X-Received: by 2002:adf:97d3:: with SMTP id t19-v6mr9877700wrb.283.1534731867574;
- Sun, 19 Aug 2018 19:24:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <1534478043-7170-1-git-send-email-jianchao.w.wang@oracle.com>
- <1534478043-7170-2-git-send-email-jianchao.w.wang@oracle.com>
- <CACVXFVPZF7ohzUib4Nr1qdHLwjpEWP4+be6h6GmZh1y9-qsVqg@mail.gmail.com> <96657784-dd95-6ea9-3ffd-25737c534075@oracle.com>
-In-Reply-To: <96657784-dd95-6ea9-3ffd-25737c534075@oracle.com>
-From:   Ming Lei <tom.leiming@gmail.com>
-Date:   Mon, 20 Aug 2018 10:24:14 +0800
-Message-ID: <CACVXFVMqjiSmzL2JeLUV2Q4bXqy2WRNHahg-fusFYjHeCX3gng@mail.gmail.com>
-Subject: Re: [PATCH V2 1/2] blk-mq: init hctx sched after update ctx and hctx mapping
-To:     "jianchao.wang" <jianchao.w.wang@oracle.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Keith Busch <keith.busch@linux.intel.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ming Lei <ming.lei@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=b1I7dBbI/arDrANAKQX779/AMaCxS+x0jAszuzQ5uOU=;
+        b=diiFsMC/gKXqeuxzNAyamI6Zgb8Ba/aQ5Ml0//7cMZD5FUrKtHEYbZZwUkFjRsCFVq
+         Nifwl7cbGnbXH2a9o6U1DxuhQ7xE559M4fK+0jiJylwd1V0Z0jR5TYAnbXig1JVwyDhJ
+         Xo/CBmhoHQcOBrlpqgRFN8F/3YRTWpm4VYWivK7ZXt2KX6HzcCAXmG4W22jUw51nqusp
+         ZkTbM8tWJDu49FHF4xs/OtEuIEk5MBJ9zsshl4DUg0zRjOF6FIgvc1smguLCJmH6+uvu
+         XAEfCGr2GmrUrWI//cH3IAKa9AYMFTxKrGo4mOMVhNVNbt948sxnRMdoEG0MMS+8dcFn
+         6U7g==
+X-Gm-Message-State: AOUpUlFFSb9nL/tO9HciSCS3z2HcPCmMuxuGhC5OZc9R0wJTcumGSMYi
+        /f0zAubDKXharv5Utax7vEWHIg==
+X-Google-Smtp-Source: AA+uWPzciJvK7tDvP1R58iv7axuCJ66pWbwqisQXPt1diLxRDs+sqlRezB/ZjLV+0SOxW809SouVNQ==
+X-Received: by 2002:a81:518e:: with SMTP id f136-v6mr4067828ywb.46.1534733263608;
+        Sun, 19 Aug 2018 19:47:43 -0700 (PDT)
+Received: from a8k.localdomain (68-248-140-212.lightspeed.austtx.sbcglobal.net. [68.248.140.212])
+        by smtp.gmail.com with ESMTPSA id h65-v6sm4335668ywe.75.2018.08.19.19.47.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 19 Aug 2018 19:47:42 -0700 (PDT)
+From:   Brian Brooks <brian.brooks@linaro.org>
+To:     davem@davemloft.net
+Cc:     antoine.tenart@bootlin.com, maxime.chevallier@bootlin.com,
+        ymarkman@marvell.com, stefanc@marvell.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bjorn.topel@intel.com,
+        brian.brooks@arm.com, Brian Brooks <brian.brooks@linaro.org>
+Subject: [PATCH] net: mvpp2: avoid bouncing buffers
+Date:   Sun, 19 Aug 2018 21:47:30 -0500
+Message-Id: <20180820024730.9147-1-brian.brooks@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 9:29 AM jianchao.wang
-<jianchao.w.wang@oracle.com> wrote:
->
-> Hi Ming
->
-> On 08/17/2018 05:33 PM, Ming Lei wrote:
-> >> +               /*
-> >> +                * elevator_release will put it.
-> >> +                */
-> >> +               __module_get(q->elv_type->elevator_owner);
-> > I understand what elevator_release() frees is the 'ref-counter' got in
-> > elevator_get(), but who will be the counter-pair of the above  __module_get()?
->
->
-> Sorry for my bad description.
->
-> The code path is:
->
-> elevator_release
->   -> elevator_put(e->type)
->     -> module_put(e->elevator_owner)
->
-> In normal elevator switch path, elevator_get will hold a reference counter of the
-> elevator_owner.
-> In this patch set, the elevator_type is saved directly. To prevent the io scheduler module
-> is removed, we need to hold a reference of the module.
+Some memory regions used by this device need to share the same
+upper 8 bits of the 40-bit bus address. Currently, a coherent
+DMA mask of 32 bits is used so that dma_alloc_coherent() regions
+have the same upper 8 bits. Packet buffers are not allocated via
+DMA APIs, and the device does not require these memory regions
+to have the same upper 8 bits. However, packet buffers are being
+bounced during streaming mappings because streaming and coherent
+DMA are using the same DMA mask, i.e. dev->dma_mask points to
+dev->coherent_dma_mask.
 
-Yeah, I agree that the module reference need to be held, but it need to be
-released too.
+Avoid bouncing packet buffers by ensuring streaming DMA uses a
+mask of 40 bits and coherent DMA uses a mask of 32 bits. iperf3
+shows throughput increases from 4.04 Gbps to 9.14 Gbps.
 
-My concern is that this introduced getting module reference in your patch
-isn't released. The module reference is a counter too, so the get and
-put operation should be matched.
+Signed-off-by: Brian Brooks <brian.brooks@linaro.org>
+---
+ drivers/net/ethernet/marvell/mvpp2/mvpp2.h      | 3 +++
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 6 ++++++
+ 2 files changed, 9 insertions(+)
 
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
+index def00dc3eb4e..3eb0c3ede8d2 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
+@@ -676,6 +676,9 @@ struct mvpp2 {
+ 	struct clk *mg_core_clk;
+ 	struct clk *axi_clk;
+ 
++	/* DMA mask for streaming mappings */
++	u64 dma_mask;
++
+ 	/* List of pointers to port structures */
+ 	int port_count;
+ 	struct mvpp2_port *port_list[MVPP2_MAX_PORTS];
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+index 0319ed9ef8b8..3a190c489589 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -5126,6 +5126,12 @@ static int mvpp2_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	if (priv->hw_version == MVPP22) {
++		/* Platform code may have set dev->dma_mask to point
++		 * to dev->coherent_dma_mask, but we want to ensure
++		 * they take different values due to comment below.
++		 */
++		pdev->dev.dma_mask = &priv->dma_mask;
++
+ 		err = dma_set_mask(&pdev->dev, MVPP2_DESC_DMA_MASK);
+ 		if (err)
+ 			goto err_axi_clk;
+-- 
+2.17.1
 
-thanks,
-Ming Lei
