@@ -2,270 +2,197 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73851C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2197BC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1980E2170E
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:41:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1980E2170E
+	by mail.kernel.org (Postfix) with ESMTP id BF55A2172C
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:42:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vRLSHYJO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF55A2172C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbeHTR5P (ORCPT
+        id S1726765AbeHTR6u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 13:57:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51210 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726735AbeHTR5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 13:57:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BD95BAF3E;
-        Mon, 20 Aug 2018 14:41:17 +0000 (UTC)
-Date:   Mon, 20 Aug 2018 16:41:16 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Li RongQing <lirongqing@baidu.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        darrick.wong@oracle.com
-Subject: Re: [PATCH] mm: introduce kvvirt_to_page() helper
-Message-ID: <20180820144116.GO29735@dhcp22.suse.cz>
-References: <1534596541-31393-1-git-send-email-lirongqing@baidu.com>
+        Mon, 20 Aug 2018 13:58:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55530 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726221AbeHTR6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 13:58:50 -0400
+Received: from localhost (LFbn-NCY-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 280C721722;
+        Mon, 20 Aug 2018 14:42:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534776173;
+        bh=mj6ZRM7vj8mc4GZMoCz9wyZd0wHJc3CvlZTL3PTeb2U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vRLSHYJO8w9Kvxegbn6whOpyK6OpfC4e/19jpsEXFfy7K//ifW1tjsYliusXTcrjQ
+         XtfD6JokiNcnWTAN+p9Xd7PtyVgUH2kM6MeO9evIlBi5RKEpl5jJpgarN6UD6ug+4D
+         QjE5FMvN9uC2qXGOkORPpq+ZL5Hga0RYX83ws9Ck=
+Date:   Mon, 20 Aug 2018 16:42:50 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Leo Yan <leo.yan@linaro.org>
+Subject: Re: [PATCH] sched: idle: Avoid retaining the tick when it has been
+ stopped
+Message-ID: <20180820144249.GA9770@lerouge>
+References: <2161372.IsD4PDzmmY@aspire.rjw.lan>
+ <20180816132723.GA6010@lerouge>
+ <10817203.8q7neLTJVD@aspire.rjw.lan>
+ <20180817141252.GA12426@lerouge>
+ <CAJZ5v0gD79NuTgr3dVS_3cBFz5Q1JtQTP8mDfSM1tvwDcYkFAQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1534596541-31393-1-git-send-email-lirongqing@baidu.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAJZ5v0gD79NuTgr3dVS_3cBFz5Q1JtQTP8mDfSM1tvwDcYkFAQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 18-08-18 20:49:01, Li RongQing wrote:
-> The new helper returns address mapping page, which has several users
-> in individual subsystem, like mem_to_page in xfs_buf.c and pgv_to_page
-> in af_packet.c, unify them
-
-kvvirt_to_page is a weird name. I guess you wanted it to fit into
-kv*alloc, kvfree naming, right? If yes then I guess kvmem_to_page
-would be slightly better.
-
-Other than that the patch makes sense to me. It would be great to add
-some documentation and be explicit that the call is only safe on
-directly mapped kernel address and vmalloc areas.
-
-> Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
-> Signed-off-by: Li RongQing <lirongqing@baidu.com>
-> ---
->  fs/xfs/xfs_buf.c       | 13 +------------
->  include/linux/mm.h     |  8 ++++++++
->  net/9p/trans_virtio.c  |  5 +----
->  net/ceph/crypto.c      |  6 +-----
->  net/packet/af_packet.c | 31 ++++++++++++-------------------
->  5 files changed, 23 insertions(+), 40 deletions(-)
+On Sat, Aug 18, 2018 at 11:57:00PM +0200, Rafael J. Wysocki wrote:
+> On Fri, Aug 17, 2018 at 4:12 PM Frederic Weisbecker <frederic@kernel.org> wrote:
+> >
+> > On Fri, Aug 17, 2018 at 11:32:07AM +0200, Rafael J. Wysocki wrote:
+> > > On Thursday, August 16, 2018 3:27:24 PM CEST Frederic Weisbecker wrote:
+> > > > On Thu, Aug 09, 2018 at 07:08:34PM +0200, Rafael J. Wysocki wrote:
+> > > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > >
+> > > > > If the tick has been stopped already, but the governor has not asked to
+> > > > > stop it (which it can do sometimes), the idle loop should invoke
+> > > > > tick_nohz_idle_stop_tick(), to let tick_nohz_stop_tick() take care
+> > > > > of this case properly.
+> > > > >
+> > > > > Fixes: 554c8aa8ecad (sched: idle: Select idle state before stopping the tick)
+> > > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > > ---
+> > > > >  kernel/sched/idle.c |    2 +-
+> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > >
+> > > > > Index: linux-pm/kernel/sched/idle.c
+> > > > > ===================================================================
+> > > > > --- linux-pm.orig/kernel/sched/idle.c
+> > > > > +++ linux-pm/kernel/sched/idle.c
+> > > > > @@ -190,7 +190,7 @@ static void cpuidle_idle_call(void)
+> > > > >            */
+> > > > >           next_state = cpuidle_select(drv, dev, &stop_tick);
+> > > > >
+> > > > > -         if (stop_tick)
+> > > > > +         if (stop_tick || tick_nohz_tick_stopped())
+> > > > >                   tick_nohz_idle_stop_tick();
+> > > > >           else
+> > > > >                   tick_nohz_idle_retain_tick();
+> > > >
+> > > > So what if tick_nohz_idle_stop_tick() sees no timer to schedule and
+> > > > cancels it, we may remain idle in a shallow state for a long while?
+> > >
+> > > Yes, but the governor is expected to avoid using shallow states when the
+> > > tick is stopped already.
+> >
+> > So what kind of sleep do we enter to when an idle tick fires and we go
+> > back to idle? Is it always deep?
 > 
-> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> index e839907e8492..edd22b33f49e 100644
-> --- a/fs/xfs/xfs_buf.c
-> +++ b/fs/xfs/xfs_buf.c
-> @@ -866,17 +866,6 @@ xfs_buf_set_empty(
->  	bp->b_maps[0].bm_len = bp->b_length;
->  }
->  
-> -static inline struct page *
-> -mem_to_page(
-> -	void			*addr)
-> -{
-> -	if ((!is_vmalloc_addr(addr))) {
-> -		return virt_to_page(addr);
-> -	} else {
-> -		return vmalloc_to_page(addr);
-> -	}
-> -}
-> -
->  int
->  xfs_buf_associate_memory(
->  	xfs_buf_t		*bp,
-> @@ -909,7 +898,7 @@ xfs_buf_associate_memory(
->  	bp->b_offset = offset;
->  
->  	for (i = 0; i < bp->b_page_count; i++) {
-> -		bp->b_pages[i] = mem_to_page((void *)pageaddr);
-> +		bp->b_pages[i] = kvvirt_to_page((void *)pageaddr);
->  		pageaddr += PAGE_SIZE;
->  	}
->  
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 68a5121694ef..bb34a3c71df5 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -599,6 +599,14 @@ static inline void *kvcalloc(size_t n, size_t size, gfp_t flags)
->  	return kvmalloc_array(n, size, flags | __GFP_ZERO);
->  }
->  
-> +static inline struct page *kvvirt_to_page(const void *addr)
-> +{
-> +	if (!is_vmalloc_addr(addr))
-> +		return virt_to_page(addr);
-> +	else
-> +		return vmalloc_to_page(addr);
-> +}
-> +
->  extern void kvfree(const void *addr);
->  
->  static inline atomic_t *compound_mapcount_ptr(struct page *page)
-> diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-> index 05006cbb3361..8f1895f15593 100644
-> --- a/net/9p/trans_virtio.c
-> +++ b/net/9p/trans_virtio.c
-> @@ -368,10 +368,7 @@ static int p9_get_mapped_pages(struct virtio_chan *chan,
->  		*need_drop = 0;
->  		p -= (*offs = offset_in_page(p));
->  		for (index = 0; index < nr_pages; index++) {
-> -			if (is_vmalloc_addr(p))
-> -				(*pages)[index] = vmalloc_to_page(p);
-> -			else
-> -				(*pages)[index] = kmap_to_page(p);
-> +			(*pages)[index] = kvvirt_to_page(p);
->  			p += PAGE_SIZE;
->  		}
->  		return len;
-> diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
-> index 02172c408ff2..cc5f0723a44d 100644
-> --- a/net/ceph/crypto.c
-> +++ b/net/ceph/crypto.c
-> @@ -191,11 +191,7 @@ static int setup_sgtable(struct sg_table *sgt, struct scatterlist *prealloc_sg,
->  		struct page *page;
->  		unsigned int len = min(chunk_len - off, buf_len);
->  
-> -		if (is_vmalloc)
-> -			page = vmalloc_to_page(buf);
-> -		else
-> -			page = virt_to_page(buf);
-> -
-> +		page = kvvirt_to_page(buf);
->  		sg_set_page(sg, page, len, off);
->  
->  		off = 0;
-> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-> index 5610061e7f2e..1bec111122ad 100644
-> --- a/net/packet/af_packet.c
-> +++ b/net/packet/af_packet.c
-> @@ -359,13 +359,6 @@ static void unregister_prot_hook(struct sock *sk, bool sync)
->  		__unregister_prot_hook(sk, sync);
->  }
->  
-> -static inline struct page * __pure pgv_to_page(void *addr)
-> -{
-> -	if (is_vmalloc_addr(addr))
-> -		return vmalloc_to_page(addr);
-> -	return virt_to_page(addr);
-> -}
-> -
->  static void __packet_set_status(struct packet_sock *po, void *frame, int status)
->  {
->  	union tpacket_uhdr h;
-> @@ -374,15 +367,15 @@ static void __packet_set_status(struct packet_sock *po, void *frame, int status)
->  	switch (po->tp_version) {
->  	case TPACKET_V1:
->  		h.h1->tp_status = status;
-> -		flush_dcache_page(pgv_to_page(&h.h1->tp_status));
-> +		flush_dcache_page(kvvirt_to_page(&h.h1->tp_status));
->  		break;
->  	case TPACKET_V2:
->  		h.h2->tp_status = status;
-> -		flush_dcache_page(pgv_to_page(&h.h2->tp_status));
-> +		flush_dcache_page(kvvirt_to_page(&h.h2->tp_status));
->  		break;
->  	case TPACKET_V3:
->  		h.h3->tp_status = status;
-> -		flush_dcache_page(pgv_to_page(&h.h3->tp_status));
-> +		flush_dcache_page(kvvirt_to_page(&h.h3->tp_status));
->  		break;
->  	default:
->  		WARN(1, "TPACKET version not supported.\n");
-> @@ -401,13 +394,13 @@ static int __packet_get_status(struct packet_sock *po, void *frame)
->  	h.raw = frame;
->  	switch (po->tp_version) {
->  	case TPACKET_V1:
-> -		flush_dcache_page(pgv_to_page(&h.h1->tp_status));
-> +		flush_dcache_page(kvvirt_to_page(&h.h1->tp_status));
->  		return h.h1->tp_status;
->  	case TPACKET_V2:
-> -		flush_dcache_page(pgv_to_page(&h.h2->tp_status));
-> +		flush_dcache_page(kvvirt_to_page(&h.h2->tp_status));
->  		return h.h2->tp_status;
->  	case TPACKET_V3:
-> -		flush_dcache_page(pgv_to_page(&h.h3->tp_status));
-> +		flush_dcache_page(kvvirt_to_page(&h.h3->tp_status));
->  		return h.h3->tp_status;
->  	default:
->  		WARN(1, "TPACKET version not supported.\n");
-> @@ -462,7 +455,7 @@ static __u32 __packet_set_timestamp(struct packet_sock *po, void *frame,
->  	}
->  
->  	/* one flush is safe, as both fields always lie on the same cacheline */
-> -	flush_dcache_page(pgv_to_page(&h.h1->tp_sec));
-> +	flush_dcache_page(kvvirt_to_page(&h.h1->tp_sec));
->  	smp_wmb();
->  
->  	return ts_status;
-> @@ -728,7 +721,7 @@ static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
->  
->  	end = (u8 *)PAGE_ALIGN((unsigned long)pkc1->pkblk_end);
->  	for (; start < end; start += PAGE_SIZE)
-> -		flush_dcache_page(pgv_to_page(start));
-> +		flush_dcache_page(kvvirt_to_page(start));
->  
->  	smp_wmb();
->  #endif
-> @@ -741,7 +734,7 @@ static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
->  
->  #if ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE == 1
->  	start = (u8 *)pbd1;
-> -	flush_dcache_page(pgv_to_page(start));
-> +	flush_dcache_page(kvvirt_to_page(start));
->  
->  	smp_wmb();
->  #endif
-> @@ -2352,7 +2345,7 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
->  					macoff + snaplen);
->  
->  		for (start = h.raw; start < end; start += PAGE_SIZE)
-> -			flush_dcache_page(pgv_to_page(start));
-> +			flush_dcache_page(kvvirt_to_page(start));
->  	}
->  	smp_wmb();
->  #endif
-> @@ -2508,7 +2501,7 @@ static int tpacket_fill_skb(struct packet_sock *po, struct sk_buff *skb,
->  			return -EFAULT;
->  		}
->  
-> -		page = pgv_to_page(data);
-> +		page = kvvirt_to_page(data);
->  		data += len;
->  		flush_dcache_page(page);
->  		get_page(page);
-> @@ -4385,7 +4378,7 @@ static int packet_mmap(struct file *file, struct socket *sock,
->  			int pg_num;
->  
->  			for (pg_num = 0; pg_num < rb->pg_vec_pages; pg_num++) {
-> -				page = pgv_to_page(kaddr);
-> +				page = kvvirt_to_page(kaddr);
->  				err = vm_insert_page(vma, start, page);
->  				if (unlikely(err))
->  					goto out;
-> -- 
-> 2.16.2
+> No, it isn't.
 > 
+> The state to select must always fit the time till the closest timer
+> event and that may be shorter than the tick period.
 
--- 
-Michal Hocko
-SUSE Labs
+Ah ok, so that's fine then.
+
+> 
+> If there's a non-tick timer to wake the CPU up, we don't need to worry
+> about restarting the tick, though. :-)
+
+Ok.
+
+> 
+> > I believe that ts->tick_stopped == 1 shouldn't be too relevant for the governor.
+> > We can definetly have scenarios where the idle tick is stopped for a long while,
+> > then it fires and schedules the next timer at NOW() + TICK_NSEC (as if the tick
+> > had been restarted). This can even repeat that way for some time, because
+> > ts->tick_stopped == 1 only implies that the tick has been stopped once since
+> > we entered the idle loop. After that we may well have a periodic tick behaviour.
+> > In that case we probably don't want deep idle state. Especially if we have:
+> >
+> >               idle_loop() {
+> >                   tick_stop (scheduled several seconds forward)
+> >                   deep_idle_sleep()
+> >                   //several seconds later
+> >                   tick()
+> >                   tick_stop (scheduled TICK_NSEC forward)
+> >                   deep_idle_sleep()
+> >                   tick() {
+> >                       set_need_resched()
+> >                   }
+> >                   exit idle loop
+> >               }
+> >
+> > Here the last deep idle state isn't necessary.
+> 
+> No, it isn't.
+> 
+> However, that is not relevant for the question of whether or not to
+> restart the tick before entering the idle state IMO (see the
+> considerations below).
+
+Yes indeed.
+
+> > But then in the longer term, perhaps cpuidle_select() should think that
+> > through.
+> 
+> So I have given more consideration to this and my conclusion is that
+> restarting the tick between cpuidle_select() and call_cpuidle() is a
+> bad idea.
+> 
+> First off, if need_resched() is "false", the primary reason for
+> running the tick on the given CPU is not there, so it only might be
+> useful as a "backup" timer to wake up the CPU from an inadequate idle
+> state.
+> 
+> Now, in general, there are two reasons for the idle governor (whatever
+> it is) to select an idle state with a target residency below the tick
+> period length.  The first reason is when the governor knows that the
+> closest timer event is going to occur in this time frame, but in that
+> case (as stated above), it is not necessary to worry about the tick,
+> because the other timer will trigger soon enough anyway.  The second
+> reason is when the governor predicts a wakeup which is not by a timer
+> in this time frame and it is quite arguable what the governor should
+> do then.  IMO it at least is not unreasonable to throw the prediction
+> away and still go for the closest timer event in that case (which is
+> the current approach).
+
+Then in this case, when you say you throw away that prediction, does it
+mean you select an idle state that only takes the next timer event into
+consideration?
+
+So for example we predict a wake up event TICK_NSEC ahead but the next
+timer event is a few seconds, you're going to select an idle state
+according to that "few seconds" ahead next event, right? (which in
+practice is likely to be deep I guess).
+
+I guess so but, just want to be sure I understand you correctly.
+
+> 
+> There's more, though.  Restarting the tick between cpuidle_select()
+> and call_cpuidle() might introduce quite a bit of latency into that
+> point and that would mess up with the idle state selection (e.g.
+> selecting a very shallow idle state might not make a lot of sense if
+> that latency was high enough, because the expected wakeup might very
+> well take place when the tick was being restarted), so it should
+> rather be avoided IMO.
+
+Yes indeed.
+
+Thanks.
