@@ -2,112 +2,110 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79739C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C99E3C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:07:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D2B520C0C
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:05:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D2B520C0C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 787A620C0C
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:07:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VQKTxg9c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787A620C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbeHTUVy (ORCPT
+        id S1726884AbeHTUYR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 16:21:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43716 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726641AbeHTUVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 16:21:54 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3B531AD6A;
-        Mon, 20 Aug 2018 17:05:26 +0000 (UTC)
-Subject: Re: [PATCH RESEND] x86/xen: enable early use of set_fixmap in 32-bit
- Xen PV guest
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Cc:     hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com
-References: <20180820152420.16004-1-jgross@suse.com>
- <dd4dc3da-0d06-5844-406a-9e3d942e900d@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a62903ae-566a-10b2-5b2f-4d6ca75dda91@suse.com>
-Date:   Mon, 20 Aug 2018 19:05:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 20 Aug 2018 16:24:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54034 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726033AbeHTUYR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 16:24:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=l8aFa40Vi7Sszsphg0yzSXuipsctzw7GyuBLhREIxMs=; b=VQKTxg9cUUFQnjSwFFNfPy6Oe
+        cVo6h5WcnUrGAuzdEW+3c/N3TyJR5iSP5Qx9bXlVtbOy8+9ydVXJoEFGzOEU5UyOBO9R0VWpW3wZV
+        qCwULcBgPLC+leQSJqrs+WRtw3v5R7vxLX/x6JfW3yFOg42KTKYEkrRTqC4UVWKXLdSfv8Zqd4iIf
+        76m79dx6XkLdiBtk3TqQDo8/LDolKwWn5HJC+B/h7dnhKHXzmGn5mLcFPwx3uSGHYMpvAiyQM0QMv
+        mQEmmNnMq1bGxZ7gx7k/bOkd2/mGBeArpG6Ezaj7wbUCqetI6RnP2H1bPTBog6ypSHaGDywkBDTel
+        0dizQRDWw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1frnea-0003p5-TU; Mon, 20 Aug 2018 17:07:44 +0000
+Date:   Mon, 20 Aug 2018 10:07:44 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Li RongQing <lirongqing@baidu.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        darrick.wong@oracle.com
+Subject: Re: [PATCH] mm: introduce kvvirt_to_page() helper
+Message-ID: <20180820170744.GD25153@bombadil.infradead.org>
+References: <1534596541-31393-1-git-send-email-lirongqing@baidu.com>
+ <20180820144116.GO29735@dhcp22.suse.cz>
+ <20180820144923.GA25153@bombadil.infradead.org>
+ <20180820162406.GQ29735@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <dd4dc3da-0d06-5844-406a-9e3d942e900d@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180820162406.GQ29735@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/08/18 18:56, Boris Ostrovsky wrote:
-> On 08/20/2018 11:24 AM, Juergen Gross wrote:
->> Commit 7b25b9cb0dad83 ("x86/xen/time: Initialize pv xen time in
->> init_hypervisor_platform()") moved the mapping of the shared info area
->> before pagetable_init(). This breaks booting as 32-bit PV guest as the
->> use of set_fixmap isn't possible at this time on 32-bit.
->>
->> This can be worked around by populating the needed PMD on 32-bit
->> kernel earlier.
->>
->> In order not to reimplement populate_extra_pte() using extend_brk()
->> for allocating new page tables extend alloc_low_pages() to do that in
->> case the early page table pool is not yet available.
->>
->> Fixes: 7b25b9cb0dad83 ("x86/xen/time: Initialize pv xen time in init_hypervisor_platform()")
->> Signed-off-by: Juergen Gross <jgross@suse.com>
->> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
->> ---
->> Resending with corrected Fixes: tag
->> Boris, please take this via the Xen tree (Thomas asked us to do so)
+On Mon, Aug 20, 2018 at 06:24:06PM +0200, Michal Hocko wrote:
+> On Mon 20-08-18 07:49:23, Matthew Wilcox wrote:
+> > On Mon, Aug 20, 2018 at 04:41:16PM +0200, Michal Hocko wrote:
+> > > On Sat 18-08-18 20:49:01, Li RongQing wrote:
+> > > > The new helper returns address mapping page, which has several users
+> > > > in individual subsystem, like mem_to_page in xfs_buf.c and pgv_to_page
+> > > > in af_packet.c, unify them
+> > > 
+> > > kvvirt_to_page is a weird name. I guess you wanted it to fit into
+> > > kv*alloc, kvfree naming, right? If yes then I guess kvmem_to_page
+> > > would be slightly better.
+> > > 
+> > > Other than that the patch makes sense to me. It would be great to add
+> > > some documentation and be explicit that the call is only safe on
+> > > directly mapped kernel address and vmalloc areas.
+> > 
+> > ... and not safe if the length crosses a page boundary.  I don't want to
+> > see new code emerge that does kvmalloc(PAGE_SIZE * 2, ...); kvmem_to_page()
+> > and have it randomly crash when kvmalloc happens to fall back to vmalloc()
+> > under heavy memory pressure.
+> > 
+> > Also, people are going to start using this for stack addresses.  Perhaps
+> > we should have a debug option to guard against them doing that.
 > 
-> 
-> Sure, but we will need to rebase to the latest bits, so you will have to
-> explain yourself to Linus ;-)
+> I do agree that such an interface is quite dangerous. That's why I was
+> stressing out the proper documentation. I would be much happier if we
+> could do without it altogether. Maybe the existing users can be rewoked
+> to not rely on the addr2page functionality. If that is not the case then
+> we should probably offer a helper. With some WARN_ONs to catch misuse
+> would be really nice. I am not really sure how many abuses can we catch
+> actually though.
 
-NP for me. At least I hope so. :-)
+I certainly understand the enthusiasm for sharing this code rather than
+having dozens of places outside the VM implement their own version of it.
+But I think most of these users are using code that's working at the wrong
+level.  Most of them seem to have an address range which may-or-may-not-be
+virtually mapped and they want to get an array-of-pages for that.
 
-
-Juergen
-
+Perhaps we should offer -that- API instead.  vmalloc/vmap already has
+an array-of-pages, and the various users could be given a pointer to
+that array.  If the memory isn't vmapped, maybe the caller could pass
+an array pointer like XFS does, or we could require them to pass GFP flags
+to allocate a new array.
