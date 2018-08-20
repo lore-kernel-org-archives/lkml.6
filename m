@@ -2,77 +2,78 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA4CC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B27C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 268F52170E
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:42:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 268F52170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DE3752170E
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:43:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE3752170E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbeHTS7E (ORCPT
+        id S1726634AbeHTS74 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 14:59:04 -0400
-Received: from mga12.intel.com ([192.55.52.136]:37379 "EHLO mga12.intel.com"
+        Mon, 20 Aug 2018 14:59:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726024AbeHTS7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 14:59:03 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 08:42:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,265,1531810800"; 
-   d="scan'208";a="256443708"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by fmsmga006.fm.intel.com with ESMTP; 20 Aug 2018 08:42:54 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id CF9A8300B48; Mon, 20 Aug 2018 08:42:54 -0700 (PDT)
-Date:   Mon, 20 Aug 2018 08:42:54 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>, stable@vger.kernel.org,
-        Adrian Schroeter <adrian@suse.de>,
-        Dominique Leuenberger <dimstar@suse.de>
-Subject: Re: [PATCH] x86/speculation/l1tf: fix overflow on l1tf_pfn_limit()
- on 32bit
-Message-ID: <20180820154254.GM12066@tassilo.jf.intel.com>
-References: <20180820095835.5298-1-vbabka@suse.cz>
- <20180820142027.GL12066@tassilo.jf.intel.com>
- <20180820142636.GM29735@dhcp22.suse.cz>
+        id S1726024AbeHTS74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 14:59:56 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A0612170E;
+        Mon, 20 Aug 2018 15:43:46 +0000 (UTC)
+Date:   Mon, 20 Aug 2018 11:43:45 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
+        Yordan Karadzhov <y.karadz@gmail.com>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
+        Tiago Macieira <thiago.macieira@intel.com>
+Subject: Re: libtracevent build warnings on Clear Linux (gcc 8.2.0)
+Message-ID: <20180820114345.09b1a9e5@gandalf.local.home>
+In-Reply-To: <20180820133943.GB21100@kernel.org>
+References: <20180820133943.GB21100@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180820142636.GM29735@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > BTW our much worse problems right now are crash reports on several 
-> > stable kernels, especially with large pages 
+On Mon, 20 Aug 2018 10:39:43 -0300
+Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+
+> Hi guys,
 > 
-> Do you have any reference?
+> I noticed this while working on a new perf build container for the Clear
+> Linux distro, can you take a look at it so that we get the build clean on Clear?
 
+Hi Arnaldo,
 
-https://lkml.org/lkml/2018/8/17/546
-https://bugzilla.redhat.com/show_bug.cgi?id=1618792       (this is 4.17, not 4.18)
+Thanks for reporting this, Tzvetomir is going to take a look at the
+warnings happening in the traceevent directory.
 
-(might be different problems. I wasn't able to reproduce the 4.17 one
-so far)
+-- Steve
 
-
--Andi
+> 
+> - Arnaldo
+> 
+> root@28864dcfe31b /git/perf # gcc -v
+> Using built-in specs.
+> COLLECT_GCC=gcc
+> COLLECT_LTO_WRAPPER=/usr/lib64/gcc/x86_64-generic-linux/8.2.0/lto-wrapper
+> Target: x86_64-generic-linux
+> Configured with: ../gcc-8.2.0/configure --prefix=/usr --with-pkgversion='Clear Linux OS for Intel Architecture' --libdir=/usr/lib64 --enable-libstdcxx-pch --libexecdir=/usr/lib64 --with-system-zlib --enable-shared --enable-gnu-indirect-function --disable-vtable-verify --enable-threads=posix --enable-__cxa_atexit --enable-plugin --enable-ld=default --enable-clocale=gnu --disable-multiarch --enable-multilib --enable-lto --enable-linker-build-id --build=x86_64-generic-linux --target=x86_64-generic-linux --enable-languages=c,c++,fortran,go --enable-bootstrap --with-ppl=yes --with-isl --includedir=/usr/include --with-gxx-include-dir=/usr/include/c++/ --exec-prefix=/usr --with-glibc-version=2.19 --disable-libunwind-exceptions --with-gnu-ld --with-tune=haswell --with-arch=westmere --disable-libmpx
+> Thread model: posix
+> gcc version 8.2.0 (Clear Linux OS for Intel Architecture) 
+> root@28864dcfe31b /git/perf # 
+> 
+>
