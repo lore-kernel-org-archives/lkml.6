@@ -2,135 +2,228 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C170C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:03:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69379C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D6E821581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:03:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D6E821581
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2DCD221581
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:03:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DCD221581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbeHTQS4 (ORCPT
+        id S1727119AbeHTQTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 12:18:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41098 "EHLO mx1.redhat.com"
+        Mon, 20 Aug 2018 12:19:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58974 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726688AbeHTQSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 12:18:55 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 815E040201C9;
-        Mon, 20 Aug 2018 13:03:20 +0000 (UTC)
-Received: from [10.32.181.140] (unknown [10.32.181.140])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 14E7C63A76;
-        Mon, 20 Aug 2018 13:03:17 +0000 (UTC)
-Subject: Re: [PATCH] x86/kvm/vmx: Fix coding style in vmx_setup_l1d_flush()
-To:     Yi Wang <wang.yi59@zte.com.cn>
-Cc:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, kvm@vger.kernel.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, jiang.biao2@zte.com.cn,
-        zhong.weidong@zte.com.cn
-References: <1534398159-48509-1-git-send-email-wang.yi59@zte.com.cn>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e4ffd7ca-a508-440e-43eb-34f784e04d3e@redhat.com>
-Date:   Mon, 20 Aug 2018 15:03:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1534398159-48509-1-git-send-email-wang.yi59@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 20 Aug 2018 13:03:20 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 20 Aug 2018 13:03:20 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+        id S1726785AbeHTQTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 12:19:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B928CAFCA;
+        Mon, 20 Aug 2018 13:03:32 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org
+Cc:     boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
+        mingo@redhat.com, Juergen Gross <jgross@suse.com>
+Subject: [PATCH] xen: remove unused hypercall functions
+Date:   Mon, 20 Aug 2018 15:03:30 +0200
+Message-Id: <20180820130330.11704-1-jgross@suse.com>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/08/2018 07:42, Yi Wang wrote:
-> Substitute spaces with tab. No functional changes.
-> 
-> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-> Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
-> ---
->  arch/x86/kvm/vmx.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 46b428c0..ef712b2 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -218,15 +218,15 @@ static int vmx_setup_l1d_flush(enum vmx_l1d_flush_state l1tf)
->  		return 0;
->  	}
->  
-> -       if (boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES)) {
-> -	       u64 msr;
-> -
-> -	       rdmsrl(MSR_IA32_ARCH_CAPABILITIES, msr);
-> -	       if (msr & ARCH_CAP_SKIP_VMENTRY_L1DFLUSH) {
-> -		       l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_NOT_REQUIRED;
-> -		       return 0;
-> -	       }
-> -       }
-> +	if (boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES)) {
-> +		u64 msr;
-> +
-> +		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, msr);
-> +		if (msr & ARCH_CAP_SKIP_VMENTRY_L1DFLUSH) {
-> +			l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_NOT_REQUIRED;
-> +			return 0;
-> +		}
-> +	}
->  
->  	/* If set to auto use the default l1tf mitigation method */
->  	if (l1tf == VMENTER_L1D_FLUSH_AUTO) {
-> 
+Remove Xen hypercall functions which are used nowhere in the kernel.
 
-Queued, thanks.
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ arch/x86/include/asm/xen/hypercall.h | 118 -----------------------------------
+ 1 file changed, 118 deletions(-)
 
-Paolo
+diff --git a/arch/x86/include/asm/xen/hypercall.h b/arch/x86/include/asm/xen/hypercall.h
+index 6b2f90a0b149..ef05bea7010d 100644
+--- a/arch/x86/include/asm/xen/hypercall.h
++++ b/arch/x86/include/asm/xen/hypercall.h
+@@ -197,17 +197,6 @@ extern struct { char _entry[32]; } hypercall_page[];
+ 	(type)__res;							\
+ })
+ 
+-#define _hypercall5(type, name, a1, a2, a3, a4, a5)			\
+-({									\
+-	__HYPERCALL_DECLS;						\
+-	__HYPERCALL_5ARG(a1, a2, a3, a4, a5);				\
+-	asm volatile (__HYPERCALL					\
+-		      : __HYPERCALL_5PARAM				\
+-		      : __HYPERCALL_ENTRY(name)				\
+-		      : __HYPERCALL_CLOBBER5);				\
+-	(type)__res;							\
+-})
+-
+ static inline long
+ xen_single_call(unsigned int call,
+ 		unsigned long a1, unsigned long a2,
+@@ -267,47 +256,12 @@ HYPERVISOR_set_gdt(unsigned long *frame_list, int entries)
+ }
+ 
+ static inline int
+-HYPERVISOR_stack_switch(unsigned long ss, unsigned long esp)
+-{
+-	return _hypercall2(int, stack_switch, ss, esp);
+-}
+-
+-#ifdef CONFIG_X86_32
+-static inline int
+-HYPERVISOR_set_callbacks(unsigned long event_selector,
+-			 unsigned long event_address,
+-			 unsigned long failsafe_selector,
+-			 unsigned long failsafe_address)
+-{
+-	return _hypercall4(int, set_callbacks,
+-			   event_selector, event_address,
+-			   failsafe_selector, failsafe_address);
+-}
+-#else  /* CONFIG_X86_64 */
+-static inline int
+-HYPERVISOR_set_callbacks(unsigned long event_address,
+-			unsigned long failsafe_address,
+-			unsigned long syscall_address)
+-{
+-	return _hypercall3(int, set_callbacks,
+-			   event_address, failsafe_address,
+-			   syscall_address);
+-}
+-#endif  /* CONFIG_X86_{32,64} */
+-
+-static inline int
+ HYPERVISOR_callback_op(int cmd, void *arg)
+ {
+ 	return _hypercall2(int, callback_op, cmd, arg);
+ }
+ 
+ static inline int
+-HYPERVISOR_fpu_taskswitch(int set)
+-{
+-	return _hypercall1(int, fpu_taskswitch, set);
+-}
+-
+-static inline int
+ HYPERVISOR_sched_op(int cmd, void *arg)
+ {
+ 	return _hypercall2(int, sched_op, cmd, arg);
+@@ -419,19 +373,6 @@ HYPERVISOR_grant_table_op(unsigned int cmd, void *uop, unsigned int count)
+ }
+ 
+ static inline int
+-HYPERVISOR_update_va_mapping_otherdomain(unsigned long va, pte_t new_val,
+-					 unsigned long flags, domid_t domid)
+-{
+-	if (sizeof(new_val) == sizeof(long))
+-		return _hypercall4(int, update_va_mapping_otherdomain, va,
+-				   new_val.pte, flags, domid);
+-	else
+-		return _hypercall5(int, update_va_mapping_otherdomain, va,
+-				   new_val.pte, new_val.pte >> 32,
+-				   flags, domid);
+-}
+-
+-static inline int
+ HYPERVISOR_vm_assist(unsigned int cmd, unsigned int type)
+ {
+ 	return _hypercall2(int, vm_assist, cmd, type);
+@@ -465,12 +406,6 @@ HYPERVISOR_suspend(unsigned long start_info_mfn)
+ 	return _hypercall3(int, sched_op, SCHEDOP_shutdown, &r, start_info_mfn);
+ }
+ 
+-static inline int
+-HYPERVISOR_nmi_op(unsigned long op, unsigned long arg)
+-{
+-	return _hypercall2(int, nmi_op, op, arg);
+-}
+-
+ static inline unsigned long __must_check
+ HYPERVISOR_hvm_op(int op, void *arg)
+ {
+@@ -529,39 +464,6 @@ MULTI_update_va_mapping(struct multicall_entry *mcl, unsigned long va,
+ }
+ 
+ static inline void
+-MULTI_grant_table_op(struct multicall_entry *mcl, unsigned int cmd,
+-		     void *uop, unsigned int count)
+-{
+-	mcl->op = __HYPERVISOR_grant_table_op;
+-	mcl->args[0] = cmd;
+-	mcl->args[1] = (unsigned long)uop;
+-	mcl->args[2] = count;
+-
+-	trace_xen_mc_entry(mcl, 3);
+-}
+-
+-static inline void
+-MULTI_update_va_mapping_otherdomain(struct multicall_entry *mcl, unsigned long va,
+-				    pte_t new_val, unsigned long flags,
+-				    domid_t domid)
+-{
+-	mcl->op = __HYPERVISOR_update_va_mapping_otherdomain;
+-	mcl->args[0] = va;
+-	if (sizeof(new_val) == sizeof(long)) {
+-		mcl->args[1] = new_val.pte;
+-		mcl->args[2] = flags;
+-		mcl->args[3] = domid;
+-	} else {
+-		mcl->args[1] = new_val.pte;
+-		mcl->args[2] = new_val.pte >> 32;
+-		mcl->args[3] = flags;
+-		mcl->args[4] = domid;
+-	}
+-
+-	trace_xen_mc_entry(mcl, sizeof(new_val) == sizeof(long) ? 4 : 5);
+-}
+-
+-static inline void
+ MULTI_update_descriptor(struct multicall_entry *mcl, u64 maddr,
+ 			struct desc_struct desc)
+ {
+@@ -582,16 +484,6 @@ MULTI_update_descriptor(struct multicall_entry *mcl, u64 maddr,
+ }
+ 
+ static inline void
+-MULTI_memory_op(struct multicall_entry *mcl, unsigned int cmd, void *arg)
+-{
+-	mcl->op = __HYPERVISOR_memory_op;
+-	mcl->args[0] = cmd;
+-	mcl->args[1] = (unsigned long)arg;
+-
+-	trace_xen_mc_entry(mcl, 2);
+-}
+-
+-static inline void
+ MULTI_mmu_update(struct multicall_entry *mcl, struct mmu_update *req,
+ 		 int count, int *success_count, domid_t domid)
+ {
+@@ -618,16 +510,6 @@ MULTI_mmuext_op(struct multicall_entry *mcl, struct mmuext_op *op, int count,
+ }
+ 
+ static inline void
+-MULTI_set_gdt(struct multicall_entry *mcl, unsigned long *frames, int entries)
+-{
+-	mcl->op = __HYPERVISOR_set_gdt;
+-	mcl->args[0] = (unsigned long)frames;
+-	mcl->args[1] = entries;
+-
+-	trace_xen_mc_entry(mcl, 2);
+-}
+-
+-static inline void
+ MULTI_stack_switch(struct multicall_entry *mcl,
+ 		   unsigned long ss, unsigned long esp)
+ {
+-- 
+2.13.7
+
