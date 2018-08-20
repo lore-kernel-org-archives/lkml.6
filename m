@@ -2,197 +2,141 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2197BC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC8CFC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF55A2172C
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:42:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vRLSHYJO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF55A2172C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5D7442172C
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:45:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7442172C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbeHTR6u (ORCPT
+        id S1726946AbeHTSBI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 13:58:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55530 "EHLO mail.kernel.org"
+        Mon, 20 Aug 2018 14:01:08 -0400
+Received: from mga18.intel.com ([134.134.136.126]:33241 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726221AbeHTR6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 13:58:50 -0400
-Received: from localhost (LFbn-NCY-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 280C721722;
-        Mon, 20 Aug 2018 14:42:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534776173;
-        bh=mj6ZRM7vj8mc4GZMoCz9wyZd0wHJc3CvlZTL3PTeb2U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vRLSHYJO8w9Kvxegbn6whOpyK6OpfC4e/19jpsEXFfy7K//ifW1tjsYliusXTcrjQ
-         XtfD6JokiNcnWTAN+p9Xd7PtyVgUH2kM6MeO9evIlBi5RKEpl5jJpgarN6UD6ug+4D
-         QjE5FMvN9uC2qXGOkORPpq+ZL5Hga0RYX83ws9Ck=
-Date:   Mon, 20 Aug 2018 16:42:50 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Leo Yan <leo.yan@linaro.org>
-Subject: Re: [PATCH] sched: idle: Avoid retaining the tick when it has been
- stopped
-Message-ID: <20180820144249.GA9770@lerouge>
-References: <2161372.IsD4PDzmmY@aspire.rjw.lan>
- <20180816132723.GA6010@lerouge>
- <10817203.8q7neLTJVD@aspire.rjw.lan>
- <20180817141252.GA12426@lerouge>
- <CAJZ5v0gD79NuTgr3dVS_3cBFz5Q1JtQTP8mDfSM1tvwDcYkFAQ@mail.gmail.com>
+        id S1726641AbeHTSBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 14:01:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 07:45:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,265,1531810800"; 
+   d="scan'208";a="63796093"
+Received: from orsmsx110.amr.corp.intel.com ([10.22.240.8])
+  by fmsmga007.fm.intel.com with ESMTP; 20 Aug 2018 07:45:12 -0700
+Received: from orsmsx162.amr.corp.intel.com (10.22.240.85) by
+ ORSMSX110.amr.corp.intel.com (10.22.240.8) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Mon, 20 Aug 2018 07:45:11 -0700
+Received: from orsmsx107.amr.corp.intel.com ([169.254.1.245]) by
+ ORSMSX162.amr.corp.intel.com ([169.254.3.195]) with mapi id 14.03.0319.002;
+ Mon, 20 Aug 2018 07:45:11 -0700
+From:   "Schaufler, Casey" <casey.schaufler@intel.com>
+To:     Jann Horn <jannh@google.com>
+CC:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "selinux@tycho.nsa.gov" <selinux@tycho.nsa.gov>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>
+Subject: RE: [PATCH RFC v2 2/5] X86: Support LSM determination of
+ side-channel vulnerability
+Thread-Topic: [PATCH RFC v2 2/5] X86: Support LSM determination of
+ side-channel vulnerability
+Thread-Index: AQHUNnfxqicfKrr44E68NP+tZyvMZaTFE9UAgAOi9EA=
+Date:   Mon, 20 Aug 2018 14:45:10 +0000
+Message-ID: <99FC4B6EFCEFD44486C35F4C281DC6732143F769@ORSMSX107.amr.corp.intel.com>
+References: <20180817221624.10232-1-casey.schaufler@intel.com>
+ <20180817221624.10232-3-casey.schaufler@intel.com>
+ <CAG48ez23G+wcnkCMNZV_mxYMS=h+pZkpx1451Wz5GB9_tcDv3Q@mail.gmail.com>
+In-Reply-To: <CAG48ez23G+wcnkCMNZV_mxYMS=h+pZkpx1451Wz5GB9_tcDv3Q@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZDVjZTU0ZmYtZDg1Yi00NmY4LTkwOTEtZDRmNTc1ZmNlNTRkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiUGJNbkRmYmRleDN3XC8zRXNuM3lBVXJwM004OFVFQTVMQUhhSGphQ2hDOUdSN1UrckMyMjVWS1hSVDNkZTVmRE4ifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0gD79NuTgr3dVS_3cBFz5Q1JtQTP8mDfSM1tvwDcYkFAQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 18, 2018 at 11:57:00PM +0200, Rafael J. Wysocki wrote:
-> On Fri, Aug 17, 2018 at 4:12 PM Frederic Weisbecker <frederic@kernel.org> wrote:
-> >
-> > On Fri, Aug 17, 2018 at 11:32:07AM +0200, Rafael J. Wysocki wrote:
-> > > On Thursday, August 16, 2018 3:27:24 PM CEST Frederic Weisbecker wrote:
-> > > > On Thu, Aug 09, 2018 at 07:08:34PM +0200, Rafael J. Wysocki wrote:
-> > > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > >
-> > > > > If the tick has been stopped already, but the governor has not asked to
-> > > > > stop it (which it can do sometimes), the idle loop should invoke
-> > > > > tick_nohz_idle_stop_tick(), to let tick_nohz_stop_tick() take care
-> > > > > of this case properly.
-> > > > >
-> > > > > Fixes: 554c8aa8ecad (sched: idle: Select idle state before stopping the tick)
-> > > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > > ---
-> > > > >  kernel/sched/idle.c |    2 +-
-> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > >
-> > > > > Index: linux-pm/kernel/sched/idle.c
-> > > > > ===================================================================
-> > > > > --- linux-pm.orig/kernel/sched/idle.c
-> > > > > +++ linux-pm/kernel/sched/idle.c
-> > > > > @@ -190,7 +190,7 @@ static void cpuidle_idle_call(void)
-> > > > >            */
-> > > > >           next_state = cpuidle_select(drv, dev, &stop_tick);
-> > > > >
-> > > > > -         if (stop_tick)
-> > > > > +         if (stop_tick || tick_nohz_tick_stopped())
-> > > > >                   tick_nohz_idle_stop_tick();
-> > > > >           else
-> > > > >                   tick_nohz_idle_retain_tick();
-> > > >
-> > > > So what if tick_nohz_idle_stop_tick() sees no timer to schedule and
-> > > > cancels it, we may remain idle in a shallow state for a long while?
-> > >
-> > > Yes, but the governor is expected to avoid using shallow states when the
-> > > tick is stopped already.
-> >
-> > So what kind of sleep do we enter to when an idle tick fires and we go
-> > back to idle? Is it always deep?
-> 
-> No, it isn't.
-> 
-> The state to select must always fit the time till the closest timer
-> event and that may be shorter than the tick period.
-
-Ah ok, so that's fine then.
-
-> 
-> If there's a non-tick timer to wake the CPU up, we don't need to worry
-> about restarting the tick, though. :-)
-
-Ok.
-
-> 
-> > I believe that ts->tick_stopped == 1 shouldn't be too relevant for the governor.
-> > We can definetly have scenarios where the idle tick is stopped for a long while,
-> > then it fires and schedules the next timer at NOW() + TICK_NSEC (as if the tick
-> > had been restarted). This can even repeat that way for some time, because
-> > ts->tick_stopped == 1 only implies that the tick has been stopped once since
-> > we entered the idle loop. After that we may well have a periodic tick behaviour.
-> > In that case we probably don't want deep idle state. Especially if we have:
-> >
-> >               idle_loop() {
-> >                   tick_stop (scheduled several seconds forward)
-> >                   deep_idle_sleep()
-> >                   //several seconds later
-> >                   tick()
-> >                   tick_stop (scheduled TICK_NSEC forward)
-> >                   deep_idle_sleep()
-> >                   tick() {
-> >                       set_need_resched()
-> >                   }
-> >                   exit idle loop
-> >               }
-> >
-> > Here the last deep idle state isn't necessary.
-> 
-> No, it isn't.
-> 
-> However, that is not relevant for the question of whether or not to
-> restart the tick before entering the idle state IMO (see the
-> considerations below).
-
-Yes indeed.
-
-> > But then in the longer term, perhaps cpuidle_select() should think that
-> > through.
-> 
-> So I have given more consideration to this and my conclusion is that
-> restarting the tick between cpuidle_select() and call_cpuidle() is a
-> bad idea.
-> 
-> First off, if need_resched() is "false", the primary reason for
-> running the tick on the given CPU is not there, so it only might be
-> useful as a "backup" timer to wake up the CPU from an inadequate idle
-> state.
-> 
-> Now, in general, there are two reasons for the idle governor (whatever
-> it is) to select an idle state with a target residency below the tick
-> period length.  The first reason is when the governor knows that the
-> closest timer event is going to occur in this time frame, but in that
-> case (as stated above), it is not necessary to worry about the tick,
-> because the other timer will trigger soon enough anyway.  The second
-> reason is when the governor predicts a wakeup which is not by a timer
-> in this time frame and it is quite arguable what the governor should
-> do then.  IMO it at least is not unreasonable to throw the prediction
-> away and still go for the closest timer event in that case (which is
-> the current approach).
-
-Then in this case, when you say you throw away that prediction, does it
-mean you select an idle state that only takes the next timer event into
-consideration?
-
-So for example we predict a wake up event TICK_NSEC ahead but the next
-timer event is a few seconds, you're going to select an idle state
-according to that "few seconds" ahead next event, right? (which in
-practice is likely to be deep I guess).
-
-I guess so but, just want to be sure I understand you correctly.
-
-> 
-> There's more, though.  Restarting the tick between cpuidle_select()
-> and call_cpuidle() might introduce quite a bit of latency into that
-> point and that would mess up with the idle state selection (e.g.
-> selecting a very shallow idle state might not make a lot of sense if
-> that latency was high enough, because the expected wakeup might very
-> well take place when the tick was being restarted), so it should
-> rather be avoided IMO.
-
-Yes indeed.
-
-Thanks.
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKYW5uIEhvcm4gW21haWx0bzpq
+YW5uaEBnb29nbGUuY29tXQ0KPiBTZW50OiBGcmlkYXksIEF1Z3VzdCAxNywgMjAxOCA0OjU1IFBN
+DQo+IFRvOiBTY2hhdWZsZXIsIENhc2V5IDxjYXNleS5zY2hhdWZsZXJAaW50ZWwuY29tPg0KPiBD
+YzogS2VybmVsIEhhcmRlbmluZyA8a2VybmVsLWhhcmRlbmluZ0BsaXN0cy5vcGVud2FsbC5jb20+
+OyBrZXJuZWwgbGlzdA0KPiA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47IGxpbnV4LXNl
+Y3VyaXR5LW1vZHVsZSA8bGludXgtc2VjdXJpdHktDQo+IG1vZHVsZUB2Z2VyLmtlcm5lbC5vcmc+
+OyBzZWxpbnV4QHR5Y2hvLm5zYS5nb3Y7IEhhbnNlbiwgRGF2ZQ0KPiA8ZGF2ZS5oYW5zZW5AaW50
+ZWwuY29tPjsgRG9jaywgRGVuZWVuIFQgPGRlbmVlbi50LmRvY2tAaW50ZWwuY29tPjsNCj4ga3Jp
+c3RlbkBsaW51eC5pbnRlbC5jb207IEFyamFuIHZhbiBkZSBWZW4gPGFyamFuQGxpbnV4LmludGVs
+LmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCBSRkMgdjIgMi81XSBYODY6IFN1cHBvcnQgTFNN
+IGRldGVybWluYXRpb24gb2Ygc2lkZS0NCj4gY2hhbm5lbCB2dWxuZXJhYmlsaXR5DQo+IA0KPiBP
+biBTYXQsIEF1ZyAxOCwgMjAxOCBhdCAxMjoxNyBBTSBDYXNleSBTY2hhdWZsZXINCj4gPGNhc2V5
+LnNjaGF1ZmxlckBpbnRlbC5jb20+IHdyb3RlOg0KPiA+DQo+ID4gRnJvbTogQ2FzZXkgU2NoYXVm
+bGVyIDxjc2NoYXVmbGVyQGxvY2FsaG9zdC5sb2NhbGRvbWFpbj4NCj4gPg0KPiA+IFdoZW4gc3dp
+dGNoaW5nIGJldHdlZW4gdGFza3MgaXQgbWF5IGJlIG5lY2Vzc2FyeQ0KPiA+IHRvIHNldCBhbiBp
+bmRpcmVjdCBicmFuY2ggcHJlZGljdGlvbiBiYXJyaWVyIGlmIHRoZQ0KPiA+IHRhc2tzIGFyZSBw
+b3RlbnRpYWxseSB2dWxuZXJhYmxlIHRvIHNpZGUtY2hhbm5lbA0KPiA+IGF0dGFja3MuIFRoaXMg
+YWRkcyBhIGNhbGwgdG8gc2VjdXJpdHlfdGFza19zYWZlX3NpZGVjaGFubmVsDQo+ID4gc28gdGhh
+dCBzZWN1cml0eSBtb2R1bGVzIGNhbiB3ZWlnaCBpbiBvbiB0aGUgZGVjaXNpb24uDQo+ID4NCj4g
+PiBTaWduZWQtb2ZmLWJ5OiBDYXNleSBTY2hhdWZsZXIgPGNhc2V5LnNjaGF1ZmxlckBpbnRlbC5j
+b20+DQo+ID4gLS0tDQo+ID4gIGFyY2gveDg2L21tL3RsYi5jIHwgMTIgKysrKysrKystLS0tDQo+
+ID4gIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQo+ID4N
+Cj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYvbW0vdGxiLmMgYi9hcmNoL3g4Ni9tbS90bGIuYw0K
+PiA+IGluZGV4IDZlYjFmMzRjM2M4NS4uODcxNGQ0YWYwNmFhIDEwMDY0NA0KPiA+IC0tLSBhL2Fy
+Y2gveDg2L21tL3RsYi5jDQo+ID4gKysrIGIvYXJjaC94ODYvbW0vdGxiLmMNCj4gPiBAQCAtNyw2
+ICs3LDcgQEANCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2V4cG9ydC5oPg0KPiA+ICAjaW5jbHVkZSA8
+bGludXgvY3B1Lmg+DQo+ID4gICNpbmNsdWRlIDxsaW51eC9kZWJ1Z2ZzLmg+DQo+ID4gKyNpbmNs
+dWRlIDxsaW51eC9zZWN1cml0eS5oPg0KPiA+DQo+ID4gICNpbmNsdWRlIDxhc20vdGxiZmx1c2gu
+aD4NCj4gPiAgI2luY2x1ZGUgPGFzbS9tbXVfY29udGV4dC5oPg0KPiA+IEBAIC0yNzAsMTEgKzI3
+MSwxNCBAQCB2b2lkIHN3aXRjaF9tbV9pcnFzX29mZihzdHJ1Y3QgbW1fc3RydWN0ICpwcmV2LA0K
+PiBzdHJ1Y3QgbW1fc3RydWN0ICpuZXh0LA0KPiA+ICAgICAgICAgICAgICAgICAgKiB0aHJlYWRz
+LiBJdCB3aWxsIGFsc28gbm90IGZsdXNoIGlmIHdlIHN3aXRjaCB0byBpZGxlDQo+ID4gICAgICAg
+ICAgICAgICAgICAqIHRocmVhZCBhbmQgYmFjayB0byB0aGUgc2FtZSBwcm9jZXNzLiBJdCB3aWxs
+IGZsdXNoIGlmIHdlDQo+ID4gICAgICAgICAgICAgICAgICAqIHN3aXRjaCB0byBhIGRpZmZlcmVu
+dCBub24tZHVtcGFibGUgcHJvY2Vzcy4NCj4gPiArICAgICAgICAgICAgICAgICogSWYgYSBzZWN1
+cml0eSBtb2R1bGUgdGhpbmtzIHRoYXQgdGhlIHRyYW5zaXRpb24NCj4gPiArICAgICAgICAgICAg
+ICAgICogaXMgdW5zYWZlIGRvIHRoZSBmbHVzaC4NCj4gPiAgICAgICAgICAgICAgICAgICovDQo+
+ID4gLSAgICAgICAgICAgICAgIGlmICh0c2sgJiYgdHNrLT5tbSAmJg0KPiA+IC0gICAgICAgICAg
+ICAgICAgICAgdHNrLT5tbS0+Y29udGV4dC5jdHhfaWQgIT0gbGFzdF9jdHhfaWQgJiYNCj4gPiAt
+ICAgICAgICAgICAgICAgICAgIGdldF9kdW1wYWJsZSh0c2stPm1tKSAhPSBTVUlEX0RVTVBfVVNF
+UikNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICBpbmRpcmVjdF9icmFuY2hfcHJlZGljdGlv
+bl9iYXJyaWVyKCk7DQo+ID4gKyAgICAgICAgICAgICAgIGlmICh0c2sgJiYgdHNrLT5tbSAmJiB0
+c2stPm1tLT5jb250ZXh0LmN0eF9pZCAhPSBsYXN0X2N0eF9pZCkgew0KPiA+ICsgICAgICAgICAg
+ICAgICAgICAgICAgIGlmIChnZXRfZHVtcGFibGUodHNrLT5tbSkgIT0gU1VJRF9EVU1QX1VTRVIg
+fHwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgc2VjdXJpdHlfdGFza19zYWZlX3Np
+ZGVjaGFubmVsKHRzaykgIT0gMCkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IGluZGlyZWN0X2JyYW5jaF9wcmVkaWN0aW9uX2JhcnJpZXIoKTsNCj4gPiArICAgICAgICAgICAg
+ICAgfQ0KPiANCj4gV2hlbiB5b3UgcG9zdGVkIHYxIG9mIHRoaXMgc2VyaWVzLCBJIGFza2VkOg0K
+PiANCj4gfCBEb2VzIHRoaXMgZW5mb3JjZSB0cmFuc2l0aXZpdHk/IFdoYXQgaGFwcGVucyBpZiB3
+ZSBmaXJzdCBzd2l0Y2ggZnJvbQ0KPiB8IGFuIGF0dGFja2VyIHRhc2sgdG8gYSB0YXNrIHdpdGhv
+dXQgLT5tbSwgYW5kIGltbWVkaWF0ZWx5IGFmdGVyd2FyZHMNCj4gfCBmcm9tIHRoZSB0YXNrIHdp
+dGhvdXQgLT5tbSB0byBhIHZpY3RpbSB0YXNrPyBJbiB0aGF0IGNhc2UsIHdoZXRoZXIgYQ0KPiB8
+IGZsdXNoIGhhcHBlbnMgYmV0d2VlbiB0aGUgYXR0YWNrZXIgdGFzayBhbmQgdGhlIHZpY3RpbSB0
+YXNrIGRlcGVuZHMgb24NCj4gfCB3aGV0aGVyIHRoZSBMU00gdGhpbmtzIHRoYXQgdGhlIG1tLWxl
+c3MgdGFzayBzaG91bGQgaGF2ZSBhY2Nlc3MgdG8gdGhlDQo+IHwgdmljdGltIHRhc2ssIHJpZ2h0
+Pw0KPiANCj4gSGF2ZSB5b3UgYWRkcmVzc2VkIHRoYXQ/IEkgZG9uJ3Qgc2VlIGl0Li4uDQoNCk5v
+cGUuIFRoYXQncyBnb2luZyB0byByZXF1aXJlIG1haW50YWluaW5nIHN0YXRlIGFib3V0IGFsbCB0
+aGUNCnRhc2tzIGluIHRoZSBjaGFpbiB0aGF0IG1pZ2h0IHN0aWxsIGhhdmUgY2FjaGUgaW52b2x2
+ZW1lbnQuDQoNCglBIC0+IEIgLT4gQyAtPiBEDQoNCklmIEIgYW5kIEMgZG9uJ3QgZG8gYW55dGhp
+bmcgY2FjaGV3b3J0aHkgRCBjb3VsZCBjb25jZWl2YWJseSBhdHRhY2sgQS4NClRoZSBhbW91bnQg
+b2Ygc3RhdGUgcmVxdWlyZWQgdG8gZGV0ZWN0IHRoaXMgY2FzZSB3b3VsZCBiZSBwcm9oaWJpdGl2
+ZS4NCkkgdGhpbmsgdGhhdCBpZiB5b3UncmUgc3VmZmljaWVudGx5IGNvbmNlcm5lZCBhYm91dCB0
+aGlzIGNhc2UgeW91IHNob3VsZCBqdXN0DQpnbyBhaGVhZCBhbmQgc2V0IHRoZSBiYXJyaWVyLiBJ
+J20gd2lsbGluZyB0byBsZWFybiBzb21ldGhpbmcgdGhhdCBzYXlzIEknbQ0Kd3JvbmcuDQoNCg==
