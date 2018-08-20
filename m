@@ -2,449 +2,648 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C40BCC04AB9
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 05:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1148C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 05:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7933B2154B
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 05:42:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7933B2154B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8034420873
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 05:53:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSTz75fZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8034420873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbeHTI4R (ORCPT
+        id S1726141AbeHTJHq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 04:56:17 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46154 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725948AbeHTI4M (ORCPT
+        Mon, 20 Aug 2018 05:07:46 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:36532 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725954AbeHTJHq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 04:56:12 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7K5cn0i096367
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 01:41:57 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kyprphq1m-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 01:41:56 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
-        Mon, 20 Aug 2018 01:41:56 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 20 Aug 2018 01:41:52 -0400
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7K5fqjj8257928
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 20 Aug 2018 05:41:52 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 712C3112067;
-        Mon, 20 Aug 2018 01:41:29 -0400 (EDT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 25C69112062;
-        Mon, 20 Aug 2018 01:41:29 -0400 (EDT)
-Received: from sofia.ibm.com (unknown [9.124.35.106])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 20 Aug 2018 01:41:29 -0400 (EDT)
-Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id 0738A2E3CF3; Mon, 20 Aug 2018 11:11:49 +0530 (IST)
-From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
-        Anton Blanchard <anton@samba.org>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Subject: [PATCH v7 1/2] powerpc: Detect the presence of big-cores via "ibm,thread-groups"
-Date:   Mon, 20 Aug 2018 11:11:43 +0530
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1534743704-4760-1-git-send-email-ego@linux.vnet.ibm.com>
-References: <1534743704-4760-1-git-send-email-ego@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18082005-0040-0000-0000-00000461AEE4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009577; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01076107; UDB=6.00554704; IPR=6.00856077;
- MB=3.00022818; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-20 05:41:55
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082005-0041-0000-0000-00000868BE0C
-Message-Id: <1534743704-4760-2-git-send-email-ego@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-20_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808200061
+        Mon, 20 Aug 2018 05:07:46 -0400
+Received: by mail-qk0-f196.google.com with SMTP id 93-v6so8776073qks.3
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Aug 2018 22:53:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=6aHxYD4u2CdShGKdXn+jIfWnVuk3kwq6rff96mSY+o4=;
+        b=MSTz75fZE/7oCKH/esl0j4ERXoUumse/dfAL3gocVDEN6XnYXdyJKhqvrpd5IzN2ZE
+         2ejSK5O8hDTq0LICgT/PT7QrYsw55l6C9j8vowpGWtd1RG+VGt7j7rbdSgv5JAMfBhR2
+         CoOQJ39a0L/LqLJhrkuNuYbpJrfkproLSWcgdMlqRK2XvrAYbZq7LVfDN1oSCZ8Yac++
+         0IY1mmvkjGBpopwMDZbYsJFrg/jc+cvU3ptuT5cnd3fKopNDNFiX0Jy3XWfvoKu44OGp
+         f+g+j7m2cVPjgup9qbZdtgFwA/7RIQsHJFtys1f0O8szMCNPmm8sjIgclnXi9+YzWVzu
+         MkRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=6aHxYD4u2CdShGKdXn+jIfWnVuk3kwq6rff96mSY+o4=;
+        b=Awcp4Kx08humq+1viGfzjEY98Pbzwof2yolJ8uPmmFT1SXrE7pOXTy10fzst2dUdpV
+         L2jLhZJngCP5PgM/G04JTg0I5HGErZqKcsGtwzU9zcRkcvI4fb6zMfSxF41mJ6C8mVVK
+         mqJK5aT7JUB10uDz/+0XXfxwC/xswngjZdvV/THpfNkV0g6U4RsdtPZXPFvEcqmBT0U9
+         9xvP31bDig3SkU74RHGUkgW0zxig2uM83MIdbqHfhhZ9hPRGaPbrTihC5ylzFbitdfsg
+         UZPXN4TYebFioyoY3199REJOLlIUVM5eokk2/NYfT6qL0K/Pls9Fr+Lv+IEm13H7mjmn
+         p3BQ==
+X-Gm-Message-State: AOUpUlFyG4lCy9pxmMxv21iAS98BcPrmejb/NgQGZhwuEPET+tthF3B1
+        Lr24kaD2rPyUbunlIQfPNtSks9LOYo4ZJqsdjyuVuDic
+X-Google-Smtp-Source: AA+uWPxvlC0zaUlQcb8Ja+5vgP+sZoDUSAUiLX1W3F9mdJ/4HZyUX9eFFKMh1u5sSJMnA5KV1yDQjR1RgOhy9YPFdZU=
+X-Received: by 2002:a37:284d:: with SMTP id o74-v6mr11554079qkh.424.1534744410226;
+ Sun, 19 Aug 2018 22:53:30 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a0c:c3cc:0:0:0:0:0 with HTTP; Sun, 19 Aug 2018 22:53:29
+ -0700 (PDT)
+In-Reply-To: <20180820044250.11659-2-ravi.bangoria@linux.ibm.com>
+References: <20180820044250.11659-1-ravi.bangoria@linux.ibm.com> <20180820044250.11659-2-ravi.bangoria@linux.ibm.com>
+From:   Song Liu <liu.song.a23@gmail.com>
+Date:   Sun, 19 Aug 2018 22:53:29 -0700
+Message-ID: <CAPhsuW7XAfade333RpwrauYDgeWNEwQhXFjx64vAbtnyb-3wdA@mail.gmail.com>
+Subject: Re: [PATCH v9 1/4] Uprobes: Support SDT markers having reference
+ count (semaphore)
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>, mhiramat@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        ananth@linux.vnet.ibm.com,
+        Alexis Berlemont <alexis.berlemont@gmail.com>,
+        naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+On Sun, Aug 19, 2018 at 9:42 PM, Ravi Bangoria
+<ravi.bangoria@linux.ibm.com> wrote:
+> Userspace Statically Defined Tracepoints[1] are dtrace style markers
+> inside userspace applications. Applications like PostgreSQL, MySQL,
+> Pthread, Perl, Python, Java, Ruby, Node.js, libvirt, QEMU, glib etc
+> have these markers embedded in them. These markers are added by developer
+> at important places in the code. Each marker source expands to a single
+> nop instruction in the compiled code but there may be additional
+> overhead for computing the marker arguments which expands to couple of
+> instructions. In case the overhead is more, execution of it can be
+> omitted by runtime if() condition when no one is tracing on the marker:
+>
+>     if (reference_counter > 0) {
+>         Execute marker instructions;
+>     }
+>
+> Default value of reference counter is 0. Tracer has to increment the
+> reference counter before tracing on a marker and decrement it when
+> done with the tracing.
+>
+> Implement the reference counter logic in core uprobe. User will be
+> able to use it from trace_uprobe as well as from kernel module. New
+> trace_uprobe definition with reference counter will now be:
+>
+>     <path>:<offset>[(ref_ctr_offset)]
+>
+> where ref_ctr_offset is an optional field. For kernel module, new
+> variant of uprobe_register() has been introduced:
+>
+>     uprobe_register_refctr(inode, offset, ref_ctr_offset, consumer)
+>
+> No new variant for uprobe_unregister() because it's assumed to have
+> only one reference counter for one uprobe.
+>
+> [1] https://sourceware.org/systemtap/wiki/UserSpaceProbeImplementation
+>
+> Note: 'reference counter' is called as 'semaphore' in original Dtrace
+> (or Systemtap, bcc and even in ELF) documentation and code. But the
+> term 'semaphore' is misleading in this context. This is just a counter
+> used to hold number of tracers tracing on a marker. This is not really
+> used for any synchronization. So we are calling it a 'reference counter'
+> in kernel / perf code.
+>
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+> [Only trace_uprobe.c]
+> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 
-On IBM POWER9, the device tree exposes a property array identifed by
-"ibm,thread-groups" which will indicate which groups of threads share
-a particular set of resources.
+Reviewed-by: Song Liu <songliubraving@fb.com>
 
-As of today we only have one form of grouping identifying the group of
-threads in the core that share the L1 cache, translation cache and
-instruction data flow.
-
-This patch defines the helper function to parse the contents of
-"ibm,thread-groups" and a new structure to contain the parsed output.
-
-The patch also creates the sysfs file named "small_core_siblings" that
-returns the physical ids of the threads in the core that share the L1
-cache, translation cache and instruction data flow.
-
-Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
----
- Documentation/ABI/testing/sysfs-devices-system-cpu |   8 ++
- arch/powerpc/include/asm/cputhreads.h              |  25 ++++
- arch/powerpc/kernel/setup-common.c                 | 151 +++++++++++++++++++++
- arch/powerpc/kernel/sysfs.c                        |  38 ++++++
- 4 files changed, 222 insertions(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
-index 9c5e7732..b09b051 100644
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -487,3 +487,11 @@ Description:	Information about CPU vulnerabilities
- 		"Not affected"	  CPU is not affected by the vulnerability
- 		"Vulnerable"	  CPU is affected and no mitigation in effect
- 		"Mitigation: $M"  CPU is affected and mitigation $M is in effect
-+
-+What: 		/sys/devices/system/cpu/cpu[0-9]+/small_core_siblings
-+Date:		Aug-2018
-+KernelVersion:	v4.19.0
-+Contact:	Linux for PowerPC mailing list <linuxppc-dev@ozlabs.org>
-+Description:	List of Physical ids of CPUs which share the L1 cache,
-+		translation cache and instruction data-flow with this CPU.
-+Values:		Comma separated list of decimal integers.
-diff --git a/arch/powerpc/include/asm/cputhreads.h b/arch/powerpc/include/asm/cputhreads.h
-index d71a909..cb8b4a4 100644
---- a/arch/powerpc/include/asm/cputhreads.h
-+++ b/arch/powerpc/include/asm/cputhreads.h
-@@ -23,11 +23,13 @@
- extern int threads_per_core;
- extern int threads_per_subcore;
- extern int threads_shift;
-+extern bool has_big_cores;
- extern cpumask_t threads_core_mask;
- #else
- #define threads_per_core	1
- #define threads_per_subcore	1
- #define threads_shift		0
-+#define has_big_cores		0
- #define threads_core_mask	(*get_cpu_mask(0))
- #endif
- 
-@@ -69,12 +71,35 @@ static inline cpumask_t cpu_online_cores_map(void)
- 	return cpu_thread_mask_to_cores(cpu_online_mask);
- }
- 
-+#define MAX_THREAD_LIST_SIZE	8
-+#define THREAD_GROUP_SHARE_L1   1
-+struct thread_groups {
-+	unsigned int property;
-+	unsigned int nr_groups;
-+	unsigned int threads_per_group;
-+	unsigned int thread_list[MAX_THREAD_LIST_SIZE];
-+};
-+
- #ifdef CONFIG_SMP
- int cpu_core_index_of_thread(int cpu);
- int cpu_first_thread_of_core(int core);
-+int parse_thread_groups(struct device_node *dn, struct thread_groups *tg,
-+			unsigned property);
-+int get_cpu_thread_group_start(int cpu, struct thread_groups *tg);
- #else
- static inline int cpu_core_index_of_thread(int cpu) { return cpu; }
- static inline int cpu_first_thread_of_core(int core) { return core; }
-+static inline int parse_thread_groups(struct device_node *dn,
-+				      struct thread_groups *tg,
-+				      unsigned property)
-+{
-+	return -ENODATA;
-+}
-+
-+static inline int get_cpu_thread_group_start(int cpu, struct thread_groups *tg)
-+{
-+	return -1;
-+}
- #endif
- 
- static inline int cpu_thread_in_core(int cpu)
-diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
-index 40b44bb..272dbe5 100644
---- a/arch/powerpc/kernel/setup-common.c
-+++ b/arch/powerpc/kernel/setup-common.c
-@@ -402,10 +402,12 @@ void __init check_for_initrd(void)
- #ifdef CONFIG_SMP
- 
- int threads_per_core, threads_per_subcore, threads_shift;
-+bool has_big_cores;
- cpumask_t threads_core_mask;
- EXPORT_SYMBOL_GPL(threads_per_core);
- EXPORT_SYMBOL_GPL(threads_per_subcore);
- EXPORT_SYMBOL_GPL(threads_shift);
-+EXPORT_SYMBOL_GPL(has_big_cores);
- EXPORT_SYMBOL_GPL(threads_core_mask);
- 
- static void __init cpu_init_thread_core_maps(int tpc)
-@@ -433,6 +435,150 @@ static void __init cpu_init_thread_core_maps(int tpc)
- 
- u32 *cpu_to_phys_id = NULL;
- 
-+/*
-+ * parse_thread_groups: Parses the "ibm,thread-groups" device tree
-+ *                      property for the CPU device node @dn and stores
-+ *                      the parsed output in the thread_groups
-+ *                      structure @tg if the ibm,thread-groups[0]
-+ *                      matches @property.
-+ *
-+ * @dn: The device node of the CPU device.
-+ * @tg: Pointer to a thread group structure into which the parsed
-+ *      output of "ibm,thread-groups" is stored.
-+ * @property: The property of the thread-group that the caller is
-+ *            interested in.
-+ *
-+ * ibm,thread-groups[0..N-1] array defines which group of threads in
-+ * the CPU-device node can be grouped together based on the property.
-+ *
-+ * ibm,thread-groups[0] tells us the property based on which the
-+ * threads are being grouped together. If this value is 1, it implies
-+ * that the threads in the same group share L1, translation cache.
-+ *
-+ * ibm,thread-groups[1] tells us how many such thread groups exist.
-+ *
-+ * ibm,thread-groups[2] tells us the number of threads in each such
-+ * group.
-+ *
-+ * ibm,thread-groups[3..N-1] is the list of threads identified by
-+ * "ibm,ppc-interrupt-server#s" arranged as per their membership in
-+ * the grouping.
-+ *
-+ * Example: If ibm,thread-groups = [1,2,4,5,6,7,8,9,10,11,12] it
-+ * implies that there are 2 groups of 4 threads each, where each group
-+ * of threads share L1, translation cache.
-+ *
-+ * The "ibm,ppc-interrupt-server#s" of the first group is {5,6,7,8}
-+ * and the "ibm,ppc-interrupt-server#s" of the second group is {9, 10,
-+ * 11, 12} structure
-+ *
-+ * Returns 0 on success, -EINVAL if the property does not exist,
-+ * -ENODATA if property does not have a value, and -EOVERFLOW if the
-+ * property data isn't large enough.
-+ */
-+int parse_thread_groups(struct device_node *dn,
-+			struct thread_groups *tg,
-+			unsigned int property)
-+{
-+	int i;
-+	u32 thread_group_array[3 + MAX_THREAD_LIST_SIZE];
-+	u32 *thread_list;
-+	size_t total_threads;
-+	int ret;
-+
-+	ret = of_property_read_u32_array(dn, "ibm,thread-groups",
-+					 thread_group_array, 3);
-+	if (ret)
-+		goto out_err;
-+
-+	ret = -ENODATA;
-+	tg->property = thread_group_array[0];
-+	tg->nr_groups = thread_group_array[1];
-+	tg->threads_per_group = thread_group_array[2];
-+	if (tg->property != property ||
-+	    tg->nr_groups < 1 ||
-+	    tg->threads_per_group < 1)
-+		goto out_err;
-+
-+	total_threads = tg->nr_groups * tg->threads_per_group;
-+
-+	ret = of_property_read_u32_array(dn, "ibm,thread-groups",
-+					 thread_group_array,
-+					 3 + total_threads);
-+	if (ret)
-+		goto out_err;
-+
-+	thread_list = &thread_group_array[3];
-+
-+	for (i = 0 ; i < total_threads; i++)
-+		tg->thread_list[i] = thread_list[i];
-+
-+	return 0;
-+out_err:
-+	tg->property = 0;
-+	tg->nr_groups = 0;
-+	tg->threads_per_group = 0;
-+	return ret;
-+}
-+
-+/*
-+ * dt_has_big_core : Parses the device tree property
-+ *		    "ibm,thread-groups" for device node pointed by @dn
-+ *		    and stores the parsed output in the structure
-+ *		    pointed to by @tg.  Then checks if the output in
-+ *		    @tg corresponds to a big-core.
-+ *
-+ * @dn: Device node pointer of the CPU node being checked for a
-+ *      big-core.
-+ * @tg: Pointer to thread_groups struct in which parsed output of
-+ *      "ibm,thread-groups" is recorded.
-+ *
-+ * Returns true if the @dn points to a big-core.
-+ * Returns false if there is an error in parsing "ibm,thread-groups"
-+ * or the parsed output doesn't correspond to a big-core.
-+ */
-+static inline bool dt_has_big_core(struct device_node *dn,
-+				   struct thread_groups *tg)
-+{
-+	if (parse_thread_groups(dn, tg, THREAD_GROUP_SHARE_L1))
-+		return false;
-+
-+	return true;
-+}
-+
-+/*
-+ * get_cpu_thread_group_start : Searches the thread group in tg->thread_list
-+ *                              that @cpu belongs to.
-+ *
-+ * @cpu : The logical CPU whose thread group is being searched.
-+ * @tg : The thread-group structure of the CPU node which @cpu belongs
-+ *       to.
-+ *
-+ * Returns the index to tg->thread_list that points to the the start
-+ * of the thread_group that @cpu belongs to.
-+ *
-+ * Returns -1 if cpu doesn't belong to any of the groups pointed to by
-+ * tg->thread_list.
-+ */
-+int get_cpu_thread_group_start(int cpu, struct thread_groups *tg)
-+{
-+	int hw_cpu_id = get_hard_smp_processor_id(cpu);
-+	int i, j;
-+
-+	for (i = 0; i < tg->nr_groups; i++) {
-+		int group_start = i * tg->threads_per_group;
-+
-+		for (j = 0; j < tg->threads_per_group; j++) {
-+			int idx = group_start + j;
-+
-+			if (tg->thread_list[idx] == hw_cpu_id)
-+				return group_start;
-+		}
-+	}
-+
-+	return -1;
-+}
-+
- /**
-  * setup_cpu_maps - initialize the following cpu maps:
-  *                  cpu_possible_mask
-@@ -457,6 +603,7 @@ void __init smp_setup_cpu_maps(void)
- 	int cpu = 0;
- 	int nthreads = 1;
- 
-+	has_big_cores = true;
- 	DBG("smp_setup_cpu_maps()\n");
- 
- 	cpu_to_phys_id = __va(memblock_alloc(nr_cpu_ids * sizeof(u32),
-@@ -467,6 +614,7 @@ void __init smp_setup_cpu_maps(void)
- 		const __be32 *intserv;
- 		__be32 cpu_be;
- 		int j, len;
-+		struct thread_groups tg;
- 
- 		DBG("  * %pOF...\n", dn);
- 
-@@ -505,6 +653,9 @@ void __init smp_setup_cpu_maps(void)
- 			cpu++;
- 		}
- 
-+		if (has_big_cores && !dt_has_big_core(dn, &tg))
-+			has_big_cores = false;
-+
- 		if (cpu >= nr_cpu_ids) {
- 			of_node_put(dn);
- 			break;
-diff --git a/arch/powerpc/kernel/sysfs.c b/arch/powerpc/kernel/sysfs.c
-index 755dc98..83fd26b 100644
---- a/arch/powerpc/kernel/sysfs.c
-+++ b/arch/powerpc/kernel/sysfs.c
-@@ -18,6 +18,7 @@
- #include <asm/smp.h>
- #include <asm/pmc.h>
- #include <asm/firmware.h>
-+#include <asm/cputhreads.h>
- 
- #include "cacheinfo.h"
- #include "setup.h"
-@@ -1025,6 +1026,36 @@ static ssize_t show_physical_id(struct device *dev,
- }
- static DEVICE_ATTR(physical_id, 0444, show_physical_id, NULL);
- 
-+static ssize_t show_small_core_siblings(struct device *dev,
-+					struct device_attribute *attr,
-+					char *buf)
-+{
-+	struct cpu *cpu = container_of(dev, struct cpu, dev);
-+	struct device_node *dn = of_get_cpu_node(cpu->dev.id, NULL);
-+	struct thread_groups tg;
-+	int i, j, err;
-+	ssize_t ret = 0;
-+
-+	err = parse_thread_groups(dn, &tg, THREAD_GROUP_SHARE_L1);
-+	of_node_put(dn);
-+
-+	if (err)
-+		return -ENODATA;
-+
-+	i = get_cpu_thread_group_start(cpu->dev.id, &tg);
-+
-+	if (i == -1)
-+		return -ENODATA;
-+
-+	for (j = 0; j < tg.threads_per_group - 1; j++)
-+		ret += sprintf(buf + ret, "%d,", tg.thread_list[i + j]);
-+
-+	ret += sprintf(buf + ret, "%d\n", tg.thread_list[i + j]);
-+
-+	return ret;
-+}
-+static DEVICE_ATTR(small_core_siblings, 0444, show_small_core_siblings, NULL);
-+
- static int __init topology_init(void)
- {
- 	int cpu, r;
-@@ -1048,6 +1079,13 @@ static int __init topology_init(void)
- 			register_cpu(c, cpu);
- 
- 			device_create_file(&c->dev, &dev_attr_physical_id);
-+
-+			if (has_big_cores) {
-+				const struct device_attribute *attr =
-+				       &dev_attr_small_core_siblings;
-+
-+			       device_create_file(&c->dev, attr);
-+			}
- 		}
- 	}
- 	r = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "powerpc/topology:online",
--- 
-1.9.4
-
+> ---
+>  include/linux/uprobes.h     |   5 +
+>  kernel/events/uprobes.c     | 259 ++++++++++++++++++++++++++++++++++++++++++--
+>  kernel/trace/trace.c        |   2 +-
+>  kernel/trace/trace_uprobe.c |  38 ++++++-
+>  4 files changed, 293 insertions(+), 11 deletions(-)
+>
+> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> index bb9d2084af03..103a48a48872 100644
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
+> @@ -123,6 +123,7 @@ extern unsigned long uprobe_get_swbp_addr(struct pt_regs *regs);
+>  extern unsigned long uprobe_get_trap_addr(struct pt_regs *regs);
+>  extern int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long vaddr, uprobe_opcode_t);
+>  extern int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
+> +extern int uprobe_register_refctr(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
+>  extern int uprobe_apply(struct inode *inode, loff_t offset, struct uprobe_consumer *uc, bool);
+>  extern void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
+>  extern int uprobe_mmap(struct vm_area_struct *vma);
+> @@ -160,6 +161,10 @@ uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
+>  {
+>         return -ENOSYS;
+>  }
+> +static inline int uprobe_register_refctr(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc)
+> +{
+> +       return -ENOSYS;
+> +}
+>  static inline int
+>  uprobe_apply(struct inode *inode, loff_t offset, struct uprobe_consumer *uc, bool add)
+>  {
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 919c1ce32beb..35065febcb6c 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -73,6 +73,7 @@ struct uprobe {
+>         struct uprobe_consumer  *consumers;
+>         struct inode            *inode;         /* Also hold a ref to inode */
+>         loff_t                  offset;
+> +       loff_t                  ref_ctr_offset;
+>         unsigned long           flags;
+>
+>         /*
+> @@ -88,6 +89,15 @@ struct uprobe {
+>         struct arch_uprobe      arch;
+>  };
+>
+> +struct delayed_uprobe {
+> +       struct list_head list;
+> +       struct uprobe *uprobe;
+> +       struct mm_struct *mm;
+> +};
+> +
+> +static DEFINE_MUTEX(delayed_uprobe_lock);
+> +static LIST_HEAD(delayed_uprobe_list);
+> +
+>  /*
+>   * Execute out of line area: anonymous executable mapping installed
+>   * by the probed task to execute the copy of the original instruction
+> @@ -282,6 +292,166 @@ static int verify_opcode(struct page *page, unsigned long vaddr, uprobe_opcode_t
+>         return 1;
+>  }
+>
+> +static struct delayed_uprobe *
+> +delayed_uprobe_check(struct uprobe *uprobe, struct mm_struct *mm)
+> +{
+> +       struct delayed_uprobe *du;
+> +
+> +       list_for_each_entry(du, &delayed_uprobe_list, list)
+> +               if (du->uprobe == uprobe && du->mm == mm)
+> +                       return du;
+> +       return NULL;
+> +}
+> +
+> +static int delayed_uprobe_add(struct uprobe *uprobe, struct mm_struct *mm)
+> +{
+> +       struct delayed_uprobe *du;
+> +
+> +       if (delayed_uprobe_check(uprobe, mm))
+> +               return 0;
+> +
+> +       du  = kzalloc(sizeof(*du), GFP_KERNEL);
+> +       if (!du)
+> +               return -ENOMEM;
+> +
+> +       du->uprobe = uprobe;
+> +       du->mm = mm;
+> +       list_add(&du->list, &delayed_uprobe_list);
+> +       return 0;
+> +}
+> +
+> +static void delayed_uprobe_delete(struct delayed_uprobe *du)
+> +{
+> +       if (WARN_ON(!du))
+> +               return;
+> +       list_del(&du->list);
+> +       kfree(du);
+> +}
+> +
+> +static void delayed_uprobe_remove(struct uprobe *uprobe, struct mm_struct *mm)
+> +{
+> +       struct list_head *pos, *q;
+> +       struct delayed_uprobe *du;
+> +
+> +       if (!uprobe && !mm)
+> +               return;
+> +
+> +       list_for_each_safe(pos, q, &delayed_uprobe_list) {
+> +               du = list_entry(pos, struct delayed_uprobe, list);
+> +
+> +               if (uprobe && du->uprobe != uprobe)
+> +                       continue;
+> +               if (mm && du->mm != mm)
+> +                       continue;
+> +
+> +               delayed_uprobe_delete(du);
+> +       }
+> +}
+> +
+> +static bool valid_ref_ctr_vma(struct uprobe *uprobe,
+> +                             struct vm_area_struct *vma)
+> +{
+> +       unsigned long vaddr = offset_to_vaddr(vma, uprobe->ref_ctr_offset);
+> +
+> +       return uprobe->ref_ctr_offset &&
+> +               vma->vm_file &&
+> +               file_inode(vma->vm_file) == uprobe->inode &&
+> +               (vma->vm_flags & (VM_WRITE|VM_SHARED)) == VM_WRITE &&
+> +               vma->vm_start <= vaddr &&
+> +               vma->vm_end > vaddr;
+> +}
+> +
+> +static struct vm_area_struct *
+> +find_ref_ctr_vma(struct uprobe *uprobe, struct mm_struct *mm)
+> +{
+> +       struct vm_area_struct *tmp;
+> +
+> +       for (tmp = mm->mmap; tmp; tmp = tmp->vm_next)
+> +               if (valid_ref_ctr_vma(uprobe, tmp))
+> +                       return tmp;
+> +
+> +       return NULL;
+> +}
+> +
+> +static int
+> +__update_ref_ctr(struct mm_struct *mm, unsigned long vaddr, short d)
+> +{
+> +       void *kaddr;
+> +       struct page *page;
+> +       struct vm_area_struct *vma;
+> +       int ret;
+> +       short *ptr;
+> +
+> +       if (!vaddr || !d)
+> +               return -EINVAL;
+> +
+> +       ret = get_user_pages_remote(NULL, mm, vaddr, 1,
+> +                       FOLL_WRITE, &page, &vma, NULL);
+> +       if (unlikely(ret <= 0)) {
+> +               /*
+> +                * We are asking for 1 page. If get_user_pages_remote() fails,
+> +                * it may return 0, in that case we have to return error.
+> +                */
+> +               return ret == 0 ? -EBUSY : ret;
+> +       }
+> +
+> +       kaddr = kmap_atomic(page);
+> +       ptr = kaddr + (vaddr & ~PAGE_MASK);
+> +
+> +       if (unlikely(*ptr + d < 0)) {
+> +               pr_warn("ref_ctr going negative. vaddr: 0x%lx, "
+> +                       "curr val: %d, delta: %d\n", vaddr, *ptr, d);
+> +               ret = -EINVAL;
+> +               goto out;
+> +       }
+> +
+> +       *ptr += d;
+> +       ret = 0;
+> +out:
+> +       kunmap_atomic(kaddr);
+> +       put_page(page);
+> +       return ret;
+> +}
+> +
+> +static void update_ref_ctr_warn(struct uprobe *uprobe,
+> +                               struct mm_struct *mm, short d)
+> +{
+> +       pr_warn("ref_ctr %s failed for inode: 0x%lx offset: "
+> +               "0x%llx ref_ctr_offset: 0x%llx of mm: 0x%pK\n",
+> +               d > 0 ? "increment" : "decrement", uprobe->inode->i_ino,
+> +               (unsigned long long) uprobe->offset,
+> +               (unsigned long long) uprobe->ref_ctr_offset, mm);
+> +}
+> +
+> +static int update_ref_ctr(struct uprobe *uprobe, struct mm_struct *mm,
+> +                         short d)
+> +{
+> +       struct vm_area_struct *rc_vma;
+> +       unsigned long rc_vaddr;
+> +       int ret = 0;
+> +
+> +       rc_vma = find_ref_ctr_vma(uprobe, mm);
+> +
+> +       if (rc_vma) {
+> +               rc_vaddr = offset_to_vaddr(rc_vma, uprobe->ref_ctr_offset);
+> +               ret = __update_ref_ctr(mm, rc_vaddr, d);
+> +               if (ret)
+> +                       update_ref_ctr_warn(uprobe, mm, d);
+> +
+> +               if (d > 0)
+> +                       return ret;
+> +       }
+> +
+> +       mutex_lock(&delayed_uprobe_lock);
+> +       if (d > 0)
+> +               ret = delayed_uprobe_add(uprobe, mm);
+> +       else
+> +               delayed_uprobe_remove(uprobe, mm);
+> +       mutex_unlock(&delayed_uprobe_lock);
+> +
+> +       return ret;
+> +}
+> +
+>  /*
+>   * NOTE:
+>   * Expect the breakpoint instruction to be the smallest size instruction for
+> @@ -302,9 +472,13 @@ static int verify_opcode(struct page *page, unsigned long vaddr, uprobe_opcode_t
+>  int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
+>                         unsigned long vaddr, uprobe_opcode_t opcode)
+>  {
+> +       struct uprobe *uprobe;
+>         struct page *old_page, *new_page;
+>         struct vm_area_struct *vma;
+> -       int ret;
+> +       int ret, is_register, ref_ctr_updated = 0;
+> +
+> +       is_register = is_swbp_insn(&opcode);
+> +       uprobe = container_of(auprobe, struct uprobe, arch);
+>
+>  retry:
+>         /* Read the page with vaddr into memory */
+> @@ -317,6 +491,15 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
+>         if (ret <= 0)
+>                 goto put_old;
+>
+> +       /* We are going to replace instruction, update ref_ctr. */
+> +       if (!ref_ctr_updated && uprobe->ref_ctr_offset) {
+> +               ret = update_ref_ctr(uprobe, mm, is_register ? 1 : -1);
+> +               if (ret)
+> +                       goto put_old;
+> +
+> +               ref_ctr_updated = 1;
+> +       }
+> +
+>         ret = anon_vma_prepare(vma);
+>         if (ret)
+>                 goto put_old;
+> @@ -337,6 +520,11 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
+>
+>         if (unlikely(ret == -EAGAIN))
+>                 goto retry;
+> +
+> +       /* Revert back reference counter if instruction update failed. */
+> +       if (ret && is_register && ref_ctr_updated)
+> +               update_ref_ctr(uprobe, mm, -1);
+> +
+>         return ret;
+>  }
+>
+> @@ -378,8 +566,15 @@ static struct uprobe *get_uprobe(struct uprobe *uprobe)
+>
+>  static void put_uprobe(struct uprobe *uprobe)
+>  {
+> -       if (atomic_dec_and_test(&uprobe->ref))
+> +       if (atomic_dec_and_test(&uprobe->ref)) {
+> +               /*
+> +                * If application munmap(exec_vma) before uprobe_unregister()
+> +                * gets called, we don't get a chance to remove uprobe from
+> +                * delayed_uprobe_list from remove_breakpoint(). Do it here.
+> +                */
+> +               delayed_uprobe_remove(uprobe, NULL);
+>                 kfree(uprobe);
+> +       }
+>  }
+>
+>  static int match_uprobe(struct uprobe *l, struct uprobe *r)
+> @@ -484,7 +679,8 @@ static struct uprobe *insert_uprobe(struct uprobe *uprobe)
+>         return u;
+>  }
+>
+> -static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset)
+> +static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset,
+> +                                  loff_t ref_ctr_offset)
+>  {
+>         struct uprobe *uprobe, *cur_uprobe;
+>
+> @@ -494,6 +690,7 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset)
+>
+>         uprobe->inode = inode;
+>         uprobe->offset = offset;
+> +       uprobe->ref_ctr_offset = ref_ctr_offset;
+>         init_rwsem(&uprobe->register_rwsem);
+>         init_rwsem(&uprobe->consumer_rwsem);
+>
+> @@ -895,7 +1092,7 @@ EXPORT_SYMBOL_GPL(uprobe_unregister);
+>   * else return 0 (success)
+>   */
+>  static int __uprobe_register(struct inode *inode, loff_t offset,
+> -                            struct uprobe_consumer *uc)
+> +                            loff_t ref_ctr_offset, struct uprobe_consumer *uc)
+>  {
+>         struct uprobe *uprobe;
+>         int ret;
+> @@ -912,7 +1109,7 @@ static int __uprobe_register(struct inode *inode, loff_t offset,
+>                 return -EINVAL;
+>
+>   retry:
+> -       uprobe = alloc_uprobe(inode, offset);
+> +       uprobe = alloc_uprobe(inode, offset, ref_ctr_offset);
+>         if (!uprobe)
+>                 return -ENOMEM;
+>         /*
+> @@ -938,10 +1135,17 @@ static int __uprobe_register(struct inode *inode, loff_t offset,
+>  int uprobe_register(struct inode *inode, loff_t offset,
+>                     struct uprobe_consumer *uc)
+>  {
+> -       return __uprobe_register(inode, offset, uc);
+> +       return __uprobe_register(inode, offset, 0, uc);
+>  }
+>  EXPORT_SYMBOL_GPL(uprobe_register);
+>
+> +int uprobe_register_refctr(struct inode *inode, loff_t offset,
+> +                          loff_t ref_ctr_offset, struct uprobe_consumer *uc)
+> +{
+> +       return __uprobe_register(inode, offset, ref_ctr_offset, uc);
+> +}
+> +EXPORT_SYMBOL_GPL(uprobe_register_refctr);
+> +
+>  /*
+>   * uprobe_apply - unregister a already registered probe.
+>   * @inode: the file in which the probe has to be removed.
+> @@ -1060,6 +1264,35 @@ static void build_probe_list(struct inode *inode,
+>         spin_unlock(&uprobes_treelock);
+>  }
+>
+> +/* @vma contains reference counter, not the probed instruction. */
+> +static int delayed_ref_ctr_inc(struct vm_area_struct *vma)
+> +{
+> +       struct list_head *pos, *q;
+> +       struct delayed_uprobe *du;
+> +       unsigned long vaddr;
+> +       int ret = 0, err = 0;
+> +
+> +       mutex_lock(&delayed_uprobe_lock);
+> +       list_for_each_safe(pos, q, &delayed_uprobe_list) {
+> +               du = list_entry(pos, struct delayed_uprobe, list);
+> +
+> +               if (du->mm != vma->vm_mm ||
+> +                   !valid_ref_ctr_vma(du->uprobe, vma))
+> +                       continue;
+> +
+> +               vaddr = offset_to_vaddr(vma, du->uprobe->ref_ctr_offset);
+> +               ret = __update_ref_ctr(vma->vm_mm, vaddr, 1);
+> +               if (ret) {
+> +                       update_ref_ctr_warn(du->uprobe, vma->vm_mm, 1);
+> +                       if (!err)
+> +                               err = ret;
+> +               }
+> +               delayed_uprobe_delete(du);
+> +       }
+> +       mutex_unlock(&delayed_uprobe_lock);
+> +       return err;
+> +}
+> +
+>  /*
+>   * Called from mmap_region/vma_adjust with mm->mmap_sem acquired.
+>   *
+> @@ -1072,7 +1305,15 @@ int uprobe_mmap(struct vm_area_struct *vma)
+>         struct uprobe *uprobe, *u;
+>         struct inode *inode;
+>
+> -       if (no_uprobe_events() || !valid_vma(vma, true))
+> +       if (no_uprobe_events())
+> +               return 0;
+> +
+> +       if (vma->vm_file &&
+> +           (vma->vm_flags & (VM_WRITE|VM_SHARED)) == VM_WRITE &&
+> +           test_bit(MMF_HAS_UPROBES, &vma->vm_mm->flags))
+> +               delayed_ref_ctr_inc(vma);
+> +
+> +       if (!valid_vma(vma, true))
+>                 return 0;
+>
+>         inode = file_inode(vma->vm_file);
+> @@ -1246,6 +1487,10 @@ void uprobe_clear_state(struct mm_struct *mm)
+>  {
+>         struct xol_area *area = mm->uprobes_state.xol_area;
+>
+> +       mutex_lock(&delayed_uprobe_lock);
+> +       delayed_uprobe_remove(NULL, mm);
+> +       mutex_unlock(&delayed_uprobe_lock);
+> +
+>         if (!area)
+>                 return;
+>
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index 2dad27809794..23689831f656 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -4620,7 +4620,7 @@ static const char readme_msg[] =
+>    "place (kretprobe): [<module>:]<symbol>[+<offset>]|<memaddr>\n"
+>  #endif
+>  #ifdef CONFIG_UPROBE_EVENTS
+> -       "\t    place: <path>:<offset>\n"
+> +  "   place (uprobe): <path>:<offset>[(ref_ctr_offset)]\n"
+>  #endif
+>         "\t     args: <name>=fetcharg[:type]\n"
+>         "\t fetcharg: %<register>, @<address>, @<symbol>[+|-<offset>],\n"
+> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> index ac02fafc9f1b..a7ef6c4ca16e 100644
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -59,6 +59,7 @@ struct trace_uprobe {
+>         struct inode                    *inode;
+>         char                            *filename;
+>         unsigned long                   offset;
+> +       unsigned long                   ref_ctr_offset;
+>         unsigned long                   nhit;
+>         struct trace_probe              tp;
+>  };
+> @@ -364,10 +365,10 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
+>  static int create_trace_uprobe(int argc, char **argv)
+>  {
+>         struct trace_uprobe *tu;
+> -       char *arg, *event, *group, *filename;
+> +       char *arg, *event, *group, *filename, *rctr, *rctr_end;
+>         char buf[MAX_EVENT_NAME_LEN];
+>         struct path path;
+> -       unsigned long offset;
+> +       unsigned long offset, ref_ctr_offset;
+>         bool is_delete, is_return;
+>         int i, ret;
+>
+> @@ -376,6 +377,7 @@ static int create_trace_uprobe(int argc, char **argv)
+>         is_return = false;
+>         event = NULL;
+>         group = NULL;
+> +       ref_ctr_offset = 0;
+>
+>         /* argc must be >= 1 */
+>         if (argv[0][0] == '-')
+> @@ -450,6 +452,26 @@ static int create_trace_uprobe(int argc, char **argv)
+>                 goto fail_address_parse;
+>         }
+>
+> +       /* Parse reference counter offset if specified. */
+> +       rctr = strchr(arg, '(');
+> +       if (rctr) {
+> +               rctr_end = strchr(rctr, ')');
+> +               if (rctr > rctr_end || *(rctr_end + 1) != 0) {
+> +                       ret = -EINVAL;
+> +                       pr_info("Invalid reference counter offset.\n");
+> +                       goto fail_address_parse;
+> +               }
+> +
+> +               *rctr++ = '\0';
+> +               *rctr_end = '\0';
+> +               ret = kstrtoul(rctr, 0, &ref_ctr_offset);
+> +               if (ret) {
+> +                       pr_info("Invalid reference counter offset.\n");
+> +                       goto fail_address_parse;
+> +               }
+> +       }
+> +
+> +       /* Parse uprobe offset. */
+>         ret = kstrtoul(arg, 0, &offset);
+>         if (ret)
+>                 goto fail_address_parse;
+> @@ -484,6 +506,7 @@ static int create_trace_uprobe(int argc, char **argv)
+>                 goto fail_address_parse;
+>         }
+>         tu->offset = offset;
+> +       tu->ref_ctr_offset = ref_ctr_offset;
+>         tu->path = path;
+>         tu->filename = kstrdup(filename, GFP_KERNEL);
+>
+> @@ -602,6 +625,9 @@ static int probes_seq_show(struct seq_file *m, void *v)
+>                         trace_event_name(&tu->tp.call), tu->filename,
+>                         (int)(sizeof(void *) * 2), tu->offset);
+>
+> +       if (tu->ref_ctr_offset)
+> +               seq_printf(m, "(0x%lx)", tu->ref_ctr_offset);
+> +
+>         for (i = 0; i < tu->tp.nr_args; i++)
+>                 seq_printf(m, " %s=%s", tu->tp.args[i].name, tu->tp.args[i].comm);
+>
+> @@ -917,7 +943,13 @@ probe_event_enable(struct trace_uprobe *tu, struct trace_event_file *file,
+>
+>         tu->consumer.filter = filter;
+>         tu->inode = d_real_inode(tu->path.dentry);
+> -       ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
+> +       if (tu->ref_ctr_offset) {
+> +               ret = uprobe_register_refctr(tu->inode, tu->offset,
+> +                               tu->ref_ctr_offset, &tu->consumer);
+> +       } else {
+> +               ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
+> +       }
+> +
+>         if (ret)
+>                 goto err_buffer;
+>
+> --
+> 2.14.4
+>
