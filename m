@@ -2,101 +2,80 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 095F5C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A86C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B33B621581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:01:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMkDNRBe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B33B621581
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4AA9221581
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:01:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AA9221581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727189AbeHTTRQ (ORCPT
+        id S1727274AbeHTTRU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 15:17:16 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:43520 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726667AbeHTTRP (ORCPT
+        Mon, 20 Aug 2018 15:17:20 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:55896 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726667AbeHTTRU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 15:17:15 -0400
-Received: by mail-oi0-f68.google.com with SMTP id b15-v6so26648305oib.10;
-        Mon, 20 Aug 2018 09:01:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=6DsXgaboVG5BVc2k8E6WbvT0ITYydRw3zWMWEo9acL4=;
-        b=OMkDNRBeKMDmEafMhtJJjjKKTpP3uMLvYGr2jQpbt+WN+2wnSQmD820YG+QqQjMmX4
-         u0GGwQu9Q7q5eli9LFxLrnXig+mEqnWmuxtclplvzvR7+IC0ckO+K1n40E3F54NGOu3A
-         86Vo7zP1lc4FGCwluiW0HZvP3X21+k5jt+HLDMUn7aJLIp0J/CNuElrKECi9sbuR2928
-         uTe3i+CW2k1bTWaH3kYHZM2Hc2lyXVA9RfTMMdft863jQUuXleeVgC6adDxTSlcBj8I4
-         yGZ82VDN+/eQShHdt1jhpQAm0RiOsEwtBQwV5pW1ZJJhOAnCU/x5i4fw6sJ8RATsHzvc
-         Qt5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=6DsXgaboVG5BVc2k8E6WbvT0ITYydRw3zWMWEo9acL4=;
-        b=iuvYTVum6CScLCnfyeqAP1VDsseHpzfWxuJvReiUxIPybcw8lUrtce9ajuOSpuiabI
-         uAVpCB1Qc/1pl8P0Nac/cqI8otLUglBYfTJca7piVEr1sxZ7ncU0HC5/iZuE9RLng5PF
-         aIjn8tX75bIEpQLDibtgR0MU0zDq7HMOvXyJ2XUAqrcai8Rev5vNg5EgFpmhat+71vz6
-         EgXkXHWbWJ6vvRQ776hfYBo4esgMg9eiCtYFC/HM8p1gyEJ7g2eazpAzaBIjGpS21Uco
-         7bI7ftB4Bs10A/4UObB11ctlwU64PwCtqFlDzJzg3P6Upgps/DRLNmfNs9dt8S8UlH4p
-         vZ8g==
-X-Gm-Message-State: AOUpUlFnPhJmnzBCiEtxYMoNyAD1cVdOIlYk3tdU7s0AihR0HdFRBCu/
-        6+qC+nWh7CMq1dPA9oB/K6BNrs3y7R9+bEVGm8q13mXq
-X-Google-Smtp-Source: AA+uWPzh02wWaTgM+ItFDevXWv9rEe5Fo7OSPYLk5jrU/EO5jzUeZf7VZCboNHdygnjlDO4e8UcmZGoLgvs91SXyDVQ=
-X-Received: by 2002:aca:bdc4:: with SMTP id n187-v6mr13521244oif.3.1534780862659;
- Mon, 20 Aug 2018 09:01:02 -0700 (PDT)
+        Mon, 20 Aug 2018 15:17:20 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1frmbs-0000HZ-2U; Mon, 20 Aug 2018 18:00:52 +0200
+Date:   Mon, 20 Aug 2018 18:00:51 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Jim Mattson <jmattson@google.com>
+cc:     Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, Borislav Petkov <bp@suse.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        linux-kernel@vger.kernel.org, Fred Jacobs <fjacobs@vmware.com>,
+        Peter Shier <pshier@google.com>
+Subject: Re: [PATCH] x86/spectre: Expand test for vulnerability to empty RSB
+ exploits
+In-Reply-To: <20180807222535.143193-1-jmattson@google.com>
+Message-ID: <alpine.DEB.2.21.1808201758250.1551@nanos.tec.linutronix.de>
+References: <20180807222535.143193-1-jmattson@google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Received: by 2002:a9d:284e:0:0:0:0:0 with HTTP; Mon, 20 Aug 2018 09:01:02
- -0700 (PDT)
-In-Reply-To: <20180814204758.3049-1-tuomas@tuxera.com>
-References: <20180814204758.3049-1-tuomas@tuxera.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 20 Aug 2018 13:01:02 -0300
-Message-ID: <CAOMZO5A2U5vZkfCE7xaMfrTQCogBojBDAWUe3XDCr7-JipD2Wg@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: imx6: Add stdout-path to Wandboard
-To:     Tuomas Tynkkynen <tuomas@tuxera.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tuomas,
+On Tue, 7 Aug 2018, Jim Mattson wrote:
 
-On Tue, Aug 14, 2018 at 5:47 PM, Tuomas Tynkkynen <tuomas@tuxera.com> wrote:
-> Setting a stdout-path in the .dtb is convenient because then the user
-> gets a serial console on the RS-232 connector without any extra effort
-> of figuring out the relevant 'console=' boot parameter.
->
-> Signed-off-by: Tuomas Tynkkynen <tuomas@tuxera.com>
+> Skylake-era Intel CPUs are vulnerable to exploits of empty RSB
+> conditions. On hardware, platform vulnerability can be determined
+> simply by checking the processor's DisplayModel/DisplayFamily
+> signature.  However, when running in a VM, the operating system should
+> also query IA32_ARCH_CAPABILITIES.RSBA[bit 2], a synthetic bit that
+> can be set by a hypervisor to indicate that the VM might run on a
+> vulnerable physical processor, regardless of the
+> DisplayModel/DisplayFamily reported by CPUID.
+> 
+> Note that IA32_ARCH_CAPABILITIES.RSBA[bit 2] is always clear on
+> hardware, so the DisplayModel/DisplayFamily check is still required.
+> 
+> For all of the details, see the Intel white paper, "Retpoline: A
+> Branch Target Injection Mitigation" (document number 337131-001),
+> section 5.3: Virtual Machine CPU Identification.
+> 
+> Signed-off-by: Jim Mattson <jmattson@google.com>
+> Reviewed-by: Peter Shier <pshier@google.com>
 
-Patch looks good.
+That has been superseeded by:
 
-Only a minor nit on the Subject line: I would do it like this to make
-it consistent:
+  fdf82a7856b3 ("x86/speculation: Protect against userspace-userspace spectreRSB")
 
-ARM: dts: imx6qdl-wandboard: Add stdout-path
+right? At least it does not apply anymore...
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Thanks,
+
+	tglx
