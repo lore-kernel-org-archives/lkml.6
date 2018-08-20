@@ -2,65 +2,77 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8D1C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA4CC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA5F521722
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:40:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA5F521722
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 268F52170E
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:42:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 268F52170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbeHTS4v (ORCPT
+        id S1726524AbeHTS7E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 14:56:51 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55847 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbeHTS4v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 14:56:51 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1frmHy-0008O5-PQ; Mon, 20 Aug 2018 17:40:18 +0200
-Date:   Mon, 20 Aug 2018 17:40:18 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jiri Kosina <jikos@kernel.org>, x86@kernel.org,
-        Christoph Hellwig <hch@lst.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] x86: apm: mark proc_apm_show as __maybe_unused
-In-Reply-To: <20180814091904.2186262-1-arnd@arndb.de>
-Message-ID: <alpine.DEB.2.21.1808201737330.1551@nanos.tec.linutronix.de>
-References: <20180814091904.2186262-1-arnd@arndb.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 20 Aug 2018 14:59:04 -0400
+Received: from mga12.intel.com ([192.55.52.136]:37379 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726024AbeHTS7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 14:59:03 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 08:42:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,265,1531810800"; 
+   d="scan'208";a="256443708"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by fmsmga006.fm.intel.com with ESMTP; 20 Aug 2018 08:42:54 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id CF9A8300B48; Mon, 20 Aug 2018 08:42:54 -0700 (PDT)
+Date:   Mon, 20 Aug 2018 08:42:54 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>, stable@vger.kernel.org,
+        Adrian Schroeter <adrian@suse.de>,
+        Dominique Leuenberger <dimstar@suse.de>
+Subject: Re: [PATCH] x86/speculation/l1tf: fix overflow on l1tf_pfn_limit()
+ on 32bit
+Message-ID: <20180820154254.GM12066@tassilo.jf.intel.com>
+References: <20180820095835.5298-1-vbabka@suse.cz>
+ <20180820142027.GL12066@tassilo.jf.intel.com>
+ <20180820142636.GM29735@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180820142636.GM29735@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 14 Aug 2018, Arnd Bergmann wrote:
-
-> A new build error appeared with CONFIG_PROC_FS disabled:
+> > BTW our much worse problems right now are crash reports on several 
+> > stable kernels, especially with large pages 
 > 
-> arch/x86/kernel/apm_32.c:1643:12: error: 'proc_apm_show' defined but not used [-Werror=unused-function]
-> 
-> This marks the function as __maybe_unused to let the compiler drop
-> it silently.
->
-> Fixes: 3f3942aca6da ("proc: introduce proc_create_single{,_data}")
+> Do you have any reference?
 
-The proper fix for this is to convert the stub function for proc_apm_show()
-to an inline. The compiler complains because the stub is a macro ....
 
-Thanks,
+https://lkml.org/lkml/2018/8/17/546
+https://bugzilla.redhat.com/show_bug.cgi?id=1618792       (this is 4.17, not 4.18)
 
-	tglx
+(might be different problems. I wasn't able to reproduce the 4.17 one
+so far)
+
+
+-Andi
