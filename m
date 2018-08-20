@@ -2,111 +2,92 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49FD7C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A74BEC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:22:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7A3A20E20
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:20:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bT2764uV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7A3A20E20
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F1112154B
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:22:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F1112154B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbeHTMfj (ORCPT
+        id S1726606AbeHTMhb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 08:35:39 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40985 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbeHTMfj (ORCPT
+        Mon, 20 Aug 2018 08:37:31 -0400
+Received: from bmailout1.hostsharing.net ([83.223.95.100]:48923 "EHLO
+        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbeHTMhb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 08:35:39 -0400
-Received: by mail-lf1-f66.google.com with SMTP id v22-v6so10366964lfe.8;
-        Mon, 20 Aug 2018 02:20:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:in-reply-to:references:user-agent:date
-         :message-id:mime-version:content-transfer-encoding;
-        bh=n74IuMkDSDZTyVw8b/r+ENWCGBPVgPV4omw9MsI7euk=;
-        b=bT2764uV2UvzuZXvwpc8treXl3fhp5wB20f5x3mZnPh98OjVIJqOpu47RUI5M0/xad
-         6kxhgB19bSf+F0WgvvrNlb6O/GbXnZdHYx8eQtuRbDEsq0a63Pq2js7VGAHr0GPoNRIQ
-         jjcV6zroJtJy21D8aJTHeVKRvmS5R81LZO7GxdxJCWw374uvaDPw7vuwLeV50sXM+EHu
-         U82UEXvTDL1NXyiNPlronYrV3oGqGNPcnzeKlytarOPSYW+K6gjcSSOkMv/JP59rYv6Q
-         spqt6D6+n6455GtxRQmUKQWaL83VmNXxsZ8NrRuPhH42AANnnxGGMaLPqc9m3/kXP6NH
-         l+Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :user-agent:date:message-id:mime-version:content-transfer-encoding;
-        bh=n74IuMkDSDZTyVw8b/r+ENWCGBPVgPV4omw9MsI7euk=;
-        b=g47UWIxQ97OE6jokfhVOTtMhw2z/ZWi69JT0ozOGJTvhLi+sSx7VzXOddof+D6KAcO
-         4bCLdZ3ezvdUp4lKWb4qrn+RruZlrECI3VeDglxDVwxupNHkALiUH3CQLCKbCoKteOde
-         AKEdUeDBwqePbkGC8V+9p7+9ceV7HHhDk/OLTdRNgIxu8k4Kwgv6B9WKUJg+atqdvgTZ
-         GH1IhQlyy28tzBSc+E1hAy3cjRbK6FfCDM03iULnFYekniibaGAw288jgK+TL3vKoCgl
-         +aeTT24iOxyc8lJ41tZrsCBE5/oA1XjiPIWI6ZKbBs7pVoWyq8gDoGIFfjl9gS3Nl2Q+
-         1Wow==
-X-Gm-Message-State: AOUpUlHAA3dx/NjPZn4rSHOyzhXNZ0AkV3JmrTwaBmpWBRHEN7KVVmTR
-        C9/2JWlYmwEdAp/SU9/BTEo6IeZS
-X-Google-Smtp-Source: AA+uWPxBxl2VAzQMFMdrgsgf8+0byeXlvwdBTZxUkiV4IGisP+BxZ2c/D/x66FLA4TDeWM4yJKxRGQ==
-X-Received: by 2002:a19:ded7:: with SMTP id i84-v6mr13080634lfl.146.1534756846762;
-        Mon, 20 Aug 2018 02:20:46 -0700 (PDT)
-Received: from localhost ([87.54.42.112])
-        by smtp.gmail.com with ESMTPSA id f9-v6sm1520382ljf.9.2018.08.20.02.20.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 Aug 2018 02:20:46 -0700 (PDT)
-From:   Esben Haabendal <esben.haabendal@gmail.com>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-i2c@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Phil Reid <preid@electromag.com.au>,
-        Peter Rosin <peda@axentia.se>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] i2c: imx: Simplify stopped state tracking
-In-Reply-To: <20180820091413.ranx7smh3f3swvvc@ninjato> (Wolfram Sang's message
-        of "Mon, 20 Aug 2018 11:14:13 +0200")
-References: <20180816084315.7857-1-esben.haabendal@gmail.com>
-        <20180816084315.7857-3-esben.haabendal@gmail.com>
-        <20180820091413.ranx7smh3f3swvvc@ninjato>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-Date:   Mon, 20 Aug 2018 11:20:44 +0200
-Message-ID: <874lfpiec3.fsf@gmail.com>
+        Mon, 20 Aug 2018 08:37:31 -0400
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout1.hostsharing.net (Postfix) with ESMTPS id E633E300168AA;
+        Mon, 20 Aug 2018 11:22:38 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id C05B3240BB0; Mon, 20 Aug 2018 11:22:38 +0200 (CEST)
+Date:   Mon, 20 Aug 2018 11:22:38 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Sinan Kaya <okaya@kernel.org>
+Cc:     linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Keith Busch <keith.busch@intel.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 1/2] PCI: pciehp: Ignore link events when there is a
+ fatal error pending
+Message-ID: <20180820092238.kvktwlovc64oa66e@wunner.de>
+References: <20180818065126.77912-1-okaya@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180818065126.77912-1-okaya@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wolfram Sang <wsa@the-dreams.de> writes:
+On Fri, Aug 17, 2018 at 11:51:09PM -0700, Sinan Kaya wrote:
+> --- a/drivers/pci/hotplug/pciehp_ctrl.c
+> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
+> @@ -222,9 +222,27 @@ void pciehp_handle_disable_request(struct slot *slot)
+>  void pciehp_handle_presence_or_link_change(struct slot *slot, u32 events)
+>  {
+>  	struct controller *ctrl = slot->ctrl;
+> +	struct pci_dev *pdev = ctrl->pcie->port;
+>  	bool link_active;
+>  	u8 present;
+>  
+> +	/* If a fatal error is pending, wait for AER or DPC to handle it. */
+> +	if (pcie_fatal_error_pending(pdev)) {
+> +		bool recovered;
+> +
+> +		recovered = pcie_wait_fatal_error_clear(pdev);
+> +
+> +		/* If the fatal error is gone and the link is up, return */
+> +		if (recovered && pcie_wait_for_link(pdev, true)) {
+> +			ctrl_info(ctrl, "Slot(%s): Ignoring Link event due to successful fatal error recovery\n",
+> +				  slot_name(slot));
+> +			return;
+> +		}
+> +
+> +		ctrl_info(ctrl, "Slot(%s): Fatal error recovery failed for Link event, trying hotplug reset\n",
+> +			  slot_name(slot));
+> +	}
+> +
 
-> On Thu, Aug 16, 2018 at 10:43:13AM +0200, Esben Haabendal wrote:
->> From: Esben Haabendal <eha@deif.com>
->>=20
->> Always update the stopped state when busy status have been checked.
->> This is identical to what was done before, with the exception of error
->> handling.
->> Without this change, some errors cause the stopped state to be left in
->> incorrect state in i2c_imx_stop(), i2c_imx_dma_read(), i2c_imx_read() and
->> i2c_imx_xfer().
->>=20
->> Signed-off-by: Esben Haabendal <eha@deif.com>
->> Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
->
-> Applied to for-next, thanks! I did not add stable because the cover
-> latter said minor issue? Not really sure here, though...
+This differs from v7 of the patch in that *any* fatal error, not just
+a Surprise Link Down, results in pciehp waiting for the error to clear.
 
-I agree, it does not need to go into stable.
+I'm wondering if that's safe:  Theoretically, the user might quickly
+swap the card in the slot during, say, a Completion Timeout Error,
+and with this patch pciehp would carry on as if nothing happened.
 
-/Esben
+Thanks,
+
+Lukas
