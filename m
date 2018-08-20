@@ -2,87 +2,162 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA09EC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC7DC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A76A320852
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:34:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XAhNwujT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A76A320852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 267AA2173A
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:37:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 267AA2173A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726637AbeHTVvZ (ORCPT
+        id S1726626AbeHTVyC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 17:51:25 -0400
-Received: from mail-it0-f50.google.com ([209.85.214.50]:36969 "EHLO
-        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbeHTVvY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 17:51:24 -0400
-Received: by mail-it0-f50.google.com with SMTP id h20-v6so720659itf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 11:34:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OuI2MCG4GlNh3e4e88xgDpaUNeV06i824ZpgrNURf3I=;
-        b=XAhNwujTvE4hg34XrOCuZ8oGCqwnI4DuYWo9OPLwqRT0JSDE1EWggJ+jqXJwdwgL2o
-         KCvEPg7w+HJfEm8L5n+7fIzrj9ebRPFx4lmh3iAYZQ51rqZCOo5iFRlqy9F8qTaPngxT
-         zvoSs2JJiQJoWV+9BAYZDboqwYyfuAdl0LQTo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OuI2MCG4GlNh3e4e88xgDpaUNeV06i824ZpgrNURf3I=;
-        b=dmLS9ONh26cDYc/Nts2SCZFLd/ezd3UYixcYkUPIm+OApyuiuTLVzpB7RIwnlZzxXb
-         pKruA8V1TfKks9HaDnXP7w44A+W+NIKWNyh+4Sak4/KCwGm7KtpXzZCtnE4LxsSnWe2v
-         o2MHJIcJ/d/5IglkPNMHcliQhbVFbR6IUr3R97KqUHDMoD//lXBOm5uNqhj1KNAH6KhL
-         Kb0lhTvP4/cL0mSQzlwJYMDgJN45N9i/VnwApEqKrUKdZCM1xz6R9cHWHkJSNFt+yMTP
-         hT1f+bj4AAgeInwVlgM+GO84UqY7Ltv4WR+TvbzmGFlCrYdWBgQe+gxshKQrh8AfA8wT
-         umEQ==
-X-Gm-Message-State: APzg51Ai9FiRQTbhoZQaYTHCn/+Ht2n6BOzsjEVz0z92fA5fwSiSoZGZ
-        6FGwVyP2Fxn9SP+Hf3cNwxea5JIb9rwztsstLXc=
-X-Google-Smtp-Source: AA+uWPyXIEV+OAQXdYgN1Wb4qIEFETG5hPz5se0awXxJMp7MxoJzZ69NlKF3ED5FJ+1zgLDoR532Q0ajl8BvamDa4cI=
-X-Received: by 2002:a24:61d2:: with SMTP id s201-v6mr1105959itc.22.1534790079859;
- Mon, 20 Aug 2018 11:34:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <4cdd4ab9ddd16f1fb168266643264595782fd890.camel@perches.com> <20180820174655.75739-1-ndesaulniers@google.com>
-In-Reply-To: <20180820174655.75739-1-ndesaulniers@google.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 20 Aug 2018 11:34:28 -0700
-Message-ID: <CA+55aFzTPCoarqD7=2NFFvZjmZQjr=FhTWMFfLm+UfaF+M_ixg@mail.gmail.com>
-Subject: Re: Build failures with gcc 4.5 and older
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Mike Galbraith <efault@gmx.de>,
+        Mon, 20 Aug 2018 17:54:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58354 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726077AbeHTVyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 17:54:01 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A791FAD96;
+        Mon, 20 Aug 2018 18:37:13 +0000 (UTC)
+Date:   Mon, 20 Aug 2018 20:37:12 +0200
+Message-ID: <s5h6004hokn.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rik van Riel <riel@surriel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Andreas Schwab <schwab@suse.de>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Jeff Mahoney <jeffm@suse.com>,
+        "Peter Zijlstra," <peterz@infradead.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-um@lists.infradead.org
+Subject: Re: due to kconfig changes kernel config file is no longer sufficient for configuring the kernel
+In-Reply-To: <CAK7LNATCktToMui4NYxoUXV8ZbuDK8F0JCp_CysEWaSBPUP7NQ@mail.gmail.com>
+References: <20180627143705.5a1fed1c@kitsune.suse.cz>
+        <CAK7LNARVPNx_uC5xTrS_p9T4nMRTC79BO51T4Lytv2eU1c-ynw@mail.gmail.com>
+        <20180628111623.3807fe9b@naga.suse.cz>
+        <CAK7LNARRKU7Mfa8ZBu1qPFYFRr-5k69sjVyERM2bYcnWoBDN8g@mail.gmail.com>
+        <20180806200725.4efa5d35@kitsune.suse.cz>
+        <CAK7LNATCktToMui4NYxoUXV8ZbuDK8F0JCp_CysEWaSBPUP7NQ@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 10:46 AM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
->
-> I think we should take Joe's patch.
+On Mon, 20 Aug 2018 20:15:12 +0200,
+Masahiro Yamada wrote:
+> 
+> 2018-08-07 3:07 GMT+09:00 Michal Suchánek <msuchanek@suse.de>:
+> > On Mon, 30 Jul 2018 17:02:42 +0900
+> > Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> >
+> >> 2018-06-28 18:16 GMT+09:00 Michal Suchánek <msuchanek@suse.de>:
+> >> > On Wed, 27 Jun 2018 23:07:21 +0900
+> >> > Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> >> >
+> >> >> Hi.
+> >> >>
+> >> >>
+> >> >> 2018-06-27 21:37 GMT+09:00 Michal Suchánek <msuchanek@suse.de>:
+> >> >> > Hello,
+> >> >> >
+> >> >> > in the x86 Kconfig we have this:
+> >> >> >
+> >> >> > # Select 32 or 64 bit
+> >> >> > config 64BIT
+> >> >> >         bool "64-bit kernel" if "$(ARCH)" = "x86"
+> >> >> >         default "$(ARCH)" != "i386"
+> >> >> >         ---help---
+> >> >> >           Say yes to build a 64-bit kernel - formerly known as
+> >> >> > x86_64 Say no to build a 32-bit kernel - formerly known as i386
+> >> >> >
+> >> >> > Since commit 104daea149c4 ("kconfig: reference environment
+> >> >> > variables directly and remove 'option env='") the value of ARCH
+> >> >> > is not saved in the kernel config.
+> >> >>
+> >> >> I think this commit is unrelated.  It was just a syntax change.
+> >> >
+> >> > This does not look like syntax only change to me:
+> >> >
+> >> > diff --git a/init/Kconfig b/init/Kconfig
+> >> > index 15aae32e0719..1217fc62ca61 100644
+> >> > --- a/init/Kconfig
+> >> > +++ b/init/Kconfig
+> >> > @@ -1,20 +1,12 @@
+> >> > -config ARCH
+> >> > -       string
+> >> > -       option env="ARCH"
+> >> > -
+> >> > -config KERNELVERSION
+> >> > -       string
+> >> > -       option env="KERNELVERSION"
+> >> > -
+> >>
+> >> This is just syntax change.
+> >>
+> >> 'option env=' was used to reference an environment variable.
+> >>
+> >> Now, $(ARCH), $(KERNELVERSION) are simpler forms.
+> >>
+> >>
+> >> >>
+> >> >> Unless I am missing something,
+> >> >> we have never saved ARCH in the .config in the past.
+> >> >
+> >> > There was a config symbol defined for it before the commit removed
+> >> > it.
+> >>
+> >> No.
+> >>
+> >> CONFIG symbols with'option env='
+> >> are not written out to the .config file.
+> >>
+> >> We have never had CONFIG_ARCH or CONFIG_KERNELVERSION.
 
-I'll happily take Joe's patch and get the whole "ancient gcc versions"
-issue behind us.
+Maybe it sounds like a stupid question, but...
+if passing ARCH= is almost mandatory for distinguishing the bi-arch or
+cross-compile cases, why don't we save it in .config?
 
-We'll come back to it in a few years when 4.6 is ancient too, but for
-now we have no pressing need not to support it.
+The whole "regression" we've seen can be worked around by passing
+ARCH at each time.  So, by having it in .config, everything would work
+more easily, no?
 
-Joe - proper commit message and sign-off?
 
-                  Linus
+thanks,
+
+Takashi
