@@ -2,197 +2,93 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C886C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 20:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D86CCC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 20:09:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D224921722
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 20:07:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D224921722
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 7F7FA21722
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 20:09:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PsFb9lKb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F7FA21722
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbeHTXX7 (ORCPT
+        id S1726589AbeHTX0R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 19:23:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41426 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726089AbeHTXX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 19:23:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 23CD0AE23;
-        Mon, 20 Aug 2018 20:06:58 +0000 (UTC)
-Message-ID: <7d575334f8c140071980b16ab8b1607db9eb01ef.camel@suse.de>
-Subject: Re: [PATCH 0/4] locks: avoid thundering-herd wake-ups
-From:   Martin Wilck <mwilck@suse.de>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     Jeff Layton <jlayton@kernel.org>, NeilBrown <neilb@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 20 Aug 2018 22:06:56 +0200
-In-Reply-To: <20180820200223.GG5468@fieldses.org>
-References: <153369219467.12605.13472423449508444601.stgit@noble>
-         <ea503e6a6f26dfb344fda02c765ae87de65ed025.camel@kernel.org>
-         <20180808182959.GB23873@fieldses.org>
-         <c9e11a27fd6cf3e7a80045ba545ae25c19b6ff76.camel@suse.de>
-         <20180820200223.GG5468@fieldses.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 20 Aug 2018 19:26:17 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45204 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbeHTX0R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 19:26:17 -0400
+Received: by mail-pl0-f68.google.com with SMTP id j8-v6so7622209pll.12
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 13:09:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GLDbSdsTgGa1wCScKmKnljoWzofeP6d7YbzDhYvhXrA=;
+        b=PsFb9lKbWG0SmSForrT0mD7eLqicLjP4NTAS/0gwGyFR17PjjSFPXw7M23pZ8cxsGB
+         1BJAb7RN/neovZAuzW2dev8yM1C0gDXC8vluPhj4Sz4SmsHI0ZZl9fe7BRgxfyzLefmd
+         u/LlZ0gwBzdHVPLPGNDQCFIKC72k460RJuizFQSWSzzEZy3zBJ+v8sZ4sAJ4qYD1/OMN
+         MFscGgb2uxQTM+GYUTiz9z1bUXycmpFJy00+oc8AewA9fKf2Ip6lnd/GIFUVwAcgQvIR
+         kdDnMIXu/PKFlOSjJZZmdEfeFkQ0C8wOCzILE/vuBhrpYsa0eT3H2HOkD0ZkcCX0Trfk
+         eafA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GLDbSdsTgGa1wCScKmKnljoWzofeP6d7YbzDhYvhXrA=;
+        b=mKZaItzeus/+4VvdkPEXySDvNheK+CTOgDsrCHt3uhhU72dRANTA8cTg0ofJYjv/Bp
+         Ml8pXvoYiGP7Zsy3fJvPGvzgprrfv1WmjgXuwXiIuTkbkXCop5fYZGV4HWRubT3IqZ2P
+         eR+OY1qpmrOhjtlWF/4l3f433rrf6uxO1/ZdS0K5HnnPaepoiORGmaJ9hUH775BpMxWz
+         O5ejq3RCQnJHUKkMHbtXrI7JjeLTgIc6Q368s20dUJMXBd1bbp+UYOrzG0eFqlrfNuuG
+         kUCKqOUwnE42Me2l4elSiGQcAtP3uNa88nEuZXtv/wA6oTq2PRTyNgByEiuKD9zCH2oc
+         sd1Q==
+X-Gm-Message-State: AOUpUlG37Ws0sfG3LsRXG2OgUAvKHE+O/N6k0tnbQ80KYh4SyGkwd2ci
+        uEWKmYVTYMANdVJQSMAth8b+2g==
+X-Google-Smtp-Source: AA+uWPym0DzbygPcwpMTPWDsML44pvClsujXxN1qlv8tG3KiMziOvmvKK+8ndvswrNI4snUI4Ui8mA==
+X-Received: by 2002:a17:902:9b93:: with SMTP id y19-v6mr42448158plp.113.1534795757957;
+        Mon, 20 Aug 2018 13:09:17 -0700 (PDT)
+Received: from wnukowski-desktop.sea.corp.google.com ([2620:0:1009:11:cdf9:e330:7b8e:1961])
+        by smtp.gmail.com with ESMTPSA id r64-v6sm18757727pfk.157.2018.08.20.13.09.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 Aug 2018 13:09:16 -0700 (PDT)
+From:   Michal Wnukowski <wnukowski@google.com>
+Subject: Re: [PATCH v2] Bugfix for handling of shadow doorbell buffer.
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     torvalds@linux-foundation.org, axboe@fb.com, keith.busch@intel.com,
+        keith.busch@linux.intel.com, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, sagi@grimberg.me,
+        yigitfiliz@google.com
+References: <CA+55aFxOc7_s-BbWJx-kyit-pH9m5fQJk6MSMJ57tFFvMtNh-w@mail.gmail.com>
+ <20180815225157.89523-1-wnukowski@google.com> <20180817070712.GA11383@lst.de>
+Message-ID: <2414346b-5ea5-834e-24a5-0d22c2c68b6a@google.com>
+Date:   Mon, 20 Aug 2018 13:09:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180817070712.GA11383@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-08-20 at 16:02 -0400, J. Bruce Fields wrote:
-> On Mon, Aug 20, 2018 at 01:02:21PM +0200, Martin Wilck wrote:
-> > On Wed, 2018-08-08 at 14:29 -0400, J. Bruce Fields wrote:
-> > > On Wed, Aug 08, 2018 at 12:47:22PM -0400, Jeff Layton wrote:
-> > > > On Wed, 2018-08-08 at 11:51 +1000, NeilBrown wrote:
-> > > > > If you have a many-core machine, and have many threads all
-> > > > > wanting to
-> > > > > briefly lock a give file (udev is known to do this), you can
-> > > > > get
-> > > > > quite
-> > > > > poor performance.
-> > > > > 
-> > > > > When one thread releases a lock, it wakes up all other
-> > > > > threads
-> > > > > that
-> > > > > are waiting (classic thundering-herd) - one will get the lock
-> > > > > and
-> > > > > the
-> > > > > others go to sleep.
-> > > > > When you have few cores, this is not very noticeable: by the
-> > > > > time
-> > > > > the
-> > > > > 4th or 5th thread gets enough CPU time to try to claim the
-> > > > > lock,
-> > > > > the
-> > > > > earlier threads have claimed it, done what was needed, and
-> > > > > released.
-> > > > > With 50+ cores, the contention can easily be measured.
-> > > > > 
-> > > > > This patchset creates a tree of pending lock request in which
-> > > > > siblings
-> > > > > don't conflict and each lock request does conflict with its
-> > > > > parent.
-> > > > > When a lock is released, only requests which don't conflict
-> > > > > with
-> > > > > each
-> > > > > other a woken.
-> > > > > 
-> > > > > Testing shows that lock-acquisitions-per-second is now fairly
-> > > > > stable even
-> > > > > as number of contending process goes to 1000.  Without this
-> > > > > patch,
-> > > > > locks-per-second drops off steeply after a few 10s of
-> > > > > processes.
-> > > > > 
-> > > > > There is a small cost to this extra complexity.
-> > > > > At 20 processes running a particular test on 72 cores, the
-> > > > > lock
-> > > > > acquisitions per second drops from 1.8 million to 1.4 million
-> > > > > with
-> > > > > this patch.  For 100 processes, this patch still provides 1.4
-> > > > > million
-> > > > > while without this patch there are about 700,000.
-> > > > > 
-> > > > > NeilBrown
-> > > > > 
-> > > > > ---
-> > > > > 
-> > > > > NeilBrown (4):
-> > > > >       fs/locks: rename some lists and pointers.
-> > > > >       fs/locks: allow a lock request to block other requests.
-> > > > >       fs/locks: change all *_conflict() functions to return
-> > > > > bool.
-> > > > >       fs/locks: create a tree of dependent requests.
-> > > > > 
-> > > > > 
-> > > > >  fs/cifs/file.c                  |    2 -
-> > > > >  fs/locks.c                      |  142
-> > > > > +++++++++++++++++++++++++--------------
-> > > > >  include/linux/fs.h              |    5 +
-> > > > >  include/trace/events/filelock.h |   16 ++--
-> > > > >  4 files changed, 103 insertions(+), 62 deletions(-)
-> > > > > 
-> > > > 
-> > > > Nice work! I looked over this and I think it looks good.
-> > > > 
-> > > > I made an attempt to fix this issue several years ago, but my
-> > > > method
-> > > > sucked as it ended up penalizing the unlocking task too much.
-> > > > This
-> > > > is
-> > > > much cleaner and should scale well overall, I think.
-> > > 
-> > > I think I also took a crack at this at one point while I was at
-> > > UM/CITI
-> > > and never got anything I was happy with.  Looks like good work!
-> > > 
-> > > I remember one main obstacle that I felt like I never had a good
-> > > benchmark....
-> > > 
-> > > How did you choose this workload and hardware?  Was it in fact
-> > > udev
-> > > (booting a large machine?), or was there some other motivation?
-> > 
-> > Some details can be found here:
-> > 
-> > https://github.com/systemd/systemd/pull/9551
-> > 
-> > https://github.com/systemd/systemd/pull/8667#issuecomment-385520335
-> > and comments further down. 8667 has been superseded by 9551.
-> > 
-> > The original problem was that the symlink "/dev/disk/by-
-> > partlabel/primary" may be claimed by _many_ devices on big systems
-> > under certain distributions, which use older versions of parted for
-> > partition creation on GPT disk labels. I've seen systems with
-> > literally
-> > thousands of contenders for this symlink. 
-> > 
-> > We found that with current systemd, this can cause a boot-time race
-> > where the wrong device is eventually assigned the "best" contender
-> > for
-> > the symlink (e.g. a partition on multipath member rather than a
-> > partition on the multipath map itself). I extended the udev test
-> > suite,
-> > creating a test that makes this race easily reproducible, at least
-> > on
-> > systems with many CPUs (the test host I used most had 72 cores).
-> > 
-> > I created an udev patch that would use systemd's built in fcntl-
-> > based
-> > locking to avoid this race, but I found that it would massively
-> > slow
-> > down the system, and found the contention to be in the spin locks
-> > in
-> > posix_lock_common(). (I therefore added more the systemd patches to
-> > make the locking scale better, but that's irrelevant for the
-> > kernel-
-> > side discussion).
-> > 
-> > I further created an artificial test just for the scaling of
-> > fcntl(F_OFD_SETLKW) and flock(), with which I could reproduce the
-> > scaling problem easily, and do some quantitive experiments. My
-> > tests
-> > didn't use any byte ranges, only "full" locking of 0-byte files.
+Thanks for applying and improving the comments. All still makes sense.
+I will forward this patch to stable@vger.kernel.org once it get merged
+into Linus’ tree.
+
+On 08/17/2018 12:07 AM, Christoph Hellwig wrote:
+> I've applied this with some major updates to the subject, changelog
+> and the comment in the code.  Please double check it all still makes
+> sense.
 > 
-> Thanks for the explanation!
-> 
-> I wonder whether there's also anything we could do to keep every
-> waiter
-> from having to take the same spinlock.
-
-That was my line of thinking initially, but Neil's patches that just
-avoid the thundering herd wakeup made both tests scale quite nicely, so
-at least for my use case, no further optimizations are required.
-
-Martin
-
-
