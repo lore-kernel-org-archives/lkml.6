@@ -2,183 +2,120 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 225B6C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 19:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B94C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 19:34:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEB3F21735
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 19:32:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEB3F21735
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
+	by mail.kernel.org (Postfix) with ESMTP id 7461A21735
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 19:34:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aZvlBUAd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7461A21735
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbeHTWsw (ORCPT
+        id S1726493AbeHTWu4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 18:48:52 -0400
-Received: from g9t5008.houston.hpe.com ([15.241.48.72]:59682 "EHLO
-        g9t5008.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726077AbeHTWsw (ORCPT
+        Mon, 20 Aug 2018 18:50:56 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43783 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbeHTWu4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 18:48:52 -0400
-Received: from g9t2301.houston.hpecorp.net (g9t2301.houston.hpecorp.net [16.220.97.129])
-        by g9t5008.houston.hpe.com (Postfix) with ESMTP id 562FB57;
-        Mon, 20 Aug 2018 19:31:59 +0000 (UTC)
-Received: from anatevka.ftc.rdlabs.hpecorp.net (anatevka.americas.hpqcorp.net [10.34.81.6])
-        by g9t2301.houston.hpecorp.net (Postfix) with ESMTP id 6AC114A;
-        Mon, 20 Aug 2018 19:31:58 +0000 (UTC)
-From:   Jerry Hoemann <jerry.hoemann@hpe.com>
-To:     wim@linux-watchdog.org, linux@roeck-us.net
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rwright@hpe.com, Jerry Hoemann <jerry.hoemann@hpe.com>
-Subject: [PATCH] watchdog: hpwdt: Update Driver Documentation.
-Date:   Mon, 20 Aug 2018 13:31:23 -0600
-Message-Id: <20180820193123.23976-1-jerry.hoemann@hpe.com>
-X-Mailer: git-send-email 2.13.6
+        Mon, 20 Aug 2018 18:50:56 -0400
+Received: by mail-lf1-f65.google.com with SMTP id f135-v6so11768025lfg.10
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 12:34:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AzWkE8n6146GGXKGkZkvxiS3oOclWa9uBB0aDqHRPNk=;
+        b=aZvlBUAd4E+z/XY0mBxl9FwmP1s/wgICKDY3u7yN7vjKVp8zVNtoR5GVg9h4qeBlko
+         5YuffRi1TgBwy7ut2E1R/GbrxT+1u5Vklo5BIhbQomwNF0rSeGVbNsTqV3eo0nclsQ14
+         aZlia99KCbSE7OCDG1JD+yk8XpQvOHxIQ7TOQ2SDVeYUawoOMnikriMD+GYeUQt+JyhT
+         Vfb/03CcQQFC7W0/brfK7BL9dyR2rKzZq4o6M0WE/EZY51eiN4nXpenL7bC3ZQHe42EC
+         Q+P4angFh/jX7NoiZgIKh3IAu6ZCdYLQGyRAmcBZlEeLPPPEfpKFOV/wq9w45plCpx7G
+         JvYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AzWkE8n6146GGXKGkZkvxiS3oOclWa9uBB0aDqHRPNk=;
+        b=oGw8BJ39n7YOxsN3M4pOinRfw92KCKRkxXV1xq1KpMQCZZZ2NMo7FPpvgxEuzQxIa1
+         TSC78rhsrLB1cUb2P6l0bFd4vqF06f4hFZz+cdgQ46BxJVtt94oP7JWhopJZaDXFVq2O
+         9ALo1AvPtotc8HKpDUNCJDaSkxWzcPEntBRMvUOmYVTz2dkzLhpVMUwNTzT1YKLA0Gbo
+         vjWOArmuHVRmOR+FjatMboiwNDIYRhcnY02/PP24cyQE0YNoGvN+RT1aeMxUSuyaOgQV
+         A4fsubKtF7zx5+02NmY6fz5P+27VP4odgMfRp+0GwJxZwVZeN2ZpHxuJp9plYPdW7OnK
+         5Uxw==
+X-Gm-Message-State: AOUpUlGkt9gH36wvu2rM3DPTz6wMiwUy6H9qhFxd8SJmpTxNf9Yhew1U
+        XW5pXv8L6fD5bakPMIPOtIYCfM0E+SmLFFvmBslgmZ+H
+X-Google-Smtp-Source: AA+uWPypiLNs79/QqMfr6TonpKBStgCjHn+vRZSJ4eVRDeGh0adm/0GPOHMWKgoL9nnOmCyDcqK02ZYGMByzg0dJGq8=
+X-Received: by 2002:ac2:4141:: with SMTP id c1-v6mr6461936lfi.11.1534793641603;
+ Mon, 20 Aug 2018 12:34:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <1534784987-16107-1-git-send-email-srikar@linux.vnet.ibm.com> <20180820192247.GA20101@kroah.com>
+In-Reply-To: <20180820192247.GA20101@kroah.com>
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date:   Mon, 20 Aug 2018 12:33:50 -0700
+Message-ID: <CAKdAkRT3OfvcvHdNC4Jn1RfM76TUHohcXVFDA0QfsSPdTW348Q@mail.gmail.com>
+Subject: Re: [PATCH] kobject: Access kobject name with caution if state is not initialized
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     srikar@linux.vnet.ibm.com, lkml <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove references to deprecated features like NMI sourcing
-and obsoleted module parameters.
+On Mon, Aug 20, 2018 at 12:22 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Aug 20, 2018 at 10:39:47PM +0530, Srikar Dronamraju wrote:
+> > If kobject state is not initialized, then its not even certain that
+> > kobject'name is initialized. Hence when accessing the kobject's name
+> > tread carefully.
+> >
+> > A stupid module test like
+> > https://github.com/srikard/tests/blob/master/modules/kobject_test.c
+> > can panic the system.
+>
+> Lots of stupid modules can do dumb things.  Just don't do that.  The
+> kernel is not built to keep you from doing stupid things in kernel code
+> :)
+>
+> So I fail to see why this patch is needed.  What in-kernel code path is
+> trying to print a kobject's name before it is initialized?  Why not fix
+> that obvious bug instead of forcing the kernel core to protect from
+> stupid code?
 
-Add details concerning new module parameter pretimeout and tips
-to programming it.
+Kay decided to add some guards in:
 
-Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
----
- Documentation/watchdog/hpwdt.txt | 93 ++++++++++++++--------------------------
- 1 file changed, 31 insertions(+), 62 deletions(-)
+commit 0f4dafc0563c6c49e17fe14b3f5f356e4c4b8806
+Author: Kay Sievers <kay.sievers@vrfy.org>
+Date:   Wed Dec 19 01:40:42 2007 +0100
 
-diff --git a/Documentation/watchdog/hpwdt.txt b/Documentation/watchdog/hpwdt.txt
-index 6d866c537127..55df692c5595 100644
---- a/Documentation/watchdog/hpwdt.txt
-+++ b/Documentation/watchdog/hpwdt.txt
-@@ -1,15 +1,12 @@
--Last reviewed: 05/20/2016
-+Last reviewed: 08/20/2018
- 
-                      HPE iLO NMI Watchdog Driver
--              NMI sourcing for iLO based ProLiant Servers
--                     Documentation and Driver by
--                         Thomas Mingarelli
-+                   for iLO based ProLiant Servers
- 
-  The HPE iLO NMI Watchdog driver is a kernel module that provides basic
-- watchdog functionality and the added benefit of NMI sourcing. Both the
-- watchdog functionality and the NMI sourcing capability need to be enabled
-- by the user. Remember that the two modes are not dependent on one another.
-- A user can have the NMI sourcing without the watchdog timer and vice-versa.
-+ watchdog functionality and handler for the iLO "Generate NMI to System"
-+ virtual button.
-+
-  All references to iLO in this document imply it also works on iLO2 and all
-  subsequent generations.
- 
-@@ -21,12 +18,16 @@ Last reviewed: 05/20/2016
-  not be updated in a timely fashion and a hardware system reset (also known as
-  an Automatic Server Recovery (ASR)) event will occur.
- 
-- The hpwdt driver also has three (3) module parameters. They are the following:
-+ The hpwdt driver also has the following module parameters:
- 
-  soft_margin - allows the user to set the watchdog timer value.
-                Default value is 30 seconds.
-- allow_kdump - allows the user to save off a kernel dump image after an NMI.
--               Default value is 1/ON
-+ timeout     - an alias of soft_margin.
-+ pretimeout  - allows the user to set the watchdog pretimeout value.
-+               This is the number of seconds before timeout when an
-+               NMI is delivered to the system. Setting the value to
-+               zero disables the pretimeout NMI.
-+               Default value is 9 seconds.
-  nowayout    - basic watchdog parameter that does not allow the timer to
-                be restarted or an impending ASR to be escaped.
-                Default value is set when compiling the kernel. If it is set
-@@ -37,61 +38,29 @@ Last reviewed: 05/20/2016
-        interface to /dev/watchdog can be found in
-        Documentation/watchdog/watchdog-api.txt and Documentation/IPMI.txt.
- 
-- The NMI sourcing capability is disabled by default due to the inability to
-- distinguish between "NMI Watchdog Ticks" and "HW generated NMI events" in the
-- Linux kernel. What this means is that the hpwdt nmi handler code is called
-- each time the NMI signal fires off. This could amount to several thousands of
-- NMIs in a matter of seconds. If a user sees the Linux kernel's "dazed and
-- confused" message in the logs or if the system gets into a hung state, then
-- the hpwdt driver can be reloaded.
--
-- 1. If the kernel has not been booted with nmi_watchdog turned off then
--    edit and place the nmi_watchdog=0 at the end of the currently booting
--    kernel line. Depending on your Linux distribution and platform setup:
--    For non-UEFI systems
--       /boot/grub/grub.conf   or
--       /boot/grub/menu.lst
--    For UEFI systems
--      /boot/efi/EFI/distroname/grub.conf   or
--      /boot/efi/efi/distroname/elilo.conf
-- 2. reboot the sever
-- 3. Once the system comes up perform a modprobe -r hpwdt
-- 4. modprobe /lib/modules/`uname -r`/kernel/drivers/watchdog/hpwdt.ko
--
-- Now, the hpwdt can successfully receive and source the NMI and provide a log
-- message that details the reason for the NMI (as determined by the HPE BIOS).
--
-- Below is a list of NMIs the HPE BIOS understands along with the associated
-- code (reason):
--
--	No source found                00h
--
--	Uncorrectable Memory Error     01h
--
--	ASR NMI                        1Bh
--
--	PCI Parity Error               20h
--
--	NMI Button Press               27h
--
--	SB_BUS_NMI                     28h
--
--	ILO Doorbell NMI               29h
--
--	ILO IOP NMI                    2Ah
--
--	ILO Watchdog NMI               2Bh
--
--	Proc Throt NMI                 2Ch
-+ Due to limitations in the iLO hardware, the NMI pretimeout if enabled,
-+ can only be set to 9 seconds.  Attempts to set pretimeout to other
-+ non-zero values will be rounded, possibly to zero.  Users should verify
-+ the pretimeout value after attempting to set pretimeout or timeout.
- 
--	Front Side Bus NMI             2Dh
-+ Upon receipt of an NMI from the iLO, the hpwdt driver will initiate a
-+ panic. This is to allow for a crash dump to be collected.  It is incumbent
-+ upon the user to have properly configured the system for kdump.
- 
--	PCI Express Error              2Fh
-+ The default Linux kernel behavior upon panic is to print a kernel tombstone
-+ and loop forever.  This is generally not what a watchdog user wants.
- 
--	DMA controller NMI             30h
-+ For those wishing to learn more please see:
-+	Documentation/kdump/kdump.txt
-+	Documentation/admin-guide/kernel-parameters.txt (panic=)
-+	Your Linux Distribution specific documentation.
- 
--	Hypertransport/CSI Error       31h
-+ If the hpwdt does not receive the NMI associated with an expiring timer,
-+ the iLO will proceed to reset the system at timeout if the timer hasn't
-+ been updated.
- 
-+--
- 
-+ The HPE iLO NMI Watchdog Driver and documentation were originally developed
-+ by Tom Mingarelli.
- 
-- -- Tom Mingarelli
+   Kobject: auto-cleanup on final unref
+...
+
++       if (!kobj->state_initialized) {
++               printk(KERN_ERR "kobject '%s' (%p): tried to add an "
++                      "uninitialized object, something is seriously wrong.\n",
++                      kobject_name(kobj), kobj);
++               dump_stack();
++               return -EINVAL;
+
+Given that we have dump_stack() we can probably simply drop
+kobject_name(kobj) instead of building even more elaborate checks. Or
+just drop the whole check. Adding kobjects is somewhat uncommon
+operation, plus "gabage in, garbage out".
+
+Thanks.
+
 -- 
-2.13.6
-
+Dmitry
