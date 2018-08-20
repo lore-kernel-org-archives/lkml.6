@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB4CC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF97C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:45:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E16DB20836
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:45:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E16DB20836
+	by mail.kernel.org (Postfix) with ESMTP id A4CFE20836
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:45:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4CFE20836
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726748AbeHTM7y (ORCPT
+        id S1726775AbeHTM77 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 08:59:54 -0400
-Received: from foss.arm.com ([217.140.101.70]:34952 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726010AbeHTM7y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 08:59:54 -0400
+        Mon, 20 Aug 2018 08:59:59 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34980 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726010AbeHTM76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 08:59:58 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91C2E15BE;
-        Mon, 20 Aug 2018 02:44:59 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E741315BE;
+        Mon, 20 Aug 2018 02:45:03 -0700 (PDT)
 Received: from queper01-lin.local (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A5B03F2EA;
-        Mon, 20 Aug 2018 02:44:55 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D02973F2EA;
+        Mon, 20 Aug 2018 02:44:59 -0700 (PDT)
 From:   Quentin Perret <quentin.perret@arm.com>
 To:     peterz@infradead.org, rjw@rjwysocki.net,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
@@ -42,9 +42,9 @@ Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
         edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
         currojerez@riseup.net, javi.merino@kernel.org,
         quentin.perret@arm.com
-Subject: [PATCH v6 06/14] sched/topology: Lowest CPU asymmetry sched_domain level pointer
-Date:   Mon, 20 Aug 2018 10:44:12 +0100
-Message-Id: <20180820094420.26590-7-quentin.perret@arm.com>
+Subject: [PATCH v6 07/14] sched/topology: Introduce sched_energy_present static key
+Date:   Mon, 20 Aug 2018 10:44:13 +0100
+Message-Id: <20180820094420.26590-8-quentin.perret@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180820094420.26590-1-quentin.perret@arm.com>
 References: <20180820094420.26590-1-quentin.perret@arm.com>
@@ -53,84 +53,161 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add another member to the family of per-cpu sched_domain shortcut
-pointers. This one, sd_asym_cpucapacity, points to the lowest level
-at which the SD_ASYM_CPUCAPACITY flag is set. While at it, rename the
-sd_asym shortcut to sd_asym_packing to avoid confusions.
+In order to ensure a minimal performance impact on non-energy-aware
+systems, introduce a static_key guarding the access to Energy-Aware
+Scheduling (EAS) code.
 
-Generally speaking, the largest opportunity to save energy via
-scheduling comes from a smarter exploitation of heterogeneous platforms
-(i.e. big.LITTLE). Consequently, the sd_asym_cpucapacity shortcut will
-be used at first as the lowest domain where Energy-Aware Scheduling
-(EAS) should be applied. For example, it is possible to apply EAS within
-a socket on a multi-socket system, as long as each socket has an
-asymmetric topology. Cross-sockets wake-up balancing will only happen
-when the system is over-utilized, or this_cpu and prev_cpu are in
-different sockets.
+The static key is set iff all the following conditions are met for at
+least one root domain:
+  1. all online CPUs of the root domain are covered by the Energy
+     Model (EM);
+  2. the complexity of the root domain's EM is low enough to keep
+     scheduling overheads low;
+  3. the root domain has an asymmetric CPU capacity topology (detected
+     by looking for the SD_ASYM_CPUCAPACITY flag in the sched_domain
+     hierarchy).
 
 cc: Ingo Molnar <mingo@redhat.com>
 cc: Peter Zijlstra <peterz@infradead.org>
-Suggested-by: Morten Rasmussen <morten.rasmussen@arm.com>
 Signed-off-by: Quentin Perret <quentin.perret@arm.com>
 ---
- kernel/sched/fair.c     | 2 +-
- kernel/sched/sched.h    | 3 ++-
- kernel/sched/topology.c | 8 ++++++--
- 3 files changed, 9 insertions(+), 4 deletions(-)
+ kernel/sched/sched.h    |  1 +
+ kernel/sched/topology.c | 77 ++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 77 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index c60616796483..c28c7adcc7b3 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9167,7 +9167,7 @@ static void nohz_balancer_kick(struct rq *rq)
- 		}
- 	}
- 
--	sd = rcu_dereference(per_cpu(sd_asym, cpu));
-+	sd = rcu_dereference(per_cpu(sd_asym_packing, cpu));
- 	if (sd) {
- 		for_each_cpu(i, sched_domain_span(sd)) {
- 			if (i == cpu ||
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 97d79429e755..4b884e467545 100644
+index 4b884e467545..cb3d6afdb114 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -1203,7 +1203,8 @@ DECLARE_PER_CPU(int, sd_llc_size);
- DECLARE_PER_CPU(int, sd_llc_id);
- DECLARE_PER_CPU(struct sched_domain_shared *, sd_llc_shared);
- DECLARE_PER_CPU(struct sched_domain *, sd_numa);
--DECLARE_PER_CPU(struct sched_domain *, sd_asym);
-+DECLARE_PER_CPU(struct sched_domain *, sd_asym_packing);
-+DECLARE_PER_CPU(struct sched_domain *, sd_asym_cpucapacity);
- extern struct static_key_false sched_asym_cpucapacity;
+@@ -1421,6 +1421,7 @@ static const_debug __maybe_unused unsigned int sysctl_sched_features =
  
- struct sched_group_capacity {
+ extern struct static_key_false sched_numa_balancing;
+ extern struct static_key_false sched_schedstats;
++extern struct static_key_false sched_energy_present;
+ 
+ static inline u64 global_rt_period(void)
+ {
 diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 545e2c7b6e66..4c6a36a8d7b8 100644
+index 4c6a36a8d7b8..1cb86a0ef00f 100644
 --- a/kernel/sched/topology.c
 +++ b/kernel/sched/topology.c
-@@ -508,7 +508,8 @@ DEFINE_PER_CPU(int, sd_llc_size);
- DEFINE_PER_CPU(int, sd_llc_id);
- DEFINE_PER_CPU(struct sched_domain_shared *, sd_llc_shared);
- DEFINE_PER_CPU(struct sched_domain *, sd_numa);
--DEFINE_PER_CPU(struct sched_domain *, sd_asym);
-+DEFINE_PER_CPU(struct sched_domain *, sd_asym_packing);
-+DEFINE_PER_CPU(struct sched_domain *, sd_asym_cpucapacity);
- DEFINE_STATIC_KEY_FALSE(sched_asym_cpucapacity);
+@@ -200,6 +200,14 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
  
- static void update_top_cache_domain(int cpu)
-@@ -534,7 +535,10 @@ static void update_top_cache_domain(int cpu)
- 	rcu_assign_pointer(per_cpu(sd_numa, cpu), sd);
+ 	return 1;
+ }
++/*
++ * This static_key is set if at least one root domain meets all the following
++ * conditions:
++ *    1. all CPUs of the root domain are covered by the EM;
++ *    2. the EM complexity is low enough to keep scheduling overheads low;
++ *    3. the SD_ASYM_CPUCAPACITY flag is set in the sched_domain hierarchy.
++ */
++DEFINE_STATIC_KEY_FALSE(sched_energy_present);
  
- 	sd = highest_flag_domain(cpu, SD_ASYM_PACKING);
--	rcu_assign_pointer(per_cpu(sd_asym, cpu), sd);
-+	rcu_assign_pointer(per_cpu(sd_asym_packing, cpu), sd);
-+
-+	sd = lowest_flag_domain(cpu, SD_ASYM_CPUCAPACITY);
-+	rcu_assign_pointer(per_cpu(sd_asym_cpucapacity, cpu), sd);
+ #ifdef CONFIG_ENERGY_MODEL
+ static void free_pd(struct perf_domain *pd)
+@@ -270,12 +278,34 @@ static void destroy_perf_domain_rcu(struct rcu_head *rp)
+ 	free_pd(pd);
  }
  
- /*
++/*
++ * The complexity of the Energy Model is defined as: nr_pd * (nr_cpus + nr_cs)
++ * with: 'nr_pd' the number of performance domains; 'nr_cpus' the number of
++ * CPUs; and 'nr_cs' the sum of the capacity states numbers of all performance
++ * domains.
++ *
++ * It is generally not a good idea to use such a model in the wake-up path on
++ * very complex platforms because of the associated scheduling overheads. The
++ * arbitrary constraint below prevents that. It makes EAS usable up to 16 CPUs
++ * with per-CPU DVFS and less than 8 capacity states each, for example.
++ */
++#define EM_MAX_COMPLEXITY 2048
++
+ static void build_perf_domains(const struct cpumask *cpu_map)
+ {
++	int i, nr_pd = 0, nr_cs = 0, nr_cpus = cpumask_weight(cpu_map);
+ 	struct perf_domain *pd = NULL, *tmp;
+ 	int cpu = cpumask_first(cpu_map);
+ 	struct root_domain *rd = cpu_rq(cpu)->rd;
+-	int i;
++
++	/* EAS is enabled for asymmetric CPU capacity topologies. */
++	if (!per_cpu(sd_asym_cpucapacity, cpu)) {
++		if (sched_debug()) {
++			pr_info("rd %*pbl: CPUs do not have asymmetric capacities\n",
++					cpumask_pr_args(cpu_map));
++		}
++		goto free;
++	}
+ 
+ 	for_each_cpu(i, cpu_map) {
+ 		/* Skip already covered CPUs. */
+@@ -288,6 +318,21 @@ static void build_perf_domains(const struct cpumask *cpu_map)
+ 			goto free;
+ 		tmp->next = pd;
+ 		pd = tmp;
++
++		/*
++		 * Count performance domains and capacity states for the
++		 * complexity check.
++		 */
++		nr_pd++;
++		nr_cs += em_pd_nr_cap_states(pd->obj);
++	}
++
++	/* Bail out if the Energy Model complexity is too high. */
++	if (nr_pd * (nr_cs + nr_cpus) > EM_MAX_COMPLEXITY) {
++		if (sched_debug())
++			pr_info("rd %*pbl: EM complexity is too high\n ",
++						cpumask_pr_args(cpu_map));
++		goto free;
+ 	}
+ 
+ 	perf_domain_debug(cpu_map, pd);
+@@ -307,6 +352,35 @@ static void build_perf_domains(const struct cpumask *cpu_map)
+ 	if (tmp)
+ 		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
+ }
++
++static void sched_energy_start(int ndoms_new, cpumask_var_t doms_new[])
++{
++	/*
++	 * The conditions for EAS to start are checked during the creation of
++	 * root domains. If one of them meets all conditions, it will have a
++	 * non-null list of performance domains.
++	 */
++	while (ndoms_new) {
++		if (cpu_rq(cpumask_first(doms_new[ndoms_new - 1]))->rd->pd)
++			goto enable;
++		ndoms_new--;
++	}
++
++	if (static_branch_unlikely(&sched_energy_present)) {
++		if (sched_debug())
++			pr_info("%s: stopping EAS\n", __func__);
++		static_branch_disable_cpuslocked(&sched_energy_present);
++	}
++
++	return;
++
++enable:
++	if (!static_branch_unlikely(&sched_energy_present)) {
++		if (sched_debug())
++			pr_info("%s: starting EAS\n", __func__);
++		static_branch_enable_cpuslocked(&sched_energy_present);
++	}
++}
+ #else
+ static void free_pd(struct perf_domain *pd) { }
+ #endif
+@@ -2123,6 +2197,7 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+ match3:
+ 		;
+ 	}
++	sched_energy_start(ndoms_new, doms_new);
+ #endif
+ 
+ 	/* Remember the new sched domains: */
 -- 
 2.17.1
 
