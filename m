@@ -2,118 +2,115 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2115C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD18C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5959D21570
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:18:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KB5HpleQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5959D21570
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id B2EB02173D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:20:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2EB02173D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbeHTVfa (ORCPT
+        id S1726563AbeHTVhf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 17:35:30 -0400
-Received: from mail-pg1-f172.google.com ([209.85.215.172]:44384 "EHLO
-        mail-pg1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726147AbeHTVfa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 17:35:30 -0400
-Received: by mail-pg1-f172.google.com with SMTP id r1-v6so7168235pgp.11
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 11:18:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=UIvGdfkJASDQGOLB5J9k9je0aTMk2YmIKQZKVH4qvkU=;
-        b=KB5HpleQjLarj5CiW6kJcYc85tvqg3TIC2E4KcjfopzSWYLYQtLYPIrZ144NEI+dD2
-         SWsLorSy5yreCE/sGGhhYEpfVjxerW/ZSnPkk27ua7uSABI37jTRkkg7wKlWMMXrPJEO
-         GWaWk1G5feNPN9hTCj2Ywx+lyUCPjYxryegN4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=UIvGdfkJASDQGOLB5J9k9je0aTMk2YmIKQZKVH4qvkU=;
-        b=uDDhrhkLpx3D4vWwzE31c7Qa/FEdPHzyGjwBpvkZ8mk42XAxB5k/4z+qGRf5XlFvWf
-         ThdAknFyQlwV7a6RyNXqWpGUTCinuK54xDFjCkgHjexI0KnGXalJoAgN8+LNkXB171HL
-         Zx4+mjfgT7ujVgi0NDlYIR8UKASZ97oDWsEqU0rgAW/ypHPAQm/t/wMNAh5EUT5Vvjn0
-         u6hjIatCbwMKygLfqxISYSbMnI8xqOlvMuhGkVVV46FzRokyCZF2roseKZCdpUypoXpN
-         cU0mYB8t3ygOL2M8pIfeVhn+7ebBI4VeyyPv6QyO75AHghavcK5qssQ9ZYFiCMxD2zer
-         7/zQ==
-X-Gm-Message-State: AOUpUlEQAPXkMV9R2blrqOEr78LdWTJdfILMYWELaOedY8pJsNlfhdFC
-        QOLLbokWjfU3epTWHnzewA16BQ==
-X-Google-Smtp-Source: AA+uWPyIu0amXJ212BikuyXQFQbjfstDEPJodI18XzkbGnV1euPTRgeSpkrhsFjW0z/ogPFbT4LV8w==
-X-Received: by 2002:a62:2c95:: with SMTP id s143-v6mr49277173pfs.3.1534789128580;
-        Mon, 20 Aug 2018 11:18:48 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id x87-v6sm16863736pfa.143.2018.08.20.11.18.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 Aug 2018 11:18:48 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 20 Aug 2018 17:37:35 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49275 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726229AbeHTVhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 17:37:35 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8C11520728; Mon, 20 Aug 2018 20:20:50 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id BC67D206A6;
+        Mon, 20 Aug 2018 20:20:39 +0200 (CEST)
+Date:   Mon, 20 Aug 2018 20:20:38 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Alban <albeu@free.fr>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Naren <naren.kernel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 06/29] mtd: Add support for reading MTD devices via
+ the nvmem API
+Message-ID: <20180820202038.5d3dc195@bbrezillon>
+In-Reply-To: <5b8c30b8-41e1-d59e-542b-fef6c6469ff0@linaro.org>
+References: <20180810080526.27207-1-brgl@bgdev.pl>
+        <20180810080526.27207-7-brgl@bgdev.pl>
+        <20180817182720.6a6e5e8e@bbrezillon>
+        <20180819133106.0420df5f@tock>
+        <20180819184609.6dcdbb9a@bbrezillon>
+        <5b8c30b8-41e1-d59e-542b-fef6c6469ff0@linaro.org>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Andy Gross <andy.gross@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20180810215150.82490-3-dianders@chromium.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>, tfiga@chromium.org,
-        Manu Gautam <mgautam@codeaurora.org>,
-        David Collins <collinsd@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <20180810215150.82490-1-dianders@chromium.org>
- <20180810215150.82490-3-dianders@chromium.org>
-Message-ID: <153478912722.28926.1278085207557745493@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: sdm845-mtp: Add RPMh VRM/XOB regulators
-Date:   Mon, 20 Aug 2018 11:18:47 -0700
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Douglas Anderson (2018-08-10 14:51:49)
-> @@ -20,6 +21,450 @@
->         chosen {
->                 stdout-path =3D "serial0:115200n8";
->         };
-> +
-> +       vph_pwr: vph-pwr-regulator {
-> +               compatible =3D "regulator-fixed";
-> +               regulator-name =3D "vph_pwr";
-> +               regulator-min-microvolt =3D <3700000>;
-> +               regulator-max-microvolt =3D <3700000>;
-> +       };
-> +
-> +       /*
-> +        * Apparently RPMh does not provide support for PM8998 S4 because=
- it
-> +        * is always-on; model it as a fixed regulator.
-> +        */
-> +       vreg_s4a_1p8: pm8998-smps4 {
-> +               compatible =3D "regulator-fixed";
-> +               regulator-name =3D "vreg_s4a_1p8";
-> +
-> +               regulator-min-microvolt =3D <1800000>;
-> +               regulator-max-microvolt =3D <1800000>;
-> +
-> +               regulator-always-on;
-> +               regulator-boot-on;
+On Mon, 20 Aug 2018 11:43:34 +0100
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
 
-Can vin be vph_pwr? That would properly model this.
+> 
+> Overall am still not able to clear visualize on how MTD bindings with 
+> nvmem cells would look in both partition and un-partition usecases?
+> An example DT would be nice here!!
 
-> +       };
-> +};
+Something along those lines:
+
+	mtdnode {
+		nvmem-cells {
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			cell@0 {
+				reg = <0x0 0x14>;
+			};
+		};
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				reg = <0x0 0x20000>;
+
+				nvmem-cells {
+					#address-cells = <1>;
+					#size-cells = <1>;
+
+					cell@0 {
+						reg = <0x0 0x10>;
+					};
+				};
+			};
+		};
+	};
