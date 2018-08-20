@@ -2,93 +2,110 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A41AC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 06:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BDBC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 06:07:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D0DB20BED
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 06:04:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U5QMpptK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D0DB20BED
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D37F21473
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 06:07:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D37F21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=diasemi.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726192AbeHTJSh (ORCPT
+        id S1726486AbeHTJWJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 05:18:37 -0400
-Received: from mail-vk0-f54.google.com ([209.85.213.54]:43135 "EHLO
-        mail-vk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbeHTJSh (ORCPT
+        Mon, 20 Aug 2018 05:22:09 -0400
+Received: from mail1.bemta25.messagelabs.com ([195.245.230.2]:22457 "EHLO
+        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725954AbeHTJWI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 05:18:37 -0400
-Received: by mail-vk0-f54.google.com with SMTP id s17-v6so5943461vke.10;
-        Sun, 19 Aug 2018 23:04:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=/2O5FM9aVCXtcJKq3syyRUT/XQdA3VN/YLeLc1UB+Q4=;
-        b=U5QMpptK8s0Dlt1cT4WbwPoFGSsEw9jexaDa9kzI836ieRN8WMtP6oRXNQFvXncQIs
-         Xe3zuqIKgY63LOeArhhXzxNymbEMmYKaXvjXyjv25tBkzZm23gFnbZGVTSZ1C6/7/1wC
-         Bl6Muad5Hm0FV70IVeYGzsZ4SdnYJOvlGs2ZcX0W3AIYTrY7SC/d3zAJfzTZcJ0pVixb
-         a1IJKGhVLo4WiwxPG5H/RRQ+d8yLqYqI+rog+L3qWTubVmjlfmVz+JQQvQ/TaHmaFZvK
-         8Ls6sSmh9zrA5qH2tvXcks3JpE7+rmYAzgtRQeAQrzhqjd3M4qysGrrP4KvGXMW/vMni
-         pSUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
-         :from:date:message-id:subject:to:cc;
-        bh=/2O5FM9aVCXtcJKq3syyRUT/XQdA3VN/YLeLc1UB+Q4=;
-        b=lPs5zVhjX8iJ39Kdd2b3Egs4Lm4HOtzAXeO5yV9wqZj59ZYSIAohXcX9XVddzV1AiA
-         pRtfpikixfgUfV50sxQRkYSMyRkLwWSdjghWH8xbtji2kGhOzgM3xIEQcSZpyYOOQljf
-         ZJV71Qz3mzGgAJJcxJh+bomrWyv99lmn5Q5TZ+AmxWzalUBJgrx29NE9dYfiwVBEItSf
-         CthaHJa3x/qicLiTF/T83A3klopYcg115Orasubbi8bj2rm5WUuvTPC4RL1swvA2spC8
-         T15pUQhCIAvWjMAbft9D8uPOwPr1DuWHXj2Oz8a7+7sOz0AR/mTK1NwrryTrXSKM3BOc
-         tvLQ==
-X-Gm-Message-State: AOUpUlGLDsJtsHCAlODyq4uH8vKy1NApvYhi8Nu9vCu39QDvet18hsEJ
-        1IGmLozT7hyBdZ6sYEVUFd2v1T5l7mj++1WMPQ==
-X-Google-Smtp-Source: AA+uWPyb3H+SUJ4V5PkqJGMYPhK6julyIbR00fHNCxj+O3UnXoz1l6qXDLnhM6Qf7w7HRJxYcInES3xxQ10iJdpD3S8=
-X-Received: by 2002:a1f:844e:: with SMTP id g75-v6mr29468062vkd.16.1534745059676;
- Sun, 19 Aug 2018 23:04:19 -0700 (PDT)
+        Mon, 20 Aug 2018 05:22:08 -0400
+Received: from [46.226.52.104] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-2.bemta.az-a.eu-west-1.aws.symcld.net id 95/46-10350-3BA5A7B5; Mon, 20 Aug 2018 06:07:47 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDIsWRWlGSWpSXmKPExsUS3ulwWHdzVFW
+  0wZNl+hbzj5xjtTi86AWjxc1P31gtLu+aw2ax9PpFJovWvUfYHdg81sxbw+ixc9Zddo9NqzrZ
+  PD5vkgtgiWLNzEvKr0hgzdi18ypLwUTOinVzpRoYn7B1MXJxCAmsZZSY8f8vcxcjB5BTIfGtW
+  beLkZODV8BUYubsk0wgNpuAjsSjmevBbBYBVYlpP/6zgNjCApYSC5o3gsVFBIIkHj86ywIyk1
+  lgN6PEhwsHmCEGCUqcnPkErIFZQELi4IsXYHEhAS2Jc2tWMYLYEgL2EtPfX2WGsPUlXn6FGCo
+  hYCjxfdY3FgjbXGLKtI3sELa1xPUPs9gmMArMQrJiFpIVCxiZVjFaJBVlpmeU5CZm5ugaGhjo
+  Ghoa6RpaGusaGRrqJVbpJuqlluqWpxaX6AK55cV6xZW5yTkpenmpJZsYgSHPAAQ7GJdfSD7EK
+  MnBpCTKq21aFS3El5SfUpmRWJwRX1Sak1p8iFGGg0NJgrckEignWJSanlqRlpkDjD6YtAQHj5
+  II736QNG9xQWJucWY6ROoUoy7Hn/dTJzELseTl56VKifOuAykSACnKKM2DGwFLBJcYZaWEeRm
+  BjhLiKUgtys0sQZV/xSjOwagkzHsEZApPZl4J3KZXQEcwAR3BzlYJckRJIkIKmA5CufdHvJsz
+  xTLl4yy+OteXYQyLU1Lndf/OeJDy2NrjeXz3892nr0mq86f9/nnfYbmGqFy6zPmKrmDetp4vX
+  E+dP3/77ajJlJZ59nH+bsFpZ3KD1r8+tcNV+l/vtVzGp98aDvvLx7W/PrrPtqU59MXMyqVHz2
+  Vs8G//flXFqu3E68sN+WrdLJFKLMUZiYZazEXFiQAbjeeD/wIAAA==
+X-Env-Sender: roy.im.opensource@diasemi.com
+X-Msg-Ref: server-10.tower-268.messagelabs.com!1534745267!5703828!2
+X-Originating-IP: [87.137.64.195]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.9.15; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 10502 invoked from network); 20 Aug 2018 06:07:47 -0000
+Received: from unknown (HELO NB-EX-CASHUB01.diasemi.com) (87.137.64.195)
+  by server-10.tower-268.messagelabs.com with AES128-SHA encrypted SMTP; 20 Aug 2018 06:07:47 -0000
+Received: from krsrvapps-01.diasemi.com (10.95.17.50) by
+ NB-EX-CASHUB01.diasemi.com (10.1.16.140) with Microsoft SMTP Server id
+ 14.3.382.0; Mon, 20 Aug 2018 08:07:46 +0200
+Received: by krsrvapps-01.diasemi.com (Postfix, from userid 22266)      id
+ 1B6A35F7F9; Mon, 20 Aug 2018 15:07:45 +0900 (KST)
+Message-ID: <cover.1534743380.git.Roy.Im@diasemi.com>
+From:   Roy Im <roy.im.opensource@diasemi.com>
+Date:   Mon, 20 Aug 2018 14:36:20 +0900
+Subject: [PATCH V3 0/3]  da7280: haptic driver submission
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        <devicetree@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a67:e915:0:0:0:0:0 with HTTP; Sun, 19 Aug 2018 23:03:59
- -0700 (PDT)
-Reply-To: whiteheadm@acm.org
-In-Reply-To: <CAADnVQJjqLY3iFy2y5mb+oMR=VHS8HS_KXa0wm1HO3v0ayvrkw@mail.gmail.com>
-References: <CAP8WD_YEyxKOimMrGk+5Db8DpNfqQL84-2xLXbe53jiY_FoPrQ@mail.gmail.com>
- <CAADnVQJjqLY3iFy2y5mb+oMR=VHS8HS_KXa0wm1HO3v0ayvrkw@mail.gmail.com>
-From:   tedheadster <tedheadster@gmail.com>
-Date:   Mon, 20 Aug 2018 02:03:59 -0400
-Message-ID: <CAP8WD_ba1k6uxSFQ00QtW0L23jzjSFw93YpEq+010zKE5sT27g@mail.gmail.com>
-Subject: Re: Allocation failure with subsequent kernel crash
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-ServerInfo: NB-EX-CASHUB01.diasemi.com, 9
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 20.08.2018 03:16:00
+X-EXCLAIMER-MD-CONFIG: 8d172408-bd6a-42b1-8e53-daaedf35a5af
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 1:22 AM, Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
-> I don't remember vzalloc issues that was fixed in this area.
-> 4.14 kernel is quite old. Since then syzbot found few mem
-> related bugs that were fixed.
-> please try to reproduce on the latest tree.
+From: Roy Im <roy.im.opensource@diasemi.com>
 
-Alexei,
-  I get this panic with two very recent kernels: 4.18.0 and 4.17.14. I
-do not think this has been fixed. I am still trying to bisect it, but
-sometimes it takes 5 hours for the panic to occur.
+This patch adds support for the Dialog DA7280 Haptic driver IC.
 
-- Matthew Whitehead
+In this patch set the following is provided:
+
+[PATCH V2 1/3] MAINTAINERS file update for DA7280
+[PATCH V2 2/3] DA7280 DT Binding
+[PATCH V2 3/3] DA7280 Driver
+
+This patch applies against linux-next and v4.18
+
+Thank you,
+Roy Im, Dialog Semiconductor Ltd.
+
+Roy Im (3):
+  MAINTAINERS: da7280 updates to the Dialog Semiconductor search terms
+  dt-bindings: input: Add document bindings for DA7280
+  Input: new da7280 haptic driver
+
+ .../devicetree/bindings/input/dlg,da7280.txt       |   91 ++
+ MAINTAINERS                                        |    2 +
+ drivers/input/misc/Kconfig                         |   12 +
+ drivers/input/misc/Makefile                        |    1 +
+ drivers/input/misc/da7280.c                        | 1451 ++++++++++++++++++++
+ drivers/input/misc/da7280.h                        |  412 ++++++
+ 6 files changed, 1969 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/dlg,da7280.txt
+ create mode 100644 drivers/input/misc/da7280.c
+ create mode 100644 drivers/input/misc/da7280.h
+
+-- 
+end-of-patch for PATCH V3
+
