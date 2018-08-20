@@ -2,87 +2,88 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 604C3C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A24C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:43:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1564C215EB
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:37:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZbyTXb11"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1564C215EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 158BC21534
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:43:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 158BC21534
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbeHTMwR (ORCPT
+        id S1726174AbeHTM6k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 08:52:17 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:59752 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbeHTMwR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 08:52:17 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7K9Xjvj028981;
-        Mon, 20 Aug 2018 09:37:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=eeu32JaqIlqknw7ZI4YsAZHTcR5AuHoAPFlNIySW/Fk=;
- b=ZbyTXb11v4aJZ6ZcVs48uWZaqjhb1ipqtgCGuvcgU+mds4FykVyLdo4Q366TsNBFy/Ij
- h6SN8pGTlsBmcacofLI3/EIXRJjky9liGTPQyboug3MOxN1kpz2JGbrV7hPP7CWk7j9c
- v4o0rL1IjiKaf06elPBKASfPyJmi7Xa74xuR66pX+ea0a5R30j42HrS5L61la1//IMY6
- lRdjePUdNsZQk1xTtMkpFkGF5QO9tX4rqvaZkQV1OYCJmiVcT+i2qLBpx8Z/fI/OxIMb
- ISDdyQelYEDdKX6t6evW/0SNsUNTuAL2BsEB/GvC/EhoAYYUmLSB+JwlAoTWTg9a/TfP cg== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2kxavtdam3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Aug 2018 09:37:20 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7K9bJec011685
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Aug 2018 09:37:19 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7K9bJeD016347;
-        Mon, 20 Aug 2018 09:37:19 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 20 Aug 2018 02:37:18 -0700
-Date:   Mon, 20 Aug 2018 12:37:12 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Bhaskar Singh <bhaskar.kernel@gmail.com>
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8188eu: Type cast function argument
-Message-ID: <20180820093712.e5qgzyfof732n2z6@mwanda>
-References: <20180818142409.GA17122@Gentoo-PC>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180818142409.GA17122@Gentoo-PC>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8990 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=409
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808200104
+        Mon, 20 Aug 2018 08:58:40 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:53602 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726010AbeHTM6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 08:58:40 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AB06A1A0086;
+        Mon, 20 Aug 2018 11:43:44 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id ED3781A008D;
+        Mon, 20 Aug 2018 11:43:40 +0200 (CEST)
+Received: from mega.am.freescale.net (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E9B50402A3;
+        Mon, 20 Aug 2018 17:43:35 +0800 (SGT)
+From:   Chuanhua Han <chuanhua.han@nxp.com>
+To:     broonie@kernel.org, boris.brezillon@bootlin.com
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, jiafei.pan@nxp.com, zhiqiang.hou@nxp.com,
+        Chuanhua Han <chuanhua.han@nxp.com>
+Subject: [PATCH] mtd: m25p80: consider max message size when use the spi_mem_xx() API
+Date:   Mon, 20 Aug 2018 17:43:26 +0800
+Message-Id: <1534758206-24555-1-git-send-email-chuanhua.han@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 18, 2018 at 07:54:09PM +0530, Bhaskar Singh wrote:
-> This patch might suppress some warrning.
-> 
+Signed-off-by: Chuanhua Han <chuanhua.han@nxp.com>
+---
+Changes in v2:
+	- Place the adjusted transfer bytes code in spi_mem_adjust_op_size()
+	and  check spi_max_message_size(mem->spi) value before subtracting 
+	opcode, addr and dummy bytes.
+*fixes:
+	spi: Extend the core to ease integration of SPI memory controllers
+---
+ drivers/spi/spi-mem.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Which warning?  You should find out which program is generating the
-warning and delete it from your computer because that is a nonsense
-warning.
-
-regards,
-dan carpenter
+diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
+index 990770d..f5e75d1 100644
+--- a/drivers/spi/spi-mem.c
++++ b/drivers/spi/spi-mem.c
+@@ -328,10 +328,21 @@ EXPORT_SYMBOL_GPL(spi_mem_exec_op);
+ int spi_mem_adjust_op_size(struct spi_mem *mem, struct spi_mem_op *op)
+ {
+ 	struct spi_controller *ctlr = mem->spi->controller;
++	unsigned long val =	sizeof(op->cmd.opcode) +
++							  op->addr.nbytes +
++							  op->dummy.nbytes;
+ 
+ 	if (ctlr->mem_ops && ctlr->mem_ops->adjust_op_size)
+ 		return ctlr->mem_ops->adjust_op_size(mem, op);
+ 
++	if (spi_max_message_size(mem->spi) < val)
++		return -EINVAL;
++
++	if (!ctlr->mem_ops || !ctlr->mem_ops->exec_op)
++		op->data.nbytes = min3((unsigned long)op->data.nbytes,
++				spi_max_transfer_size(mem->spi),
++				spi_max_message_size(mem->spi) - val);
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(spi_mem_adjust_op_size);
+-- 
+2.7.4
 
