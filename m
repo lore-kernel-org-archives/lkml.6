@@ -2,145 +2,206 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 172D6C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 19:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0CACC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 19:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8C6120E20
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 19:36:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iC1hKi6U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8C6120E20
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A10E2174A
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 19:36:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A10E2174A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbeHTWwv (ORCPT
+        id S1726729AbeHTWxC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 18:52:51 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39870 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726077AbeHTWwv (ORCPT
+        Mon, 20 Aug 2018 18:53:02 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:33856 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbeHTWxC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 18:52:51 -0400
-Received: by mail-lj1-f194.google.com with SMTP id l15-v6so12485942lji.6;
-        Mon, 20 Aug 2018 12:35:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6qz2Xi7XqJjsPwYv9y2KBHTydMtu66uf4HJAWwC9l3o=;
-        b=iC1hKi6UniA1ql8Djop70cZ8TyqSRGfXHQ8YbG/4Itm+ilzSaz2XNq0I7/QcgvEdcl
-         wehoE0N/qW51oCrf+KsD18xtacR4ILXbIDTOY6VFzE4RbXTDsn7QbRWk9eQqYouhJGZS
-         zPS7X/GCeWaIsXSR5R3IlmZSOggrGwPoCjL9bM6pa6ltecZuU6BDIQP7mbFDnPlQMd8g
-         HULZeTxwYUO5V4vTxZ9ujXn5GZIqfKKZoB62l0cZjHVz++9HtorWiyg/1UpLMllmKbx2
-         kMmTFu08J1NJqIsh5vrNaolP+DHzK0NiGswn1e8K1IGKXE2rjK4ZVb+d0zoHrUya9dWR
-         ELlg==
+        Mon, 20 Aug 2018 18:53:02 -0400
+Received: by mail-oi0-f67.google.com with SMTP id 13-v6so27908308ois.1;
+        Mon, 20 Aug 2018 12:36:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=6qz2Xi7XqJjsPwYv9y2KBHTydMtu66uf4HJAWwC9l3o=;
-        b=D/aSWh6FlUp4xplM36YeENMS3mXU5V/K0cESi2DSpTc9gVO6bnuNUyTJAYYXXbl4S7
-         2tLuvOaAmi1K+4oTMT5BmdkreHnKZ6X8XldVcovr1xiZR4h1f6BuJrD1OTVNPrO1TC/W
-         1a7gBjwhPPhHC4WYwhP4WMzxthVfHZvATLPBfVBqxnRwzzFUm+gIEjFr43HshpuDaZCs
-         FhxtvcoeLk0Xrdni//pZHCqy73IQPZfl7yP31EB79+EWdAjkcC6kkPuGj8xwCvhrJ008
-         +LiQ+RdXzeo9/XwjJf1n467ghJQrUxM9mxLxbzXHVQgE6ce79mKxBzJg0Flgh8hpV2nI
-         LcQQ==
-X-Gm-Message-State: AOUpUlHP61wvYyKLOjn1j1g2WSoIhCMN09oXPpx9cP7gojic7iOubyhg
-        OTkgq0BakQF6kL8Sc57qIfDIFKyt
-X-Google-Smtp-Source: AA+uWPwfckL1um0H2dezR4fw2UOEdZq7LxTZBfCUuNhKMqN60gtgYmRVQM5PMqInESMtCpsVmsgIfA==
-X-Received: by 2002:a2e:5687:: with SMTP id k7-v6mr33793569lje.105.1534793756224;
-        Mon, 20 Aug 2018 12:35:56 -0700 (PDT)
-Received: from [192.168.2.145] ([109.252.90.13])
-        by smtp.googlemail.com with ESMTPSA id 20-v6sm1746730ljs.32.2018.08.20.12.35.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 Aug 2018 12:35:55 -0700 (PDT)
-Subject: Re: [PATCH v3 06/19] dt-bindings: memory: tegra: Squash tegra20-gart
- into tegra20-mc
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180818155430.5586-1-digetx@gmail.com>
- <20180818155430.5586-7-digetx@gmail.com> <20180820191209.GA28618@bogus>
- <b46cac22-9b31-9aa7-7eca-4725156346bb@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <4538309b-fcb3-73ee-04e3-6cefcedd376d@gmail.com>
-Date:   Mon, 20 Aug 2018 22:35:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oeIkd4BbvArwplsQRKUIclX3kdvXfyIoD8KytKdHccM=;
+        b=SmLMsPkaz2k2FI0oKMr4hBDVOVxoej5rXYE7X5bI6jg1+m1S5Asg90hjbgszZh+RBn
+         //Ikx2Uct2yVuDvjGrCgHPp+givwiMsXLL3dPraGs14cK8aXrxz9PfUHk+1/y2yvMa0s
+         MrdARTRhoF62I+BwlxoHxDcn+y0w9CH0c2I8rQW9mclb/jl9f9nOHzdTEi0TfWsO/Smy
+         t4GANRqvV93y9tUafcpIEH3AXpVlFGvvXvukZPhw23NjRKry3dvj1qqg2wJRd1sdIWom
+         HywzplRdjFydKjd5/xF1tY3fCdx4VZufLzrw7Gb/HgPda3rkvLkwgPmVQ9oogWYi8x5N
+         KxKg==
+X-Gm-Message-State: AOUpUlHVtoQ9JpuzzuHSXWWRo3BLF6mWsHblgy6bw4sPvLSi6phr7BGc
+        MmnFcrzB57vVqei0elwiluyop8s=
+X-Google-Smtp-Source: AA+uWPyCar0OBadnckGk3dzA5G4tKQtxLlVoF9facr+6xjZ4UloI/XIBokyQyY1CpvCoGcRDHrga+w==
+X-Received: by 2002:aca:5e02:: with SMTP id s2-v6mr15861042oib.176.1534793768349;
+        Mon, 20 Aug 2018 12:36:08 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id p132-v6sm14346686oia.31.2018.08.20.12.36.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 20 Aug 2018 12:36:07 -0700 (PDT)
+Date:   Mon, 20 Aug 2018 14:36:07 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Roy Im <roy.im.opensource@diasemi.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 2/3] dt-bindings: input: Add document bindings for
+ DA7280
+Message-ID: <20180820193607.GA17298@bogus>
+References: <cover.1534743380.git.Roy.Im@diasemi.com>
+ <131d4b001d1da69fc8d82029a91e77a0a126a09b.1534743380.git.Roy.Im@diasemi.com>
 MIME-Version: 1.0
-In-Reply-To: <b46cac22-9b31-9aa7-7eca-4725156346bb@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <131d4b001d1da69fc8d82029a91e77a0a126a09b.1534743380.git.Roy.Im@diasemi.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.08.2018 22:27, Dmitry Osipenko wrote:
-> On 20.08.2018 22:12, Rob Herring wrote:
->> On Sat, Aug 18, 2018 at 06:54:17PM +0300, Dmitry Osipenko wrote:
->>> Splitting GART and Memory Controller wasn't a good decision that was made
->>> back in the day. Given that the GART driver hasn't ever been used by
->>> anything in the kernel, we decided that it will be better to correct the
->>> mistakes of the past and merge two bindings into a single one. In a result
->>
->> As a result...
->>
->>> there is a DT ABI change for the Memory Controller that allows not to
->>> break newer kernels using older DT by introducing a new required property,
->>> the memory clock. Adding the new clock property also puts the tegra20-mc
->>> binding in line with the bindings of the later Tegra generations.
->>
->> I don't understand this part. It looks to me like you are breaking 
->> compatibility. The driver failing to probe with an old DT is okay?
+On Mon, Aug 20, 2018 at 02:36:20PM +0900, Roy Im wrote:
 > 
-> Yes, DT compatibility is broken. New driver won't probe/load with the old DT,
-> that's what we want.
-> 
->> OS's like OpenSUSE use new DTs with older kernel versions, so you should 
->> consider how to not break them as well. I guess if all this is optional 
->> or has been unused, then there shouldn't be a problem.
-> 
-> That's interesting.. Memory Controller isn't optional, I guess we could change
-> compatible to "nvidia,tegra20-mc-gart".
+> from: Roy Im <roy.im.opensource@diasemi.com>
 
-* I meant it's not optional in a sense that it's enabled in kernels config by
-default and driver is functional, but it's okay if MC driver will stop to probe
-with older kernels as it is used only for reporting memory errors.
+Looks like this needs to be removed. You should only have 'From' line 
+show up when the sender and author emails are different.
+
+> 
+> Add device tree binding information for DA7280 haptic driver.
+> Example bindings for DA7280 are added.
+> 
+> Signed-off-by: Roy Im <roy.im.opensource@diasemi.com>
+> 
+> ---
+> v3: Fixed subject format.
+> 
+> v2: No changes
+> 
+> 
+>  .../devicetree/bindings/input/dlg,da7280.txt       |   91 ++++++++++++++++++++
+>  1 file changed, 91 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/dlg,da7280.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/input/dlg,da7280.txt b/Documentation/devicetree/bindings/input/dlg,da7280.txt
+> new file mode 100644
+> index 0000000..759bcfe
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/dlg,da7280.txt
+> @@ -0,0 +1,91 @@
+> +Dialog Semiconductor DA7280 Haptics bindings
+> +
+> +Required properties:
+> +- compatible: Should be "dlg,da7280".
+> +- reg: Specifies the I2C slave address.
+> +
+> +- interrupt-parent : Specifies the phandle of the interrupt controller to
+> +  which the IRQs from DA7280 are delivered to.
+
+interrupt-parent is implied, so you don't need it here.
+
+> +- interrupts: IRQ line info for DA7280.
+> +  (See Documentation/devicetree/bindings/interrupt-controller/
+> +   interrupts.txt for further information relating to interrupt properties)
+> +- dlg,vib-mode:
+> +  "LRA-MODE" - Linear Resonance Actuator mode.
+> +  "ERM-BAR" - Bar type Eccentric Rotating Mass mode.
+> +  "ERM-COIN" - Coin type Eccentric Rotating Mass mode.
+> +- dlg,play-mode: choose one in below five modes.
+> +  "DRO-MODE" - Direct register override mode.
+> +  "PWM-MODE" - PWM data source mode.
+> +	In this case, user is able to set duty to 0 ~ 0xffff(0% ~ 100%)
+> +  "RTWM-MODE" - Register triggered waveform memory mode.
+> +	In this case, when enable this mode the pattern assigned
+> +	to the PS_SEQ_ID will be played as much times as PS_SEQ_LOOP.
+> +  "ETWM-MODE" - Edge triggered waveform memory mode.
+> +	In this case, external GPI(N) control are required to enable/disable
+> +	and it needs to keep device enabled by sending magnitude (X > 0)
+> +	the pattern assigned to the GPI(N)_SEQUENCE_ID below.
+> +	For more details, please see the datasheet.
+
+'-MODE' is redundant
+
+If these modes correspond to a register field, then using the numerical 
+values would be simpler.
+
+> +- dlg,nom-microvolt: Nominal actuator voltage rating.
+> +- dlg,abs-max-microvolt: Absolute actuator maximum voltage rating.
+> +- dlg,imax-microamp: Actuator max current rating.
+> +- dlg,impd-micro-ohms: the impedance of the actuator in micro ohm,
+> +  as read from its datasheet.
+> +
+> +Optional properties:
+> +- pwms : phandle to the physical PWM(Pulse Width Modulation) device.
+> +  PWM properties should be named "pwms". And number of cell is different
+> +  for each pwm device.
+> +  (See Documentation/devicetree/bindings/pwm/pwm.txt
+> +   for further information relating to pwm properties)
+> +- dlg,ps-seq-id: the PS_SEQ_ID(pattern ID in waveform memory inside chip)
+> +  to play back when RTWM-MODE is enabled.
+
+What's the range of valid values?
+
+> +- dlg,ps-seq-loop: the PS_SEQ_LOOP, Number of times the pre-stored sequence
+> +  pointed to	by PS_SEQ_ID or GPI(N)_SEQUENCE_ID is repeated.
+> +- dlg,gpiN-seq-id: the GPI(N)_SEQUENCE_ID, pattern to play
+> +  when gpi0 is triggered, 'N' must be 0~2.
+> +- dlg,gpiN-mode: the pattern mode which can select either
+> +  "Single-pattern" or "Multi-pattern", 'N' must be 0~2.
+> +- dlg,gpiN-polarity: gpiN polarity which can be chosen among "Rising-edge",
+> +  "Falling-edge" and "Both-edge", 'N' must be 0~2.
+> +  Haptic will work by this edge option in case of ETWM-MODE.
+> +
+> +- dlg,resonant-freq-hz: use in case of LRA-MODE, default 205Hz.
+> +  the freq range: 50Hz ~ 300Hz.
+> +  It will be set to 205Hz if the value is out of range.
+> +- dlg,bemf-sens-enable: Enable for internal loop computations.
+> +- dlg,freq-track-enable: Enable for resonant frequency tracking.
+> +- dlg,acc-enable: Enable for active acceleration.
+> +- dlg,rapid-stop-enable: Enable for rapid stop.
+> +- dlg,amp-pid-enable: Enable for the amplitude PID.
+> +- dlg,mem-array: use in case that memory registers should be updated,
+> +  Please fill the whole buffers(100 bytes) to avoid any error in driver.
+> +  For example,
+> +	dlg,mem-array = <
+> +		0x01 0x02 0x03 0x04 0x05 0x06 0x07 0x08 0x09 0x0A
+> +		...
+> +		0x71 0x72 0x73 0x74 0x75 0x76 0x77 0x78 0x79 0x7A
+> +		0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
+> +		0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
+> +	>;
+> +
+> +For further information, see device datasheet.
+> +
+> +======
+> +
+> +Example:
+> +
+> +	haptics: da7280-haptics@4A {
+
+Use lowercase hex for unit-address.
+
+> +		compatible = "dlg,da7280";
+> +		reg = <0x4A>;
+> +		interrupt-parent = <&gpio6>;
+> +		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+> +		dlg,vib-mode = "LRA-MODE";
+> +		dlg,play-mode = "DRO-MODE";
+> +		dlg,nom-microvolt = <2000000>;
+> +		dlg,abs-max-microvolt = <2000000>;
+> +		dlg,imax-microamp = <170000>;
+> +		dlg,resonant-freq-hz = <180>;
+> +		dlg,impd-micro-ohms = <10500000>;
+> +		dlg,freq-track-enable;
+> +		dlg,rapid-stop-enable;
+> +	};
+> -- 
+> end-of-patch for PATCH V3
+> 
