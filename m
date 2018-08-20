@@ -2,78 +2,128 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D931C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62404C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:22:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFA9A21581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:22:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="X9rGNPWt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFA9A21581
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 27440216FC
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:22:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27440216FC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbeHTRiL (ORCPT
+        id S1726831AbeHTRip (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 13:38:11 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38615 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbeHTRiL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 13:38:11 -0400
-Received: by mail-lf1-f67.google.com with SMTP id i7-v6so1463203lfh.5
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 07:22:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=n7xp5JGqCgqHux3F1QscYajVK4o6g0A/p3dZSDH90jQ=;
-        b=X9rGNPWt1tJ9EA6XYqXFJe3tUzltWHsm5f5AvCAy6uRDU9pdeHyy6FUfWWUhorcqIW
-         XixrrY8PH53a9+Z9ZjoF5z1DNUpsumDlpIFI0B9s0KrRm2vgSt5nlNsyJA0HvyJS3PBI
-         MVdQZ92g4FDbHHrya/nOxt2rj5StOQrJbtQ6I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n7xp5JGqCgqHux3F1QscYajVK4o6g0A/p3dZSDH90jQ=;
-        b=LS2Vud0azwEfW8nHjwzLmKgqljIRK9eSO63MBHI2FMwmVXKMTYa2wVzuxxQmUSXad4
-         IPleC3E1dZQtV9I7Kjq/tWECKS3Nxi4qmt/8kTh15Xy0qmAimDWAqVN3j8JOub18SF4r
-         4iw7+5xPq6xGrMcvjKe+18DZvtKX8X7l6xJIw6uHR8fkRISlK5LQPeKyqlzUFVDO04K4
-         La3FAnA0ibRNlcjr66bDBjH2SIWLcW8z638tefh6G1yIES7D7mLbrH4NagW+PkY/7VmU
-         aIoAYH6PAPXTJSGpZoVuoESeqISd4O6fV0KoL8PmNKaCMlqVFeNkm+rve1Af26e/SXii
-         T5ZA==
-X-Gm-Message-State: AOUpUlGc1sQTkTfOMDheqhrwSMx9uhB8rWN9EGvbt65GxzKzBPF2WAjC
-        cGU4orndjx/4P1xCefo9rY3M3ag0Q0M6K5MjCmwOlw==
-X-Google-Smtp-Source: AA+uWPw9TQZLJDIhRCbCkZ5Wa7o6VDCt4/57y8gOYvG87We7PxT3Qd/VgplyY6JeZM3BxmyYm/pv1en7OLHCivlW1iU=
-X-Received: by 2002:a19:23c5:: with SMTP id j188-v6mr3897058lfj.137.1534774939821;
- Mon, 20 Aug 2018 07:22:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <1534770297-5242-1-git-send-email-igor.opaniuk@linaro.org>
-In-Reply-To: <1534770297-5242-1-git-send-email-igor.opaniuk@linaro.org>
-From:   Shawn Guo <shawn.guo@linaro.org>
-Date:   Mon, 20 Aug 2018 22:21:58 +0800
-Message-ID: <CAAQ0ZWS1X6=+tEzG48mOvGdA9NiwPE1ChafTPJM0dk-X3PuLUA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] mmc: dw_mmc: hi3798cv200: add MMC_CAP_CMD23 cap
-To:     igor.opaniuk@linaro.org
-Cc:     linux-mmc@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        tianshuliang <tianshuliang@hisilicon.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 20 Aug 2018 13:38:45 -0400
+Received: from foss.arm.com ([217.140.101.70]:38256 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726798AbeHTRip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 13:38:45 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED026ED1;
+        Mon, 20 Aug 2018 07:22:54 -0700 (PDT)
+Received: from dupont (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4AB7F3F24A;
+        Mon, 20 Aug 2018 07:22:53 -0700 (PDT)
+Date:   Mon, 20 Aug 2018 09:22:52 -0500
+From:   Kim Phillips <kim.phillips@arm.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        <schwidefsky@de.ibm.com>, <heiko.carstens@de.ibm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, <ast@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, <suzuki.poulosi@arm.com>,
+        <linux-s390@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 0/7] perf: Add ioctl for PMU driver configuration
+Message-Id: <20180820092252.32dd015afcc5cbf2fe4c7ab7@arm.com>
+In-Reply-To: <18fe78a3-9a58-cecd-ddb9-d46cbc473b95@arm.com>
+References: <1531950487-24554-1-git-send-email-mathieu.poirier@linaro.org>
+        <20180813124642.3d49c082a95fc294d926016e@arm.com>
+        <CANLsYkx=tjCG-eb4qRoGz0SvG4qCMDz1ajR9Mo9VK5XTAn_WdQ@mail.gmail.com>
+        <20180814120910.ed225bbc462c58b09e5d68de@arm.com>
+        <CANLsYkxZ_Wts6k9yqJhJf_R5oh74svpcuoNxhtFf6h3mz8U4ZA@mail.gmail.com>
+        <20180815093912.GE2427@arm.com>
+        <20180815102820.3520d0c3875d2fd82300cdef@arm.com>
+        <CANLsYkz0j79+1C-Amz=3+7zw-0VZhnZ+rp5WAjHduEp+WjFs8A@mail.gmail.com>
+        <18fe78a3-9a58-cecd-ddb9-d46cbc473b95@arm.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 9:04 PM Igor Opaniuk <igor.opaniuk@linaro.org> wrote:
->
-> Enable access to the RPMB on the on-board eMMC of the
-> Poplar board.
->
-> Signed-off-by: Igor Opaniuk <igor.opaniuk@linaro.org>
+On Mon, 20 Aug 2018 11:03:03 +0100
+Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
 
-Acked-by: Shawn Guo <shawn.guo@linaro.org>
+> On 08/16/2018 08:28 PM, Mathieu Poirier wrote:
+> > On Wed, 15 Aug 2018 at 09:28, Kim Phillips <kim.phillips@arm.com> wrote:
+> >>
+> >> On Wed, 15 Aug 2018 10:39:13 +0100
+> >> Will Deacon <will.deacon@arm.com> wrote:
+> >>
+> >>> On Tue, Aug 14, 2018 at 01:42:27PM -0600, Mathieu Poirier wrote:
+> >>>> On Tue, 14 Aug 2018 at 11:09, Kim Phillips <kim.phillips@arm.com> wrote:
+> >>>>> The other thing that's going on here is that I'm becoming numb to the
+> >>>>> loathsome "failed to mmap with 12 (Cannot allocate memory)" being
+> >>>>> returned no matter what the error is/was. E.g., an error that would
+> >>>>> indicate a sense of non-implementation would be much better
+> >>>>> appreciated than presumably what the above is doing, i.e., returning
+> >>>>> -ENOMEM.  That, backed up with specific details in the form of human
+> >>>>> readable text in dmesg would be *most* welcome.
+> >>>>
+> >>>> As part of the refactoring of the code to support CPU-wide scenarios I
+> >>>> intend to emit better diagnostic messages from the driver.  Modifying
+> >>>> rb_alloc_aux() to propagate the error message generated by the
+> >>>> architecture specific PMUs doesn't look hard either and I _may_ get to
+> >>>> it as part of this work.
+> >>>
+> >>> For the record, I will continue to oppose PMU drivers that dump diagnostics
+> >>> about user-controlled input into dmesg, but the coresight drivers are yours
+> >>> so it's up to you and I won't get in the way!
+> >>
+> >> That sounds technically self-contradicting to me.  Why shouldn't
+> >> coresight share the same policies as those used for PMU drivers?  Or
+> >> why not allow the individual vendor PMU driver authors control the
+> >> level of user-friendliness of their own drivers?
+> >>
+> >> That being said, Matheiu, would you accept patches that make coresight
+> >> more verbose in dmesg?
+> > 
+> > It depends on the issue you're hoping to address.  I'd rather see the
+> > root cause of the problem fixed than adding temporary code.  Suzuki
+> > added the ETR perf API and I'm currently working on CPU-wide
+> > scenarios.  From there and with regards to what can happen in
+> > setup_aux(), we should have things covered.
+> 
+> I think the main issue is the lack of error code propagation from
+> setup_aux() back to the perf_aux_output_handle_begin(), which always
+> return -ENOMEM. If we fix that, we could get better idea of whats
+> wrong.
+
+Why get a better idea when we can get the exact details?
+
+> If someone is planning to add verbose messages, they may do so by adding
+> dev_dbg() / pr_debug(), which can be turned on as and when needed.
+
+I disagree:  that just adds another usage and kernel configuration
+obstacle.  Why not use pr_err straight up?
+
+Kim
