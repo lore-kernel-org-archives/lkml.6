@@ -2,374 +2,166 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BBD8C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 19:08:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F85C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 19:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEFA72173A
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 19:08:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="0r3Q/uea"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEFA72173A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 2DB542173A
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 19:12:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DB542173A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbeHTWZA (ORCPT
+        id S1726599AbeHTW3A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 18:25:00 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:37223 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbeHTWZA (ORCPT
+        Mon, 20 Aug 2018 18:29:00 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:46221 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbeHTW3A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 18:25:00 -0400
-Received: by mail-vk0-f65.google.com with SMTP id v72-v6so7045912vkd.4
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 12:08:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kGoEfBtc6o8mBnegiwI5E1wwIG/LoEwU4hPV6YKyU44=;
-        b=0r3Q/ueaRxRP29+opfZKWTLTPFHS59oTibh9RO/+spB2zVuxaHeh/aphwc1ZuXbxT+
-         4+cwZOgvxI/58bDxdb0JZXh7aiCh/WoF5dpOsFM53TzHsRvzte2ndiX7whX6+JH9B2Pb
-         gSJ6yy/hrMULlwqgUkL/CRYmIhmfQKXBFdgRNiWX73cfO4hc74iKqgynaWPGMWhUDr7C
-         O4CpE/nFARmaG9J4O9eY4vxGp60PXE8bTY1F/R9TtHa6fQwR01Q7Byjlt1HUJThpqVNi
-         bvTTp8hecBBopldrSZtbEYMGNatoKbQEcwMJtoS3HCN2aHBckJwoAhKsdKnfcDSrn8Cr
-         ZhgA==
+        Mon, 20 Aug 2018 18:29:00 -0400
+Received: by mail-oi0-f67.google.com with SMTP id y207-v6so27735244oie.13;
+        Mon, 20 Aug 2018 12:12:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kGoEfBtc6o8mBnegiwI5E1wwIG/LoEwU4hPV6YKyU44=;
-        b=ZTyHZ1bDP/5wrLDL3MYaLR7Jf9YYejwGMX8aYFRFFjx6Wv88+6hu/P6QPwNjPiTH5m
-         XyxNyeCgUyKzZvtMn65U+ldkry82HXUtcLQtMzwTLaXscFc0RgdjzBAR6Ct7qIUgBi3s
-         /66ypbr8QMSMz4SZFT+RPsmV45tN1f7GtMWJedefFmPk6xlKuzc6pm5aWeSLTWpWuvYC
-         LLkXxcCzC8eUtA/Z4HeaB+ROfS4qXFD0J1fzZYg0n9eJvygWgKT/oPKclGkoxR7WqIMd
-         3yQTpp/VyQn8R9/FJPNjf/SykgUU7CczSXSTyUlnU9SVaUGmOW95Bmq3cV+VLksuAPSk
-         61fQ==
-X-Gm-Message-State: AOUpUlGsy1G9SAd8e8x2ELjGFYnoKN+nNBaphOu/QL4mB5bHWj9NvBge
-        d3+TX3GGA+P5AbsqHlhmZdPQCw==
-X-Google-Smtp-Source: AA+uWPzLM0P3/w6r9R1ktuXoCm1B2y2ttDzshGn7J0MmzEX9hiT+ZZ+adDeKjIw73orWIj3nkywigA==
-X-Received: by 2002:a1f:de87:: with SMTP id v129-v6mr30308988vkg.73.1534792089726;
-        Mon, 20 Aug 2018 12:08:09 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id d71-v6sm2828840vka.47.2018.08.20.12.08.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 Aug 2018 12:08:08 -0700 (PDT)
-Subject: Re: [PATCH] blk-wbt: Avoid lock contention and thundering herd issue
- in wbt_wait
-To:     "van der Linden, Frank" <fllinden@amazon.com>,
-        "Agarwal, Anchal" <anchalag@amazon.com>
-Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Singh, Balbir" <sblbir@amazon.com>,
-        "Wilson, Matt" <msw@amazon.com>
-References: <20180731213410.GA35291@kaos-source-ops-60001.pdx1.amazon.com>
- <df2a0476-d9d1-c6c9-6553-f459e890ce8b@kernel.dk>
- <20180801170603.GA32864@kaos-source-ops-60001.pdx1.amazon.com>
- <a9871e54-83bf-7557-2d2f-99e006ceadcf@kernel.dk>
- <9265896d-3f02-ff2f-8e02-3aca775f4087@kernel.dk>
- <20180807201247.GA21108@kaos-source-ops-60001.pdx1.amazon.com>
- <6f24ff4b-9373-2708-8342-96f190f17cbf@kernel.dk>
- <20180807211216.GA14371@kaos-source-ops-60001.pdx1.amazon.com>
- <6bab69c9-b787-b12f-7738-72e05bf74444@kernel.dk>
- <72f90be2-0b63-d3a0-e953-da9232f44d5b@kernel.dk>
- <761bb0ab416649b8bf3bac1706124456@EX13D13UWB002.ant.amazon.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7f6c399d-bda1-0bbf-4ea1-07fc510ed1eb@kernel.dk>
-Date:   Mon, 20 Aug 2018 13:08:06 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VOjcWZNQT+oE4CmRPMJvaeuxf6azO0ttZBpl7JS+vH4=;
+        b=iDXM8Dl4NfDC1T/SwQwilfW0gWkQ0QNE6HoiDhAKdP75Nk+mJR8rGLuQhx9cfSDslJ
+         Wh5Mxa1h4q7mqAZzWU1S3sfnseuUarJ61DSRDLRq1ahMSuH3J99XsSeBi0dhLFFPsUfP
+         UeRFYv9euq11BDTuOk+xB0vRn1cYsew2KLYOIFk0B8nFZm3MLEHANGWAC+61f+GsuxzH
+         4V7qYxo1JydMoB83jxgHmWuigvc5/qJgA9H9188yCjTAhXJCcPUIfBkWFZQkwegx8kPi
+         ZwF3GprchFflYmWJB0RMP2GYNsbf37K027IpB9OdaAqDf0oHmdyMnMZ9wFMhbMpQJbq0
+         orzw==
+X-Gm-Message-State: AOUpUlGMZDrGFJ29EB+UEBKDUjYKHbjylBCNuo+1y+rM9kQBx/hKfdgU
+        UyECZlAe7BLG4t8eMyJnCA==
+X-Google-Smtp-Source: AA+uWPzwB6WB3hy+DB5yDHoD/0Cp78MCBG627ZdKQ0AevivpTS7D5cEJtG7xwU+rVO6sRtKm9R9B+A==
+X-Received: by 2002:aca:4fd1:: with SMTP id d200-v6mr16623370oib.224.1534792330340;
+        Mon, 20 Aug 2018 12:12:10 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id b125-v6sm5757605oia.38.2018.08.20.12.12.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 20 Aug 2018 12:12:09 -0700 (PDT)
+Date:   Mon, 20 Aug 2018 14:12:09 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 06/19] dt-bindings: memory: tegra: Squash tegra20-gart
+ into tegra20-mc
+Message-ID: <20180820191209.GA28618@bogus>
+References: <20180818155430.5586-1-digetx@gmail.com>
+ <20180818155430.5586-7-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <761bb0ab416649b8bf3bac1706124456@EX13D13UWB002.ant.amazon.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180818155430.5586-7-digetx@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/20/18 11:34 AM, van der Linden, Frank wrote:
-> On 8/20/18 9:37 AM, Jens Axboe wrote:
->> On 8/7/18 3:19 PM, Jens Axboe wrote:
->>> On 8/7/18 3:12 PM, Anchal Agarwal wrote:
->>>> On Tue, Aug 07, 2018 at 02:39:48PM -0600, Jens Axboe wrote:
->>>>> On 8/7/18 2:12 PM, Anchal Agarwal wrote:
->>>>>> On Tue, Aug 07, 2018 at 08:29:44AM -0600, Jens Axboe wrote:
->>>>>>> On 8/1/18 4:09 PM, Jens Axboe wrote:
->>>>>>>> On 8/1/18 11:06 AM, Anchal Agarwal wrote:
->>>>>>>>> On Wed, Aug 01, 2018 at 09:14:50AM -0600, Jens Axboe wrote:
->>>>>>>>>> On 7/31/18 3:34 PM, Anchal Agarwal wrote:
->>>>>>>>>>> Hi folks,
->>>>>>>>>>>
->>>>>>>>>>> This patch modifies commit e34cbd307477a
->>>>>>>>>>> (blk-wbt: add general throttling mechanism)
->>>>>>>>>>>
->>>>>>>>>>> I am currently running a large bare metal instance (i3.metal)
->>>>>>>>>>> on EC2 with 72 cores, 512GB of RAM and NVME drives, with a
->>>>>>>>>>> 4.18 kernel. I have a workload that simulates a database
->>>>>>>>>>> workload and I am running into lockup issues when writeback
->>>>>>>>>>> throttling is enabled,with the hung task detector also
->>>>>>>>>>> kicking in.
->>>>>>>>>>>
->>>>>>>>>>> Crash dumps show that most CPUs (up to 50 of them) are
->>>>>>>>>>> all trying to get the wbt wait queue lock while trying to add
->>>>>>>>>>> themselves to it in __wbt_wait (see stack traces below).
->>>>>>>>>>>
->>>>>>>>>>> [    0.948118] CPU: 45 PID: 0 Comm: swapper/45 Not tainted 4.14.51-62.38.amzn1.x86_64 #1
->>>>>>>>>>> [    0.948119] Hardware name: Amazon EC2 i3.metal/Not Specified, BIOS 1.0 10/16/2017
->>>>>>>>>>> [    0.948120] task: ffff883f7878c000 task.stack: ffffc9000c69c000
->>>>>>>>>>> [    0.948124] RIP: 0010:native_queued_spin_lock_slowpath+0xf8/0x1a0
->>>>>>>>>>> [    0.948125] RSP: 0018:ffff883f7fcc3dc8 EFLAGS: 00000046
->>>>>>>>>>> [    0.948126] RAX: 0000000000000000 RBX: ffff887f7709ca68 RCX: ffff883f7fce2a00
->>>>>>>>>>> [    0.948128] RDX: 000000000000001c RSI: 0000000000740001 RDI: ffff887f7709ca68
->>>>>>>>>>> [    0.948129] RBP: 0000000000000002 R08: 0000000000b80000 R09: 0000000000000000
->>>>>>>>>>> [    0.948130] R10: ffff883f7fcc3d78 R11: 000000000de27121 R12: 0000000000000002
->>>>>>>>>>> [    0.948131] R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
->>>>>>>>>>> [    0.948132] FS:  0000000000000000(0000) GS:ffff883f7fcc0000(0000) knlGS:0000000000000000
->>>>>>>>>>> [    0.948134] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>>>>>>> [    0.948135] CR2: 000000c424c77000 CR3: 0000000002010005 CR4: 00000000003606e0
->>>>>>>>>>> [    0.948136] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>>>>>>>>>> [    0.948137] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>>>>>>>>>> [    0.948138] Call Trace:
->>>>>>>>>>> [    0.948139]  <IRQ>
->>>>>>>>>>> [    0.948142]  do_raw_spin_lock+0xad/0xc0
->>>>>>>>>>> [    0.948145]  _raw_spin_lock_irqsave+0x44/0x4b
->>>>>>>>>>> [    0.948149]  ? __wake_up_common_lock+0x53/0x90
->>>>>>>>>>> [    0.948150]  __wake_up_common_lock+0x53/0x90
->>>>>>>>>>> [    0.948155]  wbt_done+0x7b/0xa0
->>>>>>>>>>> [    0.948158]  blk_mq_free_request+0xb7/0x110
->>>>>>>>>>> [    0.948161]  __blk_mq_complete_request+0xcb/0x140
->>>>>>>>>>> [    0.948166]  nvme_process_cq+0xce/0x1a0 [nvme]
->>>>>>>>>>> [    0.948169]  nvme_irq+0x23/0x50 [nvme]
->>>>>>>>>>> [    0.948173]  __handle_irq_event_percpu+0x46/0x300
->>>>>>>>>>> [    0.948176]  handle_irq_event_percpu+0x20/0x50
->>>>>>>>>>> [    0.948179]  handle_irq_event+0x34/0x60
->>>>>>>>>>> [    0.948181]  handle_edge_irq+0x77/0x190
->>>>>>>>>>> [    0.948185]  handle_irq+0xaf/0x120
->>>>>>>>>>> [    0.948188]  do_IRQ+0x53/0x110
->>>>>>>>>>> [    0.948191]  common_interrupt+0x87/0x87
->>>>>>>>>>> [    0.948192]  </IRQ>
->>>>>>>>>>> ....
->>>>>>>>>>> [    0.311136] CPU: 4 PID: 9737 Comm: run_linux_amd64 Not tainted 4.14.51-62.38.amzn1.x86_64 #1
->>>>>>>>>>> [    0.311137] Hardware name: Amazon EC2 i3.metal/Not Specified, BIOS 1.0 10/16/2017
->>>>>>>>>>> [    0.311138] task: ffff883f6e6a8000 task.stack: ffffc9000f1ec000
->>>>>>>>>>> [    0.311141] RIP: 0010:native_queued_spin_lock_slowpath+0xf5/0x1a0
->>>>>>>>>>> [    0.311142] RSP: 0018:ffffc9000f1efa28 EFLAGS: 00000046
->>>>>>>>>>> [    0.311144] RAX: 0000000000000000 RBX: ffff887f7709ca68 RCX: ffff883f7f722a00
->>>>>>>>>>> [    0.311145] RDX: 0000000000000035 RSI: 0000000000d80001 RDI: ffff887f7709ca68
->>>>>>>>>>> [    0.311146] RBP: 0000000000000202 R08: 0000000000140000 R09: 0000000000000000
->>>>>>>>>>> [    0.311147] R10: ffffc9000f1ef9d8 R11: 000000001a249fa0 R12: ffff887f7709ca68
->>>>>>>>>>> [    0.311148] R13: ffffc9000f1efad0 R14: 0000000000000000 R15: ffff887f7709ca00
->>>>>>>>>>> [    0.311149] FS:  000000c423f30090(0000) GS:ffff883f7f700000(0000) knlGS:0000000000000000
->>>>>>>>>>> [    0.311150] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>>>>>>> [    0.311151] CR2: 00007feefcea4000 CR3: 0000007f7016e001 CR4: 00000000003606e0
->>>>>>>>>>> [    0.311152] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>>>>>>>>>> [    0.311153] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>>>>>>>>>> [    0.311154] Call Trace:
->>>>>>>>>>> [    0.311157]  do_raw_spin_lock+0xad/0xc0
->>>>>>>>>>> [    0.311160]  _raw_spin_lock_irqsave+0x44/0x4b
->>>>>>>>>>> [    0.311162]  ? prepare_to_wait_exclusive+0x28/0xb0
->>>>>>>>>>> [    0.311164]  prepare_to_wait_exclusive+0x28/0xb0
->>>>>>>>>>> [    0.311167]  wbt_wait+0x127/0x330
->>>>>>>>>>> [    0.311169]  ? finish_wait+0x80/0x80
->>>>>>>>>>> [    0.311172]  ? generic_make_request+0xda/0x3b0
->>>>>>>>>>> [    0.311174]  blk_mq_make_request+0xd6/0x7b0
->>>>>>>>>>> [    0.311176]  ? blk_queue_enter+0x24/0x260
->>>>>>>>>>> [    0.311178]  ? generic_make_request+0xda/0x3b0
->>>>>>>>>>> [    0.311181]  generic_make_request+0x10c/0x3b0
->>>>>>>>>>> [    0.311183]  ? submit_bio+0x5c/0x110
->>>>>>>>>>> [    0.311185]  submit_bio+0x5c/0x110
->>>>>>>>>>> [    0.311197]  ? __ext4_journal_stop+0x36/0xa0 [ext4]
->>>>>>>>>>> [    0.311210]  ext4_io_submit+0x48/0x60 [ext4]
->>>>>>>>>>> [    0.311222]  ext4_writepages+0x810/0x11f0 [ext4]
->>>>>>>>>>> [    0.311229]  ? do_writepages+0x3c/0xd0
->>>>>>>>>>> [    0.311239]  ? ext4_mark_inode_dirty+0x260/0x260 [ext4]
->>>>>>>>>>> [    0.311240]  do_writepages+0x3c/0xd0
->>>>>>>>>>> [    0.311243]  ? _raw_spin_unlock+0x24/0x30
->>>>>>>>>>> [    0.311245]  ? wbc_attach_and_unlock_inode+0x165/0x280
->>>>>>>>>>> [    0.311248]  ? __filemap_fdatawrite_range+0xa3/0xe0
->>>>>>>>>>> [    0.311250]  __filemap_fdatawrite_range+0xa3/0xe0
->>>>>>>>>>> [    0.311253]  file_write_and_wait_range+0x34/0x90
->>>>>>>>>>> [    0.311264]  ext4_sync_file+0x151/0x500 [ext4]
->>>>>>>>>>> [    0.311267]  do_fsync+0x38/0x60
->>>>>>>>>>> [    0.311270]  SyS_fsync+0xc/0x10
->>>>>>>>>>> [    0.311272]  do_syscall_64+0x6f/0x170
->>>>>>>>>>> [    0.311274]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
->>>>>>>>>>>
->>>>>>>>>>> In the original patch, wbt_done is waking up all the exclusive
->>>>>>>>>>> processes in the wait queue, which can cause a thundering herd
->>>>>>>>>>> if there is a large number of writer threads in the queue. The
->>>>>>>>>>> original intention of the code seems to be to wake up one thread
->>>>>>>>>>> only however, it uses wake_up_all() in __wbt_done(), and then
->>>>>>>>>>> uses the following check in __wbt_wait to have only one thread
->>>>>>>>>>> actually get out of the wait loop:
->>>>>>>>>>>
->>>>>>>>>>> if (waitqueue_active(&rqw->wait) &&
->>>>>>>>>>>             rqw->wait.head.next != &wait->entry)
->>>>>>>>>>>                 return false;
->>>>>>>>>>>
->>>>>>>>>>> The problem with this is that the wait entry in wbt_wait is
->>>>>>>>>>> define with DEFINE_WAIT, which uses the autoremove wakeup function.
->>>>>>>>>>> That means that the above check is invalid - the wait entry will
->>>>>>>>>>> have been removed from the queue already by the time we hit the
->>>>>>>>>>> check in the loop.
->>>>>>>>>>>
->>>>>>>>>>> Secondly, auto-removing the wait entries also means that the wait
->>>>>>>>>>> queue essentially gets reordered "randomly" (e.g. threads re-add
->>>>>>>>>>> themselves in the order they got to run after being woken up).
->>>>>>>>>>> Additionally, new requests entering wbt_wait might overtake requests
->>>>>>>>>>> that were queued earlier, because the wait queue will be
->>>>>>>>>>> (temporarily) empty after the wake_up_all, so the waitqueue_active
->>>>>>>>>>> check will not stop them. This can cause certain threads to starve
->>>>>>>>>>> under high load.
->>>>>>>>>>>
->>>>>>>>>>> The fix is to leave the woken up requests in the queue and remove
->>>>>>>>>>> them in finish_wait() once the current thread breaks out of the
->>>>>>>>>>> wait loop in __wbt_wait. This will ensure new requests always
->>>>>>>>>>> end up at the back of the queue, and they won't overtake requests
->>>>>>>>>>> that are already in the wait queue. With that change, the loop
->>>>>>>>>>> in wbt_wait is also in line with many other wait loops in the kernel.
->>>>>>>>>>> Waking up just one thread drastically reduces lock contention, as
->>>>>>>>>>> does moving the wait queue add/remove out of the loop.
->>>>>>>>>>>
->>>>>>>>>>> A significant drop in lockdep's lock contention numbers is seen when
->>>>>>>>>>> running the test application on the patched kernel.
->>>>>>>>>> I like the patch, and a few weeks ago we independently discovered that
->>>>>>>>>> the waitqueue list checking was bogus as well. My only worry is that
->>>>>>>>>> changes like this can be delicate, meaning that it's easy to introduce
->>>>>>>>>> stall conditions. What kind of testing did you push this through?
->>>>>>>>>>
->>>>>>>>>> -- 
->>>>>>>>>> Jens Axboe
->>>>>>>>>>
->>>>>>>>> I ran the following tests on both real HW with NVME devices attached
->>>>>>>>> and emulated NVME too:
->>>>>>>>>
->>>>>>>>> 1. The test case I used to reproduce the issue, spawns a bunch of threads 
->>>>>>>>>    to concurrently read and write files with random size and content. 
->>>>>>>>>    Files are randomly fsync'd. The implementation is a FIFO queue of files. 
->>>>>>>>>    When the queue fills the test starts to verify and remove the files. This 
->>>>>>>>>    test will fail if there's a read, write, or hash check failure. It tests
->>>>>>>>>    for file corruption when lots of small files are being read and written 
->>>>>>>>>    with high concurrency.
->>>>>>>>>
->>>>>>>>> 2. Fio for random writes with a root NVME device of 200GB
->>>>>>>>>   
->>>>>>>>>   fio --name=randwrite --ioengine=libaio --iodepth=1 --rw=randwrite --bs=4k 
->>>>>>>>>   --direct=0 --size=10G --numjobs=2 --runtime=60 --group_reporting
->>>>>>>>>   
->>>>>>>>>   fio --name=randwrite --ioengine=libaio --iodepth=1 --rw=randwrite --bs=4k
->>>>>>>>>   --direct=0 --size=5G --numjobs=2 --runtime=30 --fsync=64 --group_reporting
->>>>>>>>>   
->>>>>>>>>   I did see an improvement in the bandwidth numbers reported on the patched
->>>>>>>>>   kernel. 
->>>>>>>>>
->>>>>>>>> Do you have any test case/suite in mind that you would suggest me to 
->>>>>>>>> run to be sure that patch does not introduce any stall conditions?
->>>>>>>> One thing that is always useful is to run xfstest, do a full run on
->>>>>>>> the device. If that works, then do another full run, this time limiting
->>>>>>>> the queue depth of the SCSI device to 1. If both of those pass, then
->>>>>>>> I'd feel pretty good getting this applied for 4.19.
->>>>>>> Did you get a chance to run this full test?
->>>>>>>
->>>>>>> -- 
->>>>>>> Jens Axboe
->>>>>>>
->>>>>>>
->>>>>> Hi Jens,
->>>>>> Yes I did run the tests and was in the process of compiling concrete results
->>>>>> I tested following environments against xfs/auto group
->>>>>> 1. Vanilla 4.18.rc kernel
->>>>>> 2. 4.18 kernel with the blk-wbt patch
->>>>>> 3. 4.18 kernel with the blk-wbt patch + io_queue_depth=2. I 
->>>>>> understand you asked for queue depth for SCSI device=1 however, I have NVME 
->>>>>> devices in my environment and 2 is the minimum value for io_queue_depth allowed 
->>>>>> according to the NVME driver code. The results pretty much look same with no 
->>>>>> stalls or exceptional failures. 
->>>>>> xfs/auto ran 296 odd tests with 3 failures and 130 something "no runs". 
->>>>>> Remaining tests passed. "Skipped tests"  were mostly due to missing features
->>>>>> (eg: reflink support on scratch filesystem)
->>>>>> The failures were consistent across runs on 3 different environments. 
->>>>>> I am also running full test suite but it is taking long time as I am 
->>>>>> hitting kernel BUG in xfs code in some generic tests. This BUG is not 
->>>>>> related to the patch and  I see them in vanilla kernel too. I am in 
->>>>>> the process of excluding these kind of tests as they come and 
->>>>>> re-run the suite however, this proces is time taking. 
->>>>>> Do you have any specific tests in mind that you would like me 
->>>>>> to run apart from what I have already tested above?
->>>>> Thanks, I think that looks good. I'll get your patch applied for
->>>>> 4.19.
->>>>>
->>>>> -- 
->>>>> Jens Axboe
->>>>>
->>>>>
->>>> Hi Jens,
->>>> Thanks for accepting this. There is one small issue, I don't find any emails
->>>> send by me on the lkml mailing list. I am not sure why it didn't land there,
->>>> all I can see is your responses. Do you want one of us to resend the patch
->>>> or will you be able to do it?
->>> That's odd, are you getting rejections on your emails? For reference, the
->>> patch is here:
->>>
->>> http://git.kernel.dk/cgit/linux-block/commit/?h=for-4.19/block&id=2887e41b910bb14fd847cf01ab7a5993db989d88
->> One issue with this, as far as I can tell. Right now we've switched to
->> waking one task at the time, which is obviously more efficient. But if
->> we do that with exclusive waits, then we have to ensure that this task
->> makes progress. If we wake up a task, and then fail to get a queueing
->> token, then we'll go back to sleep. We need to ensure that someone makes
->> forward progress at this point. There are two ways I can see that
->> happening:
->>
->> 1) The task woken _always_ gets to queue an IO
->> 2) If the task woken is NOT allowed to queue an IO, then it must select
->>    a new task to wake up. That new task is then subjected to rule 1 or 2
->>    as well.
->>
->> For #1, it could be as simple as:
->>
->> if (slept || !rwb_enabled(rwb)) {
->> 	atomic_inc(&rqw->inflight);
->> 	break;
->> }
->>
->> but this obviously won't always be fair. Might be good enough however,
->> instead of having to eg replace the generic wait queues with a priority
->> list/queue.
->>
->> Note that this isn't an entirely new issue, it's just so much easier to
->> hit with the single wakeups.
->>
-> Hi Jens,
+On Sat, Aug 18, 2018 at 06:54:17PM +0300, Dmitry Osipenko wrote:
+> Splitting GART and Memory Controller wasn't a good decision that was made
+> back in the day. Given that the GART driver hasn't ever been used by
+> anything in the kernel, we decided that it will be better to correct the
+> mistakes of the past and merge two bindings into a single one. In a result
+
+As a result...
+
+> there is a DT ABI change for the Memory Controller that allows not to
+> break newer kernels using older DT by introducing a new required property,
+> the memory clock. Adding the new clock property also puts the tegra20-mc
+> binding in line with the bindings of the later Tegra generations.
+
+I don't understand this part. It looks to me like you are breaking 
+compatibility. The driver failing to probe with an old DT is okay?
+
+OS's like OpenSUSE use new DTs with older kernel versions, so you should 
+consider how to not break them as well. I guess if all this is optional 
+or has been unused, then there shouldn't be a problem.
+
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../bindings/iommu/nvidia,tegra20-gart.txt    | 14 -----------
+>  .../memory-controllers/nvidia,tegra20-mc.txt  | 23 ++++++++++++++-----
+>  2 files changed, 17 insertions(+), 20 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
 > 
-> What is the scenario that you see under which the woken up task does not
-> get to run?
-
-That scenario is pretty easy to hit - let's say the next in line task
-has a queue limit of 1, and we currently have 4 pending. Task gets
-woken, goes back to sleep. Which should be totally fine. At some point
-we'll get below the limit, and allow the task to proceed. This will
-ensure forward progress.
-
-> The theory behind leaving the task on the wait queue is that the
-> waitqueue_active check in wbt_wait prevents new tasks from taking up a
-> slot in the queue (e.g. incrementing inflight). So, there should not be
-> a way for inflight to be incremented between the time the wake_up is
-> done and the task at the head of the wait queue runs. That's the idea
-> anyway :-) If we missed something, let us know.
-
-And that's a fine theory, I think it's a good improvement (and how it
-should have worked). I'm struggling to see where the issue is. Perhaps
-it's related to the wq active check. With fewer wakeups, we're more
-likely to hit a race there.
-
-I'll poke at it...
-
--- 
-Jens Axboe
-
+> diff --git a/Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt b/Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
+> deleted file mode 100644
+> index 099d9362ebc1..000000000000
+> --- a/Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
+> +++ /dev/null
+> @@ -1,14 +0,0 @@
+> -NVIDIA Tegra 20 GART
+> -
+> -Required properties:
+> -- compatible: "nvidia,tegra20-gart"
+> -- reg: Two pairs of cells specifying the physical address and size of
+> -  the memory controller registers and the GART aperture respectively.
+> -
+> -Example:
+> -
+> -	gart {
+> -		compatible = "nvidia,tegra20-gart";
+> -		reg = <0x7000f024 0x00000018	/* controller registers */
+> -		       0x58000000 0x02000000>;	/* GART aperture */
+> -	};
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
+> index 7d60a50a4fa1..1564df89392a 100644
+> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
+> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
+> @@ -2,25 +2,36 @@ NVIDIA Tegra20 MC(Memory Controller)
+>  
+>  Required properties:
+>  - compatible : "nvidia,tegra20-mc"
+> -- reg : Should contain 2 register ranges(address and length); see the
+> -  example below. Note that the MC registers are interleaved with the
+> -  GART registers, and hence must be represented as multiple ranges.
+> +- reg : Should contain 2 register ranges: physical base address and length of
+> +  the controller's registers and the GART aperture respectively.
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +  See ../clocks/clock-bindings.txt for details.
+> +- clock-names: Must include the following entries:
+> +  - mc: the module's clock input
+>  - interrupts : Should contain MC General interrupt.
+>  - #reset-cells : Should be 1. This cell represents memory client module ID.
+>    The assignments may be found in header file <dt-bindings/memory/tegra20-mc.h>
+>    or in the TRM documentation.
+> +- #iommu-cells: Should be 0. This cell represents the number of cells in an
+> +  IOMMU specifier needed to encode an address. GART supports only a single
+> +  address space that is shared by all devices, therefore no additional
+> +  information needed for the address encoding.
+>  
+>  Example:
+>  	mc: memory-controller@7000f000 {
+>  		compatible = "nvidia,tegra20-mc";
+> -		reg = <0x7000f000 0x024
+> -		       0x7000f03c 0x3c4>;
+> -		interrupts = <0 77 0x04>;
+> +		reg = <0x7000f000 0x400		/* controller registers */
+> +		       0x58000000 0x02000000>;	/* GART aperture */
+> +		clocks = <&tegra_car TEGRA20_CLK_MC>;
+> +		clock-names = "mc";
+> +		interrupts = <GIC_SPI 77 0x04>;
+>  		#reset-cells = <1>;
+> +		#iommu-cells = <0>;
+>  	};
+>  
+>  	video-codec@6001a000 {
+>  		compatible = "nvidia,tegra20-vde";
+>  		...
+>  		resets = <&mc TEGRA20_MC_RESET_VDE>;
+> +		iommus = <&mc>;
+>  	};
+> -- 
+> 2.18.0
+> 
