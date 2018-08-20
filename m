@@ -2,128 +2,149 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6023C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BEBC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99E852154B
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:36:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99E852154B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0889A21581
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:38:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0889A21581
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbeHTPwY (ORCPT
+        id S1726810AbeHTPyJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 11:52:24 -0400
-Received: from mga01.intel.com ([192.55.52.88]:15883 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726197AbeHTPwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 11:52:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 05:36:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,265,1531810800"; 
-   d="scan'208";a="63770407"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by fmsmga007.fm.intel.com with ESMTP; 20 Aug 2018 05:36:56 -0700
-Received: from fmsmsx114.amr.corp.intel.com (10.18.116.8) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 20 Aug 2018 05:36:55 -0700
-Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
- FMSMSX114.amr.corp.intel.com (10.18.116.8) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 20 Aug 2018 05:36:54 -0700
-Received: from shsmsx103.ccr.corp.intel.com ([169.254.4.240]) by
- SHSMSX152.ccr.corp.intel.com ([169.254.6.150]) with mapi id 14.03.0319.002;
- Mon, 20 Aug 2018 20:36:53 +0800
-From:   "Liu, Jingqi" <jingqi.liu@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>
-CC:     "x86@kernel.org" <x86@kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Wang, Wei W" <wei.w.wang@intel.com>
-Subject: RE: [PATCH 1/3] KVM: x86: expose UMWAIT/UMONITOR/TPAUSE CPU
- features into VM.
-Thread-Topic: [PATCH 1/3] KVM: x86: expose UMWAIT/UMONITOR/TPAUSE CPU
- features into VM.
-Thread-Index: AQHUGCvKcf5dcvBUXEuBx1uZ6MlWdKTIJyKAgACs58A=
-Date:   Mon, 20 Aug 2018 12:36:52 +0000
-Message-ID: <09D68D4CF52CAF489B702DEBDD12D3D35279F7F0@SHSMSX103.ccr.corp.intel.com>
-References: <1531212883-63173-1-git-send-email-jingqi.liu@intel.com>
- <1531212883-63173-2-git-send-email-jingqi.liu@intel.com>
- <8605faeb-c46e-d54c-cc3a-d01b23405705@redhat.com>
-In-Reply-To: <8605faeb-c46e-d54c-cc3a-d01b23405705@redhat.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjEzYzJiNWItOGM1NC00ODgzLTg1NmQtZmY3YmViZTdmNTZlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiYlp6QTB0TFVBajB3MmMwTEZFNzN3RVhXem1vM1ZBb3BtNklwQ0ptT0J6eVFwQzRCYWRacUxQSDBiOThDcWFWciJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Mon, 20 Aug 2018 11:54:09 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52464 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726549AbeHTPyJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 11:54:09 -0400
+Received: by mail-wm0-f66.google.com with SMTP id o11-v6so14063491wmh.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 05:38:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=SVkHq9VR9hc1OdQdOmdz5cFUDDthkVfmANrWwQ22oag=;
+        b=ICrX0/jl5hG3ME6iphPd1n58lfFTJ7JaYebwymyFurcybaUGusN4N+N1IcD6+C3ELc
+         TO/lIn3NQv85Ik4uVq3N7slrfBebHVay0jMszvk1RjqVV3Rf9ShOq3wYRaf89cJEgjrk
+         J5pAtQOh2VIqpk65lR8smXw6D3QGmZKevGvLPaQx/PF3bkxD/Z1VAm2oXUjeLlWSzpF8
+         TFUBpIWEsHehM/s0eMb0R+M9RtV4hEDB8TS8grr87ob6u9QbtDnxouGDMZJsoqAhWnla
+         U5MUpl3piNYCjp/L3jPhtOKbh6n9k1759dlTZ/UsIslA6MpQyScICwCMlqdRLZfDxCrO
+         j6vQ==
+X-Gm-Message-State: APzg51DGJyv2lc4lTY5SMD/MaeebeKS0LxsGxsvwSfV/sQNZZBSY4+kr
+        bdDDH3AlkzR660TF1gdpOkLGUA==
+X-Google-Smtp-Source: AA+uWPxWIiwUw2x3EZVn7JZncS9HLqGT13GCbN9Nxeu3MweFWKCKj2Xw/6qnOQg1Vfq6iB4yVZRi6A==
+X-Received: by 2002:a1c:a5c9:: with SMTP id o192-v6mr971506wme.3.1534768718813;
+        Mon, 20 Aug 2018 05:38:38 -0700 (PDT)
+Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id v2-v6sm496917wme.36.2018.08.20.05.38.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 20 Aug 2018 05:38:38 -0700 (PDT)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     linux-audit@redhat.com
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        Ondrej Mosnacek <omosnace@redhat.com>
+Subject: [RFC PATCH ghak10 v4 0/2] audit: Log modifying adjtimex(2) calls
+Date:   Mon, 20 Aug 2018 14:38:16 +0200
+Message-Id: <20180820123818.27547-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBQYW9sbyBCb256aW5pIFttYWls
-dG86cGJvbnppbmlAcmVkaGF0LmNvbV0NCj4gU2VudDogTW9uZGF5LCBBdWd1c3QgMjAsIDIwMTgg
-NjoxNiBQTQ0KPiBUbzogTGl1LCBKaW5ncWkgPGppbmdxaS5saXVAaW50ZWwuY29tPjsgcmtyY21h
-ckByZWRoYXQuY29tOyB0Z2x4QGxpbnV0cm9uaXguZGU7DQo+IG1pbmdvQHJlZGhhdC5jb207IGhw
-YUB6eXRvci5jb20NCj4gQ2M6IHg4NkBrZXJuZWwub3JnOyBrdm1Admdlci5rZXJuZWwub3JnOyBs
-aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBXYW5nLA0KPiBXZWkgVyA8d2VpLncud2FuZ0Bp
-bnRlbC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS8zXSBLVk06IHg4NjogZXhwb3NlIFVN
-V0FJVC9VTU9OSVRPUi9UUEFVU0UgQ1BVDQo+IGZlYXR1cmVzIGludG8gVk0uDQo+IA0KPiBPbiAx
-MC8wNy8yMDE4IDEwOjU0LCBKaW5ncWkgTGl1IHdyb3RlOg0KPiA+IFVNT05JVE9SLCBVTVdBSVQs
-IGFuZCBUUEFVU0UgYXJlIGEgc2V0IG9mIHVzZXIgd2FpdCBpbnN0cnVjdGlvbnMuDQo+ID4NCj4g
-PiBVTU9OSVRPUiBhcm1zIGFkZHJlc3MgbW9uaXRvcmluZyBoYXJkd2FyZSB1c2luZyBhbiBhZGRy
-ZXNzLiBBIHN0b3JlIHRvDQo+ID4gYW4gYWRkcmVzcyB3aXRoaW4gdGhlIHNwZWNpZmllZCBhZGRy
-ZXNzIHJhbmdlIHRyaWdnZXJzIHRoZSBtb25pdG9yaW5nDQo+ID4gaGFyZHdhcmUgdG8gd2FrZSB1
-cCB0aGUgcHJvY2Vzc29yIHdhaXRpbmcgaW4gdW13YWl0Lg0KPiA+DQo+ID4gVU1XQUlUIGluc3Ry
-dWN0cyB0aGUgcHJvY2Vzc29yIHRvIGVudGVyIGFuIGltcGxlbWVudGF0aW9uLWRlcGVuZGVudA0K
-PiA+IG9wdGltaXplZCBzdGF0ZSB3aGlsZSBtb25pdG9yaW5nIGEgcmFuZ2Ugb2YgYWRkcmVzc2Vz
-LiBUaGUgb3B0aW1pemVkDQo+ID4gc3RhdGUgbWF5IGJlIGVpdGhlciBhIGxpZ2h0LXdlaWdodCBw
-b3dlci9wZXJmb3JtYW5jZSBvcHRpbWl6ZWQgc3RhdGUNCj4gPiAoYzAuMSBzdGF0ZSkgb3IgYW4g
-aW1wcm92ZWQgcG93ZXIvcGVyZm9ybWFuY2Ugb3B0aW1pemVkIHN0YXRlDQo+ID4gKGMwLjIgc3Rh
-dGUpLg0KPiA+DQo+ID4gVFBBVVNFIGluc3RydWN0cyB0aGUgcHJvY2Vzc29yIHRvIGVudGVyIGFu
-IGltcGxlbWVudGF0aW9uLWRlcGVuZGVudA0KPiA+IG9wdGltaXplZCBzdGF0ZSBjMC4xIG9yIGMw
-LjIgc3RhdGUgYW5kIHdha2UgdXAgd2hlbiB0aW1lLXN0YW1wIGNvdW50ZXINCj4gPiByZWFjaGVz
-IHNwZWNpZmllZCB0aW1lb3V0Lg0KPiA+DQo+ID4gQXZhaWxhYmlsaXR5IG9mIHRoZSB1c2VyIHdh
-aXQgaW5zdHJ1Y3Rpb25zIGlzIGluZGljYXRlZCBieSB0aGUNCj4gPiBwcmVzZW5jZSBvZiB0aGUg
-Q1BVSUQgZmVhdHVyZSBmbGFnIFdBSVRQS0cgQ1BVSUQuMHgwNy4weDA6RUNYWzVdLg0KPiA+DQo+
-ID4gVGhpcyBwYXRjaCBleHBvc2VzIHRoZSB1bW9uaXRvcix1bXdhaXQsIGFuZCB0cGF1c2UgZmVh
-dHVyZXMgdG8gdGhlIGd1ZXN0Lg0KPiA+DQo+ID4gVGhlIHJlbGVhc2UgZG9jdW1lbnQgcmVmIGJl
-bG93IGxpbms6DQo+ID4gaHR0cHM6Ly9zb2Z0d2FyZS5pbnRlbC5jb20vc2l0ZXMvZGVmYXVsdC9m
-aWxlcy9tYW5hZ2VkL2M1LzE1L1wNCj4gPiBhcmNoaXRlY3R1cmUtaW5zdHJ1Y3Rpb24tc2V0LWV4
-dGVuc2lvbnMtcHJvZ3JhbW1pbmctcmVmZXJlbmNlLnBkZg0KPiA+IFRoaXMgcGF0Y2ggaGFzIGEg
-ZGVwZW5kZW5jeSBvbiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxOC82LzE1LzY1Ny4NCj4gPg0K
-PiA+IFNpZ25lZC1vZmYtYnk6IEppbmdxaSBMaXUgPGppbmdxaS5saXVAaW50ZWwuY29tPg0KPiAN
-Cj4gSGkgSmluZ3FpLCB5b3UgYWxzbyBuZWVkIHRvIHRyYWNrIGFuZCBzYXZlL3Jlc3RvcmUgSUEz
-Ml9VTVdBSVRfQ09OVFJPTC4NCg0KWWVzLCBJJ2xsIGhhbmRsZSBJQTMyX1VNV0FJVF9DT05UUk9M
-IGluIHRoZSBzZWNvbmQgdmVyc2lvbi4NClRoYW5rcyBmb3IgeW91ciByZXZpZXcuDQoNCj4gDQo+
-IFRoYW5rcywNCj4gDQo+IFBhb2xvDQo+IA0KPiA+IC0tLQ0KPiA+ICBhcmNoL3g4Ni9rdm0vY3B1
-aWQuYyB8IDIgKy0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0
-aW9uKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYva3ZtL2NwdWlkLmMgYi9hcmNo
-L3g4Ni9rdm0vY3B1aWQuYyBpbmRleA0KPiA+IDdlMDQyZTMuLmUxNmMwNWUgMTAwNjQ0DQo+ID4g
-LS0tIGEvYXJjaC94ODYva3ZtL2NwdWlkLmMNCj4gPiArKysgYi9hcmNoL3g4Ni9rdm0vY3B1aWQu
-Yw0KPiA+IEBAIC00MDYsNyArNDA2LDcgQEAgc3RhdGljIGlubGluZSBpbnQgX19kb19jcHVpZF9l
-bnQoc3RydWN0DQo+IGt2bV9jcHVpZF9lbnRyeTIgKmVudHJ5LCB1MzIgZnVuY3Rpb24sDQo+ID4g
-IAkJRihBVlg1MTJWQk1JKSB8IEYoTEE1NykgfCBGKFBLVSkgfCAwIC8qT1NQS0UqLyB8DQo+ID4g
-IAkJRihBVlg1MTJfVlBPUENOVERRKSB8IEYoVU1JUCkgfCBGKEFWWDUxMl9WQk1JMikgfCBGKEdG
-TkkpDQo+IHwNCj4gPiAgCQlGKFZBRVMpIHwgRihWUENMTVVMUURRKSB8IEYoQVZYNTEyX1ZOTkkp
-IHwNCj4gRihBVlg1MTJfQklUQUxHKSB8DQo+ID4gLQkJRihDTERFTU9URSk7DQo+ID4gKwkJRihD
-TERFTU9URSkgfCBGKFdBSVRQS0cpOw0KPiA+DQo+ID4gIAkvKiBjcHVpZCA3LjAuZWR4Ki8NCj4g
-PiAgCWNvbnN0IHUzMiBrdm1fY3B1aWRfN18wX2VkeF94ODZfZmVhdHVyZXMgPQ0KPiA+DQoNCg==
+Hi,
+
+this patchset implements more detailed auditing of the adjtimex(2)
+syscall in order to make it possible to:
+  a) distinguish modifying vs. read-only calls in the audit log
+  b) reconstruct from the audit log what changes were made and how they
+     have influenced the system clock
+
+The main motivation is to be able to detect an adversary that tries to
+confuse the audit timestamps by changing system time via adjtimex(2),
+but at the same time avoid flooding the audit log with records of benign
+read-only adjtimex(2) calls.
+
+@John or other timekeeping/NTP folks: We had a discussion on the audit
+ML on which of the internal timekeeping/NTP variables we should actually
+log changes for. We are only interested in variables that can (directly
+or indirectly) cause noticeable changes to the system clock, but since we
+have only limited understanding of the NTP code, we would like to ask
+you for advice on which variables are security relevant.
+
+Right now, the patchset is conservative and logs all changes that can be
+done via adjtimex(2):
+  - direct injection of timekeeping offset (obviously relevant)
+  - adjustment of timekeeping's TAI offset
+  - NTP value adjustments:
+    - time_offset (probably important)
+    - time_freq (maybe not important?)
+    - time_status (likely important, can cause leap second injection)
+    - time_maxerror (maybe not important?)
+    - time_esterror (maybe not important?)
+    - time_constant (???)
+    - time_adjust (sounds important)
+    - tick_usec (???)
+
+Could you please give us some hints on the effect of changing these
+variables and whether you think that it is important to log their
+changes?
+
+Thanks a lot!
+
+
+GitHub issue: https://github.com/linux-audit/audit-kernel/issues/10
+
+Changes in v4:
+  - Squashed first two patches into one
+  - Rename ADJNTPVAL's "type" field to "op" to align with audit record
+    conventions
+  - Minor commit message editing
+  - Cc timekeeping/NTP people for feedback
+
+v3: https://www.redhat.com/archives/linux-audit/2018-July/msg00001.html
+Changes in v3:
+  - Switched to separate records for each variable
+  - Both old and new value is now reported for each change
+  - Injecting offset is reported via a separate record (since this
+    offset consists of two values and is added directly to the clock,
+    i.e. it doesn't make sense to log old and new value)
+  - Added example records produced by chronyd -q (see the commit message
+    of the last patch)
+
+v2: https://www.redhat.com/archives/linux-audit/2018-June/msg00114.html
+Changes in v2:
+  - The audit_adjtime() function has been modified to only log those
+    fields that contain values that are actually used, resulting in more
+    compact records.
+  - The audit_adjtime() call has been moved to do_adjtimex() in
+    timekeeping.c
+  - Added an additional patch (for review) that simplifies the detection
+    if the syscall is read-only.
+
+v1: https://www.redhat.com/archives/linux-audit/2018-June/msg00095.html
+
+Ondrej Mosnacek (2):
+  audit: Add functions to log time adjustments
+  timekeeping/ntp: Audit clock/NTP params adjustments
+
+ include/linux/audit.h      | 21 ++++++++++++++++
+ include/uapi/linux/audit.h |  2 ++
+ kernel/auditsc.c           | 15 ++++++++++++
+ kernel/time/ntp.c          | 50 ++++++++++++++++++++++++++++++--------
+ kernel/time/timekeeping.c  |  3 +++
+ 5 files changed, 81 insertions(+), 10 deletions(-)
+
+-- 
+2.17.1
+
