@@ -2,296 +2,130 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2173C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80282C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:52:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 721B921722
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:49:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D28E21570
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:52:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FRBZuiwh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 721B921722
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=profitbricks-com.20150623.gappssmtp.com header.i=@profitbricks-com.20150623.gappssmtp.com header.b="sxz7uj2X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D28E21570
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=profitbricks.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbeHTSFZ (ORCPT
+        id S1726667AbeHTSIw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 14:05:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53496 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbeHTSFY (ORCPT
+        Mon, 20 Aug 2018 14:08:52 -0400
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:34710 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726021AbeHTSIw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 14:05:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=o/bLKABOmwe1/4Q9KZyby0wTUxaWz0MjsXGNS7VbazQ=; b=FRBZuiwhqX/8HaClgqbbdsUp1
-        Q0/pIwhGejrnj42itnJECYF4KG6I6KZyK6YBBV/mze7KzEQ5ju4HppG08Z58LptrJ+vI2+wfa/e2U
-        D2gVyKnje45j4g+NVpiiSSQ/TcriqzS7GETfMZ8h+1LB7jRYIi23Saa+1WzFMhnRMUO/7xlm94uz+
-        yX0B7Q1HpjhZTmCTDnuFURjATaOFS2pX5DLioN/a8dmWhfyZMyo1VTHUiFjx/nMCHdPpcx5ssojV6
-        SQkelMQNieZG5AqyfIETyDGSb+bqKDoLo+VwR0ej27TFogUJa1YmaRmgr6uTmuqBdkcyVRAtGhFgA
-        AyXvR9cOg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1frlUi-0000JW-3X; Mon, 20 Aug 2018 14:49:24 +0000
-Date:   Mon, 20 Aug 2018 07:49:23 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Li RongQing <lirongqing@baidu.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        darrick.wong@oracle.com
-Subject: Re: [PATCH] mm: introduce kvvirt_to_page() helper
-Message-ID: <20180820144923.GA25153@bombadil.infradead.org>
-References: <1534596541-31393-1-git-send-email-lirongqing@baidu.com>
- <20180820144116.GO29735@dhcp22.suse.cz>
+        Mon, 20 Aug 2018 14:08:52 -0400
+Received: by mail-wr1-f47.google.com with SMTP id g33-v6so3200227wrd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 07:52:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=profitbricks-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ipAt6i3S8f8sadoT0MLOwhFC/s1r406y78AL7L73JWs=;
+        b=sxz7uj2XJTWIacNP2GFv+vwq9HceBmZ3M2ImOtclMAOMmZ7BVIrrAgy9sm2MVjBpkb
+         EHX/Bv3iMOkvIRoHVC9GSy651lGEl8annAAYP2PNsWj8Jdt0ZbJBrs/bJEiIMopPQuGc
+         MxyhA3W2Uxa/BGnGZzaJ5V3HG9jMz47FMrXVZzWJEiusYqQ9hXCue6Px5e9HgmOzWlQd
+         wCtOcwrb9oZc9qXTOw9q4P6NK22UBirdMjdrTYAv31ODGxNyP51Mq8FK+NZGlRNztmC7
+         xEPBw3/VhRkbaAjPEPBvAJs7OpehTJ+TxZWvK94GB/KsnXf1HT8UkprPAYxOqx0u4zq4
+         LuxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ipAt6i3S8f8sadoT0MLOwhFC/s1r406y78AL7L73JWs=;
+        b=j27GpPx5J+zBleETNHAKzg5cgUx94DeLbmcMjWzc0UpXyGsBQ5uqHMaAatYdOOv+iP
+         oi4uD8eoHlvzmWSoPfP62oafd06/N3yW2rCfgSYBjgsyIsu8OEem6M2kUa8W9+yEzYOP
+         k5IY62edXzBPgb/tf5SIHQMfgTmo8bDdw8MhHtFqnCpXJ2XlQ+HI1tOzKuLu9WRntoed
+         tuhNUZOvfyXAEscbYAFIVMCs0Sf0jJ6WoMdXQNK1OaKFkqf4Wwsd5uZIxD2GVaSiZKzj
+         vLXgrENhBlI1drL9KnJSxLeSLgux+k1y16OVzYO9omRFy+3RCSXOWKTsubayDVfzYwL7
+         zVgA==
+X-Gm-Message-State: AOUpUlFGzN1FWginMtlt+mxk6D3h4wbdEqQ8UF9MVlHaDrDlixh3btGE
+        0AkaZJF8C0dj32d7XLcq0pFLn18jIOGOK+YDAd5cVg==
+X-Google-Smtp-Source: AA+uWPyFAXTAi6sbE2ZfpcuAXX88BKp4vC3rcSD6l9ZkPz1nra8SPhvXZm06m5q+z3AYa+q+VV2DtLokE/+OgEsoz8M=
+X-Received: by 2002:adf:c74e:: with SMTP id b14-v6mr29332844wrh.16.1534776773312;
+ Mon, 20 Aug 2018 07:52:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180820144116.GO29735@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <CAMGffEnzVo5VVSVBjCOBMhcoV1qXf0XXqJqr3C01xQn-aUiZFQ@mail.gmail.com>
+ <20180816155126.GA18296@kroah.com> <CAMGffEmJR310NKHO1JpwE8yTg1Oeu_oaTaJ1D2_T_UHKCnHwKA@mail.gmail.com>
+ <20180816163937.GA5105@kroah.com> <CAMGffEk2FqRn0av7T-aF-TKvRAKeinm96NYjJju_T4CmUrYPkQ@mail.gmail.com>
+ <CAMGffEnKt0xcc6LhNdZQGRmckJ3qCFxCOnQ3owZmWWiaKYdYuw@mail.gmail.com>
+ <20180817170129.GE24945@kroah.com> <alpine.DEB.2.21.1808181330380.2151@nanos.tec.linutronix.de>
+ <CAMGffEk=6eVgB=A--FyooDoVPY4mEiOdf=yNnqdX4cF6Ud_NuA@mail.gmail.com>
+ <alpine.DEB.2.21.1808201500590.1551@nanos.tec.linutronix.de>
+ <CAMGffEnmp3zOXYb2cpHdLgeb0LAUac5umhK3OMUBFiJ1+7ce6w@mail.gmail.com> <alpine.DEB.2.21.1808201646440.1551@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1808201646440.1551@nanos.tec.linutronix.de>
+From:   Jinpu Wang <jinpu.wang@profitbricks.com>
+Date:   Mon, 20 Aug 2018 16:52:41 +0200
+Message-ID: <CAMGffEnrFu3ve6CbqNX9cRKz_MwH-Ch_QU7zGbYiQ7Hpnv6Yrw@mail.gmail.com>
+Subject: Re: [BUG]smt sysfs dir missing on 4.4.148 and 4.14.63
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable <stable@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, konrad.wilk@oracle.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 04:41:16PM +0200, Michal Hocko wrote:
-> On Sat 18-08-18 20:49:01, Li RongQing wrote:
-> > The new helper returns address mapping page, which has several users
-> > in individual subsystem, like mem_to_page in xfs_buf.c and pgv_to_page
-> > in af_packet.c, unify them
-> 
-> kvvirt_to_page is a weird name. I guess you wanted it to fit into
-> kv*alloc, kvfree naming, right? If yes then I guess kvmem_to_page
-> would be slightly better.
-> 
-> Other than that the patch makes sense to me. It would be great to add
-> some documentation and be explicit that the call is only safe on
-> directly mapped kernel address and vmalloc areas.
+On Mon, Aug 20, 2018 at 4:47 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> On Mon, 20 Aug 2018, Jinpu Wang wrote:
+> > On Mon, Aug 20, 2018 at 3:02 PM Thomas Gleixner <tglx@linutronix.de> wr=
+ote:
+> > > That works, but we might as well force 'select HOTPLUG_CPU if SMP' so=
+ the
+> > > L1TF mitigations are functional. Sigh....
+> > >
+> > > Thanks,
+> > >
+> > >         tglx
+> > right, sth like?
+> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> > index b0312f8..5852948 100644
+> > --- a/arch/x86/Kconfig
+> > +++ b/arch/x86/Kconfig
+> > @@ -188,7 +188,8 @@ config X86
+> >         select HAVE_SYSCALL_TRACEPOINTS
+> >         select HAVE_UNSTABLE_SCHED_CLOCK
+> >         select HAVE_USER_RETURN_NOTIFIER
+> > -       select HOTPLUG_SMT                      if SMP
+> > +       select HOTPLUG_CPU                      if SMP
+> > +       select HOTPLUG_SMT                      if SMP && HOTPLUG_CPU
+>
+> The && HOTPLUG is pretty pointless now.
+Hmm, so this way?
++       select HOTPLUG_CPU                      if SMP
++       select HOTPLUG_SMT                      if HOTPLUG_CPU
 
-... and not safe if the length crosses a page boundary.  I don't want to
-see new code emerge that does kvmalloc(PAGE_SIZE * 2, ...); kvmem_to_page()
-and have it randomly crash when kvmalloc happens to fall back to vmalloc()
-under heavy memory pressure.
+thanks!
+--=20
+Jack Wang
+Linux Kernel Developer
 
-Also, people are going to start using this for stack addresses.  Perhaps
-we should have a debug option to guard against them doing that.
+ProfitBricks GmbH
+Greifswalder Str. 207
+D - 10405 Berlin
 
-> > Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
-> > Signed-off-by: Li RongQing <lirongqing@baidu.com>
-> > ---
-> >  fs/xfs/xfs_buf.c       | 13 +------------
-> >  include/linux/mm.h     |  8 ++++++++
-> >  net/9p/trans_virtio.c  |  5 +----
-> >  net/ceph/crypto.c      |  6 +-----
-> >  net/packet/af_packet.c | 31 ++++++++++++-------------------
-> >  5 files changed, 23 insertions(+), 40 deletions(-)
-> > 
-> > diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> > index e839907e8492..edd22b33f49e 100644
-> > --- a/fs/xfs/xfs_buf.c
-> > +++ b/fs/xfs/xfs_buf.c
-> > @@ -866,17 +866,6 @@ xfs_buf_set_empty(
-> >  	bp->b_maps[0].bm_len = bp->b_length;
-> >  }
-> >  
-> > -static inline struct page *
-> > -mem_to_page(
-> > -	void			*addr)
-> > -{
-> > -	if ((!is_vmalloc_addr(addr))) {
-> > -		return virt_to_page(addr);
-> > -	} else {
-> > -		return vmalloc_to_page(addr);
-> > -	}
-> > -}
-> > -
-> >  int
-> >  xfs_buf_associate_memory(
-> >  	xfs_buf_t		*bp,
-> > @@ -909,7 +898,7 @@ xfs_buf_associate_memory(
-> >  	bp->b_offset = offset;
-> >  
-> >  	for (i = 0; i < bp->b_page_count; i++) {
-> > -		bp->b_pages[i] = mem_to_page((void *)pageaddr);
-> > +		bp->b_pages[i] = kvvirt_to_page((void *)pageaddr);
-> >  		pageaddr += PAGE_SIZE;
-> >  	}
-> >  
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index 68a5121694ef..bb34a3c71df5 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -599,6 +599,14 @@ static inline void *kvcalloc(size_t n, size_t size, gfp_t flags)
-> >  	return kvmalloc_array(n, size, flags | __GFP_ZERO);
-> >  }
-> >  
-> > +static inline struct page *kvvirt_to_page(const void *addr)
-> > +{
-> > +	if (!is_vmalloc_addr(addr))
-> > +		return virt_to_page(addr);
-> > +	else
-> > +		return vmalloc_to_page(addr);
-> > +}
-> > +
-> >  extern void kvfree(const void *addr);
-> >  
-> >  static inline atomic_t *compound_mapcount_ptr(struct page *page)
-> > diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-> > index 05006cbb3361..8f1895f15593 100644
-> > --- a/net/9p/trans_virtio.c
-> > +++ b/net/9p/trans_virtio.c
-> > @@ -368,10 +368,7 @@ static int p9_get_mapped_pages(struct virtio_chan *chan,
-> >  		*need_drop = 0;
-> >  		p -= (*offs = offset_in_page(p));
-> >  		for (index = 0; index < nr_pages; index++) {
-> > -			if (is_vmalloc_addr(p))
-> > -				(*pages)[index] = vmalloc_to_page(p);
-> > -			else
-> > -				(*pages)[index] = kmap_to_page(p);
-> > +			(*pages)[index] = kvvirt_to_page(p);
-> >  			p += PAGE_SIZE;
-> >  		}
-> >  		return len;
-> > diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
-> > index 02172c408ff2..cc5f0723a44d 100644
-> > --- a/net/ceph/crypto.c
-> > +++ b/net/ceph/crypto.c
-> > @@ -191,11 +191,7 @@ static int setup_sgtable(struct sg_table *sgt, struct scatterlist *prealloc_sg,
-> >  		struct page *page;
-> >  		unsigned int len = min(chunk_len - off, buf_len);
-> >  
-> > -		if (is_vmalloc)
-> > -			page = vmalloc_to_page(buf);
-> > -		else
-> > -			page = virt_to_page(buf);
-> > -
-> > +		page = kvvirt_to_page(buf);
-> >  		sg_set_page(sg, page, len, off);
-> >  
-> >  		off = 0;
-> > diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-> > index 5610061e7f2e..1bec111122ad 100644
-> > --- a/net/packet/af_packet.c
-> > +++ b/net/packet/af_packet.c
-> > @@ -359,13 +359,6 @@ static void unregister_prot_hook(struct sock *sk, bool sync)
-> >  		__unregister_prot_hook(sk, sync);
-> >  }
-> >  
-> > -static inline struct page * __pure pgv_to_page(void *addr)
-> > -{
-> > -	if (is_vmalloc_addr(addr))
-> > -		return vmalloc_to_page(addr);
-> > -	return virt_to_page(addr);
-> > -}
-> > -
-> >  static void __packet_set_status(struct packet_sock *po, void *frame, int status)
-> >  {
-> >  	union tpacket_uhdr h;
-> > @@ -374,15 +367,15 @@ static void __packet_set_status(struct packet_sock *po, void *frame, int status)
-> >  	switch (po->tp_version) {
-> >  	case TPACKET_V1:
-> >  		h.h1->tp_status = status;
-> > -		flush_dcache_page(pgv_to_page(&h.h1->tp_status));
-> > +		flush_dcache_page(kvvirt_to_page(&h.h1->tp_status));
-> >  		break;
-> >  	case TPACKET_V2:
-> >  		h.h2->tp_status = status;
-> > -		flush_dcache_page(pgv_to_page(&h.h2->tp_status));
-> > +		flush_dcache_page(kvvirt_to_page(&h.h2->tp_status));
-> >  		break;
-> >  	case TPACKET_V3:
-> >  		h.h3->tp_status = status;
-> > -		flush_dcache_page(pgv_to_page(&h.h3->tp_status));
-> > +		flush_dcache_page(kvvirt_to_page(&h.h3->tp_status));
-> >  		break;
-> >  	default:
-> >  		WARN(1, "TPACKET version not supported.\n");
-> > @@ -401,13 +394,13 @@ static int __packet_get_status(struct packet_sock *po, void *frame)
-> >  	h.raw = frame;
-> >  	switch (po->tp_version) {
-> >  	case TPACKET_V1:
-> > -		flush_dcache_page(pgv_to_page(&h.h1->tp_status));
-> > +		flush_dcache_page(kvvirt_to_page(&h.h1->tp_status));
-> >  		return h.h1->tp_status;
-> >  	case TPACKET_V2:
-> > -		flush_dcache_page(pgv_to_page(&h.h2->tp_status));
-> > +		flush_dcache_page(kvvirt_to_page(&h.h2->tp_status));
-> >  		return h.h2->tp_status;
-> >  	case TPACKET_V3:
-> > -		flush_dcache_page(pgv_to_page(&h.h3->tp_status));
-> > +		flush_dcache_page(kvvirt_to_page(&h.h3->tp_status));
-> >  		return h.h3->tp_status;
-> >  	default:
-> >  		WARN(1, "TPACKET version not supported.\n");
-> > @@ -462,7 +455,7 @@ static __u32 __packet_set_timestamp(struct packet_sock *po, void *frame,
-> >  	}
-> >  
-> >  	/* one flush is safe, as both fields always lie on the same cacheline */
-> > -	flush_dcache_page(pgv_to_page(&h.h1->tp_sec));
-> > +	flush_dcache_page(kvvirt_to_page(&h.h1->tp_sec));
-> >  	smp_wmb();
-> >  
-> >  	return ts_status;
-> > @@ -728,7 +721,7 @@ static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
-> >  
-> >  	end = (u8 *)PAGE_ALIGN((unsigned long)pkc1->pkblk_end);
-> >  	for (; start < end; start += PAGE_SIZE)
-> > -		flush_dcache_page(pgv_to_page(start));
-> > +		flush_dcache_page(kvvirt_to_page(start));
-> >  
-> >  	smp_wmb();
-> >  #endif
-> > @@ -741,7 +734,7 @@ static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
-> >  
-> >  #if ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE == 1
-> >  	start = (u8 *)pbd1;
-> > -	flush_dcache_page(pgv_to_page(start));
-> > +	flush_dcache_page(kvvirt_to_page(start));
-> >  
-> >  	smp_wmb();
-> >  #endif
-> > @@ -2352,7 +2345,7 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
-> >  					macoff + snaplen);
-> >  
-> >  		for (start = h.raw; start < end; start += PAGE_SIZE)
-> > -			flush_dcache_page(pgv_to_page(start));
-> > +			flush_dcache_page(kvvirt_to_page(start));
-> >  	}
-> >  	smp_wmb();
-> >  #endif
-> > @@ -2508,7 +2501,7 @@ static int tpacket_fill_skb(struct packet_sock *po, struct sk_buff *skb,
-> >  			return -EFAULT;
-> >  		}
-> >  
-> > -		page = pgv_to_page(data);
-> > +		page = kvvirt_to_page(data);
-> >  		data += len;
-> >  		flush_dcache_page(page);
-> >  		get_page(page);
-> > @@ -4385,7 +4378,7 @@ static int packet_mmap(struct file *file, struct socket *sock,
-> >  			int pg_num;
-> >  
-> >  			for (pg_num = 0; pg_num < rb->pg_vec_pages; pg_num++) {
-> > -				page = pgv_to_page(kaddr);
-> > +				page = kvvirt_to_page(kaddr);
-> >  				err = vm_insert_page(vma, start, page);
-> >  				if (unlikely(err))
-> >  					goto out;
-> > -- 
-> > 2.16.2
-> > 
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
-> 
+Tel:       +49 30 577 008  042
+Fax:      +49 30 577 008 299
+Email:    jinpu.wang@profitbricks.com
+URL:      https://www.profitbricks.de
+
+Sitz der Gesellschaft: Berlin
+Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
+Gesch=C3=A4ftsf=C3=BChrer: Achim Weiss, Matthias Steinberg, Christoph Steff=
+ens
