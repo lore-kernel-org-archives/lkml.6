@@ -2,119 +2,107 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DATE_IN_FUTURE_03_06,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA353C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 02:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A864C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 02:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78A1620C09
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 02:01:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78A1620C09
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id EFDE420C0C
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 02:12:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFDE420C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726274AbeHTFOw (ORCPT
+        id S1726032AbeHTFZl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 01:14:52 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:43351 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725805AbeHTFOv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 01:14:51 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E25339D6B7804;
-        Mon, 20 Aug 2018 10:01:10 +0800 (CST)
-Received: from dessert.huawei.com (10.69.192.158) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.399.0; Mon, 20 Aug 2018 10:01:02 +0800
-From:   Zeng Tao <prime.zeng@hisilicon.com>
-To:     <gregkh@linuxfoundation.org>, <stern@rowland.harvard.edu>,
-        <mathias.nyman@linux.intel.com>, <drinkcat@chromium.org>,
-        <felipe.balbi@linux.intel.com>, <drake@endlessm.com>,
-        <ravisadineni@chromium.org>, <joe@perches.com>
-CC:     <prime.zeng@hisilicon.com>, Jonathan Corbet <corbet@lwn.net>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Thymo van Beers <thymovanbeers@gmail.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        Mike Looijmans <mike.looijmans@topic.nl>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>
-Subject: [PATCH v3] usb: hub: try old enumeration scheme first for high speed devices
-Date:   Mon, 20 Aug 2018 18:04:39 +0800
-Message-ID: <1534759484-44744-1-git-send-email-prime.zeng@hisilicon.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.158]
-X-CFilter-Loop: Reflected
+        Mon, 20 Aug 2018 01:25:41 -0400
+Received: from gate.crashing.org ([63.228.1.57]:50853 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725921AbeHTFZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 01:25:41 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w7K2Axqb026478;
+        Sun, 19 Aug 2018 21:11:02 -0500
+Message-ID: <4d777ed8c17b479e59b16cc0b4e9a3f6537f9884.camel@kernel.crashing.org>
+Subject: Re: [RFC PATCH 1/6] Revert "PCI: Fix is_added/is_busmaster race
+ condition"
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, Hari Vyas <hari.vyas@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jens Axboe <axboe@kernel.dk>, Lukas Wunner <lukas@wunner.de>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Marta Rybczynska <mrybczyn@kalray.eu>,
+        Pierre-Yves Kerbrat <pkerbrat@kalray.eu>,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 20 Aug 2018 12:10:59 +1000
+In-Reply-To: <20180819022440.GG128050@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180817044902.31420-1-benh@kernel.crashing.org>
+         <20180817044902.31420-2-benh@kernel.crashing.org>
+         <20180817154431.GC128050@bhelgaas-glaptop.roam.corp.google.com>
+         <06c1233b71dea08b1fc32334acefc48c32c46557.camel@kernel.crashing.org>
+         <20180819022440.GG128050@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new scheme is required just to support legacy low and full-speed
-devices. For high speed devices, it will slower the enumeration speed.
-So in this patch we try the "old" enumeration scheme first for high speed
-devices, and this is what Windows does since Windows 8.
+On Sat, 2018-08-18 at 21:24 -0500, Bjorn Helgaas wrote:
+> On Sat, Aug 18, 2018 at 01:24:51PM +1000, Benjamin Herrenschmidt wrote:
+> > On Fri, 2018-08-17 at 10:44 -0500, Bjorn Helgaas wrote:
+> > > On Fri, Aug 17, 2018 at 02:48:57PM +1000, Benjamin Herrenschmidt wrote:
+> > > > This reverts commit 44bda4b7d26e9fffed6d7152d98a2e9edaeb2a76.
+> > > 
+> > > Just to be clear, if I understand correctly, this is a pure revert of
+> > > 44bda4b7d26e and as such it reintroduces the problem solved by that
+> > > commit.
+> > > 
+> > > If your solution turns out to be better, that's great, but it would be
+> > > nice to avoid the bisection hole of reintroducing the problem, then
+> > > fixing it again later.
+> > 
+> > There is no way to do that other than merging the revert and the fix
+> > into one. That said, the race is sufficiently hard to hit that I
+> > wouldn't worry too much about it.
+> 
+> OK, then at least mention that in the changelog.
 
-Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
----
-Changes in v2:
-1. As suggested by Alan, mention in the commit log that this change is
-follow what the Window does.
-2. As suggested by Roger, update the kernel-parameter description.
+Sure will do. This is just RFC at this stage :-)
 
-Changes in v3:
-1. Remove the blank line suggested by Alan.
-2. Tag applied.
+As for the race with enable, what's your take on my approach ? The
+basic premise is that we need some kind of mutex to make the updates to
+enable_cnt and the actual config space changes atomic. While at it we
+can fold pci_set_master vs. is_busmaster as well as those are racy too.
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
----
- Documentation/admin-guide/kernel-parameters.txt | 3 ++-
- drivers/usb/core/hub.c                          | 4 +++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+I chose to create a new mutex which we should be able to address other
+similar races if we find them. The other solutions that I dismissed
+were:
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 533ff5c..95db23c 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4453,7 +4453,8 @@
- 
- 	usbcore.old_scheme_first=
- 			[USB] Start with the old device initialization
--			scheme (default 0 = off).
-+			scheme,  applies only to low and full-speed devices
-+			 (default 0 = off).
- 
- 	usbcore.usbfs_memory_mb=
- 			[USB] Memory limit (in MB) for buffers allocated by
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 1fb2668..003fac0 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -2660,11 +2660,13 @@ static bool use_new_scheme(struct usb_device *udev, int retry,
- {
- 	int old_scheme_first_port =
- 		port_dev->quirks & USB_PORT_QUIRK_OLD_SCHEME;
-+	int quick_enumeration = (udev->speed == USB_SPEED_HIGH);
- 
- 	if (udev->speed >= USB_SPEED_SUPER)
- 		return false;
- 
--	return USE_NEW_SCHEME(retry, old_scheme_first_port || old_scheme_first);
-+	return USE_NEW_SCHEME(retry, old_scheme_first_port || old_scheme_first
-+			      || quick_enumeration);
- }
- 
- /* Is a USB 3.0 port in the Inactive or Compliance Mode state?
--- 
-2.7.4
+ - Using the device_lock. A explained previously, this is tricky, I
+prefer not using this for anything other than locking against
+concurrent add/remove. The main issue is that drivers will be sometimes
+called in context where that's already held, so we can't take it inside
+pci_enable_device() and I'd rather not add new constraints such as
+"pci_enable_device() must be only called from probe() unless you also
+take the device lock". It would be tricky to audit everybody...
+
+ - Using a global mutex. We could move the bridge lock from AER to core
+code for example, and use that. But it doesn't buy us much, and
+slightly redecuces parallelism. It also makes it a little bit more
+messy to walk up the bridge chain, we'd have to do a
+pci_enable_device_unlocked or something, messy.
+
+So are you ok with the approach ? Do you prefer one of the above
+regardless ? Something else ?
+
+Cheers,
+Ben.
+
 
