@@ -2,126 +2,159 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8F4C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B153C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:25:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A12F52170E
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:24:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A12F52170E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id B796F2154B
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 15:25:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B796F2154B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbeHTSk2 (ORCPT
+        id S1727259AbeHTSlk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 14:40:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58282 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726021AbeHTSk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 14:40:28 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A9BDAACB7;
-        Mon, 20 Aug 2018 15:24:22 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Cc:     boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, Juergen Gross <jgross@suse.com>
-Subject: [PATCH RESEND] x86/xen: enable early use of set_fixmap in 32-bit Xen PV guest
-Date:   Mon, 20 Aug 2018 17:24:20 +0200
-Message-Id: <20180820152420.16004-1-jgross@suse.com>
-X-Mailer: git-send-email 2.13.7
+        Mon, 20 Aug 2018 14:41:40 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39320 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726021AbeHTSlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 14:41:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3EF60ED1;
+        Mon, 20 Aug 2018 08:25:35 -0700 (PDT)
+Received: from dupont (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 22A523F24A;
+        Mon, 20 Aug 2018 08:25:34 -0700 (PDT)
+Date:   Mon, 20 Aug 2018 10:25:32 -0500
+From:   Kim Phillips <kim.phillips@arm.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        <schwidefsky@de.ibm.com>, <heiko.carstens@de.ibm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, <ast@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, <suzuki.poulosi@arm.com>,
+        <linux-s390@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 0/7] perf: Add ioctl for PMU driver configuration
+Message-Id: <20180820102532.96a90fe59d9ea3785df76a4d@arm.com>
+In-Reply-To: <a2edfae3-302e-bbc7-0563-337186fc2919@arm.com>
+References: <1531950487-24554-1-git-send-email-mathieu.poirier@linaro.org>
+        <20180813124642.3d49c082a95fc294d926016e@arm.com>
+        <CANLsYkx=tjCG-eb4qRoGz0SvG4qCMDz1ajR9Mo9VK5XTAn_WdQ@mail.gmail.com>
+        <20180814120910.ed225bbc462c58b09e5d68de@arm.com>
+        <CANLsYkxZ_Wts6k9yqJhJf_R5oh74svpcuoNxhtFf6h3mz8U4ZA@mail.gmail.com>
+        <20180815093912.GE2427@arm.com>
+        <20180815102820.3520d0c3875d2fd82300cdef@arm.com>
+        <CANLsYkz0j79+1C-Amz=3+7zw-0VZhnZ+rp5WAjHduEp+WjFs8A@mail.gmail.com>
+        <18fe78a3-9a58-cecd-ddb9-d46cbc473b95@arm.com>
+        <20180820092252.32dd015afcc5cbf2fe4c7ab7@arm.com>
+        <a2edfae3-302e-bbc7-0563-337186fc2919@arm.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 7b25b9cb0dad83 ("x86/xen/time: Initialize pv xen time in
-init_hypervisor_platform()") moved the mapping of the shared info area
-before pagetable_init(). This breaks booting as 32-bit PV guest as the
-use of set_fixmap isn't possible at this time on 32-bit.
+On Mon, 20 Aug 2018 15:36:47 +0100
+Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
 
-This can be worked around by populating the needed PMD on 32-bit
-kernel earlier.
+> On 08/20/2018 03:22 PM, Kim Phillips wrote:
+> > On Mon, 20 Aug 2018 11:03:03 +0100
+> > Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+> > 
+> >> On 08/16/2018 08:28 PM, Mathieu Poirier wrote:
+> >>> On Wed, 15 Aug 2018 at 09:28, Kim Phillips <kim.phillips@arm.com> wrote:
+> >>>>
+> >>>> On Wed, 15 Aug 2018 10:39:13 +0100
+> >>>> Will Deacon <will.deacon@arm.com> wrote:
+> >>>>
+> >>>>> On Tue, Aug 14, 2018 at 01:42:27PM -0600, Mathieu Poirier wrote:
+> >>>>>> On Tue, 14 Aug 2018 at 11:09, Kim Phillips <kim.phillips@arm.com> wrote:
+> >>>>>>> The other thing that's going on here is that I'm becoming numb to the
+> >>>>>>> loathsome "failed to mmap with 12 (Cannot allocate memory)" being
+> >>>>>>> returned no matter what the error is/was. E.g., an error that would
+> >>>>>>> indicate a sense of non-implementation would be much better
+> >>>>>>> appreciated than presumably what the above is doing, i.e., returning
+> >>>>>>> -ENOMEM.  That, backed up with specific details in the form of human
+> >>>>>>> readable text in dmesg would be *most* welcome.
+> >>>>>>
+> >>>>>> As part of the refactoring of the code to support CPU-wide scenarios I
+> >>>>>> intend to emit better diagnostic messages from the driver.  Modifying
+> >>>>>> rb_alloc_aux() to propagate the error message generated by the
+> >>>>>> architecture specific PMUs doesn't look hard either and I _may_ get to
+> >>>>>> it as part of this work.
+> >>>>>
+> >>>>> For the record, I will continue to oppose PMU drivers that dump diagnostics
+> >>>>> about user-controlled input into dmesg, but the coresight drivers are yours
+> >>>>> so it's up to you and I won't get in the way!
+> >>>>
+> >>>> That sounds technically self-contradicting to me.  Why shouldn't
+> >>>> coresight share the same policies as those used for PMU drivers?  Or
+> >>>> why not allow the individual vendor PMU driver authors control the
+> >>>> level of user-friendliness of their own drivers?
+> >>>>
+> >>>> That being said, Matheiu, would you accept patches that make coresight
+> >>>> more verbose in dmesg?
+> >>>
+> >>> It depends on the issue you're hoping to address.  I'd rather see the
+> >>> root cause of the problem fixed than adding temporary code.  Suzuki
+> >>> added the ETR perf API and I'm currently working on CPU-wide
+> >>> scenarios.  From there and with regards to what can happen in
+> >>> setup_aux(), we should have things covered.
+> >>
+> >> I think the main issue is the lack of error code propagation from
+> >> setup_aux() back to the perf_aux_output_handle_begin(), which always
+> >> return -ENOMEM. If we fix that, we could get better idea of whats
+> >> wrong.
+> > 
+> > Why get a better idea when we can get the exact details?
+> 
+> The different values for error numbers are there for a reason...
 
-In order not to reimplement populate_extra_pte() using extend_brk()
-for allocating new page tables extend alloc_low_pages() to do that in
-case the early page table pool is not yet available.
+But the same error number, e.g., EINVAL, can be returned for different
+reasons.
 
-Fixes: 7b25b9cb0dad83 ("x86/xen/time: Initialize pv xen time in init_hypervisor_platform()")
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
----
-Resending with corrected Fixes: tag
-Boris, please take this via the Xen tree (Thomas asked us to do so)
----
- arch/x86/mm/init.c          | 17 ++++++++++++-----
- arch/x86/xen/enlighten_pv.c |  2 ++
- arch/x86/xen/mmu_pv.c       |  2 ++
- 3 files changed, 16 insertions(+), 5 deletions(-)
+> >> If someone is planning to add verbose messages, they may do so by adding
+> >> dev_dbg() / pr_debug(), which can be turned on as and when needed.
+> > 
+> > I disagree:  that just adds another usage and kernel configuration
+> > obstacle.  Why not use pr_err straight up?
+> 
+> I personally don't agree to usage of pr_err() in paths which are easily
+> triggered from user input.
 
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index acfab322fbe0..5c32a7665492 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -99,15 +99,22 @@ __ref void *alloc_low_pages(unsigned int num)
- 	}
- 
- 	if ((pgt_buf_end + num) > pgt_buf_top || !can_use_brk_pgt) {
--		unsigned long ret;
--		if (min_pfn_mapped >= max_pfn_mapped)
--			panic("alloc_low_pages: ran out of memory");
--		ret = memblock_find_in_range(min_pfn_mapped << PAGE_SHIFT,
-+		unsigned long ret = 0;
-+
-+		if (min_pfn_mapped < max_pfn_mapped) {
-+			ret = memblock_find_in_range(
-+					min_pfn_mapped << PAGE_SHIFT,
- 					max_pfn_mapped << PAGE_SHIFT,
- 					PAGE_SIZE * num , PAGE_SIZE);
-+		}
-+		if (ret)
-+			memblock_reserve(ret, PAGE_SIZE * num);
-+		else if (can_use_brk_pgt)
-+			ret = __pa(extend_brk(PAGE_SIZE * num, PAGE_SIZE));
-+
- 		if (!ret)
- 			panic("alloc_low_pages: can not alloc memory");
--		memblock_reserve(ret, PAGE_SIZE * num);
-+
- 		pfn = ret >> PAGE_SHIFT;
- 	} else {
- 		pfn = pgt_buf_end;
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index ee3b00c7acda..d7b2022ee301 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -122,6 +122,8 @@ static void __init xen_banner(void)
- 
- static void __init xen_pv_init_platform(void)
- {
-+	populate_extra_pte(fix_to_virt(FIX_PARAVIRT_BOOTMAP));
-+
- 	set_fixmap(FIX_PARAVIRT_BOOTMAP, xen_start_info->shared_info);
- 	HYPERVISOR_shared_info = (void *)fix_to_virt(FIX_PARAVIRT_BOOTMAP);
- 
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index 52206ad81e4b..9e7012858420 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -2171,6 +2171,8 @@ void __init xen_relocate_p2m(void)
- #else	/* !CONFIG_X86_64 */
- static RESERVE_BRK_ARRAY(pmd_t, initial_kernel_pmd, PTRS_PER_PMD);
- static RESERVE_BRK_ARRAY(pmd_t, swapper_kernel_pmd, PTRS_PER_PMD);
-+RESERVE_BRK(fixup_kernel_pmd, PAGE_SIZE);
-+RESERVE_BRK(fixup_kernel_pte, PAGE_SIZE);
- 
- static void __init xen_write_cr3_init(unsigned long cr3)
- {
--- 
-2.13.7
+Why not?  pr_* are ratelimited.
 
+> Also, we are moving all the "debugging"
+> messages to the dynamic debug, to prevent lockdep splats.
+
+Are you referring to this?:
+
+https://lkml.org/lkml/2018/5/1/73
+
+Re-reading the thread, AFAICT, it was never proven that the splats
+occurred due to the dev_infos, and there's no dev_info in this
+stacktrace:
+
+https://lkml.org/lkml/2018/5/10/269
+
+But even if it were, wouldn't the splats also occur with dev_dbg?
+
+Kim
