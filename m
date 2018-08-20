@@ -2,174 +2,202 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FCBC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 08:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA52C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 08:54:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7801B21536
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 08:52:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QYt+QLGz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7801B21536
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id CF6C0213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 08:54:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF6C0213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726156AbeHTMHb (ORCPT
+        id S1726228AbeHTMIy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 08:07:31 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:48027 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbeHTMHb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 08:07:31 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180820085244euoutp029e8e06d4856a3c5b52039144c8f5150d~Mi7DVDG5w0981509815euoutp02K
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 08:52:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180820085244euoutp029e8e06d4856a3c5b52039144c8f5150d~Mi7DVDG5w0981509815euoutp02K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1534755164;
-        bh=MKfMg87Fj3etpJMWc8Sbh593webe/msY8JiQyCJwmrU=;
-        h=Subject:To:From:Date:In-Reply-To:References:From;
-        b=QYt+QLGzPrdGfhY77EBUEJFy17bIm1OUQf1WoLLkTj/IDVnrs2BDn1ePlesVknash
-         udaePCEGTs2d5gRSBKbE2Xc9t6wE6/6CftfXxnHYkBJtbxYzRs2y260PKXh9FjnX+v
-         j2ICEoK5/zu1H0AsQxJ3rTIzijIFmM5fzutXvSeQ=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180820085243eucas1p222f8857864867f0f80a95ed7472ebeb0~Mi7Cs9qRD1035710357eucas1p2g;
-        Mon, 20 Aug 2018 08:52:43 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id A7.ED.04441.B518A7B5; Mon, 20
-        Aug 2018 09:52:43 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20180820085242eucas1p23f693665452400f3a57676393ce08939~Mi7BqhC1Y0964309643eucas1p2V;
-        Mon, 20 Aug 2018 08:52:42 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20180820085242eusmtrp1231d3c30bd59b3cb375683165d520334~Mi7Bb_s4n1030310303eusmtrp1y;
-        Mon, 20 Aug 2018 08:52:42 +0000 (GMT)
-X-AuditID: cbfec7f2-5c9ff70000001159-c4-5b7a815bbd67
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id F5.B4.04128.A518A7B5; Mon, 20
-        Aug 2018 09:52:42 +0100 (BST)
-Received: from [106.116.147.30] (unknown [106.116.147.30]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20180820085242eusmtip22fda597dafc966afeb6ea64c686f4ae6~Mi7BCLzPH0393703937eusmtip2a;
-        Mon, 20 Aug 2018 08:52:42 +0000 (GMT)
-Subject: Re: Input: cros_ec_keyb: Remove check before calling
- pm_wakeup_event.
-To:     RaviChandra Sadineni <ravisadineni@chromium.org>,
-        dmitry.torokhov@gmail.com, ravisadineni@google.com,
-        dtor@google.com, linux-samsung-soc@vger.kernel.org,
-        tbroch@google.com, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org, tfiga@chromium.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Date:   Mon, 20 Aug 2018 10:52:41 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
-        Thunderbird/52.9.1
+        Mon, 20 Aug 2018 08:08:54 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33807 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726010AbeHTMIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 08:08:54 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A916C20DFB; Mon, 20 Aug 2018 10:54:05 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2A83A20DF8;
+        Mon, 20 Aug 2018 10:53:55 +0200 (CEST)
+Date:   Mon, 20 Aug 2018 10:53:55 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
+Cc:     "richard@nod.at" <richard@nod.at>,
+        "absahu@codeaurora.org" <absahu@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>,
+        Michal Simek <michals@xilinx.com>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "peterpandong@micron.com" <peterpandong@micron.com>
+Subject: Re: [LINUX PATCH v10 2/2] mtd: rawnand: arasan: Add support for
+ Arasan NAND Flash Controller
+Message-ID: <20180820105355.11bd50a8@bbrezillon>
+In-Reply-To: <MWHPR02MB2623D48B5DBAFCE2B5D03747AF3C0@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <1534511964-20342-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1534511964-20342-3-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <20180817195903.49963b25@bbrezillon>
+        <MWHPR02MB2623D48B5DBAFCE2B5D03747AF3C0@MWHPR02MB2623.namprd02.prod.outlook.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180817212135.222689-1-ravisadineni@chromium.org>
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7djPc7rRjVXRBsubNSwOL3rBaDH/ZSe7
-        xc1P31gtLu+aw2Yx4/w+Jot1Ld8YLc6//c1qsej7Q1aLz63/2Bw4PWY3XGTx2DnrLrvHgk2l
-        Hp83yQWwRHHZpKTmZJalFunbJXBlrNu/g6ngDF/Fh+YXzA2Mt7i7GDk4JARMJL5/0Opi5OIQ
-        EljBKNHdeZEVwvnCKPGlZzoThPOZUWLR4qXMXYycYB2XN61iA7GFBJYzSvSeCYMoes8ocbdr
-        AytIQlggQOJC0zJmkISIQBuTxOONHWAJNgFDia63XWDdLAKqEhOaNzKD3CEqECPxe5c1SJhX
-        QFDi5MwnLCA2p4CDxNbz18BsZgF5ie1v5zBD2OISt57MB7tOQmAdu8TV9V9YIZrLJFrO7oW6
-        1EXiZ9MPdghbWOLV8S1QtozE6ck9LBDNzYwS7TNmsUM4PYwSW+fsYIOospY4fBwUGhxA6zQl
-        1u/Shwg7Sux6t5ANEnh8EjfeCkIcxCcxadt0Zogwr0RHmxBEtZrErOPr4NYevHAJ6jQPiYOH
-        HzFPYFScheTlWUjenIXkzVkINyxgZFnFKJ5aWpybnlpsmJdarlecmFtcmpeul5yfu4kRmIpO
-        /zv+aQfj10tJhxgFOBiVeHgXXK2MFmJNLCuuzD3EKMHBrCTCe/UHUIg3JbGyKrUoP76oNCe1
-        +BCjNAeLkjgvn1ZatJBAemJJanZqakFqEUyWiYNTqoFxwaSTK3njufg52/ydluq796qtuON7
-        7bz5Ud/Jhue4J2S037N6k1Ol8v9R8KT+g1UtOp/eq9zofnFTq287l8OxXfcLbq0u15Zc3Kgg
-        s9d5OZvh5HK50ji3iE0Xlz2QOv/G1KR82879D/KUtOyWzgvvu3kqKkRkjeG09N1GRvfFbWpN
-        ryrw+3srsRRnJBpqMRcVJwIAuW9G5EEDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGIsWRmVeSWpSXmKPExsVy+t/xe7pRjVXRBmsnKVkcXvSC0WL+y052
-        i5ufvrFaXN41h81ixvl9TBbrWr4xWpx/+5vVYtH3h6wWn1v/sTlwesxuuMjisXPWXXaPBZtK
-        PT5vkgtgidKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3
-        S9DLWLd/B1PBGb6KD80vmBsYb3F3MXJySAiYSFzetIqti5GLQ0hgKaPEq+2dbBAJGYmT0xpY
-        IWxhiT/XuqCK3jJK7G9+BVYkLOAncejeOVaQhIhAC5PEwY4VLBBVDUwSbx5tYAKpYhMwlOh6
-        C9LOwcErYCexoCsOJMwioCoxoXkjM4gtKhAjcXRyC9hQXgFBiZMzn7CA2JwCDhJbz18Ds5kF
-        zCTmbX7IDGHLS2x/OwfKFpe49WQ+0wRGwVlI2mchaZmFpGUWkpYFjCyrGEVSS4tz03OLjfSK
-        E3OLS/PS9ZLzczcxAuNs27GfW3Ywdr0LPsQowMGoxMO74GpltBBrYllxZe4hRgkOZiUR3qs/
-        gEK8KYmVValF+fFFpTmpxYcYTYGem8gsJZqcD0wBeSXxhqaG5haWhubG5sZmFkrivOcNKqOE
-        BNITS1KzU1MLUotg+pg4OKUaGPc3s+j/ULmz4BLHtrt9Mh0mQbOPtM29+UBwt4hD7DNGZsbV
-        tbyW0tPKXmjkM27yzEycdEjerlV/wdM3U/h9bcqDeKbuYT13aIvYg+ybj2wdb2Twndo5MTzc
-        Tuz9k01fFz7zF+t+8++FwseD7dMP7V3yfNbPmcF8S3/utNjl5WVauOto8XNODRElluKMREMt
-        5qLiRACcQVZMyQIAAA==
-Message-Id: <20180820085242eucas1p23f693665452400f3a57676393ce08939~Mi7BqhC1Y0964309643eucas1p2V@eucas1p2.samsung.com>
-X-CMS-MailID: 20180820085242eucas1p23f693665452400f3a57676393ce08939
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20180817212153epcas2p4aa217751a7d24f1ababc6038d2e4c9b7
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180817212153epcas2p4aa217751a7d24f1ababc6038d2e4c9b7
-References: <20180810082344eucas1p2c525a61cb176b4ab1dab22347afd539b~JeE3uTBkU1731217312eucas1p2T@eucas1p2.samsung.com>
-        <CGME20180817212153epcas2p4aa217751a7d24f1ababc6038d2e4c9b7@epcas2p4.samsung.com>
-        <20180817212135.222689-1-ravisadineni@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ravi,
+On Sat, 18 Aug 2018 05:49:32 +0000
+Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
 
-On 2018-08-17 23:21, RaviChandra Sadineni wrote:
-> From: RaviChandra Sadineni <ravisadineni@google.com>
->
-> hi Merek,
->
-> Unfortunately I could not get the device to boot even after using the exynos_defconfig.
-> Can you please try this patch and see if this fixes the issue. If not can you enable the
-> debug logs and send me the logs.
->
->
-> Currently on every resume we check for mkbp events and notify the
-> clients. This helps in identifying the wakeup sources. But on devices
-> that do not support mkbp protocol, we might end up getting key state of
-> the keyboard in a loop and block the resume. Instead check for events only
-> if  mkbp is supported.
->
-> Signed-off-by: RaviChandra Sadineni <ravisadineni@chromium.org>
+> Hi Boris,
+> 
+> Thanks for the review.
+> 
+> > -----Original Message-----
+> > From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
+> > Sent: Friday, August 17, 2018 11:29 PM
+> > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> > Cc: miquel.raynal@bootlin.com; richard@nod.at; dwmw2@infradead.org;
+> > computersforpeace@gmail.com; marek.vasut@gmail.com; kyungmin.park@samsung.com;
+> > absahu@codeaurora.org; peterpandong@micron.com; frieder.schrempf@exceet.de; linux-
+> > mtd@lists.infradead.org; linux-kernel@vger.kernel.org; Michal Simek <michals@xilinx.com>;
+> > nagasureshkumarrelli@gmail.com
+> > Subject: Re: [LINUX PATCH v10 2/2] mtd: rawnand: arasan: Add support for Arasan
+> > NAND Flash Controller
+> > 
+> > Hi Naga,
+> > 
+> > On Fri, 17 Aug 2018 18:49:24 +0530
+> > Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com> wrote:
+> >   
+> > > +static int anfc_exec_op_cmd(struct nand_chip *chip,
+> > > +				   const struct nand_subop *subop) {
+> > > +	const struct nand_op_instr *instr;
+> > > +	struct anfc_op nfc_op = {};
+> > > +	struct anfc_nand_chip *achip = to_anfc_nand(chip);
+> > > +	struct anfc_nand_controller *nfc = to_anfc(chip->controller);
+> > > +	struct mtd_info *mtd = nand_to_mtd(chip);
+> > > +	u32 addrcycles;
+> > > +	unsigned int op_id, len = 0;
+> > > +	bool reading;
+> > > +
+> > > +	anfc_parse_instructions(chip, subop, &nfc_op);
+> > > +	instr = nfc_op.data_instr;
+> > > +	op_id = nfc_op.data_instr_idx;
+> > > +	if (nfc_op.data_instr)
+> > > +		len = nand_subop_get_data_len(subop, op_id);
+> > > +
+> > > +	/*
+> > > +	 * The switch case is to prepare a command and to set page/column
+> > > +	 * address. Arasan NAND controller has program register(Off: 0x10)),
+> > > +	 * which needs to be set for every command.
+> > > +	 * Ex: When NAND_CMD_RESET is issued, then we need to set reset bit
+> > > +	 * in program_register. etc..
+> > > +	 */
+> > > +	switch (nfc_op.cmnds[0]) {
+> > > +	case NAND_CMD_SEQIN:
+> > > +		addrcycles = achip->raddr_cycles + achip->caddr_cycles;
+> > > +
+> > > +		anfc_prepare_cmd(nfc, nfc_op.cmnds[0], NAND_CMD_PAGEPROG, 1,
+> > > +				 mtd->writesize, addrcycles);
+> > > +		anfc_setpagecoladdr(nfc, nfc_op.row, nfc_op.col);
+> > > +		break;
+> > > +	case NAND_CMD_READOOB:
+> > > +		nfc_op.col += mtd->writesize;
+> > > +	case NAND_CMD_READ0:
+> > > +	case NAND_CMD_READ1:
+> > > +		addrcycles = achip->raddr_cycles + achip->caddr_cycles;
+> > > +		anfc_prepare_cmd(nfc, NAND_CMD_READ0, NAND_CMD_READSTART,  
+> > 1,  
+> > > +				 mtd->writesize, addrcycles);
+> > > +		anfc_setpagecoladdr(nfc, nfc_op.row, nfc_op.col);
+> > > +		if (!nfc_op.data_instr)
+> > > +			return 0;
+> > > +
+> > > +		anfc_read_data_op(mtd, instr->ctx.data.buf.in, len);
+> > > +		break;
+> > > +	case NAND_CMD_RNDOUT:
+> > > +		anfc_prepare_cmd(nfc, nfc_op.cmnds[0], NAND_CMD_RNDOUTSTART, 1,
+> > > +				 mtd->writesize, 2);
+> > > +		anfc_setpagecoladdr(nfc, nfc_op.row, nfc_op.col);
+> > > +		nfc->prog = PROG_PGRD;
+> > > +		break;
+> > > +	case NAND_CMD_PARAM:
+> > > +		anfc_prepare_cmd(nfc, nfc_op.cmnds[0], 0, 0, 0, 1);
+> > > +		anfc_setpagecoladdr(nfc, nfc_op.row, nfc_op.col);
+> > > +		nfc->prog = PROG_RDPARAM;
+> > > +		break;
+> > > +	case NAND_CMD_READID:
+> > > +		anfc_prepare_cmd(nfc, nfc_op.cmnds[0], 0, 0, 0, 1);
+> > > +		anfc_setpagecoladdr(nfc, nfc_op.row, nfc_op.col);
+> > > +		nfc->prog = PROG_RDID;
+> > > +		break;
+> > > +	case NAND_CMD_GET_FEATURES:
+> > > +		anfc_prepare_cmd(nfc, nfc_op.cmnds[0], 0, 0, 0, 1);
+> > > +		anfc_setpagecoladdr(nfc, nfc_op.row, nfc_op.col);
+> > > +		nfc->prog = PROG_GET_FEATURE;
+> > > +		break;
+> > > +	case NAND_CMD_SET_FEATURES:
+> > > +		anfc_prepare_cmd(nfc, nfc_op.cmnds[0], 0, 0, 0, 1);
+> > > +		anfc_setpagecoladdr(nfc, nfc_op.row, nfc_op.col);
+> > > +		nfc->prog = PROG_SET_FEATURE;
+> > > +		break;
+> > > +	case NAND_CMD_ERASE1:
+> > > +		anfc_erase_function(chip, nfc_op);
+> > > +		break;
+> > > +	default:
+> > > +		break;
+> > > +	}  
+> > 
+> > Looks like you have one of these smart controllers where everything is hardcoded and new
+> > commands (like vendor specific commands) can't be supported, and we're back to abusing -  
+> > >exec_op(), just like ->cmdfunc() was abused.  
+> Actually hardcoding commands with ->exec_op() interface in the driver is really looking weird.
+> I agree with that.
+> But as per the spec, for every command, we need to set respective bit in PROG_REG and because
+> Of this, we need to track the commands for each exec_op() call.
+> > 
+> > Don't you have a way to send raw CMD/ADDR/DATA cycles? If not, then we'll have to
+> > consider other options, because I don't want to go back to the situation we are in with -  
+> > >cmdfunc().  
+> As I said above, for each command we need to set a bit in PROG_REG, to initiate the operation.
+> The only conflicting thing is that, setting a respective bit in PROG_REG based on the command
+> Needs command tracking. 
+> > 
+> > Maybe I already asked, but is there a public spec for this IP?  
+> I didn't find any public spec for this IP, but you can find the register data base at below link
+> https://www.xilinx.com/html_docs/registers/ug1087/ug1087-zynq-ultrascale-registers.html
+> and click on NAND.
+> There we have Command Reg(Off: 0x0C) and Program Reg(Off: 0x10), which describes the usage.
+> 
+> Also not in depth but at least something is documented in TRM
+> https://www.xilinx.com/support/documentation/user_guides/ug1085-zynq-ultrascale-trm.pdf
+> we can find the programming model in chapter 25.
+> Please let me know if I missed anything.
 
-This patch fixes the suspend/resume issue on Snow and Peach-Pit
-Chromebooks, both on vanilla v4.18 as well as linux-next from 20 August 
-2018.
+I had a closer look at those documents (which I remember reading a
+while back BTW), and the PROG bits are indeed not described in detail.
 
-Thanks!
+Still, I think it's close to what we have on Marvell SoC, where those
+'modes' actually encode a specific sequence of timing that is used for
+well-known commands (like ERASE, RESET, READID) but could be used the
+same way with other opcodes assuming the sequence is the same.
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-A small hint: to merge it please resend with proper subject and put the note
-should be after '---' mark, so it will be dropped by the 'git am' command.
-
-> ---
->   drivers/mfd/cros_ec.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-> index 65a9757a6d21..fe6f83766144 100644
-> --- a/drivers/mfd/cros_ec.c
-> +++ b/drivers/mfd/cros_ec.c
-> @@ -218,7 +218,8 @@ EXPORT_SYMBOL(cros_ec_suspend);
->   
->   static void cros_ec_report_events_during_suspend(struct cros_ec_device *ec_dev)
->   {
-> -	while (cros_ec_get_next_event(ec_dev, NULL) > 0)
-> +	while (ec_dev->mkbp_event_supported &&
-> +	       cros_ec_get_next_event(ec_dev, NULL) > 0)
->   		blocking_notifier_call_chain(&ec_dev->event_notifier,
->   					     1, ec_dev);
->   }
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+So, you should use the pattern approach, but not like you do: you
+should have a dedicated hook for each pattern which would set PROG bit,
+and then a generic helper to fill all other information (opcode,
+address cycles, ...).
