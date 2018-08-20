@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DATE_IN_PAST_12_24,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1230C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CBEFC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:52:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8785620896
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:52:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E14C120896
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 18:52:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ty8RoTGC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8785620896
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ae94tq8r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E14C120896
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbeHTWJD (ORCPT
+        id S1726798AbeHTWJI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 18:09:03 -0400
+        Mon, 20 Aug 2018 18:09:08 -0400
 Received: from mail-eopbgr70080.outbound.protection.outlook.com ([40.107.7.80]:28224
         "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726734AbeHTWJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 18:09:03 -0400
+        id S1726260AbeHTWJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 18:09:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gr7jcIGI85ThC2fGN0WpILM6b88eWXTI5WQaWogkENQ=;
- b=ty8RoTGCzAz+zazA6lH7NWJBQjX28mpc9s3B+OzxLOWa7vWU1GLtU1T3n8C8TSa7p52kcgPJFhps+q+mmWejJ0cu+3WSxxXv88XxKiBKgODXmdDfZVRu2aCRHuOwq2ZQRW4jZyn6mZvnN5pDBXfkOxpdAWCqjfLjoLcG5rX86hA=
+ bh=LaDiJlIYnfjlDPxPYby383KqQPKNcP+PPIQNJh8mrZo=;
+ b=ae94tq8r1UhVJOBt7yTR+ZmxqinhA3wCcuNuJ38KMQTWgx1WBB2a+aILnGFJMwNbrb2aB0/aH1eLXWwh1kEffk1bQw+vMqu8jl7naa0cmC6ZctZkda1Y4Xn2Hctc+CpgS7YXNZEN6OhVTiDrW7wUVd5qgJ50Anbuxu/itqodHhw=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=vabhav.sharma@nxp.com; 
 Received: from uefi-OptiPlex-790.ap.freescale.net (14.142.187.166) by
  VI1PR04MB4799.eurprd04.prod.outlook.com (2603:10a6:803:53::28) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1059.23; Mon, 20 Aug 2018 18:52:05 +0000
+ 15.20.1059.23; Mon, 20 Aug 2018 18:52:10 +0000
 From:   Vabhav Sharma <vabhav.sharma@nxp.com>
 To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         robh+dt@kernel.org, mark.rutland@arm.com,
@@ -47,12 +47,16 @@ To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         will.deacon@arm.com, gregkh@linuxfoundation.org, arnd@arndb.de,
         kstewart@linuxfoundation.org, yamada.masahiro@socionext.com
 Cc:     linux@armlinux.org.uk, V.Sethi@nxp.com, udit.kumar@nxp.com,
+        Vabhav Sharma <vabhav.sharma@nxp.com>,
+        Ramneek Mehresh <ramneek.mehresh@nxp.com>,
+        Zhang Ying-22455 <ying.zhang22455@nxp.com>,
+        Nipun Gupta <nipun.gupta@nxp.com>,
+        Priyanka Jain <priyanka.jain@nxp.com>,
         Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
-        Tang Yuantian <andy.tang@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for lx2160a
-Date:   Mon, 20 Aug 2018 12:17:14 +0530
-Message-Id: <1534747636-20064-4-git-send-email-vabhav.sharma@nxp.com>
+        Sriram Dash <sriram.dash@nxp.com>
+Subject: [PATCH 4/5] arm64: dts: add QorIQ LX2160A SoC support
+Date:   Mon, 20 Aug 2018 12:17:15 +0530
+Message-Id: <1534747636-20064-5-git-send-email-vabhav.sharma@nxp.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
 References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
@@ -62,51 +66,52 @@ X-Originating-IP: [14.142.187.166]
 X-ClientProxiedBy: BM1PR01CA0114.INDPRD01.PROD.OUTLOOK.COM (2603:1096:b00::30)
  To VI1PR04MB4799.eurprd04.prod.outlook.com (2603:10a6:803:53::28)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c668b01f-5016-4eec-9b88-08d606ce08c6
+X-MS-Office365-Filtering-Correlation-Id: 06cbe479-3e9b-4dc6-e2a4-08d606ce0bdd
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4799;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4799;3:Hi+wpwDrq3NQvUvHDhqRb39bdwjJ4IYSoLIBGIs+NC/3+ByhGMNpYmma5EVpmr33VKibM9FC5tBooLTsI4zS2khQHsYX1bd9QnWbgPyCCgH7DURiupdK44xF7f4sfJYe1P4BzSuFIbkwjrJVPms5ia9TsUDHq+oI+InqcvOBl5mxr69v5ariWxjpPqqLF8pGN5loE8aP7gC/1hG/AtsF5ted0lEZGIvKxnJfM3RI5c1umw+Vw4QJyxf5TdPu0Gr0;25:inNXj620YjF4Mke1UkxpgO9EbSlEOmYDKyVk5JEFNX1CiDGmdthFn0zQFuowyxKZFkvZLnSRBUo0PSgywLkU0BsH9xR3hCFbplSu4uBHW6CcekfCdJm5Ft8HI4pF27iRfLUDc8wVbP/uo82db4ae8Jq6wqVKrhRj18U2D/IgFvZ/jGr2ZDHJSEEsb4BNHIbp8IRCvkmbqmXHOF6xmHg7CC/Odfv6pjL4sbYnJqL78qWrWrZ3ciV7czg8GuyQWN/HHeipfpc5evcwMDqM9F2lUKsRl5e45Lz2RcPiSAYD0DLVw5zE7QkNa/ZTI5CDJZZIfo9ABL4+lt7YVs7ewV33Sg==;31:8EdULVc0ePsCNgzzLd+hviwOJKjt1uzpXqSFBaNhOjN66JKPsPz9sfKSlUdLhNrHLfL6pYyPj/FgHnFB99hjq8hHGuxqkMu1WWaIPbOFtlv8xvDoLFFWNQMQVTEv26hH8+pUpCE6ZjQjK2hA9e6r98uVWQsnM5G1YEBX4hxWY/iqH7xyGbLKgTkppo6df88rGCbu9bSdWQB8IzTXpHktP7eJtwKL5bmJyueTtt8cc9E=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4799;3:Mlb7BKwr8Grb6lhlAg+1zOb7lCnIOKj6GQjgiY7cs1i/206xZrAz/cLNdpGV+UjG34g/SBMIsxUWIQuBOOYtuB4zie10Q3z+pjDz24Hlimpi2pwFhZS0e9YJoDr2Ax36IsWcnZhKe8Z/JkdSUcYAn6YZeJtJXz43HJ2nHGTH/b1ga672eQ/anLfuoCaOMQCIlpZ+WBK6y+WcqmXieeQix35sJgrRwwvbFBZVXRy1aulK9ULxwy4EAlTSeOfR9yJN;25:zh5MWxqUv8U/vrswjtQVsJMGvFqXsVpaEPKqtQiGkDVRCbBbSdSlX90TTwCeuM/0vZ2j9EhUxM4t+rtGktNq654h5Vw9bz44xRrZjfjUa0ZYo+4iVf7x0I3etKhlYrUNnAxT/lXedfpPDWX/kphJcxE2ltNLYRMjckxKqFkTdlD+WHVmG635Qh5ol3eqIvc9bGMXIm6IqD5/wnPSx4tWHhW5NJAyBzS9RsYFe6+Gt/WO0lu8xmk784OISpJs5YMoSRdCPkTa2+gNzKQJI38UQm45tm6n6oIIFoNdD1eABxsYI/7BU5XKS9owM6OkGJ9NPmyuoFvX7HdaoDSqs0pUYA==;31:qGo8jHNnrsBS+t0xNtTKthgUPrdP0dlmsWOVpw1sxooJakW97K5caFGl6ZQsw5pn6tgutRQqwLvgO3RJGPbQhvCdoOJs4Z5fROfb+k5ICsRFtCCu34aEczLpWxMDhWQrl4kN+w69b4nK0aEPDckVMo1/Tsb/YokYo/pKu000woPGh2NPcYnWRc2v0jyZn8zVusUP1QmO46Y7Pb3te5ni0AWZLB063lv6nrpaoyeYcus=
 X-MS-TrafficTypeDiagnostic: VI1PR04MB4799:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4799;20:uWOhu1R6p+C3P5x05M8Tzd33DWADY+GhMryQlaf1V5TqtetTbrrFwbaNnJ5H1vBR7HjpkCciyzkntHlOXFrQcnlfee45Yle2a0NhvKBLogQPQR/pAw5rd15HwMe8SMAb5JRxGmZkAJ1rRxLJBbBnN6tA8tp4hkQVFowNVFVRemq98Z+CWgvK7TyAua/cJV3ve/rDAGCdWqR4m+9ALQFKw1L+6Sa6XG8I+6MJ+TrlHYVlFd9WTPNuW/vKmQ/ZbajKWi2m9cCu0+tUMVu9pj0YFrTFThpL1m3mk3CAP3Wmm4rDYYd0B33gH/Y3ro6OetFEOs6FwnTFNd2x91qGmo1c+lutSvqDX3MN0rr6U4jE/YVRwh+hjcqRar1y+A0syBikx1G9JiLgpyHoxc0Oxj2FPGCSulw8naeCYZHOgFSaTp2PT/0Wzpx2UGZN9swY1rqe2p6I/boZdYU/74eknkD41I0vJl2rQtjFhWO0mQUWfIssnZJViYgZ0TQi3C5mZi3y;4:30tGLX06ySk7+tPS5TH4Q/U+jTW5CHCYGD+/TgT4YeWoFIq/lWP4vDtokS+RUudyqsLDrjLzIjtNG4Pl6nPM9zv7B+5Nzy2/s6mevej4sDt22qmqsBPjxUKNVuNTO6QybyQPsKzohiPFAN7l8J3Jp7KOH6OBagSXK1Z4DJ9/5eGDI8rH1Egzj7SbPyS9QTZAzex/HmAt6ZgULSl68KBMnPcbCOE7QCReXikNV1JfFKvliZ9frjGYXvqBszpkRU1bnq8qRNC8dCHc6Mcmb8UvS/UfYi3LQ5lnt2v/mr8jzadXNVpcK5ua8tFZh2IqWOXL
-X-Microsoft-Antispam-PRVS: <VI1PR04MB47990FA48013C9ADCA47BDD9F3320@VI1PR04MB4799.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4799;20:memyzQQAXo1AdbgkXBngSGWcFOQtkH7Ghdln8VQp/Ezy7+dcv14WaXYDfCGxi3gKh7YRD5uueIjiGNvLN2e++d40OkKiLFRe4R89IC8DYwpYQsquhqbuYErSmPKKnE3KPZMpoxiBLhRhSR2eFgo+44mutnCfMozbBicgxNjcsCRTUOsPdqeMDvAdvyRLLWOlroXvhDTPXXJuSxBj3CvRT/WDrDdAlX+huIuqw/M3HO/dbmz7tMJBwUnUMM5/jbr8tEjRjzoAsuiiN4/i2eyNtwAc4bPHUls8Miyzv7ZHGLpJ8W2yIE69SdA2zbuu4x17F42pQ+M1yxrwLgD6m2+WHHwjejKtWalgLcIBR/41XhGvFB3F5vvtqHzW6d6P7Q2EcNaB1M2zNo11pJc7IHttrlKkwc49Af925tljem8xbpjZFijSq1NY5XwbZGI2EBjPPUbqk2fj8IgYCaB7N2cjhN/446zhxDIldd/5RIxeBSTluuJc6zUttzoZ6MHKlBVf;4:O7P2Cl7f5hxWEUZa1Dezar9o7316Z39N7xkxvvnXiIyjUzu/KvW9gE7V17nKPOqBMooGiZsOs7k367akUEh+ldMz+qRW1ytTxy1zQe/jkzi4/ZfmVHu1FtWnoNoyAgDyr63WhMQbb2uaTQ3k3FBWt6vIkwKMaInbcmZqLhw2zICa3kUOm3+bDkKzgvXM+c+HufXYTdMT/UGN4cFtHW8FhPj9XhmsIR1HrrPFCTmtdmQu8dqBAxQnwqmvt4KEfnX8wsuRefwUattiNBO54dintK79E/CN1UtEMDk2snXyIGUGb0EPieDwZGVxKWBm9DPG
+X-Microsoft-Antispam-PRVS: <VI1PR04MB479990D87F5AFD5EA5217AC0F3320@VI1PR04MB4799.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(10201501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699016);SRVR:VI1PR04MB4799;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4799;
 X-Forefront-PRVS: 0770F75EA9
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(396003)(346002)(136003)(376002)(199004)(189003)(6666003)(8676002)(36756003)(7736002)(81156014)(81166006)(305945005)(16526019)(186003)(26005)(478600001)(25786009)(4326008)(386003)(6506007)(48376002)(55236004)(50466002)(106356001)(5009440100003)(3846002)(105586002)(5660300001)(44832011)(7416002)(14444005)(6116002)(51416003)(52116002)(76176011)(2906002)(316002)(16586007)(54906003)(8936002)(476003)(6486002)(486006)(66066001)(47776003)(6512007)(86362001)(446003)(11346002)(68736007)(97736004)(53936002)(956004)(2616005)(50226002)(110426005)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4799;H:uefi-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(396003)(346002)(136003)(376002)(199004)(189003)(8676002)(36756003)(7736002)(81156014)(81166006)(305945005)(16526019)(186003)(26005)(478600001)(25786009)(4326008)(386003)(6506007)(48376002)(55236004)(50466002)(106356001)(5009440100003)(3846002)(105586002)(5660300001)(44832011)(7416002)(14444005)(6116002)(51416003)(52116002)(76176011)(2906002)(316002)(16586007)(54906003)(8936002)(476003)(6486002)(486006)(66066001)(47776003)(6512007)(86362001)(446003)(11346002)(575784001)(68736007)(97736004)(53936002)(956004)(2616005)(50226002)(110426005)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4799;H:uefi-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR04MB4799;23:uKJVNZ5JdUJR4S3maF7ohy1KwBYYlHJ/+5HM/6b3Z?=
- =?us-ascii?Q?KM57Y7obP5u7Ds7V5rMcvq8b1TB1ncMvtnoyrFEx0JAB89oTmGwhRZ0o6VR2?=
- =?us-ascii?Q?1CwmMrc+HR4My6tCzLKs3v9tq3POZsCEppqQvb8r8hpvkN0h8CDBsof+3/US?=
- =?us-ascii?Q?s+p4AZQyz+By5OWstk3dAhBIs6EQFiv+sA8dQ6OGaPNGW/5/UBMmBmdlVfJC?=
- =?us-ascii?Q?TKUbp0tYlZuz6zyGVFnI0+r22l1j7tIAa2PwhCTmaIMqseuE/6bMhgEVCHst?=
- =?us-ascii?Q?f2Wc+LOYKbOCmHmk07uw+aHhlRy1JohPzl6rWUDiGq7Gsz8UIFYGjPIRXVNq?=
- =?us-ascii?Q?tMcVHGKZr/ebswGCAV7fwdSueZG4VFq3QXrj5QJR6tFB+xY+p6CnO3BG3S2T?=
- =?us-ascii?Q?w2iElXBcV6KKcr90IhFNd/FK2G8/aU1b6BIrbTTGbLz3GodNWf0Buxj42nPO?=
- =?us-ascii?Q?wprF/aorChsdY1dBwxGj5QGl4r7yIswh6igHGXZoOIB1jiLVjGtX+KLyEESO?=
- =?us-ascii?Q?WxK/GuhIOJ1iafXZZTJJaynIHyZwCm3CHeKBthlBb4nGMA5jvXZLEYL1wbJH?=
- =?us-ascii?Q?fGzoOTB8TyaHNc8hVgcHMdrjbc50+RworgxP5gRmuOKshoUs+kocylknluzq?=
- =?us-ascii?Q?lTQybw9ijT1sGzLFPneX0xwWEHOc5mYaHDWCfiHGDjLwLV7glRKWMpu/y7h7?=
- =?us-ascii?Q?NSHhOsKq6Hq9Tq/FGziC9eJpnGVgv3ie85v1SZo32w8yX7g7ELPrViO4fX2K?=
- =?us-ascii?Q?SnWTkgu6X2vKBJs/Q1fpR2+1zLSHtAasBDAU1rogSSuiiBLhd6JMrEnSqU1N?=
- =?us-ascii?Q?mTgyRnO1aWii8jkDc6LIgjdzcV2LxApxzBsb7y2LWAsCWc2yamw0uA4p/PW3?=
- =?us-ascii?Q?NaowwQa7lT+tsj2iyUC7ekKDMUDQwhvKB0DO/1JsCxSVEfa9NI3SwnJdjCPT?=
- =?us-ascii?Q?BqyPzsbZyDZ4ymr9UflxuYsXdD92yJIPoAMI9y7MCCnzPzAkGk6bTcRAzjTu?=
- =?us-ascii?Q?9K97jU0kR6yWYYd0QuoZpOq012PYBsuHzyrUQmQeWPjhGA12rIwv5KpiLLps?=
- =?us-ascii?Q?XZWkIpedsSE6FQnSM7RyQZdwsE7HlX9nWF2LewjLqCeMhb8TkySIWdjquabS?=
- =?us-ascii?Q?45hnhpoR1kZrwBItWoj4E28GNlzImhrz0K0O8I5dXM66jxxoMYg55s9k7b78?=
- =?us-ascii?Q?Stiun46MyTdGBr9WzFqg7dNrJnUhSFbMqaiCoH7ycspWndssNchlkZg3KDLo?=
- =?us-ascii?Q?CnQ0iKsd/H4zulN7WMb7x8vx/f9PUTSSLn8xewkteXvG5M6rmjkVGMT5zADL?=
- =?us-ascii?Q?FnIf+mdZu1L3A7oKeF3BoKTyB5zqDNBimIypugf3GLk?=
-X-Microsoft-Antispam-Message-Info: j/nF7/QyEKWegNeCiaZ4OJtHFv6uHrPyjneLKOdDf8pcuulIs7Lg8vl9SQ+BNo96I+j6mOVFkA5dAE9hok7jJHIq3OoC15TFVNHmiRUwo+VDWlJPQ7d0LphM3p98jfvOurIHiGEhV8P0tpAxC8lizHmLS2SlzBp9Nsjy8RVuxGan70xqZFhD57liDS2CyRLlInL9rvhBP6ZaC/pxXsgRDDNAdfYew7sOWW0Rvmo6lnaDi0jKxdxRRTNj7X2UWNnB062hyGQKemAFpfkcrWjbbERqElHZ1+Sxb/AXOTC1EOop4HYdjGKBd3fGHPIZNmlgBxqq7/PDkMTAG1OYuHmIA/PpktPjl0+ewHL34tldcNI=
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4799;6:4L+8j0wVzNiwXpBw6puxeQKr+Jj9SrMrr8an4sEkNsvrI1EfZXZWI5+BCVuIURFOlyase/iWPWEi2wXM7iAnD3k/G0USFhLGAZp+TA025ybJtDo4/jlxAQbwBSYdNvL383TIN0kUpGoXhrmxAIneng4Vzs4q68ulHXOfFywaSLtMCaAJ6cPX5Q0HNoiPSjt/cqHjb0PkvjPIWAG1g59RawK0Ol5yPqabUJIaMgYlBUzJKVJZu1PhmNpIRJKGxkwXQ/nB3AkNjVSP2kSyBPLpgbyamAJwM3tzpz7a8xdwWkz6tzZlyn1wvL1v2+RPcNNdMBufXFNTyLTQw4UanXFgWP9VgNu/PFrgNN+a7ENfpJY8IdhS4TBaRcHARPTfeQ2OnyZtD1J2O/BgdZICTpbVlSj2eAxFcv8twmuseBg7eoMxqmJqwPFk4Ng47dYVFWz72NmLbcaWmGpzMXU8RC0MGA==;5:pVtsjsmCX3VJaXYgYheSanYWO5sqpkv22ZLEgHsC7D0Y893qtvFYZiImVn0A3b9u0wk8+FouAAmWcZiolZ0GxWCsiZGTFygNotj6qrpEPb6A4PlvbMMhNyzjrX8w/FBJk14GZadzYtZfEAVD64LaAO2jDnCiOijFXiMJBKvugwY=;7:rW50b2jDkiSAfnWw27dhWs7Pyq7ubUkbp5rBZ3Ze/BLhsr1l05xQQ+WXMgNdXBrCSS2yubFN1iQFsR/hTKDygld7oi7PJAjBbBo6mKN8ws8QveVBVwfuUnpYAmcq5O8isBlyvp7ybEaMcaHcmYfx3rNtDFcHun+YJUyZs8lrwDPyxKD/po/sKxtri1s5Qz23LyUHttSOXpeUp/rNT1+d1anEmo7ftAoZLVPk8gOtl8mvfV+k94yEeyZJKyCQEsHN
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR04MB4799;23:YOZ2+vNvW4T8V9fv5jwo92t9s+8Y3e6O8686/mBwh?=
+ =?us-ascii?Q?t/3iFuBWp7+EVJ6+SKX1/IvTRiWo1bQfUExdSoGx5jpIXp1o7ptneLlY9Nvt?=
+ =?us-ascii?Q?vBcKqHffzKcCyD7MoqLfwvn4oa3+ouQ8dFB/WuqYyVqVEXNlDB+2E1oNweWD?=
+ =?us-ascii?Q?bcy+NAIvgvd22aNN+FnxJgZOAQo3S4ZdKheyzIA5Cq0X8otHgJy1utwV2au6?=
+ =?us-ascii?Q?jzVVGzA9RlliwAipcyxi20QDMcX7Y5YBVTyDTMy8VcPczhGfiz4VODEWLtZR?=
+ =?us-ascii?Q?d8b7qd35GVEtUVSdp3IA+Sv+Nf4E5DrA3tNUINONx1hVKBh1QM2a+ghVZCF+?=
+ =?us-ascii?Q?65deuaQ+QD2jg8dC+BeJ1BB06YEBUOqWSCUd/uSJ6Ui2Qu8bWvqHqsSYt1S7?=
+ =?us-ascii?Q?aWvmVYe+gbn6JQOlmx2opihT7QqC8K9n2IGXS4/5+zSbDBAm9JiAHoitWd5M?=
+ =?us-ascii?Q?Xew9O/VA32lBQyPHY2Jex69WrIbUMlxqJmtYzireMuV+XwMALxIHHWx1YqTK?=
+ =?us-ascii?Q?RYgrzAiY0jnbrf99mMAJ0ML1wQmkUWUQW3EVknBlGozKmx7GwHpwPhumnKWQ?=
+ =?us-ascii?Q?c4GAUw2+omRfTP6z3FAZ/jKljKstCqW3I8+G+gkYJwF0Gp8aeV8p3Hr3XHJk?=
+ =?us-ascii?Q?cVvR4MuqpdTpi3c0x9wk69Hmie9z/IybiReoBAYoQzZ4sibYKBO0i3yhMdDC?=
+ =?us-ascii?Q?fgIjxXtVJP8pXUKUINPSOVLA8iFT9NPrS71mdOKUdUGIDyJoHDpRK8h0TqCv?=
+ =?us-ascii?Q?IkoyzKepdfh4yjDpu1dLwJxwV4yTteOl+MBB+zjBRrOzLR8VdDSAyZPcJVDc?=
+ =?us-ascii?Q?Uz9KV11DZkelwoRgZ4seWa9ZxE1XLElk4wBD/sJZusaYEczAutSbAUVKEUtF?=
+ =?us-ascii?Q?xN98tsdNfy72ZmHeHOMAdl/m3+XH4l2ZF7lp7F4mQBeD7q5ZluQSrkNEOv0T?=
+ =?us-ascii?Q?s4Waf+w6+0/iIc57/1AR9/wwwts+OXRenx/x0X4RgeDiN8K+WWrhOFn0Mkoy?=
+ =?us-ascii?Q?o/wxRYNWuvujcZtVqd1yx8cva8fih39j77B/5s1KAk44GbhiizOHluE6Vrfe?=
+ =?us-ascii?Q?X/LTd60D4UC0aNQdULPKEhFPx9UyhKITup9dcR/U0uwpaorfo/vcSZdtoaYw?=
+ =?us-ascii?Q?YqF0tpIQvecE3weqIm9481V3A4XJ651l3Qc4OzohYajVICBl95Ga7llvwBry?=
+ =?us-ascii?Q?rfDFPu/ciTD3zVhima1oypyIerF/XtTlgRmW8xiOwf1nuxu9hqw8J4Wd+/Ks?=
+ =?us-ascii?Q?E7OWomMbqI3/xEZFzDBzVMTHG7whqANuKv7Ns1/CVhPINxLd0C6V2ytvloRX?=
+ =?us-ascii?Q?vLY2q88kGhxtFeNitb0ITQmac6p7QEj/4woPa/6OTOuAHxhU0BJjQwpgrU/c?=
+ =?us-ascii?Q?7fQXw=3D=3D?=
+X-Microsoft-Antispam-Message-Info: 2bkOBop03SEWKW80VCXdJ8rhMcyXQgDeQ1n4bN0I/0s+28nNavS4ZNLKqR/sHca/6zniPlUeNSueXWyiWWAJIvuDiCDlopI3e1WXNUJ22gWNKRgA28niMvh9bnT60m5eWSEpJMTal8MAJaYZ1La1DC0IPB7xG5c+eotLu4Z35n6e5LVxiXtXkadgutEy5W1s+csFN1uvUM1vyasyqaF/8FnqH57d19szx4BrKhgHlpEtxyhe1LqQc1zYEnZRx474b0/H+5jTQMOC0Xm/3nNhlr4d5/syLVkgNZt7GX/yNtzM0nRGNO4PoyqkkYrZ3iYsM32tN+3idNC0oWhEUFyhIiBCKmAETMja+nezaLTmL7c=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4799;6:+PRacPOoRksXaB6jseQZVcxhMVeli9eXvWXYGLl+lR8DQYyCiqLv1wjE/CqBzRENvvvl+5tPew47YUhzr4mcGuN9D8kWEpZ+B0H6JVLGuCoDNUArkfjgf6mISpo+NkeW8HymISkj1HZy9EWyzi5ECSZ/aF8rvMiYP1e//VGjokVwfV5L7WM/Fp5m7ZgBvjLwe2h0Cf1bed6jShiv6fxQL7rFsLWrc48s2R+t0tNHnFwbjoLlGdbZ3LVQthvN9al4lgpxOw/NMvHYxcH31yEU7kmgvqPOWykTMNe85b2wdEWO5uQ9PxpiqtvICKjFFYjIid8dU5fnKFTP71jDKAePYdsiPfOT6htZSEE7j9k/QkKo8xvh5/YHI9UjGKXZPku9k8csHKEVv+tGXWlQkkzvL6fukiv6KW7/gIiIoE18M72bimvAxHOXMghE3OvsBgL5DW8jN8qjesF29KRmg+51OA==;5:BoUciDbHdj8nrOhNLJt4vz8MnVFY9+7v0N0kKFtvrE85c/Xtpj3dxoNb4hqUWu64gaXBnjrjjEBsh5LXA4yKqgPPRNilc/iqu6vxsbNRz9rUPAvycMlmQdzMI/8kU2SEBKlsZJm+LlLpEH+ku3SXHXXDME3SaPRPWsCyIwE6iEk=;7:yP1jz01GG3JuQQSo0NeqLippsxoCVi5qMSIiIe400gEOqnw9B5rhj8k/wG14OfoiVtZCLDnZk2bz75Qe56xMsHyyOoNdfAPTr7j8JYFkaG6M/8z2AXwEPKIXZmPml8esRn0eDR4u4Ctq/wkqfegBN2c11HAM5GaUH5tvMlHHJUkNIknh+dbmPLM+yno58GGT2G+Tw4meaeM3sp64MF27johMtgJTsQg7SSid8RE3Q3rUb0jF6r+TYVTYh3HmOLEV
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2018 18:52:05.9608
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2018 18:52:10.4600
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c668b01f-5016-4eec-9b88-08d606ce08c6
+X-MS-Exchange-CrossTenant-Network-Message-Id: 06cbe479-3e9b-4dc6-e2a4-08d606ce0bdd
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4799
@@ -115,71 +120,603 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+LX2160A SoC is based on Layerscape Chassis Generation 3.2 Architecture.
 
-Add clockgen support for lx2160a.
-Added entry for compat 'fsl,lx2160a-clockgen'.
-As LX2160A is 16 core, so modified value for NUM_CMUX
+LX2160A features an advanced 16 64-bit ARM v8 CortexA72 processor cores
+in 8 cluster, CCN508, GICv3,two 64-bit DDR4 memory controller, 8 I2C
+controllers, 3 dspi, 2 esdhc,2 USB 3.0, mmu 500, 3 SATA, 4 PL011 SBSA
+UARTs etc.
 
-Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+Signed-off-by: Ramneek Mehresh <ramneek.mehresh@nxp.com>
+Signed-off-by: Zhang Ying-22455 <ying.zhang22455@nxp.com>
+Signed-off-by: Nipun Gupta <nipun.gupta@nxp.com>
+Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
 Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
 Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
 ---
- drivers/clk/clk-qoriq.c         | 14 +++++++++++++-
- drivers/cpufreq/qoriq-cpufreq.c |  1 +
- 2 files changed, 14 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 572 +++++++++++++++++++++++++
+ 1 file changed, 572 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 3a1812f..fc6e308 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -60,7 +60,7 @@ struct clockgen_muxinfo {
- };
- 
- #define NUM_HWACCEL	5
--#define NUM_CMUX	8
-+#define NUM_CMUX	16
- 
- struct clockgen;
- 
-@@ -570,6 +570,17 @@ static const struct clockgen_chipinfo chipinfo[] = {
- 		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
- 	},
- 	{
-+		.compat = "fsl,lx2160a-clockgen",
-+		.cmux_groups = {
-+			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
-+		},
-+		.cmux_to_group = {
-+			0, 0, 0, 0, 1, 1, 1, 1, -1
-+		},
-+		.pll_mask = 0x37,
-+		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
-+	},
-+	{
- 		.compat = "fsl,p2041-clockgen",
- 		.guts_compat = "fsl,qoriq-device-config-1.0",
- 		.init_periph = p2041_init_periph,
-@@ -1424,6 +1435,7 @@ CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1046a, "fsl,ls1046a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1088a, "fsl,ls1088a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
-+CLK_OF_DECLARE(qoriq_clockgen_lx2160a, "fsl,lx2160a-clockgen", clockgen_init);
- 
- /* Legacy nodes */
- CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
-diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
-index 3d773f6..83921b7 100644
---- a/drivers/cpufreq/qoriq-cpufreq.c
-+++ b/drivers/cpufreq/qoriq-cpufreq.c
-@@ -295,6 +295,7 @@ static const struct of_device_id node_matches[] __initconst = {
- 	{ .compatible = "fsl,ls1046a-clockgen", },
- 	{ .compatible = "fsl,ls1088a-clockgen", },
- 	{ .compatible = "fsl,ls2080a-clockgen", },
-+	{ .compatible = "fsl,lx2160a-clockgen", },
- 	{ .compatible = "fsl,p4080-clockgen", },
- 	{ .compatible = "fsl,qoriq-clockgen-1.0", },
- 	{ .compatible = "fsl,qoriq-clockgen-2.0", },
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+new file mode 100644
+index 0000000..e35e494
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+@@ -0,0 +1,572 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++//
++// Device Tree Include file for Layerscape-LX2160A family SoC.
++//
++// Copyright 2018 NXP
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/memreserve/ 0x80000000 0x00010000;
++
++/ {
++	compatible = "fsl,lx2160a";
++	interrupt-parent = <&gic>;
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		// 8 clusters having 2 Cortex-A72 cores each
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x0>;
++			clocks = <&clockgen 1 0>;
++			next-level-cache = <&cluster0_l2>;
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x1>;
++			clocks = <&clockgen 1 0>;
++			next-level-cache = <&cluster0_l2>;
++		};
++
++		cpu@100 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x100>;
++			clocks = <&clockgen 1 1>;
++			next-level-cache = <&cluster1_l2>;
++		};
++
++		cpu@101 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x101>;
++			clocks = <&clockgen 1 1>;
++			next-level-cache = <&cluster1_l2>;
++		};
++
++		cpu@200 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x200>;
++			clocks = <&clockgen 1 2>;
++			next-level-cache = <&cluster2_l2>;
++		};
++
++		cpu@201 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x201>;
++			clocks = <&clockgen 1 2>;
++			next-level-cache = <&cluster2_l2>;
++		};
++
++		cpu@300 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x300>;
++			clocks = <&clockgen 1 3>;
++			next-level-cache = <&cluster3_l2>;
++		};
++
++		cpu@301 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x301>;
++			clocks = <&clockgen 1 3>;
++			next-level-cache = <&cluster3_l2>;
++		};
++
++		cpu@400 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x400>;
++			clocks = <&clockgen 1 4>;
++			next-level-cache = <&cluster4_l2>;
++		};
++
++		cpu@401 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x401>;
++			clocks = <&clockgen 1 4>;
++			next-level-cache = <&cluster4_l2>;
++		};
++
++		cpu@500 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x500>;
++			clocks = <&clockgen 1 5>;
++			next-level-cache = <&cluster5_l2>;
++		};
++
++		cpu@501 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x501>;
++			clocks = <&clockgen 1 5>;
++			next-level-cache = <&cluster5_l2>;
++		};
++
++		cpu@600 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x600>;
++			clocks = <&clockgen 1 6>;
++			next-level-cache = <&cluster6_l2>;
++		};
++
++		cpu@601 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x601>;
++			clocks = <&clockgen 1 6>;
++			next-level-cache = <&cluster6_l2>;
++		};
++
++		cpu@700 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x700>;
++			clocks = <&clockgen 1 7>;
++			next-level-cache = <&cluster7_l2>;
++		};
++
++		cpu@701 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x701>;
++			clocks = <&clockgen 1 7>;
++			next-level-cache = <&cluster7_l2>;
++		};
++
++		cluster0_l2: l2-cache0 {
++			compatible = "cache";
++		};
++
++		cluster1_l2: l2-cache1 {
++			compatible = "cache";
++		};
++
++		cluster2_l2: l2-cache2 {
++			compatible = "cache";
++		};
++
++		cluster3_l2: l2-cache3 {
++			compatible = "cache";
++		};
++
++		cluster4_l2: l2-cache4 {
++			compatible = "cache";
++		};
++
++		cluster5_l2: l2-cache5 {
++			compatible = "cache";
++		};
++
++		cluster6_l2: l2-cache6 {
++			compatible = "cache";
++		};
++
++		cluster7_l2: l2-cache7 {
++			compatible = "cache";
++		};
++	};
++
++	gic: interrupt-controller@6000000 {
++		compatible = "arm,gic-v3";
++		reg = <0x0 0x06000000 0 0x10000>, // GIC Dist
++			<0x0 0x06200000 0 0x200000>, // GICR (RD_base +
++						     // SGI_base)
++			<0x0 0x0c0c0000 0 0x2000>, // GICC
++			<0x0 0x0c0d0000 0 0x1000>, // GICH
++			<0x0 0x0c0e0000 0 0x20000>; // GICV
++		#interrupt-cells = <3>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++		interrupt-controller;
++		interrupts = <1 9 0x4>;
++
++		its: gic-its@6020000 {
++			compatible = "arm,gic-v3-its";
++			msi-controller;
++			reg = <0x0 0x6020000 0 0x20000>;
++		};
++	};
++
++	rstcr: syscon@1e60000 {
++		compatible = "syscon";
++		reg = <0x0 0x1e60000 0x0 0x4>;
++	};
++
++	reboot {
++		compatible ="syscon-reboot";
++		regmap = <&rstcr>;
++		offset = <0x0>;
++		mask = <0x2>;
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <1 13 4>, // Physical Secure PPI, active-low
++			     <1 14 4>, // Physical Non-Secure PPI, active-low
++			     <1 11 4>, // Virtual PPI, active-low
++			     <1 10 4>; // Hypervisor PPI, active-low
++	};
++
++	pmu {
++		compatible = "arm,armv8-pmuv3";
++		interrupts = <1 7 0x8>; // PMU PPI, Level low type
++	};
++
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++	memory@80000000 {
++		// DRAM space - 1, size : 2 GB DRAM
++		device_type = "memory";
++		reg = <0x00000000 0x80000000 0 0x80000000>;
++	};
++
++	ddr1: memory-controller@1080000 {
++		compatible = "fsl,qoriq-memory-controller";
++		reg = <0x0 0x1080000 0x0 0x1000>;
++		interrupts = <0 17 0x4>;
++		little-endian;
++	};
++
++	ddr2: memory-controller@1090000 {
++		compatible = "fsl,qoriq-memory-controller";
++		reg = <0x0 0x1090000 0x0 0x1000>;
++		interrupts = <0 18 0x4>;
++		little-endian;
++	};
++
++	sysclk: sysclk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <100000000>;
++		clock-output-names = "sysclk";
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		clockgen: clocking@1300000 {
++			compatible = "fsl,lx2160a-clockgen";
++			reg = <0 0x1300000 0 0xa0000>;
++			#clock-cells = <2>;
++			clocks = <&sysclk>;
++		};
++
++		crypto: crypto@8000000 {
++			compatible = "fsl,sec-v5.0", "fsl,sec-v4.0";
++			fsl,sec-era = <10>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0x0 0x00 0x8000000 0x100000>;
++			reg = <0x00 0x8000000 0x0 0x100000>;
++			interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>;
++			dma-coherent;
++			status = "disabled";
++
++			sec_jr0: jr@10000 {
++				compatible = "fsl,sec-v5.0-job-ring",
++					     "fsl,sec-v4.0-job-ring";
++				reg        = <0x10000 0x10000>;
++				interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			sec_jr1: jr@20000 {
++				compatible = "fsl,sec-v5.0-job-ring",
++					     "fsl,sec-v4.0-job-ring";
++				reg        = <0x20000 0x10000>;
++				interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			sec_jr2: jr@30000 {
++				compatible = "fsl,sec-v5.0-job-ring",
++					     "fsl,sec-v4.0-job-ring";
++				reg        = <0x30000 0x10000>;
++				interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			sec_jr3: jr@40000 {
++				compatible = "fsl,sec-v5.0-job-ring",
++					     "fsl,sec-v4.0-job-ring";
++				reg        = <0x40000 0x10000>;
++				interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
++			};
++		};
++
++		dcfg: dcfg@1e00000 {
++			compatible = "fsl,lx2160a-dcfg", "syscon";
++			reg = <0x0 0x1e00000 0x0 0x10000>;
++			little-endian;
++		};
++
++		gpio0: gpio@2300000 {
++			compatible = "fsl,qoriq-gpio";
++			reg = <0x0 0x2300000 0x0 0x10000>;
++			interrupts = <0 36 0x4>; // Level high type
++			gpio-controller;
++			little-endian;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		gpio1: gpio@2310000 {
++			compatible = "fsl,qoriq-gpio";
++			reg = <0x0 0x2310000 0x0 0x10000>;
++			interrupts = <0 36 0x4>; // Level high type
++			gpio-controller;
++			little-endian;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		gpio2: gpio@2320000 {
++			compatible = "fsl,qoriq-gpio";
++			reg = <0x0 0x2320000 0x0 0x10000>;
++			interrupts = <0 37 0x4>; // Level high type
++			gpio-controller;
++			little-endian;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		gpio3: gpio@2330000 {
++			compatible = "fsl,qoriq-gpio";
++			reg = <0x0 0x2330000 0x0 0x10000>;
++			interrupts = <0 37 0x4>; // Level high type
++			gpio-controller;
++			little-endian;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++
++		i2c0: i2c@2000000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2000000 0x0 0x10000>;
++			interrupts = <0 34 0x4>; // Level high type
++			clock-names = "i2c";
++			clocks = <&clockgen 4 7>;
++			fsl-scl-gpio = <&gpio2 15 0>;
++			status = "disabled";
++		};
++
++		i2c1: i2c@2010000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2010000 0x0 0x10000>;
++			interrupts = <0 34 0x4>; // Level high type
++			clock-names = "i2c";
++			clocks = <&clockgen 4 7>;
++			status = "disabled";
++		};
++
++		i2c2: i2c@2020000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2020000 0x0 0x10000>;
++			interrupts = <0 35 0x4>; // Level high type
++			clock-names = "i2c";
++			clocks = <&clockgen 4 7>;
++			status = "disabled";
++		};
++
++		i2c3: i2c@2030000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2030000 0x0 0x10000>;
++			interrupts = <0 35 0x4>; // Level high type
++			clock-names = "i2c";
++			clocks = <&clockgen 4 7>;
++			status = "disabled";
++		};
++
++		i2c4: i2c@2040000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2040000 0x0 0x10000>;
++			interrupts = <0 74 0x4>; // Level high type
++			clock-names = "i2c";
++			clocks = <&clockgen 4 7>;
++			fsl-scl-gpio = <&gpio2 16 0>;
++			status = "disabled";
++		};
++
++		i2c5: i2c@2050000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2050000 0x0 0x10000>;
++			interrupts = <0 74 0x4>; // Level high type
++			clock-names = "i2c";
++			clocks = <&clockgen 4 7>;
++			status = "disabled";
++		};
++
++		i2c6: i2c@2060000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2060000 0x0 0x10000>;
++			interrupts = <0 75 0x4>; // Level high type
++			clock-names = "i2c";
++			clocks = <&clockgen 4 7>;
++			status = "disabled";
++		};
++
++		i2c7: i2c@2070000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2070000 0x0 0x10000>;
++			interrupts = <0 75 0x4>; // Level high type
++			clock-names = "i2c";
++			clocks = <&clockgen 4 7>;
++			status = "disabled";
++		};
++
++		uart0: serial@21c0000 {
++			device_type = "serial";
++			compatible = "arm,pl011","arm,sbsa-uart";
++			reg = <0x0 0x21c0000 0x0 0x1000>;
++			interrupts = <0 32 0x4>;	// Level high type
++			current-speed = <115200>;
++			status = "disabled";
++		};
++
++		uart1: serial@21d0000 {
++			device_type = "serial";
++			compatible = "arm,pl011","arm,sbsa-uart";
++			reg = <0x0 0x21d0000 0x0 0x1000>;
++			interrupts = <0 33 0x4>;	// Level high type
++			current-speed = <115200>;
++			status = "disabled";
++		};
++
++		uart2: serial@21e0000 {
++			device_type = "serial";
++			compatible = "arm,pl011","arm,sbsa-uart";
++			reg = <0x0 0x21e0000 0x0 0x1000>;
++			interrupts = <0 72 0x4>;	// Level high type
++			current-speed = <115200>;
++			status = "disabled";
++		};
++
++		uart3: serial@21f0000 {
++			device_type = "serial";
++			compatible = "arm,pl011","arm,sbsa-uart";
++			reg = <0x0 0x21f0000 0x0 0x1000>;
++			interrupts = <0 73 0x4>;	// Level high type
++			current-speed = <115200>;
++			status = "disabled";
++		};
++
++		smmu: iommu@5000000 {
++			compatible = "arm,mmu-500";
++			reg = <0 0x5000000 0 0x800000>;
++			#iommu-cells = <1>;
++			#global-interrupts = <14>;
++			interrupts = <0 13 4>, // global secure fault
++				     <0 14 4>, // combined secure interrupt
++				     <0 15 4>, // global non-secure fault
++				     <0 16 4>, // combined non-secure interrupt
++				// performance counter interrupts 0-9
++				     <0 211 4>, <0 212 4>,
++				     <0 213 4>, <0 214 4>,
++				     <0 215 4>, <0 216 4>,
++				     <0 217 4>, <0 218 4>,
++				     <0 219 4>, <0 220 4>,
++				// per context interrupt, 64 interrupts
++				     <0 146 4>, <0 147 4>,
++				     <0 148 4>, <0 149 4>,
++				     <0 150 4>, <0 151 4>,
++				     <0 152 4>, <0 153 4>,
++				     <0 154 4>, <0 155 4>,
++				     <0 156 4>, <0 157 4>,
++				     <0 158 4>, <0 159 4>,
++				     <0 160 4>, <0 161 4>,
++				     <0 162 4>, <0 163 4>,
++				     <0 164 4>, <0 165 4>,
++				     <0 166 4>, <0 167 4>,
++				     <0 168 4>, <0 169 4>,
++				     <0 170 4>, <0 171 4>,
++				     <0 172 4>, <0 173 4>,
++				     <0 174 4>, <0 175 4>,
++				     <0 176 4>, <0 177 4>,
++				     <0 178 4>, <0 179 4>,
++				     <0 180 4>, <0 181 4>,
++				     <0 182 4>, <0 183 4>,
++				     <0 184 4>, <0 185 4>,
++				     <0 186 4>, <0 187 4>,
++				     <0 188 4>, <0 189 4>,
++				     <0 190 4>, <0 191 4>,
++				     <0 192 4>, <0 193 4>,
++				     <0 194 4>, <0 195 4>,
++				     <0 196 4>, <0 197 4>,
++				     <0 198 4>, <0 199 4>,
++				     <0 200 4>, <0 201 4>,
++				     <0 202 4>, <0 203 4>,
++				     <0 204 4>, <0 205 4>,
++				     <0 206 4>, <0 207 4>,
++				     <0 208 4>, <0 209 4>;
++			dma-coherent;
++		};
++
++		usb0: usb3@3100000 {
++			status = "disabled";
++			compatible = "snps,dwc3";
++			reg = <0x0 0x3100000 0x0 0x10000>;
++			interrupts = <0 80 0x4>; // Level high type
++			dr_mode = "host";
++			snps,quirk-frame-length-adjustment = <0x20>;
++			snps,dis_rxdet_inp3_quirk;
++		};
++
++		usb1: usb3@3110000 {
++			status = "disabled";
++			compatible = "snps,dwc3";
++			reg = <0x0 0x3110000 0x0 0x10000>;
++			interrupts = <0 81 0x4>; // Level high type
++			dr_mode = "host";
++			snps,quirk-frame-length-adjustment = <0x20>;
++			snps,dis_rxdet_inp3_quirk;
++		};
++
++		watchdog@23a0000 {
++			compatible = "arm,sbsa-gwdt";
++			reg = <0x0 0x23a0000 0 0x1000>,
++			      <0x0 0x2390000 0 0x1000>;
++			interrupts = <0 59 4>;
++			timeout-sec = <30>;
++		};
++
++	};
++};
 -- 
 2.7.4
 
