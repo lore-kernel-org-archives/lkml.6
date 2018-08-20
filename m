@@ -2,110 +2,97 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C99E3C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02669C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 787A620C0C
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:07:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAD58208CC
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:09:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VQKTxg9c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787A620C0C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="vwV8x+BI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAD58208CC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbeHTUYR (ORCPT
+        id S1727097AbeHTU0C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 16:24:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54034 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbeHTUYR (ORCPT
+        Mon, 20 Aug 2018 16:26:02 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:58370 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726228AbeHTU0C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 16:24:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=l8aFa40Vi7Sszsphg0yzSXuipsctzw7GyuBLhREIxMs=; b=VQKTxg9cUUFQnjSwFFNfPy6Oe
-        cVo6h5WcnUrGAuzdEW+3c/N3TyJR5iSP5Qx9bXlVtbOy8+9ydVXJoEFGzOEU5UyOBO9R0VWpW3wZV
-        qCwULcBgPLC+leQSJqrs+WRtw3v5R7vxLX/x6JfW3yFOg42KTKYEkrRTqC4UVWKXLdSfv8Zqd4iIf
-        76m79dx6XkLdiBtk3TqQDo8/LDolKwWn5HJC+B/h7dnhKHXzmGn5mLcFPwx3uSGHYMpvAiyQM0QMv
-        mQEmmNnMq1bGxZ7gx7k/bOkd2/mGBeArpG6Ezaj7wbUCqetI6RnP2H1bPTBog6ypSHaGDywkBDTel
-        0dizQRDWw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1frnea-0003p5-TU; Mon, 20 Aug 2018 17:07:44 +0000
-Date:   Mon, 20 Aug 2018 10:07:44 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Li RongQing <lirongqing@baidu.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        darrick.wong@oracle.com
-Subject: Re: [PATCH] mm: introduce kvvirt_to_page() helper
-Message-ID: <20180820170744.GD25153@bombadil.infradead.org>
-References: <1534596541-31393-1-git-send-email-lirongqing@baidu.com>
- <20180820144116.GO29735@dhcp22.suse.cz>
- <20180820144923.GA25153@bombadil.infradead.org>
- <20180820162406.GQ29735@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180820162406.GQ29735@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Mon, 20 Aug 2018 16:26:02 -0400
+Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id w7KH8lMi020657;
+        Tue, 21 Aug 2018 02:08:48 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w7KH8lMi020657
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1534784928;
+        bh=W+ulMFy2DYDNDGT0WCl0WP5mY2rpiCkYnN0RMOcb80Q=;
+        h=From:To:Cc:Subject:Date:From;
+        b=vwV8x+BI6RIrLqIpWj05DWNp4XeSv0xZPdeaEW83PAI9mHInMLx/TkJpdfxJ7aLyO
+         FCZ9SAQeJmPH1j45ypV6wzB3fGlSRA2RjNTrUfjlIoy3ArzgG1mpc5dcBB7BC9ZCL1
+         JOcCsy2mApd5tXyp9o5U6dJCKfz/d+geFEzI4HxcRdCjbQad7ikQh362LePoG05GmZ
+         KY7AyHn/5HLhsaPIBklUyJXHq3StJ2vuB6cHLAzFmAyr1gmY8vGGqta923Yz3Mrx8p
+         3bqE+Go9Pbx33h3U8ajCeEMfthGpxhwdNYqnxIAkOgCxRDWYGqa5+c9QV5q2/+yDR/
+         v26tYMdH5eJkw==
+X-Nifty-SrcIP: [218.220.227.105]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        sparclinux@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] sparc: fix KBUILD_DEFCONFIG for ARCH=sparc32
+Date:   Tue, 21 Aug 2018 02:08:28 +0900
+Message-Id: <1534784908-11692-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 06:24:06PM +0200, Michal Hocko wrote:
-> On Mon 20-08-18 07:49:23, Matthew Wilcox wrote:
-> > On Mon, Aug 20, 2018 at 04:41:16PM +0200, Michal Hocko wrote:
-> > > On Sat 18-08-18 20:49:01, Li RongQing wrote:
-> > > > The new helper returns address mapping page, which has several users
-> > > > in individual subsystem, like mem_to_page in xfs_buf.c and pgv_to_page
-> > > > in af_packet.c, unify them
-> > > 
-> > > kvvirt_to_page is a weird name. I guess you wanted it to fit into
-> > > kv*alloc, kvfree naming, right? If yes then I guess kvmem_to_page
-> > > would be slightly better.
-> > > 
-> > > Other than that the patch makes sense to me. It would be great to add
-> > > some documentation and be explicit that the call is only safe on
-> > > directly mapped kernel address and vmalloc areas.
-> > 
-> > ... and not safe if the length crosses a page boundary.  I don't want to
-> > see new code emerge that does kvmalloc(PAGE_SIZE * 2, ...); kvmem_to_page()
-> > and have it randomly crash when kvmalloc happens to fall back to vmalloc()
-> > under heavy memory pressure.
-> > 
-> > Also, people are going to start using this for stack addresses.  Perhaps
-> > we should have a debug option to guard against them doing that.
-> 
-> I do agree that such an interface is quite dangerous. That's why I was
-> stressing out the proper documentation. I would be much happier if we
-> could do without it altogether. Maybe the existing users can be rewoked
-> to not rely on the addr2page functionality. If that is not the case then
-> we should probably offer a helper. With some WARN_ONs to catch misuse
-> would be really nice. I am not really sure how many abuses can we catch
-> actually though.
+As commit 5ba800962a80 ("kbuild: update ARCH alias info for sparc")
+addressed, SPARC accepts ARCH=sparc32 as an alias.
 
-I certainly understand the enthusiasm for sharing this code rather than
-having dozens of places outside the VM implement their own version of it.
-But I think most of these users are using code that's working at the wrong
-level.  Most of them seem to have an address range which may-or-may-not-be
-virtually mapped and they want to get an array-of-pages for that.
+However, arch/sparc/Makefile wrongly sets KBUILD_DEFCONFIG, then
+sparc64_defconfig is chosen as the base configuration for ARCH=sparc32.
 
-Perhaps we should offer -that- API instead.  vmalloc/vmap already has
-an array-of-pages, and the various users could be given a pointer to
-that array.  If the memory isn't vmapped, maybe the caller could pass
-an array pointer like XFS does, or we could require them to pass GFP flags
-to allocate a new array.
+  $ make ARCH=sparc32 defconfig
+  *** Default configuration is based on 'sparc64_defconfig'
+  #
+  # configuration written to .config
+  #
+
+Fix the logic to choose sparc64_defconfig only when ARCH=sparc64.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ arch/sparc/Makefile | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/sparc/Makefile b/arch/sparc/Makefile
+index 966a13d..e32ef20 100644
+--- a/arch/sparc/Makefile
++++ b/arch/sparc/Makefile
+@@ -9,10 +9,10 @@
+ # Copyright (C) 1998 Jakub Jelinek (jj@ultra.linux.cz)
+ 
+ # We are not yet configured - so test on arch
+-ifeq ($(ARCH),sparc)
+-        KBUILD_DEFCONFIG := sparc32_defconfig
+-else
++ifeq ($(ARCH),sparc64)
+         KBUILD_DEFCONFIG := sparc64_defconfig
++else
++        KBUILD_DEFCONFIG := sparc32_defconfig
+ endif
+ 
+ ifeq ($(CONFIG_SPARC32),y)
+-- 
+2.7.4
+
