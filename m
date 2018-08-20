@@ -4,60 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B025C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 748C0C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:09:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D01872174A
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:08:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 238332174A
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 23:09:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="sGJD7sfT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D01872174A
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="oNLBE2p+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 238332174A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbeHUC0W (ORCPT
+        id S1726755AbeHUC0q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 22:26:22 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:43258 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbeHUC0V (ORCPT
+        Mon, 20 Aug 2018 22:26:46 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:43800 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbeHUC0q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 22:26:21 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7KN4v3G156991;
-        Mon, 20 Aug 2018 23:08:29 GMT
+        Mon, 20 Aug 2018 22:26:46 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7KN4EU8114293;
+        Mon, 20 Aug 2018 23:08:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
  references : from : message-id : date : mime-version : in-reply-to :
  content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=OVN0wKsxWhpVqWFmisr7CvOUEaNdiz06xW6cMcmfsTw=;
- b=sGJD7sfTYOVada4DyhaC+7g5Q5a53VeCGTbB6SF36nJcW3N7Y/uj6Tk9l2Eep+Aq49bK
- hfQ0jvWLBpFwEKPgQCJDTW3p3MAG/L+u3Cx4p/qbZ4UTZ/YNfHJqy+0vdNHV1bsicvQi
- tBo5SlZMrGonczNRXMSpq++I7zYr9djyd88U8G7pLBxqk7CqF67FaE7n12rXHaa8rLdD
- sPM6iN6B0urd71wOFKn1MgvjtpA7WslOa8lDF2Fs26x1ZrmPh7epxgpm1kmqcDqN3s68
- emL/lasNxl8fxf47b+ltu8oCXfUFK6SbjsPJf6H9fodlNHejqsATeOoBf6S30rkrzoaL jQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2kxbdps8rs-1
+ bh=v5/oN9SgfH+uTcdUZj7qLIvrx/QsTn9sn0HaYmTZ/S8=;
+ b=oNLBE2p+Gi9t7tqyF2WLGJYFn0Rnr/Ar9mv4VXczXkeYayD91I+RvJ3KdtUA3voPtHUQ
+ xxaJQGA7ogIVm1rG0r8XJDO9sTGqdOTthzzrH2I+kOZ4WoOMwI5WZ8TaYEbU3+nhH0KO
+ w8k47Ccy8A/tVYFbyrptHj1/5Izmhdl7W5Oq8EHw/vvyFhwmKVvuNYuhyz64Gv/On8qC
+ q6XIKvN3sCUmaEWTWQVw6PokWYr411RzS6IWOeo42KnB8IrWVaX8wmS7VuQwtyssVYKd
+ tOg9iZi0CkrFajawR/XuHMz1LlDv4qRZ1Vu89/tUVdsT2X2u4sYvdPhQBcCcubRBVL9B ug== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2kxc3qh6sf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Aug 2018 23:08:29 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7KN8RRO026537
+        Mon, 20 Aug 2018 23:08:53 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7KN8r2R003355
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Aug 2018 23:08:28 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7KN8R3w008416;
-        Mon, 20 Aug 2018 23:08:27 GMT
+        Mon, 20 Aug 2018 23:08:53 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7KN8qm3022665;
+        Mon, 20 Aug 2018 23:08:53 GMT
 Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 20 Aug 2018 16:08:26 -0700
-Subject: Re: [PATCH] x86/xen: remove unused function
- xen_auto_xlated_memory_setup()
+        with ESMTP ; Mon, 20 Aug 2018 16:08:52 -0700
+Subject: Re: [PATCH] xen: remove unused hypercall functions
 To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
         xen-devel@lists.xenproject.org, x86@kernel.org
 Cc:     hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com
-References: <20180820130203.11501-1-jgross@suse.com>
+References: <20180820130330.11704-1-jgross@suse.com>
 From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
@@ -103,18 +102,18 @@ Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
  Fm5PY8YtX576DchSP6qJC57/eAAe/9ztZdVAdesQwGb9hZHJc75B+VNm4xrh/PJO6c1THqdQ
  19WVJ+7rDx3PhVncGlbAOiiiE3NOFPJ1OQYxPKtpBUukAlOTnkKE6QcA4zckFepUkfmBV1wM
  Jg6OxFYd01z+a+oL
-Message-ID: <4e9a92ce-854b-75f1-c164-f38fc67f7c98@oracle.com>
-Date:   Mon, 20 Aug 2018 19:09:52 -0400
+Message-ID: <80a934d8-d07d-0dc5-b7f9-2aa91bdd6dc3@oracle.com>
+Date:   Mon, 20 Aug 2018 19:10:18 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180820130203.11501-1-jgross@suse.com>
+In-Reply-To: <20180820130330.11704-1-jgross@suse.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8991 signatures=668707
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=848
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=766
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1807170000 definitions=main-1808200233
 Sender: linux-kernel-owner@vger.kernel.org
@@ -122,13 +121,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/20/2018 09:02 AM, Juergen Gross wrote:
-> xen_auto_xlated_memory_setup() is a leftover from PVH V1. Remove it.
+On 08/20/2018 09:03 AM, Juergen Gross wrote:
+> Remove Xen hypercall functions which are used nowhere in the kernel.
 >
 > Signed-off-by: Juergen Gross <jgross@suse.com>
->
-
+> ---
 
 Applied to for-linus-19b.
 
 -boris
+
