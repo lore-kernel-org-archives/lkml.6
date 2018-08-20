@@ -2,106 +2,80 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFCC9C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C027C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:47:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E7E921473
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:43:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49C5F21473
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:47:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ot5GXT4D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E7E921473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FfDkvOPG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49C5F21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbeHTVAA (ORCPT
+        id S1726346AbeHTVDe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 17:00:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36604 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726106AbeHTVAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 17:00:00 -0400
-Received: from [192.168.0.114] (cpe-174-109-247-98.nc.res.rr.com [174.109.247.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08BC121473;
-        Mon, 20 Aug 2018 17:43:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534787006;
-        bh=7tLkMFMr/o1N3ZqcMkPOIu4owKJjoZO0QGPq1ozaRqk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Ot5GXT4Dsb7t2drWPVjq2eQiN6sGX21NGjWA4DmeZduYbHkGLQl7QAREctjau7ih0
-         BSbBgMzLa5k5TE9WtgpHR9cEzx+t/sHwd0MNpnrJCyDQq/4oT7AG+p5WP+d0Rsr5Pu
-         HcwOIMYJNpl01zsTAwPWN1jTifZXBrqGZ24sF/8s=
-Subject: Re: [PATCH v8 2/2] PCI: pciehp: Mask AER surprise link down error if
- hotplug is enabled
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180818065126.77912-1-okaya@kernel.org>
- <20180818065126.77912-2-okaya@kernel.org>
- <20180820082150.r4q47ppqqclaschd@wunner.de>
-From:   Sinan Kaya <okaya@kernel.org>
-Message-ID: <38fd0d0a-6d60-c8db-f155-e6078260513b@kernel.org>
-Date:   Mon, 20 Aug 2018 13:43:22 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180820082150.r4q47ppqqclaschd@wunner.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 20 Aug 2018 17:03:34 -0400
+Received: from mail-ua1-f74.google.com ([209.85.222.74]:52687 "EHLO
+        mail-ua1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbeHTVDd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 17:03:33 -0400
+Received: by mail-ua1-f74.google.com with SMTP id t22-v6so6282956uap.19
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 10:46:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=1ovlQGkYHvOVXMYn2XNXpNdqox9/+NQ/7n5Lng2ePc8=;
+        b=FfDkvOPG5NCAiCET8/hpfg3g2vDMJ4uWMJwvCNREJ0IhgylMxI7L9xkXYNFsjdpJvE
+         yxtMvdC/KmT9pCUquy/zBZEzxjdiwoDuMXf6pPKiwGqkrM1QA7nrGYyBeX7rGU9kLG/9
+         KprsXw7jXsnr3QsNX/5cUQQZy28PF4TJIEhbP5KoPoRJPgNWzMRt26+lhujj6wr72KRl
+         dd4qBwSdV+BEVHy/KUgc+zsu7mX9aCkxioEM8BrVhhS1cXeWS8dZBe0ZZJL28PEmDjrB
+         W1qpqv9mGxHezCDN9WYJNTtUtiLzIN2higHrXf0No5hNEvgw6NNl2ekmg3+YyiALdFIT
+         ewOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=1ovlQGkYHvOVXMYn2XNXpNdqox9/+NQ/7n5Lng2ePc8=;
+        b=dqbQg1u3HwP6h+hpCCFhy5eLeIVfJlBK+NP2dycWmB9php2RF/P+co6knDv9ajaxko
+         kUkDYYM+n8N5yR/zSxVdbtrYTdqnh42djKRYDJD9q1WgO/aPTTIf7cBDuW+FfyojrVEF
+         g+DSbaYi1/1R7qG5hHG97Rju1ZxETVjGt3simhvwRXa42JXFNh9BwOdKS+dT+rpzzQPi
+         Oj9rkMJZDdQmATQ3KDUAKWTrg9+bgOOO7ZDnrC/oFsvwwMAbAV9WyZuyoZzbfDniLWWA
+         i9BQtYVJUZqny0Pd6hgEmCVGEX8/7BkuJ/UHUeaAPyOxzmEJ2YqgH8qVl5cj2htqUdGU
+         ikyQ==
+X-Gm-Message-State: APzg51B/wm0si5yaiH//d+QY7b2HJKtsPFNn3jV8eOPffg2ZOQeP4S4I
+        PzelmumjqE0/litTfXbZ5V8HwWJwTRXy7ScPX+E=
+X-Google-Smtp-Source: ANB0Vdb+w0o+hkOKwhWGRXgLHgaaYZa/ceUp1jJfXCDdG7yXZIDvuJSdR8MZQdAiXuOrrhySxY/eoFmSNAdJHngZ82s=
+X-Received: by 2002:a1f:b907:: with SMTP id j7-v6mr1344458vkf.39.1534787218471;
+ Mon, 20 Aug 2018 10:46:58 -0700 (PDT)
+Date:   Mon, 20 Aug 2018 10:46:55 -0700
+In-Reply-To: <4cdd4ab9ddd16f1fb168266643264595782fd890.camel@perches.com>
+Message-Id: <20180820174655.75739-1-ndesaulniers@google.com>
+Mime-Version: 1.0
+References: <4cdd4ab9ddd16f1fb168266643264595782fd890.camel@perches.com>
+X-Mailer: git-send-email 2.18.0.865.gffc8e1a3cd6-goog
+Subject: Re: Build failures with gcc 4.5 and older
+From:   Nick Desaulniers <ndesaulniers@google.com>
+To:     joe@perches.com
+Cc:     akpm@linux-foundation.org, dave.hansen@intel.com, efault@gmx.de,
+        linux-kernel@vger.kernel.org, linux@roeck-us.net, riel@surriel.com,
+        torvalds@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/20/2018 4:21 AM, Lukas Wunner wrote:
-> On Fri, Aug 17, 2018 at 11:51:10PM -0700, Sinan Kaya wrote:
->> +static int pciehp_control_surprise_error(struct controller *ctrl, bool enable)
-> 
-> The return value isn't checked, so this could return void.
-> 
+I think we should take Joe's patch.
 
-Sure, I can do that.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-> 
->> @@ -280,6 +303,9 @@ static int pciehp_probe(struct pcie_device *dev)
->>   
->>   	pciehp_check_presence(ctrl);
->>   
->> +	/* We want exclusive control of link down events in hotplug driver */
->> +	pciehp_control_surprise_error(ctrl, false);
->> +
->>   	return 0;
-> 
-> Hm, if the platform firmware hasn't granted native hotplug control to OSPM,
-> or if some other hotplug driver than pciehp is used, shouldn't surprise down
-> be ignored by error recovery as well?  If yes, the mask would have to be set
-> in generic code somewhere in drivers/pci/probe.c I guess, based on the
-> is_hotplug_bridge bit in struct pci_dev.
-
-I could move this code if we know that is_hotplug_bridge flag is set
-regardless of OS hotplug driver control or not.
-
-
-> 
-> (Interestingly, PCI_ERR_UNCOR_MASK is already changed in probe.c by
-> program_hpp_type2().  That seems to be ACPI-specific code, which kind
-> of begs the question why it's not in pci-acpi.c?)
-
-Yes, you can tell the OS what AER mask to set following hotplug
-insertion via ACPI HPP table especially if you remove a hotplug bridge.
-This is used during ACPI hotplug.
-
-> 
-> Thanks,
-> 
-> Lukas
-> 
-
+(sorry for the lack of context, trying out the reply instructions from:
+https://lore.kernel.org/lkml/4cdd4ab9ddd16f1fb168266643264595782fd890.camel@perches.com/)
