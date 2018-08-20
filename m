@@ -2,175 +2,114 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A905C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F23F5C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DEED20C0C
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:57:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DEED20C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A72F820C0C
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:58:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A72F820C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbeHTNMG (ORCPT
+        id S1726498AbeHTNNs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 09:12:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52328 "EHLO mx1.redhat.com"
+        Mon, 20 Aug 2018 09:13:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58122 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725948AbeHTNMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 09:12:06 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 87BCD26354;
-        Mon, 20 Aug 2018 09:57:08 +0000 (UTC)
-Received: from [10.36.117.169] (ovpn-117-169.ams2.redhat.com [10.36.117.169])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5EFE063F2F;
-        Mon, 20 Aug 2018 09:57:05 +0000 (UTC)
-Subject: Re: [PATCH v1 5/5] mm/memory_hotplug: print only with DEBUG_VM in
- online/offline_pages()
-To:     Wei Yang <richard.weiyang@gmail.com>,
-        Oscar Salvador <osalvador@techadventures.net>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Jia He <jia.he@hxt-semitech.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Petr Tesarik <ptesarik@suse.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Baoquan He <bhe@redhat.com>, Ross Zwisler <zwisler@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20180816100628.26428-1-david@redhat.com>
- <20180816100628.26428-6-david@redhat.com>
- <20180817081853.GB17638@techadventures.net>
- <20180819123403.GA22352@WeideMacBook-Pro.local>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <a36c4a26-658a-f57a-fdff-9fcf17fc27a6@redhat.com>
-Date:   Mon, 20 Aug 2018 11:57:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1725948AbeHTNNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 09:13:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AB05AAE3A;
+        Mon, 20 Aug 2018 09:58:49 +0000 (UTC)
+From:   Vlastimil Babka <vbabka@suse.cz>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, stable@vger.kernel.org,
+        Adrian Schroeter <adrian@suse.de>,
+        Dominique Leuenberger <dimstar@suse.de>
+Subject: [PATCH] x86/speculation/l1tf: fix overflow on l1tf_pfn_limit() on 32bit
+Date:   Mon, 20 Aug 2018 11:58:35 +0200
+Message-Id: <20180820095835.5298-1-vbabka@suse.cz>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-In-Reply-To: <20180819123403.GA22352@WeideMacBook-Pro.local>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 20 Aug 2018 09:57:08 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 20 Aug 2018 09:57:08 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19.08.2018 14:34, Wei Yang wrote:
-> On Fri, Aug 17, 2018 at 10:18:53AM +0200, Oscar Salvador wrote:
->>>  failed_addition:
->>> +#ifdef CONFIG_DEBUG_VM
->>>  	pr_debug("online_pages [mem %#010llx-%#010llx] failed\n",
->>>  		 (unsigned long long) pfn << PAGE_SHIFT,
->>>  		 (((unsigned long long) pfn + nr_pages) << PAGE_SHIFT) - 1);
->>> +#endif
->>
->> I have never been sure about this.
->> IMO, if I fail to online pages, I want to know I failed.
->> I think that pr_err would be better than pr_debug and without CONFIG_DEBUG_VM.
->>
->> But at least, if not, envolve it with a CONFIG_DEBUG_VM, but change pr_debug to pr_info.
->>
-> 
-> I don't have a clear rule about these debug macro neither.
-> 
-> While when you look at the page related logs in calculate_node_totalpages(),
-> it is KERNEL_DEBUG level and without any config macro.
-> 
-> Maybe we should leave them at the same state?
+On 32bit PAE kernels on 64bit hardware with enough physical bits,
+l1tf_pfn_limit() will overflow unsigned long. This in turn affects
+max_swapfile_size() and can lead to swapon returning -EINVAL. This has been
+observed in a 32bit guest with 42 bits physical address size, where
+max_swapfile_size() overflows exactly to 1 << 32, thus zero, and produces the
+following warning to dmesg:
 
-I guess we can do that for the to debug messages.
+[    6.396845] Truncating oversized swap area, only using 0k out of 2047996k
 
-When offlining memory right now:
+Fix this by using unsigned long long instead.
 
-:/# echo 0 > /sys/devices/system/memory/memory9/online
-[   24.476207] Offlined Pages 32768
-[   24.477200] remove from free list 48000 1024 50000
-[   24.477896] remove from free list 48400 1024 50000
-[   24.478584] remove from free list 48800 1024 50000
-[   24.479454] remove from free list 48c00 1024 50000
-[   24.480192] remove from free list 49000 1024 50000
-[   24.480957] remove from free list 49400 1024 50000
-[   24.481752] remove from free list 49800 1024 50000
-[   24.482578] remove from free list 49c00 1024 50000
-[   24.483302] remove from free list 4a000 1024 50000
-[   24.484300] remove from free list 4a400 1024 50000
-[   24.484902] remove from free list 4a800 1024 50000
-[   24.485462] remove from free list 4ac00 1024 50000
-[   24.486381] remove from free list 4b000 1024 50000
-[   24.487108] remove from free list 4b400 1024 50000
-[   24.487842] remove from free list 4b800 1024 50000
-[   24.488610] remove from free list 4bc00 1024 50000
-[   24.489548] remove from free list 4c000 1024 50000
-[   24.490392] remove from free list 4c400 1024 50000
-[   24.491224] remove from free list 4c800 1024 50000
-...
+Reported-by: Dominique Leuenberger <dimstar@suse.de>
+Reported-by: Adrian Schroeter <adrian@suse.de>
+Fixes: 17dbca119312 ("x86/speculation/l1tf: Add sysfs reporting for l1tf")
+Fixes: 377eeaa8e11f ("x86/speculation/l1tf: Limit swap file size to MAX_PA/2")
+Cc: stable@vger.kernel.org
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+ arch/x86/include/asm/processor.h | 4 ++--
+ arch/x86/mm/init.c               | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-While "remove from free list" is pr_info under CONFIG_DEBUG_VM,
-"Offlined Pages ..." is pr_info without CONFIG_DEBUG_VM.
-
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 682286aca881..a0a52274cb4a 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -181,9 +181,9 @@ extern const struct seq_operations cpuinfo_op;
+ 
+ extern void cpu_detect(struct cpuinfo_x86 *c);
+ 
+-static inline unsigned long l1tf_pfn_limit(void)
++static inline unsigned long long l1tf_pfn_limit(void)
+ {
+-	return BIT(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
++	return BIT_ULL(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
+ }
+ 
+ extern void early_cpu_init(void);
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index acfab322fbe0..02de3d6065c4 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -923,7 +923,7 @@ unsigned long max_swapfile_size(void)
+ 
+ 	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
+ 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
+-		unsigned long l1tf_limit = l1tf_pfn_limit() + 1;
++		unsigned long long l1tf_limit = l1tf_pfn_limit() + 1;
+ 		/*
+ 		 * We encode swap offsets also with 3 bits below those for pfn
+ 		 * which makes the usable limit higher.
+@@ -931,7 +931,7 @@ unsigned long max_swapfile_size(void)
+ #if CONFIG_PGTABLE_LEVELS > 2
+ 		l1tf_limit <<= PAGE_SHIFT - SWP_OFFSET_FIRST_BIT;
+ #endif
+-		pages = min_t(unsigned long, l1tf_limit, pages);
++		pages = min_t(unsigned long long, l1tf_limit, pages);
+ 	}
+ 	return pages;
+ }
 -- 
+2.18.0
 
-Thanks,
-
-David / dhildenb
