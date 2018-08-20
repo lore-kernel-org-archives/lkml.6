@@ -2,159 +2,119 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 490B3C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:13:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C9A8C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C11B2154B
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:13:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C11B2154B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 47339216FC
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 14:17:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47339216FC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbeHTR3O (ORCPT
+        id S1726644AbeHTRdE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 13:29:14 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:43307 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726590AbeHTR3N (ORCPT
+        Mon, 20 Aug 2018 13:33:04 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:46540 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726524AbeHTRdE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 13:29:13 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1frkvr-0001ZA-LD; Mon, 20 Aug 2018 16:13:23 +0200
-Message-ID: <1534774398.5445.32.camel@pengutronix.de>
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com,
-        Tiffany Lin =?UTF-8?Q?=28=E6=9E=97=E6=85=A7=E7=8F=8A=29?= 
-        <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen =?UTF-8?Q?=28=E9=99=B3=E6=99=BA=E8=BF=AA=29?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Date:   Mon, 20 Aug 2018 16:13:18 +0200
-In-Reply-To: <CAAFQd5BBOh7nPZ70aaWiSuygGSOTiAQrOm0V9UPgFqqBgZf_LA@mail.gmail.com>
-References: <20180724140621.59624-1-tfiga@chromium.org>
-         <20180724140621.59624-2-tfiga@chromium.org>
-         <1534770242.5445.13.camel@pengutronix.de>
-         <CAAFQd5BBOh7nPZ70aaWiSuygGSOTiAQrOm0V9UPgFqqBgZf_LA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Mon, 20 Aug 2018 13:33:04 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7KEE2mg020728;
+        Mon, 20 Aug 2018 09:17:13 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2kxgv1adns-1;
+        Mon, 20 Aug 2018 09:17:13 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 97BE1611C8B0;
+        Mon, 20 Aug 2018 09:17:12 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 20 Aug 2018
+ 15:17:11 +0100
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w7KEHBgt016862; Mon,
+ 20 Aug 2018 15:17:11 +0100
+Date:   Mon, 20 Aug 2018 15:17:11 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <sapthagiri.baratam@gmail.com>
+CC:     <lee.jones@linaro.org>, <patches@opensource.cirrus.com>,
+        <linux-kernel@vger.kernel.org>,
+        Sapthagiri Baratam <sapthagiri.baratam@cirrus.com>
+Subject: Re: [PATCH] mfd: arizona: Correct calling of runtime_put_sync
+Message-ID: <20180820141711.GQ32322@imbe.wolfsonmicro.main>
+References: <5b7a983d.1c69fb81.8349b.fc57@mx.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <5b7a983d.1c69fb81.8349b.fc57@mx.google.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=934 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1808200154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
-
-On Mon, 2018-08-20 at 22:12 +0900, Tomasz Figa wrote:
-> On Mon, Aug 20, 2018 at 10:04 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> > 
-> > On Tue, 2018-07-24 at 23:06 +0900, Tomasz Figa wrote:
-> > [...]
-> > > +Seek
-> > > +====
-> > > +
-> > > +Seek is controlled by the ``OUTPUT`` queue, as it is the source of
-> > > +bitstream data. ``CAPTURE`` queue remains unchanged/unaffected.
-> > > +
-> > > +1. Stop the ``OUTPUT`` queue to begin the seek sequence via
-> > > +   :c:func:`VIDIOC_STREAMOFF`.
-> > > +
-> > > +   * **Required fields:**
-> > > +
-> > > +     ``type``
-> > > +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-> > > +
-> > > +   * The driver must drop all the pending ``OUTPUT`` buffers and they are
-> > > +     treated as returned to the client (following standard semantics).
-> > > +
-> > > +2. Restart the ``OUTPUT`` queue via :c:func:`VIDIOC_STREAMON`
-> > > +
-> > > +   * **Required fields:**
-> > > +
-> > > +     ``type``
-> > > +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-> > > +
-> > > +   * The driver must be put in a state after seek and be ready to
-> > > +     accept new source bitstream buffers.
-> > > +
-> > > +3. Start queuing buffers to ``OUTPUT`` queue containing stream data after
-> > > +   the seek until a suitable resume point is found.
-> > > +
-> > > +   .. note::
-> > > +
-> > > +      There is no requirement to begin queuing stream starting exactly from
-> > > +      a resume point (e.g. SPS or a keyframe). The driver must handle any
-> > > +      data queued and must keep processing the queued buffers until it
-> > > +      finds a suitable resume point. While looking for a resume point, the
-> > 
-> > I think the definition of a resume point is too vague in this place.
-> > Can the driver decide whether or not a keyframe without SPS is a
-> > suitable resume point? Or do drivers have to parse and store SPS/PPS if
-> > the hardware does not support resuming from a keyframe without sending
-> > SPS/PPS again?
+On Mon, Aug 20, 2018 at 03:59:01PM +0530, sapthagiri.baratam@gmail.com wrote:
+> From: Sapthagiri Baratam <sapthagiri.baratam@cirrus.com>
 > 
-> The thing is that existing drivers implement and user space clients
-> rely on the behavior described above, so we cannot really change it
-> anymore.
+> Don't call runtime_put_sync when clk32k_ref is ARIZONA_32KZ_MCLK2
+> as there is no corresponding runtime_get_sync call.
+> 
+> MCLK1 is not in the AoD power domain so if it is used as 32kHz clock
+> source we need to hold a runtime PM reference to keep the device from
+> going into low power mode.
+> 
+> fixes: cdd8da8cc66b ("mfd: arizona: Add gating of external MCLKn clocks")
+> Signed-off-by: baratam <sapthagiri.baratam@cirrus.com>
 
-My point is that I'm not exactly sure what that behaviour is, given the
-description.
+You should have your full name here too.
 
-Must a driver be able to resume from a keyframe even if userspace never
-pushes SPS/PPS again?
-If so, I think it should be mentioned more explicitly than just via an
-example in parentheses, to make it clear to all driver developers that
-this is a requirement that userspace is going to rely on.
+Otherwise the change looks good to me:
 
-Or, if that is not the case, is a driver free to define "SPS only" as
-its "suitable resume point" and to discard all input including keyframes
-until the next SPS/PPS is pushed?
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-It would be better to clearly define what a "suitable resume point" has
-to be per codec, and not let the drivers decide for themselves, if at
-all possible. Otherwise we'd need a away to inform userspace about the
-per-driver definition.
+Thanks,
+Charles
 
-> Do we have hardware for which this wouldn't work to the point that the
-> driver couldn't even continue with a bunch of frames corrupted? If
-> only frame corruption is a problem, we can add a control to tell the
-> user space to seek to resume points and it can happen in an
-> incremental patch.
-
-The coda driver currently can't seek at all, it always stops and
-restarts the sequence. So depending on the above I might have to either
-find and store SPS/PPS in software, or figure out how to make the
-firmware flush the bitstream buffer and restart without actually
-stopping the sequence.
-I'm sure the hardware is capable of this, it's more a question of what
-behaviour is actually intended, and whether I have enough information
-about the firmware interface to implement it.
-
-regards
-Philipp
+> ---
+>  drivers/mfd/arizona-core.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mfd/arizona-core.c b/drivers/mfd/arizona-core.c
+> index c7c3d72..190f9a4 100644
+> --- a/drivers/mfd/arizona-core.c
+> +++ b/drivers/mfd/arizona-core.c
+> @@ -53,8 +53,10 @@ int arizona_clk32k_enable(struct arizona *arizona)
+>  			if (ret != 0)
+>  				goto err_ref;
+>  			ret = clk_prepare_enable(arizona->mclk[ARIZONA_MCLK1]);
+> -			if (ret != 0)
+> -				goto err_pm;
+> +			if (ret != 0) {
+> +				pm_runtime_put_sync(arizona->dev);
+> +				goto err_ref;
+> +			}
+>  			break;
+>  		case ARIZONA_32KZ_MCLK2:
+>  			ret = clk_prepare_enable(arizona->mclk[ARIZONA_MCLK2]);
+> @@ -68,8 +70,6 @@ int arizona_clk32k_enable(struct arizona *arizona)
+>  					 ARIZONA_CLK_32K_ENA);
+>  	}
+>  
+> -err_pm:
+> -	pm_runtime_put_sync(arizona->dev);
+>  err_ref:
+>  	if (ret != 0)
+>  		arizona->clk32k_ref--;
+> -- 
+> 1.9.1
