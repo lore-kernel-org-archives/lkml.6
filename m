@@ -6,123 +6,108 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA32C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79739C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B798921473
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 16:59:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B798921473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D2B520C0C
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 17:05:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D2B520C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726850AbeHTUQJ (ORCPT
+        id S1726778AbeHTUVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 16:16:09 -0400
-Received: from mga03.intel.com ([134.134.136.65]:47598 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726042AbeHTUQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 16:16:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 09:59:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,266,1531810800"; 
-   d="scan'208";a="67661355"
-Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
-  by orsmga006.jf.intel.com with ESMTP; 20 Aug 2018 09:59:43 -0700
-Received: from orsmsx160.amr.corp.intel.com (10.22.226.43) by
- ORSMSX104.amr.corp.intel.com (10.22.225.131) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 20 Aug 2018 09:59:43 -0700
-Received: from orsmsx107.amr.corp.intel.com ([169.254.1.245]) by
- ORSMSX160.amr.corp.intel.com ([169.254.13.106]) with mapi id 14.03.0319.002;
- Mon, 20 Aug 2018 09:59:43 -0700
-From:   "Schaufler, Casey" <casey.schaufler@intel.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@tycho.nsa.gov" <selinux@tycho.nsa.gov>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "arjan@linux.intel.com" <arjan@linux.intel.com>
-Subject: RE: [PATCH RFC v2 5/5] SELinux: Support SELinux determination of
- side-channel vulnerability
-Thread-Topic: [PATCH RFC v2 5/5] SELinux: Support SELinux determination of
- side-channel vulnerability
-Thread-Index: AQHUNnfzi3NO3xojlUaFqSZKkXNAjaTJRumA//+XoTA=
-Date:   Mon, 20 Aug 2018 16:59:42 +0000
-Message-ID: <99FC4B6EFCEFD44486C35F4C281DC6732143F80E@ORSMSX107.amr.corp.intel.com>
-References: <20180817221624.10232-1-casey.schaufler@intel.com>
- <20180817221624.10232-6-casey.schaufler@intel.com>
- <6e70b7c7-d932-91c8-35d1-70bd6cef16a5@tycho.nsa.gov>
-In-Reply-To: <6e70b7c7-d932-91c8-35d1-70bd6cef16a5@tycho.nsa.gov>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTE1ZDBmNGItNmRiZC00MWY5LThhN2EtMzlkM2QyMTEwM2VhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWTArM1JHUEhaRnRDclUwUkNnODZ2NXd6ZjZEMkwrQUZ6ZUw1MysyaGRTcVpRWkVRSWhYVjQ2UDM3VWcrK2E3SiJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 20 Aug 2018 16:21:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43716 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726641AbeHTUVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 16:21:54 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3B531AD6A;
+        Mon, 20 Aug 2018 17:05:26 +0000 (UTC)
+Subject: Re: [PATCH RESEND] x86/xen: enable early use of set_fixmap in 32-bit
+ Xen PV guest
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org
+Cc:     hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com
+References: <20180820152420.16004-1-jgross@suse.com>
+ <dd4dc3da-0d06-5844-406a-9e3d942e900d@oracle.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <a62903ae-566a-10b2-5b2f-4d6ca75dda91@suse.com>
+Date:   Mon, 20 Aug 2018 19:05:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <dd4dc3da-0d06-5844-406a-9e3d942e900d@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIFNtYWxsZXkgW21h
-aWx0bzpzZHNAdHljaG8ubnNhLmdvdl0NCj4gU2VudDogTW9uZGF5LCBBdWd1c3QgMjAsIDIwMTgg
-OTowMyBBTQ0KPiBUbzogU2NoYXVmbGVyLCBDYXNleSA8Y2FzZXkuc2NoYXVmbGVyQGludGVsLmNv
-bT47IGtlcm5lbC0NCj4gaGFyZGVuaW5nQGxpc3RzLm9wZW53YWxsLmNvbTsgbGludXgta2VybmVs
-QHZnZXIua2VybmVsLm9yZzsgbGludXgtc2VjdXJpdHktDQo+IG1vZHVsZUB2Z2VyLmtlcm5lbC5v
-cmc7IHNlbGludXhAdHljaG8ubnNhLmdvdjsgSGFuc2VuLCBEYXZlDQo+IDxkYXZlLmhhbnNlbkBp
-bnRlbC5jb20+OyBEb2NrLCBEZW5lZW4gVCA8ZGVuZWVuLnQuZG9ja0BpbnRlbC5jb20+Ow0KPiBr
-cmlzdGVuQGxpbnV4LmludGVsLmNvbTsgYXJqYW5AbGludXguaW50ZWwuY29tDQo+IFN1YmplY3Q6
-IFJlOiBbUEFUQ0ggUkZDIHYyIDUvNV0gU0VMaW51eDogU3VwcG9ydCBTRUxpbnV4IGRldGVybWlu
-YXRpb24gb2YNCj4gc2lkZS1jaGFubmVsIHZ1bG5lcmFiaWxpdHkNCj4gDQo+IE9uIDA4LzE3LzIw
-MTggMDY6MTYgUE0sIENhc2V5IFNjaGF1ZmxlciB3cm90ZToNCj4gPiBTRUxpbnV4IGNvbnNpZGVy
-cyB0YXNrcyB0byBiZSBzaWRlLWNoYW5uZWwgc2FmZSBpZiB0aGV5DQo+ID4gaGF2ZSBQUk9DRVNT
-X1NIQVJFIGFjY2Vzcy4NCj4gDQo+IE5vdyB0aGUgZGVzY3JpcHRpb24gYW5kIHRoZSBjb2RlIG5v
-IGxvbmdlciBtYXRjaC4NCg0KWW91J3JlIHJpZ2h0Lg0KDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5
-OiBDYXNleSBTY2hhdWZsZXIgPGNhc2V5LnNjaGF1ZmxlckBpbnRlbC5jb20+DQo+ID4gLS0tDQo+
-ID4gICBzZWN1cml0eS9zZWxpbnV4L2hvb2tzLmMgfCA5ICsrKysrKysrKw0KPiA+ICAgMSBmaWxl
-IGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL3NlY3VyaXR5
-L3NlbGludXgvaG9va3MuYyBiL3NlY3VyaXR5L3NlbGludXgvaG9va3MuYw0KPiA+IGluZGV4IGE4
-YmYzMjQxMzBmNS4uN2ZiZDdkN2FjMWNiIDEwMDY0NA0KPiA+IC0tLSBhL3NlY3VyaXR5L3NlbGlu
-dXgvaG9va3MuYw0KPiA+ICsrKyBiL3NlY3VyaXR5L3NlbGludXgvaG9va3MuYw0KPiA+IEBAIC00
-MjE5LDYgKzQyMTksMTQgQEAgc3RhdGljIHZvaWQgc2VsaW51eF90YXNrX3RvX2lub2RlKHN0cnVj
-dA0KPiB0YXNrX3N0cnVjdCAqcCwNCj4gPiAgIAlzcGluX3VubG9jaygmaXNlYy0+bG9jayk7DQo+
-ID4gICB9DQo+ID4NCj4gPiArc3RhdGljIGludCBzZWxpbnV4X3Rhc2tfc2FmZV9zaWRlY2hhbm5l
-bChzdHJ1Y3QgdGFza19zdHJ1Y3QgKnApDQo+ID4gK3sNCj4gPiArCXN0cnVjdCBhdl9kZWNpc2lv
-biBhdmQ7DQo+ID4gKw0KPiA+ICsJcmV0dXJuIGF2Y19oYXNfcGVybV9ub2F1ZGl0KCZzZWxpbnV4
-X3N0YXRlLCBjdXJyZW50X3NpZCgpLA0KPiB0YXNrX3NpZChwKSwNCj4gPiArCQkJCSAgICBTRUND
-TEFTU19GSUxFLCBGSUxFX19SRUFELCAwLCAmYXZkKTsNCj4gPiArfQ0KPiANCj4gQW5kIG15IHF1
-ZXN0aW9uIGZyb20gYmVmb3JlIHN0aWxsIHN0YW5kczogIHdoeSBkbyB3ZSBuZWVkIGEgbmV3IGhv
-b2sgYW5kDQo+IG5ldyBzZWN1cml0eSBtb2R1bGUgaW5zdGVhZCBvZiBqdXN0IHVzaW5nIHB0cmFj
-ZV9tYXlfYWNjZXNzKCk/DQoNCkxvY2tpbmcuIFRoZSBTRUxpbnV4IGNoZWNrLCBmb3IgZXhhbXBs
-ZSwgd2lsbCBsb2NrIHVwIHNvbGlkIHdoaWxlIHRyeWluZw0KdG8gZ2VuZXJhdGUgYW4gYXVkaXQg
-cmVjb3JkLiBUaGVyZSBpcyBubyBnb29kIHJlYXNvbiBhc2lkZSBmcm9tIGNvZGluZw0KY29udmVu
-aWVuY2UgdG8gYXNzdW1lIHRoYXQgdGhlIHNhbWUgcmVzdHJpY3Rpb25zIHdpbGwgYXBwbHkgZm9y
-IHNpZGUtY2hhbm5lbA0KYXMgYXBwbHkgdG8gcHRyYWNlLiBJJ20gYWN0dWFsbHkgYSB0b3VjaCBz
-dXJwcmlzZWQgeW91J3JlIG5vdCBzdWdnZXN0aW5nIGENCnNlcGFyYXRlIFNFQ0NMQVNTIG9yIGFj
-Y2VzcyBtb2RlIGZvciB0aGUgU0VMaW51eCBob29rLg0KDQo+IA0KPiA+ICsNCj4gPiAgIC8qIFJl
-dHVybnMgZXJyb3Igb25seSBpZiB1bmFibGUgdG8gcGFyc2UgYWRkcmVzc2VzICovDQo+ID4gICBz
-dGF0aWMgaW50IHNlbGludXhfcGFyc2Vfc2tiX2lwdjQoc3RydWN0IHNrX2J1ZmYgKnNrYiwNCj4g
-PiAgIAkJCXN0cnVjdCBjb21tb25fYXVkaXRfZGF0YSAqYWQsIHU4ICpwcm90bykNCj4gPiBAQCAt
-NzAwMiw2ICs3MDEwLDcgQEAgc3RhdGljIHN0cnVjdCBzZWN1cml0eV9ob29rX2xpc3Qgc2VsaW51
-eF9ob29rc1tdDQo+IF9fbHNtX3JvX2FmdGVyX2luaXQgPSB7DQo+ID4gICAJTFNNX0hPT0tfSU5J
-VCh0YXNrX21vdmVtZW1vcnksIHNlbGludXhfdGFza19tb3ZlbWVtb3J5KSwNCj4gPiAgIAlMU01f
-SE9PS19JTklUKHRhc2tfa2lsbCwgc2VsaW51eF90YXNrX2tpbGwpLA0KPiA+ICAgCUxTTV9IT09L
-X0lOSVQodGFza190b19pbm9kZSwgc2VsaW51eF90YXNrX3RvX2lub2RlKSwNCj4gPiArCUxTTV9I
-T09LX0lOSVQodGFza19zYWZlX3NpZGVjaGFubmVsLA0KPiBzZWxpbnV4X3Rhc2tfc2FmZV9zaWRl
-Y2hhbm5lbCksDQo+ID4NCj4gPiAgIAlMU01fSE9PS19JTklUKGlwY19wZXJtaXNzaW9uLCBzZWxp
-bnV4X2lwY19wZXJtaXNzaW9uKSwNCj4gPiAgIAlMU01fSE9PS19JTklUKGlwY19nZXRzZWNpZCwg
-c2VsaW51eF9pcGNfZ2V0c2VjaWQpLA0KPiA+DQoNCg==
+On 20/08/18 18:56, Boris Ostrovsky wrote:
+> On 08/20/2018 11:24 AM, Juergen Gross wrote:
+>> Commit 7b25b9cb0dad83 ("x86/xen/time: Initialize pv xen time in
+>> init_hypervisor_platform()") moved the mapping of the shared info area
+>> before pagetable_init(). This breaks booting as 32-bit PV guest as the
+>> use of set_fixmap isn't possible at this time on 32-bit.
+>>
+>> This can be worked around by populating the needed PMD on 32-bit
+>> kernel earlier.
+>>
+>> In order not to reimplement populate_extra_pte() using extend_brk()
+>> for allocating new page tables extend alloc_low_pages() to do that in
+>> case the early page table pool is not yet available.
+>>
+>> Fixes: 7b25b9cb0dad83 ("x86/xen/time: Initialize pv xen time in init_hypervisor_platform()")
+>> Signed-off-by: Juergen Gross <jgross@suse.com>
+>> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+>> ---
+>> Resending with corrected Fixes: tag
+>> Boris, please take this via the Xen tree (Thomas asked us to do so)
+> 
+> 
+> Sure, but we will need to rebase to the latest bits, so you will have to
+> explain yourself to Linus ;-)
+
+NP for me. At least I hope so. :-)
+
+
+Juergen
+
