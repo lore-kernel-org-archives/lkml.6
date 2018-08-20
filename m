@@ -4,99 +4,157 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5D5C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 22:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 412D9C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 22:43:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07E682174E
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 22:41:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB3D12174E
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 22:43:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MlykcVAS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07E682174E
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g+2BJRF5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB3D12174E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbeHUB7C (ORCPT
+        id S1726693AbeHUCBP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 21:59:02 -0400
-Received: from mail-yw1-f53.google.com ([209.85.161.53]:33118 "EHLO
-        mail-yw1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbeHUB7C (ORCPT
+        Mon, 20 Aug 2018 22:01:15 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45128 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726119AbeHUCBO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 21:59:02 -0400
-Received: by mail-yw1-f53.google.com with SMTP id x67-v6so2377698ywg.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 15:41:33 -0700 (PDT)
+        Mon, 20 Aug 2018 22:01:14 -0400
+Received: by mail-pl0-f68.google.com with SMTP id j8-v6so7798006pll.12
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 15:43:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=G8mTI1+a5+TRH2Lwrujn00YE6MhN8HUV1/tJyCBu9yA=;
-        b=MlykcVASvSGOYgQ7ZfQ6ijx99M1upT1bPpbOtNa8UQJ2JC+0fbhzPp8c6XwU/KaSI0
-         dfPk4+Xp/sG0XrSMtffS44UOJtopICv3Q4lg1eEOVCydET0GukxbNO8BOBAmoMjr+T9Y
-         nRWkRcIhB/2Ctui/0p13fxwt8tW48QhCZP+W6rStj7VtJ3psabi7Aheg7TbJ90KypekK
-         72zyQnimPK0UWsEObVpevvT7VYRMhT6BaJalMttqpHSxekWorpxXfwfLEC2XhNaQen1A
-         2j1vzArod+r+RC3FwRPUwlX2JpNOnv88r4+sq5ukBmyVMOTZEa+YhdWYdE40QvIjGfkI
-         +2nQ==
+        bh=5GJL91cuhhsld7JKfmdoK4UQDVqSSroKG3EaMH1ULjY=;
+        b=g+2BJRF5Vwlwhtmngf64CIW5NwNs8NPdLeMg7LvI3IptnVCkvtWDhH1PWwGaJAYrqh
+         t2aOMPnKxQlwo2Zralo1vRyVQ37czAuaqGa9t2wltivYVrGy9Y9A3w1bsIDVsGr40SL6
+         hEpgfu1ooQk/ze9D02grcQHeCJWd32XqFx1OlTaogPqWrroJ+cmfwheeYgoJ7C5Lr4Wb
+         ADuQooQ83C/Dqcoi7Y7c7BDY9OWAkVPsXDXaK14vhaq+Qk6RO+D1D5fyNgR+bIy1CGjZ
+         uYXnwP0C2auvuurBbbkcCnhaq45dSXjpnTcAUBRrHf22psKndDcej5lBejHN8eWEkRef
+         91ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=G8mTI1+a5+TRH2Lwrujn00YE6MhN8HUV1/tJyCBu9yA=;
-        b=tJVamFrn7rMWdXLQ+mTesqSb35vy99PmSwQIeDpUF46r0zZNsXvEL6uu0yCffuMmc8
-         x/FpgPWHq7Bf1qfKmH+BvGSOldFMT4aEU77OIcvqRJ6VXT5DMlg4FTsBYA5ZSaADTAy3
-         QhIacYmHt3dPZgBOrbm3vr/EqhVMIufmaji9PUUbJCw/OCg3LqtiiChvst+RpLUZk0Bv
-         j4dfKyy8HEGgeWrFN3R97BxJbc5wXC2LRUi9eYVs+P7L9DlzNaSeovWNZoelPQl3EGtn
-         hpPUSCFXNtbifNKPAqiLbltI/SaRuVq7TuNc49wXQMbJSPoUk1JmlWiJLh3rlpGA0xy8
-         jSEg==
-X-Gm-Message-State: AOUpUlH2VynlClPfclb1K8XZToDdFS4CuAWLMLQGkAAf82UOKQAUss3C
-        fTvc+vQxDCYFcWe4RSKYwtNXelCAsexDVg6RljwiLUTdwvM=
-X-Google-Smtp-Source: AA+uWPysgqxw3NKt5xTCv3YKUFTLH/Rq8AxyFbvSODgKjeqW+2ih1WvEOG75XmScZjMglRW2Ww4AnTyO06Bpfrc90b8=
-X-Received: by 2002:a81:6a45:: with SMTP id f66-v6mr7909387ywc.300.1534804892721;
- Mon, 20 Aug 2018 15:41:32 -0700 (PDT)
+        bh=5GJL91cuhhsld7JKfmdoK4UQDVqSSroKG3EaMH1ULjY=;
+        b=I9gJLjgqfWWPsjTWJGamMI6A9orkOM71Mr8hcaIcTR6czVzegCf37nJ5ahY0q/xlbW
+         ohyMTuULKsagBmSurTV7+NxoEJ5We3GJmrX5WhOlqX8wiM3cazcwzCb9ovcgkaPnsOnV
+         fZzf2KJIgLwpQCaz9FRUqaowEGoK4IGNrIp+K7jMjUHNR49Hh/uV0RyAKblZoe0+Z/JL
+         AZpyLN3UvAjglUidW3S3BKPdHqQ4S5wVxyL7F72UG33Or4ZOooCgc+6wSJruI5QMlCh2
+         ciTqrjS+BVTcK1p0/8Mjy8TGlGK1ckOFpXbT/KUFWvWa1s34lf3QLY/2d8DlH3PD18nU
+         JykA==
+X-Gm-Message-State: AOUpUlGNfwMCGC7YHQ+MXPFbzlha9HnPu50ccx6pqASCvTMjB5ihdPLy
+        Bijz7FLrTQoBQJ/Ca8Y5PZ6pQK5GXTjsf++kU/FZUw==
+X-Google-Smtp-Source: AA+uWPwyQZI2S7r/5pjTR3QOj1S3sGvtX1d+TbP5Om9QEfra0Hh1A3MBDzvpv3UJzHN0ojOitIBDDLGuogQvyLKrON0=
+X-Received: by 2002:a17:902:d70d:: with SMTP id w13-v6mr47514189ply.229.1534805023781;
+ Mon, 20 Aug 2018 15:43:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <xmqqwoskadpe.fsf@gitster-ct.c.googlers.com>
-In-Reply-To: <xmqqwoskadpe.fsf@gitster-ct.c.googlers.com>
-From:   Stefan Beller <sbeller@google.com>
-Date:   Mon, 20 Aug 2018 15:41:21 -0700
-Message-ID: <CAGZ79kbrv62ttBYt7nwO7E4S7wTVWZGceqE6hPjAbhPPWfRkEQ@mail.gmail.com>
-Subject: Re: [ANNOUNCE] Git v2.19.0-rc0
-To:     Junio C Hamano <gitster@pobox.com>
-Cc:     git <git@vger.kernel.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        git-packagers@googlegroups.com
+References: <20180820224032.53194-1-ndesaulniers@google.com>
+In-Reply-To: <20180820224032.53194-1-ndesaulniers@google.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 20 Aug 2018 15:43:32 -0700
+Message-ID: <CAKwvOdm9ZabUHY0w0mT52nZQNZqfhk1EyQHXo27uO816TyU0eg@mail.gmail.com>
+Subject: Re: [PATCH] arm64/crypto: remove non-standard notation
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-crypto@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->  * The conversion to pass "the_repository" and then "a_repository"
->    throughout the object access API continues.
+On Mon, Aug 20, 2018 at 3:41 PM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
 >
-[...]
+> It seems that:
+> ldr q8, =0x30000000200000001
 >
->  * The conversion to pass "the_repository" and then "a_repository"
->    throughout the object access API continues.
+> is a GNU as convience notation for:
+> ldr q8, .Lconstant
+> .Lconstant
+> .word 0x00000001
+> .word 0x00000002
+> .word 0x00000003
+> .word 0x00000000
+>
+> based on this comment in binutils' source [0]. I've asked for this
+> non-standard convience notation to be added to other assemblers [1], but
+> until then, we can remove it and get equivalent disassembly:
+>
+> before:
+> 00000000000009d4 <neon_aes_ctr_encrypt>:
+> ...
+>      a48:       9c000ac8        ldr     q8, ba0 <neon_aes_ctr_encrypt+0x1cc>
+> ...
+>      ba0:       00000001        .word   0x00000001
+>      ba4:       00000002        .word   0x00000002
+>      ba8:       00000003        .word   0x00000003
+>      bac:       00000000        .word   0x00000000
+>
+> after:
+>
+> 00000000000009d4 <neon_aes_ctr_encrypt>:
+> ...
+>      a48:       9c000aa8        ldr     q8, b9c <neon_aes_ctr_encrypt+0x1c8>
+> ...
+>      b9c:       00000001        .word   0x00000001
+>      ba0:       00000002        .word   0x00000002
+>      ba4:       00000003        .word   0x00000003
+>      ba8:       00000000        .word   0x00000000
+>
+> [0] https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=blob;f=gas/testsuite/gas/aarch64/programmer-friendly.s;h=6254c6476efdc848648b05068be0574e7addc85d;hb=HEAD#l11
+> [1] https://bugs.llvm.org/show_bug.cgi?id=38642
+>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> ---
+>  arch/arm64/crypto/aes-modes.S | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/crypto/aes-modes.S b/arch/arm64/crypto/aes-modes.S
+> index 483a7130cf0e..9288c5b0eca2 100644
+> --- a/arch/arm64/crypto/aes-modes.S
+> +++ b/arch/arm64/crypto/aes-modes.S
+> @@ -232,7 +232,7 @@ AES_ENTRY(aes_ctr_encrypt)
+>         bmi             .Lctr1x
+>         cmn             w6, #4                  /* 32 bit overflow? */
+>         bcs             .Lctr1x
+> -       ldr             q8, =0x30000000200000001        /* addends 1,2,3[,0] */
+> +       ldr             q8, .Laddends /* addends 1,2,3[,0] */
+>         dup             v7.4s, w6
+>         mov             v0.16b, v4.16b
+>         add             v7.4s, v7.4s, v8.4s
+> @@ -295,6 +295,12 @@ AES_ENTRY(aes_ctr_encrypt)
+>         rev             x7, x7
+>         ins             v4.d[0], x7
+>         b               .Lctrcarrydone
+> +
+> +.Laddends:
+> +       .word   0x00000001
+> +       .word   0x00000002
+> +       .word   0x00000003
+> +       .word   0x00000000
+>  AES_ENDPROC(aes_ctr_encrypt)
+>         .ltorg
+>
+> --
+> 2.18.0.865.gffc8e1a3cd6-goog
+>
 
-I guess it continues twice as two large series were merged? ;-)
-sb/object-store-grafts
-sb/object-store-lookup
+I can't spell. s/convience/convenience/g
 
-The latter one is not the correct one, as later we'll have
-
-  * lookup_commit_reference() and friends have been updated to find
-    in-core object for a specific in-core repository instance.
-
->  * "git submodule" did not correctly adjust core.worktree setting that
->    indicates whether/where a submodule repository has its associated
->    working tree across various state transitions, which has been
->    corrected.
->    (merge 984cd77ddb sb/submodule-core-worktree later to maint).
-
-Personally I do not view this as a bug fix but a feature
-(but then again my thinking might be tainted of too much
-submodule work) hence I would not merge it down.
-
-Stefan
+-- 
+Thanks,
+~Nick Desaulniers
