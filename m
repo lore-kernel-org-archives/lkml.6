@@ -2,87 +2,126 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0DEEC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD90C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:57:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54F6020C0C
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:51:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="xXDwsMQT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54F6020C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id D4DBA20C0C
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:57:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4DBA20C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbeHTNF4 (ORCPT
+        id S1726229AbeHTNL4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 09:05:56 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:41112 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbeHTNF4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 09:05:56 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7K9ovCX030609;
-        Mon, 20 Aug 2018 09:50:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=i+P5v3dPuikTbllZEU5fNZuNPbD1RI9OEoB6M7hDIIU=;
- b=xXDwsMQTA4YY7vANjvqscyKqCBPGu3GDRFAoQSzVIDwu7koCBfi2fjERBk4IuWCqyQMP
- H+UhuTsESfO7aOCqE73f2/HBXCLZRyY7WU971FTLGJgOWj9c9HOTZQZwh5jjGnbw1UT3
- 4uDWLSEpjKDuawVLGgPtIxyDgGefqjFlMBibUjkbuFe2q9DOJFHdjSL5nAdOga2gWTI8
- G/o1bbXx/YLDi/1JhAlkPmrTQpkdkPpAz/1hBuYu2/Fd3yb8ej1oYyvwGG947B9GFZTQ
- RBgo46tUVslx6WdZRDmvvX8hYBe3Yct5blhpCEfpl/gTtbaoGZhG2LJbThU7jxDxWsfz 7A== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2kxc3qd9m1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Aug 2018 09:50:57 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7K9ooeD023914
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Aug 2018 09:50:51 GMT
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7K9ooGx002741;
-        Mon, 20 Aug 2018 09:50:50 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 20 Aug 2018 02:50:49 -0700
-Date:   Mon, 20 Aug 2018 12:50:43 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Bhaskar Singh <bhaskar.kernel@gmail.com>
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8188eu: Removed code valid for 5GHz
-Message-ID: <20180820095042.pgucu7e3i3aiu3lb@mwanda>
-References: <20180817074729.GA16204@Gentoo-PC>
+        Mon, 20 Aug 2018 09:11:56 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35188 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725948AbeHTNL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 09:11:56 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 18F7020DEE; Mon, 20 Aug 2018 11:56:57 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-85-9.w90-88.abo.wanadoo.fr [90.88.27.9])
+        by mail.bootlin.com (Postfix) with ESMTPSA id DBFC920703;
+        Mon, 20 Aug 2018 11:56:56 +0200 (CEST)
+Date:   Mon, 20 Aug 2018 11:56:57 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <contact@paulk.fr>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] drm/sun4i: Avoid failing to init fbdev without any
+ connector
+Message-ID: <20180820095657.rcs3wxikxprty55d@flea>
+References: <20180807193919.4800-1-contact@paulk.fr>
+ <20180807201801.GF3008@phenom.ffwll.local>
+ <230112e8b2ad4b4e53b54fe1446e7f71aa09e514.camel@paulk.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="brph2bwq7h4vdshc"
 Content-Disposition: inline
-In-Reply-To: <20180817074729.GA16204@Gentoo-PC>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8990 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=389
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808200107
+In-Reply-To: <230112e8b2ad4b4e53b54fe1446e7f71aa09e514.camel@paulk.fr>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 01:17:29PM +0530, Bhaskar Singh wrote:
-> This patch removed code which are valid for IEEE 802.11a i.e. 5GHz.
 
-I would be uncomfortable accepting this kind of change without an Ack
-from the maintainers.
+--brph2bwq7h4vdshc
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The messes up the indenting so we can accept it anyway.
+On Tue, Aug 07, 2018 at 10:31:30PM +0200, Paul Kocialkowski wrote:
+> Hi,
+>=20
+> Le mardi 07 ao=FBt 2018 =E0 22:18 +0200, Daniel Vetter a =E9crit :
+> > On Tue, Aug 07, 2018 at 09:39:19PM +0200, Paul Kocialkowski wrote:
+> > > Initializing and registering fbdev requires at least one DRM connector
+> > > and will fail otherwise. In order to support headless setups (for
+> > > instance for GPU rendering with the GBM backend, where a DRI card node
+> > > is required to provide GEM memory reservation), add a check on the
+> > > number of registered connectors before initializing fbdev.
+> >=20
+> > sun4i is a pure kms driver, why exactly do you need it for gbm backed
+> > rendering? What exactly is rendering here, and why does it insist on a
+> > display card node, even if that display card node is 100% defunct?
+>=20
+> The non-free Mali blobs provide GPU support with a GBM interface that
+> takes a DRM fd in order to reserve the memory it needs for its rendering
+> targets. This uses the GEM interface available through the DRI card node
+> (and there is no render node with the non-free Mali driver). Allwinner
+> has a minimalistic out-of-tree driver pretty much only for this purpose.
+>=20
+> I crafted this patch when someone on IRC tried to get the out-of-tree
+> Mali GPU driver going with the mainline kernel in order to do rendering
+> in a GBM buffer, since it's apparently the only option for headless
+> rendering with the blob.
+>=20
+> In my opinion, supporting the pipeline of an out-of-tree GPU driver that
+> only works with a non-free userspace blob is not a valid reason to do
+> anything. Still, it felt like adding support for the headless use-case
+> wouldn't hurt, whatever the underlying use case for it may be.
 
-regards,
-dan carpenter
+If you start considering the DMA constraints and the API in itself, it
+does hurt. You'll get buffers that are not meant for the GPU, and
+might not be accessible, and from another device without using
+dma-buf, which again works because the hardware is dumb enough, but is
+breaking a lot of expectations in the process.
 
+If one wants to do headless rendering, mali-drm or lima looks like a
+better solution.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--brph2bwq7h4vdshc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlt6kGgACgkQ0rTAlCFN
+r3QvMw/+ONJADCO6KUornzlgOakDTKkCVgTK9/SouB4ykqlQulFygTjAkzUiZfbg
+9A4E4DvU1DqJY+/ihqaoNZ1x3Stse7Ip/J3arWbs0lgn/5IxOXGMVFmxPr2EJ9XP
+lthNuB8ufC++PiY3zUORqMgXDtfmxOEI962PtaqxuFnf3RYjf4GgZzkOzs+y9xwe
+2RerAB54hM1h0f+NyVZVCNw7jxvlJLO61IvEp6xPBrRQxypq5AVcQR5zyzbuVfl+
+6ITdRfeNPkFT0vHnSiCpBV/f8/9FFA+kjHxcTU7yR5Nd4KDGqsph84CtwaOvuJUP
++HC6TD+ahnlVyV80FWe/fbbvdXBH93W0akOqSlvzZT3RuouoWTz1LOXmePSHHap/
+o+3B9xPbo3VXhoNxUhmy1S6akSkief/JAXPxYJbG1pZ+ZMwl+fAOoYEfKruI7Ka8
+7BsQPKNPFQFJKgCm+9OhXHtC6AuYpmtZr9W0hRiVOt5YJSjBKIHt2QEJLncDBRSF
+ZnP4O+wS0dtzu7s5UpISX6K1xmUTisTpN+kgR7H2J5+iFUe0RMpGXodi8peR61g8
+s8r2S1a/AFSPx48ygPQH2LQ/2FczoIrJ6B9mrGeNcNGQKyDFZLqNSDAvMaJyZOCI
+L57LVkvq5KKG1iBYdxWevLjRE3/PXMookUXBRZsTjfGKeAwgcEE=
+=Oi5c
+-----END PGP SIGNATURE-----
+
+--brph2bwq7h4vdshc--
