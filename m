@@ -2,105 +2,126 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C9FBC4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D07DEC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:01:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51C9E21581
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:00:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="tf/jAatw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51C9E21581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	by mail.kernel.org (Postfix) with ESMTP id 8ED7E21581
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 13:01:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ED7E21581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726817AbeHTQPg (ORCPT
+        id S1726960AbeHTQRY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 12:15:36 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45436 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbeHTQPf (ORCPT
+        Mon, 20 Aug 2018 12:17:24 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:39971 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726705AbeHTQRY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 12:15:35 -0400
-Received: by mail-lj1-f193.google.com with SMTP id w16-v6so11512225ljh.12
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 06:00:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KFEGRNXG6jGhkWzKu1wMnVtS4eIhncZB52VPNE7hPHg=;
-        b=tf/jAatwx0m5FsSFqhR25+PUkX2t3PP4xtCcm38GRHmos+trPhjTyVkToDIPVjzYZF
-         inDYJK7JkpzMXQPVLKrhfzCTRSIdXAHykcXG/JGA7l8d7df2exDdlU8C55lmZvCZBC5w
-         fAnQ5/w4CHNMZez7wHIMi/F4EwpsUZDNNV3fIZSbOd/bZDh3spu6AQUb4zke4DUtEoMD
-         +jDVUZmxAkcpXlHJVlMM2yLpyYxgm4YbL51d5WhQo8OmJ14kj0nsEjqmfGqFQRQloyea
-         eFBcE3eDDawoJY1Sf2+lWAv/ChXsRHYllbQg1PgM2aDKPsZsQGJkipSSwOJgIeP1dhU7
-         pDxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KFEGRNXG6jGhkWzKu1wMnVtS4eIhncZB52VPNE7hPHg=;
-        b=jsHzBYoAsJ88K/YsvIqeporEPyuqIDnuXWEJK1b9IjaFBGJyLmHVze3G4O+sflabW1
-         VdPbi5smPzUsQC9+5Hs5cJnx9mZL2btkJDGT2tEPwqmIBLGlox00R3E1nbYTYbUVmQiZ
-         R+cI9lGQ/NLNWGRY4m8vGO8QMCTwSVf4RVauQfWJUvsom1TKSQxyc7IdOJ/owtC12AnG
-         kzoKkJEHrwMhxzAw4XIpiAxDc6Iz4ltdSQefw9bK03nOGSXPqVpU6PomId4sV2lXirlN
-         886lsNSWF/KK3CZNT9HsNWMCEXlGodRip6c8rjvVnIvQNbR9QpJSsOFSFYOS/fxqk+1c
-         h8Ww==
-X-Gm-Message-State: AOUpUlHC0M7ivewMVhkQBAiPYt/dZjcW/vr+w1sc57is0C4EFDdoot/K
-        LqkuY8siJ5M/tUF8Pa0QiqsctQ==
-X-Google-Smtp-Source: AA+uWPyVjtqly7AyBK4P3cnDfGPpSxlNgF/OdxWymXe+vOr5Bh2pTMm2OTP88+o+ustfF6dJi3Kuqw==
-X-Received: by 2002:a2e:9941:: with SMTP id r1-v6mr30054946ljj.53.1534770001004;
-        Mon, 20 Aug 2018 06:00:01 -0700 (PDT)
-Received: from localhost.localdomain (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.gmail.com with ESMTPSA id a14-v6sm1609051ljb.49.2018.08.20.05.59.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 Aug 2018 05:59:59 -0700 (PDT)
-From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-To:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
-        javier@cnexlabs.com, hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
-        youngtack.jin@circuitblvd.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [PATCH] lightnvm: pblk: remove size and out of bounds read check
-Date:   Mon, 20 Aug 2018 14:59:53 +0200
-Message-Id: <20180820125953.15364-1-mb@lightnvm.io>
-X-Mailer: git-send-email 2.11.0
+        Mon, 20 Aug 2018 12:17:24 -0400
+X-IronPort-AV: E=Sophos;i="5.53,265,1531810800"; 
+   d="scan'208";a="16242335"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 20 Aug 2018 06:01:50 -0700
+Received: from localhost.localdomain (10.10.76.4) by
+ chn-sv-exch07.mchp-main.com (10.10.76.108) with Microsoft SMTP Server id
+ 14.3.352.0; Mon, 20 Aug 2018 06:01:48 -0700
+Subject: Re: [PATCH v2 0/3] add support to non-uniform SFDP SPI NOR flash
+ memories
+To:     <marek.vasut@gmail.com>
+CC:     <cyrille.pitchen@microchip.com>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <boris.brezillon@bootlin.com>,
+        <richard@nod.at>, <linux-mtd@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <nicolas.ferre@microchip.com>,
+        <Cristian.Birsan@microchip.com>
+References: <20180712173235.7901-1-tudor.ambarus@microchip.com>
+From:   Tudor Ambarus <tudor.ambarus@microchip.com>
+Message-ID: <bb6647a7-8d3b-5487-8876-228adfc5ad53@microchip.com>
+Date:   Mon, 20 Aug 2018 16:01:36 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180712173235.7901-1-tudor.ambarus@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The I/O size and capacity check are already done by the block layer.
+Hi, Marek,
 
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
----
- drivers/lightnvm/pblk-read.c | 7 -------
- 1 file changed, 7 deletions(-)
+Did you have the chance to look over these patches? Please advise how can I move
+forward with the non-uniform erase support.
 
-diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
-index f275c7e5abe4..d0fbd50ecc90 100644
---- a/drivers/lightnvm/pblk-read.c
-+++ b/drivers/lightnvm/pblk-read.c
-@@ -452,13 +452,6 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
- 	DECLARE_BITMAP(read_bitmap, NVM_MAX_VLBA);
- 	int ret = NVM_IO_ERR;
- 
--	/* logic error: lba out-of-bounds. Ignore read request */
--	if (blba >= pblk->rl.nr_secs || nr_secs > NVM_MAX_VLBA) {
--		WARN(1, "pblk: read lba out of bounds (lba:%llu, nr:%d)\n",
--					(unsigned long long)blba, nr_secs);
--		return NVM_IO_ERR;
--	}
--
- 	generic_start_io_acct(q, READ, bio_sectors(bio), &pblk->disk->part0);
- 
- 	bitmap_zero(read_bitmap, nr_secs);
--- 
-2.11.0
+Thanks,
+ta
 
+On 07/12/2018 08:32 PM, Tudor Ambarus wrote:
+> Backward compatibility test done on mx25l3273fm2i-08g.
+> Non-uniform erase test done on sst26vf064b-104i/sn.
+> 
+> Note that in order to do the non-uniform test on the aforementioned memory
+> you'll have to force the spi_nor_has_uniform_erase() to return false, because
+> the erase map is tuned to come back to the uniform case. Also, you'll have to
+> unlock the global protection on the flash. There was an attempt to unlock this
+> protection, but for whatever reason the patch was not taken:
+> https://patchwork.ozlabs.org/patch/544270/. I'm taking care of the
+> global protection lock on sst26vf064b-104i/sn, I will submit a patch soon.
+> 
+> Changes in v2:
+> - add JESD216B SFDP optional parser: Sector Map Parameter Table parser
+>   and 4-byte Address Instruction Table parser (patch 2/3 and patch 3/3).
+> - fix condition on finding erase regions
+> - fix the list command adding
+> - write_enable(nor); before erasing the sectors
+> - As Boris suggested, remove likely() because it doesn't make any difference
+>   given the time it takes to actually erase the block.
+> - save the Erase Types from bfpt, to determine the Erase Type sizes. Sort all
+>   the map's Erase Types in ascending order with the smallest erase size being
+>   the first member in the erase_type array. Sort Erase Type mask in regions.
+>   We sort the Erase Type by size, at init, in order to speed up the
+>   process of finding the best erase command at run-time.
+> - spi_nor_select_erase(): pass directly info->sector_size instead of the whole
+>   flash_info structure in order to simplify the code.
+> - keep the same convention as most flashes, and order erase types by size with
+>   the smallest Erase Type size starting at index 0/ BIT(0).
+> - return unused function: spi_nor_region_mark_end().
+> - fix return value of spi_nor_has_uniform_erase().
+> - remove setting of mtd->erasesize and nor->erase_opcode when parsing the Basic
+>   Flash Parameter Table. mtd->erasesize was set to the maximum supported Erase
+>   Type size, without verifying if that Erase Type can erase the entire flash.
+>   mtd->erasesize is now set just in spi_nor_select_erase(), after we find which
+>   Erase Types are supported in the uniform case.
+> 
+> Changes in v1 or what I've done on top of Cyrille's work (https://lkml.org/lkml/2017/4/15/70):
+> - minimize the amount of erase() calls by using the best sequence of erase
+>   type commands depending on alignment.
+> - build the list of best fitted erase commands to be executed once we
+>   validate that the erase can be performed.
+> - add improvements on how the erase map is handled. The regions are
+>   consecutive in the address space, walk through the regions incrementally.
+> - speed up finding the best erase type command. Order erase types by
+>   size, iterate them from the biggest to the smallest and stop when best
+>   fitted command is found.
+> - determine at init if there are erase types that can erase the entire
+>   memory
+> - fix support for overlaid regions.
+> 
+> Cyrille Pitchen (1):
+>   mtd: spi-nor: parse SFDP 4-byte Address Instruction Table
+> 
+> Tudor Ambarus (2):
+>   mtd: spi-nor: add support to non-uniform SFDP SPI NOR flash memories
+>   mtd: spi-nor: parse SFDP Sector Map Parameter Table
+> 
+>  drivers/mtd/spi-nor/spi-nor.c | 892 +++++++++++++++++++++++++++++++++++++++---
+>  include/linux/mtd/spi-nor.h   | 120 ++++++
+>  2 files changed, 954 insertions(+), 58 deletions(-)
+> 
