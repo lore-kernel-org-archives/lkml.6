@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26765C43615
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D75C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9F7A20C03
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:13:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F7A20C03
+	by mail.kernel.org (Postfix) with ESMTP id A816120C03
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 09:13:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A816120C03
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726570AbeHTM1y (ORCPT
+        id S1726522AbeHTM1w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 08:27:54 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:28538 "EHLO
+        Mon, 20 Aug 2018 08:27:52 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:45479 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726010AbeHTM1x (ORCPT
+        with ESMTP id S1726239AbeHTM1w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 08:27:53 -0400
-X-UUID: 4fd946433235492983af336944f474b9-20180820
+        Mon, 20 Aug 2018 08:27:52 -0400
+X-UUID: aa50939bb6a449c2920dffba03ceefad-20180820
 Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
         (envelope-from <sean.wang@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 989111970; Mon, 20 Aug 2018 17:12:59 +0800
+        with ESMTP id 1634069004; Mon, 20 Aug 2018 17:12:59 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
  mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
  15.0.1210.3; Mon, 20 Aug 2018 17:12:57 +0800
@@ -39,12 +39,10 @@ To:     <marcel@holtmann.org>, <johan.hedberg@gmail.com>
 CC:     <linux-bluetooth@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 2/2] Bluetooth: mediatek: Add protocol support for MediaTek MT7663U USB devices
-Date:   Mon, 20 Aug 2018 17:12:55 +0800
-Message-ID: <3f43f8211428c059eb642a0f08b7b7af6296193f.1534752578.git.sean.wang@mediatek.com>
+Subject: [PATCH v2 0/2] Bluetooth: mediatek: Add protocol support for MediaTek USB devices
+Date:   Mon, 20 Aug 2018 17:12:53 +0800
+Message-ID: <cover.1534752578.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1534752578.git.sean.wang@mediatek.com>
-References: <cover.1534752578.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -55,81 +53,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-This adds the support of enabling MT7663U Bluetooth function running
-on the top of btusb driver.
+v2:
 
-The information in /sys/kernel/debug/usb/devices about the Bluetooth
-device is listed as the below.
+add fixes and enhancements based on [1]
+* include /sys/kernel/debug/usb/devices portion in the commit message.
+* turn default into n for config BT_HCIBTUSB_MTK in Kconfig
+* only add MediaTek support to btusb.c
+* drop cmd_sync callback usage
+* use __hci_cmd_send to send WMT commands
+* add wait event handling similar to what is being done in btmtkuart.c
+* submit a control IN URB similar to interrupt IN URB on demand for the WMT
+  commands during setup 
+* add cosmetic changes
 
-T:  Bus=04 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  5 Spd=5000 MxCh= 0
-D:  Ver= 3.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS= 9 #Cfgs=  1
-P:  Vendor=0e8d ProdID=7663 Rev= 1.00
-S:  Manufacturer=MediaTek Inc.
-S:  Product=Wireless_Device
-S:  SerialNumber=000000000
-C:* #Ifs= 3 Cfg#= 1 Atr=a0 MxPwr=160mA
-A:  FirstIf#= 0 IfCount= 2 Cls=e0(wlcon) Sub=01 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
-E:  Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+[1]
+http://lists.infradead.org/pipermail/linux-mediatek/2018-August/014650.html
+http://lists.infradead.org/pipermail/linux-mediatek/2018-August/014656.html
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/bluetooth/btusb.c | 5 +++++
- 1 file changed, 5 insertions(+)
+v1:
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 4ebfb77..b362a64 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -2358,6 +2358,7 @@ static int btusb_shutdown_intel(struct hci_dev *hdev)
- 
- #ifdef CONFIG_BT_HCIBTUSB_MTK
- 
-+#define FIRMWARE_MT7663		"mt7663pr2h.bin"
- #define FIRMWARE_MT7668		"mt7668pr2h.bin"
- 
- #define BTMTKUSB_TX_WAIT_VND_EVT	1
-@@ -2751,6 +2752,9 @@ static int btusb_mtk_setup(struct hci_dev *hdev)
- 	}
- 
- 	switch (dev_id) {
-+	case 0x7663:
-+		fwname = FIRMWARE_MT7663;
-+		break;
- 	case 0x7668:
- 		fwname = FIRMWARE_MT7668;
- 		break;
-@@ -2882,6 +2886,7 @@ static int btusb_mtk_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
- 	return err;
- }
- 
-+MODULE_FIRMWARE(FIRMWARE_MT7663);
- MODULE_FIRMWARE(FIRMWARE_MT7668);
- #endif
- 
+This adds the support of enabling MT7668U and MT7663U Bluetooth
+function running on the top of btusb driver. The patch also adds
+a newly created file mtkbt.c able to be reused independently from
+the transport type such as UART, USB and SDIO.
+
+Sean Wang (2):
+  Bluetooth: mediatek: Add protocol support for MediaTek MT7668U USB
+    devices
+  Bluetooth: mediatek: Add protocol support for MediaTek MT7663U USB
+    devices
+
+ drivers/bluetooth/Kconfig |  11 +
+ drivers/bluetooth/btusb.c | 554 ++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 565 insertions(+)
+
 -- 
 2.7.4
 
