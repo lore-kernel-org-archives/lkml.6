@@ -2,287 +2,191 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35716C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B3FC4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:39:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D42382154B
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:38:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D42382154B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BD9CF2154B
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 12:39:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="CSbEG9Kd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD9CF2154B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbeHTPyO (ORCPT
+        id S1726919AbeHTPyg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 11:54:14 -0400
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:54347 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726816AbeHTPyM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 11:54:12 -0400
-Received: by mail-wm0-f50.google.com with SMTP id c14-v6so14152159wmb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 05:38:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=e3+bwZgGK1UVwSxi1SkygbicFf2dAHAxDhey8dSE9X0=;
-        b=UqwPAa4MNRoWNCq5L7KvODEuXecvSi15C2OZpgDlb/79Kjt0sNBMQ3iJzvnNgZnPNf
-         DB/OqzBbD1VmgS9ip6UAvkZdjB/ULI9sRIGUWJjPbqrBcEBGtXg0Kr3586KZuOmJCSCE
-         hoLPM44TVVEyzgAnmLZJplHC5ZA5KoGv2tjkkIw9NfoSz5+VNj2p/WOdnXUxwaQYHgGU
-         3RSCRkc+4RjX+qIlCyU4uD+8H76zrn0YtGC1s5KbhOGouRfsnGOOQz3QzGNdzcoiSvwH
-         uPTHGIO+TE/J7O3H1RmqrauSVnccpT4Ahg1pjV8HVCLx0YMLYhz4dp29+/G2/Gy+NY9m
-         toZw==
-X-Gm-Message-State: AOUpUlGslJMtQuyTVMna1hQbWMpq3fMpnG946jpuwkeuunMxGm43yYj9
-        +uDW691CakE0aHt8J8O0NGCdXw==
-X-Google-Smtp-Source: AA+uWPw1chckuqOiEUl2dS6BO9q8hsaapJi1KUqLf+TcDSdA5yZMVJAogZ1UyJk4tnO/mlsnrAJMvg==
-X-Received: by 2002:a1c:4d09:: with SMTP id o9-v6mr27807527wmh.111.1534768721489;
-        Mon, 20 Aug 2018 05:38:41 -0700 (PDT)
-Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id v2-v6sm496917wme.36.2018.08.20.05.38.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 Aug 2018 05:38:40 -0700 (PDT)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     linux-audit@redhat.com
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        Ondrej Mosnacek <omosnace@redhat.com>
-Subject: [RFC PATCH ghak10 v4 2/2] timekeeping/ntp: Audit clock/NTP params adjustments
-Date:   Mon, 20 Aug 2018 14:38:18 +0200
-Message-Id: <20180820123818.27547-3-omosnace@redhat.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180820123818.27547-1-omosnace@redhat.com>
-References: <20180820123818.27547-1-omosnace@redhat.com>
+        Mon, 20 Aug 2018 11:54:36 -0400
+Received: from mail-eopbgr00058.outbound.protection.outlook.com ([40.107.0.58]:20224
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726775AbeHTPyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 11:54:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0qb7/yK4VfUS7NZwRpeB+d0Rr/v4A79hi6rqio2orsM=;
+ b=CSbEG9KdyNEkYolUH7JCHghDfy/9bKZkmCvv8v6rHaJdnPYEXSYOG7b1tGXwLt3PwtMpB21rULin8n7tIMjVoqhm+UotZ2z9SNaOqSqUEeV9kgq8g2QVdLB5Sm8nC15CpPRPWShTAz5t4lOS4s8f2ohPPiFpPiSgla5WtemZQhY=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Ayan.Halder@arm.com; 
+Received: from localhost (217.140.106.49) by
+ VI1PR0801MB1392.eurprd08.prod.outlook.com (2603:10a6:800:3b::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1059.19; Mon, 20 Aug
+ 2018 12:39:02 +0000
+Date:   Mon, 20 Aug 2018 13:38:59 +0100
+From:   Ayan Halder <ayan.halder@arm.com>
+To:     Liviu Dudau <liviu.dudau@arm.com>
+Cc:     airlied@linux.ie, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, seanpaul@chromium.org, nd@arm.com
+Subject: Re: [PATCH] drm: Use horizontal and vertical chroma subsampling
+ factor while calculating offsets in the physical address of framebuffer
+Message-ID: <20180820123859.GA2054@arm.com>
+References: <1534527184-24552-1-git-send-email-ayan.halder@arm.com>
+ <20180820110319.GV907@e110455-lin.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180820110319.GV907@e110455-lin.cambridge.arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [217.140.106.49]
+X-ClientProxiedBy: CWLP265CA0190.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:401:4d::34) To VI1PR0801MB1392.eurprd08.prod.outlook.com
+ (2603:10a6:800:3b::20)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 36ebeca9-5cd0-42e2-8265-08d60699e8d1
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0801MB1392;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1392;3:9NEs6jJ1b5PaO/IoeB1dPT389AefvkOSZASlD0p/8Np2dDPunBMSv+k68aYdGs5V9bW+vwTYtTRrk4tPgWZC7LX63mPAe4ndbxO5oUOpns2XjJFfGm5o4LvHSZXjpiaftYcL/UKE8vDHu7Z0V7eoDO1v3DjNlhf4ShotxjxKuwFNHXmr6tc2Y/0k2qUOcRrooJk9lCSzIJHUUyWlvLX/aVj355m1S+ILhL9N4VrkMFmUB+mI4dZnsYA1yDodOaGB;25:IXOlOzYK2e5M5w0TE4jnM6oxl6+L0ID87pMRLe7wxh1z+9UaHebWNJsMXTLG2O0kgtXzCtPbFuF6rnxS5eWCxYzmu3x89h74pwwcfTC2jREDq/nkcUaoOqozaM1X/M6Nl24TwulU+3xwIIrJIIK7UowXbcEnFH2O+Ey+yPvfB3Cti0wIZbAN8iBAhI/HXOvHGC2agy6lnvc7Qs3FvPQdNUbv+vv6XUvQT5qidfzmIlE+R1mX2AisUvWpkvid/iesEkOei/cnC4VOQw+qy3j+dmFeOdx7QiiAkvleac/yuhGsd3ArktcVO9vp5Gz6M2JE6VXqxuFqC3UYFQk9M5Y1AQ==;31:Sl1gU/jaPCxqdOXTOsyRweUkvvwZ9D6E7lSi6aG5qgfJp/M67TLerpHVKJUcG4xrJzV14PJ5N8iIAb4GRjPHptSTiPNGkESqO5wl3LnRYatIJemqYtq3O9RCyPfeD7wZp6jQqhCEGMwf2z8EMueC7Az9/58nm67WHjl1NRdrrzFzmNweVAWEN0ImvgURrgXISy9+2nW0KIFneVYl+Po7vuJwtx9ekFVJ1iywie4x4fo=
+X-MS-TrafficTypeDiagnostic: VI1PR0801MB1392:
+NoDisclaimer: True
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1392;20:Chuh80/cGvxtxE8DZSxpYt69FE6j/X4jQjtRgscjln6NHdWHquDg4EX45U2o28bHyb8eap2u6iGOWU3MOdtoQAiySdh6fin1dyMvwf+IP37YwMvyLbSq6B/Ag5itAdFZZbaZs554i5sqSc9z8ORwwpUtB6eP6vKultZD/f5rVAWA9x9/snOB1tbeCpy8kCl8dJCp7wZuV1nTNG8dyzNrJm9YPsJBNFWA1XRcp1YoBj4pzSujQxdx+65Cx2ZKPB9FLAbVZeDg2Qo2iezNdhykXe5Df5qzr9ZkPNXiL+g9CBR2BJPPz3vrpJQWVDbE8ONOcMo8IPnnMXlQ8LSN/IGRnw==;4:kKFgwO+ZJ4IpXmN9c++dtpmyDWwkJk7cVnqsTQxfw8pZ2EAK3fyfXs+djLCWbufJy1R/yYin+NkLyeC3/d71nRcSs2z+LOLRP2x4BYtEKZvIzxiWDdUSDRdeivftgNlaf1Cz4bCbOqhkKaW83sohmWTU9JarOnSxHq9rHsrjNI1XcIByV2b7jw6CLLRRJxFPKvOAfo+cU1y98bzIcuJGNGufbxrB20EZEG9LFxnCnFWR7gG6QYRr2KDrBgTz4G4AZ1wiMKv/OVA96AJe9nymzRpKOqCYyVkebupGHdVA+swwB1OkU6paUDICPyQS+IYLCajHxywe48b+Vriu64DTqoAfGylnAZarvILgdW016kE=
+X-Microsoft-Antispam-PRVS: <VI1PR0801MB1392B6F64A701DE2812FE4F0E4320@VI1PR0801MB1392.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(180628864354917)(217544274631240);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(3231311)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201708071742011)(7699016);SRVR:VI1PR0801MB1392;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0801MB1392;
+X-Forefront-PRVS: 0770F75EA9
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(39860400002)(136003)(396003)(376002)(366004)(346002)(199004)(189003)(575784001)(2906002)(86362001)(6486002)(97736004)(7736002)(6246003)(106356001)(16526019)(53936002)(6636002)(305945005)(44832011)(6666003)(6862004)(5660300001)(81156014)(81166006)(4326008)(229853002)(3846002)(6116002)(14444005)(36756003)(52116002)(6496006)(76506005)(478600001)(23726003)(76176011)(8676002)(8936002)(68736007)(966005)(72206003)(33656002)(37006003)(6306002)(26005)(58126008)(386003)(486006)(316002)(446003)(11346002)(2616005)(956004)(105586002)(47776003)(25786009)(16586007)(50466002)(1076002)(66066001)(476003)(18370500001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0801MB1392;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0801MB1392;23:+xpm90OJKYuv7i9UUaYNVyRL4nacdUgm0/2yDzQ?=
+ =?us-ascii?Q?tWzjPJ2xbaC6w+4slpvIo4aYH9QJ7mql0o/PQ3sBRM5IHXEVD4xbSQC3waW1?=
+ =?us-ascii?Q?TMw0pU4zHHTNOhiDqs1+AiIVkll1fUAwAYH358rZldjXNgXMTHs+VtAouv1X?=
+ =?us-ascii?Q?UlCWO9pziCpAWgUgNGw4d9HPlC3lkMJbrdjvJYd9ryjUjrMdfX7qrOfKr6bL?=
+ =?us-ascii?Q?aVXfNyPMkmSIUb7wgbkSSL8EMDD2PbL8H/kyzTaPOZK45+b19AEjc6im1nEP?=
+ =?us-ascii?Q?URG6vTdgO6DZFiIc0uW7AeP+aKF/CktBMMpGKz97uSLIv1d/7pgrs3ryjUm7?=
+ =?us-ascii?Q?1lzst+39kc3CSTPt+g3A16aubkFoF5nhpB0mJcww3YbhEqFIItSgF4pqwQHB?=
+ =?us-ascii?Q?4iKcDkxNP/mQRqFiwMJ5jQI1ouF9ZCDOGLxG8c4a/hK3qgYlhXwvgSJzYI/j?=
+ =?us-ascii?Q?zvmlMZxs/Gn6B0L362yAiD89ABVjbIDFJb+1xOxIcwHamRY7i36Ce5ZlXynB?=
+ =?us-ascii?Q?OLA06ZpqrC4AN3ZkQwzt8eDBgOE/m2Yo22CJ1AlcaPHa1MFUj8VZwEVFTODF?=
+ =?us-ascii?Q?VM//wbdWNPxhDtXBIqBhBQD89iPBrpAjIP4dP3H8OLsXnYAz2Jz4SmGTKmMp?=
+ =?us-ascii?Q?2+KW1jzr8nts9W0WYtM+w26oBHT/yG0vfYC6Z7X4aNYXkHOylMnTStw6819i?=
+ =?us-ascii?Q?b1S2WaPWT8lfIWKLq7fJ4+Zttc3MnUaLyExb0l12z75O2Ji4efvxiGc+WOBU?=
+ =?us-ascii?Q?5uQAn33KeJxn2L6gqTabbMaVoLIMwfr7iYTvc74u+zS5vxUhhuuHxPQRP5DI?=
+ =?us-ascii?Q?I0P65OnicYq4g2mGXdWs1j8TReQ1fMviS8W37HEPyttG4cN1Kdm/L8tNzfZ+?=
+ =?us-ascii?Q?pYzn/+TGo6yUiuDYVp/XcZwhBTvy29w8b/vANCRcbRt+L57bho1nAMtDrrr4?=
+ =?us-ascii?Q?E3WKd6UHG0pXtvwPRHDFoSCdknB+yULJWrfDIopqMRB2/4kLU3L35V+bPsdS?=
+ =?us-ascii?Q?MfKPHBzxXK5FuB/9GL3j1/WEwu9cqPgg1ev2hfch/HBJAPXKfJw8Pj1J2OMg?=
+ =?us-ascii?Q?2KLEH8B5NCAdmYh21KwhbW1AJNAbBsYJZr+RsF22eyR51oVHC3B3bq5bGiqu?=
+ =?us-ascii?Q?LPkO+/E/mF6ydDKSeX/2BmYcA8xASGsswpnfBcZh9hawtICPQbqxuzXoTlvl?=
+ =?us-ascii?Q?v764m6dybDcZVb2CCUmk7SEg0Hp2/wqBfhcrQvLGT+UYUjJCv8jZDKchF/Ec?=
+ =?us-ascii?Q?BXi1+9NFGcGk2BN3QPVJkXoMnmvUZknqDUxoDqZbeLTTYGlI1pFvw1f6B/jB?=
+ =?us-ascii?Q?MTuKbAJ4qDSbM9r8B4rOP2VLMN53eBKoW6p9l8oC5Qj2eJ81V7cwmiD68OQj?=
+ =?us-ascii?Q?xuURtTpOZqTGgxag12WuLN0ZJMiOnyUXkxDPI9qHVkimXIGTSx9I0QVhWvEw?=
+ =?us-ascii?Q?P8/FZcInH2A=3D=3D?=
+X-Microsoft-Antispam-Message-Info: xna1qZ72InyqiGyG1CPZ5zYho6GjgYSZTVNe9GWhfuFz8U9sY/uMfh0mJl2+W02cvxROTjehV05CYwmiWLfFQxh8xbnqtPsvN0jt3HFrHvIQA3iaYOe8EflbTtQI4YPnyGIzrA6hjF3Y4XhT3V7USvRsRpwbUYbiNVK5wXBSP/yOAamrBTiG/Np7jQGQQIAI7pDIbay3oNFuEsOo7Kv3FNEEoEl9/bhKRc0z2M6W3Ho6sGmS4PGp/wuQPbMLIzrQJxusuhdbu0FzdnOziYMVP75HIS/XGWqsg8S5K+5lHP1krynwWBRUfu1/BBRUoOPSMkojNEkNI6ZbvymxYswnIRorbPzq2GBJCw0yvefavKo=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1392;6:G57UAE4E5fJ4qsVrYw3/cBWT6ckUgELlXpRDQQnArXMKJBCNP7deXTZb+H6Kd5/gzLi51a3qVT1eXrcDJaIazPFqA2wP6mLnALeFoiursEP4cpibLwut1/r/UzeBPQd4WNQls4exfxxrlDDL0Ko49j4Np9USuGdXBlc15CnzT8AHorxjqExf4YW/Xb1JF14YEdB3W93dzokYHnBme+Ud0b/YVGh6ZImYl/wDLdNaoKZtQe+uwQYDUpU+dUyMGV8eW2GUjRsELdF6aGmkaPmmUPsh8xm03zIOIoyuqHXPsmhuqBbBgvIwCsIEoC/CfeOV2sKluadLf12sayYp2ndkxYrcLqRVZYYGVkqr7HyAmU85lmc8VIMpVH2L6YknU7TEIp351Gnuc4tSOB7+oxeNu+iRWIda/luqNrWm1TsbX/tWok6GqwBEYiL6qMc2RIkQ1V9l66XybDdLZF1640fslg==;5:bonWhFu+fgyn0hsHDfKH04OgyH5p97P9mrZ7PUsq8qD8tlKtkfaOPgsDLmFIU6CLTuvJyi2Fzb/CUu2MluzzS6Ep8/WEjsUhiVcvwLPvV7YBzjUYIf3C+/1hVJVKo1oK1tFN2g+++4xbhB+OsQF57x/Fd5NvMyIZ99Kddy5NtP0=;7:JbCRULW2EtnpgCVyT7bL0o+EKjfPQG53gcuJ80RWw05TTKUnYT2b2+CmBgMIv80aKDOWZpDWoYyRAlYobUGbRS9lwaTfy7BdnQeWHz26tAas3ZFJOLssjTV6Xz0wZ6YB1j9deEf0SyxfcCleuXmptKdT4pVcTncnAN84YdSKJVEZIupB/vPYv3tHTJJU0d8K0zmeKbHb9Pw+eH5rU/rLO2k+dsFNukbClsjkBTW4A1uV6aSh5XR63iox5Zig5V9/
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2018 12:39:02.3970
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36ebeca9-5cd0-42e2-8265-08d60699e8d1
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0801MB1392
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds logging of all attempts to either inject an offset into
-the clock (producing an AUDIT_TIME_INJOFFSET record) or adjust an NTP
-parameter (producing an AUDIT_TIME_ADJNTPVAL record).
+On Mon, Aug 20, 2018 at 12:03:19PM +0100, Liviu Dudau wrote:
+> On Fri, Aug 17, 2018 at 06:33:04PM +0100, Ayan Kumar Halder wrote:
+> > For multi-planar formats, while calculating offsets in planes with index greater than 0
+> > (ie second plane, third plane, etc), one needs to divide (src_x * cpp) with horizontal
+> > chroma subsampling factor and (src_y * pitch) with vertical chroma subsampling factor.
+> > 
+> > The reason being that the planes contain subsampled (ie reduced) data (by a factor of 2) and thus the
+> 
+> drop the extraneous "the" at the end of the line.
+> 
+> > while calculating the byte position coresponding to the x and y co-ordinates, one needs to be
+> 
+> and drop the extraneous "be" at the end of this line.
+> 
+> > divide it with the sampling factor.
+> > 
+> > Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
+> 
+> Otherwise, it looks good to me!
+> 
+> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+>
+Thanks Liviu. I will update the commit message and push this in
+drm-misc-next.
 
-For reference, running the following commands:
-
-    auditctl -D
-    auditctl -a exit,always -F arch=b64 -S adjtimex
-    chronyd -q
-
-produces audit records like this:
-
-type=TIME_ADJNTPVAL msg=audit(1530616044.507:5): op=adjust old=0 new=0
-type=SYSCALL msg=audit(1530616044.507:5): arch=c000003e syscall=159 success=yes exit=5 a0=7fff57e78c00 a1=0 a2=4 a3=7f754ae28c0a items=0 ppid=626 pid=629 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=1 comm="chronyd" exe="/usr/sbin/chronyd" subj=system_u:system_r:kernel_t:s0 key=(null)
-type=PROCTITLE msg=audit(1530616044.507:5): proctitle=6368726F6E7964002D71
-type=TIME_ADJNTPVAL msg=audit(1530616044.507:6): op=maxerr old=16000000 new=0
-type=SYSCALL msg=audit(1530616044.507:6): arch=c000003e syscall=159 success=yes exit=5 a0=7fff57e78c00 a1=1 a2=1 a3=7f754ae28c0a items=0 ppid=626 pid=629 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=1 comm="chronyd" exe="/usr/sbin/chronyd" subj=system_u:system_r:kernel_t:s0 key=(null)
-type=PROCTITLE msg=audit(1530616044.507:6): proctitle=6368726F6E7964002D71
-type=TIME_INJOFFSET msg=audit(1530616044.507:7): sec=0 nsec=0
-type=TIME_ADJNTPVAL msg=audit(1530616044.507:7): op=status old=64 new=8256
-type=SYSCALL msg=audit(1530616044.507:7): arch=c000003e syscall=159 success=yes exit=5 a0=7fff57e78c00 a1=1 a2=1 a3=7f754ae28c0a items=0 ppid=626 pid=629 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=1 comm="chronyd" exe="/usr/sbin/chronyd" subj=system_u:system_r:kernel_t:s0 key=(null)
-type=PROCTITLE msg=audit(1530616044.507:7): proctitle=6368726F6E7964002D71
-type=TIME_ADJNTPVAL msg=audit(1530616044.507:8): op=status old=8256 new=8257
-type=TIME_ADJNTPVAL msg=audit(1530616044.507:8): op=offset old=0 new=0
-type=TIME_ADJNTPVAL msg=audit(1530616044.507:8): op=freq old=0 new=0
-type=SYSCALL msg=audit(1530616044.507:8): arch=c000003e syscall=159 success=yes exit=5 a0=7fff57e78ab0 a1=0 a2=55e129c850c0 a3=7f754ae28c0a items=0 ppid=626 pid=629 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=1 comm="chronyd" exe="/usr/sbin/chronyd" subj=system_u:system_r:kernel_t:s0 key=(null)
-type=PROCTITLE msg=audit(1530616044.507:8): proctitle=6368726F6E7964002D71
-type=TIME_ADJNTPVAL msg=audit(1530616044.507:9): op=status old=8257 new=64
-type=SYSCALL msg=audit(1530616044.507:9): arch=c000003e syscall=159 success=yes exit=5 a0=7fff57e78ab0 a1=0 a2=55e129c850c0 a3=7f754ae28c0a items=0 ppid=626 pid=629 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=1 comm="chronyd" exe="/usr/sbin/chronyd" subj=system_u:system_r:kernel_t:s0 key=(null)
-type=PROCTITLE msg=audit(1530616044.507:9): proctitle=6368726F6E7964002D71
-type=SYSCALL msg=audit(1530616044.507:10): arch=c000003e syscall=159 success=yes exit=5 a0=7fff57e78a70 a1=0 a2=55e129c850c0 a3=7f754ae28c0a items=0 ppid=626 pid=629 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=1 comm="chronyd" exe="/usr/sbin/chronyd" subj=system_u:system_r:kernel_t:s0 key=(null)
-type=PROCTITLE msg=audit(1530616044.507:10): proctitle=6368726F6E7964002D71
-type=TIME_ADJNTPVAL msg=audit(1530616044.511:11): op=freq old=0 new=49180377088000
-type=TIME_ADJNTPVAL msg=audit(1530616044.511:11): op=tick old=10000 new=10000
-type=SYSCALL msg=audit(1530616044.511:11): arch=c000003e syscall=159 success=yes exit=5 a0=7fff57e78ad0 a1=0 a2=2710 a3=f42f82a800000 items=0 ppid=626 pid=629 auid=0 uid=385 gid=382 euid=385 suid=385 fsuid=385 egid=382 sgid=382 fsgid=382 tty=(none) ses=1 comm="chronyd" exe="/usr/sbin/chronyd" subj=system_u:system_r:kernel_t:s0 key=(null)
-type=PROCTITLE msg=audit(1530616044.511:11): proctitle=6368726F6E7964002D71
-type=TIME_ADJNTPVAL msg=audit(1530616044.521:12): op=status old=64 new=64
-type=TIME_ADJNTPVAL msg=audit(1530616044.521:12): op=maxerr old=16000000 new=16000000
-type=TIME_ADJNTPVAL msg=audit(1530616044.521:12): op=esterr old=16000000 new=16000000
-type=SYSCALL msg=audit(1530616044.521:12): arch=c000003e syscall=159 success=yes exit=5 a0=7fff57e78b40 a1=1 a2=40 a3=f91f6ef84fbab items=0 ppid=626 pid=629 auid=0 uid=385 gid=382 euid=385 suid=385 fsuid=385 egid=382 sgid=382 fsgid=382 tty=(none) ses=1 comm="chronyd" exe="/usr/sbin/chronyd" subj=system_u:system_r:kernel_t:s0 key=(null)
-type=PROCTITLE msg=audit(1530616044.521:12): proctitle=6368726F6E7964002D71
-type=TIME_INJOFFSET msg=audit(1530616049.652:13): sec=-16 nsec=124887145
-type=TIME_ADJNTPVAL msg=audit(1530616049.652:13): op=status old=64 new=8256
-type=SYSCALL msg=audit(1530616049.652:13): arch=c000003e syscall=159 success=yes exit=5 a0=7fff57e78270 a1=1 a2=fffffffffffffff0 a3=137b828205ca12 items=0 ppid=626 pid=629 auid=0 uid=385 gid=382 euid=385 suid=385 fsuid=385 egid=382 sgid=382 fsgid=382 tty=(none) ses=1 comm="chronyd" exe="/usr/sbin/chronyd" subj=system_u:system_r:kernel_t:s0 key=(null)
-type=PROCTITLE msg=audit(1530616049.652:13): proctitle=6368726F6E7964002D71
-type=TIME_ADJNTPVAL msg=audit(1530616033.783:14): op=freq old=49180377088000 new=49180377088000
-type=TIME_ADJNTPVAL msg=audit(1530616033.783:14): op=tick old=10000 new=10000
-type=SYSCALL msg=audit(1530616033.783:14): arch=c000003e syscall=159 success=yes exit=5 a0=7fff57e78bc0 a1=0 a2=2710 a3=0 items=0 ppid=626 pid=629 auid=0 uid=385 gid=382 euid=385 suid=385 fsuid=385 egid=382 sgid=382 fsgid=382 tty=(none) ses=1 comm="chronyd" exe="/usr/sbin/chronyd" subj=system_u:system_r:kernel_t:s0 key=(null)
-type=PROCTITLE msg=audit(1530616033.783:14): proctitle=6368726F6E7964002D71
-
-The chronyd command that produced the above records executed the
-following adjtimex(2) syscalls (as per strace output):
-
-adjtimex({modes=ADJ_OFFSET|0x8000, offset=0, freq=0, maxerror=16000000, esterror=16000000, status=STA_UNSYNC, constant=2, precision=1, tolerance=32768000, time={tv_sec=1530616044, tv_usec=507215}, tick=10000, ppsfreq=0, jitter=0, shift=0, stabil=0, jitcnt=0, calcnt=0, errcnt=0, stbcnt=0, tai=0}) = 5 (TIME_ERROR)
-adjtimex({modes=ADJ_MAXERROR, offset=0, freq=0, maxerror=0, esterror=16000000, status=STA_UNSYNC, constant=2, precision=1, tolerance=32768000, time={tv_sec=1530616044, tv_usec=507438}, tick=10000, ppsfreq=0, jitter=0, shift=0, stabil=0, jitcnt=0, calcnt=0, errcnt=0, stbcnt=0, tai=0}) = 5 (TIME_ERROR)
-adjtimex({modes=ADJ_SETOFFSET|ADJ_NANO, offset=0, freq=0, maxerror=16000000, esterror=16000000, status=STA_UNSYNC|STA_NANO, constant=2, precision=1, tolerance=32768000, time={tv_sec=1530616044, tv_usec=507604737}, tick=10000, ppsfreq=0, jitter=0, shift=0, stabil=0, jitcnt=0, calcnt=0, errcnt=0, stbcnt=0, tai=0}) = 5 (TIME_ERROR)
-adjtimex({modes=ADJ_OFFSET|ADJ_STATUS, offset=0, freq=0, maxerror=16000000, esterror=16000000, status=STA_PLL|STA_UNSYNC|STA_NANO, constant=2, precision=1, tolerance=32768000, time={tv_sec=1530616044, tv_usec=507698330}, tick=10000, ppsfreq=0, jitter=0, shift=0, stabil=0, jitcnt=0, calcnt=0, errcnt=0, stbcnt=0, tai=0}) = 5 (TIME_ERROR)
-adjtimex({modes=ADJ_STATUS, offset=0, freq=0, maxerror=16000000, esterror=16000000, status=STA_UNSYNC, constant=2, precision=1, tolerance=32768000, time={tv_sec=1530616044, tv_usec=507792}, tick=10000, ppsfreq=0, jitter=0, shift=0, stabil=0, jitcnt=0, calcnt=0, errcnt=0, stbcnt=0, tai=0}) = 5 (TIME_ERROR)
-adjtimex({modes=0, offset=0, freq=0, maxerror=16000000, esterror=16000000, status=STA_UNSYNC, constant=2, precision=1, tolerance=32768000, time={tv_sec=1530616044, tv_usec=508000}, tick=10000, ppsfreq=0, jitter=0, shift=0, stabil=0, jitcnt=0, calcnt=0, errcnt=0, stbcnt=0, tai=0}) = 5 (TIME_ERROR)
-adjtimex({modes=ADJ_FREQUENCY|ADJ_TICK, offset=0, freq=750433, maxerror=16000000, esterror=16000000, status=STA_UNSYNC, constant=2, precision=1, tolerance=32768000, time={tv_sec=1530616044, tv_usec=512146}, tick=10000, ppsfreq=0, jitter=0, shift=0, stabil=0, jitcnt=0, calcnt=0, errcnt=0, stbcnt=0, tai=0}) = 5 (TIME_ERROR)
-adjtimex({modes=ADJ_MAXERROR|ADJ_ESTERROR|ADJ_STATUS, offset=0, freq=750433, maxerror=16000000, esterror=16000000, status=STA_UNSYNC, constant=2, precision=1, tolerance=32768000, time={tv_sec=1530616044, tv_usec=522506}, tick=10000, ppsfreq=0, jitter=0, shift=0, stabil=0, jitcnt=0, calcnt=0, errcnt=0, stbcnt=0, tai=0}) = 5 (TIME_ERROR)
-adjtimex({modes=ADJ_SETOFFSET|ADJ_NANO, offset=0, freq=750433, maxerror=16000000, esterror=16000000, status=STA_UNSYNC|STA_NANO, constant=2, precision=1, tolerance=32768000, time={tv_sec=1530616033, tv_usec=778717675}, tick=10000, ppsfreq=0, jitter=0, shift=0, stabil=0, jitcnt=0, calcnt=0, errcnt=0, stbcnt=0, tai=0}) = 5 (TIME_ERROR)
-adjtimex({modes=ADJ_FREQUENCY|ADJ_TICK, offset=0, freq=750433, maxerror=16000000, esterror=16000000, status=STA_UNSYNC|STA_NANO, constant=2, precision=1, tolerance=32768000, time={tv_sec=1530616033, tv_usec=784644657}, tick=10000, ppsfreq=0, jitter=0, shift=0, stabil=0, jitcnt=0, calcnt=0, errcnt=0, stbcnt=0, tai=0}) = 5 (TIME_ERROR)
-
-(The struct timex fields above are from *after* the syscall was
-executed, so they contain the current (new) values as set from the
-kernel, except of the 'modes' field, which contains the original value
-sent by the caller.)
-
-Note that the records are emitted even when the actual value does not
-change (i.e. when there is an explicit attempt to change a value, but
-the new value equals the old one).
-
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
- kernel/time/ntp.c         | 50 +++++++++++++++++++++++++++++++--------
- kernel/time/timekeeping.c |  3 +++
- 2 files changed, 43 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
-index a09ded765f6c..cb2073a69ada 100644
---- a/kernel/time/ntp.c
-+++ b/kernel/time/ntp.c
-@@ -18,6 +18,7 @@
- #include <linux/module.h>
- #include <linux/rtc.h>
- #include <linux/math64.h>
-+#include <linux/audit.h>
- 
- #include "ntp_internal.h"
- #include "timekeeping_internal.h"
-@@ -294,6 +295,8 @@ static inline s64 ntp_update_offset_fll(s64 offset64, long secs)
- 
- static void ntp_update_offset(long offset)
- {
-+	s64 old_offset = time_offset;
-+	s64 old_freq = time_freq;
- 	s64 freq_adj;
- 	s64 offset64;
- 	long secs;
-@@ -342,6 +345,9 @@ static void ntp_update_offset(long offset)
- 	time_freq   = max(freq_adj, -MAXFREQ_SCALED);
- 
- 	time_offset = div_s64(offset64 << NTP_SCALE_SHIFT, NTP_INTERVAL_FREQ);
-+
-+	audit_ntp_adjust("offset", old_offset, time_offset);
-+	audit_ntp_adjust("freq", old_freq, time_freq);
- }
- 
- /**
-@@ -669,45 +675,67 @@ static inline void process_adjtimex_modes(struct timex *txc,
- 						struct timespec64 *ts,
- 						s32 *time_tai)
- {
--	if (txc->modes & ADJ_STATUS)
--		process_adj_status(txc, ts);
-+	if (txc->modes & (ADJ_STATUS | ADJ_NANO | ADJ_MICRO)) {
-+		int old_status = time_status;
-+
-+		if (txc->modes & ADJ_STATUS)
-+			process_adj_status(txc, ts);
- 
--	if (txc->modes & ADJ_NANO)
--		time_status |= STA_NANO;
-+		if (txc->modes & ADJ_NANO)
-+			time_status |= STA_NANO;
- 
--	if (txc->modes & ADJ_MICRO)
--		time_status &= ~STA_NANO;
-+		if (txc->modes & ADJ_MICRO)
-+			time_status &= ~STA_NANO;
-+
-+		audit_ntp_adjust("status", old_status, time_status);
-+	}
- 
- 	if (txc->modes & ADJ_FREQUENCY) {
-+		s64 old_freq = time_freq;
-+
- 		time_freq = txc->freq * PPM_SCALE;
- 		time_freq = min(time_freq, MAXFREQ_SCALED);
- 		time_freq = max(time_freq, -MAXFREQ_SCALED);
- 		/* update pps_freq */
- 		pps_set_freq(time_freq);
-+
-+		audit_ntp_adjust("freq", old_freq, time_freq);
- 	}
- 
--	if (txc->modes & ADJ_MAXERROR)
-+	if (txc->modes & ADJ_MAXERROR) {
-+		audit_ntp_adjust("maxerr", time_maxerror, txc->maxerror);
- 		time_maxerror = txc->maxerror;
-+	}
- 
--	if (txc->modes & ADJ_ESTERROR)
-+	if (txc->modes & ADJ_ESTERROR) {
-+		audit_ntp_adjust("esterr", time_esterror, txc->esterror);
- 		time_esterror = txc->esterror;
-+	}
- 
- 	if (txc->modes & ADJ_TIMECONST) {
-+		long old_constant = time_constant;
-+
- 		time_constant = txc->constant;
- 		if (!(time_status & STA_NANO))
- 			time_constant += 4;
- 		time_constant = min(time_constant, (long)MAXTC);
- 		time_constant = max(time_constant, 0l);
-+
-+		audit_ntp_adjust("const", old_constant, time_constant);
- 	}
- 
--	if (txc->modes & ADJ_TAI && txc->constant > 0)
-+	if (txc->modes & ADJ_TAI && txc->constant > 0) {
-+		audit_ntp_adjust("tai", *time_tai, txc->constant);
- 		*time_tai = txc->constant;
-+	}
- 
- 	if (txc->modes & ADJ_OFFSET)
- 		ntp_update_offset(txc->offset);
- 
--	if (txc->modes & ADJ_TICK)
-+	if (txc->modes & ADJ_TICK) {
-+		audit_ntp_adjust("tick", tick_usec, txc->tick);
- 		tick_usec = txc->tick;
-+	}
- 
- 	if (txc->modes & (ADJ_TICK|ADJ_FREQUENCY|ADJ_OFFSET))
- 		ntp_update_frequency();
-@@ -729,6 +757,8 @@ int __do_adjtimex(struct timex *txc, struct timespec64 *ts, s32 *time_tai)
- 			/* adjtime() is independent from ntp_adjtime() */
- 			time_adjust = txc->offset;
- 			ntp_update_frequency();
-+
-+			audit_ntp_adjust("adjust", save_adjust, txc->offset);
- 		}
- 		txc->offset = save_adjust;
- 	} else {
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 4786df904c22..9089ac329e69 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -25,6 +25,7 @@
- #include <linux/stop_machine.h>
- #include <linux/pvclock_gtod.h>
- #include <linux/compiler.h>
-+#include <linux/audit.h>
- 
- #include "tick-internal.h"
- #include "ntp_internal.h"
-@@ -2308,6 +2309,8 @@ int do_adjtimex(struct timex *txc)
- 		ret = timekeeping_inject_offset(&delta);
- 		if (ret)
- 			return ret;
-+
-+		audit_tk_injoffset(delta);
- 	}
- 
- 	getnstimeofday64(&ts);
--- 
-2.17.1
-
+> Best regards,
+> Liviu
+> 
+> > ---
+> >  drivers/gpu/drm/drm_fb_cma_helper.c | 11 +++++++++--
+> >  1 file changed, 9 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c b/drivers/gpu/drm/drm_fb_cma_helper.c
+> > index b127061..47e0e2f 100644
+> > --- a/drivers/gpu/drm/drm_fb_cma_helper.c
+> > +++ b/drivers/gpu/drm/drm_fb_cma_helper.c
+> > @@ -86,14 +86,21 @@ dma_addr_t drm_fb_cma_get_gem_addr(struct drm_framebuffer *fb,
+> >  {
+> >  	struct drm_gem_cma_object *obj;
+> >  	dma_addr_t paddr;
+> > +	u8 h_div = 1, v_div = 1;
+> >  
+> >  	obj = drm_fb_cma_get_gem_obj(fb, plane);
+> >  	if (!obj)
+> >  		return 0;
+> >  
+> >  	paddr = obj->paddr + fb->offsets[plane];
+> > -	paddr += fb->format->cpp[plane] * (state->src_x >> 16);
+> > -	paddr += fb->pitches[plane] * (state->src_y >> 16);
+> > +
+> > +	if (plane > 0) {
+> > +		h_div = fb->format->hsub;
+> > +		v_div = fb->format->vsub;
+> > +	}
+> > +
+> > +	paddr += (fb->format->cpp[plane] * (state->src_x >> 16)) / h_div;
+> > +	paddr += (fb->pitches[plane] * (state->src_y >> 16)) / v_div;
+> >  
+> >  	return paddr;
+> >  }
+> > -- 
+> > 2.7.4
+> > 
+> 
+> -- 
+> ====================
+> | I would like to |
+> | fix the world,  |
+> | but they're not |
+> | giving me the   |
+>  \ source code!  /
+>   ---------------
+>     ??\_(???)_/??
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
