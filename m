@@ -2,140 +2,153 @@ Return-Path: <SRS0=A5JR=LD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCD2C4321D
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 08:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB897C4321D
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 08:17:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF12F21473
-	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 08:06:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF12F21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 8BF2421473
+	for <linux-kernel@archiver.kernel.org>; Mon, 20 Aug 2018 08:17:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D3b/Wdvj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BF2421473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbeHTLVN (ORCPT
+        id S1726486AbeHTLbs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 07:21:13 -0400
-Received: from sauhun.de ([88.99.104.3]:57120 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726119AbeHTLVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 07:21:12 -0400
-Received: from localhost (p54B33943.dip0.t-ipconnect.de [84.179.57.67])
-        by pokefinder.org (Postfix) with ESMTPSA id D36B82D3E19;
-        Mon, 20 Aug 2018 10:06:32 +0200 (CEST)
-Date:   Mon, 20 Aug 2018 10:06:29 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        sedat.dilek@credativ.de, Jean Delvare <jdelvare@suse.de>,
-        linux-i2c@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Paul Mackerras <pmac@au1.ibm.com>
-Subject: Re: [PATCH v2] i2c: Remove '-Wno-deprecated-declarations' compiler
- warning
-Message-ID: <20180820080629.i7y4cx4wewmcyqpk@ninjato>
-References: <20180819135135.8801-1-sedat.dilek@credativ.de>
- <CA+55aFxv5_8C5ApV4cDjpvAmZbn1aiKebc7yrRWBskQQbz9=Hw@mail.gmail.com>
- <1d2a7c56cc44ff639ef2943366f4868e6e5ecdfe.camel@kernel.crashing.org>
+        Mon, 20 Aug 2018 07:31:48 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53121 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726119AbeHTLbs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 07:31:48 -0400
+Received: by mail-wm0-f65.google.com with SMTP id o11-v6so13239143wmh.2;
+        Mon, 20 Aug 2018 01:17:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YbfRqziy2EWLEG1mQ1orqRox2rFRhwJnrGerYoys99Y=;
+        b=D3b/WdvjoRpkLJKpjLqaA6ufj4Z8FNGwTbViFaqLxQ6YAE1K6CgF9bZ3WQ6WAQxZrF
+         LTxZzhLPYdXoFualnN3nwzWFZpTNG7aMoRSQadVJsmdpqmR6jVxiqw+9e/zSNa+QlQVb
+         l9bP/VrkhVHYbez02ukDy6wxb6YMtF2E2JzKueEqotdNodLN9pMYIV1zls+L67//jG/u
+         xoPlNt5v+skxSHS0vpZkFQBHATuKkHMCQlajN1XsfVEGoLsRLLRm7gzU4BP+Xl7IH6LE
+         tO1Uf6ZpLQS9OVUiIovh3fX6b0jMrc74GTVQ3v/YdeEuMoFFW63+Q8ZVEz0eDSCFn4vS
+         KWPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YbfRqziy2EWLEG1mQ1orqRox2rFRhwJnrGerYoys99Y=;
+        b=KstKNHFOE/DY4pff3TeGX6w8+Iqkiz0JQnWTvo538zfDosxgHIkvpTGb0FaLTAIpZR
+         riJLSq7EVGjHpXnl0e7OfddSg+OcKuJtCW6eQDriJRswO5WuxasWzfSXpxES0Rmcc4I0
+         Fy31tDa5SkVFbrBJuycD3h41TZ+Zsx7qfPrqVosahTAH7qp0JJWKI57DMsV0yBZJe4+A
+         K+TtxyKBxSVJK5OamuTu1fn+f/ZFlETbG7oFcANdc4nDDwg/cg9xcTf0XvTvhuXM+T+S
+         0bB00SQpvgj5LPLPyMzO/atq1s2liZ43H/4e+JBvieuV9UIkrFp7QnlY2XTgWe7YHnZV
+         yJ9A==
+X-Gm-Message-State: AOUpUlFSIrxx/C1+xQjovqscMjoR5d4njqShkkoa9HFWEGSlIUyjasU2
+        hXbM4QYW5gdEjVJ1zCbbBtrFrpa1zLfSLX2Lg/M=
+X-Google-Smtp-Source: AA+uWPzn98/JroKsCy0eYX8oAl6jJzP+BFKuYv7QjOzpp/z26FVPWSKkLPL9InRvr7rW13gNi/7YAd82O+o9zvB0Fb4=
+X-Received: by 2002:a1c:ce0b:: with SMTP id e11-v6mr23964143wmg.47.1534753028377;
+ Mon, 20 Aug 2018 01:17:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tee3kciyjjipcgdi"
-Content-Disposition: inline
-In-Reply-To: <1d2a7c56cc44ff639ef2943366f4868e6e5ecdfe.camel@kernel.crashing.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <1534749606-7311-1-git-send-email-jianchao.w.wang@oracle.com> <1534749606-7311-3-git-send-email-jianchao.w.wang@oracle.com>
+In-Reply-To: <1534749606-7311-3-git-send-email-jianchao.w.wang@oracle.com>
+From:   Ming Lei <tom.leiming@gmail.com>
+Date:   Mon, 20 Aug 2018 16:16:55 +0800
+Message-ID: <CACVXFVMxMf4Ag8CODJ_FPNrNTY-DhUZXV5JGLX-J4zexKF+qzg@mail.gmail.com>
+Subject: Re: [PATCH V3 2/2] blk-mq: sync the update nr_hw_queues with blk_mq_queue_tag_busy_iter
+To:     "jianchao.wang" <jianchao.w.wang@oracle.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Keith Busch <keith.busch@linux.intel.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Aug 20, 2018 at 3:18 PM Jianchao Wang
+<jianchao.w.wang@oracle.com> wrote:
+>
+> For blk-mq, part_in_flight/rw will invoke blk_mq_in_flight/rw to
+> account the inflight requests. It will access the queue_hw_ctx and
+> nr_hw_queues w/o any protection. When updating nr_hw_queues and
+> blk_mq_in_flight/rw occur concurrently, panic comes up.
+>
+> Before update nr_hw_queues, the q will be frozen. So we could use
+> q_usage_counter to avoid the race. percpu_ref_is_zero is used here
+> so that we will not miss any in-flight request. The access to
+> nr_hw_queues and queue_hw_ctx in blk_mq_queue_tag_busy_iter are
+> under rcu critical section, __blk_mq_update_nr_hw_queues could use
+> synchronize_rcu to ensure the zeroed q_usage_counter to be globally
+> visible.
+>
+> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+> ---
+>  block/blk-mq-tag.c | 14 +++++++++++++-
+>  block/blk-mq.c     |  5 ++++-
+>  2 files changed, 17 insertions(+), 2 deletions(-)
+>
+> diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
+> index c0c4e63..8c5cc11 100644
+> --- a/block/blk-mq-tag.c
+> +++ b/block/blk-mq-tag.c
+> @@ -320,6 +320,18 @@ void blk_mq_queue_tag_busy_iter(struct request_queue *q, busy_iter_fn *fn,
+>         struct blk_mq_hw_ctx *hctx;
+>         int i;
+>
+> +       /*
+> +        * __blk_mq_update_nr_hw_queues will update the nr_hw_queues and
+> +        * queue_hw_ctx after freeze the queue. So we could use q_usage_counter
+> +        * to avoid race with it. __blk_mq_update_nr_hw_queues will users
+> +        * synchronize_rcu to ensure all of the users go out of the critical
+> +        * section below and see zeroed q_usage_counter.
+> +        */
+> +       rcu_read_lock();
+> +       if (percpu_ref_is_zero(&q->q_usage_counter)) {
+> +               rcu_read_unlock();
+> +               return;
+> +       }
+>
+>         queue_for_each_hw_ctx(q, hctx, i) {
+>                 struct blk_mq_tags *tags = hctx->tags;
+> @@ -335,7 +347,7 @@ void blk_mq_queue_tag_busy_iter(struct request_queue *q, busy_iter_fn *fn,
+>                         bt_for_each(hctx, &tags->breserved_tags, fn, priv, true);
+>                 bt_for_each(hctx, &tags->bitmap_tags, fn, priv, false);
+>         }
+> -
+> +       rcu_read_unlock();
+>  }
+>
+>  static int bt_alloc(struct sbitmap_queue *bt, unsigned int depth,
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index 7b99477..fb56bae 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -2905,7 +2905,10 @@ static void __blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set,
+>
+>         list_for_each_entry(q, &set->tag_list, tag_set_list)
+>                 blk_mq_freeze_queue(q);
+> -
+> +       /*
+> +        * Sync with blk_mq_in_flight and blk_mq_queue_tag_busy_iter.
+> +        */
+> +       synchronize_rcu();
+>         /*
+>          * switch io scheduler to NULL to clean up the data in it.
+>          * will get it back after update mapping between cpu and hw queues.
+> --
+> 2.7.4
+>
 
---tee3kciyjjipcgdi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Aug 20, 2018 at 12:12:47PM +1000, Benjamin Herrenschmidt wrote:
-> On Sun, 2018-08-19 at 09:46 -0700, Linus Torvalds wrote:
-> > On Sun, Aug 19, 2018 at 6:51 AM Sedat Dilek <sedat.dilek@credativ.de> w=
-rote:
-> > >=20
-> > > This can be dropped with commit 771c035372a036f83353eef46dbb829780330=
-234
-> > > ("deprecate the '__deprecated' attribute warnings entirely and for go=
-od")
-> > > now in upstream.
-> >=20
-> > Could we please just remove the __deprecated use in i2c entirely?
-> >=20
-> > As fat as I can tell, it's used for one thing, which is the
-> > "attach_adapter" function pointer member in 'struct i2c_driver'.
-> >=20
-> > And I think there is _one_ remaining driver using it, namely the
-> > powermac "therm_windtunnel" driver.
-> >=20
-> > Could somebody who knows the i2c probing just a bit convert that *one*
-> > remaining driver, then remove the "attach_adapter" entirely, and also
-> > remove this thing?
-> >=20
-> > Alternatively, perhaps the driver should be removed? The last actual
-> > powermac change to that driver seems to be from August 2009.
-> > Everything since has been just cleanup unrelated to that driver code
-> > itself (ie spelling fixes, automated coccinelle scripts etc).
-> >=20
-> > Added a few people either because they're still officially maintainers
-> > of that file, or because they touched the code ten years ago.
->=20
-> Some people still use those old machines, I'll give a try at fixing the
-> driver.
-
-I did this here a while ago [1] ("macintosh: therm_windtunnel: drop
-using attach adapter")...
-
-> Paul: Do you still have one of these machines ?
-
-=2E.. but this was the main problem. I couldn't find anyone to test this.
-Even asked on PPC lists of various distributions.
-
-Note that we did apply the same approach of patch [1] already in commit
-ac397c80de89 ("ALSA: ppc: keywest: drop using attach adapter"). This has
-been tested on HW. I also have a hack to make this driver probe on one
-of my ARM boards. Of course, no real HW present there, but shows that
-the new probing works at least there.
-
-This is very interesting timing, too. Because I wanted to use the
-tentative version jump to 5.0 to finally get rid of this deprecated
-feature independently of the discussion here. Which would have meant
-resending the patch and arguing we have enough indications that the
-patch [1] is sane. And then I could finally remove this callback.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
 Thanks,
-
-   Wolfram
-
-[1] http://patchwork.ozlabs.org/patch/461759/
-
-
---tee3kciyjjipcgdi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt6doAACgkQFA3kzBSg
-KbZk/A//cpCMtKUwztdNTPu70z0HxMxBpdMhItbKcxDHV2VcssC57fLeNla+1Ng1
-uT/4/Xni1TZOf+srO50veerXDZadQydAwp9rVw4N0567T859tmB09aXP4PQKXTB7
-H6j/pUQOYWJek3drbWaW3jeDVOhQRQL13IwYfjeHq335NePYcD/kqWRkM7FMNaQ+
-nl1MRVDXAYfLPmXW++YQNKwEQ9dsiC62+mnAFqUjm6mlel9wHUKMMMfTdUd+fPjD
-NwpQDBRV8nCJJWs/MZMSWGVfr+8sEcNyqomfvNuTZYLMJ7Tu2TkaKAeCUyNl2BZc
-GTVqdYgsLL9cW3N92Qs0Kr+tg6E4adUEajuwn7kRgPv2Y9x1a9bNvP5NxWKV+Qm9
-TBFrr0f9PQuJAG5UyVQR61+HN4WHiV0RfVgNtO/6k3qt9kfIjnu6Wdiyt9iyHLI6
-RBKBWqVAI6p5kiaEBP2yzQmMskOODH1hTdN4FJ3joFRFKVW17/pf341DP5WeLlZT
-7Vlq1OPHMWbx5Y+iyziTkKAgLfhgLHo9qXLZP33WJlhNPDAvI3/VhN9N3MoyKoq5
-vCALiLDQkQ0LL9xQV7ntV0Dd3iXh3FH5niaLzJI3qYcO9FRh280CJtrtx1+U63Ei
-ssuGQ6Y2gRv+w7BkYiLf6v2XBAJCDAIFtP5pUUe4x0RSbyX2AI4=
-=9/e0
------END PGP SIGNATURE-----
-
---tee3kciyjjipcgdi--
+Ming Lei
