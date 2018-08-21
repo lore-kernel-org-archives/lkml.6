@@ -2,113 +2,91 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE75EC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0236C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:13:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 826A620C01
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:11:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 826A620C01
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 7E50C20C01
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:13:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E50C20C01
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbeHULbB (ORCPT
+        id S1726720AbeHULcj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 07:31:01 -0400
-Received: from mail-ua1-f50.google.com ([209.85.222.50]:43938 "EHLO
-        mail-ua1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726346AbeHULbB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 07:31:01 -0400
-Received: by mail-ua1-f50.google.com with SMTP id f4-v6so11320703uao.10;
-        Tue, 21 Aug 2018 01:11:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c5KYaLQ+yVYey17feGzjTGSPSb2K5Cc6S2noaTb1Ijg=;
-        b=QQdexwkUoagKVijYFKqBjfCTmDrzCwWNsAJcfAwmgIpjqEyyXYE/Co+9HXnAG8sOUd
-         e5ZYMPVzZFzzkNyUpwqqLsdhRB79wrjCldwqB5q9+AUHUr1IWiOjCHqsY8fKVtEWsGdh
-         CZdLqM/845gbLg4wgEquXKn+3f93Slsx5lCYdVU/fTfkk2jB1bqu9mdWTgIVo/8HY+gX
-         HNryLalt17fqHzv5nac1exfavx8m+Xq9nu2YLjF4Y+IB+QbCzISuLU3RiTWsUuVRSsMB
-         4LNOD0mLqlBw8uuqsWvkc9CTpYh2kGMgKkEV7yITobUOqlKR79ZdK0F7IGX5qc+wLH3j
-         QK4w==
-X-Gm-Message-State: AOUpUlHD8btnCIdzG32N/CbH4b5JZzcOUkrHtqJ1wWvvBwYSukP3h9IZ
-        GggdIFjDHtMH1JiZJgZOtLexTxAOMB009tlSMYE=
-X-Google-Smtp-Source: AA+uWPySvzo2wz/3vDTkjwPbG+3PcD4WK+4M/jiHaU8S2K/Byz380Te7ThVNFRNcxzXZQs/1EUytEwTOAeB+G7Nui9k=
-X-Received: by 2002:ab0:48a4:: with SMTP id x33-v6mr32580485uac.138.1534839112638;
- Tue, 21 Aug 2018 01:11:52 -0700 (PDT)
+        Tue, 21 Aug 2018 07:32:39 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:36944 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726343AbeHULcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 07:32:39 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id KU4JCLVKIfs5; Tue, 21 Aug 2018 10:13:12 +0200 (CEST)
+Received: from nazgul.tnic (77-85-47-250.ip.btc-net.bg [77.85.47.250])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 10DE61EC044B;
+        Tue, 21 Aug 2018 10:13:11 +0200 (CEST)
+Date:   Tue, 21 Aug 2018 10:13:31 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Pu Wen <puwen@hygon.cn>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
+        mchehab@kernel.org, mikhail.jin@gmail.com,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-edac@vger.kernel.org
+Subject: Re: [PATCH v4 15/16] driver/edac: enable Hygon support to AMD64 EDAC
+ driver
+Message-ID: <20180821081331.GC24940@nazgul.tnic>
+References: <cover.1534599097.git.puwen@hygon.cn>
+ <6275a5a0a0cfbd2c1abc09a5bb41caabecd02e27.1534599097.git.puwen@hygon.cn>
 MIME-Version: 1.0
-References: <20180720134219.680ae314@canb.auug.org.au>
-In-Reply-To: <20180720134219.680ae314@canb.auug.org.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 21 Aug 2018 10:11:41 +0200
-Message-ID: <CAMuHMdVs-3CWF23_qik6euae6tQasp-zM4tSgx-pp02xPnyEeA@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the mfd tree with the sound tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Lee Jones <lee.jones@linaro.org>, Takashi Iwai <tiwai@suse.de>,
-        Linux-Next <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6275a5a0a0cfbd2c1abc09a5bb41caabecd02e27.1534599097.git.puwen@hygon.cn>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 5:42 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Today's linux-next merge of the mfd tree got a conflict in:
->
->   drivers/gpu/drm/i915/Kconfig
->
-> between commit:
->
->   a57942bfdd61 ("ALSA: hda: Make audio component support more generic")
->
-> from the sound tree and commit:
->
->   9c229127aee2 ("drm/i915: hdmi: add CEC notifier to intel_hdmi")
->
-> from the mfd tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> --
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc drivers/gpu/drm/i915/Kconfig
-> index 5c607f2c707b,2d65d567d5d1..000000000000
-> --- a/drivers/gpu/drm/i915/Kconfig
-> +++ b/drivers/gpu/drm/i915/Kconfig
-> @@@ -23,7 -23,7 +23,8 @@@ config DRM_I91
->         select SYNC_FILE
->         select IOSF_MBI
->         select CRC32
->  +      select SND_HDA_I915 if SND_HDA_CORE
-> +       select CEC_CORE if CEC_NOTIFIER
->         help
->           Choose this option if you have a system that has "Intel Graphics
->           Media Accelerator" or "HD Graphics" integrated graphics,
+On Mon, Aug 20, 2018 at 12:14:58AM +0800, Pu Wen wrote:
+> To make AMD64 EDAC and MCE drivers working on Hygon platforms, add
+> vendor checking for Hygon by using the code path of AMD 0x17. Add a
+> vendor field to struct amd64_pvt and initialize it in per_family_init
+> for vendor checking.
+> 
+> Also Hygon PCI Device ID DF_F0/DF_F6(0x1460/0x1466) of Host bridges
+> is needed for edac driver.
+> 
+> Signed-off-by: Pu Wen <puwen@hygon.cn>
+> ---
+>  drivers/edac/amd64_edac.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++-
+>  drivers/edac/amd64_edac.h |  5 +++++
+>  drivers/edac/mce_amd.c    | 15 +++++++++++++-
+>  3 files changed, 70 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+> index 18aeabb..3cefb25 100644
+> --- a/drivers/edac/amd64_edac.c
+> +++ b/drivers/edac/amd64_edac.c
+> @@ -211,7 +211,8 @@ static int __set_scrub_rate(struct amd64_pvt *pvt, u32 new_bw, u32 min_rate)
+>  
+>  	scrubval = scrubrates[i].scrubval;
+>  
+> -	if (pvt->fam == 0x17) {
+> +	if (pvt->fam == 0x17 ||
+> +	   (pvt->vendor == X86_VENDOR_HYGON && pvt->fam == 0x18)) {
 
-Anyone who cares about alphabetically sorting the (long) list of selects,
-reducing the potential for conflicts?
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Didn't we say that AMD won't do family 0x18 so you don't need the vendor check?
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards/Gruss,
+    Boris.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ECO tip #101: Trim your mails when you reply.
+--
