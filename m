@@ -2,170 +2,104 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F31C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE29C43615
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:58:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 531FD214C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:58:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 531FD214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 89765214C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:58:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89765214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbeHUQSt (ORCPT
+        id S1727589AbeHUQSx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 12:18:49 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:50171 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727159AbeHUQSt (ORCPT
+        Tue, 21 Aug 2018 12:18:53 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40052 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbeHUQSw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 12:18:49 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w7LCsD8Q023284;
-        Tue, 21 Aug 2018 14:58:40 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2m0etjh9hh-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 21 Aug 2018 14:58:40 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2054A34;
-        Tue, 21 Aug 2018 12:58:39 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E74405690;
-        Tue, 21 Aug 2018 12:58:38 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 21 Aug
- 2018 14:58:38 +0200
-Received: from localhost (10.201.23.97) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 21 Aug 2018 14:58:38
- +0200
-From:   =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>
-To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        "Philippe Cornu" <philippe.cornu@st.com>
-Subject: [PATCH] ARM: dts: stm32: enable display on stm32mp157c-ev1 board
-Date:   Tue, 21 Aug 2018 14:58:36 +0200
-Message-ID: <1534856316-30346-1-git-send-email-yannick.fertre@st.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 21 Aug 2018 12:18:52 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n2-v6so5306569wrw.7
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 05:58:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oJeTZCFZ6Vc724C5uEYbt7sNJqz7l1QoeZkwSeK1ZDQ=;
+        b=LbvUfxAOOkCoKSEeZjh8oKWCQXjU3PDUif1LqXQdk3fHSXFci5YR/B1hR+KpCk9nsG
+         NelIwREKfBCcjLdaTExCeHYjn10PvKUyZyk+3XZEVXwI9p72Ic76YUf+IXv24goeK+ev
+         rp86UFUtqJBdc3snL6oycCQOuvo7i+YLL3WjEJ6jJwlSFE3H+MjbyjvDybWes1AmBls7
+         LqjeXXM/UUQocPND61CEvFwyqkrcOqVG/39ywkiLS4CPq4mKsTyl/O0iW4gdBORUWNJv
+         GJfuVDX03ttyA2pN/EeM6EvNMCN6viuT6/XaVtcflQ0jwCDOC2i3uAQQlIrQXHHTrgdN
+         BceQ==
+X-Gm-Message-State: APzg51BZrwALorWFiVWvx85nMms2GkxIdvQe7XzjsMP6MpmpueV0Evfb
+        gDAev0qVAWPEIk2DFNe/frA=
+X-Google-Smtp-Source: ANB0VdYIAsOhmGhYZBQvWRX474wkfVyBb2cPKHfQ6/GSDYaXcfsevA1sFQWugnKsbtqkO6Y8FQT8SQ==
+X-Received: by 2002:adf:a11c:: with SMTP id o28-v6mr11236890wro.169.1534856328037;
+        Tue, 21 Aug 2018 05:58:48 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id g6-v6sm2370606wmf.16.2018.08.21.05.58.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 Aug 2018 05:58:47 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id BBA911249C5; Tue, 21 Aug 2018 14:58:46 +0200 (CEST)
+Date:   Tue, 21 Aug 2018 14:58:46 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, tglx@linutronix.de,
+        joe@perches.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH] mm: Fix comment for NODEMASK_ALLOC
+Message-ID: <20180821125846.GB9489@techadventures.net>
+References: <20180820085516.9687-1-osalvador@techadventures.net>
+ <20180820142440.1f9ccbebefc5d617c881b41e@linux-foundation.org>
+ <20180821121734.GA29735@dhcp22.suse.cz>
+ <20180821123024.GA9489@techadventures.net>
+ <20180821125156.GB29735@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.201.23.97]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-21_07:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180821125156.GB29735@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable panel raydium RM68200, DSI bridge & display controller.
+On Tue, Aug 21, 2018 at 02:51:56PM +0200, Michal Hocko wrote:
+> On Tue 21-08-18 14:30:24, Oscar Salvador wrote:
+> > On Tue, Aug 21, 2018 at 02:17:34PM +0200, Michal Hocko wrote:
+> > > We do have CONFIG_NODES_SHIFT=10 in our SLES kernels for quite some
+> > > time (around SLE11-SP3 AFAICS).
+> > > 
+> > > Anyway, isn't NODES_ALLOC over engineered a bit? Does actually even do
+> > > larger than 1024 NUMA nodes? This would be 128B and from a quick glance
+> > > it seems that none of those functions are called in deep stacks. I
+> > > haven't gone through all of them but a patch which checks them all and
+> > > removes NODES_ALLOC would be quite nice IMHO.
+> > 
+> > No, maximum we can get is 1024 NUMA nodes.
+> > I checked this when writing another patch [1], and since having gone
+> > through all archs Kconfigs, CONFIG_NODES_SHIFT=10 is the limit.
+> > 
+> > NODEMASK_ALLOC gets only called from:
+> > 
+> > - unregister_mem_sect_under_nodes() (not anymore after [1])
+> > - __nr_hugepages_store_common (This does not seem to have a deep stack, we could use a normal nodemask_t)
+> > 
+> > But is also used for NODEMASK_SCRATCH (mainly used for mempolicy):
+> 
+> mempolicy code should be a shallow stack as well. Mostly the syscall
+> entry.
 
-Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
----
- arch/arm/boot/dts/stm32mp157c-ev1.dts | 60 +++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+Ok, then I could give it a try and see if we can get rid of NODEMASK_ALLOC in there
+as well.
 
-diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
-index 372bc2e..cd9062a 100644
---- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
-@@ -6,6 +6,7 @@
- /dts-v1/;
- 
- #include "stm32mp157c-ed1.dts"
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	model = "STMicroelectronics STM32MP157C eval daughter on eval mother";
-@@ -19,6 +20,12 @@
- 		serial0 = &uart4;
- 		ethernet0 = &ethernet0;
- 	};
-+	panel_backlight: panel-backlight {
-+		compatible = "gpio-backlight";
-+		gpios = <&gpiod 13 GPIO_ACTIVE_LOW>;
-+		default-on;
-+		status = "okay";
-+	};
- };
- 
- &ethernet0 {
-@@ -46,6 +53,45 @@
- 	status = "okay";
- };
- 
-+&dsi {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			dsi_in: endpoint {
-+				remote-endpoint = <&ltdc_ep0_out>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			dsi_out: endpoint {
-+				remote-endpoint = <&dsi_panel_in>;
-+			};
-+		};
-+	};
-+
-+	panel-dsi@0 {
-+		compatible = "raydium,rm68200";
-+		reg = <0>;
-+		reset-gpios = <&gpiof 15 GPIO_ACTIVE_LOW>;
-+		backlight = <&panel_backlight>;
-+		status = "okay";
-+
-+		port {
-+			dsi_panel_in: endpoint {
-+				remote-endpoint = <&dsi_out>;
-+			};
-+		};
-+	};
-+};
-+
- &i2c2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c2_pins_a>;
-@@ -62,6 +108,20 @@
- 	status = "okay";
- };
- 
-+&ltdc {
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ltdc_ep0_out: endpoint@0 {
-+			reg = <0>;
-+			remote-endpoint = <&dsi_in>;
-+		};
-+	};
-+};
-+
- &m_can1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&m_can1_pins_a>;
 -- 
-2.7.4
-
+Oscar Salvador
+SUSE L3
