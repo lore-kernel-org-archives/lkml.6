@@ -2,187 +2,183 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D7AC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 09:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE70C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 09:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A01222170E
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 09:50:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85E3A2170E
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 09:51:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IjQ55V+x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A01222170E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mNYygGVh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85E3A2170E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbeHUNJv (ORCPT
+        id S1727020AbeHUNK2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 09:09:51 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36155 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726755AbeHUNJv (ORCPT
+        Tue, 21 Aug 2018 09:10:28 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40224 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726709AbeHUNK1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 09:09:51 -0400
-Received: by mail-lf1-f65.google.com with SMTP id c21-v6so3314998lfh.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 02:50:22 -0700 (PDT)
+        Tue, 21 Aug 2018 09:10:27 -0400
+Received: by mail-pf1-f194.google.com with SMTP id e13-v6so8237712pff.7
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 02:51:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=LiDkFVGtZoY5SY0MH5SVlV2yfG+a7bGuL3Nrdqc8mK4=;
-        b=IjQ55V+x8JBphUo+EbyoFPrwjWPaBJJPnR975KEZmta7uPdX7qDtaxPQm5/lkc+XAY
-         6KBKVAXD4z2Tpl2EUw/b5IyqJn1VIigFZ37KDAz4OIFHjjKsicBfOWPvxh+PmAV8dCR2
-         8N3wtVGA/tUb37SNASzPul2TfF+NaT7Qbr4QPGFCDS//Dgj9X+04JbmIbdB98czCAa3p
-         FAOy+gqMllUmUez042FFS1pnO/jHx6H6QXWrjHzNe7D3DXETpdySGY6uX546l2DTshNr
-         0+2RM8XuvroZx1iwfGSiDHFgqCw7rmiQrXHculbuX69WuS4TttP24rvARcrSrTSWFnIV
-         xLqA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FLdzujfYjLg06RcMdig1Mi3f7IcKZoyYcqD22cBhoPA=;
+        b=mNYygGVhesp+TAU5E2EDJ+kq981NbllxtY3cZJ3wXazbnx9/aHC+N5Oo0JGOUMqgHr
+         H6kbMCIwIrelk10kZeGaZBh+XOMdG1zulQYFu2efbDWUWH+G7k5A4sC8hruNDxcSjFcV
+         5HBrAsUeysd8l80pu8lKUJkRN1jNCCwN7fuGxf/GP7pJuRMNVGebCP/VA3l1aqVbZDDA
+         SdzE+GTW2DBVT6624LcypS3iqhv5mjaB/KtrYWie3VOpkEFQowExhtUSrh7NZTURJxiU
+         C0Tx0f6kkL9zJtQgmtR4QORKxOEZodiJHgenrlUWx9+s/rb/yZQXXpctXgkxh7R83Oli
+         JpUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=LiDkFVGtZoY5SY0MH5SVlV2yfG+a7bGuL3Nrdqc8mK4=;
-        b=FZqLX1CcKld83qNTAty5GRjE2BXsmMnMmmuzGOLOIqZMuqL06IdhqOn8LPg5bTxPVB
-         Sh3RMjnqa7c7gOFTL37YYOXPUpv8tgvG1hJeoZhtSDxKvReoWeYTlb7QHUxF8UOUeHUR
-         ikiL41g1JB8lQFIOgoHePT3+4iesTXsh2offDn1pIIy6+3hmxoJa7ORVjskjvdrMIwGB
-         a7dySWfGvJweZV6GGksjX64W4fDjwf3d02hmUVmEdGFdIMZxBgLz7N9bmA4mUZZaVAvH
-         l5LCpypAgVT5SGYU1j1hrE0Nl8/SgIWlK+CaYYHyaNrPYvrdE/1UHjSgS/29tecJuyvE
-         iLsw==
-X-Gm-Message-State: AOUpUlHWdRDs3OvQR7pRjxbHfxz8Pbtb9ICRUu3jM24ATL9Kbtxzf3Zr
-        CKBo5tSxDb1DcEP/jzQFTSg7GR6Ua7tS7G3mlzQ=
-X-Google-Smtp-Source: AA+uWPzoYHQVwQAT7x8i3rQXEJa0QEsZayeLmkUsBkn7sRXg3ZvArYoB2hubJ8NzaY+/LuR9uEj3jU5fLaw/no6hQ50=
-X-Received: by 2002:a19:124d:: with SMTP id h74-v6mr13131266lfi.107.1534845021894;
- Tue, 21 Aug 2018 02:50:21 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FLdzujfYjLg06RcMdig1Mi3f7IcKZoyYcqD22cBhoPA=;
+        b=r9aYrRhZdgweR60IGZT6oHAv6lx65dGStj8qdO6n/TTXelSPhPDknpk8VMBqLC8ryq
+         JIJD/9oB1VuJ1i7lN2qrdBkdGut1n8AvgVahk6EMiocVTulGB3Ta5tsP85tEicnrDI7f
+         YzYRr6znOYiOekJiB5xOqaalraug7hEmnwA1e1AVoU/1k0PBxNKQCMayvUNEih1wNkm8
+         uQLyfodoMQckyAyKcbQCxc2JtcOdCUpY5u6GUcoZ4A98DAnrhbKX+/ZpT+JVlIdvOeH5
+         KXkazMZktk1yhu/e7AUyeaxQnaKOnv1ET4N8zhCb+ynFWQ6ITURCRIXZVbDadQfxH3D2
+         GXeg==
+X-Gm-Message-State: AOUpUlHWSyyDIp82Gqehmc/wGkFTIGVWjiA/MaB7hAUk8tE3OmWpAGyZ
+        LqwJkOzCe2mgWiO+DMaavCw=
+X-Google-Smtp-Source: AA+uWPyskbmKgJlbeo5kgrG8aS/q1cNiXUZPfnVTheIsTUWq52y6/j8+YJGZFj1NsWah33ZZbVBUxQ==
+X-Received: by 2002:a63:5a50:: with SMTP id k16-v6mr10465676pgm.143.1534845059906;
+        Tue, 21 Aug 2018 02:50:59 -0700 (PDT)
+Received: from localhost ([39.7.47.210])
+        by smtp.gmail.com with ESMTPSA id g20-v6sm16389809pfo.94.2018.08.21.02.50.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 Aug 2018 02:50:58 -0700 (PDT)
+Date:   Tue, 21 Aug 2018 18:50:55 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Martin Wilck <mwilck@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC][PATCH] lib/string: introduce sysfs_strncpy() and
+ sysfs_strlcpy()
+Message-ID: <20180821095055.GA400@jagdpanzerIV>
+References: <20180821062459.1807-1-sergey.senozhatsky@gmail.com>
+ <0e06858f-3625-692a-582d-d828a3cc3ebe@rasmusvillemoes.dk>
 MIME-Version: 1.0
-Received: by 2002:a19:2b09:0:0:0:0:0 with HTTP; Tue, 21 Aug 2018 02:50:21
- -0700 (PDT)
-In-Reply-To: <BYAPR05MB4181991EA79CE952D9F8C398BA320@BYAPR05MB4181.namprd05.prod.outlook.com>
-References: <20180811201147.GA14169@jordon-HP-15-Notebook-PC> <BYAPR05MB4181991EA79CE952D9F8C398BA320@BYAPR05MB4181.namprd05.prod.outlook.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Tue, 21 Aug 2018 15:20:21 +0530
-Message-ID: <CAFqt6zZ86CMdrGBHAob3VN0_Yc+5zdyjpCchroMCrB2J8=D9mg@mail.gmail.com>
-Subject: Re: [Linux-graphics-maintainer] [PATCH] drm/vmwgfx: Convert drm_atomic_helper_suspend/resume()
-To:     Deepak Singh Rawat <drawat@vmware.com>
-Cc:     "ajitn.linux@gmail.com" <ajitn.linux@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        linux-graphics-maintainer <linux-graphics-maintainer@vmware.com>,
-        Sinclair Yeh <syeh@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0e06858f-3625-692a-582d-d828a3cc3ebe@rasmusvillemoes.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 3:04 AM, Deepak Singh Rawat <drawat@vmware.com> wrote:
-> Hi, thanks for the patch. Perhaps can get rid of vmw_kms_resume
-> and vmw_kms_suspend, otherwise looks good to me.
+Hi Rasmus,
 
-Ok, will remove in v2.
+On (08/21/18 09:59), Rasmus Villemoes wrote:
+> > +char *sysfs_strncpy(char *dest, const char *src, size_t count)
+> > +{
+> > +	char *c;
+> > +
+> > +	strncpy(dest, skip_spaces(src), count);
+> 
+> I'd like to see where and how you'd use this, but I'm very skeptical of
+> count being used both for the size of the dest buffer as well as an
+> essentially random argument to strncpy - if count is also the maximum
+> number of bytes to read from the src, you'd need to take the
+> skip_spaces() into account, because there are not count bytes left after
+> that...
+> And if src is not necessarily nul-terminated, skip_spaces() by
+> itself is wrong.
 
+I think that sysfs input is always properly NULL-terminated. It may or
+may not contain \n, but \0 is expected to be there. Am I wrong?
+
+> Moreover, I don't think we should add more users or wrappers for strncpy
+> - I highly doubt the sysfs users you have in mind want the "fill the
+> rest of the buffer with '\0'" nor the "not enough room for a terminating
+> '\0'? Oh well, what could possibly go wrong" semantics.
+
+The reason I added both strncpy() and strlcpy() was that there are lots
+of sysfs ->store() callbacks which use strncpy().
+
+E.g.
+	channel_dimm_label_store()
+	dimmdev_label_store()
+	pmbus_add_label()
+	axp20x_store_attr()
+	cmdline_store()
+	
+	and so on and on.
+
+> > +	c = dest + count - 1;
+> > +	while (c >= dest && (isspace(*c) || *c == '\n' || *c == '\0')) {
+> 
+> nit: '\n' certainly already passes the isspace() test.
+
+Hah, indeed, it should.
+"\n" & 0x20 must be positive. Andrew had the same comment. But I didn't
+check what actually isspace() was doing, until now.
+
+> > +size_t sysfs_strlcpy(char *dest, const char *src, size_t size)
+> > +{
+> > +	size_t ret;
+> > +	char *c;
+> > +
+> > +	ret = strlcpy(dest, skip_spaces(src), size);
+> > +
+> > +	size = strlen(dest);
+> > +	c = dest + size - 1;
+> > +	while (c >= dest && (isspace(*c) || *c == '\n'))
+> > +		c--;
+> > +	*(c + 1) = '\0';
+> > +	return ret;
+> > +}
+> 
+> What exactly is the return value?
+
+Honestly, I didn't think about it. I wasn't sure if we want to return
+anything from this function and from sysfs_strncpy(). I glanced through
+a number of ->store() callbacks, and it seems that mostly people don't
+bother to check strlcpy() return value at all.
+
+> A more useful return value would either be "the length of the string
+> now in dest", or some sort of indicator that the input was truncated,
+> if that is ever possible.
+
+Agreed.
+
+> I think you're too focused on making wrappers around str[ln]cpy
+> preserving parts of those functions' API. Instead, try to figure out
+> what sysfs users actually want, name the functions after that, and then
+> whether they use strncpy or sprintf or strscpy internally is completely
+> irrelevant.
+
+Going point, that's why the patch is in RFC stage: to figure out
+what do we actually want.
+
+> int strcpy_trim(char *dst, size_t dstsize, const char *src, size_t
+> srcsize) - copy (potentially not '\0'-terminated) src to dst, trimming
+> leading and trailing whitespace. dstsize must be positive, and dst is
+> guaranteed to be '\0'-terminated. Returns the length of the string now
+> in dst, or -EOVERFLOW if some none-whitespace character was chopped.
 >
->>
->> convert drm_atomic_helper_suspend/resume() to use
->> drm_mode_config_helper_suspend/resume().
->>
->> suspend_state can be removed from vmw_private as
->> it will not be used anymore.
->>
->> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
->> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->> ---
->>  drivers/gpu/drm/vmwgfx/vmwgfx_drv.c |  6 +++---
->>  drivers/gpu/drm/vmwgfx/vmwgfx_drv.h |  1 -
->>  drivers/gpu/drm/vmwgfx/vmwgfx_kms.c | 25 ++-----------------------
->>  3 files changed, 5 insertions(+), 27 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
->> b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
->> index bb6dbbe..a317cda 100644
->> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
->> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
->> @@ -1521,7 +1521,7 @@ static int vmw_pm_freeze(struct device *kdev)
->>               WARN_ON(vmw_request_device_late(dev_priv));
->>               dev_priv->suspend_locked = false;
->>               ttm_suspend_unlock(&dev_priv->reservation_sem);
->> -             if (dev_priv->suspend_state)
->> +             if (dev->mode_config.suspend_state)
->>                       vmw_kms_resume(dev);
->>               if (dev_priv->enable_fb)
->>                       vmw_fb_on(dev_priv);
->> @@ -1558,8 +1558,8 @@ static int vmw_pm_restore(struct device *kdev)
->>       vmw_fence_fifo_up(dev_priv->fman);
->>       dev_priv->suspend_locked = false;
->>       ttm_suspend_unlock(&dev_priv->reservation_sem);
->> -     if (dev_priv->suspend_state)
->> -             vmw_kms_resume(dev_priv->dev);
->> +     if (dev->mode_config.suspend_state)
->> +             vmw_kms_resume(dev);
->>
->>       if (dev_priv->enable_fb)
->>               vmw_fb_on(dev_priv);
->> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
->> b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
->> index 1abe217..b8e200b 100644
->> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
->> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
->> @@ -438,7 +438,6 @@ struct vmw_private {
->>       struct vmw_framebuffer *implicit_fb;
->>       struct mutex global_kms_state_mutex;
->>       spinlock_t cursor_lock;
->> -     struct drm_atomic_state *suspend_state;
->>
->>       /*
->>        * Context and surface management.
->> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
->> b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
->> index 23beff5..2d011a1 100644
->> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
->> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
->> @@ -3028,19 +3028,7 @@ int vmw_kms_set_config(struct drm_mode_set
->> *set,
->>   */
->>  int vmw_kms_suspend(struct drm_device *dev)
->>  {
->> -     struct vmw_private *dev_priv = vmw_priv(dev);
->> -
->> -     dev_priv->suspend_state = drm_atomic_helper_suspend(dev);
->> -     if (IS_ERR(dev_priv->suspend_state)) {
->> -             int ret = PTR_ERR(dev_priv->suspend_state);
->> -
->> -             DRM_ERROR("Failed kms suspend: %d\n", ret);
->> -             dev_priv->suspend_state = NULL;
->> -
->> -             return ret;
->> -     }
->> -
->> -     return 0;
->> +     return drm_mode_config_helper_suspend(dev);
->>  }
->>
->>
->> @@ -3055,16 +3043,7 @@ int vmw_kms_suspend(struct drm_device *dev)
->>   */
->>  int vmw_kms_resume(struct drm_device *dev)
->>  {
->> -     struct vmw_private *dev_priv = vmw_priv(dev);
->> -     int ret;
->> -
->> -     if (WARN_ON(!dev_priv->suspend_state))
->> -             return 0;
->> -
->> -     ret = drm_atomic_helper_resume(dev, dev_priv->suspend_state);
->> -     dev_priv->suspend_state = NULL;
->> -
->> -     return ret;
->> +     return drm_mode_config_helper_resume(dev);
->>  }
->>
->>  /**
->> --
->> 1.9.1
+> would cover all use cases?
+
+I like it in general. Sounds like a plan to me. Maybe the "-EOVERFLOW if
+some none-whitespace character was chopped" part can be changed: if we
+would trim leading and trailing whitespaces before we copy a string then
+only valid input chars can get chopped.
+
+	-ss
