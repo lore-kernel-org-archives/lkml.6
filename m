@@ -2,178 +2,181 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0ABC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 02:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C276C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 02:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FD742174D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 02:46:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hiQZM/Ll"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FD742174D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CC93920673
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 02:47:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC93920673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbeHUGE2 (ORCPT
+        id S1726590AbeHUGFq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 02:04:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56204 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725732AbeHUGE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 02:04:27 -0400
-Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net [67.185.97.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD90920673;
-        Tue, 21 Aug 2018 02:46:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534819578;
-        bh=jx26pJkf9gSdIWKanynxv7WzNVXVHPgPsDm3C1+OJ4I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hiQZM/LlKDYSdDeZHi1gtoXt8+SHEQuOT+LcMfFY4AiS09vqXgB1qbOGSwPfvXFrl
-         yXUuNJcx7z7paHLfncfuBPjP20m35vAkacBc0RbEAWzFgjPSwbdjZKgOKHPYr5dFf0
-         0oBRX/XAptCzc2MFAbxeV6Uz5/4Ij+LFX06AuaLE=
-Date:   Mon, 20 Aug 2018 19:46:16 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     syzbot <syzbot+94ee41ce442afe333d2e@syzkaller.appspotmail.com>
-Cc:     davem@davemloft.net, herbert@gondor.apana.org.au, hpa@zytor.com,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        megha.dey@linux.intel.com, mingo@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        tim.c.chen@linux.intel.com, x86@kernel.org
-Subject: Re: KASAN: use-after-free Read in sha512_mb_flusher
-Message-ID: <20180821024615.GC706@sol.localdomain>
-References: <00000000000091258805737be8b3@google.com>
+        Tue, 21 Aug 2018 02:05:46 -0400
+Received: from exmail.andestech.com ([59.124.169.137]:8421 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbeHUGFq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 02:05:46 -0400
+Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
+        by ATCSQR.andestech.com with ESMTP id w7L2jXYi048082;
+        Tue, 21 Aug 2018 10:45:33 +0800 (GMT-8)
+        (envelope-from alankao@andestech.com)
+Received: from andestech.com (10.0.1.85) by ATCPCS16.andestech.com
+ (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Tue, 21 Aug 2018
+ 10:47:27 +0800
+Date:   Tue, 21 Aug 2018 10:47:28 +0800
+From:   Alan Kao <alankao@andestech.com>
+To:     Palmer Dabbelt <palmer@sifive.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        <albert@sifive.com>, Christoph Hellwig <hch@infradead.org>,
+        Andrew Waterman <andrew@sifive.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Darius Rad <darius@bluespec.com>, <greentime@andestech.com>,
+        <vincentc@andestech.com>, <zong@andestech.com>,
+        <nickhu@andestech.com>
+Subject: Re: [PATCH v4 3/5] Cleanup ISA string setting
+Message-ID: <20180821024728.GA6169@andestech.com>
+References: <1533698685-18022-4-git-send-email-alankao@andestech.com>
+ <mhng-e7585e65-b47f-48c2-97dd-5cc19396c0a7@palmer-si-x1c4>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <00000000000091258805737be8b3@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <mhng-e7585e65-b47f-48c2-97dd-5cc19396c0a7@palmer-si-x1c4>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.0.1.85]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com w7L2jXYi048082
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 09:35:03AM -0700, syzbot wrote:
-> Hello,
+On Mon, Aug 20, 2018 at 03:22:55PM -0700, Palmer Dabbelt wrote:
+> On Tue, 07 Aug 2018 20:24:43 PDT (-0700), alankao@andestech.com wrote:
+> >Just a side note: (Assume that atomic and compressed is on)
+> >
+> >Before this patch, assembler was always given the riscv64imafdc
+> >MARCH string because there are fld/fsd's in entry.S; compiler was
+> >always given riscv64imac because kernel doesn't need floating point
+> >code generation.  After this, the MARCH string in AFLAGS and CFLAGS
+> >become the same.
+> >
+> >Signed-off-by: Alan Kao <alankao@andestech.com>
+> >Cc: Greentime Hu <greentime@andestech.com>
+> >Cc: Vincent Chen <vincentc@andestech.com>
+> >Cc: Zong Li <zong@andestech.com>
+> >Cc: Nick Hu <nickhu@andestech.com>
+> >Reviewed-by: Christoph Hellwig <hch@lst.de>
+> >---
+> > arch/riscv/Makefile | 19 ++++++++-----------
+> > 1 file changed, 8 insertions(+), 11 deletions(-)
+> >
+> >diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+> >index 6d4a5f6c3f4f..e0fe6790624f 100644
+> >--- a/arch/riscv/Makefile
+> >+++ b/arch/riscv/Makefile
+> >@@ -26,7 +26,6 @@ ifeq ($(CONFIG_ARCH_RV64I),y)
+> >
+> > 	KBUILD_CFLAGS += -mabi=lp64
+> > 	KBUILD_AFLAGS += -mabi=lp64
+> >-	KBUILD_MARCH = rv64im
+> > 	LDFLAGS += -melf64lriscv
+> > else
+> > 	BITS := 32
+> >@@ -34,22 +33,20 @@ else
+> >
+> > 	KBUILD_CFLAGS += -mabi=ilp32
+> > 	KBUILD_AFLAGS += -mabi=ilp32
+> >-	KBUILD_MARCH = rv32im
+> > 	LDFLAGS += -melf32lriscv
+> > endif
+> >
+> > KBUILD_CFLAGS += -Wall
+> >
+> >-ifeq ($(CONFIG_RISCV_ISA_A),y)
+> >-	KBUILD_ARCH_A = a
+> >-endif
+> >-ifeq ($(CONFIG_RISCV_ISA_C),y)
+> >-	KBUILD_ARCH_C = c
+> >-endif
+> >-
+> >-KBUILD_AFLAGS += -march=$(KBUILD_MARCH)$(KBUILD_ARCH_A)fd$(KBUILD_ARCH_C)
+> >+# ISA string setting
+> >+riscv-march-$(CONFIG_ARCH_RV32I)	:= rv32im
+> >+riscv-march-$(CONFIG_ARCH_RV64I)	:= rv64im
+> >+riscv-march-$(CONFIG_RISCV_ISA_A)	:= $(riscv-march-y)a
+> >+riscv-march-y				:= $(riscv-march-y)fd
+> >+riscv-march-$(CONFIG_RISCV_ISA_C)	:= $(riscv-march-y)c
+> >+KBUILD_CFLAGS += -march=$(riscv-march-y)
+> >+KBUILD_AFLAGS += -march=$(riscv-march-y)
+> >
+> >-KBUILD_CFLAGS += -march=$(KBUILD_MARCH)$(KBUILD_ARCH_A)$(KBUILD_ARCH_C)
 > 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    5ed5da74de9e Add linux-next specific files for 20180813
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13fd82c4400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=18edf0289d1b5ab
-> dashboard link: https://syzkaller.appspot.com/bug?extid=94ee41ce442afe333d2e
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+94ee41ce442afe333d2e@syzkaller.appspotmail.com
-> 
-> RDX: 00000000200002c0 RSI: 0000000000000005 RDI: 0000000000000004
-> RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000f6a R11: 0000000000000246 R12: 0000000000000006
-> R13: 00000000004d3840 R14: 00000000004c85ae R15: 0000000000000003
-> ==================================================================
-> BUG: KASAN: use-after-free in sha512_mb_flusher+0x572/0x610
-> arch/x86/crypto/sha512-mb/sha512_mb.c:940
-> Read of size 8 at addr ffff8801b35669d8 by task kworker/0:2/1879
-> 
-> CPU: 0 PID: 1879 Comm: kworker/0:2 Not tainted 4.18.0-next-20180813+ #37
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Workqueue: crypto mcryptd_flusher
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
->  print_address_description+0x6c/0x20b mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
->  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->  sha512_mb_flusher+0x572/0x610 arch/x86/crypto/sha512-mb/sha512_mb.c:940
->  mcryptd_flusher+0x342/0x4b0 crypto/mcryptd.c:208
->  process_one_work+0xc73/0x1aa0 kernel/workqueue.c:2153
->  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
->  kthread+0x35a/0x420 kernel/kthread.c:246
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
-> 
-> Allocated by task 18983:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
->  __do_kmalloc mm/slab.c:3718 [inline]
->  __kmalloc+0x14e/0x720 mm/slab.c:3727
->  kmalloc include/linux/slab.h:518 [inline]
->  sock_kmalloc+0x156/0x1f0 net/core/sock.c:1983
->  hash_accept_parent_nokey+0x58/0x2e0 crypto/algif_hash.c:438
->  hash_accept_parent+0x5b/0x80 crypto/algif_hash.c:465
->  af_alg_accept+0x127/0x7d0 crypto/af_alg.c:296
->  alg_accept+0x46/0x60 crypto/af_alg.c:332
->  __sys_accept4+0x3b2/0x8a0 net/socket.c:1589
->  __do_sys_accept4 net/socket.c:1624 [inline]
->  __se_sys_accept4 net/socket.c:1621 [inline]
->  __x64_sys_accept4+0x97/0xf0 net/socket.c:1621
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> Freed by task 18979:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
->  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->  __cache_free mm/slab.c:3498 [inline]
->  kfree+0xd9/0x210 mm/slab.c:3813
->  __sock_kfree_s net/core/sock.c:2004 [inline]
->  sock_kfree_s+0x29/0x60 net/core/sock.c:2010
->  hash_sock_destruct+0x157/0x1c0 crypto/algif_hash.c:427
->  __sk_destruct+0x107/0xa60 net/core/sock.c:1560
->  sk_destruct+0x78/0x90 net/core/sock.c:1595
->  __sk_free+0xcf/0x300 net/core/sock.c:1606
->  sk_free+0x42/0x50 net/core/sock.c:1617
->  sock_put include/net/sock.h:1691 [inline]
->  af_alg_release+0x6e/0x90 crypto/af_alg.c:126
->  __sock_release+0xd7/0x250 net/socket.c:580
->  sock_close+0x19/0x20 net/socket.c:1140
->  __fput+0x376/0x8a0 fs/file_table.c:279
->  ____fput+0x15/0x20 fs/file_table.c:312
->  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
->  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
->  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
->  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
->  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
->  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> The buggy address belongs to the object at ffff8801b3566600
->  which belongs to the cache kmalloc-2048 of size 2048
-> The buggy address is located 984 bytes inside of
->  2048-byte region [ffff8801b3566600, ffff8801b3566e00)
-> The buggy address belongs to the page:
-> page:ffffea0006cd5980 count:1 mapcount:0 mapping:ffff8801dac00c40 index:0x0
-> compound_mapcount: 0
-> flags: 0x2fffc0000008100(slab|head)
-> raw: 02fffc0000008100 ffffea0006cf2c08 ffffea000764ef08 ffff8801dac00c40
-> raw: 0000000000000000 ffff8801b3566600 0000000100000003 0000000000000000
-> page dumped because: kasan: bad access detected
-> 
-> Memory state around the buggy address:
->  ffff8801b3566880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8801b3566900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > ffff8801b3566980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                                                     ^
->  ffff8801b3566a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8801b3566a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
-> 
-> 
+> We used to have "fd" disabled in KBUILD_CFLAGS because we wanted to ensure
+> that any use of floating-point types within the kernel would trigger the
+> inclusion of soft-float libraries rather than emitting hardware
+> floating-point instructions.  The worry here is that we'd end up corrupting
+> the user's floating-point state with the kernel accesses because of the lazy
+> save/restore stuff going on.
 
-This is probably the same root cause as the other sha512_mb use-after-free
-(https://lkml.org/lkml/2018/8/15/296), see my reply there.
+Thanks for pointing that out.
 
-#syz dup: KASAN: use-after-free Read in sha512_ctx_mgr_resubmit
+Just as you said, the use of KBUILD_CFLAGS=*fd* is based on the assumption that
+not a single floating-point instruction involves in the kernel, and that might
+be wrong.
 
-- Eric
+> I remember at some point it was illegal to use floating-point within the
+> kernel, but for some reason I thought that had changed.  I do see a handful
+> of references to "float" and "double" in the kernel source, and most of
+> references to kernel_fpu_begin() appear to be in SSE-specific stuff.  My one
+> worry are the usages in drivers/gpu/drm/amd/display/dc/calcs/dcn_calcs.c, as
+> I can't quickly demonstrate they won't happen.
+
+Empirically, this CFLAGS with *fd* did not cause any trouble to me, but of
+course this is not a good statement to support this patch.
+
+Meanwhile, I find a flaw in "[PATCH 4/5] Allow to Disable FPU Support." 
+The purpose of this "[PATCH 3/5] Cleanup ISA String" was to make CONFIG_FPU
+a switch for the appearance of "fd" in both KBUILD_CFLAGS and KBUILD_ASFLAGS,
+but somehow the modification was forgotten.
+
+> 
+> If we do this I think we should at least ensure kernel_fpu_{begin,end}() do
+> the right thing for RISC-V.  I'd still feel safer telling the C compiler to
+> disallow floating-point, though, as I'm a bit paranoid that GCC might go and
+> emit a floating-point instruction even when it's not explicitly asked for.
+> I just asked Jim, who actually understands GCC, and he said that it'll spill
+> to floating-point registers if the cost function determines it's cheaper
+> than the stack.  While he thinks that's unlikely, I don't really want to
+> rely a GCC cost function for the correctness of our kernel port.
+
+The purpose of this whole patchset was to remove all floating-point-related
+logic in kernel space (while remainging FPU systems work as usual), so
+implementing the two APIs would be out of scope here.
+
+I suggest that, some people have to provide these APIs if they do need hardware
+floating-point calculation in kernel space (kernel or module) in the future.
+It seems that we don't need those for the kernel and any already supported
+hardware drivers at least for now.  Please correct me if my understanding is
+out-of-date.
+
+> 
+> I'd like to avoid having "-march=*fd*" in CFLAGS, unless someone can
+> convince me it's safe and that I'm just being too paranoid :).
+
+I will send a new version of the patchset, which will make sure that CFLAGS has
+no *fd* (3/5) and the CONFIG_FPU did remove *fd* from ASFLAGS (4/5).
+
+> 
+> > KBUILD_CFLAGS += -mno-save-restore
+> > KBUILD_CFLAGS += -DCONFIG_PAGE_OFFSET=$(CONFIG_PAGE_OFFSET)
+
+Thanks!
+
+Alan
