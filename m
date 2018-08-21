@@ -2,121 +2,139 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18EAEC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C35C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:24:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1381217C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:17:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DBD9217C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:24:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="epCEA50E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1381217C7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="qNjE3USb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DBD9217C7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbeHVBjo (ORCPT
+        id S1727816AbeHVBq0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 21:39:44 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33584 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727636AbeHVBjo (ORCPT
+        Tue, 21 Aug 2018 21:46:26 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:33408 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbeHVBq0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 21:39:44 -0400
-Received: by mail-pg1-f195.google.com with SMTP id t14-v6so2370331pgf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 15:17:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=O9L/3BVYTDaG4nR4vhr3SRJntD05ZCWEg5S1vHWlqk4=;
-        b=epCEA50EZ2OATfCMeYMQR2xmd7xPNQ8BsRkn19WirBKa2m1U5yCHcQ8hovmux3JLqV
-         ggscB31d3GXPTz+2Z2DUY5tgoKJwJZyVqNsJrKQwsRYRWBL888RsYqiUYaPYoj5I4bdR
-         kRoVnWO4Yb6Nrm4kMMtHn1Mw2R9du5hASP2ps=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=O9L/3BVYTDaG4nR4vhr3SRJntD05ZCWEg5S1vHWlqk4=;
-        b=F+EKWNzYAmrzG9NVzeG94HmJNXKI2kfZR4nDYQndc2wFGq1WkLxn2Gi03FjIcLjLv+
-         P5IzG5x/GWyFFWuiB8z0ETwz9Uunet5LrYlNA4w/8ucJCNqbpdAcjhk0uaXEwZ3uNl6F
-         hWVmj/NE/UnxjDVs0Y6bpLROSJUccsNyfKnd4sQt3f8sFeNgI5DMnyfBCke9rQRFwpWO
-         t9Hb9GcRUNSUjqsNPz+hDGaPmnj5pAngjeN4ovk7iZp4UTULBagB9DpNARSg7bGf4iDD
-         PxA5MdOWBe6vEq6A2LgIG4OBcATKeRPvigmPMX0EsmH85ppDyCk+O0wpdGFZ9pcheNoK
-         IH4A==
-X-Gm-Message-State: AOUpUlG4E6yTLUyCMmLZbaQ8VNr/JRllKPUfMsDkieydDwySG9otQBV/
-        pkUznQwx5LOp7+Q+SH0mifiNUumgWB0=
-X-Google-Smtp-Source: AA+uWPziwjbfCmDybh+dKxv+WQTyIqVp+3wn81nqQZiwJbXYYy/4IkYiHmE8/YUx4aeZ3hEoIZxD3w==
-X-Received: by 2002:a63:2c0e:: with SMTP id s14-v6mr14323040pgs.199.1534889863474;
-        Tue, 21 Aug 2018 15:17:43 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id o10-v6sm32659724pfk.76.2018.08.21.15.17.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 Aug 2018 15:17:42 -0700 (PDT)
-Date:   Tue, 21 Aug 2018 15:17:40 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     p.zabel@pengutronix.de, robh+dt@kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com,
-        sricharan@codeaurora.org, akdwived@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
-Subject: Re: [PATCH 2/4] reset: qcom: PDC (Power Domain Controller) reset
- controller
-Message-ID: <20180821221740.GB2353@minitux>
-References: <20180727152811.15258-1-sibis@codeaurora.org>
- <20180727152811.15258-2-sibis@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180727152811.15258-2-sibis@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 21 Aug 2018 21:46:26 -0400
+Received: from trochilidae.lan (unknown [37.17.239.3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 0C9515C054A;
+        Wed, 22 Aug 2018 00:24:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1534890260;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
+         in-reply-to:references; bh=V5ZO0llhBh0dA5CGb2xhgUiVajwNN5XqLN9q2GxvKcU=;
+        b=qNjE3USbU0mmRpPAYRT7K5Myqf0KSW7xk91giWtIxo5zzjjn/r/vtcOntCk0gHFMczJw6g
+        Dk900nDA8FErtRG9UX9hu7yEsJ6gOellGqFOUP9Icgk+e283zphEAEYERunrwSRsD++pZK
+        39vbh2jCbeTz1cKT06WC8YKtXqpFcPQ=
+From:   Stefan Agner <stefan@agner.ch>
+To:     linux@armlinux.org.uk, arnd@arndb.de
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH] ARM: use choice for kernel unwinders
+Date:   Wed, 22 Aug 2018 00:24:16 +0200
+Message-Id: <20180821222416.7771-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 27 Jul 08:28 PDT 2018, Sibi Sankar wrote:
+While in theory multiple unwinders could be compiled in, it does
+not make sense in practise. Use a choice to make the unwinder
+selection mutually exclusive and mandatory.
 
-> Add reset controller for SDM845 SoC to control reset signals
-> provided by PDC for Modem, Compute, Display, GPU, Debug, AOP,
-> Sensors, Audio, SP and APPS
-> 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  drivers/reset/Kconfig          |   9 +++
->  drivers/reset/Makefile         |   1 +
->  drivers/reset/reset-qcom-pdc.c | 139 +++++++++++++++++++++++++++++++++
->  3 files changed, 149 insertions(+)
->  create mode 100644 drivers/reset/reset-qcom-pdc.c
-> 
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 13d28fdbdbb5..5344e202a630 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -98,6 +98,15 @@ config RESET_QCOM_AOSS
->  	  reset signals provided by AOSS for Modem, Venus, ADSP,
->  	  GPU, Camera, Wireless, Display subsystem. Otherwise, say N.
->  
-> +config RESET_QCOM_PDC
-> +	bool "Qcom PDC Reset Driver"
+Already before this commit it has not been possible to deselect
+FRAME_POINTER. Remove the obsolete comment.
 
-"Qualcomm"
+Furthermore, to produce a meaningful backtrace with FRAME_POINTER
+enabled the kernel needs a specific function prologue:
+    mov    ip, sp
+    stmfd    sp!, {fp, ip, lr, pc}
+    sub    fp, ip, #4
 
-And I do not see a strong reason for this not being tristate, the
-consumers we've talked about so far can all be modules.
+To get to the required prologue gcc uses apcs and no-sched-prolog.
+This compiler options are not available on clang, and clang is not
+able to generate the required prologue. Make the FRAME_POINTER
+config symbol depending on !clang.
 
-> +	depends on ARCH_QCOM || COMPILE_TEST
-> +	help
-> +	  This enables the PDC (Power Domain Controller) reset driver
-> +	  for Qualcomm Technologies Inc SDM845 SoCs. Say Y if you want
-> +	  to control reset signals provided by PDC for Modem, Compute,
-> +	  Display, GPU, Debug, AOP, Sensors, Audio, SP and APPS.
-> +
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/Kconfig.debug | 43 ++++++++++++++++++++++++++----------------
+ 1 file changed, 27 insertions(+), 16 deletions(-)
 
-Implementation looks fine.
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 693f84392f1b..ba09e744384a 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -48,30 +48,41 @@ config DEBUG_WX
+ 
+ 		If in doubt, say "Y".
+ 
+-# RMK wants arm kernels compiled with frame pointers or stack unwinding.
+-# If you know what you are doing and are willing to live without stack
+-# traces, you can get a slightly smaller kernel by setting this option to
+-# n, but then RMK will have to kill you ;).
+-config FRAME_POINTER
+-	bool
+-	depends on !THUMB2_KERNEL
+-	default y if !ARM_UNWIND || FUNCTION_GRAPH_TRACER
++choice
++	prompt "Choose kernel unwinder"
++	default UNWINDER_ARM if AEABI && !FUNCTION_GRAPH_TRACER
++	default UNWINDER_FRAME_POINTER if !AEABI || FUNCTION_GRAPH_TRACER
++	help
++	  This determines which method will be used for unwinding kernel stack
++	  traces for panics, oopses, bugs, warnings, perf, /proc/<pid>/stack,
++	  livepatch, lockdep, and more.
++
++config UNWINDER_FRAME_POINTER
++	bool "Frame pointer unwinder"
++	depends on !THUMB2_KERNEL && !CC_IS_CLANG
++	select FRAME_POINTER
+ 	help
+-	  If you say N here, the resulting kernel will be slightly smaller and
+-	  faster. However, if neither FRAME_POINTER nor ARM_UNWIND are enabled,
+-	  when a problem occurs with the kernel, the information that is
+-	  reported is severely limited.
++	  This option enables the frame pointer unwinder for unwinding
++	  kernel stack traces.
+ 
+-config ARM_UNWIND
+-	bool "Enable stack unwinding support (EXPERIMENTAL)"
++config UNWINDER_ARM
++	bool "ARM EABI stack unwinder"
+ 	depends on AEABI
+-	default y
++	select ARM_UNWIND
+ 	help
+ 	  This option enables stack unwinding support in the kernel
+ 	  using the information automatically generated by the
+ 	  compiler. The resulting kernel image is slightly bigger but
+ 	  the performance is not affected. Currently, this feature
+-	  only works with EABI compilers. If unsure say Y.
++	  only works with EABI compilers.
++
++endchoice
++
++config ARM_UNWIND
++	bool
++
++config FRAME_POINTER
++	bool
+ 
+ config OLD_MCOUNT
+ 	bool
+-- 
+2.18.0
 
-Regards,
-Bjorn
