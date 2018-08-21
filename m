@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6546C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 133A1C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8842520C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8842520C09
+	by mail.kernel.org (Postfix) with ESMTP id CAD3E20C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAD3E20C09
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728486AbeHUJxM (ORCPT
+        id S1728496AbeHUJxQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:53:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56992 "EHLO
+        Tue, 21 Aug 2018 05:53:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57002 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727433AbeHUJxM (ORCPT
+        with ESMTP id S1726938AbeHUJxP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:53:12 -0400
+        Tue, 21 Aug 2018 05:53:15 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9FF0A9D7;
-        Tue, 21 Aug 2018 06:34:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D8B537F6;
+        Tue, 21 Aug 2018 06:34:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Przemek <soprwa@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
+        stable@vger.kernel.org, Willy Tarreau <w@1wt.eu>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.4 17/22] ACPI: save NVS memory for Lenovo G50-45
-Date:   Tue, 21 Aug 2018 08:21:43 +0200
-Message-Id: <20180821055140.322455428@linuxfoundation.org>
+Subject: [PATCH 4.4 18/22] ACPI / PM: save NVS memory for ASUS 1025C laptop
+Date:   Tue, 21 Aug 2018 08:21:44 +0200
+Message-Id: <20180821055140.374975286@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055139.462620042@linuxfoundation.org>
 References: <20180821055139.462620042@linuxfoundation.org>
@@ -51,63 +50,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhang Rui <rui.zhang@intel.com>
+From: Willy Tarreau <w@1wt.eu>
 
-commit cbc00c1310d34139a63946482b40a6b261a03fb9 upstream.
+commit 231f9415001138a000cd0f881c46654b7ea3f8c5 upstream.
 
-In commit 821d6f0359b0 (ACPI / sleep: Do not save NVS for new machines to
-accelerate S3), to optimize S3 suspend/resume speed, code is introduced
-to ignore NVS memory saving during S3 for all the platforms later than
-2012.
+Every time I tried to upgrade my laptop from 3.10.x to 4.x I faced an
+issue by which the fan would run at full speed upon resume. Bisecting
+it showed me the issue was introduced in 3.17 by commit 821d6f0359b0
+(ACPI / sleep: Do not save NVS for new machines to accelerate S3). This
+code only affects machines built starting as of 2012, but this Asus
+1025C laptop was made in 2012 and apparently needs the NVS data to be
+saved, otherwise the CPU's thermal state is not properly reported on
+resume and the fan runs at full speed upon resume.
 
-But, Lenovo G50-45, a platform released in 2015, still needs NVS memory
-saving during S3. A quirk is introduced for this platform.
+Here's a very simple way to check if such a machine is affected :
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=189431
-Tested-by: Przemek <soprwa@gmail.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
-[ rjw: Drop unnecessary code ]
+  # cat /sys/class/thermal/thermal_zone0/temp
+  55000
+
+  ( now suspend, wait one second and resume )
+
+  # cat /sys/class/thermal/thermal_zone0/temp
+  0
+
+  (and after ~15 seconds the fan starts to spin)
+
+Let's apply the same quirk as commit cbc00c13 (ACPI: save NVS memory
+for Lenovo G50-45) and reuse the function it provides. Note that this
+commit was already backported to 4.9.x but not 4.4.x.
+
+Cc: 3.17+ <stable@vger.kernel.org> # 3.17+: requires cbc00c13
+Signed-off-by: Willy Tarreau <w@1wt.eu>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/sleep.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/acpi/sleep.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 --- a/drivers/acpi/sleep.c
 +++ b/drivers/acpi/sleep.c
-@@ -124,6 +124,12 @@ void __init acpi_nvs_nosave_s3(void)
- 	nvs_nosave_s3 = true;
- }
- 
-+static int __init init_nvs_save_s3(const struct dmi_system_id *d)
-+{
-+	nvs_nosave_s3 = false;
-+	return 0;
-+}
-+
- /*
-  * ACPI 1.0 wants us to execute _PTS before suspending devices, so we allow the
-  * user to request that behavior by using the 'acpi_old_suspend_ordering'
-@@ -318,6 +324,19 @@ static struct dmi_system_id acpisleep_dm
+@@ -324,6 +324,14 @@ static struct dmi_system_id acpisleep_dm
  		DMI_MATCH(DMI_PRODUCT_NAME, "K54HR"),
  		},
  	},
-+	/*
-+	 * https://bugzilla.kernel.org/show_bug.cgi?id=189431
-+	 * Lenovo G50-45 is a platform later than 2012, but needs nvs memory
-+	 * saving during S3.
-+	 */
 +	{
 +	.callback = init_nvs_save_s3,
-+	.ident = "Lenovo G50-45",
++	.ident = "Asus 1025C",
 +	.matches = {
-+		DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+		DMI_MATCH(DMI_PRODUCT_NAME, "80E3"),
++		DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
++		DMI_MATCH(DMI_PRODUCT_NAME, "1025C"),
 +		},
 +	},
- 	{},
- };
- 
+ 	/*
+ 	 * https://bugzilla.kernel.org/show_bug.cgi?id=189431
+ 	 * Lenovo G50-45 is a platform later than 2012, but needs nvs memory
 
 
