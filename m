@@ -3,61 +3,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=0.0 required=3.0 tests=FROM_WORDY,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D6EC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E603C43615
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:28:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EF1520896
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:28:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EF1520896
+	by mail.kernel.org (Postfix) with ESMTP id D0BCA20896
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:28:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0BCA20896
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=diasemi.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbeHUPsX (ORCPT
+        id S1727344AbeHUPsY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 11:48:23 -0400
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.4]:31289 "EHLO
+        Tue, 21 Aug 2018 11:48:24 -0400
+Received: from mail1.bemta25.messagelabs.com ([195.245.230.1]:18776 "EHLO
         mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726884AbeHUPsX (ORCPT
+        by vger.kernel.org with ESMTP id S1726856AbeHUPsX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 21 Aug 2018 11:48:23 -0400
 Received: from [46.226.52.104] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-4.bemta.az-a.eu-west-1.aws.symcld.net id 68/5B-19240-7650C7B5; Tue, 21 Aug 2018 12:28:23 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphleJIrShJLcpLzFFi42KJ27nUWDedtSb
-  a4Eudxfwj51gtmhevZ7N4c3w6k0XX6p0sFteO9TJZXN41h81i0bJWZosnC88wWSy9fpHJonXv
-  EXYHLo8189Ywemxa1cnmMe9koMf+uWvYPTa+28Hk8X7fVTaPnd8b2D0+b5IL4IhizcxLyq9IY
-  M1oWTeRteADW8W1zbeYGxj3snYxcnEICaxnlGjbMo2ti5ETyKmQ2DX7DSOIzSvgJrHg5kdmEJ
-  tNwEJi8okHYDUsAqoS91p7WEBsYQEPidcvd7OBDBIRmMQkcePeU1aQBLNAA6PE0h1uEIMEJU7
-  OfMICEZeQOPjiBTPEMgOJ0wsaweISAvYS099fBYpzANn6Eo3HYiHChhLfZ32DKjGXOLLtPtsE
-  Rv5ZSKbOQjJ1ASPTKkbzpKLM9IyS3MTMHF1DAwNdQ0MjXUNLI10TI73EKt1EvdRS3fLU4hJdQ
-  73E8mK94src5JwUvbzUkk2MwDhhAIIdjFsvJB9ilORgUhLlPZdWHS3El5SfUpmRWJwRX1Sak1
-  p8iFGGg0NJglecpSZaSLAoNT21Ii0zBxixMGkJDh4lEd5kZqA0b3FBYm5xZjpE6hSjMcef91M
-  nMXPs6542iVmIJS8/L1VKHGKSAEhpRmke3CBYIrnEKCslzMsIdJoQT0FqUW5mCar8K0ZxDkYl
-  YV5pkCk8mXklcPteAZ3CBHQKO1slyCkliQgpqQZGJZtnl/fkME1Kv//tk+1ip1hbxb9Tp8yxf
-  LDwtKpmmur3pkuda53Pfes/vmiVrfcBxy35Kd4FPAznL0h9Wsl053xNUoy5nr1HTvDUJtnUvO
-  fdd6fqMDEoJ8s2H7x7wetWmuJJObtT3+MEl6eJZVktXGNyOOq23p8cL7fJLGqzAneWdD2dsy9
-  XiaU4I9FQi7moOBEAstZB3B8DAAA=
+        by server-1.bemta.az-a.eu-west-1.aws.symcld.net id C2/31-19263-7650C7B5; Tue, 21 Aug 2018 12:28:23 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNKsWRWlGSWpSXmKPExsUSt3OpsW46a02
+  0wd+TIhbzj5xjtWhevJ7N4s3x6UwWXat3slhcO9bLZHF51xw2i0XLWpktniw8w2Sx9PpFJovW
+  vUfYHbg81sxbw+ixaVUnm8e8k4Ee++euYffY+G4Hk8f7fVfZPHZ+b2D3+LxJLoAjijUzLym/I
+  oE1Y/v286wFDwQr+lcfY2lg/M/XxcjFISSwnlHi4fnrTF2MnEBOhcS31TtZQWxegUyJSzMnMo
+  LYnALuEg8eLWSEqHGTuLz5JDuIzSZgITH5xAM2EJtFQFXi4oMJLCC2sECsxNI/79lBFogITGK
+  SuHHvKdhQZoEGRomlO9wgFghKnJz5hAUiLiFx8MULZogFBhKnFzSCxSUE7CWmv78KFOcAsvUl
+  Go/FQoQNJb7P+gZVYi5xZNt9tgmMgrOQTJ2FZOoCRqZVjOZJRZnpGSW5iZk5uoYGBrqGhka6h
+  pbGukbGeolVuol6qaW65anFJbqGeonlxXrFlbnJOSl6eaklmxiBkcUABDsYz3xLPsQoycGkJM
+  p7Lq06WogvKT+lMiOxOCO+qDQntfgQowwHh5IEby5LTbSQYFFqempFWmYOMMZh0hIcPEoivKE
+  gad7igsTc4sx0iNQpRkuObw+6JzFzzDs6FUj+eQ8khVjy8vNSpcR5l4A0CIA0ZJTmwY2DpaFL
+  jLJSwryMQAcK8RSkFuVmlqDKv2IU52BUEuadCjKFJzOvBG7rK6CDmIAOYmerBDmoJBEhJdXAm
+  LXv0A2L270aKTPnFq48L8HKqpO6ZG5UrP2dAMt/XK/KVyx5pdc3tSxr1dbOvX8M0vOkWssXnb
+  +Q9ak35PMxEY2Ny/kcQ5uCN51L/6kxO2z12fZXPpO3b9i4rdiB7WOZsgyzYGNkUmhiNfubuk+
+  N2g5z9Gb0rL7H/mN1J/+miJKjByI+XSssU2Ipzkg01GIuKk4EAJVzpOc+AwAA
 X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
-X-Msg-Ref: server-24.tower-268.messagelabs.com!1534854502!5799296!1
+X-Msg-Ref: server-24.tower-268.messagelabs.com!1534854502!5799296!3
 X-Originating-IP: [94.185.165.51]
 X-SYMC-ESS-Client-Auth: outbound-route-from=pass
 X-StarScan-Received: 
 X-StarScan-Version: 9.9.15; banners=-,-,-
 X-VirusChecked: Checked
-Received: (qmail 12385 invoked from network); 21 Aug 2018 12:28:22 -0000
+Received: (qmail 12401 invoked from network); 21 Aug 2018 12:28:23 -0000
 Received: from mailrelay2.diasemi.com (HELO sw-ex-cashub01.diasemi.com) (94.185.165.51)
-  by server-24.tower-268.messagelabs.com with AES128-SHA encrypted SMTP; 21 Aug 2018 12:28:22 -0000
+  by server-24.tower-268.messagelabs.com with AES128-SHA encrypted SMTP; 21 Aug 2018 12:28:23 -0000
 Received: from swsrvapps-01.diasemi.com (10.20.28.141) by
  SW-EX-CASHUB01.diasemi.com (10.20.16.140) with Microsoft SMTP Server id
- 14.3.382.0; Tue, 21 Aug 2018 13:28:20 +0100
+ 14.3.382.0; Tue, 21 Aug 2018 13:28:22 +0100
 Received: by swsrvapps-01.diasemi.com (Postfix, from userid 22379)      id
- 387833FAEE; Tue, 21 Aug 2018 13:28:20 +0100 (BST)
-Message-ID: <cover.1534853047.git.Adam.Thomson.Opensource@diasemi.com>
+ 3D40D3FBC6; Tue, 21 Aug 2018 13:28:22 +0100 (BST)
+Message-ID: <6472fd66d20df31165f9645eb49f4f30a0a51468.1534853047.git.Adam.Thomson.Opensource@diasemi.com>
+In-Reply-To: <cover.1534853047.git.Adam.Thomson.Opensource@diasemi.com>
+References: <cover.1534853047.git.Adam.Thomson.Opensource@diasemi.com>
 From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date:   Tue, 21 Aug 2018 13:28:20 +0100
-Subject: [PATCH 0/3] dt-bindings: connector: Add USB-PD PPS APDO support
+Date:   Tue, 21 Aug 2018 13:28:22 +0100
+Subject: [PATCH 2/3] dt-bindings: usb: fusb302: Use usb-connector bindings for
+ configuration
 To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         Guenter Roeck <linux@roeck-us.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -77,23 +80,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set adds DT bindings support for PPS APDOs, and updates the FUSB302
-to use the generic connector bindings allowing for PPS support in this Type-C
-port controller. Existing FUSB302 device specific bindings still work, but
-are now deprecated in favour of the generic connector approach.
+There are now generic usb-connector bindings which can be used
+to define a port controllers configuration for USB-PD, so device
+specific bindings are no longer necessary.
 
-Adam Thomson (3):
-  dt-bindings: connector: Add support for USB-PD PPS APDOs to bindings
-  dt-bindings: usb: fusb302: Use usb-connector bindings for
-    configuration
-  usb: typec: fusb302: Populate tcpc fwnode for TCPM property handling
+This update deprecates 'fcs,operating-sink-microwatt', and references
+the 'usb-connector' bindings instead to achieve the required port
+config.
 
- .../bindings/connector/usb-connector.txt           |  8 +++---
+Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+---
  .../devicetree/bindings/usb/fcs,fusb302.txt        | 32 +++++++++++++++++-----
- drivers/usb/typec/fusb302/fusb302.c                |  3 ++
- include/dt-bindings/usb/pd.h                       | 26 ++++++++++++++++++
- 4 files changed, 58 insertions(+), 11 deletions(-)
+ 1 file changed, 25 insertions(+), 7 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/usb/fcs,fusb302.txt b/Documentation/devicetree/bindings/usb/fcs,fusb302.txt
+index 6087dc7..a5d011d 100644
+--- a/Documentation/devicetree/bindings/usb/fcs,fusb302.txt
++++ b/Documentation/devicetree/bindings/usb/fcs,fusb302.txt
+@@ -5,10 +5,19 @@ Required properties :
+ - reg                    : I2C slave address
+ - interrupts             : Interrupt specifier
+ 
+-Optional properties :
+-- fcs,operating-sink-microwatt :
+-			   Minimum amount of power accepted from a sink
+-			   when negotiating
++Required sub-node:
++- connector : The "usb-c-connector" attached to the FUSB302 IC. The bindings
++  of the connector node are specified in:
++
++	Documentation/devicetree/bindings/connector/usb-connector.txt
++
++Deprecated properties :
++- fcs,max-sink-microvolt : Maximum sink voltage accepted by port controller
++- fcs,max-sink-microamp : Maximum sink current accepted by port controller
++- fcs,max-sink-microwatt : Maximum sink power accepted by port controller
++- fcs,operating-sink-microwatt : Minimum amount of power accepted from a sink
++  when negotiating
++
+ 
+ Example:
+ 
+@@ -17,7 +26,16 @@ fusb302: typec-portc@54 {
+ 	reg = <0x54>;
+ 	interrupt-parent = <&nmi_intc>;
+ 	interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+-	fcs,max-sink-microvolt = <12000000>;
+-	fcs,max-sink-microamp = <3000000>;
+-	fcs,max-sink-microwatt = <36000000>;
++
++	usb_con: connector {
++		compatible = "usb-c-connector";
++		label = "USB-C";
++		power-role = "dual";
++		try-power-role = "sink";
++		source-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
++		sink-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)
++			     PDO_VAR(3000, 12000, 3000)
++			     PDO_PPS_APDO(3000, 11000, 3000)>;
++		op-sink-microwatt = <10000000>;
++	};
+ };
 -- 
 1.9.1
 
