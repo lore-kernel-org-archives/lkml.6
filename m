@@ -2,115 +2,177 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20510C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:03:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 631D4C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE7272151D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:03:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08718216C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:04:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WLRb2CUT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE7272151D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="l4tbA9iU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08718216C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbeHURX5 (ORCPT
+        id S1727549AbeHURYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 13:23:57 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40395 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbeHURX5 (ORCPT
+        Tue, 21 Aug 2018 13:24:35 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:47212 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726679AbeHURYf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 13:23:57 -0400
-Received: by mail-pg1-f194.google.com with SMTP id z25-v6so3811340pgu.7;
-        Tue, 21 Aug 2018 07:03:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=z/VnmYoAyJ4SVln8hwnNvr7F94TfsFN6gJjb3CBp1nM=;
-        b=WLRb2CUT3EMveUtjRmSoFw/ggtntBupU6BfNNBjpQxvkMnJeJ2AziuOpafSaGGV+t4
-         8CRC6pNOvWayE/OGHQqWjWrml3+D0yvinPgGwLoLYdC5u2CEngf8/PizIh1ON4nnodY8
-         JdVZ9B75EgcMBBlKvUs/Wxrqqfuaag5r0RP7Ez9IGqT0Xpq4ktHWsN+T3edfWDxL9C/A
-         5f+2Z//4D1Abt/c6BkHbiVeXaRY+fUqpWEviB84s0efVwzgo50CZo9FxohciO6EjJjki
-         6BWpwLZ4dDtrixfaVaoeqjhc95tD2+KoyLGcYKgGBSdIG9/CfnFIWw7LAHJVlaAbBuTM
-         rCXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z/VnmYoAyJ4SVln8hwnNvr7F94TfsFN6gJjb3CBp1nM=;
-        b=DpKiYBA9Xa5H5PYGRYA/30pSh/A+iyZ8pL4nmrtSPhfYlSdFVlW0xVwHRKkpJx+P0X
-         MqIaitMwUs3ozlqpHPeupnHtyS4Ey57q51SeJk3PJX2svlWNZrAVTHGJPgykoHXE3Egw
-         Sb6vNLZuHpM/5hWCeTbsQo3ImOaLSOl4+xPTqi2oEqAInB7q12dDwAlVp4wOc9tSV+Gc
-         KxDE34CCCoiCweK6Ce9SdAAr9ivHtwxc+oy7LSO5qjcqdQ/ecV106yi3HJJJWuPC8ZrM
-         sX9Bl+CtZWt6keguz5ORT6NAhJXNAnqQNcWWJE24VWfL1KSTqRASZbSmbmD6I9Ynu7nW
-         e+UQ==
-X-Gm-Message-State: AOUpUlF8Kz1E507uUaB31ufNc1YiowSjBoD37eFTE5bU3rl8Kn9NrJ7W
-        gV3Dtie3WxGlkr8uv1hzMAY=
-X-Google-Smtp-Source: AA+uWPzXC/1W8R9FB0V/h+Jal7kLvB4dkRd0XP+qDRZyj+vR4g3amlQek/ffNw15V+nv9D/Bme4Pyg==
-X-Received: by 2002:a62:6d02:: with SMTP id i2-v6mr53393038pfc.218.1534860219797;
-        Tue, 21 Aug 2018 07:03:39 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id y18-v6sm15615916pfl.90.2018.08.21.07.03.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 Aug 2018 07:03:39 -0700 (PDT)
-Date:   Tue, 21 Aug 2018 07:03:38 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hans de Goede <hdegoede@redhat.com>, Li Jun <jun.li@nxp.com>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, support.opensource@diasemi.com
-Subject: Re: [PATCH 3/3] usb: typec: fusb302: Populate tcpc fwnode for TCPM
- property handling
-Message-ID: <20180821140338.GE17160@roeck-us.net>
-References: <cover.1534853047.git.Adam.Thomson.Opensource@diasemi.com>
- <5ab35968fea28abb54326423523af38dd887ddcc.1534853047.git.Adam.Thomson.Opensource@diasemi.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5ab35968fea28abb54326423523af38dd887ddcc.1534853047.git.Adam.Thomson.Opensource@diasemi.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Tue, 21 Aug 2018 13:24:35 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7LDxJg2021449;
+        Tue, 21 Aug 2018 14:02:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=eS/jbnoiStp6z91Q35PdP9FPUYjBnHPylDqiZ9YmGcE=;
+ b=l4tbA9iU3WMQzcTk4oV1wIwTxjfZcl84f1HLB6B7I7LFj/K+Ck94IfVivWLT9usgCJOO
+ Jk8xs7GAO0rnNih5PJlHEkX5+Ddr6mj6kizN/tQj9VILVlUc1Bk2u/Wjc77iLNvd2LlV
+ tK8hulHJn3KRthIbR5QzKb1nHAiZbRV2ajbJ32KtjRxEkYJ8oZghdLR82gb8WWsipOmH
+ fK3vADpPRBsIeOuthtFx9Pwng3nt+xRcUQoTXL43kdfc/iSubHiabB+dkwGQx6ouW+Vs
+ ug8yGug77sRCQIgJpijwN2xgYUnlIiu9jIDiVmD7POwocAwKK/R1E+D6iNmZqk4QE0gw AA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2kxc3qmm1a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Aug 2018 14:02:07 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7LE26hD030546
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Aug 2018 14:02:06 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7LE24T4027816;
+        Tue, 21 Aug 2018 14:02:04 GMT
+Received: from lirans-mbp.ravello.local (/213.57.127.2)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 21 Aug 2018 07:02:03 -0700
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
+Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs
+ in mind (for KVM to isolate its guests per CPU)
+From:   Liran Alon <liran.alon@oracle.com>
+In-Reply-To: <1534845423.10027.44.camel@infradead.org>
+Date:   Tue, 21 Aug 2018 17:01:57 +0300
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        juerg.haefliger@hpe.com, deepa.srinivasan@oracle.com,
+        Jim Mattson <jmattson@google.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-mm <linux-mm@kvack.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        joao.m.martins@oracle.com, pradeep.vincent@oracle.com,
+        Andi Kleen <ak@linux.intel.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        kanth.ghatraju@oracle.com, Kees Cook <keescook@google.com>,
+        jsteckli@os.inf.tu-dresden.de,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        chris.hyser@oracle.com, Tyler Hicks <tyhicks@canonical.com>,
+        John Haxby <john.haxby@oracle.com>,
+        Jon Masters <jcm@redhat.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <ED24D811-C740-417F-A443-B7A249F4FF4C@oracle.com>
+References: <20180820212556.GC2230@char.us.oracle.com>
+ <CA+55aFxZCyVZc4ZpRyZ3uDyakRSOG_=2XvnwMo4oejpsieF9=A@mail.gmail.com>
+ <1534801939.10027.24.camel@amazon.co.uk>
+ <CA+55aFxyUdhYjnQdnmWAt8tTwn4HQ1xz3SAMZJiawkLpMiJ_+w@mail.gmail.com>
+ <1534845423.10027.44.camel@infradead.org>
+To:     David Woodhouse <dwmw2@infradead.org>
+X-Mailer: Apple Mail (2.3445.4.7)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8991 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808210147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 01:28:23PM +0100, Adam Thomson wrote:
-> This update populates the tcpc handle's fwnode pointer with the
-> child usb-connector node, if it exists, so that TCPM can perform
-> generic property handling to define the ports capabilities.
-> 
-> Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> On 21 Aug 2018, at 12:57, David Woodhouse <dwmw2@infradead.org> wrote:
+>=20
+> Another alternative... I'm told POWER8 does an interesting thing with
+> hyperthreading and gang scheduling for KVM. The host kernel doesn't
+> actually *see* the hyperthreads at all, and KVM just launches the full
+> set of siblings when it enters a guest, and gathers them again when =
+any
+> of them exits. That's definitely worth investigating as an option for
+> x86, too.
 
-> ---
->  drivers/usb/typec/fusb302/fusb302.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/usb/typec/fusb302/fusb302.c b/drivers/usb/typec/fusb302/fusb302.c
-> index 82bed98..1b464c9 100644
-> --- a/drivers/usb/typec/fusb302/fusb302.c
-> +++ b/drivers/usb/typec/fusb302/fusb302.c
-> @@ -1736,6 +1736,9 @@ static int fusb302_probe(struct i2c_client *client,
->  	chip->tcpc_dev.config = &chip->tcpc_config;
->  	mutex_init(&chip->lock);
->  
-> +	chip->tcpc_dev.fwnode =
-> +		device_get_named_child_node(dev, "connector");
-> +
->  	if (!device_property_read_u32(dev, "fcs,operating-sink-microwatt", &v))
->  		chip->tcpc_config.operating_snk_mw = v / 1000;
->  
-> -- 
-> 1.9.1
-> 
+I actually think that such scheduling mechanism which prevents leaking =
+cache entries to sibling hyperthreads should co-exist together with the =
+KVM address space isolation to fully mitigate L1TF and other similar =
+vulnerabilities. The address space isolation should prevent VMExit =
+handlers code gadgets from loading arbitrary host memory to the cache. =
+Once VMExit code path switches to full host address space, then we =
+should also make sure that no other sibling hyprethread is running in =
+the guest.
+
+Focusing on the scheduling mechanism, we must make sure that when a =
+logical processor runs guest code, all siblings logical processors must =
+run code which do not populate L1D cache with information unrelated to =
+this VM. This includes forbidding one logical processor to run guest =
+code while sibling is running a host task such as a NIC interrupt =
+handler.
+Thus, when a vCPU thread exits the guest into the host and VMExit =
+handler reaches code flow which could populate L1D cache with this =
+information, we should force an exit from the guest of the siblings =
+logical processors, such that they will be allowed to resume only on a =
+core which we can promise that the L1D cache is free from information =
+unrelated to this VM.
+
+At first, I have created a patch series which attempts to implement such =
+mechanism in KVM. However, it became clear to me that this may need to =
+be implemented in the scheduler itself. This is because:
+1. It is difficult to handle all new scheduling contrains only in KVM.
+2. This mechanism should be relevant for any Type-2 hypervisor which =
+runs inside Linux besides KVM (Such as VMware Workstation or =
+VirtualBox).
+3. This mechanism could also be used to prevent future =
+=E2=80=9Ccore-cache-leaking=E2=80=9D vulnerabilities to be exploited =
+between processes of different security domains which run as siblings on =
+the same core.
+
+The main idea is a mechanism which is very similar to Microsoft's "core =
+scheduler" which they implemented to mitigate this vulnerability. The =
+mechanism should work as follows:
+1. Each CPU core will now be tagged with a "security domain id".
+2. The scheduler will provide a mechanism to tag a task with a security =
+domain id.
+3. Tasks will inherit their security domain id from their parent task.
+    3.1. First task in system will have security domain id of 0. Thus, =
+if nothing special is done, all tasks will be assigned with security =
+domain id of 0.
+4. Tasks will be able to allocate a new security domain id from the =
+scheduler and assign it to another task dynamically.
+5. Linux scheduler will prevent scheduling tasks on a core with a =
+different security domain id:
+    5.0. CPU core security domain id will be set to the security domain =
+id of the tasks which currently run on it.
+    5.1. The scheduler will attempt to first schedule a task on a core =
+with required security domain id if such exists.
+    5.2. Otherwise, will need to decide if it wishes to kick all tasks =
+running on some core to run the task with a different security domain id =
+on that core.
+
+The above mechanism can be used to mitigate the L1TF HT variant by just =
+assigning vCPU tasks with a security domain id which is unique per VM =
+and also different than the security domain id of the host which is 0.
+
+I would be glad to hear feedback on the above suggestion.
+If this should better be discussed on a separate email thread, please =
+say so and I will open a new thread.
+
+Thanks,
+-Liran
+
+
