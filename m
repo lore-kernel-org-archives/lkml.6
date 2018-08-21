@@ -2,131 +2,184 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C72EC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 03:35:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE3DC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 03:38:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96C472170E
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 03:35:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96C472170E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 63D662174D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 03:38:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHnpzTxI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63D662174D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726560AbeHUGxw (ORCPT
+        id S1726549AbeHUG5O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 02:53:52 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11178 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725734AbeHUGxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 02:53:52 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E92C27645C9AC;
-        Tue, 21 Aug 2018 11:35:31 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.399.0; Tue, 21 Aug 2018
- 11:35:31 +0800
-Subject: Re: [PATCH 1/2] f2fs: fix to avoid quota inode leak in ->put_super
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <20180817091840.50792-1-yuchao0@huawei.com>
- <20180818151600.GA84798@jaegeuk-macbookpro.roam.corp.google.com>
- <b10c4ae6-2a25-fb0b-cbfa-467b5e988b47@kernel.org>
- <20180821023840.GD20263@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <fbb9e77b-aca0-9ad9-cd06-503ec335370c@huawei.com>
-Date:   Tue, 21 Aug 2018 11:35:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 21 Aug 2018 02:57:14 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33129 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725734AbeHUG5N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 02:57:13 -0400
+Received: by mail-pf1-f194.google.com with SMTP id d4-v6so7815768pfn.0;
+        Mon, 20 Aug 2018 20:38:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Z4eDeCuaoR2lSRG13UqHTblSOwrIFDyHOJQxVV9sNDA=;
+        b=OHnpzTxIU1RFPdVe/CMr93FhuW1/Gr2WM6FNZ0sk0JfGZhyCyGTHkUKBTtQzAvURSp
+         7lrdQ+nIpkuBDutB5w/A1qj3wDwM7IOzJw+Y/frc38CkTf71DaxqzHuTdYm8fO1SKr4d
+         Jvzi4ADtLBPrPXtrdUwhrhmiOizB+7jngwZVO2mQHAaNKR0fusH/O0gB/WhluyLPfgXn
+         jnQS2o1I9RRobyGVOEBIrkh+GicE4GTYSRJn+bKVXLB6n56XDMgt4FyAYdDW723qgt/P
+         micg5FnyC0WynLMo+CHQpc20HK/C34k50Za4aBBH/suSR8V/qMS6TVl6dvCK+fQSG1TR
+         fwdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Z4eDeCuaoR2lSRG13UqHTblSOwrIFDyHOJQxVV9sNDA=;
+        b=KXZfGSirtRBvwlbVGv1YCAyI44zxOIeNNE29J1+Hug1vYSUwgUVAdZJky+zOM1TJSi
+         jsJ+FT2AmYVmNCndcJOep+hY9/CgEMAcWBT8Fr7T+UPjgBzRkJ2J72PNe7JoD2ztaAo1
+         ADRUBYYm8+Z3CJX7JaMEmSS3MvivywOmeE8EkY9JdtVLiobcFiS+efsiUnU/G9RQO/eR
+         ZlHrEfu8XmCLAJm3LNZnfBSRySl1NN3n05gSMq2nwd2JCg2LlTzgpO04hBXztEkIFk1t
+         57nl2dZLDcUhZdN7O4tLOW6ICH9xQ6ATaLBj4lNGfD71QcJNkW4VM4DMTWihkbQkc8fv
+         fELQ==
+X-Gm-Message-State: AOUpUlFmt2s6PFooCVqXbTYuD32t64NYBJIZFGLAMJDVnhhGXks4NoLy
+        xa2N2gtGXLey9wTBUSKt7EU=
+X-Google-Smtp-Source: AA+uWPxl8NONXRWGN2usS2i/V1I8YIJ5RHoEwC62vW8GSdRyz/BlME7vnIAZl7YenOHxVZgyWMyAEg==
+X-Received: by 2002:a62:954:: with SMTP id e81-v6mr51176719pfd.231.1534822734906;
+        Mon, 20 Aug 2018 20:38:54 -0700 (PDT)
+Received: from roar.ozlabs.ibm.com ([122.99.82.10])
+        by smtp.gmail.com with ESMTPSA id z19-v6sm16765357pgi.33.2018.08.20.20.38.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 20 Aug 2018 20:38:53 -0700 (PDT)
+Date:   Tue, 21 Aug 2018 13:38:42 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+To:     Vaibhav Jain <vaibhav@linux.ibm.com>
+Cc:     "Gautham R . Shenoy" <ego@linux.vnet.ibm.com>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Stewart Smith <stewart@linux.ibm.com>,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, James Hogan <jhogan@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [Skiboot] [PATCH] opal/hmi: Wakeup the cpu before reading
+ core_fir
+Message-ID: <20180821133842.1b13e972@roar.ozlabs.ibm.com>
+In-Reply-To: <20180820140605.11846-1-vaibhav@linux.ibm.com>
+References: <20180820183417.dejfsluih7elbclu@pburton-laptop>
+        <20180820223618.22319-1-paul.burton@mips.com>
+        <20180820223618.22319-2-paul.burton@mips.com>
+        <20180820140605.11846-1-vaibhav@linux.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180821023840.GD20263@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/21 10:38, Jaegeuk Kim wrote:
-> On 08/20, Chao Yu wrote:
->> On 2018/8/18 23:16, Jaegeuk Kim wrote:
->>> On 08/17, Chao Yu wrote:
->>>> generic/019 reports below error:
->>>>
->>>>  __quota_error: 1160 callbacks suppressed
->>>>  Quota error (device zram1): write_blk: dquota write failed
->>>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>>>  Quota error (device zram1): write_blk: dquota write failed
->>>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>>>  Quota error (device zram1): write_blk: dquota write failed
->>>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>>>  Quota error (device zram1): write_blk: dquota write failed
->>>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>>>  Quota error (device zram1): write_blk: dquota write failed
->>>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>>>  VFS: Busy inodes after unmount of zram1. Self-destruct in 5 seconds.  Have a nice day...
->>>>
->>>> If we failed in below path due to fail to write dquot block, we will miss
->>>> to release quota inode, fix it.
->>>>
->>>> - f2fs_put_super
->>>>  - f2fs_quota_off_umount
->>>>   - f2fs_quota_off
->>>>    - f2fs_quota_sync   <-- failed
->>>>    - dquot_quota_off   <-- missed to call
->>>>
->>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>> ---
->>>>  fs/f2fs/super.c | 6 ++++--
->>>>  1 file changed, 4 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>> index a5df9fbc6355..9647bbcdfd2b 100644
->>>> --- a/fs/f2fs/super.c
->>>> +++ b/fs/f2fs/super.c
->>>> @@ -1977,10 +1977,12 @@ void f2fs_quota_off_umount(struct super_block *sb)
->>>>  	for (type = 0; type < MAXQUOTAS; type++) {
->>>>  		err = f2fs_quota_off(sb, type);
->>>>  		if (err) {
->>>> +			int ret = dquot_quota_off(sb, type);
->>>> +
->>>
->>> Could you check the mainline version?
->>
->> I guess we missed to apply below patch? Could you check that?
->>
->> f2fs: report error if quota off error during umount
-> 
-> I remember there was a bug in the patch.
+On Mon, 20 Aug 2018 19:36:05 +0530
+Vaibhav Jain <vaibhav@linux.ibm.com> wrote:
 
-Yeah, I guess this patch can fix that one. So could you help trying to test
-again with the two patches if you have time. :)
+> When stop state 5 is enabled, reading the core_fir during an HMI can
+> result in a xscom read error with xscom_read() returning the
+> OPAL_XSCOM_PARTIAL_GOOD error code and core_fir value of all FFs. At
+> present this return error code is not handled in decode_core_fir()
+> hence the invalid core_fir value is sent to the kernel where it
+> interprets it as a FATAL hmi causing a system check-stop.
+> 
+> This can be prevented by forcing the core to wake-up using before
+> reading the core_fir. Hence this patch wraps the call to
+> read_core_fir() within calls to dctl_set_special_wakeup() and
+> dctl_clear_special_wakeup().
+
+Would it be feasible to enumerate the ranges of scoms that require
+special wakeup and check for those in xscom_read/write, and warn if
+spwkup was not set?
 
 Thanks,
+Nick
 
 > 
->>
->> Thanks,
->>
->>>
->>>>  			f2fs_msg(sb, KERN_ERR,
->>>>  				"Fail to turn off disk quota "
->>>> -				"(type: %d, err: %d), Please "
->>>> -				"run fsck to fix it.", type, err);
->>>> +				"(type: %d, err: %d, ret:%d), Please "
->>>> +				"run fsck to fix it.", type, err, ret);
->>>>  			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
->>>>  		}
->>>>  	}
->>>> -- 
->>>> 2.18.0.rc1
+> Suggested-by: Michael Neuling <mikey@neuling.org>
+> Signed-off-by: Vaibhav Jain <vaibhav@linux.ibm.com>
+> Signed-off-by: Mahesh J Salgaonkar <mahesh@linux.vnet.ibm.com>
+> ---
+>  core/hmi.c | 25 +++++++++++++++++--------
+>  1 file changed, 17 insertions(+), 8 deletions(-)
 > 
-> .
-> 
+> diff --git a/core/hmi.c b/core/hmi.c
+> index 1f665a2f..67c520a0 100644
+> --- a/core/hmi.c
+> +++ b/core/hmi.c
+> @@ -379,7 +379,7 @@ static bool decode_core_fir(struct cpu_thread *cpu,
+>  {
+>  	uint64_t core_fir;
+>  	uint32_t core_id;
+> -	int i;
+> +	int i, swkup_rc = OPAL_UNSUPPORTED;
+>  	bool found = false;
+>  	int64_t ret;
+>  	const char *loc;
+> @@ -390,14 +390,15 @@ static bool decode_core_fir(struct cpu_thread *cpu,
+>  
+>  	core_id = pir_to_core_id(cpu->pir);
+>  
+> +	/* Force the core to wakeup, otherwise reading core_fir is unrealiable
+> +	 * if stop-state 5 is enabled.
+> +	 */
+> +	swkup_rc = dctl_set_special_wakeup(cpu);
+> +
+>  	/* Get CORE FIR register value. */
+>  	ret = read_core_fir(cpu->chip_id, core_id, &core_fir);
+>  
+> -	if (ret == OPAL_HARDWARE) {
+> -		prerror("XSCOM error reading CORE FIR\n");
+> -		/* If the FIR can't be read, we should checkstop. */
+> -		return true;
+> -	} else if (ret == OPAL_WRONG_STATE) {
+> +	if (ret == OPAL_WRONG_STATE) {
+>  		/*
+>  		 * CPU is asleep, so it probably didn't cause the checkstop.
+>  		 * If no other HMI cause is found a "catchall" checkstop
+> @@ -407,11 +408,16 @@ static bool decode_core_fir(struct cpu_thread *cpu,
+>  		prlog(PR_DEBUG,
+>  		      "FIR read failed, chip %d core %d asleep\n",
+>  		      cpu->chip_id, core_id);
+> -		return false;
+> +		goto out;
+> +	} else if (ret != OPAL_SUCCESS) {
+> +		prerror("XSCOM error reading CORE FIR\n");
+> +		/* If the FIR can't be read, we should checkstop. */
+> +		found = true;
+> +		goto out;
+>  	}
+>  
+>  	if (!core_fir)
+> -		return false;
+> +		goto out;
+>  
+>  	loc = chip_loc_code(cpu->chip_id);
+>  	prlog(PR_INFO, "[Loc: %s]: CHIP ID: %x, CORE ID: %x, FIR: %016llx\n",
+> @@ -426,6 +432,9 @@ static bool decode_core_fir(struct cpu_thread *cpu,
+>  						|= xstop_bits[i].reason;
+>  		}
+>  	}
+> +out:
+> +	if (!swkup_rc)
+> +		dctl_clear_special_wakeup(cpu);
+>  	return found;
+>  }
+>  
 
