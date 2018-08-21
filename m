@@ -2,83 +2,113 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9613BC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B06CDC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:04:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 528252177F
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:56:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 605C72183D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:04:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XqlslvgG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 528252177F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dCmbA1jz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 605C72183D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbeHUWRt (ORCPT
+        id S1727047AbeHUW0R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 18:17:49 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:47031 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726627AbeHUWRt (ORCPT
+        Tue, 21 Aug 2018 18:26:17 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:36470 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726627AbeHUW0R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 18:17:49 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id CE00321DCC;
-        Tue, 21 Aug 2018 14:56:28 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Tue, 21 Aug 2018 14:56:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=6UnVhYYATUSSfKC6JguI8h1xAu/KD
-        /9YDtQ/kHWzuG4=; b=XqlslvgGT4MoDwt2+WJUPXNZqw0pyLVHQd22mW2sQr69N
-        DEy/MC8VhMifK77zozeJ7+G9U56Vi1kO4ngisOi0yiCINuf2j6Kt7FJhkjNGUHvk
-        Mo2QptuzhG8INFEqrKsOpBcDt83hs2ysxoP1qltb1iIiyWMXZDcDVEkwLhvu3RGM
-        hWRhoj38V5ZcsicyLuyxSuORM30u25rf/29b/lYxAHC00iLrAA42b/Q7y6ydHMx4
-        1M2BN9n9tc46Wv6gF1N/SLoLetZAf/r4iTkJq3yDRsMbRYAsNzoEkWThBf5GNonh
-        qGtKgrmVh3rpFZNwF+4ITLufW7Adr2aRmXv4Bn68A==
-X-ME-Proxy: <xmx:XGB8WwxP86hT5OMO0NYcGNr13Z65Vbu7PDp8X_E_c6ScRj2i-VbMgw>
-    <xmx:XGB8W5ZkDOolxQdCWMgCPXMHzkyb3xAw-yh49lPynf9uGNRA9StPdA>
-    <xmx:XGB8W1RvvxS6Ksrik8sNlXfatqI5absaURkHSREhH52z_cm66npw8w>
-    <xmx:XGB8W0gnRIBfZx33EDuNQ1gfVsb-eTdyV7il8TtRbkzN5hO2v2i4kA>
-    <xmx:XGB8W464slo_FRX46EhRDndO7YLFDg1yzJI3eTMAsDF-OD6l7XUr3g>
-    <xmx:XGB8WyIlD1Cp3ntFdz_Gj9CgKLXMv3zEsfcu8QXDowMaySw6Mcv4RQ>
-X-ME-Sender: <xms:XGB8WxkvCrgtaNgxwtZbt4sh5Ul61jrwTUTph-TNs4aDJtiYlHiMNw>
-Received: from localhost (unknown [5.29.216.175])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 9302510255;
-        Tue, 21 Aug 2018 14:56:27 -0400 (EDT)
-Date:   Tue, 21 Aug 2018 21:56:25 +0300
-From:   Ido Schimmel <idosch@idosch.org>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     davem@davemloft.net, shuah@kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] selftests: net: move fragment forwarding/config up a
- level
-Message-ID: <20180821185625.GB27078@splinter>
-References: <20180821161212.5750-1-anders.roxell@linaro.org>
+        Tue, 21 Aug 2018 18:26:17 -0400
+Received: by mail-yw1-f65.google.com with SMTP id w202-v6so2431320yww.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 12:04:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=WIVOPBqjzJaK2vcDq0BM+iWm6htld8vMomalx81vGP4=;
+        b=dCmbA1jzBCGAcBTZJEUBOS6spz6tWSycPLmQsDK6w0WjJ9t101KtCgm/tIBILcaQp3
+         Kod8RFibaZo/NM3BP31R/RVI95eo4jYjxHRqoQz0a4n/0nxp/uPFQiAFstqoWlWiAbYo
+         8HFErENP179R8gMOi/oAvTv7sjTfSSQy6IuNs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=WIVOPBqjzJaK2vcDq0BM+iWm6htld8vMomalx81vGP4=;
+        b=Hsx/On5f26Rti0AqPyo1pYNaBuGcAefPGAR5AMesKrbNUsQsx/x5HS3qlvGrdvcexf
+         GML5BnlpdsgM5Xt/sgTgevxVam4wGDKwpgIGgiQAiqZU3m418is0MxMURHRbXhUozIL8
+         3DMrOGQ+iA1q0r1+t3qka/S9RTX5eJ3sor3e74J+3QmI1Cxz2CRgLrEmz2IsWuWb3zDf
+         0KA0fCTMQUpoNnbdF7I7bbkbf1KmnPtaBDdjTBsK7IVVSLvQXx33oMBB5I7llwzNM3Xx
+         vdRvqkfqtgiRpshgr+R6XJ0NocVayI6p9Fn/P3mH1OEJ25qG8CNO8GCThUxWkPkkxtbJ
+         dczg==
+X-Gm-Message-State: AOUpUlHec0+Wuw5mb865rFcI/Ws5hhv+77M2+Ii/02K2OmTvEfhlMNJW
+        eo7brD9yn3GlcsYvHEQqxybkga+b/CI=
+X-Google-Smtp-Source: AA+uWPyxmU3rH1AAcL2H7rQ69vNEdoi4DKc+0lpN33fyNXFnnf+h41iPyON9TAK9iK12shyNdCgsbw==
+X-Received: by 2002:a0d:e387:: with SMTP id m129-v6mr27166304ywe.315.1534878294472;
+        Tue, 21 Aug 2018 12:04:54 -0700 (PDT)
+Received: from mail-yb0-f179.google.com (mail-yb0-f179.google.com. [209.85.213.179])
+        by smtp.gmail.com with ESMTPSA id e134-v6sm11904719ywa.59.2018.08.21.12.04.51
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 Aug 2018 12:04:52 -0700 (PDT)
+Received: by mail-yb0-f179.google.com with SMTP id l16-v6so6375305ybk.11
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 12:04:51 -0700 (PDT)
+X-Received: by 2002:a25:1345:: with SMTP id 66-v6mr15741549ybt.171.1534878291456;
+ Tue, 21 Aug 2018 12:04:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180821161212.5750-1-anders.roxell@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a25:2c11:0:0:0:0:0 with HTTP; Tue, 21 Aug 2018 12:04:50
+ -0700 (PDT)
+In-Reply-To: <CAK7LNAQeY1kHxPpGgLfP=GUZ7nB6DQy3mYsMzLduUagGAB=OXQ@mail.gmail.com>
+References: <1534657880-11573-1-git-send-email-yamada.masahiro@socionext.com>
+ <CAGXu5j+t7c31xVXD+pu3Xhv10Nj0rWsGW=H1OgXh+uKGJRicnA@mail.gmail.com>
+ <CAKwvOdmPF29ywp-qx7dBTQoZPEE29QwqZL4Un==Z3T_nm0u8cQ@mail.gmail.com> <CAK7LNAQeY1kHxPpGgLfP=GUZ7nB6DQy3mYsMzLduUagGAB=OXQ@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 21 Aug 2018 12:04:50 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+g97kaCimRd1euRdFNg1aNQFoaVV7V6PBPOA0P51=3xg@mail.gmail.com>
+Message-ID: <CAGXu5j+g97kaCimRd1euRdFNg1aNQFoaVV7V6PBPOA0P51=3xg@mail.gmail.com>
+Subject: Re: [RFC PATCH] compiler.h: give up __compiletime_assert_fallback()
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        James Hogan <james.hogan@imgtec.com>,
+        Joe Stringer <joe@ovn.org>,
+        Daniel Santos <daniel.santos@pobox.com>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christopher Li <sparse@chrisli.org>,
+        Sparse Mailing-list <linux-sparse@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        George Burgess <gbiv@google.com>,
+        James Y Knight <jyknight@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 06:12:12PM +0200, Anders Roxell wrote:
-> 'make kselftest-merge' assumes that the config files for the tests are
-> located under the 'main' tet dir, like tools/testing/selftests/net/ and
-> not in a subdir to net.
+On Tue, Aug 21, 2018 at 9:15 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>> Note that there are a few definitions of BUILD_BUG_ON that still use
+>> this negative array size trick.  Should that pattern be removed from
+>> them as well?  See:
+>> * arch/x86/boot/boot.h#L33
+>> * include/linux/build_bug.h#L66
+>> * tools/include/linux/kernel.h#L38
+>
+> At this moment, -Wvla is the warning-3 level
+> in scripts/Makefile.extrawarn.
 
-The tests under tools/testing/selftests/net/forwarding/ aren't executed
-as part of the Makefile. The config file is there mainly so that people
-will know which config options they need in order to run the tests.
+We're down to a handful of VLA uses, but I don't think the negative
+cases should matter since they're _intended_ to break a compile.
 
-The tests can be added to the Makefile, but some of them take a few
-minutes to complete which is probably against "Don't take too long;"
-mentioned in Documentation/dev-tools/kselftest.rst.
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
