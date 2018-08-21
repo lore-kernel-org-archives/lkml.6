@@ -6,221 +6,120 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3DBC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 02:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 343AEC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 02:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07CC02174A
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 02:36:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCE042174D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 02:38:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BJWRTV4A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07CC02174A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FOQ8U4X8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCE042174D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbeHUFyg (ORCPT
+        id S1726485AbeHUF4t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 01:54:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54482 "EHLO mail.kernel.org"
+        Tue, 21 Aug 2018 01:56:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725733AbeHUFyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 01:54:36 -0400
+        id S1725848AbeHUF4t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 01:56:49 -0400
 Received: from localhost (unknown [104.132.1.88])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 992D521581;
-        Tue, 21 Aug 2018 02:36:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2743A21581;
+        Tue, 21 Aug 2018 02:38:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534818987;
-        bh=IwDl8xLtrEXmKGSS49WJEBP1/6xvuB22+6wRvYaPXNI=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=BJWRTV4Aeyygt8oEu43f/2yFBOSghe9CQaUbVmCJgVNRyPurBCePDyIGOOanu6Ff2
-         2zi4/UVzCOOrSy/tI2fuIFUJrpPzxIUBmb7Zmx4WO/j/aoOUDafg2bxLh2KR0fvrGu
-         0cV6mL/weDq6IC4uGXLH2192Yv8VKjXrjg6GZ6Xw=
-Date:   Mon, 20 Aug 2018 19:36:26 -0700
+        s=default; t=1534819121;
+        bh=OnLDxnMIX+07vswzb8slsPufLoL+b3yS/k2fQG79RvU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FOQ8U4X8ygpDRxb2yL9ett4paYFLb1CkDOlz1b37pSGdaYAbVBXbAAin3llzfmp9N
+         p5gc67gCnm2rbijnaoLu8DqoW8cLI7WS1YEYKBmzl4UTkfrzCVCE/Kpk/eE4bj67Wp
+         VWHwz93GhoKvbj2hB0eFVxqTRA27w0FSmV7H2dAY=
+Date:   Mon, 20 Aug 2018 19:38:40 -0700
 From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH v5] f2fs: fix performance issue observed with
- multi-thread sequential read
-Message-ID: <20180821023626.GB20263@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180810023758.46974-1-jaegeuk@kernel.org>
- <20180810024859.GA48219@jaegeuk-macbookpro.roam.corp.google.com>
- <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
- <20180817182944.GA58612@jaegeuk-macbookpro.roam.corp.google.com>
+To:     Chao Yu <chao@kernel.org>
+Cc:     Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] f2fs: fix to avoid quota inode leak in ->put_super
+Message-ID: <20180821023840.GD20263@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180817091840.50792-1-yuchao0@huawei.com>
+ <20180818151600.GA84798@jaegeuk-macbookpro.roam.corp.google.com>
+ <b10c4ae6-2a25-fb0b-cbfa-467b5e988b47@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180817182944.GA58612@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <b10c4ae6-2a25-fb0b-cbfa-467b5e988b47@kernel.org>
 User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts the commit - "b93f771 - f2fs: remove writepages lock"
-to fix the drop in sequential read throughput.
+On 08/20, Chao Yu wrote:
+> On 2018/8/18 23:16, Jaegeuk Kim wrote:
+> > On 08/17, Chao Yu wrote:
+> >> generic/019 reports below error:
+> >>
+> >>  __quota_error: 1160 callbacks suppressed
+> >>  Quota error (device zram1): write_blk: dquota write failed
+> >>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+> >>  Quota error (device zram1): write_blk: dquota write failed
+> >>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+> >>  Quota error (device zram1): write_blk: dquota write failed
+> >>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+> >>  Quota error (device zram1): write_blk: dquota write failed
+> >>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+> >>  Quota error (device zram1): write_blk: dquota write failed
+> >>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+> >>  VFS: Busy inodes after unmount of zram1. Self-destruct in 5 seconds.  Have a nice day...
+> >>
+> >> If we failed in below path due to fail to write dquot block, we will miss
+> >> to release quota inode, fix it.
+> >>
+> >> - f2fs_put_super
+> >>  - f2fs_quota_off_umount
+> >>   - f2fs_quota_off
+> >>    - f2fs_quota_sync   <-- failed
+> >>    - dquot_quota_off   <-- missed to call
+> >>
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >>  fs/f2fs/super.c | 6 ++++--
+> >>  1 file changed, 4 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> >> index a5df9fbc6355..9647bbcdfd2b 100644
+> >> --- a/fs/f2fs/super.c
+> >> +++ b/fs/f2fs/super.c
+> >> @@ -1977,10 +1977,12 @@ void f2fs_quota_off_umount(struct super_block *sb)
+> >>  	for (type = 0; type < MAXQUOTAS; type++) {
+> >>  		err = f2fs_quota_off(sb, type);
+> >>  		if (err) {
+> >> +			int ret = dquot_quota_off(sb, type);
+> >> +
+> > 
+> > Could you check the mainline version?
+> 
+> I guess we missed to apply below patch? Could you check that?
+> 
+> f2fs: report error if quota off error during umount
 
-Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
-device: UFS
+I remember there was a bug in the patch.
 
-Before -
-read throughput: 185 MB/s
-total read requests: 85177 (of these ~80000 are 4KB size requests).
-total write requests: 2546 (of these ~2208 requests are written in 512KB).
-
-After -
-read throughput: 758 MB/s
-total read requests: 2417 (of these ~2042 are 512KB reads).
-total write requests: 2701 (of these ~2034 requests are written in 512KB).
-
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
-Change log from v4:
- - add __should_serialize_io
- - fix wrong condition
-
- Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
- fs/f2fs/data.c                          | 21 +++++++++++++++++++++
- fs/f2fs/f2fs.h                          |  2 ++
- fs/f2fs/segment.c                       |  1 +
- fs/f2fs/super.c                         |  1 +
- fs/f2fs/sysfs.c                         |  2 ++
- 6 files changed, 35 insertions(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 9b0123388f18..94a24aedcdb2 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -51,6 +51,14 @@ Description:
- 		 Controls the dirty page count condition for the in-place-update
- 		 policies.
- 
-+What:		/sys/fs/f2fs/<disk>/min_seq_blocks
-+Date:		August 2018
-+Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
-+Description:
-+		 Controls the dirty page count condition for batched sequential
-+		 writes in ->writepages.
-+
-+
- What:		/sys/fs/f2fs/<disk>/min_hot_blocks
- Date:		March 2017
- Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 43d3723dc886..bdcb023506a7 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2122,6 +2122,18 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 	return ret;
- }
- 
-+static inline bool __should_serialize_io(struct inode *inode,
-+					struct writeback_control *wbc)
-+{
-+	if (!S_ISREG(inode->i_mode))
-+		return false;
-+	if (wbc->sync_mode != WB_SYNC_ALL)
-+		return true;
-+	if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
-+		return true;
-+	return false;
-+}
-+
- static int __f2fs_write_data_pages(struct address_space *mapping,
- 						struct writeback_control *wbc,
- 						enum iostat_type io_type)
-@@ -2130,6 +2142,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct blk_plug plug;
- 	int ret;
-+	bool locked = false;
- 
- 	/* deal with chardevs and other special file */
- 	if (!mapping->a_ops->writepage)
-@@ -2160,10 +2173,18 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
- 	else if (atomic_read(&sbi->wb_sync_req[DATA]))
- 		goto skip_write;
- 
-+	if (__should_serialize_io(inode, wbc)) {
-+		mutex_lock(&sbi->writepages);
-+		locked = true;
-+	}
-+
- 	blk_start_plug(&plug);
- 	ret = f2fs_write_cache_pages(mapping, wbc, io_type);
- 	blk_finish_plug(&plug);
- 
-+	if (locked)
-+		mutex_unlock(&sbi->writepages);
-+
- 	if (wbc->sync_mode == WB_SYNC_ALL)
- 		atomic_dec(&sbi->wb_sync_req[DATA]);
- 	/*
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9a6ba4a8d338..170573f8a04a 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -913,6 +913,7 @@ struct f2fs_sm_info {
- 	unsigned int ipu_policy;	/* in-place-update policy */
- 	unsigned int min_ipu_util;	/* in-place-update threshold */
- 	unsigned int min_fsync_blocks;	/* threshold for fsync */
-+	unsigned int min_seq_blocks;	/* threshold for sequential blocks */
- 	unsigned int min_hot_blocks;	/* threshold for hot block allocation */
- 	unsigned int min_ssr_sections;	/* threshold to trigger SSR allocation */
- 
-@@ -1133,6 +1134,7 @@ struct f2fs_sb_info {
- 	struct rw_semaphore sb_lock;		/* lock for raw super block */
- 	int valid_super_block;			/* valid super block no */
- 	unsigned long s_flag;				/* flags for sbi */
-+	struct mutex writepages;		/* mutex for writepages() */
- 
- #ifdef CONFIG_BLK_DEV_ZONED
- 	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index b136e39e1e9e..20650e25117b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -4127,6 +4127,7 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
- 		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
- 	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
- 	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
-+	sm_info->min_seq_blocks = sbi->blocks_per_seg * sbi->segs_per_sec;
- 	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
- 	sm_info->min_ssr_sections = reserved_sections(sbi);
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index be41dbd7b261..53d70b64fea1 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2842,6 +2842,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	/* init f2fs-specific super block info */
- 	sbi->valid_super_block = valid_super_block;
- 	mutex_init(&sbi->gc_mutex);
-+	mutex_init(&sbi->writepages);
- 	mutex_init(&sbi->cp_mutex);
- 	init_rwsem(&sbi->node_write);
- 	init_rwsem(&sbi->node_change);
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index cd2e030e47b8..81c0e5337443 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -397,6 +397,7 @@ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
-+F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_seq_blocks, min_seq_blocks);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_hot_blocks, min_hot_blocks);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ssr_sections, min_ssr_sections);
- F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
-@@ -449,6 +450,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(ipu_policy),
- 	ATTR_LIST(min_ipu_util),
- 	ATTR_LIST(min_fsync_blocks),
-+	ATTR_LIST(min_seq_blocks),
- 	ATTR_LIST(min_hot_blocks),
- 	ATTR_LIST(min_ssr_sections),
- 	ATTR_LIST(max_victim_search),
--- 
-2.17.0.441.gb46fe60e1d-goog
-
+> 
+> Thanks,
+> 
+> > 
+> >>  			f2fs_msg(sb, KERN_ERR,
+> >>  				"Fail to turn off disk quota "
+> >> -				"(type: %d, err: %d), Please "
+> >> -				"run fsck to fix it.", type, err);
+> >> +				"(type: %d, err: %d, ret:%d), Please "
+> >> +				"run fsck to fix it.", type, err, ret);
+> >>  			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
+> >>  		}
+> >>  	}
+> >> -- 
+> >> 2.18.0.rc1
