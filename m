@@ -2,183 +2,129 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE70C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 09:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61585C43615
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 09:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85E3A2170E
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 09:51:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mNYygGVh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85E3A2170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 208A42170E
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 09:52:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 208A42170E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeHUNK2 (ORCPT
+        id S1726877AbeHUNMJ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 09:10:28 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40224 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726709AbeHUNK1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 09:10:27 -0400
-Received: by mail-pf1-f194.google.com with SMTP id e13-v6so8237712pff.7
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 02:51:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FLdzujfYjLg06RcMdig1Mi3f7IcKZoyYcqD22cBhoPA=;
-        b=mNYygGVhesp+TAU5E2EDJ+kq981NbllxtY3cZJ3wXazbnx9/aHC+N5Oo0JGOUMqgHr
-         H6kbMCIwIrelk10kZeGaZBh+XOMdG1zulQYFu2efbDWUWH+G7k5A4sC8hruNDxcSjFcV
-         5HBrAsUeysd8l80pu8lKUJkRN1jNCCwN7fuGxf/GP7pJuRMNVGebCP/VA3l1aqVbZDDA
-         SdzE+GTW2DBVT6624LcypS3iqhv5mjaB/KtrYWie3VOpkEFQowExhtUSrh7NZTURJxiU
-         C0Tx0f6kkL9zJtQgmtR4QORKxOEZodiJHgenrlUWx9+s/rb/yZQXXpctXgkxh7R83Oli
-         JpUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FLdzujfYjLg06RcMdig1Mi3f7IcKZoyYcqD22cBhoPA=;
-        b=r9aYrRhZdgweR60IGZT6oHAv6lx65dGStj8qdO6n/TTXelSPhPDknpk8VMBqLC8ryq
-         JIJD/9oB1VuJ1i7lN2qrdBkdGut1n8AvgVahk6EMiocVTulGB3Ta5tsP85tEicnrDI7f
-         YzYRr6znOYiOekJiB5xOqaalraug7hEmnwA1e1AVoU/1k0PBxNKQCMayvUNEih1wNkm8
-         uQLyfodoMQckyAyKcbQCxc2JtcOdCUpY5u6GUcoZ4A98DAnrhbKX+/ZpT+JVlIdvOeH5
-         KXkazMZktk1yhu/e7AUyeaxQnaKOnv1ET4N8zhCb+ynFWQ6ITURCRIXZVbDadQfxH3D2
-         GXeg==
-X-Gm-Message-State: AOUpUlHWSyyDIp82Gqehmc/wGkFTIGVWjiA/MaB7hAUk8tE3OmWpAGyZ
-        LqwJkOzCe2mgWiO+DMaavCw=
-X-Google-Smtp-Source: AA+uWPyskbmKgJlbeo5kgrG8aS/q1cNiXUZPfnVTheIsTUWq52y6/j8+YJGZFj1NsWah33ZZbVBUxQ==
-X-Received: by 2002:a63:5a50:: with SMTP id k16-v6mr10465676pgm.143.1534845059906;
-        Tue, 21 Aug 2018 02:50:59 -0700 (PDT)
-Received: from localhost ([39.7.47.210])
-        by smtp.gmail.com with ESMTPSA id g20-v6sm16389809pfo.94.2018.08.21.02.50.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 Aug 2018 02:50:58 -0700 (PDT)
-Date:   Tue, 21 Aug 2018 18:50:55 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Martin Wilck <mwilck@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC][PATCH] lib/string: introduce sysfs_strncpy() and
- sysfs_strlcpy()
-Message-ID: <20180821095055.GA400@jagdpanzerIV>
-References: <20180821062459.1807-1-sergey.senozhatsky@gmail.com>
- <0e06858f-3625-692a-582d-d828a3cc3ebe@rasmusvillemoes.dk>
+        Tue, 21 Aug 2018 09:12:09 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37320 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726684AbeHUNMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 09:12:09 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id CDCA620799; Tue, 21 Aug 2018 11:52:38 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-85-9.w90-88.abo.wanadoo.fr [90.88.27.9])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 55911204AE;
+        Tue, 21 Aug 2018 11:52:38 +0200 (CEST)
+Date:   Tue, 21 Aug 2018 11:52:38 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>,
+        "absahu@codeaurora.org" <absahu@codeaurora.org>,
+        "peterpandong@micron.com" <peterpandong@micron.com>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Simek <michals@xilinx.com>,
+        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>
+Subject: Re: [LINUX PATCH v10 1/2] dt-bindings: mtd: arasan: Add device tree
+ binding documentation
+Message-ID: <20180821115238.1ad4dcb8@xps13>
+In-Reply-To: <MWHPR02MB2623E78222225D1CE8167463AF310@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <1534511964-20342-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1534511964-20342-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <20180820143324.61af9027@bbrezillon>
+        <MWHPR02MB2623F315C6D4C9775CDA08D8AF310@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20180821075948.28962170@bbrezillon>
+        <MWHPR02MB2623E78222225D1CE8167463AF310@MWHPR02MB2623.namprd02.prod.outlook.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0e06858f-3625-692a-582d-d828a3cc3ebe@rasmusvillemoes.dk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rasmus,
+Hi Naga,
 
-On (08/21/18 09:59), Rasmus Villemoes wrote:
-> > +char *sysfs_strncpy(char *dest, const char *src, size_t count)
-> > +{
-> > +	char *c;
-> > +
-> > +	strncpy(dest, skip_spaces(src), count);
+Naga Sureshkumar Relli <nagasure@xilinx.com> wrote on Tue, 21 Aug 2018
+09:22:07 +0000:
+
+> Hi Boris,
 > 
-> I'd like to see where and how you'd use this, but I'm very skeptical of
-> count being used both for the size of the dest buffer as well as an
-> essentially random argument to strncpy - if count is also the maximum
-> number of bytes to read from the src, you'd need to take the
-> skip_spaces() into account, because there are not count bytes left after
-> that...
-> And if src is not necessarily nul-terminated, skip_spaces() by
-> itself is wrong.
+> > -----Original Message-----
+> > From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
+> > Sent: Tuesday, August 21, 2018 11:30 AM
+> > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> > Cc: miquel.raynal@bootlin.com; richard@nod.at; dwmw2@infradead.org;
+> > computersforpeace@gmail.com; marek.vasut@gmail.com; kyungmin.park@samsung.com;
+> > absahu@codeaurora.org; peterpandong@micron.com; frieder.schrempf@exceet.de; linux-
+> > mtd@lists.infradead.org; linux-kernel@vger.kernel.org; Michal Simek <michals@xilinx.com>;
+> > nagasureshkumarrelli@gmail.com
+> > Subject: Re: [LINUX PATCH v10 1/2] dt-bindings: mtd: arasan: Add device tree binding
+> > documentation
+> > 
+> > On Tue, 21 Aug 2018 05:47:18 +0000
+> > Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
+> >   
+> > > > > +Required properties:
+> > > > > +- compatible:		Should be "xlnx,zynqmp-nand" or "arasan,nfc-v3p10"  
+> > > >
+> > > > In your example it's not an "or" since both are defined.  
+> > > In our previous discussion
+> > > (https://lore.kernel.org/patchwork/patch/748901/)
+> > > We decided to have compatible strings like " compatible = "<soc-vendor>,<ip-revision>",  
+> > "arasan,<ip-revision>";"  
+> > > So it should be either of these.
+> > > so I will write something like below
+> > > "Possible values are  "xlnx,zynqmp-nand"
+> > > 			"arasan,nfc-v3p10"
+> > > And in example I will mention any one compatible.
+> > > Is it ok?  
+> > 
+> > Hm, why do you need arasan,nfc-v3p10 at all if it's supposed to be overloaded by a soc specific
+> > compat?  
+> Actually we put these compatible strings based on the comments on v7 series.
+> Anyway I will just keep "xlnx,zynqmp-nand" as compatible.
+> >   
+> > > > > +
+> > > > > +Optional properties:
+> > > > > +- arasan,has-mdma: Enables DMA support  
+> > > >
+> > > > Can't you detect that based on the compatible (or thanks to a
+> > > > register). If it's something you choose when configuring the IP and can't detect at  
+> > runtime I guess it's fine.  
+> > > There is no way to select DMA when configuring the IP.
+> > > But it has internal DMA and there is a register to select PIO or DMA while starting a  
+> > transfer.  
+> > > So if user really don't want DMA, then we will never set DMA in the code based on DT  
+> > property.
+> > 
+> > If it's a purely SW choice, then is shouldn't be described in the DT.
+> > You can use a module param, but I'm not even sure why one would want to disable DMA.  
+> UBIFS doesn't work with DMA, hence we are using a DT property to operate the driver in IO.
+> But as you pointed (use virt_is_valid()), with this we can switch our driver to operate in PIO or DMA.
+> I will remove this from DT.
 
-I think that sysfs input is always properly NULL-terminated. It may or
-may not contain \n, but \0 is expected to be there. Am I wrong?
+I don't get why UBIFS would not work with DMA? This is a significant
+drawback.
 
-> Moreover, I don't think we should add more users or wrappers for strncpy
-> - I highly doubt the sysfs users you have in mind want the "fill the
-> rest of the buffer with '\0'" nor the "not enough room for a terminating
-> '\0'? Oh well, what could possibly go wrong" semantics.
-
-The reason I added both strncpy() and strlcpy() was that there are lots
-of sysfs ->store() callbacks which use strncpy().
-
-E.g.
-	channel_dimm_label_store()
-	dimmdev_label_store()
-	pmbus_add_label()
-	axp20x_store_attr()
-	cmdline_store()
-	
-	and so on and on.
-
-> > +	c = dest + count - 1;
-> > +	while (c >= dest && (isspace(*c) || *c == '\n' || *c == '\0')) {
-> 
-> nit: '\n' certainly already passes the isspace() test.
-
-Hah, indeed, it should.
-"\n" & 0x20 must be positive. Andrew had the same comment. But I didn't
-check what actually isspace() was doing, until now.
-
-> > +size_t sysfs_strlcpy(char *dest, const char *src, size_t size)
-> > +{
-> > +	size_t ret;
-> > +	char *c;
-> > +
-> > +	ret = strlcpy(dest, skip_spaces(src), size);
-> > +
-> > +	size = strlen(dest);
-> > +	c = dest + size - 1;
-> > +	while (c >= dest && (isspace(*c) || *c == '\n'))
-> > +		c--;
-> > +	*(c + 1) = '\0';
-> > +	return ret;
-> > +}
-> 
-> What exactly is the return value?
-
-Honestly, I didn't think about it. I wasn't sure if we want to return
-anything from this function and from sysfs_strncpy(). I glanced through
-a number of ->store() callbacks, and it seems that mostly people don't
-bother to check strlcpy() return value at all.
-
-> A more useful return value would either be "the length of the string
-> now in dest", or some sort of indicator that the input was truncated,
-> if that is ever possible.
-
-Agreed.
-
-> I think you're too focused on making wrappers around str[ln]cpy
-> preserving parts of those functions' API. Instead, try to figure out
-> what sysfs users actually want, name the functions after that, and then
-> whether they use strncpy or sprintf or strscpy internally is completely
-> irrelevant.
-
-Going point, that's why the patch is in RFC stage: to figure out
-what do we actually want.
-
-> int strcpy_trim(char *dst, size_t dstsize, const char *src, size_t
-> srcsize) - copy (potentially not '\0'-terminated) src to dst, trimming
-> leading and trailing whitespace. dstsize must be positive, and dst is
-> guaranteed to be '\0'-terminated. Returns the length of the string now
-> in dst, or -EOVERFLOW if some none-whitespace character was chopped.
->
-> would cover all use cases?
-
-I like it in general. Sounds like a plan to me. Maybe the "-EOVERFLOW if
-some none-whitespace character was chopped" part can be changed: if we
-would trim leading and trailing whitespaces before we copy a string then
-only valid input chars can get chopped.
-
-	-ss
+Miquèl
