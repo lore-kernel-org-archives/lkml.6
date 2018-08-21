@@ -2,159 +2,78 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C00C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 10:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83504C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 10:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A398A21776
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 10:53:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A398A21776
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 49BFD21776
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 10:54:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49BFD21776
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbeHUONB (ORCPT
+        id S1726853AbeHUONw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 10:13:01 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38882 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726346AbeHUONA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 10:13:00 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 50C2E2072D; Tue, 21 Aug 2018 12:53:18 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 431D8207F0;
-        Tue, 21 Aug 2018 12:52:48 +0200 (CEST)
-Date:   Tue, 21 Aug 2018 12:52:48 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>,
-        "absahu@codeaurora.org" <absahu@codeaurora.org>,
-        "peterpandong@micron.com" <peterpandong@micron.com>,
-        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Simek <michals@xilinx.com>,
-        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>
-Subject: Re: [LINUX PATCH v10 1/2] dt-bindings: mtd: arasan: Add device tree
- binding documentation
-Message-ID: <20180821125248.0eecbb5e@bbrezillon>
-In-Reply-To: <MWHPR02MB2623A681FB4FF038B3F9C758AF310@MWHPR02MB2623.namprd02.prod.outlook.com>
-References: <1534511964-20342-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
-        <1534511964-20342-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
-        <20180820143324.61af9027@bbrezillon>
-        <MWHPR02MB2623F315C6D4C9775CDA08D8AF310@MWHPR02MB2623.namprd02.prod.outlook.com>
-        <20180821075948.28962170@bbrezillon>
-        <MWHPR02MB2623E78222225D1CE8167463AF310@MWHPR02MB2623.namprd02.prod.outlook.com>
-        <20180821115238.1ad4dcb8@xps13>
-        <MWHPR02MB2623A681FB4FF038B3F9C758AF310@MWHPR02MB2623.namprd02.prod.outlook.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 21 Aug 2018 10:13:52 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39573 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726346AbeHUONw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 10:13:52 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fs4IZ-0005Q8-LQ; Tue, 21 Aug 2018 10:54:07 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/pl111: add in missing sentinel to a of_device_id array
+Date:   Tue, 21 Aug 2018 11:54:07 +0100
+Message-Id: <20180821105407.2318-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 Aug 2018 10:44:54 +0000
-Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Hi Miquel,
-> 
-> > -----Original Message-----
-> > From: Miquel Raynal [mailto:miquel.raynal@bootlin.com]
-> > Sent: Tuesday, August 21, 2018 3:23 PM
-> > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
-> > Cc: Boris Brezillon <boris.brezillon@bootlin.com>; richard@nod.at; dwmw2@infradead.org;
-> > computersforpeace@gmail.com; marek.vasut@gmail.com; kyungmin.park@samsung.com;
-> > absahu@codeaurora.org; peterpandong@micron.com; frieder.schrempf@exceet.de; linux-
-> > mtd@lists.infradead.org; linux-kernel@vger.kernel.org; Michal Simek <michals@xilinx.com>;
-> > nagasureshkumarrelli@gmail.com
-> > Subject: Re: [LINUX PATCH v10 1/2] dt-bindings: mtd: arasan: Add device tree binding
-> > documentation
-> > 
-> > Hi Naga,
-> > 
-> > Naga Sureshkumar Relli <nagasure@xilinx.com> wrote on Tue, 21 Aug 2018
-> > 09:22:07 +0000:
-> >   
-> > > Hi Boris,
-> > >  
-> > > > -----Original Message-----
-> > > > From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
-> > > > Sent: Tuesday, August 21, 2018 11:30 AM
-> > > > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
-> > > > Cc: miquel.raynal@bootlin.com; richard@nod.at; dwmw2@infradead.org;
-> > > > computersforpeace@gmail.com; marek.vasut@gmail.com;
-> > > > kyungmin.park@samsung.com; absahu@codeaurora.org;
-> > > > peterpandong@micron.com; frieder.schrempf@exceet.de; linux-
-> > > > mtd@lists.infradead.org; linux-kernel@vger.kernel.org; Michal Simek
-> > > > <michals@xilinx.com>; nagasureshkumarrelli@gmail.com
-> > > > Subject: Re: [LINUX PATCH v10 1/2] dt-bindings: mtd: arasan: Add
-> > > > device tree binding documentation
-> > > >
-> > > > On Tue, 21 Aug 2018 05:47:18 +0000
-> > > > Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
-> > > >  
-> > > > > > > +Required properties:
-> > > > > > > +- compatible:		Should be "xlnx,zynqmp-nand" or "arasan,nfc-v3p10"  
-> > > > > >
-> > > > > > In your example it's not an "or" since both are defined.  
-> > > > > In our previous discussion
-> > > > > (https://lore.kernel.org/patchwork/patch/748901/)
-> > > > > We decided to have compatible strings like " compatible =
-> > > > > "<soc-vendor>,<ip-revision>",  
-> > > > "arasan,<ip-revision>";"  
-> > > > > So it should be either of these.
-> > > > > so I will write something like below "Possible values are
-> > > > > "xlnx,zynqmp-nand"
-> > > > > 			"arasan,nfc-v3p10"
-> > > > > And in example I will mention any one compatible.
-> > > > > Is it ok?  
-> > > >
-> > > > Hm, why do you need arasan,nfc-v3p10 at all if it's supposed to be
-> > > > overloaded by a soc specific compat?  
-> > > Actually we put these compatible strings based on the comments on v7 series.
-> > > Anyway I will just keep "xlnx,zynqmp-nand" as compatible.  
-> > > >  
-> > > > > > > +
-> > > > > > > +Optional properties:
-> > > > > > > +- arasan,has-mdma: Enables DMA support  
-> > > > > >
-> > > > > > Can't you detect that based on the compatible (or thanks to a
-> > > > > > register). If it's something you choose when configuring the IP
-> > > > > > and can't detect at  
-> > > > runtime I guess it's fine.  
-> > > > > There is no way to select DMA when configuring the IP.
-> > > > > But it has internal DMA and there is a register to select PIO or
-> > > > > DMA while starting a  
-> > > > transfer.  
-> > > > > So if user really don't want DMA, then we will never set DMA in
-> > > > > the code based on DT  
-> > > > property.
-> > > >
-> > > > If it's a purely SW choice, then is shouldn't be described in the DT.
-> > > > You can use a module param, but I'm not even sure why one would want to disable DMA.  
-> > > UBIFS doesn't work with DMA, hence we are using a DT property to operate the driver in  
-> > IO.  
-> > > But as you pointed (use virt_is_valid()), with this we can switch our driver to operate in  
-> > PIO or DMA.  
-> > > I will remove this from DT.  
-> > 
-> > I don't get why UBIFS would not work with DMA? This is a significant drawback.  
-> UBIFS uses vmalloc'ed buffers whereas for DMA it should be DMA-able, i.e uses physically contiguous memory.
-> Hence we used a DT property to make it work in PIO mode.
-> Some discussion happened in https://patchwork.kernel.org/patch/9675007/.
-> But whatever I said above, is with older arasan_nand driver, now anyway we have
-> virt_addr_valid(). By checking this we can use DMA or PIO.
-> This is the information I have, but I may be wrong.
+Array vexpress_muxfpga_match is missing an end of array sentinel,
+add it.
 
-My recommandation: set the NAND_USE_BOUNCE_BUFFER and always use DMA.
+Detected by Coccinelle: ("vexpress_muxfpga_match is not NULL
+terminated at line")
+
+Fixes: ca454bd42dc2 ("drm/pl111: Support the Versatile Express")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/pl111/pl111_vexpress.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/pl111/pl111_vexpress.c b/drivers/gpu/drm/pl111/pl111_vexpress.c
+index a534b225e31b..48e2afcd4798 100644
+--- a/drivers/gpu/drm/pl111/pl111_vexpress.c
++++ b/drivers/gpu/drm/pl111/pl111_vexpress.c
+@@ -111,7 +111,8 @@ static int vexpress_muxfpga_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id vexpress_muxfpga_match[] = {
+-	{ .compatible = "arm,vexpress-muxfpga", }
++	{ .compatible = "arm,vexpress-muxfpga", },
++	{ /* sentinel */ }
+ };
+ 
+ static struct platform_driver vexpress_muxfpga_driver = {
+-- 
+2.17.1
+
