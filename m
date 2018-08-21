@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B118FC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D94C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E97C2174D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E97C2174D
+	by mail.kernel.org (Postfix) with ESMTP id 5B71720C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B71720C09
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728507AbeHUJxT (ORCPT
+        id S1728239AbeHUJxW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:53:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57010 "EHLO
+        Tue, 21 Aug 2018 05:53:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57018 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726938AbeHUJxS (ORCPT
+        with ESMTP id S1727363AbeHUJxW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:53:18 -0400
+        Tue, 21 Aug 2018 05:53:22 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 20C369D7;
-        Tue, 21 Aug 2018 06:34:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5D3289D7;
+        Tue, 21 Aug 2018 06:34:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chen Hu <hu1.chen@intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.4 19/22] serial: 8250_dw: always set baud rate in dw8250_set_termios
-Date:   Tue, 21 Aug 2018 08:21:45 +0200
-Message-Id: <20180821055140.451598344@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+05f840f3b04f211bad55@syzkaller.appspotmail.com,
+        Wei Wang <weiwan@google.com>, Martin KaFai Lau <kafai@fb.com>,
+        Guillaume Nault <g.nault@alphalink.fr>,
+        David Ahern <dsahern@gmail.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 02/22] l2tp: use sk_dst_check() to avoid race on sk->sk_dst_cache
+Date:   Tue, 21 Aug 2018 08:21:28 +0200
+Message-Id: <20180821055139.570014967@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055139.462620042@linuxfoundation.org>
 References: <20180821055139.462620042@linuxfoundation.org>
@@ -51,48 +55,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chen Hu <hu1.chen@intel.com>
+From: Wei Wang <weiwan@google.com>
 
-commit dfcab6ba573445c703235ab6c83758eec12d7f28 upstream.
+[ Upstream commit 6d37fa49da1e8db8fb1995be22ac837ca41ac8a8 ]
 
-dw8250_set_termios() doesn't set baud rate if the arg "old ktermios" is
-NULL. This happens during resume.
+In l2tp code, if it is a L2TP_UDP_ENCAP tunnel, tunnel->sk points to a
+UDP socket. User could call sendmsg() on both this tunnel and the UDP
+socket itself concurrently. As l2tp_xmit_skb() holds socket lock and call
+__sk_dst_check() to refresh sk->sk_dst_cache, while udpv6_sendmsg() is
+lockless and call sk_dst_check() to refresh sk->sk_dst_cache, there
+could be a race and cause the dst cache to be freed multiple times.
+So we fix l2tp side code to always call sk_dst_check() to garantee
+xchg() is called when refreshing sk->sk_dst_cache to avoid race
+conditions.
+
+Syzkaller reported stack trace:
+BUG: KASAN: use-after-free in atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+BUG: KASAN: use-after-free in atomic_fetch_add_unless include/linux/atomic.h:575 [inline]
+BUG: KASAN: use-after-free in atomic_add_unless include/linux/atomic.h:597 [inline]
+BUG: KASAN: use-after-free in dst_hold_safe include/net/dst.h:308 [inline]
+BUG: KASAN: use-after-free in ip6_hold_safe+0xe6/0x670 net/ipv6/route.c:1029
+Read of size 4 at addr ffff8801aea9a880 by task syz-executor129/4829
+
+CPU: 0 PID: 4829 Comm: syz-executor129 Not tainted 4.18.0-rc7-next-20180802+ #30
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
-...
-[   54.928108] dw8250_set_termios+0x162/0x170
-[   54.928114] serial8250_set_termios+0x17/0x20
-[   54.928117] uart_change_speed+0x64/0x160
-[   54.928119] uart_resume_port
-...
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+ print_address_description+0x6c/0x20b mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
+ check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+ check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+ kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
+ atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+ atomic_fetch_add_unless include/linux/atomic.h:575 [inline]
+ atomic_add_unless include/linux/atomic.h:597 [inline]
+ dst_hold_safe include/net/dst.h:308 [inline]
+ ip6_hold_safe+0xe6/0x670 net/ipv6/route.c:1029
+ rt6_get_pcpu_route net/ipv6/route.c:1249 [inline]
+ ip6_pol_route+0x354/0xd20 net/ipv6/route.c:1922
+ ip6_pol_route_output+0x54/0x70 net/ipv6/route.c:2098
+ fib6_rule_lookup+0x283/0x890 net/ipv6/fib6_rules.c:122
+ ip6_route_output_flags+0x2c5/0x350 net/ipv6/route.c:2126
+ ip6_dst_lookup_tail+0x1278/0x1da0 net/ipv6/ip6_output.c:978
+ ip6_dst_lookup_flow+0xc8/0x270 net/ipv6/ip6_output.c:1079
+ ip6_sk_dst_lookup_flow+0x5ed/0xc50 net/ipv6/ip6_output.c:1117
+ udpv6_sendmsg+0x2163/0x36b0 net/ipv6/udp.c:1354
+ inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
+ sock_sendmsg_nosec net/socket.c:622 [inline]
+ sock_sendmsg+0xd5/0x120 net/socket.c:632
+ ___sys_sendmsg+0x51d/0x930 net/socket.c:2115
+ __sys_sendmmsg+0x240/0x6f0 net/socket.c:2210
+ __do_sys_sendmmsg net/socket.c:2239 [inline]
+ __se_sys_sendmmsg net/socket.c:2236 [inline]
+ __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2236
+ do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x446a29
+Code: e8 ac b8 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 eb 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f4de5532db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 00000000006dcc38 RCX: 0000000000446a29
+RDX: 00000000000000b8 RSI: 0000000020001b00 RDI: 0000000000000003
+RBP: 00000000006dcc30 R08: 00007f4de5533700 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dcc3c
+R13: 00007ffe2b830fdf R14: 00007f4de55339c0 R15: 0000000000000001
 
-So the baud rate is not restored after S3 and breaks the apps who use
-UART, for example, console and bluetooth etc.
-
-We address this issue by setting the baud rate irrespective of arg
-"old", just like the drivers for other 8250 IPs. This is tested with
-Intel Broxton platform.
-
-Signed-off-by: Chen Hu <hu1.chen@intel.com>
-Fixes: 4e26b134bd17 ("serial: 8250_dw: clock rate handling for all ACPI platforms")
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: stable <stable@vger.kernel.org>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Fixes: 71b1391a4128 ("l2tp: ensure sk->dst is still valid")
+Reported-by: syzbot+05f840f3b04f211bad55@syzkaller.appspotmail.com
+Signed-off-by: Wei Wang <weiwan@google.com>
+Signed-off-by: Martin KaFai Lau <kafai@fb.com>
+Cc: Guillaume Nault <g.nault@alphalink.fr>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/tty/serial/8250/8250_dw.c |    2 +-
+ net/l2tp/l2tp_core.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -224,7 +224,7 @@ static void dw8250_set_termios(struct ua
- 	unsigned int rate;
- 	int ret;
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -1145,7 +1145,7 @@ int l2tp_xmit_skb(struct l2tp_session *s
  
--	if (IS_ERR(d->clk) || !old)
-+	if (IS_ERR(d->clk))
- 		goto out;
+ 	/* Get routing info from the tunnel socket */
+ 	skb_dst_drop(skb);
+-	skb_dst_set(skb, dst_clone(__sk_dst_check(sk, 0)));
++	skb_dst_set(skb, sk_dst_check(sk, 0));
  
- 	clk_disable_unprepare(d->clk);
+ 	inet = inet_sk(sk);
+ 	fl = &inet->cork.fl;
 
 
