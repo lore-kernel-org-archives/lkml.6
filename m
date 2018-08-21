@@ -2,106 +2,120 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AEFCC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:33:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0472C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:34:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F5FE216C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:33:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hBiIjvIy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F5FE216C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 2577C216C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:34:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2577C216C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbeHULwa (ORCPT
+        id S1726790AbeHULxq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 07:52:30 -0400
-Received: from ozlabs.org ([203.11.71.1]:60351 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726315AbeHULwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 07:52:30 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41vkTP4Cdjz9s4v;
-        Tue, 21 Aug 2018 18:33:13 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1534840395;
-        bh=4Y9BGFASycOORMikIcdDfj2giAklplwoFsC4/TyE2jA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hBiIjvIyQHksBFunvhUvb08BZ+25g1LdP6SwulSVrsOz+EsVxtX3GuN7+VE3x1NKj
-         ZFfStV0IPNmfef/M6uwjsTr19Vem+vSlwsgnrs8AkPszilCtUPGipR0onCijLt8GCZ
-         nKUqJ/I+9AduGmcf+sxcVU/YYOpdzjkxKgEPx5PA8J7hBA9NpGBQCfQUKfB1RvhMkH
-         kM7pvIsE0sapJGAUpJDGW85zQz32eoGzz/CZM1NTjw2eYYcHFmNqvJUJSyKByCQia4
-         f/jOe1BqfwTpy/XD5+RhQ3rUcJ+U0ILtpdtAznzPojyisaq2deN7d/KqSCRdgnby8Z
-         lHCDTYnl8jGTA==
-Date:   Tue, 21 Aug 2018 18:33:12 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        "Nikula, Jani" <jani.nikula@linux.intel.com>,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Next <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        paulo.r.zanoni@intel.com
-Subject: Re: linux-next: manual merge of the mfd tree with the drm-intel
- tree
-Message-ID: <20180821183312.690df265@canb.auug.org.au>
-In-Reply-To: <CAMuHMdXtMer6z09GV4HM++0RjYSkLWaXO9-m==SE85RkQ2xP-g@mail.gmail.com>
-References: <20180726151006.345e8397@canb.auug.org.au>
-        <20180816121256.0435930e@canb.auug.org.au>
-        <CAMuHMdXtMer6z09GV4HM++0RjYSkLWaXO9-m==SE85RkQ2xP-g@mail.gmail.com>
+        Tue, 21 Aug 2018 07:53:46 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:43455 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbeHULxq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 07:53:46 -0400
+Received: from 79.184.253.33.ipv4.supernova.orange.pl (79.184.253.33) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 90be5fd06e6eea36; Tue, 21 Aug 2018 10:34:30 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ramesh Thomas <ramesh.thomas@intel.com>,
+        linux-kernel@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v1 1/5] cpuidle: menu: Clean up variables usage in menu_select()
+Date:   Tue, 21 Aug 2018 10:32:14 +0200
+Message-ID: <2838787.qSB1WlRZH1@aspire.rjw.lan>
+In-Reply-To: <1534090171-14464-2-git-send-email-leo.yan@linaro.org>
+References: <1534090171-14464-1-git-send-email-leo.yan@linaro.org> <1534090171-14464-2-git-send-email-leo.yan@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mN/pLNHOeUnbSuu_2uXBwAG"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/mN/pLNHOeUnbSuu_2uXBwAG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sunday, August 12, 2018 6:09:27 PM CEST Leo Yan wrote:
+> The usage for two variables 'data->predicted_us' and 'expected_interval'
+> in menu_select() are confused, especially these two variables are
+> assigned with each other: firstly 'data->predicted_us' is assigned to
+> the minimum value between 'data->predicted_us' and 'expected_interval',
+> so it presents the prediction period for taking account different
+> factors and include consideration for expected interval; but later
+> 'data->predicted_us' is assigned back to 'expected_interval' and from
+> then on the function uses 'expected_interval' to select idle state; this
+> results in 'expected_interval' has two different semantics between the
+> top half and the bottom half of the same function.
+> 
+> This patch is to clean up the usage of these two variables, we always
+> use 'data->predicted_us' to present the idle duration predictions and
+> it can be used to compare with idle state target residency or tick
+> boundary for choosing idle state; we purely use 'expected_interval' to
+> record the expected interval value, which is mainly for interval
+> interrupt estimation.
+> 
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
+>  drivers/cpuidle/governors/menu.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+> index 5eb7d6f..b972db1 100644
+> --- a/drivers/cpuidle/governors/menu.c
+> +++ b/drivers/cpuidle/governors/menu.c
+> @@ -363,7 +363,6 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+>  		latency_req = interactivity_req;
+>  
+>  select:
+> -	expected_interval = data->predicted_us;
+>  	/*
+>  	 * Find the idle state with the lowest power while satisfying
+>  	 * our constraints.
+> @@ -386,7 +385,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+>  			 * expected idle duration so that the tick is retained
+>  			 * as long as that target residency is low enough.
+>  			 */
+> -			expected_interval = drv->states[idx].target_residency;
+> +			data->predicted_us = drv->states[idx].target_residency;
 
-Hi Geert,
+This is not what is predicted though, so the name of the field isn't quite
+adequate for this use IMO.
 
-On Tue, 21 Aug 2018 10:27:48 +0200 Geert Uytterhoeven <geert@linux-m68k.org=
-> wrote:
->=20
-> FTR, it's not this one, but the similar one reported on Jul 19, which doe=
-s not
-> add the tc_port_type enum.
+Besides, I'm not sure in what way using a structure field is simpler than
+using a local variable.
 
-Right, sorry about that.  Linus has now merged the mfd tree so things
-are probably done now.
+>  			break;
+>  		}
+>  		idx = i;
+> @@ -400,7 +399,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+>  	 * expected idle duration is shorter than the tick period length.
+>  	 */
+>  	if (((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
+> -	    expected_interval < TICK_USEC) && !tick_nohz_tick_stopped()) {
+> +	    data->predicted_us < TICK_USEC) && !tick_nohz_tick_stopped()) {
+>  		unsigned int delta_next_us = ktime_to_us(delta_next);
+>  
+>  		*stop_tick = false;
+> 
 
---=20
-Cheers,
-Stephen Rothwell
+Yes, it can be simplified along these lines, but then please note that
+data->predicted_us is only used in menu_select(), so it doesn't even need to
+be there in struct menu_device.  And if you make it a local variable and
+call it something like duration_us, then yes, it will be fine to use it like
+in this patch in my view.
 
---Sig_/mN/pLNHOeUnbSuu_2uXBwAG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Thanks,
+Rafael
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt7zkgACgkQAVBC80lX
-0GwumggAmMYtZ3+bsBuQAv5rMt7IvUeVl7q1oyOShdcVYns81DVI+DPRGTqedocx
-e3A8bkMNXOpD6Lj4aOCoxWSxBuLnxBw+bWZyUTmYvnpi6HqU+htsNWaikvTpU8TL
-wSzdJ3X3n5AJKv/C+ndtLT/Ie0F9vIfELBuYzE1DKs0YvFAhqZsXahkJbN5di0NN
-RUy52qBjTJj1UIjMs0gaCo+/WFI7Eb6cr/GOjufPi2x+9zgbl29jOsU96c4pbxyM
-tA/UcsCWd2ns1dKT6BnRM4SpbvdUcEGnalE1HSc7KszpLyIgcNAO0KXsYwd3yQds
-Ao6gDzSgovN3B+bky87Ah9ynfy+J+g==
-=pvwd
------END PGP SIGNATURE-----
-
---Sig_/mN/pLNHOeUnbSuu_2uXBwAG--
