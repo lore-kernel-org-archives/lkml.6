@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE16C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C5CC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E80120C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:32:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E80120C09
+	by mail.kernel.org (Postfix) with ESMTP id B237420C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:32:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B237420C09
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbeHUJvk (ORCPT
+        id S1728170AbeHUJvo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:51:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56710 "EHLO
+        Tue, 21 Aug 2018 05:51:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56722 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726852AbeHUJvj (ORCPT
+        with ESMTP id S1726852AbeHUJvn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:51:39 -0400
+        Tue, 21 Aug 2018 05:51:43 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EFB327F6;
-        Tue, 21 Aug 2018 06:32:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2A7AC9D7;
+        Tue, 21 Aug 2018 06:32:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        Kees Cook <keescook@chromium.org>,
+        stable@vger.kernel.org, Li Shuang <shuali@redhat.com>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 16/25] isdn: Disable IIOCDBGVAR
-Date:   Tue, 21 Aug 2018 08:21:30 +0200
-Message-Id: <20180821055125.694753093@linuxfoundation.org>
+Subject: [PATCH 4.9 17/25] cls_matchall: fix tcf_unbind_filter missing
+Date:   Tue, 21 Aug 2018 08:21:31 +0200
+Message-Id: <20180821055125.732443395@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055124.909865464@linuxfoundation.org>
 References: <20180821055124.909865464@linuxfoundation.org>
@@ -52,41 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-[ Upstream commit 5e22002aa8809e2efab2da95855f73f63e14a36c ]
+[ Upstream commit a51c76b4dfb30496dc65396a957ef0f06af7fb22 ]
 
-It was possible to directly leak the kernel address where the isdn_dev
-structure pointer was stored. This is a kernel ASLR bypass for anyone
-with access to the ioctl. The code had been present since the beginning
-of git history, though this shouldn't ever be needed for normal operation,
-therefore remove it.
+Fix tcf_unbind_filter missing in cls_matchall as this will trigger
+WARN_ON() in cbq_destroy_class().
 
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Karsten Keil <isdn@linux-pingi.de>
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Fixes: fd62d9f5c575f ("net/sched: matchall: Fix configuration race")
+Reported-by: Li Shuang <shuali@redhat.com>
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/isdn/i4l/isdn_common.c |    8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ net/sched/cls_matchall.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/isdn/i4l/isdn_common.c
-+++ b/drivers/isdn/i4l/isdn_common.c
-@@ -1655,13 +1655,7 @@ isdn_ioctl(struct file *file, uint cmd,
- 			} else
- 				return -EINVAL;
- 		case IIOCDBGVAR:
--			if (arg) {
--				if (copy_to_user(argp, &dev, sizeof(ulong)))
--					return -EFAULT;
--				return 0;
--			} else
--				return -EINVAL;
--			break;
-+			return -EINVAL;
- 		default:
- 			if ((cmd & IIOCDRVCTL) == IIOCDRVCTL)
- 				cmd = ((cmd >> _IOC_NRSHIFT) & _IOC_NRMASK) & ISDN_DRVIOCTL_MASK;
+--- a/net/sched/cls_matchall.c
++++ b/net/sched/cls_matchall.c
+@@ -94,6 +94,8 @@ static bool mall_destroy(struct tcf_prot
+ 	if (!head)
+ 		return true;
+ 
++	tcf_unbind_filter(tp, &head->res);
++
+ 	if (tc_should_offload(dev, tp, head->flags))
+ 		mall_destroy_hw_filter(tp, head, (unsigned long) head);
+ 
 
 
