@@ -2,319 +2,99 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ECA9C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D58D5C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC73C2183D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:04:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC73C2183D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 86716217B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:05:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YVoSMvRF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86716217B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbeHVB0W (ORCPT
+        id S1727984AbeHVB04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 21:26:22 -0400
-Received: from mga18.intel.com ([134.134.136.126]:38726 "EHLO mga18.intel.com"
+        Tue, 21 Aug 2018 21:26:56 -0400
+Received: from ozlabs.org ([203.11.71.1]:49767 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726814AbeHVB0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 21:26:22 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2018 15:04:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,271,1531810800"; 
-   d="gz'50?scan'50,208,50";a="82296451"
-Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by fmsmga004.fm.intel.com with ESMTP; 21 Aug 2018 15:04:07 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1fsEkx-000ATb-Au; Wed, 22 Aug 2018 06:04:07 +0800
-Date:   Wed, 22 Aug 2018 06:03:29 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     kbuild-all@01.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] mm: migration: fix migration of huge PMD shared
- pages
-Message-ID: <201808220558.yMC1bC0F%fengguang.wu@intel.com>
-References: <20180821205902.21223-2-mike.kravetz@oracle.com>
+        id S1726829AbeHVB04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 21:26:56 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41w4V01nwFz9s4v;
+        Wed, 22 Aug 2018 08:04:55 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1534889096;
+        bh=W3Gv7q+ho7Wk3QeyEMdQU1grF0MiLoRS7EXrg8MmMVM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=YVoSMvRFKnBbgoEAJXbKdvQYsFjHULvfH8ATPlPpxqKiB8w251LRUvuFxSIZuqJ1v
+         XVCOgzGu4XylUgExlMbGM4SlrZChNFeJnG7Va8envm8XVEOPYUB3pAF1aEHiScgBBm
+         lKXZiHYpSrI5EBVpmCTDrIEDy1MegIy4XK9MwTAUk5vFD8RAtaxykxiu4tzdR1nFki
+         WgRAeZKn4aEFiuzYT78Tmq70KXQ98D/4NxW74T93HVgX1LsJ/bNInO+wuAw3ID8IqO
+         3p1DAkjgNGKjpUbxpmBRFdM/FNj5YJ4+7G3RMJsIb+FDpll4ukTeZHFDxgZ3TMrRNG
+         HiAtLfmm/SJYQ==
+Date:   Wed, 22 Aug 2018 08:04:49 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Cong Wang <xiyou.wangcong@gmail.com>
+Subject: linux-next: build warning after merge of the net tree
+Message-ID: <20180822080449.5887e244@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="cNdxnHkX5QqsyA0e"
-Content-Disposition: inline
-In-Reply-To: <20180821205902.21223-2-mike.kravetz@oracle.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/u73I2CAj_0XHU31A_03DG_W"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/u73I2CAj_0XHU31A_03DG_W
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi all,
 
-Hi Mike,
+After merging the net tree, today's linux-next build (KCONFIG_NAME)
+produced this warning:
 
-I love your patch! Yet something to improve:
+drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c: In function 'tc_fill_actio=
+ns':
+drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c:64:6: warning: unused varia=
+ble 'i' [-Wunused-variable]
+  int i;
+      ^
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v4.18 next-20180821]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Introduced by commit
 
-url:    https://github.com/0day-ci/linux/commits/Mike-Kravetz/huge_pmd_unshare-migration-and-flushing/20180822-050255
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+  244cd96adb5f ("net_sched: remove list_head from tc_action")
 
-All errors (new ones prefixed by >>):
+--=20
+Cheers,
+Stephen Rothwell
 
-   arch/x86/mm/fault.o: In function `huge_pmd_sharing_possible':
->> fault.c:(.text+0xa06): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   arch/x86/mm/pgtable.o: In function `huge_pmd_sharing_possible':
-   pgtable.c:(.text+0x4): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   kernel/fork.o: In function `huge_pmd_sharing_possible':
-   fork.c:(.text+0x309): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   kernel/sysctl.o: In function `huge_pmd_sharing_possible':
-   sysctl.c:(.text+0x0): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   kernel/sched/core.o: In function `huge_pmd_sharing_possible':
-   core.c:(.text+0x299): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   kernel/sched/loadavg.o: In function `huge_pmd_sharing_possible':
-   loadavg.c:(.text+0x0): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   kernel/sched/clock.o: In function `huge_pmd_sharing_possible':
-   clock.c:(.text+0x0): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   kernel/sched/cputime.o: In function `huge_pmd_sharing_possible':
-   cputime.c:(.text+0x0): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   kernel/sched/idle.o: In function `huge_pmd_sharing_possible':
-   idle.c:(.text+0x36): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   kernel/sched/fair.o: In function `huge_pmd_sharing_possible':
-   fair.c:(.text+0x864): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   kernel/sched/rt.o: In function `huge_pmd_sharing_possible':
-   rt.c:(.text+0x72b): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   kernel/sched/deadline.o: In function `huge_pmd_sharing_possible':
-   deadline.c:(.text+0xac7): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   kernel/sched/wait.o: In function `huge_pmd_sharing_possible':
-   wait.c:(.text+0x16e): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   kernel/sched/wait_bit.o: In function `huge_pmd_sharing_possible':
-   wait_bit.c:(.text+0x7b): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   kernel/sched/swait.o: In function `huge_pmd_sharing_possible':
-   swait.c:(.text+0x4): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   kernel/sched/completion.o: In function `huge_pmd_sharing_possible':
-   completion.c:(.text+0x4): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/filemap.o: In function `huge_pmd_sharing_possible':
-   filemap.c:(.text+0x3ca): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/page_alloc.o: In function `huge_pmd_sharing_possible':
-   page_alloc.c:(.text+0xa95): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/swap.o: In function `huge_pmd_sharing_possible':
-   swap.c:(.text+0x551): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/vmscan.o: In function `huge_pmd_sharing_possible':
-   vmscan.c:(.text+0x5bb): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/shmem.o: In function `huge_pmd_sharing_possible':
-   shmem.c:(.text+0x6d): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/util.o: In function `huge_pmd_sharing_possible':
-   util.c:(.text+0xc): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/compaction.o: In function `huge_pmd_sharing_possible':
-   compaction.c:(.text+0x0): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/debug.o: In function `huge_pmd_sharing_possible':
-   debug.c:(.text+0x0): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/gup.o: In function `huge_pmd_sharing_possible':
-   gup.c:(.text+0x17c): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/memory.o: In function `huge_pmd_sharing_possible':
-   memory.c:(.text+0x5f9): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/mincore.o: In function `huge_pmd_sharing_possible':
-   mincore.c:(.text+0x150): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/mlock.o: In function `huge_pmd_sharing_possible':
-   mlock.c:(.text+0x245): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/mmap.o: In function `huge_pmd_sharing_possible':
-   mmap.c:(.text+0x565): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/mprotect.o: In function `huge_pmd_sharing_possible':
-   mprotect.c:(.text+0x39): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/mremap.o: In function `huge_pmd_sharing_possible':
-   mremap.c:(.text+0xf2): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/page_vma_mapped.o: In function `huge_pmd_sharing_possible':
-   page_vma_mapped.c:(.text+0x0): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/pagewalk.o: In function `huge_pmd_sharing_possible':
-   pagewalk.c:(.text+0x13d): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
-   mm/rmap.o: In function `huge_pmd_sharing_possible':
-   rmap.c:(.text+0x3bb): multiple definition of `huge_pmd_sharing_possible'
-   arch/x86/mm/init_32.o:init_32.c:(.text+0x0): first defined here
+--Sig_/u73I2CAj_0XHU31A_03DG_W
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+-----BEGIN PGP SIGNATURE-----
 
---cNdxnHkX5QqsyA0e
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt8jIEACgkQAVBC80lX
+0Gy9rggAmgoFDJxS7tbYirshdBLQulKP16+xv8mZTJ6WJgM59HmkaodNsvjYgQfj
+lJ7derYeOUQHMglKON+nNzMKWcSC1r8GGW/LudBY2CI7jr6V7C1o+FTtHUB80n8O
+dY0i4lFu/R/K6/bYFiDBdl825Obr08JP8bZkdQDOE/zcSEgSxios51CTMjv4e79/
+f7h/gmiW4p5obZNkqTIP3YXQrj5r2NEQQwN4G9OQW1lqjG1gwLJSB7f+1uaFEFsP
+uiTvukh257mgGHDl1u3Z7C4lYigzMHwzgnc+ButCJrzoR6SOZ5J/9oqTwxdhfDr/
+3z5XakXJ47ssLtHX/PdmmrJQN5neww==
+=3oaR
+-----END PGP SIGNATURE-----
 
-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
-AAA=
-
---cNdxnHkX5QqsyA0e--
+--Sig_/u73I2CAj_0XHU31A_03DG_W--
