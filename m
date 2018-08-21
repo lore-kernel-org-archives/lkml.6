@@ -2,82 +2,84 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6017AC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E683C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:34:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25C7520E20
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:33:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25C7520E20
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1847820E20
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:34:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1847820E20
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727707AbeHURyS (ORCPT
+        id S1727782AbeHURyr convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 13:54:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41250 "EHLO mx1.redhat.com"
+        Tue, 21 Aug 2018 13:54:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39852 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726876AbeHURyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 13:54:17 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E5D1387A78;
-        Tue, 21 Aug 2018 14:33:53 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B747063F37;
-        Tue, 21 Aug 2018 14:33:50 +0000 (UTC)
-Date:   Tue, 21 Aug 2018 16:33:48 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Pierre Morel <pmorel@linux.ibm.com>
-Cc:     david@redhat.com, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-Subject: Re: [PATCH] KVM: s390: vsie: BUG correction by shadow_crycb
-Message-ID: <20180821163348.327ce02d.cohuck@redhat.com>
-In-Reply-To: <1534861178-30372-1-git-send-email-pmorel@linux.ibm.com>
-References: <1534861178-30372-1-git-send-email-pmorel@linux.ibm.com>
-Organization: Red Hat GmbH
+        id S1727206AbeHURyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 13:54:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 62639AE5B;
+        Tue, 21 Aug 2018 14:34:22 +0000 (UTC)
+Date:   Tue, 21 Aug 2018 16:34:21 +0200
+From:   Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Schmauss, Erik" <erik.schmauss@intel.com>,
+        Lv <lv.zheng@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Robert Moore <robert.moore@intel.com>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        devel@acpica.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: Re: Regression: 18996f2db918 ("ACPICA: Events: Stop unconditionally
+ clearing ACPI IRQs during suspend/resume" breaks resume from suspend
+Message-ID: <20180821163421.3208af59@kitsune.suse.cz>
+In-Reply-To: <CAJZ5v0hMZ_bmCy7vQBfzu6RNVkCX0V9qRtqYVNmFOefc1TnGCA@mail.gmail.com>
+References: <20180820182906.48f7743f@kitsune.suse.cz>
+        <CAJZ5v0hMZ_bmCy7vQBfzu6RNVkCX0V9qRtqYVNmFOefc1TnGCA@mail.gmail.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 21 Aug 2018 14:33:54 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 21 Aug 2018 14:33:54 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 Aug 2018 16:19:38 +0200
-Pierre Morel <pmorel@linux.ibm.com> wrote:
+On Tue, 21 Aug 2018 08:50:36 +0200
+"Rafael J. Wysocki" <rafael@kernel.org> wrote:
 
-> Copy the key mask to the right offset inside the shadow CRYCB
+> On Mon, Aug 20, 2018 at 6:29 PM Michal Suchánek <msuchanek@suse.de>
+> wrote:
+> >
+> > Hello,
+> >
+> > after commit 18996f2db918 ("ACPICA: Events: Stop unconditionally
+> > clearing ACPI IRQs during suspend/resume") I am no longer able to
+> > resume from suspend.
+> >
+> > Reported in bugzilla
+> > https://bugzilla.kernel.org/show_bug.cgi?id=200841
+> >
+> > Reverting this on top of 4.18 fixes the issue. acpidump output is
+> > attaches in the bugzilla.
+> >
+> > Is there anything else that can be done to diagnose the issue?  
 > 
-> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> ---
->  arch/s390/kvm/vsie.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Can you please test the patch at
+> https://patchwork.kernel.org/patch/10563631/ to start with?
 > 
-> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
-> index 63844b9..a2b28cd 100644
-> --- a/arch/s390/kvm/vsie.c
-> +++ b/arch/s390/kvm/vsie.c
-> @@ -173,7 +173,8 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->  		return set_validity_icpt(scb_s, 0x0039U);
->  
->  	/* copy only the wrapping keys */
-> -	if (read_guest_real(vcpu, crycb_addr + 72, &vsie_page->crycb, 56))
-> +	if (read_guest_real(vcpu, crycb_addr + 72,
-> +			    vsie_page->crycb.dea_wrapping_key_mask, 56))
 
-Don't you need the address here?
+Yes, that works for me.
 
->  		return set_validity_icpt(scb_s, 0x0035U);
->  
->  	scb_s->ecb3 |= ecb3_flags;
+Thanks
 
+Michal
