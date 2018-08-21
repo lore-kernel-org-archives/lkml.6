@@ -2,236 +2,351 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F162C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD86DC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BCAB2151D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:44:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YS5gCHhp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BCAB2151D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6D70120C0F
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:47:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D70120C0F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbeHUQD5 (ORCPT
+        id S1727255AbeHUQHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 12:03:57 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33251 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727306AbeHUQD5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 12:03:57 -0400
-Received: by mail-it0-f66.google.com with SMTP id d16-v6so10907628itj.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 05:43:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Jhi3RTp8eUnFr4q17mOUY0ZqDqUHb47YI3CjfMXx2c8=;
-        b=YS5gCHhpFxto72Unr0XDP1W0GL+CGcHoPEfLK4MmT7DRZUEpJuaUmPkYcX2qk8iDWw
-         BRdiYGHEIXQGM0PZzOrVDL/7M3U3pJ9fAanbrvQZqjNyGvUbRYbsKOjiTimm3PbsOhOo
-         vY8a6kgS4tZAYLVL5wzPpU/W0puEbZfLVFB9k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Jhi3RTp8eUnFr4q17mOUY0ZqDqUHb47YI3CjfMXx2c8=;
-        b=b//4l5SDcpU/+t6WW2rYuPMKouvHvP4QUPbYj55tnAZuC25q/unznQ1d9Z/pp8LrcB
-         D7rZQ1xkcbS2o4b0CvIZJAjteDkVlI41KYf23ZBYp3mUJWJjw/7gVYY8RqWJxyq6xZnS
-         CjA5hh2O3H1DQye2Xpg10QDQa4FtDcpr8djz9/4uMWVEtVcw9uD6NP4vh9cf7sPmMQOY
-         3qZWfU8yrWtGJ8McLwPjTdYobLqakpCdM0vqA4H2A0oVcBqC89Va/j/sywUhLEoEK8kA
-         /9ucFG+5FU07xzx7gA1pEZzXuF5job0G2Kf+NNKhfAs+VOKYgx6zIrWOSc8xV8ILK1PL
-         62tA==
-X-Gm-Message-State: AOUpUlEVc7xAee/fA8cIv0fa2Z6206x6lDg3C9Zl98uCqStFW8waCJSi
-        EM+m6GG9u4rEQrPV5DxXSotAc/hewFTR7yXcfllQgg==
-X-Google-Smtp-Source: AA+uWPyLm7QBFQRgAOrELPt00NpvuC5AZGVZXGF/jg5FCQPPLjpMDbqiiwSDgFTi6j+mYRrUy1hNis/Ys5tt9D9z4e4=
-X-Received: by 2002:a24:9686:: with SMTP id z128-v6mr16049867itd.58.1534855436688;
- Tue, 21 Aug 2018 05:43:56 -0700 (PDT)
+        Tue, 21 Aug 2018 12:07:18 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11179 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727018AbeHUQHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 12:07:18 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 724C03CAEFD8E;
+        Tue, 21 Aug 2018 20:47:12 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.399.0; Tue, 21 Aug 2018 20:47:07 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        Weichao Guo <guoweichao@huawei.com>
+Subject: [PATCH v2] f2fs: guarantee journalled quota data by checkpoint
+Date:   Tue, 21 Aug 2018 20:47:02 +0800
+Message-ID: <20180821124702.68370-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Tue, 21 Aug 2018 05:43:56
- -0700 (PDT)
-In-Reply-To: <20180820073119.GA14931@sol.localdomain>
-References: <00000000000072d64d05737b6b8c@google.com> <20180820073119.GA14931@sol.localdomain>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 21 Aug 2018 14:43:56 +0200
-Message-ID: <CAKv+Gu9Y0TLOuMba43HPihYqy-kk0nttBfPj1_UukiYy1cBcFw@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in sha512_ctx_mgr_resubmit
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Megha Dey <megha.dey@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        syzbot <syzbot+d5455bac3ba1ee9114e5@syzkaller.appspotmail.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20 August 2018 at 09:31, Eric Biggers <ebiggers@kernel.org> wrote:
-> [+sha512-mb maintainers...]
->
-> On Wed, Aug 15, 2018 at 09:00:04AM -0700, syzbot wrote:
->> Hello,
->>
->> syzbot found the following crash on:
->>
->> HEAD commit:    7796916146b8 Merge branch 'x86-cpu-for-linus' of git://git..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=164b1922400000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=265bef9882cce8d7
->> dashboard link: https://syzkaller.appspot.com/bug?extid=d5455bac3ba1ee9114e5
->> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1013478c400000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1349c8aa400000
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+d5455bac3ba1ee9114e5@syzkaller.appspotmail.com
->>
->> ==================================================================
->> BUG: KASAN: use-after-free in sha512_ctx_mgr_resubmit.part.3+0x3b1/0x4a0
->> arch/x86/crypto/sha512-mb/sha512_mb.c:136
->> Read of size 4 at addr ffff8801b0b9e838 by task kworker/0:1/13
->>
->> CPU: 0 PID: 13 Comm: kworker/0:1 Not tainted 4.18.0+ #187
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> Google 01/01/2011
->> Workqueue: crypto mcryptd_flusher
->> Call Trace:
->>  __dump_stack lib/dump_stack.c:77 [inline]
->>  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
->>  print_address_description+0x6c/0x20b mm/kasan/report.c:256
->>  kasan_report_error mm/kasan/report.c:354 [inline]
->>  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
->>  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
->>  sha512_ctx_mgr_resubmit.part.3+0x3b1/0x4a0
->> arch/x86/crypto/sha512-mb/sha512_mb.c:136
->>  sha512_ctx_mgr_resubmit arch/x86/crypto/sha512-mb/sha512_mb.c:135 [inline]
->>  sha512_ctx_mgr_flush+0x5c/0xb0 arch/x86/crypto/sha512-mb/sha512_mb.c:367
->>  sha512_mb_flusher+0x27b/0x610 arch/x86/crypto/sha512-mb/sha512_mb.c:939
->>  mcryptd_flusher+0x342/0x4b0 crypto/mcryptd.c:208
->>  process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
->>  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
->>  kthread+0x35a/0x420 kernel/kthread.c:246
->>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
->>
->> Allocated by task 23902:
->>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->>  set_track mm/kasan/kasan.c:460 [inline]
->>  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
->>  __do_kmalloc mm/slab.c:3718 [inline]
->>  __kmalloc+0x14e/0x760 mm/slab.c:3727
->>  kmalloc include/linux/slab.h:518 [inline]
->>  sock_kmalloc+0x156/0x1f0 net/core/sock.c:1996
->>  hash_accept_parent_nokey+0x58/0x2e0 crypto/algif_hash.c:438
->>  hash_accept_parent+0x5b/0x80 crypto/algif_hash.c:465
->>  af_alg_accept+0x127/0x7d0 crypto/af_alg.c:296
->>  alg_accept+0x46/0x60 crypto/af_alg.c:332
->>  __sys_accept4+0x3b2/0x8a0 net/socket.c:1600
->>  __do_sys_accept4 net/socket.c:1635 [inline]
->>  __se_sys_accept4 net/socket.c:1632 [inline]
->>  __x64_sys_accept4+0x97/0xf0 net/socket.c:1632
->>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>
->> Freed by task 23902:
->>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->>  set_track mm/kasan/kasan.c:460 [inline]
->>  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
->>  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->>  __cache_free mm/slab.c:3498 [inline]
->>  kfree+0xd9/0x260 mm/slab.c:3813
->>  __sock_kfree_s net/core/sock.c:2017 [inline]
->>  sock_kfree_s+0x29/0x60 net/core/sock.c:2023
->>  hash_sock_destruct+0x157/0x1c0 crypto/algif_hash.c:427
->>  __sk_destruct+0x107/0xa60 net/core/sock.c:1573
->>  sk_destruct+0x78/0x90 net/core/sock.c:1608
->>  __sk_free+0xcf/0x300 net/core/sock.c:1619
->>  sk_free+0x42/0x50 net/core/sock.c:1630
->>  sock_put include/net/sock.h:1667 [inline]
->>  af_alg_release+0x6e/0x90 crypto/af_alg.c:126
->>  __sock_release+0xd7/0x260 net/socket.c:600
->>  sock_close+0x19/0x20 net/socket.c:1151
->>  __fput+0x355/0x8b0 fs/file_table.c:209
->>  ____fput+0x15/0x20 fs/file_table.c:243
->>  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
->>  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
->>  exit_to_usermode_loop+0x313/0x370 arch/x86/entry/common.c:166
->>  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
->>  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
->>  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
->>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>
->> The buggy address belongs to the object at ffff8801b0b9e340
->>  which belongs to the cache kmalloc-2048 of size 2048
->> The buggy address is located 1272 bytes inside of
->>  2048-byte region [ffff8801b0b9e340, ffff8801b0b9eb40)
->> The buggy address belongs to the page:
->> page:ffffea0006c2e780 count:1 mapcount:0 mapping:ffff8801dac00c40 index:0x0
->> compound_mapcount: 0
->> flags: 0x2fffc0000008100(slab|head)
->> raw: 02fffc0000008100 ffffea0007543a88 ffffea000760b188 ffff8801dac00c40
->> raw: 0000000000000000 ffff8801b0b9e340 0000000100000003 0000000000000000
->> page dumped because: kasan: bad access detected
->>
->> Memory state around the buggy address:
->>  ffff8801b0b9e700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>  ffff8801b0b9e780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->> > ffff8801b0b9e800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>                                         ^
->>  ffff8801b0b9e880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>  ffff8801b0b9e900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->> ==================================================================
->
-> Apparently, the SHA multibuffer algorithms sometimes return success while the
-> hash request is still being asynchronously processed, which allows an in-use
-> request to be freed or reused.  It also allows the wrong digest value to be
-> computed.
+For journalled quota mode, let checkpoint to flush dquot dirty data
+and quota file data to keep all file quota info are consisting in
+last checkpoint, so that we can avoid quota file being corrupted
+after SPO.
 
-[...]
+The implementation is that:
 
->
-> Personally, I'm wondering why the SHA multibuffer code is in the kernel at all
-> given all the severe issues it has that its authors/maintainers don't seem to be
-> working very hard to fix.  The code is very difficult to understand due to the
-> weird 3-layer design with "mcryptd" and other issues, making debugging it very
-> time consuming; most of the code is duplicated in 3 places (sha1-mb, sha256-mb,
-> and sha512-mb), making maintenance even more difficult; and most importantly
-> there are severe bugs, including edge cases where it computes the wrong hash, as
-> shown not only by this bug but also the sha256_mb bug I recently ran into.  It
-> seems the algorithms were never tested under load to cover these edge cases.
->
-> That's *not* acceptable for crypto code.  Security and correctness come first.
->
-> Also as I've shown previously, in most cases the multibuffer SHA algorithms are
-> ~1000x slower than the regular ones due to the flush delay.  So the performance
-> argument for them actually seems pretty tenuous...  And, isn't AVX2 multibuffer
-> useless on new processors, which have SHA instructions?
->
-> I'd also be very interested to hear an explanation for why systemwide sharing of
-> hash jobs doesn't enable side-channel attacks and isn't just the latest example
-> of prioritizing "performance" over security?
->
-> We need to have higher standards for crypto and not accept buggy spaghetti code
-> just because it's slightly faster in some artificial microbenchmark.
->
-> So unless major improvements are made, I personally think we'd be much better
-> off without the SHA multibuffer algorithms in the kernel.
->
+1. add a global state SBI_QUOTA_NEED_FLUSH to indicate that there is
+cached dquot metadata changes in quota subsystem, and later checkpoint
+should:
+ a) flush dquot metadata into quota file.
+ b) flush quota file to storage to keep file usage be consistent.
 
-I agree. The code is obviously broken in a way that would have been
-noticed if it were in wide use, and it is too complicated for mere
-mortals to fix or maintain. I suggest we simply remove it for now, and
-if anyone wants to reintroduce it, we can review the code *and* the
-justification for the approach from scratch (in which case we should
-consider factoring out the algo agnostics plumbing in a way that
-allows it to be reused by other architectures as well)
+2. add a glabal state SBI_QUOTA_NEED_REPAIR to indicate that quota
+persisting is failed due to -EIO or -ENOSPC, and then,
+ a) checkpoint will skip syncing dquot metadata.
+ b) CP_QUOTA_NEED_FSCK_FLAG will be set in last cp pack to give a
+    hint for fsck repairing.
+
+Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2:
+- refactor the patch, implementation is updated in commit log.
+ fs/f2fs/checkpoint.c    | 21 ++++++++++
+ fs/f2fs/data.c          |  8 +++-
+ fs/f2fs/f2fs.h          |  3 ++
+ fs/f2fs/super.c         | 90 ++++++++++++++++++++++++++++++++++++-----
+ include/linux/f2fs_fs.h |  1 +
+ 5 files changed, 112 insertions(+), 11 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index a01fd22c1410..05d58aa508b5 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1086,6 +1086,12 @@ static void __prepare_cp_block(struct f2fs_sb_info *sbi)
+ 	ckpt->next_free_nid = cpu_to_le32(last_nid);
+ }
+ 
++static bool __need_flush_quota(struct f2fs_sb_info *sbi)
++{
++	return is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH) &&
++			!is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR);
++}
++
+ /*
+  * Freeze all the FS-operations for checkpoint.
+  */
+@@ -1102,7 +1108,19 @@ static int block_operations(struct f2fs_sb_info *sbi)
+ 	blk_start_plug(&plug);
+ 
+ retry_flush_dents:
++	if (__need_flush_quota(sbi)) {
++		clear_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
++		err = f2fs_quota_sync(sbi->sb, -1);
++		if (err)
++			goto out;
++	}
++
+ 	f2fs_lock_all(sbi);
++	if (__need_flush_quota(sbi)) {
++		f2fs_unlock_all(sbi);
++		goto retry_flush_dents;
++	}
++
+ 	/* write all the dirty dentry pages */
+ 	if (get_pages(sbi, F2FS_DIRTY_DENTS)) {
+ 		f2fs_unlock_all(sbi);
+@@ -1217,6 +1235,9 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+ 		__set_ckpt_flags(ckpt, CP_FSCK_FLAG);
+ 
++	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
++		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
++
+ 	/* set this flag to activate crc|cp_ver for recovery */
+ 	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG);
+ 	__clear_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 16abe2231247..eac3a0e27c6e 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -49,7 +49,7 @@ static bool __is_cp_guaranteed(struct page *page)
+ 			inode->i_ino ==  F2FS_NODE_INO(sbi) ||
+ 			S_ISDIR(inode->i_mode) ||
+ 			(S_ISREG(inode->i_mode) &&
+-			is_inode_flag_set(inode, FI_ATOMIC_FILE)) ||
++			(f2fs_is_atomic_file(inode) || IS_NOQUOTA(inode))) ||
+ 			is_cold_data(page))
+ 		return true;
+ 	return false;
+@@ -1708,6 +1708,8 @@ bool f2fs_should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
+ 		return true;
+ 	if (S_ISDIR(inode->i_mode))
+ 		return true;
++	if (IS_NOQUOTA(inode))
++		return true;
+ 	if (f2fs_is_atomic_file(inode))
+ 		return true;
+ 	if (fio) {
+@@ -1952,7 +1954,7 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 	}
+ 
+ 	unlock_page(page);
+-	if (!S_ISDIR(inode->i_mode))
++	if (!S_ISDIR(inode->i_mode) && !IS_NOQUOTA(inode))
+ 		f2fs_balance_fs(sbi, need_balance_fs);
+ 
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+@@ -2143,6 +2145,8 @@ static inline bool __should_serialize_io(struct inode *inode,
+ {
+ 	if (!S_ISREG(inode->i_mode))
+ 		return false;
++	if (IS_NOQUOTA(inode))
++		return false;
+ 	if (wbc->sync_mode != WB_SYNC_ALL)
+ 		return true;
+ 	if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index e9009e8d30e2..57cd6d7f36ea 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1092,6 +1092,8 @@ enum {
+ 	SBI_NEED_CP,				/* need to checkpoint */
+ 	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
+ 	SBI_IS_RECOVERED,			/* recovered orphan/data */
++	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
++	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
+ };
+ 
+ enum {
+@@ -2832,6 +2834,7 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
+ int f2fs_inode_dirtied(struct inode *inode, bool sync);
+ void f2fs_inode_synced(struct inode *inode);
+ int f2fs_enable_quota_files(struct f2fs_sb_info *sbi, bool rdonly);
++int f2fs_quota_sync(struct super_block *sb, int type);
+ void f2fs_quota_off_umount(struct super_block *sb);
+ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover);
+ int f2fs_sync_fs(struct super_block *sb, int sync);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index af0a3cbb11a9..74e8a39254fc 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1696,6 +1696,13 @@ static qsize_t *f2fs_get_reserved_space(struct inode *inode)
+ 
+ static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
+ {
++
++	if (is_set_ckpt_flags(sbi, CP_QUOTA_NEED_FSCK_FLAG)) {
++		f2fs_msg(sbi->sb, KERN_ERR,
++			"quota sysfile may be corrupted, skip loading it");
++		return 0;
++	}
++
+ 	return dquot_quota_on_mount(sbi->sb, F2FS_OPTION(sbi).s_qf_names[type],
+ 					F2FS_OPTION(sbi).s_jquota_fmt, type);
+ }
+@@ -1766,7 +1773,14 @@ static int f2fs_enable_quotas(struct super_block *sb)
+ 		test_opt(F2FS_SB(sb), PRJQUOTA),
+ 	};
+ 
++	if (is_set_ckpt_flags(F2FS_SB(sb), CP_QUOTA_NEED_FSCK_FLAG)) {
++		f2fs_msg(sb, KERN_ERR,
++			"quota file may be corrupted, skip loading it");
++		return 0;
++	}
++
+ 	sb_dqopt(sb)->flags |= DQUOT_QUOTA_SYS_FILE | DQUOT_NOLIST_DIRTY;
++
+ 	for (type = 0; type < MAXQUOTAS; type++) {
+ 		qf_inum = f2fs_qf_ino(sb, type);
+ 		if (qf_inum) {
+@@ -1787,7 +1801,7 @@ static int f2fs_enable_quotas(struct super_block *sb)
+ 	return 0;
+ }
+ 
+-static int f2fs_quota_sync(struct super_block *sb, int type)
++int f2fs_quota_sync(struct super_block *sb, int type)
+ {
+ 	struct quota_info *dqopt = sb_dqopt(sb);
+ 	int cnt;
+@@ -1795,7 +1809,7 @@ static int f2fs_quota_sync(struct super_block *sb, int type)
+ 
+ 	ret = dquot_writeback_dquots(sb, type);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	/*
+ 	 * Now when everything is written we can discard the pagecache so
+@@ -1809,13 +1823,16 @@ static int f2fs_quota_sync(struct super_block *sb, int type)
+ 
+ 		ret = filemap_write_and_wait(dqopt->files[cnt]->i_mapping);
+ 		if (ret)
+-			return ret;
++			goto out;
+ 
+ 		inode_lock(dqopt->files[cnt]);
+ 		truncate_inode_pages(&dqopt->files[cnt]->i_data, 0);
+ 		inode_unlock(dqopt->files[cnt]);
+ 	}
+-	return 0;
++out:
++	if (ret)
++		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
++	return ret;
+ }
+ 
+ static int f2fs_quota_on(struct super_block *sb, int type, int format_id,
+@@ -1889,6 +1906,61 @@ void f2fs_quota_off_umount(struct super_block *sb)
+ 	}
+ }
+ 
++static int f2fs_dquot_commit(struct dquot *dquot)
++{
++	int ret;
++
++	ret = dquot_commit(dquot);
++	if (ret == -ENOSPC || ret == -EIO)
++		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
++	return ret;
++}
++
++static int f2fs_dquot_acquire(struct dquot *dquot)
++{
++	int ret;
++
++	ret = dquot_acquire(dquot);
++	if (ret == -ENOSPC || ret == -EIO)
++		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
++	return ret;
++}
++
++static int f2fs_dquot_release(struct dquot *dquot)
++{
++	int ret;
++
++	ret = dquot_release(dquot);
++	if (ret == -ENOSPC || ret == -EIO)
++		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
++	return ret;
++}
++
++static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
++{
++	struct super_block *sb = dquot->dq_sb;
++	struct f2fs_sb_info *sbi = F2FS_SB(sb);
++
++	/* if we are using journalled quota */
++	if (f2fs_sb_has_quota_ino(sbi) ||
++		F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
++		F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
++		F2FS_OPTION(sbi).s_qf_names[PRJQUOTA])
++		set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
++
++	return dquot_mark_dquot_dirty(dquot);
++}
++
++static int f2fs_dquot_commit_info(struct super_block *sb, int type)
++{
++	int ret;
++
++	ret = dquot_commit_info(sb, type);
++	if (ret == -ENOSPC || ret == -EIO)
++		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
++	return ret;
++}
++
+ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
+ {
+ 	*projid = F2FS_I(inode)->i_projid;
+@@ -1897,11 +1969,11 @@ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
+ 
+ static const struct dquot_operations f2fs_quota_operations = {
+ 	.get_reserved_space = f2fs_get_reserved_space,
+-	.write_dquot	= dquot_commit,
+-	.acquire_dquot	= dquot_acquire,
+-	.release_dquot	= dquot_release,
+-	.mark_dirty	= dquot_mark_dquot_dirty,
+-	.write_info	= dquot_commit_info,
++	.write_dquot	= f2fs_dquot_commit,
++	.acquire_dquot	= f2fs_dquot_acquire,
++	.release_dquot	= f2fs_dquot_release,
++	.mark_dirty	= f2fs_dquot_mark_dquot_dirty,
++	.write_info	= f2fs_dquot_commit_info,
+ 	.alloc_dquot	= dquot_alloc,
+ 	.destroy_dquot	= dquot_destroy,
+ 	.get_projid	= f2fs_get_projid,
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index aa4b586569c1..b6cc2b38471f 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -119,6 +119,7 @@ struct f2fs_super_block {
+ /*
+  * For checkpoint
+  */
++#define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
+ #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
+ #define CP_NOCRC_RECOVERY_FLAG	0x00000200
+ #define CP_TRIMMED_FLAG		0x00000100
+-- 
+2.18.0.rc1
+
