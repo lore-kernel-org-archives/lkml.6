@@ -2,93 +2,88 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53519C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 15:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2FCC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 15:13:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09AD0217B9
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 15:12:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+/Esg26"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09AD0217B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6C7F92177F
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 15:13:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C7F92177F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbeHUSdT (ORCPT
+        id S1727808AbeHUSeF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 14:33:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33620 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726590AbeHUSdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 14:33:19 -0400
-Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71EEC2177F;
-        Tue, 21 Aug 2018 15:12:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534864366;
-        bh=XqxMX2Sk3vMS9dhxKctIinudJJ4fCE0V6sSR6ar1kmc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=f+/Esg26oLeLza7NY1lLHBHTR5eCgA/mlQ3OqxpyyTjOdfPiM3N86QCAxUB36KB2/
-         F5fDJ8zC9OQ9vpAVvBe3GFGL+9A99Xu6D5VkA+Ti4AbDs7LQx3Z+5pUzBcCaIm7APm
-         gRxoO8VrJZ/UUctOtG/krzH49NH6X0FC7fCXkTdI=
-Date:   Tue, 21 Aug 2018 08:12:44 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>, agruenba@redhat.com,
-        Christoph Hellwig <hch@infradead.org>
-Subject: [GIT PULL] xfs: 4.19 merge, part 3
-Message-ID: <20180821151244.GC4334@magnolia>
+        Tue, 21 Aug 2018 14:34:05 -0400
+Received: from www62.your-server.de ([213.133.104.62]:33602 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727322AbeHUSeF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 14:34:05 -0400
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fs8LX-0008W8-9R; Tue, 21 Aug 2018 17:13:27 +0200
+Received: from [178.197.248.16] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fs8Jg-000IGn-1Q; Tue, 21 Aug 2018 17:11:32 +0200
+To:     netdev@vger.kernel.org, iovisor-dev@lists.iovisor.org,
+        xdp-newbies@vger.kernel.org, containers@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Cc:     lpc-bpf@vger.kernel.org, alexei.starovoitov@gmail.com
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Subject: Linux Plumbers BPF micro-conference CFP
+Message-ID: <4e0793c9-2808-2a0b-c299-dc386d18a001@iogearbox.net>
+Date:   Tue, 21 Aug 2018 17:11:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.1/24862/Tue Aug 21 10:47:00 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+This is a call for proposals for the BPF micro-conference at the
+Linux Plumbers Conference (LPC) 2018 which will be held in Vancouver,
+Canada from the 13th to the 15th of November, co-located with the
+Linux Kernel Summit.
 
-Here are a few fixes that I've queued up for 4.19.  I need to recover
-from some medical events, so don't be too surprised if the next pull
-request(s) come from Dave Chinner.
+The goal of the BPF micro-conference is to bring BPF developers
+together to discuss topics around Linux kernel work related to
+the BPF core infrastructure as well as its many subsystems under
+tracing, networking, security, and BPF user space tooling. The
+format of the micro-conference has a main focus on discussion,
+therefore each accepted topic will provide a short 1-2 slide
+introduction with subsequent discussion for the rest of the
+allocated time slot. The expected time for one discussion slot is
+approximately 15 min. The whole BPF micro-conference is a 3 hours
+long session which will run on the third day of LPC (so that it
+does not overlap with the LPC's Networking Track).
 
---D
+The BPF micro-conference is a community-driven event and open to
+all LPC attendees, there is no additional registration required.
 
-The following changes since commit 01239d77b9dd978863d1a75f0d095ab942a1fe66:
+Please submit your discussion proposals to the LPC BPF micro-conference
+organizers at:
 
-  xfs: fix a null pointer dereference in xfs_bmap_extents_to_btree (2018-08-12 08:37:31 -0700)
+	lpc-bpf@vger.kernel.org
 
-are available in the Git repository at:
+Proposals must be submitted until October 1st, and submitters will
+be notified of acceptance by October 5th. (Please note that proposals
+must not be sent as html mail as they are otherwise dropped by vger.)
 
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-4.19-merge-7
+The format of the submission and many other details can be found at:
 
-for you to fetch changes up to 7d5e049e72c4cb933b557c78cbd63285dd8102ce:
+	http://vger.kernel.org/lpc-bpf.html
 
-  iomap: fix WARN_ON_ONCE on uninitialized variable (2018-08-14 08:17:02 -0700)
-
-----------------------------------------------------------------
-Changes since last update:
-- Fix an uninitialized variable
-- Don't use obviously garbage AG header counters to calculate
-  transaction reservations
-- Trigger icount recalculation on bad icount when monting.
-
-----------------------------------------------------------------
-Darrick J. Wong (3):
-      xfs: recalculate summary counters at mount time if icount is bad
-      xfs: sanity check ag header values in xrep_calc_ag_resblks
-      iomap: fix WARN_ON_ONCE on uninitialized variable
-
- fs/iomap.c            |  2 +-
- fs/xfs/scrub/repair.c | 46 +++++++++++++++++++++++++++-------------------
- fs/xfs/xfs_mount.c    |  1 +
- 3 files changed, 29 insertions(+), 20 deletions(-)
+Looking forward to seeing you all in Vancouver!
