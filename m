@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A67C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96515C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:27:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D112C208A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:27:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D112C208A6
+	by mail.kernel.org (Postfix) with ESMTP id 5A657208A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:27:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A657208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbeHUJqK (ORCPT
+        id S1728657AbeHUJqN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:46:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56478 "EHLO
+        Tue, 21 Aug 2018 05:46:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56486 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726228AbeHUJqK (ORCPT
+        with ESMTP id S1726228AbeHUJqN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:46:10 -0400
+        Tue, 21 Aug 2018 05:46:13 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A68D7AD8;
-        Tue, 21 Aug 2018 06:27:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F39B6ACC;
+        Tue, 21 Aug 2018 06:27:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chen Hu <hu1.chen@intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        stable@vger.kernel.org,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.14 24/29] serial: 8250_dw: always set baud rate in dw8250_set_termios
-Date:   Tue, 21 Aug 2018 08:21:17 +0200
-Message-Id: <20180821055109.370379948@linuxfoundation.org>
+Subject: [PATCH 4.14 25/29] serial: 8250_dw: Add ACPI support for uart on Broadcom SoC
+Date:   Tue, 21 Aug 2018 08:21:18 +0200
+Message-Id: <20180821055109.404820855@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055108.333930282@linuxfoundation.org>
 References: <20180821055108.333930282@linuxfoundation.org>
@@ -51,48 +52,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chen Hu <hu1.chen@intel.com>
+From: Srinath Mannam <srinath.mannam@broadcom.com>
 
-commit dfcab6ba573445c703235ab6c83758eec12d7f28 upstream.
+commit 784c29eda5b4e28c3a56aa90b3815f9a1b0cfdc1 upstream.
 
-dw8250_set_termios() doesn't set baud rate if the arg "old ktermios" is
-NULL. This happens during resume.
-Call Trace:
-...
-[   54.928108] dw8250_set_termios+0x162/0x170
-[   54.928114] serial8250_set_termios+0x17/0x20
-[   54.928117] uart_change_speed+0x64/0x160
-[   54.928119] uart_resume_port
-...
+Add ACPI identifier HID for UART DW 8250 on Broadcom SoCs
+to match the HID passed through ACPI tables to enable
+UART controller.
 
-So the baud rate is not restored after S3 and breaks the apps who use
-UART, for example, console and bluetooth etc.
-
-We address this issue by setting the baud rate irrespective of arg
-"old", just like the drivers for other 8250 IPs. This is tested with
-Intel Broxton platform.
-
-Signed-off-by: Chen Hu <hu1.chen@intel.com>
-Fixes: 4e26b134bd17 ("serial: 8250_dw: clock rate handling for all ACPI platforms")
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+Reviewed-by: Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>
+Tested-by: Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/8250/8250_dw.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/8250/8250_dw.c |    1 +
+ 1 file changed, 1 insertion(+)
 
 --- a/drivers/tty/serial/8250/8250_dw.c
 +++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -260,7 +260,7 @@ static void dw8250_set_termios(struct ua
- 	long rate;
- 	int ret;
- 
--	if (IS_ERR(d->clk) || !old)
-+	if (IS_ERR(d->clk))
- 		goto out;
- 
- 	clk_disable_unprepare(d->clk);
+@@ -672,6 +672,7 @@ static const struct acpi_device_id dw825
+ 	{ "APMC0D08", 0},
+ 	{ "AMD0020", 0 },
+ 	{ "AMDI0020", 0 },
++	{ "BRCM2032", 0 },
+ 	{ "HISI0031", 0 },
+ 	{ },
+ };
 
 
