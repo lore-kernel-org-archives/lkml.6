@@ -2,260 +2,187 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4618CC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 000C4C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:07:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D417420685
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:07:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 758C520685
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:07:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eYIXD9IZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D417420685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="lUEqtNeA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 758C520685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727618AbeHUT2J (ORCPT
+        id S1727684AbeHUT2a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 15:28:09 -0400
-Received: from twosheds.infradead.org ([90.155.92.209]:37262 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbeHUT2J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 15:28:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=twosheds.20170209; h=Mime-Version:Date:Content-Type:
-        References:In-Reply-To:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=x1Nv247CGDViug18ZEWT+/jYDtnb2+4DpNuAAw186YQ=; b=eYIXD9IZPPIX3F4qjxwFJgtMT
-        2Q3e1nuumVBzwxoOGvlofUwzoVeIjAHizPq8D/oI4n0v20r7wAzjgzW+nXZoM6Td/CjUqucnP54Iu
-        UB+M09OcuFCJya0pM1pKUa2dfGQaNtWiZOLGKHHw32KPRrPQMGA35vhoj1DnSY7NOySV56X/P828C
-        vX32lP8meQe+Xfn5lkRGtBSpjuLN/hFZ9px3CpqUHI6brlP1taRkw49jI+4lcPa8dilZ+miyYiAFD
-        N++lRxJYRUigFz93L2I9kqSlN4MzmMJhjrVfdXXbCgYZZNFSbwbgN7H3TU4ZORRt2XlUBC2hPJeQD
-        yJJWIAdaw==;
-Received: from [2001:8b0:10b:1::2fb]
-        by twosheds.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fs9BU-005G3y-6H; Tue, 21 Aug 2018 16:07:08 +0000
-Message-ID: <1534861342.14722.11.camel@infradead.org>
-Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated
- CPUs in mind (for KVM to isolate its guests per CPU)
-From:   David Woodhouse <dwmw2@infradead.org>
-To:     Liran Alon <liran.alon@oracle.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        juerg.haefliger@hpe.com, deepa.srinivasan@oracle.com,
-        Jim Mattson <jmattson@google.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-mm <linux-mm@kvack.org>,
+        Tue, 21 Aug 2018 15:28:30 -0400
+Received: from mail-dm3nam03on0078.outbound.protection.outlook.com ([104.47.41.78]:40368
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727463AbeHUT2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 15:28:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JVVUZETjaFQtN1DPAcYrBcPI3sHQaesBrHrBwtk/3sY=;
+ b=lUEqtNeA0obdqQwCgWv+eE8Aq3OOlkitpJpYe4OAa61oWYT8A/DqD8t9Lzou9eUGSvbQbbQTqk20/NT7XH820g0Uv7V6fNSOI4dYiFTnX1FrQB2fKfxotzinShHVUTE0yB8jOG+JtKhAXPKCpxl1HJ1Ch1GBSZpMiSKyyK+/6nM=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=brijesh.singh@amd.com; 
+Received: from [10.236.136.62] (165.204.77.1) by
+ SN6PR12MB2685.namprd12.prod.outlook.com (2603:10b6:805:6f::26) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1059.23; Tue, 21 Aug 2018 16:07:41 +0000
+Cc:     brijesh.singh@amd.com, "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        joao.m.martins@oracle.com, pradeep.vincent@oracle.com,
-        Andi Kleen <ak@linux.intel.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        kanth.ghatraju@oracle.com, Kees Cook <keescook@google.com>,
-        jsteckli@os.inf.tu-dresden.de,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        chris.hyser@oracle.com, Tyler Hicks <tyhicks@canonical.com>,
-        John Haxby <john.haxby@oracle.com>,
-        Jon Masters <jcm@redhat.com>
-In-Reply-To: <ED24D811-C740-417F-A443-B7A249F4FF4C@oracle.com>
-References: <20180820212556.GC2230@char.us.oracle.com>
-         <CA+55aFxZCyVZc4ZpRyZ3uDyakRSOG_=2XvnwMo4oejpsieF9=A@mail.gmail.com>
-         <1534801939.10027.24.camel@amazon.co.uk>
-         <CA+55aFxyUdhYjnQdnmWAt8tTwn4HQ1xz3SAMZJiawkLpMiJ_+w@mail.gmail.com>
-         <1534845423.10027.44.camel@infradead.org>
-         <ED24D811-C740-417F-A443-B7A249F4FF4C@oracle.com>
-Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-AGIKUwyiw+rQKRwORF2j"
-Date:   Tue, 21 Aug 2018 15:22:22 +0100
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>
+Subject: Re: SEV guest regression in 4.18
+To:     Borislav Petkov <bp@suse.de>
+References: <20ad6cd5-394c-d3ae-d99c-b656d7ef8293@amd.com>
+ <20180821083911.GF24940@nazgul.tnic>
+ <3d46f44c-dd78-8fa9-02ac-8206676ffde9@amd.com>
+ <20180821151938.GA31212@nazgul.tnic>
+From:   Brijesh Singh <brijesh.singh@amd.com>
+Message-ID: <92e2b80c-0dcc-94be-8d3a-5e11e5cf2370@amd.com>
+Date:   Tue, 21 Aug 2018 11:07:38 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180821151938.GA31212@nazgul.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [165.204.77.1]
+X-ClientProxiedBy: SN4PR0401CA0017.namprd04.prod.outlook.com
+ (2603:10b6:803:21::27) To SN6PR12MB2685.namprd12.prod.outlook.com
+ (2603:10b6:805:6f::26)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 95d4585a-45cc-4163-27ff-08d60780397b
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN6PR12MB2685;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR12MB2685;3:Rw1IwSm9b7cSZzq5rDF/7jDxjHnHX+SHrYW7Tbt1m6Nf8AaBRnEmEZIpc3MyGXnX6z44+hI4UHSvEO1cqLR0hrOItRAM0eZWdtKQTmsr2ZwGe8jDwhGvPkI9XEC9EB+Wl436BuKKPGzDYgZ4IieoO88y3jfGDYiACDWujHWBPBKoPhdmASQWwB4kwdOxet+pD3vuw2L2dNswmWKRNKNRJgWlwb96Lgpsy3uKO3SnMcJFTEu6i3np3uu0jag/HNM4;25:WoWhpTCdeb6QfhWPuNXTDRAzZdlE2Huhc03y60N+rIT0aRemnl3MiX9NOKW7SjbQgyVkB73LqDNif900KC27OOIG6t6/jzOM9FxJ6kr7Pg5EjGHMFRpjNZjRYSlfuSzS+FX+klAoLarhbH4UnX/0O4avr6Cf0ULckU7yAyii22UHMQ74F+ApcGva47qDQ4BqqcyjUAGrIEPqDWVNPkzBLkzpZWBwL/ms8vvI+8D04iLlUIcK+wqbeeUJQ+FWqRsk0sa8OEsSBIqeJjhu7RoNoPXkxIYPD2ih6IgEcyZPQDtkgSXIzE0f8yDz2dOIBurTxzm59VLw4U00zEdS/sVuOQ==;31:bpXDDENK2SPcJxLszQVFWJmFOv5QtuHA+KTqDMyqQEwVUTAWo1tBaa8kA6JaArKcjQVM1KrRytpKFr5f5mI1FQHCw+Mg6eLO53GJqZ8FXON7kLFigz5lgpOJn118l8/CLHz/+2e70EcC3BMIPYTBrViWyiM+neYGUqbp5LGaFM9iiZYkgK1VNSERRjZXDXNZ7zqj0D5D3qWEq5Gk3jspb9YjGtlK7Uxq/p2QWhTgAsc=
+X-MS-TrafficTypeDiagnostic: SN6PR12MB2685:
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR12MB2685;20:RSOrj4hkd6t4fprj7nINTk4v9EjpvDQX0mY6+9wQz21C7K5O5hLBY1fqmXOJ2t8zJaieiItu3b5bK7WXOzFrYEx1317sH78y/l1zKHpBOGeLDt52xpCU0trbFu/wDGUrxcEfrZdKCDwoBwIpH5CbCOfpdeeG9pACaA9TYZLHWWA+zFuxIl2n9OOa7pg43ztgiCXratnm9ZQ526lOhcYjAk1qyUCE7vHwUcuBYn5Y+yjlwVmEiUgD1+w+9LQAX3F0vKyE8udK6G0L2qj8oVnOOEPJer2rpgEVDBiEUSsnGoCGtAb8j6+RURU6JwKotGJVDPM71MjBv2BE+hkda0tgQL0QZCq0RZAePfQg+0igMTAhFx4zTdVSE/ylmwrCQbx4PuKO3zuDXaA8mvIv0V3Nripm2quPE2j2fcjrZj1eTrgh15aabEPuK/la3GCWKHnkyIEjlyZjP3YLRcP+sQNnqfei1tDcd32ZTISplMjP6QaRAGy8lHHdXR6TUwcgjMUF;4:sKywB8DMBbee8HC0IOZyviFYcYK4txAPSTqG0azSCovk0EUo7ytWqnns1Ofcr0LgGnWQxuGse+Y73/uat1K3WxC4p88cHLXnS8OCA/CzE/UCKRDzB6hV9Y/pXs44Ehpm9mRcZVdOPtQWhH5UstyxqDINlfZ6j/TLe/OpN2WD6zQz2qh06Es64tdUZUau3CVHT4j/5XnAZkNtEw/ZV4RW8wpwDz7ULaAfcd77JVZGCp9raknK9xz5SVPg/SVdWNW/glcTsvLYdicFebnZPctn0Q==
+X-Microsoft-Antispam-PRVS: <SN6PR12MB2685E7DBBED1474E79E68938E5310@SN6PR12MB2685.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699016);SRVR:SN6PR12MB2685;BCL:0;PCL:0;RULEID:;SRVR:SN6PR12MB2685;
+X-Forefront-PRVS: 0771670921
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(366004)(39860400002)(396003)(136003)(346002)(376002)(189003)(199004)(11346002)(81166006)(97736004)(2616005)(476003)(44832011)(2906002)(93886005)(16576012)(36756003)(53546011)(956004)(54906003)(66066001)(65806001)(65956001)(58126008)(47776003)(486006)(14444005)(76176011)(316002)(7736002)(446003)(81156014)(8676002)(230700001)(53936002)(6666003)(50466002)(31696002)(305945005)(6486002)(6916009)(77096007)(86362001)(65826007)(229853002)(6246003)(31686004)(8936002)(5660300001)(3846002)(186003)(16526019)(386003)(52116002)(2486003)(26005)(106356001)(52146003)(68736007)(105586002)(25786009)(23676004)(64126003)(67846002)(6116002)(4326008)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2685;H:[10.236.136.62];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtTTjZQUjEyTUIyNjg1OzIzOmJwUTU0aWtUQ3o0Y0NOajRnZDQ5QTNQTVN3?=
+ =?utf-8?B?RlVwNmtwY3hFekNaOUNZRlJZZ0ZyYzdvL2tocTBqN0VoTG93NjY0MjcyNVZv?=
+ =?utf-8?B?bmFlNUNOV3hWVlh5eHY4S0d0aXhTOUFKWTJTY3pJRFdqb0laN0NQU0htOGFQ?=
+ =?utf-8?B?UnBCNzFrUW1QTEUwSzJ5OFhDSkRLZytuaVNmS0tjOFdBMVFaazVOMzZhelMy?=
+ =?utf-8?B?ZXdWZ1hreVhPaWRabEZkbTZlcDZQOGRMVjFNdVFGR3JQbmc3a1MwRGxpTDU1?=
+ =?utf-8?B?aUplMjJ6aXN2SU9XSDZ2aXJiaUFsWlBJVmpyeTVZeExnbkRoK1lNUENzZ0FY?=
+ =?utf-8?B?bkJoUUVaQ2U3amVVVFZZQWozNHFFanVmLy83YmpZV3BMUStjdVFzQUo2SDJh?=
+ =?utf-8?B?dzdtVmdZbGZndm1uWGx4U21kb0R5NWV4ZlUxUFhSaXZTUENWSHBMTEw4eXZy?=
+ =?utf-8?B?SVFXVXRRMlhtU0JndXBXc2xVVnFsaEpPOWVhcW9EZWFHUzBYMFQrb0tQOFM4?=
+ =?utf-8?B?dlVxYm0zeVdJUHQ3cUZQWEVCMHB1clZKV2Iwb2x2d2pOTUZ5bFlQeFJROVQ5?=
+ =?utf-8?B?UE0ydHQySjJmc3NJZVFqSzVTSXJST0FPMG81SVo3V29rR2VpMkxYMVNKYjRk?=
+ =?utf-8?B?VWViR2RrenlsUVlCQlZHVjRrbEtiU25CSTZUdjFEQ20xSUNqa1N4UzYvUk4z?=
+ =?utf-8?B?c1NrTzNSKzA0Q3pZcGs4Q2Q0czlsUzNNc1VWVUZLSEFFVVRBaEt5TVJPejZr?=
+ =?utf-8?B?MU5hSjYvNGNYc2ZoMzIvMTFyTWlnNndmVEVzRnNoMmp6aFVkQ1NhRG84MVdB?=
+ =?utf-8?B?a1Q3c0NSQnM2Rk40T1JUSXo3MEx4bENDVHZmdW9zVTNGZnFzOThJd3NjUThN?=
+ =?utf-8?B?Y3JnbkFBTFlMK20xaG5UY01zR2VxTUJjYlVXZVN5NGNDWTU3K1VXU3RyMmhJ?=
+ =?utf-8?B?SGV0UTZDZWZwellmb1BFUFNLa2ZobDc1ai9DazAvbHVXUDFqUG1hMTRFcEoz?=
+ =?utf-8?B?eFBHMmlDSXRiSEt6RUYyamgyR1lIZFZkUU0wbzBKdVFuMVd6WVdMY2cybUky?=
+ =?utf-8?B?Zm4yaG9kWW9UUFMxc3JQdTNjRjRxbFYyL0Zsb054UXBCQU1vOW9FeFlTTGtF?=
+ =?utf-8?B?aCtndEtMV0pvZlkxckdnMEpEREtGVVpYeUJPMGRkWkd5UThTdVp0K3FBNitK?=
+ =?utf-8?B?YnN2dGJLRm5zWXkzT2R6MFpKVGpQYjFHektyVTgvTUhiNzFFTjc1V1Q4NldV?=
+ =?utf-8?B?ZEEzWnpkRzBjVHBVeVJ5ckM2Tkp6VFNPVUFOYjNDbHBLTFUxWWhEUUpYbVZl?=
+ =?utf-8?B?bHM4R09DRmxhK2FWWHd1bWplZjZhM1BlRHZQWVlBZ3piZ2ZSNzRRMHRTb1hn?=
+ =?utf-8?B?VkEveE94UWVONXFSQ2FoRDBjK2lnbXlINHlrVldHaENTaVBpL0RyUmJGdUtW?=
+ =?utf-8?B?M05lR2ZmSlYySG16UXBlL1pRcXB6MkFPODJFUU9YYUFKZGl4dStZaEJvMjZj?=
+ =?utf-8?B?RjJVdkhvZ1VHUnN1U2FrdnFpL3FGOVMyUWFzNE5oUnF5MG02dTRsdmdpNm1P?=
+ =?utf-8?B?UTBMdmV3ajEvSlZ6QWo3ZkYrQm9CZ2d3bkdiYU5rV09TN2U0RDRsUmtYUU50?=
+ =?utf-8?B?N1FURTFwM0Z4ODUxbDBOQWpacGJ5K2kydmxFRlZPQ2orT1JOY2ZGQVJxRFgr?=
+ =?utf-8?B?MVZ0Sk9CQTR3Q0VtKzhzYWUvdXpkMTVHcFFsTStVNWxGVE9NWk9UNjlnZk9U?=
+ =?utf-8?B?bVBDWEd5V3NHRzNJZGdTUWJrc0QrTG9RcEZYNVV2ZGhUaEpTTUZFclJmYUpm?=
+ =?utf-8?B?SG5ESWFpa1RadTBIUFZTSFJsSVZHbEIvcFdMRVJxOFNzUnM4Qlc5MnFTN1ZI?=
+ =?utf-8?B?dENiaTdtaTVUM2VMbXQ0QVEzUCsxSVVqa3JSL2U3MkxwRDgwOXJKTW5UNW1a?=
+ =?utf-8?B?N0dKbUxPeUQ1dm5rb3B3TnpRbGVMQ0ppakJqY2VvT1ZUc0NhNFlYODlSS3U3?=
+ =?utf-8?B?TUEwQUJzc1lCUVdVZEk0czg0ZWtnaktmbldEUCswb3MzNHFFdlk4N0FYT3NC?=
+ =?utf-8?Q?Oi1w=3D?=
+X-Microsoft-Antispam-Message-Info: gJ59sSdOLhdkE641Mh7jCX/5HMhLhcW8uv+328dhKv/MfyoZUojgPkhuGgJrzYP4WB57r6GPJTwTLnWiA+2eTGGG/F/KazL0bu550EaibotH9Pz+6ZXy71YiGhC2SBf1o3VpcsKePlL4jNn1+uUo5SuDqN3zI8QLcuhmSiMAWBoDl5k/w4wCKOsUcqiZA7rZ1p3RAtVS3rqGLM4mSA5rv2WgWmOKcLS10IzTAyOMSfx65KACXr4ow5XohUMg9McIeGhGqEHtuI+/OIITpMSmtRWUoryqhgNUEVCGqyu02HFms5MlA3lyCSr9eOB6gjgWtJbAPHR1wP9pIjc/ytyJQzhpR70MVoBjoIZRw03ie58=
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR12MB2685;6:UCRddRwtU3TxAmWNlCM+sVLERaqYSwwhJ/mLYax+lM7w7SB7MKAURF8i+bhPZerSEUNxWal29RrHuqGA0naiexhw3hJWLBpyEuvkurwbWRRIPNX5DdvsVYiUOg3UdX9rrL46FZsEvrTEKNIOBlndWOoQl/116aN2YO8j1uVLUBew6L1wj5vndkksMhZ+rVEViLn9RBTU9Bq2LZGTqzwMD6xSHCjnanfZhMyEnIdl5akRjLr76O+GOpPza67oLrwoStlt7iOw8bUfGJKyXVmSVPi9m0N1jL3agePZZteMANZpMFOhsL5Op25RVEf742kio74UKC9y2qdYd7hf4ZB9B4pbHRq41b+rlGcAZltex6uU4gTsdSxfOIUyhHcyQrd4tQiMX53gMBui1bzjl2HySXyYzZqSGoUC4L0VmZnFcUR/02UD4P8c0tenH1skWzzTdGeBm5ZQ5P00lVboLk2CyA==;5:ddJEOrpnfOfsPFGJ/AVd3MRvPdAw3X0dgX1XcmxTrxQgGHgHctTJqxQzrYhymdvN24aBEDkHfCkerOpsfUA9ccFY6tkBJtNtdpMnJT3g4KtbZLk/xY0h51+zBUmlfY7y/wVGlZtLAEFXGsGsS9gY8Qg2OnKaNz/IryIuNoNqw7M=;7:lZYJJR7FvSY0Sy4W47ObDjrM6GN7gnT/QvDVeW1uUtDDd615aFLijW/bSnWNuqI25cQ/F5FNPE6llDrjLDpjPEXWhpqB8IdWo0DVFV/4zaeYk+99Gq1e6bKd7tZ05jDh+p1F8hpP/GouGgisVjyEPOcWXgEJXhuWf22gnCb5L44DxvG1Xv4a2ybcUdwcv8d7uc6Ac5r2T7+fLtgUrR8CeiCIPwqvxgC1QsWRM62uZT+WUuYqw2eN9/zyyXpqhRzK
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR12MB2685;20:5FCLtaarUkaTB2p3zeI3GvcsVatYssws1cU3pXE0wUOzLD0QXmxpGdHWtA1VB1wmNV1qKtnerTSL167xdaNbP7O+97RMUTOMYweT/0JGxs7ikJqfocbgPoLXrtkMy7qraPO/iCP+Hkl2D2/DrriKEh/3Drvnp6yRxFMnq4cBAjmAZ2vzaaQsZ8WQUn7+TP3HNrifY9n7Scc1htRv7qzmI3qHRNRWzxSZZkPhTFi1o0epfbY5Sf4v250bzCQqr8tT
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2018 16:07:41.8272 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95d4585a-45cc-4163-27ff-08d60780397b
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2685
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-AGIKUwyiw+rQKRwORF2j
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2018-08-21 at 17:01 +0300, Liran Alon wrote:
->=20
-> > On 21 Aug 2018, at 12:57, David Woodhouse <dwmw2@infradead.org>
-> wrote:
-> >=C2=A0
-> > Another alternative... I'm told POWER8 does an interesting thing
-> with
-> > hyperthreading and gang scheduling for KVM. The host kernel doesn't
-> > actually *see* the hyperthreads at all, and KVM just launches the
-> full
-> > set of siblings when it enters a guest, and gathers them again when
-> any
-> > of them exits. That's definitely worth investigating as an option
-> for
-> > x86, too.
->=20
-> I actually think that such scheduling mechanism which prevents
-> leaking cache entries to sibling hyperthreads should co-exist
-> together with the KVM address space isolation to fully mitigate L1TF
-> and other similar vulnerabilities. The address space isolation should
-> prevent VMExit handlers code gadgets from loading arbitrary host
-> memory to the cache. Once VMExit code path switches to full host
-> address space, then we should also make sure that no other sibling
-> hyprethread is running in the guest.
+On 08/21/2018 10:19 AM, Borislav Petkov wrote:
+> On Tue, Aug 21, 2018 at 09:37:56AM -0500, Brijesh Singh wrote:
+>> Those variables are accessed immediately by the tsc calibration code
+>> path hence we will not able to delay the allocation.
+> 
+> If you mean, check_tsc_sync_source/_target(), those are called pretty
+> late, AFAICT.
+> 
+> And I see a setup_arch() -> init_mem_mapping -> ... ->
+> kernel_physical_mapping_init() call which happens much earlier.
+> 
+> Again, AFAICT. You probably should try it though, to make sure.
+> 
 
-The KVM POWER8 solution (see arch/powerpc/kvm/book3s_hv.c) does that.
-The siblings are *never* running host kernel code; they're all torn
-down when any of them exits the guest. And it's always the *same*
-guest.
+Here is a typical flow:
 
-> Focusing on the scheduling mechanism, we must make sure that when a
-> logical processor runs guest code, all siblings logical processors
-> must run code which do not populate L1D cache with information
-> unrelated to this VM. This includes forbidding one logical processor
-> to run guest code while sibling is running a host task such as a NIC
-> interrupt handler.
-> Thus, when a vCPU thread exits the guest into the host and VMExit
-> handler reaches code flow which could populate L1D cache with this
-> information, we should force an exit from the guest of the siblings
-> logical processors, such that they will be allowed to resume only on
-> a core which we can promise that the L1D cache is free from
-> information unrelated to this VM.
->=20
-> At first, I have created a patch series which attempts to implement
-> such mechanism in KVM. However, it became clear to me that this may
-> need to be implemented in the scheduler itself. This is because:
-> 1. It is difficult to handle all new scheduling contrains only in
-> KVM.
-> 2. This mechanism should be relevant for any Type-2 hypervisor which
-> runs inside Linux besides KVM (Such as VMware Workstation or
-> VirtualBox).
-> 3. This mechanism could also be used to prevent future =E2=80=9Ccore-cach=
-e-
-> leaking=E2=80=9D vulnerabilities to be exploited between processes of
-> different security domains which run as siblings on the same core.
+setup_arch()
+   ....
 
-I'm not sure I agree. If KVM is handling "only let siblings run the
-*same* guest" and the siblings aren't visible to the host at all,
-that's quite simple. Any other hypervisor can also do it.
+   init_hypervisor_platform()
+     kvmclock_init()
+       kvm_register_clock("primary cpu clock")
+         /* this shares the physical address of variable with HV.
+          * Ideally you want C-bit to be cleared before we give
+          * the address to HV because HV may start using the
+          * variable as soon as we issue wrmsrl(MSR_KVM_SYSTEM_TIME).
+          *
+          * we may able to relax rules that variable should be mapped
+          * with C=0 before making the wrmsrl(). Since HV will anyways
+          * write the data with C=0. The important thing is when guest
+          * tries to read it must map the address as C=0.
+          */
+        Later part of kvmclock_init provides a hooks for tsc calibration
 
-Now, the down-side of this is that the siblings aren't visible to the
-host. They can't be used to run multiple threads of the same userspace
-processes; only multiple threads of the same KVM guest. A truly generic
-core scheduler would cope with userspace threads too.
+   tsc_early_init()
+      determine_cpu_tsc_frequencies()
+        /* this will call tsc calibration hooks registered by the
+         * kvmclock_init. The hooks basically reads those variables.
+         * These variable must be mapped with C=0 otherwise we will
+         * not be able to get the data written by the hypervisor.
+         */
 
-BUT I strongly suspect there's a huge correlation between the set of
-people who care enough about the KVM/L1TF issue to enable a costly
-XFPO-like solution, and the set of people who mostly don't give a shit
-about having sibling CPUs available to run the host's userspace anyway.
+   ...
+   ...
+   ...
+   ...
 
-This is not the "I happen to run a Windows VM on my Linux desktop" use
-case...
---=-AGIKUwyiw+rQKRwORF2j
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+   trim_low_memory_range
+   init_mem_mapping()
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA4MjExNDIyMjJaMC8GCSqG
-SIb3DQEJBDEiBCCxy+HR5ksSw3tazTt1WBZNBOTHXgjNH/vO8i0s4dA1PjCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBACNiCSmhYmWQ
-BIWf6HA2fWXJZzLNVJEKkpTPpLu9APld2RvHWIRnf7gmR00jGv/uBC4khdyuFLWoVlsYMJ39klgA
-pmvpaJvDNHhV2H8XoSkX7cKZbT81VPxPiKT4/na87Pd7zcYqK25hI6KM/OC7tpMMI+jOzFQdC24i
-mzQiX1uLwuPAm6fTTIkLmOGqN0Y9HLXTGf9UAtHX3Y8mFwGUPm5Pj/gFufC5Z6f29Ia4iN8h3Cja
-DRIl7GOkZ8L5zGbgxuYBjJyjS97L7Br6QuFURCXjTbwfPvZtP/ezs3H0xml6KktE3u6erTpmOSc8
-99/RLQXiqFoLGjHF9V6Nd3Zg7twAAAAAAAA=
+   ...
 
+The tsc_early_init() is called before setup_arch() -> init_mem_mapping.
 
---=-AGIKUwyiw+rQKRwORF2j--
-
+-Brijesh
