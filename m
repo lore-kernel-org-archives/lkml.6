@@ -2,120 +2,203 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A17C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FFBFC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:47:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25CFE2170E
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:45:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gK1CoxAg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25CFE2170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2AA362170E
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:47:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AA362170E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbeHUSFv (ORCPT
+        id S1727323AbeHUSHa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 14:05:51 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36696 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726812AbeHUSFv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 14:05:51 -0400
-Received: by mail-pg1-f193.google.com with SMTP id h17-v6so2330420pgv.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 07:45:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:from:to:cc:subject:date;
-        bh=auNUopE+mBY+w41/CR183ZVpW9njQEbyHrBiCblSbZA=;
-        b=gK1CoxAghwgkGaFmq3byGDWxq/fSmvdMqIkJq66+a/DHxFW6Ikw8W7QSNGcoSR65ji
-         egK3i6mbAZoHnoZBfxEUXiMYuwqPwuEgkiX0SiVpvn032qeDvF62IF+UoumGSPB6IBZS
-         X4LhQ+BwY4SiepY1WCKSX6R6oLlFwdxzPyN6E0VfyjuQXDVVPYTE+gKmnyXtfY4xoi24
-         85OfBkOO/0X7NkKigZnTcJH6Kp0ePjRG9kl2759S8M9BVaedSSCj4XMHMEZ9usD2r42n
-         zNkheLX4wJW5xWn0+/OO+WUEL8edvznfdDc3XPxOqrvzOzao5DusBTSCewSIkVdags1i
-         EFlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:from:to:cc:subject:date;
-        bh=auNUopE+mBY+w41/CR183ZVpW9njQEbyHrBiCblSbZA=;
-        b=DleEGT4ZmOS1yvTjf8nuy/qyGO/3Dub5fZL4MYbugzhlKaZVo19pVcf0kEQHAn+rcX
-         Ki+zERWUS2WWby3SDM7mEk2+IDlOA3VTKD+loYs5d1QXe5Hn7QRiNA2YM+XtWE4R69sz
-         Niql70SfpA0bffLnT3Bofxrl+L81sc3nWAzV/S/jMfk8gR9+2PGDwFS5Avjh3mY2DriB
-         wxq6KrnMZPH2JdcF4pOKFat+9hdeEWWK68gkjnlOS/nhWDvwPky/Owsio8Ufdul+zRu6
-         c38Pfsg1oEg1GAb8Gmsf9pbodtFxyh9wxf35m31cZoXmGxNB1OdTKtLgk+Ms20LJd4eb
-         c9xA==
-X-Gm-Message-State: AOUpUlHNCXDU3DtY6LO28hKNAYweZxCn0b1XXwms/iBbhvd5o5nThHuM
-        PEf2sJe6m0/3U6TPzU7N4WM=
-X-Google-Smtp-Source: AA+uWPyuSFrGGV3eyJ4wOa0Ul50EMrHGHvJsqkxjB+7fmUolhkwaVF1qRa7fXPRvOHo3o8HNB+IVjg==
-X-Received: by 2002:a63:4e5f:: with SMTP id o31-v6mr45364194pgl.256.1534862724356;
-        Tue, 21 Aug 2018 07:45:24 -0700 (PDT)
-Received: from bsapthagiri.soct.com (gw4.soctronics.com. [202.153.34.22])
-        by smtp.gmail.com with ESMTPSA id u71-v6sm20378965pfk.174.2018.08.21.07.45.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 21 Aug 2018 07:45:23 -0700 (PDT)
-Message-ID: <5b7c2583.1c69fb81.c4b41.086e@mx.google.com>
-X-Google-Original-Message-ID: <1534861364-8646-1-git-send-email-bsapthagiri>
-From:   sapthagiri.baratam@gmail.com
-X-Google-Original-From: bsapthagiri
-To:     lee.jones@linaro.org
-Cc:     patches@opensource.cirrus.com, linux-kernel@vger.kernel.org,
-        Sapthagiri Baratam <sapthagiri.baratam@cirrus.com>
-Subject: [PATCH v2] mfd: arizona: Correct calling of runtime_put_sync
-Date:   Tue, 21 Aug 2018 19:52:44 +0530
-X-Mailer: git-send-email 1.9.1
+        Tue, 21 Aug 2018 14:07:30 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50242 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726590AbeHUSHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 14:07:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00B477A9;
+        Tue, 21 Aug 2018 07:47:03 -0700 (PDT)
+Received: from dupont (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DA4253F5BC;
+        Tue, 21 Aug 2018 07:47:01 -0700 (PDT)
+Date:   Tue, 21 Aug 2018 09:47:01 -0500
+From:   Kim Phillips <kim.phillips@arm.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        <schwidefsky@de.ibm.com>, <heiko.carstens@de.ibm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, <ast@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, <suzuki.poulosi@arm.com>,
+        <linux-s390@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 0/7] perf: Add ioctl for PMU driver configuration
+Message-Id: <20180821094701.685b14d25490fe09ecb32d12@arm.com>
+In-Reply-To: <cba4017f-8a81-e47b-1e99-d510ef9b2a67@arm.com>
+References: <1531950487-24554-1-git-send-email-mathieu.poirier@linaro.org>
+        <20180813124642.3d49c082a95fc294d926016e@arm.com>
+        <CANLsYkx=tjCG-eb4qRoGz0SvG4qCMDz1ajR9Mo9VK5XTAn_WdQ@mail.gmail.com>
+        <20180814120910.ed225bbc462c58b09e5d68de@arm.com>
+        <CANLsYkxZ_Wts6k9yqJhJf_R5oh74svpcuoNxhtFf6h3mz8U4ZA@mail.gmail.com>
+        <20180815093912.GE2427@arm.com>
+        <20180815102820.3520d0c3875d2fd82300cdef@arm.com>
+        <CANLsYkz0j79+1C-Amz=3+7zw-0VZhnZ+rp5WAjHduEp+WjFs8A@mail.gmail.com>
+        <18fe78a3-9a58-cecd-ddb9-d46cbc473b95@arm.com>
+        <20180820092252.32dd015afcc5cbf2fe4c7ab7@arm.com>
+        <a2edfae3-302e-bbc7-0563-337186fc2919@arm.com>
+        <20180820102532.96a90fe59d9ea3785df76a4d@arm.com>
+        <cba4017f-8a81-e47b-1e99-d510ef9b2a67@arm.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sapthagiri Baratam <sapthagiri.baratam@cirrus.com>
+On Tue, 21 Aug 2018 09:39:22 +0100
+Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
 
-Don't call runtime_put_sync when clk32k_ref is ARIZONA_32KZ_MCLK2
-as there is no corresponding runtime_get_sync call.
+> On 08/20/2018 04:25 PM, Kim Phillips wrote:
+> > On Mon, 20 Aug 2018 15:36:47 +0100
+> > Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+> > 
+> >> On 08/20/2018 03:22 PM, Kim Phillips wrote:
+> >>> On Mon, 20 Aug 2018 11:03:03 +0100
+> >>> Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+> >>>
+> >>>> On 08/16/2018 08:28 PM, Mathieu Poirier wrote:
+> >>>>> On Wed, 15 Aug 2018 at 09:28, Kim Phillips <kim.phillips@arm.com> wrote:
+> >>>>>>
+> >>>>>> On Wed, 15 Aug 2018 10:39:13 +0100
+> >>>>>> Will Deacon <will.deacon@arm.com> wrote:
+> >>>>>>
+> >>>>>>> On Tue, Aug 14, 2018 at 01:42:27PM -0600, Mathieu Poirier wrote:
+> >>>>>>>> On Tue, 14 Aug 2018 at 11:09, Kim Phillips <kim.phillips@arm.com> wrote:
+> >>>>>>>>> The other thing that's going on here is that I'm becoming numb to the
+> >>>>>>>>> loathsome "failed to mmap with 12 (Cannot allocate memory)" being
+> >>>>>>>>> returned no matter what the error is/was. E.g., an error that would
+> >>>>>>>>> indicate a sense of non-implementation would be much better
+> >>>>>>>>> appreciated than presumably what the above is doing, i.e., returning
+> >>>>>>>>> -ENOMEM.  That, backed up with specific details in the form of human
+> >>>>>>>>> readable text in dmesg would be *most* welcome.
+> >>>>>>>>
+> >>>>>>>> As part of the refactoring of the code to support CPU-wide scenarios I
+> >>>>>>>> intend to emit better diagnostic messages from the driver.  Modifying
+> >>>>>>>> rb_alloc_aux() to propagate the error message generated by the
+> >>>>>>>> architecture specific PMUs doesn't look hard either and I _may_ get to
+> >>>>>>>> it as part of this work.
+> >>>>>>>
+> >>>>>>> For the record, I will continue to oppose PMU drivers that dump diagnostics
+> >>>>>>> about user-controlled input into dmesg, but the coresight drivers are yours
+> >>>>>>> so it's up to you and I won't get in the way!
+> >>>>>>
+> >>>>>> That sounds technically self-contradicting to me.  Why shouldn't
+> >>>>>> coresight share the same policies as those used for PMU drivers?  Or
+> >>>>>> why not allow the individual vendor PMU driver authors control the
+> >>>>>> level of user-friendliness of their own drivers?
+> >>>>>>
+> >>>>>> That being said, Matheiu, would you accept patches that make coresight
+> >>>>>> more verbose in dmesg?
+> >>>>>
+> >>>>> It depends on the issue you're hoping to address.  I'd rather see the
+> >>>>> root cause of the problem fixed than adding temporary code.  Suzuki
+> >>>>> added the ETR perf API and I'm currently working on CPU-wide
+> >>>>> scenarios.  From there and with regards to what can happen in
+> >>>>> setup_aux(), we should have things covered.
+> >>>>
+> >>>> I think the main issue is the lack of error code propagation from
+> >>>> setup_aux() back to the perf_aux_output_handle_begin(), which always
+> >>>> return -ENOMEM. If we fix that, we could get better idea of whats
+> >>>> wrong.
+> >>>
+> >>> Why get a better idea when we can get the exact details?
+> >>
+> >> The different values for error numbers are there for a reason...
+> > 
+> > But the same error number, e.g., EINVAL, can be returned for different
+> > reasons.
+> 
+> True, but then you can narrow it down by tuning it.
 
-MCLK1 is not in the AoD power domain so if it is used as 32kHz clock
-source we need to hold a runtime PM reference to keep the device from
-going into low power mode.
+I'm trying to avoid having our users have to do that every time
+something isn't quite right :)
 
-fixes: cdd8da8cc66b ("mfd: arizona: Add gating of external MCLKn clocks")
-Signed-off-by: Sapthagiri Baratam <sapthagiri.baratam@cirrus.com>
----
-Changes in v2:
-- changed signed-off in commit message to full name
+> We do that for
+> several syscalls without printing any useful messages to debug. Why
+> should the perf syscalls be any different ?
 
- drivers/mfd/arizona-core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Not sure what syscalls you kernel hackers are talking about, nor
+whether the work was being done on behalf of an end-user, but things
+like mount have the same problem as perf, and perf is notorious for it.
 
-diff --git a/drivers/mfd/arizona-core.c b/drivers/mfd/arizona-core.c
-index c7c3d72..190f9a4 100644
---- a/drivers/mfd/arizona-core.c
-+++ b/drivers/mfd/arizona-core.c
-@@ -53,8 +53,10 @@ int arizona_clk32k_enable(struct arizona *arizona)
- 			if (ret != 0)
- 				goto err_ref;
- 			ret = clk_prepare_enable(arizona->mclk[ARIZONA_MCLK1]);
--			if (ret != 0)
--				goto err_pm;
-+			if (ret != 0) {
-+				pm_runtime_put_sync(arizona->dev);
-+				goto err_ref;
-+			}
- 			break;
- 		case ARIZONA_32KZ_MCLK2:
- 			ret = clk_prepare_enable(arizona->mclk[ARIZONA_MCLK2]);
-@@ -68,8 +70,6 @@ int arizona_clk32k_enable(struct arizona *arizona)
- 					 ARIZONA_CLK_32K_ENA);
- 	}
- 
--err_pm:
--	pm_runtime_put_sync(arizona->dev);
- err_ref:
- 	if (ret != 0)
- 		arizona->clk32k_ref--;
--- 
-1.9.1
+> >>>> If someone is planning to add verbose messages, they may do so by adding
+> >>>> dev_dbg() / pr_debug(), which can be turned on as and when needed.
+> >>>
+> >>> I disagree:  that just adds another usage and kernel configuration
+> >>> obstacle.  Why not use pr_err straight up?
+> >>
+> >> I personally don't agree to usage of pr_err() in paths which are easily
+> >> triggered from user input.
+> > 
+> > Why not?  pr_* are ratelimited.
+> > 
+> >> Also, we are moving all the "debugging"
+> >> messages to the dynamic debug, to prevent lockdep splats.
+> > 
+> > Are you referring to this?:
+> > 
+> > https://lkml.org/lkml/2018/5/1/7
+> 
+> Definitely not that thread.
 
+bah, sorry, apparently the trailing 3 was removed somehow.  Here you go:
+
+https://lkml.org/lkml/2018/5/1/73
+
+> > Re-reading the thread, AFAICT, it was never proven that the splats
+> > occurred due to the dev_infos, and there's no dev_info in this
+> > stacktrace:
+> > 
+> > https://lkml.org/lkml/2018/5/10/269
+> 
+> That doesn't have the stack trace. Mathieu was also able to reproduce
+> the lockdep splat involving console lock lately. Unfortunately none of
+> these were captured here.
+
+OK, I'd rather we see and properly debug and fix the so-called lockdep
+splats rather than hiding them by lowering their loglevel.
+
+> > But even if it were, wouldn't the splats also occur with dev_dbg?
+> 
+> Not normally. dev_dbg() has to be turned on manually and the user knows
+> what he is doing. That allows the normal user to use the system without
+> any trouble.
+
+I thought it was obvious that I was talking about when dev_dbg _is_
+enabled.  There, the problem still occurs, so you can't say 'we are
+moving all the "debugging" messages to the dynamic debug, to prevent
+lockdep splats.'
+
+Please let's see the lockdep splat and the proper fix for it instead of
+paper-taping over it via dev_dbg, thanks.
+
+Kim
