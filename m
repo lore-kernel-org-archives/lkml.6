@@ -2,202 +2,183 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B16FC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1B3C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:51:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04801214C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:51:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DD89216C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:51:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ItMACsmh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04801214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="ZM3+d5/2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DD89216C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726848AbeHUULv (ORCPT
+        id S1726943AbeHUUM0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 16:11:51 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43296 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726789AbeHUULv (ORCPT
+        Tue, 21 Aug 2018 16:12:26 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43958 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726800AbeHUUM0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 16:11:51 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j26-v6so8768524pfi.10
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 09:50:56 -0700 (PDT)
+        Tue, 21 Aug 2018 16:12:26 -0400
+Received: by mail-ed1-f65.google.com with SMTP id j21-v6so11044640edp.10
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 09:51:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ebkvD4y+HkqRYPd6oy37QD+lC/Qg68gYDIGaWFOPXBI=;
-        b=ItMACsmhFtAseAPRwFPHIZslfqLW2LSuhczqN55Jv0snL3W6KLAwKpXblbrkT12b6Q
-         FVVHQvDEEujLkHx5NnfRDVt+6XbRowtoPSj/DfjVpsos7RdYNvPIGlnTeLIVEHyzdOPA
-         xIV20AYgpLS4ry3Hhl5qnKbrsMKmv85yK9vCbkctp4Z+GpBUyAEHjxjm1OWlbXQg1ZF0
-         iAgbs1Ur7scBWsbu9/6i3ctsKWslmzgpDu6OvmKhKEHR0S/aGgH+/teVCZsiXD2Y6Yjd
-         qRPsSBpLGUxyKv/UuyzSmFvug9BrM+lkCdaLCfgWuKFGQm3RvmX4qg5+e3YCxqY/sUkv
-         B2QA==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Seh88QffLst90jWENMJL/gTBJR25J7ZTNyB3leZI74M=;
+        b=ZM3+d5/28VAlppW13o7ILDIEjfkFYZum+Ijj77qai9UMaFTk78pmNV5yjbvrR2+Up3
+         iBgfKnNZOE6NwPdrT+6duiyQtqzMsw71t6VpkgeSxWJzGGPBYtCu99UxxxbA/tGf4Lt3
+         GMgGGrs1Sq+jxgrJToU/m9NZBUf7OrquuUt5A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ebkvD4y+HkqRYPd6oy37QD+lC/Qg68gYDIGaWFOPXBI=;
-        b=iwvDfAUiqiAJxFoTDpHM9wR0R4EtQQkZQ1IxTz1hnGg2bwxDWUxspGQvGwn5QJVUgI
-         VzXVosfGulXnRqFZ9e9VN1gk9zc6NjQdR7NMF/+JXdpt4H7+DNQjzS+F5B5CMuVzxbw9
-         nMIzOEPlZTCA9BXPHoWV3Izu9wQZEZXADlrThUPnnVGysJblanyt3006WK09t9GZyMAa
-         uQ6GSMswnRidIkFVq2xhGm161ppea2LBcVnaoXGaN790zjBvwTFs6xu/ArZemu69wuZG
-         PILUey6hBI4W7k+rTUdVLa9ZONo6EOTqmiMsn7k5TQIVgc0hUXfRjDKzOB136UkZA9WY
-         SsEw==
-X-Gm-Message-State: AOUpUlE5IFKuRCHQzbUg/kASG1Jc1XqnWPLxniAYxZWfkYP6bowc1Mw5
-        R321Pikr4OE/FYH5ldgUbaUrLjhcqmNKGXnuSUHtgA==
-X-Google-Smtp-Source: AA+uWPzLb4uk5P4VsbRUFhMCxY9e+rRTgiIvRfYowtd+AzdnCyJt+bUSoIKyGqnU8mKwtffRFcjJa3hFGxJBDTlAn0M=
-X-Received: by 2002:a63:6243:: with SMTP id w64-v6mr20987798pgb.145.1534870256151;
- Tue, 21 Aug 2018 09:50:56 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=Seh88QffLst90jWENMJL/gTBJR25J7ZTNyB3leZI74M=;
+        b=BFuLGALZwMWOHDoOr9AY9JaIHRmcKV4OS9lxif9kBDSqZagtBz+c0hMLEklAS6Wmx+
+         upy0Z7qiSw/k7iv2z4Jyd6fJ2BUFc6FoXyRKk/DbGtm9NtYOamuAiU8EC+IVwdza+M//
+         hFDFRNMY4bVdYRWkTGPuq0rp3IaraTNl4JMBU3dWBhMMniYyZF54xcZ8O8H5AfQVQqZ8
+         Gs0DAdzU8cMIZLBMdUdaQJBakuURajYBZNW0TuNjBe/1ZoLn2TdG+IzB7lXiV8OddYl2
+         4GYwwddm3650d7j1oeGWTwOPNV8B9haKwrql1JVwcdbV0T7MkZVOpcQ00yggXR1P4F6+
+         ss3A==
+X-Gm-Message-State: AOUpUlG+VdG1QotXcJdGB5lcyN50NASQLxMLK+K1oujKshxPNkpS80xh
+        Wc67vtayAtaiLiwA+tmqGXl3aA==
+X-Google-Smtp-Source: AA+uWPxeUNVkA+WiX1f4j9IQekGPGoozIjWMGIiyKiT1M5K1+M3HFh4dgI5UByxEDm9xbC6Vfc0slg==
+X-Received: by 2002:aa7:d60d:: with SMTP id c13-v6mr61503763edr.301.1534870289910;
+        Tue, 21 Aug 2018 09:51:29 -0700 (PDT)
+Received: from phenom.ffwll.local (212-51-149-109.fiber7.init7.net. [212.51.149.109])
+        by smtp.gmail.com with ESMTPSA id x22-v6sm1212201edb.8.2018.08.21.09.51.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 Aug 2018 09:51:29 -0700 (PDT)
+Date:   Tue, 21 Aug 2018 18:51:26 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Brian Starkey <brian.starkey@arm.com>
+Cc:     dri-devel@lists.freedesktop.org, daniel.vetter@ffwll.ch,
+        airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        corbet@lwn.net, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alexandru-cosmin.gheorghe@arm.com,
+        liviu.dudau@arm.com, ayan.halder@arm.com
+Subject: Re: [PATCH] drm/fourcc: Add DOC: overview comment
+Message-ID: <20180821165126.GL21634@phenom.ffwll.local>
+Mail-Followup-To: Brian Starkey <brian.starkey@arm.com>,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, corbet@lwn.net, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alexandru-cosmin.gheorghe@arm.com,
+        liviu.dudau@arm.com, ayan.halder@arm.com
+References: <20180821161611.10424-1-brian.starkey@arm.com>
 MIME-Version: 1.0
-References: <20180820224032.53194-1-ndesaulniers@google.com> <CAKv+Gu-xAmadr96vwStOxdeqi=rCEBrn8V6GofexBhpmA=JiuA@mail.gmail.com>
-In-Reply-To: <CAKv+Gu-xAmadr96vwStOxdeqi=rCEBrn8V6GofexBhpmA=JiuA@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 21 Aug 2018 09:50:44 -0700
-Message-ID: <CAKwvOdkZR-MWuMU=j=kKXQwA0LEj1n0uoZQyTpwOzZuz9gjmJQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64/crypto: remove non-standard notation
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-crypto@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180821161611.10424-1-brian.starkey@arm.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 5:23 AM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
->
-> Hi Nick,
->
-> On 21 August 2018 at 00:40, Nick Desaulniers <ndesaulniers@google.com> wrote:
-> > It seems that:
-> > ldr q8, =0x30000000200000001
-> >
-> > is a GNU as convience notation for:
-> > ldr q8, .Lconstant
-> > .Lconstant
-> > .word 0x00000001
-> > .word 0x00000002
-> > .word 0x00000003
-> > .word 0x00000000
-> >
-> > based on this comment in binutils' source [0]. I've asked for this
-> > non-standard convience notation to be added to other assemblers [1], but
-> > until then, we can remove it and get equivalent disassembly:
-> >
->
-> What do you mean by 'non-standard convenience notation'? Which asm
-> 'standard' does Clang actually claim to implement?
+On Tue, Aug 21, 2018 at 05:16:11PM +0100, Brian Starkey wrote:
+> There's a number of things which haven't previously been documented
+> around the usage of format modifiers. Capture the current
+> understanding in an overview comment and add it to the rst
+> documentation.
+> 
+> Ideally, the generated documentation would also include documentation
+> of all of the #defines, but the kernel-doc system doesn't currently
+> support kernel-doc comments on #define constants.
+> 
+> Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Signed-off-by: Brian Starkey <brian.starkey@arm.com>
+> ---
+>  Documentation/gpu/drm-kms.rst |  6 ++++++
+>  include/uapi/drm/drm_fourcc.h | 36 ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 42 insertions(+)
+> 
+> diff --git a/Documentation/gpu/drm-kms.rst b/Documentation/gpu/drm-kms.rst
+> index 1dffd1ac4cd4..1dd9f4824d3b 100644
+> --- a/Documentation/gpu/drm-kms.rst
+> +++ b/Documentation/gpu/drm-kms.rst
+> @@ -322,6 +322,12 @@ Frame Buffer Functions Reference
+>  DRM Format Handling
+>  ===================
+>  
+> +.. kernel-doc:: include/uapi/drm/drm_fourcc.h
+> +   :doc: overview
+> +
+> +Format Functions Reference
+> +--------------------------
+> +
+>  .. kernel-doc:: include/drm/drm_fourcc.h
+>     :internal:
+>  
+> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+> index 894fa2da32fd..3f6c0b499323 100644
+> --- a/include/uapi/drm/drm_fourcc.h
+> +++ b/include/uapi/drm/drm_fourcc.h
+> @@ -30,6 +30,42 @@
+>  extern "C" {
+>  #endif
+>  
+> +/**
+> + * DOC: overview
+> + *
+> + * In the DRM subsystem, framebuffer pixel formats are described using the
+> + * fourcc codes defined in `include/uapi/drm/drm_fourcc.h`. In addition to the
+> + * fourcc code, a Format Modifier may optionally be provided, in order to
+> + * further describe the buffer's format - for example tiling or compression.
+> + *
+> + * Format Modifiers
+> + * ----------------
+> + *
+> + * Format modifiers are used in conjunction with a fourcc code, forming a
+> + * unique fourcc:modifier pair. This format:modifier pair must fully define the
+> + * format and data layout of the buffer, and should be the only way to describe
+> + * that particular buffer.
+> + *
+> + * Having multiple fourcc:modifier pairs which describe the same layout should
+> + * be avoided, as such aliases run the risk of different drivers exposing
+> + * different names for the same data format, forcing userspace to understand
+> + * that they are aliases.
+> + *
+> + * Format modifiers may change any property of the buffer, including the number
+> + * of planes and/or the required allocation size. Format modifiers are
+> + * vendor-namespaced, and as such the relationship between a fourcc code and a
+> + * modifier is specific to the modifer being used. For example, some modifiers
+> + * may preserve meaning - such as number of planes - from the fourcc code,
+> + * whereas others may not.
+> + *
+> + * Vendors are encouraged to document their modifier usage in as much detail as
 
-Well, for assembly 'standard' is a bit nebulous.  But it's frustrating
-when you can't find what the `=0x...` notation means in either the ARM
-or GNU as manuals.  The source of truth happened to be a comment in
-the source [0] that explained that this was a "programmer friendly
-notation."  Sure, if you can find it.
+I'd go with a slightly stronger "... should document ..." but either way:
 
->
-> This 'GCC/binutils is broken and we are reluctant to subvert Clang'
-> attitude is getting a bit old tbh. In the future, could you please
-> mention clang explicitly in the patch subject so it is obvious what
-> the purpose of the patch is? I think we should accommodate Clang in
-> Linux, but the attitude has got to go.
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-'Reluctant?' Please assume good faith; I filed the bug/noticed
-yesterday [1]. And I'm in favor of supporting the shorthand.  That's
-not my argument at all; Strawman.
+I'll leave pushing to one of the arm committers for drm-misc.
+-Daniel
 
->
->
-> > before:
-> > 00000000000009d4 <neon_aes_ctr_encrypt>:
-> > ...
-> >      a48:       9c000ac8        ldr     q8, ba0 <neon_aes_ctr_encrypt+0x1cc>
-> > ...
-> >      ba0:       00000001        .word   0x00000001
-> >      ba4:       00000002        .word   0x00000002
-> >      ba8:       00000003        .word   0x00000003
-> >      bac:       00000000        .word   0x00000000
-> >
-> > after:
-> >
-> > 00000000000009d4 <neon_aes_ctr_encrypt>:
-> > ...
-> >      a48:       9c000aa8        ldr     q8, b9c <neon_aes_ctr_encrypt+0x1c8>
-> > ...
-> >      b9c:       00000001        .word   0x00000001
-> >      ba0:       00000002        .word   0x00000002
-> >      ba4:       00000003        .word   0x00000003
-> >      ba8:       00000000        .word   0x00000000
-> >
-> > [0] https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=blob;f=gas/testsuite/gas/aarch64/programmer-friendly.s;h=6254c6476efdc848648b05068be0574e7addc85d;hb=HEAD#l11
-> > [1] https://bugs.llvm.org/show_bug.cgi?id=38642
-> >
-> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> > ---
-> >  arch/arm64/crypto/aes-modes.S | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/crypto/aes-modes.S b/arch/arm64/crypto/aes-modes.S
-> > index 483a7130cf0e..9288c5b0eca2 100644
-> > --- a/arch/arm64/crypto/aes-modes.S
-> > +++ b/arch/arm64/crypto/aes-modes.S
-> > @@ -232,7 +232,7 @@ AES_ENTRY(aes_ctr_encrypt)
-> >         bmi             .Lctr1x
-> >         cmn             w6, #4                  /* 32 bit overflow? */
-> >         bcs             .Lctr1x
-> > -       ldr             q8, =0x30000000200000001        /* addends 1,2,3[,0] */
-> > +       ldr             q8, .Laddends /* addends 1,2,3[,0] */
-> >         dup             v7.4s, w6
-> >         mov             v0.16b, v4.16b
-> >         add             v7.4s, v7.4s, v8.4s
-> > @@ -295,6 +295,12 @@ AES_ENTRY(aes_ctr_encrypt)
-> >         rev             x7, x7
-> >         ins             v4.d[0], x7
-> >         b               .Lctrcarrydone
-> > +
-> > +.Laddends:
-> > +       .word   0x00000001
-> > +       .word   0x00000002
-> > +       .word   0x00000003
-> > +       .word   0x00000000
->
-
-
-> As Will points out, this breaks BE builds.
-
-Looks like -EB and -EL are the flags for me to test with in GNU as
-(looks like a few different flags for this).  Is there a target triple
-ABI for BE?  I'll ask around here too, and post my findings.
-
->
-> >  AES_ENDPROC(aes_ctr_encrypt)
-> >         .ltorg
->
-> You can drop this .ltorg if you get rid of all =xxx instances.
->
-> Actually, though, I would prefer it if we could use some clever short
-> sequence of movi+add instructions, and get rid of the literal
-> altogether. Or otherwise, please use something like
->
-> ldr_l q8, .Laddends, <temp register>
->
-> instead, and move the literal into the .rodata section (and use .octa
-> so you don't break BE)
-
-Ah, .octa, neat.  Ok, I'll take a look for v2.
+> + * possible, to ensure maximum compatibility across devices, drivers and
+> + * applications.
+> + *
+> + * The authoritative list of format modifier codes is found in
+> + * `include/uapi/drm/drm_fourcc.h`
+> + */
+> +
+>  #define fourcc_code(a, b, c, d) ((__u32)(a) | ((__u32)(b) << 8) | \
+>  				 ((__u32)(c) << 16) | ((__u32)(d) << 24))
+>  
+> -- 
+> 2.16.1
+> 
 
 -- 
-Thanks,
-~Nick Desaulniers
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
