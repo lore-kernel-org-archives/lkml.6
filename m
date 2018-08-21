@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA57C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7BBC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:59:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5433217C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:59:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45A29217FF
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:59:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dpGHh12L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5433217C9
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="0Vvzei+p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45A29217FF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbeHVAVH (ORCPT
+        id S1727942AbeHVAVH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 21 Aug 2018 20:21:07 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:52750 "EHLO
+Received: from userp2120.oracle.com ([156.151.31.85]:52752 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726801AbeHVAVG (ORCPT
+        with ESMTP id S1726626AbeHVAVG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 21 Aug 2018 20:21:06 -0400
 Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7LKuw5l017113;
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7LKuvxj017041;
         Tue, 21 Aug 2018 20:59:10 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=EMUsyMD++FbCjeWKHZ1xj6y0FD6wedPmRsDrc6Pm4QY=;
- b=dpGHh12LG8aPmIZROt1nt9FpZmkR6ySb4W64twUE5LBrXfP393jPdcFo2gOylNzc9/10
- O6lgtto5cmq9mSeeV9mf8fyh73Vrm0dbLq2sBsftklCz89gNYSlU4zlGuckbv9ENzBNC
- cBdR/rotyyrJGx8KJONldHHR9Vc3awDWgHf/dyG12o7iHuT+GAbBqyD+0C8hmhNK5wS1
- SUBuKz7IRvMAK1KkwsmBg0lERefl8oGb4UYebecoTN3Qne21Ji21baATCSBTX6wfyM2A
- URT4KDcu2Ar+npDA9UZNLlbcS9q71uuXtGEX509Urtr1Ysr4aziBW4lv4enYKuL1xUSn /A== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2kxc3qq2aq-1
+ bh=LFL6ZSxE0JiKDM9ncMAccYELsjXFhz4cBGzmhpVvM3Q=;
+ b=0Vvzei+p2gDaCEaMDBK8wylS7+1EsZ+L2rp801/aI3jxh2Z8GFO42Ey2KCBniKsyv9Jt
+ fgUUOlmuBUIldKLcajd2TgGKvb0fSgj1KH4uRkuYYpPZkJtAYy9ry2XSO0JHkWGv/rRc
+ N/HrFqKXj3qRfXKyqy1dQ9rCrvA4a7TVeLUTlfDwcdaEQovhP/+9mXogNlRNii1N66Bl
+ V4/44/zJEdekpTNiEljqoInqnbARJrruHGR12d1pvkguTqERuJRCAxvtrFKNxwygIyff
+ Elyti8OEjMGOImWfALc/dkUROlHgPK8Pn4Ws3+HbjpQzjjfGflaTw8fIHKu0UbrMcjb8 3g== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2kxc3qq2am-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Tue, 21 Aug 2018 20:59:10 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7LKx94A000435
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7LKx9ue009231
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 Aug 2018 20:59:10 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7LKx9jC015319;
         Tue, 21 Aug 2018 20:59:09 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7LKx8gk032141;
+        Tue, 21 Aug 2018 20:59:08 GMT
 Received: from monkey.oracle.com (/50.38.38.67)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 21 Aug 2018 13:59:09 -0700
+        with ESMTP ; Tue, 21 Aug 2018 13:59:07 -0700
 From:   Mike Kravetz <mike.kravetz@oracle.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
@@ -60,16 +60,16 @@ Cc:     "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
         Davidlohr Bueso <dave@stgolabs.net>,
         Michal Hocko <mhocko@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [PATCH v3 2/2] hugetlb: take PMD sharing into account when flushing tlb/caches
-Date:   Tue, 21 Aug 2018 13:59:02 -0700
-Message-Id: <20180821205902.21223-3-mike.kravetz@oracle.com>
+        Mike Kravetz <mike.kravetz@oracle.com>, stable@vger.kernel.org
+Subject: [PATCH v3 1/2] mm: migration: fix migration of huge PMD shared pages
+Date:   Tue, 21 Aug 2018 13:59:01 -0700
+Message-Id: <20180821205902.21223-2-mike.kravetz@oracle.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180821205902.21223-1-mike.kravetz@oracle.com>
 References: <20180821205902.21223-1-mike.kravetz@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8992 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=815
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1807170000 definitions=main-1808210212
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,140 +77,200 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When fixing an issue with PMD sharing and migration, it was discovered
-via code inspection that other callers of huge_pmd_unshare potentially
-have an issue with cache and tlb flushing.
+The page migration code employs try_to_unmap() to try and unmap the
+source page.  This is accomplished by using rmap_walk to find all
+vmas where the page is mapped.  This search stops when page mapcount
+is zero.  For shared PMD huge pages, the page map count is always 1
+no matter the number of mappings.  Shared mappings are tracked via
+the reference count of the PMD page.  Therefore, try_to_unmap stops
+prematurely and does not completely unmap all mappings of the source
+page.
 
-Use the routine huge_pmd_sharing_possible() to calculate worst case
-ranges for mmu notifiers.  Ensure that this range is flushed if
-huge_pmd_unshare succeeds and unmaps a PUD_SUZE area.
+This problem can result is data corruption as writes to the original
+source page can happen after contents of the page are copied to the
+target page.  Hence, data is lost.
 
+This problem was originally seen as DB corruption of shared global
+areas after a huge page was soft offlined due to ECC memory errors.
+DB developers noticed they could reproduce the issue by (hotplug)
+offlining memory used to back huge pages.  A simple testcase can
+reproduce the problem by creating a shared PMD mapping (note that
+this must be at least PUD_SIZE in size and PUD_SIZE aligned (1GB on
+x86)), and using migrate_pages() to migrate process pages between
+nodes while continually writing to the huge pages being migrated.
+
+To fix, have the try_to_unmap_one routine check for huge PMD sharing
+by calling huge_pmd_unshare for hugetlbfs huge pages.  If it is a
+shared mapping it will be 'unshared' which removes the page table
+entry and drops the reference on the PMD page.  After this, flush
+caches and TLB.
+
+mmu notifiers are called before locking page tables, but we can not
+be sure of PMD sharing until page tables are locked.  Therefore,
+check for the possibility of PMD sharing before locking so that
+notifiers can prepare for the worst possible case.
+
+Fixes: 39dde65c9940 ("shared page table for hugetlb page")
+Cc: stable@vger.kernel.org
 Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
 ---
- mm/hugetlb.c | 53 +++++++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 44 insertions(+), 9 deletions(-)
+ include/linux/hugetlb.h | 14 ++++++++++++++
+ mm/hugetlb.c            | 40 +++++++++++++++++++++++++++++++++++++++
+ mm/rmap.c               | 42 ++++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 93 insertions(+), 3 deletions(-)
 
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 36fa6a2a82e3..1c6cde68487f 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -140,6 +140,8 @@ pte_t *huge_pte_alloc(struct mm_struct *mm,
+ pte_t *huge_pte_offset(struct mm_struct *mm,
+ 		       unsigned long addr, unsigned long sz);
+ int huge_pmd_unshare(struct mm_struct *mm, unsigned long *addr, pte_t *ptep);
++bool huge_pmd_sharing_possible(struct vm_area_struct *vma,
++				unsigned long *start, unsigned long *end);
+ struct page *follow_huge_addr(struct mm_struct *mm, unsigned long address,
+ 			      int write);
+ struct page *follow_huge_pd(struct vm_area_struct *vma,
+@@ -170,6 +172,18 @@ static inline unsigned long hugetlb_total_pages(void)
+ 	return 0;
+ }
+ 
++static inline int huge_pmd_unshare(struct mm_struct *mm, unsigned long *addr,
++					pte_t *ptep)
++{
++	return 0;
++}
++
++bool huge_pmd_sharing_possible(struct vm_area_struct *vma,
++				unsigned long *start, unsigned long *end)
++{
++	return false;
++}
++
+ #define follow_hugetlb_page(m,v,p,vs,a,b,i,w,n)	({ BUG(); 0; })
+ #define follow_huge_addr(mm, addr, write)	ERR_PTR(-EINVAL)
+ #define copy_hugetlb_page_range(src, dst, vma)	({ BUG(); 0; })
 diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index fd155dc52117..c31d92889775 100644
+index 3103099f64fd..fd155dc52117 100644
 --- a/mm/hugetlb.c
 +++ b/mm/hugetlb.c
-@@ -3333,8 +3333,8 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 	struct page *page;
- 	struct hstate *h = hstate_vma(vma);
- 	unsigned long sz = huge_page_size(h);
--	const unsigned long mmun_start = start;	/* For mmu_notifiers */
--	const unsigned long mmun_end   = end;	/* For mmu_notifiers */
-+	unsigned long mmun_start = start;	/* For mmu_notifiers */
-+	unsigned long mmun_end   = end;		/* For mmu_notifiers */
+@@ -4555,6 +4555,9 @@ static bool vma_shareable(struct vm_area_struct *vma, unsigned long addr)
  
- 	WARN_ON(!is_vm_hugetlb_page(vma));
- 	BUG_ON(start & ~huge_page_mask(h));
-@@ -3346,6 +3346,11 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 	 */
- 	tlb_remove_check_page_size_change(tlb, sz);
- 	tlb_start_vma(tlb, vma);
-+
-+	/*
-+	 * If sharing possible, alert mmu notifiers of worst case.
-+	 */
-+	(void)huge_pmd_sharing_possible(vma, &mmun_start, &mmun_end);
- 	mmu_notifier_invalidate_range_start(mm, mmun_start, mmun_end);
- 	address = start;
- 	for (; address < end; address += sz) {
-@@ -3356,6 +3361,10 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		ptl = huge_pte_lock(h, mm, ptep);
- 		if (huge_pmd_unshare(mm, &address, ptep)) {
- 			spin_unlock(ptl);
-+			/*
-+			 * We just unmapped a page of PMDs by clearing a PUD.
-+			 * The caller's TLB flush range should cover this area.
-+			 */
- 			continue;
- 		}
- 
-@@ -3438,12 +3447,23 @@ void unmap_hugepage_range(struct vm_area_struct *vma, unsigned long start,
- {
- 	struct mm_struct *mm;
- 	struct mmu_gather tlb;
-+	unsigned long tlb_start = start;
-+	unsigned long tlb_end = end;
-+
-+	/*
-+	 * If shared PMDs were possibly used within this vma range, adjust
-+	 * start/end for worst case tlb flushing.
-+	 * Note that we can not be sure if PMDs are shared until we try to
-+	 * unmap pages.  However, we want to make sure TLB flushing covers
-+	 * the largest possible range.
-+	 */
-+	(void)huge_pmd_sharing_possible(vma, &tlb_start, &tlb_end);
- 
- 	mm = vma->vm_mm;
- 
--	tlb_gather_mmu(&tlb, mm, start, end);
-+	tlb_gather_mmu(&tlb, mm, tlb_start, tlb_end);
- 	__unmap_hugepage_range(&tlb, vma, start, end, ref_page);
--	tlb_finish_mmu(&tlb, start, end);
-+	tlb_finish_mmu(&tlb, tlb_start, tlb_end);
- }
- 
- /*
-@@ -4309,11 +4329,21 @@ unsigned long hugetlb_change_protection(struct vm_area_struct *vma,
- 	pte_t pte;
- 	struct hstate *h = hstate_vma(vma);
- 	unsigned long pages = 0;
-+	unsigned long f_start = start;
-+	unsigned long f_end = end;
-+	bool shared_pmd = false;
-+
-+	/*
-+	 * In the case of shared PMDs, the area to flush could be beyond
-+	 * start/end.  Set f_start/f_end to cover the maximum possible
-+	 * range if PMD sharing is possible.
-+	 */
-+	(void)huge_pmd_sharing_possible(vma, &f_start, &f_end);
- 
- 	BUG_ON(address >= end);
--	flush_cache_range(vma, address, end);
-+	flush_cache_range(vma, f_start, f_end);
- 
--	mmu_notifier_invalidate_range_start(mm, start, end);
-+	mmu_notifier_invalidate_range_start(mm, f_start, f_end);
- 	i_mmap_lock_write(vma->vm_file->f_mapping);
- 	for (; address < end; address += huge_page_size(h)) {
- 		spinlock_t *ptl;
-@@ -4324,6 +4354,7 @@ unsigned long hugetlb_change_protection(struct vm_area_struct *vma,
- 		if (huge_pmd_unshare(mm, &address, ptep)) {
- 			pages++;
- 			spin_unlock(ptl);
-+			shared_pmd = true;
- 			continue;
- 		}
- 		pte = huge_ptep_get(ptep);
-@@ -4359,9 +4390,13 @@ unsigned long hugetlb_change_protection(struct vm_area_struct *vma,
- 	 * Must flush TLB before releasing i_mmap_rwsem: x86's huge_pmd_unshare
- 	 * may have cleared our pud entry and done put_page on the page table:
- 	 * once we release i_mmap_rwsem, another task can do the final put_page
--	 * and that page table be reused and filled with junk.
-+	 * and that page table be reused and filled with junk.  If we actually
-+	 * did unshare a page of pmds, flush the range corresponding to the pud.
- 	 */
--	flush_hugetlb_tlb_range(vma, start, end);
-+	if (shared_pmd)
-+		flush_hugetlb_tlb_range(vma, f_start, f_end);
-+	else
-+		flush_hugetlb_tlb_range(vma, start, end);
  	/*
- 	 * No need to call mmu_notifier_invalidate_range() we are downgrading
- 	 * page table protection not changing it to point to a new page.
-@@ -4369,7 +4404,7 @@ unsigned long hugetlb_change_protection(struct vm_area_struct *vma,
- 	 * See Documentation/vm/mmu_notifier.rst
+ 	 * check on proper vm_flags and page table alignment
++	 *
++	 * Note that this is the same check used in huge_pmd_sharing_possible.
++	 * If you change one, consider changing both.
  	 */
- 	i_mmap_unlock_write(vma->vm_file->f_mapping);
--	mmu_notifier_invalidate_range_end(mm, start, end);
-+	mmu_notifier_invalidate_range_end(mm, f_start, f_end);
- 
- 	return pages << h->order;
+ 	if (vma->vm_flags & VM_MAYSHARE &&
+ 	    vma->vm_start <= base && end <= vma->vm_end)
+@@ -4562,6 +4565,43 @@ static bool vma_shareable(struct vm_area_struct *vma, unsigned long addr)
+ 	return false;
  }
+ 
++/*
++ * Determine if start,end range within vma could be mapped by shared pmd.
++ * If yes, adjust start and end to cover range associated with possible
++ * shared pmd mappings.
++ */
++bool huge_pmd_sharing_possible(struct vm_area_struct *vma,
++				unsigned long *start, unsigned long *end)
++{
++	unsigned long check_addr = *start;
++	bool ret = false;
++
++	if (!(vma->vm_flags & VM_MAYSHARE))
++		return ret;
++
++	for (check_addr = *start; check_addr < *end; check_addr += PUD_SIZE) {
++		unsigned long a_start = check_addr & PUD_MASK;
++		unsigned long a_end = a_start + PUD_SIZE;
++
++		/*
++		 * If sharing is possible, adjust start/end if necessary.
++		 *
++		 * Note that this is the same check used in vma_shareable.  If
++		 * you change one, consider changing both.
++		 */
++		if (vma->vm_start <= a_start && a_end <= vma->vm_end) {
++			if (a_start < *start)
++				*start = a_start;
++			if (a_end > *end)
++				*end = a_end;
++
++			ret = true;
++		}
++	}
++
++	return ret;
++}
++
+ /*
+  * Search for a shareable pmd page for hugetlb. In any case calls pmd_alloc()
+  * and returns the corresponding pte. While this is not necessary for the
+diff --git a/mm/rmap.c b/mm/rmap.c
+index eb477809a5c0..8cf853a4b093 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1362,11 +1362,21 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+ 	}
+ 
+ 	/*
+-	 * We have to assume the worse case ie pmd for invalidation. Note that
+-	 * the page can not be free in this function as call of try_to_unmap()
+-	 * must hold a reference on the page.
++	 * For THP, we have to assume the worse case ie pmd for invalidation.
++	 * For hugetlb, it could be much worse if we need to do pud
++	 * invalidation in the case of pmd sharing.
++	 *
++	 * Note that the page can not be free in this function as call of
++	 * try_to_unmap() must hold a reference on the page.
+ 	 */
+ 	end = min(vma->vm_end, start + (PAGE_SIZE << compound_order(page)));
++	if (PageHuge(page)) {
++		/*
++		 * If sharing is possible, start and end will be adjusted
++		 * accordingly.
++		 */
++		(void)huge_pmd_sharing_possible(vma, &start, &end);
++	}
+ 	mmu_notifier_invalidate_range_start(vma->vm_mm, start, end);
+ 
+ 	while (page_vma_mapped_walk(&pvmw)) {
+@@ -1409,6 +1419,32 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+ 		subpage = page - page_to_pfn(page) + pte_pfn(*pvmw.pte);
+ 		address = pvmw.address;
+ 
++		if (PageHuge(page)) {
++			if (huge_pmd_unshare(mm, &address, pvmw.pte)) {
++				/*
++				 * huge_pmd_unshare unmapped an entire PMD
++				 * page.  There is no way of knowing exactly
++				 * which PMDs may be cached for this mm, so
++				 * we must flush them all.  start/end were
++				 * already adjusted above to cover this range.
++				 */
++				flush_cache_range(vma, start, end);
++				flush_tlb_range(vma, start, end);
++				mmu_notifier_invalidate_range(mm, start, end);
++
++				/*
++				 * The ref count of the PMD page was dropped
++				 * which is part of the way map counting
++				 * is done for shared PMDs.  Return 'true'
++				 * here.  When there is no other sharing,
++				 * huge_pmd_unshare returns false and we will
++				 * unmap the actual page and drop map count
++				 * to zero.
++				 */
++				page_vma_mapped_walk_done(&pvmw);
++				break;
++			}
++		}
+ 
+ 		if (IS_ENABLED(CONFIG_MIGRATION) &&
+ 		    (flags & TTU_MIGRATION) &&
 -- 
 2.17.1
 
