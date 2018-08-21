@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 075B8C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E359C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C085E21774
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C085E21774
+	by mail.kernel.org (Postfix) with ESMTP id 1F77C21779
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F77C21779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbeHUJmb (ORCPT
+        id S1727611AbeHUJme (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:42:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54894 "EHLO
+        Tue, 21 Aug 2018 05:42:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54904 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726472AbeHUJma (ORCPT
+        with ESMTP id S1726472AbeHUJmd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:42:30 -0400
+        Tue, 21 Aug 2018 05:42:33 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 219938A5;
-        Tue, 21 Aug 2018 06:23:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 525FC8A5;
+        Tue, 21 Aug 2018 06:23:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Aaron Sierra <asierra@xes-inc.com>
-Subject: [PATCH 4.18 21/35] serial: 8250_exar: Read INT0 from slave device, too
-Date:   Tue, 21 Aug 2018 08:20:47 +0200
-Message-Id: <20180821055020.923554180@linuxfoundation.org>
+        stable@vger.kernel.org, Chen Hu <hu1.chen@intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.18 22/35] serial: 8250_dw: always set baud rate in dw8250_set_termios
+Date:   Tue, 21 Aug 2018 08:20:48 +0200
+Message-Id: <20180821055020.962636124@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055019.954904905@linuxfoundation.org>
 References: <20180821055019.954904905@linuxfoundation.org>
@@ -51,49 +51,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaron Sierra <asierra@xes-inc.com>
+From: Chen Hu <hu1.chen@intel.com>
 
-commit 60ab0fafc4b652fcaf7cbc3bb8555a0cf1149c28 upstream.
+commit dfcab6ba573445c703235ab6c83758eec12d7f28 upstream.
 
-The sleep wake-up refactoring that I introduced in
+dw8250_set_termios() doesn't set baud rate if the arg "old ktermios" is
+NULL. This happens during resume.
+Call Trace:
+...
+[   54.928108] dw8250_set_termios+0x162/0x170
+[   54.928114] serial8250_set_termios+0x17/0x20
+[   54.928117] uart_change_speed+0x64/0x160
+[   54.928119] uart_resume_port
+...
 
-  commit c7e1b4059075 ("tty: serial: exar: Relocate sleep wake-up handling")
+So the baud rate is not restored after S3 and breaks the apps who use
+UART, for example, console and bluetooth etc.
 
-did not account for devices with a slave device on the expansion port.
-This patch pokes the INT0 register in the slave device, if present, in
-order to ensure that MSI interrupts don't get permanently "stuck"
-because of a sleep wake-up interrupt as described here:
+We address this issue by setting the baud rate irrespective of arg
+"old", just like the drivers for other 8250 IPs. This is tested with
+Intel Broxton platform.
 
-  commit 2c0ac5b48a35 ("serial: exar: Fix stuck MSIs")
-
-This also converts an ioread8() to readb() in order to provide visual
-consistency with the MMIO-only accessors used elsewhere in the driver.
-
-Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Aaron Sierra <asierra@xes-inc.com>
-Fixes: c7e1b4059075 ("tty: serial: exar: Relocate sleep wake-up handling")
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Chen Hu <hu1.chen@intel.com>
+Fixes: 4e26b134bd17 ("serial: 8250_dw: clock rate handling for all ACPI platforms")
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Cc: stable <stable@vger.kernel.org>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/8250/8250_exar.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/tty/serial/8250/8250_dw.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/serial/8250/8250_exar.c
-+++ b/drivers/tty/serial/8250/8250_exar.c
-@@ -433,7 +433,11 @@ static irqreturn_t exar_misc_handler(int
- 	struct exar8250 *priv = data;
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -293,7 +293,7 @@ static void dw8250_set_termios(struct ua
+ 	long rate;
+ 	int ret;
  
- 	/* Clear all PCI interrupts by reading INT0. No effect on IIR */
--	ioread8(priv->virt + UART_EXAR_INT0);
-+	readb(priv->virt + UART_EXAR_INT0);
-+
-+	/* Clear INT0 for Expansion Interface slave ports, too */
-+	if (priv->board->num_ports > 8)
-+		readb(priv->virt + 0x2000 + UART_EXAR_INT0);
+-	if (IS_ERR(d->clk) || !old)
++	if (IS_ERR(d->clk))
+ 		goto out;
  
- 	return IRQ_HANDLED;
- }
+ 	clk_disable_unprepare(d->clk);
 
 
