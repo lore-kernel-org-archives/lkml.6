@@ -2,213 +2,211 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4861AC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91725C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:25:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0178F2088F
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:25:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0178F2088F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 40037208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:25:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hp8LT5RI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40037208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbeHUJn6 (ORCPT
+        id S1728104AbeHUJn7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:43:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55312 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbeHUJn5 (ORCPT
+        Tue, 21 Aug 2018 05:43:59 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37234 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726884AbeHUJn6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:43:57 -0400
-Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4BC2516;
-        Tue, 21 Aug 2018 06:25:09 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nir Dotan <nird@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 08/42] mlxsw: core_acl_flex_actions: Return error for conflicting actions
-Date:   Tue, 21 Aug 2018 08:20:40 +0200
-Message-Id: <20180821055017.979288105@linuxfoundation.org>
+        Tue, 21 Aug 2018 05:43:58 -0400
+Received: by mail-pf1-f193.google.com with SMTP id h69-v6so44090pfd.4
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 23:25:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=L0ERylun72Tqm2zZlFo9PYhuCGovtEAs12uinNgUg6M=;
+        b=Hp8LT5RIMmnqlt1dyVIWjHI5TCHnP8i5ORPgKrp20DfU1nzckV/0kelgHu24JW7GcG
+         aOy8147A00/kZGkOfELd9PRUyGF8JpYW83Fy5beSUBWkNLByqjmFWVBl6kyNS9Afu+u9
+         cSIU/AKjxxlJaHtFZTKWTBKumgVVHERWGn50uNyGmhhuJt68qV9Qs8YgBKEocLO/gsac
+         ZHIVSWWRwhp9BW/OR2rhe56KV1uVGOf3gIElpul69ovhN6hysHavNHnaQuLXo6aCX/hz
+         3oTVenIOWvSdv74C4vmZGHCMp3PtoUGPpBSr+zRHt0AqGHkINTjSYR4R3gcSfNg2Yh5+
+         id4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=L0ERylun72Tqm2zZlFo9PYhuCGovtEAs12uinNgUg6M=;
+        b=YMKuuE1sB69vxqelY0YwHQiOwSYhi5F4Bcl4tGE3JjOIXZiKJWO6esLBwxgB6WTlGV
+         x0bteYldRBgJCrhbIcXGPdRFk3rBdOzPP5gtuv4fGRLkhXPPCp8f1McyzZvQFGvXDtrW
+         jAawBYgZUFWNFKPhV18pB9nMWtr92Y8GL48uDtb13bXOHVXE/X2jNXvJB6WAyWdWJa3E
+         5o3gjiwVNNumRcdO6IGBpELnB8vq36vWl91wxrOG6EMkLe/Lh+xO2N9lJMhOSPJnSGql
+         xzWBBoHgGrX5SCZV90jA6guHnVk3kNBGmLFjVxuaqtOVRdg0+m24MJpy0PHO0OcO5Wgu
+         kwfw==
+X-Gm-Message-State: AOUpUlH7Yn9qVyhyD/JYAMQLI7Rn8KGrE4fprLUD2emyO0GORQLuGM+5
+        lF5ANCXeUWNmnlpPGlI5faKoci6q
+X-Google-Smtp-Source: AA+uWPwud7FoTtp5epzzD1F8zdLAkpPKsdl41wNPhGqBXgvxBKd7ZvJTP2eyQ4DF8mxDs9PWk9Dd7w==
+X-Received: by 2002:a62:f0d:: with SMTP id x13-v6mr51160402pfi.123.1534832711576;
+        Mon, 20 Aug 2018 23:25:11 -0700 (PDT)
+Received: from localhost.localdomain ([39.7.47.210])
+        by smtp.gmail.com with ESMTPSA id o3-v6sm14637835pgv.53.2018.08.20.23.25.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 Aug 2018 23:25:10 -0700 (PDT)
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Martin Wilck <mwilck@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: [RFC][PATCH] lib/string: introduce sysfs_strncpy() and sysfs_strlcpy()
+Date:   Tue, 21 Aug 2018 15:24:59 +0900
+Message-Id: <20180821062459.1807-1-sergey.senozhatsky@gmail.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180821055017.596264829@linuxfoundation.org>
-References: <20180821055017.596264829@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+In sysfs ->store() callbacks we usually need to remember that a
+supplied sysfs input string might or might not contain whitespaces
+and a trailing new-line symbol, which we need to take care of.
+Examples:
+	echo "newline" > /sys/.../attr
+	echo -n "no_newine" > /sys/.../attr
 
-------------------
+That's why a typical sysfs ->store() should do something like
+below when it copies a string:
 
-From: Nir Dotan <nird@mellanox.com>
+	ssize_t FOO_store(struct device *dev, ....)
+	{
+		....
+		strlcpy(value, buf, MAX_SZ);
+		sz = strlen(value);
+		if (sz > 0 && value[sz - 1] == '\n')
+			value[sz - 1] = 0x00;
+		...
+	}
 
-[ Upstream commit 3757b255bf20ae3c941abae7624ff215bfd9ef05 ]
+or use a sysfs-string friendly strcmp() function when comparing
+a given string to a pre-defined one:
 
-Spectrum switch ACL action set is built in groups of three actions
-which may point to additional actions. A group holds a single record
-which can be set as goto record for pointing at a following group
-or can be set to mark the termination of the lookup. This is perfectly
-adequate for handling a series of actions to be executed on a packet.
-While the SW model allows configuration of conflicting actions
-where it is clear that some actions will never execute, the mlxsw
-driver must block such configurations as it creates a conflict
-over the single terminate/goto record value.
+	ssize_t FOO_store(struct device *dev, ....)
+	{
+		...
+		if (sysfs_streq(buf, "normal"))
+			mode = m_normal;
+		...
+	}
 
-For a conflicting actions configuration such as:
+Per Andrew Morton:
+: There's a LOT of code which does basically-the-same-thing with sysfs
+: input. And a lot of it misses things, such as leading whitespace.
+: Passing all this through helpers would provide consistency as well
+: as code-size reductions, improved reviewability, etc.
 
- # tc filter add dev swp49 parent ffff: \
-   protocol ip pref 10 \
-   flower skip_sw dst_ip 192.168.101.1 \
-   action goto chain 100 \
-   action mirred egress mirror dev swp4
+This patch introduces two such helpers - sysfs_strncpy() and
+sysfs_strlcpy(), which, basically, do what strncpy() and strlcpy() do,
+but additionally they remove leading and trailing white-spaces and
+tailing new-line symbols. So a FOO_store() example which was posted
+above may be rewritten to:
 
-Where it is clear that the last action will never execute, the
-mlxsw driver was issuing a warning instead of returning an error.
-Therefore replace that warning with an error for this specific
-case.
+	ssize_t FOO_store(struct device *dev, ....)
+	{
+		....
+		sysfs_strlcpy(value, buf, MAX_SZ);
+		...
+	}
 
-Fixes: 4cda7d8d7098 ("mlxsw: core: Introduce flexible actions support")
-Signed-off-by: Nir Dotan <nird@mellanox.com>
-Reviewed-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Suggested-by: Andrew Morton <akpm@linux-foundation.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_actions.c |   42 ++++++------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ include/linux/string.h |  3 +++
+ lib/string.c           | 51 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 54 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_actions.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_actions.c
-@@ -626,8 +626,8 @@ static char *mlxsw_afa_block_append_acti
- 	char *oneact;
- 	char *actions;
+diff --git a/include/linux/string.h b/include/linux/string.h
+index 4a5a0eb7df51..62b08bbc3ada 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -175,6 +175,9 @@ extern char **argv_split(gfp_t gfp, const char *str, int *argcp);
+ extern void argv_free(char **argv);
  
--	if (WARN_ON(block->finished))
--		return NULL;
-+	if (block->finished)
-+		return ERR_PTR(-EINVAL);
- 	if (block->cur_act_index + action_size >
- 	    block->afa->max_acts_per_set) {
- 		struct mlxsw_afa_set *set;
-@@ -637,7 +637,7 @@ static char *mlxsw_afa_block_append_acti
- 		 */
- 		set = mlxsw_afa_set_create(false);
- 		if (!set)
--			return NULL;
-+			return ERR_PTR(-ENOBUFS);
- 		set->prev = block->cur_set;
- 		block->cur_act_index = 0;
- 		block->cur_set->next = set;
-@@ -724,8 +724,8 @@ int mlxsw_afa_block_append_vlan_modify(s
- 						  MLXSW_AFA_VLAN_CODE,
- 						  MLXSW_AFA_VLAN_SIZE);
- 
--	if (!act)
--		return -ENOBUFS;
-+	if (IS_ERR(act))
-+		return PTR_ERR(act);
- 	mlxsw_afa_vlan_pack(act, MLXSW_AFA_VLAN_VLAN_TAG_CMD_NOP,
- 			    MLXSW_AFA_VLAN_CMD_SET_OUTER, vid,
- 			    MLXSW_AFA_VLAN_CMD_SET_OUTER, pcp,
-@@ -806,8 +806,8 @@ int mlxsw_afa_block_append_drop(struct m
- 						  MLXSW_AFA_TRAPDISC_CODE,
- 						  MLXSW_AFA_TRAPDISC_SIZE);
- 
--	if (!act)
--		return -ENOBUFS;
-+	if (IS_ERR(act))
-+		return PTR_ERR(act);
- 	mlxsw_afa_trapdisc_pack(act, MLXSW_AFA_TRAPDISC_TRAP_ACTION_NOP,
- 				MLXSW_AFA_TRAPDISC_FORWARD_ACTION_DISCARD, 0);
- 	return 0;
-@@ -820,8 +820,8 @@ int mlxsw_afa_block_append_trap(struct m
- 						  MLXSW_AFA_TRAPDISC_CODE,
- 						  MLXSW_AFA_TRAPDISC_SIZE);
- 
--	if (!act)
--		return -ENOBUFS;
-+	if (IS_ERR(act))
-+		return PTR_ERR(act);
- 	mlxsw_afa_trapdisc_pack(act, MLXSW_AFA_TRAPDISC_TRAP_ACTION_TRAP,
- 				MLXSW_AFA_TRAPDISC_FORWARD_ACTION_DISCARD,
- 				trap_id);
-@@ -836,8 +836,8 @@ int mlxsw_afa_block_append_trap_and_forw
- 						  MLXSW_AFA_TRAPDISC_CODE,
- 						  MLXSW_AFA_TRAPDISC_SIZE);
- 
--	if (!act)
--		return -ENOBUFS;
-+	if (IS_ERR(act))
-+		return PTR_ERR(act);
- 	mlxsw_afa_trapdisc_pack(act, MLXSW_AFA_TRAPDISC_TRAP_ACTION_TRAP,
- 				MLXSW_AFA_TRAPDISC_FORWARD_ACTION_FORWARD,
- 				trap_id);
-@@ -908,8 +908,8 @@ mlxsw_afa_block_append_allocated_mirror(
- 	char *act = mlxsw_afa_block_append_action(block,
- 						  MLXSW_AFA_TRAPDISC_CODE,
- 						  MLXSW_AFA_TRAPDISC_SIZE);
--	if (!act)
--		return -ENOBUFS;
-+	if (IS_ERR(act))
-+		return PTR_ERR(act);
- 	mlxsw_afa_trapdisc_pack(act, MLXSW_AFA_TRAPDISC_TRAP_ACTION_NOP,
- 				MLXSW_AFA_TRAPDISC_FORWARD_ACTION_FORWARD, 0);
- 	mlxsw_afa_trapdisc_mirror_pack(act, true, mirror_agent);
-@@ -996,8 +996,8 @@ int mlxsw_afa_block_append_fwd(struct ml
- 
- 	act = mlxsw_afa_block_append_action(block, MLXSW_AFA_FORWARD_CODE,
- 					    MLXSW_AFA_FORWARD_SIZE);
--	if (!act) {
--		err = -ENOBUFS;
-+	if (IS_ERR(act)) {
-+		err = PTR_ERR(act);
- 		goto err_append_action;
- 	}
- 	mlxsw_afa_forward_pack(act, MLXSW_AFA_FORWARD_TYPE_PBS,
-@@ -1052,8 +1052,8 @@ int mlxsw_afa_block_append_allocated_cou
+ extern bool sysfs_streq(const char *s1, const char *s2);
++extern char *sysfs_strncpy(char *dest, const char *src, size_t count);
++extern size_t sysfs_strlcpy(char *dest, const char *src, size_t size);
++
+ extern int kstrtobool(const char *s, bool *res);
+ static inline int strtobool(const char *s, bool *res)
  {
- 	char *act = mlxsw_afa_block_append_action(block, MLXSW_AFA_POLCNT_CODE,
- 						  MLXSW_AFA_POLCNT_SIZE);
--	if (!act)
--		return -ENOBUFS;
-+	if (IS_ERR(act))
-+		return PTR_ERR(act);
- 	mlxsw_afa_polcnt_pack(act, MLXSW_AFA_POLCNT_COUNTER_SET_TYPE_PACKETS_BYTES,
- 			      counter_index);
- 	return 0;
-@@ -1123,8 +1123,8 @@ int mlxsw_afa_block_append_fid_set(struc
- 	char *act = mlxsw_afa_block_append_action(block,
- 						  MLXSW_AFA_VIRFWD_CODE,
- 						  MLXSW_AFA_VIRFWD_SIZE);
--	if (!act)
--		return -ENOBUFS;
-+	if (IS_ERR(act))
-+		return PTR_ERR(act);
- 	mlxsw_afa_virfwd_pack(act, MLXSW_AFA_VIRFWD_FID_CMD_SET, fid);
- 	return 0;
+diff --git a/lib/string.c b/lib/string.c
+index 2c0900a5d51a..e81b1be00796 100644
+--- a/lib/string.c
++++ b/lib/string.c
+@@ -631,6 +631,57 @@ bool sysfs_streq(const char *s1, const char *s2)
  }
-@@ -1193,8 +1193,8 @@ int mlxsw_afa_block_append_mcrouter(stru
- 	char *act = mlxsw_afa_block_append_action(block,
- 						  MLXSW_AFA_MCROUTER_CODE,
- 						  MLXSW_AFA_MCROUTER_SIZE);
--	if (!act)
--		return -ENOBUFS;
-+	if (IS_ERR(act))
-+		return PTR_ERR(act);
- 	mlxsw_afa_mcrouter_pack(act, MLXSW_AFA_MCROUTER_RPF_ACTION_TRAP,
- 				expected_irif, min_mtu, rmid_valid, kvdl_index);
- 	return 0;
-
+ EXPORT_SYMBOL(sysfs_streq);
+ 
++/**
++ * sysfs_strncpy - Trim a length-limited C-string (wgutesoaces and a trailing
++ *                 newline symbol) and copy into a buffer
++ * @dest: Where to copy the string to
++ * @src: Where to copy the string from
++ * @count: The maximum number of bytes to copy
++ *
++ * A wrapper around strncpy().
++ *
++ */
++char *sysfs_strncpy(char *dest, const char *src, size_t count)
++{
++	char *c;
++
++	strncpy(dest, skip_spaces(src), count);
++
++	c = dest + count - 1;
++	while (c >= dest && (isspace(*c) || *c == '\n' || *c == '\0')) {
++		*c = '\0';
++		c--;
++	}
++	return dest;
++}
++EXPORT_SYMBOL(sysfs_strncpy);
++
++/**
++ * sysfs_strlcpy - Trim a C-string (whitespaces and a trailing newline symbol)
++ *                 and copy it into a sized buffer
++ * @dest: Where to copy the string to
++ * @src: Where to copy the string from
++ * @size: size of destination buffer
++ *
++ * A wrapper around strlcpy().
++ *
++ */
++size_t sysfs_strlcpy(char *dest, const char *src, size_t size)
++{
++	size_t ret;
++	char *c;
++
++	ret = strlcpy(dest, skip_spaces(src), size);
++
++	size = strlen(dest);
++	c = dest + size - 1;
++	while (c >= dest && (isspace(*c) || *c == '\n'))
++		c--;
++	*(c + 1) = '\0';
++	return ret;
++}
++EXPORT_SYMBOL(sysfs_strlcpy);
++
+ /**
+  * match_string - matches given string in an array
+  * @array:	array of strings
+-- 
+2.18.0
 
