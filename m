@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A286AC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D20C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C8BE21774
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C8BE21774
+	by mail.kernel.org (Postfix) with ESMTP id 5608221781
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5608221781
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727400AbeHUJmA (ORCPT
+        id S1727413AbeHUJmD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:42:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54818 "EHLO
+        Tue, 21 Aug 2018 05:42:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54830 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726472AbeHUJl7 (ORCPT
+        with ESMTP id S1726472AbeHUJmD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:41:59 -0400
+        Tue, 21 Aug 2018 05:42:03 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7A2258A5;
-        Tue, 21 Aug 2018 06:23:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E3FFB8A5;
+        Tue, 21 Aug 2018 06:23:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 31/35] r8169: dont use MSI-X on RTL8106e
-Date:   Tue, 21 Aug 2018 08:20:57 +0200
-Message-Id: <20180821055021.308541129@linuxfoundation.org>
+Subject: [PATCH 4.18 32/35] ip_vti: fix a null pointer deferrence when create vti fallback tunnel
+Date:   Tue, 21 Aug 2018 08:20:58 +0200
+Message-Id: <20180821055021.350226830@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055019.954904905@linuxfoundation.org>
 References: <20180821055019.954904905@linuxfoundation.org>
@@ -50,74 +51,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jian-Hong Pan <jian-hong@endlessm.com>
+From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
 
-[ Upstream commit 7bb05b85bc2d1a1b647b91424b2ed4a18e6ecd81 ]
+[ Upstream commit cd1aa9c2c665cafbd05b83507d3f1096f3912aa4 ]
 
-Found the ethernet network on ASUS X441UAR doesn't come back on resume
-from suspend when using MSI-X.  The chip is RTL8106e - version 39.
+After set fb_tunnels_only_for_init_net to 1, the itn->fb_tunnel_dev will
+be NULL and will cause following crash:
 
-[   21.848357] libphy: r8169: probed
-[   21.848473] r8169 0000:02:00.0 eth0: RTL8106e, 0c:9d:92:32:67:b4, XID
-44900000, IRQ 127
-[   22.518860] r8169 0000:02:00.0 enp2s0: renamed from eth0
-[   29.458041] Generic PHY r8169-200:00: attached PHY driver [Generic
-PHY] (mii_bus:phy_addr=r8169-200:00, irq=IGNORE)
-[   63.227398] r8169 0000:02:00.0 enp2s0: Link is Up - 100Mbps/Full -
-flow control off
-[  124.514648] Generic PHY r8169-200:00: attached PHY driver [Generic
-PHY] (mii_bus:phy_addr=r8169-200:00, irq=IGNORE)
+[ 2742.849298] BUG: unable to handle kernel NULL pointer dereference at 0000000000000941
+[ 2742.851380] PGD 800000042c21a067 P4D 800000042c21a067 PUD 42aaed067 PMD 0
+[ 2742.852818] Oops: 0002 [#1] SMP PTI
+[ 2742.853570] CPU: 7 PID: 2484 Comm: unshare Kdump: loaded Not tainted 4.18.0-rc8+ #2
+[ 2742.855163] Hardware name: Fedora Project OpenStack Nova, BIOS seabios-1.7.5-11.el7 04/01/2014
+[ 2742.856970] RIP: 0010:vti_init_net+0x3a/0x50 [ip_vti]
+[ 2742.858034] Code: 90 83 c0 48 c7 c2 20 a1 83 c0 48 89 fb e8 6e 3b f6 ff 85 c0 75 22 8b 0d f4 19 00 00 48 8b 93 00 14 00 00 48 8b 14 ca 48 8b 12 <c6> 82 41 09 00 00 04 c6 82 38 09 00 00 45 5b c3 66 0f 1f 44 00 00
+[ 2742.861940] RSP: 0018:ffff9be28207fde0 EFLAGS: 00010246
+[ 2742.863044] RAX: 0000000000000000 RBX: ffff8a71ebed4980 RCX: 0000000000000013
+[ 2742.864540] RDX: 0000000000000000 RSI: 0000000000000013 RDI: ffff8a71ebed4980
+[ 2742.866020] RBP: ffff8a71ea717000 R08: ffffffffc083903c R09: ffff8a71ea717000
+[ 2742.867505] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8a71ebed4980
+[ 2742.868987] R13: 0000000000000013 R14: ffff8a71ea5b49c0 R15: 0000000000000000
+[ 2742.870473] FS:  00007f02266c9740(0000) GS:ffff8a71ffdc0000(0000) knlGS:0000000000000000
+[ 2742.872143] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 2742.873340] CR2: 0000000000000941 CR3: 000000042bc20006 CR4: 00000000001606e0
+[ 2742.874821] Call Trace:
+[ 2742.875358]  ops_init+0x38/0xf0
+[ 2742.876078]  setup_net+0xd9/0x1f0
+[ 2742.876789]  copy_net_ns+0xb7/0x130
+[ 2742.877538]  create_new_namespaces+0x11a/0x1d0
+[ 2742.878525]  unshare_nsproxy_namespaces+0x55/0xa0
+[ 2742.879526]  ksys_unshare+0x1a7/0x330
+[ 2742.880313]  __x64_sys_unshare+0xe/0x20
+[ 2742.881131]  do_syscall_64+0x5b/0x180
+[ 2742.881933]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Here is the ethernet controller in detail:
+Reproduce:
+echo 1 > /proc/sys/net/core/fb_tunnels_only_for_init_net
+modprobe ip_vti
+unshare -n
 
-02:00.0 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd.
-RTL8101/2/6E PCI Express Fast/Gigabit Ethernet controller [10ec:8136]
-(rev 07)
-	Subsystem: ASUSTeK Computer Inc. RTL810xE PCI Express Fast
-Ethernet controller [1043:200f]
-	Flags: bus master, fast devsel, latency 0, IRQ 16
-	I/O ports at e000 [size=256]
-	Memory at ef100000 (64-bit, non-prefetchable) [size=4K]
-	Memory at e0000000 (64-bit, prefetchable) [size=16K]
-	Capabilities: <access denied>
-	Kernel driver in use: r8169
-	Kernel modules: r8169
-
-Falling back to MSI fixes the issue.
-
-Fixes: 6c6aa15fdea5 ("r8169: improve interrupt handling")
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Fixes: 79134e6ce2c9 ("net: do not create fallback tunnels for non-default namespaces")
+Cc: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/realtek/r8169.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ net/ipv4/ip_vti.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -7539,17 +7539,20 @@ static int rtl_alloc_irq(struct rtl8169_
- {
- 	unsigned int flags;
- 
--	if (tp->mac_version <= RTL_GIGA_MAC_VER_06) {
-+	switch (tp->mac_version) {
-+	case RTL_GIGA_MAC_VER_01 ... RTL_GIGA_MAC_VER_06:
- 		RTL_W8(tp, Cfg9346, Cfg9346_Unlock);
- 		RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~MSIEnable);
- 		RTL_W8(tp, Cfg9346, Cfg9346_Lock);
- 		flags = PCI_IRQ_LEGACY;
--	} else if (tp->mac_version == RTL_GIGA_MAC_VER_40) {
-+		break;
-+	case RTL_GIGA_MAC_VER_39 ... RTL_GIGA_MAC_VER_40:
- 		/* This version was reported to have issues with resume
- 		 * from suspend when using MSI-X
- 		 */
- 		flags = PCI_IRQ_LEGACY | PCI_IRQ_MSI;
--	} else {
-+		break;
-+	default:
- 		flags = PCI_IRQ_ALL_TYPES;
- 	}
+--- a/net/ipv4/ip_vti.c
++++ b/net/ipv4/ip_vti.c
+@@ -438,7 +438,8 @@ static int __net_init vti_init_net(struc
+ 	if (err)
+ 		return err;
+ 	itn = net_generic(net, vti_net_id);
+-	vti_fb_tunnel_init(itn->fb_tunnel_dev);
++	if (itn->fb_tunnel_dev)
++		vti_fb_tunnel_init(itn->fb_tunnel_dev);
+ 	return 0;
+ }
  
 
 
