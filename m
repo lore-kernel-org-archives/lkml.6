@@ -3,133 +3,241 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 093B5C43615
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80703C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:02:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8A9C217FF
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:02:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8A9C217FF
+	by mail.kernel.org (Postfix) with ESMTP id 3846B21837
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:02:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3846B21837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727761AbeHVBYq (ORCPT
+        id S1727951AbeHVBYu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 21:24:46 -0400
-Received: from sauhun.de ([88.99.104.3]:45262 "EHLO pokefinder.org"
+        Tue, 21 Aug 2018 21:24:50 -0400
+Received: from sauhun.de ([88.99.104.3]:45304 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726762AbeHVBYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 21:24:44 -0400
+        id S1726762AbeHVBYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 21:24:48 -0400
 Received: from localhost (p54B3375F.dip0.t-ipconnect.de [84.179.55.95])
-        by pokefinder.org (Postfix) with ESMTPSA id 0E64A2DA3F0;
-        Wed, 22 Aug 2018 00:02:42 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id 5EAAB2DA3F0;
+        Wed, 22 Aug 2018 00:02:48 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        dmaengine@vger.kernel.org, linux-can@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH 00/11] tree-wide: use SPDX identifier for Renesas drivers
-Date:   Wed, 22 Aug 2018 00:02:13 +0200
-Message-Id: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 04/11] mmc: use SPDX identifier for Renesas drivers
+Date:   Wed, 22 Aug 2018 00:02:17 +0200
+Message-Id: <20180821220233.9202-5-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
+References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here is my first batch of SPDX conversion patches. Mostly low hanging fruits,
-only a handful of drivers needed corrections in MODULE_LICENSE, too.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-checkpatch is happy as well.
+To be applied individually per subsystem tree. Morimoto-san, could you maybe
+ack this with your Renesas address?
 
-I think an ack from Morimoto-san with his Renesas email address would be nice
-to make it more official? Still, I *am* contracted by Renesas.
+ drivers/mmc/host/renesas_sdhi.h               | 5 +----
+ drivers/mmc/host/renesas_sdhi_core.c          | 5 +----
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 5 +----
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 5 +----
+ drivers/mmc/host/sh_mmcif.c                   | 7 ++-----
+ drivers/mmc/host/tmio_mmc.c                   | 5 +----
+ drivers/mmc/host/tmio_mmc.h                   | 6 +-----
+ drivers/mmc/host/tmio_mmc_core.c              | 5 +----
+ drivers/mmc/host/usdhi6rol0.c                 | 5 +----
+ 9 files changed, 10 insertions(+), 38 deletions(-)
 
-Thanks,
-
-   Wolfram
-
-Wolfram Sang (11):
-  clk: renesas: use SPDX identifier for Renesas drivers
-  dmaengine: use SPDX identifier for Renesas drivers
-  i2c: use SPDX identifier for Renesas drivers
-  mmc: use SPDX identifier for Renesas drivers
-  can: rcar: use SPDX identifier for Renesas drivers
-  net: ethernet: renesas: use SPDX identifier for Renesas drivers
-  phy: renesas: use SPDX identifier for Renesas drivers
-  pwm: use SPDX identifier for Renesas drivers
-  soc: renesas: use SPDX identifier for Renesas drivers
-  spi: use SPDX identifier for Renesas drivers
-  watchdog: use SPDX identifier for Renesas drivers
-
- drivers/clk/renesas/clk-div6.c                |  5 +----
- drivers/clk/renesas/r8a7795-cpg-mssr.c        |  5 +----
- drivers/clk/renesas/r8a7796-cpg-mssr.c        |  5 +----
- drivers/clk/renesas/r8a77995-cpg-mssr.c       |  5 +----
- drivers/clk/renesas/rcar-gen3-cpg.c           |  5 +----
- drivers/clk/renesas/rcar-usb2-clock-sel.c     |  5 +----
- drivers/clk/renesas/renesas-cpg-mssr.c        |  5 +----
- drivers/clk/renesas/renesas-cpg-mssr.h        |  5 +----
- drivers/dma/nbpfaxi.c                         |  5 +----
- drivers/dma/sh/shdma-arm.h                    |  5 +----
- drivers/dma/sh/shdma-base.c                   |  5 +----
- drivers/dma/sh/shdma-of.c                     |  5 +----
- drivers/dma/sh/shdma-r8a73a4.c                |  5 +----
- drivers/dma/sh/shdma.h                        |  6 +-----
- drivers/dma/sh/shdmac.c                       |  6 +-----
- drivers/dma/sh/sudmac.c                       |  5 +----
- drivers/dma/sh/usb-dmac.c                     |  5 +----
- drivers/i2c/busses/i2c-emev2.c                |  5 +----
- drivers/i2c/busses/i2c-highlander.c           |  5 +----
- drivers/i2c/busses/i2c-rcar.c                 | 10 +---------
- drivers/i2c/busses/i2c-riic.c                 |  5 +----
- drivers/i2c/busses/i2c-sh_mobile.c            | 10 +---------
- drivers/mmc/host/renesas_sdhi.h               |  5 +----
- drivers/mmc/host/renesas_sdhi_core.c          |  5 +----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |  5 +----
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  5 +----
- drivers/mmc/host/sh_mmcif.c                   |  7 ++-----
- drivers/mmc/host/tmio_mmc.c                   |  5 +----
- drivers/mmc/host/tmio_mmc.h                   |  6 +-----
- drivers/mmc/host/tmio_mmc_core.c              |  5 +----
- drivers/mmc/host/usdhi6rol0.c                 |  5 +----
- drivers/net/can/rcar/rcar_can.c               |  6 +-----
- drivers/net/can/rcar/rcar_canfd.c             |  6 +-----
- drivers/net/ethernet/renesas/ravb.h           |  5 +----
- drivers/net/ethernet/renesas/ravb_main.c      |  5 +----
- drivers/net/ethernet/renesas/sh_eth.c         | 13 +------------
- drivers/net/ethernet/renesas/sh_eth.h         | 13 +------------
- drivers/phy/renesas/phy-rcar-gen2.c           |  5 +----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c      |  5 +----
- drivers/phy/renesas/phy-rcar-gen3-usb3.c      |  5 +----
- drivers/pwm/pwm-rcar.c                        |  5 +----
- drivers/pwm/pwm-renesas-tpu.c                 | 10 +---------
- drivers/soc/renesas/r8a7743-sysc.c            |  5 +----
- drivers/soc/renesas/r8a7745-sysc.c            |  5 +----
- drivers/soc/renesas/r8a7779-sysc.c            |  5 +----
- drivers/soc/renesas/r8a7790-sysc.c            |  5 +----
- drivers/soc/renesas/r8a7791-sysc.c            |  5 +----
- drivers/soc/renesas/r8a7792-sysc.c            |  5 +----
- drivers/soc/renesas/r8a7794-sysc.c            |  5 +----
- drivers/soc/renesas/r8a7795-sysc.c            |  5 +----
- drivers/soc/renesas/r8a7796-sysc.c            |  5 +----
- drivers/soc/renesas/r8a77970-sysc.c           |  5 +----
- drivers/soc/renesas/r8a77995-sysc.c           |  5 +----
- drivers/soc/renesas/rcar-sysc.h               |  5 +----
- drivers/soc/renesas/renesas-soc.c             | 10 +---------
- drivers/spi/spi-rspi.c                        | 10 +---------
- drivers/spi/spi-sh-hspi.c                     | 12 ++----------
- drivers/spi/spi-sh-msiof.c                    |  6 +-----
- drivers/spi/spi-sh.c                          | 12 ++----------
- drivers/watchdog/renesas_wdt.c                |  5 +----
- 60 files changed, 63 insertions(+), 300 deletions(-)
-
+diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
+index f13f798d8506..da1e49c45bec 100644
+--- a/drivers/mmc/host/renesas_sdhi.h
++++ b/drivers/mmc/host/renesas_sdhi.h
+@@ -1,12 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Renesas Mobile SDHI
+  *
+  * Copyright (C) 2017 Horms Solutions Ltd., Simon Horman
+  * Copyright (C) 2017 Renesas Electronics Corporation
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #ifndef RENESAS_SDHI_H
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 777e32b0e410..68ece2f183cf 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Renesas SDHI
+  *
+@@ -6,10 +7,6 @@
+  * Copyright (C) 2016-17 Horms Solutions, Simon Horman
+  * Copyright (C) 2009 Magnus Damm
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Based on "Compaq ASIC3 support":
+  *
+  * Copyright 2001 Compaq Computer Corporation.
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 35cc0de6be67..a3e03c473bb2 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * DMA support for Internal DMAC with SDHI SD/SDIO controller
+  *
+  * Copyright (C) 2016-17 Renesas Electronics Corporation
+  * Copyright (C) 2016-17 Horms Solutions, Simon Horman
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #include <linux/bitops.h>
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index 890f192dedbd..f5fcbb5dc8cd 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * DMA support use of SYS DMAC with SDHI SD/SDIO controller
+  *
+@@ -5,10 +6,6 @@
+  * Copyright (C) 2016-17 Sang Engineering, Wolfram Sang
+  * Copyright (C) 2017 Horms Solutions, Simon Horman
+  * Copyright (C) 2010-2011 Guennadi Liakhovetski
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #include <linux/device.h>
+diff --git a/drivers/mmc/host/sh_mmcif.c b/drivers/mmc/host/sh_mmcif.c
+index 4c2a1f8ddbf3..81bd9afb0980 100644
+--- a/drivers/mmc/host/sh_mmcif.c
++++ b/drivers/mmc/host/sh_mmcif.c
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * MMCIF eMMC driver.
+  *
+  * Copyright (C) 2010 Renesas Solutions Corp.
+  * Yusuke Goda <yusuke.goda.sx@renesas.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License.
+  */
+ 
+ /*
+@@ -1573,6 +1570,6 @@ static struct platform_driver sh_mmcif_driver = {
+ module_platform_driver(sh_mmcif_driver);
+ 
+ MODULE_DESCRIPTION("SuperH on-chip MMC/eMMC interface driver");
+-MODULE_LICENSE("GPL");
++MODULE_LICENSE("GPL v2");
+ MODULE_ALIAS("platform:" DRIVER_NAME);
+ MODULE_AUTHOR("Yusuke Goda <yusuke.goda.sx@renesas.com>");
+diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+index 43a2ea5cff24..36d8e7db00e6 100644
+--- a/drivers/mmc/host/tmio_mmc.c
++++ b/drivers/mmc/host/tmio_mmc.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Driver for the MMC / SD / SDIO cell found in:
+  *
+@@ -7,10 +8,6 @@
+  * Copyright (C) 2017 Horms Solutions, Simon Horman
+  * Copyright (C) 2007 Ian Molton
+  * Copyright (C) 2004 Ian Molton
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #include <linux/device.h>
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 5d141f79e175..efa5a1e3e5af 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Driver for the MMC / SD / SDIO cell found in:
+  *
+@@ -8,11 +9,6 @@
+  * Copyright (C) 2016-17 Horms Solutions, Simon Horman
+  * Copyright (C) 2007 Ian Molton
+  * Copyright (C) 2004 Ian Molton
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  */
+ 
+ #ifndef TMIO_MMC_H
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 261b4d62d2b1..b750f6372dc2 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Driver for the MMC / SD / SDIO IP found in:
+  *
+@@ -10,10 +11,6 @@
+  * Copyright (C) 2007 Ian Molton
+  * Copyright (C) 2004 Ian Molton
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * This driver draws mainly on scattered spec sheets, Reverse engineering
+  * of the toshiba e800  SD driver and some parts of the 2.4 ASIC3 driver (4 bit
+  * support). (Further 4 bit support from a later datasheet).
+diff --git a/drivers/mmc/host/usdhi6rol0.c b/drivers/mmc/host/usdhi6rol0.c
+index cdfeb15b6f05..cd8b1b9d4d8a 100644
+--- a/drivers/mmc/host/usdhi6rol0.c
++++ b/drivers/mmc/host/usdhi6rol0.c
+@@ -1,10 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (C) 2013-2014 Renesas Electronics Europe Ltd.
+  * Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of version 2 of the GNU General Public License as
+- * published by the Free Software Foundation.
+  */
+ 
+ #include <linux/clk.h>
 -- 
 2.11.0
 
