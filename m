@@ -2,387 +2,177 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3292C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 10:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8166BC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 10:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76D292170E
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 10:19:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 240A72170E
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 10:20:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hE8rue7L";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iEMPm4k1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76D292170E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q9tDhGht"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 240A72170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbeHUNjD (ORCPT
+        id S1726935AbeHUNkX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 09:39:03 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49122 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbeHUNjD (ORCPT
+        Tue, 21 Aug 2018 09:40:23 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:41929 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbeHUNkX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 09:39:03 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1C24E6101A; Tue, 21 Aug 2018 10:19:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1534846768;
-        bh=Gf8WAFA5eaJX+cOw/5/t5HuJRIPrpwqTBDGoMn2FsNU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hE8rue7LM4mpJUc5d/whgImJHHmRRWn4FJtPmLLD6sQWzNL6mRwWCVFSAK7vC5jfn
-         nwAE26+8PB/S7JoK4ppjclTM5k1CPi1F84lvShjcYlzx0Bg4zqU9xe6v8CkFn/zSRd
-         KoWaamYf7N0sUUDyeyTGY9FEbbsvqqg8HPjSxEro=
-Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8BB1460FA8;
-        Tue, 21 Aug 2018 10:19:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1534846766;
-        bh=Gf8WAFA5eaJX+cOw/5/t5HuJRIPrpwqTBDGoMn2FsNU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iEMPm4k1Mwrlk1KnXKDWhPzn5QmygQQwYb0b9xPlw6O8Ywe9wJiIgTmnTdhTNa2ff
-         NJzum3xX6oiEvnXfSKFnA9S02hJMgFbSla6SAANKPcPHxIRxTrj2WVKSTq4WnYB4bs
-         JRklsybs4CyY5czPeOYwKZtzEyYF3Tt+kXmGnoyg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8BB1460FA8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-From:   Sayali Lokhande <sayalil@codeaurora.org>
-To:     subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        evgreen@chromium.org, riteshh@codeaurora.org
-Cc:     adrian.hunter@intel.com, linux-scsi@vger.kernel.org,
-        Sayali Lokhande <sayalil@codeaurora.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V9 2/2] scsi: ufs: Add configfs support for UFS provisioning
-Date:   Tue, 21 Aug 2018 15:47:29 +0530
-Message-Id: <1534846649-2456-3-git-send-email-sayalil@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1534846649-2456-1-git-send-email-sayalil@codeaurora.org>
-References: <1534846649-2456-1-git-send-email-sayalil@codeaurora.org>
+        Tue, 21 Aug 2018 09:40:23 -0400
+Received: by mail-oi0-f68.google.com with SMTP id k12-v6so31074103oiw.8
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 03:20:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vA/JCh58R8QCWFOfit0ENKup+HumIfAXgVw9J6ORBpQ=;
+        b=Q9tDhGhtbvA+cr9Ju0Lvfp06cSfLvNtfFA+NRIr+mFUslfuI5m4zBq6AeyBKr+FrQE
+         zT6z2d0Y7McjxbY/VD1ixYyeYUp7OZ3h37w4gkqKtZuCIONF8iygFUnMRvD2izkUJPoL
+         ExH/dt002ZUJ04h9G88RZ7Oi2kWKFTiL9wRyxp5PNk/giE7Te1HevS87y9M5kmNvrOJv
+         ySvIr3ll4Gajy05RS6TbnjbIjJJ2n4cD9Q+FvacCPYQOdnAO3znv5RqnomCf5cYiwkg7
+         keMn1oU/a38t7ZGQ5/ZvOeJslkQabZs7dIPWk7rBAwGYGoOwcEFZoAgVKN356B5zt+vP
+         vXEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vA/JCh58R8QCWFOfit0ENKup+HumIfAXgVw9J6ORBpQ=;
+        b=fV0bi6vh3YRe8p9KaG0LhGu+B5xSZgSvCf6OtmQigNzaTEX9jo3TgXPS8TR8sfMe/u
+         5/V5BmfmzCWnKdeX2ehQ/uKTWJC+vLzb/4RjhDmOG7iRWYjXyhnCwkap6E6pmXFKYmcb
+         mHl/Nvcluc1vkpptdmCa1BQWq823lzOmyEcUUQ2rTN5UXWehCcLLGLc8XctqWh5yFuSa
+         Yg1SNbEfns3H7azn6FMdFtvKXhQwQdXXNaIXmeRV5xhi0Yx0TsJdPkCqQUP9Uh9VSuO3
+         PgED/yGUMeeZDJAOxyciTsuaTNPI88SBSXjBY3M/3EB8P9NvYsqwJjbaqcw67x5/IIvT
+         JCbg==
+X-Gm-Message-State: APzg51CKp44LPBbRFgwl1EolsBdPuvSVbogEsx8gG/wgJUK+HGarTijU
+        p2big4oCB8HZxogNBzmPd3+uIxCEhsXsb9PODncxeQTF4uY=
+X-Google-Smtp-Source: AA+uWPyypTAArbYaUNX7sNXNDO041yxEdsbK3HraN60Jj7avjXgi4a1PZOTPAuh6AQLI+OrJVkMLnvO+8GiIl4S4o1A=
+X-Received: by 2002:aca:4784:: with SMTP id u126-v6mr18234488oia.229.1534846848271;
+ Tue, 21 Aug 2018 03:20:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180817221624.10232-1-casey.schaufler@intel.com>
+ <20180817221624.10232-3-casey.schaufler@intel.com> <CAG48ez23G+wcnkCMNZV_mxYMS=h+pZkpx1451Wz5GB9_tcDv3Q@mail.gmail.com>
+ <99FC4B6EFCEFD44486C35F4C281DC6732143F769@ORSMSX107.amr.corp.intel.com>
+In-Reply-To: <99FC4B6EFCEFD44486C35F4C281DC6732143F769@ORSMSX107.amr.corp.intel.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 21 Aug 2018 12:20:21 +0200
+Message-ID: <CAG48ez1LHOHvB4ud+8asOjKARVLQJGV4ocdKVDJtvTXTfeMa9w@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 2/5] X86: Support LSM determination of side-channel vulnerability
+To:     Casey Schaufler <casey.schaufler@intel.com>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        selinux@tycho.nsa.gov, Dave Hansen <dave.hansen@intel.com>,
+        deneen.t.dock@intel.com, kristen@linux.intel.com,
+        Arjan van de Ven <arjan@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds configfs support to provision UFS device at
-runtime. This feature can be primarily useful in factory or
-assembly line as some devices may be required to be configured
-multiple times during initial system development phase.
-Configuration Descriptors can be written multiple times until
-bConfigDescrLock attribute is zero.
+On Mon, Aug 20, 2018 at 4:45 PM Schaufler, Casey
+<casey.schaufler@intel.com> wrote:
+>
+> > -----Original Message-----
+> > From: Jann Horn [mailto:jannh@google.com]
+> > Sent: Friday, August 17, 2018 4:55 PM
+> > To: Schaufler, Casey <casey.schaufler@intel.com>
+> > Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>; kernel list
+> > <linux-kernel@vger.kernel.org>; linux-security-module <linux-security-
+> > module@vger.kernel.org>; selinux@tycho.nsa.gov; Hansen, Dave
+> > <dave.hansen@intel.com>; Dock, Deneen T <deneen.t.dock@intel.com>;
+> > kristen@linux.intel.com; Arjan van de Ven <arjan@linux.intel.com>
+> > Subject: Re: [PATCH RFC v2 2/5] X86: Support LSM determination of side-
+> > channel vulnerability
+> >
+> > On Sat, Aug 18, 2018 at 12:17 AM Casey Schaufler
+> > <casey.schaufler@intel.com> wrote:
+> > >
+> > > From: Casey Schaufler <cschaufler@localhost.localdomain>
+> > >
+> > > When switching between tasks it may be necessary
+> > > to set an indirect branch prediction barrier if the
+> > > tasks are potentially vulnerable to side-channel
+> > > attacks. This adds a call to security_task_safe_sidechannel
+> > > so that security modules can weigh in on the decision.
+> > >
+> > > Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
+> > > ---
+> > >  arch/x86/mm/tlb.c | 12 ++++++++----
+> > >  1 file changed, 8 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+> > > index 6eb1f34c3c85..8714d4af06aa 100644
+> > > --- a/arch/x86/mm/tlb.c
+> > > +++ b/arch/x86/mm/tlb.c
+> > > @@ -7,6 +7,7 @@
+> > >  #include <linux/export.h>
+> > >  #include <linux/cpu.h>
+> > >  #include <linux/debugfs.h>
+> > > +#include <linux/security.h>
+> > >
+> > >  #include <asm/tlbflush.h>
+> > >  #include <asm/mmu_context.h>
+> > > @@ -270,11 +271,14 @@ void switch_mm_irqs_off(struct mm_struct *prev,
+> > struct mm_struct *next,
+> > >                  * threads. It will also not flush if we switch to idle
+> > >                  * thread and back to the same process. It will flush if we
+> > >                  * switch to a different non-dumpable process.
+> > > +                * If a security module thinks that the transition
+> > > +                * is unsafe do the flush.
+> > >                  */
+> > > -               if (tsk && tsk->mm &&
+> > > -                   tsk->mm->context.ctx_id != last_ctx_id &&
+> > > -                   get_dumpable(tsk->mm) != SUID_DUMP_USER)
+> > > -                       indirect_branch_prediction_barrier();
+> > > +               if (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id) {
+> > > +                       if (get_dumpable(tsk->mm) != SUID_DUMP_USER ||
+> > > +                           security_task_safe_sidechannel(tsk) != 0)
+> > > +                               indirect_branch_prediction_barrier();
+> > > +               }
+> >
+> > When you posted v1 of this series, I asked:
+> >
+> > | Does this enforce transitivity? What happens if we first switch from
+> > | an attacker task to a task without ->mm, and immediately afterwards
+> > | from the task without ->mm to a victim task? In that case, whether a
+> > | flush happens between the attacker task and the victim task depends on
+> > | whether the LSM thinks that the mm-less task should have access to the
+> > | victim task, right?
+> >
+> > Have you addressed that? I don't see it...
+>
+> Nope. That's going to require maintaining state about all the
+> tasks in the chain that might still have cache involvement.
+>
+>         A -> B -> C -> D
 
-Configuration descriptor buffer consists of Device and Unit
-descriptor configurable parameters which are parsed from vendor
-specific provisioning file and then passed via configfs node at
-runtime to provision ufs device.
-CONFIG_CONFIGFS_FS needs to be enabled for using this feature.
+Really?
 
-Usage:
-1) To read current configuration descriptor :
-   cat /config/XXXX.ufshc/ufs_provision
-2) To provision ufs device:
-   echo <config_desc_buf> > /config/XXXX.ufshc/ufs_provision
+From what I can tell, it'd be enough to:
 
-Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
----
- Documentation/ABI/testing/configfs-driver-ufs |  18 +++
- drivers/scsi/ufs/Kconfig                      |  10 ++
- drivers/scsi/ufs/Makefile                     |   1 +
- drivers/scsi/ufs/ufs-configfs.c               | 157 ++++++++++++++++++++++++++
- drivers/scsi/ufs/ufshcd.c                     |   3 +-
- drivers/scsi/ufs/ufshcd.h                     |  18 +++
- 6 files changed, 206 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
- create mode 100644 drivers/scsi/ufs/ufs-configfs.c
+ - ensure that the LSM-based access checks behave approximately transitively
+   (which I think they already do, mostly)
+ - keep a copy of the metadata of the last non-kernel task on the CPU
 
-diff --git a/Documentation/ABI/testing/configfs-driver-ufs b/Documentation/ABI/testing/configfs-driver-ufs
-new file mode 100644
-index 0000000..eeee499c
---- /dev/null
-+++ b/Documentation/ABI/testing/configfs-driver-ufs
-@@ -0,0 +1,18 @@
-+What:		/config/ufshcd/ufs_provision
-+Date:		Jun 2018
-+KernelVersion:	4.14
-+Description:
-+		This file shows the current ufs configuration descriptor set in device.
-+		This can be used to provision ufs device if bConfigDescrLock is 0.
-+		For more details, refer 14.1.6.3 Configuration Descriptor and
-+		Table 14-12 - Unit Descriptor configurable parameters from specs for
-+		description of each configuration descriptor parameter.
-+		Configuration descriptor buffer needs to be passed in space separated
-+		format specificied as below:
-+		echo <bLength> <bDescriptorIDN> <bConfDescContinue> <bBootEnable>
-+		<bDescrAccessEn> <bInitPowerMode> <bHighPriorityLUN>
-+		<bSecureRemovalType> <bInitActiveICCLevel> <wPeriodicRTCUpdate>
-+		<0Bh:0Fh_ReservedAs_0> <bLUEnable> <bBootLunID> <bLUWriteProtect>
-+		<bMemoryType> <dNumAllocUnits> <bDataReliability> <bLogicalBlockSize>
-+		<bProvisioningType> <wContextCapabilities> <0Dh:0Fh_ReservedAs_0>
-+		> /config/XXXX.ufshc/ufs_provision
-diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
-index e27b4d4..a9a0a58 100644
---- a/drivers/scsi/ufs/Kconfig
-+++ b/drivers/scsi/ufs/Kconfig
-@@ -100,3 +100,13 @@ config SCSI_UFS_QCOM
- 
- 	  Select this if you have UFS controller on QCOM chipset.
- 	  If unsure, say N.
-+
-+config UFS_PROVISION
-+	tristate "Runtime UFS Provisioning support"
-+	depends on SCSI_UFSHCD && CONFIGFS_FS
-+	help
-+	  This enables runtime UFS provisioning support. This can be used
-+	  primarily during assembly line as some devices may be required to
-+	  be configured multiple times during initial development phase.
-+
-+	  If unsure, say N.
-diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
-index 918f579..00110ea 100644
---- a/drivers/scsi/ufs/Makefile
-+++ b/drivers/scsi/ufs/Makefile
-@@ -5,5 +5,6 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-d
- obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
- obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
- ufshcd-core-objs := ufshcd.o ufs-sysfs.o
-+obj-$(CONFIG_UFS_PROVISION) += ufs-configfs.o
- obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
- obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
-diff --git a/drivers/scsi/ufs/ufs-configfs.c b/drivers/scsi/ufs/ufs-configfs.c
-new file mode 100644
-index 0000000..09607e5
---- /dev/null
-+++ b/drivers/scsi/ufs/ufs-configfs.c
-@@ -0,0 +1,157 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+// Copyright (c) 2018, Linux Foundation.
-+
-+#include <linux/configfs.h>
-+#include <linux/err.h>
-+#include <linux/string.h>
-+
-+#include "ufs.h"
-+#include "ufshcd.h"
-+
-+static inline struct ufs_hba *config_item_to_hba(struct config_item *item)
-+{
-+	struct config_group *group = to_config_group(item);
-+	struct configfs_subsystem *subsys = to_configfs_subsystem(group);
-+	struct ufs_hba *hba = container_of(subsys, struct ufs_hba, subsys);
-+
-+	return subsys ? hba : NULL;
-+}
-+
-+static ssize_t ufs_provision_show(struct config_item *item, char *buf)
-+{
-+	u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
-+	int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
-+	int i, ret, curr_len = 0;
-+	struct ufs_hba *hba = config_item_to_hba(item);
-+
-+	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_READ_DESC,
-+		QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
-+
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < buff_len; i++)
-+		curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
-+				"0x%x ", desc_buf[i]);
-+
-+	return curr_len;
-+}
-+
-+ssize_t ufshcd_desc_configfs_store(struct ufs_hba *hba,
-+		const char *buf, size_t count)
-+{
-+	char *strbuf;
-+	char *strbuf_copy;
-+	u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
-+	int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
-+	char *token;
-+	int i, ret, value;
-+	u32 config_desc_lock = 0;
-+
-+	/* reserve one byte for null termination */
-+	strbuf = kmalloc(count + 1, GFP_KERNEL);
-+	if (!strbuf)
-+		return -ENOMEM;
-+
-+	strbuf_copy = strbuf;
-+	strlcpy(strbuf, buf, count + 1);
-+
-+	/* Just return if bConfigDescrLock is already set */
-+	ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-+		QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &config_desc_lock);
-+	if (ret)
-+		goto out;
-+
-+	if (config_desc_lock) {
-+		dev_err(hba->dev, "%s: bConfigDescrLock already set to %u, cannot re-provision device!\n",
-+		__func__, config_desc_lock);
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	for (i = 0; i < QUERY_DESC_CONFIGURATION_DEF_SIZE; i++) {
-+		token = strsep(&strbuf, " ");
-+		if (!token && i)
-+			break;
-+
-+		ret = kstrtoint(token, 0, &value);
-+		if (ret) {
-+			dev_err(hba->dev, "%s: kstrtoint failed %d %s\n",
-+				__func__, ret, token);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+		desc_buf[i] = (u8)value;
-+	}
-+
-+	/* Write configuration descriptor to provision ufs */
-+	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
-+		QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
-+
-+	if (!ret)
-+		dev_err(hba->dev, "%s: UFS Provisioning done, reboot now!\n",
-+		__func__);
-+
-+out:
-+	kfree(strbuf_copy);
-+	if (ret)
-+		return ret;
-+	return count;
-+}
-+
-+static ssize_t ufs_provision_store(struct config_item *item,
-+		const char *buf, size_t count)
-+{
-+	struct ufs_hba *hba = config_item_to_hba(item);
-+
-+	return ufshcd_desc_configfs_store(hba, buf, count);
-+}
-+
-+static struct configfs_attribute ufshcd_attr_provision = {
-+	.ca_name	= "ufs_provision",
-+	.ca_mode	= 0644,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_provision_show,
-+	.store		= ufs_provision_store,
-+};
-+
-+static struct configfs_attribute *ufshcd_attrs[] = {
-+	&ufshcd_attr_provision,
-+	NULL,
-+};
-+
-+static struct config_item_type ufscfg_type = {
-+	.ct_attrs	= ufshcd_attrs,
-+	.ct_owner	= THIS_MODULE,
-+};
-+
-+static struct configfs_subsystem ufscfg_subsys = {
-+	.su_group = {
-+		.cg_item = {
-+			.ci_type = &ufscfg_type,
-+		},
-+	},
-+};
-+
-+int ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
-+{
-+	int ret;
-+	struct configfs_subsystem *subsys = &hba->subsys;
-+
-+	strncpy(ufscfg_subsys.su_group.cg_item.ci_namebuf, name, strlen(name));
-+	subsys->su_group = ufscfg_subsys.su_group;
-+	config_group_init(&subsys->su_group);
-+	mutex_init(&subsys->su_mutex);
-+	ret = configfs_register_subsystem(subsys);
-+	if (ret)
-+		pr_err("Error %d while registering subsystem %s\n",
-+		       ret,
-+		       subsys->su_group.cg_item.ci_namebuf);
-+
-+	return ret;
-+}
-+
-+void ufshcd_configfs_exit(void)
-+{
-+	configfs_unregister_subsystem(&ufscfg_subsys);
-+}
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index e946844..11b28bf 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -7713,6 +7713,7 @@ int ufshcd_shutdown(struct ufs_hba *hba)
- void ufshcd_remove(struct ufs_hba *hba)
- {
- 	ufs_sysfs_remove_nodes(hba->dev);
-+	ufshcd_configfs_exit();
- 	scsi_remove_host(hba->host);
- 	/* disable interrupts */
- 	ufshcd_disable_intr(hba, hba->intr_mask);
-@@ -7967,7 +7968,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 
- 	async_schedule(ufshcd_async_scan, hba);
- 	ufs_sysfs_add_nodes(hba->dev);
--
-+	ufshcd_configfs_init(hba, dev_name(hba->dev));
- 	return 0;
- 
- out_remove_scsi_host:
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 45013b6..c5956b2 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -37,6 +37,7 @@
- #ifndef _UFSHCD_H
- #define _UFSHCD_H
- 
-+#include <linux/configfs.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-@@ -515,6 +516,9 @@ struct ufs_hba {
- 
- 	struct Scsi_Host *host;
- 	struct device *dev;
-+#ifdef CONFIG_UFS_PROVISION
-+	struct configfs_subsystem subsys;
-+#endif
- 	/*
- 	 * This field is to keep a reference to "scsi_device" corresponding to
- 	 * "UFS device" W-LU.
-@@ -868,6 +872,20 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
- int ufshcd_hold(struct ufs_hba *hba, bool async);
- void ufshcd_release(struct ufs_hba *hba);
- 
-+/* Expose UFS configfs API's */
-+#ifndef CONFIG_UFS_PROVISION
-+static inline int ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
-+{
-+	return 0;
-+}
-+static inline void ufshcd_configfs_exit(void)
-+{
-+}
-+#else
-+int ufshcd_configfs_init(struct ufs_hba *hba, const char *name);
-+void ufshcd_configfs_exit(void);
-+#endif
-+
- int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn desc_id,
- 	int *desc_length);
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> If B and C don't do anything cacheworthy D could conceivably attack A.
+> The amount of state required to detect this case would be prohibitive.
+> I think that if you're sufficiently concerned about this case you should just
+> go ahead and set the barrier. I'm willing to learn something that says I'm
+> wrong.
 
+That means that an attacker who can e.g. get a CPU to first switch
+from an attacker task to a softirqd (e.g. for network packet
+processing or whatever), then switch from the softirqd to a root-owned
+victim task would be able to bypass the check, right? That doesn't
+sound like a very complicated attack...
+
+I very much dislike the idea of adding a mitigation with a known
+bypass technique to the kernel.
