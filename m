@@ -2,84 +2,607 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66EB9C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8683C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23CCE216C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:15:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23CCE216C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 3A738216C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:17:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A738216C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbeHUQft (ORCPT
+        id S1727741AbeHUQhY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 12:35:49 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:49646 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726907AbeHUQft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 12:35:49 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 2SVsYDHxrXxb; Tue, 21 Aug 2018 15:15:25 +0200 (CEST)
-Received: from nazgul.tnic (77-85-47-250.ip.btc-net.bg [77.85.47.250])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 21 Aug 2018 12:37:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38490 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726907AbeHUQhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 12:37:24 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AF0491EC028D;
-        Tue, 21 Aug 2018 15:15:24 +0200 (CEST)
-Date:   Tue, 21 Aug 2018 15:15:41 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH 2/2] x86/MCE/AMD: Skip creating kobjects with NULL names
-Message-ID: <20180821131541.GE30528@nazgul.tnic>
-References: <20180809140834.59264-1-Yazen.Ghannam@amd.com>
- <20180809140834.59264-2-Yazen.Ghannam@amd.com>
- <20180809161806.GB20928@nazgul.tnic>
- <BN7PR12MB259395675EBD74400D9FEBE5F8250@BN7PR12MB2593.namprd12.prod.outlook.com>
- <20180815155452.GB28669@nazgul.tnic>
- <BN7PR12MB2593C9819A949A2F7571FAB7F83E0@BN7PR12MB2593.namprd12.prod.outlook.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 4642A4B75D;
+        Tue, 21 Aug 2018 13:17:14 +0000 (UTC)
+Received: from [10.36.117.96] (ovpn-117-96.ams2.redhat.com [10.36.117.96])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 370C52026D64;
+        Tue, 21 Aug 2018 13:17:11 +0000 (UTC)
+Subject: Re: [RFC v2 2/2] mm/memory_hotplug: Shrink spanned pages when
+ offlining memory
+To:     Oscar Salvador <osalvador@techadventures.net>,
+        akpm@linux-foundation.org
+Cc:     mhocko@suse.com, dan.j.williams@intel.com, jglisse@redhat.com,
+        jonathan.cameron@huawei.com, Pavel.Tatashin@microsoft.com,
+        yasu.isimatu@gmail.com, logang@deltatee.com, dave.jiang@intel.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Oscar Salvador <osalvador@suse.de>
+References: <20180817154127.28602-1-osalvador@techadventures.net>
+ <20180817154127.28602-3-osalvador@techadventures.net>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <a18525a5-ea5f-5e7a-8765-a6c0e38ddd21@redhat.com>
+Date:   Tue, 21 Aug 2018 15:17:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20180817154127.28602-3-osalvador@techadventures.net>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <BN7PR12MB2593C9819A949A2F7571FAB7F83E0@BN7PR12MB2593.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 21 Aug 2018 13:17:14 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 21 Aug 2018 13:17:14 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 06:46:33PM +0000, Ghannam, Yazen wrote:
-> Future SMCA systems may have banks whose MCA_IPID is not known so we
+> add_device_memory is in charge of
 
-You lost me here. How would the IPID not be known? Are you talking about
-an old kernel running on new HW and thus the HardwareID in its MCA_IPID
-to be unknown to the old kernel?
+I wouldn't use the terminology of onlining/offlining here. That applies
+rather to memory that is exposed to the rest of the system (e.g. buddy
+allocator, has underlying memory block devices). I guess it is rather a
+pure setup/teardown of that device memory.
 
-> In the past, the sysfs entries were named something like "th_bank#" before
-> each bank was given a more descriptive name. We can go back to this format
-> as a fallback for unrecognized bank types. This will fix the issue with sysfs
-> failing and also the interface will still work on new hardware.
+> 
+> a) calling either arch_add_memory() or add_pages(), depending on whether
+>    we want a linear mapping
+> b) online the memory sections that correspond to the pfn range
+> c) calling move_pfn_range_to_zone() being zone ZONE_DEVICE to
+>    expand zone/pgdat spanned pages and initialize its pages
+> 
+> del_device_memory, on the other hand, is in charge of
+> 
+> a) offline the memory sections that correspond to the pfn range
+> b) calling shrink_pages(), which shrinks node/zone spanned pages.
+> c) calling either arch_remove_memory() or __remove_pages(), depending on
+>    whether we need to tear down the linear mapping or not
+> 
+> These two functions are called from:
+> 
+> add_device_memory:
+> 	- devm_memremap_pages()
+> 	- hmm_devmem_pages_create()
+> 
+> del_device_memory:
+> 	- devm_memremap_pages_release()
+> 	- hmm_devmem_release()
+> 
+> I think that this will get easier as soon as [1] gets merged.
+> 
+> Finally, shrink_pages() is moved to offline_pages(), so now,
+> all pages/zone handling is being taken care in online/offline_pages stage.
+> 
+> [1] https://lkml.org/lkml/2018/6/19/110
+> 
 
-You could do: th_bank#<HardwareID> so that we can find what it is by
-grepping the PPR.
+[...]
 
-> I agree. I just wanted to make a small change and fix this issue. I
-> think there's a lot we can do to clean up the thresholding code going
-> forward.
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index f90fa077b0c4..d04338ffabec 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -1152,15 +1152,9 @@ int __ref arch_remove_memory(int nid, u64 start, u64 size, struct vmem_altmap *a
+>  {
+>  	unsigned long start_pfn = start >> PAGE_SHIFT;
+>  	unsigned long nr_pages = size >> PAGE_SHIFT;
+> -	struct page *page = pfn_to_page(start_pfn);
+> -	struct zone *zone;
+>  	int ret;
+>  
+> -	/* With altmap the first mapped page is offset from @start */
+> -	if (altmap)
+> -		page += vmem_altmap_offset(altmap);
+> -	zone = page_zone(page);
+> -	ret = __remove_pages(zone, start_pfn, nr_pages, altmap);
+> +	ret = __remove_pages(nid, start_pfn, nr_pages, altmap);
 
-ACK.
+These changes certainly look nice.
+
+[...]
+
+> index 7a832b844f24..95df37686196 100644
+> --- a/kernel/memremap.c
+> +++ b/kernel/memremap.c
+> @@ -119,6 +119,8 @@ static void devm_memremap_pages_release(void *data)
+>  	struct dev_pagemap *pgmap = data;
+>  	struct device *dev = pgmap->dev;
+>  	struct resource *res = &pgmap->res;
+> +	struct vmem_altmap *altmap = pgmap->altmap_valid ?
+> +					&pgmap->altmap : NULL;
+>  	resource_size_t align_start, align_size;
+>  	unsigned long pfn;
+>  	int nid;
+> @@ -138,8 +140,7 @@ static void devm_memremap_pages_release(void *data)
+>  	nid = dev_to_node(dev);
+>  
+>  	mem_hotplug_begin();
+
+I would really like to see the mem_hotplug_begin/end also getting moved
+inside add_device_memory()/del_device_memory(). (just like for
+add/remove_memory)
+
+I wonder if kasan_ stuff actually requires this lock, or if it could
+also be somehow moved inside add_device_memory/del_device_memory.
+
+> -	arch_remove_memory(nid, align_start, align_size, pgmap->altmap_valid ?
+> -			&pgmap->altmap : NULL);
+> +	del_device_memory(nid, align_start, align_size, altmap, true);
+>  	kasan_remove_zero_shadow(__va(align_start), align_size);
+>  	mem_hotplug_done();
+>  
+> @@ -175,7 +176,7 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
+>  {
+>  	resource_size_t align_start, align_size, align_end;
+>  	struct vmem_altmap *altmap = pgmap->altmap_valid ?
+> -			&pgmap->altmap : NULL;
+> +					&pgmap->altmap : NULL;
+>  	struct resource *res = &pgmap->res;
+>  	unsigned long pfn, pgoff, order;
+>  	pgprot_t pgprot = PAGE_KERNEL;
+> @@ -249,11 +250,8 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
+>  		goto err_kasan;
+>  	}
+>  
+> -	error = arch_add_memory(nid, align_start, align_size, altmap, false);
+> -	if (!error)
+> -		move_pfn_range_to_zone(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
+> -					align_start >> PAGE_SHIFT,
+> -					align_size >> PAGE_SHIFT, altmap);
+> +	error = add_device_memory(nid, align_start, align_size, altmap, true);
+> +
+>  	mem_hotplug_done();
+>  	if (error)
+>  		goto err_add_memory;
+> diff --git a/kernel/resource.c b/kernel/resource.c
+> index 30e1bc68503b..8e68b5ca67ca 100644
+> --- a/kernel/resource.c
+> +++ b/kernel/resource.c
+> @@ -1262,6 +1262,22 @@ int release_mem_region_adjustable(struct resource *parent,
+>  			continue;
+>  		}
+>  
+> +		/*
+> +		 * All memory regions added from memory-hotplug path
+> +		 * have the flag IORESOURCE_SYSTEM_RAM.
+> +		 * IORESOURCE_SYSTEM_RAM = (IORESOURCE_MEM|IORESOURCE_SYSRAM)
+> +		 * If the resource does not have this flag, we know that
+> +		 * we are dealing with a resource coming from HMM/devm.
+> +		 * HMM/devm use another mechanism to add/release a resource.
+> +		 * This goes via devm_request_mem_region/devm_release_mem_region.
+> +		 * HMM/devm take care to release their resources when they want, so
+> +		 * if we are dealing with them, let us just back off nicely
+> +		 */
+
+Maybe shorten that a bit
+
+"HMM/devm memory does not have IORESOURCE_SYSTEM_RAM set. They use
+ devm_request_mem_region/devm_release_mem_region to add/release a
+ resource. Just back off here."
+
+> +		if (!(res->flags & IORESOURCE_SYSRAM)) {
+> +			ret = 0;
+> +			break;
+> +		}
+> +
+>  		if (!(res->flags & IORESOURCE_MEM))
+>  			break;
+>  
+> diff --git a/mm/hmm.c b/mm/hmm.c
+> index 21787e480b4a..23ce7fbdb651 100644
+> --- a/mm/hmm.c
+> +++ b/mm/hmm.c
+> @@ -996,6 +996,7 @@ static void hmm_devmem_release(struct device *dev, void *data)
+>  	struct zone *zone;
+>  	struct page *page;
+>  	int nid;
+> +	bool mapping;
+>  
+>  	if (percpu_ref_tryget_live(&devmem->ref)) {
+>  		dev_WARN(dev, "%s: page mapping is still live!\n", __func__);
+> @@ -1012,12 +1013,14 @@ static void hmm_devmem_release(struct device *dev, void *data)
+>  
+>  	mem_hotplug_begin();
+>  	if (resource->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY)
+> -		__remove_pages(zone, start_pfn, npages, NULL);
+> +		mapping = false;
+>  	else
+> -		arch_remove_memory(nid, start_pfn << PAGE_SHIFT,
+> -				   npages << PAGE_SHIFT, NULL);
+> -	mem_hotplug_done();
+> +		mapping = true;
+>  
+> +	del_device_memory(nid, start_pfn << PAGE_SHIFT, npages << PAGE_SHIFT,
+> +									NULL,
+> +									mapping);
+> +	mem_hotplug_done();
+>  	hmm_devmem_radix_release(resource);
+>  }
+>  
+> @@ -1027,6 +1030,7 @@ static int hmm_devmem_pages_create(struct hmm_devmem *devmem)
+>  	struct device *device = devmem->device;
+>  	int ret, nid, is_ram;
+>  	unsigned long pfn;
+> +	bool mapping;
+>  
+>  	align_start = devmem->resource->start & ~(PA_SECTION_SIZE - 1);
+>  	align_size = ALIGN(devmem->resource->start +
+> @@ -1085,7 +1089,6 @@ static int hmm_devmem_pages_create(struct hmm_devmem *devmem)
+>  	if (nid < 0)
+>  		nid = numa_mem_id();
+>  
+> -	mem_hotplug_begin();
+>  	/*
+>  	 * For device private memory we call add_pages() as we only need to
+>  	 * allocate and initialize struct page for the device memory. More-
+> @@ -1096,21 +1099,18 @@ static int hmm_devmem_pages_create(struct hmm_devmem *devmem)
+>  	 * For device public memory, which is accesible by the CPU, we do
+>  	 * want the linear mapping and thus use arch_add_memory().
+>  	 */
+> +	mem_hotplug_begin();
+>  	if (devmem->pagemap.type == MEMORY_DEVICE_PUBLIC)
+> -		ret = arch_add_memory(nid, align_start, align_size, NULL,
+> -				false);
+> +		mapping = true;
+>  	else
+> -		ret = add_pages(nid, align_start >> PAGE_SHIFT,
+> -				align_size >> PAGE_SHIFT, NULL, false);
+> -	if (ret) {
+> -		mem_hotplug_done();
+> -		goto error_add_memory;
+> -	}
+> -	move_pfn_range_to_zone(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
+> -				align_start >> PAGE_SHIFT,
+> -				align_size >> PAGE_SHIFT, NULL);
+> +		mapping = false;
+> +
+> +	ret = add_device_memory(nid, align_start, align_size, NULL, mapping);
+>  	mem_hotplug_done();
+>  
+> +	if (ret)
+> +		goto error_add_memory;
+> +
+>  	for (pfn = devmem->pfn_first; pfn < devmem->pfn_last; pfn++) {
+>  		struct page *page = pfn_to_page(pfn);
+>  
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 9bd629944c91..60b67f09956e 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -320,12 +320,10 @@ static unsigned long find_smallest_section_pfn(int nid, struct zone *zone,
+>  				     unsigned long start_pfn,
+>  				     unsigned long end_pfn)
+>  {
+> -	struct mem_section *ms;
+> -
+>  	for (; start_pfn < end_pfn; start_pfn += PAGES_PER_SECTION) {
+> -		ms = __pfn_to_section(start_pfn);
+> +		struct mem_section *ms = __pfn_to_section(start_pfn);
+>  
+> -		if (unlikely(!valid_section(ms)))
+> +		if (unlikely(!online_section(ms)))
+>  			continue;
+>  
+>  		if (unlikely(pfn_to_nid(start_pfn) != nid))
+> @@ -345,15 +343,14 @@ static unsigned long find_biggest_section_pfn(int nid, struct zone *zone,
+>  				    unsigned long start_pfn,
+>  				    unsigned long end_pfn)
+>  {
+> -	struct mem_section *ms;
+>  	unsigned long pfn;
+>  
+>  	/* pfn is the end pfn of a memory section. */
+>  	pfn = end_pfn - 1;
+>  	for (; pfn >= start_pfn; pfn -= PAGES_PER_SECTION) {
+> -		ms = __pfn_to_section(pfn);
+> +		struct mem_section *ms = __pfn_to_section(pfn);
+>  
+> -		if (unlikely(!valid_section(ms)))
+> +		if (unlikely(!online_section(ms)))
+>  			continue;
+>  
+>  		if (unlikely(pfn_to_nid(pfn) != nid))
+> @@ -415,7 +412,7 @@ static void shrink_zone_span(struct zone *zone, unsigned long start_pfn,
+>  	for (; pfn < zone_end_pfn; pfn += PAGES_PER_SECTION) {
+>  		ms = __pfn_to_section(pfn);
+>  
+> -		if (unlikely(!valid_section(ms)))
+> +		if (unlikely(!online_section(ms)))
+>  			continue;
+>  
+>  		if (page_zone(pfn_to_page(pfn)) != zone)
+> @@ -502,23 +499,33 @@ static void shrink_pgdat_span(struct pglist_data *pgdat,
+>  	pgdat->node_spanned_pages = 0;
+>  }
+>  
+> -static void __remove_zone(struct zone *zone, unsigned long start_pfn)
+> +static void shrink_pages(struct zone *zone, unsigned long start_pfn,
+> +						unsigned long end_pfn,
+> +						unsigned long offlined_pages)
+>  {
+>  	struct pglist_data *pgdat = zone->zone_pgdat;
+>  	int nr_pages = PAGES_PER_SECTION;
+>  	unsigned long flags;
+> +	unsigned long pfn;
+>  
+> -	pgdat_resize_lock(zone->zone_pgdat, &flags);
+> -	shrink_zone_span(zone, start_pfn, start_pfn + nr_pages);
+> -	shrink_pgdat_span(pgdat, start_pfn, start_pfn + nr_pages);
+> -	pgdat_resize_unlock(zone->zone_pgdat, &flags);
+> +	zone->present_pages -= offlined_pages;
+> +
+> +	clear_zone_contiguous(zone);
+> +	pgdat_resize_lock(pgdat, &flags);
+> +
+> +	for(pfn = start_pfn; pfn < end_pfn; pfn += nr_pages) {
+> +		shrink_zone_span(zone, pfn, pfn + nr_pages);
+> +		shrink_pgdat_span(pgdat, pfn, pfn + nr_pages);
+> +	}
+> +	pgdat->node_present_pages -= offlined_pages;
+> +
+> +	pgdat_resize_unlock(pgdat, &flags);
+> +	set_zone_contiguous(zone);
+>  }
+>  
+> -static int __remove_section(struct zone *zone, struct mem_section *ms,
+> +static int __remove_section(int nid, struct mem_section *ms,
+>  		unsigned long map_offset, struct vmem_altmap *altmap)
+>  {
+> -	unsigned long start_pfn;
+> -	int scn_nr;
+>  	int ret = -EINVAL;
+>  
+>  	if (!valid_section(ms))
+> @@ -528,17 +535,13 @@ static int __remove_section(struct zone *zone, struct mem_section *ms,
+>  	if (ret)
+>  		return ret;
+>  
+> -	scn_nr = __section_nr(ms);
+> -	start_pfn = section_nr_to_pfn((unsigned long)scn_nr);
+> -	__remove_zone(zone, start_pfn);
+> -
+> -	sparse_remove_one_section(zone, ms, map_offset, altmap);
+> +	sparse_remove_one_section(nid, ms, map_offset, altmap);
+>  	return 0;
+>  }
+>  
+>  /**
+>   * __remove_pages() - remove sections of pages from a zone
+> - * @zone: zone from which pages need to be removed
+> + * @nid: nid from which pages belong to
+>   * @phys_start_pfn: starting pageframe (must be aligned to start of a section)
+>   * @nr_pages: number of pages to remove (must be multiple of section size)
+>   * @altmap: alternative device page map or %NULL if default memmap is used
+> @@ -548,35 +551,27 @@ static int __remove_section(struct zone *zone, struct mem_section *ms,
+>   * sure that pages are marked reserved and zones are adjust properly by
+>   * calling offline_pages().
+>   */
+> -int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
+> +int __remove_pages(int nid, unsigned long phys_start_pfn,
+>  		 unsigned long nr_pages, struct vmem_altmap *altmap)
+>  {
+>  	unsigned long i;
+>  	unsigned long map_offset = 0;
+>  	int sections_to_remove, ret = 0;
+> +	resource_size_t start, size;
+>  
+> -	/* In the ZONE_DEVICE case device driver owns the memory region */
+> -	if (is_dev_zone(zone)) {
+> -		if (altmap)
+> -			map_offset = vmem_altmap_offset(altmap);
+> -	} else {
+> -		resource_size_t start, size;
+> -
+> -		start = phys_start_pfn << PAGE_SHIFT;
+> -		size = nr_pages * PAGE_SIZE;
+> +	start = phys_start_pfn << PAGE_SHIFT;
+> +	size = nr_pages * PAGE_SIZE;
+>  
+> -		ret = release_mem_region_adjustable(&iomem_resource, start,
+> -					size);
+> -		if (ret) {
+> -			resource_size_t endres = start + size - 1;
+> +	if (altmap)
+> +		map_offset = vmem_altmap_offset(altmap);
+>  
+> -			pr_warn("Unable to release resource <%pa-%pa> (%d)\n",
+> -					&start, &endres, ret);
+> -		}
+> +	ret = release_mem_region_adjustable(&iomem_resource, start, size);
+> +	if (ret) {
+> +		resource_size_t endres = start + size - 1;
+> +		pr_warn("Unable to release resource <%pa-%pa> (%d)\n",
+> +						&start, &endres, ret);
+>  	}
+>  
+> -	clear_zone_contiguous(zone);
+> -
+>  	/*
+>  	 * We can only remove entire sections
+>  	 */
+> @@ -587,15 +582,13 @@ int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
+>  	for (i = 0; i < sections_to_remove; i++) {
+>  		unsigned long pfn = phys_start_pfn + i*PAGES_PER_SECTION;
+>  
+> -		ret = __remove_section(zone, __pfn_to_section(pfn), map_offset,
+> -				altmap);
+> +		ret = __remove_section(nid, __pfn_to_section(pfn), map_offset,
+> +									altmap);
+>  		map_offset = 0;
+>  		if (ret)
+>  			break;
+>  	}
+>  
+> -	set_zone_contiguous(zone);
+> -
+>  	return ret;
+>  }
+>  #endif /* CONFIG_MEMORY_HOTREMOVE */
+> @@ -1595,7 +1588,6 @@ static int __ref __offline_pages(unsigned long start_pfn,
+>  	unsigned long pfn, nr_pages;
+>  	long offlined_pages;
+>  	int ret, node;
+> -	unsigned long flags;
+>  	unsigned long valid_start, valid_end;
+>  	struct zone *zone;
+>  	struct memory_notify arg;
+> @@ -1665,11 +1657,9 @@ static int __ref __offline_pages(unsigned long start_pfn,
+>  	undo_isolate_page_range(start_pfn, end_pfn, MIGRATE_MOVABLE);
+>  	/* removal success */
+>  	adjust_managed_page_count(pfn_to_page(start_pfn), -offlined_pages);
+> -	zone->present_pages -= offlined_pages;
+>  
+> -	pgdat_resize_lock(zone->zone_pgdat, &flags);
+> -	zone->zone_pgdat->node_present_pages -= offlined_pages;
+> -	pgdat_resize_unlock(zone->zone_pgdat, &flags);
+> +	/* Here we will shrink zone/node's spanned/present_pages */
+> +	shrink_pages(zone, valid_start, valid_end, offlined_pages);
+>  
+>  	init_per_zone_wmark_min();
+>  
+> @@ -1902,4 +1892,57 @@ void __ref remove_memory(int nid, u64 start, u64 size)
+>  	mem_hotplug_done();
+>  }
+>  EXPORT_SYMBOL_GPL(remove_memory);
+> +
+> +static int __del_device_memory(int nid, unsigned long start, unsigned long size,
+> +				struct vmem_altmap *altmap, bool mapping)
+> +{
+> +	int ret;
+> +	unsigned long start_pfn = PHYS_PFN(start);
+> +	unsigned long nr_pages = size >> PAGE_SHIFT;
+> +	struct zone *zone = &NODE_DATA(nid)->node_zones[ZONE_DEVICE];
+> +
+> +	offline_mem_sections(start_pfn, start_pfn + nr_pages);
+> +	shrink_pages(zone, start_pfn, start_pfn + nr_pages, 0);
+> +
+> +	if (mapping)
+> +		ret = arch_remove_memory(nid, start, size, altmap);
+> +	else
+> +		ret = __remove_pages(nid, start_pfn, nr_pages, altmap);
+> +
+> +	return ret;
+> +}
+> +
+> +int del_device_memory(int nid, unsigned long start, unsigned long size,
+> +			struct vmem_altmap *altmap, bool mapping)
+> +{
+> +	return __del_device_memory(nid, start, size, altmap, mapping);
+> +}
+>  #endif /* CONFIG_MEMORY_HOTREMOVE */
+> +
+> +static int __add_device_memory(int nid, unsigned long start, unsigned long size,
+> +				struct vmem_altmap *altmap, bool mapping)
+> +{
+> +	int ret;
+> +        unsigned long start_pfn = PHYS_PFN(start);
+> +        unsigned long nr_pages = size >> PAGE_SHIFT;
+> +
+> +	if (mapping)
+> +		ret = arch_add_memory(nid, start, size, altmap, false);
+> +        else
+> +		ret = add_pages(nid, start_pfn, nr_pages, altmap, false);
+> +
+> +	if (!ret) {
+> +		struct zone *zone = &NODE_DATA(nid)->node_zones[ZONE_DEVICE];
+> +
+> +		online_mem_sections(start_pfn, start_pfn + nr_pages);
+> +		move_pfn_range_to_zone(zone, start_pfn, nr_pages, altmap);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +int add_device_memory(int nid, unsigned long start, unsigned long size,
+> +				struct vmem_altmap *altmap, bool mapping)
+> +{
+> +	return __add_device_memory(nid, start, size, altmap, mapping);
+> +}
+
+Any reason for these indirections?
+
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index 10b07eea9a6e..016020bd20b5 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -766,12 +766,12 @@ static void free_section_usemap(struct page *memmap, unsigned long *usemap,
+>  		free_map_bootmem(memmap);
+>  }
+
+
+I guess for readability, this patch could be split up into several
+patches. E.g. factoring out of add_device_memory/del_device_memory,
+release_mem_region_adjustable change ...
 
 -- 
-Regards/Gruss,
-    Boris.
 
-ECO tip #101: Trim your mails when you reply.
---
+Thanks,
+
+David / dhildenb
