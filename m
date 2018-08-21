@@ -2,163 +2,133 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_MUTT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7218FC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 192A1C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2022D2177F
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:54:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lxKZ9Q+F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2022D2177F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id D73E72177F
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:55:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D73E72177F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727544AbeHUWPh (ORCPT
+        id S1727608AbeHUWQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 18:15:37 -0400
-Received: from mail-pg1-f176.google.com ([209.85.215.176]:33925 "EHLO
-        mail-pg1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727291AbeHUWPh (ORCPT
+        Tue, 21 Aug 2018 18:16:20 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39684 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727549AbeHUWQU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 18:15:37 -0400
-Received: by mail-pg1-f176.google.com with SMTP id y5-v6so8870095pgv.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 11:54:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=eDP3J3WmsoXeJC+IogDc2Ql6ygKt2z7zmKuDC4K7ytY=;
-        b=lxKZ9Q+FkazkoUsKzbXw03WbFALJ+UBqWn1OlPvtdzOf7c8X4hkiLTIXaJXK17piQW
-         Qoa7bgWRi+kHf4K4Ve855B4+dPac3taLOry2Re5qBdHQ9NpiiFYF3UR92Jb1tLhTDIZS
-         kStqCYy5ta1MmpJLwcYJzf0TAcrSGWj6OoqlqAU+mntgAVLsdMx9PK0luNBW4RZd8T82
-         0msw07s4LDAUGIL1y0+Wc0K/HMLCMkbELfBNpgxPdoMCRSYipAQtmR7ycNfIKowCBRGe
-         q7txsGPiLL/QFtP430RAj2QSHf76UdXf+rXABikZ2PxQdfhslJBHPlNr6rg2TKygv7Db
-         j6Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=eDP3J3WmsoXeJC+IogDc2Ql6ygKt2z7zmKuDC4K7ytY=;
-        b=kXSqw0z74+1uB5p1dC0APLaMCZc64dJRFo6W77iCOLvDzvMisg315EEe+0RVHPme0y
-         K3NAEl2xr3wq/RvrcodMxreVrN4J+KhKCHqbNf4c8ouCdCAEO+qoC+yuPD//WypRF9Hc
-         CS0mHjWW5LGmBbQYqt2cog5EQ7+EY+axTKHlzvkSCCB4DACuQbzUjEUaBnYlsBtUJE04
-         1QB4MsgtIQaBy7G0KDZohx+Xk9kUPaPEYmXt7orTZ3OLozqiK0DtY5N+BFuiOBHWF4zM
-         YFrj1rsS/baBQc783/dWL5+M5WchESgdDeVVzCkdwIcAeEN+NDvS88HnPYVDfJ4LcmU8
-         ophA==
-X-Gm-Message-State: APzg51DITqaiMJjr1wk9kaO8hzTlpcjxYTGJR2iMTkDL/4VrEGBoZqz3
-        dwiK9YqqkDEu2aDZywTise4xzqfisiM=
-X-Google-Smtp-Source: ANB0VdZf3V4k+fQICcar8qfl+C0U2P1ON7Rhhil1AlfVUJCWDNQXnXYlXXV5Ai8SFvY7a0dOCmeg8w==
-X-Received: by 2002:a63:5126:: with SMTP id f38-v6mr1917700pgb.30.1534877656591;
-        Tue, 21 Aug 2018 11:54:16 -0700 (PDT)
-Received: from decatoncale.mtv.corp.google.com ([2620:15c:202:1:c562:226a:6d78:2ae4])
-        by smtp.gmail.com with ESMTPSA id f6-v6sm20502862pgf.52.2018.08.21.11.54.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 Aug 2018 11:54:15 -0700 (PDT)
-Date:   Tue, 21 Aug 2018 11:54:13 -0700
-From:   Benson Leung <bleung@google.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, bleung@chromium.org
-Subject: [GIT PULL] chrome-platform updates for v4.19
-Message-ID: <20180821185413.GA40305@decatoncale.mtv.corp.google.com>
+        Tue, 21 Aug 2018 18:16:20 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7LIsDNB094342
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 14:54:59 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m0ndtqmgn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 14:54:59 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Tue, 21 Aug 2018 19:54:56 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 21 Aug 2018 19:54:53 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7LIspsk19857500
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 21 Aug 2018 18:54:51 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C35AAA404D;
+        Tue, 21 Aug 2018 21:54:51 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D928CA4051;
+        Tue, 21 Aug 2018 21:54:49 +0100 (BST)
+Received: from oc0155643701.ibm.com (unknown [9.145.63.66])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 21 Aug 2018 21:54:49 +0100 (BST)
+Subject: Re: [PATCH v9 22/22] s390: doc: detailed specifications for AP
+ virtualization
+To:     Tony Krowiak <akrowiak@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-23-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180820180359.38cc4af3.cohuck@redhat.com>
+ <a305a39b-1196-ae64-97fd-f970387d82d4@linux.ibm.com>
+From:   Halil Pasic <pasic@linux.ibm.com>
+Date:   Tue, 21 Aug 2018 20:54:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <a305a39b-1196-ae64-97fd-f970387d82d4@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18082118-0016-0000-0000-000001F9CC1B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082118-0017-0000-0000-000032501CE0
+Message-Id: <af7d64a8-23fb-7953-57e8-18683a4f334d@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-21_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808210193
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---gKMricLos+KVdGMg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On 08/20/2018 10:16 PM, Tony Krowiak wrote:
+>> Does the SIE complain if you specify a control
+>> domain that the host does not have access to (I'd guess so)?
+> 
+> The SIE does not complain if you specify a domain to which the host - or a
+> lower level guest - does not have access. The firmware performs a logical
+> AND of the guest's and hosts's - or lower level guest's - APMs, AQMs and ADMs
 
-The following changes since commit 021c91791a5e7e85c567452f1be3e4c2c6cb6063:
+Rather a bit-wise AND, I guess (of the same type masks corresponding to Guest 1 and
+Guest 2). The result of a logical AND is a logical value (true or false) as
+far as I remember.
 
-  Linux 4.18-rc3 (2018-07-01 16:04:53 -0700)
+> to create effective masks EAPM, EAQM and EADM. Only devices corresponding to
+> the bits set in the EAPM, EAQM and EADM will be accessible by the guest.
 
-are available in the Git repository at:
+I'm not sure what is the intended meaning of 'the SIE complains'. If it means
+getting out of (SIE when interpreting lets say an NQAP under the discussed
+circumstances) with some sort of error code, I think Tony's answer, ' SIE does not complain'
+makes a lot of sense. It's the guest that's is trying to stretch further than
+the blanket reaches, and it's the guest that needs to be educated on this fact.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git =
-tags/chrome-platform-for-linus-4.19
+AFAIR SIE does the right thing (whatever the right thing is) and we don't have to
+worry about it.
 
-for you to fetch changes up to 40291fb75123816b35ba06696e56b9cf2d96bf90:
+As a matter of fact I can't recall exactly what is supposed to happen
+when a guest tries to modify a domain such that the guest does not
+have privileges to modify (in terms of EADM, either because the
+guest or because the host does not have the corresponding bit set). I'm sure
+I did not try it out. Tony did you test this scenario? (BTW my best guess
+at the moment is, that the situation is handled via the command-reply.)
 
-  Merge tag 'ib-platform-chrome-mfd-move-cros-ec-transport-for-4.19' into w=
-orking-branch-for-4.19 (2018-07-09 16:36:00 -0700)
-
-----------------------------------------------------------------
-Minor changes this time around for 4.19.
-
-cros_ec_i2c and cros_ec_spi drivers moved from mfd
-to chrome platform.
-
-----------------------------------------------------------------
-Benson Leung (2):
-      platform/chrome: chromeos_tbmc - fix SPDX identifier
-      Merge tag 'ib-platform-chrome-mfd-move-cros-ec-transport-for-4.19' in=
-to working-branch-for-4.19
-
-Enric Balletbo i Serra (3):
-      platform/chrome: Move cros-ec transport drivers to drivers/platform.
-      arm/arm64: configs: Remove the MFD_ prefix for MFD_CROS_EC_I2C/SPI sy=
-mbols.
-      Input: keyboard: Fix ChromeOS EC keyboard help message.
-
- arch/arm/configs/exynos_defconfig              |  4 ++--
- arch/arm/configs/multi_v7_defconfig            |  4 ++--
- arch/arm/configs/pxa_defconfig                 |  4 ++--
- arch/arm64/configs/defconfig                   |  4 ++--
- drivers/input/keyboard/Kconfig                 |  2 +-
- drivers/mfd/Kconfig                            | 20 --------------------
- drivers/mfd/Makefile                           |  2 --
- drivers/platform/chrome/Kconfig                | 20 ++++++++++++++++++++
- drivers/platform/chrome/Makefile               |  2 ++
- drivers/platform/chrome/chromeos_tbmc.c        | 10 +++++++++-
- drivers/{mfd =3D> platform/chrome}/cros_ec_i2c.c |  0
- drivers/{mfd =3D> platform/chrome}/cros_ec_spi.c |  0
- 12 files changed, 40 insertions(+), 32 deletions(-)
- rename drivers/{mfd =3D> platform/chrome}/cros_ec_i2c.c (100%)
- rename drivers/{mfd =3D> platform/chrome}/cros_ec_spi.c (100%)
+Regards,
+Halil
 
 
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
-
---gKMricLos+KVdGMg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlt8X9UACgkQHwn1ewov
-5lhjmRAAiwIQLxx7vbhzc7q7gvHuSDPPfEPSCfzlEAgq7UORSXFvZ8BAsqBPDKIm
-5mtg9FLYvmVMtx088icfOLGOzycfsGIlvN0RY6UqM6uAFt1BQcsNAChrz+WTE7u+
-HKFU7JZcSKyiArESxN0neYpm9XMv+5MvZVpfqkCMmppxBcelzBV5G+yyXaJU7DQF
-01I8MDVsNlv+RESVbHsD09jVbDGC9qIXnsP5GNRY/ncbW5k5TP4X8VTcTBqThY2o
-b1n0SYzyE/5aC/uIoqq97yIe1DBbR0VG/6FrZ+wZ0AoquBrfrZzb79FLuJ5270J6
-KQCMITJO2UGLghvjMoX0Ouf249gHCa1SLOIzOAys73VNS6iAKK1MG49kENpoezqo
-ku2wfd5mtLvY52TPl6suyuITTk83aEvNPfYuABYYMkCrpTTFIxHczaPbNVfDboyk
-Tl/glXI+P60xY/FAhGzxPvUtVvbjCTUiD4S9SKSl1S+qQ2/v0Yn08Ds9FhVq26In
-x8K5przHuIp05u/7DPo5pPctlpx92aWnJO/soG8IV6+JlFBk+skc1or7ZYMUR7Qh
-QWJK4fjVxXDmqkn51JBJE2t+24siywSRmPlKDz9KTA8t5fE0bVhYGQvPtFuewwcE
-JpDApQxy8bcKwGU4wwwL01ShD6RGO9oQA8Cx0GSmRviw83HQiWs=
-=nk1l
------END PGP SIGNATURE-----
-
---gKMricLos+KVdGMg--
