@@ -2,219 +2,173 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96FB1C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD6CDC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30CE121570
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:45:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64FCB2151D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:46:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QR1Ucz5U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30CE121570
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uct1UE2g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64FCB2151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbeHVAHP (ORCPT
+        id S1727835AbeHVAIG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 20:07:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33712 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726626AbeHVAHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 20:07:15 -0400
-Received: from mail-qt0-f172.google.com (mail-qt0-f172.google.com [209.85.216.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC4B921867;
-        Tue, 21 Aug 2018 20:45:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534884333;
-        bh=GKE1ituJ24vBedy6472t4ihE+QvDQalZHAMrkkwheiw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=QR1Ucz5UPGzNMh7vafTKbYbpSyoNq2D4DqIUBCsfWCM+4dFTWVdzP3X9eu5zBnnO1
-         od3QjwJ6fyR8UOE65CTSgTLWCyi2HyPU4QdpcDfNtqgE8gnqmvIYIPOxG6vzdUa8fr
-         b93k5Ij05pu9PK9PsjAmk8KR5SheCv0DKJ7xqcU8=
-Received: by mail-qt0-f172.google.com with SMTP id f18-v6so21900457qtp.10;
-        Tue, 21 Aug 2018 13:45:32 -0700 (PDT)
-X-Gm-Message-State: APzg51CLURMTXXQGxTyhzMIu2cldxMXXK72vRgw7p3nQqd46U5HopJqJ
-        sKLWu+a9G1wcxhiM0A1/+u4w05/m+vC4pXtfxA==
-X-Google-Smtp-Source: ANB0VdY6XXp2tyzKq67IzVTOyO5OSh4qQB3Mt1pFJfbChVixnI38qNjx3IFHSk8+LiZFyon4g3z4NwwuGFQHMsQ4+uo=
-X-Received: by 2002:a0c:95f7:: with SMTP id t52-v6mr11460022qvt.246.1534884331996;
- Tue, 21 Aug 2018 13:45:31 -0700 (PDT)
+        Tue, 21 Aug 2018 20:08:06 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:35281 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726626AbeHVAIF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 20:08:05 -0400
+Received: by mail-qt0-f193.google.com with SMTP id r21-v6so21916999qtm.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 13:46:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=1u2tcyS1PsrjWtZqEcN4otxlYAJ/lNZ22ncHFxxHIaY=;
+        b=uct1UE2gbdFFKASoZtl7UbBRqhWbpid++31L0JWoezFbSZZ5+lAHyfp7eUtA/Sz6CV
+         GHaWDMmtI3Q+rBTkiKjPrp/MBRRYbK+WQs92KJRtZq3NrXJr8tb8LXB1rWAX+qSf+g5Z
+         X1jxWhlfBW1lmFMlR6ko1FGTqYuTKU+3FVPoLfmPgy+c3X2FZkp9KSbqr3RiG9FO8VZO
+         cc+mkmJydzN0P78g2S7pCG+C48r5bz+26cyXt6wMTho9fHxCJcUop6r1uXja1hcybWT+
+         dplKuJ9Xq9CaTd/9Z79Dnp/T013NxgCC6WIVyqFtlhcq2MjmFqhfltXysUeMIc9hJ50H
+         YnVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=1u2tcyS1PsrjWtZqEcN4otxlYAJ/lNZ22ncHFxxHIaY=;
+        b=jvKaZjBRcyS7FUP/2bP5Q3vBhwLd9wW8Vxxn0vyj4mPfGJbhHPWoNF74EdnEE6rfom
+         7RvAzaCq2NK0+tJM646zRIKnpWoLb8g/dRkWdwpekqWruUsWBZrWItLm3ACvxj4lpgR1
+         oFmpYpPwJb8OeahqBgQar5lW9+y+bHplKs1yXBJOc0e4lqytd3SIQ2UdYeHKsg5KRplD
+         ugO7T3Q+//5G+RvobBBCJA2+WYRsKaTGbnQkqO9flxe0LmzHSUVg8tMS5QRmP5J4vKGe
+         Y+t7N83zV5YlhFLAGYL6aBKuw89efNZpho71dS4ZegZ0sCRzWSlTB5vRsC1r2cTUFPFa
+         xRfQ==
+X-Gm-Message-State: AOUpUlEiAbH8Ymq1Lq49X4cKfR58Q4FzVZKsY26MtagRbXCYM3zQhN8D
+        OwS0yAsZH/GNnQiGuDPMIQufi1a7VHPMNvvgr7o=
+X-Google-Smtp-Source: AA+uWPy6VnHEMH5ZJlTGAxzYNTUR8mSU9SzhuzlsuO6PCMWCik/lEcOQVVWgHM2K+3wM3jYOQeDP5nD2OEr5mryTuWE=
+X-Received: by 2002:ac8:24b7:: with SMTP id s52-v6mr42455919qts.87.1534884383279;
+ Tue, 21 Aug 2018 13:46:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com> <1534747636-20064-6-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1534747636-20064-6-git-send-email-vabhav.sharma@nxp.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 21 Aug 2018 15:45:20 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKH4haGy2F2_2EP=evC8ip7DmGR8J4wzrO0wWnOLsaZqA@mail.gmail.com>
-Message-ID: <CAL_JsqKH4haGy2F2_2EP=evC8ip7DmGR8J4wzrO0wWnOLsaZqA@mail.gmail.com>
-Subject: Re: [PATCH 5/5] arm64: dts: add LX2160ARDB board support
-To:     vabhav.sharma@nxp.com
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-kernel-owner@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Russell King <linux@armlinux.org.uk>, V.Sethi@nxp.com,
-        Udit Kumar <udit.kumar@nxp.com>,
-        Priyanka Jain <priyanka.jain@nxp.com>,
-        Sriram Dash <sriram.dash@nxp.com>
+Received: by 2002:a0c:c3cc:0:0:0:0:0 with HTTP; Tue, 21 Aug 2018 13:46:22
+ -0700 (PDT)
+In-Reply-To: <20180820044250.11659-4-ravi.bangoria@linux.ibm.com>
+References: <20180820044250.11659-1-ravi.bangoria@linux.ibm.com> <20180820044250.11659-4-ravi.bangoria@linux.ibm.com>
+From:   Song Liu <liu.song.a23@gmail.com>
+Date:   Tue, 21 Aug 2018 13:46:22 -0700
+Message-ID: <CAPhsuW4hZv7cdF37aAUyfMR5e_Wb-25Drzjg7=MNNf8Gb9dOMQ@mail.gmail.com>
+Subject: Re: [PATCH v9 3/4] trace_uprobe/sdt: Prevent multiple reference
+ counter for same uprobe
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>, mhiramat@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        ananth@linux.vnet.ibm.com,
+        Alexis Berlemont <alexis.berlemont@gmail.com>,
+        naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 1:52 PM Vabhav Sharma <vabhav.sharma@nxp.com> wrote:
+On Sun, Aug 19, 2018 at 9:42 PM, Ravi Bangoria
+<ravi.bangoria@linux.ibm.com> wrote:
+> We assume to have only one reference counter for one uprobe.
+> Don't allow user to add multiple trace_uprobe entries having
+> same inode+offset but different reference counter.
 >
-> LX2160A reference design board (RDB) is a high-performance
-> computing, evaluation, and development platform with LX2160A
-> SoC.
+> Ex,
+>   # echo "p:sdt_tick/loop2 /home/ravi/tick:0x6e4(0x10036)" > uprobe_events
+>   # echo "p:sdt_tick/loop2_1 /home/ravi/tick:0x6e4(0xfffff)" >> uprobe_events
+>   bash: echo: write error: Invalid argument
 >
-> Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
-> Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
-> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+>   # dmesg
+>   trace_kprobe: Reference counter offset mismatch.
+>
+> There is one exception though:
+> When user is trying to replace the old entry with the new
+> one, we allow this if the new entry does not conflict with
+> any other existing entries.
+>
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> Acked-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+> Reviewed-by: Song Liu <songliubraving@fb.com>
+
+Reviewed-and-tested-by: Song Liu <songliubraving@fb.com>
+
+> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 > ---
->  arch/arm64/boot/dts/freescale/Makefile            |  1 +
->  arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 95 +++++++++++++++++++++++
->  2 files changed, 96 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+>  kernel/trace/trace_uprobe.c | 37 +++++++++++++++++++++++++++++++++++--
+>  1 file changed, 35 insertions(+), 2 deletions(-)
 >
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> index 86e18ad..445b72b 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -13,3 +13,4 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-rdb.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-qds.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-rdb.dtb
-> +dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-lx2160a-rdb.dtb
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> new file mode 100644
-> index 0000000..70fad20
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> @@ -0,0 +1,95 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +//
-> +// Device Tree file for LX2160ARDB
-> +//
-> +// Copyright 2018 NXP
+> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> index a7ef6c4ca16e..21d9fffaa096 100644
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -324,6 +324,35 @@ static int unregister_trace_uprobe(struct trace_uprobe *tu)
+>         return 0;
+>  }
+>
+> +/*
+> + * Uprobe with multiple reference counter is not allowed. i.e.
+> + * If inode and offset matches, reference counter offset *must*
+> + * match as well. Though, there is one exception: If user is
+> + * replacing old trace_uprobe with new one(same group/event),
+> + * then we allow same uprobe with new reference counter as far
+> + * as the new one does not conflict with any other existing
+> + * ones.
+> + */
+> +static struct trace_uprobe *find_old_trace_uprobe(struct trace_uprobe *new)
+> +{
+> +       struct trace_uprobe *tmp, *old = NULL;
+> +       struct inode *new_inode = d_real_inode(new->path.dentry);
 > +
-> +/dts-v1/;
+> +       old = find_probe_event(trace_event_name(&new->tp.call),
+> +                               new->tp.call.class->system);
 > +
-> +#include "fsl-lx2160a.dtsi"
+> +       list_for_each_entry(tmp, &uprobe_list, list) {
+> +               if ((old ? old != tmp : true) &&
+> +                   new_inode == d_real_inode(tmp->path.dentry) &&
+> +                   new->offset == tmp->offset &&
+> +                   new->ref_ctr_offset != tmp->ref_ctr_offset) {
+> +                       pr_warn("Reference counter offset mismatch.");
+> +                       return ERR_PTR(-EINVAL);
+> +               }
+> +       }
+> +       return old;
+> +}
 > +
-> +/ {
-> +       model = "NXP Layerscape LX2160ARDB";
-> +       compatible = "fsl,lx2160a-rdb", "fsl,lx2160a";
+>  /* Register a trace_uprobe and probe_event */
+>  static int register_trace_uprobe(struct trace_uprobe *tu)
+>  {
+> @@ -333,8 +362,12 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
+>         mutex_lock(&uprobe_lock);
+>
+>         /* register as an event */
+> -       old_tu = find_probe_event(trace_event_name(&tu->tp.call),
+> -                       tu->tp.call.class->system);
+> +       old_tu = find_old_trace_uprobe(tu);
+> +       if (IS_ERR(old_tu)) {
+> +               ret = PTR_ERR(old_tu);
+> +               goto end;
+> +       }
 > +
-> +       aliases {
-> +               crypto = &crypto;
-
-Drop this. Aliases should be numbered, and this is not a standard
-alias name either.
-
-> +               serial0 = &uart0;
-> +               serial1 = &uart1;
-> +               serial2 = &uart2;
-> +               serial3 = &uart3;
-> +       };
-> +       chosen {
-> +               stdout-path = "serial0:115200n8";
-> +       };
-> +};
-> +
-> +&uart0 {
-> +       status = "okay";
-> +};
-> +
-> +&uart1 {
-> +       status = "okay";
-> +};
-> +
-> +&i2c0 {
-> +       status = "okay";
-> +       pca9547@77 {
-
-i2c-mux@77
-
-> +               compatible = "nxp,pca9547";
-> +               reg = <0x77>;
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               i2c@2 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <0x2>;
-> +
-> +                       ina220@40 {
-> +                               compatible = "ti,ina220";
-> +                               reg = <0x40>;
-> +                               shunt-resistor = <1000>;
-> +                       };
-> +               };
-> +
-> +               i2c@3 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <0x3>;
-> +
-> +                       sa56004@4c {
-
-temperature-sensor@4c
-
-> +                               compatible = "nxp,sa56004";
-> +                               reg = <0x4c>;
-> +                       };
-> +
-> +                       sa56004@4d {
-> +                               compatible = "nxp,sa56004";
-> +                               reg = <0x4d>;
-> +                       };
-> +               };
-> +       };
-> +};
-> +
-> +&i2c4 {
-> +       status = "okay";
-> +
-> +       rtc@51 {
-> +               compatible = "nxp,pcf2129";
-> +               reg = <0x51>;
-> +               // IRQ10_B
-> +               interrupts = <0 150 0x4>;
-> +               };
-> +
-> +};
-> +
-> +&usb0 {
-> +       status = "okay";
-> +};
-> +
-> +&usb1 {
-> +       status = "okay";
-> +};
-> +
-> +&crypto {
-> +       status = "okay";
-> +};
+>         if (old_tu) {
+>                 /* delete old event */
+>                 ret = unregister_trace_uprobe(old_tu);
 > --
-> 2.7.4
+> 2.14.4
 >
