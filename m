@@ -6,33 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB690C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE57C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:25:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 811902174D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:25:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 811902174D
+	by mail.kernel.org (Postfix) with ESMTP id 8C8D1208A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:25:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C8D1208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbeHUJoI (ORCPT
+        id S1728166AbeHUJoL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:44:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55344 "EHLO
+        Tue, 21 Aug 2018 05:44:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55352 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726841AbeHUJoH (ORCPT
+        with ESMTP id S1726841AbeHUJoK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:44:07 -0400
+        Tue, 21 Aug 2018 05:44:10 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 235E78A5;
-        Tue, 21 Aug 2018 06:25:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CAB9D8A5;
+        Tue, 21 Aug 2018 06:25:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.17 24/42] ALSA: vxpocket: Fix invalid endian conversions
-Date:   Tue, 21 Aug 2018 08:20:56 +0200
-Message-Id: <20180821055018.829948528@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.17 33/42] serial: 8250_dw: Add ACPI support for uart on Broadcom SoC
+Date:   Tue, 21 Aug 2018 08:21:05 +0200
+Message-Id: <20180821055019.239501015@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055017.596264829@linuxfoundation.org>
 References: <20180821055017.596264829@linuxfoundation.org>
@@ -49,65 +52,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Srinath Mannam <srinath.mannam@broadcom.com>
 
-commit 3acd3e3bab95ec3622ff98da313290ee823a0f68 upstream.
+commit 784c29eda5b4e28c3a56aa90b3815f9a1b0cfdc1 upstream.
 
-The endian conversions used in vxp_dma_read() and vxp_dma_write() are
-superfluous and even wrong on big-endian machines, as inw() and outw()
-already do conversions.  Kill them.
+Add ACPI identifier HID for UART DW 8250 on Broadcom SoCs
+to match the HID passed through ACPI tables to enable
+UART controller.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+Reviewed-by: Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>
+Tested-by: Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pcmcia/vx/vxp_ops.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/tty/serial/8250/8250_dw.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/pcmcia/vx/vxp_ops.c
-+++ b/sound/pcmcia/vx/vxp_ops.c
-@@ -375,7 +375,7 @@ static void vxp_dma_write(struct vx_core
- 		length >>= 1; /* in 16bit words */
- 		/* Transfer using pseudo-dma. */
- 		for (; length > 0; length--) {
--			outw(cpu_to_le16(*addr), port);
-+			outw(*addr, port);
- 			addr++;
- 		}
- 		addr = (unsigned short *)runtime->dma_area;
-@@ -385,7 +385,7 @@ static void vxp_dma_write(struct vx_core
- 	count >>= 1; /* in 16bit words */
- 	/* Transfer using pseudo-dma. */
- 	for (; count > 0; count--) {
--		outw(cpu_to_le16(*addr), port);
-+		outw(*addr, port);
- 		addr++;
- 	}
- 	vx_release_pseudo_dma(chip);
-@@ -417,7 +417,7 @@ static void vxp_dma_read(struct vx_core
- 		length >>= 1; /* in 16bit words */
- 		/* Transfer using pseudo-dma. */
- 		for (; length > 0; length--)
--			*addr++ = le16_to_cpu(inw(port));
-+			*addr++ = inw(port);
- 		addr = (unsigned short *)runtime->dma_area;
- 		pipe->hw_ptr = 0;
- 	}
-@@ -425,12 +425,12 @@ static void vxp_dma_read(struct vx_core
- 	count >>= 1; /* in 16bit words */
- 	/* Transfer using pseudo-dma. */
- 	for (; count > 1; count--)
--		*addr++ = le16_to_cpu(inw(port));
-+		*addr++ = inw(port);
- 	/* Disable DMA */
- 	pchip->regDIALOG &= ~VXP_DLG_DMAREAD_SEL_MASK;
- 	vx_outb(chip, DIALOG, pchip->regDIALOG);
- 	/* Read the last word (16 bits) */
--	*addr = le16_to_cpu(inw(port));
-+	*addr = inw(port);
- 	/* Disable 16-bit accesses */
- 	pchip->regDIALOG &= ~VXP_DLG_DMA16_SEL_MASK;
- 	vx_outb(chip, DIALOG, pchip->regDIALOG);
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -680,6 +680,7 @@ static const struct acpi_device_id dw825
+ 	{ "APMC0D08", 0},
+ 	{ "AMD0020", 0 },
+ 	{ "AMDI0020", 0 },
++	{ "BRCM2032", 0 },
+ 	{ "HISI0031", 0 },
+ 	{ },
+ };
 
 
