@@ -2,179 +2,95 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D1FDC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4F6C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:39:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C96AC21581
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:38:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C96AC21581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 11EEE2170E
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:39:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11EEE2170E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbeHUL54 (ORCPT
+        id S1726899AbeHUL6W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 07:57:56 -0400
-Received: from foss.arm.com ([217.140.101.70]:46386 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726536AbeHUL54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 07:57:56 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5537C7A9;
-        Tue, 21 Aug 2018 01:38:42 -0700 (PDT)
-Received: from [192.168.0.21] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E57753F739;
-        Tue, 21 Aug 2018 01:38:37 -0700 (PDT)
-Subject: Re: [PATCH v3 0/7] perf: Add ioctl for PMU driver configuration
-To:     Kim Phillips <kim.phillips@arm.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
+        Tue, 21 Aug 2018 07:58:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54510 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726536AbeHUL6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 07:58:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A1EE4AD6D;
+        Tue, 21 Aug 2018 08:39:06 +0000 (UTC)
+Date:   Tue, 21 Aug 2018 10:39:11 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     Brijesh Singh <brijesh.singh@amd.com>
+Cc:     "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>, ast@kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, suzuki.poulosi@arm.com,
-        linux-s390@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <1531950487-24554-1-git-send-email-mathieu.poirier@linaro.org>
- <20180813124642.3d49c082a95fc294d926016e@arm.com>
- <CANLsYkx=tjCG-eb4qRoGz0SvG4qCMDz1ajR9Mo9VK5XTAn_WdQ@mail.gmail.com>
- <20180814120910.ed225bbc462c58b09e5d68de@arm.com>
- <CANLsYkxZ_Wts6k9yqJhJf_R5oh74svpcuoNxhtFf6h3mz8U4ZA@mail.gmail.com>
- <20180815093912.GE2427@arm.com>
- <20180815102820.3520d0c3875d2fd82300cdef@arm.com>
- <CANLsYkz0j79+1C-Amz=3+7zw-0VZhnZ+rp5WAjHduEp+WjFs8A@mail.gmail.com>
- <18fe78a3-9a58-cecd-ddb9-d46cbc473b95@arm.com>
- <20180820092252.32dd015afcc5cbf2fe4c7ab7@arm.com>
- <a2edfae3-302e-bbc7-0563-337186fc2919@arm.com>
- <20180820102532.96a90fe59d9ea3785df76a4d@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <cba4017f-8a81-e47b-1e99-d510ef9b2a67@arm.com>
-Date:   Tue, 21 Aug 2018 09:39:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>
+Subject: Re: SEV guest regression in 4.18
+Message-ID: <20180821083911.GF24940@nazgul.tnic>
+References: <20ad6cd5-394c-d3ae-d99c-b656d7ef8293@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <20180820102532.96a90fe59d9ea3785df76a4d@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20ad6cd5-394c-d3ae-d99c-b656d7ef8293@amd.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/20/2018 04:25 PM, Kim Phillips wrote:
-> On Mon, 20 Aug 2018 15:36:47 +0100
-> Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+On Mon, Aug 20, 2018 at 05:11:53PM -0500, Brijesh Singh wrote:
+> Hi All,
 > 
->> On 08/20/2018 03:22 PM, Kim Phillips wrote:
->>> On Mon, 20 Aug 2018 11:03:03 +0100
->>> Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
->>>
->>>> On 08/16/2018 08:28 PM, Mathieu Poirier wrote:
->>>>> On Wed, 15 Aug 2018 at 09:28, Kim Phillips <kim.phillips@arm.com> wrote:
->>>>>>
->>>>>> On Wed, 15 Aug 2018 10:39:13 +0100
->>>>>> Will Deacon <will.deacon@arm.com> wrote:
->>>>>>
->>>>>>> On Tue, Aug 14, 2018 at 01:42:27PM -0600, Mathieu Poirier wrote:
->>>>>>>> On Tue, 14 Aug 2018 at 11:09, Kim Phillips <kim.phillips@arm.com> wrote:
->>>>>>>>> The other thing that's going on here is that I'm becoming numb to the
->>>>>>>>> loathsome "failed to mmap with 12 (Cannot allocate memory)" being
->>>>>>>>> returned no matter what the error is/was. E.g., an error that would
->>>>>>>>> indicate a sense of non-implementation would be much better
->>>>>>>>> appreciated than presumably what the above is doing, i.e., returning
->>>>>>>>> -ENOMEM.  That, backed up with specific details in the form of human
->>>>>>>>> readable text in dmesg would be *most* welcome.
->>>>>>>>
->>>>>>>> As part of the refactoring of the code to support CPU-wide scenarios I
->>>>>>>> intend to emit better diagnostic messages from the driver.  Modifying
->>>>>>>> rb_alloc_aux() to propagate the error message generated by the
->>>>>>>> architecture specific PMUs doesn't look hard either and I _may_ get to
->>>>>>>> it as part of this work.
->>>>>>>
->>>>>>> For the record, I will continue to oppose PMU drivers that dump diagnostics
->>>>>>> about user-controlled input into dmesg, but the coresight drivers are yours
->>>>>>> so it's up to you and I won't get in the way!
->>>>>>
->>>>>> That sounds technically self-contradicting to me.  Why shouldn't
->>>>>> coresight share the same policies as those used for PMU drivers?  Or
->>>>>> why not allow the individual vendor PMU driver authors control the
->>>>>> level of user-friendliness of their own drivers?
->>>>>>
->>>>>> That being said, Matheiu, would you accept patches that make coresight
->>>>>> more verbose in dmesg?
->>>>>
->>>>> It depends on the issue you're hoping to address.  I'd rather see the
->>>>> root cause of the problem fixed than adding temporary code.  Suzuki
->>>>> added the ETR perf API and I'm currently working on CPU-wide
->>>>> scenarios.  From there and with regards to what can happen in
->>>>> setup_aux(), we should have things covered.
->>>>
->>>> I think the main issue is the lack of error code propagation from
->>>> setup_aux() back to the perf_aux_output_handle_begin(), which always
->>>> return -ENOMEM. If we fix that, we could get better idea of whats
->>>> wrong.
->>>
->>> Why get a better idea when we can get the exact details?
->>
->> The different values for error numbers are there for a reason...
+> The following commit
 > 
-> But the same error number, e.g., EINVAL, can be returned for different
-> reasons.
+> "
+> x86/kvmclock: Remove memblock dependency
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=368a540e0232ad446931f5a4e8a5e06f69f21343
+> 
+> "
+> broke the SEV support in 4.18.
+> 
+> Since the guest physical address holding the wall_clock and
+> vcpu_time_info are shared with the hypervisor  it must be mapped
+> as "decrypted" when SEV is active. To clear the C-bit we use
+> kernel_physical_mapping_init() to split the large pages into 4K before
+> changing the C-bit. Now the kernel_physical_mapping_init() is failing to
+> allocate the memory because its called very early.
+> 
+> [    0.000000] Call Trace:
+> [    0.000000]  ? dump_stack+0x5c/0x80
+> [    0.000000]  ? panic+0xe7/0x247
+> [    0.000000]  ? alloc_low_pages+0x130/0x130
+> [    0.000000]  ? kernel_physical_mapping_init+0xe0/0x204
+> [    0.000000]  ? early_set_memory_enc_dec+0x123/0x174
+> [    0.000000]  ? 0xffffffffae000000
+> [    0.000000]  ? kvmclock_init+0x60/0x1ea
+> [    0.000000]  ? kvm_init_platform+0xa/0x16
+> [    0.000000]  ? setup_arch+0x434/0xce9
+> [    0.000000]  ? start_kernel+0x67/0x52e
+> [    0.000000]  ? load_ucode_bsp+0x76/0x12e
+> [    0.000000]  ? secondary_startup_64+0xa4/0xb0
 
-True, but then you can narrow it down by tuning it. We do that for
-several syscalls without printing any useful messages to debug. Why
-should the perf syscalls be any different ?
+Silly question: can we delay the call to kernel_physical_mapping_init()
+to right before those variables are accessed by the guest for the first
+time, assuming we can allocate memory at that point?
 
-> 
->>>> If someone is planning to add verbose messages, they may do so by adding
->>>> dev_dbg() / pr_debug(), which can be turned on as and when needed.
->>>
->>> I disagree:  that just adds another usage and kernel configuration
->>> obstacle.  Why not use pr_err straight up?
->>
->> I personally don't agree to usage of pr_err() in paths which are easily
->> triggered from user input.
-> 
-> Why not?  pr_* are ratelimited.
-> 
->> Also, we are moving all the "debugging"
->> messages to the dynamic debug, to prevent lockdep splats.
-> 
-> Are you referring to this?:
-> 
-> https://lkml.org/lkml/2018/5/1/7
+-- 
+Regards/Gruss,
+    Boris.
 
-Definitely not that thread.
-
-> 
-> Re-reading the thread, AFAICT, it was never proven that the splats
-> occurred due to the dev_infos, and there's no dev_info in this
-> stacktrace:
-> 
-> https://lkml.org/lkml/2018/5/10/269
-
-That doesn't have the stack trace. Mathieu was also able to reproduce
-the lockdep splat involving console lock lately. Unfortunately none of
-these were captured here.
-
-> 
-> But even if it were, wouldn't the splats also occur with dev_dbg?
-
-Not normally. dev_dbg() has to be turned on manually and the user knows
-what he is doing. That allows the normal user to use the system without
-any trouble.
-
-Suzuki
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
