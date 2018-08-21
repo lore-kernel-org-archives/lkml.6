@@ -2,99 +2,149 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D58D5C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3484C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:08:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86716217B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:05:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EED0217BF
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:08:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YVoSMvRF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86716217B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kLRFAGaJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EED0217BF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbeHVB04 (ORCPT
+        id S1727495AbeHVBa2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 21:26:56 -0400
-Received: from ozlabs.org ([203.11.71.1]:49767 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726829AbeHVB04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 21:26:56 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41w4V01nwFz9s4v;
-        Wed, 22 Aug 2018 08:04:55 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1534889096;
-        bh=W3Gv7q+ho7Wk3QeyEMdQU1grF0MiLoRS7EXrg8MmMVM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=YVoSMvRFKnBbgoEAJXbKdvQYsFjHULvfH8ATPlPpxqKiB8w251LRUvuFxSIZuqJ1v
-         XVCOgzGu4XylUgExlMbGM4SlrZChNFeJnG7Va8envm8XVEOPYUB3pAF1aEHiScgBBm
-         lKXZiHYpSrI5EBVpmCTDrIEDy1MegIy4XK9MwTAUk5vFD8RAtaxykxiu4tzdR1nFki
-         WgRAeZKn4aEFiuzYT78Tmq70KXQ98D/4NxW74T93HVgX1LsJ/bNInO+wuAw3ID8IqO
-         3p1DAkjgNGKjpUbxpmBRFdM/FNj5YJ4+7G3RMJsIb+FDpll4ukTeZHFDxgZ3TMrRNG
-         HiAtLfmm/SJYQ==
-Date:   Wed, 22 Aug 2018 08:04:49 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Cong Wang <xiyou.wangcong@gmail.com>
-Subject: linux-next: build warning after merge of the net tree
-Message-ID: <20180822080449.5887e244@canb.auug.org.au>
+        Tue, 21 Aug 2018 21:30:28 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38528 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727241AbeHVBa2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 21:30:28 -0400
+Received: by mail-pf1-f194.google.com with SMTP id x17-v6so9150090pfh.5
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 15:08:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=D8/Hn7Wdqa1+TM7RznIRPLj5ZlW1UyKghVd47g+2sNs=;
+        b=kLRFAGaJxrMvW+y5ViuDgwnUTWGyGKPMoegeVukA+0oPy0GtZ+SAabUxCrF6XUnce5
+         UicU7Ee3SXkj3FtCmXoS+D2B+DBQOKQrb+4CKN1VegcoPd+iPKDBk4TNIsa0brmKAVZM
+         /wK52HmVDznsb2MOqRdoZtVnrJzFyDbVAFNbo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=D8/Hn7Wdqa1+TM7RznIRPLj5ZlW1UyKghVd47g+2sNs=;
+        b=r0cN3x9+etD/ojmeMWR6wCAcjdJU5QrRr047YySphpproMR5yxuhefQQK39IjpVqFo
+         EauoqTpoLqQo77JGqWzcHQktiz8EK5saAvthVhdP3XF/C2eWlNnwiXLmzL8hrIucLnpP
+         oDWV9lpwh5P9AnmlCvzx1BeD6tJS+Gd4KfHMhuWuC6EnwaGUoyueLNkUGCQdyfvWAmY7
+         sBGzSDdMp5eamnRHj4dxAb2NUT94tnqtUMn6TGs872jU+qtLuX1si09ItGDp5rF5WqJQ
+         CXAjEmEwUWZrkUz0HlJ5M3OuitmIlc01NU6cqCrBp+yqwuBlMEUYCgn8VORgi7iLoiwx
+         hb0w==
+X-Gm-Message-State: AOUpUlE3z0r/+SXHqtEXktf1wzVPvhQtkToGl44F2/ZQSBuDFJief55s
+        rJOw7Lq/9rgOic/8M3HIVjAFzw==
+X-Google-Smtp-Source: AA+uWPyXRyra9uC8/ds+xWCMhGwSuiHr2xEOw+K8hdS89fUhwC9+5sYjYcKvptMZV1J9Mvsdrv58cg==
+X-Received: by 2002:a63:6283:: with SMTP id w125-v6mr16115109pgb.83.1534889309191;
+        Tue, 21 Aug 2018 15:08:29 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id n9-v6sm20267765pfg.21.2018.08.21.15.08.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 Aug 2018 15:08:28 -0700 (PDT)
+Date:   Tue, 21 Aug 2018 15:08:26 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     p.zabel@pengutronix.de, robh+dt@kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com,
+        sricharan@codeaurora.org, akdwived@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Subject: Re: [PATCH 1/4] dt-bindings: reset: Add PDC reset binding for SDM845
+ SoCs
+Message-ID: <20180821220826.GA2353@minitux>
+References: <20180727152811.15258-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/u73I2CAj_0XHU31A_03DG_W"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180727152811.15258-1-sibis@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/u73I2CAj_0XHU31A_03DG_W
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri 27 Jul 08:28 PDT 2018, Sibi Sankar wrote:
 
-Hi all,
+> Add SDM845 PDC (Power Domain Controller) reset controller binding
+> 
 
-After merging the net tree, today's linux-next build (KCONFIG_NAME)
-produced this warning:
+Even though this is currently describing only a reset controller I think
+this binding better be talking about the "PDC Global" hardware.
 
-drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c: In function 'tc_fill_actio=
-ns':
-drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c:64:6: warning: unused varia=
-ble 'i' [-Wunused-variable]
-  int i;
-      ^
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  .../bindings/reset/qcom,pdc-reset.txt         | 52 +++++++++++++++++++
+>  include/dt-bindings/reset/qcom,sdm845-pdc.h   | 20 +++++++
+>  2 files changed, 72 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/qcom,pdc-reset.txt
+>  create mode 100644 include/dt-bindings/reset/qcom,sdm845-pdc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/reset/qcom,pdc-reset.txt b/Documentation/devicetree/bindings/reset/qcom,pdc-reset.txt
 
-Introduced by commit
+Rename this qcom,pdc-global to match the compatible, and hardware name.
 
-  244cd96adb5f ("net_sched: remove list_head from tc_action")
+> new file mode 100644
+> index 000000000000..85e159962e08
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/reset/qcom,pdc-reset.txt
+> @@ -0,0 +1,52 @@
+> +PDC Reset Controller
 
---=20
-Cheers,
-Stephen Rothwell
+PDC Global
 
---Sig_/u73I2CAj_0XHU31A_03DG_W
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> +======================================
+> +
+> +This binding describes a reset-controller found on PDC-Global(Power Domain
+> +Controller) block for Qualcomm Technologies Inc SDM845 SoCs.
 
------BEGIN PGP SIGNATURE-----
+This looks good.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt8jIEACgkQAVBC80lX
-0Gy9rggAmgoFDJxS7tbYirshdBLQulKP16+xv8mZTJ6WJgM59HmkaodNsvjYgQfj
-lJ7derYeOUQHMglKON+nNzMKWcSC1r8GGW/LudBY2CI7jr6V7C1o+FTtHUB80n8O
-dY0i4lFu/R/K6/bYFiDBdl825Obr08JP8bZkdQDOE/zcSEgSxios51CTMjv4e79/
-f7h/gmiW4p5obZNkqTIP3YXQrj5r2NEQQwN4G9OQW1lqjG1gwLJSB7f+1uaFEFsP
-uiTvukh257mgGHDl1u3Z7C4lYigzMHwzgnc+ButCJrzoR6SOZ5J/9oqTwxdhfDr/
-3z5XakXJ47ssLtHX/PdmmrJQN5neww==
-=3oaR
------END PGP SIGNATURE-----
+> +
+> +Required properties:
+> +- compatible:
+> +	Usage: required
+> +	Value type: <string>
+> +	Definition: must be:
+> +		    "qcom,sdm845-pdc-global"
+> +
+> +- reg:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: must specify the base address and size of the register
+> +	            space.
+> +
+> +- #reset-cells:
+> +	Usage: required
+> +	Value type: <uint>
+> +	Definition: must be 1; cell entry represents the reset index.
+> +
+> +Example:
+> +
+> +pdc_reset: reset-controller@b2e0000 {
 
---Sig_/u73I2CAj_0XHU31A_03DG_W--
+This is perfectly fine, in its current form it is a reset-controller.
+
+> +	compatible = "qcom,sdm845-pdc-global";
+> +	reg = <0xb2e0000 0x20000>;
+> +	#reset-cells = <1>;
+> +};
+> +
+
+Apart from this, the binding looks good!
+
+Regards,
+Bjorn
