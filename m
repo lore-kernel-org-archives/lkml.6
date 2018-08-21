@@ -2,113 +2,166 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29472C04E83
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 21:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6908C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 21:24:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF5F321884
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 21:23:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9707D217DF
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 21:24:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vNwaRIts"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF5F321884
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Nrk1pnCG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9707D217DF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbeHVApI (ORCPT
+        id S1727485AbeHVAqU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 20:45:08 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:35615 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbeHVApH (ORCPT
+        Tue, 21 Aug 2018 20:46:20 -0400
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:37220 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbeHVAqU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 20:45:07 -0400
-Received: by mail-qt0-f194.google.com with SMTP id r21-v6so22038873qtm.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 14:23:18 -0700 (PDT)
+        Tue, 21 Aug 2018 20:46:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pAwyQEaHEwmDYTVF+IAr3GO6/Dh3nqid5fovpvm0XnY=;
-        b=vNwaRItsvjroyNq3EKFmk8Ejg479/0EAHr0Zyn4wlN7PX+WFIuQzmEcr3crEJVTmlY
-         BQLIenupERWEK0jA8lXUrK0RSDlpaCuxwX19BnwD4MRyxF+2Jiv8cj0/IV7kQmVrnTFJ
-         1X6GUUdbmnQoiywkn0xxFVsKnO3vtCgcLLHDXlZH8FlE3PknSuwvzGfSvLgHxyVGxyzg
-         7iO8mXHJK2ffbZaFbdAkxeYMeo6u0RIVtGzJr+G4mCGyAhaZn9xIHekj9HqMMPGdLeOl
-         +iTsjMw6Mw295bOqtoCMDONKAo0rn3hJar8KmeKJGC/6O/6dqsf70wQtopvnIaKYCNIa
-         9CTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=pAwyQEaHEwmDYTVF+IAr3GO6/Dh3nqid5fovpvm0XnY=;
-        b=SVM0a/Rkl1/f0N2M7zOPyffL4DQO6N2si60bLKzQl2aRpXhvAXmcs1W3QbAt8/HoXi
-         OHOyN0Z5IO4FRVk0rAyKGp3mbtt71L6FytQnG2YWfTIxAYZvKIpe1065yefknBXROAAF
-         fcfz7xgTj/VmluJ6eH5vScTmbXXEsoX0c1dayfL0izzNrAK5UmU9ZJvdGccd4OflHhXJ
-         nectXE/VE9T+73OI2NAregMxCaAmhIqOE6H67dPm4Dsa+fRoFDVKVZiZ4YilgpxAyjsQ
-         Swy1iL+Sb3PY64QHBcP+ETYWWfxFH3XoRZBGO0qtN1i7c8Eef8PghV21U0s674SsHaNn
-         vhPQ==
-X-Gm-Message-State: AOUpUlHGeyuuwKe4pxYn0Ide7SSGrY13G5S6dLiyu/uF6v+PWlRDEcWK
-        7QVNOCWCoJa0np+9Akhzwg==
-X-Google-Smtp-Source: ANB0VdYvg6/FBf+KUycVlREX1QYb7P2E5/IzXKT7qWGvbX3BK6h3j1OK9Q58Lzd9wxktsYlnY2u4gA==
-X-Received: by 2002:ac8:2e2b:: with SMTP id r40-v6mr19109409qta.12.1534886597870;
-        Tue, 21 Aug 2018 14:23:17 -0700 (PDT)
-Received: from gabell.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id q6-v6sm2148525qtq.44.2018.08.21.14.23.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 Aug 2018 14:23:17 -0700 (PDT)
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1534886671; x=1566422671;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=ejVBKa0T+g1YWl45u51OBZNIMC1Eg8VLBZCLEtTqQHw=;
+  b=Nrk1pnCG8cBs/IzmQkHzeSx5pS/GL5VS9e8zXv5afZFB/1h4MmGSs39Z
+   8CvxYsNqfgR4AOoVAMWdH1ReBBiea4N4640SnMHlIv50OvbPJezm+TRF+
+   mKlTt3rZK2u65Lfubj2Kh51f0CihnR30UPTnDFMxZChPUxS5KHL4BozzB
+   I=;
+X-IronPort-AV: E=Sophos;i="5.53,271,1531785600"; 
+   d="scan'208";a="755281504"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1a-67b371d8.us-east-1.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 21 Aug 2018 21:16:28 +0000
+Received: from EX13MTAUWC001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1a-67b371d8.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w7LLFet8092301
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 21 Aug 2018 21:15:41 GMT
+Received: from EX13D05UWC003.ant.amazon.com (10.43.162.226) by
+ EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 21 Aug 2018 21:15:41 +0000
+Received: from EX13MTAUWC001.ant.amazon.com (10.43.162.135) by
+ EX13D05UWC003.ant.amazon.com (10.43.162.226) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 21 Aug 2018 21:15:40 +0000
+Received: from localhost (10.55.160.46) by mail-relay.amazon.com
+ (10.43.162.232) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
+ Transport; Tue, 21 Aug 2018 21:15:40 +0000
+From:   Eduardo Valentin <eduval@amazon.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     Eduardo Valentin <eduval@amazon.com>,
         Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Baoquan He <bhe@redhat.com>
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] docs: kernel-parameters.txt: document rand_mem_physical_padding parameter
-Date:   Tue, 21 Aug 2018 17:23:05 -0400
-Message-Id: <20180821212305.20214-2-msys.mizuma@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180821212305.20214-1-msys.mizuma@gmail.com>
-References: <20180821212305.20214-1-msys.mizuma@gmail.com>
+        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "Jia Zhang" <qianyue.zj@alibaba-inc.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/1] perf/x86/intel: make error messages less confusing
+Date:   Tue, 21 Aug 2018 14:15:28 -0700
+Message-ID: <20180821211528.8575-1-eduval@amazon.com>
+X-Mailer: git-send-email 2.18.0
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+On a system with X86_FEATURE_ARCH_PERFMON disabled
+and with a model not known by family PMU drivers,
+user gets a kernel message log like the following:
+[ 0.100114] Performance Events: unsupported p6 CPU model 85 no PMU driver, software events only.
 
-This kernel parameter allows to change the padding used for the physical
-memory mapping section when KASLR memory is enabled.
+The "unsupported .. CPU" part may be confusing for some
+users. Rewording the messages on the failure path to:
+[ 0.667154] Performance Events: unknown p6 PMU on CPU model 85: !X86_FEATURE_ARCH_PERFMON: no PMU driver, software events only.
 
-For some systems, the default value, CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING,
-is not enough. The option is useful to adjust the padding size to work
-around such issue.
-
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Eduardo Valentin <eduval@amazon.com>
+Cc: Jia Zhang <qianyue.zj@alibaba-inc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org
+Reported-by: Matt Wilson <msw@amazon.com>
+Signed-off-by: Eduardo Valentin <eduval@amazon.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/events/intel/core.c | 15 +++++++++++----
+ arch/x86/events/intel/p4.c   |  2 +-
+ arch/x86/events/intel/p6.c   |  3 ++-
+ 3 files changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 0c883029881a..97f54c910c9c 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3477,6 +3477,13 @@
- 	ramdisk_size=	[RAM] Sizes of RAM disks in kilobytes
- 			See Documentation/blockdev/ramdisk.txt.
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 86f0c15dcc2d..b57a16997ee6 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3884,15 +3884,22 @@ __init int intel_pmu_init(void)
+ 	char *name;
  
-+	rand_mem_physical_padding=
-+			[KNL] Define the padding size in terabytes
-+			used for the physical memory mapping section
-+			when KASLR memory is enabled.
-+			The default value is
-+			CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING.
+ 	if (!cpu_has(&boot_cpu_data, X86_FEATURE_ARCH_PERFMON)) {
++		int ret = -ENODEV;
 +
- 	ras=option[,option,...]	[KNL] RAS-specific options
+ 		switch (boot_cpu_data.x86) {
+ 		case 0x6:
+-			return p6_pmu_init();
++			ret = p6_pmu_init();
++			break;
+ 		case 0xb:
+-			return knc_pmu_init();
++			ret = knc_pmu_init();
++			break;
+ 		case 0xf:
+-			return p4_pmu_init();
++			ret = p4_pmu_init();
++			break;
+ 		}
+-		return -ENODEV;
++		if (ret)
++			pr_cont(" !X86_FEATURE_ARCH_PERFMON: ");
++		return ret;
+ 	}
  
- 		cec_disable	[X86]
+ 	/*
+diff --git a/arch/x86/events/intel/p4.c b/arch/x86/events/intel/p4.c
+index d32c0eed38ca..963d2b0600f6 100644
+--- a/arch/x86/events/intel/p4.c
++++ b/arch/x86/events/intel/p4.c
+@@ -1346,7 +1346,7 @@ __init int p4_pmu_init(void)
+ 
+ 	rdmsr(MSR_IA32_MISC_ENABLE, low, high);
+ 	if (!(low & (1 << 7))) {
+-		pr_cont("unsupported Netburst CPU model %d ",
++		pr_cont("unknown Netburst PMU on CPU model %d: ",
+ 			boot_cpu_data.x86_model);
+ 		return -ENODEV;
+ 	}
+diff --git a/arch/x86/events/intel/p6.c b/arch/x86/events/intel/p6.c
+index 408879b0c0d4..221e374299b2 100644
+--- a/arch/x86/events/intel/p6.c
++++ b/arch/x86/events/intel/p6.c
+@@ -269,7 +269,8 @@ __init int p6_pmu_init(void)
+ 		break;
+ 
+ 	default:
+-		pr_cont("unsupported p6 CPU model %d ", boot_cpu_data.x86_model);
++		pr_cont("unknown p6 PMU on CPU model %d: ",
++			boot_cpu_data.x86_model);
+ 		return -ENODEV;
+ 	}
+ 
 -- 
 2.18.0
 
