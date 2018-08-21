@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5F9C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 00:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F225BC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 00:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3812221763
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 00:04:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3812221763
+	by mail.kernel.org (Postfix) with ESMTP id B54F221763
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 00:04:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B54F221763
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbeHUDWg (ORCPT
+        id S1727076AbeHUDWj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 23:22:36 -0400
-Received: from mga06.intel.com ([134.134.136.31]:10086 "EHLO mga06.intel.com"
+        Mon, 20 Aug 2018 23:22:39 -0400
+Received: from mga06.intel.com ([134.134.136.31]:10085 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726863AbeHUDWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 23:22:35 -0400
+        id S1726715AbeHUDWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 23:22:38 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 17:04:47 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 17:04:46 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,267,1531810800"; 
-   d="scan'208";a="250527780"
+   d="scan'208";a="250527755"
 Received: from cschaufl-mobl.amr.corp.intel.com ([10.252.136.122])
-  by orsmga005.jf.intel.com with ESMTP; 20 Aug 2018 17:04:46 -0700
+  by orsmga005.jf.intel.com with ESMTP; 20 Aug 2018 17:04:45 -0700
 From:   Casey Schaufler <casey.schaufler@intel.com>
 To:     kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov,
         casey.schaufler@intel.com, dave.hansen@intel.com,
         deneen.t.dock@intel.com, kristen@linux.intel.com,
         arjan@linux.intel.com
-Subject: [PATCH v3 3/5] LSM: Security module checking for side-channel dangers
-Date:   Mon, 20 Aug 2018 17:04:42 -0700
-Message-Id: <20180821000444.7004-4-casey.schaufler@intel.com>
+Subject: [PATCH v3 1/5] LSM: Introduce a hook for side-channel danger
+Date:   Mon, 20 Aug 2018 17:04:40 -0700
+Message-Id: <20180821000444.7004-2-casey.schaufler@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180821000444.7004-1-casey.schaufler@intel.com>
 References: <20180821000444.7004-1-casey.schaufler@intel.com>
@@ -48,348 +48,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sidechannel LSM checks for cases where a side-channel
-attack may be dangerous based on security attributes of tasks.
-This includes:
-        Effective UID of the tasks is different
-        Capablity sets are different
-        Tasks are in different namespaces
-An option is also provided to assert that task are never
-to be considered safe. This is high paranoia, and expensive
-as well.
+There may be cases where the data maintained for
+security controls is more sensitive than general
+process information and that may be subjected to
+side-channel attacks. An LSM hook is provided so
+that this can be check for where the system would
+take action should the current task have potential
+access to the passed task.
 
 Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
 ---
- MAINTAINERS                        |   6 ++
- include/linux/lsm_hooks.h          |   5 +
- security/Kconfig                   |   1 +
- security/Makefile                  |   2 +
- security/security.c                |   1 +
- security/sidechannel/Kconfig       |  60 +++++++++++
- security/sidechannel/Makefile      |   1 +
- security/sidechannel/sidechannel.c | 162 +++++++++++++++++++++++++++++
- 8 files changed, 238 insertions(+)
- create mode 100644 security/sidechannel/Kconfig
- create mode 100644 security/sidechannel/Makefile
- create mode 100644 security/sidechannel/sidechannel.c
+ include/linux/lsm_hooks.h | 7 +++++++
+ include/linux/security.h  | 1 +
+ security/security.c       | 5 +++++
+ 3 files changed, 13 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3119bba7971c..d078d6a5b471 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13066,6 +13066,12 @@ F:	drivers/slimbus/
- F:	Documentation/devicetree/bindings/slimbus/
- F:	include/linux/slimbus.h
- 
-+SIDECHANNEL SECURITY MODULE
-+M:	Casey Schaufler <casey.schaufler@intel.com>
-+L:	linux-security-module@vger.kernel.org
-+S:	Maintained
-+F:	security/sidechannel/
-+
- SMACK SECURITY MODULE
- M:	Casey Schaufler <casey@schaufler-ca.com>
- L:	linux-security-module@vger.kernel.org
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index fd2a7e6beb01..d48e4a085fe2 100644
+index a08bc2587b96..fd2a7e6beb01 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -2088,5 +2088,10 @@ void __init loadpin_add_hooks(void);
- #else
- static inline void loadpin_add_hooks(void) { };
- #endif
-+#ifdef CONFIG_SECURITY_SIDECHANNEL
-+void __init sidechannel_add_hooks(void);
-+#else
-+static inline void sidechannel_add_hooks(void) { };
-+#endif
+@@ -698,6 +698,11 @@
+  *	security attributes, e.g. for /proc/pid inodes.
+  *	@p contains the task_struct for the task.
+  *	@inode contains the inode structure for the inode.
++ * @task_safe_sidechannel:
++ *	Check if a side channel attack is harmless for the current task and @p.
++ *	The caller may have determined that no attack is possible, in which
++ *	case this hook won't get called.
++ *	@p contains the task_struct for the task.
+  *
+  * Security hooks for Netlink messaging.
+  *
+@@ -1611,6 +1616,7 @@ union security_list_options {
+ 	int (*task_prctl)(int option, unsigned long arg2, unsigned long arg3,
+ 				unsigned long arg4, unsigned long arg5);
+ 	void (*task_to_inode)(struct task_struct *p, struct inode *inode);
++	int (*task_safe_sidechannel)(struct task_struct *p);
  
- #endif /* ! __LINUX_LSM_HOOKS_H */
-diff --git a/security/Kconfig b/security/Kconfig
-index c4302067a3ad..28cb7b2939ee 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -237,6 +237,7 @@ source security/tomoyo/Kconfig
- source security/apparmor/Kconfig
- source security/loadpin/Kconfig
- source security/yama/Kconfig
-+source security/sidechannel/Kconfig
- 
- source security/integrity/Kconfig
- 
-diff --git a/security/Makefile b/security/Makefile
-index 4d2d3782ddef..d0c9e1b227f9 100644
---- a/security/Makefile
-+++ b/security/Makefile
-@@ -10,6 +10,7 @@ subdir-$(CONFIG_SECURITY_TOMOYO)        += tomoyo
- subdir-$(CONFIG_SECURITY_APPARMOR)	+= apparmor
- subdir-$(CONFIG_SECURITY_YAMA)		+= yama
- subdir-$(CONFIG_SECURITY_LOADPIN)	+= loadpin
-+subdir-$(CONFIG_SECURITY_SIDECHANNEL)	+= sidechannel
- 
- # always enable default capabilities
- obj-y					+= commoncap.o
-@@ -25,6 +26,7 @@ obj-$(CONFIG_SECURITY_TOMOYO)		+= tomoyo/
- obj-$(CONFIG_SECURITY_APPARMOR)		+= apparmor/
- obj-$(CONFIG_SECURITY_YAMA)		+= yama/
- obj-$(CONFIG_SECURITY_LOADPIN)		+= loadpin/
-+obj-$(CONFIG_SECURITY_SIDECHANNEL)	+= sidechannel/
- obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
- 
- # Object integrity file lists
+ 	int (*ipc_permission)(struct kern_ipc_perm *ipcp, short flag);
+ 	void (*ipc_getsecid)(struct kern_ipc_perm *ipcp, u32 *secid);
+@@ -1897,6 +1903,7 @@ struct security_hook_heads {
+ 	struct hlist_head task_kill;
+ 	struct hlist_head task_prctl;
+ 	struct hlist_head task_to_inode;
++	struct hlist_head task_safe_sidechannel;
+ 	struct hlist_head ipc_permission;
+ 	struct hlist_head ipc_getsecid;
+ 	struct hlist_head msg_msg_alloc_security;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 3410acfe139c..69a5526f789f 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -366,6 +366,7 @@ int security_task_kill(struct task_struct *p, struct siginfo *info,
+ int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+ 			unsigned long arg4, unsigned long arg5);
+ void security_task_to_inode(struct task_struct *p, struct inode *inode);
++int security_task_safe_sidechannel(struct task_struct *p);
+ int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag);
+ void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid);
+ int security_msg_msg_alloc(struct msg_msg *msg);
 diff --git a/security/security.c b/security/security.c
-index 353b711e635a..777919349751 100644
+index 4927e7cc7d96..353b711e635a 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -80,6 +80,7 @@ int __init security_init(void)
- 	capability_add_hooks();
- 	yama_add_hooks();
- 	loadpin_add_hooks();
-+	sidechannel_add_hooks();
+@@ -1165,6 +1165,11 @@ void security_task_to_inode(struct task_struct *p, struct inode *inode)
+ 	call_void_hook(task_to_inode, p, inode);
+ }
  
- 	/*
- 	 * Load all the remaining security modules.
-diff --git a/security/sidechannel/Kconfig b/security/sidechannel/Kconfig
-new file mode 100644
-index 000000000000..af9396534128
---- /dev/null
-+++ b/security/sidechannel/Kconfig
-@@ -0,0 +1,60 @@
-+config SECURITY_SIDECHANNEL
-+	bool "Sidechannel attack safety extra checks"
-+	depends on SECURITY
-+	default n
-+	help
-+	  Look for a variety of cases where a side-channel attack
-+	  could potentially be exploited. Instruct the switching
-+	  code to use the indirect_branch_prediction_barrier in
-+	  cases where the passed task and the current task may be
-+	  at risk.
-+
-+          If you are unsure how to answer this question, answer N.
-+
-+config SECURITY_SIDECHANNEL_UIDS
-+	bool "Sidechannel check on UID"
-+	depends on SECURITY_SIDECHANNEL
-+	default n
-+	help
-+	  Assume that tasks with different effective UIDs may be
-+	  subject to side-channel attacks. As most task switching
-+	  occurs between tasks with different effective UIDs this
-+	  can have a significant performance impact.
-+
-+          If you are unsure how to answer this question, answer N.
-+
-+
-+config SECURITY_SIDECHANNEL_CAPABILITIES
-+	bool "Sidechannel check on capability sets"
-+	depends on SECURITY_SIDECHANNEL
-+	default n
-+	help
-+	  Assume that tasks with different sets of privilege may be
-+	  subject to side-channel attacks. Potential interactions
-+	  where the attacker lacks capabilities the attacked has
-+	  are blocked.
-+
-+          If you are unsure how to answer this question, answer N.
-+
-+config SECURITY_SIDECHANNEL_NAMESPACES
-+	bool "Sidechannel check on namespaces"
-+	depends on SECURITY_SIDECHANNEL
-+	depends on NAMESPACES
-+	default n
-+	help
-+	  Assume that tasks in different namespaces may be
-+	  subject to side-channel attacks. User, PID and cgroup
-+	  namespaces are checked.
-+
-+          If you are unsure how to answer this question, answer N.
-+
-+config SECURITY_SIDECHANNEL_ALWAYS
-+	bool "Sidechannel assumed to always be possible"
-+	depends on SECURITY_SIDECHANNEL
-+	default n
-+	help
-+	  Assume that all tasks may be subject to side-channel attacks.
-+	  Always instruct the system to use countermeasures regardless
-+	  of the potential impact.
-+
-+          If you are unsure how to answer this question, answer N.
-diff --git a/security/sidechannel/Makefile b/security/sidechannel/Makefile
-new file mode 100644
-index 000000000000..f61d83f28035
---- /dev/null
-+++ b/security/sidechannel/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_SECURITY_SIDECHANNEL) += sidechannel.o
-diff --git a/security/sidechannel/sidechannel.c b/security/sidechannel/sidechannel.c
-new file mode 100644
-index 000000000000..4da7d6dafdc5
---- /dev/null
-+++ b/security/sidechannel/sidechannel.c
-@@ -0,0 +1,162 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Side Channel Safety Security Module
-+ *
-+ * Copyright (C) 2018 Intel Corporation.
-+ *
-+ */
-+
-+#define pr_fmt(fmt) "SideChannel: " fmt
-+
-+#include <linux/types.h>
-+#include <linux/lsm_hooks.h>
-+#include <linux/capability.h>
-+#include <linux/cred.h>
-+#include <linux/sched.h>
-+#include <linux/string_helpers.h>
-+#include <linux/nsproxy.h>
-+#include <linux/pid_namespace.h>
-+
-+#ifdef CONFIG_SECURITY_SIDECHANNEL_ALWAYS
-+static int sidechannel_task_safe_sidechannel(struct task_struct *p)
++int security_task_safe_sidechannel(struct task_struct *p)
 +{
-+	return -EACCES;
++	return call_int_hook(task_safe_sidechannel, 0, p);
 +}
-+#else
-+/*
-+ * safe_by_uid - Are task and current sidechannel safe?
-+ * @p: task to check on
-+ *
-+ * Returns 0 if the tasks are sidechannel safe, -EACCES otherwise.
-+ */
-+#ifdef CONFIG_SECURITY_SIDECHANNEL_UIDS
-+static int safe_by_uid(struct task_struct *p)
-+{
-+	const struct cred *ccred = current_real_cred();
-+	const struct cred *pcred = rcu_dereference_protected(p->real_cred, 1);
 +
-+	/*
-+	 * Credential checks. Considered safe if:
-+	 *	UIDs are the same
-+	 */
-+	if (ccred != pcred && ccred->euid.val != pcred->euid.val)
-+		return -EACCES;
-+	return 0;
-+}
-+#else
-+static inline int safe_by_uid(struct task_struct *p)
-+{
-+	return 0;
-+}
-+#endif
-+
-+/*
-+ * safe_by_capability - Are task and current sidechannel safe?
-+ * @p: task to check on
-+ *
-+ * Returns 0 if the tasks are sidechannel safe, -EACCES otherwise.
-+ */
-+#ifdef CONFIG_SECURITY_SIDECHANNEL_CAPABILITIES
-+static int safe_by_capability(struct task_struct *p)
-+{
-+	const struct cred *ccred = current_real_cred();
-+	const struct cred *pcred = rcu_dereference_protected(p->real_cred, 1);
-+
-+	/*
-+	 * Capabilities checks. Considered safe if:
-+	 *	current has all the capabilities p does
-+	 */
-+	if (ccred != pcred &&
-+	    !cap_issubset(pcred->cap_effective, ccred->cap_effective))
-+		return -EACCES;
-+	return 0;
-+}
-+#else
-+static inline int safe_by_capability(struct task_struct *p)
-+{
-+	return 0;
-+}
-+#endif
-+
-+#ifdef CONFIG_SECURITY_SIDECHANNEL_NAMESPACES
-+/**
-+ * safe_by_namespace - Are task and current sidechannel safe?
-+ * @p: task to check on
-+ *
-+ * Returns 0 if the tasks are sidechannel safe, -EACCES otherwise.
-+ */
-+static int safe_by_namespace(struct task_struct *p)
-+{
-+	struct cgroup_namespace *ccgn = NULL;
-+	struct cgroup_namespace *pcgn = NULL;
-+	const struct cred *ccred;
-+	const struct cred *pcred;
-+
-+	/*
-+	 * Namespace checks. Considered safe if:
-+	 *	cgroup namespace is the same
-+	 *	User namespace is the same
-+	 *	PID namespace is the same
-+	 */
-+	if (current->nsproxy)
-+		ccgn = current->nsproxy->cgroup_ns;
-+	if (p->nsproxy)
-+		pcgn = p->nsproxy->cgroup_ns;
-+	if (ccgn != pcgn)
-+		return -EACCES;
-+
-+	ccred = current_real_cred();
-+	pcred = rcu_dereference_protected(p->real_cred, 1);
-+
-+	if (ccred->user_ns != pcred->user_ns)
-+		return -EACCES;
-+	if (task_active_pid_ns(current) != task_active_pid_ns(p))
-+		return -EACCES;
-+	return 0;
-+}
-+#else
-+static inline int safe_by_namespace(struct task_struct *p)
-+{
-+	return 0;
-+}
-+#endif
-+
-+/**
-+ * sidechannel_task_safe_sidechannel - Are task and current sidechannel safe?
-+ * @p: task to check on
-+ *
-+ * Returns 0 if the tasks are sidechannel safe, -EACCES otherwise.
-+ */
-+static int sidechannel_task_safe_sidechannel(struct task_struct *p)
-+{
-+	int rc;
-+
-+	/*
-+	 * Easy optimizations
-+	 */
-+	if (p == current || p->pid == current->pid)
-+		return 0;
-+
-+	rc = safe_by_uid(p);
-+	if (rc)
-+		return rc;
-+	rc = safe_by_capability(p);
-+	if (rc)
-+		return rc;
-+	rc = safe_by_namespace(p);
-+	if (rc)
-+		return rc;
-+	return 0;
-+}
-+#endif /* CONFIG_SECURITY_SIDECHANNEL_ALWAYS */
-+
-+static struct security_hook_list sidechannel_hooks[] __lsm_ro_after_init = {
-+	LSM_HOOK_INIT(task_safe_sidechannel, sidechannel_task_safe_sidechannel),
-+};
-+
-+void __init sidechannel_add_hooks(void)
-+{
-+	pr_info("Extra sidechannel checks enabled\n");
-+	security_add_hooks(sidechannel_hooks, ARRAY_SIZE(sidechannel_hooks),
-+			   "sidechannel");
-+}
+ int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
+ {
+ 	return call_int_hook(ipc_permission, 0, ipcp, flag);
 -- 
 2.17.1
 
