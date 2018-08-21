@@ -2,106 +2,204 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1126C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C452C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:55:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D96B21829
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:46:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D96B21829
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	by mail.kernel.org (Postfix) with ESMTP id 30A82217C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:55:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="fV6+XyUF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30A82217C7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbeHUXH4 (ORCPT
+        id S1727111AbeHUXQa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 19:07:56 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:48921 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726626AbeHUXH4 (ORCPT
+        Tue, 21 Aug 2018 19:16:30 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34532 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbeHUXQa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 19:07:56 -0400
-Received: from excalibur.cnev.de ([89.0.218.119]) by mrelayeu.kundenserver.de
- (mreue007 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 0LrDwG-1fxjNb45nQ-0139zj; Tue, 21 Aug 2018 21:45:52 +0200
-Received: from karsten by excalibur.cnev.de with local (Exim 4.89)
-        (envelope-from <merker@debian.org>)
-        id 1fsCb8-0007iU-J4; Tue, 21 Aug 2018 21:45:50 +0200
-Date:   Tue, 21 Aug 2018 21:45:50 +0200
-From:   Karsten Merker <merker@debian.org>
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     linux@roeck-us.net, linux-riscv@lists.infradead.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] RISC-V Updates for the 4.19 Merge Window
-Message-ID: <20180821194550.wrh3q2fkr6wmrovd@excalibur.cnev.de>
-References: <20180818133759.GA20049@roeck-us.net>
- <mhng-d01c95f5-d4bb-49c5-addb-78b09911f6cd@palmer-si-x1c4>
+        Tue, 21 Aug 2018 19:16:30 -0400
+Received: by mail-wm0-f65.google.com with SMTP id l2-v6so10435579wme.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 12:54:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=b/v1ib08gpXnKQVOpBS9hExt+6lM9c3yAmrdIjdxow0=;
+        b=fV6+XyUFTFbcxtaLueIyrJ5KuK9m6A8xIcJ+p1wcOYEx0UZIsWwhtj4peEWQAiBbf0
+         I+NG6lMvxrea6jZXH4T6xoXannNnhLqtfuijRqKH/kjrVofntUr2xcp9YFoo1Kb9u6DW
+         ko/eOk1yH7jBS4q1sBuWqH8L6TpMi4vhPdrq4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=b/v1ib08gpXnKQVOpBS9hExt+6lM9c3yAmrdIjdxow0=;
+        b=hjhZQyF7gOhr5EHf4zo9/ZluSyzyueKvanamj9v0LMFRAnd3I1A+9iFGVj7okqzXBn
+         7sMH+XBD1mktzNigDlNVVkoYrlHCDc3g3rw9LiJtqMpYsNTBEqwzpzS6Hwez4z/D6mA0
+         nPkxwsuNIAgfvw3nKfDpIAst4nwTesjaxsq8rnN2zvhmiO/367eWMs8HQhJ53mUHK8sV
+         e7MnIJMqkyDVKL4SY/8XEoNHderBAFcrdsHzw9eTmlPm1OuCFduCERLa5npHyzoVzSL5
+         en45Gr8Fhl5tPsYqskxYfyySdFGiT/XUFiU/CpziloPOse8mZNjQIPFdmzeSvSFN2Ynn
+         wxlQ==
+X-Gm-Message-State: APzg51CL7Jmoa+Xtd4g74xmkGdHaEkrXPXjkHUc1DXS/8Im3YvRE95k7
+        SXqJINEpRfxVPudWeYel7EfpDA==
+X-Google-Smtp-Source: ANB0VdYeo/yCr6xDSDefjqw4qPSn+PfjGGB6jR5UTHdbnPnrrdy7lOz1/vsHrsz8E3G1XvGt2GbtFg==
+X-Received: by 2002:a1c:ae8d:: with SMTP id x135-v6mr539119wme.20.1534881295161;
+        Tue, 21 Aug 2018 12:54:55 -0700 (PDT)
+Received: from veci.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id g2-v6sm33523614wrd.71.2018.08.21.12.54.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 Aug 2018 12:54:54 -0700 (PDT)
+Date:   Tue, 21 Aug 2018 21:54:46 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, viro@zeniv.linux.org.uk,
+        hch@infradead.org
+Subject: [GIT PULL] overlayfs update for 4.19
+Message-ID: <20180821195446.GA9512@veci.piliscsaba.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <mhng-d01c95f5-d4bb-49c5-addb-78b09911f6cd@palmer-si-x1c4>
-X-No-Archive: yes
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Provags-ID: V03:K1:cL4HX/1A+geVz8WKz2P/9oE8jZ6VppXNS6ivhEa6RTPssEm4IX0
- DlTrtfLSR0Qog/KrgPRK7tRUQR5u63BmK6HP0PkriSxLl0qbpH5hRMUtg9BgV+7/sunysPe
- lb7O0uHfSgCs65kPN47lOYGoOjv8f0/CdTUEFDAfG1b93DS+jdzF1GPoZs4Zsc2vtg2jnCT
- mLJ55nxovfuXt4jh+dSzQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:p6mtv+1WAZY=:ogkem+MpiB0bX6sg1gNar3
- Z73DzQMU8JOAIyNgYTQf/Vc0x/aU6EsMaLTbQ9Yh9P+NTpy2oE4uWUp6BDvl4W0gUrWkOKJIf
- 2GxkgWBt0o8T9eyWnR/n6vxgm0D2KJNm5k1e3a6O6mrVqjXe9rpdDdEphe1xaWfLyZdUVzzi2
- Xc4Jp9cBNFW5RaZEqvlmfI7lVGhRjz+EXZQJG7VaZuqzWdowKKgCwsy/B0CiPDABunTT3L220
- cOzgucZ6fDPTGpVnK+w0i1+JlC41qDka/Ieo5eMFVx7JBaxPIg+7SJqGQJI0BR7kmDPL9qcV7
- L3am4w2T9Cyn/tWiRmeerC2ZkOzQ8J9EEQhpMdGnN2/EM8A6f/RSIzb00BmkJ+GoFk5loy5bv
- FGvcT4gs+FxpKl7wPRR30CcjPvTUWQQGR73NC0WtUIpslUiSdqH0DQrl3dLkbDplMKuY5WcjD
- FPKhuRVw+oGmoVdN6EYhqlVJWnFnydveJ26ljtfIFPZhi1MlktaRyIIKuAm82/13YgDsy7F0l
- cNaRTGIQFbFBY2Gn5Ht0F6ziPX0W0G7mjvbozcEQYQE7qPF2qY3MeENG0KZy4Mwh303kMRJqY
- gS4WCJB7HEauWse4o8WNo9fGUtocKMIR+CPEXcLPDtZwt0N21zIqsZ0CGnQhVmNscvJZ7zjBd
- yzK4j2vIAzCU59xP/HLArb6ZMmre8l8hiGsJnqgp7eTHkRjwQgenlA7bf3n8PDaKMQv0=
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 11:31:48AM -0700, Palmer Dabbelt wrote:
-> On Sat, 18 Aug 2018 06:37:59 PDT (-0700), linux@roeck-us.net wrote:
-[...]
-> > Do you have vmlinux embedded in bbl ?
-> > 
-> > With separate bbl and vmlinux, and the following qemu command line
-> > (with qemu 3.0)
-> > 
-> > qemu-system-riscv64 -M virt -m 512M -no-reboot \
-> > 	-bios bbl -kernel vmlinux \
-> > 	-netdev user,id=net0 -device virtio-net-device,netdev=net0 \
-> > 	-device virtio-blk-device,drive=d0 \
-> > 	-drive file=rootfs.ext2,if=none,id=d0,format=raw \
-> > 	-append 'root=/dev/vda rw console=ttyS0,115200' \
-> > 	-nographic -monitor none
-> > 
-> > all I get is
-> > 
-> > rom: requested regions overlap (rom mrom.reset. free=0x000000000001cbe8, addr=0x0000000000001000)
-> > 
-> > However, the she system boots fine with the same qemu command line if I use qemu
-> > built from https://github.com/riscv/riscv-qemu.git, branch qemu-for-upstream.
-> 
-> Yes, I have a vmlinux built into my BBL.  I didn't actually look closely at
-> the command line I was copying and see that vmlinux in there, my guess would
-> be that it's getting ignored.  I don't remember if upstream BBL actually
-> works with the split bbl/vmlinux setup, I've kind of stopped paying
-> attention to BBL as I'm just waiting for someone to tell me instructions as
-> to how to use a real bootloader... :)
+Hi Linus,
 
-JFTR, upstream bbl supports the split bbl/vmlinux setup, it's just 
-upstream qemu that lacks the support for now (qemu-riscv has it).
+Please pull from:
 
-Regards,
-Karsten
--- 
-Gem. Par. 28 Abs. 4 Bundesdatenschutzgesetz widerspreche ich der Nutzung
-sowie der Weitergabe meiner personenbezogenen Daten für Zwecke der
-Werbung sowie der Markt- oder Meinungsforschung.
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-update-4.19
+
+This contains two new features:
+
+ 1) Stack file operations: this allows removal of several hacks from the
+    VFS, proper interaction of read-only open files with copy-up,
+    possibility to implement fs modifying ioctls properly, and others.
+
+ 2) Metadata only copy-up: when file is on lower layer and only metadata is
+    modified (except size) then only copy up the metadata and continue to
+    use the data from the lower file.
+
+The vfs bits have been reworked based on Al's open cleanup work.
+
+Thanks,
+Miklos
+
+----------------------------------------------------------------
+Al Viro (1):
+      new helper: open_with_fake_path()
+
+Amir Goldstein (1):
+      ovl: fix wrong use of impure dir cache in ovl_iterate()
+
+Miklos Szeredi (36):
+      vfs: limit size of dedupe
+      vfs: dedupe: return int
+      vfs: dedupe: rationalize args
+      vfs: dedupe: extract helper for a single dedup
+      vfs: make open_with_fake_path() not contribute to nr_files
+      vfs: export vfs_ioctl() to modules
+      vfs: export vfs_dedupe_file_range_one() to modules
+      ovl: copy up times
+      ovl: copy up inode flags
+      Revert "Revert "ovl: get_write_access() in truncate""
+      ovl: copy up file size as well
+      ovl: deal with overlay files in ovl_d_real()
+      ovl: stack file ops
+      ovl: add helper to return real file
+      ovl: add ovl_read_iter()
+      ovl: add ovl_write_iter()
+      ovl: add ovl_fsync()
+      ovl: add ovl_mmap()
+      ovl: add ovl_fallocate()
+      ovl: add lsattr/chattr support
+      ovl: add ovl_fiemap()
+      ovl: add O_DIRECT support
+      ovl: add reflink/copyfile/dedup support
+      vfs: don't open real
+      Revert "ovl: fix may_write_real() for overlayfs directories"
+      Revert "ovl: don't allow writing ioctl on lower layer"
+      vfs: fix freeze protection in mnt_want_write_file() for overlayfs
+      Revert "ovl: fix relatime for directories"
+      Revert "vfs: update ovl inode before relatime check"
+      Revert "vfs: add flags to d_real()"
+      Revert "vfs: do get_write_access() on upper layer of overlayfs"
+      Partially revert "locks: fix file locking on overlayfs"
+      Revert "fsnotify: support overlayfs"
+      vfs: remove open_flags from d_real()
+      ovl: obsolete "check_copy_up" module option
+      ovl: fix documentation of non-standard behavior
+
+Vivek Goyal (28):
+      ovl: Initialize ovl_inode->redirect in ovl_get_inode()
+      ovl: Move the copy up helpers to copy_up.c
+      ovl: Provide a mount option metacopy=on/off for metadata copyup
+      ovl: During copy up, first copy up metadata and then data
+      ovl: Copy up only metadata during copy up where it makes sense
+      ovl: Add helper ovl_already_copied_up()
+      ovl: A new xattr OVL_XATTR_METACOPY for file on upper
+      ovl: Use out_err instead of out_nomem
+      ovl: Modify ovl_lookup() and friends to lookup metacopy dentry
+      ovl: Copy up meta inode data from lowest data inode
+      ovl: Add helper ovl_dentry_lowerdata() to get lower data dentry
+      ovl: Fix ovl_getattr() to get number of blocks from lower
+      ovl: Store lower data inode in ovl_inode
+      ovl: Add helper ovl_inode_realdata()
+      ovl: Open file with data except for the case of fsync
+      ovl: Do not expose metacopy only dentry from d_real()
+      ovl: Move some dir related ovl_lookup_single() code in else block
+      ovl: Check redirects for metacopy files
+      ovl: Treat metacopy dentries as type OVL_PATH_MERGE
+      ovl: Add an inode flag OVL_CONST_INO
+      ovl: Do not set dentry type ORIGIN for broken hardlinks
+      ovl: Set redirect on metacopy files upon rename
+      ovl: Set redirect on upper inode when it is linked
+      ovl: Check redirect on index as well
+      ovl: add helper to force data copy-up
+      ovl: Do not do metadata only copy-up for truncate operation
+      ovl: Do not do metacopy only for ioctl modifying file attr
+      ovl: Enable metadata only feature
+
+ Documentation/filesystems/Locking       |   3 +-
+ Documentation/filesystems/overlayfs.txt |  81 +++--
+ Documentation/filesystems/vfs.txt       |  16 +-
+ fs/btrfs/ctree.h                        |   5 +-
+ fs/btrfs/ioctl.c                        |  11 +-
+ fs/file_table.c                         |  69 +++--
+ fs/inode.c                              |  46 +--
+ fs/internal.h                           |  11 +-
+ fs/ioctl.c                              |   1 +
+ fs/locks.c                              |  20 +-
+ fs/namei.c                              |   2 +-
+ fs/namespace.c                          |  69 +----
+ fs/ocfs2/file.c                         |  17 +-
+ fs/open.c                               |  44 +--
+ fs/overlayfs/Kconfig                    |  19 ++
+ fs/overlayfs/Makefile                   |   4 +-
+ fs/overlayfs/copy_up.c                  | 190 ++++++++----
+ fs/overlayfs/dir.c                      | 105 +++++--
+ fs/overlayfs/export.c                   |   3 +
+ fs/overlayfs/file.c                     | 511 ++++++++++++++++++++++++++++++++
+ fs/overlayfs/inode.c                    | 175 +++++++----
+ fs/overlayfs/namei.c                    | 195 +++++++-----
+ fs/overlayfs/overlayfs.h                |  47 ++-
+ fs/overlayfs/ovl_entry.h                |   6 +-
+ fs/overlayfs/readdir.c                  |  19 +-
+ fs/overlayfs/super.c                    | 103 ++++---
+ fs/overlayfs/util.c                     | 252 +++++++++++++++-
+ fs/read_write.c                         |  94 +++---
+ fs/xattr.c                              |   9 +-
+ fs/xfs/xfs_file.c                       |  29 +-
+ include/linux/dcache.h                  |  15 +-
+ include/linux/fs.h                      |  29 +-
+ include/linux/fsnotify.h                |  14 +-
+ 33 files changed, 1619 insertions(+), 595 deletions(-)
+ create mode 100644 fs/overlayfs/file.c
