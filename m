@@ -2,249 +2,113 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4652C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 04:39:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95EF8C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 04:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 831CE2172D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 04:39:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iPIu70R6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 831CE2172D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 433F92172D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 04:42:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 433F92172D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbeHUH5d (ORCPT
+        id S1726553AbeHUIA4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 03:57:33 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37630 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726253AbeHUH5d (ORCPT
+        Tue, 21 Aug 2018 04:00:56 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60876 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726175AbeHUIA4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 03:57:33 -0400
-Received: by mail-wr1-f66.google.com with SMTP id u12-v6so14659930wrr.4
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 21:39:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=coOmkcsf8s73gAVG60WRGn1dtuwmH6ZPcsuftAbwqUs=;
-        b=iPIu70R62sgkAqDB7V5l4ceuW960zjNhdPyNNIzqg97dwgFWg5anXLkMpSmWfDdted
-         eWBI0/E9tQykgIArPFn2lUUUtIszCz3ics4E+vP04Ir5yVx3hV/JT/+x12NIJn51dsqI
-         2oBETiSz6juxvowYtSv4+u0fIEp3MayZMCGNg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=coOmkcsf8s73gAVG60WRGn1dtuwmH6ZPcsuftAbwqUs=;
-        b=t/5vCXTu1hDiCQ1PqJ7vRrxS3y5oQu1VeOoAL5q1qKncO46+xeFUDe2yZVpM5FS032
-         av/1ImnJ9oxKcFiSEmKy6iCgCrDU62k58Gy3+lKw0xWiS7auh0KCoueEwzvqxSoov8zF
-         7FiovtgaX3Ev/lkb6LVQzWOU7evRrNiQHj9evTLJmX5dt7vkFaAvszofJv6xFM3Iv9I/
-         CdoAWsrdnHjffXNqk9h9rkgGkzCl741mrhDpATam7uok2rR/tGeMX3G3n+zOzqLX7sCR
-         15rgoQ+7hnsNjp0dY9y5C1/rP+dalvBpg4+0u6Me8ChlBs0jC/5CnO1uilo3gCyuTN0Z
-         R08w==
-X-Gm-Message-State: AOUpUlEJjSczpXSQWkIZPlDynfAlM4wysA99J+D4ydmcAR11ZbGj5XLA
-        M6+WE8CuuIz2mqa4Spv3YOffcHO/vEogGzcEUFeGTg==
-X-Google-Smtp-Source: AA+uWPznCtHjDm241uEc441CORXE33WgUmkmuYNmYmu/anCqTPS8qxnUK2lc+1vVXF1Chvm7w28Qp5BRnxcpzxYBOCM=
-X-Received: by 2002:a5d:66c4:: with SMTP id k4-v6mr31431398wrw.154.1534826342869;
- Mon, 20 Aug 2018 21:39:02 -0700 (PDT)
+        Tue, 21 Aug 2018 04:00:56 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7L4dT5c018439
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 00:42:27 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m09guvge5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 00:42:26 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Tue, 21 Aug 2018 05:42:25 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 21 Aug 2018 05:42:20 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7L4gJBU42270932
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 21 Aug 2018 04:42:19 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 17310A4057;
+        Tue, 21 Aug 2018 07:42:20 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5DCDCA4040;
+        Tue, 21 Aug 2018 07:42:15 +0100 (BST)
+Received: from [9.195.41.244] (unknown [9.195.41.244])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 21 Aug 2018 07:42:15 +0100 (BST)
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: Re: [PATCH v9 0/4] Uprobes: Support SDT markers having reference
+ count (semaphore)
+To:     Song Liu <liu.song.a23@gmail.com>
+Cc:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>, mhiramat@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        ananth@linux.vnet.ibm.com,
+        Alexis Berlemont <alexis.berlemont@gmail.com>,
+        naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180820044250.11659-1-ravi.bangoria@linux.ibm.com>
+ <CAPhsuW70nRkwM8C76m4c_XF4tjepdRWYezg15sTvkMUDtHZ8JQ@mail.gmail.com>
+Date:   Tue, 21 Aug 2018 10:12:13 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a1c:c243:0:0:0:0:0 with HTTP; Mon, 20 Aug 2018 21:39:01
- -0700 (PDT)
-In-Reply-To: <20180723015732.24252-2-takahiro.akashi@linaro.org>
-References: <20180723015732.24252-1-takahiro.akashi@linaro.org> <20180723015732.24252-2-takahiro.akashi@linaro.org>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Mon, 20 Aug 2018 21:39:01 -0700
-Message-ID: <CALAqxLU3+tu09M5=D-6xCqweKenfXtZuBGy6tqEP2DoGAs-LNA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/5] arm64: export memblock_reserve()d regions via /proc/iomem
-To:     AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        G Gregory <graeme.gregory@linaro.org>, al.stone@linaro.org,
-        bhsharma@redhat.com, tbaicar@codeaurora.org,
-        kexec@lists.infradead.org, lkml <linux-kernel@vger.kernel.org>,
-        james.morse@arm.com, hanjun.guo@linaro.org,
-        Sudeep Holla <sudeep.holla@arm.com>, dyoung@redhat.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAPhsuW70nRkwM8C76m4c_XF4tjepdRWYezg15sTvkMUDtHZ8JQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18082104-4275-0000-0000-000002AC7ECB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082104-4276-0000-0000-000037B5B2E9
+Message-Id: <b0b9e181-0df7-dc8f-927a-a2cf52bed93d@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-21_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=978 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808210047
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 22, 2018 at 6:57 PM, AKASHI Takahiro
-<takahiro.akashi@linaro.org> wrote:
-> From: James Morse <james.morse@arm.com>
->
-> There has been some confusion around what is necessary to prevent kexec
-> overwriting important memory regions. memblock: reserve, or nomap?
-> Only memblock nomap regions are reported via /proc/iomem, kexec's
-> user-space doesn't know about memblock_reserve()d regions.
->
-> Until commit f56ab9a5b73ca ("efi/arm: Don't mark ACPI reclaim memory
-> as MEMBLOCK_NOMAP") the ACPI tables were nomap, now they are reserved
-> and thus possible for kexec to overwrite with the new kernel or initrd.
-> But this was always broken, as the UEFI memory map is also reserved
-> and not marked as nomap.
->
-> Exporting both nomap and reserved memblock types is a nuisance as
-> they live in different memblock structures which we can't walk at
-> the same time.
->
-> Take a second walk over memblock.reserved and add new 'reserved'
-> subnodes for the memblock_reserved() regions that aren't already
-> described by the existing code. (e.g. Kernel Code)
->
-> We use reserve_region_with_split() to find the gaps in existing named
-> regions. This handles the gap between 'kernel code' and 'kernel data'
-> which is memblock_reserve()d, but already partially described by
-> request_standard_resources(). e.g.:
-> | 80000000-dfffffff : System RAM
-> |   80080000-80ffffff : Kernel code
-> |   81000000-8158ffff : reserved
-> |   81590000-8237efff : Kernel data
-> |   a0000000-dfffffff : Crash kernel
-> | e00f0000-f949ffff : System RAM
->
-> reserve_region_with_split needs kzalloc() which isn't available when
-> request_standard_resources() is called, use an initcall.
->
-> Reported-by: Bhupesh Sharma <bhsharma@redhat.com>
-> Reported-by: Tyler Baicar <tbaicar@codeaurora.org>
-> Suggested-by: Akashi Takahiro <takahiro.akashi@linaro.org>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Fixes: d28f6df1305a ("arm64/kexec: Add core kexec support")
-> Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> CC: Mark Rutland <mark.rutland@arm.com>
-> ---
->  arch/arm64/kernel/setup.c | 38 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
->
-> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
-> index 30ad2f085d1f..5b4fac434c84 100644
-> --- a/arch/arm64/kernel/setup.c
-> +++ b/arch/arm64/kernel/setup.c
-> @@ -241,6 +241,44 @@ static void __init request_standard_resources(void)
->         }
->  }
->
-> +static int __init reserve_memblock_reserved_regions(void)
-> +{
-> +       phys_addr_t start, end, roundup_end = 0;
-> +       struct resource *mem, *res;
-> +       u64 i;
-> +
-> +       for_each_reserved_mem_region(i, &start, &end) {
-> +               if (end <= roundup_end)
-> +                       continue; /* done already */
-> +
-> +               start = __pfn_to_phys(PFN_DOWN(start));
-> +               end = __pfn_to_phys(PFN_UP(end)) - 1;
-> +               roundup_end = end;
-> +
-> +               res = kzalloc(sizeof(*res), GFP_ATOMIC);
-> +               if (WARN_ON(!res))
-> +                       return -ENOMEM;
-> +               res->start = start;
-> +               res->end = end;
-> +               res->name  = "reserved";
-> +               res->flags = IORESOURCE_MEM;
-> +
-> +               mem = request_resource_conflict(&iomem_resource, res);
-> +               /*
-> +                * We expected memblock_reserve() regions to conflict with
-> +                * memory created by request_standard_resources().
-> +                */
-> +               if (WARN_ON_ONCE(!mem))
-> +                       continue;
-> +               kfree(res);
-> +
-> +               reserve_region_with_split(mem, start, end, "reserved");
-> +       }
-> +
-> +       return 0;
-> +}
-> +arch_initcall(reserve_memblock_reserved_regions);
-> +
+Hi Song,
 
-Since this patch landed, on the HiKey board at bootup I'm seeing:
+> root@virt-test:~# ~/a.out
+> 11
+> semaphore 0
+> semaphore 0
+> semaphore 2      <<<  when the uprobe is enabled
 
-[    0.451884] WARNING: CPU: 1 PID: 1 at arch/arm64/kernel/setup.c:271
-reserve_memblock_reserved_regions+0xd4/0x13c
-[    0.451896] CPU: 1 PID: 1 Comm: swapper/0 Not tainted
-4.18.0-10758-ga534dc3 #709
-[    0.451903] Hardware name: HiKey Development Board (DT)
-[    0.451913] pstate: 80400005 (Nzcv daif +PAN -UAO)
-[    0.451922] pc : reserve_memblock_reserved_regions+0xd4/0x13c
-[    0.451931] lr : reserve_memblock_reserved_regions+0xcc/0x13c
-[    0.451938] sp : ffffff8008053d30
-[    0.451945] x29: ffffff8008053d30 x28: ffffff8008ebe650
-[    0.451957] x27: ffffff8008ead060 x26: ffffff8008e113b0
-[    0.451969] x25: 0000000000000000 x24: 0000000000488020
-[    0.451981] x23: 0000000021ffffff x22: ffffff8008e0d860
-[    0.451993] x21: ffffff8008d74370 x20: ffffff8009019000
-[    0.452005] x19: ffffffc07507a400 x18: ffffff8009019a48
-[    0.452017] x17: 0000000000000000 x16: 0000000000000000
-[    0.452028] x15: ffffff80890e973f x14: 0000000000000006
-[    0.452040] x13: 0000000000000000 x12: 0000000000000000
-[    0.452051] x11: 0101010101010101 x10: 7f7f7f7f7f7f7f7f
-[    0.452063] x9 : 0000000000000000 x8 : ffffffc07507a480
-[    0.452074] x7 : 0000000000000000 x6 : ffffffc07ffffc30
-[    0.452086] x5 : 0000000000000000 x4 : 0000000021ffffff
-[    0.452097] x3 : 0000000000000001 x2 : 0000000000000001
-[    0.452109] x1 : 0000000000000000 x0 : 0000000000000000
-[    0.452121] Call trace:
-[    0.452130]  reserve_memblock_reserved_regions+0xd4/0x13c
-[    0.452140]  do_one_initcall+0x78/0x150
-[    0.452148]  kernel_init_freeable+0x198/0x258
-[    0.452159]  kernel_init+0x10/0x108
-[    0.452170]  ret_from_fork+0x10/0x18
-[    0.452181] ---[ end trace b4b78c443df3a750 ]---
+Yes, this happens when multiple vmas points to the same file portion.
+Can you check /proc/`pgrep a.out`/maps.
 
-From skimming the patch, it seems this is maybe expected? Or should
-this warning raise eyebrows? I can't quite figure it out.
+Logic is simple. If we are going to patch an instruction, increment the
+reference counter. If we are going to unpatch an instruction, decrement
+the reference counter. In this case, we patched instruction twice and
+thus incremented reference counter twice as well.
 
-It seems to trigger on the pstore memory at 0x21f00000-0x21ffffff.
+Ravi
 
-/proc/iomem now has:
-...
-07410000-21efffff : System RAM
-  11000000-1113cfff : reserved
-21f00000-21ffffff : reserved
-  21f00000-21f1ffff : persistent_ram
-  21f20000-21f3ffff : persistent_ram
-  21f40000-21f5ffff : persistent_ram
-  21f60000-21f7ffff : persistent_ram
-  21f80000-21f9ffff : persistent_ram
-  21fa0000-21fbffff : persistent_ram
-  21fc0000-21fdffff : persistent_ram
-  21fe0000-21ffffff : persistent_ram
-22000000-34ffffff : System RAM
-...
-
-Where previously it had:
-...
-07410000-21efffff : System RAM
-21f00000-21f1ffff : persistent_ram
-21f20000-21f3ffff : persistent_ram
-21f40000-21f5ffff : persistent_ram
-21f60000-21f7ffff : persistent_ram
-21f80000-21f9ffff : persistent_ram
-21fa0000-21fbffff : persistent_ram
-21fc0000-21fdffff : persistent_ram
-21fe0000-21ffffff : persistent_ram
-22000000-34ffffff : System RAM
-...
-
-
-
-thanks
--john
