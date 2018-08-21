@@ -3,95 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5583BC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 056ADC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C99F216C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:21:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C99F216C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B8F0120895
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:21:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8F0120895
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbeHUQlT (ORCPT
+        id S1727705AbeHUQlx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 12:41:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54938 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726907AbeHUQlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 12:41:19 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 21 Aug 2018 12:41:53 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:49892 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726907AbeHUQlw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 12:41:52 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id EvaJ79_dH0Hg; Tue, 21 Aug 2018 15:21:27 +0200 (CEST)
+Received: from nazgul.tnic (77-85-47-250.ip.btc-net.bg [77.85.47.250])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1D50040131A5;
-        Tue, 21 Aug 2018 13:21:11 +0000 (UTC)
-Received: from ming.t460p (ovpn-12-61.pek2.redhat.com [10.72.12.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 68A6863F34;
-        Tue, 21 Aug 2018 13:20:42 +0000 (UTC)
-Date:   Tue, 21 Aug 2018 21:19:55 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Johannes Thumshirn <jthumshirn@suse.de>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.com>,
-        John Garry <john.garry@huawei.com>, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: core: Update SCSI_MQ_DEFAULT help text to match
- default
-Message-ID: <20180821131953.GA28549@ming.t460p>
-References: <20180821114407.18393-1-geert+renesas@glider.be>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 13D531EC0330;
+        Tue, 21 Aug 2018 15:21:25 +0200 (CEST)
+Date:   Tue, 21 Aug 2018 15:21:41 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH 1/2] x86/MCE/AMD: Check for NULL banks in THR interrupt
+ handler
+Message-ID: <20180821132141.GF30528@nazgul.tnic>
+References: <20180809140834.59264-1-Yazen.Ghannam@amd.com>
+ <20180809161548.GA20928@nazgul.tnic>
+ <BN7PR12MB259365671F2A73D5FF33C134F8250@BN7PR12MB2593.namprd12.prod.outlook.com>
+ <BN7PR12MB25930909EFF4F407A528A44FF83E0@BN7PR12MB2593.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180821114407.18393-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 21 Aug 2018 13:21:11 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 21 Aug 2018 13:21:11 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+In-Reply-To: <BN7PR12MB25930909EFF4F407A528A44FF83E0@BN7PR12MB2593.namprd12.prod.outlook.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 01:44:07PM +0200, Geert Uytterhoeven wrote:
-> The default was changed, but the help text was not updated.
+On Thu, Aug 16, 2018 at 07:00:43PM +0000, Ghannam, Yazen wrote:
+> So I think we should keep the NULL pointer checks for now to keep this fix
+> small. I can make a new patch following your suggestion above.
 > 
-> Fix grammar (s/the option/this option/) while at it.
-> 
-> Fixes: d5038a13eca72fb2 ("scsi: core: switch to scsi-mq by default")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/scsi/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-> index 8fc851a9e1162a56..a0491e11bd359499 100644
-> --- a/drivers/scsi/Kconfig
-> +++ b/drivers/scsi/Kconfig
-> @@ -53,11 +53,11 @@ config SCSI_MQ_DEFAULT
->  	depends on SCSI
->  	---help---
->  	  This option enables the new blk-mq based I/O path for SCSI
-> -	  devices by default.  With the option the scsi_mod.use_blk_mq
-> +	  devices by default.  With this option the scsi_mod.use_blk_mq
->  	  module/boot option defaults to Y, without it to N, but it can
->  	  still be overridden either way.
->  
-> -	  If unsure say N.
-> +	  If unsure say Y.
->  
->  config SCSI_PROC_FS
->  	bool "legacy /proc/scsi/ support"
-> -- 
-> 2.17.1
-> 
+> We can change the code so that we create the data structures during the
+> earlier init process, but I think this will be a much bigger change. This could
+> fall under the idea of decoupling the handling code from sysfs.
 
-Looks fine,
+Ok, then pls add the simpler fixes at the beginning of the series so
+that they can go to stable and have the more involved changes follow
+them.
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Thx.
 
-Thanks,
-Ming
+-- 
+Regards/Gruss,
+    Boris.
+
+ECO tip #101: Trim your mails when you reply.
+--
