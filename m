@@ -6,112 +6,91 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69037C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7BBAC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 217D621765
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:58:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C075216C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:00:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPmuwtZm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 217D621765
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pKxrWze3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C075216C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727615AbeHURTA (ORCPT
+        id S1727506AbeHURUW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 13:19:00 -0400
-Received: from mail-pf1-f175.google.com ([209.85.210.175]:35866 "EHLO
-        mail-pf1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbeHURTA (ORCPT
+        Tue, 21 Aug 2018 13:20:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42788 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727003AbeHURUV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 13:19:00 -0400
-Received: by mail-pf1-f175.google.com with SMTP id b11-v6so8556827pfo.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 06:58:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aNLAlnzBQxiBRsR8v2zXtt5MtRWEZX994H1zPgR3UQ8=;
-        b=IPmuwtZmEapXtpB/BYvBY0allvM/fWdAj/gf+z6cEdHHxyZ/dJ303XEcoS3Yd5z0Mj
-         djuS2hHyn77COE9C7n1hXgE6ohTewF0ErwIrQGWbLfBTZHRdTUjrKvuhSrxuMnzNDCdD
-         ijKv9FPY4ujVGY2YaDTI9hq7lSkralW7ONKenm+UiQInWeRDe6uF/JzIU2B6Sx4CXoZg
-         /XHvIgIrQxv4npte+ArnvoeTi1iodUtGjoMFnPJW90AGQe/qzh5HkWEVYuXw0bWrEdFO
-         zpO56fh1y3Ik94WAvsB/SxPKI31rLq0im+P8NDwlOg0EqVTznoaKKCqsXtNLrfbSNIAJ
-         qozQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aNLAlnzBQxiBRsR8v2zXtt5MtRWEZX994H1zPgR3UQ8=;
-        b=E1Re7T0Lb0B3lYg1ImABA9WH2PFyrZNHY6dzvqrwGy4AlaNWtmrJR1sQoGlQBdT8sk
-         GkJVn1BOO8s6GtdJtq5YmIOdk7UIWutOxuoXsANlAUatDLvfK8YTIJeSxZIVlDixUW+v
-         y5qUixOjK28FVISkcob7kJ8fgUZJE4CdcDu+MkcpjUz+mZX7u1SubVICjFQkvMyojiae
-         r6yiJwqI2DzNagj+T/xkrFLZPzvY3yGq+e7oKiZT/APoK5XOs9m8QL4JH2NLusax96MU
-         fqTm70+ur+MNL3SnvvigI9uMQBVgkzFL8pkrBopSrO1XktxQQb/AIMQckD9S4cMaIYkk
-         mKYw==
-X-Gm-Message-State: AOUpUlFXoyAmIXbrxoIqxX71ZiOrAiDJidesreeCaaMTuOKQL8fGj9fh
-        NcDWxNlny/u43bENWgcmAEY=
-X-Google-Smtp-Source: AA+uWPxIdQpCPjT8yt+PziRpQfRq7daZpmzMSM7PAN/i67M2hxhQjJ1X2F7osFBYUzNhYjEtp2yLfQ==
-X-Received: by 2002:a63:4663:: with SMTP id v35-v6mr47096440pgk.178.1534859924453;
-        Tue, 21 Aug 2018 06:58:44 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id 22-v6sm22069017pfl.126.2018.08.21.06.58.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 Aug 2018 06:58:43 -0700 (PDT)
-Date:   Tue, 21 Aug 2018 06:58:41 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tue, 21 Aug 2018 13:20:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LDnIvO0k5C2Q9NZTkVnMt1bnlbAwGe7QKEP/lGnz/Z8=; b=pKxrWze3CNydmOHe9dmjmIhe1
+        cL4p5jEHjx8P/HgB3RfcLeEBKVVM/vptji/jU2liTEDOUfUo9X0fH19ooy2n8qMetniRLcGbJVMSA
+        Qm0z6OXNDpiJhpCDY70rKogaSDAWL4lVSHKD565gg6dvCspmWStSyUvggYixFBOSJp8FJvxB01xtD
+        sqJMzMcJzNQn7OFa2bTcRZcutldZd9N8+E6nFTn3ccjWxssV2RcoHNZ05u/0VXf0WHZLouRhu5CQj
+        y0rnN+XWzI7W+yio4PPd714vaPBz/PLqgwrdtOlqr7OdQ3mg0Dx06Z077sqpPV93Sre52dVVdyJvw
+        vBNkzJM3g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fs7CK-0006ri-7g; Tue, 21 Aug 2018 13:59:52 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 46080202975C6; Tue, 21 Aug 2018 15:59:49 +0200 (CEST)
+Date:   Tue, 21 Aug 2018 15:59:49 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        David Woodhouse <dwmw@amazon.co.uk>, x86@kernel.org,
-        dvyukov@google.com, hughd@google.com,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: Crash in MM code in v4.4.y, v4.9.y with TRANSPARENT_HUGEPAGE
- enabled
-Message-ID: <20180821135841.GA17160@roeck-us.net>
-References: <20180817222733.GA18575@roeck-us.net>
- <20180820162938.GR29735@dhcp22.suse.cz>
- <20180820180353.GO12066@tassilo.jf.intel.com>
- <20180820201843.GA15008@tassilo.jf.intel.com>
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Andre Wild <wild@linux.vnet.ibm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH 1/2] sched/topology: Set correct numa topology type
+Message-ID: <20180821135949.GI24082@hirez.programming.kicks-ass.net>
+References: <20180808081942.GA37418@linux.vnet.ibm.com>
+ <1533920419-17410-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <20180821110258.GA2080@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180820201843.GA15008@tassilo.jf.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180821110258.GA2080@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 01:18:43PM -0700, Andi Kleen wrote:
-> On Mon, Aug 20, 2018 at 11:03:53AM -0700, Andi Kleen wrote:
-> > On Mon, Aug 20, 2018 at 06:29:38PM +0200, Michal Hocko wrote:
-> > > On Fri 17-08-18 15:27:33, Guenter Roeck wrote:
-> > > > Hi,
-> > > > 
-> > > > the following crash is seen in v4.4.148, v4.4.149, v4.9.120, and v4.9.121
-> > > > with CONFIG_TRANSPARENT_HUGEPAGE=y, CONFIG_TRANSPARENT_HUGEPAGE_MADVISE=y.
-> > > 
-> > > Could you try to apply fd7e315988b7 ("x86/mm: Simplify p[g4um]d_page()
-> > > macros"). I do not see it in stable 4.4 tree and it has been introduced
-> > > much later in 4.14. This one gave us quite some headache because it is
-> > > soooo easy to overlook.
-> > 
-> > Good catch!
-> > 
-> > I tested that with 4.9 and backporting the patch indeed fixes the
-> > syzcaller test case running in a KVM VM. Backported patch appended.
+On Tue, Aug 21, 2018 at 04:02:58AM -0700, Srikar Dronamraju wrote:
+> * Srikar Dronamraju <srikar@linux.vnet.ibm.com> [2018-08-10 22:30:18]:
 > 
-> Tested on 4.4 too and it fixes the syzkaller test case there too.
+> > With commit 051f3ca02e46 ("sched/topology: Introduce NUMA identity node
+> > sched domain") scheduler introduces an new numa level. However this
+> > leads to numa topology on 2 node systems no more marked as NUMA_DIRECT.
+> > After this commit, it gets reported as NUMA_BACKPLANE. This is because
+> > sched_domains_numa_level is now 2 on 2 node systems.
+> > 
+> > Fix this by allowing setting systems that have upto 2 numa levels as
+> > NUMA_DIRECT.
+> > 
+> > While here remove a code that assumes level can be 0.
+> > 
+> > Fixes: 051f3ca02e46 "Introduce NUMA identity node sched domain"
+> > Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+> > ---
 > 
+> Hey Peter,
+> 
+> Did you look at these two patches?
 
-Confirmed that the problem is fixed in v4.4.151-rc1 and v4.9.123-rc1.
-
-Thanks a lot for tracking this down and backporting the fix!
-
-Guenter
+Nope, been on holidays and the inbox is an even bigger mess than normal.
+I'll get to it, eventually :/
