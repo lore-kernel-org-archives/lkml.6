@@ -2,162 +2,117 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B2ACC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 01:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8786DC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 01:16:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0654C2175D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 01:02:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SxhpWU7z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0654C2175D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3CF5F21765
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 01:16:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CF5F21765
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726343AbeHUEUO (ORCPT
+        id S1726523AbeHUEec (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 00:20:14 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:40608 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725732AbeHUEUO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 00:20:14 -0400
-Received: by mail-pl0-f66.google.com with SMTP id s17-v6so7951678plp.7
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Aug 2018 18:02:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=J7IR1c2elDFWDAnSM4MPsm6zTi7GlE3DvX2Qvt8T3H0=;
-        b=SxhpWU7z6vW1fFEgCl5iYRKLG6aTpMoGVJOYsGH89oh1W29DXiNqVNmHJETIHWR+Xa
-         bj85iAFeHk2+aLVRta4fKhF6zmEF+Sdd4sSdZVP5zbdGM1yilfCXb9UZby0Eiu9Zrlmi
-         Ei1lSYRdtByIJ6ndUuZuBSEcf2sXLXIgn00B6lmwehy4Pa80cnJRscof8F8HAadHQGsS
-         EKD69FoSOL94CdLI4QetyiwDiv1eQ9bOd5muDeI4kegnPVzwY4BNwVGBeoLFxeaghrWm
-         P3BmiV1pDZ0MEMFriufpJ6O0/eQGdY5P1iRbxnxSqedU6CwdMs/3LCAv2/bfDEV3fStw
-         /2JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=J7IR1c2elDFWDAnSM4MPsm6zTi7GlE3DvX2Qvt8T3H0=;
-        b=C+V9rm4X6a5VbzdJY1APlC2WFqyU+fxlPdLZkl0yaBCl1rGVMoDzUTZ7CygsXgUKk7
-         ZqTCrw6zOL32V5z0UY6D2kA5s/IExp6VvaD2G8HAqLsc7hsUYY17MbImLbj6uxXgxKbI
-         4J/GMJORLQ1weWLnibLoyYloijWK9VoeR0KyrDYplM+Nm8x8H1f1tDhd0nXe1LI/Nm1f
-         cYE/3TC/Muzp23v9bqUHz4D+z4S8kOaYFyBZE6QLGAEVQ1OboFKm7kHWhpjq9qH2ynJ+
-         iN+fS2G0hDueTYof+gjWRi9ebEIbc9GsOESRVrDYrWA7Te2M29FpLJ7IJXHituAhRMDv
-         oImw==
-X-Gm-Message-State: AOUpUlFOvfTLj/LvfXcF/+uhxGEejMqQdy1bvBD6uhewheivmVfOLI3q
-        gZZTja27p15mHt33A0hUX+U=
-X-Google-Smtp-Source: AA+uWPwTsE5uajnD7GWsinB+wtdcum+pCan1LNgTdViaE7yLsb1TSzltzNF4JuP1eSTSD0k8g7TDyQ==
-X-Received: by 2002:a17:902:7683:: with SMTP id m3-v6mr47585372pll.255.1534813340035;
-        Mon, 20 Aug 2018 18:02:20 -0700 (PDT)
-Received: from Gentoo-PC ([117.204.240.63])
-        by smtp.gmail.com with ESMTPSA id o134-v6sm22303099pfg.74.2018.08.20.18.02.18
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 Aug 2018 18:02:19 -0700 (PDT)
-Date:   Tue, 21 Aug 2018 06:32:22 +0530
-From:   Bhaskar Singh <bhaskar.kernel@gmail.com>
-To:     devel@driverdev.osuosl.org
-Cc:     dan.carpenter@oracle.com, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, bhaskar.kernel@gmail.com
-Subject: [PATCH v2] staging: rtl8188eu: Removed a function and coded inline
-Message-ID: <20180821010222.GA6979@Gentoo-PC>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 21 Aug 2018 00:34:32 -0400
+Received: from mga07.intel.com ([134.134.136.100]:17761 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725733AbeHUEec (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 00:34:32 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 18:16:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,267,1531810800"; 
+   d="scan'208";a="74359128"
+Received: from shbuild000.sh.intel.com (HELO byang_ol.sh.intel.com) ([10.239.144.215])
+  by FMSMGA003.fm.intel.com with ESMTP; 20 Aug 2018 18:16:34 -0700
+From:   Bin Yang <bin.yang@intel.com>
+To:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+        dave.hansen@intel.com, mark.gross@intel.com, bin.yang@intel.com
+Subject: [PATCH v3 0/5] x86/mm: fix cpu stuck issue in __change_page_attr_set_clr
+Date:   Tue, 21 Aug 2018 01:16:21 +0000
+Message-Id: <1534814186-37067-1-git-send-email-bin.yang@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removed function named rtw_malloc2d.
 
-I removed this function because this function is used exactly once and
-function call have some overhead also.
+One problem is found when optimizing the x86 kernel boot time, that sometimes
+the free_initmem() will take about 600ms, which is way too much for fast boot.
 
-Maybe this will improve code runtime slightly.
+When changing a 4K page attr inside the large page range,
+__change_page_attr() will call try_preserve_large_page() to decide
+to split the big page or not. And try_preserve_large_page() will
+call static_protections() to check all 4K pages inside the large page
+range one by one.
 
-Signed-off-by: Bhaskar Singh <bhaskar.kernel@gmail.com>
----
+free_initmem()  <-- free N pages
+  free_init_pages()
+    set_memory_rw()
+      change_page_attr_set()
+        change_page_attr_set_clr()
+	  __change_page_attr_set_clr()
+	    __change_page_attr() <-- loop N times
+	      try_preserve_large_page()
+                static_protections() <-- worst case: loop (1G/4K = 262144) * N times
 
-Changes in v2:
-- Incorporated comments from Dan Carpenter.
----
- drivers/staging/rtl8188eu/core/rtw_efuse.c        |  8 ++++++--
- drivers/staging/rtl8188eu/include/osdep_service.h |  2 --
- drivers/staging/rtl8188eu/os_dep/osdep_service.c  | 14 --------------
- 3 files changed, 6 insertions(+), 18 deletions(-)
+The problem is,  most of the  256K * N  times of call of static_proetections()
+is _not_ necessary at all, as pointed out by Thomas Gleixner :
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_efuse.c b/drivers/staging/rtl8188eu/core/rtw_efuse.c
-index 0fd306a808c4..ddd7f67fe5a2 100644
---- a/drivers/staging/rtl8188eu/core/rtw_efuse.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_efuse.c
-@@ -86,16 +86,20 @@ efuse_phymap_to_logical(u8 *phymap, u16 _offset, u16 _size_byte, u8  *pbuf)
- 	u16	**eFuseWord = NULL;
- 	u16	efuse_utilized = 0;
- 	u8 u1temp = 0;
-+	void **tmp = NULL;
- 
- 	efuseTbl = kzalloc(EFUSE_MAP_LEN_88E, GFP_KERNEL);
- 	if (!efuseTbl)
- 		return;
- 
--	eFuseWord = (u16 **)rtw_malloc2d(EFUSE_MAX_SECTION_88E, EFUSE_MAX_WORD_UNIT, sizeof(u16));
--	if (!eFuseWord) {
-+	tmp = kzalloc(EFUSE_MAX_SECTION_88E * (sizeof(void *) + EFUSE_MAX_WORD_UNIT * sizeof(u16)), GFP_KERNEL);
-+	if (!tmp) {
- 		DBG_88E("%s: alloc eFuseWord fail!\n", __func__);
- 		goto eFuseWord_failed;
- 	}
-+	for (i = 0; i < EFUSE_MAX_SECTION_88E; i++)
-+		tmp[i] = ((char *)(tmp + EFUSE_MAX_SECTION_88E)) + i * EFUSE_MAX_WORD_UNIT * sizeof(u16);
-+	eFuseWord = (u16 **)tmp;
- 
- 	/*  0. Refresh efuse init map as all oxFF. */
- 	for (i = 0; i < EFUSE_MAX_SECTION_88E; i++)
-diff --git a/drivers/staging/rtl8188eu/include/osdep_service.h b/drivers/staging/rtl8188eu/include/osdep_service.h
-index fbcba79a0927..cfe5698fbbb1 100644
---- a/drivers/staging/rtl8188eu/include/osdep_service.h
-+++ b/drivers/staging/rtl8188eu/include/osdep_service.h
-@@ -64,8 +64,6 @@ static inline int rtw_netif_queue_stopped(struct net_device *pnetdev)
- u8 *_rtw_malloc(u32 sz);
- #define rtw_malloc(sz)			_rtw_malloc((sz))
- 
--void *rtw_malloc2d(int h, int w, int size);
--
- void _rtw_init_queue(struct __queue *pqueue);
- 
- struct rtw_netdev_priv_indicator {
-diff --git a/drivers/staging/rtl8188eu/os_dep/osdep_service.c b/drivers/staging/rtl8188eu/os_dep/osdep_service.c
-index 78daef6704ac..105f3f21bdea 100644
---- a/drivers/staging/rtl8188eu/os_dep/osdep_service.c
-+++ b/drivers/staging/rtl8188eu/os_dep/osdep_service.c
-@@ -18,20 +18,6 @@ u8 *_rtw_malloc(u32 sz)
- 	return kmalloc(sz, in_interrupt() ? GFP_ATOMIC : GFP_KERNEL);
- }
- 
--void *rtw_malloc2d(int h, int w, int size)
--{
--	int j;
--	void **a = kzalloc(h * sizeof(void *) + h * w * size, GFP_KERNEL);
--
--	if (!a)
--		goto out;
--
--	for (j = 0; j < h; j++)
--		a[j] = ((char *)(a + h)) + j * w * size;
--out:
--	return a;
--}
--
- void _rtw_init_queue(struct __queue *pqueue)
- {
- 	INIT_LIST_HEAD(&pqueue->queue);
+"The current code does the static_protection() check loop _before_ checking:
+
+  1) Whether the new and the old pgprot are the same
+  
+  2) Whether the address range which needs to be changed is aligned to and
+     covers the full large mapping
+
+It does the static_protections() loop before #1 and #2 which can be
+optimized."
+
+The static_protections() check loop can be optimized to check for overlapping
+ranges and then check explicitly for those without any looping.
+
+Here are 5 patches for these optimizations:
+
+Patch 1: check whether new pgprot is same as old pgprot first to avoid
+	 unnecessary static_protection() checking.
+
+Patch 2: check whether it is whole large page attr change first to avoid
+	 unnecessary static_protection() checking.
+
+Patch 3: add help function to check specific protection flags in range
+
+Patch 4: Optimize the static_protection() by using overlap() check instead
+	 of within()
+
+Patch 5: Add a check for catching a case where the existing mapping is wrong
+	 already
+
+The approach and some of the comments came from Thomas's email example for how
+to do this. Thanks again for Thomas's kind help.
+
+Thanks,
+Bin
+
+Bin Yang (5):
+  x86/mm: avoid redundant checking if pgprot has no change
+  x86/mm: avoid static_protection() checking if not whole large page
+    attr change
+  x86/mm: add help function to check specific protection flags in range
+  x86/mm: optimize static_protection() by using overlap()
+  x86/mm: add WARN_ON_ONCE() for wrong large page mapping
+
+ arch/x86/mm/pageattr.c | 127 +++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 86 insertions(+), 41 deletions(-)
+
 -- 
-2.16.4
+2.7.4
 
