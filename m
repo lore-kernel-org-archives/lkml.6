@@ -3,75 +3,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 056ADC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 098D7C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:22:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8F0120895
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:21:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8F0120895
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id BB32F20895
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:22:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB32F20895
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbeHUQlx (ORCPT
+        id S1727754AbeHUQmy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 12:41:53 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:49892 "EHLO mail.skyhub.de"
+        Tue, 21 Aug 2018 12:42:54 -0400
+Received: from mga04.intel.com ([192.55.52.120]:6092 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726907AbeHUQlw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 12:41:52 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id EvaJ79_dH0Hg; Tue, 21 Aug 2018 15:21:27 +0200 (CEST)
-Received: from nazgul.tnic (77-85-47-250.ip.btc-net.bg [77.85.47.250])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 13D531EC0330;
-        Tue, 21 Aug 2018 15:21:25 +0200 (CEST)
-Date:   Tue, 21 Aug 2018 15:21:41 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH 1/2] x86/MCE/AMD: Check for NULL banks in THR interrupt
- handler
-Message-ID: <20180821132141.GF30528@nazgul.tnic>
-References: <20180809140834.59264-1-Yazen.Ghannam@amd.com>
- <20180809161548.GA20928@nazgul.tnic>
- <BN7PR12MB259365671F2A73D5FF33C134F8250@BN7PR12MB2593.namprd12.prod.outlook.com>
- <BN7PR12MB25930909EFF4F407A528A44FF83E0@BN7PR12MB2593.namprd12.prod.outlook.com>
+        id S1726907AbeHUQmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 12:42:54 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2018 06:22:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,269,1531810800"; 
+   d="scan'208";a="83209653"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 21 Aug 2018 06:22:28 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 21 Aug 2018 16:22:27 +0300
+Date:   Tue, 21 Aug 2018 16:22:27 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hans de Goede <hdegoede@redhat.com>, Li Jun <jun.li@nxp.com>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, support.opensource@diasemi.com
+Subject: Re: [PATCH 3/3] usb: typec: fusb302: Populate tcpc fwnode for TCPM
+ property handling
+Message-ID: <20180821132227.GB31230@kuha.fi.intel.com>
+References: <cover.1534853047.git.Adam.Thomson.Opensource@diasemi.com>
+ <5ab35968fea28abb54326423523af38dd887ddcc.1534853047.git.Adam.Thomson.Opensource@diasemi.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BN7PR12MB25930909EFF4F407A528A44FF83E0@BN7PR12MB2593.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <5ab35968fea28abb54326423523af38dd887ddcc.1534853047.git.Adam.Thomson.Opensource@diasemi.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 07:00:43PM +0000, Ghannam, Yazen wrote:
-> So I think we should keep the NULL pointer checks for now to keep this fix
-> small. I can make a new patch following your suggestion above.
+On Tue, Aug 21, 2018 at 01:28:23PM +0100, Adam Thomson wrote:
+> This update populates the tcpc handle's fwnode pointer with the
+> child usb-connector node, if it exists, so that TCPM can perform
+> generic property handling to define the ports capabilities.
 > 
-> We can change the code so that we create the data structures during the
-> earlier init process, but I think this will be a much bigger change. This could
-> fall under the idea of decoupling the handling code from sysfs.
+> Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
 
-Ok, then pls add the simpler fixes at the beginning of the series so
-that they can go to stable and have the more involved changes follow
-them.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Thx.
+> ---
+>  drivers/usb/typec/fusb302/fusb302.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/usb/typec/fusb302/fusb302.c b/drivers/usb/typec/fusb302/fusb302.c
+> index 82bed98..1b464c9 100644
+> --- a/drivers/usb/typec/fusb302/fusb302.c
+> +++ b/drivers/usb/typec/fusb302/fusb302.c
+> @@ -1736,6 +1736,9 @@ static int fusb302_probe(struct i2c_client *client,
+>  	chip->tcpc_dev.config = &chip->tcpc_config;
+>  	mutex_init(&chip->lock);
+>  
+> +	chip->tcpc_dev.fwnode =
+> +		device_get_named_child_node(dev, "connector");
+> +
+>  	if (!device_property_read_u32(dev, "fcs,operating-sink-microwatt", &v))
+>  		chip->tcpc_config.operating_snk_mw = v / 1000;
+
+Thanks,
 
 -- 
-Regards/Gruss,
-    Boris.
-
-ECO tip #101: Trim your mails when you reply.
---
+heikki
