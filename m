@@ -2,159 +2,255 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFB9C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 10:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A97C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 10:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C91402170E
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 10:17:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C91402170E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BEE9B2170E
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 10:18:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ENE1nvnA";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Nt46aoZ+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEE9B2170E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbeHUNgv (ORCPT
+        id S1727094AbeHUNhc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 09:36:51 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47316 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726684AbeHUNgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 09:36:51 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 37A807A9;
-        Tue, 21 Aug 2018 03:17:17 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.emea.arm.com [10.4.12.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7745B3F739;
-        Tue, 21 Aug 2018 03:17:12 -0700 (PDT)
-Date:   Tue, 21 Aug 2018 11:17:02 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Vabhav Sharma <vabhav.sharma@nxp.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-        sboyd@kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel-owner@vger.kernel.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, gregkh@linuxfoundation.org, arnd@arndb.de,
-        kstewart@linuxfoundation.org, yamada.masahiro@socionext.com,
-        linux@armlinux.org.uk, V.Sethi@nxp.com, udit.kumar@nxp.com,
-        Ramneek Mehresh <ramneek.mehresh@nxp.com>,
-        Zhang Ying-22455 <ying.zhang22455@nxp.com>,
-        Nipun Gupta <nipun.gupta@nxp.com>,
-        Priyanka Jain <priyanka.jain@nxp.com>,
-        Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
-        Sriram Dash <sriram.dash@nxp.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 4/5] arm64: dts: add QorIQ LX2160A SoC support
-Message-ID: <20180821101652.GA18139@e107155-lin>
-References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
- <1534747636-20064-5-git-send-email-vabhav.sharma@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1534747636-20064-5-git-send-email-vabhav.sharma@nxp.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Tue, 21 Aug 2018 09:37:32 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48646 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbeHUNhc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 09:37:32 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C842661327; Tue, 21 Aug 2018 10:17:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534846677;
+        bh=GfbMSNSIY05qvPdZQqA5mvo4HP/qeiLrGlJWHEbhQsE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ENE1nvnAWG01Ul4fP0h6XsisVpcT/C8qZRYh4/c5pAGUJ7rVBS3wfWiqtZnBNfLcH
+         z3K/jYUHLlpX//NoIhinxbhB5cSsx1DcfA6Q1EeELwuH0d8SSSLv/X0ZTHYfMcNq/Y
+         sZa+/Vqgh9dkH8zSSwK8PY/f+QSisxL6RjvTNQzA=
+Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sayalil@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9D51961323;
+        Tue, 21 Aug 2018 10:17:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534846676;
+        bh=GfbMSNSIY05qvPdZQqA5mvo4HP/qeiLrGlJWHEbhQsE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Nt46aoZ+k7BJhvP6iiOhTHotYqZlzL2nvDxEVGv1cCDS089GMCQfXD7RUxkpyF7yQ
+         NaDn48zkUZPCWTVSQgVDodL4QFRE++LrYD4SUvUQ+slUt/uUFUK25af+u5dpGu7JtL
+         BBvTZUoeaDj7dGD4a+IsXHwoQ8630Y470Za+2I88=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D51961323
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+From:   Sayali Lokhande <sayalil@codeaurora.org>
+To:     subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
+        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, asutoshd@codeaurora.org,
+        evgreen@chromium.org, riteshh@codeaurora.org
+Cc:     adrian.hunter@intel.com, linux-scsi@vger.kernel.org,
+        Sayali Lokhande <sayalil@codeaurora.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH V9 1/2] scsi: ufs: set the device reference clock setting
+Date:   Tue, 21 Aug 2018 15:47:28 +0530
+Message-Id: <1534846649-2456-2-git-send-email-sayalil@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1534846649-2456-1-git-send-email-sayalil@codeaurora.org>
+References: <1534846649-2456-1-git-send-email-sayalil@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 12:17:15PM +0530, Vabhav Sharma wrote:
-> LX2160A SoC is based on Layerscape Chassis Generation 3.2 Architecture.
-> 
-> LX2160A features an advanced 16 64-bit ARM v8 CortexA72 processor cores
-> in 8 cluster, CCN508, GICv3,two 64-bit DDR4 memory controller, 8 I2C
-> controllers, 3 dspi, 2 esdhc,2 USB 3.0, mmu 500, 3 SATA, 4 PL011 SBSA
-> UARTs etc.
-> 
-> Signed-off-by: Ramneek Mehresh <ramneek.mehresh@nxp.com>
-> Signed-off-by: Zhang Ying-22455 <ying.zhang22455@nxp.com>
-> Signed-off-by: Nipun Gupta <nipun.gupta@nxp.com>
-> Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
-> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-> Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
-> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 572 +++++++++++++++++++++++++
->  1 file changed, 572 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> new file mode 100644
-> index 0000000..e35e494
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> @@ -0,0 +1,572 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +//
-> +// Device Tree Include file for Layerscape-LX2160A family SoC.
-> +//
-> +// Copyright 2018 NXP
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +/memreserve/ 0x80000000 0x00010000;
-> +
-> +/ {
-> +	compatible = "fsl,lx2160a";
-> +	interrupt-parent = <&gic>;
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		// 8 clusters having 2 Cortex-A72 cores each
-> +		cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a72";
-> +			reg = <0x0>;
-> +			clocks = <&clockgen 1 0>;
-> +			next-level-cache = <&cluster0_l2>;
+From: Subhash Jadavani <subhashj@codeaurora.org>
 
-If you expect to get cache properties in sysfs entries, you need to populate
-them here and for each L2 cache.
+UFS host supplies the reference clock to UFS device and UFS device
+specification allows host to provide one of the 4 frequencies (19.2 MHz,
+26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
+device reference clock frequency setting in the device based on what
+frequency it is supplying to UFS device.
 
-[...]
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
+Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+---
+ drivers/scsi/ufs/ufs.h    | 14 ++++++++
+ drivers/scsi/ufs/ufshcd.c | 92 +++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd.h |  2 ++
+ 3 files changed, 108 insertions(+)
 
-> +
-> +	rstcr: syscon@1e60000 {
-> +		compatible = "syscon";
-> +		reg = <0x0 0x1e60000 0x0 0x4>;
-> +	};
-> +
-> +	reboot {
-> +		compatible ="syscon-reboot";
-> +		regmap = <&rstcr>;
-> +		offset = <0x0>;
-> +		mask = <0x2>;
+diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+index 14e5bf7..a2e76b1 100644
+--- a/drivers/scsi/ufs/ufs.h
++++ b/drivers/scsi/ufs/ufs.h
+@@ -378,6 +378,20 @@ enum query_opcode {
+ 	UPIU_QUERY_OPCODE_TOGGLE_FLAG	= 0x8,
+ };
+ 
++/* bRefClkFreq attribute values */
++enum ufs_ref_clk_freq {
++	REF_CLK_FREQ_19_2_MHZ	= 0,
++	REF_CLK_FREQ_26_MHZ	= 1,
++	REF_CLK_FREQ_38_4_MHZ	= 2,
++	REF_CLK_FREQ_52_MHZ	= 3,
++	REF_CLK_FREQ_INVAL	= -1,
++};
++
++struct ufs_ref_clk {
++	u32 freq_hz;
++	enum ufs_ref_clk_freq val;
++};
++
+ /* Query response result code */
+ enum {
+ 	QUERY_RESULT_SUCCESS                    = 0x00,
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index c5b1bf1..e946844 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -6296,6 +6296,91 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
+ 	hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
+ }
+ 
++static struct ufs_ref_clk ufs_ref_clk_freqs[] = {
++	{19200000, REF_CLK_FREQ_19_2_MHZ},
++	{26000000, REF_CLK_FREQ_26_MHZ},
++	{38400000, REF_CLK_FREQ_38_4_MHZ},
++	{52000000, REF_CLK_FREQ_52_MHZ},
++	{0, REF_CLK_FREQ_INVAL},
++};
++
++static inline enum ufs_ref_clk_freq
++ufs_get_bref_clk_for_ref_clk_freq_hz(u32 freq)
++{
++	int i = 0;
++
++	while (ufs_ref_clk_freqs[i].freq_hz != freq) {
++		if (!ufs_ref_clk_freqs[i].freq_hz)
++			return REF_CLK_FREQ_INVAL;
++		i++;
++	}
++
++	return ufs_ref_clk_freqs[i].val;
++}
++
++void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
++{
++	struct device *dev = hba->dev;
++	struct device_node *np = dev->of_node;
++	struct clk *refclk = NULL;
++	u32 freq = 0;
++
++	if (!np)
++		return;
++
++	hba->dev_ref_clk_freq = REF_CLK_FREQ_INVAL;
++
++	refclk = of_clk_get_by_name(np, "ref_clk");
++	if (!refclk)
++		return;
++
++	freq = clk_get_rate(refclk);
++	if (freq > REF_CLK_FREQ_52_MHZ) {
++		dev_err(hba->dev,
++		"%s: invalid ref_clk setting = %d\n",
++		__func__, freq);
++		return;
++	}
++
++	hba->dev_ref_clk_freq =
++		ufs_get_bref_clk_for_ref_clk_freq_hz(freq);
++}
++
++static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
++{
++	int err = 0;
++	int ref_clk = -1;
++	u32 freq = (u32)hba->dev_ref_clk_freq;
++
++	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
++			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
++
++	if (err) {
++		dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
++			 __func__, err);
++		goto out;
++	}
++
++	if (ref_clk == hba->dev_ref_clk_freq)
++		goto out; /* nothing to update */
++
++	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
++			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &freq);
++
++	if (err)
++		dev_err(hba->dev, "%s: bRefClkFreq setting to %u Hz failed\n",
++		__func__, ufs_ref_clk_freqs[freq].freq_hz);
++	/*
++	 * It is good to print this out here to debug any later failures
++	 * related to gear switch.
++	 */
++	dev_dbg(hba->dev, "%s: bRefClkFreq setting to %u Hz succeeded\n",
++		__func__, ufs_ref_clk_freqs[freq].freq_hz);
++
++out:
++	return err;
++}
++
+ /**
+  * ufshcd_probe_hba - probe hba to detect device and initialize
+  * @hba: per-adapter instance
+@@ -6361,6 +6446,12 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+ 			"%s: Failed getting max supported power mode\n",
+ 			__func__);
+ 	} else {
++		/*
++		 * Set the right value to bRefClkFreq before attempting to
++		 * switch to HS gears.
++		 */
++		if (hba->dev_ref_clk_freq != REF_CLK_FREQ_INVAL)
++			ufshcd_set_dev_ref_clk(hba);
+ 		ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
+ 		if (ret) {
+ 			dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n",
+@@ -7693,6 +7784,7 @@ int ufshcd_alloc_host(struct device *dev, struct ufs_hba **hba_handle)
+ 
+ 	INIT_LIST_HEAD(&hba->clk_list_head);
+ 
++	ufshcd_parse_dev_ref_clk_freq(hba);
+ out_error:
+ 	return err;
+ }
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index 8110dcd..45013b6 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -548,6 +548,7 @@ struct ufs_hba {
+ 	void *priv;
+ 	unsigned int irq;
+ 	bool is_irq_enabled;
++	enum ufs_ref_clk_freq dev_ref_clk_freq;
+ 
+ 	/* Interrupt aggregation support is broken */
+ 	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
+@@ -746,6 +747,7 @@ static inline void ufshcd_rmwl(struct ufs_hba *hba, u32 mask, u32 val, u32 reg)
+ int ufshcd_wait_for_register(struct ufs_hba *hba, u32 reg, u32 mask,
+ 				u32 val, unsigned long interval_us,
+ 				unsigned long timeout_ms, bool can_sleep);
++void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba);
+ 
+ static inline void check_upiu_size(void)
+ {
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-Is this disabled in bootloader ? With PSCI, it's preferred to use
-SYSTEM_RESET/OFF. EL3 f/w may need to do some housekeeping on poweroff.
-
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupts = <1 13 4>, // Physical Secure PPI, active-low
-
-The comment says active low but the value 4 indicates it's HIGH from
-"include/dt-bindings/interrupt-controller/irq.h"
-
-> +			     <1 14 4>, // Physical Non-Secure PPI, active-low
-> +			     <1 11 4>, // Virtual PPI, active-low
-> +			     <1 10 4>; // Hypervisor PPI, active-low
-> +	};
-> +
-> +	pmu {
-> +		compatible = "arm,armv8-pmuv3";
-
-More specific compatible preferably "arm,cortex-a72-pmu" ?
-
---
-Regards,
-Sudeep
