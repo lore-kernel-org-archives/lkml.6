@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1941BC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:26:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4CBC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D08ED208A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:26:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D08ED208A6
+	by mail.kernel.org (Postfix) with ESMTP id 7B508208A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:26:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B508208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728406AbeHUJpJ (ORCPT
+        id S1728418AbeHUJpN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:45:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56314 "EHLO
+        Tue, 21 Aug 2018 05:45:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56322 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726228AbeHUJpJ (ORCPT
+        with ESMTP id S1726228AbeHUJpM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:45:09 -0400
+        Tue, 21 Aug 2018 05:45:12 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 35C8ABE1;
-        Tue, 21 Aug 2018 06:26:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 974A0BE1;
+        Tue, 21 Aug 2018 06:26:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chen Hu <hu1.chen@intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.17 32/42] serial: 8250_dw: always set baud rate in dw8250_set_termios
-Date:   Tue, 21 Aug 2018 08:21:04 +0200
-Message-Id: <20180821055019.197507244@linuxfoundation.org>
+        stable@vger.kernel.org, zhang jun <jun.zhang@intel.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.17 23/42] ALSA: memalloc: Dont exceed over the requested size
+Date:   Tue, 21 Aug 2018 08:20:55 +0200
+Message-Id: <20180821055018.775375320@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055017.596264829@linuxfoundation.org>
 References: <20180821055017.596264829@linuxfoundation.org>
@@ -51,48 +50,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chen Hu <hu1.chen@intel.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit dfcab6ba573445c703235ab6c83758eec12d7f28 upstream.
+commit dfef01e150824b0e6da750cacda8958188d29aea upstream.
 
-dw8250_set_termios() doesn't set baud rate if the arg "old ktermios" is
-NULL. This happens during resume.
-Call Trace:
-...
-[   54.928108] dw8250_set_termios+0x162/0x170
-[   54.928114] serial8250_set_termios+0x17/0x20
-[   54.928117] uart_change_speed+0x64/0x160
-[   54.928119] uart_resume_port
-...
+snd_dma_alloc_pages_fallback() tries to allocate pages again when the
+allocation fails with reduced size.  But the first try actually
+*increases* the size to power-of-two, which may give back a larger
+chunk than the requested size.  This confuses the callers, e.g. sgbuf
+assumes that the size is equal or less, and it may result in a bad
+loop due to the underflow and eventually lead to Oops.
 
-So the baud rate is not restored after S3 and breaks the apps who use
-UART, for example, console and bluetooth etc.
+The code of this function seems incorrectly assuming the usage of
+get_order().  We need to decrease at first, then align to
+power-of-two.
 
-We address this issue by setting the baud rate irrespective of arg
-"old", just like the drivers for other 8250 IPs. This is tested with
-Intel Broxton platform.
-
-Signed-off-by: Chen Hu <hu1.chen@intel.com>
-Fixes: 4e26b134bd17 ("serial: 8250_dw: clock rate handling for all ACPI platforms")
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: stable <stable@vger.kernel.org>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reported-and-tested-by: he, bo <bo.he@intel.com>
+Reported-by: zhang jun <jun.zhang@intel.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/8250/8250_dw.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/core/memalloc.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -274,7 +274,7 @@ static void dw8250_set_termios(struct ua
- 	long rate;
- 	int ret;
+--- a/sound/core/memalloc.c
++++ b/sound/core/memalloc.c
+@@ -242,16 +242,12 @@ int snd_dma_alloc_pages_fallback(int typ
+ 	int err;
  
--	if (IS_ERR(d->clk) || !old)
-+	if (IS_ERR(d->clk))
- 		goto out;
- 
- 	clk_disable_unprepare(d->clk);
+ 	while ((err = snd_dma_alloc_pages(type, device, size, dmab)) < 0) {
+-		size_t aligned_size;
+ 		if (err != -ENOMEM)
+ 			return err;
+ 		if (size <= PAGE_SIZE)
+ 			return -ENOMEM;
+-		aligned_size = PAGE_SIZE << get_order(size);
+-		if (size != aligned_size)
+-			size = aligned_size;
+-		else
+-			size >>= 1;
++		size >>= 1;
++		size = PAGE_SIZE << get_order(size);
+ 	}
+ 	if (! dmab->area)
+ 		return -ENOMEM;
 
 
