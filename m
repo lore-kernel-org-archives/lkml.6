@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29107C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7638FC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0216208A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:26:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0216208A6
+	by mail.kernel.org (Postfix) with ESMTP id 3A01C2174D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:26:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A01C2174D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728327AbeHUJot (ORCPT
+        id S1728329AbeHUJow (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:44:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55764 "EHLO
+        Tue, 21 Aug 2018 05:44:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55850 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727017AbeHUJos (ORCPT
+        with ESMTP id S1727017AbeHUJov (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:44:48 -0400
+        Tue, 21 Aug 2018 05:44:51 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ABB58516;
-        Tue, 21 Aug 2018 06:26:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5372FACC;
+        Tue, 21 Aug 2018 06:26:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Ogness <john.ogness@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        stable@vger.kernel.org, Movie Song <MovieSong@aten-itlab.cn>,
         Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.17 26/42] USB: serial: sierra: fix potential deadlock at close
-Date:   Tue, 21 Aug 2018 08:20:58 +0200
-Message-Id: <20180821055018.924667755@linuxfoundation.org>
+Subject: [PATCH 4.17 27/42] USB: serial: pl2303: add a new device id for ATEN
+Date:   Tue, 21 Aug 2018 08:20:59 +0200
+Message-Id: <20180821055018.971452006@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055017.596264829@linuxfoundation.org>
 References: <20180821055017.596264829@linuxfoundation.org>
@@ -51,40 +50,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: John Ogness <john.ogness@linutronix.de>
+From: Movie Song <MovieSong@aten-itlab.cn>
 
-commit e60870012e5a35b1506d7b376fddfb30e9da0b27 upstream.
+commit 29c692c96b3a39cd1911fb79cd2505af8d070f07 upstream.
 
-The portdata spinlock can be taken in interrupt context (via
-sierra_outdat_callback()).
-Disable interrupts when taking the portdata spinlock when discarding
-deferred URBs during close to prevent a possible deadlock.
-
-Fixes: 014333f77c0b ("USB: sierra: fix urb and memory leak on disconnect")
+Signed-off-by: Movie Song <MovieSong@aten-itlab.cn>
+Cc: Johan Hovold <johan@kernel.org>
 Cc: stable <stable@vger.kernel.org>
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-[ johan: amend commit message and add fixes and stable tags ]
-Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/sierra.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/serial/pl2303.c |    2 ++
+ drivers/usb/serial/pl2303.h |    1 +
+ 2 files changed, 3 insertions(+)
 
---- a/drivers/usb/serial/sierra.c
-+++ b/drivers/usb/serial/sierra.c
-@@ -770,9 +770,9 @@ static void sierra_close(struct usb_seri
- 		kfree(urb->transfer_buffer);
- 		usb_free_urb(urb);
- 		usb_autopm_put_interface_async(serial->interface);
--		spin_lock(&portdata->lock);
-+		spin_lock_irq(&portdata->lock);
- 		portdata->outstanding_urbs--;
--		spin_unlock(&portdata->lock);
-+		spin_unlock_irq(&portdata->lock);
- 	}
+--- a/drivers/usb/serial/pl2303.c
++++ b/drivers/usb/serial/pl2303.c
+@@ -52,6 +52,8 @@ static const struct usb_device_id id_tab
+ 		.driver_info = PL2303_QUIRK_ENDPOINT_HACK },
+ 	{ USB_DEVICE(ATEN_VENDOR_ID, ATEN_PRODUCT_UC485),
+ 		.driver_info = PL2303_QUIRK_ENDPOINT_HACK },
++	{ USB_DEVICE(ATEN_VENDOR_ID, ATEN_PRODUCT_UC232B),
++		.driver_info = PL2303_QUIRK_ENDPOINT_HACK },
+ 	{ USB_DEVICE(ATEN_VENDOR_ID, ATEN_PRODUCT_ID2) },
+ 	{ USB_DEVICE(ATEN_VENDOR_ID2, ATEN_PRODUCT_ID) },
+ 	{ USB_DEVICE(ELCOM_VENDOR_ID, ELCOM_PRODUCT_ID) },
+--- a/drivers/usb/serial/pl2303.h
++++ b/drivers/usb/serial/pl2303.h
+@@ -24,6 +24,7 @@
+ #define ATEN_VENDOR_ID2		0x0547
+ #define ATEN_PRODUCT_ID		0x2008
+ #define ATEN_PRODUCT_UC485	0x2021
++#define ATEN_PRODUCT_UC232B	0x2022
+ #define ATEN_PRODUCT_ID2	0x2118
  
- 	sierra_stop_rx_urbs(port);
+ #define IODATA_VENDOR_ID	0x04bb
 
 
