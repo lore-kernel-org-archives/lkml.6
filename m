@@ -2,113 +2,76 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4218C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DD7C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:36:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C12A214C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:34:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C12A214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 8FA852151D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:36:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FA852151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbeHUXzi (ORCPT
+        id S1727502AbeHUX6M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 19:55:38 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:36527 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726723AbeHUXzi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 19:55:38 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue004 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0Lm8JB-1gRp9C1BI1-00Zhqz; Tue, 21 Aug 2018 22:33:51 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org
-Cc:     linux-kernel@vger.kernel.org, hch@lst.de,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>
-Subject: [PATCH] y2038: provide aliases for compat helpers
-Date:   Tue, 21 Aug 2018 22:33:00 +0200
-Message-Id: <20180821203329.2089473-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:Tz4rR78D6D5YDjwxi2ltvZGIPabdLWnHbdesETs4CKgteO0gnVx
- 4Uq5ah36AgwOmUsS6GI0YrwZ8Pc80VR7IiJNly6C3aB9KWImyP6cZNaCUdq01cFGsdOJZpF
- 9fbXIK4PLTKF5isytvhDPNnmhiQKqgQeAtmhRpdrNzvDUn4pM8h+ugeKV74/MTcAC0LM7Mx
- 3HSA6EWkUIaWi/31RUGjQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:MAg3g7v3ovI=:4wKqJaGy8zxXO3cwqLaGLY
- lu7AFywzr1x+E3hIrne6EoEhHv23mvnPImXt4BiPoDQeH4Oo54yYJqpSunVdVS/Pshhe0FMEa
- 0CY8Ku8CSRM+mSNzpxYeM/3dnxCX0vKpYiPQDnz/TRdUv8oQNUB5/AcFrnq/8mJ3DqSEqmdi9
- xOn/FO4cxipx7yOeMrwv9CET7aHNBPsO+lUz/bG5NSgc57lY5KMIokejkuGOZsH3QVvu6oYHr
- SFrVGouXF8f0e3PMj70HoGrz9UWVEoE5ceF/yT+23YWuO+XwPc/RzyoI/BPzt+IJURNWEane7
- 2lxuThFnkDT3IMVWdmiBWpijtvxcsiMay7Y+T8O9MDWToX6JyYN/U7h9BwQaL6n7ixy62vd6P
- K/vMfSHwecQQYyHe7pJCIal7GcTSeLWUWUIHFqpDUgGhzn/V7A4F5PMQftEbdRjgjQDkuK9gQ
- 2z+c8+XScaM+TD1+tYPucaUME5l8poImkjudS1YV/MGm3mPYkICH2lIWp15KDQ+XeskhN2fWt
- VMpBREsJAoBijiafBrloGFJ1nCx/WHSODxyb8+v866VWz/z63oxv/DY3G+292dZA9HVjF+MC+
- bJs8PfHuG7wpNia05HwbP1SqtlY/7FAP5KeNf5i1rdQPwhb6la6fGCR2/OnFEhex2mP3tRRM9
- d5Yeh96wqIW/h3PiHUYHQGDefNTsZmAFPUV0x+5jfSTiWQTd269kTrqGYhGk9xbqGUbw=
+        Tue, 21 Aug 2018 19:58:12 -0400
+Received: from mga14.intel.com ([192.55.52.115]:32366 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726801AbeHUX6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 19:58:12 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2018 13:36:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,271,1531810800"; 
+   d="scan'208";a="83755307"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by orsmga001.jf.intel.com with ESMTP; 21 Aug 2018 13:36:31 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id B4EC1301B91; Tue, 21 Aug 2018 13:36:31 -0700 (PDT)
+Date:   Tue, 21 Aug 2018 13:36:31 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     yang.shi@linux.alibaba.com
+Cc:     David Woodhouse <dwmw2@infradead.org>, gregkh@linuxfoundation.org,
+        tglx@linutronix.de, dave.hansen@intel.com, stable@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [BUG] madvise05 leads kernel panic on 4.9.122
+Message-ID: <20180821203631.GU12066@tassilo.jf.intel.com>
+References: <b205fec4-a1ed-dd44-7ba4-7b78f7429689@linux.alibaba.com>
+ <1534876981.7459.1.camel@infradead.org>
+ <a080e61a-70a2-872a-8849-d6599762ac7c@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a080e61a-70a2-872a-8849-d6599762ac7c@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As part of the system call rework for 64-bit time_t, we are restructuring
-the way that compat syscalls deal with 32-bit time_t, reusing the
-implementation for 32-bit architectures. Christoph Hellwig suggested
-a rename of the associated types and interfaces to avoid the confusing
-usage of the 'compat' prefix for 32-bit architectures.
+On Tue, Aug 21, 2018 at 01:30:20PM -0700, yang.shi@linux.alibaba.com wrote:
+> 
+> 
+> On 8/21/18 11:43 AM, David Woodhouse wrote:
+> > On Tue, 2018-08-21 at 11:37 -0700, Yang Shi wrote:
+> > > I just ran some regression test on stable 4.9.122 with LTP. madvise05
+> > > triggers the below kernel panic:
+> 
+> Thanks, David. It works. A silly question, I don't get why this commit could
+> solve this issue, it looks just like a code refactor. Just because it
+> changed how to get pfn from page table entries? And, this may cause some
+> mismatch on 4.9 stable without it?
 
-To prepare for doing that in linux-4.20, this adds a set of macros
-that lets us convert subsystems separately to the new names and
-avoid some of the nastier merge conflicts.
+With the L1TF patches open coded pte_val() to get the PFN can cause problems
+because it doesn't do the invert for PROT_NONE mappings
 
-Link: https://lore.kernel.org/lkml/20180713133204.3123939-1-arnd@arndb.de/
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-The patch I posted originally was ready but didn't see proper linux-next
-testing as I did not get to finalize it before my summer vacation,
-so this is the minimal replacement I'd still like to get into 4.19-rc1,
-in order to base patches for system calls, sound, networking, media
-and file systems on top of.
+The cleanup changes the open coded versions to use p*_pfn(), which always
+works correctly.
 
-I have put it into linux-next now after realizing that it would be
-a problem to do all my other planned changes for the 4.20 merge
-window. Please let me know if you have concerns about the approach,
-or provide an Ack if this is ok with you.
----
- include/linux/time32.h | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/include/linux/time32.h b/include/linux/time32.h
-index 0b14f936100a..d1ae43c13e25 100644
---- a/include/linux/time32.h
-+++ b/include/linux/time32.h
-@@ -207,4 +207,19 @@ static inline s64 timeval_to_ns(const struct timeval *tv)
- extern struct timeval ns_to_timeval(const s64 nsec);
- extern struct __kernel_old_timeval ns_to_kernel_old_timeval(s64 nsec);
- 
-+/*
-+ * New aliases for compat time functions. These will be used to replace
-+ * the compat code so it can be shared between 32-bit and 64-bit builds
-+ * both of which provide compatibility with old 32-bit tasks.
-+ */
-+#define old_time32_t		compat_time_t
-+#define old_timeval32		compat_timeval
-+#define old_timespec32		compat_timespec
-+#define old_itimerspec32	compat_itimerspec
-+#define ns_to_old_timeval32	ns_to_compat_timeval
-+#define get_old_itimerspec32	get_compat_itimerspec64
-+#define put_old_itimerspec32	put_compat_itimerspec64
-+#define get_old_timespec32	compat_get_timespec64
-+#define put_old_timespec32	compat_put_timespec64
-+
- #endif
--- 
-2.18.0
-
+-Andi
