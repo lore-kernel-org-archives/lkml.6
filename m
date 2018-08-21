@@ -3,112 +3,136 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B06CDC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E015DC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 605C72183D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:04:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 908E4217DF
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:09:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dCmbA1jz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 605C72183D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JQYVKfTs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 908E4217DF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbeHUW0R (ORCPT
+        id S1727440AbeHUWa4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 18:26:17 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:36470 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726627AbeHUW0R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 18:26:17 -0400
-Received: by mail-yw1-f65.google.com with SMTP id w202-v6so2431320yww.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 12:04:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=WIVOPBqjzJaK2vcDq0BM+iWm6htld8vMomalx81vGP4=;
-        b=dCmbA1jzBCGAcBTZJEUBOS6spz6tWSycPLmQsDK6w0WjJ9t101KtCgm/tIBILcaQp3
-         Kod8RFibaZo/NM3BP31R/RVI95eo4jYjxHRqoQz0a4n/0nxp/uPFQiAFstqoWlWiAbYo
-         8HFErENP179R8gMOi/oAvTv7sjTfSSQy6IuNs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=WIVOPBqjzJaK2vcDq0BM+iWm6htld8vMomalx81vGP4=;
-        b=Hsx/On5f26Rti0AqPyo1pYNaBuGcAefPGAR5AMesKrbNUsQsx/x5HS3qlvGrdvcexf
-         GML5BnlpdsgM5Xt/sgTgevxVam4wGDKwpgIGgiQAiqZU3m418is0MxMURHRbXhUozIL8
-         3DMrOGQ+iA1q0r1+t3qka/S9RTX5eJ3sor3e74J+3QmI1Cxz2CRgLrEmz2IsWuWb3zDf
-         0KA0fCTMQUpoNnbdF7I7bbkbf1KmnPtaBDdjTBsK7IVVSLvQXx33oMBB5I7llwzNM3Xx
-         vdRvqkfqtgiRpshgr+R6XJ0NocVayI6p9Fn/P3mH1OEJ25qG8CNO8GCThUxWkPkkxtbJ
-         dczg==
-X-Gm-Message-State: AOUpUlHec0+Wuw5mb865rFcI/Ws5hhv+77M2+Ii/02K2OmTvEfhlMNJW
-        eo7brD9yn3GlcsYvHEQqxybkga+b/CI=
-X-Google-Smtp-Source: AA+uWPyxmU3rH1AAcL2H7rQ69vNEdoi4DKc+0lpN33fyNXFnnf+h41iPyON9TAK9iK12shyNdCgsbw==
-X-Received: by 2002:a0d:e387:: with SMTP id m129-v6mr27166304ywe.315.1534878294472;
-        Tue, 21 Aug 2018 12:04:54 -0700 (PDT)
-Received: from mail-yb0-f179.google.com (mail-yb0-f179.google.com. [209.85.213.179])
-        by smtp.gmail.com with ESMTPSA id e134-v6sm11904719ywa.59.2018.08.21.12.04.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 Aug 2018 12:04:52 -0700 (PDT)
-Received: by mail-yb0-f179.google.com with SMTP id l16-v6so6375305ybk.11
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 12:04:51 -0700 (PDT)
-X-Received: by 2002:a25:1345:: with SMTP id 66-v6mr15741549ybt.171.1534878291456;
- Tue, 21 Aug 2018 12:04:51 -0700 (PDT)
+        Tue, 21 Aug 2018 18:30:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41150 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727329AbeHUWa4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 18:30:56 -0400
+Received: from mail-qt0-f171.google.com (mail-qt0-f171.google.com [209.85.216.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB1082183B;
+        Tue, 21 Aug 2018 19:09:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534878572;
+        bh=TLOTLjFsl2P1EjphIo2lPqxbn1A897ahEznjMY67l2s=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=JQYVKfTsQ0eSgf1jCq5Het9dI7nrMf9VzNWQlx3pk3KNZC1KvvDfQN52mzZdxr8VR
+         A8xMqolliQD6pV5tMvYXzQRSA+d83WUeXsS3NOPuXhZGRiyZrjWZWZqAxvjOkZciGK
+         NI8AWakXQppjwBIaR3wfrcJGdVPxLKz2/COGJ2xc=
+Received: by mail-qt0-f171.google.com with SMTP id t5-v6so21525822qtn.3;
+        Tue, 21 Aug 2018 12:09:32 -0700 (PDT)
+X-Gm-Message-State: AOUpUlF5aDXL+c7Dfk86xGhGhUwDeREeg8KrWE1vh4Xhb3RE7VhNW55t
+        k4KVBwszPk7nKG9hhBGZRCkNGYk2SGM9sHPGSA==
+X-Google-Smtp-Source: AA+uWPweJYWpu8bbmxBysAJJyNjUdVsY7Zi5JTd3/4mGX0xGGQfGPG7wH/a3sDyh4Vns3xZ/M3HuDqAt1Rran5bj198=
+X-Received: by 2002:aed:2aa1:: with SMTP id t30-v6mr10948764qtd.101.1534878571851;
+ Tue, 21 Aug 2018 12:09:31 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:2c11:0:0:0:0:0 with HTTP; Tue, 21 Aug 2018 12:04:50
- -0700 (PDT)
-In-Reply-To: <CAK7LNAQeY1kHxPpGgLfP=GUZ7nB6DQy3mYsMzLduUagGAB=OXQ@mail.gmail.com>
-References: <1534657880-11573-1-git-send-email-yamada.masahiro@socionext.com>
- <CAGXu5j+t7c31xVXD+pu3Xhv10Nj0rWsGW=H1OgXh+uKGJRicnA@mail.gmail.com>
- <CAKwvOdmPF29ywp-qx7dBTQoZPEE29QwqZL4Un==Z3T_nm0u8cQ@mail.gmail.com> <CAK7LNAQeY1kHxPpGgLfP=GUZ7nB6DQy3mYsMzLduUagGAB=OXQ@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 21 Aug 2018 12:04:50 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+g97kaCimRd1euRdFNg1aNQFoaVV7V6PBPOA0P51=3xg@mail.gmail.com>
-Message-ID: <CAGXu5j+g97kaCimRd1euRdFNg1aNQFoaVV7V6PBPOA0P51=3xg@mail.gmail.com>
-Subject: Re: [RFC PATCH] compiler.h: give up __compiletime_assert_fallback()
+References: <1534843809-4137-1-git-send-email-yamada.masahiro@socionext.com>
+ <1534843809-4137-2-git-send-email-yamada.masahiro@socionext.com> <CAK7LNASr=rf_foQ7PDTNS440rx3TLuY_TBagfQ-gCHxXpFB2vw@mail.gmail.com>
+In-Reply-To: <CAK7LNASr=rf_foQ7PDTNS440rx3TLuY_TBagfQ-gCHxXpFB2vw@mail.gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 21 Aug 2018 14:09:20 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJwXKx3MKE-8GuHqnJZ-047GxhHUB5LpW3O8j58OsAKuA@mail.gmail.com>
+Message-ID: <CAL_JsqJwXKx3MKE-8GuHqnJZ-047GxhHUB5LpW3O8j58OsAKuA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: dmaengine: add DT binding for UniPhier
+ MIO DMAC
 To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        James Hogan <james.hogan@imgtec.com>,
-        Joe Stringer <joe@ovn.org>,
-        Daniel Santos <daniel.santos@pobox.com>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christopher Li <sparse@chrisli.org>,
-        Sparse Mailing-list <linux-sparse@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        George Burgess <gbiv@google.com>,
-        James Y Knight <jyknight@google.com>
+Cc:     Vinod <vkoul@kernel.org>,
+        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
+        <dmaengine@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 9:15 AM, Masahiro Yamada
+On Tue, Aug 21, 2018 at 4:48 AM Masahiro Yamada
 <yamada.masahiro@socionext.com> wrote:
->> Note that there are a few definitions of BUILD_BUG_ON that still use
->> this negative array size trick.  Should that pattern be removed from
->> them as well?  See:
->> * arch/x86/boot/boot.h#L33
->> * include/linux/build_bug.h#L66
->> * tools/include/linux/kernel.h#L38
 >
-> At this moment, -Wvla is the warning-3 level
-> in scripts/Makefile.extrawarn.
+> (+CC Rob, DT, LKML)
+>
+> I forgot to CC this to DT community...
 
-We're down to a handful of VLA uses, but I don't think the negative
-cases should matter since they're _intended_ to break a compile.
+You really need to resend so that patchwork will pick it up and I'll
+see it for sure.
 
--Kees
+>
+>
+> 2018-08-21 18:30 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> > The MIO DMAC (Media IO DMA Controller) is used in UniPhier LD4,
+> > Pro4, and sLD8 SoCs.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> >  .../devicetree/bindings/dma/uniphier-mio-dmac.txt  | 28 ++++++++++++++++++++++
+> >  1 file changed, 28 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/dma/uniphier-mio-dmac.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/dma/uniphier-mio-dmac.txt b/Documentation/devicetree/bindings/dma/uniphier-mio-dmac.txt
+> > new file mode 100644
+> > index 0000000..a9e969e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/dma/uniphier-mio-dmac.txt
+> > @@ -0,0 +1,28 @@
+> > +UniPhier Media IO DMA controller
+> > +
+> > +This works as an external DMA engine for SD/eMMC controllers etc.
+> > +found in UniPhier LD4, Pro4, sLD8 SoCs.
+> > +
+> > +Required properties:
+> > +- compatible: should be "socionext,uniphier-mio-dmac".
+> > +- reg: offset and length of the register set for the device.
+> > +- interrupts: a list of interrupt specifiers associated with the DMA channels.
+> > +- clocks: a single clock specifier
+> > +- #dma-cells: should be <1>. The single cell represents the channel number.
+> > +- dma-channels: specify the number of the DMA channels. This should match to
+> > +  the number of tuples in the interrupts property.
+> > +
+> > +Example:
+> > +       dmac: dmac@5a000000 {
 
--- 
-Kees Cook
-Pixel Security
+dma-controller@...
+
+> > +               compatible = "socionext,uniphier-mio-dmac";
+> > +               reg = <0x5a000000 0x1000>;
+> > +               interrupts = <0 68 4>, <0 68 4>, <0 69 4>, <0 70 4>,
+> > +                            <0 71 4>, <0 72 4>, <0 73 4>, <0 74 4>;
+> > +               clocks = <&mio_clk 7>;
+> > +               #dma-cells = <1>;
+> > +               dma-channels = <8>;
+> > +       };
+> > +
+> > +Note:
+> > +In the example above, "interrupts = <0 68 4>, <0 68 4>, ..." is not a typo.
+> > +The first two channels share a single interrupt line.
+> > --
+> > 2.7.4
+> >
+>
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
