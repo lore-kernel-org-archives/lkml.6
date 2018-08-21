@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A9E6C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB9FC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54E332177C
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54E332177C
+	by mail.kernel.org (Postfix) with ESMTP id 55ED721774
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55ED721774
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbeHUJmV (ORCPT
+        id S1727538AbeHUJmY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:42:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54874 "EHLO
+        Tue, 21 Aug 2018 05:42:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54880 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726472AbeHUJmU (ORCPT
+        with ESMTP id S1726472AbeHUJmY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:42:20 -0400
+        Tue, 21 Aug 2018 05:42:24 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 24DF0516;
-        Tue, 21 Aug 2018 06:23:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6EFDA516;
+        Tue, 21 Aug 2018 06:23:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Aleksander Morgado <aleksander@aleksander.es>
-Subject: [PATCH 4.18 18/35] USB: option: add support for DW5821e
-Date:   Tue, 21 Aug 2018 08:20:44 +0200
-Message-Id: <20180821055020.801665870@linuxfoundation.org>
+        stable@vger.kernel.org, Willy Tarreau <w@1wt.eu>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.18 19/35] ACPI / PM: save NVS memory for ASUS 1025C laptop
+Date:   Tue, 21 Aug 2018 08:20:45 +0200
+Message-Id: <20180821055020.841205606@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055019.954904905@linuxfoundation.org>
 References: <20180821055019.954904905@linuxfoundation.org>
@@ -50,72 +50,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aleksander Morgado <aleksander@aleksander.es>
+From: Willy Tarreau <w@1wt.eu>
 
-commit 7bab01ecc6c43da882333c6db39741cb43677004 upstream.
+commit 231f9415001138a000cd0f881c46654b7ea3f8c5 upstream.
 
-The device exposes AT, NMEA and DIAG ports in both USB configurations.
+Every time I tried to upgrade my laptop from 3.10.x to 4.x I faced an
+issue by which the fan would run at full speed upon resume. Bisecting
+it showed me the issue was introduced in 3.17 by commit 821d6f0359b0
+(ACPI / sleep: Do not save NVS for new machines to accelerate S3). This
+code only affects machines built starting as of 2012, but this Asus
+1025C laptop was made in 2012 and apparently needs the NVS data to be
+saved, otherwise the CPU's thermal state is not properly reported on
+resume and the fan runs at full speed upon resume.
 
-The patch explicitly ignores interfaces 0 and 1, as they're bound to
-other drivers already; and also interface 6, which is a GNSS interface
-for which we don't have a driver yet.
+Here's a very simple way to check if such a machine is affected :
 
-T:  Bus=01 Lev=03 Prnt=04 Port=00 Cnt=01 Dev#= 18 Spd=480 MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  2
-P:  Vendor=413c ProdID=81d7 Rev=03.18
-S:  Manufacturer=DELL
-S:  Product=DW5821e Snapdragon X20 LTE
-S:  SerialNumber=0123456789ABCDEF
-C:  #Ifs= 7 Cfg#= 2 Atr=a0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-I:  If#= 6 Alt= 0 #EPs= 1 Cls=ff(vend.) Sub=ff Prot=ff Driver=(none)
+  # cat /sys/class/thermal/thermal_zone0/temp
+  55000
 
-T:  Bus=01 Lev=03 Prnt=04 Port=00 Cnt=01 Dev#= 16 Spd=480 MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  2
-P:  Vendor=413c ProdID=81d7 Rev=03.18
-S:  Manufacturer=DELL
-S:  Product=DW5821e Snapdragon X20 LTE
-S:  SerialNumber=0123456789ABCDEF
-C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-I:  If#= 1 Alt= 0 #EPs= 1 Cls=03(HID  ) Sub=00 Prot=00 Driver=usbhid
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+  ( now suspend, wait one second and resume )
 
-Signed-off-by: Aleksander Morgado <aleksander@aleksander.es>
-Cc: stable <stable@vger.kernel.org>
+  # cat /sys/class/thermal/thermal_zone0/temp
+  0
+
+  (and after ~15 seconds the fan starts to spin)
+
+Let's apply the same quirk as commit cbc00c13 (ACPI: save NVS memory
+for Lenovo G50-45) and reuse the function it provides. Note that this
+commit was already backported to 4.9.x but not 4.4.x.
+
+Cc: 3.17+ <stable@vger.kernel.org> # 3.17+: requires cbc00c13
+Signed-off-by: Willy Tarreau <w@1wt.eu>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/option.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/acpi/sleep.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -196,6 +196,8 @@ static void option_instat_callback(struc
- #define DELL_PRODUCT_5800_V2_MINICARD_VZW	0x8196  /* Novatel E362 */
- #define DELL_PRODUCT_5804_MINICARD_ATT		0x819b  /* Novatel E371 */
- 
-+#define DELL_PRODUCT_5821E			0x81d7
-+
- #define KYOCERA_VENDOR_ID			0x0c88
- #define KYOCERA_PRODUCT_KPC650			0x17da
- #define KYOCERA_PRODUCT_KPC680			0x180a
-@@ -1030,6 +1032,8 @@ static const struct usb_device_id option
- 	{ USB_DEVICE_AND_INTERFACE_INFO(DELL_VENDOR_ID, DELL_PRODUCT_5800_MINICARD_VZW, 0xff, 0xff, 0xff) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(DELL_VENDOR_ID, DELL_PRODUCT_5800_V2_MINICARD_VZW, 0xff, 0xff, 0xff) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(DELL_VENDOR_ID, DELL_PRODUCT_5804_MINICARD_ATT, 0xff, 0xff, 0xff) },
-+	{ USB_DEVICE(DELL_VENDOR_ID, DELL_PRODUCT_5821E),
-+	  .driver_info = RSVD(0) | RSVD(1) | RSVD(6) },
- 	{ USB_DEVICE(ANYDATA_VENDOR_ID, ANYDATA_PRODUCT_ADU_E100A) },	/* ADU-E100, ADU-310 */
- 	{ USB_DEVICE(ANYDATA_VENDOR_ID, ANYDATA_PRODUCT_ADU_500A) },
- 	{ USB_DEVICE(ANYDATA_VENDOR_ID, ANYDATA_PRODUCT_ADU_620UW) },
+--- a/drivers/acpi/sleep.c
++++ b/drivers/acpi/sleep.c
+@@ -338,6 +338,14 @@ static const struct dmi_system_id acpisl
+ 		DMI_MATCH(DMI_PRODUCT_NAME, "K54HR"),
+ 		},
+ 	},
++	{
++	.callback = init_nvs_save_s3,
++	.ident = "Asus 1025C",
++	.matches = {
++		DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
++		DMI_MATCH(DMI_PRODUCT_NAME, "1025C"),
++		},
++	},
+ 	/*
+ 	 * https://bugzilla.kernel.org/show_bug.cgi?id=189431
+ 	 * Lenovo G50-45 is a platform later than 2012, but needs nvs memory
 
 
