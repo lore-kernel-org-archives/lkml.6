@@ -2,112 +2,90 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52FC7C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 01:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD24C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 01:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E66D120645
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 01:49:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="K9y1PMkW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E66D120645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id DA35721502
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 01:54:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA35721502
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726602AbeHUFHm (ORCPT
+        id S1726472AbeHUFMU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 01:07:42 -0400
-Received: from ozlabs.org ([203.11.71.1]:54547 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725732AbeHUFHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 01:07:42 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41vYWk653mz9rvt;
-        Tue, 21 Aug 2018 11:49:38 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1534816179;
-        bh=0PfL2vTbhcQvDbXPIUQPfFEqDSr+sIZyCmWR/v72LIk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=K9y1PMkWro6uA1+XaNU//CHliAYJLasm972JQPNWSs/gdSwpxvIlkoWZqhBn+uJVR
-         VJujXlCIa+fJMoybF1rHr5lIkWEIGRJ9AeLJ55fI4ay1KJUsb/qVNkXYqb+BAGGKw7
-         xzuVWux5c7C9iBtmlzalN0vNUrDS3Yw7pMkXcTS6FLcDHX5zSoDwGxIyg2S9LXPJQj
-         wvzghnVUL2cI9ux9n1FXjqb2bBajyeFRiHi+L3ZtlCqT/o00jKN4QKTlZ4qpt8PK11
-         TkcmtU9CaLCgD5B2cEnOsvrhUd9TFOMv/Tk0EAsRzVP8iYnDJ1Kj376lu/nnCH3Bs+
-         +hAwRxcPU/XXQ==
-Date:   Tue, 21 Aug 2018 11:49:24 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Matthew Wilcox <willy@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Jiang <dave.jiang@intel.com>
-Subject: linux-next: manual merge of the xarray tree with the nvdimm tree
-Message-ID: <20180821114924.0133d568@canb.auug.org.au>
+        Tue, 21 Aug 2018 01:12:20 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43848 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725732AbeHUFMT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 01:12:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A3F377A9;
+        Mon, 20 Aug 2018 18:54:18 -0700 (PDT)
+Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF2763F739;
+        Mon, 20 Aug 2018 18:54:17 -0700 (PDT)
+Date:   Tue, 21 Aug 2018 02:54:15 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Waiman Long <longman@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] locking: Remove an insn from spin and write locks
+Message-ID: <20180821015413.GD1758@brain-police>
+References: <20180820162639.GC25153@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YYriHAKQDnmippWqdOewGUj"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180820162639.GC25153@bombadil.infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/YYriHAKQDnmippWqdOewGUj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Aug 20, 2018 at 09:26:39AM -0700, Matthew Wilcox wrote:
+> On Mon, Aug 20, 2018 at 05:56:50PM +0200, Peter Zijlstra wrote:
+> > Yeah, _acquire should be retained; sorry about loosing that. I'm neck
+> > deep into tlb invalidate stuff and wrote this without much thinking
+> > involved.
+> 
+> NP.  Here's the current version I've got, with some updated likely()
+> hints.
+> 
+> From 337298a88266f7b21492f893c2bf05409a5392c8 Mon Sep 17 00:00:00 2001
+> From: Matthew Wilcox <willy@infradead.org>
+> Date: Mon, 20 Aug 2018 10:19:14 -0400
+> Subject: [PATCH] locking: Remove an insn from spin and write locks
+> 
+> Both spin locks and write locks currently do:
+> 
+>  f0 0f b1 17             lock cmpxchg %edx,(%rdi)
+>  85 c0                   test   %eax,%eax
+>  75 05                   jne    [slowpath]
+> 
+> This 'test' insn is superfluous; the cmpxchg insn sets the Z flag
+> appropriately.  Peter pointed out that using atomic_try_cmpxchg_acquire()
+> will let the compiler know this is true.  Comparing before/after
+> disassemblies show the only effect is to remove this insn.
+> 
+> Take this opportunity to make the spin & write lock code resemble each
+> other more closely and have similar likely() hints.
+> 
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Matthew Wilcox <willy@infradead.org>
+> ---
+>  include/asm-generic/qrwlock.h   |  7 ++++---
+>  include/asm-generic/qspinlock.h | 17 ++++++++++-------
+>  2 files changed, 14 insertions(+), 10 deletions(-)
 
-Hi Matthew,
+Shouldn't make any difference on arm64, so:
 
-Today's linux-next merge of the xarray tree got a conflict in:
+Acked-by: Will Deacon <will.deacon@arm.com>
 
-  mm/memory-failure.c
-
-between commit:
-
-  6100e34b2526 ("mm, memory_failure: Teach memory_failure() about dev_pagem=
-ap pages")
-
-from the nvdimm tree and commit:
-
-  0c2b437d7e2b ("mm, memory_failure: Teach memory_failure() about dev_pagem=
-ap pages")
-
-from the xarray tree.
-
-I fixed it up (the former looks like an updated version (after Linus'
-"review", so I used that version) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-I guess the xarray tree needs to be rebased on the changes in the
-nvdimm tree.  :-(
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/YYriHAKQDnmippWqdOewGUj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt7b6QACgkQAVBC80lX
-0GwrPQf9GHnKNn9uuagOUzpUZWyAEOty6hY7/m2HCmZEYLDL5hMf87KkR5UYORLp
-xesgfVLG35bsksbNtr2WP085sFvWJvwQIW4lVo+TB6D4thUK6M2ywGYTEprFUk15
-Xp7S7VtyCw+qE1OVuOE7wHoYBM4i0PzHEkaE9Vm9TPh4uEiX+jzuPcAumJ+k+1e/
-XZ4P1v4ZXTbgZYkTLDhI1rcTkG2IDxmHEPT7y2SE6EQXd1Gk/g4uXlzt/4gMeajT
-62yyfqqeDWWvKXVCzox6etpKi6cVXt8Bt87yu3hjzKF6yF45mPcCVsXW8LeX35OO
-N9dXuD+DuSTLKqnllclQdkyxHHH2JQ==
-=oUTT
------END PGP SIGNATURE-----
-
---Sig_/YYriHAKQDnmippWqdOewGUj--
+Will
