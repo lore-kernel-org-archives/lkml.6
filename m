@@ -2,82 +2,87 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42395C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A6FC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:47:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00CC2216C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:42:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00CC2216C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 578F8216C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:47:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MpKBvyQ5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MpKBvyQ5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 578F8216C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbeHURDE (ORCPT
+        id S1727113AbeHURHy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 13:03:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50384 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727046AbeHURDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 13:03:04 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 21 Aug 2018 13:07:54 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45708 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726679AbeHURHy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 13:07:54 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2CF5461474; Tue, 21 Aug 2018 13:47:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534859261;
+        bh=Fnc23PoxZMiv56ZKhJKK1tOqcdTPCEs1Iru4rFPU9qI=;
+        h=From:Subject:To:Date:From;
+        b=MpKBvyQ5camamXpPRNHh8iyHM8OIv9lVQLp1HdAH2FMQQqui3NtnVUwjSpoOQYhae
+         JedQ+wcHApuo2zQTMRhP5ivG/lQQZdC7b9txC6ewYIsrXWWMTrGVRldnq719+ysyU9
+         4OVEMhvSWS52ge4k+UaBOggYavQh/lu8caLD68UQ=
+Received: from [10.204.79.100] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03DAB214D5;
-        Tue, 21 Aug 2018 13:42:50 +0000 (UTC)
-Date:   Tue, 21 Aug 2018 09:42:49 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Francis Deslauriers <francis.deslauriers@efficios.com>,
-        peterz@infradead.org, mathieu.desnoyers@efficios.com,
-        linux-kernel@vger.kernel.org, Michael Rodin <michael@rodin.online>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: [BUGFIX PATCH] tracing/kprobes: Fix to check notrace function
- with correct range
-Message-ID: <20180821094249.3fea76bb@gandalf.local.home>
-In-Reply-To: <153485669706.16611.17726752296213785504.stgit@devbox>
-References: <20180821212448.d20ea26fa998b206adf4ece6@kernel.org>
-        <153485669706.16611.17726752296213785504.stgit@devbox>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        (Authenticated sender: mojha@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 10CB0612E0;
+        Tue, 21 Aug 2018 13:47:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534859261;
+        bh=Fnc23PoxZMiv56ZKhJKK1tOqcdTPCEs1Iru4rFPU9qI=;
+        h=From:Subject:To:Date:From;
+        b=MpKBvyQ5camamXpPRNHh8iyHM8OIv9lVQLp1HdAH2FMQQqui3NtnVUwjSpoOQYhae
+         JedQ+wcHApuo2zQTMRhP5ivG/lQQZdC7b9txC6ewYIsrXWWMTrGVRldnq719+ysyU9
+         4OVEMhvSWS52ge4k+UaBOggYavQh/lu8caLD68UQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 10CB0612E0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
+From:   Mukesh Ojha <mojha@codeaurora.org>
+Subject: Query on skip_onerr field in struct cpuhp_step
+To:     lkml <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Message-ID: <c228c495-63fa-5af9-32ff-355410d78cc8@codeaurora.org>
+Date:   Tue, 21 Aug 2018 19:17:31 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 Aug 2018 22:04:57 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+Hi All,
 
-> Fix within_notrace_func() to check notrace function correctly.
-> 
-> Since the ftrace_location_range(start, end) function checks
-> the range inclusively (start <= ftrace-loc <= end), the end
-> address must not include the entry address of next function.
-> 
-> However, within_notrace_func() uses kallsyms_lookup_size_offset()
-> to get the function size and calculate the end address from
-> adding the size to the entry address. This means the end address
-> is the entry address of the next function.
-> 
-> In the result, within_notrace_func() fails to find notrace
-> function if the next function of the target function is
-> ftraced.
-> 
-> Let's subtract 1 from the end address so that ftrace_location_range()
-> can check it correctly.
-> 
-> Fixes: commit 45408c4f9250 ("tracing: kprobes: Prohibit probing on notrace function")
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Reported-by: Michael Rodin <michael@rodin.online>
-> ---
->
+This is about one of field in struct cpuhp_step
 
-Applied. Thanks Masami! I'll start testing this and send it upstream
-when it's finished.
+* @skip_onerr: Do not invoke the functions on error rollback
+  *              Will go away once the notifiers are gone
+         bool                    skip_onerr;
 
--- Steve
+Why this field was introduced, can anyone explain the history behind ? 
+As i don't see it being set from anywhere
+
+If it is specifically was dependent on notifiers, did we missed to 
+remove it as the notifiers are gone or the usecase still there?
+And If it is still valid, in what scenario i would not want my callback 
+to be called in rollback path?
+
+Thanks,
+Mukesh
