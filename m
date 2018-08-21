@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F9CC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:15:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C53C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 684EB2177A
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:15:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F453217B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:15:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u/PTOFAn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 684EB2177A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YzS5Y3gH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F453217B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbeHUUgn (ORCPT
+        id S1727419AbeHUUgp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 16:36:43 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:56101 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726848AbeHUUgl (ORCPT
+        Tue, 21 Aug 2018 16:36:45 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44141 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727261AbeHUUgo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 16:36:41 -0400
-Received: by mail-wm0-f68.google.com with SMTP id f21-v6so3652767wmc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 10:15:41 -0700 (PDT)
+        Tue, 21 Aug 2018 16:36:44 -0400
+Received: by mail-wr1-f68.google.com with SMTP id v16-v6so2067076wro.11
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 10:15:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=M9bY589X3JqdY//Yiwi8SyouDqydWJxY9KrskDcXJOk=;
-        b=u/PTOFAndwRhRMdxy7KIhWZcAQhyW5xRStwgItIrZe8WCweIKbWsKsekdl8GthzbpN
-         Ee9b7et8rqKuFdKnWVRcyWaDn/kTPc3uvkR37iqtaFff18elRaUOfBdZ22MlOv8W1xRX
-         fOZmegH5onO2mv0jXcbRQE7i4yKvZbSkZmuFT1VLn35ZH6/5WU8YVSWCczD0BVP0j0vu
-         EtHlXPMzRgpWnh2L5T75wjycEkU6QAs5HiEYfqQw8jlz3CtG5GJd/7hRmFwNtaVyGRhK
-         M5zzh4srLAEhqW4bU4aPrpKHhjH+FhOsOTmlLOZOoipPbHI2DK11ZHMzFD5bdftmFPHx
-         hRAw==
+        bh=vqKCyU5MO32rSLd4tVRBwDP+bTinDapRseliHOUC8RI=;
+        b=YzS5Y3gHbqUyAjL9dLkIRMrJZhzEN7HE2y+9z8JiQqK/W7vu8aBwsLYaXtmU3iSeBx
+         mENJLSnBFc7fDISQ8taMlJKJc3PPo7uwLlT/+S4QhWs/RsiuQGiChc0WjMNnItIAuPeG
+         gZMM6+bQxOFYz3wpvwK8766ZkGDQG2hvKf82LVEkCIDWNt4qqwY5qDlznud924S2lx0z
+         +ca06X8R5e8RQl/YB8Wb3GDyKOZEdyRxPKN0OFk6b1ACoPi9YCzGmJl0ePRcDV2zYXYY
+         /yntwDQmbdo2nyaV5ly5OUWGFB1+CUFGY5hXM9bF1aNBhs15yhHrAwdrJO1rA+LSMRN7
+         XGNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=M9bY589X3JqdY//Yiwi8SyouDqydWJxY9KrskDcXJOk=;
-        b=HeQcr8D7NgT7inNmXcwKzYDvdeW2kD7Dpy9lqWY2JA866yB8RLvKL9WReoxcNbkwpQ
-         CvYctUzRMFKVT7NP38dzlV4Zz6flOGKjWC4kAcfO969matPvQuExyPcu61vX8xwniy3o
-         WKAo6VQl01uS5M1rTbleYCX982L030xj1UEBqUCD09cf4+ynV258ZZIGtOteA4Ex5+Br
-         EqnK0ZOmzoqROQcRUm/KUN9qVmNeOgVp2RMeB7sHxB6H5bEfsqeF8Lc3LvF2BAkhUAKv
-         imdG3kcnKFZQvaTW/Nhk2wAQ+f3RF6cZspsIhQ04g2awbS5ztotzrmbWs6ytIkSQNJVV
-         xpJQ==
-X-Gm-Message-State: APzg51C30u+v3fh58oxuEngSz4xj3c0PuLj5w51ro+mzGcHuVjQAm9/n
-        khU73xX5BHAO6Z1b5IEefFdfK2newsk=
-X-Google-Smtp-Source: ANB0VdYuS2iv5McwTn4XJpA0A4xzSs4clIcQSWzaQ9ooCK5RMTxQ0jxwLf2p2VMklBGJ2FyI/UD0RA==
-X-Received: by 2002:a1c:ea53:: with SMTP id i80-v6mr168555wmh.113.1534871740905;
-        Tue, 21 Aug 2018 10:15:40 -0700 (PDT)
+        bh=vqKCyU5MO32rSLd4tVRBwDP+bTinDapRseliHOUC8RI=;
+        b=McIcw3alHKMRuyS++HZQ+Hjo9NunclYhkFp8VuATnHra5ZcKVtZkhZUCHAqUtDMEb7
+         U0p1llRpulu/zcnmFnj2z+tYBkkB+a/jiGGFc9/e42i+40fdi3L8HVAkQOn1HB0BLanu
+         1isvXRKprZgGsGNP2A1qTLhIagcBNtpz6HKkPB6aIdjPQGHC5sbcS4z4jovlMyKy/pgs
+         GfM4m/IT/s3HBGrurB5ot7RILPfa6PRODxkRj9h9CLGZrZXr6wxszdyGDAzofxZZA6ki
+         /U1Q5/kOGT9kVr7nAeKBi3aY0EhGlLvDO316W9rNa828n0bnTNPHeU+W1ZlRE0zp9jqp
+         InTA==
+X-Gm-Message-State: APzg51CJx+s3kw0njk9o8lQ+2+ipep0y//kBXT5m7RuQFn4EzqW62HeT
+        kZyZrSLVcdAHx/4hQSlaB+WJ0DK2zOw=
+X-Google-Smtp-Source: ANB0VdYWgWUX3pCGGyUN4IkOkk0yh7xIDHF2myNZBEmBRPZgdwVYHPB3pEHYizQTeEuWVIomlfas3Q==
+X-Received: by 2002:adf:e486:: with SMTP id i6-v6mr2071346wrm.145.1534871742644;
+        Tue, 21 Aug 2018 10:15:42 -0700 (PDT)
 Received: from localhost.localdomain (host86-148-21-150.range86-148.btcentralplus.com. [86.148.21.150])
-        by smtp.gmail.com with ESMTPSA id 88-v6sm7564292wrf.95.2018.08.21.10.15.39
+        by smtp.gmail.com with ESMTPSA id 88-v6sm7564292wrf.95.2018.08.21.10.15.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 Aug 2018 10:15:40 -0700 (PDT)
+        Tue, 21 Aug 2018 10:15:41 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 01/17] staging:rtl8192u: Remove unused defines - Style
-Date:   Tue, 21 Aug 2018 18:15:21 +0100
-Message-Id: <20180821171537.9330-2-johnfwhitmore@gmail.com>
+Subject: [PATCH 02/17] staging:rtl8192u: Refactor SEQUENCE_CONTROL - Style
+Date:   Tue, 21 Aug 2018 18:15:22 +0100
+Message-Id: <20180821171537.9330-3-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821171537.9330-1-johnfwhitmore@gmail.com>
 References: <20180821171537.9330-1-johnfwhitmore@gmail.com>
@@ -73,40 +73,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove a number of unused constant definitions.
+Remove the 'typedef' from union SEQUENCE_CONTROL. This clears a
+checkpatch issue with defining new types.
 
-This is a coding style change which should have no impact on runtime
+Additionally renamed the union to lowercase to comply with coding
+standard.
+
+These are coding style changes which should not impact runtime
 code execution.
+
+typedef union _SEQUENCE_CONTROL{
++union sequence_control {
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/rtl819x_BA.h | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/rtl819x_BA.h     | 6 +++---
+ drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_BA.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_BA.h
-index b6a76aae4832..8a74faedf6d6 100644
+index 8a74faedf6d6..446de58f1849 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_BA.h
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_BA.h
-@@ -2,11 +2,7 @@
- #ifndef _BATYPE_H_
- #define _BATYPE_H_
+@@ -22,13 +22,13 @@ struct ieee80211_ADDBA_Req{
+ } __attribute__ ((packed));
+ */
+ //Is this need?I put here just to make it easier to define structure BA_RECORD //WB
+-typedef union _SEQUENCE_CONTROL{
++union sequence_control {
+ 	u16 ShortData;
+ 	struct {
+ 		u16	FragNum:4;
+ 		u16	SeqNum:12;
+ 	} field;
+-} SEQUENCE_CONTROL, *PSEQUENCE_CONTROL;
++};
  
--#define		TOTAL_TXBA_NUM	16
--#define	TOTAL_RXBA_NUM	16
--
- #define	BA_SETUP_TIMEOUT	200
--#define	BA_INACT_TIMEOUT	60000
+ typedef union _BA_PARAM_SET {
+ 	u8 charData[2];
+@@ -57,7 +57,7 @@ typedef struct _BA_RECORD {
+ 	u8				DialogToken;
+ 	BA_PARAM_SET		BaParamSet;
+ 	u16				BaTimeoutValue;
+-	SEQUENCE_CONTROL	BaStartSeqCtrl;
++	union sequence_control	BaStartSeqCtrl;
+ } BA_RECORD, *PBA_RECORD;
  
- #define	BA_POLICY_DELAYED		0
- #define	BA_POLICY_IMMEDIATE	1
-@@ -15,7 +11,6 @@
- #define	ADDBA_STATUS_REFUSED		37
- #define	ADDBA_STATUS_INVALID_PARAM	38
+ #endif //end _BATYPE_H_
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
+index 01b631c2a180..c1fe42e0893c 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
+@@ -324,7 +324,7 @@ int ieee80211_rx_ADDBAReq(struct ieee80211_device *ieee, struct sk_buff *skb)
+ 	PBA_RECORD pBA = NULL;
+ 	PBA_PARAM_SET	pBaParamSet = NULL;
+ 	u16 *pBaTimeoutVal = NULL;
+-	PSEQUENCE_CONTROL pBaStartSeqCtrl = NULL;
++	union sequence_control *pBaStartSeqCtrl = NULL;
+ 	struct rx_ts_record  *pTS = NULL;
  
--#define	DELBA_REASON_QSTA_LEAVING	36
- #define	DELBA_REASON_END_BA			37
- #define	DELBA_REASON_UNKNOWN_BA	38
- #define	DELBA_REASON_TIMEOUT			39
+ 	if (skb->len < sizeof(struct rtl_80211_hdr_3addr) + 9) {
+@@ -344,7 +344,7 @@ int ieee80211_rx_ADDBAReq(struct ieee80211_device *ieee, struct sk_buff *skb)
+ 	pDialogToken = tag + 2;  //category+action
+ 	pBaParamSet = (PBA_PARAM_SET)(tag + 3);   //+DialogToken
+ 	pBaTimeoutVal = (u16 *)(tag + 5);
+-	pBaStartSeqCtrl = (PSEQUENCE_CONTROL)(req + 7);
++	pBaStartSeqCtrl = (union sequence_control *)(req + 7);
+ 
+ 	netdev_info(ieee->dev, "====================>rx ADDBAREQ from :%pM\n", dst);
+ //some other capability is not ready now.
 -- 
 2.18.0
 
