@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D600C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21008C43615
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D76220E20
+	by mail.kernel.org (Postfix) with ESMTP id D1C7A20E20
 	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:32:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h2HYunVT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D76220E20
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TuI+wbhO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1C7A20E20
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727376AbeHURwW (ORCPT
+        id S1727484AbeHURwX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 13:52:22 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34437 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbeHURwV (ORCPT
+        Tue, 21 Aug 2018 13:52:23 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:45319 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727238AbeHURwX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 13:52:21 -0400
-Received: by mail-ed1-f68.google.com with SMTP id h1-v6so10787716eds.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 07:31:57 -0700 (PDT)
+        Tue, 21 Aug 2018 13:52:23 -0400
+Received: by mail-ed1-f65.google.com with SMTP id p52-v6so1183903eda.12
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 07:31:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3Gk0RyL+JY4us236hlAyW7jZ/UezWkAaOTG9LaGHQ/U=;
-        b=h2HYunVT0yPNzJXr7CBKkgXE1KoVin5/E7fg6E8FYRsMVj09CJXqSMQ+jQbrH52WOQ
-         lMtAs3TvwfQ1vJ4HlVcjCgbj2JeQC1QpyI5kr11p204RG6AonHLJP6Gmx3RaCfVbHStx
-         /pdhv3PVu9XvZ82ABDxNqG8TM2uvASSvzf/46ZSc3bkKGezA/Y9kgbcUetu7pX/C85C0
-         z/vek1OB8adusgwPX7Bu8bFS+Iv5MHitYlIKaKRdsgiT5x3BQvMnJT747pF6RXIPMshV
-         Lhl5p1M3MYHqoGTiP9518IIyJHbsAdNW2t5qzuEOIk2YU/1vdj9/v/IMwwRJ33qccVlp
-         hLVA==
+        bh=Bdw/oXweRo9ZqoVDdPAjPX2cTB/s3gVRxxriYJhxr6E=;
+        b=TuI+wbhONJm5SV4nMWWWhLSmndAX6F/lA93vk5/SN4zPh1985i4wSfRCy080ESXUCu
+         LI7cTkSPKDDa3k4B+SRVm3e8Ne/2IIyi95ErCzSpiVW7edSVla4i+n7YREJi5jiYpOKE
+         oKcuKEkSnHv3F1zCqx5zsKmMV2mzvJVDsvdgmtROYbDehnDqu40T11E92x7qqTPAZlvE
+         OwDFUa6VgDgbhc8jcaPHVvCqgoF0y1AUMdn92dJ1J2cIBqp+ItZxD/e8GH9t0mLRU54d
+         Q234vAnC1yIV7tm3pIWL6aVITAPm58XeJNn5nsJF69Duv/I0dyJ9vMiHyCAX0fGR1Gn9
+         1wGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=3Gk0RyL+JY4us236hlAyW7jZ/UezWkAaOTG9LaGHQ/U=;
-        b=hMNr24oB9LSxLFa/KHsAeseJwuVzMtGVu+QZbGMzDRNJrzLAQIuS+1MK9JGzcpQZ2H
-         yTEzeWy5UW6eKcMTpbsQqOot3Mom/yTm42ypVkIbM85CXzZE75c3PG9dLZCVtvFwkFba
-         Xug+lt/grOlXUuHjYnyv/upwglhWPmMETW5U5xGkA3LzEBrYXAdZts9LdPnA4ylmHYlT
-         UeIMSRpw/fTl/4YjErAy6ZrueSItOvm+z5ihJd3VF+5XfaGwS9e0DJxX5hUI6KGgKxR8
-         tct1I8Jc7KPl1SEerBj7bF7fD35EXkqgGd6y+dVhQKq55ZIv8AEG92d2TZhnPgUe5W/K
-         TWEA==
-X-Gm-Message-State: APzg51AnkhH8M69ztNUCZNhW/2bMdatqgAhe/MbALgobJUidA1jHOhK4
-        zpV08exGm59vZg53KhKNqjev7Gjo
-X-Google-Smtp-Source: AA+uWPzyURC99hdaPJ2+MVok3VwOYL8DXwNLUGWZ6oEwGUwtsEL+lZ2GlmVEZVbdMc2TJsg/l3y4bA==
-X-Received: by 2002:a50:97c8:: with SMTP id f8-v6mr8532691edb.28.1534861916955;
-        Tue, 21 Aug 2018 07:31:56 -0700 (PDT)
+        bh=Bdw/oXweRo9ZqoVDdPAjPX2cTB/s3gVRxxriYJhxr6E=;
+        b=BnV4EIuNcrOXaAtQ8nWNNPzgDOSK3IiT1Ns8DJrGafzwyAO4Nho7aVls9f2W2h33Wn
+         OEIkqW4JDK4T0/Htpd/Mi9Li4ebaBmIr6cJeDwvdgkAVYzmBqQBsz8UoW61cIIX8iNMT
+         mTDBVMYYcQXFfTlYhFdFJ6jNz2rXmzq4nPIVG0qvrTD/i6kQHmmhnB7wOsKMtayzxzKT
+         1Ihmks+5jKkXsKngFBNlz+X70UWbP005TfNAcDIOR9tPl7UEoJT9ofBTqBy6o1EfrhyR
+         zm+t2CjAOfXUzb6pvaaAdxbiSB9Dt0ndqosZqj3y9pHvImePKI4aiXeSt3Xn+VKf5Gkp
+         iK8g==
+X-Gm-Message-State: APzg51DG0hLdW2qJeasd5pGEPctGo82y+r/zzs/KIua6jaqQu7K//MpD
+        0X/vq+uizK6N295FsMZ4cpQ=
+X-Google-Smtp-Source: ANB0VdaV4nvAJaDVj8Nl3/VCGr8qzRluNHjvSA6LcTpvHcDrd2IfPtIhLywo3X+BjbVu/3nUC90eFA==
+X-Received: by 2002:aa7:d70b:: with SMTP id t11-v6mr3554787edq.137.1534861918689;
+        Tue, 21 Aug 2018 07:31:58 -0700 (PDT)
 Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id n17-v6sm6766144edq.10.2018.08.21.07.31.55
+        by smtp.gmail.com with ESMTPSA id n17-v6sm6766144edq.10.2018.08.21.07.31.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 Aug 2018 07:31:55 -0700 (PDT)
+        Tue, 21 Aug 2018 07:31:57 -0700 (PDT)
 From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 To:     David Woodhouse <dwmw2@infradead.org>,
         Brian Norris <computersforpeace@gmail.com>,
@@ -67,9 +67,9 @@ To:     David Woodhouse <dwmw2@infradead.org>,
         Zhouyang Jia <jiazhouyang09@gmail.com>,
         linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH 1/8] mtd: maps: gpio-addr-flash: Replace custom printk
-Date:   Tue, 21 Aug 2018 16:31:45 +0200
-Message-Id: <20180821143152.32293-2-ricardo.ribalda@gmail.com>
+Subject: [PATCH 2/8] mtd: maps: gpio-addr-flash: Fix ioremapped size
+Date:   Tue, 21 Aug 2018 16:31:46 +0200
+Message-Id: <20180821143152.32293-3-ricardo.ribalda@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821143152.32293-1-ricardo.ribalda@gmail.com>
 References: <20180821143152.32293-1-ricardo.ribalda@gmail.com>
@@ -78,49 +78,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use preferred print methods dev_*
+We should only iomap the area of the chip that is memory mapped.
+Otherwise we could be mapping devices beyond the memory space or that
+belong to other devices.
 
 Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- drivers/mtd/maps/gpio-addr-flash.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/mtd/maps/gpio-addr-flash.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/mtd/maps/gpio-addr-flash.c b/drivers/mtd/maps/gpio-addr-flash.c
-index 9d9723693217..17be47f72973 100644
+index 17be47f72973..6de16e81994c 100644
 --- a/drivers/mtd/maps/gpio-addr-flash.c
 +++ b/drivers/mtd/maps/gpio-addr-flash.c
-@@ -25,11 +25,7 @@
- #include <linux/slab.h>
- #include <linux/types.h>
+@@ -234,7 +234,7 @@ static int gpio_flash_probe(struct platform_device *pdev)
+ 	state->map.copy_to    = gf_copy_to;
+ 	state->map.bankwidth  = pdata->width;
+ 	state->map.size       = state->win_size * (1 << state->gpio_count);
+-	state->map.virt       = ioremap_nocache(memory->start, state->map.size);
++	state->map.virt       = ioremap_nocache(memory->start, state->win_size);
+ 	if (!state->map.virt)
+ 		return -ENOMEM;
  
--#define pr_devinit(fmt, args...) \
--	({ static const char __fmt[] = fmt; printk(__fmt, ## args); })
--
- #define DRIVER_NAME "gpio-addr-flash"
--#define PFX DRIVER_NAME ": "
- 
- /**
-  * struct async_state - keep GPIO flash state
-@@ -250,7 +246,7 @@ static int gpio_flash_probe(struct platform_device *pdev)
- 	i = 0;
- 	do {
- 		if (gpio_request(state->gpio_addrs[i], DRIVER_NAME)) {
--			pr_devinit(KERN_ERR PFX "failed to request gpio %d\n",
-+			dev_err(&pdev->dev, "failed to request gpio %d\n",
- 				state->gpio_addrs[i]);
- 			while (i--)
- 				gpio_free(state->gpio_addrs[i]);
-@@ -260,8 +256,8 @@ static int gpio_flash_probe(struct platform_device *pdev)
- 		gpio_direction_output(state->gpio_addrs[i], 0);
- 	} while (++i < state->gpio_count);
- 
--	pr_devinit(KERN_NOTICE PFX "probing %d-bit flash bus\n",
--		state->map.bankwidth * 8);
-+	dev_notice(&pdev->dev, "probing %d-bit flash bus\n",
-+		   state->map.bankwidth * 8);
- 	state->mtd = do_map_probe(memory->name, &state->map);
- 	if (!state->mtd) {
- 		for (i = 0; i < state->gpio_count; ++i)
 -- 
 2.18.0
 
