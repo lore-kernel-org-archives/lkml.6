@@ -3,149 +3,172 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BBCCC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:25:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68CD3C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 181D6216C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:25:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 181D6216C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D5B12170E
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:26:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D5B12170E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbeHURps (ORCPT
+        id S1727409AbeHURrL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 13:45:48 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33888 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726679AbeHURpr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 13:45:47 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7LEItci115708
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 10:25:25 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m0k56v4gc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 10:25:25 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Tue, 21 Aug 2018 15:25:23 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 21 Aug 2018 15:25:21 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7LEPKhp30212132
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 21 Aug 2018 14:25:20 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C376E52051;
-        Tue, 21 Aug 2018 17:25:20 +0100 (BST)
-Received: from skywalker (unknown [9.85.94.159])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with SMTP id E72975204E;
-        Tue, 21 Aug 2018 17:25:18 +0100 (BST)
-Received: (nullmailer pid 18405 invoked by uid 1000);
-        Tue, 21 Aug 2018 14:25:17 -0000
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        aneesh.kumar@linux.vnet.ibm.com
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] powerpc/nohash: fix pte_access_permitted()
-In-Reply-To: <8097a1d32403ea47d076803e9070869badfe24bc.1534856426.git.christophe.leroy@c-s.fr>
-References: <8097a1d32403ea47d076803e9070869badfe24bc.1534856426.git.christophe.leroy@c-s.fr>
-Date:   Tue, 21 Aug 2018 19:55:17 +0530
+        Tue, 21 Aug 2018 13:47:11 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:43767 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726743AbeHURrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 13:47:11 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 870D7207B3; Tue, 21 Aug 2018 16:26:46 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id BA54620787;
+        Tue, 21 Aug 2018 16:26:45 +0200 (CEST)
+Date:   Tue, 21 Aug 2018 16:26:44 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Alban <albeu@free.fr>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Naren <naren.kernel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 06/29] mtd: Add support for reading MTD devices via
+ the nvmem API
+Message-ID: <20180821162644.5a1d7799@bbrezillon>
+In-Reply-To: <20180821155706.2adf3b4c@eos>
+References: <20180810080526.27207-1-brgl@bgdev.pl>
+        <20180810080526.27207-7-brgl@bgdev.pl>
+        <20180817182720.6a6e5e8e@bbrezillon>
+        <20180819133106.0420df5f@tock>
+        <20180819184609.6dcdbb9a@bbrezillon>
+        <20180821005327.0d312a85@tock>
+        <20180821074404.23aaeb6b@bbrezillon>
+        <20180821142716.0adcdd56@eos>
+        <20180821145725.3b385399@bbrezillon>
+        <20180821155706.2adf3b4c@eos>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18082114-0008-0000-0000-00000264B0D9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082114-0009-0000-0000-000021CCEF7B
-Message-Id: <87eferg5ki.fsf@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-21_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=890 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808210151
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
+On Tue, 21 Aug 2018 15:57:06 +0200
+Alban <albeu@free.fr> wrote:
 
-> Commit 5769beaf180a8 ("powerpc/mm: Add proper pte access check helper
-> for other platforms") replaced generic pte_access_permitted() by an
-> arch specific one.
->
-> The generic one is defined as
-> (pte_present(pte) && (!(write) || pte_write(pte)))
->
-> The arch specific one is open coded checking that _PAGE_USER and
-> _PAGE_WRITE (_PAGE_RW) flags are set, but lacking to check that
-> _PAGE_RO and _PAGE_PRIVILEGED are unset, leading to a useless test
-> on targets like the 8xx which defines _PAGE_RW and _PAGE_USER as 0.
->
-> Commit 5fa5b16be5b31 ("powerpc/mm/hugetlb: Use pte_access_permitted
-> for hugetlb access check") replaced some tests performed with
-> pte helpers by a call to pte_access_permitted(), leading to the same
-> issue.
->
-> This patch rewrites powerpc/nohash pte_access_permitted()
-> using pte helpers.
->
+> 
+> That would only be needed if the NVMEM framework would do "forward"
+> parsing, creating data structure for each NVMEM cell found under an
+> NVMEM provider. However currently it doesn't do that and only goes
+> "backward", starting by resolving a phandle pointing to a cell, then
+> finding the provider that the cell belongs to.
 
-Thanks for fixing this. I should have used the helper instead of
-opencoding it on nohash platforms. This is another reason why I was also
-suggesting we should avoid consolidating pte accessors across platforms
-and user accessors instead of opencoding. 
+Yes, I missed that when briefly looking at the code.
 
-https://lore.kernel.org/lkml/87lgcusc6z.fsf@linux.vnet.ibm.com/T/#u
+> 
+> This also has the side effect that nvmem cells defined in DT don't
+> appear in sysfs, unlike those defined from board code.
 
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Wow, that's not good. I guess we'll want to make that consistent at
+some point.
 
-> Fixes: 5769beaf180a8 ("powerpc/mm: Add proper pte access check helper for other platforms")
-> Fixes: 5fa5b16be5b31 ("powerpc/mm/hugetlb: Use pte_access_permitted for hugetlb access check")
-> Cc: stable@vger.kernel.org # v4.15+
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  arch/powerpc/include/asm/nohash/pgtable.h | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
-> index 2160be2e4339..b321c82b3624 100644
-> --- a/arch/powerpc/include/asm/nohash/pgtable.h
-> +++ b/arch/powerpc/include/asm/nohash/pgtable.h
-> @@ -51,17 +51,14 @@ static inline int pte_present(pte_t pte)
->  #define pte_access_permitted pte_access_permitted
->  static inline bool pte_access_permitted(pte_t pte, bool write)
->  {
-> -	unsigned long pteval = pte_val(pte);
->  	/*
->  	 * A read-only access is controlled by _PAGE_USER bit.
->  	 * We have _PAGE_READ set for WRITE and EXECUTE
->  	 */
-> -	unsigned long need_pte_bits = _PAGE_PRESENT | _PAGE_USER;
-> -
-> -	if (write)
-> -		need_pte_bits |= _PAGE_WRITE;
-> +	if (!pte_present(pte) || !pte_user(pte) || !pte_read(pte))
-> +		return false;
->  
-> -	if ((pteval & need_pte_bits) != need_pte_bits)
-> +	if (write && !pte_write(pte))
->  		return false;
->  
->  	return true;
-> -- 
-> 2.13.3
+ 
+> > > > > Furthermore xlate functions are more about converting
+> > > > > from hardware parameters to internal kernel representation than
+> > > > > to hide extra DT parsing.        
+> > > > 
+> > > > Hm, how is that different? ->of_xlate() is just a way for drivers
+> > > > to have their own DT representation, which is exactly what we
+> > > > want here.      
+> > > 
+> > > There is a big difference. DT represent the hardware and the
+> > > relationship between the devices in an OS independent format. We
+> > > don't add extra stuff in there just to map back internal Linux API
+> > > details.    
+> > 
+> > And I'm not talking about adding SW information in the DT, I'm talking
+> > about HW specific description. We have the same solution for pinctrl
+> > configs (it's HW/driver specific).  
+> 
+> For pinctrl I do understand, these beast can be very different from SoC
+> to SoC, having a single biding for all doesn't make much sense.
+> 
+> However here we are talking about a simple linear storage, nothing
+> special at all. I could see the need for an xlate to for example
+> support a device with several partitions, but not to just allow each
+> driver to have slightly incompatible bindings.
 
+Maybe, but I guess that's up to the subsystem maintainer to decide what
+he prefers.
+> > 
+> > No because partitions defined the old way (as direct subnodes of the
+> > MTD node) will be considered as NVMEM cells by the NVMEM framework,
+> > and I don't want that.  
+> 
+> As I explained above that is not currently the case. If the NVMEM,
+> framework is ever changed to explicitly parse NVMEM cells in advance
+> we can first update the few existing users to add the compatible string.
+
+We're supposed to be backward compatible (compatible with old DTs), so
+that's not an option, though we could add a way to check the compat
+string afterwards.
+
+> 
+> > Plus, I don't want people to start defining their NVMEM cells and
+> > forget the compat string (which would work just fine because the
+> > NVMEM framework doesn't care).  
+> 
+> A review of a new DTS should check that it use each binding correctly,
+> AFAIK the DT people do that. We could also add a warning when there is
+> no compatible string, that would also help pushing people to update
+> their DTS.
+
+Yes, but I'd still prefer if we were preventing people from referencing
+mtd-nvmem cells if the node does not have an "nvmem-cell" compat.
+
+> 
+> > >     
+> > > > What forces people to add this compatible in their
+> > > > DT? Nothing. I'll tell you what will happen: people will start
+> > > > defining their nvmem cells directly under the MTD node because
+> > > > that *works*, and even if the binding is not documented and we
+> > > > consider it invalid, we'll be stuck supporting it forever.      
+> > > 
+> > > Do note that undocumented bindings are not allowed. DTS that use
+> > > undocumented bindings (normally) just get rejected.    
+> > 
+> > Except that's just in theory. In practice, if people can do something
+> > wrong, they'll complain if you later fix the bug and break their
+> > setup. So no, if we go for the "nvmem cells have an 'nvmem-cell'
+> > compat", then I'd like the NVMEM framework to enforce that somehow.  
+> 
+> That should be trivial to implement.
+
+Exactly, and that's why I'm insisting on this point.
