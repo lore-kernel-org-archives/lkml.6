@@ -2,185 +2,116 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9783AC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 396DDC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:25:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50E0A21840
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:24:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZQxaJgJ9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50E0A21840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 035D821837
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:25:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 035D821837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbeHUUp2 (ORCPT
+        id S1727077AbeHUUqY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 16:45:28 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:37107 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbeHUUp2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 16:45:28 -0400
-Received: by mail-oi0-f68.google.com with SMTP id j205-v6so33408552oib.4
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 10:24:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RWGilGlT6U1QaTL6FhIRIwBE8gvGjbdmOEDu9+bJbt0=;
-        b=ZQxaJgJ9ZJYsBSjmKjlBvKZBuPMxDE72XJKm2T7rhuFRZwQqhXuEq2gJy7mrIspxHp
-         HmNF6Y8OK0LcbAidVlm1ahYj1S83FNFUwWLk5fnH2fGx33EgI1lMhguBa2aSLXtg287d
-         hIe/fl0d1HJUFXVq4Y6iUYSs4nTomUkutlZbvyxXwma0Cw3fLG/FjKlURZBlSHCQKHHx
-         HJr93yVxL/Of/fl8o4wvoWLjtS969rWpneC3QkEPsp5CT17jJ4E9vsXCYfZORm6BmcmF
-         yJpN/AasAWtRyWQ37t6Kh4GbT5fbY6rpuZelW4MZDQS9oCgYC+qYuKZS4z02+bBwTHi6
-         THFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RWGilGlT6U1QaTL6FhIRIwBE8gvGjbdmOEDu9+bJbt0=;
-        b=a2r2YjXHsRFnFd2a/cJ9DLuJiKXMPIxDJZsJ2pkCj1gShQxYy0d4hc4965zG7Nki0u
-         EL069RFjYP9yotO+6oeVk4E/WHYt5bRg3H0CO8AkAmlWFEOJqWhYO7fCWj7I7mP+azT/
-         EzbOLed2RyFOMs+bpqg8+ozfKaoI3S0bYRMI6lrO0Iw1CQUlQPgBqgdNgh2PpQ1Hu5KL
-         R/Hp9eESZCC+D4AFw/yr9t0klFGXsCQkSoojTVaxHYVRREZO0Ickqq3n79oGws4C9g7H
-         l9xkCITO0Hs+bzLj8pofCguA8XcVmErnk8yxmftrI7PtLtyqhmmzTjiz9yylXv2rnmKn
-         wwPA==
-X-Gm-Message-State: APzg51DcJ/hMjA5sb4eeDPX1C8yX+w5oBZqTXCaFTjEZmyE1f6XFXfQr
-        9Z3Ocr8ETO/uzhXygmVXyuf/qRyvbPstQxHW84U9iQ==
-X-Google-Smtp-Source: ANB0VdbVIAFSxoUDa/W2LWOA3lRW5d/9TudcFvhbaNIeEEE/BnxvxQaCfRRuNpZ/tdttrNuoKmK7OaNPUOXYTpy1McQ=
-X-Received: by 2002:aca:dc55:: with SMTP id t82-v6mr214854oig.159.1534872264879;
- Tue, 21 Aug 2018 10:24:24 -0700 (PDT)
+        Tue, 21 Aug 2018 16:46:24 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52634 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726810AbeHUUqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 16:46:24 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 431D8ED1;
+        Tue, 21 Aug 2018 10:25:21 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B93E43F739;
+        Tue, 21 Aug 2018 10:25:19 -0700 (PDT)
+Subject: Re: [PATCH] arm64/crypto: remove non-standard notation
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20180820224032.53194-1-ndesaulniers@google.com>
+ <CAKv+Gu-xAmadr96vwStOxdeqi=rCEBrn8V6GofexBhpmA=JiuA@mail.gmail.com>
+ <CAKwvOdkZR-MWuMU=j=kKXQwA0LEj1n0uoZQyTpwOzZuz9gjmJQ@mail.gmail.com>
+ <CAKv+Gu8ZZYvh9ZthRH7mvG7_j3bvT=3st-aj0kdwpNQaAcs=-w@mail.gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <0dda3996-a4f3-33f8-ef4f-935943f132b4@arm.com>
+Date:   Tue, 21 Aug 2018 18:25:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180821000444.7004-1-casey.schaufler@intel.com> <20180821000444.7004-4-casey.schaufler@intel.com>
-In-Reply-To: <20180821000444.7004-4-casey.schaufler@intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 21 Aug 2018 19:23:58 +0200
-Message-ID: <CAG48ez1D-DPBP8ACA1W5=XZLNKUeVj7ZOGUG8uJ2nL1xOSR_9Q@mail.gmail.com>
-Subject: Re: [PATCH v3 3/5] LSM: Security module checking for side-channel dangers
-To:     Casey Schaufler <casey.schaufler@intel.com>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        selinux@tycho.nsa.gov, Dave Hansen <dave.hansen@intel.com>,
-        deneen.t.dock@intel.com, kristen@linux.intel.com,
-        Arjan van de Ven <arjan@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAKv+Gu8ZZYvh9ZthRH7mvG7_j3bvT=3st-aj0kdwpNQaAcs=-w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 2:05 AM Casey Schaufler
-<casey.schaufler@intel.com> wrote:
->
-> The sidechannel LSM checks for cases where a side-channel
-> attack may be dangerous based on security attributes of tasks.
-> This includes:
->         Effective UID of the tasks is different
->         Capablity sets are different
->         Tasks are in different namespaces
-> An option is also provided to assert that task are never
-> to be considered safe. This is high paranoia, and expensive
-> as well.
->
-> Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
-> ---
-[...]
-> diff --git a/security/sidechannel/Kconfig b/security/sidechannel/Kconfig
-> new file mode 100644
-> index 000000000000..af9396534128
-> --- /dev/null
-> +++ b/security/sidechannel/Kconfig
-[...]
-> +config SECURITY_SIDECHANNEL_CAPABILITIES
-> +       bool "Sidechannel check on capability sets"
-> +       depends on SECURITY_SIDECHANNEL
-> +       default n
-> +       help
-> +         Assume that tasks with different sets of privilege may be
-> +         subject to side-channel attacks. Potential interactions
-> +         where the attacker lacks capabilities the attacked has
-> +         are blocked.
-> +
-> +          If you are unsure how to answer this question, answer N.
-> +
-> +config SECURITY_SIDECHANNEL_NAMESPACES
-> +       bool "Sidechannel check on namespaces"
-> +       depends on SECURITY_SIDECHANNEL
-> +       depends on NAMESPACES
-> +       default n
-> +       help
-> +         Assume that tasks in different namespaces may be
-> +         subject to side-channel attacks. User, PID and cgroup
-> +         namespaces are checked.
-> +
-> +          If you are unsure how to answer this question, answer N.
-[...]
-> diff --git a/security/sidechannel/sidechannel.c b/security/sidechannel/sidechannel.c
-> new file mode 100644
-> index 000000000000..4da7d6dafdc5
-> --- /dev/null
-> +++ b/security/sidechannel/sidechannel.c
-[...]
-> +/*
-> + * safe_by_capability - Are task and current sidechannel safe?
-> + * @p: task to check on
-> + *
-> + * Returns 0 if the tasks are sidechannel safe, -EACCES otherwise.
-> + */
-> +#ifdef CONFIG_SECURITY_SIDECHANNEL_CAPABILITIES
-> +static int safe_by_capability(struct task_struct *p)
-> +{
-> +       const struct cred *ccred = current_real_cred();
-> +       const struct cred *pcred = rcu_dereference_protected(p->real_cred, 1);
-> +
-> +       /*
-> +        * Capabilities checks. Considered safe if:
-> +        *      current has all the capabilities p does
-> +        */
-> +       if (ccred != pcred &&
-> +           !cap_issubset(pcred->cap_effective, ccred->cap_effective))
-> +               return -EACCES;
-> +       return 0;
-> +}
+On 21/08/18 18:00, Ard Biesheuvel wrote:
+> On 21 August 2018 at 18:50, Nick Desaulniers <ndesaulniers@google.com> wrote:
+>> On Tue, Aug 21, 2018 at 5:23 AM Ard Biesheuvel
+>> <ard.biesheuvel@linaro.org> wrote:
+>>>
+>>> Hi Nick,
+>>>
+>>> On 21 August 2018 at 00:40, Nick Desaulniers <ndesaulniers@google.com> wrote:
+>>>> It seems that:
+>>>> ldr q8, =0x30000000200000001
+>>>>
+>>>> is a GNU as convience notation for:
+>>>> ldr q8, .Lconstant
+>>>> .Lconstant
+>>>> .word 0x00000001
+>>>> .word 0x00000002
+>>>> .word 0x00000003
+>>>> .word 0x00000000
+>>>>
+>>>> based on this comment in binutils' source [0]. I've asked for this
+>>>> non-standard convience notation to be added to other assemblers [1], but
+>>>> until then, we can remove it and get equivalent disassembly:
+>>>>
+>>>
+>>> What do you mean by 'non-standard convenience notation'? Which asm
+>>> 'standard' does Clang actually claim to implement?
+>>
+>> Well, for assembly 'standard' is a bit nebulous.  But it's frustrating
+>> when you can't find what the `=0x...` notation means in either the ARM
+>> or GNU as manuals.  The source of truth happened to be a comment in
+>> the source [0] that explained that this was a "programmer friendly
+>> notation."  Sure, if you can find it.
+>>
+> 
+> Well, it is documented in the ARM manuals as the 'ldr pseudo
+> instruction' for 32-bit ARM, and originally, it would only emit a
+> literal if the value could not be loaded using a ordinary mov.
 
-On its own (without safe_by_namespace()), this check makes no sense, I
-think. You're performing a test on the namespaced capability sets
-without looking at which user namespaces they are relative to. Maybe
-either introduce a configuration dependency or add an extra namespace
-check here?
+FWIW It's certainly well-documented by common A64 assemblers too:
 
-> +static int safe_by_namespace(struct task_struct *p)
-> +{
-> +       struct cgroup_namespace *ccgn = NULL;
-> +       struct cgroup_namespace *pcgn = NULL;
-> +       const struct cred *ccred;
-> +       const struct cred *pcred;
-> +
-> +       /*
-> +        * Namespace checks. Considered safe if:
-> +        *      cgroup namespace is the same
-> +        *      User namespace is the same
-> +        *      PID namespace is the same
-> +        */
-> +       if (current->nsproxy)
-> +               ccgn = current->nsproxy->cgroup_ns;
-> +       if (p->nsproxy)
-> +               pcgn = p->nsproxy->cgroup_ns;
-> +       if (ccgn != pcgn)
-> +               return -EACCES;
-> +
-> +       ccred = current_real_cred();
-> +       pcred = rcu_dereference_protected(p->real_cred, 1);
-> +
-> +       if (ccred->user_ns != pcred->user_ns)
-> +               return -EACCES;
-> +       if (task_active_pid_ns(current) != task_active_pid_ns(p))
-> +               return -EACCES;
-> +       return 0;
-> +}
+http://infocenter.arm.com/help/topic/com.arm.doc.100069_0610_01_en/dom1395139540926.html
+
+https://sourceware.org/binutils/docs/as/AArch64-Opcodes.html#AArch64-Opcodes
+
+> For AArch64, I don't think that occurs any longer, i.e., a ldr is
+> always emitted as an ldr. However, it is used widely in the ARM code
+> (although not as much in arch/arm64) for loading compile time
+> constants and even symbol addresses into general purpose registers.
+> The FP variant may actually be a GNU invention, but given that there
+> is no standard to begin with, playing the 'GNU is non-standard' card
+> again is just a bit annoying.
+
+I note that GAS just says "register" rather than explicitly calling out 
+GPRs as armasm does, so in some ways it's not even all that unexpected 
+that FP registers also work there, even if it is a bit funky.
+
+Robin.
