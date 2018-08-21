@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F21C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C4AC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01BA4208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01BA4208E8
+	by mail.kernel.org (Postfix) with ESMTP id EADC12087A
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:35:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EADC12087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728559AbeHUJxo (ORCPT
+        id S1728282AbeHUJxs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:53:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57116 "EHLO
+        Tue, 21 Aug 2018 05:53:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57124 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726790AbeHUJxn (ORCPT
+        with ESMTP id S1726560AbeHUJxs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:53:43 -0400
+        Tue, 21 Aug 2018 05:53:48 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2AA427F6;
-        Tue, 21 Aug 2018 06:34:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D13A67F6;
+        Tue, 21 Aug 2018 06:34:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li Shuang <shuali@redhat.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 06/22] net_sched: fix NULL pointer dereference when delete tcindex filter
-Date:   Tue, 21 Aug 2018 08:21:32 +0200
-Message-Id: <20180821055139.805480166@linuxfoundation.org>
+        stable@vger.kernel.org, Park Ju Hyung <qkrwngud825@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 07/22] ALSA: hda - Sleep for 10ms after entering D3 on Conexant codecs
+Date:   Tue, 21 Aug 2018 08:21:33 +0200
+Message-Id: <20180821055139.856866912@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055139.462620042@linuxfoundation.org>
 References: <20180821055139.462620042@linuxfoundation.org>
@@ -52,118 +50,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Park Ju Hyung <qkrwngud825@gmail.com>
 
-[ Upstream commit 2df8bee5654bb2b7312662ca6810d4dc16b0b67f ]
+commit f59cf9a0551dd954ad8b752461cf19d9789f4b1d upstream.
 
-Li Shuang reported the following crash:
+On rare occasions, we are still noticing that the internal speaker
+spitting out spurious noises even after adding the problematic codec
+to the list.
 
-[   71.267724] BUG: unable to handle kernel NULL pointer dereference at 0000000000000004
-[   71.276456] PGD 800000085d9bd067 P4D 800000085d9bd067 PUD 859a0b067 PMD 0
-[   71.284127] Oops: 0000 [#1] SMP PTI
-[   71.288015] CPU: 12 PID: 2386 Comm: tc Not tainted 4.18.0-rc8.latest+ #131
-[   71.295686] Hardware name: Dell Inc. PowerEdge R730/0WCJNT, BIOS 2.1.5 04/11/2016
-[   71.304037] RIP: 0010:tcindex_delete+0x72/0x280 [cls_tcindex]
-[   71.310446] Code: 00 31 f6 48 87 75 20 48 85 f6 74 11 48 8b 47 18 48 8b 40 08 48 8b 40 50 e8 fb a6 f8 fc 48 85 db 0f 84 dc 00 00 00 48 8b 73 18 <8b> 56 04 48 8d 7e 04 85 d2 0f 84 7b 01 00
-[   71.331517] RSP: 0018:ffffb45207b3f898 EFLAGS: 00010282
-[   71.337345] RAX: ffff8ad3d72d6360 RBX: ffff8acc84393680 RCX: 000000000000002e
-[   71.345306] RDX: ffff8ad3d72c8570 RSI: 0000000000000000 RDI: ffff8ad847a45800
-[   71.353277] RBP: ffff8acc84393688 R08: ffff8ad3d72c8400 R09: 0000000000000000
-[   71.361238] R10: ffff8ad3de786e00 R11: 0000000000000000 R12: ffffb45207b3f8c7
-[   71.369199] R13: ffff8ad3d93bd2a0 R14: 000000000000002e R15: ffff8ad3d72c9600
-[   71.377161] FS:  00007f9d3ec3e740(0000) GS:ffff8ad3df980000(0000) knlGS:0000000000000000
-[   71.386188] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   71.392597] CR2: 0000000000000004 CR3: 0000000852f06003 CR4: 00000000001606e0
-[   71.400558] Call Trace:
-[   71.403299]  tcindex_destroy_element+0x25/0x40 [cls_tcindex]
-[   71.409611]  tcindex_walk+0xbb/0x110 [cls_tcindex]
-[   71.414953]  tcindex_destroy+0x44/0x90 [cls_tcindex]
-[   71.420492]  ? tcindex_delete+0x280/0x280 [cls_tcindex]
-[   71.426323]  tcf_proto_destroy+0x16/0x40
-[   71.430696]  tcf_chain_flush+0x51/0x70
-[   71.434876]  tcf_block_put_ext.part.30+0x8f/0x1b0
-[   71.440122]  tcf_block_put+0x4d/0x70
-[   71.444108]  cbq_destroy+0x4d/0xd0 [sch_cbq]
-[   71.448869]  qdisc_destroy+0x62/0x130
-[   71.452951]  dsmark_destroy+0x2a/0x70 [sch_dsmark]
-[   71.458300]  qdisc_destroy+0x62/0x130
-[   71.462373]  qdisc_graft+0x3ba/0x470
-[   71.466359]  tc_get_qdisc+0x2a6/0x2c0
-[   71.470443]  ? cred_has_capability+0x7d/0x130
-[   71.475307]  rtnetlink_rcv_msg+0x263/0x2d0
-[   71.479875]  ? rtnl_calcit.isra.30+0x110/0x110
-[   71.484832]  netlink_rcv_skb+0x4d/0x130
-[   71.489109]  netlink_unicast+0x1a3/0x250
-[   71.493482]  netlink_sendmsg+0x2ae/0x3a0
-[   71.497859]  sock_sendmsg+0x36/0x40
-[   71.501748]  ___sys_sendmsg+0x26f/0x2d0
-[   71.506029]  ? handle_pte_fault+0x586/0xdf0
-[   71.510694]  ? __handle_mm_fault+0x389/0x500
-[   71.515457]  ? __sys_sendmsg+0x5e/0xa0
-[   71.519636]  __sys_sendmsg+0x5e/0xa0
-[   71.523626]  do_syscall_64+0x5b/0x180
-[   71.527711]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   71.533345] RIP: 0033:0x7f9d3e257f10
-[   71.537331] Code: c3 48 8b 05 82 6f 2c 00 f7 db 64 89 18 48 83 cb ff eb dd 0f 1f 80 00 00 00 00 83 3d 8d d0 2c 00 00 75 10 b8 2e 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8
-[   71.558401] RSP: 002b:00007fff6f893398 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-[   71.566848] RAX: ffffffffffffffda RBX: 000000005b71274d RCX: 00007f9d3e257f10
-[   71.574810] RDX: 0000000000000000 RSI: 00007fff6f8933e0 RDI: 0000000000000003
-[   71.582770] RBP: 00007fff6f8933e0 R08: 000000000000ffff R09: 0000000000000003
-[   71.590729] R10: 00007fff6f892e20 R11: 0000000000000246 R12: 0000000000000000
-[   71.598689] R13: 0000000000662ee0 R14: 0000000000000000 R15: 0000000000000000
-[   71.606651] Modules linked in: sch_cbq cls_tcindex sch_dsmark xt_CHECKSUM iptable_mangle ipt_MASQUERADE iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_coni
-[   71.685425]  libahci i2c_algo_bit i2c_core i40e libata dca mdio megaraid_sas dm_mirror dm_region_hash dm_log dm_mod
-[   71.697075] CR2: 0000000000000004
-[   71.700792] ---[ end trace f604eb1acacd978b ]---
+Adding a 10ms artificial delay before rebooting fixes the issue entirely.
 
-Reproducer:
-tc qdisc add dev lo handle 1:0 root dsmark indices 64 set_tc_index
-tc filter add dev lo parent 1:0 protocol ip prio 1 tcindex mask 0xfc shift 2
-tc qdisc add dev lo parent 1:0 handle 2:0 cbq bandwidth 10Mbit cell 8 avpkt 1000 mpu 64
-tc class add dev lo parent 2:0 classid 2:1 cbq bandwidth 10Mbit rate 1500Kbit avpkt 1000 prio 1 bounded isolated allot 1514 weight 1 maxburst 10
-tc filter add dev lo parent 2:0 protocol ip prio 1 handle 0x2e tcindex classid 2:1 pass_on
-tc qdisc add dev lo parent 2:1 pfifo limit 5
-tc qdisc del dev lo root
+Patch for Realtek codecs also adds the same amount of delay after
+entering D3.
 
-This is because in tcindex_set_parms, when there is no old_r, we set new
-exts to cr.exts. And we didn't set it to filter when r == &new_filter_result.
-
-Then in tcindex_delete() -> tcf_exts_get_net(), we will get NULL pointer
-dereference as we didn't init exts.
-
-Fix it by moving tcf_exts_change() after "if (old_r && old_r != r)" check.
-Then we don't need "cr" as there is no errout after that.
-
-Fixes: bf63ac73b3e13 ("net_sched: fix an oops in tcindex filter")
-Reported-by: Li Shuang <shuali@redhat.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sched/cls_tcindex.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
 
---- a/net/sched/cls_tcindex.c
-+++ b/net/sched/cls_tcindex.c
-@@ -382,16 +382,13 @@ tcindex_set_parms(struct net *net, struc
- 		tcf_bind_filter(tp, &cr.res, base);
- 	}
+---
+ sound/pci/hda/patch_conexant.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -219,6 +219,7 @@ static void cx_auto_reboot_notify(struct
+ 	snd_hda_codec_set_power_to_all(codec, codec->core.afg, AC_PWRST_D3);
+ 	snd_hda_codec_write(codec, codec->core.afg, 0,
+ 			    AC_VERB_SET_POWER_STATE, AC_PWRST_D3);
++	msleep(10);
+ }
  
--	if (old_r)
--		tcf_exts_change(tp, &r->exts, &e);
--	else
--		tcf_exts_change(tp, &cr.exts, &e);
--
- 	if (old_r && old_r != r)
- 		tcindex_filter_result_init(old_r);
- 
- 	oldp = p;
- 	r->res = cr.res;
-+	tcf_exts_change(tp, &r->exts, &e);
-+
- 	rcu_assign_pointer(tp->root, cp);
- 
- 	if (r == &new_filter_result) {
+ static void cx_auto_free(struct hda_codec *codec)
 
 
