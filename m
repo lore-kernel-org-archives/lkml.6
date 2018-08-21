@@ -3,161 +3,199 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7C3C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5147C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4C2F216C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:28:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4C2F216C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 5F643216C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:28:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F643216C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbeHULrN (ORCPT
+        id S1726818AbeHULrg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 07:47:13 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:46266 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbeHULrM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 07:47:12 -0400
-Received: by mail-ua1-f65.google.com with SMTP id u11-v6so11326350uan.13;
-        Tue, 21 Aug 2018 01:28:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GvSVqNU4Ija0fkpJLdsqbSOgMFXjnuhtR8+iBh/1i5o=;
-        b=iyK+3F84mInUw/kRB8Lom8rlHCDwgAq2gDBhtcWqbHO4Me7clZlD36luuTNVyyK2Zi
-         5/EMwyddwbcOK8Yx471ygtgSGTgFf9/m7jvYoIV421CT9sYHkQJE0WOi+syjqAI6P0B7
-         m5vIP2q+WicHTsCqi6eniVKYbPVOn0ha80LVocfTLdEyRhsTOBhQR5c/m+4n1QAVJkGM
-         Hyf+Fcav7ToMi9EH8ZvsM0Msz4JHWqYOgSZtllloGbDYR++S3mjmK/8Xcc8aBFf9CgW4
-         MoDd11ieWzfiAqdInGQbKULHaqWvC0s+jwZ1ZmPNa6L2C+TtfHa0+vlx58UD6Xc0KoSZ
-         9eEg==
-X-Gm-Message-State: AOUpUlHIPOhlGYHF6veS1IDYlS6cSQBG4Y/vuCLgB7zZdf28rDXEiDlT
-        xc+Kps3wTlYv0L+0KC/t152C4GQXWEFx30FJ+y4=
-X-Google-Smtp-Source: AA+uWPzraOcF53jDXeX/WmyhMWtgABsg3yEPzplGMxIsr2gSOXGcqEWUEMk9W7Iu0BRQ/SBH36CW6h2ngUhI/5HMjQs=
-X-Received: by 2002:ab0:13c7:: with SMTP id n7-v6mr13284933uae.47.1534840080070;
- Tue, 21 Aug 2018 01:28:00 -0700 (PDT)
+        Tue, 21 Aug 2018 07:47:36 -0400
+Received: from foss.arm.com ([217.140.101.70]:46234 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726315AbeHULrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 07:47:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA7407A9;
+        Tue, 21 Aug 2018 01:28:24 -0700 (PDT)
+Received: from [10.4.13.119] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D3AA53F739;
+        Tue, 21 Aug 2018 01:28:22 -0700 (PDT)
+Subject: Re: [PATCH] r8169: don't use MSI-X on RTL8106e
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>, jian-hong@endlessm.com
+Cc:     David Miller <davem@davemloft.net>, nic_swsd@realtek.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@endlessm.com, linux-pci@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>
+References: <20180815062110.16155-1-jian-hong@endlessm.com>
+ <20180816.122131.604270853620318143.davem@davemloft.net>
+ <458efbf9-5971-653a-e7cd-8c56ba055648@gmail.com>
+ <20180816.123958.750435252621963789.davem@davemloft.net>
+ <ac30d4e6-6411-09e6-1205-96e3e8e29f6f@gmail.com>
+ <20180820184438.GA154536@bhelgaas-glaptop.roam.corp.google.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <02c08346-3901-9c39-a837-f04e283794d5@arm.com>
+Date:   Tue, 21 Aug 2018 09:28:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180726151006.345e8397@canb.auug.org.au> <20180816121256.0435930e@canb.auug.org.au>
-In-Reply-To: <20180816121256.0435930e@canb.auug.org.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 21 Aug 2018 10:27:48 +0200
-Message-ID: <CAMuHMdXtMer6z09GV4HM++0RjYSkLWaXO9-m==SE85RkQ2xP-g@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the mfd tree with the drm-intel tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        "Nikula, Jani" <jani.nikula@linux.intel.com>,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Next <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        paulo.r.zanoni@intel.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180820184438.GA154536@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 8:05 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> On Thu, 26 Jul 2018 15:10:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Today's linux-next merge of the mfd tree got a conflict in:
-> >
-> >   drivers/gpu/drm/i915/intel_display.h
-> >
-> > between commit:
-> >
-> >   6075546f57f8 ("drm/i915/icl: store the port type for TC ports")
-> >
-> > from the drm-intel tree and commit:
-> >
-> >   9c229127aee2 ("drm/i915: hdmi: add CEC notifier to intel_hdmi")
-> >
-> > from the mfd tree.
-> >
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> >
-> > --
-> > Cheers,
-> > Stephen Rothwell
-> >
-> > diff --cc drivers/gpu/drm/i915/intel_display.h
-> > index 0a79a46d5805,1f176a71e081..000000000000
-> > --- a/drivers/gpu/drm/i915/intel_display.h
-> > +++ b/drivers/gpu/drm/i915/intel_display.h
-> > @@@ -126,24 -126,30 +126,48 @@@ enum port
-> >
-> >   #define port_name(p) ((p) + 'A')
-> >
-> > + /*
-> > +  * Ports identifier referenced from other drivers.
-> > +  * Expected to remain stable over time
-> > +  */
-> > + static inline const char *port_identifier(enum port port)
-> > + {
-> > +     switch (port) {
-> > +     case PORT_A:
-> > +             return "Port A";
-> > +     case PORT_B:
-> > +             return "Port B";
-> > +     case PORT_C:
-> > +             return "Port C";
-> > +     case PORT_D:
-> > +             return "Port D";
-> > +     case PORT_E:
-> > +             return "Port E";
-> > +     case PORT_F:
-> > +             return "Port F";
-> > +     default:
-> > +             return "<invalid>";
-> > +     }
-> > + }
-> > +
-> >  +enum tc_port {
-> >  +    PORT_TC_NONE = -1,
-> >  +
-> >  +    PORT_TC1 = 0,
-> >  +    PORT_TC2,
-> >  +    PORT_TC3,
-> >  +    PORT_TC4,
-> >  +
-> >  +    I915_MAX_TC_PORTS
-> >  +};
-> >  +
-> >  +enum tc_port_type {
-> >  +    TC_PORT_UNKNOWN = 0,
-> >  +    TC_PORT_TYPEC,
-> >  +    TC_PORT_TBT,
-> >  +    TC_PORT_LEGACY,
-> >  +};
-> >  +
-> >   enum dpio_channel {
-> >       DPIO_CH0,
-> >       DPIO_CH1
->
-> This is now a conflict between Linus' tree and the mfd tree.
+On 20/08/18 19:44, Bjorn Helgaas wrote:
+> [+cc Marc, Thomas, Christoph, linux-pci)
+> (beginning of thread at [1])
+> 
+> On Thu, Aug 16, 2018 at 09:50:48PM +0200, Heiner Kallweit wrote:
+>> On 16.08.2018 21:39, David Miller wrote:
+>>> From: Heiner Kallweit <hkallweit1@gmail.com>
+>>> Date: Thu, 16 Aug 2018 21:37:31 +0200
+>>>
+>>>> On 16.08.2018 21:21, David Miller wrote:
+>>>>> From: <jian-hong@endlessm.com>
+>>>>> Date: Wed, 15 Aug 2018 14:21:10 +0800
+>>>>>
+>>>>>> Found the ethernet network on ASUS X441UAR doesn't come back on resume
+>>>>>> from suspend when using MSI-X.  The chip is RTL8106e - version 39.
+>>>>>
+>>>>> Heiner, please take a look at this.
+>>>>>
+>>>>> You recently disabled MSI-X on RTL8168g for similar reasons.
+>>>>>
+>>>>> Now that we've seen two chips like this, maybe there is some other
+>>>>> problem afoot.
+>>>>>
+>>>> Thanks for the hint. I saw it already and just contacted Realtek
+>>>> whether they are aware of any MSI-X issues with particular chip
+>>>> versions. With the chip versions I have access to MSI-X works fine.
+>>>>
+>>>> There's also the theoretical option that the issues are caused by
+>>>> broken BIOS's. But so far only chip versions have been reported
+>>>> which are very similar, at least with regard to version number
+>>>> (2x VER_40, 1x VER_39). So they may share some buggy component.
+>>>>
+>>>> Let's see whether Realtek can provide some hint.
+>>>> If more chip versions are reported having problems with MSI-X,
+>>>> then we could switch to a whitelist or disable MSI-X in general.
+>>>
+>>> It could be that we need to reprogram some register(s) on resume,
+>>> which normally might not be needed, and that is what is causing the
+>>> problem with some chips.
+>>>
+>> Indeed. That's what I'm checking with Realtek.
+>> In the register list in the r8169 driver there's one entry which
+>> seems to indicate that there are MSI-X specific settings.
+>> However this register isn't used, and the r8168 vendor driver
+>> uses only MSI. And there are no public datasheets.
+> 
+> Do we have any information about these chip versions in other systems?
+> Or other devices using MSI-X in the same ASUS system?  It seems
+> possible that there's some PCI core or suspend/resume issue with MSI-X
+> and this patch just avoids it without fixing the root cause.
+> 
+> It might be useful to have a kernel.org bugzilla with the complete
+> dmesg, "sudo lspci -vv" output, and /proc/interrupts contents archived
+> for future reference.
 
-FTR, it's not this one, but the similar one reported on Jul 19, which does not
-add the tc_port_type enum.
+The one system I have with a Realtek chip seems happy enough with MSI-X,
+but it never gets suspended. There is comment in the patch that I don't
+quite get:
 
-Gr{oetje,eeting}s,
+> It is the IRQ 127 - PCI-MSI used by enp2s0.  However, lspci lists MSI is
+> disabled and MSI-X is enabled which conflicts to the interrupt table.
 
-                        Geert
+What do you mean by "conflicts"? With what? Another question is whether
+you've loaded any firmware (some versions of the Realtek HW seem to require
+it).
+
+For the posterity, some data from my own system, which I don't know if it
+has any relevance to the problem at hand.
+
+Thanks,
+
+	M.
+
+[    2.624963] r8169 0000:02:00.0 eth0: RTL8168g/8111g, 5a:fe:ad:ce:11:00, XID 4c000800, IRQ 26
+[    2.633398] r8169 0000:02:00.0 eth0: jumbo features [frames: 9200 bytes, tx checksumming: ko]
+
+ 26:         50     997005          0          0       MSI 1048576 Edge      enp2s0
+
+02:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller (rev 0c)
+	Subsystem: Realtek Semiconductor Co., Ltd. RTL8111/8168 PCI Express Gigabit Ethernet controller
+	Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx+
+	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+	Latency: 0, Cache Line Size: 64 bytes
+	Interrupt: pin A routed to IRQ 25
+	Region 0: I/O ports at 1000 [size=256]
+	Region 2: Memory at 100004000 (64-bit, prefetchable) [size=4K]
+	Region 4: Memory at 100000000 (64-bit, prefetchable) [size=16K]
+	Capabilities: [40] Power Management version 3
+		Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=375mA PME(D0+,D1+,D2+,D3hot+,D3cold+)
+		Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
+	Capabilities: [50] MSI: Enable- Count=1/1 Maskable- 64bit+
+		Address: 0000000000000000  Data: 0000
+	Capabilities: [70] Express (v2) Endpoint, MSI 01
+		DevCap:	MaxPayload 128 bytes, PhantFunc 0, Latency L0s <512ns, L1 <64us
+			ExtTag- AttnBtn- AttnInd- PwrInd- RBE+ FLReset- SlotPowerLimit 0.000W
+		DevCtl:	Report errors: Correctable- Non-Fatal- Fatal- Unsupported-
+			RlxdOrd+ ExtTag- PhantFunc- AuxPwr- NoSnoop-
+			MaxPayload 128 bytes, MaxReadReq 4096 bytes
+		DevSta:	CorrErr+ UncorrErr- FatalErr- UnsuppReq+ AuxPwr+ TransPend-
+		LnkCap:	Port #0, Speed 2.5GT/s, Width x1, ASPM L0s L1, Exit Latency L0s unlimited, L1 <64us
+			ClockPM+ Surprise- LLActRep- BwNot- ASPMOptComp+
+		LnkCtl:	ASPM Disabled; RCB 64 bytes Disabled- CommClk+
+			ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
+		LnkSta:	Speed 2.5GT/s, Width x1, TrErr- Train- SlotClk+ DLActive- BWMgmt- ABWMgmt-
+		DevCap2: Completion Timeout: Range ABCD, TimeoutDis+, LTR+, OBFF Via message/WAKE#
+		DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis-, LTR-, OBFF Disabled
+		LnkCtl2: Target Link Speed: 2.5GT/s, EnterCompliance- SpeedDis-
+			 Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
+			 Compliance De-emphasis: -6dB
+		LnkSta2: Current De-emphasis Level: -6dB, EqualizationComplete-, EqualizationPhase1-
+			 EqualizationPhase2-, EqualizationPhase3-, LinkEqualizationRequest-
+	Capabilities: [b0] MSI-X: Enable+ Count=4 Masked-
+		Vector table: BAR=4 offset=00000000
+		PBA: BAR=4 offset=00000800
+	Capabilities: [d0] Vital Product Data
+pcilib: sysfs_read_vpd: read failed: Input/output error
+		Not readable
+	Capabilities: [100 v1] Advanced Error Reporting
+		UESta:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+		UEMsk:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+		UESvrt:	DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+ ECRC- UnsupReq- ACSViol-
+		CESta:	RxErr+ BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr-
+		CEMsk:	RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr+
+		AERCap:	First Error Pointer: 00, GenCap+ CGenEn- ChkCap+ ChkEn-
+	Capabilities: [140 v1] Virtual Channel
+		Caps:	LPEVC=0 RefClk=100ns PATEntryBits=1
+		Arb:	Fixed- WRR32- WRR64- WRR128-
+		Ctrl:	ArbSelect=Fixed
+		Status:	InProgress-
+		VC0:	Caps:	PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
+			Arb:	Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
+			Ctrl:	Enable+ ID=0 ArbSelect=Fixed TC/VC=ff
+			Status:	NegoPending- InProgress-
+	Capabilities: [160 v1] Device Serial Number 00-00-00-00-00-00-00-00
+	Capabilities: [170 v1] Latency Tolerance Reporting
+		Max snoop latency: 0ns
+		Max no snoop latency: 0ns
+	Kernel driver in use: r8169
+
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Jazz is not dead. It just smells funny...
