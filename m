@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 133A1C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B118FC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAD3E20C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAD3E20C09
+	by mail.kernel.org (Postfix) with ESMTP id 6E97C2174D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E97C2174D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbeHUJxQ (ORCPT
+        id S1728507AbeHUJxT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:53:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57002 "EHLO
+        Tue, 21 Aug 2018 05:53:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57010 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726938AbeHUJxP (ORCPT
+        with ESMTP id S1726938AbeHUJxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:53:15 -0400
+        Tue, 21 Aug 2018 05:53:18 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D8B537F6;
-        Tue, 21 Aug 2018 06:34:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 20C369D7;
+        Tue, 21 Aug 2018 06:34:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Willy Tarreau <w@1wt.eu>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.4 18/22] ACPI / PM: save NVS memory for ASUS 1025C laptop
-Date:   Tue, 21 Aug 2018 08:21:44 +0200
-Message-Id: <20180821055140.374975286@linuxfoundation.org>
+        stable@vger.kernel.org, Chen Hu <hu1.chen@intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.4 19/22] serial: 8250_dw: always set baud rate in dw8250_set_termios
+Date:   Tue, 21 Aug 2018 08:21:45 +0200
+Message-Id: <20180821055140.451598344@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055139.462620042@linuxfoundation.org>
 References: <20180821055139.462620042@linuxfoundation.org>
@@ -50,60 +51,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willy Tarreau <w@1wt.eu>
+From: Chen Hu <hu1.chen@intel.com>
 
-commit 231f9415001138a000cd0f881c46654b7ea3f8c5 upstream.
+commit dfcab6ba573445c703235ab6c83758eec12d7f28 upstream.
 
-Every time I tried to upgrade my laptop from 3.10.x to 4.x I faced an
-issue by which the fan would run at full speed upon resume. Bisecting
-it showed me the issue was introduced in 3.17 by commit 821d6f0359b0
-(ACPI / sleep: Do not save NVS for new machines to accelerate S3). This
-code only affects machines built starting as of 2012, but this Asus
-1025C laptop was made in 2012 and apparently needs the NVS data to be
-saved, otherwise the CPU's thermal state is not properly reported on
-resume and the fan runs at full speed upon resume.
+dw8250_set_termios() doesn't set baud rate if the arg "old ktermios" is
+NULL. This happens during resume.
+Call Trace:
+...
+[   54.928108] dw8250_set_termios+0x162/0x170
+[   54.928114] serial8250_set_termios+0x17/0x20
+[   54.928117] uart_change_speed+0x64/0x160
+[   54.928119] uart_resume_port
+...
 
-Here's a very simple way to check if such a machine is affected :
+So the baud rate is not restored after S3 and breaks the apps who use
+UART, for example, console and bluetooth etc.
 
-  # cat /sys/class/thermal/thermal_zone0/temp
-  55000
+We address this issue by setting the baud rate irrespective of arg
+"old", just like the drivers for other 8250 IPs. This is tested with
+Intel Broxton platform.
 
-  ( now suspend, wait one second and resume )
-
-  # cat /sys/class/thermal/thermal_zone0/temp
-  0
-
-  (and after ~15 seconds the fan starts to spin)
-
-Let's apply the same quirk as commit cbc00c13 (ACPI: save NVS memory
-for Lenovo G50-45) and reuse the function it provides. Note that this
-commit was already backported to 4.9.x but not 4.4.x.
-
-Cc: 3.17+ <stable@vger.kernel.org> # 3.17+: requires cbc00c13
-Signed-off-by: Willy Tarreau <w@1wt.eu>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Chen Hu <hu1.chen@intel.com>
+Fixes: 4e26b134bd17 ("serial: 8250_dw: clock rate handling for all ACPI platforms")
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: stable <stable@vger.kernel.org>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/sleep.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/tty/serial/8250/8250_dw.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/acpi/sleep.c
-+++ b/drivers/acpi/sleep.c
-@@ -324,6 +324,14 @@ static struct dmi_system_id acpisleep_dm
- 		DMI_MATCH(DMI_PRODUCT_NAME, "K54HR"),
- 		},
- 	},
-+	{
-+	.callback = init_nvs_save_s3,
-+	.ident = "Asus 1025C",
-+	.matches = {
-+		DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-+		DMI_MATCH(DMI_PRODUCT_NAME, "1025C"),
-+		},
-+	},
- 	/*
- 	 * https://bugzilla.kernel.org/show_bug.cgi?id=189431
- 	 * Lenovo G50-45 is a platform later than 2012, but needs nvs memory
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -224,7 +224,7 @@ static void dw8250_set_termios(struct ua
+ 	unsigned int rate;
+ 	int ret;
+ 
+-	if (IS_ERR(d->clk) || !old)
++	if (IS_ERR(d->clk))
+ 		goto out;
+ 
+ 	clk_disable_unprepare(d->clk);
 
 
