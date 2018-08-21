@@ -2,105 +2,110 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5063DC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:42:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A651DC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:43:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FAD52151D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:42:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FAD52151D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6E8DC2151D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:43:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E8DC2151D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbeHUSDP (ORCPT
+        id S1727735AbeHUSDo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 14:03:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51840 "EHLO mx1.redhat.com"
+        Tue, 21 Aug 2018 14:03:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41322 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726590AbeHUSDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 14:03:15 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1F37F7D84D;
-        Tue, 21 Aug 2018 14:42:49 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A570F94653;
-        Tue, 21 Aug 2018 14:42:45 +0000 (UTC)
-Date:   Tue, 21 Aug 2018 16:42:43 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Pierre Morel <pmorel@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-Subject: Re: [PATCH] KVM: s390: vsie: BUG correction by shadow_crycb
-Message-ID: <20180821164243.584e891f.cohuck@redhat.com>
-In-Reply-To: <4c91cd0c-d679-eecc-0566-ed45158f6b7f@redhat.com>
-References: <1534861178-30372-1-git-send-email-pmorel@linux.ibm.com>
-        <20180821163348.327ce02d.cohuck@redhat.com>
-        <4c91cd0c-d679-eecc-0566-ed45158f6b7f@redhat.com>
-Organization: Red Hat GmbH
+        id S1726590AbeHUSDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 14:03:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7445FAF60;
+        Tue, 21 Aug 2018 14:43:16 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 00DF11E0EFE; Tue, 21 Aug 2018 16:43:15 +0200 (CEST)
+Date:   Tue, 21 Aug 2018 16:43:15 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fanotify: use killable wait for waiting response for
+ permission events
+Message-ID: <20180821144315.GC11261@quack2.suse.cz>
+References: <153474898224.6806.12518115530793064797.stgit@buzz>
+ <20180820105327.GC13830@quack2.suse.cz>
+ <a7b4501c-ce1d-6590-3a48-a951740cf681@yandex-team.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 21 Aug 2018 14:42:49 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 21 Aug 2018 14:42:49 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a7b4501c-ce1d-6590-3a48-a951740cf681@yandex-team.ru>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 Aug 2018 16:36:19 +0200
-David Hildenbrand <david@redhat.com> wrote:
-
-> On 21.08.2018 16:33, Cornelia Huck wrote:
-> > On Tue, 21 Aug 2018 16:19:38 +0200
-> > Pierre Morel <pmorel@linux.ibm.com> wrote:
-> >   
-> >> Copy the key mask to the right offset inside the shadow CRYCB
-> >>
-> >> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> >> ---
-> >>  arch/s390/kvm/vsie.c | 3 ++-
-> >>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
-> >> index 63844b9..a2b28cd 100644
-> >> --- a/arch/s390/kvm/vsie.c
-> >> +++ b/arch/s390/kvm/vsie.c
-> >> @@ -173,7 +173,8 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
-> >>  		return set_validity_icpt(scb_s, 0x0039U);
-> >>  
-> >>  	/* copy only the wrapping keys */
-> >> -	if (read_guest_real(vcpu, crycb_addr + 72, &vsie_page->crycb, 56))
-> >> +	if (read_guest_real(vcpu, crycb_addr + 72,
-> >> +			    vsie_page->crycb.dea_wrapping_key_mask, 56))  
+On Tue 21-08-18 16:42:26, Konstantin Khlebnikov wrote:
+> On 20.08.2018 13:53, Jan Kara wrote:
+> > > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> > > index eb4e75175cfb..7a0c37790c89 100644
+> > > --- a/fs/notify/fanotify/fanotify.c
+> > > +++ b/fs/notify/fanotify/fanotify.c
+> > > @@ -64,7 +64,27 @@ static int fanotify_get_response(struct fsnotify_group *group,
+> > >   	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
+> > > -	wait_event(group->fanotify_data.access_waitq, event->response);
+> > > +	ret = wait_event_killable(group->fanotify_data.access_waitq,
+> > > +				  event->response);
+> > > +	if (ret) {
+> > > +		/* Try to remove pending event from the queue */
+> > > +		spin_lock(&group->notification_lock);
+> > > +		if (!list_empty(&event->fae.fse.list))
+> > > +			list_del_init(&event->fae.fse.list);
 > > 
-> > Don't you need the address here?  
+> > Here you forget to decrement group->q_len like
+> > fsnotify_remove_first_event() does.
+> > 
 > 
-> As it is defined as an array, the address would result in the same value.
+> Yep
+
+Actually only if this was the list of events to report to userspace. If the
+event was on a list of events already reported but not responded to,
+group->q_len should not be touched.
+
+> > > +		else
+> > > +			ret = 0;
+> > > +		spin_unlock(&group->notification_lock);
+> > 
+> > So the above check for list_empty can hit either when response is just
+> > being processed (and then we'll be woken up very soon) or when the event is
+> > just in the process of being copied from event queue to userspace (in which
+> > case we are in the same situation as in the old code). So it would be
+> > weird that in rare cases wait would not be really killable. I think we
+> > could detect this situation in fanotify_read() before adding event to
+> > access_list and just wakeup waiter in fanotify_get_response() again and
+> > avoid reporting the event to userspace. Hmm?
 > 
-> (&vsie_page->crycb.dea_wrapping_key_mask[0])
-
-/me looks...
-
-Indeed, it just looks a bit odd.
-
-With the changed subject
-
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-
+> I've missed that move from list to list in fanotify_read().
 > 
-> >   
-> >>  		return set_validity_icpt(scb_s, 0x0035U);
-> >>  
-> >>  	scb_s->ecb3 |= ecb3_flags;  
-> >   
-> 
-> 
+> So, fanotify_read needs event alive for a long time - copy_to_user might
+> block forever.
 
+It might block for a long time due to page fault. That is correct.
+
+> We have to transfer ownership and destroy event in fanotify_read.
+> I'll try this approach.
+
+I'm open to that if you come up with something reasonably simple. But you
+need to somehow communicate back the response and that used to be a mess
+and that's why we ended up with permission events being completely handled
+by the process generating them...
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
