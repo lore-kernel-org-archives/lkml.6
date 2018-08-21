@@ -2,312 +2,142 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46EA0C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:36:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1CA1C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:38:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB0EB20C0C
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:36:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB0EB20C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C1492151D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:38:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="Z5VdWUjY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C1492151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbeHUP4h (ORCPT
+        id S1727392AbeHUP6Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 11:56:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37234 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727019AbeHUP4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 11:56:37 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 344DD401EF0D;
-        Tue, 21 Aug 2018 12:36:38 +0000 (UTC)
-Received: from localhost (ovpn-116-132.ams2.redhat.com [10.36.116.132])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CDF0F2026D64;
-        Tue, 21 Aug 2018 12:36:37 +0000 (UTC)
-From:   Niels de Vos <ndevos@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marcin Sulikowski <marcin.k.sulikowski@gmail.com>,
-        Niels de Vos <ndevos@redhat.com>
-Subject: [PATCH v4] fuse: add support for copy_file_range()
-Date:   Tue, 21 Aug 2018 14:36:31 +0200
-Message-Id: <20180821123631.5673-1-ndevos@redhat.com>
-In-Reply-To: <20180821101233.GD2650@ndevos-x270>
-References: <20180821101233.GD2650@ndevos-x270>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 21 Aug 2018 12:36:38 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 21 Aug 2018 12:36:38 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ndevos@redhat.com' RCPT:''
+        Tue, 21 Aug 2018 11:58:25 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:35358 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726737AbeHUP6Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 11:58:25 -0400
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     od@zcrc.me, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 1/3] clk: ingenic: Add proper Kconfig entries
+Date:   Tue, 21 Aug 2018 14:38:17 +0200
+Message-Id: <20180821123819.25020-1-paul@crapouillou.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1534855104; bh=zFpAK0UcH/7cjAimEX4oDCPCUnK/1v8XT7MdFY8etbk=; h=From:To:Cc:Subject:Date:Message-Id; b=Z5VdWUjYz9nZfbDphWoupApURGP2OwM1caIhzp1O+6UG0g4Nd9TFTtBwjTo9PYLZUiu5qZx2ykPd7p2pCq3VhRWjHZum72iYvJtn8OgGafG1cxjkWvwWkVwrinopTNS/Kk1Drj+0hWQNbQe5kuDCbSfAou4ysU9evEfbRdDT/eM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are several FUSE filesystems that can implement server-side copy
-or other efficient copy/duplication/clone methods. The copy_file_range()
-syscall is the standard interface that users have access to while not
-depending on external libraries that bypass FUSE.
+Previously, the CGU code corresponding to the SoC for which we're
+compiling the kernel was the only one enabled, which made it impossible
+to build one kernel that supports them all.
 
-Signed-off-by: Niels de Vos <ndevos@redhat.com>
+Now, it is possible to select more than one SoC to support.
 
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
-libfuse: https://github.com/libfuse/libfuse/pull/259
+ drivers/clk/Kconfig          |  1 +
+ drivers/clk/Makefile         |  2 +-
+ drivers/clk/ingenic/Kconfig  | 37 ++++++++++++++++++++++++++++++++++++
+ drivers/clk/ingenic/Makefile |  8 ++++----
+ 4 files changed, 43 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/clk/ingenic/Kconfig
 
-v2: return ssize_t instead of long
-v3: add nodeid_out to fuse_copy_file_range_in for libfuse expectations
-v4: use fuse_write_out as response, correct write-back handling
----
- fs/fuse/file.c            |  80 +++++++++++++++++++++++++++++
- fs/fuse/fuse_i.h          |   3 ++
- include/uapi/linux/fuse.h | 104 +++++++++++++++++++++-----------------
- 3 files changed, 142 insertions(+), 45 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index a201fb0ac64f..6aea3675fd88 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3009,6 +3009,85 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
- 	return err;
- }
- 
-+static ssize_t fuse_copy_file_range(struct file *file_in, loff_t pos_in,
-+				    struct file *file_out, loff_t pos_out,
-+				    size_t len, unsigned int flags)
-+{
-+	struct fuse_file *ff_in = file_in->private_data;
-+	struct fuse_file *ff_out = file_out->private_data;
-+	struct inode *inode_out = file_inode(file_out);
-+	struct fuse_inode *fi_out = get_fuse_inode(inode_out);
-+	struct fuse_conn *fc = ff_in->fc;
-+	FUSE_ARGS(args);
-+	struct fuse_copy_file_range_in inarg = {
-+		.fh_in = ff_in->fh,
-+		.off_in = pos_in,
-+		.nodeid_out = ff_out->nodeid,
-+		.fh_out = ff_out->fh,
-+		.off_out = pos_out,
-+		.len = len,
-+		.flags = flags
-+	};
-+	struct fuse_write_out outarg;
-+	ssize_t err;
-+	/* mark unstable when write-back is not used, and file_out gets
-+	 * extended */
-+	bool is_unstable = (!fc->writeback_cache) &&
-+			   ((pos_out + len) > inode_out->i_size);
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 721572a8c429..95a9627cdf1d 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -281,6 +281,7 @@ source "drivers/clk/actions/Kconfig"
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+ source "drivers/clk/imgtec/Kconfig"
++source "drivers/clk/ingenic/Kconfig"
+ source "drivers/clk/keystone/Kconfig"
+ source "drivers/clk/mediatek/Kconfig"
+ source "drivers/clk/meson/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 0bb25dd009d1..3b3da7d84496 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -71,7 +71,7 @@ obj-$(CONFIG_H8300)			+= h8300/
+ obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
+ obj-y					+= imgtec/
+ obj-$(CONFIG_ARCH_MXC)			+= imx/
+-obj-$(CONFIG_MACH_INGENIC)		+= ingenic/
++obj-y					+= ingenic/
+ obj-$(CONFIG_ARCH_KEYSTONE)		+= keystone/
+ obj-$(CONFIG_MACH_LOONGSON32)		+= loongson1/
+ obj-y					+= mediatek/
+diff --git a/drivers/clk/ingenic/Kconfig b/drivers/clk/ingenic/Kconfig
+new file mode 100644
+index 000000000000..851a5662f119
+--- /dev/null
++++ b/drivers/clk/ingenic/Kconfig
+@@ -0,0 +1,37 @@
++menu "Ingenic JZ47xx CGU drivers"
++	depends on MIPS || COMPILE_TEST
 +
-+	if (fc->no_copy_file_range)
-+		return -EOPNOTSUPP;
++config INGENIC_CGU_COMMON
++	bool
 +
-+	inode_lock(inode_out);
++config INGENIC_CGU_JZ4740
++	bool "Ingenic JZ4740 CGU driver"
++	default MACH_JZ4740
++	select INGENIC_CGU_COMMON
++	help
++	  Support the clocks provided by the CGU hardware on Ingenic JZ4740
++	  and compatible SoCs.
 +
-+	if (fc->writeback_cache) {
-+		err = filemap_write_and_wait_range(inode_out->i_mapping,
-+						   pos_out, pos_out + len);
-+		if (err)
-+			goto out;
++	  If building for a JZ4740 SoC, you want to say Y here.
 +
-+		fuse_sync_writes(inode_out);
-+	}
++config INGENIC_CGU_JZ4770
++	bool "Ingenic JZ4770 CGU driver"
++	default MACH_JZ4770
++	select INGENIC_CGU_COMMON
++	help
++	  Support the clocks provided by the CGU hardware on Ingenic JZ4770
++	  and compatible SoCs.
 +
-+	if (is_unstable)
-+		set_bit(FUSE_I_SIZE_UNSTABLE, &fi_out->state);
++	  If building for a JZ4770 SoC, you want to say Y here.
 +
-+	args.in.h.opcode = FUSE_COPY_FILE_RANGE;
-+	args.in.h.nodeid = ff_in->nodeid;
-+	args.in.numargs = 1;
-+	args.in.args[0].size = sizeof(inarg);
-+	args.in.args[0].value = &inarg;
-+	args.out.numargs = 1;
-+	args.out.args[0].size = sizeof(outarg);
-+	args.out.args[0].value = &outarg;
-+	err = fuse_simple_request(fc, &args);
-+	if (err == -ENOSYS) {
-+		fc->no_copy_file_range = 1;
-+		err = -EOPNOTSUPP;
-+	}
-+	if (err)
-+		goto out;
++config INGENIC_CGU_JZ4780
++	bool "Ingenic JZ4780 CGU driver"
++	default MACH_JZ4780
++	select INGENIC_CGU_COMMON
++	help
++	  Support the clocks provided by the CGU hardware on Ingenic JZ4780
++	  and compatible SoCs.
 +
-+	if (fc->writeback_cache) {
-+		bool changed = fuse_write_update_size(inode_out,
-+						      pos_out + outarg.size);
++	  If building for a JZ4780 SoC, you want to say Y here.
 +
-+		if (changed)
-+			file_update_time(file_out);
-+	}
-+
-+	fuse_invalidate_attr(inode_out);
-+
-+	err = outarg.size;
-+out:
-+	if (is_unstable)
-+		clear_bit(FUSE_I_SIZE_UNSTABLE, &fi_out->state);
-+
-+	inode_unlock(inode_out);
-+
-+	return err;
-+}
-+
- static const struct file_operations fuse_file_operations = {
- 	.llseek		= fuse_file_llseek,
- 	.read_iter	= fuse_file_read_iter,
-@@ -3025,6 +3104,7 @@ static const struct file_operations fuse_file_operations = {
- 	.compat_ioctl	= fuse_file_compat_ioctl,
- 	.poll		= fuse_file_poll,
- 	.fallocate	= fuse_file_fallocate,
-+	.copy_file_range = fuse_copy_file_range,
- };
- 
- static const struct file_operations fuse_direct_io_file_operations = {
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 5256ad333b05..ea848bb7d9e2 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -637,6 +637,9 @@ struct fuse_conn {
- 	/** Allow other than the mounter user to access the filesystem ? */
- 	unsigned allow_other:1;
- 
-+	/** Does the filesystem support copy_file_range? */
-+	unsigned no_copy_file_range:1;
-+
- 	/** The number of requests waiting for completion */
- 	atomic_t num_waiting;
- 
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 92fa24c24c92..c806a17beaef 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -116,6 +116,9 @@
-  *
-  *  7.27
-  *  - add FUSE_ABORT_ERROR
-+ *
-+ *  7.28
-+ *  - add FUSE_COPY_FILE_RANGE
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -337,53 +340,54 @@ struct fuse_file_lock {
- #define FUSE_POLL_SCHEDULE_NOTIFY (1 << 0)
- 
- enum fuse_opcode {
--	FUSE_LOOKUP	   = 1,
--	FUSE_FORGET	   = 2,  /* no reply */
--	FUSE_GETATTR	   = 3,
--	FUSE_SETATTR	   = 4,
--	FUSE_READLINK	   = 5,
--	FUSE_SYMLINK	   = 6,
--	FUSE_MKNOD	   = 8,
--	FUSE_MKDIR	   = 9,
--	FUSE_UNLINK	   = 10,
--	FUSE_RMDIR	   = 11,
--	FUSE_RENAME	   = 12,
--	FUSE_LINK	   = 13,
--	FUSE_OPEN	   = 14,
--	FUSE_READ	   = 15,
--	FUSE_WRITE	   = 16,
--	FUSE_STATFS	   = 17,
--	FUSE_RELEASE       = 18,
--	FUSE_FSYNC         = 20,
--	FUSE_SETXATTR      = 21,
--	FUSE_GETXATTR      = 22,
--	FUSE_LISTXATTR     = 23,
--	FUSE_REMOVEXATTR   = 24,
--	FUSE_FLUSH         = 25,
--	FUSE_INIT          = 26,
--	FUSE_OPENDIR       = 27,
--	FUSE_READDIR       = 28,
--	FUSE_RELEASEDIR    = 29,
--	FUSE_FSYNCDIR      = 30,
--	FUSE_GETLK         = 31,
--	FUSE_SETLK         = 32,
--	FUSE_SETLKW        = 33,
--	FUSE_ACCESS        = 34,
--	FUSE_CREATE        = 35,
--	FUSE_INTERRUPT     = 36,
--	FUSE_BMAP          = 37,
--	FUSE_DESTROY       = 38,
--	FUSE_IOCTL         = 39,
--	FUSE_POLL          = 40,
--	FUSE_NOTIFY_REPLY  = 41,
--	FUSE_BATCH_FORGET  = 42,
--	FUSE_FALLOCATE     = 43,
--	FUSE_READDIRPLUS   = 44,
--	FUSE_RENAME2       = 45,
--	FUSE_LSEEK         = 46,
-+	FUSE_LOOKUP		= 1,
-+	FUSE_FORGET		= 2,  /* no reply */
-+	FUSE_GETATTR		= 3,
-+	FUSE_SETATTR		= 4,
-+	FUSE_READLINK		= 5,
-+	FUSE_SYMLINK		= 6,
-+	FUSE_MKNOD		= 8,
-+	FUSE_MKDIR		= 9,
-+	FUSE_UNLINK		= 10,
-+	FUSE_RMDIR		= 11,
-+	FUSE_RENAME		= 12,
-+	FUSE_LINK		= 13,
-+	FUSE_OPEN		= 14,
-+	FUSE_READ		= 15,
-+	FUSE_WRITE		= 16,
-+	FUSE_STATFS		= 17,
-+	FUSE_RELEASE		= 18,
-+	FUSE_FSYNC		= 20,
-+	FUSE_SETXATTR		= 21,
-+	FUSE_GETXATTR		= 22,
-+	FUSE_LISTXATTR		= 23,
-+	FUSE_REMOVEXATTR	= 24,
-+	FUSE_FLUSH		= 25,
-+	FUSE_INIT		= 26,
-+	FUSE_OPENDIR		= 27,
-+	FUSE_READDIR		= 28,
-+	FUSE_RELEASEDIR		= 29,
-+	FUSE_FSYNCDIR		= 30,
-+	FUSE_GETLK		= 31,
-+	FUSE_SETLK		= 32,
-+	FUSE_SETLKW		= 33,
-+	FUSE_ACCESS		= 34,
-+	FUSE_CREATE		= 35,
-+	FUSE_INTERRUPT		= 36,
-+	FUSE_BMAP		= 37,
-+	FUSE_DESTROY		= 38,
-+	FUSE_IOCTL		= 39,
-+	FUSE_POLL		= 40,
-+	FUSE_NOTIFY_REPLY	= 41,
-+	FUSE_BATCH_FORGET	= 42,
-+	FUSE_FALLOCATE		= 43,
-+	FUSE_READDIRPLUS	= 44,
-+	FUSE_RENAME2		= 45,
-+	FUSE_LSEEK		= 46,
-+	FUSE_COPY_FILE_RANGE	= 47,
- 
- 	/* CUSE specific operations */
--	CUSE_INIT          = 4096,
-+	CUSE_INIT		= 4096,
- };
- 
- enum fuse_notify_code {
-@@ -792,4 +796,14 @@ struct fuse_lseek_out {
- 	uint64_t	offset;
- };
- 
-+struct fuse_copy_file_range_in {
-+	uint64_t	fh_in;
-+	uint64_t	off_in;
-+	uint64_t	nodeid_out;
-+	uint64_t	fh_out;
-+	uint64_t	off_out;
-+	uint64_t	len;
-+	uint64_t	flags;
-+};
-+
- #endif /* _LINUX_FUSE_H */
++endmenu
+diff --git a/drivers/clk/ingenic/Makefile b/drivers/clk/ingenic/Makefile
+index 1456e4cdb562..8b8dc79c7ce6 100644
+--- a/drivers/clk/ingenic/Makefile
++++ b/drivers/clk/ingenic/Makefile
+@@ -1,4 +1,4 @@
+-obj-y				+= cgu.o
+-obj-$(CONFIG_MACH_JZ4740)	+= jz4740-cgu.o
+-obj-$(CONFIG_MACH_JZ4770)	+= jz4770-cgu.o
+-obj-$(CONFIG_MACH_JZ4780)	+= jz4780-cgu.o
++obj-$(CONFIG_INGENIC_CGU_COMMON)	+= cgu.o
++obj-$(CONFIG_INGENIC_CGU_JZ4740)	+= jz4740-cgu.o
++obj-$(CONFIG_INGENIC_CGU_JZ4770)	+= jz4770-cgu.o
++obj-$(CONFIG_INGENIC_CGU_JZ4780)	+= jz4780-cgu.o
 -- 
-2.17.1
+2.18.0
 
