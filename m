@@ -2,115 +2,82 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B2F9C04E83
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6983C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF8F821854
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:55:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rdamasAC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF8F821854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6654A21854
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:59:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6654A21854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbeHUXRJ (ORCPT
+        id S1727540AbeHUXUi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 19:17:09 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41685 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbeHUXRI (ORCPT
+        Tue, 21 Aug 2018 19:20:38 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:34118 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726628AbeHUXUh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 19:17:08 -0400
-Received: by mail-lj1-f193.google.com with SMTP id y17-v6so15256192ljy.8;
-        Tue, 21 Aug 2018 12:55:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=F2Zsdo1XhZLTDDIIKfjmSMVlN8EgCFbdSj37gG9c69o=;
-        b=rdamasACz0U1QlG2x9NFrkLy7AdGkW/CAfdPuVlpGitPcChmXYuSzAv4e/47GtdnVl
-         0McL5A6/u/F8O71Re9cvG9sBWTHjja675S4Rl9r5/+uTeWOKKUcswDH0c2BRwdmhGwOo
-         3FrAxPvofu3qb1L1cAVlKIZLbTMHSoV5rWDcH5E44LfgGNlBCtzVvcMBFZz1xHj6eBhK
-         rgHsttCXOViDvcKiVC3m/ZThu1sIVewffp7mYGXu9KeLAThye1+QBU8OTZmDwf4YxUkg
-         YagbBVdWxW9+UOmNIs9x5F5hs8uIL8hQRfC9y3G+TclkUQCLsE80v1KyczexI1Bd2tOp
-         Wm8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=F2Zsdo1XhZLTDDIIKfjmSMVlN8EgCFbdSj37gG9c69o=;
-        b=UQOiFZq8PUWysl8fl5hsYNTu0GXSxv5qMPcjg9VICWehnNb8UUWRbXUd5aHEiFSAaO
-         uB/YZcbU8emzsf9bIbbk8X5Dg15ObWs+8MiBN44jXpYF0SG2+RI2m4xH+E9nYDpeo1TY
-         irf8xyzEmHAJ2Ea2zcuKZYn8z5tor6eg0jC4UDiD+A4BJXsIb3ByU7dTiBNTdisjg0tt
-         NgrsAL6dE3TRc/pBIPGgw05YkzvLJNFI1/h7TW1FPwHGOLoo0Yieb2Wp2Z5nM7qHsGkZ
-         ZB+IGE2fROMnLuPA4Cznh56MzoQad6odL2zJrWCAMef2fVeP7ctQyqcMx8TVbSbizfmQ
-         qGdw==
-X-Gm-Message-State: AOUpUlG4I5obr124AaCy6zVOvSskL/tEiEC4JWY9qPsrlnEjzaVxZGFy
-        6HYz+aj6k7kjavupdDX4L1Q=
-X-Google-Smtp-Source: AA+uWPyWe8s1oAHuzyn1W2Kn5P1Yy52Mt1Xp0dIuMmhm7x8a84dGw7kYf0JF3kpY8IMnmsnRROEFHQ==
-X-Received: by 2002:a2e:97c8:: with SMTP id m8-v6mr37476355ljj.52.1534881334030;
-        Tue, 21 Aug 2018 12:55:34 -0700 (PDT)
-Received: from localhost.localdomain (c-2ec26f18-74736162.cust.telenor.se. [46.194.111.24])
-        by smtp.gmail.com with ESMTPSA id l141-v6sm2449374lfg.55.2018.08.21.12.55.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 Aug 2018 12:55:32 -0700 (PDT)
-From:   Marcus Folkesson <marcus.folkesson@gmail.com>
-To:     Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        Tue, 21 Aug 2018 19:20:37 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 626A4C11B5;
+        Tue, 21 Aug 2018 19:50:05 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo01-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id HJXMPTzU19Nq; Tue, 21 Aug 2018 19:50:05 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id DDDD0C062B;
+        Tue, 21 Aug 2018 19:49:49 +0000 (UTC)
+Subject: Re: [PATCH 4.14 00/29] 4.14.66-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] MAINTAINERS: add entry for ltc1660 DAC driver
-Date:   Tue, 21 Aug 2018 21:31:26 +0200
-Message-Id: <20180821193126.15733-3-marcus.folkesson@gmail.com>
-X-Mailer: git-send-email 2.11.0.rc2
-In-Reply-To: <20180821193126.15733-1-marcus.folkesson@gmail.com>
-References: <20180821193126.15733-1-marcus.folkesson@gmail.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+References: <20180821055108.333930282@linuxfoundation.org>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <67b10291-3ec0-77c9-08c8-6730c13e317f@kernel.org>
+Date:   Tue, 21 Aug 2018 13:49:48 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180821055108.333930282@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add entry for ltc1660 DAC driver and add myself as
-maintainer of this driver.
+On 08/21/2018 12:20 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.66 release.
+> There are 29 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Aug 23 05:50:58 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.66-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
----
+Compiled and booted on my test system. No dmesg regressions.
 
-Notes:
-    v2:
-    	- rename enumerated files, ltc166x* -> ltc1660*
-
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9276da915d9d..3db1edaf68bd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8363,6 +8363,13 @@ L:	linux-scsi@vger.kernel.org
- S:	Maintained
- F:	drivers/scsi/sym53c8xx_2/
- 
-+LTC1660 DAC DRIVER
-+M:	Marcus Folkesson <marcus.folkesson@gmail.com>
-+L:	linux-iio@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/iio/dac/ltc1660.txt
-+F:	drivers/iio/dac/ltc1660.c
-+
- LTC4261 HARDWARE MONITOR DRIVER
- M:	Guenter Roeck <linux@roeck-us.net>
- L:	linux-hwmon@vger.kernel.org
--- 
-2.11.0.rc2
+thanks,
+-- Shuah
 
