@@ -2,129 +2,176 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D06C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 07:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F22FEC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 07:19:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7524921581
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 07:17:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8BC22152D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 07:19:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="j8WXgwZI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7524921581
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="A+hmr9l9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8BC22152D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbeHUKgy (ORCPT
+        id S1726813AbeHUKiU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 06:36:54 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:47560 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726253AbeHUKgx (ORCPT
+        Tue, 21 Aug 2018 06:38:20 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:26401 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726253AbeHUKiU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 06:36:53 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7L7EI3x060279;
-        Tue, 21 Aug 2018 07:17:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=t/TthygHuB5vcQaBCdvDGh7YmGWB1WHjRAhPrMG/A/s=;
- b=j8WXgwZIqgv5Le5FaNNTHl77QCyfeY4hEHlSg89lWYec72vjAd7M912xHvQqlYkv2FSO
- CU3JkI5xmdI0Ec/vrrLV1a5QrXXEDBqxtwIqIdOgjpKtRnctJ4FRZeN1lFrZiQhkG99U
- Msps73FEmoGYO6e/UGxTeUIE4DzoeO2Ctxl3ELLJr8qciq/8rnziIM2hkYtv11PnGsvt
- d59TNSOb19NlYbhYIGYNeBDj1DP7JMwIDw0wz9VAeKuv9kcIHDatKhaboPixlnZygjyI
- cupxov8pZw8QlVvMfPwdKYuJkKWZQVXOhxhp6ejumQyY5RhiUqL+G2qLN2tA5OjzcYYc hA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2kxc3qjgbt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 Aug 2018 07:17:52 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7L7HpnD006634
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 Aug 2018 07:17:52 GMT
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7L7Hpf9023881;
-        Tue, 21 Aug 2018 07:17:51 GMT
-Received: from [10.182.69.179] (/10.182.69.179)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 21 Aug 2018 00:17:51 -0700
-Subject: Re: [PATCH V3 1/2] blk-mq: init hctx sched after update ctx and hctx
- mapping
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     tom.leiming@gmail.com, bart.vanassche@wdc.com,
-        keith.busch@linux.intel.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1534749606-7311-1-git-send-email-jianchao.w.wang@oracle.com>
- <1534749606-7311-2-git-send-email-jianchao.w.wang@oracle.com>
- <048cdf08-6c9e-f54a-1e5c-f1d40fb2ecdb@kernel.dk>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <a9379a69-cfaf-56b5-9c2b-b4c4e35f6a67@oracle.com>
-Date:   Tue, 21 Aug 2018 15:18:24 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 21 Aug 2018 06:38:20 -0400
+Received: from mail-vk0-f44.google.com (mail-vk0-f44.google.com [209.85.213.44]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id w7L7JF00015219;
+        Tue, 21 Aug 2018 16:19:15 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w7L7JF00015219
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1534835956;
+        bh=piJ4YOaLew6AimOarTAtHPOhz4LT6LYRd/szMnWMqDM=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=A+hmr9l95rH/GP1fIgpwfjh40Xa3eiqhUOoTbuWxL5qllG+7Ibnod3dWJtsdkH76p
+         cOUYp00zqY12lpq5Wm4KUs4rfBa+WftST4pYmpmHEB0R5u4/0fRTZV9K3CkJ58Wp8a
+         rNiaOQzbjp0dVGrZIXbZCwzDRi3x0ofHOdE2D8r9AmYrlgWBe/r6U2CAG3G9ETp3qo
+         p77hlsBxUx8YCMdXt1oeC+vZJFA24b8vbjA7C8JYm3uzC27nOrz9+r3Z7zlZzNebVs
+         90f5htuSndTCuMizv//MWWvlKSQ/TlZdnKGnElYjpXmWG0u8WiYoeqF125y5qlSk+G
+         jfDSQ4RChoVEQ==
+X-Nifty-SrcIP: [209.85.213.44]
+Received: by mail-vk0-f44.google.com with SMTP id l143-v6so7750201vke.1;
+        Tue, 21 Aug 2018 00:19:15 -0700 (PDT)
+X-Gm-Message-State: APzg51DshCBOl4BM9pvq6Kn5FF0P+vhHihbwCpGtV7B6nAIa9TiDuPDM
+        OVc/gLmss5nfVK3UsyarB+z7nqQzWXCsG6Sh1w0=
+X-Google-Smtp-Source: ANB0VdYfSJwl3/LGlDWz2CLuw/ece++R9ijZqsxi2V6ZxFN8x4LzebmI2Ksl1THn1WbiBJ0rJGxY/zUBpW6Q3/ApMv0=
+X-Received: by 2002:a1f:f8c2:: with SMTP id w185-v6mr1557278vkh.135.1534835954647;
+ Tue, 21 Aug 2018 00:19:14 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <048cdf08-6c9e-f54a-1e5c-f1d40fb2ecdb@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8991 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808210077
+Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Tue, 21 Aug 2018 00:18:34
+ -0700 (PDT)
+In-Reply-To: <78d8984c-211a-65c3-ab43-b3c02373ef0a@gmail.com>
+References: <1530669563-32637-1-git-send-email-yamada.masahiro@socionext.com>
+ <cfb66b67-f423-0c26-0b22-0d57a581b44a@gmail.com> <CAL_Jsq+iAxmKvZ+RAD-VSOWirYOxc52mJHU5f5gybhWwQn2w_g@mail.gmail.com>
+ <7fba348e-9fd3-9661-248d-82917f8f6676@gmail.com> <CAK7LNATFbykSHcDZqovTZ0aN9kHvZw3Q4Mamb1gwMwRhg7_s-A@mail.gmail.com>
+ <78d8984c-211a-65c3-ab43-b3c02373ef0a@gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 21 Aug 2018 16:18:34 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR5aHQ9Vo=-KTg8fzmk-1Nxu8WaXUT9wHM2n9Wr4wHFYw@mail.gmail.com>
+Message-ID: <CAK7LNAR5aHQ9Vo=-KTg8fzmk-1Nxu8WaXUT9wHM2n9Wr4wHFYw@mail.gmail.com>
+Subject: Re: [PATCH] scripts/dtc: consolidate include path options in Makefile
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jens
+Hi Frank,
 
-On 08/20/2018 10:45 PM, Jens Axboe wrote:
-> On 8/20/18 1:20 AM, Jianchao Wang wrote:
->> @@ -2913,6 +2906,29 @@ static void __blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set,
->>  	list_for_each_entry(q, &set->tag_list, tag_set_list)
->>  		blk_mq_freeze_queue(q);
->>  
->> +	/*
->> +	 * switch io scheduler to NULL to clean up the data in it.
->> +	 * will get it back after update mapping between cpu and hw queues.
->> +	 */
-> 
-> "Switch IO scheduler to 'none', cleaning up the data associated with
-> the previous scheduler. We'll switch back once we're done updating
-> the new sw to hw queue mappings.
-> 
->> +	list_for_each_entry(q, &set->tag_list, tag_set_list) {
->> +		if (!q->elevator) {
->> +			q->elv_type = NULL;
->> +			continue;
->> +		}
->> +		q->elv_type = q->elevator->type;
->> +		mutex_lock(&q->sysfs_lock);
->> +		/*
->> +		 * After elevator_switch_mq, the previous elevator_queue will be
->> +		 * released by elevator_release. The reference of the io scheduler
->> +		 * module get by elevator_get will also be put. So we need to get
->> +		 * a reference of the io scheduler module here to prevent it to be
->> +		 * removed.
->> +		 */
->> +		__module_get(q->elv_type->elevator_owner);
->> +		elevator_switch_mq(q, NULL);
->> +		mutex_unlock(&q->sysfs_lock);
->> +	}
-> 
-> I don't hate this, but I also find it pretty annoying to put local state
-> into the queue itself. It would be much nicer _not_ to have ->elv_type
-> in the queue itself. That would need an allocation, however...
-> 
-> Apart from those two things, looks fine to me.
-> 
 
-Thanks very much for your comment.
-I have reworked this patch based on your kindly suggestion and posted the V4.
+2018-08-21 14:37 GMT+09:00 Frank Rowand <frowand.list@gmail.com>:
+> On 08/20/18 19:08, Masahiro Yamada wrote:
+>> Hi Frank,
+>>
+>> 2018-08-21 10:31 GMT+09:00 Frank Rowand <frowand.list@gmail.com>:
+>>> On 08/20/18 14:32, Rob Herring wrote:
+>>>> On Mon, Aug 20, 2018 at 1:55 PM Frank Rowand <frowand.list@gmail.com> wrote:
+>>>>>
+>>>>> On 07/03/18 18:59, Masahiro Yamada wrote:
+>>>>>> It is tedious to specify extra compiler options for every file.
+>>>>>> HOST_EXTRACFLAGS is useful to add options to all files in a
+>>>>>> directory.
+>>>>>>
+>>>>>> -I$(src)/libfdt is needed for all the files in this directory
+>>>>>> to include libfdt_env.h etc. from scripts/dtc/libfdt/.
+>>>>>>
+>>>>>> On the other hand, -I$(src) is used to include check-in headers
+>>>>>> from generated C files.  Thus, I added it only to dtc-lexer.lex.o
+>>>>>> and dtc-parser.tab.o .
+>>>>>>
+>>>>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>>>>> ---
+>>>>>>
+>>>>>>  scripts/dtc/Makefile | 18 ++++--------------
+>>>>>>  1 file changed, 4 insertions(+), 14 deletions(-)
+>>>>>>
+>>>>>> diff --git a/scripts/dtc/Makefile b/scripts/dtc/Makefile
+>>>>>> index 9cac65b..1c943e0 100644
+>>>>>> --- a/scripts/dtc/Makefile
+>>>>>> +++ b/scripts/dtc/Makefile
+>>>>>> @@ -9,21 +9,11 @@ dtc-objs    := dtc.o flattree.o fstree.o data.o livetree.o treesource.o \
+>>>>>>  dtc-objs     += dtc-lexer.lex.o dtc-parser.tab.o
+>>>>>>
+>>>>>>  # Source files need to get at the userspace version of libfdt_env.h to compile
+>>>>>> +HOST_EXTRACFLAGS := -I$(src)/libfdt
+>>>>>
+>>>>> Shouldn't that be += instead of :=?
+>>>>
+>>>> I don't think so. The definition is local to the file (and reset
+>>>> before each makefile is included).
+>>>>
+>>>> Rob
+>>>>
+>>>
+>>> Every other place where HOST_EXTRACFLAGS is assigned a value, += is used
+>>> instead of :=, including the example in Documentation/kbuild/makefiles.txt
+>>>
+>>> What makes scripts/dtc/Makefile different than the other makefiles?
+>>>
+>>> -Frank
+>>>
+>>
+>>
+>> := and += work in the same way in here.
+>
+> Unless I do: HOST_EXTRACFLAGS=xxx make
+> where "xxx" is some random flag I feel like adding in a particular build.
 
-Thanks
-Jianchao
+
+
+This is not the intended usage of HOST_EXTRACFLAGS.
+
+HOST_EXTRACFLAGS is supposed to be set by Makefile in the kernel tree.
+
+
+Documentation/kbuild/makefiles.txt explains this:
+
+       To set flags that will take effect for all host programs created
+       in that Makefile, use the variable HOST_EXTRACFLAGS.
+
+
+
+If you want to pass additional host compiler flags,
+please use HOSTCFLAGS instead.
+
+
+Documentation/kbuild/kbuild.txt lists officially supported
+environment variables / command line variables.
+
+    HOSTCFLAGS
+    --------------------------------------------------
+    Additional flags to be passed to $(HOSTCC) when building host programs.
+
+
+
+
+Maybe I should add
+
+HOST_EXTRACFLAGS   :=
+HOST_EXTRACXXFLAGS :=
+
+to the top of scripts/Makefile.build
+to reset the variables explicitly
+in case people try to abuse them.
+
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
