@@ -2,246 +2,170 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E732C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 674F1C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:15:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C91562177A
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:14:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C91562177A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
+	by mail.kernel.org (Postfix) with ESMTP id 02F80217BE
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:15:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="CinW7ykV";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="h1hWlbQk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02F80217BE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727701AbeHVBgr (ORCPT
+        id S1727765AbeHVBhu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 21:36:47 -0400
-Received: from g2t1383g.austin.hpe.com ([15.233.16.89]:49352 "EHLO
-        g2t1383g.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726788AbeHVBgr (ORCPT
+        Tue, 21 Aug 2018 21:37:50 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:36456 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726788AbeHVBhu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 21:36:47 -0400
-Received: from g2t2352.austin.hpe.com (g2t2352.austin.hpe.com [15.233.44.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by g2t1383g.austin.hpe.com (Postfix) with ESMTPS id 07646D3D
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 22:14:47 +0000 (UTC)
-Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
-        by g2t2352.austin.hpe.com (Postfix) with ESMTP id 573E5B1;
-        Tue, 21 Aug 2018 22:14:46 +0000 (UTC)
-Received: from linux-tqvx.americas.hpqcorp.net (linux-tqvx.americas.hpqcorp.net [10.34.51.15])
-        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id C591637;
-        Tue, 21 Aug 2018 22:14:45 +0000 (UTC)
-Date:   Tue, 21 Aug 2018 17:14:43 -0500
-From:   Andrew Banman <abanman@hpe.com>
-To:     Corey Minyard <minyard@acm.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     abanman@hpe.com, justin.ernst@hpe.com, rja@hpe.com,
-        frank.ramsay@hpe.com, openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: [RFC] IPMI state machine regression
-Message-ID: <20180821221443.hhgcnzw6xttaih3i@linux-tqvx.americas.hpqcorp.net>
+        Tue, 21 Aug 2018 21:37:50 -0400
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w7LMDGCY023627;
+        Tue, 21 Aug 2018 15:15:41 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=facebook; bh=xCVy/Bi2kWPm7FmW69Y6qBUIatTV6vtx3Y23Wd63/lE=;
+ b=CinW7ykVrqTWUKemCpuRdNLBOlbdsj7xYteIniZsRvGx8KFIeYtDO8bBwdluXKLAmrZS
+ IsYQZfV+xHQFGq/ybSJfsP0v0bZa7gg+LLce9QnZ67ODQdEPHe9MHMG9qE4B57g43bbg
+ dajsZ6LNgL6xT/edrWyaYIFR5ItxxDQdpxE= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by m0001303.ppops.net with ESMTP id 2m0gj7hy8a-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 21 Aug 2018 15:15:41 -0700
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.26) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Tue, 21 Aug 2018 18:15:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xCVy/Bi2kWPm7FmW69Y6qBUIatTV6vtx3Y23Wd63/lE=;
+ b=h1hWlbQkA+K8xJKp6Y9CH0HkfG4FFqvUEEi7meiTm4A9IQYMkOewFo4hNKWLeZrD4RnPTmeWM71j0QuGglgy3jfGopTXsINmgmKnxnBZS6L6zmcD+jVjJrrHUkwQUKViY814wAAoGxmRury2a3am7iXBvauvEzQBYLalmspD/dY=
+Received: from tower.DHCP.thefacebook.com (2620:10d:c090:200::7:b0bf) by
+ CY1PR15MB0170.namprd15.prod.outlook.com (2a01:111:e400:58bb::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1059.20; Tue, 21 Aug
+ 2018 22:15:37 +0000
+Date:   Tue, 21 Aug 2018 15:15:32 -0700
+From:   Roman Gushchin <guro@fb.com>
+To:     Shakeel Butt <shakeelb@google.com>
+CC:     Linux MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        <kernel-team@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>, <luto@kernel.org>,
+        Konstantin Khlebnikov <koct9i@gmail.com>,
+        Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2 1/3] mm: rework memcg kernel stack accounting
+Message-ID: <20180821221529.GA18627@tower.DHCP.thefacebook.com>
+References: <20180821213559.14694-1-guro@fb.com>
+ <CALvZod4HAf+iPXQx1v+dwJkTph3ySAiYo4kn4d2jRFNQS59Tgg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <CALvZod4HAf+iPXQx1v+dwJkTph3ySAiYo4kn4d2jRFNQS59Tgg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [2620:10d:c090:200::7:b0bf]
+X-ClientProxiedBy: MWHPR2201CA0008.namprd22.prod.outlook.com
+ (2603:10b6:301:28::21) To CY1PR15MB0170.namprd15.prod.outlook.com
+ (2a01:111:e400:58bb::16)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d83c17d3-e631-4a47-b900-08d607b39f7f
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CY1PR15MB0170;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR15MB0170;3:oIGqyoAbczAgFT/lvnuHUhPUyFtNoVfgljOvkBhP7TnvjwLgeGcFI4YYf7TXPxi7AzmVmUNzEyENKFdMIRhNDuaUgmK7e+MyUbzsaGc+jq7nFsmFvvjthreqim/Mh694BC2Yv7xkVIiRKqylqQgzXSyCwUItYUmVWMQuS+o0+VWQ1NY/amC75A49F9iA5iYdZhi5tGk4FOX8f0bXtqq7ZNaBq9vpgzgG1c/wiAYlcpiZL4+8OtMtOUEDR2LzfSp7;25:k0h+OFEHs7HaMYcL8v/FcG7WIH4so3VCue/2LMpiyrS9M/TZdw41OU1eO/1NgmdmGknBcklo+eL+k5dX3YBEhSeJu5RNteq+Jv/3NAkc/SgveDEq4b1PW71KLT9gh2esilSPNdjk8uFlQDNql0aBVPzhc9rQrUs38uCNelN+hPkv6mCKVOTbfxaW9ewkxIQYz6vZYIP0hqiDlpDbDACXqOK5eVn63s3GUmnhklWO70Nk2ZgXv4EEERQxUjT4HheoL69yty9aPQ7bbgSRzKzc6yPQNsE5maaswT156EcxyAEo7OLkwio6sARdddQE+dfvAtKgCeXxNFVxlVdO98RcJXwlkO+r3PO53RSrEWl2j/c=;31:+t7n0qQ7V1NetbAWx+qlLQUD0LkZjjzby5qfVxBKZ3k9nkW53xWml0OsNeU1GTRrhyTotpIB99Zxg4Jcjv2+xIsd/YnaU2qiC/Ll2+jYG6bVkXpn2vYUfUl3PmHeqAGnAfGkNRvubhFJb1ggliMfJeyMVJMPAiy70WuS7DQ2k0H1mFiZYZ9ostgYjcjGxG4rexllfjeVeSl5BVPqLZBKM8okq17NKDexgwPdLlfT9l0=
+X-MS-TrafficTypeDiagnostic: CY1PR15MB0170:
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR15MB0170;20:ESIM9qNrmrfkZoJNeB2g0y5Env9/3/ELZnsNoX6TGDLHtIGq603Y5eXePD+ClErAk1CfPxZTPgYOWtodp2VSokG01vXbSyA5lRy3onZiCq6LOYWWxvXp12p4RcWwLDVag6ofA/7rIKuvXxvs83tfAfNJJfmc0Ge4xw+t0H5wu9Z/+6yZi0vBEBVYAX3Xz/7JQ689tlNPHBvAVvEf4bflYg9j7FwCiBtOwIzf6snCbsDlc0+BENNwUQZL0dgMSZ/FpjdLNs2xH45W7QMfKHJfn+t4LkqGZD3wKT5dz/mB3JqDhtPDiBlbBaBsdf34Sckzo7aoWSZ31g4MVYRJ2xln+GesU6qXckeMUlquSNowxUSlmJ8NCWXTr1pWFF6yc7xWhJ3lFSF7+PRHylW42+mkMWOBGkNQk3izqUjBT5rg+iaqLwOPXeZpHw3NwRzXkR9FulIxHRe+rlFuu2WRXY9qYAcjoONUwptJOAYIVuM8NGMWeB52DDnOpWVn42qj5ikw;4:JRD0tj0T0Q5ykJyR0ZxSKdihS8vNnLnRmgG8GQ4JkBYK8kSFhdxv50YNeLGmQs/5q7cLQC6SKFfR/cRCCqiApJ4yzFfZKugR24aEHt0ZLVvrax3TiNkaETpnCagz7Fiz9MhOzEG/4qW5tInpJ13a+qEOgZRoF3DdWGXC/T/CbDpvM3a4C9FnI9h0ubZcIsorFQWPyOGwG8wtPPsgTF/Wezy+DNabsvmyVmFag5dS78NqFcCfxtdNbQo/J4l8YlhzvmNq3lddVPCJBprbHEcQNutA4HveR88RmU4HJhBxX68MyiMxZT0AHM/wmRZh2j/41TRDVM/eQu6CNMTk+cea2c8Wsbah2T/nbXZxaUkuUKEC78O1/x9EIVJtXlbW517U
+X-Microsoft-Antispam-PRVS: <CY1PR15MB0170207F8398B3941C08B72CBE310@CY1PR15MB0170.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(67672495146484)(211936372134217)(153496737603132);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(3231311)(11241501184)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:CY1PR15MB0170;BCL:0;PCL:0;RULEID:;SRVR:CY1PR15MB0170;
+X-Forefront-PRVS: 0771670921
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(366004)(376002)(396003)(136003)(189003)(199004)(16586007)(11346002)(476003)(486006)(446003)(47776003)(54906003)(478600001)(46003)(76176011)(14444005)(52116002)(186003)(316002)(7696005)(86362001)(6116002)(53936002)(68736007)(9686003)(16526019)(52396003)(15650500001)(58126008)(81156014)(386003)(5660300001)(53546011)(229853002)(6506007)(81166006)(6916009)(97736004)(25786009)(1076002)(305945005)(23726003)(6666003)(50466002)(2906002)(105586002)(4326008)(7736002)(33656002)(8936002)(55016002)(106356001)(8676002)(6246003)(39060400002)(18370500001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY1PR15MB0170;H:tower.DHCP.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR15MB0170;23:WL0I1ZF3g6lwayKU3wOL/CXzJK6T6GHaAxkamOPG+?=
+ =?us-ascii?Q?oQ1eMJLmJ82/Ii2Rn7yTAPA+e8RfPOJ3uAms0rRFeLk5ZRfXTREonRiqDdhp?=
+ =?us-ascii?Q?X3WY4OhZFYPC/D9uUwZwPf4r5KZ7LtrEmpNKvsQut0E7Xi7/Ez9zJhSLko2K?=
+ =?us-ascii?Q?xgol1/aZ4B+rSOIVYuR5Dkvj+2YgyNjhetD9/NJJiR/XqgPJt6wsJVvzSnAi?=
+ =?us-ascii?Q?w/OQrDawz4T9nDN8aG96gned8Rs+vohKcSEvJ9PYNElx29M/gLiwB/sXsW3L?=
+ =?us-ascii?Q?j+ql26Ey5QzfVbODhHY5erzfyyifGkhU0/tt0Bg7PKYCSThkrMjEuRTeSVyb?=
+ =?us-ascii?Q?FMGk94qcUhmqx3uMSa+NhnrKsdBlfxqTKVB/lRmxupFs0KBYniwybPlEEcSW?=
+ =?us-ascii?Q?yRx1jTvYgV+LA8t0kVZFcljS7RuUPxvzLxpRmibDSWb+xBA4KxBwEkQ6s2vr?=
+ =?us-ascii?Q?WN03YaLFHpOuYnXiVRL05OhnRdBzrG1+Re+95Mz2ZxtrEg5sJYQ1MK2Sfr3+?=
+ =?us-ascii?Q?VyylRdk1laB8xgP5AZ36R4fEquwsjTW4CXEW8OpeUzJuRZWQebh/hrFlA1vg?=
+ =?us-ascii?Q?DP+EK1GNz3ILwE22LznC39odH4YWYysxNEe7ArcKV+Roq0nYEGLaJuBdtNgi?=
+ =?us-ascii?Q?ku7NgehePVshlaqRemTfDiL4yCfOO/mp9xMmywSbrm2ZIo3BPK0BcbMEyziP?=
+ =?us-ascii?Q?gj5F1wQGB20YtLEUnEH+UOWXxQTda1RzV3JPxMdCSfzrBFRkRFk61dvLSLgd?=
+ =?us-ascii?Q?XAS2yihmE7/Zb1QvckcwHEENmnyy+7LSvBMxhXaD3E2+k0JvY3zVjK88ETtg?=
+ =?us-ascii?Q?c5mQAvvNQowOlvlXMSTCZ+Xx3RJ3dxlAIo7O6hR5Sa4Q3kME711aoNzWtPNT?=
+ =?us-ascii?Q?uUpdkg9QsYXdT3tu83aO//jBfesJoVeLcjTT7HACTdQZd0ouNnq7U3axEyQM?=
+ =?us-ascii?Q?drgBEH57Xu4gvs8QyaCQVcuGdGKssTsQHpwNOCtwIRsGxjLiNOCjyXW+dYiD?=
+ =?us-ascii?Q?fM+r+vgzBt4phq0V1ic/z02GPV3OwQFgM9PBNjKSTeXtMyYfbJnhpMHZuIKx?=
+ =?us-ascii?Q?XKryD1fMRocLad65kBlnccNAN6k5YMI4HbL/Hu21nZDHTB86oDwdsNb7Xb6P?=
+ =?us-ascii?Q?mvNp8HhXocWkMqDLiOUtPXoO6GBIWOH+tqg3x1OgB6bDpyw3m8AWhjmDIA0F?=
+ =?us-ascii?Q?lQHHEFBV1x/60SzqrP/MmeT6Tmmn87C0LM1OH3fPxrgmKXL8CAdUCHJOAm2S?=
+ =?us-ascii?Q?twYAcK6KnroSSL00CZ5Q081rK23NMRhPSSfjHutCQdx9F229L3F1bHCt10Aq?=
+ =?us-ascii?Q?5cHQSlt8jUAsM499IR47bCAMZ7ZRm4BJFlHE84WAtpI?=
+X-Microsoft-Antispam-Message-Info: pC2YFONvHwjt0tlCFwd0VOsd8+ItR0sjluiykkjd22Z4xm88y/ClUc4Ipqs9Vv6rQ/7/MUfS9zRQb9/yFKtIFOF1xOtKWQFxHebA2KPfSzn6MRt+8BJ5pTc0H4lkXIsnH5+joToPNkzgWzzzB09iUpKVqHDDKVj8qiCTz8949ax2wMTNfMdBVFNs9Vz2EdkQKmtF59TM6EqxqzjAIetSZHXYdlEeJCt/deND3ywjUN9Glwl1WFvtaqjHauRlVuI7p8tHhynu5Hw61gT+ZmOM55OVD2A2zPepJ/ThIGeFIhAGLbUvCpc9gAFQCBCXR1PCVtJZESa3kcvXY5/LCp9olJKdfofyquZREB/QXJcq6t8=
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR15MB0170;6:bR6ze2T71b7d8FCMT0gNVrJzQ1eogs1REO3RSoMQ859SP3yCyuqF52Efz9BHHvg5eezXnGJlribVDLR9XMSwUF1JgyBFsNCZ12gO8l9y9QdB2o63ajUpqKmAMjPWIOXxWHqxb5cvy7c2JaZaqwrgWLUdyJtOIrNHpGcAGrjl6tR58FdXf9alI14GhhLqSIhVduW7wyfgtmrJrgWjxWyyBAM1M9/NgboOTl1BLbA62jaDPrCGYTUsM+Hwfb24tWQf/MtswMQQFl2L6AprS7LViK0K0Zzf/r7NlkMYXwiqwgNZxcw5Y7FeMhHuhPh5uZ4wmkY44+vItmLnTfliWmxgL/izBbkDSMHzz589mG4euQAimd7nk4QzheYIu1urJ3jRiGQRdbVW/LZGAB6r9h/5snWBWNPCpHqzv/TCzsSy2q23d4d/aigfiyVtOHvitzkg2attRjrh2G545F2jaRtUdg==;5:ZjtsxgMXlTjqcjiIe+l1PRC6tyPJKBIL3kbdJwY+DeCRKmZFl1mitv5LToBngnP67CjfLxfvKCWMSf6i13kuu9uZrVHFb//R5f9NcLYmorkEJbleFxwUHxlwfqrwmUNRj4Hs7ZzVyi7kRffngKEh6+ZKQYyjO+3t+YalpDZ7W+M=;7:V5mjpnXBsHtiYZfVH7XPXIUfzzwn7/RNVgrEGStLhdOqkwWlSkAsSn05rbpvUsL9ZAwbt8wWI0stHYkiQb6M9XJpkhj+8Nda+5Mc7gfg//VSHNpe+obSOyAro/rVHUhSLpNK1AgrRfGhVKGF0HQexK80z30gvprLSiPDSGpcJMCxQN3UpFsb4oE5J1HtYCPwCGXwOFimlyuIhGkhSoITl+w9VQLv0l8yrgu4V9BTYD6e/VYKJitaubtqYQQ9v3VI
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR15MB0170;20:DG1DwIbM9tRyA2N4p/d8fYTWACId1P2OY2ztLKbrJNh6sHSzj0YKrtwgGA/sr6KQt4+EH6HJfl/4pHaaMmKZ8HjGVayQhBW7PjJa6/09uKjdXrqO4yCj7stuYFGzal6QD/okz38oKkF37NeAhJgWz5GX5vnkSIAu6aVHD4LZx9Y=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2018 22:15:37.0054 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d83c17d3-e631-4a47-b900-08d607b39f7f
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR15MB0170
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-21_11:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear IPMI supporters,
+On Tue, Aug 21, 2018 at 03:10:52PM -0700, Shakeel Butt wrote:
+> On Tue, Aug 21, 2018 at 2:36 PM Roman Gushchin <guro@fb.com> wrote:
+> >
+> > If CONFIG_VMAP_STACK is set, kernel stacks are allocated
+> > using __vmalloc_node_range() with __GFP_ACCOUNT. So kernel
+> > stack pages are charged against corresponding memory cgroups
+> > on allocation and uncharged on releasing them.
+> >
+> > The problem is that we do cache kernel stacks in small
+> > per-cpu caches and do reuse them for new tasks, which can
+> > belong to different memory cgroups.
+> >
+> > Each stack page still holds a reference to the original cgroup,
+> > so the cgroup can't be released until the vmap area is released.
+> >
+> > To make this happen we need more than two subsequent exits
+> > without forks in between on the current cpu, which makes it
+> > very unlikely to happen. As a result, I saw a significant number
+> > of dying cgroups (in theory, up to 2 * number_of_cpu +
+> > number_of_tasks), which can't be released even by significant
+> > memory pressure.
+> >
+> > As a cgroup structure can take a significant amount of memory
+> > (first of all, per-cpu data like memcg statistics), it leads
+> > to a noticeable waste of memory.
+> >
+> > Signed-off-by: Roman Gushchin <guro@fb.com>
+> 
+> Reviewed-by: Shakeel Butt <shakeelb@google.com>
 
-We observe a window in IPMI BT's opportunistic get capabilities request,
-wherein GET_DEVICE_GUID and GET_DEVICE_ID requests may start while the BT state
-machine is in WR_CONSUME. Following this, the 0xD5 error code is forced in
-bt_start_transaction, IPMI fails to initialize, and the interface is torn down.
-There is no mechanism to retry bringing up the interface in open() /dev/ipmi.
-This leaves IPMI hosed until you reload modules. Looks to happen after we call
-schedule().
+Thanks!
 
-The problem is intermittent, but we observe ~50% fail rate on 4.18
-kernels on our UV4 systems.
+> 
+> BTW this makes a very good use-case for optimizing kmem uncharging
+> similar to what you did for skmem uncharging.
 
-Here's the relevant snippet (the action starts at 120.367379):
-
-[  118.316764] IPMI System Interface driver.
-[  118.354246] ipmi_si dmi-ipmi-si.0: ipmi_platform: probing via SMBIOS
-[  118.354249] ipmi_si: SMBIOS: mem 0xce4 regsize 1 spacing 1 irq 6
-[  118.354251] ipmi_si: Adding SMBIOS-specified bt state machine
-[  118.354311] ipmi_si IPI0001:00: ipmi_platform: probing via ACPI
-[  118.381164] ipmi_si IPI0001:00: [io  0x0ce4-0x0ce6] regsize 1 spacing 1 irq 6
-[  118.381167] ipmi_si: Adding ACPI-specified bt state machine
-[  118.382811] ipmi_si: Trying SMBIOS-specified bt state machine at mem address 0xce4, slave address 0x20, irq 6
-[  118.382815] ipmi_si dmi-ipmi-si.0: Could not set up I/O space
-[  118.382816] ipmi_si: Trying ACPI-specified bt state machine at i/o address 0xce4, slave address 0x0, irq 6
-[  118.382911] IPMI BT: flag reset [ ]
-[  118.383008] BT: XACTION [ ] TO=5000000 - 0
-[  118.383059] BT: WR_BYTES [ ] TO=5000000 - 0
-[  118.383272] BT: WR_CONSUME [ H2B ] TO=5000000 - 0
-[  118.388034] BT: WR_CONSUME [ ] TO=5000000 - 4000
-[  118.388059] BT: RD_WAIT [ ] TO=4996000 - 0
-[  118.396017] BT: RD_WAIT [ ] TO=4996000 - 4000
-[  118.492015] BT: RD_WAIT [ ] TO=4992000 - 4000
-[  118.520073] BT: RD_WAIT [ ] TO=4988000 - 4000
-[  118.528079] BT: RD_WAIT [ ] TO=4984000 - 4000
-[  118.540049] BT: RD_WAIT [ ] TO=4980000 - 4000
-[  118.548011] BT: RD_WAIT [ ] TO=4976000 - 4000
-[  118.564033] BT: RD_WAIT [ ] TO=4972000 - 4000
-[  118.572109] BT: RD_WAIT [ ] TO=4968000 - 4000
-[  118.580013] BT: RD_WAIT [ ] TO=4964000 - 4000
-[  118.588017] BT: RD_WAIT [ ] TO=4960000 - 4000
-[  118.608014] BT: RD_WAIT [ ] TO=4956000 - 4000
-[  118.628058] BT: RD_WAIT [ ] TO=4952000 - 4000
-[  118.636053] BT: RD_WAIT [ ] TO=4948000 - 4000
-[  118.648016] BT: RD_WAIT [ ] TO=4944000 - 4000
-[  118.672028] BT: RD_WAIT [ ] TO=4940000 - 4000
-[  118.684056] BT: RD_WAIT [ ] TO=4936000 - 4000
-[  118.696021] BT: RD_WAIT [ ] TO=4932000 - 4000
-[  118.708015] BT: RD_WAIT [ ] TO=4928000 - 4000
-[  118.720018] BT: RD_WAIT [ ] TO=4924000 - 4000
-[  118.732063] BT: RD_WAIT [ ] TO=4920000 - 4000
-[  118.744021] BT: RD_WAIT [ ] TO=4916000 - 4000
-[  118.752089] BT: RD_WAIT [ ] TO=4912000 - 4000
-[  118.764011] BT: RD_WAIT [ ] TO=4908000 - 4000
-[  118.784009] BT: RD_WAIT [ ] TO=4904000 - 4000
-[  118.808011] BT: RD_WAIT [ ] TO=4900000 - 4000
-[  118.832010] BT: RD_WAIT [ ] TO=4896000 - 4000
-[  118.844011] BT: RD_WAIT [ ] TO=4892000 - 4000
-[  118.860036] BT: RD_WAIT [ ] TO=4888000 - 4000
-[  118.868102] BT: RD_WAIT [ ] TO=4884000 - 4000
-[  118.876012] BT: RD_WAIT [ ] TO=4880000 - 4000
-[  118.904011] BT: RD_WAIT [ ] TO=4876000 - 4000
-[  118.924013] BT: RD_WAIT [ ] TO=4872000 - 4000
-[  118.948016] BT: RD_WAIT [ ] TO=4868000 - 4000
-[  118.984043] BT: RD_WAIT [ ] TO=4864000 - 4000
-[  118.992059] BT: RD_WAIT [ ] TO=4860000 - 4000
-[  118.995422]  for 2000000
-[  118.995650]
-[  119.000026] BT: RD_WAIT [ ] TO=4856000 - 4000
-[  119.012018] BT: RD_WAIT [ ] TO=4852000 - 4000
-[  119.032010] BT: RD_WAIT [ ] TO=4848000 - 4000
-[  119.048013] BT: RD_WAIT [ ] TO=4844000 - 4000
-[  119.060013] BT: RD_WAIT [ ] TO=4840000 - 4000
-[  119.080014] BT: RD_WAIT [ ] TO=4836000 - 4000
-[  119.096021] BT: RD_WAIT [ ] TO=4832000 - 4000
-[  119.120009] BT: RD_WAIT [ ] TO=4828000 - 4000
-[  119.128017] BT: RD_WAIT [ ] TO=4824000 - 4000
-[  119.136011] BT: RD_WAIT [ ] TO=4820000 - 4000
-[  119.144013] BT: RD_WAIT [ ] TO=4816000 - 4000
-[  119.164008] BT: RD_WAIT [ ] TO=4812000 - 4000
-[  119.184010] BT: RD_WAIT [ ] TO=4808000 - 4000
-[  119.204015] BT: RD_WAIT [ ] TO=4804000 - 4000
-[  119.264034] BT: RD_WAIT [ ] TO=4800000 - 4000
-[  119.272013] BT: RD_WAIT [ ] TO=4796000 - 4000
-[  119.288013] BT: RD_WAIT [ ] TO=4792000 - 4000
-[  119.308011] BT: RD_WAIT [ ] TO=4788000 - 4000
-[  119.324011] BT: RD_WAIT [ ] TO=4784000 - 4000
-[  119.344010] BT: RD_WAIT [ ] TO=4780000 - 4000
-[  119.364027] BT: RD_WAIT [ ] TO=4776000 - 4000
-[  119.376011] BT: RD_WAIT [ ] TO=4772000 - 4000
-[  119.396010] BT: RD_WAIT [ ] TO=4768000 - 4000
-[  119.408013] BT: RD_WAIT [ ] TO=4764000 - 4000
-[  119.424012] BT: RD_WAIT [ B2H ] TO=4760000 - 4000
-[  119.434845] BT: CLEAR_B2H [ H_BUSY ] TO=4756000 - 0
-[  119.592204] BT: RD_BYTES [ H_BUSY ] TO=4756000 - 0
-[  119.650481] BT: XACTION [ ] TO=5000000 - 0
-[  119.676062] BT: WR_BYTES [ ] TO=5000000 - 0
-[  119.734596] BT: WR_CONSUME [ H2B ] TO=5000000 - 0
-[  119.740019] BT: WR_CONSUME [ ] TO=5000000 - 4000
-[  119.740036] BT: RD_WAIT [ ] TO=4996000 - 0
-[  119.748032] BT: RD_WAIT [ B2H ] TO=4996000 - 4000
-[  119.748101] BT: CLEAR_B2H [ H_BUSY ] TO=4992000 - 0
-[  119.748124] BT: RD_BYTES [ H_BUSY ] TO=4992000 - 0
-[  119.748348] BT: XACTION [ ] TO=5000000 - 0
-[  119.748382] BT: WR_BYTES [ ] TO=5000000 - 0
-[  119.748537] BT: WR_CONSUME [ H2B ] TO=5000000 - 0
-[  119.760013] BT: WR_CONSUME [ B2H ] TO=5000000 - 4000
-[  119.806271] BT: RD_WAIT [ B2H ] TO=4996000 - 0
-[  119.806282] BT: CLEAR_B2H [ H_BUSY ] TO=4996000 - 0
-[  119.816909] BT: RD_BYTES [ H_BUSY ] TO=4996000 - 0
-[  119.816944] BT: XACTION [ ] TO=5000000 - 0
-[  119.827061] BT: WR_BYTES [ ] TO=5000000 - 0
-[  119.827088] BT: WR_CONSUME [ H2B ] TO=5000000 - 0
-[  119.852024] BT: WR_CONSUME [ B2H ] TO=5000000 - 4000
-[  119.875752] BT: RD_WAIT [ B2H ] TO=4996000 - 0
-[  119.895099] BT: CLEAR_B2H [ H_BUSY ] TO=4996000 - 0
-[  119.991768] BT: RD_BYTES [ H_BUSY ] TO=4996000 - 0
-[  119.991805] BT: XACTION [ ] TO=5000000 - 0
-[  120.004993] BT: WR_BYTES [ ] TO=5000000 - 0
-[  120.027171] BT: WR_CONSUME [ H2B ] TO=5000000 - 0
-[  120.048024] BT: WR_CONSUME [ ] TO=5000000 - 4000
-[  120.072949] BT: RD_WAIT [ B2H ] TO=4996000 - 0
-[  120.085892] BT: CLEAR_B2H [ H_BUSY ] TO=4996000 - 0
-[  120.097374] BT: RD_BYTES [ H_BUSY ] TO=4996000 - 0
-[  120.097406] BT: XACTION [ ] TO=5000000 - 0
-[  120.125568] BT: WR_BYTES [ ] TO=5000000 - 0
-[  120.141827] BT: WR_CONSUME [ H2B ] TO=5000000 - 0
-[  120.264026] BT: WR_CONSUME [ B2H ] TO=5000000 - 4000
-[  120.287267] BT: RD_WAIT [ B2H ] TO=4996000 - 0
-[  120.287276] BT: CLEAR_B2H [ H_BUSY ] TO=4996000 - 0
-[  120.287280] BT: RD_BYTES [ H_BUSY ] TO=4996000 - 0
-[  120.287429] ipmi_si IPI0001:00: Using irq 6
-[  120.287447] **Interrupt: 1534434704.287445059
-[  120.287457] BT: XACTION [ ] TO=5000000 - 0
-[  120.287466] BT: WR_BYTES [ ] TO=5000000 - 0
-[  120.287500] BT: WR_CONSUME [ H2B ] TO=5000000 - 0
-[  120.297445] **Interrupt: 1534434704.297445691
-[  120.332534] BT: WR_CONSUME [ B2H ] TO=5000000 - 0
-[  120.332538] BT: RD_WAIT [ B2H ] TO=5000000 - 0
-[  120.342956] BT: CLEAR_B2H [ H_BUSY ] TO=5000000 - 0
-[  120.342969] BT: RD_BYTES [ H_BUSY ] TO=5000000 - 0
-[  120.343244] **Done: 1534434704.343244675
-[  120.367379] BT: IDLE [ ] TO=5000000 - 0
-[  120.367384] BT: CAP_BEGIN [ ] TO=5000000 - 0
-[  120.376634] **Timer: 1534434704.376633453
-[  120.376646] BT: XACTION [ ] TO=5000000 - 92000
-[  120.376683] BT: WR_BYTES [ ] TO=4908000 - 0
-[  120.376995] BT: WR_CONSUME [ H2B ] TO=4908000 - 0
-[  120.377025] Send:  18 08
-[  120.377027] **Enqueue: 1534434704.377028726
-[  120.377028] **Start2: 1534434704.377029859
-[  120.377061] BT: WR_CONSUME [ ] TO=4908000 - 0
-[  120.377137] BT: RD_WAIT [ ] TO=4908000 - 0
-[  120.377140] Recv::  1c 08 d5
-[  120.377156] Send:  18 01
-[  120.377161] **Enqueue: 1534434704.377161047
-[  120.377164] **Start2: 1534434704.377164751
-[  120.377226] BT: RD_WAIT [ ] TO=4908000 - 0
-[  120.377237] Recv::  1c 01 d5
-[  120.377242] ipmi_si IPI0001:00: IPMI message handler: device id demangle failed: -22
-[  120.377252] ipmi_si IPI0001:00: Unable to get the device id: -5
-[  120.377252] ipmi_si IPI0001:00: Unable to register device: error -5
-[  120.569865] IPMI SSIF Interface driver
-
-Also FYI,
-
-Bad cleanup code causes a null pointer and adds a race condition; this
-is addressed by "[PATCH] Remove redundant cleanup in ipmi_register_smi"
-from Justin Ernst <justin.ernst@hpe.com>, which I paste here:
-
-diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index 51832b8a2c62..3b0b50c4f064 100644
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -3395,12 +3395,12 @@ int ipmi_register_smi(const struct ipmi_smi_handlers *handlers,
- 
-  out:
- 	if (rv) {
--		ipmi_bmc_unregister(intf);
--		list_del_rcu(&intf->link);
-+		/*
-+		 * ipmi_unregister_smi must be called to clean up after
-+		 * failure. We unlock the mutex to allow ipmi_unregister_smi
-+		 * to lock it and perform cleanup.
-+		 */
- 		mutex_unlock(&ipmi_interfaces_mutex);
--		synchronize_srcu(&ipmi_interfaces_srcu);
--		cleanup_srcu_struct(&intf->users_srcu);
--		kref_put(&intf->refcount, intf_free);
- 	} else {
- 		/*
- 		 * Keep memory order straight for RCU readers.  Make
---
+Good point!
+Let me prepare the patch.
