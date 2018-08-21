@@ -2,183 +2,122 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6452AC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 167A7C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CBE0214C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:39:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CBE0214C5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BF2E82177F
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:41:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="THyZtBVk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF2E82177F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726849AbeHUUAN (ORCPT
+        id S1726911AbeHUUC1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 16:00:13 -0400
-Received: from mga17.intel.com ([192.55.52.151]:44406 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726553AbeHUUAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 16:00:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2018 09:37:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,270,1531810800"; 
-   d="scan'208";a="82207101"
-Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
-  by fmsmga004.fm.intel.com with ESMTP; 21 Aug 2018 09:37:20 -0700
-Received: from orsmsx107.amr.corp.intel.com ([169.254.1.245]) by
- ORSMSX104.amr.corp.intel.com ([169.254.4.237]) with mapi id 14.03.0319.002;
- Tue, 21 Aug 2018 09:37:19 -0700
-From:   "Schaufler, Casey" <casey.schaufler@intel.com>
-To:     Jann Horn <jannh@google.com>
-CC:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "selinux@tycho.nsa.gov" <selinux@tycho.nsa.gov>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>
-Subject: RE: [PATCH RFC v2 2/5] X86: Support LSM determination of
- side-channel vulnerability
-Thread-Topic: [PATCH RFC v2 2/5] X86: Support LSM determination of
- side-channel vulnerability
-Thread-Index: AQHUNnfxqicfKrr44E68NP+tZyvMZaTFE9UAgAOi9ECAAcLBgP//5k6Q
-Date:   Tue, 21 Aug 2018 16:37:19 +0000
-Message-ID: <99FC4B6EFCEFD44486C35F4C281DC67321440056@ORSMSX107.amr.corp.intel.com>
-References: <20180817221624.10232-1-casey.schaufler@intel.com>
- <20180817221624.10232-3-casey.schaufler@intel.com>
- <CAG48ez23G+wcnkCMNZV_mxYMS=h+pZkpx1451Wz5GB9_tcDv3Q@mail.gmail.com>
- <99FC4B6EFCEFD44486C35F4C281DC6732143F769@ORSMSX107.amr.corp.intel.com>
- <CAG48ez1LHOHvB4ud+8asOjKARVLQJGV4ocdKVDJtvTXTfeMa9w@mail.gmail.com>
-In-Reply-To: <CAG48ez1LHOHvB4ud+8asOjKARVLQJGV4ocdKVDJtvTXTfeMa9w@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzBiMjFmYTMtMWRjYy00MjYyLWFiYjktZGY3NGE3MmFiOTMyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiOVE1dGRWYnV3VVBBaldNMTJxcVg1eHpNbEFsRlwvWEMzdDlWdXBZZDhZMTBpd0hSMWtxbllBRHErVTB0bUtMNlIifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Tue, 21 Aug 2018 16:02:27 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35167 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726860AbeHUUC1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 16:02:27 -0400
+Received: by mail-wr1-f68.google.com with SMTP id j26-v6so592791wre.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 09:41:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=lFOHFpR+amS5x9JJ70VCAqgX8mu7REL4MivPg0W8qQs=;
+        b=THyZtBVkw0x53a14WAFgTnz3v6p60e5IDwa3P+1sHdJL7wzE1SutmJg0Ujt5mi/jK7
+         bhk1vXf7kRlxGD5F1c4+78pT6JMFl0vqklzjvvmgmxcMPZfVn6O5sdwaQAY17LGBaKKo
+         ODeIW27jOkyDzvNxLTBPo/inm9si3QgA0ewW8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lFOHFpR+amS5x9JJ70VCAqgX8mu7REL4MivPg0W8qQs=;
+        b=f96BbyRorUNDPUW2ogJRFNy1jCzMTQ7nAeuiFJPz1HZJQiUasa0R7sE3gtzpNeyc9T
+         VEHES6fBq9phVbtkUmFLg1/pT8Y1xV0pIbYd2PBn12Eqq9lQhXqjfDNQYONSF9N/Q0mk
+         UYoSd5uLn76AH1NxrOeEX72F2BxCOKcoEF4DKK8Le7gzp70bzIoMx9ONquwm9nlVtppn
+         Q9Q9/8ztTX9UoZUmiS9lKu5wj4NxfzYsUxkhEw0HNVMLQ9Av0l0ZLLvA0Mjqk+GB5+Dc
+         zLcT9uarqStmDhD1Qdif5QemoQGA81UQqe4RlG41o4h3UsasSf8N6F97M4LLUOU8IDI8
+         KZCA==
+X-Gm-Message-State: APzg51B6qnEnK9csTM1tNktW6LkOdoOCUoRg5CVAfvVQI14tbLAMT8QP
+        slEbsoXDOe1xRzjGPMGrBgDQzw==
+X-Google-Smtp-Source: ANB0Vdafax72hB2E5n3+W+szE83xbu7Ew/QPp2YoHC6c6cLDKeAmtXrBiZJTBW1sV9ycwAhydh12qg==
+X-Received: by 2002:adf:fa4d:: with SMTP id y13-v6mr9706329wrr.155.1534869694602;
+        Tue, 21 Aug 2018 09:41:34 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e0a:f:6020:3439:d494:ce42:6719])
+        by smtp.gmail.com with ESMTPSA id l16-v6sm2165294wmc.38.2018.08.21.09.41.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 21 Aug 2018 09:41:33 -0700 (PDT)
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+To:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, punit.agrawal@arm.com
+Cc:     edubezval@gmail.com, viresh.kumar@linaro.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH] dt-binding: arm/cpus.txt: fix dynamic-power-coefficient unit
+Date:   Tue, 21 Aug 2018 18:41:25 +0200
+Message-Id: <1534869685-22221-1-git-send-email-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKYW5uIEhvcm4gW21haWx0bzpq
-YW5uaEBnb29nbGUuY29tXQ0KPiBTZW50OiBUdWVzZGF5LCBBdWd1c3QgMjEsIDIwMTggMzoyMCBB
-TQ0KPiBUbzogU2NoYXVmbGVyLCBDYXNleSA8Y2FzZXkuc2NoYXVmbGVyQGludGVsLmNvbT4NCj4g
-Q2M6IEtlcm5lbCBIYXJkZW5pbmcgPGtlcm5lbC1oYXJkZW5pbmdAbGlzdHMub3BlbndhbGwuY29t
-Pjsga2VybmVsIGxpc3QNCj4gPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyBsaW51eC1z
-ZWN1cml0eS1tb2R1bGUgPGxpbnV4LXNlY3VyaXR5LQ0KPiBtb2R1bGVAdmdlci5rZXJuZWwub3Jn
-Pjsgc2VsaW51eEB0eWNoby5uc2EuZ292OyBIYW5zZW4sIERhdmUNCj4gPGRhdmUuaGFuc2VuQGlu
-dGVsLmNvbT47IERvY2ssIERlbmVlbiBUIDxkZW5lZW4udC5kb2NrQGludGVsLmNvbT47DQo+IGty
-aXN0ZW5AbGludXguaW50ZWwuY29tOyBBcmphbiB2YW4gZGUgVmVuIDxhcmphbkBsaW51eC5pbnRl
-bC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggUkZDIHYyIDIvNV0gWDg2OiBTdXBwb3J0IExT
-TSBkZXRlcm1pbmF0aW9uIG9mIHNpZGUtDQo+IGNoYW5uZWwgdnVsbmVyYWJpbGl0eQ0KPiANCj4g
-T24gTW9uLCBBdWcgMjAsIDIwMTggYXQgNDo0NSBQTSBTY2hhdWZsZXIsIENhc2V5DQo+IDxjYXNl
-eS5zY2hhdWZsZXJAaW50ZWwuY29tPiB3cm90ZToNCj4gPg0KPiA+ID4gLS0tLS1PcmlnaW5hbCBN
-ZXNzYWdlLS0tLS0NCj4gPiA+IEZyb206IEphbm4gSG9ybiBbbWFpbHRvOmphbm5oQGdvb2dsZS5j
-b21dDQo+ID4gPiBTZW50OiBGcmlkYXksIEF1Z3VzdCAxNywgMjAxOCA0OjU1IFBNDQo+ID4gPiBU
-bzogU2NoYXVmbGVyLCBDYXNleSA8Y2FzZXkuc2NoYXVmbGVyQGludGVsLmNvbT4NCj4gPiA+IENj
-OiBLZXJuZWwgSGFyZGVuaW5nIDxrZXJuZWwtaGFyZGVuaW5nQGxpc3RzLm9wZW53YWxsLmNvbT47
-IGtlcm5lbCBsaXN0DQo+ID4gPiA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47IGxpbnV4
-LXNlY3VyaXR5LW1vZHVsZSA8bGludXgtc2VjdXJpdHktDQo+ID4gPiBtb2R1bGVAdmdlci5rZXJu
-ZWwub3JnPjsgc2VsaW51eEB0eWNoby5uc2EuZ292OyBIYW5zZW4sIERhdmUNCj4gPiA+IDxkYXZl
-LmhhbnNlbkBpbnRlbC5jb20+OyBEb2NrLCBEZW5lZW4gVCA8ZGVuZWVuLnQuZG9ja0BpbnRlbC5j
-b20+Ow0KPiA+ID4ga3Jpc3RlbkBsaW51eC5pbnRlbC5jb207IEFyamFuIHZhbiBkZSBWZW4gPGFy
-amFuQGxpbnV4LmludGVsLmNvbT4NCj4gPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggUkZDIHYyIDIv
-NV0gWDg2OiBTdXBwb3J0IExTTSBkZXRlcm1pbmF0aW9uIG9mIHNpZGUtDQo+ID4gPiBjaGFubmVs
-IHZ1bG5lcmFiaWxpdHkNCj4gPiA+DQo+ID4gPiBPbiBTYXQsIEF1ZyAxOCwgMjAxOCBhdCAxMjox
-NyBBTSBDYXNleSBTY2hhdWZsZXINCj4gPiA+IDxjYXNleS5zY2hhdWZsZXJAaW50ZWwuY29tPiB3
-cm90ZToNCj4gPiA+ID4NCj4gPiA+ID4gRnJvbTogQ2FzZXkgU2NoYXVmbGVyIDxjc2NoYXVmbGVy
-QGxvY2FsaG9zdC5sb2NhbGRvbWFpbj4NCj4gPiA+ID4NCj4gPiA+ID4gV2hlbiBzd2l0Y2hpbmcg
-YmV0d2VlbiB0YXNrcyBpdCBtYXkgYmUgbmVjZXNzYXJ5DQo+ID4gPiA+IHRvIHNldCBhbiBpbmRp
-cmVjdCBicmFuY2ggcHJlZGljdGlvbiBiYXJyaWVyIGlmIHRoZQ0KPiA+ID4gPiB0YXNrcyBhcmUg
-cG90ZW50aWFsbHkgdnVsbmVyYWJsZSB0byBzaWRlLWNoYW5uZWwNCj4gPiA+ID4gYXR0YWNrcy4g
-VGhpcyBhZGRzIGEgY2FsbCB0byBzZWN1cml0eV90YXNrX3NhZmVfc2lkZWNoYW5uZWwNCj4gPiA+
-ID4gc28gdGhhdCBzZWN1cml0eSBtb2R1bGVzIGNhbiB3ZWlnaCBpbiBvbiB0aGUgZGVjaXNpb24u
-DQo+ID4gPiA+DQo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IENhc2V5IFNjaGF1ZmxlciA8Y2FzZXku
-c2NoYXVmbGVyQGludGVsLmNvbT4NCj4gPiA+ID4gLS0tDQo+ID4gPiA+ICBhcmNoL3g4Ni9tbS90
-bGIuYyB8IDEyICsrKysrKysrLS0tLQ0KPiA+ID4gPiAgMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0
-aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCj4gPiA+ID4NCj4gPiA+ID4gZGlmZiAtLWdpdCBhL2Fy
-Y2gveDg2L21tL3RsYi5jIGIvYXJjaC94ODYvbW0vdGxiLmMNCj4gPiA+ID4gaW5kZXggNmViMWYz
-NGMzYzg1Li44NzE0ZDRhZjA2YWEgMTAwNjQ0DQo+ID4gPiA+IC0tLSBhL2FyY2gveDg2L21tL3Rs
-Yi5jDQo+ID4gPiA+ICsrKyBiL2FyY2gveDg2L21tL3RsYi5jDQo+ID4gPiA+IEBAIC03LDYgKzcs
-NyBAQA0KPiA+ID4gPiAgI2luY2x1ZGUgPGxpbnV4L2V4cG9ydC5oPg0KPiA+ID4gPiAgI2luY2x1
-ZGUgPGxpbnV4L2NwdS5oPg0KPiA+ID4gPiAgI2luY2x1ZGUgPGxpbnV4L2RlYnVnZnMuaD4NCj4g
-PiA+ID4gKyNpbmNsdWRlIDxsaW51eC9zZWN1cml0eS5oPg0KPiA+ID4gPg0KPiA+ID4gPiAgI2lu
-Y2x1ZGUgPGFzbS90bGJmbHVzaC5oPg0KPiA+ID4gPiAgI2luY2x1ZGUgPGFzbS9tbXVfY29udGV4
-dC5oPg0KPiA+ID4gPiBAQCAtMjcwLDExICsyNzEsMTQgQEAgdm9pZCBzd2l0Y2hfbW1faXJxc19v
-ZmYoc3RydWN0IG1tX3N0cnVjdA0KPiAqcHJldiwNCj4gPiA+IHN0cnVjdCBtbV9zdHJ1Y3QgKm5l
-eHQsDQo+ID4gPiA+ICAgICAgICAgICAgICAgICAgKiB0aHJlYWRzLiBJdCB3aWxsIGFsc28gbm90
-IGZsdXNoIGlmIHdlIHN3aXRjaCB0byBpZGxlDQo+ID4gPiA+ICAgICAgICAgICAgICAgICAgKiB0
-aHJlYWQgYW5kIGJhY2sgdG8gdGhlIHNhbWUgcHJvY2Vzcy4gSXQgd2lsbCBmbHVzaCBpZiB3ZQ0K
-PiA+ID4gPiAgICAgICAgICAgICAgICAgICogc3dpdGNoIHRvIGEgZGlmZmVyZW50IG5vbi1kdW1w
-YWJsZSBwcm9jZXNzLg0KPiA+ID4gPiArICAgICAgICAgICAgICAgICogSWYgYSBzZWN1cml0eSBt
-b2R1bGUgdGhpbmtzIHRoYXQgdGhlIHRyYW5zaXRpb24NCj4gPiA+ID4gKyAgICAgICAgICAgICAg
-ICAqIGlzIHVuc2FmZSBkbyB0aGUgZmx1c2guDQo+ID4gPiA+ICAgICAgICAgICAgICAgICAgKi8N
-Cj4gPiA+ID4gLSAgICAgICAgICAgICAgIGlmICh0c2sgJiYgdHNrLT5tbSAmJg0KPiA+ID4gPiAt
-ICAgICAgICAgICAgICAgICAgIHRzay0+bW0tPmNvbnRleHQuY3R4X2lkICE9IGxhc3RfY3R4X2lk
-ICYmDQo+ID4gPiA+IC0gICAgICAgICAgICAgICAgICAgZ2V0X2R1bXBhYmxlKHRzay0+bW0pICE9
-IFNVSURfRFVNUF9VU0VSKQ0KPiA+ID4gPiAtICAgICAgICAgICAgICAgICAgICAgICBpbmRpcmVj
-dF9icmFuY2hfcHJlZGljdGlvbl9iYXJyaWVyKCk7DQo+ID4gPiA+ICsgICAgICAgICAgICAgICBp
-ZiAodHNrICYmIHRzay0+bW0gJiYgdHNrLT5tbS0+Y29udGV4dC5jdHhfaWQgIT0gbGFzdF9jdHhf
-aWQpDQo+IHsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgaWYgKGdldF9kdW1wYWJs
-ZSh0c2stPm1tKSAhPSBTVUlEX0RVTVBfVVNFUiB8fA0KPiA+ID4gPiArICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgc2VjdXJpdHlfdGFza19zYWZlX3NpZGVjaGFubmVsKHRzaykgIT0gMCkNCj4g
-PiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpbmRpcmVjdF9icmFuY2hfcHJl
-ZGljdGlvbl9iYXJyaWVyKCk7DQo+ID4gPiA+ICsgICAgICAgICAgICAgICB9DQo+ID4gPg0KPiA+
-ID4gV2hlbiB5b3UgcG9zdGVkIHYxIG9mIHRoaXMgc2VyaWVzLCBJIGFza2VkOg0KPiA+ID4NCj4g
-PiA+IHwgRG9lcyB0aGlzIGVuZm9yY2UgdHJhbnNpdGl2aXR5PyBXaGF0IGhhcHBlbnMgaWYgd2Ug
-Zmlyc3Qgc3dpdGNoIGZyb20NCj4gPiA+IHwgYW4gYXR0YWNrZXIgdGFzayB0byBhIHRhc2sgd2l0
-aG91dCAtPm1tLCBhbmQgaW1tZWRpYXRlbHkgYWZ0ZXJ3YXJkcw0KPiA+ID4gfCBmcm9tIHRoZSB0
-YXNrIHdpdGhvdXQgLT5tbSB0byBhIHZpY3RpbSB0YXNrPyBJbiB0aGF0IGNhc2UsIHdoZXRoZXIg
-YQ0KPiA+ID4gfCBmbHVzaCBoYXBwZW5zIGJldHdlZW4gdGhlIGF0dGFja2VyIHRhc2sgYW5kIHRo
-ZSB2aWN0aW0gdGFzayBkZXBlbmRzIG9uDQo+ID4gPiB8IHdoZXRoZXIgdGhlIExTTSB0aGlua3Mg
-dGhhdCB0aGUgbW0tbGVzcyB0YXNrIHNob3VsZCBoYXZlIGFjY2VzcyB0byB0aGUNCj4gPiA+IHwg
-dmljdGltIHRhc2ssIHJpZ2h0Pw0KPiA+ID4NCj4gPiA+IEhhdmUgeW91IGFkZHJlc3NlZCB0aGF0
-PyBJIGRvbid0IHNlZSBpdC4uLg0KPiA+DQo+ID4gTm9wZS4gVGhhdCdzIGdvaW5nIHRvIHJlcXVp
-cmUgbWFpbnRhaW5pbmcgc3RhdGUgYWJvdXQgYWxsIHRoZQ0KPiA+IHRhc2tzIGluIHRoZSBjaGFp
-biB0aGF0IG1pZ2h0IHN0aWxsIGhhdmUgY2FjaGUgaW52b2x2ZW1lbnQuDQo+ID4NCj4gPiAgICAg
-ICAgIEEgLT4gQiAtPiBDIC0+IEQNCj4gDQo+IFJlYWxseT8NCg0KSSBhbSB3aWxsaW5nIHRvIGJl
-IGVkdWNhdGVkIG90aGVyd2lzZS4gTXkgdW5kZXJzdGFuZGluZw0Kb2YgTW9kZXJuIFByb2Nlc3Nv
-ciBUZWNobm9sb2d5IHdpbGwgbmV2ZXIgYmUgc28gZGVlcCB0aGF0DQpJIHdvbid0IGxpc3RlbiB0
-byByZWFzb24uDQoNCj4gDQo+IEZyb20gd2hhdCBJIGNhbiB0ZWxsLCBpdCdkIGJlIGVub3VnaCB0
-bzoNCj4gDQo+ICAtIGVuc3VyZSB0aGF0IHRoZSBMU00tYmFzZWQgYWNjZXNzIGNoZWNrcyBiZWhh
-dmUgYXBwcm94aW1hdGVseSB0cmFuc2l0aXZlbHkNCj4gICAgKHdoaWNoIEkgdGhpbmsgdGhleSBh
-bHJlYWR5IGRvLCBtb3N0bHkpDQoNClNtYWNrIHJ1bGVzIGFyZSBleHBsaWNpdGx5IGFuZCBpbnRl
-bnRpb25hbGx5IG5vdCB0cmFuc2l0aXZlLg0KDQpBIHJlYWRzIEIsIEIgcmVhZHMgQyBkb2VzICpu
-b3QqIGltcGx5IEEgcmVhZHMgQy4NCg0KPiAgLSBrZWVwIGEgY29weSBvZiB0aGUgbWV0YWRhdGEg
-b2YgdGhlIGxhc3Qgbm9uLWtlcm5lbCB0YXNrIG9uIHRoZSBDUFUNCg0KRG8geW91IGhhdmUgYSBz
-dWdnZXN0aW9uIG9mIGhvdyBvbmUgbWlnaHQgZG8gdGhhdD8NCkknbSB3aWxsaW5nIHRvIGJlbGll
-dmUgdGhlIGluZm9ybWF0aW9uIGNvdWxkIGJlIGF2YWlsYWJsZSwNCmJ1dCBJIGhhdmUgeWV0IHRv
-IGNvbWUgdXAgd2l0aCBhIG1lY2hhbmlzbSBmb3IgZ2V0dGluZyBpdC4NCg0KPiANCj4gPiBJZiBC
-IGFuZCBDIGRvbid0IGRvIGFueXRoaW5nIGNhY2hld29ydGh5IEQgY291bGQgY29uY2VpdmFibHkg
-YXR0YWNrIEEuDQo+ID4gVGhlIGFtb3VudCBvZiBzdGF0ZSByZXF1aXJlZCB0byBkZXRlY3QgdGhp
-cyBjYXNlIHdvdWxkIGJlIHByb2hpYml0aXZlLg0KPiA+IEkgdGhpbmsgdGhhdCBpZiB5b3UncmUg
-c3VmZmljaWVudGx5IGNvbmNlcm5lZCBhYm91dCB0aGlzIGNhc2UgeW91IHNob3VsZCBqdXN0DQo+
-ID4gZ28gYWhlYWQgYW5kIHNldCB0aGUgYmFycmllci4gSSdtIHdpbGxpbmcgdG8gbGVhcm4gc29t
-ZXRoaW5nIHRoYXQgc2F5cyBJJ20NCj4gPiB3cm9uZy4NCj4gDQo+IFRoYXQgbWVhbnMgdGhhdCBh
-biBhdHRhY2tlciB3aG8gY2FuIGUuZy4gZ2V0IGEgQ1BVIHRvIGZpcnN0IHN3aXRjaA0KPiBmcm9t
-IGFuIGF0dGFja2VyIHRhc2sgdG8gYSBzb2Z0aXJxZCAoZS5nLiBmb3IgbmV0d29yayBwYWNrZXQN
-Cj4gcHJvY2Vzc2luZyBvciB3aGF0ZXZlciksIHRoZW4gc3dpdGNoIGZyb20gdGhlIHNvZnRpcnFk
-IHRvIGEgcm9vdC1vd25lZA0KPiB2aWN0aW0gdGFzayB3b3VsZCBiZSBhYmxlIHRvIGJ5cGFzcyB0
-aGUgY2hlY2ssIHJpZ2h0PyBUaGF0IGRvZXNuJ3QNCj4gc291bmQgbGlrZSBhIHZlcnkgY29tcGxp
-Y2F0ZWQgYXR0YWNrLi4uDQoNCk1heWJlIG15IGJyYWluIGlzIHN0aWxsIHN0dWNrIGluIHRoZSAx
-OTgwJ3MsIGJ1dCB0aGF0IHNvdW5kcyBwcmV0dHkNCmNvbXBsaWNhdGVkIHRvIG1lISBPZiBjb3Vy
-c2UsIHRoZSBmYWN0IHRoYXQgaXQncyBiZXlvbmQgd2hlcmUgSSB3b3VsZA0KZ28gZG9lc24ndCBt
-ZWFuIGl0J3MgaW1wbGF1c2libGUuDQoNCj4gDQo+IEkgdmVyeSBtdWNoIGRpc2xpa2UgdGhlIGlk
-ZWEgb2YgYWRkaW5nIGEgbWl0aWdhdGlvbiB3aXRoIGEga25vd24NCj4gYnlwYXNzIHRlY2huaXF1
-ZSB0byB0aGUga2VybmVsLg0KDQpUaGF0J3MgZmFpci4gSSdsbCBsb29rIG1vcmUgY2xvc2VseSBh
-dCBnZXR0aW5nIHByZXZpb3VzX2NyZWRfdGhpc19jcHUoKS4NCg0KVGhhbmshDQoNCg==
+The unit of dynamic-power-coefficient is described as mW/MHz/uV^2 whereas
+its usage in the code assumes that unit is mW/GHz/V^2
+
+In drivers/thermal/cpu_cooling.c, the code is :
+
+power = (u64)capacitance * freq_mhz * voltage_mv * voltage_mv;
+do_div(power, 1000000000);
+
+which can be summarized as :
+power (mW) = capacitance * freq_mhz/1000 * (voltage_mv/1000)^2
+
+Furthermore, if we test basic values like :
+voltage_mv = 1000mV = 1V
+freq_mhz = 1000Mhz = 1Ghz
+
+The minimum possible power, when dynamic-power-coefficient equals 1, will
+be :
+min power = 1 * 1000  * (1000000)^2 = 10^15 mW
+which is not realistic
+
+With the unit used by the code, the min power is
+min power =  1 * 1 * 1^2 = 1mW which is far more realistic
+
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+---
+ Documentation/devicetree/bindings/arm/cpus.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
+index 29e1dc5..0148d7d 100644
+--- a/Documentation/devicetree/bindings/arm/cpus.txt
++++ b/Documentation/devicetree/bindings/arm/cpus.txt
+@@ -274,7 +274,7 @@ described below.
+ 		Usage: optional
+ 		Value type: <prop-encoded-array>
+ 		Definition: A u32 value that represents the running time dynamic
+-			    power coefficient in units of mW/MHz/uV^2. The
++			    power coefficient in units of mW/GHz/V^2. The
+ 			    coefficient can either be calculated from power
+ 			    measurements or derived by analysis.
+ 
+@@ -285,7 +285,7 @@ described below.
+ 
+ 			    Pdyn = dynamic-power-coefficient * V^2 * f
+ 
+-			    where voltage is in uV, frequency is in MHz.
++			    where voltage is in V, frequency is in GHz.
+ 
+ Example 1 (dual-cluster big.LITTLE system 32-bit):
+ 
+-- 
+2.7.4
+
