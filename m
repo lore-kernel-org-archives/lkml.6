@@ -2,102 +2,107 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F2BC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 05:13:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB469C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 05:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C97212172D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 05:13:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C97212172D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 901FD2172D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 05:23:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 901FD2172D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726585AbeHUIcP (ORCPT
+        id S1726585AbeHUImK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 04:32:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51172 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbeHUIcP (ORCPT
+        Tue, 21 Aug 2018 04:42:10 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42020 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726175AbeHUImJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 04:32:15 -0400
-Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E0023BC8;
-        Tue, 21 Aug 2018 05:13:40 +0000 (UTC)
-Date:   Tue, 21 Aug 2018 07:13:36 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH] staging: android: ion: check for kref overflow
-Message-ID: <20180821051336.GA23394@kroah.com>
-References: <20180821013057.139644-1-drosen@google.com>
+        Tue, 21 Aug 2018 04:42:09 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7L5Jg5Q008574
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 01:23:34 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m07vdgw59-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 01:23:34 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Tue, 21 Aug 2018 06:23:31 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 21 Aug 2018 06:23:25 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7L5NOkC41811990
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 21 Aug 2018 05:23:24 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CCB19A4055;
+        Tue, 21 Aug 2018 08:23:24 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3D0F1A4040;
+        Tue, 21 Aug 2018 08:23:20 +0100 (BST)
+Received: from [9.195.41.244] (unknown [9.195.41.244])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 21 Aug 2018 08:23:19 +0100 (BST)
+Subject: Re: [PATCH v9 0/4] Uprobes: Support SDT markers having reference
+ count (semaphore)
+To:     Song Liu <liu.song.a23@gmail.com>
+Cc:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>, mhiramat@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        ananth@linux.vnet.ibm.com,
+        Alexis Berlemont <alexis.berlemont@gmail.com>,
+        naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180820044250.11659-1-ravi.bangoria@linux.ibm.com>
+ <CAPhsuW70nRkwM8C76m4c_XF4tjepdRWYezg15sTvkMUDtHZ8JQ@mail.gmail.com>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Tue, 21 Aug 2018 10:53:18 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180821013057.139644-1-drosen@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAPhsuW70nRkwM8C76m4c_XF4tjepdRWYezg15sTvkMUDtHZ8JQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18082105-0020-0000-0000-000002B97B06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082105-0021-0000-0000-00002106C97D
+Message-Id: <2e997c62-371c-1d9d-97ab-65726f588ab5@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-21_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=827 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808210055
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 06:30:57PM -0700, Daniel Rosenberg wrote:
-> Userspace can cause the kref to handles to increment
-> arbitrarily high. Ensure it does not overflow.
-> 
-> Signed-off-by: Daniel Rosenberg <drosen@google.com>
-> ---
-> 
-> This patch is against 4.4. It does not apply to master due to a large
-> rework of ion in 4.12 which removed the affected functions altogther.
-> It applies from 3.18 to 4.11, although with a trivial conflict resolution
-> for the later branches.
-> 4c23cbff073f3b9b ("staging: android: ion: Remove import interface")
-> 
->  drivers/staging/android/ion/ion.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-> index 374f840f31a48..11f93a6314fdb 100644
-> --- a/drivers/staging/android/ion/ion.c
-> +++ b/drivers/staging/android/ion/ion.c
-> @@ -15,6 +15,7 @@
->   *
->   */
->  
-> +#include <linux/atomic.h>
->  #include <linux/device.h>
->  #include <linux/err.h>
->  #include <linux/file.h>
-> @@ -387,6 +388,15 @@ static void ion_handle_get(struct ion_handle *handle)
->  	kref_get(&handle->ref);
->  }
->  
-> +/* Must hold the client lock */
-> +static struct ion_handle *ion_handle_get_check_overflow(
-> +					struct ion_handle *handle)
-> +{
-> +	if (atomic_read(&handle->ref.refcount) + 1 == 0)
-> +		return ERR_PTR(-EOVERFLOW);
-> +	ion_handle_get(handle);
-> +	return handle;
-> +}
-> +
->  static int ion_handle_put_nolock(struct ion_handle *handle)
->  {
->  	int ret;
+Hi Song,
 
-I tried to apply this patch, but it looks like you hand-edited it which
-made it impossible to apply.  Did you do that, or did git really create
-this broken diff exactly as-is?
+> However, if I start a.out AFTER enabling the uprobe, there is something wrong:
+> 
+> root@virt-test:~# ~/a.out
+> 11
+> semaphore 0       <<< this should be non-zero, as the uprobe is already enabled
 
-Try applying this patch yourself, you will see the error.  I could fix
-it by manually editing the diff metadata but I really shouldn't have to
-as that implies you did not test the patch you sent me :(
+Ok. I'm able to reproduce this. Digging deeper.
 
-thanks,
+Ravi
 
-greg k-h
