@@ -2,152 +2,93 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6270C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC24C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:10:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94F3620C03
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:06:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94F3620C03
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BE0D820C03
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:10:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pxJltKKL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE0D820C03
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbeHUR0e (ORCPT
+        id S1727618AbeHURaq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 13:26:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33614 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727113AbeHUR0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 13:26:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0A925AD04;
-        Tue, 21 Aug 2018 14:06:14 +0000 (UTC)
-Date:   Tue, 21 Aug 2018 16:06:12 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Greg Thelen <gthelen@google.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Dmitry Vyukov <dvyukov@google.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] memcg, oom: emit oom report when there is no
- eligible task
-Message-ID: <20180821140612.GD16611@dhcp22.suse.cz>
-References: <20180808064414.GA27972@dhcp22.suse.cz>
- <20180808071301.12478-1-mhocko@kernel.org>
- <20180808071301.12478-3-mhocko@kernel.org>
- <20180808144515.GA9276@cmpxchg.org>
- <20180808161737.GQ27972@dhcp22.suse.cz>
+        Tue, 21 Aug 2018 13:30:46 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:40168 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727427AbeHURap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 13:30:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=w7j4L49OOuVdMajWg0adFjrGiNlaN4fBwF83BsCwRgo=;
+        b=pxJltKKLvSlgpUoWgQGYGcCE29yMX7z+3hmFLyKWFOSlL9Xp4c6qz8o9GzNYljOhdZfmKlbBLqR47AZtMJVT1c2JQiY05GyehBM7alEt2kcxFnyudVdRNC05cMnsgXGCoTw5UMghkFam4tCWHGQxpnaqlLnXY46DP7qLivHRBTM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fs7MU-0001HN-RX; Tue, 21 Aug 2018 16:10:22 +0200
+Date:   Tue, 21 Aug 2018 16:10:22 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Michal Kubecek <mkubecek@suse.cz>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jiri Pirko <jiri@resnulli.us>,
+        David Miller <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Jakub Kicinski <kubakici@wp.pl>,
+        "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: [RFC PATCH net-next v2 10/17] ethtool: implement GET_SETTINGS
+ message
+Message-ID: <20180821141022.GD2985@lunn.ch>
+References: <cover.1532953989.git.mkubecek@suse.cz>
+ <67d3b68a50e95db9612cc96e42a52ce332f716a9.1532953989.git.mkubecek@suse.cz>
+ <20180730185455.GJ2983@lunn.ch>
+ <20180821093245.ktattosaduf6jvya@unicorn.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180808161737.GQ27972@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180821093245.ktattosaduf6jvya@unicorn.suse.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do you plan to repost these two? They are quite deep in the email thread
-so they can easily fall through cracks.
+On Tue, Aug 21, 2018 at 11:32:46AM +0200, Michal Kubecek wrote:
+> On Mon, Jul 30, 2018 at 08:54:55PM +0200, Andrew Lunn wrote:
+> > > +/* Internal kernel helper to query a device ethtool_link_settings.
+> > > + *
+> > > + * Backward compatibility note: for compatibility with legacy drivers
+> > > + * that implement only the ethtool_cmd API, this has to work with both
+> > > + * drivers implementing get_link_ksettings API and drivers
+> > > + * implementing get_settings API. When drivers implement get_settings
+> > > + * and report ethtool_cmd deprecated fields
+> > > + * (transceiver/maxrxpkt/maxtxpkt), these fields are silently ignored
+> > > + * because the resulting struct ethtool_link_settings does not report them.
+> > 
+> > ~/linux/drivers$ grep -r [.]get_settings *
+> > net/ethernet/8390/etherh.c:		 .get_settings	= etherh_get_settings,
+> > 
+> > I don't think it is worth adding support for .get_settings for just
+> > one driver. It is better to just convert that driver to the new API.
+> 
+> I have prepared a patch converting 8390/etherh driver to use
+> {g,s}et_link_ksettings and I'm going to submit it when net-next opens.
+> Do you think we can then drop {g,s}et_settings callbacks completely
+> (i.e. also from ioctl() code and ethtool_ops)?  Do we care about
+> unconverted out of tree drivers?
 
-On Wed 08-08-18 18:17:37, Michal Hocko wrote:
-> On Wed 08-08-18 10:45:15, Johannes Weiner wrote:
-[...]
-> > >From bba01122f739b05a689dbf1eeeb4f0e07affd4e7 Mon Sep 17 00:00:00 2001
-> > From: Johannes Weiner <hannes@cmpxchg.org>
-> > Date: Wed, 8 Aug 2018 09:59:40 -0400
-> > Subject: [PATCH] mm: memcontrol: print proper OOM header when no eligible
-> >  victim left
-> > 
-> > When the memcg OOM killer runs out of killable tasks, it currently
-> > prints a WARN with no further OOM context. This has caused some user
-> > confusion.
-> > 
-> > Warnings indicate a kernel problem. In a reported case, however, the
-> > situation was triggered by a non-sensical memcg configuration (hard
-> > limit set to 0). But without any VM context this wasn't obvious from
-> > the report, and it took some back and forth on the mailing list to
-> > identify what is actually a trivial issue.
-> > 
-> > Handle this OOM condition like we handle it in the global OOM killer:
-> > dump the full OOM context and tell the user we ran out of tasks.
-> > 
-> > This way the user can identify misconfigurations easily by themselves
-> > and rectify the problem - without having to go through the hassle of
-> > running into an obscure but unsettling warning, finding the
-> > appropriate kernel mailing list and waiting for a kernel developer to
-> > remote-analyze that the memcg configuration caused this.
-> > 
-> > If users cannot make sense of why the OOM killer was triggered or why
-> > it failed, they will still report it to the mailing list, we know that
-> > from experience. So in case there is an actual kernel bug causing
-> > this, kernel developers will very likely hear about it.
-> > 
-> > Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> 
-> Yes this works as well. We would get a dump even for the race we have
-> seen but I do not think this is something to lose sleep over. And if it
-> triggers too often to be disturbing we can add
-> tsk_is_oom_victim(current) check there.
-> 
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> 
-> > ---
-> >  mm/memcontrol.c |  2 --
-> >  mm/oom_kill.c   | 13 ++++++++++---
-> >  2 files changed, 10 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index 4e3c1315b1de..29d9d1a69b36 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -1701,8 +1701,6 @@ static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int
-> >  	if (mem_cgroup_out_of_memory(memcg, mask, order))
-> >  		return OOM_SUCCESS;
-> >  
-> > -	WARN(1,"Memory cgroup charge failed because of no reclaimable memory! "
-> > -		"This looks like a misconfiguration or a kernel bug.");
-> >  	return OOM_FAILED;
-> >  }
-> >  
-> > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> > index 0e10b864e074..07ae222d7830 100644
-> > --- a/mm/oom_kill.c
-> > +++ b/mm/oom_kill.c
-> > @@ -1103,10 +1103,17 @@ bool out_of_memory(struct oom_control *oc)
-> >  	}
-> >  
-> >  	select_bad_process(oc);
-> > -	/* Found nothing?!?! Either we hang forever, or we panic. */
-> > -	if (!oc->chosen && !is_sysrq_oom(oc) && !is_memcg_oom(oc)) {
-> > +	/* Found nothing?!?! */
-> > +	if (!oc->chosen) {
-> >  		dump_header(oc, NULL);
-> > -		panic("Out of memory and no killable processes...\n");
-> > +		pr_warn("Out of memory and no killable processes...\n");
-> > +		/*
-> > +		 * If we got here due to an actual allocation at the
-> > +		 * system level, we cannot survive this and will enter
-> > +		 * an endless loop in the allocator. Bail out now.
-> > +		 */
-> > +		if (!is_sysrq_oom(oc) && !is_memcg_oom(oc))
-> > +			panic("System is deadlocked on memory\n");
-> >  	}
-> >  	if (oc->chosen && oc->chosen != (void *)-1UL)
-> >  		oom_kill_process(oc, !is_memcg_oom(oc) ? "Out of memory" :
-> > -- 
-> > 2.18.0
-> > 
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
+Hi Michal
 
--- 
-Michal Hocko
-SUSE Labs
+We cannot break ethtool, the ABI it uses. But there is already code to
+use get_link_ksettings() and only fall back to get_settings if it does
+not exist. So we can clean up all the fallback code, remove the
+ethtool_ops, etc.
+
+I personally don't care about out of tree drivers. They have had over
+2 years to change to the new API.
+
+	     Andrew
