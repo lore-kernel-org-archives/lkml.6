@@ -2,88 +2,100 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3398C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E17C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:45:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9318A2151D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:44:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9318A2151D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2FAE020893
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:45:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FAE020893
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbeHUUFR (ORCPT
+        id S1727443AbeHUUG1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 16:05:17 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52034 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727043AbeHUUFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 16:05:17 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 32B66ED1;
-        Tue, 21 Aug 2018 09:44:25 -0700 (PDT)
-Received: from e107564-lin.cambridge.arm.com (e107564-lin.cambridge.arm.com [10.2.131.9])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F236D3F5BC;
-        Tue, 21 Aug 2018 09:44:22 -0700 (PDT)
-Date:   Tue, 21 Aug 2018 17:44:17 +0100
-From:   Brian Starkey <brian.starkey@arm.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dri-devel@lists.freedesktop.org, daniel.vetter@ffwll.ch,
-        airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        corbet@lwn.net, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alexandru-cosmin.gheorghe@arm.com,
-        liviu.dudau@arm.com, ayan.halder@arm.com
-Subject: Re: [PATCH] drm/fourcc: Add DOC: overview comment
-Message-ID: <20180821164416.GA11553@e107564-lin.cambridge.arm.com>
-References: <20180821161611.10424-1-brian.starkey@arm.com>
- <20180821162639.GA21697@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180821162639.GA21697@bombadil.infradead.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Tue, 21 Aug 2018 16:06:27 -0400
+Received: from smtprelay0052.hostedemail.com ([216.40.44.52]:54881 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726734AbeHUUG1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 16:06:27 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id CBFDE180A884B;
+        Tue, 21 Aug 2018 16:45:33 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: peace76_876e920e42646
+X-Filterd-Recvd-Size: 2780
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 21 Aug 2018 16:45:30 +0000 (UTC)
+Message-ID: <acb93bae0086447c7cbe0eec05907335ebae7788.camel@perches.com>
+Subject: Re: [PATCH] compiler-gcc: get back Clang build
+From:   Joe Perches <joe@perches.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>, asmadeus@codewreck.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Arnd Bergmann <arnd@arndb.de>, dwmw@amazon.co.uk,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Tue, 21 Aug 2018 09:45:28 -0700
+In-Reply-To: <CAKwvOdmLQen+TWF_F3e5-66vtF3FEnoxjEgZbjmOZ9cv6YrEpA@mail.gmail.com>
+References: <1534834088-15835-1-git-send-email-yamada.masahiro@socionext.com>
+         <20180821123832.GA19034@nautica>
+         <CAKwvOdmLQen+TWF_F3e5-66vtF3FEnoxjEgZbjmOZ9cv6YrEpA@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthew,
+On Tue, 2018-08-21 at 09:32 -0700, Nick Desaulniers wrote:
+> On Tue, Aug 21, 2018 at 5:38 AM Dominique Martinet
+> <asmadeus@codewreck.org> wrote:
+> > 
+> > Nick Desaulniers Aug. 21, 2018, 8:09 a.m. UTC:
+> > > Thanks for noticing, and sending this patch.  I'm happy to see others
+> > > testing with Clang.  I noticed this too near the end of the day
+> > > https://github.com/ClangBuiltLinux/linux/issues/27.
+> > 
+> > FWIW libbcc so many BPF users also use clang, so this has more impact
+> > than just testing to build linux with clang (not that this would be any
+> > reason to delay fixing either way)
+> > 
+> > I would tend to agree havin a compiler-common + make clang/intel not
+> > include compiler-gcc would probably be best in the long run but we might
+> > want a quick fix for 4.19 meanwhile..
+> 
+> That's fair. SOP here is quick (full) revert, then come up with a
+> better fix.  And I do prefer Masahiro's partial revert to a full
+> revert of Joe's patch.  That will give us more time to develop the
+> proper fix rather than rush.  I'll try to see how we can more properly
+> split the compiler specific headers.
+> 
+> Tested with gcc-7 and clang-8.
 
-On Tue, Aug 21, 2018 at 09:26:39AM -0700, Matthew Wilcox wrote:
->On Tue, Aug 21, 2018 at 05:16:11PM +0100, Brian Starkey wrote:
->> There's a number of things which haven't previously been documented
->> around the usage of format modifiers. Capture the current
->> understanding in an overview comment and add it to the rst
->> documentation.
->>
->> Ideally, the generated documentation would also include documentation
->> of all of the #defines, but the kernel-doc system doesn't currently
->> support kernel-doc comments on #define constants.
->
->Can you turn them into enums?  This seems to work ok:
->
->-/* color index */
->-#define DRM_FORMAT_C8          fourcc_code('C', '8', ' ', ' ') /* [7:0] C */
->-
->-/* 8 bpp Red */
->-#define DRM_FORMAT_R8          fourcc_code('R', '8', ' ', ' ') /* [7:0] R */
->+enum {
->+       /* color index */
->+       DRM_FORMAT_C8   = fourcc_code('C', '8', ' ', ' '), /* [7:0] C */
->+       /* 8 bpp Red */
->+       DRM_FORMAT_R8   = fourcc_code('R', '8', ' ', ' '), /* [7:0] R */
->+};
->
->but I appreciate this is user API and maybe there's some code out there
->that does #ifndef DRM_FORMAT_C8 ...
+clang-8? Isn't the latest officlal clang 6.0.1 ?
 
-Thanks for the suggestion, Daniel did mention the same. However,
-unfortunately I don't think we can safely change the UAPI header in
-this manner.
+http://releases.llvm.org/
 
-Cheers,
--Brian
+vs
+
+https://clang.llvm.org/docs/ReleaseNotes.html
+
+So if something other than 6.0.x is required,
+then some additional check should probably be
+added to compiler-clang.h as well.
+
