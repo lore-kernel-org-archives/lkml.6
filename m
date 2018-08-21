@@ -6,199 +6,140 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FFBFC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 405CDC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AA362170E
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:47:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AA362170E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0AF102151D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:48:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AF102151D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbeHUSHa (ORCPT
+        id S1727616AbeHUSIa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 14:07:30 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50242 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726590AbeHUSHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 14:07:30 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00B477A9;
-        Tue, 21 Aug 2018 07:47:03 -0700 (PDT)
-Received: from dupont (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DA4253F5BC;
-        Tue, 21 Aug 2018 07:47:01 -0700 (PDT)
-Date:   Tue, 21 Aug 2018 09:47:01 -0500
-From:   Kim Phillips <kim.phillips@arm.com>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        <schwidefsky@de.ibm.com>, <heiko.carstens@de.ibm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>, <ast@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, <suzuki.poulosi@arm.com>,
-        <linux-s390@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 0/7] perf: Add ioctl for PMU driver configuration
-Message-Id: <20180821094701.685b14d25490fe09ecb32d12@arm.com>
-In-Reply-To: <cba4017f-8a81-e47b-1e99-d510ef9b2a67@arm.com>
-References: <1531950487-24554-1-git-send-email-mathieu.poirier@linaro.org>
-        <20180813124642.3d49c082a95fc294d926016e@arm.com>
-        <CANLsYkx=tjCG-eb4qRoGz0SvG4qCMDz1ajR9Mo9VK5XTAn_WdQ@mail.gmail.com>
-        <20180814120910.ed225bbc462c58b09e5d68de@arm.com>
-        <CANLsYkxZ_Wts6k9yqJhJf_R5oh74svpcuoNxhtFf6h3mz8U4ZA@mail.gmail.com>
-        <20180815093912.GE2427@arm.com>
-        <20180815102820.3520d0c3875d2fd82300cdef@arm.com>
-        <CANLsYkz0j79+1C-Amz=3+7zw-0VZhnZ+rp5WAjHduEp+WjFs8A@mail.gmail.com>
-        <18fe78a3-9a58-cecd-ddb9-d46cbc473b95@arm.com>
-        <20180820092252.32dd015afcc5cbf2fe4c7ab7@arm.com>
-        <a2edfae3-302e-bbc7-0563-337186fc2919@arm.com>
-        <20180820102532.96a90fe59d9ea3785df76a4d@arm.com>
-        <cba4017f-8a81-e47b-1e99-d510ef9b2a67@arm.com>
-Organization: Arm
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 21 Aug 2018 14:08:30 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:47788 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726730AbeHUSIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 14:08:30 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41vtnc5shPz9tvSc;
+        Tue, 21 Aug 2018 16:47:48 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id Hd9LSB2UVtwm; Tue, 21 Aug 2018 16:47:48 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41vtnc4bDwz9tvSH;
+        Tue, 21 Aug 2018 16:47:48 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 96AEC8B819;
+        Tue, 21 Aug 2018 16:48:00 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id ePG_pZNNj4Ex; Tue, 21 Aug 2018 16:48:00 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id CFBE58B7F4;
+        Tue, 21 Aug 2018 16:47:59 +0200 (CEST)
+Subject: Re: [PATCH] powerpc/nohash: fix pte_access_permitted()
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        aneesh.kumar@linux.vnet.ibm.com
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <8097a1d32403ea47d076803e9070869badfe24bc.1534856426.git.christophe.leroy@c-s.fr>
+ <87eferg5ki.fsf@linux.ibm.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <6f17bbe5-0ce5-a40e-b3c2-d4b5c9fbfd93@c-s.fr>
+Date:   Tue, 21 Aug 2018 16:47:58 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <87eferg5ki.fsf@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 Aug 2018 09:39:22 +0100
-Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
 
-> On 08/20/2018 04:25 PM, Kim Phillips wrote:
-> > On Mon, 20 Aug 2018 15:36:47 +0100
-> > Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
-> > 
-> >> On 08/20/2018 03:22 PM, Kim Phillips wrote:
-> >>> On Mon, 20 Aug 2018 11:03:03 +0100
-> >>> Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
-> >>>
-> >>>> On 08/16/2018 08:28 PM, Mathieu Poirier wrote:
-> >>>>> On Wed, 15 Aug 2018 at 09:28, Kim Phillips <kim.phillips@arm.com> wrote:
-> >>>>>>
-> >>>>>> On Wed, 15 Aug 2018 10:39:13 +0100
-> >>>>>> Will Deacon <will.deacon@arm.com> wrote:
-> >>>>>>
-> >>>>>>> On Tue, Aug 14, 2018 at 01:42:27PM -0600, Mathieu Poirier wrote:
-> >>>>>>>> On Tue, 14 Aug 2018 at 11:09, Kim Phillips <kim.phillips@arm.com> wrote:
-> >>>>>>>>> The other thing that's going on here is that I'm becoming numb to the
-> >>>>>>>>> loathsome "failed to mmap with 12 (Cannot allocate memory)" being
-> >>>>>>>>> returned no matter what the error is/was. E.g., an error that would
-> >>>>>>>>> indicate a sense of non-implementation would be much better
-> >>>>>>>>> appreciated than presumably what the above is doing, i.e., returning
-> >>>>>>>>> -ENOMEM.  That, backed up with specific details in the form of human
-> >>>>>>>>> readable text in dmesg would be *most* welcome.
-> >>>>>>>>
-> >>>>>>>> As part of the refactoring of the code to support CPU-wide scenarios I
-> >>>>>>>> intend to emit better diagnostic messages from the driver.  Modifying
-> >>>>>>>> rb_alloc_aux() to propagate the error message generated by the
-> >>>>>>>> architecture specific PMUs doesn't look hard either and I _may_ get to
-> >>>>>>>> it as part of this work.
-> >>>>>>>
-> >>>>>>> For the record, I will continue to oppose PMU drivers that dump diagnostics
-> >>>>>>> about user-controlled input into dmesg, but the coresight drivers are yours
-> >>>>>>> so it's up to you and I won't get in the way!
-> >>>>>>
-> >>>>>> That sounds technically self-contradicting to me.  Why shouldn't
-> >>>>>> coresight share the same policies as those used for PMU drivers?  Or
-> >>>>>> why not allow the individual vendor PMU driver authors control the
-> >>>>>> level of user-friendliness of their own drivers?
-> >>>>>>
-> >>>>>> That being said, Matheiu, would you accept patches that make coresight
-> >>>>>> more verbose in dmesg?
-> >>>>>
-> >>>>> It depends on the issue you're hoping to address.  I'd rather see the
-> >>>>> root cause of the problem fixed than adding temporary code.  Suzuki
-> >>>>> added the ETR perf API and I'm currently working on CPU-wide
-> >>>>> scenarios.  From there and with regards to what can happen in
-> >>>>> setup_aux(), we should have things covered.
-> >>>>
-> >>>> I think the main issue is the lack of error code propagation from
-> >>>> setup_aux() back to the perf_aux_output_handle_begin(), which always
-> >>>> return -ENOMEM. If we fix that, we could get better idea of whats
-> >>>> wrong.
-> >>>
-> >>> Why get a better idea when we can get the exact details?
-> >>
-> >> The different values for error numbers are there for a reason...
-> > 
-> > But the same error number, e.g., EINVAL, can be returned for different
-> > reasons.
+
+Le 21/08/2018 à 16:25, Aneesh Kumar K.V a écrit :
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
 > 
-> True, but then you can narrow it down by tuning it.
-
-I'm trying to avoid having our users have to do that every time
-something isn't quite right :)
-
-> We do that for
-> several syscalls without printing any useful messages to debug. Why
-> should the perf syscalls be any different ?
-
-Not sure what syscalls you kernel hackers are talking about, nor
-whether the work was being done on behalf of an end-user, but things
-like mount have the same problem as perf, and perf is notorious for it.
-
-> >>>> If someone is planning to add verbose messages, they may do so by adding
-> >>>> dev_dbg() / pr_debug(), which can be turned on as and when needed.
-> >>>
-> >>> I disagree:  that just adds another usage and kernel configuration
-> >>> obstacle.  Why not use pr_err straight up?
-> >>
-> >> I personally don't agree to usage of pr_err() in paths which are easily
-> >> triggered from user input.
-> > 
-> > Why not?  pr_* are ratelimited.
-> > 
-> >> Also, we are moving all the "debugging"
-> >> messages to the dynamic debug, to prevent lockdep splats.
-> > 
-> > Are you referring to this?:
-> > 
-> > https://lkml.org/lkml/2018/5/1/7
+>> Commit 5769beaf180a8 ("powerpc/mm: Add proper pte access check helper
+>> for other platforms") replaced generic pte_access_permitted() by an
+>> arch specific one.
+>>
+>> The generic one is defined as
+>> (pte_present(pte) && (!(write) || pte_write(pte)))
+>>
+>> The arch specific one is open coded checking that _PAGE_USER and
+>> _PAGE_WRITE (_PAGE_RW) flags are set, but lacking to check that
+>> _PAGE_RO and _PAGE_PRIVILEGED are unset, leading to a useless test
+>> on targets like the 8xx which defines _PAGE_RW and _PAGE_USER as 0.
+>>
+>> Commit 5fa5b16be5b31 ("powerpc/mm/hugetlb: Use pte_access_permitted
+>> for hugetlb access check") replaced some tests performed with
+>> pte helpers by a call to pte_access_permitted(), leading to the same
+>> issue.
+>>
+>> This patch rewrites powerpc/nohash pte_access_permitted()
+>> using pte helpers.
+>>
 > 
-> Definitely not that thread.
+> Thanks for fixing this. I should have used the helper instead of
+> opencoding it on nohash platforms. This is another reason why I was also
+> suggesting we should avoid consolidating pte accessors across platforms
+> and user accessors instead of opencoding.
 
-bah, sorry, apparently the trailing 3 was removed somehow.  Here you go:
+I fully agree. I have opened a topic for that at 
+https://github.com/linuxppc/linux/issues/177
 
-https://lkml.org/lkml/2018/5/1/73
+Christophe
 
-> > Re-reading the thread, AFAICT, it was never proven that the splats
-> > occurred due to the dev_infos, and there's no dev_info in this
-> > stacktrace:
-> > 
-> > https://lkml.org/lkml/2018/5/10/269
 > 
-> That doesn't have the stack trace. Mathieu was also able to reproduce
-> the lockdep splat involving console lock lately. Unfortunately none of
-> these were captured here.
-
-OK, I'd rather we see and properly debug and fix the so-called lockdep
-splats rather than hiding them by lowering their loglevel.
-
-> > But even if it were, wouldn't the splats also occur with dev_dbg?
+> https://lore.kernel.org/lkml/87lgcusc6z.fsf@linux.vnet.ibm.com/T/#u
 > 
-> Not normally. dev_dbg() has to be turned on manually and the user knows
-> what he is doing. That allows the normal user to use the system without
-> any trouble.
-
-I thought it was obvious that I was talking about when dev_dbg _is_
-enabled.  There, the problem still occurs, so you can't say 'we are
-moving all the "debugging" messages to the dynamic debug, to prevent
-lockdep splats.'
-
-Please let's see the lockdep splat and the proper fix for it instead of
-paper-taping over it via dev_dbg, thanks.
-
-Kim
+> Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> 
+>> Fixes: 5769beaf180a8 ("powerpc/mm: Add proper pte access check helper for other platforms")
+>> Fixes: 5fa5b16be5b31 ("powerpc/mm/hugetlb: Use pte_access_permitted for hugetlb access check")
+>> Cc: stable@vger.kernel.org # v4.15+
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>   arch/powerpc/include/asm/nohash/pgtable.h | 9 +++------
+>>   1 file changed, 3 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
+>> index 2160be2e4339..b321c82b3624 100644
+>> --- a/arch/powerpc/include/asm/nohash/pgtable.h
+>> +++ b/arch/powerpc/include/asm/nohash/pgtable.h
+>> @@ -51,17 +51,14 @@ static inline int pte_present(pte_t pte)
+>>   #define pte_access_permitted pte_access_permitted
+>>   static inline bool pte_access_permitted(pte_t pte, bool write)
+>>   {
+>> -	unsigned long pteval = pte_val(pte);
+>>   	/*
+>>   	 * A read-only access is controlled by _PAGE_USER bit.
+>>   	 * We have _PAGE_READ set for WRITE and EXECUTE
+>>   	 */
+>> -	unsigned long need_pte_bits = _PAGE_PRESENT | _PAGE_USER;
+>> -
+>> -	if (write)
+>> -		need_pte_bits |= _PAGE_WRITE;
+>> +	if (!pte_present(pte) || !pte_user(pte) || !pte_read(pte))
+>> +		return false;
+>>   
+>> -	if ((pteval & need_pte_bits) != need_pte_bits)
+>> +	if (write && !pte_write(pte))
+>>   		return false;
+>>   
+>>   	return true;
+>> -- 
+>> 2.13.3
