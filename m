@@ -2,244 +2,113 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20451C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F10EC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:57:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEE7121798
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:54:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 486D2217C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:57:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYl5waWo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEE7121798
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="EgoLdWdh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 486D2217C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbeHVAQK (ORCPT
+        id S1727743AbeHVATk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 20:16:10 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42104 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbeHVAQJ (ORCPT
+        Tue, 21 Aug 2018 20:19:40 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:38457 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726626AbeHVATk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 20:16:09 -0400
-Received: by mail-wr1-f68.google.com with SMTP id v17-v6so2344513wrr.9;
-        Tue, 21 Aug 2018 13:54:25 -0700 (PDT)
+        Tue, 21 Aug 2018 20:19:40 -0400
+Received: by mail-pl0-f65.google.com with SMTP id u11-v6so9335845plq.5
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 13:57:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=87+8hEC62BjBKLQGq36c+tyrpdqESUR0UNMq2BWUUh0=;
-        b=RYl5waWoZSwBZRNMC6w0QWTGTM2PRv8IDQZFS9IqD4A05bVtWtVrnw1eMWdZAYIggM
-         tbwed4MXRMVWG1ZizkSyeOCrQ5JJui1DNfais95A5Op5ttyStHusASdq2Mu/WCq+wY/e
-         Eg1imQ+nbdaKgDpnBKs2Od3b/C8i0KFRa04w5QrpA/38ejxNUEN8S3bd5Wi+e6W7S4tG
-         lfMBpl1ZE8x9PwEsosF8jcO5RkxYNlzylIFK8g8tisG0rerfUdskrQ9atityWRXu4NF1
-         XScZetJEFrSiAlNJsdIro25MiO5l+6NHN5Orxujmv5FpfKGXwxIEewk2W/duU1SR2IlK
-         OI9A==
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hAHWk6/qd9S7OusfCLBNHTNgXGAVK8jrW+6sAJHEyz4=;
+        b=EgoLdWdhnTEiZ5T19gKs+KZTRsZqrCmf484bnngpIGuTj7vGiNZtoHQQB0Zb50fbHE
+         mwXWeNwOye5PDj3StXWk5/FWTJDigPaq+9Uu9aWK5jsLeDw30Ld2LSTmVG8kpCe/8w//
+         i9OlttY392K+qVHTYSfTI3o2G9gzSS/X2zdI7PKF8D41rFUS9FWeCPIwfSYomy7X+n1t
+         sgBH9lrb5tch9iYuR+v/5/0iAdE9sCYe4RVe5pg10mO3hwplNSWsd3j7CPF0MFistjRG
+         wC7uNYA7VXgzOhaxD7Iny7zYE0eJRyWThSBpf+4Yf4BX8HINwLFFxnWDuVsS61ohU152
+         kbEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=87+8hEC62BjBKLQGq36c+tyrpdqESUR0UNMq2BWUUh0=;
-        b=kUX1/n4hYkwJyIyltr5tuNbwxtoAoSyYGyham+iZ/u4Aw/OyB81xGUVgM8kDs1Q79e
-         v/wb+1uHoqkoWMwVUbaSHr6ivMzeXPdrFEGmb9s5KmTmtxJUbfxdY1k1B4TICs3JcUIu
-         xX5P8Ok8vXumOkWLXbRBO4QORsn3LI7cH1S9h9YYy5RW+ghOoISXLIPHUWZmTkO9v1ZG
-         //EuiXj3OWmD4SZ2M9n60PM86UQaOq/4Mz2QdNBwu+gEICiffqZzV9NjJWg8+fT4s7wb
-         Q3WbNjIrMGesIp8WedrYHcY7p3d75o0AMMSQTIvRrcRh7x5brMgw6mmSilASyOi2SOM5
-         lFNg==
-X-Gm-Message-State: APzg51DUMsCOzSEAMR5Iitn16X3Jj/o0iWAF81+vRi31iZNh2cSAnjqC
-        ic9FRG51kN81Kk6OHcJhT8k=
-X-Google-Smtp-Source: ANB0Vdaj/11nECnNdmuWW7424quPNA6FxS9q8Ffy9eoFSRoeaLBjjt1A9Px4ruCCMZ3yoi3iCbcPsw==
-X-Received: by 2002:adf:ee86:: with SMTP id b6-v6mr13660691wro.242.1534884864746;
-        Tue, 21 Aug 2018 13:54:24 -0700 (PDT)
-Received: from ?IPv6:2003:ea:8bd4:d600:543:164:fcfc:451a? (p200300EA8BD4D60005430164FCFC451A.dip0.t-ipconnect.de. [2003:ea:8bd4:d600:543:164:fcfc:451a])
-        by smtp.googlemail.com with ESMTPSA id r140-v6sm93767wmd.7.2018.08.21.13.54.23
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=hAHWk6/qd9S7OusfCLBNHTNgXGAVK8jrW+6sAJHEyz4=;
+        b=Heyd0VF1q92yLNG7umMNXZchNt0sQe7m/gLJ2x8iFSqguZs0bO7gXVHOm9cIevvthr
+         zlS1VxD8MBJNpNKD29Vs+otU+0vmFLHRhyfAiHxKdHb6gqXTSMAhTJH/s035N4Quu4OF
+         Z5/P4OnoOQEH+37tFGPDEQEVJ0SoeUYoiEXeuBWn2U8uGvZQRlDJ8IFz34r0cnKwLixX
+         w7+O6KocbzhU7waY+/yIzyXWjIIlXHcSCx7rBCU8SUL3AHuPII4q5uwt+9a9SAv0loU1
+         1SBMUmbf8QWxoA5uizsr585s2uVEetgJiaOk422fhcrm9SuyIc0R3D/L2m5IHQ5bZ/EJ
+         Y6Ug==
+X-Gm-Message-State: AOUpUlGXIpaJfhNBicwWdFY14Jl8L/N4vXN4lQd5XOPhlyJcBARZdy9m
+        ZQUnrQKEeN1M/Ze4QYMsKwDPOw==
+X-Google-Smtp-Source: AA+uWPzx25ZYgaPhLl854Hs0vpAFBbQilvilfEn10UwJd41KGGI4qaYmB7WGRYmV07PkV2cIUOXjIg==
+X-Received: by 2002:a17:902:47c2:: with SMTP id d2-v6mr50844580plh.139.1534885075500;
+        Tue, 21 Aug 2018 13:57:55 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id z22-v6sm21598625pgc.67.2018.08.21.13.57.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 Aug 2018 13:54:24 -0700 (PDT)
-Subject: Re: [PATCH] r8169: don't use MSI-X on RTL8106e
-To:     Marc Zyngier <marc.zyngier@arm.com>,
-        Bjorn Helgaas <helgaas@kernel.org>, jian-hong@endlessm.com
-Cc:     David Miller <davem@davemloft.net>, nic_swsd@realtek.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux@endlessm.com, linux-pci@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>
-References: <20180815062110.16155-1-jian-hong@endlessm.com>
- <20180816.122131.604270853620318143.davem@davemloft.net>
- <458efbf9-5971-653a-e7cd-8c56ba055648@gmail.com>
- <20180816.123958.750435252621963789.davem@davemloft.net>
- <ac30d4e6-6411-09e6-1205-96e3e8e29f6f@gmail.com>
- <20180820184438.GA154536@bhelgaas-glaptop.roam.corp.google.com>
- <02c08346-3901-9c39-a837-f04e283794d5@arm.com>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <74d977b1-10a9-9b6e-4e92-0462ac0d2b35@gmail.com>
-Date:   Tue, 21 Aug 2018 22:54:17 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <02c08346-3901-9c39-a837-f04e283794d5@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 21 Aug 2018 13:57:54 -0700 (PDT)
+Date:   Tue, 21 Aug 2018 13:57:54 -0700 (PDT)
+X-Google-Original-Date: Tue, 21 Aug 2018 13:56:53 PDT (-0700)
+Subject:     Re: [GIT PULL] RISC-V Updates for the 4.19 Merge Window
+In-Reply-To: <20180821194550.wrh3q2fkr6wmrovd@excalibur.cnev.de>
+CC:     linux@roeck-us.net, linux-riscv@lists.infradead.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     merker@debian.org
+Message-ID: <mhng-d4882478-2772-4ef9-b79e-9b447a32cb8c@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.08.2018 10:28, Marc Zyngier wrote:
-> On 20/08/18 19:44, Bjorn Helgaas wrote:
->> [+cc Marc, Thomas, Christoph, linux-pci)
->> (beginning of thread at [1])
+On Tue, 21 Aug 2018 12:45:50 PDT (-0700), merker@debian.org wrote:
+> On Tue, Aug 21, 2018 at 11:31:48AM -0700, Palmer Dabbelt wrote:
+>> On Sat, 18 Aug 2018 06:37:59 PDT (-0700), linux@roeck-us.net wrote:
+> [...]
+>> > Do you have vmlinux embedded in bbl ?
+>> >
+>> > With separate bbl and vmlinux, and the following qemu command line
+>> > (with qemu 3.0)
+>> >
+>> > qemu-system-riscv64 -M virt -m 512M -no-reboot \
+>> > 	-bios bbl -kernel vmlinux \
+>> > 	-netdev user,id=net0 -device virtio-net-device,netdev=net0 \
+>> > 	-device virtio-blk-device,drive=d0 \
+>> > 	-drive file=rootfs.ext2,if=none,id=d0,format=raw \
+>> > 	-append 'root=/dev/vda rw console=ttyS0,115200' \
+>> > 	-nographic -monitor none
+>> >
+>> > all I get is
+>> >
+>> > rom: requested regions overlap (rom mrom.reset. free=0x000000000001cbe8, addr=0x0000000000001000)
+>> >
+>> > However, the she system boots fine with the same qemu command line if I use qemu
+>> > built from https://github.com/riscv/riscv-qemu.git, branch qemu-for-upstream.
 >>
->> On Thu, Aug 16, 2018 at 09:50:48PM +0200, Heiner Kallweit wrote:
->>> On 16.08.2018 21:39, David Miller wrote:
->>>> From: Heiner Kallweit <hkallweit1@gmail.com>
->>>> Date: Thu, 16 Aug 2018 21:37:31 +0200
->>>>
->>>>> On 16.08.2018 21:21, David Miller wrote:
->>>>>> From: <jian-hong@endlessm.com>
->>>>>> Date: Wed, 15 Aug 2018 14:21:10 +0800
->>>>>>
->>>>>>> Found the ethernet network on ASUS X441UAR doesn't come back on resume
->>>>>>> from suspend when using MSI-X.  The chip is RTL8106e - version 39.
->>>>>>
->>>>>> Heiner, please take a look at this.
->>>>>>
->>>>>> You recently disabled MSI-X on RTL8168g for similar reasons.
->>>>>>
->>>>>> Now that we've seen two chips like this, maybe there is some other
->>>>>> problem afoot.
->>>>>>
->>>>> Thanks for the hint. I saw it already and just contacted Realtek
->>>>> whether they are aware of any MSI-X issues with particular chip
->>>>> versions. With the chip versions I have access to MSI-X works fine.
->>>>>
->>>>> There's also the theoretical option that the issues are caused by
->>>>> broken BIOS's. But so far only chip versions have been reported
->>>>> which are very similar, at least with regard to version number
->>>>> (2x VER_40, 1x VER_39). So they may share some buggy component.
->>>>>
->>>>> Let's see whether Realtek can provide some hint.
->>>>> If more chip versions are reported having problems with MSI-X,
->>>>> then we could switch to a whitelist or disable MSI-X in general.
->>>>
->>>> It could be that we need to reprogram some register(s) on resume,
->>>> which normally might not be needed, and that is what is causing the
->>>> problem with some chips.
->>>>
->>> Indeed. That's what I'm checking with Realtek.
->>> In the register list in the r8169 driver there's one entry which
->>> seems to indicate that there are MSI-X specific settings.
->>> However this register isn't used, and the r8168 vendor driver
->>> uses only MSI. And there are no public datasheets.
->>
->> Do we have any information about these chip versions in other systems?
->> Or other devices using MSI-X in the same ASUS system?  It seems
->> possible that there's some PCI core or suspend/resume issue with MSI-X
->> and this patch just avoids it without fixing the root cause.
->>
->> It might be useful to have a kernel.org bugzilla with the complete
->> dmesg, "sudo lspci -vv" output, and /proc/interrupts contents archived
->> for future reference.
-> 
-> The one system I have with a Realtek chip seems happy enough with MSI-X,
-> but it never gets suspended.
+>> Yes, I have a vmlinux built into my BBL.  I didn't actually look closely at
+>> the command line I was copying and see that vmlinux in there, my guess would
+>> be that it's getting ignored.  I don't remember if upstream BBL actually
+>> works with the split bbl/vmlinux setup, I've kind of stopped paying
+>> attention to BBL as I'm just waiting for someone to tell me instructions as
+>> to how to use a real bootloader... :)
+>
+> JFTR, upstream bbl supports the split bbl/vmlinux setup, it's just
+> upstream qemu that lacks the support for now (qemu-riscv has it).
 
-Other owners of affected chip versiosn made the same experience, MSI-X
-works fine until resume from suspend.
-
-> There is comment in the patch that I don't quite get:
-> 
->> It is the IRQ 127 - PCI-MSI used by enp2s0.  However, lspci lists MSI is
->> disabled and MSI-X is enabled which conflicts to the interrupt table.
-> 
-> What do you mean by "conflicts"? With what? Another question is whether
-> you've loaded any firmware (some versions of the Realtek HW seem to require
-> it).
-> 
-These "conflicts" were a misunderstanding which was clarified with the
-reporter. "PCI-MSI" as irq chip name in /proc/interrupts output was
-interpreted in a way that a MSI irq is used, not a MSI-X irq.
-
-The firmware is for the PHY only, that's at least my experience on
-the chip versions I have for testing.
-
-> For the posterity, some data from my own system, which I don't know if it
-> has any relevance to the problem at hand.
-> 
-> Thanks,
-> 
-> 	M.
-> 
-> [    2.624963] r8169 0000:02:00.0 eth0: RTL8168g/8111g, 5a:fe:ad:ce:11:00, XID 4c000800, IRQ 26
-> [    2.633398] r8169 0000:02:00.0 eth0: jumbo features [frames: 9200 bytes, tx checksumming: ko]
-> 
->  26:         50     997005          0          0       MSI 1048576 Edge      enp2s0
-> 
-> 02:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller (rev 0c)
-> 	Subsystem: Realtek Semiconductor Co., Ltd. RTL8111/8168 PCI Express Gigabit Ethernet controller
-> 	Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx+
-> 	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
-> 	Latency: 0, Cache Line Size: 64 bytes
-> 	Interrupt: pin A routed to IRQ 25
-> 	Region 0: I/O ports at 1000 [size=256]
-> 	Region 2: Memory at 100004000 (64-bit, prefetchable) [size=4K]
-> 	Region 4: Memory at 100000000 (64-bit, prefetchable) [size=16K]
-> 	Capabilities: [40] Power Management version 3
-> 		Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=375mA PME(D0+,D1+,D2+,D3hot+,D3cold+)
-> 		Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
-> 	Capabilities: [50] MSI: Enable- Count=1/1 Maskable- 64bit+
-> 		Address: 0000000000000000  Data: 0000
-> 	Capabilities: [70] Express (v2) Endpoint, MSI 01
-> 		DevCap:	MaxPayload 128 bytes, PhantFunc 0, Latency L0s <512ns, L1 <64us
-> 			ExtTag- AttnBtn- AttnInd- PwrInd- RBE+ FLReset- SlotPowerLimit 0.000W
-> 		DevCtl:	Report errors: Correctable- Non-Fatal- Fatal- Unsupported-
-> 			RlxdOrd+ ExtTag- PhantFunc- AuxPwr- NoSnoop-
-> 			MaxPayload 128 bytes, MaxReadReq 4096 bytes
-> 		DevSta:	CorrErr+ UncorrErr- FatalErr- UnsuppReq+ AuxPwr+ TransPend-
-> 		LnkCap:	Port #0, Speed 2.5GT/s, Width x1, ASPM L0s L1, Exit Latency L0s unlimited, L1 <64us
-> 			ClockPM+ Surprise- LLActRep- BwNot- ASPMOptComp+
-> 		LnkCtl:	ASPM Disabled; RCB 64 bytes Disabled- CommClk+
-> 			ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
-> 		LnkSta:	Speed 2.5GT/s, Width x1, TrErr- Train- SlotClk+ DLActive- BWMgmt- ABWMgmt-
-> 		DevCap2: Completion Timeout: Range ABCD, TimeoutDis+, LTR+, OBFF Via message/WAKE#
-> 		DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis-, LTR-, OBFF Disabled
-> 		LnkCtl2: Target Link Speed: 2.5GT/s, EnterCompliance- SpeedDis-
-> 			 Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
-> 			 Compliance De-emphasis: -6dB
-> 		LnkSta2: Current De-emphasis Level: -6dB, EqualizationComplete-, EqualizationPhase1-
-> 			 EqualizationPhase2-, EqualizationPhase3-, LinkEqualizationRequest-
-> 	Capabilities: [b0] MSI-X: Enable+ Count=4 Masked-
-> 		Vector table: BAR=4 offset=00000000
-> 		PBA: BAR=4 offset=00000800
-> 	Capabilities: [d0] Vital Product Data
-> pcilib: sysfs_read_vpd: read failed: Input/output error
-> 		Not readable
-> 	Capabilities: [100 v1] Advanced Error Reporting
-> 		UESta:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
-> 		UEMsk:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
-> 		UESvrt:	DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+ ECRC- UnsupReq- ACSViol-
-> 		CESta:	RxErr+ BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr-
-> 		CEMsk:	RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr+
-> 		AERCap:	First Error Pointer: 00, GenCap+ CGenEn- ChkCap+ ChkEn-
-> 	Capabilities: [140 v1] Virtual Channel
-> 		Caps:	LPEVC=0 RefClk=100ns PATEntryBits=1
-> 		Arb:	Fixed- WRR32- WRR64- WRR128-
-> 		Ctrl:	ArbSelect=Fixed
-> 		Status:	InProgress-
-> 		VC0:	Caps:	PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
-> 			Arb:	Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
-> 			Ctrl:	Enable+ ID=0 ArbSelect=Fixed TC/VC=ff
-> 			Status:	NegoPending- InProgress-
-> 	Capabilities: [160 v1] Device Serial Number 00-00-00-00-00-00-00-00
-> 	Capabilities: [170 v1] Latency Tolerance Reporting
-> 		Max snoop latency: 0ns
-> 		Max no snoop latency: 0ns
-> 	Kernel driver in use: r8169
-> 
-> 
-
+Thanks!
