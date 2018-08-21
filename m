@@ -2,166 +2,190 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6908C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 21:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8C6C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 21:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9707D217DF
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 21:24:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7888A20661
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 21:24:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Nrk1pnCG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9707D217DF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
+	dkim=pass (1024-bit key) header.d=ucsc.edu header.i=@ucsc.edu header.b="lIs6V7te"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7888A20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=ucsc.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbeHVAqU (ORCPT
+        id S1727626AbeHVAqZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 20:46:20 -0400
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:37220 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbeHVAqU (ORCPT
+        Tue, 21 Aug 2018 20:46:25 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36914 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbeHVAqY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 20:46:20 -0400
+        Tue, 21 Aug 2018 20:46:24 -0400
+Received: by mail-wr1-f65.google.com with SMTP id u12-v6so17007944wrr.4
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 14:24:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1534886671; x=1566422671;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=ejVBKa0T+g1YWl45u51OBZNIMC1Eg8VLBZCLEtTqQHw=;
-  b=Nrk1pnCG8cBs/IzmQkHzeSx5pS/GL5VS9e8zXv5afZFB/1h4MmGSs39Z
-   8CvxYsNqfgR4AOoVAMWdH1ReBBiea4N4640SnMHlIv50OvbPJezm+TRF+
-   mKlTt3rZK2u65Lfubj2Kh51f0CihnR30UPTnDFMxZChPUxS5KHL4BozzB
-   I=;
-X-IronPort-AV: E=Sophos;i="5.53,271,1531785600"; 
-   d="scan'208";a="755281504"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1a-67b371d8.us-east-1.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 21 Aug 2018 21:16:28 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1a-67b371d8.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w7LLFet8092301
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 21 Aug 2018 21:15:41 GMT
-Received: from EX13D05UWC003.ant.amazon.com (10.43.162.226) by
- EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 21 Aug 2018 21:15:41 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (10.43.162.135) by
- EX13D05UWC003.ant.amazon.com (10.43.162.226) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 21 Aug 2018 21:15:40 +0000
-Received: from localhost (10.55.160.46) by mail-relay.amazon.com
- (10.43.162.232) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
- Transport; Tue, 21 Aug 2018 21:15:40 +0000
-From:   Eduardo Valentin <eduval@amazon.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     Eduardo Valentin <eduval@amazon.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "Jia Zhang" <qianyue.zj@alibaba-inc.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/1] perf/x86/intel: make error messages less confusing
-Date:   Tue, 21 Aug 2018 14:15:28 -0700
-Message-ID: <20180821211528.8575-1-eduval@amazon.com>
-X-Mailer: git-send-email 2.18.0
+        d=ucsc.edu; s=ucsc-google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Z410QeI9xStMbX3pyICN17asT3/ywjL4aa6wXQOzhm4=;
+        b=lIs6V7tel5YmPobUC5jT0ksCZ02hI+eKsiEgGJRRfAdJCGsjNeRmgukAU55A6fmHfP
+         +a/GjPywHFuZg0fKCruYGfCFp05BLJam2G3lGqWO2+7YN6Vtx2VD5/5EVbOpNJqEDc4g
+         ucm3fQ5YX4hmAS0mFy7Q8qXhL3xo+F9ifV5cQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Z410QeI9xStMbX3pyICN17asT3/ywjL4aa6wXQOzhm4=;
+        b=YBvhyDOh4XMwc2IKgG9Yn+VWce59jKQSplz1LiIH+drCyXCDQSxYMk83M0E19LXPCf
+         5UzbtDOxDgrGaAXbdE9soAYPSxP4ODdSWVTpjbntCEwgrz0NNHnXZAZMnBBiExNY1urp
+         YyIRnONQqe4kCq5S55BD8LOV+M81UnfDKFna+ETJLnGHoQg/sTU+mwOpYf2RsqoqFZqy
+         SKuaAw97XGu1RPL3xPo/u0f9BWXLQE9gRPTkFDwHzSy0cys+VZdPRzS0skpqw8+zeelw
+         /KBeXhm61LSm2BxnEThUQxSMJMd3SfzgEaymo2Q2ujx5jmZ1ShZ+XyRCu4E5YdubfZBU
+         hIRQ==
+X-Gm-Message-State: APzg51AIwuI88lMg9MFil1O5GOdf0cQuoLMcZDw8Cpe7FVbZY3eC049R
+        ckUbSAT+HW8u0jNkBnjAICEJ0SyYxGKeacCas58qFA==
+X-Google-Smtp-Source: ANB0VdZTte+oIErsoECwLaHH6FwkLyz1NRbIOsLsSApsseGWZik0+j7Ds7gwXaMuNw/9wBH3nLCGZDVDiNaNyUybBYg=
+X-Received: by 2002:adf:9281:: with SMTP id 1-v6mr4839135wrn.69.1534886672897;
+ Tue, 21 Aug 2018 14:24:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20180821114441.23147-1-mb@lightnvm.io>
+In-Reply-To: <20180821114441.23147-1-mb@lightnvm.io>
+From:   Heiner Litz <hlitz@ucsc.edu>
+Date:   Tue, 21 Aug 2018 23:24:01 +0200
+Message-ID: <CAJbgVnWYr6HMjO_gnQpyhrZ0cT5G9e-TPjqtRpaao0dW7rvEXg@mail.gmail.com>
+Subject: Re: [PATCH v2] lightnvm: pblk: refactor put line fn on read completion
+To:     =?UTF-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
+Cc:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
+        Javier Gonzalez <javier@cnexlabs.com>,
+        hans.holmberg@cnexlabs.com, youngtack.jin@circuitblvd.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On a system with X86_FEATURE_ARCH_PERFMON disabled
-and with a model not known by family PMU drivers,
-user gets a kernel message log like the following:
-[ 0.100114] Performance Events: unsupported p6 CPU model 85 no PMU driver, software events only.
+Thanks, Matias!
 
-The "unsupported .. CPU" part may be confusing for some
-users. Rewording the messages on the failure path to:
-[ 0.667154] Performance Events: unknown p6 PMU on CPU model 85: !X86_FEATURE_ARCH_PERFMON: no PMU driver, software events only.
+LGTM
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Eduardo Valentin <eduval@amazon.com>
-Cc: Jia Zhang <qianyue.zj@alibaba-inc.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org
-Reported-by: Matt Wilson <msw@amazon.com>
-Signed-off-by: Eduardo Valentin <eduval@amazon.com>
----
- arch/x86/events/intel/core.c | 15 +++++++++++----
- arch/x86/events/intel/p4.c   |  2 +-
- arch/x86/events/intel/p6.c   |  3 ++-
- 3 files changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 86f0c15dcc2d..b57a16997ee6 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3884,15 +3884,22 @@ __init int intel_pmu_init(void)
- 	char *name;
- 
- 	if (!cpu_has(&boot_cpu_data, X86_FEATURE_ARCH_PERFMON)) {
-+		int ret = -ENODEV;
-+
- 		switch (boot_cpu_data.x86) {
- 		case 0x6:
--			return p6_pmu_init();
-+			ret = p6_pmu_init();
-+			break;
- 		case 0xb:
--			return knc_pmu_init();
-+			ret = knc_pmu_init();
-+			break;
- 		case 0xf:
--			return p4_pmu_init();
-+			ret = p4_pmu_init();
-+			break;
- 		}
--		return -ENODEV;
-+		if (ret)
-+			pr_cont(" !X86_FEATURE_ARCH_PERFMON: ");
-+		return ret;
- 	}
- 
- 	/*
-diff --git a/arch/x86/events/intel/p4.c b/arch/x86/events/intel/p4.c
-index d32c0eed38ca..963d2b0600f6 100644
---- a/arch/x86/events/intel/p4.c
-+++ b/arch/x86/events/intel/p4.c
-@@ -1346,7 +1346,7 @@ __init int p4_pmu_init(void)
- 
- 	rdmsr(MSR_IA32_MISC_ENABLE, low, high);
- 	if (!(low & (1 << 7))) {
--		pr_cont("unsupported Netburst CPU model %d ",
-+		pr_cont("unknown Netburst PMU on CPU model %d: ",
- 			boot_cpu_data.x86_model);
- 		return -ENODEV;
- 	}
-diff --git a/arch/x86/events/intel/p6.c b/arch/x86/events/intel/p6.c
-index 408879b0c0d4..221e374299b2 100644
---- a/arch/x86/events/intel/p6.c
-+++ b/arch/x86/events/intel/p6.c
-@@ -269,7 +269,8 @@ __init int p6_pmu_init(void)
- 		break;
- 
- 	default:
--		pr_cont("unsupported p6 CPU model %d ", boot_cpu_data.x86_model);
-+		pr_cont("unknown p6 PMU on CPU model %d: ",
-+			boot_cpu_data.x86_model);
- 		return -ENODEV;
- 	}
- 
--- 
-2.18.0
-
+On Tue, Aug 21, 2018 at 1:44 PM Matias Bj=C3=B8rling <mb@lightnvm.io> wrote=
+:
+>
+> The read completion path uses the put_line variable to decide whether
+> the reference on a line should be released. The function name used for
+> that is pblk_read_put_rqd_kref, which could lead one to believe that it
+> is the rqd that is releasing the reference, while it is the line
+> reference that is put.
+>
+> Rename and also split the function in two to account for either rqd or
+> single ppa callers and move it to core, such that it later can be used
+> in the write path as well.
+>
+> Signed-off-by: Matias Bj=C3=B8rling <mb@lightnvm.io>
+> Reviewed-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
+> Reviewed-by: Heiner Litz <hlitz@ucsc.edu>
+>
+> Changes since v1:
+>
+>   Moved into core for Heiner to later integrate with his RAIL
+>   patches.
+> ---
+>  drivers/lightnvm/pblk-core.c | 19 +++++++++++++++++++
+>  drivers/lightnvm/pblk-read.c | 18 +-----------------
+>  drivers/lightnvm/pblk.h      |  2 ++
+>  3 files changed, 22 insertions(+), 17 deletions(-)
+>
+> diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+> index e0b513d07e14..5f99cf396072 100644
+> --- a/drivers/lightnvm/pblk-core.c
+> +++ b/drivers/lightnvm/pblk-core.c
+> @@ -1426,6 +1426,25 @@ struct pblk_line *pblk_line_get_first_data(struct =
+pblk *pblk)
+>         return line;
+>  }
+>
+> +void pblk_ppa_to_line_put(struct pblk *pblk, struct ppa_addr ppa)
+> +{
+> +       struct pblk_line *line;
+> +
+> +       line =3D &pblk->lines[pblk_ppa_to_line(ppa)];
+> +       kref_put(&line->ref, pblk_line_put_wq);
+> +}
+> +
+> +void pblk_rq_to_line_put(struct pblk *pblk, struct nvm_rq *rqd)
+> +{
+> +       struct ppa_addr *ppa_list;
+> +       int i;
+> +
+> +       ppa_list =3D (rqd->nr_ppas > 1) ? rqd->ppa_list : &rqd->ppa_addr;
+> +
+> +       for (i =3D 0; i < rqd->nr_ppas; i++)
+> +               pblk_ppa_to_line_put(pblk, ppa_list[i]);
+> +}
+> +
+>  static void pblk_stop_writes(struct pblk *pblk, struct pblk_line *line)
+>  {
+>         lockdep_assert_held(&pblk->l_mg.free_lock);
+> diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
+> index 1ad501721d0f..dc8233f3fd6c 100644
+> --- a/drivers/lightnvm/pblk-read.c
+> +++ b/drivers/lightnvm/pblk-read.c
+> @@ -165,22 +165,6 @@ static void pblk_read_check_rand(struct pblk *pblk, =
+struct nvm_rq *rqd,
+>         WARN_ONCE(j !=3D rqd->nr_ppas, "pblk: corrupted random request\n"=
+);
+>  }
+>
+> -static void pblk_read_put_rqd_kref(struct pblk *pblk, struct nvm_rq *rqd=
+)
+> -{
+> -       struct ppa_addr *ppa_list;
+> -       int i;
+> -
+> -       ppa_list =3D (rqd->nr_ppas > 1) ? rqd->ppa_list : &rqd->ppa_addr;
+> -
+> -       for (i =3D 0; i < rqd->nr_ppas; i++) {
+> -               struct ppa_addr ppa =3D ppa_list[i];
+> -               struct pblk_line *line;
+> -
+> -               line =3D &pblk->lines[pblk_ppa_to_line(ppa)];
+> -               kref_put(&line->ref, pblk_line_put_wq);
+> -       }
+> -}
+> -
+>  static void pblk_end_user_read(struct bio *bio)
+>  {
+>  #ifdef CONFIG_NVM_PBLK_DEBUG
+> @@ -208,7 +192,7 @@ static void __pblk_end_io_read(struct pblk *pblk, str=
+uct nvm_rq *rqd,
+>                 bio_put(int_bio);
+>
+>         if (put_line)
+> -               pblk_read_put_rqd_kref(pblk, rqd);
+> +               pblk_rq_to_line_put(pblk, rqd);
+>
+>  #ifdef CONFIG_NVM_PBLK_DEBUG
+>         atomic_long_add(rqd->nr_ppas, &pblk->sync_reads);
+> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+> index 64ae0c7ed3bb..be67bbfa3d0a 100644
+> --- a/drivers/lightnvm/pblk.h
+> +++ b/drivers/lightnvm/pblk.h
+> @@ -787,6 +787,8 @@ struct bio *pblk_bio_map_addr(struct pblk *pblk, void=
+ *data,
+>  struct pblk_line *pblk_line_get(struct pblk *pblk);
+>  struct pblk_line *pblk_line_get_first_data(struct pblk *pblk);
+>  struct pblk_line *pblk_line_replace_data(struct pblk *pblk);
+> +void pblk_ppa_to_line_put(struct pblk *pblk, struct ppa_addr ppa);
+> +void pblk_rq_to_line_put(struct pblk *pblk, struct nvm_rq *rqd);
+>  int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line);
+>  void pblk_line_recov_close(struct pblk *pblk, struct pblk_line *line);
+>  struct pblk_line *pblk_line_get_data(struct pblk *pblk);
+> --
+> 2.11.0
+>
