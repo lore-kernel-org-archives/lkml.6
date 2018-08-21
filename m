@@ -2,103 +2,150 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86590C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A079C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45B3D21837
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:31:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Ty6mLLxY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45B3D21837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by mail.kernel.org (Postfix) with ESMTP id C8189214C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:37:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8189214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbeHUVxI (ORCPT
+        id S1727357AbeHUV6p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 17:53:08 -0400
-Received: from mail-pl0-f43.google.com ([209.85.160.43]:36081 "EHLO
-        mail-pl0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726993AbeHUVxG (ORCPT
+        Tue, 21 Aug 2018 17:58:45 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:54796 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726813AbeHUV6p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 17:53:06 -0400
-Received: by mail-pl0-f43.google.com with SMTP id e11-v6so9191001plb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 11:31:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qNKAEdzdN9Q+TXhj9ZUdjvsa3xtTUQbZd07ZfnXALZI=;
-        b=Ty6mLLxYa6l/crhHIV1OfSrzOQ5R51SDbjkzforX2gsyPiBOmAT1nM2IbHzn7nVPCE
-         aRbmzuRD8vp/v8bO20xVxvhvfA5GvdBSNA7nD/IymCwvhBU3kKKsGEz0qwPw3tIgJpsG
-         cQIEmwPmhGGjwLjfrf2tmJ0GGuGh5Q1wyPg3IW9ERX/C/S9C78c9OCZqa9t9+AKo4GqB
-         eOhfw4I/U80UseGRh8dPh51071AH+mfNMrQQI+FMMoR4NoE6WKc5uSsDx4XkbcBc0B7e
-         4NXCAT+IHMW43BWxe0J5NvkZS0/0kfX11fXcBnKZu8paWmdotVdI80SNdIgAglQvYeDh
-         8eaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=qNKAEdzdN9Q+TXhj9ZUdjvsa3xtTUQbZd07ZfnXALZI=;
-        b=cC5293jZK8rzM6CNCD4lUQDb4p7gtuNhPMIWzNYODTwQtKdFFL3iNJET6K7axXSXJN
-         mVS4j6qRxN3+baYz+KDWzaRMAXoN+ODkbtDqERezGAR5BxwieFEfBk6RbQQlqEtSaE7c
-         Q2DAtkaU1jHaLGIE9sN9wabtQP+G9A9Zk7Qx8CAxi9XqPfOi7kbKPamXMEyyQWRs/hFn
-         eYO0V+wvw51+GbN9aA+Y7rJ75J0srYQpa58Bwz3BhwicUl1ZnlGtR14U8klPY/zlHKwz
-         Tr4jnE5VV637jkO7xH+B6Vtvcu3uuHgb4AK+bDLdGEhrDF2bhBwNMVFgkH9AMCwgWkQ2
-         yTAA==
-X-Gm-Message-State: AOUpUlGOicu3cBBqmcwZvOpeHsj+BQUycD7oj1wcymnZdVkOCE3wfoZ/
-        7P0rEDHzLWQZTCHH4yEwf5uBgHp66JA=
-X-Google-Smtp-Source: AA+uWPz7PgjLT4+iK+sYR0adTjCL5O6sGhDvtWvlBpMrhlDTQZc5h3FB9gqTYbVWfy1aSHaP5oOFbA==
-X-Received: by 2002:a17:902:622:: with SMTP id 31-v6mr50944339plg.153.1534876310926;
-        Tue, 21 Aug 2018 11:31:50 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id n4-v6sm13249540pga.83.2018.08.21.11.31.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 Aug 2018 11:31:49 -0700 (PDT)
-Date:   Tue, 21 Aug 2018 11:31:49 -0700 (PDT)
-X-Google-Original-Date: Tue, 21 Aug 2018 11:31:13 PDT (-0700)
-Subject:     Re: [GIT PULL] RISC-V Updates for the 4.19 Merge Window
-In-Reply-To: <CA+55aFz8Zt8-3iq-Gop-hJ4FDmK9DVq_pyvuo5Bw=kQHy1VvOA@mail.gmail.com>
-CC:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <mhng-4e54e53d-d5c8-4187-8777-58d0b210d20e@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
+        Tue, 21 Aug 2018 17:58:45 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01429;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0T7-GkVw_1534876624;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T7-GkVw_1534876624)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 22 Aug 2018 02:37:07 +0800
+To:     gregkh@linuxfoundation.org, ak@linux.intel.com, tglx@linutronix.de,
+        dave.hansen@intel.com, dwmw@amazon.co.uk
+Cc:     stable@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, YangShi <yang.shi@linux.alibaba.com>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Subject: [BUG] madvise05 leads kernel panic on 4.9.122
+Message-ID: <b205fec4-a1ed-dd44-7ba4-7b78f7429689@linux.alibaba.com>
+Date:   Tue, 21 Aug 2018 11:37:03 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 18 Aug 2018 11:15:18 PDT (-0700), Linus Torvalds wrote:
-> On Fri, Aug 17, 2018 at 1:28 PM Palmer Dabbelt <palmer@sifive.com> wrote:
->>
->> I remember having sent this on Wednesday, but for some reason I don't see it in
->> your tree or my outbox so I might be crazy.
->
-> You might indeed have been having hallucinations. I don't see any
-> other pull request from you in my mailbox than this one.
->
-> Google does find a posting from you saying
->
->  "Below is the pull request I plan to submit on Wednesday morning"
->
-> on the RISC-V development google group list, so I think you just
-> remembered your _plan_, not your actual email ...
+Hi folks,
 
-That does sound like something I would do...  It's odd because I remember 
-specifically being excited that I finally got the arguments to "git send-pull" 
-correct, but I guess that excitement was pre-mature :)
 
-> Anyway, I can confirm that this new pull request is now in my queue
-> even if I don't see any earlier ones.
+I just ran some regression test on stable 4.9.122 with LTP. madvise05 
+triggers the below kernel panic:
 
-Thanks!
 
-I'm planning on submitting another PR tomorrow (which has been baking since 
-yesterday like it's supposed to), so fingers crossed I'm slightly less crazy 
-this week.
+[ 6785.089994] BUG: unable to handle kernel paging request at 
+ffffeaff44488020
+[ 6785.097952] IP: [] page_remove_rmap+0x27/0x580
+[ 6785.104810] PGD 0
+[ 6785.106859]
+[ 6785.108526] Oops: 0000 [#1] SMP
+[ 6785.112029] Modules linked in: mptctl(E) mptbase(E) tun(E) fuse(E) 
+vfat(E) fat(E) btrfs(E) xor(E) raid6_pq(E) xfs(E)
+[ 6785.123905] CPU: 14 PID: 77983 Comm: madvise05 Tainted: G E 
+4.9.122-001.ali3000_nightly_cov_20180820_193.test.alios7.x86_64 #1
+[ 6785.137880] Hardware name: Dell Inc. PowerEdge R720xd/0X6FFV, BIOS 
+1.3.6 09/11/2012
+[ 6785.146425] task: ffff882daeb78000 task.stack: ffffc9001b438000
+[ 6785.153031] RIP: 0010:[] [] page_remove_rmap+0x27/0x580
+[ 6785.162461] RSP: 0018:ffffc9001b43bc50 EFLAGS: 00010246
+[ 6785.168388] RAX: 0000000000000000 RBX: ffffeaff44488000 RCX: 
+0000000000000080
+[ 6785.176351] RDX: ffffeaff44488000 RSI: 0000000000000001 RDI: 
+ffffeaff44488000
+[ 6785.184315] RBP: ffffc9001b43bc80 R08: ffff882f9d4a6540 R09: 
+ffffffff84bcdf60
+[ 6785.192277] R10: 0000000000000000 R11: 0000000000000000 R12: 
+0000000000000001
+[ 6785.200241] R13: ffff882db6996910 R14: ffffea00b6da65b0 R15: 
+00003fffffe00000
+[ 6785.208205] FS: 00002ae5a3dfbb80(0000) GS:ffff882fbf180000(0000) 
+knlGS:0000000000000000
+[ 6785.217234] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 6785.223646] CR2: ffffeaff44488020 CR3: 0000002f9d51c000 CR4: 
+00000000000606f0
+[ 6785.231610] Stack:
+[ 6785.233851] 0000000000000000 00003ffffd6b3320 0434f9415ac47f2c 
+ffffeaff44488000
+[ 6785.242143] ffffc9001b43bdd8 ffff882db6996910 ffffc9001b43bcc0 
+ffffffff81355aaa
+[ 6785.250438] ffff882f9d4a6540 00002ae5a4400000 00002ae5a4600000 
+ffffffff84bcd7a0
+[ 6785.258728] Call Trace:
+[ 6785.261460] [] zap_huge_pmd+0x28a/0x640
+[ 6785.267585] [] unmap_page_range+0x532/0x630
+[ 6785.274087] [] unmap_single_vma+0xa9/0x160
+[ 6785.280501] [] unmap_vmas+0x5f/0xe0
+[ 6785.286236] [] unmap_region+0xe4/0x1e0
+[ 6785.292263] [] ? blk_finish_plug+0x3c/0x60
+[ 6785.298669] [] ? SYSC_madvise+0x69b/0xed0
+[ 6785.304985] [] do_munmap+0x39b/0x5b0
+[ 6785.310818] [] SyS_munmap+0x78/0xb0
+[ 6785.316552] [] do_syscall_64+0xf4/0x350
+[ 6785.322676] [] entry_SYSCALL_64_after_swapgs+0x58/0xca
+[ 6785.330244] Code: 00 00 00 00 66 66 66 66 90 55 <48> 8b 57 20 48 89 
+f8 f6 c2 01 0f
+[ 6785.339011] RIP [] page_remove_rmap+0x27/0x580
+[ 6785.345825] RSP
+[ 6785.349715] CR2: ffffeaff44488020
+
+
+The same test case works well on both 4.9.119 and the latest Linus's 
+tree. So, it looks it is caused by the L1TF patches on the stable tree.
+
+
+And, the madvise05 test case can be simplified to the below test program:
+
+
+#include <sys/mman.h>
+#include <stdio.h>
+
+void main()
+{
+         void *addr;
+         int err;
+
+         addr = mmap(NULL, 32 * 1024 * 1024, PROT_READ,
+                     MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE, -1, 0);
+
+         if (addr == MAP_FAILED) {
+                 printf("mmap failed\n");
+                 return;
+         }
+
+         err = mprotect(addr, 32 * 1024 * 1024, PROT_NONE);
+         if (err < 0) {
+                 printf("mprotect failed\n");
+                 return;
+         }
+
+         munmap(addr, 32 * 1024 * 1024);
+}
+
+
+You may be already aware of this problem or any hint is appreciated.
+
+
+Thanks,
+
+Yang
+
