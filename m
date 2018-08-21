@@ -2,81 +2,84 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A99C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66EB9C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:15:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CA2F214FF
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:14:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mLZ4u9Ix"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CA2F214FF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 23CCE216C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:15:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23CCE216C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727668AbeHUQeu (ORCPT
+        id S1727711AbeHUQft (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 12:34:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44080 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726907AbeHUQeu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 12:34:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=d98yOvqik39kYVbGz25Uc80En1BMy4Nim0RpXPxAZ9w=; b=mLZ4u9IxhcaTXXLwhMP5EeTkIa
-        aBwshDvyZUMuxeB7N8uzKR+zjqyESIl5f+deQaMh6ZqPFEOIuNfrm8gqQE9eqMpFreI6Kl0w2qGlE
-        14HaJFcd0SHEP61LBOG9JJnucRFtICo3YRnUQzx0uY/s5+vNAPF/W/fLDIjUBMMLEP0ak2nwu2VLo
-        iedU+cdZsw2ctDRsZEh2Uqq72o34AWwLHX9oPpbyLNwl67w4wIDNfpXhwHqJhHiu+6cNRhKYJJ8L8
-        y7tA6ygGbqKQqkbiPfviwFwMMHAAwl/731jrrRowbjmUswok9G6YzqfhllbIJMISAYayI++31K9ut
-        jbtZfAIg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fs6Ub-0001ci-RX; Tue, 21 Aug 2018 13:14:41 +0000
-Date:   Tue, 21 Aug 2018 06:14:41 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     David Woodhouse <dwmw2@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-pci@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org
-Subject: Re: [RFC 00/15] PCI: turn some __weak functions into callbacks
-Message-ID: <20180821131441.GA6156@infradead.org>
-References: <20180817102645.3839621-1-arnd@arndb.de>
- <20180821061451.GB481@infradead.org>
- <1534851050.14722.3.camel@infradead.org>
+        Tue, 21 Aug 2018 12:35:49 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:49646 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726907AbeHUQft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 12:35:49 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 2SVsYDHxrXxb; Tue, 21 Aug 2018 15:15:25 +0200 (CEST)
+Received: from nazgul.tnic (77-85-47-250.ip.btc-net.bg [77.85.47.250])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AF0491EC028D;
+        Tue, 21 Aug 2018 15:15:24 +0200 (CEST)
+Date:   Tue, 21 Aug 2018 15:15:41 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH 2/2] x86/MCE/AMD: Skip creating kobjects with NULL names
+Message-ID: <20180821131541.GE30528@nazgul.tnic>
+References: <20180809140834.59264-1-Yazen.Ghannam@amd.com>
+ <20180809140834.59264-2-Yazen.Ghannam@amd.com>
+ <20180809161806.GB20928@nazgul.tnic>
+ <BN7PR12MB259395675EBD74400D9FEBE5F8250@BN7PR12MB2593.namprd12.prod.outlook.com>
+ <20180815155452.GB28669@nazgul.tnic>
+ <BN7PR12MB2593C9819A949A2F7571FAB7F83E0@BN7PR12MB2593.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1534851050.14722.3.camel@infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <BN7PR12MB2593C9819A949A2F7571FAB7F83E0@BN7PR12MB2593.namprd12.prod.outlook.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 12:30:50PM +0100, David Woodhouse wrote:
-> On Mon, 2018-08-20 at 23:14 -0700, Christoph Hellwig wrote:
-> > On Fri, Aug 17, 2018 at 12:26:30PM +0200, Arnd Bergmann wrote:
-> > > Hi Bjorn and others,
-> > > 
-> > > Triggered by Christoph's patches, I had another go at converting
-> > > all of the remaining pci host bridge implementations to be based
-> > > on pci_alloc_host_bridge and a separate registration function.
-> > 
-> > I really like the idea behind this series.
-> 
-> Hm... are you turning direct calls into retpolined indirect calls?
+On Thu, Aug 16, 2018 at 06:46:33PM +0000, Ghannam, Yazen wrote:
+> Future SMCA systems may have banks whose MCA_IPID is not known so we
 
-He does.  But not anywhere near the fast path.
+You lost me here. How would the IPID not be known? Are you talking about
+an old kernel running on new HW and thus the HardwareID in its MCA_IPID
+to be unknown to the old kernel?
+
+> In the past, the sysfs entries were named something like "th_bank#" before
+> each bank was given a more descriptive name. We can go back to this format
+> as a fallback for unrecognized bank types. This will fix the issue with sysfs
+> failing and also the interface will still work on new hardware.
+
+You could do: th_bank#<HardwareID> so that we can find what it is by
+grepping the PPR.
+
+> I agree. I just wanted to make a small change and fix this issue. I
+> think there's a lot we can do to clean up the thresholding code going
+> forward.
+
+ACK.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+ECO tip #101: Trim your mails when you reply.
+--
