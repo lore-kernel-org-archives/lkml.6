@@ -2,81 +2,132 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A23C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 09:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD37C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 09:48:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59E362170E
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 09:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 045892170E
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 09:48:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HbSrMNyF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59E362170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="nL6Zvu+a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 045892170E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbeHUNCV (ORCPT
+        id S1726841AbeHUNIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 09:02:21 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:43798 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726709AbeHUNCV (ORCPT
+        Tue, 21 Aug 2018 09:08:20 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:51467 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726549AbeHUNIU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 09:02:21 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7L9gE77034199;
-        Tue, 21 Aug 2018 09:42:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=ByZlr4Y6SgGRVFBApRmSH6YGeVwf812VOY23IBRal4o=;
- b=HbSrMNyFyDwCJOSEs7kSmBI9zKq+kjedV0s8mps7++2fuBKaehr6BoNivc14Ac3ixdy2
- /f3HFbWupJiAVJ+hipmF4ZgMzLWjsGupPDUtjogqUkqV4BJAzVljBEkd9U6WJ8bzd6CK
- xdtmHfxWJKbFjGa6m2uRx3xSWWD01Jl4t+pznsR/QcwE9f6BrupgPvuuZqOf31axcTpU
- nC8cnSE9Ti6HQiTTyaMZV9FHQDS/WbxXh4jcJC8E7qAHgjJUwraMgSTkGUHvd18H6Zvg
- PzIYM24MLFYxaoBRgOk0bYjxkg05cLOKwjXCEdPgItqo3H3nJxXRgcS0eb4fzPQxnyPP lw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2kxbdpucbp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 Aug 2018 09:42:52 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7L9gpOf002942
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 Aug 2018 09:42:51 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7L9gpKj005322;
-        Tue, 21 Aug 2018 09:42:51 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 21 Aug 2018 02:42:50 -0700
-Date:   Tue, 21 Aug 2018 12:42:44 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Bhaskar Singh <bhaskar.kernel@gmail.com>
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: rtl8188eu: Removed code valid for 5GHz
-Message-ID: <20180821094244.zjljope5hzdghfuq@mwanda>
-References: <20180821013603.GA7589@Gentoo-PC>
+        Tue, 21 Aug 2018 09:08:20 -0400
+X-Greylist: delayed 1065 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Aug 2018 09:08:18 EDT
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id w7L9meke005110;
+        Tue, 21 Aug 2018 18:48:40 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w7L9meke005110
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1534844920;
+        bh=wFU/SPrD1GFzSsc34HCbIWOgMY3S8H5k/C2qVCK2OIA=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=nL6Zvu+a1LZnVQGzZEgpZAVvyj10gF6IZjZydgitcSDlq4iDPJO79XjYdAl30Swg5
+         CKavgE4ZhfI320thgjWo1f9d0gJ2xyqpX5fPoDbZnHN/Mx+Sq6leF/UQoLnh6RLd1x
+         uFpn2p3yI7e6LUM7zS8XOSuw1eg9rP++OLXLqvGzPDzMuHRnQKU4AYf671LWk7UjCt
+         YV+D/yt/PgRlYmnPbMGtg5oAow8EnDZTP6C5aeAVJ/QUW8Acay6Tcf8H6qsiUCjoGN
+         ZJr4L8OnZVpdVCURwL+DnnUsyuDBta8Lx4iFU+2hpKqUM2UZQQa7+G7HLlj+KfYOWF
+         hsj1hubV0sB4A==
+X-Nifty-SrcIP: [209.85.222.51]
+Received: by mail-ua1-f51.google.com with SMTP id l2-v6so1153064uaf.11;
+        Tue, 21 Aug 2018 02:48:40 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHa7mfEiPURESmDQiugZAUbaFOVbt+Eu6BGm5eFIBu11FnVgw75
+        iWxYGSsdCc9r8r1fUS9pv71jSOAHIw46Xhsz/Pk=
+X-Google-Smtp-Source: AA+uWPzzSd78PVezNam5nLJWDgezXCGMLKy2a8W2Jkym9dwXyteK2ltxonCAiXBXDlk0Lu0SAlSfKhUgjHa4/bnZcvs=
+X-Received: by 2002:ab0:b:: with SMTP id 11-v6mr32408370uai.19.1534844919514;
+ Tue, 21 Aug 2018 02:48:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180821013603.GA7589@Gentoo-PC>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8991 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=555
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808210103
+Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Tue, 21 Aug 2018 02:47:59
+ -0700 (PDT)
+In-Reply-To: <1534843809-4137-2-git-send-email-yamada.masahiro@socionext.com>
+References: <1534843809-4137-1-git-send-email-yamada.masahiro@socionext.com> <1534843809-4137-2-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 21 Aug 2018 18:47:59 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASr=rf_foQ7PDTNS440rx3TLuY_TBagfQ-gCHxXpFB2vw@mail.gmail.com>
+Message-ID: <CAK7LNASr=rf_foQ7PDTNS440rx3TLuY_TBagfQ-gCHxXpFB2vw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: dmaengine: add DT binding for UniPhier
+ MIO DMAC
+To:     Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Great.  Thanks!
+(+CC Rob, DT, LKML)
 
-regards,
-dan carpenter
+I forgot to CC this to DT community...
 
+
+2018-08-21 18:30 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> The MIO DMAC (Media IO DMA Controller) is used in UniPhier LD4,
+> Pro4, and sLD8 SoCs.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+>  .../devicetree/bindings/dma/uniphier-mio-dmac.txt  | 28 ++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/uniphier-mio-dmac.txt
+>
+> diff --git a/Documentation/devicetree/bindings/dma/uniphier-mio-dmac.txt b/Documentation/devicetree/bindings/dma/uniphier-mio-dmac.txt
+> new file mode 100644
+> index 0000000..a9e969e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/dma/uniphier-mio-dmac.txt
+> @@ -0,0 +1,28 @@
+> +UniPhier Media IO DMA controller
+> +
+> +This works as an external DMA engine for SD/eMMC controllers etc.
+> +found in UniPhier LD4, Pro4, sLD8 SoCs.
+> +
+> +Required properties:
+> +- compatible: should be "socionext,uniphier-mio-dmac".
+> +- reg: offset and length of the register set for the device.
+> +- interrupts: a list of interrupt specifiers associated with the DMA channels.
+> +- clocks: a single clock specifier
+> +- #dma-cells: should be <1>. The single cell represents the channel number.
+> +- dma-channels: specify the number of the DMA channels. This should match to
+> +  the number of tuples in the interrupts property.
+> +
+> +Example:
+> +       dmac: dmac@5a000000 {
+> +               compatible = "socionext,uniphier-mio-dmac";
+> +               reg = <0x5a000000 0x1000>;
+> +               interrupts = <0 68 4>, <0 68 4>, <0 69 4>, <0 70 4>,
+> +                            <0 71 4>, <0 72 4>, <0 73 4>, <0 74 4>;
+> +               clocks = <&mio_clk 7>;
+> +               #dma-cells = <1>;
+> +               dma-channels = <8>;
+> +       };
+> +
+> +Note:
+> +In the example above, "interrupts = <0 68 4>, <0 68 4>, ..." is not a typo.
+> +The first two channels share a single interrupt line.
+> --
+> 2.7.4
+>
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
