@@ -2,91 +2,103 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13840C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2930C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:27:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA3C1208A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:27:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA3C1208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A8EC7208A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:27:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8EC7208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728697AbeHUJqY (ORCPT
+        id S1728703AbeHUJqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:46:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56508 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727742AbeHUJqX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:46:23 -0400
-Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 645EE9D7;
-        Tue, 21 Aug 2018 06:27:36 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        Kees Cook <keescook@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 28/29] isdn: Disable IIOCDBGVAR
-Date:   Tue, 21 Aug 2018 08:21:21 +0200
-Message-Id: <20180821055109.520121858@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180821055108.333930282@linuxfoundation.org>
-References: <20180821055108.333930282@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Tue, 21 Aug 2018 05:46:34 -0400
+Received: from ozlabs.org ([203.11.71.1]:58423 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727742AbeHUJqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 05:46:33 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41vghc6m3qz9sBs;
+        Tue, 21 Aug 2018 16:27:44 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, muriloo@linux.ibm.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 1/2] powerpc/process: fix nested output in show_user_instructions()
+In-Reply-To: <718cc9c9bd1d4bb2b4c2596f1a7ee00334e77055.1534192631.git.christophe.leroy@c-s.fr>
+References: <718cc9c9bd1d4bb2b4c2596f1a7ee00334e77055.1534192631.git.christophe.leroy@c-s.fr>
+Date:   Tue, 21 Aug 2018 16:27:44 +1000
+Message-ID: <877ekkmdy7.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
-------------------
+> When two processes crash at the same time, we sometimes encounter
+> nesting in the middle of a line:
 
-From: Kees Cook <keescook@chromium.org>
+I think "interleaved" is the right word, rather than "nesting".
 
-[ Upstream commit 5e22002aa8809e2efab2da95855f73f63e14a36c ]
+They're actually (potentially) completely unrelated segfaults, that just
+happen to occur at the same time.
 
-It was possible to directly leak the kernel address where the isdn_dev
-structure pointer was stored. This is a kernel ASLR bypass for anyone
-with access to the ioctl. The code had been present since the beginning
-of git history, though this shouldn't ever be needed for normal operation,
-therefore remove it.
+And in fact any output that happens simultaneously will mess things up,
+it doesn't have to be another segfault.
 
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Karsten Keil <isdn@linux-pingi.de>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/isdn/i4l/isdn_common.c |    8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+> [    4.365317] init[1]: segfault (11) at 0 nip 0 lr 0 code 1
+> [    4.370452] init[1]: code: XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
+> [    4.372042] init[74]: segfault (11) at 10a74 nip 1000c198 lr 100078c8 code 1 in sh[10000000+14000]
+> [    4.386829] XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
+> [    4.391542] init[1]: code: XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
+> [    4.400863] init[74]: code: 90010024 bf61000c 91490a7c 3fa01002 3be00000 7d3e4b78 3bbd0c20 3b600000
+> [    4.409867] init[74]: code: 3b9d0040 7c7fe02e 2f830000 419e0028 <89230000> 2f890000 41be001c 4b7f6e79
+>
+> This patch fixes it by preparing complete lines in a buffer and
+> printing it at once.
+>
+> Fixes: 88b0fe1757359 ("powerpc: Add show_user_instructions()")
+> Cc: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>  arch/powerpc/kernel/process.c | 17 +++++++++--------
+>  1 file changed, 9 insertions(+), 8 deletions(-)
+>
+> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+> index 913c5725cdb2..c722ce4ca1c0 100644
+> --- a/arch/powerpc/kernel/process.c
+> +++ b/arch/powerpc/kernel/process.c
+> @@ -1303,32 +1303,33 @@ void show_user_instructions(struct pt_regs *regs)
+>  {
+>  	unsigned long pc;
+>  	int i;
+> +	char buf[96]; /* enough for 8 times 9 + 2 chars */
+> +	int l = 0;
 
---- a/drivers/isdn/i4l/isdn_common.c
-+++ b/drivers/isdn/i4l/isdn_common.c
-@@ -1640,13 +1640,7 @@ isdn_ioctl(struct file *file, uint cmd,
- 			} else
- 				return -EINVAL;
- 		case IIOCDBGVAR:
--			if (arg) {
--				if (copy_to_user(argp, &dev, sizeof(ulong)))
--					return -EFAULT;
--				return 0;
--			} else
--				return -EINVAL;
--			break;
-+			return -EINVAL;
- 		default:
- 			if ((cmd & IIOCDRVCTL) == IIOCDRVCTL)
- 				cmd = ((cmd >> _IOC_NRSHIFT) & _IOC_NRMASK) & ISDN_DRVIOCTL_MASK;
+I'm sure your math is right, but still an on-stack buffer with sprintf()
+is a bit scary.
 
+Can you try using seq_buf instead? It is safe against overflow.
 
+eg, something like:
+
+struct seq_buf s;
+char buf[96];
+
+seq_buf_init(&s, buf, sizeof(buf));
+...
+seq_buf_printf(&s, ...);
+
+cheers
