@@ -2,97 +2,128 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6450EC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D5EC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:28:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12B9521837
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:27:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5FDD21837
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:28:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TwgFyDbQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12B9521837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EV2s1dCY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5FDD21837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726966AbeHUUsS (ORCPT
+        id S1727002AbeHUUts (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 16:48:18 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:43743 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726615AbeHUUsR (ORCPT
+        Tue, 21 Aug 2018 16:49:48 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:32876 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726615AbeHUUts (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 16:48:17 -0400
-Received: by mail-yw1-f68.google.com with SMTP id l189-v6so8410088ywb.10;
-        Tue, 21 Aug 2018 10:27:14 -0700 (PDT)
+        Tue, 21 Aug 2018 16:49:48 -0400
+Received: by mail-ed1-f67.google.com with SMTP id h9-v6so3715373edr.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 10:28:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jTGX14H0bWptDNMBYs9ye/y/xuZ84gxHsfCCH8xdm6g=;
-        b=TwgFyDbQEhH0b1V5uFpPeGdej43EYw5Tj+SqBl83twLc4X1CQBzlpmJwUTkVn8IcCI
-         7OUnlU0AWYV3kLpyJ4Wx8wcvwCzsKbJxnxGxhwVHG6t1f4zA8zutYUk1zeNdoxJpnBEL
-         m2wz4wCqXV7YLlNCrqj/tNC1EvN8tA+n+MaUubBCRipU3qyQdd2mQ53AcJcw0Bwn3cTw
-         Wz/Xy9rPAW/U8jeROxk3T4I9TpRlfR1GJcnsogPsIh/gzI3w/JjqHbq7B3F8rh/U6/fU
-         XYne9fqY7rlznYayrRhLSoiBqOATLf/nyda9wvVESzLhQhPMkQ/zvQ0kDUfYkBsM+bRv
-         t0xg==
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=V7JcX9TJkFRIeYghVVBHAuxKIL9Ien7WkapaghyRol8=;
+        b=EV2s1dCY8uxfwzItB+GtPndUPuX6eSWlQBl3OkZGP/ZDRfYqJiQNmM/3VBv9xF6/CE
+         T2lTY++pfySV3cPcPWjwm+wAXNf9BPxM64O2oxLpqfLN9SeoD9FRTp2tTxO8Uk8R+FvH
+         TryF3Mc7oEGYEaM+c3qV/UQ14kHTX+dcchsrDgk52UWNAnig3/QpPxykIfBwvXkCcBeI
+         aHxv4RimZoOG8vUzLc7FkUho12GaB80BIItYhgxVzLPNvZ6DAa/TnBfHN6984k5KrNYB
+         aY7lCp5H5hQx46Z4CPbkxra9k8lLPYftAVJGKESnvz7Jm4WrF3OY2ZrfQIWJwdy5QHNl
+         SMVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jTGX14H0bWptDNMBYs9ye/y/xuZ84gxHsfCCH8xdm6g=;
-        b=Y1FuPZ36ASBa1o61lLvQ1n0NRTXhRCQgpjfFvR/4wkqNrSsZukOFs9JUrz56Efxwe5
-         m4UwOSCr6f40WxsEWwmghCxh+5a+dSjdtuNy+hjjuzhkT3GxFA0Qm4ApMTjKdnT7Y3dh
-         B4AvmDu+OV75NJFvErevV3L92XYK1QOs3kHBzuKAnP8DZQMUMf8QRgG9hEOHY77+ugC1
-         UBWxJFnINrcS5LS4mYBbMDC+PwUmvHt6kuGRrhWkrdP3CweL6gEJNdLl/87TxWVCN9pT
-         yy+LF3sNCT0L7NmRSEm62ifjit/VdK8RbBl8e52hiabVfMNoBUYeaUX3mmgfkFq153C+
-         M0gg==
-X-Gm-Message-State: AOUpUlGes7krvIuvauJX+gbHUIHw6mZWSdNB90vHtrXmURWKP2xtTDoQ
-        PfeWHGlPp1Gxa3rgI7i4sCk=
-X-Google-Smtp-Source: AA+uWPxgeRT7SEwd3IgF7ushYdu02oYLxF2W44MMLR38zYbpR78NOYoDAXs9GqPi0C5wBfSzFKhEcg==
-X-Received: by 2002:a81:5545:: with SMTP id j66-v6mr27176187ywb.336.1534872434051;
-        Tue, 21 Aug 2018 10:27:14 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::1:9c5d])
-        by smtp.gmail.com with ESMTPSA id r12-v6sm5894349ywg.67.2018.08.21.10.27.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 Aug 2018 10:27:13 -0700 (PDT)
-Date:   Tue, 21 Aug 2018 10:27:11 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH 1/2] workqueue: skip lockdep wq dependency in
- cancel_work_sync()
-Message-ID: <20180821172711.GR3978217@devbig004.ftw2.facebook.com>
-References: <20180821120317.4115-1-johannes@sipsolutions.net>
- <20180821120317.4115-2-johannes@sipsolutions.net>
- <20180821160814.GP3978217@devbig004.ftw2.facebook.com>
- <1534871894.25523.34.camel@sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1534871894.25523.34.camel@sipsolutions.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=V7JcX9TJkFRIeYghVVBHAuxKIL9Ien7WkapaghyRol8=;
+        b=rNnTBTh1mtN2XmYMSFti+XMGUC6dR+JsRp3D7XxCGi6RAye/5jUcw61hFelr/cAt9+
+         1VTKLCnCtz+Vx7tgnzprm05RQx49AnoCWXRZaQzRZTX/YFcLfGTXhBoEXxWnNVZCPyOw
+         pMECMukusSHHU7u3zahBZQPmDhYqrVafyifQxB3hcpBx/4TAaYDTbloo2ZX2xF0RXTZe
+         pYEyIu2KQUC7XQeUOAjmDv9hN2EuN7YOAhUhoCSSjPAfzV4wRzfbfiK+zoI/sApRRld7
+         Wnq+xAVPzjlCl13LaSKNPcHluV9Kp4TX2YC9UbgE+gwKCF0+EAvM04Q4Y4NBE1KG4R6n
+         ljDQ==
+X-Gm-Message-State: AOUpUlELveFe03HKykTsBdYvGbrM3JWGuVJ4VJqWezJAB+okvXxKWjH8
+        K+3sUxVh3Wc09j8TcHXcTHU=
+X-Google-Smtp-Source: AA+uWPxiiMeH2vyz+Q0oTjzeV0N5mrlilEvNh+4UMwMPaWa/NLM4+LEf+PRlEfX7t34OeVY/j6cCqw==
+X-Received: by 2002:a50:dd4b:: with SMTP id u11-v6mr63586699edk.298.1534872523522;
+        Tue, 21 Aug 2018 10:28:43 -0700 (PDT)
+Received: from dell.be.48ers.dk (d51a5bc31.access.telenet.be. [81.165.188.49])
+        by smtp.gmail.com with ESMTPSA id w1-v6sm9599668eda.63.2018.08.21.10.28.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 Aug 2018 10:28:42 -0700 (PDT)
+Received: from peko by dell.be.48ers.dk with local (Exim 4.89)
+        (envelope-from <peko@dell.be.48ers.dk>)
+        id 1fsASP-00087E-Gf; Tue, 21 Aug 2018 19:28:41 +0200
+From:   Peter Korsgaard <peter@korsgaard.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Peter Korsgaard <peter@korsgaard.com>
+Subject: [PATCH] ttyprintk: make the printk log level configurable
+Date:   Tue, 21 Aug 2018 19:28:22 +0200
+Message-Id: <20180821172822.30975-1-peter@korsgaard.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Johannes.
+For some use cases it is handy to use a different printk log level than the
+default (info) for the messages written to ttyprintk, so add a Kconfig
+option similar to what we have for default console loglevel.
 
-On Tue, Aug 21, 2018 at 07:18:14PM +0200, Johannes Berg wrote:
-> > But this can lead to a deadlock.  I'd much rather err on the side of
-> > discouraging complex lock dancing around ordered workqueues, no?
-> 
-> What can lead to a deadlock?
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ drivers/char/Kconfig     | 8 ++++++++
+ drivers/char/ttyprintk.c | 4 +++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-Oh not this particular case, but I was wondering whether we'd be
-missing legitimate possible deadlock cases by skipping lockdep for all
-cancel_work_sync()'s as they can actually flush.
-
-Thanks.
-
+diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
+index ce277ee0a28a..14a7f023f20b 100644
+--- a/drivers/char/Kconfig
++++ b/drivers/char/Kconfig
+@@ -66,6 +66,14 @@ config TTY_PRINTK
+ 
+ 	  If unsure, say N.
+ 
++config TTY_PRINTK_LEVEL
++	depends on TTY_PRINTK
++	int "ttyprintk log level (1-7)"
++	range 1 7
++	default "6"
++	help
++	  Printk log level to use for ttyprintk messages.
++
+ config PRINTER
+ 	tristate "Parallel printer support"
+ 	depends on PARPORT
+diff --git a/drivers/char/ttyprintk.c b/drivers/char/ttyprintk.c
+index 67549ce88cc9..22fbd483b5dc 100644
+--- a/drivers/char/ttyprintk.c
++++ b/drivers/char/ttyprintk.c
+@@ -37,6 +37,8 @@ static struct ttyprintk_port tpk_port;
+  */
+ #define TPK_STR_SIZE 508 /* should be bigger then max expected line length */
+ #define TPK_MAX_ROOM 4096 /* we could assume 4K for instance */
++#define TPK_PREFIX KERN_SOH __stringify(CONFIG_TTY_PRINTK_LEVEL) " [U]"
++
+ static int tpk_curr;
+ 
+ static char tpk_buffer[TPK_STR_SIZE + 4];
+@@ -45,7 +47,7 @@ static void tpk_flush(void)
+ {
+ 	if (tpk_curr > 0) {
+ 		tpk_buffer[tpk_curr] = '\0';
+-		pr_info("[U] %s\n", tpk_buffer);
++		printk(TPK_PREFIX " %s\n", tpk_buffer);
+ 		tpk_curr = 0;
+ 	}
+ }
 -- 
-tejun
+2.11.0
+
