@@ -6,84 +6,175 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBADC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D1FDC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 312D721581
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:37:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 312D721581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id C96AC21581
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:38:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C96AC21581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbeHUL4z (ORCPT
+        id S1726761AbeHUL54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 07:56:55 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:49258 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbeHUL4y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 07:56:54 -0400
-Received: from 79.184.253.33.ipv4.supernova.orange.pl (79.184.253.33) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 015ee626f3aea79a; Tue, 21 Aug 2018 10:37:40 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ramesh Thomas <ramesh.thomas@intel.com>,
-        linux-kernel@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v1 4/5] cpuidle: menu: Don't stay in shallow state for a long time
-Date:   Tue, 21 Aug 2018 10:35:23 +0200
-Message-ID: <7779444.DV2K5n5ugl@aspire.rjw.lan>
-In-Reply-To: <1534090171-14464-5-git-send-email-leo.yan@linaro.org>
-References: <1534090171-14464-1-git-send-email-leo.yan@linaro.org> <1534090171-14464-5-git-send-email-leo.yan@linaro.org>
+        Tue, 21 Aug 2018 07:57:56 -0400
+Received: from foss.arm.com ([217.140.101.70]:46386 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726536AbeHUL54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 07:57:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5537C7A9;
+        Tue, 21 Aug 2018 01:38:42 -0700 (PDT)
+Received: from [192.168.0.21] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E57753F739;
+        Tue, 21 Aug 2018 01:38:37 -0700 (PDT)
+Subject: Re: [PATCH v3 0/7] perf: Add ioctl for PMU driver configuration
+To:     Kim Phillips <kim.phillips@arm.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, ast@kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, suzuki.poulosi@arm.com,
+        linux-s390@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <1531950487-24554-1-git-send-email-mathieu.poirier@linaro.org>
+ <20180813124642.3d49c082a95fc294d926016e@arm.com>
+ <CANLsYkx=tjCG-eb4qRoGz0SvG4qCMDz1ajR9Mo9VK5XTAn_WdQ@mail.gmail.com>
+ <20180814120910.ed225bbc462c58b09e5d68de@arm.com>
+ <CANLsYkxZ_Wts6k9yqJhJf_R5oh74svpcuoNxhtFf6h3mz8U4ZA@mail.gmail.com>
+ <20180815093912.GE2427@arm.com>
+ <20180815102820.3520d0c3875d2fd82300cdef@arm.com>
+ <CANLsYkz0j79+1C-Amz=3+7zw-0VZhnZ+rp5WAjHduEp+WjFs8A@mail.gmail.com>
+ <18fe78a3-9a58-cecd-ddb9-d46cbc473b95@arm.com>
+ <20180820092252.32dd015afcc5cbf2fe4c7ab7@arm.com>
+ <a2edfae3-302e-bbc7-0563-337186fc2919@arm.com>
+ <20180820102532.96a90fe59d9ea3785df76a4d@arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <cba4017f-8a81-e47b-1e99-d510ef9b2a67@arm.com>
+Date:   Tue, 21 Aug 2018 09:39:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180820102532.96a90fe59d9ea3785df76a4d@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday, August 12, 2018 6:09:30 PM CEST Leo Yan wrote:
-> To avoid staying in a shallow state for a long time, the menu governor
-> relies on not stopping tick when detects the prediction is shorter than
-> the tick event.  This is just luckily to cover most cases but cannot say
-> it is completely safe.  For example, if the prediction is 2000us and the
-> TICK_USEC=1000 so it's impossible to meet the condition
-> 'data->predicted_us < TICK_USEC' and this lead to stop the tick for a
-> shallow state; finally the CPU is possible to stay in this shallow state
-> for very long time.
+On 08/20/2018 04:25 PM, Kim Phillips wrote:
+> On Mon, 20 Aug 2018 15:36:47 +0100
+> Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
 > 
-> This patch checks the candidate idle state isn't deepest one and find if
-> the timer will come after more than 2 times of the maximum target
-> residency, though the governor selects a shallow state according to
-> prediction, due the timer is most reliable waken up source but it will
-> come very late, so the CPU has chance to stay in the shallow state
-> for a long time; the patch doesn't stop the tick for this case so can
-> avoid powernightmares issue.
+>> On 08/20/2018 03:22 PM, Kim Phillips wrote:
+>>> On Mon, 20 Aug 2018 11:03:03 +0100
+>>> Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+>>>
+>>>> On 08/16/2018 08:28 PM, Mathieu Poirier wrote:
+>>>>> On Wed, 15 Aug 2018 at 09:28, Kim Phillips <kim.phillips@arm.com> wrote:
+>>>>>>
+>>>>>> On Wed, 15 Aug 2018 10:39:13 +0100
+>>>>>> Will Deacon <will.deacon@arm.com> wrote:
+>>>>>>
+>>>>>>> On Tue, Aug 14, 2018 at 01:42:27PM -0600, Mathieu Poirier wrote:
+>>>>>>>> On Tue, 14 Aug 2018 at 11:09, Kim Phillips <kim.phillips@arm.com> wrote:
+>>>>>>>>> The other thing that's going on here is that I'm becoming numb to the
+>>>>>>>>> loathsome "failed to mmap with 12 (Cannot allocate memory)" being
+>>>>>>>>> returned no matter what the error is/was. E.g., an error that would
+>>>>>>>>> indicate a sense of non-implementation would be much better
+>>>>>>>>> appreciated than presumably what the above is doing, i.e., returning
+>>>>>>>>> -ENOMEM.  That, backed up with specific details in the form of human
+>>>>>>>>> readable text in dmesg would be *most* welcome.
+>>>>>>>>
+>>>>>>>> As part of the refactoring of the code to support CPU-wide scenarios I
+>>>>>>>> intend to emit better diagnostic messages from the driver.  Modifying
+>>>>>>>> rb_alloc_aux() to propagate the error message generated by the
+>>>>>>>> architecture specific PMUs doesn't look hard either and I _may_ get to
+>>>>>>>> it as part of this work.
+>>>>>>>
+>>>>>>> For the record, I will continue to oppose PMU drivers that dump diagnostics
+>>>>>>> about user-controlled input into dmesg, but the coresight drivers are yours
+>>>>>>> so it's up to you and I won't get in the way!
+>>>>>>
+>>>>>> That sounds technically self-contradicting to me.  Why shouldn't
+>>>>>> coresight share the same policies as those used for PMU drivers?  Or
+>>>>>> why not allow the individual vendor PMU driver authors control the
+>>>>>> level of user-friendliness of their own drivers?
+>>>>>>
+>>>>>> That being said, Matheiu, would you accept patches that make coresight
+>>>>>> more verbose in dmesg?
+>>>>>
+>>>>> It depends on the issue you're hoping to address.  I'd rather see the
+>>>>> root cause of the problem fixed than adding temporary code.  Suzuki
+>>>>> added the ETR perf API and I'm currently working on CPU-wide
+>>>>> scenarios.  From there and with regards to what can happen in
+>>>>> setup_aux(), we should have things covered.
+>>>>
+>>>> I think the main issue is the lack of error code propagation from
+>>>> setup_aux() back to the perf_aux_output_handle_begin(), which always
+>>>> return -ENOMEM. If we fix that, we could get better idea of whats
+>>>> wrong.
+>>>
+>>> Why get a better idea when we can get the exact details?
+>>
+>> The different values for error numbers are there for a reason...
 > 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  drivers/cpuidle/governors/menu.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
+> But the same error number, e.g., EINVAL, can be returned for different
+> reasons.
+
+True, but then you can narrow it down by tuning it. We do that for
+several syscalls without printing any useful messages to debug. Why
+should the perf syscalls be any different ?
+
 > 
-> diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-> index 4f02207..566c65c 100644
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -284,6 +284,10 @@ static unsigned int get_typical_interval(struct menu_device *data)
->  static bool menu_decide_stopping_tick(struct cpuidle_driver *drv,
->  				      struct menu_device *data, int idx)
->  {
-> +	int max_target_residency;
-> +
-> +	max_target_residency = drv->states[drv->state_count-1].target_residency;
+>>>> If someone is planning to add verbose messages, they may do so by adding
+>>>> dev_dbg() / pr_debug(), which can be turned on as and when needed.
+>>>
+>>> I disagree:  that just adds another usage and kernel configuration
+>>> obstacle.  Why not use pr_err straight up?
+>>
+>> I personally don't agree to usage of pr_err() in paths which are easily
+>> triggered from user input.
+> 
+> Why not?  pr_* are ratelimited.
+> 
+>> Also, we are moving all the "debugging"
+>> messages to the dynamic debug, to prevent lockdep splats.
+> 
+> Are you referring to this?:
+> 
+> https://lkml.org/lkml/2018/5/1/7
 
-But this state may be disabled, may it not?
+Definitely not that thread.
 
-Thanks,
-Rafael
+> 
+> Re-reading the thread, AFAICT, it was never proven that the splats
+> occurred due to the dev_infos, and there's no dev_info in this
+> stacktrace:
+> 
+> https://lkml.org/lkml/2018/5/10/269
 
+That doesn't have the stack trace. Mathieu was also able to reproduce
+the lockdep splat involving console lock lately. Unfortunately none of
+these were captured here.
+
+> 
+> But even if it were, wouldn't the splats also occur with dev_dbg?
+
+Not normally. dev_dbg() has to be turned on manually and the user knows
+what he is doing. That allows the normal user to use the system without
+any trouble.
+
+Suzuki
