@@ -2,95 +2,88 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7BBAC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B0EEC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C075216C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:00:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDBE42151D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:02:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pKxrWze3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C075216C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BD/RK9Cq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDBE42151D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727506AbeHURUW (ORCPT
+        id S1727409AbeHURW5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 13:20:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42788 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727003AbeHURUV (ORCPT
+        Tue, 21 Aug 2018 13:22:57 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:42815 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727038AbeHURW5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 13:20:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LDnIvO0k5C2Q9NZTkVnMt1bnlbAwGe7QKEP/lGnz/Z8=; b=pKxrWze3CNydmOHe9dmjmIhe1
-        cL4p5jEHjx8P/HgB3RfcLeEBKVVM/vptji/jU2liTEDOUfUo9X0fH19ooy2n8qMetniRLcGbJVMSA
-        Qm0z6OXNDpiJhpCDY70rKogaSDAWL4lVSHKD565gg6dvCspmWStSyUvggYixFBOSJp8FJvxB01xtD
-        sqJMzMcJzNQn7OFa2bTcRZcutldZd9N8+E6nFTn3ccjWxssV2RcoHNZ05u/0VXf0WHZLouRhu5CQj
-        y0rnN+XWzI7W+yio4PPd714vaPBz/PLqgwrdtOlqr7OdQ3mg0Dx06Z077sqpPV93Sre52dVVdyJvw
-        vBNkzJM3g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fs7CK-0006ri-7g; Tue, 21 Aug 2018 13:59:52 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 46080202975C6; Tue, 21 Aug 2018 15:59:49 +0200 (CEST)
-Date:   Tue, 21 Aug 2018 15:59:49 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Andre Wild <wild@linux.vnet.ibm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH 1/2] sched/topology: Set correct numa topology type
-Message-ID: <20180821135949.GI24082@hirez.programming.kicks-ass.net>
-References: <20180808081942.GA37418@linux.vnet.ibm.com>
- <1533920419-17410-1-git-send-email-srikar@linux.vnet.ibm.com>
- <20180821110258.GA2080@linux.vnet.ibm.com>
+        Tue, 21 Aug 2018 13:22:57 -0400
+Received: by mail-pl0-f67.google.com with SMTP id g23-v6so5891151plq.9;
+        Tue, 21 Aug 2018 07:02:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=X5u8rg4L67IpggPIklDkmkhFg5gSXXm9J9u/yfXXtzU=;
+        b=BD/RK9CqbAtbVUZ0zUB98TQV+1dtNlm5P69f7obzX2Q5KsrlysrqCjmWHnzcMvzPvr
+         rJlliwoD67v40M7/uXzQePpbAfkT1tGxbpRceyf5/J0KNbbfuxjwGM1/MHJP0JLBkqKJ
+         RWeoX+AoY3l5aEDqwtC8yYbyktnxW7MBl2cX1oj7iYOuI0+JoVanmCuHi4HXo8NX42qS
+         mmBo5Hrfxt0ERGMdCU5yfAsyMcW7WO6Bwz1UpmCCDxw/mBBCU2FYLD/x8UUD/LMeDnXf
+         g4p/TsTor0W+DI/x+uO2ibJVlPoKlPEYEfTkFZmM4UdCRGPBifQEXYAKYpHDGJJut821
+         8iJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=X5u8rg4L67IpggPIklDkmkhFg5gSXXm9J9u/yfXXtzU=;
+        b=iyJBFR13W4KYKrxZ7IzstvBpQ6SlQ8XH26C4XtE7CzwYxxl4ZBBgFQnJ87ay5Resym
+         oNIGmExJrSo/REaxPAbYYGHLnQq3udRDf89/2pK5WDsHD+6oxj0O69Oi4MK09juW8Rwq
+         K9nrIqNXMIV+/+fYcpKhD0i9t8g+/BYWBMBN6mu3o1o9fqdLZp6yVNwykwTmlt6NDGEg
+         X5WLeSSRPvmPCnjbtI+50X7GF+55fjW5hCjUYkTksOFslIxVCw/pvWwoYYUR5DBrlNRl
+         nKfYwo/wQ2vz9jJ2ZsJZSNswAPmWHcz19kkTsd1Dcd/CslrLsHLgFFCfkj4Ten/2FPsm
+         aRjQ==
+X-Gm-Message-State: AOUpUlF43EGCjop/XDvu2jSzPBEUsTg4W+THXczFEu0UYWqQOSi0G8rG
+        taD1AhKGIU0blIvTqxKDnZ7NcCnT
+X-Google-Smtp-Source: AA+uWPw/KkHy+JZUhDXasW7f6PtLS5QkWOAFVZQAyByMeJI5L0HU8FL8p5h514WO1B7HP+bg9J11Tw==
+X-Received: by 2002:a17:902:209:: with SMTP id 9-v6mr50072378plc.270.1534860160768;
+        Tue, 21 Aug 2018 07:02:40 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id a77-v6sm28698485pfj.38.2018.08.21.07.02.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 Aug 2018 07:02:40 -0700 (PDT)
+Date:   Tue, 21 Aug 2018 07:02:39 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Jerry Hoemann <jerry.hoemann@hpe.com>
+Cc:     wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rwright@hpe.com
+Subject: Re: [PATCH] watchdog: hpwdt: Update Driver Documentation.
+Message-ID: <20180821140239.GD17160@roeck-us.net>
+References: <20180820193123.23976-1-jerry.hoemann@hpe.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180821110258.GA2080@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180820193123.23976-1-jerry.hoemann@hpe.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 04:02:58AM -0700, Srikar Dronamraju wrote:
-> * Srikar Dronamraju <srikar@linux.vnet.ibm.com> [2018-08-10 22:30:18]:
+On Mon, Aug 20, 2018 at 01:31:23PM -0600, Jerry Hoemann wrote:
+> Remove references to deprecated features like NMI sourcing
+> and obsoleted module parameters.
 > 
-> > With commit 051f3ca02e46 ("sched/topology: Introduce NUMA identity node
-> > sched domain") scheduler introduces an new numa level. However this
-> > leads to numa topology on 2 node systems no more marked as NUMA_DIRECT.
-> > After this commit, it gets reported as NUMA_BACKPLANE. This is because
-> > sched_domains_numa_level is now 2 on 2 node systems.
-> > 
-> > Fix this by allowing setting systems that have upto 2 numa levels as
-> > NUMA_DIRECT.
-> > 
-> > While here remove a code that assumes level can be 0.
-> > 
-> > Fixes: 051f3ca02e46 "Introduce NUMA identity node sched domain"
-> > Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-> > ---
+> Add details concerning new module parameter pretimeout and tips
+> to programming it.
 > 
-> Hey Peter,
-> 
-> Did you look at these two patches?
+> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
 
-Nope, been on holidays and the inbox is an even bigger mess than normal.
-I'll get to it, eventually :/
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
