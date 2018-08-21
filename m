@@ -2,116 +2,136 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C477C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A1AC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:00:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3E1A214C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:59:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCUDmpPV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3E1A214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 70C02214C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 13:00:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70C02214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbeHUQTU (ORCPT
+        id S1727619AbeHUQUE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 12:19:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39152 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727192AbeHUQTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 12:19:20 -0400
-Received: from mail-wm0-f46.google.com (mail-wm0-f46.google.com [74.125.82.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6429821772
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 12:59:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534856356;
-        bh=7J5QD5z+MP5ZDD6cvPh0llP+QdxeqZcvPa36xg9D0To=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=iCUDmpPVOGcD6f+Kcq/AwW/M5gjJFN3nMGV+lfsKVeSSiAmG6fEsnImZB56hKit4f
-         xYmobENTkE7np/dTETsEKhMdPQRQHYPwW5Q8LiWU2aHzyVwTdyBkKvmdDyTCKhAQlb
-         1DTBr2WH5MbcStQr0sGCMalWIcmXsGFqlM3Ams2g=
-Received: by mail-wm0-f46.google.com with SMTP id s9-v6so2834552wmh.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 05:59:16 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHAUA6piupSWsi4GGfzOsoD8csQEEicbSXNkyH8ri4BK9o57zcV
-        FNi+sBsoRxSP7kJ9nkV32ZxRMJm4ggaexE85dD7mtw==
-X-Google-Smtp-Source: AA+uWPxoMuQWzUyBpmGsyNqCx4obZh5oJvyG7KgJjHOhIEBFdYLW7FWI/nAL7YhjrkXTqVwv+JNtlRCie5V8GFfR2b0=
-X-Received: by 2002:a1c:9091:: with SMTP id s139-v6mr11646720wmd.146.1534856354788;
- Tue, 21 Aug 2018 05:59:14 -0700 (PDT)
+        Tue, 21 Aug 2018 12:20:04 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:57700 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727136AbeHUQUE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 12:20:04 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fs6GN-00085O-Qq; Tue, 21 Aug 2018 06:59:59 -0600
+Received: from [105.224.248.17] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fs6G7-0002xt-Tq; Tue, 21 Aug 2018 06:59:59 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     <linux-kernel@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+        Wen Yang <wen.yang99@zte.com.cn>, majiang <ma.jiang@zte.com.cn>
+Date:   Tue, 21 Aug 2018 14:59:37 +0200
+Message-ID: <874lfnzxhi.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20180820230011.25368-1-palmer@sifive.com> <51924de4-4a16-07a0-f499-753e0df49678@wdc.com>
-In-Reply-To: <51924de4-4a16-07a0-f499-753e0df49678@wdc.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 21 Aug 2018 07:59:03 -0500
-X-Gmail-Original-Message-ID: <CABGGisyZ=kuWesNkKRQQATsSf6_aiWTscmW1OANLtTSJAKQ0EA@mail.gmail.com>
-Message-ID: <CABGGisyZ=kuWesNkKRQQATsSf6_aiWTscmW1OANLtTSJAKQ0EA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: riscv,cpu-intc: Cleanups from a missed review
-To:     atish.patra@wdc.com
-Cc:     palmer@sifive.com, linux-riscv@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        hch@infradead.org, merker@debian.org,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1fs6G7-0002xt-Tq;;;mid=<874lfnzxhi.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.224.248.17;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/oF8bJPq/Y12CCiRgSDKRxOzk+IKYpP9E=
+X-SA-Exim-Connect-IP: 105.224.248.17
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: [GIT PULL] signal work for v4.19-rc1
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 6:10 PM Atish Patra <atish.patra@wdc.com> wrote:
->
-> On 8/20/18 4:01 PM, Palmer Dabbelt wrote:
-> > I managed to miss one of Rob's code reviews on the mailing list
-> > <http://lists.infradead.org/pipermail/linux-riscv/2018-August/001139.html>.
-> > The patch has already been merged, so I'm submitting a fixup.
-> >
-> > Sorry!
-> >
-> > Fixes: b67bc7cb4088 ("dt-bindings: interrupt-controller: RISC-V local interrupt controller")
-> > Cc: Rob Herring <robh@kernel.org>
-> > Cc: Christoph Hellwig <hch@infradead.org>
-> > Cc: Karsten Merker <merker@debian.org>
-> > Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-> > ---
-> >   .../bindings/interrupt-controller/riscv,cpu-intc.txt       | 14 +++++++++++---
-> >   1 file changed, 11 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
-> > index b0a8af51c388..265b223cd978 100644
-> > --- a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
-> > +++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
-> > @@ -11,7 +11,7 @@ The RISC-V supervisor ISA manual specifies three interrupt sources that are
-> >   attached to every HLIC: software interrupts, the timer interrupt, and external
-> >   interrupts.  Software interrupts are used to send IPIs between cores.  The
-> >   timer interrupt comes from an architecturally mandated real-time timer that is
-> > -controller via Supervisor Binary Interface (SBI) calls and CSR reads.  External
-> > +controlled via Supervisor Binary Interface (SBI) calls and CSR reads.  External
-> >   interrupts connect all other device interrupts to the HLIC, which are routed
-> >   via the platform-level interrupt controller (PLIC).
-> >
-> > @@ -25,7 +25,15 @@ in the system.
-> >
-> >   Required properties:
-> >   - compatible : "riscv,cpu-intc"
->
-> Since this is a fix up patch, we should update the compatible string
-> with the sifive specific one as well. no?
 
-I think it is fine as is if my understanding is correct. Given this is
-part of the RISC-V spec(s), then using 'riscv' here for riscv,cpu-intc
-is fine. It was only the PLIC which didn't have any standard
-definition that I had issue with. Plus, with the SoC specific string,
-I'm not too worried about what the fallback is.
+Linus,
 
-However, sifive,fu540-c000-cpu-intc does need to be documented.
-Putting it in the example is not documenting it.
+Please pull the siginfo-linus branch from the git tree:
 
-Rob
+   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git siginfo-linus
+
+   HEAD: 84fe4cc09abc1a5ef3a282db3ed10f4d3f1e6a0b signal: Don't send signals to tasks that don't exist
+
+It was observed that a periodic timer in combination with a sufficiently
+expensive fork could prevent fork from every completing.   This branch
+holds the set of changes to remove the need for that restart.
+
+This set of changes is split into several parts.  The first part
+makes PIDTYPE_TGID a proper pid type instead something only for very
+special cases.  The part starts uses PIDTYPE_TGID enough so that in
+__send_signal where signals are actually delivered we know if the signal
+is being sent to a a group of processes or just a single process.  With
+that prep work out of the way the logic in fork is modified so that fork
+logically makes signals received while it is running appear to be
+received after the fork completes.
+
+Eric W. Biederman (22):
+      pids: Initialize leader_pid in init_task
+      pids: Move task_pid_type into sched/signal.h
+      pids: Compute task_tgid using signal->leader_pid
+      kvm: Don't open code task_pid in kvm_vcpu_ioctl
+      pids: Move the pgrp and session pid pointers from task_struct to signal_struct
+      pid: Implement PIDTYPE_TGID
+      signal: Use PIDTYPE_TGID to clearly store where file signals will be sent
+      posix-timers: Noralize good_sigevent
+      signal: Pass pid and pid type into send_sigqueue
+      signal: Pass pid type into group_send_sig_info
+      signal: Pass pid type into send_sigio_to_task & send_sigurg_to_task
+      signal: Pass pid type into do_send_sig_info
+      signal: Push pid type down into send_signal
+      signal: Push pid type down into __send_signal
+      signal: Push pid type down into complete_signal.
+      fork: Move and describe why the code examines PIDNS_ADDING
+      fork: Unconditionally exit if a fatal signal is pending
+      signal: Add calculate_sigpending()
+      fork: Skip setting TIF_SIGPENDING in ptrace_init_task
+      fork: Have new threads join on-going signal group stops
+      signal: Don't restart fork when signals come in.
+      signal: Don't send signals to tasks that don't exist
+
+ arch/ia64/kernel/asm-offsets.c       |  4 +-
+ arch/ia64/kernel/fsys.S              | 12 ++---
+ arch/s390/kernel/perf_cpum_sf.c      |  2 +-
+ drivers/net/tun.c                    |  2 +-
+ drivers/platform/x86/thinkpad_acpi.c |  1 +
+ drivers/tty/sysrq.c                  |  2 +-
+ drivers/tty/tty_io.c                 |  2 +-
+ fs/autofs/autofs_i.h                 |  1 +
+ fs/exec.c                            |  1 +
+ fs/fcntl.c                           | 74 ++++++++++++++-------------
+ fs/fuse/file.c                       |  1 +
+ fs/locks.c                           |  2 +-
+ fs/notify/dnotify/dnotify.c          |  3 +-
+ fs/notify/fanotify/fanotify.c        |  1 +
+ include/linux/init_task.h            |  9 ----
+ include/linux/pid.h                  | 11 +---
+ include/linux/ptrace.h               |  2 -
+ include/linux/sched.h                | 31 +++---------
+ include/linux/sched/signal.h         | 49 ++++++++++++++++--
+ include/linux/signal.h               |  6 ++-
+ include/net/scm.h                    |  1 +
+ init/init_task.c                     | 13 +++--
+ kernel/events/core.c                 |  2 +-
+ kernel/exit.c                        | 12 ++---
+ kernel/fork.c                        | 75 +++++++++++++++++++--------
+ kernel/pid.c                         | 42 ++++++++--------
+ kernel/sched/core.c                  |  2 +
+ kernel/signal.c                      | 98 ++++++++++++++++++++++++++----------
+ kernel/time/itimer.c                 |  5 +-
+ kernel/time/posix-cpu-timers.c       |  2 +-
+ kernel/time/posix-timers.c           | 21 ++++----
+ mm/oom_kill.c                        |  4 +-
+ virt/kvm/kvm_main.c                  |  2 +-
+ 33 files changed, 294 insertions(+), 201 deletions(-)
+
+Eric
