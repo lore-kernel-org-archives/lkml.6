@@ -2,108 +2,109 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CC8C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A82C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 773AA208B6
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:02:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 773AA208B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id F170421570
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:02:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SIxSKjjD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F170421570
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727331AbeHUPVv (ORCPT
+        id S1727357AbeHUPW0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 11:21:51 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41538 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726938AbeHUPVv (ORCPT
+        Tue, 21 Aug 2018 11:22:26 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33381 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727162AbeHUPW0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 11:21:51 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7LC0Fpq105724
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 08:01:58 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m0gp84nvk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 08:01:58 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Tue, 21 Aug 2018 13:01:56 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 21 Aug 2018 13:01:53 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7LC1q3d46203020
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 21 Aug 2018 12:01:52 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C8F8A11C06C;
-        Tue, 21 Aug 2018 15:01:52 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B48EB11C04C;
-        Tue, 21 Aug 2018 15:01:51 +0100 (BST)
-Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Tue, 21 Aug 2018 15:01:51 +0100 (BST)
-Date:   Tue, 21 Aug 2018 05:01:50 -0700
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 0/6] numa-balancing patches
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <1533276841-16341-1-git-send-email-srikar@linux.vnet.ibm.com>
+        Tue, 21 Aug 2018 11:22:26 -0400
+Received: by mail-lj1-f195.google.com with SMTP id s12-v6so14099470ljj.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 05:02:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ASEXKtE9J3QGtrXxj8rWJowtdn/xKqROXNTd0odm7rg=;
+        b=SIxSKjjD8de5Dj7M2/G6qMTTSSTSaRJyL/moXpUvTh+A+iwzYZyfgfwtQCab8qxByv
+         O8h2MxRd9oXSqrlJ3QEueM2vCrwBnHRBaEEJQN6ssyv8nq1Jn7f1ZXOg+haSHj8oBYZ3
+         5U18O7BwLedAy5aYM1WW8acbLu8Sb+mkpXEEs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ASEXKtE9J3QGtrXxj8rWJowtdn/xKqROXNTd0odm7rg=;
+        b=ZhVcDH49uMp2lHTyqeh+TUXmw2M35VwdG+u4g9T4WOUB9XXb1/b6YCxdAwA4FuKFZB
+         njUreBlEtnvYByi889c7LwT8BoVycn7ZBt+y3Bfaxwb7lLw0PDk36tW31JTnIJ6HhagC
+         z2uAqMjYyqi/LBlCnXRQWKwFEK1hunjS1kB/fMfBS6ImvoTUp+OKK22fJm+mzDT4x9Fb
+         JYbaruh2+1cXIv0KAx1N8PCZPdr68gmtAK7iZ7zxKjwYvme7mXiwyDLZYDp6xobdWVn1
+         a1o33Ti5D0ruddd7bk2aG4ouNiDfcUGc+KdMhd8ovLG3NJwxr6NXLycf8COzHaYvAMx1
+         /Nig==
+X-Gm-Message-State: AOUpUlHxl+LbaWE02Fqaegi03VL3g/OUkz5sFlcFg/6i+ZTxFrrKM4//
+        WE72uN2IuxTjxIHAaw5oTeivJQ==
+X-Google-Smtp-Source: AA+uWPz7l6V/1e60fNx4uJZqpBiZFQdU3twS8gLWwy4a510sOTlrYO3nBCKWI+Qj4oOKL6sgIOMJwQ==
+X-Received: by 2002:a2e:97c8:: with SMTP id m8-v6mr36334195ljj.52.1534852951686;
+        Tue, 21 Aug 2018 05:02:31 -0700 (PDT)
+Received: from localhost (c-2c3d70d5.07-21-73746f28.bbcust.telenor.se. [213.112.61.44])
+        by smtp.gmail.com with ESMTPSA id u19-v6sm2059688lje.51.2018.08.21.05.02.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 Aug 2018 05:02:31 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     trenn@suse.com, shuah@kernel.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] cpupower: remove stringop-truncation waring
+Date:   Tue, 21 Aug 2018 14:02:25 +0200
+Message-Id: <20180821120225.3516-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <1533276841-16341-1-git-send-email-srikar@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18082112-0008-0000-0000-00000264A123
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082112-0009-0000-0000-000021CCDF34
-Message-Id: <20180821120150.GB2080@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-21_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808210128
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Srikar Dronamraju <srikar@linux.vnet.ibm.com> [2018-08-03 11:43:55]:
+The strncpy doesn't null terminate the string because the size is too
+short by one byte.
 
-> This patchset based on current tip/sched/core, provides left out patches
-> from the previous series. This version handles the comments given to some of
-> the patches. It drops "sched/numa: Restrict migrating in parallel to the same
-> node." It adds an additional patch from Mel Gorman.
-> It also provides specjbb2005 /dbench/ perf bench numa numbers on a patch
-> basis on 4 node and 2 node systems.
-> 
-> v2: http://lkml.kernel.org/r/1529514181-9842-1-git-send-email-srikar@linux.vnet.ibm.com
-> v1: http://lkml.kernel.org/r/1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com
-> 
+parse.c: In function ‘prepare_default_config’:
+parse.c:148:2: warning: ‘strncpy’ output truncated before terminating
+    nul copying 8 bytes from a string of the same length
+    [-Wstringop-truncation]
+  strncpy(config->governor, "ondemand", 8);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Hi Peter, Ingo
+Passing the length of the input argument to strncpy() is almost always
+wrong and provides no extra benefit over strcpy(), and since 'ondemand'
+fits within 15 bytes" and it null terminates the string its safe to use
+strcpy().
 
-Can you please respond with your comments suggestions.
+Fixes: 7fe2f6399a84 ("cpupowerutils - cpufrequtils extended with quite some features")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ tools/power/cpupower/bench/parse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Mel and Rik have acked most of the patches.
-
+diff --git a/tools/power/cpupower/bench/parse.c b/tools/power/cpupower/bench/parse.c
+index 9ba8a44ad2a7..91b5b768ffd2 100644
+--- a/tools/power/cpupower/bench/parse.c
++++ b/tools/power/cpupower/bench/parse.c
+@@ -145,7 +145,7 @@ struct config *prepare_default_config()
+ 	config->cpu = 0;
+ 	config->prio = SCHED_HIGH;
+ 	config->verbose = 0;
+-	strncpy(config->governor, "ondemand", 8);
++	strcpy(config->governor, "ondemand");
+ 
+ 	config->output = stdout;
+ 
 -- 
-Thanks and Regards
-Srikar Dronamraju
+2.18.0
 
