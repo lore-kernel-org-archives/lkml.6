@@ -2,119 +2,139 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC200C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60739C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F0FC214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:27:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1941121837
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:31:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="z57auqH/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F0FC214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="WHLNtQ2C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1941121837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbeHUVsx (ORCPT
+        id S1727282AbeHUVxF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 17:48:53 -0400
-Received: from mail-eopbgr720060.outbound.protection.outlook.com ([40.107.72.60]:51844
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726730AbeHUVsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 17:48:52 -0400
+        Tue, 21 Aug 2018 17:53:05 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45176 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726993AbeHUVxF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 17:53:05 -0400
+Received: by mail-pl0-f66.google.com with SMTP id j8-v6so9156740pll.12
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 11:31:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qx1CL79HGeLPEPvKumsS3p3DvV7cH9hZBRLXAha7jnU=;
- b=z57auqH/WxKXAE8qWk+tMVwEHqjQ7faeHRVBl+cL8zDloCvCkSs4g1vmQN+xrEtd/Un9W50qMbzdZ6fZWotDxBr0iNcrX5VxnxuR6bxoi1AP3dxcXw0ddVsmbG97QOgaIVg6/RvwedplmJKEkJVuKP5F6wA3O8iNg1m7hNyJzJU=
-Received: from BN7PR12MB2593.namprd12.prod.outlook.com (20.176.176.31) by
- BN7PR12MB2721.namprd12.prod.outlook.com (20.176.178.89) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1080.14; Tue, 21 Aug 2018 18:27:35 +0000
-Received: from BN7PR12MB2593.namprd12.prod.outlook.com
- ([fe80::60a7:5c31:8fd7:825d]) by BN7PR12MB2593.namprd12.prod.outlook.com
- ([fe80::60a7:5c31:8fd7:825d%4]) with mapi id 15.20.1059.023; Tue, 21 Aug 2018
- 18:27:35 +0000
-From:   "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: RE: [PATCH 2/2] x86/MCE/AMD: Skip creating kobjects with NULL names
-Thread-Topic: [PATCH 2/2] x86/MCE/AMD: Skip creating kobjects with NULL names
-Thread-Index: AQHUL+qPjfuIpXUOskyw2O7P1ShxPqS3mUYAgAAhmNCACUXnAIABukEQgAeHQ4CAAFbVkA==
-Date:   Tue, 21 Aug 2018 18:27:34 +0000
-Message-ID: <BN7PR12MB2593D34AEBB6BFD8CAC381AEF8310@BN7PR12MB2593.namprd12.prod.outlook.com>
-References: <20180809140834.59264-1-Yazen.Ghannam@amd.com>
- <20180809140834.59264-2-Yazen.Ghannam@amd.com>
- <20180809161806.GB20928@nazgul.tnic>
- <BN7PR12MB259395675EBD74400D9FEBE5F8250@BN7PR12MB2593.namprd12.prod.outlook.com>
- <20180815155452.GB28669@nazgul.tnic>
- <BN7PR12MB2593C9819A949A2F7571FAB7F83E0@BN7PR12MB2593.namprd12.prod.outlook.com>
- <20180821131541.GE30528@nazgul.tnic>
-In-Reply-To: <20180821131541.GE30528@nazgul.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com; 
-x-originating-ip: [2601:3c2:8280:2327:3414:3059:320b:d027]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN7PR12MB2721;20:vLJy9qtddPPpE79bp9inJfsPCi3hEWJ67SaEdRyLb7B1D+DdTcbTfDFGDyCtL6zACX4W+jUlgKHG7lLzkYzlZqwZSN4ICDnZQWitI+qVvjiBPWfE/yF2wWxB1GcD59y3r1LZKdZgylT5Rajq0/pL/oCuceV2yBRYrU+/NfI3q6/N7BdfMB/1c9WsUfj3BAyswWInN8nzk0dqBtzClXaXZCW3JgVx8uVtwMdq3hU8reoefDn96xfLmc1iW+CeKHOS
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: ff7435dc-3eb1-4700-6f39-08d60793c41b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN7PR12MB2721;
-x-ms-traffictypediagnostic: BN7PR12MB2721:
-x-microsoft-antispam-prvs: <BN7PR12MB2721172075527F43EB43CDBEF8310@BN7PR12MB2721.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110)(105169848403564)(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201708071742011)(7699016);SRVR:BN7PR12MB2721;BCL:0;PCL:0;RULEID:;SRVR:BN7PR12MB2721;
-x-forefront-prvs: 0771670921
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(39860400002)(136003)(366004)(13464003)(199004)(189003)(486006)(7696005)(86362001)(7736002)(106356001)(5660300001)(6436002)(76176011)(229853002)(316002)(2900100001)(2906002)(93886005)(305945005)(476003)(4326008)(256004)(68736007)(74316002)(6246003)(54906003)(105586002)(446003)(11346002)(8676002)(25786009)(186003)(102836004)(46003)(72206003)(5250100002)(33656002)(6506007)(81166006)(81156014)(478600001)(53546011)(9686003)(53936002)(8936002)(97736004)(14454004)(6916009)(55016002)(99286004)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2721;H:BN7PR12MB2593.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 1qefkvgDownBxM4m59ljCs1LADBEqwRpqa7GliM8G+Ri+c7OCdc/PKEfdltSs5f3mQRlDfdu7m2+IrMHYLrLJov+I70K0tKrTEILkOwgaISxJ5HeZv9CK/zkkjUvItq62wbmblB58MKFCI2x4K98aeCNek3xpOHK9uYYIyWLHsbv+0EaXZN5/F6JYpNT/anFTxFRIheWoH/YKLD8jJQgaPOQxIale6AlOjc/3lLk/IKxGINgT1I9ztORedz0s/XachQnzsD8RntDS2BkDetlk9eDOQpALTnPjUtCDHLpvP6Q9f08z6rqcI4J2sLHcFYbxABfSaFj5Mi8mgDqaDhy0F3vFlhBCsINVvowEfgW6Ds=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff7435dc-3eb1-4700-6f39-08d60793c41b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2018 18:27:34.9504
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2721
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=g8IpY6hzTZwIrzQA58MO50kervf+ZjMhPMKD1MIyhkI=;
+        b=WHLNtQ2Cz0hR0bGvc19P9GieGuL2RJSWGUx1nL2yT3dNpOSYjOYUSWzzlnHHgpAFzC
+         Wi6X8E894kpVME/sMqatJXHlnbbFp6ENpi1QmRaZ2ZC47aZHFWUNKShyS+lHkeHjhdUw
+         sPOgAPZHc209ldLPURNlSAdb7emXr/7aZWrJ8EJv4ZRW4DvgWsGPH2ZyWlkma9xWk86u
+         +gds4kZPwlw1nKD/JxXSs0vNmrWVo4BQtHjrw8dum1S7P2T1xqZLO0BGhvjUTXk0coV1
+         MaG5d/pO0SH9KhnV0iA1oZjV+vTC50EENTnbW3bHiTuD+NahKZeTcSbPa3/r+QBwLS04
+         sFXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=g8IpY6hzTZwIrzQA58MO50kervf+ZjMhPMKD1MIyhkI=;
+        b=sdfoCUh3DWk7Gy23HakJ34n8DeV9swp5oQNM2Jd6OywiEZLmoen2EGD8o2Yc39LPS7
+         f9jTlecP+TRHT+z+RSBgH0pozWl86QL/Eg2fRt9Rr4GVHNkQLqLgHz3ay7ciuPFpl90r
+         I5uW0qoI+ZcSKnVDmANNNmORd3P3Rp+QTiX+kMcnvZcmD+Vb0OxyJ0wvhY7FrBOfwTCq
+         9x41IfuT81r6sP9yaofVIcqqwytmjDc474AYY/ObSLONv9KiY86lsZ3DLtotvdW6CMsc
+         PZZR1oz6XTPfoeQZQNGp97mDobsVkU2k3gJY1jArjB9lYQ8TBYEB+xO18qhK2F/JQMGl
+         acrQ==
+X-Gm-Message-State: AOUpUlFZ4MHgIVRUkKatK0/B/ezAXHex2Y0SWskKoCH/knhpsG1ajwak
+        nDMyiGwZgOn9JVNGljHmDTLO+o/qOVg=
+X-Google-Smtp-Source: AA+uWPxkz0wBGe0RA7zZs/iLFdzhxu3YRPaIUN+KAewG/alxTSp4fWhGOkp9drHnshfmRslZskk0ZA==
+X-Received: by 2002:a17:902:654b:: with SMTP id d11-v6mr50763094pln.8.1534876309000;
+        Tue, 21 Aug 2018 11:31:49 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id h18-v6sm35357939pfa.173.2018.08.21.11.31.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 Aug 2018 11:31:48 -0700 (PDT)
+Date:   Tue, 21 Aug 2018 11:31:48 -0700 (PDT)
+X-Google-Original-Date: Tue, 21 Aug 2018 11:24:28 PDT (-0700)
+Subject:     Re: [GIT PULL] RISC-V Updates for the 4.19 Merge Window
+In-Reply-To: <20180818133759.GA20049@roeck-us.net>
+CC:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     linux@roeck-us.net
+Message-ID: <mhng-d01c95f5-d4bb-49c5-addb-78b09911f6cd@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBCb3Jpc2xhdiBQZXRrb3YgPGJw
-QGFsaWVuOC5kZT4NCj4gU2VudDogVHVlc2RheSwgQXVndXN0IDIxLCAyMDE4IDg6MTYgQU0NCj4g
-VG86IEdoYW5uYW0sIFlhemVuIDxZYXplbi5HaGFubmFtQGFtZC5jb20+DQo+IENjOiBsaW51eC1l
-ZGFjQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj4gdG9u
-eS5sdWNrQGludGVsLmNvbTsgeDg2QGtlcm5lbC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCAy
-LzJdIHg4Ni9NQ0UvQU1EOiBTa2lwIGNyZWF0aW5nIGtvYmplY3RzIHdpdGggTlVMTA0KPiBuYW1l
-cw0KPiANCj4gT24gVGh1LCBBdWcgMTYsIDIwMTggYXQgMDY6NDY6MzNQTSArMDAwMCwgR2hhbm5h
-bSwgWWF6ZW4gd3JvdGU6DQo+ID4gRnV0dXJlIFNNQ0Egc3lzdGVtcyBtYXkgaGF2ZSBiYW5rcyB3
-aG9zZSBNQ0FfSVBJRCBpcyBub3Qga25vd24gc28gd2UNCj4gDQo+IFlvdSBsb3N0IG1lIGhlcmUu
-IEhvdyB3b3VsZCB0aGUgSVBJRCBub3QgYmUga25vd24/IEFyZSB5b3UgdGFsa2luZyBhYm91dA0K
-PiBhbiBvbGQga2VybmVsIHJ1bm5pbmcgb24gbmV3IEhXIGFuZCB0aHVzIHRoZSBIYXJkd2FyZUlE
-IGluIGl0cyBNQ0FfSVBJRA0KPiB0byBiZSB1bmtub3duIHRvIHRoZSBvbGQga2VybmVsPw0KPiAN
-Cg0KWWVzLCB0aGF0J3MgcmlnaHQ6IG9sZCBrZXJuZWwgb24gbmV3IEhXLg0KDQo+ID4gSW4gdGhl
-IHBhc3QsIHRoZSBzeXNmcyBlbnRyaWVzIHdlcmUgbmFtZWQgc29tZXRoaW5nIGxpa2UgInRoX2Jh
-bmsjIiBiZWZvcmUNCj4gPiBlYWNoIGJhbmsgd2FzIGdpdmVuIGEgbW9yZSBkZXNjcmlwdGl2ZSBu
-YW1lLiBXZSBjYW4gZ28gYmFjayB0byB0aGlzIGZvcm1hdA0KPiA+IGFzIGEgZmFsbGJhY2sgZm9y
-IHVucmVjb2duaXplZCBiYW5rIHR5cGVzLiBUaGlzIHdpbGwgZml4IHRoZSBpc3N1ZSB3aXRoIHN5
-c2ZzDQo+ID4gZmFpbGluZyBhbmQgYWxzbyB0aGUgaW50ZXJmYWNlIHdpbGwgc3RpbGwgd29yayBv
-biBuZXcgaGFyZHdhcmUuDQo+IA0KPiBZb3UgY291bGQgZG86IHRoX2JhbmsjPEhhcmR3YXJlSUQ+
-IHNvIHRoYXQgd2UgY2FuIGZpbmQgd2hhdCBpdCBpcyBieQ0KPiBncmVwcGluZyB0aGUgUFBSLg0K
-PiANCg0KR29vZCBpZGVhLiBXaWxsIGRvLg0KDQpUaGFua3MsDQpZYXplbg0K
+On Sat, 18 Aug 2018 06:37:59 PDT (-0700), linux@roeck-us.net wrote:
+> Hi Palmer,
+>
+> On Fri, Aug 17, 2018 at 01:28:11PM -0700, Palmer Dabbelt wrote:
+> [ ... ]
+>
+>>
+>> This tag boots a Fedora root filesystem on QEMU's master branch for me,
+>> and before this morning's rebase (from 4.18-rc8 to 4.18) it booted on
+>> the HiFive Unleashed.
+>>
+>
+> Do you have vmlinux embedded in bbl ?
+>
+> With separate bbl and vmlinux, and the following qemu command line
+> (with qemu 3.0)
+>
+> qemu-system-riscv64 -M virt -m 512M -no-reboot \
+> 	-bios bbl -kernel vmlinux \
+> 	-netdev user,id=net0 -device virtio-net-device,netdev=net0 \
+> 	-device virtio-blk-device,drive=d0 \
+> 	-drive file=rootfs.ext2,if=none,id=d0,format=raw \
+> 	-append 'root=/dev/vda rw console=ttyS0,115200' \
+> 	-nographic -monitor none
+>
+> all I get is
+>
+> rom: requested regions overlap (rom mrom.reset. free=0x000000000001cbe8, addr=0x0000000000001000)
+>
+> However, the she system boots fine with the same qemu command line if I use qemu
+> built from https://github.com/riscv/riscv-qemu.git, branch qemu-for-upstream.
+
+Yes, I have a vmlinux built into my BBL.  I didn't actually look closely at the 
+command line I was copying and see that vmlinux in there, my guess would be 
+that it's getting ignored.  I don't remember if upstream BBL actually works 
+with the split bbl/vmlinux setup, I've kind of stopped paying attention to BBL 
+as I'm just waiting for someone to tell me instructions as to how to use a real 
+bootloader... :)
+
+I'm building master from QEMU as of a few weeks ago
+
+    * f7502360397d - (HEAD -> master, tag: v3.0.0-rc3, origin/master, origin/HEAD) Update version for v3.0.0-rc3 release (3 weeks ago) <Peter Maydell>
+    *   b89041647422 - Merge remote-tracking branch 'remotes/armbru/tags/pull-monitor-2018-07-31' into staging (3 weeks ago) <Peter Maydell>
+    |\
+    | * 9a1054061c62 - monitor: temporary fix for dead-lock on event recursion (3 weeks ago) <Marc-André Lureau>
+    |/
+    *   42e76456cf68 - Merge remote-tracking branch 'remotes/vivier2/tags/linux-user-for-3.0-pull-request' into staging (3 weeks ago) <Peter Maydell>
+    |\
+    | * 5d9f3ea08172 - linux-user: ppc64: don't use volatile register during safe_syscall (3 weeks ago) <Shivaprasad G Bhat>
+    | * 28cbb997d66e - tests: add check_invalid_maps to test-mmap (3 weeks ago) <Alex Bennée>
+    | * 38138fab9358 - linux-user/mmap.c: handle invalid len maps correctly (3 weeks ago) <Alex Bennée>
+    * |   45a505d0a4b3 - Merge remote-tracking branch 'remotes/bonzini/tags/for-upstream' into staging (3 weeks ago) <Peter Maydell>
+
+in general once we get a port upstream I jump over to using master from 
+upstream as that way we'll find any bugs quickly.  Michael Clark has a pretty 
+big QEMU patch queue, but nothing appears to be critical for Linux boot.
+
+> Excellent - once this series hits mainline, I'll add riscv to my
+> boot tests.
+
+Thanks!  I'm super excited to get CI stuff up and running as now that we can 
+boot I'm worried people will notice when I screw something up :)
