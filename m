@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EEAAC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:32:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB53C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 313AD20C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:32:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 313AD20C09
+	by mail.kernel.org (Postfix) with ESMTP id D474B20C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:32:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D474B20C09
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbeHUJvD (ORCPT
+        id S1727772AbeHUJvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:51:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56612 "EHLO
+        Tue, 21 Aug 2018 05:51:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56622 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbeHUJvD (ORCPT
+        with ESMTP id S1727082AbeHUJvG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:51:03 -0400
+        Tue, 21 Aug 2018 05:51:06 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 550D29D7;
-        Tue, 21 Aug 2018 06:32:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 910C09D7;
+        Tue, 21 Aug 2018 06:32:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+c51e6736a1bf614b3272@syzkaller.appspotmail.com,
-        Jason Wang <jasowang@redhat.com>,
+        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
+        Xin Long <lucien.xin@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 07/29] vhost: reset metadata cache when initializing new IOTLB
-Date:   Tue, 21 Aug 2018 08:21:00 +0200
-Message-Id: <20180821055108.716959387@linuxfoundation.org>
+Subject: [PATCH 4.14 08/29] ip6_tunnel: use the right value for ipv4 min mtu check in ip6_tnl_xmit
+Date:   Tue, 21 Aug 2018 08:21:01 +0200
+Message-Id: <20180821055108.757916987@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055108.333930282@linuxfoundation.org>
 References: <20180821055108.333930282@linuxfoundation.org>
@@ -52,40 +51,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit b13f9c6364373a1b9f71e9846dc4fb199296f926 ]
+[ Upstream commit 82a40777de12728dedf4075453b694f0d1baee80 ]
 
-We need to reset metadata cache during new IOTLB initialization,
-otherwise the stale pointers to previous IOTLB may be still accessed
-which will lead a use after free.
+According to RFC791, 68 bytes is the minimum size of IPv4 datagram every
+device must be able to forward without further fragmentation while 576
+bytes is the minimum size of IPv4 datagram every device has to be able
+to receive, so in ip6_tnl_xmit(), 68(IPV4_MIN_MTU) should be the right
+value for the ipv4 min mtu check in ip6_tnl_xmit.
 
-Reported-by: syzbot+c51e6736a1bf614b3272@syzkaller.appspotmail.com
-Fixes: f88949138058 ("vhost: introduce O(1) vq metadata cache")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
+While at it, change to use max() instead of if statement.
+
+Fixes: c9fefa08190f ("ip6_tunnel: get the min mtu properly in ip6_tnl_xmit")
+Reported-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vhost/vhost.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ net/ipv6/ip6_tunnel.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1578,9 +1578,12 @@ int vhost_init_device_iotlb(struct vhost
- 	d->iotlb = niotlb;
- 
- 	for (i = 0; i < d->nvqs; ++i) {
--		mutex_lock(&d->vqs[i]->mutex);
--		d->vqs[i]->iotlb = niotlb;
--		mutex_unlock(&d->vqs[i]->mutex);
-+		struct vhost_virtqueue *vq = d->vqs[i];
-+
-+		mutex_lock(&vq->mutex);
-+		vq->iotlb = niotlb;
-+		__vhost_vq_meta_reset(vq);
-+		mutex_unlock(&vq->mutex);
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -1134,12 +1134,8 @@ route_lookup:
+ 		max_headroom += 8;
+ 		mtu -= 8;
  	}
+-	if (skb->protocol == htons(ETH_P_IPV6)) {
+-		if (mtu < IPV6_MIN_MTU)
+-			mtu = IPV6_MIN_MTU;
+-	} else if (mtu < 576) {
+-		mtu = 576;
+-	}
++	mtu = max(mtu, skb->protocol == htons(ETH_P_IPV6) ?
++		       IPV6_MIN_MTU : IPV4_MIN_MTU);
  
- 	vhost_umem_clean(oiotlb);
+ 	skb_dst_update_pmtu(skb, mtu);
+ 	if (skb->len - t->tun_hlen - eth_hlen > mtu && !skb_is_gso(skb)) {
 
 
