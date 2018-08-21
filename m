@@ -6,83 +6,165 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE26C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 09:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F179BC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 09:56:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98B40214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 09:55:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98B40214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B132F214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 09:56:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B132F214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbeHUNPI (ORCPT
+        id S1727049AbeHUNQN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 09:15:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34818 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726755AbeHUNPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 09:15:07 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 21DD74075180;
-        Tue, 21 Aug 2018 09:55:38 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-147.rdu2.redhat.com [10.10.123.147])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 740562157F49;
-        Tue, 21 Aug 2018 09:55:37 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 6/6] proc: Set correct userns for new proc super created by
- a new pid_namespace
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     Andrei Vagin <avagin@gmail.com>, dhowells@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 21 Aug 2018 10:55:37 +0100
-Message-ID: <153484533695.1183.7796797839895873922.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153484529922.1183.17405985592221413059.stgit@warthog.procyon.org.uk>
-References: <153484529922.1183.17405985592221413059.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Tue, 21 Aug 2018 09:16:13 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37457 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726709AbeHUNQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 09:16:13 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 37DB820799; Tue, 21 Aug 2018 11:56:41 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 68FD120618;
+        Tue, 21 Aug 2018 11:56:40 +0200 (CEST)
+Date:   Tue, 21 Aug 2018 11:56:39 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Alban <albeu@free.fr>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Naren <naren.kernel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 06/29] mtd: Add support for reading MTD devices via
+ the nvmem API
+Message-ID: <20180821115639.4894c1c9@bbrezillon>
+In-Reply-To: <e0ec3194-fd3a-9b3d-fba8-f88447eb56e9@linaro.org>
+References: <20180810080526.27207-1-brgl@bgdev.pl>
+        <20180810080526.27207-7-brgl@bgdev.pl>
+        <20180817182720.6a6e5e8e@bbrezillon>
+        <20180819133106.0420df5f@tock>
+        <20180819184609.6dcdbb9a@bbrezillon>
+        <5b8c30b8-41e1-d59e-542b-fef6c6469ff0@linaro.org>
+        <20180820202038.5d3dc195@bbrezillon>
+        <e0ec3194-fd3a-9b3d-fba8-f88447eb56e9@linaro.org>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 21 Aug 2018 09:55:38 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 21 Aug 2018 09:55:38 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrei Vagin <avagin@openvz.org>
+On Tue, 21 Aug 2018 10:50:07 +0100
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
 
-Fix the setting up a new proc superblock for a new pid_namespace such that
-the user_ns for that proc superblock needs to be taken from the new
-pid_namespace and not the active process.
+> On 20/08/18 19:20, Boris Brezillon wrote:
+> > On Mon, 20 Aug 2018 11:43:34 +0100
+> > Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
+> >   
+> >>
+> >> Overall am still not able to clear visualize on how MTD bindings with
+> >> nvmem cells would look in both partition and un-partition usecases?
+> >> An example DT would be nice here!!  
+> > 
+> > Something along those lines:
+> >   
+> This looks good to me.
+> > 	mtdnode {
+> > 		nvmem-cells {
+> > 			#address-cells = <1>;
+> > 			#size-cells = <1>;
+> > 
+> > 			cell@0 {
+> > 				reg = <0x0 0x14>;
+> > 			};
+> > 		};
+> > 
+> > 		partitions {
+> > 			compatible = "fixed-partitions";
+> > 			#address-cells = <1>;
+> > 			#size-cells = <1>;
+> > 
+> > 			partition@0 {
+> > 				reg = <0x0 0x20000>;
+> > 
+> > 				nvmem-cells {
+> > 					#address-cells = <1>;
+> > 					#size-cells = <1>;
+> > 
+> > 					cell@0 {
+> > 						reg = <0x0 0x10>;
+> > 					};
+> > 				};
+> > 			};
+> > 		};
+> > 	}; >  
+> 
+> Just curious...Is there a reason why we can't do it like this?:
+> Is this because of issue of #address-cells and #size-cells Or mtd 
+> bindings always prefer subnodes?
+> 
+> 	mtdnode {
+> 		reg = <0x0123000 0x40000>;
+> 		#address-cells = <1>;
+> 		#size-cells = <1>;
+> 		cell@0 {
+> 			compatible = "nvmem-cell";
+> 			reg = <0x0 0x14>;
+> 		};
+> 
+> 		partitions {
+> 			compatible = "fixed-partitions";
+> 			#address-cells = <1>;
+> 			#size-cells = <1>;
+> 
+> 			partition@0 {
+> 				reg = <0x0 0x20000>;
+> 				cell@0 {
+> 					compatible = "nvmem-cell";
+> 					reg = <0x0 0x10>;
+> 				};
+> 			};
+> 		};
+> 	};
 
-Signed-off-by: Andrei Vagin <avagin@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+It's because partitions were initially directly defined under the mtd
+node, so, if you have an old DT you might have something like:
 
- fs/proc/root.c |    5 +++++
- 1 file changed, 5 insertions(+)
+	mtdnode {
+		reg = <0x0123000 0x40000>;
+		#address-cells = <1>;
+		#size-cells = <1>;
 
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index 1d6e5bfa30cc..1419b48a89ab 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -315,6 +315,11 @@ int pid_ns_prepare_proc(struct pid_namespace *ns)
- 	if (IS_ERR(fc))
- 		return PTR_ERR(fc);
- 
-+	if (fc->user_ns != ns->user_ns) {
-+		put_user_ns(fc->user_ns);
-+		fc->user_ns = get_user_ns(ns->user_ns);
-+	}
-+
- 	ctx = fc->fs_private;
- 	if (ctx->pid_ns != ns) {
- 		put_pid_ns(ctx->pid_ns);
+		partition@0 {
+			reg = <0x0 0x20000>;
+			...
+		};
+		...
+	};
 
+If we use such a DT with this patch applied, the NVMEM framework will
+consider MTD partitions as nvmem cells, which is not what we want.
