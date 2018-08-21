@@ -6,39 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62FD4C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68EF3C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:27:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26B102174D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:27:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26B102174D
+	by mail.kernel.org (Postfix) with ESMTP id 26765208A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:27:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26765208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728579AbeHUJpy (ORCPT
+        id S1728593AbeHUJp5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:45:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56434 "EHLO
+        Tue, 21 Aug 2018 05:45:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56446 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726228AbeHUJpx (ORCPT
+        with ESMTP id S1726228AbeHUJp5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:45:53 -0400
+        Tue, 21 Aug 2018 05:45:57 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B2020BE1;
-        Tue, 21 Aug 2018 06:27:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 36904AD8;
+        Tue, 21 Aug 2018 06:27:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+05f840f3b04f211bad55@syzkaller.appspotmail.com,
-        Wei Wang <weiwan@google.com>, Martin KaFai Lau <kafai@fb.com>,
-        Guillaume Nault <g.nault@alphalink.fr>,
-        David Ahern <dsahern@gmail.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 02/29] l2tp: use sk_dst_check() to avoid race on sk->sk_dst_cache
-Date:   Tue, 21 Aug 2018 08:20:55 +0200
-Message-Id: <20180821055108.470391254@linuxfoundation.org>
+        Aleksander Morgado <aleksander@aleksander.es>
+Subject: [PATCH 4.14 20/29] USB: option: add support for DW5821e
+Date:   Tue, 21 Aug 2018 08:21:13 +0200
+Message-Id: <20180821055109.198724507@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055108.333930282@linuxfoundation.org>
 References: <20180821055108.333930282@linuxfoundation.org>
@@ -55,95 +50,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wei Wang <weiwan@google.com>
+From: Aleksander Morgado <aleksander@aleksander.es>
 
-[ Upstream commit 6d37fa49da1e8db8fb1995be22ac837ca41ac8a8 ]
+commit 7bab01ecc6c43da882333c6db39741cb43677004 upstream.
 
-In l2tp code, if it is a L2TP_UDP_ENCAP tunnel, tunnel->sk points to a
-UDP socket. User could call sendmsg() on both this tunnel and the UDP
-socket itself concurrently. As l2tp_xmit_skb() holds socket lock and call
-__sk_dst_check() to refresh sk->sk_dst_cache, while udpv6_sendmsg() is
-lockless and call sk_dst_check() to refresh sk->sk_dst_cache, there
-could be a race and cause the dst cache to be freed multiple times.
-So we fix l2tp side code to always call sk_dst_check() to garantee
-xchg() is called when refreshing sk->sk_dst_cache to avoid race
-conditions.
+The device exposes AT, NMEA and DIAG ports in both USB configurations.
 
-Syzkaller reported stack trace:
-BUG: KASAN: use-after-free in atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
-BUG: KASAN: use-after-free in atomic_fetch_add_unless include/linux/atomic.h:575 [inline]
-BUG: KASAN: use-after-free in atomic_add_unless include/linux/atomic.h:597 [inline]
-BUG: KASAN: use-after-free in dst_hold_safe include/net/dst.h:308 [inline]
-BUG: KASAN: use-after-free in ip6_hold_safe+0xe6/0x670 net/ipv6/route.c:1029
-Read of size 4 at addr ffff8801aea9a880 by task syz-executor129/4829
+The patch explicitly ignores interfaces 0 and 1, as they're bound to
+other drivers already; and also interface 6, which is a GNSS interface
+for which we don't have a driver yet.
 
-CPU: 0 PID: 4829 Comm: syz-executor129 Not tainted 4.18.0-rc7-next-20180802+ #30
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
- print_address_description+0x6c/0x20b mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
- check_memory_region_inline mm/kasan/kasan.c:260 [inline]
- check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
- kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
- atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
- atomic_fetch_add_unless include/linux/atomic.h:575 [inline]
- atomic_add_unless include/linux/atomic.h:597 [inline]
- dst_hold_safe include/net/dst.h:308 [inline]
- ip6_hold_safe+0xe6/0x670 net/ipv6/route.c:1029
- rt6_get_pcpu_route net/ipv6/route.c:1249 [inline]
- ip6_pol_route+0x354/0xd20 net/ipv6/route.c:1922
- ip6_pol_route_output+0x54/0x70 net/ipv6/route.c:2098
- fib6_rule_lookup+0x283/0x890 net/ipv6/fib6_rules.c:122
- ip6_route_output_flags+0x2c5/0x350 net/ipv6/route.c:2126
- ip6_dst_lookup_tail+0x1278/0x1da0 net/ipv6/ip6_output.c:978
- ip6_dst_lookup_flow+0xc8/0x270 net/ipv6/ip6_output.c:1079
- ip6_sk_dst_lookup_flow+0x5ed/0xc50 net/ipv6/ip6_output.c:1117
- udpv6_sendmsg+0x2163/0x36b0 net/ipv6/udp.c:1354
- inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
- sock_sendmsg_nosec net/socket.c:622 [inline]
- sock_sendmsg+0xd5/0x120 net/socket.c:632
- ___sys_sendmsg+0x51d/0x930 net/socket.c:2115
- __sys_sendmmsg+0x240/0x6f0 net/socket.c:2210
- __do_sys_sendmmsg net/socket.c:2239 [inline]
- __se_sys_sendmmsg net/socket.c:2236 [inline]
- __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2236
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x446a29
-Code: e8 ac b8 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 eb 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f4de5532db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
-RAX: ffffffffffffffda RBX: 00000000006dcc38 RCX: 0000000000446a29
-RDX: 00000000000000b8 RSI: 0000000020001b00 RDI: 0000000000000003
-RBP: 00000000006dcc30 R08: 00007f4de5533700 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dcc3c
-R13: 00007ffe2b830fdf R14: 00007f4de55339c0 R15: 0000000000000001
+T:  Bus=01 Lev=03 Prnt=04 Port=00 Cnt=01 Dev#= 18 Spd=480 MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  2
+P:  Vendor=413c ProdID=81d7 Rev=03.18
+S:  Manufacturer=DELL
+S:  Product=DW5821e Snapdragon X20 LTE
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 7 Cfg#= 2 Atr=a0 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+I:  If#= 6 Alt= 0 #EPs= 1 Cls=ff(vend.) Sub=ff Prot=ff Driver=(none)
 
-Fixes: 71b1391a4128 ("l2tp: ensure sk->dst is still valid")
-Reported-by: syzbot+05f840f3b04f211bad55@syzkaller.appspotmail.com
-Signed-off-by: Wei Wang <weiwan@google.com>
-Signed-off-by: Martin KaFai Lau <kafai@fb.com>
-Cc: Guillaume Nault <g.nault@alphalink.fr>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+T:  Bus=01 Lev=03 Prnt=04 Port=00 Cnt=01 Dev#= 16 Spd=480 MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  2
+P:  Vendor=413c ProdID=81d7 Rev=03.18
+S:  Manufacturer=DELL
+S:  Product=DW5821e Snapdragon X20 LTE
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+I:  If#= 1 Alt= 0 #EPs= 1 Cls=03(HID  ) Sub=00 Prot=00 Driver=usbhid
+I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+
+Signed-off-by: Aleksander Morgado <aleksander@aleksander.es>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/l2tp/l2tp_core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -1211,7 +1211,7 @@ int l2tp_xmit_skb(struct l2tp_session *s
+---
+ drivers/usb/serial/option.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -199,6 +199,8 @@ static void option_instat_callback(struc
+ #define DELL_PRODUCT_5800_V2_MINICARD_VZW	0x8196  /* Novatel E362 */
+ #define DELL_PRODUCT_5804_MINICARD_ATT		0x819b  /* Novatel E371 */
  
- 	/* Get routing info from the tunnel socket */
- 	skb_dst_drop(skb);
--	skb_dst_set(skb, dst_clone(__sk_dst_check(sk, 0)));
-+	skb_dst_set(skb, sk_dst_check(sk, 0));
- 
- 	inet = inet_sk(sk);
- 	fl = &inet->cork.fl;
++#define DELL_PRODUCT_5821E			0x81d7
++
+ #define KYOCERA_VENDOR_ID			0x0c88
+ #define KYOCERA_PRODUCT_KPC650			0x17da
+ #define KYOCERA_PRODUCT_KPC680			0x180a
+@@ -1033,6 +1035,8 @@ static const struct usb_device_id option
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(DELL_VENDOR_ID, DELL_PRODUCT_5800_MINICARD_VZW, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(DELL_VENDOR_ID, DELL_PRODUCT_5800_V2_MINICARD_VZW, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(DELL_VENDOR_ID, DELL_PRODUCT_5804_MINICARD_ATT, 0xff, 0xff, 0xff) },
++	{ USB_DEVICE(DELL_VENDOR_ID, DELL_PRODUCT_5821E),
++	  .driver_info = RSVD(0) | RSVD(1) | RSVD(6) },
+ 	{ USB_DEVICE(ANYDATA_VENDOR_ID, ANYDATA_PRODUCT_ADU_E100A) },	/* ADU-E100, ADU-310 */
+ 	{ USB_DEVICE(ANYDATA_VENDOR_ID, ANYDATA_PRODUCT_ADU_500A) },
+ 	{ USB_DEVICE(ANYDATA_VENDOR_ID, ANYDATA_PRODUCT_ADU_620UW) },
 
 
