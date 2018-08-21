@@ -6,33 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FFAC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE16C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:32:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6B2620C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:32:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6B2620C09
+	by mail.kernel.org (Postfix) with ESMTP id 1E80120C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:32:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E80120C09
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728122AbeHUJvh (ORCPT
+        id S1728145AbeHUJvk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:51:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56702 "EHLO
+        Tue, 21 Aug 2018 05:51:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56710 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726852AbeHUJvg (ORCPT
+        with ESMTP id S1726852AbeHUJvj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:51:36 -0400
+        Tue, 21 Aug 2018 05:51:39 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B6AA87F6;
-        Tue, 21 Aug 2018 06:32:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EFB327F6;
+        Tue, 21 Aug 2018 06:32:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 15/25] ALSA: vxpocket: Fix invalid endian conversions
-Date:   Tue, 21 Aug 2018 08:21:29 +0200
-Message-Id: <20180821055125.660158677@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        Kees Cook <keescook@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 16/25] isdn: Disable IIOCDBGVAR
+Date:   Tue, 21 Aug 2018 08:21:30 +0200
+Message-Id: <20180821055125.694753093@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055124.909865464@linuxfoundation.org>
 References: <20180821055124.909865464@linuxfoundation.org>
@@ -49,65 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Kees Cook <keescook@chromium.org>
 
-commit 3acd3e3bab95ec3622ff98da313290ee823a0f68 upstream.
+[ Upstream commit 5e22002aa8809e2efab2da95855f73f63e14a36c ]
 
-The endian conversions used in vxp_dma_read() and vxp_dma_write() are
-superfluous and even wrong on big-endian machines, as inw() and outw()
-already do conversions.  Kill them.
+It was possible to directly leak the kernel address where the isdn_dev
+structure pointer was stored. This is a kernel ASLR bypass for anyone
+with access to the ioctl. The code had been present since the beginning
+of git history, though this shouldn't ever be needed for normal operation,
+therefore remove it.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Karsten Keil <isdn@linux-pingi.de>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/pcmcia/vx/vxp_ops.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/isdn/i4l/isdn_common.c |    8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
---- a/sound/pcmcia/vx/vxp_ops.c
-+++ b/sound/pcmcia/vx/vxp_ops.c
-@@ -375,7 +375,7 @@ static void vxp_dma_write(struct vx_core
- 		length >>= 1; /* in 16bit words */
- 		/* Transfer using pseudo-dma. */
- 		for (; length > 0; length--) {
--			outw(cpu_to_le16(*addr), port);
-+			outw(*addr, port);
- 			addr++;
- 		}
- 		addr = (unsigned short *)runtime->dma_area;
-@@ -385,7 +385,7 @@ static void vxp_dma_write(struct vx_core
- 	count >>= 1; /* in 16bit words */
- 	/* Transfer using pseudo-dma. */
- 	for (; count > 0; count--) {
--		outw(cpu_to_le16(*addr), port);
-+		outw(*addr, port);
- 		addr++;
- 	}
- 	vx_release_pseudo_dma(chip);
-@@ -417,7 +417,7 @@ static void vxp_dma_read(struct vx_core
- 		length >>= 1; /* in 16bit words */
- 		/* Transfer using pseudo-dma. */
- 		for (; length > 0; length--)
--			*addr++ = le16_to_cpu(inw(port));
-+			*addr++ = inw(port);
- 		addr = (unsigned short *)runtime->dma_area;
- 		pipe->hw_ptr = 0;
- 	}
-@@ -425,12 +425,12 @@ static void vxp_dma_read(struct vx_core
- 	count >>= 1; /* in 16bit words */
- 	/* Transfer using pseudo-dma. */
- 	for (; count > 1; count--)
--		*addr++ = le16_to_cpu(inw(port));
-+		*addr++ = inw(port);
- 	/* Disable DMA */
- 	pchip->regDIALOG &= ~VXP_DLG_DMAREAD_SEL_MASK;
- 	vx_outb(chip, DIALOG, pchip->regDIALOG);
- 	/* Read the last word (16 bits) */
--	*addr = le16_to_cpu(inw(port));
-+	*addr = inw(port);
- 	/* Disable 16-bit accesses */
- 	pchip->regDIALOG &= ~VXP_DLG_DMA16_SEL_MASK;
- 	vx_outb(chip, DIALOG, pchip->regDIALOG);
+--- a/drivers/isdn/i4l/isdn_common.c
++++ b/drivers/isdn/i4l/isdn_common.c
+@@ -1655,13 +1655,7 @@ isdn_ioctl(struct file *file, uint cmd,
+ 			} else
+ 				return -EINVAL;
+ 		case IIOCDBGVAR:
+-			if (arg) {
+-				if (copy_to_user(argp, &dev, sizeof(ulong)))
+-					return -EFAULT;
+-				return 0;
+-			} else
+-				return -EINVAL;
+-			break;
++			return -EINVAL;
+ 		default:
+ 			if ((cmd & IIOCDRVCTL) == IIOCDRVCTL)
+ 				cmd = ((cmd >> _IOC_NRSHIFT) & _IOC_NRMASK) & ISDN_DRVIOCTL_MASK;
 
 
