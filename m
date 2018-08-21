@@ -2,135 +2,147 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A66C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ACD3C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0381E21774
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:21:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0381E21774
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 40C0621774
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:22:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40C0621774
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726615AbeHUJjp (ORCPT
+        id S1726734AbeHUJkm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:39:45 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50900 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726175AbeHUJjp (ORCPT
+        Tue, 21 Aug 2018 05:40:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54590 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbeHUJkm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:39:45 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7L6IldV053509
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 02:20:59 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m0daxg4h5-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 02:20:59 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Tue, 21 Aug 2018 07:20:57 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 21 Aug 2018 07:20:51 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7L6Kou937093414
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 21 Aug 2018 06:20:50 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 451ECA4053;
-        Tue, 21 Aug 2018 09:20:51 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CA68AA4040;
-        Tue, 21 Aug 2018 09:20:45 +0100 (BST)
-Received: from [9.195.41.244] (unknown [9.195.41.244])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 21 Aug 2018 09:20:45 +0100 (BST)
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: Re: [PATCH v9 0/4] Uprobes: Support SDT markers having reference
- count (semaphore)
-To:     Song Liu <liu.song.a23@gmail.com>
-Cc:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>, mhiramat@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        ananth@linux.vnet.ibm.com,
-        Alexis Berlemont <alexis.berlemont@gmail.com>,
-        naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20180820044250.11659-1-ravi.bangoria@linux.ibm.com>
- <CAPhsuW70nRkwM8C76m4c_XF4tjepdRWYezg15sTvkMUDtHZ8JQ@mail.gmail.com>
- <2e997c62-371c-1d9d-97ab-65726f588ab5@linux.ibm.com>
-Date:   Tue, 21 Aug 2018 11:50:43 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 21 Aug 2018 05:40:42 -0400
+Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2D07B8A5;
+        Tue, 21 Aug 2018 06:21:55 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        syzbot+05f840f3b04f211bad55@syzkaller.appspotmail.com,
+        Wei Wang <weiwan@google.com>, Martin KaFai Lau <kafai@fb.com>,
+        Guillaume Nault <g.nault@alphalink.fr>,
+        David Ahern <dsahern@gmail.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 01/35] l2tp: use sk_dst_check() to avoid race on sk->sk_dst_cache
+Date:   Tue, 21 Aug 2018 08:20:27 +0200
+Message-Id: <20180821055020.031044093@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180821055019.954904905@linuxfoundation.org>
+References: <20180821055019.954904905@linuxfoundation.org>
+User-Agent: quilt/0.65
 MIME-Version: 1.0
-In-Reply-To: <2e997c62-371c-1d9d-97ab-65726f588ab5@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18082106-0020-0000-0000-000002B97F43
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082106-0021-0000-0000-00002106CDF0
-Message-Id: <dbd74447-b3e2-6bcf-2d8b-717b403bdf11@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-21_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808210066
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Song,
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-On 08/21/2018 10:53 AM, Ravi Bangoria wrote:
-> Hi Song,
-> 
->> However, if I start a.out AFTER enabling the uprobe, there is something wrong:
->>
->> root@virt-test:~# ~/a.out
->> 11
->> semaphore 0       <<< this should be non-zero, as the uprobe is already enabled
+------------------
 
-In this testcase, semaphore variable is stored into .bss:
+From: Wei Wang <weiwan@google.com>
 
-  $ nm test | grep semaphore
-  0000000010010c5e B semaphore
+[ Upstream commit 6d37fa49da1e8db8fb1995be22ac837ca41ac8a8 ]
+
+In l2tp code, if it is a L2TP_UDP_ENCAP tunnel, tunnel->sk points to a
+UDP socket. User could call sendmsg() on both this tunnel and the UDP
+socket itself concurrently. As l2tp_xmit_skb() holds socket lock and call
+__sk_dst_check() to refresh sk->sk_dst_cache, while udpv6_sendmsg() is
+lockless and call sk_dst_check() to refresh sk->sk_dst_cache, there
+could be a race and cause the dst cache to be freed multiple times.
+So we fix l2tp side code to always call sk_dst_check() to garantee
+xchg() is called when refreshing sk->sk_dst_cache to avoid race
+conditions.
+
+Syzkaller reported stack trace:
+BUG: KASAN: use-after-free in atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+BUG: KASAN: use-after-free in atomic_fetch_add_unless include/linux/atomic.h:575 [inline]
+BUG: KASAN: use-after-free in atomic_add_unless include/linux/atomic.h:597 [inline]
+BUG: KASAN: use-after-free in dst_hold_safe include/net/dst.h:308 [inline]
+BUG: KASAN: use-after-free in ip6_hold_safe+0xe6/0x670 net/ipv6/route.c:1029
+Read of size 4 at addr ffff8801aea9a880 by task syz-executor129/4829
+
+CPU: 0 PID: 4829 Comm: syz-executor129 Not tainted 4.18.0-rc7-next-20180802+ #30
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+ print_address_description+0x6c/0x20b mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
+ check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+ check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+ kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
+ atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+ atomic_fetch_add_unless include/linux/atomic.h:575 [inline]
+ atomic_add_unless include/linux/atomic.h:597 [inline]
+ dst_hold_safe include/net/dst.h:308 [inline]
+ ip6_hold_safe+0xe6/0x670 net/ipv6/route.c:1029
+ rt6_get_pcpu_route net/ipv6/route.c:1249 [inline]
+ ip6_pol_route+0x354/0xd20 net/ipv6/route.c:1922
+ ip6_pol_route_output+0x54/0x70 net/ipv6/route.c:2098
+ fib6_rule_lookup+0x283/0x890 net/ipv6/fib6_rules.c:122
+ ip6_route_output_flags+0x2c5/0x350 net/ipv6/route.c:2126
+ ip6_dst_lookup_tail+0x1278/0x1da0 net/ipv6/ip6_output.c:978
+ ip6_dst_lookup_flow+0xc8/0x270 net/ipv6/ip6_output.c:1079
+ ip6_sk_dst_lookup_flow+0x5ed/0xc50 net/ipv6/ip6_output.c:1117
+ udpv6_sendmsg+0x2163/0x36b0 net/ipv6/udp.c:1354
+ inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
+ sock_sendmsg_nosec net/socket.c:622 [inline]
+ sock_sendmsg+0xd5/0x120 net/socket.c:632
+ ___sys_sendmsg+0x51d/0x930 net/socket.c:2115
+ __sys_sendmmsg+0x240/0x6f0 net/socket.c:2210
+ __do_sys_sendmmsg net/socket.c:2239 [inline]
+ __se_sys_sendmmsg net/socket.c:2236 [inline]
+ __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2236
+ do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x446a29
+Code: e8 ac b8 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 eb 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f4de5532db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 00000000006dcc38 RCX: 0000000000446a29
+RDX: 00000000000000b8 RSI: 0000000020001b00 RDI: 0000000000000003
+RBP: 00000000006dcc30 R08: 00007f4de5533700 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dcc3c
+R13: 00007ffe2b830fdf R14: 00007f4de55339c0 R15: 0000000000000001
+
+Fixes: 71b1391a4128 ("l2tp: ensure sk->dst is still valid")
+Reported-by: syzbot+05f840f3b04f211bad55@syzkaller.appspotmail.com
+Signed-off-by: Wei Wang <weiwan@google.com>
+Signed-off-by: Martin KaFai Lau <kafai@fb.com>
+Cc: Guillaume Nault <g.nault@alphalink.fr>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/l2tp/l2tp_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -1110,7 +1110,7 @@ int l2tp_xmit_skb(struct l2tp_session *s
  
-  $ readelf -SW ./test | grep "data\|bss"
-    [22] .data             PROGBITS        0000000010010c58 000c58 000004 00  WA  0   0  1
-    [23] .bss              NOBITS          0000000010010c5c 000c5c 000004 00  WA  0   0  2
+ 	/* Get routing info from the tunnel socket */
+ 	skb_dst_drop(skb);
+-	skb_dst_set(skb, dst_clone(__sk_dst_check(sk, 0)));
++	skb_dst_set(skb, sk_dst_check(sk, 0));
+ 
+ 	inet = inet_sk(sk);
+ 	fl = &inet->cork.fl;
 
-I'm not so sure but I guess .bss data initialization happens after
-calling uprobe_mmap() and thus you are seeing semaphore as 0.
-
-To verify this, if I force to save semaphore into data section by
-assigning non-zero value to it:
-
-  volatile short semaphore = 1
-
- $ nm test | grep semaphore
- 0000000010010c5c D semaphore
-
- $ readelf -SW ./test | grep "data\|bss"
-    [22] .data             PROGBITS        0000000010010c58 000c58 000006 00  WA  0   0  2
-    [23] .bss              NOBITS          0000000010010c5e 000c5e 000002 00  WA  0   0  1 
-
-increment/decrement works fine.
-
-Ravi
 
