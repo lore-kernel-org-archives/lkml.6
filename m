@@ -2,163 +2,98 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C28C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 925D4C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC9FC217C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:58:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC9FC217C5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C152217C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:58:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MvS6I1xr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C152217C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbeHUSSh (ORCPT
+        id S1727672AbeHUSTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 14:18:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41626 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726590AbeHUSSh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 14:18:37 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2B06D401C968;
-        Tue, 21 Aug 2018 14:58:06 +0000 (UTC)
-Received: from [10.36.117.96] (ovpn-117-96.ams2.redhat.com [10.36.117.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 79F4F2026D64;
-        Tue, 21 Aug 2018 14:58:04 +0000 (UTC)
-Subject: Re: [PATCH] KVM: s390: vsie: BUG correction by shadow_crycb
-To:     Janosch Frank <frankja@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, cornelia.huck@de.ibm.com,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        akrowiak@linux.ibm.com, borntraeger@de.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
-References: <1534861178-30372-1-git-send-email-pmorel@linux.ibm.com>
- <929b67bc-44aa-a9ff-0ac2-9a35c2b456ef@linux.ibm.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <afe5eb8d-359b-60b7-bd4c-6d0ddda1b65b@redhat.com>
-Date:   Tue, 21 Aug 2018 16:58:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 21 Aug 2018 14:19:08 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43899 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726590AbeHUSTI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 14:19:08 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j26-v6so8622938pfi.10;
+        Tue, 21 Aug 2018 07:58:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EZNzC8GcS2VuQ6Y8/RmMGz/1HUJn0vN3Km59cEwImQU=;
+        b=MvS6I1xrnY1sUC8WoTPR8ZU9k9J0/g5qvRWOGy5vpMN1MVfhtd7gaUzV/zJqP8sNlW
+         6RiFJRfzl1mOileMgAON8ZXmIl/osAHekzmxK4mLUy7D5l2WFr7KEyfK3cMuR9B+0SFY
+         rjtrGbTTCvGbQHRXiqKaYl2qou7zfyMSUlBqK1gwKA6Fh8eAtJrqX1pARW2sPePfgR4c
+         7NrkdrTGmZhjvwiJT1HQeZ5KPwtQGAEcMU165OSAhb1gT2YMZkd3dv0LuJg+YN0RXldB
+         YRfNxN6+XGxiKGXd9vHA1wQ1QHt+rLKnY5vMsJ27t8W2fBGVOWF9FsmIuskvSh5hI2D1
+         4bww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EZNzC8GcS2VuQ6Y8/RmMGz/1HUJn0vN3Km59cEwImQU=;
+        b=tjPJhuq3FZI430aYFVqsWgFUKROJZFiSm0ixNzrr3x1hn5AE8POsp/TtqnbxqeGXIw
+         4OD9o61NXz2pbgrN1fXPmBwWsYjKxRDU8ZTMqb/ax0M8O6L+0OcgLZJAz1KQ9vuOinWF
+         gL0FxvA4GfEeB5D7ZP3Sq9w9ff9u8MsQVJCMJwcB1NOPd0IElFCiKZuaB/lOGE9t5nfG
+         DrihIO7aqKXH2MXmWnZpubbkWG2GQ4TX0+L743uy0kqLctFAW33GA9spCL75g6kgJgRW
+         SDs0UEucnZC9g86VwiIc7lTJBFJymWrsnCeHwy+MsGJe7UViRviiMv9atcsJsvIztfpl
+         nvEQ==
+X-Gm-Message-State: AOUpUlE/qLQcCCMT6JRkblL9B12soKWHOpmlqa34ZSVTdqTPD8+KAakZ
+        te8+aIRlfRsX9RzUc3KsJjg=
+X-Google-Smtp-Source: AA+uWPzISgAAvmSJ4Br78bBO+p5SVSVSdakGTXO0rR42ndNKxscGfl99Koycm8dntw6QsRZJVacacg==
+X-Received: by 2002:a62:2646:: with SMTP id m67-v6mr53710433pfm.254.1534863517934;
+        Tue, 21 Aug 2018 07:58:37 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id f19-v6sm22217574pfd.147.2018.08.21.07.58.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 Aug 2018 07:58:37 -0700 (PDT)
+Date:   Tue, 21 Aug 2018 07:58:36 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.17 00/42] 4.17.18-stable review
+Message-ID: <20180821145836.GD13639@roeck-us.net>
+References: <20180821055017.596264829@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <929b67bc-44aa-a9ff-0ac2-9a35c2b456ef@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 21 Aug 2018 14:58:06 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 21 Aug 2018 14:58:06 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180821055017.596264829@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.08.2018 16:43, Janosch Frank wrote:
-> On 21.08.2018 16:19, Pierre Morel wrote:
->> Copy the key mask to the right offset inside the shadow CRYCB
->>
->> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->> ---
->>  arch/s390/kvm/vsie.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
->> index 63844b9..a2b28cd 100644
->> --- a/arch/s390/kvm/vsie.c
->> +++ b/arch/s390/kvm/vsie.c
->> @@ -173,7 +173,8 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->>  		return set_validity_icpt(scb_s, 0x0039U);
->>  
->>  	/* copy only the wrapping keys */
->> -	if (read_guest_real(vcpu, crycb_addr + 72, &vsie_page->crycb, 56))
->> +	if (read_guest_real(vcpu, crycb_addr + 72,
->> +			    vsie_page->crycb.dea_wrapping_key_mask, 56))
->>  		return set_validity_icpt(scb_s, 0x0035U);
->>  
->>  	scb_s->ecb3 |= ecb3_flags;
->>
+On Tue, Aug 21, 2018 at 08:20:32AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.17.18 release.
+> There are 42 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Are we able to use offsetof and sizeof here? I'd rather have a few more
-> characters than magic offsets.
-> What about CC stable?
-
-Thought about both things, too.
-
-1. offsetof and sizeof will most likely make sense (although will most
-likely make this very ugly due to the long names involved)
-
-2. I am not sure about wrapping keys. We never had migration problems,
-so I assume this does not break migration (maybe it will break once we
-fix it on one side :) ). As we xor with the g2 keys, we will never match
-the g2 keys. HW will xor with our keys either way, so it cannot match
-our keys.
-
-But two g3 guests will now have the same wrapping keys, I assume that's bad?
-
-I guess we'll have to wait for Christian, I remember he was one of the
-people that understood what wrapping keys are actually good for (and the
-real key used in HW can simply, silently change, e.g. when migrating to
-another system - due to the xoring).
-
-Not having understood/looked into the details, I guess this should be
-stable material.
-
-> 
-> 
-> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+> Responses should be made by Thu Aug 23 05:50:04 UTC 2018.
+> Anything received after that time might be too late.
 > 
 
+Build results:
+	total: 134 pass: 134 fail: 0
+Qemu test results:
+	total: 302 pass: 302 fail: 0
 
--- 
+Details are available at http://kerneltests.org/builders/.
 
-Thanks,
-
-David / dhildenb
+Guenter
