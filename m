@@ -2,77 +2,114 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F4BC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1D2C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F9AA214C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:52:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F9AA214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0561B214C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:52:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0561B214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeHUQMB (ORCPT
+        id S1727466AbeHUQME (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 12:12:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43690 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727386AbeHUQMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 12:12:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5F5C6B050;
-        Tue, 21 Aug 2018 12:51:58 +0000 (UTC)
-Date:   Tue, 21 Aug 2018 14:51:56 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Oscar Salvador <osalvador@techadventures.net>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, tglx@linutronix.de,
-        joe@perches.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH] mm: Fix comment for NODEMASK_ALLOC
-Message-ID: <20180821125156.GB29735@dhcp22.suse.cz>
-References: <20180820085516.9687-1-osalvador@techadventures.net>
- <20180820142440.1f9ccbebefc5d617c881b41e@linux-foundation.org>
- <20180821121734.GA29735@dhcp22.suse.cz>
- <20180821123024.GA9489@techadventures.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180821123024.GA9489@techadventures.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 21 Aug 2018 12:12:04 -0400
+Received: from nautica.notk.org ([91.121.71.147]:46875 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727386AbeHUQMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 12:12:03 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 437E2C009; Tue, 21 Aug 2018 14:52:00 +0200 (CEST)
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Doron Roberts-Kedes <doronrk@fb.com>,
+        Tom Herbert <tom@quantonium.net>,
+        Dave Watson <davejwatson@fb.com>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] strparser: remove any offset before parsing messages
+Date:   Tue, 21 Aug 2018 14:51:46 +0200
+Message-Id: <1534855906-22870-1-git-send-email-asmadeus@codewreck.org>
+X-Mailer: git-send-email 1.7.10.4
+In-Reply-To: <1533854411-28184-1-git-send-email-asmadeus@codewreck.org>
+References: <1533854411-28184-1-git-send-email-asmadeus@codewreck.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 21-08-18 14:30:24, Oscar Salvador wrote:
-> On Tue, Aug 21, 2018 at 02:17:34PM +0200, Michal Hocko wrote:
-> > We do have CONFIG_NODES_SHIFT=10 in our SLES kernels for quite some
-> > time (around SLE11-SP3 AFAICS).
-> > 
-> > Anyway, isn't NODES_ALLOC over engineered a bit? Does actually even do
-> > larger than 1024 NUMA nodes? This would be 128B and from a quick glance
-> > it seems that none of those functions are called in deep stacks. I
-> > haven't gone through all of them but a patch which checks them all and
-> > removes NODES_ALLOC would be quite nice IMHO.
-> 
-> No, maximum we can get is 1024 NUMA nodes.
-> I checked this when writing another patch [1], and since having gone
-> through all archs Kconfigs, CONFIG_NODES_SHIFT=10 is the limit.
-> 
-> NODEMASK_ALLOC gets only called from:
-> 
-> - unregister_mem_sect_under_nodes() (not anymore after [1])
-> - __nr_hugepages_store_common (This does not seem to have a deep stack, we could use a normal nodemask_t)
-> 
-> But is also used for NODEMASK_SCRATCH (mainly used for mempolicy):
+Offset is not well handled by strparser users right now.
 
-mempolicy code should be a shallow stack as well. Mostly the syscall
-entry.
+Out of the current strparser users, we have:
+ - tls, that handles offset properly in parse and rcv callbacks
+ - kcm, that handles offset in rcv but not in parse
+ - bpf sockmap, that does not seem to handle offset anywhere
 
+Calling pskb_pull() on new skb ensures that the offset will be 0
+everywhere in practice, and in particular for the parse function,
+unless the user modifies it themselves like tls does.
+
+This fixes a bug which can be exhibited by implementing a simple kcm
+parser that looks for the packet size in the first word of the packet,
+and sending two such packets in a single write() call on the other side:
+the second message will be cut at the length of the first message.
+Since this is a stream protocol, all the following messages will also
+be corrupt since it will start looking for the next offset at a wrong
+position.
+
+Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+---
+
+I haven't had any comment on v0, so here is what I had planned as
+refactoring anyawy, but I'd *really* like some opinion on this as a
+whole...
+
+Also note that compiling bpf programs with libbcc is currently broken in
+linus' master, see the fix thread here:
+https://lkml.kernel.org/r/1534834088-15835-1-git-send-email-yamada.masahiro@socionext.com
+You can likely just revert cafa0010cd51 ("Raise the minimum required gcc
+version to 4.6") localy meanwhile, or base the patch off 4.18.
+
+ net/strparser/strparser.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/net/strparser/strparser.c b/net/strparser/strparser.c
+index da1a676860ca..d7fb30b1bcfc 100644
+--- a/net/strparser/strparser.c
++++ b/net/strparser/strparser.c
+@@ -201,7 +201,17 @@ static int __strp_recv(read_descriptor_t *desc, struct sk_buff *orig_skb,
+ 			strp->skb_nextp = NULL;
+ 			stm = _strp_msg(head);
+ 			memset(stm, 0, sizeof(*stm));
+-			stm->strp.offset = orig_offset + eaten;
++
++			/* Can only parse if there is no offset */
++			if (unlikely(orig_offset + eaten)) {
++				if (!pskb_pull(skb, orig_offset + eaten)) {
++					STRP_STATS_INCR(strp->stats.mem_fail);
++					strp_parser_err(strp, -ENOMEM, desc);
++					break;
++				}
++				orig_len -= eaten;
++				orig_offset = eaten = 0;
++			}
+ 		} else {
+ 			/* Unclone if we are appending to an skb that we
+ 			 * already share a frag_list with.
+@@ -253,8 +263,7 @@ static int __strp_recv(read_descriptor_t *desc, struct sk_buff *orig_skb,
+ 				STRP_STATS_INCR(strp->stats.msg_too_big);
+ 				strp_parser_err(strp, -EMSGSIZE, desc);
+ 				break;
+-			} else if (len <= (ssize_t)head->len -
+-					  skb->len - stm->strp.offset) {
++			} else if (len <= (ssize_t)head->len - skb->len) {
+ 				/* Length must be into new skb (and also
+ 				 * greater than zero)
+ 				 */
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
+
