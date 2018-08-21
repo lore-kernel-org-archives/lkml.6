@@ -2,108 +2,207 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1297C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE17C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 23:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 292AA21486
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:51:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 292AA21486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 0857A217D5
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 23:03:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0857A217D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbeHVCNh (ORCPT
+        id S1727796AbeHVCZj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 22:13:37 -0400
-Received: from nautica.notk.org ([91.121.71.147]:52194 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726283AbeHVCNh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 22:13:37 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 6E98CC009; Wed, 22 Aug 2018 00:51:28 +0200 (CEST)
-Date:   Wed, 22 Aug 2018 00:51:13 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Doron Roberts-Kedes <doronrk@fb.com>
-Cc:     Tom Herbert <tom@quantonium.net>, Dave Watson <davejwatson@fb.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Tue, 21 Aug 2018 22:25:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54892 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727273AbeHVCZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 22:25:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0F282AEA3;
+        Tue, 21 Aug 2018 23:03:28 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     "Joel Fernandes \(Google\)" <joel@joelfernandes.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] strparser: remove any offset before parsing messages
-Message-ID: <20180821225113.GA6515@nautica>
-References: <1533854411-28184-1-git-send-email-asmadeus@codewreck.org>
- <1534855906-22870-1-git-send-email-asmadeus@codewreck.org>
- <20180821145321.GA44710@doronrk-mbp>
- <20180821193655.GA15354@nautica>
- <20180821211504.GA76892@doronrk-mbp.dhcp.thefacebook.com>
+Date:   Wed, 22 Aug 2018 09:03:17 +1000
+Cc:     kernel-team@android.com, Joel Fernandes <joel@joelfernandes.org>,
+        willy@infradead.org, stable@vger.kernel.org, peterz@infradead.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH] mm: shmem: Correctly annotate new inodes
+In-Reply-To: <20180814161652.28831-1-joel@joelfernandes.org>
+References: <20180814161652.28831-1-joel@joelfernandes.org>
+Message-ID: <87bm9vpbka.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180821211504.GA76892@doronrk-mbp.dhcp.thefacebook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Doron Roberts-Kedes wrote on Tue, Aug 21, 2018:
-> On Tue, Aug 21, 2018 at 09:36:55PM +0200, Dominique Martinet wrote:
-> > One of the solutions I had suggested was adding a flag at strparser
-> > setup time to only do that pull for users which cannot handle offset,
-> > but nobody seemed interested two weeks ago. I can still do that.
-> 
-> This seems overly complicated. 
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-That sounds much simpler than adding a similar feature to bpf if it
-doesn't already support it -- we already have an user-provided struct at
-strparser init timer (strp->cb) in which it would be easy to add a flag
-saying whether the callbacks support offset or not.
+On Tue, Aug 14 2018, Joel Fernandes (Google) wrote:
 
-That's maybe three more lines than the current patch, which is also
-pretty simple, I'm not sure what you're expecting from alternative
-solutions to call that overly complicated...
+> Directories and inodes don't necessarily need to be in the same
+> lockdep class. For ex, hugetlbfs splits them out too to prevent
+> false positives in lockdep. Annotate correctly after new inode
+> creation. If its a directory inode, it will be put into a different
+> class.
+>
+> This should fix a lockdep splat reported by syzbot:
+>
+>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+>> WARNING: possible circular locking dependency detected
+>> 4.18.0-rc8-next-20180810+ #36 Not tainted
+>> ------------------------------------------------------
+>> syz-executor900/4483 is trying to acquire lock:
+>> 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at: inode_lock
+>> include/linux/fs.h:765 [inline]
+>> 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at:
+>> shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
+>>
+>> but task is already holding lock:
+>> 0000000025208078 (ashmem_mutex){+.+.}, at: ashmem_shrink_scan+0xb4/0x630
+>> drivers/staging/android/ashmem.c:448
+>>
+>> which lock already depends on the new lock.
+>>
+>> -> #2 (ashmem_mutex){+.+.}:
+>>        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+>>        __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
+>>        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
+>>        ashmem_mmap+0x55/0x520 drivers/staging/android/ashmem.c:361
+>>        call_mmap include/linux/fs.h:1844 [inline]
+>>        mmap_region+0xf27/0x1c50 mm/mmap.c:1762
+>>        do_mmap+0xa10/0x1220 mm/mmap.c:1535
+>>        do_mmap_pgoff include/linux/mm.h:2298 [inline]
+>>        vm_mmap_pgoff+0x213/0x2c0 mm/util.c:357
+>>        ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1585
+>>        __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+>>        __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+>>        __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+>>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>
+>> -> #1 (&mm->mmap_sem){++++}:
+>>        __might_fault+0x155/0x1e0 mm/memory.c:4568
+>>        _copy_to_user+0x30/0x110 lib/usercopy.c:25
+>>        copy_to_user include/linux/uaccess.h:155 [inline]
+>>        filldir+0x1ea/0x3a0 fs/readdir.c:196
+>>        dir_emit_dot include/linux/fs.h:3464 [inline]
+>>        dir_emit_dots include/linux/fs.h:3475 [inline]
+>>        dcache_readdir+0x13a/0x620 fs/libfs.c:193
+>>        iterate_dir+0x48b/0x5d0 fs/readdir.c:51
+>>        __do_sys_getdents fs/readdir.c:231 [inline]
+>>        __se_sys_getdents fs/readdir.c:212 [inline]
+>>        __x64_sys_getdents+0x29f/0x510 fs/readdir.c:212
+>>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>
+>> -> #0 (&sb->s_type->i_mutex_key#9){++++}:
+>>        lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
+>>        down_write+0x8f/0x130 kernel/locking/rwsem.c:70
+>>        inode_lock include/linux/fs.h:765 [inline]
+>>        shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
+>>        ashmem_shrink_scan+0x236/0x630 drivers/staging/android/ashmem.c:4=
+55
+>>        ashmem_ioctl+0x3ae/0x13a0 drivers/staging/android/ashmem.c:797
+>>        vfs_ioctl fs/ioctl.c:46 [inline]
+>>        file_ioctl fs/ioctl.c:501 [inline]
+>>        do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+>>        ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+>>        __do_sys_ioctl fs/ioctl.c:709 [inline]
+>>        __se_sys_ioctl fs/ioctl.c:707 [inline]
+>>        __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+>>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>
+>> other info that might help us debug this:
+>>
+>> Chain exists of:
+>>   &sb->s_type->i_mutex_key#9 --> &mm->mmap_sem --> ashmem_mutex
+>>
+>>  Possible unsafe locking scenario:
+>>
+>>        CPU0                    CPU1
+>>        ----                    ----
+>>   lock(ashmem_mutex);
+>>                                lock(&mm->mmap_sem);
+>>                                lock(ashmem_mutex);
+>>   lock(&sb->s_type->i_mutex_key#9);
+>>
+>>  *** DEADLOCK ***
+>>
+>> 1 lock held by syz-executor900/4483:
+>>  #0: 0000000025208078 (ashmem_mutex){+.+.}, at:
+>> ashmem_shrink_scan+0xb4/0x630 drivers/staging/android/ashmem.c:448
+>
+> Reported-by: syzbot <syzkaller@googlegroups.com>
+> Cc: willy@infradead.org
+> Cc: stable@vger.kernel.org
+> Cc: peterz@infradead.org
+> Suggested-by: Neil Brown <neilb@suse.com>
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
+Reviewed-by: NeilBrown <neilb@suse.com>
 
-> It seems like we mainly agree that the proposed patch is suboptimal for
-> existing clients of the library that use offset correctly (tls). 
-> 
-> It also seems like you've identified that the proper fix is in bpf. 
+This is necessary for any filesystem that doesn't use
+unlock_new_inode().
 
-I don't think bpf itself needs to be changed here -- the offset is
-stored in a strparser specific struct so short of such a skb_pull I
-think we'd need to change the type of the bpf function, pass it it the
-extra parameter, and make it a user visible change breaking the kcm
-API... And I have no idea for sockmap but probably something similar.
-
-I can't think of that as better than adding a flag to strparser.
-
-(Also, note that pskb_pull will not copy any data or allocate memory
-unless we're pulling past the end of the skb, which seems pretty
-unlikely in that situation as we should have consumed any fully "eaten"
-skb before getting to a new one here -- so in practice this patch just
-adds a skb->data += offset with safety guards "just in case")
-
-
-> As an aside, I would recommend reaching the netdev FAQ page:
-> https://www.kernel.org/doc/Documentation/networking/netdev-FAQ.txt
-> 
-> It contains helpful hints about how to format email subjects (specifying
-> net vs. net-next) and determining when trees are closed (currently
-> closed). 
-
-Thank you for pointing out to that document.
-While this bug has been around from day one of kcm it is still a bug fix
-so I'd rather let maintainers decide which tree it goes to.
-
-I wasn't aware that net-next closes during the Linus merge window, but
-if you want to split hairs, the FAQ says "do not send new net-next
-content to netdev [while closed]" and this isn't new content as the v0
-of the patch was mostly the same and sent before the 4.18 release, (and,
-ironically, did not get any comment).
-Anyway, sure, I'll wait until next week for a v2 if that matters.
-
+(If/when you repost, I suggest including Andrew Morton).
 
 Thanks,
--- 
-Dominique
+NeilBrown
+
+
+> ---
+>  mm/shmem.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 2cab84403055..4429a8fd932d 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2225,6 +2225,8 @@ static struct inode *shmem_get_inode(struct super_b=
+lock *sb, const struct inode
+>  			mpol_shared_policy_init(&info->policy, NULL);
+>  			break;
+>  		}
+> +
+> +		lockdep_annotate_inode_mutex_key(inode);
+>  	} else
+>  		shmem_free_inode(sb);
+>  	return inode;
+> --=20
+> 2.18.0.597.ga71716f1ad-goog
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlt8mjYACgkQOeye3VZi
+gbngHxAAlkZ2KlhLNzez3wOYONyz+kWiP9x3cmrK8g6/1A4vxfin4p/9VTgXajU9
+d3yheY9odMBCGOVoXLHabEki/rsnRGYkKFtSmQU16xo7iVOrxoXwLP5zmaVhSXFe
+5cmbgcRQnPNb8M3Zujlpd27bCvitj7MiALzVCasJtvr4OEJSk/PJYokrPUfTLPBl
+gP29hNsifemr89btzR7NuJ6Kcah3GNnAjc2aJPYP17z5GZCmcQ9R2NuFPPqs/50q
+6syuCpMxWKANyYBJ1LjiIARvrSTMXFOLRbd0csIz2d/ax+ndpYpBzHX6/5ujgHOI
+yRrcdOx7ttgXZz1UG2KCWZs6JzePa+ymjRSKJBAh8f53FPWKmOUUTOimQVV0oEQc
+PmlOigJ4t1NrM1Bv1F87V8WEafscEzM83NRsK8QeTO80WXe1P+Rd3+mSfRcLPviv
+i4lzRAOGXBKEhmnSGXSYawLz+6JPGPvviLTSozRjfZUJWCuVis/gxeBdjrHUzoDi
+dlitOTUoz7ECjYbJKfw19IydPPXqDs0Fru28fIUn+K+lyJkTI6o/BNoarqznp21Y
+j9uqVVnWiVxTMeLrwm66FawOXtAj0eFNbh0aqaxqskBuN4VwgeHLRJMJ2/loVjs4
+Lw8mRmoRRwbKtfuyyDfVVdvjybf/Q2RC0diH+OeRAN5IooojgSM=
+=g5k3
+-----END PGP SIGNATURE-----
+--=-=-=--
