@@ -3,219 +3,133 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE3FCC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 093B5C43615
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:02:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A8EC21837
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:02:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A8EC21837
+	by mail.kernel.org (Postfix) with ESMTP id B8A9C217FF
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:02:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8A9C217FF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727595AbeHVBYo (ORCPT
+        id S1727761AbeHVBYq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 21:24:44 -0400
-Received: from sauhun.de ([88.99.104.3]:45276 "EHLO pokefinder.org"
+        Tue, 21 Aug 2018 21:24:46 -0400
+Received: from sauhun.de ([88.99.104.3]:45262 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727440AbeHVBYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 21:24:43 -0400
+        id S1726762AbeHVBYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 21:24:44 -0400
 Received: from localhost (p54B3375F.dip0.t-ipconnect.de [84.179.55.95])
-        by pokefinder.org (Postfix) with ESMTPSA id ADA512DA3F1;
-        Wed, 22 Aug 2018 00:02:43 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id 0E64A2DA3F0;
+        Wed, 22 Aug 2018 00:02:42 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 01/11] clk: renesas: use SPDX identifier for Renesas drivers
-Date:   Wed, 22 Aug 2018 00:02:14 +0200
-Message-Id: <20180821220233.9202-2-wsa+renesas@sang-engineering.com>
+        dmaengine@vger.kernel.org, linux-can@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH 00/11] tree-wide: use SPDX identifier for Renesas drivers
+Date:   Wed, 22 Aug 2018 00:02:13 +0200
+Message-Id: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
-References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Here is my first batch of SPDX conversion patches. Mostly low hanging fruits,
+only a handful of drivers needed corrections in MODULE_LICENSE, too.
 
-To be applied individually per subsystem tree. Morimoto-san, could you maybe
-ack this with your Renesas address?
+checkpatch is happy as well.
 
- drivers/clk/renesas/clk-div6.c            | 5 +----
- drivers/clk/renesas/r8a7795-cpg-mssr.c    | 5 +----
- drivers/clk/renesas/r8a7796-cpg-mssr.c    | 5 +----
- drivers/clk/renesas/r8a77995-cpg-mssr.c   | 5 +----
- drivers/clk/renesas/rcar-gen3-cpg.c       | 5 +----
- drivers/clk/renesas/rcar-usb2-clock-sel.c | 5 +----
- drivers/clk/renesas/renesas-cpg-mssr.c    | 5 +----
- drivers/clk/renesas/renesas-cpg-mssr.h    | 5 +----
- 8 files changed, 8 insertions(+), 32 deletions(-)
+I think an ack from Morimoto-san with his Renesas email address would be nice
+to make it more official? Still, I *am* contracted by Renesas.
 
-diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
-index 9febbf42c3df..6643733952a6 100644
---- a/drivers/clk/renesas/clk-div6.c
-+++ b/drivers/clk/renesas/clk-div6.c
-@@ -1,13 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * r8a7790 Common Clock Framework support
-  *
-  * Copyright (C) 2013  Renesas Solutions Corp.
-  *
-  * Contact: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
- 
- #include <linux/clk-provider.h>
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index ca8cb0eed950..119c02440726 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * r8a7795 Clock Pulse Generator / Module Standby and Software Reset
-  *
-@@ -6,10 +7,6 @@
-  * Based on clk-rcar-gen3.c
-  *
-  * Copyright (C) 2015 Renesas Electronics Corp.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
- 
- #include <linux/device.h>
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 7e98fb8b1074..10567386e6dd 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * r8a7796 Clock Pulse Generator / Module Standby and Software Reset
-  *
-@@ -7,10 +8,6 @@
-  *
-  * Copyright (C) 2015 Glider bvba
-  * Copyright (C) 2015 Renesas Electronics Corp.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
- 
- #include <linux/device.h>
-diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-index 49e6a0de5491..47e60e3dbe05 100644
---- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * r8a77995 Clock Pulse Generator / Module Standby and Software Reset
-  *
-@@ -7,10 +8,6 @@
-  *
-  * Copyright (C) 2015 Glider bvba
-  * Copyright (C) 2015 Renesas Electronics Corp.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
- 
- #include <linux/device.h>
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 4346fdeef01b..4ba38f98cc7b 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * R-Car Gen3 Clock Pulse Generator
-  *
-@@ -6,10 +7,6 @@
-  * Based on clk-rcar-gen3.c
-  *
-  * Copyright (C) 2015 Renesas Electronics Corp.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
- 
- #include <linux/bug.h>
-diff --git a/drivers/clk/renesas/rcar-usb2-clock-sel.c b/drivers/clk/renesas/rcar-usb2-clock-sel.c
-index 6cd030a58964..b241f9ca3d71 100644
---- a/drivers/clk/renesas/rcar-usb2-clock-sel.c
-+++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Renesas R-Car USB2.0 clock selector
-  *
-@@ -6,10 +7,6 @@
-  * Based on renesas-cpg-mssr.c
-  *
-  * Copyright (C) 2015 Glider bvba
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
- 
- #include <linux/clk.h>
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index f90b0d0ba46a..1a0c15896894 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Renesas Clock Pulse Generator / Module Standby and Software Reset
-  *
-@@ -7,10 +8,6 @@
-  *
-  * Copyright (C) 2013 Ideas On Board SPRL
-  * Copyright (C) 2015 Renesas Electronics Corp.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
- 
- #include <linux/clk.h>
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index 2e1730bc5ef2..874a4fb9f010 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -1,11 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Renesas Clock Pulse Generator / Module Standby and Software Reset
-  *
-  * Copyright (C) 2015 Glider bvba
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
- 
- #ifndef __CLK_RENESAS_CPG_MSSR_H__
+Thanks,
+
+   Wolfram
+
+Wolfram Sang (11):
+  clk: renesas: use SPDX identifier for Renesas drivers
+  dmaengine: use SPDX identifier for Renesas drivers
+  i2c: use SPDX identifier for Renesas drivers
+  mmc: use SPDX identifier for Renesas drivers
+  can: rcar: use SPDX identifier for Renesas drivers
+  net: ethernet: renesas: use SPDX identifier for Renesas drivers
+  phy: renesas: use SPDX identifier for Renesas drivers
+  pwm: use SPDX identifier for Renesas drivers
+  soc: renesas: use SPDX identifier for Renesas drivers
+  spi: use SPDX identifier for Renesas drivers
+  watchdog: use SPDX identifier for Renesas drivers
+
+ drivers/clk/renesas/clk-div6.c                |  5 +----
+ drivers/clk/renesas/r8a7795-cpg-mssr.c        |  5 +----
+ drivers/clk/renesas/r8a7796-cpg-mssr.c        |  5 +----
+ drivers/clk/renesas/r8a77995-cpg-mssr.c       |  5 +----
+ drivers/clk/renesas/rcar-gen3-cpg.c           |  5 +----
+ drivers/clk/renesas/rcar-usb2-clock-sel.c     |  5 +----
+ drivers/clk/renesas/renesas-cpg-mssr.c        |  5 +----
+ drivers/clk/renesas/renesas-cpg-mssr.h        |  5 +----
+ drivers/dma/nbpfaxi.c                         |  5 +----
+ drivers/dma/sh/shdma-arm.h                    |  5 +----
+ drivers/dma/sh/shdma-base.c                   |  5 +----
+ drivers/dma/sh/shdma-of.c                     |  5 +----
+ drivers/dma/sh/shdma-r8a73a4.c                |  5 +----
+ drivers/dma/sh/shdma.h                        |  6 +-----
+ drivers/dma/sh/shdmac.c                       |  6 +-----
+ drivers/dma/sh/sudmac.c                       |  5 +----
+ drivers/dma/sh/usb-dmac.c                     |  5 +----
+ drivers/i2c/busses/i2c-emev2.c                |  5 +----
+ drivers/i2c/busses/i2c-highlander.c           |  5 +----
+ drivers/i2c/busses/i2c-rcar.c                 | 10 +---------
+ drivers/i2c/busses/i2c-riic.c                 |  5 +----
+ drivers/i2c/busses/i2c-sh_mobile.c            | 10 +---------
+ drivers/mmc/host/renesas_sdhi.h               |  5 +----
+ drivers/mmc/host/renesas_sdhi_core.c          |  5 +----
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c |  5 +----
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  5 +----
+ drivers/mmc/host/sh_mmcif.c                   |  7 ++-----
+ drivers/mmc/host/tmio_mmc.c                   |  5 +----
+ drivers/mmc/host/tmio_mmc.h                   |  6 +-----
+ drivers/mmc/host/tmio_mmc_core.c              |  5 +----
+ drivers/mmc/host/usdhi6rol0.c                 |  5 +----
+ drivers/net/can/rcar/rcar_can.c               |  6 +-----
+ drivers/net/can/rcar/rcar_canfd.c             |  6 +-----
+ drivers/net/ethernet/renesas/ravb.h           |  5 +----
+ drivers/net/ethernet/renesas/ravb_main.c      |  5 +----
+ drivers/net/ethernet/renesas/sh_eth.c         | 13 +------------
+ drivers/net/ethernet/renesas/sh_eth.h         | 13 +------------
+ drivers/phy/renesas/phy-rcar-gen2.c           |  5 +----
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c      |  5 +----
+ drivers/phy/renesas/phy-rcar-gen3-usb3.c      |  5 +----
+ drivers/pwm/pwm-rcar.c                        |  5 +----
+ drivers/pwm/pwm-renesas-tpu.c                 | 10 +---------
+ drivers/soc/renesas/r8a7743-sysc.c            |  5 +----
+ drivers/soc/renesas/r8a7745-sysc.c            |  5 +----
+ drivers/soc/renesas/r8a7779-sysc.c            |  5 +----
+ drivers/soc/renesas/r8a7790-sysc.c            |  5 +----
+ drivers/soc/renesas/r8a7791-sysc.c            |  5 +----
+ drivers/soc/renesas/r8a7792-sysc.c            |  5 +----
+ drivers/soc/renesas/r8a7794-sysc.c            |  5 +----
+ drivers/soc/renesas/r8a7795-sysc.c            |  5 +----
+ drivers/soc/renesas/r8a7796-sysc.c            |  5 +----
+ drivers/soc/renesas/r8a77970-sysc.c           |  5 +----
+ drivers/soc/renesas/r8a77995-sysc.c           |  5 +----
+ drivers/soc/renesas/rcar-sysc.h               |  5 +----
+ drivers/soc/renesas/renesas-soc.c             | 10 +---------
+ drivers/spi/spi-rspi.c                        | 10 +---------
+ drivers/spi/spi-sh-hspi.c                     | 12 ++----------
+ drivers/spi/spi-sh-msiof.c                    |  6 +-----
+ drivers/spi/spi-sh.c                          | 12 ++----------
+ drivers/watchdog/renesas_wdt.c                |  5 +----
+ 60 files changed, 63 insertions(+), 300 deletions(-)
+
 -- 
 2.11.0
 
