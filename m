@@ -3,38 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E22BAC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D6EC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:22:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA41121774
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:22:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA41121774
+	by mail.kernel.org (Postfix) with ESMTP id 6996421774
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:22:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6996421774
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbeHUJlZ (ORCPT
+        id S1727125AbeHUJl2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:41:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54722 "EHLO
+        Tue, 21 Aug 2018 05:41:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54728 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbeHUJlY (ORCPT
+        with ESMTP id S1727094AbeHUJl1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:41:24 -0400
+        Tue, 21 Aug 2018 05:41:27 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CEC98516;
-        Tue, 21 Aug 2018 06:22:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 140D7516;
+        Tue, 21 Aug 2018 06:22:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+619d9f40141d826b097e@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.18 08/35] ALSA: virmidi: Fix too long output trigger loop
-Date:   Tue, 21 Aug 2018 08:20:34 +0200
-Message-Id: <20180821055020.350192028@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.18 09/35] ALSA: cs5535audio: Fix invalid endian conversion
+Date:   Tue, 21 Aug 2018 08:20:35 +0200
+Message-Id: <20180821055020.396566221@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055019.954904905@linuxfoundation.org>
 References: <20180821055019.954904905@linuxfoundation.org>
@@ -53,53 +51,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit 50e9ffb1996a5d11ff5040a266585bad4ceeca0a upstream.
+commit 69756930f2de0457d51db7d505a1e4f40e9fd116 upstream.
 
-The virmidi output trigger tries to parse the all available bytes and
-process sequencer events as much as possible.  In a normal situation,
-this is supposed to be relatively short, but a program may give a huge
-buffer and it'll take a long time in a single spin lock, which may
-eventually lead to a soft lockup.
+One place in cs5535audio_build_dma_packets() does an extra conversion
+via cpu_to_le32(); namely jmpprd_addr is passed to setup_prd() ops,
+which writes the value via cs_writel().  That is, the callback does
+the conversion by itself, and we don't need to convert beforehand.
 
-This patch simply adds a workaround, a cond_resched() call in the loop
-if applicable.  A better solution would be to move the event processor
-into a work, but let's put a duct-tape quickly at first.
+This patch fixes that bogus conversion.
 
-Reported-and-tested-by: Dae R. Jeong <threeearcat@gmail.com>
-Reported-by: syzbot+619d9f40141d826b097e@syzkaller.appspotmail.com
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/seq/seq_virmidi.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ sound/pci/cs5535audio/cs5535audio.h     |    6 +++---
+ sound/pci/cs5535audio/cs5535audio_pcm.c |    4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
---- a/sound/core/seq/seq_virmidi.c
-+++ b/sound/core/seq/seq_virmidi.c
-@@ -163,6 +163,7 @@ static void snd_virmidi_output_trigger(s
- 	int count, res;
- 	unsigned char buf[32], *pbuf;
- 	unsigned long flags;
-+	bool check_resched = !in_atomic();
+--- a/sound/pci/cs5535audio/cs5535audio.h
++++ b/sound/pci/cs5535audio/cs5535audio.h
+@@ -67,9 +67,9 @@ struct cs5535audio_dma_ops {
+ };
  
- 	if (up) {
- 		vmidi->trigger = 1;
-@@ -200,6 +201,15 @@ static void snd_virmidi_output_trigger(s
- 					vmidi->event.type = SNDRV_SEQ_EVENT_NONE;
- 				}
- 			}
-+			if (!check_resched)
-+				continue;
-+			/* do temporary unlock & cond_resched() for avoiding
-+			 * CPU soft lockup, which may happen via a write from
-+			 * a huge rawmidi buffer
-+			 */
-+			spin_unlock_irqrestore(&substream->runtime->lock, flags);
-+			cond_resched();
-+			spin_lock_irqsave(&substream->runtime->lock, flags);
- 		}
- 	out:
- 		spin_unlock_irqrestore(&substream->runtime->lock, flags);
+ struct cs5535audio_dma_desc {
+-	u32 addr;
+-	u16 size;
+-	u16 ctlreserved;
++	__le32 addr;
++	__le16 size;
++	__le16 ctlreserved;
+ };
+ 
+ struct cs5535audio_dma {
+--- a/sound/pci/cs5535audio/cs5535audio_pcm.c
++++ b/sound/pci/cs5535audio/cs5535audio_pcm.c
+@@ -158,8 +158,8 @@ static int cs5535audio_build_dma_packets
+ 	lastdesc->addr = cpu_to_le32((u32) dma->desc_buf.addr);
+ 	lastdesc->size = 0;
+ 	lastdesc->ctlreserved = cpu_to_le16(PRD_JMP);
+-	jmpprd_addr = cpu_to_le32(lastdesc->addr +
+-				  (sizeof(struct cs5535audio_dma_desc)*periods));
++	jmpprd_addr = (u32)dma->desc_buf.addr +
++		sizeof(struct cs5535audio_dma_desc) * periods;
+ 
+ 	dma->substream = substream;
+ 	dma->period_bytes = period_bytes;
 
 
