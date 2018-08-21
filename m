@@ -2,117 +2,135 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B897AC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 11:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09806C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 11:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ECFE208A5
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 11:04:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ECFE208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id 997FA208A5
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 11:06:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cycEK6IW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 997FA208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbeHUOYb (ORCPT
+        id S1727017AbeHUO0X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 10:24:31 -0400
-Received: from smtp17.cstnet.cn ([159.226.251.17]:58407 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726590AbeHUOYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 10:24:31 -0400
-Received: from [172.20.20.131] (unknown [182.150.46.145])
-        by APP-09 (Coremail) with SMTP id swCowAB3XR248Xtb2uHsAg--.4257S2;
-        Tue, 21 Aug 2018 19:04:25 +0800 (CST)
-From:   Pu Wen <puwen@hygon.cn>
-Subject: Re: [PATCH v4 15/16] driver/edac: enable Hygon support to AMD64 EDAC
- driver
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
-        mchehab@kernel.org, mikhail.jin@gmail.com,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-edac@vger.kernel.org
-References: <cover.1534599097.git.puwen@hygon.cn>
- <6275a5a0a0cfbd2c1abc09a5bb41caabecd02e27.1534599097.git.puwen@hygon.cn>
- <20180821081331.GC24940@nazgul.tnic>
-Message-ID: <ccbc6572-c16f-7a9b-ab27-54fffac1ba0d@hygon.cn>
-Date:   Tue, 21 Aug 2018 19:04:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Tue, 21 Aug 2018 10:26:23 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40319 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726590AbeHUO0W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 10:26:22 -0400
+Received: by mail-wm0-f65.google.com with SMTP id y9-v6so2466622wma.5;
+        Tue, 21 Aug 2018 04:06:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=J3oxF2+RCiA3K4BYTcxC00Sy53yQrr6YR/gfTyx8Lk0=;
+        b=cycEK6IWXGDnTSwhS4GaIAmcl+LxXnoQW17ZraUGFjSiXnJGGlFdJSJU/CJcsRQ7Yq
+         FMRSEltHAK1hJhaupE6a54ZMlaD6CCYUz681t6QGMWgGAphewa3qa/RSVw0YzymHNbsz
+         yZUUgMgD9vAArJWPaL+QRapzBcA1LRZIKYHqk1T3n88wl51zOoFaHyhAyKO8DsxCCmKu
+         3yigdmUEmvSTDdONatIATLSTe+TJce5ZdzDMeOhd2eLFtbL8Wy17rYID+GzGibkj4Aap
+         fJrTpV72CLl2qY9ZBOEQmgQ0NK0enJ/uumrVWllOAEuTIxNqbXi3/QymNf4DCNGs40KX
+         05rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=J3oxF2+RCiA3K4BYTcxC00Sy53yQrr6YR/gfTyx8Lk0=;
+        b=MX+71pon2DI2s7pvXb9knTvNNADeFUuLimgqJ22AGCSCwdAq6+kEG0jlZPtWJDxF9P
+         LdzTxZTUoVaw1QAHsMathmvTu0fZ1EO+QfWj+P0knt1hYPBYf2X/lBeawkpg23pppPvq
+         M20E3eiN/PfiuagSqnJzgvDTzMWoRLehLf3aR4XkjZeKnHR94gfvAFPGLQj7fZ5lJZ5t
+         HVCN2BaGZNsMHB+WFlin0z9FeTL06uZexDvmKk0L5EH7dqhaJSvIqbt7rVVbvYgsLtw3
+         IBF8rOnRLrnsUXxcBlCoPfU2D7xlXgd1gsOZX+GWL0r7vNZm0pcohATGc40FEx7VbY7j
+         BRCw==
+X-Gm-Message-State: AOUpUlFKoUwzf0LGFSnivPr2bdFAseomAWgoHhucvFm3uNNexvbyB9co
+        AfqBNcltJQ/innO+oFQk69p3BYOP
+X-Google-Smtp-Source: AA+uWPyFgqp4crhqLC/7emdq8Cf7kjjvyeXs+QdOTvVDga9eSeAZbxagjO+LYudfiubBGpOnWezwNg==
+X-Received: by 2002:a1c:90e:: with SMTP id 14-v6mr28697317wmj.130.1534849598440;
+        Tue, 21 Aug 2018 04:06:38 -0700 (PDT)
+Received: from [192.168.10.150] (dynamic-adsl-78-12-184-244.clienti.tiscali.it. [78.12.184.244])
+        by smtp.googlemail.com with ESMTPSA id 72-v6sm13605909wrb.48.2018.08.21.04.06.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 Aug 2018 04:06:37 -0700 (PDT)
+Subject: Re: [PATCH] KVM: Documentation: rename the capability of
+ KVM_CAP_ARM_SET_SERROR_ESR
+To:     Andrew Jones <drjones@redhat.com>,
+        Dongjiu Geng <gengdongjiu@huawei.com>
+Cc:     christoffer.dall@arm.com, marc.zyngier@arm.com,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <1534801165-41525-1-git-send-email-gengdongjiu@huawei.com>
+ <20180820142925.zw2vgplbutfcvvos@kamzik.brq.redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+Message-ID: <a1d72e58-ce94-e681-bebc-125ea84045d1@redhat.com>
+Date:   Tue, 21 Aug 2018 13:06:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180821081331.GC24940@nazgul.tnic>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180820142925.zw2vgplbutfcvvos@kamzik.brq.redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: swCowAB3XR248Xtb2uHsAg--.4257S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KrW5Gr48ZF47GFy7XF47urg_yoW8Xw4kpr
-        WDJr1S9r1kWF15Gw1vkw1UuFyrC3s7JFW3C345K3s5A3Z8ZF95Wry7t3yxur90kr95Ar42
-        yayvg3yUGa4YyaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvEb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
-        jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4
-        A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8Jr0_Cr
-        1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xK
-        xwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-        1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-        b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-        vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI
-        42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
-        evJa73UjIFyTuYvjxUz2-eUUUUU
-X-Originating-IP: [182.150.46.145]
-X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-21 16:13, Borislav Petkov wrote:
->On Mon, Aug 20, 2018 at 12:14:58AM +0800, Pu Wen wrote:
-...
->> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
->> index 18aeabb..3cefb25 100644
->> --- a/drivers/edac/amd64_edac.c
->> +++ b/drivers/edac/amd64_edac.c
->> @@ -211,7 +211,8 @@ static int __set_scrub_rate(struct amd64_pvt 
-*pvt, u32 new_bw, u32 min_rate)
->>
->>  scrubval = scrubrates[i].scrubval;
->>
->> -	if (pvt->fam == 0x17) {
->> +	if (pvt->fam == 0x17 ||
->> +	   (pvt->vendor == X86_VENDOR_HYGON && pvt->fam == 0x18)) {
+On 20/08/2018 16:29, Andrew Jones wrote:
+>> In the documentation description, this capability's name is
+>> KVM_CAP_ARM_SET_SERROR_ESR, but in the header file this
+>> capability's name is KVM_CAP_ARM_INJECT_SERROR_ESR, so change
+>> the documentation description to make it same.
+>> 
+>> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
 >
->Didn't we say that AMD won't do family 0x18 so you don't need the 
-vendor check?
+> Reported-by: Andrew Jones <drjones@redhat.com>
+> Reviewed-by: Andrew Jones <drjones@redhat.com>
 
-Hi Boris:
+Queued, thanks.
 
-Based on the feedback from Paolo Bonzini:
-"if the x86 maintainers prefer to have a new X86_VENDOR_*
-constant, I'd just ignore the fact that AMD will skip family 18h, and
-introduce vendor checks along the lines below. This has the advantage
-that it's not an issue if AMD ends up _not_ skipping family 18h."
-http://lkml.iu.edu/hypermail/linux/kernel/1807.3/06042.html
-
-and the suggestions from Michael Jin:
-"The condition case for family 18h and vendor Hygon looks better
-because it is more clear."
-http://lkml.iu.edu/hypermail/linux/kernel/1808.1/03232.html
-
-we reworked the patch.
-
-Sure, JV will negotiate with AMD and make sure only JV use family 18h and
-AMD won't use family 0x18h, which will make the patch tight and clear.
-
-What's the best way to adapt for EDAC driver?
-* To simplify the code based on AMD won't do family 0x18 and remove
-   vendor checking.
-* Or add vendor checking in codes?
-
-Thanks,
-Pu Wen
-
+Paolo
