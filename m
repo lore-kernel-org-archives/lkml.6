@@ -5,132 +5,125 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7080DC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 07:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA7FCC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 07:34:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28013214C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 07:31:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28013214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 99E67214C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 07:34:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99E67214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbeHUKu2 convert rfc822-to-8bit (ORCPT
+        id S1726720AbeHUKxa convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 06:50:28 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34161 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726795AbeHUKu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 06:50:27 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3505E20787; Tue, 21 Aug 2018 09:31:25 +0200 (CEST)
-Received: from xps13 (AAubervilliers-681-1-85-9.w90-88.abo.wanadoo.fr [90.88.27.9])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A5907204AE;
-        Tue, 21 Aug 2018 09:31:24 +0200 (CEST)
-Date:   Tue, 21 Aug 2018 09:31:25 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>,
-        "absahu@codeaurora.org" <absahu@codeaurora.org>,
-        "peterpandong@micron.com" <peterpandong@micron.com>,
-        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Simek <michals@xilinx.com>,
-        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>
-Subject: Re: [LINUX PATCH v10 2/2] mtd: rawnand: arasan: Add support for
- Arasan NAND Flash Controller
-Message-ID: <20180821093125.05fb46a4@xps13>
-In-Reply-To: <MWHPR02MB26235AF18211E3FB39076396AF310@MWHPR02MB2623.namprd02.prod.outlook.com>
-References: <1534511964-20342-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
-        <1534511964-20342-3-git-send-email-naga.sureshkumar.relli@xilinx.com>
-        <20180820184013.57fd7b5c@bbrezillon>
-        <MWHPR02MB26235AF18211E3FB39076396AF310@MWHPR02MB2623.namprd02.prod.outlook.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 21 Aug 2018 06:53:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38174 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726253AbeHUKxa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 06:53:30 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7L7YOh5078660
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 03:34:28 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m0cm7m8kp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 03:34:28 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
+        Tue, 21 Aug 2018 08:34:25 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 21 Aug 2018 08:34:20 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7L7YJdw45875314
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 21 Aug 2018 07:34:19 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2234C11C052;
+        Tue, 21 Aug 2018 10:34:20 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B8A4F11C04A;
+        Tue, 21 Aug 2018 10:34:19 +0100 (BST)
+Received: from localhost (unknown [9.77.215.214])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 21 Aug 2018 10:34:19 +0100 (BST)
+Date:   Tue, 21 Aug 2018 13:04:17 +0530
+From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Subject: Re: [PATCH v9 0/4] Uprobes: Support SDT markers having reference
+ count (semaphore)
+To:     Song Liu <liu.song.a23@gmail.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     acme@kernel.org, alexander.shishkin@linux.intel.com,
+        Alexis Berlemont <alexis.berlemont@gmail.com>,
+        ananth@linux.vnet.ibm.com, jolsa@redhat.com,
+        linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-mips@linux-mips.org, mhiramat@kernel.org, mingo@redhat.com,
+        namhyung@kernel.org, Oleg Nesterov <oleg@redhat.com>,
+        paul.burton@mips.com, Peter Zijlstra <peterz@infradead.org>,
+        ralf@linux-mips.org, Steven Rostedt <rostedt@goodmis.org>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <20180820044250.11659-1-ravi.bangoria@linux.ibm.com>
+        <CAPhsuW70nRkwM8C76m4c_XF4tjepdRWYezg15sTvkMUDtHZ8JQ@mail.gmail.com>
+In-Reply-To: <CAPhsuW70nRkwM8C76m4c_XF4tjepdRWYezg15sTvkMUDtHZ8JQ@mail.gmail.com>
+User-Agent: astroid/0.13.0 (https://github.com/astroidmail/astroid)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8BIT
+X-TM-AS-GCONF: 00
+x-cbid: 18082107-0016-0000-0000-000001F98918
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082107-0017-0000-0000-0000324FD619
+Message-Id: <1534836620.dp1nz6tfz0.naveen@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-21_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808210081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Naga,
-
-> > And why is it an s32 and not a u32?  
-> To monitor NAND_CMD_STATUS.
-> Sometimes core will just send status command without reading back the status data and later
-> It will try to read one byte using ->exec_op().
-> So Arasan has FLASH_STS register and whenever we initiate a status command, the controller
-> Will update this register with the value returned by the flash device.
-> So we need to return this value when core is asking about 1 byte status value without issuing the command.
-> And in driver we are using memset(nfc_op, 0, sizeof(struct anfc_op)), this will make cmnds[4] to zeros but 0x0 is also
-> NAND_CMD_READ0, so inorder to differentiate whether to give status data or not, I just assigned 
-> 	nfc_op->cmnds[0] = NAND_CMD_NONE;
+Song Liu wrote:
+> I am testing the patch set with the following code:
 > 
-> May be this case we can now eliminate as per your suggestion(defining a separate hook for each pattern) and thanks for that.
-> >   
-> > > +	u32 type;
-> > > +	u32 len;
-> > > +	u32 naddrs;
-> > > +	u32 col;
-> > > +	u32 row;
-> > > +	unsigned int data_instr_idx;
-> > > +	unsigned int rdy_timeout_ms;
-> > > +	unsigned int rdy_delay_ns;
-> > > +	const struct nand_op_instr *data_instr; };  
-> > 
-> > Please make sure you actually need to redefine all these fields. Looks like some them could be
-> > extracted directly from the nand_op_instr objects.  
-> Ok, all these values are getting updated in anfc_parse_instructions()
+> #include <stdio.h>
+> #include <unistd.h>
+> 
+> volatile short semaphore = 0;
+> 
+> int for_uprobe(int c)
+> {
+>         printf("%d\n", c + 10);
+>         return c + 1;
+> }
+> 
+> int main(int argc, char *argv[])
+> {
+>         for_uprobe(argc);
+>         while (1) {
+>                 sleep(1);
+>                 printf("semaphore %d\n", semaphore);
+>         }
+> }
+> 
+> I created a uprobe on function for_uprobe(), that uses semaphore as
+> reference counter:
+> 
+>   echo "p:uprobe_1 /root/a.out:0x49a(0x1036)" >> uprobe_events
 
-In anfc_parse_instructions():
-
-+			nfc_op->data_instr = instr;
-+			nfc_op->type = NAND_OP_DATA_IN_INSTR;
-
-This looks pointless.
-
-+			nfc_op->data_instr_idx = op_id;
-+			break;
-+		case NAND_OP_DATA_OUT_INSTR:
-+			nfc_op->data_instr = instr;
-+			nfc_op->type = NAND_OP_DATA_IN_INSTR;
-+			nfc_op->data_instr_idx = op_id;
-+			break;
-+		case NAND_OP_WAITRDY_INSTR:
-+			nfc_op->rdy_timeout_ms = instr->ctx.waitrdy.timeout_ms;
-
-This one also.
-
-+			nfc_op->rdy_delay_ns = instr->delay_ns;
-
-And this one too.
-
-Once you'll have a per pattern callback, I suppose you won't need it
-anymore.
-
-> >   
-> > > +
-> > > +/**
-> > > + * struct anfc_nand_chip - Defines the nand chip related information
-> > > + * @node:		used to store NAND chips into a list.
-> > > + * @chip:		NAND chip information structure.
-> > > + * @bch:		Bch / Hamming mode enable/disable.
-> > > + * @bchmode:		Bch mode.  
-> > 
-> > What's the difference between bch and bchmode?  
-> @bch -> to select error correction method(either BCH or Hamming)
-> @bchmode -> to select ECC correctability (4/8/12/24 bit ECC)
-
-Then something like "strength" or "ecc_strength" would be more
-meaningful.
+Is that even valid? That _looks_ like a semaphore, but I'm not quite 
+sure that it qualifies as an _SDT_ semaphore. Do you see this issue if 
+you instead use the macros provided by <sys/sdt.h> to create SDT 
+markers?
 
 
-Thanks,
-Miquèl
+- Naveen
+
+
