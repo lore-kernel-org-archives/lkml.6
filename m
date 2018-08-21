@@ -2,344 +2,170 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7225EC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F31C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12FB0214C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:57:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12FB0214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 531FD214C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:58:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 531FD214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbeHUQRf (ORCPT
+        id S1727560AbeHUQSt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 12:17:35 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41352 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727292AbeHUQRe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 12:17:34 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 732D320763; Tue, 21 Aug 2018 14:57:28 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 98328204AE;
-        Tue, 21 Aug 2018 14:57:27 +0200 (CEST)
-Date:   Tue, 21 Aug 2018 14:57:25 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Alban <albeu@free.fr>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Naren <naren.kernel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 06/29] mtd: Add support for reading MTD devices via
- the nvmem API
-Message-ID: <20180821145725.3b385399@bbrezillon>
-In-Reply-To: <20180821142716.0adcdd56@eos>
-References: <20180810080526.27207-1-brgl@bgdev.pl>
-        <20180810080526.27207-7-brgl@bgdev.pl>
-        <20180817182720.6a6e5e8e@bbrezillon>
-        <20180819133106.0420df5f@tock>
-        <20180819184609.6dcdbb9a@bbrezillon>
-        <20180821005327.0d312a85@tock>
-        <20180821074404.23aaeb6b@bbrezillon>
-        <20180821142716.0adcdd56@eos>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 21 Aug 2018 12:18:49 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:50171 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727159AbeHUQSt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 12:18:49 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w7LCsD8Q023284;
+        Tue, 21 Aug 2018 14:58:40 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2m0etjh9hh-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 21 Aug 2018 14:58:40 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2054A34;
+        Tue, 21 Aug 2018 12:58:39 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E74405690;
+        Tue, 21 Aug 2018 12:58:38 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 21 Aug
+ 2018 14:58:38 +0200
+Received: from localhost (10.201.23.97) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 21 Aug 2018 14:58:38
+ +0200
+From:   =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>
+To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        "Philippe Cornu" <philippe.cornu@st.com>
+Subject: [PATCH] ARM: dts: stm32: enable display on stm32mp157c-ev1 board
+Date:   Tue, 21 Aug 2018 14:58:36 +0200
+Message-ID: <1534856316-30346-1-git-send-email-yannick.fertre@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.201.23.97]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-21_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 Aug 2018 14:27:16 +0200
-Alban <albeu@free.fr> wrote:
+Enable panel raydium RM68200, DSI bridge & display controller.
 
-> On Tue, 21 Aug 2018 07:44:04 +0200
-> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> 
-> > On Tue, 21 Aug 2018 00:53:27 +0200
-> > Alban <albeu@free.fr> wrote:
-> >   
-> > > On Sun, 19 Aug 2018 18:46:09 +0200
-> > > Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> > >     
-> > > > On Sun, 19 Aug 2018 13:31:06 +0200
-> > > > Alban <albeu@free.fr> wrote:
-> > > >       
-> > > > > On Fri, 17 Aug 2018 18:27:20 +0200
-> > > > > Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> > > > >         
-> > > > > > Hi Bartosz,
-> > > > > > 
-> > > > > > On Fri, 10 Aug 2018 10:05:03 +0200
-> > > > > > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> > > > > >           
-> > > > > > > From: Alban Bedel <albeu@free.fr>
-> > > > > > > 
-> > > > > > > Allow drivers that use the nvmem API to read data stored on
-> > > > > > > MTD devices. For this the mtd devices are registered as
-> > > > > > > read-only NVMEM providers.
-> > > > > > > 
-> > > > > > > Signed-off-by: Alban Bedel <albeu@free.fr>
-> > > > > > > [Bartosz:
-> > > > > > >   - use the managed variant of nvmem_register(),
-> > > > > > >   - set the nvmem name]
-> > > > > > > Signed-off-by: Bartosz Golaszewski
-> > > > > > > <bgolaszewski@baylibre.com>            
-> > > > > > 
-> > > > > > What happened to the 2 other patches of Alban's series? I'd
-> > > > > > really like the DT case to be handled/agreed on in the same
-> > > > > > patchset, but IIRC, Alban and Srinivas disagreed on how this
-> > > > > > should be represented. I hope this time we'll come to an
-> > > > > > agreement, because the MTD <-> NVMEM glue has been floating
-> > > > > > around for quite some time...          
-> > > > > 
-> > > > > These other patches were to fix what I consider a fundamental
-> > > > > flaw in the generic NVMEM bindings, however we couldn't agree
-> > > > > on this point. Bartosz later contacted me to take over this
-> > > > > series and I suggested to just change the MTD NVMEM binding to
-> > > > > use a compatible string on the NVMEM cells as an alternative
-> > > > > solution to fix the clash with the old style MTD partition.
-> > > > > 
-> > > > > However all this has no impact on the code needed to add NVMEM
-> > > > > support to MTD, so the above patch didn't change at all.        
-> > > > 
-> > > > It does have an impact on the supported binding though.
-> > > > nvmem->dev.of_node is automatically assigned to mtd->dev.of_node,
-> > > > which means people will be able to define their NVMEM cells
-> > > > directly under the MTD device and reference them from other nodes
-> > > > (even if it's not documented), and as you said, it conflict with
-> > > > the old MTD partition bindings. So we'd better agree on this
-> > > > binding before merging this patch.      
-> > > 
-> > > Unless the nvmem cell node has a compatible string, then it won't be
-> > > considered as a partition by the MTD code. That is were the clash
-> > > is, both bindings allow free named child nodes without a compatible
-> > > string.    
-> > 
-> > Except the current nvmem cells parsing code does not enforce that, and
-> > existing DTs rely on this behavior, so we're screwed. Or are you
-> > suggesting to add a new "bool check_cells_compat;" field to
-> > nvmem_config?  
-> 
-> There is no nvmem cell parsing at the moment. The DT lookup just
-> resolve the phandle to the cell node, take the parent node and search
-> for the nvmem provider that has this OF node. So extending it in case
-> the node has a *new* compatible string would not break users of the old
-> binding, none of them has a compatible string.
+Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
+---
+ arch/arm/boot/dts/stm32mp157c-ev1.dts | 60 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-But we want to enforce the compat check on MTD devices, otherwise old
-MTD partitions (those defined under the MTD node) will be considered as
-NVMEM cells by the NVMEM framework. Hence the bool check_cells_compat
-field.
+diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+index 372bc2e..cd9062a 100644
+--- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
++++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+@@ -6,6 +6,7 @@
+ /dts-v1/;
+ 
+ #include "stm32mp157c-ed1.dts"
++#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	model = "STMicroelectronics STM32MP157C eval daughter on eval mother";
+@@ -19,6 +20,12 @@
+ 		serial0 = &uart4;
+ 		ethernet0 = &ethernet0;
+ 	};
++	panel_backlight: panel-backlight {
++		compatible = "gpio-backlight";
++		gpios = <&gpiod 13 GPIO_ACTIVE_LOW>;
++		default-on;
++		status = "okay";
++	};
+ };
+ 
+ &ethernet0 {
+@@ -46,6 +53,45 @@
+ 	status = "okay";
+ };
+ 
++&dsi {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++			dsi_in: endpoint {
++				remote-endpoint = <&ltdc_ep0_out>;
++			};
++		};
++
++		port@1 {
++			reg = <1>;
++			dsi_out: endpoint {
++				remote-endpoint = <&dsi_panel_in>;
++			};
++		};
++	};
++
++	panel-dsi@0 {
++		compatible = "raydium,rm68200";
++		reg = <0>;
++		reset-gpios = <&gpiof 15 GPIO_ACTIVE_LOW>;
++		backlight = <&panel_backlight>;
++		status = "okay";
++
++		port {
++			dsi_panel_in: endpoint {
++				remote-endpoint = <&dsi_out>;
++			};
++		};
++	};
++};
++
+ &i2c2 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c2_pins_a>;
+@@ -62,6 +108,20 @@
+ 	status = "okay";
+ };
+ 
++&ltdc {
++	status = "okay";
++
++	port {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ltdc_ep0_out: endpoint@0 {
++			reg = <0>;
++			remote-endpoint = <&dsi_in>;
++		};
++	};
++};
++
+ &m_can1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&m_can1_pins_a>;
+-- 
+2.7.4
 
-> 
-> > >     
-> > > > I see several options:
-> > > > 
-> > > > 1/ provide a way to tell the NVMEM framework not to use
-> > > > parent->of_node even if it's != NULL. This way we really don't
-> > > > support defining NVMEM cells in the DT, and also don't support
-> > > > referencing the nvmem device using a phandle.      
-> > > 
-> > > I really don't get what the point of this would be. Make the whole
-> > > API useless?    
-> > 
-> > No, just allow Bartosz to get his changes merged without waiting for
-> > you and Srinivas to agree on how to handle the new binding. As I said
-> > earlier, this mtd <-> nvmem stuff has been around for quite some time,
-> > and instead of trying to find an approach that makes everyone happy,
-> > you decided to let the patchset die.  
-> 
-> As long as that wouldn't prevent using DT in the future I'm fine with
-> it.
-> 
-> > >     
-> > > > 2/ define a new binding where all nvmem-cells are placed in an
-> > > >    "nvmem" subnode (just like we have this "partitions" subnode
-> > > > for partitions), and then add a config->of_node field so that the
-> > > >    nvmem provider can explicitly specify the DT node representing
-> > > > the nvmem device. We'll also need to set this field to
-> > > > ERR_PTR(-ENOENT) in case this node does not exist so that the
-> > > > nvmem framework knows that it should not assign
-> > > > nvmem->dev.of_node to parent->of_node      
-> > > 
-> > > This is not good. First the NVMEM device is only a virtual concept
-> > > of the Linux kernel, it has no place in the DT.    
-> > 
-> > nvmem-cells is a virtual concept too, still, you define them in the
-> > DT.  
-> 
-> To be honest I also think that naming this concept "nvmem" in the DT was
-> a bad idea. Perhaps something like "driver-data" or "data-cell" would
-> have been better as that would make it clear what this is about, nvmem
-> is just the Linux implementation of this concept.
-
-I'm fine using a different name.
-
-> 
-> > > Secondly the NVMEM
-> > > provider (here the MTD device) then has to manually parse its DT
-> > > node to find this subnode, pass it to the NVMEM framework to later
-> > > again resolve it back to the MTD device.    
-> > 
-> > We don't resolve it back to the MTD device, because the MTD device is
-> > just the parent of the nvmem device.
-> >  
-> > > Not very complex but still a lot of
-> > > useless code, just registering the MTD device is a lot simpler and
-> > > much more inline with most other kernel API that register a
-> > > "service" available from a device.    
-> > 
-> > I'm not a big fan of this option either, but I thought I had to
-> > propose it.
-> >   
-> > >     
-> > > > 3/ only declare partitions as nvmem providers. This would solve
-> > > > the problem we have with partitions defined in the DT since
-> > > >    defining sub-partitions in the DT is not (yet?) supported and
-> > > >    partition nodes are supposed to be leaf nodes. Still, I'm not
-> > > > a big fan of this solution because it will prevent us from
-> > > > supporting sub-partitions if we ever want/need to.      
-> > > 
-> > > That sound like a poor workaround.    
-> > 
-> > Yes, that's a workaround. And the reason I propose it, is, again,
-> > because I don't want to block Bartosz.
-> >   
-> > > Remember that this problem could
-> > > appear with any device that has a binding that use child nodes.    
-> > 
-> > I'm talking about partitions, and you're talking about mtd devices.
-> > Right now partitions don't have subnodes, and if we define that
-> > partition subnodes should describe nvmem-cells, then it becomes part
-> > of the official binding. So, no, the problem you mention does not
-> > (yet) exist.  
-> 
-> That would add another binding that allow free named child nodes
-> without compatible string although experience has repeatedly shown that
-> this was a bad idea.
-
-Yes, I agree. Just thought it was important to have this solution in
-the list, even if it's just to reject it.
-
-> 
-> > >     
-> > > > 4/ Add a ->of_xlate() hook that would be called if present by the
-> > > >    framework instead of using the default parsing we have right
-> > > > now.      
-> > > 
-> > > That is a bit cleaner, but I don't think it would be worse the
-> > > complexity.    
-> > 
-> > But it's way more flexible than putting everything in the nvmem
-> > framework. BTW, did you notice that nvmem-cells parsing does not work
-> > with flashes bigger than 4GB, because the framework assumes
-> > #address-cells and #size-cells are always 1. That's probably something
-> > we'll have to fix for the MTD case.  
-> 
-> Yes, however that's just an implementation limitation which is trivial
-> to solve.
-
-Agree. I was just pointing it in case you hadn't noticed.
-
-> 
-> > > Furthermore xlate functions are more about converting
-> > > from hardware parameters to internal kernel representation than to
-> > > hide extra DT parsing.    
-> > 
-> > Hm, how is that different? ->of_xlate() is just a way for drivers to
-> > have their own DT representation, which is exactly what we want here.  
-> 
-> There is a big difference. DT represent the hardware and the
-> relationship between the devices in an OS independent format. We don't
-> add extra stuff in there just to map back internal Linux API details.
-
-And I'm not talking about adding SW information in the DT, I'm talking
-about HW specific description. We have the same solution for pinctrl
-configs (it's HW/driver specific).
-
-> 
-> > >     
-> > > > 5/ Tell the nvmem framework the name of the subnode containing
-> > > > nvmem cell definitions (if NULL that means cells are directly
-> > > > defined under the nvmem provider node). We would set it to
-> > > > "nvmem-cells" (or whatever you like) for the MTD case.      
-> > > 
-> > > If so please match on compatible and not on the node name.    
-> > 
-> > If you like.
-> >   
-> > > 
-> > > 6/ Extend the current NVMEM cell lookup to check if the parent node
-> > > of the cell has a compatible string set to "nvmem-cells". If it
-> > > doesn't it mean we have the current binding and this node is the
-> > > NVMEM device. If it does the device node is just the next parent.
-> > > This is trivial to implement (literally 2 lines of code) and cover
-> > > all the cases currently known.    
-> > 
-> > Except Srinivas was not happy with this solution, and this stalled the
-> > discussion. I'm trying to find other options and you keep rejecting
-> > all of them to come back to this one.  
-> 
-> Well, I think this is the best solution :/
-> 
-> > > 
-> > > 7/ Just add a compatible string to the nvmem cell. No code change is
-> > > needed,    
-> > 
-> > That's not true!!!  
-> 
-> What is not true in this statement? The current nvmem lookup don't care
-> about compatible strings, so the cell lookup would just works fine. The
-> MTD partition parser won't consider them as a partition because of the
-> compatible string. Problem solved!
-
-No because partitions defined the old way (as direct subnodes of the MTD
-node) will be considered as NVMEM cells by the NVMEM framework, and I
-don't want that. Plus, I don't want people to start defining their
-NVMEM cells and forget the compat string (which would work just fine
-because the NVMEM framework doesn't care).
-
-> 
-> > What forces people to add this compatible in their
-> > DT? Nothing. I'll tell you what will happen: people will start
-> > defining their nvmem cells directly under the MTD node because that
-> > *works*, and even if the binding is not documented and we consider it
-> > invalid, we'll be stuck supporting it forever.  
-> 
-> Do note that undocumented bindings are not allowed. DTS that use
-> undocumented bindings (normally) just get rejected.
-
-Except that's just in theory. In practice, if people can do something
-wrong, they'll complain if you later fix the bug and break their setup.
-So no, if we go for the "nvmem cells have an 'nvmem-cell' compat", then
-I'd like the NVMEM framework to enforce that somehow.
