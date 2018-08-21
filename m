@@ -2,75 +2,73 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3EDBC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:03:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E896CC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96B0621473
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:03:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACDE621854
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:03:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJdPI6fC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96B0621473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jZcitCiC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACDE621854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbeHUVYc (ORCPT
+        id S1727549AbeHUVYp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 17:24:32 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55427 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727027AbeHUVYc (ORCPT
+        Tue, 21 Aug 2018 17:24:45 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:36816 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727027AbeHUVYp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 17:24:32 -0400
-Received: by mail-wm0-f65.google.com with SMTP id f21-v6so3780681wmc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 11:03:21 -0700 (PDT)
+        Tue, 21 Aug 2018 17:24:45 -0400
+Received: by mail-lf1-f65.google.com with SMTP id c21-v6so4459764lfh.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 11:03:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=I07EKvJS33reK/4yVM4Frt/XOASp/B0SX5Kem/UHp5Q=;
-        b=MJdPI6fCcE6k6Nvwin1x6q8J9EFQn/BRbAaiMf4lCAmMxE2WmT8UGLl75ytdRa/nkM
-         8tZhCQ7ReutRjwVb8YyJybMgFuY0PmtlcjTz855tqMOEItJQ1THl1NfquE1QsyQywVSl
-         o0p1MxbUqKO0IQY1hQ761VeDZTwLOwBOKeEUlGw4qH+CyjOmeVj1KV181wjwpND2V4Yn
-         jvmx5p/iJognDBHPzm1pMtkEcuOwMmORqhl+9zF9XwX16r6j6uocqMJ+wwjUnGAvWei0
-         VDCIBWcYMH9hGMBzvF8gC82O+CLygAYHPD2MXmDrbUsWUult8M8MkJ69UYdTj1p/jWX1
-         UUaw==
+        bh=rs/lO+SwystcTx/+tcoam+ENZo4fBcqVqRil9Yikzt0=;
+        b=jZcitCiCecLa4bAOm4nSuAl6Q4UV3vhYD9kXzDp4YDeydRFjS5ljiofVYxAmt5eP6d
+         e22mCogEEnxgUvWWs4yZ65U3uors9u/XdiN/J2aAb3yk6WMl5NyNUNKIsJEbkMmMclcq
+         Tly3DtLhiJe4h/lkJEOkK+67Afmq2TLxfL8Bc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=I07EKvJS33reK/4yVM4Frt/XOASp/B0SX5Kem/UHp5Q=;
-        b=gzQJ4GWRsfmH56lhoBvOZ9LIrn+Wt034MC8qRlj8dJZ7TbDInEw4M7EmTRDZDTwnBt
-         HZnPjKNZViIVxPowbk+4/L1mcDyYFB6+gBFcs2ReRb2U3Zb5w8GvTYhfy3WpMd5YOD2e
-         0ETG859hIMHHisoLYj+PTNFZ91eahHP5296EGgZtJ05M6NS5cH86m4uxnzBl+mKKB6kk
-         jBG5rbWo6/m3UaRsjGzmUbO2NFddgKZmc747ajnHm3tClb1op6w6jpiou/MAGt520Xty
-         Sf3zprKOpw4g7y+caKJrrv8gIgMnXdHpC/KZHULR+JSthyU+/V7V8MBihOhjAGj7FMrl
-         nKMA==
-X-Gm-Message-State: APzg51C5aA3f8Dus6f3jw8lg8Qc0nfjT2h2VCh1V62/hc6LAknENGViO
-        N0BwAgOqkDJ0ozBWRD1CTJfVaf/lXK3BveZSEN2lVg==
-X-Google-Smtp-Source: ANB0VdbqJkAadmObSYXxrZFNHa3Xd2fEuAMOb7ivxuThUnWEZNtQy3HEvQN+B1hQbCT4le7U/cNMAuZ9c/GRtmBx/oI=
-X-Received: by 2002:a1c:d750:: with SMTP id o77-v6mr266413wmg.67.1534874600750;
- Tue, 21 Aug 2018 11:03:20 -0700 (PDT)
+        bh=rs/lO+SwystcTx/+tcoam+ENZo4fBcqVqRil9Yikzt0=;
+        b=jFcenxc96JBdac+juVFkcJ6w3HuNORM52PpuNWJlLUio6W4MwfNgmC+OjGP759RqNp
+         SYDbWzmpeHVmMlVP49p5juB56FGUfi3thofNEJNPjXxHn0pueRB1+zqYuVKLw3/7CuBk
+         60z4B25Yalo2w6gClqSBisNaDl36vs+LtQLlGP1BHtMoppMawmx0oy4aL5/Rn2ns3FhC
+         ox1kUnZx0yZtQLk+rouuLL+S1prGfsLAwgSotnFWASJJI7ovdMhs3YjYi0gVYPbyMWhs
+         Q3EQobs8iGNEZKuBJ//YS56G/NiMtnbCNK2Ks1A13eKrJAf8jMpC4YQ20TGZ04uBHCNz
+         Rt5Q==
+X-Gm-Message-State: AOUpUlGS+FqPPrTWOqYxosl6O1zHtX46sG9EXP3jBEM/EostpAO0OTlq
+        tZOe1GS/SZue/G+pkmB2uoz6UAiUtAHibtTyP5e44YvfB4I=
+X-Google-Smtp-Source: AA+uWPwhUrpJ25dQPDHepK41JcLNs9b5qqsm1AX627XZuC8qfOvyw3mYTaiAHAOCzLHH2R0B9UGGdIolt2k4zDR+4e8=
+X-Received: by 2002:a19:9710:: with SMTP id z16-v6mr34827825lfd.17.1534874613387;
+ Tue, 21 Aug 2018 11:03:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <1534475388-40036-1-git-send-email-wen.yang99@zte.com.cn> <783744d1-29a2-c601-7d1f-b937308d407c@infradead.org>
-In-Reply-To: <783744d1-29a2-c601-7d1f-b937308d407c@infradead.org>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 21 Aug 2018 14:03:06 -0400
-Message-ID: <CADnq5_NfTLXxLrsx+hUnfShPZFfVpzposmnmXe5WXV_R_WMZig@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: fix a compile warning
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     wen.yang99@zte.com.cn, Dave Airlie <airlied@linux.ie>,
-        Chunming Zhou <David1.Zhou@amd.com>, zhong.weidong@zte.com.cn,
-        LKML <linux-kernel@vger.kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        "Deucher, Alexander" <alexander.deucher@amd.com>,
-        jiang.biao2@zte.com.cn, Christian Koenig <christian.koenig@amd.com>
+Received: by 2002:a19:16cd:0:0:0:0:0 with HTTP; Tue, 21 Aug 2018 11:03:32
+ -0700 (PDT)
+In-Reply-To: <20180821055019.954904905@linuxfoundation.org>
+References: <20180821055019.954904905@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 21 Aug 2018 23:33:32 +0530
+Message-ID: <CA+G9fYsOC47MDSUrJK7e8o6QHJVZPv_ZmonR12omg9c3kgGarg@mail.gmail.com>
+Subject: Re: [PATCH 4.18 00/35] 4.18.4-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,65 +76,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 3:01 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+On 21 August 2018 at 11:50, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.18.4 release.
+> There are 35 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> On 08/16/2018 08:09 PM, Wen Yang wrote:
-> > Fix comile warning like,
-> >   CC [M]  drivers/gpu/drm/i915/gvt/execlist.o
-> >   CC [M]  drivers/gpu/drm/nouveau/nvkm/subdev/instmem/nv50.o
-> >   CC [M]  drivers/gpu/drm/radeon/btc_dpm.o
-> >   CC [M]  drivers/isdn/hisax/avm_a1p.o
-> >   CC [M]  drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_dpp.o
-> > drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c: In=
- function =E2=80=98dcn10_update_mpcc=E2=80=99:
-> > drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:190=
-3:9: warning: missing braces around initializer [-Wmissing-braces]
-> >   struct mpcc_blnd_cfg blnd_cfg =3D {0};
-> >          ^
-> > drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:190=
-3:9: warning: (near initialization for =E2=80=98blnd_cfg.black_color=E2=80=
-=99) [-Wmissing-braces]
-> >
-> > Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> > Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+> Responses should be made by Thu Aug 23 05:50:07 UTC 2018.
+> Anything received after that time might be too late.
 >
-> works for me.  Thanks.
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.18.4-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.18.y
+> and the diffstat can be found below.
 >
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
+> thanks,
 >
+> greg k-h
 
-Applied.  thanks!
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm and x86_64.
 
-Alex
+Summary
+------------------------------------------------------------------------
 
->
-> > ---
-> >  drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c =
-b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-> > index cfcc54f..a06a035 100644
-> > --- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-> > +++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-> > @@ -1900,7 +1900,7 @@ static void update_dpp(struct dpp *dpp, struct dc=
-_plane_state *plane_state)
-> >  static void dcn10_update_mpcc(struct dc *dc, struct pipe_ctx *pipe_ctx=
-)
-> >  {
-> >       struct hubp *hubp =3D pipe_ctx->plane_res.hubp;
-> > -     struct mpcc_blnd_cfg blnd_cfg =3D {0};
-> > +     struct mpcc_blnd_cfg blnd_cfg =3D {{0}};
-> >       bool per_pixel_alpha =3D pipe_ctx->plane_state->per_pixel_alpha &=
-& pipe_ctx->bottom_pipe;
-> >       int mpcc_id;
-> >       struct mpcc *new_mpcc;
-> >
->
->
-> --
-> ~Randy
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+kernel: 4.18.4-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.18.y
+git commit: 1b2dc862d5f32eded2e22e173a92771c81dbe5dd
+git describe: v4.18.3-36-g1b2dc862d5f3
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.18-oe/bu=
+ild/v4.18.3-36-g1b2dc862d5f3
+
+No regressions (compared to build v4.18.3)
+
+
+Ran 15693 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
