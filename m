@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22643C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CFFEC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:24:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAB4321779
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:24:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAB4321779
+	by mail.kernel.org (Postfix) with ESMTP id C687721774
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:24:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C687721774
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727678AbeHUJmu (ORCPT
+        id S1727701AbeHUJmy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:42:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54944 "EHLO
+        Tue, 21 Aug 2018 05:42:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54954 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726472AbeHUJmt (ORCPT
+        with ESMTP id S1726472AbeHUJmx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:42:49 -0400
+        Tue, 21 Aug 2018 05:42:53 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A8091516;
-        Tue, 21 Aug 2018 06:24:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 16BED516;
+        Tue, 21 Aug 2018 06:24:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
-        Xin Long <lucien.xin@gmail.com>,
+        stable@vger.kernel.org, Nir Dotan <nird@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 10/42] ip6_tunnel: use the right value for ipv4 min mtu check in ip6_tnl_xmit
-Date:   Tue, 21 Aug 2018 08:20:42 +0200
-Message-Id: <20180821055018.117379574@linuxfoundation.org>
+Subject: [PATCH 4.17 11/42] mlxsw: core_acl_flex_actions: Remove redundant resource destruction
+Date:   Tue, 21 Aug 2018 08:20:43 +0200
+Message-Id: <20180821055018.164841756@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055017.596264829@linuxfoundation.org>
 References: <20180821055017.596264829@linuxfoundation.org>
@@ -51,43 +52,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Nir Dotan <nird@mellanox.com>
 
-[ Upstream commit 82a40777de12728dedf4075453b694f0d1baee80 ]
+[ Upstream commit dda0a3a3fb92451d4a922e56365ee1f73c8a9586 ]
 
-According to RFC791, 68 bytes is the minimum size of IPv4 datagram every
-device must be able to forward without further fragmentation while 576
-bytes is the minimum size of IPv4 datagram every device has to be able
-to receive, so in ip6_tnl_xmit(), 68(IPV4_MIN_MTU) should be the right
-value for the ipv4 min mtu check in ip6_tnl_xmit.
+Some ACL actions require the allocation of a separate resource
+prior to applying the action itself. When facing an error condition
+during the setup phase of the action, resource should be destroyed.
+For such actions the destruction was done twice which is dangerous
+and lead to a potential crash.
+The destruction took place first upon error on action setup phase
+and then as the rule was destroyed.
 
-While at it, change to use max() instead of if statement.
+The following sequence generated a crash:
 
-Fixes: c9fefa08190f ("ip6_tunnel: get the min mtu properly in ip6_tnl_xmit")
-Reported-by: Sabrina Dubroca <sd@queasysnail.net>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
+ # tc qdisc add dev swp49 ingress
+ # tc filter add dev swp49 parent ffff: \
+   protocol ip chain 100 pref 10 \
+   flower skip_sw dst_ip 192.168.101.1 action drop
+ # tc filter add dev swp49 parent ffff: \
+   protocol ip pref 10 \
+   flower skip_sw dst_ip 192.168.101.1 action goto chain 100 \
+   action mirred egress mirror dev swp4
+
+Therefore add mlxsw_afa_resource_del() as a complement of
+mlxsw_afa_resource_add() to add symmetry to resource_list membership
+handling. Call this from mlxsw_afa_fwd_entry_ref_destroy() to make the
+_fwd_entry_ref_create() and _fwd_entry_ref_destroy() pair of calls a
+NOP.
+
+Fixes: 140ce421217e ("mlxsw: core: Convert fwd_entry_ref list to be generic per-block resource list")
+Signed-off-by: Nir Dotan <nird@mellanox.com>
+Reviewed-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_tunnel.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_actions.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/ip6_tunnel.c
-+++ b/net/ipv6/ip6_tunnel.c
-@@ -1133,12 +1133,8 @@ route_lookup:
- 		max_headroom += 8;
- 		mtu -= 8;
- 	}
--	if (skb->protocol == htons(ETH_P_IPV6)) {
--		if (mtu < IPV6_MIN_MTU)
--			mtu = IPV6_MIN_MTU;
--	} else if (mtu < 576) {
--		mtu = 576;
--	}
-+	mtu = max(mtu, skb->protocol == htons(ETH_P_IPV6) ?
-+		       IPV6_MIN_MTU : IPV4_MIN_MTU);
+--- a/drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_actions.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/core_acl_flex_actions.c
+@@ -327,12 +327,16 @@ static void mlxsw_afa_resource_add(struc
+ 	list_add(&resource->list, &block->resource_list);
+ }
  
- 	skb_dst_update_pmtu(skb, mtu);
- 	if (skb->len - t->tun_hlen - eth_hlen > mtu && !skb_is_gso(skb)) {
++static void mlxsw_afa_resource_del(struct mlxsw_afa_resource *resource)
++{
++	list_del(&resource->list);
++}
++
+ static void mlxsw_afa_resources_destroy(struct mlxsw_afa_block *block)
+ {
+ 	struct mlxsw_afa_resource *resource, *tmp;
+ 
+ 	list_for_each_entry_safe(resource, tmp, &block->resource_list, list) {
+-		list_del(&resource->list);
+ 		resource->destructor(block, resource);
+ 	}
+ }
+@@ -530,6 +534,7 @@ static void
+ mlxsw_afa_fwd_entry_ref_destroy(struct mlxsw_afa_block *block,
+ 				struct mlxsw_afa_fwd_entry_ref *fwd_entry_ref)
+ {
++	mlxsw_afa_resource_del(&fwd_entry_ref->resource);
+ 	mlxsw_afa_fwd_entry_put(block->afa, fwd_entry_ref->fwd_entry);
+ 	kfree(fwd_entry_ref);
+ }
 
 
