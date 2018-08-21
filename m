@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E21C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 15:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D25C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 15:16:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4655217BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 15:15:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9AC6217B9
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 15:15:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXqhHLzc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4655217BB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uO4vk4m0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9AC6217B9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbeHUSf5 (ORCPT
+        id S1727818AbeHUSgb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 14:35:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34876 "EHLO mail.kernel.org"
+        Tue, 21 Aug 2018 14:36:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727086AbeHUSf5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 14:35:57 -0400
+        id S1726812AbeHUSgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 14:36:31 -0400
 Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
         (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23C0B2177F;
-        Tue, 21 Aug 2018 15:15:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 085BD2177F;
+        Tue, 21 Aug 2018 15:15:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534864523;
-        bh=Ld0eNxkdiT6XrPf5RdoxmFeNdsvHjztNzMGGLr29k4g=;
+        s=default; t=1534864557;
+        bh=dIpIFj2VvmOqlTZVg9YKPk5NhFyTHgrU5ONIXPnqaJ4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fXqhHLzcZ8TawzUTzxIifC7IgL+DTnUOdhzANlwdU+rNcafZPQNMq04A8Fglxk1JZ
-         pWvC5PoZEreR13XXdrUQRn/8oMPQJvy9BMzn3WI0mXLWyVAP/8P5MvZ0OFSkVaVODW
-         iEstgjmrmQjWVsRtJ/6vQzPgNlUFSO4JboPP+X14=
-Date:   Tue, 21 Aug 2018 23:14:44 +0800
+        b=uO4vk4m0HBvNxZy9BqwNx4vVG5XjMDNZerRppOJguv8QXzm8Zr8h/YD/zQX1+J41h
+         /LZ8YXDcNSIfkN2yxOYSR0dLDygisfTcrxkOaWwiUhy2jbBAJsi7PM/FnXKhOfzCxu
+         ApOXF6RLhwIgPGy9AVOAdG0lvBf7yzwcR0FP2oB4=
+Date:   Tue, 21 Aug 2018 23:15:20 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
 To:     Sven Schmitt <Sven.Schmitt@mixed-mode.de>
 Cc:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
@@ -46,25 +46,22 @@ Cc:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "etnaviv@lists.freedesktop.org" <etnaviv@lists.freedesktop.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
-Subject: Re: [PATCH v3 1/3] soc: imx: gpc: fix PDN delay
-Message-ID: <20180821151441.GA32159@dragon>
-References: <1532425558626.11533@mixed-mode.de>
+        "etnaviv@lists.freedesktop.org" <etnaviv@lists.freedesktop.org>
+Subject: Re: [PATCH v3 3/3] soc: imx: gpc: use GPC_PGC_DOMAIN_* indexes
+Message-ID: <20180821151518.GB32159@dragon>
+References: <1532425563388.30268@mixed-mode.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1532425558626.11533@mixed-mode.de>
+In-Reply-To: <1532425563388.30268@mixed-mode.de>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 09:46:03AM +0000, Sven Schmitt wrote:
-> imx6_pm_domain_power_off() reads iso and iso2sw from GPC_PGC_PUPSCR_OFFS 
-> which stores the power up delays. 
-> So use GPC_PGC_PDNSCR_OFFS for the correct delays.
+On Tue, Jul 24, 2018 at 09:46:07AM +0000, Sven Schmitt wrote:
+> Use GPC_PGC_DOMAIN_* indexes consistent.
 > 
 > Signed-off-by: Sven Schmitt <sven.schmitt@mixed-mode.de>
 
