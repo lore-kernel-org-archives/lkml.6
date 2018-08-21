@@ -2,143 +2,178 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F64C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D4E7C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B6122177F
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:36:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B6122177F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 24B402151D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:38:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="l+0G3uj5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24B402151D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727644AbeHUR4r (ORCPT
+        id S1727741AbeHUR62 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 13:56:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57144 "EHLO mx1.redhat.com"
+        Tue, 21 Aug 2018 13:58:28 -0400
+Received: from mail-eopbgr700074.outbound.protection.outlook.com ([40.107.70.74]:34376
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726743AbeHUR4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 13:56:47 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A60FA40006EC;
-        Tue, 21 Aug 2018 14:36:21 +0000 (UTC)
-Received: from [10.36.117.96] (ovpn-117-96.ams2.redhat.com [10.36.117.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E2E112166BA1;
-        Tue, 21 Aug 2018 14:36:19 +0000 (UTC)
-Subject: Re: [PATCH] KVM: s390: vsie: BUG correction by shadow_crycb
-To:     Cornelia Huck <cohuck@redhat.com>,
-        Pierre Morel <pmorel@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-References: <1534861178-30372-1-git-send-email-pmorel@linux.ibm.com>
- <20180821163348.327ce02d.cohuck@redhat.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <4c91cd0c-d679-eecc-0566-ed45158f6b7f@redhat.com>
-Date:   Tue, 21 Aug 2018 16:36:19 +0200
+        id S1727053AbeHUR62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 13:58:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y0BfeaMKD3ggrg6VbY/Pc3in0gEvVWO3oCVAJilfDuY=;
+ b=l+0G3uj5oCmV5pfBlBGIUX+0hH9dt4xYJXP1vzJZWiBdGplye6VqtTAi8CayX5dgM+caXWMlUYav7xSlQ5w69GRF5qjSGrSHe3ae9M1RXFGwACRpVskvwJ5mkLFKnV2Ep45GP/y/CvEKkUTLLH7O5gjDwXVADWYn1RP0HfMKKlY=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=brijesh.singh@amd.com; 
+Received: from [10.236.136.62] (165.204.77.1) by
+ SN6PR12MB2686.namprd12.prod.outlook.com (2603:10b6:805:6f::27) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1059.24; Tue, 21 Aug 2018 14:37:59 +0000
+Cc:     brijesh.singh@amd.com, "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>
+Subject: Re: SEV guest regression in 4.18
+To:     Borislav Petkov <bp@suse.de>
+References: <20ad6cd5-394c-d3ae-d99c-b656d7ef8293@amd.com>
+ <20180821083911.GF24940@nazgul.tnic>
+From:   Brijesh Singh <brijesh.singh@amd.com>
+Message-ID: <3d46f44c-dd78-8fa9-02ac-8206676ffde9@amd.com>
+Date:   Tue, 21 Aug 2018 09:37:56 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180821163348.327ce02d.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180821083911.GF24940@nazgul.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 21 Aug 2018 14:36:21 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 21 Aug 2018 14:36:21 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+X-Originating-IP: [165.204.77.1]
+X-ClientProxiedBy: SN1PR12CA0114.namprd12.prod.outlook.com
+ (2603:10b6:802:21::49) To SN6PR12MB2686.namprd12.prod.outlook.com
+ (2603:10b6:805:6f::27)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b0c37035-1b18-4f74-e199-08d60773b1b4
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN6PR12MB2686;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR12MB2686;3:4QVvQgabyB1RZSBi2fHL//NT/bouWCL3IAmKjAGKxbXVUwOfC8ihr6S4UEDcqE6MGR5IwA95JIbhxrT/oxCo0RiFpjx6EUtB7vyMcD/e6wCIf+9jSKE+jvMI49ae3HmaeSYiAKSXR074Hsehv/UdVnfUjh0hsNJl66coHdcUAYQdpudCM25MzQTjG2BRPINKC+SFinl1TtXbjylinT57CO+jy5wLgYJRI5HxBv6nHpKhrQyV640u3pEn6RP/NKv5;25:OVr9YLVgKNsiwEoycFt1mRFAhfmesAMJvq8FTq1iZqdm3Yw0FlSW84bcYqk5RxpNkOwsfFLyCykmH1XPClGjPfzC1jmFPyS+LgdyAAUju2IZS4Q2DR3X3XtTZhPW0lnNGXhOXNmUTrhiEp19WKKPsrRbw1WgyP8yBjZaIMliDxWtj2DAJyNYT4UcDNn4yu29//qYcACKz2opi3WWquW8TCXLDIbI8+VoonPOdQDwbl/HoscYemlYc8Tmh84sp+gfPYhHlFtn00mi+pI6Y/AqrwwguIGD1HHtWIcPP//IenYNkouuIRSK4s9jhVqZQ6ypZeSnvB0rU2uIxzmxKOdtEA==;31:3m5f9qq//TQA3quaF+63IPr0U6Vgr7Vm+9dA6Zaozd3laSmId3eNVb2a7y06EgW7S/PlETdr+7x0PfL7gsJmxXW0A/U/oMMQ2lvdgbbItCOoisgsf3uW4hkxBDRKbbUyPxcQcN1Ie+Wb7UnnRL2dvm3fC97Qh7djjsYRowf7OPf0+YHNl4VslTUGv7TUVPe3spAZG5kiRAC2XrfcenBiMap1Vn7PnmCj9m+vLoSJSkM=
+X-MS-TrafficTypeDiagnostic: SN6PR12MB2686:
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR12MB2686;20:pAf5KBADpNqF8oWkmWm2hET7BQ0kAUzkJm/5qld5LBo4YLftBkvnzd2mUcPJLH9XmLSxKYT80AEYOnnjYak4JYiLyxUnEnfh0XqCEvs/QpNSeaQOQ/UtpacTRFHesmdYjhqaAxYoaTENdsdOwute6//2tL8egQhP/v3GJMsXdIxo/PM1JcxpdpS4eeBrO9vwtdwjuqhv+l810yCEu9sn2qgnFwV9aHbauWgVEqbf73jviLBKpZL9RRrnDie84QrTy+m++gHdrul5hdqywwwTZPTHU6912owZkHv5li5B8/l5CwsJCadpO34BKhA+ZNf4U4xWzh/TJp9XhJhKwFwEi7y6XYM0mWrWO9bEfXaYnEcOFdIvVJ6HhxOJFwP8jUx3U079bRPxeCGcmMNxxIGApW+KUEXwPZLMs5HEvUMu3/88TmPP8pUmGTRRhZoNwCZH14W4HU/3gt8kW7T+6eJAprejkSieAKXWGcPxm2XCct9lHdLRJDEyweoktIK4yUeE;4:G1tDDUEYQALqAMuuPzudN4hQxbszrDziY5K2kjXwR2eQ1cy9wyNqdz+tyXPyskMbECIBTcA2fsTFSs2xktn1vKl9fwG5D8TgIuLcgRJGMywBmgm3+sP4TKcRFE3KNa6uaXvYyx3gEWMrc6OXFbwBE++lBjXQZfUW3UtAiybUTf8SQNC+dLzX2TAUaJKFPvX7m8gp1JklOrFMWz3wUDA+cXxPt2E/hPZM9gdMo4EINkz0MMEiwJY2ncNxpihpX0530MWCPfW907a5G68ikH1k/Pz94N7rKHe3Xs3x/iRLHxNyEgoATtHpeDDQb0+Ezna2
+X-Microsoft-Antispam-PRVS: <SN6PR12MB2686D0B33051C98D3D8F05BCE5310@SN6PR12MB2686.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(84791874153150);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699016);SRVR:SN6PR12MB2686;BCL:0;PCL:0;RULEID:;SRVR:SN6PR12MB2686;
+X-Forefront-PRVS: 0771670921
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(39860400002)(366004)(396003)(136003)(376002)(346002)(53754006)(199004)(189003)(106356001)(23676004)(105586002)(230700001)(53546011)(6116002)(186003)(476003)(486006)(26005)(956004)(16526019)(64126003)(386003)(77096007)(3846002)(50466002)(31686004)(44832011)(86362001)(68736007)(2486003)(7736002)(52116002)(8676002)(52146003)(76176011)(11346002)(2616005)(81166006)(81156014)(67846002)(31696002)(478600001)(305945005)(8936002)(16576012)(6306002)(316002)(25786009)(54906003)(4326008)(229853002)(47776003)(65826007)(6246003)(5660300001)(97736004)(2906002)(53936002)(446003)(66066001)(36756003)(6666003)(6916009)(6486002)(65806001)(966005)(65956001)(58126008);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2686;H:[10.236.136.62];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtTTjZQUjEyTUIyNjg2OzIzOjBjZlBiOWN0b0xSWmpROFQ2OHkrR3kyNVJL?=
+ =?utf-8?B?WENlYm84bDNXTXpZK0NIeG5IT2pJZ2VWYkJPZnNYMVdmb0Q2VDhQNnFIYmht?=
+ =?utf-8?B?UlhicHhjWXZ0Vk53M2dMdkhXOTZFaGVqKzV4VTQ2eTk0aWlJWkZwbHZ0TzZD?=
+ =?utf-8?B?WVd1UXcxYzdGOXRpUzJvdXN5RTNTUVdoc1RRSEhaVmlrazVOclQrTHp1SWRQ?=
+ =?utf-8?B?MmVjOTNMZyt2K2xvMWw5ZlZYTzlGaDVnK1NnRUFwZm1Ddm1LcFVvQzNtc01r?=
+ =?utf-8?B?VkRrU29aVTNKZ3U1WFA5KzZNVytUVVc0N2pFdzJZUDFScXcvenRZUmEzV1lR?=
+ =?utf-8?B?QWxaandEajAyRmZYUEx5RU9sTjR2VnhPVUVseUZlM3BackdtMFpWMTQ2R1Fw?=
+ =?utf-8?B?UVM5eDNYZEE1eFhVdEJVNWtxVDIwN1FBbTl0MDJHdVNNbmp6Z0QrSjJIUEVL?=
+ =?utf-8?B?YmxVazVQLy9NK1cydEt6aFRTaUVYdmFpUW5UeUZwQmZaR1ZrYXlMZGNrWDRx?=
+ =?utf-8?B?OEEwTUhLWVdlNXdzSjNNMWRoWnZMUUVXSklVOXlDajRlZUIvY1pPaTI2SG9G?=
+ =?utf-8?B?RlFUeHkzUFNlcGxuRG44Wk1qWjNKT2hjNTdtUm4vRXB4U09CZHppNitwT3Fx?=
+ =?utf-8?B?TjdscGd3UkdUbWZ3elZsQWUvOVlMYTJiV1cwRGpsMzFBK0x1TnI4VHI3UE1R?=
+ =?utf-8?B?cGxHUjdDQjRGQmtReEdJSC9CeTV3dlZZS2tXQUlXYWgyb0gyakxxeElHc1pq?=
+ =?utf-8?B?MUdXT2wxYzQxekRnbHBrQ1dPbkVuK1dDOVJGYlhlTzFtOEN3RGQ2eC9DaHY4?=
+ =?utf-8?B?SE9kOEFZU3AxNC9QTWdGRnV4bGVKd0xyRHBHQklZanF2RFVxTE5zK3htZlBv?=
+ =?utf-8?B?QTBWeCtEN3BqQkQ4NmNrKzg2T25LRFFmZkR0VlVNT05rTkl1UTBGbWRvdmpn?=
+ =?utf-8?B?R1FaOXNCd3JmTUxndnRVMDBTL2RGanpVc3ZSU0NQNzl2M0J0VXlRa1A5dXd0?=
+ =?utf-8?B?a3BTSTJNQ3BVdER2K1A3djBGRjk5WUlaODB2N3JoTWpQUlBDZmRJOW5CQkZV?=
+ =?utf-8?B?WHdtbnQzbnNkRTFHV1RQOXVpYUV5b1lRWmNlRU9meXl2d3VDdFZzUzVlcW12?=
+ =?utf-8?B?WmpMUmRjelNCbVVVeiszUEpqc0t4TkZpWGxKZ1hNVXNLbWdyL1RYK1FUY3R2?=
+ =?utf-8?B?U0ZnMkd3YnEzMDZ6aExUWlAydlI1UnlBeVRWbXdYd1RiYndOUlhFM0lTc2Rk?=
+ =?utf-8?B?b05lcnlDT3RXbUZFbVZ5cmdBbXFxQ3lPSHcxMUdCTzFUSU9UNXl2Qml6b2Iy?=
+ =?utf-8?B?SFZjeTZNNGdwV1JESWo1azErYitnV3JXTzdWaVlDWTdRWW9Jdy81dGw1TzBw?=
+ =?utf-8?B?ZFNtWlp3N0wveDUvUmdHajlmUEZpZG43a29HRXd0NGpobC82aXdqMUJrajZL?=
+ =?utf-8?B?NlNhaTRrZHZJMU40aE5xaUZiU1Ywd3o0TUUxR2RZVGNHdklmZnlpenQxTnUx?=
+ =?utf-8?B?OEExcDBXbGhTbXVBZ1VBSDNFUWI2YnNJblE3N24xZXN6NlgvMUNnVGZDMzVW?=
+ =?utf-8?B?cHhDaHI4bVlOdU5WbFZkdmpkNDZTU1FMUVlCNmJQRFR5WThDYjZzRVlNTTdV?=
+ =?utf-8?B?dU81UkhieHhTVCsvMVMyN3ZISGgxWVk3Qjd1U3kzM2xtbDUvbnk4OEt5b2JR?=
+ =?utf-8?B?ZjFPWXRIVERzaTdueVhyNkVLaXY3NzZsMFRRbWNiQkYvYWgzTlBmUzBVUGgz?=
+ =?utf-8?B?alloMUMvNW9mSW9Cak02RWhrUWNZMXlRSjZOeVFTU1hHN0lhS0dWbkkzRU1E?=
+ =?utf-8?B?b3I3eDBUUE5xS2o4TFYwRThmQ0Jjb09RcThGZjR2c2d3QW00UUVPVmhzTHV6?=
+ =?utf-8?B?d0JQRnBFZkYrcCtCcS9IRWhyRExPd3FhZnptQnNYdlBlT2dzT2tYWndJc3RC?=
+ =?utf-8?B?dVNyb3YyZlNVc3NTdUtLWmFMUStDTWRzL1k4S0RzR1hBTmVsT1YwZ08xdm4y?=
+ =?utf-8?B?dnRiTlJXN2JDNGk1RFZiUUtQdmQxUUFJb1pUazBuL1A3a1VhUHBUemdHWllC?=
+ =?utf-8?Q?qEOxNr4NPmGKZnu4EWg8TeHoI?=
+X-Microsoft-Antispam-Message-Info: YZvKeQXD+dfQzJtbI2MrFQ61XwMbZc/1UzL2NTi20bSU1luNPDLMT/d6VDe+xaqgSkk1/apTxbKCVtS/BCTT5I5IBmOCKZMxgu1e6RevHKRHhyG6eqpt6Ow318VSStWPh//nQSyA8RtBG2ajz5MZqiSU95UTF95A4Sepaoswi+NAlzw9o4LDSpZAel24WjUrr6sK9W2zcygdeF1ifkel1cCIKsKeskSLbhAK1jSww7iiQ0ftH5bNiu7oBFuck346xpFxjPWUub0qtKgA44iy52X5TlD/O14dq4tpNkBh+LQNaOYBcBtNjl8JUIMDUsISQENhmezirQYEge7uHeJA7TtXo67FVQA7/OL9SyMSJB8=
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR12MB2686;6:zrj22CLgM9R/J2nUeyrVGMfuN8hZA6GLkMKjvIDfJ2gaV/RFcmfYWlbSRsexHaKbexA0ju7sZgZVQaik7S1+qua9gXVVCL7f6TYCYcrSlczpTnInMiBRZLzW/6P0AhdQQCbZ15HJR8/rgQ6SeD0qpKfe73hmKwG0bX08YKdtdBp8dHGd4Fhu70fa/5V1ZzryEg+U9qrrm8L59kzVILDxr7Q44SLwboSEX1DOUb028ElQufaaTi3uVeEjnsV8sEr75rVLxSmArntqZM5aeSMGMOLt+d84IPGt+8NZKlgZPZ3yDb+n8983uZJ1/8QDcShsWPiXrr0S7RntuLfSNDNDlFb0eotgi8nINr0uXe/CUBG2OiKr2BjN63Vvz/YK6YjkNXJ0gk1aDP/GUnwdEheGojwCxgSuSqPmOutzfp7I7W8dM8b79dr1keuFVEjAE72d4oFIF4DSL/yhQK6Xyt0FVg==;5:A6mhIOGtIEB36UbjC5uqU/8zeu3NT8PwVYHGFLBTfev4h+5rmlFgJXZNIFWPbRejI3daFE1SmRmESpizIszlDVzVhD/G8qvRuUWEo+w3x2DeULZMqsPy0tUI8lJFzhXwRTKroXJMf3+ItZ9occ0dkKV819Y4IquRu2meG+MvvBM=;7:szRgig6A1sTuwFX8NyCcrUMb+YEZ1zAfUAyCFy9ADZ62JhlA3ucJs7hBQhAQettMPVdbrB2z4a6g/JVWw109KCrRPWrJLcEtCHcMx+jKao087rckJLQo28tF8vjYvTNSK1tSweGkBBCwRtN1E5D6SNg8f+hM9c68QVYEvIz/EDmHr6UAeY/SzN02mvDr0DjknArGooEf6VoAgEutiUsQCGb1Jmnua6MrDPmOVPH/hgU+cMkJ71bnpEe/sM6K0B3A
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR12MB2686;20:6uBQdC7C3WXlQsmHiyjVpATVgSLb6RFsSXDXYHGfp/4dOjAd1+9FPEJJT/7zHOvf5HKTfPXbSUbVPN3MQSaekQ7DufgiOSFqnGJ2+yy9YAFCBKSjplOG0MPahBKWf0tuMmQYfCpQsZaXQw7/UmN7DIr2qKAeeM7J441XJVCo5RBznW6+ozcW/X7vZbSHg9Fefs4W9WhRRHKw0uD7bc2KymexyqEMgjcSENqFaRtNzPjaOnuCQm/oWTTyNI8XV0WP
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2018 14:37:59.9340 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b0c37035-1b18-4f74-e199-08d60773b1b4
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2686
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.08.2018 16:33, Cornelia Huck wrote:
-> On Tue, 21 Aug 2018 16:19:38 +0200
-> Pierre Morel <pmorel@linux.ibm.com> wrote:
-> 
->> Copy the key mask to the right offset inside the shadow CRYCB
+Hi Boris,
+
+
+On 08/21/2018 03:39 AM, Borislav Petkov wrote:
+> On Mon, Aug 20, 2018 at 05:11:53PM -0500, Brijesh Singh wrote:
+>> Hi All,
 >>
->> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->> ---
->>  arch/s390/kvm/vsie.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
+>> The following commit
 >>
->> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
->> index 63844b9..a2b28cd 100644
->> --- a/arch/s390/kvm/vsie.c
->> +++ b/arch/s390/kvm/vsie.c
->> @@ -173,7 +173,8 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->>  		return set_validity_icpt(scb_s, 0x0039U);
->>  
->>  	/* copy only the wrapping keys */
->> -	if (read_guest_real(vcpu, crycb_addr + 72, &vsie_page->crycb, 56))
->> +	if (read_guest_real(vcpu, crycb_addr + 72,
->> +			    vsie_page->crycb.dea_wrapping_key_mask, 56))
+>> "
+>> x86/kvmclock: Remove memblock dependency
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=368a540e0232ad446931f5a4e8a5e06f69f21343
+>>
+>> "
+>> broke the SEV support in 4.18.
+>>
+>> Since the guest physical address holding the wall_clock and
+>> vcpu_time_info are shared with the hypervisor  it must be mapped
+>> as "decrypted" when SEV is active. To clear the C-bit we use
+>> kernel_physical_mapping_init() to split the large pages into 4K before
+>> changing the C-bit. Now the kernel_physical_mapping_init() is failing to
+>> allocate the memory because its called very early.
+>>
+>> [    0.000000] Call Trace:
+>> [    0.000000]  ? dump_stack+0x5c/0x80
+>> [    0.000000]  ? panic+0xe7/0x247
+>> [    0.000000]  ? alloc_low_pages+0x130/0x130
+>> [    0.000000]  ? kernel_physical_mapping_init+0xe0/0x204
+>> [    0.000000]  ? early_set_memory_enc_dec+0x123/0x174
+>> [    0.000000]  ? 0xffffffffae000000
+>> [    0.000000]  ? kvmclock_init+0x60/0x1ea
+>> [    0.000000]  ? kvm_init_platform+0xa/0x16
+>> [    0.000000]  ? setup_arch+0x434/0xce9
+>> [    0.000000]  ? start_kernel+0x67/0x52e
+>> [    0.000000]  ? load_ucode_bsp+0x76/0x12e
+>> [    0.000000]  ? secondary_startup_64+0xa4/0xb0
 > 
-> Don't you need the address here?
-
-As it is defined as an array, the address would result in the same value.
-
-(&vsie_page->crycb.dea_wrapping_key_mask[0])
-
-> 
->>  		return set_validity_icpt(scb_s, 0x0035U);
->>  
->>  	scb_s->ecb3 |= ecb3_flags;
+> Silly question: can we delay the call to kernel_physical_mapping_init()
+> to right before those variables are accessed by the guest for the first
+> time, assuming we can allocate memory at that point?
 > 
 
 
--- 
+Those variables are accessed immediately by the tsc calibration code
+path hence we will not able to delay the allocation. Before the above
+patch series, kvmclock_init() and early tsc calibration was called a
+bit late in setup_arch() hence it all worked fine.
 
-Thanks,
-
-David / dhildenb
+-Brijesh
