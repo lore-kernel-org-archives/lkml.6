@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 796ACC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9A1C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A58B21779
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A58B21779
+	by mail.kernel.org (Postfix) with ESMTP id 5EFD521774
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EFD521774
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbeHUJmH (ORCPT
+        id S1727460AbeHUJmK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:42:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54840 "EHLO
+        Tue, 21 Aug 2018 05:42:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54850 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726472AbeHUJmG (ORCPT
+        with ESMTP id S1726472AbeHUJmK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:42:06 -0400
+        Tue, 21 Aug 2018 05:42:10 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 66E5E8A5;
-        Tue, 21 Aug 2018 06:23:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA5519D7;
+        Tue, 21 Aug 2018 06:23:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        stable@vger.kernel.org,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 33/35] net: ethernet: mvneta: Fix napi structure mixup on armada 3700
-Date:   Tue, 21 Aug 2018 08:20:59 +0200
-Message-Id: <20180821055021.383965691@linuxfoundation.org>
+Subject: [PATCH 4.18 34/35] net: mvneta: fix mvneta_config_rss on armada 3700
+Date:   Tue, 21 Aug 2018 08:21:00 +0200
+Message-Id: <20180821055021.418467416@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055019.954904905@linuxfoundation.org>
 References: <20180821055019.954904905@linuxfoundation.org>
@@ -51,107 +52,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrew Lunn <andrew@lunn.ch>
+From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 
-[ Upstream commit 7a86f05faf112463cfbbdfd222012e247de461a1 ]
+[ Upstream commit 0f5c6c30a0f8c629b92ecdaef61b315c43fde10a ]
 
 The mvneta Ethernet driver is used on a few different Marvell SoCs.
-Some SoCs have per cpu interrupts for Ethernet events. Some SoCs have
-a single interrupt, independent of the CPU. The driver handles this by
-having a per CPU napi structure when there are per CPU interrupts, and
-a global napi structure when there is a single interrupt.
+Some SoCs have per cpu interrupts for Ethernet events, the driver uses
+a per CPU napi structure for this case. Some SoCs such as armada 3700
+have a single interrupt for Ethernet events, the driver uses a global
+napi structure for this case.
 
-When the napi core calls mvneta_poll(), it passes the napi
-instance. This was not being propagated through the call chain, and
-instead the per-cpu napi instance was passed to napi_gro_receive()
-call. This breaks when there is a single global napi instance.
+Current mvneta_config_rss() always operates the per cpu napi structure.
+Fix it by operating a global napi for "single interrupt" case, and per
+cpu napi structure for remaining cases.
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 Fixes: 2636ac3cc2b4 ("net: mvneta: Add network support for Armada 3700 SoC")
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/mvneta.c |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/marvell/mvneta.c |   35 +++++++++++++++++++++-------------
+ 1 file changed, 22 insertions(+), 13 deletions(-)
 
 --- a/drivers/net/ethernet/marvell/mvneta.c
 +++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -1901,10 +1901,10 @@ static void mvneta_rxq_drop_pkts(struct
- }
+@@ -4020,13 +4020,18 @@ static int  mvneta_config_rss(struct mvn
  
- /* Main rx processing when using software buffer management */
--static int mvneta_rx_swbm(struct mvneta_port *pp, int rx_todo,
-+static int mvneta_rx_swbm(struct napi_struct *napi,
-+			  struct mvneta_port *pp, int rx_todo,
- 			  struct mvneta_rx_queue *rxq)
- {
--	struct mvneta_pcpu_port *port = this_cpu_ptr(pp->ports);
- 	struct net_device *dev = pp->dev;
- 	int rx_done;
- 	u32 rcvd_pkts = 0;
-@@ -1959,7 +1959,7 @@ err_drop_frame:
+ 	on_each_cpu(mvneta_percpu_mask_interrupt, pp, true);
  
- 			skb->protocol = eth_type_trans(skb, dev);
- 			mvneta_rx_csum(pp, rx_status, skb);
--			napi_gro_receive(&port->napi, skb);
-+			napi_gro_receive(napi, skb);
- 
- 			rcvd_pkts++;
- 			rcvd_bytes += rx_bytes;
-@@ -2001,7 +2001,7 @@ err_drop_frame:
- 
- 		mvneta_rx_csum(pp, rx_status, skb);
- 
--		napi_gro_receive(&port->napi, skb);
-+		napi_gro_receive(napi, skb);
+-	/* We have to synchronise on the napi of each CPU */
+-	for_each_online_cpu(cpu) {
+-		struct mvneta_pcpu_port *pcpu_port =
+-			per_cpu_ptr(pp->ports, cpu);
+-
+-		napi_synchronize(&pcpu_port->napi);
+-		napi_disable(&pcpu_port->napi);
++	if (!pp->neta_armada3700) {
++		/* We have to synchronise on the napi of each CPU */
++		for_each_online_cpu(cpu) {
++			struct mvneta_pcpu_port *pcpu_port =
++				per_cpu_ptr(pp->ports, cpu);
++
++			napi_synchronize(&pcpu_port->napi);
++			napi_disable(&pcpu_port->napi);
++		}
++	} else {
++		napi_synchronize(&pp->napi);
++		napi_disable(&pp->napi);
  	}
  
- 	if (rcvd_pkts) {
-@@ -2020,10 +2020,10 @@ err_drop_frame:
- }
+ 	pp->rxq_def = pp->indir[0];
+@@ -4043,12 +4048,16 @@ static int  mvneta_config_rss(struct mvn
+ 	mvneta_percpu_elect(pp);
+ 	spin_unlock(&pp->lock);
  
- /* Main rx processing when using hardware buffer management */
--static int mvneta_rx_hwbm(struct mvneta_port *pp, int rx_todo,
-+static int mvneta_rx_hwbm(struct napi_struct *napi,
-+			  struct mvneta_port *pp, int rx_todo,
- 			  struct mvneta_rx_queue *rxq)
- {
--	struct mvneta_pcpu_port *port = this_cpu_ptr(pp->ports);
- 	struct net_device *dev = pp->dev;
- 	int rx_done;
- 	u32 rcvd_pkts = 0;
-@@ -2085,7 +2085,7 @@ err_drop_frame:
- 
- 			skb->protocol = eth_type_trans(skb, dev);
- 			mvneta_rx_csum(pp, rx_status, skb);
--			napi_gro_receive(&port->napi, skb);
-+			napi_gro_receive(napi, skb);
- 
- 			rcvd_pkts++;
- 			rcvd_bytes += rx_bytes;
-@@ -2129,7 +2129,7 @@ err_drop_frame:
- 
- 		mvneta_rx_csum(pp, rx_status, skb);
- 
--		napi_gro_receive(&port->napi, skb);
-+		napi_gro_receive(napi, skb);
+-	/* We have to synchronise on the napi of each CPU */
+-	for_each_online_cpu(cpu) {
+-		struct mvneta_pcpu_port *pcpu_port =
+-			per_cpu_ptr(pp->ports, cpu);
+-
+-		napi_enable(&pcpu_port->napi);
++	if (!pp->neta_armada3700) {
++		/* We have to synchronise on the napi of each CPU */
++		for_each_online_cpu(cpu) {
++			struct mvneta_pcpu_port *pcpu_port =
++				per_cpu_ptr(pp->ports, cpu);
++
++			napi_enable(&pcpu_port->napi);
++		}
++	} else {
++		napi_enable(&pp->napi);
  	}
  
- 	if (rcvd_pkts) {
-@@ -2722,9 +2722,11 @@ static int mvneta_poll(struct napi_struc
- 	if (rx_queue) {
- 		rx_queue = rx_queue - 1;
- 		if (pp->bm_priv)
--			rx_done = mvneta_rx_hwbm(pp, budget, &pp->rxqs[rx_queue]);
-+			rx_done = mvneta_rx_hwbm(napi, pp, budget,
-+						 &pp->rxqs[rx_queue]);
- 		else
--			rx_done = mvneta_rx_swbm(pp, budget, &pp->rxqs[rx_queue]);
-+			rx_done = mvneta_rx_swbm(napi, pp, budget,
-+						 &pp->rxqs[rx_queue]);
- 	}
- 
- 	if (rx_done < budget) {
+ 	netif_tx_start_all_queues(pp->dev);
 
 
