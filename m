@@ -2,321 +2,279 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F8EC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5805C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C01020C0C
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:38:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="k1IqnCgM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C01020C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
+	by mail.kernel.org (Postfix) with ESMTP id 981E520C0C
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:38:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 981E520C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727497AbeHUP62 (ORCPT
+        id S1727519AbeHUP6n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 11:58:28 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:35810 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbeHUP61 (ORCPT
+        Tue, 21 Aug 2018 11:58:43 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:59878 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727499AbeHUP6n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 11:58:27 -0400
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     od@zcrc.me, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 3/3] clk: Add Ingenic jz4725b CGU driver
-Date:   Tue, 21 Aug 2018 14:38:19 +0200
-Message-Id: <20180821123819.25020-3-paul@crapouillou.net>
-In-Reply-To: <20180821123819.25020-1-paul@crapouillou.net>
-References: <20180821123819.25020-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1534855106; bh=w5k6ISz3GbDvbNpUpaHjO6Byzo+PUFQ2puJNknGVMLs=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=k1IqnCgMbPP5ozGOSeTj9BUPa59+j0bzDwNe23PLazt+lUagBhdJJzg1daSFyHd2k8RpCeFkFz8ejjTJO6j87hTzuR5uT/wUOTDnmLi2LS92SULHlBnHum6O7uTwtvGB9CXwaGlekn5B9YAKEZFYGazWem87o+jsikCECOwr26c=
+        Tue, 21 Aug 2018 11:58:43 -0400
+X-Greylist: delayed 2123 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Aug 2018 11:58:41 EDT
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1fs5Nc-00017c-9R; Tue, 21 Aug 2018 14:03:24 +0200
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+Subject: [PATCH 0/2] workqueue lockdep limitations/bugs
+Date:   Tue, 21 Aug 2018 14:03:15 +0200
+Message-Id: <20180821120317.4115-1-johannes@sipsolutions.net>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the clocks provided by the CGU in the Ingenic JZ4725B
-SoC.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/clk/ingenic/Kconfig       |  10 ++
- drivers/clk/ingenic/Makefile      |   1 +
- drivers/clk/ingenic/jz4725b-cgu.c | 225 ++++++++++++++++++++++++++++++
- 3 files changed, 236 insertions(+)
- create mode 100644 drivers/clk/ingenic/jz4725b-cgu.c
+Hi Tejun, Lia, all,
 
-diff --git a/drivers/clk/ingenic/Kconfig b/drivers/clk/ingenic/Kconfig
-index 851a5662f119..a3a158a0c946 100644
---- a/drivers/clk/ingenic/Kconfig
-+++ b/drivers/clk/ingenic/Kconfig
-@@ -14,6 +14,16 @@ config INGENIC_CGU_JZ4740
- 
- 	  If building for a JZ4740 SoC, you want to say Y here.
- 
-+config INGENIC_CGU_JZ4725B
-+	bool "Ingenic JZ4725B CGU driver"
-+	default MACH_JZ4725B
-+	select INGENIC_CGU_COMMON
-+	help
-+	  Support the clocks provided by the CGU hardware on Ingenic JZ4725B
-+	  and compatible SoCs.
-+
-+	  If building for a JZ4725B SoC, you want to say Y here.
-+
- config INGENIC_CGU_JZ4770
- 	bool "Ingenic JZ4770 CGU driver"
- 	default MACH_JZ4770
-diff --git a/drivers/clk/ingenic/Makefile b/drivers/clk/ingenic/Makefile
-index 8b8dc79c7ce6..00a79b2fba10 100644
---- a/drivers/clk/ingenic/Makefile
-+++ b/drivers/clk/ingenic/Makefile
-@@ -1,4 +1,5 @@
- obj-$(CONFIG_INGENIC_CGU_COMMON)	+= cgu.o
- obj-$(CONFIG_INGENIC_CGU_JZ4740)	+= jz4740-cgu.o
-+obj-$(CONFIG_INGENIC_CGU_JZ4725B)	+= jz4725b-cgu.o
- obj-$(CONFIG_INGENIC_CGU_JZ4770)	+= jz4770-cgu.o
- obj-$(CONFIG_INGENIC_CGU_JZ4780)	+= jz4780-cgu.o
-diff --git a/drivers/clk/ingenic/jz4725b-cgu.c b/drivers/clk/ingenic/jz4725b-cgu.c
-new file mode 100644
-index 000000000000..584ff4ff81c7
---- /dev/null
-+++ b/drivers/clk/ingenic/jz4725b-cgu.c
-@@ -0,0 +1,225 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Ingenic JZ4725B SoC CGU driver
-+ *
-+ * Copyright (C) 2018 Paul Cercueil
-+ * Author: Paul Cercueil <paul@crapouillou.net>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/of.h>
-+#include <dt-bindings/clock/jz4725b-cgu.h>
-+#include "cgu.h"
-+
-+/* CGU register offsets */
-+#define CGU_REG_CPCCR		0x00
-+#define CGU_REG_LCR		0x04
-+#define CGU_REG_CPPCR		0x10
-+#define CGU_REG_CLKGR		0x20
-+#define CGU_REG_OPCR		0x24
-+#define CGU_REG_I2SCDR		0x60
-+#define CGU_REG_LPCDR		0x64
-+#define CGU_REG_MSCCDR		0x68
-+#define CGU_REG_SSICDR		0x74
-+#define CGU_REG_CIMCDR		0x78
-+
-+/* bits within the LCR register */
-+#define LCR_SLEEP		BIT(0)
-+
-+static struct ingenic_cgu *cgu;
-+
-+static const s8 pll_od_encoding[4] = {
-+	0x0, 0x1, -1, 0x3,
-+};
-+
-+static const struct ingenic_cgu_clk_info jz4725b_cgu_clocks[] = {
-+
-+	/* External clocks */
-+
-+	[JZ4725B_CLK_EXT] = { "ext", CGU_CLK_EXT },
-+	[JZ4725B_CLK_OSC32K] = { "osc32k", CGU_CLK_EXT },
-+
-+	[JZ4725B_CLK_PLL] = {
-+		"pll", CGU_CLK_PLL,
-+		.parents = { JZ4725B_CLK_EXT, -1, -1, -1 },
-+		.pll = {
-+			.reg = CGU_REG_CPPCR,
-+			.m_shift = 23,
-+			.m_bits = 9,
-+			.m_offset = 2,
-+			.n_shift = 18,
-+			.n_bits = 5,
-+			.n_offset = 2,
-+			.od_shift = 16,
-+			.od_bits = 2,
-+			.od_max = 4,
-+			.od_encoding = pll_od_encoding,
-+			.stable_bit = 10,
-+			.bypass_bit = 9,
-+			.enable_bit = 8,
-+		},
-+	},
-+
-+	/* Muxes & dividers */
-+
-+	[JZ4725B_CLK_PLL_HALF] = {
-+		"pll half", CGU_CLK_DIV,
-+		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 21, 1, 1, -1, -1, -1 },
-+	},
-+
-+	[JZ4725B_CLK_CCLK] = {
-+		"cclk", CGU_CLK_DIV,
-+		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1 },
-+	},
-+
-+	[JZ4725B_CLK_HCLK] = {
-+		"hclk", CGU_CLK_DIV,
-+		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1 },
-+	},
-+
-+	[JZ4725B_CLK_PCLK] = {
-+		"pclk", CGU_CLK_DIV,
-+		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 8, 1, 4, 22, -1, -1 },
-+	},
-+
-+	[JZ4725B_CLK_MCLK] = {
-+		"mclk", CGU_CLK_DIV,
-+		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 12, 1, 4, 22, -1, -1 },
-+	},
-+
-+	[JZ4725B_CLK_IPU] = {
-+		"ipu", CGU_CLK_DIV | CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 16, 1, 4, 22, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 13 },
-+	},
-+
-+	[JZ4725B_CLK_LCD] = {
-+		"lcd", CGU_CLK_DIV | CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_PLL_HALF, -1, -1, -1 },
-+		.div = { CGU_REG_LPCDR, 0, 1, 11, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 9 },
-+	},
-+
-+	[JZ4725B_CLK_I2S] = {
-+		"i2s", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_EXT, JZ4725B_CLK_PLL_HALF, -1, -1 },
-+		.mux = { CGU_REG_CPCCR, 31, 1 },
-+		.div = { CGU_REG_I2SCDR, 0, 1, 9, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 6 },
-+	},
-+
-+	[JZ4725B_CLK_SPI] = {
-+		"spi", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_EXT, JZ4725B_CLK_PLL, -1, -1 },
-+		.mux = { CGU_REG_SSICDR, 31, 1 },
-+		.div = { CGU_REG_SSICDR, 0, 1, 4, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 4 },
-+	},
-+
-+	[JZ4725B_CLK_MMC_MUX] = {
-+		"mmc_mux", CGU_CLK_DIV,
-+		.parents = { JZ4725B_CLK_PLL_HALF, -1, -1, -1 },
-+		.div = { CGU_REG_MSCCDR, 0, 1, 5, -1, -1, -1 },
-+	},
-+
-+	[JZ4725B_CLK_UDC] = {
-+		"udc", CGU_CLK_MUX | CGU_CLK_DIV,
-+		.parents = { JZ4725B_CLK_EXT, JZ4725B_CLK_PLL_HALF, -1, -1 },
-+		.mux = { CGU_REG_CPCCR, 29, 1 },
-+		.div = { CGU_REG_CPCCR, 23, 1, 6, -1, -1, -1 },
-+	},
-+
-+	/* Gate-only clocks */
-+
-+	[JZ4725B_CLK_UART] = {
-+		"uart", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_EXT, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 0 },
-+	},
-+
-+	[JZ4725B_CLK_DMA] = {
-+		"dma", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_PCLK, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 12 },
-+	},
-+
-+	[JZ4725B_CLK_ADC] = {
-+		"adc", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_EXT, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 7 },
-+	},
-+
-+	[JZ4725B_CLK_I2C] = {
-+		"i2c", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_EXT, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 3 },
-+	},
-+
-+	[JZ4725B_CLK_AIC] = {
-+		"aic", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_EXT, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 5 },
-+	},
-+
-+	[JZ4725B_CLK_MMC0] = {
-+		"mmc0", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_MMC_MUX, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 6 },
-+	},
-+
-+	[JZ4725B_CLK_MMC1] = {
-+		"mmc1", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_MMC_MUX, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 16 },
-+	},
-+
-+	[JZ4725B_CLK_BCH] = {
-+		"bch", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_MCLK/* not sure */, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 11 },
-+	},
-+
-+	[JZ4725B_CLK_TCU] = {
-+		"tcu", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_EXT/* not sure */, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 1 },
-+	},
-+
-+	[JZ4725B_CLK_EXT512] = {
-+		"ext/512", CGU_CLK_FIXDIV,
-+		.parents = { JZ4725B_CLK_EXT },
-+
-+		/* Doc calls it EXT512, but it seems to be /256... */
-+		.fixdiv = { 256 },
-+	},
-+
-+	[JZ4725B_CLK_RTC] = {
-+		"rtc", CGU_CLK_MUX,
-+		.parents = { JZ4725B_CLK_EXT512, JZ4725B_CLK_OSC32K, -1, -1 },
-+		.mux = { CGU_REG_OPCR, 2, 1},
-+	},
-+};
-+
-+static void __init jz4725b_cgu_init(struct device_node *np)
-+{
-+	int retval;
-+
-+	cgu = ingenic_cgu_new(jz4725b_cgu_clocks,
-+			      ARRAY_SIZE(jz4725b_cgu_clocks), np);
-+	if (!cgu) {
-+		pr_err("%s: failed to initialise CGU\n", __func__);
-+		return;
-+	}
-+
-+	retval = ingenic_cgu_register_clocks(cgu);
-+	if (retval)
-+		pr_err("%s: failed to register CGU Clocks\n", __func__);
-+}
-+CLK_OF_DECLARE(jz4725b_cgu, "ingenic,jz4725b-cgu", jz4725b_cgu_init);
--- 
-2.18.0
+While doing some unrelated testing earlier, I found a bug in workqueue
+lockdep, and while looking into the code I found another bug, and another
+limitation. I'll follow up with patches for the two bugs, and explain all
+three issues here.
 
+
+1)
+Lockdep report is below - the problem is the following: cancel_work_sync()
+calls flush_work(), which may or may not do something, depending on whether
+or not it's running. This is reasonable for semantics of the workqueue, but
+it's not fine for lockdep, and also the reason for issue 3 below.
+
+The lockdep report I hit basically says:
+ * you're flushing (but really I'm doing cancel_work_sync) the work
+   item, so we take the workqueue lockdep map (it's an ordered
+   workqueue)
+ * the workqueue has other work items that can be on it, that take locks
+   that we already hold (at least indirectly via a dependency chain)
+ * thus a locking violation occurred - the other work might be pending
+   or running, so you have to wait for it and get a deadlock
+
+Note how this isn't true - we really call cancel_work_sync(), so we don't
+need to wait for any other work to run. If this one's running, it must be
+the first one running on the workqueue (otherwise we'd just have cancelled
+it and it wouldn't be running). Thus, the code is fine, but because
+cancel_work_sync() just uses flush_work(), the annotation isn't quite
+right. I've fixed that in the follow-up patch by making the annotation
+depend on where we came from, but I'm not entirely sure that's the right
+thing to do.
+
+2)
+The second issue is that we never really use work->lockdep_map when we
+flush the work, and thus if we have code like
+
+work_function
+{
+	mutex_lock(&mutex);
+}
+
+other_function
+{
+	mutex_lock(&mutex);
+	flush_work(&work);
+}
+
+we never actually get a lockdep report. I've fixed this by putting a lock
+map acquire/release in the (hopefully) correct place.
+
+3)
+The third problem is more complicated, but it means that we likely miss a
+lot of potential locking problems with ordered workqueues, and I think we
+should really try to fix this somehow.
+
+Let's say we again have an ordered workqueue, and the following:
+
+work1_function
+{
+	mutex_lock(&mutex);
+}
+
+work2_function
+{
+	// empty
+}
+
+other_function
+{
+	queue_work_on(&ordered_wq, &work1);
+	queue_work_on(&ordered_wq, &work2);
+	flush_workqueue(&ordered_wq);
+	mutex_lock(&mutex);
+	flush_work(&work2);
+}
+
+As far as I can tell, this will not generate a lockdep report, because the
+flush_work() will not find any pwq in start_flush_work(), and thus will do
+"goto already_gone" without ever doing anything with lockdep. After my
+second patch, at least it will still acquire and release the
+work2.lockdep_map, but that doesn't create any dependency with the whole
+workqueue.
+
+I realize that this is difficult since the work struct isn't tied to the
+workqueue while it's not running, and it could possibly be used with
+different workqueues, but I think we need to solve this too, somehow.
+
+Perhaps we can give each work struct *two* lockdep maps? One that includes
+the workqueue dependency, and one that doesn't? Then we could create a
+dependency when scheduling:
+
+  schedule_work_on():
+    lock_map_acquire(work->wq_lockdep_map);
+    lock_map_acquire(wq->lockdep_map);
+
+and then in flush we take both:
+    lock_map_acquire(work->lockdep_map);
+    lock_map_acquire(work->wq_lockdep_map);
+
+(perhaps also when running the work).
+
+Then, the above scenario should create the following relevant lockdep chain:
+
+mutex			--> work2->wq_lockdep_map
+work2->wq_lockdep_map	--> wq->lockdep_map
+wq->lockdep_map		--> work->wq_lockdep_map
+work->wq_lockdep_map	--> mutex
+
+I think?
+
+johannes
+
+
+----
+lockdep report for problem 1
+
+======================================================
+WARNING: possible circular locking dependency detected
+4.18.0-rc8+ #1573 Not tainted
+------------------------------------------------------
+wpa_supplicant/708 is trying to acquire lock:
+00000000a1e36a54 ((wq_completion)"%s"wiphy_name(local->hw.wiphy)){+.+.}, at: flush_work+0x175/0x280
+
+but task is already holding lock:
+00000000056b83e2 (&local->sta_mtx){+.+.}, at: __sta_info_flush+0x94/0x190
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (&local->sta_mtx){+.+.}:
+       __mutex_lock+0x8e/0x9c0
+       ieee80211_del_key+0x40/0x1e0
+       nl80211_del_key+0x126/0x450
+       genl_family_rcv_msg+0x2aa/0x370
+       genl_rcv_msg+0x47/0x90
+       netlink_rcv_skb+0x4a/0x110
+       genl_rcv+0x24/0x40
+       netlink_unicast+0x186/0x230
+       netlink_sendmsg+0x3b7/0x3e0
+       sock_sendmsg+0x16/0x20
+       ___sys_sendmsg+0x2d5/0x2f0
+       __sys_sendmsg+0x51/0x90
+       do_syscall_64+0x59/0x390
+       entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #2 (&wdev->mtx){+.+.}:
+       __mutex_lock+0x8e/0x9c0
+       ieee80211_sta_rx_queued_mgmt+0x4b/0x3e0
+       ieee80211_iface_work+0x21f/0x340
+       process_one_work+0x28f/0x700
+       worker_thread+0x39/0x3f0
+       kthread+0x116/0x130
+       ret_from_fork+0x3a/0x50
+
+-> #1 ((work_completion)(&sdata->work)){+.+.}:
+       process_one_work+0x262/0x700
+       worker_thread+0x39/0x3f0
+       kthread+0x116/0x130
+       ret_from_fork+0x3a/0x50
+
+-> #0 ((wq_completion)"%s"wiphy_name(local->hw.wiphy)){+.+.}:
+       lock_acquire+0xa3/0x230
+       flush_work+0x195/0x280
+       __cancel_work_timer+0x137/0x1e0
+       ieee80211_sta_tear_down_BA_sessions+0x8d/0x150
+       __sta_info_destroy_part1+0x5d/0x9c0
+       __sta_info_flush+0xd8/0x190
+       ieee80211_set_disassoc+0xd2/0x7d0
+       ieee80211_mgd_auth+0x200/0x340
+       cfg80211_mlme_auth+0x152/0x440
+       nl80211_authenticate+0x2fd/0x360
+       genl_family_rcv_msg+0x2aa/0x370
+       genl_rcv_msg+0x47/0x90
+       netlink_rcv_skb+0x4a/0x110
+       genl_rcv+0x24/0x40
+       netlink_unicast+0x186/0x230
+       netlink_sendmsg+0x3b7/0x3e0
+       sock_sendmsg+0x16/0x20
+       ___sys_sendmsg+0x2d5/0x2f0
+       __sys_sendmsg+0x51/0x90
+       do_syscall_64+0x59/0x390
+       entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+other info that might help us debug this:
+
+Chain exists of:
+  (wq_completion)"%s"wiphy_name(local->hw.wiphy) --> &wdev->mtx --> &local->sta_mtx
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&local->sta_mtx);
+                               lock(&wdev->mtx);
+                               lock(&local->sta_mtx);
+  lock((wq_completion)"%s"wiphy_name(local->hw.wiphy));
+
+ *** DEADLOCK ***
+
+5 locks held by wpa_supplicant/708:
+ #0: 00000000a50eb6ff (cb_lock){++++}, at: genl_rcv+0x15/0x40
+ #1: 000000008954a22a (genl_mutex){+.+.}, at: genl_rcv_msg+0x7a/0x90
+ #2: 000000007622d582 (rtnl_mutex){+.+.}, at: nl80211_pre_doit+0xe1/0x190
+ #3: 000000004cd75553 (&wdev->mtx){+.+.}, at: nl80211_authenticate+0x2b1/0x360
+ #4: 00000000056b83e2 (&local->sta_mtx){+.+.}, at: __sta_info_flush+0x94/0x190
+
+stack backtrace:
+CPU: 3 PID: 708 Comm: wpa_supplicant Not tainted 4.18.0-rc8+ #1573
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-2.fc27 04/01/2014
+Call Trace:
+ dump_stack+0x85/0xcb
+ print_circular_bug.isra.19+0x1d1/0x2c0
+ check_prev_add.constprop.27+0x542/0x7c0
+ __lock_acquire+0x1107/0x11e0
+ lock_acquire+0xa3/0x230
+ flush_work+0x195/0x280
+ __cancel_work_timer+0x137/0x1e0
+ ieee80211_sta_tear_down_BA_sessions+0x8d/0x150
+ __sta_info_destroy_part1+0x5d/0x9c0
+ __sta_info_flush+0xd8/0x190
+ ieee80211_set_disassoc+0xd2/0x7d0
+ ieee80211_mgd_auth+0x200/0x340
+ cfg80211_mlme_auth+0x152/0x440
+ nl80211_authenticate+0x2fd/0x360
+ genl_family_rcv_msg+0x2aa/0x370
+ genl_rcv_msg+0x47/0x90
+ netlink_rcv_skb+0x4a/0x110
+ genl_rcv+0x24/0x40
+ netlink_unicast+0x186/0x230
+ netlink_sendmsg+0x3b7/0x3e0
+ sock_sendmsg+0x16/0x20
+ ___sys_sendmsg+0x2d5/0x2f0
+ __sys_sendmsg+0x51/0x90
+ do_syscall_64+0x59/0x390
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
