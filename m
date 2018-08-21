@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA16AC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F971C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:24:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F59B21774
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:24:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F59B21774
+	by mail.kernel.org (Postfix) with ESMTP id 4815D205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:24:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4815D205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbeHUJnS (ORCPT
+        id S1727860AbeHUJnW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:43:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55042 "EHLO
+        Tue, 21 Aug 2018 05:43:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55050 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726472AbeHUJnR (ORCPT
+        with ESMTP id S1726472AbeHUJnV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:43:17 -0400
+        Tue, 21 Aug 2018 05:43:21 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2FFDB516;
-        Tue, 21 Aug 2018 06:24:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C4463516;
+        Tue, 21 Aug 2018 06:24:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Park Ju Hyung <qkrwngud825@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.17 18/42] ALSA: hda - Turn CX8200 into D3 as well upon reboot
-Date:   Tue, 21 Aug 2018 08:20:50 +0200
-Message-Id: <20180821055018.513470269@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.17 19/42] ALSA: vx222: Fix invalid endian conversions
+Date:   Tue, 21 Aug 2018 08:20:51 +0200
+Message-Id: <20180821055018.557729659@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055017.596264829@linuxfoundation.org>
 References: <20180821055017.596264829@linuxfoundation.org>
@@ -50,46 +49,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Park Ju Hyung <qkrwngud825@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit d77a4b4a5b0b2ebcbc9840995d91311ef28302ab upstream.
+commit fff71a4c050ba46e305d910c837b99ba1728135e upstream.
 
-As an equivalent codec with CX20724,
-CX8200 is also subject to the reboot bug.
+The endian conversions used in vx2_dma_read() and vx2_dma_write() are
+superfluous and even wrong on big-endian machines, as inl() and outl()
+already do conversions.  Kill them.
 
-Late 2017 and 2018 LG Gram and some HP Spectre laptops are known victims
-to this issue, causing extremely loud noises upon reboot.
+Spotted by sparse, a warning like:
+  sound/pci/vx222/vx222_ops.c:278:30: warning: incorrect type in argument 1 (different base types)
 
-Now that we know that this bug is subject to multiple codecs,
-fix the comment as well.
-
-Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_conexant.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/pci/vx222/vx222_ops.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -211,6 +211,7 @@ static void cx_auto_reboot_notify(struct
- 	struct conexant_spec *spec = codec->spec;
- 
- 	switch (codec->core.vendor_id) {
-+	case 0x14f12008: /* CX8200 */
- 	case 0x14f150f2: /* CX20722 */
- 	case 0x14f150f4: /* CX20724 */
- 		break;
-@@ -218,7 +219,7 @@ static void cx_auto_reboot_notify(struct
- 		return;
+--- a/sound/pci/vx222/vx222_ops.c
++++ b/sound/pci/vx222/vx222_ops.c
+@@ -275,7 +275,7 @@ static void vx2_dma_write(struct vx_core
+ 		length >>= 2; /* in 32bit words */
+ 		/* Transfer using pseudo-dma. */
+ 		for (; length > 0; length--) {
+-			outl(cpu_to_le32(*addr), port);
++			outl(*addr, port);
+ 			addr++;
+ 		}
+ 		addr = (u32 *)runtime->dma_area;
+@@ -285,7 +285,7 @@ static void vx2_dma_write(struct vx_core
+ 	count >>= 2; /* in 32bit words */
+ 	/* Transfer using pseudo-dma. */
+ 	for (; count > 0; count--) {
+-		outl(cpu_to_le32(*addr), port);
++		outl(*addr, port);
+ 		addr++;
  	}
  
--	/* Turn the CX20722 codec into D3 to avoid spurious noises
-+	/* Turn the problematic codec into D3 to avoid spurious noises
- 	   from the internal speaker during (and after) reboot */
- 	cx_auto_turn_eapd(codec, spec->num_eapds, spec->eapds, false);
+@@ -313,7 +313,7 @@ static void vx2_dma_read(struct vx_core
+ 		length >>= 2; /* in 32bit words */
+ 		/* Transfer using pseudo-dma. */
+ 		for (; length > 0; length--)
+-			*addr++ = le32_to_cpu(inl(port));
++			*addr++ = inl(port);
+ 		addr = (u32 *)runtime->dma_area;
+ 		pipe->hw_ptr = 0;
+ 	}
+@@ -321,7 +321,7 @@ static void vx2_dma_read(struct vx_core
+ 	count >>= 2; /* in 32bit words */
+ 	/* Transfer using pseudo-dma. */
+ 	for (; count > 0; count--)
+-		*addr++ = le32_to_cpu(inl(port));
++		*addr++ = inl(port);
  
+ 	vx2_release_pseudo_dma(chip);
+ }
 
 
