@@ -2,118 +2,202 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D377C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B16FC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC175214C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:50:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04801214C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:51:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ve0yTe5a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC175214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ItMACsmh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04801214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbeHUULk (ORCPT
+        id S1726848AbeHUULv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 16:11:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34972 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726609AbeHUULk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 16:11:40 -0400
-Received: from localhost (219.sub-174-234-132.myvzw.com [174.234.132.219])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F122216C4;
-        Tue, 21 Aug 2018 16:50:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534870245;
-        bh=DA0AwB6UwGRV0YpI0Rsa5gTrDvdVuGsRp66OiC11Sq8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ve0yTe5ao5bGmjFKKTW7yzoEb5Fp5ElXvjj4Y5NBzWeHHkWH6tn0ZlYz8nBPbQ98O
-         CzTqidpgJPiwlLJaOIhdukkXjVYA/Y+mAjHXW2H9rXLtft2RYWSqb/Kw7LP3VQc6MP
-         oRZVgukiyU84mNZGreA87jAAnlU3BhDsUAZHPqQ8=
-Date:   Tue, 21 Aug 2018 11:50:42 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mmyangfl@gmail.com, Ashok Raj <ashok.raj@intel.com>,
-        Rajat Jain <rajatja@google.com>
-Subject: Re: Enumeration issue with QCA9005 AR9462
-Message-ID: <20180821165042.GC154536@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180820230624.GB154536@bhelgaas-glaptop.roam.corp.google.com>
- <20180821054704.jlqk5zrlbbsjsd4g@wunner.de>
- <20180821072541.tcdg5fkk4zrwxahj@wunner.de>
+        Tue, 21 Aug 2018 16:11:51 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43296 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726789AbeHUULv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 16:11:51 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j26-v6so8768524pfi.10
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 09:50:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ebkvD4y+HkqRYPd6oy37QD+lC/Qg68gYDIGaWFOPXBI=;
+        b=ItMACsmhFtAseAPRwFPHIZslfqLW2LSuhczqN55Jv0snL3W6KLAwKpXblbrkT12b6Q
+         FVVHQvDEEujLkHx5NnfRDVt+6XbRowtoPSj/DfjVpsos7RdYNvPIGlnTeLIVEHyzdOPA
+         xIV20AYgpLS4ry3Hhl5qnKbrsMKmv85yK9vCbkctp4Z+GpBUyAEHjxjm1OWlbXQg1ZF0
+         iAgbs1Ur7scBWsbu9/6i3ctsKWslmzgpDu6OvmKhKEHR0S/aGgH+/teVCZsiXD2Y6Yjd
+         qRPsSBpLGUxyKv/UuyzSmFvug9BrM+lkCdaLCfgWuKFGQm3RvmX4qg5+e3YCxqY/sUkv
+         B2QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ebkvD4y+HkqRYPd6oy37QD+lC/Qg68gYDIGaWFOPXBI=;
+        b=iwvDfAUiqiAJxFoTDpHM9wR0R4EtQQkZQ1IxTz1hnGg2bwxDWUxspGQvGwn5QJVUgI
+         VzXVosfGulXnRqFZ9e9VN1gk9zc6NjQdR7NMF/+JXdpt4H7+DNQjzS+F5B5CMuVzxbw9
+         nMIzOEPlZTCA9BXPHoWV3Izu9wQZEZXADlrThUPnnVGysJblanyt3006WK09t9GZyMAa
+         uQ6GSMswnRidIkFVq2xhGm161ppea2LBcVnaoXGaN790zjBvwTFs6xu/ArZemu69wuZG
+         PILUey6hBI4W7k+rTUdVLa9ZONo6EOTqmiMsn7k5TQIVgc0hUXfRjDKzOB136UkZA9WY
+         SsEw==
+X-Gm-Message-State: AOUpUlE5IFKuRCHQzbUg/kASG1Jc1XqnWPLxniAYxZWfkYP6bowc1Mw5
+        R321Pikr4OE/FYH5ldgUbaUrLjhcqmNKGXnuSUHtgA==
+X-Google-Smtp-Source: AA+uWPzLb4uk5P4VsbRUFhMCxY9e+rRTgiIvRfYowtd+AzdnCyJt+bUSoIKyGqnU8mKwtffRFcjJa3hFGxJBDTlAn0M=
+X-Received: by 2002:a63:6243:: with SMTP id w64-v6mr20987798pgb.145.1534870256151;
+ Tue, 21 Aug 2018 09:50:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180821072541.tcdg5fkk4zrwxahj@wunner.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180820224032.53194-1-ndesaulniers@google.com> <CAKv+Gu-xAmadr96vwStOxdeqi=rCEBrn8V6GofexBhpmA=JiuA@mail.gmail.com>
+In-Reply-To: <CAKv+Gu-xAmadr96vwStOxdeqi=rCEBrn8V6GofexBhpmA=JiuA@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 21 Aug 2018 09:50:44 -0700
+Message-ID: <CAKwvOdkZR-MWuMU=j=kKXQwA0LEj1n0uoZQyTpwOzZuz9gjmJQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64/crypto: remove non-standard notation
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-crypto@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Rajat, Ashok]
+On Tue, Aug 21, 2018 at 5:23 AM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+>
+> Hi Nick,
+>
+> On 21 August 2018 at 00:40, Nick Desaulniers <ndesaulniers@google.com> wrote:
+> > It seems that:
+> > ldr q8, =0x30000000200000001
+> >
+> > is a GNU as convience notation for:
+> > ldr q8, .Lconstant
+> > .Lconstant
+> > .word 0x00000001
+> > .word 0x00000002
+> > .word 0x00000003
+> > .word 0x00000000
+> >
+> > based on this comment in binutils' source [0]. I've asked for this
+> > non-standard convience notation to be added to other assemblers [1], but
+> > until then, we can remove it and get equivalent disassembly:
+> >
+>
+> What do you mean by 'non-standard convenience notation'? Which asm
+> 'standard' does Clang actually claim to implement?
 
-On Tue, Aug 21, 2018 at 09:25:41AM +0200, Lukas Wunner wrote:
-> On Tue, Aug 21, 2018 at 07:47:04AM +0200, Lukas Wunner wrote:
-> > On Mon, Aug 20, 2018 at 06:06:24PM -0500, Bjorn Helgaas wrote:
-> > > mmyangfl@gmail.com reported a problem [1]: on v4.17, a QCA9005 AR9462
-> > > wifi device was present at boot, but disappeared after suspend/resume.
-> > > 
-> > > He also tested a recent kernel (5c60a7389d79, from Thu Aug 16),
-> > > where the suspend/resume problem doesn't seem to happen, but the wifi
-> > > device isn't enumerated correctly at boot-time.
-> > > 
-> > > [    0.928714] pciehp 0000:04:00.0:pcie204: Slot #0 AttnBtn- PwrCtrl- MRL- AttnInd- PwrInd- HotPlug+ Surprise+ Interlock- NoCompl- LLActRep+
-> > > [    0.928752] pciehp 0000:04:00.0:pcie204: Slot(0-1): Card not present
-> > > [    0.928811] pciehp 0000:04:00.0:pcie204: Slot(0-1): Link Up
-> > > [    0.928815] pciehp 0000:04:00.0:pcie204: Slot(0-1): No adapter
-> > > 
-> > > [1] https://bugzilla.kernel.org/show_bug.cgi?id=200839
-> > > [2] https://bugzilla.kernel.org/attachment.cgi?id=277923
-> > 
-> > The hardware appears to be broken in that the Presence Detect State bit
-> > in the Slot Status register is 0 (Slot Empty) even though the slot is
-> > occupied.
-> [...]
-> > Possible solutions:
-> > 
-> > (a) Be lenient towards broken hardware and accept DLActive+ as a proxy
-> >     for PresDet+.
-> > 
-> > (b) Add a blacklist to pciehp such that it doesn't bind to [1ae9:0200].
-> >     The bug reporter writes that "it's a single Half Mini PCIe card,
-> >     with two chipsets (Wil6110? + AR9462) combined by a PCIe hub".
-> >     This sounds like it's not really hotpluggable.
-> >     (Is Mini PCIe hotplug capable at all?)
-> > 
-> > Let me go through the driver and see if (a) is feasible and how intrusive
-> > it would be.
-> 
-> So (a) would seem to be feasible, we could add a quirk for devices like
-> this to call pciehp_check_link_active() in pciehp_get_adapter_status().
-> 
-> Alternatively, we could generally add a call to pciehp_check_link_active()
-> in get_adapter_status(), pciehp_check_presence() and pcie_init() and thus
-> avoid a quirk for this specific device.
-> The existing call in __pciehp_enable_slot() could actually be removed,
-> this code path is only entered if either PDS or DLLLA is set.
-> 
-> And the third option would be to add a quirk like quirk_hotplug_bridge()
-> which sets is_hotplug_bridge = 0 on this broken device such that pciehp
-> doesn't bind to it in the first place.
+Well, for assembly 'standard' is a bit nebulous.  But it's frustrating
+when you can't find what the `=0x...` notation means in either the ARM
+or GNU as manuals.  The source of truth happened to be a comment in
+the source [0] that explained that this was a "programmer friendly
+notation."  Sure, if you can find it.
 
-It sounds like with (a), you could make this work without having a
-Wil6110-specific quirk, i.e., if the Link Status says the link is
-active, we assume a device is present.  That seems reasonable to me
-and it sort of fits with these previous changes:
+>
+> This 'GCC/binutils is broken and we are reluctant to subvert Clang'
+> attitude is getting a bit old tbh. In the future, could you please
+> mention clang explicitly in the patch subject so it is obvious what
+> the purpose of the patch is? I think we should accommodate Clang in
+> Linux, but the attitude has got to go.
 
-  385895fef6b5 ("PCI: pciehp: Prioritize data-link event over presence detect")
-  e48f1b67f668 ("PCI: pciehp: Use link change notifications for hot-plug and removal")
+'Reluctant?' Please assume good faith; I filed the bug/noticed
+yesterday [1]. And I'm in favor of supporting the shorthand.  That's
+not my argument at all; Strawman.
 
-Bjorn
+>
+>
+> > before:
+> > 00000000000009d4 <neon_aes_ctr_encrypt>:
+> > ...
+> >      a48:       9c000ac8        ldr     q8, ba0 <neon_aes_ctr_encrypt+0x1cc>
+> > ...
+> >      ba0:       00000001        .word   0x00000001
+> >      ba4:       00000002        .word   0x00000002
+> >      ba8:       00000003        .word   0x00000003
+> >      bac:       00000000        .word   0x00000000
+> >
+> > after:
+> >
+> > 00000000000009d4 <neon_aes_ctr_encrypt>:
+> > ...
+> >      a48:       9c000aa8        ldr     q8, b9c <neon_aes_ctr_encrypt+0x1c8>
+> > ...
+> >      b9c:       00000001        .word   0x00000001
+> >      ba0:       00000002        .word   0x00000002
+> >      ba4:       00000003        .word   0x00000003
+> >      ba8:       00000000        .word   0x00000000
+> >
+> > [0] https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=blob;f=gas/testsuite/gas/aarch64/programmer-friendly.s;h=6254c6476efdc848648b05068be0574e7addc85d;hb=HEAD#l11
+> > [1] https://bugs.llvm.org/show_bug.cgi?id=38642
+> >
+> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> > ---
+> >  arch/arm64/crypto/aes-modes.S | 8 +++++++-
+> >  1 file changed, 7 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm64/crypto/aes-modes.S b/arch/arm64/crypto/aes-modes.S
+> > index 483a7130cf0e..9288c5b0eca2 100644
+> > --- a/arch/arm64/crypto/aes-modes.S
+> > +++ b/arch/arm64/crypto/aes-modes.S
+> > @@ -232,7 +232,7 @@ AES_ENTRY(aes_ctr_encrypt)
+> >         bmi             .Lctr1x
+> >         cmn             w6, #4                  /* 32 bit overflow? */
+> >         bcs             .Lctr1x
+> > -       ldr             q8, =0x30000000200000001        /* addends 1,2,3[,0] */
+> > +       ldr             q8, .Laddends /* addends 1,2,3[,0] */
+> >         dup             v7.4s, w6
+> >         mov             v0.16b, v4.16b
+> >         add             v7.4s, v7.4s, v8.4s
+> > @@ -295,6 +295,12 @@ AES_ENTRY(aes_ctr_encrypt)
+> >         rev             x7, x7
+> >         ins             v4.d[0], x7
+> >         b               .Lctrcarrydone
+> > +
+> > +.Laddends:
+> > +       .word   0x00000001
+> > +       .word   0x00000002
+> > +       .word   0x00000003
+> > +       .word   0x00000000
+>
+
+
+> As Will points out, this breaks BE builds.
+
+Looks like -EB and -EL are the flags for me to test with in GNU as
+(looks like a few different flags for this).  Is there a target triple
+ABI for BE?  I'll ask around here too, and post my findings.
+
+>
+> >  AES_ENDPROC(aes_ctr_encrypt)
+> >         .ltorg
+>
+> You can drop this .ltorg if you get rid of all =xxx instances.
+>
+> Actually, though, I would prefer it if we could use some clever short
+> sequence of movi+add instructions, and get rid of the literal
+> altogether. Or otherwise, please use something like
+>
+> ldr_l q8, .Laddends, <temp register>
+>
+> instead, and move the literal into the .rodata section (and use .octa
+> so you don't break BE)
+
+Ah, .octa, neat.  Ok, I'll take a look for v2.
+
+-- 
+Thanks,
+~Nick Desaulniers
