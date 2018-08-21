@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFEC3C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76DD2C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:22:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0C5D21774
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:22:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0C5D21774
+	by mail.kernel.org (Postfix) with ESMTP id 3860121774
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:22:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3860121774
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbeHUJlL (ORCPT
+        id S1727006AbeHUJlP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:41:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54688 "EHLO
+        Tue, 21 Aug 2018 05:41:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54698 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726560AbeHUJlL (ORCPT
+        with ESMTP id S1726516AbeHUJlO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:41:11 -0400
+        Tue, 21 Aug 2018 05:41:14 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 08BDE516;
-        Tue, 21 Aug 2018 06:22:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8351C8A5;
+        Tue, 21 Aug 2018 06:22:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Dodd <steved424@gmail.com>,
-        Lou Reed <gogen@disroot.org>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 04/35] r8169: dont use MSI-X on RTL8168g
-Date:   Tue, 21 Aug 2018 08:20:30 +0200
-Message-Id: <20180821055020.156532585@linuxfoundation.org>
+        stable@vger.kernel.org, Park Ju Hyung <qkrwngud825@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.18 05/35] ALSA: hda - Sleep for 10ms after entering D3 on Conexant codecs
+Date:   Tue, 21 Aug 2018 08:20:31 +0200
+Message-Id: <20180821055020.206183086@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055019.954904905@linuxfoundation.org>
 References: <20180821055019.954904905@linuxfoundation.org>
@@ -52,42 +50,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Heiner Kallweit <hkallweit1@gmail.com>
+From: Park Ju Hyung <qkrwngud825@gmail.com>
 
-[ Upstream commit 7c53a722459c1d6ffb0f5b2058c06ca8980b8600 ]
+commit f59cf9a0551dd954ad8b752461cf19d9789f4b1d upstream.
 
-There have been two reports that network doesn't come back on resume
-from suspend when using MSI-X. Both cases affect the same chip version
-(RTL8168g - version 40), on different systems. Falling back to MSI
-fixes the issue.
-Even though we don't really have a proof yet that the network chip
-version is to blame, let's disable MSI-X for this version.
+On rare occasions, we are still noticing that the internal speaker
+spitting out spurious noises even after adding the problematic codec
+to the list.
 
-Reported-by: Steve Dodd <steved424@gmail.com>
-Reported-by: Lou Reed <gogen@disroot.org>
-Tested-by: Steve Dodd <steved424@gmail.com>
-Tested-by: Lou Reed <gogen@disroot.org>
-Fixes: 6c6aa15fdea5 ("r8169: improve interrupt handling")
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Adding a 10ms artificial delay before rebooting fixes the issue entirely.
+
+Patch for Realtek codecs also adds the same amount of delay after
+entering D3.
+
+Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/realtek/r8169.c |    5 +++++
- 1 file changed, 5 insertions(+)
 
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -7544,6 +7544,11 @@ static int rtl_alloc_irq(struct rtl8169_
- 		RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~MSIEnable);
- 		RTL_W8(tp, Cfg9346, Cfg9346_Lock);
- 		flags = PCI_IRQ_LEGACY;
-+	} else if (tp->mac_version == RTL_GIGA_MAC_VER_40) {
-+		/* This version was reported to have issues with resume
-+		 * from suspend when using MSI-X
-+		 */
-+		flags = PCI_IRQ_LEGACY | PCI_IRQ_MSI;
- 	} else {
- 		flags = PCI_IRQ_ALL_TYPES;
- 	}
+---
+ sound/pci/hda/patch_conexant.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -225,6 +225,7 @@ static void cx_auto_reboot_notify(struct
+ 	snd_hda_codec_set_power_to_all(codec, codec->core.afg, AC_PWRST_D3);
+ 	snd_hda_codec_write(codec, codec->core.afg, 0,
+ 			    AC_VERB_SET_POWER_STATE, AC_PWRST_D3);
++	msleep(10);
+ }
+ 
+ static void cx_auto_free(struct hda_codec *codec)
 
 
