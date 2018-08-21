@@ -5,55 +5,53 @@ X-Spam-Level:
 X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B74FC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 21:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A80DC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 21:56:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07D7D214D5
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 21:55:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07D7D214D5
+	by mail.kernel.org (Postfix) with ESMTP id 48987217FF
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 21:56:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48987217FF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbeHVBRp (ORCPT
+        id S1727958AbeHVBRz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 21:17:45 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:36058 "EHLO
+        Tue, 21 Aug 2018 21:17:55 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:34992 "EHLO
         mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727027AbeHVBR3 (ORCPT
+        with ESMTP id S1726755AbeHVBRZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 21:17:29 -0400
-Received: by mail-oi0-f67.google.com with SMTP id n21-v6so34806618oig.3;
-        Tue, 21 Aug 2018 14:55:34 -0700 (PDT)
+        Tue, 21 Aug 2018 21:17:25 -0400
+Received: by mail-oi0-f67.google.com with SMTP id m11-v6so34828685oic.2;
+        Tue, 21 Aug 2018 14:55:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=bfCjKvj/Rt0QdLyRoM+SklnSQ45TvYZysCa41HzJYLU=;
-        b=ITSFSkIY5sUaxK6RGb5xKcrK7GpQ0cRaPIgp7XVRLULLJ8RKTmg3R8qxAITC/AR0dn
-         8D+DdP0mmYQ4AssdmF5BlUXMhsv6/uA5oeQKrixh1eYJnb7GjZdp49udzTn1oAayHmcl
-         k7rDI/wuNa9nLufyfKlLC7sL79Wv/A1sqvxuQeK7t887xus2121TfVR+AKwbPspzttV7
-         UWUr8K12sQQt1AfMdSzoknW+ZFeU72FkaITxNwLLI8qQjIP6t2NWy5n1W4mfEBNJH6tR
-         BI4OpjCAUMrRa4PQdzUTjicku7NhH7Q0DzebGRbMdhgX03zQHaMRuypGCClW8NhkGkzj
-         4WeQ==
-X-Gm-Message-State: APzg51AdLiC8eICh681fKsleNV+ASQivTgvIBtUhGT+cv/X6SYIYIf2t
-        615EiO2vsUqJDUZPoZ0U8wj4I60=
-X-Google-Smtp-Source: ANB0VdZ0hnMjT/dU+HwOZec0mYxVOsouUerqbjI6Pi3RFtdX7A0CgbCXM520qAFJLawlmj2dGTMkWA==
-X-Received: by 2002:aca:c141:: with SMTP id r62-v6mr1251510oif.179.1534888533852;
-        Tue, 21 Aug 2018 14:55:33 -0700 (PDT)
+        bh=96bgZeDJu8lmzLzGQEjyQG1f1/HFZ+sSY2PjMNDbDoY=;
+        b=YtJpnrICImw/anir2wNfaUrYGmyEvWecitpkr5EGNFQDirwwjHHprEimeAjbc5RE9D
+         NxRkRX7RrOXhl7I37IK9jppFnQ/35s+8EnG0U7Dbrr1BPlG3Q93uRIap66zbuKGETi+E
+         HNdXuzSEJGNWisbdjsmhG+3ecFiiJ3IlRtCeguOsdv4xJpgOoeHUrtVXHFV4vzuBsfdo
+         8+i5p06Cv5ofNDxNlQ7BR1FTWIuwjhAjv18/gJzlieiYbKDq7zqn7O5AawqUxLOMckI/
+         HPa/85z5U1FqfnCCmzWv25kRcByJGQWm8ei5xNv9KnU5FyF7ANnCeU5ifAq8/oEaq+km
+         Hltw==
+X-Gm-Message-State: APzg51DE7dZN3eYa0bmnrNI+opJrAwYtEKkgtt3MY+kggseXG73dfXgM
+        RCEW6DwH6FBRRnC6CFSBoj53IPM=
+X-Google-Smtp-Source: ANB0VdZjUG/J+LrGaaDkqqe3YpufRpyPA49c/FbjUcMgYxSAlVOsWYx3FFHDbnR0cDbbRZa4JWmr4Q==
+X-Received: by 2002:aca:401:: with SMTP id 1-v6mr1152011oie.28.1534888530309;
+        Tue, 21 Aug 2018 14:55:30 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id x126-v6sm18785332oig.15.2018.08.21.14.55.33
+        by smtp.googlemail.com with ESMTPSA id x126-v6sm18785332oig.15.2018.08.21.14.55.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 Aug 2018 14:55:33 -0700 (PDT)
+        Tue, 21 Aug 2018 14:55:29 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 7/8] powerpc: enable building all dtbs
-Date:   Tue, 21 Aug 2018 16:55:23 -0500
-Message-Id: <20180821215524.23040-8-robh@kernel.org>
+        Ley Foon Tan <lftan@altera.com>,
+        nios2-dev@lists.rocketboards.org
+Subject: [PATCH 4/8] nios2: fix building all dtbs
+Date:   Tue, 21 Aug 2018 16:55:20 -0500
+Message-Id: <20180821215524.23040-5-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180821215524.23040-1-robh@kernel.org>
 References: <20180821215524.23040-1-robh@kernel.org>
@@ -62,39 +60,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the 'dtbs' target for powerpc. This allows building all the dts
-files in arch/powerpc/boot/dts/ when COMPILE_TEST and OF_ALL_DTBS are
-enabled.
+nios2 has a 'dtbs' target, but nothing is added to 'dtb-*' targets and
+no dtbs were getting built. This enables building all the dts files in
+arch/nios2/boot/dts/ when COMPILE_TEST and OF_ALL_DTBS are enabled.
 
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org
+Cc: Ley Foon Tan <lftan@altera.com>
+Cc: nios2-dev@lists.rocketboards.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- arch/powerpc/boot/dts/Makefile     | 5 +++++
- arch/powerpc/boot/dts/fsl/Makefile | 4 ++++
- 2 files changed, 9 insertions(+)
- create mode 100644 arch/powerpc/boot/dts/fsl/Makefile
+ arch/nios2/boot/dts/Makefile | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/powerpc/boot/dts/Makefile b/arch/powerpc/boot/dts/Makefile
-index f66554cd5c45..fb335d05aae8 100644
---- a/arch/powerpc/boot/dts/Makefile
-+++ b/arch/powerpc/boot/dts/Makefile
-@@ -1 +1,6 @@
+diff --git a/arch/nios2/boot/dts/Makefile b/arch/nios2/boot/dts/Makefile
+index f6358e395b25..a91a0b09be63 100644
+--- a/arch/nios2/boot/dts/Makefile
++++ b/arch/nios2/boot/dts/Makefile
+@@ -1,3 +1,6 @@
  # SPDX-License-Identifier: GPL-2.0
-+
-+subdir-y += fsl
-+
-+dtstree		:= $(srctree)/$(src)
-+dtb-$(CONFIG_OF_ALL_DTBS) := $(patsubst $(dtstree)/%.dts,%.dtb, $(wildcard $(dtstree)/*.dts))
-diff --git a/arch/powerpc/boot/dts/fsl/Makefile b/arch/powerpc/boot/dts/fsl/Makefile
-new file mode 100644
-index 000000000000..3bae982641e9
---- /dev/null
-+++ b/arch/powerpc/boot/dts/fsl/Makefile
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0
+ 
+ obj-y := $(patsubst "%.dts",%.dtb.o,$(CONFIG_NIOS2_DTB_SOURCE))
 +
 +dtstree		:= $(srctree)/$(src)
 +dtb-$(CONFIG_OF_ALL_DTBS) := $(patsubst $(dtstree)/%.dts,%.dtb, $(wildcard $(dtstree)/*.dts))
