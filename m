@@ -2,353 +2,225 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D39A6C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 02:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3DBC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 02:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D0FD21581
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 02:35:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D0FD21581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 07CC02174A
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 02:36:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BJWRTV4A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07CC02174A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726346AbeHUFxt (ORCPT
+        id S1726545AbeHUFyg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 01:53:49 -0400
-Received: from mx.socionext.com ([202.248.49.38]:28510 "EHLO mx.socionext.com"
+        Tue, 21 Aug 2018 01:54:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725733AbeHUFxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 01:53:49 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 21 Aug 2018 11:35:40 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 425E9600AA;
-        Tue, 21 Aug 2018 11:35:40 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Tue, 21 Aug 2018 11:35:40 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id D5B29403C1;
-        Tue, 21 Aug 2018 11:35:39 +0900 (JST)
-Received: from DESKTOPFLNNJ4T (unknown [10.213.132.95])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id B005012014A;
-        Tue, 21 Aug 2018 11:35:39 +0900 (JST)
-From:   "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
-To:     "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
-        <linux-media@vger.kernel.org>
-Cc:     "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
-        "Jassi Brar" <jaswinder.singh@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180803020839.5967-1-suzuki.katsuhiro@socionext.com>
-In-Reply-To: <20180803020839.5967-1-suzuki.katsuhiro@socionext.com>
-Subject: Re: [PATCH v2] media: dvb-frontends: add LNBH29 LNB supply driver
-Date:   Tue, 21 Aug 2018 11:35:36 +0900
-Message-ID: <000001d438f7$a4764940$ed62dbc0$@socionext.com>
+        id S1725733AbeHUFyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 01:54:36 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 992D521581;
+        Tue, 21 Aug 2018 02:36:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534818987;
+        bh=IwDl8xLtrEXmKGSS49WJEBP1/6xvuB22+6wRvYaPXNI=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=BJWRTV4Aeyygt8oEu43f/2yFBOSghe9CQaUbVmCJgVNRyPurBCePDyIGOOanu6Ff2
+         2zi4/UVzCOOrSy/tI2fuIFUJrpPzxIUBmb7Zmx4WO/j/aoOUDafg2bxLh2KR0fvrGu
+         0cV6mL/weDq6IC4uGXLH2192Yv8VKjXrjg6GZ6Xw=
+Date:   Mon, 20 Aug 2018 19:36:26 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH v5] f2fs: fix performance issue observed with
+ multi-thread sequential read
+Message-ID: <20180821023626.GB20263@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180810023758.46974-1-jaegeuk@kernel.org>
+ <20180810024859.GA48219@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180817182944.GA58612@jaegeuk-macbookpro.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="iso-2022-jp"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHUKs7rq1hZ3Doj0kaAWx35ZneZRaTJmJXg
-Content-Language: ja
-x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
-x-shieldmailcheckerpolicyversion: POLICY180220
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180817182944.GA58612@jaegeuk-macbookpro.roam.corp.google.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mauro,
+This reverts the commit - "b93f771 - f2fs: remove writepages lock"
+to fix the drop in sequential read throughput.
 
-This is ping...
+Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
+device: UFS
 
+Before -
+read throughput: 185 MB/s
+total read requests: 85177 (of these ~80000 are 4KB size requests).
+total write requests: 2546 (of these ~2208 requests are written in 512KB).
 
-> -----Original Message-----
-> From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> Sent: Friday, August 3, 2018 11:09 AM
-> To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>;
-> linux-media@vger.kernel.org
-> Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>; Jassi Brar
-> <jaswinder.singh@linaro.org>; linux-arm-kernel@lists.infradead.org;
-> linux-kernel@vger.kernel.org; Suzuki, Katsuhiro/鈴木 勝博
-> <suzuki.katsuhiro@socionext.com>
-> Subject: [PATCH v2] media: dvb-frontends: add LNBH29 LNB supply driver
-> 
-> Add support for STMicroelectronics LNBH29 LNB supply driver.
-> 
-> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> 
-> ---
-> 
-> Changes since v1:
->   - Fix wrong I2C transfer routine
->   - Remove unused headers
-> ---
->  drivers/media/dvb-frontends/Kconfig  |  10 ++
->  drivers/media/dvb-frontends/Makefile |   1 +
->  drivers/media/dvb-frontends/lnbh29.c | 168 +++++++++++++++++++++++++++
->  drivers/media/dvb-frontends/lnbh29.h |  36 ++++++
->  4 files changed, 215 insertions(+)
->  create mode 100644 drivers/media/dvb-frontends/lnbh29.c
->  create mode 100644 drivers/media/dvb-frontends/lnbh29.h
-> 
-> diff --git a/drivers/media/dvb-frontends/Kconfig
-> b/drivers/media/dvb-frontends/Kconfig
-> index 048285134cdf..847da72d1256 100644
-> --- a/drivers/media/dvb-frontends/Kconfig
-> +++ b/drivers/media/dvb-frontends/Kconfig
-> @@ -791,6 +791,16 @@ config DVB_LNBH25
->  	  An SEC control chip.
->  	  Say Y when you want to support this chip.
-> 
-> +config DVB_LNBH29
-> +	tristate "LNBH29 SEC controller"
-> +	depends on DVB_CORE && I2C
-> +	default m if !MEDIA_SUBDRV_AUTOSELECT
-> +	help
-> +	  LNB power supply and control voltage
-> +	  regulator chip with step-up converter
-> +	  and I2C interface for STMicroelectronics LNBH29.
-> +	  Say Y when you want to support this chip.
-> +
->  config DVB_LNBP21
->  	tristate "LNBP21/LNBH24 SEC controllers"
->  	depends on DVB_CORE && I2C
-> diff --git a/drivers/media/dvb-frontends/Makefile
-> b/drivers/media/dvb-frontends/Makefile
-> index 779dfd027b24..e9179162658c 100644
-> --- a/drivers/media/dvb-frontends/Makefile
-> +++ b/drivers/media/dvb-frontends/Makefile
-> @@ -58,6 +58,7 @@ obj-$(CONFIG_DVB_LGDT3306A) += lgdt3306a.o
->  obj-$(CONFIG_DVB_LG2160) += lg2160.o
->  obj-$(CONFIG_DVB_CX24123) += cx24123.o
->  obj-$(CONFIG_DVB_LNBH25) += lnbh25.o
-> +obj-$(CONFIG_DVB_LNBH29) += lnbh29.o
->  obj-$(CONFIG_DVB_LNBP21) += lnbp21.o
->  obj-$(CONFIG_DVB_LNBP22) += lnbp22.o
->  obj-$(CONFIG_DVB_ISL6405) += isl6405.o
-> diff --git a/drivers/media/dvb-frontends/lnbh29.c
-> b/drivers/media/dvb-frontends/lnbh29.c
-> new file mode 100644
-> index 000000000000..410bae099c32
-> --- /dev/null
-> +++ b/drivers/media/dvb-frontends/lnbh29.c
-> @@ -0,0 +1,168 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// Driver for LNB supply and control IC STMicroelectronics LNBH29
-> +//
-> +// Copyright (c) 2018 Socionext Inc.
-> +
-> +#include <linux/module.h>
-> +#include <linux/init.h>
-> +#include <linux/slab.h>
-> +
-> +#include <media/dvb_frontend.h>
-> +#include "lnbh29.h"
-> +
-> +/**
-> + * struct lnbh29_priv - LNBH29 driver private data
-> + * @i2c:         Pointer to the I2C adapter structure
-> + * @i2c_address: I2C address of LNBH29 chip
-> + * @config:      Registers configuration
-> + *               offset 0: 1st register address, always 0x01 (DATA)
-> + *               offset 1: DATA register value
-> + */
-> +struct lnbh29_priv {
-> +	struct i2c_adapter *i2c;
-> +	u8 i2c_address;
-> +	u8 config[2];
-> +};
-> +
-> +#define LNBH29_STATUS_OLF     BIT(0)
-> +#define LNBH29_STATUS_OTF     BIT(1)
-> +#define LNBH29_STATUS_VMON    BIT(2)
-> +#define LNBH29_STATUS_PNG     BIT(3)
-> +#define LNBH29_STATUS_PDO     BIT(4)
-> +#define LNBH29_VSEL_MASK      GENMASK(2, 0)
-> +#define LNBH29_VSEL_0         0x00
-> +/* Min: 13.188V, Typ: 13.667V, Max:14V */
-> +#define LNBH29_VSEL_13        0x03
-> +/* Min: 18.158V, Typ: 18.817V, Max:19.475V */
-> +#define LNBH29_VSEL_18        0x07
-> +
-> +static int lnbh29_read_vmon(struct lnbh29_priv *priv)
-> +{
-> +	u8 addr = 0x00;
-> +	u8 status[2];
-> +	int ret;
-> +	struct i2c_msg msg[2] = {
-> +		{
-> +			.addr = priv->i2c_address,
-> +			.flags = 0,
-> +			.len = 1,
-> +			.buf = &addr
-> +		}, {
-> +			.addr = priv->i2c_address,
-> +			.flags = I2C_M_RD,
-> +			.len = sizeof(status),
-> +			.buf = status
-> +		}
-> +	};
-> +
-> +	ret = i2c_transfer(priv->i2c, msg, 2);
-> +	if (ret >= 0 && ret != 2)
-> +		ret = -EIO;
-> +	if (ret < 0) {
-> +		dev_dbg(&priv->i2c->dev, "LNBH29 I2C transfer failed (%d)\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	if (status[0] & (LNBH29_STATUS_OLF | LNBH29_STATUS_VMON)) {
-> +		dev_err(&priv->i2c->dev,
-> +			"LNBH29 voltage in failure state, status reg 0x%x\n",
-> +			status[0]);
-> +		return -EIO;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int lnbh29_set_voltage(struct dvb_frontend *fe,
-> +			      enum fe_sec_voltage voltage)
-> +{
-> +	struct lnbh29_priv *priv = fe->sec_priv;
-> +	u8 data_reg;
-> +	int ret;
-> +	struct i2c_msg msg = {
-> +		.addr = priv->i2c_address,
-> +		.flags = 0,
-> +		.len = sizeof(priv->config),
-> +		.buf = priv->config
-> +	};
-> +
-> +	switch (voltage) {
-> +	case SEC_VOLTAGE_OFF:
-> +		data_reg = LNBH29_VSEL_0;
-> +		break;
-> +	case SEC_VOLTAGE_13:
-> +		data_reg = LNBH29_VSEL_13;
-> +		break;
-> +	case SEC_VOLTAGE_18:
-> +		data_reg = LNBH29_VSEL_18;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +	priv->config[1] &= ~LNBH29_VSEL_MASK;
-> +	priv->config[1] |= data_reg;
-> +
-> +	ret = i2c_transfer(priv->i2c, &msg, 1);
-> +	if (ret >= 0 && ret != 1)
-> +		ret = -EIO;
-> +	if (ret < 0) {
-> +		dev_err(&priv->i2c->dev, "LNBH29 I2C transfer error (%d)\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	/* Soft-start time (Vout 0V to 18V) is Typ. 6ms. */
-> +	usleep_range(6000, 20000);
-> +
-> +	if (voltage == SEC_VOLTAGE_OFF)
-> +		return 0;
-> +
-> +	return lnbh29_read_vmon(priv);
-> +}
-> +
-> +static void lnbh29_release(struct dvb_frontend *fe)
-> +{
-> +	lnbh29_set_voltage(fe, SEC_VOLTAGE_OFF);
-> +	kfree(fe->sec_priv);
-> +	fe->sec_priv = NULL;
-> +}
-> +
-> +struct dvb_frontend *lnbh29_attach(struct dvb_frontend *fe,
-> +				   struct lnbh29_config *cfg,
-> +				   struct i2c_adapter *i2c)
-> +{
-> +	struct lnbh29_priv *priv;
-> +
-> +	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return NULL;
-> +
-> +	priv->i2c_address = (cfg->i2c_address >> 1);
-> +	priv->i2c = i2c;
-> +	priv->config[0] = 0x01;
-> +	priv->config[1] = cfg->data_config;
-> +	fe->sec_priv = priv;
-> +
-> +	if (lnbh29_set_voltage(fe, SEC_VOLTAGE_OFF)) {
-> +		dev_err(&i2c->dev, "no LNBH29 found at I2C addr 0x%02x\n",
-> +			priv->i2c_address);
-> +		kfree(priv);
-> +		fe->sec_priv = NULL;
-> +		return NULL;
-> +	}
-> +
-> +	fe->ops.release_sec = lnbh29_release;
-> +	fe->ops.set_voltage = lnbh29_set_voltage;
-> +
-> +	dev_info(&i2c->dev, "LNBH29 attached at I2C addr 0x%02x\n",
-> +		 priv->i2c_address);
-> +
-> +	return fe;
-> +}
-> +EXPORT_SYMBOL(lnbh29_attach);
-> +
-> +MODULE_AUTHOR("Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>");
-> +MODULE_DESCRIPTION("STMicroelectronics LNBH29 driver");
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/media/dvb-frontends/lnbh29.h
-> b/drivers/media/dvb-frontends/lnbh29.h
-> new file mode 100644
-> index 000000000000..6179921520d9
-> --- /dev/null
-> +++ b/drivers/media/dvb-frontends/lnbh29.h
-> @@ -0,0 +1,36 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Driver for LNB supply and control IC STMicroelectronics LNBH29
-> + *
-> + * Copyright (c) 2018 Socionext Inc.
-> + */
-> +
-> +#ifndef LNBH29_H
-> +#define LNBH29_H
-> +
-> +#include <linux/i2c.h>
-> +#include <linux/dvb/frontend.h>
-> +
-> +/* Using very low E.S.R. capacitors or ceramic caps */
-> +#define LNBH29_DATA_COMP    BIT(3)
-> +
-> +struct lnbh29_config {
-> +	u8 i2c_address;
-> +	u8 data_config;
-> +};
-> +
-> +#if IS_REACHABLE(CONFIG_DVB_LNBH29)
-> +struct dvb_frontend *lnbh29_attach(struct dvb_frontend *fe,
-> +				   struct lnbh29_config *cfg,
-> +				   struct i2c_adapter *i2c);
-> +#else
-> +static inline struct dvb_frontend *lnbh29_attach(struct dvb_frontend *fe,
-> +						 struct lnbh29_config *cfg,
-> +						 struct i2c_adapter *i2c)
-> +{
-> +	printk(KERN_WARNING "%s: driver disabled by Kconfig\n", __func__);
-> +	return NULL;
-> +}
-> +#endif
-> +
-> +#endif
-> --
-> 2.18.0
+After -
+read throughput: 758 MB/s
+total read requests: 2417 (of these ~2042 are 512KB reads).
+total write requests: 2701 (of these ~2034 requests are written in 512KB).
 
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+Change log from v4:
+ - add __should_serialize_io
+ - fix wrong condition
 
+ Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
+ fs/f2fs/data.c                          | 21 +++++++++++++++++++++
+ fs/f2fs/f2fs.h                          |  2 ++
+ fs/f2fs/segment.c                       |  1 +
+ fs/f2fs/super.c                         |  1 +
+ fs/f2fs/sysfs.c                         |  2 ++
+ 6 files changed, 35 insertions(+)
+
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 9b0123388f18..94a24aedcdb2 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -51,6 +51,14 @@ Description:
+ 		 Controls the dirty page count condition for the in-place-update
+ 		 policies.
+ 
++What:		/sys/fs/f2fs/<disk>/min_seq_blocks
++Date:		August 2018
++Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
++Description:
++		 Controls the dirty page count condition for batched sequential
++		 writes in ->writepages.
++
++
+ What:		/sys/fs/f2fs/<disk>/min_hot_blocks
+ Date:		March 2017
+ Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 43d3723dc886..bdcb023506a7 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2122,6 +2122,18 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 	return ret;
+ }
+ 
++static inline bool __should_serialize_io(struct inode *inode,
++					struct writeback_control *wbc)
++{
++	if (!S_ISREG(inode->i_mode))
++		return false;
++	if (wbc->sync_mode != WB_SYNC_ALL)
++		return true;
++	if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
++		return true;
++	return false;
++}
++
+ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 						struct writeback_control *wbc,
+ 						enum iostat_type io_type)
+@@ -2130,6 +2142,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct blk_plug plug;
+ 	int ret;
++	bool locked = false;
+ 
+ 	/* deal with chardevs and other special file */
+ 	if (!mapping->a_ops->writepage)
+@@ -2160,10 +2173,18 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 	else if (atomic_read(&sbi->wb_sync_req[DATA]))
+ 		goto skip_write;
+ 
++	if (__should_serialize_io(inode, wbc)) {
++		mutex_lock(&sbi->writepages);
++		locked = true;
++	}
++
+ 	blk_start_plug(&plug);
+ 	ret = f2fs_write_cache_pages(mapping, wbc, io_type);
+ 	blk_finish_plug(&plug);
+ 
++	if (locked)
++		mutex_unlock(&sbi->writepages);
++
+ 	if (wbc->sync_mode == WB_SYNC_ALL)
+ 		atomic_dec(&sbi->wb_sync_req[DATA]);
+ 	/*
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9a6ba4a8d338..170573f8a04a 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -913,6 +913,7 @@ struct f2fs_sm_info {
+ 	unsigned int ipu_policy;	/* in-place-update policy */
+ 	unsigned int min_ipu_util;	/* in-place-update threshold */
+ 	unsigned int min_fsync_blocks;	/* threshold for fsync */
++	unsigned int min_seq_blocks;	/* threshold for sequential blocks */
+ 	unsigned int min_hot_blocks;	/* threshold for hot block allocation */
+ 	unsigned int min_ssr_sections;	/* threshold to trigger SSR allocation */
+ 
+@@ -1133,6 +1134,7 @@ struct f2fs_sb_info {
+ 	struct rw_semaphore sb_lock;		/* lock for raw super block */
+ 	int valid_super_block;			/* valid super block no */
+ 	unsigned long s_flag;				/* flags for sbi */
++	struct mutex writepages;		/* mutex for writepages() */
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index b136e39e1e9e..20650e25117b 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4127,6 +4127,7 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
+ 		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
+ 	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
+ 	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
++	sm_info->min_seq_blocks = sbi->blocks_per_seg * sbi->segs_per_sec;
+ 	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
+ 	sm_info->min_ssr_sections = reserved_sections(sbi);
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index be41dbd7b261..53d70b64fea1 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2842,6 +2842,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	/* init f2fs-specific super block info */
+ 	sbi->valid_super_block = valid_super_block;
+ 	mutex_init(&sbi->gc_mutex);
++	mutex_init(&sbi->writepages);
+ 	mutex_init(&sbi->cp_mutex);
+ 	init_rwsem(&sbi->node_write);
+ 	init_rwsem(&sbi->node_change);
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index cd2e030e47b8..81c0e5337443 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -397,6 +397,7 @@ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
++F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_seq_blocks, min_seq_blocks);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_hot_blocks, min_hot_blocks);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ssr_sections, min_ssr_sections);
+ F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
+@@ -449,6 +450,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(ipu_policy),
+ 	ATTR_LIST(min_ipu_util),
+ 	ATTR_LIST(min_fsync_blocks),
++	ATTR_LIST(min_seq_blocks),
+ 	ATTR_LIST(min_hot_blocks),
+ 	ATTR_LIST(min_ssr_sections),
+ 	ATTR_LIST(max_victim_search),
+-- 
+2.17.0.441.gb46fe60e1d-goog
 
