@@ -5,38 +5,39 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E3FC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F64C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C62B20E20
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:35:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C62B20E20
+	by mail.kernel.org (Postfix) with ESMTP id 1B6122177F
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 14:36:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B6122177F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbeHURza (ORCPT
+        id S1727644AbeHUR4r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 13:55:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57104 "EHLO mx1.redhat.com"
+        Tue, 21 Aug 2018 13:56:47 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57144 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726743AbeHURza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 13:55:30 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        id S1726743AbeHUR4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 13:56:47 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B73D64023132;
-        Tue, 21 Aug 2018 14:35:04 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id A60FA40006EC;
+        Tue, 21 Aug 2018 14:36:21 +0000 (UTC)
 Received: from [10.36.117.96] (ovpn-117-96.ams2.redhat.com [10.36.117.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B27A94654;
-        Tue, 21 Aug 2018 14:35:02 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E2E112166BA1;
+        Tue, 21 Aug 2018 14:36:19 +0000 (UTC)
 Subject: Re: [PATCH] KVM: s390: vsie: BUG correction by shadow_crycb
-To:     Pierre Morel <pmorel@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+To:     Cornelia Huck <cohuck@redhat.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
         borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
         heiko.carstens@de.ibm.com
 References: <1534861178-30372-1-git-send-email-pmorel@linux.ibm.com>
+ <20180821163348.327ce02d.cohuck@redhat.com>
 From:   David Hildenbrand <david@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
@@ -83,53 +84,56 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
  SE+xAvmumFBY
 Organization: Red Hat GmbH
-Message-ID: <a7054733-ebd7-477b-0f42-2857db7cb0d3@redhat.com>
-Date:   Tue, 21 Aug 2018 16:35:02 +0200
+Message-ID: <4c91cd0c-d679-eecc-0566-ed45158f6b7f@redhat.com>
+Date:   Tue, 21 Aug 2018 16:36:19 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1534861178-30372-1-git-send-email-pmorel@linux.ibm.com>
+In-Reply-To: <20180821163348.327ce02d.cohuck@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 21 Aug 2018 14:35:04 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 21 Aug 2018 14:35:04 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 21 Aug 2018 14:36:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 21 Aug 2018 14:36:21 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.08.2018 16:19, Pierre Morel wrote:
-> Copy the key mask to the right offset inside the shadow CRYCB
+On 21.08.2018 16:33, Cornelia Huck wrote:
+> On Tue, 21 Aug 2018 16:19:38 +0200
+> Pierre Morel <pmorel@linux.ibm.com> wrote:
+> 
+>> Copy the key mask to the right offset inside the shadow CRYCB
+>>
+>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+>> ---
+>>  arch/s390/kvm/vsie.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
+>> index 63844b9..a2b28cd 100644
+>> --- a/arch/s390/kvm/vsie.c
+>> +++ b/arch/s390/kvm/vsie.c
+>> @@ -173,7 +173,8 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+>>  		return set_validity_icpt(scb_s, 0x0039U);
+>>  
+>>  	/* copy only the wrapping keys */
+>> -	if (read_guest_real(vcpu, crycb_addr + 72, &vsie_page->crycb, 56))
+>> +	if (read_guest_real(vcpu, crycb_addr + 72,
+>> +			    vsie_page->crycb.dea_wrapping_key_mask, 56))
+> 
+> Don't you need the address here?
 
-"KVM: s390: vsie: copy wrapping keys to right place"
+As it is defined as an array, the address would result in the same value.
 
-Indeed, we're writing it into the apcb0 mask (which is ignored).
-Luckily, the xor-ing with the g2 keys seems to work.
-
-Reviewed-by: David Hildenbrand <david@redhat.com>
+(&vsie_page->crycb.dea_wrapping_key_mask[0])
 
 > 
-> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> ---
->  arch/s390/kvm/vsie.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
-> index 63844b9..a2b28cd 100644
-> --- a/arch/s390/kvm/vsie.c
-> +++ b/arch/s390/kvm/vsie.c
-> @@ -173,7 +173,8 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->  		return set_validity_icpt(scb_s, 0x0039U);
->  
->  	/* copy only the wrapping keys */
-> -	if (read_guest_real(vcpu, crycb_addr + 72, &vsie_page->crycb, 56))
-> +	if (read_guest_real(vcpu, crycb_addr + 72,
-> +			    vsie_page->crycb.dea_wrapping_key_mask, 56))
->  		return set_validity_icpt(scb_s, 0x0035U);
->  
->  	scb_s->ecb3 |= ecb3_flags;
+>>  		return set_validity_icpt(scb_s, 0x0035U);
+>>  
+>>  	scb_s->ecb3 |= ecb3_flags;
 > 
 
 
