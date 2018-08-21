@@ -6,40 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C06C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5CB0C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:24:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3598621774
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3598621774
+	by mail.kernel.org (Postfix) with ESMTP id AA72A21774
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:24:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA72A21774
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727643AbeHUJmk (ORCPT
+        id S1727656AbeHUJmr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:42:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54918 "EHLO
+        Tue, 21 Aug 2018 05:42:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54936 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726472AbeHUJmj (ORCPT
+        with ESMTP id S1726472AbeHUJmq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:42:39 -0400
+        Tue, 21 Aug 2018 05:42:46 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0CFE08A5;
-        Tue, 21 Aug 2018 06:23:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 734AD516;
+        Tue, 21 Aug 2018 06:24:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
-        Hailong Liu <liu.hailong6@zte.com.cn>,
-        Jiang Biao <jiang.biao2@zte.com.cn>
-Subject: [PATCH 4.18 24/35] uio: fix wrong return value from uio_mmap()
-Date:   Tue, 21 Aug 2018 08:20:50 +0200
-Message-Id: <20180821055021.038282947@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Kodanev <alexey.kodanev@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 01/42] dccp: fix undefined behavior with cwnd shift in ccid2_cwnd_restart()
+Date:   Tue, 21 Aug 2018 08:20:33 +0200
+Message-Id: <20180821055017.652476373@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180821055019.954904905@linuxfoundation.org>
-References: <20180821055019.954904905@linuxfoundation.org>
+In-Reply-To: <20180821055017.596264829@linuxfoundation.org>
+References: <20180821055017.596264829@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -47,39 +45,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Hailong Liu <liu.hailong6@zte.com.cn>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
-commit e7de2590f18a272e63732b9d519250d1b522b2c4 upstream.
+[ Upstream commit 61ef4b07fcdc30535889990cf4229766502561cf ]
 
-uio_mmap has multiple fail paths to set return value to nonzero then
-goto out. However, it always returns *0* from the *out* at end, and
-this will mislead callers who check the return value of this function.
+The shift of 'cwnd' with '(now - hc->tx_lsndtime) / hc->tx_rto' value
+can lead to undefined behavior [1].
 
-Fixes: 57c5f4df0a5a0ee ("uio: fix crash after the device is unregistered")
-CC: Xiubo Li <xiubli@redhat.com>
-Signed-off-by: Hailong Liu <liu.hailong6@zte.com.cn>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
+In order to fix this use a gradual shift of the window with a 'while'
+loop, similar to what tcp_cwnd_restart() is doing.
+
+When comparing delta and RTO there is a minor difference between TCP
+and DCCP, the last one also invokes dccp_cwnd_restart() and reduces
+'cwnd' if delta equals RTO. That case is preserved in this change.
+
+[1]:
+[40850.963623] UBSAN: Undefined behaviour in net/dccp/ccids/ccid2.c:237:7
+[40851.043858] shift exponent 67 is too large for 32-bit type 'unsigned int'
+[40851.127163] CPU: 3 PID: 15940 Comm: netstress Tainted: G        W   E     4.18.0-rc7.x86_64 #1
+...
+[40851.377176] Call Trace:
+[40851.408503]  dump_stack+0xf1/0x17b
+[40851.451331]  ? show_regs_print_info+0x5/0x5
+[40851.503555]  ubsan_epilogue+0x9/0x7c
+[40851.548363]  __ubsan_handle_shift_out_of_bounds+0x25b/0x2b4
+[40851.617109]  ? __ubsan_handle_load_invalid_value+0x18f/0x18f
+[40851.686796]  ? xfrm4_output_finish+0x80/0x80
+[40851.739827]  ? lock_downgrade+0x6d0/0x6d0
+[40851.789744]  ? xfrm4_prepare_output+0x160/0x160
+[40851.845912]  ? ip_queue_xmit+0x810/0x1db0
+[40851.895845]  ? ccid2_hc_tx_packet_sent+0xd36/0x10a0 [dccp]
+[40851.963530]  ccid2_hc_tx_packet_sent+0xd36/0x10a0 [dccp]
+[40852.029063]  dccp_xmit_packet+0x1d3/0x720 [dccp]
+[40852.086254]  dccp_write_xmit+0x116/0x1d0 [dccp]
+[40852.142412]  dccp_sendmsg+0x428/0xb20 [dccp]
+[40852.195454]  ? inet_dccp_listen+0x200/0x200 [dccp]
+[40852.254833]  ? sched_clock+0x5/0x10
+[40852.298508]  ? sched_clock+0x5/0x10
+[40852.342194]  ? inet_create+0xdf0/0xdf0
+[40852.388988]  sock_sendmsg+0xd9/0x160
+...
+
+Fixes: 113ced1f52e5 ("dccp ccid-2: Perform congestion-window validation")
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/uio/uio.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/dccp/ccids/ccid2.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -814,7 +814,7 @@ static int uio_mmap(struct file *filep,
+--- a/net/dccp/ccids/ccid2.c
++++ b/net/dccp/ccids/ccid2.c
+@@ -228,14 +228,16 @@ static void ccid2_cwnd_restart(struct so
+ 	struct ccid2_hc_tx_sock *hc = ccid2_hc_tx_sk(sk);
+ 	u32 cwnd = hc->tx_cwnd, restart_cwnd,
+ 	    iwnd = rfc3390_bytes_to_packets(dccp_sk(sk)->dccps_mss_cache);
++	s32 delta = now - hc->tx_lsndtime;
  
- out:
- 	mutex_unlock(&idev->info_lock);
--	return 0;
-+	return ret;
- }
+ 	hc->tx_ssthresh = max(hc->tx_ssthresh, (cwnd >> 1) + (cwnd >> 2));
  
- static const struct file_operations uio_fops = {
+ 	/* don't reduce cwnd below the initial window (IW) */
+ 	restart_cwnd = min(cwnd, iwnd);
+-	cwnd >>= (now - hc->tx_lsndtime) / hc->tx_rto;
+-	hc->tx_cwnd = max(cwnd, restart_cwnd);
+ 
++	while ((delta -= hc->tx_rto) >= 0 && cwnd > restart_cwnd)
++		cwnd >>= 1;
++	hc->tx_cwnd = max(cwnd, restart_cwnd);
+ 	hc->tx_cwnd_stamp = now;
+ 	hc->tx_cwnd_used  = 0;
+ 
 
 
