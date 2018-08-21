@@ -2,111 +2,106 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D40BFC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 07:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49459C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 07:22:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D0F4214C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 07:21:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D0F4214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 047A421722
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 07:22:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YruzIQwF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 047A421722
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbeHUKkT (ORCPT
+        id S1726787AbeHUKlB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 06:40:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38446 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726253AbeHUKkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 06:40:19 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D0FFC7D84D;
-        Tue, 21 Aug 2018 07:21:20 +0000 (UTC)
-Received: from localhost (unknown [10.43.134.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C0BDA10075DF;
-        Tue, 21 Aug 2018 07:21:15 +0000 (UTC)
-Date:   Tue, 21 Aug 2018 09:21:14 +0200
-From:   Miroslav Lichvar <mlichvar@redhat.com>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-audit@redhat.com,
-        Paul Moore <paul@paul-moore.com>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH ghak10 v4 0/2] audit: Log modifying adjtimex(2) calls
-Message-ID: <20180821072114.GC23069@localhost>
-References: <20180820123818.27547-1-omosnace@redhat.com>
- <alpine.DEB.2.21.1808201721350.1551@nanos.tec.linutronix.de>
+        Tue, 21 Aug 2018 06:41:01 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35134 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726253AbeHUKlB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 06:41:01 -0400
+Received: by mail-wr1-f65.google.com with SMTP id g1-v6so14954523wru.2;
+        Tue, 21 Aug 2018 00:22:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uTqZh4EmUFtLjBa7E8iGzAgSWAQ+DU62c4TwIpV79o8=;
+        b=YruzIQwFbASMAnCw5mWYrgLCqCIHvb2YW5TNCZ5TOnsBrAZjK6VEzRw5pHMU8u8HwX
+         hzo0HKusEOkv7neAbFbzLv8sU95pcbbmIBq3P1lvvLen3uFBd0/fOV2VSSL8xdGJJ9PR
+         S5oEsf/JvGWILU0TjcOHXZSZLxrZpEXdt5K5Nf/rPhQd2/2KbZ3+Zc3auscxNFxsYwgu
+         Y6nWB8JNSCwOQwHA2Cex/BQN8GPF1dVnQxcJH/aGaGP3sMq2LP8Kvht6fzfBFUZ1+KEM
+         GOEBL1hagNWCp6re2iK83GnA/ITjFf8S0G/lTAsZNVPFkLKKxFXbaD+bqQBYsVV0WPRU
+         2yhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uTqZh4EmUFtLjBa7E8iGzAgSWAQ+DU62c4TwIpV79o8=;
+        b=N+6RZs6lPlDW9STRUa0IHrYw0VFeGfBxfyAciLsrRwRJMR8UI5gqGHfVOyBk107t/y
+         LtB3jSa40ingxPGPlVQqeIwFvTtGc3MV0U44TU1sw19XssV811+RyA0A+pBRy2bCbx58
+         XTqo3O22OO12poirr0ngqc9fCwPEbOw9HA4czoWp5+Q2Q67RkhD5xnGXVp1hPGbVxG+c
+         cJuXzyJ9gFwKyK6WK21OMG1nMSj5H88dPCYijT+IXkux97YyIejOWeN5mahcUR6KOPwK
+         KV+AjGDupYO6b4MoVNSC9KjSKTDocKHyuS98D8eLrQg6MHFExNdkvNOEpKQ26pxeXPNj
+         D48w==
+X-Gm-Message-State: AOUpUlGMcyP3v71gDifFoSJvfF9AElO3F/QcvQlyoUMt4eGq/uSa9TYH
+        EWobuR6TmHbsTGXnKE6U9Q4=
+X-Google-Smtp-Source: AA+uWPwI+qqmOlTXxfuqM/MFKu5ZjFeUy+7P6BcMfQdREWp6souuOhvwh1veo+OW9DoNT29COe+KGg==
+X-Received: by 2002:adf:d08c:: with SMTP id y12-v6mr31601934wrh.152.1534836120855;
+        Tue, 21 Aug 2018 00:22:00 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id j3-v6sm9877631wrt.70.2018.08.21.00.21.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 Aug 2018 00:21:59 -0700 (PDT)
+Date:   Tue, 21 Aug 2018 00:21:58 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 00/25] 4.9.123-stable review
+Message-ID: <20180821072158.GA27793@flashbox>
+References: <20180821055124.909865464@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1808201721350.1551@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 21 Aug 2018 07:21:20 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 21 Aug 2018 07:21:20 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mlichvar@redhat.com' RCPT:''
+In-Reply-To: <20180821055124.909865464@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Mon, 20 Aug 2018, Ondrej Mosnacek wrote:
-> > @John or other timekeeping/NTP folks: We had a discussion on the audit
-> > ML on which of the internal timekeeping/NTP variables we should actually
-> > log changes for. We are only interested in variables that can (directly
-> > or indirectly) cause noticeable changes to the system clock, but since we
-> > have only limited understanding of the NTP code, we would like to ask
-> > you for advice on which variables are security relevant.
+On Tue, Aug 21, 2018 at 08:21:14AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.123 release.
+> There are 25 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Aug 23 05:51:15 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.123-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-I guess that mostly depends on whether you consider setting the clock
-to run faster or slower than real time to be an important event for
-the audit.
+Merged, compiled with -Werror, and installed onto my OnePlus 6.
 
-> >   - NTP value adjustments:
-> >     - time_offset (probably important)
+No initial issues noticed in dmesg or general usage.
 
-This can adjust the clock by up to 0.5 seconds per call and also speed
-it up or slow down by up to about 0.05% (43 seconds per day).
-
-> >     - time_freq (maybe not important?)
-
-This can speed up or slow down by up to about 0.05%.
-
-> >     - time_status (likely important, can cause leap second injection)
-
-Yes, it can insert/delete leap seconds and it also enables/disables
-synchronization of the hardware real-time clock.
-
-> >     - time_maxerror (maybe not important?)
-> >     - time_esterror (maybe not important?)
-
-These two change the error estimates that are reported to applications
-using ntp_gettime()/adjtimex(). If an application was periodically
-checking that the clock is synchronized with some specified accuracy
-and setting the maxerror to a larger value would cause the application
-to abort, would it be an important event in the audit?
-
-> >     - time_constant (???)
-
-This controls the speed of the clock adjustments that are made when
-time_offset is set. Probably not important for the audit.
-
-> >     - time_adjust (sounds important)
-
-This is similar to time_freq. It can temporarily speed up or slow down
-the clock by up to 0.05%.
-
-> >     - tick_usec (???)
-
-This is a more extreme version of time_freq. It can speed up or slow
-down the clock by up to 10%.
-
--- 
-Miroslav Lichvar
+Thanks!
+Nathan
