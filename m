@@ -2,218 +2,151 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E35ECC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1240DC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:00:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 976C8217B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:00:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3065217BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:00:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GTvtM3b2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 976C8217B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="DRywrjRf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3065217BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbeHUUVM (ORCPT
+        id S1727412AbeHUUVf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 16:21:12 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:46408 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727348AbeHUUVL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 16:21:11 -0400
-Received: by mail-io0-f196.google.com with SMTP id y12-v6so6232342ioj.13
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 10:00:14 -0700 (PDT)
+        Tue, 21 Aug 2018 16:21:35 -0400
+Received: from mail-by2nam03on0104.outbound.protection.outlook.com ([104.47.42.104]:62696
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726872AbeHUUVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 16:21:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=soThsR83dBv2CqgGIlTGG/TbWFg4WLYYoqNcyYGSIYc=;
-        b=GTvtM3b2qeWRCv57pjJHvmO63lxMIM1bHJFJrGtyICyO9TCpf/bSM0T2pkYZFtLuWt
-         1NMfanPaW+1CPJyqy2j75zFiOFcpfsIoH0nnkMHAeJE+u+xh9mq6vYTmHFYbAq4Muq0x
-         6M66H3GPfX3H9lnCBi7cCWzCrTjZq9vgGMB6Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=soThsR83dBv2CqgGIlTGG/TbWFg4WLYYoqNcyYGSIYc=;
-        b=tnOlJ5XjrJ0LllpaYby39nJj888OgOXpgHjaLAn2+2AmRU0wVDPeUTYEKeY1ctbUlW
-         5sgv1ClV/oYeIkuxd99wFDIPROPU7fimC43e2x0gdw4l7kBIxAX28aV/klgfZtlg99Kq
-         NM2cM7QlKYonuuKGwOTffD1RDm6ER6dfJafrLExM4E1iBUpVhMX+miFHffAf86+d4A53
-         nDNuKeyay8juwwm9szoOkNV8uB2KNrMC8bqi0MFEri1a9T8QQ7Mu7dmbAO1wR5w8MGaT
-         eX6jibEfbD2Y/61WIEXhPu36EwblI2d6F3rpPSewJellLm4GAQTrHKPjJ8Q4nNR0q0bz
-         n0vQ==
-X-Gm-Message-State: AOUpUlHi1H9Jy8HczWa4FPliyzIPk5GNkfpkqfEIWn5BkW8/GNWZ94o2
-        0YiQvc8ThWis9YnSi+u9oRYDIQfcnah7VdXoWMU3gQ==
-X-Google-Smtp-Source: AA+uWPwzgYYuUZKClwg//qUTiORy4ZX8MtB43DYS8dP78W8l0NlwsJgDo81cTAspJ2F0uCLVrTHorxos8zxFmCgmhA8=
-X-Received: by 2002:a6b:be83:: with SMTP id o125-v6mr42576095iof.173.1534870814495;
- Tue, 21 Aug 2018 10:00:14 -0700 (PDT)
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ll6G8cTuUbXvwEfrrWg5ESC84XqEA1sT9OfCS08TuTI=;
+ b=DRywrjRfwq84EHmZGJkNMMuo88aoF8IW/jJEWtRTpgXhW3Oc6I874vf7srHGORAWsyCD+td8Vm/LpOgB/KX+XnPUjkDbG0fzWt7RVDNEB9b49LeThPEmOCEPgZTj1JdTZJx2Ev0XGqzGMwCMw22cAseJFyRYasUK0NrwprAGztk=
+Received: from localhost (4.16.204.77) by
+ BYAPR08MB4933.namprd08.prod.outlook.com (2603:10b6:a03:6a::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1059.20; Tue, 21 Aug 2018 17:00:36 +0000
+Date:   Tue, 21 Aug 2018 10:00:34 -0700
+From:   Paul Burton <paul.burton@mips.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux-MIPS <linux-mips@linux-mips.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, James Hogan <jhogan@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH v9 1/2] kbuild: Allow arch-specific asm/compiler.h
+Message-ID: <20180821170034.rpnwukgnpyrpxytw@pburton-laptop>
+References: <20180820183417.dejfsluih7elbclu@pburton-laptop>
+ <20180820223618.22319-1-paul.burton@mips.com>
+ <20180820223618.22319-2-paul.burton@mips.com>
+ <CAK7LNASarMBH8af=oTPoanEvJOS3zWTKx4MpGZe-AJiP2Wu41g@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Tue, 21 Aug 2018 10:00:13
- -0700 (PDT)
-In-Reply-To: <CAKwvOdkZR-MWuMU=j=kKXQwA0LEj1n0uoZQyTpwOzZuz9gjmJQ@mail.gmail.com>
-References: <20180820224032.53194-1-ndesaulniers@google.com>
- <CAKv+Gu-xAmadr96vwStOxdeqi=rCEBrn8V6GofexBhpmA=JiuA@mail.gmail.com> <CAKwvOdkZR-MWuMU=j=kKXQwA0LEj1n0uoZQyTpwOzZuz9gjmJQ@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 21 Aug 2018 19:00:13 +0200
-Message-ID: <CAKv+Gu8ZZYvh9ZthRH7mvG7_j3bvT=3st-aj0kdwpNQaAcs=-w@mail.gmail.com>
-Subject: Re: [PATCH] arm64/crypto: remove non-standard notation
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNASarMBH8af=oTPoanEvJOS3zWTKx4MpGZe-AJiP2Wu41g@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Originating-IP: [4.16.204.77]
+X-ClientProxiedBy: CS1PR8401CA0047.NAMPRD84.PROD.OUTLOOK.COM
+ (2a01:111:e400:7503::33) To BYAPR08MB4933.namprd08.prod.outlook.com
+ (2603:10b6:a03:6a::14)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 3a3e2e5c-c1ab-41e5-4bf4-08d607879d9e
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR08MB4933;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4933;3:RtDn1R/cQZi0RrrNFuflmiH5eubo8Liipz0sQ2bA7MWDRGEmLoMaAl8zoWz+hTmtq6lEge5ZRjNsF5n1E41aqlGR3fJjBOSVU0mW0xFiE9o4xXHt87nL5WRrSgvi11Nydjmj1w6gI52bC3n370kk8uYNvrW/F4ChQPCaichP5vtsTkYj+hhTnI+NzDmFgD4Z1B+0hQ2ST+1SCHLMX2GyySiBkCWPsMBaHNG90OstjoxWlOFwuXIG92SwqyT28sZs;25:bTD7m298JgWOA9jFxhZzo4aDh+CrFxgyG2RQbCQS5dypGskFsEaq2s/0BnJ13um91nmtbX/74u1JK/iuZX8tRBwKIfeh9RYLRfGIm006gfOw99zDpInMiqyOcb6LcH8bx/vP85+0a2vs654Lq/GJ2sgt2JzHRqmSAUf0ah0qgtuzAJocHTtIWvzmIdB/qOyBwoPJNNoUj8oYMzusV8T2+uu6xS63FAISY3RoCsnGYdtDs0460JsKQodgvxWLcxYZgQbMOmfHA1jBtAZzNhwcSrAp59T61SSn+DOsyL/NcrQ1lLBjfTHhLOf96RhJibZui8sbkSRvF/IQfqirFSY9PA==;31:gQQN8mUYqXRx5fjNMuFF1t7GbSzt7YZJifWBEAQ7SrxnrsP9pgp0T7YqVT3DpEZOJ0yA8k+weo/BX3IsfucS6eqZI7DKN+OXH/swO6SrqMcdTKPgRYo7mkU5GNNP4uVUok6+U0Yz02izHOjyPBlHCKvAct7XqndIbVsg+TFG2s3/oMNDiGtPv0+tVm8JU7pyiOf5rSzA/L1zEqfb/esa5qMkXRDjoJI0CDNmjPJB7N4=
+X-MS-TrafficTypeDiagnostic: BYAPR08MB4933:
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4933;20:clBXDjuno3GipeF4PLzEmEtu9jyUIoowmAKx8VtTWIiSRLZ4qQX7itI/vZyYyMNmdNbpTkV3F/x86amsgwgd1yURor7iTBL7QJNrTMP2MmirTs9VaJxPlpcbLo26kbufmNrI+X0AsLnA9mZD+rYgkNkplwbGtQibZzAVVdQxFfRCZ3InrrIcpKKO1q2qyHlz265HCGaV3dgzdJPQK0ruh1jdH+Fh9UYhO5Ni8lJCHtJUYcrwq11PwXOuI0eptGnD;4:gXmEikALSOqjEjbZRcvAwuIWjILsOIIsACC49c9oZUEIFey0Jc7yRI/zyCpZPEHrw+qYxnJNx7t8Idagfy621qbiB8r7WCDBYyBNMx8Nyzbw+zPJzaCqZaiCtJuJpwt2n10Rt+QTFrzzZamxhHlhmgO5PHKQrT45LXMz95k9ipa9VK5gIgEYHIjQhuKkRSbW7u0ZzGMFijOjGx/sT91ouM5RgYUNXquxq6tm3++pWyVGaxePkhvANaA/OAIIU/M45CI9MVoAcKGEd6xuqkAP8w==
+X-Microsoft-Antispam-PRVS: <BYAPR08MB4933D8AF9E9D49847ABC12B5C1310@BYAPR08MB4933.namprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(10201501046)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:BYAPR08MB4933;BCL:0;PCL:0;RULEID:;SRVR:BYAPR08MB4933;
+X-Forefront-PRVS: 0771670921
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(7916004)(376002)(366004)(396003)(346002)(39840400004)(136003)(199004)(189003)(23726003)(9686003)(76506005)(2906002)(81166006)(4326008)(6486002)(229853002)(25786009)(50466002)(53936002)(7736002)(5660300001)(68736007)(8676002)(81156014)(44832011)(8936002)(106356001)(6246003)(6916009)(105586002)(33716001)(93886005)(1076002)(476003)(52116002)(3716004)(446003)(6496006)(54906003)(33896004)(97736004)(386003)(58126008)(478600001)(316002)(16526019)(47776003)(6346003)(956004)(26005)(305945005)(6116002)(186003)(486006)(16586007)(3846002)(11346002)(66066001)(42882007)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR08MB4933;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR08MB4933;23:YdagLiFIDitgje4hNU7c9e4U1zmmY8pMME+gjuZ6m?=
+ =?us-ascii?Q?liekqJVcCoDzRQTq0PccY6Oq9NWukAW2VpW8TtPG2SyPqsoIFMfp7ko62a6P?=
+ =?us-ascii?Q?Wqgv7wijTcjfqzJXb3jQM8847f6fDvMdiAImbGbDK/CnjudbtVuwiCzmaAO4?=
+ =?us-ascii?Q?FeR8PF7eUf5XT6twICG8UPkqkaWV8VDBUoO3PMUxHF0MX82xM2EUQOzATCOD?=
+ =?us-ascii?Q?0lRjuhe0K4ALj6XYQ9ZuTpyKgoG67AefxaFMkfiefbJlrnbS3spyu5nKsigW?=
+ =?us-ascii?Q?2G5lw2TkrFhiUEF5FZVKVrtLHjmpPmewEdmPVWv9YzbwbZcDbduH1hogOYyH?=
+ =?us-ascii?Q?NWLU2p3E0arKK5M69pmT9xjly0OTbwE3k+cQTWx56BXRM5FrkyJRUXFsiXeB?=
+ =?us-ascii?Q?C+qzEJ/+X3kr40hQSzSM1Vy/217PudBsNRoWmzpz1Zt86hdlpz/Udcx5E70W?=
+ =?us-ascii?Q?eRL6SzFpSWUiEqEdt9IaZKxRjljqkyANvscMqsU+v+OsqTiHx+Meroar76nw?=
+ =?us-ascii?Q?Dx254NIyTrsdp7g+kM/F1NjEOH1MLLJgzp/p70fcyT1VHbZEPQBcagjOLwXT?=
+ =?us-ascii?Q?48L31sBwxfdbfCQk2dAAMXyG6l6FMPmgtBq7E2EgOEiE7hh8iUnd7qkmJGN5?=
+ =?us-ascii?Q?sXBhMpJalwhrpDjnL5nNH5hLft5tKNoSA4GK1WHqxQld9AutGhUliasG84XU?=
+ =?us-ascii?Q?qCmfUjMYMHpt3k9eMdCBVrd7NdoXtD4cW6RaytbKNIHyz9W5+6wZkfv3o0jJ?=
+ =?us-ascii?Q?9Px++IRMlYfmujFhFTXzdl9sEZvEhWFaJcLtR/aS9u7WmLGu3nQDN7CUsnkF?=
+ =?us-ascii?Q?qZeypj5cdW7dbqMVTE3cwMqF235u2ZJ0vZhW0+8Xzsx7kQTo5YdLxXAlsbsh?=
+ =?us-ascii?Q?5eukSiHCYOudqzMpgzkNo6n4Xe0mV4hsSbgyJDAQitbLWF6sEkaotAWiEZ/o?=
+ =?us-ascii?Q?7H/sL+AoLD++QedQjCXVwMzzXjuJftZ7/y3O94pU1jP/AQqkXLOfZMCR1PKM?=
+ =?us-ascii?Q?TEXg+DjVElUdrIF9wHqIeW57mVJXO4JbbWXs8fV5YUx8LFI+qkWX1OeUVzHs?=
+ =?us-ascii?Q?95FT2mPID/bpVfx+bD+FJJQ0nZrYZL/xiHaUSQY93WUcoLCazsgOYXT3W+RA?=
+ =?us-ascii?Q?fesAEfzBKkg4GZLIwG1LIuUagKEWAlafy+QPsyBibYWfHcSrfBMDpdrGP90/?=
+ =?us-ascii?Q?ypkKAJGl12ZbA5YyKhPL4rtjrIj6Uj629hkj9Gf5gZTC71v+xevofKKNKtQH?=
+ =?us-ascii?Q?tauJoWcphItHhoLuSHQLlkOwVbMVvYwOzzJTTQ6nf35JRVjj4rA5Br6sYo+F?=
+ =?us-ascii?Q?/TYLCQP/TFA11XP0TIl22jwZBG9T/ojDL6JhEJ912QDnL2gNRxmLufW/CWF/?=
+ =?us-ascii?Q?HNRMQ=3D=3D?=
+X-Microsoft-Antispam-Message-Info: OpvyPh/eq4WhubgJ6R1kYkixG56JehutrxMRm5ws/qaPk7QJcJ94Ubi1fLhTrb3gsAbPLdNy7CgZLjba3podLfbfkafofJUIgaKxNII4ZBrIp6Yj1zQOW0McJVizaUBMYusGAgNJ2BuXpgyi76ljuMqAY6CsuDrUogzQZP21o/zjQY0dMFWEh+9fQbSf/Qbe1eeYsKu7NKJheyDQorFqtfPncr2cP32iTImOF04fiIO6jyoNB6BGNZjk4u24QuM90f1brMzfycRArhTWn4vqZtnJTBvX3ydoTPD92rfSCDjgMLJPPrIxOIxmH2VfirwILMFvxLh9OCIHRKLDHLspoZMOz3Cb0lm/uQrM87ha1Xw=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4933;6:hLHw0NOWOb9fFXE6DapttcNxIH+9dhxk5bLj+QxUTTorXqmqYTe8fWPck+eto+IFX1rFIbrgLxqz2QHAJy5QXYH6pZ1G7K+E4wVei5z1T+YIO8KpyckyEYgp8ZRXUs8UTI9yKogpZfuUbn4azGlq35IFCfmKXONTPkF4RjXXUU+HVR+HTaCDk+f4W/BelHYIeUv4JTfMXG1VYOTRzSQYKcXWpSFX2EL2JqpKEqXWupM0PEPFGq708l0obPo00UrQ/9CgsoUvaekgEjF3Ajq8Biag22SSoeB08jwd2ifAfeRpX+GU1oGDTCxpZyHZqglGHHD1boMpRwVcsdzSyymXFQlZtXWSXGHbH+JL6Tpta5CrXfqB8274FsC22tuYfMQ74UIL95B/bumaiGqEN7IC/IaoA2EDQLZVfHp/Hh2EMhhhUYwN6t0lLStMVK5cqxXfq4266wTH9lOQaTMtptnwhg==;5:NjKSfCUq06IwK8C/y32WmG9iXIcadiYc68bgWRiok0xw2UHJZUwsVIt3BsHOl2/Ap5/ybieoKYLi5jHVsNhn5JlvoE8jh5XCUqIagqnk70qaoWSimaoRd7TQjRcN5xul/aOIz7gQH/QjHQdIn1OiRpOzFsAprHbuYAhBHcp1IT4=;7:13XdAmQNZC5Jdym2XEXfilQ9l5A4c1Ww+3F1ftOlwWTVQdRFr2sihZwMHhPxLDg8A/QtKD5IMFQwwxuHigSZv142qnptyDRrbuN3j65b/djgMQImhuDBBgThBQlsuD6YnVa1HJYV4TjbiWjm1igdunbgPcYlvjANhBS7YEAawUq/tIxVVIcXHOqwufug5XBQCblPG7dQeT26bIuhXyqJ8d8ATHn5WArJ66iMFwgPWGJ+ZwZyNXvZ/TMamq8nroxr
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2018 17:00:36.4179 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a3e2e5c-c1ab-41e5-4bf4-08d607879d9e
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR08MB4933
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21 August 2018 at 18:50, Nick Desaulniers <ndesaulniers@google.com> wrote:
-> On Tue, Aug 21, 2018 at 5:23 AM Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
->>
->> Hi Nick,
->>
->> On 21 August 2018 at 00:40, Nick Desaulniers <ndesaulniers@google.com> wrote:
->> > It seems that:
->> > ldr q8, =0x30000000200000001
->> >
->> > is a GNU as convience notation for:
->> > ldr q8, .Lconstant
->> > .Lconstant
->> > .word 0x00000001
->> > .word 0x00000002
->> > .word 0x00000003
->> > .word 0x00000000
->> >
->> > based on this comment in binutils' source [0]. I've asked for this
->> > non-standard convience notation to be added to other assemblers [1], but
->> > until then, we can remove it and get equivalent disassembly:
->> >
->>
->> What do you mean by 'non-standard convenience notation'? Which asm
->> 'standard' does Clang actually claim to implement?
->
-> Well, for assembly 'standard' is a bit nebulous.  But it's frustrating
-> when you can't find what the `=0x...` notation means in either the ARM
-> or GNU as manuals.  The source of truth happened to be a comment in
-> the source [0] that explained that this was a "programmer friendly
-> notation."  Sure, if you can find it.
->
+Hi Masahiro,
 
-Well, it is documented in the ARM manuals as the 'ldr pseudo
-instruction' for 32-bit ARM, and originally, it would only emit a
-literal if the value could not be loaded using a ordinary mov.
+On Tue, Aug 21, 2018 at 11:49:48AM +0900, Masahiro Yamada wrote:
+> The code diff looks good to me.
+> 
+> Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-For AArch64, I don't think that occurs any longer, i.e., a ldr is
-always emitted as an ldr. However, it is used widely in the ARM code
-(although not as much in arch/arm64) for loading compile time
-constants and even symbol addresses into general purpose registers.
-The FP variant may actually be a GNU invention, but given that there
-is no standard to begin with, playing the 'GNU is non-standard' card
-again is just a bit annoying.
+Thanks :)
 
->>
->> This 'GCC/binutils is broken and we are reluctant to subvert Clang'
->> attitude is getting a bit old tbh. In the future, could you please
->> mention clang explicitly in the patch subject so it is obvious what
->> the purpose of the patch is? I think we should accommodate Clang in
->> Linux, but the attitude has got to go.
+> > A straightforward approach to the per-arch header is to make use of
+> > asm-generic to provide a default empty header & adjust architectures
+> > which don't need anything specific to make use of that by adding the
+> > header to generic-y. Unfortunately this doesn't work so well due to
+> > commit a95b37e20db9 ("kbuild: get <linux/compiler_types.h> out of
+> > <linux/kconfig.h>") which moved the inclusion of linux/compiler.h to
+> > cflags using the -include compiler flag.
 >
-> 'Reluctant?' Please assume good faith; I filed the bug/noticed
-> yesterday [1]. And I'm in favor of supporting the shorthand.  That's
-> not my argument at all; Strawman.
->
+> I doubt this statement.
+> 
+> Commit a95b37e20db9 is not the cause of the problem.
+> 
+>%
+> 
+> The change happened in commit 28128c61e08e.
 
-OK, fair enough. But note that Clang already supports the syntax for GPRs.
+You're correct - I'll fix that up.
 
->>
->>
->> > before:
->> > 00000000000009d4 <neon_aes_ctr_encrypt>:
->> > ...
->> >      a48:       9c000ac8        ldr     q8, ba0 <neon_aes_ctr_encrypt+0x1cc>
->> > ...
->> >      ba0:       00000001        .word   0x00000001
->> >      ba4:       00000002        .word   0x00000002
->> >      ba8:       00000003        .word   0x00000003
->> >      bac:       00000000        .word   0x00000000
->> >
->> > after:
->> >
->> > 00000000000009d4 <neon_aes_ctr_encrypt>:
->> > ...
->> >      a48:       9c000aa8        ldr     q8, b9c <neon_aes_ctr_encrypt+0x1c8>
->> > ...
->> >      b9c:       00000001        .word   0x00000001
->> >      ba0:       00000002        .word   0x00000002
->> >      ba4:       00000003        .word   0x00000003
->> >      ba8:       00000000        .word   0x00000000
->> >
->> > [0] https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=blob;f=gas/testsuite/gas/aarch64/programmer-friendly.s;h=6254c6476efdc848648b05068be0574e7addc85d;hb=HEAD#l11
->> > [1] https://bugs.llvm.org/show_bug.cgi?id=38642
->> >
->> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
->> > ---
->> >  arch/arm64/crypto/aes-modes.S | 8 +++++++-
->> >  1 file changed, 7 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/arch/arm64/crypto/aes-modes.S b/arch/arm64/crypto/aes-modes.S
->> > index 483a7130cf0e..9288c5b0eca2 100644
->> > --- a/arch/arm64/crypto/aes-modes.S
->> > +++ b/arch/arm64/crypto/aes-modes.S
->> > @@ -232,7 +232,7 @@ AES_ENTRY(aes_ctr_encrypt)
->> >         bmi             .Lctr1x
->> >         cmn             w6, #4                  /* 32 bit overflow? */
->> >         bcs             .Lctr1x
->> > -       ldr             q8, =0x30000000200000001        /* addends 1,2,3[,0] */
->> > +       ldr             q8, .Laddends /* addends 1,2,3[,0] */
->> >         dup             v7.4s, w6
->> >         mov             v0.16b, v4.16b
->> >         add             v7.4s, v7.4s, v8.4s
->> > @@ -295,6 +295,12 @@ AES_ENTRY(aes_ctr_encrypt)
->> >         rev             x7, x7
->> >         ins             v4.d[0], x7
->> >         b               .Lctrcarrydone
->> > +
->> > +.Laddends:
->> > +       .word   0x00000001
->> > +       .word   0x00000002
->> > +       .word   0x00000003
->> > +       .word   0x00000000
->>
->
->
->> As Will points out, this breaks BE builds.
->
-> Looks like -EB and -EL are the flags for me to test with in GNU as
-> (looks like a few different flags for this).  Is there a target triple
-> ABI for BE?  I'll ask around here too, and post my findings.
->
->>
->> >  AES_ENDPROC(aes_ctr_encrypt)
->> >         .ltorg
->>
->> You can drop this .ltorg if you get rid of all =xxx instances.
->>
->> Actually, though, I would prefer it if we could use some clever short
->> sequence of movi+add instructions, and get rid of the literal
->> altogether. Or otherwise, please use something like
->>
->> ldr_l q8, .Laddends, <temp register>
->>
->> instead, and move the literal into the .rodata section (and use .octa
->> so you don't break BE)
->
-> Ah, .octa, neat.  Ok, I'll take a look for v2.
->
+> One more thing, you are not touching any makefile in this version.
+> 
+> Maybe, you can prefix the subject with "compiler.h:" or something
+> instead of "kbuild:".
 
-Please check my solution first. I just sent it out.
+Will do.
+
+Thanks,
+    Paul
