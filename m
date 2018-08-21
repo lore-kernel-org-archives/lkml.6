@@ -2,105 +2,108 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 208FDC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1297C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:51:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B98FD213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:45:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L+QoEsnM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B98FD213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 292AA21486
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:51:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 292AA21486
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727752AbeHVCHa (ORCPT
+        id S1727757AbeHVCNh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 22:07:30 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:45501 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbeHVCHa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 22:07:30 -0400
-Received: by mail-oi0-f65.google.com with SMTP id q11-v6so34955656oic.12;
-        Tue, 21 Aug 2018 15:45:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=JNufvX4YiVBjIU7FCFp9+wzeWVY68Er8U2mB3Q8ALM0=;
-        b=L+QoEsnMHoVVKYawjEJ7Wz/Nlos5lWuD6FrqMJA239B5F7Y9/GfOS59I3lHH6MfqEr
-         KGrOBjOVd3ClCYJIw7U2PTqFtjdw09lPOmoTF2XNlxxbuiqL55APOhGDjrjlDikxYYal
-         UlLPyqcE5BS3QdKghaxmRBXBZ+iE7p7rsyzPRtTQARl55ePjVODDBW85kZQfFQDdu+sU
-         2NmA/hvvOYuNv4P85BRjoTGWOAZUOt5/P7kdDK1Fat2QyxjywBGIdtgRVGHvb+w2nG+G
-         aQ6ZemqlYcNOiMAlp9cM3SK0zBCGo0aKOQVGKSM1FHg/ta5wuZOS9pMWF+lvchrgXjDj
-         FTMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=JNufvX4YiVBjIU7FCFp9+wzeWVY68Er8U2mB3Q8ALM0=;
-        b=YiKD10/CN6zn5zLuOsbhzFZEipjW1oQQ9hNfY1xSSDV4dbdwO8lH8NoqI5uSo6HIf8
-         3xrCVXCUDQiOMvFvoOTwAxF5Pz6PuJLnvCk1IxQ/9mUM5cfejWl8zLIkWQ24mT/cT7EE
-         6O5zYZMNJ4Vub/YxwSvZqu8aEyAU+V+xmIbelSuDyAIdfI917E3pBUbcKS2zZBqY2WJX
-         JqdAwbKAOgTVkos6I/zRCdDIFk6u8kOUxq68D0+wQbHIG95OY7cWb1uyX+py6cE2msjY
-         SYdN/wHmWdxtfit1W3mjk7Kz6zYxRnr4hiahjKdAGWA/g4jU8Z6kej0RhvZmhcqQa0vT
-         uhDA==
-X-Gm-Message-State: APzg51DlnCZcK1Jw2sQrlAHdmjxkltVqo5QC1ulLC3GEZGaoc3NguR99
-        Pnr6i6sUahCKu/8HvnJJSt4m3u+bLPxosA1AJD1QeWQb
-X-Google-Smtp-Source: ANB0VdZOcAlYSQuijYo2TtbuXbu6ecK09kiu/RSMMt4Ln/BhOMyWOLsGxZnMQ/YFFj9vUbE9U5KCE1gX6Lu/OPxsa0E=
-X-Received: by 2002:aca:d986:: with SMTP id q128-v6mr1267086oig.349.1534891525084;
- Tue, 21 Aug 2018 15:45:25 -0700 (PDT)
+        Tue, 21 Aug 2018 22:13:37 -0400
+Received: from nautica.notk.org ([91.121.71.147]:52194 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726283AbeHVCNh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 22:13:37 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 6E98CC009; Wed, 22 Aug 2018 00:51:28 +0200 (CEST)
+Date:   Wed, 22 Aug 2018 00:51:13 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Doron Roberts-Kedes <doronrk@fb.com>
+Cc:     Tom Herbert <tom@quantonium.net>, Dave Watson <davejwatson@fb.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] strparser: remove any offset before parsing messages
+Message-ID: <20180821225113.GA6515@nautica>
+References: <1533854411-28184-1-git-send-email-asmadeus@codewreck.org>
+ <1534855906-22870-1-git-send-email-asmadeus@codewreck.org>
+ <20180821145321.GA44710@doronrk-mbp>
+ <20180821193655.GA15354@nautica>
+ <20180821211504.GA76892@doronrk-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
-Received: by 2002:a9d:284e:0:0:0:0:0 with HTTP; Tue, 21 Aug 2018 15:45:24
- -0700 (PDT)
-In-Reply-To: <20180821220233.9202-6-wsa+renesas@sang-engineering.com>
-References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com> <20180821220233.9202-6-wsa+renesas@sang-engineering.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 21 Aug 2018 19:45:24 -0300
-Message-ID: <CAOMZO5AkVNiYMGdED9erL=YMaKcmtS5BzZxw2gO1KLXEaPnD7A@mail.gmail.com>
-Subject: Re: [PATCH 05/11] can: rcar: use SPDX identifier for Renesas drivers
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180821211504.GA76892@doronrk-mbp.dhcp.thefacebook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
+Doron Roberts-Kedes wrote on Tue, Aug 21, 2018:
+> On Tue, Aug 21, 2018 at 09:36:55PM +0200, Dominique Martinet wrote:
+> > One of the solutions I had suggested was adding a flag at strparser
+> > setup time to only do that pull for users which cannot handle offset,
+> > but nobody seemed interested two weeks ago. I can still do that.
+> 
+> This seems overly complicated. 
 
-On Tue, Aug 21, 2018 at 7:02 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->
-> To be applied individually per subsystem tree. Morimoto-san, could you maybe
-> ack this with your Renesas address?
->
->  drivers/net/can/rcar/rcar_can.c   | 6 +-----
->  drivers/net/can/rcar/rcar_canfd.c | 6 +-----
->  2 files changed, 2 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/net/can/rcar/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
-> index 11662f479e76..051bf4ef4be2 100644
-> --- a/drivers/net/can/rcar/rcar_can.c
-> +++ b/drivers/net/can/rcar/rcar_can.c
-> @@ -1,12 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
+That sounds much simpler than adding a similar feature to bpf if it
+doesn't already support it -- we already have an user-provided struct at
+strparser init timer (strp->cb) in which it would be easy to add a flag
+saying whether the callbacks support offset or not.
 
-According to Documentation/process/license-rules.rst the format should
-be like this instead:
+That's maybe three more lines than the current patch, which is also
+pretty simple, I'm not sure what you're expecting from alternative
+solutions to call that overly complicated...
 
-// SPDX-License-Identifier: GPL-2.0+
+
+> It seems like we mainly agree that the proposed patch is suboptimal for
+> existing clients of the library that use offset correctly (tls). 
+> 
+> It also seems like you've identified that the proper fix is in bpf. 
+
+I don't think bpf itself needs to be changed here -- the offset is
+stored in a strparser specific struct so short of such a skb_pull I
+think we'd need to change the type of the bpf function, pass it it the
+extra parameter, and make it a user visible change breaking the kcm
+API... And I have no idea for sockmap but probably something similar.
+
+I can't think of that as better than adding a flag to strparser.
+
+(Also, note that pskb_pull will not copy any data or allocate memory
+unless we're pulling past the end of the skb, which seems pretty
+unlikely in that situation as we should have consumed any fully "eaten"
+skb before getting to a new one here -- so in practice this patch just
+adds a skb->data += offset with safety guards "just in case")
+
+
+> As an aside, I would recommend reaching the netdev FAQ page:
+> https://www.kernel.org/doc/Documentation/networking/netdev-FAQ.txt
+> 
+> It contains helpful hints about how to format email subjects (specifying
+> net vs. net-next) and determining when trees are closed (currently
+> closed). 
+
+Thank you for pointing out to that document.
+While this bug has been around from day one of kcm it is still a bug fix
+so I'd rather let maintainers decide which tree it goes to.
+
+I wasn't aware that net-next closes during the Linus merge window, but
+if you want to split hairs, the FAQ says "do not send new net-next
+content to netdev [while closed]" and this isn't new content as the v0
+of the patch was mostly the same and sent before the 4.18 release, (and,
+ironically, did not get any comment).
+Anyway, sure, I'll wait until next week for a v2 if that matters.
+
+
+Thanks,
+-- 
+Dominique
