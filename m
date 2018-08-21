@@ -2,99 +2,255 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB15C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 638AEC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:13:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40DC3217B9
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:13:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M54wSS+H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40DC3217B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F19E20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:13:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F19E20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728344AbeHUTdz (ORCPT
+        id S1728362AbeHUTeX convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 15:33:55 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38366 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728325AbeHUTdz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 15:33:55 -0400
-Received: by mail-pf1-f196.google.com with SMTP id x17-v6so8727429pfh.5;
-        Tue, 21 Aug 2018 09:13:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=sFaPtY6nI7qDQThR+HnBM/AIrP7kAf9zPQVSwd4WFro=;
-        b=M54wSS+HLqZ8tZ7/AlZlC38i6CkbvrfchoRTiGzzrLfk3X5guCfM4ze6TftX6yn7EB
-         GAgY1Z5HXPM8rOl1lf2KTf3Ww/PoiAKkfLOfwnffUWnkDq9+xwB2H+gmGYHzC9Mrvi5o
-         0WAmRqtAFy2QSyLfrc1kYpOLffIZm4MGkFmgaZ/6e/I74VUz1vEc2mCroj69BlZI08B5
-         ajWk6dRcZfIhRYqcaRjXvq4LdpMMZP8E5zJqO+YKMyJVkUCQjUZlyLL8AP01ssNauR1E
-         dINFhZHLTUT6ZqhAn/Kdj3r84/brZzSMuvbPzAPv+ftWP8TW4+Fw0rx+IA6j1jO1ADuW
-         O6qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sFaPtY6nI7qDQThR+HnBM/AIrP7kAf9zPQVSwd4WFro=;
-        b=WyKw9PRQS/q+bUYls6e4Sc5JAUi431Pp+I+hMTHmlBnkmfEBk35G3Wfn1JPwaIJq7t
-         8ADDJpHDqPHOHmNT1iDx2CDQqNIM06UPHxHYEwSzg5jq7ZEKpWVhlJ3S0JVkiiu+z0kI
-         ZO6h1CEyajSDTVtu5a6NBSfxF9hCaRJqxvaJt0t3bWjevk2v9CJQeX0MtqVVeZaJPrs1
-         /yw5fRCQuzSf6y0edDz72CwD7T1Y9fTQQnlGb8Vl8qi8pRFWUy0WqXdQHld6L1lFfaYH
-         b9VupOyA5kgYFRMyUI9aJjx/11hkoqI2+qBjjHNVYGs5l9xmF2+akBbWRDw6oTYCsmLs
-         pCeA==
-X-Gm-Message-State: APzg51D8mYU/Up4Ts+DtgYK2jQXLSpTm/cN8/prXiq7x70se/mBlXk6z
-        2+m85Ncutpi+guiapwXYjsM=
-X-Google-Smtp-Source: ANB0VdamInDKTi9OXiUBbcLKjV2Yugeqm0CN27cwmHjBmBICaN6a5vSuXEyq2iJ1nQJwjnEgwfSCYw==
-X-Received: by 2002:a65:65c6:: with SMTP id y6-v6mr2378035pgv.436.1534867989805;
-        Tue, 21 Aug 2018 09:13:09 -0700 (PDT)
-Received: from localhost.localdomain ([211.196.191.92])
-        by smtp.gmail.com with ESMTPSA id n29-v6sm18049183pgl.30.2018.08.21.09.13.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 Aug 2018 09:13:08 -0700 (PDT)
-From:   Taeung Song <treeze.taeung@gmail.com>
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH] libbpf: Remove the duplicate checking of function storage
-Date:   Wed, 22 Aug 2018 01:12:58 +0900
-Message-Id: <20180821161258.19718-1-treeze.taeung@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 21 Aug 2018 15:34:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45698 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727986AbeHUTeW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 15:34:22 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 148B6402178A;
+        Tue, 21 Aug 2018 16:13:36 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4FCCE94653;
+        Tue, 21 Aug 2018 16:13:31 +0000 (UTC)
+Date:   Tue, 21 Aug 2018 18:13:29 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.ibm.com>
+Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+Subject: Re: [PATCH v9 22/22] s390: doc: detailed specifications for AP
+ virtualization
+Message-ID: <20180821181329.1610c3b3.cohuck@redhat.com>
+In-Reply-To: <a305a39b-1196-ae64-97fd-f970387d82d4@linux.ibm.com>
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1534196899-16987-23-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <20180820180359.38cc4af3.cohuck@redhat.com>
+        <a305a39b-1196-ae64-97fd-f970387d82d4@linux.ibm.com>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 21 Aug 2018 16:13:36 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 21 Aug 2018 16:13:36 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After the commit eac7d84519a3 ("tools: libbpf: don't return '.text'
-as a program for multi-function programs"), bpf_program__next()
-in bpf_object__for_each_program skips the function storage such as .text,
-so eliminate the duplicate checking.
+On Mon, 20 Aug 2018 16:16:15 -0400
+Tony Krowiak <akrowiak@linux.ibm.com> wrote:
 
-Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
----
- tools/lib/bpf/libbpf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On 08/20/2018 12:03 PM, Cornelia Huck wrote:
+> > On Mon, 13 Aug 2018 17:48:19 -0400
+> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 2abd0f112627..8476da7f2720 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -2336,7 +2336,7 @@ int bpf_prog_load_xattr(const struct bpf_prog_load_attr *attr,
- 		bpf_program__set_expected_attach_type(prog,
- 						      expected_attach_type);
- 
--		if (!bpf_program__is_function_storage(prog, obj) && !first_prog)
-+		if (!first_prog)
- 			first_prog = prog;
- 	}
- 
--- 
-2.17.1
+> >> +AP Architectural Overview:
+> >> +=========================
+> >> +To facilitate the comprehension of the design, let's start with some
+> >> +definitions:
+> >> +
+> >> +* AP adapter
+> >> +
+> >> +  An AP adapter is an IBM Z adapter card that can perform cryptographic
+> >> +  functions. There can be from 0 to 256 adapters assigned to an LPAR. Adapters
+> >> +  assigned to the LPAR in which a linux host is running will be available to
+> >> +  the linux host. Each adapter is identified by a number from 0 to 255. When
+> >> +  installed, an AP adapter is accessed by AP instructions executed by any CPU.
+> >> +
+> >> +  The AP adapter cards are assigned to a given LPAR via the system's Activation
+> >> +  Profile which can be edited via the HMC. When the system is IPL'd, the AP bus  
+> > There's lots of s390 jargon in here... but one hopes that someone
+> > trying to understand AP is already familiar with the basics...  
+> 
+> I'm not quite sure how one can describe s390-specific devices that can 
+> be installed
+> only on an s390 system without using s390 jargon. I would think that one 
+> who is
+> administering a linux host or guest running on an s390 system would have 
+> some
+> basic knowledge of s390. If you have any suggestions, I'd be happy to 
+> entertain them.
 
+I fear the jargon is mostly unavoidable :(
+
+> >> +* AP Instructions:
+> >> +
+> >> +  There are three AP instructions:
+> >> +
+> >> +  * NQAP: to enqueue an AP command-request message to a queue
+> >> +  * DQAP: to dequeue an AP command-reply message from a queue
+> >> +  * PQAP: to administer the queues  
+> > So, NQAP/DQAP need usage domains, while PQAP needs a control domain? Or
+> > is it that all of them need usage domains, but PQAP can target a control
+> > domain as well?  
+> 
+> All AP instructions - the lone exception being the PQAP(QCI) subfunction -
+> identify the usage domain that is the target of the instruction. I think
+> using the term 'control domain' is the source of much confusion. It makes
+> it seem as if there are two types of domains that serve different purposes.
+> That is simply not true. A domain is a partition within an AP adapter that
+> can process AP command request messages. All AP commands are sent to a
+> domain. Configuring a domain as a usage domain means it can be used to
+> process AP commands; in other words, it can be the target of an AP
+> instruction. Configuring a domain as a control domain means it can be
+> changed by an AP command. AP commands that change a domain are sent to
+> a usage domain, but the domain to be changed is specified in the payload
+> of the AP command message. The domain thus specified must be
+> identified via the AP configuration as a control domain, or the AP command
+> will be rejected.
+
+Yes, the 'control domain' term is a source of much confusion :(
+
+> 
+> >
+> > [I don't want to dive deeply into the AP architecture here, just far
+> > enough to really understand the design implications.]  
+> 
+> Are you suggesting some of the above should be removed? If so, what?
+
+Not removed. What about an explanation like the following somewhere:
+
+"AP instructions identify the domain that is targeted to process the
+command: This must be one of the usage domains. They may modify a
+domain that is not one of the usage domains, but the modified domain
+must be one of the control domains."
+
+I hope that is both correct and understandable ;)
+
+> > Does the SIE complain if you specify a control
+> > domain that the host does not have access to (I'd guess so)?  
+> 
+> The SIE does not complain if you specify a domain to which the host - or a
+> lower level guest - does not have access. The firmware performs a logical
+> AND of the guest's and hosts's - or lower level guest's - APMs, AQMs and 
+> ADMs
+> to create effective masks EAPM, EAQM and EADM. Only devices corresponding to
+> the bits set in the EAPM, EAQM and EADM will be accessible by the guest.
+
+OK, so the guest effectively won't see the domain. That makes sense.
+
+> 
+> >  
+> >> +
+> >> +The APQNs can provide secure key functionality - i.e., a private key is stored
+> >> +on the adapter card for each of its domains - so each APQN must be assigned to
+> >> +at most one guest or to the linux host.
+> >> +
+> >> +   Example 1: Valid configuration:
+> >> +   ------------------------------
+> >> +   Guest1: adapters 1,2  domains 5,6
+> >> +   Guest2: adapter  1,2  domain 7
+> >> +
+> >> +   This is valid because both guests have a unique set of APQNs: Guest1 has
+> >> +   APQNs (1,5), (1,6), (2,5) and (2,6); Guest2 has APQNs (1,7) and (2,7).
+> >> +
+> >> +   Example 2: Invalid configuration:
+> >> +   Guest1: adapters 1,2  domains 5,6
+> >> +   Guest2: adapter  1    domains 6,7
+> >> +
+> >> +   This is an invalid configuration because both guests have access to
+> >> +   APQN (1,6).  
+> > So, the adapters or the domains can overlap , but the cross product
+> > mustn't? If I had
+> >
+> > Guest1: adapters 1,2 domains 5,6
+> > Guest2: adapters 3,4 domains 5,6
+> >
+> > would that be fine?  
+> 
+> Yes, that would be fine because Guest1 would have access to APQNs
+> (1,5), (1,6), (2,5) and (2,6) while Guest2 would have access to
+> (3,5), (3,6), (4,5) AND (4,6), but neither would have access to
+> the same APQN.
+
+Might be a good idea to add this as an additional example.
+
+> 
+> >
+> > Is there any rule about shared control domains?  
+> 
+> AFAIK there isn't, but I will consult with Reinhard about that.
+> 
+> >
+> > (...)
+> >  
+> >> +Limitations
+> >> +===========
+> >> +* The KVM/kernel interfaces do not provide a way to prevent unbinding an AP
+> >> +  queue that is still assigned to a mediated device. Even if the device
+> >> +  'remove' callback returns an error, the device core detaches the AP
+> >> +  queue from the VFIO AP driver. It is therefore incumbent upon the
+> >> +  administrator to make sure there is no mediated device to which the
+> >> +  APQN - for the AP queue being unbound - is assigned.
+> >> +
+> >> +* Hot plug/unplug of AP devices is not supported for guests.  
+> > Not sure what that sentence means. Adding/removing devices by the
+> > hypervisor is not supported? Or some guest actions, respectively
+> > injecting notifications that would trigger some actions on the real
+> > hardware?  
+> 
+> No means is provided to modify a guest's AP matrix - i.e., APM, AQM
+> and ADM - while a guest is running. Once a guest is running, its AP
+> configuration can not be changed dynamically.
+> 
+> >
+> > Do you want to add (some of) this in the future?  
+> 
+> Yes, we plan to introduce dynamic configurations in future releases.
+
+What about the following sentence:
+
+"Dynamically modifying the AP matrix for a running guest (which would
+amount to hot(un)plug of AP devices for the guest) is currently not
+supported."
+
+> 
+> >  
+> >> +
+> >> +* Live guest migration is not supported for guests using AP devices.  
+> > Migration and vfio is an interesting area in general :) Would be great
+> > if vfio-ap could benefit from any generic efforts in that area, but
+> > that probably requires that someone with access to documentation and
+> > hardware keeps an eye on developments.  
+> 
+> I have briefly looked at some of the articles talking about live migration
+> of passthrough devices, but nothing seemed applicable to AP architecture.
+
+Most of the approaches to live migration of vfio devices are focused on
+pci devices; even ccw devices have different needs. Any halfway generic
+approach would need a common part and a backend-specific part anyway, I
+think.
+
+>  From my limited perspective, it would seem that architectural changes
+> would have to be implemented to fully support live migration of in-process
+> AP queues.
+
+From what I have seen of the AP virtualization architecture, this may
+very well be the case. I'll keep AP in the back of my head, but it's
+probably better to focus on the easier targets first.
