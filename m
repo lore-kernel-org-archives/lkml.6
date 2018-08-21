@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7710BC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 357CFC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:03:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F6DA217FF
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:03:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F6DA217FF
+	by mail.kernel.org (Postfix) with ESMTP id D72A1217FF
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 22:03:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D72A1217FF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728108AbeHVBZm (ORCPT
+        id S1728126AbeHVBZv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 21:25:42 -0400
-Received: from sauhun.de ([88.99.104.3]:45294 "EHLO pokefinder.org"
+        Tue, 21 Aug 2018 21:25:51 -0400
+Received: from sauhun.de ([88.99.104.3]:45286 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727440AbeHVBYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727445AbeHVBYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 21 Aug 2018 21:24:45 -0400
 Received: from localhost (p54B3375F.dip0.t-ipconnect.de [84.179.55.95])
-        by pokefinder.org (Postfix) with ESMTPSA id AD53D2DA3F4;
-        Wed, 22 Aug 2018 00:02:46 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id 6F4E72DA3F2;
+        Wed, 22 Aug 2018 00:02:45 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 03/11] i2c: use SPDX identifier for Renesas drivers
-Date:   Wed, 22 Aug 2018 00:02:16 +0200
-Message-Id: <20180821220233.9202-4-wsa+renesas@sang-engineering.com>
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 02/11] dmaengine: use SPDX identifier for Renesas drivers
+Date:   Wed, 22 Aug 2018 00:02:15 +0200
+Message-Id: <20180821220233.9202-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
 References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
@@ -47,120 +49,186 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To be applied individually per subsystem tree. Morimoto-san, could you maybe
 ack this with your Renesas address?
 
- drivers/i2c/busses/i2c-emev2.c      |  5 +----
- drivers/i2c/busses/i2c-highlander.c |  5 +----
- drivers/i2c/busses/i2c-rcar.c       | 10 +---------
- drivers/i2c/busses/i2c-riic.c       |  5 +----
- drivers/i2c/busses/i2c-sh_mobile.c  | 10 +---------
- 5 files changed, 5 insertions(+), 30 deletions(-)
+ drivers/dma/nbpfaxi.c          | 5 +----
+ drivers/dma/sh/shdma-arm.h     | 5 +----
+ drivers/dma/sh/shdma-base.c    | 5 +----
+ drivers/dma/sh/shdma-of.c      | 5 +----
+ drivers/dma/sh/shdma-r8a73a4.c | 5 +----
+ drivers/dma/sh/shdma.h         | 6 +-----
+ drivers/dma/sh/shdmac.c        | 6 +-----
+ drivers/dma/sh/sudmac.c        | 5 +----
+ drivers/dma/sh/usb-dmac.c      | 5 +----
+ 9 files changed, 9 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-emev2.c b/drivers/i2c/busses/i2c-emev2.c
-index ba9b6ea48a31..35b302d983e0 100644
---- a/drivers/i2c/busses/i2c-emev2.c
-+++ b/drivers/i2c/busses/i2c-emev2.c
-@@ -1,13 +1,10 @@
+diff --git a/drivers/dma/nbpfaxi.c b/drivers/dma/nbpfaxi.c
+index 8c7b2e8703da..38d251b198b8 100644
+--- a/drivers/dma/nbpfaxi.c
++++ b/drivers/dma/nbpfaxi.c
+@@ -1,10 +1,7 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * I2C driver for the Renesas EMEV2 SoC
-  *
-  * Copyright (C) 2015 Wolfram Sang <wsa@sang-engineering.com>
-  * Copyright 2013 Codethink Ltd.
-  * Copyright 2010-2015 Renesas Electronics Corporation
+  * Copyright (C) 2013-2014 Renesas Electronics Europe Ltd.
+  * Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
 - *
 - * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2
-- * as published by the Free Software Foundation.
+- * it under the terms of version 2 of the GNU General Public License as
+- * published by the Free Software Foundation.
   */
  
- #include <linux/clk.h>
-diff --git a/drivers/i2c/busses/i2c-highlander.c b/drivers/i2c/busses/i2c-highlander.c
-index 56dc69e7349f..ff340d7ae2e5 100644
---- a/drivers/i2c/busses/i2c-highlander.c
-+++ b/drivers/i2c/busses/i2c-highlander.c
+ #include <linux/bitmap.h>
+diff --git a/drivers/dma/sh/shdma-arm.h b/drivers/dma/sh/shdma-arm.h
+index a1b0ef45d6a2..7459f9a13b5b 100644
+--- a/drivers/dma/sh/shdma-arm.h
++++ b/drivers/dma/sh/shdma-arm.h
+@@ -1,11 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Renesas SuperH DMA Engine support
+  *
+  * Copyright (C) 2013 Renesas Electronics, Inc.
+- *
+- * This is free software; you can redistribute it and/or modify it under the
+- * terms of version 2 the GNU General Public License as published by the Free
+- * Software Foundation.
+  */
+ 
+ #ifndef SHDMA_ARM_H
+diff --git a/drivers/dma/sh/shdma-base.c b/drivers/dma/sh/shdma-base.c
+index 6b5626e299b2..c51de498b5b4 100644
+--- a/drivers/dma/sh/shdma-base.c
++++ b/drivers/dma/sh/shdma-base.c
 @@ -1,3 +1,4 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * Renesas Solutions Highlander FPGA I2C/SMBus support.
+  * Dmaengine driver base library for DMA controllers, found on SH-based SoCs
   *
-@@ -6,10 +7,6 @@
-  * Copyright (C) 2008  Paul Mundt
-  * Copyright (C) 2008  Renesas Solutions Corp.
-  * Copyright (C) 2008  Atom Create Engineering Co., Ltd.
+@@ -7,10 +8,6 @@
+  * Copyright (C) 2009 Nobuhiro Iwamatsu <iwamatsu.nobuhiro@renesas.com>
+  * Copyright (C) 2009 Renesas Solutions, Inc. All rights reserved.
+  * Copyright (C) 2007 Freescale Semiconductor, Inc. All rights reserved.
 - *
-- * This file is subject to the terms and conditions of the GNU General
-- * Public License version 2. See the file "COPYING" in the main directory
-- * of this archive for more details.
+- * This is free software; you can redistribute it and/or modify
+- * it under the terms of version 2 of the GNU General Public License as
+- * published by the Free Software Foundation.
   */
- #include <linux/module.h>
- #include <linux/interrupt.h>
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 43ad933df0f0..52cf42b32f0a 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Driver for the Renesas R-Car I2C unit
-  *
-@@ -9,15 +10,6 @@
-  *
-  * This file is based on the drivers/i2c/busses/i2c-sh7760.c
-  * (c) 2005-2008 MSC Vertriebsges.m.b.H, Manuel Lauss <mlau@msc-ge.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #include <linux/bitops.h>
- #include <linux/clk.h>
-diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
-index 5f1fca7880b1..b75ff144b570 100644
---- a/drivers/i2c/busses/i2c-riic.c
-+++ b/drivers/i2c/busses/i2c-riic.c
+ 
+ #include <linux/delay.h>
+diff --git a/drivers/dma/sh/shdma-of.c b/drivers/dma/sh/shdma-of.c
+index f999f9b0d314..be89dd894328 100644
+--- a/drivers/dma/sh/shdma-of.c
++++ b/drivers/dma/sh/shdma-of.c
 @@ -1,12 +1,9 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * Renesas RIIC driver
+  * SHDMA Device Tree glue
   *
-  * Copyright (C) 2013 Wolfram Sang <wsa@sang-engineering.com>
-  * Copyright (C) 2013 Renesas Solutions Corp.
+  * Copyright (C) 2013 Renesas Electronics Inc.
+  * Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
 - *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
+- * This is free software; you can redistribute it and/or modify
+- * it under the terms of version 2 of the GNU General Public License as
+- * published by the Free Software Foundation.
   */
  
+ #include <linux/dmaengine.h>
+diff --git a/drivers/dma/sh/shdma-r8a73a4.c b/drivers/dma/sh/shdma-r8a73a4.c
+index 96ea3828c3eb..ddc9a3578353 100644
+--- a/drivers/dma/sh/shdma-r8a73a4.c
++++ b/drivers/dma/sh/shdma-r8a73a4.c
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
  /*
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 9c7f6f8ceb22..439e8778f849 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
+  * Renesas SuperH DMA Engine support for r8a73a4 (APE6) SoCs
+  *
+  * Copyright (C) 2013 Renesas Electronics, Inc.
+- *
+- * This is free software; you can redistribute it and/or modify it under the
+- * terms of version 2 the GNU General Public License as published by the Free
+- * Software Foundation.
+  */
+ #include <linux/sh_dma.h>
+ 
+diff --git a/drivers/dma/sh/shdma.h b/drivers/dma/sh/shdma.h
+index 2c0a969adc9f..fd702ca9a39c 100644
+--- a/drivers/dma/sh/shdma.h
++++ b/drivers/dma/sh/shdma.h
+@@ -1,14 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
+ /*
+  * Renesas SuperH DMA Engine support
+  *
+  * Copyright (C) 2009 Nobuhiro Iwamatsu <iwamatsu.nobuhiro@renesas.com>
+  * Copyright (C) 2009 Renesas Solutions, Inc. All rights reserved.
+  *
+- * This is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+  */
+ #ifndef __DMA_SHDMA_H
+ #define __DMA_SHDMA_H
+diff --git a/drivers/dma/sh/shdmac.c b/drivers/dma/sh/shdmac.c
+index 04a74e0a95b7..fa37541b2d05 100644
+--- a/drivers/dma/sh/shdmac.c
++++ b/drivers/dma/sh/shdmac.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+  * Renesas SuperH DMA Engine support
+  *
+@@ -8,11 +9,6 @@
+  * Copyright (C) 2009 Renesas Solutions, Inc. All rights reserved.
+  * Copyright (C) 2007 Freescale Semiconductor, Inc. All rights reserved.
+  *
+- * This is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+  * - DMA of SuperH does not have Hardware DMA chain mode.
+  * - MAX DMA size is 16MB.
+  *
+diff --git a/drivers/dma/sh/sudmac.c b/drivers/dma/sh/sudmac.c
+index 69b9564dc9d9..30cc3553cb8b 100644
+--- a/drivers/dma/sh/sudmac.c
++++ b/drivers/dma/sh/sudmac.c
 @@ -1,3 +1,4 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * SuperH Mobile I2C Controller
+  * Renesas SUDMAC support
   *
-@@ -7,15 +8,6 @@
-  *
-  * Portions of the code based on out-of-tree driver i2c-sh7343.c
-  * Copyright (c) 2006 Carlos Munoz <carlos@kenati.com>
+@@ -8,10 +9,6 @@
+  * Copyright (C) 2009 Nobuhiro Iwamatsu <iwamatsu.nobuhiro@renesas.com>
+  * Copyright (C) 2009 Renesas Solutions, Inc. All rights reserved.
+  * Copyright (C) 2007 Freescale Semiconductor, Inc. All rights reserved.
 - *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
+- * This is free software; you can redistribute it and/or modify
+- * it under the terms of version 2 of the GNU General Public License as
+- * published by the Free Software Foundation.
   */
  
- #include <linux/clk.h>
+ #include <linux/dmaengine.h>
+diff --git a/drivers/dma/sh/usb-dmac.c b/drivers/dma/sh/usb-dmac.c
+index 1bb1a8e09025..7f7184c3cf95 100644
+--- a/drivers/dma/sh/usb-dmac.c
++++ b/drivers/dma/sh/usb-dmac.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Renesas USB DMA Controller Driver
+  *
+@@ -6,10 +7,6 @@
+  * based on rcar-dmac.c
+  * Copyright (C) 2014 Renesas Electronics Inc.
+  * Author: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+- *
+- * This is free software; you can redistribute it and/or modify
+- * it under the terms of version 2 of the GNU General Public License as
+- * published by the Free Software Foundation.
+  */
+ 
+ #include <linux/delay.h>
 -- 
 2.11.0
 
