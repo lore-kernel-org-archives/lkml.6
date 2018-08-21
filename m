@@ -5,170 +5,89 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0ACEC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2997FC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92021217DF
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:17:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92021217DF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D0C1C217DF
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:20:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0C1C217DF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbeHUWiw (ORCPT
+        id S1727265AbeHUWmO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 18:38:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53652 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726810AbeHUWiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 18:38:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDD1280D;
-        Tue, 21 Aug 2018 12:17:27 -0700 (PDT)
-Received: from dupont (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C22D33F5A0;
-        Tue, 21 Aug 2018 12:17:26 -0700 (PDT)
-Date:   Tue, 21 Aug 2018 14:17:25 -0500
-From:   Kim Phillips <kim.phillips@arm.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     "Suzuki K. Poulose" <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>, ast@kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, suzuki.poulosi@arm.com,
-        linux-s390@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 0/7] perf: Add ioctl for PMU driver configuration
-Message-Id: <20180821141725.e593a1c7fc0d7dcecaef74d0@arm.com>
-In-Reply-To: <CANLsYkzvEfaoHVLTiUiYAV++O2ZJ1YBzyRMwJLtz_v1=h1uX-g@mail.gmail.com>
-References: <1531950487-24554-1-git-send-email-mathieu.poirier@linaro.org>
-        <20180813124642.3d49c082a95fc294d926016e@arm.com>
-        <CANLsYkx=tjCG-eb4qRoGz0SvG4qCMDz1ajR9Mo9VK5XTAn_WdQ@mail.gmail.com>
-        <20180814120910.ed225bbc462c58b09e5d68de@arm.com>
-        <CANLsYkxZ_Wts6k9yqJhJf_R5oh74svpcuoNxhtFf6h3mz8U4ZA@mail.gmail.com>
-        <20180815093912.GE2427@arm.com>
-        <20180815102820.3520d0c3875d2fd82300cdef@arm.com>
-        <CANLsYkz0j79+1C-Amz=3+7zw-0VZhnZ+rp5WAjHduEp+WjFs8A@mail.gmail.com>
-        <18fe78a3-9a58-cecd-ddb9-d46cbc473b95@arm.com>
-        <20180820092252.32dd015afcc5cbf2fe4c7ab7@arm.com>
-        <a2edfae3-302e-bbc7-0563-337186fc2919@arm.com>
-        <CANLsYkzvEfaoHVLTiUiYAV++O2ZJ1YBzyRMwJLtz_v1=h1uX-g@mail.gmail.com>
-Organization: Arm
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 21 Aug 2018 18:42:14 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:37132 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726694AbeHUWmN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 18:42:13 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1fsCCs-00010s-4K; Tue, 21 Aug 2018 21:20:46 +0200
+Message-ID: <1534879241.25523.44.camel@sipsolutions.net>
+Subject: Re: [PATCH 1/2] workqueue: skip lockdep wq dependency in
+ cancel_work_sync()
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        Byungchul Park <byungchul.park@lge.com>
+Date:   Tue, 21 Aug 2018 21:20:41 +0200
+In-Reply-To: <20180821175550.GS3978217@devbig004.ftw2.facebook.com> (sfid-20180821_195557_005865_AFE22844)
+References: <20180821120317.4115-1-johannes@sipsolutions.net>
+         <20180821120317.4115-2-johannes@sipsolutions.net>
+         <20180821160814.GP3978217@devbig004.ftw2.facebook.com>
+         <1534871894.25523.34.camel@sipsolutions.net>
+         <20180821172711.GR3978217@devbig004.ftw2.facebook.com>
+         <1534872621.25523.39.camel@sipsolutions.net>
+         <20180821175550.GS3978217@devbig004.ftw2.facebook.com>
+         (sfid-20180821_195557_005865_AFE22844)
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 Aug 2018 11:16:49 -0600
-Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+On Tue, 2018-08-21 at 10:55 -0700, Tejun Heo wrote:
 
-> On Mon, 20 Aug 2018 at 08:36, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
-> >
-> > On 08/20/2018 03:22 PM, Kim Phillips wrote:
-> > > On Mon, 20 Aug 2018 11:03:03 +0100
-> > > Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
-> > >
-> > >> On 08/16/2018 08:28 PM, Mathieu Poirier wrote:
-> > >>> On Wed, 15 Aug 2018 at 09:28, Kim Phillips <kim.phillips@arm.com> wrote:
-> > >>>>
-> > >>>> On Wed, 15 Aug 2018 10:39:13 +0100
-> > >>>> Will Deacon <will.deacon@arm.com> wrote:
-> > >>>>
-> > >>>>> On Tue, Aug 14, 2018 at 01:42:27PM -0600, Mathieu Poirier wrote:
-> > >>>>>> On Tue, 14 Aug 2018 at 11:09, Kim Phillips <kim.phillips@arm.com> wrote:
-> > >>>>>>> The other thing that's going on here is that I'm becoming numb to the
-> > >>>>>>> loathsome "failed to mmap with 12 (Cannot allocate memory)" being
-> > >>>>>>> returned no matter what the error is/was. E.g., an error that would
-> > >>>>>>> indicate a sense of non-implementation would be much better
-> > >>>>>>> appreciated than presumably what the above is doing, i.e., returning
-> > >>>>>>> -ENOMEM.  That, backed up with specific details in the form of human
-> > >>>>>>> readable text in dmesg would be *most* welcome.
-> > >>>>>>
-> > >>>>>> As part of the refactoring of the code to support CPU-wide scenarios I
-> > >>>>>> intend to emit better diagnostic messages from the driver.  Modifying
-> > >>>>>> rb_alloc_aux() to propagate the error message generated by the
-> > >>>>>> architecture specific PMUs doesn't look hard either and I _may_ get to
-> > >>>>>> it as part of this work.
-> > >>>>>
-> > >>>>> For the record, I will continue to oppose PMU drivers that dump diagnostics
-> > >>>>> about user-controlled input into dmesg, but the coresight drivers are yours
-> > >>>>> so it's up to you and I won't get in the way!
-> > >>>>
-> > >>>> That sounds technically self-contradicting to me.  Why shouldn't
-> > >>>> coresight share the same policies as those used for PMU drivers?  Or
-> > >>>> why not allow the individual vendor PMU driver authors control the
-> > >>>> level of user-friendliness of their own drivers?
-> > >>>>
-> > >>>> That being said, Matheiu, would you accept patches that make coresight
-> > >>>> more verbose in dmesg?
-> > >>>
-> > >>> It depends on the issue you're hoping to address.  I'd rather see the
-> > >>> root cause of the problem fixed than adding temporary code.  Suzuki
-> > >>> added the ETR perf API and I'm currently working on CPU-wide
-> > >>> scenarios.  From there and with regards to what can happen in
-> > >>> setup_aux(), we should have things covered.
-> > >>
-> > >> I think the main issue is the lack of error code propagation from
-> > >> setup_aux() back to the perf_aux_output_handle_begin(), which always
-> > >> return -ENOMEM. If we fix that, we could get better idea of whats
-> > >> wrong.
-> > >
-> > > Why get a better idea when we can get the exact details?
-> >
-> > The different values for error numbers are there for a reason...
-> >
-> > >
-> > >> If someone is planning to add verbose messages, they may do so by adding
-> > >> dev_dbg() / pr_debug(), which can be turned on as and when needed.
-> > >
-> > > I disagree:  that just adds another usage and kernel configuration
-> > > obstacle.  Why not use pr_err straight up?
+> > I'm not really sure what you think we might be missing? Am I missing
+> > some case where cancel_work_sync() can possibly deadlock? Apart from the
+> > issue I addressed in the second patch, obviously.
 > 
-> I think everything on this topic has been said already.  As I remarked
+> Ah, that was me being slow.  I thought you were skipping the work's
+> lockdep_map.  I can almost swear we had that before (the part you're
+> adding on the second patch).  Right, fd1a5b04dfb8 ("workqueue: Remove
+> now redundant lock acquisitions wrt. workqueue flushes") removed it
+> because it gets propagated through wait_for_completion().  Did we miss
+> some cases with that change?
 
-Apparently not :)
+Hmm.
 
-> earlier once I'm done with CPU-wide support we shouldn't need detailed
-> error reporting.  Everything should be handled via error code
-> propagation and that is what I'd like to see addressed in the first
-> place.  From there we can think about individual error cases as they
-> come up.
+It doesn't seem to be working.
 
-FYI, there are a lot of -EINVAL cases:
+No, ok, actually it probably *does*, but the point is similar to my
+issue # 3 before - we don't do any of this unless the work is actually
+running, but we really want the lockdep annotation *regardless* of that,
+so that we catch the error unconditionally.
 
-$ git grep -- -EINVAL drivers/hwtracing/coresight/ | wc -l
-142
+So perhaps that commit just needs to be reverted entirely - I'd only
+looked at a small subset of it, but the flush_workqueue() case has the
+same problem - we only get to the completion when there's something to
+flush, not when the workqueue happens to actually be empty. But again,
+for lockdep we want to catch *potential* problems, not only *actual*
+ones.
 
-> > I personally don't agree to usage of pr_err() in paths which are easily
-> > triggered from user input. Also, we are moving all the "debugging"
-> > messages to the dynamic debug, to prevent lockdep splats.
-> 
-> A slight correction here - we are moving most of the framework error
-> reporting to dynamic debug because they clog the log file and aren't
-> useful outside of a development context.  It is not a remedy for the
+The remaining part of the patch I'm not sure I fully understand (removal
+of lockdep_init_map_crosslock()), but I suppose if we revert the other
+bits we need to revert this as well.
 
-I didn't see anyone complain about any 'clogging', and I sure don't
-mind seeing the extra messaging, esp. when using coresight in sysfs
-mode: it's reinforcement to the user that it's doing work.
+So please drop this patch, but revert Byungchul Park's commit
+fd1a5b04dfb8 again, I don't think the lockdep annotations there are
+really redundant as I just explained.
 
-> negative interaction between event locking and console access
-> generated by the framework's reporting of device status as a path is
-> built/enabled/disabled.
-
-I'd like to see this splat from this 'negative interaction', and it be
-fixed before we allow code in that makes it silently go away...
-
-Kim
+johannes
