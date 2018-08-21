@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB5BC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C906C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92D5D2174D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:32:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92D5D2174D
+	by mail.kernel.org (Postfix) with ESMTP id 5123120C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:32:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5123120C09
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbeHUJv0 (ORCPT
+        id S1728075AbeHUJva (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:51:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56680 "EHLO
+        Tue, 21 Aug 2018 05:51:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56688 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727018AbeHUJv0 (ORCPT
+        with ESMTP id S1726995AbeHUJv3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:51:26 -0400
+        Tue, 21 Aug 2018 05:51:29 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AB8AF7F6;
-        Tue, 21 Aug 2018 06:32:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E41407F6;
+        Tue, 21 Aug 2018 06:32:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 12/25] ALSA: cs5535audio: Fix invalid endian conversion
-Date:   Tue, 21 Aug 2018 08:21:26 +0200
-Message-Id: <20180821055125.555305749@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 13/25] ALSA: hda: Correct Asrock B85M-ITX power_save blacklist entry
+Date:   Tue, 21 Aug 2018 08:21:27 +0200
+Message-Id: <20180821055125.589498244@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055124.909865464@linuxfoundation.org>
 References: <20180821055124.909865464@linuxfoundation.org>
@@ -49,53 +50,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 69756930f2de0457d51db7d505a1e4f40e9fd116 upstream.
+commit 8e82a728792bf66b9f0a29c9d4c4b0630f7b9c79 upstream.
 
-One place in cs5535audio_build_dma_packets() does an extra conversion
-via cpu_to_le32(); namely jmpprd_addr is passed to setup_prd() ops,
-which writes the value via cs_writel().  That is, the callback does
-the conversion by itself, and we don't need to convert beforehand.
+I added the subsys product-id for the HDMI HDA device rather then for
+the PCH one, this commit fixes this.
 
-This patch fixes that bogus conversion.
-
-Cc: <stable@vger.kernel.org>
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1525104
+Cc: stable@vger.kernel.org
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/cs5535audio/cs5535audio.h     |    6 +++---
- sound/pci/cs5535audio/cs5535audio_pcm.c |    4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ sound/pci/hda/hda_intel.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/cs5535audio/cs5535audio.h
-+++ b/sound/pci/cs5535audio/cs5535audio.h
-@@ -66,9 +66,9 @@ struct cs5535audio_dma_ops {
- };
- 
- struct cs5535audio_dma_desc {
--	u32 addr;
--	u16 size;
--	u16 ctlreserved;
-+	__le32 addr;
-+	__le16 size;
-+	__le16 ctlreserved;
- };
- 
- struct cs5535audio_dma {
---- a/sound/pci/cs5535audio/cs5535audio_pcm.c
-+++ b/sound/pci/cs5535audio/cs5535audio_pcm.c
-@@ -158,8 +158,8 @@ static int cs5535audio_build_dma_packets
- 	lastdesc->addr = cpu_to_le32((u32) dma->desc_buf.addr);
- 	lastdesc->size = 0;
- 	lastdesc->ctlreserved = cpu_to_le16(PRD_JMP);
--	jmpprd_addr = cpu_to_le32(lastdesc->addr +
--				  (sizeof(struct cs5535audio_dma_desc)*periods));
-+	jmpprd_addr = (u32)dma->desc_buf.addr +
-+		sizeof(struct cs5535audio_dma_desc) * periods;
- 
- 	dma->substream = substream;
- 	dma->period_bytes = period_bytes;
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2058,7 +2058,7 @@ out_free:
+  */
+ static struct snd_pci_quirk power_save_blacklist[] = {
+ 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
+-	SND_PCI_QUIRK(0x1849, 0x0c0c, "Asrock B85M-ITX", 0),
++	SND_PCI_QUIRK(0x1849, 0xc892, "Asrock B85M-ITX", 0),
+ 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
+ 	SND_PCI_QUIRK(0x1043, 0x8733, "Asus Prime X370-Pro", 0),
+ 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1572975 */
 
 
