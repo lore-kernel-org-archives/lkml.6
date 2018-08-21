@@ -2,134 +2,120 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3071C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 15:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FA9C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 15:34:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EACA2177A
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 15:34:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EACA2177A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E54721570
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 15:34:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E54721570
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727863AbeHUSym (ORCPT
+        id S1727874AbeHUSzX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 14:54:42 -0400
-Received: from bastet.se.axis.com ([195.60.68.11]:53198 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727767AbeHUSym (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 14:54:42 -0400
-X-Greylist: delayed 519 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Aug 2018 14:54:39 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id C9B0A1832D;
-        Tue, 21 Aug 2018 17:25:24 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id f1nvzc7nlPLy; Tue, 21 Aug 2018 17:25:24 +0200 (CEST)
-Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
-        by bastet.se.axis.com (Postfix) with ESMTPS id F28FE180D2;
-        Tue, 21 Aug 2018 17:25:23 +0200 (CEST)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 989291E08A;
-        Tue, 21 Aug 2018 17:25:23 +0200 (CEST)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8CB1E1E089;
-        Tue, 21 Aug 2018 17:25:23 +0200 (CEST)
-Received: from seth.se.axis.com (unknown [10.0.2.172])
-        by boulder03.se.axis.com (Postfix) with ESMTP;
-        Tue, 21 Aug 2018 17:25:23 +0200 (CEST)
-Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
-        by seth.se.axis.com (Postfix) with ESMTP id 7F7F716B2;
-        Tue, 21 Aug 2018 17:25:23 +0200 (CEST)
-Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
-        id 717018016D; Tue, 21 Aug 2018 17:25:23 +0200 (CEST)
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     mingo@kernel.org, tglx@linutronix.de
-Cc:     oleg@redhat.com, linux-kernel@vger.kernel.org, tj@kernel.org,
-        jiangshanlai@gmail.com, Vincent Whitchurch <rabinv@axis.com>
-Subject: [PATCH] watchdog: Mark watchdog touch functions as notrace
-Date:   Tue, 21 Aug 2018 17:25:07 +0200
-Message-Id: <20180821152507.18313-1-vincent.whitchurch@axis.com>
-X-Mailer: git-send-email 2.11.0
-X-TM-AS-GCONF: 00
+        Tue, 21 Aug 2018 14:55:23 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51198 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727747AbeHUSzX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 14:55:23 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0ABFA7A9;
+        Tue, 21 Aug 2018 08:34:46 -0700 (PDT)
+Received: from [10.4.13.119] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DA72C3F5BC;
+        Tue, 21 Aug 2018 08:34:44 -0700 (PDT)
+Subject: Re: bisected - arm64 kvm unit test failures
+To:     Mike Galbraith <efault@gmx.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+References: <20180727215710.zq6gkoqzlb4ca7qv@linutronix.de>
+ <1532768831.9882.71.camel@gmx.de> <1532847330.1618.8.camel@gmx.de>
+ <1532864867.1618.32.camel@gmx.de> <1532967899.30205.62.camel@gmx.de>
+ <1533061729.12487.26.camel@gmx.de>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <c96d252c-6ed7-320e-0d47-c4b78af20ce0@arm.com>
+Date:   Tue, 21 Aug 2018 16:34:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1533061729.12487.26.camel@gmx.de>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some architectures need to use stop_machine() to patch functions for
-ftrace, and the assumption is that the stopped CPUs do not make function
-calls to traceable functions when they are in the stopped state.
+Hi Mike,
 
-Commit ce4f06dcbb5d ("stop_machine: Touch_nmi_watchdog() after
-MULTI_STOP_PREPARE") added calls to the watchdog touch functions from
-the stopped CPUs and those functions lack notrace annotations.  This
-leads to crashes when enabling/disabling ftrace on ARM kernels built
-with the Thumb-2 instruction set.
+On 31/07/18 19:28, Mike Galbraith wrote:
+> On Mon, 2018-07-30 at 18:24 +0200, Mike Galbraith wrote:
+>> On Sun, 2018-07-29 at 13:47 +0200, Mike Galbraith wrote:
+>>> FYI, per kvm unit tests, 4.16-rt definitely has more kvm issues.
+> 
+> But it's not RT, or rather most of it isn't...
+> 
+>>> huawei5:/abuild/mike/kvm-unit-tests # uname -r
+>>> 4.16.18-rt11-rt
+>>> huawei5:/abuild/mike/kvm-unit-tests # ./run_tests.sh
+>>> PASS selftest-setup (2 tests)
+>>> FAIL selftest-vectors-kernel 
+>>> FAIL selftest-vectors-user 
+>>> PASS selftest-smp (65 tests)
+>>> PASS pci-test (1 tests)
+>>> PASS pmu (3 tests)
+>>> FAIL gicv2-ipi 
+>>> FAIL gicv3-ipi 
+>>> FAIL gicv2-active 
+>>> FAIL gicv3-active 
+>>> PASS psci (4 tests)
+>>> FAIL timer 
+>>> huawei5:/abuild/mike/kvm-unit-tests #
+>>>
+>>> 4.14-rt passes all tests.  The above is with the kvm raw_spinlock_t
+>>> conversion patch applied, but the 4.12 based SLERT tree I cloned to
+>>> explore arm-land in the first place shows only one timer failure, and
+>>> has/needs it applied as well, which would seem to vindicate it.
+>>>
+>>> huawei5:/abuild/mike/kvm-unit-tests # uname -r
+>>> 4.12.14-0.gec0b559-rt
+>>> huawei5:/abuild/mike/kvm-unit-tests # ./run_tests.sh
+>>> PASS selftest-setup (2 tests)
+>>> PASS selftest-vectors-kernel (2 tests)
+>>> PASS selftest-vectors-user (2 tests)
+>>> PASS selftest-smp (65 tests)
+>>> PASS pci-test (1 tests)
+>>> PASS pmu (3 tests)
+>>> PASS gicv2-ipi (3 tests)
+>>> PASS gicv3-ipi (3 tests)
+>>> PASS gicv2-active (1 tests)
+>>> PASS gicv3-active (1 tests)
+>>> PASS psci (4 tests)
+>>> FAIL timer (8 tests, 1 unexpected failures)
+>>
+>> FWIW, this single timer failure wass inspired by something in the 4-15
+>> merge window.
+> 
+> As noted, the single timer failure is an RT issue of some sort, and
+> remains.  The rest I bisected in @stable with the attached config, and
+> confirmed that revert fixes up 4.16-rt as well (modulo singleton).
 
-Fix it by adding the necessary notrace annotations.
+Could you give that patchlet[1] a go? It solves a similar issue for me
+on a different platform.
 
-Fixes: ce4f06dcbb5d ("stop_machine: Touch_nmi_watchdog() after MULTI_STOP_PREPARE")
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
----
- kernel/watchdog.c     | 4 ++--
- kernel/watchdog_hld.c | 2 +-
- kernel/workqueue.c    | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+Thanks,
 
-diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index 5470dce212c0..977918d5d350 100644
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -261,7 +261,7 @@ static void __touch_watchdog(void)
-  * entering idle state.  This should only be used for scheduler events.
-  * Use touch_softlockup_watchdog() for everything else.
-  */
--void touch_softlockup_watchdog_sched(void)
-+notrace void touch_softlockup_watchdog_sched(void)
- {
- 	/*
- 	 * Preemption can be enabled.  It doesn't matter which CPU's timestamp
-@@ -270,7 +270,7 @@ void touch_softlockup_watchdog_sched(void)
- 	raw_cpu_write(watchdog_touch_ts, 0);
- }
- 
--void touch_softlockup_watchdog(void)
-+notrace void touch_softlockup_watchdog(void)
- {
- 	touch_softlockup_watchdog_sched();
- 	wq_watchdog_touch(raw_smp_processor_id());
-diff --git a/kernel/watchdog_hld.c b/kernel/watchdog_hld.c
-index 1f7020d65d0a..71381168dede 100644
---- a/kernel/watchdog_hld.c
-+++ b/kernel/watchdog_hld.c
-@@ -29,7 +29,7 @@ static struct cpumask dead_events_mask;
- static unsigned long hardlockup_allcpu_dumped;
- static atomic_t watchdog_cpus = ATOMIC_INIT(0);
- 
--void arch_touch_nmi_watchdog(void)
-+notrace void arch_touch_nmi_watchdog(void)
- {
- 	/*
- 	 * Using __raw here because some code paths have
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 78b192071ef7..5f78c6e41796 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -5559,7 +5559,7 @@ static void wq_watchdog_timer_fn(struct timer_list *unused)
- 	mod_timer(&wq_watchdog_timer, jiffies + thresh);
- }
- 
--void wq_watchdog_touch(int cpu)
-+notrace void wq_watchdog_touch(int cpu)
- {
- 	if (cpu >= 0)
- 		per_cpu(wq_watchdog_touched_cpu, cpu) = jiffies;
+	M.
+
+[1] https://lists.cs.columbia.edu/pipermail/kvmarm/2018-August/032469.html
 -- 
-2.11.0
-
+Jazz is not dead. It just smells funny...
