@@ -2,223 +2,176 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36939C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:38:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F20C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:43:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6E87214C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:38:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6E87214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 916AC2184F
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:43:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="px/qadGi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 916AC2184F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbeHUWAJ (ORCPT
+        id S1727400AbeHUWE0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 18:00:09 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:40337 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbeHUWAJ (ORCPT
+        Tue, 21 Aug 2018 18:04:26 -0400
+Received: from twosheds.infradead.org ([90.155.92.209]:49432 "EHLO
+        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbeHUWE0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 18:00:09 -0400
-Received: by mail-ua1-f66.google.com with SMTP id m13-v6so12437682uaq.7;
-        Tue, 21 Aug 2018 11:38:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lOdOp37y3yQdJEjVEjS2WLlY5EeYEgpAbpcUNH75lqs=;
-        b=OdOpumXVjNHA95ItsyMnnkpgAgfHeXpvCPJgHHO/GvTR4OQPBwm9cgmzD0Ou09WY2e
-         7H+IEV0WxkHWUdFpVic3IcHfIjv9AAf3ZpYePrXEoBnGGwJUfgPzF0FjgiB7xKlUAedj
-         mik0fCKmcyQuM0fAKhdrOYLynseWZTU/QEXuwkTnao1UC0dot1gJv9hKcgcxbxSNbtFk
-         WFPZFJ8764i5mgqo/WEf54wbE0CQ0TOhgZbs9Drjt51m2YMFPmi1TxXYhoXFVMbA6Ibb
-         kxHjW6KKFWiuS/9DvbbtNQQKO7/w4i2Uq4r744vDRtn/7NTtxCspT0WCsStlH3CY1PJN
-         m7WA==
-X-Gm-Message-State: AOUpUlH9uq9s70f3EWXM4MYxQECTYZEsdKzBI5BP21/nDC7Km8L3Ux0B
-        QlSnP04/E8L9RX4BfGuQENnm+K8VvBOqAel9W/o=
-X-Google-Smtp-Source: AA+uWPzqDNyVIxLMEMpJUBsrXht5afx6fjg1ka6lICiY+YNOROs1e8N4QLyEX/IDbP4kQgRenFnOC6XnPZmmkRHfdLU=
-X-Received: by 2002:ab0:48a4:: with SMTP id x33-v6mr34111901uac.138.1534876731461;
- Tue, 21 Aug 2018 11:38:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180813220011.D03DE21C8F@pdx-korg-gitolite-1.ci.codeaurora.org>
-In-Reply-To: <20180813220011.D03DE21C8F@pdx-korg-gitolite-1.ci.codeaurora.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 21 Aug 2018 20:38:39 +0200
-Message-ID: <CAMuHMdVg868LgL5xTg5Dp5rReKxoo+8fRy+ETJiMxGWZCp+hWw@mail.gmail.com>
-Subject: WARNING: CPU: 0 PID: 14 at kernel/kthread.c:501 kthread_park+0x44/0xa4
- (was: Re: kthread: Simplify kthread_park() completion)
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 21 Aug 2018 18:04:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=twosheds.20170209; h=Mime-Version:Date:Content-Type:
+        References:In-Reply-To:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hfp1PgJxl47mst4VH3G6mBVk64BGor1dSfeveX8LALA=; b=px/qadGiADET+5wGTzrYu6gCW
+        q3cILOuniVeqerikfskAafcGlCTiNqlEIjUluEaJ7rn/g4kUGzeDsUAVtuw5b6GlnVFPGksqfBeNC
+        q/CG3Oc3fxC+GrUr01iiE5+jYO4XynXkBVvWkqFbUcyLWNPvVHh8jFiaIuVmvRdUGvTV7sdogiyw3
+        mfIfqUDOqalDGUE2GpTCWJCZ0GRUv4zCvBmkJZKweannOIqGh3fOAMesG9LSTC/zLTjKKdC+Zj3jN
+        Esdcttz0iZgE5LYHD0mrzPf4L33DQhwHx0Wd8S4FKi2mXL9JvajhSo/gQrT03/SUckgJKj+b6lYJ9
+        7jj2QSiPg==;
+Received: from [2001:8b0:10b:1::2fb]
+        by twosheds.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fsBcL-005JMq-G1; Tue, 21 Aug 2018 18:43:01 +0000
+Message-ID: <1534876981.7459.1.camel@infradead.org>
+Subject: Re: [BUG] madvise05 leads kernel panic on 4.9.122
+From:   David Woodhouse <dwmw2@infradead.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>, gregkh@linuxfoundation.org,
+        ak@linux.intel.com, tglx@linutronix.de, dave.hansen@intel.com
+Cc:     stable@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <b205fec4-a1ed-dd44-7ba4-7b78f7429689@linux.alibaba.com>
+References: <b205fec4-a1ed-dd44-7ba4-7b78f7429689@linux.alibaba.com>
+Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-zS8WtgcScvcxh5sHoy4t"
+Date:   Tue, 21 Aug 2018 19:43:01 +0100
+Mime-Version: 1.0
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hoi Peter,
 
-On Tue, Aug 14, 2018 at 12:00 AM Linux Kernel Mailing List
-<linux-kernel@vger.kernel.org> wrote:
-> Web:        https://git.kernel.org/torvalds/c/f83ee19be4272564ad592ef90145db7295229490
-> Commit:     f83ee19be4272564ad592ef90145db7295229490
-> Parent:     167a88677b05d6a810f23b871cfb2b5db1808e60
-> Refname:    refs/heads/master
-> Author:     Peter Zijlstra <peterz@infradead.org>
-> AuthorDate: Thu Jun 7 10:55:56 2018 +0200
-> Committer:  Ingo Molnar <mingo@kernel.org>
-> CommitDate: Tue Jul 3 09:20:44 2018 +0200
->
->     kthread: Simplify kthread_park() completion
->
->     Oleg explains the reason we could hit park+park is that
->     smpboot_update_cpumask_percpu_thread()'s
->
->       for_each_cpu_and(cpu, &tmp, cpu_online_mask)
->             smpboot_park_kthread();
->
->     turns into:
->
->       for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask, (void)and)
->             smpboot_park_kthread();
->
->     on UP, ignoring the mask. But since we just completely removed that
->     function, this is no longer relevant.
->
->     So revert commit:
->
->       b1f5b378e126 ("kthread: Allow kthread_park() on a parked kthread")
->
->     Suggested-by: Oleg Nesterov <oleg@redhat.com>
->     Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->     Cc: Linus Torvalds <torvalds@linux-foundation.org>
->     Cc: Peter Zijlstra <peterz@infradead.org>
->     Cc: Thomas Gleixner <tglx@linutronix.de>
->     Cc: linux-kernel@vger.kernel.org
->     Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> ---
->  kernel/kthread.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/kthread.c b/kernel/kthread.c
-> index 750cb8082694..11b591ee51ab 100644
-> --- a/kernel/kthread.c
-> +++ b/kernel/kthread.c
-> @@ -190,7 +190,7 @@ static void __kthread_parkme(struct kthread *self)
->                 if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
->                         break;
->
-> -               complete_all(&self->parked);
-> +               complete(&self->parked);
->                 schedule();
->         }
->         __set_current_state(TASK_RUNNING);
-> @@ -465,7 +465,6 @@ void kthread_unpark(struct task_struct *k)
->         if (test_bit(KTHREAD_IS_PER_CPU, &kthread->flags))
->                 __kthread_bind(k, kthread->cpu, TASK_PARKED);
->
-> -       reinit_completion(&kthread->parked);
->         clear_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
->         /*
->          * __kthread_parkme() will either see !SHOULD_PARK or get the wakeup.
-> @@ -493,6 +492,9 @@ int kthread_park(struct task_struct *k)
->         if (WARN_ON(k->flags & PF_EXITING))
->                 return -ENOSYS;
->
-> +       if (WARN_ON_ONCE(test_bit(KTHREAD_SHOULD_PARK, &kthread->flags)))
-> +               return -EBUSY;
-> +
->         set_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
->         if (k != current) {
->                 wake_up_process(k);
+--=-zS8WtgcScvcxh5sHoy4t
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The above WARN_ON_ONCE() triggers during psci_checker operation when booting
-on R-Car Gen3 (arm64) SoCs where a trusted OS is resident on CPU0.
+On Tue, 2018-08-21 at 11:37 -0700, Yang Shi wrote:
+>=20
+> I just ran some regression test on stable 4.9.122 with LTP. madvise05=C2=
+=A0
+> triggers the below kernel panic:
 
-Reverting the commit fixes the issue.
+Please could you try 4.9.123-rc1, specifically this commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git/=
+commit/?h=3Dlinux-4.9.y&id=3D64fc89a2702e0e70e34ced0a270ef556242d5f26
+--=-zS8WtgcScvcxh5sHoy4t
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-Dmesg before/after on R-Car H3 ES2.0:
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
+ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
+NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
+hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
+5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
+3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
+3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
+5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
+ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
+AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
+AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
+UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
+aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
+SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
+BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
+QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
+XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
+TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
+7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
+PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
+hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
+MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
+TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
+MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
+YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
+xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
+5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
+Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
+kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
+tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
+HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
+RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
+Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
+BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
+bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
+hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
+HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
+w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
+WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
+U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
+EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
+DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
+A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
+nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
+xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
+jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
+4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
+7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
+HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
+Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
+BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
+DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
+7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
+4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
+Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
+vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
+ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
+uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
+mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
+N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
+px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
+U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA4MjExODQzMDFaMC8GCSqG
+SIb3DQEJBDEiBCDSWbUWt5RpvCKZpmevf/4VojsAoOqu4MrnZYMcMPphODCBvQYJKwYBBAGCNxAE
+MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
+jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAIMpQqijzeI/
+41BIPy3FNY0nnNV29iTTDubX/bmJSX5nVVeR7m4/bT5+sQRTo7Lro+9SxD4K42zyjJxLDnf7vN7n
+oCVfLvmJ8ZB0OTfdd4383f9IhJu16w9jIrCmO1SSBlEQ+iBcRfoP+qmorYiUxuPagffyieI3v0NZ
+4JSU0/mhaEoQOC67/SekAvxZLJ3D9iA5DTNHvZQHsDQGUt07FauRGsy7VabBcuTZXIYXZfGAXJUF
+DL9JFA1sk5gbHOrV2y4bho4lcZ6MLD++DD2W68GLCflY6CWg801PdM7ilncKafBWKwtJK6hTgX8q
+jvJhEpCzq2yay8FRGPqa8XwuSggAAAAAAAA=
 
- psci: probing for conduit method from DT.
- psci: PSCIv1.0 detected in firmware.
- psci: Using standard PSCI v0.2 function IDs
- psci: Trusted OS resident on physical CPU 0x0
- psci: SMC Calling Convention v1.0
- ...
- psci_checker: Trying to turn off and on again group 0 (CPUs 0-3)
-+WARNING: CPU: 0 PID: 14 at kernel/kthread.c:501 kthread_park+0x44/0xa4
-+Modules linked in:
-+CPU: 0 PID: 14 Comm: cpuhp/0 Not tainted
-4.18.0-salvator-x-00407-gbc763e81b483a4e3 #170
-+Hardware name: Renesas Salvator-X 2nd version board based on r8a7795
-ES2.0+ (DT)
-+pstate: 80400005 (Nzcv daif +PAN -UAO)
-+pc : kthread_park+0x44/0xa4
-+lr : smpboot_park_threads+0x88/0x94
-+sp : ffffff8009dcbca0
-+x29: ffffff8009dcbca0 x28: ffffff80081156cc
-+x27: ffffff800900e000 x26: 00000046f7027000
-+x25: ffffff8008e9cfc0 x24: ffffffc6ffec3fc0
-+x23: ffffff80090305b8 x22: 0000000000000000
-+x21: ffffffc6fb8ab200 x20: 0000000000000001
-+x19: ffffff80090269e8 x18: ffffffc6fb897348
-+x17: 0000000000000000 x16: 0000000000000000
-+x15: 0000000000000400 x14: 0000000000000400
-+x13: 0000000000000400 x12: 0000000000000001
-+x11: 0000000000000400 x10: 0000000000000400
-+x9 : 0000000000000125 x8 : 0000000000000000
-+x7 : ffffff80081156f8 x6 : 0000000000000001
-+x5 : 0000000000000000 x4 : ffffff8009804b40
-+x3 : 000000007cbd3c4e x2 : 38716e04a5aa3600
-+x1 : 0000000004208040 x0 : ffffffc6fb95c240
-+Call trace:
-+ kthread_park+0x44/0xa4
-+ smpboot_park_threads+0x88/0x94
-+ cpuhp_invoke_callback+0x230/0xcfc
-+ cpuhp_thread_fun+0xb8/0x1d8
-+ smpboot_thread_fn+0x228/0x244
-+ kthread+0x124/0x134
-+ ret_from_fork+0x10/0x18
-+irq event stamp: 3390
-+hardirqs last  enabled at (3389): [<ffffff800818729c>]
-generic_exec_single+0x80/0x11c
-+hardirqs last disabled at (3390): [<ffffff80080818cc>]
-do_debug_exception+0x5c/0x17c
-+softirqs last  enabled at (1810): [<ffffff8008081da8>] __do_softirq+0x160/0x4ec
-+softirqs last disabled at (1795): [<ffffff80080ed460>] irq_exit+0xa4/0x100
-+---[ end trace 518ee2fb840813cb ]---
- CPU1: shutdown
- psci: CPU1 killed.
--NOHZ: local_softirq_pending 51
-+NOHZ: local_softirq_pending 55
- CPU2: shutdown
- psci: CPU2 killed.
- NOHZ: local_softirq_pending 51
- CPU3: shutdown
- psci: CPU3 killed.
- Detected PIPT I-cache on CPU1
- CPU1: Booted secondary processor 0x0000000001 [0x411fd073]
- Detected PIPT I-cache on CPU2
- CPU2: Booted secondary processor 0x0000000002 [0x411fd073]
- Detected PIPT I-cache on CPU3
- CPU3: Booted secondary processor 0x0000000003 [0x411fd073]
 
-The issue can also be seen on R-Car M3-W and M3-N.
-It does not happen on R-Car H3 ES1.0 with an older firmware version, where
-no trusted OS is running on CPU0 ("psci: Trusted OS migration not required").
+--=-zS8WtgcScvcxh5sHoy4t--
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
