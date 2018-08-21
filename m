@@ -2,137 +2,173 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E015DC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0ACEC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:17:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 908E4217DF
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:09:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JQYVKfTs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 908E4217DF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 92021217DF
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:17:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92021217DF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbeHUWa4 (ORCPT
+        id S1727522AbeHUWiw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 18:30:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41150 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727329AbeHUWa4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 18:30:56 -0400
-Received: from mail-qt0-f171.google.com (mail-qt0-f171.google.com [209.85.216.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB1082183B;
-        Tue, 21 Aug 2018 19:09:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534878572;
-        bh=TLOTLjFsl2P1EjphIo2lPqxbn1A897ahEznjMY67l2s=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=JQYVKfTsQ0eSgf1jCq5Het9dI7nrMf9VzNWQlx3pk3KNZC1KvvDfQN52mzZdxr8VR
-         A8xMqolliQD6pV5tMvYXzQRSA+d83WUeXsS3NOPuXhZGRiyZrjWZWZqAxvjOkZciGK
-         NI8AWakXQppjwBIaR3wfrcJGdVPxLKz2/COGJ2xc=
-Received: by mail-qt0-f171.google.com with SMTP id t5-v6so21525822qtn.3;
-        Tue, 21 Aug 2018 12:09:32 -0700 (PDT)
-X-Gm-Message-State: AOUpUlF5aDXL+c7Dfk86xGhGhUwDeREeg8KrWE1vh4Xhb3RE7VhNW55t
-        k4KVBwszPk7nKG9hhBGZRCkNGYk2SGM9sHPGSA==
-X-Google-Smtp-Source: AA+uWPweJYWpu8bbmxBysAJJyNjUdVsY7Zi5JTd3/4mGX0xGGQfGPG7wH/a3sDyh4Vns3xZ/M3HuDqAt1Rran5bj198=
-X-Received: by 2002:aed:2aa1:: with SMTP id t30-v6mr10948764qtd.101.1534878571851;
- Tue, 21 Aug 2018 12:09:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <1534843809-4137-1-git-send-email-yamada.masahiro@socionext.com>
- <1534843809-4137-2-git-send-email-yamada.masahiro@socionext.com> <CAK7LNASr=rf_foQ7PDTNS440rx3TLuY_TBagfQ-gCHxXpFB2vw@mail.gmail.com>
-In-Reply-To: <CAK7LNASr=rf_foQ7PDTNS440rx3TLuY_TBagfQ-gCHxXpFB2vw@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 21 Aug 2018 14:09:20 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJwXKx3MKE-8GuHqnJZ-047GxhHUB5LpW3O8j58OsAKuA@mail.gmail.com>
-Message-ID: <CAL_JsqJwXKx3MKE-8GuHqnJZ-047GxhHUB5LpW3O8j58OsAKuA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: dmaengine: add DT binding for UniPhier
- MIO DMAC
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Vinod <vkoul@kernel.org>,
-        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
-        <dmaengine@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 21 Aug 2018 18:38:52 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53652 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726810AbeHUWiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 18:38:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDD1280D;
+        Tue, 21 Aug 2018 12:17:27 -0700 (PDT)
+Received: from dupont (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C22D33F5A0;
+        Tue, 21 Aug 2018 12:17:26 -0700 (PDT)
+Date:   Tue, 21 Aug 2018 14:17:25 -0500
+From:   Kim Phillips <kim.phillips@arm.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     "Suzuki K. Poulose" <suzuki.poulose@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, ast@kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, suzuki.poulosi@arm.com,
+        linux-s390@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 0/7] perf: Add ioctl for PMU driver configuration
+Message-Id: <20180821141725.e593a1c7fc0d7dcecaef74d0@arm.com>
+In-Reply-To: <CANLsYkzvEfaoHVLTiUiYAV++O2ZJ1YBzyRMwJLtz_v1=h1uX-g@mail.gmail.com>
+References: <1531950487-24554-1-git-send-email-mathieu.poirier@linaro.org>
+        <20180813124642.3d49c082a95fc294d926016e@arm.com>
+        <CANLsYkx=tjCG-eb4qRoGz0SvG4qCMDz1ajR9Mo9VK5XTAn_WdQ@mail.gmail.com>
+        <20180814120910.ed225bbc462c58b09e5d68de@arm.com>
+        <CANLsYkxZ_Wts6k9yqJhJf_R5oh74svpcuoNxhtFf6h3mz8U4ZA@mail.gmail.com>
+        <20180815093912.GE2427@arm.com>
+        <20180815102820.3520d0c3875d2fd82300cdef@arm.com>
+        <CANLsYkz0j79+1C-Amz=3+7zw-0VZhnZ+rp5WAjHduEp+WjFs8A@mail.gmail.com>
+        <18fe78a3-9a58-cecd-ddb9-d46cbc473b95@arm.com>
+        <20180820092252.32dd015afcc5cbf2fe4c7ab7@arm.com>
+        <a2edfae3-302e-bbc7-0563-337186fc2919@arm.com>
+        <CANLsYkzvEfaoHVLTiUiYAV++O2ZJ1YBzyRMwJLtz_v1=h1uX-g@mail.gmail.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 4:48 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> (+CC Rob, DT, LKML)
->
-> I forgot to CC this to DT community...
+On Tue, 21 Aug 2018 11:16:49 -0600
+Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
 
-You really need to resend so that patchwork will pick it up and I'll
-see it for sure.
+> On Mon, 20 Aug 2018 at 08:36, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+> >
+> > On 08/20/2018 03:22 PM, Kim Phillips wrote:
+> > > On Mon, 20 Aug 2018 11:03:03 +0100
+> > > Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+> > >
+> > >> On 08/16/2018 08:28 PM, Mathieu Poirier wrote:
+> > >>> On Wed, 15 Aug 2018 at 09:28, Kim Phillips <kim.phillips@arm.com> wrote:
+> > >>>>
+> > >>>> On Wed, 15 Aug 2018 10:39:13 +0100
+> > >>>> Will Deacon <will.deacon@arm.com> wrote:
+> > >>>>
+> > >>>>> On Tue, Aug 14, 2018 at 01:42:27PM -0600, Mathieu Poirier wrote:
+> > >>>>>> On Tue, 14 Aug 2018 at 11:09, Kim Phillips <kim.phillips@arm.com> wrote:
+> > >>>>>>> The other thing that's going on here is that I'm becoming numb to the
+> > >>>>>>> loathsome "failed to mmap with 12 (Cannot allocate memory)" being
+> > >>>>>>> returned no matter what the error is/was. E.g., an error that would
+> > >>>>>>> indicate a sense of non-implementation would be much better
+> > >>>>>>> appreciated than presumably what the above is doing, i.e., returning
+> > >>>>>>> -ENOMEM.  That, backed up with specific details in the form of human
+> > >>>>>>> readable text in dmesg would be *most* welcome.
+> > >>>>>>
+> > >>>>>> As part of the refactoring of the code to support CPU-wide scenarios I
+> > >>>>>> intend to emit better diagnostic messages from the driver.  Modifying
+> > >>>>>> rb_alloc_aux() to propagate the error message generated by the
+> > >>>>>> architecture specific PMUs doesn't look hard either and I _may_ get to
+> > >>>>>> it as part of this work.
+> > >>>>>
+> > >>>>> For the record, I will continue to oppose PMU drivers that dump diagnostics
+> > >>>>> about user-controlled input into dmesg, but the coresight drivers are yours
+> > >>>>> so it's up to you and I won't get in the way!
+> > >>>>
+> > >>>> That sounds technically self-contradicting to me.  Why shouldn't
+> > >>>> coresight share the same policies as those used for PMU drivers?  Or
+> > >>>> why not allow the individual vendor PMU driver authors control the
+> > >>>> level of user-friendliness of their own drivers?
+> > >>>>
+> > >>>> That being said, Matheiu, would you accept patches that make coresight
+> > >>>> more verbose in dmesg?
+> > >>>
+> > >>> It depends on the issue you're hoping to address.  I'd rather see the
+> > >>> root cause of the problem fixed than adding temporary code.  Suzuki
+> > >>> added the ETR perf API and I'm currently working on CPU-wide
+> > >>> scenarios.  From there and with regards to what can happen in
+> > >>> setup_aux(), we should have things covered.
+> > >>
+> > >> I think the main issue is the lack of error code propagation from
+> > >> setup_aux() back to the perf_aux_output_handle_begin(), which always
+> > >> return -ENOMEM. If we fix that, we could get better idea of whats
+> > >> wrong.
+> > >
+> > > Why get a better idea when we can get the exact details?
+> >
+> > The different values for error numbers are there for a reason...
+> >
+> > >
+> > >> If someone is planning to add verbose messages, they may do so by adding
+> > >> dev_dbg() / pr_debug(), which can be turned on as and when needed.
+> > >
+> > > I disagree:  that just adds another usage and kernel configuration
+> > > obstacle.  Why not use pr_err straight up?
+> 
+> I think everything on this topic has been said already.  As I remarked
 
->
->
-> 2018-08-21 18:30 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> > The MIO DMAC (Media IO DMA Controller) is used in UniPhier LD4,
-> > Pro4, and sLD8 SoCs.
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > ---
-> >
-> >  .../devicetree/bindings/dma/uniphier-mio-dmac.txt  | 28 ++++++++++++++++++++++
-> >  1 file changed, 28 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/dma/uniphier-mio-dmac.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/dma/uniphier-mio-dmac.txt b/Documentation/devicetree/bindings/dma/uniphier-mio-dmac.txt
-> > new file mode 100644
-> > index 0000000..a9e969e
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/dma/uniphier-mio-dmac.txt
-> > @@ -0,0 +1,28 @@
-> > +UniPhier Media IO DMA controller
-> > +
-> > +This works as an external DMA engine for SD/eMMC controllers etc.
-> > +found in UniPhier LD4, Pro4, sLD8 SoCs.
-> > +
-> > +Required properties:
-> > +- compatible: should be "socionext,uniphier-mio-dmac".
-> > +- reg: offset and length of the register set for the device.
-> > +- interrupts: a list of interrupt specifiers associated with the DMA channels.
-> > +- clocks: a single clock specifier
-> > +- #dma-cells: should be <1>. The single cell represents the channel number.
-> > +- dma-channels: specify the number of the DMA channels. This should match to
-> > +  the number of tuples in the interrupts property.
-> > +
-> > +Example:
-> > +       dmac: dmac@5a000000 {
+Apparently not :)
 
-dma-controller@...
+> earlier once I'm done with CPU-wide support we shouldn't need detailed
+> error reporting.  Everything should be handled via error code
+> propagation and that is what I'd like to see addressed in the first
+> place.  From there we can think about individual error cases as they
+> come up.
 
-> > +               compatible = "socionext,uniphier-mio-dmac";
-> > +               reg = <0x5a000000 0x1000>;
-> > +               interrupts = <0 68 4>, <0 68 4>, <0 69 4>, <0 70 4>,
-> > +                            <0 71 4>, <0 72 4>, <0 73 4>, <0 74 4>;
-> > +               clocks = <&mio_clk 7>;
-> > +               #dma-cells = <1>;
-> > +               dma-channels = <8>;
-> > +       };
-> > +
-> > +Note:
-> > +In the example above, "interrupts = <0 68 4>, <0 68 4>, ..." is not a typo.
-> > +The first two channels share a single interrupt line.
-> > --
-> > 2.7.4
-> >
->
->
->
-> --
-> Best Regards
-> Masahiro Yamada
+FYI, there are a lot of -EINVAL cases:
+
+$ git grep -- -EINVAL drivers/hwtracing/coresight/ | wc -l
+142
+
+> > I personally don't agree to usage of pr_err() in paths which are easily
+> > triggered from user input. Also, we are moving all the "debugging"
+> > messages to the dynamic debug, to prevent lockdep splats.
+> 
+> A slight correction here - we are moving most of the framework error
+> reporting to dynamic debug because they clog the log file and aren't
+> useful outside of a development context.  It is not a remedy for the
+
+I didn't see anyone complain about any 'clogging', and I sure don't
+mind seeing the extra messaging, esp. when using coresight in sysfs
+mode: it's reinforcement to the user that it's doing work.
+
+> negative interaction between event locking and console access
+> generated by the framework's reporting of device status as a path is
+> built/enabled/disabled.
+
+I'd like to see this splat from this 'negative interaction', and it be
+fixed before we allow code in that makes it silently go away...
+
+Kim
