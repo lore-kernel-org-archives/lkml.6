@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9A1C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE449C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EFD521774
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EFD521774
+	by mail.kernel.org (Postfix) with ESMTP id 806C821774
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 806C821774
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbeHUJmK (ORCPT
+        id S1727484AbeHUJmN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:42:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54850 "EHLO
+        Tue, 21 Aug 2018 05:42:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54858 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726472AbeHUJmK (ORCPT
+        with ESMTP id S1726472AbeHUJmN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:42:10 -0400
+        Tue, 21 Aug 2018 05:42:13 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA5519D7;
-        Tue, 21 Aug 2018 06:23:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 57B9F516;
+        Tue, 21 Aug 2018 06:23:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 34/35] net: mvneta: fix mvneta_config_rss on armada 3700
-Date:   Tue, 21 Aug 2018 08:21:00 +0200
-Message-Id: <20180821055021.418467416@linuxfoundation.org>
+        stable@vger.kernel.org, Movie Song <MovieSong@aten-itlab.cn>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.18 17/35] USB: serial: pl2303: add a new device id for ATEN
+Date:   Tue, 21 Aug 2018 08:20:43 +0200
+Message-Id: <20180821055020.765676687@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055019.954904905@linuxfoundation.org>
 References: <20180821055019.954904905@linuxfoundation.org>
@@ -52,79 +50,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+From: Movie Song <MovieSong@aten-itlab.cn>
 
-[ Upstream commit 0f5c6c30a0f8c629b92ecdaef61b315c43fde10a ]
+commit 29c692c96b3a39cd1911fb79cd2505af8d070f07 upstream.
 
-The mvneta Ethernet driver is used on a few different Marvell SoCs.
-Some SoCs have per cpu interrupts for Ethernet events, the driver uses
-a per CPU napi structure for this case. Some SoCs such as armada 3700
-have a single interrupt for Ethernet events, the driver uses a global
-napi structure for this case.
-
-Current mvneta_config_rss() always operates the per cpu napi structure.
-Fix it by operating a global napi for "single interrupt" case, and per
-cpu napi structure for remaining cases.
-
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Fixes: 2636ac3cc2b4 ("net: mvneta: Add network support for Armada 3700 SoC")
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Movie Song <MovieSong@aten-itlab.cn>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/marvell/mvneta.c |   35 +++++++++++++++++++++-------------
- 1 file changed, 22 insertions(+), 13 deletions(-)
 
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -4020,13 +4020,18 @@ static int  mvneta_config_rss(struct mvn
+---
+ drivers/usb/serial/pl2303.c |    2 ++
+ drivers/usb/serial/pl2303.h |    1 +
+ 2 files changed, 3 insertions(+)
+
+--- a/drivers/usb/serial/pl2303.c
++++ b/drivers/usb/serial/pl2303.c
+@@ -52,6 +52,8 @@ static const struct usb_device_id id_tab
+ 		.driver_info = PL2303_QUIRK_ENDPOINT_HACK },
+ 	{ USB_DEVICE(ATEN_VENDOR_ID, ATEN_PRODUCT_UC485),
+ 		.driver_info = PL2303_QUIRK_ENDPOINT_HACK },
++	{ USB_DEVICE(ATEN_VENDOR_ID, ATEN_PRODUCT_UC232B),
++		.driver_info = PL2303_QUIRK_ENDPOINT_HACK },
+ 	{ USB_DEVICE(ATEN_VENDOR_ID, ATEN_PRODUCT_ID2) },
+ 	{ USB_DEVICE(ATEN_VENDOR_ID2, ATEN_PRODUCT_ID) },
+ 	{ USB_DEVICE(ELCOM_VENDOR_ID, ELCOM_PRODUCT_ID) },
+--- a/drivers/usb/serial/pl2303.h
++++ b/drivers/usb/serial/pl2303.h
+@@ -24,6 +24,7 @@
+ #define ATEN_VENDOR_ID2		0x0547
+ #define ATEN_PRODUCT_ID		0x2008
+ #define ATEN_PRODUCT_UC485	0x2021
++#define ATEN_PRODUCT_UC232B	0x2022
+ #define ATEN_PRODUCT_ID2	0x2118
  
- 	on_each_cpu(mvneta_percpu_mask_interrupt, pp, true);
- 
--	/* We have to synchronise on the napi of each CPU */
--	for_each_online_cpu(cpu) {
--		struct mvneta_pcpu_port *pcpu_port =
--			per_cpu_ptr(pp->ports, cpu);
--
--		napi_synchronize(&pcpu_port->napi);
--		napi_disable(&pcpu_port->napi);
-+	if (!pp->neta_armada3700) {
-+		/* We have to synchronise on the napi of each CPU */
-+		for_each_online_cpu(cpu) {
-+			struct mvneta_pcpu_port *pcpu_port =
-+				per_cpu_ptr(pp->ports, cpu);
-+
-+			napi_synchronize(&pcpu_port->napi);
-+			napi_disable(&pcpu_port->napi);
-+		}
-+	} else {
-+		napi_synchronize(&pp->napi);
-+		napi_disable(&pp->napi);
- 	}
- 
- 	pp->rxq_def = pp->indir[0];
-@@ -4043,12 +4048,16 @@ static int  mvneta_config_rss(struct mvn
- 	mvneta_percpu_elect(pp);
- 	spin_unlock(&pp->lock);
- 
--	/* We have to synchronise on the napi of each CPU */
--	for_each_online_cpu(cpu) {
--		struct mvneta_pcpu_port *pcpu_port =
--			per_cpu_ptr(pp->ports, cpu);
--
--		napi_enable(&pcpu_port->napi);
-+	if (!pp->neta_armada3700) {
-+		/* We have to synchronise on the napi of each CPU */
-+		for_each_online_cpu(cpu) {
-+			struct mvneta_pcpu_port *pcpu_port =
-+				per_cpu_ptr(pp->ports, cpu);
-+
-+			napi_enable(&pcpu_port->napi);
-+		}
-+	} else {
-+		napi_enable(&pp->napi);
- 	}
- 
- 	netif_tx_start_all_queues(pp->dev);
+ #define IODATA_VENDOR_ID	0x04bb
 
 
