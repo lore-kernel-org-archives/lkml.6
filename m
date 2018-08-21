@@ -2,158 +2,316 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FDD0C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 21:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D4EC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 21:16:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93B6E217DF
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 21:15:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="U7aLtQsn";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="eMFHJA2P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93B6E217DF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id B2673217DF
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 21:16:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2673217DF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727618AbeHVAh2 (ORCPT
+        id S1727785AbeHVAiA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 20:37:28 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:34818 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726788AbeHVAh1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 20:37:27 -0400
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7LLD6iJ018017;
-        Tue, 21 Aug 2018 14:15:35 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=facebook; bh=oGdKo5I01ekMYjbUPJcFqjEHzojjnSraSHGyDTXcqP4=;
- b=U7aLtQsngTQNadH83jqF6Zg8iL35QkNqfz5Sy2xoxjmQoDVgm+G648aync8bYB60Jhlc
- LK8cAAZyqWrLZpd9KZDPakeq57LPlbEoSILXeGigPfbMYfBqBRxamG9B4CKsq2l5i7hf
- unKK58wNTDWnJTSD+DLerKZuVjLxNNB4AHM= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2m0ss9r4a9-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 21 Aug 2018 14:15:35 -0700
-Received: from NAM05-BY2-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.33) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Tue, 21 Aug 2018 17:15:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oGdKo5I01ekMYjbUPJcFqjEHzojjnSraSHGyDTXcqP4=;
- b=eMFHJA2PJM3goh5SwY0SWOmXrjZIAOLXJevoXLJh9w1rHRBPB7bl9xfSm1/bLfjU5uXzviNIrlDWTS2aH7Cpmoz73cfTILFW6iZ/ovzNpDFsh1ZanZvdUjimyvBF078iPoMxMVUKE7A9ECAGDndhBt2mJin2xFLVV7aopBbbHks=
-Received: from doronrk-mbp.dhcp.thefacebook.com (2620:10d:c090:200::4:3df0) by
- SN1PR15MB0479.namprd15.prod.outlook.com (2a01:111:e400:c422::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1038.23; Tue, 21 Aug
- 2018 21:15:30 +0000
-Date:   Tue, 21 Aug 2018 14:15:22 -0700
-From:   Doron Roberts-Kedes <doronrk@fb.com>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-CC:     Tom Herbert <tom@quantonium.net>, Dave Watson <davejwatson@fb.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] strparser: remove any offset before parsing messages
-Message-ID: <20180821211504.GA76892@doronrk-mbp.dhcp.thefacebook.com>
-References: <1533854411-28184-1-git-send-email-asmadeus@codewreck.org>
- <1534855906-22870-1-git-send-email-asmadeus@codewreck.org>
- <20180821145321.GA44710@doronrk-mbp>
- <20180821193655.GA15354@nautica>
+        Tue, 21 Aug 2018 20:38:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43114 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726788AbeHVAiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 20:38:00 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D8C0AAE62;
+        Tue, 21 Aug 2018 21:16:09 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Jeff Layton <jlayton@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 22 Aug 2018 07:15:59 +1000
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "linux-samsung-soc\@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [BUG][BISECT] NFSv4 root failures after "fs/locks: allow a lock request to block other requests."
+In-Reply-To: <99fd03d3002d03f86b0d8a5b1ad4a2015383545e.camel@kernel.org>
+References: <CAJKOXPc2cb1OK3tmRCO2p+docdXY=PoU1MEBa-VDyEM4mG1eSw@mail.gmail.com> <8acb99be800a1842278f754986a17d6fc93af409.camel@kernel.org> <87o9e2anwg.fsf@notabene.neil.brown.name> <87k1okpam2.fsf@notabene.neil.brown.name> <99fd03d3002d03f86b0d8a5b1ad4a2015383545e.camel@kernel.org>
+Message-ID: <87eferpgj4.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180821193655.GA15354@nautica>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [2620:10d:c090:200::4:3df0]
-X-ClientProxiedBy: MWHPR04CA0108.namprd04.prod.outlook.com
- (2603:10b6:301:3a::49) To SN1PR15MB0479.namprd15.prod.outlook.com
- (2a01:111:e400:c422::21)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: bfb57bae-b13e-4536-94ee-08d607ab39e3
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:SN1PR15MB0479;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0479;3:djIyY6mqSJ4XphuYgmgwfNHGQvjqwY+60kn4unUA3grhRYpH8N64QL8XUrJHqPopApQKMGnb+HsQaprGlq2VgVvboyZ9eVxLNly3N4PY5Rq3nKIKSSDsh+K5S91HxyogDUTC89Ru+DOzFxBjPBL1bBcUeYi8749RdTMUX3zayk9Bt93KxQ1UBGMRnedpH9wCteyuWS/FkxgNbkALE3EuxHiJInHHLqIFYX0kstPW/SCYTePIjPcIqkPkp272t32A;25:Gy7xNhilJ59G2YdPijgKyQ/G2N/zTOQNSOu2WVws4/YdrUkrCCN6p+9PGFisIjOAkbJWKW4PmY3crMnHlLKuSFMfTYOZP+rN4Xr9/Blc7ssP6Qadbg+uUto7rBfxHTHO6Ir0DK4uhdhRl1P7AXltfhAClZ0kfYpZ9X4wB4n3KDUPz1f6zE6bQX1AUCGmPtXr/T+CakOXgJsaTdapD3ZB2MGKlil47aovc0yfXXN7eOhSQvzotAM876R3vGVCpQze/YuU1cqW/u78kHy9LNsos94lLEsojRwxZ+IYh8IqKuGlcoiPMR41TY9htof1QeeSrqdUi+i8/YD7vs84WXgtvg==;31:MeSNFgRGhdvumrI9beQV+i0f6AzH4xdNuhYL/9zvY+Lf1F8ax/xy1BzSZA8/BvAvPgLEIQtJtUsjipGtjgzq7HxGvgRmEgloQm7DNkI5dtwkznjx7BEZmmyYOngDJpCFN2IJmcfZ2kwriY6qpW6AoGtAmBg2H5pubNM3j1cdO/WPsV4BtPhehVCvd9g6rEJmIC4rS9fl55ioL6lKbRhEvkerGT5ym+KpXmbpnh5gUEo=
-X-MS-TrafficTypeDiagnostic: SN1PR15MB0479:
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0479;20:DgH5u9uHexNj7/I8x8mZfTvZDisBK/ZGUEss60iq1m6w7W9EXYkBpUAz54lUGtyfEKVPtcrwJjUypgCh2zeUOFm+RFTnve8cd4hMyLne08ffmR8DDbMprfDgni8I7hThsjGELikrMuCk9MG1hPVW8g4kj+UTbAijzhWfY1Qi6choqRO4DmM3VFCAtrBKTNmPP7EvlCRSYTqVNM/U4mXjDq1aStRxICMdTbvPvg5l1d5e2amwy5bGUYdVbZ17JDDJytSTXWlveQMX1bLoAY1a0iFpsS9qifnuxt6coA9BC5TpFfpzqaiGkEGcaogOH9rQDyL95fo8oZ3gtHgvg5cjUnfyll2RrmkhlRfKo+U1l9f+OoSbHCQ2IFN/4F/xqRfKQBR75llYusQfAk3NISbSk4xfOLhwn0u25ca40FhpZV1rc3xrJExHaAqEf2fe9pBcqBgJoEFuP2V+TCubFYcAUUBy9xNWUMWXO732hcr9UAfLviI3VzK/32aKvC9ER92D;4:zUdYqG/mOMagHNbPqhlfKajUKs/iMEqFJHpfg2Rn1iYWvA71wyGEIgBoXTBu/5Tcf6XBhda6gBneFv8uSONYCTXdRJgMgC+dUQtEmanMjdw08d96Sld/+WHXamTwiatNBuA2OPLG9a2MII6m1wVMfqW2ambz81L49sSHt9EfSLhbfzZpkVc3bUFix9nEUlEvWxEao9Au1ab2j8PTx728hH0BrYlAzfzzqUm3mj4pb5YiOdBlsA2qQDeB11RxUiEhtVgS3iUUKNvcfQUAzM/8cQ==
-X-Microsoft-Antispam-PRVS: <SN1PR15MB047991688EE9233B447888B5D0310@SN1PR15MB0479.namprd15.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(11241501184)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201708071742011)(7699016);SRVR:SN1PR15MB0479;BCL:0;PCL:0;RULEID:;SRVR:SN1PR15MB0479;
-X-Forefront-PRVS: 0771670921
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(346002)(376002)(136003)(366004)(39860400002)(199004)(189003)(6666003)(6246003)(8936002)(5660300001)(68736007)(33656002)(97736004)(4326008)(25786009)(6916009)(47776003)(106356001)(50466002)(105586002)(81166006)(7696005)(93886005)(46003)(52396003)(229853002)(52116002)(16586007)(316002)(58126008)(476003)(8676002)(53936002)(11346002)(81156014)(386003)(966005)(54906003)(305945005)(23726003)(55016002)(6306002)(1076002)(486006)(186003)(76176011)(6506007)(16526019)(7736002)(9686003)(478600001)(86362001)(6116002)(2906002)(446003)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN1PR15MB0479;H:doronrk-mbp.dhcp.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR15MB0479;23:EZSDQxi9SNPL9fg5BCd4XwL2z9NEqqxCwxzQeThWs?=
- =?us-ascii?Q?Mxxe0AF/sneOTeRGG4MXuDoXwo+dZQbd4Cb704ZVmtOCZeK1fYFNdx4Drq02?=
- =?us-ascii?Q?qjN7vbYlan8NMfIaD6r/c/eWpzCd8xAbE3LT+O5WBPdDhA1Kb1/mbw5qO2Ht?=
- =?us-ascii?Q?Xt+tnnE45PGhoha+rd4S5EjKWhZG37xbTmXmvFa1nDsQEpqdpLZi97wdF7SE?=
- =?us-ascii?Q?6LPrFrzb2USEDB7+1TVxD3FeJ6lTScClNKwVZ73tjdyz3UwLbxgYaNCSnaGK?=
- =?us-ascii?Q?B8ckf+h5vLkfXVzcAnfARqx6Jt4dcqBWCLwqkBL+g+IIPk51hX4E59ldlrNs?=
- =?us-ascii?Q?ugj08qLGFYL5In1QIjXw43N95WTkyrhc/bP2esdahPVFXqOuKgflh/uM+lVd?=
- =?us-ascii?Q?RXvnxCSq5QJLl7fcKSBDH4R57iAyMXA18MQa7FDstxNKFVs42g/i0VvzNnlW?=
- =?us-ascii?Q?dK1YC1wBoZColM2cpHElr+O2Spr0JwHGUXB2tF5EFL9+KO/nXKsov0symhCZ?=
- =?us-ascii?Q?FlMaICRst8u0zbljXwmZe5UxD6YXhA0xhVeIx9pyOQ1HtIfBIYxOpv2UHgGD?=
- =?us-ascii?Q?8GXQRzAyN8ul5tL+WT3x5c2oytBw5ROBrQKq/xzlp4QLYxpuEocJPvAcIEhh?=
- =?us-ascii?Q?t00lkddpeG3c9AFKICkh849eOIdwTH2nfnbcVwPANlnpWj7a+ykTqRuugFxa?=
- =?us-ascii?Q?/NA02hpFjPOmXSdHmiwRXv9u/tswMCrYYJ7FN56Lw9OLo5BwfdHdrm1Zjf+R?=
- =?us-ascii?Q?ksCFLn4uhoy0xYILPixcpPQeKMnb7Uw83ZfdRamu6x3Mp4BG2JQt0Sm/0j9+?=
- =?us-ascii?Q?Mrrk5GuGwE6Pn15ovXiL9kjP4deTW11nxD68tZyFpgRp/ekgJhIWiAO5QrL7?=
- =?us-ascii?Q?YWEBkI4oJHJ30boU6Pgu0qMagOmyAM10HiXZ01TsI7RVr8vqmmkrtn9Na8nD?=
- =?us-ascii?Q?HdqUR24mBFpeEUrkk/CIMBnr1+j0F6u+5vDEsdTyRk2+xJ7BZ3lo3MO8UEys?=
- =?us-ascii?Q?51eDc9ImIppBO179NKdKd395rWD8gWG7DgT6Icb4ix+Lyb2zc9OCFZtBPvCM?=
- =?us-ascii?Q?2vSk6FWSd+X+ruN3rzof38CaP/Sz8lopklo6YIvj+Xln8kP9xrdKOkZxHurU?=
- =?us-ascii?Q?7XSBWqsQsZ3LWV5Mk8ES2tmCU9ZPM36s++WO63TTtFxhYyhnFJe8hWmZboZq?=
- =?us-ascii?Q?RrawamOe1ckPYSOerl+exTQaEa1vjZxTBn+DJ6GfL0Gf/6LYPCbbjbhQmmXR?=
- =?us-ascii?Q?+dT5kPQ1kLZ1I9+q8IFLlTYkXMYiP/coyaKlrOQ?=
-X-Microsoft-Antispam-Message-Info: aYGdHE4Wksbr7UoUwhKfND7m+6eY+Mw85TdXdjdFaLaou6HgTtKD316n8JPZg6DJwOi8iGkpqQAle8bOeRzcfYtYjS1pAajC86kA1OP6PjSOjj6DsVuElYQ7sE2lKmDysw8WWBlQtBHSWUGLB8mGGmrdzFsmMt7F5YlGDolaG6loFu1ZByshhP2ad6vYohtNV86rsLf9DiD59WR82jkmdePFoZTqWRWdxxb5cgUeofmgBkYfaGw8bFDim4h6gqONmS+cCK4bNeR0Vm/CIatzk+9cap+PL48FX8K/g/lDGTyKKhf2AXV8iCfUXOvS14dc859Qy9IBcU2Ptf2FPxfzOmIDoeag2r4CBTFLBA8bQhM=
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0479;6:yiLgUK8fcmmYynzIMUu/dI9DhDT3+D2CgINF9kRqgLIbHCQ+nu9lgzenf0lJZoo6/41l+2yx2/dR88yyH9luJKNbJ6w/J7CHB8yY7y60VsSJ/f3+dsjGqQIIRjO/hsBvbsK3ofeSPAq3mkwDA+HkpxEqr9kXG4GArQGNjpKHEh8iQy1i0eIQOY+lVf5pxH/Lxu/XfFs+e+8CT7XmtwQrguX4a0MBOpUOHLeSo522ZW2tTWBxvPa0V8P0P+3VylURCwsPABcC5idW2o1b4wff7tPrfkEsddEVftEypArD0OvIhBVuxvMY/iskD04sTujS7Y2HQH06JLKZCprjpTtSTYXPAISg80BtWP0oaxAI+PFMi33bIaeS1QnUg8g98LecpvbruDNKrwJpgLPSxhNi3uhJbsz8glYrAVffPFvS04x9QfL25xhLZ4E9BDEdmIgywtyO9yC4GfwcGtQzXoc+Cw==;5:3/rhXLd7ydB3uqbO1jB0o4Zp1eIUE6yyv1GjxCWROlDvRe1HDLDzggiwLHoPMydBTf/2NVCIwbxi4dcQ4B0WtfynAzDxPKoCP0VTkJYEWwgo2MNEy/Il7a10uJYyiF94KIRjPuI8R/EGNHDN8LOqwEL+lVkNb40jOVkJsE/N/Ds=;7:MoIgALdxS+un9WpOVmDi+XkHBmaGcCNMPO+e9YMSuwXDTlg+8vtY7YRmo6a7h79LiH/ttK/xT8n6xlDpYykWfvD2bQNqC1q6WnU7+VuX+eA+CWsGPRLqGuLrrjml6oWSRnmYKFmEd+wBsNO+TntityzMuwZmCqPoFiSTf6dIXs+L4rSRtxa1Izr1I2kcLbZQR0lefyueQPFYUvJZgR7RPcZzSolahKwSqQhLqTI5o8lv14lhgk7d80qBbPkBnKAo
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0479;20:EvFMAA+kuuNqoU/Buyh9U72/NmiukFVcTgxve0MTqirWEV34wIMDt05he6PaM6+SZDoVJA8tckwq68FhhXKUpcjcii3p1KT62TnKnKTBB+g6j/ma6kcB1JrbzTos0yaI1tGg9sME4Ghlx883U7TOTvf+pVvqQ9YZjPih8sxQLHM=
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2018 21:15:30.5584 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bfb57bae-b13e-4536-94ee-08d607ab39e3
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR15MB0479
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-21_09:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 09:36:55PM +0200, Dominique Martinet wrote:
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> One of the solutions I had suggested was adding a flag at strparser
-> setup time to only do that pull for users which cannot handle offset,
-> but nobody seemed interested two weeks ago. I can still do that.
+On Tue, Aug 21 2018, Jeff Layton wrote:
 
-This seems overly complicated. 
+> On Tue, 2018-08-21 at 15:11 +1000, NeilBrown wrote:
+>> On Thu, Aug 16 2018, NeilBrown wrote:
+>>=20
+>> > On Wed, Aug 15 2018, Jeff Layton wrote:
+>> >=20
+>> > > On Wed, 2018-08-15 at 14:28 +0200, Krzysztof Kozlowski wrote:
+>> > > > Hi,
+>> > > >=20
+>> > > > Bisect pointed commit ce3147990450a68b3f549088b30f087742a08b5d
+>> > > > ("fs/locks: allow a lock request to block other requests.") to fai=
+lure
+>> > > > boot of NFSv4 with root on several boards.
+>> > > >=20
+>> > > > Log is here:
+>> > > > https://krzk.eu/#/builders/21/builds/836/steps/12/logs/serial0
+>> > > >=20
+>> > > > With several errors:
+>> > > > kernel BUG at ../fs/locks.c:336!
+>> > > > Unable to handle kernel NULL pointer dereference at virtual addres=
+s 00000004
+>> > > >=20
+>> > > > Configuration:
+>> > > > 1. exynos_defconfig
+>> > > > 2. Arch ARM Linux
+>> > > > 3. Boards:
+>> > > > a. Odroid family (ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC)
+>> > > > b. Toradex Colibri VF50 (ARMv7, UP, Cortex-A5)
+>> > > > 4. Systemd: v236, 238
+>> > > > 5. All boards boot from TFTP with NFS root (NFSv4)
+>> > > >=20
+>> > > > On Colibri VF50 I got slightly different errors:
+>> > > > [   11.663204] Internal error: Oops - undefined instruction: 0 [#1=
+] ARM
+>> > > > [   12.455273] Unable to handle kernel NULL pointer dereference at
+>> > > > virtual address 00000004
+>> > > > and only with some specific GCC (v6.3) or with other conditions wh=
+ich
+>> > > > I did not bisect yet. Maybe Colibri's failure is unrelated to that
+>> > > > commit.
+>> > > >=20
+>> > > > Best regards,
+>> > > > Krzysztof
+>> >=20
+>> > Thanks a lot for the report Krzysztof!!
+>> >=20
+>> > >=20
+>> > > The BUG is due to a lock being freed when the fl_blocked list wasn't
+>> > > empty (implying that there were still blocked locks waiting on it).
+>> > >=20
+>> > > There are a number of calls to locks_delete_lock_ctx in posix_lock_i=
+node
+>> > > and I don't think the fl_blocked list is being handled properly with=
+ all
+>> > > of them. It only transplants the blocked locks to a new lock when th=
+ere
+>> > > are surviving locks on the list, and that may not be the case when t=
+he
+>> > > whole file is being unlocked.
+>> >=20
+>> > locks_delete_lock_ctx() calls locks_unlink_lock_ctx() which calls
+>> > locks_wake_up_block() which doesn't only wake_up the blocks, but also
+>> > detached them. When that function completes, ->fl_blocked must be empt=
+y.
+>> >=20
+>> > The trace shows the locks_free_lock() call at the end of fcntl_setlk64=
+()
+>> > as the problematic call.
+>> > This suggests that do_lock_file_wait() exited with ->fl_blocked
+>> > non-empty, which it shouldn't.
+>> >=20
+>> > I think we need to insert a call to locks_wake_up_block() in
+>> > do_lock_file_wait() before it returns.
+>> > I cannot find a sequence that would make this necessary, but
+>> > it isn't surprising that there might be one.
+>> >=20
+>> > I'll dig through the code a bit more later and make sure I understand
+>> > what is happening.
+>> >=20
+>>=20
+>> I think this problem if fixed by the following.  It is probably
+>> triggered when the owner already has a lock for part of the requested
+>> range.  After waiting for some other lock, the pending request gets
+>> merged with the existing lock, and blocked requests aren't moved across
+>> in that case.
+>>=20
+>> I still haven't done more testing, so this is just FYI, not a
+>> submission.
+>>=20
+>> Thanks,
+>> NeilBrown
+>>=20
+>> From: NeilBrown <neilb@suse.com>
+>> Date: Tue, 21 Aug 2018 15:09:06 +1000
+>> Subject: [PATCH] fs/locks: always delete_block after waiting.
+>>=20
+>> Now that requests can block other requests, we
+>> need to be careful to always clean up those blocked
+>> requests.
+>> Any time that we wait for a request, we might have
+>> other requests attached, and when we stop waiting,
+>> we much clean them up.
+>> If the lock was granted, the requests might have been
+>> moved to the new lock, though when merged with a
+>> pre-exiting lock, this might not happen.
+>> No all cases we don't want blocked locks to remain
+>> attached, so we remove them to be safe.
+>>=20
+>> Signed-off-by: NeilBrown <neilb@suse.com>
+>> ---
+>>  fs/locks.c | 24 +++++++++---------------
+>>  1 file changed, 9 insertions(+), 15 deletions(-)
+>>=20
+>> diff --git a/fs/locks.c b/fs/locks.c
+>> index de38bafb7f7b..6b310112cf3b 100644
+>> --- a/fs/locks.c
+>> +++ b/fs/locks.c
+>> @@ -1276,12 +1276,10 @@ static int posix_lock_inode_wait(struct inode *i=
+node, struct file_lock *fl)
+>>  		if (error !=3D FILE_LOCK_DEFERRED)
+>>  			break;
+>>  		error =3D wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
+>> -		if (!error)
+>> -			continue;
+>> -
+>> -		locks_delete_block(fl);
+>> -		break;
+>> +		if (error)
+>> +			break;
+>>  	}
+>> +	locks_delete_block(fl);
+>>  	return error;
+>>  }
+>>=20=20
+>> @@ -1971,12 +1969,10 @@ static int flock_lock_inode_wait(struct inode *i=
+node, struct file_lock *fl)
+>>  		if (error !=3D FILE_LOCK_DEFERRED)
+>>  			break;
+>>  		error =3D wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
+>> -		if (!error)
+>> -			continue;
+>> -
+>> -		locks_delete_block(fl);
+>> -		break;
+>> +		if (error)
+>> +			break;
+>>  	}
+>> +	locks_delete_block(fl);
+>>  	return error;
+>>  }
+>>=20=20
+>> @@ -2250,12 +2246,10 @@ static int do_lock_file_wait(struct file *filp, =
+unsigned int cmd,
+>>  		if (error !=3D FILE_LOCK_DEFERRED)
+>>  			break;
+>>  		error =3D wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
+>> -		if (!error)
+>> -			continue;
+>> -
+>> -		locks_delete_block(fl);
+>> -		break;
+>> +		if (error)
+>> +			break;
+>>  	}
+>> +	locks_delete_block(fl);
+>>=20=20
+>>  	return error;
+>>  }
+>
+> Thanks Neil.
+>
+> FWIW, I was able to reproduce something that looked a lot like what
+> Krzysztof reported by running the cthon04 lock tests on a client running
+> the kernel with the original set.
+>
+> I applied the above patch on top of that set, reran the test and got a
+> different BUG (list corruption):
+>
+> [   85.117307] ------------[ cut here ]------------
+> [   85.118130] kernel BUG at lib/list_debug.c:53!
+> [   85.118684] invalid opcode: 0000 [#1] SMP NOPTI
+> [   85.119800] CPU: 5 PID: 92 Comm: kworker/u16:1 Not tainted 4.18.0+ #46
+> [   85.120845] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
+S ?-20180531_142017-buildhw-08.phx2.fedoraproject.org-1.fc28 04/01/2014
+> [   85.122350] Workqueue: rpciod rpc_async_schedule [sunrpc]
+> [   85.123242] RIP: 0010:__list_del_entry_valid.cold.1+0x34/0x4c
+> [   85.124116] Code: 03 10 9b e8 08 07 ca ff 0f 0b 48 c7 c7 c8 03 10 9b e=
+8 fa 06 ca ff 0f 0b 48 89 f2 48 89 fe 48 c7 c7 88 03 10 9b e8 e6 06 ca ff <=
+0f> 0b 48 89 fe 48 c7 c7 50 03 10 9b e8 d5 06 ca ff 0f 0b 90 90 90
+> [   85.126704] RSP: 0018:ffffa0fe0133bd90 EFLAGS: 00010246
+> [   85.127382] RAX: 0000000000000054 RBX: ffff92bcf3a46ad8 RCX: 000000000=
+0000000
+> [   85.128322] RDX: 0000000000000000 RSI: ffff92bcffd56828 RDI: ffff92bcf=
+fd56828
+> [   85.129251] RBP: ffff92bcf3a46b10 R08: 0000000000000000 R09: 000000000=
+0aaaaaa
+> [   85.130250] R10: 0000000000000000 R11: 0000000000000001 R12: ffff92bce=
+2588618
+> [   85.131230] R13: ffff92bcf3a45800 R14: ffffffffc06f9f60 R15: ffffffffc=
+06f9f60
+> [   85.132191] FS:  0000000000000000(0000) GS:ffff92bcffd40000(0000) knlG=
+S:0000000000000000
+> [   85.133296] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   85.134088] CR2: 00007f16c1292008 CR3: 0000000138588000 CR4: 000000000=
+00006e0
+> [   85.134926] Call Trace:
+> [   85.135251]  __locks_delete_block+0x3f/0x70
+> [   85.135751]  locks_delete_block+0x25/0x30
+> [   85.136259]  locks_lock_inode_wait+0x63/0x150
+> [   85.136841]  ? nfs41_release_slot+0x98/0xd0 [nfsv4]
+> [   85.137556]  nfs4_lock_done+0x1a2/0x1c0 [nfsv4]
+> [   85.138272]  rpc_exit_task+0x2d/0x80 [sunrpc]
+> [   85.138994]  __rpc_execute+0x7f/0x340 [sunrpc]
+> [   85.139953]  process_one_work+0x1a1/0x350
+> [   85.140678]  worker_thread+0x30/0x380
+> [   85.141800]  ? wq_update_unbound_numa+0x1a0/0x1a0
+> [   85.142904]  kthread+0x112/0x130
+> [   85.143445]  ? kthread_create_worker_on_cpu+0x70/0x70
+> [   85.144273]  ret_from_fork+0x22/0x40
+> [   85.144859] Modules linked in: rpcsec_gss_krb5 auth_rpcgss nfsv4 dns_r=
+esolver nfs lockd grace fscache xt_conntrack nf_conntrack ip_set nfnetlink =
+ebtable_nat ebtable_broute bridge stp llc ip6table_mangle ip6table_raw ip6t=
+able_security iptable_mangle iptable_raw iptable_security ebtable_filter eb=
+tables ip6table_filter ip6_tables sunrpc i2c_piix4 edac_mce_amd joydev pcsp=
+kr virtio_balloon xfs libcrc32c virtio_net net_failover virtio_console fail=
+over virtio_blk floppy qxl serio_raw drm_kms_helper ttm qemu_fw_cfg drm vir=
+tio_pci ata_generic pata_acpi virtio_rng virtio_ring virtio
+> [   85.153426] ---[ end trace 63df06139208ee23 ]---
+>
 
-> That's still suboptimal, but I don't have any better idea.
-> To properly fix the users, I'd really need help with how bpf works to
-> even know if passing an offset would be possible in the first place, as
-> I do not see how at this time.
+Oh dear.
+nfs4_alloc_lockdata contains:
+	memcpy(&p->fl, fl, sizeof(p->fl));
 
-Thanks for clarifying Dominique.
-It seems like we mainly agree that the proposed patch is suboptimal for
-existing clients of the library that use offset correctly (tls). 
+so any list_heads that are valid in fl will be invalid in p->fl.
 
-It also seems like you've identified that the proper fix is in bpf. 
-Regrettably, I cannot help you understand how bpf works because I'm not
-familiar with that code. 
+Maybe I should initialize the relevant list_heads at the start of wait
+functions.
+I should look more closely at what filesystems do with locks though.
 
-As an aside, I would recommend reaching the netdev FAQ page:
-https://www.kernel.org/doc/Documentation/networking/netdev-FAQ.txt
+Thanks,
+NeilBrown
 
-It contains helpful hints about how to format email subjects (specifying
-net vs. net-next) and determining when trees are closed (currently
-closed). 
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlt8gQ8ACgkQOeye3VZi
+gbkZ6Q/+JfmkJk4nS0rZ0XWoAb6jhlMgtSDyvN8z5oc9p6oEs30B62vjOUpx0Exx
+kko2AU85kYMCd4riJ6U1ZaxnethNastfZACokVFLynn9xlxzLHz+D6z5UXz2BtOI
+3EJoN3nJCQMaOTt7bhtM3a1TGkSMtfQXihxL3KENE4iICNeeac2Md/qTa/I+SjlL
+25zWSDUQaBnfdkN5UGeZrGnw7XjimLsmXCtC5ZHBIzIMBmEUQfxuc+q1+gqpeTqq
+vWX9aPJf04buufTCBe9AjFEPfAT6iwQsKP7lYD5cx73b6CEZufRaHCZVfcL3+GAB
+5KOe7ux5tkc/1XD8k/nOxzAICKu7DosRfpb3SnvSaPFPSQwycVrvVtfZq/8tks2V
+nfVwnhSmFRl0ke1OH1z75nUrpxWkq5HmwsviTsm+IjPdLziwUnhRCxe0s0CcXt5t
+mfRXwL0WSiSlLQFYKYSOMA9styzfNKvssKkYMq/AUWgejRSSzgywI7MEl3wGmqdl
+0hnIPEyzd6XdN6gdb/OVK4L4J3BKq7HABVQ18QI6bljSl2O7KQTpxx6QUCgC5nvl
+jnqm0B7MOC0S3E9aFg0Cx+KSbmo77ho5Z7gmw7eJStykFpgdEUTwII6rpYVbLHEy
+KGeeaOjWsm0vC0pb5q2RNd5U2axKZEpW9obtodSZuJcao8t/uik=
+=X50I
+-----END PGP SIGNATURE-----
+--=-=-=--
