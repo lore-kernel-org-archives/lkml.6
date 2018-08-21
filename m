@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE449C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B990EC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 806C821774
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 806C821774
+	by mail.kernel.org (Postfix) with ESMTP id 7B0BB21774
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:23:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B0BB21774
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727484AbeHUJmN (ORCPT
+        id S1727501AbeHUJmR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:42:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54858 "EHLO
+        Tue, 21 Aug 2018 05:42:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54866 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726472AbeHUJmN (ORCPT
+        with ESMTP id S1726472AbeHUJmQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:42:13 -0400
+        Tue, 21 Aug 2018 05:42:16 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 57B9F516;
-        Tue, 21 Aug 2018 06:23:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A04578A5;
+        Tue, 21 Aug 2018 06:23:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Movie Song <MovieSong@aten-itlab.cn>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.18 17/35] USB: serial: pl2303: add a new device id for ATEN
-Date:   Tue, 21 Aug 2018 08:20:43 +0200
-Message-Id: <20180821055020.765676687@linuxfoundation.org>
+        stable@vger.kernel.org, Li Shuang <shuali@redhat.com>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 35/35] cls_matchall: fix tcf_unbind_filter missing
+Date:   Tue, 21 Aug 2018 08:21:01 +0200
+Message-Id: <20180821055021.456868685@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055019.954904905@linuxfoundation.org>
 References: <20180821055019.954904905@linuxfoundation.org>
@@ -50,40 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Movie Song <MovieSong@aten-itlab.cn>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-commit 29c692c96b3a39cd1911fb79cd2505af8d070f07 upstream.
+[ Upstream commit a51c76b4dfb30496dc65396a957ef0f06af7fb22 ]
 
-Signed-off-by: Movie Song <MovieSong@aten-itlab.cn>
-Cc: Johan Hovold <johan@kernel.org>
-Cc: stable <stable@vger.kernel.org>
+Fix tcf_unbind_filter missing in cls_matchall as this will trigger
+WARN_ON() in cbq_destroy_class().
+
+Fixes: fd62d9f5c575f ("net/sched: matchall: Fix configuration race")
+Reported-by: Li Shuang <shuali@redhat.com>
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/serial/pl2303.c |    2 ++
- drivers/usb/serial/pl2303.h |    1 +
- 2 files changed, 3 insertions(+)
+ net/sched/cls_matchall.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/usb/serial/pl2303.c
-+++ b/drivers/usb/serial/pl2303.c
-@@ -52,6 +52,8 @@ static const struct usb_device_id id_tab
- 		.driver_info = PL2303_QUIRK_ENDPOINT_HACK },
- 	{ USB_DEVICE(ATEN_VENDOR_ID, ATEN_PRODUCT_UC485),
- 		.driver_info = PL2303_QUIRK_ENDPOINT_HACK },
-+	{ USB_DEVICE(ATEN_VENDOR_ID, ATEN_PRODUCT_UC232B),
-+		.driver_info = PL2303_QUIRK_ENDPOINT_HACK },
- 	{ USB_DEVICE(ATEN_VENDOR_ID, ATEN_PRODUCT_ID2) },
- 	{ USB_DEVICE(ATEN_VENDOR_ID2, ATEN_PRODUCT_ID) },
- 	{ USB_DEVICE(ELCOM_VENDOR_ID, ELCOM_PRODUCT_ID) },
---- a/drivers/usb/serial/pl2303.h
-+++ b/drivers/usb/serial/pl2303.h
-@@ -24,6 +24,7 @@
- #define ATEN_VENDOR_ID2		0x0547
- #define ATEN_PRODUCT_ID		0x2008
- #define ATEN_PRODUCT_UC485	0x2021
-+#define ATEN_PRODUCT_UC232B	0x2022
- #define ATEN_PRODUCT_ID2	0x2118
+--- a/net/sched/cls_matchall.c
++++ b/net/sched/cls_matchall.c
+@@ -111,6 +111,8 @@ static void mall_destroy(struct tcf_prot
+ 	if (!head)
+ 		return;
  
- #define IODATA_VENDOR_ID	0x04bb
++	tcf_unbind_filter(tp, &head->res);
++
+ 	if (!tc_skip_hw(head->flags))
+ 		mall_destroy_hw_filter(tp, head, (unsigned long) head, extack);
+ 
 
 
