@@ -2,174 +2,118 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D07C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D377C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B06A52177A
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:47:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B06A52177A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DC175214C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:50:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ve0yTe5a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC175214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbeHUUIm (ORCPT
+        id S1726785AbeHUULk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 16:08:42 -0400
-Received: from foss.arm.com ([217.140.101.70]:52138 "EHLO foss.arm.com"
+        Tue, 21 Aug 2018 16:11:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726626AbeHUUIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 16:08:42 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25178ED1;
-        Tue, 21 Aug 2018 09:47:49 -0700 (PDT)
-Received: from [10.37.12.203] (unknown [10.37.12.203])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AA9743F5BC;
-        Tue, 21 Aug 2018 09:47:44 -0700 (PDT)
-Subject: Re: [PATCH v4 1/5] arm64: export memblock_reserve()d regions via
- /proc/iomem
-From:   James Morse <james.morse@arm.com>
-To:     John Stultz <john.stultz@linaro.org>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        G Gregory <graeme.gregory@linaro.org>, al.stone@linaro.org,
-        bhsharma@redhat.com, tbaicar@codeaurora.org,
-        kexec@lists.infradead.org, lkml <linux-kernel@vger.kernel.org>,
-        hanjun.guo@linaro.org, Sudeep Holla <sudeep.holla@arm.com>,
-        dyoung@redhat.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <20180723015732.24252-1-takahiro.akashi@linaro.org>
- <20180723015732.24252-2-takahiro.akashi@linaro.org>
- <CALAqxLU3+tu09M5=D-6xCqweKenfXtZuBGy6tqEP2DoGAs-LNA@mail.gmail.com>
- <38e0224a-46f8-85c3-abe2-5e89d16810ea@arm.com>
-Message-ID: <55a21245-7bc2-a700-20ce-1103fbadf72b@arm.com>
-Date:   Tue, 21 Aug 2018 17:48:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1726609AbeHUULk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 16:11:40 -0400
+Received: from localhost (219.sub-174-234-132.myvzw.com [174.234.132.219])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F122216C4;
+        Tue, 21 Aug 2018 16:50:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534870245;
+        bh=DA0AwB6UwGRV0YpI0Rsa5gTrDvdVuGsRp66OiC11Sq8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ve0yTe5ao5bGmjFKKTW7yzoEb5Fp5ElXvjj4Y5NBzWeHHkWH6tn0ZlYz8nBPbQ98O
+         CzTqidpgJPiwlLJaOIhdukkXjVYA/Y+mAjHXW2H9rXLtft2RYWSqb/Kw7LP3VQc6MP
+         oRZVgukiyU84mNZGreA87jAAnlU3BhDsUAZHPqQ8=
+Date:   Tue, 21 Aug 2018 11:50:42 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mmyangfl@gmail.com, Ashok Raj <ashok.raj@intel.com>,
+        Rajat Jain <rajatja@google.com>
+Subject: Re: Enumeration issue with QCA9005 AR9462
+Message-ID: <20180821165042.GC154536@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180820230624.GB154536@bhelgaas-glaptop.roam.corp.google.com>
+ <20180821054704.jlqk5zrlbbsjsd4g@wunner.de>
+ <20180821072541.tcdg5fkk4zrwxahj@wunner.de>
 MIME-Version: 1.0
-In-Reply-To: <38e0224a-46f8-85c3-abe2-5e89d16810ea@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180821072541.tcdg5fkk4zrwxahj@wunner.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/21/2018 11:22 AM, James Morse wrote:
-> On 08/21/2018 05:39 AM, John Stultz wrote:
->> On Sun, Jul 22, 2018 at 6:57 PM, AKASHI Takahiro
->> <takahiro.akashi@linaro.org> wrote:
->>> From: James Morse <james.morse@arm.com>
->>>
->>> There has been some confusion around what is necessary to prevent kexec
->>> overwriting important memory regions. memblock: reserve, or nomap?
->>> Only memblock nomap regions are reported via /proc/iomem, kexec's
->>> user-space doesn't know about memblock_reserve()d regions.
->>>
->>> Until commit f56ab9a5b73ca ("efi/arm: Don't mark ACPI reclaim memory
->>> as MEMBLOCK_NOMAP") the ACPI tables were nomap, now they are reserved
->>> and thus possible for kexec to overwrite with the new kernel or initrd.
->>> But this was always broken, as the UEFI memory map is also reserved
->>> and not marked as nomap.
->>>
->>> Exporting both nomap and reserved memblock types is a nuisance as
->>> they live in different memblock structures which we can't walk at
->>> the same time.
->>>
->>> Take a second walk over memblock.reserved and add new 'reserved'
->>> subnodes for the memblock_reserved() regions that aren't already
->>> described by the existing code. (e.g. Kernel Code)
->>>
->>> We use reserve_region_with_split() to find the gaps in existing named
->>> regions. This handles the gap between 'kernel code' and 'kernel data'
->>> which is memblock_reserve()d, but already partially described by
->>> request_standard_resources(). e.g.:
->>> | 80000000-dfffffff : System RAM
->>> |   80080000-80ffffff : Kernel code
->>> |   81000000-8158ffff : reserved
->>> |   81590000-8237efff : Kernel data
->>> |   a0000000-dfffffff : Crash kernel
->>> | e00f0000-f949ffff : System RAM
->>>
->>> reserve_region_with_split needs kzalloc() which isn't available when
->>> request_standard_resources() is called, use an initcall.
+[+cc Rajat, Ashok]
+
+On Tue, Aug 21, 2018 at 09:25:41AM +0200, Lukas Wunner wrote:
+> On Tue, Aug 21, 2018 at 07:47:04AM +0200, Lukas Wunner wrote:
+> > On Mon, Aug 20, 2018 at 06:06:24PM -0500, Bjorn Helgaas wrote:
+> > > mmyangfl@gmail.com reported a problem [1]: on v4.17, a QCA9005 AR9462
+> > > wifi device was present at boot, but disappeared after suspend/resume.
+> > > 
+> > > He also tested a recent kernel (5c60a7389d79, from Thu Aug 16),
+> > > where the suspend/resume problem doesn't seem to happen, but the wifi
+> > > device isn't enumerated correctly at boot-time.
+> > > 
+> > > [    0.928714] pciehp 0000:04:00.0:pcie204: Slot #0 AttnBtn- PwrCtrl- MRL- AttnInd- PwrInd- HotPlug+ Surprise+ Interlock- NoCompl- LLActRep+
+> > > [    0.928752] pciehp 0000:04:00.0:pcie204: Slot(0-1): Card not present
+> > > [    0.928811] pciehp 0000:04:00.0:pcie204: Slot(0-1): Link Up
+> > > [    0.928815] pciehp 0000:04:00.0:pcie204: Slot(0-1): No adapter
+> > > 
+> > > [1] https://bugzilla.kernel.org/show_bug.cgi?id=200839
+> > > [2] https://bugzilla.kernel.org/attachment.cgi?id=277923
+> > 
+> > The hardware appears to be broken in that the Presence Detect State bit
+> > in the Slot Status register is 0 (Slot Empty) even though the slot is
+> > occupied.
+> [...]
+> > Possible solutions:
+> > 
+> > (a) Be lenient towards broken hardware and accept DLActive+ as a proxy
+> >     for PresDet+.
+> > 
+> > (b) Add a blacklist to pciehp such that it doesn't bind to [1ae9:0200].
+> >     The bug reporter writes that "it's a single Half Mini PCIe card,
+> >     with two chipsets (Wil6110? + AR9462) combined by a PCIe hub".
+> >     This sounds like it's not really hotpluggable.
+> >     (Is Mini PCIe hotplug capable at all?)
+> > 
+> > Let me go through the driver and see if (a) is feasible and how intrusive
+> > it would be.
 > 
->>> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
->>> index 30ad2f085d1f..5b4fac434c84 100644
->>> --- a/arch/arm64/kernel/setup.c
->>> +++ b/arch/arm64/kernel/setup.c
->>> @@ -241,6 +241,44 @@ static void __init request_standard_resources(void)
+> So (a) would seem to be feasible, we could add a quirk for devices like
+> this to call pciehp_check_link_active() in pciehp_get_adapter_status().
 > 
->>> +static int __init reserve_memblock_reserved_regions(void)
+> Alternatively, we could generally add a call to pciehp_check_link_active()
+> in get_adapter_status(), pciehp_check_presence() and pcie_init() and thus
+> avoid a quirk for this specific device.
+> The existing call in __pciehp_enable_slot() could actually be removed,
+> this code path is only entered if either PDS or DLLLA is set.
 > 
->>> +       for_each_reserved_mem_region(i, &start, &end) {
->>> +               if (end <= roundup_end)
->>> +                       continue; /* done already */
->>> +
->>> +               start = __pfn_to_phys(PFN_DOWN(start));
->>> +               end = __pfn_to_phys(PFN_UP(end)) - 1;
->>> +               roundup_end = end;
->>> +
->>> +               res = kzalloc(sizeof(*res), GFP_ATOMIC);
->>> +               if (WARN_ON(!res))
->>> +                       return -ENOMEM;
->>> +               res->start = start;
->>> +               res->end = end;
->>> +               res->name  = "reserved";
->>> +               res->flags = IORESOURCE_MEM;
->>> +
->>> +               mem = request_resource_conflict(&iomem_resource, res);
->>> +               /*
->>> +                * We expected memblock_reserve() regions to conflict with
->>> +                * memory created by request_standard_resources().
->>> +                */
->>> +               if (WARN_ON_ONCE(!mem))
+> And the third option would be to add a quirk like quirk_hotplug_bridge()
+> which sets is_hotplug_bridge = 0 on this broken device such that pciehp
+> doesn't bind to it in the first place.
 
+It sounds like with (a), you could make this work without having a
+Wil6110-specific quirk, i.e., if the Link Status says the link is
+active, we assume a device is present.  That seems reasonable to me
+and it sort of fits with these previous changes:
 
->> Since this patch landed, on the HiKey board at bootup I'm seeing:
->>
->> [    0.451884] WARNING: CPU: 1 PID: 1 at arch/arm64/kernel/setup.c:271
->> reserve_memblock_reserved_regions+0xd4/0x13c
+  385895fef6b5 ("PCI: pciehp: Prioritize data-link event over presence detect")
+  e48f1b67f668 ("PCI: pciehp: Use link change notifications for hot-plug and removal")
 
->>  From skimming the patch, it seems this is maybe expected? Or should
->> this warning raise eyebrows? I can't quite figure it out.
-> 
-> Ugh, sorry for the noise! This is warning that there is something wrong
-> with our assumptions about what types of memory exist.
-> 
-> 
->> It seems to trigger on the pstore memory at 0x21f00000-0x21ffffff.
-> 
-> ... pmem ...
-
-
-> So, this is a memblock_reserved() range that isn't actually memory.
-> 
-> This happens because your DT has carved these regions out of the memory
-> node, but added a named 'reserved-memory' region for them, just in case?
-> I'm not sure what it means if 'reserved-memory' is not also described as
-> memory....
-> 
-> You do need the carve-out, otherwise this gets covered by the linear
-> map, and when you throw in that 'unbuffered' property you get both a
-> cacheable and uncacheable mapping of the same page.
-
-
-Hmm, looks like its (even) more complicated than I thought, of_reserved_mem.c's 
-definition of 'nomap' is memblock_remove(), not memblock_mark_nomap().
-
-This might be more common to all users of DTs memreserve.
-
-
-Thanks,
-
-James
+Bjorn
