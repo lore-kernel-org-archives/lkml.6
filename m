@@ -2,194 +2,106 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3ACFC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FC4C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:37:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9030D21857
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:36:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9030D21857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sai.msu.ru
+	by mail.kernel.org (Postfix) with ESMTP id 495BE2088E
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:37:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=birdec.tech header.i=@birdec.tech header.b="S3OIlaWF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 495BE2088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=birdec.tech
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727292AbeHUU5N (ORCPT
+        id S1727302AbeHUU6D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 16:57:13 -0400
-Received: from lnfm1.sai.msu.ru ([93.180.26.255]:52893 "EHLO lnfm1.sai.msu.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726694AbeHUU5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 16:57:12 -0400
-Received: from dragon.sai.msu.ru (dragon.sai.msu.ru [93.180.26.172])
-        by lnfm1.sai.msu.ru (8.14.1/8.12.8) with ESMTP id w7LH6YvF026342;
-        Tue, 21 Aug 2018 20:06:39 +0300
-Received: from alpha.local (unknown [92.243.181.209])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client did not present a certificate)
-        by dragon.sai.msu.ru (Postfix) with ESMTPSA id EF9997A69;
-        Tue, 21 Aug 2018 20:06:35 +0300 (MSK)
-From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
-To:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     matwey.kornilov@gmail.com,
-        "Matwey V. Kornilov" <matwey@sai.msu.ru>, tfiga@chromium.org,
-        laurent.pinchart@ideasonboard.com, stern@rowland.harvard.edu,
-        ezequiel@collabora.com, hdegoede@redhat.com, hverkuil@xs4all.nl,
-        mchehab@kernel.org, rostedt@goodmis.org, mingo@redhat.com,
-        isely@pobox.com, bhumirks@gmail.com, colin.king@canonical.com,
-        kieran.bingham@ideasonboard.com, keiichiw@chromium.org
-Subject: [PATCH v5 2/2] media: usb: pwc: Don't use coherent DMA buffers for ISO transfer
-Date:   Tue, 21 Aug 2018 20:06:29 +0300
-Message-Id: <20180821170629.18408-3-matwey@sai.msu.ru>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180821170629.18408-1-matwey@sai.msu.ru>
-References: <20180821170629.18408-1-matwey@sai.msu.ru>
+        Tue, 21 Aug 2018 16:58:03 -0400
+Received: from host.euro-space.net ([87.117.239.2]:32989 "EHLO
+        host.euro-space.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726694AbeHUU6D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 16:58:03 -0400
+X-Greylist: delayed 2682 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Aug 2018 16:58:02 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=birdec.tech
+        ; s=default; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=t4f8oPdQWR7CVGpy8qipQ4CMEZcm7J/RuzuRdUSZytU=; b=S3OIlaWFNpEe/scrazHbbp8EzK
+        gN+k7CFAMqfmwYWvwyJIFawFHnTVHdCRx2RCo/yWTBvkPbFvOkfXHm1cRJL8gB3qmbWsF8FlYDXpN
+        mFXuhT2MmEVurmdqIKomsA4U6Y4YVvgdjZQF+iJOJoILmPcRax4w7q5CWRvb7jixIMR/izWfWT0RR
+        iEnwBUR3RTF4l5i9xgN2n0z5gyIEoedxnhlOy55XwVtGhMEYLI+a/DvVii/TXRd9IwCcL6lDHFrLv
+        rvoUzsLGQxkxr3XVgco1hs/AKnpBvntnHmirWJ9PdceIco6XwitqfBn2SP6j7UY3OYHlxcwSDJDzN
+        ZTmrjFmA==;
+Received: from x55b18169.dyn.telefonica.de ([85.177.129.105]:39848 helo=gentoo0.localdomain)
+        by host.euro-space.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <kmarinushkin@birdec.tech>)
+        id 1fs9tG-0003Hx-St; Tue, 21 Aug 2018 17:52:22 +0100
+From:   Kirill Marinushkin <kmarinushkin@birdec.tech>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        M R Swami Reddy <mr.swami.reddy@ti.com>,
+        Vishwas A Deshpande <vishwas.a.deshpande@ti.com>,
+        Kevin Cernekee <cernekee@chromium.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Kirill Marinushkin <kmarinushkin@birdec.tech>
+Subject: [PATCH 0/1] ASoC: pcm3060: Add codec driver
+Date:   Tue, 21 Aug 2018 18:52:45 +0200
+Message-Id: <20180821165246.9479-1-kmarinushkin@birdec.tech>
+X-Mailer: git-send-email 2.13.6
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - host.euro-space.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - birdec.tech
+X-Get-Message-Sender-Via: host.euro-space.net: authenticated_id: kmarinushkin@birdec.tech
+X-Authenticated-Sender: host.euro-space.net: kmarinushkin@birdec.tech
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DMA cocherency slows the transfer down on systems without hardware
-coherent DMA.
-Instead we use noncocherent DMA memory and explicit sync at data receive
-handler.
+Hello Mark,
 
-Based on previous commit the following performance benchmarks have been
-carried out. Average memcpy() data transfer rate (rate) and handler
-completion time (time) have been measured when running video stream at
-640x480 resolution at 10fps.
+I am developing sound support for a Linux-based device, with playback and
+capture through the TI PCM3060 codec.
 
-x86_64 based system (Intel Core i5-3470). This platform has hardware
-coherent DMA support and proposed change doesn't make big difference here.
+With the following patch, I propose to add the PCM3060 codec driver into
+the kernel.
 
- * kmalloc:            rate = (2.0 +- 0.4) GBps
-                       time = (5.0 +- 3.0) usec
- * usb_alloc_coherent: rate = (3.4 +- 1.2) GBps
-                       time = (3.5 +- 3.0) usec
+Best Regards,
+Kirill
 
-We see that the measurements agree within error ranges in this case.
-So theoretically predicted performance downgrade cannot be reliably
-measured here.
+Kirill Marinushkin (1):
+  ASoC: pcm3060: Add codec driver
 
-armv7l based system (TI AM335x BeagleBone Black @ 300MHz). This platform
-has no hardware coherent DMA support. DMA coherence is implemented via
-disabled page caching that slows down memcpy() due to memory controller
-behaviour.
+ .../devicetree/bindings/sound/pcm3060.txt          |  17 ++
+ MAINTAINERS                                        |   7 +
+ sound/soc/codecs/Kconfig                           |  17 ++
+ sound/soc/codecs/Makefile                          |   6 +
+ sound/soc/codecs/pcm3060-i2c.c                     |  61 +++++
+ sound/soc/codecs/pcm3060-spi.c                     |  60 +++++
+ sound/soc/codecs/pcm3060.c                         | 290 +++++++++++++++++++++
+ sound/soc/codecs/pcm3060.h                         |  88 +++++++
+ 8 files changed, 546 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/pcm3060.txt
+ create mode 100644 sound/soc/codecs/pcm3060-i2c.c
+ create mode 100644 sound/soc/codecs/pcm3060-spi.c
+ create mode 100644 sound/soc/codecs/pcm3060.c
+ create mode 100644 sound/soc/codecs/pcm3060.h
 
- * kmalloc:            rate =  (114 +- 5) MBps
-                       time =   (84 +- 4) usec
- * usb_alloc_coherent: rate = (28.1 +- 0.1) MBps
-                       time =  (341 +- 2) usec
-
-Note, that quantative difference leads (this commit leads to 4 times
-acceleration) to qualitative behavior change in this case. As it was
-stated before, the video stream cannot be successfully received at AM335x
-platforms with MUSB based USB host controller due to performance issues
-[1].
-
-[1] https://www.spinics.net/lists/linux-usb/msg165735.html
-
-Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
----
- drivers/media/usb/pwc/pwc-if.c | 57 ++++++++++++++++++++++++++++++++----------
- 1 file changed, 44 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
-index 72d2897a4b9f..1360722ab423 100644
---- a/drivers/media/usb/pwc/pwc-if.c
-+++ b/drivers/media/usb/pwc/pwc-if.c
-@@ -159,6 +159,32 @@ static const struct video_device pwc_template = {
- /***************************************************************************/
- /* Private functions */
- 
-+static void *pwc_alloc_urb_buffer(struct device *dev,
-+				  size_t size, dma_addr_t *dma_handle)
-+{
-+	void *buffer = kmalloc(size, GFP_KERNEL);
-+
-+	if (!buffer)
-+		return NULL;
-+
-+	*dma_handle = dma_map_single(dev, buffer, size, DMA_FROM_DEVICE);
-+	if (dma_mapping_error(dev, *dma_handle)) {
-+		kfree(buffer);
-+		return NULL;
-+	}
-+
-+	return buffer;
-+}
-+
-+static void pwc_free_urb_buffer(struct device *dev,
-+				size_t size,
-+				void *buffer,
-+				dma_addr_t dma_handle)
-+{
-+	dma_unmap_single(dev, dma_handle, size, DMA_FROM_DEVICE);
-+	kfree(buffer);
-+}
-+
- static struct pwc_frame_buf *pwc_get_next_fill_buf(struct pwc_device *pdev)
- {
- 	unsigned long flags = 0;
-@@ -306,6 +332,11 @@ static void pwc_isoc_handler(struct urb *urb)
- 	/* Reset ISOC error counter. We did get here, after all. */
- 	pdev->visoc_errors = 0;
- 
-+	dma_sync_single_for_cpu(&urb->dev->dev,
-+				urb->transfer_dma,
-+				urb->transfer_buffer_length,
-+				DMA_FROM_DEVICE);
-+
- 	/* vsync: 0 = don't copy data
- 		  1 = sync-hunt
- 		  2 = synched
-@@ -428,16 +459,15 @@ static int pwc_isoc_init(struct pwc_device *pdev)
- 		urb->dev = udev;
- 		urb->pipe = usb_rcvisocpipe(udev, pdev->vendpoint);
- 		urb->transfer_flags = URB_ISO_ASAP | URB_NO_TRANSFER_DMA_MAP;
--		urb->transfer_buffer = usb_alloc_coherent(udev,
--							  ISO_BUFFER_SIZE,
--							  GFP_KERNEL,
--							  &urb->transfer_dma);
-+		urb->transfer_buffer_length = ISO_BUFFER_SIZE;
-+		urb->transfer_buffer = pwc_alloc_urb_buffer(&udev->dev,
-+							    urb->transfer_buffer_length,
-+							    &urb->transfer_dma);
- 		if (urb->transfer_buffer == NULL) {
- 			PWC_ERROR("Failed to allocate urb buffer %d\n", i);
- 			pwc_isoc_cleanup(pdev);
- 			return -ENOMEM;
- 		}
--		urb->transfer_buffer_length = ISO_BUFFER_SIZE;
- 		urb->complete = pwc_isoc_handler;
- 		urb->context = pdev;
- 		urb->start_frame = 0;
-@@ -488,15 +518,16 @@ static void pwc_iso_free(struct pwc_device *pdev)
- 
- 	/* Freeing ISOC buffers one by one */
- 	for (i = 0; i < MAX_ISO_BUFS; i++) {
--		if (pdev->urbs[i]) {
-+		struct urb *urb = pdev->urbs[i];
-+
-+		if (urb) {
- 			PWC_DEBUG_MEMORY("Freeing URB\n");
--			if (pdev->urbs[i]->transfer_buffer) {
--				usb_free_coherent(pdev->udev,
--					pdev->urbs[i]->transfer_buffer_length,
--					pdev->urbs[i]->transfer_buffer,
--					pdev->urbs[i]->transfer_dma);
--			}
--			usb_free_urb(pdev->urbs[i]);
-+			if (urb->transfer_buffer)
-+				pwc_free_urb_buffer(&urb->dev->dev,
-+						    urb->transfer_buffer_length,
-+						    urb->transfer_buffer,
-+						    urb->transfer_dma);
-+			usb_free_urb(urb);
- 			pdev->urbs[i] = NULL;
- 		}
- 	}
 -- 
-2.16.4
+2.13.6
 
