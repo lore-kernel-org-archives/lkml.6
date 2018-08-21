@@ -6,105 +6,169 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66662C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E32C43615
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AFE92087A
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:35:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AFE92087A
+	by mail.kernel.org (Postfix) with ESMTP id DD1982087A
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:35:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD1982087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728589AbeHUJxy (ORCPT
+        id S1728608AbeHUJx7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:53:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57144 "EHLO
+        Tue, 21 Aug 2018 05:53:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57154 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726560AbeHUJxy (ORCPT
+        with ESMTP id S1726560AbeHUJx6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:53:54 -0400
+        Tue, 21 Aug 2018 05:53:58 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1601F7F6;
-        Tue, 21 Aug 2018 06:35:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 55FBB7F6;
+        Tue, 21 Aug 2018 06:35:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 09/22] ALSA: vx222: Fix invalid endian conversions
-Date:   Tue, 21 Aug 2018 08:21:35 +0200
-Message-Id: <20180821055139.935601698@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.4 00/22] 4.4.151-stable review
+Date:   Tue, 21 Aug 2018 08:21:26 +0200
+Message-Id: <20180821055139.462620042@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180821055139.462620042@linuxfoundation.org>
-References: <20180821055139.462620042@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.151-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.4.151-rc1
+X-KernelTest-Deadline: 2018-08-23T05:51+00:00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.4.151 release.
+There are 22 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Thu Aug 23 05:51:31 UTC 2018.
+Anything received after that time might be too late.
 
-From: Takashi Iwai <tiwai@suse.de>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.151-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+and the diffstat can be found below.
 
-commit fff71a4c050ba46e305d910c837b99ba1728135e upstream.
+thanks,
 
-The endian conversions used in vx2_dma_read() and vx2_dma_write() are
-superfluous and even wrong on big-endian machines, as inl() and outl()
-already do conversions.  Kill them.
+greg k-h
 
-Spotted by sparse, a warning like:
-  sound/pci/vx222/vx222_ops.c:278:30: warning: incorrect type in argument 1 (different base types)
+-------------
+Pseudo-Shortlog of commits:
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.4.151-rc1
 
----
- sound/pci/vx222/vx222_ops.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Kees Cook <keescook@chromium.org>
+    isdn: Disable IIOCDBGVAR
 
---- a/sound/pci/vx222/vx222_ops.c
-+++ b/sound/pci/vx222/vx222_ops.c
-@@ -275,7 +275,7 @@ static void vx2_dma_write(struct vx_core
- 		length >>= 2; /* in 32bit words */
- 		/* Transfer using pseudo-dma. */
- 		for (; length > 0; length--) {
--			outl(cpu_to_le32(*addr), port);
-+			outl(*addr, port);
- 			addr++;
- 		}
- 		addr = (u32 *)runtime->dma_area;
-@@ -285,7 +285,7 @@ static void vx2_dma_write(struct vx_core
- 	count >>= 2; /* in 32bit words */
- 	/* Transfer using pseudo-dma. */
- 	for (; count > 0; count--) {
--		outl(cpu_to_le32(*addr), port);
-+		outl(*addr, port);
- 		addr++;
- 	}
- 
-@@ -313,7 +313,7 @@ static void vx2_dma_read(struct vx_core
- 		length >>= 2; /* in 32bit words */
- 		/* Transfer using pseudo-dma. */
- 		for (; length > 0; length--)
--			*addr++ = le32_to_cpu(inl(port));
-+			*addr++ = inl(port);
- 		addr = (u32 *)runtime->dma_area;
- 		pipe->hw_ptr = 0;
- 	}
-@@ -321,7 +321,7 @@ static void vx2_dma_read(struct vx_core
- 	count >>= 2; /* in 32bit words */
- 	/* Transfer using pseudo-dma. */
- 	for (; count > 0; count--)
--		*addr++ = le32_to_cpu(inl(port));
-+		*addr++ = inl(port);
- 
- 	vx2_release_pseudo_dma(chip);
- }
+Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+    Bluetooth: avoid killing an already killed socket
+
+Tom Lendacky <thomas.lendacky@amd.com>
+    x86/mm: Simplify p[g4um]d_page() macros
+
+Chen Hu <hu1.chen@intel.com>
+    serial: 8250_dw: always set baud rate in dw8250_set_termios
+
+Willy Tarreau <w@1wt.eu>
+    ACPI / PM: save NVS memory for ASUS 1025C laptop
+
+Zhang Rui <rui.zhang@intel.com>
+    ACPI: save NVS memory for Lenovo G50-45
+
+Aleksander Morgado <aleksander@aleksander.es>
+    USB: option: add support for DW5821e
+
+John Ogness <john.ogness@linutronix.de>
+    USB: serial: sierra: fix potential deadlock at close
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: vxpocket: Fix invalid endian conversions
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: memalloc: Don't exceed over the requested size
+
+Hans de Goede <hdegoede@redhat.com>
+    ALSA: hda: Correct Asrock B85M-ITX power_save blacklist entry
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: cs5535audio: Fix invalid endian conversion
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: virmidi: Fix too long output trigger loop
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: vx222: Fix invalid endian conversions
+
+Park Ju Hyung <qkrwngud825@gmail.com>
+    ALSA: hda - Turn CX8200 into D3 as well upon reboot
+
+Park Ju Hyung <qkrwngud825@gmail.com>
+    ALSA: hda - Sleep for 10ms after entering D3 on Conexant codecs
+
+Hangbin Liu <liuhangbin@gmail.com>
+    net_sched: fix NULL pointer dereference when delete tcindex filter
+
+Cong Wang <xiyou.wangcong@gmail.com>
+    vsock: split dwork to avoid reinitializations
+
+Hangbin Liu <liuhangbin@gmail.com>
+    net_sched: Fix missing res info when create new tc_index filter
+
+Cong Wang <xiyou.wangcong@gmail.com>
+    llc: use refcount_inc_not_zero() for llc_sap_find()
+
+Wei Wang <weiwan@google.com>
+    l2tp: use sk_dst_check() to avoid race on sk->sk_dst_cache
+
+Alexey Kodanev <alexey.kodanev@oracle.com>
+    dccp: fix undefined behavior with 'cwnd' shift in ccid2_cwnd_restart()
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                |  4 ++--
+ arch/x86/include/asm/pgtable.h          | 13 ++++++++-----
+ drivers/acpi/sleep.c                    | 27 +++++++++++++++++++++++++++
+ drivers/isdn/i4l/isdn_common.c          |  8 +-------
+ drivers/tty/serial/8250/8250_dw.c       |  2 +-
+ drivers/usb/serial/option.c             |  4 ++++
+ drivers/usb/serial/sierra.c             |  4 ++--
+ include/net/af_vsock.h                  |  4 ++--
+ include/net/llc.h                       |  5 +++++
+ net/bluetooth/sco.c                     |  3 ++-
+ net/dccp/ccids/ccid2.c                  |  6 ++++--
+ net/l2tp/l2tp_core.c                    |  2 +-
+ net/llc/llc_core.c                      |  4 ++--
+ net/sched/cls_tcindex.c                 |  8 +++-----
+ net/vmw_vsock/af_vsock.c                | 15 ++++++++-------
+ net/vmw_vsock/vmci_transport.c          |  3 +--
+ sound/core/memalloc.c                   |  8 ++------
+ sound/core/seq/seq_virmidi.c            | 10 ++++++++++
+ sound/pci/cs5535audio/cs5535audio.h     |  6 +++---
+ sound/pci/cs5535audio/cs5535audio_pcm.c |  4 ++--
+ sound/pci/hda/hda_intel.c               |  2 +-
+ sound/pci/hda/patch_conexant.c          |  4 +++-
+ sound/pci/vx222/vx222_ops.c             |  8 ++++----
+ sound/pcmcia/vx/vxp_ops.c               | 10 +++++-----
+ 24 files changed, 103 insertions(+), 61 deletions(-)
 
 
