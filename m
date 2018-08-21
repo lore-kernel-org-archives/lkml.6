@@ -6,36 +6,35 @@ X-Spam-Status: No, score=1.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A400C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B7CC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E51122151D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:26:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E51122151D
+	by mail.kernel.org (Postfix) with ESMTP id 5AA7B216C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:28:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AA7B216C4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbeHULpL (ORCPT
+        id S1726710AbeHULrL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 07:45:11 -0400
-Received: from mga09.intel.com ([134.134.136.24]:58704 "EHLO mga09.intel.com"
+        Tue, 21 Aug 2018 07:47:11 -0400
+Received: from mga12.intel.com ([192.55.52.136]:10480 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726315AbeHULpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 07:45:11 -0400
+        id S1726315AbeHULrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 07:47:10 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2018 01:26:00 -0700
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2018 01:27:58 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,268,1531810800"; 
-   d="scan'208";a="83562126"
+X-IronPort-AV: E=Sophos;i="5.53,269,1531810800"; 
+   d="scan'208";a="85087508"
 Received: from linux.intel.com ([10.54.29.200])
-  by orsmga001.jf.intel.com with ESMTP; 21 Aug 2018 01:26:00 -0700
+  by orsmga002.jf.intel.com with ESMTP; 21 Aug 2018 01:27:07 -0700
 Received: from [10.125.252.171] (abudanko-mobl.ccr.corp.intel.com [10.125.252.171])
-        by linux.intel.com (Postfix) with ESMTP id 8B6FC580145;
-        Tue, 21 Aug 2018 01:25:58 -0700 (PDT)
-Subject: [PATCH v1 1/2]: perf util: map data buffer for preserving collected
- data
+        by linux.intel.com (Postfix) with ESMTP id 5F39D580145;
+        Tue, 21 Aug 2018 01:27:04 -0700 (PDT)
+Subject: [PATCH v1 2/2]: perf record: enable asynchronous trace writing
 From:   Alexey Budankov <alexey.budankov@linux.intel.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>,
@@ -48,8 +47,8 @@ Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         linux-perf-users@vger.kernel.org
 References: <dcd3ee88-57d6-8704-f5e1-7a3c75a17d8d@linux.intel.com>
 Organization: Intel Corp.
-Message-ID: <f5d77b16-25fe-58c9-19c0-138638e0ae9e@linux.intel.com>
-Date:   Tue, 21 Aug 2018 11:25:56 +0300
+Message-ID: <2db359cc-dc5d-c00e-a42a-12a2e9da80b7@linux.intel.com>
+Date:   Tue, 21 Aug 2018 11:27:03 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -62,159 +61,232 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The data buffer and accompanying AIO control block are allocated at 
-perf_mmap object and the mapped data buffer size is equal to 
-the kernel one.
 
-The buffer is then used to preserve profiling data ready for dumping 
-and queue it for asynchronous writing into perf trace thru implemented 
-record__aio_write() function.
+Trace file offsets are different for every enqueued write operation 
+and calculated dynamically in trace streaming loop and don't overlap 
+so write requests can be written in parallel.
 
-mmap_aio control structure of the size equal to the number of per-cpu 
-kernel buffers is used to keep pointers to enqueued AIO control 
-blocks for monitoring of completed AIO operations.
+record__mmap_read_sync implements sort of a barrier between spilling 
+ready profiling data to disk.
 
 Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
- tools/perf/builtin-record.c | 18 ++++++++++++++++++
- tools/perf/util/evlist.c    |  9 +++++++++
- tools/perf/util/evlist.h    |  2 ++
- tools/perf/util/mmap.c      | 12 ++++++++++++
- tools/perf/util/mmap.h      |  3 +++
- 5 files changed, 44 insertions(+)
+ tools/perf/builtin-record.c | 97 +++++++++++++++++++++++++++++++++++++++++----
+ tools/perf/util/mmap.c      | 23 +++++------
+ tools/perf/util/mmap.h      |  2 +-
+ 3 files changed, 101 insertions(+), 21 deletions(-)
 
 diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 22ebeb92ac51..a35675e9f3aa 100644
+index a35675e9f3aa..dee63229ed37 100644
 --- a/tools/perf/builtin-record.c
 +++ b/tools/perf/builtin-record.c
-@@ -53,6 +53,7 @@
- #include <sys/mman.h>
- #include <sys/wait.h>
- #include <linux/time64.h>
-+#include <aio.h>
+@@ -132,7 +132,7 @@ static int record__aio_write(int trace_fd, struct aiocb *cblock,
+ 	cblock->aio_sigevent.sigev_notify = SIGEV_NONE;
  
- struct switch_output {
- 	bool		 enabled;
-@@ -121,6 +122,23 @@ static int record__write(struct record *rec, void *bf, size_t size)
- 	return 0;
+ 	if (aio_write(cblock) == -1) {
+-		pr_err("failed to write perf data, error: %m\n");
++		pr_err("failed to queue perf data, error: %m\n");
+ 		return -1;
+ 	}
+ 
+@@ -148,12 +148,14 @@ static int process_synthesized_event(struct perf_tool *tool,
+ 	return record__write(rec, event, event->header.size);
  }
  
-+static int record__aio_write(int trace_fd, struct aiocb *cblock,
-+		void *buf, size_t size, off_t off)
+-static int record__pushfn(void *to, void *bf, size_t size)
++static int record__pushfn(void *to, void *bf, size_t size, off_t off)
+ {
+ 	struct record *rec = to;
++	struct perf_mmap *map = bf;
+ 
+ 	rec->samples++;
+-	return record__write(rec, bf, size);
++	return record__aio_write(rec->session->data->file.fd, &map->cblock,
++			map->data, size, off);
+ }
+ 
+ static volatile int done;
+@@ -528,13 +530,85 @@ static struct perf_event_header finished_round_event = {
+ 	.type = PERF_RECORD_FINISHED_ROUND,
+ };
+ 
++static int record__mmap_read_sync(int trace_fd, struct aiocb **cblocks,
++		int cblocks_size, struct record *rec)
 +{
-+	cblock->aio_fildes = trace_fd;
-+	cblock->aio_buf    = buf;
-+	cblock->aio_nbytes = size;
-+	cblock->aio_offset = off;
-+	cblock->aio_sigevent.sigev_notify = SIGEV_NONE;
++	size_t rem;
++	ssize_t size;
++	off_t rem_off;
++	int i, aio_ret, aio_errno, do_suspend;
++	struct perf_mmap *md;
++	struct timespec timeout0 = { 0, 0 };
++	struct timespec timeoutS = { 0, 1000 * 500  * 1 };
 +
-+	if (aio_write(cblock) == -1) {
-+		pr_err("failed to write perf data, error: %m\n");
-+		return -1;
-+	}
++	if (!cblocks_size)
++		return 0;
++
++	do {
++		do_suspend = 0;
++		nanosleep(&timeoutS, NULL);
++		if (aio_suspend((const struct aiocb**)cblocks, cblocks_size, &timeout0)) {
++			if (errno == EAGAIN || errno == EINTR) {
++				do_suspend = 1;
++				continue;
++			} else {
++				pr_err("failed to sync perf data, error: %m\n");
++				break;
++			}
++		}
++		for (i = 0; i < cblocks_size; i++) {
++			if (cblocks[i] == NULL) {
++				continue;
++			}
++			aio_errno = aio_error(cblocks[i]);
++			if (aio_errno == EINPROGRESS) {
++				do_suspend = 1;
++				continue;
++			}
++			size = aio_ret = aio_return((struct aiocb*)cblocks[i]);
++			if (aio_ret < 0) {
++				if (aio_errno == EINTR) {
++					size = 0;
++				} else {
++					pr_err("failed to write perf data, error: %m\n");
++					cblocks[i] = NULL;
++					continue;
++				}
++			}
++			rec->bytes_written += size;
++			md = (struct perf_mmap*)((char*)cblocks[i] -
++				offsetof(struct perf_mmap, cblock));
++			rem = cblocks[i]->aio_nbytes - (size_t)size;
++			if (rem == 0) {
++				perf_mmap__put(md);
++				cblocks[i] = NULL;
++				if (switch_output_size(rec))
++					trigger_hit(&switch_output_trigger);
++			} else {
++				rem_off = cblocks[i]->aio_offset +
++					cblocks[i]->aio_nbytes - rem;
++				if (!record__aio_write(trace_fd,
++					(struct aiocb *)cblocks[i],
++					md->data + cblocks[i]->aio_nbytes - rem,
++					rem, rem_off))
++					do_suspend = 1;
++			}
++		}
++	} while (do_suspend);
 +
 +	return 0;
 +}
 +
- static int process_synthesized_event(struct perf_tool *tool,
- 				     union perf_event *event,
- 				     struct perf_sample *sample __maybe_unused,
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index e7a4b31a84fb..6bce307d2cfb 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -718,6 +718,8 @@ static void perf_evlist__munmap_nofree(struct perf_evlist *evlist)
- void perf_evlist__munmap(struct perf_evlist *evlist)
+ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evlist,
+ 				    bool overwrite)
  {
- 	perf_evlist__munmap_nofree(evlist);
-+	if (&evlist->mmap_aio)
-+		zfree(&evlist->mmap_aio);
- 	zfree(&evlist->mmap);
- 	zfree(&evlist->overwrite_mmap);
- }
-@@ -749,6 +751,13 @@ static struct perf_mmap *perf_evlist__alloc_mmap(struct perf_evlist *evlist,
- 		 */
- 		refcount_set(&map[i].refcnt, 0);
+ 	u64 bytes_written = rec->bytes_written;
+-	int i;
+-	int rc = 0;
++	int i, rc = 0;
+ 	struct perf_mmap *maps;
++	int trace_fd = rec->session->data->file.fd;
++	struct aiocb **mmap_aio = rec->evlist->mmap_aio;
++	int mmap_aio_size = 0;
++	off_t off;
+ 
+ 	if (!evlist)
+ 		return 0;
+@@ -546,14 +620,17 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+ 	if (overwrite && evlist->bkw_mmap_state != BKW_MMAP_DATA_PENDING)
+ 		return 0;
+ 
++	off = lseek(trace_fd, 0, SEEK_CUR);
++
+ 	for (i = 0; i < evlist->nr_mmaps; i++) {
+ 		struct auxtrace_mmap *mm = &maps[i].auxtrace_mmap;
+ 
+ 		if (maps[i].base) {
+-			if (perf_mmap__push(&maps[i], rec, record__pushfn) != 0) {
+-				rc = -1;
++			rc = perf_mmap__push(&maps[i], rec, record__pushfn, &off);
++			if (rc < 0)
+ 				goto out;
+-			}
++			else if (rc > 0)
++				mmap_aio[mmap_aio_size++] = &maps[i].cblock;
+ 		}
+ 
+ 		if (mm->base && !rec->opts.auxtrace_snapshot_mode &&
+@@ -563,6 +640,10 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+ 		}
  	}
-+
-+	evlist->mmap_aio = zalloc(evlist->nr_mmaps * sizeof(struct aiocb *));
-+	if (!evlist->mmap_aio) {
-+		zfree(&map);
-+		return NULL;
-+	}
-+
- 	return map;
- }
  
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index dc66436add98..f98b949561fd 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -15,6 +15,7 @@
- #include "util.h"
- #include <signal.h>
- #include <unistd.h>
-+#include <aio.h>
- 
- struct pollfd;
- struct thread_map;
-@@ -43,6 +44,7 @@ struct perf_evlist {
- 	} workload;
- 	struct fdarray	 pollfd;
- 	struct perf_mmap *mmap;
-+	struct aiocb	 **mmap_aio;
- 	struct perf_mmap *overwrite_mmap;
- 	struct thread_map *threads;
- 	struct cpu_map	  *cpus;
++	record__mmap_read_sync(trace_fd, mmap_aio, mmap_aio_size, rec);
++
++	lseek(trace_fd, off, SEEK_SET);
++
+ 	/*
+ 	 * Mark the round finished in case we wrote
+ 	 * at least one event.
 diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index fc832676a798..e71d46cb01cc 100644
+index e71d46cb01cc..c8b921c88a5d 100644
 --- a/tools/perf/util/mmap.c
 +++ b/tools/perf/util/mmap.c
-@@ -155,6 +155,10 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
+@@ -292,11 +292,11 @@ int perf_mmap__read_init(struct perf_mmap *map)
+ }
  
- void perf_mmap__munmap(struct perf_mmap *map)
+ int perf_mmap__push(struct perf_mmap *md, void *to,
+-		    int push(void *to, void *buf, size_t size))
++		    int push(void *to, void *buf, size_t size, off_t), off_t *off)
  {
-+	if (map->data != NULL) {
-+		munmap(map->data, perf_mmap__mmap_len(map));
-+		map->data = NULL;
-+	}
- 	if (map->base != NULL) {
- 		munmap(map->base, perf_mmap__mmap_len(map));
- 		map->base = NULL;
-@@ -190,6 +194,14 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd)
- 		map->base = NULL;
- 		return -1;
- 	}
-+	map->data = mmap(NULL, perf_mmap__mmap_len(map), PROT_READ | PROT_WRITE,
-+			MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-+	if (map->data == MAP_FAILED) {
-+		pr_debug2("failed to mmap perf event data buffer, error %d\n",
-+				errno);
-+		map->data = NULL;
-+		return -1;
-+	}
- 	map->fd = fd;
+ 	u64 head = perf_mmap__read_head(md);
+ 	unsigned char *data = md->base + page_size;
+-	unsigned long size;
++	unsigned long size, size0 = 0;
+ 	void *buf;
+ 	int rc = 0;
  
- 	if (auxtrace_mmap__mmap(&map->auxtrace_mmap,
+@@ -308,23 +308,22 @@ int perf_mmap__push(struct perf_mmap *md, void *to,
+ 
+ 	if ((md->start & md->mask) + size != (md->end & md->mask)) {
+ 		buf = &data[md->start & md->mask];
+-		size = md->mask + 1 - (md->start & md->mask);
+-		md->start += size;
+-
+-		if (push(to, buf, size) < 0) {
+-			rc = -1;
+-			goto out;
+-		}
++		size0 = md->mask + 1 - (md->start & md->mask);
++		md->start += size0;
++		memcpy(md->data, buf, size0);
+ 	}
+ 
+ 	buf = &data[md->start & md->mask];
+ 	size = md->end - md->start;
+ 	md->start += size;
++	memcpy(md->data + size0, buf, size);
+ 
+-	if (push(to, buf, size) < 0) {
+-		rc = -1;
++	rc = push(to, md, size0 + size, *off) < 0 ? -1 : 1;
++	if (rc == -1)
+ 		goto out;
+-	}
++
++	perf_mmap__get(md);
++	*off += size0 + size;
+ 
+ 	md->prev = head;
+ 	perf_mmap__consume(md);
 diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index d82294db1295..1974e621e36b 100644
+index 1974e621e36b..6211a3a0c4c3 100644
 --- a/tools/perf/util/mmap.h
 +++ b/tools/perf/util/mmap.h
-@@ -6,6 +6,7 @@
- #include <linux/types.h>
- #include <asm/barrier.h>
- #include <stdbool.h>
-+#include <aio.h>
- #include "auxtrace.h"
- #include "event.h"
+@@ -95,7 +95,7 @@ union perf_event *perf_mmap__read_forward(struct perf_mmap *map);
+ union perf_event *perf_mmap__read_event(struct perf_mmap *map);
  
-@@ -25,6 +26,8 @@ struct perf_mmap {
- 	bool		 overwrite;
- 	struct auxtrace_mmap auxtrace_mmap;
- 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
-+	void 		 *data;
-+	struct aiocb	 cblock;
- };
+ int perf_mmap__push(struct perf_mmap *md, void *to,
+-		    int push(void *to, void *buf, size_t size));
++		    int push(void *to, void *buf, size_t size, off_t off), off_t *off);
  
- /*
+ size_t perf_mmap__mmap_len(struct perf_mmap *map);
  
