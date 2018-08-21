@@ -6,133 +6,116 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6066C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE659C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78AA0214C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:40:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78AA0214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 34BE021581
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 08:42:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34BE021581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbeHUL7Q (ORCPT
+        id S1726783AbeHUMBv convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 07:59:16 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:62783 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbeHUL7P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 07:59:15 -0400
-Received: from 79.184.253.33.ipv4.supernova.orange.pl (79.184.253.33) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 4a36ef4f9f6b8fae; Tue, 21 Aug 2018 10:39:58 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ramesh Thomas <ramesh.thomas@intel.com>,
-        linux-kernel@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v1 0/5] Improvement stopping tick decision making in 'menu' idle governor
-Date:   Tue, 21 Aug 2018 10:37:42 +0200
-Message-ID: <1980448.5HStMnL72j@aspire.rjw.lan>
-In-Reply-To: <1534090171-14464-1-git-send-email-leo.yan@linaro.org>
-References: <1534090171-14464-1-git-send-email-leo.yan@linaro.org>
+        Tue, 21 Aug 2018 08:01:51 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35563 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726536AbeHUMBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 08:01:51 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id EB09F20711; Tue, 21 Aug 2018 10:42:33 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-85-9.w90-88.abo.wanadoo.fr [90.88.27.9])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A17342072C;
+        Tue, 21 Aug 2018 10:42:23 +0200 (CEST)
+Date:   Tue, 21 Aug 2018 10:42:24 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH] mtd: rawnand: denali: do not pass zero maxchips to
+ nand_scan()
+Message-ID: <20180821104224.6aafb0bd@xps13>
+In-Reply-To: <1534839799-14112-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1534839799-14112-1-git-send-email-yamada.masahiro@socionext.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday, August 12, 2018 6:09:26 PM CEST Leo Yan wrote:
-> We found the CPU cannot stay in deepest idle state as expected with
-> running synthetic workloads with mainline kernel on Arm platform
-> (96boards Hikey620 with octa CA53 CPUs).
-> 
-> The main issue is the criteria for decision stopping tick; now
-> the criteria is checking expected interval is less than TICK_USEC, but
-> this doesn't consider the next tick detla is float due CPU randomly
-> eneters and exits idle states; furthermore, it's stick to checking
-> TICK_USEC as boundary for decision stopping tick, unfortunately this has
-> hole to select a shallow state with stopping tick, so the CPU stays in
-> shallow state for long time.
-> 
-> This patch series is to explore more reasonable making decision for
-> stopping tick and the most important fixing is to avoid powernightmares
-> issue after we apply these criterias for making decisions.  Patches
-> 0001 ~ 0003 are used to refactor the variables and structures for more
-> readable code, it also provides a function menu_decide_stopping_tick()
-> which can be used to encapsulate the making decision logics.  The last
-> two patches are primary for improvement, patch 0004 'cpuidle: menu:
-> Don't stay in shallow state for a long time' introduces a new criteria
-> (it's a more strict criteria than before) for not stopping tick for
-> shallow state cases; patch 0005 is use the dynamic tick detla to replace
-> the static value TICK_USEC for decision if the tick is expired before or
-> after the prediction, according this comparison we can get conclusion if
-> need to stop tick or not.
-> 
-> With more accurate decision for stopping tick, one immediate benefit is
-> the CPUs have more chance to stay in deepest state, it also can avoid to
-> run tick unnecessarily and so avoid a shallower state introduced by tick
-> event.  For the testing result in below table, we can see the result
-> proves the improvement by better stopping tick decision making in this
-> patch series, we run the workload generated by rt-app (a single task
-> with period 5ms and duty cycle 1%/3%/5%/10%/20%/30%/40%), the total
-> running time is 60s.  We do statistics for all CPUs for all idle states
-> duration, the unit is second (s), for cases (dutycycle=1%/3%/5%/10%/20%)
-> we can see the shallow state C0/C1 duration are reduced and the time
-> has been moved to deepest state, so the deepest state C2 duration can
-> have improvement for ~9s to ~21s.  for cases (dutycycle=30%/40%) though
-> we can see the deepest state durations are parity between with and
-> without patch series, but it has a minor improvement for C1 state
-> duration by stealing C0 state duration.
-> 
-> Some notations are used in the table:
-> 
-> state: C0: WFI; C1: CPU OFF; C2: Cluster OFF
-> 
-> All testing cases have single task with 5ms period:
-> 
-> 		 Without patches           With patches               Difference
->             -----------------------  -----------------------   --------------------------
-> Duty cycle    C0     C1       C2       C0      C1      C2        C0        C1        C2
->   1%        2.397  16.528  471.905   0.916    2.688  487.328   -1.481   -13.840   +15.422
->   3%        3.957  20.541  464.434   1.510    2.398  485.914   -2.447   -18.143   +21.480
->   5%        2.866   8.609  474.777   1.166    2.250  483.983   -1.699    -6.359    +9.205
->  10%        2.893  28.753  453.277   1.147   14.134  469.190   -1.745   -14.618   +15.913
->  20%        7.620  41.086  431.735   1.595   35.055  442.482   -6.024    -6.030   +10.747
->  30%        4.394  38.328  431.442   1.964   40.857  430.973   -2.430    +2.529    -0.468
->  40%        7.390  29.415  430.914   1.789   34.832  431.588   -5.600    +5.417    -0.673
-> 
-> 
-> P.s. for the testing, applied Rafael's patch 'cpuidle: menu: Handle
-> stopped tick more aggressively' [1] to avoid select unexpected shallow
-> state after tick has been stopped.
-> 
-> [1] https://lkml.org/lkml/2018/8/10/259
-> 
-> Leo Yan (5):
->   cpuidle: menu: Clean up variables usage in menu_select()
->   cpuidle: menu: Record tick delta value in struct menu_device
->   cpuidle: menu: Provide menu_decide_stopping_tick()
->   cpuidle: menu: Don't stay in shallow state for a long time
->   cpuidle: menu: Change to compare prediction with tick delta
-> 
->  drivers/cpuidle/governors/menu.c | 104 ++++++++++++++++++++++++++++-----------
->  1 file changed, 76 insertions(+), 28 deletions(-)
-> 
-> 
+Hi Masahiro,
 
-Overall, I don't like this series, sorry about that.
+Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Tue, 21 Aug
+2018 17:23:19 +0900:
 
-The majority of changes in it are code reorganization, quite questionable
-in a couple of cases, and a similar goal can be achieved with a very simple
-patch that I'm going to post shortly.
+> Commit 49aa76b16676 ("mtd: rawnand: do not execute nand_scan_ident()
+> if maxchips is zero") gave a new meaning for calling nand_scan_ident()
+> with maxchips=0.
+> 
+> It is a special usage for some drivers such as docg4, but in fact
+> the Denali driver may pass maxchips=0 to nand_scan() when the driver
+> is enabled but no NAND chip is found on the board for some reasons.
+> 
+> If nand_scan_with_ids() is called with maxchips=0, nand_scan_ident()
+> is skipped, i.e. nand_set_defaults() is skipped.  Therefore, the
+> driver must have set chip->controller beforehand.  Otherwise,
+> nand_attach() causes NULL pointer dereference.
+> 
+> In fact, the Denali controller knows the number of connected chips
+> before calling nand_scan_ident(); if DEVICE_RESET fails, there is no
+> chip in that chip select.  Then, denali_reset_banks() sets the maxchips
+> to the number of detected chips.  If no chip is found, it is zero.
+> 
+> The reason of this trick was, as commit f486287d2372 ("mtd: nand:
+> denali: fix bank reset function to detect the number of chips")
+> explained, nand_scan_ident() issued Set Features (0xEF) command
+> to all CS lines, some of which may not be connected with a chip.
+> Then, the driver would wait until R/B# response, which never happens.
+> 
+> This problem was solved by commit 107b7d6a7ad4 ("mtd: rawnand: avoid
+> setting again the timings to mode 0 after a reset").  In the current
+> code, nand_setup_data_interface() is called from nand_scan_tail(),
+> which is after the chip detection is done.
+> 
+> Remove the code that is causing NULL pointer dereference.  Now, the
+> maxchips passed to nand_scan() is the maximum number of chip selects
+> supported by the IP (typically 4 or 8).  Leave all the chip detection
+> process to nand_scan_ident().
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+Thanks for the fix.
+
+Actually the docg4 driver is getting removed and the special handling
+in nand_scan() about having 0 maxchips will also disappear.
+Nonetheless, I think the below code was buggy and I would like to apply
+the fix anyway.
+
+> ---
+> 
+>  drivers/mtd/nand/raw/denali.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
+> index ca18612..3e4b8e1 100644
+> --- a/drivers/mtd/nand/raw/denali.c
+> +++ b/drivers/mtd/nand/raw/denali.c
+> @@ -1086,7 +1086,6 @@ static void denali_reset_banks(struct denali_nand_info *denali)
+>  	}
+>  
+>  	dev_dbg(denali->dev, "%d chips connected\n", i);
+> -	denali->max_banks = i;
+>  }
+>  
+>  static void denali_hw_init(struct denali_nand_info *denali)
 
 Thanks,
-Rafael
-
-
+Miquèl
