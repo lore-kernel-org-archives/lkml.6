@@ -2,128 +2,146 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D5EC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96847C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5FDD21837
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:28:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 565BE21837
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:29:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EV2s1dCY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5FDD21837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="D7dQ8k68";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Njt+cdoH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 565BE21837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbeHUUts (ORCPT
+        id S1727167AbeHUUuV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 16:49:48 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:32876 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726615AbeHUUts (ORCPT
+        Tue, 21 Aug 2018 16:50:21 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59058 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726615AbeHUUuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 16:49:48 -0400
-Received: by mail-ed1-f67.google.com with SMTP id h9-v6so3715373edr.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 10:28:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=V7JcX9TJkFRIeYghVVBHAuxKIL9Ien7WkapaghyRol8=;
-        b=EV2s1dCY8uxfwzItB+GtPndUPuX6eSWlQBl3OkZGP/ZDRfYqJiQNmM/3VBv9xF6/CE
-         T2lTY++pfySV3cPcPWjwm+wAXNf9BPxM64O2oxLpqfLN9SeoD9FRTp2tTxO8Uk8R+FvH
-         TryF3Mc7oEGYEaM+c3qV/UQ14kHTX+dcchsrDgk52UWNAnig3/QpPxykIfBwvXkCcBeI
-         aHxv4RimZoOG8vUzLc7FkUho12GaB80BIItYhgxVzLPNvZ6DAa/TnBfHN6984k5KrNYB
-         aY7lCp5H5hQx46Z4CPbkxra9k8lLPYftAVJGKESnvz7Jm4WrF3OY2ZrfQIWJwdy5QHNl
-         SMVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=V7JcX9TJkFRIeYghVVBHAuxKIL9Ien7WkapaghyRol8=;
-        b=rNnTBTh1mtN2XmYMSFti+XMGUC6dR+JsRp3D7XxCGi6RAye/5jUcw61hFelr/cAt9+
-         1VTKLCnCtz+Vx7tgnzprm05RQx49AnoCWXRZaQzRZTX/YFcLfGTXhBoEXxWnNVZCPyOw
-         pMECMukusSHHU7u3zahBZQPmDhYqrVafyifQxB3hcpBx/4TAaYDTbloo2ZX2xF0RXTZe
-         pYEyIu2KQUC7XQeUOAjmDv9hN2EuN7YOAhUhoCSSjPAfzV4wRzfbfiK+zoI/sApRRld7
-         Wnq+xAVPzjlCl13LaSKNPcHluV9Kp4TX2YC9UbgE+gwKCF0+EAvM04Q4Y4NBE1KG4R6n
-         ljDQ==
-X-Gm-Message-State: AOUpUlELveFe03HKykTsBdYvGbrM3JWGuVJ4VJqWezJAB+okvXxKWjH8
-        K+3sUxVh3Wc09j8TcHXcTHU=
-X-Google-Smtp-Source: AA+uWPxiiMeH2vyz+Q0oTjzeV0N5mrlilEvNh+4UMwMPaWa/NLM4+LEf+PRlEfX7t34OeVY/j6cCqw==
-X-Received: by 2002:a50:dd4b:: with SMTP id u11-v6mr63586699edk.298.1534872523522;
-        Tue, 21 Aug 2018 10:28:43 -0700 (PDT)
-Received: from dell.be.48ers.dk (d51a5bc31.access.telenet.be. [81.165.188.49])
-        by smtp.gmail.com with ESMTPSA id w1-v6sm9599668eda.63.2018.08.21.10.28.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 Aug 2018 10:28:42 -0700 (PDT)
-Received: from peko by dell.be.48ers.dk with local (Exim 4.89)
-        (envelope-from <peko@dell.be.48ers.dk>)
-        id 1fsASP-00087E-Gf; Tue, 21 Aug 2018 19:28:41 +0200
-From:   Peter Korsgaard <peter@korsgaard.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Peter Korsgaard <peter@korsgaard.com>
-Subject: [PATCH] ttyprintk: make the printk log level configurable
-Date:   Tue, 21 Aug 2018 19:28:22 +0200
-Message-Id: <20180821172822.30975-1-peter@korsgaard.com>
-X-Mailer: git-send-email 2.11.0
+        Tue, 21 Aug 2018 16:50:21 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 708E760C7E; Tue, 21 Aug 2018 17:29:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534872556;
+        bh=mcYwkC2sv/kazNmU5yj78aSm5tr5j5ZQoRL+e8Z++Yk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=D7dQ8k68TGC2L8Ist2a9X9RlAUQB2mW9gblJwNTMU89waxsLmwgCGmAKEWJiuQZ+c
+         WJ0w13LVq+n4q6khh1JhTF5tuTMXcOXnPV3vAo81IM30fiYMYetLIx3YlnlqcopJGK
+         KU137Bdl0t9xFQNFmcTQkG4wGBO9075WlBmKubZU=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id A0C1060585;
+        Tue, 21 Aug 2018 17:29:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1534872555;
+        bh=mcYwkC2sv/kazNmU5yj78aSm5tr5j5ZQoRL+e8Z++Yk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Njt+cdoHtH2TAdocq+Yw5gWOQ7/4My/V2PIWKQiV1HvZicGTPcABBbemmcwXwQZvE
+         tM8DeskSgG4KNGz7wU7DWe/pSo3kuVt2CrrthPzR7bDkeu7EVNH3jnZ6jR2ncCHcGx
+         u6osNvjLGaSTZw8Ro9DNbn13P6wQQSMNMtLBiBsM=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 21 Aug 2018 22:59:15 +0530
+From:   Vikash Garodia <vgarodia@codeaurora.org>
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     hverkuil@xs4all.nl, mchehab@kernel.org, robh@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org, arnd@arndb.de,
+        bjorn.andersson@linaro.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        acourbot@chromium.org, linux-media-owner@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] venus: firmware: move load firmware in a separate
+ function
+In-Reply-To: <8ffd63d9-ba9f-44b2-e1c0-7edce167fd9c@linaro.org>
+References: <1533562085-8773-1-git-send-email-vgarodia@codeaurora.org>
+ <1533562085-8773-3-git-send-email-vgarodia@codeaurora.org>
+ <8ffd63d9-ba9f-44b2-e1c0-7edce167fd9c@linaro.org>
+Message-ID: <4ad5d921a54256bccfd7030a3f0893d8@codeaurora.org>
+X-Sender: vgarodia@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For some use cases it is handy to use a different printk log level than the
-default (info) for the messages written to ttyprintk, so add a Kconfig
-option similar to what we have for default console loglevel.
+Hi Stanimir,
 
-Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
----
- drivers/char/Kconfig     | 8 ++++++++
- drivers/char/ttyprintk.c | 4 +++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+On 2018-08-21 17:38, Stanimir Varbanov wrote:
+> Hi Vikash,
+> 
+> On 08/06/2018 04:28 PM, Vikash Garodia wrote:
 
-diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
-index ce277ee0a28a..14a7f023f20b 100644
---- a/drivers/char/Kconfig
-+++ b/drivers/char/Kconfig
-@@ -66,6 +66,14 @@ config TTY_PRINTK
- 
- 	  If unsure, say N.
- 
-+config TTY_PRINTK_LEVEL
-+	depends on TTY_PRINTK
-+	int "ttyprintk log level (1-7)"
-+	range 1 7
-+	default "6"
-+	help
-+	  Printk log level to use for ttyprintk messages.
-+
- config PRINTER
- 	tristate "Parallel printer support"
- 	depends on PARPORT
-diff --git a/drivers/char/ttyprintk.c b/drivers/char/ttyprintk.c
-index 67549ce88cc9..22fbd483b5dc 100644
---- a/drivers/char/ttyprintk.c
-+++ b/drivers/char/ttyprintk.c
-@@ -37,6 +37,8 @@ static struct ttyprintk_port tpk_port;
-  */
- #define TPK_STR_SIZE 508 /* should be bigger then max expected line length */
- #define TPK_MAX_ROOM 4096 /* we could assume 4K for instance */
-+#define TPK_PREFIX KERN_SOH __stringify(CONFIG_TTY_PRINTK_LEVEL) " [U]"
-+
- static int tpk_curr;
- 
- static char tpk_buffer[TPK_STR_SIZE + 4];
-@@ -45,7 +47,7 @@ static void tpk_flush(void)
- {
- 	if (tpk_curr > 0) {
- 		tpk_buffer[tpk_curr] = '\0';
--		pr_info("[U] %s\n", tpk_buffer);
-+		printk(TPK_PREFIX " %s\n", tpk_buffer);
- 		tpk_curr = 0;
- 	}
- }
--- 
-2.11.0
+<snip>
 
+>> -int venus_boot(struct device *dev, const char *fwname)
+>> +static int venus_load_fw(struct venus_core *core, const char *fwname,
+>> +			phys_addr_t *mem_phys, size_t *mem_size)
+> 
+> fix indentation
+Please let me know which indentation rule is missed out here. As per 
+last
+discussion, the parameters on next line should start from open 
+parenthesis.
+I see the same being followed above.
+Also i have been running checkpatch script and it does not show up any 
+issue.
+Any other script which can be executed to ensure the coding guidelines ?
+
+<snip>
+
+>> 
+>> -	ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va, 
+>> mem_phys,
+>> -			    mem_size, NULL);
+>> +	if (core->no_tz)
+>> +		ret = qcom_mdt_load_no_init(dev, mdt, fwname, VENUS_PAS_ID,
+>> +					mem_va, *mem_phys, *mem_size, NULL);
+>> +	else
+>> +		ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID,
+>> +				mem_va, *mem_phys, *mem_size, NULL);
+> 
+> Please fix the indentation issues above.
+Please specify here as well.
+
+>> 
+>>  	release_firmware(mdt);
+>> 
+>> -	if (ret)
+>> -		goto err_unmap;
+>> -
+>> -	ret = qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
+>> -	if (ret)
+>> -		goto err_unmap;
+>> -
+>>  err_unmap:
+>>  	memunmap(mem_va);
+>>  	return ret;
+>>  }
+>> 
+>> +int venus_boot(struct venus_core *core)
+>> +{
+>> +	phys_addr_t mem_phys;
+>> +	struct device *dev = core->dev;
+> 
+> move this one row upper.
+> 
+>> +	size_t mem_size;
+>> +	int ret;
+>> +
+>> +	if (!IS_ENABLED(CONFIG_QCOM_MDT_LOADER) ||
+>> +		(!core->no_tz && !qcom_scm_is_available()))
+>> +		return -EPROBE_DEFER;
+> 
+> fix indentation
+Please specify here as well.
+
+Thanks,
+Vikash
