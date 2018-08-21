@@ -2,132 +2,85 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E195CC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C24C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:24:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C09B21837
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:14:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1C72214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 18:24:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tKvbdv9A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C09B21837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HsfSwNC5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1C72214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbeHUVfS (ORCPT
+        id S1727635AbeHUVpn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 17:35:18 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39690 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727707AbeHUVfR (ORCPT
+        Tue, 21 Aug 2018 17:45:43 -0400
+Received: from mail-pg1-f172.google.com ([209.85.215.172]:42762 "EHLO
+        mail-pg1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726730AbeHUVpn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 17:35:17 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j8-v6so8877017pff.6
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 11:14:05 -0700 (PDT)
+        Tue, 21 Aug 2018 17:45:43 -0400
+Received: by mail-pg1-f172.google.com with SMTP id y4-v6so8823849pgp.9;
+        Tue, 21 Aug 2018 11:24:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=huxYcu7rr1SM4YgUjlQ2CXSFiyHYGA4MJn92PprdvTU=;
-        b=tKvbdv9ANX61rsRs3dleTy8U1EvQy080VfHQr9uH7EAXuEuymWWT1XIBdy7NBsXtyz
-         S2QI5G8ndrwuBmX64Xx/AN572sVv2C3G6kFuBD6SER4SPyraO/L1Ica17Uq3y2krm7k2
-         iMZHhbW9oX59pNmimQqaxa7gL0A7roPU67YWesal5fscjoWFUh/ipN+gKfApGlGaPxl8
-         dS6mIAW7X7Eshfpbk/zNHctMZ+xvK6R0cQYsijRm9Nmsnsc9dAsjqY5GpPbKygs5a5rV
-         TuzwG4s5vIGMnHlDZtCOP1yl+/txzSSENqcwjKJQ+JQHA069knbuNtboQTfVRpqaqGz9
-         i4TQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=WvqG4Q20y18uh+Z9oirQUqXN1LpIVKvF9zwefmdYxig=;
+        b=HsfSwNC57yTlHvpjv8uHVNdr3QiOex/I8PSuA4M+nQSmz6swWwUgkCk8c4JaU2vItp
+         iNQYgvP0VoriBMwCDqLtI866GON+eaLjZC45W/T42BCmhRBSDGaUCb7WwnOvBIRWCxX0
+         dbKW+G8oFimvL8KSQ+qUw23dGb51lI3rwNwwRt7762Dd6aJ8KWOPrVcmB9FXx81O3M72
+         gQ/mhAEjuHqQfAqjuo0nVV3yaAWFk/xM/1l/Rslq5Yq/rMBSeBTmSBNbODvA+5YJ0Q8F
+         QT4mQKZEv356KiDM+WyGjWjWWKRs0Zqf/r0OlLHtlQl3Es4d5hweKfXGssshBi+sgF27
+         CVNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=huxYcu7rr1SM4YgUjlQ2CXSFiyHYGA4MJn92PprdvTU=;
-        b=jhp7Mv+7bXaZSqhywMMtXY237rVugtz6HQjia3Sc7HvK7b+vSxsYM7oVNWK9Ir5l6F
-         BcmMaVt1AKntln150PVzEkiPxZcD0TsLdoy4ugopVgKn8fjF81acpusa5WFH66jvZxJw
-         6CsxrBc5/fvhuR8Ji2lfTk4gqU1caMUDsL/G4Qap8fto53ZzjuyfVtSITrNqUtLkheii
-         4jIuCGluZHdO2o4gH1PCuWh1doYVi96OH7HBmf1w5MupLhkO9F1Z44W7oTIxxck7ZKVF
-         H6PGf5+6XmWsLVbAb+VuK+N/FPLR+uabF8WU2+R8TMyNzPbtoEAmxH6p2iWxbXioaSZl
-         8r+g==
-X-Gm-Message-State: AOUpUlG6Y8JHXmFwCfJcGL0QHcfi9cmmkX4BD0fgChAvNGQisp9vnM4P
-        8STQBZ2owwsdesIKMw1WiCWmWnR5/I45JrJ9R+VGjA==
-X-Google-Smtp-Source: AA+uWPzxfyW8vDOUbfR0ke8MicOhjdvFDEK3AG50laIDK5zctCv/yKsTVpHJVMNgfQXIPiZwU2XFdVqzM4//cQywBbU=
-X-Received: by 2002:a63:c24c:: with SMTP id l12-v6mr20975608pgg.255.1534875244924;
- Tue, 21 Aug 2018 11:14:04 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=WvqG4Q20y18uh+Z9oirQUqXN1LpIVKvF9zwefmdYxig=;
+        b=YMHQmE91WjR+2Um4hSylvD8RhOWS7gIyIsxrTUthk6Q/jqR45mlIWtQz9/i2W0+KPG
+         vPlimFv1zmv9tWsZ4FNDpGRPZno7a06/VAqQafVT3XJjDT4/XQ7kDL2crp+YKpXaP45z
+         eFZi/8FesXFdlP8jHffsIUZ8NFUiY0PRgG4QdBpUwgdmJfeN0WpIHmaiEXdxqPm0yfzt
+         geCQTtTiuhkFyfhD7BXDhk/AgAjn5QOqrOyw1JZFLZNcAOO4m2BRzK0uJ3VrWWKtEjNh
+         bRbY0JrkKtyyS25uf7Zko8frsUrbzJpZ6+Fh0164cjRhVhF0uiCUgPgXoOZVtI3Ay0JO
+         5MBA==
+X-Gm-Message-State: AOUpUlHGJgxp+7u46Q/ydhVxcHIALg5bu+RFaHC4XkQv8eCCj3/7ERLF
+        TFCcfSTO+dAXsnhESp7tYrYogpi7rWtV0A8W34qi1g==
+X-Google-Smtp-Source: AA+uWPztz+kZ/Fsc7caU8EA69xRjOaq+5H8M/ZmFJB05wCiN4gzH/eyGjVvLF+V+iLzhVNmZh4y6knSMH9aKwS2zWRA=
+X-Received: by 2002:a63:9412:: with SMTP id m18-v6mr10825474pge.440.1534875868891;
+ Tue, 21 Aug 2018 11:24:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180820224032.53194-1-ndesaulniers@google.com>
- <CAKv+Gu-xAmadr96vwStOxdeqi=rCEBrn8V6GofexBhpmA=JiuA@mail.gmail.com>
- <CAKwvOdkZR-MWuMU=j=kKXQwA0LEj1n0uoZQyTpwOzZuz9gjmJQ@mail.gmail.com>
- <CAKv+Gu8ZZYvh9ZthRH7mvG7_j3bvT=3st-aj0kdwpNQaAcs=-w@mail.gmail.com> <0dda3996-a4f3-33f8-ef4f-935943f132b4@arm.com>
-In-Reply-To: <0dda3996-a4f3-33f8-ef4f-935943f132b4@arm.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 21 Aug 2018 11:13:53 -0700
-Message-ID: <CAKwvOdnpBT=73JOG-OO36NgnGCGr6HNxhEKsCBDOAX=WR5HB=Q@mail.gmail.com>
-Subject: Re: [PATCH] arm64/crypto: remove non-standard notation
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+From:   Steve French <smfrench@gmail.com>
+Date:   Tue, 21 Aug 2018 13:24:17 -0500
+Message-ID: <CAH2r5mtO6545itRxAV0KW7NSt7ucvxgHOtg8wUZZ0DMHO-V8XQ@mail.gmail.com>
+Subject: Overview of performance improvements of recent SMB3 compounding patches
+To:     CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        linux-crypto@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 10:25 AM Robin Murphy <robin.murphy@arm.com> wrote:
->
-> On 21/08/18 18:00, Ard Biesheuvel wrote:
-> > On 21 August 2018 at 18:50, Nick Desaulniers <ndesaulniers@google.com> wrote:
-> >> On Tue, Aug 21, 2018 at 5:23 AM Ard Biesheuvel
-> >> <ard.biesheuvel@linaro.org> wrote:
-> >>>
-> >>> Hi Nick,
-> >>>
-> >>> On 21 August 2018 at 00:40, Nick Desaulniers <ndesaulniers@google.com> wrote:
-> >>>> It seems that:
-> >>>> ldr q8, =0x30000000200000001
-> >>>>
-> >>>> is a GNU as convience notation for:
-> >>>> ldr q8, .Lconstant
-> >>>> .Lconstant
-> >>>> .word 0x00000001
-> >>>> .word 0x00000002
-> >>>> .word 0x00000003
-> >>>> .word 0x00000000
-> >>>>
-> >>>> based on this comment in binutils' source [0]. I've asked for this
-> >>>> non-standard convience notation to be added to other assemblers [1], but
-> >>>> until then, we can remove it and get equivalent disassembly:
-> >>>>
-> >>>
-> >>> What do you mean by 'non-standard convenience notation'? Which asm
-> >>> 'standard' does Clang actually claim to implement?
-> >>
-> >> Well, for assembly 'standard' is a bit nebulous.  But it's frustrating
-> >> when you can't find what the `=0x...` notation means in either the ARM
-> >> or GNU as manuals.  The source of truth happened to be a comment in
-> >> the source [0] that explained that this was a "programmer friendly
-> >> notation."  Sure, if you can find it.
-> >>
-> >
-> > Well, it is documented in the ARM manuals as the 'ldr pseudo
-> > instruction' for 32-bit ARM, and originally, it would only emit a
-> > literal if the value could not be loaded using a ordinary mov.
->
-> FWIW It's certainly well-documented by common A64 assemblers too:
->
-> http://infocenter.arm.com/help/topic/com.arm.doc.100069_0610_01_en/dom1395139540926.html
->
-> https://sourceware.org/binutils/docs/as/AArch64-Opcodes.html#AArch64-Opcodes
+In experiments today with Ronnie's most recent compounding patches I
+see the expected significant improvements in create/mkdir/unlink/rmdir
+operations over SMB3 mounts (tests were to Samba but would be similar
+to all modern servers).  See below:
 
-Thanks for those links, I've added them to the LLVM bug to show that
-this is documented behavior.
+"touch /mnt/file"  goes from 6 request/response pairs to 4 with
+Ronnie's compounding patches
+"rm /mnt/file" from 5 to 2 request/response pairs
+"mkdir /mnt/newdir" 6 pairs to 3 pairs
+"rmdir /mnt/newdir" 6 pairs down to 2 pairs
+
+Good job Ronnie!
 -- 
 Thanks,
-~Nick Desaulniers
+
+Steve
