@@ -2,287 +2,121 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 617A2C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 05:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B96BC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 05:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E021121763
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 05:44:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E021121763
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E43F72172D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 05:47:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E43F72172D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726584AbeHUJCr (ORCPT
+        id S1726602AbeHUJFq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:02:47 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58348 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726115AbeHUJCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:02:46 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C1826207AD; Tue, 21 Aug 2018 07:44:04 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D3E03204AE;
-        Tue, 21 Aug 2018 07:44:03 +0200 (CEST)
-Date:   Tue, 21 Aug 2018 07:44:04 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Alban <albeu@free.fr>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Naren <naren.kernel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 06/29] mtd: Add support for reading MTD devices via
- the nvmem API
-Message-ID: <20180821074404.23aaeb6b@bbrezillon>
-In-Reply-To: <20180821005327.0d312a85@tock>
-References: <20180810080526.27207-1-brgl@bgdev.pl>
-        <20180810080526.27207-7-brgl@bgdev.pl>
-        <20180817182720.6a6e5e8e@bbrezillon>
-        <20180819133106.0420df5f@tock>
-        <20180819184609.6dcdbb9a@bbrezillon>
-        <20180821005327.0d312a85@tock>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 21 Aug 2018 05:05:46 -0400
+Received: from bmailout3.hostsharing.net ([176.9.242.62]:49369 "EHLO
+        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbeHUJFq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 05:05:46 -0400
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout3.hostsharing.net (Postfix) with ESMTPS id 48F9F100DA1DC;
+        Tue, 21 Aug 2018 07:47:05 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id EE5C34A15; Tue, 21 Aug 2018 07:47:04 +0200 (CEST)
+Date:   Tue, 21 Aug 2018 07:47:04 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mmyangfl@gmail.com
+Subject: Re: Enumeration issue with QCA9005 AR9462
+Message-ID: <20180821054704.jlqk5zrlbbsjsd4g@wunner.de>
+References: <20180820230624.GB154536@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180820230624.GB154536@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 Aug 2018 00:53:27 +0200
-Alban <albeu@free.fr> wrote:
-
-> On Sun, 19 Aug 2018 18:46:09 +0200
-> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+On Mon, Aug 20, 2018 at 06:06:24PM -0500, Bjorn Helgaas wrote:
+> mmyangfl@gmail.com reported a problem [1]: on v4.17, a QCA9005 AR9462
+> wifi device was present at boot, but disappeared after suspend/resume.
 > 
-> > On Sun, 19 Aug 2018 13:31:06 +0200
-> > Alban <albeu@free.fr> wrote:
-> >   
-> > > On Fri, 17 Aug 2018 18:27:20 +0200
-> > > Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> > >     
-> > > > Hi Bartosz,
-> > > > 
-> > > > On Fri, 10 Aug 2018 10:05:03 +0200
-> > > > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> > > >       
-> > > > > From: Alban Bedel <albeu@free.fr>
-> > > > > 
-> > > > > Allow drivers that use the nvmem API to read data stored on MTD devices.
-> > > > > For this the mtd devices are registered as read-only NVMEM providers.
-> > > > > 
-> > > > > Signed-off-by: Alban Bedel <albeu@free.fr>
-> > > > > [Bartosz:
-> > > > >   - use the managed variant of nvmem_register(),
-> > > > >   - set the nvmem name]
-> > > > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>        
-> > > > 
-> > > > What happened to the 2 other patches of Alban's series? I'd really
-> > > > like the DT case to be handled/agreed on in the same patchset, but
-> > > > IIRC, Alban and Srinivas disagreed on how this should be represented.
-> > > > I hope this time we'll come to an agreement, because the MTD <-> NVMEM
-> > > > glue has been floating around for quite some time...      
-> > > 
-> > > These other patches were to fix what I consider a fundamental flaw in
-> > > the generic NVMEM bindings, however we couldn't agree on this point.
-> > > Bartosz later contacted me to take over this series and I suggested to
-> > > just change the MTD NVMEM binding to use a compatible string on the
-> > > NVMEM cells as an alternative solution to fix the clash with the old
-> > > style MTD partition.
-> > > 
-> > > However all this has no impact on the code needed to add NVMEM support
-> > > to MTD, so the above patch didn't change at all.    
-> > 
-> > It does have an impact on the supported binding though.
-> > nvmem->dev.of_node is automatically assigned to mtd->dev.of_node, which
-> > means people will be able to define their NVMEM cells directly under
-> > the MTD device and reference them from other nodes (even if it's not
-> > documented), and as you said, it conflict with the old MTD partition
-> > bindings. So we'd better agree on this binding before merging this
-> > patch.  
+> He also tested a recent kernel (5c60a7389d79, from Thu Aug 16),
+> where the suspend/resume problem doesn't seem to happen, but the wifi
+> device isn't enumerated correctly at boot-time.
 > 
-> Unless the nvmem cell node has a compatible string, then it won't be
-> considered as a partition by the MTD code. That is were the clash is,
-> both bindings allow free named child nodes without a compatible string.
-
-Except the current nvmem cells parsing code does not enforce that, and
-existing DTs rely on this behavior, so we're screwed. Or are you
-suggesting to add a new "bool check_cells_compat;" field to
-nvmem_config?
-
+> [    0.928714] pciehp 0000:04:00.0:pcie204: Slot #0 AttnBtn- PwrCtrl- MRL- AttnInd- PwrInd- HotPlug+ Surprise+ Interlock- NoCompl- LLActRep+
+> [    0.928752] pciehp 0000:04:00.0:pcie204: Slot(0-1): Card not present
+> [    0.928811] pciehp 0000:04:00.0:pcie204: Slot(0-1): Link Up
+> [    0.928815] pciehp 0000:04:00.0:pcie204: Slot(0-1): No adapter
 > 
-> > I see several options:
-> > 
-> > 1/ provide a way to tell the NVMEM framework not to use parent->of_node
-> >    even if it's != NULL. This way we really don't support defining
-> >    NVMEM cells in the DT, and also don't support referencing the nvmem
-> >    device using a phandle.  
-> 
-> I really don't get what the point of this would be. Make the whole API
-> useless?
+> [1] https://bugzilla.kernel.org/show_bug.cgi?id=200839
+> [2] https://bugzilla.kernel.org/attachment.cgi?id=277923
 
-No, just allow Bartosz to get his changes merged without waiting for you
-and Srinivas to agree on how to handle the new binding. As I said
-earlier, this mtd <-> nvmem stuff has been around for quite some time,
-and instead of trying to find an approach that makes everyone happy, you
-decided to let the patchset die.
+The hardware appears to be broken in that the Presence Detect State bit
+in the Slot Status register is 0 (Slot Empty) even though the slot is
+occupied.
 
-> 
-> > 2/ define a new binding where all nvmem-cells are placed in an
-> >    "nvmem" subnode (just like we have this "partitions" subnode for
-> >    partitions), and then add a config->of_node field so that the
-> >    nvmem provider can explicitly specify the DT node representing the
-> >    nvmem device. We'll also need to set this field to ERR_PTR(-ENOENT)
-> >    in case this node does not exist so that the nvmem framework knows
-> >    that it should not assign nvmem->dev.of_node to parent->of_node  
-> 
-> This is not good. First the NVMEM device is only a virtual concept of
-> the Linux kernel, it has no place in the DT.
+Thus, as of v4.19, pciehp will initially consider the slot to be in
+ON_STATE when it probes (because there are enumerated children).
+It then looks at the PDS bit, sees that it's 0, believes that there
+is no longer anything in the slot and synthesizes a Presence Detect
+Changed event to bring down the slot.  The IRQ thread then removes
+the device in the slot, sees that the link is up, tries to bring the
+slot up again, but that fails because __pciehp_enable_slot() complains
+that the Presence Detect State bit isn't set ("No adapter").
 
-nvmem-cells is a virtual concept too, still, you define them in the DT.
+The slot is then considered to be in OFF_STATE by pciehp, even though
+the rescan made the device reappear behind pciehp's back.  On resume
+from system sleep, pciehp sees that the Presence Detect State bit
+in the Slot Status register is still 0, and because it's already in
+OFF_STATE, there's nothing to do.
 
-> Secondly the NVMEM
-> provider (here the MTD device) then has to manually parse its DT node to
-> find this subnode, pass it to the NVMEM framework to later again
-> resolve it back to the MTD device.
+Up until v4.18, an unoccupied slot was only brought down on resume:
 
-We don't resolve it back to the MTD device, because the MTD device is
-just the parent of the nvmem device.
+	/* Check if slot is occupied */
+	pciehp_get_adapter_status(slot, &status);
+	mutex_lock(&slot->hotplug_lock);
+	if (status)
+		pciehp_enable_slot(slot);
+	else
+		pciehp_disable_slot(slot);
+	mutex_unlock(&slot->hotplug_lock);
 
-> Not very complex but still a lot of
-> useless code, just registering the MTD device is a lot simpler and much
-> more inline with most other kernel API that register a "service"
-> available from a device.
+From v4.19, this is now also done on probe for consistency.
 
-I'm not a big fan of this option either, but I thought I had to propose
-it.
+The above hypothesis is confirmed by the lspci -vv output:
 
-> 
-> > 3/ only declare partitions as nvmem providers. This would solve the
-> >    problem we have with partitions defined in the DT since
-> >    defining sub-partitions in the DT is not (yet?) supported and
-> >    partition nodes are supposed to be leaf nodes. Still, I'm not a big
-> >    fan of this solution because it will prevent us from supporting
-> >    sub-partitions if we ever want/need to.  
-> 
-> That sound like a poor workaround.
+LnkSta: Speed 2.5GT/s, Width x1, TrErr- Train- SlotClk- DLActive+ BWMgmt+ ABWMgmt-
+                                                        ^^^^^^^^^
+SltSta: Status: AttnBtn- PowerFlt- MRL- CmdCplt- PresDet- Interlock-
+                                                 ^^^^^^^^
 
-Yes, that's a workaround. And the reason I propose it, is, again,
-because I don't want to block Bartosz.
+Possible solutions:
 
-> Remember that this problem could
-> appear with any device that has a binding that use child nodes.
+(a) Be lenient towards broken hardware and accept DLActive+ as a proxy
+    for PresDet+.
 
-I'm talking about partitions, and you're talking about mtd devices.
-Right now partitions don't have subnodes, and if we define that
-partition subnodes should describe nvmem-cells, then it becomes part of
-the official binding. So, no, the problem you mention does not (yet)
-exist.
+(b) Add a blacklist to pciehp such that it doesn't bind to [1ae9:0200].
+    The bug reporter writes that "it's a single Half Mini PCIe card,
+    with two chipsets (Wil6110? + AR9462) combined by a PCIe hub".
+    This sounds like it's not really hotpluggable.
+    (Is Mini PCIe hotplug capable at all?)
 
-> 
-> > 4/ Add a ->of_xlate() hook that would be called if present by the
-> >    framework instead of using the default parsing we have right now.  
-> 
-> That is a bit cleaner, but I don't think it would be worse the
-> complexity.
+Let me go through the driver and see if (a) is feasible and how intrusive
+it would be.
 
-But it's way more flexible than putting everything in the nvmem
-framework. BTW, did you notice that nvmem-cells parsing does not work
-with flashes bigger than 4GB, because the framework assumes
-#address-cells and #size-cells are always 1. That's probably something
-we'll have to fix for the MTD case.
+Thanks,
 
-> Furthermore xlate functions are more about converting
-> from hardware parameters to internal kernel representation than to hide
-> extra DT parsing.
-
-Hm, how is that different? ->of_xlate() is just a way for drivers to
-have their own DT representation, which is exactly what we want here.
-
-> 
-> > 5/ Tell the nvmem framework the name of the subnode containing nvmem
-> >    cell definitions (if NULL that means cells are directly defined
-> >    under the nvmem provider node). We would set it to "nvmem-cells" (or
-> >    whatever you like) for the MTD case.  
-> 
-> If so please match on compatible and not on the node name.
-
-If you like.
-
-> 
-> 6/ Extend the current NVMEM cell lookup to check if the parent node of
-> the cell has a compatible string set to "nvmem-cells". If it doesn't it
-> mean we have the current binding and this node is the NVMEM device. If
-> it does the device node is just the next parent. This is trivial to
-> implement (literally 2 lines of code) and cover all the cases currently
-> known.
-
-Except Srinivas was not happy with this solution, and this stalled the
-discussion. I'm trying to find other options and you keep rejecting all
-of them to come back to this one.
-
-> 
-> 7/ Just add a compatible string to the nvmem cell. No code change is
-> needed,
-
-That's not true!!! What forces people to add this compatible in their
-DT? Nothing. I'll tell you what will happen: people will start defining
-their nvmem cells directly under the MTD node because that *works*, and
-even if the binding is not documented and we consider it invalid, we'll
-be stuck supporting it forever. As said above, the very reason for
-option #1 to exist is to give you and Srinivas some more time to sort
-this out, while unblocking Bartosz in the meantime.
-
-> however as the nvmem cells have an address space (the offset in
-> byte in the storage) it might still clash with another address space
-> used by the main device biding (for example a number of child
-> functions).
-> 
-> > There are probably other options (some were proposed by Alban and
-> > Srinivas already), but I'd like to get this sorted out before we merge
-> > this patch.
-> > 
-> > Alban, Srinivas, any opinion?  
-> 
-> My preference goes to 6/ as it is trivial to implement, solves all
-> known shortcomings and is backward compatible with the current binding.
-> All other solutions have limitations and/or require too complex
-> implementations compared to what they try to solve.
-
-So we're back to square 1, and you're again blocking everything because
-you refuse to consider other options.
-
-There's obviously nothing more I can do to help, and that's unfortunate
-because other people are waiting for this feature.
-
-Regards,
-
-Boris
+Lukas
