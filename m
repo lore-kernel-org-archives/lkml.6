@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9366BC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B04AC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:33:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5816020C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:33:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5816020C09
+	by mail.kernel.org (Postfix) with ESMTP id 27F3920C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:33:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27F3920C09
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728233AbeHUJv6 (ORCPT
+        id S1728243AbeHUJwC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:51:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56766 "EHLO
+        Tue, 21 Aug 2018 05:52:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56772 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726852AbeHUJv5 (ORCPT
+        with ESMTP id S1726852AbeHUJwA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:51:57 -0400
+        Tue, 21 Aug 2018 05:52:00 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4D869D7;
-        Tue, 21 Aug 2018 06:33:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F1FBBACC;
+        Tue, 21 Aug 2018 06:33:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Willy Tarreau <w@1wt.eu>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.9 20/25] ACPI / PM: save NVS memory for ASUS 1025C laptop
-Date:   Tue, 21 Aug 2018 08:21:34 +0200
-Message-Id: <20180821055125.975511514@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Hounschell <dmarkh@cfl.rr.com>
+Subject: [PATCH 4.9 21/25] tty: serial: 8250: Revert NXP SC16C2552 workaround
+Date:   Tue, 21 Aug 2018 08:21:35 +0200
+Message-Id: <20180821055126.013171549@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055124.909865464@linuxfoundation.org>
 References: <20180821055124.909865464@linuxfoundation.org>
@@ -50,60 +49,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willy Tarreau <w@1wt.eu>
+From: Mark <dmarkh@cfl.rr.com>
 
-commit 231f9415001138a000cd0f881c46654b7ea3f8c5 upstream.
+commit 47ac76662ca9c5852fd353093f19de3ae85f2e66 upstream.
 
-Every time I tried to upgrade my laptop from 3.10.x to 4.x I faced an
-issue by which the fan would run at full speed upon resume. Bisecting
-it showed me the issue was introduced in 3.17 by commit 821d6f0359b0
-(ACPI / sleep: Do not save NVS for new machines to accelerate S3). This
-code only affects machines built starting as of 2012, but this Asus
-1025C laptop was made in 2012 and apparently needs the NVS data to be
-saved, otherwise the CPU's thermal state is not properly reported on
-resume and the fan runs at full speed upon resume.
+Revert commit ecb988a3b7985913d1f0112f66667cdd15e40711: tty: serial:
+8250: 8250_core: NXP SC16C2552 workaround
 
-Here's a very simple way to check if such a machine is affected :
+The above commit causes userland application to no longer write
+correctly its first write to a dumb terminal connected to /dev/ttyS0.
+This commit seems to be the culprit. It's as though the TX FIFO is being
+reset during that write. What should be displayed is:
 
-  # cat /sys/class/thermal/thermal_zone0/temp
-  55000
+PSW 80000000 INST 00000000                           HALT
+//
 
-  ( now suspend, wait one second and resume )
+What is displayed is some variation of:
 
-  # cat /sys/class/thermal/thermal_zone0/temp
-  0
+T 00000000           HAL//
 
-  (and after ~15 seconds the fan starts to spin)
+Reverting this commit via this patch fixes my problem.
 
-Let's apply the same quirk as commit cbc00c13 (ACPI: save NVS memory
-for Lenovo G50-45) and reuse the function it provides. Note that this
-commit was already backported to 4.9.x but not 4.4.x.
-
-Cc: 3.17+ <stable@vger.kernel.org> # 3.17+: requires cbc00c13
-Signed-off-by: Willy Tarreau <w@1wt.eu>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Mark Hounschell <dmarkh@cfl.rr.com>
+Fixes: ecb988a3b798 ("tty: serial: 8250: 8250_core: NXP SC16C2552 workaround")
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/sleep.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/tty/serial/8250/8250_port.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/acpi/sleep.c
-+++ b/drivers/acpi/sleep.c
-@@ -330,6 +330,14 @@ static struct dmi_system_id acpisleep_dm
- 		DMI_MATCH(DMI_PRODUCT_NAME, "K54HR"),
- 		},
+--- a/drivers/tty/serial/8250/8250_port.c
++++ b/drivers/tty/serial/8250/8250_port.c
+@@ -83,8 +83,7 @@ static const struct serial8250_config ua
+ 		.name		= "16550A",
+ 		.fifo_size	= 16,
+ 		.tx_loadsz	= 16,
+-		.fcr		= UART_FCR_ENABLE_FIFO | UART_FCR_R_TRIG_10 |
+-				  UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT,
++		.fcr		= UART_FCR_ENABLE_FIFO | UART_FCR_R_TRIG_10,
+ 		.rxtrig_bytes	= {1, 4, 8, 14},
+ 		.flags		= UART_CAP_FIFO,
  	},
-+	{
-+	.callback = init_nvs_save_s3,
-+	.ident = "Asus 1025C",
-+	.matches = {
-+		DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-+		DMI_MATCH(DMI_PRODUCT_NAME, "1025C"),
-+		},
-+	},
- 	/*
- 	 * https://bugzilla.kernel.org/show_bug.cgi?id=189431
- 	 * Lenovo G50-45 is a platform later than 2012, but needs nvs memory
 
 
