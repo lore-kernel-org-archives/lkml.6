@@ -6,39 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CAB6C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9366BC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:33:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FB5A20C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:33:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FB5A20C09
+	by mail.kernel.org (Postfix) with ESMTP id 5816020C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:33:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5816020C09
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728218AbeHUJvy (ORCPT
+        id S1728233AbeHUJv6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:51:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56750 "EHLO
+        Tue, 21 Aug 2018 05:51:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56766 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727442AbeHUJvx (ORCPT
+        with ESMTP id S1726852AbeHUJv5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:51:53 -0400
+        Tue, 21 Aug 2018 05:51:57 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A59F9ACC;
-        Tue, 21 Aug 2018 06:33:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4D869D7;
+        Tue, 21 Aug 2018 06:33:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+05f840f3b04f211bad55@syzkaller.appspotmail.com,
-        Wei Wang <weiwan@google.com>, Martin KaFai Lau <kafai@fb.com>,
-        Guillaume Nault <g.nault@alphalink.fr>,
-        David Ahern <dsahern@gmail.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 02/25] l2tp: use sk_dst_check() to avoid race on sk->sk_dst_cache
-Date:   Tue, 21 Aug 2018 08:21:16 +0200
-Message-Id: <20180821055125.003276155@linuxfoundation.org>
+        stable@vger.kernel.org, Willy Tarreau <w@1wt.eu>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.9 20/25] ACPI / PM: save NVS memory for ASUS 1025C laptop
+Date:   Tue, 21 Aug 2018 08:21:34 +0200
+Message-Id: <20180821055125.975511514@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055124.909865464@linuxfoundation.org>
 References: <20180821055124.909865464@linuxfoundation.org>
@@ -55,95 +50,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wei Wang <weiwan@google.com>
+From: Willy Tarreau <w@1wt.eu>
 
-[ Upstream commit 6d37fa49da1e8db8fb1995be22ac837ca41ac8a8 ]
+commit 231f9415001138a000cd0f881c46654b7ea3f8c5 upstream.
 
-In l2tp code, if it is a L2TP_UDP_ENCAP tunnel, tunnel->sk points to a
-UDP socket. User could call sendmsg() on both this tunnel and the UDP
-socket itself concurrently. As l2tp_xmit_skb() holds socket lock and call
-__sk_dst_check() to refresh sk->sk_dst_cache, while udpv6_sendmsg() is
-lockless and call sk_dst_check() to refresh sk->sk_dst_cache, there
-could be a race and cause the dst cache to be freed multiple times.
-So we fix l2tp side code to always call sk_dst_check() to garantee
-xchg() is called when refreshing sk->sk_dst_cache to avoid race
-conditions.
+Every time I tried to upgrade my laptop from 3.10.x to 4.x I faced an
+issue by which the fan would run at full speed upon resume. Bisecting
+it showed me the issue was introduced in 3.17 by commit 821d6f0359b0
+(ACPI / sleep: Do not save NVS for new machines to accelerate S3). This
+code only affects machines built starting as of 2012, but this Asus
+1025C laptop was made in 2012 and apparently needs the NVS data to be
+saved, otherwise the CPU's thermal state is not properly reported on
+resume and the fan runs at full speed upon resume.
 
-Syzkaller reported stack trace:
-BUG: KASAN: use-after-free in atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
-BUG: KASAN: use-after-free in atomic_fetch_add_unless include/linux/atomic.h:575 [inline]
-BUG: KASAN: use-after-free in atomic_add_unless include/linux/atomic.h:597 [inline]
-BUG: KASAN: use-after-free in dst_hold_safe include/net/dst.h:308 [inline]
-BUG: KASAN: use-after-free in ip6_hold_safe+0xe6/0x670 net/ipv6/route.c:1029
-Read of size 4 at addr ffff8801aea9a880 by task syz-executor129/4829
+Here's a very simple way to check if such a machine is affected :
 
-CPU: 0 PID: 4829 Comm: syz-executor129 Not tainted 4.18.0-rc7-next-20180802+ #30
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
- print_address_description+0x6c/0x20b mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
- check_memory_region_inline mm/kasan/kasan.c:260 [inline]
- check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
- kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
- atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
- atomic_fetch_add_unless include/linux/atomic.h:575 [inline]
- atomic_add_unless include/linux/atomic.h:597 [inline]
- dst_hold_safe include/net/dst.h:308 [inline]
- ip6_hold_safe+0xe6/0x670 net/ipv6/route.c:1029
- rt6_get_pcpu_route net/ipv6/route.c:1249 [inline]
- ip6_pol_route+0x354/0xd20 net/ipv6/route.c:1922
- ip6_pol_route_output+0x54/0x70 net/ipv6/route.c:2098
- fib6_rule_lookup+0x283/0x890 net/ipv6/fib6_rules.c:122
- ip6_route_output_flags+0x2c5/0x350 net/ipv6/route.c:2126
- ip6_dst_lookup_tail+0x1278/0x1da0 net/ipv6/ip6_output.c:978
- ip6_dst_lookup_flow+0xc8/0x270 net/ipv6/ip6_output.c:1079
- ip6_sk_dst_lookup_flow+0x5ed/0xc50 net/ipv6/ip6_output.c:1117
- udpv6_sendmsg+0x2163/0x36b0 net/ipv6/udp.c:1354
- inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
- sock_sendmsg_nosec net/socket.c:622 [inline]
- sock_sendmsg+0xd5/0x120 net/socket.c:632
- ___sys_sendmsg+0x51d/0x930 net/socket.c:2115
- __sys_sendmmsg+0x240/0x6f0 net/socket.c:2210
- __do_sys_sendmmsg net/socket.c:2239 [inline]
- __se_sys_sendmmsg net/socket.c:2236 [inline]
- __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2236
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x446a29
-Code: e8 ac b8 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 eb 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f4de5532db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
-RAX: ffffffffffffffda RBX: 00000000006dcc38 RCX: 0000000000446a29
-RDX: 00000000000000b8 RSI: 0000000020001b00 RDI: 0000000000000003
-RBP: 00000000006dcc30 R08: 00007f4de5533700 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dcc3c
-R13: 00007ffe2b830fdf R14: 00007f4de55339c0 R15: 0000000000000001
+  # cat /sys/class/thermal/thermal_zone0/temp
+  55000
 
-Fixes: 71b1391a4128 ("l2tp: ensure sk->dst is still valid")
-Reported-by: syzbot+05f840f3b04f211bad55@syzkaller.appspotmail.com
-Signed-off-by: Wei Wang <weiwan@google.com>
-Signed-off-by: Martin KaFai Lau <kafai@fb.com>
-Cc: Guillaume Nault <g.nault@alphalink.fr>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  ( now suspend, wait one second and resume )
+
+  # cat /sys/class/thermal/thermal_zone0/temp
+  0
+
+  (and after ~15 seconds the fan starts to spin)
+
+Let's apply the same quirk as commit cbc00c13 (ACPI: save NVS memory
+for Lenovo G50-45) and reuse the function it provides. Note that this
+commit was already backported to 4.9.x but not 4.4.x.
+
+Cc: 3.17+ <stable@vger.kernel.org> # 3.17+: requires cbc00c13
+Signed-off-by: Willy Tarreau <w@1wt.eu>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/l2tp/l2tp_core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -1239,7 +1239,7 @@ int l2tp_xmit_skb(struct l2tp_session *s
- 
- 	/* Get routing info from the tunnel socket */
- 	skb_dst_drop(skb);
--	skb_dst_set(skb, dst_clone(__sk_dst_check(sk, 0)));
-+	skb_dst_set(skb, sk_dst_check(sk, 0));
- 
- 	inet = inet_sk(sk);
- 	fl = &inet->cork.fl;
+---
+ drivers/acpi/sleep.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+--- a/drivers/acpi/sleep.c
++++ b/drivers/acpi/sleep.c
+@@ -330,6 +330,14 @@ static struct dmi_system_id acpisleep_dm
+ 		DMI_MATCH(DMI_PRODUCT_NAME, "K54HR"),
+ 		},
+ 	},
++	{
++	.callback = init_nvs_save_s3,
++	.ident = "Asus 1025C",
++	.matches = {
++		DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
++		DMI_MATCH(DMI_PRODUCT_NAME, "1025C"),
++		},
++	},
+ 	/*
+ 	 * https://bugzilla.kernel.org/show_bug.cgi?id=189431
+ 	 * Lenovo G50-45 is a platform later than 2012, but needs nvs memory
 
 
