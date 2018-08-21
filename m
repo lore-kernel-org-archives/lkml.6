@@ -2,109 +2,212 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A82C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C69C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:08:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F170421570
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:02:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DDB921763
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 12:08:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SIxSKjjD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F170421570
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gV2ruoka"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DDB921763
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbeHUPW0 (ORCPT
+        id S1727315AbeHUP2n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 11:22:26 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33381 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727162AbeHUPW0 (ORCPT
+        Tue, 21 Aug 2018 11:28:43 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38080 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726932AbeHUP2n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 11:22:26 -0400
-Received: by mail-lj1-f195.google.com with SMTP id s12-v6so14099470ljj.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 05:02:32 -0700 (PDT)
+        Tue, 21 Aug 2018 11:28:43 -0400
+Received: by mail-wm0-f68.google.com with SMTP id t25-v6so2617127wmi.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 05:08:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ASEXKtE9J3QGtrXxj8rWJowtdn/xKqROXNTd0odm7rg=;
-        b=SIxSKjjD8de5Dj7M2/G6qMTTSSTSaRJyL/moXpUvTh+A+iwzYZyfgfwtQCab8qxByv
-         O8h2MxRd9oXSqrlJ3QEueM2vCrwBnHRBaEEJQN6ssyv8nq1Jn7f1ZXOg+haSHj8oBYZ3
-         5U18O7BwLedAy5aYM1WW8acbLu8Sb+mkpXEEs=
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=VEP3BXn88EqQsrJIqzViF2ONkrjogXpicuBD9QfmpeM=;
+        b=gV2ruoka/nSoGxbhe8443xpqKBXLyBcYE0KDo+c9G0uavy4HtP9z3qxBvj5kYMtH0I
+         gHGNo0RiGheUQawCCH3Ullt07IYUgBm8QmQAoQg72kMwKZg8AbEU+f58j2QyBBZxHkUW
+         SbF4gP1U5ukqnuuNHmml9mKP9fQwdvzKWE7wA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ASEXKtE9J3QGtrXxj8rWJowtdn/xKqROXNTd0odm7rg=;
-        b=ZhVcDH49uMp2lHTyqeh+TUXmw2M35VwdG+u4g9T4WOUB9XXb1/b6YCxdAwA4FuKFZB
-         njUreBlEtnvYByi889c7LwT8BoVycn7ZBt+y3Bfaxwb7lLw0PDk36tW31JTnIJ6HhagC
-         z2uAqMjYyqi/LBlCnXRQWKwFEK1hunjS1kB/fMfBS6ImvoTUp+OKK22fJm+mzDT4x9Fb
-         JYbaruh2+1cXIv0KAx1N8PCZPdr68gmtAK7iZ7zxKjwYvme7mXiwyDLZYDp6xobdWVn1
-         a1o33Ti5D0ruddd7bk2aG4ouNiDfcUGc+KdMhd8ovLG3NJwxr6NXLycf8COzHaYvAMx1
-         /Nig==
-X-Gm-Message-State: AOUpUlHxl+LbaWE02Fqaegi03VL3g/OUkz5sFlcFg/6i+ZTxFrrKM4//
-        WE72uN2IuxTjxIHAaw5oTeivJQ==
-X-Google-Smtp-Source: AA+uWPz7l6V/1e60fNx4uJZqpBiZFQdU3twS8gLWwy4a510sOTlrYO3nBCKWI+Qj4oOKL6sgIOMJwQ==
-X-Received: by 2002:a2e:97c8:: with SMTP id m8-v6mr36334195ljj.52.1534852951686;
-        Tue, 21 Aug 2018 05:02:31 -0700 (PDT)
-Received: from localhost (c-2c3d70d5.07-21-73746f28.bbcust.telenor.se. [213.112.61.44])
-        by smtp.gmail.com with ESMTPSA id u19-v6sm2059688lje.51.2018.08.21.05.02.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 Aug 2018 05:02:31 -0700 (PDT)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     trenn@suse.com, shuah@kernel.org
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] cpupower: remove stringop-truncation waring
-Date:   Tue, 21 Aug 2018 14:02:25 +0200
-Message-Id: <20180821120225.3516-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        bh=VEP3BXn88EqQsrJIqzViF2ONkrjogXpicuBD9QfmpeM=;
+        b=orLDE6riz9JJ40RxtyzqKhTvyG8GvVQYCCriiJHTiP2X3XYWfxYhvNgelLbx9+PS1r
+         Pi3mn9JXkmaPCFaUtXckwdki5+CRgkL2FUkRiGK2t5C8h35aKmbdBOhXnHCNtIkt2594
+         B5hWhXMsWJTzcf9oTPzXJkJV33gSnBB3TorvqoZk7CAeqM7Hqq2qsz5lo4eZMENbqZod
+         a/KVgQ40vvj4+4E1Ss9Z4c3YCRyhO5K3mrFNCjqGuINKmbG8FkF2AIm4X0cM4x7gr+Zm
+         aTICtRLOUReXdvppiWMqG7cNMHKCCKuTYIEMqNIOUEpHQSP0QBnbN10m7R8Lj2cVG13V
+         WSHg==
+X-Gm-Message-State: AOUpUlEA+OBB6O6snp2PikBorhnkFwqTby0bv9yVSvf7D9a/tpmzCK8/
+        ILos/kGdsnFHHJzd40s0viKtpA==
+X-Google-Smtp-Source: AA+uWPxBnRNZxFsiwsW19+DqcnwVnk3GqJeLMG7e7OigeZKS2cnP1m2poIOuI6N88yXzqe8D05v9Ng==
+X-Received: by 2002:a1c:f46:: with SMTP id 67-v6mr26574390wmp.122.1534853328691;
+        Tue, 21 Aug 2018 05:08:48 -0700 (PDT)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id o33-v6sm29516922wrf.11.2018.08.21.05.08.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 Aug 2018 05:08:48 -0700 (PDT)
+Subject: Re: [PATCH v4 2/4] venus: firmware: move load firmware in a separate
+ function
+To:     Vikash Garodia <vgarodia@codeaurora.org>, hverkuil@xs4all.nl,
+        mchehab@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        andy.gross@linaro.org, arnd@arndb.de, bjorn.andersson@linaro.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, acourbot@chromium.org
+References: <1533562085-8773-1-git-send-email-vgarodia@codeaurora.org>
+ <1533562085-8773-3-git-send-email-vgarodia@codeaurora.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <8ffd63d9-ba9f-44b2-e1c0-7edce167fd9c@linaro.org>
+Date:   Tue, 21 Aug 2018 15:08:44 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1533562085-8773-3-git-send-email-vgarodia@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The strncpy doesn't null terminate the string because the size is too
-short by one byte.
+Hi Vikash,
 
-parse.c: In function ‘prepare_default_config’:
-parse.c:148:2: warning: ‘strncpy’ output truncated before terminating
-    nul copying 8 bytes from a string of the same length
-    [-Wstringop-truncation]
-  strncpy(config->governor, "ondemand", 8);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+On 08/06/2018 04:28 PM, Vikash Garodia wrote:
+> Separate firmware loading part into a new function.
+> 
+> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+> ---
+>  drivers/media/platform/qcom/venus/core.c     |  4 +--
+>  drivers/media/platform/qcom/venus/firmware.c | 54 +++++++++++++++++-----------
+>  drivers/media/platform/qcom/venus/firmware.h |  2 +-
+>  3 files changed, 37 insertions(+), 23 deletions(-)
+> 
 
-Passing the length of the input argument to strncpy() is almost always
-wrong and provides no extra benefit over strcpy(), and since 'ondemand'
-fits within 15 bytes" and it null terminates the string its safe to use
-strcpy().
+<snip>
 
-Fixes: 7fe2f6399a84 ("cpupowerutils - cpufrequtils extended with quite some features")
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- tools/power/cpupower/bench/parse.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+> index 3aa6b37..4577043 100644
+> --- a/drivers/media/platform/qcom/venus/firmware.c
+> +++ b/drivers/media/platform/qcom/venus/firmware.c
+> @@ -58,20 +58,18 @@ int venus_set_hw_state(struct venus_core *core, bool resume)
+>  	return 0;
+>  }
+>  
+> -int venus_boot(struct device *dev, const char *fwname)
+> +static int venus_load_fw(struct venus_core *core, const char *fwname,
+> +			phys_addr_t *mem_phys, size_t *mem_size)
 
-diff --git a/tools/power/cpupower/bench/parse.c b/tools/power/cpupower/bench/parse.c
-index 9ba8a44ad2a7..91b5b768ffd2 100644
---- a/tools/power/cpupower/bench/parse.c
-+++ b/tools/power/cpupower/bench/parse.c
-@@ -145,7 +145,7 @@ struct config *prepare_default_config()
- 	config->cpu = 0;
- 	config->prio = SCHED_HIGH;
- 	config->verbose = 0;
--	strncpy(config->governor, "ondemand", 8);
-+	strcpy(config->governor, "ondemand");
- 
- 	config->output = stdout;
- 
+fix indentation
+
+>  {
+>  	const struct firmware *mdt;
+>  	struct device_node *node;
+> -	phys_addr_t mem_phys;
+> +	struct device *dev;
+>  	struct resource r;
+>  	ssize_t fw_size;
+> -	size_t mem_size;
+>  	void *mem_va;
+>  	int ret;
+>  
+> -	if (!IS_ENABLED(CONFIG_QCOM_MDT_LOADER) || !qcom_scm_is_available())
+> -		return -EPROBE_DEFER;
+> -
+> +	dev = core->dev;
+>  	node = of_parse_phandle(dev->of_node, "memory-region", 0);
+>  	if (!node) {
+>  		dev_err(dev, "no memory-region specified\n");
+> @@ -82,16 +80,16 @@ int venus_boot(struct device *dev, const char *fwname)
+>  	if (ret)
+>  		return ret;
+>  
+> -	mem_phys = r.start;
+> -	mem_size = resource_size(&r);
+> +	*mem_phys = r.start;
+> +	*mem_size = resource_size(&r);
+>  
+> -	if (mem_size < VENUS_FW_MEM_SIZE)
+> +	if (*mem_size < VENUS_FW_MEM_SIZE)
+>  		return -EINVAL;
+>  
+> -	mem_va = memremap(r.start, mem_size, MEMREMAP_WC);
+> +	mem_va = memremap(r.start, *mem_size, MEMREMAP_WC);
+>  	if (!mem_va) {
+>  		dev_err(dev, "unable to map memory region: %pa+%zx\n",
+> -			&r.start, mem_size);
+> +			&r.start, *mem_size);
+>  		return -ENOMEM;
+>  	}
+>  
+> @@ -106,23 +104,39 @@ int venus_boot(struct device *dev, const char *fwname)
+>  		goto err_unmap;
+>  	}
+>  
+> -	ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va, mem_phys,
+> -			    mem_size, NULL);
+> +	if (core->no_tz)
+> +		ret = qcom_mdt_load_no_init(dev, mdt, fwname, VENUS_PAS_ID,
+> +					mem_va, *mem_phys, *mem_size, NULL);
+> +	else
+> +		ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID,
+> +				mem_va, *mem_phys, *mem_size, NULL);
+
+Please fix the indentation issues above.
+
+>  
+>  	release_firmware(mdt);
+>  
+> -	if (ret)
+> -		goto err_unmap;
+> -
+> -	ret = qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
+> -	if (ret)
+> -		goto err_unmap;
+> -
+>  err_unmap:
+>  	memunmap(mem_va);
+>  	return ret;
+>  }
+>  
+> +int venus_boot(struct venus_core *core)
+> +{
+> +	phys_addr_t mem_phys;
+> +	struct device *dev = core->dev;
+
+move this one row upper.
+
+> +	size_t mem_size;
+> +	int ret;
+> +
+> +	if (!IS_ENABLED(CONFIG_QCOM_MDT_LOADER) ||
+> +		(!core->no_tz && !qcom_scm_is_available()))
+> +		return -EPROBE_DEFER;
+
+fix indentation
+
+> +
+> +	ret = venus_load_fw(core, core->res->fwname, &mem_phys, &mem_size);
+> +	if (ret) {
+> +		dev_err(dev, "fail to load video firmware\n");
+> +		return -EINVAL;
+> +	}
+
+blank line here
+
+> +	return qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
+> +}
+
 -- 
-2.18.0
-
+regards,
+Stan
