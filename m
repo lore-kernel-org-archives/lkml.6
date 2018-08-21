@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE5A5C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 611DAC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:16:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75E75217B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:15:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21F48217BF
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 17:16:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZdQlk7VM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75E75217B7
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pHiGUcNg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21F48217BF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727596AbeHUUgy (ORCPT
+        id S1727622AbeHUUg5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 16:36:54 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35893 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727027AbeHUUgx (ORCPT
+        Tue, 21 Aug 2018 16:36:57 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45737 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727027AbeHUUg4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 16:36:53 -0400
-Received: by mail-wm0-f67.google.com with SMTP id w24-v6so3538606wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 10:15:52 -0700 (PDT)
+        Tue, 21 Aug 2018 16:36:56 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 20-v6so10536543wrb.12
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 10:15:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HHBNLdjSnqoIZ22rY2JfCJoPpdoguC5H7G+iOmDzPMs=;
-        b=ZdQlk7VMDMCTbNQR+yiXfVnzmMCjsFYBInRVYXoeZxv2XmdGEmNl+fMY2Td76PYmkT
-         UeVIQeZBxqO+xc2WU726ZFmJLMtshc1UTgsUc3FM1lriN3f4QST/W6h4gHJICb7pKlmm
-         oYmrb+yv6TfWTjlfaASsINh3npNSSqe7Sn+Fj5gtk745XEHTwqZNB9T+0K6hapEzocLu
-         sYF9ITom9IeJR8ScrQmoSXIdgEgMFT5vdUFUp01FdEYHOm4CnsICy1kHWJT50/JwqvS7
-         tBVuE+bDzx/tZm+vY52vfnyBk7ZlGVQ5mBPJieUF7nX+ywtLv368ZuWjS9iWRwia+CgW
-         bIdw==
+        bh=lmRyjblLoKPklHXWzh8kvQ95VHb0ecWwjqmdXo5UaQg=;
+        b=pHiGUcNgYoAQqHlxSVIpZH4mRpXTiwarTFZj0EVTNZ+50+65c/OSU8KiSQ00e4I+b/
+         PUi/kP9mDT6nlJqkRvip8iMLqWm4IrDc2W7KVPCgluWidyfuwGV/i/YGhGtM33MnKup/
+         yFn9Ttf656070fc+UnFOAskmoy8Pj/ZZl4bE4YsnBEh3QWh9xhrCj8mXl2wHNysPDUWx
+         zMrBwLWSL58cqLwP2aidzAnZR05WCAyEqOhJQy2ACviQlAK0qcaMEELvBkH+PTDk18wc
+         Kg3afgGXuKqe6kfHFXTysmdisQeLFIrk8WhpL+OdxQ2024n/wM3AaAoWntdEcZJTZXlA
+         /06Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=HHBNLdjSnqoIZ22rY2JfCJoPpdoguC5H7G+iOmDzPMs=;
-        b=t+VoqjkNvxv9XveEdO8d/f8G7rOrBqhxcRGY0z91DlbGCJ/vrW2kAmdwuuhHGBBJLt
-         NZc7bGcRm2wht4MDPVVdyAT1dHAhM8TCCYq55/h3s0YxacnVj3D1LH/L6m3OtM9Psur8
-         dHLD4g95OrPKKsJDzYN2vL/Kr+iUY4GMMdLfuE1NESkEq9GsZPPU6E7e851oFkOo3H3k
-         makjkfl2VkFP53A5y6m4xXgCwWvQl9cI37sT5D+O9nkZ2MoLCC2PnlUWLq90UMR4JaDt
-         hv1dwxz4P2fix6RI66jBdSwjxhVfJpz2HOPmMpP0rCjVxxxmlqdzvR8QUZrjyi+QZzOG
-         XH6A==
-X-Gm-Message-State: APzg51Cbcan7NlzqgDcGIlUL9qnTEluVf2UH8pCIp4bhcbs7qaSrJDJm
-        TPENdTUZa8BHNoJMgupFUe28POQIAUs=
-X-Google-Smtp-Source: ANB0Vda90n1+5RSLg6WcIMJKpzFBH/LsLFlfo6qgeaNWZ3+o/DC06CVjIDNwOiMQfAnUjcBSv00T5g==
-X-Received: by 2002:a1c:9c56:: with SMTP id f83-v6mr146176wme.135.1534871751356;
-        Tue, 21 Aug 2018 10:15:51 -0700 (PDT)
+        bh=lmRyjblLoKPklHXWzh8kvQ95VHb0ecWwjqmdXo5UaQg=;
+        b=Utx5mp5udfLjnAW3asXeOTI8CuQuTzBhMWVmF/Z02jN9o76cKT/dUMkIQKWngpH1J1
+         tIhvcrCRBkkT7achRMYhA/1wxj/5Oa+fEFQSIETJVTKnOSoqErwZwYt6wWT242Kqt0ys
+         p6Jc+Yd+sqpGsYhErDzNyKEOP7GzQqLD3YvveW14n22ViDtwLXqv7n//ci3iS/F8k5nC
+         2VFP0RWtMLDotJDWCUW7gq7OFOZygVZmfPBwY/VNoNlgP83/NFPgyUIrStS6uDSgXfGp
+         xDXg2lXdGBkHLwjWb+R49ETy2ye1okQUEtaOeGVRMXLHlGtCrbTfr205v1mQPJPsTqs/
+         XsxQ==
+X-Gm-Message-State: APzg51BT4wpkUQJip+6bjJi3DF3cFzvlXV5e+lOpoOI0f0wAdvom6P6Z
+        mccXOMvRGzyTyN7TIkkYx718yn4T+4M=
+X-Google-Smtp-Source: ANB0VdbsSOVF4TfFhsGvZ96AwyG3oePjXAm1rYKLB8qNpLqqfusFzKuR5YfBbWnrnbR1IulCwuM+0g==
+X-Received: by 2002:adf:a292:: with SMTP id s18-v6mr8847359wra.100.1534871754456;
+        Tue, 21 Aug 2018 10:15:54 -0700 (PDT)
 Received: from localhost.localdomain (host86-148-21-150.range86-148.btcentralplus.com. [86.148.21.150])
-        by smtp.gmail.com with ESMTPSA id 88-v6sm7564292wrf.95.2018.08.21.10.15.49
+        by smtp.gmail.com with ESMTPSA id 88-v6sm7564292wrf.95.2018.08.21.10.15.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 Aug 2018 10:15:50 -0700 (PDT)
+        Tue, 21 Aug 2018 10:15:53 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 07/17] staging:rtl8192u: Rename ba_param_set members - Style
-Date:   Tue, 21 Aug 2018 18:15:27 +0100
-Message-Id: <20180821171537.9330-8-johnfwhitmore@gmail.com>
+Subject: [PATCH 09/17] staging:rtl8192u: Refactor union delba_param_set - Style
+Date:   Tue, 21 Aug 2018 18:15:29 +0100
+Message-Id: <20180821171537.9330-10-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821171537.9330-1-johnfwhitmore@gmail.com>
 References: <20180821171537.9330-1-johnfwhitmore@gmail.com>
@@ -73,133 +73,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the member variables of union ba_param_set to clear the
-checkpatch issue with CamelCase naming:
+remove member 'charData' from the union delba_param_set, as it is not
+used in code. The remaining member variables have all been renamed to
+clear the checkpatch issue with CamelCase naming.
 
-AMSDU_Support  to  amsdu_support
-BAPolicy       to  ba_policy
-TID            to  tid
-BufferSize     to  buffer_size
+shortData  to short_data
+Reserved   to reserved
+Initiator  to initiator
+TID        to tid
 
-These are coding style changes which should have no impact on
-runtime code execution.
+These changes are all coding style changes which should have no
+impact on runtime code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- .../staging/rtl8192u/ieee80211/rtl819x_BA.h   |  8 +++---
- .../rtl8192u/ieee80211/rtl819x_BAProc.c       | 28 +++++++++----------
- 2 files changed, 18 insertions(+), 18 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/rtl819x_BA.h     |  9 ++++-----
+ drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c | 12 ++++++------
+ 2 files changed, 10 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_BA.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_BA.h
-index d3730fc6c8fe..8beae1af63a1 100644
+index 10e81c3c0ff1..008fe722af03 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_BA.h
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_BA.h
-@@ -33,10 +33,10 @@ union sequence_control {
- union ba_param_set {
- 	u16 short_data;
+@@ -41,12 +41,11 @@ union ba_param_set {
+ };
+ 
+ union delba_param_set {
+-	u8 charData[2];
+-	u16 shortData;
++	u16 short_data;
  	struct {
--		u16 AMSDU_Support:1;
--		u16 BAPolicy:1;
+-		u16 Reserved:11;
+-		u16 Initiator:1;
 -		u16 TID:4;
--		u16 BufferSize:10;
-+		u16 amsdu_support:1;
-+		u16 ba_policy:1;
++		u16 reserved:11;
++		u16 initiator:1;
 +		u16 tid:4;
-+		u16 buffer_size:10;
  	} field;
  };
  
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
-index 1a9271548b94..42f458b4ece0 100644
+index 931123faf9ed..e504d1eb2ccf 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
-@@ -202,7 +202,7 @@ static struct sk_buff *ieee80211_DELBA(
+@@ -201,8 +201,8 @@ static struct sk_buff *ieee80211_DELBA(
+ 
  	memset(&DelbaParamSet, 0, 2);
  
- 	DelbaParamSet.field.Initiator	= (TxRxSelect == TX_DIR) ? 1 : 0;
--	DelbaParamSet.field.TID	= pBA->BaParamSet.field.TID;
-+	DelbaParamSet.field.TID	= pBA->BaParamSet.field.tid;
+-	DelbaParamSet.field.Initiator	= (TxRxSelect == TX_DIR) ? 1 : 0;
+-	DelbaParamSet.field.TID	= pBA->BaParamSet.field.tid;
++	DelbaParamSet.field.initiator	= (TxRxSelect == TX_DIR) ? 1 : 0;
++	DelbaParamSet.field.tid	= pBA->BaParamSet.field.tid;
  
  	skb = dev_alloc_skb(len + sizeof(struct rtl_80211_hdr_3addr)); //need to add something others? FIXME
  	if (!skb) {
-@@ -362,7 +362,7 @@ int ieee80211_rx_ADDBAReq(struct ieee80211_device *ieee, struct sk_buff *skb)
- 			ieee,
- 			(struct ts_common_info **)(&pTS),
- 			dst,
--			(u8)(pBaParamSet->field.TID),
-+			(u8)(pBaParamSet->field.tid),
- 			RX_DIR,
- 			true)) {
- 		rc = ADDBA_STATUS_REFUSED;
-@@ -371,10 +371,10 @@ int ieee80211_rx_ADDBAReq(struct ieee80211_device *ieee, struct sk_buff *skb)
- 	}
- 	pBA = &pTS->rx_admitted_ba_record;
- 	// To Determine the ADDBA Req content
--	// We can do much more check here, including BufferSize, AMSDU_Support, Policy, StartSeqCtrl...
-+	// We can do much more check here, including buffer_size, AMSDU_Support, Policy, StartSeqCtrl...
- 	// I want to check StartSeqCtrl to make sure when we start aggregation!!!
- 	//
--	if (pBaParamSet->field.BAPolicy == BA_POLICY_DELAYED) {
-+	if (pBaParamSet->field.ba_policy == BA_POLICY_DELAYED) {
- 		rc = ADDBA_STATUS_INVALID_PARAM;
- 		IEEE80211_DEBUG(IEEE80211_DL_ERR, "BA Policy is not correct in %s()\n", __func__);
- 		goto OnADDBAReq_Fail;
-@@ -388,9 +388,9 @@ int ieee80211_rx_ADDBAReq(struct ieee80211_device *ieee, struct sk_buff *skb)
- 	pBA->BaStartSeqCtrl = *pBaStartSeqCtrl;
- 	//for half N mode we only aggregate 1 frame
- 	if (ieee->GetHalfNmodeSupportByAPsHandler(ieee->dev))
--	pBA->BaParamSet.field.BufferSize = 1;
-+	pBA->BaParamSet.field.buffer_size = 1;
- 	else
--	pBA->BaParamSet.field.BufferSize = 32;
-+	pBA->BaParamSet.field.buffer_size = 32;
- 	ActivateBAEntry(ieee, pBA, pBA->BaTimeoutValue);
- 	ieee80211_send_ADDBARsp(ieee, dst, pBA, ADDBA_STATUS_SUCCESS);
+@@ -226,7 +226,7 @@ static struct sk_buff *ieee80211_DELBA(
  
-@@ -403,7 +403,7 @@ int ieee80211_rx_ADDBAReq(struct ieee80211_device *ieee, struct sk_buff *skb)
- 		BA.BaParamSet = *pBaParamSet;
- 		BA.BaTimeoutValue = *pBaTimeoutVal;
- 		BA.DialogToken = *pDialogToken;
--		BA.BaParamSet.field.BAPolicy = BA_POLICY_IMMEDIATE;
-+		BA.BaParamSet.field.ba_policy = BA_POLICY_IMMEDIATE;
- 		ieee80211_send_ADDBARsp(ieee, dst, &BA, rc);
- 		return 0; //we send RSP out.
- 	}
-@@ -461,7 +461,7 @@ int ieee80211_rx_ADDBARsp(struct ieee80211_device *ieee, struct sk_buff *skb)
+ 	// DELBA Parameter Set
+ 
+-	put_unaligned_le16(DelbaParamSet.shortData, tag);
++	put_unaligned_le16(DelbaParamSet.short_data, tag);
+ 	tag += 2;
+ 	// Reason Code
+ 
+@@ -565,14 +565,14 @@ int ieee80211_rx_DELBA(struct ieee80211_device *ieee, struct sk_buff *skb)
+ 	dst = &delba->addr2[0];
+ 	pDelBaParamSet = (union delba_param_set *)&delba->payload[2];
+ 
+-	if (pDelBaParamSet->field.Initiator == 1) {
++	if (pDelBaParamSet->field.initiator == 1) {
+ 		struct rx_ts_record *pRxTs;
+ 
+ 		if (!GetTs(
+ 				ieee,
+ 				(struct ts_common_info **)&pRxTs,
+ 				dst,
+-				(u8)pDelBaParamSet->field.TID,
++				(u8)pDelBaParamSet->field.tid,
+ 				RX_DIR,
+ 				false)) {
+ 			IEEE80211_DEBUG(IEEE80211_DL_ERR,  "can't get TS for RXTS in %s()\n", __func__);
+@@ -587,7 +587,7 @@ int ieee80211_rx_DELBA(struct ieee80211_device *ieee, struct sk_buff *skb)
  			ieee,
- 			(struct ts_common_info **)(&pTS),
+ 			(struct ts_common_info **)&pTxTs,
  			dst,
--			(u8)(pBaParamSet->field.TID),
-+			(u8)(pBaParamSet->field.tid),
+-			(u8)pDelBaParamSet->field.TID,
++			(u8)pDelBaParamSet->field.tid,
  			TX_DIR,
  			false)) {
- 		IEEE80211_DEBUG(IEEE80211_DL_ERR, "can't get TS in %s()\n", __func__);
-@@ -498,7 +498,7 @@ int ieee80211_rx_ADDBARsp(struct ieee80211_device *ieee, struct sk_buff *skb)
- 		// We can compare the value of BA parameter set that Peer returned and Self sent.
- 		// If it is OK, then admitted. Or we can send DELBA to cancel BA mechanism.
- 		//
--		if (pBaParamSet->field.BAPolicy == BA_POLICY_DELAYED) {
-+		if (pBaParamSet->field.ba_policy == BA_POLICY_DELAYED) {
- 			// Since this is a kind of ADDBA failed, we delay next ADDBA process.
- 			pTS->add_ba_req_delayed = true;
- 			DeActivateBAEntry(ieee, pAdmittedBA);
-@@ -624,11 +624,11 @@ TsInitAddBA(
- 	DeActivateBAEntry(ieee, pBA);
- 
- 	pBA->DialogToken++;						// DialogToken: Only keep the latest dialog token
--	pBA->BaParamSet.field.AMSDU_Support = 0;	// Do not support A-MSDU with A-MPDU now!!
--	pBA->BaParamSet.field.BAPolicy = Policy;	// Policy: Delayed or Immediate
--	pBA->BaParamSet.field.TID = pTS->ts_common_info.t_spec.ts_info.uc_tsid;	// TID
--	// BufferSize: This need to be set according to A-MPDU vector
--	pBA->BaParamSet.field.BufferSize = 32;		// BufferSize: This need to be set according to A-MPDU vector
-+	pBA->BaParamSet.field.amsdu_support = 0;	// Do not support A-MSDU with A-MPDU now!!
-+	pBA->BaParamSet.field.ba_policy = Policy;	// Policy: Delayed or Immediate
-+	pBA->BaParamSet.field.tid = pTS->ts_common_info.t_spec.ts_info.uc_tsid;	// TID
-+	// buffer_size: This need to be set according to A-MPDU vector
-+	pBA->BaParamSet.field.buffer_size = 32;		// buffer_size: This need to be set according to A-MPDU vector
- 	pBA->BaTimeoutValue = 0;					// Timeout value: Set 0 to disable Timer
- 	pBA->BaStartSeqCtrl.field.seq_num = (pTS->tx_cur_seq + 3) % 4096;	// Block Ack will start after 3 packets later.
- 
+ 			IEEE80211_DEBUG(IEEE80211_DL_ERR,  "can't get TS for TXTS in %s()\n", __func__);
 -- 
 2.18.0
 
