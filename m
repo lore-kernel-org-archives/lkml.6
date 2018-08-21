@@ -2,102 +2,93 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B03C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 05:51:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D735C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 05:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D8402172D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 05:51:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UyniyzfB";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UyniyzfB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D8402172D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 0DA992172D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 05:59:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DA992172D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbeHUJKh (ORCPT
+        id S1726560AbeHUJSc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:10:37 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53988 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbeHUJKh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:10:37 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id AD15D6143F; Tue, 21 Aug 2018 05:51:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1534830716;
-        bh=hp0huJ5MZ2rp9oEBtBSYbHnDh90I6IiiyLKXBCgNTbk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UyniyzfBvwt+9Oj7FqWRi3Ga9YGYIqppCsmz/G9g/qOcaCKvsePFVF8Vus0uNvxGE
-         BtxhZUEQuM8Hz4DVU+JDbX3bcIeBz84tKO0KzKSHPO8FqhcNThJta/E5PtmBEE+uqo
-         NB8wguc8ne2ppK3ruT7U23Zp/NbJqxUy7O//dHhw=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 1815E609A1;
-        Tue, 21 Aug 2018 05:51:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1534830716;
-        bh=hp0huJ5MZ2rp9oEBtBSYbHnDh90I6IiiyLKXBCgNTbk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UyniyzfBvwt+9Oj7FqWRi3Ga9YGYIqppCsmz/G9g/qOcaCKvsePFVF8Vus0uNvxGE
-         BtxhZUEQuM8Hz4DVU+JDbX3bcIeBz84tKO0KzKSHPO8FqhcNThJta/E5PtmBEE+uqo
-         NB8wguc8ne2ppK3ruT7U23Zp/NbJqxUy7O//dHhw=
+        Tue, 21 Aug 2018 05:18:32 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58697 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726228AbeHUJSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 05:18:32 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id DF9D5204AE; Tue, 21 Aug 2018 07:59:48 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 80E2E204AE;
+        Tue, 21 Aug 2018 07:59:48 +0200 (CEST)
+Date:   Tue, 21 Aug 2018 07:59:48 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
+Cc:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>,
+        "absahu@codeaurora.org" <absahu@codeaurora.org>,
+        "peterpandong@micron.com" <peterpandong@micron.com>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Simek <michals@xilinx.com>,
+        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>
+Subject: Re: [LINUX PATCH v10 1/2] dt-bindings: mtd: arasan: Add device tree
+ binding documentation
+Message-ID: <20180821075948.28962170@bbrezillon>
+In-Reply-To: <MWHPR02MB2623F315C6D4C9775CDA08D8AF310@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <1534511964-20342-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1534511964-20342-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <20180820143324.61af9027@bbrezillon>
+        <MWHPR02MB2623F315C6D4C9775CDA08D8AF310@MWHPR02MB2623.namprd02.prod.outlook.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 21 Aug 2018 11:21:56 +0530
-From:   Vikash Garodia <vgarodia@codeaurora.org>
-To:     stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
-        mchehab@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        andy.gross@linaro.org, arnd@arndb.de, bjorn.andersson@linaro.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, acourbot@chromium.org,
-        linux-media-owner@vger.kernel.org
-Subject: Re: [PATCH v4 0/4] Venus updates - PIL
-In-Reply-To: <1533562085-8773-1-git-send-email-vgarodia@codeaurora.org>
-References: <1533562085-8773-1-git-send-email-vgarodia@codeaurora.org>
-Message-ID: <1cf867118f803a359b258dcc823e1442@codeaurora.org>
-X-Sender: vgarodia@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-<Friendly reminder for review>
+On Tue, 21 Aug 2018 05:47:18 +0000
+Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
 
-On 2018-08-06 18:58, Vikash Garodia wrote:
-> Hello,
-> 
-> Here is v4 with following comments addressed:
-> 
-> * inline function for setting suspend and resume.
-> * keep firmware size as 6 MB.
-> * comments related to indentation, cleanup, etc.
-> 
-> As per comments from Bjorn, qcom_mdt_load_no_init is being used in this
-> patch series to align with 
-> https://patchwork.kernel.org/patch/10397889/.
-> 
-> Comments are welcome!
-> 
-> Vikash Garodia (4):
->   venus: firmware: add routine to reset ARM9
->   venus: firmware: move load firmware in a separate function
->   venus: firmware: add no TZ boot and shutdown routine
->   venus: firmware: register separate driver for firmware device
-> 
->  .../devicetree/bindings/media/qcom,venus.txt       |  17 +-
->  drivers/media/platform/qcom/venus/core.c           |  60 +++++--
->  drivers/media/platform/qcom/venus/core.h           |   7 +
->  drivers/media/platform/qcom/venus/firmware.c       | 192 
-> ++++++++++++++++++---
->  drivers/media/platform/qcom/venus/firmware.h       |  17 +-
->  drivers/media/platform/qcom/venus/hfi_venus.c      |  13 +-
->  drivers/media/platform/qcom/venus/hfi_venus_io.h   |   6 +
->  7 files changed, 268 insertions(+), 44 deletions(-)
+> > > +Required properties:
+> > > +- compatible:		Should be "xlnx,zynqmp-nand" or "arasan,nfc-v3p10"  
+> > 
+> > In your example it's not an "or" since both are defined.  
+> In our previous discussion (https://lore.kernel.org/patchwork/patch/748901/)
+> We decided to have compatible strings like " compatible = "<soc-vendor>,<ip-revision>", "arasan,<ip-revision>";"
+> So it should be either of these.
+> so I will write something like below
+> "Possible values are  "xlnx,zynqmp-nand" 
+> 			"arasan,nfc-v3p10"
+> And in example I will mention any one compatible.
+> Is it ok?
+
+Hm, why do you need arasan,nfc-v3p10 at all if it's supposed to be
+overloaded by a soc specific compat?
+
+> > > +
+> > > +Optional properties:
+> > > +- arasan,has-mdma: Enables DMA support  
+> > 
+> > Can't you detect that based on the compatible (or thanks to a register). If it's something you
+> > choose when configuring the IP and can't detect at runtime I guess it's fine.  
+> There is no way to select DMA when configuring the IP.
+> But it has internal DMA and there is a register to select PIO or DMA while starting a transfer.
+> So if user really don't want DMA, then we will never set DMA in the code based on DT property.
+
+If it's a purely SW choice, then is shouldn't be described in the DT.
+You can use a module param, but I'm not even sure why one would want to
+disable DMA.
