@@ -2,100 +2,106 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E17C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06BB1C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FAE020893
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:45:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FAE020893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id BA9E92177A
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 16:46:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="GIZvi5KQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA9E92177A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbeHUUG1 (ORCPT
+        id S1726804AbeHUUHr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 16:06:27 -0400
-Received: from smtprelay0052.hostedemail.com ([216.40.44.52]:54881 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726734AbeHUUG1 (ORCPT
+        Tue, 21 Aug 2018 16:07:47 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:35364 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbeHUUHq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 16:06:27 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id CBFDE180A884B;
-        Tue, 21 Aug 2018 16:45:33 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: peace76_876e920e42646
-X-Filterd-Recvd-Size: 2780
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 21 Aug 2018 16:45:30 +0000 (UTC)
-Message-ID: <acb93bae0086447c7cbe0eec05907335ebae7788.camel@perches.com>
-Subject: Re: [PATCH] compiler-gcc: get back Clang build
-From:   Joe Perches <joe@perches.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>, asmadeus@codewreck.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Arnd Bergmann <arnd@arndb.de>, dwmw@amazon.co.uk,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Date:   Tue, 21 Aug 2018 09:45:28 -0700
-In-Reply-To: <CAKwvOdmLQen+TWF_F3e5-66vtF3FEnoxjEgZbjmOZ9cv6YrEpA@mail.gmail.com>
-References: <1534834088-15835-1-git-send-email-yamada.masahiro@socionext.com>
-         <20180821123832.GA19034@nautica>
-         <CAKwvOdmLQen+TWF_F3e5-66vtF3FEnoxjEgZbjmOZ9cv6YrEpA@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 21 Aug 2018 16:07:46 -0400
+Received: by mail-ua1-f66.google.com with SMTP id q12-v6so12247707ual.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 09:46:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=BDkEf5k9dkHjOup5CUjO5xVZWg/tALtAYkBjHOV4qb0=;
+        b=GIZvi5KQOyhTH7pC2aD7FcQJAoUoP3jsmY06U0sjBYjUKj4p35CnNB1tIkmSyrfSce
+         aanGZVyPPis+/VzdTJFH258JsCQ1wnO5urftGRbUx4FAgQNPGA69TCmwSzqPIg6/DxNG
+         XOw5YSxPMK/VKF5wR1YWU0i83g5IVkVbNYKrgUZAPu2YTOMB02mhn3tFYhiQYAbuth82
+         G+iJXMWCRqaExMn6utekKm+lsOqmoUFMJIjDRMTOqdX0PPZPJ0UF7Rk9heoFqpu23xxO
+         ZlafeapcNleKpBddXPEC9sHT236DKAOgshsBPWjPPQXh2snz+S6ARSQYp/fDOHV2tMPf
+         3brw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=BDkEf5k9dkHjOup5CUjO5xVZWg/tALtAYkBjHOV4qb0=;
+        b=tDWQzjOx0IkAufbDQcbbIV0/FedBeUvvctrZHrzaDc7FGf7qPZRhTw7ubFOnG3vTmD
+         yy4e2KJy5+IYHqG5U2QOsrrPbik0ana+mgOXJTmEdcOl8cnU44Dj/017Br/UtrOWIPpO
+         kyFiQBB8gQGJjWse8pZP1WmwR0zCQmPx+ldhhWKT/TMR001NPG27Bm9JO/6uuvsZTmgI
+         vdYpuHRqCeQLkCG6V/ahvLDwuYIgndrNi8QRoXML7mTRnZ0EUb6w6nbNXLwnq4f1Rm09
+         04La5ciH6X2Ug8m/z0RAJHB3j8OY85f+rbvk1X20WQVx+tWDhtLW3rwlzfSru8yCyAGT
+         HBuA==
+X-Gm-Message-State: APzg51DeT5n5+d8UyyfVDpY4Q4Zay+eoJEVEaI68/8UaZXuZs+6vQj6k
+        6JbHv/CzlPb95v8WLOsJWAlDNX6eFetRX69X2X5SFYgU5Ttm8A==
+X-Google-Smtp-Source: AA+uWPy1bqFqabmuSrxtZ2DVnelO/zp7ouoqYyjtfDJZ5E/c6YcW7tdN/rxeeE7U/mHLPB6ubf9sbYrSkNw/acnO1tE=
+X-Received: by 2002:a9f:3968:: with SMTP id i40-v6mr3428144uag.63.1534870012926;
+ Tue, 21 Aug 2018 09:46:52 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9f:2a87:0:0:0:0:0 with HTTP; Tue, 21 Aug 2018 09:46:52
+ -0700 (PDT)
+In-Reply-To: <20180821161258.19718-1-treeze.taeung@gmail.com>
+References: <20180821161258.19718-1-treeze.taeung@gmail.com>
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+Date:   Tue, 21 Aug 2018 18:46:52 +0200
+Message-ID: <CAJpBn1zT1EnyKnzmoEO_4WwjR1qgY94wcQjHdKUPAa5z+5OvXw@mail.gmail.com>
+Subject: Re: [PATCH] libbpf: Remove the duplicate checking of function storage
+To:     Taeung Song <treeze.taeung@gmail.com>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-08-21 at 09:32 -0700, Nick Desaulniers wrote:
-> On Tue, Aug 21, 2018 at 5:38 AM Dominique Martinet
-> <asmadeus@codewreck.org> wrote:
-> > 
-> > Nick Desaulniers Aug. 21, 2018, 8:09 a.m. UTC:
-> > > Thanks for noticing, and sending this patch.  I'm happy to see others
-> > > testing with Clang.  I noticed this too near the end of the day
-> > > https://github.com/ClangBuiltLinux/linux/issues/27.
-> > 
-> > FWIW libbcc so many BPF users also use clang, so this has more impact
-> > than just testing to build linux with clang (not that this would be any
-> > reason to delay fixing either way)
-> > 
-> > I would tend to agree havin a compiler-common + make clang/intel not
-> > include compiler-gcc would probably be best in the long run but we might
-> > want a quick fix for 4.19 meanwhile..
-> 
-> That's fair. SOP here is quick (full) revert, then come up with a
-> better fix.  And I do prefer Masahiro's partial revert to a full
-> revert of Joe's patch.  That will give us more time to develop the
-> proper fix rather than rush.  I'll try to see how we can more properly
-> split the compiler specific headers.
-> 
-> Tested with gcc-7 and clang-8.
+On Tue, Aug 21, 2018 at 6:12 PM, Taeung Song <treeze.taeung@gmail.com> wrote:
+> After the commit eac7d84519a3 ("tools: libbpf: don't return '.text'
+> as a program for multi-function programs"), bpf_program__next()
+> in bpf_object__for_each_program skips the function storage such as .text,
+> so eliminate the duplicate checking.
+>
+> Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
+> Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
 
-clang-8? Isn't the latest officlal clang 6.0.1 ?
+Looks reasonable, but you may need to repost once bpf-next is open:
 
-http://releases.llvm.org/
+https://www.kernel.org/doc/Documentation/networking/netdev-FAQ.txt
 
-vs
+Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-https://clang.llvm.org/docs/ReleaseNotes.html
-
-So if something other than 6.0.x is required,
-then some additional check should probably be
-added to compiler-clang.h as well.
-
+> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> index 2abd0f112627..8476da7f2720 100644
+> --- a/tools/lib/bpf/libbpf.c
+> +++ b/tools/lib/bpf/libbpf.c
+> @@ -2336,7 +2336,7 @@ int bpf_prog_load_xattr(const struct bpf_prog_load_attr *attr,
+>                 bpf_program__set_expected_attach_type(prog,
+>                                                       expected_attach_type);
+>
+> -               if (!bpf_program__is_function_storage(prog, obj) && !first_prog)
+> +               if (!first_prog)
+>                         first_prog = prog;
+>         }
+>
+> --
+> 2.17.1
+>
