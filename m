@@ -2,174 +2,233 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A90AAC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 23:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FD2C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 23:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49AA921763
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 23:44:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49AA921763
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 21A6E2098B
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 23:45:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="grYQtJSa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21A6E2098B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727707AbeHVDGl (ORCPT
+        id S1727760AbeHVDHb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 23:06:41 -0400
-Received: from mga18.intel.com ([134.134.136.126]:48215 "EHLO mga18.intel.com"
+        Tue, 21 Aug 2018 23:07:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726916AbeHVDGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 23:06:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2018 16:44:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,271,1531810800"; 
-   d="scan'208";a="83807535"
-Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
-  by orsmga001.jf.intel.com with ESMTP; 21 Aug 2018 16:44:24 -0700
-Received: from orsmsx155.amr.corp.intel.com (10.22.240.21) by
- ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Tue, 21 Aug 2018 16:44:24 -0700
-Received: from orsmsx107.amr.corp.intel.com ([169.254.1.245]) by
- ORSMSX155.amr.corp.intel.com ([169.254.7.64]) with mapi id 14.03.0319.002;
- Tue, 21 Aug 2018 16:44:23 -0700
-From:   "Schaufler, Casey" <casey.schaufler@intel.com>
-To:     Jann Horn <jannh@google.com>
-CC:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "selinux@tycho.nsa.gov" <selinux@tycho.nsa.gov>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>
-Subject: RE: [PATCH v3 3/5] LSM: Security module checking for side-channel
- dangers
-Thread-Topic: [PATCH v3 3/5] LSM: Security module checking for side-channel
- dangers
-Thread-Index: AQHUOOKX5VPJ9yk/5U6pLmxaRABENqTK6xAA///w3HA=
-Date:   Tue, 21 Aug 2018 23:44:23 +0000
-Message-ID: <99FC4B6EFCEFD44486C35F4C281DC673214402D3@ORSMSX107.amr.corp.intel.com>
-References: <20180821000444.7004-1-casey.schaufler@intel.com>
- <20180821000444.7004-4-casey.schaufler@intel.com>
- <CAG48ez1D-DPBP8ACA1W5=XZLNKUeVj7ZOGUG8uJ2nL1xOSR_9Q@mail.gmail.com>
-In-Reply-To: <CAG48ez1D-DPBP8ACA1W5=XZLNKUeVj7ZOGUG8uJ2nL1xOSR_9Q@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDllOGFiOWMtYzU5Yi00Nzg0LWEzMWQtY2M2NDY2ZDFkODc2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRVRGWXh5anBtZ28wN09sNld5dzUwamlvTGlpcFpWK1FxSjJMOVE4Z1lpS2ZYdVdjeW1tVzYwb3FWY0dHNExGciJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727027AbeHVDHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 23:07:30 -0400
+Received: from mail.kernel.org (unknown [185.216.33.115])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5B302098B;
+        Tue, 21 Aug 2018 23:45:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1534895113;
+        bh=I0BU8w9Z2Yf01AZwXAR1v7yXH6p4Egdom0VSzru1O1o=;
+        h=Date:From:To:Cc:Subject:From;
+        b=grYQtJSapQcwll+Y39rrZvWWMK3YAN66Az0aNkOcClYWWZy1SCV2xzxUQAg6QD7jY
+         ul27+g3PU+G32/5AyxpSURh7RcDILE+kxJWuB3JuGAg6uXnA9Fws09x0AkvGiOoS3Z
+         JN0G/6zGu4u0vJs/i5n9+D2BqSeZKiXQmwsiu85A=
+Date:   Wed, 22 Aug 2018 01:45:10 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [GIT PULL] power-supply changes for 4.19
+Message-ID: <20180821234510.dpoycz5uffigz7ul@earth.universe>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kwafn5acwuscsjxi"
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKYW5uIEhvcm4gW21haWx0bzpq
-YW5uaEBnb29nbGUuY29tXQ0KPiBTZW50OiBUdWVzZGF5LCBBdWd1c3QgMjEsIDIwMTggMTA6MjQg
-QU0NCj4gVG86IFNjaGF1ZmxlciwgQ2FzZXkgPGNhc2V5LnNjaGF1ZmxlckBpbnRlbC5jb20+DQo+
-IENjOiBLZXJuZWwgSGFyZGVuaW5nIDxrZXJuZWwtaGFyZGVuaW5nQGxpc3RzLm9wZW53YWxsLmNv
-bT47IGtlcm5lbCBsaXN0DQo+IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgbGludXgt
-c2VjdXJpdHktbW9kdWxlIDxsaW51eC1zZWN1cml0eS0NCj4gbW9kdWxlQHZnZXIua2VybmVsLm9y
-Zz47IHNlbGludXhAdHljaG8ubnNhLmdvdjsgSGFuc2VuLCBEYXZlDQo+IDxkYXZlLmhhbnNlbkBp
-bnRlbC5jb20+OyBEb2NrLCBEZW5lZW4gVCA8ZGVuZWVuLnQuZG9ja0BpbnRlbC5jb20+Ow0KPiBr
-cmlzdGVuQGxpbnV4LmludGVsLmNvbTsgQXJqYW4gdmFuIGRlIFZlbiA8YXJqYW5AbGludXguaW50
-ZWwuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYzIDMvNV0gTFNNOiBTZWN1cml0eSBtb2R1
-bGUgY2hlY2tpbmcgZm9yIHNpZGUtY2hhbm5lbA0KPiBkYW5nZXJzDQo+IA0KPiBPbiBUdWUsIEF1
-ZyAyMSwgMjAxOCBhdCAyOjA1IEFNIENhc2V5IFNjaGF1Zmxlcg0KPiA8Y2FzZXkuc2NoYXVmbGVy
-QGludGVsLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBUaGUgc2lkZWNoYW5uZWwgTFNNIGNoZWNrcyBm
-b3IgY2FzZXMgd2hlcmUgYSBzaWRlLWNoYW5uZWwNCj4gPiBhdHRhY2sgbWF5IGJlIGRhbmdlcm91
-cyBiYXNlZCBvbiBzZWN1cml0eSBhdHRyaWJ1dGVzIG9mIHRhc2tzLg0KPiA+IFRoaXMgaW5jbHVk
-ZXM6DQo+ID4gICAgICAgICBFZmZlY3RpdmUgVUlEIG9mIHRoZSB0YXNrcyBpcyBkaWZmZXJlbnQN
-Cj4gPiAgICAgICAgIENhcGFibGl0eSBzZXRzIGFyZSBkaWZmZXJlbnQNCj4gPiAgICAgICAgIFRh
-c2tzIGFyZSBpbiBkaWZmZXJlbnQgbmFtZXNwYWNlcw0KPiA+IEFuIG9wdGlvbiBpcyBhbHNvIHBy
-b3ZpZGVkIHRvIGFzc2VydCB0aGF0IHRhc2sgYXJlIG5ldmVyDQo+ID4gdG8gYmUgY29uc2lkZXJl
-ZCBzYWZlLiBUaGlzIGlzIGhpZ2ggcGFyYW5vaWEsIGFuZCBleHBlbnNpdmUNCj4gPiBhcyB3ZWxs
-Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQ2FzZXkgU2NoYXVmbGVyIDxjYXNleS5zY2hhdWZs
-ZXJAaW50ZWwuY29tPg0KPiA+IC0tLQ0KPiBbLi4uXQ0KPiA+IGRpZmYgLS1naXQgYS9zZWN1cml0
-eS9zaWRlY2hhbm5lbC9LY29uZmlnIGIvc2VjdXJpdHkvc2lkZWNoYW5uZWwvS2NvbmZpZw0KPiA+
-IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gaW5kZXggMDAwMDAwMDAwMDAwLi5hZjkzOTY1MzQx
-MjgNCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvc2VjdXJpdHkvc2lkZWNoYW5uZWwvS2Nv
-bmZpZw0KPiBbLi4uXQ0KPiA+ICtjb25maWcgU0VDVVJJVFlfU0lERUNIQU5ORUxfQ0FQQUJJTElU
-SUVTDQo+ID4gKyAgICAgICBib29sICJTaWRlY2hhbm5lbCBjaGVjayBvbiBjYXBhYmlsaXR5IHNl
-dHMiDQo+ID4gKyAgICAgICBkZXBlbmRzIG9uIFNFQ1VSSVRZX1NJREVDSEFOTkVMDQo+ID4gKyAg
-ICAgICBkZWZhdWx0IG4NCj4gPiArICAgICAgIGhlbHANCj4gPiArICAgICAgICAgQXNzdW1lIHRo
-YXQgdGFza3Mgd2l0aCBkaWZmZXJlbnQgc2V0cyBvZiBwcml2aWxlZ2UgbWF5IGJlDQo+ID4gKyAg
-ICAgICAgIHN1YmplY3QgdG8gc2lkZS1jaGFubmVsIGF0dGFja3MuIFBvdGVudGlhbCBpbnRlcmFj
-dGlvbnMNCj4gPiArICAgICAgICAgd2hlcmUgdGhlIGF0dGFja2VyIGxhY2tzIGNhcGFiaWxpdGll
-cyB0aGUgYXR0YWNrZWQgaGFzDQo+ID4gKyAgICAgICAgIGFyZSBibG9ja2VkLg0KPiA+ICsNCj4g
-PiArICAgICAgICAgIElmIHlvdSBhcmUgdW5zdXJlIGhvdyB0byBhbnN3ZXIgdGhpcyBxdWVzdGlv
-biwgYW5zd2VyIE4uDQo+ID4gKw0KPiA+ICtjb25maWcgU0VDVVJJVFlfU0lERUNIQU5ORUxfTkFN
-RVNQQUNFUw0KPiA+ICsgICAgICAgYm9vbCAiU2lkZWNoYW5uZWwgY2hlY2sgb24gbmFtZXNwYWNl
-cyINCj4gPiArICAgICAgIGRlcGVuZHMgb24gU0VDVVJJVFlfU0lERUNIQU5ORUwNCj4gPiArICAg
-ICAgIGRlcGVuZHMgb24gTkFNRVNQQUNFUw0KPiA+ICsgICAgICAgZGVmYXVsdCBuDQo+ID4gKyAg
-ICAgICBoZWxwDQo+ID4gKyAgICAgICAgIEFzc3VtZSB0aGF0IHRhc2tzIGluIGRpZmZlcmVudCBu
-YW1lc3BhY2VzIG1heSBiZQ0KPiA+ICsgICAgICAgICBzdWJqZWN0IHRvIHNpZGUtY2hhbm5lbCBh
-dHRhY2tzLiBVc2VyLCBQSUQgYW5kIGNncm91cA0KPiA+ICsgICAgICAgICBuYW1lc3BhY2VzIGFy
-ZSBjaGVja2VkLg0KPiA+ICsNCj4gPiArICAgICAgICAgIElmIHlvdSBhcmUgdW5zdXJlIGhvdyB0
-byBhbnN3ZXIgdGhpcyBxdWVzdGlvbiwgYW5zd2VyIE4uDQo+IFsuLi5dDQo+ID4gZGlmZiAtLWdp
-dCBhL3NlY3VyaXR5L3NpZGVjaGFubmVsL3NpZGVjaGFubmVsLmMNCj4gYi9zZWN1cml0eS9zaWRl
-Y2hhbm5lbC9zaWRlY2hhbm5lbC5jDQo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gPiBpbmRl
-eCAwMDAwMDAwMDAwMDAuLjRkYTdkNmRhZmRjNQ0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysg
-Yi9zZWN1cml0eS9zaWRlY2hhbm5lbC9zaWRlY2hhbm5lbC5jDQo+IFsuLi5dDQo+ID4gKy8qDQo+
-ID4gKyAqIHNhZmVfYnlfY2FwYWJpbGl0eSAtIEFyZSB0YXNrIGFuZCBjdXJyZW50IHNpZGVjaGFu
-bmVsIHNhZmU/DQo+ID4gKyAqIEBwOiB0YXNrIHRvIGNoZWNrIG9uDQo+ID4gKyAqDQo+ID4gKyAq
-IFJldHVybnMgMCBpZiB0aGUgdGFza3MgYXJlIHNpZGVjaGFubmVsIHNhZmUsIC1FQUNDRVMgb3Ro
-ZXJ3aXNlLg0KPiA+ICsgKi8NCj4gPiArI2lmZGVmIENPTkZJR19TRUNVUklUWV9TSURFQ0hBTk5F
-TF9DQVBBQklMSVRJRVMNCj4gPiArc3RhdGljIGludCBzYWZlX2J5X2NhcGFiaWxpdHkoc3RydWN0
-IHRhc2tfc3RydWN0ICpwKQ0KPiA+ICt7DQo+ID4gKyAgICAgICBjb25zdCBzdHJ1Y3QgY3JlZCAq
-Y2NyZWQgPSBjdXJyZW50X3JlYWxfY3JlZCgpOw0KPiA+ICsgICAgICAgY29uc3Qgc3RydWN0IGNy
-ZWQgKnBjcmVkID0gcmN1X2RlcmVmZXJlbmNlX3Byb3RlY3RlZChwLT5yZWFsX2NyZWQsIDEpOw0K
-PiA+ICsNCj4gPiArICAgICAgIC8qDQo+ID4gKyAgICAgICAgKiBDYXBhYmlsaXRpZXMgY2hlY2tz
-LiBDb25zaWRlcmVkIHNhZmUgaWY6DQo+ID4gKyAgICAgICAgKiAgICAgIGN1cnJlbnQgaGFzIGFs
-bCB0aGUgY2FwYWJpbGl0aWVzIHAgZG9lcw0KPiA+ICsgICAgICAgICovDQo+ID4gKyAgICAgICBp
-ZiAoY2NyZWQgIT0gcGNyZWQgJiYNCj4gPiArICAgICAgICAgICAhY2FwX2lzc3Vic2V0KHBjcmVk
-LT5jYXBfZWZmZWN0aXZlLCBjY3JlZC0+Y2FwX2VmZmVjdGl2ZSkpDQo+ID4gKyAgICAgICAgICAg
-ICAgIHJldHVybiAtRUFDQ0VTOw0KPiA+ICsgICAgICAgcmV0dXJuIDA7DQo+ID4gK30NCj4gDQo+
-IE9uIGl0cyBvd24gKHdpdGhvdXQgc2FmZV9ieV9uYW1lc3BhY2UoKSksIHRoaXMgY2hlY2sgbWFr
-ZXMgbm8gc2Vuc2UsIEkNCj4gdGhpbmsuIFlvdSdyZSBwZXJmb3JtaW5nIGEgdGVzdCBvbiB0aGUg
-bmFtZXNwYWNlZCBjYXBhYmlsaXR5IHNldHMNCj4gd2l0aG91dCBsb29raW5nIGF0IHdoaWNoIHVz
-ZXIgbmFtZXNwYWNlcyB0aGV5IGFyZSByZWxhdGl2ZSB0by4gTWF5YmUNCj4gZWl0aGVyIGludHJv
-ZHVjZSBhIGNvbmZpZ3VyYXRpb24gZGVwZW5kZW5jeSBvciBhZGQgYW4gZXh0cmEgbmFtZXNwYWNl
-DQo+IGNoZWNrIGhlcmU/DQoNCklmIHlvdSBkb24ndCBoYXZlIG5hbWVzcGFjZXMgdGhlIGNoZWNr
-IGlzIGNvcnJlY3QuIElmIHlvdSBkbywgYW5kIHVzZQ0Kc2FmZV9ieV9uYW1lc3BhY2UoKSB5b3Un
-cmUgYWxzbyBjb3JyZWN0LiBJZiB5b3UgdXNlIG5hbWVzcGFjZXMgYW5kDQpjYXJlIGFib3V0IHNp
-ZGUtY2hhbm5lbCBhdHRhY2tzIHlvdSBzaG91bGQgZW5hYmxlIHRoZSBuYW1lc3BhY2UgY2hlY2tz
-Lg0KSSBkb24ndCBzZWUgcmVhbCB2YWx1ZSBpbiBhZGRpbmcgbmFtZXNwYWNlIGNoZWNrcyBpbiB0
-aGUgY2FwYWJpbGl0eSBjaGVja3MNCmZvciB0aGUgZXZlbnQgd2hlcmUgc29tZW9uZSBoYXMgc2Fp
-ZCB0aGV5IGRvbid0IHdhbnQgbmFtZXNwYWNlIGNoZWNrcy4NCg0KSSBnb3QgZWFybHkgZmVlZGJh
-Y2sgdGhhdCBjb25maWd1cmFiaWxpdHkgd2FzIGNvbnNpZGVyZWQgaW1wb3J0YW50Lg0KVGhpcyBp
-cyB0aGUgY29ycmVjdCBiZWhhdmlvciBpZiB5b3Ugd2FudCBuYW1lc3BhY2UgY2hlY2tzIHRvIGJl
-DQpzZXBhcmF0ZWx5IGNvbmZpZ3VyYWJsZSBmcm9tIGNhcGFiaWxpdHkgY2hlY2tzLiBZb3UgY291
-bGQgYXNrIGZvcg0KZGlzdGluY3QgY29uZmlndXJhdGlvbiBvcHRpb25zIGZvciBlYWNoIGtpbmQg
-b2YgbmFtZXNwYWNlLCBidXQsIHdlbGwsIHl1Y2suDQoNCj4gPiArc3RhdGljIGludCBzYWZlX2J5
-X25hbWVzcGFjZShzdHJ1Y3QgdGFza19zdHJ1Y3QgKnApDQo+ID4gK3sNCj4gPiArICAgICAgIHN0
-cnVjdCBjZ3JvdXBfbmFtZXNwYWNlICpjY2duID0gTlVMTDsNCj4gPiArICAgICAgIHN0cnVjdCBj
-Z3JvdXBfbmFtZXNwYWNlICpwY2duID0gTlVMTDsNCj4gPiArICAgICAgIGNvbnN0IHN0cnVjdCBj
-cmVkICpjY3JlZDsNCj4gPiArICAgICAgIGNvbnN0IHN0cnVjdCBjcmVkICpwY3JlZDsNCj4gPiAr
-DQo+ID4gKyAgICAgICAvKg0KPiA+ICsgICAgICAgICogTmFtZXNwYWNlIGNoZWNrcy4gQ29uc2lk
-ZXJlZCBzYWZlIGlmOg0KPiA+ICsgICAgICAgICogICAgICBjZ3JvdXAgbmFtZXNwYWNlIGlzIHRo
-ZSBzYW1lDQo+ID4gKyAgICAgICAgKiAgICAgIFVzZXIgbmFtZXNwYWNlIGlzIHRoZSBzYW1lDQo+
-ID4gKyAgICAgICAgKiAgICAgIFBJRCBuYW1lc3BhY2UgaXMgdGhlIHNhbWUNCj4gPiArICAgICAg
-ICAqLw0KPiA+ICsgICAgICAgaWYgKGN1cnJlbnQtPm5zcHJveHkpDQo+ID4gKyAgICAgICAgICAg
-ICAgIGNjZ24gPSBjdXJyZW50LT5uc3Byb3h5LT5jZ3JvdXBfbnM7DQo+ID4gKyAgICAgICBpZiAo
-cC0+bnNwcm94eSkNCj4gPiArICAgICAgICAgICAgICAgcGNnbiA9IHAtPm5zcHJveHktPmNncm91
-cF9uczsNCj4gPiArICAgICAgIGlmIChjY2duICE9IHBjZ24pDQo+ID4gKyAgICAgICAgICAgICAg
-IHJldHVybiAtRUFDQ0VTOw0KPiA+ICsNCj4gPiArICAgICAgIGNjcmVkID0gY3VycmVudF9yZWFs
-X2NyZWQoKTsNCj4gPiArICAgICAgIHBjcmVkID0gcmN1X2RlcmVmZXJlbmNlX3Byb3RlY3RlZChw
-LT5yZWFsX2NyZWQsIDEpOw0KPiA+ICsNCj4gPiArICAgICAgIGlmIChjY3JlZC0+dXNlcl9ucyAh
-PSBwY3JlZC0+dXNlcl9ucykNCj4gPiArICAgICAgICAgICAgICAgcmV0dXJuIC1FQUNDRVM7DQo+
-ID4gKyAgICAgICBpZiAodGFza19hY3RpdmVfcGlkX25zKGN1cnJlbnQpICE9IHRhc2tfYWN0aXZl
-X3BpZF9ucyhwKSkNCj4gPiArICAgICAgICAgICAgICAgcmV0dXJuIC1FQUNDRVM7DQo+ID4gKyAg
-ICAgICByZXR1cm4gMDsNCj4gPiArfQ0K
+
+--kwafn5acwuscsjxi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi Linus,
+
+I was too busy for reviewing patches the last few weeks, so
+everything has been in linux-next for a multiple weeks (except
+for some fixes, that I initially planned to send for 4.18-rc,
+but even those have been in -next for some time now). Stephen
+Rothwell noticed a merge conflict in MAINTAINERS file, should
+be trivial to figure out.
+
+-- Sebastian
+
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git tags/for-v4.19
+
+for you to fetch changes up to 5198a48381455969aa1053a0ca2e4ce409be2fc2:
+
+  Merge branch 'psy-fixes' into psy-next (2018-08-16 22:19:22 +0200)
+
+----------------------------------------------------------------
+power supply and reset changes for the v4.19 series
+
+* Improve support for TI bq20z75 in sbs-battery
+* Add Qualcomm PM8xxx reboot driver
+* Add cros-ec USBPD charger driver
+* Add adp5061 battery driver
+* Move ds2760 battery driver from w1 to power-supply and add DT support
+* Misc. fixes
+
+----------------------------------------------------------------
+Alexey Khoroshilov (1):
+      power: reset: zx-reboot: put device node in zx_reboot_probe()
+
+Arnd Bergmann (1):
+      power: supply: ab8500: stop using getnstimeofday64()
+
+Benjamin Tissoires (1):
+      power: remove possible deadlock when unregistering power_supply
+
+Brian Norris (2):
+      power: supply: sbs-battery: don't assume MANUFACTURER_DATA formats
+      dt-bindings: power: sbs-battery: re-document "ti,bq20z75"
+
+Colin Ian King (1):
+      power: supply: max1721x: fix spelling mistake "RSenese" -> "RSense"
+
+Dan Carpenter (1):
+      power: supply: adp5061: Fix a couple off by ones
+
+Daniel Mack (5):
+      dt-bindings: w1: document generic onewire bindings
+      dt-bindings: w1: document bindings for ds2760 battery monitor
+      w1: core: match sub-nodes of bus masters in devicetree
+      power: supply: ds2760_battery: merge ds2760 supply driver with its w1 slave companion
+      power: supply: ds2760_battery: add devicetree probing
+
+David Lechner (2):
+      power: supply: lego_ev3_battery: Don't ignore iio_read_channel_processed() return value
+      power: supply: lego_ev3_battery: fix Vce offset
+
+Enric Balletbo i Serra (2):
+      power: supply: tps65217: Switch to SPDX identifier.
+      mfd: cros_ec_dev: Register cros_usbpd-charger driver as a subdevice.
+
+Gustavo A. R. Silva (2):
+      power: supply: mark expected switch fall-throughs
+      power: supply: max77693_charger: fix unintentional fall-through
+
+H. Nikolaus Schaller (2):
+      power: generic-adc-battery: fix out-of-bounds write when copying channel properties
+      power: generic-adc-battery: check for duplicate properties copied from iio channels
+
+Hans de Goede (1):
+      power: supply: axp288_charger: Fix initial constant_charge_current value
+
+Linus Walleij (1):
+      power: gemini-poweroff: Avoid more spurious poweroffs
+
+Liu Xiang (1):
+      power: supply: bq27xxx: Update comments
+
+Sameer Nanda (2):
+      mfd: cros_ec: Add USBPD charger commands and struct definitions.
+      power: supply: add cros-ec USBPD charger driver.
+
+Sebastian Reichel (3):
+      Merge tag 'ib-mfd-v4.19' into psy-next
+      Merge tag 'ds2760-for-v4.19-signed' into psy-next
+      Merge branch 'psy-fixes' into psy-next
+
+Stefan Popa (1):
+      adp5061: New driver for ADP5061 I2C battery charger
+
+Sudeep Holla (1):
+      power: vexpress: fix corruption in notifier registration
+
+Vinod Koul (3):
+      dt-bindings: power: reset: Add qcom pon binding
+      power: reset: qcom-pon: Add Qcom PON driver
+      dt-bindings: power: reset: qcom: Add resin binding
+
+ .../bindings/input/qcom,pm8941-pwrkey.txt          |   1 +
+ .../devicetree/bindings/power/reset/qcom,pon.txt   |  45 ++
+ .../bindings/power/supply/maxim,ds2760.txt         |  26 +
+ .../bindings/power/supply/sbs_sbs-battery.txt      |  12 +-
+ Documentation/devicetree/bindings/w1/w1-gpio.txt   |  11 +-
+ Documentation/devicetree/bindings/w1/w1.txt        |  25 +
+ MAINTAINERS                                        |   7 +
+ drivers/mfd/cros_ec_dev.c                          |  16 +
+ drivers/power/reset/Kconfig                        |  11 +
+ drivers/power/reset/Makefile                       |   1 +
+ drivers/power/reset/gemini-poweroff.c              |  12 +-
+ drivers/power/reset/qcom-pon.c                     |  91 +++
+ drivers/power/reset/vexpress-poweroff.c            |  12 +-
+ drivers/power/reset/zx-reboot.c                    |   1 +
+ drivers/power/supply/Kconfig                       |  23 +-
+ drivers/power/supply/Makefile                      |   2 +
+ drivers/power/supply/ab8500_fg.c                   |  14 +-
+ drivers/power/supply/adp5061.c                     | 745 +++++++++++++++++++++
+ drivers/power/supply/axp20x_usb_power.c            |   1 +
+ drivers/power/supply/axp288_charger.c              |   2 +-
+ drivers/power/supply/bq27xxx_battery.c             |   3 +-
+ drivers/power/supply/cros_usbpd-charger.c          | 545 +++++++++++++++
+ drivers/power/supply/ds2760_battery.c              | 348 +++++++---
+ drivers/power/supply/generic-adc-battery.c         |  25 +-
+ drivers/power/supply/lego_ev3_battery.c            |  20 +-
+ drivers/power/supply/max1721x_battery.c            |   2 +-
+ drivers/power/supply/max77693_charger.c            |   1 +
+ drivers/power/supply/power_supply_core.c           |  11 +-
+ drivers/power/supply/sbs-battery.c                 |  67 +-
+ drivers/power/supply/tps65217_charger.c            |  22 +-
+ drivers/power/supply/wm8350_power.c                |   3 +-
+ drivers/w1/slaves/Kconfig                          |  12 -
+ drivers/w1/slaves/Makefile                         |   1 -
+ drivers/w1/slaves/w1_ds2760.c                      | 175 -----
+ drivers/w1/slaves/w1_ds2760.h                      |  59 --
+ drivers/w1/w1.c                                    |   3 +
+ include/linux/mfd/cros_ec_commands.h               | 132 +++-
+ include/linux/power_supply.h                       |   1 +
+ include/linux/w1.h                                 |   2 +
+ 39 files changed, 2077 insertions(+), 413 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/reset/qcom,pon.txt
+ create mode 100644 Documentation/devicetree/bindings/power/supply/maxim,ds2760.txt
+ create mode 100644 Documentation/devicetree/bindings/w1/w1.txt
+ create mode 100644 drivers/power/reset/qcom-pon.c
+ create mode 100644 drivers/power/supply/adp5061.c
+ create mode 100644 drivers/power/supply/cros_usbpd-charger.c
+ delete mode 100644 drivers/w1/slaves/w1_ds2760.c
+ delete mode 100644 drivers/w1/slaves/w1_ds2760.h
+
+--kwafn5acwuscsjxi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlt8pAMACgkQ2O7X88g7
++poBnw/+O8MoiTHGdPbXXoN5Y6ua3V8lGXDY7B7Fjj7gA3OimABtVATIo4ZoulS1
+ORJOxDVK4LEx3aAtfTtFySi13HcoEKHRoIA2O2Ym/XbNtyIB6Zw7ZxMPxP9doP9T
+ubBLrzGr96aXnmJ7nfaHey3NJRXqUIrOojLxpxngm8lV2g6rTT3xZeFJL9KltJkb
+1eurhVEnBeN4Ethiy2MtiFjTJaVa8BGFc+lhtlqxU7JBfehQZFnt0n9wr7+IfO/A
+fnOWlgvQAwiy5QUIQ0LVYSk9/MOOqZHX2e1ciMxMcjutHqvoyGzP3dheU25ReRSU
+Lo/7KoW0/bR0KhVqQF1whCbrDglFrN5YYfeVfCZijWW6cvwMEdgaeMUtGhmaNjBV
+qpUAbe/Rsjmp6/MX1wH74HeorqgVNgs09J+Mfj97bDlGR70ZD5wHpPvPygVzfNug
+H8xBl1Sz8p7HDbTriT636VNZVh4evhb6mC5NOmKNvefYiDVFb2Sv3jrqK7SPlMha
+pAQ51UOi8UYlwcJDB4CQ4fKSwuOxAKyewhx8nc7ZjJ2fUcHkzAeA6EcI0lNnQixG
+yEa+0xmoEN4V1YQqU43F65hQUfzM63Jakc8Vn6QXEHYKcp6jFMiIWmLDLkz7Yd9c
+NnwJ6kdbq3GxZD7ZJ+4tU/BvGn8cr6f3duKE2fiBD53vAmMBhtI=
+=xGpU
+-----END PGP SIGNATURE-----
+
+--kwafn5acwuscsjxi--
