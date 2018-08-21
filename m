@@ -2,204 +2,388 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C452C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5D1C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30A82217C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:55:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AA4B21854
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 19:55:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="fV6+XyUF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30A82217C7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cqMDl/5i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AA4B21854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbeHUXQa (ORCPT
+        id S1727290AbeHUXRE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 19:16:30 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34532 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbeHUXQa (ORCPT
+        Tue, 21 Aug 2018 19:17:04 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37259 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726628AbeHUXRE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 19:16:30 -0400
-Received: by mail-wm0-f65.google.com with SMTP id l2-v6so10435579wme.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 12:54:55 -0700 (PDT)
+        Tue, 21 Aug 2018 19:17:04 -0400
+Received: by mail-lf1-f68.google.com with SMTP id j8-v6so14508877lfb.4;
+        Tue, 21 Aug 2018 12:55:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=b/v1ib08gpXnKQVOpBS9hExt+6lM9c3yAmrdIjdxow0=;
-        b=fV6+XyUFTFbcxtaLueIyrJ5KuK9m6A8xIcJ+p1wcOYEx0UZIsWwhtj4peEWQAiBbf0
-         I+NG6lMvxrea6jZXH4T6xoXannNnhLqtfuijRqKH/kjrVofntUr2xcp9YFoo1Kb9u6DW
-         ko/eOk1yH7jBS4q1sBuWqH8L6TpMi4vhPdrq4=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=BX6PJuVzM2m4l/CyH1Gv9PMcmEF3U7/AEVuq4Oeh2S8=;
+        b=cqMDl/5iNMscjj3WP1hZNkb4WUjVuzXlW1R3LOxBevu0HJu2vDqKsp8AWkIrwz10Tn
+         hdFFc0mfBdNZ8NIoIhu4fp+PqQh9eRXznBAQV+mq8ddXdYlcnzFm9sXTys7jSPSZWrYB
+         0Qe87J73nbmIULHNQ9cKWWPJcYxGfxBCgU+MSN9xuKP8YSUmE+yGHJa7+Ju9fhDqfAZM
+         qwRL5wC2/EfjKqQ8DZSIqGomgWZHomGZqiWEJe2oyLIIwn5qJvGu10AYGBN8oN840gDK
+         xP2sAMPZA+ck6DZRoTkIn/0ihH+64A3Sw23FNnmHrXzJd0kO6gacdME/iSfc0Vl9DFNu
+         UdGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=b/v1ib08gpXnKQVOpBS9hExt+6lM9c3yAmrdIjdxow0=;
-        b=hjhZQyF7gOhr5EHf4zo9/ZluSyzyueKvanamj9v0LMFRAnd3I1A+9iFGVj7okqzXBn
-         7sMH+XBD1mktzNigDlNVVkoYrlHCDc3g3rw9LiJtqMpYsNTBEqwzpzS6Hwez4z/D6mA0
-         nPkxwsuNIAgfvw3nKfDpIAst4nwTesjaxsq8rnN2zvhmiO/367eWMs8HQhJ53mUHK8sV
-         e7MnIJMqkyDVKL4SY/8XEoNHderBAFcrdsHzw9eTmlPm1OuCFduCERLa5npHyzoVzSL5
-         en45Gr8Fhl5tPsYqskxYfyySdFGiT/XUFiU/CpziloPOse8mZNjQIPFdmzeSvSFN2Ynn
-         wxlQ==
-X-Gm-Message-State: APzg51CL7Jmoa+Xtd4g74xmkGdHaEkrXPXjkHUc1DXS/8Im3YvRE95k7
-        SXqJINEpRfxVPudWeYel7EfpDA==
-X-Google-Smtp-Source: ANB0VdYeo/yCr6xDSDefjqw4qPSn+PfjGGB6jR5UTHdbnPnrrdy7lOz1/vsHrsz8E3G1XvGt2GbtFg==
-X-Received: by 2002:a1c:ae8d:: with SMTP id x135-v6mr539119wme.20.1534881295161;
-        Tue, 21 Aug 2018 12:54:55 -0700 (PDT)
-Received: from veci.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id g2-v6sm33523614wrd.71.2018.08.21.12.54.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 Aug 2018 12:54:54 -0700 (PDT)
-Date:   Tue, 21 Aug 2018 21:54:46 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, viro@zeniv.linux.org.uk,
-        hch@infradead.org
-Subject: [GIT PULL] overlayfs update for 4.19
-Message-ID: <20180821195446.GA9512@veci.piliscsaba.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BX6PJuVzM2m4l/CyH1Gv9PMcmEF3U7/AEVuq4Oeh2S8=;
+        b=QMjBrSHnT+cYKp0E2KfIJrdzsSUmldm393YajjRFjWaf+pPhIEjdW1eja44MUuobOL
+         K8ri56WPEqRvca83AKvxPivUgMjyW8RCLGzdgG5y8eB03Fl7xa1ruNxq1CZec7v89KtA
+         1ZkTvKKDEtBHsl0FkQYnZRC3mAQCIgL8eDVQeQfZwCaRBoRWgyg3wqBScFsgkMHvM3kB
+         SVQS2Lic1QBu2wbYcpMwIZFF5g37ycy08drdyf7Qd3ZqkSjS0i398ZvbK8LfZfrt3u9J
+         1N4yCNlnV8O3cwGATgT9wYzjwYbAl773kTFm3H/nOW0ottfE+NwSIn9tl5roDLOIWRPA
+         rzzQ==
+X-Gm-Message-State: AOUpUlFh68B/lyAR1Wj1EH4SsRjinyr/72v+pIK5R3Vvdidu8273DHW2
+        mxTmXwJ70Yv7M9HCflwIppQ=
+X-Google-Smtp-Source: AA+uWPxolu5B/xbXXOaalWPnvBUaEsW6iDL8+RRSsx1nljTEjZpQEqVhQVAfsO8eJU7N/P2zYTVgtw==
+X-Received: by 2002:a19:4b15:: with SMTP id y21-v6mr9156281lfa.118.1534881329542;
+        Tue, 21 Aug 2018 12:55:29 -0700 (PDT)
+Received: from localhost.localdomain (c-2ec26f18-74736162.cust.telenor.se. [46.194.111.24])
+        by smtp.gmail.com with ESMTPSA id l141-v6sm2449374lfg.55.2018.08.21.12.55.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 Aug 2018 12:55:28 -0700 (PDT)
+From:   Marcus Folkesson <marcus.folkesson@gmail.com>
+To:     Marcus Folkesson <marcus.folkesson@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/3] iio: dac: add support for ltc1660
+Date:   Tue, 21 Aug 2018 21:31:24 +0200
+Message-Id: <20180821193126.15733-1-marcus.folkesson@gmail.com>
+X-Mailer: git-send-email 2.11.0.rc2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+LTC1665/LTC1660 is a 8/10-bit Digital-to-Analog Converter
+(DAC) with eight individual channels.
 
-Please pull from:
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-update-4.19
+Notes:
+    v2:
+    	- rename all instances of ltc166x to ltc1660
+    	- read regulator value "in-place" instead of cache voltage
+    	- fix error handling in ltc1660_write_raw
 
-This contains two new features:
+ drivers/iio/dac/Kconfig   |  10 ++
+ drivers/iio/dac/Makefile  |   1 +
+ drivers/iio/dac/ltc1660.c | 250 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 261 insertions(+)
+ create mode 100644 drivers/iio/dac/ltc1660.c
 
- 1) Stack file operations: this allows removal of several hacks from the
-    VFS, proper interaction of read-only open files with copy-up,
-    possibility to implement fs modifying ioctls properly, and others.
+diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
+index 76db0768e454..cbee80bd111e 100644
+--- a/drivers/iio/dac/Kconfig
++++ b/drivers/iio/dac/Kconfig
+@@ -120,6 +120,16 @@ config AD5624R_SPI
+ 	  Say yes here to build support for Analog Devices AD5624R, AD5644R and
+ 	  AD5664R converters (DAC). This driver uses the common SPI interface.
+ 
++config LTC1660
++	tristate "Linear Technology LTC1660/LTC1665 DAC SPI driver"
++	depends on SPI
++	help
++	  Say yes here to build support for Linear Technology
++	  LTC1660 and LTC1665 Digital to Analog Converters.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called ltc1660.
++
+ config LTC2632
+ 	tristate "Linear Technology LTC2632-12/10/8 DAC spi driver"
+ 	depends on SPI
+diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
+index 81e710ed7491..e446eeb09c85 100644
+--- a/drivers/iio/dac/Makefile
++++ b/drivers/iio/dac/Makefile
+@@ -26,6 +26,7 @@ obj-$(CONFIG_CIO_DAC) += cio-dac.o
+ obj-$(CONFIG_DPOT_DAC) += dpot-dac.o
+ obj-$(CONFIG_DS4424) += ds4424.o
+ obj-$(CONFIG_LPC18XX_DAC) += lpc18xx_dac.o
++obj-$(CONFIG_LTC1660) += ltc1660.o
+ obj-$(CONFIG_LTC2632) += ltc2632.o
+ obj-$(CONFIG_M62332) += m62332.o
+ obj-$(CONFIG_MAX517) += max517.o
+diff --git a/drivers/iio/dac/ltc1660.c b/drivers/iio/dac/ltc1660.c
+new file mode 100644
+index 000000000000..10866838c72a
+--- /dev/null
++++ b/drivers/iio/dac/ltc1660.c
+@@ -0,0 +1,250 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Driver for Linear Technology LTC1665/LTC1660, 8 channels DAC
++ *
++ * Copyright (C) 2018 Marcus Folkesson <marcus.folkesson@gmail.com>
++ */
++#include <linux/bitops.h>
++#include <linux/iio/iio.h>
++#include <linux/iio/sysfs.h>
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/regulator/consumer.h>
++#include <linux/regmap.h>
++#include <linux/spi/spi.h>
++
++#define LTC1660_REG_WAKE	0x0
++#define LTC1660_REG_DAC_A	0x1
++#define LTC1660_REG_DAC_B	0x2
++#define LTC1660_REG_DAC_C	0x3
++#define LTC1660_REG_DAC_D	0x4
++#define LTC1660_REG_DAC_E	0x5
++#define LTC1660_REG_DAC_F	0x6
++#define LTC1660_REG_DAC_G	0x7
++#define LTC1660_REG_DAC_H	0x8
++#define LTC1660_REG_SLEEP	0xe
++
++#define LTC1660_NUM_CHANNELS	8
++
++static const struct regmap_config ltc1660_regmap_config = {
++	.reg_bits = 4,
++	.val_bits = 12,
++};
++
++enum ltc1660_supported_device_ids {
++	ID_LTC1660,
++	ID_LTC1665,
++};
++
++struct ltc1660_priv {
++	struct spi_device *spi;
++	struct regmap *regmap;
++	struct regulator *vref_reg;
++	unsigned int value[LTC1660_NUM_CHANNELS];
++	unsigned int vref_mv;
++};
++
++static int ltc1660_read_raw(struct iio_dev *indio_dev,
++		struct iio_chan_spec const *chan,
++		int *val,
++		int *val2,
++		long mask)
++{
++	struct ltc1660_priv *priv = iio_priv(indio_dev);
++
++	switch (mask) {
++	case IIO_CHAN_INFO_RAW:
++		*val = priv->value[chan->channel];
++		return IIO_VAL_INT;
++	case IIO_CHAN_INFO_SCALE:
++		*val = regulator_get_voltage(priv->vref_reg);
++		if (*val < 0) {
++			dev_err(&priv->spi->dev, "failed to read vref regulator: %d\n",
++					*val);
++			return *val;
++		}
++
++		/* Convert to mV */
++		*val /= 1000;
++		*val2 = chan->scan_type.realbits;
++		return IIO_VAL_FRACTIONAL_LOG2;
++	default:
++		return -EINVAL;
++	}
++}
++
++static int ltc1660_write_raw(struct iio_dev *indio_dev,
++		struct iio_chan_spec const *chan,
++		int val,
++		int val2,
++		long mask)
++{
++	struct ltc1660_priv *priv = iio_priv(indio_dev);
++	int ret;
++
++	switch (mask) {
++	case IIO_CHAN_INFO_RAW:
++		if (val2 != 0)
++			return -EINVAL;
++
++		if (val < 0 || val > GENMASK(chan->scan_type.realbits - 1, 0))
++			return -EINVAL;
++
++		ret = regmap_write(priv->regmap, chan->channel,
++					(val << chan->scan_type.shift));
++		if (!ret)
++			priv->value[chan->channel] = val;
++
++		return ret;
++	default:
++		return -EINVAL;
++	}
++}
++
++#define LTC1660_CHAN(chan, bits) {			\
++	.type = IIO_VOLTAGE,				\
++	.indexed = 1,					\
++	.output = 1,					\
++	.channel = chan,				\
++	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),	\
++	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
++	.scan_type = {					\
++		.sign = 'u',				\
++		.realbits = (bits),			\
++		.storagebits = 16,			\
++		.shift = 12 - (bits),			\
++	},						\
++}
++
++#define  LTC1660_OCTAL_CHANNELS(bits) {			\
++		LTC1660_CHAN(LTC1660_REG_DAC_A, bits),	\
++		LTC1660_CHAN(LTC1660_REG_DAC_B, bits),	\
++		LTC1660_CHAN(LTC1660_REG_DAC_C, bits),	\
++		LTC1660_CHAN(LTC1660_REG_DAC_D, bits),	\
++		LTC1660_CHAN(LTC1660_REG_DAC_E, bits),	\
++		LTC1660_CHAN(LTC1660_REG_DAC_F, bits),	\
++		LTC1660_CHAN(LTC1660_REG_DAC_G, bits),	\
++		LTC1660_CHAN(LTC1660_REG_DAC_H, bits),	\
++}
++
++static const struct iio_chan_spec ltc1660_channels[][LTC1660_NUM_CHANNELS] = {
++	[ID_LTC1660] = LTC1660_OCTAL_CHANNELS(10),
++	[ID_LTC1665] = LTC1660_OCTAL_CHANNELS(8),
++};
++
++static const struct iio_info ltc1660_info = {
++	.read_raw = &ltc1660_read_raw,
++	.write_raw = &ltc1660_write_raw,
++};
++
++static int __maybe_unused ltc1660_suspend(struct device *dev)
++{
++	struct ltc1660_priv *priv = iio_priv(spi_get_drvdata(
++						to_spi_device(dev)));
++	return regmap_write(priv->regmap, LTC1660_REG_SLEEP, 0x00);
++}
++
++static int __maybe_unused ltc1660_resume(struct device *dev)
++{
++	struct ltc1660_priv *priv = iio_priv(spi_get_drvdata(
++						to_spi_device(dev)));
++	return regmap_write(priv->regmap, LTC1660_REG_WAKE, 0x00);
++}
++static SIMPLE_DEV_PM_OPS(ltc1660_pm_ops, ltc1660_suspend, ltc1660_resume);
++
++static int ltc1660_probe(struct spi_device *spi)
++{
++	struct iio_dev *indio_dev;
++	struct ltc1660_priv *priv;
++	const struct spi_device_id *id = spi_get_device_id(spi);
++	int ret;
++
++	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*priv));
++	if (indio_dev == NULL)
++		return -ENOMEM;
++
++	priv = iio_priv(indio_dev);
++	priv->regmap = devm_regmap_init_spi(spi, &ltc1660_regmap_config);
++	if (IS_ERR(priv->regmap)) {
++		dev_err(&spi->dev, "failed to register spi regmap %ld\n",
++			PTR_ERR(priv->regmap));
++		return PTR_ERR(priv->regmap);
++	}
++
++	priv->vref_reg = devm_regulator_get(&spi->dev, "vref");
++	if (IS_ERR(priv->vref_reg)) {
++		dev_err(&spi->dev, "vref regulator not specified\n");
++		return PTR_ERR(priv->vref_reg);
++	}
++
++	ret = regulator_enable(priv->vref_reg);
++	if (ret) {
++		dev_err(&spi->dev, "failed to enable vref regulator: %d\n",
++				ret);
++		return ret;
++	}
++
++	priv->spi = spi;
++	spi_set_drvdata(spi, indio_dev);
++	indio_dev->dev.parent = &spi->dev;
++	indio_dev->info = &ltc1660_info;
++	indio_dev->modes = INDIO_DIRECT_MODE;
++	indio_dev->channels = ltc1660_channels[id->driver_data];
++	indio_dev->num_channels = LTC1660_NUM_CHANNELS;
++	indio_dev->name = id->name;
++
++	ret = iio_device_register(indio_dev);
++	if (ret) {
++		dev_err(&spi->dev, "failed to register iio device: %d\n",
++				ret);
++		goto error_disable_reg;
++	}
++
++	return 0;
++
++error_disable_reg:
++	regulator_disable(priv->vref_reg);
++
++	return ret;
++}
++
++static int ltc1660_remove(struct spi_device *spi)
++{
++	struct iio_dev *indio_dev = spi_get_drvdata(spi);
++	struct ltc1660_priv *priv = iio_priv(indio_dev);
++
++	iio_device_unregister(indio_dev);
++	regulator_disable(priv->vref_reg);
++
++	return 0;
++}
++
++static const struct of_device_id ltc1660_dt_ids[] = {
++	{ .compatible = "lltc,ltc1660", .data = (void *)ID_LTC1660 },
++	{ .compatible = "lltc,ltc1665", .data = (void *)ID_LTC1665 },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, ltc1660_dt_ids);
++
++static const struct spi_device_id ltc1660_id[] = {
++	{"ltc1660", ID_LTC1660},
++	{"ltc1665", ID_LTC1665},
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(spi, ltc1660_id);
++
++static struct spi_driver ltc1660_driver = {
++	.driver = {
++		.name = "ltc1660",
++		.of_match_table = ltc1660_dt_ids,
++		.pm = &ltc1660_pm_ops,
++	},
++	.probe	= ltc1660_probe,
++	.remove = ltc1660_remove,
++	.id_table = ltc1660_id,
++};
++module_spi_driver(ltc1660_driver);
++
++MODULE_AUTHOR("Marcus Folkesson <marcus.folkesson@gmail.com>");
++MODULE_DESCRIPTION("Linear Technology LTC1660/LTC1665 DAC");
++MODULE_LICENSE("GPL v2");
+-- 
+2.11.0.rc2
 
- 2) Metadata only copy-up: when file is on lower layer and only metadata is
-    modified (except size) then only copy up the metadata and continue to
-    use the data from the lower file.
-
-The vfs bits have been reworked based on Al's open cleanup work.
-
-Thanks,
-Miklos
-
-----------------------------------------------------------------
-Al Viro (1):
-      new helper: open_with_fake_path()
-
-Amir Goldstein (1):
-      ovl: fix wrong use of impure dir cache in ovl_iterate()
-
-Miklos Szeredi (36):
-      vfs: limit size of dedupe
-      vfs: dedupe: return int
-      vfs: dedupe: rationalize args
-      vfs: dedupe: extract helper for a single dedup
-      vfs: make open_with_fake_path() not contribute to nr_files
-      vfs: export vfs_ioctl() to modules
-      vfs: export vfs_dedupe_file_range_one() to modules
-      ovl: copy up times
-      ovl: copy up inode flags
-      Revert "Revert "ovl: get_write_access() in truncate""
-      ovl: copy up file size as well
-      ovl: deal with overlay files in ovl_d_real()
-      ovl: stack file ops
-      ovl: add helper to return real file
-      ovl: add ovl_read_iter()
-      ovl: add ovl_write_iter()
-      ovl: add ovl_fsync()
-      ovl: add ovl_mmap()
-      ovl: add ovl_fallocate()
-      ovl: add lsattr/chattr support
-      ovl: add ovl_fiemap()
-      ovl: add O_DIRECT support
-      ovl: add reflink/copyfile/dedup support
-      vfs: don't open real
-      Revert "ovl: fix may_write_real() for overlayfs directories"
-      Revert "ovl: don't allow writing ioctl on lower layer"
-      vfs: fix freeze protection in mnt_want_write_file() for overlayfs
-      Revert "ovl: fix relatime for directories"
-      Revert "vfs: update ovl inode before relatime check"
-      Revert "vfs: add flags to d_real()"
-      Revert "vfs: do get_write_access() on upper layer of overlayfs"
-      Partially revert "locks: fix file locking on overlayfs"
-      Revert "fsnotify: support overlayfs"
-      vfs: remove open_flags from d_real()
-      ovl: obsolete "check_copy_up" module option
-      ovl: fix documentation of non-standard behavior
-
-Vivek Goyal (28):
-      ovl: Initialize ovl_inode->redirect in ovl_get_inode()
-      ovl: Move the copy up helpers to copy_up.c
-      ovl: Provide a mount option metacopy=on/off for metadata copyup
-      ovl: During copy up, first copy up metadata and then data
-      ovl: Copy up only metadata during copy up where it makes sense
-      ovl: Add helper ovl_already_copied_up()
-      ovl: A new xattr OVL_XATTR_METACOPY for file on upper
-      ovl: Use out_err instead of out_nomem
-      ovl: Modify ovl_lookup() and friends to lookup metacopy dentry
-      ovl: Copy up meta inode data from lowest data inode
-      ovl: Add helper ovl_dentry_lowerdata() to get lower data dentry
-      ovl: Fix ovl_getattr() to get number of blocks from lower
-      ovl: Store lower data inode in ovl_inode
-      ovl: Add helper ovl_inode_realdata()
-      ovl: Open file with data except for the case of fsync
-      ovl: Do not expose metacopy only dentry from d_real()
-      ovl: Move some dir related ovl_lookup_single() code in else block
-      ovl: Check redirects for metacopy files
-      ovl: Treat metacopy dentries as type OVL_PATH_MERGE
-      ovl: Add an inode flag OVL_CONST_INO
-      ovl: Do not set dentry type ORIGIN for broken hardlinks
-      ovl: Set redirect on metacopy files upon rename
-      ovl: Set redirect on upper inode when it is linked
-      ovl: Check redirect on index as well
-      ovl: add helper to force data copy-up
-      ovl: Do not do metadata only copy-up for truncate operation
-      ovl: Do not do metacopy only for ioctl modifying file attr
-      ovl: Enable metadata only feature
-
- Documentation/filesystems/Locking       |   3 +-
- Documentation/filesystems/overlayfs.txt |  81 +++--
- Documentation/filesystems/vfs.txt       |  16 +-
- fs/btrfs/ctree.h                        |   5 +-
- fs/btrfs/ioctl.c                        |  11 +-
- fs/file_table.c                         |  69 +++--
- fs/inode.c                              |  46 +--
- fs/internal.h                           |  11 +-
- fs/ioctl.c                              |   1 +
- fs/locks.c                              |  20 +-
- fs/namei.c                              |   2 +-
- fs/namespace.c                          |  69 +----
- fs/ocfs2/file.c                         |  17 +-
- fs/open.c                               |  44 +--
- fs/overlayfs/Kconfig                    |  19 ++
- fs/overlayfs/Makefile                   |   4 +-
- fs/overlayfs/copy_up.c                  | 190 ++++++++----
- fs/overlayfs/dir.c                      | 105 +++++--
- fs/overlayfs/export.c                   |   3 +
- fs/overlayfs/file.c                     | 511 ++++++++++++++++++++++++++++++++
- fs/overlayfs/inode.c                    | 175 +++++++----
- fs/overlayfs/namei.c                    | 195 +++++++-----
- fs/overlayfs/overlayfs.h                |  47 ++-
- fs/overlayfs/ovl_entry.h                |   6 +-
- fs/overlayfs/readdir.c                  |  19 +-
- fs/overlayfs/super.c                    | 103 ++++---
- fs/overlayfs/util.c                     | 252 +++++++++++++++-
- fs/read_write.c                         |  94 +++---
- fs/xattr.c                              |   9 +-
- fs/xfs/xfs_file.c                       |  29 +-
- include/linux/dcache.h                  |  15 +-
- include/linux/fs.h                      |  29 +-
- include/linux/fsnotify.h                |  14 +-
- 33 files changed, 1619 insertions(+), 595 deletions(-)
- create mode 100644 fs/overlayfs/file.c
