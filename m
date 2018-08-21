@@ -3,102 +3,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2930C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FDCC4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8EC7208A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:27:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8EC7208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id D9C4F208A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:29:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9C4F208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728703AbeHUJqe (ORCPT
+        id S1728214AbeHUJoU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:46:34 -0400
-Received: from ozlabs.org ([203.11.71.1]:58423 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727742AbeHUJqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:46:33 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41vghc6m3qz9sBs;
-        Tue, 21 Aug 2018 16:27:44 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, muriloo@linux.ibm.com
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 1/2] powerpc/process: fix nested output in show_user_instructions()
-In-Reply-To: <718cc9c9bd1d4bb2b4c2596f1a7ee00334e77055.1534192631.git.christophe.leroy@c-s.fr>
-References: <718cc9c9bd1d4bb2b4c2596f1a7ee00334e77055.1534192631.git.christophe.leroy@c-s.fr>
-Date:   Tue, 21 Aug 2018 16:27:44 +1000
-Message-ID: <877ekkmdy7.fsf@concordia.ellerman.id.au>
+        Tue, 21 Aug 2018 05:44:20 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:52960 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726841AbeHUJoU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 05:44:20 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 85274606D4A1;
+        Tue, 21 Aug 2018 08:25:32 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id X11Epb2vHBnL; Tue, 21 Aug 2018 08:25:32 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 40AF0605A917;
+        Tue, 21 Aug 2018 08:25:32 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id J137MLaYxJF4; Tue, 21 Aug 2018 08:25:32 +0200 (CEST)
+Received: from blindfold.localnet (089144202104.atnat0011.highway.a1.net [89.144.202.104])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id B0296605A915;
+        Tue, 21 Aug 2018 08:25:31 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Liu Song <liu.song11@zte.com.cn>
+Cc:     dedekind1@gmail.com, adrian.hunter@intel.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn
+Subject: Re: [PATCH] ubifs: remove unnecessary check in ubifs_log_start_commit
+Date:   Tue, 21 Aug 2018 08:25:30 +0200
+Message-ID: <6703427.thn4Ct9gCO@blindfold>
+In-Reply-To: <1534821442-178518-1-git-send-email-liu.song11@zte.com.cn>
+References: <1534821442-178518-1-git-send-email-liu.song11@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
+Liu Song,
 
-> When two processes crash at the same time, we sometimes encounter
-> nesting in the middle of a line:
+Am Dienstag, 21. August 2018, 05:17:22 CEST schrieb Liu Song:
+> The value of c->lhead_offs cannot exceed max_len which much
+> smaller than c->leb_size. So the check will never be true.
+> Just remove it.
 
-I think "interleaved" is the right word, rather than "nesting".
+Please explain in more detail why this case is never ever possible.
+Removing such code needs a good justification. 
 
-They're actually (potentially) completely unrelated segfaults, that just
-happen to occur at the same time.
+In general I don't much like such changes for two reasons:
+1. They don't fix a problem
+2. They are likely to introduce very hard to debug new issues if they are wrong
 
-And in fact any output that happens simultaneously will mess things up,
-it doesn't have to be another segfault.
+Thanks,
+//richard
 
-> [    4.365317] init[1]: segfault (11) at 0 nip 0 lr 0 code 1
-> [    4.370452] init[1]: code: XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
-> [    4.372042] init[74]: segfault (11) at 10a74 nip 1000c198 lr 100078c8 code 1 in sh[10000000+14000]
-> [    4.386829] XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
-> [    4.391542] init[1]: code: XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
-> [    4.400863] init[74]: code: 90010024 bf61000c 91490a7c 3fa01002 3be00000 7d3e4b78 3bbd0c20 3b600000
-> [    4.409867] init[74]: code: 3b9d0040 7c7fe02e 2f830000 419e0028 <89230000> 2f890000 41be001c 4b7f6e79
->
-> This patch fixes it by preparing complete lines in a buffer and
-> printing it at once.
->
-> Fixes: 88b0fe1757359 ("powerpc: Add show_user_instructions()")
-> Cc: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  arch/powerpc/kernel/process.c | 17 +++++++++--------
->  1 file changed, 9 insertions(+), 8 deletions(-)
->
-> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-> index 913c5725cdb2..c722ce4ca1c0 100644
-> --- a/arch/powerpc/kernel/process.c
-> +++ b/arch/powerpc/kernel/process.c
-> @@ -1303,32 +1303,33 @@ void show_user_instructions(struct pt_regs *regs)
->  {
->  	unsigned long pc;
->  	int i;
-> +	char buf[96]; /* enough for 8 times 9 + 2 chars */
-> +	int l = 0;
 
-I'm sure your math is right, but still an on-stack buffer with sprintf()
-is a bit scary.
-
-Can you try using seq_buf instead? It is safe against overflow.
-
-eg, something like:
-
-struct seq_buf s;
-char buf[96];
-
-seq_buf_init(&s, buf, sizeof(buf));
-...
-seq_buf_printf(&s, ...);
-
-cheers
