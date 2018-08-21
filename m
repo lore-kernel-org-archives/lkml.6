@@ -2,113 +2,215 @@ Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F10EC4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA57C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 486D2217C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:57:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5433217C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 20:59:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="EgoLdWdh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 486D2217C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dpGHh12L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5433217C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbeHVATk (ORCPT
+        id S1727963AbeHVAVH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 20:19:40 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38457 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726626AbeHVATk (ORCPT
+        Tue, 21 Aug 2018 20:21:07 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:52750 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726801AbeHVAVG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 20:19:40 -0400
-Received: by mail-pl0-f65.google.com with SMTP id u11-v6so9335845plq.5
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 13:57:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hAHWk6/qd9S7OusfCLBNHTNgXGAVK8jrW+6sAJHEyz4=;
-        b=EgoLdWdhnTEiZ5T19gKs+KZTRsZqrCmf484bnngpIGuTj7vGiNZtoHQQB0Zb50fbHE
-         mwXWeNwOye5PDj3StXWk5/FWTJDigPaq+9Uu9aWK5jsLeDw30Ld2LSTmVG8kpCe/8w//
-         i9OlttY392K+qVHTYSfTI3o2G9gzSS/X2zdI7PKF8D41rFUS9FWeCPIwfSYomy7X+n1t
-         sgBH9lrb5tch9iYuR+v/5/0iAdE9sCYe4RVe5pg10mO3hwplNSWsd3j7CPF0MFistjRG
-         wC7uNYA7VXgzOhaxD7Iny7zYE0eJRyWThSBpf+4Yf4BX8HINwLFFxnWDuVsS61ohU152
-         kbEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=hAHWk6/qd9S7OusfCLBNHTNgXGAVK8jrW+6sAJHEyz4=;
-        b=Heyd0VF1q92yLNG7umMNXZchNt0sQe7m/gLJ2x8iFSqguZs0bO7gXVHOm9cIevvthr
-         zlS1VxD8MBJNpNKD29Vs+otU+0vmFLHRhyfAiHxKdHb6gqXTSMAhTJH/s035N4Quu4OF
-         Z5/P4OnoOQEH+37tFGPDEQEVJ0SoeUYoiEXeuBWn2U8uGvZQRlDJ8IFz34r0cnKwLixX
-         w7+O6KocbzhU7waY+/yIzyXWjIIlXHcSCx7rBCU8SUL3AHuPII4q5uwt+9a9SAv0loU1
-         1SBMUmbf8QWxoA5uizsr585s2uVEetgJiaOk422fhcrm9SuyIc0R3D/L2m5IHQ5bZ/EJ
-         Y6Ug==
-X-Gm-Message-State: AOUpUlGXIpaJfhNBicwWdFY14Jl8L/N4vXN4lQd5XOPhlyJcBARZdy9m
-        ZQUnrQKEeN1M/Ze4QYMsKwDPOw==
-X-Google-Smtp-Source: AA+uWPzx25ZYgaPhLl854Hs0vpAFBbQilvilfEn10UwJd41KGGI4qaYmB7WGRYmV07PkV2cIUOXjIg==
-X-Received: by 2002:a17:902:47c2:: with SMTP id d2-v6mr50844580plh.139.1534885075500;
-        Tue, 21 Aug 2018 13:57:55 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id z22-v6sm21598625pgc.67.2018.08.21.13.57.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 Aug 2018 13:57:54 -0700 (PDT)
-Date:   Tue, 21 Aug 2018 13:57:54 -0700 (PDT)
-X-Google-Original-Date: Tue, 21 Aug 2018 13:56:53 PDT (-0700)
-Subject:     Re: [GIT PULL] RISC-V Updates for the 4.19 Merge Window
-In-Reply-To: <20180821194550.wrh3q2fkr6wmrovd@excalibur.cnev.de>
-CC:     linux@roeck-us.net, linux-riscv@lists.infradead.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     merker@debian.org
-Message-ID: <mhng-d4882478-2772-4ef9-b79e-9b447a32cb8c@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Tue, 21 Aug 2018 20:21:06 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7LKuw5l017113;
+        Tue, 21 Aug 2018 20:59:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=EMUsyMD++FbCjeWKHZ1xj6y0FD6wedPmRsDrc6Pm4QY=;
+ b=dpGHh12LG8aPmIZROt1nt9FpZmkR6ySb4W64twUE5LBrXfP393jPdcFo2gOylNzc9/10
+ O6lgtto5cmq9mSeeV9mf8fyh73Vrm0dbLq2sBsftklCz89gNYSlU4zlGuckbv9ENzBNC
+ cBdR/rotyyrJGx8KJONldHHR9Vc3awDWgHf/dyG12o7iHuT+GAbBqyD+0C8hmhNK5wS1
+ SUBuKz7IRvMAK1KkwsmBg0lERefl8oGb4UYebecoTN3Qne21Ji21baATCSBTX6wfyM2A
+ URT4KDcu2Ar+npDA9UZNLlbcS9q71uuXtGEX509Urtr1Ysr4aziBW4lv4enYKuL1xUSn /A== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2kxc3qq2aq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Aug 2018 20:59:10 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7LKx94A000435
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Aug 2018 20:59:10 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7LKx9jC015319;
+        Tue, 21 Aug 2018 20:59:09 GMT
+Received: from monkey.oracle.com (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 21 Aug 2018 13:59:09 -0700
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: [PATCH v3 2/2] hugetlb: take PMD sharing into account when flushing tlb/caches
+Date:   Tue, 21 Aug 2018 13:59:02 -0700
+Message-Id: <20180821205902.21223-3-mike.kravetz@oracle.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180821205902.21223-1-mike.kravetz@oracle.com>
+References: <20180821205902.21223-1-mike.kravetz@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8992 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=815
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808210212
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 Aug 2018 12:45:50 PDT (-0700), merker@debian.org wrote:
-> On Tue, Aug 21, 2018 at 11:31:48AM -0700, Palmer Dabbelt wrote:
->> On Sat, 18 Aug 2018 06:37:59 PDT (-0700), linux@roeck-us.net wrote:
-> [...]
->> > Do you have vmlinux embedded in bbl ?
->> >
->> > With separate bbl and vmlinux, and the following qemu command line
->> > (with qemu 3.0)
->> >
->> > qemu-system-riscv64 -M virt -m 512M -no-reboot \
->> > 	-bios bbl -kernel vmlinux \
->> > 	-netdev user,id=net0 -device virtio-net-device,netdev=net0 \
->> > 	-device virtio-blk-device,drive=d0 \
->> > 	-drive file=rootfs.ext2,if=none,id=d0,format=raw \
->> > 	-append 'root=/dev/vda rw console=ttyS0,115200' \
->> > 	-nographic -monitor none
->> >
->> > all I get is
->> >
->> > rom: requested regions overlap (rom mrom.reset. free=0x000000000001cbe8, addr=0x0000000000001000)
->> >
->> > However, the she system boots fine with the same qemu command line if I use qemu
->> > built from https://github.com/riscv/riscv-qemu.git, branch qemu-for-upstream.
->>
->> Yes, I have a vmlinux built into my BBL.  I didn't actually look closely at
->> the command line I was copying and see that vmlinux in there, my guess would
->> be that it's getting ignored.  I don't remember if upstream BBL actually
->> works with the split bbl/vmlinux setup, I've kind of stopped paying
->> attention to BBL as I'm just waiting for someone to tell me instructions as
->> to how to use a real bootloader... :)
->
-> JFTR, upstream bbl supports the split bbl/vmlinux setup, it's just
-> upstream qemu that lacks the support for now (qemu-riscv has it).
+When fixing an issue with PMD sharing and migration, it was discovered
+via code inspection that other callers of huge_pmd_unshare potentially
+have an issue with cache and tlb flushing.
 
-Thanks!
+Use the routine huge_pmd_sharing_possible() to calculate worst case
+ranges for mmu notifiers.  Ensure that this range is flushed if
+huge_pmd_unshare succeeds and unmaps a PUD_SUZE area.
+
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+---
+ mm/hugetlb.c | 53 +++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 44 insertions(+), 9 deletions(-)
+
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index fd155dc52117..c31d92889775 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3333,8 +3333,8 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 	struct page *page;
+ 	struct hstate *h = hstate_vma(vma);
+ 	unsigned long sz = huge_page_size(h);
+-	const unsigned long mmun_start = start;	/* For mmu_notifiers */
+-	const unsigned long mmun_end   = end;	/* For mmu_notifiers */
++	unsigned long mmun_start = start;	/* For mmu_notifiers */
++	unsigned long mmun_end   = end;		/* For mmu_notifiers */
+ 
+ 	WARN_ON(!is_vm_hugetlb_page(vma));
+ 	BUG_ON(start & ~huge_page_mask(h));
+@@ -3346,6 +3346,11 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 	 */
+ 	tlb_remove_check_page_size_change(tlb, sz);
+ 	tlb_start_vma(tlb, vma);
++
++	/*
++	 * If sharing possible, alert mmu notifiers of worst case.
++	 */
++	(void)huge_pmd_sharing_possible(vma, &mmun_start, &mmun_end);
+ 	mmu_notifier_invalidate_range_start(mm, mmun_start, mmun_end);
+ 	address = start;
+ 	for (; address < end; address += sz) {
+@@ -3356,6 +3361,10 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 		ptl = huge_pte_lock(h, mm, ptep);
+ 		if (huge_pmd_unshare(mm, &address, ptep)) {
+ 			spin_unlock(ptl);
++			/*
++			 * We just unmapped a page of PMDs by clearing a PUD.
++			 * The caller's TLB flush range should cover this area.
++			 */
+ 			continue;
+ 		}
+ 
+@@ -3438,12 +3447,23 @@ void unmap_hugepage_range(struct vm_area_struct *vma, unsigned long start,
+ {
+ 	struct mm_struct *mm;
+ 	struct mmu_gather tlb;
++	unsigned long tlb_start = start;
++	unsigned long tlb_end = end;
++
++	/*
++	 * If shared PMDs were possibly used within this vma range, adjust
++	 * start/end for worst case tlb flushing.
++	 * Note that we can not be sure if PMDs are shared until we try to
++	 * unmap pages.  However, we want to make sure TLB flushing covers
++	 * the largest possible range.
++	 */
++	(void)huge_pmd_sharing_possible(vma, &tlb_start, &tlb_end);
+ 
+ 	mm = vma->vm_mm;
+ 
+-	tlb_gather_mmu(&tlb, mm, start, end);
++	tlb_gather_mmu(&tlb, mm, tlb_start, tlb_end);
+ 	__unmap_hugepage_range(&tlb, vma, start, end, ref_page);
+-	tlb_finish_mmu(&tlb, start, end);
++	tlb_finish_mmu(&tlb, tlb_start, tlb_end);
+ }
+ 
+ /*
+@@ -4309,11 +4329,21 @@ unsigned long hugetlb_change_protection(struct vm_area_struct *vma,
+ 	pte_t pte;
+ 	struct hstate *h = hstate_vma(vma);
+ 	unsigned long pages = 0;
++	unsigned long f_start = start;
++	unsigned long f_end = end;
++	bool shared_pmd = false;
++
++	/*
++	 * In the case of shared PMDs, the area to flush could be beyond
++	 * start/end.  Set f_start/f_end to cover the maximum possible
++	 * range if PMD sharing is possible.
++	 */
++	(void)huge_pmd_sharing_possible(vma, &f_start, &f_end);
+ 
+ 	BUG_ON(address >= end);
+-	flush_cache_range(vma, address, end);
++	flush_cache_range(vma, f_start, f_end);
+ 
+-	mmu_notifier_invalidate_range_start(mm, start, end);
++	mmu_notifier_invalidate_range_start(mm, f_start, f_end);
+ 	i_mmap_lock_write(vma->vm_file->f_mapping);
+ 	for (; address < end; address += huge_page_size(h)) {
+ 		spinlock_t *ptl;
+@@ -4324,6 +4354,7 @@ unsigned long hugetlb_change_protection(struct vm_area_struct *vma,
+ 		if (huge_pmd_unshare(mm, &address, ptep)) {
+ 			pages++;
+ 			spin_unlock(ptl);
++			shared_pmd = true;
+ 			continue;
+ 		}
+ 		pte = huge_ptep_get(ptep);
+@@ -4359,9 +4390,13 @@ unsigned long hugetlb_change_protection(struct vm_area_struct *vma,
+ 	 * Must flush TLB before releasing i_mmap_rwsem: x86's huge_pmd_unshare
+ 	 * may have cleared our pud entry and done put_page on the page table:
+ 	 * once we release i_mmap_rwsem, another task can do the final put_page
+-	 * and that page table be reused and filled with junk.
++	 * and that page table be reused and filled with junk.  If we actually
++	 * did unshare a page of pmds, flush the range corresponding to the pud.
+ 	 */
+-	flush_hugetlb_tlb_range(vma, start, end);
++	if (shared_pmd)
++		flush_hugetlb_tlb_range(vma, f_start, f_end);
++	else
++		flush_hugetlb_tlb_range(vma, start, end);
+ 	/*
+ 	 * No need to call mmu_notifier_invalidate_range() we are downgrading
+ 	 * page table protection not changing it to point to a new page.
+@@ -4369,7 +4404,7 @@ unsigned long hugetlb_change_protection(struct vm_area_struct *vma,
+ 	 * See Documentation/vm/mmu_notifier.rst
+ 	 */
+ 	i_mmap_unlock_write(vma->vm_file->f_mapping);
+-	mmu_notifier_invalidate_range_end(mm, start, end);
++	mmu_notifier_invalidate_range_end(mm, f_start, f_end);
+ 
+ 	return pages << h->order;
+ }
+-- 
+2.17.1
+
