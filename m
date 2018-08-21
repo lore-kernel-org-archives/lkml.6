@@ -6,75 +6,90 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D933C4321D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9110C04AB9
 	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 00:04:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51D2521763
+	by mail.kernel.org (Postfix) with ESMTP id 7F12B21765
 	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 00:04:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51D2521763
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F12B21765
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbeHUDWa (ORCPT
+        id S1726925AbeHUDWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 20 Aug 2018 23:22:30 -0400
-Received: from mga06.intel.com ([134.134.136.31]:10085 "EHLO mga06.intel.com"
+        Mon, 20 Aug 2018 23:22:32 -0400
+Received: from mga06.intel.com ([134.134.136.31]:10086 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726715AbeHUDWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Aug 2018 23:22:30 -0400
+        id S1726862AbeHUDWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Aug 2018 23:22:31 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 17:04:45 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2018 17:04:46 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,267,1531810800"; 
-   d="scan'208";a="250527745"
+   d="scan'208";a="250527768"
 Received: from cschaufl-mobl.amr.corp.intel.com ([10.252.136.122])
-  by orsmga005.jf.intel.com with ESMTP; 20 Aug 2018 17:04:44 -0700
+  by orsmga005.jf.intel.com with ESMTP; 20 Aug 2018 17:04:46 -0700
 From:   Casey Schaufler <casey.schaufler@intel.com>
 To:     kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov,
         casey.schaufler@intel.com, dave.hansen@intel.com,
         deneen.t.dock@intel.com, kristen@linux.intel.com,
         arjan@linux.intel.com
-Subject: [PATCH RFC v3 0/5] LSM: Add and use a hook for side-channel safety checks
-Date:   Mon, 20 Aug 2018 17:04:39 -0700
-Message-Id: <20180821000444.7004-1-casey.schaufler@intel.com>
+Subject: [PATCH v3 2/5] X86: Support LSM determination of side-channel
+Date:   Mon, 20 Aug 2018 17:04:41 -0700
+Message-Id: <20180821000444.7004-3-casey.schaufler@intel.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180821000444.7004-1-casey.schaufler@intel.com>
+References: <20180821000444.7004-1-casey.schaufler@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v3: get_task_cred wasn't a good choice due to refcounts.
-    Use lower level protection instead
-v2: SELinux access policy corrected.
-    Use real_cred instead of cred.
-
-This patchset provide a mechanism by which a security module
-can advise the system about potential side-channel vulnerabilities.
-If security_safe_sidechannel() returns 0 the security modules do
-not know of any data that would be subject to a side-channel
-attack. If the security module maintains data that it believes
-may be susceptible to a side-channel attack it will return -EACCES.
-
-Simple hooks are provided for SELinux and Smack. A new security
-module is provided to make determinations regarding traditional
-task attributes, including user IDs, capability sets and namespaces.
+When switching between tasks it may be necessary
+to set an indirect branch prediction barrier if the
+tasks are potentially vulnerable to side-channel
+attacks. This adds a call to security_task_safe_sidechannel
+so that security modules can weigh in on the decision.
 
 Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
-
 ---
- MAINTAINERS                        |   6 ++
- arch/x86/mm/tlb.c                  |  12 ++-
- include/linux/lsm_hooks.h          |  12 +++
- include/linux/security.h           |   1 +
- security/Kconfig                   |   1 +
- security/Makefile                  |   2 +
- security/security.c                |   6 ++
- security/selinux/hooks.c           |   9 +++
- security/sidechannel/Kconfig       |  60 ++++++++++++++
- security/sidechannel/Makefile      |   1 +
- security/sidechannel/sidechannel.c | 162 +++++++++++++++++++++++++++++++++++++
- security/smack/smack_lsm.c         |  18 +++++
- 12 files changed, 286 insertions(+), 4 deletions(-)
+ arch/x86/mm/tlb.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 6eb1f34c3c85..8714d4af06aa 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -7,6 +7,7 @@
+ #include <linux/export.h>
+ #include <linux/cpu.h>
+ #include <linux/debugfs.h>
++#include <linux/security.h>
+ 
+ #include <asm/tlbflush.h>
+ #include <asm/mmu_context.h>
+@@ -270,11 +271,14 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 		 * threads. It will also not flush if we switch to idle
+ 		 * thread and back to the same process. It will flush if we
+ 		 * switch to a different non-dumpable process.
++		 * If a security module thinks that the transition
++		 * is unsafe do the flush.
+ 		 */
+-		if (tsk && tsk->mm &&
+-		    tsk->mm->context.ctx_id != last_ctx_id &&
+-		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
+-			indirect_branch_prediction_barrier();
++		if (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id) {
++			if (get_dumpable(tsk->mm) != SUID_DUMP_USER ||
++			    security_task_safe_sidechannel(tsk) != 0)
++				indirect_branch_prediction_barrier();
++		}
+ 
+ 		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
+ 			/*
+-- 
+2.17.1
+
