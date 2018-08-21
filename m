@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5537C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABBD4C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DC89208A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:25:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DC89208A6
+	by mail.kernel.org (Postfix) with ESMTP id 703CD208A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:26:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 703CD208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728295AbeHUJom (ORCPT
+        id S1728306AbeHUJor (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:44:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55514 "EHLO
+        Tue, 21 Aug 2018 05:44:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55726 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727017AbeHUJol (ORCPT
+        with ESMTP id S1727017AbeHUJor (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:44:41 -0400
+        Tue, 21 Aug 2018 05:44:47 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1B2C9BC1;
-        Tue, 21 Aug 2018 06:25:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 679BABE1;
+        Tue, 21 Aug 2018 06:25:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 42/42] net: mvneta: fix mvneta_config_rss on armada 3700
-Date:   Tue, 21 Aug 2018 08:21:14 +0200
-Message-Id: <20180821055019.669055692@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.17 25/42] ALSA: seq: Fix poll() error return
+Date:   Tue, 21 Aug 2018 08:20:57 +0200
+Message-Id: <20180821055018.890422334@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055017.596264829@linuxfoundation.org>
 References: <20180821055017.596264829@linuxfoundation.org>
@@ -52,79 +49,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 0f5c6c30a0f8c629b92ecdaef61b315c43fde10a ]
+commit a49a71f6e25da2acc637fcd31e73debd96ca18f8 upstream.
 
-The mvneta Ethernet driver is used on a few different Marvell SoCs.
-Some SoCs have per cpu interrupts for Ethernet events, the driver uses
-a per CPU napi structure for this case. Some SoCs such as armada 3700
-have a single interrupt for Ethernet events, the driver uses a global
-napi structure for this case.
+The sanity checks in ALSA sequencer and OSS sequencer emulation codes
+return falsely -ENXIO from poll callback.  They should be EPOLLERR
+instead.
 
-Current mvneta_config_rss() always operates the per cpu napi structure.
-Fix it by operating a global napi for "single interrupt" case, and per
-cpu napi structure for remaining cases.
+This was caught thanks to the recent change to the return value.
 
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Fixes: 2636ac3cc2b4 ("net: mvneta: Add network support for Armada 3700 SoC")
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/marvell/mvneta.c |   35 +++++++++++++++++++++-------------
- 1 file changed, 22 insertions(+), 13 deletions(-)
 
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -4020,13 +4020,18 @@ static int  mvneta_config_rss(struct mvn
+---
+ sound/core/seq/oss/seq_oss.c   |    2 +-
+ sound/core/seq/seq_clientmgr.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+--- a/sound/core/seq/oss/seq_oss.c
++++ b/sound/core/seq/oss/seq_oss.c
+@@ -203,7 +203,7 @@ odev_poll(struct file *file, poll_table
+ 	struct seq_oss_devinfo *dp;
+ 	dp = file->private_data;
+ 	if (snd_BUG_ON(!dp))
+-		return -ENXIO;
++		return EPOLLERR;
+ 	return snd_seq_oss_poll(dp, file, wait);
+ }
  
- 	on_each_cpu(mvneta_percpu_mask_interrupt, pp, true);
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -1101,7 +1101,7 @@ static __poll_t snd_seq_poll(struct file
  
--	/* We have to synchronise on the napi of each CPU */
--	for_each_online_cpu(cpu) {
--		struct mvneta_pcpu_port *pcpu_port =
--			per_cpu_ptr(pp->ports, cpu);
--
--		napi_synchronize(&pcpu_port->napi);
--		napi_disable(&pcpu_port->napi);
-+	if (!pp->neta_armada3700) {
-+		/* We have to synchronise on the napi of each CPU */
-+		for_each_online_cpu(cpu) {
-+			struct mvneta_pcpu_port *pcpu_port =
-+				per_cpu_ptr(pp->ports, cpu);
-+
-+			napi_synchronize(&pcpu_port->napi);
-+			napi_disable(&pcpu_port->napi);
-+		}
-+	} else {
-+		napi_synchronize(&pp->napi);
-+		napi_disable(&pp->napi);
- 	}
+ 	/* check client structures are in place */
+ 	if (snd_BUG_ON(!client))
+-		return -ENXIO;
++		return EPOLLERR;
  
- 	pp->rxq_def = pp->indir[0];
-@@ -4043,12 +4048,16 @@ static int  mvneta_config_rss(struct mvn
- 	mvneta_percpu_elect(pp);
- 	spin_unlock(&pp->lock);
- 
--	/* We have to synchronise on the napi of each CPU */
--	for_each_online_cpu(cpu) {
--		struct mvneta_pcpu_port *pcpu_port =
--			per_cpu_ptr(pp->ports, cpu);
--
--		napi_enable(&pcpu_port->napi);
-+	if (!pp->neta_armada3700) {
-+		/* We have to synchronise on the napi of each CPU */
-+		for_each_online_cpu(cpu) {
-+			struct mvneta_pcpu_port *pcpu_port =
-+				per_cpu_ptr(pp->ports, cpu);
-+
-+			napi_enable(&pcpu_port->napi);
-+		}
-+	} else {
-+		napi_enable(&pp->napi);
- 	}
- 
- 	netif_tx_start_all_queues(pp->dev);
+ 	if ((snd_seq_file_flags(file) & SNDRV_SEQ_LFLG_INPUT) &&
+ 	    client->data.user.fifo) {
 
 
