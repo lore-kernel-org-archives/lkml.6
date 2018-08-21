@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E92C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D01C4321D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A3E720C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A3E720C09
+	by mail.kernel.org (Postfix) with ESMTP id 746262174D
+	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 06:34:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 746262174D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbeHUJxG (ORCPT
+        id S1728470AbeHUJxJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 05:53:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56982 "EHLO
+        Tue, 21 Aug 2018 05:53:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56986 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727562AbeHUJxF (ORCPT
+        with ESMTP id S1727507AbeHUJxI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 05:53:05 -0400
+        Tue, 21 Aug 2018 05:53:08 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F095E7F6;
-        Tue, 21 Aug 2018 06:34:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 077259D7;
+        Tue, 21 Aug 2018 06:34:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Ogness <john.ogness@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 15/22] USB: serial: sierra: fix potential deadlock at close
-Date:   Tue, 21 Aug 2018 08:21:41 +0200
-Message-Id: <20180821055140.230645877@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Aleksander Morgado <aleksander@aleksander.es>
+Subject: [PATCH 4.4 16/22] USB: option: add support for DW5821e
+Date:   Tue, 21 Aug 2018 08:21:42 +0200
+Message-Id: <20180821055140.274795678@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180821055139.462620042@linuxfoundation.org>
 References: <20180821055139.462620042@linuxfoundation.org>
@@ -51,40 +50,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: John Ogness <john.ogness@linutronix.de>
+From: Aleksander Morgado <aleksander@aleksander.es>
 
-commit e60870012e5a35b1506d7b376fddfb30e9da0b27 upstream.
+commit 7bab01ecc6c43da882333c6db39741cb43677004 upstream.
 
-The portdata spinlock can be taken in interrupt context (via
-sierra_outdat_callback()).
-Disable interrupts when taking the portdata spinlock when discarding
-deferred URBs during close to prevent a possible deadlock.
+The device exposes AT, NMEA and DIAG ports in both USB configurations.
 
-Fixes: 014333f77c0b ("USB: sierra: fix urb and memory leak on disconnect")
+The patch explicitly ignores interfaces 0 and 1, as they're bound to
+other drivers already; and also interface 6, which is a GNSS interface
+for which we don't have a driver yet.
+
+T:  Bus=01 Lev=03 Prnt=04 Port=00 Cnt=01 Dev#= 18 Spd=480 MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  2
+P:  Vendor=413c ProdID=81d7 Rev=03.18
+S:  Manufacturer=DELL
+S:  Product=DW5821e Snapdragon X20 LTE
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 7 Cfg#= 2 Atr=a0 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+I:  If#= 6 Alt= 0 #EPs= 1 Cls=ff(vend.) Sub=ff Prot=ff Driver=(none)
+
+T:  Bus=01 Lev=03 Prnt=04 Port=00 Cnt=01 Dev#= 16 Spd=480 MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  2
+P:  Vendor=413c ProdID=81d7 Rev=03.18
+S:  Manufacturer=DELL
+S:  Product=DW5821e Snapdragon X20 LTE
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+I:  If#= 1 Alt= 0 #EPs= 1 Cls=03(HID  ) Sub=00 Prot=00 Driver=usbhid
+I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+
+Signed-off-by: Aleksander Morgado <aleksander@aleksander.es>
 Cc: stable <stable@vger.kernel.org>
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-[ johan: amend commit message and add fixes and stable tags ]
-Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/sierra.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/serial/option.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/usb/serial/sierra.c
-+++ b/drivers/usb/serial/sierra.c
-@@ -790,9 +790,9 @@ static void sierra_close(struct usb_seri
- 		kfree(urb->transfer_buffer);
- 		usb_free_urb(urb);
- 		usb_autopm_put_interface_async(serial->interface);
--		spin_lock(&portdata->lock);
-+		spin_lock_irq(&portdata->lock);
- 		portdata->outstanding_urbs--;
--		spin_unlock(&portdata->lock);
-+		spin_unlock_irq(&portdata->lock);
- 	}
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -199,6 +199,8 @@ static void option_instat_callback(struc
+ #define DELL_PRODUCT_5800_V2_MINICARD_VZW	0x8196  /* Novatel E362 */
+ #define DELL_PRODUCT_5804_MINICARD_ATT		0x819b  /* Novatel E371 */
  
- 	sierra_stop_rx_urbs(port);
++#define DELL_PRODUCT_5821E			0x81d7
++
+ #define KYOCERA_VENDOR_ID			0x0c88
+ #define KYOCERA_PRODUCT_KPC650			0x17da
+ #define KYOCERA_PRODUCT_KPC680			0x180a
+@@ -1033,6 +1035,8 @@ static const struct usb_device_id option
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(DELL_VENDOR_ID, DELL_PRODUCT_5800_MINICARD_VZW, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(DELL_VENDOR_ID, DELL_PRODUCT_5800_V2_MINICARD_VZW, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(DELL_VENDOR_ID, DELL_PRODUCT_5804_MINICARD_ATT, 0xff, 0xff, 0xff) },
++	{ USB_DEVICE(DELL_VENDOR_ID, DELL_PRODUCT_5821E),
++	  .driver_info = RSVD(0) | RSVD(1) | RSVD(6) },
+ 	{ USB_DEVICE(ANYDATA_VENDOR_ID, ANYDATA_PRODUCT_ADU_E100A) },	/* ADU-E100, ADU-310 */
+ 	{ USB_DEVICE(ANYDATA_VENDOR_ID, ANYDATA_PRODUCT_ADU_500A) },
+ 	{ USB_DEVICE(ANYDATA_VENDOR_ID, ANYDATA_PRODUCT_ADU_620UW) },
 
 
