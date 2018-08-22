@@ -2,89 +2,92 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0050C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:23:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0ECC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:26:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DAA02147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:23:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DAA02147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
+	by mail.kernel.org (Postfix) with ESMTP id 59389214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:26:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FFPWtYWb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59389214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbeHVTt3 (ORCPT
+        id S1727086AbeHVTwW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 15:49:29 -0400
-Received: from g2t2352.austin.hpe.com ([15.233.44.25]:37025 "EHLO
-        g2t2352.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726550AbeHVTt3 (ORCPT
+        Wed, 22 Aug 2018 15:52:22 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:44208 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbeHVTwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 15:49:29 -0400
-X-Greylist: delayed 65563 seconds by postgrey-1.27 at vger.kernel.org; Wed, 22 Aug 2018 15:49:29 EDT
-Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
-        by g2t2352.austin.hpe.com (Postfix) with ESMTP id D4A82A1;
-        Wed, 22 Aug 2018 16:23:56 +0000 (UTC)
-Received: from linux-tqvx (linux-tqvx.americas.hpqcorp.net [10.34.51.15])
-        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id 4B39137;
-        Wed, 22 Aug 2018 16:23:56 +0000 (UTC)
-Date:   Wed, 22 Aug 2018 11:23:54 -0500
-From:   Andrew Banman <abanman@hpe.com>
-To:     Corey Minyard <minyard@acm.org>
-Cc:     Andrew Banman <abanman@hpe.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        justin.ernst@hpe.com, rja@hpe.com, frank.ramsay@hpe.com,
-        openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC] IPMI state machine regression
-Message-ID: <20180822162352.q7qc2udqabbqxdya@linux-tqvx>
-References: <20180821221443.hhgcnzw6xttaih3i@linux-tqvx.americas.hpqcorp.net>
- <a72a169e-ce1b-500c-7910-b400c7842033@acm.org>
+        Wed, 22 Aug 2018 15:52:21 -0400
+Received: by mail-oi0-f67.google.com with SMTP id s198-v6so4135878oih.11;
+        Wed, 22 Aug 2018 09:26:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=/IOhb7r4z7zWuIjEz6ym+awQzrWrwQIZPjGD84tB0hI=;
+        b=FFPWtYWb7fENWhaSTIQK/S4RuSBUNFs6bu/LNmK3bLxdniMFMNL0da5atJeKeB4i50
+         T4W8jGcRQQcD/SdaYVCTsgeUycnwblEObg1oD+feJYhCuYoD5zpmAyhGJ/fLWJz6OjwZ
+         2Dt5OS/mii6uLETZ+rqECkYNsOaQ+1Q+AM65y/L/Pz6lk0pAslne/9he90j2oZduJ61k
+         NZEx7ANfaVeD7IgekdnbSiz1CXWMzz6N3W/iMvAulHtfI0Qoeh857ayctC2j4rqtwCsb
+         glW3MZ2+EASbTOhsrMUptHzrj+KL7BIaL5EYBlyqzCRb7H3/EIHwtUI9cer1ZQk4a4GY
+         3vQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=/IOhb7r4z7zWuIjEz6ym+awQzrWrwQIZPjGD84tB0hI=;
+        b=gZKerljxtfyq82OoGuuZ5b47RCTI4fl96XdLT5Q995fOq7QylFpGeZkuhrOLpECuhJ
+         BOj3Ie02KPHpPBRp+T7VUj3PWb4h7GkoWGt1zGvzxEdVslYFEGB9ywmnswiOTh5dX4y/
+         h6zGL5qwYS1kGCMPVOlQZ/zuurOH67+YmqMZ9jHMTIsxHsRiu292rhqRtK5/noqTBQVD
+         TLHTZZMwWNSOL74wqjDbE8fcTh9FcnoQgV+FGHyXrd/KJo3bVe0W2c8qs12Cyj2dhAoU
+         Ls928whUWKX4P0xVoN3vKGbxRMiG60ZBfF+6DY01CMphkz5oWQl0T4gqiBXVErDRazEQ
+         bgyQ==
+X-Gm-Message-State: APzg51CABkInBVP4sOr81VdSnvF63Pl/84hKb7quHKJQojPV3U0a+1p/
+        FJj2jVOBKihLH/Ku/J1t3TD26//xat0Henlc+q4=
+X-Google-Smtp-Source: ANB0VdakZ5uTz8TlRei222kXPA8Bev/UOFurT+/4T2xkHGtTGK+AL+4i6UqyDsJHbqPm4XsJY/8Q14dKQBSFJz/Kgqg=
+X-Received: by 2002:aca:d986:: with SMTP id q128-v6mr4395579oig.349.1534955208163;
+ Wed, 22 Aug 2018 09:26:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a72a169e-ce1b-500c-7910-b400c7842033@acm.org>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Received: by 2002:a9d:284e:0:0:0:0:0 with HTTP; Wed, 22 Aug 2018 09:26:47
+ -0700 (PDT)
+In-Reply-To: <20180822155137.10018-4-jan.tuerk@emtrion.com>
+References: <20180427132445.3458-1-jan.tuerk@emtrion.com> <20180822155137.10018-1-jan.tuerk@emtrion.com>
+ <20180822155137.10018-4-jan.tuerk@emtrion.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Wed, 22 Aug 2018 13:26:47 -0300
+Message-ID: <CAOMZO5Bb=T49ZOfsc+LbUKM8iRH7GAFkKyFMT_FCfkT16LDdDw@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] ARM: imx_v6_v7_defconfig: Enable DA0963 PMIC support.
+To:     Jan Tuerk <jan.tuerk@emtrion.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 11:14:52AM -0500, Corey Minyard wrote:
-> On 08/21/2018 05:14 PM, Andrew Banman wrote:
-> > Dear IPMI supporters,
-> > 
-> > We observe a window in IPMI BT's opportunistic get capabilities request,
-> > wherein GET_DEVICE_GUID and GET_DEVICE_ID requests may start while the BT state
-> > machine is in WR_CONSUME. Following this, the 0xD5 error code is forced in
-> > bt_start_transaction, IPMI fails to initialize, and the interface is torn down.
-> > There is no mechanism to retry bringing up the interface in open() /dev/ipmi.
-> > This leaves IPMI hosed until you reload modules. Looks to happen after we call
-> > schedule().
-> 
-> When was the latest kernel where this worked properly?  Also, what hardware
-> is this?
+On Wed, Aug 22, 2018 at 12:51 PM, Jan Tuerk <jan.tuerk@emtrion.com> wrote:
+> All recent emtrion modules based on i.mx6 make use of the DA0963.
 
-This is UV4.
+s/DA0963/DA9063/
 
-First known bad commit, but I am not sure if the timing issue predates
-it:
-
-commit aa9c9ab2443e3b9562c6c7cfc245a9e43b557d14
-Author: Jeremy Kerr <jk@ozlabs.org>
-Date:   Fri Aug 25 15:47:24 2017 +0800
-
-    ipmi: allow dynamic BMC version information
-
-Hits less frequently with older kernels so I didn't see it until
-recently when it became more frequent.
-
-> 
-> BTW, you can use the "hotmod" capability of the IPMI driver to add the
-> device
-> dynamically.
-> 
-> -corey
+In the Subject line there is also the same typo.
