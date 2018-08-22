@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E357C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00763C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9C10208B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:43:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9C10208B7
+	by mail.kernel.org (Postfix) with ESMTP id B17F1208CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:43:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B17F1208CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728688AbeHWAKP (ORCPT
+        id S1728755AbeHWAKR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 20:10:15 -0400
-Received: from shell.v3.sk ([90.176.6.54]:53360 "EHLO shell.v3.sk"
+        Wed, 22 Aug 2018 20:10:17 -0400
+Received: from shell.v3.sk ([90.176.6.54]:53378 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728497AbeHWAKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 20:10:13 -0400
+        id S1728611AbeHWAKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 20:10:16 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 3809FB5B97;
-        Wed, 22 Aug 2018 22:43:46 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 06FFEB5BA5;
+        Wed, 22 Aug 2018 22:43:49 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id ZKJfPONjqW_S; Wed, 22 Aug 2018 22:43:32 +0200 (CEST)
+        with ESMTP id vYSUNHFsCMCc; Wed, 22 Aug 2018 22:43:30 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id B7415B5B9F;
-        Wed, 22 Aug 2018 22:43:18 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 866BDB5B9D;
+        Wed, 22 Aug 2018 22:43:17 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id KafwWKzl1TPP; Wed, 22 Aug 2018 22:43:16 +0200 (CEST)
+        with ESMTP id D3s7r6G-3Cjy; Wed, 22 Aug 2018 22:43:15 +0200 (CEST)
 Received: from odvarok.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 4B0BAB5B97;
-        Wed, 22 Aug 2018 22:43:14 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id E60C0B5B95;
+        Wed, 22 Aug 2018 22:43:13 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -49,9 +49,9 @@ Cc:     linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Kishon Vijay Abraham I <kishon@ti.com>,
         Alan Stern <stern@rowland.harvard.edu>,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 11/14] USB: EHCI: ehci-mv: add DT support
-Date:   Wed, 22 Aug 2018 22:43:04 +0200
-Message-Id: <20180822204307.13251-12-lkundrak@v3.sk>
+Subject: [PATCH 10/14] USB: gadget: mv-udc: use phy-pxa-usb
+Date:   Wed, 22 Aug 2018 22:43:03 +0200
+Message-Id: <20180822204307.13251-11-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180822204307.13251-1-lkundrak@v3.sk>
 References: <20180822204307.13251-1-lkundrak@v3.sk>
@@ -60,122 +60,145 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Device tree support.
+Use a proper PHY driver, instead of hooks to a board support package.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- drivers/usb/host/ehci-mv.c | 41 +++++++++++++++++++++-----------------
- 1 file changed, 23 insertions(+), 18 deletions(-)
+ arch/arm/mach-mmp/devices.c          | 11 +-------
+ drivers/usb/gadget/udc/mv_udc.h      |  7 ++++-
+ drivers/usb/gadget/udc/mv_udc_core.c | 38 ++++++++--------------------
+ 3 files changed, 17 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/usb/host/ehci-mv.c b/drivers/usb/host/ehci-mv.c
-index 43b300c90875..f26109eafdbf 100644
---- a/drivers/usb/host/ehci-mv.c
-+++ b/drivers/usb/host/ehci-mv.c
-@@ -34,11 +34,11 @@ struct ehci_hcd_mv {
- 	void __iomem *op_regs;
+diff --git a/arch/arm/mach-mmp/devices.c b/arch/arm/mach-mmp/devices.c
+index eb9b3c34e90a..d925be9f14a9 100644
+--- a/arch/arm/mach-mmp/devices.c
++++ b/arch/arm/mach-mmp/devices.c
+@@ -263,21 +263,12 @@ struct platform_device pxa168_device_usb_phy = {
  
- 	struct usb_phy *otg;
-+	struct clk *clk;
+ #if IS_ENABLED(CONFIG_USB_MV_UDC)
+ struct resource pxa168_u2o_resources[] = {
+-	/* regbase */
+ 	[0] = {
+-		.start	= PXA168_U2O_REGBASE + U2x_CAPREGS_OFFSET,
++		.start	= PXA168_U2O_REGBASE,
+ 		.end	= PXA168_U2O_REGBASE + USB_REG_RANGE,
+ 		.flags	= IORESOURCE_MEM,
+-		.name	= "capregs",
+ 	},
+-	/* phybase */
+ 	[1] = {
+-		.start	= PXA168_U2O_PHYBASE,
+-		.end	= PXA168_U2O_PHYBASE + USB_PHY_RANGE,
+-		.flags	= IORESOURCE_MEM,
+-		.name	= "phyregs",
+-	},
+-	[2] = {
+ 		.start	= IRQ_PXA168_USB1,
+ 		.end	= IRQ_PXA168_USB1,
+ 		.flags	= IORESOURCE_IRQ,
+diff --git a/drivers/usb/gadget/udc/mv_udc.h b/drivers/usb/gadget/udc/mv_udc.h
+index b3f759c0962c..6f04f432964d 100644
+--- a/drivers/usb/gadget/udc/mv_udc.h
++++ b/drivers/usb/gadget/udc/mv_udc.h
+@@ -6,6 +6,9 @@
+ #ifndef __MV_UDC_H
+ #define __MV_UDC_H
  
--	struct mv_usb_platform_data *pdata;
- 	struct phy *phy;
++/* registers */
++#define U2x_CAPREGS_OFFSET	0x100
++
+ #define VUSBHS_MAX_PORTS	8
  
--	struct clk *clk;
-+	int (*set_vbus)(unsigned int vbus);
+ #define DQH_ALIGNMENT		2048
+@@ -174,9 +177,9 @@ struct mv_udc {
+ 	struct platform_device		*dev;
+ 	int				irq;
+ 
++	void __iomem                    *base;
+ 	struct mv_cap_regs __iomem	*cap_regs;
+ 	struct mv_op_regs __iomem	*op_regs;
+-	void __iomem                    *phy_regs;
+ 	unsigned int			max_eps;
+ 	struct mv_dqh			*ep_dqh;
+ 	size_t				ep_dqh_size;
+@@ -219,6 +222,8 @@ struct mv_udc {
+ 
+ 	/* some SOC has mutiple clock sources for USB*/
+ 	struct clk      *clk;
++
++	struct phy	*phy;
  };
  
- static void ehci_clock_enable(struct ehci_hcd_mv *ehci_mv)
-@@ -100,11 +100,6 @@ static int mv_ehci_probe(struct platform_device *pdev)
- 	int retval = -ENODEV;
- 	u32 offset;
+ /* endpoint data structure */
+diff --git a/drivers/usb/gadget/udc/mv_udc_core.c b/drivers/usb/gadget/udc/mv_udc_core.c
+index 95f52232493b..c701c83d3af5 100644
+--- a/drivers/usb/gadget/udc/mv_udc_core.c
++++ b/drivers/usb/gadget/udc/mv_udc_core.c
+@@ -1069,14 +1069,11 @@ static int mv_udc_enable_internal(struct mv_udc *udc)
+ 	if (retval)
+ 		return retval;
  
--	if (!pdata) {
--		dev_err(&pdev->dev, "missing platform_data\n");
--		return -ENODEV;
+-	if (udc->pdata->phy_init) {
+-		retval = udc->pdata->phy_init(udc->phy_regs);
+-		if (retval) {
+-			dev_err(&udc->dev->dev,
+-				"init phy error %d\n", retval);
+-			udc_clock_disable(udc);
+-			return retval;
+-		}
++	retval = phy_init(udc->phy);
++	if (retval) {
++		dev_err(&udc->dev->dev, "init phy error %d\n", retval);
++		udc_clock_disable(udc);
++		return retval;
+ 	}
+ 	udc->active = 1;
+ 
+@@ -1095,8 +1092,7 @@ static void mv_udc_disable_internal(struct mv_udc *udc)
+ {
+ 	if (udc->active) {
+ 		dev_dbg(&udc->dev->dev, "disable udc\n");
+-		if (udc->pdata->phy_deinit)
+-			udc->pdata->phy_deinit(udc->phy_regs);
++		phy_exit(udc->phy);
+ 		udc_clock_disable(udc);
+ 		udc->active = 0;
+ 	}
+@@ -2147,30 +2143,16 @@ static int mv_udc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(udc->clk))
+ 		return PTR_ERR(udc->clk);
+ 
+-	r = platform_get_resource_byname(udc->dev, IORESOURCE_MEM, "capregs");
++	r = platform_get_resource(udc->dev, IORESOURCE_MEM, 0);
+ 	if (r == NULL) {
+ 		dev_err(&pdev->dev, "no I/O memory resource defined\n");
+ 		return -ENODEV;
+ 	}
+ 
+-	udc->cap_regs = (struct mv_cap_regs __iomem *)
+-		devm_ioremap(&pdev->dev, r->start, resource_size(r));
+-	if (udc->cap_regs == NULL) {
+-		dev_err(&pdev->dev, "failed to map I/O memory\n");
+-		return -EBUSY;
 -	}
 -
- 	if (usb_disabled())
- 		return -ENODEV;
+-	r = platform_get_resource_byname(udc->dev, IORESOURCE_MEM, "phyregs");
+-	if (r == NULL) {
+-		dev_err(&pdev->dev, "no phy I/O memory resource defined\n");
+-		return -ENODEV;
+-	}
++	udc->base = devm_ioremap(&pdev->dev, r->start, resource_size(r));
  
-@@ -114,7 +109,12 @@ static int mv_ehci_probe(struct platform_device *pdev)
+-	udc->phy_regs = devm_ioremap(&pdev->dev, r->start, resource_size(r));
+-	if (udc->phy_regs == NULL) {
+-		dev_err(&pdev->dev, "failed to map phy I/O memory\n");
+-		return -EBUSY;
+-	}
++	udc->cap_regs =
++		(void __iomem *) ((unsigned long)udc->base + U2x_CAPREGS_OFFSET);
  
- 	platform_set_drvdata(pdev, hcd);
- 	ehci_mv = hcd_to_ehci_hcd_mv(hcd);
--	ehci_mv->pdata = pdata;
-+
-+	ehci_mv->mode = MV_USB_MODE_HOST;
-+	if (pdata) {
-+		ehci_mv->mode = pdata->mode;
-+		ehci_mv->set_vbus = pdata->set_vbus;
-+	}
- 
- 	ehci_mv->phy = devm_phy_get(&pdev->dev, "usb");
- 	if (IS_ERR(ehci_mv->phy)) {
-@@ -166,7 +166,6 @@ static int mv_ehci_probe(struct platform_device *pdev)
- 	ehci = hcd_to_ehci(hcd);
- 	ehci->caps = (struct ehci_caps *) ehci_mv->cap_regs;
- 
--	ehci_mv->mode = pdata->mode;
- 	if (ehci_mv->mode == MV_USB_MODE_OTG) {
- 		ehci_mv->otg = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
- 		if (IS_ERR(ehci_mv->otg)) {
-@@ -191,8 +190,8 @@ static int mv_ehci_probe(struct platform_device *pdev)
- 		/* otg will enable clock before use as host */
- 		mv_ehci_disable(ehci_mv);
- 	} else {
--		if (pdata->set_vbus)
--			pdata->set_vbus(1);
-+		if (ehci_mv->set_vbus)
-+			ehci_mv->set_vbus(1);
- 
- 		retval = usb_add_hcd(hcd, hcd->irq, IRQF_SHARED);
- 		if (retval) {
-@@ -211,8 +210,8 @@ static int mv_ehci_probe(struct platform_device *pdev)
- 	return 0;
- 
- err_set_vbus:
--	if (pdata->set_vbus)
--		pdata->set_vbus(0);
-+	if (ehci_mv->set_vbus)
-+		ehci_mv->set_vbus(0);
- err_disable_clk:
- 	mv_ehci_disable(ehci_mv);
- err_put_hcd:
-@@ -233,8 +232,8 @@ static int mv_ehci_remove(struct platform_device *pdev)
- 		otg_set_host(ehci_mv->otg->otg, NULL);
- 
- 	if (ehci_mv->mode == MV_USB_MODE_HOST) {
--		if (ehci_mv->pdata->set_vbus)
--			ehci_mv->pdata->set_vbus(0);
-+		if (ehci_mv->set_vbus)
-+			ehci_mv->set_vbus(0);
- 
- 		mv_ehci_disable(ehci_mv);
- 	}
-@@ -265,14 +264,20 @@ static void mv_ehci_shutdown(struct platform_device *pdev)
- 		hcd->driver->shutdown(hcd);
- }
- 
-+static const struct of_device_id ehci_mv_dt_ids[] = {
-+	{ .compatible = "marvell,pxau2o-ehci", },
-+	{},
-+};
-+
- static struct platform_driver ehci_mv_driver = {
- 	.probe = mv_ehci_probe,
- 	.remove = mv_ehci_remove,
- 	.shutdown = mv_ehci_shutdown,
- 	.driver = {
--		   .name = "mv-ehci",
--		   .bus = &platform_bus_type,
--		   },
-+		.name = "mv-ehci",
-+		.bus = &platform_bus_type,
-+		.of_match_table = ehci_mv_dt_ids,
-+	},
- 	.id_table = ehci_id_table,
- };
- 
+ 	/* we will acces controller register, so enable the clk */
+ 	retval = mv_udc_enable_internal(udc);
 -- 
 2.17.1
 
