@@ -5,32 +5,31 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBFEBC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C13C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99392208A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:06:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99392208A2
+	by mail.kernel.org (Postfix) with ESMTP id 27D87208A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:07:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27D87208A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbeHVUbz (ORCPT
+        id S1727455AbeHVUd1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 16:31:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34918 "EHLO mx1.redhat.com"
+        Wed, 22 Aug 2018 16:33:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55088 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727212AbeHVUbz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 16:31:55 -0400
+        id S1727095AbeHVUd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 16:33:27 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2D8C7804BCF4;
-        Wed, 22 Aug 2018 17:06:12 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 880A840241C0;
+        Wed, 22 Aug 2018 17:07:43 +0000 (UTC)
 Received: from [10.36.116.89] (ovpn-116-89.ams2.redhat.com [10.36.116.89])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 689202166BA1;
-        Wed, 22 Aug 2018 17:06:10 +0000 (UTC)
-Subject: Re: [PATCH v2 3/5] KVM: s390: vsie: Allow support for a host without
- AP
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BCC1B2166BA1;
+        Wed, 22 Aug 2018 17:07:41 +0000 (UTC)
+Subject: Re: [PATCH v2 4/5] KVM: s390: vsie: Always test the crycbd for NULL
 To:     Pierre Morel <pmorel@linux.ibm.com>
 Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
         linux-s390@vger.kernel.org, kvm@vger.kernel.org,
@@ -38,7 +37,7 @@ Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
         borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
         heiko.carstens@de.ibm.com
 References: <1534956717-14087-1-git-send-email-pmorel@linux.ibm.com>
- <1534956717-14087-4-git-send-email-pmorel@linux.ibm.com>
+ <1534956717-14087-5-git-send-email-pmorel@linux.ibm.com>
 From:   David Hildenbrand <david@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
@@ -85,64 +84,53 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
  SE+xAvmumFBY
 Organization: Red Hat GmbH
-Message-ID: <beb38451-8ec9-59c7-2e51-f9a065b769bf@redhat.com>
-Date:   Wed, 22 Aug 2018 19:06:09 +0200
+Message-ID: <c4894cbd-4e4f-74a1-6fe0-6f3c264f297e@redhat.com>
+Date:   Wed, 22 Aug 2018 19:07:41 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1534956717-14087-4-git-send-email-pmorel@linux.ibm.com>
+In-Reply-To: <1534956717-14087-5-git-send-email-pmorel@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 22 Aug 2018 17:06:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 22 Aug 2018 17:06:12 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 22 Aug 2018 17:07:43 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 22 Aug 2018 17:07:43 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 22.08.2018 18:51, Pierre Morel wrote:
-> Currently the CRYCB format used in the host for the
-> shadowed CRYCB is FORMAT2 while no check is done if
-> AP instructions are supported in the host.
-> 
-> We better use the format the host calculated for the
-> guest 1 as the host already tested it against its
-> facility set.
+> BUG: the crycbd must be tested for null even if
+> not crossing a page boundary (which will never
+> occur in this case anyway).
+
+I don't see the BUG. Can you elaborate? (maybe it is too late for me)
+
+Either we return or we check for !crycb_addr
+
 > 
 > Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
 > ---
->  arch/s390/kvm/vsie.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>  arch/s390/kvm/vsie.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
-> index 56a9d47..0b12916 100644
+> index 0b12916..7ee4329 100644
 > --- a/arch/s390/kvm/vsie.c
 > +++ b/arch/s390/kvm/vsie.c
-> @@ -154,6 +154,7 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->  	const u32 crycb_addr = crycbd_o & 0x7ffffff8U;
->  	unsigned long *b1, *b2;
->  	u8 ecb3_flags;
-> +	unsigned long g1_fmt;
+> @@ -172,7 +172,7 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
 >  
->  	scb_s->crycbd = 0;
->  	if (!(crycbd_o == CRYCB_FORMAT1))
-> @@ -180,8 +181,8 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->  		return set_validity_icpt(scb_s, 0x0035U);
+>  	if ((crycb_addr & PAGE_MASK) != ((crycb_addr + 128) & PAGE_MASK))
+>  		return set_validity_icpt(scb_s, 0x003CU);
+> -	else if (!crycb_addr)
+> +	if (!crycb_addr)
+>  		return set_validity_icpt(scb_s, 0x0039U);
 >  
->  	scb_s->ecb3 |= ecb3_flags;
-> -	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | CRYCB_FORMAT1 |
-> -			CRYCB_FORMAT2;
-> +	g1_fmt = vcpu->arch.sie_block->crycbd & 0x03;
-> +	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | g1_fmt;
->  
->  	/* xor both blocks in one run */
->  	b1 = (unsigned long *) vsie_page->crycb.dea_wrapping_key_mask;
+>  	/* copy only the wrapping keys */
 > 
 
-This is wrong. I remember that with APXA, if FORMAT2 is available, we
-should always use FORMAT2. That's why we explicitly convert it here.
 
 -- 
 
