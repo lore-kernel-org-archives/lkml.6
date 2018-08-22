@@ -2,174 +2,114 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0744FC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B18C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5BEF21525
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:10:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5BEF21525
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=KARO-electronics.de
+	by mail.kernel.org (Postfix) with ESMTP id 2A5862150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:12:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A5862150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729223AbeHVRfr convert rfc822-to-8bit (ORCPT
+        id S1729006AbeHVRhU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 13:35:47 -0400
-Received: from smtprelay03.ispgateway.de ([80.67.31.41]:62245 "EHLO
-        smtprelay03.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728197AbeHVRfq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 13:35:46 -0400
-X-Greylist: delayed 10395 seconds by postgrey-1.27 at vger.kernel.org; Wed, 22 Aug 2018 13:35:45 EDT
-Received: from [89.1.81.74] (helo=ipc1.ka-ro)
-        by smtprelay03.ispgateway.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <LW@KARO-electronics.de>)
-        id 1fsTqH-0002eU-Lh; Wed, 22 Aug 2018 16:10:37 +0200
-Date:   Wed, 22 Aug 2018 16:10:36 +0200
-From:   Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
-To:     Michal =?UTF-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Subject: Re: [RFC PATCH 1/2] dt-bindings: pwm: imx: Allow switching PWM
- output between PWM and GPIO
-Message-ID: <20180822161036.4d69bdc1@ipc1.ka-ro>
-In-Reply-To: <18b4a847-bc59-4450-331a-0b17f27c97a8@ysoft.com>
-References: <1534862333-27950-1-git-send-email-michal.vokac@ysoft.com>
-        <1534862333-27950-2-git-send-email-michal.vokac@ysoft.com>
-        <20180822081436.13d8f55b@ipc1.ka-ro>
-        <175003bc-eae7-1b30-ebfe-b56ffc58705e@ysoft.com>
-        <20180822131758.162d5351@ipc1.ka-ro>
-        <18b4a847-bc59-4450-331a-0b17f27c97a8@ysoft.com>
-Organization: Ka-Ro electronics GmbH
+        Wed, 22 Aug 2018 13:37:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39314 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728057AbeHVRhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 13:37:19 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 37617B030;
+        Wed, 22 Aug 2018 14:12:14 +0000 (UTC)
+Date:   Wed, 22 Aug 2018 16:12:13 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, Johannes Weiner <hannes@cmpxchg.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Konstantin Khlebnikov <koct9i@gmail.com>,
+        Tejun Heo <tj@kernel.org>, Shakeel Butt <shakeelb@google.com>
+Subject: Re: [PATCH v2 1/3] mm: rework memcg kernel stack accounting
+Message-ID: <20180822141213.GO29735@dhcp22.suse.cz>
+References: <20180821213559.14694-1-guro@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Df-Sender: bHdAa2Fyby1lbGVjdHJvbmljcy5kZQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180821213559.14694-1-guro@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Vokáč <michal.vokac@ysoft.com> wrote:
-
-> On 22.8.2018 13:17, Lothar Waßmann wrote:
-> > Michal Vokáč <michal.vokac@ysoft.com> wrote:
-> >   
-> >> On 22.8.2018 08:14, Lothar Waßmann wrote:  
-> >>> Michal Vokáč <michal.vokac@ysoft.com> wrote:
-> >>>      
-> >>>> Output of the PWM block of i.MX SoCs is always zero volts when the block
-> >>>> is disabled. This can caue issues when inverted PWM polarity is needed.
-> >>>> With inverted polarity a duty cycle = 0% corresponds to solid high level
-> >>>> on the output. If the PWM is dissabled its output instantly goes to solid
-> >>>> zero which corresponds to duty cycle = 100%.
-> >>>>
-> >>>> To have a trully inverted PWM output configure the PWM pad as a GPIO
-> >>>> with pull-up. Then switch the pad to PWM output whenever non-zero
-> >>>> duty cycle is needed.
-> >>>>
-> >>>> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
-> >>>> ---
-> >>>>    Documentation/devicetree/bindings/pwm/imx-pwm.txt | 44 +++++++++++++++++++++++
-> >>>>    1 file changed, 44 insertions(+)
-> >>>>
-> >>>> diff --git a/Documentation/devicetree/bindings/pwm/imx-pwm.txt b/Documentation/devicetree/bindings/pwm/imx-pwm.txt
-> >>>> index c61bdf8..3b1bc4c 100644
-> >>>> --- a/Documentation/devicetree/bindings/pwm/imx-pwm.txt
-> >>>> +++ b/Documentation/devicetree/bindings/pwm/imx-pwm.txt
-> >>>> @@ -14,6 +14,12 @@ See the clock consumer binding,
-> >>>>    	Documentation/devicetree/bindings/clock/clock-bindings.txt
-> >>>>    - interrupts: The interrupt for the pwm controller
-> >>>>    
-> >>>> +Optional properties:
-> >>>> +- pinctrl: For i.MX27 and newer SoCs. Add extra pinctrl to configure the PWM
-> >>>> +  pin to gpio function.  It allows control over the pin output level when the
-> >>>> +  PWM block is disabled. This is meant to be used if inverted polarity of the
-> >>>> +  PWM signal is required. See "Inverted PWM output" section bellow.
-> >>>> +
-> >>>>    Example:
-> >>>>    
-> >>>>    pwm1: pwm@53fb4000 {
-> >>>> @@ -25,3 +31,41 @@ pwm1: pwm@53fb4000 {
-> >>>>    	clock-names = "ipg", "per";
-> >>>>    	interrupts = <61>;
-> >>>>    };
-> >>>> +
-> >>>> +Inverted PWM output
-> >>>> +-------------------
-> >>>> +
-> >>>> +The i.MX SoC has such limitation that whenever a pad is configured as a PWM
-> >>>> +output, the output level is always zero volts when the PWM block is disabled.
-> >>>> +The zero output level is actively driven by the output stage of the PWM block
-> >>>> +and can not be overridden by pull-up. It also does not matter what PWM polarity
-> >>>> +a PWM client (e.g. backlight) requested.
-> >>>> +
-> >>>> +To gain control of the PWM output level in disabled state two pinctrl states
-> >>>> +can be used. The "default" state and the "pwm" state. In the default state the
-> >>>>     
-> >>> The "default" function of a PWM is to deliver a PWM signal. So it is
-> >>> more sensible to me to have the PWM function as "default" and a "gpio"
-> >>> function as alternative state.  
-> >>
-> >> Yes, I totally agree that using "default" for PWM and "gpio" as the
-> >> alternative function seems more sensible. That is actually how I started.
-> >> Then I realized that that way you end up with the PWM pad set to zero
-> >> until the first call of imx_pwm_apply_v2 where you can select the GPIO
-> >> function. On my system that first call is made by pwm-backlight more than
-> >> 3s after pinctrl init.
-> >>
-> >> I suggested to use the "default" state as a GPIO function as the only way
-> >> how to get a truly inverted PWM output all the time from power-up to
-> >> power-down.
-> >>
-> >> In my opinion it is up to the DT author what pad configuration he uses for
-> >> each pinctrl function as he knows what the HW really needs. I see that this
-> >> approach is kind of controversial but I hope that with good documentation
-> >> this would not be a problem. And as I wrote in the intro, it is absolutely
-> >> optional. If you do not need it, you do not use it.
-> >>  
-> > This is OK so far.
-> > But the approach with the pin being driven high via the pullup
-> > configuration has a fundamental flaw:
-> > The pwm polarity is specified by the PWM client (e.g: the pwm-backlight
-> > driver:
-> > 	pwms = <&pwm0 0 PWM_POLARITY_INVERTED>;
-> > )
-> > The pinconfig is defined in the pinctrl of the PWM driver.
-> > 
-> > If you have clients that may use the same PWM instance and require
-> > different polarity, there is no way to set the pullup/-down
-> > configuration in accordance with the clients needs.  
+On Tue 21-08-18 14:35:57, Roman Gushchin wrote:
+> If CONFIG_VMAP_STACK is set, kernel stacks are allocated
+> using __vmalloc_node_range() with __GFP_ACCOUNT. So kernel
+> stack pages are charged against corresponding memory cgroups
+> on allocation and uncharged on releasing them.
 > 
-> Hmm, I did not think about more than one PWM client. Is it even possible
-> to design such board? Do you have an example of such usage? It would mean
->
-My use case is attaching different displays to the same baseboard,
-where some displays have the brightness control pin inverted with
-respect to the others. It's easy to change the compatible string for
-the simple-panel driver and the PWM polarity setting for the
-pwm-backlight driver from U-Boot according to the display model, but
-it's not so easy, to edit the pinctrl settings from pull-up to
-pull-down or vice versa.
+> The problem is that we do cache kernel stacks in small
+> per-cpu caches and do reuse them for new tasks, which can
+> belong to different memory cgroups.
+> 
+> Each stack page still holds a reference to the original cgroup,
+> so the cgroup can't be released until the vmap area is released.
+> 
+> To make this happen we need more than two subsequent exits
+> without forks in between on the current cpu, which makes it
+> very unlikely to happen. As a result, I saw a significant number
+> of dying cgroups (in theory, up to 2 * number_of_cpu +
+> number_of_tasks), which can't be released even by significant
+> memory pressure.
+> 
+> As a cgroup structure can take a significant amount of memory
+> (first of all, per-cpu data like memcg statistics), it leads
+> to a noticeable waste of memory.
+> 
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Konstantin Khlebnikov <koct9i@gmail.com>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Shakeel Butt <shakeelb@google.com>
 
+Looks good to me. Two nits below.
 
-Lothar Waßmann
+I am not sure stable tree backport is really needed but it would be nice
+to put
+Fixes: ac496bf48d97 ("fork: Optimize task creation by caching two thread stacks per CPU if CONFIG_VMAP_STACK=y")
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> @@ -248,9 +253,20 @@ static unsigned long *alloc_thread_stack_node(struct task_struct *tsk, int node)
+>  static inline void free_thread_stack(struct task_struct *tsk)
+>  {
+>  #ifdef CONFIG_VMAP_STACK
+> -	if (task_stack_vm_area(tsk)) {
+> +	struct vm_struct *vm = task_stack_vm_area(tsk);
+> +
+> +	if (vm) {
+>  		int i;
+>  
+> +		for (i = 0; i < THREAD_SIZE / PAGE_SIZE; i++) {
+> +			mod_memcg_page_state(vm->pages[i],
+> +					     MEMCG_KERNEL_STACK_KB,
+> +					     -(int)(PAGE_SIZE / 1024));
+> +
+> +			memcg_kmem_uncharge(vm->pages[i],
+> +					    compound_order(vm->pages[i]));
+
+when do we have order > 0 here? Also I was wondering how come this
+doesn't blow up on partially charged stacks but both
+mod_memcg_page_state and memcg_kmem_uncharge check for page->mem_cgroup
+so this is safe. Maybe a comment would save people from scratching their
+heads.
+
 -- 
-___________________________________________________________
-
-Ka-Ro electronics GmbH | Pascalstraße 22 | D - 52076 Aachen
-Phone: +49 2408 1402-0 | Fax: +49 2408 1402-10
-Geschäftsführer: Matthias Kaussen
-Handelsregistereintrag: Amtsgericht Aachen, HRB 4996
-
-www.karo-electronics.de | info@karo-electronics.de
-___________________________________________________________
+Michal Hocko
+SUSE Labs
