@@ -5,136 +5,87 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78056C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA67FC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C4102148C
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:48:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C4102148C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 98D6821528
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:50:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D6821528
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729378AbeHVTOE (ORCPT
+        id S1729452AbeHVTPm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 15:14:04 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33848 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729024AbeHVTOD (ORCPT
+        Wed, 22 Aug 2018 15:15:42 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52270 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729426AbeHVTPm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 15:14:03 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7MFibqc065286
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 11:48:38 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m19wcb2n9-1
+        Wed, 22 Aug 2018 15:15:42 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7MFjwpT060837
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 11:50:16 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m18dbq7ve-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 11:48:37 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 11:50:15 -0400
 Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Wed, 22 Aug 2018 16:48:34 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Wed, 22 Aug 2018 16:50:11 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 22 Aug 2018 16:48:30 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MFmTS036634660
+        Wed, 22 Aug 2018 16:50:07 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MFo5Qa34799820
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 22 Aug 2018 15:48:29 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E609311C054;
-        Wed, 22 Aug 2018 18:48:28 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B76411C069;
-        Wed, 22 Aug 2018 18:48:28 +0100 (BST)
-Received: from oc7330422307.ibm.com (unknown [9.152.224.87])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 22 Aug 2018 18:48:28 +0100 (BST)
-Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
- control domains
-To:     pmorel@linux.ibm.com, Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-Cc:     Tony Krowiak <akrowiak@linux.ibm.com>,
+        Wed, 22 Aug 2018 15:50:05 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 69D45A4053;
+        Wed, 22 Aug 2018 18:50:05 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 95DBDA4057;
+        Wed, 22 Aug 2018 18:50:04 +0100 (BST)
+Received: from [9.152.224.111] (unknown [9.152.224.111])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 22 Aug 2018 18:50:04 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v9 21/22] KVM: s390: CPU model support for AP
+ virtualization
+To:     David Hildenbrand <david@redhat.com>,
         Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
         linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
         bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
         alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
         alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
         jjherne@linux.vnet.ibm.com, thuth@redhat.com,
         pasic@linux.vnet.ibm.com, berrange@redhat.com,
         fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
 References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180820162317.08bd7d23.cohuck@redhat.com>
- <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
- <20180821172548.57a6c758.cohuck@redhat.com>
- <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
- <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
- <20180822114250.59a250aa.cohuck@redhat.com>
- <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
- <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
- <f84dbcc0-f627-be02-9933-3baa953adc09@linux.ibm.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Wed, 22 Aug 2018 17:48:28 +0200
+ <1534196899-16987-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <2c2c4859-ed3e-a492-dd59-78529c7768b2@redhat.com>
+ <e7e1efe7-a7f5-f9a8-bd85-88759fa8ba2b@linux.ibm.com>
+ <b04e7d88-b7d3-b55d-cba8-bec0623e4adc@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Wed, 22 Aug 2018 17:50:04 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <f84dbcc0-f627-be02-9933-3baa953adc09@linux.ibm.com>
+In-Reply-To: <b04e7d88-b7d3-b55d-cba8-bec0623e4adc@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18082215-4275-0000-0000-000002ADB416
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082215-4276-0000-0000-000037B6B9C3
-Message-Id: <219b352b-d5a2-189c-e205-82e7f9ae3d64@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18082215-0020-0000-0000-000002BA3DCB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082215-0021-0000-0000-000021079501
+Message-Id: <9f512d55-ef10-e2ae-f34e-e003c929bc3f@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -147,57 +98,184 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/22/2018 05:34 PM, Pierre Morel wrote:
-> On 22/08/2018 17:11, Christian Borntraeger wrote:
->>
->>
->> On 08/22/2018 01:03 PM, Pierre Morel wrote:
->>>> That's interesting.
+On 22/08/2018 17:04, David Hildenbrand wrote:
+> On 22.08.2018 16:33, Pierre Morel wrote:
+>> On 22/08/2018 13:19, David Hildenbrand wrote:
+>>> On 13.08.2018 23:48, Tony Krowiak wrote:
+>>>> From: Tony Krowiak <akrowiak@linux.ibm.com>
 >>>>
->>>>> IMHO this quote is quite a half-full half-empty cup one:
->>>>> * it mandates the set of usage domains is a subset of the set
->>>>> of the control domains, but
->>>>> * it speaks of independent controls, namely about the 'usage domain index'
->>>>> and the 'control domain index list' and makes the enforcement of the rule
->>>>> a job of the administrator (instead of codifying it in the controls).
->>>> I'm wondering if a configuration with a usage domain that is not also a
->>>> control domain is rejected outright? Anybody tried that? :)
+>>>> Introduces a new CPU model feature and two CPU model
+>>>> facilities to support AP virtualization for KVM guests.
+>>>>
+>>>> CPU model feature:
+>>>>
+>>>> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
+>>>> AP instructions are available on the guest. This
+>>>> feature will be enabled by the kernel only if the AP
+>>>> instructions are installed on the linux host. This feature
+>>>> must be specifically turned on for the KVM guest from
+>>>> userspace to use the VFIO AP device driver for guest
+>>>> access to AP devices.
+>>>>
+>>>> CPU model facilities:
+>>>>
+>>>> 1. AP Query Configuration Information (QCI) facility is installed.
+>>>>
+>>>>      This is indicated by setting facilities bit 12 for
+>>>>      the guest. The kernel will not enable this facility
+>>>>      for the guest if it is not set on the host.
+>>>>
+>>>>      If this facility is not set for the KVM guest, then only
+>>>>      APQNs with an APQI less than 16 will be used by a Linux
+>>>>      guest regardless of the matrix configuration for the virtual
+>>>>      machine. This is a limitation of the Linux AP bus.
+>>>>
+>>>> 2. AP Facilities Test facility (APFT) is installed.
+>>>>
+>>>>      This is indicated by setting facilities bit 15 for
+>>>>      the guest. The kernel will not enable this facility for
+>>>>      the guest if it is not set on the host.
+>>>>
+>>>>      If this facility is not set for the KVM guest, then no
+>>>>      AP devices will be available to the guest regardless of
+>>>>      the guest's matrix configuration for the virtual
+>>>>      machine. This is a limitation of the Linux AP bus.
+>>>>
+>>>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>>>> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>>>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+>>>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+>>>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+>>>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>>>> ---
+>>>>    arch/s390/kvm/kvm-s390.c         |    5 +++++
+>>>>    arch/s390/tools/gen_facilities.c |    2 ++
+>>>>    2 files changed, 7 insertions(+), 0 deletions(-)
+>>>>
+>>>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>>>> index 1e8cb67..d5e04d2 100644
+>>>> --- a/arch/s390/kvm/kvm-s390.c
+>>>> +++ b/arch/s390/kvm/kvm-s390.c
+>>>> @@ -367,6 +367,11 @@ static void kvm_s390_cpu_feat_init(void)
+>>>>    
+>>>>    	if (MACHINE_HAS_ESOP)
+>>>>    		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
+>>>> +
+>>>> +	/* Check if AP instructions installed on host */
+>>>> +	if (ap_instructions_available())
+>>>> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
+>>>> +
+>>>>    	/*
+>>>>    	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
+>>>>    	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
+>>>> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
+>>>> index 90a8c9e..a52290b 100644
+>>>> --- a/arch/s390/tools/gen_facilities.c
+>>>> +++ b/arch/s390/tools/gen_facilities.c
+>>>> @@ -106,6 +106,8 @@ struct facility_def {
+>>>>    
+>>>>    		.name = "FACILITIES_KVM_CPUMODEL",
+>>>>    		.bits = (int[]){
+>>>> +			12, /* AP Query Configuration Information */
+>>>> +			15, /* AP Facilities Test */
+>>>>    			-1  /* END */
+>>>>    		}
+>>>>    	},
+>>>>
 >>>
->>> Yes, and no it is not.
->>> We can use a queue (usage domain) to a AP card for SHA-512 or RSA without
->>> having to define the queue as a control domain.
+>>> I really wonder if we should also export the APXA facility.
+>>>
+>>> We can probe and allow that CPU feature. However, we cannot disable it
+>>> (as of now).
+>>>
+>>> We have other CPU features where it is the same case (basically all
+>>> subfunctions). See kvm_s390_get_processor_subfunc(). We probe them and
+>>> export them, but support to disable them has never been implemented.
+>>>
+>>> On a high level, we could then e.g. deny to start a QEMU guest if APXA
+>>> is available but has been disabled. (until we know that disabling it
+>>> actually works - if ever).
+>>>
+>>> This helps to catch nasty migration bugs (e.g. APXA suddenly
+>>> disappearing). Although unlikely, definitely possible. >
+>>>
+>>> Are there any other AP related facilities that the guest can from now on
+>>> probe that should also become part of the CPU model?
+>>>
 >>
->> Huh? My HMC allows to add a domain as
->> - control only domain
->> - control and usage domain.
 >>
->> But I am not able to configure a usage-only domain for my LPAR. That seems to match
->> the current code, no?
 >>
+>> Before going too far in a discussion on features which we do not really
+>> need, we can make clear that we only support beginning with z13 and only
+>> in the Z architecture mode as host and as guest.
 > 
-> Yes, it may not be configurable by the HMC but if we start a guest with no control domain it is not a problem to access the hardware through the usage domain.
+> Easy answer:
 > 
-> I tested this a long time ago, but tested again today to be sure on my LPAR.
+> The CPU model should be prepared for all eventualities. We have handled
+> it that way since the beginning.
 > 
-> AFAIU adding a control only domain and a control and usage domain
-> allows say:
-> control and usage domain 1
-> control only domain 2
-> 
-> Allow to send a message to domain 2 using queue 1
-> 
-> Allow also to send a domain modifying message to domain 1 using queue 1
-> 
-> control domain are domain which are controlled
+> The minimal thing I expect to have is all relevant features probed and
+> exported to user space. Just like we do with all the MSA/PTFF/PLO
+> subfunctions. I expect (and remember) this to be the same for PQAP.
 
-So you have changed the code to not automatically make a usage domain a
-control domain in the bitfield (and you could still use it as a usage
-domain). Correct?
-I think this is probably expected. the "usage implies control" seems to 
-be a convention implemented by HMC (lpar) and z/VM but millicode offers 
-the bits to have usage-only domains. As LPAR and z/VM will always enable
-any usage-domain to also be a control domain we should do the same.
+OK, we will need a separate patch.
+
+> 
+> (there are some very special cases regarding subfunctions that are not
+> indicated)
+> 
+> Why? The CPU model is not KVM specific.
+
+Is it true for privilege instructions?
+
+> 
+>>
+>> We then need to abort the VFIO driver if APXA is not installed.
+> 
+> While you should do that, the CPU model is more generic. This would only
+> imply that as of now, the APXA feature would always be available if the
+> AP feature is available.
+
+yes
+
+> 
+> In addition, it makes the vSIE handling code easier - there is always
+> APXA and for now it cannot be disabled.
+> 
+
+yes :)
+
+>>
+>> In this case we will have no problem with older guests not having idea
+>> about APXA.
+>>
+>> Would it be a solution?
+> 
+> Any feature the guest sees, should be part of the CPU model. The whole
+> environment for cpu subfunctions is already in place both in KVM and
+> QEMU. Only disabling subfunctions in KVM is not implemented yet.
+> 
+> You can exclude any subfunctions/facilities that are only valid on LPAR
+> level and cannot be used in some guest either way. (that makes life
+> sometimes easier)
+> 
+> 
+> I know that this might sound a little bit complicated, but it really
+> isn't. Boils down to modifying kvm_s390_cpu_feat_init() and specifying
+> some features+feature groups in QEMU.
+
+OK, we definitively need another patch/patch-set, to handle this.
+Do you think it can be done in another series since if we always support 
+APXA when we have AP instructions, we already have an indication that
+APXA exist: the AP facility.
+
+Regards,
+Pierre
 
 
-> It seems that the HMC enforce the LPARs to have access to their usage domain (AFAIU from Harald)
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
