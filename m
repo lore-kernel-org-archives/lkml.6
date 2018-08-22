@@ -5,204 +5,150 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70640C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03738C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18D29208E8
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:12:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18D29208E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A380620989
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:15:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A380620989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbeHVUhs (ORCPT
+        id S1727464AbeHVUlh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 16:37:48 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44790 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727234AbeHVUhs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 16:37:48 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7MH8m7d091792
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 13:12:04 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m1axttu0p-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 13:12:03 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Wed, 22 Aug 2018 18:12:01 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 22 Aug 2018 18:11:57 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MHBumG35586294
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 22 Aug 2018 17:11:56 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0637AA4051;
-        Wed, 22 Aug 2018 20:11:56 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 06B9DA404D;
-        Wed, 22 Aug 2018 20:11:54 +0100 (BST)
-Received: from oc0155643701.ibm.com (unknown [9.145.189.122])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 22 Aug 2018 20:11:53 +0100 (BST)
-Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
- control domains
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        pmorel@linux.ibm.com, Cornelia Huck <cohuck@redhat.com>
-Cc:     Tony Krowiak <akrowiak@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180820162317.08bd7d23.cohuck@redhat.com>
- <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
- <20180821172548.57a6c758.cohuck@redhat.com>
- <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
- <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
- <20180822114250.59a250aa.cohuck@redhat.com>
- <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
- <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
- <f84dbcc0-f627-be02-9933-3baa953adc09@linux.ibm.com>
- <219b352b-d5a2-189c-e205-82e7f9ae3d64@de.ibm.com>
-From:   Halil Pasic <pasic@linux.ibm.com>
-Date:   Wed, 22 Aug 2018 19:11:53 +0200
+        Wed, 22 Aug 2018 16:41:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35134 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726876AbeHVUlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 16:41:37 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 45108804BAAC;
+        Wed, 22 Aug 2018 17:15:52 +0000 (UTC)
+Received: from [10.36.116.89] (ovpn-116-89.ams2.redhat.com [10.36.116.89])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 945D92166BA1;
+        Wed, 22 Aug 2018 17:15:50 +0000 (UTC)
+Subject: Re: [PATCH v2 5/5] KVM: s390: vsie: Do the CRYCB validation first
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+References: <1534956717-14087-1-git-send-email-pmorel@linux.ibm.com>
+ <1534956717-14087-6-git-send-email-pmorel@linux.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <e985a036-1b19-0feb-e50c-d55dec3dc9e7@redhat.com>
+Date:   Wed, 22 Aug 2018 19:15:49 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <219b352b-d5a2-189c-e205-82e7f9ae3d64@de.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1534956717-14087-6-git-send-email-pmorel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18082217-0016-0000-0000-000001FA468E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082217-0017-0000-0000-000032509D24
-Message-Id: <dbb74c9c-93ab-ed05-fad4-ea2aa5f2b71e@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808220172
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 22 Aug 2018 17:15:52 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 22 Aug 2018 17:15:52 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 08/22/2018 05:48 PM, Christian Borntraeger wrote:
-> On 08/22/2018 05:34 PM, Pierre Morel wrote:
->> On 22/08/2018 17:11, Christian Borntraeger wrote:
->>>
->>>
->>> On 08/22/2018 01:03 PM, Pierre Morel wrote:
->>>>> That's interesting.
->>>>>
->>>>>> IMHO this quote is quite a half-full half-empty cup one:
->>>>>> * it mandates the set of usage domains is a subset of the set
->>>>>> of the control domains, but
->>>>>> * it speaks of independent controls, namely about the 'usage domain index'
->>>>>> and the 'control domain index list' and makes the enforcement of the rule
->>>>>> a job of the administrator (instead of codifying it in the controls).
->>>>> I'm wondering if a configuration with a usage domain that is not also a
->>>>> control domain is rejected outright? Anybody tried that? :)
->>>>
->>>> Yes, and no it is not.
->>>> We can use a queue (usage domain) to a AP card for SHA-512 or RSA without
->>>> having to define the queue as a control domain.
->>>
->>> Huh? My HMC allows to add a domain as
->>> - control only domain
->>> - control and usage domain.
->>>
->>> But I am not able to configure a usage-only domain for my LPAR. That seems to match
->>> the current code, no?
->>>
->>
->> Yes, it may not be configurable by the HMC but if we start a guest with no control domain it is not a problem to access the hardware through the usage domain.
->>
->> I tested this a long time ago, but tested again today to be sure on my LPAR.
->>
->> AFAIU adding a control only domain and a control and usage domain
->> allows say:
->> control and usage domain 1
->> control only domain 2
->>
->> Allow to send a message to domain 2 using queue 1
->>
->> Allow also to send a domain modifying message to domain 1 using queue 1
->>
->> control domain are domain which are controlled
+On 22.08.2018 18:51, Pierre Morel wrote:
+> When entering the SIE the CRYCB validation better
+> be done independently of the instruction's
+> availability.
 > 
-> So you have changed the code to not automatically make a usage domain a
-> control domain in the bitfield (and you could still use it as a usage
-> domain). Correct?
-
-I tested basically the same yesterday, with the same results.
-
-> I think this is probably expected. the "usage implies control" seems to
-> be a convention implemented by HMC (lpar) and z/VM but millicode offers
-> the bits to have usage-only domains. As LPAR and z/VM will always enable
-> any usage-domain to also be a control domain we should do the same.
-
-I'm fine either way, but slightly prefer higher level management software
-and not the kernel accommodating this convention.
-
-Please consider a quote from Harald's mail in another sub-thread
-
-
-"""
-... about control domains
-
-Talked with the s390 firmware guys. The convention that the control domain
-mask is a superset of the usage domain mask is only true for 1st level guests.
-
-It is absolutely valid to run a kvm guest with restricted control domain
-mask bitmap in the CRYCB. It is valid to have an empty control domain mask
-and the guest should be able to run crypto CPRBs on the usage domain(s) without
-any problems. However, nobody has tried this.
-"""
-
-I'm yet to get an explanation why was this convention established in the first
-place. And I can not figure it out myself. For me a setup where I know that
-the domains used by some guest can not be modified by the same guest makes
-perfect sense. If I try to think in analogies, I kind of compare modification
-(that is control domain) with write access, and usage (that is usage domain)
-with read access to, let's say a regular file. For me, all options (rw, r, and w)
-do make sense, and if I had to pick the one that makes the least sense I would
-pick write only. The convention is in these terms making read-only illegal. But
-should 'usage only domains' ever get identified as something somebody wants to do
-we can just add an attribute for that. So I'm fine either way.
-
-Still I find the commit message for this patch, the implementation of
-assign_control_domain() and also the documentation slightly misleading regarding
-what does one get from assign_domain.
-
-Regards,
-Halil
-
-
-
-
-
+> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> ---
+>  arch/s390/kvm/vsie.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 > 
-> 
->> It seems that the HMC enforce the LPARs to have access to their usage domain (AFAIU from Harald)
+> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
+> index 7ee4329..fca25aa 100644
+> --- a/arch/s390/kvm/vsie.c
+> +++ b/arch/s390/kvm/vsie.c
+> @@ -164,17 +164,18 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+>  	/* format-1 is supported with message-security-assist extension 3 */
+>  	if (!test_kvm_facility(vcpu->kvm, 76))
+>  		return 0;
+> -	/* we may only allow it if enabled for guest 2 */
+> -	ecb3_flags = scb_o->ecb3 & vcpu->arch.sie_block->ecb3 &
+> -		     (ECB3_AES | ECB3_DEA);
+> -	if (!ecb3_flags)
+> -		return 0;
+>  
+>  	if ((crycb_addr & PAGE_MASK) != ((crycb_addr + 128) & PAGE_MASK))
+>  		return set_validity_icpt(scb_s, 0x003CU);
+>  	if (!crycb_addr)
+>  		return set_validity_icpt(scb_s, 0x0039U);
+>  
+> +	/* we may only allow it if enabled for guest 2 */
+> +	ecb3_flags = scb_o->ecb3 & vcpu->arch.sie_block->ecb3 &
+> +		     (ECB3_AES | ECB3_DEA);
+> +	if (!ecb3_flags)
+> +		return 0;
+> +
+>  	/* copy only the wrapping keys */
+>  	if (read_guest_real(vcpu, crycb_addr + 72,
+>  			    vsie_page->crycb.dea_wrapping_key_mask, 56))
 > 
 
+That makes sense, especially if ECB3_AES is used but effectively turned
+off by us.
+
+What is the expected behavior if ECB3_AES | ECB3_DEA are not set by g2
+for g3?
+
+-- 
+
+Thanks,
+
+David / dhildenb
