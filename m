@@ -2,103 +2,137 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83765C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00426C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:34:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4080421473
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:33:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4080421473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id ADB3D21473
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:34:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="szPIPT4S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADB3D21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728180AbeHVK53 (ORCPT
+        id S1728229AbeHVK5u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 06:57:29 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:44631 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbeHVK53 (ORCPT
+        Wed, 22 Aug 2018 06:57:50 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33838 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728199AbeHVK5u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 06:57:29 -0400
-Received: by mail-qk0-f193.google.com with SMTP id d131-v6so606616qke.11;
-        Wed, 22 Aug 2018 00:33:49 -0700 (PDT)
+        Wed, 22 Aug 2018 06:57:50 -0400
+Received: by mail-lj1-f193.google.com with SMTP id f8-v6so717373ljk.1;
+        Wed, 22 Aug 2018 00:34:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ClZGx4MeigKRPfILqQ+DFDAkm4s+VI2rV6E9tisjjUA=;
+        b=szPIPT4SwIFAhr2V/tU4CVLeWXLTUZjXUyT1or8j4nHjKezwO4fCcupr1MoCR1L6dJ
+         /N1O923rK/8x1PtWubkpj+AIrBQMvsbzUsvPrGmV9flwg4/C1WupkXoaz9P+Hz8MFfd+
+         6S1bQ5U8UnJAp0LksVOiEpRnDv+ikw0rXDd5X/z3axgqyHGBMBHgRO/f4XVAGElhWhfx
+         3loRXhLGhv9iqkISyd1nEY/cj9v6wIWzz+FcSrUTLsSU1ar5EMekpv7sBkKGxW78pn0O
+         h0OFpfYFDVsBv61KUzOhw68c5hv2TKIYshrykmJZGi8tAsZR1neh4ASCd1hd2do/rYsz
+         dbUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YfRQ8LNTIdnMy3HeT5xDDir0OXJpj20CM46u1WGTJN0=;
-        b=PxZ9ifZKwqlAh34vtdY/+uwPWRzH7TdEUYGXpNXgQrDb3eXO3KTDY5hI/dcJgIpu49
-         +pURLxS7XngDbCn0j/qs0LU+TsfqxiUzwF9mP+FCSnm7B0d2f75aZ0Q35N6NHIQWxufH
-         G1KhMc0B4/krWl0VHx2mj0wUDrJDzIk5yjQ0FLQ5a80hCpi9Ixi79bCemcKjK2UCawup
-         Cnz4XmWSCPGH5CrReERHv8cJQatQIhcQe8Bf0y4FzHVwyUw/43S7OwROKbMToHMNMfPU
-         TrJnTtm8AK5N70vHxQK34Q+uz5QCuJFrl/a7NfACUEBVQz2WmLlLkA+NTMRk2SWEs782
-         fMbg==
-X-Gm-Message-State: AOUpUlFTUBVbLp2DhB2nFoVj+3Db5fu7IT8Bf0s/eYX2DT/V/HoomgyA
-        hIHmzl+NlnszVAvORbaF9a6zjYhUOzBnd2rs/Xo=
-X-Google-Smtp-Source: AA+uWPw3zMXSuC9Mhq3gxgcTIB7OIb9+2jjr70ir0dQy6XKgP9JvDWVCf3ZioIGwRAxzZq/xC/SRtRScOsCzDJUSXQo=
-X-Received: by 2002:a37:6b03:: with SMTP id g3-v6mr48021300qkc.107.1534923228754;
- Wed, 22 Aug 2018 00:33:48 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ClZGx4MeigKRPfILqQ+DFDAkm4s+VI2rV6E9tisjjUA=;
+        b=gpLZM0rKo/xHJ694Hl7h6ECSUkTYjUViOHNA3KMm3jbNJZer+3XA34AEftHVMjDvrA
+         0QU3mxogVNjRihivof3AbcKbnkXXcYa6bHRPgbp4GmxthwX2B8J9xua2jZy9kOGCVEW2
+         Ycw7olEylZt4Ozjj1PQ4lsYud3/s/tGDAVJoHQvseaO+xClUi+yYV2GCiomVNAIVrdhe
+         7anqqD30O8g2lBbqMddNuogpknoqD+TQHm4M1PzyGktBuMsSHoqUsg3lWSSRGrE2ZiHW
+         4dvbT7WohuqLLv1+B/2i2pN3OPQFSbVMOfDWmn3frkmvzkhoQncF8BFjnjYlMshO+96x
+         k+5Q==
+X-Gm-Message-State: AOUpUlH23OSHTPrvn9YPXCh6aJXOcuku0t5BcKd31NJadLocgDntk1dP
+        C9IUouGB+cS1BXmOLMn2j5LUa2Xs
+X-Google-Smtp-Source: AA+uWPxpdcQYwxhCPhvQyGIbia3ov2pvreGfyVWABFFoWS8RgB7E0mKX3NIKgOonhz5CXNqXrTT4Ew==
+X-Received: by 2002:a2e:2282:: with SMTP id i124-v6mr38055290lji.11.1534923248891;
+        Wed, 22 Aug 2018 00:34:08 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id s202-v6sm175127lfs.28.2018.08.22.00.34.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 Aug 2018 00:34:08 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1fsNeb-0007pa-Hj; Wed, 22 Aug 2018 09:34:09 +0200
+Date:   Wed, 22 Aug 2018 09:34:09 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Keerthy <j-keerthy@ti.com>
+Cc:     tony@atomide.com, d-gerlach@ti.com, linux-kernel@vger.kernel.org,
+        t-kristo@ti.com, ssantosh@kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] soc: ti: pm33xx: Enable DS0 for the platforms on which
+ it is functional
+Message-ID: <20180822073409.GK14967@localhost>
+References: <1534915951-8783-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-References: <20180821142100.2250647-1-arnd@arndb.de> <20180822031813.GA1313@ziepe.ca>
-In-Reply-To: <20180822031813.GA1313@ziepe.ca>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 22 Aug 2018 09:33:32 +0200
-Message-ID: <CAK8P3a043WTUs92521a1KJ8LEn5sjyw9Bxj7CFfK-z15AgfPHg@mail.gmail.com>
-Subject: Re: [PATCH] IB/ucm: fix UCM link error
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Doug Ledford <dledford@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Matan Barak <matanb@mellanox.com>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1534915951-8783-1-git-send-email-j-keerthy@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 5:18 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
->
-> On Tue, Aug 21, 2018 at 04:20:44PM +0200, Arnd Bergmann wrote:
-> > Building UCM with CONFIG_INFINIBAND_USER_ACCESS=m results in a
-> > set of link errors including:
-> >
-> > drivers/infiniband/core/ucm.o: In function `ib_ucm_event_handler':
-> > ucm.c:(.text+0x6dc): undefined reference to `ib_copy_path_rec_to_user'
-> > drivers/infiniband/core/ucma.o: In function `ucma_event_handler':
-> > ucma.c:(.text+0xdc0): undefined reference to `ib_copy_ah_attr_to_user'
-> >
-> > To get it to build-test again, this makes the option itself a
-> > tristate, which lets Kconfig figure out the dependency correctly.
-> >
-> > Fixes: 486edfb1039d ("IB/ucm: Fix compiling ucm.c")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> >  drivers/infiniband/Kconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> Applied to for-rc
->
-> But that fixes line isn't right is it?
->
-> Should it be
->
-> commit 7a8690ed6f5346f6738971892205e91d39b6b901
-> Author: Leon Romanovsky <leonro@mellanox.com>
-> Date:   Wed May 23 08:22:11 2018 +0300
->
->     RDMA/ucm: Mark UCM interface as BROKEN
->
-> Which added the config in the first place??
+On Wed, Aug 22, 2018 at 11:02:31AM +0530, Keerthy wrote:
+> Enable DS0 for only those platforms on which it is functional
+> 
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> ---
+>  arch/arm/mach-omap2/pm33xx-core.c    | 5 +++++
+>  drivers/soc/ti/pm33xx.c              | 9 +++++++++
+>  include/linux/platform_data/pm33xx.h | 2 ++
+>  3 files changed, 16 insertions(+)
+> 
+> diff --git a/arch/arm/mach-omap2/pm33xx-core.c b/arch/arm/mach-omap2/pm33xx-core.c
+> index f4971e4..f0f6e8e 100644
+> --- a/arch/arm/mach-omap2/pm33xx-core.c
+> +++ b/arch/arm/mach-omap2/pm33xx-core.c
+> @@ -135,6 +135,11 @@ static int am43xx_suspend(unsigned int state, int (*fn)(unsigned long),
+>  {
+>  	int ret = 0;
+>  
+> +	if (!(args & WFI_FLAG_DEEP_SLEEP0)) {
+> +		pr_err("DS0 mode not supported\n");
+> +		return -ENOTSUPP;
+> +	}
+> +
+>  	amx3_pre_suspend_common();
+>  	scu_power_mode(scu_base, SCU_PM_POWEROFF);
+>  	ret = cpu_suspend(args, fn);
+> diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
+> index d0dab32..53238d7 100644
+> --- a/drivers/soc/ti/pm33xx.c
+> +++ b/drivers/soc/ti/pm33xx.c
+> @@ -324,6 +324,15 @@ static int am33xx_pm_probe(struct platform_device *pdev)
+>  	suspend_wfi_flags |= WFI_FLAG_SAVE_EMIF;
+>  	suspend_wfi_flags |= WFI_FLAG_WAKE_M3;
+>  
+> +	/*
+> +	 * Deep Sleep0 mode is currently functional only on am437x-gp-evm,
+> +	 * am33xx-evm and boneblack family. Hence set the DS0 flag
+> +	 */
+> +	if (of_machine_is_compatible("ti,am437x-gp-evm") ||
+> +	    of_machine_is_compatible("ti,am335x-bone-black") ||
+> +	    of_machine_is_compatible("ti,am335x-evm"))
+> +		suspend_wfi_flags |= WFI_FLAG_DEEP_SLEEP0;
 
-The commit I cited is the one that caused the build regression for me.
+What about other (out-of-tree) machines which supports DS0 and which
+this change would break?
 
-The first one (7a8690ed6f) caused the interface to disappear,
-the second one (486edfb1039d) brought it back in a way that
-fails in some random configurations.
+I think this needs to be a blacklist if anything.
 
-       Arnd
+Please also expand in the commit message why you think this is needed.
+
+Last, what tree is this against? There's no am43xx_suspend() in
+linux-next (and you add compatibles above for am33xx too).
+
+Thanks,
+Johan
