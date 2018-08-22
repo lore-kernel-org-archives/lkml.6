@@ -2,85 +2,76 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA67AC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F08FFC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 662C0214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:20:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EvedmypN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 662C0214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 5E470214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:20:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E470214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728211AbeHVJnn (ORCPT
+        id S1728232AbeHVJoU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 05:43:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35580 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727772AbeHVJnn (ORCPT
+        Wed, 22 Aug 2018 05:44:20 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:34888 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728020AbeHVJoU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 05:43:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=u6E1f7as2JOKYtb+GLX+v9A1/h7lIwwkHpNzry0isTw=; b=EvedmypNYv0qnMvrkA7qin2To
-        wXWNGCM4AnXzZ91iGvATB+bP/III05bV6qNltOGIvacnOE+sZOOrrqu/5W4FZ+CngrUuxGEKlk3j9
-        jdfVw8BnL/Hr0zqZjyy8Y1RVm091GIqg7God+PV77YiVRb+TfAdqXBhPuCMC+BzRCjR2MClQTVvvD
-        iz5Zf3BtXeXtEwxyUHLOLiL4pGAIB+33eGSwYr2/qI2OYzNfjPR9CiTupeUvMFjK/g60ul0NB03ED
-        QaGH38eUr3ilvgC22/tBt5ivxBmi2GDcjcxoTc7dP7ApXFywaAM8h87Jxo2edp8Xsg02oU7yJmI29
-        x438laHNg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fsMV6-0006Dc-Eo; Wed, 22 Aug 2018 06:20:16 +0000
-Date:   Tue, 21 Aug 2018 23:20:16 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Jeff Lien <jeff.lien@wdc.com>, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, herbert@gondor.apana.org.au,
-        tim.c.chen@linux.intel.com, david.darrington@wdc.com,
-        jeff.furlong@wdc.com
-Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
-Message-ID: <20180822062016.GA10356@infradead.org>
-References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
- <yq1in4gq5jf.fsf@oracle.com>
- <yq1lg8zb2lp.fsf@oracle.com>
+        Wed, 22 Aug 2018 05:44:20 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1fsMVa-0006GI-KH; Wed, 22 Aug 2018 14:20:46 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1fsMVQ-0006jN-O1; Wed, 22 Aug 2018 14:20:36 +0800
+Date:   Wed, 22 Aug 2018 14:20:36 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Megha Dey <megha.dey@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot <syzbot+d5455bac3ba1ee9114e5@syzkaller.appspotmail.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: KASAN: use-after-free Read in sha512_ctx_mgr_resubmit
+Message-ID: <20180822062036.mdq4q5o5zdzuxh7s@gondor.apana.org.au>
+References: <00000000000072d64d05737b6b8c@google.com>
+ <20180820073119.GA14931@sol.localdomain>
+ <CAKv+Gu9Y0TLOuMba43HPihYqy-kk0nttBfPj1_UukiYy1cBcFw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <yq1lg8zb2lp.fsf@oracle.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAKv+Gu9Y0TLOuMba43HPihYqy-kk0nttBfPj1_UukiYy1cBcFw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 09:40:34PM -0400, Martin K. Petersen wrote:
-> When crc-t10dif is initialized, the crypto infrastructure will pick the
-> algorithm with the highest priority currently registered. Both block and
-> SCSI will cause crc-t10dif to be compiled as a built-in so this
-> selection happens very early.
+On Tue, Aug 21, 2018 at 02:43:56PM +0200, Ard Biesheuvel wrote:
+>
+> I agree. The code is obviously broken in a way that would have been
+> noticed if it were in wide use, and it is too complicated for mere
+> mortals to fix or maintain. I suggest we simply remove it for now, and
+> if anyone wants to reintroduce it, we can review the code *and* the
+> justification for the approach from scratch (in which case we should
+> consider factoring out the algo agnostics plumbing in a way that
+> allows it to be reused by other architectures as well)
 
-Ouch.  This might actually happen in a lot of other users of the crypto
-functionality as well.
+I agree too.  Could one of you guys send me a patch to remove
+them?
 
-> However, it seems like a bit of a deficiency in crypto that there is no
-> way to upgrade existing transformations if higher priority algorithms
-> become available. btrfs and a few others work around this issue by not
-> using the generic lib/ CRC functions (which defeats the purpose of
-> having these in the first place). Instead they are registering their own
-> transformation at a later time where any accelerator modules are more
-> likely to be loaded.
-
-If we can't fix this in crypto (which doesn't seem that easy), we
-should at least clearly document the issue somewhere, and fix this in
-the t10pi code by initializing crct10dif_tfm in a lazy fashion only
-once the fist block device starts using it.
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
