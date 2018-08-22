@@ -2,642 +2,145 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9122C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A63C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B448214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:46:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B448214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 4FCCC214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:53:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="cd8fTf37"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FCCC214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbeHVKKY (ORCPT
+        id S1727994AbeHVKQu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 06:10:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46468 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726838AbeHVKKX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 06:10:23 -0400
-Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 49FA98B1;
-        Wed, 22 Aug 2018 06:46:50 +0000 (UTC)
-Date:   Wed, 22 Aug 2018 08:46:46 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.4.151
-Message-ID: <20180822064646.GB28244@kroah.com>
-References: <20180822064640.GA28244@kroah.com>
+        Wed, 22 Aug 2018 06:16:50 -0400
+Received: from mail-eopbgr00082.outbound.protection.outlook.com ([40.107.0.82]:61248
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726603AbeHVKQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 06:16:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w976+BlkUYf2NBP1hf+W/wvlf+iz2zl5gTwjc9hv6Lk=;
+ b=cd8fTf37JqTzImTouHR4dRrMRkOadvHUTjdCau96yU/jB2QJJV1GPnswR1xACdDYLlA0A9eo8gPa4go6+iMW0NNQmY2qbdLFagUgl9XuAVzU0okRrCdFeJXH6lw92IVrKyAZOSVDTNpD9PJw+lmZxY7LOMDMvF2b1ouqx6Rk3FY=
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
+ AM0PR04MB4914.eurprd04.prod.outlook.com (20.176.215.211) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1059.24; Wed, 22 Aug 2018 06:53:14 +0000
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::2545:18ff:ca37:1e60]) by AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::2545:18ff:ca37:1e60%4]) with mapi id 15.20.1059.023; Wed, 22 Aug 2018
+ 06:53:14 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     "festevam@gmail.com" <festevam@gmail.com>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Ying Liu <victor.liu@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [RFC] clk: imx6: Mark imx_clk_mux as glitchy by default
+Thread-Topic: [RFC] clk: imx6: Mark imx_clk_mux as glitchy by default
+Thread-Index: AQHUOYYTdwDinWiDP0ilYt2OR3uisaTKzVgAgACJMoA=
+Date:   Wed, 22 Aug 2018 06:53:14 +0000
+Message-ID: <c0966648ef0a15672ddd617de87692f71a19bad4.camel@nxp.com>
+References: <e56c6f0acfe7afb885d2cb67e1e069f7edd0d2d7.1534879459.git.leonard.crestez@nxp.com>
+         <CAOMZO5Dr9NUXuu+LECp2QHZLRhfbymHK23yCCFW-9jB=VXNn+A@mail.gmail.com>
+In-Reply-To: <CAOMZO5Dr9NUXuu+LECp2QHZLRhfbymHK23yCCFW-9jB=VXNn+A@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.5-1 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [85.204.4.237]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4914;6:/Bk2Ewl7xJJbZECT/MgZaJI7BgO0GwpgJohjEycuwtFjLFbVCCidISXPv4GAMTd8N+3Qn0tgGIMIY1jKVvbDYfJr5+cv6/mrD/wwjP3vfOpKejITkJyUJYPo7s8qB/0prGsOIxuXEZsyotE6dFkmFSWJXru+rh3axcqoAQRdi9sEDHhGyqhIOBnkHIWv81YlQpsaN3TcPsTiKYNUypiDw4OKpHNCghxwX3AeBFDyjCu1YD6+Ggv9mjd/QVgUd4zieZiKZACOGW/xzz5u9rjFWcxYPvWC/T6R21gUL9tNoW95GmiFtOMs5FOoSIZ2NHJW0TMxVsNuWFSL94l9F6n8aGbFWzUFMgydfrrcUQ6PQt3ed5x1e08AMsEvpXRa+teAhpErssEthFd3e8knb5o6LwKSQ1LETmFrvM7mLsAnSfBuv957lU4Zeq36j7iEnqWcr/rqNnvhvPQl0TC5PetC6A==;5:wWgCs7EpyRi3lrzpGrF05e/cqpL2Fk3RbLOkNNZpHLBJNVtoXC0IQP3IhDuB8mBXW7RVU61JrQlgUhGlgowtICT1lEr7IQznL3IUGBVDXzUKC3yop7HTOfZ29okL/UWk9tgM/0/VR+IxmM+We8ZUr+M4PoxPkBWmsjAZoSE/Q8s=;7:IbNsYLNhCbwbff5sq1FNaq3r3uEkARb+7jmb5Q6EitWIMUXRjwMUmEKRExFsLN/Ix489CGDEWKhLYfXIo/bR1JOAMnKBxliQ+km2gP67u6rTUhPg+QV77qBNWptyH8g/9FPOxnwtd/PZOKfp2u+M8F5LJVzeGsgRX90As/EmDPfpM9Usq/oGHxHy6OctpJJSoVH8O54eOxQPTJw9/WZnoVTFmQrDTvxNUSYNNHs/4JbAoJ6Mfe1Ju5L+G13NY2qW
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 830174a1-00de-48bf-67b6-08d607fbeecf
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4914;
+x-ms-traffictypediagnostic: AM0PR04MB4914:
+x-microsoft-antispam-prvs: <AM0PR04MB49148CA181729A08BAD7C630EE300@AM0PR04MB4914.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197)(17755550239193);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(3231311)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699016);SRVR:AM0PR04MB4914;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4914;
+x-forefront-prvs: 0772E5DAD5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(39860400002)(376002)(346002)(136003)(43544003)(199004)(189003)(50226002)(486006)(4326008)(6506007)(102836004)(36756003)(186003)(106356001)(26005)(39060400002)(305945005)(105586002)(44832011)(53546011)(2906002)(14444005)(7416002)(8676002)(25786009)(97736004)(66066001)(256004)(6246003)(7736002)(446003)(86362001)(6436002)(478600001)(118296001)(8936002)(81166006)(476003)(110136005)(68736007)(316002)(5250100002)(2616005)(76176011)(81156014)(2501003)(99286004)(14454004)(6486002)(229853002)(5660300001)(6116002)(11346002)(53936002)(6512007)(2900100001)(3846002)(54906003)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4914;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: FV5Sbvxjvo254Jb+BYh/fwhZoHUkjkagXaviahcVSQojcYv5hVgGjJ1bzGPelUu6M6GVnQ/ho88LJ9dswJaZVdrmpXi678zgpszNJ2k3ldOVU6Nz5L2c6kmtHLSr+QRezqBrvAl2NhxziivjYXbpqtvVxfxQjmgn3NasNUUgXkmEpM7fPxoU6Qm7tYPv+/tebyBraT4/8VtdG0oGREhvzhsIjnsVFDjOQPevunapyfexejqWH2gV52zcphuncoT4s5gUxbI0pLP7C3skwBCMXYX0aQ00HL40D3cRPLkSLDo2fmUFU3jh6qn9Oy18msyLQ3KWRuV5CZx09jP9GVBgWJ3DOl09bIQJDAO43Hqnzrc=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <40D514BCC9D8464F8905E50087FC4D41@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180822064640.GA28244@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 830174a1-00de-48bf-67b6-08d607fbeecf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2018 06:53:14.3321
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4914
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/Makefile b/Makefile
-index 7789195c6a59..04199cf99dd5 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 4
- PATCHLEVEL = 4
--SUBLEVEL = 150
-+SUBLEVEL = 151
- EXTRAVERSION =
- NAME = Blurry Fish Butt
- 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 4de6c282c02a..68a55273ce0f 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -173,6 +173,11 @@ static inline unsigned long pud_pfn(pud_t pud)
- 	return (pfn & pud_pfn_mask(pud)) >> PAGE_SHIFT;
- }
- 
-+static inline unsigned long pgd_pfn(pgd_t pgd)
-+{
-+	return (pgd_val(pgd) & PTE_PFN_MASK) >> PAGE_SHIFT;
-+}
-+
- #define pte_page(pte)	pfn_to_page(pte_pfn(pte))
- 
- static inline int pmd_large(pmd_t pte)
-@@ -578,8 +583,7 @@ static inline unsigned long pmd_page_vaddr(pmd_t pmd)
-  * Currently stuck as a macro due to indirect forward reference to
-  * linux/mmzone.h's __section_mem_map_addr() definition:
-  */
--#define pmd_page(pmd)		\
--	pfn_to_page((pmd_val(pmd) & pmd_pfn_mask(pmd)) >> PAGE_SHIFT)
-+#define pmd_page(pmd)	pfn_to_page(pmd_pfn(pmd))
- 
- /*
-  * the pmd page can be thought of an array like this: pmd_t[PTRS_PER_PMD]
-@@ -647,8 +651,7 @@ static inline unsigned long pud_page_vaddr(pud_t pud)
-  * Currently stuck as a macro due to indirect forward reference to
-  * linux/mmzone.h's __section_mem_map_addr() definition:
-  */
--#define pud_page(pud)		\
--	pfn_to_page((pud_val(pud) & pud_pfn_mask(pud)) >> PAGE_SHIFT)
-+#define pud_page(pud)	pfn_to_page(pud_pfn(pud))
- 
- /* Find an entry in the second-level page table.. */
- static inline pmd_t *pmd_offset(pud_t *pud, unsigned long address)
-@@ -688,7 +691,7 @@ static inline unsigned long pgd_page_vaddr(pgd_t pgd)
-  * Currently stuck as a macro due to indirect forward reference to
-  * linux/mmzone.h's __section_mem_map_addr() definition:
-  */
--#define pgd_page(pgd)		pfn_to_page(pgd_val(pgd) >> PAGE_SHIFT)
-+#define pgd_page(pgd)		pfn_to_page(pgd_pfn(pgd))
- 
- /* to find an entry in a page-table-directory. */
- static inline unsigned long pud_index(unsigned long address)
-diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
-index e3322adaaae0..4f07029de209 100644
---- a/drivers/acpi/sleep.c
-+++ b/drivers/acpi/sleep.c
-@@ -124,6 +124,12 @@ void __init acpi_nvs_nosave_s3(void)
- 	nvs_nosave_s3 = true;
- }
- 
-+static int __init init_nvs_save_s3(const struct dmi_system_id *d)
-+{
-+	nvs_nosave_s3 = false;
-+	return 0;
-+}
-+
- /*
-  * ACPI 1.0 wants us to execute _PTS before suspending devices, so we allow the
-  * user to request that behavior by using the 'acpi_old_suspend_ordering'
-@@ -318,6 +324,27 @@ static struct dmi_system_id acpisleep_dmi_table[] __initdata = {
- 		DMI_MATCH(DMI_PRODUCT_NAME, "K54HR"),
- 		},
- 	},
-+	{
-+	.callback = init_nvs_save_s3,
-+	.ident = "Asus 1025C",
-+	.matches = {
-+		DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-+		DMI_MATCH(DMI_PRODUCT_NAME, "1025C"),
-+		},
-+	},
-+	/*
-+	 * https://bugzilla.kernel.org/show_bug.cgi?id=189431
-+	 * Lenovo G50-45 is a platform later than 2012, but needs nvs memory
-+	 * saving during S3.
-+	 */
-+	{
-+	.callback = init_nvs_save_s3,
-+	.ident = "Lenovo G50-45",
-+	.matches = {
-+		DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+		DMI_MATCH(DMI_PRODUCT_NAME, "80E3"),
-+		},
-+	},
- 	{},
- };
- 
-diff --git a/drivers/isdn/i4l/isdn_common.c b/drivers/isdn/i4l/isdn_common.c
-index e4c43a17b333..8088c34336aa 100644
---- a/drivers/isdn/i4l/isdn_common.c
-+++ b/drivers/isdn/i4l/isdn_common.c
-@@ -1655,13 +1655,7 @@ isdn_ioctl(struct file *file, uint cmd, ulong arg)
- 			} else
- 				return -EINVAL;
- 		case IIOCDBGVAR:
--			if (arg) {
--				if (copy_to_user(argp, &dev, sizeof(ulong)))
--					return -EFAULT;
--				return 0;
--			} else
--				return -EINVAL;
--			break;
-+			return -EINVAL;
- 		default:
- 			if ((cmd & IIOCDRVCTL) == IIOCDRVCTL)
- 				cmd = ((cmd >> _IOC_NRSHIFT) & _IOC_NRMASK) & ISDN_DRVIOCTL_MASK;
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index 8435c3f204c1..a30d68c4b689 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -224,7 +224,7 @@ static void dw8250_set_termios(struct uart_port *p, struct ktermios *termios,
- 	unsigned int rate;
- 	int ret;
- 
--	if (IS_ERR(d->clk) || !old)
-+	if (IS_ERR(d->clk))
- 		goto out;
- 
- 	clk_disable_unprepare(d->clk);
-diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
-index d982c455e18e..2b81939fecd7 100644
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -199,6 +199,8 @@ static void option_instat_callback(struct urb *urb);
- #define DELL_PRODUCT_5800_V2_MINICARD_VZW	0x8196  /* Novatel E362 */
- #define DELL_PRODUCT_5804_MINICARD_ATT		0x819b  /* Novatel E371 */
- 
-+#define DELL_PRODUCT_5821E			0x81d7
-+
- #define KYOCERA_VENDOR_ID			0x0c88
- #define KYOCERA_PRODUCT_KPC650			0x17da
- #define KYOCERA_PRODUCT_KPC680			0x180a
-@@ -1033,6 +1035,8 @@ static const struct usb_device_id option_ids[] = {
- 	{ USB_DEVICE_AND_INTERFACE_INFO(DELL_VENDOR_ID, DELL_PRODUCT_5800_MINICARD_VZW, 0xff, 0xff, 0xff) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(DELL_VENDOR_ID, DELL_PRODUCT_5800_V2_MINICARD_VZW, 0xff, 0xff, 0xff) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(DELL_VENDOR_ID, DELL_PRODUCT_5804_MINICARD_ATT, 0xff, 0xff, 0xff) },
-+	{ USB_DEVICE(DELL_VENDOR_ID, DELL_PRODUCT_5821E),
-+	  .driver_info = RSVD(0) | RSVD(1) | RSVD(6) },
- 	{ USB_DEVICE(ANYDATA_VENDOR_ID, ANYDATA_PRODUCT_ADU_E100A) },	/* ADU-E100, ADU-310 */
- 	{ USB_DEVICE(ANYDATA_VENDOR_ID, ANYDATA_PRODUCT_ADU_500A) },
- 	{ USB_DEVICE(ANYDATA_VENDOR_ID, ANYDATA_PRODUCT_ADU_620UW) },
-diff --git a/drivers/usb/serial/sierra.c b/drivers/usb/serial/sierra.c
-index 07d1ecd564f7..8960a46c83bb 100644
---- a/drivers/usb/serial/sierra.c
-+++ b/drivers/usb/serial/sierra.c
-@@ -790,9 +790,9 @@ static void sierra_close(struct usb_serial_port *port)
- 		kfree(urb->transfer_buffer);
- 		usb_free_urb(urb);
- 		usb_autopm_put_interface_async(serial->interface);
--		spin_lock(&portdata->lock);
-+		spin_lock_irq(&portdata->lock);
- 		portdata->outstanding_urbs--;
--		spin_unlock(&portdata->lock);
-+		spin_unlock_irq(&portdata->lock);
- 	}
- 
- 	sierra_stop_rx_urbs(port);
-diff --git a/include/net/af_vsock.h b/include/net/af_vsock.h
-index e9eb2d6791b3..f7a35fcaaaf6 100644
---- a/include/net/af_vsock.h
-+++ b/include/net/af_vsock.h
-@@ -62,7 +62,8 @@ struct vsock_sock {
- 	struct list_head pending_links;
- 	struct list_head accept_queue;
- 	bool rejected;
--	struct delayed_work dwork;
-+	struct delayed_work connect_work;
-+	struct delayed_work pending_work;
- 	u32 peer_shutdown;
- 	bool sent_request;
- 	bool ignore_connecting_rst;
-@@ -73,7 +74,6 @@ struct vsock_sock {
- 
- s64 vsock_stream_has_data(struct vsock_sock *vsk);
- s64 vsock_stream_has_space(struct vsock_sock *vsk);
--void vsock_pending_work(struct work_struct *work);
- struct sock *__vsock_create(struct net *net,
- 			    struct socket *sock,
- 			    struct sock *parent,
-diff --git a/include/net/llc.h b/include/net/llc.h
-index e8e61d4fb458..82d989995d18 100644
---- a/include/net/llc.h
-+++ b/include/net/llc.h
-@@ -116,6 +116,11 @@ static inline void llc_sap_hold(struct llc_sap *sap)
- 	atomic_inc(&sap->refcnt);
- }
- 
-+static inline bool llc_sap_hold_safe(struct llc_sap *sap)
-+{
-+	return atomic_inc_not_zero(&sap->refcnt);
-+}
-+
- void llc_sap_close(struct llc_sap *sap);
- 
- static inline void llc_sap_put(struct llc_sap *sap)
-diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
-index f52bcbf2e58c..2209fd2ff2e3 100644
---- a/net/bluetooth/sco.c
-+++ b/net/bluetooth/sco.c
-@@ -392,7 +392,8 @@ static void sco_sock_cleanup_listen(struct sock *parent)
-  */
- static void sco_sock_kill(struct sock *sk)
- {
--	if (!sock_flag(sk, SOCK_ZAPPED) || sk->sk_socket)
-+	if (!sock_flag(sk, SOCK_ZAPPED) || sk->sk_socket ||
-+	    sock_flag(sk, SOCK_DEAD))
- 		return;
- 
- 	BT_DBG("sk %p state %d", sk, sk->sk_state);
-diff --git a/net/dccp/ccids/ccid2.c b/net/dccp/ccids/ccid2.c
-index 86a2ed0fb219..161dfcf86126 100644
---- a/net/dccp/ccids/ccid2.c
-+++ b/net/dccp/ccids/ccid2.c
-@@ -228,14 +228,16 @@ static void ccid2_cwnd_restart(struct sock *sk, const u32 now)
- 	struct ccid2_hc_tx_sock *hc = ccid2_hc_tx_sk(sk);
- 	u32 cwnd = hc->tx_cwnd, restart_cwnd,
- 	    iwnd = rfc3390_bytes_to_packets(dccp_sk(sk)->dccps_mss_cache);
-+	s32 delta = now - hc->tx_lsndtime;
- 
- 	hc->tx_ssthresh = max(hc->tx_ssthresh, (cwnd >> 1) + (cwnd >> 2));
- 
- 	/* don't reduce cwnd below the initial window (IW) */
- 	restart_cwnd = min(cwnd, iwnd);
--	cwnd >>= (now - hc->tx_lsndtime) / hc->tx_rto;
--	hc->tx_cwnd = max(cwnd, restart_cwnd);
- 
-+	while ((delta -= hc->tx_rto) >= 0 && cwnd > restart_cwnd)
-+		cwnd >>= 1;
-+	hc->tx_cwnd = max(cwnd, restart_cwnd);
- 	hc->tx_cwnd_stamp = now;
- 	hc->tx_cwnd_used  = 0;
- 
-diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
-index 92df832a1896..591d18785285 100644
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -1145,7 +1145,7 @@ int l2tp_xmit_skb(struct l2tp_session *session, struct sk_buff *skb, int hdr_len
- 
- 	/* Get routing info from the tunnel socket */
- 	skb_dst_drop(skb);
--	skb_dst_set(skb, dst_clone(__sk_dst_check(sk, 0)));
-+	skb_dst_set(skb, sk_dst_check(sk, 0));
- 
- 	inet = inet_sk(sk);
- 	fl = &inet->cork.fl;
-diff --git a/net/llc/llc_core.c b/net/llc/llc_core.c
-index 842851cef698..e896a2c53b12 100644
---- a/net/llc/llc_core.c
-+++ b/net/llc/llc_core.c
-@@ -73,8 +73,8 @@ struct llc_sap *llc_sap_find(unsigned char sap_value)
- 
- 	rcu_read_lock_bh();
- 	sap = __llc_sap_find(sap_value);
--	if (sap)
--		llc_sap_hold(sap);
-+	if (!sap || !llc_sap_hold_safe(sap))
-+		sap = NULL;
- 	rcu_read_unlock_bh();
- 	return sap;
- }
-diff --git a/net/sched/cls_tcindex.c b/net/sched/cls_tcindex.c
-index 403746b20263..040d853f48b9 100644
---- a/net/sched/cls_tcindex.c
-+++ b/net/sched/cls_tcindex.c
-@@ -382,22 +382,20 @@ tcindex_set_parms(struct net *net, struct tcf_proto *tp, unsigned long base,
- 		tcf_bind_filter(tp, &cr.res, base);
- 	}
- 
--	if (old_r)
--		tcf_exts_change(tp, &r->exts, &e);
--	else
--		tcf_exts_change(tp, &cr.exts, &e);
--
- 	if (old_r && old_r != r)
- 		tcindex_filter_result_init(old_r);
- 
- 	oldp = p;
- 	r->res = cr.res;
-+	tcf_exts_change(tp, &r->exts, &e);
-+
- 	rcu_assign_pointer(tp->root, cp);
- 
- 	if (r == &new_filter_result) {
- 		struct tcindex_filter *nfp;
- 		struct tcindex_filter __rcu **fp;
- 
-+		f->result.res = r->res;
- 		tcf_exts_change(tp, &f->result.exts, &r->exts);
- 
- 		fp = cp->h + (handle % cp->hash);
-diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
-index 60324f7c72bd..7f1d166ce612 100644
---- a/net/vmw_vsock/af_vsock.c
-+++ b/net/vmw_vsock/af_vsock.c
-@@ -430,14 +430,14 @@ static int vsock_send_shutdown(struct sock *sk, int mode)
- 	return transport->shutdown(vsock_sk(sk), mode);
- }
- 
--void vsock_pending_work(struct work_struct *work)
-+static void vsock_pending_work(struct work_struct *work)
- {
- 	struct sock *sk;
- 	struct sock *listener;
- 	struct vsock_sock *vsk;
- 	bool cleanup;
- 
--	vsk = container_of(work, struct vsock_sock, dwork.work);
-+	vsk = container_of(work, struct vsock_sock, pending_work.work);
- 	sk = sk_vsock(vsk);
- 	listener = vsk->listener;
- 	cleanup = true;
-@@ -477,7 +477,6 @@ out:
- 	sock_put(sk);
- 	sock_put(listener);
- }
--EXPORT_SYMBOL_GPL(vsock_pending_work);
- 
- /**** SOCKET OPERATIONS ****/
- 
-@@ -576,6 +575,8 @@ static int __vsock_bind(struct sock *sk, struct sockaddr_vm *addr)
- 	return retval;
- }
- 
-+static void vsock_connect_timeout(struct work_struct *work);
-+
- struct sock *__vsock_create(struct net *net,
- 			    struct socket *sock,
- 			    struct sock *parent,
-@@ -618,6 +619,8 @@ struct sock *__vsock_create(struct net *net,
- 	vsk->sent_request = false;
- 	vsk->ignore_connecting_rst = false;
- 	vsk->peer_shutdown = 0;
-+	INIT_DELAYED_WORK(&vsk->connect_work, vsock_connect_timeout);
-+	INIT_DELAYED_WORK(&vsk->pending_work, vsock_pending_work);
- 
- 	psk = parent ? vsock_sk(parent) : NULL;
- 	if (parent) {
-@@ -1094,7 +1097,7 @@ static void vsock_connect_timeout(struct work_struct *work)
- 	struct sock *sk;
- 	struct vsock_sock *vsk;
- 
--	vsk = container_of(work, struct vsock_sock, dwork.work);
-+	vsk = container_of(work, struct vsock_sock, connect_work.work);
- 	sk = sk_vsock(vsk);
- 
- 	lock_sock(sk);
-@@ -1195,9 +1198,7 @@ static int vsock_stream_connect(struct socket *sock, struct sockaddr *addr,
- 			 * timeout fires.
- 			 */
- 			sock_hold(sk);
--			INIT_DELAYED_WORK(&vsk->dwork,
--					  vsock_connect_timeout);
--			schedule_delayed_work(&vsk->dwork, timeout);
-+			schedule_delayed_work(&vsk->connect_work, timeout);
- 
- 			/* Skip ahead to preserve error code set above. */
- 			goto out_wait;
-diff --git a/net/vmw_vsock/vmci_transport.c b/net/vmw_vsock/vmci_transport.c
-index 662bdd20a748..589c8b9908a5 100644
---- a/net/vmw_vsock/vmci_transport.c
-+++ b/net/vmw_vsock/vmci_transport.c
-@@ -1099,8 +1099,7 @@ static int vmci_transport_recv_listen(struct sock *sk,
- 	vpending->listener = sk;
- 	sock_hold(sk);
- 	sock_hold(pending);
--	INIT_DELAYED_WORK(&vpending->dwork, vsock_pending_work);
--	schedule_delayed_work(&vpending->dwork, HZ);
-+	schedule_delayed_work(&vpending->pending_work, HZ);
- 
- out:
- 	return err;
-diff --git a/sound/core/memalloc.c b/sound/core/memalloc.c
-index f05cb6a8cbe0..78ffe445d775 100644
---- a/sound/core/memalloc.c
-+++ b/sound/core/memalloc.c
-@@ -239,16 +239,12 @@ int snd_dma_alloc_pages_fallback(int type, struct device *device, size_t size,
- 	int err;
- 
- 	while ((err = snd_dma_alloc_pages(type, device, size, dmab)) < 0) {
--		size_t aligned_size;
- 		if (err != -ENOMEM)
- 			return err;
- 		if (size <= PAGE_SIZE)
- 			return -ENOMEM;
--		aligned_size = PAGE_SIZE << get_order(size);
--		if (size != aligned_size)
--			size = aligned_size;
--		else
--			size >>= 1;
-+		size >>= 1;
-+		size = PAGE_SIZE << get_order(size);
- 	}
- 	if (! dmab->area)
- 		return -ENOMEM;
-diff --git a/sound/core/seq/seq_virmidi.c b/sound/core/seq/seq_virmidi.c
-index ef494ffc1369..975a7c939d2f 100644
---- a/sound/core/seq/seq_virmidi.c
-+++ b/sound/core/seq/seq_virmidi.c
-@@ -163,6 +163,7 @@ static void snd_virmidi_output_trigger(struct snd_rawmidi_substream *substream,
- 	int count, res;
- 	unsigned char buf[32], *pbuf;
- 	unsigned long flags;
-+	bool check_resched = !in_atomic();
- 
- 	if (up) {
- 		vmidi->trigger = 1;
-@@ -200,6 +201,15 @@ static void snd_virmidi_output_trigger(struct snd_rawmidi_substream *substream,
- 					vmidi->event.type = SNDRV_SEQ_EVENT_NONE;
- 				}
- 			}
-+			if (!check_resched)
-+				continue;
-+			/* do temporary unlock & cond_resched() for avoiding
-+			 * CPU soft lockup, which may happen via a write from
-+			 * a huge rawmidi buffer
-+			 */
-+			spin_unlock_irqrestore(&substream->runtime->lock, flags);
-+			cond_resched();
-+			spin_lock_irqsave(&substream->runtime->lock, flags);
- 		}
- 	out:
- 		spin_unlock_irqrestore(&substream->runtime->lock, flags);
-diff --git a/sound/pci/cs5535audio/cs5535audio.h b/sound/pci/cs5535audio/cs5535audio.h
-index 0579daa62215..425d1b664029 100644
---- a/sound/pci/cs5535audio/cs5535audio.h
-+++ b/sound/pci/cs5535audio/cs5535audio.h
-@@ -66,9 +66,9 @@ struct cs5535audio_dma_ops {
- };
- 
- struct cs5535audio_dma_desc {
--	u32 addr;
--	u16 size;
--	u16 ctlreserved;
-+	__le32 addr;
-+	__le16 size;
-+	__le16 ctlreserved;
- };
- 
- struct cs5535audio_dma {
-diff --git a/sound/pci/cs5535audio/cs5535audio_pcm.c b/sound/pci/cs5535audio/cs5535audio_pcm.c
-index 9c2dc911d8d7..709f1c584d3e 100644
---- a/sound/pci/cs5535audio/cs5535audio_pcm.c
-+++ b/sound/pci/cs5535audio/cs5535audio_pcm.c
-@@ -158,8 +158,8 @@ static int cs5535audio_build_dma_packets(struct cs5535audio *cs5535au,
- 	lastdesc->addr = cpu_to_le32((u32) dma->desc_buf.addr);
- 	lastdesc->size = 0;
- 	lastdesc->ctlreserved = cpu_to_le16(PRD_JMP);
--	jmpprd_addr = cpu_to_le32(lastdesc->addr +
--				  (sizeof(struct cs5535audio_dma_desc)*periods));
-+	jmpprd_addr = (u32)dma->desc_buf.addr +
-+		sizeof(struct cs5535audio_dma_desc) * periods;
- 
- 	dma->substream = substream;
- 	dma->period_bytes = period_bytes;
-diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-index d0b55c866370..cabccb10210e 100644
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -2069,7 +2069,7 @@ out_free:
-  */
- static struct snd_pci_quirk power_save_blacklist[] = {
- 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
--	SND_PCI_QUIRK(0x1849, 0x0c0c, "Asrock B85M-ITX", 0),
-+	SND_PCI_QUIRK(0x1849, 0xc892, "Asrock B85M-ITX", 0),
- 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
- 	SND_PCI_QUIRK(0x1043, 0x8733, "Asus Prime X370-Pro", 0),
- 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1572975 */
-diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
-index cb19af145f46..a1a3ce8c3f56 100644
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -205,6 +205,7 @@ static void cx_auto_reboot_notify(struct hda_codec *codec)
- 	struct conexant_spec *spec = codec->spec;
- 
- 	switch (codec->core.vendor_id) {
-+	case 0x14f12008: /* CX8200 */
- 	case 0x14f150f2: /* CX20722 */
- 	case 0x14f150f4: /* CX20724 */
- 		break;
-@@ -212,13 +213,14 @@ static void cx_auto_reboot_notify(struct hda_codec *codec)
- 		return;
- 	}
- 
--	/* Turn the CX20722 codec into D3 to avoid spurious noises
-+	/* Turn the problematic codec into D3 to avoid spurious noises
- 	   from the internal speaker during (and after) reboot */
- 	cx_auto_turn_eapd(codec, spec->num_eapds, spec->eapds, false);
- 
- 	snd_hda_codec_set_power_to_all(codec, codec->core.afg, AC_PWRST_D3);
- 	snd_hda_codec_write(codec, codec->core.afg, 0,
- 			    AC_VERB_SET_POWER_STATE, AC_PWRST_D3);
-+	msleep(10);
- }
- 
- static void cx_auto_free(struct hda_codec *codec)
-diff --git a/sound/pci/vx222/vx222_ops.c b/sound/pci/vx222/vx222_ops.c
-index 8e457ea27f89..1997bb048d8b 100644
---- a/sound/pci/vx222/vx222_ops.c
-+++ b/sound/pci/vx222/vx222_ops.c
-@@ -275,7 +275,7 @@ static void vx2_dma_write(struct vx_core *chip, struct snd_pcm_runtime *runtime,
- 		length >>= 2; /* in 32bit words */
- 		/* Transfer using pseudo-dma. */
- 		for (; length > 0; length--) {
--			outl(cpu_to_le32(*addr), port);
-+			outl(*addr, port);
- 			addr++;
- 		}
- 		addr = (u32 *)runtime->dma_area;
-@@ -285,7 +285,7 @@ static void vx2_dma_write(struct vx_core *chip, struct snd_pcm_runtime *runtime,
- 	count >>= 2; /* in 32bit words */
- 	/* Transfer using pseudo-dma. */
- 	for (; count > 0; count--) {
--		outl(cpu_to_le32(*addr), port);
-+		outl(*addr, port);
- 		addr++;
- 	}
- 
-@@ -313,7 +313,7 @@ static void vx2_dma_read(struct vx_core *chip, struct snd_pcm_runtime *runtime,
- 		length >>= 2; /* in 32bit words */
- 		/* Transfer using pseudo-dma. */
- 		for (; length > 0; length--)
--			*addr++ = le32_to_cpu(inl(port));
-+			*addr++ = inl(port);
- 		addr = (u32 *)runtime->dma_area;
- 		pipe->hw_ptr = 0;
- 	}
-@@ -321,7 +321,7 @@ static void vx2_dma_read(struct vx_core *chip, struct snd_pcm_runtime *runtime,
- 	count >>= 2; /* in 32bit words */
- 	/* Transfer using pseudo-dma. */
- 	for (; count > 0; count--)
--		*addr++ = le32_to_cpu(inl(port));
-+		*addr++ = inl(port);
- 
- 	vx2_release_pseudo_dma(chip);
- }
-diff --git a/sound/pcmcia/vx/vxp_ops.c b/sound/pcmcia/vx/vxp_ops.c
-index 56aa1ba73ccc..49a883341eff 100644
---- a/sound/pcmcia/vx/vxp_ops.c
-+++ b/sound/pcmcia/vx/vxp_ops.c
-@@ -375,7 +375,7 @@ static void vxp_dma_write(struct vx_core *chip, struct snd_pcm_runtime *runtime,
- 		length >>= 1; /* in 16bit words */
- 		/* Transfer using pseudo-dma. */
- 		for (; length > 0; length--) {
--			outw(cpu_to_le16(*addr), port);
-+			outw(*addr, port);
- 			addr++;
- 		}
- 		addr = (unsigned short *)runtime->dma_area;
-@@ -385,7 +385,7 @@ static void vxp_dma_write(struct vx_core *chip, struct snd_pcm_runtime *runtime,
- 	count >>= 1; /* in 16bit words */
- 	/* Transfer using pseudo-dma. */
- 	for (; count > 0; count--) {
--		outw(cpu_to_le16(*addr), port);
-+		outw(*addr, port);
- 		addr++;
- 	}
- 	vx_release_pseudo_dma(chip);
-@@ -417,7 +417,7 @@ static void vxp_dma_read(struct vx_core *chip, struct snd_pcm_runtime *runtime,
- 		length >>= 1; /* in 16bit words */
- 		/* Transfer using pseudo-dma. */
- 		for (; length > 0; length--)
--			*addr++ = le16_to_cpu(inw(port));
-+			*addr++ = inw(port);
- 		addr = (unsigned short *)runtime->dma_area;
- 		pipe->hw_ptr = 0;
- 	}
-@@ -425,12 +425,12 @@ static void vxp_dma_read(struct vx_core *chip, struct snd_pcm_runtime *runtime,
- 	count >>= 1; /* in 16bit words */
- 	/* Transfer using pseudo-dma. */
- 	for (; count > 1; count--)
--		*addr++ = le16_to_cpu(inw(port));
-+		*addr++ = inw(port);
- 	/* Disable DMA */
- 	pchip->regDIALOG &= ~VXP_DLG_DMAREAD_SEL_MASK;
- 	vx_outb(chip, DIALOG, pchip->regDIALOG);
- 	/* Read the last word (16 bits) */
--	*addr = le16_to_cpu(inw(port));
-+	*addr = inw(port);
- 	/* Disable 16-bit accesses */
- 	pchip->regDIALOG &= ~VXP_DLG_DMA16_SEL_MASK;
- 	vx_outb(chip, DIALOG, pchip->regDIALOG);
+T24gVHVlLCAyMDE4LTA4LTIxIGF0IDE5OjQyIC0wMzAwLCBGYWJpbyBFc3RldmFtIHdyb3RlOg0K
+PiBIaSBMZW9uYXJkLA0KPiANCj4gT24gVHVlLCBBdWcgMjEsIDIwMTggYXQgNDozNCBQTSwgTGVv
+bmFyZCBDcmVzdGV6DQo+IDxsZW9uYXJkLmNyZXN0ZXpAbnhwLmNvbT4gd3JvdGU6DQo+IA0KPiA+
+IE1vcmUgY29uY3JldGVseSBvbiA2cXAtc2RiIGJsYW5raW5nIHRoZSBkaXNwbGF5IGhhcHBlbnMg
+bGlrZSB0aGlzOg0KPiA+ICAqIGlteF9sZGJfZW5jb2Rlcl9kaXNhYmxlIHN3aXRjaGVzIGlwdTFf
+ZGkwX3NlbCB0byBpcHUxX2RpMF9wcmUgZnJvbSBsZGJfZGkxX3BvZGYNCj4gPiAgKiByZXBhcmVu
+dGluZyB0byBpcHUxX2RpMF9wcmUgZW5hYmxlcyBpdCBhbmQgaXRzIHBhcmVudHMgdXAgdG8gcGxs
+NQ0KPiA+ICAqIHBvc3NpYmx5IGdsaXRjaHkgbXV4aW5nDQo+ID4gICogaXB1X2RpX2Rpc2FibGUg
+ZGlzYWJsZXMgaXB1MV9kaTAgKGFuZCBwYXJlbnRzLCB1cCB0byBwbGw1KQ0KDQo+IFdlIGhhdmUg
+YWxyZWFkeSB0YWtlbiBjYXJlIG9mIGl0IGluIHRoZXNlIGNvbW1pdHM6DQo+ICAgICBjbGs6IGlt
+eDY6IEZpeCBwcm9jZWR1cmUgdG8gc3dpdGNoIHRoZSBwYXJlbnQgb2YgTERCX0RJX0NMSw0KPiAg
+ICAgY2xrOiBpbXg2OiBNYWtlIHRoZSBMREJfREkwIGFuZCBMREJfREkxIGNsb2NrcyByZWFkLW9u
+bHkNCg0KVGhhdCdzIGZvciBsZGJfZGl7MCwxfV9zZWwsIHRoaXMgaXMgZm9yIGlwdXsxLDJ9X2Rp
+ezAsMX1fc2VsLg0KDQpPbiBpbXg2cSB0aGUgbGRiX2RpezAsMX1fc2VsIG11eCBoYXMgYW4gaW1w
+cm9wZXJseSBwbGFjZWQgZ2F0ZSBhbmQgYQ0Kc3BlY2lhbCBzd2l0Y2ggcHJvY2VkdXJlIG5lZWRz
+IHRvIGJlIHBlcmZvcm1lZCBhdCBib290IHRpbWUuIFRoaXMNCmRlc2lnbiB3YXMgZml4ZWQgb24g
+NnFwIGJ5IG1vdmluZyB0aGUgbGRiX2RpezAsMX0gZ2F0ZSBpbW1lZGlhdGVseQ0KYWZ0ZXIgdGhl
+IG11eC4gTXkgdGVzdHMgYXJlIG9uIDZxcC4NCg0KRm9yIGlwdXsxLDJ9X2RpezAsMX1fc2VsIHRo
+ZSBpcHV7MSwyfV9kaXswLDF9IGdhdGUgY2FuIGJlIHVzZWQgb24gYWxsDQpjaGlwcywgaXQncyBq
+dXN0IHRoYXQgdGhlIGRybSBkcml2ZXIgZG9lc24ndCBkbyB0aGlzLiBBZGRpbmcgdGhlDQpDTEtf
+U0VUX1JBVEVfUEFSRU5UIGZsYWcgZXhwb3NlcyB0aGUgaXNzdWUgYnkgcmV0dXJuaW5nIGVycm9y
+cy4NCg0KPiBJIHRoaW5rIHdlIHNob3VsZCBhbHNvIHRha2UgY2FyZSBvZiB0aGUgb3RoZXIgZ2xp
+dGNoeSBtdXhlcyBhcw0KPiB5b3UgcHJvcG9zZSBoZXJlLg0KPg0KPiBIYXZlIHlvdSBzZWVuIHN1
+Y2ggZ2xpdGNoIGlzc3VlIGluIHByYWN0aWNlIHdpdGggdGhlIExEQiBjbG9ja3M/DQoNCklmIEkg
+cnVuICJ3aGlsZSB0cnVlOyBkbyBydGN3YWtlIC1tIG1lbSAtcyA1OyBkb25lIiBpdCB3aWxsIGhh
+bmcgaW4gfjMwDQptaW51dGVzIGJlY2F1c2UgdGhlICJzdXNwZW5kIGRldmljZXMiIHRha2VzIHRv
+byBsb25nIGFuZCBSVEMgYWxhcm0NCmV4cGlyZXMuIEkgdHJhY2tlZCB0aGlzIGRvd24gdG8gdGhl
+IGNsa19zZXRfcGFyZW50IGNhbGwgaW5zaWRlDQppbXhfbGRiX2VuY29kZXJfZGlzYWJsZTogc29t
+ZXRpbWVzIHRoaXMgdGFrZXMgbWFueSBzZWNvbmRzLg0KDQpBcyBmYXIgYXMgSSBjYW4gdGVsbCB0
+aGlzIGxpdmUgcmVwYXJlbnRpbmcgaXMgdW5zYWZlIChSTSBjbGFpbXMNCmdsaXRjaGVzIGFyZSBw
+b3NzaWJsZSkgYW5kIG5vdCB1c2VmdWwgKHdlJ3JlIGRlYWN0aXZhdGluZyB0aGUgZGlzcGxheQ0K
+YW55d2F5KS4gSG93ZXZlciBJJ20gbm90IHN1cmUgdGhpcyBjYW4gYmUgYmxhbWVkIG9uIGEgImds
+aXRjaCIuDQoNCldoYXQgc2VlbXMgdG8gYmUgaGFwcGVuaW5nIGlzIHRoYXQgdGhpcyB0cmlnZ2Vy
+cyB0aGUgZW5hYmxpbmcgb2YgcGxsNQ0KKHllcywgb24gZGlzYWJsZSkgYW5kIHRoZSB1c2xlZXAg
+ZnJvbSBjbGtfcGxsdjNfd2FpdF9sb2NrIHRha2VzIGZhciB0b28NCm11Y2ggdGltZSB0byByZXR1
+cm4uIFRoaXMgbWlnaHQgYmUgYW4gdW5yZWxhdGVkIHRpbWVrZWVwaW5nIGlzc3VlLCBJJ2xsDQps
+b29rIGludG8gdGhpcyBmdXJ0aGVyLg0KDQpBY2NvcmRpbmcgdG8gdGhlIFJNIHRoaXMgcmVwYXJl
+bnRpbmcgaXMgdW5zYWZlIGFueXdheSBzbyB3ZSBzaG91bGQNCmF2b2lkIGl0LCBwcm9iYWJseSBi
+eSBkaXNhYmxpbmcgaXB1X2RpIHNvb25lci4NCg0KLS0NClJlZ2FyZHMsDQpMZW9uYXJkDQo=
