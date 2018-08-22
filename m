@@ -2,87 +2,120 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC92C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:08:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C829CC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:10:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E4AC214DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:08:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F7BD214AB
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:10:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XVm80Tbv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E4AC214DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qIWeXFq+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F7BD214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbeHVMcd (ORCPT
+        id S1728538AbeHVMd7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 08:32:33 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:48482 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728208AbeHVMcc (ORCPT
+        Wed, 22 Aug 2018 08:33:59 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:58022 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728208AbeHVMd7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 08:32:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2MlIghxPQNJMxSSvYcJQ6trD5NkfV7M80jjYoTVNm1k=; b=XVm80Tbv0ALcd0XUwYMtmRmWR
-        3QXLNvlPIBBwbxoKRPeugLbDxPOWJ0qp8cBMXWy4k8SIu2HQl7kEL2ikye5jMZxJJu8K/RtFVcvUY
-        Nu9W5GMNJFDe7i5ESrjoV1PDaZnr7g46L7JRq0NzhAZA3uP2A0oHRxcFxQAdbU0FVdrMmyh9zU7OT
-        mNFWL2/P/B+QJYv6QmxqRdguMfTMAxWpYEt0AeIjC6Mv0CdfKeSdFWs81aQNa5hJpCx8J/TH1neeP
-        OCQRkcYDoGFifXylADdq3j30/SFYpJnPkuG/5t/A17O1qIW3HOPAQFSx6HdDCd6/TdCE4JtFtSQL7
-        7w0vdWaDw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fsP7p-0007D0-AZ; Wed, 22 Aug 2018 09:08:25 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id EF2622025D75D; Wed, 22 Aug 2018 11:08:23 +0200 (CEST)
-Date:   Wed, 22 Aug 2018 11:08:23 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     syzbot <syzbot+1f56df64bfb3c29dde6f@syzkaller.appspotmail.com>
-Cc:     dvhart@infradead.org, hpa@zytor.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        pbonzini@redhat.com, rkrcmar@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Subject: Re: general protection fault in finish_task_switch (2)
-Message-ID: <20180822090823.GT24124@hirez.programming.kicks-ass.net>
-References: <00000000000035c2ed057315bf85@google.com>
- <0000000000006e87360573f8b328@google.com>
+        Wed, 22 Aug 2018 08:33:59 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7M8xDRb169243;
+        Wed, 22 Aug 2018 09:09:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=j1DfNoQRaxDjNwEb8W13966dnIjj8JR3AyfzrVwW6Zo=;
+ b=qIWeXFq+8YlQ7+z9L3fYWt0OJTLe5LpYqSyqrRqAhWsCZ2RsTPWxxNT37IKA+UVOJxj2
+ arM307f3FmCMZwFjXIxmtNeOM5UZooPzVo/ExIYisRTzak9uqsJzuM9eODV+25OJS24Y
+ eOiZsekRJNtxzsXqXoQOQup3FspkyJPOr58FbN59kAnfk9wnQhxj+UV+GIRqaYJ6ytCa
+ kc9UW9Ei+iSOQCtcY6uPwqXd35jsoyxnAATyzx7aZSXZvLdrJWoQFAsiqJk3spuxrK0R
+ JDsVlh6WXW1UZYcBlFApcleDNv6qAXCOMPHoH9xhNAYtFHmkpaKuN3oxqO7gfNJmYmuK Lw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2kxbdq15ce-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 Aug 2018 09:09:46 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7M99jLk004444
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 Aug 2018 09:09:45 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7M99i3t022679;
+        Wed, 22 Aug 2018 09:09:44 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 22 Aug 2018 02:09:43 -0700
+Date:   Wed, 22 Aug 2018 12:09:36 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Nishad Kamdar <nishadkamdar@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        NeilBrown <neil@brown.name>, Joe Perches <joe@perches.com>,
+        Christian =?iso-8859-1?Q?L=FCtke-Stetzkamp?= <christian@lkamp.de>,
+        John Crispin <blogic@openwrt.org>
+Subject: Re: [PATCH v4 1/4] staging: mt7621-mmc: Fix debug macro N_MSG
+Message-ID: <20180822090935.eod5oyodo3xchaxw@mwanda>
+References: <cover.1534923403.git.nishadkamdar@gmail.com>
+ <2313d873f9a940fcdd4f608ffe3c37ec6a5b6e35.1534923403.git.nishadkamdar@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000006e87360573f8b328@google.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <2313d873f9a940fcdd4f608ffe3c37ec6a5b6e35.1534923403.git.nishadkamdar@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8992 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=989
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808220093
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 02:28:02PM -0700, syzbot wrote:
-> syzbot has found a reproducer for the following crash on:
+On Wed, Aug 22, 2018 at 02:04:55PM +0530, Nishad Kamdar wrote:
+> This patch fixes the debug macro N_MSG. Replaces printk with
+> dev_<level> without __func__ or __LINE__ or current->comm and
+> current->pid. Removes the do {} while(0) loop for the single
+> statement macro. Issue found by checkpatch.
 > 
-> HEAD commit:    778a33959a8a Merge tag 'please-pull-noboot' of git://git.k..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14a5385a400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=214e4990bd49329f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=1f56df64bfb3c29dde6f
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> userspace arch: i386
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=13ffa561400000
+> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> ---
+>  drivers/staging/mt7621-mmc/dbg.h | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/staging/mt7621-mmc/dbg.h b/drivers/staging/mt7621-mmc/dbg.h
+> index 2f2c56b73987..c56fb896617a 100644
+> --- a/drivers/staging/mt7621-mmc/dbg.h
+> +++ b/drivers/staging/mt7621-mmc/dbg.h
+> @@ -104,13 +104,10 @@ do { \
+>  
+>  #define N_MSG(evt, fmt, args...)
+>  /*
+> -do {    \
+> -    if ((DBG_EVT_##evt) & sd_debug_zone[host->id]) { \
+> -        printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
+> -            host->id,  ##args , __FUNCTION__, __LINE__, current->comm, current->pid);	\
+> -    } \
+> -} while(0)
+> -*/
+> + *if ((DBG_EVT_##evt) & sd_debug_zone[host->id]) { \
+> + *    dev_err(mmc_dev(host->mmc), "%d -> " fmt "\n", host->id, ##args) \
+> + *}
+> + */
 
-FWIW the lack of whitespace between "repro:" and the URL makes it hard
-to copy paste.
+I don't understand what you're trying to do here.  You just commented
+out the macro and turned it into a no-op.  That's not what the patch
+description says.
 
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10023961400000
+To me the original code seems fine.
 
+regards,
+dan carpenter
 
-> RIP: 0010:__fire_sched_in_preempt_notifiers kernel/sched/core.c:2481
-
-That repro thing does something dodgy with KVM, which then corrupts the
-premption notifier thing. I'm sufficiently KVM clueless to not really
-know where to start looking though..
