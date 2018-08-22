@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 263A5C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 04:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F852C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 04:53:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB69E208B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 04:52:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06BF5208B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 04:53:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="cpMTovRn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB69E208B6
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="iZ/pAw3c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06BF5208B6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbeHVIQF (ORCPT
+        id S1728124AbeHVIQR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 04:16:05 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:6054 "EHLO
+        Wed, 22 Aug 2018 04:16:17 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:38818 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726676AbeHVIQF (ORCPT
+        by vger.kernel.org with ESMTP id S1726676AbeHVIQQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 04:16:05 -0400
-Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
-  by relmlie2.idc.renesas.com with ESMTP; 22 Aug 2018 13:52:52 +0900
+        Wed, 22 Aug 2018 04:16:16 -0400
+Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
+  by relmlie2.idc.renesas.com with ESMTP; 22 Aug 2018 13:53:04 +0900
 Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir3.idc.renesas.com (Postfix) with ESMTP id AAAD777C44;
-        Wed, 22 Aug 2018 13:52:52 +0900 (JST)
+        by relmlir4.idc.renesas.com (Postfix) with ESMTP id C74397BABD;
+        Wed, 22 Aug 2018 13:53:04 +0900 (JST)
 X-IronPort-AV: E=Sophos;i="5.53,272,1531753200"; 
-   d="scan'208";a="288721477"
-Received: from mail-ty1jpn01lp0176.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.176])
-  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 22 Aug 2018 13:52:52 +0900
+   d="scan'208";a="288721493"
+Received: from mail-os2jpn01lp0150.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.150])
+  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 22 Aug 2018 13:53:04 +0900
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MpN1PLJHO/mtntfYa89AKn58kG9cIrDf8vjtR9uS+iQ=;
- b=cpMTovRnCzyQLNvF7Q9sJWk4HK1XJzG+6AKJrRtmSSS/5mHEyBSdKG20fPBCkIgNDZh8ew2h9hNSnk77YGYrE3XtIXsB9RmkzWicIWjinzSV9VPtmCVpLjyCn02o/A/eGU7HEc5ax8op2/G2O6tN3KHuzgH3V8+aAOcj9KEqdYE=
+ bh=Y3ik1l5zXdpZ74pv0ALvbYE0WIZtoQjMvN+OAtygCzE=;
+ b=iZ/pAw3cqc1lqpwLkyrmxvbVKi/cH/EM3yBwlkon7wX4UDgNet6FQW4+JH4PeFniVpnu1Lgnn6n2m+YXtgIe14Qfd4xODjijYlIFwGW7Qw0VRLssi8ZLkFLhCkLO06D3CGEbEuKhixzqFFjHj4TTJiGEI5LjlxWcBIvUNQqrQ0Q=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
 Received: from morimoto-PC.renesas.com (211.11.155.130) by
- OSBPR01MB1862.jpnprd01.prod.outlook.com (2603:1096:603:2::15) with Microsoft
+ TY1PR01MB1865.jpnprd01.prod.outlook.com (2603:1096:403:2::21) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1080.13; Wed, 22 Aug 2018 04:52:49 +0000
-Message-ID: <87tvnndn50.wl-kuninori.morimoto.gx@renesas.com>
+ 15.20.1059.21; Wed, 22 Aug 2018 04:53:03 +0000
+Message-ID: <87sh37dn4l.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH 1/2] irqchip: irq-renesas-irqc: convert to SPDX identifiers
+Subject: [PATCH 2/2] irqchip: irq-renesas-intc-irqpin: convert to SPDX identifiers
 User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Marc Zyngier <marc.zyngier@arm.com>,
@@ -58,64 +58,63 @@ In-Reply-To: <87va83dn68.wl-kuninori.morimoto.gx@renesas.com>
 References: <87va83dn68.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-Date:   Wed, 22 Aug 2018 04:52:49 +0000
+Date:   Wed, 22 Aug 2018 04:53:03 +0000
 X-Originating-IP: [211.11.155.130]
-X-ClientProxiedBy: OSAPR01CA0091.jpnprd01.prod.outlook.com
- (2603:1096:604:b::31) To OSBPR01MB1862.jpnprd01.prod.outlook.com
- (2603:1096:603:2::15)
+X-ClientProxiedBy: TYAPR04CA0011.apcprd04.prod.outlook.com
+ (2603:1096:404:15::23) To TY1PR01MB1865.jpnprd01.prod.outlook.com
+ (2603:1096:403:2::21)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 542696a1-88a9-45c6-de53-08d607eb1cb9
+X-MS-Office365-Filtering-Correlation-Id: ab5ac641-2114-4e44-5f38-08d607eb2505
 X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB1862;
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1862;3:0VeQAPk6D1UhmW+OtZn31ehWHFimHkblGJIg0wpETRt9KufAThKdY5XkqDac48ep+DjFadwnw3OyvhievY1dBzDM/sVn0k98EYuZd90OmSdTXzDfejJjsn/Kta8O1qhNMUMeLCG/txTg3S/L1+S22xSItnG+V3jMCLJKYYB3obUKTI7BbkzAGTzYdYfZWqPHI5Q/mMjijugHcRJZD501J3U8ouHX1lXoHOeLj5ZNfCDj8NlBFSbzjbp8/aQNG0EA;25:NXjrC+7gx1xnKPNmJWMf5qGcXBr/KlWL4DO4U06NG33XepzTGNapOlyccXt5e9T7Kg8PdmlZj70ao/76c4JImB4grAhgFSw+i6BPCpd3Dm9QvcgRFvi/i81Pxc3c/I6AQORjxuXxM9IzQZTOvkHUWIuq3Or3TnlNjZtxcpq/NDES5ydXOdLr6K5DRGUXDH+U7x9kO+sPcNLIOXwJmYDmR3TE+ADzKRhsTng9z1kwKv2LL6cXGWkPLSQFWAd/R4YsinjXxK8tCx3f6VRyOqak9OSPv8Ctzq5BK87rHSeHPz/fKs+wLxsHCvOuL0WofynASMT5w/yiDp+ZEl+G1BHoaA==;31:bejLxGTQfcP2lJPR44IOPoi1evu6lWTXSXCYrdG6zf9vpRpeX7Shl2159ZwtWm4TgiOa6Jwi0hZCL6o23OxH4g5xzCAokyIjv+UpbApcyra6OJAxER7TvIYZb76P5MBR6iU+YfWFXdlSwZjnnfGSS/jW5g4M6kDeydefh1KNDUtWL+trICNy/KNwHJvQnCMHHqBFEc3vfWuk6BK9ceOn+9CO9JMqroTwLOi8wPPik+o=
-X-MS-TrafficTypeDiagnostic: OSBPR01MB1862:
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1862;20:oXHrgaWxaWFe+vv1aMxzL5arr8qp1jDfR3H7vzXs0q5UHbI3Whhin0K1dq4MVMSW12+iFdbnL11qK1E3M9PHoODznLfttxzZzptxx5pQ9QkA7YMq0pl7BRcHF1SzXb+wLK53lidXwGBealbvBPI9nVyvCtx5fP7Eq2gpub7yqyy+N7N1iVVqhU3zP4XCOwxsFCrF27TiN5mwqXfCzucjqpZpbuTbaRRAjUnUSZ1ad41ZM/wmxoZlEOoBS1he4NuB6+ZYGHi8/bocpW/LgXGQsoRhNlsGUOwgHoFeyAoervY8fNj4ElDvot1TEU+I3Iv6cpft7TpWFTdp3X7v54iqmQ8XxmN4Qv0jlYllW7z0OQN+mFQKddgW+xGlwkJ5HHkcshhRDcIBfmO5dDa2db+mVZlOvXP44c9hH/30WAWNITX/e+wOG9YaLnY4ujqTkZKvTn2NhtCqxhl75blVaOk3sONPvfyYbS6UMsZg4ybus+gxN8GKXv1GEnKIY1tedYKt;4:IHFl5aa2fii5UJTBw/gC/XMeXIV0ydaD4fc3ASC7A0ldCqeV3kPuOpP5ruYnGlmFXZ6hkGxS3OMQ1Gpwe3Jc35oNksvBaCAtYuzzcVa3JlfqVzuy4cRL68V8EX9McKec/UhdK2z6vnhKAq9AUHrfcsoTVYtspHSz7EkNxaYQDmT/LZqsm1WbA9H4Wrw+6vLRAFZSGrj9qlygZplVCeyLjlTTai1rEAVBnm7BUytPlo3EYCmRc9TEWkyiDNj1tfOhs9vdOf41+dGfLwuQXvKH2g==
-X-Microsoft-Antispam-PRVS: <OSBPR01MB1862B5530486CA72493BE4E4D4300@OSBPR01MB1862.jpnprd01.prod.outlook.com>
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1865;
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;3:EdAH3rdTSySYfRdz/uaOrGPx9ZBtBp5GlxYvAJPAzhuAUmkdM9ECbBVOqPqlDZZcaX6HDxrD0TO1Gkggafa9fhzl3a5scPsW7RzAgjMTilBS89u4Uvr+Au5Cqjc7N5BRHj4wVgZ/VvjJQXr9R4Ewi7UWlvDZ4+DA1ATEpGmmAtmSGEjxpcvNliSSXvvoG3jzh5GUDdr2c4TjKzHstrn1Im1byS+MJf+Ga2Du/lyHDZ+cBaa4sqCse8WQ//L9J8xA;25:OgZmKtEmB2qX8GAB+nhEp3DpR9MSXzxY9po4Y6/0WA7LtqDS2MML5FNYYroK5Wo3uMAt29g+PqT+JZzOv74uNSS8PbGqw0mRhvUFJB/A+j9KNPsLm2EPGnvaNX/x0XKSqXsxDB7dqEzR/RaNKKg+J0EhrhoD0KhHkTdpPqUH6zKWls4cYnuFqha0MoaXvR68SRy1+D0mcQHvrSwYgXTBc3FTUleimLPch8Vm4CKW8IVnKVIaa5J1nTbTQ/JOSxJ59W3BZlxclYmoBLvUvAGLz+f8JxIs8csJK8zj+e2lARNlHkWz9G+0zGHnExUmm9mD9cibFPTofLP7rkstP2IBjA==;31:dA1gJAA6pmO9wLHtdrrL55mMObpXx6IHbYx5K4L9R9o+66/0zgy9q3V2KbAwlWCcO3S97RIujo8w7V3vK423+QjqNwIcHi35I1jn4UgbCEuAUQK/gjL81deor0YOhHTw2XwrVDs95bUf5jynzAEbm2ANFKHVFDi9YO6xJPYY4j/6JvlBI2BD1JwXGJISgtlqLaeCNZzF5/5Mkf+D+FBkDCVNreAXwMBYXbJ2ovEzGV0=
+X-MS-TrafficTypeDiagnostic: TY1PR01MB1865:
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;20:TNj9bhVXEcE22U/Ptlb8ZU6bgvN4FVlm/nhc+HwwAVzdMR4l7ZsEQn9R+T5zA6NArzkZ1yH9+cH/OAI+4+tcUOYKSn1SOlxnmm1wr4KsX8/69MCpzlxHdALa+C8Yxc96qUSsomTlO0xMYgLAqJGKZ063kXvSPI1Zgh+4QTGI2+KlitbxBB8PdD/FodLWQP/Xjd+e3z0yrm6yAJZKmYAZZkcWD2CERhwM/LTJpYAww/DGmPUcXI60yPW2ulm3PeFeiEy1WCLrApbyObeQR0eZuOLW9ACFae3aFIwsTlQTftNc0muL1G3SRQSAk7GzWSeI7tWC8ll6tgQ0u1d/xIIQJENEcESWnOera2jnwC+DfcxiHswizClJpZN3tzH3ycDUkjNFarERs7N6mjORivT1BKE75/bSw/bvFNbkr7A6gSo8yWXtq1Uw14WNZmSNhclMvfJQ3YM6LeOx+NUWzGy2JoYO4OZOYS/D/Abs91RvHSNWQzRFxQ1q+0FY9oioB4Qt;4:9FLqsA6ENB8D1bmju+97AOtVwPz7aat94aoMCqVDpFwBOu2Hld6FzMA+JJuQzxXzZ6lu832jIC29wGQCyNwxoHhkLB4Zv0ci7PB2Uyf4yYQo4/3667OEYi7GpnrhrbAIyN7oXQUWS+Tn7sIaxXaKq3TaBRQTYusFQUEqgSFpwMSeQVyZBwugSfGMLnIFxg7Wj5XWZBt7/+ezAf2yqf9uPmQFfWFig2pxCsNqKyT1Sm52de76Iq3UMfUVpO/brxgeveNhyISVz742ETCHNB2Qbg==
+X-Microsoft-Antispam-PRVS: <TY1PR01MB186512199EE9455F40819BD6D4300@TY1PR01MB1865.jpnprd01.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699016);SRVR:OSBPR01MB1862;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB1862;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:TY1PR01MB1865;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1865;
 X-Forefront-PRVS: 0772E5DAD5
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(136003)(376002)(396003)(366004)(39860400002)(189003)(199004)(25786009)(4326008)(50466002)(6486002)(47776003)(66066001)(53936002)(53416004)(106356001)(105586002)(8676002)(7736002)(305945005)(186003)(26005)(316002)(16586007)(11346002)(69596002)(956004)(16526019)(2906002)(2616005)(54906003)(58126008)(3846002)(110136005)(5660300001)(486006)(478600001)(386003)(81166006)(81156014)(97736004)(7696005)(76176011)(52116002)(86362001)(23726003)(6116002)(476003)(446003)(8936002)(68736007)(36756003)(2004002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB1862;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(136003)(376002)(346002)(396003)(39860400002)(199004)(189003)(5660300001)(2906002)(36756003)(25786009)(81166006)(446003)(8676002)(305945005)(81156014)(11346002)(4326008)(956004)(16526019)(2616005)(186003)(23726003)(3846002)(476003)(97736004)(6116002)(106356001)(105586002)(386003)(486006)(50466002)(7736002)(53416004)(86362001)(53936002)(66066001)(69596002)(110136005)(478600001)(68736007)(6486002)(54906003)(16586007)(58126008)(47776003)(26005)(76176011)(7696005)(52116002)(316002)(8936002)(2004002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1865;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: renesas.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSBPR01MB1862;23:rtMYAs/S2BM4wO/cNbCZWZAzonWhR+6K3TwWMzMTn?=
- =?us-ascii?Q?sImTrSgExhsQn4RSDjz2Rpz0eTfM/iKdiR9+vsd0LovlnIHJFXbBAcYbgpRe?=
- =?us-ascii?Q?rnAL4Z/EuhFPDC3jdFCQr4PIxdKC7W/ypj1wbLJk7bsK+YWyH+MT9Ebto/kX?=
- =?us-ascii?Q?f4VzaMwtNp60k0GCzkL+tfUsslVKA3ipvUvRk+wnysXrP/zdJ7EM8BHRNsSE?=
- =?us-ascii?Q?DJhdDvS+pdh68LSRQVmOVYl2N93BylRrnI7NKjUZnwl/4fdl5Ay0pE71MVkc?=
- =?us-ascii?Q?AcQipNAKWjnXDQh/jWVXp8ZuNvR8oQasHlMeobAoTL5HgsayS2n8W2h8rYsW?=
- =?us-ascii?Q?H9JN5Lbht8kSc5coUnn1Itm5mGtr19MOMLfBIOKCtluag4Axs67us/qFrv1y?=
- =?us-ascii?Q?0IUTdoEI00EGCi3FMThgjwzguAQnedvCM+8bxkfyAqo95sOYCiJO15VuxeJP?=
- =?us-ascii?Q?mHz3y6HEg1A4cfRLGRCXUC9iq2pzQtUPCmxoL99eCVdnCuaDg1bcDnZdrrix?=
- =?us-ascii?Q?OQj/ntINOOl+wWYsLtNWWxIEJ+NOiBfbAlbUvZ4KgbA23B95g4pVOg/fCGVu?=
- =?us-ascii?Q?KTOVsi9hzc+1glURG9ORBcaBGz4tr/aYq5NgyK5l1Y+RaVkvtDKEkwa3Inn+?=
- =?us-ascii?Q?fEh6eMoovkktIO5O6dDAvdLBIRj7+XNQ0jZ9wv7CfCeacIaR/zKjlQdfTAFt?=
- =?us-ascii?Q?JZhIBUBcFQyxKlQLCCESXeUVDcFcp0IyadM4w1ebJRDcGzqWnrPFmEKglItK?=
- =?us-ascii?Q?/tHCGdwI/i/zhw5QpSXv1WeWQ19nYdeAjETP/6vPn9KNVytAEHQYkL+IUhg+?=
- =?us-ascii?Q?Ib9MNtfRVP8SDcOdgqyuGkJLO1RCBVbNsmJ6uvIBKrMFeom7S39YvHYrQGm6?=
- =?us-ascii?Q?MuBg/8BA179NDxpbpPpl5XAqzav26wJ3bCnyhYqRIZw/pTdsJlYk5V8dOeob?=
- =?us-ascii?Q?ssB0REx2sZTqYnrNBPcsg79WhBVlRtqzjwzgrE0hQoslUMtEBCQ/WcU77ZmI?=
- =?us-ascii?Q?bJuAbPbfWhVfS33XQxc1fGrNCzS8ccSJYk7gc9SUyrfcJiBiuKZArNyyduYC?=
- =?us-ascii?Q?hQ8GJebA6K0l36e0u/GNKjWU58ayZGE+lWjD7WT4uinRIPOmXdFqjrJnJoHn?=
- =?us-ascii?Q?a9FRPH1TSn3Y6P5FgfpBZDAjo/KmCXxsqPyDSIZk22vgPLHF9wcde7SMmOT1?=
- =?us-ascii?Q?pTDH2zhhicawEewQh7Bkb5RpvrcrDEH4hYaHxa3OibgcW9xK1qOu4tGpQ=3D?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TY1PR01MB1865;23:q6Dah4+pveIHCjEuyLD6JlqL+BWC3obp0qFCFM4Ht?=
+ =?us-ascii?Q?2Ll02v9e6pIz21bxElf0y4KImZgYPajV1ycVxrIywi4xog58G1I3MGw4sHQ/?=
+ =?us-ascii?Q?nfMrkzWToXeAt13cgKGGdIYYgw9wA8/9cq7aBaVNnIU7W9AJ2C+qQ1/tcjMw?=
+ =?us-ascii?Q?iPczTsFAapsNIoNIDgFiz7edtotzFZ6Qi1I7t72XKUPA9HC7uCiNjOr191id?=
+ =?us-ascii?Q?rTEPfQVHrDNWBlC6zKBBH9pA+OTfh6nCKl82plGlRugjAKYqxaQz+trGMq6+?=
+ =?us-ascii?Q?pAKYXUCDGziYvYRc4p62uhn6Trx8LWPL27CAgaGfNSBNyyObclzBQz3VD6LL?=
+ =?us-ascii?Q?jb9r8yka1YfQJrIwXAq7J1jfOGMy6cQF6ce6vCHkpkJHWHnTXGNTjMfSZEIf?=
+ =?us-ascii?Q?cpDpFx/QUDT9lig95f/FnRbLsAEShtzmH42H/Hp9vEza39oUdlSiZzoYU8Jx?=
+ =?us-ascii?Q?ffW8J1Q3OPtTUAMd7D1z5/qrTrqWKaNInLxLNlVG9OJWkGcPSgt0XJaVNHHf?=
+ =?us-ascii?Q?FNZgsk03O+RHrDPEEx4ycqVfBALqA1O8UyzKWJdV8Ae8RfUlxZCAl299w5iw?=
+ =?us-ascii?Q?KJOpHMNLzGwTCBByocwkEb6uS6MAGohAIVUu3XkDSNmnYuM0JJVyalhn40fA?=
+ =?us-ascii?Q?k6wH90S/vevRPJA26SIPiYR97B9TwYi0DvyeuvyxupD7xOk/DkwzBhrHrcoY?=
+ =?us-ascii?Q?yqUUZMXnkvhmdupZ4JJAg3wNsQ9NuMsW8u8VmQAkHzKlznLDlGJGh0ZE2/iq?=
+ =?us-ascii?Q?/7gUashXgp+BOHY8Jsgtg8ByrgywmX/sH53C8FUNfsk7u0Qz+2qPlV+0JxNb?=
+ =?us-ascii?Q?8fL57yzXzU6J/bV7oz6h2VITogUJ25tggZQkoh2rU9CSMm8mQMmNI/h76X5X?=
+ =?us-ascii?Q?ejATkZ3iWAYIfDxZTwpEZhz03Nvtobk55akWo/NE27dKzdcPqdKKTcAOV50u?=
+ =?us-ascii?Q?z5fUb6cMWLF2CMTwb/OjDEu2LuUFJq2tC0toQrtAHDmiBPUJ1nTPe726oaFs?=
+ =?us-ascii?Q?cHbMhh9L6WtsIhh9syKENaOqhq6y6AbPB5c1GF69hIvOwDZ036fIg1J4Lrj+?=
+ =?us-ascii?Q?S6/xWnqanP5mFLI6x0nozOCSYmIJXwVUfEnerfEvhTE4Ywl2ECpI7jiAzU4g?=
+ =?us-ascii?Q?Rr80i+KUBpkbz4apYkEHh4AWpzBaNQ7eZfr2Fc7VkeIECezSx328hXzsh3tX?=
+ =?us-ascii?Q?8O64W06ydtFWRmXi3EYZgBmIidj8k6g2ZWaYeNC2HrCdfNL6TnSlwfAUQ=3D?=
  =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: Vy+sUKhowPRV7c7TmRaTxdblDaHlSJNn7o3WqgL29W/zJv/mPC6S++53yX2s946FyEHJF3mYc1xnps/4T/DzPsXWqwsR4f2O1cOW8eY3Wu6S/ynPY0ZOn7IyNkbqbCPfm55EfLahhGU5jzdpbEyNh5XVadzmqEg6FWPH/LjpKmJnw8tV8FsSp79MTjVQMf/ZLTGXn/BtqS0vRRc7+U/TtO+8IOot1rtdPHOf9pSlCRk2M9PH4Dda4+8GDfN3xCSPV2X0DnjMQLVEWQREiAuqShGSKf9EYApbGEG8aEn+PoSf4s1OHVuUChpTsMQs8m4lBw5DOOI3k+YSCdq1vGX2CNnzNiwEdf007/DeHiy7cY4=
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1862;6:Vkl1UHDS7qx7O6c2aq0ry7PXquI5v4APPoNoq7Ietjlc5k05rJbQ2sPlhcEY8Vq/wKObrilU7BJ8adEJcjRFZvp8WCXDDNAqAcCtux6jc72qGmTJLltCY4WSwUh76RwJoj6D6ik1curAGx0AZxXAKePgxWt9fkvbGvIh137Hh6KKQA2JIJTesW0M0gCkMPsvqdSxZmt9GaekSTrb6T1CjDiuy6wSY1tTiwi8trxHAqu7qcjB/S9LHJIF60H1E5/86mR3n8ZhZG7nJX8PGSacc0mUtw7QCa6pUteH2v7c9TYoV61J/iSjYCf997pCAXo2tXxLFPw/bL+HJ2p7BOGMyQGIpn6DshOnszlwfjR2iWVE+XZZpL7Na9hGPiiqWvPjTZrobUs2xFTkAOB2LYeCx+K7+RuPq//Mh1h/1QImX9qIGtBG42VhK4hdVotyydbmYuR0zvpATOxh7700dY29fQ==;5:yI0WGRV4oVo985BNMe238DN8ECq15Q4mjWa27OGrWi63YAIsi2nItiZh88xO6IIiko5Iss7X/stT3lIh5gLuNyuG5FpXvS1vP3J16BpADOlBrHKVwGi3gTTyARf+YVQ9RbWDDyA/+feHf5SW0afBvRT0VQLR4cO1K+loWLd9mVY=;7:O3ahj+AdR0jdkkRmYlRzY7Z7Q43UONQ/DorcVxJSQ0tk7gYYykYpna1gc4vUEGj5BOUXaJGWUK8nFLDrxKM9OcwpsoWzAxE9WVSDI3UnwwTx+NA8o4tWtgyYSaezTg4MWpiTjBgIinfkRi32aKd89Mt89G+I/BqwlMOIi8pFooCd4CvWcJIjZzEqjLPJnTNKg5ykyljP2w7vgypHY5Px4Vg/ltYvVKJcpnztMw8PlUImAm8YkqpD5denkZnPot/v
+X-Microsoft-Antispam-Message-Info: RybDxmpA8Y0IUeFAmA2JqmbgAzPQVyaL4kpMcaNHNATXY7oWyRS/YPWwmWzcrCY4hfJe1qJ9lAd+co7VDxpneYIXK5ef7f6QQunnqwOe0HUPQPK+H9fvMvvMShFR/57mbUYmRdVUGzG+XHugZyhE3/r4zN36rH8feGWKVr5uusO7bGXyaqgdomtcjbS/pM74bnr6bX1avUZifzy+XxlFSX2cHKPSzwmSd0307uIQoi4ztTtGGEoXkc9T6Tvf/ZqZCG9fM1hjkodkx5g/kjqM8/aZd85sz1ZzxEwJpvhEePvixMTNfDKjUDa7rhUdrF247Dvwc1+iAsW7l71rFeHXmW2rqRtnqA+UAJ0wJBMDjPY=
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;6:wLIQNAJfrREASPCalhuWfMKI9WGhGLdRwwgCRx0IMJws5JWcIrFMWS/X1NGKvdBkoAs/OfQcoM/zmj7aYZ2cshL6sPfOgdZTUvrr4GHOFT4Kf05DQYyqLA463L4b6ugWvAcBNWG3w7yHQsrwsd48yG/HLVpwk7vWIgP5Nl4QSJHvHHMnEDGbSsB/48IX6p1UxniFGC41XoYnSDwFFbUe3kVXdqo5AJAKyjq4XlGWcdqRTJ+GRXws6BH8kUiNVonV0PUD7VLvQGYtJl2qn4B0KXNKu3g4853H7FeQulAtHc8+ojFoX5h1luR5zWvDmaxnDbqjXV/YAQx4bOOezloP6+zGjorOCKdT9l+KliFq3lnMTaYMwqECdD4sCWjeyDLIWNOHxEi+o6ADrzoJqxuDS3N1GH9OzSV8ygm1xokUWgoPRetQUQA3BVssFX29DhYlmZOf8KYRI90sbDGwQtnrjQ==;5:pMROzun3tLBJBmsrVjRls72ROPd8lcWkPlXCORmsiW6MsCkiq05VqSMZP+C9Yl2g1Rs30Qp554NBnpqyCmVSykfy5K1drb03+Ksz+ERonhEaLz6PkOIi0EIFznlcfRpcx6qcra2009DwdK/FhQUjIyDUlO75ZkeQ/hcspYM8F6E=;7:5wN70ZkRg10KAlWxRrOplxkTx7+pImodKO9LrttHzlBtKwm6owzFKw0qIXne+gjZfLwXqjDVeybOdh5oMFGLOfvBWYs01Wmuvci5y34Q0bHT3l7vg5QM6tXuYjJAGZHvaX9wsvfYolaKLRKVf7fSoQm9aod2XLfoJSl3dN6Q4NumwqpI9jdoY4+9TrMPAyQI0qq6L+X/1bAgVkg3eYOZfZXqpsYwfb1hXVtdIPSrtroNFDgm77L4Vt1cuyG+EoEY
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1862;20:0SGY487/8q84u6QqM4PC0pNkN3XLLnlWpldHH0/0jwvI1Sur5XfbX5VMw8CDQXiAv0N+6G9Ae01e4XbkVprrcxI/XHcnZptez2+dE4szhT0pGWR7JlZgwyqQ8RU3eKZ8YS9DueIHrJM7b9yUBicRmR2TMXRiasUwhVX08cjFOCA=
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;20:JAmRBlLNuAMMdqhYPpmx71vtV951g2muca+XorrhayW+ernoQMfhAKUPabY5VI/nTOoHLO8yNXr7OWXBULPsOc0Y2+6FwBLuF4COdd1IdAbJxvhYusLsPTqygN6DpH9Z2AWAEB6/DFEkCRJFcKCVGd9ElwADvwpr1WMQqLOyyD4=
 X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2018 04:52:49.8815 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 542696a1-88a9-45c6-de53-08d607eb1cb9
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2018 04:53:03.8540 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab5ac641-2114-4e44-5f38-08d607eb2505
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1862
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1865
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
@@ -124,17 +123,17 @@ instead of verbose license text.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 ---
- drivers/irqchip/irq-renesas-irqc.c | 14 +-------------
+ drivers/irqchip/irq-renesas-intc-irqpin.c | 14 +-------------
  1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
-index a4f1112..a449a7c 100644
---- a/drivers/irqchip/irq-renesas-irqc.c
-+++ b/drivers/irqchip/irq-renesas-irqc.c
+diff --git a/drivers/irqchip/irq-renesas-intc-irqpin.c b/drivers/irqchip/irq-renesas-intc-irqpin.c
+index c6e6c9e..8c03952 100644
+--- a/drivers/irqchip/irq-renesas-intc-irqpin.c
++++ b/drivers/irqchip/irq-renesas-intc-irqpin.c
 @@ -1,20 +1,8 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * Renesas IRQC Driver
+  * Renesas INTC External IRQ Pin Driver
   *
   *  Copyright (C) 2013 Magnus Damm
 - *
