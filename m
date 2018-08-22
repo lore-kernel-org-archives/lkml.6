@@ -2,136 +2,218 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 334A6C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3233C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:16:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECEB021480
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:16:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECEB021480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D3EE21480
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:16:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D3EE21480
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728318AbeHVMkB (ORCPT
+        id S1728393AbeHVMkP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 08:40:01 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34584 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726448AbeHVMkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 08:40:01 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B181A20728; Wed, 22 Aug 2018 11:15:56 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-85-9.w90-88.abo.wanadoo.fr [90.88.27.9])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7B16220711;
-        Wed, 22 Aug 2018 11:15:56 +0200 (CEST)
-Date:   Wed, 22 Aug 2018 11:15:57 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     tfiga@chromium.org, posciak@chromium.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        hans.verkuil@cisco.com, acourbot@chromium.org,
-        sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Guenter Roeck <groeck@chromium.org>
-Subject: Re: [PATCH 1/9] CHROMIUM: v4l: Add H264 low-level decoder API
- compound controls.
-Message-ID: <20180822091557.gtnlgoebyv6yttzf@flea>
-References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
- <20180613140714.1686-2-maxime.ripard@bootlin.com>
- <80e1d9cb49c6df06843e49332685f2b401023292.camel@collabora.com>
+        Wed, 22 Aug 2018 08:40:15 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:60128 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726448AbeHVMkO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 08:40:14 -0400
+Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
+        by 156.147.23.53 with ESMTP; 22 Aug 2018 18:16:10 +0900
+X-Original-SENDERIP: 156.147.1.126
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
+        by 156.147.1.126 with ESMTP; 22 Aug 2018 18:16:09 +0900
+X-Original-SENDERIP: 10.177.222.33
+X-Original-MAILFROM: byungchul.park@lge.com
+Date:   Wed, 22 Aug 2018 18:15:47 +0900
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        kernel-team@lge.com
+Subject: Re: [PATCH 1/2] workqueue: skip lockdep wq dependency in
+ cancel_work_sync()
+Message-ID: <20180822091547.GB29722@X58A-UD3R>
+References: <20180821172711.GR3978217@devbig004.ftw2.facebook.com>
+ <1534872621.25523.39.camel@sipsolutions.net>
+ <20180821175550.GS3978217@devbig004.ftw2.facebook.com>
+ <1534879241.25523.44.camel@sipsolutions.net>
+ <20180822024535.GA2414@X58A-UD3R>
+ <1534910543.25523.50.camel@sipsolutions.net>
+ <20180822054731.GB2414@X58A-UD3R>
+ <1534921643.25523.56.camel@sipsolutions.net>
+ <20180822075010.GA29722@X58A-UD3R>
+ <1534924940.25523.70.camel@sipsolutions.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="noua72ythpkh5fic"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <80e1d9cb49c6df06843e49332685f2b401023292.camel@collabora.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1534924940.25523.70.camel@sipsolutions.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Aug 22, 2018 at 10:02:20AM +0200, Johannes Berg wrote:
+> > Sorry I don't catch you. Why is that problem with the example? Please
+> > a deadlock example.
+> 
+> sure, I thought that was easy:
+> 
+> thread 1			thread 2 (wq thread)
+> 
+> common_case = false;
+> queue_work(&my_wq, &work);
+> mutex_lock(&mutex);
+> 
+> flush_workqueue(&my_wq);
+> 				work_function()
+> 				-> mutex_lock(&mutex);
+> 				-> schedule(), wait for mutex
+> wait_for_completion()
+> 
+> -> deadlock - we can't make any forward progress here.
 
---noua72ythpkh5fic
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I see. Now, I understand what you are talking about.
 
-Hi,
+   if (common_case)
+	schedule_and_wait_for_something_that_takes_a_long_time()
 
-On Tue, Aug 21, 2018 at 01:58:38PM -0300, Ezequiel Garcia wrote:
-> On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
-> > From: Pawel Osciak <posciak@chromium.org>
-> >=20
-> > Signed-off-by: Pawel Osciak <posciak@chromium.org>
-> > Reviewed-by: Wu-cheng Li <wuchengli@chromium.org>
-> > Tested-by: Tomasz Figa <tfiga@chromium.org>
-> > [rebase44(groeck): include linux/types.h in v4l2-controls.h]
-> > Signed-off-by: Guenter Roeck <groeck@chromium.org>
-> > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > ---
-> >=20
-> [..]
-> > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videod=
-ev2.h
-> > index 242a6bfa1440..4b4a1b25a0db 100644
-> > --- a/include/uapi/linux/videodev2.h
-> > +++ b/include/uapi/linux/videodev2.h
-> > @@ -626,6 +626,7 @@ struct v4l2_pix_format {
-> >  #define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') /* H264 =
-with start codes */
-> >  #define V4L2_PIX_FMT_H264_NO_SC v4l2_fourcc('A', 'V', 'C', '1') /* H26=
-4 without start codes */
-> >  #define V4L2_PIX_FMT_H264_MVC v4l2_fourcc('M', '2', '6', '4') /* H264 =
-MVC */
-> > +#define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* H26=
-4 parsed slices */
->=20
-> As pointed out by Tomasz, the Rockchip VPU driver expects start codes [1]=
-, so the userspace
-> should be aware of it. Perhaps we could document this pixel format better=
- as:
->=20
-> #define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* H264 p=
-arsed slices with start codes */
+should be:
 
-I'm not sure this is something we want to do at that point. libva
-doesn't give the start code, so this is only going to make the life of
-the sane controllers more difficult. And if you need to have the start
-code and parse it, then you're not so stateless anymore.
+   if (common_case)
+	schedule_and_wait_long_time_so_that_the_work_to_finish()
 
-Maxime
+> > > My argument basically is that the lockdep annotations in the workqueue
+> > > code should be entirely independent of the actual need to call
+> > > wait_for_completion().
+> > 
+> > No. Lockdep annotations always do with either wait_for_something or self
+> > event loop within a single context e.g. fs -> memory reclaim -> fs -> ..
+> 
+> Yes, but I'm saying that we should catch *potential* deadlocks *before*
+> they happen.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Absolutely true about what lockdep does.
 
---noua72ythpkh5fic
-Content-Type: application/pgp-signature; name="signature.asc"
+> See the example above. Clearly, you're actually deadlocking, and
+> obviously (assuming all the wait_for_completion() things work right)
+> lockdep will show why we just deadlocked.
+> 
+> BUT.
+> 
+> This is useless. We want/need lockdep to show *potential* deadlocks,
+> even when they didn't happen. Consider the other case in the above
+> scenario:
+> 
+> thread 1			thread 2 (wq thread)
+> 
+> common_case = true;
+> queue_work(&my_wq, &work);
+> 
+> schedule_and_wait_...();	work_function()
+> 				-> mutex_lock(&mutex);
+> 				-> mutex_unlock()
+> 				done
+> 
+> 
+> mutex_lock(&mutex);
+> flush_workqueue(&my_wq);
+> -> nothing to do, will NOT
+>    call wait_for_completion();
+> 
+> -> no deadlock
 
------BEGIN PGP SIGNATURE-----
+Sure. It's not a deadlock because wait_for_completion() is not involved
+in this path - where wait_for_completion() is necessary to deadlock.
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlt9KcwACgkQ0rTAlCFN
-r3RpKQ//aADj5oLUZV78d16Y1whgjwjeyfX6eBcc6VmFhBvEbu68xB2blBtc0Z+J
-6lo4AisRAK9YAO6WBtfNCL+ZIgWs2RD7PF+HiXah789Ksfdk2bzESGFou7EfS37o
-67v9cxz1tnts7TQbPx5RQlpfb56uuvGZo6fRV+KXYq71hwCgx0IjeGhZc1QsBCdE
-O3b4YiINvlTNQZQZfGUszA4wQ/+gT4OZXmtQu5SpLT2pdre57SmQ8EN9+Z5GthBQ
-vhdhSlLP9L6TmZonQfA0HIPYtLsfPCPtOMbznS9KEqsLuGDJ20dUTLagXTJRVcEJ
-WwgrdiX7OXoUsB6PmfNMr0I7cxWATh3k54OIl2+dSPJANdjIUwWb1s7yBAlYBwWu
-5vg22giYTU7bj4oc5Vfe1MSm6huM7We0ED93Y/L7PWfq9WbDMeeKZMMh7viTg3Tq
-H+L77lsxDwusG+NsWoKpFhq08UOcaOUue+dBPadRILfYEbizccrob+0x82APctWA
-KBDAukqZp6sRRV8Yl0op2trS7W332pnTDv/09zXNEIrUK+yXetrxEIX74aJY4qRF
-M34vgMQdok1/RJRZLo18p39kLyKQB+CZbNtFWC6VK0Ziu+vnEluXXq3wU7c2qIcb
-rwMeeWQP9kNcO04AcJ7E+pAYYMme159CkaktdL4a7hL5eaiORao=
-=tUm/
------END PGP SIGNATURE-----
+Ok. I didn't know what you are talking about but now I got it.
 
---noua72ythpkh5fic--
+You are talking about who knows whether common_case is true or not,
+so we must aggresively consider the case the wait_for_completion()
+so far hasn't been called but may be called in the future.
+
+I think it's a problem of how aggressively we need to check dependencies.
+If we choose the aggressive option, then we could get reported
+aggressively but could not avoid aggresive false positives either.
+I don't want to strongly argue that because it's a problem of policy.
+
+Just, I would consider only waits that actually happened anyway. Of
+course, we gotta consider the waits definitely even if any actual
+deadlock doesn't happen since detecting potantial problem is more
+important than doing on actual ones as you said.
+
+So no big objection to check dependencies aggressively.
+
+> Here we don't have a deadlock, but without the revert we will also not
+
+You misunderstand me. The commit should be reverted or acquire/release
+pairs should be added in both flush functions.
+
+> get a lockdep report. We should though, because we're doing something
+> that's quite clearly dangerous - we simply don't know if the work
+> function will complete before we get to flush_workqueue(). Maybe the
+> work function has an uncommon case itself that takes forever, etc.
+> 
+> > > Therefore, the commit should be reverted regardless of any cross-release
+> > 
+> > No. That is necessary only when the wait_for_completion() cannot be
+> > tracked in checking dependencies automatically by cross-release.
+> 
+> No. See above. We want the annotation regardless of invoking
+> wait_for_completion().
+
+Anyway the annotation should be placed in the path where
+wait_for_completion() might be called. But whether doing it
+regardless of invoking wait_for_completion() or not is a problem of
+policy so I don't care. No big objection whichever you do.
+
+> > It might be the key to understand you, could you explain it more why you
+> > think lockdep annotations are independent of the actual need to call
+> > wait_for_completion()(or wait_for_something_else) hopefully with a
+> > deadlock example?
+> 
+> See above.
+> 
+> You're getting too hung up about a deadlock example. We don't want to
+
+No no. Your example was helpful to understand what you are talking about.
+I asked you for a potential deadlock example.
+
+> have lockdep only catch *actual* deadlocks. The code I wrote clearly has
+> a potential deadlock (sequence given above), but in most cases the code
+> above will *not* deadlock. This is the interesting part we want lockdep
+> to catch.
+
+Absolutly true. You can find my opinion about that in
+Documentation/locking/crossrelease.txt which has been removed because
+crossrelease is strong at detecting *potential* deadlock problems.
+
+> > > work (that I neither know and thus don't understand right now), since it
+> > > makes workqueue code rely on lockdep for the completion, whereas we
+> > 
+> > Using wait_for_completion(), right?
+> 
+> Yes.
+> 
+> > > really want to have annotations here even when we didn't actually need
+> > > to wait_for_completion().
+> > 
+> > Please an example of deadlock even w/o wait_for_completion().
+> 
+> No, here's where you get confused. Clearly, there is no lockdep if we
+> don't do wait_for_completion(). But if you have the code above, lockdep
+> should still warn about the potential deadlock that happens when you
+> *do* get to wait_for_completion(). Lockdep shouldn't be restricted to
+> warning about a deadlock that *actually* happened.
+
+I didn't know if you were talking about this in the previous talk.
+
+Byungchul
+
