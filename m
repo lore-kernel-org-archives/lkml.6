@@ -2,208 +2,143 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E24C4C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 21:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2932C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 21:27:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7643520685
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 21:20:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62ACB208CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 21:27:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="MAXcb7pB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7643520685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="d+aV+3wj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62ACB208CC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbeHWAqw (ORCPT
+        id S1727592AbeHWAyE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 20:46:52 -0400
-Received: from mail-hk2apc01on0093.outbound.protection.outlook.com ([104.47.124.93]:1429
-        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727100AbeHWAqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 20:46:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=byniXtBbjd6TSxt/qvY3V6wML9eteI8dM+DyeG2GRYY=;
- b=MAXcb7pB1nTbf0TyVLA7VtB1ahGvoHiBDG9nHfNU/wctUFsN2RAp/uUG+Vue+MYJxGL58ophmmegpE5OD25zHA+tMTw5oeL08CSWAu9pGhn29WZ3zAbFWzReozt5HG1+i68CTLgvnG2Yxg0eLZDh6uNrOpHEmpZi1q1CYecbejE=
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
- PU1P153MB0188.APCP153.PROD.OUTLOOK.COM (10.170.190.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1101.3; Wed, 22 Aug 2018 21:20:04 +0000
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::b835:d23a:7cda:c4e1]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::b835:d23a:7cda:c4e1%2]) with mapi id 15.20.1101.005; Wed, 22 Aug 2018
- 21:20:04 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "'David S. Miller'" <davem@davemloft.net>,
-        "'netdev@vger.kernel.org'" <netdev@vger.kernel.org>
-CC:     "'devel@linuxdriverproject.org'" <devel@linuxdriverproject.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'olaf@aepfle.de'" <olaf@aepfle.de>,
-        "'apw@canonical.com'" <apw@canonical.com>,
-        "'jasowang@redhat.com'" <jasowang@redhat.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "'marcelo.cerri@canonical.com'" <marcelo.cerri@canonical.com>,
-        Josh Poulson <jopoulso@microsoft.com>
-Subject: [PATCH] hv_netvsc: Fix a deadlock by getting rtnl_lock earlier in
- netvsc_probe()
-Thread-Topic: [PATCH] hv_netvsc: Fix a deadlock by getting rtnl_lock earlier
- in netvsc_probe()
-Thread-Index: AdQ6XXUw8kE8DKeUTSmE1/NI7CjYQw==
-Date:   Wed, 22 Aug 2018 21:20:03 +0000
-Message-ID: <PU1P153MB01692432D92B3A726FBDDC68BF300@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-08-22T21:20:01.1451985Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-originating-ip: [2001:4898:80e8:7:658b:57a7:e905:fc7a]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;PU1P153MB0188;6:uUZR9IV3JhIb2Fw0ZXy2CdRnNB4ejlt/AlQfEVPP8pPN81RyOaiEID7Gy5lOLASn9/q5dFLX1PnM54FXcKaJm3T3T91z9bpyUGR3D60n58Vww8LKmC0qbfxS6jCNxrkNGRzZtkQNFlsDMJEvjuSf02VjeFkRbKnmWzLSZBPQKjVw4K6wV9TS+4Hmd9AmCs4DpYB6HIrSxrTJVSDKvzbXGyZt5rTB3WpWqAly/Xj5/foxzqY22hzHwzI9TH9k+gMLxY4kr2NyQ1j2FpqeBNkX7QwQhQk/qswGT3OqAWnEYY1OEX73OA11BYW7TbSs0vMQNEB2pWpQbus4kqn3BInFywUNCbrrp/byqm5KoJWSXQ4VJ+k+kalj5ICATLqDEo1A66IKoKgNhlom1wzAhX5I1kDdCHXZ+3X/oEk8v0l49DlpgIDQESvS2sUWlfR+/5q3Mzk44lKM9TBzpICxVz0uvQ==;5:tSwkq7nC3odhgEOJ0WYOVJ/j7s5Pib7CwG77Yat1f4U12Mo80Gk7Qz3hJBFtTAksInwQawLbunAls1F95sw0DqnoIbDZS1mQew4mSf+YQmU2rH5S9tq1wV5FDJm0//xGv5mMJIzO85Hll/R48Vc9RfYdsnuv6ZWpEeyoT7tQISk=;7:ToF8WJZFeecl65EghdIWR8ocrFs4CgrVeZjY7G+v+zieBKu+oyZVetkUeISyWzncJKC4Luale3+y0aFBM5xgoJTONka38+GxbmcYTK3sE5xZJlXt2Fiti7CYKf33SM9OE21Bs4H8pfJMKM4i/HHtDLIJK9Uo1ttbs6btUjz6BQaXMM5GJs9wCSpZdqjz2hWDotxEJlax0brLW73RaEPDuppJTe4HWB0mumxnef6ddaVEhIebKicOSom2ZQhtjiSP
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 6e004655-09d6-485d-b652-08d608750701
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:PU1P153MB0188;
-x-ms-traffictypediagnostic: PU1P153MB0188:
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <PU1P153MB0188D8A0C936C92B0D7F23A1BF300@PU1P153MB0188.APCP153.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:PU1P153MB0188;BCL:0;PCL:0;RULEID:;SRVR:PU1P153MB0188;
-x-forefront-prvs: 0772E5DAD5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(39860400002)(396003)(366004)(376002)(51234002)(69234005)(199004)(189003)(305945005)(8936002)(1857600001)(33656002)(478600001)(10090500001)(9686003)(10290500003)(8990500004)(14454004)(107886003)(55016002)(53936002)(7696005)(7736002)(68736007)(106356001)(2906002)(74316002)(105586002)(86612001)(86362001)(25786009)(2900100001)(6436002)(6506007)(5660300001)(81156014)(54906003)(476003)(81166006)(4326008)(22452003)(99286004)(316002)(46003)(486006)(5250100002)(8676002)(6116002)(97736004)(1511001)(14444005)(256004)(102836004)(5024004)(110136005)(491001);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0188;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Tfyr+cmaeegy67xOVcU0eroYXmVcWQnNJUi0QnXgJVI0wvViC+o65Iwvm1e6BF5oqu5OEcxkJ2f0f5mWTTCz8QtZ72nccrbGwI4bNbW51g4nnFuOwYL3coLobpBXsleZ+zEIbL7XHrVlWu8Ivi+6+qkL3/ZtlSmx/bhOtQW+A94shzeasjD3gYpuRGAyhiBB9cbdb70U/+Iom/SLel6ZdoplSHEwtLto/MVLRo0Filz+1VZP5jBY3ftyl6JFt7vrePHu+YtphTAM1LOQMHfPsrhMqL6xkyI7Qb+WVs7Q1MHPtjAjZKTfaoVh+Yi1vD3ebRG6G5E/oYkNMLJ3m/5QKIFFznLaklYWotyI8o4qcLM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 22 Aug 2018 20:54:04 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34160 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727046AbeHWAyD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 20:54:03 -0400
+Received: by mail-lf1-f68.google.com with SMTP id g9-v6so2497631lfh.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 14:27:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Cm+nAL3IIhx6QRZZYR+YGJCmHAXx9DJF+n4BLRzP6dU=;
+        b=d+aV+3wjv3KVmrx0Ry7/8GLpj0tQOudnHMs23HeK63bguB/flgbeU3wpoIk2xipKuZ
+         s+DU3hHcvw55XS5/5737+IDSCsMRvaIoOkmlmfvVze98Do/t1g8PrddMB6aPnfbw2HUd
+         xXu/OBb9wUPO7Pt1zX9g3DZrjJ+7CoJD/QZI+KmuuwxVF+ZFxHh9+UW6ac2FJgl+A8Wp
+         6aCAiYmPNKdyft8POsrXx9XE4s6uLfrbmH5D0HrBijqqHg2eznP6IGb/jqo0q1gf8+pl
+         TuJCM14NdBsasy0tM2J8EJddEcsYDLHggz3JQGugBHn3QwwNByAAb7woyqU48p+UMX+X
+         nu0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Cm+nAL3IIhx6QRZZYR+YGJCmHAXx9DJF+n4BLRzP6dU=;
+        b=fiHFHKAPxb2S5/3bDw3ANIr2X869X9npT6H5BCfnGciRXgUhaTNWahO1qHyWwqPYih
+         yIBcOkkiRWAfJ2HOhVgl51ETOFoj58q5+oJvKWCAIBkSstRXDWTuAReiIHEIfjhEr+Ma
+         u37vPshcywx/kgSpDdZthKW5PaWZk4gvKwAUn7SHXjWbFouXJAi+nmCplxnQ2KpYJHn9
+         IzISj+qVvKbRa2sFWn8Pub9Yy6ncvpLrtXUn6NMEiyMiNZpfLU+a6l6HQhJIRQiTgxLL
+         aCaSDHBWUJZJuzwCLYvm1aKUy2O8UNgLKELdl7VX/WdGb0GWsBTxgs3Q83mAgcgu1dT9
+         PP+g==
+X-Gm-Message-State: APzg51CvlQ68FZFwrhWMAGz1VKxFg6yx9S2nwtbFDO31UJ26OuvZSr8A
+        aocfG7CelygMBeuJNvwUYrlSDJ2738e/uef6Xp/cag4=
+X-Google-Smtp-Source: ANB0VdbnxIbYRyeTFcCFQv+USCLkTTisjGNYT7nTiU6kd0MO0cqVF4/RUDC/ga4sDrAVBXkMQUAtDApO0aR7l1JCC/c=
+X-Received: by 2002:a19:14e6:: with SMTP id 99-v6mr5673367lfu.26.1534973248688;
+ Wed, 22 Aug 2018 14:27:28 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e004655-09d6-485d-b652-08d608750701
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2018 21:20:03.6879
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0188
+References: <20180820123818.27547-1-omosnace@redhat.com> <alpine.DEB.2.21.1808201721350.1551@nanos.tec.linutronix.de>
+ <20180821072114.GC23069@localhost>
+In-Reply-To: <20180821072114.GC23069@localhost>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 22 Aug 2018 17:27:17 -0400
+Message-ID: <CAHC9VhQCB5kB9Vy-TWwu-Z62p2XcPpKwsFLB647=usVM2EE=LA@mail.gmail.com>
+Subject: Re: [RFC PATCH ghak10 v4 0/2] audit: Log modifying adjtimex(2) calls
+To:     mlichvar@redhat.com, omosnace@redhat.com
+Cc:     tglx@linutronix.de, linux-audit@redhat.com, rgb@redhat.com,
+        sgrubb@redhat.com, john.stultz@linaro.org, sboyd@kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 21, 2018 at 3:21 AM Miroslav Lichvar <mlichvar@redhat.com> wrote:
+> > On Mon, 20 Aug 2018, Ondrej Mosnacek wrote:
+> > > @John or other timekeeping/NTP folks: We had a discussion on the audit
+> > > ML on which of the internal timekeeping/NTP variables we should actually
+> > > log changes for. We are only interested in variables that can (directly
+> > > or indirectly) cause noticeable changes to the system clock, but since we
+> > > have only limited understanding of the NTP code, we would like to ask
+> > > you for advice on which variables are security relevant.
+>
+> I guess that mostly depends on whether you consider setting the clock
+> to run faster or slower than real time to be an important event for
+> the audit.
+>
+> > >   - NTP value adjustments:
+> > >     - time_offset (probably important)
+>
+> This can adjust the clock by up to 0.5 seconds per call and also speed
+> it up or slow down by up to about 0.05% (43 seconds per day).
 
-This patch fixes the race between netvsc_probe() and
-rndis_set_subchannel(), which can cause a deadlock.
+This seems worthwhile.
 
-Fixes: 8195b1396ec8 ("hv_netvsc: fix deadlock on hotplug")
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
----
- drivers/net/hyperv/netvsc_drv.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+> > >     - time_freq (maybe not important?)
+>
+> This can speed up or slow down by up to about 0.05%.
 
+This too.
 
-FYI: these are the related 3 paths which show the deadlock:
+> > >     - time_status (likely important, can cause leap second injection)
+>
+> Yes, it can insert/delete leap seconds and it also enables/disables
+> synchronization of the hardware real-time clock.
 
-#1:
-    Workqueue: hv_vmbus_con vmbus_onmessage_work [hv_vmbus]
-    Call Trace:
-     schedule
-     schedule_preempt_disabled
-     __mutex_lock
-     __device_attach
-     bus_probe_device
-     device_add
-     vmbus_device_register
-     vmbus_onoffer
-     vmbus_onmessage_work
-     process_one_work
-     worker_thread
-     kthread
-     ret_from_fork
+This one as well.
 
-#2:
-    schedule
-     schedule_preempt_disabled
-     __mutex_lock
-     netvsc_probe
-     vmbus_probe
-     really_probe
-     __driver_attach
-     bus_for_each_dev
-     driver_attach_async
-     async_run_entry_fn
-     process_one_work
-     worker_thread
-     kthread
-     ret_from_fork
+> > >     - time_maxerror (maybe not important?)
+> > >     - time_esterror (maybe not important?)
+>
+> These two change the error estimates that are reported to applications
+> using ntp_gettime()/adjtimex(). If an application was periodically
+> checking that the clock is synchronized with some specified accuracy
+> and setting the maxerror to a larger value would cause the application
+> to abort, would it be an important event in the audit?
 
-#3:
-    Workqueue: events netvsc_subchan_work [hv_netvsc]
-    Call Trace:
-     schedule
-     rndis_set_subchannel
-     netvsc_subchan_work
-     process_one_work
-     worker_thread
-     kthread
-     ret_from_fork
+Since these don't really affect the time, just the expected error, I'm
+not sure this is important.
 
-Before path #1 finishes, path #2 can start to run, because just before
-the "bus_probe_device(dev);" in device_add() in path #1, there is a line
-"object_uevent(&dev->kobj, KOBJ_ADD);", so systemd-udevd can
-immediately try to load hv_netvsc and hence path #2 can start to run.
+> > >     - time_constant (???)
+>
+> This controls the speed of the clock adjustments that are made when
+> time_offset is set. Probably not important for the audit.
 
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_dr=
-v.c
-index 1121a1ec..4fd14a0 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -2206,6 +2206,16 @@ static int netvsc_probe(struct hv_device *dev,
-=20
- 	memcpy(net->dev_addr, device_info.mac_adr, ETH_ALEN);
-=20
-+	/* We must get rtnl_lock before scheduling nvdev->subchan_work,
-+	 * otherwise netvsc_subchan_work() can get rtnl_lock first and wait
-+	 * all subchannels to show up, but that may not happen because
-+	 * netvsc_probe() can't get rtnl_lock and as a result vmbus_onoffer()
-+	 * -> ... -> device_add() -> ... -> __device_attach() can't get
-+	 * the device lock, so all the subchannels can't be processed --
-+	 * finally netvsc_subchan_work() hangs for ever.
-+	 */
-+	rtnl_lock();
-+
- 	if (nvdev->num_chn > 1)
- 		schedule_work(&nvdev->subchan_work);
-=20
-@@ -2224,7 +2234,6 @@ static int netvsc_probe(struct hv_device *dev,
- 	else
- 		net->max_mtu =3D ETH_DATA_LEN;
-=20
--	rtnl_lock();
- 	ret =3D register_netdevice(net);
- 	if (ret !=3D 0) {
- 		pr_err("Unable to register netdev.\n");
---=20
-2.7.4
+Agreed.  I think we can skip this.
 
+> > >     - time_adjust (sounds important)
+>
+> This is similar to time_freq. It can temporarily speed up or slow down
+> the clock by up to 0.05%.
+
+Like time_freq, we should probably log this too.
+
+> > >     - tick_usec (???)
+>
+> This is a more extreme version of time_freq. It can speed up or slow
+> down the clock by up to 10%.
+
+Let's audit this one too.
+
+-- 
+paul moore
+www.paul-moore.com
