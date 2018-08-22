@@ -2,152 +2,154 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 690F3C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B87C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2890020BEC
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:41:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2890020BEC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 85E8521480
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:42:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85E8521480
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728664AbeHVNFn (ORCPT
+        id S1728686AbeHVNHA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 09:05:43 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:43620 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728462AbeHVNFn (ORCPT
+        Wed, 22 Aug 2018 09:07:00 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:53664 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728315AbeHVNHA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 09:05:43 -0400
-Received: by mail-oi0-f68.google.com with SMTP id b15-v6so2087593oib.10;
-        Wed, 22 Aug 2018 02:41:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=0SLZ7YQ1IsMzNBfqYEKVbawCwQOjcL69Ad2WyMCXXHs=;
-        b=K1qyRphRXCyrnTxjHCXIFDW563cpbjRgG71y11C41IuZWthg+9M9qMe/uwx+E6JuEj
-         RhKHyp9nJOzXqo9eoBPel1TGRGNLAqAhN6nq9atn9T0PSkJs03yW12XNEm09/akOVIx+
-         tjJ0vY4u9vBeEemVT24rGsuJBBiY8w4vgt4riMcowTMjoJOeg5q9u3jNw7bpHeH0zojc
-         +vqKmFZqkTrqTaNl/LZskTI4a36+ApKz5RfNxinQ08lPRd9m983VlByDJGxQwX6sLriF
-         9irZvDZTY+Q1ij9OUr2JATBe1/QXUDHeoEF1PF2WQb0I3NZvNJpVd3dLdPb60wN2MPTl
-         Ip/Q==
-X-Gm-Message-State: APzg51AkVv5awr3nXrjH5xLxWFwr8lxnFuLx4yDYnzqx2HoIGr5wSvG1
-        W7viWxw/Cy6r4LRKK7I5HlFzFadnUVtOhUfcEjI=
-X-Google-Smtp-Source: ANB0VdaiH7xuB0sdBIDlfpQnI3Dl6VSMdOmS3Co70Qt22zuxy/T45KXxmx6S8/kZPjr+dz82+kMQUL7xh5pfhUvDwXM=
-X-Received: by 2002:aca:1719:: with SMTP id j25-v6mr3231580oii.138.1534930895653;
- Wed, 22 Aug 2018 02:41:35 -0700 (PDT)
-MIME-Version: 1.0
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 22 Aug 2018 11:41:24 +0200
-Message-ID: <CAJZ5v0gJYBtH2P3oS-hGxk0p1Vy6jcv-ZzggoDS3PSS+S9k_ng@mail.gmail.com>
-Subject: [GIT PULL] More ACPI updates for v4.19-rc1
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Wed, 22 Aug 2018 09:07:00 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1fsPf7-0007Ix-Av; Wed, 22 Aug 2018 11:42:49 +0200
+Message-ID: <1534930963.25523.87.camel@sipsolutions.net>
+Subject: Re: [PATCH 1/2] workqueue: skip lockdep wq dependency in
+ cancel_work_sync()
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        kernel-team@lge.com
+Date:   Wed, 22 Aug 2018 11:42:43 +0200
+In-Reply-To: <20180822091547.GB29722@X58A-UD3R>
+References: <20180821172711.GR3978217@devbig004.ftw2.facebook.com>
+         <1534872621.25523.39.camel@sipsolutions.net>
+         <20180821175550.GS3978217@devbig004.ftw2.facebook.com>
+         <1534879241.25523.44.camel@sipsolutions.net>
+         <20180822024535.GA2414@X58A-UD3R>
+         <1534910543.25523.50.camel@sipsolutions.net>
+         <20180822054731.GB2414@X58A-UD3R>
+         <1534921643.25523.56.camel@sipsolutions.net>
+         <20180822075010.GA29722@X58A-UD3R>
+         <1534924940.25523.70.camel@sipsolutions.net>
+         <20180822091547.GB29722@X58A-UD3R>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Wed, 2018-08-22 at 18:15 +0900, Byungchul Park wrote:
+> 
+> > thread 1			thread 2 (wq thread)
+> > 
+> > common_case = false;
+> > queue_work(&my_wq, &work);
+> > mutex_lock(&mutex);
+> > 
+> > flush_workqueue(&my_wq);
+> > 				work_function()
+> > 				-> mutex_lock(&mutex);
+> > 				-> schedule(), wait for mutex
+> > wait_for_completion()
+> > 
+> > -> deadlock - we can't make any forward progress here.
+> 
+> I see. Now, I understand what you are talking about.
+> 
+>    if (common_case)
+> 	schedule_and_wait_for_something_that_takes_a_long_time()
+> 
+> should be:
+> 
+>    if (common_case)
+> 	schedule_and_wait_long_time_so_that_the_work_to_finish()
 
-Please pull from the tag
+Fair point.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-4.19-rc1-2
+> Ok. I didn't know what you are talking about but now I got it.
 
-with top-most commit d1f3ab5b13c03b6f32d5379cd3cd5c7e50ce612c
+great.
 
- Merge branch 'acpi-pmic'
+> You are talking about who knows whether common_case is true or not,
+> so we must aggresively consider the case the wait_for_completion()
+> so far hasn't been called but may be called in the future.
 
-on top of commit 2c20443ec221dcb76484b30933593e8ecd836bbd
+Yes.
 
- Merge tag 'acpi-4.19-rc1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+> I think it's a problem of how aggressively we need to check dependencies.
+> If we choose the aggressive option, then we could get reported
+> aggressively but could not avoid aggresive false positives either.
+> I don't want to strongly argue that because it's a problem of policy.
 
-to receive more ACPI updates for 4.19-rc1.
+I don't think you could consider a report from "aggressive reporting" to
+ be a false positive. It's clearly possible that this happens, and once
+you go to a workqueue you basically don't really know your sequencing
+and timing any more.
 
-These update the ACPICA code in the kernel to the most recent
-upstream revision (which includes a regression fix and other
-improvements), make ACPICA clear the status of all ACPI events
-when entering sleep states (to restore the previous behavior)
-and update the ACPI operation region driver for the CrystalCove
-PMIC.
+> Just, I would consider only waits that actually happened anyway. Of
+> course, we gotta consider the waits definitely even if any actual
+> deadlock doesn't happen since detecting potantial problem is more
+> important than doing on actual ones as you said.
+> 
+> So no big objection to check dependencies aggressively.
+> 
+> > Here we don't have a deadlock, but without the revert we will also not
+> 
+> You misunderstand me. The commit should be reverted or acquire/release
+> pairs should be added in both flush functions.
 
-Specifics:
+Ok, I thought you were arguing we shouldn't revert it :)
 
- - Update the ACPICA code in the kernel to upstream revision 20180810
-   including:
-   * Fix for AML parser regression causing it to mishandle opcodes
-     that open a scope upon parse failures (Erik Schmauss).
-   * Fix for a reference counting issue on large systems (Erik
-     Schmauss).
-   * Fix to discard values coming from register reads that have
-     failed (Erik Schmauss).
-   * Two acpiexec fixes (Bob Moore, Erik Schmauss).
-   * Debugger cleanup (Bob Moore).
-   * Cleanup of duplicate table error message (Bob Moore).
-   * Cleanup of hex detection in the utilities (Erik Schmauss).
+I don't know whether to revert or just add the pairs in the flush
+functions, because I can't say I understand what the third part of the
+patch does.
 
- - Make ACPICA clear the status of all ACPI events when entering
-   sleep states again to avoid functional regressions (Rafael Wysocki).
+> Anyway the annotation should be placed in the path where
+> wait_for_completion() might be called.
 
- - Update the ACPI operation region driver for the CrystalCove PMIC
-   to cover all of the known operation region fields (Hans de Goede).
+Yes, it should be called regardless of whether we actually wait or not,
+i.e. before most of the checking in the functions.
 
-Thanks!
+My issue #3 that I outlined is related - we'd like to have lockdep
+understand that if this work was on the WQ it might deadlock, but we
+don't have a way to get the WQ unless the work is scheduled - and in the
+case that it is scheduled we might already hitting the deadlock
+(depending on the order of execution though I guess).
 
+> Absolutly true. You can find my opinion about that in
+> Documentation/locking/crossrelease.txt which has been removed because
+> crossrelease is strong at detecting *potential* deadlock problems.
 
----------------
+Ok, you know what, I'm going to read this now ... hang on........
 
-Bob Moore (4):
-      ACPICA: Update an error message for a duplicate table
-      ACPICA: Debugger: Cleanup interface to the AML disassembler
-      ACPICA: acpiexec: fix a small memory leak regression
-      ACPICA: Update version to 20180810
+I see. You were trying to solve the problem of completions/context
+transfers in lockdep.
 
-Erik Schmauss (7):
-      ACPICA: AML Parser: ignore all exceptions resulting from
-incorrect AML during table load
-      ACPICA: ACPICA: add status check for acpi_hw_read before
-assigning return value
-      ACPICA: Utilities: split hex detection into smaller functions
-      ACPICA: AML Parser: skip opcodes that open a scope upon parse failure
-      ACPICA: acpi_exec: fixing -fi option
-      ACPICA: Reference count: add additional debugging details
-      ACPICA: Reference Counts: increase max to 0x4000 for large servers
+Given the revert of crossrelease though, we can't actually revert your
+patch anyway, and looking at it again I see what you mean by the "name"
+now ...
 
-Hans de Goede (1):
-      ACPI / PMIC: CrystalCove: Extend PMOP support to support all
-possible fields
+So yeah, we should only re-add the two acquire/release pairs. I guess
+I'll make a patch for that, replacing my patch 2.
 
-Rafael J. Wysocki (1):
-      ACPICA: Clear status of all events when entering sleep states
+I'm intrigued by the crossrelease - but that's a separate topic.
 
----------------
-
- drivers/acpi/acpica/aclocal.h      |   1 +
- drivers/acpi/acpica/acnamesp.h     |  17 +++---
- drivers/acpi/acpica/acutils.h      |   2 +
- drivers/acpi/acpica/dbinput.c      |  10 ++++
- drivers/acpi/acpica/dbmethod.c     |   8 +--
- drivers/acpi/acpica/dbxface.c      |  10 +++-
- drivers/acpi/acpica/dsfield.c      |  34 +++++++++++-
- drivers/acpi/acpica/hwregs.c       |   9 ++-
- drivers/acpi/acpica/hwsleep.c      |  11 +---
- drivers/acpi/acpica/nsaccess.c     |  13 +++++
- drivers/acpi/acpica/psloop.c       |  43 ++++++++-------
- drivers/acpi/acpica/tbdata.c       |   4 +-
- drivers/acpi/acpica/utdelete.c     |   7 ++-
- drivers/acpi/acpica/utstrsuppt.c   |  26 ++++++++-
- drivers/acpi/acpica/utstrtoul64.c  |   2 +-
- drivers/acpi/pmic/intel_pmic_crc.c | 109 ++++++++++++++++++++++++++++++++++++-
- include/acpi/acconfig.h            |   2 +-
- include/acpi/acexcep.h             |   6 ++
- include/acpi/acpixf.h              |   2 +-
- 19 files changed, 260 insertions(+), 56 deletions(-)
+johannes
