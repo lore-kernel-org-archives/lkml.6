@@ -2,98 +2,132 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DATE_IN_FUTURE_03_06,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71283C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A30C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33E33217DF
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:19:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33E33217DF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DB18E217BE
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:25:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="Hl++Gupz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB18E217BE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727871AbeHVFmB (ORCPT
+        id S1727604AbeHVFru (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 01:42:01 -0400
-Received: from mga18.intel.com ([134.134.136.126]:53099 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726298AbeHVFmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 01:42:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2018 19:19:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,272,1531810800"; 
-   d="scan'208";a="83404610"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Aug 2018 19:19:18 -0700
-Received: from dazhang1-ssd.sh.intel.com (unknown [10.239.48.163])
-        by linux.intel.com (Postfix) with ESMTP id 95AB55802C8;
-        Tue, 21 Aug 2018 19:19:15 -0700 (PDT)
-From:   Zhang Yi <yi.z.zhang@linux.intel.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, pbonzini@redhat.com,
-        dan.j.williams@intel.com, dave.jiang@intel.com,
-        yu.c.zhang@intel.com, pagupta@redhat.com, david@redhat.com,
-        jack@suse.cz, hch@lst.de
-Cc:     linux-mm@kvack.org, rkrcmar@redhat.com, jglisse@redhat.com,
-        yi.z.zhang@intel.com, Zhang Yi <yi.z.zhang@linux.intel.com>
-Subject: [PATCH V4 4/4] kvm: add a check if pfn is from NVDIMM pmem.
-Date:   Wed, 22 Aug 2018 18:58:10 +0800
-Message-Id: <a4183c0f0adfb6d123599dd306062fd193e83f5a.1534934405.git.yi.z.zhang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1534934405.git.yi.z.zhang@linux.intel.com>
-References: <cover.1534934405.git.yi.z.zhang@linux.intel.com>
+        Wed, 22 Aug 2018 01:47:50 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:45605 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726298AbeHVFru (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 01:47:50 -0400
+Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
+  by relmlie2.idc.renesas.com with ESMTP; 22 Aug 2018 11:25:05 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir1.idc.renesas.com (Postfix) with ESMTP id 619426BAD3;
+        Wed, 22 Aug 2018 11:25:05 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.53,272,1531753200"; 
+   d="scan'208";a="290246626"
+Received: from mail-ty1jpn01lp0179.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.179])
+  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 22 Aug 2018 11:25:03 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=k99BB05b5kw15BGhUGCd+Z3JE5LqALs496mq92Fvse4=;
+ b=Hl++GupzP39GEilte5fBCUsdSKTXPwBL9erYGKZ77p/PV+WOjj4xqyCY0hp7NeMPEHR1GtdBaPNU7sc96MA4vz36J+TVUnUoHPA3JUGxs+344hDoaKBsMZnEeNYMCgX2i53o9aboKnlcmRiehWNPakRBjljgtE1BzkvuXVPAvsQ=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+Received: from morimoto-PC.renesas.com (211.11.155.130) by
+ OSBPR01MB1863.jpnprd01.prod.outlook.com (2603:1096:603:2::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1059.23; Wed, 22 Aug 2018 02:25:02 +0000
+Message-ID: <87a7pff8jq.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH 0/4] clocksource: convert to SPDX for Renesas
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Wed, 22 Aug 2018 02:25:02 +0000
+X-Originating-IP: [211.11.155.130]
+X-ClientProxiedBy: KAWPR01CA0097.jpnprd01.prod.outlook.com
+ (2603:1096:402:c::33) To OSBPR01MB1863.jpnprd01.prod.outlook.com
+ (2603:1096:603:2::16)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ab003d8e-fdc4-425f-e4fa-08d607d6778e
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB1863;
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1863;3:jdArJrOcV3vLHonWGuEF9IqvIBZlSrFqryZ8jzRvrNJEFPz8ZkPr+0rXMCh7T3g1udBzmyNyG3yP+d1BVos3e76Q5300Hd/3kYoovrF0Eycf0UA8dFc4p3/DH4JUVl71GUfJWhOWtX6gls1123suE+MyyyTJX6uHwXO7OP9CFtqJ1E7tlEO+Y1j7Nvrxb6n3QJrn12EZFSAjJ/0jzrbF0N3cgUnCZSDOfun971cHSK0Cu/binG563eHROmQW6FCQ;25:qV40WNjKSwEhnEyqMxxxa4Jm2JL1vvlbRTkHPtM5/MbD88/b9p93Jb5mmZCQ269yOKQsaTTMU8mJlbdI0YBltFeLQaiK5bynN8/5qNd6k5YFGn7ysh7aNq+FW+gD3NYmq5U5GjYuNhk9RMYQd7nmHZ6ffR/VAybdeybGpkS4owcS1csthoe9M0uclH7vlgiwaOouZ2aqbvAxw4rjAA3lMVIHu2hml4Q/02+3o8FKXeXs8VYsMxIeVNlA85JuE+YEz7cyNBjAjorLcYJttqKN4z3Hleowom5ubHU8rOSBU5nSlh9wAaOsEq5DcpJ5AlzXjtNmBMqt+pH4D12mkIuSug==;31:mHZNQDgJnkwptGjN+YvHXlesGUrFMBe3Q40uNg6ICp08rPRJz3aKp+OnvKTFrdEg8jfcdh8hb4AHgJprCG0RfI2hwyJPn8PmspgNdD/8PFcCky5y6ub1HpCPrzUenyM2HYoz6fH3qLH2UNTb9nymL4SrMuS/J4Mi559N2FxUEIxgtnZlIkUbpT4s7OcuyFMVEw2eXuRAz/7kba5fUS1J61Lqj+2CW4EeAzqljvLExQU=
+X-MS-TrafficTypeDiagnostic: OSBPR01MB1863:
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1863;20:HtWZ6JAbAcC9I5syTLFVL+x8acNepq4WI0y/EAAPPKcYkJ7FK2oyUKEfzTDO2ZyTtKlNWWAl3InXsXXoZHPbvI7JqItaogO2/EB0AFGOH48STZ4UKw+Dd1XpVfNeWGczc/1G6R63H2SXsXIOyAHC6ga7r59v+iGpO3H0sz3HCX0wrnp1UGiPu4cNBA8ZYWAnGRpbegkZdKAwZSRUs8jVAAAKvdzKkxF73XX+atfji/vHDJ1RZsSYgBQmjtNvLTVFTdO3RlOPuVHF214La0rNYurf5Fsm6kYvOTHjPbbXCOLyd3qlKXi20HMMiBLA1jdXYKjaCv/kuUhhOquKo1cTwRYgiG/wrh0jQiGEeFSxHYssGyZg1wrc1Gs/LZfgqmaNfHRfvLSQbo2E5J7DDWSyW4IF5+5kYYc+LOdueTj1cvLvhUb63/uaC784dYLDcPijXPwDBbnPJhtQkS6mWUGO0jJ6d7noHN9XE4tWkX8wTlAOR2h/Hb28xzNSGL63Oy1Q;4:+PCStt3nJXBGqHP5qp2eGcn1B5YlEP8rKWyD3XNRbVOhU3DFRU3BAp/gBexGinGWZr4y3GdegMIxXLEp3aUhFO1WMUlaASenOTUKhxVuc9l24Qjr35W4PtWviqa4oZHcPR+acEKLfqYVh/odtbh6XWBVjf00WZDwTPeAOIVrhpUFyEgcasN6g7Wo3QbfvMkqYBo/jNARZgtEQM9N+W4l/3KiLwQxIrPnkHyBt+JROxP7sIPUz4QHQvGTIqdc72xMCJ4q+/cbfUStCOIOvGduAg==
+X-Microsoft-Antispam-PRVS: <OSBPR01MB1863A815D023C69CC30088F3D4300@OSBPR01MB1863.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(201708071742011)(7699016);SRVR:OSBPR01MB1863;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB1863;
+X-Forefront-PRVS: 0772E5DAD5
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(376002)(39860400002)(136003)(396003)(366004)(199004)(189003)(53416004)(106356001)(86362001)(50466002)(6486002)(110136005)(58126008)(2906002)(316002)(47776003)(2616005)(16586007)(486006)(68736007)(66066001)(386003)(956004)(8936002)(476003)(105586002)(305945005)(36756003)(7696005)(478600001)(52116002)(53936002)(16526019)(81166006)(186003)(26005)(97736004)(81156014)(8676002)(69596002)(3846002)(5660300001)(6116002)(23726003)(7736002)(4326008)(25786009)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB1863;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSBPR01MB1863;23:sug2w5IoKrcVyzQj6cW+KAxiKmEK0W8NXi7am1V7o?=
+ =?us-ascii?Q?MqxvBjQCWDn4WSBIqDRVqnvN3O5V0pPLTSQ1a0AvVnRi/cQH+vIEYfixTw/Z?=
+ =?us-ascii?Q?UFgPcdMvffvRBCfabN3DQOiMU/vLrxe+dN54DSiVAQQNsacWPv07eiFnddXY?=
+ =?us-ascii?Q?sIIOZNbNoh+WNr7TS6ykRQudelgE/oAqGklpaIlKabOeyqf3Svj2QhjLtyoQ?=
+ =?us-ascii?Q?UthYc6nU1rTOIYwx51Eu1zimNSINTFKY9bpMwb6UgEmc9BO1ih7MBLFAHeKu?=
+ =?us-ascii?Q?XWIsPf2JL89S3SF/f+HX62ROGnqPBOsVQvm5jmcXE5E4kn1TnJ+bD/jSyk3G?=
+ =?us-ascii?Q?Vzv4SsN0F0IfMhRLFQ0WHMYywEcFCAMKikunNnURLm4e9fFCBj6GABLozSap?=
+ =?us-ascii?Q?SgKhq/u4ovSrLyD4e+5Bh4FKWTAwrAXRu2OpwZRYYQVZ4hBsyWD8JGVrkY0P?=
+ =?us-ascii?Q?QBa/egYnMVHwM672DBmiyUgRksTtvUOTYICRip2suCvWmcLJGwQhFF8BR9V+?=
+ =?us-ascii?Q?Sp6FgNRAATPyj5yHKMG5s3YMlqo6cwqSOSzSGk1qmAeQrhllKL6TmNUn78P6?=
+ =?us-ascii?Q?vtFzU5qL+WE8R/qhuY4HyRToex/U9zaQyZP8ikwrdYqrqwN9MivPcuQyDeYC?=
+ =?us-ascii?Q?FCNnCRipprSW+vFvuDE8OsnKBGvyTrKN8f2SjeMHUcYbLvENwNdsI8cuNgsy?=
+ =?us-ascii?Q?tVYswU6Rkr+YQ50PJqQaveq5oiW4KoML7woXvRxhcX+FWN8Js5h7N6BLrTmu?=
+ =?us-ascii?Q?NEKcWzoin+9/9n86ohbmNNTU2ZY5TcSgBUvPbIxJQgaoR6cX9Fn4oM5RlOTI?=
+ =?us-ascii?Q?07Uscmp4No0KEknB8z70Qufz6x5+rZwkaoihDkZyFMabOyr0Sw3xgXc0W5fu?=
+ =?us-ascii?Q?fSJVIhgOXeaDMmFwvBYXTjzkm7DEgmPwQ52V5fXSZXIg5uqq7sY9oMhoHNod?=
+ =?us-ascii?Q?qPJ1IZxULyOZmNhG5Z18tH55EZ7hOcLN81cDJ+Uez44ZgdJo3RjG3WEwb2sa?=
+ =?us-ascii?Q?2qvB3jnduhI27OWB5EJsG2YAYLsiuDR2o4Zbtm0ALT4bGhwL9+ttIG2pYfAp?=
+ =?us-ascii?Q?GFK+x7DkSFR5yrV5d4CbJsGKRHkM7pDphDzDq7GzYIgz0FSJcEv45qbXfoPB?=
+ =?us-ascii?Q?x+y4nn42Aw=3D?=
+X-Microsoft-Antispam-Message-Info: OoyzvDcosI2bs9LW7kOlHEhwnHOkaWCOhYu8ccZSAaKSXTtuh3cTt+7C286nmxSxOgC9HK/8o+n9H23l9blOmdtPibJQi/MeFg7n8ypFac2VSln2fMNDhHfCpw/P/2Q9/ucY3RGJ4idbt39vl+Mu9/0aysKCFPRTUs9Kuqud3Zmb2cICJrtW1Lx8xf6x/iA2olSDYqVi49sGPQxsMRyrEC3u8GQ5zTLvmTK/1RjYVTSKX4BJxU/hzKWYaZwqDXEkkw+X2hl/Zr4s+HrR2hTzLZXZa+G+Jc826p259Rq59oLv9oh6mxzzJniFE1tcIT8qJRkhv3q+C0kOFKUIh2MWki1KuA+MkoIL8jRgdRnG270=
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1863;6:xBwVgdbEMM1YvYlmBX466S7BM3jmZ2A4x663zmZBgGGWINAAEeMjMvSZjthshbUclMOhDinVJo9ak+6eNhkuoAoDPMQPOhAAqyvyjuAXzAXubqbv47H002E7VRI0Ts0NexkH7i+q8lpQG3IEzVUCbHFrophrGqyp9YRnCaW+C65ZUhvr/keSBiH5lCK9PAdZC8P19WvGftd6V56xs/Jwkd8x1yQ40PcfppN5xljiSEimU3aSvoCy449+fP3c72pQX/h5GVIVCiz82sveGM3JeveqYlUwC2qVc6IVHLKVkF6dyYTzc+9A5UTcZ+F5L6Bs8jDwP/6BV/CnMJRA7aph0s1ybZA0ULt0Ei68C9aMYXRXgTpxNU2ILYf4sVZXy2r405Evh81Lsd63bzmcLmV6MvMlex4gwElY+QqRIDL9bP2eqSiQIWFK5GQYTTUYLexQgX/kRVdcEmeS1YNKlRWjoQ==;5:RCQ5GCGJ8DtUBxtVMH5nfv2XDa1Q2LphuYVN1E283UuY1jNgZyuw31QBxBcuC+YS33coglSPv2agy5URTKZnodLuU1sieG1kFihG/O0I4sPkc/vWSHJvjeC3bx74lSe93ptOb/hhRhowr3Lxq/m7tZQhygHMOT/Yb4yvpeQOehE=;7:/vFK4gJAOe89pTD9VhH5YPowxdzrLpPkJChP+akmG1WRsoe7aogyYVyV+hsVmrs1ZHMIB+VGJPAjXrQFLKWmZAHmtxZ6qpNJr3Iw7VbXfINuMKPZFNA8Sxb2tlQB4021AA/v4Tbo3zcnmCFrIjEOhvKuG4yMEoR+a2xJcxFLJxWFr+UJrgmGBwuxGRCh8RNlQD2gm8AJ6dZKWmwTKx+ePfQ6OL07Zft/3GNflcgv9trtHx6sibYEypMXAyVNp2FY
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1863;20:Q055NbO9R+u+oS6g3VpejM5zmPVUdDjVsk+XmYy7goni7uh0we7Bd6Wich1diyMQBQoA0P60DTD88ZM+99R5w91GfQ1oWYzod0zeRlYoZHyHFnNxos9nOz7cuNaDcRirwftSpaZgdc4wJM66oy+KUhvPdX+5OkNVHUgtR0lDUMU=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2018 02:25:02.8562 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab003d8e-fdc4-425f-e4fa-08d607d6778e
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1863
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For device specific memory space, when we move these area of pfn to
-memory zone, we will set the page reserved flag at that time, some of
-these reserved for device mmio, and some of these are not, such as
-NVDIMM pmem.
 
-Now, we map these dev_dax or fs_dax pages to kvm for DIMM/NVDIMM
-backend, since these pages are reserved, the check of
-kvm_is_reserved_pfn() misconceives those pages as MMIO. Therefor, we
-introduce 2 page map types, MEMORY_DEVICE_FS_DAX/MEMORY_DEVICE_DEV_DAX,
-to identify these pages are from NVDIMM pmem and let kvm treat these
-as normal pages.
+Hi Daniel, Thomas
 
-Without this patch, many operations will be missed due to this
-mistreatment to pmem pages, for example, a page may not have chance to
-be unpinned for KVM guest(in kvm_release_pfn_clean), not able to be
-marked as dirty/accessed(in kvm_set_pfn_dirty/accessed) etc.
+These convert license to SPDX style on clocksource for Renesas
 
-Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
----
- virt/kvm/kvm_main.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Kuninori Morimoto (4):
+  clocksource: renesas-ostm: convert to SPDX identifiers
+  clocksource: sh_cmt: convert to SPDX identifiers
+  clocksource: sh_mtu2: convert to SPDX identifiers
+  clocksource: sh_tmu: convert to SPDX identifiers
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index c44c406..969b6ca 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -147,8 +147,12 @@ __weak void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
- 
- bool kvm_is_reserved_pfn(kvm_pfn_t pfn)
- {
--	if (pfn_valid(pfn))
--		return PageReserved(pfn_to_page(pfn));
-+	struct page *page;
-+
-+	if (pfn_valid(pfn)) {
-+		page = pfn_to_page(pfn);
-+		return PageReserved(page) && !is_dax_page(page);
-+	}
- 
- 	return true;
- }
+ drivers/clocksource/renesas-ostm.c | 11 +----------
+ drivers/clocksource/sh_cmt.c       | 10 +---------
+ drivers/clocksource/sh_mtu2.c      | 10 +---------
+ drivers/clocksource/sh_tmu.c       | 10 +---------
+ 4 files changed, 4 insertions(+), 37 deletions(-)
+
 -- 
 2.7.4
 
