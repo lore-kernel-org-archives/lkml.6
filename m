@@ -2,230 +2,326 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FEFC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3DD9C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:02:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66641214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:00:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="ghnaE7yD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66641214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	by mail.kernel.org (Postfix) with ESMTP id 775F4214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:02:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 775F4214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728852AbeHVOYm (ORCPT
+        id S1728581AbeHVO0Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 10:24:42 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40472 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728438AbeHVOYm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 10:24:42 -0400
-Received: by mail-lf1-f66.google.com with SMTP id y200-v6so1071181lfd.7
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 04:00:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=c4rBigiN+9LYl1QapVRbBlea3wXs8W+EEtTfW6rmMiM=;
-        b=ghnaE7yD3MwwzPrZLVReVX71ia4eKJTU9XkvjrXPSgjdCYRbamN5xdfTRcJD+Lujlv
-         KDqDvApBaMNHpSp8/coRdwdYssYE2mo05grYC6wM+Kufkh0DDZF524BzjuBqjre3bT6t
-         5xzLrjEiGUQgbFTh4cKgyFydBTPysTILXQpCw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=c4rBigiN+9LYl1QapVRbBlea3wXs8W+EEtTfW6rmMiM=;
-        b=FGhHzmojNCTHQmIZpyOrm3I1LpB/z597pu0rt/uVa2wJ8fGiAzxceMMyp5RDQHmsq/
-         9sAaWT07rZKjR/2pO5ub1M16MG8ZrJPQWfk0p4WgqOz4l9FJS/T6vr+C8WL9s+jZtzgT
-         Ov3LHCv9rdv0sRp4C7/pjP6IwIdrxjwK2eL+3nqm+x+LsFQuc6gHRFJDekCcOZ58V0Ni
-         ViimBTq01wot7OC7wOrMfF5cCMPYQruLVJliw17YwRNVKgxeQLGYLFDSlCUYEgv99fny
-         Su7G2R6MpWJooY9mcp+1czLiEycznFWJ0GKunmjj4RbSIHh9S/q3aVUudPbhELuRU/lH
-         8k3Q==
-X-Gm-Message-State: AOUpUlEWZeHcC34amfirbONJdGdngdcNWq32pZNsdCB2RvgIRYLB/cZS
-        tU+5A19MZ15+Dd5fosYkHaiKPA==
-X-Google-Smtp-Source: AA+uWPzNgmL08xWjX1S/sToSOvP2gagMEG/w+TwsafESj3Hjc1gK7zQwakx5Ye7eLCKN2HAiIT93qQ==
-X-Received: by 2002:a19:9cca:: with SMTP id f193-v6mr36011594lfe.60.1534935614753;
-        Wed, 22 Aug 2018 04:00:14 -0700 (PDT)
-Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id y5-v6sm234273ljj.75.2018.08.22.04.00.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 22 Aug 2018 04:00:14 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-nfs@vger.kernel.org
-Subject: [PATCH 1/4] string: try to find const-laundering bugs
-Date:   Wed, 22 Aug 2018 13:00:06 +0200
-Message-Id: <20180822110009.17583-1-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.16.4
+        Wed, 22 Aug 2018 10:26:25 -0400
+Received: from mga14.intel.com ([192.55.52.115]:1401 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727016AbeHVO0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 10:26:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2018 04:01:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,273,1531810800"; 
+   d="scan'208";a="79097730"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.137]) ([10.237.72.137])
+  by fmsmga002.fm.intel.com with ESMTP; 22 Aug 2018 04:01:56 -0700
+Subject: Re: [PATCH v4] scsi: ufs: Make sysfs attributes writable
+To:     Evan Green <evgreen@chromium.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bart.VanAssche@wdc.com
+References: <20180808224454.243790-1-evgreen@chromium.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <6dd8a547-7260-09b8-9096-8a1564b08e70@intel.com>
+Date:   Wed, 22 Aug 2018 14:00:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180808224454.243790-1-evgreen@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This wraps strchr and friends in macros that ensure the return value has
-type const char* if the passed-in string (which the return value points
-into) also has type const char*. The (s)+0 thing is to force a const
-char[] (e.g. a string literal) to decay to a const char* for the
-__same_type comparison.
+On 09/08/18 01:44, Evan Green wrote:
+> This change makes the UFS controller's sysfs attributes writable, which
+> will enable users to provision unprovisioned UFS devices, or
+> re-provision unlocked UFS devices.
+> 
+> Signed-off-by: Evan Green <evgreen@chromium.org>
 
-Not sure it's worth the churn necessary to eliminate the resulting
-warnings, but maybe it'll find some actual bugs. It certainly spews
-out lots of warnings all over the tree, but instead of trying to fix
-them up before actually getting this patch in, I've made the use of
-these macros opt-in so anybody can do a build with
-KCFLAGS=-D__CONST_LAUNDER (or add a 'ccflags-y += ...' to some
-sub-Makefile) and take a look at their subsystem of interest.
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Note that the use of the identifier strchr in the macro strchr is not a
-problem; the preprocessor rules say that the expanded strchr should be
-left alone. But we do have to prevent macro expansion when actually
-defining the strchr function, hence the lib/string.c part of this. For
-the same reason, I'm not defining strchr when __HAVE_ARCH_STRCHR, since
-then I'd have to go into all those arches and protect their definitions
-similarly.
-
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
-Patches 2,3,4 can be applied independently of each other and this one,
-and just serve as examples of the kind of churn enabling these
-unconditionally would give.
-
-While playing with this, I haven't found any obvious bugs, but one
-example where it's not immediately obvious whether there is a problem
-is
-
-	comma = strchr(dev_name, ',');
-	if (comma != NULL && comma < end)
-		*comma = 0;
-
-in fs/nfs/super.c. dev_name is const char*, but it is modified through
-comma. I haven't been able to track back through all the VFS callbacks
-whether that's perfectly fine. At least a comment would be nice.
-
- include/linux/string.h | 47 +++++++++++++++++++++++++++++++++++++++++++++++
- lib/string.c           | 12 ++++++------
- 2 files changed, 53 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 4a5a0eb7df51..06d260cdc4b7 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -449,4 +449,51 @@ static inline void memcpy_and_pad(void *dest, size_t dest_len,
- 		memcpy(dest, src, dest_len);
- }
- 
-+#ifdef __CONST_LAUNDER
-+
-+#ifndef __HAVE_ARCH_STRCHR
-+#define strchr(s, c) (						  \
-+	__builtin_choose_expr(__same_type((s) + 0, const char *), \
-+			      (const char *)strchr(s, c),	  \
-+			      strchr(s, c)))
-+#endif
-+
-+#ifndef __HAVE_ARCH_STRCHRNUL
-+#define strchrnul(s, c) (					  \
-+	__builtin_choose_expr(__same_type((s) + 0, const char *), \
-+			      (const char *)strchrnul(s, c),	  \
-+			      strchrnul(s, c)))
-+#endif
-+
-+#ifndef __HAVE_ARCH_STRNCHR
-+#define strnchr(s, n, c) (					  \
-+	__builtin_choose_expr(__same_type((s) + 0, const char *), \
-+			      (const char *)strnchr(s, n, c),	  \
-+			      strnchr(s, n, c)))
-+#endif
-+
-+#ifndef __HAVE_ARCH_STRRCHR
-+#define strrchr(s, c) (						  \
-+	__builtin_choose_expr(__same_type((s) + 0, const char *), \
-+			      (const char *)strrchr(s, c),	  \
-+			      strrchr(s, c)))
-+#endif
-+
-+#ifndef __HAVE_ARCH_STRSTR
-+#define strstr(s, t) (						  \
-+	__builtin_choose_expr(__same_type((s) + 0, const char *), \
-+			      (const char *)strstr(s, t),	  \
-+			      strstr(s, t)))
-+#endif
-+
-+#ifndef __HAVE_ARCH_STRNSTR
-+#define strnstr(s, t, n) (					  \
-+	__builtin_choose_expr(__same_type((s) + 0, const char *), \
-+			      (const char *)strnstr(s, t, n),	  \
-+			      strnstr(s, t, n)))
-+#endif
-+
-+#endif /* __CONST_LAUNDER */
-+
-+
- #endif /* _LINUX_STRING_H_ */
-diff --git a/lib/string.c b/lib/string.c
-index 2c0900a5d51a..89871c6d57cf 100644
---- a/lib/string.c
-+++ b/lib/string.c
-@@ -367,7 +367,7 @@ EXPORT_SYMBOL(strncmp);
-  * @s: The string to be searched
-  * @c: The character to search for
-  */
--char *strchr(const char *s, int c)
-+char *(strchr)(const char *s, int c)
- {
- 	for (; *s != (char)c; ++s)
- 		if (*s == '\0')
-@@ -386,7 +386,7 @@ EXPORT_SYMBOL(strchr);
-  * Returns pointer to first occurrence of 'c' in s. If c is not found, then
-  * return a pointer to the null byte at the end of s.
-  */
--char *strchrnul(const char *s, int c)
-+char *(strchrnul)(const char *s, int c)
- {
- 	while (*s && *s != (char)c)
- 		s++;
-@@ -401,7 +401,7 @@ EXPORT_SYMBOL(strchrnul);
-  * @s: The string to be searched
-  * @c: The character to search for
-  */
--char *strrchr(const char *s, int c)
-+char *(strrchr)(const char *s, int c)
- {
- 	const char *last = NULL;
- 	do {
-@@ -420,7 +420,7 @@ EXPORT_SYMBOL(strrchr);
-  * @count: The number of characters to be searched
-  * @c: The character to search for
-  */
--char *strnchr(const char *s, size_t count, int c)
-+char *(strnchr)(const char *s, size_t count, int c)
- {
- 	for (; count-- && *s != '\0'; ++s)
- 		if (*s == (char)c)
-@@ -896,7 +896,7 @@ EXPORT_SYMBOL(memscan);
-  * @s1: The string to be searched
-  * @s2: The string to search for
-  */
--char *strstr(const char *s1, const char *s2)
-+char *(strstr)(const char *s1, const char *s2)
- {
- 	size_t l1, l2;
- 
-@@ -922,7 +922,7 @@ EXPORT_SYMBOL(strstr);
-  * @s2: The string to search for
-  * @len: the maximum number of characters to search
-  */
--char *strnstr(const char *s1, const char *s2, size_t len)
-+char *(strnstr)(const char *s1, const char *s2, size_t len)
- {
- 	size_t l2;
- 
--- 
-2.16.4
+> ---
+> Changes since v3:
+> 	- Added static to UFS_ATTRIBUTE_RO [Stanislav]
+> 	- Fixed read-only exception_event_status [Stanislav]
+> 	- Added warnings in documentation for write-once
+> 	  attributes [Stanislav]
+> 
+> Configfs was determined to be the preferred mechanism for writing the
+> config descriptor, but attributes also need to be written during setup,
+> and are already present in sysfs. Making these attributes writable is
+> also helpful for debugging and experimentation.
+> 
+> Changes since v2:
+> 	- Removed the configuration descriptor changes from the series,
+> since configfs was the preferred way to write to that, leaving only
+> this change.
+> 
+> Changes since v1:
+> 	- Reworked the interface to show each unit of the config
+> descriptor as a separate directory, rather than the previous method I
+> had of a file for selecting the unit, and then a common set of files
+> that interacted with whichever unit was selected. I did some kobject
+> magic to accomplish this. I noticed from Greg KH's reply to Sayali's
+> patches [1] that configfs might be the preferred method. Let me know
+> if I should abandon this series in favor of Sayali's, with the
+> possible exception of "Make sysfs attributes writable".
+> 	- Squashed documentation changes into their respective code
+> changes.
+> 	- I decided to keep the config descriptor attributes as their
+> own files, rather than hiding writes behind device descriptor and unit
+> descriptor, as I think that's more future proof and true to the UFS spec.
+> 
+> [1] https://lkml.org/lkml/2018/6/8/210
+> 
+>  Documentation/ABI/testing/sysfs-driver-ufs | 29 +++++++---------
+>  drivers/scsi/ufs/ufs-sysfs.c               | 56 ++++++++++++++++++++----------
+>  2 files changed, 51 insertions(+), 34 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
+> index 016724ec26d5..3ed8aaac2faf 100644
+> --- a/Documentation/ABI/testing/sysfs-driver-ufs
+> +++ b/Documentation/ABI/testing/sysfs-driver-ufs
+> @@ -685,7 +685,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+>  Description:	This file provides the boot lun enabled UFS device attribute.
+>  		The full information about the attribute could be found at
+>  		UFS specifications 2.1.
+> -		The file is read only.
+>  
+>  What:		/sys/bus/platform/drivers/ufshcd/*/attributes/current_power_mode
+>  Date:		February 2018
+> @@ -693,7 +692,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+>  Description:	This file provides the current power mode UFS device attribute.
+>  		The full information about the attribute could be found at
+>  		UFS specifications 2.1.
+> -		The file is read only.
+>  
+>  What:		/sys/bus/platform/drivers/ufshcd/*/attributes/active_icc_level
+>  Date:		February 2018
+> @@ -701,7 +699,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+>  Description:	This file provides the active icc level UFS device attribute.
+>  		The full information about the attribute could be found at
+>  		UFS specifications 2.1.
+> -		The file is read only.
+>  
+>  What:		/sys/bus/platform/drivers/ufshcd/*/attributes/ooo_data_enabled
+>  Date:		February 2018
+> @@ -709,7 +706,9 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+>  Description:	This file provides the out of order data transfer enabled UFS
+>  		device attribute. The full information about the attribute
+>  		could be found at UFS specifications 2.1.
+> -		The file is read only.
+> +		Warning: This attribute can only be written one time
+> +		within the lifetime of the device. Once written, it cannot be
+> +		changed.
+>  
+>  What:		/sys/bus/platform/drivers/ufshcd/*/attributes/bkops_status
+>  Date:		February 2018
+> @@ -717,7 +716,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+>  Description:	This file provides the background operations status UFS device
+>  		attribute. The full information about the attribute could
+>  		be found at UFS specifications 2.1.
+> -		The file is read only.
+>  
+>  What:		/sys/bus/platform/drivers/ufshcd/*/attributes/purge_status
+>  Date:		February 2018
+> @@ -725,7 +723,9 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+>  Description:	This file provides the purge operation status UFS device
+>  		attribute. The full information about the attribute could
+>  		be found at UFS specifications 2.1.
+> -		The file is read only.
+> +		Warning: This attribute can only be written one time
+> +		within the lifetime of the device. Once written, it cannot be
+> +		changed.
+>  
+>  What:		/sys/bus/platform/drivers/ufshcd/*/attributes/max_data_in_size
+>  Date:		February 2018
+> @@ -733,7 +733,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+>  Description:	This file shows the maximum data size in a DATA IN
+>  		UPIU. The full information about the attribute could
+>  		be found at UFS specifications 2.1.
+> -		The file is read only.
+>  
+>  What:		/sys/bus/platform/drivers/ufshcd/*/attributes/max_data_out_size
+>  Date:		February 2018
+> @@ -741,7 +740,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+>  Description:	This file shows the maximum number of bytes that can be
+>  		requested with a READY TO TRANSFER UPIU. The full information
+>  		about the attribute could be found at UFS specifications 2.1.
+> -		The file is read only.
+>  
+>  What:		/sys/bus/platform/drivers/ufshcd/*/attributes/reference_clock_frequency
+>  Date:		February 2018
+> @@ -749,14 +747,19 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+>  Description:	This file provides the reference clock frequency UFS device
+>  		attribute. The full information about the attribute could
+>  		be found at UFS specifications 2.1.
+> -		The file is read only.
+> +		Warning: This attribute can only be written one time
+> +		within the lifetime of the device. Once written, it cannot be
+> +		changed.
+>  
+>  What:		/sys/bus/platform/drivers/ufshcd/*/attributes/configuration_descriptor_lock
+>  Date:		February 2018
+>  Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+>  Description:	This file shows whether the configuration descriptor is locked.
+>  		The full information about the attribute could be found at
+> -		UFS specifications 2.1. The file is read only.
+> +		UFS specifications 2.1.
+> +		Warning: This attribute can only be written one time
+> +		within the lifetime of the device. Once written, it cannot be
+> +		changed.
+>  
+>  What:		/sys/bus/platform/drivers/ufshcd/*/attributes/max_number_of_rtt
+>  Date:		February 2018
+> @@ -765,7 +768,6 @@ Description:	This file provides the maximum current number of
+>  		outstanding RTTs in device that is allowed. The full
+>  		information about the attribute could be found at
+>  		UFS specifications 2.1.
+> -		The file is read only.
+>  
+>  What:		/sys/bus/platform/drivers/ufshcd/*/attributes/exception_event_control
+>  Date:		February 2018
+> @@ -773,7 +775,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+>  Description:	This file provides the exception event control UFS device
+>  		attribute. The full information about the attribute could
+>  		be found at UFS specifications 2.1.
+> -		The file is read only.
+>  
+>  What:		/sys/bus/platform/drivers/ufshcd/*/attributes/exception_event_status
+>  Date:		February 2018
+> @@ -781,7 +782,6 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+>  Description:	This file provides the exception event status UFS device
+>  		attribute. The full information about the attribute could
+>  		be found at UFS specifications 2.1.
+> -		The file is read only.
+>  
+>  What:		/sys/bus/platform/drivers/ufshcd/*/attributes/ffu_status
+>  Date:		February 2018
+> @@ -789,14 +789,12 @@ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+>  Description:	This file provides the ffu status UFS device attribute.
+>  		The full information about the attribute could be found at
+>  		UFS specifications 2.1.
+> -		The file is read only.
+>  
+>  What:		/sys/bus/platform/drivers/ufshcd/*/attributes/psa_state
+>  Date:		February 2018
+>  Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+>  Description:	This file show the PSA feature status. The full information
+>  		about the attribute could be found at UFS specifications 2.1.
+> -		The file is read only.
+>  
+>  What:		/sys/bus/platform/drivers/ufshcd/*/attributes/psa_data_size
+>  Date:		February 2018
+> @@ -805,7 +803,6 @@ Description:	This file shows the amount of data that the host plans to
+>  		load to all logical units in pre-soldering state.
+>  		The full information about the attribute could be found at
+>  		UFS specifications 2.1.
+> -		The file is read only.
+>  
+>  
+>  What:		/sys/class/scsi_device/*/device/dyn_cap_needed
+> diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
+> index 8d9332bb7d0c..344f5025bc36 100644
+> --- a/drivers/scsi/ufs/ufs-sysfs.c
+> +++ b/drivers/scsi/ufs/ufs-sysfs.c
+> @@ -655,7 +655,7 @@ static const struct attribute_group ufs_sysfs_flags_group = {
+>  	.attrs = ufs_sysfs_device_flags,
+>  };
+>  
+> -#define UFS_ATTRIBUTE(_name, _uname)					\
+> +#define UFS_ATTRIBUTE_SHOW(_name, _uname)				\
+>  static ssize_t _name##_show(struct device *dev,				\
+>  	struct device_attribute *attr, char *buf)			\
+>  {									\
+> @@ -665,25 +665,45 @@ static ssize_t _name##_show(struct device *dev,				\
+>  		QUERY_ATTR_IDN##_uname, 0, 0, &value))			\
+>  		return -EINVAL;						\
+>  	return sprintf(buf, "0x%08X\n", value);				\
+> -}									\
+> +}
+> +
+> +#define UFS_ATTRIBUTE_RO(_name, _uname)					\
+> +UFS_ATTRIBUTE_SHOW(_name, _uname)					\
+>  static DEVICE_ATTR_RO(_name)
+>  
+> -UFS_ATTRIBUTE(boot_lun_enabled, _BOOT_LU_EN);
+> -UFS_ATTRIBUTE(current_power_mode, _POWER_MODE);
+> -UFS_ATTRIBUTE(active_icc_level, _ACTIVE_ICC_LVL);
+> -UFS_ATTRIBUTE(ooo_data_enabled, _OOO_DATA_EN);
+> -UFS_ATTRIBUTE(bkops_status, _BKOPS_STATUS);
+> -UFS_ATTRIBUTE(purge_status, _PURGE_STATUS);
+> -UFS_ATTRIBUTE(max_data_in_size, _MAX_DATA_IN);
+> -UFS_ATTRIBUTE(max_data_out_size, _MAX_DATA_OUT);
+> -UFS_ATTRIBUTE(reference_clock_frequency, _REF_CLK_FREQ);
+> -UFS_ATTRIBUTE(configuration_descriptor_lock, _CONF_DESC_LOCK);
+> -UFS_ATTRIBUTE(max_number_of_rtt, _MAX_NUM_OF_RTT);
+> -UFS_ATTRIBUTE(exception_event_control, _EE_CONTROL);
+> -UFS_ATTRIBUTE(exception_event_status, _EE_STATUS);
+> -UFS_ATTRIBUTE(ffu_status, _FFU_STATUS);
+> -UFS_ATTRIBUTE(psa_state, _PSA_STATE);
+> -UFS_ATTRIBUTE(psa_data_size, _PSA_DATA_SIZE);
+> +#define UFS_ATTRIBUTE_RW(_name, _uname)					\
+> +UFS_ATTRIBUTE_SHOW(_name, _uname)					\
+> +static ssize_t _name##_store(struct device *dev,			\
+> +		struct device_attribute *attr, const char *buf,		\
+> +		size_t count)						\
+> +{									\
+> +	struct ufs_hba *hba = dev_get_drvdata(dev);			\
+> +	u32 value;							\
+> +	if (kstrtou32(buf, 0, &value))					\
+> +		return -EINVAL;						\
+> +	if (ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,	\
+> +		QUERY_ATTR_IDN##_uname, 0, 0, &value))			\
+> +		return -EINVAL;						\
+> +	return count;							\
+> +}									\
+> +static DEVICE_ATTR_RW(_name)
+> +
+> +UFS_ATTRIBUTE_RW(boot_lun_enabled, _BOOT_LU_EN);
+> +UFS_ATTRIBUTE_RO(current_power_mode, _POWER_MODE);
+> +UFS_ATTRIBUTE_RW(active_icc_level, _ACTIVE_ICC_LVL);
+> +UFS_ATTRIBUTE_RW(ooo_data_enabled, _OOO_DATA_EN);
+> +UFS_ATTRIBUTE_RO(bkops_status, _BKOPS_STATUS);
+> +UFS_ATTRIBUTE_RO(purge_status, _PURGE_STATUS);
+> +UFS_ATTRIBUTE_RW(max_data_in_size, _MAX_DATA_IN);
+> +UFS_ATTRIBUTE_RW(max_data_out_size, _MAX_DATA_OUT);
+> +UFS_ATTRIBUTE_RW(reference_clock_frequency, _REF_CLK_FREQ);
+> +UFS_ATTRIBUTE_RW(configuration_descriptor_lock, _CONF_DESC_LOCK);
+> +UFS_ATTRIBUTE_RW(max_number_of_rtt, _MAX_NUM_OF_RTT);
+> +UFS_ATTRIBUTE_RW(exception_event_control, _EE_CONTROL);
+> +UFS_ATTRIBUTE_RO(exception_event_status, _EE_STATUS);
+> +UFS_ATTRIBUTE_RO(ffu_status, _FFU_STATUS);
+> +UFS_ATTRIBUTE_RO(psa_state, _PSA_STATE);
+> +UFS_ATTRIBUTE_RO(psa_data_size, _PSA_DATA_SIZE);
+>  
+>  static struct attribute *ufs_sysfs_attributes[] = {
+>  	&dev_attr_boot_lun_enabled.attr,
+> 
 
