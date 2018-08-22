@@ -2,150 +2,98 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55832C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 19:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05BB4C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 19:01:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08F82208B8
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 19:01:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A248B208B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 19:01:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Xgzo0ipo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08F82208B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wv92jiT6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A248B208B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbeHVW1X (ORCPT
+        id S1728104AbeHVW1q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 18:27:23 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:35538 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727844AbeHVW1X (ORCPT
+        Wed, 22 Aug 2018 18:27:46 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41978 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727844AbeHVW1p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 18:27:23 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7MIrUdd112181;
-        Wed, 22 Aug 2018 18:58:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=1miKbo76WUBcWCSr9eE93KHKdKk4y34U/L7/M6u1eGU=;
- b=Xgzo0ipo5WvXMVbdFdtT0Cm9gzSxoPxlC0PHUCERhQNzIBs2zoGMxPjhDgUzQZP2PpfR
- JX47Ufi9BHyg8t+WhwjWm1w9rKQSF2ES4nQtQYBxGCVGG8AKWia3oXaqB8/1w0hXV6cj
- PRPvYdBNne7soqlAAq7aU4pM88ugUrMmnSYm09eI0PAP1EWknIc7eIXY0vzbjcURSzAc
- hrQCnnegGZIQVD8kXTCFWZMnLBcTv8I1NndV3UpEYMk1hbAZyU5gYkOkc4AxZzi+XLVC
- ajOsEwXQZ+lVy5YFIhk9biF4C6W4qYFf4PHGl+/Z6I8YqnkABO0lMIZM7R9s4rGgqtv5 eA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2kxavtv2f0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 22 Aug 2018 18:58:07 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7MIw6lO017858
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 22 Aug 2018 18:58:06 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7MIw4oQ026234;
-        Wed, 22 Aug 2018 18:58:04 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 22 Aug 2018 11:58:04 -0700
-Subject: Re: Infinite looping observed in __offline_pages
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Haren Myneni <haren@linux.vnet.ibm.com>
-Cc:     n-horiguchi@ah.jp.nec.com, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, kamezawa.hiroyu@jp.fujitsu.com,
-        mgorman@suse.de
-References: <20180725181115.hmlyd3tmnu3mn3sf@p50.austin.ibm.com>
- <20180725200336.GP28386@dhcp22.suse.cz> <87bm9ug34l.fsf@linux.ibm.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <54c72a22-a921-fc64-460d-f66985d0df4e@oracle.com>
-Date:   Wed, 22 Aug 2018 11:58:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 22 Aug 2018 18:27:45 -0400
+Received: by mail-pg1-f193.google.com with SMTP id s15-v6so1330092pgv.8
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 12:01:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I3BcfIhA3h9s6DdGVmQPVyMaMqFYY5q9/XMxBLMD3h4=;
+        b=Wv92jiT66l5eVlezNHU4qDxI4BlEaegyqjhZfkcVCGF3b/0VDMHbqnYRba0i/NxtAS
+         1COZsyILmj7fakX/E8K3LJU8W/gfiu+8yg8DlTCjZ8rA4eVVb09N2jG+QOo3ycw0d9Jp
+         hVs7OBwOslQ8EQ/6bFYkpRxaxYD4po93cusIVb4YoDMIVpJQCzz8mdUdsbHdEMdk0Rvq
+         53TDq1BvSaHxG5GWKRg8a9Jxk8fp87irfq0wX7kQoZJgXq9q+GC/wXDCgF8dSoiELccU
+         GFFR4cjJch7CE+VYULGnwbNpzDeYAlmNwZjzBQhJPxiIZY6mvS2n0h3xCu+iwMGn/SUU
+         HrVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I3BcfIhA3h9s6DdGVmQPVyMaMqFYY5q9/XMxBLMD3h4=;
+        b=m95NXsCn1xPCitavRzl6Mwd6SMqRbalRrQ3hubxT4v+fbHIGxyMYRT7R/PJeAfo8XN
+         qd2AuDgHtyyI4w+to/Be+Wu62R3gxtzdHM7DhVojNunTVPv55gV1PlGldgvDbIlWdcUf
+         iOPd8dPrbek5wCZWISlymvsrYRSX8FX3YZKdI5SyoXKFAAJgaTSeZTLl9HPkN4YBC4FM
+         BMClPGdAFJcqO9Vx+X1V/nX0kQZObJa+TP/f0EOuFnG5o2pfkuYR2wUPm8vKhTTuUa6F
+         Z9zGV3JFdVck5hQcPGwBACa/fUY7tpgxqN8dTIq4DH1xMZgCLax8hjvUIUX6F9ZaoIkl
+         ILtw==
+X-Gm-Message-State: AOUpUlFlBS3rVnRL8KMPum3GHo1xrBpOsXDazcLrNDZ9PBX/oSc2j+CH
+        7bqmVYUMz0eQiLj+08oLNRog44GroKvV8NdSb03CQg==
+X-Google-Smtp-Source: AA+uWPxOEV6LvUHNfv6twWfTzLxCnLMnnVTf0+q/Y9zgfGhAgvD2idTHyBUV260xyqpwWWUr7F0qrKy3I42KYb9hVyM=
+X-Received: by 2002:aa7:800f:: with SMTP id j15-v6mr58945192pfi.174.1534964499883;
+ Wed, 22 Aug 2018 12:01:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <87bm9ug34l.fsf@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8993 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808220186
+References: <1534834088-15835-1-git-send-email-yamada.masahiro@socionext.com>
+ <20180821123832.GA19034@nautica> <CAKwvOdmLQen+TWF_F3e5-66vtF3FEnoxjEgZbjmOZ9cv6YrEpA@mail.gmail.com>
+ <acb93bae0086447c7cbe0eec05907335ebae7788.camel@perches.com>
+ <CAKwvOdkLGhdQxx3oV=R2kv290NOv_w8qQ_yHWCVpvmofp7+ivQ@mail.gmail.com>
+ <20180822041646.GA21716@nautica> <78396ba82562326f4b3a395a63e3e8dc38d608b2.camel@perches.com>
+ <20180822043230.GA26654@nautica> <CAKwvOdm+BwvDxAw-A_1v5xO2EjDff1axAttHVz5QnBSxSbKo=g@mail.gmail.com>
+In-Reply-To: <CAKwvOdm+BwvDxAw-A_1v5xO2EjDff1axAttHVz5QnBSxSbKo=g@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 22 Aug 2018 12:01:28 -0700
+Message-ID: <CAKwvOdkV7=XSG6LOaV9Khp0faGOT=vOsHmuCArDMAXFKeOjaiw@mail.gmail.com>
+Subject: Re: [PATCH] compiler-gcc: get back Clang build
+To:     asmadeus@codewreck.org
+Cc:     joe@perches.com, Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Arnd Bergmann <arnd@arndb.de>, dwmw@amazon.co.uk,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/22/2018 02:30 AM, Aneesh Kumar K.V wrote:
-> commit 2e9d754ac211f2af3731f15df3cd8cd070b4cc54
-> Author: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> Date:   Tue Aug 21 14:17:55 2018 +0530
-> 
->     mm/hugetlb: filter out hugetlb pages if HUGEPAGE migration is not supported.
->     
->     When scanning for movable pages, filter out Hugetlb pages if hugepage migration
->     is not supported. Without this we hit infinte loop in __offline pages where we
->     do
->             pfn = scan_movable_pages(start_pfn, end_pfn);
->             if (pfn) { /* We have movable pages */
->                     ret = do_migrate_range(pfn, end_pfn);
->                     goto repeat;
->             }
->     
->     We do support hugetlb migration ony if the hugetlb pages are at pmd level. Here
+On Wed, Aug 22, 2018 at 11:31 AM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+> Hi Dominique,
+> I'm currently testing a fix in
+> https://github.com/ClangBuiltLinux/linux/commit/1f89ae7622c26b8131f42f3a362d6ef41b88a595,
 
-I thought migration at pgd level was added for POWER?  commit 94310cbcaa3c
-(mm/madvise: enable (soft|hard) offline of HugeTLB pages at PGD level).
-Only remember, because I did not fully understand the use case. :)
-
->     we just check for Kernel config. The gigantic page size check is done in
->     page_huge_active.
->     
->     Reported-by: Haren Myneni <haren@linux.vnet.ibm.com>
->     CC: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
->     Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 4eb6e824a80c..f9bdea685cf4 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1338,7 +1338,8 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
->  				return pfn;
->  			if (__PageMovable(page))
->  				return pfn;
-> -			if (PageHuge(page)) {
-> +			if (IS_ENABLED(CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION) &&
-> +			    PageHuge(page)) {
-
-How about using hugepage_migration_supported instead?  It would automatically
-catch those non-migratable huge page sizes.  Something like:
-
-			if (PageHuge(page) &&
-			    hugepage_migration_supported(page_hstate(page))) {
-
+Sorry, maybe https://github.com/ClangBuiltLinux/linux/commits/compiler_detection
+is a better link, as the sha changes whenever I modify the patch and
+force push.
 -- 
-Mike Kravetz
-
->  				if (page_huge_active(page))
->  					return pfn;
->  				else
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 15ea511fb41c..a3f81e18c882 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -7649,6 +7649,10 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
->  		 * handle each tail page individually in migration.
->  		 */
->  		if (PageHuge(page)) {
-> +
-> +			if (!IS_ENABLED(CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION))
-> +				goto unmovable;
-> +
->  			iter = round_up(iter + 1, 1<<compound_order(page)) - 1;
->  			continue;
->  		}
-> 
+Thanks,
+~Nick Desaulniers
