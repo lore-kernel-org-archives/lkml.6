@@ -2,99 +2,83 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5299FC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E85C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0144021486
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:16:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R02GwzJs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0144021486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
+	by mail.kernel.org (Postfix) with ESMTP id 3487521486
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:17:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3487521486
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbeHVTmT (ORCPT
+        id S1727059AbeHVTnO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 15:42:19 -0400
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:39457 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726770AbeHVTmT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 15:42:19 -0400
-Received: by mail-wm0-f45.google.com with SMTP id q8-v6so2787783wmq.4;
-        Wed, 22 Aug 2018 09:16:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version;
-        bh=BSgNjFue3yX1zJii+M050p91Ol/lhrwPaAJ/mgXBTZM=;
-        b=R02GwzJsRIA1xUmoQ3tvLW0tMuM+gIE0pCSpRoyjsRXzf63N/zOG7D+09WOfX7LDYG
-         DXZyXg7LXga0UUJl4Vbew5He9rJ/zAMH5jXMHdWgUOadVNA+nRs3NAlKnWxdxVoHc3mq
-         DNSq/hGdiyTfZ36eoeeaTHyYIhIyujScDLXi/LiVb0sS4xZcmsBAODm/HuZ6oBi3FyVl
-         +eS1YpAR2n0GOLCNKVT2vgtVz0lLbGXJx4iKRS+1q0tg2t/5dIckHB8sjxoAjfXbPWHO
-         aZbw0KRcX3i0CwuCc7HJGaIrZ28j3m/JauGAqbSeUMkpQjMzcbXNJgx6NZy3Yo7lCoao
-         Bgbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:references:date
-         :in-reply-to:message-id:user-agent:mime-version;
-        bh=BSgNjFue3yX1zJii+M050p91Ol/lhrwPaAJ/mgXBTZM=;
-        b=FQQ0xCXiXH8gJ7cRPwpZ1XjWxIzitFUJrIN23o2YPKAClQCV8oi4S1euHCNL4O7IPh
-         nXtVX1+Qo+OSFvlOBEAYEcpF8wRpUaVSvvnPLiW0Y19OOFEGeJbA2XA7RDw9sUH9YWfG
-         tMXNg1LIwxmOK3i6/qJUa5GXA7lTMQGouutSmcU1VG1327F676MiPaqR/ppjtfWkI9s0
-         bjbsWwBO1AM4z7UsUJf5AFPHM/0L26e8z0SljAamqQ8yRVuuSwHubXhQA2kNdhJnaTQo
-         i5ppBUb8nUmDoxDUa66T3t+FYR9y4Z617NfSCYsTxxcWHgQR7h9Vd+n1NoR2YYPCy/z0
-         bm/A==
-X-Gm-Message-State: APzg51BlelVAceRc4eAtqWVC7D7C5S3TP4d3BDb3SMDeXsOW5JihzV0B
-        tMruiOuCwiPC9bDcCkgJnlPoUfNi
-X-Google-Smtp-Source: ANB0VdYs8t6ft0wf+GGCAobkJbwV/wrRejRfKwB64hU6YRFR5ChytxecaY/7kjwCauANDzCQFhKBiw==
-X-Received: by 2002:a1c:c147:: with SMTP id r68-v6mr2834465wmf.161.1534954606139;
-        Wed, 22 Aug 2018 09:16:46 -0700 (PDT)
-Received: from dell.be.48ers.dk (d528f5fe4.static.telenet.be. [82.143.95.228])
-        by smtp.gmail.com with ESMTPSA id x23-v6sm1546907wmh.26.2018.08.22.09.16.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 22 Aug 2018 09:16:45 -0700 (PDT)
-Received: from peko by dell.be.48ers.dk with local (Exim 4.89)
-        (envelope-from <peter@korsgaard.com>)
-        id 1fsVoK-0006Sd-MJ; Wed, 22 Aug 2018 18:16:44 +0200
-From:   Peter Korsgaard <peter@korsgaard.com>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Federico Vaga <federico.vaga@cern.ch>,
-        Peter Korsgaard <peter.korsgaard@barco.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Korsgaard <jacmet@sunsite.dk>
-Subject: Re: i2c:ocores: fixes and polling mechanism
-References: <20180625161303.7991-1-federico.vaga@cern.ch>
-        <5011687.103nMUzm2u@harkonnen> <20180812153400.GA1010@kunai>
-Date:   Wed, 22 Aug 2018 18:16:44 +0200
-In-Reply-To: <20180812153400.GA1010@kunai> (Wolfram Sang's message of "Sun, 12
-        Aug 2018 17:34:00 +0200")
-Message-ID: <8760022x77.fsf@dell.be.48ers.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Wed, 22 Aug 2018 15:43:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35132 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726770AbeHVTnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 15:43:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F362BAF6C;
+        Wed, 22 Aug 2018 16:17:41 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id CA3CE1E361C; Wed, 22 Aug 2018 18:17:41 +0200 (CEST)
+Date:   Wed, 22 Aug 2018 18:17:41 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Jeremy Cline <jcline@redhat.com>
+Cc:     Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH 1/2] fs/quota: Replace XQM_MAXQUOTAS usage with MAXQUOTAS
+Message-ID: <20180822161741.GA2559@quack2.suse.cz>
+References: <20180731013731.1987-1-jcline@redhat.com>
+ <20180731013731.1987-2-jcline@redhat.com>
+ <20180822160551.GE23037@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180822160551.GE23037@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>>>> "Wolfram" == Wolfram Sang <wsa@the-dreams.de> writes:
+On Wed 22-08-18 18:05:51, Jan Kara wrote:
+> On Tue 31-07-18 01:37:30, Jeremy Cline wrote:
+> > XQM_MAXQUOTAS and MAXQUOTAS are, it appears, equivalent. Replace all
+> > usage of XQM_MAXQUOTAS and remove it along with the unused XQM_*QUOTA
+> > definitions.
+> > 
+> > Signed-off-by: Jeremy Cline <jcline@redhat.com>
+> 
+> Thanks for the cleanup. The patch looks good, just one small nit:
+> 
+> > diff --git a/include/uapi/linux/dqblk_xfs.h b/include/uapi/linux/dqblk_xfs.h
+> > index 03d890b80ebc..a5846cde8272 100644
+> > --- a/include/uapi/linux/dqblk_xfs.h
+> > +++ b/include/uapi/linux/dqblk_xfs.h
+> > @@ -27,11 +27,6 @@
+> >  #define XQM_CMD(x)	(('X'<<8)+(x))	/* note: forms first QCMD argument */
+> >  #define XQM_COMMAND(x)	(((x) & (0xff<<8)) == ('X'<<8))	/* test if for XFS */
+> 
+> You can delete XQM_COMMAND() as well here.
+> 
+> > -#define XQM_USRQUOTA	0	/* system call user quota type */
+> > -#define XQM_GRPQUOTA	1	/* system call group quota type */
+> > -#define XQM_PRJQUOTA	2	/* system call project quota type */
+> > -#define XQM_MAXQUOTAS	3
+> > -
 
- >> sorry to disturb you all but after one month and a half I never received 
- >> any comment about this patch set and I fear it ended up in a forgotten 
- >> corner. I would like to know if someone is considering it or not.
+Oh, now I've realized that these are actually from uapi header. I don't
+think it's worth to break existing userspace sources just for a sake of
+this small cleanup. So I'll just remove this hunk from the patch.
 
- > Adding Peter to CC using his latest EMail address.
-
-Thanks! I'll take a look at the patches now.
-
-> Peter, you said you wanted to update MAINTAINERs with the new address?
-
-Sorry, I forgot about it when I left on holidays. Will send now.
-
+								Honza
 -- 
-Bye, Peter Korsgaard
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
