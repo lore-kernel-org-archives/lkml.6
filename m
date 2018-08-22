@@ -2,145 +2,233 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A63C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67EB3C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FCCC214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:53:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CA98214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:03:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="cd8fTf37"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FCCC214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="iBYP96r5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CA98214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=ysoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbeHVKQu (ORCPT
+        id S1728161AbeHVK0l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 06:16:50 -0400
-Received: from mail-eopbgr00082.outbound.protection.outlook.com ([40.107.0.82]:61248
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        Wed, 22 Aug 2018 06:26:41 -0400
+Received: from mail-he1eur01on0053.outbound.protection.outlook.com ([104.47.0.53]:10688
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726603AbeHVKQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 06:16:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+        id S1726736AbeHVK0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 06:26:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w976+BlkUYf2NBP1hf+W/wvlf+iz2zl5gTwjc9hv6Lk=;
- b=cd8fTf37JqTzImTouHR4dRrMRkOadvHUTjdCau96yU/jB2QJJV1GPnswR1xACdDYLlA0A9eo8gPa4go6+iMW0NNQmY2qbdLFagUgl9XuAVzU0okRrCdFeJXH6lw92IVrKyAZOSVDTNpD9PJw+lmZxY7LOMDMvF2b1ouqx6Rk3FY=
-Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
- AM0PR04MB4914.eurprd04.prod.outlook.com (20.176.215.211) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1059.24; Wed, 22 Aug 2018 06:53:14 +0000
-Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
- ([fe80::2545:18ff:ca37:1e60]) by AM0PR04MB4290.eurprd04.prod.outlook.com
- ([fe80::2545:18ff:ca37:1e60%4]) with mapi id 15.20.1059.023; Wed, 22 Aug 2018
- 06:53:14 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     "festevam@gmail.com" <festevam@gmail.com>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
-CC:     dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Ying Liu <victor.liu@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC] clk: imx6: Mark imx_clk_mux as glitchy by default
-Thread-Topic: [RFC] clk: imx6: Mark imx_clk_mux as glitchy by default
-Thread-Index: AQHUOYYTdwDinWiDP0ilYt2OR3uisaTKzVgAgACJMoA=
-Date:   Wed, 22 Aug 2018 06:53:14 +0000
-Message-ID: <c0966648ef0a15672ddd617de87692f71a19bad4.camel@nxp.com>
-References: <e56c6f0acfe7afb885d2cb67e1e069f7edd0d2d7.1534879459.git.leonard.crestez@nxp.com>
-         <CAOMZO5Dr9NUXuu+LECp2QHZLRhfbymHK23yCCFW-9jB=VXNn+A@mail.gmail.com>
-In-Reply-To: <CAOMZO5Dr9NUXuu+LECp2QHZLRhfbymHK23yCCFW-9jB=VXNn+A@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.28.5-1 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [85.204.4.237]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4914;6:/Bk2Ewl7xJJbZECT/MgZaJI7BgO0GwpgJohjEycuwtFjLFbVCCidISXPv4GAMTd8N+3Qn0tgGIMIY1jKVvbDYfJr5+cv6/mrD/wwjP3vfOpKejITkJyUJYPo7s8qB/0prGsOIxuXEZsyotE6dFkmFSWJXru+rh3axcqoAQRdi9sEDHhGyqhIOBnkHIWv81YlQpsaN3TcPsTiKYNUypiDw4OKpHNCghxwX3AeBFDyjCu1YD6+Ggv9mjd/QVgUd4zieZiKZACOGW/xzz5u9rjFWcxYPvWC/T6R21gUL9tNoW95GmiFtOMs5FOoSIZ2NHJW0TMxVsNuWFSL94l9F6n8aGbFWzUFMgydfrrcUQ6PQt3ed5x1e08AMsEvpXRa+teAhpErssEthFd3e8knb5o6LwKSQ1LETmFrvM7mLsAnSfBuv957lU4Zeq36j7iEnqWcr/rqNnvhvPQl0TC5PetC6A==;5:wWgCs7EpyRi3lrzpGrF05e/cqpL2Fk3RbLOkNNZpHLBJNVtoXC0IQP3IhDuB8mBXW7RVU61JrQlgUhGlgowtICT1lEr7IQznL3IUGBVDXzUKC3yop7HTOfZ29okL/UWk9tgM/0/VR+IxmM+We8ZUr+M4PoxPkBWmsjAZoSE/Q8s=;7:IbNsYLNhCbwbff5sq1FNaq3r3uEkARb+7jmb5Q6EitWIMUXRjwMUmEKRExFsLN/Ix489CGDEWKhLYfXIo/bR1JOAMnKBxliQ+km2gP67u6rTUhPg+QV77qBNWptyH8g/9FPOxnwtd/PZOKfp2u+M8F5LJVzeGsgRX90As/EmDPfpM9Usq/oGHxHy6OctpJJSoVH8O54eOxQPTJw9/WZnoVTFmQrDTvxNUSYNNHs/4JbAoJ6Mfe1Ju5L+G13NY2qW
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 830174a1-00de-48bf-67b6-08d607fbeecf
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4914;
-x-ms-traffictypediagnostic: AM0PR04MB4914:
-x-microsoft-antispam-prvs: <AM0PR04MB49148CA181729A08BAD7C630EE300@AM0PR04MB4914.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197)(17755550239193);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(3231311)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699016);SRVR:AM0PR04MB4914;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4914;
-x-forefront-prvs: 0772E5DAD5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(39860400002)(376002)(346002)(136003)(43544003)(199004)(189003)(50226002)(486006)(4326008)(6506007)(102836004)(36756003)(186003)(106356001)(26005)(39060400002)(305945005)(105586002)(44832011)(53546011)(2906002)(14444005)(7416002)(8676002)(25786009)(97736004)(66066001)(256004)(6246003)(7736002)(446003)(86362001)(6436002)(478600001)(118296001)(8936002)(81166006)(476003)(110136005)(68736007)(316002)(5250100002)(2616005)(76176011)(81156014)(2501003)(99286004)(14454004)(6486002)(229853002)(5660300001)(6116002)(11346002)(53936002)(6512007)(2900100001)(3846002)(54906003)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4914;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: FV5Sbvxjvo254Jb+BYh/fwhZoHUkjkagXaviahcVSQojcYv5hVgGjJ1bzGPelUu6M6GVnQ/ho88LJ9dswJaZVdrmpXi678zgpszNJ2k3ldOVU6Nz5L2c6kmtHLSr+QRezqBrvAl2NhxziivjYXbpqtvVxfxQjmgn3NasNUUgXkmEpM7fPxoU6Qm7tYPv+/tebyBraT4/8VtdG0oGREhvzhsIjnsVFDjOQPevunapyfexejqWH2gV52zcphuncoT4s5gUxbI0pLP7C3skwBCMXYX0aQ00HL40D3cRPLkSLDo2fmUFU3jh6qn9Oy18msyLQ3KWRuV5CZx09jP9GVBgWJ3DOl09bIQJDAO43Hqnzrc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <40D514BCC9D8464F8905E50087FC4D41@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ bh=Tu87YeRyFYy6b3pYQu9idvefbk4OR9TUkpcmk0Bv5Ck=;
+ b=iBYP96r5Ff1DMxAqkUHMpXw8gv+brDq3W3tJCXFeLQscIjqoQqTGsUEl3IQoJg/eqCYum3IsF6rS6knClRiRbLELpkZjuzedbML2/MjwhbtWxDUjKK0KWkJlmsx4PNq2UQdMoB3Q2kuLIcKaXo09Ovn4JhbOWxP7kyc7qHw3OxQ=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Michal.Vokac@ysoft.com; 
+Received: from [10.1.8.111] (89.24.100.190) by
+ AM0PR04MB4658.eurprd04.prod.outlook.com (2603:10a6:208:75::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1059.23; Wed, 22 Aug 2018 07:01:54 +0000
+Subject: Re: [RFC PATCH 1/2] dt-bindings: pwm: imx: Allow switching PWM output
+ between PWM and GPIO
+To:     =?UTF-8?Q?Lothar_Wa=c3=9fmann?= <LW@KARO-electronics.de>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukasz Majewski <l.majewski@majess.pl>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+References: <1534862333-27950-1-git-send-email-michal.vokac@ysoft.com>
+ <1534862333-27950-2-git-send-email-michal.vokac@ysoft.com>
+ <20180822081436.13d8f55b@ipc1.ka-ro>
+From:   =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
+Message-ID: <175003bc-eae7-1b30-ebfe-b56ffc58705e@ysoft.com>
+Date:   Wed, 22 Aug 2018 09:01:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 830174a1-00de-48bf-67b6-08d607fbeecf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2018 06:53:14.3321
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4914
+In-Reply-To: <20180822081436.13d8f55b@ipc1.ka-ro>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [89.24.100.190]
+X-ClientProxiedBy: VI1PR0602CA0018.eurprd06.prod.outlook.com
+ (2603:10a6:800:bc::28) To AM0PR04MB4658.eurprd04.prod.outlook.com
+ (2603:10a6:208:75::12)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e2dbea44-9aab-45ca-8bb5-08d607fd24e4
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4658;
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4658;3:EopnLNxegc3wCqlERUKA5AD9xPOVTFv1DHBQn2kNqHAyJ5/SK6P5VxC+HKkriOq0IgI6CwrpG/L16ec4cbOV01Uy4U8lmXuftWWIAnmCGOHuXHB8V+XodQHAeHj9HmwSB7YSMTvbpyeXeFLki1SMWYq1nxPItRtPkAh5xnmZF0A4mW4EtFAZZHKc7Q31EzFSFP7C+eKHhVvzgdeYwIhZB+Kc65gVy0sIbPWv98nNkGQjl3+Qn3TdxrXMk8nYHWFH;25:a3umouOk4ipK+sX0HNgU3u6m5sqxISs1Xu6eUJ2MFJglGrV9oX2By6mpY0PLMhlF19WR3BP214iBtKlk97XQilKPL0nzKNJvhc0IefluayyI0UpvtGp+qA0H70R9vxIZ4QMvXCEz7QyOzgb5i+JvCB4AQmUW/csofQ0oVqw5RjJ3nk7Sxer3wn8DWnSrk+ES8cAEWPMWlQBtfzrxC+JH1P5Ywg4cTmJvcTJuN8MgLgCqTdo1flv66b1RjQy58+D8b5k+v6Cp8osIdGZsubuMXRMxrV+8d3njVQfmFnYPyqYeO1P4IfQTlC0e5kjKWUgZ/3FNNvKe/ioWtm9CVwK9FA==;31:i0AXxtZPHYLm7Vj7Ehl47Bzab0u/gEEdWELjO0jGr5MH6nayhwm84382UnhQNOmUQsu0duDdFHitH0qTpgqmVICWk+qQtN7nlLJ9QxAiMy9kmJiFg3xvyVAemSSwK3PT2MHx8Xu63jDeUsgTckWjM487btCgEtoSsWulhHG5/ZJKHzQw6y2NnhZuQhu3b5cb+WhVpoQBLAcFslufiF1r380qaLqzVZNDrbkv+5R7O+s=
+X-MS-TrafficTypeDiagnostic: AM0PR04MB4658:
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4658;20:94nSDbiK8MGs6cjnwrF2TJ2G5/ovyzNMH5Kz9E/1cYSfZ30uMYDjn3mgql/KimIa247uUSClu6AEpEca4N5/mHjcwn3EENpuG5mT6UIr3FFpVMjAAKkkmG6v3ntSJL4mzS4EJaUEGewUyMFhL+qmiJQC5WwiBWM0ORQRBfk/I84cJW4I7wrjGn0s0Y99NwB8yu32ihyK7coSz5cnc1csx2/QpJTgRhwpvXlJze0gcd5Tkp4aWn3boOnV+a9b4WVj;4:aQCbMdj17YBRh+NOgpB21XGIJZA/HAep9SPOLt6wlElltWPic/DkSGI+2hqJWzBwI4vl3RL2nlFCvP5DCku91419sQIopLkHAdZgj1B36wm7+6fEqyR8qL6F5oW7lK9a99nJCJokD3MstpZYEEoqsZ6ZwRv7qEc5PxsmcdXSKj5zXPuYVJBQddhcGg/15gLQcBU1MUEF70eNigil/AehDdWJkCWTBdkXIKzzbYrb6+cBk4fZKKHgXnDFWGEK4k2seOEuVdeWgn9CzR1+Px7VqA==
+X-Microsoft-Antispam-PRVS: <AM0PR04MB46589ACB3CAFF26868676FB99E300@AM0PR04MB4658.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699016);SRVR:AM0PR04MB4658;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4658;
+X-Forefront-PRVS: 0772E5DAD5
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(346002)(376002)(39850400004)(366004)(396003)(136003)(199004)(189003)(4326008)(2906002)(956004)(65826007)(39060400002)(72206003)(386003)(5660300001)(229853002)(53546011)(81166006)(478600001)(6666003)(26005)(2616005)(8936002)(8676002)(23676004)(76176011)(77096007)(52146003)(68736007)(6916009)(66066001)(486006)(52116002)(53936002)(476003)(47776003)(7736002)(14444005)(2486003)(65956001)(6486002)(64126003)(97736004)(65806001)(25786009)(2870700001)(305945005)(6246003)(67846002)(50466002)(85182001)(316002)(217873002)(446003)(3846002)(86362001)(31696002)(54906003)(58126008)(36756003)(31686004)(106356001)(16576012)(105586002)(16526019)(81156014)(11346002)(186003)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4658;H:[10.1.8.111];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: ysoft.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTBQUjA0TUI0NjU4OzIzOmYrclRBWTAwVHVTUlllT2hLLzkvT1k1THU3?=
+ =?utf-8?B?MzNHYmxtQS92RVFYd2NCZmlkZk1RcFU5SWJ3ODNlQmIzR1hLa0Y1RFNMUEpx?=
+ =?utf-8?B?RktSWEEvZVpiSDREZ3ZOMmU5MG9OMVgvdDdLT0NKbXN2UVRvanZKUUR3LzlG?=
+ =?utf-8?B?bGNmdFA2UlMyRmo0d3J4THp4NTNYTUxNZTNQOWtoZXFxZjZWN0NJV2lyYkxu?=
+ =?utf-8?B?REcyVE5zUTNLUmFtNW4wSXB2Yi9WUFd0VXVuay93Z2tXR1VPcWk4azFtYjEw?=
+ =?utf-8?B?NWhGclJrM2xKeSswZ2xTSVgxTzNIQmFJKzVCSDUxcEZMclp0VDJpY21oSkQ5?=
+ =?utf-8?B?ZFJGa2FVeHh1VFJoS3hlWVgyaXJIVCtuK20rcXhyVjM4WlQvU2U4QjFJQ3li?=
+ =?utf-8?B?cm90RThTNzZvUjlSOXhzUVZKazBLeTBVZURSaDRjMzUrNnR4eTZDWmtxQVZG?=
+ =?utf-8?B?R204amRMVGtXOUc3MXZHdndTSWNoZFZGNll5M21MQjdIRjg5eFBHeVFSWnBW?=
+ =?utf-8?B?YUlqVHZUUTNUZGNSRTZXYzNmUFJ1Wko4MkkwMWdKN0FXNHB0MmJiaG1IdkRJ?=
+ =?utf-8?B?dkJqNit5cjd0VUVWUHhPOWtwUnRvRmpiSXFSSUFGNzVOY1dncVdZS2lmV2xr?=
+ =?utf-8?B?WTJEU2grR2xOaFV5N2xLV2VOL04vWkdsUERVZXl2REJGaitqV0ttTUVQUTlr?=
+ =?utf-8?B?Z1NzN1c5SjQ5b3E2ZmlCeDJhMUIraEJZdTNucmVneXpkb3QzaHBYNHM2RFhs?=
+ =?utf-8?B?Tm9Hb1NrckxzY2J6SEFCZC92RUxMZUROaS83MUp5MGN5c3BNZUxTZ0swOVVE?=
+ =?utf-8?B?N043S3hzMGE4OHNqdkZ3aU0rWHAzdm00d3MxMnduS20yTkFHeGY4Z0NHd0Rh?=
+ =?utf-8?B?NWg2R0dDNXdRbjZvbDJKWTMvZi8reDRlSnQ3WDRqZHNYbWJ6UG45Vkd5VjF1?=
+ =?utf-8?B?TS9VYlUyN3VmZTFUQys5L2RuZ1Z5T2NocWJOU0FwNnJQR29zZXpsYlZtbFhF?=
+ =?utf-8?B?S0Jock1VZWlhZnJEdEdFek5JdmJ0b0J6bEFabkd6aEhnL0Z1aXlCbGRCM3Vq?=
+ =?utf-8?B?Q0c2Q2lML1UyckFic24rNmZpKzJ0OGxYUXdPaXNFTnBKcm9qV0RZQkRkclcy?=
+ =?utf-8?B?WlVkUDBZOURqUTlvSEhWdzdreklvcUQ3c2xKM01MR1dpc1BGNisvdUk4bWVC?=
+ =?utf-8?B?cTZneU1pSG1ycy9mWDNlQmFZcFRqTVJFcGpOYkhGRkppNnhEOG50VDJxdzRs?=
+ =?utf-8?B?WVZwcDZCY2s0VWM2RURHLytCbVhTUktUVDQyZVVXYUNJa3NUUmNUMENQemc4?=
+ =?utf-8?B?UEZ4Vk1wdnZ0TzFNbHFQbE9BSmF1QzBDblpTWGhvVWZwN0dRRHNjWi9mWDNo?=
+ =?utf-8?B?SHMxTkk0SHVjaTBzOGwxeHNLUmhObExvdzltUVk4cWw4WnJZeGNILytIYlFm?=
+ =?utf-8?B?N0FmZnVQZFlQN3B3K0crcHlkSjBGejA1NlozTjhicVZlZS9tNEIrekR3VEhy?=
+ =?utf-8?B?bkdVSXpadll0cTNGcERud2xVdTlDZzhJNVNqZmtCWUNoQ0paeUZ1R2dZUC83?=
+ =?utf-8?B?c0tmcVNscnVJcmUwZ0lEOUs3SThjNzJpWEEyZVkxT1kyOTZxOVFwZUJacUpn?=
+ =?utf-8?B?dzNCVGlDSkw3UzJ4bzhPRUNtN0NMMFRwZ3dRUzlCcytQd0tVZDFUSXJHamVp?=
+ =?utf-8?B?U0g5UDRDd0R2OTVFbUJUMmtRTXlQWmJHRTA0b0ZzZzIwdEZwZEpIeElMODNk?=
+ =?utf-8?B?NzRTSVRiUVJ5dU54TWxBR3N1MEVIRmRzUzNobWY4RVFQazA0YThJYi84Zzhj?=
+ =?utf-8?B?eGZtemdNUzRaU3ZpUE1HMGxGaHcwRG1nYy9JQXNWaXVPVmhWMk5UN0VHRjF0?=
+ =?utf-8?B?NUkwOGttdWs1MG05UXpzUW1RRTJRQWp4bmFjNHhNNjZ6aFBncjBGbG1CMFdS?=
+ =?utf-8?B?Slg0YWFZb0VZU0JEcWRhWHVHZExhSEZtREtwTTZJTlNFRkVGNGlUR3NPRnZZ?=
+ =?utf-8?B?U3BjV1EwMW9VWE1PUXp1Y1lNa2tYUytMa1Y4MmFCVDZ1T21iOEg0RHppUnpG?=
+ =?utf-8?B?WkNMM1czZXllZjNUVWYzTUt2RFRqblhweWVZTFdrRHJDYXdKNThwTUd3dDRQ?=
+ =?utf-8?B?a1E9PQ==?=
+X-Microsoft-Antispam-Message-Info: OPQ2wsoPLL/xvGvwkuU7FxjDGA6sM++NUfMnXP/ALbKVbo4UAC3j1G43mxihXGF94v4Rj5j4CQnSDJi6+I/CVQ/kMgevYfxU1CNHlTGMYJoycUrNcGbbpOTbd1Ip9OZeEenukAyQD+v99pr64QtOqEx3ihM2Ocgm3p3tvBbCJ0/j8Tj8nml86N5E9t92HL/MSDChfV3CI3z1U0/gqSmRWeU3iDF8o6BCfHhk+1BdDeguQ2sx5KDJsUfCHo2ixxhCZkLqJmsujovD9rdMVe5idq/IQ0q33ZMFxJlYMCOg3B4R40rGRWwE8wi3/BcZAq3OzSrCFZ0bmIq29e2wh9RDH4f0gEywPSSZz5jZ16HRQ0w=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4658;6:NVV2EcQy8cQd+E0le1WnyGRiP4TL6SxVOxogFJ846z2Ejkbca5RvkbRR5LGegbG7Yn1wr1bfujh/LIgO3keF5LEpN/pBwc7tCWQ5x9X58aX6zqV8hSNVbbY73QiEqfr/VdTMOYHdSejuFEKVCZ5jtkLf130xjq52mbTen0GuKVckPPKwHD0UXTmb/nS22xisbkUGYsUf2suQdQwHMdbs/ZA2yg6a/pmraGbWtBzrBlwz1tJP50tChZLiAiC5RK1EED6ZhP8gpu9wFRTOFQyPHmcon14Z9aY6RoU1oDJUya1VB0Pxk4E+ShAdPPkVtGrqLCzAbt8A1D4Tcpz2u61OzH0Gt0MVg3CZo/URi8vZXcNA56/HGBwIMFjnmKU/hENa8A6oBrTQGsgAKXsNtd3MgaTQL1KGthlnaMt+lvbyHH657iZw845dGyAR1qzZJGcMQv8RN5h44MWx3NAvZ/4GQg==;5:AVdCrztEaPq8avcJuchIB7oDr2KUZaF3XdUh6eoX0FIerzFqYcx8vU6Uz/dr+aqQigOz8ORVrGxC6mCm2KUR/f4dPXNKo8132VedRy89HxsNAdz1aNqI6rg06jB3U5IynsWv5g1LOMgAHgEDkC1JH+INjHv3/qiANW0UzWifcY4=;7:QRgPxagPDJa+qRN9g5p4+p5hxYDiwFgdeH0OyColDa8xHBaRu7aa9VX8o8a0jCEkbc1QhqMuLZo18gsd/KHWbgLs7xTWvEDohVT28twIFj2G4VyCagf4Pakbggxeerp+eSoYg7S7+tvD4zaVOJAFeIVkN9v8oOXGZ9tJNsStMUDINcL5B7348YGjZZ8gck7/Kj/KrjuxwGt2dnecFoQE8tF+0QmXFIQiUe04S8Io3WNY0uJdo+vGwiaC/doQNrrL
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: ysoft.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2018 07:01:54.0644 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2dbea44-9aab-45ca-8bb5-08d607fd24e4
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: b5839965-430f-4be2-b282-d7a3149f2b37
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4658
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTA4LTIxIGF0IDE5OjQyIC0wMzAwLCBGYWJpbyBFc3RldmFtIHdyb3RlOg0K
-PiBIaSBMZW9uYXJkLA0KPiANCj4gT24gVHVlLCBBdWcgMjEsIDIwMTggYXQgNDozNCBQTSwgTGVv
-bmFyZCBDcmVzdGV6DQo+IDxsZW9uYXJkLmNyZXN0ZXpAbnhwLmNvbT4gd3JvdGU6DQo+IA0KPiA+
-IE1vcmUgY29uY3JldGVseSBvbiA2cXAtc2RiIGJsYW5raW5nIHRoZSBkaXNwbGF5IGhhcHBlbnMg
-bGlrZSB0aGlzOg0KPiA+ICAqIGlteF9sZGJfZW5jb2Rlcl9kaXNhYmxlIHN3aXRjaGVzIGlwdTFf
-ZGkwX3NlbCB0byBpcHUxX2RpMF9wcmUgZnJvbSBsZGJfZGkxX3BvZGYNCj4gPiAgKiByZXBhcmVu
-dGluZyB0byBpcHUxX2RpMF9wcmUgZW5hYmxlcyBpdCBhbmQgaXRzIHBhcmVudHMgdXAgdG8gcGxs
-NQ0KPiA+ICAqIHBvc3NpYmx5IGdsaXRjaHkgbXV4aW5nDQo+ID4gICogaXB1X2RpX2Rpc2FibGUg
-ZGlzYWJsZXMgaXB1MV9kaTAgKGFuZCBwYXJlbnRzLCB1cCB0byBwbGw1KQ0KDQo+IFdlIGhhdmUg
-YWxyZWFkeSB0YWtlbiBjYXJlIG9mIGl0IGluIHRoZXNlIGNvbW1pdHM6DQo+ICAgICBjbGs6IGlt
-eDY6IEZpeCBwcm9jZWR1cmUgdG8gc3dpdGNoIHRoZSBwYXJlbnQgb2YgTERCX0RJX0NMSw0KPiAg
-ICAgY2xrOiBpbXg2OiBNYWtlIHRoZSBMREJfREkwIGFuZCBMREJfREkxIGNsb2NrcyByZWFkLW9u
-bHkNCg0KVGhhdCdzIGZvciBsZGJfZGl7MCwxfV9zZWwsIHRoaXMgaXMgZm9yIGlwdXsxLDJ9X2Rp
-ezAsMX1fc2VsLg0KDQpPbiBpbXg2cSB0aGUgbGRiX2RpezAsMX1fc2VsIG11eCBoYXMgYW4gaW1w
-cm9wZXJseSBwbGFjZWQgZ2F0ZSBhbmQgYQ0Kc3BlY2lhbCBzd2l0Y2ggcHJvY2VkdXJlIG5lZWRz
-IHRvIGJlIHBlcmZvcm1lZCBhdCBib290IHRpbWUuIFRoaXMNCmRlc2lnbiB3YXMgZml4ZWQgb24g
-NnFwIGJ5IG1vdmluZyB0aGUgbGRiX2RpezAsMX0gZ2F0ZSBpbW1lZGlhdGVseQ0KYWZ0ZXIgdGhl
-IG11eC4gTXkgdGVzdHMgYXJlIG9uIDZxcC4NCg0KRm9yIGlwdXsxLDJ9X2RpezAsMX1fc2VsIHRo
-ZSBpcHV7MSwyfV9kaXswLDF9IGdhdGUgY2FuIGJlIHVzZWQgb24gYWxsDQpjaGlwcywgaXQncyBq
-dXN0IHRoYXQgdGhlIGRybSBkcml2ZXIgZG9lc24ndCBkbyB0aGlzLiBBZGRpbmcgdGhlDQpDTEtf
-U0VUX1JBVEVfUEFSRU5UIGZsYWcgZXhwb3NlcyB0aGUgaXNzdWUgYnkgcmV0dXJuaW5nIGVycm9y
-cy4NCg0KPiBJIHRoaW5rIHdlIHNob3VsZCBhbHNvIHRha2UgY2FyZSBvZiB0aGUgb3RoZXIgZ2xp
-dGNoeSBtdXhlcyBhcw0KPiB5b3UgcHJvcG9zZSBoZXJlLg0KPg0KPiBIYXZlIHlvdSBzZWVuIHN1
-Y2ggZ2xpdGNoIGlzc3VlIGluIHByYWN0aWNlIHdpdGggdGhlIExEQiBjbG9ja3M/DQoNCklmIEkg
-cnVuICJ3aGlsZSB0cnVlOyBkbyBydGN3YWtlIC1tIG1lbSAtcyA1OyBkb25lIiBpdCB3aWxsIGhh
-bmcgaW4gfjMwDQptaW51dGVzIGJlY2F1c2UgdGhlICJzdXNwZW5kIGRldmljZXMiIHRha2VzIHRv
-byBsb25nIGFuZCBSVEMgYWxhcm0NCmV4cGlyZXMuIEkgdHJhY2tlZCB0aGlzIGRvd24gdG8gdGhl
-IGNsa19zZXRfcGFyZW50IGNhbGwgaW5zaWRlDQppbXhfbGRiX2VuY29kZXJfZGlzYWJsZTogc29t
-ZXRpbWVzIHRoaXMgdGFrZXMgbWFueSBzZWNvbmRzLg0KDQpBcyBmYXIgYXMgSSBjYW4gdGVsbCB0
-aGlzIGxpdmUgcmVwYXJlbnRpbmcgaXMgdW5zYWZlIChSTSBjbGFpbXMNCmdsaXRjaGVzIGFyZSBw
-b3NzaWJsZSkgYW5kIG5vdCB1c2VmdWwgKHdlJ3JlIGRlYWN0aXZhdGluZyB0aGUgZGlzcGxheQ0K
-YW55d2F5KS4gSG93ZXZlciBJJ20gbm90IHN1cmUgdGhpcyBjYW4gYmUgYmxhbWVkIG9uIGEgImds
-aXRjaCIuDQoNCldoYXQgc2VlbXMgdG8gYmUgaGFwcGVuaW5nIGlzIHRoYXQgdGhpcyB0cmlnZ2Vy
-cyB0aGUgZW5hYmxpbmcgb2YgcGxsNQ0KKHllcywgb24gZGlzYWJsZSkgYW5kIHRoZSB1c2xlZXAg
-ZnJvbSBjbGtfcGxsdjNfd2FpdF9sb2NrIHRha2VzIGZhciB0b28NCm11Y2ggdGltZSB0byByZXR1
-cm4uIFRoaXMgbWlnaHQgYmUgYW4gdW5yZWxhdGVkIHRpbWVrZWVwaW5nIGlzc3VlLCBJJ2xsDQps
-b29rIGludG8gdGhpcyBmdXJ0aGVyLg0KDQpBY2NvcmRpbmcgdG8gdGhlIFJNIHRoaXMgcmVwYXJl
-bnRpbmcgaXMgdW5zYWZlIGFueXdheSBzbyB3ZSBzaG91bGQNCmF2b2lkIGl0LCBwcm9iYWJseSBi
-eSBkaXNhYmxpbmcgaXB1X2RpIHNvb25lci4NCg0KLS0NClJlZ2FyZHMsDQpMZW9uYXJkDQo=
+On 22.8.2018 08:14, Lothar Waßmann wrote:
+> Michal Vokáč <michal.vokac@ysoft.com> wrote:
+> 
+>> Output of the PWM block of i.MX SoCs is always zero volts when the block
+>> is disabled. This can caue issues when inverted PWM polarity is needed.
+>> With inverted polarity a duty cycle = 0% corresponds to solid high level
+>> on the output. If the PWM is dissabled its output instantly goes to solid
+>> zero which corresponds to duty cycle = 100%.
+>>
+>> To have a trully inverted PWM output configure the PWM pad as a GPIO
+>> with pull-up. Then switch the pad to PWM output whenever non-zero
+>> duty cycle is needed.
+>>
+>> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+>> ---
+>>   Documentation/devicetree/bindings/pwm/imx-pwm.txt | 44 +++++++++++++++++++++++
+>>   1 file changed, 44 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pwm/imx-pwm.txt b/Documentation/devicetree/bindings/pwm/imx-pwm.txt
+>> index c61bdf8..3b1bc4c 100644
+>> --- a/Documentation/devicetree/bindings/pwm/imx-pwm.txt
+>> +++ b/Documentation/devicetree/bindings/pwm/imx-pwm.txt
+>> @@ -14,6 +14,12 @@ See the clock consumer binding,
+>>   	Documentation/devicetree/bindings/clock/clock-bindings.txt
+>>   - interrupts: The interrupt for the pwm controller
+>>   
+>> +Optional properties:
+>> +- pinctrl: For i.MX27 and newer SoCs. Add extra pinctrl to configure the PWM
+>> +  pin to gpio function.  It allows control over the pin output level when the
+>> +  PWM block is disabled. This is meant to be used if inverted polarity of the
+>> +  PWM signal is required. See "Inverted PWM output" section bellow.
+>> +
+>>   Example:
+>>   
+>>   pwm1: pwm@53fb4000 {
+>> @@ -25,3 +31,41 @@ pwm1: pwm@53fb4000 {
+>>   	clock-names = "ipg", "per";
+>>   	interrupts = <61>;
+>>   };
+>> +
+>> +Inverted PWM output
+>> +-------------------
+>> +
+>> +The i.MX SoC has such limitation that whenever a pad is configured as a PWM
+>> +output, the output level is always zero volts when the PWM block is disabled.
+>> +The zero output level is actively driven by the output stage of the PWM block
+>> +and can not be overridden by pull-up. It also does not matter what PWM polarity
+>> +a PWM client (e.g. backlight) requested.
+>> +
+>> +To gain control of the PWM output level in disabled state two pinctrl states
+>> +can be used. The "default" state and the "pwm" state. In the default state the
+>>
+> The "default" function of a PWM is to deliver a PWM signal. So it is
+> more sensible to me to have the PWM function as "default" and a "gpio"
+> function as alternative state.
+
+Yes, I totally agree that using "default" for PWM and "gpio" as the
+alternative function seems more sensible. That is actually how I started.
+Then I realized that that way you end up with the PWM pad set to zero
+until the first call of imx_pwm_apply_v2 where you can select the GPIO
+function. On my system that first call is made by pwm-backlight more than
+3s after pinctrl init.
+
+I suggested to use the "default" state as a GPIO function as the only way
+how to get a truly inverted PWM output all the time from power-up to
+power-down.
+
+In my opinion it is up to the DT author what pad configuration he uses for
+each pinctrl function as he knows what the HW really needs. I see that this
+approach is kind of controversial but I hope that with good documentation
+this would not be a problem. And as I wrote in the intro, it is absolutely
+optional. If you do not need it, you do not use it.
+
+>> +PWM output is configured as a GPIO with pull-up. In the "pwm" state the output
+>> +is configured as a PWM output. This setup assures that the PWM output is at
+>> +the required level that corresponds to duty cycle = 0 when PWM is disabled.
+>> +E.g. at boot.
+>> +
+>> +Example:
+>> +
+>> +&pwm1 {
+>> +	pinctrl-names = "default", "pwm";
+>> +	pinctrl-0 = <&pinctrl_backlight_gpio>;
+>> +	pinctrl-1 = <&pinctrl_backlight_pwm>;
+>> +}
+>> +
+>> +pinctrl_backlight_gpio: pwm1grp-gpio {
+>> +	fsl,pins = <
+>> +		/* GPIO with 22kOhm pull-up */
+>> +		MX6QDL_PAD_GPIO_9__GPIO1_IO09	0xF008
+>> +	>;
+>> +};
+>> +
+>> +pinctrl_backlight_pwm: pwm1grp-pwm {
+>> +	fsl,pins = <
+>> +		/* PWM output */
+>> +		MX6QDL_PAD_GPIO_9__PWM1_OUT	0x8
+>> +	>;
+>> +};
+> 
+> 
+> 
+
