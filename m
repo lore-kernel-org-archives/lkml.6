@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DATE_IN_FUTURE_03_06,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E34C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71283C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:19:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98678217B4
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:18:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98678217B4
+	by mail.kernel.org (Postfix) with ESMTP id 33E33217DF
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:19:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33E33217DF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbeHVFkk (ORCPT
+        id S1727871AbeHVFmB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 01:40:40 -0400
-Received: from mga09.intel.com ([134.134.136.24]:42432 "EHLO mga09.intel.com"
+        Wed, 22 Aug 2018 01:42:01 -0400
+Received: from mga18.intel.com ([134.134.136.126]:53099 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726357AbeHVFkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 01:40:40 -0400
+        id S1726298AbeHVFmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 01:42:01 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2018 19:17:58 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2018 19:19:19 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,272,1531810800"; 
-   d="scan'208";a="256952771"
+   d="scan'208";a="83404610"
 Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga006.fm.intel.com with ESMTP; 21 Aug 2018 19:17:55 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 21 Aug 2018 19:19:18 -0700
 Received: from dazhang1-ssd.sh.intel.com (unknown [10.239.48.163])
-        by linux.intel.com (Postfix) with ESMTP id F052F5802C8;
-        Tue, 21 Aug 2018 19:17:53 -0700 (PDT)
+        by linux.intel.com (Postfix) with ESMTP id 95AB55802C8;
+        Tue, 21 Aug 2018 19:19:15 -0700 (PDT)
 From:   Zhang Yi <yi.z.zhang@linux.intel.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org, pbonzini@redhat.com,
@@ -42,9 +42,9 @@ To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         jack@suse.cz, hch@lst.de
 Cc:     linux-mm@kvack.org, rkrcmar@redhat.com, jglisse@redhat.com,
         yi.z.zhang@intel.com, Zhang Yi <yi.z.zhang@linux.intel.com>
-Subject: [PATCH V4 3/4] mm: add a function to differentiate the pages is from DAX device memory
-Date:   Wed, 22 Aug 2018 18:56:48 +0800
-Message-Id: <044309496afbb4121447dff6a453bd6b96d6068d.1534934405.git.yi.z.zhang@linux.intel.com>
+Subject: [PATCH V4 4/4] kvm: add a check if pfn is from NVDIMM pmem.
+Date:   Wed, 22 Aug 2018 18:58:10 +0800
+Message-Id: <a4183c0f0adfb6d123599dd306062fd193e83f5a.1534934405.git.yi.z.zhang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1534934405.git.yi.z.zhang@linux.intel.com>
 References: <cover.1534934405.git.yi.z.zhang@linux.intel.com>
@@ -53,50 +53,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DAX driver hotplug the device memory and move it to memory zone, these
-pages will be marked reserved flag, however, some other kernel componet
-will misconceive these pages are reserved mmio (ex: we map these dev_dax
-or fs_dax pages to kvm for DIMM/NVDIMM backend). Together with the type
-MEMORY_DEVICE_FS_DAX, we can use is_dax_page() to differentiate the pages
-is DAX device memory or not.
+For device specific memory space, when we move these area of pfn to
+memory zone, we will set the page reserved flag at that time, some of
+these reserved for device mmio, and some of these are not, such as
+NVDIMM pmem.
+
+Now, we map these dev_dax or fs_dax pages to kvm for DIMM/NVDIMM
+backend, since these pages are reserved, the check of
+kvm_is_reserved_pfn() misconceives those pages as MMIO. Therefor, we
+introduce 2 page map types, MEMORY_DEVICE_FS_DAX/MEMORY_DEVICE_DEV_DAX,
+to identify these pages are from NVDIMM pmem and let kvm treat these
+as normal pages.
+
+Without this patch, many operations will be missed due to this
+mistreatment to pmem pages, for example, a page may not have chance to
+be unpinned for KVM guest(in kvm_release_pfn_clean), not able to be
+marked as dirty/accessed(in kvm_set_pfn_dirty/accessed) etc.
 
 Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
-Signed-off-by: Zhang Yu <yu.c.zhang@linux.intel.com>
-Acked-by: Jan Kara <jack@suse.cz>
 ---
- include/linux/mm.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ virt/kvm/kvm_main.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 68a5121..de5cbc3 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -889,6 +889,13 @@ static inline bool is_device_public_page(const struct page *page)
- 		page->pgmap->type == MEMORY_DEVICE_PUBLIC;
- }
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index c44c406..969b6ca 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -147,8 +147,12 @@ __weak void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
  
-+static inline bool is_dax_page(const struct page *page)
-+{
-+	return is_zone_device_page(page) &&
-+		(page->pgmap->type == MEMORY_DEVICE_FS_DAX ||
-+		page->pgmap->type == MEMORY_DEVICE_DEV_DAX);
-+}
-+
- #else /* CONFIG_DEV_PAGEMAP_OPS */
- static inline void dev_pagemap_get_ops(void)
+ bool kvm_is_reserved_pfn(kvm_pfn_t pfn)
  {
-@@ -912,6 +919,11 @@ static inline bool is_device_public_page(const struct page *page)
- {
- 	return false;
- }
+-	if (pfn_valid(pfn))
+-		return PageReserved(pfn_to_page(pfn));
++	struct page *page;
 +
-+static inline bool is_dax_page(const struct page *page)
-+{
-+	return false;
-+}
- #endif /* CONFIG_DEV_PAGEMAP_OPS */
++	if (pfn_valid(pfn)) {
++		page = pfn_to_page(pfn);
++		return PageReserved(page) && !is_dax_page(page);
++	}
  
- static inline void get_page(struct page *page)
+ 	return true;
+ }
 -- 
 2.7.4
 
