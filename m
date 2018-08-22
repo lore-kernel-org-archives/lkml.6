@@ -2,135 +2,155 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A917C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50374C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EA58214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:49:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J2VTmd6h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EA58214C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0E806214C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:49:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E806214C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728895AbeHVNN0 (ORCPT
+        id S1728881AbeHVNN0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 22 Aug 2018 09:13:26 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:37551 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728844AbeHVNNZ (ORCPT
+Received: from s3.sipsolutions.net ([144.76.43.62]:53988 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728824AbeHVNNZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 22 Aug 2018 09:13:25 -0400
-Received: by mail-it0-f68.google.com with SMTP id h20-v6so2156394itf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 02:49:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=G7k12NEe/K6PhOVSzhCdcl0vo4/q1k38l6Vn9h3lL9E=;
-        b=J2VTmd6hyjupGWEQGxzYDVktNIN4W4ET98wJ1x4f0/3hHwu2KZE48S9bhO7gkLGRQs
-         MWEUSkkwLOBd1jwzZHoBZyJbTqVRnneHxmr113EghETFjQGaE/ZVLsnYxZHOw/Ue7atj
-         nnBJ+WhbHYISnlVX/9pW3L6/K/RQtOB3ORE0w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=G7k12NEe/K6PhOVSzhCdcl0vo4/q1k38l6Vn9h3lL9E=;
-        b=h6B/3JkBMOrpojM0SOJ7q9bjYvEPiO8DeERt+Xmrh2yRe3WjkPWWQus4riE1rS6ps1
-         RNBTs2glgyfqKZUzh55tN5eSeVNwhP6Ww1bL10E5fAYQA+XewovYBMLk67pRq2JwQWoN
-         my8WMROnTKXpMj2Fu3PxZhYuKO5QhMI3chzaH15iCWKu5bGT6nQ+8QkvTyTBNTXk17lB
-         1AnXB+oOKLuPf+YOCRTh+OQ3NVr6pl7jUroV4tVY67V+iP/QTeF5HL7atF267F4xkJXM
-         msYCB53+VXpC3pcnOk5A6ln6DEBXXQkjQnPNyMrrL7KCfJA4EOdhYIPypv8E/7RWobXT
-         Negw==
-X-Gm-Message-State: APzg51CkMMrPVEEGYbKnSYQI4Tg9Zc8tV87JXI2JNFDDaPOtOLObWdng
-        ZdjrR07NTd0VpTGknG9BmJoUC7YGUE0mMW6zGr0Y6Q==
-X-Google-Smtp-Source: ANB0VdYmDoRQeGdwY7edk3huJmUvTrxd89wVESVotcglM5kI0dUuv6J5B4qphKRQoZD8U2yTpIX/leQs54dU6lqV7sA=
-X-Received: by 2002:a24:800c:: with SMTP id g12-v6mr2487688itd.146.1534931355360;
- Wed, 22 Aug 2018 02:49:15 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Wed, 22 Aug 2018 02:49:15
- -0700 (PDT)
-In-Reply-To: <20180821152151.32113-1-paul@crapouillou.net>
-References: <20180821152151.32113-1-paul@crapouillou.net>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 22 Aug 2018 11:49:15 +0200
-Message-ID: <CAPDyKFr+xbnMdzj90bHi84gD9W4U0CUvrExBdmhJ-1miFi8xog@mail.gmail.com>
-Subject: Re: [PATCH] mmc: jz4740: Add support for the JZ4725B
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>, od@zcrc.me,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1fsPlJ-0007Qa-D8; Wed, 22 Aug 2018 11:49:13 +0200
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        Byungchul Park <byungchul.park@lge.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH v2 1/2] workqueue: skip lockdep wq dependency in cancel_work_sync()
+Date:   Wed, 22 Aug 2018 11:49:03 +0200
+Message-Id: <20180822094904.15718-2-johannes@sipsolutions.net>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180822094904.15718-1-johannes@sipsolutions.net>
+References: <20180822094904.15718-1-johannes@sipsolutions.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21 August 2018 at 17:21, Paul Cercueil <paul@crapouillou.net> wrote:
-> The JZ4725B is the first JZ SoC version that introduced a 32-bit IMASK
-> register, not the JZ4750.
->
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+From: Johannes Berg <johannes.berg@intel.com>
 
-Thanks, queued for v4.20!
+In cancel_work_sync(), we can only have one of two cases, even
+with an ordered workqueue:
+ * the work isn't running, just cancelled before it started
+ * the work is running, but then nothing else can be on the
+   workqueue before it
 
-Kind regards
-Uffe
+Thus, we need to skip the lockdep workqueue dependency handling,
+otherwise we get false positive reports from lockdep saying that
+we have a potential deadlock when the workqueue also has other
+work items with locking, e.g.
 
-> ---
->  Documentation/devicetree/bindings/mmc/jz4740.txt | 1 +
->  drivers/mmc/host/jz4740_mmc.c                    | 5 +++--
->  2 files changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/jz4740.txt b/Documentation/devicetree/bindings/mmc/jz4740.txt
-> index 7cd8c432d7c8..8a6f87f13114 100644
-> --- a/Documentation/devicetree/bindings/mmc/jz4740.txt
-> +++ b/Documentation/devicetree/bindings/mmc/jz4740.txt
-> @@ -7,6 +7,7 @@ described in mmc.txt.
->  Required properties:
->  - compatible: Should be one of the following:
->    - "ingenic,jz4740-mmc" for the JZ4740
-> +  - "ingenic,jz4725b-mmc" for the JZ4725B
->    - "ingenic,jz4780-mmc" for the JZ4780
->  - reg: Should contain the MMC controller registers location and length.
->  - interrupts: Should contain the interrupt specifier of the MMC controller.
-> diff --git a/drivers/mmc/host/jz4740_mmc.c b/drivers/mmc/host/jz4740_mmc.c
-> index 993386c9ea50..0c1efd5100b7 100644
-> --- a/drivers/mmc/host/jz4740_mmc.c
-> +++ b/drivers/mmc/host/jz4740_mmc.c
-> @@ -115,7 +115,7 @@
->
->  enum jz4740_mmc_version {
->         JZ_MMC_JZ4740,
-> -       JZ_MMC_JZ4750,
-> +       JZ_MMC_JZ4725B,
->         JZ_MMC_JZ4780,
->  };
->
-> @@ -176,7 +176,7 @@ struct jz4740_mmc_host {
->  static void jz4740_mmc_write_irq_mask(struct jz4740_mmc_host *host,
->                                       uint32_t val)
->  {
-> -       if (host->version >= JZ_MMC_JZ4750)
-> +       if (host->version >= JZ_MMC_JZ4725B)
->                 return writel(val, host->base + JZ_REG_MMC_IMASK);
->         else
->                 return writew(val, host->base + JZ_REG_MMC_IMASK);
-> @@ -1012,6 +1012,7 @@ static void jz4740_mmc_free_gpios(struct platform_device *pdev)
->
->  static const struct of_device_id jz4740_mmc_of_match[] = {
->         { .compatible = "ingenic,jz4740-mmc", .data = (void *) JZ_MMC_JZ4740 },
-> +       { .compatible = "ingenic,jz4725b-mmc", .data = (void *)JZ_MMC_JZ4725B },
->         { .compatible = "ingenic,jz4780-mmc", .data = (void *) JZ_MMC_JZ4780 },
->         {},
->  };
-> --
-> 2.11.0
->
+  work1_function() { mutex_lock(&mutex); ... }
+  work2_function() { /* nothing */ }
+
+  other_function() {
+    queue_work(ordered_wq, &work1);
+    queue_work(ordered_wq, &work2);
+    mutex_lock(&mutex);
+    cancel_work_sync(&work2);
+  }
+
+As described above, this isn't a problem, but lockdep will
+currently flag it as if cancel_work_sync() was flush_work(),
+which *is* a problem.
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ kernel/workqueue.c | 37 ++++++++++++++++++++++---------------
+ 1 file changed, 22 insertions(+), 15 deletions(-)
+
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index 78b192071ef7..a6c2b823f348 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -2843,7 +2843,8 @@ void drain_workqueue(struct workqueue_struct *wq)
+ }
+ EXPORT_SYMBOL_GPL(drain_workqueue);
+ 
+-static bool start_flush_work(struct work_struct *work, struct wq_barrier *barr)
++static bool start_flush_work(struct work_struct *work, struct wq_barrier *barr,
++			     bool from_cancel)
+ {
+ 	struct worker *worker = NULL;
+ 	struct worker_pool *pool;
+@@ -2885,7 +2886,8 @@ static bool start_flush_work(struct work_struct *work, struct wq_barrier *barr)
+ 	 * workqueues the deadlock happens when the rescuer stalls, blocking
+ 	 * forward progress.
+ 	 */
+-	if (pwq->wq->saved_max_active == 1 || pwq->wq->rescuer) {
++	if (!from_cancel &&
++	    (pwq->wq->saved_max_active == 1 || pwq->wq->rescuer)) {
+ 		lock_map_acquire(&pwq->wq->lockdep_map);
+ 		lock_map_release(&pwq->wq->lockdep_map);
+ 	}
+@@ -2896,6 +2898,22 @@ static bool start_flush_work(struct work_struct *work, struct wq_barrier *barr)
+ 	return false;
+ }
+ 
++static bool __flush_work(struct work_struct *work, bool from_cancel)
++{
++	struct wq_barrier barr;
++
++	if (WARN_ON(!wq_online))
++		return false;
++
++	if (start_flush_work(work, &barr, from_cancel)) {
++		wait_for_completion(&barr.done);
++		destroy_work_on_stack(&barr.work);
++		return true;
++	} else {
++		return false;
++	}
++}
++
+ /**
+  * flush_work - wait for a work to finish executing the last queueing instance
+  * @work: the work to flush
+@@ -2909,18 +2927,7 @@ static bool start_flush_work(struct work_struct *work, struct wq_barrier *barr)
+  */
+ bool flush_work(struct work_struct *work)
+ {
+-	struct wq_barrier barr;
+-
+-	if (WARN_ON(!wq_online))
+-		return false;
+-
+-	if (start_flush_work(work, &barr)) {
+-		wait_for_completion(&barr.done);
+-		destroy_work_on_stack(&barr.work);
+-		return true;
+-	} else {
+-		return false;
+-	}
++	return __flush_work(work, false);
+ }
+ EXPORT_SYMBOL_GPL(flush_work);
+ 
+@@ -2986,7 +2993,7 @@ static bool __cancel_work_timer(struct work_struct *work, bool is_dwork)
+ 	 * isn't executing.
+ 	 */
+ 	if (wq_online)
+-		flush_work(work);
++		__flush_work(work, true);
+ 
+ 	clear_work_data(work);
+ 
+-- 
+2.14.4
+
