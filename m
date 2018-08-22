@@ -2,132 +2,102 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78153C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D04DC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:05:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16340208EB
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D00D82148E
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:05:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mkHACjEI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16340208EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TzSJKryf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D00D82148E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728560AbeHVM1d (ORCPT
+        id S1728580AbeHVM33 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 08:27:33 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45138 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728152AbeHVM1d (ORCPT
+        Wed, 22 Aug 2018 08:29:29 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:40534 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728152AbeHVM33 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 08:27:33 -0400
-Received: by mail-lj1-f195.google.com with SMTP id u83-v6so855973lje.12;
-        Wed, 22 Aug 2018 02:03:33 -0700 (PDT)
+        Wed, 22 Aug 2018 08:29:29 -0400
+Received: by mail-pl0-f68.google.com with SMTP id s17-v6so604469plp.7
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 02:05:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=pe90KY5CQaYJKUnXzF74fKqsP8Ey1m1Hc5xUHpQ9xg0=;
-        b=mkHACjEI2Jl8RGj50mgOL++Ov2JOSHmBTeuWYMY2x3v0uCCK8Q+09B3a1AZvENi0At
-         5TxvtQqeAgBVMGlwfOA/kVITgdEaqqRqvLR8/ts+aQfWOOW0l0uUGsqxgrLrZY4MRqby
-         B4oub3qGk/H+8/iH2aDCMFQwc2i+d0lH81F79uYB4hph8OSiWdzf+Rqjp0e0wn5Wwvgg
-         JHVbcfhS9ih9nvPk79IaKpM2f7RlC0wrXFIFS5+gz117t6Hh79L9y+mU31W9vzw6i4w8
-         9N3J8/of0bM/uV64KsjCO45eVJgpjnG9YeWIUp0MA1a/BC/An71YfFy7u07Mnbcy7+tf
-         ZFsg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WSPAfKTqAURuuMHBFsdjYJISio3g6efb2gzMrkEOxT0=;
+        b=TzSJKryfV1V/C6WHthb78sZgP7TWaNIwGr8w0rhSsdklTB8smayd+Afw0PirQy3Ro6
+         ojfuGPXtLvX+zlHcw0LHgeWIXUoxHXafAWffQA37jcHeiyY0LGDwnCm2XRW5begTdciJ
+         d3dygLUjc0tWyndoeyqBh4uMXZVFtZfAVilieOSFJR3xdVppAYssIfUg/BdpIPzMDXu9
+         ePWk1D1T9n2APJ8yHcGhvFph44HKzGKgRHahf9cqDDhLoIdKMU3uwhs01Cm1Bfygv6Np
+         zp9Roa9G9Jo+g5PUxagRWxO2PB4ePAZUqIdebI5ZSox3zKD9X5fyK5KH4PmdqvWtiKlB
+         JsUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=pe90KY5CQaYJKUnXzF74fKqsP8Ey1m1Hc5xUHpQ9xg0=;
-        b=dQuptJ/OcrJGOe/kVLOxK7aVY1BmzM4GQw1Q2sXqfKFBKhaS7DBjZfG19QkaOvzH9b
-         YaON0DNHbxmOoNlq/DZFRmV+KOrSuXQdoPR7z/U7SVuM49X8jmZLM4hotc3Vry2wUWLv
-         RnVAUDF4Wdgogxq7G2bgYC3c7wLkMLyGPRnNDDLuBtgYkflTAIj722/Dqi5IzxgsO8S/
-         KkXEo50Hca8gzB4zQYSYrUZNOaGPYuFBitNgqPEhZhxO5OCOAuFfWqfcbOlOAWwAzlrJ
-         IQbs0PPapnFAE4B7+heFf0dfXi0QfKq1WhBHWBnhEW7Jwugwluapoc0XNZ0xFF+5Hf48
-         HbRw==
-X-Gm-Message-State: AOUpUlEeMvyNurFqCxRfVcqS4lmgJcp2Pw3D2Tnn9+ZFFtNfh5h3fFbB
-        8IXlKHrzbaC/RlekxAI3sq4=
-X-Google-Smtp-Source: ANB0VdaRJnHXu59bc0cM06T9BMZaWMQrsYTuEeJcg6ArCCnTnuHm01up0F+l1XXRHdgwQ8CyOKis3w==
-X-Received: by 2002:a2e:4089:: with SMTP id r9-v6mr5251021lje.2.1534928612398;
-        Wed, 22 Aug 2018 02:03:32 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id l25-v6sm209030lfi.94.2018.08.22.02.03.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Aug 2018 02:03:31 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@xi.terra>)
-        id 1fsP37-0007bB-18; Wed, 22 Aug 2018 11:03:33 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Tero Kristo <t-kristo@ti.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH] clk: ti: fix OF child-node lookup
-Date:   Wed, 22 Aug 2018 11:03:19 +0200
-Message-Id: <20180822090319.29167-1-johan@kernel.org>
-X-Mailer: git-send-email 2.18.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WSPAfKTqAURuuMHBFsdjYJISio3g6efb2gzMrkEOxT0=;
+        b=U1mrsX/nYewJJRcB0FoViQPOC9NRe+CU8y8v8Cgj/dtHLZ53c6EX/OQ+t0krC9AlDf
+         Acvq7z6QWaAEleGJDC4jBNebDzS1qgMyfAPRrntIGINT4ORai+j0nUZ8nPyraMxJJhXg
+         /fF991pcEb7lK+Q6rkZJ691qnilotIy3xOwqKl9QbTNOYDlpdx8CGtSGCoHeMp27QMrI
+         txdrWf5Pwpf9Gxq3UKOf82FRbn09kJkVD/Zsrlzmce6PVI0hHksImksDn2WS8rhyUfVR
+         q6Uan5GJ5fdZmjmK1Y/5DTbOZvl1Izhn+qrPtJ2Ibp0aTXwFi8xYKGh8NyrwzvE6Agif
+         RPiQ==
+X-Gm-Message-State: AOUpUlEotNemn6nCZVkzKcFvo7yvJ8rw6/W1kgXurrPg5VP6Ee8VHz4Z
+        4QPffgdGPuBoTZ9yc3TUSDfFwjJG
+X-Google-Smtp-Source: AA+uWPyE7eNqdJ57SJTeVEAMdXocLOCN0eTjyV9bBIPadbxB/oJJ41C9r7iHwF682vT3dcAsy8Lepw==
+X-Received: by 2002:a17:902:49:: with SMTP id 67-v6mr9519044pla.206.1534928729731;
+        Wed, 22 Aug 2018 02:05:29 -0700 (PDT)
+Received: from Gentoo-PC ([117.204.240.63])
+        by smtp.gmail.com with ESMTPSA id e82-v6sm1981723pfd.40.2018.08.22.02.05.28
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 22 Aug 2018 02:05:29 -0700 (PDT)
+Date:   Wed, 22 Aug 2018 14:35:32 +0530
+From:   Bhaskar Singh <bhaskar.kernel@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8188eu: Fix spelling mistake
+Message-ID: <20180822090532.GA2715@Gentoo-PC>
+References: <20180821014428.GA7914@Gentoo-PC>
+ <20180822081636.eu54b6z5g5s7wgfp@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180822081636.eu54b6z5g5s7wgfp@mwanda>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix child-node lookup which by using the wrong OF helper was searching
-the whole tree depth-first, something which could end up matching an
-unrelated node.
+On Wed, Aug 22, 2018 at 11:16:36AM +0300, Dan Carpenter wrote:
+> On Tue, Aug 21, 2018 at 07:14:28AM +0530, Bhaskar Singh wrote:
+> > This patch fix spelling mistakes in TODO.
+> > 
+> 
+> Btw, it helps when you say which word you're changing, otherwise it
+> takes a while to spot the difference.  We changed "HGz" to "GHz".
+> 
+> Probably someone smarter than I am would have spotted it faster...
+> 
+> regards,
+> dan carpenter
+>
 
-Also fix the related node-reference leaks.
+Apologies for the inconvenience and thanks a lot for your suggestion.
 
-Fixes: 5b385a45e001 ("clk: ti: add support for clkctrl aliases")
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/clk/ti/clk.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+I will definitely follow that.
 
-diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-index 7d22e1af2247..27e0979b3158 100644
---- a/drivers/clk/ti/clk.c
-+++ b/drivers/clk/ti/clk.c
-@@ -129,7 +129,7 @@ int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
- void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
- {
- 	struct ti_dt_clk *c;
--	struct device_node *node;
-+	struct device_node *node, *parent;
- 	struct clk *clk;
- 	struct of_phandle_args clkspec;
- 	char buf[64];
-@@ -164,8 +164,12 @@ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
- 			continue;
- 
- 		node = of_find_node_by_name(NULL, buf);
--		if (num_args)
--			node = of_find_node_by_name(node, "clk");
-+		if (num_args) {
-+			parent = node;
-+			node = of_get_child_by_name(parent, "clk");
-+			of_node_put(parent);
-+		}
-+
- 		clkspec.np = node;
- 		clkspec.args_count = num_args;
- 		for (i = 0; i < num_args; i++) {
-@@ -173,11 +177,12 @@ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
- 			if (ret) {
- 				pr_warn("Bad tag in %s at %d: %s\n",
- 					c->node_name, i, tags[i]);
-+				of_node_put(node);
- 				return;
- 			}
- 		}
- 		clk = of_clk_get_from_provider(&clkspec);
--
-+		of_node_put(node);
- 		if (!IS_ERR(clk)) {
- 			c->lk.clk = clk;
- 			clkdev_add(&c->lk);
--- 
-2.18.0
+Should I send the patch again?
+
+Thanks
+Bhaskar Singh
 
