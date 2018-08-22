@@ -2,160 +2,318 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E32C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A3F3C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47D7C208E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:02:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47D7C208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id F0DD2208E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:04:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c5X5J7DB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0DD2208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbeHVU1p (ORCPT
+        id S1727402AbeHVU3y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 16:27:45 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35622 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726892AbeHVU1o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 16:27:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 990F880D;
-        Wed, 22 Aug 2018 10:02:03 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E28B13F5BC;
-        Wed, 22 Aug 2018 10:02:01 -0700 (PDT)
-Subject: Re: [PATCH v5 5/5] iommu/arm-smmu-v3: add bootup option
- "iommu.non_strict"
-To:     Zhen Lei <thunder.leizhen@huawei.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Cc:     LinuxArm <linuxarm@huawei.com>, Hanjun Guo <guohanjun@huawei.com>,
-        Libin <huawei.libin@huawei.com>,
-        John Garry <john.garry@huawei.com>
-References: <1534296510-12888-1-git-send-email-thunder.leizhen@huawei.com>
- <1534296510-12888-6-git-send-email-thunder.leizhen@huawei.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <29330cf7-d269-c4db-2f5a-632509058987@arm.com>
-Date:   Wed, 22 Aug 2018 18:02:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 22 Aug 2018 16:29:54 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:41876 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727152AbeHVU3y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 16:29:54 -0400
+Received: by mail-oi0-f67.google.com with SMTP id k12-v6so4357339oiw.8
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 10:04:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qMTf89cOhk8oBDSCvZrTe3+HAsfdL9YhBp4Ak9wjTHk=;
+        b=c5X5J7DBaUoqMg+ZEXWuxuEoXWcsoh7VFGNZf6GXTD9xH4quZXbUDkoDRazPRiHVjP
+         Zw5A5usF7ahA2HewWktmw1wGxSe8+fLC8ot4tG4n/Yj6n1JHSyEaJD/9rLimQNYbYHL5
+         pr6i+6NXdJob+W4Kc/fOiVerXYzTOlOmnzKCM8h9K6znoqK3W8ihR0adhu4cC1Qx2JxZ
+         DVAmclkrVI5KHpJ+3WbCAJ1fT5s85eg7gh4GnD20N892Zrv/Slb/FaQK0BuilsStTCTX
+         /p2WMnHxHUo79kIdqfRIcE54zFhNS/kLvRYzLS7R27/yfHLzTkrBnTfowrXcNnhexesX
+         sOuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qMTf89cOhk8oBDSCvZrTe3+HAsfdL9YhBp4Ak9wjTHk=;
+        b=eYwi8XEI+lCxYsG8kq6bTVYdxtOPKkyILM+hzq1YyJvt9BAu/L3aTg32iGu4iTq8Er
+         7FBiZjnoF6rKLIxOi8lexR/ma0FF/Y+oWZucs8h2RN2glE0WnX6X/buEOa1CX9Dt7CRT
+         F4fuExnQRxMl3Hvd/E6gVbSSF+ci5Y2KHnmka2X2libajQwhQb03NBH42BUau35HDfvc
+         4I8NhXxJiG7sNG5WVrkOJjufx7CMH4y/WiDIv3DBLB7GPOgKgEeuXmISQRmFasofuroW
+         oK6nFj/EK4ZLVNQQKrY1L56ZI/gir52FDayZZfFQTalQtWjyYpsJb32GFySV5Mjtosr/
+         PU3w==
+X-Gm-Message-State: APzg51CeWMZyQxRYua9jlqpEiVWIGrBX2gnKuS2UmeVqXoYDZi6PRA1K
+        2ElnrmIxLfgiVw3CIo1jBiUeN1KNt8HKjBDloAFqdyWQZZ2l+A==
+X-Google-Smtp-Source: ANB0VdZ5NC4f6VvOxqnDdjazCto0dJoJ5bA4/3teZV+ZHHukp4uFDFk1nDhnPIX0oAjM0FOnjABj9/ya1ib4noIakmU=
+X-Received: by 2002:aca:4784:: with SMTP id u126-v6mr4808487oia.229.1534957451878;
+ Wed, 22 Aug 2018 10:04:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1534296510-12888-6-git-send-email-thunder.leizhen@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20180821000444.7004-1-casey.schaufler@intel.com>
+ <20180821000444.7004-4-casey.schaufler@intel.com> <CAG48ez1D-DPBP8ACA1W5=XZLNKUeVj7ZOGUG8uJ2nL1xOSR_9Q@mail.gmail.com>
+ <99FC4B6EFCEFD44486C35F4C281DC673214402D3@ORSMSX107.amr.corp.intel.com>
+ <CAG48ez3bh5cFgZ5ZY63pszTV+KX+KC4utRCm7E8en+uF5w6vKw@mail.gmail.com> <99FC4B6EFCEFD44486C35F4C281DC67321440770@ORSMSX107.amr.corp.intel.com>
+In-Reply-To: <99FC4B6EFCEFD44486C35F4C281DC67321440770@ORSMSX107.amr.corp.intel.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 22 Aug 2018 19:03:45 +0200
+Message-ID: <CAG48ez3OkpcrC34LJTWAvH4ZvREW7jDVkeMBZrLQe6cRSEBheg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] LSM: Security module checking for side-channel dangers
+To:     Casey Schaufler <casey.schaufler@intel.com>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        selinux@tycho.nsa.gov, Dave Hansen <dave.hansen@intel.com>,
+        deneen.t.dock@intel.com, kristen@linux.intel.com,
+        Arjan van de Ven <arjan@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/08/18 02:28, Zhen Lei wrote:
-> Add a bootup option to make the system manager can choose which mode to
-> be used. The default mode is strict.
-> 
-> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-> ---
->   Documentation/admin-guide/kernel-parameters.txt | 13 +++++++++++++
->   drivers/iommu/arm-smmu-v3.c                     | 22 +++++++++++++++++++++-
->   2 files changed, 34 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 5cde1ff..cb9d043e 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -1720,6 +1720,19 @@
->   		nobypass	[PPC/POWERNV]
->   			Disable IOMMU bypass, using IOMMU for PCI devices.
-> 
-> +	iommu.non_strict=	[ARM64]
-> +			Format: { "0" | "1" }
-> +			0 - strict mode, default.
-> +			    Release IOVAs after the related TLBs are invalid
-> +			    completely.
-> +			1 - non-strict mode.
-> +			    Put off TLBs invalidation and release memory first.
-> +			    It's good for scatter-gather performance but lacks
-> +			    full isolation, an untrusted device can access the
-> +			    reused memory because the TLBs may still valid.
-> +			    Please take	full consideration before choosing this
-> +			    mode. Note that, VFIO will always use strict mode.
-> +
->   	iommu.passthrough=
->   			[ARM64] Configure DMA to bypass the IOMMU by default.
->   			Format: { "0" | "1" }
-> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-> index 61eb7ec..0eda90e 100644
-> --- a/drivers/iommu/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm-smmu-v3.c
-> @@ -631,6 +631,26 @@ struct arm_smmu_option_prop {
->   	{ 0, NULL},
->   };
-> 
-> +static bool smmu_non_strict __read_mostly;
-> +
-> +static int __init arm_smmu_setup(char *str)
-> +{
-> +	int ret;
-> +
-> +	ret = kstrtobool(str, &smmu_non_strict);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (smmu_non_strict) {
-> +		pr_warn("WARNING: iommu non-strict mode is chosen.\n"
-> +			"It's good for scatter-gather performance but lacks full isolation\n");
-> +		add_taint(TAINT_WARN, LOCKDEP_STILL_OK);
-> +	}
-> +
-> +	return 0;
-> +}
-> +early_param("iommu.non_strict", arm_smmu_setup);
+On Wed, Aug 22, 2018 at 6:39 PM Schaufler, Casey
+<casey.schaufler@intel.com> wrote:
+>
+> > -----Original Message-----
+> > From: Jann Horn [mailto:jannh@google.com]
+> > Sent: Tuesday, August 21, 2018 6:01 PM
+> > To: Schaufler, Casey <casey.schaufler@intel.com>
+> > Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>; kernel list
+> > <linux-kernel@vger.kernel.org>; linux-security-module <linux-security-
+> > module@vger.kernel.org>; selinux@tycho.nsa.gov; Hansen, Dave
+> > <dave.hansen@intel.com>; Dock, Deneen T <deneen.t.dock@intel.com>;
+> > kristen@linux.intel.com; Arjan van de Ven <arjan@linux.intel.com>
+> > Subject: Re: [PATCH v3 3/5] LSM: Security module checking for side-channel
+> > dangers
+> >
+> > On Wed, Aug 22, 2018 at 1:44 AM Schaufler, Casey
+> > <casey.schaufler@intel.com> wrote:
+> > >
+> > > > -----Original Message-----
+> > > > From: Jann Horn [mailto:jannh@google.com]
+> > > > Sent: Tuesday, August 21, 2018 10:24 AM
+> > > > To: Schaufler, Casey <casey.schaufler@intel.com>
+> > > > Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>; kernel list
+> > > > <linux-kernel@vger.kernel.org>; linux-security-module <linux-security-
+> > > > module@vger.kernel.org>; selinux@tycho.nsa.gov; Hansen, Dave
+> > > > <dave.hansen@intel.com>; Dock, Deneen T <deneen.t.dock@intel.com>;
+> > > > kristen@linux.intel.com; Arjan van de Ven <arjan@linux.intel.com>
+> > > > Subject: Re: [PATCH v3 3/5] LSM: Security module checking for side-channel
+> > > > dangers
+> > > >
+> > > > On Tue, Aug 21, 2018 at 2:05 AM Casey Schaufler
+> > > > <casey.schaufler@intel.com> wrote:
+> > > > >
+> > > > > The sidechannel LSM checks for cases where a side-channel
+> > > > > attack may be dangerous based on security attributes of tasks.
+> > > > > This includes:
+> > > > >         Effective UID of the tasks is different
+> > > > >         Capablity sets are different
+> > > > >         Tasks are in different namespaces
+> > > > > An option is also provided to assert that task are never
+> > > > > to be considered safe. This is high paranoia, and expensive
+> > > > > as well.
+> > > > >
+> > > > > Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
+> > > > > ---
+> > > > [...]
+> > > > > diff --git a/security/sidechannel/Kconfig b/security/sidechannel/Kconfig
+> > > > > new file mode 100644
+> > > > > index 000000000000..af9396534128
+> > > > > --- /dev/null
+> > > > > +++ b/security/sidechannel/Kconfig
+> > > > [...]
+> > > > > +config SECURITY_SIDECHANNEL_CAPABILITIES
+> > > > > +       bool "Sidechannel check on capability sets"
+> > > > > +       depends on SECURITY_SIDECHANNEL
+> > > > > +       default n
+> > > > > +       help
+> > > > > +         Assume that tasks with different sets of privilege may be
+> > > > > +         subject to side-channel attacks. Potential interactions
+> > > > > +         where the attacker lacks capabilities the attacked has
+> > > > > +         are blocked.
+> > > > > +
+> > > > > +          If you are unsure how to answer this question, answer N.
+> > > > > +
+> > > > > +config SECURITY_SIDECHANNEL_NAMESPACES
+> > > > > +       bool "Sidechannel check on namespaces"
+> > > > > +       depends on SECURITY_SIDECHANNEL
+> > > > > +       depends on NAMESPACES
+> > > > > +       default n
+> > > > > +       help
+> > > > > +         Assume that tasks in different namespaces may be
+> > > > > +         subject to side-channel attacks. User, PID and cgroup
+> > > > > +         namespaces are checked.
+> > > > > +
+> > > > > +          If you are unsure how to answer this question, answer N.
+> > > > [...]
+> > > > > diff --git a/security/sidechannel/sidechannel.c
+> > > > b/security/sidechannel/sidechannel.c
+> > > > > new file mode 100644
+> > > > > index 000000000000..4da7d6dafdc5
+> > > > > --- /dev/null
+> > > > > +++ b/security/sidechannel/sidechannel.c
+> > > > [...]
+> > > > > +/*
+> > > > > + * safe_by_capability - Are task and current sidechannel safe?
+> > > > > + * @p: task to check on
+> > > > > + *
+> > > > > + * Returns 0 if the tasks are sidechannel safe, -EACCES otherwise.
+> > > > > + */
+> > > > > +#ifdef CONFIG_SECURITY_SIDECHANNEL_CAPABILITIES
+> > > > > +static int safe_by_capability(struct task_struct *p)
+> > > > > +{
+> > > > > +       const struct cred *ccred = current_real_cred();
+> > > > > +       const struct cred *pcred = rcu_dereference_protected(p->real_cred,
+> > 1);
+> > > > > +
+> > > > > +       /*
+> > > > > +        * Capabilities checks. Considered safe if:
+> > > > > +        *      current has all the capabilities p does
+> > > > > +        */
+> > > > > +       if (ccred != pcred &&
+> > > > > +           !cap_issubset(pcred->cap_effective, ccred->cap_effective))
+> > > > > +               return -EACCES;
+> > > > > +       return 0;
+> > > > > +}
+> > > >
+> > > > On its own (without safe_by_namespace()), this check makes no sense, I
+> > > > think. You're performing a test on the namespaced capability sets
+> > > > without looking at which user namespaces they are relative to. Maybe
+> > > > either introduce a configuration dependency or add an extra namespace
+> > > > check here?
+> > >
+> > > If you don't have namespaces the check is correct. If you do, and use
+> > > safe_by_namespace() you're also correct. If you use namespaces and
+> > > care about side-channel attacks you should enable the namespace checks.
+> >
+> > By "use namespaces", you mean "have CONFIG_USER_NS=y set in the kernel
+> > config", right?
+>
+> That's correct.
+>
+> > It doesn't matter much whether processes on your system are
+> > intentionally using namespaces;
+>
+> Also correct.
+>
+> > what matters is whether some random
+> > process can just use unshare(CLONE_NEWUSER) to increase its apparent
+> > capabilities and bypass the checks performed by this LSM.
+>
+> Which puts it in a new user namespace, which gets caught by the
+> safe_by_namespace() check.
+>
+> > My expectation is that unshare(CLONE_NEWUSER) should not increase the
+> > caller's abilities. Your patch seems to violate that expectation.
+>
+> If you have CONFIG_USER_NS and not
+> CONFIG_SECURITY_SIDECHANNEL_NAMESPACES you do not increase the
+> caller's abilities from what you have without safesidechannel. If you have
+> CONFIG_SECURITY_SIDECHANNEL_NAMESPACES you have additional
+> restriction (assuming one considers setting the barrier a restriction) that
+> the tasks must be in the same namespace(s). As I said, if you care about
+> namespace implications you should configure the system accordingly.
+>
+> > > I don't see real value in adding namespace checks in the capability checks
+> > > for the event where someone has said they don't want namespace checks.
+> >
+> > Capabilities are meaningless if you don't consider the namespaces
+> > relative to which they are effective.
+>
+> Agreed. But if CONFIG_NAMESPACES is off you are always in the same
+> namespace and if it is on you should use the sidechannel namespace check.
+>
+> > Anyone can get CAP_SYS_ADMIN or
+> > whatever other capabilities they want, by design - just not relative
+> > to objects they don't own. Look:
+> >
+> > $ grep ^Cap /proc/self/status
+> > CapInh: 0000000000000000
+> > CapPrm: 0000000000000000
+> > CapEff: 0000000000000000
+> > CapBnd: 0000003fffffffff
+> > CapAmb: 0000000000000000
+> > $ unshare -Ur grep ^Cap /proc/self/status
+> > CapInh: 0000000000000000
+> > CapPrm: 0000003fffffffff
+> > CapEff: 0000003fffffffff
+> > CapBnd: 0000003fffffffff
+> > CapAmb: 0000000000000000
+> >
+> > Ta-daa! Full capability set.
+>
+> Yes, but in a different namespace. Hence the namespace check.
+>
+> What I hear you saying is that you don't want the capability check
+> to be independent of the namespace check.
 
-As I said on v3, the option should be parsed by iommu-dma, since that's 
-where it takes effect, and I'm sure SMMUv2 users will be interested in 
-trying it out too.
+The capability check doesn't always require a namespace match, and I
+don't care about non-user namespaces here, but I would prefer it if
+A->B with A having some capabilities required A's user namespace to be
+ancestor-or-self of B's user namespace. But alternatively:
 
-In other words, if iommu_dma_init_domain() does something like:
+> This conflicts with the
+> strong desire expressed to me when I started this that the configuration
+> should be flexible. I can beef up the description of the various options.
+> Would that address the issue?
 
-	if (iommu_dma_non_strict && domain->ops->flush_iotlb_all) {
-		domain->non_strict = true;
-		cookie->domain = domain;
-		init_iova_flush_queue(...);
-	}
+It seems to me that it would make sense to express this as something
+like a Kconfig dependency. But I guess if you document that the
+combination of CONFIG_USER_NS=y,
+CONFIG_SECURITY_SIDECHANNEL_NAMESPACES=n and
+SECURITY_SIDECHANNEL_CAPABILITIES=y is nonsensical, that works too. I
+just don't see why you'd want to provide such a footgun?
+Configurability is nice, but if we know that one of the possible
+configurations doesn't make sense, it seems like a good idea to just
+not allow the system to be configured that way.
 
-> +
->   static inline void __iomem *arm_smmu_page1_fixup(unsigned long offset,
->   						 struct arm_smmu_device *smmu)
->   {
-> @@ -1622,7 +1642,7 @@ static int arm_smmu_domain_finalise(struct iommu_domain *domain)
->   	if (smmu->features & ARM_SMMU_FEAT_COHERENCY)
->   		pgtbl_cfg.quirks = IO_PGTABLE_QUIRK_NO_DMA;
-> 
-> -	if (domain->type == IOMMU_DOMAIN_DMA) {
-> +	if ((domain->type == IOMMU_DOMAIN_DMA) && smmu_non_strict) {
->   		domain->non_strict = true;
->   		pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_NON_STRICT;
->   	}
+You say that you were asked to make the configuration flexible. Did
+whoever told you that actually want the ability to compare raw
+capability sets on a system with CONFIG_USER_NS=y, and understand what
+semantics that has (and doesn't have)? Or was their intent more along
+the lines of "we want to flush if the new task has higher privileges,
+capability-wise, than the old task; but we don't explicitly care about
+namespaces"?
 
-...then all the driver should need to do is:
-
-	if (domain->non_strict)
-		pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_NON_STRICT;
-
-
-Now, that would make it possible to request non-strict mode even with 
-drivers which *don't* understand it, but I think that's not actually 
-harmful, just means that some TLBIs will still get issued synchronously 
-and the flush queue might not do much. If you wanted to avoid even that, 
-you could replace domain->non_strict with an iommu_domain_set_attr() 
-call, so iommu_dma could tell up-front whether the driver understands 
-non-strict mode and it's worth setting the queue up or not.
-
-Robin.
+> > > I got early feedback that configurability was considered important.
+> > > This is the correct behavior if you want namespace checks to be
+> > > separately configurable from capability checks. You could ask for
+> > > distinct configuration options for each kind of namespace, but, well, yuck.
+> > >
+> > > > > +static int safe_by_namespace(struct task_struct *p)
+> > > > > +{
+> > > > > +       struct cgroup_namespace *ccgn = NULL;
+> > > > > +       struct cgroup_namespace *pcgn = NULL;
+> > > > > +       const struct cred *ccred;
+> > > > > +       const struct cred *pcred;
+> > > > > +
+> > > > > +       /*
+> > > > > +        * Namespace checks. Considered safe if:
+> > > > > +        *      cgroup namespace is the same
+> > > > > +        *      User namespace is the same
+> > > > > +        *      PID namespace is the same
+> > > > > +        */
+> > > > > +       if (current->nsproxy)
+> > > > > +               ccgn = current->nsproxy->cgroup_ns;
+> > > > > +       if (p->nsproxy)
+> > > > > +               pcgn = p->nsproxy->cgroup_ns;
+> > > > > +       if (ccgn != pcgn)
+> > > > > +               return -EACCES;
+> > > > > +
+> > > > > +       ccred = current_real_cred();
+> > > > > +       pcred = rcu_dereference_protected(p->real_cred, 1);
+> > > > > +
+> > > > > +       if (ccred->user_ns != pcred->user_ns)
+> > > > > +               return -EACCES;
+> > > > > +       if (task_active_pid_ns(current) != task_active_pid_ns(p))
+> > > > > +               return -EACCES;
+> > > > > +       return 0;
+> > > > > +}
