@@ -5,99 +5,159 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80FC1C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 12:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C29C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 12:48:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 416CD214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 12:48:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 416CD214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 46366214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 12:48:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46366214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728756AbeHVQMq (ORCPT
+        id S1728816AbeHVQM7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 12:12:46 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:28723 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728057AbeHVQMq (ORCPT
+        Wed, 22 Aug 2018 12:12:59 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:52591 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728057AbeHVQM7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 12:12:46 -0400
-X-IronPort-AV: E=Sophos;i="5.53,274,1531810800"; 
-   d="scan'208";a="16397722"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 22 Aug 2018 05:47:59 -0700
-Received: from [10.159.245.112] (10.10.76.4) by chn-sv-exch03.mchp-main.com
- (10.10.76.49) with Microsoft SMTP Server id 14.3.352.0; Wed, 22 Aug 2018
- 05:47:58 -0700
-Subject: at91 git tree in linux-next
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        <ksummit-discuss@lists.linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-References: <551A9FAC.2010203@atmel.com>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-Message-ID: <f15a82c8-5960-34ea-e7fc-dffdfdd369c6@microchip.com>
-Date:   Wed, 22 Aug 2018 14:47:56 +0200
+        Wed, 22 Aug 2018 12:12:59 -0400
+Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
+        by 156.147.23.53 with ESMTP; 22 Aug 2018 21:48:09 +0900
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO ?10.177.222.33?) (10.177.222.33)
+        by 156.147.1.121 with ESMTP; 22 Aug 2018 21:48:09 +0900
+X-Original-SENDERIP: 10.177.222.33
+X-Original-MAILFROM: byungchul.park@lge.com
+Subject: Re: [PATCH 1/2] workqueue: skip lockdep wq dependency in
+ cancel_work_sync()
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        kernel-team@lge.com
+References: <20180821172711.GR3978217@devbig004.ftw2.facebook.com>
+ <1534872621.25523.39.camel@sipsolutions.net>
+ <20180821175550.GS3978217@devbig004.ftw2.facebook.com>
+ <1534879241.25523.44.camel@sipsolutions.net>
+ <20180822024535.GA2414@X58A-UD3R>
+ <1534910543.25523.50.camel@sipsolutions.net>
+ <20180822054731.GB2414@X58A-UD3R>
+ <1534921643.25523.56.camel@sipsolutions.net>
+ <20180822075010.GA29722@X58A-UD3R>
+ <1534924940.25523.70.camel@sipsolutions.net>
+ <20180822091547.GB29722@X58A-UD3R>
+ <1534930963.25523.87.camel@sipsolutions.net>
+From:   Byungchul Park <byungchul.park@lge.com>
+Message-ID: <ea4d5b82-24e5-5e2f-d336-37bfbd32475b@lge.com>
+Date:   Wed, 22 Aug 2018 21:47:52 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <551A9FAC.2010203@atmel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+In-Reply-To: <1534930963.25523.87.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen,
-
-Alexandre Ludovic and myself are the group of maintainers for Microchip 
-ARM SoCs. The current tree that we have in linux-next is mine [1] and we 
-are moving to a common group kernel.org tree.
-
-So, can you please add our new tree to linux-next:
-at91 git 
-git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git#at91-next
-
-instead of:
-git://git.kernel.org/pub/scm/linux/kernel/git/nferre/linux-at91.git#at91-next
-
-In addition to that, we also have now a "fixes" branch. Can you please 
-add it to your "fixes" tree?
-
-at91 git 
-git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git#at91-fixes
-
-Thanks for your help, best regards,
-   Nicolas
 
 
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Next/Trees#n84
+On 08/22/2018 06:42 PM, Johannes Berg wrote:
+> On Wed, 2018-08-22 at 18:15 +0900, Byungchul Park wrote:
+>>> thread 1			thread 2 (wq thread)
+>>>
+>>> common_case = false;
+>>> queue_work(&my_wq, &work);
+>>> mutex_lock(&mutex);
+>>>
+>>> flush_workqueue(&my_wq);
+>>> 				work_function()
+>>> 				-> mutex_lock(&mutex);
+>>> 				-> schedule(), wait for mutex
+>>> wait_for_completion()
+>>>
+>>> -> deadlock - we can't make any forward progress here.
+>> I see. Now, I understand what you are talking about.
+>>
+>>     if (common_case)
+>> 	schedule_and_wait_for_something_that_takes_a_long_time()
+>>
+>> should be:
+>>
+>>     if (common_case)
+>> 	schedule_and_wait_long_time_so_that_the_work_to_finish()
+> Fair point.
+>
+>> Ok. I didn't know what you are talking about but now I got it.
+> great.
+>
+>> You are talking about who knows whether common_case is true or not,
+>> so we must aggresively consider the case the wait_for_completion()
+>> so far hasn't been called but may be called in the future.
+> Yes.
+>
+>> I think it's a problem of how aggressively we need to check dependencies.
+>> If we choose the aggressive option, then we could get reported
+>> aggressively but could not avoid aggresive false positives either.
+>> I don't want to strongly argue that because it's a problem of policy.
+> I don't think you could consider a report from "aggressive reporting" to
+>   be a false positive. It's clearly possible that this happens, and once
+> you go to a workqueue you basically don't really know your sequencing
+> and timing any more.
+>
+>> Just, I would consider only waits that actually happened anyway. Of
+>> course, we gotta consider the waits definitely even if any actual
+>> deadlock doesn't happen since detecting potantial problem is more
+>> important than doing on actual ones as you said.
+>>
+>> So no big objection to check dependencies aggressively.
+>>
+>>> Here we don't have a deadlock, but without the revert we will also not
+>> You misunderstand me. The commit should be reverted or acquire/release
+>> pairs should be added in both flush functions.
+> Ok, I thought you were arguing we shouldn't revert it :)
+>
+> I don't know whether to revert or just add the pairs in the flush
+> functions, because I can't say I understand what the third part of the
+> patch does.
+>
+>> Anyway the annotation should be placed in the path where
+>> wait_for_completion() might be called.
+> Yes, it should be called regardless of whether we actually wait or not,
+> i.e. before most of the checking in the functions.
+>
+> My issue #3 that I outlined is related - we'd like to have lockdep
+> understand that if this work was on the WQ it might deadlock, but we
+> don't have a way to get the WQ unless the work is scheduled - and in the
+> case that it is scheduled we might already hitting the deadlock
+> (depending on the order of execution though I guess).
+>
+>> Absolutly true. You can find my opinion about that in
+>> Documentation/locking/crossrelease.txt which has been removed because
+>> crossrelease is strong at detecting *potential* deadlock problems.
+> Ok, you know what, I'm going to read this now ... hang on........
 
+But very sorry for poor English on it in advance...
 
-Reference of previous request below... back in the days...
+The document should have gotten contributed by ones who
+are good at English. It might be too naive for you to read.
 
-On 31/03/2015 at 15:22, Nicolas Ferre wrote:
-> Hi Stephen,
-> 
-> I am the maintainer for the Atmel ARM SoCs (aka at91) and I would like to
-> know if it's possible for you to include my git tree in linux-next. It is
-> usually pulled in by the ARM-soc guys (in copy).
-> 
-> Here it is, with the branch that you would pull: "at91-next".
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/nferre/linux-at91.git  at91-next
-> 
-> I usually merge branches in this particular one when I send a pull-request to
-> Arnd, Olof and Kevin so the material is usually pretty "stable".
-> 
-> Thanks, bye,
-> 
+>
+> I see. You were trying to solve the problem of completions/context
+> transfers in lockdep.
+>
+> Given the revert of crossrelease though, we can't actually revert your
+> patch anyway, and looking at it again I see what you mean by the "name"
+> now ...
+>
+> So yeah, we should only re-add the two acquire/release pairs. I guess
+> I'll make a patch for that, replacing my patch 2.
+>
+> I'm intrigued by the crossrelease - but that's a separate topic.
+>
+> johannes
+>
 
-
--- 
-Nicolas Ferre
