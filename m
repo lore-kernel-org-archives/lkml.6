@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE76C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33542C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B66B2208C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:33:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD905208C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:33:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="oareQxlE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B66B2208C4
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="jk7dUvsB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD905208C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728689AbeHVM50 (ORCPT
+        id S1728703AbeHVM5p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 08:57:26 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:49419 "EHLO
+        Wed, 22 Aug 2018 08:57:45 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:49436 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727396AbeHVM50 (ORCPT
+        with ESMTP id S1727396AbeHVM5p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 08:57:26 -0400
+        Wed, 22 Aug 2018 08:57:45 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 74B0C25AD64;
-        Wed, 22 Aug 2018 19:33:19 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id D745D25AD64;
+        Wed, 22 Aug 2018 19:33:37 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1534930399; bh=86w2YxMcjdh5grqyFJOJDFXA/2nfTWqfGzWYz4+XGsc=;
+        t=1534930418; bh=TwC+CfYKBAmQoIfapYQXPmNqNDKCbqEOaqpW6KUvvaw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oareQxlEBKguOOGAgY3q/8yPp+n9jJWeumES1ogckV65L1znQHvnZqqL5/oKDInqq
-         iWkYc4K0YArTYBMJr6enxKjDhUGJq5XtjdFBgKuVwdpttTlNQjyZT/uFgh7T1us0sJ
-         RZv6K/ShQMrlzEMSpLJEyBsdazWis0MKtkht/41g=
+        b=jk7dUvsB/Fj6xVkaklXW8mTpY7H0Pi9TKYLiqUVzW59HYMrt15GHRyruSTM/QBGsg
+         otsoi2J9182/47dXcmfRhRlcj49UKr4DjgByp+wALLD1MiKiRi153DoLYogM+0U1Dq
+         qn2YO09mRSciLNDRCOMfxRLGYFRqXqTfVCL9V8bo=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 751CF94040B; Wed, 22 Aug 2018 11:33:17 +0200 (CEST)
-Date:   Wed, 22 Aug 2018 11:33:17 +0200
+        id C8C5894040B; Wed, 22 Aug 2018 11:33:35 +0200 (CEST)
+Date:   Wed, 22 Aug 2018 11:33:35 +0200
 From:   Simon Horman <horms@verge.net.au>
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc:     linux-renesas-soc@vger.kernel.org,
         Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/11] spi: use SPDX identifier for Renesas drivers
-Message-ID: <20180822093317.tzx2ujo7znol5wrz@verge.net.au>
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/11] pwm: use SPDX identifier for Renesas drivers
+Message-ID: <20180822093335.kwuan66y2awf67j4@verge.net.au>
 References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
- <20180821220233.9202-11-wsa+renesas@sang-engineering.com>
+ <20180821220233.9202-9-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180821220233.9202-11-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180821220233.9202-9-wsa+renesas@sang-engineering.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,7 +59,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 12:02:23AM +0200, Wolfram Sang wrote:
+On Wed, Aug 22, 2018 at 12:02:21AM +0200, Wolfram Sang wrote:
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
