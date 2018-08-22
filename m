@@ -7,51 +7,53 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48938C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4C12C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:37:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 034632152D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:36:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A1092152F
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:37:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="jatddBQQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 034632152D
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="lAGTY75F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A1092152F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728982AbeHVPBV (ORCPT
+        id S1728993AbeHVPBr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 11:01:21 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:51029 "EHLO
+        Wed, 22 Aug 2018 11:01:47 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:51043 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728052AbeHVPBV (ORCPT
+        with ESMTP id S1727835AbeHVPBr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 11:01:21 -0400
+        Wed, 22 Aug 2018 11:01:47 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id D4D0F25AD64;
-        Wed, 22 Aug 2018 21:36:46 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id E3C2325AD64;
+        Wed, 22 Aug 2018 21:37:12 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1534937807; bh=QRq4vi2LMNw/1vbfxreVmaObU8hYupWLElJCEi8phac=;
+        t=1534937833; bh=Q/ExfyMLr5z0sVQT14Hjb1YQM3AHDnOGLZWD18yz3t4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jatddBQQs5OfzvAbGgMzPVOIDzZKjBY19Q1avwweSjKW7fKy3dj27h2QSpmqg79cC
-         EJ7XRtaOswbtf072BxDQT1+apWnU8XxSR/hlNug0KXzeODIhOFlQxsUl78lBSBQdwq
-         71JmmGFRWxSdtCtXwt/eeb9xekdJoiJOZ+XMuRBk=
+        b=lAGTY75FlHiXdJBLDY9O240TIt80Qjrz7+rdKSuSLddxvAk9tNsQL0/wQ1lXcb0pj
+         qQmVISZEVo8KXTos0yTi03DZJOFuDLNvuTEsF6XF8hqTPz6FuCpYhJAMRdKvZmpSqJ
+         IdVAytd5sDS7dhI5s5G/M5365f6MX79OFcC97r34=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id C277694040B; Wed, 22 Aug 2018 13:36:44 +0200 (CEST)
-Date:   Wed, 22 Aug 2018 13:36:44 +0200
+        id D97B094040B; Wed, 22 Aug 2018 13:37:10 +0200 (CEST)
+Date:   Wed, 22 Aug 2018 13:37:10 +0200
 From:   Simon Horman <horms@verge.net.au>
 To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] clocksource: sh_tmu: convert to SPDX identifiers
-Message-ID: <20180822113644.xojrz4i4hu57fkkl@verge.net.au>
-References: <87a7pff8jq.wl-kuninori.morimoto.gx@renesas.com>
- <874lfnf8hm.wl-kuninori.morimoto.gx@renesas.com>
+        Linux-Kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] irqchip: irq-renesas-irqc: convert to SPDX
+ identifiers
+Message-ID: <20180822113710.p4rmwjrnb6ag6hr6@verge.net.au>
+References: <87va83dn68.wl-kuninori.morimoto.gx@renesas.com>
+ <87tvnndn50.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <874lfnf8hm.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87tvnndn50.wl-kuninori.morimoto.gx@renesas.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,7 +61,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 02:26:20AM +0000, Kuninori Morimoto wrote:
+On Wed, Aug 22, 2018 at 04:52:49AM +0000, Kuninori Morimoto wrote:
 > 
 > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 > 
