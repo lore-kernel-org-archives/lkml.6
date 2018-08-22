@@ -2,92 +2,102 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 981EFC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E003C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A38A214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:30:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A38A214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 4D6F82151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:30:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D6F82151D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbeHVJxk (ORCPT
+        id S1728139AbeHVJxs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 05:53:40 -0400
-Received: from sauhun.de ([88.99.104.3]:48122 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbeHVJxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 05:53:40 -0400
-Received: from localhost (p54B3399D.dip0.t-ipconnect.de [84.179.57.157])
-        by pokefinder.org (Postfix) with ESMTPSA id 90D982DB8F7;
-        Wed, 22 Aug 2018 08:30:10 +0200 (CEST)
-Date:   Wed, 22 Aug 2018 08:30:05 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 05/11] can: rcar: use SPDX identifier for Renesas drivers
-Message-ID: <20180822063005.535lytz7hl32rsha@katana>
-References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
- <20180821220233.9202-6-wsa+renesas@sang-engineering.com>
- <CAOMZO5AkVNiYMGdED9erL=YMaKcmtS5BzZxw2gO1KLXEaPnD7A@mail.gmail.com>
+        Wed, 22 Aug 2018 05:53:48 -0400
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:43379 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726186AbeHVJxs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 05:53:48 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id sMekfFJqqoj71sMeofXZ41; Wed, 22 Aug 2018 08:30:19 +0200
+Subject: Re: [PATCH] media: vimc: implement basic v4l2-ctrls
+To:     Guilherme Gallo <gagallo7@gmail.com>,
+        lkcamp@lists.libreplanetbr.org, helen.koike@collabora.com,
+        mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180822012219.22946-1-gagallo7@gmail.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <0c204c5f-2bd1-2ca7-c055-b0ff6d93189a@xs4all.nl>
+Date:   Wed, 22 Aug 2018 08:30:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="l3tkizk2h44slbvj"
-Content-Disposition: inline
-In-Reply-To: <CAOMZO5AkVNiYMGdED9erL=YMaKcmtS5BzZxw2gO1KLXEaPnD7A@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180822012219.22946-1-gagallo7@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfMQ+5/wplLy0u8aTV2AZJOWwRxVyEVzY7tJWaHpWjX/OWCOeYh6zvgpYcMKce0VqtJvT1/aHFubTDPaTSovj8Ur1IczZMq6Dysbk08x/XjV88MMSqEjK
+ UU1g+kYaZhggg/sBitmS6tTMOprKgnnhmLVcRViRb0zZ9aGDgN35NHfGgn+imj3Ewj3k5dfXGad+aF/3bYrwxv+iaUryQs18qbvJZcZhybHsaWDQeSlw9Not
+ 02+8VFPgiH0VxYHOt4LnTV5rW1EcW7QVruYc51K9bwbSnkoL/n249+eroVajOvUI5wLxqKlAxnfRUZfSyVFeZg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Guilherme,
 
---l3tkizk2h44slbvj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for your patch. It looks good, but can you add support for V4L2_CID_SATURATION
+as well? The TPG supports that as well, so there is no reason to leave that out.
 
+Thank you!
 
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
->=20
-> According to Documentation/process/license-rules.rst the format should
-> be like this instead:
->=20
-> // SPDX-License-Identifier: GPL-2.0+
+	Hans
 
-According to https://spdx.org/licenses/ it should be what I did above.
+On 08/22/2018 03:22 AM, Guilherme Gallo wrote:
+> Implement brightness, contrast and hue controls in vimc-sensor
+> 
+> Signed-off-by: Guilherme Alcarde Gallo <gagallo7@gmail.com>
+> ---
+>  drivers/media/platform/vimc/vimc-sensor.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/media/platform/vimc/vimc-sensor.c b/drivers/media/platform/vimc/vimc-sensor.c
+> index 605e2a2d5dd5..ecc82cd60900 100644
+> --- a/drivers/media/platform/vimc/vimc-sensor.c
+> +++ b/drivers/media/platform/vimc/vimc-sensor.c
+> @@ -316,6 +316,15 @@ static int vimc_sen_s_ctrl(struct v4l2_ctrl *ctrl)
+>  	case V4L2_CID_VFLIP:
+>  		tpg_s_vflip(&vsen->tpg, ctrl->val);
+>  		break;
+> +	case V4L2_CID_BRIGHTNESS:
+> +		tpg_s_brightness(&vsen->tpg, ctrl->val);
+> +		break;
+> +	case V4L2_CID_CONTRAST:
+> +		tpg_s_contrast(&vsen->tpg, ctrl->val);
+> +		break;
+> +	case V4L2_CID_HUE:
+> +		tpg_s_hue(&vsen->tpg, ctrl->val);
+> +		break;
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -377,6 +386,12 @@ static int vimc_sen_comp_bind(struct device *comp, struct device *master,
+>  			  V4L2_CID_VFLIP, 0, 1, 1, 0);
+>  	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
+>  			  V4L2_CID_HFLIP, 0, 1, 1, 0);
+> +	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
+> +			  V4L2_CID_BRIGHTNESS, 0, 255, 1, 128);
+> +	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
+> +			  V4L2_CID_CONTRAST, 0, 255, 1, 128);
+> +	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
+> +			  V4L2_CID_HUE, 0, 255, 1, 128);
+>  	vsen->sd.ctrl_handler = &vsen->hdl;
+>  	if (vsen->hdl.error) {
+>  		ret = vsen->hdl.error;
+> 
 
-
---l3tkizk2h44slbvj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt9AugACgkQFA3kzBSg
-KbbVsxAAilL4O89Og1iC6sJx89b+euWyoRGCkeNio0iM+paRSXSf2OgwmpyFBsnc
-9NPxv6WoNOoTNUmtadLpJtSBomJ0eI1LRgj3PLHc0YIlq6KdASDq6tZmd5i3n/cT
-G32o40GMBAVQxam/qG7lHOi2gTFFrIB08nKnXFpXbGmUxNgU7B3wu+z7uQyx3gnx
-Hjsb2LpYwjQ8OzNE9GLvJ+xp5amXG+EvJkOFJ/aWKy2Da9NLyxz0Tz8FRaLMzaCh
-4Eb9E6IVCTdw/fSUBqMKuISd6EHGfQyTq73G3rd0ZJV2+gqD4zmwtW+MGu594NaA
-jaUi81043F/d0cx5EISVXbPtq/K0hmGHTFaeogFYTfWpDXPljQdCHWXNDCGSOFI/
-ss1P2tQWQCK3pDnlJZQj8jqvSxF1AURx2YUYFaX/VxTm+doEnAWP02Q6y3E5bLpI
-pL2hwdZEPgRMK+w5rQe+Q//puXJHCl1KcdvYiDAVJwRq6P/KUed+CzwRmGB89TzW
-nt7AhJdYyPrFPRePCFrcAfTTA8CFrpmuKv0miyvBtj4+bwnrX46nKqFFmKWDsCW7
-ioH8ujmLft/qyNrsXdFsWM+r57ohP2tD9eN5teF0znLuhxrjWda3dXAvOSnfQSI/
-Pe/pVBeBmOBt1HX2DAtS1ns100uT3IzbpDuBXl5OGwhYW8KYjDg=
-=jUPf
------END PGP SIGNATURE-----
-
---l3tkizk2h44slbvj--
