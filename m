@@ -2,98 +2,199 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C7C7C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95390C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:30:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3832D206B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:29:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GG/osBXo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3832D206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4015A208C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:30:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4015A208C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728548AbeHVMxC (ORCPT
+        id S1728557AbeHVMyd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 08:53:02 -0400
-Received: from mail-vk0-f45.google.com ([209.85.213.45]:35238 "EHLO
-        mail-vk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728171AbeHVMxC (ORCPT
+        Wed, 22 Aug 2018 08:54:33 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32816 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727396AbeHVMyd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 08:53:02 -0400
-Received: by mail-vk0-f45.google.com with SMTP id w193-v6so572538vke.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 02:28:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=LfnPXIVY0w4Vah+h3Qix6eITdiDEsLRcPZ/kAE53N/0=;
-        b=GG/osBXovEUOA3/uCiSgARDPt6fsRr2wzimal2+rtyzFCKw6ntIwggO4CK143UMsLE
-         Ht5HU3KeAOE1tlpvWlHts0DH5wcr0JAOnxcL1anHMnEUpYN+ZVdpTdYXCrDRlxX+p/lY
-         nuUJrFuHxh528hct2s5oh6l49Yf/ZzT09KyXwAQ77EQbHcq1XiuCu2lD03JoHpQ9ZRoy
-         3b9huNdJv+2ML1SSELYtonsTCYvLaezUe4BIGIljINZeSWDsUBQxEW4HlEWla53maF5H
-         ZqgRlT4NxIgVjazrYtxO9ZugBqyfRTuDdLf2kfRslixenY+lI1lCKXReXKuitgn0ab+3
-         Xesw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=LfnPXIVY0w4Vah+h3Qix6eITdiDEsLRcPZ/kAE53N/0=;
-        b=ceCBKU5SW8ZKICzhscqLeC0ToFOscMABVcdLNuAyY7jzdtPv573+q0xMt5rhEHPGj4
-         FMrSBPyIp1S+2PpccSwKFY/D8wMmfAtQCYVtRbn0VjOBDIRFLttlkATkpyhLCYBnYRhm
-         tvGOmQOCsNww1Tk4dkI0IP9XoafMKBt+KTLKGxCqN7Ndpgxlru14HsfxN+KBdSXWz0Y8
-         D5m2wK6FQ1S56EFIRqpgy5P/XS49PVmc4ii9HuLsIMd6LAnwkssDc/8ZUGq//tCtx1GU
-         L7DuA7siQ/1XHSjHPHYQtvJZ6NOF3v/XoNSQKd9TfRldBhJVfZZT+fZdA3hiVigyHA4y
-         inxA==
-X-Gm-Message-State: APzg51A3VbJ6ApV7h/+ef4XkK5HOW/Eu1VejelOVf0VKHTmTrm6DNe9f
-        4hdb7UzbWo4fV4e2igUhFgUcuM9h7f37HTwrcrD4KPSDzoI=
-X-Google-Smtp-Source: ANB0Vdbo2MNvRSkgfOSEcYrYKkag5K6WqyNL3JIBkD2wqw/rnwX8xJgpNUIU9uJfm7xgCfHaig+pK36lzRYmCbg2/+k=
-X-Received: by 2002:a1f:144:: with SMTP id 65-v6mr1032048vkb.13.1534930137268;
- Wed, 22 Aug 2018 02:28:57 -0700 (PDT)
+        Wed, 22 Aug 2018 08:54:33 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7M9TnUn009061
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 05:30:27 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m107mjfra-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 05:30:27 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Wed, 22 Aug 2018 10:30:25 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 22 Aug 2018 10:30:22 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7M9UL3344499008
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 Aug 2018 09:30:22 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EEDF2AE056;
+        Wed, 22 Aug 2018 12:29:59 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 118E9AE04D;
+        Wed, 22 Aug 2018 12:29:58 +0100 (BST)
+Received: from skywalker (unknown [9.102.1.235])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Wed, 22 Aug 2018 12:29:57 +0100 (BST)
+Received: (nullmailer pid 16601 invoked by uid 1000);
+        Wed, 22 Aug 2018 09:30:18 -0000
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     Michal Hocko <mhocko@kernel.org>,
+        Haren Myneni <haren@linux.vnet.ibm.com>
+Cc:     n-horiguchi@ah.jp.nec.com, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, kamezawa.hiroyu@jp.fujitsu.com,
+        mgorman@suse.de
+Subject: Re: Infinite looping observed in __offline_pages
+In-Reply-To: <20180725200336.GP28386@dhcp22.suse.cz>
+References: <20180725181115.hmlyd3tmnu3mn3sf@p50.austin.ibm.com> <20180725200336.GP28386@dhcp22.suse.cz>
+Date:   Wed, 22 Aug 2018 15:00:18 +0530
 MIME-Version: 1.0
-From:   Marcus Linsner <constantoverride@gmail.com>
-Date:   Wed, 22 Aug 2018 11:25:35 +0200
-Message-ID: <CAKYFi-4a=H+vT+vo5s6mpKXAv+0W0pyTj1WtEr6xfjoFVFmtJQ@mail.gmail.com>
-Subject: Howto prevent kernel from evicting code pages ever? (to avoid disk
- thrashing when about to run out of RAM)
-To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18082209-0008-0000-0000-0000026515E1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082209-0009-0000-0000-000021CD57B5
+Message-Id: <87bm9ug34l.fsf@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808220097
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi. How to make the kernel keep(lock?) all code pages in RAM so that
-kswapd0 won't evict them when the system is under low memory
-conditions ?
 
-The purpose of this is to prevent the kernel from causing lots of disk
-reads(effectively freezing the whole system) when about to run out of
-RAM, even when there is no swap enabled, but well before(in real time
-minutes) OOM-killer triggers to kill the offending process (eg. ld)!
+Hi Michal,
 
-I can replicate this consistently with 4G (and 12G) max RAM inside a
-Qubes OS R4.0 AppVM running Fedora 28 while trying to compile Firefox.
-The disk thrashing (continuous 192+MiB/sec reads) occurs well before
-the OOM-killer triggers to kill 'ld' (or 'rustc') process and
-everything is frozen for (real time) minutes. I've also encountered
-this on bare metal myself, if it matters at all.
+Michal Hocko <mhocko@kernel.org> writes:
 
-I tried to ask this question on SO here:
-https://stackoverflow.com/q/51927528/10239615
-but maybe I have better luck on this mailing list where the kernel experts are.
+> On Wed 25-07-18 13:11:15, John Allen wrote:
+> [...]
+>> Does a failure in do_migrate_range indicate that the range is unmigratable
+>> and the loop in __offline_pages should terminate and goto failed_removal? Or
+>> should we allow a certain number of retrys before we
+>> give up on migrating the range?
+>
+> Unfortunatelly not. Migration code doesn't tell a difference between
+> ephemeral and permanent failures. We are relying on
+> start_isolate_page_range to tell us this. So the question is, what kind
+> of page is not migratable and for what reason.
+>
+> Are you able to add some debugging to give us more information. The
+> current debugging code in the hotplug/migration sucks...
 
-Just think of all the frozen systems that you'll be saving(see related
-question in the above link, for one), if you figure out the answer to
-this, whether be it a kernel patch, or some .config options needing
-change, or whatever. Just consider it, whoever you are, reader :)
-(probably a kernel god xD 'cause who else would know howto) - I'm
-actually selfish, I want this for myself, but I'm more than willing to
-share it with all, once I'm aware of it. (this = this howto: let the
-OOM-killer kill the offending process asap, without first passing
-through disk-thrashing hell freezing the OS ;-) er, I mean Hi, and
-how's life? 'll be even better after you've read this, I guarantee it
-;-) just believe! synergize)
+Haren did most of the debugging, so at minimum we need a patch like this
+I guess. 
+
+modified   mm/page_alloc.c
+@@ -7649,6 +7649,10 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+ 		 * handle each tail page individually in migration.
+ 		 */
+ 		if (PageHuge(page)) {
++
++			if (!IS_ENABLED(CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION))
++				goto unmovable;
++
+ 			iter = round_up(iter + 1, 1<<compound_order(page)) - 1;
+ 			continue;
+ 		}
+
+
+The problem is start_isolate_range, doesn't look at hugetlbpage and
+return error if the architecture didn't support HUGEPAGE migration. 
+
+Now discussing with Naoya, I was suggsting whether we should add a
+similar check in 
+
+modified   mm/memory_hotplug.c
+@@ -1338,7 +1338,8 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
+ 				return pfn;
+ 			if (__PageMovable(page))
+ 				return pfn;
+-			if (PageHuge(page)) {
++			if (IS_ENABLED(CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION) &&
++			    PageHuge(page)) {
+ 				if (page_huge_active(page))
+ 					return pfn;
+
+One of the thinking there is it possible to get new hugetlb pages
+allocated in that range after start_isolate_range ran. But i guess since
+we marked all the free pages as  MIGRATE_ISOLATE that is not possible?
+
+But then it is good to have scan_movable_pages also check for
+HUGEPAGE_MIGRATION?
+
+Complete patch below.
+
+commit 2e9d754ac211f2af3731f15df3cd8cd070b4cc54
+Author: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Date:   Tue Aug 21 14:17:55 2018 +0530
+
+    mm/hugetlb: filter out hugetlb pages if HUGEPAGE migration is not supported.
+    
+    When scanning for movable pages, filter out Hugetlb pages if hugepage migration
+    is not supported. Without this we hit infinte loop in __offline pages where we
+    do
+            pfn = scan_movable_pages(start_pfn, end_pfn);
+            if (pfn) { /* We have movable pages */
+                    ret = do_migrate_range(pfn, end_pfn);
+                    goto repeat;
+            }
+    
+    We do support hugetlb migration ony if the hugetlb pages are at pmd level. Here
+    we just check for Kernel config. The gigantic page size check is done in
+    page_huge_active.
+    
+    Reported-by: Haren Myneni <haren@linux.vnet.ibm.com>
+    CC: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+    Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 4eb6e824a80c..f9bdea685cf4 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1338,7 +1338,8 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
+ 				return pfn;
+ 			if (__PageMovable(page))
+ 				return pfn;
+-			if (PageHuge(page)) {
++			if (IS_ENABLED(CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION) &&
++			    PageHuge(page)) {
+ 				if (page_huge_active(page))
+ 					return pfn;
+ 				else
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 15ea511fb41c..a3f81e18c882 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -7649,6 +7649,10 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+ 		 * handle each tail page individually in migration.
+ 		 */
+ 		if (PageHuge(page)) {
++
++			if (!IS_ENABLED(CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION))
++				goto unmovable;
++
+ 			iter = round_up(iter + 1, 1<<compound_order(page)) - 1;
+ 			continue;
+ 		}
+
