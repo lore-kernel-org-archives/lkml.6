@@ -2,115 +2,247 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFDEC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D94C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5A0D20C0C
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:27:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="BxzaC61x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5A0D20C0C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id D15DC2147C
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:30:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D15DC2147C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728892AbeHVRwQ (ORCPT
+        id S1729014AbeHVRzj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 13:52:16 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:40027 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728509AbeHVRwP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 13:52:15 -0400
-Received: by mail-it0-f66.google.com with SMTP id h23-v6so3139742ita.5
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 07:27:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fS+sHCyYrCw+HMvls3AWquhz6m/pWvanaDHMw1yj5Fc=;
-        b=BxzaC61xksduDP/fDeBjnUTb9WlNEYtPTxZnwBQjMqw7jgRw0C9eFRgV1ctCbM0CPU
-         QFenThOOowcG1aBXdI/xRUKYUGJFxh9DrdYoKNsqTmg1DzavitH8ek9SGH9NpRzF6Jnq
-         Itu4kDudqxet8iDtiHqxmEM2gzS3e4ZGExGmb/ZuasG3EdhvzETd/sxuW5bdU6G1kSgB
-         0JxemgletmUzZkXYQx8Nm+TxX5l0wI4GbN2/MxO8PPEPx6Knotgb+AYVBhxhQUt/ggI2
-         R/iBkPUG3IuwRc1xUKu75XDgMXiiB7DVeAuHDpCSCHxNHgWig/dgrprP2IO2pR0ckNJ4
-         GHXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fS+sHCyYrCw+HMvls3AWquhz6m/pWvanaDHMw1yj5Fc=;
-        b=b1wovvP7lHb9Fm2FUlImQ4VNiJJVHUiiwLGji6sQ+pU2CkAfgCTYglt+Z3C2Ha7mB8
-         U3v170PO/W9NcCzQAKMCSwiGwC52KPeRLJvUkIOk7KzXie0XQdOkf53ZTYhFZ9uyR+Qq
-         MbGfcTDQai+SJfxyBX2N9SsLYjZOXor9Ba6rmbYjVOoxCSv7L7vyvLwcduV4SuX8bxem
-         1lDZPU9hkCDmIPyZBVw9nGW7wDcdaaxKMBkIsOT1uTj1Izu5Ec9fOxAqa5XDZfjxCTt1
-         ZLsZKAb6Dd25RRFCnUZa3048vovcZrz1qIvqrdAN+E5y+mt2V0JOK1A9FdcgHKgT+3Ft
-         Z3aw==
-X-Gm-Message-State: APzg51BFaUz1oAKW50TnvwK7UrJNz3bo2xvlmoG8mmjxs80jxNSGac6O
-        n8iGaudfhrGBzOBztpD79InIsl4nArw=
-X-Google-Smtp-Source: ANB0VdY5VWyJXlcHgtVtxK5HsWOy6YGlUl/F61E0Nvy/JVImbOe0iZ+rdVWtzRLLg3GzUK19IwdlFQ==
-X-Received: by 2002:a24:3507:: with SMTP id k7-v6mr3371535ita.13.1534948027144;
-        Wed, 22 Aug 2018 07:27:07 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id s24-v6sm541890ioj.17.2018.08.22.07.27.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Aug 2018 07:27:05 -0700 (PDT)
-Subject: Re: [PATCH] blk-wbt: Avoid lock contention and thundering herd issue
- in wbt_wait
-To:     =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>,
-        Anchal Agarwal <anchalag@amazon.com>
-Cc:     fllinden@amazon.com, sblbir@amazon.com, msw@amazon.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <6bab69c9-b787-b12f-7738-72e05bf74444@kernel.dk>
- <72f90be2-0b63-d3a0-e953-da9232f44d5b@kernel.dk>
- <761bb0ab416649b8bf3bac1706124456@EX13D13UWB002.ant.amazon.com>
- <7f6c399d-bda1-0bbf-4ea1-07fc510ed1eb@kernel.dk>
- <3498fbfb-e9f3-7606-1fc3-904a0e61ff57@kernel.dk>
- <168d80ac73a44a6f9242c47c164778fc@EX13D13UWB002.ant.amazon.com>
- <c5152431-6e36-6f6e-616e-1cfbd974817d@kernel.dk>
- <20180820224241.GA72523@8c8590bceeee.ant.amazon.com>
- <70e2063a-53fa-2475-eed9-07db277c8c0d@kernel.dk>
- <b2adf708-d396-94ac-b123-8027d3839fd1@kernel.dk>
- <20180822040126.GA18736@kaos-source-ops-60001.pdx1.amazon.com>
- <76ecb022-f167-67eb-8801-111fc209bbaa@kernel.dk>
- <834649ab-62d6-bc7f-ec60-6c1654ea3f26@applied-asynchrony.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d8c171ce-6dfe-e9e5-5673-8443cfec5f01@kernel.dk>
-Date:   Wed, 22 Aug 2018 08:27:04 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <834649ab-62d6-bc7f-ec60-6c1654ea3f26@applied-asynchrony.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 22 Aug 2018 13:55:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:43002 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728517AbeHVRzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 13:55:39 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 88CC420720; Wed, 22 Aug 2018 16:30:28 +0200 (CEST)
+Received: from aptenodytes (AAubervilliers-681-1-85-9.w90-88.abo.wanadoo.fr [90.88.27.9])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1ED37203EC;
+        Wed, 22 Aug 2018 16:30:28 +0200 (CEST)
+Message-ID: <e32484e1a2efce3e319e025ba7232500bd5aa2a8.camel@bootlin.com>
+Subject: Re: [PATCH 1/9] CHROMIUM: v4l: Add H264 low-level decoder API
+ compound controls.
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg "
+         "Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        jenskuske@gmail.com, linux-sunxi@googlegroups.com,
+        thomas.petazzoni@bootlin.com, groeck@chromium.org
+Date:   Wed, 22 Aug 2018 16:30:28 +0200
+In-Reply-To: <CAAFQd5AybueM-rhy8bMbRHHZmwBP08-cWB11NadcUQAb6XJ1SA@mail.gmail.com>
+References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
+         <20180613140714.1686-2-maxime.ripard@bootlin.com>
+         <80e1d9cb49c6df06843e49332685f2b401023292.camel@collabora.com>
+         <20180822091557.gtnlgoebyv6yttzf@flea>
+         <CAAFQd5ANvKF2+GEXQTnRsdYVzJTtBOhv7nFahV=2W-9_QXwY4g@mail.gmail.com>
+         <e6324ea983d34403199044ae30e932cd728c8ad4.camel@bootlin.com>
+         <CAAFQd5AybueM-rhy8bMbRHHZmwBP08-cWB11NadcUQAb6XJ1SA@mail.gmail.com>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-3aAsz1HYbIFK9eXBX5+l"
+X-Mailer: Evolution 3.28.4 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/22/18 6:54 AM, Holger Hoffstätte wrote:
-> On 08/22/18 06:10, Jens Axboe wrote:
->> [...]
->> If you have time, please look at the 3 patches I posted earlier today.
->> Those are for mainline, so should be OK :-)
-> 
-> I'm just playing along at home but with those 3 I get repeatable
-> hangs & writeback not starting at all, but curiously *only* on my btrfs
-> device; for inexplicable reasons some other devices with ext4/xfs flush
-> properly. Yes, that surprised me too, but it's repeatable.
-> Now this may or may not have something to do with some of my in-testing
-> patches for btrfs itself, but if I remove those 3 wbt fixes, everything
-> is golden again. Not eager to repeat since it hangs sync & requires a
-> hard reboot.. :(
-> Just thought you'd like to know.
 
-Thanks, that's very useful info! I'll see if I can reproduce that.
+--=-3aAsz1HYbIFK9eXBX5+l
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Jens Axboe
+Hi,
+
+On Wed, 2018-08-22 at 22:24 +0900, Tomasz Figa wrote:
+> On Wed, Aug 22, 2018 at 10:03 PM Paul Kocialkowski
+> <paul.kocialkowski@bootlin.com> wrote:
+> >=20
+> > Hi,
+> >=20
+> > On Wed, 2018-08-22 at 18:54 +0900, Tomasz Figa wrote:
+> > > On Wed, Aug 22, 2018 at 6:16 PM Maxime Ripard <maxime.ripard@bootlin.=
+com> wrote:
+> > > >=20
+> > > > Hi,
+> > > >=20
+> > > > On Tue, Aug 21, 2018 at 01:58:38PM -0300, Ezequiel Garcia wrote:
+> > > > > On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
+> > > > > > From: Pawel Osciak <posciak@chromium.org>
+> > > > > >=20
+> > > > > > Signed-off-by: Pawel Osciak <posciak@chromium.org>
+> > > > > > Reviewed-by: Wu-cheng Li <wuchengli@chromium.org>
+> > > > > > Tested-by: Tomasz Figa <tfiga@chromium.org>
+> > > > > > [rebase44(groeck): include linux/types.h in v4l2-controls.h]
+> > > > > > Signed-off-by: Guenter Roeck <groeck@chromium.org>
+> > > > > > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > > > > > ---
+> > > > > >=20
+> > > > >=20
+> > > > > [..]
+> > > > > > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linu=
+x/videodev2.h
+> > > > > > index 242a6bfa1440..4b4a1b25a0db 100644
+> > > > > > --- a/include/uapi/linux/videodev2.h
+> > > > > > +++ b/include/uapi/linux/videodev2.h
+> > > > > > @@ -626,6 +626,7 @@ struct v4l2_pix_format {
+> > > > > >  #define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') =
+/* H264 with start codes */
+> > > > > >  #define V4L2_PIX_FMT_H264_NO_SC v4l2_fourcc('A', 'V', 'C', '1'=
+) /* H264 without start codes */
+> > > > > >  #define V4L2_PIX_FMT_H264_MVC v4l2_fourcc('M', '2', '6', '4') =
+/* H264 MVC */
+> > > > > > +#define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4'=
+) /* H264 parsed slices */
+> > > > >=20
+> > > > > As pointed out by Tomasz, the Rockchip VPU driver expects start c=
+odes [1], so the userspace
+> > > > > should be aware of it. Perhaps we could document this pixel forma=
+t better as:
+> > > > >=20
+> > > > > #define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /=
+* H264 parsed slices with start codes */
+> > > >=20
+> > > > I'm not sure this is something we want to do at that point. libva
+> > > > doesn't give the start code, so this is only going to make the life=
+ of
+> > > > the sane controllers more difficult. And if you need to have the st=
+art
+> > > > code and parse it, then you're not so stateless anymore.
+> > >=20
+> > > I might not remember correctly, but Rockchip decoder does some slice
+> > > parsing on its own (despite not doing any higher level parsing).
+> > > Probably that's why it needs those start codes.
+> >=20
+> > The VPU found on Allwinner platforms also provides a mechanism to parse
+> > the bitstream data via a dedicated interface through the VPU registers.
+> > It is used in libvdpau-sunxi but not in our driver, because we don't
+> > want to be doing bitstream parsing in the kernel.
+> >=20
+> > It would be good to know if this is just a feature of the Rockchip VPU
+> > hardware that can be skipped (like on Allwinner) or if it's a hard
+> > requirement in its decoding pipeline.
+>=20
+> It's a hard requirement for its decoding pipeline, but...
+>=20
+> > Also, maybe it only concerns the
+> > slice header? It is already part of the slice data (provided by VAAPI)
+> > for H.264/H.265 and an offset is provided to the beginning of the coded
+> > video data.
+>=20
+> Yes, it seems to be only the slice header.
+
+Sounds good, then I don't have any problem with that.
+
+> >=20
+> > > I wonder if libva is the best reference here. It's been designed
+> > > almost entirely by Intel for Intel video hardware. We want something
+> > > that could work with a wide range of devices and avoid something like
+> > > a need to create a semi-stateless API few months later. In fact,
+> > > hardware from another vendor, we're working with, also does parsing o=
+f
+> > > slice headers internally. Moreover, we have some weird
+> > > kind-of-stateful decoders, which cannot fully deal with bitstream on
+> > > its own, e.g. cannot parse formats, cannot handle resolution changes,
+> > > need H264 bitstream NALUs split into separate buffers, etc.
+> > >=20
+> > > As I suggested some time ago, having the full bitstream in the buffer=
+,
+> > > with offsets of particular units included in respective controls,
+> > > would be the most scalable thing. If really needed, we could add flag=
+s
+> > > telling the driver that particular units are present, so one's
+> > > implementation of libva could put only raw slice data in the buffers.
+> > > But perhaps it's libva which needs some amendment?
+> >=20
+> > If the raw bitstream is needed, I think it would make more sense to use
+> > the already-existing formats for stateful VPUs along with the controls
+> > for stateless ones instead of having the full bitstream in the
+> > V4L2_PIX_FMT_*_SLICE formats.
+>=20
+> It may indeed make sense to separate this based on pixel format.
+> However, how do we tell the client that it needs to provide those
+> controls? Current concept was based entirely on pixel format, so I
+> guess that would mean creating something like
+> V4L2_PIX_FMT_*_NOT_REALLY_SLICE (_PARSED, _STATELESS?). Might be okay,
+> though...
+
+How about declaring support for the request API (through the associated
+CAPs) and only having the non-_SLICE formats listed in ENUM_FMT?
+
+> > I would also be tempted to say that reconstructing the needed parts of
+> > the bitstream in-driver for these half-way VPUs would be a better
+> > approach than blurrying the line between how (and what) data should be
+> > passed for stateful and stateless VPUs at the API level. Stateless
+> > should only cover what's in the slice NAL unit RBSP, which excludes the
+> > start code detection bytes. It is no longer parsed data otherwise.
+>=20
+> I'm not sure where such decision comes from. In particular, Chromium,
+> from which this code originates, includes start codes in
+> V4L2_PIX_FMT_H264_SLICE. As I mentioned earlier, we can't design this
+> API based only on 1 type of hardware semantics. The stateless API
+> should cover any kind of codec that needs user space assistance in
+> processing the stream, which in practice would be almost everything
+> for which stateful API doesn't work.
+
+Maybe we need to formalize what the stateless API aims to support and
+what the formats really entail. I was under the impression that it was
+synonymouse with providing parsed bitstream to the kernel. The way I
+understand "parsed bitstream" means the slice NALU RBSP as raw data and
+the metadata from other NALUs as controls (with the overlap of the slice
+header in recent formats, that is in both).
+
+I don't see any other sane boundary that could be conceptually attached
+to something like "providing parsed bitstream". Covering all that might
+be required for !=3D stateful seems hard to formalize conceptually and to
+delimit in general.
+
+> That said, since pixel format essentially specifies the buffer
+> contents, having such cases differentiated based on the pixel format
+> doesn't sound insane.
+
+Great!
+
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+
+--=-3aAsz1HYbIFK9eXBX5+l
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlt9c4QACgkQ3cLmz3+f
+v9GVPAf/QtvvtBKBM3MAU7tEHGmfMj7cEY824F/9v/3eECN9T39p0HyvsLupLInA
+g9L9SjVfVmKImhuarT3lB47XIt9KArBtomim1w2msne98PCXSnNHqs1RU81z3ufz
+HSBPE0mMQVNpXlUCk6nshaNPn7x7u2tW8816YH2RgFOiKtVt7YIZlddi3TrxyYXF
+lY4hWHk9gihzSuF45PC4QqRnWr+oA9IMKhZJ2OyFFrfKnX6eI1XmL3DAtN2sCdh1
+bkFIF5ISiYuAzwHZaXWbZKcbnVsF/C01fgmVAVkTjSfbm0PLmseclvO3chaFiwnh
+Dfy/A8wBcWVqD7X60LHKbMtJPBNbew==
+=ElKj
+-----END PGP SIGNATURE-----
+
+--=-3aAsz1HYbIFK9eXBX5+l--
 
