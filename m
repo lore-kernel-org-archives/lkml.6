@@ -2,108 +2,96 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4F4C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC84BC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:50:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F06C2177F
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:46:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F06C2177F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
+	by mail.kernel.org (Postfix) with ESMTP id 64F6D217B4
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:50:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="anaR1EwH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64F6D217B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727990AbeHVGIl (ORCPT
+        id S1727998AbeHVGN3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 02:08:41 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:50341 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726753AbeHVGIl (ORCPT
+        Wed, 22 Aug 2018 02:13:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37570 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726469AbeHVGN3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 02:08:41 -0400
-Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
-        by 156.147.23.51 with ESMTP; 22 Aug 2018 11:45:52 +0900
-X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
-        by 156.147.1.121 with ESMTP; 22 Aug 2018 11:45:52 +0900
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Wed, 22 Aug 2018 11:45:35 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        kernel-team@lge.com
-Subject: Re: [PATCH 1/2] workqueue: skip lockdep wq dependency in
- cancel_work_sync()
-Message-ID: <20180822024535.GA2414@X58A-UD3R>
-References: <20180821120317.4115-1-johannes@sipsolutions.net>
- <20180821120317.4115-2-johannes@sipsolutions.net>
- <20180821160814.GP3978217@devbig004.ftw2.facebook.com>
- <1534871894.25523.34.camel@sipsolutions.net>
- <20180821172711.GR3978217@devbig004.ftw2.facebook.com>
- <1534872621.25523.39.camel@sipsolutions.net>
- <20180821175550.GS3978217@devbig004.ftw2.facebook.com>
- <1534879241.25523.44.camel@sipsolutions.net>
+        Wed, 22 Aug 2018 02:13:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LnpUi0P8aw9/8Z4iKcTA9INx6QFkqvT1G9oa2dDTsFE=; b=anaR1EwHBKP6r2YIxUxQG10Qm
+        lga5y850v57SKMxfeQlf2NR8hxwAOQRyK5gcQEemvQLcUQ+++sealp43Ia4Mmxg6+r2JE4AXaHVdV
+        phv94IszEO+elw8lUQ2X/6Rt5P8PkyN94flFhYsMTu8m904KaS//NYo443nufAhQ3N7S/PGabz3g9
+        F2gCuMaMEEE8qy3HrKFcFUGL69CizRezJ55OwS8V4b0tS6nSUqLFWP5K2BeWcoQ4nNYw2yNXSrGkP
+        4/qf2qjOQC3u4kf2NHsl/ozZbERQKFf5ROBRXdwIe/6Vd7XWxRI4KoIRjOrKzgNh9Vp6F8xLPpy4u
+        GPUhHXsLg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fsJEG-0006nB-LY; Wed, 22 Aug 2018 02:50:40 +0000
+Date:   Tue, 21 Aug 2018 19:50:40 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-mm <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] XArray for 4.19
+Message-ID: <20180822025040.GA12244@bombadil.infradead.org>
+References: <20180813161357.GB1199@bombadil.infradead.org>
+ <CA+55aFxFjAmrFpwQmEHCthHOzgidCKnod+cNDEE+3Spu9o1s3w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1534879241.25523.44.camel@sipsolutions.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CA+55aFxFjAmrFpwQmEHCthHOzgidCKnod+cNDEE+3Spu9o1s3w@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 09:20:41PM +0200, Johannes Berg wrote:
-> On Tue, 2018-08-21 at 10:55 -0700, Tejun Heo wrote:
+On Tue, Aug 21, 2018 at 07:09:31PM -0700, Linus Torvalds wrote:
+> On Mon, Aug 13, 2018 at 9:14 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > Please consider pulling the XArray patch set.
 > 
-> > > I'm not really sure what you think we might be missing? Am I missing
-> > > some case where cancel_work_sync() can possibly deadlock? Apart from the
-> > > issue I addressed in the second patch, obviously.
-> > 
-> > Ah, that was me being slow.  I thought you were skipping the work's
-> > lockdep_map.  I can almost swear we had that before (the part you're
-> > adding on the second patch).  Right, fd1a5b04dfb8 ("workqueue: Remove
-> > now redundant lock acquisitions wrt. workqueue flushes") removed it
-> > because it gets propagated through wait_for_completion().  Did we miss
-> > some cases with that change?
+> So this merge window has been horrible, but I was just about to start
+> looking at it.
 > 
-> Hmm.
+> And no. I'm not going to pull this.
 > 
-> It doesn't seem to be working.
-> 
-> No, ok, actually it probably *does*, but the point is similar to my
-> issue # 3 before - we don't do any of this unless the work is actually
-> running, but we really want the lockdep annotation *regardless* of that,
-> so that we catch the error unconditionally.
-> 
-> So perhaps that commit just needs to be reverted entirely - I'd only
-> looked at a small subset of it, but the flush_workqueue() case has the
-> same problem - we only get to the completion when there's something to
-> flush, not when the workqueue happens to actually be empty. But again,
-> for lockdep we want to catch *potential* problems, not only *actual*
-> ones.
-> 
-> The remaining part of the patch I'm not sure I fully understand (removal
-> of lockdep_init_map_crosslock()), but I suppose if we revert the other
-> bits we need to revert this as well.
-> 
-> So please drop this patch, but revert Byungchul Park's commit
-> fd1a5b04dfb8 again, I don't think the lockdep annotations there are
-> really redundant as I just explained.
+> For some unfathomable reason, you have based it on the libnvdimm tree.
+> I don't understand at all wjhy you did that.
 
-That should've been adjusted as well when Ingo reverted Cross-release.
-It would be much easier to add each pair, acquire/release, before
-wait_for_completion() in both flush_workqueue() and flush_work() than
-reverting the whole commit.
+I said in the pull request ...
 
-What's lacking is only lockdep annotations for wait_for_completion().
+  There are two conflicts I wanted to flag; the first is against the
+  linux-nvdimm tree.  I rebased on top of one of the branches that went
+  into that tree, so if you pull my tree before linux-nvdimm, you'll get
+  fifteen commits I've had no involvement with.
 
-Byungchul
+Dan asked me to do that so that his commit (which I had no involvement
+with) would be easier to backport.  At the time I thought this was a
+reasonable request; I know this API change is disruptive and I wanted
+to accommodate that.  I didn't know his patch was "complete garbage";
+I didn't review it.
 
-> 
-> johannes
+So, should I have based just on your tree and sent you a description of
+what a resolved conflict should look like?
+
+> And since I won't be merging this, I clearly won't be merging your
+> other pull request that depended on this either.
+
+I can yank most of the patches (all but the last two, iirc) out of the
+IDA patchset and submit those as a separate pull request.  Would that
+be acceptable?  I'm really struggling to juggle all the pieces here to
+get them merged.
