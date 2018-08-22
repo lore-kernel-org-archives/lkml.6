@@ -3,237 +3,150 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A7DC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 861D9C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6850021525
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:03:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6850021525
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 303022150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:04:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 303022150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728944AbeHVR2Q (ORCPT
+        id S1728997AbeHVR3g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 13:28:16 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47382 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728512AbeHVR2Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 13:28:16 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: nicolas)
-        with ESMTPSA id B320D26045C
-Message-ID: <2550f0d2fd955922c8d6508573ac78487315bf25.camel@collabora.com>
-Subject: Re: [PATCH 1/9] CHROMIUM: v4l: Add H264 low-level decoder API
- compound controls.
-From:   Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Reply-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To:     Tomasz Figa <tfiga@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg "
-         "Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        jenskuske@gmail.com, linux-sunxi@googlegroups.com,
-        thomas.petazzoni@bootlin.com, groeck@chromium.org
-Date:   Wed, 22 Aug 2018 10:03:05 -0400
-In-Reply-To: <CAAFQd5AybueM-rhy8bMbRHHZmwBP08-cWB11NadcUQAb6XJ1SA@mail.gmail.com>
-References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
-         <20180613140714.1686-2-maxime.ripard@bootlin.com>
-         <80e1d9cb49c6df06843e49332685f2b401023292.camel@collabora.com>
-         <20180822091557.gtnlgoebyv6yttzf@flea>
-         <CAAFQd5ANvKF2+GEXQTnRsdYVzJTtBOhv7nFahV=2W-9_QXwY4g@mail.gmail.com>
-         <e6324ea983d34403199044ae30e932cd728c8ad4.camel@bootlin.com>
-         <CAAFQd5AybueM-rhy8bMbRHHZmwBP08-cWB11NadcUQAb6XJ1SA@mail.gmail.com>
-Organization: Collabora Ltd.
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-        boundary="=-O9f5ftoJBAVQZuKAhDT7"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Wed, 22 Aug 2018 13:29:36 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:7379 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728444AbeHVR3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 13:29:36 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41wTmy4MN1z9tvSg;
+        Wed, 22 Aug 2018 16:04:18 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id kyQPpFf_RKGg; Wed, 22 Aug 2018 16:04:18 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41wTmy3kWqz9tvST;
+        Wed, 22 Aug 2018 16:04:18 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 874388B87E;
+        Wed, 22 Aug 2018 16:04:32 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id wmmeZUZUdTgF; Wed, 22 Aug 2018 16:04:32 +0200 (CEST)
+Received: from PO15451 (unknown [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4DE1B8B877;
+        Wed, 22 Aug 2018 16:04:32 +0200 (CEST)
+Subject: Re: [PATCH v2 3/4] powerpc/mm: fix a warning when a cache is common
+ to PGD and hugepages
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        aneesh.kumar@linux.vnet.ibm.com
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <2f96bf1a8df1091c642de099ed07c34b5ab9b90a.1534258290.git.christophe.leroy@c-s.fr>
+ <4aaca2d27429e6bdadc340fd3b96e7c350c4b2f4.1534258290.git.christophe.leroy@c-s.fr>
+ <6dea8d0c-c4ab-49aa-da26-a729c18fa818@linux.ibm.com>
+ <006e5f33-b816-7508-faac-da26a860659c@c-s.fr>
+Message-ID: <1aa6d8c1-d5af-fe03-79fe-afb10c9b1bec@c-s.fr>
+Date:   Wed, 22 Aug 2018 16:04:32 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <006e5f33-b816-7508-faac-da26a860659c@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Aneesh,
 
---=-O9f5ftoJBAVQZuKAhDT7
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Le 17/08/2018 à 12:44, Christophe LEROY a écrit :
+> 
+> 
+> Le 17/08/2018 à 05:32, Aneesh Kumar K.V a écrit :
+>> On 08/14/2018 08:24 PM, Christophe Leroy wrote:
+>>> While implementing TLB miss HW assistance on the 8xx, the following
+>>> warning was encountered:
+>>>
+>>> [  423.732965] WARNING: CPU: 0 PID: 345 at mm/slub.c:2412 
+>>> ___slab_alloc.constprop.30+0x26c/0x46c
+>>> [  423.733033] CPU: 0 PID: 345 Comm: mmap Not tainted 
+>>> 4.18.0-rc8-00664-g2dfff9121c55 #671
+>>> [  423.733075] NIP:  c0108f90 LR: c0109ad0 CTR: 00000004
+>>> [  423.733121] REGS: c455bba0 TRAP: 0700   Not tainted 
+>>> (4.18.0-rc8-00664-g2dfff9121c55)
+>>> [  423.733147] MSR:  00021032 <ME,IR,DR,RI>  CR: 24224848  XER: 20000000
+>>> [  423.733319]
+>>> [  423.733319] GPR00: c0109ad0 c455bc50 c4521910 c60053c0 007080c0 
+>>> c0011b34 c7fa41e0 c455be30
+>>> [  423.733319] GPR08: 00000001 c00103a0 c7fa41e0 c49afcc4 24282842 
+>>> 10018840 c079b37c 00000040
+>>> [  423.733319] GPR16: 73f00000 00210d00 00000000 00000001 c455a000 
+>>> 00000100 00000200 c455a000
+>>> [  423.733319] GPR24: c60053c0 c0011b34 007080c0 c455a000 c455a000 
+>>> c7fa41e0 00000000 00009032
+>>> [  423.734190] NIP [c0108f90] ___slab_alloc.constprop.30+0x26c/0x46c
+>>> [  423.734257] LR [c0109ad0] kmem_cache_alloc+0x210/0x23c
+>>> [  423.734283] Call Trace:
+>>> [  423.734326] [c455bc50] [00000100] 0x100 (unreliable)
+>>> [  423.734430] [c455bcc0] [c0109ad0] kmem_cache_alloc+0x210/0x23c
+>>> [  423.734543] [c455bcf0] [c0011b34] huge_pte_alloc+0xc0/0x1dc
+>>> [  423.734633] [c455bd20] [c01044dc] hugetlb_fault+0x408/0x48c
+>>> [  423.734720] [c455bdb0] [c0104b20] follow_hugetlb_page+0x14c/0x44c
+>>> [  423.734826] [c455be10] [c00e8e54] __get_user_pages+0x1c4/0x3dc
+>>> [  423.734919] [c455be80] [c00e9924] __mm_populate+0xac/0x140
+>>> [  423.735020] [c455bec0] [c00db14c] vm_mmap_pgoff+0xb4/0xb8
+>>> [  423.735127] [c455bf00] [c00f27c0] ksys_mmap_pgoff+0xcc/0x1fc
+>>> [  423.735222] [c455bf40] [c000e0f8] ret_from_syscall+0x0/0x38
+>>> [  423.735271] Instruction dump:
+>>> [  423.735321] 7cbf482e 38fd0008 7fa6eb78 7fc4f378 4bfff5dd 7fe3fb78 
+>>> 4bfffe24 81370010
+>>> [  423.735536] 71280004 41a2ff88 4840c571 4bffff80 <0fe00000> 
+>>> 4bfffeb8 81340010 712a0004
+>>> [  423.735757] ---[ end trace e9b222919a470790 ]---
+>>>
+>>> This warning occurs when calling kmem_cache_zalloc() on a
+>>> cache having a constructor.
+>>>
+>>> In this case it happens because PGD cache and 512k hugepte cache are
+>>> the same size (4k). While a cache with constructor is created for
+>>> the PGD, hugepages create cache without constructor and uses
+>>> kmem_cache_zalloc(). As both expect a cache with the same size,
+>>> the hugepages reuse the cache created for PGD, hence the conflict.
+>>>
+>>> In order to avoid this conflict, this patch:
+>>> - modifies pgtable_cache_add() so that a zeroising constructor is
+>>> added for any cache size.
+>>> - replaces calls to kmem_cache_zalloc() by kmem_cache_alloc()
+>>>
+>>
+>> Can't we just do kmem_cache_alloc with gfp flags __GFP_ZERO? and 
+>> remove the constructor completely?
+> 
+> I don't understand what you mean. That's exactly what I did in v1 (by 
+> using kmem_cache_zalloc()), and you commented that doing this we would 
+> zeroise at allocation whereas the constructors are called when adding 
+> memory to the slab and when freeing the allocated block. Or did I 
+> misunderstood your comment ?
+> 
+> static inline void *kmem_cache_zalloc(struct kmem_cache *k, gfp_t flags)
+> {
+>      return kmem_cache_alloc(k, flags | __GFP_ZERO);
+> }
+> 
 
-Le mercredi 22 ao=C3=BBt 2018 =C3=A0 22:24 +0900, Tomasz Figa a =C3=A9crit =
-:
-> On Wed, Aug 22, 2018 at 10:03 PM Paul Kocialkowski
-> <paul.kocialkowski@bootlin.com> wrote:
-> >=20
-> > Hi,
-> >=20
-> > On Wed, 2018-08-22 at 18:54 +0900, Tomasz Figa wrote:
-> > > On Wed, Aug 22, 2018 at 6:16 PM Maxime Ripard <maxime.ripard@bootlin.=
-com> wrote:
-> > > >=20
-> > > > Hi,
-> > > >=20
-> > > > On Tue, Aug 21, 2018 at 01:58:38PM -0300, Ezequiel Garcia wrote:
-> > > > > On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
-> > > > > > From: Pawel Osciak <posciak@chromium.org>
-> > > > > >=20
-> > > > > > Signed-off-by: Pawel Osciak <posciak@chromium.org>
-> > > > > > Reviewed-by: Wu-cheng Li <wuchengli@chromium.org>
-> > > > > > Tested-by: Tomasz Figa <tfiga@chromium.org>
-> > > > > > [rebase44(groeck): include linux/types.h in v4l2-controls.h]
-> > > > > > Signed-off-by: Guenter Roeck <groeck@chromium.org>
-> > > > > > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > > > > > ---
-> > > > > >=20
-> > > > >=20
-> > > > > [..]
-> > > > > > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linu=
-x/videodev2.h
-> > > > > > index 242a6bfa1440..4b4a1b25a0db 100644
-> > > > > > --- a/include/uapi/linux/videodev2.h
-> > > > > > +++ b/include/uapi/linux/videodev2.h
-> > > > > > @@ -626,6 +626,7 @@ struct v4l2_pix_format {
-> > > > > >  #define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') =
-/* H264 with start codes */
-> > > > > >  #define V4L2_PIX_FMT_H264_NO_SC v4l2_fourcc('A', 'V', 'C', '1'=
-) /* H264 without start codes */
-> > > > > >  #define V4L2_PIX_FMT_H264_MVC v4l2_fourcc('M', '2', '6', '4') =
-/* H264 MVC */
-> > > > > > +#define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4'=
-) /* H264 parsed slices */
-> > > > >=20
-> > > > > As pointed out by Tomasz, the Rockchip VPU driver expects start c=
-odes [1], so the userspace
-> > > > > should be aware of it. Perhaps we could document this pixel forma=
-t better as:
-> > > > >=20
-> > > > > #define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /=
-* H264 parsed slices with start codes */
-> > > >=20
-> > > > I'm not sure this is something we want to do at that point. libva
-> > > > doesn't give the start code, so this is only going to make the life=
- of
-> > > > the sane controllers more difficult. And if you need to have the st=
-art
-> > > > code and parse it, then you're not so stateless anymore.
-> > >=20
-> > > I might not remember correctly, but Rockchip decoder does some slice
-> > > parsing on its own (despite not doing any higher level parsing).
-> > > Probably that's why it needs those start codes.
-> >=20
-> > The VPU found on Allwinner platforms also provides a mechanism to parse
-> > the bitstream data via a dedicated interface through the VPU registers.
-> > It is used in libvdpau-sunxi but not in our driver, because we don't
-> > want to be doing bitstream parsing in the kernel.
-> >=20
-> > It would be good to know if this is just a feature of the Rockchip VPU
-> > hardware that can be skipped (like on Allwinner) or if it's a hard
-> > requirement in its decoding pipeline.
->=20
-> It's a hard requirement for its decoding pipeline, but...
->=20
-> > Also, maybe it only concerns the
-> > slice header? It is already part of the slice data (provided by VAAPI)
-> > for H.264/H.265 and an offset is provided to the beginning of the coded
-> > video data.
->=20
-> Yes, it seems to be only the slice header.
->=20
-> >=20
-> > > I wonder if libva is the best reference here. It's been designed
-> > > almost entirely by Intel for Intel video hardware. We want something
-> > > that could work with a wide range of devices and avoid something like
-> > > a need to create a semi-stateless API few months later. In fact,
-> > > hardware from another vendor, we're working with, also does parsing o=
-f
-> > > slice headers internally. Moreover, we have some weird
-> > > kind-of-stateful decoders, which cannot fully deal with bitstream on
-> > > its own, e.g. cannot parse formats, cannot handle resolution changes,
-> > > need H264 bitstream NALUs split into separate buffers, etc.
-> > >=20
-> > > As I suggested some time ago, having the full bitstream in the buffer=
-,
-> > > with offsets of particular units included in respective controls,
-> > > would be the most scalable thing. If really needed, we could add flag=
-s
-> > > telling the driver that particular units are present, so one's
-> > > implementation of libva could put only raw slice data in the buffers.
-> > > But perhaps it's libva which needs some amendment?
-> >=20
-> > If the raw bitstream is needed, I think it would make more sense to use
-> > the already-existing formats for stateful VPUs along with the controls
-> > for stateless ones instead of having the full bitstream in the
-> > V4L2_PIX_FMT_*_SLICE formats.
->=20
-> It may indeed make sense to separate this based on pixel format.
-> However, how do we tell the client that it needs to provide those
-> controls? Current concept was based entirely on pixel format, so I
-> guess that would mean creating something like
-> V4L2_PIX_FMT_*_NOT_REALLY_SLICE (_PARSED, _STATELESS?). Might be okay,
-> though...
->=20
-> >=20
-> > I would also be tempted to say that reconstructing the needed parts of
-> > the bitstream in-driver for these half-way VPUs would be a better
-> > approach than blurrying the line between how (and what) data should be
-> > passed for stateful and stateless VPUs at the API level. Stateless
-> > should only cover what's in the slice NAL unit RBSP, which excludes the
-> > start code detection bytes. It is no longer parsed data otherwise.
->=20
-> I'm not sure where such decision comes from. In particular, Chromium,
-> from which this code originates, includes start codes in
-> V4L2_PIX_FMT_H264_SLICE. As I mentioned earlier, we can't design this
-> API based only on 1 type of hardware semantics. The stateless API
-> should cover any kind of codec that needs user space assistance in
-> processing the stream, which in practice would be almost everything
-> for which stateful API doesn't work.
+Wasn't it what you meant in your comment to v1 ? If not, could you 
+detail your thought so that I can take it in account in a v3 ?
 
-Well, be aware that in most of today's use case, Chromium bitstream
-handling is suboptimal since the startcode are crafted by Chromium.
-Most of today's use case uses ISOMP4 container, which does not hold
-start codes but AVC headers.
-
-If we step back a little, the start codes are designed for randomly
-accessing bytes. It's a mark made to be able to randomly scan and find
-the start of a NAL. In a well framed stream, they are useless. Then AVC
-header is designed to announce the size of the following block, if we
-pass only one NAL by buffer, this is not very useful either. Both seems
-trivial to reconstruct if the HW requires it.
-
->=20
-> That said, since pixel format essentially specifies the buffer
-> contents, having such cases differentiated based on the pixel format
-> doesn't sound insane.
-
-As of today, that's what the pixel formats tries to do with these
-_NO_SC postfix (the current naming is generally ambiguous though).
-
->=20
-> Best regards,
-> Tomasz
-
---=-O9f5ftoJBAVQZuKAhDT7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCW31tGQAKCRBxUwItrAao
-HIGkAKCgkBKCJNCAYfiVGp4ochL2PrI0nQCdHEQ5iJuIyzNaKHWrmWONRL1TQFc=
-=Ew/g
------END PGP SIGNATURE-----
-
---=-O9f5ftoJBAVQZuKAhDT7--
-
+Thanks
+Christophe
