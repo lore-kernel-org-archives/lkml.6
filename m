@@ -5,40 +5,51 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FE5C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDF6C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:57:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83A13208E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:55:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83A13208E3
+	by mail.kernel.org (Postfix) with ESMTP id 4611E208E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:57:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4611E208E3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbeHVUV3 (ORCPT
+        id S1727317AbeHVUXU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 16:21:29 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54786 "EHLO mx1.redhat.com"
+        Wed, 22 Aug 2018 16:23:20 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40878 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726842AbeHVUV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 16:21:29 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        id S1726842AbeHVUXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 16:23:19 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 393A94021CC1;
-        Wed, 22 Aug 2018 16:55:49 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 927E07A7E7;
+        Wed, 22 Aug 2018 16:57:38 +0000 (UTC)
 Received: from [10.36.116.89] (ovpn-116-89.ams2.redhat.com [10.36.116.89])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4D85110EE6D9;
-        Wed, 22 Aug 2018 16:55:47 +0000 (UTC)
-Subject: Re: [PATCH v2 2/5] KVM: s390: vsie: Only accept FORMAT1 CRYCB for
- guest2
-To:     Pierre Morel <pmorel@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-References: <1534956717-14087-1-git-send-email-pmorel@linux.ibm.com>
- <1534956717-14087-3-git-send-email-pmorel@linux.ibm.com>
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 603652026D74;
+        Wed, 22 Aug 2018 16:57:32 +0000 (UTC)
+Subject: Re: [PATCH v9 21/22] KVM: s390: CPU model support for AP
+ virtualization
+To:     pmorel@linux.ibm.com, Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <2c2c4859-ed3e-a492-dd59-78529c7768b2@redhat.com>
+ <e7e1efe7-a7f5-f9a8-bd85-88759fa8ba2b@linux.ibm.com>
+ <b04e7d88-b7d3-b55d-cba8-bec0623e4adc@redhat.com>
+ <9f512d55-ef10-e2ae-f34e-e003c929bc3f@linux.ibm.com>
 From:   David Hildenbrand <david@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
@@ -85,59 +96,63 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
  SE+xAvmumFBY
 Organization: Red Hat GmbH
-Message-ID: <c1ebcecb-e2fb-6ff0-8bc7-e285af62129b@redhat.com>
-Date:   Wed, 22 Aug 2018 18:55:46 +0200
+Message-ID: <befdd6b9-6ca8-96c2-68c7-f52f8367443c@redhat.com>
+Date:   Wed, 22 Aug 2018 18:57:31 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1534956717-14087-3-git-send-email-pmorel@linux.ibm.com>
+In-Reply-To: <9f512d55-ef10-e2ae-f34e-e003c929bc3f@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 22 Aug 2018 16:55:49 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 22 Aug 2018 16:55:49 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 22 Aug 2018 16:57:38 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 22 Aug 2018 16:57:38 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22.08.2018 18:51, Pierre Morel wrote:
-> As the comment above the function suggested the shadowing
-> of the guest2 CRYCB can only accept a format 1 since
-> AP instructions are not supported in the guest.
+
+>>>
+>>> In this case we will have no problem with older guests not having idea
+>>> about APXA.
+>>>
+>>> Would it be a solution?
+>>
+>> Any feature the guest sees, should be part of the CPU model. The whole
+>> environment for cpu subfunctions is already in place both in KVM and
+>> QEMU. Only disabling subfunctions in KVM is not implemented yet.
+>>
+>> You can exclude any subfunctions/facilities that are only valid on LPAR
+>> level and cannot be used in some guest either way. (that makes life
+>> sometimes easier)
+>>
+>>
+>> I know that this might sound a little bit complicated, but it really
+>> isn't. Boils down to modifying kvm_s390_cpu_feat_init() and specifying
+>> some features+feature groups in QEMU.
 > 
-> Let's modify the check which allowed to accept a format 2 too.
-
-As the bit is ignored without AP/APXA, it is perfectly valid to accept a
-format 2, we just have to interpret it as format 1 (which is what we do)
-
-What am I missing?
-
+> OK, we definitively need another patch/patch-set, to handle this.
+> Do you think it can be done in another series since if we always support 
+> APXA when we have AP instructions, we already have an indication that
+> APXA exist: the AP facility.
 > 
-> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> ---
->  arch/s390/kvm/vsie.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+
+Please implement the subfunction stuff right away. This will allow to
+handle all future facilities transparently from a kernel POV.
+
+Implementing that should be easy - and I don't like gluing features
+together in such a way.
+
+You can always assure that consistent data (e.g. AP + APXA availability)
+is reported from KVM to QEMU.
+
+> Regards,
+> Pierre
 > 
-> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
-> index 12b9707..56a9d47 100644
-> --- a/arch/s390/kvm/vsie.c
-> +++ b/arch/s390/kvm/vsie.c
-> @@ -156,7 +156,9 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->  	u8 ecb3_flags;
->  
->  	scb_s->crycbd = 0;
-> -	if (!(crycbd_o & vcpu->arch.sie_block->crycbd & CRYCB_FORMAT1))
-> +	if (!(crycbd_o == CRYCB_FORMAT1))
-> +		return 0;
-
-huh, this looks very broken. The address is still in there.
-
-> +	if (!(vcpu->arch.sie_block->crycbd & CRYCB_FORMAT1))
->  		return 0;
->  	/* format-1 is supported with message-security-assist extension 3 */
->  	if (!test_kvm_facility(vcpu->kvm, 76))
+> 
+> 
 > 
 
 
