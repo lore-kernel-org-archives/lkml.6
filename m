@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DATE_IN_FUTURE_03_06,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A7EC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB43CC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBBEA217B4
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:17:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBBEA217B4
+	by mail.kernel.org (Postfix) with ESMTP id 7A356217B4
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:18:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A356217B4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbeHVFj1 (ORCPT
+        id S1727791AbeHVFkj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 01:39:27 -0400
-Received: from mga04.intel.com ([192.55.52.120]:55543 "EHLO mga04.intel.com"
+        Wed, 22 Aug 2018 01:40:39 -0400
+Received: from mga09.intel.com ([134.134.136.24]:42432 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726477AbeHVFj1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 01:39:27 -0400
+        id S1726186AbeHVFkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 01:40:39 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2018 19:16:46 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2018 19:17:57 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,272,1531810800"; 
-   d="scan'208";a="68089377"
+   d="scan'208";a="256952715"
 Received: from linux.intel.com ([10.54.29.200])
-  by orsmga006.jf.intel.com with ESMTP; 21 Aug 2018 19:16:46 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 21 Aug 2018 19:17:36 -0700
 Received: from dazhang1-ssd.sh.intel.com (unknown [10.239.48.163])
-        by linux.intel.com (Postfix) with ESMTP id CD74A5802E1;
-        Tue, 21 Aug 2018 19:16:42 -0700 (PDT)
+        by linux.intel.com (Postfix) with ESMTP id DCEA55802E1;
+        Tue, 21 Aug 2018 19:17:34 -0700 (PDT)
 From:   Zhang Yi <yi.z.zhang@linux.intel.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org, pbonzini@redhat.com,
@@ -42,9 +42,9 @@ To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         jack@suse.cz, hch@lst.de
 Cc:     linux-mm@kvack.org, rkrcmar@redhat.com, jglisse@redhat.com,
         yi.z.zhang@intel.com, Zhang Yi <yi.z.zhang@linux.intel.com>
-Subject: [PATCH V4 1/4] kvm: remove redundant reserved page check
-Date:   Wed, 22 Aug 2018 18:55:37 +0800
-Message-Id: <26f79872e78cc643937059003763b5cfc1333167.1534934405.git.yi.z.zhang@linux.intel.com>
+Subject: [PATCH V4 2/4] mm: introduce memory type MEMORY_DEVICE_DEV_DAX
+Date:   Wed, 22 Aug 2018 18:56:29 +0800
+Message-Id: <c0b53c74379e6d654bbe42471fcef8aa5fd22efd.1534934405.git.yi.z.zhang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1534934405.git.yi.z.zhang@linux.intel.com>
 References: <cover.1534934405.git.yi.z.zhang@linux.intel.com>
@@ -53,36 +53,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PageReserved() is already checked inside kvm_is_reserved_pfn(),
-remove it from kvm_set_pfn_dirty().
+Currently, NVDIMM pages will be marked 'PageReserved'. However, unlike
+other reserved PFNs, pages on NVDIMM shall still behave like normal ones
+in many cases, i.e. when used as backend memory of KVM guest. This patch
+introduces a new memory type, MEMORY_DEVICE_DEV_DAX. And set this flag
+while dax driver hotplug the device memory.
 
 Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
 Signed-off-by: Zhang Yu <yu.c.zhang@linux.intel.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Acked-by: Pankaj Gupta <pagupta@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- virt/kvm/kvm_main.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/dax/pmem.c       | 1 +
+ include/linux/memremap.h | 8 ++++++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 8b47507f..c44c406 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1690,12 +1690,8 @@ EXPORT_SYMBOL_GPL(kvm_release_pfn_dirty);
+diff --git a/drivers/dax/pmem.c b/drivers/dax/pmem.c
+index fd49b24..fb3f363 100644
+--- a/drivers/dax/pmem.c
++++ b/drivers/dax/pmem.c
+@@ -111,6 +111,7 @@ static int dax_pmem_probe(struct device *dev)
+ 		return rc;
  
- void kvm_set_pfn_dirty(kvm_pfn_t pfn)
- {
--	if (!kvm_is_reserved_pfn(pfn)) {
--		struct page *page = pfn_to_page(pfn);
--
--		if (!PageReserved(page))
--			SetPageDirty(page);
--	}
-+	if (!kvm_is_reserved_pfn(pfn))
-+		SetPageDirty(pfn_to_page(pfn));
- }
- EXPORT_SYMBOL_GPL(kvm_set_pfn_dirty);
+ 	dax_pmem->pgmap.ref = &dax_pmem->ref;
++	dax_pmem->pgmap.type = MEMORY_DEVICE_DEV_DAX;
+ 	addr = devm_memremap_pages(dev, &dax_pmem->pgmap);
+ 	if (IS_ERR(addr))
+ 		return PTR_ERR(addr);
+diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+index f91f9e7..cd07ca8 100644
+--- a/include/linux/memremap.h
++++ b/include/linux/memremap.h
+@@ -53,11 +53,19 @@ struct vmem_altmap {
+  * wakeup event whenever a page is unpinned and becomes idle. This
+  * wakeup is used to coordinate physical address space management (ex:
+  * fs truncate/hole punch) vs pinned pages (ex: device dma).
++ *
++ * MEMORY_DEVICE_DEV_DAX:
++ * Device memory that support raw access to persistent memory. Without need
++ * of an intervening filesystem, it could be directed mapped via an mmap
++ * capable character device. Together with the type MEMORY_DEVICE_FS_DAX,
++ * we could distinguish the persistent memory pages from normal ZONE_DEVICE
++ * pages.
+  */
+ enum memory_type {
+ 	MEMORY_DEVICE_PRIVATE = 1,
+ 	MEMORY_DEVICE_PUBLIC,
+ 	MEMORY_DEVICE_FS_DAX,
++	MEMORY_DEVICE_DEV_DAX,
+ };
  
+ /*
 -- 
 2.7.4
 
