@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF1EC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 12:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE2CC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 12:03:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB8252098B
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 12:02:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 735692098B
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 12:03:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dzRUFXfW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB8252098B
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fZV0h+Gf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 735692098B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728951AbeHVP0s (ORCPT
+        id S1728882AbeHVP2Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 11:26:48 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34083 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728726AbeHVP0s (ORCPT
+        Wed, 22 Aug 2018 11:28:16 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50188 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728365AbeHVP2P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 11:26:48 -0400
-Received: by mail-wr1-f68.google.com with SMTP id g33-v6so1403589wrd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 05:02:08 -0700 (PDT)
+        Wed, 22 Aug 2018 11:28:15 -0400
+Received: by mail-wm0-f67.google.com with SMTP id s12-v6so1801585wmc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 05:03:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=3ssHHzhLiN6/VguYPy9B8Xfr8tnluVVNb4KHNerASRk=;
-        b=dzRUFXfW6ducW/edr1YTNZZDC6nxMGNS7oRxDDHTwxR+etnOcmpE0ycNNYiG0OuBIW
-         Z3AoxBnQCUN2jQxX0DgimZy30a2ZmeCFeSgIKirL5YT6Fk2QTFYP4x9zj900t8ecjYnR
-         B3b93006YTMXEVz2TwTrBazj+MwG/EZDYo6DI=
+        bh=Q+T0B0xKuHc6PmkV7Nqp2zDRINoJzHXAWhbbqChYAyY=;
+        b=fZV0h+GflwtpC51Vcm1oDJzJMcGXjs0cbovopM3YgoFm2f16VeaHNajuQhjVfGC7Oy
+         kunslYkozEXA7GktpPnSS2G0AGZPnby+ly0X9RV+Wn4PRbs67AfDS+3A8suo4hjiAZ6V
+         orE4cSmYbODBAF6wDDvxEYOqHl7fW6Dyy5hds=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3ssHHzhLiN6/VguYPy9B8Xfr8tnluVVNb4KHNerASRk=;
-        b=suQpNraU16ZjjS2oOfYfaWPrMJgnJBvdJpgEVXi0/xRvSqkfwvx30+O5PdHBdS4A0g
-         O/Wv4+02tGGYWFCoCoqNEOpSiU/eMEMUSisGUSNsqds4FSmBX/mRXmDHcn8J2uMnCywj
-         6DQtJQf8UBm8036vCmNqj/I8XkmAqN4QFGU5xm6+UTYTv+Z0qtP9gzdoct9kTF04/pEZ
-         6jPEekUWkt2vj6TnLp1Zq/286kBRJDYgJtniWlhhykUsb7ANEMrU/3giKTlM6SbA1qNR
-         6jUlH/uFeoSORvVF9ceP4SxgCyg2OaD1JQWpoSQ8vLupSOSLXAnThZ7OxuOqktC2UIXC
-         722w==
-X-Gm-Message-State: APzg51DdPcFUyxxCGcChWtit+U34NnxqXZINzhLmDCpw6OtClcwEcj/p
-        txflk1o3l7aq9l1KLynuN+DzPQ==
-X-Google-Smtp-Source: ANB0VdYoFcsaRwvd8szPcA4YU/iNNIQT+0jU+FKc0IoMKnFWjC4QbJl75ealPOf5nhXd4SewSlgG4A==
-X-Received: by 2002:a5d:66d2:: with SMTP id k18-v6mr3919987wrw.154.1534939327864;
-        Wed, 22 Aug 2018 05:02:07 -0700 (PDT)
+        bh=Q+T0B0xKuHc6PmkV7Nqp2zDRINoJzHXAWhbbqChYAyY=;
+        b=Cg4rlbHXhOzzkWoZcZB1ImON5+R7LM5npZrN/4MmHAC8RNVs37jJCDQd58tT4Wt5dG
+         9vMIQfN4GDDSY/axP1T+F7/3TDK/UriRCTsk9C05dwXx5iYBepqoUfapJRUwYm8mxUTm
+         JK1xwBagqcvN2JpCstntuqf99gu8l7VGzzjZs7CIbDlU3JdIiBZuZOXaaUCHh4EkTKJ/
+         KaFt8SyUmc8of1KwdjN6SrPPM4YIZXC07+YCXgWJ2MRYN0MWkZuwnDuZMNLquYFiGXCY
+         Mc5b0zWJXEiXx32SmprY9yXOZtFQaMRbQKu7a6eGX5s/THq7ROw9W+PU8DHccsz6k7H+
+         FNmg==
+X-Gm-Message-State: APzg51Cg33yX45ymZ7Gi3pFyQ0pjAvZrYW5sgycx/b5TUJzGpeeitsd4
+        YIldLkGX+3nvsWtqzGVWtZeJvA==
+X-Google-Smtp-Source: ANB0VdYLxzVwsj90De3ivEF5R08ATroTdc5HOWelDjoQXd0ZU4W7REm1kN3YW7lf7D7IUc1C5UZM4Q==
+X-Received: by 2002:a1c:ec06:: with SMTP id k6-v6mr2272867wmh.39.1534939416710;
+        Wed, 22 Aug 2018 05:03:36 -0700 (PDT)
 Received: from leoy-ThinkPad-X240s ([45.76.138.171])
-        by smtp.gmail.com with ESMTPSA id j133-v6sm3005677wmd.12.2018.08.22.05.02.04
+        by smtp.gmail.com with ESMTPSA id z141-v6sm2637210wmc.3.2018.08.22.05.03.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Aug 2018 05:02:07 -0700 (PDT)
-Date:   Wed, 22 Aug 2018 20:02:00 +0800
+        Wed, 22 Aug 2018 05:03:35 -0700 (PDT)
+Date:   Wed, 22 Aug 2018 20:03:30 +0800
 From:   leo.yan@linaro.org
 To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
 Cc:     Linux PM <linux-pm@vger.kernel.org>,
@@ -64,89 +64,42 @@ Cc:     Linux PM <linux-pm@vger.kernel.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Frederic Weisbecker <frederic@kernel.org>
 Subject: Re: [PATCH] cpuidle: menu: Retain tick when shallow state is selected
-Message-ID: <20180822120200.GA8949@leoy-ThinkPad-X240s>
+Message-ID: <20180822120330.GB8949@leoy-ThinkPad-X240s>
 References: <34910476.pgRhNDWo5t@aspire.rjw.lan>
+ <20180822120200.GA8949@leoy-ThinkPad-X240s>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <34910476.pgRhNDWo5t@aspire.rjw.lan>
+In-Reply-To: <20180822120200.GA8949@leoy-ThinkPad-X240s>
 User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 10:44:10AM +0200, Rafael J . Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> The case addressed by commit 5ef499cd571c (cpuidle: menu: Handle
-> stopped tick more aggressively) in the stopped tick case is present
-> when the tick has not been stopped yet too.  Namely, if only two CPU
-> idle states, shallow state A with target residency significantly
-> below the tick boundary and deep state B with target residency
-> significantly above it, are available and the predicted idle
-> duration is above the tick boundary, but below the target residency
-> of state B, state A will be selected and the CPU may spend indefinite
-> amount of time in it, which is not quite energy-efficient.
-> 
-> However, if the tick has not been stopped yet and the governor is
-> about to select a shallow idle state for the CPU even though the idle
-> duration predicted by it is above the tick boundary, it should be
-> fine to wake up the CPU early, so the tick can be retained then and
-> the governor will have a chance to select a deeper state when it runs
-> next time.
-> 
-> [Note that when this really happens, it will make the idle duration
->  predictor believe that the CPU might be idle longer than predicted,
->  which will make it more likely to predict longer idle durations going
->  forward, but that will also cause deeper idle states to be selected
->  going forward, on average, which is what's needed here.]
-> 
-> Fixes: 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states with stopped tick)
-> Reported-by: Leo Yan <leo.yan@linaro.org>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> Commit 5ef499cd571c (cpuidle: menu: Handle stopped tick more aggressively) is
-> in linux-next only at this point.
-> 
-> ---
->  drivers/cpuidle/governors/menu.c |   13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> Index: linux-pm/drivers/cpuidle/governors/menu.c
-> ===================================================================
-> --- linux-pm.orig/drivers/cpuidle/governors/menu.c
-> +++ linux-pm/drivers/cpuidle/governors/menu.c
-> @@ -379,9 +379,20 @@ static int menu_select(struct cpuidle_dr
->  		if (idx == -1)
->  			idx = i; /* first enabled state */
->  		if (s->target_residency > data->predicted_us) {
-> -			if (!tick_nohz_tick_stopped())
-> +			if (data->predicted_us < TICK_USEC)
+On Wed, Aug 22, 2018 at 08:02:00PM +0800, Leo Yan wrote:
 
-With this change, for tick has been stopped, it might introduce
-regression to select a shallow state and it's conflict with the effect
-of patch "cpuidle: menu: Handle stopped tick more aggressively".
+[...]
 
->  				break;
->  
-> +			if (!tick_nohz_tick_stopped()) {
-> +				/*
-> +				 * If the state selected so far is shallow,
-> +				 * waking up early won't hurt, so retain the
-> +				 * tick in that case and let the governor run
-> +				 * again in the next iteration of the loop.
-> +				 */
-> +				expected_interval = drv->states[idx].target_residency;
-> +				break;
-> +			}
-> +
-
-This is reliable, how we can rely on a shallow idle state target
-residency to decide if need to stop a tick or not?
-
->  			/*
->  			 * If the state selected so far is shallow and this
->  			 * state's target residency matches the time till the
+> > +			if (!tick_nohz_tick_stopped()) {
+> > +				/*
+> > +				 * If the state selected so far is shallow,
+> > +				 * waking up early won't hurt, so retain the
+> > +				 * tick in that case and let the governor run
+> > +				 * again in the next iteration of the loop.
+> > +				 */
+> > +				expected_interval = drv->states[idx].target_residency;
+> > +				break;
+> > +			}
+> > +
 > 
+> This is reliable, how we can rely on a shallow idle state target
+> residency to decide if need to stop a tick or not?
+
+s/This is reliable/This isn't reliable
+
+> 
+> >  			/*
+> >  			 * If the state selected so far is shallow and this
+> >  			 * state's target residency matches the time till the
+> > 
