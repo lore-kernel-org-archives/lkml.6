@@ -6,41 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1AA4C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4137AC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D711214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:37:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D711214C3
+	by mail.kernel.org (Postfix) with ESMTP id 0291C2147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:37:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0291C2147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728437AbeHVLBQ (ORCPT
+        id S1728419AbeHVLBQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 22 Aug 2018 07:01:16 -0400
-Received: from mx.socionext.com ([202.248.49.38]:47195 "EHLO mx.socionext.com"
+Received: from mx.socionext.com ([202.248.49.38]:47191 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728364AbeHVLBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728174AbeHVLBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 22 Aug 2018 07:01:15 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 22 Aug 2018 16:37:32 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id CCE846062A;
-        Wed, 22 Aug 2018 16:37:32 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Wed, 22 Aug 2018 16:37:32 +0900
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 22 Aug 2018 16:37:33 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 8B94F180237;
+        Wed, 22 Aug 2018 16:37:33 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Wed, 22 Aug 2018 16:37:33 +0900
 Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id 0FBBA1A0E6F;
+        by kinkan.css.socionext.com (Postfix) with ESMTP id CC26C1A0E11;
         Wed, 22 Aug 2018 16:37:32 +0900 (JST)
 From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 To:     Tejun Heo <tj@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, linux-ide@vger.kernel.org
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Patrice Chotard <patrice.chotard@st.com>
-Subject: [PATCH 11/14] ata: ahci_st: add second argument of ahci_platform_get_resources()
-Date:   Wed, 22 Aug 2018 16:37:07 +0900
-Message-Id: <1534923430-9692-12-git-send-email-hayashi.kunihiko@socionext.com>
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [PATCH 14/14] ata: ahci_xgene: add second argument of ahci_platform_get_resources()
+Date:   Wed, 22 Aug 2018 16:37:10 +0900
+Message-Id: <1534923430-9692-15-git-send-email-hayashi.kunihiko@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1534923430-9692-1-git-send-email-hayashi.kunihiko@socionext.com>
 References: <1534923430-9692-1-git-send-email-hayashi.kunihiko@socionext.com>
@@ -54,25 +53,24 @@ as the second argument of ahci_platform_get_resources(),
 add the argument as initial value 0.
 
 Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Patrice Chotard <patrice.chotard@st.com>
 Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 ---
- drivers/ata/ahci_st.c | 2 +-
+ drivers/ata/ahci_xgene.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ata/ahci_st.c b/drivers/ata/ahci_st.c
-index bc345f2..21c5c44 100644
---- a/drivers/ata/ahci_st.c
-+++ b/drivers/ata/ahci_st.c
-@@ -156,7 +156,7 @@ static int st_ahci_probe(struct platform_device *pdev)
- 	if (!drv_data)
- 		return -ENOMEM;
+diff --git a/drivers/ata/ahci_xgene.c b/drivers/ata/ahci_xgene.c
+index ad58da7..7e157e1 100644
+--- a/drivers/ata/ahci_xgene.c
++++ b/drivers/ata/ahci_xgene.c
+@@ -759,7 +759,7 @@ static int xgene_ahci_probe(struct platform_device *pdev)
+ 					      &xgene_ahci_v2_port_info };
+ 	int rc;
  
 -	hpriv = ahci_platform_get_resources(pdev);
 +	hpriv = ahci_platform_get_resources(pdev, 0);
  	if (IS_ERR(hpriv))
  		return PTR_ERR(hpriv);
- 	hpriv->plat_data = drv_data;
+ 
 -- 
 2.7.4
 
