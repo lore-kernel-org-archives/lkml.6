@@ -2,114 +2,125 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C24C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 01:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33216C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 01:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FDEB217C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 01:22:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3D22217D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 01:29:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mAZPdSEr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FDEB217C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jCbK58B3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3D22217D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbeHVEp2 (ORCPT
+        id S1726829AbeHVEvi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 00:45:28 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:35731 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbeHVEp2 (ORCPT
+        Wed, 22 Aug 2018 00:51:38 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35031 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725792AbeHVEvi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 00:45:28 -0400
-Received: by mail-qt0-f195.google.com with SMTP id r21-v6so401596qtm.2;
-        Tue, 21 Aug 2018 18:22:56 -0700 (PDT)
+        Wed, 22 Aug 2018 00:51:38 -0400
+Received: by mail-io0-f193.google.com with SMTP id w11-v6so261635iob.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 18:29:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id;
-        bh=6SNHI51KRZzTDYcnMavTDihqimSyreFwEOe0orhx+VI=;
-        b=mAZPdSEruGbX6BAGx9oB0ByyNi3/kho0SrNSCNWoX01aap71epmQP4aTVtIY64caWx
-         OrJ0XoIvICmoV34LFBpjGdxqhwkzur+aS5PgsTrbjHYZhhNnKMZatu1eXphPU1csgqaO
-         nC/Qz5bbuvD0iCFSfOMAJoadvHQ29BWuYdLOmW7e8A+e7jfhrN4hJt/y4SHij5ZiXrKF
-         ezdV5yT4oPeg+KCYci4siEWKBO+u6Oy/XtoNX0b0AdwqmqOBWC7pzsNcFXYJGDr0TaLe
-         zny9UReqoSlshUfzQjdDhbyExNZTjcF4qDcSzWd9WNehKjTRIQneK87KMzFzM+dmeVTr
-         GAHQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YqpQEXE05qP1ux+1Gs4WHgn0x+tzTapZgHZjxjwQaEM=;
+        b=jCbK58B3dltJDiBHK/fXWV/284WdnovClJiLO4UZ8bmRIf3NLbAYnvPGhi7UOB6qSE
+         49rUhRmQGMpibqiRG2R+ThsFv1/XRvNrgOlhVM0u/l2HM0cPjykhqIlSBHyw0la/B437
+         OTA8bjNY9j6FsEBysf45fp5kp4ztNECzPUSxl3I7wyVJLAF01Unja4Re9BQsmDaxD3oV
+         izNKaUIcyJlVFepomo61DzWY7DOjvAST5vZjgcOkorJW/mERZI2B+rnds+CddeclnrTU
+         e61N6FBD8JT/2U33T/B9FIPGqCxrt8XCDRxfXakT82WTvW5t4ZxCNke1ZI4I9L9ZdS7T
+         yZkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=6SNHI51KRZzTDYcnMavTDihqimSyreFwEOe0orhx+VI=;
-        b=bZNRo09feGyeQz3VDWkovY1UtmDxM/3cL/i3+truADb4oCp3E6HhDQbOYfFKdyDVj4
-         hPjwBzqlJ0ZrHPxODSR2BmJswcRk+RDaRi0Ouz9im6E/IxGgx3L30on2IZTFUO8AJTS6
-         z1rkuYtfgmsYc0RSrD9dQiNF4yBJkHHh7Eh8acFQLaR9DVS633M3zzeNG6/iXjlOQEEp
-         AYPSVNHDt+AitOwA5opkk5aMI8QvPQ/jm9OAcIdE7AuIF0cvY/tu37DZ+W3uvDxOXTFH
-         TjsM38vXsFhzprYy6j3/xXbz7sxGSnq0Oo0UN3FGpMEH4H6VDkgK1CqZ2poUZkoMyOdu
-         F2GQ==
-X-Gm-Message-State: APzg51AtqJi0JjYKiTs0oObkYTiSaygbN0+zoGtu/heeMTq7LLJ82vQe
-        LKiykLboHZ4qwTXVtMoKHTg=
-X-Google-Smtp-Source: AA+uWPzUik9i1+8Mk1FqwksFnRqiIrtT76w8PtW3rLwA9ePr+jnvNvQyyH8SQwflkYe+obk6+bt9mw==
-X-Received: by 2002:ac8:4249:: with SMTP id r9-v6mr16577075qtm.262.1534900975942;
-        Tue, 21 Aug 2018 18:22:55 -0700 (PDT)
-Received: from gagoddess.ic.unicamp.br (wifi-177-220-84-180.wifi.ic.unicamp.br. [177.220.84.180])
-        by smtp.gmail.com with ESMTPSA id a187-v6sm179479qkd.47.2018.08.21.18.22.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 Aug 2018 18:22:55 -0700 (PDT)
-From:   Guilherme Gallo <gagallo7@gmail.com>
-To:     lkcamp@lists.libreplanetbr.org, helen.koike@collabora.com,
-        mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hverkuil@xs4all.nl
-Subject: [PATCH] media: vimc: implement basic v4l2-ctrls
-Date:   Tue, 21 Aug 2018 22:22:19 -0300
-Message-Id: <20180822012219.22946-1-gagallo7@gmail.com>
-X-Mailer: git-send-email 2.13.6
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YqpQEXE05qP1ux+1Gs4WHgn0x+tzTapZgHZjxjwQaEM=;
+        b=mcDYBxHQGDdb9GLf7EfpRtM9GawesVECUtb/O97VHz5mSVahm4suX5IsM4sQJgemFp
+         0DGrKK5uUkmP2GTIonRZj/z1oDLi/I6A9JeLkVCFCuy9Kj0Mgi40eems5GgywbJTFBnc
+         MGZpnn99rxXIE3xTNM1+CdL1YJJouxmzXlQ5pASCzQuFMaFFFsrbPEZojLPiu0p0BaGI
+         tC6G0RcgUl8KP2GA1RM+VR22Y/nPK1rOt6SDIWDQkp+jGPRtHyJBhmhOezWldr0BwIyk
+         PZAnl1gm2vxOC7YQePj8hEcNJt5ie7sW300atvxSpKVjxmGGS31eeuXkpwlZOk/66lqC
+         26Uw==
+X-Gm-Message-State: APzg51BB2AZz9pX10LqwMlbLyBL9CAwWHfumXO+vjR5ZvYx7rNoTVd9Z
+        ljrJWceewPY7AuDTdIdUOMarf6BjPb9HkuG6Ya+tpg==
+X-Google-Smtp-Source: ANB0VdYcIS4+7E9vK/9L8//MK547Mi1KEHlPYRTu4yT9McT4lBxT3ipb+FTIsK4P0PNtXmZIvi9HXE99a67NtigimXU=
+X-Received: by 2002:a6b:2191:: with SMTP id h139-v6mr8768777ioh.240.1534901343807;
+ Tue, 21 Aug 2018 18:29:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180816015724.GB2793@jagdpanzerIV> <20180815203226.2c7e48b2f9395d2772ecfcb2@linux-foundation.org>
+ <20180816014835.GA2793@jagdpanzerIV> <20180814164523.e0fdeed962917e23062ef958@linux-foundation.org>
+ <20180821160307.GA63897@google.com>
+In-Reply-To: <20180821160307.GA63897@google.com>
+From:   Peter Kalauskas <peskal@google.com>
+Date:   Tue, 21 Aug 2018 18:28:51 -0700
+Message-ID: <CAOxpCJ_gW=480c94XQR1kPjJEK+di-hYKMa_w78=iYwXFxCC6g@mail.gmail.com>
+Subject: Re: [PATCH] zram: fix bug storing backing_dev
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Minchan Kim <minchan@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement brightness, contrast and hue controls in vimc-sensor
+On Tue, Aug 14, 2018 at 04:45:23PM -0700, Andrew Morton wrote:
+> The changelog doesn't describe the end-user impact of the bug, which is
+> very desirable when tagging a patch for -stable backporting.  Can we
+> have that paragraph please?
 
-Signed-off-by: Guilherme Alcarde Gallo <gagallo7@gmail.com>
----
- drivers/media/platform/vimc/vimc-sensor.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+The end-user impact is that echoing to writeback_dev would not cause it
+to change. Would the following statement suffice?
 
-diff --git a/drivers/media/platform/vimc/vimc-sensor.c b/drivers/media/platform/vimc/vimc-sensor.c
-index 605e2a2d5dd5..ecc82cd60900 100644
---- a/drivers/media/platform/vimc/vimc-sensor.c
-+++ b/drivers/media/platform/vimc/vimc-sensor.c
-@@ -316,6 +316,15 @@ static int vimc_sen_s_ctrl(struct v4l2_ctrl *ctrl)
- 	case V4L2_CID_VFLIP:
- 		tpg_s_vflip(&vsen->tpg, ctrl->val);
- 		break;
-+	case V4L2_CID_BRIGHTNESS:
-+		tpg_s_brightness(&vsen->tpg, ctrl->val);
-+		break;
-+	case V4L2_CID_CONTRAST:
-+		tpg_s_contrast(&vsen->tpg, ctrl->val);
-+		break;
-+	case V4L2_CID_HUE:
-+		tpg_s_hue(&vsen->tpg, ctrl->val);
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -377,6 +386,12 @@ static int vimc_sen_comp_bind(struct device *comp, struct device *master,
- 			  V4L2_CID_VFLIP, 0, 1, 1, 0);
- 	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
- 			  V4L2_CID_HFLIP, 0, 1, 1, 0);
-+	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
-+			  V4L2_CID_BRIGHTNESS, 0, 255, 1, 128);
-+	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
-+			  V4L2_CID_CONTRAST, 0, 255, 1, 128);
-+	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
-+			  V4L2_CID_HUE, 0, 255, 1, 128);
- 	vsen->sd.ctrl_handler = &vsen->hdl;
- 	if (vsen->hdl.error) {
- 		ret = vsen->hdl.error;
--- 
-2.13.6
+  Without this change, it is not possible to change writeback_dev unless
+  the tool used to do so does not include a newline character.  For
+  example, 'echo -n' or 'printf' would work, but 'echo' would not work.
 
+I can also include Sergey's description of the bug if that would be
+helpful.
+
+
+On Thu, Aug 16, 2018 at 10:48:35AM +0900, Sergey Senozhatsky wrote:
+> On (08/14/18 16:45), Andrew Morton wrote:
+> > >
+> > > > > -     strlcpy(file_name, buf, len);
+> > >
+> > > This is quite interesting. The reason it worked before was the fact that
+> > > strlcpy() copies 'len - 1' bytes, which is strlen(buf) - 1 in our case,
+> > > so it accidentally didn't copy the trailing new line symbol. Which also
+> > > means that "echo -n /dev/sdX" most likely was broken.
+> > >
+> >
+> > I can't find the original email on lkml for some reason, but I
+> > recreated the patch.
+>
+> Neither can I.
+>
+
+Sorry, I sent it to Minchan directly. I'll send PATCH v2 to lkml, if v2
+is needed.
+
+
+On Wed, Aug 15, 2018 at 08:32:26PM -0700, Andrew Morton wrote:
+> On Thu, 16 Aug 2018 10:48:35 +0900 Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+>
+> > > The implementation might be able to use strim() somehow.
+> >
+> > strim() trims white-spaces.
+>
+> Which includes \n.
+>
+
+The if statement is already used by comp_algorithm_store in zram_drv.c,
+so perhaps it should remain the if statement for consistency. What do
+you think, should I use strim or the if statement?
