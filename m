@@ -3,187 +3,218 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 208D6C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D916C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1A0B208CC
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:51:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1A0B208CC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id F01BD208DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:54:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F01BD208DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbeHWASV (ORCPT
+        id S1727397AbeHWAVD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 20:18:21 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:56137 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726581AbeHWASV (ORCPT
+        Wed, 22 Aug 2018 20:21:03 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39978 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726789AbeHWAVD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 20:18:21 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0T73PJ7s_1534971092;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T73PJ7s_1534971092)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 23 Aug 2018 04:51:42 +0800
-Subject: Re: [RFC v8 PATCH 2/5] uprobes: introduce has_uprobes helper
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Cc:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        kirill@shutemov.name, akpm@linux-foundation.org,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-mm@kvack.org,
-        Oleg Nesterov <oleg@redhat.com>, liu.song.a23@gmail.com,
-        ravi.bangoria@linux.ibm.com, linux-kernel@vger.kernel.org
-References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
- <1534358990-85530-3-git-send-email-yang.shi@linux.alibaba.com>
- <e7147e14-bc38-03d0-90a4-5e0ca7e40050@suse.cz>
- <20180822150718.GB52756@linux.vnet.ibm.com>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <a8d4cb9b-eac2-2e11-d5c2-f5d57c1be537@linux.alibaba.com>
-Date:   Wed, 22 Aug 2018 13:51:31 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Wed, 22 Aug 2018 20:21:03 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7MKrjM3074591
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 16:54:35 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m1c1mqa2k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 16:54:34 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Wed, 22 Aug 2018 16:54:34 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 22 Aug 2018 16:54:30 -0400
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MKsS5Y16973824
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 Aug 2018 20:54:28 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 36E9428059;
+        Wed, 22 Aug 2018 16:52:58 -0400 (EDT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 683E22805A;
+        Wed, 22 Aug 2018 16:52:57 -0400 (EDT)
+Received: from oc8043147753.ibm.com (unknown [9.60.75.213])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 22 Aug 2018 16:52:57 -0400 (EDT)
+Subject: Re: [PATCH v9 21/22] KVM: s390: CPU model support for AP
+ virtualization
+To:     David Hildenbrand <david@redhat.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <2c2c4859-ed3e-a492-dd59-78529c7768b2@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Wed, 22 Aug 2018 16:54:26 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180822150718.GB52756@linux.vnet.ibm.com>
+In-Reply-To: <2c2c4859-ed3e-a492-dd59-78529c7768b2@redhat.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18082220-0040-0000-0000-0000046377F0
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009593; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01077363; UDB=6.00555461; IPR=6.00857339;
+ MB=3.00022873; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-22 20:54:32
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082220-0041-0000-0000-0000086A8AD3
+Message-Id: <8f3f3f41-a052-1975-69e2-49e1a662ecab@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808220207
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 8/22/18 8:07 AM, Srikar Dronamraju wrote:
-> * Vlastimil Babka <vbabka@suse.cz> [2018-08-22 12:55:59]:
->
->> On 08/15/2018 08:49 PM, Yang Shi wrote:
->>> We need check if mm or vma has uprobes in the following patch to check
->>> if a vma could be unmapped with holding read mmap_sem. The checks and
->>> pre-conditions used by uprobe_munmap() look just suitable for this
->>> purpose.
->>>
->>> Extracting those checks into a helper function, has_uprobes().
->>>
->>> Cc: Peter Zijlstra <peterz@infradead.org>
->>> Cc: Ingo Molnar <mingo@redhat.com>
->>> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
->>> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->>> Cc: Jiri Olsa <jolsa@redhat.com>
->>> Cc: Namhyung Kim <namhyung@kernel.org>
->>> Cc: Vlastimil Babka <vbabka@suse.cz>
->>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
->>> ---
->>>   include/linux/uprobes.h |  7 +++++++
->>>   kernel/events/uprobes.c | 23 ++++++++++++++++-------
->>>   2 files changed, 23 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
->>> index 0a294e9..418764e 100644
->>> --- a/include/linux/uprobes.h
->>> +++ b/include/linux/uprobes.h
->>> @@ -149,6 +149,8 @@ struct uprobes_state {
->>>   extern bool arch_uprobe_ignore(struct arch_uprobe *aup, struct pt_regs *regs);
->>>   extern void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
->>>   					 void *src, unsigned long len);
->>> +extern bool has_uprobes(struct vm_area_struct *vma, unsigned long start,
->>> +			unsigned long end);
->>>   #else /* !CONFIG_UPROBES */
->>>   struct uprobes_state {
->>>   };
->>> @@ -203,5 +205,10 @@ static inline void uprobe_copy_process(struct task_struct *t, unsigned long flag
->>>   static inline void uprobe_clear_state(struct mm_struct *mm)
->>>   {
->>>   }
->>> +static inline bool has_uprobes(struct vm_area_struct *vma, unsigned long start,
->>> +			       unsgined long end)
->>> +{
->>> +	return false;
->>> +}
->>>   #endif /* !CONFIG_UPROBES */
->>>   #endif	/* _LINUX_UPROBES_H */
->>> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
->>> index aed1ba5..568481c 100644
->>> --- a/kernel/events/uprobes.c
->>> +++ b/kernel/events/uprobes.c
->>> @@ -1114,22 +1114,31 @@ int uprobe_mmap(struct vm_area_struct *vma)
->>>   	return !!n;
->>>   }
->>>   
->>> -/*
->>> - * Called in context of a munmap of a vma.
->>> - */
->>> -void uprobe_munmap(struct vm_area_struct *vma, unsigned long start, unsigned long end)
->>> +bool
->>> +has_uprobes(struct vm_area_struct *vma, unsigned long start, unsigned long end)
->> The name is not really great...
-> I too feel the name is not apt.
-> Can you make this vma_has_uprobes and convert the current
-> vma_has_uprobes to __vma_has_uprobes?
-
-It sounds good to me.
-
->
->>>   {
->>>   	if (no_uprobe_events() || !valid_vma(vma, false))
->>> -		return;
->>> +		return false;
->>>   
->>>   	if (!atomic_read(&vma->vm_mm->mm_users)) /* called by mmput() ? */
->>> -		return;
->>> +		return false;
->>>   
->>>   	if (!test_bit(MMF_HAS_UPROBES, &vma->vm_mm->flags) ||
->>>   	     test_bit(MMF_RECALC_UPROBES, &vma->vm_mm->flags))
->> This means that vma might have uprobes, but since RECALC is already set,
->> we don't need to set it again. That's different from "has uprobes".
+On 08/22/2018 07:19 AM, David Hildenbrand wrote:
+> On 13.08.2018 23:48, Tony Krowiak wrote:
+>> From: Tony Krowiak <akrowiak@linux.ibm.com>
 >>
->> Perhaps something like vma_needs_recalc_uprobes() ?
+>> Introduces a new CPU model feature and two CPU model
+>> facilities to support AP virtualization for KVM guests.
 >>
->> But I also worry there might be a race where we initially return false
->> because of MMF_RECALC_UPROBES, then the flag is cleared while vma's
->> still have uprobes, then we downgrade mmap_sem and skip uprobe_munmap().
->> Should be checked if e.g. mmap_sem and vma visibility changes protects
->> this case from happening.
-> That is a very good observation.
->
-> One think we can probably do is pass an extra parameter to
-> has_uprobes(), depending on which we should skip this check.
-> such that when we call from uprobes_munmap(), we continue as is
-> but when calling from do_munmap_zap_rlock(), we skip the check.
-
-Yes, it sounds good to solve the race issue. When we need decide if we 
-should jump to regular path for uprobes mapping, we don't check if 
-MMF_RECALC_UPROBES is set or not. It looks not harmful to set this flag 
-twice.
-
-Thanks,
-Yang
-
->
->
->>> -		return;
->>> +		return false;
->>>   
->>>   	if (vma_has_uprobes(vma, start, end))
->>> +		return true;
->>> +
->>> +	return false;
->> Simpler:
->> 	return vma_has_uprobes(vma, start, end);
+>> CPU model feature:
 >>
->>> +}
->>> +
->>> +/*
->>> + * Called in context of a munmap of a vma.
->>> + */
->>> +void uprobe_munmap(struct vm_area_struct *vma, unsigned long start, unsigned long end)
->>> +{
->>> +	if (has_uprobes(vma, start, end))
->>>   		set_bit(MMF_RECALC_UPROBES, &vma->vm_mm->flags);
->>>   }
+>> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
+>> AP instructions are available on the guest. This
+>> feature will be enabled by the kernel only if the AP
+>> instructions are installed on the linux host. This feature
+>> must be specifically turned on for the KVM guest from
+>> userspace to use the VFIO AP device driver for guest
+>> access to AP devices.
+>>
+>> CPU model facilities:
+>>
+>> 1. AP Query Configuration Information (QCI) facility is installed.
+>>
+>>     This is indicated by setting facilities bit 12 for
+>>     the guest. The kernel will not enable this facility
+>>     for the guest if it is not set on the host.
+>>
+>>     If this facility is not set for the KVM guest, then only
+>>     APQNs with an APQI less than 16 will be used by a Linux
+>>     guest regardless of the matrix configuration for the virtual
+>>     machine. This is a limitation of the Linux AP bus.
+>>
+>> 2. AP Facilities Test facility (APFT) is installed.
+>>
+>>     This is indicated by setting facilities bit 15 for
+>>     the guest. The kernel will not enable this facility for
+>>     the guest if it is not set on the host.
+>>
+>>     If this facility is not set for the KVM guest, then no
+>>     AP devices will be available to the guest regardless of
+>>     the guest's matrix configuration for the virtual
+>>     machine. This is a limitation of the Linux AP bus.
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>> ---
+>>   arch/s390/kvm/kvm-s390.c         |    5 +++++
+>>   arch/s390/tools/gen_facilities.c |    2 ++
+>>   2 files changed, 7 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>> index 1e8cb67..d5e04d2 100644
+>> --- a/arch/s390/kvm/kvm-s390.c
+>> +++ b/arch/s390/kvm/kvm-s390.c
+>> @@ -367,6 +367,11 @@ static void kvm_s390_cpu_feat_init(void)
+>>   
+>>   	if (MACHINE_HAS_ESOP)
+>>   		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
+>> +
+>> +	/* Check if AP instructions installed on host */
+>> +	if (ap_instructions_available())
+>> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
+>> +
+>>   	/*
+>>   	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
+>>   	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
+>> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
+>> index 90a8c9e..a52290b 100644
+>> --- a/arch/s390/tools/gen_facilities.c
+>> +++ b/arch/s390/tools/gen_facilities.c
+>> @@ -106,6 +106,8 @@ struct facility_def {
+>>   
+>>   		.name = "FACILITIES_KVM_CPUMODEL",
+>>   		.bits = (int[]){
+>> +			12, /* AP Query Configuration Information */
+>> +			15, /* AP Facilities Test */
+>>   			-1  /* END */
+>>   		}
+>>   	},
+>>
+> I really wonder if we should also export the APXA facility.
+
+Given this comment is made within the context of the
+FACILITIES_KVM_CPUMODEL I might point out that APXA is not
+indicated by a facilities bit. It is indicated by a bit in
+the QCI control block returned from the PQAP(QCI)
+instruction to indicate that APXA is installed on all CPUs.
+
+> We can probe and allow that CPU feature. However, we cannot disable it
+> (as of now).
+
+Given this patch series implements passthrough devices,
+the output of the PQAP(QCI) will always be from a real
+device - i.e., there will be no way to disable it.
+
+>
+> We have other CPU features where it is the same case (basically all
+> subfunctions). See kvm_s390_get_processor_subfunc(). We probe them and
+> export them, but support to disable them has never been implemented.
+>
+> On a high level, we could then e.g. deny to start a QEMU guest if APXA
+> is available but has been disabled. (until we know that disabling it
+> actually works - if ever).
+>
+> This helps to catch nasty migration bugs (e.g. APXA suddenly
+> disappearing). Although unlikely, definitely possible.
+
+Migration of AP devices is not supported by this patch series, so this 
+should
+not be an issue.
+
+>
+>
+> Are there any other AP related facilities that the guest can from now on
+> probe that should also become part of the CPU model?
+>
 
