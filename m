@@ -1,107 +1,139 @@
-Return-Path: <SRS0=PzCS=LE=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE96C4321D
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 23:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D287DC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 00:24:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DC04217BF
-	for <linux-kernel@archiver.kernel.org>; Tue, 21 Aug 2018 23:59:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DC04217BF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A7AA217C7
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 00:24:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="Mdbl+izB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A7AA217C7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbeHVDV1 (ORCPT
+        id S1727880AbeHVDqp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 21 Aug 2018 23:21:27 -0400
-Received: from mga17.intel.com ([192.55.52.151]:25777 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727016AbeHVDV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Aug 2018 23:21:27 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2018 16:59:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,271,1531810800"; 
-   d="scan'208";a="74643959"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by FMSMGA003.fm.intel.com with ESMTP; 21 Aug 2018 16:59:08 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 8B8BE301B91; Tue, 21 Aug 2018 16:59:08 -0700 (PDT)
-Date:   Tue, 21 Aug 2018 16:59:08 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Eduardo Valentin <eduval@amazon.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] perf/x86/intel: make error messages less confusing
-Message-ID: <20180821235908.GW12066@tassilo.jf.intel.com>
-References: <20180821211528.8575-1-eduval@amazon.com>
- <20180821220937.GV12066@tassilo.jf.intel.com>
- <20180821230522.GA10816@u40b0340c692b58f6553c.ant.amazon.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180821230522.GA10816@u40b0340c692b58f6553c.ant.amazon.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 21 Aug 2018 23:46:45 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:17255 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727794AbeHVDqp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Aug 2018 23:46:45 -0400
+Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
+  by relmlie2.idc.renesas.com with ESMTP; 22 Aug 2018 09:24:20 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir1.idc.renesas.com (Postfix) with ESMTP id D55E94D32F;
+        Wed, 22 Aug 2018 09:24:20 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.53,271,1531753200"; 
+   d="scan'208";a="290232426"
+Received: from mail-os2jpn01lp0148.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.148])
+  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 22 Aug 2018 09:24:19 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D8LMER3SLSb1LuR7DDsAO5Vnwmwgu4mhAxoZ4UWRUvk=;
+ b=Mdbl+izBYmgTJ0QVHyzws12RHmoX1V0F+/q1gRP+adHRInfa0R++f7aBFIzYsDedHhoHl5DO+Izn6H9g1+3Umj4LY2A75uiR18CAU6DQmt+bidF30XgVop+g5DcesOK3OmrH61JMvkid0i42Ia2deNrhFE1dA88lH7uz3cyt4D8=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+Received: from morimoto-PC.renesas.com (211.11.155.130) by
+ OSAPR01MB1858.jpnprd01.prod.outlook.com (2603:1096:603:2d::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1059.22; Wed, 22 Aug 2018 00:24:17 +0000
+Message-ID: <87mutffe55.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: rsnd: Add r8a774a1 support
+In-Reply-To: <1534869748-26661-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1534869748-26661-1-git-send-email-fabrizio.castro@bp.renesas.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Wed, 22 Aug 2018 00:24:17 +0000
+X-Originating-IP: [211.11.155.130]
+X-ClientProxiedBy: TY2PR06CA0025.apcprd06.prod.outlook.com
+ (2603:1096:404:2e::13) To OSAPR01MB1858.jpnprd01.prod.outlook.com
+ (2603:1096:603:2d::14)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d74f2b7b-ee4b-4f3b-8cec-08d607c59940
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSAPR01MB1858;
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB1858;3:4lagKYSiBrN6cVds7cY+7Bk79cdbka19+PX+nC9LjzTUyO0NQVC+LqvYVO+QjY2Q/HRg7f028DUC6yeQrPxnnhcd5aqsVh0RCWTZVk8vjOd8hZQt87fbv9AWe2eTcLHRWeUd92GejLf0cP5Lc84zss6tnTtbzGc2KzCVwhCg9gcCEruDVvRv1EcXE/lIP7VBOz9l95SqLJMznVO24GYTIxqE45qF6CgRTf4H30Z78SOE27atNvuIb9PIJncAban1;25:ae5P3FI4lIqPUDEZnUW6xnpm26exYWSEWylBGPkint4crS7TtCH351Ewz5jFsUDGE1DCI5NAc/2pS4WVdPWeFAXPMFQXK5DloE89kBGORh7OeXJrHUN3gmsi38JZ5gsGNVDfLqAfd6mk7gR4JEhrzZLUpZvK4yCxndzRt+F95ma4qNGbwXX8M0kssY54ST5hARCoHggUIpTbyvA22jlYtch6Ae3+qnbLKkg/vyt2zci7/aiLcgn24rZ4UzIut/UJdNwm5FtyeQRNTLwls6u4jMh6fMmKhMzUMlA5UtSeSIjGDbs8JjEYgWAd71b8cZvvVgsUKxaDdJZ+YFhQ0FfJ4Q==;31:8HzlRm4+6iQEpBTPqGR4k2uX9BJNfWDQz+BjGyQBeYNKLAELKr8yZYDhB7JLVrJVxj6ce4Wh7P/eHcZlNr/Y4SUM6zjfPnPETjuSE5f/oPdsL26ocOyJLiZWxCJAPOMdiDbXpxDUqjVFbRPR8BpqDS6f3SMej/nc3sUeB3yO/UuE94/NIbSc9nz2Dqr81HTma4W3kqAYL9lXIE4fi6Y587jo4f84LLuYfnHNF78g28U=
+X-MS-TrafficTypeDiagnostic: OSAPR01MB1858:
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB1858;20:RQm/diK1/dlp8VHJwZy5iihrg7sDf7e9HAyFBzpmOcCD1stCiIxsgUPvwA6ZQWRptvinR1k7WJiI7dnvZTcjCQ8P0v+a97EgchxQrj1wMXFGU6gIRmVcuu3XF6Ba4JQ73//T1ndNlC5bhJhhznjnSEHh2ORMKuMM/SprDKhNj7Vzad2TrTl4GOsVYZoDa1BogKrtbqDSylqx+i+b/pgVbnX2Brcxqvm1FEY2fY6vb9juzjzwc35qAFWSUymP9+UZz0YMX4hk6g5/bHTZ7TMeOzlExEHq561foP5H9zTQkcHT73bB1P1J1CviojQyiFiJhB6TATxYXSkdDRakSdQr6Ve41CB0aUu1Z2DZtzKhPl/WoKToiN0YW4ZJsQM66UW5EyozNK2XVwp2VU/0If9nZybEyaSyZA0XjHKtoIFhf62InKizMoXfIUhWbF4kltozv1AKhmTlVZnafvput1qC2e9Ilogy733k9oP//l8wJdbDYo4QTYF2cdk+mflzHWi4;4:4S9XYajNdIH5Cl9hgZ2+1iAoTSbRte2nye0bfbt8DN0T26/xKdqUIVth7mEWww+4Vtq5Z0cn8s4zP0KC22SffIY2jJbr7JIW/JpXOhLtsaKuG5VAEXgwMs3oCbDCdAcEZFHsm6iy4PcbQ8SWN/SuG+/sPjo3rrumD2KDIHbEI8BIbbVdMkzD6gIezuCNnHNtc12vQl4dBgUKPIjxS+SLBp4b9iUjv/ihVCwRFn8jkEFJ+DeZJ8mOLP7XxEChzxUpA/3yJcScM9LxQxpCYsxE1w==
+X-Microsoft-Antispam-PRVS: <OSAPR01MB185824C87A38F11277DB1437D4300@OSAPR01MB1858.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(3231311)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:OSAPR01MB1858;BCL:0;PCL:0;RULEID:;SRVR:OSAPR01MB1858;
+X-Forefront-PRVS: 0772E5DAD5
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(136003)(376002)(39860400002)(346002)(366004)(199004)(189003)(316002)(50466002)(476003)(5660300001)(36756003)(53936002)(956004)(486006)(86362001)(446003)(68736007)(53416004)(8936002)(11346002)(105586002)(97736004)(2616005)(2906002)(106356001)(6486002)(47776003)(7416002)(69596002)(229853002)(305945005)(25786009)(7736002)(66066001)(81156014)(558084003)(81166006)(16526019)(26005)(478600001)(7696005)(3846002)(6116002)(58126008)(16586007)(8676002)(76176011)(54906003)(39060400002)(386003)(23726003)(6862004)(4326008)(52116002)(6246003)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB1858;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSAPR01MB1858;23:C1ZPoTWjCBgZeYgnkIkwZfr7igetQjvj5PeEzUrTO?=
+ =?us-ascii?Q?7/lDt65nk2G2ilEAX7oCMZZZ00m7A9fidZep9GJcssNngm2nzpkg1SQK4YQo?=
+ =?us-ascii?Q?7kP091nOv3jblcUkNlRPjyvtVYaTc+FKFdjWDjzUQ9jktHuOPuXDYrYE6VN/?=
+ =?us-ascii?Q?Z8wqaGgGJ/EEGPw2DHWXcclz0oF1axi4wQfW5Dy8UDToB901KEN7C8IkfHek?=
+ =?us-ascii?Q?h8NGF9hDwnoz9eYjgctOdzoOHHy7hpVSiK4LB6Eq32yt7vLuj6ach2/3n6qa?=
+ =?us-ascii?Q?wN/3Re3E0ed8A87y+aklmIVIObYB08LGIWGoqZgWP24AYmqKlKBuYxZwlFp5?=
+ =?us-ascii?Q?Ut26N679stTX8/BU58Gan/1wt6uiGcqH/nEZ5gUqZ4PmzngOORao/Ry0VLjb?=
+ =?us-ascii?Q?fCvMdRjOVdkk5nLxWx4xvGS+S52W5nRDqvDSSK3oNk97ic1GS18OIrFMwUfv?=
+ =?us-ascii?Q?b1yQoF9JmiASzhjyRUBHVTMPXLx+xbiFWmn8LbADdsg8wlDFOfBViFknsIT5?=
+ =?us-ascii?Q?zeWqHrCliBo0sQIuNAls5tDv4qvc2EgdNJAZnY8iI+A0Tr59TSpKMs2rUg0K?=
+ =?us-ascii?Q?K6XzPi32/M21/nsKW66PAazDlPVW/bKy7dwIMULKWLwRpuA/RuKTCOWmTdu4?=
+ =?us-ascii?Q?C6pANHl3VyN0OVHXqDdWf1P8FTIx9nFCL6ZzSma7sNR8Exevdf1Amgx84DCi?=
+ =?us-ascii?Q?v364EMguL0CjqI6t/ASICxNbmPC1XHNSPeSPO3JzR8V07ZBobKW1mkojkOUr?=
+ =?us-ascii?Q?ge5FCZmOA1HUFzTikZmNQF1oIXCzYA/b09q23EVz762KheSwRi9nBK+3l5WT?=
+ =?us-ascii?Q?w/yDtvvPTaxBvnC0+XTg88m3SxiOJbxSgI2rGkPtoA8Q7f9Cd3YOiHYPazoB?=
+ =?us-ascii?Q?sVP9sxm08ftPtMK3X1fzVyDCd5eRbu4x6pZMGXjv0bahXbRVx4Ksk4yyWtj7?=
+ =?us-ascii?Q?6V8A3KsgftRTycqfxwKlaP2mFDZkVno5vTsjH2GbaW8D1ZTlgJBcoWSlFt+B?=
+ =?us-ascii?Q?8pRiNTlEa/dKYiQ0lZOJ2dzlbvuVYOEUdCSkUuAxlnJmZWZhKvXCgXqH/GGn?=
+ =?us-ascii?Q?a8a0lXw9ctWLHGqa2NTstMvXEVmq5D+7yAdNkjB0H0J/36+VhOR3SNxOf3qV?=
+ =?us-ascii?Q?01IjMxTLhv9PBiXiXHZ/BClXtr0vtwvcJEEROFeMyzg8P+zF5JDSUAYZqi9+?=
+ =?us-ascii?Q?mQVwQmsI6hXFug1s9pkRhfZDHX5QNUR9vV8vSJy/DTDt4W/c4fs+WVjTATlh?=
+ =?us-ascii?Q?Il+GTlmtLOwdgfmRzxkwYJ4IGkUvPssWQj5Ter4mY/MMZNn0NMXkpyveZLqh?=
+ =?us-ascii?B?dz09?=
+X-Microsoft-Antispam-Message-Info: ydTefi7I/qpbpB+8f+ZigFgEjYJ3+P2Xqz+iX8ZrZLko6sNmm6aZLRAf2b2cd9kO9mg7rYr2GsmcCQQD9fJWVlbpFdZN8iG/mLweLnIg8edy4puh7h1eQEW+iTZNCMka9ktSd8wFH55EFTw9zdHSPKVEeTf0b3JVtI4fSgdiXPQ4ldtram24IwaCBGvPOypHYS1oi42Uyux04pY1j0vL+UAWkJIibFsmaoO/LMieQru49auhjbqV5BnX2tEKGxjx2vbsVV6PmOCf7ld56XAaT5cFBm5Jld/s4AWgiUXTyVL55CchpeedQUGrqa91eigK35vk42PaUqWZiZeXp+N7FUrd3xi1YZ6KaeeRuqaZRsU=
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB1858;6:jgtl3+hJLYUAb6roagOL5/dzlRdibE+ZN5Tdpxjw/6t5ZSVdeChW5mggIc0a3iGxAjcLrktHm9A/3GKoWP0g4L2LQE6bl/k1VNKFq6qoEV1ammmwM+zj4dOgRCtgZEc5n4eBJPHB/yb2JR/C1BkePaNLjzwnSFh+36Ps3PRKC+UKjipNm8VsE65t4lYYZO6aUlEcX+DXp1L+Mc4TGypvAVkNyux4n5lWC/0v4me15bpWpNcunGMsvJWzDpL//Q7fvMYnCMBj9D3y90S+r9N4J2cjI+EsjJBZnV+z+kys0zvJBaH1uesJVcUTOpE2T28hi3ajmUztQe44ZB1wC0IEPYVG5BuAJEVNKtW5Z3XcUr3Ks3MY15ap5ItZ2L6gyJJ8mluA4ng+H1LszwOg23BRFLzjxCQMQNulQ7Dwco27DxM9AmVo0OLz1LbYvrh9sgB/jRGEhxva0oE7qtOU8wEiyQ==;5:CSbt+hz1mKSp62IeV7E9oPYCRPYqCMFCZyikRSuRkOQFrx3SxVwd21lmHBUTxgUnNGsH7w9bobbsGlPGBvVFVZp1UBM0ZW+49jdW3S7c/kFKgc+9matSmhdIRh4/LaYq2qpWkujZKZkueYLyUZV6vUaJkgxm8+lRqhu83nQjKkY=;7:7XW6aiQhtggR07nw3+AwAF7HZ5qo5Iin44dZL6WvsrIKzbGpNp/0u2EHgSZB7rpRVDmenXMp2NMJ2qn9bl+cFIDOTrZ76ts11zRQHmAfzRDVHgETwsb5Z/NBAZ3LeFvddLn1/Ucrx4YzdrwxwtstMQ4rIK9UG41/roUTMFVdD8TRqZGR+t4vHNkvKT5jlxiKgkeSm0RNJBNcpRC5z2sVfYJj7dsu/KkoZoMS7D0mzgI8frHczaCK9+JI11nlsOTp
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB1858;20:kof66CIhDmmCeVQm+X9UHCa0Kg1F1xWsFj/rrqCaQpPMakVYHY8rSciqTzH14t4RakxOf8sFGnIaB9A1p/pj0m2m96HLa6qYEuAY2KGNIomGy/jqrrrb7tLqLvRv1BJnF7Wob5NuZpRr6DDm1rHEOb+W2r+I7uOf/2o8ILn3q9s=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2018 00:24:17.7628
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d74f2b7b-ee4b-4f3b-8cec-08d607c59940
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB1858
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 04:05:22PM -0700, Eduardo Valentin wrote:
-> On Tue, Aug 21, 2018 at 03:09:37PM -0700, Andi Kleen wrote:
-> > On Tue, Aug 21, 2018 at 02:15:28PM -0700, Eduardo Valentin wrote:
-> > > On a system with X86_FEATURE_ARCH_PERFMON disabled
-> > > and with a model not known by family PMU drivers,
-> > > user gets a kernel message log like the following:
-> > > [ 0.100114] Performance Events: unsupported p6 CPU model 85 no PMU driver, software events only.
-> > > 
-> > > The "unsupported .. CPU" part may be confusing for some
-> > > users. Rewording the messages on the failure path to:
-> > > [ 0.667154] Performance Events: unknown p6 PMU on CPU model 85: !X86_FEATURE_ARCH_PERFMON: no PMU driver, software events only.
-> > 
-> > Are you sure users even know what ARCH_PERFMON is?
-> > 
-> > Maybe it is confusing (why exactly?), but it doesn't seem to me that your
-> > new message is any better.
+
+Hi
+
+> Document RZ/G2M (R8A774A1) SoC bindings.
 > 
-> Yeah, the part that says "unsupported CPU" is the confusing part,
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> ---
 
-That makes sense.
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-> I get people thinking that the specific reported CPU model is not
-> supported by the kernel :-)
-> 
-> > 
-> > If you refer to VMs not exposing the PMU perhaps that should be explicitely mentioned.
-> > 
-> > Of course the real fix is to always expose the PMU, not improve the error messages...
-> 
-> I agree that best is simply to enable PMU. But it does not hurt to improve the error messaging, does it?
-> 
-> Any suggestions there, given that the initial attempt seams to make it even worse :-)
-
-Perhaps just say
-
-"CPU does not support PMU"
-
-which is really what the problem is here.
-
-The other option would be to move this message after the big model switch,
-but would need to be very careful that it doesn't have any unintended
-side effects. 
-
--Andi
+Best regards
+---
+Kuninori Morimoto
