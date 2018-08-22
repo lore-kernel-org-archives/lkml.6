@@ -6,165 +6,99 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4790C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35216C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A793214FF
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:48:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E68D3214C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:48:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="QsQfpTl4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A793214FF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lv4NTMfM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68D3214C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbeHVNMw (ORCPT
+        id S1728799AbeHVNMy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 09:12:52 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:53050 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728694AbeHVNMw (ORCPT
+        Wed, 22 Aug 2018 09:12:54 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:55943 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728786AbeHVNMx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 09:12:52 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 55FB610C0F1C;
-        Wed, 22 Aug 2018 02:48:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1534931323; bh=BbyC9CD4q0CG4VG6AnUshrsSh9RVBJBI8SJUi7DRyW8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=QsQfpTl4Fm+s2NWkqPNygBkDX8geoSRFU40113CVqZv6iOgcr+ihftBB05Z/bBK4+
-         t6lxSnOl8Z9gllggp2e94g0Tc5TESAuUE6xDsXTtM/JpI1lutKzfmXV5vH9YraHDjz
-         qTdxEzKqFcCjrcALOF0Ol/XMtINRkj1utbaSND1jZxfQBP8rCAi3FTosRBHSp9+EKW
-         dp3N/TL2F/5DUUsNDhul7FgGi/bkbsc6Vqnku4BZZThZh2V8W7Dw0GIl2ga8c+c6ou
-         EtLWKFOfvrYCFhtZVwmkygbwUanybse4bWbgikjqzyVT7vE2UsbvlB8x9tQsnUdAJ6
-         GEkmyE5B8zVyA==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 0E1E33A9B;
-        Wed, 22 Aug 2018 02:48:43 -0700 (PDT)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Wed, 22 Aug 2018 02:48:42 -0700
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Wed, 22 Aug 2018 11:48:40 +0200
-Received: from [10.107.25.102] (10.107.25.102) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Wed, 22 Aug 2018 11:48:40 +0200
-Subject: Re: [PATCH v2] PCI: dwc: fix scheduling while atomic issues
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        "Lorenzo Pieralisi" <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180821141512.368e3df2@xhacker.debian>
-From:   Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
-Message-ID: <ae663623-6af5-9c53-0e4b-f48b9c517a46@synopsys.com>
-Date:   Wed, 22 Aug 2018 10:45:46 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 22 Aug 2018 09:12:53 -0400
+Received: by mail-it0-f68.google.com with SMTP id d10-v6so2086774itj.5
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 02:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=XJ18fxEQvDQ8NxG9MFPEOKOMNUkOBlWKKfCxFjMB/1k=;
+        b=Lv4NTMfM/+EqSyUI5uzY56o4Tjs4XPRPw3XfR12v+5a9pOgGyqJc1jPAzB5J6mrcT/
+         7ShFYokbXIkx4KTpo22mqlawrHoAio9F2W2ISDAttlrNniea2qRMCYWdUYwMxq0WM7RI
+         4QqZOp9WOxurm/bVkaWCkr2HXBsIRrkGOJE7s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=XJ18fxEQvDQ8NxG9MFPEOKOMNUkOBlWKKfCxFjMB/1k=;
+        b=hUK47j3xNIMMgMxECdHFLovo63PjZftfKNAxE/ZxmaNedZAm8+NazacGcYRSja+s4D
+         q3e9xaRYQFI1If7/3rhIiptvw3KvPtwMOXG4XGvFaDryWFYVeQjmKhRjOfzEuumHvmGu
+         XPlE0AxCiGzhtbuaBD7TqtoL8oML9beHTuKt5ip0Dj0QjMvN0sa6xSIYmbJn8yJSUAil
+         Ry7ShhKUSCtCd7QgBy0vJg8TwLEqCbAmQ4YZ2zvZGLm6uP0fITOIHycAwvCOYL0GQyvv
+         E4y6RBtNW328UIwxFCaYXi/JNOR45PfAboeULi+XO9WOoWYiIBsE1nRdP7ihV2IDDnH6
+         gPKA==
+X-Gm-Message-State: APzg51AxW3ZjqoB4Y8cLRPPJA5Kwadeid7XgSReRbKTa9ILPWTmS7ySV
+        skPkjOrq1cB/5I9cL3WFgHyxg/5ONVocLG/jYlmG0Q==
+X-Google-Smtp-Source: ANB0VdaCruR6fBigGv+fhyiyeXFp24pBginCsCUJYFQDLehF22NikMzhXFFcl/vnkJwTwsEF7gDE0zCDvwOTbRgh1tM=
+X-Received: by 2002:a24:5f92:: with SMTP id r140-v6mr2657217itb.45.1534931324235;
+ Wed, 22 Aug 2018 02:48:44 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180821141512.368e3df2@xhacker.debian>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.107.25.102]
+Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Wed, 22 Aug 2018 02:48:43
+ -0700 (PDT)
+In-Reply-To: <20180821130320.1682-1-paul@crapouillou.net>
+References: <20180821130320.1682-1-paul@crapouillou.net>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 22 Aug 2018 11:48:43 +0200
+Message-ID: <CAPDyKFqF0kQO1xgSV1s0QjG=JUwhvXwy8h8gOD=A4_RPf5GhGg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: jz4740: Drop dependency on MACH_JZ4740/80
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     od@zcrc.me,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jisheng
+On 21 August 2018 at 15:03, Paul Cercueil <paul@crapouillou.net> wrote:
+> Depending on MACH_JZ4740 | MACH_JZ4780 prevent us from creating a generic
+> kernel that works on more than one MIPS board. Instead, we just depend on
+> MIPS being set.
+>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 
-On 21/08/2018 07:15, Jisheng Zhang wrote:
-> When programming inbound/outbound atu, we call usleep_range() after
-> each checking PCIE_ATU_ENABLE bit. Unfortunately, the atu programming
-> can be called in atomic context:
-> 
-> inbound atu programming could be called through
-> pci_epc_write_header()
->   =>dw_pcie_ep_write_header()
->     =>dw_pcie_prog_inbound_atu()
-> 
-> outbound atu programming could be called through
-> pci_bus_read_config_dword()
->   =>dw_pcie_rd_conf()
->     =>dw_pcie_prog_outbound_atu()
-> 
-> Fix this issue by calling mdelay() instead.
+Thanks, queued for v4.20!
 
-Makes sense. Thanks.
+Kind regards
+Uffe
 
-Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-
-Regards,
-Gustavo
-
-> 
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 > ---
-> 
-> Since v1
->  - use mdelay() instead of udelay() to avoid __bad_udelay()
-> 
->  drivers/pci/controller/dwc/pcie-designware.c | 8 ++++----
->  drivers/pci/controller/dwc/pcie-designware.h | 3 +--
->  2 files changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index 778c4f76a884..2153956a0b20 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -135,7 +135,7 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, int index,
->  		if (val & PCIE_ATU_ENABLE)
->  			return;
->  
-> -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
-> +		mdelay(LINK_WAIT_IATU);
->  	}
->  	dev_err(pci->dev, "Outbound iATU is not being enabled\n");
->  }
-> @@ -178,7 +178,7 @@ void dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index, int type,
->  		if (val & PCIE_ATU_ENABLE)
->  			return;
->  
-> -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
-> +		mdelay(LINK_WAIT_IATU);
->  	}
->  	dev_err(pci->dev, "Outbound iATU is not being enabled\n");
->  }
-> @@ -236,7 +236,7 @@ static int dw_pcie_prog_inbound_atu_unroll(struct dw_pcie *pci, int index,
->  		if (val & PCIE_ATU_ENABLE)
->  			return 0;
->  
-> -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
-> +		mdelay(LINK_WAIT_IATU);
->  	}
->  	dev_err(pci->dev, "Inbound iATU is not being enabled\n");
->  
-> @@ -282,7 +282,7 @@ int dw_pcie_prog_inbound_atu(struct dw_pcie *pci, int index, int bar,
->  		if (val & PCIE_ATU_ENABLE)
->  			return 0;
->  
-> -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
-> +		mdelay(LINK_WAIT_IATU);
->  	}
->  	dev_err(pci->dev, "Inbound iATU is not being enabled\n");
->  
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 96126fd8403c..9f1a5e399b70 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -26,8 +26,7 @@
->  
->  /* Parameters for the waiting for iATU enabled routine */
->  #define LINK_WAIT_MAX_IATU_RETRIES	5
-> -#define LINK_WAIT_IATU_MIN		9000
-> -#define LINK_WAIT_IATU_MAX		10000
-> +#define LINK_WAIT_IATU			9
->  
->  /* Synopsys-specific PCIe configuration registers */
->  #define PCIE_PORT_LINK_CONTROL		0x710
+>  drivers/mmc/host/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 0581c199c996..71d9bdc52422 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -761,7 +761,7 @@ config MMC_SH_MMCIF
+>
+>  config MMC_JZ4740
+>         tristate "Ingenic JZ47xx SD/Multimedia Card Interface support"
+> -       depends on MACH_JZ4740 || MACH_JZ4780
+> +       depends on MIPS
+>         help
+>           This selects support for the SD/MMC controller on Ingenic
+>           JZ4740, JZ4750, JZ4770 and JZ4780 SoCs.
+> --
+> 2.11.0
 >
