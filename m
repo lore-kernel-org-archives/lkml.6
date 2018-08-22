@@ -2,126 +2,86 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED7BFC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 19:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1054AC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95EB82098B
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 19:58:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8F4E20936
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:12:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="b3vEr0nS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95EB82098B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FQBJpKVk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8F4E20936
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728274AbeHVXYe (ORCPT
+        id S1728252AbeHVXiY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 19:24:34 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:44072 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728136AbeHVXYc (ORCPT
+        Wed, 22 Aug 2018 19:38:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34196 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728052AbeHVXiY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 19:24:32 -0400
-Received: by mail-oi0-f65.google.com with SMTP id s198-v6so5254609oih.11
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 12:58:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=49cAt8veSOAu4YR7sklw17uRrQXNRXpX1RtDRxlQSfs=;
-        b=b3vEr0nSlC2MKr1U9fnZjKwCGqFOCL7lojerUEa5mLzT5wV6ro9JlotCvmMTw1DZBT
-         xgtJfiRh51YLdCseSmCTHgFVHPloVChTBxbSYpz+zaPn9ozzUiz9DhjsWluP/H7/0et/
-         oJnHLzHA9Zh4vyLpREpEZ/5RCXn0HOCQD+Q2s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=49cAt8veSOAu4YR7sklw17uRrQXNRXpX1RtDRxlQSfs=;
-        b=TD9GtBm44EgmPUGrG0cyVeP8qUYjitL7ldT/0Cmsyv0HT1/2TegM2U2KtihnnScw2r
-         SPh833UpvaSLBf+6hpIVsc9zY+ARiNGN9T4xqO/MMkDjMC5TbWh1Fk4iaF7Ng1ER/kbS
-         rnaX0Ngvd8Ty2/bsCxVNmlID8CpCfb+ioiHcpI3rA6mora8VCdthbyJkJpgckZMyRGwO
-         WqKPqbPKVZplEFT3uC88nvwzMBVOFsXj8/krtNPCayntUgTwijWjxePuS8fH++jjz1ez
-         dKLKePZK/jw0TsCd/bmBbQMspI6Lyd0/n20gK0aJYSiKZcHGq4lm38cHRb4JNLbDDf7y
-         QSmg==
-X-Gm-Message-State: APzg51Al8MeFWLVgEyY3qrJHZyz/b5vYpejW2Imh1Bt2RyFWpHIBLO7t
-        nRM0RBBXREfrhF3Bl/kR/jWeHddEdEFPGYKbjRpEJQ==
-X-Google-Smtp-Source: ANB0VdY4eAfrcReucPsxtvPTl7sdtuXQ2dn/GSc4gn1A3I/wd+0Hi+k8ffOITHTznn5uSY/dxASeqb0AwI7GkcceUlE=
-X-Received: by 2002:aca:e8c9:: with SMTP id f192-v6mr5019785oih.87.1534967896115;
- Wed, 22 Aug 2018 12:58:16 -0700 (PDT)
+        Wed, 22 Aug 2018 19:38:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=iy4pCo0jjKiK2mMp2nL0qVptJxhyWtPHzfDVGkaYI0g=; b=FQBJpKVkYS+I240lpedLaw4uf
+        39w2zlJgY+0WA8Vb60iitpFxZWSL9a2XwJWU1aAeV9gq1QAxwfybvjAPaKmCj7362JmiztxSPFtGN
+        QVISgKwvNCHTqaPfuNxKpHcXo/3dzdhseL69c1soBzl7y7nyl/P2TVJydOu1nqb1/zZNTqvSBPZbA
+        xM15mjqFlwE58cp/NBHhVXUhAuVkQkuai+XyFqvTlgOfPzxGB9rWiCQYyvN/p2f7nDUf54VaeV3f+
+        GMsCv38RM0+Qc3MInd6H8KEodFH/XenPBbRY859kmO62TnlPMAOxecFFqNcCVQzHJacKKohnf5EIl
+        wo3R3amag==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fsZU1-00054s-VY; Wed, 22 Aug 2018 20:12:01 +0000
+Date:   Wed, 22 Aug 2018 13:12:01 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Rob Herring <rob.herring@linaro.org>,
+        Jonas Oberg <jonas@fsfe.org>,
+        Andrew Morton <akpm@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH V2] license-rules.rst and LICENSES: Use only spdx version
+ 3 with -only and -or-later
+Message-ID: <20180822201201.GC19458@bombadil.infradead.org>
+References: <9f90ed3678d32bdde88d63e877880dcb08a97e15.1534519501.git.joe@perches.com>
+ <7275a821f20ba080b6a262089ceeaf8fa94d4bab.camel@perches.com>
+ <CA+55aFyd5D9Rj2Wm+rP9QnZg2Jd_LKqPTKTmPv+doYN=JXra=w@mail.gmail.com>
+ <alpine.DEB.2.21.1808222115050.1652@nanos.tec.linutronix.de>
+ <d0d292a4d9637c1a94eb40abd8a4ee2dd1f0d823.camel@perches.com>
 MIME-Version: 1.0
-Received: by 2002:a9d:113c:0:0:0:0:0 with HTTP; Wed, 22 Aug 2018 12:58:15
- -0700 (PDT)
-X-Originating-IP: [212.96.48.140]
-In-Reply-To: <CA+55aFzd53LwrBfvdtKx7e_bQPhzsKEvCME1rGbrrY4pG94d=Q@mail.gmail.com>
-References: <20180822085522.GA14354@veci.piliscsaba.redhat.com> <CA+55aFzd53LwrBfvdtKx7e_bQPhzsKEvCME1rGbrrY4pG94d=Q@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 22 Aug 2018 21:58:15 +0200
-Message-ID: <CAJfpegsZUxZXQSHZoy0=9iqB6jRL0ZOtFGnSqT4FrzT8K2mcbQ@mail.gmail.com>
-Subject: Re: [PATCH] ovl: set I_CREATING on inode being created
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d0d292a4d9637c1a94eb40abd8a4ee2dd1f0d823.camel@perches.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 4:53 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Wed, Aug 22, 2018 at 1:55 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
->>
->> +       spin_lock(&inode->i_lock);
->> +       inode->i_state |= I_CREATING;
->> +       spin_unlock(&inode->i_lock);
->> +
->
-> Why is that spinlock protection there?
->
-> Isn't this a new inode that cannot possibly be reached any other way yet?
+On Wed, Aug 22, 2018 at 12:47:57PM -0700, Joe Perches wrote:
+> Perhaps it's better to stick to a single SPDX version style for
+> all kernel files.
+> 
+> Right now, there are already several -only and -or-later uses.
+> 
+> $ git grep -P 'SPDX-License-Identifier.*(?:-or-later|-only)'| wc -l
+> 144
+> 
+> So perhaps a patch and a tool to do the reverse conversion:
 
-new_inode() puts it on sb->s_inodes list, so it *is* reachable.
-Following operate on s_inodes:
-
-- evict_inodes() called from generic_shutdown_super(): a) we shouldn't
-get here while in creation, b) it's careful to not touch inodes with
-non-zero refcount
-
-- invalidate_inodes(), called from block devices, so it doesn't apply
-to overlayfs, also it skips inodes with non-zero refcount
-
-- iterate_bdevs(), operates on blockdev_superblock
-
-- fsnotify_unmount_inodes() called from generic_shutdown_super(): we
-shouldn't get here while in creation,
-
-- add_dquot_ref(), remove_dquot_ref(): not quite sure what these do,
-but quotas are not (yet) supported on overlayfs
-
-So looks like we are safe without a spinlock.
-
-And there's another, more fundamental reason: if anything starts
-messing with i_state of an inode that is not yet even had its state
-changed to I_NEW, then lots of filesystems are in trouble.
-
-> NOTE! This is a question. Maybe there is something I missed, and there
-> *are* other ways to reach that inode. But if that's true, isn't it
-> already too late to set I_CREATING?
-
-No, it's not too late, I_CREATING can be set anytime up to
-inode_insert5(), which is the first one to actually look at that flag.
-
-> So I'd like some clarification on this point before applying it. It's
-> possible that the spinlock is required, I just want to understand why.
-
-I added the spinlock, because it's cheap (new_inode() already pulls it
-into L1 cache) and because it's much harder to prove that lockless one
-is correct than just adding that locking.
-
-Thanks,
-Miklos
+No.  Any tool which does anything useful just has to understand both
+2.0 and 3.0 naming.  They're aliases for each other, that's all.
