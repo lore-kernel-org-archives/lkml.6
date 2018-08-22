@@ -6,97 +6,118 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 485E2C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 490C4C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:06:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F168021480
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:02:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F168021480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id DEE1421480
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:06:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEE1421480
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728222AbeHVN0t (ORCPT
+        id S1728266AbeHVNaa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 09:26:49 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:34334 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727396AbeHVN0t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 09:26:49 -0400
-Received: by mail-qt0-f194.google.com with SMTP id m13-v6so1388199qth.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 03:02:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qeX2FQmUyzDpVaMcYixH/LnRt+y7+yZD59MqswQ6G/A=;
-        b=kgK2E/E9XZUdfByfo11a+c9GrExBPHEOwi7RtAjNuxpCVBzZmZKZajIcIA93s5Hx5h
-         pq1lKarFMRotmiwcy3lIYfEVyeiol0nXmJw3W5jDnBkBl+2WkYgXJtNu6aeu6O3w2txs
-         9lruKfW6iUcoL8Uy+phv3tpROmb45MywxYcTo7sEum05o+HMD7nJMHF7vSvz2cLHHL/A
-         cas1ccKSnk8WSc3B+arGYJgHX9A+lkbn1cYibteFn9TDtC6AfKC2wEv6xoPDrqArkRZS
-         hyarknRpG04JLJowGq9LakfZtTNsK2wOyXPiKbsODM4HAdHU4rPGI0EVYLDQRTvH2MRu
-         CMEQ==
-X-Gm-Message-State: APzg51ArvZ68+v4r+khopuJHYFQgNsalTBnm91RPFlS37MJVybK6Ko6B
-        vOWqIMG0vd9ucVo0AKe+jHBxQ7Q1RmTrILSc+mX1D8G/
-X-Google-Smtp-Source: ANB0VdZEZfs6Sp4NYkN7hNL52wbqTcIMysppxIdpJHxTBKfWAwWMaPfsL3t6Q8nZyQyHrePvqwNjyQO7YeX6F/RFnSI=
-X-Received: by 2002:a0c:fb08:: with SMTP id c8-v6mr17045427qvp.149.1534932155687;
- Wed, 22 Aug 2018 03:02:35 -0700 (PDT)
+        Wed, 22 Aug 2018 09:30:30 -0400
+Received: from mx.socionext.com ([202.248.49.38]:49419 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726849AbeHVNaa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 09:30:30 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 22 Aug 2018 19:06:15 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id E6C50180237;
+        Wed, 22 Aug 2018 19:06:15 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Wed, 22 Aug 2018 19:06:15 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 5AAB0403A3;
+        Wed, 22 Aug 2018 19:06:15 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.132.48])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 2BBB31202F1;
+        Wed, 22 Aug 2018 19:06:15 +0900 (JST)
+Date:   Wed, 22 Aug 2018 19:06:14 +0900
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH 00/14] ata: ahci-platform: add reset control support except for existing drivers
+Cc:     Tejun Heo <tj@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-ide@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+In-Reply-To: <cd35711a-5308-519d-7064-b82220a36d57@redhat.com>
+References: <1534923430-9692-1-git-send-email-hayashi.kunihiko@socionext.com> <cd35711a-5308-519d-7064-b82220a36d57@redhat.com>
+Message-Id: <20180822190614.974F.4A936039@socionext.com>
 MIME-Version: 1.0
-References: <20180821222416.7771-1-stefan@agner.ch>
-In-Reply-To: <20180821222416.7771-1-stefan@agner.ch>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 22 Aug 2018 12:02:19 +0200
-Message-ID: <CAK8P3a0oaMS12R4tazChMHENQduO0-Wb-gw-inKjH0oz7_5s3g@mail.gmail.com>
-Subject: Re: [PATCH] ARM: use choice for kernel unwinders
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Becky! ver. 2.70 [ja]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 12:24 AM Stefan Agner <stefan@agner.ch> wrote:
->
-> While in theory multiple unwinders could be compiled in, it does
-> not make sense in practise. Use a choice to make the unwinder
-> selection mutually exclusive and mandatory.
->
-> Already before this commit it has not been possible to deselect
-> FRAME_POINTER. Remove the obsolete comment.
->
-> Furthermore, to produce a meaningful backtrace with FRAME_POINTER
-> enabled the kernel needs a specific function prologue:
->     mov    ip, sp
->     stmfd    sp!, {fp, ip, lr, pc}
->     sub    fp, ip, #4
->
-> To get to the required prologue gcc uses apcs and no-sched-prolog.
-> This compiler options are not available on clang, and clang is not
-> able to generate the required prologue. Make the FRAME_POINTER
-> config symbol depending on !clang.
->
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+Hi Hans,
 
-Looks ok to me. I've added it to my randconfig test environment, you
-will hear from me within a day if I run into build regressions.
+Thank you for your comment.
 
-We may still want to clean up these three lines:
+On Wed, 22 Aug 2018 11:27:18 +0200 <hdegoede@redhat.com> wrote:
 
-lib/Kconfig.debug:  select FRAME_POINTER if !MIPS && !PPC &&
-!ARM_UNWIND && !S390 && !MICROBLAZE && !ARC && !X86
-lib/Kconfig.debug:  select FRAME_POINTER if !MIPS && !PPC && !S390 &&
-!MICROBLAZE && !ARM_UNWIND && !ARC && !X86
-lib/Kconfig.debug:  select FRAME_POINTER if !MIPS && !PPC && !S390 &&
-!MICROBLAZE && !ARM_UNWIND && !ARC && !X86
+> Hi,
+> 
+> On 22-08-18 09:36, Kunihiko Hayashi wrote:
+> > Add support to get and control a list of resets for the device, and
+> > add the flag indicating whether to use the reset. Existing drivers
+> > set 0 to this flags.
+> > > This series solves the issue of the previous patch [1] that was already
+> > reverted [2].
+> > [1] https://www.spinics.net/lists/linux-ide/msg55299.html
+> > [2] https://www.spinics.net/lists/linux-ide/msg55379.html
+> > > Kunihiko Hayashi (14):
+> >    ata: ahci-platform: add reset control support and the flag to specify
+> >      using reset
+> >    ata: ahci_brcm: add second argument of ahci_platform_get_resources()
+> >    ata: ahci_ceva: add second argument of ahci_platform_get_resources()
+> >    ata: ahci_da850: add second argument of ahci_platform_get_resources()
+> >    ata: ahci_dm816: add second argument of ahci_platform_get_resources()
+> >    ata: ahci_imx: add second argument of ahci_platform_get_resources()
+> >    ata: ahci_brcm: add second argument of ahci_platform_get_resources()
+> >    ata: ahci_mvebu: add second argument of ahci_platform_get_resources()
+> >    ata: ahci_qoriq: add second argument of ahci_platform_get_resources()
+> >    ata: ahci_seattle: add second argument of
+> >      ahci_platform_get_resources()
+> >    ata: ahci_st: add second argument of ahci_platform_get_resources()
+> >    ata: ahci_sunxi: add second argument of ahci_platform_get_resources()
+> >    ata: ahci_tegra: add second argument of ahci_platform_get_resources()
+> >    ata: ahci_xgene: add second argument of ahci_platform_get_resources()
+> 
+> When you change a function prototype, you must also change all
+> the callers in a single commit, so that all intermediate commits
+> will compile without errors, otherwise you will break git bisect.
 
-in which ARM is the odd case that currently depends on an architecture
-specific rather than the architecture itself.
-We could introduce a 'config ARCH_HAS_UNWINDER' symbol that gets
-selected by mips, ppc, s390, microblaze, arm and x86 unconditionally,
-and then simplify the 'select' statements here.
+Surely, these splitted patches will make git bisect fail.
+I'll collect them in a single commit.
 
-       Arnd
+> Otherwise this looks good.
+> 
+> I suggest you split this like this:
+> 
+> 1) Add a flags argument to ahci_platform_get_resources(),
+>     without adding support for any flags yet, so this just
+>     changes the function prototype and passes 0 for the new
+>     flags argument *everywhere* without any other changes
+> 2) Add support for a AHCI_PLATFORM_GET_RESETS flag, basically
+>     your current first patch, minus the prototype patches
+> 3) A patch which passes AHCI_PLATFORM_GET_RESETS for the
+>     generic ahci_platform driver (so break this out of your
+>     first patch). Also describe in the commit message of this
+>     patch why / for which platforms this is necessary.
+> 
+> The idea of doing 3. separately is that we can easily revert
+> it in case of problems while keeping the core functionality
+> in place. Note I do not expect this to be necessary.
+
+Your split plan will be very useful for bisecting. I'll try it next.
+
+---
+Best Regards,
+Kunihiko Hayashi
+
+
