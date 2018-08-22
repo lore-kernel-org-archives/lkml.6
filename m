@@ -2,143 +2,97 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01819C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 22:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15948C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 22:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A40AD208DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 22:16:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE09420C07
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 22:36:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="s/w8dqY9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A40AD208DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ryCB2pbt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE09420C07
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbeHWBmm (ORCPT
+        id S1727144AbeHWCCq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 21:42:42 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:38343 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726396AbeHWBmm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 21:42:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1534976159; x=1566512159;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=iVGKb5KkvBln/9eE6ysVruqq4/zJKZoU4PTDRsFSOAk=;
-  b=s/w8dqY92qXx6zvR1fnXkF+I55is9Fw+AlDPe8txQEsnObku/BtNipvU
-   ehcYLgjJAq/NfJbYHdLfJ3W/pkjWZAU30o7ZEqKbHvF9S8RJ/wLm1nNKb
-   JI3ihEcg27zBgX2YrJelHeQa801lTzv664yiaiDma16Rc3C7Rz0GFgjpX
-   c=;
-X-IronPort-AV: E=Sophos;i="5.53,275,1531785600"; 
-   d="scan'208";a="358750444"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1a-715bee71.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 22 Aug 2018 22:15:50 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1a-715bee71.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w7MMCqbY085630
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Wed, 22 Aug 2018 22:12:53 GMT
-Received: from EX13D07UEA001.ant.amazon.com (10.43.61.44) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 22 Aug 2018 22:12:51 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
- EX13D07UEA001.ant.amazon.com (10.43.61.44) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 22 Aug 2018 22:12:51 +0000
-Received: from localhost (10.55.160.46) by mail-relay.amazon.com
- (10.43.61.243) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
- Transport; Wed, 22 Aug 2018 22:12:51 +0000
-Date:   Wed, 22 Aug 2018 15:12:50 -0700
-From:   Eduardo Valentin <eduval@amazon.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     <torvalds@linux-foundation.org>, <luto@kernel.org>,
-        <x86@kernel.org>, <bp@alien8.de>, <will.deacon@arm.com>,
-        <riel@surriel.com>, <jannh@google.com>, <ascannell@google.com>,
-        <dave.hansen@intel.com>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>
-Subject: Re: [PATCH 4/4] x86/mm: Only use tlb_remove_table() for paravirt
-Message-ID: <20180822221250.GB16015@u40b0340c692b58f6553c.ant.amazon.com>
-References: <20180822153012.173508681@infradead.org>
- <20180822154046.877071284@infradead.org>
+        Wed, 22 Aug 2018 22:02:46 -0400
+Received: from ozlabs.org ([203.11.71.1]:52673 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726960AbeHWCCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 22:02:46 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41wj7L6p8qz9s3C;
+        Thu, 23 Aug 2018 08:35:58 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1534977359;
+        bh=spvJ1fpEvGcjHbkujkR8TLAYDmX8vreVEvjgRIj0+g0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ryCB2pbtGf+CHDqL74zgRCDt5Ll/D2sb1dtPjB8aZpimdPG4WnDBmX5vfLdG7hcpa
+         csrkpVgDATZ3+sgaRqabORt9LbHF8whk37fl8o2XQMXC73SUlXU8tL8YYF7uoBuX2q
+         9v8jiLA8f4gQFlX89cAo77bVZ8zDKxxRNQetolM76ksCzyK6hLXJrjzeeirr0MMH1s
+         DSEOp+3JXrxulSwDuDlovKEyUhyGJk+CcH0g47LOGElydoTxrxE7TCU1+Xtt2r/oNa
+         8ldDigaPXAfoGxwoC5LGaPh48zOqqdGwH52TpjWAyeEnUEnlcIxItpPUd002ceLmP3
+         CkJsfe/dtfnNg==
+Date:   Thu, 23 Aug 2018 08:35:52 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build failure after merge of the kbuild tree
+Message-ID: <20180823083552.6fd372af@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180822154046.877071284@infradead.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/mro.6O4w9MnCWFD7==DKJwp"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Peter,
+--Sig_/mro.6O4w9MnCWFD7==DKJwp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 22, 2018 at 05:30:16PM +0200, Peter Zijlstra wrote:
-> If we don't use paravirt; don't play unnecessary and complicated games
-> to free page-tables.
-> 
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  arch/x86/Kconfig                      |    2 +-
->  arch/x86/hyperv/mmu.c                 |    2 ++
->  arch/x86/include/asm/paravirt.h       |    5 +++++
->  arch/x86/include/asm/paravirt_types.h |    3 +++
->  arch/x86/include/asm/tlbflush.h       |    3 +++
->  arch/x86/kernel/kvm.c                 |    5 ++++-
->  arch/x86/kernel/paravirt.c            |    2 ++
->  arch/x86/mm/pgtable.c                 |    8 ++++----
->  arch/x86/xen/mmu_pv.c                 |    1 +
->  9 files changed, 25 insertions(+), 6 deletions(-)
-> 
+Hi Masahiro,
 
-<cut>
+After merging the kbuild tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-> --- a/arch/x86/xen/mmu_pv.c
-> +++ b/arch/x86/xen/mmu_pv.c
-> @@ -2397,6 +2397,7 @@ static const struct pv_mmu_ops xen_mmu_o
->  	.flush_tlb_kernel = xen_flush_tlb,
->  	.flush_tlb_one_user = xen_flush_tlb_one_user,
->  	.flush_tlb_others = xen_flush_tlb_others,
-> +	.tlb_remove_table = tlb_remove_table,
+ld: failed to merge target specific data of file drivers/input/mouse/alps.o
+ld: drivers/input/mouse/byd.o: compiled for a big endian system and target =
+is little endian
+ld: failed to merge target specific data of file drivers/input/mouse/byd.o
 
-I tried compiling the series, and I am getting the following compilation error:
+and many, many more like this.
 
-  CC      arch/x86/xen/mmu_pv.o
-arch/x86/xen/mmu_pv.c:2400:22: error: ‘tlb_remove_table’ undeclared here (not in a function); did you mean ‘bus_remove_file’?
-  .tlb_remove_table = tlb_remove_table,
-                      ^~~~~~~~~~~~~~~~
-                      bus_remove_file
-make[4]: *** [arch/x86/xen/mmu_pv.o] Error 1
+Sorry, I can't easily tell what caused this.
 
+I have used the kbuild tree from next-20180822 for today.
 
-which I solved by:
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index a21988ec30d3..3114b7c76970 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -67,6 +67,7 @@
- #include <asm/init.h>
- #include <asm/pat.h>
- #include <asm/smp.h>
-+#include <asm/tlb.h>
- 
- #include <asm/xen/hypercall.h>
- #include <asm/xen/hypervisor.h>
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/mro.6O4w9MnCWFD7==DKJwp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
->  
->  	.pgd_alloc = xen_pgd_alloc,
->  	.pgd_free = xen_pgd_free,
-> 
-> 
-> 
+-----BEGIN PGP SIGNATURE-----
 
--- 
-All the best,
-Eduardo Valentin
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt95UgACgkQAVBC80lX
+0GzEwQf7BHhPvlz4bMi/xEqfOoEH7Dc6BQAcvfn/1BDSX1JGUJp34An8r40JkG60
+ZoN63sP1phqPGPMfrPzMZohMdcnuN480njVruQKKZ3k5MWsb1poHDre4jEPmfReI
+/f2hch0bz8XSiHQ1DI3ofeWeFCmk46eSWEdROuv7u4hcQ4GscY3lPSPR3GsSaZmX
+zofpnMMu350fXF2FBB6i/w/gj0RA8/1hFmVlpD99B54xNifKzGJcAtIwhIYRoN7h
+auer9590Iuo/mWa2A/oviyBmnOF41mO0SsGPnE0xINeKV4S4N9DNlvRdOg5DOG6U
+7MRBy0rBXZvr4xkO5akvmeSWv6ctmA==
+=mStA
+-----END PGP SIGNATURE-----
+
+--Sig_/mro.6O4w9MnCWFD7==DKJwp--
