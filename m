@@ -2,219 +2,147 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D916C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBBD8C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F01BD208DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:54:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F01BD208DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6A570208DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:57:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="fZwsdkaR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A570208DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbeHWAVD (ORCPT
+        id S1727498AbeHWAXm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 20:21:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39978 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726789AbeHWAVD (ORCPT
+        Wed, 22 Aug 2018 20:23:42 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:51149 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726760AbeHWAXm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 20:21:03 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7MKrjM3074591
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 16:54:35 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m1c1mqa2k-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 16:54:34 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Wed, 22 Aug 2018 16:54:34 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 22 Aug 2018 16:54:30 -0400
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MKsS5Y16973824
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 22 Aug 2018 20:54:28 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 36E9428059;
-        Wed, 22 Aug 2018 16:52:58 -0400 (EDT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 683E22805A;
-        Wed, 22 Aug 2018 16:52:57 -0400 (EDT)
-Received: from oc8043147753.ibm.com (unknown [9.60.75.213])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 22 Aug 2018 16:52:57 -0400 (EDT)
-Subject: Re: [PATCH v9 21/22] KVM: s390: CPU model support for AP
- virtualization
-To:     David Hildenbrand <david@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-22-git-send-email-akrowiak@linux.vnet.ibm.com>
- <2c2c4859-ed3e-a492-dd59-78529c7768b2@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Wed, 22 Aug 2018 16:54:26 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Wed, 22 Aug 2018 20:23:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1534971433; x=1566507433;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zQ9PhjyQopjQ/c9sxh+lXJJS7x+awHkBruSQZ/TNQ9Y=;
+  b=fZwsdkaR2/UIPuTBLi2aa2MRXUMu38BrYOixAlffYwl0PaRa3VVDd2qT
+   QnXvkeyKErf0Cos8GVQc7o+tMK7Zj/Zq5MlcZbM+QcYzLYYMHa1ofgbiG
+   yMV54azhjl9AcsfPqTlhBHBaysIr9umRWah1FZKEUUqf1eOMxg19UGNua
+   U=;
+X-IronPort-AV: E=Sophos;i="5.53,275,1531785600"; 
+   d="scan'208";a="353483326"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1a-715bee71.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 22 Aug 2018 20:57:12 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1a-715bee71.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w7MKv2ab049996
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Wed, 22 Aug 2018 20:57:08 GMT
+Received: from EX13D05UWB004.ant.amazon.com (10.43.161.208) by
+ EX13MTAUWB001.ant.amazon.com (10.43.161.207) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 22 Aug 2018 20:57:07 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (10.43.161.207) by
+ EX13D05UWB004.ant.amazon.com (10.43.161.208) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 22 Aug 2018 20:57:07 +0000
+Received: from localhost (10.55.160.46) by mail-relay.amazon.com
+ (10.43.161.249) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
+ Transport; Wed, 22 Aug 2018 20:57:07 +0000
+Date:   Wed, 22 Aug 2018 13:57:07 -0700
+From:   Eduardo Valentin <eduval@amazon.com>
+To:     Andi Kleen <ak@linux.intel.com>
+CC:     Eduardo Valentin <eduval@amazon.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Kan Liang" <kan.liang@linux.intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] perf/x86/intel: make error messages less confusing
+Message-ID: <20180822205707.GA16015@u40b0340c692b58f6553c.ant.amazon.com>
+References: <20180821211528.8575-1-eduval@amazon.com>
+ <20180821220937.GV12066@tassilo.jf.intel.com>
+ <20180821230522.GA10816@u40b0340c692b58f6553c.ant.amazon.com>
+ <20180821235908.GW12066@tassilo.jf.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <2c2c4859-ed3e-a492-dd59-78529c7768b2@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18082220-0040-0000-0000-0000046377F0
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009593; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01077363; UDB=6.00555461; IPR=6.00857339;
- MB=3.00022873; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-22 20:54:32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082220-0041-0000-0000-0000086A8AD3
-Message-Id: <8f3f3f41-a052-1975-69e2-49e1a662ecab@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808220207
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180821235908.GW12066@tassilo.jf.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/22/2018 07:19 AM, David Hildenbrand wrote:
-> On 13.08.2018 23:48, Tony Krowiak wrote:
->> From: Tony Krowiak <akrowiak@linux.ibm.com>
->>
->> Introduces a new CPU model feature and two CPU model
->> facilities to support AP virtualization for KVM guests.
->>
->> CPU model feature:
->>
->> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
->> AP instructions are available on the guest. This
->> feature will be enabled by the kernel only if the AP
->> instructions are installed on the linux host. This feature
->> must be specifically turned on for the KVM guest from
->> userspace to use the VFIO AP device driver for guest
->> access to AP devices.
->>
->> CPU model facilities:
->>
->> 1. AP Query Configuration Information (QCI) facility is installed.
->>
->>     This is indicated by setting facilities bit 12 for
->>     the guest. The kernel will not enable this facility
->>     for the guest if it is not set on the host.
->>
->>     If this facility is not set for the KVM guest, then only
->>     APQNs with an APQI less than 16 will be used by a Linux
->>     guest regardless of the matrix configuration for the virtual
->>     machine. This is a limitation of the Linux AP bus.
->>
->> 2. AP Facilities Test facility (APFT) is installed.
->>
->>     This is indicated by setting facilities bit 15 for
->>     the guest. The kernel will not enable this facility for
->>     the guest if it is not set on the host.
->>
->>     If this facility is not set for the KVM guest, then no
->>     AP devices will be available to the guest regardless of
->>     the guest's matrix configuration for the virtual
->>     machine. This is a limitation of the Linux AP bus.
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
->> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> ---
->>   arch/s390/kvm/kvm-s390.c         |    5 +++++
->>   arch/s390/tools/gen_facilities.c |    2 ++
->>   2 files changed, 7 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->> index 1e8cb67..d5e04d2 100644
->> --- a/arch/s390/kvm/kvm-s390.c
->> +++ b/arch/s390/kvm/kvm-s390.c
->> @@ -367,6 +367,11 @@ static void kvm_s390_cpu_feat_init(void)
->>   
->>   	if (MACHINE_HAS_ESOP)
->>   		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
->> +
->> +	/* Check if AP instructions installed on host */
->> +	if (ap_instructions_available())
->> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
->> +
->>   	/*
->>   	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
->>   	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
->> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
->> index 90a8c9e..a52290b 100644
->> --- a/arch/s390/tools/gen_facilities.c
->> +++ b/arch/s390/tools/gen_facilities.c
->> @@ -106,6 +106,8 @@ struct facility_def {
->>   
->>   		.name = "FACILITIES_KVM_CPUMODEL",
->>   		.bits = (int[]){
->> +			12, /* AP Query Configuration Information */
->> +			15, /* AP Facilities Test */
->>   			-1  /* END */
->>   		}
->>   	},
->>
-> I really wonder if we should also export the APXA facility.
+Hey,
 
-Given this comment is made within the context of the
-FACILITIES_KVM_CPUMODEL I might point out that APXA is not
-indicated by a facilities bit. It is indicated by a bit in
-the QCI control block returned from the PQAP(QCI)
-instruction to indicate that APXA is installed on all CPUs.
-
-> We can probe and allow that CPU feature. However, we cannot disable it
-> (as of now).
-
-Given this patch series implements passthrough devices,
-the output of the PQAP(QCI) will always be from a real
-device - i.e., there will be no way to disable it.
-
->
-> We have other CPU features where it is the same case (basically all
-> subfunctions). See kvm_s390_get_processor_subfunc(). We probe them and
-> export them, but support to disable them has never been implemented.
->
-> On a high level, we could then e.g. deny to start a QEMU guest if APXA
-> is available but has been disabled. (until we know that disabling it
-> actually works - if ever).
->
-> This helps to catch nasty migration bugs (e.g. APXA suddenly
-> disappearing). Although unlikely, definitely possible.
-
-Migration of AP devices is not supported by this patch series, so this 
-should
-not be an issue.
-
->
->
-> Are there any other AP related facilities that the guest can from now on
-> probe that should also become part of the CPU model?
+On Tue, Aug 21, 2018 at 04:59:08PM -0700, Andi Kleen wrote:
+> On Tue, Aug 21, 2018 at 04:05:22PM -0700, Eduardo Valentin wrote:
+> > On Tue, Aug 21, 2018 at 03:09:37PM -0700, Andi Kleen wrote:
+> > > On Tue, Aug 21, 2018 at 02:15:28PM -0700, Eduardo Valentin wrote:
+> > > > On a system with X86_FEATURE_ARCH_PERFMON disabled
+> > > > and with a model not known by family PMU drivers,
+> > > > user gets a kernel message log like the following:
+> > > > [ 0.100114] Performance Events: unsupported p6 CPU model 85 no PMU driver, software events only.
+> > > > 
+> > > > The "unsupported .. CPU" part may be confusing for some
+> > > > users. Rewording the messages on the failure path to:
+> > > > [ 0.667154] Performance Events: unknown p6 PMU on CPU model 85: !X86_FEATURE_ARCH_PERFMON: no PMU driver, software events only.
+> > > 
+> > > Are you sure users even know what ARCH_PERFMON is?
+> > > 
+> > > Maybe it is confusing (why exactly?), but it doesn't seem to me that your
+> > > new message is any better.
+> > 
+> > Yeah, the part that says "unsupported CPU" is the confusing part,
+> 
+> That makes sense.
+> 
+> > I get people thinking that the specific reported CPU model is not
+> > supported by the kernel :-)
+> > 
+> > > 
+> > > If you refer to VMs not exposing the PMU perhaps that should be explicitely mentioned.
+> > > 
+> > > Of course the real fix is to always expose the PMU, not improve the error messages...
+> > 
+> > I agree that best is simply to enable PMU. But it does not hurt to improve the error messaging, does it?
+> > 
+> > Any suggestions there, given that the initial attempt seams to make it even worse :-)
+> 
+> Perhaps just say
+> 
+> "CPU does not support PMU"
 >
 
+Ok.
+ 
+> which is really what the problem is here.
+> 
+
+Fair enough.
+
+> The other option would be to move this message after the big model switch,
+> but would need to be very careful that it doesn't have any unintended
+> side effects. 
+
+I will simply remove those messages with CPU model details and on
+the failure path build the message to look like:
+[    0.666785] Performance Events: CPU does not support PMU: no PMU driver, software events only.
+
+
+> 
+> -Andi
+> 
+
+-- 
+All the best,
+Eduardo Valentin
