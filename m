@@ -2,324 +2,114 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88465C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 01:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C24C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 01:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BDB921480
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 01:11:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FDEB217C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 01:22:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Gd26FPxk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BDB921480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mAZPdSEr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FDEB217C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbeHVEdc (ORCPT
+        id S1727111AbeHVEp2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 00:33:32 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:52560 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726076AbeHVEdb (ORCPT
+        Wed, 22 Aug 2018 00:45:28 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:35731 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbeHVEp2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 00:33:31 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7M19Jle191568;
-        Wed, 22 Aug 2018 01:10:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=G63m8a4YuvDEs6YhsWX8D+FabhfAxtv+hFujYg2ONbA=;
- b=Gd26FPxkmll1KjWr2kztcg9i1gGHSYznQN6QGeVhfvmXWXWRUDNXA0XeC3dIfLFa3s5D
- U5mCDE2GnKLx7dvDCpSzipJ/5NCiRZI92M860SI6VIUEV0QTTpF7vvW25wPR6qHvWOTy
- /T4tsIr1jr0kS7jsinVaqV3pFAkF+vU+AcEGsf7KoZmO+fJ30ionk7eOo6oAaa7PJTPc
- ssH+lJkbgcl1JUvuGbZPdFoVwz3TQL1Tt6ty38LaYkazrMCWedM1m4ulNWW4Xmz+y8in
- uLtf/TXVvrS6jdpwmsDG+HpT9JClSJ/tohHotsa4D06Qo+GOtcKItOZW7nT7RFf2nGNz Wg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2kxc3qqrbp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 22 Aug 2018 01:10:46 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7M1AjCm017855
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 22 Aug 2018 01:10:46 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7M1AiQb017541;
-        Wed, 22 Aug 2018 01:10:44 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 21 Aug 2018 18:10:44 -0700
-Subject: Re: [PATCH v3 1/2] mm: migration: fix migration of huge PMD shared
- pages
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org
-References: <20180821205902.21223-2-mike.kravetz@oracle.com>
- <201808220831.eM0je51n%fengguang.wu@intel.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <975b740d-26a6-eb3f-c8ca-1a9995d0d343@oracle.com>
-Date:   Tue, 21 Aug 2018 18:10:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <201808220831.eM0je51n%fengguang.wu@intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8992 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808220011
+        Wed, 22 Aug 2018 00:45:28 -0400
+Received: by mail-qt0-f195.google.com with SMTP id r21-v6so401596qtm.2;
+        Tue, 21 Aug 2018 18:22:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id;
+        bh=6SNHI51KRZzTDYcnMavTDihqimSyreFwEOe0orhx+VI=;
+        b=mAZPdSEruGbX6BAGx9oB0ByyNi3/kho0SrNSCNWoX01aap71epmQP4aTVtIY64caWx
+         OrJ0XoIvICmoV34LFBpjGdxqhwkzur+aS5PgsTrbjHYZhhNnKMZatu1eXphPU1csgqaO
+         nC/Qz5bbuvD0iCFSfOMAJoadvHQ29BWuYdLOmW7e8A+e7jfhrN4hJt/y4SHij5ZiXrKF
+         ezdV5yT4oPeg+KCYci4siEWKBO+u6Oy/XtoNX0b0AdwqmqOBWC7pzsNcFXYJGDr0TaLe
+         zny9UReqoSlshUfzQjdDhbyExNZTjcF4qDcSzWd9WNehKjTRIQneK87KMzFzM+dmeVTr
+         GAHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=6SNHI51KRZzTDYcnMavTDihqimSyreFwEOe0orhx+VI=;
+        b=bZNRo09feGyeQz3VDWkovY1UtmDxM/3cL/i3+truADb4oCp3E6HhDQbOYfFKdyDVj4
+         hPjwBzqlJ0ZrHPxODSR2BmJswcRk+RDaRi0Ouz9im6E/IxGgx3L30on2IZTFUO8AJTS6
+         z1rkuYtfgmsYc0RSrD9dQiNF4yBJkHHh7Eh8acFQLaR9DVS633M3zzeNG6/iXjlOQEEp
+         AYPSVNHDt+AitOwA5opkk5aMI8QvPQ/jm9OAcIdE7AuIF0cvY/tu37DZ+W3uvDxOXTFH
+         TjsM38vXsFhzprYy6j3/xXbz7sxGSnq0Oo0UN3FGpMEH4H6VDkgK1CqZ2poUZkoMyOdu
+         F2GQ==
+X-Gm-Message-State: APzg51AtqJi0JjYKiTs0oObkYTiSaygbN0+zoGtu/heeMTq7LLJ82vQe
+        LKiykLboHZ4qwTXVtMoKHTg=
+X-Google-Smtp-Source: AA+uWPzUik9i1+8Mk1FqwksFnRqiIrtT76w8PtW3rLwA9ePr+jnvNvQyyH8SQwflkYe+obk6+bt9mw==
+X-Received: by 2002:ac8:4249:: with SMTP id r9-v6mr16577075qtm.262.1534900975942;
+        Tue, 21 Aug 2018 18:22:55 -0700 (PDT)
+Received: from gagoddess.ic.unicamp.br (wifi-177-220-84-180.wifi.ic.unicamp.br. [177.220.84.180])
+        by smtp.gmail.com with ESMTPSA id a187-v6sm179479qkd.47.2018.08.21.18.22.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 Aug 2018 18:22:55 -0700 (PDT)
+From:   Guilherme Gallo <gagallo7@gmail.com>
+To:     lkcamp@lists.libreplanetbr.org, helen.koike@collabora.com,
+        mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hverkuil@xs4all.nl
+Subject: [PATCH] media: vimc: implement basic v4l2-ctrls
+Date:   Tue, 21 Aug 2018 22:22:19 -0300
+Message-Id: <20180822012219.22946-1-gagallo7@gmail.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/21/2018 05:51 PM, kbuild test robot wrote:
-> Hi Mike,
-> 
-> I love your patch! Yet something to improve:
-> 
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v4.18 next-20180821]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Mike-Kravetz/huge_pmd_unshare-migration-and-flushing/20180822-050255
-> config: sparc64-allyesconfig (attached as .config)
-> compiler: sparc64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=7.2.0 make.cross ARCH=sparc64 
-> 
+Implement brightness, contrast and hue controls in vimc-sensor
 
-Ok, this should take care of all the build errors.  Needed to address
-!CONFIG_HUGETLB_PAGE and !CONFIG_ARCH_WANT_HUGE_PMD_SHARE.
-
-From 2868cea3ff33fccd03da9188dde2ae5b619bf300 Mon Sep 17 00:00:00 2001
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Date: Tue, 21 Aug 2018 10:50:17 -0700
-Subject: [PATCH v5 1/2] mm: migration: fix migration of huge PMD shared pages
-
-The page migration code employs try_to_unmap() to try and unmap the
-source page.  This is accomplished by using rmap_walk to find all
-vmas where the page is mapped.  This search stops when page mapcount
-is zero.  For shared PMD huge pages, the page map count is always 1
-no matter the number of mappings.  Shared mappings are tracked via
-the reference count of the PMD page.  Therefore, try_to_unmap stops
-prematurely and does not completely unmap all mappings of the source
-page.
-
-This problem can result is data corruption as writes to the original
-source page can happen after contents of the page are copied to the
-target page.  Hence, data is lost.
-
-This problem was originally seen as DB corruption of shared global
-areas after a huge page was soft offlined due to ECC memory errors.
-DB developers noticed they could reproduce the issue by (hotplug)
-offlining memory used to back huge pages.  A simple testcase can
-reproduce the problem by creating a shared PMD mapping (note that
-this must be at least PUD_SIZE in size and PUD_SIZE aligned (1GB on
-x86)), and using migrate_pages() to migrate process pages between
-nodes while continually writing to the huge pages being migrated.
-
-To fix, have the try_to_unmap_one routine check for huge PMD sharing
-by calling huge_pmd_unshare for hugetlbfs huge pages.  If it is a
-shared mapping it will be 'unshared' which removes the page table
-entry and drops the reference on the PMD page.  After this, flush
-caches and TLB.
-
-mmu notifiers are called before locking page tables, but we can not
-be sure of PMD sharing until page tables are locked.  Therefore,
-check for the possibility of PMD sharing before locking so that
-notifiers can prepare for the worst possible case.
-
-Fixes: 39dde65c9940 ("shared page table for hugetlb page")
-Cc: stable@vger.kernel.org
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Signed-off-by: Guilherme Alcarde Gallo <gagallo7@gmail.com>
 ---
- include/linux/hugetlb.h | 14 +++++++++++++
- mm/hugetlb.c            | 46 +++++++++++++++++++++++++++++++++++++++++
- mm/rmap.c               | 42 ++++++++++++++++++++++++++++++++++---
- 3 files changed, 99 insertions(+), 3 deletions(-)
+ drivers/media/platform/vimc/vimc-sensor.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 36fa6a2a82e3..840b43a085cc 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -140,6 +140,8 @@ pte_t *huge_pte_alloc(struct mm_struct *mm,
- pte_t *huge_pte_offset(struct mm_struct *mm,
- 		       unsigned long addr, unsigned long sz);
- int huge_pmd_unshare(struct mm_struct *mm, unsigned long *addr, pte_t *ptep);
-+bool huge_pmd_sharing_possible(struct vm_area_struct *vma,
-+				unsigned long *start, unsigned long *end);
- struct page *follow_huge_addr(struct mm_struct *mm, unsigned long address,
- 			      int write);
- struct page *follow_huge_pd(struct vm_area_struct *vma,
-@@ -170,6 +172,18 @@ static inline unsigned long hugetlb_total_pages(void)
- 	return 0;
- }
- 
-+static inline int huge_pmd_unshare(struct mm_struct *mm, unsigned long *addr,
-+					pte_t *ptep)
-+{
-+	return 0;
-+}
-+
-+static inline bool huge_pmd_sharing_possible(struct vm_area_struct *vma,
-+				unsigned long *start, unsigned long *end)
-+{
-+	return false;
-+}
-+
- #define follow_hugetlb_page(m,v,p,vs,a,b,i,w,n)	({ BUG(); 0; })
- #define follow_huge_addr(mm, addr, write)	ERR_PTR(-EINVAL)
- #define copy_hugetlb_page_range(src, dst, vma)	({ BUG(); 0; })
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 3103099f64fd..f085019a4724 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4555,6 +4555,9 @@ static bool vma_shareable(struct vm_area_struct *vma, unsigned long addr)
- 
- 	/*
- 	 * check on proper vm_flags and page table alignment
-+	 *
-+	 * Note that this is the same check used in huge_pmd_sharing_possible.
-+	 * If you change one, consider changing both.
- 	 */
- 	if (vma->vm_flags & VM_MAYSHARE &&
- 	    vma->vm_start <= base && end <= vma->vm_end)
-@@ -4562,6 +4565,43 @@ static bool vma_shareable(struct vm_area_struct *vma, unsigned long addr)
- 	return false;
- }
- 
-+/*
-+ * Determine if start,end range within vma could be mapped by shared pmd.
-+ * If yes, adjust start and end to cover range associated with possible
-+ * shared pmd mappings.
-+ */
-+bool huge_pmd_sharing_possible(struct vm_area_struct *vma,
-+				unsigned long *start, unsigned long *end)
-+{
-+	unsigned long check_addr = *start;
-+	bool ret = false;
-+
-+	if (!(vma->vm_flags & VM_MAYSHARE))
-+		return ret;
-+
-+	for (check_addr = *start; check_addr < *end; check_addr += PUD_SIZE) {
-+		unsigned long a_start = check_addr & PUD_MASK;
-+		unsigned long a_end = a_start + PUD_SIZE;
-+
-+		/*
-+		 * If sharing is possible, adjust start/end if necessary.
-+		 *
-+		 * Note that this is the same check used in vma_shareable.  If
-+		 * you change one, consider changing both.
-+		 */
-+		if (vma->vm_start <= a_start && a_end <= vma->vm_end) {
-+			if (a_start < *start)
-+				*start = a_start;
-+			if (a_end > *end)
-+				*end = a_end;
-+
-+			ret = true;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
- /*
-  * Search for a shareable pmd page for hugetlb. In any case calls pmd_alloc()
-  * and returns the corresponding pte. While this is not necessary for the
-@@ -4659,6 +4699,12 @@ int huge_pmd_unshare(struct mm_struct *mm, unsigned long *addr, pte_t *ptep)
- {
- 	return 0;
- }
-+
-+bool huge_pmd_sharing_possible(struct vm_area_struct *vma,
-+				unsigned long *start, unsigned long *end)
-+{
-+	return false;
-+}
- #define want_pmd_share()	(0)
- #endif /* CONFIG_ARCH_WANT_HUGE_PMD_SHARE */
- 
-diff --git a/mm/rmap.c b/mm/rmap.c
-index eb477809a5c0..8cf853a4b093 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1362,11 +1362,21 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+diff --git a/drivers/media/platform/vimc/vimc-sensor.c b/drivers/media/platform/vimc/vimc-sensor.c
+index 605e2a2d5dd5..ecc82cd60900 100644
+--- a/drivers/media/platform/vimc/vimc-sensor.c
++++ b/drivers/media/platform/vimc/vimc-sensor.c
+@@ -316,6 +316,15 @@ static int vimc_sen_s_ctrl(struct v4l2_ctrl *ctrl)
+ 	case V4L2_CID_VFLIP:
+ 		tpg_s_vflip(&vsen->tpg, ctrl->val);
+ 		break;
++	case V4L2_CID_BRIGHTNESS:
++		tpg_s_brightness(&vsen->tpg, ctrl->val);
++		break;
++	case V4L2_CID_CONTRAST:
++		tpg_s_contrast(&vsen->tpg, ctrl->val);
++		break;
++	case V4L2_CID_HUE:
++		tpg_s_hue(&vsen->tpg, ctrl->val);
++		break;
+ 	default:
+ 		return -EINVAL;
  	}
- 
- 	/*
--	 * We have to assume the worse case ie pmd for invalidation. Note that
--	 * the page can not be free in this function as call of try_to_unmap()
--	 * must hold a reference on the page.
-+	 * For THP, we have to assume the worse case ie pmd for invalidation.
-+	 * For hugetlb, it could be much worse if we need to do pud
-+	 * invalidation in the case of pmd sharing.
-+	 *
-+	 * Note that the page can not be free in this function as call of
-+	 * try_to_unmap() must hold a reference on the page.
- 	 */
- 	end = min(vma->vm_end, start + (PAGE_SIZE << compound_order(page)));
-+	if (PageHuge(page)) {
-+		/*
-+		 * If sharing is possible, start and end will be adjusted
-+		 * accordingly.
-+		 */
-+		(void)huge_pmd_sharing_possible(vma, &start, &end);
-+	}
- 	mmu_notifier_invalidate_range_start(vma->vm_mm, start, end);
- 
- 	while (page_vma_mapped_walk(&pvmw)) {
-@@ -1409,6 +1419,32 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
- 		subpage = page - page_to_pfn(page) + pte_pfn(*pvmw.pte);
- 		address = pvmw.address;
- 
-+		if (PageHuge(page)) {
-+			if (huge_pmd_unshare(mm, &address, pvmw.pte)) {
-+				/*
-+				 * huge_pmd_unshare unmapped an entire PMD
-+				 * page.  There is no way of knowing exactly
-+				 * which PMDs may be cached for this mm, so
-+				 * we must flush them all.  start/end were
-+				 * already adjusted above to cover this range.
-+				 */
-+				flush_cache_range(vma, start, end);
-+				flush_tlb_range(vma, start, end);
-+				mmu_notifier_invalidate_range(mm, start, end);
-+
-+				/*
-+				 * The ref count of the PMD page was dropped
-+				 * which is part of the way map counting
-+				 * is done for shared PMDs.  Return 'true'
-+				 * here.  When there is no other sharing,
-+				 * huge_pmd_unshare returns false and we will
-+				 * unmap the actual page and drop map count
-+				 * to zero.
-+				 */
-+				page_vma_mapped_walk_done(&pvmw);
-+				break;
-+			}
-+		}
- 
- 		if (IS_ENABLED(CONFIG_MIGRATION) &&
- 		    (flags & TTU_MIGRATION) &&
+@@ -377,6 +386,12 @@ static int vimc_sen_comp_bind(struct device *comp, struct device *master,
+ 			  V4L2_CID_VFLIP, 0, 1, 1, 0);
+ 	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
+ 			  V4L2_CID_HFLIP, 0, 1, 1, 0);
++	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
++			  V4L2_CID_BRIGHTNESS, 0, 255, 1, 128);
++	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
++			  V4L2_CID_CONTRAST, 0, 255, 1, 128);
++	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
++			  V4L2_CID_HUE, 0, 255, 1, 128);
+ 	vsen->sd.ctrl_handler = &vsen->hdl;
+ 	if (vsen->hdl.error) {
+ 		ret = vsen->hdl.error;
 -- 
-2.17.1
+2.13.6
 
