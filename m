@@ -2,126 +2,190 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9CAC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28256C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5A33214AB
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:10:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jSiz0SUq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5A33214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E0A36214AB
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:11:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0A36214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728597AbeHVMef (ORCPT
+        id S1728600AbeHVMfT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 08:34:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54436 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728208AbeHVMee (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 08:34:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=YbdDDn0LmMntOvsDynUtkB+mSIAFRIE4RGQzJvC3h5Q=; b=jSiz0SUqgjqtYAL67S8Lqar0i
-        p0b7Y7CW10WpXS0NNVGlBubKM8EeCLv1Jaaou8dQCVTcElzguUN/Qs0+SlAHfcnF/mIHfVGmqsyLT
-        s93/sZxhQwWIwqwVs7MNBaOsFZm5hyd6ROK5gaL2lOBo982Ww+U0YqRMmdSV9UarpPQfzV6XNWn6m
-        0Nqq20kfiGNXzjtfK3hvjtA3dUXVqMMne8QJ4AijNqnL2KzK8YneUDZ8Yi9wiC2eZE6cOJYRs+rgo
-        SMdhHO15+3XIi073bSguMNAihmCZ709twxhLzv26WYHo5bMKi3vPi+YOwbljVTFkyYzXRxRTHssL2
-        Q7dTgWu/g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fsP9l-0003D6-Ss; Wed, 22 Aug 2018 09:10:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 25FD42025D75D; Wed, 22 Aug 2018 11:10:24 +0200 (CEST)
-Date:   Wed, 22 Aug 2018 11:10:24 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Shakeel Butt <shakeelb@google.com>,
-        Peter Enderborg <peter.enderborg@sony.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 8/9] psi: pressure stall information for CPU, memory, and
- IO
-Message-ID: <20180822091024.GU24124@hirez.programming.kicks-ass.net>
-References: <20180801151958.32590-1-hannes@cmpxchg.org>
- <20180801151958.32590-9-hannes@cmpxchg.org>
- <20180803172139.GE2494@hirez.programming.kicks-ass.net>
- <20180821201115.GB24538@cmpxchg.org>
+        Wed, 22 Aug 2018 08:35:19 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11181 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728147AbeHVMfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 08:35:19 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1220ABD519CA1;
+        Wed, 22 Aug 2018 17:11:14 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.399.0; Wed, 22 Aug 2018 17:11:09 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v4] f2fs: fix to flush all dirty inodes recovered in readonly fs
+Date:   Wed, 22 Aug 2018 17:11:05 +0800
+Message-ID: <20180822091105.33973-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180821201115.GB24538@cmpxchg.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 04:11:15PM -0400, Johannes Weiner wrote:
-> On Fri, Aug 03, 2018 at 07:21:39PM +0200, Peter Zijlstra wrote:
-> > On Wed, Aug 01, 2018 at 11:19:57AM -0400, Johannes Weiner wrote:
-> > > +			time = READ_ONCE(groupc->times[s]);
-> > > +			/*
-> > > +			 * In addition to already concluded states, we
-> > > +			 * also incorporate currently active states on
-> > > +			 * the CPU, since states may last for many
-> > > +			 * sampling periods.
-> > > +			 *
-> > > +			 * This way we keep our delta sampling buckets
-> > > +			 * small (u32) and our reported pressure close
-> > > +			 * to what's actually happening.
-> > > +			 */
-> > > +			if (test_state(groupc->tasks, cpu, s)) {
-> > > +				/*
-> > > +				 * We can race with a state change and
-> > > +				 * need to make sure the state_start
-> > > +				 * update is ordered against the
-> > > +				 * updates to the live state and the
-> > > +				 * time buckets (groupc->times).
-> > > +				 *
-> > > +				 * 1. If we observe task state that
-> > > +				 * needs to be recorded, make sure we
-> > > +				 * see state_start from when that
-> > > +				 * state went into effect or we'll
-> > > +				 * count time from the previous state.
-> > > +				 *
-> > > +				 * 2. If the time delta has already
-> > > +				 * been added to the bucket, make sure
-> > > +				 * we don't see it in state_start or
-> > > +				 * we'll count it twice.
-> > > +				 *
-> > > +				 * If the time delta is out of
-> > > +				 * state_start but not in the time
-> > > +				 * bucket yet, we'll miss it entirely
-> > > +				 * and handle it in the next period.
-> > > +				 */
-> > > +				smp_rmb();
-> > > +				time += cpu_clock(cpu) - groupc->state_start;
-> > > +			}
-> > 
-> > As is, groupc->state_start needs a READ_ONCE() above and a WRITE_ONCE()
-> > below. But like stated earlier, doing an update in scheduler_tick() is
-> > probably easier.
-> 
-> I've wrapped these in READ_ONCE/WRITE_ONCE.
+generic/417 reported as blow:
 
-I just realized, these are u64, so READ_ONCE/WRITE_ONCE will not work
-correct on 32bit.
+------------[ cut here ]------------
+kernel BUG at /home/yuchao/git/devf2fs/inode.c:695!
+invalid opcode: 0000 [#1] PREEMPT SMP
+CPU: 1 PID: 21697 Comm: umount Tainted: G        W  O      4.18.0-rc2+ #39
+Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+EIP: f2fs_evict_inode+0x556/0x580 [f2fs]
+Call Trace:
+ ? _raw_spin_unlock+0x2c/0x50
+ evict+0xa8/0x170
+ dispose_list+0x34/0x40
+ evict_inodes+0x118/0x120
+ generic_shutdown_super+0x41/0x100
+ ? rcu_read_lock_sched_held+0x97/0xa0
+ kill_block_super+0x22/0x50
+ kill_f2fs_super+0x6f/0x80 [f2fs]
+ deactivate_locked_super+0x3d/0x70
+ deactivate_super+0x40/0x60
+ cleanup_mnt+0x39/0x70
+ __cleanup_mnt+0x10/0x20
+ task_work_run+0x81/0xa0
+ exit_to_usermode_loop+0x59/0xa7
+ do_fast_syscall_32+0x1f5/0x22c
+ entry_SYSENTER_32+0x53/0x86
+EIP: f2fs_evict_inode+0x556/0x580 [f2fs]
+
+It can simply reproduced with scripts:
+
+Enable quota feature during mkfs.
+
+Testcase1:
+1. mkfs.f2fs /dev/zram0
+2. mount -t f2fs /dev/zram0 /mnt/f2fs
+3. xfs_io -f /mnt/f2fs/file -c "pwrite 0 4k" -c "fsync"
+4. godown /mnt/f2fs
+5. umount /mnt/f2fs
+6. mount -t f2fs -o ro /dev/zram0 /mnt/f2fs
+7. umount /mnt/f2fs
+
+Testcase2:
+1. mkfs.f2fs /dev/zram0
+2. mount -t f2fs /dev/zram0 /mnt/f2fs
+3. touch /mnt/f2fs/file
+4. create process[pid = x] do:
+	a) open /mnt/f2fs/file;
+	b) unlink /mnt/f2fs/file
+5. godown -f /mnt/f2fs
+6. kill process[pid = x]
+7. umount /mnt/f2fs
+8. mount -t f2fs -o ro /dev/zram0 /mnt/f2fs
+9. umount /mnt/f2fs
+
+The reason is: during recovery, i_{c,m}time of inode will be updated, then
+the inode can be set dirty w/o being tracked in sbi->inode_list[DIRTY_META]
+global list, so later write_checkpoint will not flush such dirty inode into
+node page.
+
+Once umount is called, sync_filesystem() in generic_shutdown_super() will
+skip syncng dirty inodes due to sb_rdonly check, leaving dirty inodes
+there.
+
+To solve this issue, during umount, add remove SB_RDONLY flag in
+sb->s_flags, to make sure sync_filesystem() will not be skipped.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v4:
+- fix to use set_sbi_flag.
+- clean up with f2fs_readonly.
+ fs/f2fs/checkpoint.c |  2 ++
+ fs/f2fs/f2fs.h       |  1 +
+ fs/f2fs/recovery.c   | 14 +++++++++-----
+ fs/f2fs/super.c      |  3 +++
+ 4 files changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 0274446f585e..5f61e9b8c678 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -696,6 +696,8 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
+ 	/* clear Orphan Flag */
+ 	clear_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG);
+ out:
++	set_sbi_flag(sbi, SBI_IS_RECOVERED);
++
+ #ifdef CONFIG_QUOTA
+ 	/* Turn quotas off */
+ 	if (quota_enabled)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index e100af9afe38..e9009e8d30e2 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1091,6 +1091,7 @@ enum {
+ 	SBI_NEED_SB_WRITE,			/* need to recover superblock */
+ 	SBI_NEED_CP,				/* need to checkpoint */
+ 	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
++	SBI_IS_RECOVERED,			/* recovered orphan/data */
+ };
+ 
+ enum {
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 95511ed11a22..e3aa6eee7a8b 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -697,11 +697,15 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 	/* let's drop all the directory inodes for clean checkpoint */
+ 	destroy_fsync_dnodes(&dir_list);
+ 
+-	if (!err && need_writecp) {
+-		struct cp_control cpc = {
+-			.reason = CP_RECOVERY,
+-		};
+-		err = f2fs_write_checkpoint(sbi, &cpc);
++	if (need_writecp) {
++		set_sbi_flag(sbi, SBI_IS_RECOVERED);
++
++		if (!err) {
++			struct cp_control cpc = {
++				.reason = CP_RECOVERY,
++			};
++			err = f2fs_write_checkpoint(sbi, &cpc);
++		}
+ 	}
+ 
+ 	kmem_cache_destroy(fsync_entry_slab);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index ab9e0921f207..9587e57f8d93 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3215,6 +3215,9 @@ static void kill_f2fs_super(struct super_block *sb)
+ 			};
+ 			f2fs_write_checkpoint(sbi, &cpc);
+ 		}
++
++		if (is_sbi_flag_set(sbi, SBI_IS_RECOVERED) && f2fs_readonly(sb))
++			sb->s_flags &= ~SB_RDONLY;
+ 	}
+ 	kill_block_super(sb);
+ }
+-- 
+2.18.0.rc1
+
