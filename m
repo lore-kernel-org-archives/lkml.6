@@ -2,147 +2,153 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBBD8C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B43C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A570208DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:57:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="fZwsdkaR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A570208DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
+	by mail.kernel.org (Postfix) with ESMTP id E4954208DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:57:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4954208DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbeHWAXm (ORCPT
+        id S1727687AbeHWAYE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 20:23:42 -0400
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:51149 "EHLO
-        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726760AbeHWAXm (ORCPT
+        Wed, 22 Aug 2018 20:24:04 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:46766 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726760AbeHWAYE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 20:23:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1534971433; x=1566507433;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zQ9PhjyQopjQ/c9sxh+lXJJS7x+awHkBruSQZ/TNQ9Y=;
-  b=fZwsdkaR2/UIPuTBLi2aa2MRXUMu38BrYOixAlffYwl0PaRa3VVDd2qT
-   QnXvkeyKErf0Cos8GVQc7o+tMK7Zj/Zq5MlcZbM+QcYzLYYMHa1ofgbiG
-   yMV54azhjl9AcsfPqTlhBHBaysIr9umRWah1FZKEUUqf1eOMxg19UGNua
-   U=;
-X-IronPort-AV: E=Sophos;i="5.53,275,1531785600"; 
-   d="scan'208";a="353483326"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1a-715bee71.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 22 Aug 2018 20:57:12 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1a-715bee71.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w7MKv2ab049996
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Wed, 22 Aug 2018 20:57:08 GMT
-Received: from EX13D05UWB004.ant.amazon.com (10.43.161.208) by
- EX13MTAUWB001.ant.amazon.com (10.43.161.207) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 22 Aug 2018 20:57:07 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (10.43.161.207) by
- EX13D05UWB004.ant.amazon.com (10.43.161.208) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 22 Aug 2018 20:57:07 +0000
-Received: from localhost (10.55.160.46) by mail-relay.amazon.com
- (10.43.161.249) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
- Transport; Wed, 22 Aug 2018 20:57:07 +0000
-Date:   Wed, 22 Aug 2018 13:57:07 -0700
-From:   Eduardo Valentin <eduval@amazon.com>
-To:     Andi Kleen <ak@linux.intel.com>
-CC:     Eduardo Valentin <eduval@amazon.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Kan Liang" <kan.liang@linux.intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] perf/x86/intel: make error messages less confusing
-Message-ID: <20180822205707.GA16015@u40b0340c692b58f6553c.ant.amazon.com>
-References: <20180821211528.8575-1-eduval@amazon.com>
- <20180821220937.GV12066@tassilo.jf.intel.com>
- <20180821230522.GA10816@u40b0340c692b58f6553c.ant.amazon.com>
- <20180821235908.GW12066@tassilo.jf.intel.com>
+        Wed, 22 Aug 2018 20:24:04 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id CADAF606B6C0;
+        Wed, 22 Aug 2018 22:57:33 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id vGIHarlwQNCF; Wed, 22 Aug 2018 22:57:33 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 77ADB605AD30;
+        Wed, 22 Aug 2018 22:57:33 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id T4B4lNEy53hQ; Wed, 22 Aug 2018 22:57:33 +0200 (CEST)
+Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id 3F5BF605AD2D;
+        Wed, 22 Aug 2018 22:57:33 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     torvalds@linux-foundation.org
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] UBI/UBIFS updates for 4.19-rc1
+Date:   Wed, 22 Aug 2018 22:57:32 +0200
+Message-ID: <25583958.CCRG8GzgUh@blindfold>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180821235908.GW12066@tassilo.jf.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey,
+Linus,
 
-On Tue, Aug 21, 2018 at 04:59:08PM -0700, Andi Kleen wrote:
-> On Tue, Aug 21, 2018 at 04:05:22PM -0700, Eduardo Valentin wrote:
-> > On Tue, Aug 21, 2018 at 03:09:37PM -0700, Andi Kleen wrote:
-> > > On Tue, Aug 21, 2018 at 02:15:28PM -0700, Eduardo Valentin wrote:
-> > > > On a system with X86_FEATURE_ARCH_PERFMON disabled
-> > > > and with a model not known by family PMU drivers,
-> > > > user gets a kernel message log like the following:
-> > > > [ 0.100114] Performance Events: unsupported p6 CPU model 85 no PMU driver, software events only.
-> > > > 
-> > > > The "unsupported .. CPU" part may be confusing for some
-> > > > users. Rewording the messages on the failure path to:
-> > > > [ 0.667154] Performance Events: unknown p6 PMU on CPU model 85: !X86_FEATURE_ARCH_PERFMON: no PMU driver, software events only.
-> > > 
-> > > Are you sure users even know what ARCH_PERFMON is?
-> > > 
-> > > Maybe it is confusing (why exactly?), but it doesn't seem to me that your
-> > > new message is any better.
-> > 
-> > Yeah, the part that says "unsupported CPU" is the confusing part,
-> 
-> That makes sense.
-> 
-> > I get people thinking that the specific reported CPU model is not
-> > supported by the kernel :-)
-> > 
-> > > 
-> > > If you refer to VMs not exposing the PMU perhaps that should be explicitely mentioned.
-> > > 
-> > > Of course the real fix is to always expose the PMU, not improve the error messages...
-> > 
-> > I agree that best is simply to enable PMU. But it does not hurt to improve the error messaging, does it?
-> > 
-> > Any suggestions there, given that the initial attempt seams to make it even worse :-)
-> 
-> Perhaps just say
-> 
-> "CPU does not support PMU"
->
+The following changes since commit 94710cac0ef4ee177a63b5227664b38c95bbf703:
 
-Ok.
- 
-> which is really what the problem is here.
-> 
+  Linux 4.18 (2018-08-12 13:41:04 -0700)
 
-Fair enough.
+are available in the Git repository at:
 
-> The other option would be to move this message after the big model switch,
-> but would need to be very careful that it doesn't have any unintended
-> side effects. 
+  git://git.infradead.org/linux-ubifs.git tags/upstream-4.19-rc1
 
-I will simply remove those messages with CPU model details and on
-the failure path build the message to look like:
-[    0.666785] Performance Events: CPU does not support PMU: no PMU driver, software events only.
+for you to fetch changes up to 99a24e02ccf6604e3020cf9e2c7a042b6ebb655f:
+
+  ubifs: Set default assert action to read-only (2018-08-15 00:25:22 +0200)
+
+----------------------------------------------------------------
+This pull request contains updates for both UBI and UBIFS:
+
+- Year 2038 preparations
+- New UBI feature to skip CRC checks of static volumes
+- A new Kconfig option to disable xattrs in UBIFS
+- Lots of fixes in UBIFS, found by our new test framework
+
+----------------------------------------------------------------
+Arnd Bergmann (2):
+      ubifs: use timespec64 for inode timestamps
+      ubifs: tnc: use monotonic znode timestamp
+
+Gustavo A. R. Silva (1):
+      ubifs: use swap macro in swap_dirty_idx
+
+Quentin Schulz (2):
+      ubi: provide a way to skip CRC checks
+      ubi: expose the volume CRC check skip flag
+
+Richard Weinberger (15):
+      ubifs: Fix directory size calculation for symlinks
+      ubifs: Fix synced_i_size calculation for xattr inodes
+      ubi: Initialize Fastmap checkmapping correctly
+      ubifs: Fix memory leak in lprobs self-check
+      ubifs: gc: Fix typo
+      ubifs: xattr: Don't operate on deleted inodes
+      ubifs: Add comment on c->commit_sem
+      Revert "UBIFS: Fix potential integer overflow in allocation"
+      ubifs: Check data node size before truncate
+      ubifs: Use kmalloc_array()
+      ubifs: Turn two ubifs_assert() into a WARN_ON()
+      ubifs: Pass struct ubifs_info to ubifs_assert()
+      ubifs: Rework ubifs_assert()
+      ubifs: Allow setting assert action as mount parameter
+      ubifs: Set default assert action to read-only
+
+Stefan Agner (1):
+      ubifs: introduce Kconfig symbol for xattr support
+
+ drivers/mtd/ubi/cdev.c      |  11 +++++
+ drivers/mtd/ubi/kapi.c      |   2 +-
+ drivers/mtd/ubi/ubi-media.h |   6 +++
+ drivers/mtd/ubi/ubi.h       |   4 ++
+ drivers/mtd/ubi/vmt.c       |  12 +++++
+ drivers/mtd/ubi/vtbl.c      |  23 +++++----
+ fs/ubifs/Kconfig            |  15 +++++-
+ fs/ubifs/Makefile           |   3 +-
+ fs/ubifs/budget.c           |  68 +++++++++++++--------------
+ fs/ubifs/commit.c           |   8 ++--
+ fs/ubifs/crypto.c           |   4 +-
+ fs/ubifs/debug.c            |  42 +++++++++++++----
+ fs/ubifs/debug.h            |  14 +++---
+ fs/ubifs/dir.c              |  42 +++++++++--------
+ fs/ubifs/file.c             |  62 ++++++++++++++----------
+ fs/ubifs/file.h             |   0
+ fs/ubifs/find.c             |  59 +++++++++++------------
+ fs/ubifs/gc.c               |  66 +++++++++++++-------------
+ fs/ubifs/io.c               |  97 +++++++++++++++++++-------------------
+ fs/ubifs/journal.c          |  72 ++++++++++++++++------------
+ fs/ubifs/key.h              |  14 +++---
+ fs/ubifs/log.c              |  12 ++---
+ fs/ubifs/lprops.c           |  94 ++++++++++++++++++-------------------
+ fs/ubifs/lpt.c              | 112 ++++++++++++++++++++++----------------------
+ fs/ubifs/lpt_commit.c       |  50 ++++++++++----------
+ fs/ubifs/master.c           |   2 +-
+ fs/ubifs/misc.c             |  11 +++++
+ fs/ubifs/misc.h             |  16 ++++---
+ fs/ubifs/orphan.c           |  26 +++++-----
+ fs/ubifs/recovery.c         |  14 +++---
+ fs/ubifs/replay.c           |  13 ++---
+ fs/ubifs/sb.c               |  18 +++----
+ fs/ubifs/scan.c             |   2 +-
+ fs/ubifs/shrinker.c         |  12 ++---
+ fs/ubifs/super.c            |  76 ++++++++++++++++++++----------
+ fs/ubifs/tnc.c              | 111 +++++++++++++++++++++----------------------
+ fs/ubifs/tnc_commit.c       |  28 +++++------
+ fs/ubifs/tnc_misc.c         |  40 +++++++++-------
+ fs/ubifs/ubifs.h            |  39 ++++++++++++---
+ fs/ubifs/xattr.c            |  40 ++++++++++++----
+ include/uapi/mtd/ubi-user.h |  18 ++++++-
+ 41 files changed, 787 insertions(+), 571 deletions(-)
+ create mode 100644 fs/ubifs/file.h
 
 
-> 
-> -Andi
-> 
 
--- 
-All the best,
-Eduardo Valentin
