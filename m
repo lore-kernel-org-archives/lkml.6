@@ -2,189 +2,201 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09313C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B292C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B62FC20B6F
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:54:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B62FC20B6F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1557C20C0F
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:56:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1557C20C0F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728733AbeHVOSW (ORCPT
+        id S1728749AbeHVOU0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 10:18:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54458 "EHLO mx1.suse.de"
+        Wed, 22 Aug 2018 10:20:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54684 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728234AbeHVOSW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 10:18:22 -0400
+        id S1728234AbeHVOU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 10:20:26 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6756AACD0;
-        Wed, 22 Aug 2018 10:53:57 +0000 (UTC)
-Date:   Wed, 22 Aug 2018 12:53:55 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc:     Haren Myneni <haren@linux.vnet.ibm.com>, n-horiguchi@ah.jp.nec.com,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kamezawa.hiroyu@jp.fujitsu.com, mgorman@suse.de
-Subject: Re: Infinite looping observed in __offline_pages
-Message-ID: <20180822105355.GI29735@dhcp22.suse.cz>
-References: <20180725181115.hmlyd3tmnu3mn3sf@p50.austin.ibm.com>
- <20180725200336.GP28386@dhcp22.suse.cz>
- <87bm9ug34l.fsf@linux.ibm.com>
+        by mx1.suse.de (Postfix) with ESMTP id 23CE5ADE3;
+        Wed, 22 Aug 2018 10:56:00 +0000 (UTC)
+Subject: Re: [RFC v8 PATCH 2/5] uprobes: introduce has_uprobes helper
+To:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
+        willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1534358990-85530-3-git-send-email-yang.shi@linux.alibaba.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <e7147e14-bc38-03d0-90a4-5e0ca7e40050@suse.cz>
+Date:   Wed, 22 Aug 2018 12:55:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87bm9ug34l.fsf@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1534358990-85530-3-git-send-email-yang.shi@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 22-08-18 15:00:18, Aneesh Kumar K.V wrote:
+On 08/15/2018 08:49 PM, Yang Shi wrote:
+> We need check if mm or vma has uprobes in the following patch to check
+> if a vma could be unmapped with holding read mmap_sem. The checks and
+> pre-conditions used by uprobe_munmap() look just suitable for this
+> purpose.
 > 
-> Hi Michal,
+> Extracting those checks into a helper function, has_uprobes().
 > 
-> Michal Hocko <mhocko@kernel.org> writes:
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Jiri Olsa <jolsa@redhat.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> ---
+>  include/linux/uprobes.h |  7 +++++++
+>  kernel/events/uprobes.c | 23 ++++++++++++++++-------
+>  2 files changed, 23 insertions(+), 7 deletions(-)
 > 
-> > On Wed 25-07-18 13:11:15, John Allen wrote:
-> > [...]
-> >> Does a failure in do_migrate_range indicate that the range is unmigratable
-> >> and the loop in __offline_pages should terminate and goto failed_removal? Or
-> >> should we allow a certain number of retrys before we
-> >> give up on migrating the range?
-> >
-> > Unfortunatelly not. Migration code doesn't tell a difference between
-> > ephemeral and permanent failures. We are relying on
-> > start_isolate_page_range to tell us this. So the question is, what kind
-> > of page is not migratable and for what reason.
-> >
-> > Are you able to add some debugging to give us more information. The
-> > current debugging code in the hotplug/migration sucks...
-> 
-> Haren did most of the debugging, so at minimum we need a patch like this
-> I guess. 
-> 
-> modified   mm/page_alloc.c
-> @@ -7649,6 +7649,10 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
->  		 * handle each tail page individually in migration.
->  		 */
->  		if (PageHuge(page)) {
+> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> index 0a294e9..418764e 100644
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
+> @@ -149,6 +149,8 @@ struct uprobes_state {
+>  extern bool arch_uprobe_ignore(struct arch_uprobe *aup, struct pt_regs *regs);
+>  extern void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
+>  					 void *src, unsigned long len);
+> +extern bool has_uprobes(struct vm_area_struct *vma, unsigned long start,
+> +			unsigned long end);
+>  #else /* !CONFIG_UPROBES */
+>  struct uprobes_state {
+>  };
+> @@ -203,5 +205,10 @@ static inline void uprobe_copy_process(struct task_struct *t, unsigned long flag
+>  static inline void uprobe_clear_state(struct mm_struct *mm)
+>  {
+>  }
+> +static inline bool has_uprobes(struct vm_area_struct *vma, unsigned long start,
+> +			       unsgined long end)
+> +{
+> +	return false;
+> +}
+>  #endif /* !CONFIG_UPROBES */
+>  #endif	/* _LINUX_UPROBES_H */
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index aed1ba5..568481c 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -1114,22 +1114,31 @@ int uprobe_mmap(struct vm_area_struct *vma)
+>  	return !!n;
+>  }
+>  
+> -/*
+> - * Called in context of a munmap of a vma.
+> - */
+> -void uprobe_munmap(struct vm_area_struct *vma, unsigned long start, unsigned long end)
+> +bool
+> +has_uprobes(struct vm_area_struct *vma, unsigned long start, unsigned long end)
+
+The name is not really great...
+
+>  {
+>  	if (no_uprobe_events() || !valid_vma(vma, false))
+> -		return;
+> +		return false;
+>  
+>  	if (!atomic_read(&vma->vm_mm->mm_users)) /* called by mmput() ? */
+> -		return;
+> +		return false;
+>  
+>  	if (!test_bit(MMF_HAS_UPROBES, &vma->vm_mm->flags) ||
+>  	     test_bit(MMF_RECALC_UPROBES, &vma->vm_mm->flags))
+
+This means that vma might have uprobes, but since RECALC is already set,
+we don't need to set it again. That's different from "has uprobes".
+
+Perhaps something like vma_needs_recalc_uprobes() ?
+
+But I also worry there might be a race where we initially return false
+because of MMF_RECALC_UPROBES, then the flag is cleared while vma's
+still have uprobes, then we downgrade mmap_sem and skip uprobe_munmap().
+Should be checked if e.g. mmap_sem and vma visibility changes protects
+this case from happening.
+
+> -		return;
+> +		return false;
+>  
+>  	if (vma_has_uprobes(vma, start, end))
+> +		return true;
 > +
-> +			if (!IS_ENABLED(CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION))
-> +				goto unmovable;
+> +	return false;
+
+Simpler:
+	return vma_has_uprobes(vma, start, end);
+
+> +}
 > +
->  			iter = round_up(iter + 1, 1<<compound_order(page)) - 1;
->  			continue;
->  		}
+> +/*
+> + * Called in context of a munmap of a vma.
+> + */
+> +void uprobe_munmap(struct vm_area_struct *vma, unsigned long start, unsigned long end)
+> +{
+> +	if (has_uprobes(vma, start, end))
+>  		set_bit(MMF_RECALC_UPROBES, &vma->vm_mm->flags);
+>  }
+>  
 > 
-> 
-> The problem is start_isolate_range, doesn't look at hugetlbpage and
-> return error if the architecture didn't support HUGEPAGE migration. 
 
-Yes this makes sense. I didn't really have arches without huge page
-migration in mind.
- 
-> Now discussing with Naoya, I was suggsting whether we should add a
-> similar check in 
-> 
-> modified   mm/memory_hotplug.c
-> @@ -1338,7 +1338,8 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
->  				return pfn;
->  			if (__PageMovable(page))
->  				return pfn;
-> -			if (PageHuge(page)) {
-> +			if (IS_ENABLED(CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION) &&
-> +			    PageHuge(page)) {
->  				if (page_huge_active(page))
->  					return pfn;
-> 
-> One of the thinking there is it possible to get new hugetlb pages
-> allocated in that range after start_isolate_range ran. But i guess since
-> we marked all the free pages as  MIGRATE_ISOLATE that is not possible?
-
-I do not follow. You are usually allocating new pages outside of the
-offlined range. But the above change makes sense because it doesn't
-really make sense to migrate pfn if it is backed by a non-migrateable
-huge page. dissolve_free_huge_pages should then try to remove it
-completely and the offlining fails if that is not possible.
-
-> But then it is good to have scan_movable_pages also check for
-> HUGEPAGE_MIGRATION?
-
-Good question. It is not necessary right now because has_unmovable_pages
-called earlier should take care of it. But I guess it will not hurt to
-have it there as well for the clarity.
-
-> 
-> Complete patch below.
-> 
-> commit 2e9d754ac211f2af3731f15df3cd8cd070b4cc54
-> Author: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> Date:   Tue Aug 21 14:17:55 2018 +0530
-> 
->     mm/hugetlb: filter out hugetlb pages if HUGEPAGE migration is not supported.
->     
->     When scanning for movable pages, filter out Hugetlb pages if hugepage migration
->     is not supported. Without this we hit infinte loop in __offline pages where we
->     do
->             pfn = scan_movable_pages(start_pfn, end_pfn);
->             if (pfn) { /* We have movable pages */
->                     ret = do_migrate_range(pfn, end_pfn);
->                     goto repeat;
->             }
->     
->     We do support hugetlb migration ony if the hugetlb pages are at pmd level. Here
->     we just check for Kernel config. The gigantic page size check is done in
->     page_huge_active.
-
-That being said. The patch makes sense to me.
-
->     
->     Reported-by: Haren Myneni <haren@linux.vnet.ibm.com>
->     CC: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
->     Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-
-I guess we should mark it for stable even though I am not sure how often
-do we see CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION=n
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 4eb6e824a80c..f9bdea685cf4 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1338,7 +1338,8 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
->  				return pfn;
->  			if (__PageMovable(page))
->  				return pfn;
-> -			if (PageHuge(page)) {
-> +			if (IS_ENABLED(CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION) &&
-> +			    PageHuge(page)) {
->  				if (page_huge_active(page))
->  					return pfn;
->  				else
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 15ea511fb41c..a3f81e18c882 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -7649,6 +7649,10 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
->  		 * handle each tail page individually in migration.
->  		 */
->  		if (PageHuge(page)) {
-> +
-> +			if (!IS_ENABLED(CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION))
-> +				goto unmovable;
-> +
->  			iter = round_up(iter + 1, 1<<compound_order(page)) - 1;
->  			continue;
->  		}
-
--- 
-Michal Hocko
-SUSE Labs
