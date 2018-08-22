@@ -3,105 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 407B1C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5299FC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E062B21486
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:14:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0144021486
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:16:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVOl4XDa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E062B21486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R02GwzJs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0144021486
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbeHVTk1 (ORCPT
+        id S1726989AbeHVTmT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 15:40:27 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:45885 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726550AbeHVTk1 (ORCPT
+        Wed, 22 Aug 2018 15:42:19 -0400
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:39457 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726770AbeHVTmT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 15:40:27 -0400
-Received: by mail-oi0-f67.google.com with SMTP id q11-v6so4059000oic.12
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 09:14:56 -0700 (PDT)
+        Wed, 22 Aug 2018 15:42:19 -0400
+Received: by mail-wm0-f45.google.com with SMTP id q8-v6so2787783wmq.4;
+        Wed, 22 Aug 2018 09:16:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:reply-to:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=VS1A7bLCIWNvTzvuZ91/aHyl1f06W9G+5OLr/SYTWGY=;
-        b=hVOl4XDaa0gNa7Gh76LbDTmy8OFYNFt1mAMUogJvCgNFRJsEPRVxJBwyy/pIKIgjwQ
-         +BsLjivnSTvUkEkw5sFS160ZtftuVzBBhTEvlM8dtanqrYlaQTdl30wgTpV0Xzp7kkAl
-         aHYx1C6tTsfHTbsQWvC+2EuSrROyyLO2iyZ6OqoV3AsXcBz7VK9lwHETKcMgoCGHqRqe
-         DAKyCDpIpen0KMnP7JVuI2mce28y+hAlpBCxi9qhBMD2SoKvPpBOj8BYNvba+MXqhXwR
-         2Fn5fI2KWTB4I+Kw7FMYcZ/cGA7rLC4LaOJO2+gKiSkeOw8hFWHqtbPGzTzGR5xmAWF1
-         to5w==
+        h=sender:from:to:cc:subject:references:date:in-reply-to:message-id
+         :user-agent:mime-version;
+        bh=BSgNjFue3yX1zJii+M050p91Ol/lhrwPaAJ/mgXBTZM=;
+        b=R02GwzJsRIA1xUmoQ3tvLW0tMuM+gIE0pCSpRoyjsRXzf63N/zOG7D+09WOfX7LDYG
+         DXZyXg7LXga0UUJl4Vbew5He9rJ/zAMH5jXMHdWgUOadVNA+nRs3NAlKnWxdxVoHc3mq
+         DNSq/hGdiyTfZ36eoeeaTHyYIhIyujScDLXi/LiVb0sS4xZcmsBAODm/HuZ6oBi3FyVl
+         +eS1YpAR2n0GOLCNKVT2vgtVz0lLbGXJx4iKRS+1q0tg2t/5dIckHB8sjxoAjfXbPWHO
+         aZbw0KRcX3i0CwuCc7HJGaIrZ28j3m/JauGAqbSeUMkpQjMzcbXNJgx6NZy3Yo7lCoao
+         Bgbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:reply-to:subject:to:cc:references:from
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=VS1A7bLCIWNvTzvuZ91/aHyl1f06W9G+5OLr/SYTWGY=;
-        b=E/iUNI9tGXnGqlNKHKv0hqu3FY0ZgjEVYOkqyOtwLQ9tP+pwG4tgpKp0LpnhIQFz98
-         QX4551HyXhg0dSNeiErWGC8mRVENPHZziP3ScItoNxGnFlmVSmLvdeQDo4buShUksiN3
-         QpRvtA6iLjuYb+VROaqYe5XGVvpQyP14knfPWTsg4INK4WSg6lRWb7KB/Rc4RK4dmWOk
-         7eYez0oM/tjh5f9aiIbkyURqWhUz1s+J1/ovDv5al22HpsN/dT+bqTYY1J1kiD5Rqwv6
-         PHtrrMzsMpBMeTMoBCt1Y6zY5EWJSEIjffbxQ+03sW6CF+CoFaQZIF7+xDN/0UzpIaym
-         ubtw==
-X-Gm-Message-State: APzg51DTl37AyGUKhVvfe4cwSIwtFGWp4aZzvml4UZlys/tGOCgnRhkL
-        YB26p2KndNYTXd7z+BT0hg==
-X-Google-Smtp-Source: ANB0VdbFqdiSThq1vQ+KhsfonpE7XDiwcg/NUmMDrWzRRZKsR4QrjHwnDsE/C+esRGYXAdnegCEHKg==
-X-Received: by 2002:aca:b702:: with SMTP id h2-v6mr4722034oif.66.1534954495369;
-        Wed, 22 Aug 2018 09:14:55 -0700 (PDT)
-Received: from serve.minyard.net ([47.184.170.128])
-        by smtp.gmail.com with ESMTPSA id 22-v6sm1188222oix.58.2018.08.22.09.14.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Aug 2018 09:14:54 -0700 (PDT)
-Received: from [IPv6:2001:470:b8f6:1b:92c:30c0:5286:7e9] (unknown [IPv6:2001:470:b8f6:1b:92c:30c0:5286:7e9])
-        by serve.minyard.net (Postfix) with ESMTPSA id 7813A79A;
-        Wed, 22 Aug 2018 11:14:53 -0500 (CDT)
-Reply-To: minyard@acm.org
-Subject: Re: [RFC] IPMI state machine regression
-To:     Andrew Banman <abanman@hpe.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     justin.ernst@hpe.com, rja@hpe.com, frank.ramsay@hpe.com,
-        openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-References: <20180821221443.hhgcnzw6xttaih3i@linux-tqvx.americas.hpqcorp.net>
-From:   Corey Minyard <minyard@acm.org>
-Message-ID: <a72a169e-ce1b-500c-7910-b400c7842033@acm.org>
-Date:   Wed, 22 Aug 2018 11:14:52 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:sender:from:to:cc:subject:references:date
+         :in-reply-to:message-id:user-agent:mime-version;
+        bh=BSgNjFue3yX1zJii+M050p91Ol/lhrwPaAJ/mgXBTZM=;
+        b=FQQ0xCXiXH8gJ7cRPwpZ1XjWxIzitFUJrIN23o2YPKAClQCV8oi4S1euHCNL4O7IPh
+         nXtVX1+Qo+OSFvlOBEAYEcpF8wRpUaVSvvnPLiW0Y19OOFEGeJbA2XA7RDw9sUH9YWfG
+         tMXNg1LIwxmOK3i6/qJUa5GXA7lTMQGouutSmcU1VG1327F676MiPaqR/ppjtfWkI9s0
+         bjbsWwBO1AM4z7UsUJf5AFPHM/0L26e8z0SljAamqQ8yRVuuSwHubXhQA2kNdhJnaTQo
+         i5ppBUb8nUmDoxDUa66T3t+FYR9y4Z617NfSCYsTxxcWHgQR7h9Vd+n1NoR2YYPCy/z0
+         bm/A==
+X-Gm-Message-State: APzg51BlelVAceRc4eAtqWVC7D7C5S3TP4d3BDb3SMDeXsOW5JihzV0B
+        tMruiOuCwiPC9bDcCkgJnlPoUfNi
+X-Google-Smtp-Source: ANB0VdYs8t6ft0wf+GGCAobkJbwV/wrRejRfKwB64hU6YRFR5ChytxecaY/7kjwCauANDzCQFhKBiw==
+X-Received: by 2002:a1c:c147:: with SMTP id r68-v6mr2834465wmf.161.1534954606139;
+        Wed, 22 Aug 2018 09:16:46 -0700 (PDT)
+Received: from dell.be.48ers.dk (d528f5fe4.static.telenet.be. [82.143.95.228])
+        by smtp.gmail.com with ESMTPSA id x23-v6sm1546907wmh.26.2018.08.22.09.16.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 22 Aug 2018 09:16:45 -0700 (PDT)
+Received: from peko by dell.be.48ers.dk with local (Exim 4.89)
+        (envelope-from <peter@korsgaard.com>)
+        id 1fsVoK-0006Sd-MJ; Wed, 22 Aug 2018 18:16:44 +0200
+From:   Peter Korsgaard <peter@korsgaard.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Federico Vaga <federico.vaga@cern.ch>,
+        Peter Korsgaard <peter.korsgaard@barco.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Korsgaard <jacmet@sunsite.dk>
+Subject: Re: i2c:ocores: fixes and polling mechanism
+References: <20180625161303.7991-1-federico.vaga@cern.ch>
+        <5011687.103nMUzm2u@harkonnen> <20180812153400.GA1010@kunai>
+Date:   Wed, 22 Aug 2018 18:16:44 +0200
+In-Reply-To: <20180812153400.GA1010@kunai> (Wolfram Sang's message of "Sun, 12
+        Aug 2018 17:34:00 +0200")
+Message-ID: <8760022x77.fsf@dell.be.48ers.dk>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180821221443.hhgcnzw6xttaih3i@linux-tqvx.americas.hpqcorp.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/21/2018 05:14 PM, Andrew Banman wrote:
-> Dear IPMI supporters,
->
-> We observe a window in IPMI BT's opportunistic get capabilities request,
-> wherein GET_DEVICE_GUID and GET_DEVICE_ID requests may start while the BT state
-> machine is in WR_CONSUME. Following this, the 0xD5 error code is forced in
-> bt_start_transaction, IPMI fails to initialize, and the interface is torn down.
-> There is no mechanism to retry bringing up the interface in open() /dev/ipmi.
-> This leaves IPMI hosed until you reload modules. Looks to happen after we call
-> schedule().
+>>>>> "Wolfram" == Wolfram Sang <wsa@the-dreams.de> writes:
 
-When was the latest kernel where this worked properly?  Also, what 
-hardware is this?
+ >> sorry to disturb you all but after one month and a half I never received 
+ >> any comment about this patch set and I fear it ended up in a forgotten 
+ >> corner. I would like to know if someone is considering it or not.
 
-BTW, you can use the "hotmod" capability of the IPMI driver to add the 
-device
-dynamically.
+ > Adding Peter to CC using his latest EMail address.
 
--corey
+Thanks! I'll take a look at the patches now.
+
+> Peter, you said you wanted to update MAINTAINERs with the new address?
+
+Sorry, I forgot about it when I left on holidays. Will send now.
+
+-- 
+Bye, Peter Korsgaard
