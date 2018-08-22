@@ -3,106 +3,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FD7C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD46C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBECA21480
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:13:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBECA21480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 402A72148E
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:15:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 402A72148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728558AbeHVNiK (ORCPT
+        id S1728587AbeHVNj5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 09:38:10 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60984 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728236AbeHVNiK (ORCPT
+        Wed, 22 Aug 2018 09:39:57 -0400
+Received: from 15.mo6.mail-out.ovh.net ([188.165.39.161]:54546 "EHLO
+        15.mo6.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728315AbeHVNj5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 09:38:10 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7MA9qaO045854
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 06:13:54 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m14ypj45y-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 06:13:54 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
-        Wed, 22 Aug 2018 11:13:52 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 22 Aug 2018 11:13:49 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MADm6439387174
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 22 Aug 2018 10:13:48 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0C21752054;
-        Wed, 22 Aug 2018 13:13:48 +0100 (BST)
-Received: from [10.0.2.15] (unknown [9.152.224.107])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 4E3D752051;
-        Wed, 22 Aug 2018 13:13:47 +0100 (BST)
-Subject: Re: [PATCH v9 22/22] s390: doc: detailed specifications for AP
- virtualization
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-23-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180820180359.38cc4af3.cohuck@redhat.com>
- <6b83b4da-00eb-c690-e965-a4398dadd0e5@linux.ibm.com>
- <20180821175309.55b774ca.cohuck@redhat.com>
-From:   Harald Freudenberger <freude@linux.ibm.com>
-Date:   Wed, 22 Aug 2018 12:13:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 22 Aug 2018 09:39:57 -0400
+Received: from player771.ha.ovh.net (unknown [10.109.160.12])
+        by mo6.mail-out.ovh.net (Postfix) with ESMTP id A1E78175E32
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 12:15:40 +0200 (CEST)
+Received: from bahia.lan (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
+        (Authenticated sender: groug@kaod.org)
+        by player771.ha.ovh.net (Postfix) with ESMTPSA id 10CA88400AA;
+        Wed, 22 Aug 2018 12:15:24 +0200 (CEST)
+Date:   Wed, 22 Aug 2018 12:15:23 +0200
+From:   Greg Kurz <groug@kaod.org>
+To:     Oleksandr Natalenko <oleksandr@natalenko.name>
+Cc:     Ming Lei <tom.leiming@gmail.com>, Ming Lei <ming.lei@redhat.com>,
+        Omar Sandoval <osandov@fb.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Hannes Reinecke <hare@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        qemu-discuss@nongnu.org, qemu-devel <qemu-devel@nongnu.org>
+Subject: Re: Slow boot in QEMU with virtio-scsi disks
+Message-ID: <20180822121523.4494871d@bahia.lan>
+In-Reply-To: <98344e68266e447826f133ad14d0c83d@natalenko.name>
+References: <f40092b20856d07bd7f870abf5ea939e@natalenko.name>
+        <CACVXFVO1pN=CZvNY8Q4wBrAoA=3w8Ew38aGqpOSHJ1uYAM-sxw@mail.gmail.com>
+        <98344e68266e447826f133ad14d0c83d@natalenko.name>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180821175309.55b774ca.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18082210-0020-0000-0000-000002BA1BC7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082210-0021-0000-0000-000021077151
-Message-Id: <63e80d08-3176-726e-b2ef-826547ac97a9@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=841 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808220104
+X-Ovh-Tracer-Id: 4020588570882513327
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrfedugddviecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-... about control domains
+On Sat, 11 Aug 2018 19:39:56 +0200
+Oleksandr Natalenko <oleksandr@natalenko.name> wrote:
 
-Talked with the s390 firmware guys. The convention that the control domain
-mask is a superset of the usage domain mask is only true for 1st level guests.
+> Hi.
+> 
+> On 11.08.2018 14:23, Ming Lei wrote:
+> > Please test for-4.19/block:
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-4.19/block
+> > 
+> > This slow boot issue should have been fixed by the following commits:
+> > 
+> > 1311326cf475 blk-mq: avoid to synchronize rcu inside 
+> > blk_cleanup_queue()
+> > 97889f9ac24f blk-mq: remove synchronize_rcu() from 
+> > blk_mq_del_queue_tag_set()
+> > 5815839b3ca1 blk-mq: introduce new lock for protecting 
+> > hctx->dispatch_wait
+> > 2278d69f030f blk-mq: don't pass **hctx to blk_mq_mark_tag_wait()
+> > 8ab6bb9ee8d0 blk-mq: cleanup blk_mq_get_driver_tag()  
+> 
+> Indeed, I can confirm that these commits fix the issue.
+> 
+> Thanks a lot.
+> 
 
-It is absolutely valid to run a kvm guest with restricted control domain
-mask bitmap in the CRYCB. It is valid to have an empty control domain mask
-and the guest should be able to run crypto CPRBs on the usage domain(s) without
-any problems. However, nobody has tried this.
+So do I.
 
-regards
-Harald Freudenberger
+Thanks Ming Lei for the fix !
 
+Cheers,
 
+--
+Greg
