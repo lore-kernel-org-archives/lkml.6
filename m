@@ -2,189 +2,311 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F24D3C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5A9C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:28:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A09AF2148E
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:23:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A09AF2148E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1131A2064A
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:28:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1131A2064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728629AbeHVNrh (ORCPT
+        id S1728554AbeHVNwy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 09:47:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44314 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726849AbeHVNrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 09:47:37 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B9FD44023ECB;
-        Wed, 22 Aug 2018 10:23:18 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-68.pek2.redhat.com [10.72.12.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1E4F32166BA1;
-        Wed, 22 Aug 2018 10:23:14 +0000 (UTC)
-Date:   Wed, 22 Aug 2018 18:23:10 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Mike Galbraith <efault@gmx.de>, Baoquan He <bhe@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Kexec Mailing List <kexec@lists.infradead.org>,
-        linux-efi <linux-efi@vger.kernel.org>
-Subject: Re: [PATCH] x86, kdump: Fix efi=noruntime NULL pointer dereference
-Message-ID: <20180822102310.GA19827@dhcp-128-65.nay.redhat.com>
-References: <1533737025.4936.3.camel@gmx.de>
- <20180809042153.GA4377@dhcp-128-65.nay.redhat.com>
- <1533800010.5087.71.camel@gmx.de>
- <20180809091333.GA8008@dhcp-128-65.nay.redhat.com>
- <CAKv+Gu8KKwNkUdx7tSxEosRvydxmQ2yaasHRJn_LcHPs7p2UYQ@mail.gmail.com>
+        Wed, 22 Aug 2018 09:52:54 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59478 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726849AbeHVNwy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 09:52:54 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7MAODKD077720
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 06:28:35 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m14y9jjme-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 06:28:34 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Wed, 22 Aug 2018 11:28:33 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 22 Aug 2018 11:28:29 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MASSYk32964834
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 Aug 2018 10:28:28 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4F3A452052;
+        Wed, 22 Aug 2018 13:28:28 +0100 (BST)
+Received: from [9.195.41.244] (unknown [9.195.41.244])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id EB2EA52050;
+        Wed, 22 Aug 2018 13:28:24 +0100 (BST)
+Subject: Re: [PATCH] trace_uprobe: support reference count in fd-based uprobe
+To:     Song Liu <songliubraving@fb.com>, linux-kernel@vger.kernel.org
+Cc:     kernel-team@fb.com, Masami Hiramatsu <mhiramat@kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Teng Qin <qinteng@fb.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180821222307.1071060-1-songliubraving@fb.com>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Wed, 22 Aug 2018 15:58:20 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu8KKwNkUdx7tSxEosRvydxmQ2yaasHRJn_LcHPs7p2UYQ@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 22 Aug 2018 10:23:18 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 22 Aug 2018 10:23:18 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
+In-Reply-To: <20180821222307.1071060-1-songliubraving@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18082210-4275-0000-0000-000002AD92E9
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082210-4276-0000-0000-000037B69786
+Message-Id: <aa068d01-c776-894f-0a7e-b81da1f624c2@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808220106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/21/18 at 03:39pm, Ard Biesheuvel wrote:
-> On 9 August 2018 at 11:13, Dave Young <dyoung@redhat.com> wrote:
-> > On 08/09/18 at 09:33am, Mike Galbraith wrote:
-> >> On Thu, 2018-08-09 at 12:21 +0800, Dave Young wrote:
-> >> > Hi Mike,
-> >> >
-> >> > Thanks for the patch!
-> >> > On 08/08/18 at 04:03pm, Mike Galbraith wrote:
-> >> > > When booting with efi=noruntime, we call efi_runtime_map_copy() while
-> >> > > loading the kdump kernel, and trip over a NULL efi.memmap.map.  Avoid
-> >> > > that and a useless allocation when the only mapping we can use (1:1)
-> >> > > is not available.
-> >> >
-> >> > At first glance, efi_get_runtime_map_size should return 0 in case
-> >> > noruntime.
-> >>
-> >> What efi does internally at unmap time is to leave everything except
-> >> efi.mmap.map untouched, setting it to NULL and turning off EFI_MEMMAP,
-> >> rendering efi.mmap.map accessors useless/unsafe without first checking
-> >> EFI_MEMMAP.
-> >
-> > Probably the x86 efi_init should reset nr_map to zero in case runtime is
-> > disabled.  But let's see how Ard thinks about this and cc linux-efi.
-> >
-> > As for efi_get_runtime_map_size, it was introduced for x86 kexec use.
-> > for copying runtime maps,  so I think it is reasonable this function
-> > return zero in case no runtime.
-> >
-> 
-> I don't see the patch in the context so I cannot comment in great detail.
 
-The patch is below:
-https://lore.kernel.org/lkml/1533737025.4936.3.camel@gmx.de
+
+On 08/22/2018 03:53 AM, Song Liu wrote:
+> This patch applies on top of Ravi Bangoria's work that enables reference
+> count for uprobe:
+> 
+>   https://lkml.org/lkml/2018/8/20/37
+> 
+> After Ravi's work, the effort to enable it in fd-based uprobe is straight
+> forward. Highest 40 bits of perf_event_attr.config is used to stored offset
+> of the reference count (semaphore).
+> 
+> Format information in /sys/bus/event_source/devices/uprobe/format/ is
+> updated to reflect this new feature.
+
+LGTM
+
+Reviewed-and-tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+
 
 > 
-> In any case, it is better to decouple EFI_MEMMAP from EFI_RUNTIME
-> dependencies. On x86, one may imply the other, but this is not
-> generally the case.
+> Signed-off-by: Song Liu <songliubraving@fb.com>
+> Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+> Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+> Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Teng Qin <qinteng@fb.com>
+> ---
+>  include/linux/trace_events.h    |  3 +-
+>  kernel/events/core.c            | 49 ++++++++++++++++++++++++++-------
+>  kernel/trace/trace_event_perf.c |  7 +++--
+>  kernel/trace/trace_probe.h      |  3 +-
+>  kernel/trace/trace_uprobe.c     |  4 ++-
+>  5 files changed, 50 insertions(+), 16 deletions(-)
 > 
-> That means that efi_get_runtime_map_size() should probably check the
-> EFI_RUNTIME flag, and return 0 if it is cleared. Perhaps there are
-> other places where EFI_MEMMAP flag checks are missing, but I consider
-> that a separate issue.
-
-Yes, I also agree with to check EFI_RUNTIME_SERVICES. There is no point for
-efi_get_runtime_map_size to return a value other than 0 in case EFI_RUNTIME_SERVICES
-is not set ie. via efi=noruntime
-
-Is below patch acceptable?  The copy function can be changed to return
-an error in case map size == 0, but that can be done later along with
-the caller size cleanups in kexec code
----------------------------------------------------------------------------
-
-efi: check EFI_RUNTIME_SERVICES flag in runtime map copying code
-
-Mike reported a kexec_file_load NULL pointer dereference bug like below:
-[    5.878262] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-[    5.879868] PGD 800000013c1f1067 P4D 800000013c1f1067 PUD 13aea7067 PMD 0 
-[    5.881225] Oops: 0000 [#1] SMP PTI
-[    5.882068] Modules linked in:
-[    5.882851] CPU: 0 PID: 394 Comm: kexec Kdump: loaded Not tainted 4.17.0-rc2+ #648
-[    5.884333] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
-[    5.885843] RIP: 0010:memcpy_erms+0x6/0x10
-[    5.886789] RSP: 0018:ffffc9000058bd00 EFLAGS: 00010246
-[    5.887899] RAX: ffff880138e050b0 RBX: 00000000000980b0 RCX: 0000000000000ba0
-[    5.889304] RDX: 0000000000000ba0 RSI: 0000000000000000 RDI: ffff880138e050b0
-[    5.890977] RBP: ffff880138e04000 R08: 0000000000000017 R09: 0000000000000002
-[    5.892524] R10: 0000000000099000 R11: 00000000000052d0 R12: 0000000039400200
-[    5.893967] R13: ffff880138e05000 R14: 0000000000000ba0 R15: ffffc90000a4d000
-[    5.895378] FS:  00007f167c9e6740(0000) GS:ffff88013fc00000(0000) knlGS:0000000000000000
-[    5.896953] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    5.898143] CR2: 0000000000000000 CR3: 000000013c3ec002 CR4: 00000000001606f0
-[    5.899542] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[    5.900962] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[    5.902552] Call Trace:
-[    5.903267]  efi_runtime_map_copy+0x28/0x30
-[    5.904956]  bzImage64_load+0x59d/0x736
-[    5.906881]  ? arch_kexec_kernel_image_load+0x6d/0x70
-[    5.908243]  ? __se_sys_kexec_file_load+0x24b/0x750
-[    5.909352]  ? _cond_resched+0x19/0x30
-[    5.910286]  ? do_syscall_64+0x65/0x180
-[    5.911229]  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[    5.912365] Code: 90 90 90 90 90 eb 1e 0f 1f 00 48 89 f8 48 89 d1 48 c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 c3 66 0f 1f 44 00 00 48 89 f8 48 89 d1 <f3> a4 c3 0f 1f 80 00 00 00 00 48 89 f8 48 83 fa 20 72 7e 40 38 
-[    5.916235] RIP: memcpy_erms+0x6/0x10 RSP: ffffc9000058bd00
-[    5.917507] CR2: 0000000000000000
-[    5.918762] ---[ end trace 5cf4c4b3b93d7fdd ]---
-
-Changing efi_get_runtime_map_size to return 0 in case runtime is
-disabled.
-
-Also moving to check EFI_RUNTIME_SERVICES in efi_runtime_map_copy 
-
-Signed-off-by: Dave Young <dyoung@redhat.com>
----
- drivers/firmware/efi/runtime-map.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
---- linux-x86.orig/drivers/firmware/efi/runtime-map.c
-+++ linux-x86/drivers/firmware/efi/runtime-map.c
-@@ -138,12 +138,18 @@ add_sysfs_runtime_map_entry(struct kobje
- 
- int efi_get_runtime_map_size(void)
- {
--	return efi.memmap.nr_map * efi.memmap.desc_size;
-+	if (efi_enabled(EFI_RUNTIME_SERVICES))
-+		return efi.memmap.nr_map * efi.memmap.desc_size;
-+
-+	return 0;
- }
- 
- int efi_get_runtime_map_desc_size(void)
- {
--	return efi.memmap.desc_size;
-+	if (efi_enabled(EFI_RUNTIME_SERVICES))
-+		return efi.memmap.desc_size;
-+
-+	return 0;
- }
- 
- int efi_runtime_map_copy(void *buf, size_t bufsz)
-@@ -163,7 +169,7 @@ int __init efi_runtime_map_init(struct k
- 	struct efi_runtime_map_entry *entry;
- 	efi_memory_desc_t *md;
- 
--	if (!efi_enabled(EFI_MEMMAP))
-+	if (!efi_enabled(EFI_RUNTIME_SERVICES))
- 		return 0;
- 
- 	map_entries = kcalloc(efi.memmap.nr_map, sizeof(entry), GFP_KERNEL);
+> diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+> index 78a010e19ed4..4130a5497d40 100644
+> --- a/include/linux/trace_events.h
+> +++ b/include/linux/trace_events.h
+> @@ -575,7 +575,8 @@ extern int bpf_get_kprobe_info(const struct perf_event *event,
+>  			       bool perf_type_tracepoint);
+>  #endif
+>  #ifdef CONFIG_UPROBE_EVENTS
+> -extern int  perf_uprobe_init(struct perf_event *event, bool is_retprobe);
+> +extern int  perf_uprobe_init(struct perf_event *event,
+> +			     unsigned long ref_ctr_offset, bool is_retprobe);
+>  extern void perf_uprobe_destroy(struct perf_event *event);
+>  extern int bpf_get_uprobe_info(const struct perf_event *event,
+>  			       u32 *fd_type, const char **filename,
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 8f0434a9951a..75a0219be420 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -8363,30 +8363,39 @@ static struct pmu perf_tracepoint = {
+>   *
+>   * PERF_PROBE_CONFIG_IS_RETPROBE if set, create kretprobe/uretprobe
+>   *                               if not set, create kprobe/uprobe
+> + *
+> + * The following values specify a reference counter (or semaphore in the
+> + * terminology of tools like dtrace, systemtap, etc.) Userspace Statically
+> + * Defined Tracepoints (USDT). Currently, we use 40 bit for the offset.
+> + *
+> + * PERF_UPROBE_REF_CTR_OFFSET_BITS	# of bits in config as th offset
+> + * PERF_UPROBE_REF_CTR_OFFSET_SHIFT	# of bits to shift left
+>   */
+>  enum perf_probe_config {
+>  	PERF_PROBE_CONFIG_IS_RETPROBE = 1U << 0,  /* [k,u]retprobe */
+> +	PERF_UPROBE_REF_CTR_OFFSET_BITS = 40,
+> +	PERF_UPROBE_REF_CTR_OFFSET_SHIFT = 64 - PERF_UPROBE_REF_CTR_OFFSET_BITS,
+>  };
+>  
+>  PMU_FORMAT_ATTR(retprobe, "config:0");
+> +#endif
+>  
+> -static struct attribute *probe_attrs[] = {
+> +#ifdef CONFIG_KPROBE_EVENTS
+> +static struct attribute *kprobe_attrs[] = {
+>  	&format_attr_retprobe.attr,
+>  	NULL,
+>  };
+>  
+> -static struct attribute_group probe_format_group = {
+> +static struct attribute_group kprobe_format_group = {
+>  	.name = "format",
+> -	.attrs = probe_attrs,
+> +	.attrs = kprobe_attrs,
+>  };
+>  
+> -static const struct attribute_group *probe_attr_groups[] = {
+> -	&probe_format_group,
+> +static const struct attribute_group *kprobe_attr_groups[] = {
+> +	&kprobe_format_group,
+>  	NULL,
+>  };
+> -#endif
+>  
+> -#ifdef CONFIG_KPROBE_EVENTS
+>  static int perf_kprobe_event_init(struct perf_event *event);
+>  static struct pmu perf_kprobe = {
+>  	.task_ctx_nr	= perf_sw_context,
+> @@ -8396,7 +8405,7 @@ static struct pmu perf_kprobe = {
+>  	.start		= perf_swevent_start,
+>  	.stop		= perf_swevent_stop,
+>  	.read		= perf_swevent_read,
+> -	.attr_groups	= probe_attr_groups,
+> +	.attr_groups	= kprobe_attr_groups,
+>  };
+>  
+>  static int perf_kprobe_event_init(struct perf_event *event)
+> @@ -8428,6 +8437,24 @@ static int perf_kprobe_event_init(struct perf_event *event)
+>  #endif /* CONFIG_KPROBE_EVENTS */
+>  
+>  #ifdef CONFIG_UPROBE_EVENTS
+> +PMU_FORMAT_ATTR(ref_ctr_offset, "config:63-24");
+> +
+> +static struct attribute *uprobe_attrs[] = {
+> +	&format_attr_retprobe.attr,
+> +	&format_attr_ref_ctr_offset.attr,
+> +	NULL,
+> +};
+> +
+> +static struct attribute_group uprobe_format_group = {
+> +	.name = "format",
+> +	.attrs = uprobe_attrs,
+> +};
+> +
+> +static const struct attribute_group *uprobe_attr_groups[] = {
+> +	&uprobe_format_group,
+> +	NULL,
+> +};
+> +
+>  static int perf_uprobe_event_init(struct perf_event *event);
+>  static struct pmu perf_uprobe = {
+>  	.task_ctx_nr	= perf_sw_context,
+> @@ -8437,12 +8464,13 @@ static struct pmu perf_uprobe = {
+>  	.start		= perf_swevent_start,
+>  	.stop		= perf_swevent_stop,
+>  	.read		= perf_swevent_read,
+> -	.attr_groups	= probe_attr_groups,
+> +	.attr_groups	= uprobe_attr_groups,
+>  };
+>  
+>  static int perf_uprobe_event_init(struct perf_event *event)
+>  {
+>  	int err;
+> +	unsigned long ref_ctr_offset;
+>  	bool is_retprobe;
+>  
+>  	if (event->attr.type != perf_uprobe.type)
+> @@ -8458,7 +8486,8 @@ static int perf_uprobe_event_init(struct perf_event *event)
+>  		return -EOPNOTSUPP;
+>  
+>  	is_retprobe = event->attr.config & PERF_PROBE_CONFIG_IS_RETPROBE;
+> -	err = perf_uprobe_init(event, is_retprobe);
+> +	ref_ctr_offset = event->attr.config >> PERF_UPROBE_REF_CTR_OFFSET_SHIFT;
+> +	err = perf_uprobe_init(event, ref_ctr_offset, is_retprobe);
+>  	if (err)
+>  		return err;
+>  
+> diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
+> index 69a3fe926e8c..76217bbef815 100644
+> --- a/kernel/trace/trace_event_perf.c
+> +++ b/kernel/trace/trace_event_perf.c
+> @@ -290,7 +290,8 @@ void perf_kprobe_destroy(struct perf_event *p_event)
+>  #endif /* CONFIG_KPROBE_EVENTS */
+>  
+>  #ifdef CONFIG_UPROBE_EVENTS
+> -int perf_uprobe_init(struct perf_event *p_event, bool is_retprobe)
+> +int perf_uprobe_init(struct perf_event *p_event,
+> +		     unsigned long ref_ctr_offset, bool is_retprobe)
+>  {
+>  	int ret;
+>  	char *path = NULL;
+> @@ -312,8 +313,8 @@ int perf_uprobe_init(struct perf_event *p_event, bool is_retprobe)
+>  		goto out;
+>  	}
+>  
+> -	tp_event = create_local_trace_uprobe(
+> -		path, p_event->attr.probe_offset, is_retprobe);
+> +	tp_event = create_local_trace_uprobe(path, p_event->attr.probe_offset,
+> +					     ref_ctr_offset, is_retprobe);
+>  	if (IS_ERR(tp_event)) {
+>  		ret = PTR_ERR(tp_event);
+>  		goto out;
+> diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+> index 5f52668e165d..03b10f3201a5 100644
+> --- a/kernel/trace/trace_probe.h
+> +++ b/kernel/trace/trace_probe.h
+> @@ -412,6 +412,7 @@ create_local_trace_kprobe(char *func, void *addr, unsigned long offs,
+>  extern void destroy_local_trace_kprobe(struct trace_event_call *event_call);
+>  
+>  extern struct trace_event_call *
+> -create_local_trace_uprobe(char *name, unsigned long offs, bool is_return);
+> +create_local_trace_uprobe(char *name, unsigned long offs,
+> +			  unsigned long ref_ctr_offset, bool is_return);
+>  extern void destroy_local_trace_uprobe(struct trace_event_call *event_call);
+>  #endif
+> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> index 3a7c73c40007..d09638706fe0 100644
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -1405,7 +1405,8 @@ static int unregister_uprobe_event(struct trace_uprobe *tu)
+>  
+>  #ifdef CONFIG_PERF_EVENTS
+>  struct trace_event_call *
+> -create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
+> +create_local_trace_uprobe(char *name, unsigned long offs,
+> +			  unsigned long ref_ctr_offset, bool is_return)
+>  {
+>  	struct trace_uprobe *tu;
+>  	struct path path;
+> @@ -1437,6 +1438,7 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
+>  
+>  	tu->offset = offs;
+>  	tu->path = path;
+> +	tu->ref_ctr_offset = ref_ctr_offset;
+>  	tu->filename = kstrdup(name, GFP_KERNEL);
+>  	init_trace_event_call(tu, &tu->tp.call);
+>  
+> 
 
