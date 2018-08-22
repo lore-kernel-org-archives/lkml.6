@@ -2,92 +2,156 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D4FC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A3FC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DB6921486
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:32:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uVzCADEa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DB6921486
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B7E85214C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:34:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7E85214C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729321AbeHVS5g (ORCPT
+        id S1729318AbeHVS7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 14:57:36 -0400
-Received: from mail-yw1-f48.google.com ([209.85.161.48]:45842 "EHLO
-        mail-yw1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729024AbeHVS5f (ORCPT
+        Wed, 22 Aug 2018 14:59:34 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38408 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729021AbeHVS7e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 14:57:35 -0400
-Received: by mail-yw1-f48.google.com with SMTP id p206-v6so784567ywg.12;
-        Wed, 22 Aug 2018 08:32:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=S7jqSq6FlSfYhFE1ODOsxoMWl0vj3raCZZ6tfe0zbvw=;
-        b=uVzCADEa2UjyaUEWmMyT35e9KwvYkhZA/o03t0Wn0lxML/ynp1u2/J+UABbznYcWU6
-         ULu94Clv3mF7h308SfG+KmXgizC1Pl1As/U/q5sH48lz7vesudbMxN1nPj5YG9l2QQba
-         hdLID/SyO4FrbEIBQNhqa0r4feNDcbrkHZk1qXf4MYiaORnNolcuJdrytqJY5N+dg2q1
-         SDhRia1uYMqqA++tLIXxuVw72DsHmWfGpjFZxleG3n4zaZUT4dhxtW9ZOPPwB07Ea8FB
-         2gzmI8ZfDcMfSeNisTUKycnTlFZu6EnnkjD9v9N/tmWiS/kKHkhPtWRRzr+Spy5I48O0
-         eQnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=S7jqSq6FlSfYhFE1ODOsxoMWl0vj3raCZZ6tfe0zbvw=;
-        b=l2Bi7c+OF10ADtOvtsiKbVmPwQU1lSRuuO04MSOrxNmqyaP50mm343z18ictR3ZrqG
-         Ok4cVN8n9ML3QABrJcda/xWuFNPhaC6HdIh2algOTd9lDPXoJapAk1mNI7csZcwu0WLf
-         VyPsduVCovv8W3iIWb8pQbbiHywLL/wW60bn9C2IGRMRjHaAYBZY8IP2j88L+e3D6APh
-         2FykqDLTcHfsCYBZXh7LJip/tvSJKU9gUh132AlRTihElFIpJIjscOA+sK+nQ0YHw/nq
-         2hde9jPu4u+IAKEmLqoSDsx+UEoS4ROYx+MvJFawhKZYxhmi1KCOU7Ynf06xwjyOaq0E
-         Ccyw==
-X-Gm-Message-State: APzg51B6/96psOX6PMYUeALwEV6LAy9bCu5y8I5sxQVPSiCq54MEoyZf
-        LMkFBKNJFEt9TuN1ZPH2Y4o=
-X-Google-Smtp-Source: ANB0Vdbe7jkfa0nkX+2zrbGIMJVflLtT6BYdHxUailhFSvG7l7xb6HGJzLJKjmoJ59efRgRuz1F5zA==
-X-Received: by 2002:a81:6c8a:: with SMTP id h132-v6mr283370ywc.219.1534951933090;
-        Wed, 22 Aug 2018 08:32:13 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::1dc9])
-        by smtp.gmail.com with ESMTPSA id l21-v6sm747862ywb.108.2018.08.22.08.32.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Aug 2018 08:32:12 -0700 (PDT)
-Date:   Wed, 22 Aug 2018 08:32:10 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        Byungchul Park <byungchul.park@lge.com>
-Subject: Re: [PATCH v2 0/2] workqueue lockdep limitations/bugs
-Message-ID: <20180822153210.GV3978217@devbig004.ftw2.facebook.com>
-References: <20180822094904.15718-1-johannes@sipsolutions.net>
+        Wed, 22 Aug 2018 14:59:34 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7MFUkvk020938
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 11:34:11 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m19wcafer-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 11:34:11 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Wed, 22 Aug 2018 16:34:08 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 22 Aug 2018 16:34:05 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MFY3Rs44564672
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 Aug 2018 15:34:03 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8BF52A404D;
+        Wed, 22 Aug 2018 18:34:03 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CDEB4A405B;
+        Wed, 22 Aug 2018 18:34:02 +0100 (BST)
+Received: from [9.152.224.111] (unknown [9.152.224.111])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 22 Aug 2018 18:34:02 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
+ control domains
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+Cc:     Tony Krowiak <akrowiak@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180820162317.08bd7d23.cohuck@redhat.com>
+ <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
+ <20180821172548.57a6c758.cohuck@redhat.com>
+ <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
+ <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
+ <20180822114250.59a250aa.cohuck@redhat.com>
+ <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
+ <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Wed, 22 Aug 2018 17:34:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180822094904.15718-1-johannes@sipsolutions.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18082215-0016-0000-0000-000001FA3E1E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082215-0017-0000-0000-00003250944B
+Message-Id: <f84dbcc0-f627-be02-9933-3baa953adc09@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808220156
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 11:49:02AM +0200, Johannes Berg wrote:
-> This addresses the first two issues.
+On 22/08/2018 17:11, Christian Borntraeger wrote:
 > 
-> The third problem is actually caught when the flush ever does
-> anything, but that might be rare depending on the circumstances,
-> so I still think it'd be nice to catch it somehow, but right now
-> I don't have the time to look into it.
+> 
+> On 08/22/2018 01:03 PM, Pierre Morel wrote:
+>>> That's interesting.
+>>>
+>>>> IMHO this quote is quite a half-full half-empty cup one:
+>>>> * it mandates the set of usage domains is a subset of the set
+>>>> of the control domains, but
+>>>> * it speaks of independent controls, namely about the 'usage domain index'
+>>>> and the 'control domain index list' and makes the enforcement of the rule
+>>>> a job of the administrator (instead of codifying it in the controls).
+>>> I'm wondering if a configuration with a usage domain that is not also a
+>>> control domain is rejected outright? Anybody tried that? :)
+>>
+>> Yes, and no it is not.
+>> We can use a queue (usage domain) to a AP card for SHA-512 or RSA without
+>> having to define the queue as a control domain.
+> 
+> Huh? My HMC allows to add a domain as
+> - control only domain
+> - control and usage domain.
+> 
+> But I am not able to configure a usage-only domain for my LPAR. That seems to match
+> the current code, no?
+> 
 
-Applied to libata/for-4.19.
+Yes, it may not be configurable by the HMC but if we start a guest with 
+no control domain it is not a problem to access the hardware through the 
+usage domain.
 
-Thanks.
+I tested this a long time ago, but tested again today to be sure on my LPAR.
+
+AFAIU adding a control only domain and a control and usage domain
+allows say:
+control and usage domain 1
+control only domain 2
+
+Allow to send a message to domain 2 using queue 1
+
+Allow also to send a domain modifying message to domain 1 using queue 1
+
+control domain are domain which are controlled
+It seems that the HMC enforce the LPARs to have access to their usage 
+domain (AFAIU from Harald)
+
 
 -- 
-tejun
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
+
