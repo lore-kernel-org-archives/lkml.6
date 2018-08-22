@@ -2,139 +2,90 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E62C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AAE5C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:46:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51DC320BEC
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:43:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51DC320BEC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E6F0421480
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:46:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6F0421480
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728719AbeHVNHG convert rfc822-to-8bit (ORCPT
+        id S1728653AbeHVNKR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 09:07:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48820 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728246AbeHVNHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 09:07:06 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6E9C387916;
-        Wed, 22 Aug 2018 09:42:57 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BD18210EE6CB;
-        Wed, 22 Aug 2018 09:42:52 +0000 (UTC)
-Date:   Wed, 22 Aug 2018 11:42:50 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Halil Pasic <pasic@linux.ibm.com>
-Cc:     Tony Krowiak <akrowiak@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
- control domains
-Message-ID: <20180822114250.59a250aa.cohuck@redhat.com>
-In-Reply-To: <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <20180820162317.08bd7d23.cohuck@redhat.com>
-        <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
-        <20180821172548.57a6c758.cohuck@redhat.com>
-        <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
-        <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
-Organization: Red Hat GmbH
+        Wed, 22 Aug 2018 09:10:17 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:50395 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728246AbeHVNKQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 09:10:16 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w7M9ifca020787;
+        Wed, 22 Aug 2018 11:45:43 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2kx8wxausu-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 22 Aug 2018 11:45:43 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8BD1838;
+        Wed, 22 Aug 2018 09:45:40 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5FF574E92;
+        Wed, 22 Aug 2018 09:45:40 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 22 Aug
+ 2018 11:45:40 +0200
+Received: from localhost (10.201.20.5) by webmail-ga.st.com (10.75.90.48) with
+ Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 22 Aug 2018 11:45:39 +0200
+From:   Amelie Delaunay <amelie.delaunay@st.com>
+To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH] ARM: dts: stm32: update rtc st,syscfg property on stm32h743
+Date:   Wed, 22 Aug 2018 11:45:39 +0200
+Message-ID: <1534931139-19817-1-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 22 Aug 2018 09:42:57 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 22 Aug 2018 09:42:57 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 22 Aug 2018 01:18:20 +0200
-Halil Pasic <pasic@linux.ibm.com> wrote:
+To fit with latest rtc driver updates, rtc st,syscfg property must contain
+the control register offset of pwrcfg and the mask corresponding to the
+DBP (Disable Backup Protection) bit.
 
-> On 08/21/2018 07:07 PM, Tony Krowiak wrote:
-> > This convention has been enforced by the kernel since v1. This is also
-> > enforced by both the LPAR as well as in z/VM. The following is from the
-> > PR/SM Planning Guide:
-> > 
-> > Control Domain
-> > A logical partition's control domains are those cryptographic domains for which remote secure
-> > administration functions can be established and administered from this logical partition. This
-> > logical partition’s control domains must include its usage domains. For each index selected in the
-> > usage domain index list, you must select the same index in the control domain index list
-> >   
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+---
+ arch/arm/boot/dts/stm32h743.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-That's interesting.
+diff --git a/arch/arm/boot/dts/stm32h743.dtsi b/arch/arm/boot/dts/stm32h743.dtsi
+index 637beff..cbdd69c 100644
+--- a/arch/arm/boot/dts/stm32h743.dtsi
++++ b/arch/arm/boot/dts/stm32h743.dtsi
+@@ -472,7 +472,7 @@
+ 			interrupt-parent = <&exti>;
+ 			interrupts = <17 IRQ_TYPE_EDGE_RISING>;
+ 			interrupt-names = "alarm";
+-			st,syscfg = <&pwrcfg>;
++			st,syscfg = <&pwrcfg 0x00 0x100>;
+ 			status = "disabled";
+ 		};
+ 
+-- 
+2.7.4
 
-> 
-> IMHO this quote is quite a half-full half-empty cup one:
-> * it mandates the set of usage domains is a subset of the set
-> of the control domains, but
-> * it speaks of independent controls, namely about the 'usage domain index'
-> and the 'control domain index list' and makes the enforcement of the rule
-> a job of the administrator (instead of codifying it in the controls).
-
-I'm wondering if a configuration with a usage domain that is not also a
-control domain is rejected outright? Anybody tried that? :)
-
-> 
-> > 
-> > Consequently, I'm going to opt for ensuring this is clearly documented. Based on the fact you've
-> > requested clarification of many points described in this section of the doc, I
-> > think I'll try putting my meager skills as a wordsmith to work to hopefully clarify things.
-> > I'll run it by you when I complete that task to see if I've succeeded:)  
-> 
-> I don't think just a doc update will do. Let me explain why.
-> 
-> What describe as "... note that the AQM and ADM masks configured for the
-> mediated matrix device will be logically OR'd together to create the ADM
-> stored in the CRYCB referenced from the guest's SIE state description."
-> is a gotcha at best. The member of struct ap_matrix and the member of the
-> respective apcb in the crycb are both called 'adm', but ap_matrix.adm is
-> not an ADM as we know it from the architecture, but rather ~ AQM & ADM.
-> 
-> I feel pretty strongly about this one. If we want to keep the enforcement
-> in the kernel, I guess, the assign_domain should set the bit corresponding
-> bit not only in ap_matrix.aqm but also in ap_matrix.adm. When the
-> ap_matrix is committed into the crycb no further manipulating the masks
-> should take place.
-
-Would you be fine if the control domain interface stated that it is
-used to configure _additional_ control domains and the usage domain
-interface stated that it is used to define usage and implicitly also
-control domains? (And make the usage domain interface also set the
-equivalent bit in the control domain mask.)
-
-> 
-> I don't feel strongly about whether to enforce this convention about AQM
-> and ADM in the kernel or not. Frankly, I don't know what is behind the
-> rule. Since I can't tell if any problems are to be expected if this
-> convention is violated, I would feel more comfortable if the rule was
-> accommodated higher in the management stack.
-
-I guess it depends:
-
-- If this is a case of: "Don't configure control domains that are not
-  also usage domains. You are likely to go through
-  {code,firmware,hardware} paths that are generally not used.",
-  configure it in the kernel.
-- If this rather is "Everybody is doing that, it's a general
-  convention.", configure it higher up in the stack (libvirt?)
