@@ -2,147 +2,171 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13AB3C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73507C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:12:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3C892148C
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:11:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="QKqVpr0B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3C892148C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 2F990214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:12:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F990214FF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729390AbeHVShO (ORCPT
+        id S1729406AbeHVShV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 14:37:14 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:50372 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729040AbeHVShO (ORCPT
+        Wed, 22 Aug 2018 14:37:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42904 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729040AbeHVShU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 14:37:14 -0400
-Received: by mail-it0-f67.google.com with SMTP id j81-v6so3305351ite.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 08:11:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=f8qXEv1/YtiJMHEiJveOQf7NBm42ALITvloNbYdGuPs=;
-        b=QKqVpr0BQkia/weP80H2VH8G/dkylKCgk1Qt3mYiRF/mHyLmCcRWVRNR+h4K9s0QHP
-         G0i0kAo9T886FXOXay8y6bjJuUgOySJ+YDBissSiR93MNamwBfz3VIsXmvXwga0iZdLK
-         IR6etcKTUXONF6f1pvrnZF5ZMWtAgET78aNBE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=f8qXEv1/YtiJMHEiJveOQf7NBm42ALITvloNbYdGuPs=;
-        b=j1y0LMbfaglV7rAAuZJwsQaCYqtECOpLLUZ/gbi/VJjhNSuX5bgwfm1x7LvCSBm8Yf
-         gOZFX14Uw3zfuMphcKhMcvLAJvqr0ay9XFDrhoBn0F1oMwaEl5jkUl1GM2zmIIz8UWsd
-         Oh3J1S+97RSvDY0JWrQ3aJKHfiEfQ5VylNqdrAq7gZ+sPZn2a6XtkdvAu9oY3cXLktPG
-         dkQ5SkWqpulzBLhlGsrHqYUdbYL7/se2s57YldTIaMk9ghTL3MazdJu4eSvxvNjsGJb+
-         GQuyhuIFQp+bMdeSLdnSQLolwfTcAfla1oQR/c08k+kFYv2lGNCtRuiLILdz217nsN25
-         dsJQ==
-X-Gm-Message-State: APzg51C/u2t7GdH/1PC5v5LpGNiu9tIXOvHoYezyWio1YQnBmBsRFc8j
-        9l3Cun8xYpa8KAHy5ywq+TPfZW4upF0GE5ZFtk2RaA==
-X-Google-Smtp-Source: ANB0VdY4GsmPcIlkP3kBq8vvcLehcTc9Y0Do/kTPf8n+GdKrt6xwj38s9PIGCS2W3b7jkKobgzGRtdutAN1tcbrNtEE=
-X-Received: by 2002:a24:6c04:: with SMTP id w4-v6mr3652678itb.4.1534950716413;
- Wed, 22 Aug 2018 08:11:56 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4f:e502:0:0:0:0:0 with HTTP; Wed, 22 Aug 2018 08:11:55
- -0700 (PDT)
-X-Originating-IP: [212.51.149.109]
-In-Reply-To: <20180822145924.GA13763@intel.com>
-References: <20180821161611.10424-1-brian.starkey@arm.com> <20180821162639.GA21697@bombadil.infradead.org>
- <20180821164416.GA11553@e107564-lin.cambridge.arm.com> <20180822145924.GA13763@intel.com>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+        Wed, 22 Aug 2018 14:37:20 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7MFAWjw098628
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 11:12:03 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m18gyd9k9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 11:12:02 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Wed, 22 Aug 2018 16:12:00 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 22 Aug 2018 16:11:58 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MFBuVC40960126
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 Aug 2018 15:11:56 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9214A11C05C;
+        Wed, 22 Aug 2018 18:11:56 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D6A4F11C052;
+        Wed, 22 Aug 2018 18:11:55 +0100 (BST)
+Received: from oc7330422307.ibm.com (unknown [9.152.224.87])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 22 Aug 2018 18:11:55 +0100 (BST)
+Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
+ control domains
+To:     pmorel@linux.ibm.com, Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+Cc:     Tony Krowiak <akrowiak@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180820162317.08bd7d23.cohuck@redhat.com>
+ <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
+ <20180821172548.57a6c758.cohuck@redhat.com>
+ <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
+ <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
+ <20180822114250.59a250aa.cohuck@redhat.com>
+ <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ xsFNBE6cPPgBEAC2VpALY0UJjGmgAmavkL/iAdqul2/F9ONz42K6NrwmT+SI9CylKHIX+fdf
+ J34pLNJDmDVEdeb+brtpwC9JEZOLVE0nb+SR83CsAINJYKG3V1b3Kfs0hydseYKsBYqJTN2j
+ CmUXDYq9J7uOyQQ7TNVoQejmpp5ifR4EzwIFfmYDekxRVZDJygD0wL/EzUr8Je3/j548NLyL
+ 4Uhv6CIPf3TY3/aLVKXdxz/ntbLgMcfZsDoHgDk3lY3r1iwbWwEM2+eYRdSZaR4VD+JRD7p8
+ 0FBadNwWnBce1fmQp3EklodGi5y7TNZ/CKdJ+jRPAAnw7SINhSd7PhJMruDAJaUlbYaIm23A
+ +82g+IGe4z9tRGQ9TAflezVMhT5J3ccu6cpIjjvwDlbxucSmtVi5VtPAMTLmfjYp7VY2Tgr+
+ T92v7+V96jAfE3Zy2nq52e8RDdUo/F6faxcumdl+aLhhKLXgrozpoe2nL0Nyc2uqFjkjwXXI
+ OBQiaqGeWtxeKJP+O8MIpjyGuHUGzvjNx5S/592TQO3phpT5IFWfMgbu4OreZ9yekDhf7Cvn
+ /fkYsiLDz9W6Clihd/xlpm79+jlhm4E3xBPiQOPCZowmHjx57mXVAypOP2Eu+i2nyQrkapaY
+ IdisDQfWPdNeHNOiPnPS3+GhVlPcqSJAIWnuO7Ofw1ZVOyg/jwARAQABzTRDaHJpc3RpYW4g
+ Qm9ybnRyYWVnZXIgKElCTSkgPGJvcm50cmFlZ2VyQGRlLmlibS5jb20+wsF4BBMBAgAiBQJO
+ nDz4AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRARe7yAtaYcfOYVD/9sqc6ZdYKD
+ bmDIvc2/1LL0g7OgiA8pHJlYN2WHvIhUoZUIqy8Sw2EFny/nlpPVWfG290JizNS2LZ0mCeGZ
+ 80yt0EpQNR8tLVzLSSr0GgoY0lwsKhAnx3p3AOrA8WXsPL6prLAu3yJI5D0ym4MJ6KlYVIjU
+ ppi4NLWz7ncA2nDwiIqk8PBGxsjdc/W767zOOv7117rwhaGHgrJ2tLxoGWj0uoH3ZVhITP1z
+ gqHXYaehPEELDV36WrSKidTarfThCWW0T3y4bH/mjvqi4ji9emp1/pOWs5/fmd4HpKW+44tD
+ Yt4rSJRSa8lsXnZaEPaeY3nkbWPcy3vX6qafIey5d8dc8Uyaan39WslnJFNEx8cCqJrC77kI
+ vcnl65HaW3y48DezrMDH34t3FsNrSVv5fRQ0mbEed8hbn4jguFAjPt4az1xawSp0YvhzwATJ
+ YmZWRMa3LPx/fAxoolq9cNa0UB3D3jmikWktm+Jnp6aPeQ2Db3C0cDyxcOQY/GASYHY3KNra
+ z8iwS7vULyq1lVhOXg1EeSm+lXQ1Ciz3ub3AhzE4c0ASqRrIHloVHBmh4favY4DEFN19Xw1p
+ 76vBu6QjlsJGjvROW3GRKpLGogQTLslbjCdIYyp3AJq2KkoKxqdeQYm0LZXjtAwtRDbDo71C
+ FxS7i/qfvWJv8ie7bE9A6Wsjn87BTQROnDz4ARAAmPI1e8xB0k23TsEg8O1sBCTXkV8HSEq7
+ JlWz7SWyM8oFkJqYAB7E1GTXV5UZcr9iurCMKGSTrSu3ermLja4+k0w71pLxws859V+3z1jr
+ nhB3dGzVZEUhCr3EuN0t8eHSLSMyrlPL5qJ11JelnuhToT6535cLOzeTlECc51bp5Xf6/XSx
+ SMQaIU1nDM31R13o98oRPQnvSqOeljc25aflKnVkSfqWSrZmb4b0bcWUFFUKVPfQ5Z6JEcJg
+ Hp7qPXHW7+tJTgmI1iM/BIkDwQ8qe3Wz8R6rfupde+T70NiId1M9w5rdo0JJsjKAPePKOSDo
+ RX1kseJsTZH88wyJ30WuqEqH9zBxif0WtPQUTjz/YgFbmZ8OkB1i+lrBCVHPdcmvathknAxS
+ bXL7j37VmYNyVoXez11zPYm+7LA2rvzP9WxR8bPhJvHLhKGk2kZESiNFzP/E4r4Wo24GT4eh
+ YrDo7GBHN82V4O9JxWZtjpxBBl8bH9PvGWBmOXky7/bP6h96jFu9ZYzVgIkBP3UYW+Pb1a+b
+ w4A83/5ImPwtBrN324bNUxPPqUWNW0ftiR5b81ms/rOcDC/k/VoN1B+IHkXrcBf742VOLID4
+ YP+CB9GXrwuF5KyQ5zEPCAjlOqZoq1fX/xGSsumfM7d6/OR8lvUPmqHfAzW3s9n4lZOW5Jfx
+ bbkAEQEAAcLBXwQYAQIACQUCTpw8+AIbDAAKCRARe7yAtaYcfPzbD/9WNGVf60oXezNzSVCL
+ hfS36l/zy4iy9H9rUZFmmmlBufWOATjiGAXnn0rr/Jh6Zy9NHuvpe3tyNYZLjB9pHT6mRZX7
+ Z1vDxeLgMjTv983TQ2hUSlhRSc6e6kGDJyG1WnGQaqymUllCmeC/p9q5m3IRxQrd0skfdN1V
+ AMttRwvipmnMduy5SdNayY2YbhWLQ2wS3XHJ39a7D7SQz+gUQfXgE3pf3FlwbwZhRtVR3z5u
+ aKjxqjybS3Ojimx4NkWjidwOaUVZTqEecBV+QCzi2oDr9+XtEs0m5YGI4v+Y/kHocNBP0myd
+ pF3OoXvcWdTb5atk+OKcc8t4TviKy1WCNujC+yBSq3OM8gbmk6NwCwqhHQzXCibMlVF9hq5a
+ FiJb8p4QKSVyLhM8EM3HtiFqFJSV7F+h+2W0kDyzBGyE0D8z3T+L3MOj3JJJkfCwbEbTpk4f
+ n8zMboekuNruDw1OADRMPlhoWb+g6exBWx/YN4AY9LbE2KuaScONqph5/HvJDsUldcRN3a5V
+ RGIN40QWFVlZvkKIEkzlzqpAyGaRLhXJPv/6tpoQaCQQoSAc5Z9kM/wEd9e2zMeojcWjUXgg
+ oWj8A/wY4UXExGBu+UCzzP/6sQRpBiPFgmqPTytrDo/gsUGqjOudLiHQcMU+uunULYQxVghC
+ syiRa+UVlsKmx1hsEg==
 Date:   Wed, 22 Aug 2018 17:11:55 +0200
-Message-ID: <CAKMK7uHxPDfxJaA+1esSW8L2HAjMD6xgF0cMH-nkTjA=6S5+CA@mail.gmail.com>
-Subject: Re: [PATCH] drm/fourcc: Add DOC: overview comment
-To:     Eric Engestrom <eric.engestrom@intel.com>
-Cc:     Brian Starkey <brian.starkey@arm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Dave Airlie <airlied@linux.ie>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Ayan Kumar Halder <ayan.halder@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18082215-0028-0000-0000-000002EE3B07
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082215-0029-0000-0000-000023A77D52
+Message-Id: <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808220154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 4:59 PM, Eric Engestrom
-<eric.engestrom@intel.com> wrote:
-> On Tuesday, 2018-08-21 17:44:17 +0100, Brian Starkey wrote:
->> Hi Matthew,
->>
->> On Tue, Aug 21, 2018 at 09:26:39AM -0700, Matthew Wilcox wrote:
->> > On Tue, Aug 21, 2018 at 05:16:11PM +0100, Brian Starkey wrote:
->> > > There's a number of things which haven't previously been documented
->> > > around the usage of format modifiers. Capture the current
->> > > understanding in an overview comment and add it to the rst
->> > > documentation.
->> > >
->> > > Ideally, the generated documentation would also include documentation
->> > > of all of the #defines, but the kernel-doc system doesn't currently
->> > > support kernel-doc comments on #define constants.
->> >
->> > Can you turn them into enums?  This seems to work ok:
->> >
->> > -/* color index */
->> > -#define DRM_FORMAT_C8          fourcc_code('C', '8', ' ', ' ') /* [7:0] C */
->> > -
->> > -/* 8 bpp Red */
->> > -#define DRM_FORMAT_R8          fourcc_code('R', '8', ' ', ' ') /* [7:0] R */
->> > +enum {
->> > +       /* color index */
->> > +       DRM_FORMAT_C8   = fourcc_code('C', '8', ' ', ' '), /* [7:0] C */
->> > +       /* 8 bpp Red */
->> > +       DRM_FORMAT_R8   = fourcc_code('R', '8', ' ', ' '), /* [7:0] R */
->> > +};
->> >
->> > but I appreciate this is user API and maybe there's some code out there
->> > that does #ifndef DRM_FORMAT_C8 ...
->>
->> Thanks for the suggestion, Daniel did mention the same. However,
->> unfortunately I don't think we can safely change the UAPI header in
->> this manner.
->
-> You could get the best of both worlds by doing both:
->
->   enum {
->     foo = fourcc(...),
->     bar = fourcc(...),
->   }
->   #define foo foo
->   #define bar bar
->
-> It would mean a bit more code though, but that way these would now be
-> enums (with all the advantages of enums vs plain literals) and still
-> pass #ifdef checks :)
->
-> (BTW, on the "maybe there's some code that does #ifdef": I can tell you
-> there is indeed, having written this myself for an out-of-tree driver
-> for customer-modified kernels that may contain additional formats)
 
-Looks reasonable. I'd even put the #define right within each enum line
-(as a reminder so people don't forget to add them. Would happily ack a
-patch to mass-convert, if that ups the odds of good kerneldoc for all
-this.
 
-enum also should support the inline style of kerneldoc (otherwise I
-guess we'd need to fix that first, or it just makes no sense at all).
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+On 08/22/2018 01:03 PM, Pierre Morel wrote:
+>> That's interesting.
+>>
+>>> IMHO this quote is quite a half-full half-empty cup one:
+>>> * it mandates the set of usage domains is a subset of the set
+>>> of the control domains, but
+>>> * it speaks of independent controls, namely about the 'usage domain index'
+>>> and the 'control domain index list' and makes the enforcement of the rule
+>>> a job of the administrator (instead of codifying it in the controls).
+>> I'm wondering if a configuration with a usage domain that is not also a
+>> control domain is rejected outright? Anybody tried that? :)
+> 
+> Yes, and no it is not.
+> We can use a queue (usage domain) to a AP card for SHA-512 or RSA without
+> having to define the queue as a control domain.
+
+Huh? My HMC allows to add a domain as
+- control only domain
+- control and usage domain.
+
+But I am not able to configure a usage-only domain for my LPAR. That seems to match
+the current code, no?
+
