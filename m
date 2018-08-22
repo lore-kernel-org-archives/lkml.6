@@ -2,101 +2,200 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89AD9C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C808EC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:54:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D54221480
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:54:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7993321480
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:54:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LlbCFJVD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D54221480
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rV7ELI3t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7993321480
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728731AbeHVNSy (ORCPT
+        id S1728754AbeHVNS5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 09:18:54 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35121 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728698AbeHVNSy (ORCPT
+        Wed, 22 Aug 2018 09:18:57 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36095 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728698AbeHVNS4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 09:18:54 -0400
-Received: by mail-pg1-f195.google.com with SMTP id z4-v6so704309pgv.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 02:54:43 -0700 (PDT)
+        Wed, 22 Aug 2018 09:18:56 -0400
+Received: by mail-pg1-f196.google.com with SMTP id h17-v6so702049pgv.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 02:54:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Pu6kSVUsOmoXq5Sx6cBotLUTLntQR3P5sBRANpjnOOA=;
-        b=LlbCFJVDGatuPiuszKGg6iC0IGGlsIRtBwtE/9N0zKQyAcqlcQnpXPIMYaNo5fNTk0
-         hvmAPZ0EcnG2u/ca1rpQn+6WamaUI4NLYzGgjCT4r7V4uS1r9cMETpeJf80EYv9kg/Jx
-         Wh2DFf6ENUXc7PQ6Sxm0LFppPqfNILKdcXtcHPu9bZMKuc9fxL2bIdYm9RnfdegKmTb5
-         08IfzG0882OYfwR7SGMvIQ/dcrb+ky1Q1d+GJTL/PiqCNBLCmS1jbyvIapKIGuVCpISX
-         jcjJf9nUtd9AzSwtkT+enqjqfWXELjZ44gllhPA7QJI01QxhvwU4LC9vJLrUP3nN2D2v
-         VvuQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=nGermj8+sJwPauBc9HZkgjRIgnvyjhqzrkyWK3pSIV0=;
+        b=rV7ELI3trNOJJ+Usz+AKPNLYCZ79i7porRjGkA4rLCAKvWNjgTyhFP9C468f4z0gqS
+         vHdP4+ZD1ogDBsjIZhZm5c9Br4R4AeLCBDfOFRy/9Golsk976H+fysrAp+CHdD7mC3Ap
+         UFGHJ6/1n9WvY4eLc0TQ3uOInk3jLgFvucd9WQljg8HMvqaHC7X4NpPDOfxfvprBHiP/
+         0629ETb4y1CKTxT0nbskyPmX0GFTKGDF4R/Ydlc0MpKr+pQw9i6piy3OvC32bKz+2YLj
+         t/5OgsWL3cRucmn9FkJHky9uHzb0LD9WmuOJPUYt0r4KqGrX1asE77ViLPMXm6nm31Pz
+         v4gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Pu6kSVUsOmoXq5Sx6cBotLUTLntQR3P5sBRANpjnOOA=;
-        b=DDCPRpiafcFsSIRWfJvYwncueKCUNjcirhU9pG+YuaTxCEmiWsXq2TW8Mqs6vF/wIv
-         uRcERz8WO4RcVFsViDDesV9L7iJtKhFi0YiYFnMl4G1Usno+OzP/riFOlWEbDxA/yWQD
-         1Fnh8e6RaZhjL61xDfw1s/iTY1U2ToFChjbQoChuh6ZdTSZ69amtQ/lQnVzhA9o5lBcK
-         nmIucDfKQGOywnMSCNOHeuZ5UbnmazNSQC/oEcia4JHBKjQ7T4Fs8+dAcSeb0L9/6Jzc
-         pHv0aCgTPTrAhsYCeh51MyDoGQsVzyPPHXaFEGWYpbsZWlndcxvCp9FPR0LQP6Oo+57p
-         FGPw==
-X-Gm-Message-State: AOUpUlF2Q0IUO1niNwMq1Oc5hy4BnWdG8K/ENR3X5lCownKCEgKyJPOm
-        v8U0Atr88Sp2fiFo5uVx0gg=
-X-Google-Smtp-Source: AA+uWPzlYrIENVQCwdqIRgvcGTVVpclgdHy+zWZgptraQpaJELXWfh6RHdY1n0/qtMU7IdNDYk8RqQ==
-X-Received: by 2002:a63:1a61:: with SMTP id a33-v6mr10372803pgm.9.1534931682890;
-        Wed, 22 Aug 2018 02:54:42 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=nGermj8+sJwPauBc9HZkgjRIgnvyjhqzrkyWK3pSIV0=;
+        b=QCWTOws1dxA3Jejso5D7COBz68qGr3HXKh+qAVU5df0T3swlidyYDmMvFXujUanNhy
+         It79UTOKpNbn4X0TSyAKpKLZKUKz/bdrjPUiwNaHnjWzE/tPq7vmlaVpfQyuIAY69lHS
+         MPFCVxnTT3mcjHMTMaqiKFkwmPcvDJVeu/+5/m20QtpYA1ySZwZic1gaY6vmgDns1coB
+         VFPbC+cc9Asuq5kEppNvhnVahqXEhujfTRtuGKtCXL+fCxf4LF3XYKarVCrMTftokROe
+         538H6lzdx5zAYoe1+uMSc9cLIKnnikPzQ9qAScbcbx+fPN1WjW7RUURzK4sPp8hK0Fq3
+         X5pQ==
+X-Gm-Message-State: AOUpUlEJgaxIvlOBvEFBBnzKapFdIjv8MT2+7KxGyNr9nAHM27opN0dI
+        Ie18/48ad8LSDbz3FGOi1+U=
+X-Google-Smtp-Source: AA+uWPz+1CgboKZ5x/OxT/pWO6AObRXZlcuEFTXtD9NZIoEFEZvMC5jaXm/YBG/E6KvKahVhwiBfXg==
+X-Received: by 2002:a62:be03:: with SMTP id l3-v6mr57028772pff.138.1534931685096;
+        Wed, 22 Aug 2018 02:54:45 -0700 (PDT)
 Received: from toy.corp.qihoo.net ([104.192.108.9])
-        by smtp.gmail.com with ESMTPSA id z20-v6sm3126105pfd.99.2018.08.22.02.54.40
+        by smtp.gmail.com with ESMTPSA id z20-v6sm3126105pfd.99.2018.08.22.02.54.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Aug 2018 02:54:42 -0700 (PDT)
+        Wed, 22 Aug 2018 02:54:44 -0700 (PDT)
 From:   Jun Yao <yaojun8558363@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
         linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v4 0/6] arm64/mm: Move swapper_pg_dir to rodata
-Date:   Wed, 22 Aug 2018 17:54:26 +0800
-Message-Id: <20180822095432.12125-1-yaojun8558363@gmail.com>
+Subject: [RESEND PATCH v4 1/6] arm64/mm: Introduce the init_pg_dir.
+Date:   Wed, 22 Aug 2018 17:54:27 +0800
+Message-Id: <20180822095432.12125-2-yaojun8558363@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180822095432.12125-1-yaojun8558363@gmail.com>
+References: <20180822095432.12125-1-yaojun8558363@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The set_init_mm_pgd() is reimplemented using assembly in order to
-avoid being instrumented by kasan.
+To make the swapper_pg_dir read only, we will move it to the rodata
+section. And force the kernel to set up the initial page table in
+the init_pg_dir. After generating all levels page table, we copy
+only the top level into the swapper_pg_dir during paging_init().
 
-Test following configs with CONFIG_RANDOMIZE_BASE/UNMAP_KERNEL_AT_EL0/
-CONFIG_ARM64_SW_TTBR0_PAN/CONFIG_KASAN_OUTLINE enabled on qemu:
+Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
+---
+ arch/arm64/include/asm/assembler.h | 29 +++++++++++++++++++++++++++++
+ arch/arm64/kernel/head.S           | 22 +++++++++++++++-------
+ arch/arm64/kernel/vmlinux.lds.S    |  8 ++++++++
+ 3 files changed, 52 insertions(+), 7 deletions(-)
 
-	1. CONFIG_ARM64_4K_PAGES/CONFIG_ARM64_VA_BITS_48
-	2. CONFIG_ARM64_4K_PAGES/CONFIG_ARM64_VA_BITS_39
-	3. CONFIG_ARM64_64K_PAGES/CONFIG_ARM64_VA_BITS_48
-	4. CONFIG_ARM64_64K_PAGES/CONFIG_ARM64_VA_BITS_42
-
-Jun Yao (6):
-  arm64/mm: Introduce the init_pg_dir.
-  arm64/mm: Pass ttbr1 as a parameter to __enable_mmu().
-  arm64/mm: Create the initial page table in the init_pg_dir.
-  arm64/mm: Create the final page table directly in swapper_pg_dir.
-  arm64/mm: Populate the swapper_pg_dir by fixmap.
-  arm64/mm: Move {idmap_pg_dir .. swapper_pg_dir} to rodata section.
-
- arch/arm64/include/asm/assembler.h | 29 +++++++++++++
- arch/arm64/include/asm/pgtable.h   | 66 ++++++++++++++++++++++++++----
- arch/arm64/kernel/head.S           | 48 ++++++++++++++--------
- arch/arm64/kernel/sleep.S          |  1 +
- arch/arm64/kernel/vmlinux.lds.S    | 47 ++++++++++++++-------
- arch/arm64/mm/mmu.c                | 45 ++++++++------------
- 6 files changed, 168 insertions(+), 68 deletions(-)
-
+diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+index 0bcc98dbba56..eb363a915c0e 100644
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -456,6 +456,35 @@ USER(\label, ic	ivau, \tmp2)			// invalidate I line PoU
+ 	b.ne	9998b
+ 	.endm
+ 
++/*
++ * clear_page - clear one page
++ *
++ *	start:	page aligned virtual address
++ */
++	.macro clear_page, start:req
++9996:	stp	xzr, xzr, [\start], #16
++	stp	xzr, xzr, [\start], #16
++	stp	xzr, xzr, [\start], #16
++	stp	xzr, xzr, [\start], #16
++	tst	\start, #(PAGE_SIZE - 1)
++	b.ne	9996b
++	.endm
++
++/*
++ * clear_pages - clear contiguous pages
++ *
++ *	start, end: page aligend virtual addresses
++ */
++	.macro clear_pages, start:req, end:req
++	sub	\end, \end, \start
++	lsr	\end, \end, #(PAGE_SHIFT)
++9997:	cbz	\end, 9998f
++	clear_page \start
++	sub	\end, \end, #1
++	b	9997b
++9998:
++	.endm
++
+ /*
+  * Annotate a function as position independent, i.e., safe to be called before
+  * the kernel virtual mapping is activated.
+diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+index b0853069702f..2c83a8c47e3f 100644
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
+@@ -295,18 +295,21 @@ __create_page_tables:
+ 	sub	x1, x1, x0
+ 	bl	__inval_dcache_area
+ 
++	adrp	x0, init_pg_dir
++	adrp	x1, init_pg_end
++	sub	x1, x1, x0
++	bl	__inval_dcache_area
++
+ 	/*
+ 	 * Clear the idmap and swapper page tables.
+ 	 */
+ 	adrp	x0, idmap_pg_dir
+ 	adrp	x1, swapper_pg_end
+-	sub	x1, x1, x0
+-1:	stp	xzr, xzr, [x0], #16
+-	stp	xzr, xzr, [x0], #16
+-	stp	xzr, xzr, [x0], #16
+-	stp	xzr, xzr, [x0], #16
+-	subs	x1, x1, #64
+-	b.ne	1b
++	clear_pages x0, x1
++
++	adrp	x0, init_pg_dir
++	adrp	x1, init_pg_end
++	clear_pages x0, x1
+ 
+ 	mov	x7, SWAPPER_MM_MMUFLAGS
+ 
+@@ -395,6 +398,11 @@ __create_page_tables:
+ 	dmb	sy
+ 	bl	__inval_dcache_area
+ 
++	adrp	x0, init_pg_dir
++	adrp	x1, init_pg_end
++	sub	x1, x1, x0
++	bl	__inval_dcache_area
++
+ 	ret	x28
+ ENDPROC(__create_page_tables)
+ 	.ltorg
+diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
+index 605d1b60469c..61d7cee3eaa6 100644
+--- a/arch/arm64/kernel/vmlinux.lds.S
++++ b/arch/arm64/kernel/vmlinux.lds.S
+@@ -68,6 +68,12 @@ jiffies = jiffies_64;
+ #define TRAMP_TEXT
+ #endif
+ 
++#define INIT_PG_TABLES					\
++	. = ALIGN(PAGE_SIZE);                           \
++	init_pg_dir = .;                                \
++	. += SWAPPER_DIR_SIZE;                          \
++	init_pg_end = .;
++
+ /*
+  * The size of the PE/COFF section that covers the kernel image, which
+  * runs from stext to _edata, must be a round multiple of the PE/COFF
+@@ -161,6 +167,8 @@ SECTIONS
+ 	__inittext_end = .;
+ 	__initdata_begin = .;
+ 
++	INIT_PG_TABLES
++
+ 	.init.data : {
+ 		INIT_DATA
+ 		INIT_SETUP(16)
 -- 
 2.17.1
 
