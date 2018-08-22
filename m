@@ -2,95 +2,198 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 548DFC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE7A0C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:02:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C99920BF3
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:00:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C99920BF3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7CA5A214C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:02:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CA5A214C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbeHVLYO (ORCPT
+        id S1728247AbeHVL0P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 07:24:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57010 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727992AbeHVLYN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 07:24:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 21AE0AEE1;
-        Wed, 22 Aug 2018 08:00:27 +0000 (UTC)
-Date:   Wed, 22 Aug 2018 10:00:25 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
-        "zy.zhengyi@alibaba-inc.com" <zy.zhengyi@alibaba-inc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH v2 0/2] mm: soft-offline: fix race against page allocation
-Message-ID: <20180822080025.GD29735@dhcp22.suse.cz>
-References: <1531805552-19547-1-git-send-email-n-horiguchi@ah.jp.nec.com>
- <20180815154334.f3eecd1029a153421631413a@linux-foundation.org>
- <20180822013748.GA10343@hori1.linux.bs1.fc.nec.co.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180822013748.GA10343@hori1.linux.bs1.fc.nec.co.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 22 Aug 2018 07:26:15 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:50318 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727797AbeHVL0P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 07:26:15 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1fsO5y-0005Yc-KU; Wed, 22 Aug 2018 10:02:26 +0200
+Message-ID: <1534924940.25523.70.camel@sipsolutions.net>
+Subject: Re: [PATCH 1/2] workqueue: skip lockdep wq dependency in
+ cancel_work_sync()
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        kernel-team@lge.com
+Date:   Wed, 22 Aug 2018 10:02:20 +0200
+In-Reply-To: <20180822075010.GA29722@X58A-UD3R>
+References: <20180821160814.GP3978217@devbig004.ftw2.facebook.com>
+         <1534871894.25523.34.camel@sipsolutions.net>
+         <20180821172711.GR3978217@devbig004.ftw2.facebook.com>
+         <1534872621.25523.39.camel@sipsolutions.net>
+         <20180821175550.GS3978217@devbig004.ftw2.facebook.com>
+         <1534879241.25523.44.camel@sipsolutions.net>
+         <20180822024535.GA2414@X58A-UD3R>
+         <1534910543.25523.50.camel@sipsolutions.net>
+         <20180822054731.GB2414@X58A-UD3R>
+         <1534921643.25523.56.camel@sipsolutions.net>
+         <20180822075010.GA29722@X58A-UD3R>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 22-08-18 01:37:48, Naoya Horiguchi wrote:
-> On Wed, Aug 15, 2018 at 03:43:34PM -0700, Andrew Morton wrote:
-> > On Tue, 17 Jul 2018 14:32:30 +0900 Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> wrote:
-> > 
-> > > I've updated the patchset based on feedbacks:
-> > > 
-> > > - updated comments (from Andrew),
-> > > - moved calling set_hwpoison_free_buddy_page() from mm/migrate.c to mm/memory-failure.c,
-> > >   which is necessary to check the return code of set_hwpoison_free_buddy_page(),
-> > > - lkp bot reported a build error when only 1/2 is applied.
-> > > 
-> > >   >    mm/memory-failure.c: In function 'soft_offline_huge_page':
-> > >   > >> mm/memory-failure.c:1610:8: error: implicit declaration of function
-> > >   > 'set_hwpoison_free_buddy_page'; did you mean 'is_free_buddy_page'?
-> > >   > [-Werror=implicit-function-declaration]
-> > >   >        if (set_hwpoison_free_buddy_page(page))
-> > >   >            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > >   >            is_free_buddy_page
-> > >   >    cc1: some warnings being treated as errors
-> > > 
-> > >   set_hwpoison_free_buddy_page() is defined in 2/2, so we can't use it
-> > >   in 1/2. Simply doing s/set_hwpoison_free_buddy_page/!TestSetPageHWPoison/
-> > >   will fix this.
-> > > 
-> > > v1: https://lkml.org/lkml/2018/7/12/968
-> > > 
-> > 
-> > Quite a bit of discussion on these two, but no actual acks or
-> > review-by's?
+On Wed, 2018-08-22 at 16:50 +0900, Byungchul Park wrote:
+
+> > You're basically saying if we don't get to do a wait_for_completion(),
+> > then we don't need any lockdep annotation. I'm saying this isn't true.
 > 
-> Really sorry for late response.
-> Xishi provided feedback on previous version, but no final ack/reviewed-by.
-> This fix should work on the reported issue, but rewriting soft-offlining
-> without PageHWPoison flag would be the better fix (no actual patch yet.)
+> Strictly no. But I'm just talking about the case in wq flush code.
 
-If we can go with the later the I would obviously prefer that. I cannot
-promise to work on the patch though. I can help with reviewing of
-course.
+Sure, I meant it's not true in the wq flush code, not talking about
+anything else.
 
-If this is important enough that people are hitting the issue in normal
-workloads then sure, let's go with the simple fix and continue on top of
-that.
--- 
-Michal Hocko
-SUSE Labs
+> > Consider the following case:
+> > 
+> > work_function()
+> > {
+> > 	mutex_lock(&mutex);
+> > 	mutex_unlock(&mutex);
+> > }
+> > 
+> > other_function()
+> > {
+> > 	queue_work(&my_wq, &work);
+> > 
+> > 	if (common_case) {
+> > 		schedule_and_wait_for_something_that_takes_a_long_time()
+> > 	}
+> > 
+> > 	mutex_lock(&mutex);
+> > 	flush_workqueue(&my_wq);
+> > 	mutex_unlock(&mutex);
+> > }
+> > 
+> > 
+> > Clearly this code is broken, right?
+> > 
+> > However, you'll almost never get lockdep to indicate that, because of
+> > the "if (common_case)".
+> 
+> Sorry I don't catch you. Why is that problem with the example? Please
+> a deadlock example.
+
+sure, I thought that was easy:
+
+thread 1			thread 2 (wq thread)
+
+common_case = false;
+queue_work(&my_wq, &work);
+mutex_lock(&mutex);
+
+flush_workqueue(&my_wq);
+				work_function()
+				-> mutex_lock(&mutex);
+				-> schedule(), wait for mutex
+wait_for_completion()
+
+-> deadlock - we can't make any forward progress here.
+
+
+> > My argument basically is that the lockdep annotations in the workqueue
+> > code should be entirely independent of the actual need to call
+> > wait_for_completion().
+> 
+> No. Lockdep annotations always do with either wait_for_something or self
+> event loop within a single context e.g. fs -> memory reclaim -> fs -> ..
+
+Yes, but I'm saying that we should catch *potential* deadlocks *before*
+they happen.
+
+See the example above. Clearly, you're actually deadlocking, and
+obviously (assuming all the wait_for_completion() things work right)
+lockdep will show why we just deadlocked.
+
+BUT.
+
+This is useless. We want/need lockdep to show *potential* deadlocks,
+even when they didn't happen. Consider the other case in the above
+scenario:
+
+thread 1			thread 2 (wq thread)
+
+common_case = true;
+queue_work(&my_wq, &work);
+
+schedule_and_wait_...();	work_function()
+				-> mutex_lock(&mutex);
+				-> mutex_unlock()
+				done
+
+
+mutex_lock(&mutex);
+flush_workqueue(&my_wq);
+-> nothing to do, will NOT
+   call wait_for_completion();
+
+-> no deadlock
+
+Here we don't have a deadlock, but without the revert we will also not
+get a lockdep report. We should though, because we're doing something
+that's quite clearly dangerous - we simply don't know if the work
+function will complete before we get to flush_workqueue(). Maybe the
+work function has an uncommon case itself that takes forever, etc.
+
+> > Therefore, the commit should be reverted regardless of any cross-release
+> 
+> No. That is necessary only when the wait_for_completion() cannot be
+> tracked in checking dependencies automatically by cross-release.
+
+No. See above. We want the annotation regardless of invoking
+wait_for_completion().
+
+> It might be the key to understand you, could you explain it more why you
+> think lockdep annotations are independent of the actual need to call
+> wait_for_completion()(or wait_for_something_else) hopefully with a
+> deadlock example?
+
+See above.
+
+You're getting too hung up about a deadlock example. We don't want to
+have lockdep only catch *actual* deadlocks. The code I wrote clearly has
+a potential deadlock (sequence given above), but in most cases the code
+above will *not* deadlock. This is the interesting part we want lockdep
+to catch.
+
+> > work (that I neither know and thus don't understand right now), since it
+> > makes workqueue code rely on lockdep for the completion, whereas we
+> 
+> Using wait_for_completion(), right?
+
+Yes.
+
+> > really want to have annotations here even when we didn't actually need
+> > to wait_for_completion().
+> 
+> Please an example of deadlock even w/o wait_for_completion().
+
+No, here's where you get confused. Clearly, there is no lockdep if we
+don't do wait_for_completion(). But if you have the code above, lockdep
+should still warn about the potential deadlock that happens when you
+*do* get to wait_for_completion(). Lockdep shouldn't be restricted to
+warning about a deadlock that *actually* happened.
+
+johannes
