@@ -2,193 +2,236 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB356C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC6ABC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:09:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 665B5214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:08:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WRvJd2sC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 665B5214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 64AC4214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:09:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64AC4214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728785AbeHVOck (ORCPT
+        id S1728832AbeHVOdp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 10:32:40 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:35950 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728603AbeHVOck (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 10:32:40 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7MB7tR7001738;
-        Wed, 22 Aug 2018 06:07:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1534936075;
-        bh=gf4J1Xn8qCdZ5qRyHfC8Z3uovce7hc2tU9H/qgtLzK8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=WRvJd2sC1MtMjrA2ErZtJJFYhislcLEC8yPQI0Bk9xmMgUZNeSClM3z98V1rM6MwQ
-         nPaAZ/samH8qXADNHi4QHaGctjKtRuOCS6VWhx6ooDJQ96i1b65KLnBYifahIz7Tgq
-         DW9evdTaK9PdKehlsdYG8QBxzd55Xxe05ixZJA1I=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7MB7tho025797;
-        Wed, 22 Aug 2018 06:07:55 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 22
- Aug 2018 06:07:54 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 22 Aug 2018 06:07:54 -0500
-Received: from [172.22.219.113] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7MB7mxZ009823;
-        Wed, 22 Aug 2018 06:07:50 -0500
-Subject: Re: [PATCH] soc: ti: pm33xx: Enable DS0 for the platforms on which it
- is functional
-To:     Johan Hovold <johan@kernel.org>, <tony@atomide.com>
-CC:     <d-gerlach@ti.com>, <linux-kernel@vger.kernel.org>,
-        <t-kristo@ti.com>, <ssantosh@kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <1534915951-8783-1-git-send-email-j-keerthy@ti.com>
- <20180822073409.GK14967@localhost> <20180822073719.GL14967@localhost>
- <ae71d45f-9260-3547-5ff2-355c084fcf8e@ti.com>
- <20180822084318.GN14967@localhost>
-From:   "J, KEERTHY" <j-keerthy@ti.com>
-Message-ID: <335b4efe-ab18-df83-35f2-ee232c09f2e3@ti.com>
-Date:   Wed, 22 Aug 2018 16:37:47 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Wed, 22 Aug 2018 10:33:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58600 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728299AbeHVOdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 10:33:44 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B84547A7EA;
+        Wed, 22 Aug 2018 11:09:16 +0000 (UTC)
+Received: from [10.36.117.196] (ovpn-117-196.ams2.redhat.com [10.36.117.196])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 19BA423141;
+        Wed, 22 Aug 2018 11:09:14 +0000 (UTC)
+Subject: Re: [PATCH] KVM: s390: vsie: Consolidate CRYCB validation
+To:     pmorel@linux.ibm.com
+Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+References: <1534925337-18380-1-git-send-email-pmorel@linux.ibm.com>
+ <c410ab24-1f83-21f3-1996-7328aeb3f408@redhat.com>
+ <7de5e991-764e-dec8-648b-6acc42c141e6@linux.ibm.com>
+ <f5261c1a-58f6-68f2-1736-eb13dce863b6@redhat.com>
+ <0032fc9b-4328-1a09-66f5-65f485a8a42f@linux.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <a6a2aec1-33cf-6299-8219-ed5043ba07be@redhat.com>
+Date:   Wed, 22 Aug 2018 13:09:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180822084318.GN14967@localhost>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <0032fc9b-4328-1a09-66f5-65f485a8a42f@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 22 Aug 2018 11:09:16 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 22 Aug 2018 11:09:16 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 8/22/2018 2:13 PM, Johan Hovold wrote:
-> On Wed, Aug 22, 2018 at 01:50:29PM +0530, J, KEERTHY wrote:
->>
->>
->> On 8/22/2018 1:07 PM, Johan Hovold wrote:
->>> On Wed, Aug 22, 2018 at 09:34:09AM +0200, Johan Hovold wrote:
->>>> On Wed, Aug 22, 2018 at 11:02:31AM +0530, Keerthy wrote:
->>>>> Enable DS0 for only those platforms on which it is functional
+On 22.08.2018 12:42, Pierre Morel wrote:
+> On 22/08/2018 10:44, David Hildenbrand wrote:
+>> On 22.08.2018 10:41, Pierre Morel wrote:
+>>> On 22/08/2018 10:25, David Hildenbrand wrote:
+>>>> On 22.08.2018 10:08, Pierre Morel wrote:
+>>>>> Currently when shadowing the CRYCB on SIE entrance, the validation
+>>>>> tests the following:
+>>>>> - accept only FORMAT1 or FORMAT2
+>>>>> - test if MSAext facility (76) is installed
+>>>>> - accept the CRYCB if no keys are used
+>>>>> - verifies that the CRYCB format1 is inside a page
+>>>>> - verifies that the CRYCB origin is not 0
 >>>>>
->>>>> Signed-off-by: Keerthy <j-keerthy@ti.com>
->>>>> ---
->>>>>    arch/arm/mach-omap2/pm33xx-core.c    | 5 +++++
->>>>>    drivers/soc/ti/pm33xx.c              | 9 +++++++++
->>>>>    include/linux/platform_data/pm33xx.h | 2 ++
->>>>>    3 files changed, 16 insertions(+)
+>>>>> This is not following the architecture.
+>>>> I have to trust you on that :)
+>>>>
+>>>>> On SIE entrance, the CRYCB must be validated before accepting
+>>>>> any of its entries.
 >>>>>
->>>>> diff --git a/arch/arm/mach-omap2/pm33xx-core.c b/arch/arm/mach-omap2/pm33xx-core.c
->>>>> index f4971e4..f0f6e8e 100644
->>>>> --- a/arch/arm/mach-omap2/pm33xx-core.c
->>>>> +++ b/arch/arm/mach-omap2/pm33xx-core.c
->>>>> @@ -135,6 +135,11 @@ static int am43xx_suspend(unsigned int state, int (*fn)(unsigned long),
->>>>>    {
->>>>>    	int ret = 0;
->>>>>    
->>>>> +	if (!(args & WFI_FLAG_DEEP_SLEEP0)) {
->>>>> +		pr_err("DS0 mode not supported\n");
->>>>> +		return -ENOTSUPP;
->>>>> +	}
->>>>> +
->>>>>    	amx3_pre_suspend_common();
->>>>>    	scu_power_mode(scu_base, SCU_PM_POWEROFF);
->>>>>    	ret = cpu_suspend(args, fn);
->>>>> diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
->>>>> index d0dab32..53238d7 100644
->>>>> --- a/drivers/soc/ti/pm33xx.c
->>>>> +++ b/drivers/soc/ti/pm33xx.c
->>>>> @@ -324,6 +324,15 @@ static int am33xx_pm_probe(struct platform_device *pdev)
->>>>>    	suspend_wfi_flags |= WFI_FLAG_SAVE_EMIF;
->>>>>    	suspend_wfi_flags |= WFI_FLAG_WAKE_M3;
->>>>>    
->>>>> +	/*
->>>>> +	 * Deep Sleep0 mode is currently functional only on am437x-gp-evm,
->>>>> +	 * am33xx-evm and boneblack family. Hence set the DS0 flag
->>>>> +	 */
->>>>> +	if (of_machine_is_compatible("ti,am437x-gp-evm") ||
->>>>> +	    of_machine_is_compatible("ti,am335x-bone-black") ||
->>>>> +	    of_machine_is_compatible("ti,am335x-evm"))
->>>>> +		suspend_wfi_flags |= WFI_FLAG_DEEP_SLEEP0;
->>>>
->>>> What about other (out-of-tree) machines which supports DS0 and which
->>>> this change would break?
->>>>
->>>> I think this needs to be a blacklist if anything.
->>>>
->>>> Please also expand in the commit message why you think this is needed.
+>>>>> Let's do the validation in the right order and also verify
+>>>>> correctly the FORMAT2 CRYCB.
+>>>> With which facility was FORMAT2 introduced?
+>>> With APXA.
+>>> KVM initialization setup CRYCB format according to the presence
+>>> of APXA for FORMAT2 or FORMAT1
+>> As our guest does not see APXA, why should it be allowed to make use of
+>> FORMAT2 here already?
 >>
->> Currently when one does echo mem > /sys/power/state on unsuppored
->> machines there can be a crash or a hang. So bail out with a message.
+>> In my opinion, the size check you are adding is in the current state not
+>> correct.
 > 
-> Yes, but why is this unsupported on some machines? Which machines, and
-> why? Your commit messages should be self-contained and hold the
-> information needed to determine whether your patch makes sense in the
-> first place.
+> The point is that the documentation states that bit 30 is ignored
+> if the APXA facility is not installed in the **host** configuration.
+> 
 
-Okay
+host here most probably means "we as a hypervisor that probe for APXA".
+This is to differentiate it from "APXA installed in the guest
+configuration" - e.g. via AP execution control. No AP, no APXA, no
+FORMAT 2 accepted. -> Bit ignored.
+
+Don't confuse it with "machine configuration". (mixing that in makes
+things way too complicated)
+
+> Which I understand as FORMAT2 may not be ignored if APXA is installed
+> in the host configuration.
+> 
+
+"host" is used to differentiate from "guest". If we are at G1 level and
+there is no APXA, the FORMAT2 bit is to be ignored.
+
+> From the host, we control the guest1 and we start it without AP
+> by not setting ECA.28.
+> So that the guest1 can not know if APXA is installed or not since to know
+> this it must use a AP instruction :)
+
+No AP implies no APXA. On that logical level "host".
 
 > 
->>>> Last, what tree is this against? There's no am43xx_suspend() in
->>>> linux-next (and you add compatibles above for am33xx too).
->>>
->>> Sorry, there is indeed an am43xx_suspend(), but you are adding
->>> compatibles for am33xx which use am33xx_suspend().
+> Now the guest1 is an hypervizor and wants to start a guest2.
+> It can set ECA.28 to allow the guest2 AP instructions , just because it can,
+> (even guest2 will not see any as it will be masked by the guest1 ECA.28
+> that we did not set)
+
+ECA.28 has no effect as G1 sees no AP facility. That is the real reason.
+
+> 
+> It can also set the FORMAT2 just because it can do it.
+> The documentation explicitly says that FORMAT2 may be used
+> without APXA and that in this case it will be handled as a FORMAT1
+> 
+> 
+> The question is do we want to forbid this?
+> It is not an error.
+> Suppose that an hypervizor always set FORMAT2 to be able to not restart
+> its guest if the host set ECA.28 a posteriori.
+> 
+> Anyway we have the choice:
+> - we verify the CRYCB for FORMAT2
+> or
+> - we forbid FORMAT2
+> 
+> Since we will soon (I hope) be able to use AP instructions in AP
+> but we are not able to do it today, we could forbid FORMAT2
+> however in the current behavior we authorize FORMAT2...
+> 
+> What ever the choice is we must change the current implementation.
+> 
+> I prefer to keep the current interface but make sure that the
+> host do not crash when scheduling a FORMAT2 SIE crossing
+> a page boundary.
+> 
+> 
+> What do you think we should do?
+
+Keep it simple. Don't mix in machine configuration. Try to make each
+layer look consistent.
+
+If there is no AP/APXA on a level ("host"), FORMAT2 is ignored in SIE.
+If there is no AP/APXA on a level ("host"), ECA.28 is ignored in SIE.
+If there is no MSA3 on a level ("host"), ECB3_AES | ECB3_DEA is ignored
+in SIE.
+
+If there is no AP/APXA/MSA3 on a level ("host"), crycbd is completely
+ignored in SIE. (that means, no validity intercepts to be injected).
+Please double check that in the documentation.
+
+If there is is AP/MSA3 and either ECA.28 | ECB3_AES | ECB3_DEA, what
+should happen? (please verify in the documentation)
+
+FORMAT2 should really only be allowed if there is APXA. As we cannot
+fake abscence for guests (as of now), guest availability always matches
+host availability if AP is enabled for a guest.
+
+> 
+> regards,
+> 
+> Pierre
+> 
 >>
->> am33xx_pm_probe is a common probe function for both am33 and am43.
 > 
-> Yes, but you add a check for your new flag only to am43xx_suspend(), not
-> to am33xx_suspend() which is used by the am33xx compatibles you add.
+> -- 
+> Pierre Morel
+> Linux/KVM/QEMU in Böblingen - Germany
+> 
 
-Got it. I will add a check there as well.
 
-> 
->> AFAIK for am33 family am335x-evm and am335x-bone-black support Deep
->> Sleep mode. For am43 family am43tx-gp-evm alone supports at the moment.
-> 
-> But these are development boards (EVKs), not SOC families (or
-> chip revisions). What about all the products that customers to TI who
-> have bought these SoCs have built?
-> 
->> Can you let me know of other am33 machines that support DS0 mode?
-> 
-> I have a customer who use DS0, whose DTS is not yet in mainline, and
-> whose setup this patch would break for example.
+-- 
 
-okay
+Thanks,
 
-> 
->> I could have simply used ti,am33xx compatible which covers entire am33
->> family but then am33xx-bone (bone white) does not support this mode.
-> 
-> Yes, and a blacklist would make much more sense for something like this
-> if where talking about specific boards.
-> 
-> Also note that your patch doesn't even handle bone-white as you didn't
-> add a check to am33xx_suspend() as I pointed out above.
-
-Tony,
-
-Black list is easier here?
-
-Regards,
-Keerthy
-> 
-> Johan
-> 
+David / dhildenb
