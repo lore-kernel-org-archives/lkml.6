@@ -2,112 +2,126 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 030CEC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:56:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A802C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B584D21480
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:56:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B584D21480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BB9EF21480
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:58:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cxLCjBAF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB9EF21480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729290AbeHVSWE (ORCPT
+        id S1729309AbeHVSYE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 14:22:04 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33964 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729273AbeHVSWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 14:22:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 185FDED1;
-        Wed, 22 Aug 2018 07:56:51 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A5963F2EA;
-        Wed, 22 Aug 2018 07:56:48 -0700 (PDT)
-From:   Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH 0/4] numa, iommu/smmu: IOMMU/SMMU driver optimization for
- NUMA systems
-To:     John Garry <john.garry@huawei.com>,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "Will.Deacon@arm.com" <Will.Deacon@arm.com>,
-        "gklkml16@gmail.com" <gklkml16@gmail.com>,
-        "Tomasz.Nowicki@cavium.com" <Tomasz.Nowicki@cavium.com>,
-        "Robert.Richter@cavium.com" <Robert.Richter@cavium.com>,
-        "mhocko@suse.com" <mhocko@suse.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "jnair@caviumnetworks.com" <jnair@caviumnetworks.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "thunder.leizhen@huawei.com" <thunder.leizhen@huawei.com>,
-        Linuxarm <linuxarm@huawei.com>, Christoph Hellwig <hch@lst.de>
-References: <20170921085922.11659-1-ganapatrao.kulkarni@cavium.com>
- <452f1665-eb3a-5e8c-f671-099ef4a15d84@huawei.com>
-Message-ID: <a7fc1e43-3652-562a-1e59-499be80b567c@arm.com>
-Date:   Wed, 22 Aug 2018 15:56:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 22 Aug 2018 14:24:04 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:41684 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729293AbeHVSYE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 14:24:04 -0400
+Received: by mail-yw1-f65.google.com with SMTP id q129-v6so745911ywg.8;
+        Wed, 22 Aug 2018 07:58:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9Z9ZfxIvUwL3fTrnXWg72P1xFzFw2cH2SiyagF+m3Ms=;
+        b=cxLCjBAFu7j/d2L0Tm6YIzL3cE2bztqZbmJR4SvwQ3gHVGDljOrSHO6Xni3bAUQVrM
+         m4iub27LZ/QhR2ie5ktWFPELifPMo0GQ1G25G5Tbj3jRi8AkQU+KKGlYd/Q6u/rVeSgF
+         G6fYjy3lHgw7Pey5/vTx3bUMTVqhlbwLSjn4pvbLveTgbwHdDT+2PxdIWk/DHwASAD9v
+         svkpoMB6qxbrD60qRwLwcRmxjCmlfbXQ04JcDRMAamicEXm/yLwy5EqKhcglZDJCvtJg
+         tYpYXxoHeXMbk61oVIRomfksz3nH5Bg6k9gD5pIl0a70VGr1AlUHGskCBRWX2lZbDmjh
+         YfGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9Z9ZfxIvUwL3fTrnXWg72P1xFzFw2cH2SiyagF+m3Ms=;
+        b=QCh2XuOangzFhw++tZIGHus8UyFACK0/g2g7npfhQGoqCQ1NutW9MvgfBTtyn1Sono
+         KDis0ZXGuAXiE/iqiSQYc+9NLF24TSL6E2m+/x87bO+qccbtF1BPiNCkypxqer8T0/fc
+         U7cykCLhORQqAdtqI83zh83qrNq2rUj6aI/8TxLURasoRFnHK74N5i8IUljdr9JrYKgo
+         Gn5/m2bvbdvpknRoADvzJ1psE5qMJq7MCAtKPCncTO9NuG1Z7wjkNCxBTyX0rrXBxSKP
+         XSqke/NsKJXPKwJEqcftWG9ORjsu0yuTSm8+q1EG8dbHH8maxumsnGqlNvz/7GQs3v0U
+         0wsw==
+X-Gm-Message-State: APzg51DdSTJ3ugCsYFUu8NXogkUVDHLCDzJDQQ26Euy7WMxVaApq8iQF
+        t4A5DkdUILRoXUOOWJOj67g=
+X-Google-Smtp-Source: ANB0VdaDEFwm3mGaXegcmWVdfbGZV5o3GyAu/nZN/cPH8ouddyoJpzjLu4qXfetOja2j2tvFODojqQ==
+X-Received: by 2002:a81:6e07:: with SMTP id j7-v6mr174848ywc.495.1534949929896;
+        Wed, 22 Aug 2018 07:58:49 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::1dc9])
+        by smtp.gmail.com with ESMTPSA id 203-v6sm808027ywv.34.2018.08.22.07.58.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 Aug 2018 07:58:48 -0700 (PDT)
+Date:   Wed, 22 Aug 2018 07:58:46 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH RFC 2/3] proc/kpagecgroup: report also inode numbers of
+ offline cgroups
+Message-ID: <20180822145846.GT3978217@devbig004.ftw2.facebook.com>
+References: <153414348591.737150.14229960913953276515.stgit@buzz>
+ <153414348994.737150.10057219558779418929.stgit@buzz>
 MIME-Version: 1.0
-In-Reply-To: <452f1665-eb3a-5e8c-f671-099ef4a15d84@huawei.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153414348994.737150.10057219558779418929.stgit@buzz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi John,
+Hello,
 
-On 22/08/18 14:44, John Garry wrote:
-> On 21/09/2017 09:59, Ganapatrao Kulkarni wrote:
->> Adding numa aware memory allocations used for iommu dma allocation and
->> memory allocated for SMMU stream tables, page walk tables and command 
->> queues.
->>
->> With this patch, iperf testing on ThunderX2, with 40G NIC card on
->> NODE 1 PCI shown same performance(around 30% improvement) as NODE 0.
->>
->> Ganapatrao Kulkarni (4):
->>   mm: move function alloc_pages_exact_nid out of __meminit
->>   numa, iommu/io-pgtable-arm: Use NUMA aware memory allocation for smmu
->>     translation tables
->>   iommu/arm-smmu-v3: Use NUMA memory allocations for stream tables and
->>     comamnd queues
->>   iommu/dma, numa: Use NUMA aware memory allocations in
->>     __iommu_dma_alloc_pages
->>
->>  drivers/iommu/arm-smmu-v3.c    | 57 
->> +++++++++++++++++++++++++++++++++++++-----
->>  drivers/iommu/dma-iommu.c      | 17 +++++++------
->>  drivers/iommu/io-pgtable-arm.c |  4 ++-
->>  include/linux/gfp.h            |  2 +-
->>  mm/page_alloc.c                |  3 ++-
->>  5 files changed, 67 insertions(+), 16 deletions(-)
->>
-> 
-> Hi Ganapatrao,
-> 
-> Have you any plans for further work on this patchset? I have not seen 
-> anything since this v1 was posted+discussed.
+On Mon, Aug 13, 2018 at 09:58:10AM +0300, Konstantin Khlebnikov wrote:
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 19a4348974a4..7ef6ea9d5e4a 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -333,6 +333,7 @@ struct cgroup_subsys_state *mem_cgroup_css_from_page(struct page *page)
+>  /**
+>   * page_cgroup_ino - return inode number of the memcg a page is charged to
+>   * @page: the page
+> + * @online: return closest online ancestor
+>   *
+>   * Look up the closest online ancestor of the memory cgroup @page is charged to
+>   * and return its inode number or 0 if @page is not charged to any cgroup. It
+> @@ -343,14 +344,14 @@ struct cgroup_subsys_state *mem_cgroup_css_from_page(struct page *page)
+>   * after page_cgroup_ino() returns, so it only should be used by callers that
+>   * do not care (such as procfs interfaces).
+>   */
+> -ino_t page_cgroup_ino(struct page *page)
+> +ino_t page_cgroup_ino(struct page *page, bool online)
+>  {
+>  	struct mem_cgroup *memcg;
+>  	unsigned long ino = 0;
+>  
+>  	rcu_read_lock();
+>  	memcg = READ_ONCE(page->mem_cgroup);
+> -	while (memcg && !(memcg->css.flags & CSS_ONLINE))
+> +	while (memcg && online && !(memcg->css.flags & CSS_ONLINE))
+>  		memcg = parent_mem_cgroup(memcg);
+>  	if (memcg)
+>  		ino = cgroup_ino(memcg->css.cgroup);
 
-Looks like I ended up doing the version of the io-pgtable change that I 
-suggested here, which was merged recently (4b123757eeaa). Patch #3 
-should also be effectively obsolete now since the SWIOTLB/dma-direct 
-rework (21f237e4d085). Apparently I also started reworking patch #4 in 
-my tree at some point but sidelined it - I think that was at least 
-partly due to another thread[1] which made it seem less clear-cut 
-whether this is always the right thing to do.
+We pin the ino till the cgroup is actually released now but that's an
+implementation detail which may change in the future, so I'm not sure
+this is a good idea.  Can you instead use the 64bit filehandle exposed
+by kernfs?  That's currently also based on ino (+gen) but it's
+something guarnateed to stay unique per cgroup and you can easily get
+to the cgroup using the fh too.
 
-Robin.
+Thanks.
 
-[1] 
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1693026.html
+-- 
+tejun
