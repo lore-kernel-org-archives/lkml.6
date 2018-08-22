@@ -3,246 +3,250 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D94C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E46C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D15DC2147C
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:30:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D15DC2147C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 0825A2147C
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:31:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0825A2147C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729014AbeHVRzj (ORCPT
+        id S1729074AbeHVR4e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 13:55:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43002 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728517AbeHVRzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 13:55:39 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 88CC420720; Wed, 22 Aug 2018 16:30:28 +0200 (CEST)
-Received: from aptenodytes (AAubervilliers-681-1-85-9.w90-88.abo.wanadoo.fr [90.88.27.9])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1ED37203EC;
-        Wed, 22 Aug 2018 16:30:28 +0200 (CEST)
-Message-ID: <e32484e1a2efce3e319e025ba7232500bd5aa2a8.camel@bootlin.com>
-Subject: Re: [PATCH 1/9] CHROMIUM: v4l: Add H264 low-level decoder API
- compound controls.
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg "
-         "Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        jenskuske@gmail.com, linux-sunxi@googlegroups.com,
-        thomas.petazzoni@bootlin.com, groeck@chromium.org
-Date:   Wed, 22 Aug 2018 16:30:28 +0200
-In-Reply-To: <CAAFQd5AybueM-rhy8bMbRHHZmwBP08-cWB11NadcUQAb6XJ1SA@mail.gmail.com>
-References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
-         <20180613140714.1686-2-maxime.ripard@bootlin.com>
-         <80e1d9cb49c6df06843e49332685f2b401023292.camel@collabora.com>
-         <20180822091557.gtnlgoebyv6yttzf@flea>
-         <CAAFQd5ANvKF2+GEXQTnRsdYVzJTtBOhv7nFahV=2W-9_QXwY4g@mail.gmail.com>
-         <e6324ea983d34403199044ae30e932cd728c8ad4.camel@bootlin.com>
-         <CAAFQd5AybueM-rhy8bMbRHHZmwBP08-cWB11NadcUQAb6XJ1SA@mail.gmail.com>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-3aAsz1HYbIFK9eXBX5+l"
-X-Mailer: Evolution 3.28.4 
-Mime-Version: 1.0
+        Wed, 22 Aug 2018 13:56:34 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52216 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728718AbeHVR4e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 13:56:34 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7METXwX121293
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 10:31:24 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m18gyb56w-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 10:31:23 -0400
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Wed, 22 Aug 2018 10:31:23 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 22 Aug 2018 10:31:19 -0400
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MEVHg59371938
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 Aug 2018 14:31:17 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1756328058;
+        Wed, 22 Aug 2018 10:29:48 -0400 (EDT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 39E6F28065;
+        Wed, 22 Aug 2018 10:29:47 -0400 (EDT)
+Received: from oc8043147753.ibm.com (unknown [9.60.75.213])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 22 Aug 2018 10:29:47 -0400 (EDT)
+Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
+ control domains
+To:     Halil Pasic <pasic@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180820162317.08bd7d23.cohuck@redhat.com>
+ <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
+ <20180821172548.57a6c758.cohuck@redhat.com>
+ <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
+ <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Wed, 22 Aug 2018 10:31:17 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18082214-0072-0000-0000-0000039555AA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009592; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01077236; UDB=6.00555385; IPR=6.00857211;
+ MB=3.00022869; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-22 14:31:22
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082214-0073-0000-0000-0000492A29D8
+Message-Id: <7ab7fcbb-b6b0-c6b6-1704-70c4fc146618@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808220148
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 08/21/2018 07:18 PM, Halil Pasic wrote:
+>
+>
+> On 08/21/2018 07:07 PM, Tony Krowiak wrote:
+>> On 08/21/2018 11:25 AM, Cornelia Huck wrote:
+>>> On Mon, 20 Aug 2018 13:41:32 -0400
+>>> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+>>>
+>>>> On 08/20/2018 10:23 AM, Cornelia Huck wrote:
+>>>>> On Mon, 13 Aug 2018 17:48:09 -0400
+>>>>> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+>>>>>> From: Tony Krowiak <akrowiak@linux.ibm.com>
+>>>>>>
+>>>>>> Provides the sysfs interfaces for:
+>>>>>>
+>>>>>> 1. Assigning AP control domains to the mediated matrix device
+>>>>>>
+>>>>>> 2. Unassigning AP control domains from a mediated matrix device
+>>>>>>
+>>>>>> 3. Displaying the control domains assigned to a mediated matrix
+>>>>>>      device
+>>>>>>
+>>>>>> The IDs of the AP control domains assigned to the mediated matrix
+>>>>>> device are stored in an AP domain mask (ADM). The bits in the ADM,
+>>>>>> from most significant to least significant bit, correspond to
+>>>>>> AP domain numbers 0 to 255. On some systems, the maximum allowable
+>>>>>> domain number may be less than 255 - depending upon the host's
+>>>>>> AP configuration - and assignment may be rejected if the input
+>>>>>> domain ID exceeds the limit.
+>>>>> Please remind me of the relationship between control domains and 
+>>>>> usage
+>>>>> domains... IIRC, usage domains allow both requests and configuration,
+>>>>> while control domains allow only configuration, and are by 
+>>>>> convention a
+>>>>> superset of usage domains.
+>>>> A usage domain is a domain to which an AP command-request message 
+>>>> can be
+>>>> submitted for processing. A control domain is a domain that can
+>>>> be changed by an AP command request message submitted to a usage 
+>>>> domain.
+>>>> AP command request messages to configure a domain will contain the 
+>>>> domain
+>>>> number of the domain to be modified. The AP firmware will check the
+>>>> control domain mask (ADM) and will allow the request to proceed 
+>>>> only if
+>>>> the corresponding bit in the ADM is set.
+>>> Thanks to you and Halil for the explanation.
+>>>
+>>>>> Is there a hard requirement somewhere in there, or can the admin
+>>>>> cheerfully use different masks for usage domains and control domains
+>>>>> without the SIE choking on it?
+>>>> There is no hard requirement that control domains must be a 
+>>>> superset of
+>>>> the usage domains, it is merely an architectural convention. AFAIK,
+>>>> SIE doesn't enforce this and will not break if the convention is not
+>>>> enforced externally. Having said that, you should note that the AQM
+>>>> and ADM masks configured for the mediated matrix device will be 
+>>>> logically
+>>>> OR'd together to create the ADM stored in the CRYCB referenced from 
+>>>> the
+>>>> guest's SIE state description. In other words, we are enforcing the
+>>>> convention in our software.
+>>> Hm, that's interesting, as Halil argued that we should not enforce it
+>>> in the kernel. Might be somewhat surprising as well. If that is really
+>>> the way to do it, this needs to be documented clearly.
+>>
+>> This convention has been enforced by the kernel since v1. This is also
+>> enforced by both the LPAR as well as in z/VM. The following is from the
+>> PR/SM Planning Guide:
+>>
+>> Control Domain
+>> A logical partition's control domains are those cryptographic domains 
+>> for which remote secure
+>> administration functions can be established and administered from 
+>> this logical partition. This
+>> logical partition’s control domains must include its usage domains. 
+>> For each index selected in the
+>> usage domain index list, you must select the same index in the 
+>> control domain index list
+>>
+>
+> IMHO this quote is quite a half-full half-empty cup one:
+> * it mandates the set of usage domains is a subset of the set
+> of the control domains, but
+> * it speaks of independent controls, namely about the 'usage domain 
+> index'
+> and the 'control domain index list' and makes the enforcement of the rule
+> a job of the administrator (instead of codifying it in the controls).
 
---=-3aAsz1HYbIFK9eXBX5+l
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+For what it's worth, I spoke with the z/VM developers about dedicated crypto
+in z/VM. In z/VM dedicated crypto, control domains are not even 
+configured by
+the admin. All configured usage domains are also configured as control 
+domains.
 
-Hi,
+>
+>
+>>
+>> Consequently, I'm going to opt for ensuring this is clearly 
+>> documented. Based on the fact you've
+>> requested clarification of many points described in this section of 
+>> the doc, I
+>> think I'll try putting my meager skills as a wordsmith to work to 
+>> hopefully clarify things.
+>> I'll run it by you when I complete that task to see if I've succeeded:)
+>
+> I don't think just a doc update will do. Let me explain why.
+>
+> What describe as "... note that the AQM and ADM masks configured for the
+> mediated matrix device will be logically OR'd together to create the ADM
+> stored in the CRYCB referenced from the guest's SIE state description."
+> is a gotcha at best. The member of struct ap_matrix and the member of the
+> respective apcb in the crycb are both called 'adm', but ap_matrix.adm is
+> not an ADM as we know it from the architecture, but rather ~ AQM & ADM.
+>
+> I feel pretty strongly about this one. If we want to keep the enforcement
+> in the kernel, I guess, the assign_domain should set the bit 
+> corresponding
+> bit not only in ap_matrix.aqm but also in ap_matrix.adm. When the
+> ap_matrix is committed into the crycb no further manipulating the masks
+> should take place.
 
-On Wed, 2018-08-22 at 22:24 +0900, Tomasz Figa wrote:
-> On Wed, Aug 22, 2018 at 10:03 PM Paul Kocialkowski
-> <paul.kocialkowski@bootlin.com> wrote:
-> >=20
-> > Hi,
-> >=20
-> > On Wed, 2018-08-22 at 18:54 +0900, Tomasz Figa wrote:
-> > > On Wed, Aug 22, 2018 at 6:16 PM Maxime Ripard <maxime.ripard@bootlin.=
-com> wrote:
-> > > >=20
-> > > > Hi,
-> > > >=20
-> > > > On Tue, Aug 21, 2018 at 01:58:38PM -0300, Ezequiel Garcia wrote:
-> > > > > On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
-> > > > > > From: Pawel Osciak <posciak@chromium.org>
-> > > > > >=20
-> > > > > > Signed-off-by: Pawel Osciak <posciak@chromium.org>
-> > > > > > Reviewed-by: Wu-cheng Li <wuchengli@chromium.org>
-> > > > > > Tested-by: Tomasz Figa <tfiga@chromium.org>
-> > > > > > [rebase44(groeck): include linux/types.h in v4l2-controls.h]
-> > > > > > Signed-off-by: Guenter Roeck <groeck@chromium.org>
-> > > > > > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > > > > > ---
-> > > > > >=20
-> > > > >=20
-> > > > > [..]
-> > > > > > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linu=
-x/videodev2.h
-> > > > > > index 242a6bfa1440..4b4a1b25a0db 100644
-> > > > > > --- a/include/uapi/linux/videodev2.h
-> > > > > > +++ b/include/uapi/linux/videodev2.h
-> > > > > > @@ -626,6 +626,7 @@ struct v4l2_pix_format {
-> > > > > >  #define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') =
-/* H264 with start codes */
-> > > > > >  #define V4L2_PIX_FMT_H264_NO_SC v4l2_fourcc('A', 'V', 'C', '1'=
-) /* H264 without start codes */
-> > > > > >  #define V4L2_PIX_FMT_H264_MVC v4l2_fourcc('M', '2', '6', '4') =
-/* H264 MVC */
-> > > > > > +#define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4'=
-) /* H264 parsed slices */
-> > > > >=20
-> > > > > As pointed out by Tomasz, the Rockchip VPU driver expects start c=
-odes [1], so the userspace
-> > > > > should be aware of it. Perhaps we could document this pixel forma=
-t better as:
-> > > > >=20
-> > > > > #define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /=
-* H264 parsed slices with start codes */
-> > > >=20
-> > > > I'm not sure this is something we want to do at that point. libva
-> > > > doesn't give the start code, so this is only going to make the life=
- of
-> > > > the sane controllers more difficult. And if you need to have the st=
-art
-> > > > code and parse it, then you're not so stateless anymore.
-> > >=20
-> > > I might not remember correctly, but Rockchip decoder does some slice
-> > > parsing on its own (despite not doing any higher level parsing).
-> > > Probably that's why it needs those start codes.
-> >=20
-> > The VPU found on Allwinner platforms also provides a mechanism to parse
-> > the bitstream data via a dedicated interface through the VPU registers.
-> > It is used in libvdpau-sunxi but not in our driver, because we don't
-> > want to be doing bitstream parsing in the kernel.
-> >=20
-> > It would be good to know if this is just a feature of the Rockchip VPU
-> > hardware that can be skipped (like on Allwinner) or if it's a hard
-> > requirement in its decoding pipeline.
->=20
-> It's a hard requirement for its decoding pipeline, but...
->=20
-> > Also, maybe it only concerns the
-> > slice header? It is already part of the slice data (provided by VAAPI)
-> > for H.264/H.265 and an offset is provided to the beginning of the coded
-> > video data.
->=20
-> Yes, it seems to be only the slice header.
+I have no problem with this and considered implementing it that way at one
+time.
 
-Sounds good, then I don't have any problem with that.
+>
+> I don't feel strongly about whether to enforce this convention about AQM
+> and ADM in the kernel or not. Frankly, I don't know what is behind the
+> rule. Since I can't tell if any problems are to be expected if this
+> convention is violated, I would feel more comfortable if the rule was
+> accommodated higher in the management stack.
 
-> >=20
-> > > I wonder if libva is the best reference here. It's been designed
-> > > almost entirely by Intel for Intel video hardware. We want something
-> > > that could work with a wide range of devices and avoid something like
-> > > a need to create a semi-stateless API few months later. In fact,
-> > > hardware from another vendor, we're working with, also does parsing o=
-f
-> > > slice headers internally. Moreover, we have some weird
-> > > kind-of-stateful decoders, which cannot fully deal with bitstream on
-> > > its own, e.g. cannot parse formats, cannot handle resolution changes,
-> > > need H264 bitstream NALUs split into separate buffers, etc.
-> > >=20
-> > > As I suggested some time ago, having the full bitstream in the buffer=
-,
-> > > with offsets of particular units included in respective controls,
-> > > would be the most scalable thing. If really needed, we could add flag=
-s
-> > > telling the driver that particular units are present, so one's
-> > > implementation of libva could put only raw slice data in the buffers.
-> > > But perhaps it's libva which needs some amendment?
-> >=20
-> > If the raw bitstream is needed, I think it would make more sense to use
-> > the already-existing formats for stateful VPUs along with the controls
-> > for stateless ones instead of having the full bitstream in the
-> > V4L2_PIX_FMT_*_SLICE formats.
->=20
-> It may indeed make sense to separate this based on pixel format.
-> However, how do we tell the client that it needs to provide those
-> controls? Current concept was based entirely on pixel format, so I
-> guess that would mean creating something like
-> V4L2_PIX_FMT_*_NOT_REALLY_SLICE (_PARSED, _STATELESS?). Might be okay,
-> though...
+I wouldn't describe it as a rule. It is described in the architecture doc
+as an architectural convention; in other words, it is agreed upon that all
+usage domains should also be control domains. Based on my discussions with
+the z/VM developers, I believe the reason for the convention is to ensure a
+system has control over its own usage domains, but that is just my
+interpretation.
 
-How about declaring support for the request API (through the associated
-CAPs) and only having the non-_SLICE formats listed in ENUM_FMT?
-
-> > I would also be tempted to say that reconstructing the needed parts of
-> > the bitstream in-driver for these half-way VPUs would be a better
-> > approach than blurrying the line between how (and what) data should be
-> > passed for stateful and stateless VPUs at the API level. Stateless
-> > should only cover what's in the slice NAL unit RBSP, which excludes the
-> > start code detection bytes. It is no longer parsed data otherwise.
->=20
-> I'm not sure where such decision comes from. In particular, Chromium,
-> from which this code originates, includes start codes in
-> V4L2_PIX_FMT_H264_SLICE. As I mentioned earlier, we can't design this
-> API based only on 1 type of hardware semantics. The stateless API
-> should cover any kind of codec that needs user space assistance in
-> processing the stream, which in practice would be almost everything
-> for which stateful API doesn't work.
-
-Maybe we need to formalize what the stateless API aims to support and
-what the formats really entail. I was under the impression that it was
-synonymouse with providing parsed bitstream to the kernel. The way I
-understand "parsed bitstream" means the slice NALU RBSP as raw data and
-the metadata from other NALUs as controls (with the overlap of the slice
-header in recent formats, that is in both).
-
-I don't see any other sane boundary that could be conceptually attached
-to something like "providing parsed bitstream". Covering all that might
-be required for !=3D stateful seems hard to formalize conceptually and to
-delimit in general.
-
-> That said, since pixel format essentially specifies the buffer
-> contents, having such cases differentiated based on the pixel format
-> doesn't sound insane.
-
-Great!
-
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
-
---=-3aAsz1HYbIFK9eXBX5+l
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlt9c4QACgkQ3cLmz3+f
-v9GVPAf/QtvvtBKBM3MAU7tEHGmfMj7cEY824F/9v/3eECN9T39p0HyvsLupLInA
-g9L9SjVfVmKImhuarT3lB47XIt9KArBtomim1w2msne98PCXSnNHqs1RU81z3ufz
-HSBPE0mMQVNpXlUCk6nshaNPn7x7u2tW8816YH2RgFOiKtVt7YIZlddi3TrxyYXF
-lY4hWHk9gihzSuF45PC4QqRnWr+oA9IMKhZJ2OyFFrfKnX6eI1XmL3DAtN2sCdh1
-bkFIF5ISiYuAzwHZaXWbZKcbnVsF/C01fgmVAVkTjSfbm0PLmseclvO3chaFiwnh
-Dfy/A8wBcWVqD7X60LHKbMtJPBNbew==
-=ElKj
------END PGP SIGNATURE-----
-
---=-3aAsz1HYbIFK9eXBX5+l--
+>
+>
+> Regards,
+> Halil
+>
+>>
+>>>
+>>
 
