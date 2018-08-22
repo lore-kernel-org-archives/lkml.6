@@ -6,71 +6,118 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 878B3C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:39:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B311DC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 505D62147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:39:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 505D62147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C36C21486
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:45:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C36C21486
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728556AbeHVLCk (ORCPT
+        id S1728290AbeHVLI6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 07:02:40 -0400
-Received: from mx.socionext.com ([202.248.49.38]:47182 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728228AbeHVLBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 07:01:12 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 22 Aug 2018 16:37:30 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id BD9AB180B7D;
-        Wed, 22 Aug 2018 16:37:30 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Wed, 22 Aug 2018 16:37:30 +0900
-Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id E44E01A0E6F;
-        Wed, 22 Aug 2018 16:37:29 +0900 (JST)
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Tejun Heo <tj@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-ide@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH 03/14] ata: ahci_ceva: add second argument of ahci_platform_get_resources()
-Date:   Wed, 22 Aug 2018 16:36:59 +0900
-Message-Id: <1534923430-9692-4-git-send-email-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1534923430-9692-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1534923430-9692-1-git-send-email-hayashi.kunihiko@socionext.com>
+        Wed, 22 Aug 2018 07:08:58 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:54613 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726838AbeHVLI5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 07:08:57 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="43780055"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 22 Aug 2018 15:45:08 +0800
+Received: from G08CNEXCHPEKD03.g08.fujitsu.local (unknown [10.167.33.85])
+        by cn.fujitsu.com (Postfix) with ESMTP id 071EB4B6AE0E;
+        Wed, 22 Aug 2018 15:45:08 +0800 (CST)
+Received: from localhost.localdomain (10.167.226.106) by
+ G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 22 Aug 2018 15:45:05 +0800
+From:   Dou Liyang <douly.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <linux-acpi@vger.kernel.org>
+CC:     <lenb@kernel.org>, <rjw@rjwysocki.net>, <tglx@linutronix.de>,
+        <rafael@kernel.org>, <indou.takao@jp.fujitsu.com>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>
+Subject: [RESEND PATCH v2] acpi/processor: Fix the return value of acpi_processor_ids_walk()
+Date:   Wed, 22 Aug 2018 15:44:53 +0800
+Message-ID: <20180822074453.26959-1-douly.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.14.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: 071EB4B6AE0E.A0406
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding a flag to indicate whether acqiring the optional resources
-as the second argument of ahci_platform_get_resources(),
-add the argument as initial value 0.
+ACPI driver should make sure all the processor IDs in their ACPI Namespace
+are unique. the driver performs a depth-first walk of the namespace tree
+and calls the acpi_processor_ids_walk() to check the duplicate IDs.
 
-Cc: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+But, the acpi_processor_ids_walk() mistakes the return value. If a
+processor is checked, it returns true which causes the walk break
+immediately, and other processors will never be checked.
+
+Repace the value with AE_OK which is the standard acpi_status value.
+And don't abort the namespace walk even on error.
+
+Fixes 8c8cb30f49b8 ("acpi/processor: Implement DEVICE operator for processor enumeration")
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
 ---
- drivers/ata/ahci_ceva.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changelog:
+  v1 --> v2:
+   - Fix the check against duplicate IDs suggested by Rafael.
+  
+  Now，the duplicate IDs only be found in Ivb42 machine, and we have added this check at 
+  linux-4.9. But, we introduced a bug in linux-4.12 by commit 8c8cb30f49b8.
 
-diff --git a/drivers/ata/ahci_ceva.c b/drivers/ata/ahci_ceva.c
-index 5ecc9d4..dc78c98 100644
---- a/drivers/ata/ahci_ceva.c
-+++ b/drivers/ata/ahci_ceva.c
-@@ -213,7 +213,7 @@ static int ceva_ahci_probe(struct platform_device *pdev)
+  For resolving the bug, firstly, I removed the check[1]. because Linux will compare
+  the coming ID with present processors when it hot-added a physical CPU and will avoid
+  using duplicate IDs.
+
+  But, seems we should consider all the possible processors. So, with this patch, All
+  the processors with the same IDs will never be hot-plugged.
+
+[1] https://lkml.org/lkml/2018/5/28/213
+---
+ drivers/acpi/acpi_processor.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
+index 449d86d39965..a59870ccd5ca 100644
+--- a/drivers/acpi/acpi_processor.c
++++ b/drivers/acpi/acpi_processor.c
+@@ -643,7 +643,7 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
  
- 	cevapriv->ahci_pdev = pdev;
+ 	status = acpi_get_type(handle, &acpi_type);
+ 	if (ACPI_FAILURE(status))
+-		return false;
++		return_ACPI_STATUS(status);
  
--	hpriv = ahci_platform_get_resources(pdev);
-+	hpriv = ahci_platform_get_resources(pdev, 0);
- 	if (IS_ERR(hpriv))
- 		return PTR_ERR(hpriv);
+ 	switch (acpi_type) {
+ 	case ACPI_TYPE_PROCESSOR:
+@@ -663,11 +663,12 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
+ 	}
+ 
+ 	processor_validated_ids_update(uid);
+-	return true;
++	return AE_OK;
+ 
+ err:
++	/* Exit on error, but don't abort the namespace walk */
+ 	acpi_handle_info(handle, "Invalid processor object\n");
+-	return false;
++	return AE_OK;
+ 
+ }
  
 -- 
-2.7.4
+2.14.3
+
+
 
