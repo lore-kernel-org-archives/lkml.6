@@ -6,74 +6,71 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F4CC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5373EC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:57:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22C98214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:57:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0606C20C0F
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:57:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RCOTXKZ/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22C98214C3
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOnSZ/Aj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0606C20C0F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728934AbeHVOWG (ORCPT
+        id S1728950AbeHVOWM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 10:22:06 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:34511 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728869AbeHVOVr (ORCPT
+        Wed, 22 Aug 2018 10:22:12 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37778 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728868AbeHVOVr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 22 Aug 2018 10:21:47 -0400
-Received: by mail-lf1-f67.google.com with SMTP id g9-v6so1089640lfh.1;
-        Wed, 22 Aug 2018 03:57:23 -0700 (PDT)
+Received: by mail-lj1-f194.google.com with SMTP id v9-v6so1103436ljk.4;
+        Wed, 22 Aug 2018 03:57:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kscD0129qQm+6dtLepdo30nacGeBZA/daG2P7mOzej8=;
-        b=RCOTXKZ/M9pdiVUa7E6hXQB5gNOoCAlLkjIvTMUBAdE3HvdPjYWS0UqueM6m4z+7yr
-         IlVQ5hXQQ4QUgocb/PlJ2kVxNqvRvg6ptXyFR7BMp0IDGbbbmtKLlKkM9LCLHDmpcT/z
-         N8Z6YBFaXVuQVN07bTrtAIF03LJNA7gM4xo82WTL6M/DVMr9yD45O1sqZvMWe/Gaq8uU
-         eqO29XMvWem0pikxbVDHYPHwH/Sk3ndKAgGEwy/uVmzdDPAX0rqRm0qlXDGoCzPTvcMV
-         K1OuYgcBmOuPnYfLhNKYzSKN1QqYkcPJywUoz0HquOo3qmsg1Blcf8y5H1UDnyRWrKgU
-         jOzA==
+        bh=5QF62ba+ncLY3/sXumyRGvx7IyjSI5wiwkvoCC0W+D0=;
+        b=aOnSZ/AjwcNnYh9EaSdXXr3nAQ7bicNhh8Y/50GL5rum4WkfNtWBTANa1Hh1Q2APSg
+         LcDGTLVXzMWC9Koky40niybQ4lBCo81gALtH4UPOo2UpmZduWWE7CKnj0qAKT95k0jiX
+         tuC78a3h0zu5vs8UXJtlyTFz5QvBJtsmsCEtwavzBfo7zj4Z45GkEhqDIs6G4YRxY1bj
+         rEdY4U4I6oNSJwIJpwBn7kN5WF+E5RhTMmmZ8Q4tMAUsHH6qg+IZkluY1+J+Hg7ynHAz
+         SS47XIEYa6u0gchCCwa4NIR4Eg2gyCmW3PZCbvb/FPlAYT4tB91sL5O/RVnSncF08Snk
+         PpZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=kscD0129qQm+6dtLepdo30nacGeBZA/daG2P7mOzej8=;
-        b=hyiN+usbF9/VK+6tv1RFFQI4nKh0wv1+Qy/bmeCHkMpqHwpLiz9QH70J1ZKoVPUGIc
-         aSRVhIoZ3P9mujALLpixb/Sfj+FrPu14tz8w6yDr8VK4fa25UYtE9wTA1LgdK86Evk8i
-         diLPlXz31U8bv8EMWZxKNMqJt8tIYOB9Q1uL9CnjQyaT72DQbVLxZDp397R1n6b2RnsC
-         jnYbAkBRdim4JYiRobzo17jo0tjDBkLGNNucxOOzTn+P0oYRP/S8Q5iXjYIIMLurO+l4
-         NC2BqEsPLDf3IpNYhkTkhoVXpbsHFMXcEQud0DQQXqUTQX9YRVdwTc0pN4x9OMYCU3Q9
-         wypQ==
-X-Gm-Message-State: AOUpUlGkbAcoj+UT/QpdkJaxBCwJATGArudXvNj9RQi4ROEihJyye05l
-        poFw2wCqdYpwCEf3blYozxIqQjIZ
-X-Google-Smtp-Source: AA+uWPyAOuLS0mi1DWuQI9dcFbtdDF6saEKXn3caWxbL3KZ8+JbEDznXZuTs24/SNn8uuBEEQSWiUg==
-X-Received: by 2002:a19:4a09:: with SMTP id x9-v6mr17304737lfa.80.1534935442376;
-        Wed, 22 Aug 2018 03:57:22 -0700 (PDT)
+        bh=5QF62ba+ncLY3/sXumyRGvx7IyjSI5wiwkvoCC0W+D0=;
+        b=o0ynS87svff9ONpRQq4er2mMBKyEFX/1BIbjlhYuyVTUDyRo8o+AwX/P7fXjuBt4Cg
+         2d9zpyLhX7UPi+GbGGv4Scq4CWv7aT3N1FuKDSL0RG/UzvfYK8DkAB0ZHLEfZ5TJ2gWZ
+         Nv/vYIkJnoSAPukhXcPyF8Sr6m/AVkcK8FPCJEcXQtMPen20oI1LmOsbhHzQe3a3+fU5
+         eiVclvgAr3RkhuUlctus3303vYdd8/ZbuUBoVD5PXbCtPp6G77ioxvy9WM639lWufzhB
+         GkE2DfXCAtFxrWTGHT/lJ595tvI0267NrxQ7xaHd4YTnpP3OB8ZDhZNow2XTQvk7B2tA
+         LVRg==
+X-Gm-Message-State: AOUpUlG0xjghToYs+FJnUqr+xKZgWL71r8RO0NkJnAqWSAIf392BkfGK
+        vma/R13KcO6jSxfbsyeXOow=
+X-Google-Smtp-Source: AA+uWPxg4F4F3uHzSpNMVz1CqQcjNfGcWqMU9OmwpCebhVFTAoLl4b946j63X8zL9gWvM22Nf7P3Fg==
+X-Received: by 2002:a2e:144f:: with SMTP id 15-v6mr38850124lju.122.1534935441814;
+        Wed, 22 Aug 2018 03:57:21 -0700 (PDT)
 Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id m8-v6sm234062ljj.10.2018.08.22.03.57.17
+        by smtp.gmail.com with ESMTPSA id j15-v6sm233235ljg.52.2018.08.22.03.57.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Wed, 22 Aug 2018 03:57:18 -0700 (PDT)
 Received: from johan by xi.terra with local (Exim 4.91)
         (envelope-from <johan@xi.terra>)
-        id 1fsQpD-0002Xi-56; Wed, 22 Aug 2018 12:57:19 +0200
+        id 1fsQpD-0002Xc-1B; Wed, 22 Aug 2018 12:57:19 +0200
 From:   Johan Hovold <johan@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
+        stable <stable@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         "David S . Miller" <davem@davemloft.net>
-Subject: [PATCH 7/9] net: stmmac: dwmac-sun8i: fix OF child-node lookup
-Date:   Wed, 22 Aug 2018 12:55:45 +0200
-Message-Id: <20180822105547.9634-8-johan@kernel.org>
+Subject: [PATCH 6/9] net: bcmgenet: fix OF child-node lookup
+Date:   Wed, 22 Aug 2018 12:55:44 +0200
+Message-Id: <20180822105547.9634-7-johan@kernel.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180822105547.9634-1-johan@kernel.org>
 References: <20180822105547.9634-1-johan@kernel.org>
@@ -82,67 +79,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new of_get_compatible_child() helper to lookup the mdio-internal
-child node instead of using of_find_compatible_node(), which searches
-the entire tree and thus can return an unrelated (i.e. non-child) node.
+Use the new of_get_compatible_child() helper to lookup the mdio child
+node instead of using of_find_compatible_node(), which searches the
+entire tree and thus can return an unrelated (i.e. non-child) node.
 
 This also addresses a potential use-after-free (e.g. after probe
 deferral) as the tree-wide helper drops a reference to its first
-argument (i.e. the mdio-mux node). Fortunately, this was inadvertently
-balanced by a failure to drop the mdio-mux reference after lookup.
+argument (i.e. the node of the device being probed).
 
-While at it, also fix the related mdio-internal- and phy-node reference
-leaks.
-
-Fixes: 634db83b8265 ("net: stmmac: dwmac-sun8i: Handle integrated/external MDIOs")
-Cc: Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose Abreu <joabreu@synopsys.com>
+Fixes: aa09677cba42 ("net: bcmgenet: add MDIO routines")
+Cc: stable <stable@vger.kernel.org>     # 3.15
+Cc: Florian Fainelli <f.fainelli@gmail.com>
 Cc: David S. Miller <davem@davemloft.net>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/broadcom/genet/bcmmii.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-index f9a61f90cfbc..0f660af01a4b 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-@@ -714,8 +714,9 @@ static int get_ephy_nodes(struct stmmac_priv *priv)
- 		return -ENODEV;
- 	}
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmmii.c b/drivers/net/ethernet/broadcom/genet/bcmmii.c
+index 5333274a283c..87fc65560ceb 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
+@@ -333,7 +333,7 @@ static struct device_node *bcmgenet_mii_of_find_mdio(struct bcmgenet_priv *priv)
+ 	if (!compat)
+ 		return NULL;
  
--	mdio_internal = of_find_compatible_node(mdio_mux, NULL,
-+	mdio_internal = of_get_compatible_child(mdio_mux,
- 						"allwinner,sun8i-h3-mdio-internal");
-+	of_node_put(mdio_mux);
- 	if (!mdio_internal) {
- 		dev_err(priv->device, "Cannot get internal_mdio node\n");
- 		return -ENODEV;
-@@ -729,13 +730,20 @@ static int get_ephy_nodes(struct stmmac_priv *priv)
- 		gmac->rst_ephy = of_reset_control_get_exclusive(iphynode, NULL);
- 		if (IS_ERR(gmac->rst_ephy)) {
- 			ret = PTR_ERR(gmac->rst_ephy);
--			if (ret == -EPROBE_DEFER)
-+			if (ret == -EPROBE_DEFER) {
-+				of_node_put(iphynode);
-+				of_node_put(mdio_internal);
- 				return ret;
-+			}
- 			continue;
- 		}
- 		dev_info(priv->device, "Found internal PHY node\n");
-+		of_node_put(iphynode);
-+		of_node_put(mdio_internal);
- 		return 0;
- 	}
-+
-+	of_node_put(mdio_internal);
- 	return -ENODEV;
- }
- 
+-	priv->mdio_dn = of_find_compatible_node(dn, NULL, compat);
++	priv->mdio_dn = of_get_compatible_child(dn, compat);
+ 	kfree(compat);
+ 	if (!priv->mdio_dn) {
+ 		dev_err(kdev, "unable to find MDIO bus node\n");
 -- 
 2.18.0
 
