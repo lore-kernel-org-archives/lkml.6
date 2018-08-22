@@ -2,150 +2,171 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5724C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C63C41535
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:03:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 886702150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:57:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 886702150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B868214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:03:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B868214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729435AbeHVTXI (ORCPT
+        id S1726740AbeHVT3V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 15:23:08 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34982 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729153AbeHVTXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 15:23:08 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C9E5680D;
-        Wed, 22 Aug 2018 08:57:40 -0700 (PDT)
-Received: from e107564-lin.cambridge.arm.com (e107564-lin.cambridge.arm.com [10.2.131.9])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B82EA3F2EA;
-        Wed, 22 Aug 2018 08:57:38 -0700 (PDT)
-Date:   Wed, 22 Aug 2018 16:57:33 +0100
-From:   Brian Starkey <brian.starkey@arm.com>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     Eric Engestrom <eric.engestrom@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Dave Airlie <airlied@linux.ie>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Ayan Kumar Halder <ayan.halder@arm.com>
-Subject: Re: [PATCH] drm/fourcc: Add DOC: overview comment
-Message-ID: <20180822155732.GA39066@e107564-lin.cambridge.arm.com>
-References: <20180821161611.10424-1-brian.starkey@arm.com>
- <20180821162639.GA21697@bombadil.infradead.org>
- <20180821164416.GA11553@e107564-lin.cambridge.arm.com>
- <20180822145924.GA13763@intel.com>
- <CAKMK7uHxPDfxJaA+1esSW8L2HAjMD6xgF0cMH-nkTjA=6S5+CA@mail.gmail.com>
+        Wed, 22 Aug 2018 15:29:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42864 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726192AbeHVT3U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 15:29:20 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7MFxVuD136880
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 12:03:52 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m1ax2gb95-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 12:03:51 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Wed, 22 Aug 2018 16:53:43 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 22 Aug 2018 16:53:39 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MFrcZ741549876
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 Aug 2018 15:53:38 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E5095A4053;
+        Wed, 22 Aug 2018 18:53:37 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 29011A404D;
+        Wed, 22 Aug 2018 18:53:37 +0100 (BST)
+Received: from [9.152.224.111] (unknown [9.152.224.111])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 22 Aug 2018 18:53:37 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
+ control domains
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+Cc:     Tony Krowiak <akrowiak@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180820162317.08bd7d23.cohuck@redhat.com>
+ <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
+ <20180821172548.57a6c758.cohuck@redhat.com>
+ <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
+ <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
+ <20180822114250.59a250aa.cohuck@redhat.com>
+ <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
+ <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
+ <f84dbcc0-f627-be02-9933-3baa953adc09@linux.ibm.com>
+ <219b352b-d5a2-189c-e205-82e7f9ae3d64@de.ibm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Wed, 22 Aug 2018 17:53:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uHxPDfxJaA+1esSW8L2HAjMD6xgF0cMH-nkTjA=6S5+CA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <219b352b-d5a2-189c-e205-82e7f9ae3d64@de.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18082215-4275-0000-0000-000002ADB47C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082215-4276-0000-0000-000037B6BA2D
+Message-Id: <7a03a9dd-2747-3a35-3048-a0b719edb955@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808220161
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Wed, Aug 22, 2018 at 05:11:55PM +0200, Daniel Vetter wrote:
->On Wed, Aug 22, 2018 at 4:59 PM, Eric Engestrom
-><eric.engestrom@intel.com> wrote:
->> On Tuesday, 2018-08-21 17:44:17 +0100, Brian Starkey wrote:
->>> Hi Matthew,
+On 22/08/2018 17:48, Christian Borntraeger wrote:
+> On 08/22/2018 05:34 PM, Pierre Morel wrote:
+>> On 22/08/2018 17:11, Christian Borntraeger wrote:
 >>>
->>> On Tue, Aug 21, 2018 at 09:26:39AM -0700, Matthew Wilcox wrote:
->>> > On Tue, Aug 21, 2018 at 05:16:11PM +0100, Brian Starkey wrote:
->>> > > There's a number of things which haven't previously been documented
->>> > > around the usage of format modifiers. Capture the current
->>> > > understanding in an overview comment and add it to the rst
->>> > > documentation.
->>> > >
->>> > > Ideally, the generated documentation would also include documentation
->>> > > of all of the #defines, but the kernel-doc system doesn't currently
->>> > > support kernel-doc comments on #define constants.
->>> >
->>> > Can you turn them into enums?  This seems to work ok:
->>> >
->>> > -/* color index */
->>> > -#define DRM_FORMAT_C8          fourcc_code('C', '8', ' ', ' ') /* [7:0] C */
->>> > -
->>> > -/* 8 bpp Red */
->>> > -#define DRM_FORMAT_R8          fourcc_code('R', '8', ' ', ' ') /* [7:0] R */
->>> > +enum {
->>> > +       /* color index */
->>> > +       DRM_FORMAT_C8   = fourcc_code('C', '8', ' ', ' '), /* [7:0] C */
->>> > +       /* 8 bpp Red */
->>> > +       DRM_FORMAT_R8   = fourcc_code('R', '8', ' ', ' '), /* [7:0] R */
->>> > +};
->>> >
->>> > but I appreciate this is user API and maybe there's some code out there
->>> > that does #ifndef DRM_FORMAT_C8 ...
 >>>
->>> Thanks for the suggestion, Daniel did mention the same. However,
->>> unfortunately I don't think we can safely change the UAPI header in
->>> this manner.
+>>> On 08/22/2018 01:03 PM, Pierre Morel wrote:
+>>>>> That's interesting.
+>>>>>
+>>>>>> IMHO this quote is quite a half-full half-empty cup one:
+>>>>>> * it mandates the set of usage domains is a subset of the set
+>>>>>> of the control domains, but
+>>>>>> * it speaks of independent controls, namely about the 'usage domain index'
+>>>>>> and the 'control domain index list' and makes the enforcement of the rule
+>>>>>> a job of the administrator (instead of codifying it in the controls).
+>>>>> I'm wondering if a configuration with a usage domain that is not also a
+>>>>> control domain is rejected outright? Anybody tried that? :)
+>>>>
+>>>> Yes, and no it is not.
+>>>> We can use a queue (usage domain) to a AP card for SHA-512 or RSA without
+>>>> having to define the queue as a control domain.
+>>>
+>>> Huh? My HMC allows to add a domain as
+>>> - control only domain
+>>> - control and usage domain.
+>>>
+>>> But I am not able to configure a usage-only domain for my LPAR. That seems to match
+>>> the current code, no?
+>>>
 >>
->> You could get the best of both worlds by doing both:
+>> Yes, it may not be configurable by the HMC but if we start a guest with no control domain it is not a problem to access the hardware through the usage domain.
 >>
->>   enum {
->>     foo = fourcc(...),
->>     bar = fourcc(...),
->>   }
->>   #define foo foo
->>   #define bar bar
+>> I tested this a long time ago, but tested again today to be sure on my LPAR.
 >>
->> It would mean a bit more code though, but that way these would now be
->> enums (with all the advantages of enums vs plain literals) and still
->> pass #ifdef checks :)
+>> AFAIU adding a control only domain and a control and usage domain
+>> allows say:
+>> control and usage domain 1
+>> control only domain 2
 >>
->> (BTW, on the "maybe there's some code that does #ifdef": I can tell you
->> there is indeed, having written this myself for an out-of-tree driver
->> for customer-modified kernels that may contain additional formats)
->
->Looks reasonable. I'd even put the #define right within each enum line
->(as a reminder so people don't forget to add them. Would happily ack a
->patch to mass-convert, if that ups the odds of good kerneldoc for all
->this.
->
->enum also should support the inline style of kerneldoc (otherwise I
->guess we'd need to fix that first, or it just makes no sense at all).
->-Daniel
+>> Allow to send a message to domain 2 using queue 1
+>>
+>> Allow also to send a domain modifying message to domain 1 using queue 1
+>>
+>> control domain are domain which are controlled
+> 
+> So you have changed the code to not automatically make a usage domain a
+> control domain in the bitfield (and you could still use it as a usage
+> domain). Correct?
 
-I'm not sure that swapping out explicit 32-bit unsigned integers for
-enums (unspecified width, signed integers) is necessarily a good idea,
-it seems like Bad Things could happen.
+yes
+and I used Harald's libica tests to verify it in the guest.
 
-The C spec says:
+> I think this is probably expected. the "usage implies control" seems to
+> be a convention implemented by HMC (lpar) and z/VM but millicode offers
+> the bits to have usage-only domains. As LPAR and z/VM will always enable
+> any usage-domain to also be a control domain we should do the same.
+> 
+> 
+>> It seems that the HMC enforce the LPARs to have access to their usage domain (AFAIU from Harald)
 
-   "the value of an enumeration constant shall be an integer constant
-   expression that has a value representable as an int"
 
-Which likely gives us 4 bytes to play with on all machines
-that run Linux, but if drm_fourcc.h is ever going to be some kind of
-standard reference, making it non-portable seems like a fail.
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
-And even if you do have 4 bytes in an enum, signed integers act
-differently from unsigned ones, and compilers do love to invoke the UB
-clause...
-
-Cheers,
--Brian
-
->-- 
->Daniel Vetter
->Software Engineer, Intel Corporation
->+41 (0) 79 365 57 48 - http://blog.ffwll.ch
