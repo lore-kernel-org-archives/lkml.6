@@ -2,240 +2,147 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BF2C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FE5C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:55:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1661D208A6
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:55:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/+XBEIv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1661D208A6
+	by mail.kernel.org (Postfix) with ESMTP id 83A13208E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:55:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83A13208E3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbeHVUUz (ORCPT
+        id S1727366AbeHVUV3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 16:20:55 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52925 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726852AbeHVUUy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 16:20:54 -0400
-Received: by mail-wm0-f66.google.com with SMTP id y139-v6so2624155wmc.2;
-        Wed, 22 Aug 2018 09:55:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=1Cvwjls0COSEPDzFETk+1j94hOyOnWnCrKgT0VPdmLo=;
-        b=E/+XBEIvL0JX118BT8ARuqpovVAqb3C9ipmJVKqwdL/CiRBDTsPT45yh30WNyAKYvv
-         3yeo6haiDwBftS56a+R8dHzkuwlGPGiYqo9G3crUBbhWgiN0x450VJwqkgor1jlW3pBA
-         QuSYeygedM9OYnPT9J1tMFxW0+PeuKimcIM6GYOg3P4F6OmJkau/zhJDBEiUKm3CJhLO
-         4M5G5O+5SSd5PMbv9b+OF32lVFkPZR80uStjfhZAujkPr63RGstva2YD86Q4U5Gkuktk
-         U+IRWTXrCWrhaQGLMGfHoV234h09mUNq5+QS0ubbZ6Y3cn9cZvlFEadwWzg+hy05O05z
-         rZGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=1Cvwjls0COSEPDzFETk+1j94hOyOnWnCrKgT0VPdmLo=;
-        b=oDhkV3DYv9DxvUoxyHe8d++T1yN3us/ts+ximDM53ztcunAmrLYyx+2McxE7s5uETZ
-         zPhee0Tkf4B5cIfbDk+p6U8x9fWXk/WXRnjvIOPW9s/bAYEeTcEHbM4YDbsrmHqtadKz
-         UFba3tYDkmxJOrnLnuxuW007+PQl4pqW8JaveHLh4N1nISFkm38aT+DY0KuTK4aXjYYS
-         iyGv2SpaB+9s0aOyqadPPhiEz/3jBPlL0vUVFBtWZr+K2UYnoAoeip9YCriZVJbJbyNB
-         rKOhaK0euZJf8gLLFSEbh1+FbnDm0EPft6zf0cMaPYCcd5PJZPrXIdel7BBFoXbjERS2
-         I4oA==
-X-Gm-Message-State: APzg51AevUhjl5q3Dqew/daOlF58F30OKdUA8+4ZyoBn9h9Yu/aqYLRf
-        8pp7YCl4cupxEZSyS31EZHE=
-X-Google-Smtp-Source: ANB0Vda49yunc2uHvykYX3O9zhmy5jmNqspmmfQ4BrPT5u0CcQ31GXgkwOvP+ODmaYKp08KRsavP+A==
-X-Received: by 2002:a1c:cc1a:: with SMTP id h26-v6mr3036265wmb.112.1534956913561;
-        Wed, 22 Aug 2018 09:55:13 -0700 (PDT)
-Received: from 640k.lan (dynamic-adsl-78-12-184-244.clienti.tiscali.it. [78.12.184.244])
-        by smtp.gmail.com with ESMTPSA id u1-v6sm1563964wrt.59.2018.08.22.09.55.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Aug 2018 09:55:12 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] Second batch of KVM changes for 4.19-rc1
-Date:   Wed, 22 Aug 2018 18:55:11 +0200
-Message-Id: <1534956911-50605-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 22 Aug 2018 16:21:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54786 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726842AbeHVUV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 16:21:29 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 393A94021CC1;
+        Wed, 22 Aug 2018 16:55:49 +0000 (UTC)
+Received: from [10.36.116.89] (ovpn-116-89.ams2.redhat.com [10.36.116.89])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4D85110EE6D9;
+        Wed, 22 Aug 2018 16:55:47 +0000 (UTC)
+Subject: Re: [PATCH v2 2/5] KVM: s390: vsie: Only accept FORMAT1 CRYCB for
+ guest2
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+References: <1534956717-14087-1-git-send-email-pmorel@linux.ibm.com>
+ <1534956717-14087-3-git-send-email-pmorel@linux.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <c1ebcecb-e2fb-6ff0-8bc7-e285af62129b@redhat.com>
+Date:   Wed, 22 Aug 2018 18:55:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1534956717-14087-3-git-send-email-pmorel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 22 Aug 2018 16:55:49 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 22 Aug 2018 16:55:49 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On 22.08.2018 18:51, Pierre Morel wrote:
+> As the comment above the function suggested the shadowing
+> of the guest2 CRYCB can only accept a format 1 since
+> AP instructions are not supported in the guest.
+> 
+> Let's modify the check which allowed to accept a format 2 too.
 
-The following changes since commit ad1d69735878a6bf797705b5d2a20316d35e1113:
+As the bit is ignored without AP/APXA, it is perfectly valid to accept a
+format 2, we just have to interpret it as format 1 (which is what we do)
 
-  Merge tag 'fuse-update-4.19' of git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse (2018-08-21 18:47:36 -0700)
+What am I missing?
 
-are available in the git repository at:
+> 
+> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> ---
+>  arch/s390/kvm/vsie.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
+> index 12b9707..56a9d47 100644
+> --- a/arch/s390/kvm/vsie.c
+> +++ b/arch/s390/kvm/vsie.c
+> @@ -156,7 +156,9 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+>  	u8 ecb3_flags;
+>  
+>  	scb_s->crycbd = 0;
+> -	if (!(crycbd_o & vcpu->arch.sie_block->crycbd & CRYCB_FORMAT1))
+> +	if (!(crycbd_o == CRYCB_FORMAT1))
+> +		return 0;
+
+huh, this looks very broken. The address is still in there.
+
+> +	if (!(vcpu->arch.sie_block->crycbd & CRYCB_FORMAT1))
+>  		return 0;
+>  	/* format-1 is supported with message-security-assist extension 3 */
+>  	if (!test_kvm_facility(vcpu->kvm, 76))
+> 
 
 
-  git://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+-- 
 
-for you to fetch changes up to 0027ff2a75f9dcf0537ac0a65c5840b0e21a4950:
+Thanks,
 
-  KVM: VMX: fixes for vmentry_l1d_flush module parameter (2018-08-22 16:48:39 +0200)
-
-----------------------------------------------------------------
-ARM: Support for Group0 interrupts in guests, Cache management
-optimizations for ARMv8.4 systems, Userspace interface for RAS, Fault
-path optimization, Emulated physical timer fixes, Random cleanups
-
-x86: fixes for L1TF, a new test case, non-support for SGX (inject the
-right exception in the guest), a lockdep false positive
-
-----------------------------------------------------------------
-
-Since you mentioned this in the past as something you'd like to be told
-about, don't read too much into the commit dates; I added some last-minute
-stable Ccs.
-
-Arnd Bergmann (1):
-      x86: kvm: avoid unused variable warning
-
-Christoffer Dall (13):
-      KVM: arm/arm64: Fix vgic init race
-      KVM: arm/arm64: vgic: Define GICD_IIDR fields for GICv2 and GIv3
-      KVM: arm/arm64: vgic: Keep track of implementation revision
-      KVM: arm/arm64: vgic: GICv2 IGROUPR should read as zero
-      KVM: arm/arm64: vgic: Add group field to struct irq
-      KVM: arm/arm64: vgic: Signal IRQs using their configured group
-      KVM: arm/arm64: vgic: Permit uaccess writes to return errors
-      KVM: arm/arm64: vgic: Return error on incompatible uaccess GICD_IIDR writes
-      KVM: arm/arm64: vgic: Allow configuration of interrupt groups
-      KVM: arm/arm64: vgic: Let userspace opt-in to writable v2 IGROUPR
-      KVM: arm/arm64: vgic: Update documentation of the GIC devices wrt IIDR
-      KVM: arm/arm64: Fix potential loss of ptimer interrupts
-      KVM: arm/arm64: Fix lost IRQs from emulated physcial timer when blocked
-
-Dongjiu Geng (3):
-      arm/arm64: KVM: Add KVM_GET/SET_VCPU_EVENTS
-      arm64: KVM: export the capability to set guest SError syndrome
-      KVM: Documentation: rename the capability of KVM_CAP_ARM_SET_SERROR_ESR
-
-Gustavo A. R. Silva (1):
-      KVM: arm: Use true and false for boolean values
-
-James Morse (2):
-      KVM: arm64: Share the parts of get/set events useful to 32bit
-      KVM: arm: Add 32bit get/set events support
-
-Jia He (2):
-      KVM: arm/arm64: vgic: Move DEBUG_SPINLOCK_BUG_ON to vgic.h
-      KVM: arm/arm64: vgic: Do not use spin_lock_irqsave/restore with irq disabled
-
-Kees Cook (1):
-      KVM: arm64: vgic-its: Remove VLA usage
-
-Marc Zyngier (13):
-      arm64: KVM: Add support for Stage-2 control of memory types and cacheability
-      arm64: KVM: Handle Set/Way CMOs as NOPs if FWB is present
-      arm64: KVM: Avoid marking pages as XN in Stage-2 if CTR_EL0.DIC is set
-      KVM: arm/arm64: Consolidate page-table accessors
-      KVM: arm/arm64: Stop using the kernel's {pmd,pud,pgd}_populate helpers
-      KVM: arm/arm64: Remove unnecessary CMOs when creating HYP page tables
-      KVM: arm/arm64: Enable adaptative WFE trapping
-      KVM: arm/arm64: vgic-debug: Show LPI status
-      arm64: KVM: Cleanup tpidr_el2 init on non-VHE
-      KVM: arm64: Remove non-existent AArch32 ICC_SGI1R encoding
-      KVM: arm/arm64: vgic-v3: Add core support for Group0 SGIs
-      KVM: arm64: vgic-v3: Add support for ICC_SGI0R_EL1 and ICC_ASGI1R_EL1 accesses
-      KVM: arm: vgic-v3: Add support for ICC_SGI0R and ICC_ASGI1R accesses
-
-Mark Rutland (1):
-      KVM: arm/arm64: vgic: Fix possible spectre-v1 write in vgic_mmio_write_apr()
-
-Paolo Bonzini (2):
-      Merge tag 'kvmarm-for-v4.19' of git://git.kernel.org/.../kvmarm/kvmarm into HEAD
-      KVM: VMX: fixes for vmentry_l1d_flush module parameter
-
-Peter Xu (5):
-      tools: introduce test_and_clear_bit
-      kvm: selftest: unify the guest port macros
-      kvm: selftest: include the tools headers
-      kvm: selftest: pass in extra memory when create vm
-      kvm: selftest: add dirty logging test
-
-Punit Agrawal (2):
-      KVM: arm/arm64: Skip updating PMD entry if no change
-      KVM: arm/arm64: Skip updating PTE entry if no change
-
-Sean Christopherson (2):
-      KVM: vmx: Add defines for SGX ENCLS exiting
-      KVM: vmx: Inject #UD for SGX ENCLS instruction in guest
-
-Thomas Gleixner (1):
-      KVM: x86: SVM: Call x86_spec_ctrl_set_guest/host() with interrupts disabled
-
-Yi Wang (1):
-      x86/kvm/vmx: Fix coding style in vmx_setup_l1d_flush()
-
- Documentation/virtual/kvm/api.txt                 |  80 +++++-
- Documentation/virtual/kvm/devices/arm-vgic-v3.txt |   8 +
- Documentation/virtual/kvm/devices/arm-vgic.txt    |  15 +-
- arch/arm/include/asm/kvm_emulate.h                |  12 +-
- arch/arm/include/asm/kvm_host.h                   |   5 +
- arch/arm/include/asm/kvm_mmu.h                    |  14 +-
- arch/arm/include/uapi/asm/kvm.h                   |  13 +
- arch/arm/kvm/coproc.c                             |  25 +-
- arch/arm/kvm/guest.c                              |  23 ++
- arch/arm64/include/asm/cpucaps.h                  |   3 +-
- arch/arm64/include/asm/kvm_arm.h                  |   1 +
- arch/arm64/include/asm/kvm_emulate.h              |  17 ++
- arch/arm64/include/asm/kvm_host.h                 |  28 +-
- arch/arm64/include/asm/kvm_mmu.h                  |  35 ++-
- arch/arm64/include/asm/memory.h                   |   7 +
- arch/arm64/include/asm/pgtable-prot.h             |  24 +-
- arch/arm64/include/asm/sysreg.h                   |   3 +
- arch/arm64/include/uapi/asm/kvm.h                 |  13 +
- arch/arm64/kernel/cpufeature.c                    |  20 ++
- arch/arm64/kvm/guest.c                            |  33 +++
- arch/arm64/kvm/hyp-init.S                         |   6 +-
- arch/arm64/kvm/hyp/sysreg-sr.c                    |   5 -
- arch/arm64/kvm/inject_fault.c                     |   6 +-
- arch/arm64/kvm/reset.c                            |   4 +
- arch/arm64/kvm/sys_regs.c                         |  54 +++-
- arch/x86/include/asm/vmx.h                        |   3 +
- arch/x86/kvm/svm.c                                |   8 +-
- arch/x86/kvm/vmx.c                                |  72 +++--
- arch/x86/kvm/x86.c                                |   4 +-
- include/kvm/arm_vgic.h                            |   9 +-
- include/linux/irqchip/arm-gic-v3.h                |  10 +
- include/linux/irqchip/arm-gic.h                   |  11 +
- include/uapi/linux/kvm.h                          |   1 +
- tools/include/linux/bitmap.h                      |  17 ++
- tools/testing/selftests/kvm/Makefile              |   5 +-
- tools/testing/selftests/kvm/cr4_cpuid_sync_test.c |  32 +--
- tools/testing/selftests/kvm/dirty_log_test.c      | 308 ++++++++++++++++++++++
- tools/testing/selftests/kvm/include/kvm_util.h    |  45 +++-
- tools/testing/selftests/kvm/include/test_util.h   |   2 -
- tools/testing/selftests/kvm/lib/kvm_util.c        |  58 ++++
- tools/testing/selftests/kvm/lib/x86.c             |  18 +-
- tools/testing/selftests/kvm/set_sregs_test.c      |   2 +-
- tools/testing/selftests/kvm/state_test.c          |  32 +--
- tools/testing/selftests/kvm/sync_regs_test.c      |  21 +-
- tools/testing/selftests/kvm/vmx_tsc_adjust_test.c |  43 +--
- virt/kvm/arm/arch_timer.c                         |  15 +-
- virt/kvm/arm/arm.c                                |  51 ++++
- virt/kvm/arm/mmu.c                                |  87 ++++--
- virt/kvm/arm/vgic/vgic-debug.c                    |  50 +++-
- virt/kvm/arm/vgic/vgic-init.c                     |  24 +-
- virt/kvm/arm/vgic/vgic-its.c                      |  27 +-
- virt/kvm/arm/vgic/vgic-mmio-v2.c                  |  66 ++++-
- virt/kvm/arm/vgic/vgic-mmio-v3.c                  |  72 +++--
- virt/kvm/arm/vgic/vgic-mmio.c                     |  56 +++-
- virt/kvm/arm/vgic/vgic-mmio.h                     |  25 +-
- virt/kvm/arm/vgic/vgic-v2.c                       |  10 +-
- virt/kvm/arm/vgic/vgic-v3.c                       |  13 +-
- virt/kvm/arm/vgic/vgic.c                          |  19 +-
- virt/kvm/arm/vgic/vgic.h                          |   7 +
- 59 files changed, 1372 insertions(+), 305 deletions(-)
- create mode 100644 tools/testing/selftests/kvm/dirty_log_test.c
+David / dhildenb
