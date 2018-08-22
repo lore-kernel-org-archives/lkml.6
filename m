@@ -2,147 +2,257 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07EEBC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 13:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58051C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 13:18:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A59982150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 13:17:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="n3n6VOgW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A59982150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 019DD214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 13:18:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 019DD214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbeHVQml (ORCPT
+        id S1729043AbeHVQna (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 12:42:41 -0400
-Received: from mail-eopbgr50053.outbound.protection.outlook.com ([40.107.5.53]:4672
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        Wed, 22 Aug 2018 12:43:30 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:42705 "EHLO mx1.molgen.mpg.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728057AbeHVQmk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 12:42:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ttElWcQCyPSs3I77C7e4UhRBPmhjDxOa+MzqrvlarVI=;
- b=n3n6VOgW4tX4eZLsnbSxvEzsrDig39H3i+Ppdl/v2fRgiSfYxByHXssV3bAJw0w5082uTL62NUpttDCCcYRxpB1AMYS94nlMp9v76i2w3TCXXYIKpHLMhSNK9+jO+/Ui6VKw1Y2DBp24wjoaeAATLsyAgcGxsmbVcsb2S8jicaY=
-Received: from VI1PR04MB1613.eurprd04.prod.outlook.com (10.164.84.147) by
- VI1PR04MB4478.eurprd04.prod.outlook.com (20.177.53.222) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1059.21; Wed, 22 Aug 2018 13:17:41 +0000
-Received: from VI1PR04MB1613.eurprd04.prod.outlook.com
- ([fe80::7cd2:5981:f694:cb23]) by VI1PR04MB1613.eurprd04.prod.outlook.com
- ([fe80::7cd2:5981:f694:cb23%2]) with mapi id 15.20.1059.023; Wed, 22 Aug 2018
- 13:17:41 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Sascha Hauer <s.hauer@pengutronix.de>
-CC:     Lucas Stach <l.stach@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abelvesa@linux.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [RESEND v5 4/5] clk: imx: add imx composite clock
-Thread-Topic: [RESEND v5 4/5] clk: imx: add imx composite clock
-Thread-Index: AQHUOFW42LN/VO0spEa4W0Rc4wu0C6TJyBAAgAH8RIA=
-Date:   Wed, 22 Aug 2018 13:17:40 +0000
-Message-ID: <20180822131739.a2qoweu5vnakhjg6@fsr-ub1664-175>
-References: <1534749367-31085-1-git-send-email-abel.vesa@nxp.com>
- <1534749367-31085-5-git-send-email-abel.vesa@nxp.com>
- <20180821065830.x5illrgyqct6h3nf@pengutronix.de>
-In-Reply-To: <20180821065830.x5illrgyqct6h3nf@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-originating-ip: [95.76.156.53]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB4478;6:3SzhNGeNzoLritsxDh5G88Rf7siFNycIF3b/28REDs+PpxTzpMYBfaPwZyICb6Rf7gcOIHQid4JG/jq8LjsuoGQZMIsaV7sFpocTfH4GwSisbGlvcPrE2wA+r4DUFNeJxC+fjNPhTAQM2coosS2WuKV0Ab0Ve8Ed/Qm83Cy6u9PwuglvlgTBvduhfQIdFB2HTUDIKRX+es5+cxZwoPcHN3jzOqiwdK4Fgeof7CQq4TyHe6ikQrVppqsjIppsK9++NcHuq9I5tyBb9y9QU3ZTZvvsq1jONeSRWwLQlUvE2N6lxS2WdGs3n/XXy4jcGjarEh/hndJBVRANktLqkpvCD0JqLJE1mWyt8R+0QV+BSaR0HyTXjhnd6lMgQq3+so+EcDF1w/SMnqrCLqO1NsYeiyqbyagPyY92ctrm5SRE77IO7XnTg1FL3aQ5u7pe3KdFGTRG86TlVMfcWaD3u+06jg==;5:KiXmQRKg60A5CmhLzwQluETIT9wSwYnMu+5CrmKdz2smjD9SWF/DjDx0ilDNXU6Q3NJnuUZvGYAfNFx8xDyCpXnkxs6xtR3JLsoQTSRnJ4uPBI3nDgsRXZiRW/kccYA8BBir7DTPJXtZoacE31DVoqWYLBfMIYPPKxL1vnP93WA=;7:czsz3MDbcwvV4lBFwgAjDgpR7loz0dFRwPjXVLgdxmwipq1cjH4/nqudJRv8C3xeQWVgsWw3Yf5SbfC/yN4fZGfG6iLGrYIqko00G98TcJV4G4zyg//WuCKYi0Q4kFIE57iSoF/GPDWUiocMHfOs/0N0I4HpnryDFfKYSIZJ/KNzmJBvYSd6uQES3/WgLvzD2EDSgaqAMdmNf9KpJMyTpT8YG0fUGBwvjVwQUK/Bew5yxwT28OWuEVvCT0Fy1Pal
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 914fa198-444b-41a2-ad36-08d60831a3a4
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4478;
-x-ms-traffictypediagnostic: VI1PR04MB4478:
-x-microsoft-antispam-prvs: <VI1PR04MB4478580395EADF7314E61C72F6300@VI1PR04MB4478.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(189930954265078)(45079756050767);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699016);SRVR:VI1PR04MB4478;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4478;
-x-forefront-prvs: 0772E5DAD5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(39860400002)(136003)(396003)(366004)(376002)(346002)(199004)(189003)(6506007)(6486002)(6116002)(14454004)(256004)(229853002)(33716001)(11346002)(66066001)(2906002)(4326008)(446003)(6246003)(476003)(8936002)(68736007)(5250100002)(25786009)(3846002)(1076002)(14444005)(81156014)(81166006)(8676002)(486006)(99286004)(33896004)(26005)(7416002)(105586002)(97736004)(966005)(6512007)(76176011)(305945005)(7736002)(102836004)(106356001)(5660300001)(478600001)(44832011)(316002)(2900100001)(86362001)(6436002)(9686003)(6916009)(45080400002)(6306002)(53936002)(186003)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4478;H:VI1PR04MB1613.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 7R1BJezzBgoBIEXkMfxOr4EuLjL2LUeMSlhyQuLA8pouysbLGIi1eVK4cVq2p2xQLrBcNFkye6yHkis9B1CCf3+XZZe6eXe9SPq5Y5y00cmVcUQpJgCamC5tFTPbQCu/MLM9gyrAzlMcorQWZPorNUb5ezYm8RGcSszDO1yvJG2TipqqLWhUemGZTz5E9zXDijykx+9C2lOcGd++iSdqFbZgsqwaACwoPewlEJf1dwru3206pYke3eQ8TsBf2tKbT95CJ7zfze1/rAvO7mM4NH1ZCP40lWPR1n5ig9z8rehCApRKs54DNVa3IrINX4pfPo5LD4AYOENql6rYbvlSdbN5nkW8karT35JMLbc3wF4=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <AA3089E295398B40801E30BCAF8CD622@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1728057AbeHVQn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 12:43:29 -0400
+Received: from keineahnung.molgen.mpg.de (keineahnung.molgen.mpg.de [141.14.17.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 9350B2012D0DC3;
+        Wed, 22 Aug 2018 15:18:33 +0200 (CEST)
+Subject: Re: efisubsys_init takes more than a few milliseconds
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <305249de-7892-fca4-b462-a493aa65d177@molgen.mpg.de>
+ <CAKv+Gu84h2+zofb4v-QrVE7rqCrGC7MaHEw7tB+z2J8DczjoKw@mail.gmail.com>
+ <f94af2ed-3492-4db5-c1bc-30c4c1855947@molgen.mpg.de>
+ <676c44ce-6909-f002-4ea3-0c6f68b6b781@molgen.mpg.de>
+From:   Paul Menzel <pmenzel+linux-efi@molgen.mpg.de>
+Message-ID: <13ebec39-6656-ee60-58be-afe56adfde7f@molgen.mpg.de>
+Date:   Wed, 22 Aug 2018 15:18:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 914fa198-444b-41a2-ad36-08d60831a3a4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2018 13:17:40.9839
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4478
+In-Reply-To: <676c44ce-6909-f002-4ea3-0c6f68b6b781@molgen.mpg.de>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms080109090602070408000002"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 08:58:30AM +0200, Sascha Hauer wrote:
-> On Mon, Aug 20, 2018 at 10:16:06AM +0300, Abel Vesa wrote:
-> > +
-> > +	val |=3D (u32)value << divider->shift;
-> > +	val |=3D (u32)value << PCG_DIV_SHIFT;
-> > +	clk_writel(val, divider->reg);
-> > +
-> > +	spin_unlock_irqrestore(divider->lock, flags);
-> > +
-> > +	return 0;
-> > +}
->=20
-> Have you tested this works? I thought those are two cascaded dividers
-> and you program both to the same value. Normally you would have to
-> calculate individual values for each divider which together give you the
-> desired output rate.
->
+This is a cryptographically signed message in MIME format.
 
-My bad. Haven't properly tested it since there is no actual driver that cal=
-ls
-set_rate on any of those clocks at this point. Sorry about that. I'll send
-another version today, where I've implemented it as I should've done from t=
-he
-start and I've tested it by explicitly calling the set_rate and read the va=
-lue
-with clk_get_rate to make sure it's fine.
-=20
-> Sascha
->=20
-> --=20
-> Pengutronix e.K.                           |                             =
-|
-> Industrial Linux Solutions                 | https://emea01.safelinks.pro=
-tection.outlook.com/?url=3Dhttp%3A%2F%2Fwww.pengutronix.de%2F&amp;data=3D02=
-%7C01%7Cabel.vesa%40nxp.com%7C722eb3cdb15849a9d19608d6073382e4%7C686ea1d3bc=
-2b4c6fa92cd99c5c301635%7C0%7C0%7C636704315167487036&amp;sdata=3DQ29pmTcLbqN=
-PjotCFjZ%2BldD%2FBlbYpm6fN%2BzguHixwfA%3D&amp;reserved=3D0  |
-> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    =
-|
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
-|
+--------------ms080109090602070408000002
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
--- =
+Dear Ard,
+
+
+On 03/25/18 17:21, Paul Menzel wrote:
+
+> On 03/25/2018 09:41 AM, Paul Menzel wrote:
+>=20
+>> On 03/24/2018 11:35 PM, Ard Biesheuvel wrote:
+>>
+>>> On 24 March 2018 at 22:10, Paul Menzel wrote:
+>=20
+>>>> According to `initcall_debug`, `efisubsys_init` takes more than a fe=
+w
+>>>> milliseconds to execute on a Dell XPS 13 9370 (Intel(R) Core(TM) i7-=
+8550U CPU @ 1.80GHz).
+>>>>
+>>>>> ```
+>>>>> [=E2=80=A6]
+>>>>> [ 0.144474] calling=C2=A0 efisubsys_init+0x0/0x2cf @ 1
+>>>>> [ 0.144474] Registered efivars operations
+>>>>> [ 0.173690] initcall efisubsys_init+0x0/0x2cf returned 0 after 2734=
+3 usecs
+>>>>> [=E2=80=A6]
+>>>>> ```
+>>>>
+>>>>
+>>>> To get a vanilla Linux kernel to boot in well under one second, it=E2=
+=80=99d be nice
+>>>> if the time could be improved. Do you know, why it takes so long?
+>>>>
+>>>> According to `bootgraph.py` from pm-graph [1][2] it takes even a lit=
+tle
+>>>> longer.
+>>>>
+>>>>> efisubsys_init: start=3D690.841, end=3D720.493, length(w/o overhead=
+)=3D31.250
+>>>>> ms, return=3D0
+>>>>
+>>>> There are several dozen calls to `virt_efi_get_next_variable()` all =
+but one
+>>>> taking around 0.335 ms. This path needs to be optimized. Is that pos=
+sible?
+>>>
+>>> That depends. These are firmware calls, so to make these calls faster=
+,
+>>> you need to modify the firmware, not the kernel.
+>>
+>> Yeah, unfortunately, no free firmware runs on this laptop, and Dell do=
+esn=E2=80=99t respond to these kind of reports, as they think, it=E2=80=99=
+s not important.
+>>
+>>> We may be able to make more intrusive changes to get rid of this
+>>> delay, e.g., spin up a special kernel thread, but I'd have to check i=
+n
+>>> more detail.
+>>
+>> That=E2=80=99d be great.
+
+On the MSI B350M MORTAR (MS-7A37) it takes even longer, almost 50 ms.
+
+```
+[    0.204009] calling  efisubsys_init+0x0/0x30a @ 1
+[    0.204009] Registered efivars operations
+[    0.252262] initcall efisubsys_init+0x0/0x30a returned 0 after 46875 u=
+secs
+```
+
+If a solution could be found to move this out of the hotpath, that=E2=80=99=
+d be great.
+But I am not sure, if threads can be used that early.
+
+>>> In the mean time, you can try passing 'efi=3Dnoruntime' to the kernel=
+=2E
+
+[=E2=80=A6]
+
+>>>> To reproduce this, clone the pm-graph repository [2], use `sudo
+>>>> ./bootgraph.py -f -fstat -maxdepth 10 -manual` to see what to add to=
+
+>>>> `/boot/grub/grub.cfg`. Then reboot, and execute `sudo ./bootgraph.py=
+ -f
+>>>> -fstat -maxdepth 10`.
+>>>>
+>>>> If your system is powerful enough, you can use a higher maximum dept=
+h. I
+>>>> didn=E2=80=99t get around how `-cgfilter` works to get smaller HTML =
+files.
+
+
+Kind regards,
+
+Paul
+
+
+>>>> [1] https://01.org/suspendresume
+>>>> [2] https://github.com/01org/pm-graph
+
+
+--------------ms080109090602070408000002
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+EFowggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
+AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
+VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
+Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
+BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
+IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
+Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
+FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
+eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
+WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
+xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
+AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
+4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
+/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
+AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
+ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
+MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
+Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
+ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
+eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
+MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
+PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
+2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
+ZYoaorVyGTkwggWNMIIEdaADAgECAgwcOtRQhH7u81j4jncwDQYJKoZIhvcNAQELBQAwgZUx
+CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
+dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
+BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjExMDMxNTI0
+NDhaFw0zMTAyMjIyMzU5NTlaMGoxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCYXllcm4xETAP
+BgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxhbmNrLUdlc2VsbHNjaGFmdDEVMBMG
+A1UEAwwMTVBHIENBIC0gRzAyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnhx4
+59Lh4WqgOs/Md04XxU2yFtfM15ZuJV0PZP7BmqSJKLLPyqmOrADfNdJ5PIGBto2JBhtRRBHd
+G0GROOvTRHjzOga95WOTeura79T21FWwwAwa29OFnD3ZplQs6HgdwQrZWNi1WHNJxn/4mA19
+rNEBUc5urSIpZPvZi5XmlF3v3JHOlx3KWV7mUteB4pwEEfGTg4npPAJbp2o7arxQdoIq+Pu2
+OsvqhD7Rk4QeaX+EM1QS4lqd1otW4hE70h/ODPy1xffgbZiuotWQLC6nIwa65Qv6byqlIX0q
+Zuu99Vsu+r3sWYsL5SBkgecNI7fMJ5tfHrjoxfrKl/ErTAt8GQIDAQABo4ICBTCCAgEwEgYD
+VR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDANBgsrBgEEAYGt
+IYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBTEiKUH7rh7qgwTv9opdGNSG0lwFjAf
+BgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGEMECgPqA8hjpo
+dHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
+Y3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1
+Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcwAYYnaHR0cDov
+L29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAChj5odHRwOi8v
+Y2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNy
+dDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9vdC1nMi1j
+YS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBABLpeD5FygzqOjj+
+/lAOy20UQOGWlx0RMuPcI4nuyFT8SGmK9lD7QCg/HoaJlfU/r78ex+SEide326evlFAoJXIF
+jVyzNltDhpMKrPIDuh2N12zyn1EtagqPL6hu4pVRzcBpl/F2HCvtmMx5K4WN1L1fmHWLcSap
+dhXLvAZ9RG/B3rqyULLSNN8xHXYXpmtvG0VGJAndZ+lj+BH7uvd3nHWnXEHC2q7iQlDUqg0a
+wIqWJgdLlx1Q8Dg/sodv0m+LN0kOzGvVDRCmowBdWGhhusD+duKV66pBl+qhC+4LipariWaM
+qK5ppMQROATjYeNRvwI+nDcEXr2vDaKmdbxgDVwwggWvMIIEl6ADAgECAgweKlJIhfynPMVG
+/KIwDQYJKoZIhvcNAQELBQAwajELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJheWVybjERMA8G
+A1UEBwwITXVlbmNoZW4xIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MRUwEwYD
+VQQDDAxNUEcgQ0EgLSBHMDIwHhcNMTcxMTE0MTEzNDE2WhcNMjAxMTEzMTEzNDE2WjCBizEL
+MAkGA1UEBhMCREUxIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MTQwMgYDVQQL
+DCtNYXgtUGxhbmNrLUluc3RpdHV0IGZ1ZXIgbW9sZWt1bGFyZSBHZW5ldGlrMQ4wDAYDVQQL
+DAVNUElNRzEUMBIGA1UEAwwLUGF1bCBNZW56ZWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
+ggEKAoIBAQDIh/UR/AX/YQ48VWWDMLTYtXjYJyhRHMc81ZHMMoaoG66lWB9MtKRTnB5lovLZ
+enTIUyPsCrMhTqV9CWzDf6v9gOTWVxHEYqrUwK5H1gx4XoK81nfV8oGV4EKuVmmikTXiztGz
+peyDmOY8o/EFNWP7YuRkY/lPQJQBeBHYq9AYIgX4StuXu83nusq4MDydygVOeZC15ts0tv3/
+6WmibmZd1OZRqxDOkoBbY3Djx6lERohs3IKS6RKiI7e90rCSy9rtidJBOvaQS9wvtOSKPx0a
++2pAgJEVzZFjOAfBcXydXtqXhcpOi2VCyl+7+LnnTz016JJLsCBuWEcB3kP9nJYNAgMBAAGj
+ggIxMIICLTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcD
+AgYIKwYBBQUHAwQwHQYDVR0OBBYEFHM0Mc3XjMLlhWpp4JufRELL4A/qMB8GA1UdIwQYMBaA
+FMSIpQfuuHuqDBO/2il0Y1IbSXAWMCAGA1UdEQQZMBeBFXBtZW56ZWxAbW9sZ2VuLm1wZy5k
+ZTB9BgNVHR8EdjB0MDigNqA0hjJodHRwOi8vY2RwMS5wY2EuZGZuLmRlL21wZy1nMi1jYS9w
+dWIvY3JsL2NhY3JsLmNybDA4oDagNIYyaHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzIt
+Y2EvcHViL2NybC9jYWNybC5jcmwwgc0GCCsGAQUFBwEBBIHAMIG9MDMGCCsGAQUFBzABhido
+dHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwQgYIKwYBBQUHMAKGNmh0
+dHA6Ly9jZHAxLnBjYS5kZm4uZGUvbXBnLWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNydDBC
+BggrBgEFBQcwAoY2aHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzItY2EvcHViL2NhY2Vy
+dC9jYWNlcnQuY3J0MEAGA1UdIAQ5MDcwDwYNKwYBBAGBrSGCLAEBBDARBg8rBgEEAYGtIYIs
+AQEEAwYwEQYPKwYBBAGBrSGCLAIBBAMGMA0GCSqGSIb3DQEBCwUAA4IBAQCQs6bUDROpFO2F
+Qz2FMgrdb39VEo8P3DhmpqkaIMC5ZurGbbAL/tAR6lpe4af682nEOJ7VW86ilsIJgm1j0ueY
+aOuL8jrN4X7IF/8KdZnnNnImW3QVni6TCcc+7+ggci9JHtt0IDCj5vPJBpP/dKXLCN4M+exl
+GXYpfHgxh8gclJPY1rquhQrihCzHfKB01w9h9tWZDVMtSoy9EUJFhCXw7mYUsvBeJwZesN2B
+fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
+1s2RyzmKd4SXTkKR3GhkZNVWy+gM68J7jP6zzN+cMYIDmjCCA5YCAQEwejBqMQswCQYDVQQG
+EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
+LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
+RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
+SIb3DQEJBTEPFw0xODA4MjIxMzE4MzNaMC8GCSqGSIb3DQEJBDEiBCAae2TDK5XqvR0PLV+H
+AHHl/gSKe4d/KmcWeSGGKKerbDBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
+BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
+MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
+bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
+gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
+DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
+BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBAKNg
+uGz/KSnwV4qFl4iCLZZNIL9Hn6TP2EnXH0A8Q8XgnicPpXP2iQLvtAYP4VepjSKRvfjPpaBT
+kT5aIKHuN2odjlbd7JOuQYVaod2r3pewcMrno76QDn4W3cV3+UsEvXqzvtVwemS1tF1iPXVy
+YrdKH+euaJuCPhzgG2+QFXR6LBxYgXIrcYUg/434bk/BVuCIfmP4WUKPbszf/44LHCHkHENA
+7o7DLCadhrJtfuVjEsR5tl6/bCp/wIAGFHorJx1GRvKSWFfwa2xCJ8Wj+rvS1axjeAAp81m7
+XYnfCIY/ZwmbFgW+LdpCBq99GzNOviocA6KumA80DvjwiuiiQR0AAAAAAAA=
+--------------ms080109090602070408000002--
