@@ -2,91 +2,169 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90972C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 21:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C107C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 21:48:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C8F2208FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 21:46:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35DF0208DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 21:48:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Teil2WU0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C8F2208FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ByyHIkmE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35DF0208DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbeHWBNQ (ORCPT
+        id S1728062AbeHWBPa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 21:13:16 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34463 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727046AbeHWBNP (ORCPT
+        Wed, 22 Aug 2018 21:15:30 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38918 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbeHWBPa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 21:13:15 -0400
-Received: by mail-ed1-f66.google.com with SMTP id h1-v6so2326333eds.1;
-        Wed, 22 Aug 2018 14:46:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=eHlgz5fVfBCWvnyggD5tSmLG/pwjloL36djKexv5YoI=;
-        b=Teil2WU0sQxUxCdY2o129BE+/Lugsk3Ag6bS6LQXf8rEFU6QTN2rZE93iALaCM3Z8W
-         hTcxr1+PlyF8UzpMDn2BHxG4ijm5GxIZHw7bq7NWFzFePq/KayfppWy4qI3Zu+HCDE2/
-         IjdPHNpRQP5J3A3z1AvaDAp7NjJ6jd3fEBkye8LRlHG4rUNfROfW/cQeIQop3O+ZxIiD
-         KmFuDUQ2UjttKNlv0pf1cyucX01FT6S5W/J1u49KsuEErbDFr/rIilMYO3j4ELxHIk+t
-         xyTB06ptwAt4BjaoOU5bIDW6u5hCt5Sd0a5znwXmsGzsi5nqEsJo0+Pu1Sp2fnn9k7kj
-         KeVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=eHlgz5fVfBCWvnyggD5tSmLG/pwjloL36djKexv5YoI=;
-        b=F2nbQh0wxUtBNDxVOYvMtVkDF/iI07bTqeDMimuu8/39QZnt/utym5cbzK5CelWNFi
-         YyUjaPhzySUy409VBgpqT2oM6XYzCQn+5D5tnd6kAvWoe7WUmO8XSPHL4TO9oudXQ8l+
-         rSxyKRzxI3pWdpoKpk7SDIrzynK3EFa9nA334PxpES9X4K3W4HtONFE7ThN589o6aoyT
-         br/F+kT6r6fEK7ZNBjUhcxspGN4+Z2wkXVUAuqGBDX2YwuA1RLMhJ9oiU+ujuv5e+Q0N
-         mfOjLurOugf/PCIhkI9YPY93QnSWIXD122oafPWesb3FQtl4S7t5JpBlNh4CvMLDGuyF
-         vqUA==
-X-Gm-Message-State: AOUpUlEbheJOcH/p+FRlOe9KBJ2gOg695KgYn5V3PrdR14POl090Rjm1
-        l0f66XERLlkyriU2sHH6H41OfczNtwpfowxsZ8U=
-X-Google-Smtp-Source: AA+uWPyl/tK7poTz/Q61LI3M5JC3eKB4gA3Fbsn6xKaH++BQtxIiv3TCQIqYYIte/AfSOjBzrf2grkT/EGKw7OGSkqs=
-X-Received: by 2002:a50:a267:: with SMTP id 94-v6mr68308036edl.189.1534974397206;
- Wed, 22 Aug 2018 14:46:37 -0700 (PDT)
+        Wed, 22 Aug 2018 21:15:30 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7MLcZ9Z074393;
+        Wed, 22 Aug 2018 21:48:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=Zx3EJl+l1qQHKGZAWou1hdDj/jgkg1sRpnXCJEzUxnk=;
+ b=ByyHIkmE/rCG3Lf5YIPiSS3xrj68hNO5YmID4xLwHH967VRZ/2L59WuKThUv0ImSv2+V
+ dPErWVUfM70MQTmOI1hMyCdqBpImq1smDMgw6q9++mIKJ/hp5UOUBmDY0I9gJVC0cN8f
+ PeoWG8WRmsEqHp2D1ur4yq+SZ8jz5Ax4cZjsIIpXfpG4dxUXHPWVP3lRujdUaGH0zzcX
+ PAKvIYzjs7f0XBwTVGAWzU2VO3WEopoz7j07naHNSDa0KeH6NhJ1N9clt/IOZwVVHLjW
+ lTlQuv6NtDjmD/UoEENeb/tRKGBVlNAQocCRSH0bFgW1aqorTLqruxqRaC6CImf0wKPA 2A== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2kxc3qvpdp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 Aug 2018 21:48:35 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7MLmZoG021915
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 Aug 2018 21:48:35 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7MLmXZI011621;
+        Wed, 22 Aug 2018 21:48:34 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 22 Aug 2018 14:48:33 -0700
+Subject: Re: [PATCH v3 1/2] mm: migration: fix migration of huge PMD shared
+ pages
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+References: <20180821205902.21223-2-mike.kravetz@oracle.com>
+ <201808220831.eM0je51n%fengguang.wu@intel.com>
+ <975b740d-26a6-eb3f-c8ca-1a9995d0d343@oracle.com>
+ <20180822210507.lvb26bghqmt6c5fw@kshutemo-mobl1>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <c3880447-8f07-e78f-d107-c45bd526fb62@oracle.com>
+Date:   Wed, 22 Aug 2018 14:48:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a50:e04f:0:0:0:0:0 with HTTP; Wed, 22 Aug 2018 14:46:36
- -0700 (PDT)
-In-Reply-To: <CAB9dFdvzTx3tn=z=he08_+QrpnaPsXQ5qWTGyu65Tv7cy2=L1w@mail.gmail.com>
-References: <20180724064929.GD19722@shao2-debian> <20180724130155.20641-1-mszeredi@redhat.com>
- <CAB9dFdvzTx3tn=z=he08_+QrpnaPsXQ5qWTGyu65Tv7cy2=L1w@mail.gmail.com>
-From:   Marc Dionne <marc.c.dionne@gmail.com>
-Date:   Wed, 22 Aug 2018 18:46:36 -0300
-Message-ID: <CAB9dFdt=Wf8ZkJV-eqjgqDKzxat2Dq7FoHvGL+GR0DBMKJX8NA@mail.gmail.com>
-Subject: Re: [PATCH v3] vfs: don't evict uninitialized inode
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180822210507.lvb26bghqmt6c5fw@kshutemo-mobl1>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8993 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808220215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 4:37 PM, Marc Dionne <marc.c.dionne@gmail.com> wrote:
->
-> FYI with this patch (now merged) I'm seeing warnings whenever an
-> object is created in an overlayfs mount:
->
-> [  842.152673] list_add double add: new=ffff88017efe03d8,
-> prev=ffff88015c07ad88, next=ffff88017efe03d8.
-> [  842.152687] WARNING: CPU: 4 PID: 7592 at lib/list_debug.c:31
-> __list_add_valid+0x6e/0x80
->
+On 08/22/2018 02:05 PM, Kirill A. Shutemov wrote:
+> On Tue, Aug 21, 2018 at 06:10:42PM -0700, Mike Kravetz wrote:
+>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>> index 3103099f64fd..f085019a4724 100644
+>> --- a/mm/hugetlb.c
+>> +++ b/mm/hugetlb.c
+>> @@ -4555,6 +4555,9 @@ static bool vma_shareable(struct vm_area_struct *vma, unsigned long addr)
+>>  
+>>  	/*
+>>  	 * check on proper vm_flags and page table alignment
+>> +	 *
+>> +	 * Note that this is the same check used in huge_pmd_sharing_possible.
+>> +	 * If you change one, consider changing both.
+> 
+> Should we have helper to isolate the check in one place?
+> 
 
-And I see that's now fixed by 6faf05c2b2b4 ("ovl: set I_CREATING on
-inode being created").
+Yes, I will create one.  Most likely just a #define.
 
-Marc
+>>  	 */
+>>  	if (vma->vm_flags & VM_MAYSHARE &&
+>>  	    vma->vm_start <= base && end <= vma->vm_end)
+>> @@ -4562,6 +4565,43 @@ static bool vma_shareable(struct vm_area_struct *vma, unsigned long addr)
+>>  	return false;
+>>  }
+>>  
+>> +/*
+>> + * Determine if start,end range within vma could be mapped by shared pmd.
+>> + * If yes, adjust start and end to cover range associated with possible
+>> + * shared pmd mappings.
+>> + */
+>> +bool huge_pmd_sharing_possible(struct vm_area_struct *vma,
+>> +				unsigned long *start, unsigned long *end)
+>> +{
+>> +	unsigned long check_addr = *start;
+>> +	bool ret = false;
+>> +
+>> +	if (!(vma->vm_flags & VM_MAYSHARE))
+>> +		return ret;
+> 
+> Do we ever use return value? I don't see it.
+> 
+> And in this case function name is not really work...
+
+You are correct.  None of the code uses the return value.  I initially
+thought some caller would use it.  But every caller wants/needs to
+adjust the range if sharing is possible.  This is a really long name
+but how about:
+
+void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
+				unsigned long *start, unsigned long *end)
+
+I'm open to other names and will update patch with suggestions.
+-- 
+Mike Kravetz
+
+> 
+>> +	for (check_addr = *start; check_addr < *end; check_addr += PUD_SIZE) {
+>> +		unsigned long a_start = check_addr & PUD_MASK;
+>> +		unsigned long a_end = a_start + PUD_SIZE;
+>> +
+>> +		/*
+>> +		 * If sharing is possible, adjust start/end if necessary.
+>> +		 *
+>> +		 * Note that this is the same check used in vma_shareable.  If
+>> +		 * you change one, consider changing both.
+>> +		 */
+>> +		if (vma->vm_start <= a_start && a_end <= vma->vm_end) {
+>> +			if (a_start < *start)
+>> +				*start = a_start;
+>> +			if (a_end > *end)
+>> +				*end = a_end;
+>> +
+>> +			ret = true;
+>> +		}
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+>> +
