@@ -2,160 +2,150 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CABC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B94C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A48E1208CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:20:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A48E1208CD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=burcheri.de
+	by mail.kernel.org (Postfix) with ESMTP id E40AD208CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:20:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kEbYjG7K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E40AD208CD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbeHVLoK (ORCPT
+        id S1728389AbeHVLop (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 07:44:10 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:55370 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727797AbeHVLoK (ORCPT
+        Wed, 22 Aug 2018 07:44:45 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:38796 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727797AbeHVLoo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 07:44:10 -0400
-Received: from localhost ([94.79.149.170]) by mrelayeu.kundenserver.de
- (mreue004 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 0Ly8sz-1fvdWm1wnt-015YaH; Wed, 22 Aug 2018 10:20:17 +0200
-Message-ID: <1534926011.18658.29.camel@burcheri.de>
-Subject: MQ-BFQ crashing on battery mode
-From:   Massimo Burcheri <massimo@burcheri.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwAQMAAABtzGvEAAAAA3NCSVQICAjb4U/gAAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABGUlEQVQYlUWQsUoDQRCGv71LjB7KSSBwwZCTgFhY2EYIHmJnZRMLo5AXUMRCBMHcE6iPoGBlINpoZXGVeQTFKqSxMgYtTBFcZw7EKfZn2Z2Z7//hr2ysZ+5tqFLmWKVaKKs0vWd9TJx2AibmoQcupj6CCZirqTgzA5hmsdtQWe5/xAREX7uJ3MLP9x4lyieNO5mcOxyM8HH79y/4Cdn9R3JDsts/uGO82yOMJf/ah1Y8tfQEIQt7Z7rCawtNiUpHFgYUdgTxgI1NAW6SvxoqWabbw0Bd5jpQibTNBC1F4nIMk2TWhTqIs+fSVpzfCsVR9eaiJf5W6mtWXK7O+vKR4nWkSYSuFbP4No3Ht6dpSN9pSMYmaXI1/usXT0FM3SoTKAAAAAAASUVORK5CYII=
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-FkIqwNjyHCVyvhY4Q5sg"
-Date:   Wed, 22 Aug 2018 10:20:11 +0200
-Mime-Version: 1.0
-X-Mailer: Evolution 3.24.6 
-X-Provags-ID: V03:K1:Mnqr1GBAFbG4Bb6tq/HN6Dx4pX2HOzw9rS54ag7bzSUa8J2o3Ic
- gxHvTm3hHKaQCTxBT316DMeRC9Tdh9NsCKG/a3gsDicofw6hB6C4E/xM3aosbAyAWYS5LjN
- 3ubQEDs7NzBSVtMLZihm6SvOEGSMSt4INuIrRaDr3z5HAoPzxiieTLNkHC855UjDi78QGRu
- um/h/4vk5MVNwpsjKi6gw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Lg9diYVSx8c=:IuMbSCOrdM3bF4YiFz3/7+
- DfyChlG0YHExouA5hn+LEcQIhVscTUi0sa4PYuyrUPAgp4rRh+M84XyAfeOJJKasmkDCBe7Dm
- CI3t46qVtRtHjrl6nf/tT2uJpYRDqzhqcSFJs4/hCakIEKyPlRL/Y6pHm7Mm+6+P9OSQJwOK9
- gAvZY2fQmPFrhbnNbkmDlwqaZdIFfxdklT212CZhk5EUDdj5v9N78LswEsKXlsfDJ5qYc6Kug
- F8VXlSBYRn+ElsoGr6JMJjl2OnElCWC3aoH1Dpp7b2P0/3J39gJABQp7yfvgIxywoYGSl4Jd9
- a3kRon1pVu3t4jYkDU1ezZnBZVN5PWQCA6EOTOCwGbDzdDSbNTeC8LO3MKm+Lnq8qbbqwGFuN
- D2jC81gLLivaQmVz40/DtV1xQqHtVes9DBDh4csCVydYncaawIyy7kExBljGFtoAEzqOqByea
- hqCo/ooR4OKzE4AnOF83s+nZeTdK0xY+rwAeZZjz2mmMesFSHwjbLF0C8zhf13y9pYCbR99F3
- tjeSZWSJjZBCvhFJwCCDIDARpf1Jsmz6BBMsaUrLjfZf3MVETiod4/6Eui72JXF9r/Bimcpbg
- om9d+AckpovuY7LKRb7XZethod7P6GCDY0kjA0DQiiyS8Ip+en7wtJFXinLVvPyW/JRXjuiy/
- nNbBbyUly+mGzjNSJK3kR7LGefjwQruvzQChcadV7KRl3hs0tCt7uPM/+1UZpSdqg1SMvX5rw
- YAQQDTHALJQTZjbP6fXnH00pihlWq2laQggsHZU581i+MWNNaupgwKBTG5hOkRWxWd3ffm3YD
- nuGf2Es
+        Wed, 22 Aug 2018 07:44:44 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7M8Ka9h100385;
+        Wed, 22 Aug 2018 03:20:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1534926036;
+        bh=bU9oLxl9eIUdWmq2ApjbdDhewWIDi6wy6gBRBnWOnH8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=kEbYjG7K6k3x9FC+Ai1kLB+4/MvVzz4CV4XFgChz9xE2QFMs2Y8OfHfjxmhOZCioz
+         6nfWmOriBpFLhEsrCK2/3QXYsKdC4UR+MKplEAeRxOBcJ5qAqF9EAq0iz7T4D+5LHW
+         5HmfJUfzNx3ic40Pz2jYFIp2zGoK7kc0sQsX79O8=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7M8KaAR006195;
+        Wed, 22 Aug 2018 03:20:36 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 22
+ Aug 2018 03:20:36 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 22 Aug 2018 03:20:36 -0500
+Received: from [172.22.218.222] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7M8KUHx012403;
+        Wed, 22 Aug 2018 03:20:32 -0500
+Subject: Re: [PATCH] soc: ti: pm33xx: Enable DS0 for the platforms on which it
+ is functional
+To:     Johan Hovold <johan@kernel.org>
+CC:     <tony@atomide.com>, <d-gerlach@ti.com>,
+        <linux-kernel@vger.kernel.org>, <t-kristo@ti.com>,
+        <ssantosh@kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <1534915951-8783-1-git-send-email-j-keerthy@ti.com>
+ <20180822073409.GK14967@localhost> <20180822073719.GL14967@localhost>
+From:   "J, KEERTHY" <j-keerthy@ti.com>
+Message-ID: <ae71d45f-9260-3547-5ff2-355c084fcf8e@ti.com>
+Date:   Wed, 22 Aug 2018 13:50:29 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180822073719.GL14967@localhost>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-FkIqwNjyHCVyvhY4Q5sg
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On 8/22/2018 1:07 PM, Johan Hovold wrote:
+> On Wed, Aug 22, 2018 at 09:34:09AM +0200, Johan Hovold wrote:
+>> On Wed, Aug 22, 2018 at 11:02:31AM +0530, Keerthy wrote:
+>>> Enable DS0 for only those platforms on which it is functional
+>>>
+>>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>>> ---
+>>>   arch/arm/mach-omap2/pm33xx-core.c    | 5 +++++
+>>>   drivers/soc/ti/pm33xx.c              | 9 +++++++++
+>>>   include/linux/platform_data/pm33xx.h | 2 ++
+>>>   3 files changed, 16 insertions(+)
+>>>
+>>> diff --git a/arch/arm/mach-omap2/pm33xx-core.c b/arch/arm/mach-omap2/pm33xx-core.c
+>>> index f4971e4..f0f6e8e 100644
+>>> --- a/arch/arm/mach-omap2/pm33xx-core.c
+>>> +++ b/arch/arm/mach-omap2/pm33xx-core.c
+>>> @@ -135,6 +135,11 @@ static int am43xx_suspend(unsigned int state, int (*fn)(unsigned long),
+>>>   {
+>>>   	int ret = 0;
+>>>   
+>>> +	if (!(args & WFI_FLAG_DEEP_SLEEP0)) {
+>>> +		pr_err("DS0 mode not supported\n");
+>>> +		return -ENOTSUPP;
+>>> +	}
+>>> +
+>>>   	amx3_pre_suspend_common();
+>>>   	scu_power_mode(scu_base, SCU_PM_POWEROFF);
+>>>   	ret = cpu_suspend(args, fn);
+>>> diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
+>>> index d0dab32..53238d7 100644
+>>> --- a/drivers/soc/ti/pm33xx.c
+>>> +++ b/drivers/soc/ti/pm33xx.c
+>>> @@ -324,6 +324,15 @@ static int am33xx_pm_probe(struct platform_device *pdev)
+>>>   	suspend_wfi_flags |= WFI_FLAG_SAVE_EMIF;
+>>>   	suspend_wfi_flags |= WFI_FLAG_WAKE_M3;
+>>>   
+>>> +	/*
+>>> +	 * Deep Sleep0 mode is currently functional only on am437x-gp-evm,
+>>> +	 * am33xx-evm and boneblack family. Hence set the DS0 flag
+>>> +	 */
+>>> +	if (of_machine_is_compatible("ti,am437x-gp-evm") ||
+>>> +	    of_machine_is_compatible("ti,am335x-bone-black") ||
+>>> +	    of_machine_is_compatible("ti,am335x-evm"))
+>>> +		suspend_wfi_flags |= WFI_FLAG_DEEP_SLEEP0;
+>>
+>> What about other (out-of-tree) machines which supports DS0 and which
+>> this change would break?
+>>
+>> I think this needs to be a blacklist if anything.
+>>
+>> Please also expand in the commit message why you think this is needed.
 
+Currently when one does echo mem > /sys/power/state on unsuppored 
+machines there can be a crash or a hang. So bail out with a message.
 
-I got a kernel trace when unplugging the power supply, switching to battery
-mode. I get the same kernel trace when booting on battery.
-Both making the system unusable or breaking the boot.
+>>
+>> Last, what tree is this against? There's no am43xx_suspend() in
+>> linux-next (and you add compatibles above for am33xx too).
+> 
+> Sorry, there is indeed an am43xx_suspend(), but you are adding
+> compatibles for am33xx which use am33xx_suspend().
 
-The kernel call trace with symbols:
+am33xx_pm_probe is a common probe function for both am33 and am43.
+AFAIK for am33 family am335x-evm and am335x-bone-black support Deep 
+Sleep mode. For am43 family am43tx-gp-evm alone supports at the moment.
 
-? blk_mq_requeue_request+0x...
-? __scsi_queue_insert+0x...
-? ata_scsi_var_len_cdb_xlat+0x
-? __blk_mq_complete_request+0x...
-? ata_scsi_translate+0x...
-? ata_scsi_queuecmd+0x...
-? scsi_dispatch_cmd+0x...
-? scsi_queue_rq+0x...
-? blk_mq_dispatch_rq_list+0x...
-? kyber_dispatch_cur_domain+0x...
-? kyber_completed_request+0x...
-? blk_mq_sched_dispatch_requests+0x...
-? __ blk_mq_run_hw_queue+0x...
-? __blk_mq_delay_run_hw_queue+0x...
-? blk_mq_run_hw_queue+0x...
-? blk_mq_run_hw_queues+0x...
-? blk_mq_requeue_work+0x...
-? process_one_work+0x...
-? worker_thread+0x...
-? process_one_work+0x...
-? kthread+0x...
-? kthread_flush_work_fn+0x...
-? ret_from_fork+0x...
-Code: ...
-RIP: sbitmap_queue_clear+0x...
+Can you let me know of other am33 machines that support DS0 mode?
+I could have simply used ti,am33xx compatible which covers entire am33 
+family but then am33xx-bone (bone white) does not support this mode.
 
-Screenshot: 	https://ibin.co/4D34Ej3DWsqI.jpg
-Kernel config: 	https://bpaste.net/show/870004e55123
-
-Kernel: 4.17.11-ck
-
-Setup:
-
-btrfs-on-bcache-on-luks
-btrfs options (rw,noatime,nodiratime,compress-
-force=3Dlzo,nossd,noacl,space_cache,autodefrag)
-
-Using mq bfq scheduler for the hdd backing and kyber for the ssd caching de=
-vice
-
-
-Failed tests:
-Tested many kernel down to 4.13.2 with Gentoo or Ck patchset. Sorry for not
-including the vanilla sources in the test, I can provide if required.
-Skipping services in the boot process didn't help, any next service leads t=
-o the
-same trace.
-Switching off the laptop-mode-tools daemon didn't help.
-Switching all devices to "none" scheduler did not help.
-
-
-Workaround:
-After some tests and due to the *mq* call stack I was able to workaround by
-disabling CONFIG_SCSI_MQ_DEFAULT and CONFIG_DM_MQ_DEFAULT and switching all
-devices to cfq scheduler.
-However with the MQ enabled kernel, only bfq, kyber and none are possible, =
-while
-the non-mq kernel can only set cfq. I guess this is intentional as the curr=
-ent
-bfq implementation is a MQ only version and CFQ is a non-mq only version?
-
-Best regards,
-Massimo
---=-FkIqwNjyHCVyvhY4Q5sg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEjdL61EKP3VOAA+I8lQj3p5VSZjIFAlt9HLsACgkQlQj3p5VS
-ZjL95hAAn3RpwMKbRwv3NjEfWwxpTaJXgtNIAW3rKxyEOO3jX0fhfA1rlEKtQ3r9
-w6OCxaORedTpxB0QEIkd2Pe82fj5dteVSETQQsZ1w/PEYhY9nZkhebbhjB5X817x
-tmwuYE3CDxn6Yti0phV7tIp9/TxmUaCybP1X8vR02t247x+lqnAPA+3eumig2y5o
-YNOghADyJj7dmxnK8C0kcnPicDlxNacP/T7NtHA/3EHIc1/itGGPN6W+G6D2Jpn5
-FOShUBCUX6rfc/z9HOWnhZXWGQfqgLp8fCPCainA7EH2DjcZn9xIRxRG/fdkja2w
-Aoj4A4JNNLJ/9YSksTt26eaeGT8ybf9eujaDtBdrk1P6R3q6qZ2lgbUOE6V+7F5r
-5KE8u1kvGBn8Q/wov6ZzvlR9vnV2GoUlJmSNiAgRt70WXmw3HXgTY5RTj1lnmbTj
-1qWJCjdx3OumnfSgrs2s/amAHa3xMhcu7dLL5u7dEg9vzgHARrAve8aQLG/tpXGc
-EAXDJIk0WhMeCXWXO3GtZCqTFelKS/BAUeCh7zQwx+U3laKqRr2oFKs6snAliY33
-UlCV91Hd8iA6tZqkhWey0sAoXvSiOjRoEE5UywV9WWovTnjMsIsCwvgsfb7f0Vij
-qvwAwhtL6G2AcbmioQvybC93r4ZbI0e2WmOvhwjzmMh4qZ8NmeI=
-=h385
------END PGP SIGNATURE-----
-
---=-FkIqwNjyHCVyvhY4Q5sg--
-
+> 
+> Johan
+> 
