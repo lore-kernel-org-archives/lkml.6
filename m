@@ -2,96 +2,136 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6436EC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0021C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:38:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EF3C2147C
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:36:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EF3C2147C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 4D173208DB
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:38:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="Kp1kipQK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D173208DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729131AbeHVSBZ (ORCPT
+        id S1729164AbeHVSDW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 14:01:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43542 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728711AbeHVSBZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 14:01:25 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AE4A208DB;
-        Wed, 22 Aug 2018 14:36:14 +0000 (UTC)
-Date:   Wed, 22 Aug 2018 10:36:12 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "tip-bot for Tzvetomir Stoyanov (VMware)" <tipbot@zytor.com>
-Cc:     y.karadz@gmail.com, acme@redhat.com, tz.stoyanov@gmail.com,
-        tglx@linutronix.de, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
-        rostedt@goodmis.org, peterz@infradead.org,
-        linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:perf/urgent] tools lib traceevent: Rename various pevent
- get/set/is APIs
-Message-ID: <20180822103612.2b41102a@gandalf.local.home>
-In-Reply-To: <tip-413af01c8d9d5d688df3244401cbddfe98bafe2a@git.kernel.org>
-References: <20180808180703.114110715@goodmis.org>
-        <tip-413af01c8d9d5d688df3244401cbddfe98bafe2a@git.kernel.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 22 Aug 2018 14:03:22 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:39784 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728711AbeHVSDW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 14:03:22 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id B05025C0934;
+        Wed, 22 Aug 2018 16:38:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1534948689;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=87aA3Vmf1ef8OfgYcsPDmJP+wsMjVljSL9Ffv2L/7q8=;
+        b=Kp1kipQKGJCjPfFMJMlJPXaFh/TJFa8X6um3fpnUfja8FB3gnzWN2KrQOxzVg4Ty99eJqY
+        tK2vaYsH1Glb1X9Tr+l3SdfaSWfmDKfwfDBTrHpx0VT1/ITV+1JAsmuZ/z41K4fJzIyfCT
+        ZPcOc0Nyaao4ReTt8IfS97c1h6+xRto=
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+Date:   Wed, 22 Aug 2018 16:38:09 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ARM: use choice for kernel unwinders
+In-Reply-To: <CAK8P3a0oaMS12R4tazChMHENQduO0-Wb-gw-inKjH0oz7_5s3g@mail.gmail.com>
+References: <20180821222416.7771-1-stefan@agner.ch>
+ <CAK8P3a0oaMS12R4tazChMHENQduO0-Wb-gw-inKjH0oz7_5s3g@mail.gmail.com>
+Message-ID: <77d139d225e16b90d9b8da1982a11707@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 18 Aug 2018 04:53:45 -0700
-"tip-bot for Tzvetomir Stoyanov (VMware)" <tipbot@zytor.com> wrote:
-
-> Commit-ID:  413af01c8d9d5d688df3244401cbddfe98bafe2a
-> Gitweb:     https://git.kernel.org/tip/413af01c8d9d5d688df3244401cbddfe98bafe2a
-> Author:     Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
-> AuthorDate: Wed, 8 Aug 2018 14:03:06 -0400
-> Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-> CommitDate: Mon, 13 Aug 2018 15:35:02 -0300
+On 22.08.2018 12:02, Arnd Bergmann wrote:
+> On Wed, Aug 22, 2018 at 12:24 AM Stefan Agner <stefan@agner.ch> wrote:
+>>
+>> While in theory multiple unwinders could be compiled in, it does
+>> not make sense in practise. Use a choice to make the unwinder
+>> selection mutually exclusive and mandatory.
+>>
+>> Already before this commit it has not been possible to deselect
+>> FRAME_POINTER. Remove the obsolete comment.
+>>
+>> Furthermore, to produce a meaningful backtrace with FRAME_POINTER
+>> enabled the kernel needs a specific function prologue:
+>>     mov    ip, sp
+>>     stmfd    sp!, {fp, ip, lr, pc}
+>>     sub    fp, ip, #4
+>>
+>> To get to the required prologue gcc uses apcs and no-sched-prolog.
+>> This compiler options are not available on clang, and clang is not
+>> able to generate the required prologue. Make the FRAME_POINTER
+>> config symbol depending on !clang.
+>>
+>> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
 > 
-> tools lib traceevent: Rename various pevent get/set/is APIs
+> Looks ok to me. I've added it to my randconfig test environment, you
+> will hear from me within a day if I run into build regressions.
 > 
-> In order to make libtraceevent into a proper library, variables, data
-> structures and functions require a unique prefix to prevent name space
-> conflicts. That prefix will be "tep_" and not "pevent_". This changes
-> APIs: pevent_pid_is_registered, pevent_get_cpus, pevent_set_cpus,
-> pevent_is_file_bigendian, pevent_is_host_bigendian, pevent_is_latency_format,
-> pevent_set_latency_format
+> We may still want to clean up these three lines:
 > 
-> Signed-off-by: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Yordan Karadzhov (VMware) <y.karadz@gmail.com>
-> Cc: linux-trace-devel@vger.kernel.org
-> Link: http://lkml.kernel.org/r/20180808180703.114110715@goodmis.org
-> Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
-
-Hi Arnaldo,
-
-I'm curious to why the "(VMware)" part of my Signed-off-by was stripped
-off on all these patches? It's required that is added to denote that my
-work is done on my company time, otherwise I will have to use my vmware
-email address which I really don't want to do.
-
--- Steve
-
-
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/lib/traceevent/event-parse.c |  4 ++--
->  tools/lib/traceevent/event-parse.h | 14 +++++++-------
->  tools/lib/traceevent/plugin_kvm.c  |  4 ++--
->  3 files changed, 11 insertions(+), 11 deletions(-)
+> lib/Kconfig.debug:  select FRAME_POINTER if !MIPS && !PPC &&
+> !ARM_UNWIND && !S390 && !MICROBLAZE && !ARC && !X86
+> lib/Kconfig.debug:  select FRAME_POINTER if !MIPS && !PPC && !S390 &&
+> !MICROBLAZE && !ARM_UNWIND && !ARC && !X86
+> lib/Kconfig.debug:  select FRAME_POINTER if !MIPS && !PPC && !S390 &&
+> !MICROBLAZE && !ARM_UNWIND && !ARC && !X86
 > 
->
+> in which ARM is the odd case that currently depends on an architecture
+> specific rather than the architecture itself.
+
+I guess we would just follow X86 lead by saying ARM is guaranteed to
+have unwinding support, and hence we can add !ARM.
+
+> We could introduce a 'config ARCH_HAS_UNWINDER' symbol that gets
+> selected by mips, ppc, s390, microblaze, arm and x86 unconditionally,
+> and then simplify the 'select' statements here.
+
+Yeah I was thinking about something like that too.
+
+It seems to be a bit weird to me that lib/Kconfig.debug selects a
+specific stack unwinding technique...
+
+Ideally other config symbol should just ask arch to make sure a
+unwinding technique is available (NEED_STACK_UNWINDING?) and arch then
+makes sure to provide a reasonable default.
+
+This then also would make it possible to select no stack unwinding in
+case arch supports that and all the users of stack unwinding are
+disabled too. Not sure how that exactly would look like in Kconfig, I
+was thinking like:
+
+choice
+    prompt "Choose kernel unwinder"
+    optional if !NEED_STACK_UNWINDING
+    default UNWINDER_ARM if AEABI && !FUNCTION_GRAPH_TRACER
+    default UNWINDER_FRAME_POINTER if !AEABI || FUNCTION_GRAPH_TRACER
+
+But "optional if" does not exist yet :-)
+
+Reading the comments in arch/arm/Kconfig.debug seems to suggest that
+once upon a time it was possible to disable stack unwinding on ARM.
+
+But then, maybe we don't really want to go there? Might be interesting
+for tinification efforts.
+
+--
+Stefan
