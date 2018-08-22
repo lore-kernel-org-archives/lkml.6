@@ -2,218 +2,159 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCDEC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E07C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 682FC20936
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:16:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 682FC20936
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5AE4820936
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:21:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVkpNC7n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AE4820936
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbeHVXmz (ORCPT
+        id S1728267AbeHVXsD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 19:42:55 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39544 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728225AbeHVXmz (ORCPT
+        Wed, 22 Aug 2018 19:48:03 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45129 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbeHVXsD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 19:42:55 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7MKE6TV118780
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 16:16:36 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m1dwmswu7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 16:16:35 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Wed, 22 Aug 2018 16:16:34 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 22 Aug 2018 16:16:31 -0400
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MKGTHO46203046
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 22 Aug 2018 20:16:29 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 46F2028065;
-        Wed, 22 Aug 2018 16:14:59 -0400 (EDT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8C60E2805E;
-        Wed, 22 Aug 2018 16:14:58 -0400 (EDT)
-Received: from oc8043147753.ibm.com (unknown [9.60.75.213])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 22 Aug 2018 16:14:58 -0400 (EDT)
-Subject: Re: [PATCH v9 21/22] KVM: s390: CPU model support for AP
- virtualization
-To:     David Hildenbrand <david@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-22-git-send-email-akrowiak@linux.vnet.ibm.com>
- <2c2c4859-ed3e-a492-dd59-78529c7768b2@redhat.com>
- <95e6ee74-69aa-9805-3233-b9ec81fce516@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Wed, 22 Aug 2018 16:16:28 -0400
+        Wed, 22 Aug 2018 19:48:03 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 20-v6so2631422wrb.12
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 13:21:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=t5uPrUDmNlK04MQOuJY0LHy/NNtg3cNiuXD4u9yAW4E=;
+        b=nVkpNC7n7/EC/CGbfRyOzF2N7hnPMcYSgfvHlUY2IsiY0QmHMskY5F71be4TL/AG/t
+         ZxrIsUs7WpuMFRpuzDUYgQAgVJW8PC/QzMsGmtF1NKQcrMpRMYB8di1RW5USF8ypqtTC
+         CYF4P86AdD42GrNMiQmLk3ekH6w8/k6H31Fkrl1nVu8Oa2B3xUzkXcvUuXQ3qGz0nUUq
+         3sTgtrnmBYnOWc3ignbAXJ8RQIxvOTdIP9RTEIMRG7dFtOOBubzBpv+9rNrMYrFVBbfu
+         5slFDLnVvX/SVmaAJsev6ziDVHwiigQvLETFgje5g9A4h1CB+rGK2vCJYo5O74zq0sEd
+         DfYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=t5uPrUDmNlK04MQOuJY0LHy/NNtg3cNiuXD4u9yAW4E=;
+        b=UT/K70DpUKfLKpN5lAxVVh+m72R7QCTvWHCLTXFgg9uTDwv1e4Xl5E+Os6NYnRAfOP
+         YvpnOl9k9f5DJcN736Y5x43LzBSm5G64a9TwKSSRlZ30TXuBQqu8TK+YgpSKOEkF6yTq
+         /qpNhmwZoChFd2mhJdxWT+f5lChnpGxpAPNUk3iqdMRfISBQ+Ob1bnM1qWqKlMr0Xtco
+         U8mJFJUl3nZ+detuG2vc9XsfLPjObnVeOBo8yh/kEEDNz8WJ/PAI1R5v6Vih+zsW76JE
+         gz3XqgIdYF33uqNKNi7gcJydAUCUf5/TktCi/r5Q6gitjc5m9axvxdFkG7L9KFXdblIy
+         Gf5w==
+X-Gm-Message-State: AOUpUlHeSJ/sIcADIBUHtJm6naxtgRbPaNEyJkF5CsL5lhexI56v4wel
+        +IWisMtKZQHYEermtSxTMWg=
+X-Google-Smtp-Source: AA+uWPzlz21juBLaO/swmQiVTGxKFvbroyXQMsKkoAa7Q9WKizjNJrI565JhgYbGjGBBGagrxEol1g==
+X-Received: by 2002:a5d:6a92:: with SMTP id s18-v6mr36672641wru.44.1534969301508;
+        Wed, 22 Aug 2018 13:21:41 -0700 (PDT)
+Received: from [192.168.1.4] (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
+        by smtp.gmail.com with ESMTPSA id n7-v6sm642138wmc.2.2018.08.22.13.21.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 Aug 2018 13:21:40 -0700 (PDT)
+Subject: Re: [PATCH] ARM: spectre-v2: Try to set IBE bit for Cortex-A15 and
+ Brahma-B15
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Luca Scalabrino <luca.scalabrino@arm.com>, marc.zyngier@arm.com,
+        Russell King <linux@armlinux.org.uk>,
+        open list <linux-kernel@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20180607225804.28771-1-f.fainelli@gmail.com>
+ <e4db9ef9-398f-114a-b5a8-8d8de0b0f85e@gmail.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <3698a520-00cd-f904-a031-a7d6f22c8885@gmail.com>
+Date:   Wed, 22 Aug 2018 22:21:39 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <95e6ee74-69aa-9805-3233-b9ec81fce516@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <e4db9ef9-398f-114a-b5a8-8d8de0b0f85e@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18082220-0068-0000-0000-0000032DB5F1
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009593; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01077351; UDB=6.00555454; IPR=6.00857326;
- MB=3.00022873; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-22 20:16:34
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082220-0069-0000-0000-0000457B2721
-Message-Id: <7e7a35f5-d1eb-7719-c5e8-57d6f19db675@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808220200
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/22/2018 07:24 AM, David Hildenbrand wrote:
-> On 22.08.2018 13:19, David Hildenbrand wrote:
->> On 13.08.2018 23:48, Tony Krowiak wrote:
->>> From: Tony Krowiak <akrowiak@linux.ibm.com>
->>>
->>> Introduces a new CPU model feature and two CPU model
->>> facilities to support AP virtualization for KVM guests.
->>>
->>> CPU model feature:
->>>
->>> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
->>> AP instructions are available on the guest. This
->>> feature will be enabled by the kernel only if the AP
->>> instructions are installed on the linux host. This feature
->>> must be specifically turned on for the KVM guest from
->>> userspace to use the VFIO AP device driver for guest
->>> access to AP devices.
->>>
->>> CPU model facilities:
->>>
->>> 1. AP Query Configuration Information (QCI) facility is installed.
->>>
->>>     This is indicated by setting facilities bit 12 for
->>>     the guest. The kernel will not enable this facility
->>>     for the guest if it is not set on the host.
->>>
->>>     If this facility is not set for the KVM guest, then only
->>>     APQNs with an APQI less than 16 will be used by a Linux
->>>     guest regardless of the matrix configuration for the virtual
->>>     machine. This is a limitation of the Linux AP bus.
->>>
->>> 2. AP Facilities Test facility (APFT) is installed.
->>>
->>>     This is indicated by setting facilities bit 15 for
->>>     the guest. The kernel will not enable this facility for
->>>     the guest if it is not set on the host.
->>>
->>>     If this facility is not set for the KVM guest, then no
->>>     AP devices will be available to the guest regardless of
->>>     the guest's matrix configuration for the virtual
->>>     machine. This is a limitation of the Linux AP bus.
->>>
->>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->>> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
->>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
->>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->>> ---
->>>   arch/s390/kvm/kvm-s390.c         |    5 +++++
->>>   arch/s390/tools/gen_facilities.c |    2 ++
->>>   2 files changed, 7 insertions(+), 0 deletions(-)
->>>
->>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->>> index 1e8cb67..d5e04d2 100644
->>> --- a/arch/s390/kvm/kvm-s390.c
->>> +++ b/arch/s390/kvm/kvm-s390.c
->>> @@ -367,6 +367,11 @@ static void kvm_s390_cpu_feat_init(void)
->>>   
->>>   	if (MACHINE_HAS_ESOP)
->>>   		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
->>> +
->>> +	/* Check if AP instructions installed on host */
->>> +	if (ap_instructions_available())
->>> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
->>> +
->>>   	/*
->>>   	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
->>>   	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
->>> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
->>> index 90a8c9e..a52290b 100644
->>> --- a/arch/s390/tools/gen_facilities.c
->>> +++ b/arch/s390/tools/gen_facilities.c
->>> @@ -106,6 +106,8 @@ struct facility_def {
->>>   
->>>   		.name = "FACILITIES_KVM_CPUMODEL",
->>>   		.bits = (int[]){
->>> +			12, /* AP Query Configuration Information */
->>> +			15, /* AP Facilities Test */
->>>   			-1  /* END */
->>>   		}
->>>   	},
->>>
->> I really wonder if we should also export the APXA facility.
+On 08/11/2018 03:58 PM, Marek Vasut wrote:
+> On 06/08/2018 12:58 AM, Florian Fainelli wrote:
+>> Per the ARM reference manual for the Cortex-A15, The ACTLR:
 >>
->> We can probe and allow that CPU feature. However, we cannot disable it
->> (as of now).
+>>  Is a read/write register.
 >>
->> We have other CPU features where it is the same case (basically all
->> subfunctions). See kvm_s390_get_processor_subfunc(). We probe them and
->> export them, but support to disable them has never been implemented.
+>>  Common to the Secure and Non-secure states.
 >>
->> On a high level, we could then e.g. deny to start a QEMU guest if APXA
->> is available but has been disabled. (until we know that disabling it
->> actually works - if ever).
+>>  Is only accessible from PL1 or higher, with access rights that depend
+>>  on the mode:
 >>
->> This helps to catch nasty migration bugs (e.g. APXA suddenly
->> disappearing). Although unlikely, definitely possible.
+>>     * Read/write in Secure PL1 modes.
 >>
+>>     * Read-only and write-ignored in Non-secure PL1 and PL2 modes
+>>       if NSACR.NS_SMP is 0.
 >>
->> Are there any other AP related facilities that the guest can from now on
->> probe that should also become part of the CPU model?
+>>     * Read/write in Non-secure PL1 and PL2 modes if NSACR.NS_SMP
+>>       is 1. In this case, all bits are write-ignored except for the SMP bit.
 >>
-> To be more precise, shouldn't PQAP(QCI) be handled just like other
-> subfunctions? (I remember it should)
+>> We can attempt to set this bit from within the kernel, which helps
+>> avoiding firmware side modifications to set the IBE bit when that is
+>> impractical. We do this within __v7_ca15mp_setup and __v7_b15mp_setup
+>> because by then we already took those labels because the processors we
+>> run on do match.
+>>
+>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> 
+> I believe this would help on selected R-Car Gen2 SoCs which have CA15
+> cores. Those cores are released from reset by Linux directly and jump to
+> the reset vector set up by Linux in Secure mode.
+> 
+> I was looking for a generic solution after discussing how to mitigate
+> the spectrev2 on such SoCs with Catalin on IRC and this seems to be one
+> option. There was also a suggestion that Russell is working on some sort
+> of generic solution too. Can you comment on that please ?
 
-When you suggest PQAP(QCI) be handled like other subfunctions, are you
-suggesting that there should be a field in struct kvm_s390_vm_cpu_subfunc
-with a bit indicating the QCI subfunction is available? The availability
-of the QCI subfunction of the PQAP instruction is determined by facilities
-bit 12. Is it not enough to export facilities bit 12?
+Is there any feedback on this ?
 
->
-> That would imply that there is actually theoretically a way to fake away
-> certain AP facilities.
->
+>> ---
+>>  arch/arm/mm/proc-v7.S | 8 +++++++-
+>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/mm/proc-v7.S b/arch/arm/mm/proc-v7.S
+>> index 6fe52819e014..a21cf3729efa 100644
+>> --- a/arch/arm/mm/proc-v7.S
+>> +++ b/arch/arm/mm/proc-v7.S
+>> @@ -284,10 +284,16 @@ __v7_cr8mp_setup:
+>>  	b	1f
+>>  __v7_ca7mp_setup:
+>>  __v7_ca12mp_setup:
+>> +	b	2f
+>>  __v7_ca15mp_setup:
+>>  __v7_b15mp_setup:
+>> +#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
+>> +	mrc	p15, 0, r0, c1, c0, 1
+>> +	orr	r0, r0, #1			@ Enable IBE bit
+>> +	mcr	p15, 0, r0, c1, c0, 1
+>> +#endif
+>>  __v7_ca17mp_setup:
+>> -	mov	r10, #0
+>> +2:	mov	r10, #0
+>>  1:	adr	r0, __v7_setup_stack_ptr
+>>  	ldr	r12, [r0]
+>>  	add	r12, r12, r0			@ the local stack
+>>
+> 
+> 
 
+
+-- 
+Best regards,
+Marek Vasut
