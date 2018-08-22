@@ -3,96 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A6FC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1AA4C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BD00214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:37:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BD00214DA
+	by mail.kernel.org (Postfix) with ESMTP id 5D711214C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:37:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D711214C3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbeHVLBL (ORCPT
+        id S1728437AbeHVLBQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 07:01:11 -0400
-Received: from mx.socionext.com ([202.248.49.38]:47182 "EHLO mx.socionext.com"
+        Wed, 22 Aug 2018 07:01:16 -0400
+Received: from mx.socionext.com ([202.248.49.38]:47195 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726448AbeHVLBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 07:01:11 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 22 Aug 2018 16:37:29 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 7A6B6180237;
-        Wed, 22 Aug 2018 16:37:29 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Wed, 22 Aug 2018 16:37:29 +0900
+        id S1728364AbeHVLBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 07:01:15 -0400
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 22 Aug 2018 16:37:32 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id CCE846062A;
+        Wed, 22 Aug 2018 16:37:32 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Wed, 22 Aug 2018 16:37:32 +0900
 Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id C98DB1A0E11;
-        Wed, 22 Aug 2018 16:37:28 +0900 (JST)
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 0FBBA1A0E6F;
+        Wed, 22 Aug 2018 16:37:32 +0900 (JST)
 From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 To:     Tejun Heo <tj@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, linux-ide@vger.kernel.org
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH 00/14] ata: ahci-platform: add reset control support except for existing drivers
-Date:   Wed, 22 Aug 2018 16:36:56 +0900
-Message-Id: <1534923430-9692-1-git-send-email-hayashi.kunihiko@socionext.com>
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Patrice Chotard <patrice.chotard@st.com>
+Subject: [PATCH 11/14] ata: ahci_st: add second argument of ahci_platform_get_resources()
+Date:   Wed, 22 Aug 2018 16:37:07 +0900
+Message-Id: <1534923430-9692-12-git-send-email-hayashi.kunihiko@socionext.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1534923430-9692-1-git-send-email-hayashi.kunihiko@socionext.com>
+References: <1534923430-9692-1-git-send-email-hayashi.kunihiko@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to get and control a list of resets for the device, and
-add the flag indicating whether to use the reset. Existing drivers
-set 0 to this flags.
+Adding a flag to indicate whether acqiring the optional resources
+as the second argument of ahci_platform_get_resources(),
+add the argument as initial value 0.
 
-This series solves the issue of the previous patch [1] that was already
-reverted [2].
-[1] https://www.spinics.net/lists/linux-ide/msg55299.html
-[2] https://www.spinics.net/lists/linux-ide/msg55379.html
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+---
+ drivers/ata/ahci_st.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Kunihiko Hayashi (14):
-  ata: ahci-platform: add reset control support and the flag to specify
-    using reset
-  ata: ahci_brcm: add second argument of ahci_platform_get_resources()
-  ata: ahci_ceva: add second argument of ahci_platform_get_resources()
-  ata: ahci_da850: add second argument of ahci_platform_get_resources()
-  ata: ahci_dm816: add second argument of ahci_platform_get_resources()
-  ata: ahci_imx: add second argument of ahci_platform_get_resources()
-  ata: ahci_brcm: add second argument of ahci_platform_get_resources()
-  ata: ahci_mvebu: add second argument of ahci_platform_get_resources()
-  ata: ahci_qoriq: add second argument of ahci_platform_get_resources()
-  ata: ahci_seattle: add second argument of
-    ahci_platform_get_resources()
-  ata: ahci_st: add second argument of ahci_platform_get_resources()
-  ata: ahci_sunxi: add second argument of ahci_platform_get_resources()
-  ata: ahci_tegra: add second argument of ahci_platform_get_resources()
-  ata: ahci_xgene: add second argument of ahci_platform_get_resources()
-
- .../devicetree/bindings/ata/ahci-platform.txt      |  1 +
- drivers/ata/ahci.h                                 |  1 +
- drivers/ata/ahci_brcm.c                            |  2 +-
- drivers/ata/ahci_ceva.c                            |  2 +-
- drivers/ata/ahci_da850.c                           |  2 +-
- drivers/ata/ahci_dm816.c                           |  2 +-
- drivers/ata/ahci_imx.c                             |  2 +-
- drivers/ata/ahci_mtk.c                             |  2 +-
- drivers/ata/ahci_mvebu.c                           |  2 +-
- drivers/ata/ahci_platform.c                        |  3 +-
- drivers/ata/ahci_qoriq.c                           |  2 +-
- drivers/ata/ahci_seattle.c                         |  2 +-
- drivers/ata/ahci_st.c                              |  2 +-
- drivers/ata/ahci_sunxi.c                           |  2 +-
- drivers/ata/ahci_tegra.c                           |  2 +-
- drivers/ata/ahci_xgene.c                           |  2 +-
- drivers/ata/libahci_platform.c                     | 35 ++++++++++++++++++----
- include/linux/ahci_platform.h                      |  4 ++-
- 18 files changed, 49 insertions(+), 21 deletions(-)
-
+diff --git a/drivers/ata/ahci_st.c b/drivers/ata/ahci_st.c
+index bc345f2..21c5c44 100644
+--- a/drivers/ata/ahci_st.c
++++ b/drivers/ata/ahci_st.c
+@@ -156,7 +156,7 @@ static int st_ahci_probe(struct platform_device *pdev)
+ 	if (!drv_data)
+ 		return -ENOMEM;
+ 
+-	hpriv = ahci_platform_get_resources(pdev);
++	hpriv = ahci_platform_get_resources(pdev, 0);
+ 	if (IS_ERR(hpriv))
+ 		return PTR_ERR(hpriv);
+ 	hpriv->plat_data = drv_data;
 -- 
 2.7.4
 
