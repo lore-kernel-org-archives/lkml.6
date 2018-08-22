@@ -2,83 +2,95 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E85C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D21DC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:17:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3487521486
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:17:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3487521486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id E2DEF214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:17:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2DEF214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbeHVTnO (ORCPT
+        id S1727128AbeHVTnY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 15:43:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35132 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726770AbeHVTnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 15:43:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F362BAF6C;
-        Wed, 22 Aug 2018 16:17:41 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id CA3CE1E361C; Wed, 22 Aug 2018 18:17:41 +0200 (CEST)
-Date:   Wed, 22 Aug 2018 18:17:41 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Jeremy Cline <jcline@redhat.com>
-Cc:     Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH 1/2] fs/quota: Replace XQM_MAXQUOTAS usage with MAXQUOTAS
-Message-ID: <20180822161741.GA2559@quack2.suse.cz>
-References: <20180731013731.1987-1-jcline@redhat.com>
- <20180731013731.1987-2-jcline@redhat.com>
- <20180822160551.GE23037@quack2.suse.cz>
+        Wed, 22 Aug 2018 15:43:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726770AbeHVTnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 15:43:24 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0A9321486;
+        Wed, 22 Aug 2018 16:17:51 +0000 (UTC)
+Date:   Wed, 22 Aug 2018 12:17:49 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Mike Galbraith <efault@gmx.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Julia Cartwright <julia@ni.com>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG v4.14-rt] kernel BUG at
+ /work/rt/stable-rt.git/kernel/sched/core.c:1639!
+Message-ID: <20180822121749.5c4632d7@gandalf.local.home>
+In-Reply-To: <1534660115.6187.4.camel@gmx.de>
+References: <20180817162340.6e8482fd@gandalf.local.home>
+        <1534588142.2516.10.camel@gmx.de>
+        <1534597992.15909.17.camel@gmx.de>
+        <1534660115.6187.4.camel@gmx.de>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180822160551.GE23037@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 22-08-18 18:05:51, Jan Kara wrote:
-> On Tue 31-07-18 01:37:30, Jeremy Cline wrote:
-> > XQM_MAXQUOTAS and MAXQUOTAS are, it appears, equivalent. Replace all
-> > usage of XQM_MAXQUOTAS and remove it along with the unused XQM_*QUOTA
-> > definitions.
-> > 
-> > Signed-off-by: Jeremy Cline <jcline@redhat.com>
-> 
-> Thanks for the cleanup. The patch looks good, just one small nit:
-> 
-> > diff --git a/include/uapi/linux/dqblk_xfs.h b/include/uapi/linux/dqblk_xfs.h
-> > index 03d890b80ebc..a5846cde8272 100644
-> > --- a/include/uapi/linux/dqblk_xfs.h
-> > +++ b/include/uapi/linux/dqblk_xfs.h
-> > @@ -27,11 +27,6 @@
-> >  #define XQM_CMD(x)	(('X'<<8)+(x))	/* note: forms first QCMD argument */
-> >  #define XQM_COMMAND(x)	(((x) & (0xff<<8)) == ('X'<<8))	/* test if for XFS */
-> 
-> You can delete XQM_COMMAND() as well here.
-> 
-> > -#define XQM_USRQUOTA	0	/* system call user quota type */
-> > -#define XQM_GRPQUOTA	1	/* system call group quota type */
-> > -#define XQM_PRJQUOTA	2	/* system call project quota type */
-> > -#define XQM_MAXQUOTAS	3
-> > -
+On Sun, 19 Aug 2018 08:28:35 +0200
+Mike Galbraith <efault@gmx.de> wrote:
 
-Oh, now I've realized that these are actually from uapi header. I don't
-think it's worth to break existing userspace sources just for a sake of
-this small cleanup. So I'll just remove this hunk from the patch.
+> On Sat, 2018-08-18 at 15:13 +0200, Mike Galbraith wrote:
+> > seems it has be something from the 4.17 cycle that went back to 4.14-
+> > stable after 4.1[56]-stable trees went extinct.  
+> 
+> See ("sched/core: Require cpu_active() in select_task_rq(), for user tasks")
+> 
+> Fix it like so?
+> 
+> sched: Allow pinned user tasks to be awakened to the CPU they pinned
+> 
+> Since 7af443ee16976, select_fallback_rq() will BUG() if the CPU to
+> which a task has pinned itself and pinned becomes !cpu_active()
+> while it slept.  Serving a 10 megaton eviction notice is neither
+> helpful nor required, the task will migrate when it can do so.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+This seems to fix the issue that I was seeing. Thanks!
+
+I'll add this to my repo as well.
+
+-- Steve
+
+> 
+> Signed-off-by: Mike Galbraith <efault@gmx.de>
+> ---
+>  kernel/sched/core.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -980,7 +980,7 @@ static inline bool is_cpu_allowed(struct
+>  	if (!cpumask_test_cpu(cpu, p->cpus_ptr))
+>  		return false;
+>  
+> -	if (is_per_cpu_kthread(p))
+> +	if (is_per_cpu_kthread(p) || __migrate_disabled(p))
+>  		return cpu_online(cpu);
+>  
+>  	return cpu_active(cpu);
+
