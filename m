@@ -2,587 +2,217 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8D2EC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84884C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5873D2150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:19:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5873D2150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=digi.com
+	by mail.kernel.org (Postfix) with ESMTP id 3DA51204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:19:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DA51204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbeHVOnY (ORCPT
+        id S1728959AbeHVOoF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 10:43:24 -0400
-Received: from mail1.bemta23.messagelabs.com ([67.219.246.212]:33977 "EHLO
-        mail1.bemta23.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728537AbeHVOnY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 10:43:24 -0400
-Received: from [67.219.246.101] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-2.bemta.az-b.us-east-1.aws.symcld.net id 3D/3B-18672-B964D7B5; Wed, 22 Aug 2018 11:18:51 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNIsWRWlGSWpSXmKPExsXi5LtOQHe2W22
-  0wd+XIhbzj5xjtdi4+TaLxaqpO1ksNj2+xmrR9Wsls8XlXXPYLJZev8hk0br3CLvF3+2bWCxe
-  bBF34PJYM28No8emVZ1sHpuX1HtsfLeDyaP/r4HH501yAWxRrJl5SfkVCawZB9YWFFxKrehqn
-  cLawDgnrIuRi0NIYBWjxJblF1ggnC2MEn/mt7F3MXJysAnoSEzZf5gFxBYRkJRYu3IRM0gRs8
-  AUJonT33axgSSEBdwkJn6aCGazCKhKTF/2nRnE5gWKz/s8nRXElhCQk7h5rhMszingLtH34yU
-  jiC0EVLPy/XdWiHpBiZMzn4AtYxaQkDj44gUzRI2yxJYVFxgh5ihIrD1wnmkCI/8sJC2zkLQs
-  YGRaxWiWVJSZnlGSm5iZo2toYKBraGika6RraGyhl1ilm6RXWqybmlhcomuol1herFdcmZuck
-  6KXl1qyiREYEQxAsIPxy6zUQ4ySHExKory3ZGujhfiS8lMqMxKLM+KLSnNSiw8xynBwKEnw/n
-  cBygkWpaanVqRl5gBjEyYtwcGjJMKr5QqU5i0uSMwtzkyHSJ1i1OX4837qJGYhlrz8vFQpcd4
-  vIDMEQIoySvPgRsDSxCVGWSlhXkago4R4ClKLcjNLUOVfMYpzMCoJ85aDrOLJzCuB2/QK6Agm
-  oCNYmcGOKElESEk1MF6UiyqenyvvE7hatHezI+eLKM7ic5O0pJcz7T4elBLctdvh6umrzS6hC
-  x/oWG6ecFr8zMPjEktnnFwv38Qd8nzzirnRJfNZknQzOae5qqy/USkuNiNgY6fIS2uGFzoqR1
-  8VaEhP2W3BVhpmX/FFO67O1oT10b4Tgix7TV5tjno6YbtS4M4CNyWW4oxEQy3mouJEAG/WLAM
-  OAwAA
-X-Env-Sender: Alex.Gonzalez@digi.com
-X-Msg-Ref: server-9.tower-385.messagelabs.com!1534936730!4190579!1
-X-Originating-IP: [66.77.174.16]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.9.15; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 7578 invoked from network); 22 Aug 2018 11:18:51 -0000
-Received: from owa.digi.com (HELO MCL-VMS-XCH01.digi.com) (66.77.174.16)
-  by server-9.tower-385.messagelabs.com with DHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 22 Aug 2018 11:18:51 -0000
-Received: from DOR-SMS-XCH01.digi.com (10.49.8.99) by MCL-VMS-XCH01.digi.com
- (10.5.8.49) with Microsoft SMTP Server (TLS) id 14.3.399.0; Wed, 22 Aug 2018
- 06:18:50 -0500
-Received: from log-linux-hp-agonzal.digi.com (10.101.2.214) by
- dor-sms-xch01.digi.com (10.49.8.99) with Microsoft SMTP Server (TLS) id
- 14.3.399.0; Wed, 22 Aug 2018 13:18:48 +0200
-From:   Alex Gonzalez <alex.gonzalez@digi.com>
-To:     <shawnguo@kernel.org>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
-        <fabio.estevam@nxp.com>, <linux-imx@nxp.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <alex.gonzalez@digi.com>
-Subject: [PATCH] ARM: dts: imx6ul: Add DTS for ConnectCore 6UL SBC Pro
-Date:   Wed, 22 Aug 2018 13:18:39 +0200
-Message-ID: <1534936719-13770-2-git-send-email-alex.gonzalez@digi.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1534936719-13770-1-git-send-email-alex.gonzalez@digi.com>
-References: <1534936719-13770-1-git-send-email-alex.gonzalez@digi.com>
+        Wed, 22 Aug 2018 10:44:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53826 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728546AbeHVOoF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 10:44:05 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C8BB6804BAAD;
+        Wed, 22 Aug 2018 11:19:34 +0000 (UTC)
+Received: from [10.36.117.196] (ovpn-117-196.ams2.redhat.com [10.36.117.196])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D0D20A9E59;
+        Wed, 22 Aug 2018 11:19:28 +0000 (UTC)
+Subject: Re: [PATCH v9 21/22] KVM: s390: CPU model support for AP
+ virtualization
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <2c2c4859-ed3e-a492-dd59-78529c7768b2@redhat.com>
+Date:   Wed, 22 Aug 2018 13:19:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.101.2.214]
+In-Reply-To: <1534196899-16987-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 22 Aug 2018 11:19:34 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 22 Aug 2018 11:19:34 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ConnectCore 6UL Single Board Computer (SBC) Pro contains the
-ConnectCore 6UL System-On-Module.
+On 13.08.2018 23:48, Tony Krowiak wrote:
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
+> 
+> Introduces a new CPU model feature and two CPU model
+> facilities to support AP virtualization for KVM guests.
+> 
+> CPU model feature:
+> 
+> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
+> AP instructions are available on the guest. This
+> feature will be enabled by the kernel only if the AP
+> instructions are installed on the linux host. This feature
+> must be specifically turned on for the KVM guest from
+> userspace to use the VFIO AP device driver for guest
+> access to AP devices.
+> 
+> CPU model facilities:
+> 
+> 1. AP Query Configuration Information (QCI) facility is installed.
+> 
+>    This is indicated by setting facilities bit 12 for
+>    the guest. The kernel will not enable this facility
+>    for the guest if it is not set on the host.
+> 
+>    If this facility is not set for the KVM guest, then only
+>    APQNs with an APQI less than 16 will be used by a Linux
+>    guest regardless of the matrix configuration for the virtual
+>    machine. This is a limitation of the Linux AP bus.
+> 
+> 2. AP Facilities Test facility (APFT) is installed.
+> 
+>    This is indicated by setting facilities bit 15 for
+>    the guest. The kernel will not enable this facility for
+>    the guest if it is not set on the host.
+> 
+>    If this facility is not set for the KVM guest, then no
+>    AP devices will be available to the guest regardless of
+>    the guest's matrix configuration for the virtual
+>    machine. This is a limitation of the Linux AP bus.
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> ---
+>  arch/s390/kvm/kvm-s390.c         |    5 +++++
+>  arch/s390/tools/gen_facilities.c |    2 ++
+>  2 files changed, 7 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+> index 1e8cb67..d5e04d2 100644
+> --- a/arch/s390/kvm/kvm-s390.c
+> +++ b/arch/s390/kvm/kvm-s390.c
+> @@ -367,6 +367,11 @@ static void kvm_s390_cpu_feat_init(void)
+>  
+>  	if (MACHINE_HAS_ESOP)
+>  		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
+> +
+> +	/* Check if AP instructions installed on host */
+> +	if (ap_instructions_available())
+> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
+> +
+>  	/*
+>  	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
+>  	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
+> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
+> index 90a8c9e..a52290b 100644
+> --- a/arch/s390/tools/gen_facilities.c
+> +++ b/arch/s390/tools/gen_facilities.c
+> @@ -106,6 +106,8 @@ struct facility_def {
+>  
+>  		.name = "FACILITIES_KVM_CPUMODEL",
+>  		.bits = (int[]){
+> +			12, /* AP Query Configuration Information */
+> +			15, /* AP Facilities Test */
+>  			-1  /* END */
+>  		}
+>  	},
+> 
 
-Its hardware specifications are:
+I really wonder if we should also export the APXA facility.
 
-* 256MB DDR3 memory
-* On module 256MB NAND flash
-* Dual 10/100 Ethernet
-* USB Host and USB OTG
-* Parallel RGB display header
-* LVDS display header
-* CSI camera
-* GPIO header
-* I2C, SPI, CAN headers
-* PCIe mini card and micro SIM slot
-* MicroSD external storage
-* On board 4GB eMMC flash
-* Audio headphone, line in/out, microphone lines
+We can probe and allow that CPU feature. However, we cannot disable it
+(as of now).
 
-Signed-off-by: Alex Gonzalez <alex.gonzalez@digi.com>
----
- arch/arm/boot/dts/Makefile                  |   1 +
- arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts | 466 ++++++++++++++++++++++++++++
- 2 files changed, 467 insertions(+)
- create mode 100644 arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts
+We have other CPU features where it is the same case (basically all
+subfunctions). See kvm_s390_get_processor_subfunc(). We probe them and
+export them, but support to disable them has never been implemented.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 6135d3dc381c..3f6f8983f6c6 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -534,6 +534,7 @@ dtb-$(CONFIG_SOC_IMX6SX) += \
- dtb-$(CONFIG_SOC_IMX6UL) += \
- 	imx6ul-14x14-evk.dtb \
- 	imx6ul-ccimx6ulsbcexpress.dtb \
-+	imx6ul-ccimx6ulsbcpro.dtb \
- 	imx6ul-geam.dtb \
- 	imx6ul-isiot-emmc.dtb \
- 	imx6ul-isiot-nand.dtb \
-diff --git a/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts b/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts
-new file mode 100644
-index 000000000000..4570347845fc
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts
-@@ -0,0 +1,466 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Digi International's ConnectCore6UL SBC Pro board device tree source
-+ *
-+ * Copyright 2018 Digi International, Inc.
-+ *
-+ */
-+
-+/dts-v1/;
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include "imx6ul.dtsi"
-+#include "imx6ul-ccimx6ulsom.dtsi"
-+
-+/ {
-+	model = "Digi International ConnectCore 6UL SBC Pro.";
-+	compatible = "digi,ccimx6ulsbcpro", "digi,ccimx6ulsom", "fsl,imx6ul";
-+
-+	lcd_backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm5 0 50000>;
-+		brightness-levels = <0 4 8 16 32 64 128 255>;
-+		default-brightness-level = <6>;
-+		status = "okay";
-+	};
-+
-+	reg_usb_otg1_vbus: reg_usb_otg1@0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "usb_otg1_vbus";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpio1 4 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+};
-+
-+&adc1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_adc1>;
-+	status = "okay";
-+};
-+
-+&can1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_flexcan1>;
-+	xceiver-supply = <&ext_3v3>;
-+	status = "okay";
-+};
-+
-+/* CAN2 is multiplexed with UART2 RTS/CTS */
-+&can2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_flexcan2>;
-+	xceiver-supply = <&ext_3v3>;
-+	status = "disabled";
-+};
-+
-+&ecspi1 {
-+	cs-gpios = <&gpio3 26 GPIO_ACTIVE_LOW>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi1_master>;
-+	status = "okay";
-+};
-+
-+&fec1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_enet1>;
-+	phy-mode = "rmii";
-+	phy-handle = <&ethphy0>;
-+	status = "okay";
-+};
-+
-+&fec2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_enet2 &pinctrl_enet2_mdio>;
-+	phy-mode = "rmii";
-+	phy-handle = <&ethphy1>;
-+	phy-reset-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
-+	phy-reset-duration = <26>;
-+	status = "okay";
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ethphy0: ethernet-phy@0 {
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+			smsc,disable-energy-detect;
-+			reg = <0>;
-+		};
-+
-+		ethphy1: ethernet-phy@1 {
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+			smsc,disable-energy-detect;
-+			reg = <1>;
-+		};
-+	};
-+};
-+
-+&lcdif {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_lcdif_dat0_17
-+		     &pinctrl_lcdif_clken
-+		     &pinctrl_lcdif_hvsync>;
-+	lcd-supply = <&ldo4_ext>;       /* BU90T82 LVDS bridge power */
-+	status = "okay";
-+};
-+
-+&ldo4_ext {
-+	regulator-max-microvolt = <1800000>;
-+};
-+
-+&pwm1 {
-+	status = "okay";
-+};
-+
-+&pwm2 {
-+	status = "okay";
-+};
-+
-+&pwm3 {
-+	status = "okay";
-+};
-+
-+&pwm4 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm4>;
-+	clocks = <&clks IMX6UL_CLK_PWM4>,
-+		<&clks IMX6UL_CLK_PWM4>;
-+	status = "okay";
-+};
-+
-+&pwm5 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm5>;
-+	clocks = <&clks IMX6UL_CLK_PWM5>,
-+		 <&clks IMX6UL_CLK_PWM5>;
-+	status = "okay";
-+};
-+
-+&pwm6 {
-+	status = "okay";
-+};
-+
-+&pwm7 {
-+	status = "okay";
-+};
-+
-+&pwm8 {
-+	status = "okay";
-+};
-+
-+&sai2 {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&pinctrl_sai2>;
-+	pinctrl-1 = <&pinctrl_sai2_sleep>;
-+	assigned-clocks = <&clks IMX6UL_CLK_SAI2_SEL>,
-+			  <&clks IMX6UL_CLK_PLL4_AUDIO_DIV>,
-+			  <&clks IMX6UL_CLK_SAI2>;
-+	assigned-clock-rates = <0>, <786432000>, <12288000>;
-+	assigned-clock-parents = <&clks IMX6UL_CLK_PLL4_AUDIO_DIV>;
-+	status = "okay";
-+};
-+
-+/* UART2 RTS/CTS muxed with CAN2 */
-+&uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart2_4wires>;
-+	uart-has-rtscts;
-+	status = "okay";
-+};
-+
-+/* UART3 RTS/CTS muxed with CAN 1 */
-+&uart3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart3_2wires>;
-+	status = "okay";
-+};
-+
-+&uart5 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart5>;
-+	status = "okay";
-+};
-+
-+&usbotg1 {
-+	dr_mode = "otg";
-+	vbus-supply = <&reg_usb_otg1_vbus>;
-+	pinctrl-0 = <&pinctrl_usbotg1>;
-+	status = "okay";
-+};
-+
-+&usbotg2 {
-+	dr_mode = "host";
-+	disable-over-current;
-+	status = "okay";
-+};
-+
-+/* USDHC2 (microSD conflicts with eMMC) */
-+&usdhc2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usdhc2>;
-+	no-1-8-v;
-+	pinctrl-assert-gpios = <&gpio5 1 GPIO_ACTIVE_LOW>;
-+	broken-cd;	/* no carrier detect line (use polling) */
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hog>;
-+
-+	pinctrl_adc1: adc1grp {
-+		fsl,pins = <
-+			/* EXP_GPIO_2 -> GPIO1_3/ADC1_IN3 */
-+			MX6UL_PAD_GPIO1_IO03__GPIO1_IO03        0xb0
-+		>;
-+	};
-+
-+	pinctrl_ecspi1_master: ecspi1grp1 {
-+		fsl,pins = <
-+			MX6UL_PAD_LCD_DATA20__ECSPI1_SCLK	0x10b0
-+			MX6UL_PAD_LCD_DATA22__ECSPI1_MOSI	0x10b0
-+			MX6UL_PAD_LCD_DATA23__ECSPI1_MISO	0x10b0
-+			MX6UL_PAD_LCD_DATA21__GPIO3_IO26	0x10b0
-+		>;
-+	};
-+
-+	pinctrl_ecspi1_slave: ecspi1grp2 {
-+		fsl,pins = <
-+			MX6UL_PAD_LCD_DATA20__ECSPI1_SCLK	0x10b0
-+			MX6UL_PAD_LCD_DATA22__ECSPI1_MOSI	0x10b0
-+			MX6UL_PAD_LCD_DATA23__ECSPI1_MISO	0x10b0
-+			MX6UL_PAD_LCD_DATA21__ECSPI1_SS0	0x10b0
-+		>;
-+	};
-+
-+	pinctrl_enet1: enet1grp {
-+		fsl,pins = <
-+			MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN	0x1b0b0
-+			MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER	0x1b0b0
-+			MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00	0x1b0b0
-+			MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01	0x1b0b0
-+			MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN	0x1b0b0
-+			MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00	0x1b0b0
-+			MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01	0x1b0b0
-+			MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1	0x40017051
-+		>;
-+	};
-+
-+	pinctrl_enet2: enet2grp {
-+		fsl,pins = <
-+			MX6UL_PAD_ENET2_RX_EN__ENET2_RX_EN	0x1b0b0
-+			MX6UL_PAD_ENET2_RX_ER__ENET2_RX_ER	0x1b0b0
-+			MX6UL_PAD_ENET2_RX_DATA0__ENET2_RDATA00	0x1b0b0
-+			MX6UL_PAD_ENET2_RX_DATA1__ENET2_RDATA01	0x1b0b0
-+			MX6UL_PAD_ENET2_TX_EN__ENET2_TX_EN	0x1b0b0
-+			MX6UL_PAD_ENET2_TX_DATA0__ENET2_TDATA00	0x1b0b0
-+			MX6UL_PAD_ENET2_TX_DATA1__ENET2_TDATA01	0x1b0b0
-+			MX6UL_PAD_ENET2_TX_CLK__ENET2_REF_CLK2	0x40017051
-+		>;
-+	};
-+
-+	/*
-+	 * The same pins GPIO1_IO6 and GPIO_IO7 are shared as the MII
-+	 * bus of ENET1 and ENET2. If both interfaces are enabled, the
-+	 * IOMUX of ENET2 will apply.
-+	 * If only one interface is enabled, the IOMUX of the enabled
-+	 * interface will apply.
-+	 */
-+	pinctrl_enet1_mdio: mdioenet1grp {
-+		fsl,pins = <
-+			MX6UL_PAD_GPIO1_IO07__ENET1_MDC		0x1b0b0
-+			MX6UL_PAD_GPIO1_IO06__ENET1_MDIO	0x1b0b0
-+		>;
-+	};
-+	pinctrl_enet2_mdio: mdioenet2grp {
-+		fsl,pins = <
-+			MX6UL_PAD_GPIO1_IO07__ENET2_MDC		0x1b0b0
-+			MX6UL_PAD_GPIO1_IO06__ENET2_MDIO	0x1b0b0
-+		>;
-+	};
-+
-+	pinctrl_flexcan1: flexcan1grp{
-+		fsl,pins = <
-+			MX6UL_PAD_UART3_CTS_B__FLEXCAN1_TX	0x1b020
-+			MX6UL_PAD_UART3_RTS_B__FLEXCAN1_RX	0x1b020
-+		>;
-+	};
-+	pinctrl_flexcan2: flexcan2grp{
-+		fsl,pins = <
-+			MX6UL_PAD_UART2_CTS_B__FLEXCAN2_TX	0x1b020
-+			MX6UL_PAD_UART2_RTS_B__FLEXCAN2_RX	0x1b020
-+		>;
-+	};
-+
-+	pinctrl_lcdif_dat0_17: lcdifdatgrp0_17 {
-+		fsl,pins = <
-+			MX6UL_PAD_LCD_DATA00__LCDIF_DATA00	0x79
-+			MX6UL_PAD_LCD_DATA01__LCDIF_DATA01	0x79
-+			MX6UL_PAD_LCD_DATA02__LCDIF_DATA02	0x79
-+			MX6UL_PAD_LCD_DATA03__LCDIF_DATA03	0x79
-+			MX6UL_PAD_LCD_DATA04__LCDIF_DATA04	0x79
-+			MX6UL_PAD_LCD_DATA05__LCDIF_DATA05	0x79
-+			MX6UL_PAD_LCD_DATA06__LCDIF_DATA06	0x79
-+			MX6UL_PAD_LCD_DATA07__LCDIF_DATA07	0x79
-+			MX6UL_PAD_LCD_DATA08__LCDIF_DATA08	0x79
-+			MX6UL_PAD_LCD_DATA09__LCDIF_DATA09	0x79
-+			MX6UL_PAD_LCD_DATA10__LCDIF_DATA10	0x79
-+			MX6UL_PAD_LCD_DATA11__LCDIF_DATA11	0x79
-+			MX6UL_PAD_LCD_DATA12__LCDIF_DATA12	0x79
-+			MX6UL_PAD_LCD_DATA13__LCDIF_DATA13	0x79
-+			MX6UL_PAD_LCD_DATA14__LCDIF_DATA14	0x79
-+			MX6UL_PAD_LCD_DATA15__LCDIF_DATA15	0x79
-+			MX6UL_PAD_LCD_DATA16__LCDIF_DATA16	0x79
-+			MX6UL_PAD_LCD_DATA17__LCDIF_DATA17	0x79
-+		>;
-+	};
-+
-+	pinctrl_lcdif_dat18_23: lcdifdatgrp18_23 {
-+		fsl,pins = <
-+			MX6UL_PAD_LCD_DATA18__LCDIF_DATA18	0x79
-+			MX6UL_PAD_LCD_DATA19__LCDIF_DATA19	0x79
-+			MX6UL_PAD_LCD_DATA20__LCDIF_DATA20	0x79
-+			MX6UL_PAD_LCD_DATA21__LCDIF_DATA21	0x79
-+			MX6UL_PAD_LCD_DATA22__LCDIF_DATA22	0x79
-+			MX6UL_PAD_LCD_DATA23__LCDIF_DATA23	0x79
-+		>;
-+	};
-+
-+	pinctrl_lcdif_clken: lcdifctrlgrp1 {
-+		fsl,pins = <
-+			MX6UL_PAD_LCD_CLK__LCDIF_CLK		0x17050
-+			MX6UL_PAD_LCD_ENABLE__LCDIF_ENABLE	0x79
-+		>;
-+	};
-+
-+	pinctrl_lcdif_hvsync: lcdifctrlgrp2 {
-+		fsl,pins = <
-+			MX6UL_PAD_LCD_HSYNC__LCDIF_HSYNC	0x79
-+			MX6UL_PAD_LCD_VSYNC__LCDIF_VSYNC	0x79
-+		>;
-+	};
-+
-+	pinctrl_lcdif_reset: lcdifctrlgrp3 {
-+		fsl,pins = <
-+			MX6UL_PAD_LCD_RESET__LCDIF_RESET	0x79
-+		>;
-+	};
-+
-+	pinctrl_pwm4: pwm4grp {
-+		fsl,pins = <
-+			MX6UL_PAD_GPIO1_IO05__PWM4_OUT          0x110b0
-+		>;
-+	};
-+
-+	pinctrl_pwm5: pwm5grp {
-+		fsl,pins = <
-+			MX6UL_PAD_NAND_DQS__PWM5_OUT		0x110b0
-+		>;
-+	};
-+
-+	pinctrl_sai2: sai2grp {
-+		fsl,pins = <
-+			MX6UL_PAD_JTAG_TRST_B__SAI2_TX_DATA	0x11088
-+			MX6UL_PAD_JTAG_TCK__SAI2_RX_DATA	0x11088
-+			MX6UL_PAD_JTAG_TMS__SAI2_MCLK		0x17088
-+			MX6UL_PAD_JTAG_TDI__SAI2_TX_BCLK	0x17088
-+			MX6UL_PAD_JTAG_TDO__SAI2_TX_SYNC	0x17088
-+			/* Interrupt */
-+			MX6UL_PAD_SNVS_TAMPER7__GPIO5_IO07	0x80000000
-+		>;
-+	};
-+
-+	pinctrl_sai2_sleep: sai2grp_sleep {
-+		fsl,pins = <
-+			MX6UL_PAD_JTAG_TRST_B__GPIO1_IO15	0x3000
-+			MX6UL_PAD_JTAG_TCK__GPIO1_IO14		0x3000
-+			MX6UL_PAD_JTAG_TMS__GPIO1_IO11		0x3000
-+			MX6UL_PAD_JTAG_TDO__GPIO1_IO12		0x3000
-+			/* Interrupt */
-+			MX6UL_PAD_SNVS_TAMPER7__GPIO5_IO07	0x3000
-+		>;
-+	};
-+
-+	pinctrl_uart2_2wires: uart2grp_2wires {
-+		fsl,pins = <
-+			MX6UL_PAD_UART2_TX_DATA__UART2_DCE_TX	0x1b0b1
-+			MX6UL_PAD_UART2_RX_DATA__UART2_DCE_RX	0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_uart2_4wires: uart2grp_4wires {
-+		fsl,pins = <
-+			MX6UL_PAD_UART2_TX_DATA__UART2_DCE_TX	0x1b0b1
-+			MX6UL_PAD_UART2_RX_DATA__UART2_DCE_RX	0x1b0b1
-+			MX6UL_PAD_UART2_CTS_B__UART2_DCE_CTS	0x1b0b1
-+			MX6UL_PAD_UART2_RTS_B__UART2_DCE_RTS	0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_uart3_2wires: uart3grp_2wires {
-+		fsl,pins = <
-+			MX6UL_PAD_UART3_TX_DATA__UART3_DCE_TX	0x1b0b1
-+			MX6UL_PAD_UART3_RX_DATA__UART3_DCE_RX	0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_uart3_4wires: uart3grp_4wires {
-+		fsl,pins = <
-+			MX6UL_PAD_UART3_TX_DATA__UART3_DCE_TX	0x1b0b1
-+			MX6UL_PAD_UART3_RX_DATA__UART3_DCE_RX	0x1b0b1
-+			MX6UL_PAD_UART3_CTS_B__UART3_DCE_CTS	0x1b0b1
-+			MX6UL_PAD_UART3_RTS_B__UART3_DCE_RTS	0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_uart5: uart5grp {
-+		fsl,pins = <
-+			MX6UL_PAD_UART5_TX_DATA__UART5_DCE_TX	0x1b0b1
-+			MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX	0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_usdhc2: usdhc2grp {
-+		fsl,pins = <
-+			MX6UL_PAD_CSI_HSYNC__USDHC2_CMD		0x17059
-+			MX6UL_PAD_CSI_VSYNC__USDHC2_CLK		0x10039
-+			MX6UL_PAD_CSI_DATA00__USDHC2_DATA0	0x17059
-+			MX6UL_PAD_CSI_DATA01__USDHC2_DATA1	0x17059
-+			MX6UL_PAD_CSI_DATA02__USDHC2_DATA2	0x17059
-+			MX6UL_PAD_CSI_DATA03__USDHC2_DATA3	0x17059
-+			/* Mux selector between eMMC/SD# */
-+			MX6UL_PAD_SNVS_TAMPER1__GPIO5_IO01	0x79
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_8databits: usdhc2-8databits-grp {
-+		fsl,pins = <
-+			MX6UL_PAD_CSI_HSYNC__USDHC2_CMD		0x17059
-+			MX6UL_PAD_CSI_VSYNC__USDHC2_CLK		0x10039
-+			MX6UL_PAD_CSI_DATA00__USDHC2_DATA0	0x17059
-+			MX6UL_PAD_CSI_DATA01__USDHC2_DATA1	0x17059
-+			MX6UL_PAD_CSI_DATA02__USDHC2_DATA2	0x17059
-+			MX6UL_PAD_CSI_DATA03__USDHC2_DATA3	0x17059
-+			MX6UL_PAD_CSI_DATA04__USDHC2_DATA4	0x17059
-+			MX6UL_PAD_CSI_DATA05__USDHC2_DATA5	0x17059
-+			MX6UL_PAD_CSI_DATA06__USDHC2_DATA6	0x17059
-+			MX6UL_PAD_CSI_DATA07__USDHC2_DATA7	0x17059
-+			/* Mux selector between eMMC/SD# */
-+			MX6UL_PAD_SNVS_TAMPER1__GPIO5_IO01	0x79
-+		>;
-+	};
-+
-+	pinctrl_usbotg1: usbotg1grp {
-+		fsl,pins = <
-+			MX6UL_PAD_GPIO1_IO00__ANATOP_OTG1_ID	0x17059
-+			MX6UL_PAD_GPIO1_IO04__GPIO1_IO04	0x17059
-+			MX6UL_PAD_GPIO1_IO01__USB_OTG1_OC	0x17059
-+		>;
-+	};
-+
-+	/* General purpose pinctrl */
-+	pinctrl_hog: hoggrp {
-+	};
-+};
+On a high level, we could then e.g. deny to start a QEMU guest if APXA
+is available but has been disabled. (until we know that disabling it
+actually works - if ever).
+
+This helps to catch nasty migration bugs (e.g. APXA suddenly
+disappearing). Although unlikely, definitely possible.
+
+
+Are there any other AP related facilities that the guest can from now on
+probe that should also become part of the CPU model?
+
+-- 
+
+Thanks,
+
+David / dhildenb
