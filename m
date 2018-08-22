@@ -3,114 +3,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F0EC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FD7C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:13:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63B032148E
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:11:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63B032148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DBECA21480
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:13:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBECA21480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728528AbeHVNfj (ORCPT
+        id S1728558AbeHVNiK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 09:35:39 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59318 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727754AbeHVNfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 09:35:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B17380D;
-        Wed, 22 Aug 2018 03:11:24 -0700 (PDT)
-Received: from localhost (e105922-lin.emea.arm.com [10.4.13.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DFE243F5BC;
-        Wed, 22 Aug 2018 03:11:23 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, edubezval@gmail.com,
-        viresh.kumar@linaro.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH] dt-binding: arm/cpus.txt: fix dynamic-power-coefficient unit
-References: <1534869685-22221-1-git-send-email-vincent.guittot@linaro.org>
-Date:   Wed, 22 Aug 2018 11:11:22 +0100
-In-Reply-To: <1534869685-22221-1-git-send-email-vincent.guittot@linaro.org>
-        (Vincent Guittot's message of "Tue, 21 Aug 2018 18:41:25 +0200")
-Message-ID: <87ftz6ww1h.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Wed, 22 Aug 2018 09:38:10 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60984 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728236AbeHVNiK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 09:38:10 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7MA9qaO045854
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 06:13:54 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m14ypj45y-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 06:13:54 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
+        Wed, 22 Aug 2018 11:13:52 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 22 Aug 2018 11:13:49 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MADm6439387174
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 Aug 2018 10:13:48 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0C21752054;
+        Wed, 22 Aug 2018 13:13:48 +0100 (BST)
+Received: from [10.0.2.15] (unknown [9.152.224.107])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 4E3D752051;
+        Wed, 22 Aug 2018 13:13:47 +0100 (BST)
+Subject: Re: [PATCH v9 22/22] s390: doc: detailed specifications for AP
+ virtualization
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-23-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180820180359.38cc4af3.cohuck@redhat.com>
+ <6b83b4da-00eb-c690-e965-a4398dadd0e5@linux.ibm.com>
+ <20180821175309.55b774ca.cohuck@redhat.com>
+From:   Harald Freudenberger <freude@linux.ibm.com>
+Date:   Wed, 22 Aug 2018 12:13:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180821175309.55b774ca.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18082210-0020-0000-0000-000002BA1BC7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082210-0021-0000-0000-000021077151
+Message-Id: <63e80d08-3176-726e-b2ef-826547ac97a9@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=841 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808220104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincent,
+... about control domains
 
-Thanks for the patch. One comment about the choice of units below.
+Talked with the s390 firmware guys. The convention that the control domain
+mask is a superset of the usage domain mask is only true for 1st level guests.
 
-Vincent Guittot <vincent.guittot@linaro.org> writes:
+It is absolutely valid to run a kvm guest with restricted control domain
+mask bitmap in the CRYCB. It is valid to have an empty control domain mask
+and the guest should be able to run crypto CPRBs on the usage domain(s) without
+any problems. However, nobody has tried this.
 
-> The unit of dynamic-power-coefficient is described as mW/MHz/uV^2 whereas
-> its usage in the code assumes that unit is mW/GHz/V^2
+regards
+Harald Freudenberger
 
-Instead of choosing GHz as the base, I'd prefer to use uW/MHz/V^2. It'll
-avoid introducing fractional GHz value for frequency calculations.
 
-> In drivers/thermal/cpu_cooling.c, the code is :
->
-> power = (u64)capacitance * freq_mhz * voltage_mv * voltage_mv;
-> do_div(power, 1000000000);
->
-> which can be summarized as :
-> power (mW) = capacitance * freq_mhz/1000 * (voltage_mv/1000)^2
-
-Which would then translate to -
-
-power (mW) = power (uW) / 1000 = capacitance * freq_mhz * (voltage_mv/1000)^2
-
-Thanks,
-Punit
-
->
-> Furthermore, if we test basic values like :
-> voltage_mv = 1000mV = 1V
-> freq_mhz = 1000Mhz = 1Ghz
->
-> The minimum possible power, when dynamic-power-coefficient equals 1, will
-> be :
-> min power = 1 * 1000  * (1000000)^2 = 10^15 mW
-> which is not realistic
->
-> With the unit used by the code, the min power is
-> min power =  1 * 1 * 1^2 = 1mW which is far more realistic
->
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->  Documentation/devicetree/bindings/arm/cpus.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
-> index 29e1dc5..0148d7d 100644
-> --- a/Documentation/devicetree/bindings/arm/cpus.txt
-> +++ b/Documentation/devicetree/bindings/arm/cpus.txt
-> @@ -274,7 +274,7 @@ described below.
->  		Usage: optional
->  		Value type: <prop-encoded-array>
->  		Definition: A u32 value that represents the running time dynamic
-> -			    power coefficient in units of mW/MHz/uV^2. The
-> +			    power coefficient in units of mW/GHz/V^2. The
->  			    coefficient can either be calculated from power
->  			    measurements or derived by analysis.
->  
-> @@ -285,7 +285,7 @@ described below.
->  
->  			    Pdyn = dynamic-power-coefficient * V^2 * f
->  
-> -			    where voltage is in uV, frequency is in MHz.
-> +			    where voltage is in V, frequency is in GHz.
->  
->  Example 1 (dual-cluster big.LITTLE system 32-bit):
