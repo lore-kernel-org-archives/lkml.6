@@ -2,158 +2,79 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C8AC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57245C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:32:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B7B620835
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:19:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B7B620835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mageia.org
+	by mail.kernel.org (Postfix) with ESMTP id 02915214DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:32:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02915214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbeHVKnP (ORCPT
+        id S1728132AbeHVKzq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 06:43:15 -0400
-Received: from mx2.yrkesakademin.fi ([85.134.45.195]:33258 "EHLO
-        mx2.yrkesakademin.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728067AbeHVKnP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 06:43:15 -0400
-Subject: Re: disabling psp in bios causes errors in dmesg
-To:     Tom Lendacky <thomas.lendacky@amd.com>,
-        <linux-crypto@vger.kernel.org>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <gary.hook@amd.com>, Brijesh Singh <brijesh.singh@amd.com>
-References: <3be85fc6-6323-b368-747f-b7650b3898b4@mageia.org>
- <1e514ed4-a2e1-32ec-4ec8-64134b2fdb9e@amd.com>
- <e0fb68e3-e98f-4f58-6f91-c570e8e6fdf2@amd.com>
-From:   Thomas Backlund <tmb@mageia.org>
-Message-ID: <3fe5542a-dd98-d021-b130-7c3145bba5a5@mageia.org>
-Date:   Wed, 22 Aug 2018 10:19:33 +0300
+        Wed, 22 Aug 2018 06:55:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48534 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727649AbeHVKzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 06:55:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 40F17AE95;
+        Wed, 22 Aug 2018 07:32:05 +0000 (UTC)
+Date:   Wed, 22 Aug 2018 09:32:04 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
+ should_reclaim_retry().
+Message-ID: <20180822073204.GC29735@dhcp22.suse.cz>
+References: <20180730145425.GE1206094@devbig004.ftw2.facebook.com>
+ <0018ac3b-94ee-5f09-e4e0-df53d2cbc925@i-love.sakura.ne.jp>
+ <20180730154424.GG1206094@devbig004.ftw2.facebook.com>
+ <20180730185110.GB24267@dhcp22.suse.cz>
+ <20180730191005.GC24267@dhcp22.suse.cz>
+ <6f433d59-4a56-b698-e119-682bb8bf6713@i-love.sakura.ne.jp>
+ <20180731050928.GA4557@dhcp22.suse.cz>
+ <d11c3aa2-0f14-d882-59c5-6634dc56eed1@i-love.sakura.ne.jp>
+ <20180803061653.GB27245@dhcp22.suse.cz>
+ <804b50cb-0b17-201a-790b-18604396f826@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <e0fb68e3-e98f-4f58-6f91-c570e8e6fdf2@amd.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: sv
-X-WatchGuard-Spam-ID: str=0001.0A0C020C.5B7D0E88.00AC,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-X-WatchGuard-Spam-Score: 0, clean; 0, virus threat unknown
-X-WatchGuard-Mail-Client-IP: 85.134.45.195
-X-WatchGuard-Mail-From: tmb@mageia.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <804b50cb-0b17-201a-790b-18604396f826@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed 22-08-18 06:07:40, Tetsuo Handa wrote:
+> On 2018/08/03 15:16, Michal Hocko wrote:
+[...]
+> >> Now that Roman's cgroup aware OOM killer patchset will be dropped from linux-next.git ,
+> >> linux-next.git will get the sleeping point removed. Please send this patch to linux-next.git .
+> > 
+> > I still haven't heard any explicit confirmation that the patch works for
+> > your workload. Should I beg for it? Or you simply do not want to have
+> > your stamp on the patch? If yes, I can live with that but this playing
+> > hide and catch is not really a lot of fun.
+> > 
+> 
+> I noticed that the patch has not been sent to linux-next.git yet.
+> Please send to linux-next.git without my stamp on the patch.
 
-Den 21.8.2018 kl. 19:47, skrev Tom Lendacky:
-> On 8/10/2018 9:11 AM, Tom Lendacky wrote:
->> On 8/10/2018 2:03 AM, Thomas Backlund wrote:
->>> Hi,
->>>
->>> this is tested on kernel 4.17.14
->>>
->>> hw:
->>>
->>> MSI X399 GAMING PRO CARBON AC (MS-7B09) bios 1.A0
->>>
->>> AMD Ryzen Threadripper 1950X
->>>
->>>
->>> Disabling psp in bios gets this in the logs:
->> Hmm, I'm not familiar with that BIOS option so I'm not exactly sure what
->> it is doing under the covers.  Having said that, it would seem that a
->> register read is indicating that SEV is supported when it is not on this
->> platform.  Maybe the register read is returning all 1s, (i.e. 0xffffffff).
-> The register read was returning all 1s.  The issue was reported to the
-> BIOS team and a fix is in process, but that may take some time to move
-> through all the vendors.  So in the meantime, see the next comment below.
->
->> You can work around this by blacklisting the ccp driver module for now.
->> In the mean time, we'll try to understand what is occurring here and
->> provide a fix if we can.
-> A patch has been submitted which adds a command timeout and should also
-> resolve this issue.  Please see:
->    https://marc.info/?l=linux-crypto-vger&m=153436754612783&w=2
->
-> This patch is not yet accepted and needs adjusting when being applied to
-> an older kernel (4.16 - 4.18).  Once accepted, versions of the patch will
-> be submitted to stable.
-
-I applied that patch to a 4.17.17 based kernel and it works as I now get 
-the intended:
-
-[   10.207024] ccp 0000:0c:00.2: sev command 0x1 timed out, disabling PSP
-[   10.207027] ccp 0000:0c:00.2: SEV: failed to INIT error 0x0
-
-And no more hung task during boot :)
-
-So consider that a:
-
-Tested-by: Thomas Backlund <tmb@mageia.org>
-
---
-Thanks
-
-Thomas
-
-> Thanks,
-> Tom
->
->> Thanks,
->> Tom
->>
->>>
->>> [  246.748978] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables
->>> this message.
->>> [  246.748978] systemd-udevd   D    0   724    716 0x80000124
->>> [  246.748980] Call Trace:
->>> [  246.748986]  ? __schedule+0x234/0x840
->>> [  246.748988]  schedule+0x28/0x80
->>> [  246.748993]  __sev_do_cmd_locked+0x1f0/0x270 [ccp]
->>> [  246.748996]  ? wait_woken+0x80/0x80
->>> [  246.748997]  ? 0xffffffffc0683000
->>> [  246.749001]  __sev_platform_init_locked+0x2f/0x80 [ccp]
->>> [  246.749001]  ? mutex_lock+0xe/0x30
->>> [  246.749004]  sev_platform_init+0x1d/0x30 [ccp]
->>> [  246.749007]  psp_pci_init+0x40/0xe0 [ccp]
->>> [  246.749008]  ? 0xffffffffc0683000
->>> [  246.749011]  sp_mod_init+0x16/0x1000 [ccp]
->>> [  246.749012]  do_one_initcall+0x46/0x1c3
->>> [  246.749014]  ? _cond_resched+0x15/0x30
->>> [  246.749017]  ? kmem_cache_alloc_trace+0x3a/0x170
->>> [  246.749019]  do_init_module+0x5a/0x210
->>> [  246.749020]  load_module+0x215b/0x2530
->>> [  246.749021]  ? kmem_cache_alloc_node_trace+0x45/0x190
->>> [  246.749024]  ? vmap_page_range_noflush+0x24d/0x320
->>> [  246.749026]  ? __do_sys_init_module+0x136/0x180
->>> [  246.749026]  ? _cond_resched+0x15/0x30
->>> [  246.749027]  __do_sys_init_module+0x136/0x180
->>> [  246.749029]  do_syscall_64+0x55/0x100
->>> [  246.749031]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->>> [  246.749032] RIP: 0033:0x7ffb1a09018a
->>> [  246.749033] RSP: 002b:00007ffe196680c8 EFLAGS: 00000246 ORIG_RAX:
->>> 00000000000000af
->>> [  246.749034] RAX: ffffffffffffffda RBX: 00005562bb20d080 RCX:
->>> 00007ffb1a09018a
->>> [  246.749034] RDX: 00007ffb1994e6f8 RSI: 0000000000029e50 RDI:
->>> 00005562bba5e710
->>> [  246.749035] RBP: 00007ffb1994e6f8 R08: 0000000000000004 R09:
->>> 0000000000000000
->>> [  246.749035] R10: 0000000000000005 R11: 0000000000000246 R12:
->>> 00005562bba5e710
->>> [  246.749036] R13: 0000000000020000 R14: 00005562bb1fde70 R15:
->>> 00005562bb20d080
->>>
->>>
->>> Should it not detect that its disabled and bail out ?
->>>
->>> -- 
->>>
->>> Thomas
->>>
->>>
-
+I plan to do so after merge window closes.
+-- 
+Michal Hocko
+SUSE Labs
