@@ -2,173 +2,150 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF71C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5724C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:57:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C92722148C
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:55:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ni16kIzT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92722148C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 886702150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:57:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 886702150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729425AbeHVTVG (ORCPT
+        id S1729435AbeHVTXI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 15:21:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38462 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729101AbeHVTVG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 15:21:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Euw82meuEkYw6hhezBwxMgQDl9BWbTIlruHAZPU+qDc=; b=ni16kIzT+l22pD7CEIMENY8vR
-        kQrvNtQ7XVc1BhoKYDVq8VcIkfa+b9HIsWT9TvRh7s+PuCgUoUajvwVmuyuCtswaXZP3qeUlO5jNK
-        KxMZGB0BrwEnsJsfxUvfJodaNpTV1zwPvHPynkraxzxwXnyzAuHCH5iUNoIC3jQ6WobwcOM+p3mqc
-        wYum2mZ9oLDQBWoAOt6d0pfqIO1uFUlSfw0sPK8SSccqkGUjDEOxtcFyIfAtdn3pm68trIKqKB4w5
-        Suo8OPL4KP9rg77yQx2M7IMlGWVKxBiCSNAaT4siWyblpX6MkLdwGjQqIt1IFxSP58L78Wxnw3ukN
-        Tc3HtcQbg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fsVTl-0001Wf-37; Wed, 22 Aug 2018 15:55:30 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 936672024D714; Wed, 22 Aug 2018 17:55:27 +0200 (CEST)
-Date:   Wed, 22 Aug 2018 17:55:27 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     torvalds@linux-foundation.org
-Cc:     luto@kernel.org, x86@kernel.org, bp@alien8.de, will.deacon@arm.com,
-        riel@surriel.com, jannh@google.com, ascannell@google.com,
-        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Nicholas Piggin <npiggin@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH 3/4] mm/tlb, x86/mm: Support invalidating TLB caches for
- RCU_TABLE_FREE
-Message-ID: <20180822155527.GF24124@hirez.programming.kicks-ass.net>
-References: <20180822153012.173508681@infradead.org>
- <20180822154046.823850812@infradead.org>
+        Wed, 22 Aug 2018 15:23:08 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34982 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729153AbeHVTXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 15:23:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C9E5680D;
+        Wed, 22 Aug 2018 08:57:40 -0700 (PDT)
+Received: from e107564-lin.cambridge.arm.com (e107564-lin.cambridge.arm.com [10.2.131.9])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B82EA3F2EA;
+        Wed, 22 Aug 2018 08:57:38 -0700 (PDT)
+Date:   Wed, 22 Aug 2018 16:57:33 +0100
+From:   Brian Starkey <brian.starkey@arm.com>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     Eric Engestrom <eric.engestrom@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Dave Airlie <airlied@linux.ie>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Ayan Kumar Halder <ayan.halder@arm.com>
+Subject: Re: [PATCH] drm/fourcc: Add DOC: overview comment
+Message-ID: <20180822155732.GA39066@e107564-lin.cambridge.arm.com>
+References: <20180821161611.10424-1-brian.starkey@arm.com>
+ <20180821162639.GA21697@bombadil.infradead.org>
+ <20180821164416.GA11553@e107564-lin.cambridge.arm.com>
+ <20180822145924.GA13763@intel.com>
+ <CAKMK7uHxPDfxJaA+1esSW8L2HAjMD6xgF0cMH-nkTjA=6S5+CA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20180822154046.823850812@infradead.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAKMK7uHxPDfxJaA+1esSW8L2HAjMD6xgF0cMH-nkTjA=6S5+CA@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 05:30:15PM +0200, Peter Zijlstra wrote:
-> ARM
-> which later used this put an explicit TLB invalidate in their
-> __p*_free_tlb() functions, and PowerPC-radix followed that example.
+Hi,
 
-> +/*
-> + * If we want tlb_remove_table() to imply TLB invalidates.
-> + */
-> +static inline void tlb_table_invalidate(struct mmu_gather *tlb)
-> +{
-> +#ifdef CONFIG_HAVE_RCU_TABLE_INVALIDATE
-> +	/*
-> +	 * Invalidate page-table caches used by hardware walkers. Then we still
-> +	 * need to RCU-sched wait while freeing the pages because software
-> +	 * walkers can still be in-flight.
-> +	 */
-> +	__tlb_flush_mmu_tlbonly(tlb);
-> +#endif
-> +}
+On Wed, Aug 22, 2018 at 05:11:55PM +0200, Daniel Vetter wrote:
+>On Wed, Aug 22, 2018 at 4:59 PM, Eric Engestrom
+><eric.engestrom@intel.com> wrote:
+>> On Tuesday, 2018-08-21 17:44:17 +0100, Brian Starkey wrote:
+>>> Hi Matthew,
+>>>
+>>> On Tue, Aug 21, 2018 at 09:26:39AM -0700, Matthew Wilcox wrote:
+>>> > On Tue, Aug 21, 2018 at 05:16:11PM +0100, Brian Starkey wrote:
+>>> > > There's a number of things which haven't previously been documented
+>>> > > around the usage of format modifiers. Capture the current
+>>> > > understanding in an overview comment and add it to the rst
+>>> > > documentation.
+>>> > >
+>>> > > Ideally, the generated documentation would also include documentation
+>>> > > of all of the #defines, but the kernel-doc system doesn't currently
+>>> > > support kernel-doc comments on #define constants.
+>>> >
+>>> > Can you turn them into enums?  This seems to work ok:
+>>> >
+>>> > -/* color index */
+>>> > -#define DRM_FORMAT_C8          fourcc_code('C', '8', ' ', ' ') /* [7:0] C */
+>>> > -
+>>> > -/* 8 bpp Red */
+>>> > -#define DRM_FORMAT_R8          fourcc_code('R', '8', ' ', ' ') /* [7:0] R */
+>>> > +enum {
+>>> > +       /* color index */
+>>> > +       DRM_FORMAT_C8   = fourcc_code('C', '8', ' ', ' '), /* [7:0] C */
+>>> > +       /* 8 bpp Red */
+>>> > +       DRM_FORMAT_R8   = fourcc_code('R', '8', ' ', ' '), /* [7:0] R */
+>>> > +};
+>>> >
+>>> > but I appreciate this is user API and maybe there's some code out there
+>>> > that does #ifndef DRM_FORMAT_C8 ...
+>>>
+>>> Thanks for the suggestion, Daniel did mention the same. However,
+>>> unfortunately I don't think we can safely change the UAPI header in
+>>> this manner.
+>>
+>> You could get the best of both worlds by doing both:
+>>
+>>   enum {
+>>     foo = fourcc(...),
+>>     bar = fourcc(...),
+>>   }
+>>   #define foo foo
+>>   #define bar bar
+>>
+>> It would mean a bit more code though, but that way these would now be
+>> enums (with all the advantages of enums vs plain literals) and still
+>> pass #ifdef checks :)
+>>
+>> (BTW, on the "maybe there's some code that does #ifdef": I can tell you
+>> there is indeed, having written this myself for an out-of-tree driver
+>> for customer-modified kernels that may contain additional formats)
+>
+>Looks reasonable. I'd even put the #define right within each enum line
+>(as a reminder so people don't forget to add them. Would happily ack a
+>patch to mass-convert, if that ups the odds of good kerneldoc for all
+>this.
+>
+>enum also should support the inline style of kerneldoc (otherwise I
+>guess we'd need to fix that first, or it just makes no sense at all).
+>-Daniel
 
+I'm not sure that swapping out explicit 32-bit unsigned integers for
+enums (unspecified width, signed integers) is necessarily a good idea,
+it seems like Bad Things could happen.
 
-Nick, Will is already looking at using this to remove the synchronous
-invalidation from __p*_free_tlb() for ARM, could you have a look to see
-if PowerPC-radix could benefit from that too?
+The C spec says:
 
-Basically, using a patch like the below, would give your tlb_flush()
-information on if tables were removed or not.
+   "the value of an enumeration constant shall be an integer constant
+   expression that has a value representable as an int"
 
----
+Which likely gives us 4 bytes to play with on all machines
+that run Linux, but if drm_fourcc.h is ever going to be some kind of
+standard reference, making it non-portable seems like a fail.
 
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -96,12 +96,22 @@ struct mmu_gather {
- #endif
- 	unsigned long		start;
- 	unsigned long		end;
--	/* we are in the middle of an operation to clear
--	 * a full mm and can make some optimizations */
--	unsigned int		fullmm : 1,
--	/* we have performed an operation which
--	 * requires a complete flush of the tlb */
--				need_flush_all : 1;
-+	/*
-+	 * we are in the middle of an operation to clear
-+	 * a full mm and can make some optimizations
-+	 */
-+	unsigned int		fullmm : 1;
-+
-+	/*
-+	 * we have performed an operation which
-+	 * requires a complete flush of the tlb
-+	 */
-+	unsigned int		need_flush_all : 1;
-+
-+	/*
-+	 * we have removed page directories
-+	 */
-+	unsigned int		freed_tables : 1;
- 
- 	struct mmu_gather_batch *active;
- 	struct mmu_gather_batch	local;
-@@ -136,6 +146,7 @@ static inline void __tlb_reset_range(str
- 		tlb->start = TASK_SIZE;
- 		tlb->end = 0;
- 	}
-+	tlb->freed_tables = 0;
- }
- 
- static inline void tlb_remove_page_size(struct mmu_gather *tlb,
-@@ -269,6 +280,7 @@ static inline void tlb_remove_check_page
- #define pte_free_tlb(tlb, ptep, address)			\
- 	do {							\
- 		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
-+		tlb->freed_tables = 1;			\
- 		__pte_free_tlb(tlb, ptep, address);		\
- 	} while (0)
- #endif
-@@ -276,7 +288,8 @@ static inline void tlb_remove_check_page
- #ifndef pmd_free_tlb
- #define pmd_free_tlb(tlb, pmdp, address)			\
- 	do {							\
--		__tlb_adjust_range(tlb, address, PAGE_SIZE);		\
-+		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
-+		tlb->freed_tables = 1;			\
- 		__pmd_free_tlb(tlb, pmdp, address);		\
- 	} while (0)
- #endif
-@@ -286,6 +299,7 @@ static inline void tlb_remove_check_page
- #define pud_free_tlb(tlb, pudp, address)			\
- 	do {							\
- 		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
-+		tlb->freed_tables = 1;			\
- 		__pud_free_tlb(tlb, pudp, address);		\
- 	} while (0)
- #endif
-@@ -295,7 +309,8 @@ static inline void tlb_remove_check_page
- #ifndef p4d_free_tlb
- #define p4d_free_tlb(tlb, pudp, address)			\
- 	do {							\
--		__tlb_adjust_range(tlb, address, PAGE_SIZE);		\
-+		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
-+		tlb->freed_tables = 1;			\
- 		__p4d_free_tlb(tlb, pudp, address);		\
- 	} while (0)
- #endif
+And even if you do have 4 bytes in an enum, signed integers act
+differently from unsigned ones, and compilers do love to invoke the UB
+clause...
+
+Cheers,
+-Brian
+
+>-- 
+>Daniel Vetter
+>Software Engineer, Intel Corporation
+>+41 (0) 79 365 57 48 - http://blog.ffwll.ch
