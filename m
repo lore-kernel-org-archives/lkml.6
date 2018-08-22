@@ -7,79 +7,79 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4900C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 18:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 028BDC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 18:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5833220B6F
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 18:06:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A238720C08
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 18:08:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TM8yxklm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5833220B6F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GtGlK1aG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A238720C08
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbeHVVcB (ORCPT
+        id S1727780AbeHVVeS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 17:32:01 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:41984 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727499AbeHVVcB (ORCPT
+        Wed, 22 Aug 2018 17:34:18 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:34942 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727466AbeHVVeS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 17:32:01 -0400
-Received: by mail-qt0-f196.google.com with SMTP id z8-v6so3162660qto.9;
-        Wed, 22 Aug 2018 11:06:06 -0700 (PDT)
+        Wed, 22 Aug 2018 17:34:18 -0400
+Received: by mail-qt0-f195.google.com with SMTP id f19-v6so1746197qtf.2;
+        Wed, 22 Aug 2018 11:08:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=Sr7ajUTsaxUybc4Os3m7kob3hReiDx94MMKePsRx2V8=;
-        b=TM8yxklmW9YoARZ0YxJEv8MzJnHMVI9+pDHvKlrg/y52Ookx3Th247MFHQK8shQDyO
-         MDpv2BYqOI4VZ3KT/rWdf8i3zaeUGT6DrGDxKFIAc/fjv3B4U6byNeGSrjfNDOCg5V9A
-         mt+xEVzNer7TxsdoDyuMcWsXh93BFGkQ2JJ4JnSp95RtzZysgD56V/TqqBaQgLnlZ4Eg
-         DPjw6HZkc38uPp8yC5Z86pA8Ftjg8O4iTYHagUU52OHAibkMyWkUQHajXQu/0KIwJ9e5
-         /U8cUAY6kpZT/ZIzVyJAoCZuYNyW9zs+3yFES37b62E/CZvKGVxi+0QlyXb/rC0GhQEm
-         RHnw==
+        bh=pHy+g1NFNSKciLi7LPwZcuLIkW0bx8y/4Sruevpf9Mg=;
+        b=GtGlK1aGVoacdj2ORMfbG/fYlB9xc5eLXvjmXSt339lPoAHcyI1B/Q4H0g6eTmysEV
+         I/Wo3J/gm2ST4NjIb0a9ctHZkcbUYueu5DJcDerLbCLg7s6wcEVCDJes0x9NDyeBB+4L
+         ZrThf2uYUQaH8Gna2dzHLifTzGfFc29VpTHj9M30ATFDjwrcYRNrSuO8KOcveVjodjAi
+         Hy3lmonGSmkO2pPkbjql26lHATYnweesLjggZU8RId4mZuzFZVuR5GGSlW5/WSJjzYhX
+         MTWLhBEjmFk1waRQxLqLR4nCvm7FNdN4Xy+h6VVrz/2PoU95/FyB0EKOht/cY+4pYAjq
+         RTEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=Sr7ajUTsaxUybc4Os3m7kob3hReiDx94MMKePsRx2V8=;
-        b=mqV3L6FP6Ns02nbmdHa/J3qUMZP77DmMy+tEZTIh3HZnoetadJkpleoLKBwSVpQOKn
-         SYFBl/WRJ4LX2NR6FKnaIjiGKk93zsVc1+Zxzd32POET/fPiyZ4Lq+EQH0UbvYTL0n1J
-         saZXzW6mXhWaPGMEI1YSyKEnNErlPWgl8Urj6ZP2vCN7/bmcC314Aoa+28H9S95sa+xd
-         WJqr8slWDU9kJGqTaIeDOQbticjMcFggATO6YYM6f1eZUwtBajfzzXNI4BxWB/lcvUKf
-         6TiERuZNpspqmluSyeSqx7H+Bmc6yoZVTvCTBFASxp11pJNT/mroi8Q09EUOxcCMZHQf
-         AvrQ==
-X-Gm-Message-State: AOUpUlFqHPGe/hxrvRxf25eo0U8Q7DTXBxlRG4nTEsCKINX89fL5+S87
-        j0wtXHvpp5bHWIFsCEypgkQ=
-X-Google-Smtp-Source: AA+uWPx1SKAW0MqmTXDMtkp9OT6o92ce/wfI+ff5qoY+iC/42la8SayKaf6A7lYqgiKzBGOSYSv5gA==
-X-Received: by 2002:ac8:2943:: with SMTP id z3-v6mr55844599qtz.149.1534961165724;
-        Wed, 22 Aug 2018 11:06:05 -0700 (PDT)
+        bh=pHy+g1NFNSKciLi7LPwZcuLIkW0bx8y/4Sruevpf9Mg=;
+        b=W0t1qWTYHZ650iaPknwn0xbcqLsDo4dfJl/mEpYa3HjVAp+fCii9RJmuSE2x/cXrSX
+         7Qyy8H8CJvsYeVWelHjCxlVjF0vqDmw4pQxcOzQPrJ2gFEwLxZ6Qb26Qv9LwXj4anOzo
+         GjQg5B1BVl3T1seVqkTFTEq1FafzHJK0hwutGEtgICfqFsJ3unXuU7Vrde0q+rK7RmVD
+         RlLLUZYyuXwgtmCVjd1OS9O4jNbijXHF7ThXwplfp3KQqjSlHB2RjAfuW06lEnuVPpE1
+         LSmwema7zk049R9ws/EAzVSWM53Z59DZGqGrmV88cHJ54Tpt83fozBffqJZYTzM4gZTs
+         CwfQ==
+X-Gm-Message-State: AOUpUlHOoKe6dqCyNUWfcdjc/u7+/i6zrI2FcShIZGDlcj5uiygneHPh
+        nE8kbVgual9hERVXJSzeEcg=
+X-Google-Smtp-Source: AA+uWPz+iPwJjrQ0sj3lCCKC1Dg8x3LNF3v/q64KuCa/oXUGzdHYYT+MZGO4QfwZJ2tFCoLNU940LQ==
+X-Received: by 2002:a0c:f883:: with SMTP id u3-v6mr52167886qvn.28.1534961302880;
+        Wed, 22 Aug 2018 11:08:22 -0700 (PDT)
 Received: from gandalf.middle.earth.net (pool-173-48-42-19.bstnma.fios.verizon.net. [173.48.42.19])
-        by smtp.gmail.com with ESMTPSA id v72-v6sm1371337qkb.84.2018.08.22.11.06.04
+        by smtp.gmail.com with ESMTPSA id r1-v6sm1438944qkl.85.2018.08.22.11.08.21
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 22 Aug 2018 11:06:05 -0700 (PDT)
+        Wed, 22 Aug 2018 11:08:22 -0700 (PDT)
 From:   "George G. Davis" <ggdavisiv@gmail.com>
 X-Google-Original-From: "George G. Davis" <george_davis@mentor.com>
-Date:   Wed, 22 Aug 2018 14:06:03 -0400
+Date:   Wed, 22 Aug 2018 14:08:20 -0400
 To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
 Cc:     nick@shmanahar.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org, alexandre.belloni@bootlin.com,
         dmitry.torokhov@gmail.com, linux-kernel@vger.kernel.org,
         robh+dt@kernel.org, linux-input@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/3] Input: atmel_mxt_ts: Add support for optional
- regulators.
-Message-ID: <20180822180603.GA4102@gandalf.middle.earth.net>
+Subject: Re: [PATCH v3 2/3] Input: atmel_mxt_ts: Wait for device be ready for
+ communication
+Message-ID: <20180822180820.GB4102@gandalf.middle.earth.net>
 References: <1533050291-11502-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
- <1533050291-11502-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+ <1533050291-11502-3-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1533050291-11502-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+In-Reply-To: <1533050291-11502-3-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -88,95 +88,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hello Paweł,
 
-
-I would suggest dropping sentence punctuation in the patch subject line:
-
-Input: atmel_mxt_ts: Add support for optional regulators.
-
-More below...
-
-On Tue, Jul 31, 2018 at 05:18:09PM +0200, Paweł Chmiel wrote:
-> This patch adds optional regulators, which can be used to power
-> up touchscreen. After enabling regulators, we need to wait 150msec.
-> This value is taken from official driver.
-> 
-> It was tested on Samsung Galaxy i9000 (based on Samsung S5PV210 SOC).
+On Tue, Jul 31, 2018 at 05:18:10PM +0200, Paweł Chmiel wrote:
+> According to documentation, device isn't ready for communication,
+> until firmware asserts the CHG line. Add missing wait for this.
 > 
 > Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 > ---
-> Changes from v2:
->   - Move code enabling regulators into separate method,
->     to make code more readable.
-> 
-> Changes from v1:
->   - Enable regulators only if reset_gpio is present.
->   - Switch from devm_regulator_get_optional to devm_regulator_get
-> ---
->  drivers/input/touchscreen/atmel_mxt_ts.c | 65 +++++++++++++++++++++++++++++---
->  1 file changed, 59 insertions(+), 6 deletions(-)
+>  drivers/input/touchscreen/atmel_mxt_ts.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 > 
 > diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-> index 54fe190fd4bc..2cd7f6db6ba9 100644
+> index 2cd7f6db6ba9..79e08916359f 100644
 > --- a/drivers/input/touchscreen/atmel_mxt_ts.c
 > +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-> @@ -27,6 +27,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/of.h>
->  #include <linux/property.h>
-> +#include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/property.h>
-> @@ -194,10 +195,10 @@ enum t100_type {
->  
->  /* Delay times */
->  #define MXT_BACKUP_TIME		50	/* msec */
-> -#define MXT_RESET_GPIO_TIME	20	/* msec */
->  #define MXT_RESET_INVALID_CHG	100	/* msec */
->  #define MXT_RESET_TIME		200	/* msec */
->  #define MXT_RESET_TIMEOUT	3000	/* msec */
-> +#define MXT_REGULATOR_DELAY	150	/* msec */
+> @@ -202,6 +202,7 @@ enum t100_type {
 >  #define MXT_CRC_TIMEOUT		1000	/* msec */
 >  #define MXT_FW_RESET_TIME	3000	/* msec */
 >  #define MXT_FW_CHG_TIMEOUT	300	/* msec */
-> @@ -310,6 +311,8 @@ struct mxt_data {
->  	struct t7_config t7_cfg;
->  	struct mxt_dbg dbg;
->  	struct gpio_desc *reset_gpio;
-> +	struct regulator *vdd_reg;
-> +	struct regulator *avdd_reg;
+> +#define MXT_POWERON_DELAY	150	/* msec */
 >  
->  	/* Cached parameters from object table */
->  	u16 T5_address;
-> @@ -3016,6 +3019,38 @@ static const struct dmi_system_id chromebook_T9_suspend_dmi[] = {
->  	{ }
->  };
->  
-> +static int mxt_regulator_enable(struct mxt_data *data)
-> +{
-> +	int error;
+>  /* Command to unlock bootloader */
+>  #define MXT_UNLOCK_CMD_MSB	0xaa
+> @@ -3046,6 +3047,16 @@ static int mxt_regulator_enable(struct mxt_data *data)
+>  		msleep(MXT_REGULATOR_DELAY);
+>  		gpiod_set_value(data->reset_gpio, 1);
+>  		msleep(MXT_RESET_INVALID_CHG);
 > +
-> +	if (data->reset_gpio) {
-> +		error = regulator_enable(data->vdd_reg);
-> +		if (error) {
-> +			dev_err(&data->client->dev, "Failed to enable vdd regulator: %d\n",
-> +				error);
-> +			return error;
-> +		}
-> +
-> +		error = regulator_enable(data->avdd_reg);
-> +		if (error) {
-> +			dev_err(&data->client->dev, "Failed to enable avdd regulator: %d\n",
-> +				error);
-> +			return error;
-> +		}
-> +
-> +		/*
-> +		 * According to maXTouch power sequencing specification, RESET line
+> +retry_wait:
+> +		reinit_completion(&data->bl_completion);
+> +		data->in_bootloader = true;
+> +		error = mxt_wait_for_completion(data, &data->bl_completion,
+> +										MXT_POWERON_DELAY);
 
-Please fix the following checkpatch issue:
+Please fix the following checkpatch issues:
 
-drivers/input/touchscreen/atmel_mxt_ts.c:3065: WARNING:LONG_LINE_COMMENT: line over 80 characters
+drivers/input/touchscreen/atmel_mxt_ts.c:3078: WARNING:LONG_LINE: line over 80 characters
+drivers/input/touchscreen/atmel_mxt_ts.c:3078: CHECK:PARENTHESIS_ALIGNMENT: Alignment should match open parenthesis
 
 Thanks!
 
@@ -184,69 +131,13 @@ Thanks!
 Regards,
 George
 
-> +		 * must be kept low until some time after regulators come up to
-> +		 * voltage
-> +		 */
-> +		msleep(MXT_REGULATOR_DELAY);
-> +		gpiod_set_value(data->reset_gpio, 1);
-> +		msleep(MXT_RESET_INVALID_CHG);
-> +	}
+> +		if (error == -EINTR)
+> +			goto retry_wait;
 > +
-> +	return 0;
-> +}
-> +
->  static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  {
->  	struct mxt_data *data;
-> @@ -3076,6 +3111,22 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  		return error;
+> +		data->in_bootloader = false;
 >  	}
 >  
-> +	data->vdd_reg = devm_regulator_get(&client->dev, "vdd");
-> +	if (IS_ERR(data->vdd_reg)) {
-> +		error = PTR_ERR(data->vdd_reg);
-> +		dev_err(&client->dev, "Failed to get vdd regulator: %d\n",
-> +			error);
-> +		return error;
-> +	}
-> +
-> +	data->avdd_reg = devm_regulator_get(&client->dev, "avdd");
-> +	if (IS_ERR(data->avdd_reg)) {
-> +		error = PTR_ERR(data->avdd_reg);
-> +		dev_err(&client->dev, "Failed to get avdd regulator: %d\n",
-> +			error);
-> +		return error;
-> +	}
-> +
->  	error = devm_request_threaded_irq(&client->dev, client->irq,
->  					  NULL, mxt_interrupt, IRQF_ONESHOT,
->  					  client->name, data);
-> @@ -3086,11 +3137,9 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  
->  	disable_irq(client->irq);
->  
-> -	if (data->reset_gpio) {
-> -		msleep(MXT_RESET_GPIO_TIME);
-> -		gpiod_set_value(data->reset_gpio, 1);
-> -		msleep(MXT_RESET_INVALID_CHG);
-> -	}
-> +	error = mxt_regulator_enable(data);
-> +	if (error)
-> +		return error;
->  
->  	error = mxt_initialize(data);
->  	if (error)
-> @@ -3116,6 +3165,10 @@ static int mxt_remove(struct i2c_client *client)
->  	struct mxt_data *data = i2c_get_clientdata(client);
->  
->  	disable_irq(data->irq);
-> +	if (data->reset_gpio) {
-> +		regulator_disable(data->avdd_reg);
-> +		regulator_disable(data->vdd_reg);
-> +	}
->  	sysfs_remove_group(&client->dev.kobj, &mxt_attr_group);
->  	mxt_free_input_device(data);
->  	mxt_free_object_table(data);
+>  	return 0;
 > -- 
 > 2.7.4
 > 
