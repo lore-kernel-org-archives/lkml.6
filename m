@@ -2,692 +2,156 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 504FDC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 23:39:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E873C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 23:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2CE4208DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 23:39:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CD4C20854
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 23:54:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KKYlKYYF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2CE4208DB
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TE7zJm6Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CD4C20854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbeHWDGW (ORCPT
+        id S1727368AbeHWDUr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 23:06:22 -0400
-Received: from mail-vk0-f74.google.com ([209.85.213.74]:47316 "EHLO
-        mail-vk0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726424AbeHWDGV (ORCPT
+        Wed, 22 Aug 2018 23:20:47 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:36703 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727082AbeHWDUr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 23:06:21 -0400
-Received: by mail-vk0-f74.google.com with SMTP id b63-v6so1409040vkf.14
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 16:39:27 -0700 (PDT)
+        Wed, 22 Aug 2018 23:20:47 -0400
+Received: by mail-oi0-f66.google.com with SMTP id r69-v6so5660870oie.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 16:53:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=lUeu8zi/hsOcT3UBs0nciHHvGfJYtNdVj8RrQ1c9zTs=;
-        b=KKYlKYYFmRLGJTwDYSKH2Nh/GxDqWMy2mi9SR+sMHPRt8E6p9y3SynQWdODl2Kmbmk
-         JlWMM7otrLSd+Q2yS32VMX35C+MRjcfZJMqsT125J9IS2IjLaCAT5AZ7C6Ut5XGX9wRU
-         Sd8Smxu4L8xZc0VV/e1kuloJzX2fPjqzzyAH9v+gH14E51tlhzPe7u6mQ43jh8ZG1SW3
-         oFLPepHNVGnAEDoiyHXhsQQND5+iyFvzwMZWectaDFEb0Ox/KEPsCb+frBZstUkKawjQ
-         FylAHYPxgsaUjPgUlYwGqBaAwckcIFMbUKUWis12M7WDLZ+3cNHbNusEssu214mxMtNH
-         v6LA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=t+lcpAwWDtQH6UYK6Nf/zFiC2BHtqP+BXiZmgGiBdd0=;
+        b=TE7zJm6Y9OthwdmKPAkzlSryOyrBgnxj5fGco0XmpLclVDK3FO3ZdIMMKdEUsgAEGD
+         NChsCWJbwVLsGTTReX80Jbxua/eLS6bacZl32zf7oCfCCWNZK2CAwWS9BPB7RmS3j0s9
+         2rQLw70yNSa1GBYgWZ7LH5npRkHUXi3/TdeauxDGjCaJ1csciTialSy37C2mvuPjG3iI
+         /Fy5+e150U/8gSGtZtmBWDcSYjQ9duL0Agd4FHAWioFEg1lgix+/nzFUmy1akvmpakK/
+         VK1hYcHpG7zXTQPj7VsQqgIyk+ddIFrlQOJl0B3gf7W+sU6k7mvTv1NrlmbbyzYbx/Ql
+         a4JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=lUeu8zi/hsOcT3UBs0nciHHvGfJYtNdVj8RrQ1c9zTs=;
-        b=fwP4HultRGt3ww0EuEC6wgiGX1NVAdYx7RSsv/fLKor+o1oCi4QdsGT6shhW+lJKxv
-         24wP1kuc7Zsiaimnrad2OnAJ2OXKGYJESQ+YBBUlIFFILV99Fs+FLEHwyAC+hf26i0Yd
-         HshkP+7IBALI7DM7cFNNPMtcLc2hPydIQ2vGTAlImPQ+xiTNuPSOfz1fCMXFtAPKX+RC
-         cGH9CyO6m30/LMv421HSeQhtf7v0cpCXwvy6aClYBsdmTV1s1zCdMxQQ/kcLs2C5DpSn
-         fxIHrPHD/kwA2rrtKgU7tSZWRWnZA2oi5a+blmZPNcPV0mDnwHbt1LyCiLbZ1mlPTduL
-         16XA==
-X-Gm-Message-State: AOUpUlHhMetyhTpgbxgRn6ZSfZBYH6fmwHU5xYTuj4L1cbqxQqPuHbx+
-        p/m2S5nNcSH7Jg56+OKJMVs5Z/LER8nTDeY0A6I=
-X-Google-Smtp-Source: AA+uWPyMtE5vaqUjrjR7AVJSa9ioB49oGrSzKSIIxBAJEaKEtq8c1wxFx+f1PS5GxT9kjeB+XSIBlB103EXyVn7oj5w=
-X-Received: by 2002:a1f:104c:: with SMTP id g73-v6mr9797738vki.2.1534981166434;
- Wed, 22 Aug 2018 16:39:26 -0700 (PDT)
-Date:   Wed, 22 Aug 2018 16:37:24 -0700
-Message-Id: <20180822233724.110454-1-ndesaulniers@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.18.0.1017.ga543ac7ca45-goog
-Subject: [PATCH] include/linux/compiler*.h: make compiler-*.h mutually exclusive
-From:   Nick Desaulniers <ndesaulniers@google.com>
-To:     torvalds@linux-foundation.org
-Cc:     keescook@chromium.org, joe@perches.com, corbet@lwn.net,
-        yamada.masahiro@socionext.com, arnd@arndb.de, dwmw@amazon.co.uk,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        will.deacon@arm.com, geert@linux-m68k.org, mingo@kernel.org,
-        akpm@linux-foundation.org, asmadeus@codewreck.org,
-        daniel@iogearbox.net, hpa@zytor.com,
-        Nick Desaulniers <ndesaulniers@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=t+lcpAwWDtQH6UYK6Nf/zFiC2BHtqP+BXiZmgGiBdd0=;
+        b=nPn4glawAznJVk7reFBQVzRiYZGYQBL0PFFfG8b3XXTsWTsERvLtZRYINsMsozsHcF
+         61c70+WOidI0zAem/uhZQ0YyDMWljO12R4qhoyfkoDqv7N5S0u1iPEwRjTEPAWW4v0vg
+         nZ9IrwUK/oZDbMQ8rmGYDq9GPSi2QEBtMjlBzMYgdSplOvql/UbvjMY165jVHJpkBtaP
+         3Gx3ZSGm6nhkRFD5ZgFHYqxCF4g61dPkozNKzT62GuriK6QvjvtdSGF7MZuvSnmGAFP5
+         Temj9WFOHXmAarCTICCS2E8v9RrWm0QKFwmCi5V6foxFwl+W9G7hK1+nQCaf1+SbWMo9
+         tr2A==
+X-Gm-Message-State: APzg51C8YYqUxKLkHthFiyRILt0Rho3ARpDQvqouGTrDCad9bdkhGbDB
+        OYPB8o4AausRpLRGcc8kZ5tYYUQBDCdgDV0fF/WDWA==
+X-Google-Smtp-Source: ANB0VdYVbzjS+gJKn/Z51h0nJgVqwYH9716HBlnUj+ApMg9dY+VAHoBGwycRHYv2Ew44aGKUJwTP4ziN9n5sacT8t9g=
+X-Received: by 2002:aca:dc55:: with SMTP id t82-v6mr5516052oig.159.1534982030543;
+ Wed, 22 Aug 2018 16:53:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180807012257.20157-1-jannh@google.com> <C6369CAA-CBB8-420F-97DB-7A242D9650A8@amacapital.net>
+In-Reply-To: <C6369CAA-CBB8-420F-97DB-7A242D9650A8@amacapital.net>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 23 Aug 2018 01:53:23 +0200
+Message-ID: <CAG48ez0c0L+WyfjDcfx=3wDwOQDOSJM-2JSVUBoWJCaKDVEfbw@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] x86: WARN() when uaccess helpers fault on kernel addresses
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit cafa0010cd51 ("Raise the minimum required gcc version to 4.6")
-recently exposed a brittle part of the build for supporting non-gcc
-compilers.
+On Tue, Aug 7, 2018 at 4:55 AM Andy Lutomirski <luto@amacapital.net> wrote:
+> > On Aug 6, 2018, at 6:22 PM, Jann Horn <jannh@google.com> wrote:
+> > There have been multiple kernel vulnerabilities that permitted userspace to
+> > pass completely unchecked pointers through to userspace accessors:
+> >
+> > - the waitid() bug - commit 96ca579a1ecc ("waitid(): Add missing
+> >  access_ok() checks")
+> > - the sg/bsg read/write APIs
+> > - the infiniband read/write APIs
+> >
+> > These don't happen all that often, but when they do happen, it is hard to
+> > test for them properly; and it is probably also hard to discover them with
+> > fuzzing. Even when an unmapped kernel address is supplied to such buggy
+> > code, it just returns -EFAULT instead of doing a proper BUG() or at least
+> > WARN().
+> >
+> > This patch attempts to make such misbehaving code a bit more visible by
+> > WARN()ing in the pagefault handler code when a userspace accessor causes
+> > #PF on a kernel address and the current context isn't whitelisted.
+>
+> I like this a lot, and, in fact, I once wrote a patch to do something similar. It was before the fancy extable code, though, so it was a mess.  Here are some thoughts:
+>
+> - It should be three patches. One patch to add the _UA annotations, one to improve the info passes to the handlers, and one to change behavior.
+>
+> - You should pass the vector, the error code, and the address to the handler.
 
-Both Clang and ICC define __GNUC__, __GNUC_MINOR__, and
-__GNUC_PATCHLEVEL__ for quick compatibility with code bases that haven't
-added compiler specific checks for __clang__ or __INTEL_COMPILER.
+I'm polishing the patch a bit, and I've noticed that to plumb the
+error code and address through properly, I might need significantly
+more code churn because of kprobes - I want to make sure I'm not going
+down the completely wrong path here.
 
-This is brittle, as they happened to get compatibility by posing as a
-certain version of GCC.  This broke when upgrading the minimal version
-of GCC required to build the kernel, to a version above what ICC and
-Clang claim to be.
+I'm extending fixup_exception() to take two extra args "unsigned long
+error_code, unsigned long fault_addr". Most callers of
+fixup_exception() are fairly straightforward, but
+kprobe_fault_handler() has a dozen callchains from different exception
+handlers, and most of them are coming via notify_die(). (My RFC patch
+cheated by just feeding zeroes into fixup_exception() from
+kprobe_fault_handler().) Also, annoyingly, for !CONFIG_KPROBES,
+kprobe_fault_handler() is defined in include/linux/kprobes.h with a
+single prototype across architectures.
 
-Rather than always including compiler-gcc.h then undefining or
-redefining macros in compiler-intel.h or compiler-clang.h, let's
-separate out the compiler specific macro definitions into mutually
-exclusive headers, do more proper compiler detection, and keep shared
-definitions in compiler_types.h.
+Currently, for example, when do_general_protection() handles a kernel
+fault, it first directly calls into fixup_exception(); and then, if
+this is happening inside a kprobe, via
+notify_die()->atomic_notifier_call_chain()->kprobe_exceptions_notify()->kprobe_fault_handler()->fixup_exception(),
+it can end up calling fixup handlers a second time.
+I think there's also some inconsistency between #PF and #GP in the
+ordering of error handling:
 
-Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Suggested-by: Eli Friedman <efriedma@codeaurora.org>
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
----
- arch/arm/kernel/asm-offsets.c     |  13 +-
- drivers/gpu/drm/i915/i915_utils.h |   2 +-
- drivers/watchdog/kempld_wdt.c     |   5 -
- include/linux/compiler-clang.h    |  20 ++-
- include/linux/compiler-gcc.h      |  88 -----------
- include/linux/compiler-intel.h    |  13 +-
- include/linux/compiler_types.h    | 238 ++++++++++++++----------------
- mm/ksm.c                          |   4 +-
- mm/migrate.c                      |   3 +-
- 9 files changed, 133 insertions(+), 253 deletions(-)
+#PF handling:
+__do_page_fault
+  kprobes_fault
+    kprobe_fault_handler
+      ->fault_handler    # first: kprobe fault handler
+      fixup_exception    # second: kprobe's fixup call
+  bad_area_nosemaphore
+    __bad_area_nosemaphore
+      no_context
+        fixup_exception    # third: normal fixup call
 
-diff --git a/arch/arm/kernel/asm-offsets.c b/arch/arm/kernel/asm-offsets.c
-index 974d8d7d1bcd..3968d6c22455 100644
---- a/arch/arm/kernel/asm-offsets.c
-+++ b/arch/arm/kernel/asm-offsets.c
-@@ -38,25 +38,14 @@
- #error Sorry, your compiler targets APCS-26 but this kernel requires APCS-32
- #endif
- /*
-- * GCC 3.0, 3.1: general bad code generation.
-- * GCC 3.2.0: incorrect function argument offset calculation.
-- * GCC 3.2.x: miscompiles NEW_AUX_ENT in fs/binfmt_elf.c
-- *            (http://gcc.gnu.org/PR8896) and incorrect structure
-- *	      initialisation in fs/jffs2/erase.c
-  * GCC 4.8.0-4.8.2: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58854
-  *	      miscompiles find_get_entry(), and can result in EXT3 and EXT4
-  *	      filesystem corruption (possibly other FS too).
-  */
--#ifdef __GNUC__
--#if (__GNUC__ == 3 && __GNUC_MINOR__ < 3)
--#error Your compiler is too buggy; it is known to miscompile kernels.
--#error    Known good compilers: 3.3, 4.x
--#endif
--#if GCC_VERSION >= 40800 && GCC_VERSION < 40803
-+#if defined(GCC_VERSION) && GCC_VERSION >= 40800 && GCC_VERSION < 40803
- #error Your compiler is too buggy; it is known to miscompile kernels
- #error and result in filesystem corruption and oopses.
- #endif
--#endif
- 
- int main(void)
- {
-diff --git a/drivers/gpu/drm/i915/i915_utils.h b/drivers/gpu/drm/i915/i915_utils.h
-index 00165ad55fb3..395dd2511568 100644
---- a/drivers/gpu/drm/i915/i915_utils.h
-+++ b/drivers/gpu/drm/i915/i915_utils.h
-@@ -43,7 +43,7 @@
- #define MISSING_CASE(x) WARN(1, "Missing case (%s == %ld)\n", \
- 			     __stringify(x), (long)(x))
- 
--#if GCC_VERSION >= 70000
-+#if defined(GCC_VERSION) && GCC_VERSION >= 70000
- #define add_overflows(A, B) \
- 	__builtin_add_overflow_p((A), (B), (typeof((A) + (B)))0)
- #else
-diff --git a/drivers/watchdog/kempld_wdt.c b/drivers/watchdog/kempld_wdt.c
-index 2f3b049ea301..e268add43010 100644
---- a/drivers/watchdog/kempld_wdt.c
-+++ b/drivers/watchdog/kempld_wdt.c
-@@ -146,12 +146,7 @@ static int kempld_wdt_set_stage_timeout(struct kempld_wdt_data *wdt_data,
- 	u32 remainder;
- 	u8 stage_cfg;
- 
--#if GCC_VERSION < 40400
--	/* work around a bug compiling do_div() */
--	prescaler = READ_ONCE(kempld_prescaler[PRESCALER_21]);
--#else
- 	prescaler = kempld_prescaler[PRESCALER_21];
--#endif
- 
- 	if (!stage)
- 		return -EINVAL;
-diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-index 7087446c24c8..5f0754692ce6 100644
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -6,11 +6,7 @@
- /* Some compiler specific definitions are overwritten here
-  * for Clang compiler
-  */
--
--#ifdef uninitialized_var
--#undef uninitialized_var
- #define uninitialized_var(x) x = *(&(x))
--#endif
- 
- /* same as gcc, this was present in clang-2.6 so we can assume it works
-  * with any version that can compile the kernel
-@@ -25,14 +21,8 @@
- #define __SANITIZE_ADDRESS__
- #endif
- 
--#undef __no_sanitize_address
- #define __no_sanitize_address __attribute__((no_sanitize("address")))
- 
--/* Clang doesn't have a way to turn it off per-function, yet. */
--#ifdef __noretpoline
--#undef __noretpoline
--#endif
--
- /*
-  * Not all versions of clang implement the the type-generic versions
-  * of the builtin overflow checkers. Fortunately, clang implements
-@@ -40,9 +30,17 @@
-  * checks. Unfortunately, we don't know which version of gcc clang
-  * pretends to be, so the macro may or may not be defined.
-  */
--#undef COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW
- #if __has_builtin(__builtin_mul_overflow) && \
-     __has_builtin(__builtin_add_overflow) && \
-     __has_builtin(__builtin_sub_overflow)
- #define COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW 1
- #endif
-+
-+/* The following are for compatibility with GCC, from compiler-gcc.h,
-+ * and may be redefined here because they should not be shared with other
-+ * compilers, like ICC.
-+ */
-+#define barrier() (__asm__ __volatile__("" : : : "memory"))
-+#define __must_be_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-+#define __assume_aligned(a, ...)	\
-+	__attribute__((__assume_aligned__(a, ## __VA_ARGS__)))
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 250b9b7cfd60..763bbad1e258 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -75,48 +75,6 @@
- #define __must_be_array(a)	BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
- #endif
- 
--/*
-- * Feature detection for gnu_inline (gnu89 extern inline semantics). Either
-- * __GNUC_STDC_INLINE__ is defined (not using gnu89 extern inline semantics,
-- * and we opt in to the gnu89 semantics), or __GNUC_STDC_INLINE__ is not
-- * defined so the gnu89 semantics are the default.
-- */
--#ifdef __GNUC_STDC_INLINE__
--# define __gnu_inline	__attribute__((gnu_inline))
--#else
--# define __gnu_inline
--#endif
--
--/*
-- * Force always-inline if the user requests it so via the .config,
-- * or if gcc is too old.
-- * GCC does not warn about unused static inline functions for
-- * -Wunused-function.  This turns out to avoid the need for complex #ifdef
-- * directives.  Suppress the warning in clang as well by using "unused"
-- * function attribute, which is redundant but not harmful for gcc.
-- * Prefer gnu_inline, so that extern inline functions do not emit an
-- * externally visible function. This makes extern inline behave as per gnu89
-- * semantics rather than c99. This prevents multiple symbol definition errors
-- * of extern inline functions at link time.
-- * A lot of inline functions can cause havoc with function tracing.
-- */
--#if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) ||		\
--    !defined(CONFIG_OPTIMIZE_INLINING)
--#define inline \
--	inline __attribute__((always_inline, unused)) notrace __gnu_inline
--#else
--#define inline inline		__attribute__((unused)) notrace __gnu_inline
--#endif
--
--#define __inline__ inline
--#define __inline inline
--#define __always_inline	inline __attribute__((always_inline))
--#define  noinline	__attribute__((noinline))
--
--#define __packed	__attribute__((packed))
--#define __weak		__attribute__((weak))
--#define __alias(symbol)	__attribute__((alias(#symbol)))
--
- #ifdef RETPOLINE
- #define __noretpoline __attribute__((indirect_branch("keep")))
- #endif
-@@ -135,55 +93,9 @@
-  */
- #define __naked		__attribute__((naked)) noinline __noclone notrace
- 
--#define __noreturn	__attribute__((noreturn))
--
--/*
-- * From the GCC manual:
-- *
-- * Many functions have no effects except the return value and their
-- * return value depends only on the parameters and/or global
-- * variables.  Such a function can be subject to common subexpression
-- * elimination and loop optimization just as an arithmetic operator
-- * would be.
-- * [...]
-- */
--#define __pure			__attribute__((pure))
--#define __aligned(x)		__attribute__((aligned(x)))
--#define __aligned_largest	__attribute__((aligned))
--#define __printf(a, b)		__attribute__((format(printf, a, b)))
--#define __scanf(a, b)		__attribute__((format(scanf, a, b)))
--#define __attribute_const__	__attribute__((__const__))
--#define __maybe_unused		__attribute__((unused))
--#define __always_unused		__attribute__((unused))
--#define __mode(x)               __attribute__((mode(x)))
--
--#define __must_check		__attribute__((warn_unused_result))
--#define __malloc		__attribute__((__malloc__))
--
--#define __used			__attribute__((__used__))
--#define __compiler_offsetof(a, b)					\
--	__builtin_offsetof(a, b)
--
--/* Mark functions as cold. gcc will assume any path leading to a call
-- * to them will be unlikely.  This means a lot of manual unlikely()s
-- * are unnecessary now for any paths leading to the usual suspects
-- * like BUG(), printk(), panic() etc. [but let's keep them for now for
-- * older compilers]
-- *
-- * Early snapshots of gcc 4.3 don't support this and we can't detect this
-- * in the preprocessor, but we can live with this because they're unreleased.
-- * Maketime probing would be overkill here.
-- *
-- * gcc also has a __attribute__((__hot__)) to move hot functions into
-- * a special section, but I don't see any sense in this right now in
-- * the kernel context
-- */
--#define __cold			__attribute__((__cold__))
--
- #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
- 
- #define __optimize(level)	__attribute__((__optimize__(level)))
--#define __nostackprotector	__optimize("no-stack-protector")
- 
- #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
- 
-diff --git a/include/linux/compiler-intel.h b/include/linux/compiler-intel.h
-index 547cdc920a3c..4c7f9befa9f6 100644
---- a/include/linux/compiler-intel.h
-+++ b/include/linux/compiler-intel.h
-@@ -14,10 +14,6 @@
- /* Intel ECC compiler doesn't support gcc specific asm stmts.
-  * It uses intrinsics to do the equivalent things.
-  */
--#undef barrier
--#undef barrier_data
--#undef RELOC_HIDE
--#undef OPTIMIZER_HIDE_VAR
- 
- #define barrier() __memory_barrier()
- #define barrier_data(ptr) barrier()
-@@ -38,13 +34,12 @@
- 
- #endif
- 
--#ifndef __HAVE_BUILTIN_BSWAP16__
- /* icc has this, but it's called _bswap16 */
- #define __HAVE_BUILTIN_BSWAP16__
- #define __builtin_bswap16 _bswap16
--#endif
- 
--/*
-- * icc defines __GNUC__, but does not implement the builtin overflow checkers.
-+/* The following are for compatibility with GCC, from compiler-gcc.h,
-+ * and may be redefined here because they should not be shared with other
-+ * compilers, like clang.
-  */
--#undef COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW
-+#define __visible	__attribute__((externally_visible))
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index fbf337933fd8..90479a0f3986 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -54,32 +54,20 @@ extern void __chk_io_ptr(const volatile void __iomem *);
- 
- #ifdef __KERNEL__
- 
--#ifdef __GNUC__
--#include <linux/compiler-gcc.h>
--#endif
--
--#if defined(CC_USING_HOTPATCH) && !defined(__CHECKER__)
--#define notrace __attribute__((hotpatch(0,0)))
--#else
--#define notrace __attribute__((no_instrument_function))
--#endif
--
--/* Intel compiler defines __GNUC__. So we will overwrite implementations
-- * coming from above header files here
-- */
--#ifdef __INTEL_COMPILER
--# include <linux/compiler-intel.h>
--#endif
--
--/* Clang compiler defines __GNUC__. So we will overwrite implementations
-- * coming from above header files here
-- */
-+/* Compiler specific macros. */
- #ifdef __clang__
- #include <linux/compiler-clang.h>
-+#elif defined(__INTEL_COMPILER)
-+#include <linux/compiler-intel.h>
-+#elif defined(__GNUC__)
-+/* The above compilers also define __GNUC__, so order is important here. */
-+#include <linux/compiler-gcc.h>
-+#else
-+#error "Unknown compiler"
- #endif
- 
- /*
-- * Generic compiler-dependent macros required for kernel
-+ * Generic compiler-independent macros required for kernel
-  * build go below this comment. Actual compiler/compiler version
-  * specific implementations come from the above header files
-  */
-@@ -106,93 +94,19 @@ struct ftrace_likely_data {
- 	unsigned long			constant;
- };
- 
--#endif /* __KERNEL__ */
--
--#endif /* __ASSEMBLY__ */
--
--#ifdef __KERNEL__
--
- /* Don't. Just don't. */
- #define __deprecated
- #define __deprecated_for_modules
- 
--#ifndef __must_check
--#define __must_check
--#endif
--
--#ifndef CONFIG_ENABLE_MUST_CHECK
--#undef __must_check
--#define __must_check
--#endif
--
--#ifndef __malloc
--#define __malloc
--#endif
--
--/*
-- * Allow us to avoid 'defined but not used' warnings on functions and data,
-- * as well as force them to be emitted to the assembly file.
-- *
-- * As of gcc 3.4, static functions that are not marked with attribute((used))
-- * may be elided from the assembly file.  As of gcc 3.4, static data not so
-- * marked will not be elided, but this may change in a future gcc version.
-- *
-- * NOTE: Because distributions shipped with a backported unit-at-a-time
-- * compiler in gcc 3.3, we must define __used to be __attribute__((used))
-- * for gcc >=3.3 instead of 3.4.
-- *
-- * In prior versions of gcc, such functions and data would be emitted, but
-- * would be warned about except with attribute((unused)).
-- *
-- * Mark functions that are referenced only in inline assembly as __used so
-- * the code is emitted even though it appears to be unreferenced.
-- */
--#ifndef __used
--# define __used			/* unimplemented */
--#endif
--
--#ifndef __maybe_unused
--# define __maybe_unused		/* unimplemented */
--#endif
--
--#ifndef __always_unused
--# define __always_unused	/* unimplemented */
--#endif
--
--#ifndef noinline
--#define noinline
--#endif
--
--/*
-- * Rather then using noinline to prevent stack consumption, use
-- * noinline_for_stack instead.  For documentation reasons.
-- */
--#define noinline_for_stack noinline
--
--#ifndef __always_inline
--#define __always_inline inline
--#endif
--
- #endif /* __KERNEL__ */
- 
-+#endif /* __ASSEMBLY__ */
-+
- /*
-- * From the GCC manual:
-- *
-- * Many functions do not examine any values except their arguments,
-- * and have no effects except the return value.  Basically this is
-- * just slightly more strict class than the `pure' attribute above,
-- * since function is not allowed to read global memory.
-- *
-- * Note that a function that has pointer arguments and examines the
-- * data pointed to must _not_ be declared `const'.  Likewise, a
-- * function that calls a non-`const' function usually must not be
-- * `const'.  It does not make sense for a `const' function to return
-- * `void'.
-+ * The below symbols may be defined for one or more, but not ALL, of the above
-+ * compilers. We don't consider that to be an error, so set them to nothing.
-+ * For example, some of them are for compiler specific plugins.
-  */
--#ifndef __attribute_const__
--# define __attribute_const__	/* unimplemented */
--#endif
--
- #ifndef __designated_init
- # define __designated_init
- #endif
-@@ -214,28 +128,10 @@ struct ftrace_likely_data {
- # define randomized_struct_fields_end
- #endif
- 
--/*
-- * Tell gcc if a function is cold. The compiler will assume any path
-- * directly leading to the call is unlikely.
-- */
--
--#ifndef __cold
--#define __cold
--#endif
--
--/* Simple shorthand for a section definition */
--#ifndef __section
--# define __section(S) __attribute__ ((__section__(#S)))
--#endif
--
- #ifndef __visible
- #define __visible
- #endif
- 
--#ifndef __nostackprotector
--# define __nostackprotector
--#endif
--
- /*
-  * Assume alignment of return value.
-  */
-@@ -243,17 +139,23 @@ struct ftrace_likely_data {
- #define __assume_aligned(a, ...)
- #endif
- 
--
- /* Are two types/vars the same type (ignoring qualifiers)? */
--#ifndef __same_type
--# define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
--#endif
-+#define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
- 
- /* Is this type a native word size -- useful for atomic operations */
--#ifndef __native_word
--# define __native_word(t) (sizeof(t) == sizeof(char) || sizeof(t) == sizeof(short) || sizeof(t) == sizeof(int) || sizeof(t) == sizeof(long))
-+#define __native_word(t) \
-+	(sizeof(t) == sizeof(char) || sizeof(t) == sizeof(short) || \
-+	 sizeof(t) == sizeof(int) || sizeof(t) == sizeof(long))
-+
-+#ifndef __attribute_const__
-+#define __attribute_const__	__attribute__((__const__))
- #endif
- 
-+#ifndef __noclone
-+#define __noclone
-+#endif
-+
-+/* Helpers for emitting diagnostics in pragmas. */
- #ifndef __diag
- #define __diag(string)
- #endif
-@@ -272,4 +174,92 @@ struct ftrace_likely_data {
- #define __diag_error(compiler, version, option, comment) \
- 	__diag_ ## compiler(version, error, option)
- 
-+/*
-+ * From the GCC manual:
-+ *
-+ * Many functions have no effects except the return value and their
-+ * return value depends only on the parameters and/or global
-+ * variables.  Such a function can be subject to common subexpression
-+ * elimination and loop optimization just as an arithmetic operator
-+ * would be.
-+ * [...]
-+ */
-+#define __pure			__attribute__((pure))
-+#define __aligned(x)		__attribute__((aligned(x)))
-+#define __aligned_largest	__attribute__((aligned))
-+#define __printf(a, b)		__attribute__((format(printf, a, b)))
-+#define __scanf(a, b)		__attribute__((format(scanf, a, b)))
-+#define __maybe_unused		__attribute__((unused))
-+#define __always_unused		__attribute__((unused))
-+#define __mode(x)		__attribute__((mode(x)))
-+#define __malloc		__attribute__((__malloc__))
-+#define __used			__attribute__((__used__))
-+#define __noreturn		__attribute__((noreturn))
-+#define __packed		__attribute__((packed))
-+#define __weak			__attribute__((weak))
-+#define __alias(symbol)		__attribute__((alias(#symbol)))
-+#define __cold			__attribute__((cold))
-+#define __section(S)		__attribute__((__section__(#S)))
-+
-+
-+#ifdef CONFIG_ENABLE_MUST_CHECK
-+#define __must_check		__attribute__((warn_unused_result))
-+#else
-+#define __must_check
-+#endif
-+
-+#if defined(CC_USING_HOTPATCH) && !defined(__CHECKER__)
-+#define notrace			__attribute__((hotpatch(0, 0)))
-+#else
-+#define notrace			__attribute__((no_instrument_function))
-+#endif
-+
-+#define __compiler_offsetof(a, b)	__builtin_offsetof(a, b)
-+
-+/*
-+ * Feature detection for gnu_inline (gnu89 extern inline semantics). Either
-+ * __GNUC_STDC_INLINE__ is defined (not using gnu89 extern inline semantics,
-+ * and we opt in to the gnu89 semantics), or __GNUC_STDC_INLINE__ is not
-+ * defined so the gnu89 semantics are the default.
-+ */
-+#ifdef __GNUC_STDC_INLINE__
-+# define __gnu_inline	__attribute__((gnu_inline))
-+#else
-+# define __gnu_inline
-+#endif
-+
-+/*
-+ * Force always-inline if the user requests it so via the .config.
-+ * GCC does not warn about unused static inline functions for
-+ * -Wunused-function.  This turns out to avoid the need for complex #ifdef
-+ * directives.  Suppress the warning in clang as well by using "unused"
-+ * function attribute, which is redundant but not harmful for gcc.
-+ * Prefer gnu_inline, so that extern inline functions do not emit an
-+ * externally visible function. This makes extern inline behave as per gnu89
-+ * semantics rather than c99. This prevents multiple symbol definition errors
-+ * of extern inline functions at link time.
-+ * A lot of inline functions can cause havoc with function tracing.
-+ */
-+#if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) || \
-+	!defined(CONFIG_OPTIMIZE_INLINING)
-+#define inline \
-+	inline __attribute__((always_inline, unused)) notrace __gnu_inline
-+#else
-+#define inline inline	__attribute__((unused)) notrace __gnu_inline
-+#endif
-+
-+#define __inline__ inline
-+#define __inline inline
-+#define noinline	__attribute__((noinline))
-+
-+#ifndef __always_inline
-+#define __always_inline inline __attribute__((always_inline))
-+#endif
-+
-+/*
-+ * Rather then using noinline to prevent stack consumption, use
-+ * noinline_for_stack instead.  For documentation reasons.
-+ */
-+#define noinline_for_stack noinline
-+
- #endif /* __LINUX_COMPILER_TYPES_H */
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 1bd514c9e5d0..5b0894b45ee5 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -652,9 +652,9 @@ static void remove_node_from_stable_tree(struct stable_node *stable_node)
- 	 * list_head to stay clear from the rb_parent_color union
- 	 * (aligned and different than any node) and also different
- 	 * from &migrate_nodes. This will verify that future list.h changes
--	 * don't break STABLE_NODE_DUP_HEAD.
-+	 * don't break STABLE_NODE_DUP_HEAD. Only recent gcc can handle it.
- 	 */
--#if GCC_VERSION >= 40903 /* only recent gcc can handle it */
-+#if defined(GCC_VERSION) && GCC_VERSION >= 40903
- 	BUILD_BUG_ON(STABLE_NODE_DUP_HEAD <= &migrate_nodes);
- 	BUILD_BUG_ON(STABLE_NODE_DUP_HEAD >= &migrate_nodes + 1);
- #endif
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 4a83268e23c2..c27e97b5b69d 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1131,7 +1131,8 @@ static int __unmap_and_move(struct page *page, struct page *newpage,
-  * gcc 4.7 and 4.8 on arm get an ICEs when inlining unmap_and_move().  Work
-  * around it.
-  */
--#if (GCC_VERSION >= 40700 && GCC_VERSION < 40900) && defined(CONFIG_ARM)
-+#if defined(CONFIG_ARM) && \
-+	defined(GCC_VERSION) && GCC_VERSION < 40900 && GCC_VERSION >= 40700
- #define ICE_noinline noinline
- #else
- #define ICE_noinline
--- 
-2.18.0.1017.ga543ac7ca45-goog
+#GP handling:
+do_general_protection
+  fixup_exception    # first: normal fixup call
+  notify_die
+    atomic_notifier_call_chain
+      kprobe_exceptions_notify
+        kprobe_fault_handler
+          ->fault_handler    # second: kprobe fault handler
+          fixup_exception    # third: kprobe's fixup call
 
+
+Do you think I should actually plumb the error code and fault address
+all the way through notify_die() and the kprobe handling fault?
+Should I supply some "I don't want to trigger uaccess fault handlers"
+flag when coming from the kprobe code?
+Should the kprobe code not call into fixup_exception() at all (and if
+so, should I change that somehow)?
