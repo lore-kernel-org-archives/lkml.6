@@ -1,199 +1,114 @@
 Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.3 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE7A0C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02EECC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CA5A214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:02:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CA5A214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
+	by mail.kernel.org (Postfix) with ESMTP id 8A0282064E
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:09:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A0282064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728247AbeHVL0P (ORCPT
+        id S1728277AbeHVLcy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 07:26:15 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:50318 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727797AbeHVL0P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 07:26:15 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1fsO5y-0005Yc-KU; Wed, 22 Aug 2018 10:02:26 +0200
-Message-ID: <1534924940.25523.70.camel@sipsolutions.net>
-Subject: Re: [PATCH 1/2] workqueue: skip lockdep wq dependency in
- cancel_work_sync()
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        kernel-team@lge.com
-Date:   Wed, 22 Aug 2018 10:02:20 +0200
-In-Reply-To: <20180822075010.GA29722@X58A-UD3R>
-References: <20180821160814.GP3978217@devbig004.ftw2.facebook.com>
-         <1534871894.25523.34.camel@sipsolutions.net>
-         <20180821172711.GR3978217@devbig004.ftw2.facebook.com>
-         <1534872621.25523.39.camel@sipsolutions.net>
-         <20180821175550.GS3978217@devbig004.ftw2.facebook.com>
-         <1534879241.25523.44.camel@sipsolutions.net>
-         <20180822024535.GA2414@X58A-UD3R>
-         <1534910543.25523.50.camel@sipsolutions.net>
-         <20180822054731.GB2414@X58A-UD3R>
-         <1534921643.25523.56.camel@sipsolutions.net>
-         <20180822075010.GA29722@X58A-UD3R>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 22 Aug 2018 07:32:54 -0400
+Received: from mx1.unisoc.com ([222.66.158.135]:59226 "EHLO SHSQR01.unisoc.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727772AbeHVLcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 07:32:53 -0400
+X-Greylist: delayed 3030 seconds by postgrey-1.27 at vger.kernel.org; Wed, 22 Aug 2018 07:32:53 EDT
+Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
+        by SHSQR01.unisoc.com with ESMTP id w7M7ITav053044
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 15:18:29 +0800 (CST)
+        (envelope-from Chunyan.Zhang@unisoc.com)
+Received: from ig2.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+        by SHSQR01.spreadtrum.com with ESMTP id w7M7GTXM047422
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 22 Aug 2018 15:16:30 +0800 (CST)
+        (envelope-from Chunyan.Zhang@unisoc.com)
+Received: from BJMBX02.spreadtrum.com (10.0.64.8) by BJMBX01.spreadtrum.com
+ (10.0.64.7) with Microsoft SMTP Server (TLS) id 15.0.847.32; Wed, 22 Aug 2018
+ 15:16:46 +0800
+Received: from BJMBX02.spreadtrum.com ([::1]) by BJMBX02.spreadtrum.com
+ ([fe80::1d12:43ae:e774:667f%19]) with mapi id 15.00.0847.030; Wed, 22 Aug
+ 2018 15:16:34 +0800
+From:   =?gb2312?B?Q2h1bnlhbiBaaGFuZyAo1cW0utHeKQ==?= 
+        <Chunyan.Zhang@unisoc.com>
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH V5 00/10] mmc: add support for sdhci 4.0
+Thread-Topic: [PATCH V5 00/10] mmc: add support for sdhci 4.0
+Thread-Index: AQHUOeca04hghWcTWk2ygzqz54fiYaTLWm+M
+Date:   Wed, 22 Aug 2018 07:16:34 +0000
+Message-ID: <2195f45cb5ce4cb5903ac213d05135ce@BJMBX02.spreadtrum.com>
+References: <1534406064-10065-1-git-send-email-zhang.chunyan@linaro.org>,<CAAfSe-sJYD4_9KGo+z8UzYHkdP15qz4=5U42_cT9tA9+B4bk1Q@mail.gmail.com>
+In-Reply-To: <CAAfSe-sJYD4_9KGo+z8UzYHkdP15qz4=5U42_cT9tA9+B4bk1Q@mail.gmail.com>
+Accept-Language: en-US, zh-CN, en-HK
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.0.93.65]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MAIL: SHSQR01.spreadtrum.com w7M7GTXM047422
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-22 at 16:50 +0900, Byungchul Park wrote:
-
-> > You're basically saying if we don't get to do a wait_for_completion(),
-> > then we don't need any lockdep annotation. I'm saying this isn't true.
-> 
-> Strictly no. But I'm just talking about the case in wq flush code.
-
-Sure, I meant it's not true in the wq flush code, not talking about
-anything else.
-
-> > Consider the following case:
-> > 
-> > work_function()
-> > {
-> > 	mutex_lock(&mutex);
-> > 	mutex_unlock(&mutex);
-> > }
-> > 
-> > other_function()
-> > {
-> > 	queue_work(&my_wq, &work);
-> > 
-> > 	if (common_case) {
-> > 		schedule_and_wait_for_something_that_takes_a_long_time()
-> > 	}
-> > 
-> > 	mutex_lock(&mutex);
-> > 	flush_workqueue(&my_wq);
-> > 	mutex_unlock(&mutex);
-> > }
-> > 
-> > 
-> > Clearly this code is broken, right?
-> > 
-> > However, you'll almost never get lockdep to indicate that, because of
-> > the "if (common_case)".
-> 
-> Sorry I don't catch you. Why is that problem with the example? Please
-> a deadlock example.
-
-sure, I thought that was easy:
-
-thread 1			thread 2 (wq thread)
-
-common_case = false;
-queue_work(&my_wq, &work);
-mutex_lock(&mutex);
-
-flush_workqueue(&my_wq);
-				work_function()
-				-> mutex_lock(&mutex);
-				-> schedule(), wait for mutex
-wait_for_completion()
-
--> deadlock - we can't make any forward progress here.
-
-
-> > My argument basically is that the lockdep annotations in the workqueue
-> > code should be entirely independent of the actual need to call
-> > wait_for_completion().
-> 
-> No. Lockdep annotations always do with either wait_for_something or self
-> event loop within a single context e.g. fs -> memory reclaim -> fs -> ..
-
-Yes, but I'm saying that we should catch *potential* deadlocks *before*
-they happen.
-
-See the example above. Clearly, you're actually deadlocking, and
-obviously (assuming all the wait_for_completion() things work right)
-lockdep will show why we just deadlocked.
-
-BUT.
-
-This is useless. We want/need lockdep to show *potential* deadlocks,
-even when they didn't happen. Consider the other case in the above
-scenario:
-
-thread 1			thread 2 (wq thread)
-
-common_case = true;
-queue_work(&my_wq, &work);
-
-schedule_and_wait_...();	work_function()
-				-> mutex_lock(&mutex);
-				-> mutex_unlock()
-				done
-
-
-mutex_lock(&mutex);
-flush_workqueue(&my_wq);
--> nothing to do, will NOT
-   call wait_for_completion();
-
--> no deadlock
-
-Here we don't have a deadlock, but without the revert we will also not
-get a lockdep report. We should though, because we're doing something
-that's quite clearly dangerous - we simply don't know if the work
-function will complete before we get to flush_workqueue(). Maybe the
-work function has an uncommon case itself that takes forever, etc.
-
-> > Therefore, the commit should be reverted regardless of any cross-release
-> 
-> No. That is necessary only when the wait_for_completion() cannot be
-> tracked in checking dependencies automatically by cross-release.
-
-No. See above. We want the annotation regardless of invoking
-wait_for_completion().
-
-> It might be the key to understand you, could you explain it more why you
-> think lockdep annotations are independent of the actual need to call
-> wait_for_completion()(or wait_for_something_else) hopefully with a
-> deadlock example?
-
-See above.
-
-You're getting too hung up about a deadlock example. We don't want to
-have lockdep only catch *actual* deadlocks. The code I wrote clearly has
-a potential deadlock (sequence given above), but in most cases the code
-above will *not* deadlock. This is the interesting part we want lockdep
-to catch.
-
-> > work (that I neither know and thus don't understand right now), since it
-> > makes workqueue code rely on lockdep for the completion, whereas we
-> 
-> Using wait_for_completion(), right?
-
-Yes.
-
-> > really want to have annotations here even when we didn't actually need
-> > to wait_for_completion().
-> 
-> Please an example of deadlock even w/o wait_for_completion().
-
-No, here's where you get confused. Clearly, there is no lockdep if we
-don't do wait_for_completion(). But if you have the code above, lockdep
-should still warn about the potential deadlock that happens when you
-*do* get to wait_for_completion(). Lockdep shouldn't be restricted to
-warning about a deadlock that *actually* happened.
-
-johannes
+T24gVGh1LCAxNiBBdWcgMjAxOCBhdCAxNTo1NCwgQ2h1bnlhbiBaaGFuZyA8emhhbmcuY2h1bnlh
+bkBsaW5hcm8ub3JnPiB3cm90ZToNCj4NCj4gRnJvbSB0aGUgU0QgaG9zdCBjb250cm9sbGVyIHZl
+cnNpb24gNC4wIG9uLCBTREhDSSBpbXBsZW1lbnRhdGlvbiBlaXRoZXINCj4gaXMgdmVyc2lvbiAz
+IGNvbXBhdGlibGUgb3IgdmVyc2lvbiA0IG1vZGUuIFRoaXMgcGF0Y2gtc2V0IGNvdmVycyB0aG9z
+ZQ0KPiBjaGFuZ2VzIHdoaWNoIGFyZSBjb21tb24gZm9yIFNESENJIDQuMCB2ZXJzaW9uLCByZWdh
+cmRsZXNzIG9mIHdoZXRoZXINCj4gdGhleSBhcmUgdXNlZCB3aXRoIFNEIG9yIGVNTUMgc3RvcmFn
+ZSBkZXZpY2VzLg0KPg0KPiBUaGlzIHBhdGNoc2V0IGFsc28gYWRkZWQgYSBuZXcgc2RoY2kgZHJp
+dmVyIGZvciBTcHJlYWR0cnVtJ3MgY29udHJvbGxlcg0KPiB3aGljaCBzdXBwb3J0cyB2NC4wIG1v
+ZGUuDQo+DQo+IFRoaXMgcGF0Y2hzZXQgaGFzIGJlZW4gdGVzdGVkIG9uIFNwcmVhZHRydW0ncyBt
+b2JpbGUgcGhvbmUsIGVtbWMgY2FuIGJlDQo+IGluaXRpYWxpemVkLCBtb3VudGVkLCByZWFkIGFu
+ZCB3cml0dGVuLCB3aXRoIHRoZXNlIGNoYW5nZXMgZm9yIGNvbW1vbg0KPiBzZGhjaSBmcmFtZXdv
+cmsgYW5kIHNkaGNpLXNwcmQgZHJpdmVyLg0KPg0KPiBDaGFuZ2VzIGZyb20gVjQ6DQo+ICogQWRk
+cmVzc2VkIEFkcmlhbidzIGNvbW1lbnRzOg0KPiAtIEVuYWJsZSB2NCBtb2RlIGluIF9fc2RoY2lf
+cmVhZF9jYXBzKCkgYW5kIHNkaGNpX2luaXQoKSBpbnN0ZWFkIG9mIHNkaGNpX2RvX3Jlc2V0KCk7
+DQo+IC0gTW92ZSB0aGUgYWRkZWQgbWVtYmVyICd2NF9tb2RlJyB0byBmb2xsb3dpbmcgd2l0aCBv
+dGhlciBib29sczsNCj4gLSBBZGQgbW9yZSBjb21tZW50cyBpbiB0aGUgYWRkZWQgZnVuY3Rpb24g
+c2RoY2lfY29uZmlnX2RtYSgpOw0KPiAtIEluc3RlYWQgb2YgZW5hYmxpbmcgYXV0by1DTUQyMyBp
+biBpbml0LCBlbmFibGVkIGl0IG9ubHkgaWYgcmVjZWl2aW5nIHNiYyBmcm9tDQo+ICAgY2FyZHMg
+YW5kIHRoZSBhcmd1bWVudCBpcyBzdWl0YWJsZSBmb3IgaG9zdCB0byBkZWFsIHdpdGg7DQo+IC0g
+TWFrZSB0aGUgYWRkaXRpb24gb2YgdGhlIFNESENJX1NQRUNfNHh4IGRlZmluZXMgYSBzZXBhcmF0
+ZSBwYXRjaDsNCj4gLSBEaXNhYmxlIGF1dG8tQ01EMjMgaWYgc3R1ZmYgYml0cyBpcyBzZXQgaW4g
+dGhlIGFyZ3VtZW50IG9mIENNRDIzIGluIHNkaGNpX3JlcXVlc3QoKS4NCj4NCj4gKiBGb3IgVjQg
+bW9kZSwgU0RNQSBhbHNvIGNhbiB1c2UgYXV0by1DTUQyMywgYWRqdXN0ZWQgaG9zdC0+ZmxhZ3Mg
+aW4gc2RoY2lfc2V0dXBfaG9zdCgpLg0KPg0KPiBQcmV2aW91cyBwYXRjaCBzZXJpZXM6DQo+IHY0
+OiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxOC83LzIzLzI2OQ0KPiB2MzogaHR0cHM6Ly9sa21s
+Lm9yZy9sa21sLzIwMTgvNy84LzIzOQ0KPiB2MjogaHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTgv
+Ni8xNC85MzYNCj4gdjE6IGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE4LzYvOC8xMDgNCj4NCj4g
+Q2h1bnlhbiBaaGFuZyAoMTApOg0KPiAgIG1tYzogc2RoY2k6IEFkZCB2ZXJzaW9uIFY0IGRlZmlu
+aXRpb24NCj4gICBtbWM6IHNkaGNpOiBBZGQgc2QgaG9zdCB2NCBtb2RlDQo+ICAgbW1jOiBzZGhj
+aTogQ2hhbmdlIFNETUEgYWRkcmVzcyByZWdpc3RlciBmb3IgdjQgbW9kZQ0KPiAgIG1tYzogc2Ro
+Y2k6IEFkZCBBRE1BMiA2NC1iaXQgYWRkcmVzc2luZyBzdXBwb3J0IGZvciBWNCBtb2RlDQo+ICAg
+bW1jOiBzZGhjaTogQWRkIDMyLWJpdCBibG9jayBjb3VudCBzdXBwb3J0IGZvciB2NCBtb2RlDQo+
+ICAgbW1jOiBzZGhjaTogRGlzYWJsZSBhdXRvLUNNRDIzIGlmIHN0dWZmIGJpdHMgaXMgc2V0IGlu
+IENNRDIzIGFyZ3VtZW50DQo+ICAgbW1jOiBzZGhjaTogQWRkIEF1dG8gQ01EIEF1dG8gU2VsZWN0
+IHN1cHBvcnQNCj4gICBtbWM6IHNkaGNpOiBTRE1BIG1heSB1c2UgQXV0by1DTUQyMyBpbiB2NCBt
+b2RlDQo+ICAgbW1jOiBzZGhjaS1zcHJkOiBBZGQgU3ByZWFkdHJ1bSdzIGluaXRpYWwgaG9zdCBj
+b250cm9sbGVyDQo+ICAgZHQtYmluZGluZ3M6IHNkaGNpLXNwcmQ6IEFkZCBiaW5kaW5ncyBmb3Ig
+dGhlIHNkaGNpLXNwcmQgY29udHJvbGxlcg0KPg0KPiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3Mv
+bW1jL3NkaGNpLXNwcmQudHh0ICAgICAgICAgfCAgNDEgKysNCj4gIGRyaXZlcnMvbW1jL2hvc3Qv
+S2NvbmZpZyAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDEzICsNCj4gIGRyaXZlcnMvbW1j
+L2hvc3QvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAxICsNCj4gIGRyaXZl
+cnMvbW1jL2hvc3Qvc2RoY2ktc3ByZC5jICAgICAgICAgICAgICAgICAgICAgIHwgNDY0ICsrKysr
+KysrKysrKysrKysrKysrKw0KPiAgZHJpdmVycy9tbWMvaG9zdC9zZGhjaS5jICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgfCAyNTEgKysrKysrKystLS0NCj4gIGRyaXZlcnMvbW1jL2hvc3Qvc2Ro
+Y2kuaCAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDIyICstDQo+ICA2IGZpbGVzIGNoYW5n
+ZWQsIDc0MSBpbnNlcnRpb25zKCspLCA1MSBkZWxldGlvbnMoLSkNCj4gIGNyZWF0ZSBtb2RlIDEw
+MDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbW1jL3NkaGNpLXNwcmQudHh0
+DQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9tbWMvaG9zdC9zZGhjaS1zcHJkLmMNCj4N
+Cj4gLS0NCj4gMi43LjQNCj4NCg==
