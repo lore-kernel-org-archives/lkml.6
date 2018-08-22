@@ -2,109 +2,117 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37EDCC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1EEC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFB83208B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:44:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kresin-me.20150623.gappssmtp.com header.i=@kresin-me.20150623.gappssmtp.com header.b="HdCAqgDf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFB83208B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kresin.me
+	by mail.kernel.org (Postfix) with ESMTP id E1F9B208D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:44:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1F9B208D6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728395AbeHWAKC (ORCPT
+        id S1728363AbeHWAKB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 20:10:02 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33383 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727537AbeHWAKB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 22 Aug 2018 20:10:01 -0400
-Received: by mail-wm0-f67.google.com with SMTP id i134-v6so463971wmf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 13:43:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kresin-me.20150623.gappssmtp.com; s=20150623;
-        h=from:to:subject:date:message-id;
-        bh=J57nBDuGXn5MkfMLUm0177RSJZQNZvRsAWiDYTsT0LI=;
-        b=HdCAqgDfJ3hqOLjcElWIoYnL7Wrsrduyjh825IavLAdP/fhdb8nNpCVaUP5PFzc7kg
-         qXVNYTTKwVx7dCjq9FQFRvmpge7W3eUmSb7ArAzlq5JjW3eStsxm7t9jh3IBhCtyynCV
-         f6j53VkKw/sRXk8I8XrFZLccW7gkufnZVdQQ9xPbFjXLHbx/pRpbtGje+WaLCcuEuXoQ
-         NRlWLvw0NCTjAOBLzWdo0eI1ix4eROz/s/879ODU8PXK4O0Yx0Bym7GJhMV9sbyEzOHS
-         WRypwbjChQd6GYAFSZ22qD9bYK8ULn9ArrDhNLeG0PF/PfQgXRgcTIZAvGAI/pku+Wfx
-         veDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=J57nBDuGXn5MkfMLUm0177RSJZQNZvRsAWiDYTsT0LI=;
-        b=cXBWvH+YTuvmy4TWgK0L/Yu4wg92bS0nSfbEY1Vtem1XEREXQ2zOSgmORv0bLYe3RA
-         HPp3qo+aiOMjxGPjD12NQVIj6r2POPs03+ls/qkumwC77p0Z59D0sD69tPBFiuSQZ/gg
-         pvipI5QWr5e21VP94tDYZNd3mSQFc9kjNGKkYrbcrb9zoCYlFhsBT+otmR3mCQCEJ/wJ
-         nG+vzXct97uxP6xEoEHXO29oN+Q4pWqST5FcVyXE0iJr/DS+89uGoRd7BE7tgE0Caw/F
-         y2BNc8SctEuz1Pbami86uLIU+qhF3iNHBlyYC/IgcUgDzqttzN0EfNEnv7VAz2Um6cZd
-         YZqQ==
-X-Gm-Message-State: APzg51CRgNGebOxYZFEYrKreMIIDEbrXcpOkQ81Y9Q9ueQKwt9ckRJ+O
-        cYmvFPEe2n7VIPOX2IXBSX6s9z684HOF/Q==
-X-Google-Smtp-Source: ANB0VdYxLK+aviJhkdOqJXI7G4Bdo4jTq7tBqqfct3UqnWST6dsJQf21CpVUVYd7qO8ujfdp5yj/iQ==
-X-Received: by 2002:a1c:af53:: with SMTP id y80-v6mr3125292wme.55.1534970615845;
-        Wed, 22 Aug 2018 13:43:35 -0700 (PDT)
-Received: from desktop.wvd.kresin.me (p200300EC2BD836007CE5606DACB185FD.dip0.t-ipconnect.de. [2003:ec:2bd8:3600:7ce5:606d:acb1:85fd])
-        by smtp.gmail.com with ESMTPSA id o81-v6sm2170144wmo.28.2018.08.22.13.43.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 22 Aug 2018 13:43:35 -0700 (PDT)
-From:   Mathias Kresin <dev@kresin.me>
-To:     John Crispin <john@phrozen.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] MIPS: ralink: Add rt3352 SPI_CS1 pinmux
-Date:   Wed, 22 Aug 2018 22:38:06 +0200
-Message-Id: <1534970286-3758-1-git-send-email-dev@kresin.me>
-X-Mailer: git-send-email 2.7.4
+Received: from shell.v3.sk ([90.176.6.54]:53284 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726760AbeHWAKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 20:10:00 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id CC3FAB5BAF;
+        Wed, 22 Aug 2018 22:43:33 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Re3kFEHfsQWd; Wed, 22 Aug 2018 22:43:19 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id AFC54B5B98;
+        Wed, 22 Aug 2018 22:43:14 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id jNXVU1hubUyr; Wed, 22 Aug 2018 22:43:12 +0200 (CEST)
+Received: from odvarok.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id BB0FCB5B8C;
+        Wed, 22 Aug 2018 22:43:11 +0200 (CEST)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Miao <eric.y.miao@gmail.com>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH 04/14] ARM: mmp: add a pxa-usb-phy device
+Date:   Wed, 22 Aug 2018 22:42:57 +0200
+Message-Id: <20180822204307.13251-5-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180822204307.13251-1-lkundrak@v3.sk>
+References: <20180822204307.13251-1-lkundrak@v3.sk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The rt3352 has a pin that can be used as second spi chip select,
-watchdog reset or GPIO. The pinmux setup was missing the definition of
-said pin.
+This is to replace the USB PHY initialization code (pxa_usb_phy_init(),
+pxa_usb_phy_deinit()) with a proper PHY driver.
 
-The pin is configured via the same bit on rt5350, so reuse the existing
-macro.
-
-Signed-off-by: Mathias Kresin <dev@kresin.me>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- arch/mips/ralink/rt305x.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/mach-mmp/devices.c | 21 +++++++++++++++++++++
+ arch/arm/mach-mmp/pxa910.h  |  1 +
+ 2 files changed, 22 insertions(+)
 
-diff --git a/arch/mips/ralink/rt305x.c b/arch/mips/ralink/rt305x.c
-index 93d472c..0f2264e 100644
---- a/arch/mips/ralink/rt305x.c
-+++ b/arch/mips/ralink/rt305x.c
-@@ -49,6 +49,10 @@ static struct rt2880_pmx_func rgmii_func[] = { FUNC("rgmii", 0, 40, 12) };
- static struct rt2880_pmx_func rt3352_lna_func[] = { FUNC("lna", 0, 36, 2) };
- static struct rt2880_pmx_func rt3352_pa_func[] = { FUNC("pa", 0, 38, 2) };
- static struct rt2880_pmx_func rt3352_led_func[] = { FUNC("led", 0, 40, 5) };
-+static struct rt2880_pmx_func rt3352_cs1_func[] = {
-+	FUNC("spi_cs1", 0, 45, 1),
-+	FUNC("wdg_cs1", 1, 45, 1),
+diff --git a/arch/arm/mach-mmp/devices.c b/arch/arm/mach-mmp/devices.c
+index 671c7a09ab3d..d162fabd38e7 100644
+--- a/arch/arm/mach-mmp/devices.c
++++ b/arch/arm/mach-mmp/devices.c
+@@ -240,6 +240,27 @@ void pxa_usb_phy_deinit(void __iomem *phy_reg)
+ #if IS_ENABLED(CONFIG_USB_SUPPORT)
+ static u64 __maybe_unused usb_dma_mask = ~(u32)0;
+ 
++#if IS_ENABLED(CONFIG_PHY_PXA_USB)
++struct resource pxa168_usb_phy_resources[] = {
++	[0] = {
++		.start	= PXA168_U2O_PHYBASE,
++		.end	= PXA168_U2O_PHYBASE + USB_PHY_RANGE,
++		.flags	= IORESOURCE_MEM,
++	},
 +};
- 
- static struct rt2880_pmx_group rt3050_pinmux_data[] = {
- 	GRP("i2c", i2c_func, 1, RT305X_GPIO_MODE_I2C),
-@@ -75,6 +79,7 @@ static struct rt2880_pmx_group rt3352_pinmux_data[] = {
- 	GRP("lna", rt3352_lna_func, 1, RT3352_GPIO_MODE_LNA),
- 	GRP("pa", rt3352_pa_func, 1, RT3352_GPIO_MODE_PA),
- 	GRP("led", rt3352_led_func, 1, RT5350_GPIO_MODE_PHY_LED),
-+	GRP("spi_cs1", rt3352_cs1_func, 2, RT5350_GPIO_MODE_SPI_CS1),
- 	{ 0 }
- };
- 
++
++struct platform_device pxa168_device_usb_phy = {
++	.name		= "pxa-usb-phy",
++	.id		= -1,
++	.resource	= pxa168_usb_phy_resources,
++	.num_resources	= ARRAY_SIZE(pxa168_usb_phy_resources),
++	.dev		=  {
++		.dma_mask	= &usb_dma_mask,
++		.coherent_dma_mask = 0xffffffff,
++	}
++};
++#endif /* CONFIG_PHY_PXA_USB */
++
+ #if IS_ENABLED(CONFIG_USB_MV_UDC)
+ struct resource pxa168_u2o_resources[] = {
+ 	/* regbase */
+diff --git a/arch/arm/mach-mmp/pxa910.h b/arch/arm/mach-mmp/pxa910.h
+index 42009c349eae..2dfe38e4acc1 100644
+--- a/arch/arm/mach-mmp/pxa910.h
++++ b/arch/arm/mach-mmp/pxa910.h
+@@ -22,6 +22,7 @@ extern struct pxa_device_desc pxa910_device_pwm2;
+ extern struct pxa_device_desc pxa910_device_pwm3;
+ extern struct pxa_device_desc pxa910_device_pwm4;
+ extern struct pxa_device_desc pxa910_device_nand;
++extern struct platform_device pxa168_device_usb_phy;
+ extern struct platform_device pxa168_device_u2o;
+ extern struct platform_device pxa168_device_u2ootg;
+ extern struct platform_device pxa168_device_u2oehci;
 -- 
-2.7.4
+2.17.1
 
