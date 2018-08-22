@@ -2,218 +2,138 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3233C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6522C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D3EE21480
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:16:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D3EE21480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
+	by mail.kernel.org (Postfix) with ESMTP id 980A52150C
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:16:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BBBLrIeN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 980A52150C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728393AbeHVMkP (ORCPT
+        id S1728424AbeHVMkv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 08:40:15 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:60128 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726448AbeHVMkO (ORCPT
+        Wed, 22 Aug 2018 08:40:51 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57732 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727396AbeHVMkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 08:40:14 -0400
-Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
-        by 156.147.23.53 with ESMTP; 22 Aug 2018 18:16:10 +0900
-X-Original-SENDERIP: 156.147.1.126
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
-        by 156.147.1.126 with ESMTP; 22 Aug 2018 18:16:09 +0900
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Wed, 22 Aug 2018 18:15:47 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        kernel-team@lge.com
-Subject: Re: [PATCH 1/2] workqueue: skip lockdep wq dependency in
- cancel_work_sync()
-Message-ID: <20180822091547.GB29722@X58A-UD3R>
-References: <20180821172711.GR3978217@devbig004.ftw2.facebook.com>
- <1534872621.25523.39.camel@sipsolutions.net>
- <20180821175550.GS3978217@devbig004.ftw2.facebook.com>
- <1534879241.25523.44.camel@sipsolutions.net>
- <20180822024535.GA2414@X58A-UD3R>
- <1534910543.25523.50.camel@sipsolutions.net>
- <20180822054731.GB2414@X58A-UD3R>
- <1534921643.25523.56.camel@sipsolutions.net>
- <20180822075010.GA29722@X58A-UD3R>
- <1534924940.25523.70.camel@sipsolutions.net>
+        Wed, 22 Aug 2018 08:40:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LuOvCEgwGsH/kKcIW3uG3WLfnGS0BKIJoNEFGYBxAkM=; b=BBBLrIeNjL/Amptv3C8Ba5ejf
+        DkRnXMvX2eB8hXqJbRmMyXfyfp/ScG+mBVmW2GWsyAo5ErX+yI74gNtk46+DHabAEtEhetYt2ygH9
+        DtZOuQZft2gQ35kw1wRZqkRZ1u+mCJhTUcn4qEucHgy4KdV+5gxGEbuL0LAcxixY2n6X6Tmm5FfYV
+        WhRQ/aRbxiMxeSDb/Br65EgSCoT91HW0YLMiJqaehk2/anwJDxLBmMXoM60MFkd2esPuUUDq1GFBM
+        iOYxF9vWoivleKz5jv0HjDBwm4pgafWlXTCsnj2cwQ9l33F/9TCiHbo016mrrhbI3mtm1+4JEM/nw
+        t2f8xzXLw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fsPFq-0005Td-FF; Wed, 22 Aug 2018 09:16:42 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id F262C2025D75D; Wed, 22 Aug 2018 11:16:40 +0200 (CEST)
+Date:   Wed, 22 Aug 2018 11:16:40 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Shakeel Butt <shakeelb@google.com>,
+        Peter Enderborg <peter.enderborg@sony.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 8/9] psi: pressure stall information for CPU, memory, and
+ IO
+Message-ID: <20180822091640.GV24124@hirez.programming.kicks-ass.net>
+References: <20180801151958.32590-1-hannes@cmpxchg.org>
+ <20180801151958.32590-9-hannes@cmpxchg.org>
+ <20180803165641.GA2476@hirez.programming.kicks-ass.net>
+ <20180821194413.GA24538@cmpxchg.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1534924940.25523.70.camel@sipsolutions.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180821194413.GA24538@cmpxchg.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 10:02:20AM +0200, Johannes Berg wrote:
-> > Sorry I don't catch you. Why is that problem with the example? Please
-> > a deadlock example.
-> 
-> sure, I thought that was easy:
-> 
-> thread 1			thread 2 (wq thread)
-> 
-> common_case = false;
-> queue_work(&my_wq, &work);
-> mutex_lock(&mutex);
-> 
-> flush_workqueue(&my_wq);
-> 				work_function()
-> 				-> mutex_lock(&mutex);
-> 				-> schedule(), wait for mutex
-> wait_for_completion()
-> 
-> -> deadlock - we can't make any forward progress here.
+On Tue, Aug 21, 2018 at 03:44:13PM -0400, Johannes Weiner wrote:
 
-I see. Now, I understand what you are talking about.
-
-   if (common_case)
-	schedule_and_wait_for_something_that_takes_a_long_time()
-
-should be:
-
-   if (common_case)
-	schedule_and_wait_long_time_so_that_the_work_to_finish()
-
-> > > My argument basically is that the lockdep annotations in the workqueue
-> > > code should be entirely independent of the actual need to call
-> > > wait_for_completion().
+> > > +		for (s = PSI_NONIDLE; s >= 0; s--) {
+> > > +			u32 time, delta;
+> > > +
+> > > +			time = READ_ONCE(groupc->times[s]);
+> > > +			/*
+> > > +			 * In addition to already concluded states, we
+> > > +			 * also incorporate currently active states on
+> > > +			 * the CPU, since states may last for many
+> > > +			 * sampling periods.
+> > > +			 *
+> > > +			 * This way we keep our delta sampling buckets
+> > > +			 * small (u32) and our reported pressure close
+> > > +			 * to what's actually happening.
+> > > +			 */
+> > > +			if (test_state(groupc->tasks, cpu, s)) {
+> > > +				/*
+> > > +				 * We can race with a state change and
+> > > +				 * need to make sure the state_start
+> > > +				 * update is ordered against the
+> > > +				 * updates to the live state and the
+> > > +				 * time buckets (groupc->times).
+> > > +				 *
+> > > +				 * 1. If we observe task state that
+> > > +				 * needs to be recorded, make sure we
+> > > +				 * see state_start from when that
+> > > +				 * state went into effect or we'll
+> > > +				 * count time from the previous state.
+> > > +				 *
+> > > +				 * 2. If the time delta has already
+> > > +				 * been added to the bucket, make sure
+> > > +				 * we don't see it in state_start or
+> > > +				 * we'll count it twice.
+> > > +				 *
+> > > +				 * If the time delta is out of
+> > > +				 * state_start but not in the time
+> > > +				 * bucket yet, we'll miss it entirely
+> > > +				 * and handle it in the next period.
+> > > +				 */
+> > > +				smp_rmb();
+> > > +				time += cpu_clock(cpu) - groupc->state_start;
+> > > +			}
 > > 
-> > No. Lockdep annotations always do with either wait_for_something or self
-> > event loop within a single context e.g. fs -> memory reclaim -> fs -> ..
+> > The alternative is adding an update to scheduler_tick(), that would
+> > ensure you're never more than nr_cpu_ids * TICK_NSEC behind.
 > 
-> Yes, but I'm saying that we should catch *potential* deadlocks *before*
-> they happen.
-
-Absolutely true about what lockdep does.
-
-> See the example above. Clearly, you're actually deadlocking, and
-> obviously (assuming all the wait_for_completion() things work right)
-> lockdep will show why we just deadlocked.
+> I wasn't able to convert *all* states to tick updates like this.
 > 
-> BUT.
+> The reason is that, while testing rq->curr for PF_MEMSTALL is cheap,
+> other tasks associated with the rq could be from any cgroup in the
+> system. That means we'd have to do for_each_cgroup() on every tick to
+> keep the groupc->times that closely uptodate, and that wouldn't scale.
+> We tend to have hundreds of them, some setups have thousands.
 > 
-> This is useless. We want/need lockdep to show *potential* deadlocks,
-> even when they didn't happen. Consider the other case in the above
-> scenario:
-> 
-> thread 1			thread 2 (wq thread)
-> 
-> common_case = true;
-> queue_work(&my_wq, &work);
-> 
-> schedule_and_wait_...();	work_function()
-> 				-> mutex_lock(&mutex);
-> 				-> mutex_unlock()
-> 				done
-> 
-> 
-> mutex_lock(&mutex);
-> flush_workqueue(&my_wq);
-> -> nothing to do, will NOT
->    call wait_for_completion();
-> 
-> -> no deadlock
+> Since we don't need to be *that* current, I left the on-demand update
+> inside the aggregator for now. It's a bit trickier, but much cheaper.
 
-Sure. It's not a deadlock because wait_for_completion() is not involved
-in this path - where wait_for_completion() is necessary to deadlock.
+ARGH indeed; I was thinking we only need to update current. But because
+we're tracking blocked state that doesn't work.
 
-Ok. I didn't know what you are talking about but now I got it.
-
-You are talking about who knows whether common_case is true or not,
-so we must aggresively consider the case the wait_for_completion()
-so far hasn't been called but may be called in the future.
-
-I think it's a problem of how aggressively we need to check dependencies.
-If we choose the aggressive option, then we could get reported
-aggressively but could not avoid aggresive false positives either.
-I don't want to strongly argue that because it's a problem of policy.
-
-Just, I would consider only waits that actually happened anyway. Of
-course, we gotta consider the waits definitely even if any actual
-deadlock doesn't happen since detecting potantial problem is more
-important than doing on actual ones as you said.
-
-So no big objection to check dependencies aggressively.
-
-> Here we don't have a deadlock, but without the revert we will also not
-
-You misunderstand me. The commit should be reverted or acquire/release
-pairs should be added in both flush functions.
-
-> get a lockdep report. We should though, because we're doing something
-> that's quite clearly dangerous - we simply don't know if the work
-> function will complete before we get to flush_workqueue(). Maybe the
-> work function has an uncommon case itself that takes forever, etc.
-> 
-> > > Therefore, the commit should be reverted regardless of any cross-release
-> > 
-> > No. That is necessary only when the wait_for_completion() cannot be
-> > tracked in checking dependencies automatically by cross-release.
-> 
-> No. See above. We want the annotation regardless of invoking
-> wait_for_completion().
-
-Anyway the annotation should be placed in the path where
-wait_for_completion() might be called. But whether doing it
-regardless of invoking wait_for_completion() or not is a problem of
-policy so I don't care. No big objection whichever you do.
-
-> > It might be the key to understand you, could you explain it more why you
-> > think lockdep annotations are independent of the actual need to call
-> > wait_for_completion()(or wait_for_something_else) hopefully with a
-> > deadlock example?
-> 
-> See above.
-> 
-> You're getting too hung up about a deadlock example. We don't want to
-
-No no. Your example was helpful to understand what you are talking about.
-I asked you for a potential deadlock example.
-
-> have lockdep only catch *actual* deadlocks. The code I wrote clearly has
-> a potential deadlock (sequence given above), but in most cases the code
-> above will *not* deadlock. This is the interesting part we want lockdep
-> to catch.
-
-Absolutly true. You can find my opinion about that in
-Documentation/locking/crossrelease.txt which has been removed because
-crossrelease is strong at detecting *potential* deadlock problems.
-
-> > > work (that I neither know and thus don't understand right now), since it
-> > > makes workqueue code rely on lockdep for the completion, whereas we
-> > 
-> > Using wait_for_completion(), right?
-> 
-> Yes.
-> 
-> > > really want to have annotations here even when we didn't actually need
-> > > to wait_for_completion().
-> > 
-> > Please an example of deadlock even w/o wait_for_completion().
-> 
-> No, here's where you get confused. Clearly, there is no lockdep if we
-> don't do wait_for_completion(). But if you have the code above, lockdep
-> should still warn about the potential deadlock that happens when you
-> *do* get to wait_for_completion(). Lockdep shouldn't be restricted to
-> warning about a deadlock that *actually* happened.
-
-I didn't know if you were talking about this in the previous talk.
-
-Byungchul
-
+Sorry for that :/
