@@ -2,167 +2,147 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C79F5C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8238FC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:32:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75ACA20B80
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:30:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3066120B80
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:32:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FYWTAdoJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75ACA20B80
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=profitbricks-com.20150623.gappssmtp.com header.i=@profitbricks-com.20150623.gappssmtp.com header.b="cWAsLcxo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3066120B80
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=profitbricks.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbeHVLyI (ORCPT
+        id S1728492AbeHVL4k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 07:54:08 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35747 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727877AbeHVLyI (ORCPT
+        Wed, 22 Aug 2018 07:56:40 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36389 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727985AbeHVL4j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 07:54:08 -0400
-Received: by mail-wm0-f65.google.com with SMTP id o18-v6so1322267wmc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 01:30:15 -0700 (PDT)
+        Wed, 22 Aug 2018 07:56:39 -0400
+Received: by mail-wr1-f68.google.com with SMTP id m27-v6so901821wrf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 01:32:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=VrKFU9/XdP71Ih0UY/AA7C+TZ1vx2NNEexkyeLY+8Rw=;
-        b=FYWTAdoJfKf7nyDmIbmNjBFZz9iGoZMvHXmcJYR5lDMcguCPRS989hCTvdwTcSf1BT
-         qiz3j2Yx0f/0HVeS9MmwrvJRYibwzw+LkPE+QwA+5ZC88wCSPdcjhKpCfrne5eVN9qG0
-         f7id/zw6sF57qMBBwM3yDaSDR5T2MD03gj1hY=
+        d=profitbricks-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=JlIhNKWoRmlu3BCz1LONL1NCdAbQZ8VJt+Ce3M8WYEU=;
+        b=cWAsLcxoob8uvsLt9TI2u/qMmBAnJ3syPzHjh69icZbU4XK/OjANI9rtBabNYxZO5M
+         BseJGR2MFY9i5IV0jifBQZRmmKBerWGh1BUsWWCByrSNerJ5xaMgEZP0DBicu8LdvKXS
+         LA571RUNjt3m0mNqhdfeVqdMT/8mIiW6aj8e/SV48YpH/3E1iHscA4/Px0PvFY2XDh6o
+         n4d878HOQqYlkJ0WIjeA7l+pxYAVNYQ/r/ZQcHMgxjCRT9A0bz6viGVdQdqUGty0c+oV
+         tnhSjw340AA4jGgg5DGBK91lm1iHtv+rG4TJdIGSYGXWV885Xnb1JWNdTFgxDvSujuh3
+         +mZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=VrKFU9/XdP71Ih0UY/AA7C+TZ1vx2NNEexkyeLY+8Rw=;
-        b=irwx0I7oNjCyMa+OR3bZM62zlxw5b8lFPfpIRLF/Yg4Q/akOu3PgicvurfjKWj2N9P
-         pKLIwyfIDSVbfI2OGLU2iHcpE9eaV1Fvt8ZGgRJsY+PZtSQI0JYexZttSouDDi2LFWYI
-         LghP5yS4TzBFMiyy8zIi5V1cv91ptQaB53j7eQBRVNTvq1MJlAqKD59DsOLpe4DysXxH
-         lsxb3aOnx8mpZZu4q53rhrhavHtOfCN4BTZOJYwvQcwomGWI+hOXEsgIi5YEKRNgxKlI
-         SE/0H7oDRAN0ZRJF9dh316sKl0kr1Zz0WMzINJCCXhQpqoQxKR07VtU6EY6v+unRkCMf
-         ykIw==
-X-Gm-Message-State: APzg51CEojG6SliCGsuUfS2uwJTh/SlJHh0NisfLM27zB4VikQ7cw5V3
-        haYTqUlACkeGRQ6hP/OGUejdeh7aEEc=
-X-Google-Smtp-Source: ANB0VdYD9zxztv5C5yR/7xDsYjY7sLb7uxRImQctniuShn1abRSbimbbJyIjh65l5v2HD73kQ8zk4w==
-X-Received: by 2002:a1c:2351:: with SMTP id j78-v6mr1135583wmj.68.1534926614987;
-        Wed, 22 Aug 2018 01:30:14 -0700 (PDT)
-Received: from [192.168.0.102] (146-241-0-97.dyn.eolo.it. [146.241.0.97])
-        by smtp.gmail.com with ESMTPSA id q5-v6sm2135443wmd.29.2018.08.22.01.30.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Aug 2018 01:30:14 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: MQ-BFQ crashing on battery mode
-From:   Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <1534926011.18658.29.camel@burcheri.de>
-Date:   Wed, 22 Aug 2018 10:30:12 +0200
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=JlIhNKWoRmlu3BCz1LONL1NCdAbQZ8VJt+Ce3M8WYEU=;
+        b=oqj7a2DouCNk0qphkYHKr7RxyTDAD9l4+vh6qyxYlJhkFHE4JA2kDuH4yHZyVbl19K
+         9zkIgF8Ze5urSeNw2BNZ8eHT5jiBfEWj8crdlAjqkBttLj7rWzxPAXC+xjLulU/YRfZ9
+         K5//WK2SfsrrwBkB5Gyo77NE1JIfJLTknnuJ5+WxDZa/FmtpkC0W4Rz8DnuL1Np1WxFp
+         iS9rFy/AzxDP8n5cDsdDJYfah2irzpfl/LJ/VNVAPzXNUaErT0XfQOzI8R2mmVrfjWcQ
+         p5O1SNu1Ut4CIjfuRg2ZuyGsOoFR4QHxYu5a2MS+Q+1vNVC/FOpKHaWpstD/gGSmb48I
+         rNXA==
+X-Gm-Message-State: APzg51B/S91FXIq7TGhqiq7gSUIsZjAk2lb7jyVt110q6IdMd8jQQ5Sx
+        s3WfIVtHR/gUF9UCAXuvoQ5fmeGu4RxooyhOvjdAw0Gwq66Yqw==
+X-Google-Smtp-Source: ANB0VdatBZoTgZa8ML5qAXa51pzxm33uSGbchGFZzhZpK4Cxhea2j3BTBtoPVT3rL+SCHOn8RiddaE5GAyhBSriVeDU=
+X-Received: by 2002:adf:f504:: with SMTP id q4-v6mr8743389wro.241.1534926766518;
+ Wed, 22 Aug 2018 01:32:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <kk5mute6dt2.fsf@brer.local.valinux.co.jp> <CA+res+Qq1uw301md02ZDPNdiEtdFHOe5VKhsUZ_ugY_LK5t2mg@mail.gmail.com>
+In-Reply-To: <CA+res+Qq1uw301md02ZDPNdiEtdFHOe5VKhsUZ_ugY_LK5t2mg@mail.gmail.com>
+From:   Jinpu Wang <jinpu.wang@profitbricks.com>
+Date:   Wed, 22 Aug 2018 10:32:35 +0200
+Message-ID: <CAMGffEmyQhBQHrqa0wzdS7OSNeJHB+A-56RaX53NTAUCLjDLKg@mail.gmail.com>
+Subject: Re: [PATCH] x86/kvm/vmx: Fix GPF on reading vmentry_l1d_flush
+To:     minoura@valinux.co.jp, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
+Cc:     stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <282984A0-62E1-4762-9C31-51327C0D0BFF@linaro.org>
-References: <1534926011.18658.29.camel@burcheri.de>
-To:     Massimo Burcheri <massimo@burcheri.de>
-X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> From: MINOURA Makoto / =E7=AE=95=E6=B5=A6 =E7=9C=9F <minoura@valinux.co.j=
+p>
+> Date: 2018=E5=B9=B48=E6=9C=8822=E6=97=A5=E5=91=A8=E4=B8=89 =E4=B8=8A=E5=
+=8D=889:50
+> Subject: [PATCH] x86/kvm/vmx: Fix GPF on reading vmentry_l1d_flush
+> To: <kvm@vger.kernel.org>
+> Cc: <linux-kernel@vger.kernel.org>
+>
+>
+>
+> When EPT is not enabled, reading
+> /sys/module/kvm_intel/parameters/vmentry_l1d_flush causes
+> general protection fault in vmentry_l1d_flush_get() due to
+> access beyond the end of the array vmentry_l1d_param[].
+>
+> Signed-off-by: Minoura Makoto <minoura@valinux.co.jp>
+> ---
+>  arch/x86/include/asm/vmx.h | 1 +
+>  arch/x86/kvm/vmx.c         | 4 +++-
+>  2 files changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
+> index 95f9107449bf..c4b834b05178 100644
+> --- a/arch/x86/include/asm/vmx.h
+> +++ b/arch/x86/include/asm/vmx.h
+> @@ -581,6 +581,7 @@ enum vmx_l1d_flush_state {
+>         VMENTER_L1D_FLUSH_NEVER,
+>         VMENTER_L1D_FLUSH_COND,
+>         VMENTER_L1D_FLUSH_ALWAYS,
+> +       VMENTER_L1D_FLUSH_PARAM_MAX =3D VMENTER_L1D_FLUSH_ALWAYS,
+>         VMENTER_L1D_FLUSH_EPT_DISABLED,
+>         VMENTER_L1D_FLUSH_NOT_REQUIRED,
+>  };
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index 1519f030fd73..155ba2a9139f 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -204,6 +204,8 @@ static const struct {
+>         {"never",       VMENTER_L1D_FLUSH_NEVER},
+>         {"cond",        VMENTER_L1D_FLUSH_COND},
+>         {"always",      VMENTER_L1D_FLUSH_ALWAYS},
+> +       {"ept-disabled", VMENTER_L1D_FLUSH_EPT_DISABLED},
+> +       {"not-required", VMENTER_L1D_FLUSH_NOT_REQUIRED},
+>  };
+>
+>  #define L1D_CACHE_ORDER 4
+> @@ -286,7 +288,7 @@ static int vmentry_l1d_flush_parse(const char *s)
+>         unsigned int i;
+>
+>         if (s) {
+> -               for (i =3D 0; i < ARRAY_SIZE(vmentry_l1d_param); i++) {
+> +               for (i =3D 0; i <=3D VMENTER_L1D_FLUSH_PARAM_MAX; i++) {
+>                         if (sysfs_streq(s, vmentry_l1d_param[i].option))
+>                                 return vmentry_l1d_param[i].cmd;
+>                 }
+Easy to reproduce. Thanks.
+Tested-by: Jack Wang <jinpu.wang@profitbricks.com>
 
+--
+Jack Wang
+Linux Kernel Developer
 
-> Il giorno 22 ago 2018, alle ore 10:20, Massimo Burcheri =
-<massimo@burcheri.de> ha scritto:
->=20
-> Hello,
->=20
->=20
-> I got a kernel trace when unplugging the power supply, switching to =
-battery
-> mode. I get the same kernel trace when booting on battery.
-> Both making the system unusable or breaking the boot.
->=20
-> The kernel call trace with symbols:
->=20
-> ? blk_mq_requeue_request+0x...
-> ? __scsi_queue_insert+0x...
-> ? ata_scsi_var_len_cdb_xlat+0x
-> ? __blk_mq_complete_request+0x...
-> ? ata_scsi_translate+0x...
-> ? ata_scsi_queuecmd+0x...
-> ? scsi_dispatch_cmd+0x...
-> ? scsi_queue_rq+0x...
-> ? blk_mq_dispatch_rq_list+0x...
-> ? kyber_dispatch_cur_domain+0x...
-> ? kyber_completed_request+0x...
-> ? blk_mq_sched_dispatch_requests+0x...
-> ? __ blk_mq_run_hw_queue+0x...
-> ? __blk_mq_delay_run_hw_queue+0x...
-> ? blk_mq_run_hw_queue+0x...
-> ? blk_mq_run_hw_queues+0x...
-> ? blk_mq_requeue_work+0x...
-> ? process_one_work+0x...
-> ? worker_thread+0x...
-> ? process_one_work+0x...
-> ? kthread+0x...
-> ? kthread_flush_work_fn+0x...
-> ? ret_from_fork+0x...
-> Code: ...
-> RIP: sbitmap_queue_clear+0x...
->=20
-> Screenshot: 	https://ibin.co/4D34Ej3DWsqI.jpg
-> Kernel config: 	https://bpaste.net/show/870004e55123
->=20
-> Kernel: 4.17.11-ck
->=20
-> Setup:
->=20
-> btrfs-on-bcache-on-luks
-> btrfs options (rw,noatime,nodiratime,compress-
-> force=3Dlzo,nossd,noacl,space_cache,autodefrag)
->=20
-> Using mq bfq scheduler for the hdd backing and kyber for the ssd =
-caching device
->=20
->=20
+ProfitBricks GmbH
+Greifswalder Str. 207
+D - 10405 Berlin
 
-Hi,
-I'm missing why you mention bfq in the subject, as, according to the
-trace, the failure has not to do with bfq.  IIRC this failure, or a
-very similar one, has been reported recently (and maybe fixed too).
+Tel:       +49 30 577 008  042
+Fax:      +49 30 577 008 299
+Email:    jinpu.wang@profitbricks.com
+URL:      https://www.profitbricks.de
 
-Thanks,
-Paolo
-
-> Failed tests:
-> Tested many kernel down to 4.13.2 with Gentoo or Ck patchset. Sorry =
-for not
-> including the vanilla sources in the test, I can provide if required.
-> Skipping services in the boot process didn't help, any next service =
-leads to the
-> same trace.
-> Switching off the laptop-mode-tools daemon didn't help.
-> Switching all devices to "none" scheduler did not help.
->=20
->=20
-> Workaround:
-> After some tests and due to the *mq* call stack I was able to =
-workaround by
-> disabling CONFIG_SCSI_MQ_DEFAULT and CONFIG_DM_MQ_DEFAULT and =
-switching all
-> devices to cfq scheduler.
-> However with the MQ enabled kernel, only bfq, kyber and none are =
-possible, while
-> the non-mq kernel can only set cfq. I guess this is intentional as the =
-current
-> bfq implementation is a MQ only version and CFQ is a non-mq only =
-version?
->=20
-> Best regards,
-> Massimo
-
+Sitz der Gesellschaft: Berlin
+Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
+Gesch=C3=A4ftsf=C3=BChrer: Achim Weiss, Matthias Steinberg, Christoph Steff=
+ens
