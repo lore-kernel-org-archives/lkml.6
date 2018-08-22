@@ -3,150 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA9EC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 22:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7CC3C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 22:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41F63208D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 22:05:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41F63208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B2BF208D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 22:11:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B2BF208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbeHWBcL (ORCPT
+        id S1726848AbeHWBhy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 21:32:11 -0400
-Received: from mga01.intel.com ([192.55.52.88]:45744 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726164AbeHWBcL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 21:32:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2018 15:05:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,275,1531810800"; 
-   d="scan'208";a="64458556"
-Received: from jjorgill-mobl1.amr.corp.intel.com (HELO [10.254.105.144]) ([10.254.105.144])
-  by fmsmga007.fm.intel.com with ESMTP; 22 Aug 2018 15:03:44 -0700
-Subject: Re: [RFC v8 PATCH 3/5] mm: mmap: zap pages with read mmap_sem in
- munmap
-To:     owner-linux-mm@kvack.org,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
- <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
- <e691d054-f807-80ad-9934-a1917d8e2e77@suse.cz>
- <3c62f605-2244-6a05-2dc4-34a3f1c56300@linux.alibaba.com>
- <20180822211053.qg3dlzf6pok2x4yk@kshutemo-mobl1>
- <45a5ff36-d53d-9ec3-f869-1b1b7a6de5cb@intel.com>
- <a1642cf6-f458-3026-dca9-652fbb20f580@linux.alibaba.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, mhocko@kernel.org,
-        willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <7f06e97e-5efa-e0d4-f952-3f01079c7283@intel.com>
-Date:   Wed, 22 Aug 2018 15:03:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <a1642cf6-f458-3026-dca9-652fbb20f580@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 22 Aug 2018 21:37:54 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:59706 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726396AbeHWBhy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 21:37:54 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1fsbLD-0007vW-9Z; Wed, 22 Aug 2018 18:11:03 -0400
+Message-ID: <15474e3aa44fe9f67b6fa6ddb67ff8fc0e6831ad.camel@surriel.com>
+Subject: Re: [PATCH 1/4] x86/mm/tlb: Revert the recent lazy TLB patches
+From:   Rik van Riel <riel@surriel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Adin Scannell <ascannell@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>
+Date:   Wed, 22 Aug 2018 18:11:02 -0400
+In-Reply-To: <CA+55aFw6bBFnV__JZnzh0ZCSTma5J2ijH8BnMtfK55dnjVp=dw@mail.gmail.com>
+References: <20180822153012.173508681@infradead.org>
+         <20180822154046.717610121@infradead.org>
+         <CA+55aFw6bBFnV__JZnzh0ZCSTma5J2ijH8BnMtfK55dnjVp=dw@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-hz++tz2+IaVsyr5y/rZl"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/22/2018 02:56 PM, owner-linux-mm@kvack.org wrote:
-> 
-> 
-> On 8/22/18 2:42 PM, Dave Hansen wrote:
->> On 08/22/2018 02:10 PM, Kirill A. Shutemov wrote:
->>>> For x86, mpx_notify_unmap() looks finally zap the VM_MPX vmas in
->>>> bound table
->>>> range with zap_page_range() and doesn't update vm flags, so it
->>>> sounds ok to
->>>> me since vmas have been detached, nobody can find those vmas. But,
->>>> I'm not
->>>> familiar with the details of mpx, maybe Kirill could help to confirm
->>>> this?
->>> I don't see anything obviously dependent on down_write() in
->>> mpx_notify_unmap(), but Dave should know better.
->> We need mmap_sem for write in mpx_notify_unmap().
->>
->> Its job is to clean up bounds tables, but bounds tables are dynamically
->> allocated and destroyed by the kernel.  When we destroy a table, we also
->> destroy the VMA for the bounds table *itself*, separate from the VMA
->> being unmapped.
-...
-> Does it depends on unmap_region()? Or IOW, does it has to be called
-> after unmap_region()? Now the calling sequence is:
-> 
-> detach vmas
-> unmap_region()
-> mpx_notify_unmap()
-> 
-> I'm wondering if it is safe to move it up before unmap_region() like:
-> 
-> detach vmas
-> mpx_notify_unmap()
-> unmap_region()
-> 
-> With this change we also can do our optimization to do unmap_region()
-> with read mmap_sem. Otherwise it does cause problem.
 
-I think changing the ordering is fine.
+--=-hz++tz2+IaVsyr5y/rZl
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The MPX bounds table unmapping is entirely driven by the VMAs being
-unmapped, so the page table unmapping in unmap_region() should not
-affect it.
+On Wed, 2018-08-22 at 14:37 -0700, Linus Torvalds wrote:
+> On Wed, Aug 22, 2018 at 8:46 AM Peter Zijlstra <peterz@infradead.org>
+> wrote:
+> >=20
+> > Revert [..] in order to simplify the TLB invalidate fixes for x86.
+> > We'll try again later.
+>=20
+> Rik, I assume I should take your earlier "yeah, I can try later" as
+> an
+> ack for this?
+
+Yes, feel free to add my Acked-by: to all these
+patches.
+
+Patch 3/4 is not ideal, with the slow path in
+tlb_remove_table sending two IPIs (one to every
+CPU, one to the CPUs in the mm_cpumask), but
+that is a slow path we should not be hitting
+much anyway.
+
+--=20
+All Rights Reversed.
+
+--=-hz++tz2+IaVsyr5y/rZl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlt933YACgkQznnekoTE
+3oOMsAf/RJSe6V5kEnd6+uZ0fO6hjLhBKFelbSOom6tOoNv9xYtJb9aJY3dxw32J
+5JBt5ihzQ2dGvSshTNYGY3okOXuq4gy46TrYGr7MS41yuHGEgBB/j8+48fWTGdAe
+LzNXHGJ31Q+MACbk1MeHYAMvsWk32ri1u9sVelp3Cw3A/eACUsGaR8O0yC2zL/nJ
+NZLofB9ceux/wnz+tg4wtubCE2AyirjJFmSTPjlbMhUeEEbkqp1B2UB7tBxwpKDl
+buFJym74wL4KTMaxWH5dFEpVHolTSsFrdU+EdnDFSuP/LPMdJVo4CHxlGIWaUaEw
+2l6Xqy7sF1U9kFT1azCKO2LzfHrdJQ==
+=jSan
+-----END PGP SIGNATURE-----
+
+--=-hz++tz2+IaVsyr5y/rZl--
+
