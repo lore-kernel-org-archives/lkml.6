@@ -3,362 +3,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B625C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 334A6C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 111ED2148E
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:15:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 111ED2148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id ECEB021480
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:16:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECEB021480
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728281AbeHVMja (ORCPT
+        id S1728318AbeHVMkB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 08:39:30 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11182 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726448AbeHVMja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 08:39:30 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 609EA15212B2D;
-        Wed, 22 Aug 2018 17:15:25 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.399.0; Wed, 22 Aug 2018 17:15:19 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        Weichao Guo <guoweichao@huawei.com>
-Subject: [PATCH v3] f2fs: guarantee journalled quota data by checkpoint
-Date:   Wed, 22 Aug 2018 17:15:15 +0800
-Message-ID: <20180822091515.34274-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        Wed, 22 Aug 2018 08:40:01 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34584 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726448AbeHVMkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 08:40:01 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B181A20728; Wed, 22 Aug 2018 11:15:56 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-85-9.w90-88.abo.wanadoo.fr [90.88.27.9])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7B16220711;
+        Wed, 22 Aug 2018 11:15:56 +0200 (CEST)
+Date:   Wed, 22 Aug 2018 11:15:57 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     tfiga@chromium.org, posciak@chromium.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        hans.verkuil@cisco.com, acourbot@chromium.org,
+        sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Guenter Roeck <groeck@chromium.org>
+Subject: Re: [PATCH 1/9] CHROMIUM: v4l: Add H264 low-level decoder API
+ compound controls.
+Message-ID: <20180822091557.gtnlgoebyv6yttzf@flea>
+References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
+ <20180613140714.1686-2-maxime.ripard@bootlin.com>
+ <80e1d9cb49c6df06843e49332685f2b401023292.camel@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="noua72ythpkh5fic"
+Content-Disposition: inline
+In-Reply-To: <80e1d9cb49c6df06843e49332685f2b401023292.camel@collabora.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For journalled quota mode, let checkpoint to flush dquot dirty data
-and quota file data to keep all file quota info are consisting in
-last checkpoint, so that we can avoid quota file being corrupted
-after SPO.
 
-The implementation is that:
+--noua72ythpkh5fic
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-1. add a global state SBI_QUOTA_NEED_FLUSH to indicate that there is
-cached dquot metadata changes in quota subsystem, and later checkpoint
-should:
- a) flush dquot metadata into quota file.
- b) flush quota file to storage to keep file usage be consistent.
+Hi,
 
-2. add a glabal state SBI_QUOTA_NEED_REPAIR to indicate that quota
-persisting is failed due to -EIO or -ENOSPC, and then,
- a) checkpoint will skip syncing dquot metadata.
- b) CP_QUOTA_NEED_FSCK_FLAG will be set in last cp pack to give a
-    hint for fsck repairing.
+On Tue, Aug 21, 2018 at 01:58:38PM -0300, Ezequiel Garcia wrote:
+> On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
+> > From: Pawel Osciak <posciak@chromium.org>
+> >=20
+> > Signed-off-by: Pawel Osciak <posciak@chromium.org>
+> > Reviewed-by: Wu-cheng Li <wuchengli@chromium.org>
+> > Tested-by: Tomasz Figa <tfiga@chromium.org>
+> > [rebase44(groeck): include linux/types.h in v4l2-controls.h]
+> > Signed-off-by: Guenter Roeck <groeck@chromium.org>
+> > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > ---
+> >=20
+> [..]
+> > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videod=
+ev2.h
+> > index 242a6bfa1440..4b4a1b25a0db 100644
+> > --- a/include/uapi/linux/videodev2.h
+> > +++ b/include/uapi/linux/videodev2.h
+> > @@ -626,6 +626,7 @@ struct v4l2_pix_format {
+> >  #define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') /* H264 =
+with start codes */
+> >  #define V4L2_PIX_FMT_H264_NO_SC v4l2_fourcc('A', 'V', 'C', '1') /* H26=
+4 without start codes */
+> >  #define V4L2_PIX_FMT_H264_MVC v4l2_fourcc('M', '2', '6', '4') /* H264 =
+MVC */
+> > +#define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* H26=
+4 parsed slices */
+>=20
+> As pointed out by Tomasz, the Rockchip VPU driver expects start codes [1]=
+, so the userspace
+> should be aware of it. Perhaps we could document this pixel format better=
+ as:
+>=20
+> #define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* H264 p=
+arsed slices with start codes */
 
-Signed-off-by: Weichao Guo <guoweichao@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v3:
-- add f2fs_quota_sync() defination when CONFIG_QUOTA is off.
- fs/f2fs/checkpoint.c    | 21 +++++++++
- fs/f2fs/data.c          |  8 +++-
- fs/f2fs/f2fs.h          |  3 ++
- fs/f2fs/super.c         | 95 +++++++++++++++++++++++++++++++++++++----
- include/linux/f2fs_fs.h |  1 +
- 5 files changed, 117 insertions(+), 11 deletions(-)
+I'm not sure this is something we want to do at that point. libva
+doesn't give the start code, so this is only going to make the life of
+the sane controllers more difficult. And if you need to have the start
+code and parse it, then you're not so stateless anymore.
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 5f61e9b8c678..960f53b4ca65 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1086,6 +1086,12 @@ static void __prepare_cp_block(struct f2fs_sb_info *sbi)
- 	ckpt->next_free_nid = cpu_to_le32(last_nid);
- }
- 
-+static bool __need_flush_quota(struct f2fs_sb_info *sbi)
-+{
-+	return is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH) &&
-+			!is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR);
-+}
-+
- /*
-  * Freeze all the FS-operations for checkpoint.
-  */
-@@ -1102,7 +1108,19 @@ static int block_operations(struct f2fs_sb_info *sbi)
- 	blk_start_plug(&plug);
- 
- retry_flush_dents:
-+	if (__need_flush_quota(sbi)) {
-+		clear_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
-+		err = f2fs_quota_sync(sbi->sb, -1);
-+		if (err)
-+			goto out;
-+	}
-+
- 	f2fs_lock_all(sbi);
-+	if (__need_flush_quota(sbi)) {
-+		f2fs_unlock_all(sbi);
-+		goto retry_flush_dents;
-+	}
-+
- 	/* write all the dirty dentry pages */
- 	if (get_pages(sbi, F2FS_DIRTY_DENTS)) {
- 		f2fs_unlock_all(sbi);
-@@ -1217,6 +1235,9 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
- 		__set_ckpt_flags(ckpt, CP_FSCK_FLAG);
- 
-+	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
-+		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-+
- 	/* set this flag to activate crc|cp_ver for recovery */
- 	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG);
- 	__clear_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG);
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 16abe2231247..eac3a0e27c6e 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -49,7 +49,7 @@ static bool __is_cp_guaranteed(struct page *page)
- 			inode->i_ino ==  F2FS_NODE_INO(sbi) ||
- 			S_ISDIR(inode->i_mode) ||
- 			(S_ISREG(inode->i_mode) &&
--			is_inode_flag_set(inode, FI_ATOMIC_FILE)) ||
-+			(f2fs_is_atomic_file(inode) || IS_NOQUOTA(inode))) ||
- 			is_cold_data(page))
- 		return true;
- 	return false;
-@@ -1708,6 +1708,8 @@ bool f2fs_should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
- 		return true;
- 	if (S_ISDIR(inode->i_mode))
- 		return true;
-+	if (IS_NOQUOTA(inode))
-+		return true;
- 	if (f2fs_is_atomic_file(inode))
- 		return true;
- 	if (fio) {
-@@ -1952,7 +1954,7 @@ static int __write_data_page(struct page *page, bool *submitted,
- 	}
- 
- 	unlock_page(page);
--	if (!S_ISDIR(inode->i_mode))
-+	if (!S_ISDIR(inode->i_mode) && !IS_NOQUOTA(inode))
- 		f2fs_balance_fs(sbi, need_balance_fs);
- 
- 	if (unlikely(f2fs_cp_error(sbi))) {
-@@ -2143,6 +2145,8 @@ static inline bool __should_serialize_io(struct inode *inode,
- {
- 	if (!S_ISREG(inode->i_mode))
- 		return false;
-+	if (IS_NOQUOTA(inode))
-+		return false;
- 	if (wbc->sync_mode != WB_SYNC_ALL)
- 		return true;
- 	if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index e9009e8d30e2..57cd6d7f36ea 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1092,6 +1092,8 @@ enum {
- 	SBI_NEED_CP,				/* need to checkpoint */
- 	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
- 	SBI_IS_RECOVERED,			/* recovered orphan/data */
-+	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
-+	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
- };
- 
- enum {
-@@ -2832,6 +2834,7 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
- int f2fs_inode_dirtied(struct inode *inode, bool sync);
- void f2fs_inode_synced(struct inode *inode);
- int f2fs_enable_quota_files(struct f2fs_sb_info *sbi, bool rdonly);
-+int f2fs_quota_sync(struct super_block *sb, int type);
- void f2fs_quota_off_umount(struct super_block *sb);
- int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover);
- int f2fs_sync_fs(struct super_block *sb, int sync);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 9587e57f8d93..64daf9f415fa 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1696,6 +1696,13 @@ static qsize_t *f2fs_get_reserved_space(struct inode *inode)
- 
- static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
- {
-+
-+	if (is_set_ckpt_flags(sbi, CP_QUOTA_NEED_FSCK_FLAG)) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"quota sysfile may be corrupted, skip loading it");
-+		return 0;
-+	}
-+
- 	return dquot_quota_on_mount(sbi->sb, F2FS_OPTION(sbi).s_qf_names[type],
- 					F2FS_OPTION(sbi).s_jquota_fmt, type);
- }
-@@ -1766,7 +1773,14 @@ static int f2fs_enable_quotas(struct super_block *sb)
- 		test_opt(F2FS_SB(sb), PRJQUOTA),
- 	};
- 
-+	if (is_set_ckpt_flags(F2FS_SB(sb), CP_QUOTA_NEED_FSCK_FLAG)) {
-+		f2fs_msg(sb, KERN_ERR,
-+			"quota file may be corrupted, skip loading it");
-+		return 0;
-+	}
-+
- 	sb_dqopt(sb)->flags |= DQUOT_QUOTA_SYS_FILE | DQUOT_NOLIST_DIRTY;
-+
- 	for (type = 0; type < MAXQUOTAS; type++) {
- 		qf_inum = f2fs_qf_ino(sb, type);
- 		if (qf_inum) {
-@@ -1787,7 +1801,7 @@ static int f2fs_enable_quotas(struct super_block *sb)
- 	return 0;
- }
- 
--static int f2fs_quota_sync(struct super_block *sb, int type)
-+int f2fs_quota_sync(struct super_block *sb, int type)
- {
- 	struct quota_info *dqopt = sb_dqopt(sb);
- 	int cnt;
-@@ -1795,7 +1809,7 @@ static int f2fs_quota_sync(struct super_block *sb, int type)
- 
- 	ret = dquot_writeback_dquots(sb, type);
- 	if (ret)
--		return ret;
-+		goto out;
- 
- 	/*
- 	 * Now when everything is written we can discard the pagecache so
-@@ -1809,13 +1823,16 @@ static int f2fs_quota_sync(struct super_block *sb, int type)
- 
- 		ret = filemap_write_and_wait(dqopt->files[cnt]->i_mapping);
- 		if (ret)
--			return ret;
-+			goto out;
- 
- 		inode_lock(dqopt->files[cnt]);
- 		truncate_inode_pages(&dqopt->files[cnt]->i_data, 0);
- 		inode_unlock(dqopt->files[cnt]);
- 	}
--	return 0;
-+out:
-+	if (ret)
-+		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
-+	return ret;
- }
- 
- static int f2fs_quota_on(struct super_block *sb, int type, int format_id,
-@@ -1889,6 +1906,61 @@ void f2fs_quota_off_umount(struct super_block *sb)
- 	}
- }
- 
-+static int f2fs_dquot_commit(struct dquot *dquot)
-+{
-+	int ret;
-+
-+	ret = dquot_commit(dquot);
-+	if (ret == -ENOSPC || ret == -EIO)
-+		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
-+	return ret;
-+}
-+
-+static int f2fs_dquot_acquire(struct dquot *dquot)
-+{
-+	int ret;
-+
-+	ret = dquot_acquire(dquot);
-+	if (ret == -ENOSPC || ret == -EIO)
-+		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
-+	return ret;
-+}
-+
-+static int f2fs_dquot_release(struct dquot *dquot)
-+{
-+	int ret;
-+
-+	ret = dquot_release(dquot);
-+	if (ret == -ENOSPC || ret == -EIO)
-+		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
-+	return ret;
-+}
-+
-+static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
-+{
-+	struct super_block *sb = dquot->dq_sb;
-+	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-+
-+	/* if we are using journalled quota */
-+	if (f2fs_sb_has_quota_ino(sbi) ||
-+		F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
-+		F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
-+		F2FS_OPTION(sbi).s_qf_names[PRJQUOTA])
-+		set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
-+
-+	return dquot_mark_dquot_dirty(dquot);
-+}
-+
-+static int f2fs_dquot_commit_info(struct super_block *sb, int type)
-+{
-+	int ret;
-+
-+	ret = dquot_commit_info(sb, type);
-+	if (ret == -ENOSPC || ret == -EIO)
-+		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
-+	return ret;
-+}
-+
- static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
- {
- 	*projid = F2FS_I(inode)->i_projid;
-@@ -1897,11 +1969,11 @@ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
- 
- static const struct dquot_operations f2fs_quota_operations = {
- 	.get_reserved_space = f2fs_get_reserved_space,
--	.write_dquot	= dquot_commit,
--	.acquire_dquot	= dquot_acquire,
--	.release_dquot	= dquot_release,
--	.mark_dirty	= dquot_mark_dquot_dirty,
--	.write_info	= dquot_commit_info,
-+	.write_dquot	= f2fs_dquot_commit,
-+	.acquire_dquot	= f2fs_dquot_acquire,
-+	.release_dquot	= f2fs_dquot_release,
-+	.mark_dirty	= f2fs_dquot_mark_dquot_dirty,
-+	.write_info	= f2fs_dquot_commit_info,
- 	.alloc_dquot	= dquot_alloc,
- 	.destroy_dquot	= dquot_destroy,
- 	.get_projid	= f2fs_get_projid,
-@@ -1919,6 +1991,11 @@ static const struct quotactl_ops f2fs_quotactl_ops = {
- 	.get_nextdqblk	= dquot_get_next_dqblk,
- };
- #else
-+int f2fs_quota_sync(struct super_block *sb, int type)
-+{
-+	return 0;
-+}
-+
- void f2fs_quota_off_umount(struct super_block *sb)
- {
- }
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index aa4b586569c1..b6cc2b38471f 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -119,6 +119,7 @@ struct f2fs_super_block {
- /*
-  * For checkpoint
-  */
-+#define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
- #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
- #define CP_NOCRC_RECOVERY_FLAG	0x00000200
- #define CP_TRIMMED_FLAG		0x00000100
--- 
-2.18.0.rc1
+Maxime
 
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--noua72ythpkh5fic
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlt9KcwACgkQ0rTAlCFN
+r3RpKQ//aADj5oLUZV78d16Y1whgjwjeyfX6eBcc6VmFhBvEbu68xB2blBtc0Z+J
+6lo4AisRAK9YAO6WBtfNCL+ZIgWs2RD7PF+HiXah789Ksfdk2bzESGFou7EfS37o
+67v9cxz1tnts7TQbPx5RQlpfb56uuvGZo6fRV+KXYq71hwCgx0IjeGhZc1QsBCdE
+O3b4YiINvlTNQZQZfGUszA4wQ/+gT4OZXmtQu5SpLT2pdre57SmQ8EN9+Z5GthBQ
+vhdhSlLP9L6TmZonQfA0HIPYtLsfPCPtOMbznS9KEqsLuGDJ20dUTLagXTJRVcEJ
+WwgrdiX7OXoUsB6PmfNMr0I7cxWATh3k54OIl2+dSPJANdjIUwWb1s7yBAlYBwWu
+5vg22giYTU7bj4oc5Vfe1MSm6huM7We0ED93Y/L7PWfq9WbDMeeKZMMh7viTg3Tq
+H+L77lsxDwusG+NsWoKpFhq08UOcaOUue+dBPadRILfYEbizccrob+0x82APctWA
+KBDAukqZp6sRRV8Yl0op2trS7W332pnTDv/09zXNEIrUK+yXetrxEIX74aJY4qRF
+M34vgMQdok1/RJRZLo18p39kLyKQB+CZbNtFWC6VK0Ziu+vnEluXXq3wU7c2qIcb
+rwMeeWQP9kNcO04AcJ7E+pAYYMme159CkaktdL4a7hL5eaiORao=
+=tUm/
+-----END PGP SIGNATURE-----
+
+--noua72ythpkh5fic--
