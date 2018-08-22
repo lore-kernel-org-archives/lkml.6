@@ -2,120 +2,213 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A19C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 13:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D7AC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 13:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA971214FF
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 13:22:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B354F20893
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 13:24:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="c1XxSt2o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA971214FF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="B0rtV+ny"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B354F20893
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbeHVQrU (ORCPT
+        id S1729078AbeHVQtf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 12:47:20 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44944 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728512AbeHVQrU (ORCPT
+        Wed, 22 Aug 2018 12:49:35 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:44444 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728758AbeHVQtf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 12:47:20 -0400
-Received: by mail-lf1-f68.google.com with SMTP id g6-v6so1363020lfb.11
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 06:22:25 -0700 (PDT)
+        Wed, 22 Aug 2018 12:49:35 -0400
+Received: by mail-yw1-f67.google.com with SMTP id l9-v6so616445ywc.11
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 06:24:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=AZbPCJSbuo+klDBiBLb68ajVcTgBIaGryLAqoz1zbFg=;
-        b=c1XxSt2o2MKrhLyRBXaEtIfAcbI419co9oJDsRtm/1ugtcaVk1NmSKqrTq1jUJjn1h
-         8miGzVkWXgpsmSKqx7XshYhc/cCao2Qb0Sm6qaG/YjOhJGRHCdp3jKv4Wu/GbwST7OAE
-         Ko5WAhrifPAUcuB7fvHb/Rwa6lxNT5BUQyC+I=
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tbrx76D5WkhPou4JfAmzZx4FT6d8lT5APKbpJ65zCHI=;
+        b=B0rtV+nyPwhpTE1HkWdZnAZwg1sFSyidPjwkyfxqi2hr3fnE9gjVsQGNatAIqW6MtC
+         tKMgdfd5hM9wKN0WHIpouM5serl46jXL6nXGdVDuJ1Ml+IEafxMBlA+uKI7DClau9Mp7
+         DXKdIuEAxUDE3KJ4sccquA/zO6kHaEe47LbuI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=AZbPCJSbuo+klDBiBLb68ajVcTgBIaGryLAqoz1zbFg=;
-        b=O9atsYOpJ9FJMEL2BO7prkiuvTNsOobeiJqRBLdDwe/lJk3m89EorGvpH4pV+l8KBy
-         AqsBIm0T49jAGklFvtPg3nEYs5XyA+w65+1fVe0CkdudYMR8q0py8T0YsXHw1jXutsQb
-         TMjeQUFc/Sy+NLFiAeZ2kLOfnNHDJzGLhLm7bjh4BiU4W5vVdr3zFzCERHr9ndvwih/9
-         jkLFwwdlbVLOsTDp9YSm708brG2zQOa5DWBUdAKdCw725fvKMXihqlz6FZMzeMuRe8Jz
-         hLidaLMOASvibrl4qkWZZsknuzvg1MFvaCF6SYtsHC2J2iTSaZOYoIKlFnm2AzmD+mMF
-         AtwQ==
-X-Gm-Message-State: APzg51D85zvYOMCSgGyUqDmezOgxO0RtKImhMlwJJSi8wwuTTeOPpPe4
-        p5C0fhlC5mAu5nad2Ft1HL9hAA==
-X-Google-Smtp-Source: ANB0VdZ3jPavtSuzCCpfqzFJ8USRyKgm/35Ri6ufCmVAlYn9DU87oCfj5otS4UyDdVAh1YM1XF0P+Q==
-X-Received: by 2002:a19:e593:: with SMTP id i19-v6mr654385lfk.18.1534944144439;
-        Wed, 22 Aug 2018 06:22:24 -0700 (PDT)
-Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id i2-v6sm314600lfa.78.2018.08.22.06.22.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 22 Aug 2018 06:22:24 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH] brcmfmac: fix wrong strnchr usage
-Date:   Wed, 22 Aug 2018 15:22:15 +0200
-Message-Id: <20180822132215.27669-1-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.16.4
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tbrx76D5WkhPou4JfAmzZx4FT6d8lT5APKbpJ65zCHI=;
+        b=CWmGIq2M1ibRsXr+WFVWJ6xBIsQScYbEp2708Lu7b4xgO7w6j1CghmASaHOLIVy4Li
+         /7Kc7qv0k5Z/1JmgrKjV4qZiDvkXjZQWgMLC9S6C/FeRqoa9evwiAcTX/RQAWIXWmhtR
+         UBadTlO6JqeBrSxNmTAZHmvUHJ8OBGThH8vLygWvxiwAd4Xyw3qqRcBcCp50lkwuB9pd
+         NZiVzZ3LnoH95hbqb+JeSvZXGI2+DdpUK4e4P4CsRG6t0IkJ67nm1J1/cGPwFfdi0izr
+         LkQDa8W5PcMpkqR605yBVnVCD8Zwb49KL95u0ltJ+zWI6Ma3GWeG3fAk9GBHu5iVz/FS
+         bAeg==
+X-Gm-Message-State: APzg51D0Ko/yPyqSzBioN4Z88wxIS+sDe6WONTj4YDOgyAV9LJLAFJXb
+        iDz+PDJpMl/mKxmmGMNjkwYdl9lpZrLLag==
+X-Google-Smtp-Source: ANB0VdazDxxTbGVAaRSpeIdmmY5JJekmpddyZosLht75Id3KVZv9aSrdKPl102/YkHkpBSN6B7KS1A==
+X-Received: by 2002:a0d:dcc1:: with SMTP id f184-v6mr30912ywe.26.1534944279713;
+        Wed, 22 Aug 2018 06:24:39 -0700 (PDT)
+Received: from mail-yb0-f169.google.com (mail-yb0-f169.google.com. [209.85.213.169])
+        by smtp.gmail.com with ESMTPSA id v126-v6sm1749382ywe.45.2018.08.22.06.24.38
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 Aug 2018 06:24:38 -0700 (PDT)
+Received: by mail-yb0-f169.google.com with SMTP id d34-v6so648634yba.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 06:24:38 -0700 (PDT)
+X-Received: by 2002:a25:9347:: with SMTP id g7-v6mr8235831ybo.293.1534944277722;
+ Wed, 22 Aug 2018 06:24:37 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
+ <20180613140714.1686-2-maxime.ripard@bootlin.com> <80e1d9cb49c6df06843e49332685f2b401023292.camel@collabora.com>
+ <20180822091557.gtnlgoebyv6yttzf@flea> <CAAFQd5ANvKF2+GEXQTnRsdYVzJTtBOhv7nFahV=2W-9_QXwY4g@mail.gmail.com>
+ <e6324ea983d34403199044ae30e932cd728c8ad4.camel@bootlin.com>
+In-Reply-To: <e6324ea983d34403199044ae30e932cd728c8ad4.camel@bootlin.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Wed, 22 Aug 2018 22:24:23 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5AybueM-rhy8bMbRHHZmwBP08-cWB11NadcUQAb6XJ1SA@mail.gmail.com>
+Message-ID: <CAAFQd5AybueM-rhy8bMbRHHZmwBP08-cWB11NadcUQAb6XJ1SA@mail.gmail.com>
+Subject: Re: [PATCH 1/9] CHROMIUM: v4l: Add H264 low-level decoder API
+ compound controls.
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        jenskuske@gmail.com, linux-sunxi@googlegroups.com,
+        thomas.petazzoni@bootlin.com, groeck@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-strnchr takes arguments in the order of its name: string, max bytes to
-read, character to search for. Here we're passing '\n' aka 10 as the
-buffer size, and searching for sizeof(buf) aka BRCMF_DCMD_SMLEN aka
-256 (aka '\0', since it's implicitly converted to char) within those 10
-bytes.
+On Wed, Aug 22, 2018 at 10:03 PM Paul Kocialkowski
+<paul.kocialkowski@bootlin.com> wrote:
+>
+> Hi,
+>
+> On Wed, 2018-08-22 at 18:54 +0900, Tomasz Figa wrote:
+> > On Wed, Aug 22, 2018 at 6:16 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > On Tue, Aug 21, 2018 at 01:58:38PM -0300, Ezequiel Garcia wrote:
+> > > > On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
+> > > > > From: Pawel Osciak <posciak@chromium.org>
+> > > > >
+> > > > > Signed-off-by: Pawel Osciak <posciak@chromium.org>
+> > > > > Reviewed-by: Wu-cheng Li <wuchengli@chromium.org>
+> > > > > Tested-by: Tomasz Figa <tfiga@chromium.org>
+> > > > > [rebase44(groeck): include linux/types.h in v4l2-controls.h]
+> > > > > Signed-off-by: Guenter Roeck <groeck@chromium.org>
+> > > > > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > > > > ---
+> > > > >
+> > > >
+> > > > [..]
+> > > > > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> > > > > index 242a6bfa1440..4b4a1b25a0db 100644
+> > > > > --- a/include/uapi/linux/videodev2.h
+> > > > > +++ b/include/uapi/linux/videodev2.h
+> > > > > @@ -626,6 +626,7 @@ struct v4l2_pix_format {
+> > > > >  #define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') /* H264 with start codes */
+> > > > >  #define V4L2_PIX_FMT_H264_NO_SC v4l2_fourcc('A', 'V', 'C', '1') /* H264 without start codes */
+> > > > >  #define V4L2_PIX_FMT_H264_MVC v4l2_fourcc('M', '2', '6', '4') /* H264 MVC */
+> > > > > +#define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* H264 parsed slices */
+> > > >
+> > > > As pointed out by Tomasz, the Rockchip VPU driver expects start codes [1], so the userspace
+> > > > should be aware of it. Perhaps we could document this pixel format better as:
+> > > >
+> > > > #define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* H264 parsed slices with start codes */
+> > >
+> > > I'm not sure this is something we want to do at that point. libva
+> > > doesn't give the start code, so this is only going to make the life of
+> > > the sane controllers more difficult. And if you need to have the start
+> > > code and parse it, then you're not so stateless anymore.
+> >
+> > I might not remember correctly, but Rockchip decoder does some slice
+> > parsing on its own (despite not doing any higher level parsing).
+> > Probably that's why it needs those start codes.
+>
+> The VPU found on Allwinner platforms also provides a mechanism to parse
+> the bitstream data via a dedicated interface through the VPU registers.
+> It is used in libvdpau-sunxi but not in our driver, because we don't
+> want to be doing bitstream parsing in the kernel.
+>
+> It would be good to know if this is just a feature of the Rockchip VPU
+> hardware that can be skipped (like on Allwinner) or if it's a hard
+> requirement in its decoding pipeline.
 
-Just interchanging the last two arguments would still leave a bug,
-because if we've been successful once, there are not sizeof(buf)
-characters left after the new value of p.
+It's a hard requirement for its decoding pipeline, but...
 
-Since clmver is immediately afterwards passed as a %s argument, I assume
-that it is actually a properly nul-terminated string. For that case, we
-have strreplace().
+> Also, maybe it only concerns the
+> slice header? It is already part of the slice data (provided by VAAPI)
+> for H.264/H.265 and an offset is provided to the beginning of the coded
+> video data.
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
-Incidentally, I found this because I was looking at our strnchr
-implementation and noticed a corner case: strchr() is specified by C and
-POSIX standards to consider the trailing '\0' to be part of the string,
-so strchr(foo, '\0') must be equivalent to "foo +
-strlen(foo)". strnchr() is not specified by anyone. Our implementation
-returns NULL as soon as count is depleted or hitting a '\0' byte, so
-since we were here looking for a '\0' byte, the first strnchr() call was
-guaranteed to return NULL.
+Yes, it seems to be only the slice header.
 
-Had strnchr() instead returned a pointer to the '\0' if such was found
-within the first count (in this case 10) bytes, we'd be overwriting that
-with a ' ', and continue until no '\0' was found within the next 10
-bytes.
+>
+> > I wonder if libva is the best reference here. It's been designed
+> > almost entirely by Intel for Intel video hardware. We want something
+> > that could work with a wide range of devices and avoid something like
+> > a need to create a semi-stateless API few months later. In fact,
+> > hardware from another vendor, we're working with, also does parsing of
+> > slice headers internally. Moreover, we have some weird
+> > kind-of-stateful decoders, which cannot fully deal with bitstream on
+> > its own, e.g. cannot parse formats, cannot handle resolution changes,
+> > need H264 bitstream NALUs split into separate buffers, etc.
+> >
+> > As I suggested some time ago, having the full bitstream in the buffer,
+> > with offsets of particular units included in respective controls,
+> > would be the most scalable thing. If really needed, we could add flags
+> > telling the driver that particular units are present, so one's
+> > implementation of libva could put only raw slice data in the buffers.
+> > But perhaps it's libva which needs some amendment?
+>
+> If the raw bitstream is needed, I think it would make more sense to use
+> the already-existing formats for stateful VPUs along with the controls
+> for stateless ones instead of having the full bitstream in the
+> V4L2_PIX_FMT_*_SLICE formats.
 
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+It may indeed make sense to separate this based on pixel format.
+However, how do we tell the client that it needs to provide those
+controls? Current concept was based entirely on pixel format, so I
+guess that would mean creating something like
+V4L2_PIX_FMT_*_NOT_REALLY_SLICE (_PARSED, _STATELESS?). Might be okay,
+though...
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
-index cd3651069d0c..94044a7a6021 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
-@@ -296,9 +296,7 @@ int brcmf_c_preinit_dcmds(struct brcmf_if *ifp)
- 		/* Replace all newline/linefeed characters with space
- 		 * character
- 		 */
--		ptr = clmver;
--		while ((ptr = strnchr(ptr, '\n', sizeof(buf))) != NULL)
--			*ptr = ' ';
-+		strreplace(clmver, '\n', ' ');
- 
- 		brcmf_dbg(INFO, "CLM version = %s\n", clmver);
- 	}
--- 
-2.16.4
+>
+> I would also be tempted to say that reconstructing the needed parts of
+> the bitstream in-driver for these half-way VPUs would be a better
+> approach than blurrying the line between how (and what) data should be
+> passed for stateful and stateless VPUs at the API level. Stateless
+> should only cover what's in the slice NAL unit RBSP, which excludes the
+> start code detection bytes. It is no longer parsed data otherwise.
 
+I'm not sure where such decision comes from. In particular, Chromium,
+from which this code originates, includes start codes in
+V4L2_PIX_FMT_H264_SLICE. As I mentioned earlier, we can't design this
+API based only on 1 type of hardware semantics. The stateless API
+should cover any kind of codec that needs user space assistance in
+processing the stream, which in practice would be almost everything
+for which stateful API doesn't work.
+
+That said, since pixel format essentially specifies the buffer
+contents, having such cases differentiated based on the pixel format
+doesn't sound insane.
+
+Best regards,
+Tomasz
