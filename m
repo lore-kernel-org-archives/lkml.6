@@ -3,155 +3,127 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A3FC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB800C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7E85214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:34:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7E85214C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 874C421486
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:43:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 874C421486
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729318AbeHVS7e (ORCPT
+        id S1729273AbeHVTJC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 14:59:34 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38408 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729021AbeHVS7e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 14:59:34 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7MFUkvk020938
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 11:34:11 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m19wcafer-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 11:34:11 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Wed, 22 Aug 2018 16:34:08 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 22 Aug 2018 16:34:05 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MFY3Rs44564672
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 22 Aug 2018 15:34:03 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8BF52A404D;
-        Wed, 22 Aug 2018 18:34:03 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CDEB4A405B;
-        Wed, 22 Aug 2018 18:34:02 +0100 (BST)
-Received: from [9.152.224.111] (unknown [9.152.224.111])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 22 Aug 2018 18:34:02 +0100 (BST)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
- control domains
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-Cc:     Tony Krowiak <akrowiak@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180820162317.08bd7d23.cohuck@redhat.com>
- <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
- <20180821172548.57a6c758.cohuck@redhat.com>
- <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
- <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
- <20180822114250.59a250aa.cohuck@redhat.com>
- <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
- <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Wed, 22 Aug 2018 17:34:02 +0200
+        Wed, 22 Aug 2018 15:09:02 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34724 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728207AbeHVTJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 15:09:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B626280D;
+        Wed, 22 Aug 2018 08:43:37 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F30083F2EA;
+        Wed, 22 Aug 2018 08:43:33 -0700 (PDT)
+Subject: Re: [PATCH v14 0/4] iommu/arm-smmu: Add runtime pm/sleep support
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>, joro@8bytes.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Will Deacon <will.deacon@arm.com>,
+        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
+        jcrouse@codeaurora.org, Sricharan R <sricharan@codeaurora.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+References: <20180727070224.23966-1-vivek.gautam@codeaurora.org>
+ <CAAFQd5C+ctVA-ynrWy=0=pjKZj0TGmHL+bWAu2yWWjYe4Oyf8w@mail.gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <08965f23-5b97-3ea7-4bd5-4f36035fddf2@arm.com>
+Date:   Wed, 22 Aug 2018 16:43:32 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
+In-Reply-To: <CAAFQd5C+ctVA-ynrWy=0=pjKZj0TGmHL+bWAu2yWWjYe4Oyf8w@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18082215-0016-0000-0000-000001FA3E1E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082215-0017-0000-0000-00003250944B
-Message-Id: <f84dbcc0-f627-be02-9933-3baa953adc09@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808220156
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/08/2018 17:11, Christian Borntraeger wrote:
+On 20/08/18 10:31, Tomasz Figa wrote:
+> Hi Robin,
 > 
-> 
-> On 08/22/2018 01:03 PM, Pierre Morel wrote:
->>> That's interesting.
->>>
->>>> IMHO this quote is quite a half-full half-empty cup one:
->>>> * it mandates the set of usage domains is a subset of the set
->>>> of the control domains, but
->>>> * it speaks of independent controls, namely about the 'usage domain index'
->>>> and the 'control domain index list' and makes the enforcement of the rule
->>>> a job of the administrator (instead of codifying it in the controls).
->>> I'm wondering if a configuration with a usage domain that is not also a
->>> control domain is rejected outright? Anybody tried that? :)
+> On Fri, Jul 27, 2018 at 4:02 PM Vivek Gautam
+> <vivek.gautam@codeaurora.org> wrote:
 >>
->> Yes, and no it is not.
->> We can use a queue (usage domain) to a AP card for SHA-512 or RSA without
->> having to define the queue as a control domain.
+>> This series provides the support for turning on the arm-smmu's
+>> clocks/power domains using runtime pm. This is done using
+>> device links between smmu and client devices. The device link
+>> framework keeps the two devices in correct order for power-cycling
+>> across runtime PM or across system-wide PM.
+>>
+>> With addition of a new device link flag DL_FLAG_AUTOREMOVE_SUPPLIER [8]
+>> (available in linux-next of Rafael's linux-pm tree [9]), the device links
+>> created between arm-smmu and its clients will be automatically purged
+>> when arm-smmu driver unbinds from its device.
+>>
+>> As not all implementations support clock/power gating, we are checking
+>> for a valid 'smmu->dev's pm_domain' to conditionally enable the runtime
+>> power management for such smmu implementations that can support it.
+>> Otherwise, the clocks are turned to be always on in .probe until .remove.
+>> With conditional runtime pm now, we avoid touching dev->power.lock
+>> in fastpaths for smmu implementations that don't need to do anything
+>> useful with pm_runtime.
+>> This lets us to use the much-argued pm_runtime_get_sync/put_sync()
+>> calls in map/unmap callbacks so that the clients do not have to
+>> worry about handling any of the arm-smmu's power.
+>>
+>> This series also adds support for Qcom's arm-smmu-v2 variant that
+>> has different clocks and power requirements.
+>>
+>> Previous version of this patch series is @ [2].
+>>
+>> Tested this series on msm8996, and sdm845 after pulling in Rafael's linux-pm
+>> linux-next[9] and Joerg's iommu next[10] branches, and related changes for
+>> device tree, etc.
+>>
+>> Hi Robin, Will,
+>> I have addressed the comments for v13. If there's still a chance
+>> can you please consider pulling this for v4.19.
+>> Thanks.
+>>
+>> [v14]
+>>     * Moved arm_smmu_device_reset() from arm_smmu_pm_resume() to
+>>       arm_smmu_runtime_resume() so that the pm_resume callback calls
+>>       only runtime_resume to resume the device.
+>>       This should take care of restoring the state of smmu in systems
+>>       in which smmu lose register state on power-domain collapse.
 > 
-> Huh? My HMC allows to add a domain as
-> - control only domain
-> - control and usage domain.
-> 
-> But I am not able to configure a usage-only domain for my LPAR. That seems to match
-> the current code, no?
-> 
+> It's been a while since this series was posted and no more comments
+> seem to be left anymore. Would you have some time to take a look
+> again? Thanks.
 
-Yes, it may not be configurable by the HMC but if we start a guest with 
-no control domain it is not a problem to access the hardware through the 
-usage domain.
+Other than the binding issue which turned up in the meantime, I *think* 
+this is looking OK now in terms of being sufficiently safe for all the 
+various awkward retention vs. state-loss combinations. There's almost 
+certainly still ways to improve it in future, but what we have now seems 
+like a reasonable starting point that isn't impossibly complicated to 
+reason about.
 
-I tested this a long time ago, but tested again today to be sure on my LPAR.
-
-AFAIU adding a control only domain and a control and usage domain
-allows say:
-control and usage domain 1
-control only domain 2
-
-Allow to send a message to domain 2 using queue 1
-
-Allow also to send a domain modifying message to domain 1 using queue 1
-
-control domain are domain which are controlled
-It seems that the HMC enforce the LPARs to have access to their usage 
-domain (AFAIU from Harald)
-
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+Robin.
