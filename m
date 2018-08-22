@@ -2,151 +2,84 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 861D9C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD41C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 303022150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:04:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 303022150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 61C51214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:05:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OGbmc/9b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61C51214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728997AbeHVR3g (ORCPT
+        id S1729044AbeHVRaA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 13:29:36 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:7379 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728444AbeHVR3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 13:29:36 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41wTmy4MN1z9tvSg;
-        Wed, 22 Aug 2018 16:04:18 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id kyQPpFf_RKGg; Wed, 22 Aug 2018 16:04:18 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41wTmy3kWqz9tvST;
-        Wed, 22 Aug 2018 16:04:18 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 874388B87E;
-        Wed, 22 Aug 2018 16:04:32 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id wmmeZUZUdTgF; Wed, 22 Aug 2018 16:04:32 +0200 (CEST)
-Received: from PO15451 (unknown [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4DE1B8B877;
-        Wed, 22 Aug 2018 16:04:32 +0200 (CEST)
-Subject: Re: [PATCH v2 3/4] powerpc/mm: fix a warning when a cache is common
- to PGD and hugepages
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        aneesh.kumar@linux.vnet.ibm.com
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <2f96bf1a8df1091c642de099ed07c34b5ab9b90a.1534258290.git.christophe.leroy@c-s.fr>
- <4aaca2d27429e6bdadc340fd3b96e7c350c4b2f4.1534258290.git.christophe.leroy@c-s.fr>
- <6dea8d0c-c4ab-49aa-da26-a729c18fa818@linux.ibm.com>
- <006e5f33-b816-7508-faac-da26a860659c@c-s.fr>
-Message-ID: <1aa6d8c1-d5af-fe03-79fe-afb10c9b1bec@c-s.fr>
-Date:   Wed, 22 Aug 2018 16:04:32 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 22 Aug 2018 13:30:00 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36184 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728444AbeHVRaA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 13:30:00 -0400
+Received: by mail-it0-f65.google.com with SMTP id p81-v6so3069283itp.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 07:04:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1gi9Qc5t5nAYzxLnctoqByn0x7/rsFuZYtwK7AC24xc=;
+        b=OGbmc/9b5NrDUQXjDtTSYYk6jydgUgbkOoSsc6m6eG8YVLf5tTzLsOLARHpSJf7zFa
+         Ohns8dg64c+xMPl+JI1YpNkKIFWp/M5h9lJ+r7pA2wMIMKeVaiITqg/KuSna4tYuz8hA
+         VGx2mStY0mRtB2seXHT2+QKdhZktBvIJl80/c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1gi9Qc5t5nAYzxLnctoqByn0x7/rsFuZYtwK7AC24xc=;
+        b=dhClRz+ycQ5BuUhpvdvNM7wmPQUEzk2WMksswDuEYjDhPrFBdOEClBBlyH3yVONSH1
+         W2CEa1dwfxZZlaqdZvJc8GYQUPmyPZUzl05rbZvMwIwC2SypWAVDpMwCu5SKiCGS78Lv
+         9RB3K0Lp4SlbDDoi9/VnyysiBZ4L6/I53YOFAlFARqUU1shYy5aoa1q0TotPkw8D52L6
+         9dF9MBxr8MI0Xs0TYb15UoDl5jU3A8T4ZiiS1Ew1QufDjXkRX+O+hDlVrqOv1UDbggqS
+         OdEy6PwmZm6IHPLo40FZaCAP5Of/f5tAZTN9MKR/25CK8EuzGZYWvaeBavwZEbCNSGBB
+         cS7A==
+X-Gm-Message-State: AOUpUlE2MlndpSlGfyKbpwfnmLIGzkzJ8fWLd2CtZVWopimvttp17c2Q
+        xIsW6d+0FheIW0JQgoj9RlcauXb3t8fXXeH36Gc=
+X-Google-Smtp-Source: AA+uWPyou3Dvno/3UJ41BhVLqqM9AXdUHhdyq7oh4Ju1Z7AFfc/UHax2LpjZEr+B/FmihcwlsEQUT3B0UamaGJoAfD8=
+X-Received: by 2002:a02:2b12:: with SMTP id h18-v6mr48795572jaa.10.1534946692479;
+ Wed, 22 Aug 2018 07:04:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <006e5f33-b816-7508-faac-da26a860659c@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <8736v8dp6u.wl-ysato@users.sourceforge.jp> <CA+55aFxDWrndr0ZxM4kTJYC5ps+Hno1dCX==4071soSqcEjUxw@mail.gmail.com>
+ <871saqefeh.wl-ysato@users.sourceforge.jp> <CA+55aFwsupq-iEL+MbNDMbzdsGA6dcMyM2Hs8uHgBZ5r77qnHg@mail.gmail.com>
+In-Reply-To: <CA+55aFwsupq-iEL+MbNDMbzdsGA6dcMyM2Hs8uHgBZ5r77qnHg@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 22 Aug 2018 07:04:41 -0700
+Message-ID: <CA+55aFyxWR+hEavg+hVbqC89=pqxgzFN2oFZhmzKJxnhBQpUOw@mail.gmail.com>
+Subject: Re: [GIT PULL] arch/h8300 update
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Aneesh,
+On Wed, Aug 22, 2018 at 6:36 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Wed, Aug 22, 2018 at 5:47 AM Yoshinori Sato
+> <ysato@users.sourceforge.jp> wrote:
+> >
+> > I fixed it.
+>
+> Thanks.
 
-Le 17/08/2018 à 12:44, Christophe LEROY a écrit :
-> 
-> 
-> Le 17/08/2018 à 05:32, Aneesh Kumar K.V a écrit :
->> On 08/14/2018 08:24 PM, Christophe Leroy wrote:
->>> While implementing TLB miss HW assistance on the 8xx, the following
->>> warning was encountered:
->>>
->>> [  423.732965] WARNING: CPU: 0 PID: 345 at mm/slub.c:2412 
->>> ___slab_alloc.constprop.30+0x26c/0x46c
->>> [  423.733033] CPU: 0 PID: 345 Comm: mmap Not tainted 
->>> 4.18.0-rc8-00664-g2dfff9121c55 #671
->>> [  423.733075] NIP:  c0108f90 LR: c0109ad0 CTR: 00000004
->>> [  423.733121] REGS: c455bba0 TRAP: 0700   Not tainted 
->>> (4.18.0-rc8-00664-g2dfff9121c55)
->>> [  423.733147] MSR:  00021032 <ME,IR,DR,RI>  CR: 24224848  XER: 20000000
->>> [  423.733319]
->>> [  423.733319] GPR00: c0109ad0 c455bc50 c4521910 c60053c0 007080c0 
->>> c0011b34 c7fa41e0 c455be30
->>> [  423.733319] GPR08: 00000001 c00103a0 c7fa41e0 c49afcc4 24282842 
->>> 10018840 c079b37c 00000040
->>> [  423.733319] GPR16: 73f00000 00210d00 00000000 00000001 c455a000 
->>> 00000100 00000200 c455a000
->>> [  423.733319] GPR24: c60053c0 c0011b34 007080c0 c455a000 c455a000 
->>> c7fa41e0 00000000 00009032
->>> [  423.734190] NIP [c0108f90] ___slab_alloc.constprop.30+0x26c/0x46c
->>> [  423.734257] LR [c0109ad0] kmem_cache_alloc+0x210/0x23c
->>> [  423.734283] Call Trace:
->>> [  423.734326] [c455bc50] [00000100] 0x100 (unreliable)
->>> [  423.734430] [c455bcc0] [c0109ad0] kmem_cache_alloc+0x210/0x23c
->>> [  423.734543] [c455bcf0] [c0011b34] huge_pte_alloc+0xc0/0x1dc
->>> [  423.734633] [c455bd20] [c01044dc] hugetlb_fault+0x408/0x48c
->>> [  423.734720] [c455bdb0] [c0104b20] follow_hugetlb_page+0x14c/0x44c
->>> [  423.734826] [c455be10] [c00e8e54] __get_user_pages+0x1c4/0x3dc
->>> [  423.734919] [c455be80] [c00e9924] __mm_populate+0xac/0x140
->>> [  423.735020] [c455bec0] [c00db14c] vm_mmap_pgoff+0xb4/0xb8
->>> [  423.735127] [c455bf00] [c00f27c0] ksys_mmap_pgoff+0xcc/0x1fc
->>> [  423.735222] [c455bf40] [c000e0f8] ret_from_syscall+0x0/0x38
->>> [  423.735271] Instruction dump:
->>> [  423.735321] 7cbf482e 38fd0008 7fa6eb78 7fc4f378 4bfff5dd 7fe3fb78 
->>> 4bfffe24 81370010
->>> [  423.735536] 71280004 41a2ff88 4840c571 4bffff80 <0fe00000> 
->>> 4bfffeb8 81340010 712a0004
->>> [  423.735757] ---[ end trace e9b222919a470790 ]---
->>>
->>> This warning occurs when calling kmem_cache_zalloc() on a
->>> cache having a constructor.
->>>
->>> In this case it happens because PGD cache and 512k hugepte cache are
->>> the same size (4k). While a cache with constructor is created for
->>> the PGD, hugepages create cache without constructor and uses
->>> kmem_cache_zalloc(). As both expect a cache with the same size,
->>> the hugepages reuse the cache created for PGD, hence the conflict.
->>>
->>> In order to avoid this conflict, this patch:
->>> - modifies pgtable_cache_add() so that a zeroising constructor is
->>> added for any cache size.
->>> - replaces calls to kmem_cache_zalloc() by kmem_cache_alloc()
->>>
->>
->> Can't we just do kmem_cache_alloc with gfp flags __GFP_ZERO? and 
->> remove the constructor completely?
-> 
-> I don't understand what you mean. That's exactly what I did in v1 (by 
-> using kmem_cache_zalloc()), and you commented that doing this we would 
-> zeroise at allocation whereas the constructors are called when adding 
-> memory to the slab and when freeing the allocated block. Or did I 
-> misunderstood your comment ?
-> 
-> static inline void *kmem_cache_zalloc(struct kmem_cache *k, gfp_t flags)
-> {
->      return kmem_cache_alloc(k, flags | __GFP_ZERO);
-> }
-> 
+Ugh. I notice that you also seem to have rebased all the commits.
 
-Wasn't it what you meant in your comment to v1 ? If not, could you 
-detail your thought so that I can take it in account in a v3 ?
+Please don't do that without reason, and if you _had_ a reason, please
+mention it to explain why the commits are all so new.
 
-Thanks
-Christophe
+                 Linus
