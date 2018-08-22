@@ -2,355 +2,169 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12EE7C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83AF1C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:28:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5A32214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:24:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5A32214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 3C666214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:28:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C666214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728204AbeHVJrk (ORCPT
+        id S1727788AbeHVJva (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 05:47:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43538 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726696AbeHVJrj (ORCPT
+        Wed, 22 Aug 2018 05:51:30 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:34190 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbeHVJva (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 05:47:39 -0400
-Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D41E349B;
-        Wed, 22 Aug 2018 06:24:11 +0000 (UTC)
-Date:   Tue, 21 Aug 2018 23:24:10 -0700
-From:   akpm@linux-foundation.org
-To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject:  mmotm 2018-08-21-23-23 uploaded
-Message-ID: <20180822062410.UZXY6cL_6%akpm@linux-foundation.org>
-User-Agent: s-nail v14.8.16
+        Wed, 22 Aug 2018 05:51:30 -0400
+Received: by mail-it0-f71.google.com with SMTP id k204-v6so9289242ite.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 23:28:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=4zIMt/K2N8Dr1F+5lKRabRUwrL9MExxKdrnDjIFjNFY=;
+        b=lPLgj7b8fPt+dYASTZ8XeNuUqQ2lFIW98h7Bs1urxRxUba1uskSqFFx7kU7KToKb2a
+         oTgfc2/nc8sGue2DB/Ldd2jD5mP4X4VsZbORznd8/U8wnA94Rrbd2KebcvC//9mwXa3k
+         7xEsj2kYEXia+a/O2H68o4fPnrs9i75MpX5ETCjQvkWLBo3vsVkm3b6ZWQnTP6nWvJO7
+         32dGegHPVc7FzJE+kUoRIthe2Ih8+vSQOYg1ez+KAbuY1XfFkLo3nzaafcKe9itNMCKQ
+         MhvLzIrQkX03eh28UTugEv6xEVK5MpLVUT0GRBDJmxv/xIelz8m5WmKcQDDl1DIsG+fF
+         YNsg==
+X-Gm-Message-State: APzg51B4NEgbD8j6/xBpxZeo5g/kUMSHRJPwJT+osLv1NwTnF7Uylb27
+        us4RuAPpaC+bJfqmP1l7OMOeocVqQ63coM3u9JNqP0QXjfrE
+X-Google-Smtp-Source: ANB0VdZ6EKqSflaSLcozY1AoYSZQeDR4vKZtmjyJGt0j8gMcklKFkguryqPYb/grBurNfumlXG5cOvDRcHJgWk3iXa/iohJlCZMB
+MIME-Version: 1.0
+X-Received: by 2002:a24:1305:: with SMTP id 5-v6mr1063244itz.23.1534919282616;
+ Tue, 21 Aug 2018 23:28:02 -0700 (PDT)
+Date:   Tue, 21 Aug 2018 23:28:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009972a10574003ef3@google.com>
+Subject: BUG: corrupted list in vmx_vcpu_load
+From:   syzbot <syzbot+bba49d73fe3404646a7b@syzkaller.appspotmail.com>
+To:     hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, pbonzini@redhat.com, rkrcmar@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2018-08-21-23-23 has been uploaded to
+Hello,
 
-   http://www.ozlabs.org/~akpm/mmotm/
+syzbot found the following crash on:
 
-mmotm-readme.txt says
+HEAD commit:    0214f46b3a03 Merge branch 'siginfo-linus' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11bc9c2e400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=214e4990bd49329f
+dashboard link: https://syzkaller.appspot.com/bug?extid=bba49d73fe3404646a7b
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-README for mm-of-the-moment:
+Unfortunately, I don't have any reproducer for this crash yet.
 
-http://www.ozlabs.org/~akpm/mmotm/
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+bba49d73fe3404646a7b@syzkaller.appspotmail.com
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+kvm [9433]: vcpu0, guest rIP: 0x20e disabled perfctr wrmsr: 0x187 data  
+0x60000000800
+list_add corruption. next->prev should be prev (ffff8801db01d130), but was  
+dead000000000200. (next=ffff8801947fdaa0).
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:25!
+invalid opcode: 0000 [#1] SMP KASAN
+CPU: 0 PID: 9519 Comm: syz-executor2 Not tainted 4.18.0+ #201
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__list_add_valid.cold.0+0xf/0x25 lib/list_debug.c:23
+Code: e8 93 f5 5b fe e9 68 ff ff ff e8 89 f5 5b fe eb c9 4c 89 e7 e8 7f f5  
+5b fe eb 97 48 89 d9 48 c7 c7 e0 9b 3a 87 e8 32 d8 03 fe <0f> 0b 48 89 f1  
+48 c7 c7 a0 9c 3a 87 48 89 de e8 1e d8 03 fe 0f 0b
+RSP: 0018:ffff88018f9bf058 EFLAGS: 00010082
+RAX: 0000000000000075 RBX: ffff8801947fdaa0 RCX: ffffc9000200d000
+RDX: 0000000000000000 RSI: ffffffff8163a441 RDI: 0000000000000001
+RBP: ffff88018f9bf070 R08: ffff880196e3a2c0 R09: ffffed003b605008
+R10: ffffed003b605008 R11: ffff8801db028047 R12: ffff8801947fdaa0
+R13: ffff8801947f8300 R14: ffff8801947fdaa0 R15: ffff8801db01d130
+FS:  00007ff35b75e700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fcb6c09b000 CR3: 00000001ca309000 CR4: 00000000001426f0
+Call Trace:
+  __list_add include/linux/list.h:60 [inline]
+  list_add include/linux/list.h:79 [inline]
+  vmx_vcpu_load+0x205/0xfe0 arch/x86/kvm/vmx.c:3061
+  kvm_arch_vcpu_load+0x22b/0x940 arch/x86/kvm/x86.c:3106
+  kvm_sched_in+0x82/0xa0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3970
+  __fire_sched_in_preempt_notifiers kernel/sched/core.c:2481 [inline]
+  fire_sched_in_preempt_notifiers kernel/sched/core.c:2487 [inline]
+  finish_task_switch+0x50d/0x870 kernel/sched/core.c:2679
+  context_switch kernel/sched/core.c:2828 [inline]
+  __schedule+0x884/0x1df0 kernel/sched/core.c:3473
+  preempt_schedule_common+0x22/0x60 kernel/sched/core.c:3597
+  _cond_resched+0x1d/0x30 kernel/sched/core.c:4963
+  slab_pre_alloc_hook mm/slab.h:421 [inline]
+  slab_alloc mm/slab.c:3378 [inline]
+  kmem_cache_alloc+0x292/0x710 mm/slab.c:3552
+  alloc_inode+0xb2/0x190 fs/inode.c:212
+  new_inode_pseudo+0x71/0x1a0 fs/inode.c:903
+  new_inode+0x1c/0x40 fs/inode.c:932
+  debugfs_get_inode+0x19/0x120 fs/debugfs/inode.c:37
+  __debugfs_create_file+0xb5/0x400 fs/debugfs/inode.c:352
+  debugfs_create_file+0x57/0x70 fs/debugfs/inode.c:399
+  kvm_create_vm_debugfs arch/x86/kvm/../../../virt/kvm/kvm_main.c:615  
+[inline]
+  kvm_dev_ioctl_create_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:3209  
+[inline]
+  kvm_dev_ioctl+0xbf5/0x1b10 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3236
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:684
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+  __do_sys_ioctl fs/ioctl.c:708 [inline]
+  __se_sys_ioctl fs/ioctl.c:706 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457089
+Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ff35b75dc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007ff35b75e6d4 RCX: 0000000000457089
+RDX: 0000000000000000 RSI: 000000000000ae01 RDI: 0000000000000006
+RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004ce9b8 R14: 00000000004c50d7 R15: 0000000000000000
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+---[ end trace a4f093c8080a0418 ]---
+RIP: 0010:__list_add_valid.cold.0+0xf/0x25 lib/list_debug.c:23
+Code: e8 93 f5 5b fe e9 68 ff ff ff e8 89 f5 5b fe eb c9 4c 89 e7 e8 7f f5  
+5b fe eb 97 48 89 d9 48 c7 c7 e0 9b 3a 87 e8 32 d8 03 fe <0f> 0b 48 89 f1  
+48 c7 c7 a0 9c 3a 87 48 89 de e8 1e d8 03 fe 0f 0b
+RSP: 0018:ffff88018f9bf058 EFLAGS: 00010082
+RAX: 0000000000000075 RBX: ffff8801947fdaa0 RCX: ffffc9000200d000
+RDX: 0000000000000000 RSI: ffffffff8163a441 RDI: 0000000000000001
+RBP: ffff88018f9bf070 R08: ffff880196e3a2c0 R09: ffffed003b605008
+R10: ffffed003b605008 R11: ffff8801db028047 R12: ffff8801947fdaa0
+R13: ffff8801947f8300 R14: ffff8801947fdaa0 R15: ffff8801db01d130
+FS:  00007ff35b75e700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fcb6c09b000 CR3: 00000001ca309000 CR4: 00000000001426f0
 
-You will need quilt to apply these patches to the latest Linus release (4.x
-or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-A git tree which contains the memory management portion of this tree is
-maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-by Michal Hocko.  It contains the patches which are between the
-"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-file, http://www.ozlabs.org/~akpm/mmotm/series.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
-
-To develop on top of mmotm git:
-
-  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-  $ git remote update mmotm
-  $ git checkout -b topic mmotm/master
-  <make changes, commit>
-  $ git send-email mmotm/master.. [...]
-
-To rebase a branch with older patches to a new mmotm release:
-
-  $ git remote update mmotm
-  $ git rebase --onto mmotm/master <topic base> topic
-
-
-
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
-
-
-This mmotm tree contains the following patches against 4.18:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-* autofs-fix-autofs_sbi-does-not-check-super-block-type.patch
-* mm-check-shrinker-is-memcg-aware-in-register_shrinker_prepared.patch
-* mm-keep-int-fields-in-struct-shrink_control-together.patch
-* mm-make-flags-of-unsigned-type-in-struct-shrinker.patch
-* swap-add-comments-to-lock_cluster_or_swap_info.patch
-* mm-swapfilec-replace-some-ifdef-with-is_enabled.patch
-* swap-use-swap_count-in-swap_page_trans_huge_swapped.patch
-* swap-unify-normal-huge-code-path-in-swap_page_trans_huge_swapped.patch
-* swap-unify-normal-huge-code-path-in-put_swap_page.patch
-* swap-get_swap_pages-use-entry_size-instead-of-cluster-in-parameter.patch
-* swap-add-__swap_entry_free_locked.patch
-* swap-put_swap_page-share-more-between-huge-normal-code-path.patch
-* mm-oom-distinguish-blockable-mode-for-mmu-notifiers.patch
-* mm-oom-remove-oom_lock-from-oom_reaper.patch
-* mm-oom-describe-task-memory-unit-larger-pid-pad.patch
-* mm-oom_killc-clean-up-oom_reap_task_mm.patch
-* mm-proc-pid-maps-remove-is_pid-and-related-wrappers.patch
-* mm-proc-pid-smaps-factor-out-mem-stats-gathering.patch
-* mm-proc-pid-smaps-factor-out-common-stats-printing.patch
-* mm-proc-pid-smaps_rollup-convert-to-single-value-seq_file.patch
-* mm-mempool-add-missing-parameter-description.patch
-* mm-zero-out-the-vma-in-vma_init.patch
-* mm-clarify-config_page_poisoning-and-usage.patch
-* mm-fix-page_freeze_refs-and-page_unfreeze_refs-in-comments.patch
-* memcg-reduce-memcg-tree-traversals-for-stats-collection.patch
-* update-documents-__vm_enough_memory-function-path.patch
-* mm-remove-zone_id-and-make-use-of-zone_idx-in-is_dev_zone.patch
-* mm-page_alloc-move-ifdefery-out-of-free_area_init_core.patch
-* mm-access-zone-node-via-zone_to_nid-and-zone_set_nid.patch
-* mm-remove-__paginginit.patch
-* mm-page_alloc-inline-function-to-handle-config_deferred_struct_page_init.patch
-* mm-page_alloc-introduce-free_area_init_core_hotplug.patch
-* mm-selftest-add-map_populate-test.patch
-* mm-oom-refactor-oom_kill_process.patch
-* mm-oom-introduce-memoryoomgroup.patch
-* proc-add-percpu-populated-pages-count-to-meminfo.patch
-* zram-fix-bug-storing-backing_dev.patch
-* mm-fix-comment-for-nodemask_alloc.patch
-* proc-fixup-pde-allocation-bloat.patch
-* procfs-uptime-use-ktime_get_boottime_ts64.patch
-* proc-test-proc-self-symlink.patch
-* proc-test-proc-thread-self-symlink.patch
-* proc-smaller-readlock-section-in-readdir-proc.patch
-* proc-put-task-earlier-in-proc-fail-nth.patch
-* proc-save-2-atomic-ops-on-write-to-proc-attr.patch
-* proc-use-macro-in-proc-latency-hook.patch
-* proc-spread-const-a-bit.patch
-* proc-use-unsigned-int-in-proc-stat-hook.patch
-* fs-proc-adding-new-typedef-vm_fault_t.patch
-* proc-kcore-use-__pa_symbol-for-kcore_text-list-entries.patch
-* proc-kcore-dont-grab-lock-for-kclist_add.patch
-* proc-kcore-dont-grab-lock-for-memory-hotplug-notifier.patch
-* proc-kcore-replace-kclist_lock-rwlock-with-rwsem.patch
-* proc-kcore-fix-memory-hotplug-vs-multiple-opens-race.patch
-* proc-kcore-hold-lock-during-read.patch
-* proc-kcore-clean-up-elf-header-generation.patch
-* proc-kcore-optimize-multiple-page-reads.patch
-* crash_core-use-vmcoreinfo_symbol_array-for-swapper_pg_dir.patch
-* proc-kcore-add-vmcoreinfo-note-to-proc-kcore.patch
-* include-asm-generic-bugh-clarify-valid-uses-of-warn.patch
-* kernelh-documentation-for-roundup-vs-round_up.patch
-* bdi-use-refcount_t-for-reference-counting-instead-atomic_t.patch
-* bdi-use-irqsave-variant-of-refcount_dec_and_lock.patch
-* userns-use-refcount_t-for-reference-counting-instead-atomic_t.patch
-* userns-use-irqsave-variant-of-refcount_dec_and_lock.patch
-* linux-compilerh-dont-use-bool.patch
-* crash-print-timestamp-using-time64_t.patch
-* kernel-hung_taskc-allow-to-set-checking-interval-separately-from-timeout.patch
-* spellingtxt-add-more-spellings-to-spellingtxt.patch
-* arch-enable-relative-relocations-for-arm64-power-and-x86.patch
-* module-allow-symbol-exports-to-be-disabled.patch
-* module-use-relative-references-for-__ksymtab-entries.patch
-* init-allow-initcall-tables-to-be-emitted-using-relative-references.patch
-* pci-add-support-for-relative-addressing-in-quirk-tables.patch
-* kernel-tracepoints-add-support-for-relative-references.patch
-* epoll-use-the-waitqueue-lock-to-protect-ep-wq.patch
-* userfaultfd-use-fault_wqh-lock.patch
-* sched-wait-assert-the-wait_queue_head-lock-is-held-in-__wake_up_common.patch
-* fs-epoll-loosen-irq-safety-in-ep_scan_ready_list.patch
-* fs-epoll-loosen-irq-safety-in-epoll_insert-and-epoll_remove.patch
-* fs-epoll-robustify-irq-safety-with-lockdep_assert_irqs_enabled.patch
-* get_maintainer-allow-usage-outside-of-kernel-tree.patch
-* get_maintainerpl-add-mpath=path-or-file-for-maintainers-file-location.patch
-* get_maintainer-allow-option-mpath-directory-to-read-all-files-in-directory.patch
-* bitmap-drop-unnecessary-0-check-for-u32-array-operations.patch
-* bitops-introduce-bits_per_type.patch
-* lib-make-struct-pointer-foo-static.patch
-* lib-add-crc64-calculation-routines.patch
-* bcache-use-routines-from-lib-crc64c-for-crc64-calculation.patch
-* lib-remove-default-n-in-kconfig-for-tests.patch
-* lib-test_hexdump-fix-failure-on-big-endian-cpu.patch
-* checkpatch-add-a-strict-test-for-structs-with-bool-member-definitions.patch
-* checkpatch-add-fix-for-concatenated_string-and-string_fragments.patch
-* checkpatch-improve-runtime-execution-speed-a-little.patch
-* checkpatch-update-section-keywords.patch
-* checkpatch-warn-if-missing-author-signed-off-by.patch
-* checkpatch-fix-macro-argument-reuse-test.patch
-* checkpatch-validate-spdx-license-with-spdxcheckpy.patch
-* checkpatch-fix-krealloc-reuse-test.patch
-* checkpatch-check-for-functions-with-passed-by-value-structs-or-unions.patch
-* checkpatch-check-for-if-0-if-1.patch
-* checkpatch-warn-when-a-patch-doesnt-have-a-description.patch
-* checkpatch-fix-spdx-license-check-with-root=path.patch
-* checkpatch-check-for-space-after-else-keyword.patch
-* checkpatch-warn-on-unnecessary-int-declarations.patch
-* checkpatch-dt-bindings-should-be-a-separate-patch.patch
-* fs-epoll-simply-config_net_rx_busy_poll-ifdefery.patch
-* fs-epoll-loosen-irq-safety-in-ep_poll.patch
-* fs-eventpoll-simplify-ep_is_linked-callers.patch
-* sparse-remove-uneffective-sparse-disabling.patch
-* init-kconfig-fix-its-typos.patch
-* init-main-log-init-process-file-name.patch
-* autofs-fix-directory-and-symlink-access.patch
-* autofs-fix-inconsistent-use-of-now-variable.patch
-* autofs-fix-clearing-autofs_exp_leaves-in-autofs_expire_indirect.patch
-* autofs-make-autofs_expire_direct-static.patch
-* autofs-make-autofs_expire_indirect-static.patch
-* autofs-make-expire-flags-usage-consistent-with-v5-params.patch
-* autofs-add-autofs_exp_forced-flag.patch
-* nilfs2-use-64-bit-superblock-timstamps.patch
-* fs-nilfs2-adding-new-return-type-vm_fault_t.patch
-* hfsplus-dont-return-0-when-fill_super-failed.patch
-* hfsplus-avoid-deadlock-on-file-truncation.patch
-* hfsplus-fix-decomposition-of-hangul-characters.patch
-* hfsplus-drop-acl-support.patch
-* reiserfs-use-monotonic-time-for-j_trans_start_time.patch
-* reiserfs-remove-obsolete-print_time-function.patch
-* reiserfs-change-j_timestamp-type-to-time64_t.patch
-* reiserfs-fix-broken-xattr-handling-heap-corruption-bad-retval.patch
-* fat-add-fitrim-ioctl-for-fat-file-system.patch
-* fat-validate-i_start-before-using.patch
-* fat-propagate-64-bit-inode-timestamps.patch
-* signal-make-force_sigsegv-void.patch
-* signal-make-kill_as_cred_perm-return-bool.patch
-* signal-make-may_ptrace_stop-return-bool.patch
-* signal-make-do_sigpending-void.patch
-* signal-simplify-rt_sigaction.patch
-* signal-make-kill_ok_by_cred-return-bool.patch
-* signal-make-sig_handler_ignored-return-bool.patch
-* signal-make-sig_task_ignored-return-bool.patch
-* signal-make-sig_ignored-return-bool.patch
-* signal-make-has_pending_signals-return-bool.patch
-* signal-make-recalc_sigpending_tsk-return-bool.patch
-* signal-make-unhandled_signal-return-bool.patch
-* signal-make-flush_sigqueue_mask-void.patch
-* signal-make-wants_signal-return-bool.patch
-* signal-make-legacy_queue-return-bool.patch
-* signal-make-sigkill_pending-return-bool.patch
-* signal-make-get_signal-return-bool.patch
-* fork-dont-copy-inconsistent-signal-handler-state-to-child.patch
-* rapidio-remove-redundant-pointer-md.patch
-* sysctl-fix-typos-in-comments.patch
-* adfs-use-timespec64-for-time-conversion.patch
-* sysvfs-use-ktime_get_real_seconds-for-superblock-stamp.patch
-* kconfig-remove-expert-from-checkpoint_restore.patch
-* ipc-ipc-compute-kern_ipc_permid-under-the-ipc-lock.patch
-* ipc-reorganize-initialization-of-kern_ipc_permseq.patch
-* ipc-utilc-use-ipc_rcu_putref-for-failues-in-ipc_addid.patch
-* ipc-rename-ipcctl_pre_down_nolock.patch
-* ipc-utilc-correct-comment-in-ipc_obtain_object_check.patch
-* ipc-drop-ipc_lock.patch
-* lib-rhashtable-simplify-bucket_table_alloc.patch
-* lib-rhashtable-guarantee-initial-hashtable-allocation.patch
-* ipc-get-rid-of-ids-tables_initialized-hack.patch
-* ipc-simplify-ipc-initialization.patch
-* ipc-utilc-further-variable-name-cleanups.patch
-* ipc-utilc-update-return-value-of-ipc_getref-from-int-to-bool.patch
-* mm-memcontrol-print-proper-oom-header-when-no-eligible-victim-left.patch
-* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
-* prctl-add-pr_et_pdeathsig_proc.patch
-* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
-* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
-* ocfs2-dont-use-iocb-when-eiocbqueued-returns.patch
-* ocfs2-fix-a-misuse-a-of-brelse-after-failing-ocfs2_check_dir_entry.patch
-* ocfs2-dont-put-and-assigning-null-to-bh-allocated-outside.patch
-* ocfs2-dlmglue-clean-up-timestamp-handling.patch
-* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
-* namei-allow-restricted-o_creat-of-fifos-and-regular-files.patch
-  mm.patch
-* arm-arm64-introduce-config_have_memblock_pfn_valid.patch
-* mm-page_alloc-remain-memblock_next_valid_pfn-on-arm-arm64.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn-fix.patch
-* mm-memblock-introduce-memblock_search_pfn_regions.patch
-* mm-memblock-introduce-memblock_search_pfn_regions-fix.patch
-* mm-memblock-introduce-pfn_valid_region.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-early_pfn_valid.patch
-* z3fold-fix-wrong-handling-of-headless-pages.patch
-* mm-fix-race-on-soft-offlining-free-huge-pages.patch
-* mm-soft-offline-close-the-race-against-page-allocation.patch
-* mm-soft-offline-close-the-race-against-page-allocation-fix.patch
-* mm-adjust-max-read-count-in-generic_file_buffered_read.patch
-* mm-make-memmap_init-a-proper-function.patch
-* mm-calculate-deferred-pages-after-skipping-mirrored-memory.patch
-* mm-calculate-deferred-pages-after-skipping-mirrored-memory-v2.patch
-* mm-calculate-deferred-pages-after-skipping-mirrored-memory-fix.patch
-* mm-move-mirrored-memory-specific-code-outside-of-memmap_init_zone.patch
-* mm-move-mirrored-memory-specific-code-outside-of-memmap_init_zone-v2.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
-* mm-fix-race-between-swapoff-and-mincore.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
-* mm-add-strictlimit-knob-v2.patch
-* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
-* mm-page_owner-align-with-pageblock_nr_pages.patch
-* mm-page_owner-align-with-pageblock_nr-pages.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* hfsplus-prevent-crash-on-exit-from-failed-search.patch
-* hfs-prevent-crash-on-exit-from-failed-search.patch
-* hfsplus-fix-null-dereference-in-hfsplus_lookup.patch
-* bfs-add-sanity-check-at-bfs_fill_super.patch
-  linux-next.patch
-  linux-next-rejects.patch
-  linux-next-git-rejects.patch
-* merge-fix-up-for-signal-pass-pid-type-into-group_send_sig_info.patch
-* hwtracing-intel_th-change-return-type-to-vm_fault_t.patch
-* fs-afs-adding-new-return-type-vm_fault_t.patch
-* treewide-correct-differenciate-and-instanciate-typos.patch
-* vmcore-hide-vmcoredd_mmap_dumps-for-nommu-builds.patch
-* mm-util-make-strndup_user-description-a-kernel-doc-comment.patch
-* mm-util-add-kernel-doc-for-kvfree.patch
-* docs-core-api-kill-trailing-whitespace-in-kernel-apirst.patch
-* docs-core-api-move-strmemdup-to-string-manipulation.patch
-* docs-core-api-split-memory-management-api-to-a-separate-file.patch
-* docs-mm-make-gfp-flags-descriptions-usable-as-kernel-doc.patch
-* docs-core-api-mm-api-add-section-about-gfp-flags.patch
-* gpu-drm-gma500-change-return-type-to-vm_fault_t.patch
-* treewide-convert-iso_8859-1-text-comments-to-utf-8.patch
-* s390-ebcdic-convert-comments-to-utf-8.patch
-* lib-fonts-convert-comments-to-utf-8.patch
-* mm-change-return-type-int-to-vm_fault_t-for-fault-handlers.patch
-* mm-change-return-type-int-to-vm_fault_t-for-fault-handlers-fix.patch
-* vfs-replace-current_kernel_time64-with-ktime-equivalent.patch
-* fix-read-buffer-overflow-in-delta-ipc.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  slab-leaks3-default-y.patch
-  workaround-for-a-pci-restoring-bug.patch
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
