@@ -1,119 +1,86 @@
 Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.1 required=3.0 tests=DATE_IN_PAST_96_XX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B8DBC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA67AC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF5AF214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:17:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF5AF214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=loewensteinmedical.de
+	by mail.kernel.org (Postfix) with ESMTP id 662C0214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 06:20:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EvedmypN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 662C0214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728200AbeHVJkX (ORCPT
+        id S1728211AbeHVJnn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 05:40:23 -0400
-Received: from portal.weinmann.de ([62.8.140.122]:65478 "EHLO
-        portal.loewensteinmedical.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728088AbeHVJkX (ORCPT
+        Wed, 22 Aug 2018 05:43:43 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35580 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727772AbeHVJnn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 05:40:23 -0400
-X-Greylist: delayed 472 seconds by postgrey-1.27 at vger.kernel.org; Wed, 22 Aug 2018 05:40:22 EDT
-From:   Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-Date:   Thu, 2 Aug 2018 08:29:13 +0200
-Subject: [PATCH] init/do_mounts.c: add root=PARTLABEL=<name> support
-To:     Dominik Brodowski <linux@dominikbrodowski.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>
-CC:     <linux-kernel@vger.kernel.org>
-Message-ID: <20180822060904.828E510665E@pc-niv.weinmann.com>
+        Wed, 22 Aug 2018 05:43:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=u6E1f7as2JOKYtb+GLX+v9A1/h7lIwwkHpNzry0isTw=; b=EvedmypNYv0qnMvrkA7qin2To
+        wXWNGCM4AnXzZ91iGvATB+bP/III05bV6qNltOGIvacnOE+sZOOrrqu/5W4FZ+CngrUuxGEKlk3j9
+        jdfVw8BnL/Hr0zqZjyy8Y1RVm091GIqg7God+PV77YiVRb+TfAdqXBhPuCMC+BzRCjR2MClQTVvvD
+        iz5Zf3BtXeXtEwxyUHLOLiL4pGAIB+33eGSwYr2/qI2OYzNfjPR9CiTupeUvMFjK/g60ul0NB03ED
+        QaGH38eUr3ilvgC22/tBt5ivxBmi2GDcjcxoTc7dP7ApXFywaAM8h87Jxo2edp8Xsg02oU7yJmI29
+        x438laHNg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fsMV6-0006Dc-Eo; Wed, 22 Aug 2018 06:20:16 +0000
+Date:   Tue, 21 Aug 2018 23:20:16 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Jeff Lien <jeff.lien@wdc.com>, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, herbert@gondor.apana.org.au,
+        tim.c.chen@linux.intel.com, david.darrington@wdc.com,
+        jeff.furlong@wdc.com
+Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
+Message-ID: <20180822062016.GA10356@infradead.org>
+References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
+ <yq1in4gq5jf.fsf@oracle.com>
+ <yq1lg8zb2lp.fsf@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-C2ProcessedOrg: a378c7e9-0079-4426-8197-7b88a526ab38
-x-msw-jemd-newsletter: false
-X-OriginalId: qfw7M8953p007051
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yq1lg8zb2lp.fsf@oracle.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support referencing the root partition label from GPT as argument
-to the root= option on the kernel command line in analogy to
-referencing the partition uuid as root=PARTUUID=<uuid>.
+On Tue, Aug 21, 2018 at 09:40:34PM -0400, Martin K. Petersen wrote:
+> When crc-t10dif is initialized, the crypto infrastructure will pick the
+> algorithm with the highest priority currently registered. Both block and
+> SCSI will cause crc-t10dif to be compiled as a built-in so this
+> selection happens very early.
 
-Specifying the partition label instead of the uuid is often much
-easier, e.g. in embedded environments when there is an
-A/B rootfs partition scheme for interruptible firmware updates
-(i.e. rootfsA/ rootfsB).
+Ouch.  This might actually happen in a lot of other users of the crypto
+functionality as well.
 
-The partition label can be queried with the blkid command.
+> However, it seems like a bit of a deficiency in crypto that there is no
+> way to upgrade existing transformations if higher priority algorithms
+> become available. btrfs and a few others work around this issue by not
+> using the generic lib/ CRC functions (which defeats the purpose of
+> having these in the first place). Instead they are registering their own
+> transformation at a later time where any accelerator modules are more
+> likely to be loaded.
 
-Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
----
- init/do_mounts.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index 2c71dabe5626..239b5104cff0 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -177,6 +177,24 @@ static dev_t devt_from_partuuid(const char *uuid_str)
- 	}
- 	return res;
- }
-+
-+/**
-+ * match_dev_by_label - callback for finding a partition using its label
-+ * @dev:	device passed in by the caller
-+ * @data:	opaque pointer to the label to match
-+ *
-+ * Returns 1 if the device matches, and 0 otherwise.
-+ */
-+static int match_dev_by_label(struct device *dev, const void *data)
-+{
-+	const char *label = data;
-+	struct hd_struct *part = dev_to_part(dev);
-+
-+	if (part->info && !strcmp(label, part->info->volname))
-+		return 1;
-+
-+	return 0;
-+}
- #endif
- 
- /*
-@@ -200,6 +218,8 @@ static dev_t devt_from_partuuid(const char *uuid_str)
-  *	   a partition with a known unique id.
-  *	8) <major>:<minor> major and minor number of the device separated by
-  *	   a colon.
-+ *	9) PARTLABEL=<name> with name being the GPT partition label.
-+ *	   MSDOS partitions do not support labels!
-  *
-  *	If name doesn't have fall into the categories above, we return (0,0).
-  *	block_class is used to check if something is a disk name. If the disk
-@@ -221,6 +241,17 @@ dev_t name_to_dev_t(const char *name)
- 		if (!res)
- 			goto fail;
- 		goto done;
-+	} else if (strncmp(name, "PARTLABEL=", 10) == 0) {
-+		struct device *dev;
-+
-+		dev = class_find_device(&block_class, NULL, name + 10,
-+					&match_dev_by_label);
-+		if (!dev)
-+			goto fail;
-+
-+		res = dev->devt;
-+		put_device(dev);
-+		goto done;
- 	}
- #endif
- 
--- 
-2.17.1
-
+If we can't fix this in crypto (which doesn't seem that easy), we
+should at least clearly document the issue somewhere, and fix this in
+the t10pi code by initializing crct10dif_tfm in a lazy fashion only
+once the fist block device starts using it.
