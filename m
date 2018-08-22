@@ -3,86 +3,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E9F2C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 19:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F7EC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 19:20:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC6692098B
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 19:17:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC6692098B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id E50962098B
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 19:20:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E50962098B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728085AbeHVWoD (ORCPT
+        id S1728131AbeHVWrA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 18:44:03 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:36907 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727016AbeHVWoD (ORCPT
+        Wed, 22 Aug 2018 18:47:00 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:38584 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728051AbeHVWrA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 18:44:03 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fsYdT-0002tz-ED; Wed, 22 Aug 2018 21:17:43 +0200
-Date:   Wed, 22 Aug 2018 21:17:42 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Rob Herring <rob.herring@linaro.org>,
-        Jonas Oberg <jonas@fsfe.org>,
-        Andrew Morton <akpm@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH V2] license-rules.rst and LICENSES: Use only spdx version
- 3 with -only and -or-later
-In-Reply-To: <CA+55aFyd5D9Rj2Wm+rP9QnZg2Jd_LKqPTKTmPv+doYN=JXra=w@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1808222115050.1652@nanos.tec.linutronix.de>
-References: <9f90ed3678d32bdde88d63e877880dcb08a97e15.1534519501.git.joe@perches.com> <7275a821f20ba080b6a262089ceeaf8fa94d4bab.camel@perches.com> <CA+55aFyd5D9Rj2Wm+rP9QnZg2Jd_LKqPTKTmPv+doYN=JXra=w@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 22 Aug 2018 18:47:00 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R371e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0T734itb_1534965638;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T734itb_1534965638)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 23 Aug 2018 03:20:43 +0800
+Subject: Re: [RFC v8 PATCH 3/5] mm: mmap: zap pages with read mmap_sem in
+ munmap
+To:     Vlastimil Babka <vbabka@suse.cz>, mhocko@kernel.org,
+        willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
+ <7145895b-ef56-f5ee-d139-609819d9a107@suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <2f447d4e-9e16-8030-85f0-4e258a7eafa3@linux.alibaba.com>
+Date:   Wed, 22 Aug 2018 12:20:37 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <7145895b-ef56-f5ee-d139-609819d9a107@suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 22 Aug 2018, Linus Torvalds wrote:
-> On Wed, Aug 22, 2018 at 11:01 AM Joe Perches <joe@perches.com> wrote:
-> >
-> > How likely is it that this is applied at rc1?
-> 
-> I'm staying out of the crazy license name bikeshedding, so it's going
-> to be up to the people who have decided they care.
-> 
-> I think whoever *did* care and argued for the change to the SPDX
-> format is a hopeless wanker. "GPL-2.0{-only,-or-later}" is in no ways
-> better than the "GPL-2.0{,+}" that was in an earlier version of the
-> SPDX spec
-> 
-> So I want nothing at all to do with pointless patches. Life is too
-> short to deal with this.
-> 
-> Other people disagree, so I expect I will get these kinds of stupid
-> noise patches through the usual channels.
 
-I'm not a great fan of that change either. We have settled on a well
-documented and machine readable format. External tools have to be able to
-deal with SPDX versions anyway and if we do this now, then we have the next
-round of pointless churn in a year when the SPDX folks decide to rename yet
-another license identifier which is used in the kernel.
 
-Thanks,
+On 8/22/18 4:11 AM, Vlastimil Babka wrote:
+> On 08/15/2018 08:49 PM, Yang Shi wrote:
+>
+>> +	start_vma = munmap_lookup_vma(mm, start, end);
+>> +	if (!start_vma)
+>> +		goto out;
+>> +	if (IS_ERR(start_vma)) {
+>> +		ret = PTR_ERR(start_vma);
+>> +		goto out;
+>> +	}
+>> +
+>> +	prev = start_vma->vm_prev;
+>> +
+>> +	if (unlikely(uf)) {
+>> +		ret = userfaultfd_unmap_prep(start_vma, start, end, uf);
+>> +		if (ret)
+>> +			goto out;
+>> +	}
+>> +
+> You sure it's ok to redo this in case of goto regular path? The
+> preparations have some side-effects... I would rather move this after
+> the regular path check?
 
-	tglx
+This preparation sets vma->vm_userfaultfd_ctx.ctx for each vmas. But, 
+before doing this, it calls has_unmap_ctx() to check if the ctx has been 
+set or not. If it has been set, it just skip the vma. It sounds ok, right?
+
+
