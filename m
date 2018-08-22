@@ -2,213 +2,124 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D7AC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 13:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBF3C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 13:27:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B354F20893
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 13:24:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="B0rtV+ny"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B354F20893
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 845EE214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 13:27:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 845EE214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729078AbeHVQtf (ORCPT
+        id S1729091AbeHVQwW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 12:49:35 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:44444 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728758AbeHVQtf (ORCPT
+        Wed, 22 Aug 2018 12:52:22 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:49060 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728464AbeHVQwW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 12:49:35 -0400
-Received: by mail-yw1-f67.google.com with SMTP id l9-v6so616445ywc.11
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 06:24:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tbrx76D5WkhPou4JfAmzZx4FT6d8lT5APKbpJ65zCHI=;
-        b=B0rtV+nyPwhpTE1HkWdZnAZwg1sFSyidPjwkyfxqi2hr3fnE9gjVsQGNatAIqW6MtC
-         tKMgdfd5hM9wKN0WHIpouM5serl46jXL6nXGdVDuJ1Ml+IEafxMBlA+uKI7DClau9Mp7
-         DXKdIuEAxUDE3KJ4sccquA/zO6kHaEe47LbuI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tbrx76D5WkhPou4JfAmzZx4FT6d8lT5APKbpJ65zCHI=;
-        b=CWmGIq2M1ibRsXr+WFVWJ6xBIsQScYbEp2708Lu7b4xgO7w6j1CghmASaHOLIVy4Li
-         /7Kc7qv0k5Z/1JmgrKjV4qZiDvkXjZQWgMLC9S6C/FeRqoa9evwiAcTX/RQAWIXWmhtR
-         UBadTlO6JqeBrSxNmTAZHmvUHJ8OBGThH8vLygWvxiwAd4Xyw3qqRcBcCp50lkwuB9pd
-         NZiVzZ3LnoH95hbqb+JeSvZXGI2+DdpUK4e4P4CsRG6t0IkJ67nm1J1/cGPwFfdi0izr
-         LkQDa8W5PcMpkqR605yBVnVCD8Zwb49KL95u0ltJ+zWI6Ma3GWeG3fAk9GBHu5iVz/FS
-         bAeg==
-X-Gm-Message-State: APzg51D0Ko/yPyqSzBioN4Z88wxIS+sDe6WONTj4YDOgyAV9LJLAFJXb
-        iDz+PDJpMl/mKxmmGMNjkwYdl9lpZrLLag==
-X-Google-Smtp-Source: ANB0VdazDxxTbGVAaRSpeIdmmY5JJekmpddyZosLht75Id3KVZv9aSrdKPl102/YkHkpBSN6B7KS1A==
-X-Received: by 2002:a0d:dcc1:: with SMTP id f184-v6mr30912ywe.26.1534944279713;
-        Wed, 22 Aug 2018 06:24:39 -0700 (PDT)
-Received: from mail-yb0-f169.google.com (mail-yb0-f169.google.com. [209.85.213.169])
-        by smtp.gmail.com with ESMTPSA id v126-v6sm1749382ywe.45.2018.08.22.06.24.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Aug 2018 06:24:38 -0700 (PDT)
-Received: by mail-yb0-f169.google.com with SMTP id d34-v6so648634yba.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 06:24:38 -0700 (PDT)
-X-Received: by 2002:a25:9347:: with SMTP id g7-v6mr8235831ybo.293.1534944277722;
- Wed, 22 Aug 2018 06:24:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
- <20180613140714.1686-2-maxime.ripard@bootlin.com> <80e1d9cb49c6df06843e49332685f2b401023292.camel@collabora.com>
- <20180822091557.gtnlgoebyv6yttzf@flea> <CAAFQd5ANvKF2+GEXQTnRsdYVzJTtBOhv7nFahV=2W-9_QXwY4g@mail.gmail.com>
- <e6324ea983d34403199044ae30e932cd728c8ad4.camel@bootlin.com>
-In-Reply-To: <e6324ea983d34403199044ae30e932cd728c8ad4.camel@bootlin.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Wed, 22 Aug 2018 22:24:23 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5AybueM-rhy8bMbRHHZmwBP08-cWB11NadcUQAb6XJ1SA@mail.gmail.com>
-Message-ID: <CAAFQd5AybueM-rhy8bMbRHHZmwBP08-cWB11NadcUQAb6XJ1SA@mail.gmail.com>
-Subject: Re: [PATCH 1/9] CHROMIUM: v4l: Add H264 low-level decoder API
- compound controls.
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        jenskuske@gmail.com, linux-sunxi@googlegroups.com,
-        thomas.petazzoni@bootlin.com, groeck@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 22 Aug 2018 12:52:22 -0400
+Received: from ramsan.of.borg ([84.194.111.163])
+        by xavier.telenet-ops.be with bizsmtp
+        id SDTQ1y00V3XaVaC01DTQoT; Wed, 22 Aug 2018 15:27:25 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fsTAS-0003xO-CD; Wed, 22 Aug 2018 15:27:24 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fsTAS-0007pO-9z; Wed, 22 Aug 2018 15:27:24 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     "David S . Miller" <davem@davemloft.net>
+Cc:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Arnd Bergmann <arnd@arnd.de>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v2] Revert "net: stmmac: fix build failure due to missing COMMON_CLK dependency"
+Date:   Wed, 22 Aug 2018 15:27:23 +0200
+Message-Id: <20180822132723.30047-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 10:03 PM Paul Kocialkowski
-<paul.kocialkowski@bootlin.com> wrote:
->
-> Hi,
->
-> On Wed, 2018-08-22 at 18:54 +0900, Tomasz Figa wrote:
-> > On Wed, Aug 22, 2018 at 6:16 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > Hi,
-> > >
-> > > On Tue, Aug 21, 2018 at 01:58:38PM -0300, Ezequiel Garcia wrote:
-> > > > On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
-> > > > > From: Pawel Osciak <posciak@chromium.org>
-> > > > >
-> > > > > Signed-off-by: Pawel Osciak <posciak@chromium.org>
-> > > > > Reviewed-by: Wu-cheng Li <wuchengli@chromium.org>
-> > > > > Tested-by: Tomasz Figa <tfiga@chromium.org>
-> > > > > [rebase44(groeck): include linux/types.h in v4l2-controls.h]
-> > > > > Signed-off-by: Guenter Roeck <groeck@chromium.org>
-> > > > > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > > > > ---
-> > > > >
-> > > >
-> > > > [..]
-> > > > > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> > > > > index 242a6bfa1440..4b4a1b25a0db 100644
-> > > > > --- a/include/uapi/linux/videodev2.h
-> > > > > +++ b/include/uapi/linux/videodev2.h
-> > > > > @@ -626,6 +626,7 @@ struct v4l2_pix_format {
-> > > > >  #define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') /* H264 with start codes */
-> > > > >  #define V4L2_PIX_FMT_H264_NO_SC v4l2_fourcc('A', 'V', 'C', '1') /* H264 without start codes */
-> > > > >  #define V4L2_PIX_FMT_H264_MVC v4l2_fourcc('M', '2', '6', '4') /* H264 MVC */
-> > > > > +#define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* H264 parsed slices */
-> > > >
-> > > > As pointed out by Tomasz, the Rockchip VPU driver expects start codes [1], so the userspace
-> > > > should be aware of it. Perhaps we could document this pixel format better as:
-> > > >
-> > > > #define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* H264 parsed slices with start codes */
-> > >
-> > > I'm not sure this is something we want to do at that point. libva
-> > > doesn't give the start code, so this is only going to make the life of
-> > > the sane controllers more difficult. And if you need to have the start
-> > > code and parse it, then you're not so stateless anymore.
-> >
-> > I might not remember correctly, but Rockchip decoder does some slice
-> > parsing on its own (despite not doing any higher level parsing).
-> > Probably that's why it needs those start codes.
->
-> The VPU found on Allwinner platforms also provides a mechanism to parse
-> the bitstream data via a dedicated interface through the VPU registers.
-> It is used in libvdpau-sunxi but not in our driver, because we don't
-> want to be doing bitstream parsing in the kernel.
->
-> It would be good to know if this is just a feature of the Rockchip VPU
-> hardware that can be skipped (like on Allwinner) or if it's a hard
-> requirement in its decoding pipeline.
+This reverts commit bde4975310eb1982bd0bbff673989052d92fd481.
 
-It's a hard requirement for its decoding pipeline, but...
+All legacy clock implementations now implement clk_set_rate() (Some
+implementations may be dummies, though).
 
-> Also, maybe it only concerns the
-> slice header? It is already part of the slice data (provided by VAAPI)
-> for H.264/H.265 and an offset is provided to the beginning of the coded
-> video data.
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Acked-by: Arnd Bergmann <arnd@arnd.de>
+Acked-by: Jose Abreu <joabreu@synopsys.com>
+---
+Marked "RFC", as this depends on "m68k: coldfire: Normalize clk API" and
+"MIPS: AR7: Normalize clk API".
 
-Yes, it seems to be only the slice header.
+v2:
+  - Add Acked-by,
+  - Dropped RFC state, as all dependencies are now upstream:
+      - commit eec85fa9d98a889e ("m68k: coldfire: Normalize clk API"),
+      - commit 6b5939d2e528525a ("MIPS: AR7: Normalize clk API").
+---
+ drivers/net/ethernet/stmicro/stmmac/Kconfig | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
->
-> > I wonder if libva is the best reference here. It's been designed
-> > almost entirely by Intel for Intel video hardware. We want something
-> > that could work with a wide range of devices and avoid something like
-> > a need to create a semi-stateless API few months later. In fact,
-> > hardware from another vendor, we're working with, also does parsing of
-> > slice headers internally. Moreover, we have some weird
-> > kind-of-stateful decoders, which cannot fully deal with bitstream on
-> > its own, e.g. cannot parse formats, cannot handle resolution changes,
-> > need H264 bitstream NALUs split into separate buffers, etc.
-> >
-> > As I suggested some time ago, having the full bitstream in the buffer,
-> > with offsets of particular units included in respective controls,
-> > would be the most scalable thing. If really needed, we could add flags
-> > telling the driver that particular units are present, so one's
-> > implementation of libva could put only raw slice data in the buffers.
-> > But perhaps it's libva which needs some amendment?
->
-> If the raw bitstream is needed, I think it would make more sense to use
-> the already-existing formats for stateful VPUs along with the controls
-> for stateless ones instead of having the full bitstream in the
-> V4L2_PIX_FMT_*_SLICE formats.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+index edf20361ea5f15c7..bf4acebb6bcddd88 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
++++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+@@ -33,7 +33,7 @@ config DWMAC_DWC_QOS_ETH
+ 	select PHYLIB
+ 	select CRC32
+ 	select MII
+-	depends on OF && COMMON_CLK && HAS_DMA
++	depends on OF && HAS_DMA
+ 	help
+ 	  Support for chips using the snps,dwc-qos-ethernet.txt DT binding.
+ 
+@@ -57,7 +57,7 @@ config DWMAC_ANARION
+ config DWMAC_IPQ806X
+ 	tristate "QCA IPQ806x DWMAC support"
+ 	default ARCH_QCOM
+-	depends on OF && COMMON_CLK && (ARCH_QCOM || COMPILE_TEST)
++	depends on OF && (ARCH_QCOM || COMPILE_TEST)
+ 	select MFD_SYSCON
+ 	help
+ 	  Support for QCA IPQ806X DWMAC Ethernet.
+@@ -100,7 +100,7 @@ config DWMAC_OXNAS
+ config DWMAC_ROCKCHIP
+ 	tristate "Rockchip dwmac support"
+ 	default ARCH_ROCKCHIP
+-	depends on OF && COMMON_CLK && (ARCH_ROCKCHIP || COMPILE_TEST)
++	depends on OF && (ARCH_ROCKCHIP || COMPILE_TEST)
+ 	select MFD_SYSCON
+ 	help
+ 	  Support for Ethernet controller on Rockchip RK3288 SoC.
+@@ -123,7 +123,7 @@ config DWMAC_SOCFPGA
+ config DWMAC_STI
+ 	tristate "STi GMAC support"
+ 	default ARCH_STI
+-	depends on OF && COMMON_CLK && (ARCH_STI || COMPILE_TEST)
++	depends on OF && (ARCH_STI || COMPILE_TEST)
+ 	select MFD_SYSCON
+ 	---help---
+ 	  Support for ethernet controller on STi SOCs.
+@@ -147,7 +147,7 @@ config DWMAC_STM32
+ config DWMAC_SUNXI
+ 	tristate "Allwinner GMAC support"
+ 	default ARCH_SUNXI
+-	depends on OF && COMMON_CLK && (ARCH_SUNXI || COMPILE_TEST)
++	depends on OF && (ARCH_SUNXI || COMPILE_TEST)
+ 	---help---
+ 	  Support for Allwinner A20/A31 GMAC ethernet controllers.
+ 
+-- 
+2.17.1
 
-It may indeed make sense to separate this based on pixel format.
-However, how do we tell the client that it needs to provide those
-controls? Current concept was based entirely on pixel format, so I
-guess that would mean creating something like
-V4L2_PIX_FMT_*_NOT_REALLY_SLICE (_PARSED, _STATELESS?). Might be okay,
-though...
-
->
-> I would also be tempted to say that reconstructing the needed parts of
-> the bitstream in-driver for these half-way VPUs would be a better
-> approach than blurrying the line between how (and what) data should be
-> passed for stateful and stateless VPUs at the API level. Stateless
-> should only cover what's in the slice NAL unit RBSP, which excludes the
-> start code detection bytes. It is no longer parsed data otherwise.
-
-I'm not sure where such decision comes from. In particular, Chromium,
-from which this code originates, includes start codes in
-V4L2_PIX_FMT_H264_SLICE. As I mentioned earlier, we can't design this
-API based only on 1 type of hardware semantics. The stateless API
-should cover any kind of codec that needs user space assistance in
-processing the stream, which in practice would be almost everything
-for which stateful API doesn't work.
-
-That said, since pixel format essentially specifies the buffer
-contents, having such cases differentiated based on the pixel format
-doesn't sound insane.
-
-Best regards,
-Tomasz
