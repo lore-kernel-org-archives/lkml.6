@@ -2,134 +2,114 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2329AC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DE8C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C44FC2152F
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:11:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n2UocVOZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C44FC2152F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DC5EB214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:11:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC5EB214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728774AbeHVOfa (ORCPT
+        id S1728850AbeHVOfe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 10:35:30 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43400 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728143AbeHVOfa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 10:35:30 -0400
-Received: by mail-pg1-f194.google.com with SMTP id v66-v6so770580pgb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 04:11:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gMmthSmECt/1QcGfwdGFFAZS/3AEempWhc1c4XQcFfo=;
-        b=n2UocVOZJ6S3lPV/DgaqVk+ma7KshFGebbieSTT8+9kIg2j4g2ZTaokeSvlC0PyrnY
-         inD6Z6GC+9REuX3atIbr/wIrhKuHrStXV3yvEMJFk85tinKRC/idef1ribhYPWDhehfC
-         kgViDgUkZm0q3nJtj0lIz0zm6nbkAr9i/PFMDDuGCglQZ7WM1c1fIzpWiU7t1fwabkNF
-         Is1ysQzc0wB0J5mz5tKot323u9jNI+jiuAMbt7Gtnv9MBdaSqprDTLT0iDlZAe0C32UU
-         lIpaPNj09FYE6Vb02QPeo5XmbdRFKUDyrNy9s3KAIY6MmWFMc5+mN/HX/qWOkZx4AcJg
-         DQxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gMmthSmECt/1QcGfwdGFFAZS/3AEempWhc1c4XQcFfo=;
-        b=pi4CveDlbSSCt0QkRPkXc9JESwggIN4pDCgf+egT7gP3bElE04f9yrP3Sie1q50pah
-         AjA2hzou+vAbPcwl1/5MuHCxkGoSBQhb2xZciSN9K8gzF1zd9tjpAmyJARVExsgz3QeT
-         ndKyyamXI4hYx+QAG/2oRESNMPUGofTpzQqyPkfsU3fy14Dvc94hCfUK7O8OCVOxBI4Q
-         S+cJUTuU5+qw5ugDVfxOANFaEgzPZ1CrDgmUgHP7dDMrmAzRb0WK5Ql4j5jJDf3UngIo
-         ZYvFuIGDJ72AattFUJK60sj5KgpnR8+aEJ/xTsMve2p/ipKj95gWkoh7c7OfmFAb7NDz
-         pkxQ==
-X-Gm-Message-State: AOUpUlEWHFDcFIpE1jdmsA8m+OIDOVuRF2iCDXmrRwtUtfNi8Kox1TCI
-        XhkAVpmvEYP/OwIxxjgjq6g=
-X-Google-Smtp-Source: AA+uWPySfw+gv9BbBDLUUax3HnJtbzOwfj/ZLpDIB0dzi9AzOOPvhDlCeVUhbzqI8XbuWAR8OLrvGA==
-X-Received: by 2002:a63:9712:: with SMTP id n18-v6mr9859095pge.292.1534936262629;
-        Wed, 22 Aug 2018 04:11:02 -0700 (PDT)
-Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id a15-v6sm2642448pfe.32.2018.08.22.04.10.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 22 Aug 2018 04:11:02 -0700 (PDT)
-Date:   Wed, 22 Aug 2018 16:40:56 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        NeilBrown <neil@brown.name>, Joe Perches <joe@perches.com>,
-        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
-        John Crispin <blogic@openwrt.org>
-Subject: Re: [PATCH v4 1/4] staging: mt7621-mmc: Fix debug macro N_MSG
-Message-ID: <20180822111052.GA2675@nishad>
-References: <cover.1534923403.git.nishadkamdar@gmail.com>
- <2313d873f9a940fcdd4f608ffe3c37ec6a5b6e35.1534923403.git.nishadkamdar@gmail.com>
- <20180822090935.eod5oyodo3xchaxw@mwanda>
+        Wed, 22 Aug 2018 10:35:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57756 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728143AbeHVOfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 10:35:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C0866AFDF;
+        Wed, 22 Aug 2018 11:11:04 +0000 (UTC)
+Subject: Re: [RFC v8 PATCH 3/5] mm: mmap: zap pages with read mmap_sem in
+ munmap
+To:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
+        willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <7145895b-ef56-f5ee-d139-609819d9a107@suse.cz>
+Date:   Wed, 22 Aug 2018 13:11:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180822090935.eod5oyodo3xchaxw@mwanda>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 12:09:36PM +0300, Dan Carpenter wrote:
-> On Wed, Aug 22, 2018 at 02:04:55PM +0530, Nishad Kamdar wrote:
-> > This patch fixes the debug macro N_MSG. Replaces printk with
-> > dev_<level> without __func__ or __LINE__ or current->comm and
-> > current->pid. Removes the do {} while(0) loop for the single
-> > statement macro. Issue found by checkpatch.
-> > 
-> > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> > ---
-> >  drivers/staging/mt7621-mmc/dbg.h | 11 ++++-------
-> >  1 file changed, 4 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/staging/mt7621-mmc/dbg.h b/drivers/staging/mt7621-mmc/dbg.h
-> > index 2f2c56b73987..c56fb896617a 100644
-> > --- a/drivers/staging/mt7621-mmc/dbg.h
-> > +++ b/drivers/staging/mt7621-mmc/dbg.h
-> > @@ -104,13 +104,10 @@ do { \
-> >  
-> >  #define N_MSG(evt, fmt, args...)
-> >  /*
-> > -do {    \
-> > -    if ((DBG_EVT_##evt) & sd_debug_zone[host->id]) { \
-> > -        printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
-> > -            host->id,  ##args , __FUNCTION__, __LINE__, current->comm, current->pid);	\
-> > -    } \
-> > -} while(0)
-> > -*/
-> > + *if ((DBG_EVT_##evt) & sd_debug_zone[host->id]) { \
-> > + *    dev_err(mmc_dev(host->mmc), "%d -> " fmt "\n", host->id, ##args) \
-> > + *}
-> > + */
-> 
-> I don't understand what you're trying to do here.  You just commented
-> out the macro and turned it into a no-op.  That's not what the patch
-> description says.
-> 
-> To me the original code seems fine.
-> 
-> regards,
-> dan carpenter
->
+On 08/15/2018 08:49 PM, Yang Shi wrote:
 
-Ok. But the macro definition was already commented.
-I just changed printk to dev_err and gave it a better
-block comment format.
-Should I leave the older version as it is ?
+> +	start_vma = munmap_lookup_vma(mm, start, end);
+> +	if (!start_vma)
+> +		goto out;
+> +	if (IS_ERR(start_vma)) {
+> +		ret = PTR_ERR(start_vma);
+> +		goto out;
+> +	}
+> +
+> +	prev = start_vma->vm_prev;
+> +
+> +	if (unlikely(uf)) {
+> +		ret = userfaultfd_unmap_prep(start_vma, start, end, uf);
+> +		if (ret)
+> +			goto out;
+> +	}
+> +
 
-Thanks for the review.
-
-regards,
-nishad
+You sure it's ok to redo this in case of goto regular path? The
+preparations have some side-effects... I would rather move this after
+the regular path check?
