@@ -2,161 +2,122 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1976C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A10C7C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94B0220A8B
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:28:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 555FC20A8B
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:28:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="zMr/NBJz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94B0220A8B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="FjZq26Lv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 555FC20A8B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727515AbeHVUyO (ORCPT
+        id S1727569AbeHVUyW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 16:54:14 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:42012 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727334AbeHVUyO (ORCPT
+        Wed, 22 Aug 2018 16:54:22 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45782 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727344AbeHVUyW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 16:54:14 -0400
-Received: by mail-yw1-f67.google.com with SMTP id n207-v6so931456ywn.9
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 10:28:27 -0700 (PDT)
+        Wed, 22 Aug 2018 16:54:22 -0400
+Received: by mail-pg1-f194.google.com with SMTP id m4-v6so705098pgv.12
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 10:28:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0fqYneS8rObbjrQtaVaioH+NNLEqKGl0wY/oATv9iXk=;
-        b=zMr/NBJzORtE1COVfHArW9FY3wL+CbxviCU//4jeV194L2ftzIk+l+qA2p5rCW/Gdq
-         11Os04dc43eIa0tEDp9oFg/y+Wo6lsqcyG4FDCxC5aH71q59ijQPQkeRNbm5dOOD4Io7
-         aWhzN6IkM0yvn6C9AJt+0Ft65+pOMvYJgILrqhaQdPx/Poj1xuuq+m4nlfUIvU64XBk8
-         rhTxgyiwJtR6Ysoo97y7QX/aRjhHlatDrZ9GerLkrAhB6GJ7AYO9XTeNWSn+W3jwU7Av
-         kWrqQi83dDWfU304d8y4A3MFqjsMOh9Z4SyIb4YEjffsNprKHUp1LKX930wyl26XGNsK
-         wgPg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=v/D5qVaix+k368XdLMYV1St5kO6zDNDBeSmyGDHqgCI=;
+        b=FjZq26LvRih4ZovFQ5cv0EBVQzpH4rv5RoNmH1MjuxbCcc+Yc9BV99R1TGcvRKwGyu
+         +E24lbUY2WlPzB/FSKdUtBDQ+6SRoJDdItysukCfU9OSqn23+gvdVjhI+3RJudH81IDD
+         HDhrvo4gNQP8j3S+oBPVdhOceH+4HHsadRRr1blndhepo43f7h93acgquxAcfbU59vUL
+         dxYJd+11DCwcLBuAouWAKGfOuwgUdi0H3IdPOIJldEyevX6jzAYi5Zzs6S8jEX8vrRh4
+         AO83rR5wYGd51VhEAjnMyWzpEkYLBUUfZ3Ai67DLUgHUI7Q7cTnZcQMwWNIOuXc235Wo
+         k4ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0fqYneS8rObbjrQtaVaioH+NNLEqKGl0wY/oATv9iXk=;
-        b=LZYT22QdrztDn+uiIN+EBxY8/nKD2OPmuo4R0HrvYx4YDYckD7Wn3tXxaFSAJyB0La
-         Q7yFmQtZnzqNlpyL7JvUZW7aCCIDzy6eEIvCOSox/mNQvCeoaPWhmemCxIgISEPVSHy8
-         dNpOcbCTGHEGchqszC2OUrICeYyfG8Sq7EY7PpNFz/HKdsCcfZhCpVz38E97Qu2uXyAC
-         CdeIiM6M6k7ka9lvSIx+LqMjkmat+CxLW/N7NWlBjfKEWWUxgPxhQEvDJbEHF6ud96La
-         YDNvpT3A8eUniKdeQdh/ccezKuo/8PvRjMupZr8n0wl9V15lwR/JYmJik6l64hCQN4tO
-         XN4w==
-X-Gm-Message-State: APzg51AjyEL5J3DFwpFW8T2CpZ1CF0GJBjivajc9g8D7uIOnjmrVMMwT
-        jBsd5keeDJfuNtHCSuhM8Fm/nA==
-X-Google-Smtp-Source: ANB0VdaEjyEQVMaFpTkj2y+EiCe6Dg2Jk0qgk7t2zsbkI5h+Ol28radhZZe415cga6g+3x8Vlihthw==
-X-Received: by 2002:a0d:c6c5:: with SMTP id i188-v6mr604994ywd.262.1534958907476;
-        Wed, 22 Aug 2018 10:28:27 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::2:8f6c])
-        by smtp.gmail.com with ESMTPSA id r3-v6sm883206ywd.82.2018.08.22.10.28.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 22 Aug 2018 10:28:26 -0700 (PDT)
-Date:   Wed, 22 Aug 2018 13:28:25 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Shakeel Butt <shakeelb@google.com>,
-        Peter Enderborg <peter.enderborg@sony.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 8/9] psi: pressure stall information for CPU, memory, and
- IO
-Message-ID: <20180822172825.GA1317@cmpxchg.org>
-References: <20180801151958.32590-1-hannes@cmpxchg.org>
- <20180801151958.32590-9-hannes@cmpxchg.org>
- <20180803172139.GE2494@hirez.programming.kicks-ass.net>
- <20180821201115.GB24538@cmpxchg.org>
- <20180822091024.GU24124@hirez.programming.kicks-ass.net>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=v/D5qVaix+k368XdLMYV1St5kO6zDNDBeSmyGDHqgCI=;
+        b=n+QrCFk0fFdk0DirC3X6w81HkZUXCbPFk4VluM/DiI05zw4NMjSoRHIK3f/tc3LStE
+         62PFd+YzxgYpeM+T8s5IeqTNVq3Mvcw/qr6y4Qo/XB+1QEYFxp8XgVh9BwRt94sluw6V
+         5aCG15UFAyXb4Z7QGPWo1ZtwBAT4q7vXSUZQTWoYHTnopmUo72U+fJriolDy7GZdBcpg
+         Qk6RapFJzVp5wWGNDuw4F1R9GesfQ29+/FKEvDlbTcgzn3SdlbzXSONwNvAPU/OxzD/1
+         2MUGf/hP8715rQJR+mbb/4Y6rYgZni0OaUN4JmZnkvyYRKA+0V6NM3c1LFmCam0nG2F7
+         pYQA==
+X-Gm-Message-State: AOUpUlGrLRrw9MzPY2pXi7x7bI8PNukRgInSaptxlQoNqvZ6FGfEnlKE
+        ft73ucQTB83EHCCn9JsttemmcizH0GY=
+X-Google-Smtp-Source: AA+uWPwJuUtalroMOvi8TKanQSy985YBZNo3Q7v5R0BS9GyGZebWyK8gOTgddRRiXBPBXplUhpSIlA==
+X-Received: by 2002:a63:e647:: with SMTP id p7-v6mr51218871pgj.218.1534958914525;
+        Wed, 22 Aug 2018 10:28:34 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c081:1130::1153? ([2620:10d:c090:180::1:bf4f])
+        by smtp.gmail.com with ESMTPSA id q26-v6sm2853222pff.9.2018.08.22.10.28.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 Aug 2018 10:28:32 -0700 (PDT)
+Subject: Re: [PATCH] blk-wbt: Avoid lock contention and thundering herd issue
+ in wbt_wait
+From:   Jens Axboe <axboe@kernel.dk>
+To:     =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>,
+        Anchal Agarwal <anchalag@amazon.com>
+Cc:     fllinden@amazon.com, sblbir@amazon.com, msw@amazon.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <6bab69c9-b787-b12f-7738-72e05bf74444@kernel.dk>
+ <72f90be2-0b63-d3a0-e953-da9232f44d5b@kernel.dk>
+ <761bb0ab416649b8bf3bac1706124456@EX13D13UWB002.ant.amazon.com>
+ <7f6c399d-bda1-0bbf-4ea1-07fc510ed1eb@kernel.dk>
+ <3498fbfb-e9f3-7606-1fc3-904a0e61ff57@kernel.dk>
+ <168d80ac73a44a6f9242c47c164778fc@EX13D13UWB002.ant.amazon.com>
+ <c5152431-6e36-6f6e-616e-1cfbd974817d@kernel.dk>
+ <20180820224241.GA72523@8c8590bceeee.ant.amazon.com>
+ <70e2063a-53fa-2475-eed9-07db277c8c0d@kernel.dk>
+ <b2adf708-d396-94ac-b123-8027d3839fd1@kernel.dk>
+ <20180822040126.GA18736@kaos-source-ops-60001.pdx1.amazon.com>
+ <76ecb022-f167-67eb-8801-111fc209bbaa@kernel.dk>
+ <834649ab-62d6-bc7f-ec60-6c1654ea3f26@applied-asynchrony.com>
+ <d8c171ce-6dfe-e9e5-5673-8443cfec5f01@kernel.dk>
+Message-ID: <ed71fb8f-1f36-c216-5886-269c77250e29@kernel.dk>
+Date:   Wed, 22 Aug 2018 11:28:30 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180822091024.GU24124@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <d8c171ce-6dfe-e9e5-5673-8443cfec5f01@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 11:10:24AM +0200, Peter Zijlstra wrote:
-> On Tue, Aug 21, 2018 at 04:11:15PM -0400, Johannes Weiner wrote:
-> > On Fri, Aug 03, 2018 at 07:21:39PM +0200, Peter Zijlstra wrote:
-> > > On Wed, Aug 01, 2018 at 11:19:57AM -0400, Johannes Weiner wrote:
-> > > > +			time = READ_ONCE(groupc->times[s]);
-> > > > +			/*
-> > > > +			 * In addition to already concluded states, we
-> > > > +			 * also incorporate currently active states on
-> > > > +			 * the CPU, since states may last for many
-> > > > +			 * sampling periods.
-> > > > +			 *
-> > > > +			 * This way we keep our delta sampling buckets
-> > > > +			 * small (u32) and our reported pressure close
-> > > > +			 * to what's actually happening.
-> > > > +			 */
-> > > > +			if (test_state(groupc->tasks, cpu, s)) {
-> > > > +				/*
-> > > > +				 * We can race with a state change and
-> > > > +				 * need to make sure the state_start
-> > > > +				 * update is ordered against the
-> > > > +				 * updates to the live state and the
-> > > > +				 * time buckets (groupc->times).
-> > > > +				 *
-> > > > +				 * 1. If we observe task state that
-> > > > +				 * needs to be recorded, make sure we
-> > > > +				 * see state_start from when that
-> > > > +				 * state went into effect or we'll
-> > > > +				 * count time from the previous state.
-> > > > +				 *
-> > > > +				 * 2. If the time delta has already
-> > > > +				 * been added to the bucket, make sure
-> > > > +				 * we don't see it in state_start or
-> > > > +				 * we'll count it twice.
-> > > > +				 *
-> > > > +				 * If the time delta is out of
-> > > > +				 * state_start but not in the time
-> > > > +				 * bucket yet, we'll miss it entirely
-> > > > +				 * and handle it in the next period.
-> > > > +				 */
-> > > > +				smp_rmb();
-> > > > +				time += cpu_clock(cpu) - groupc->state_start;
-> > > > +			}
-> > > 
-> > > As is, groupc->state_start needs a READ_ONCE() above and a WRITE_ONCE()
-> > > below. But like stated earlier, doing an update in scheduler_tick() is
-> > > probably easier.
-> > 
-> > I've wrapped these in READ_ONCE/WRITE_ONCE.
+On 8/22/18 8:27 AM, Jens Axboe wrote:
+> On 8/22/18 6:54 AM, Holger Hoffstätte wrote:
+>> On 08/22/18 06:10, Jens Axboe wrote:
+>>> [...]
+>>> If you have time, please look at the 3 patches I posted earlier today.
+>>> Those are for mainline, so should be OK :-)
+>>
+>> I'm just playing along at home but with those 3 I get repeatable
+>> hangs & writeback not starting at all, but curiously *only* on my btrfs
+>> device; for inexplicable reasons some other devices with ext4/xfs flush
+>> properly. Yes, that surprised me too, but it's repeatable.
+>> Now this may or may not have something to do with some of my in-testing
+>> patches for btrfs itself, but if I remove those 3 wbt fixes, everything
+>> is golden again. Not eager to repeat since it hangs sync & requires a
+>> hard reboot.. :(
+>> Just thought you'd like to know.
 > 
-> I just realized, these are u64, so READ_ONCE/WRITE_ONCE will not work
-> correct on 32bit.
+> Thanks, that's very useful info! I'll see if I can reproduce that.
 
-Ah, right.
+Any chance you can try with and see which patch is causing the issue?
+I can't reproduce it here, seems solid.
 
-Actually, that race described in the comment above - "If the time
-delta is out of state_start but not in the time bucket yet, we'll miss
-it entirely and handle it in the next period" - can cause bogus time
-samples if state persists for more than 2s. Because if we observed a
-live state and included it in our private copy of the time bucket
-(times_prev), missing the delta in transit to the time bucket in the
-next aggregation results in times_prev being ahead of 'time', which
-causes the delta to underflow into a bogusly large sample.
+Either that, or a reproducer would be great...
 
-Memory barriers alone cannot guarantee full coherency here (neither
-seeing the delta twice, nor missing it entirely) so I'm switching this
-over to seqcount to make sure the aggregator sees something sensible.
+-- 
+Jens Axboe
 
-And then I don't need the READ_ONCE/WRITE_ONCE.
