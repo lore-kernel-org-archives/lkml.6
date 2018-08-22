@@ -3,139 +3,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 361ABC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E61C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6DE5217BE
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:02:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2707A208B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 02:09:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rBc7DFvC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6DE5217BE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZUa+OhZM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2707A208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbeHVFZW (ORCPT
+        id S1727273AbeHVFcW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 01:25:22 -0400
-Received: from ozlabs.org ([203.11.71.1]:44563 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbeHVFZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 01:25:21 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41w9mD6J75z9s7T;
-        Wed, 22 Aug 2018 12:02:36 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1534903357;
-        bh=3SD80tWFBaOZeCIYXdk9OnJMamPHC88l44mQ3ZEj2DY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=rBc7DFvC/LeIdM6M0XcwUaZlYGDO625DS4L+zdL1NjY7zvtgSOKKS5T07MbNGjGNW
-         husvPEPfBIvsWsFvyuJdru3n7rfyuYLZ/Arwt8afA0fD7uo8otUt1CxV0JR907926X
-         f2SRrMb25PIWuuZScEFfKhnYmMpiCG0G45HF8n3VT63Yt6PlYCUAt1Hx8EMRirQ+lI
-         wJOh/P+neRgodMxY5drwQz6kGNMuzqu2rkyba2FXRdiIrjSegJbsilLkwjl4lnAozN
-         x2R9J3/FWrJT0fp5RhyaiBB8lCQ1rQHv8+LRvQrHPAQIgI99aS6MtUd3VE1jh+j4+j
-         TicbH5vSTzIRg==
-Date:   Wed, 22 Aug 2018 12:02:18 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <james.hogan@imgtec.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Paul Burton <paul.burton@mips.com>
-Subject: linux-next: manual merge of the akpm-current tree with the mips
- tree
-Message-ID: <20180822120218.44cecef5@canb.auug.org.au>
+        Wed, 22 Aug 2018 01:32:22 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35472 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbeHVFcW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 01:32:22 -0400
+Received: by mail-io0-f195.google.com with SMTP id w11-v6so319185iob.2;
+        Tue, 21 Aug 2018 19:09:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/oif1S4ZCw+p8bjZGQ6Gq4SX5L1ike1o3EWxREXHrX4=;
+        b=ZUa+OhZM7wQWN15nwjWa9j/wDKISf7iGLbsKLnPOHoJpxrtOcg3JmbDZ7yelB7qH2a
+         OBMuJp5o1OMquaOG9k17Q/EoIYP+9ph7nN8b5JaVpY7H/MNBPxL3fvrN/P0LLsVWXvJV
+         o18VtwozplzLRVdwQpOVFrHg6+FJ8YF24O0hw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/oif1S4ZCw+p8bjZGQ6Gq4SX5L1ike1o3EWxREXHrX4=;
+        b=N8NA6QwHhzzRapLzqZwSR6AX7LvmRUXbCxzIvQstc4HSNZJSeBLEzzppWL0JgNXa8p
+         HsacXzPDCiB/CkcS07243icDjUYJngwFO71LJF3LcGqADRqHAoWmZv86c4xFUCmrpa4Q
+         uChXHbjNWKiqbVYsm1QsgDMdT9Rn+GvwFlymQv2kBIvFotzJsvjJKiKEfGuuEEepG7rG
+         GtKQxRSMTAtOvUV2FNX6XbqBfiAjIYqBv0z2hM25sJ5o9MQKeNh/6+u1UE7Bsy2+vgJ4
+         lGECuwZ0RhNpYQSQX4ixHiuQdi6DxANmqC5E82oR/0vWZNPL9tDm1JX5J1lZ5VQhayUa
+         dHIQ==
+X-Gm-Message-State: AOUpUlEbSIxFuqV/acaABr9SUi9TAjnVxHTM6tsKFHBv4AWhYaqtVEOW
+        AzWsRi2iekQoyTKhU1/P+p2wi8QSswG6xz6JWDJ4SQ==
+X-Google-Smtp-Source: AA+uWPzwuEZSg5EyjoUZd2bw47oizybH288KUGks1HuvC5+a5fPK0dwTOsWlZrsZU5d6GxtpmK/bgfK5DAM46EAQ2l8=
+X-Received: by 2002:a6b:f609:: with SMTP id n9-v6mr28461912ioh.259.1534903782104;
+ Tue, 21 Aug 2018 19:09:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lSM8G+AX3PUCj_QUMvAERIk"; protocol="application/pgp-signature"
+References: <20180813161357.GB1199@bombadil.infradead.org>
+In-Reply-To: <20180813161357.GB1199@bombadil.infradead.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 21 Aug 2018 19:09:31 -0700
+Message-ID: <CA+55aFxFjAmrFpwQmEHCthHOzgidCKnod+cNDEE+3Spu9o1s3w@mail.gmail.com>
+Subject: Re: [GIT PULL] XArray for 4.19
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/lSM8G+AX3PUCj_QUMvAERIk
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Aug 13, 2018 at 9:14 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> Please consider pulling the XArray patch set.
 
-Hi all,
+So this merge window has been horrible, but I was just about to start
+looking at it.
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+And no. I'm not going to pull this.
 
-  arch/Kconfig
+For some unfathomable reason, you have based it on the libnvdimm tree.
+I don't understand at all wjhy you did that.
 
-between commit:
+That libnvdimm tree didn't get merged., because it had complete
+garbage in the mm/ code. And yes, that buggy shit was what you based
+the radix tree code on.
 
-  04f264d3a8b0 ("compiler.h: Allow arch-specific asm/compiler.h")
+I seriously have no idea why you have based it on some unstable random
+tree in the first place.
 
-from the mips tree and commit:
+But basing it on something that I independently refused to pull
+because of obvious bugs from just a quick scan - that completely
+invalidates this pull request.
 
-  7358e371b0ef ("arch: enable relative relocations for arm64, power and x86=
-")
+Why?
 
-from the akpm-current tree.
+I guess it makes this merge window easier, since now I don't even have
+to look at the code, but it annoys the hell out of me when things like
+that happen.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+There wasn't even a mention in the pull request about how this was all
+based on some libnvdimm code that hadn't been merged yet.
 
---=20
-Cheers,
-Stephen Rothwell
+But you must have known that, since you must have explicitly done the
+pull request not against my tree, but against the bogus base branch.
 
-diff --cc arch/Kconfig
-index 526a57457594,4426e9687d89..000000000000
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@@ -848,14 -841,16 +848,24 @@@ config REFCOUNT_FUL
-  	  against various use-after-free conditions that can be used in
-  	  security flaw exploits.
- =20
- +config HAVE_ARCH_COMPILER_H
- +	bool
- +	help
- +	  An architecture can select this if it provides an
- +	  asm/compiler.h header that should be included after
- +	  linux/compiler-*.h in order to override macro definitions that those
- +	  headers generally provide.
- +
-+ config HAVE_ARCH_PREL32_RELOCATIONS
-+ 	bool
-+ 	help
-+ 	  May be selected by an architecture if it supports place-relative
-+ 	  32-bit relocations, both in the toolchain and in the module loader,
-+ 	  in which case relative references can be used in special sections
-+ 	  for PCI fixup, initcalls etc which are only half the size on 64 bit
-+ 	  architectures, and don't require runtime relocation on relocatable
-+ 	  kernels.
-+=20
-  source "kernel/gcov/Kconfig"
- =20
-  source "scripts/gcc-plugins/Kconfig"
+And since I won't be merging this, I clearly won't be merging your
+other pull request that depended on this either.
 
---Sig_/lSM8G+AX3PUCj_QUMvAERIk
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Why the f*ck were these features so interlinked to begin with?
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt8xCoACgkQAVBC80lX
-0Gw61gf/eIO4X3jfg8EVTDUf/Y0wSQ7iI9LAqnfsIVF/97Uv6LFdwMJyy3VDW69b
-Od8rZYaX360ZAfpr3PvY2iysGF4oh9A93h59nvAuIGcWAor1H7jvAuWu7dCJ4sF6
-d3geWuWdr2TRa8niJa4iSwqnHjr/Q5Vs5eaaYIC6z6LDFemBV840bB3E+Ifcv/ZD
-UNlSr7fIwWC0Sd6lFSGdSo3zzeBXuouQnsIDmEBZQibTZY2wuOrQB3cOKqI+dE/F
-VnYZ1CYe2oEQXoovjRyVjcjv89CNcb5m9lXiQvCG1bCEy1TwRJGjFDrtylt19ANW
-a369BfYYINUV8AXr+GLtou1neLBpDg==
-=xHax
------END PGP SIGNATURE-----
-
---Sig_/lSM8G+AX3PUCj_QUMvAERIk--
+              Linus
