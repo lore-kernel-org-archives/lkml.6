@@ -3,89 +3,128 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEC7C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 317B2C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:50:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A331B208CC
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:46:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A331B208CC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id D68E9208CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:50:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D68E9208CC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbeHWAMY (ORCPT
+        id S1727251AbeHWARD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 20:12:24 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:56378 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726581AbeHWAMY (ORCPT
+        Wed, 22 Aug 2018 20:17:03 -0400
+Received: from smtprelay0222.hostedemail.com ([216.40.44.222]:48757 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726581AbeHWARC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 20:12:24 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0T72p0Py_1534970745;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T72p0Py_1534970745)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 23 Aug 2018 04:45:49 +0800
-Subject: Re: [RFC v8 PATCH 3/5] mm: mmap: zap pages with read mmap_sem in
- munmap
-To:     Vlastimil Babka <vbabka@suse.cz>, mhocko@kernel.org,
-        willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        kirill@shutemov.name, akpm@linux-foundation.org,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
- <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
- <e691d054-f807-80ad-9934-a1917d8e2e77@suse.cz>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <3c62f605-2244-6a05-2dc4-34a3f1c56300@linux.alibaba.com>
-Date:   Wed, 22 Aug 2018 13:45:44 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <e691d054-f807-80ad-9934-a1917d8e2e77@suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Wed, 22 Aug 2018 20:17:02 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id BFB055B3B;
+        Wed, 22 Aug 2018 20:50:35 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: birds46_4dd97befa159
+X-Filterd-Recvd-Size: 4313
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 22 Aug 2018 20:50:33 +0000 (UTC)
+Message-ID: <39b6242771fd80fe19104c8a057bcc6afc0e41e5.camel@perches.com>
+Subject: Re: [PATCH] compiler-gcc: get back Clang build
+From:   Joe Perches <joe@perches.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>, asmadeus@codewreck.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Arnd Bergmann <arnd@arndb.de>, dwmw@amazon.co.uk,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Wed, 22 Aug 2018 13:50:32 -0700
+In-Reply-To: <CAKwvOdm+BwvDxAw-A_1v5xO2EjDff1axAttHVz5QnBSxSbKo=g@mail.gmail.com>
+References: <1534834088-15835-1-git-send-email-yamada.masahiro@socionext.com>
+         <20180821123832.GA19034@nautica>
+         <CAKwvOdmLQen+TWF_F3e5-66vtF3FEnoxjEgZbjmOZ9cv6YrEpA@mail.gmail.com>
+         <acb93bae0086447c7cbe0eec05907335ebae7788.camel@perches.com>
+         <CAKwvOdkLGhdQxx3oV=R2kv290NOv_w8qQ_yHWCVpvmofp7+ivQ@mail.gmail.com>
+         <20180822041646.GA21716@nautica>
+         <78396ba82562326f4b3a395a63e3e8dc38d608b2.camel@perches.com>
+         <20180822043230.GA26654@nautica>
+         <CAKwvOdm+BwvDxAw-A_1v5xO2EjDff1axAttHVz5QnBSxSbKo=g@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 2018-08-22 at 11:31 -0700, Nick Desaulniers wrote:
+> On Tue, Aug 21, 2018 at 9:32 PM Dominique Martinet
+> <asmadeus@codewreck.org> wrote:
+> > 
+> > Joe Perches wrote on Tue, Aug 21, 2018:
+> > > On Wed, 2018-08-22 at 06:16 +0200, Dominique Martinet wrote:
+> > > > I think that could work, but at the point making a separate
+> > > > compiler-common.h and not including compiler-gcc.h for clang sounds
+> > > > better to me... More importantly here, either solution sound complex
+> > > > enough to require more than a few days and proper testing for all archs
+> > > > etc when compared to the partial revert we have here.
+> > > 
+> > > The immediate need for a partial revert seems unnecessary as
+> > > clang hasn't really worked for a couple releases now.
+> > 
+> > Sorry for repeating myself, clang is used by bcc for compiling BPF
+> > programs (e.g. bpf_module_create_c_from_string() or any similar function
+> > will use the clang libs to compile the bpf program with linux headers),
+> > and this has always been working because it's not using our makefiles.
+> > 
+> > This broke today in master and I only joined this thread after looking
+> > at why the build started failing today and noticing this patch, it
+> > definitely hasn't been broken for two releases, or I wouldn't be here
+> > with this timing :)
+> > 
+> > 
+> > > The separate compiler file changes are much more sensible,
+> > > even if it takes a few days.
+> > 
+> > A few days are fine, but I think some form of fix in 4.19-rc1 would be
+> > good.
+> > 
+> > I'll stop taking your time now, but I think you are/were underestimating
+> > how many people use clang with the linux kernel headers indirectly.
+> > BPF is a well-used tool :)
+> 
+> Hi Dominique,
+> I'm currently testing a fix in
+> https://github.com/ClangBuiltLinux/linux/commit/1f89ae7622c26b8131f42f3a362d6ef41b88a595,
+> can you please share with me your steps to test/verify that the patch
+> fixes the issue for eBPF?  I'll go talk to a co-worker who know more
+> about eBPF, but I've not yet done anything with it.
 
+A mild suggestion about the patch would be to break it up into
+2 patches to improve how people read and review them.
 
-On 8/22/18 4:19 AM, Vlastimil Babka wrote:
-> On 08/15/2018 08:49 PM, Yang Shi wrote:
->> +	downgrade_write(&mm->mmap_sem);
->> +
->> +	/* Zap mappings with read mmap_sem */
->> +	unmap_region(mm, start_vma, prev, start, end);
->> +
->> +	arch_unmap(mm, start_vma, start, end);
-> Hmm, did you check that all architectures' arch_unmap() is safe with
-> read mmap_sem instead of write mmap_sem? E.g. x86 does
-> mpx_notify_unmap() there where I would be far from sure at first glance...
+1 include/linux/compiler-*
+2 everything else
 
-Yes, I'm also not quite sure if it is 100% safe or not. I was trying to 
-move this before downgrade_write, however, I'm not sure if it is ok or 
-not too, so I keep the calling sequence.
+Yes, some kernel configs might not build properly between 1 and 2
+but that likely doesn't matter as those configs probably don't
+build before 1 either.
 
-For architectures, just x86 and ppc really do something. PPC just uses 
-it for vdso unmap which should just happen during process exit, so it 
-sounds safe.
+Perhaps the test in arch/arm/kernel/asm-offsets.c for incompatible
+gcc compiler versions from 4.8.0 to 4.8.2 should be moved to
+compiler-gcc.h.
 
-For x86, mpx_notify_unmap() looks finally zap the VM_MPX vmas in bound 
-table range with zap_page_range() and doesn't update vm flags, so it 
-sounds ok to me since vmas have been detached, nobody can find those 
-vmas. But, I'm not familiar with the details of mpx, maybe Kirill could 
-help to confirm this?
+> Also, does anyone know who I should talk to about ICC testing?
 
-Thanks,
-Yang
-
->
->> +	remove_vma_list(mm, start_vma);
->> +	up_read(&mm->mmap_sem);
-
+No clue
