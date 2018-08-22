@@ -1,135 +1,254 @@
 Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF60CC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 19:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF15C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 19:26:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9058F20B6F
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 19:25:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lKPz1KN+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9058F20B6F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F71F208E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 19:26:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F71F208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbeHVWvI (ORCPT
+        id S1728116AbeHVWwm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 18:51:08 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42660 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbeHVWvH (ORCPT
+        Wed, 22 Aug 2018 18:52:42 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48066 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727466AbeHVWwl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 18:51:07 -0400
-Received: by mail-lf1-f65.google.com with SMTP id z11-v6so2216397lff.9;
-        Wed, 22 Aug 2018 12:24:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hO9GcebNeg4TfjrwuEkmxS7g2uIYqk1ZuBykH3/CcH8=;
-        b=lKPz1KN+O8sLn3t8PUZ+3o4aHzrF5X5O62zueteH9foegZtEVGR0IjHsIvzzIu1cfx
-         d3C1vAdqDZ9K4w5Lel6rDtQfgA4mZisPAHP7zxDe2iP62VBcqzL+S6PMHvhsVY2jixiW
-         w4ZVC9RfkzGDtPYR/yTjIw7c++CPvwKbUsX9x0MEdse1T9mJLq7TbdS6JrViusrhwdGF
-         qdhTsZkVthlYcYxEc/1SfUHXiGQobP0MjJT0MV64WJuErMz8H2zsziJaY/C9g8PO2fLV
-         VTdBxOqlEkfqDonvhn62wd3ae6fCTrzhxWpKMC8Up5StT9v1kTdj2pT9jp+zdGuhLwA3
-         xpeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hO9GcebNeg4TfjrwuEkmxS7g2uIYqk1ZuBykH3/CcH8=;
-        b=W/eVv5o0I/bPySaY5Ow99Myc+/xEGnMr2Sk4z2u9bvxN0DJOCiOGQ41Pl/PO5op6yc
-         I/SntuCffREH+w7yaGXupg2AOb+T9Vjthl4IYCwdHe8uEiObkS8pQmLQ/L3MBINhpqp2
-         kC/2bxow6K7yNE5KBxB4tXUiY6R8ytliVy7osTv8b4fABQwLhJ4xzVRelqixgl20Cua7
-         AF22lkNSS74/pP6AiTZ9pUEMJuARI91e39OaYCzQ4npfxngGg+KzHjaNz56a+3a/aUSn
-         QQ0W+1YnHoGJhhaPcG7QueoCdPYb0iIEgGmFBYt8WgnUcZiwqEuX6aZbjTomgpgmuc8U
-         sPjg==
-X-Gm-Message-State: APzg51AXnl5OMCq08ROx+mCEl8zwUbJp36VXzJclrCfRIQvUQD+A7dF2
-        BtFIaA/jIwhOx6gtznVY5zY=
-X-Google-Smtp-Source: ANB0VdaWhtP6/C90XhByY1ypjkLGLgezkdOpbU6sLUVr1Wr+cq2YiRmWeTGtzje1F0+h64lVYyBeAg==
-X-Received: by 2002:a19:18d8:: with SMTP id 85-v6mr1187731lfy.133.1534965896732;
-        Wed, 22 Aug 2018 12:24:56 -0700 (PDT)
-Received: from gmail.com (c-2ec26f18-74736162.cust.telenor.se. [46.194.111.24])
-        by smtp.gmail.com with ESMTPSA id b10-v6sm456947lfa.6.2018.08.22.12.24.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 22 Aug 2018 12:24:55 -0700 (PDT)
-Date:   Wed, 22 Aug 2018 21:25:18 +0200
-From:   Marcus Folkesson <marcus.folkesson@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: iio: dac: add bindings for ltc1660
-Message-ID: <20180822192518.GA694@gmail.com>
-References: <20180821193126.15733-1-marcus.folkesson@gmail.com>
- <20180821193126.15733-2-marcus.folkesson@gmail.com>
+        Wed, 22 Aug 2018 18:52:41 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7MJOV0X058976
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 15:26:31 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m1dy203pn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 15:26:31 -0400
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Wed, 22 Aug 2018 15:16:25 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 22 Aug 2018 15:16:22 -0400
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MJGKVY63897850
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 Aug 2018 19:16:20 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 02D3F2805E;
+        Wed, 22 Aug 2018 15:14:51 -0400 (EDT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5F73C28058;
+        Wed, 22 Aug 2018 15:14:50 -0400 (EDT)
+Received: from oc8043147753.ibm.com (unknown [9.60.75.213])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 22 Aug 2018 15:14:50 -0400 (EDT)
+Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
+ control domains
+To:     Halil Pasic <pasic@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        pmorel@linux.ibm.com, Cornelia Huck <cohuck@redhat.com>
+Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180820162317.08bd7d23.cohuck@redhat.com>
+ <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
+ <20180821172548.57a6c758.cohuck@redhat.com>
+ <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
+ <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
+ <20180822114250.59a250aa.cohuck@redhat.com>
+ <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
+ <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
+ <f84dbcc0-f627-be02-9933-3baa953adc09@linux.ibm.com>
+ <219b352b-d5a2-189c-e205-82e7f9ae3d64@de.ibm.com>
+ <dbb74c9c-93ab-ed05-fad4-ea2aa5f2b71e@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Wed, 22 Aug 2018 15:16:19 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180821193126.15733-2-marcus.folkesson@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <dbb74c9c-93ab-ed05-fad4-ea2aa5f2b71e@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18082219-0072-0000-0000-0000039575CC
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009593; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01077331; UDB=6.00555442; IPR=6.00857306;
+ MB=3.00022872; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-22 19:16:24
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082219-0073-0000-0000-0000492ABC87
+Message-Id: <9ef5fcb9-02e0-88e3-007c-eedb14e6db80@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808220191
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 09:31:25PM +0200, Marcus Folkesson wrote:
-> LTC1665/LTC1660 is a 8/10-bit Digital-to-Analog Converter (DAC)
-> with eight individual channels.
-> 
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+On 08/22/2018 01:11 PM, Halil Pasic wrote:
+>
+>
+> On 08/22/2018 05:48 PM, Christian Borntraeger wrote:
+>> On 08/22/2018 05:34 PM, Pierre Morel wrote:
+>>> On 22/08/2018 17:11, Christian Borntraeger wrote:
+>>>>
+>>>>
+>>>> On 08/22/2018 01:03 PM, Pierre Morel wrote:
+>>>>>> That's interesting.
+>>>>>>
+>>>>>>> IMHO this quote is quite a half-full half-empty cup one:
+>>>>>>> * it mandates the set of usage domains is a subset of the set
+>>>>>>> of the control domains, but
+>>>>>>> * it speaks of independent controls, namely about the 'usage 
+>>>>>>> domain index'
+>>>>>>> and the 'control domain index list' and makes the enforcement of 
+>>>>>>> the rule
+>>>>>>> a job of the administrator (instead of codifying it in the 
+>>>>>>> controls).
+>>>>>> I'm wondering if a configuration with a usage domain that is not 
+>>>>>> also a
+>>>>>> control domain is rejected outright? Anybody tried that? :)
+>>>>>
+>>>>> Yes, and no it is not.
+>>>>> We can use a queue (usage domain) to a AP card for SHA-512 or RSA 
+>>>>> without
+>>>>> having to define the queue as a control domain.
+>>>>
+>>>> Huh? My HMC allows to add a domain as
+>>>> - control only domain
+>>>> - control and usage domain.
+>>>>
+>>>> But I am not able to configure a usage-only domain for my LPAR. 
+>>>> That seems to match
+>>>> the current code, no?
+>>>>
+>>>
+>>> Yes, it may not be configurable by the HMC but if we start a guest 
+>>> with no control domain it is not a problem to access the hardware 
+>>> through the usage domain.
+>>>
+>>> I tested this a long time ago, but tested again today to be sure on 
+>>> my LPAR.
+>>>
+>>> AFAIU adding a control only domain and a control and usage domain
+>>> allows say:
+>>> control and usage domain 1
+>>> control only domain 2
+>>>
+>>> Allow to send a message to domain 2 using queue 1
+>>>
+>>> Allow also to send a domain modifying message to domain 1 using queue 1
+>>>
+>>> control domain are domain which are controlled
+>>
+>> So you have changed the code to not automatically make a usage domain a
+>> control domain in the bitfield (and you could still use it as a usage
+>> domain). Correct?
+>
+> I tested basically the same yesterday, with the same results.
+>
+>> I think this is probably expected. the "usage implies control" seems to
+>> be a convention implemented by HMC (lpar) and z/VM but millicode offers
+>> the bits to have usage-only domains. As LPAR and z/VM will always enable
+>> any usage-domain to also be a control domain we should do the same.
+>
+> I'm fine either way, but slightly prefer higher level management software
+> and not the kernel accommodating this convention.
+>
+> Please consider a quote from Harald's mail in another sub-thread
+>
+>
+> """
+> ... about control domains
+>
+> Talked with the s390 firmware guys. The convention that the control 
+> domain
+> mask is a superset of the usage domain mask is only true for 1st level 
+> guests.
+>
+> It is absolutely valid to run a kvm guest with restricted control domain
+> mask bitmap in the CRYCB. It is valid to have an empty control domain 
+> mask
+> and the guest should be able to run crypto CPRBs on the usage 
+> domain(s) without
+> any problems. However, nobody has tried this.
+> """
+>
+> I'm yet to get an explanation why was this convention established in 
+> the first
+> place. And I can not figure it out myself. For me a setup where I know 
+> that
+> the domains used by some guest can not be modified by the same guest 
+> makes
+> perfect sense. If I try to think in analogies, I kind of compare 
+> modification
+> (that is control domain) with write access, and usage (that is usage 
+> domain)
+> with read access to, let's say a regular file. For me, all options 
+> (rw, r, and w)
+> do make sense, and if I had to pick the one that makes the least sense 
+> I would
+> pick write only. The convention is in these terms making read-only 
+> illegal. But
+> should 'usage only domains' ever get identified as something somebody 
+> wants to do
+> we can just add an attribute for that. So I'm fine either way.
 
-Rob, sorry I missed your tag.
+One of the things I suggested in a private conversation with Christian 
+earlier
+today was to provide an additional rw sysfs attribute - a boolean - that 
+indicates
+whether all usage domains should also be control domains. The default 
+could be
+true. This would allow one to configure guests with usage-only domains 
+as well
+as satisfy the convention.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+>
+>
+> Still I find the commit message for this patch, the implementation of
+> assign_control_domain() and also the documentation slightly misleading 
+> regarding
+> what does one get from assign_domain.
 
-> ---
-> 
-> Notes:
->     v2:
->     	- rename file, ltc166x -> ltc1660
-> 
->  .../devicetree/bindings/iio/dac/ltc1660.txt         | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/dac/ltc1660.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/dac/ltc1660.txt b/Documentation/devicetree/bindings/iio/dac/ltc1660.txt
-> new file mode 100644
-> index 000000000000..c5b5f22d6c64
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/dac/ltc1660.txt
-> @@ -0,0 +1,21 @@
-> +* Linear Technology Micropower octal 8-Bit and 10-Bit DACs
-> +
-> +Required properties:
-> + - compatible: Must be one of the following:
-> +		"lltc,ltc1660"
-> +		"lltc,ltc1665"
-> + - reg: SPI chip select number for the device
-> + - vref-supply: Phandle to the voltage reference supply
-> +
-> +Recommended properties:
-> + - spi-max-frequency: Definition as per
-> +	 Documentation/devicetree/bindings/spi/spi-bus.txt.
-> +	 Max frequency for this chip is 5 MHz.
-> +
-> +Example:
-> +dac@0 {
-> +	compatible = "lltc,ltc1660";
-> +	reg = <0>;
-> +	spi-max-frequency = <5000000>;
-> +	vref-supply = <&vref_reg>;
-> +};
-> -- 
-> 2.11.0.rc2
-> 
+
+
+>
+>
+> Regards,
+> Halil
+>
+>
+>
+>
+>
+>>
+>>
+>>> It seems that the HMC enforce the LPARs to have access to their 
+>>> usage domain (AFAIU from Harald)
+>>
+
