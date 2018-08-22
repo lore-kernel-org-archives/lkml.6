@@ -5,111 +5,185 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DE8C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B22BDC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC5EB214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:11:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC5EB214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 5AAED214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:13:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AAED214FF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728850AbeHVOfe (ORCPT
+        id S1728829AbeHVOhl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 10:35:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57756 "EHLO mx1.suse.de"
+        Wed, 22 Aug 2018 10:37:41 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45446 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728143AbeHVOfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 10:35:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C0866AFDF;
-        Wed, 22 Aug 2018 11:11:04 +0000 (UTC)
-Subject: Re: [RFC v8 PATCH 3/5] mm: mmap: zap pages with read mmap_sem in
- munmap
-To:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
-        willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        kirill@shutemov.name, akpm@linux-foundation.org,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
- <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
+        id S1728518AbeHVOhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 10:37:41 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4FBF74023ECB;
+        Wed, 22 Aug 2018 11:13:12 +0000 (UTC)
+Received: from [10.36.117.196] (ovpn-117-196.ams2.redhat.com [10.36.117.196])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D2A282166BA1;
+        Wed, 22 Aug 2018 11:13:10 +0000 (UTC)
+Subject: Re: [PATCH v1] KVM: s390: store DXC/VXC in fpc on
+ DATA/Vector-processing exceptions
+To:     Janosch Frank <frankja@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc:     linux-s390@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+References: <20180822095310.29145-1-david@redhat.com>
+ <02f9379d-d20d-8b69-94b9-959f46490a26@linux.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <7145895b-ef56-f5ee-d139-609819d9a107@suse.cz>
-Date:   Wed, 22 Aug 2018 13:11:03 +0200
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <9d0681f2-9c14-dd6f-94e9-e677b7702207@redhat.com>
+Date:   Wed, 22 Aug 2018 13:13:10 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
+In-Reply-To: <02f9379d-d20d-8b69-94b9-959f46490a26@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 22 Aug 2018 11:13:12 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 22 Aug 2018 11:13:12 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/15/2018 08:49 PM, Yang Shi wrote:
+On 22.08.2018 12:31, Janosch Frank wrote:
+> On 22.08.2018 11:53, David Hildenbrand wrote:
+>> When DATA exceptions and vector-processing exceptions (program interrupts)
+>> are injected, the DXC/VXC is also to be stored in the fpc, if AFP is
+>> enabled in CR0.
+>>
+>> This can happen inside KVM when reinjecting an interrupt during program
+>> interrupt intercepts. These are triggered for example when debugging the
+>> guest (concurrent PER events result in an intercept instead of an
+>> injection of such interrupts).
+>>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> ---
+>>
+>> Only compile-tested.
+> 
+> It baffles me that AFP is still a thing in zArch mode. I would have
+> expected it to be a default 1. But then again, I just found out about it.
+> 
+> POP checks out:
+> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+> 
+> 
+>>
+>>  arch/s390/include/asm/ctl_reg.h | 1 +
+>>  arch/s390/kvm/interrupt.c       | 8 ++++++++
+>>  2 files changed, 9 insertions(+)
+>>
+>> diff --git a/arch/s390/include/asm/ctl_reg.h b/arch/s390/include/asm/ctl_reg.h
+>> index 4600453536c2..88f3f14baee9 100644
+>> --- a/arch/s390/include/asm/ctl_reg.h
+>> +++ b/arch/s390/include/asm/ctl_reg.h
+>> @@ -11,6 +11,7 @@
+>>  #include <linux/const.h>
+>>  
+>>  #define CR0_CLOCK_COMPARATOR_SIGN	_BITUL(63 - 10)
+>> +#define CR0_AFP_REGISTER_CONTROL	_BITUL(63 - 45)
+>>  #define CR0_EMERGENCY_SIGNAL_SUBMASK	_BITUL(63 - 49)
+>>  #define CR0_EXTERNAL_CALL_SUBMASK	_BITUL(63 - 50)
+>>  #define CR0_CLOCK_COMPARATOR_SUBMASK	_BITUL(63 - 52)
+>> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+>> index fcb55b02990e..5b5754d8f460 100644
+>> --- a/arch/s390/kvm/interrupt.c
+>> +++ b/arch/s390/kvm/interrupt.c
+>> @@ -765,6 +765,14 @@ static int __must_check __deliver_prog(struct kvm_vcpu *vcpu)
+>>  		break;
+>>  	case PGM_VECTOR_PROCESSING:
+>>  	case PGM_DATA:
+>> +		if (vcpu->arch.sie_block->gcr[0] & CR0_AFP_REGISTER_CONTROL) {
+>> +			/* make sure the new fpc will be lazily loaded */
+>> +			save_fpu_regs();
+>> +			/* the DXC/VXC cannot make the fpc invalid */
+>> +			current->thread.fpu.fpc &= ~0xff00u;
+>> +			current->thread.fpu.fpc |= (pgm_info.data_exc_code << 8)
+>> +						   & 0xff00u;
+> 
+> Everything except that byte should be 0 anyway when it comes from
+> lowcore, why do you mask?
 
-> +	start_vma = munmap_lookup_vma(mm, start, end);
-> +	if (!start_vma)
-> +		goto out;
-> +	if (IS_ERR(start_vma)) {
-> +		ret = PTR_ERR(start_vma);
-> +		goto out;
-> +	}
-> +
-> +	prev = start_vma->vm_prev;
-> +
-> +	if (unlikely(uf)) {
-> +		ret = userfaultfd_unmap_prep(start_vma, start, end, uf);
-> +		if (ret)
-> +			goto out;
-> +	}
-> +
+User space can inject such an interrupt and could therefore set reserved
+bits, leading to a crash (fpc invalid when loaded). E.g. via
+kvm_s390_set_irq_state().
 
-You sure it's ok to redo this in case of goto regular path? The
-preparations have some side-effects... I would rather move this after
-the regular path check?
+As of now, DXC/VXC is always 1byte. The other ones are to be stored as
+0. (what we expect to always hold for now but user space can do crazy
+things)
+
+Thanks!
+
+> 
+>> +		}
+>>  		rc = put_guest_lc(vcpu, pgm_info.data_exc_code,
+>>  				  (u32 *)__LC_DATA_EXC_CODE);
+>>  		break;
+>>
+> 
+> 
+
+
+-- 
+
+Thanks,
+
+David / dhildenb
