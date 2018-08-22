@@ -2,244 +2,324 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60EFFC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 01:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88465C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 01:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC87C2098B
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 01:01:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BDB921480
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 01:11:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OuZpx4H4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC87C2098B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Gd26FPxk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BDB921480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbeHVEYS (ORCPT
+        id S1726898AbeHVEdc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 00:24:18 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:41474 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726055AbeHVEYS (ORCPT
+        Wed, 22 Aug 2018 00:33:32 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:52560 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726076AbeHVEdb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 00:24:18 -0400
-Received: by mail-oi0-f67.google.com with SMTP id k12-v6so433044oiw.8
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 18:01:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Pc+VHTGnOxGT9AzLaa7nepsBfaIoc2vGshQIe0EkXS4=;
-        b=OuZpx4H4/iyUYrlBum1tF/JFPdE2CeDKax/XHeP/s2oPWjIwR+zj66hjxKKgKdG6Uz
-         TWF1F2htFhhb6MtaMgx6J7ecMUBOwiS4hjdfFHuqEkTwZUVMHG0HjusYRLSXtegcSl+C
-         MKNt9Y6/DjiZEnW5/l5OIQqKj5/KBYvx6dfLdpX5chUnkhrYg4cMTauq0Kjcg+/Kftc1
-         70UxruMm8t+4vN05uiW1YksCH3loGsHIuMFj1PW7zAXnrkYa/nfAGBbWKQSY7I6w0kP/
-         iPE4C3TF6YVxZiqaJ7uDWIIOddr7UaGrkgaKPMa0zNOubl0DGRDGlH3oHspJDrrz6fpu
-         EIsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Pc+VHTGnOxGT9AzLaa7nepsBfaIoc2vGshQIe0EkXS4=;
-        b=ZpG0ppuDna0Zz8QwmoS7pV8rZT4leB8vx+yVZs3Bv5KPMI3TjItz+SeGpHHM1wine3
-         ldUZTScW3RrryPB5dcfrxKKdEM+pZG2EWC6wjLB6OB4nmqRwpzAVSaiankgu5kaG4l77
-         oqiZ6CRI7wA7QSwfwRwEy4lXMwQwlhgqubaSXjpi5/kT2udCGnrYOOwBbzDuLrmbAbIt
-         ne2V92AqeeJE8mYjtoOai2U0TFiTd7C0uIEULW3m72ZDvW/yxILdFpxEY9BFtUv1t5lD
-         agFGOB0uoSfS95uwMlF/TwtPJs20hAb5FOeTjudntRvXzR9N+ZECpaMuLX8nf6f1bGd3
-         5iYQ==
-X-Gm-Message-State: APzg51AEVZJ9+PWweiNw/wrGtAVx+x47cUxBS9jzRj8x0IaWLy+BeP6G
-        kZQGCC9l1C42Rng8oRyfXbWtqTZ9qopJNFsxJHhS3g==
-X-Google-Smtp-Source: ANB0Vda/juzpmsgrs3TYu4kgKuA8GcxtPMvAUCHxCdI/uO7TgBYmJH055j/SO2u2OOFdhRQGVcTK/qkOCO0Jl2J+2hk=
-X-Received: by 2002:aca:4784:: with SMTP id u126-v6mr1755389oia.229.1534899707660;
- Tue, 21 Aug 2018 18:01:47 -0700 (PDT)
+        Wed, 22 Aug 2018 00:33:31 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7M19Jle191568;
+        Wed, 22 Aug 2018 01:10:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=G63m8a4YuvDEs6YhsWX8D+FabhfAxtv+hFujYg2ONbA=;
+ b=Gd26FPxkmll1KjWr2kztcg9i1gGHSYznQN6QGeVhfvmXWXWRUDNXA0XeC3dIfLFa3s5D
+ U5mCDE2GnKLx7dvDCpSzipJ/5NCiRZI92M860SI6VIUEV0QTTpF7vvW25wPR6qHvWOTy
+ /T4tsIr1jr0kS7jsinVaqV3pFAkF+vU+AcEGsf7KoZmO+fJ30ionk7eOo6oAaa7PJTPc
+ ssH+lJkbgcl1JUvuGbZPdFoVwz3TQL1Tt6ty38LaYkazrMCWedM1m4ulNWW4Xmz+y8in
+ uLtf/TXVvrS6jdpwmsDG+HpT9JClSJ/tohHotsa4D06Qo+GOtcKItOZW7nT7RFf2nGNz Wg== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2kxc3qqrbp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 Aug 2018 01:10:46 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7M1AjCm017855
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 Aug 2018 01:10:46 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7M1AiQb017541;
+        Wed, 22 Aug 2018 01:10:44 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 21 Aug 2018 18:10:44 -0700
+Subject: Re: [PATCH v3 1/2] mm: migration: fix migration of huge PMD shared
+ pages
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+References: <20180821205902.21223-2-mike.kravetz@oracle.com>
+ <201808220831.eM0je51n%fengguang.wu@intel.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <975b740d-26a6-eb3f-c8ca-1a9995d0d343@oracle.com>
+Date:   Tue, 21 Aug 2018 18:10:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180821000444.7004-1-casey.schaufler@intel.com>
- <20180821000444.7004-4-casey.schaufler@intel.com> <CAG48ez1D-DPBP8ACA1W5=XZLNKUeVj7ZOGUG8uJ2nL1xOSR_9Q@mail.gmail.com>
- <99FC4B6EFCEFD44486C35F4C281DC673214402D3@ORSMSX107.amr.corp.intel.com>
-In-Reply-To: <99FC4B6EFCEFD44486C35F4C281DC673214402D3@ORSMSX107.amr.corp.intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 22 Aug 2018 03:01:20 +0200
-Message-ID: <CAG48ez3bh5cFgZ5ZY63pszTV+KX+KC4utRCm7E8en+uF5w6vKw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/5] LSM: Security module checking for side-channel dangers
-To:     Casey Schaufler <casey.schaufler@intel.com>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        selinux@tycho.nsa.gov, Dave Hansen <dave.hansen@intel.com>,
-        deneen.t.dock@intel.com, kristen@linux.intel.com,
-        Arjan van de Ven <arjan@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <201808220831.eM0je51n%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8992 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808220011
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 1:44 AM Schaufler, Casey
-<casey.schaufler@intel.com> wrote:
->
-> > -----Original Message-----
-> > From: Jann Horn [mailto:jannh@google.com]
-> > Sent: Tuesday, August 21, 2018 10:24 AM
-> > To: Schaufler, Casey <casey.schaufler@intel.com>
-> > Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>; kernel list
-> > <linux-kernel@vger.kernel.org>; linux-security-module <linux-security-
-> > module@vger.kernel.org>; selinux@tycho.nsa.gov; Hansen, Dave
-> > <dave.hansen@intel.com>; Dock, Deneen T <deneen.t.dock@intel.com>;
-> > kristen@linux.intel.com; Arjan van de Ven <arjan@linux.intel.com>
-> > Subject: Re: [PATCH v3 3/5] LSM: Security module checking for side-channel
-> > dangers
-> >
-> > On Tue, Aug 21, 2018 at 2:05 AM Casey Schaufler
-> > <casey.schaufler@intel.com> wrote:
-> > >
-> > > The sidechannel LSM checks for cases where a side-channel
-> > > attack may be dangerous based on security attributes of tasks.
-> > > This includes:
-> > >         Effective UID of the tasks is different
-> > >         Capablity sets are different
-> > >         Tasks are in different namespaces
-> > > An option is also provided to assert that task are never
-> > > to be considered safe. This is high paranoia, and expensive
-> > > as well.
-> > >
-> > > Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
-> > > ---
-> > [...]
-> > > diff --git a/security/sidechannel/Kconfig b/security/sidechannel/Kconfig
-> > > new file mode 100644
-> > > index 000000000000..af9396534128
-> > > --- /dev/null
-> > > +++ b/security/sidechannel/Kconfig
-> > [...]
-> > > +config SECURITY_SIDECHANNEL_CAPABILITIES
-> > > +       bool "Sidechannel check on capability sets"
-> > > +       depends on SECURITY_SIDECHANNEL
-> > > +       default n
-> > > +       help
-> > > +         Assume that tasks with different sets of privilege may be
-> > > +         subject to side-channel attacks. Potential interactions
-> > > +         where the attacker lacks capabilities the attacked has
-> > > +         are blocked.
-> > > +
-> > > +          If you are unsure how to answer this question, answer N.
-> > > +
-> > > +config SECURITY_SIDECHANNEL_NAMESPACES
-> > > +       bool "Sidechannel check on namespaces"
-> > > +       depends on SECURITY_SIDECHANNEL
-> > > +       depends on NAMESPACES
-> > > +       default n
-> > > +       help
-> > > +         Assume that tasks in different namespaces may be
-> > > +         subject to side-channel attacks. User, PID and cgroup
-> > > +         namespaces are checked.
-> > > +
-> > > +          If you are unsure how to answer this question, answer N.
-> > [...]
-> > > diff --git a/security/sidechannel/sidechannel.c
-> > b/security/sidechannel/sidechannel.c
-> > > new file mode 100644
-> > > index 000000000000..4da7d6dafdc5
-> > > --- /dev/null
-> > > +++ b/security/sidechannel/sidechannel.c
-> > [...]
-> > > +/*
-> > > + * safe_by_capability - Are task and current sidechannel safe?
-> > > + * @p: task to check on
-> > > + *
-> > > + * Returns 0 if the tasks are sidechannel safe, -EACCES otherwise.
-> > > + */
-> > > +#ifdef CONFIG_SECURITY_SIDECHANNEL_CAPABILITIES
-> > > +static int safe_by_capability(struct task_struct *p)
-> > > +{
-> > > +       const struct cred *ccred = current_real_cred();
-> > > +       const struct cred *pcred = rcu_dereference_protected(p->real_cred, 1);
-> > > +
-> > > +       /*
-> > > +        * Capabilities checks. Considered safe if:
-> > > +        *      current has all the capabilities p does
-> > > +        */
-> > > +       if (ccred != pcred &&
-> > > +           !cap_issubset(pcred->cap_effective, ccred->cap_effective))
-> > > +               return -EACCES;
-> > > +       return 0;
-> > > +}
-> >
-> > On its own (without safe_by_namespace()), this check makes no sense, I
-> > think. You're performing a test on the namespaced capability sets
-> > without looking at which user namespaces they are relative to. Maybe
-> > either introduce a configuration dependency or add an extra namespace
-> > check here?
->
-> If you don't have namespaces the check is correct. If you do, and use
-> safe_by_namespace() you're also correct. If you use namespaces and
-> care about side-channel attacks you should enable the namespace checks.
+On 08/21/2018 05:51 PM, kbuild test robot wrote:
+> Hi Mike,
+> 
+> I love your patch! Yet something to improve:
+> 
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.18 next-20180821]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Mike-Kravetz/huge_pmd_unshare-migration-and-flushing/20180822-050255
+> config: sparc64-allyesconfig (attached as .config)
+> compiler: sparc64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=7.2.0 make.cross ARCH=sparc64 
+> 
 
-By "use namespaces", you mean "have CONFIG_USER_NS=y set in the kernel
-config", right?
-It doesn't matter much whether processes on your system are
-intentionally using namespaces; what matters is whether some random
-process can just use unshare(CLONE_NEWUSER) to increase its apparent
-capabilities and bypass the checks performed by this LSM.
-My expectation is that unshare(CLONE_NEWUSER) should not increase the
-caller's abilities. Your patch seems to violate that expectation.
+Ok, this should take care of all the build errors.  Needed to address
+!CONFIG_HUGETLB_PAGE and !CONFIG_ARCH_WANT_HUGE_PMD_SHARE.
 
-> I don't see real value in adding namespace checks in the capability checks
-> for the event where someone has said they don't want namespace checks.
+From 2868cea3ff33fccd03da9188dde2ae5b619bf300 Mon Sep 17 00:00:00 2001
+From: Mike Kravetz <mike.kravetz@oracle.com>
+Date: Tue, 21 Aug 2018 10:50:17 -0700
+Subject: [PATCH v5 1/2] mm: migration: fix migration of huge PMD shared pages
 
-Capabilities are meaningless if you don't consider the namespaces
-relative to which they are effective. Anyone can get CAP_SYS_ADMIN or
-whatever other capabilities they want, by design - just not relative
-to objects they don't own. Look:
+The page migration code employs try_to_unmap() to try and unmap the
+source page.  This is accomplished by using rmap_walk to find all
+vmas where the page is mapped.  This search stops when page mapcount
+is zero.  For shared PMD huge pages, the page map count is always 1
+no matter the number of mappings.  Shared mappings are tracked via
+the reference count of the PMD page.  Therefore, try_to_unmap stops
+prematurely and does not completely unmap all mappings of the source
+page.
 
-$ grep ^Cap /proc/self/status
-CapInh: 0000000000000000
-CapPrm: 0000000000000000
-CapEff: 0000000000000000
-CapBnd: 0000003fffffffff
-CapAmb: 0000000000000000
-$ unshare -Ur grep ^Cap /proc/self/status
-CapInh: 0000000000000000
-CapPrm: 0000003fffffffff
-CapEff: 0000003fffffffff
-CapBnd: 0000003fffffffff
-CapAmb: 0000000000000000
+This problem can result is data corruption as writes to the original
+source page can happen after contents of the page are copied to the
+target page.  Hence, data is lost.
 
-Ta-daa! Full capability set.
+This problem was originally seen as DB corruption of shared global
+areas after a huge page was soft offlined due to ECC memory errors.
+DB developers noticed they could reproduce the issue by (hotplug)
+offlining memory used to back huge pages.  A simple testcase can
+reproduce the problem by creating a shared PMD mapping (note that
+this must be at least PUD_SIZE in size and PUD_SIZE aligned (1GB on
+x86)), and using migrate_pages() to migrate process pages between
+nodes while continually writing to the huge pages being migrated.
 
-> I got early feedback that configurability was considered important.
-> This is the correct behavior if you want namespace checks to be
-> separately configurable from capability checks. You could ask for
-> distinct configuration options for each kind of namespace, but, well, yuck.
->
-> > > +static int safe_by_namespace(struct task_struct *p)
-> > > +{
-> > > +       struct cgroup_namespace *ccgn = NULL;
-> > > +       struct cgroup_namespace *pcgn = NULL;
-> > > +       const struct cred *ccred;
-> > > +       const struct cred *pcred;
-> > > +
-> > > +       /*
-> > > +        * Namespace checks. Considered safe if:
-> > > +        *      cgroup namespace is the same
-> > > +        *      User namespace is the same
-> > > +        *      PID namespace is the same
-> > > +        */
-> > > +       if (current->nsproxy)
-> > > +               ccgn = current->nsproxy->cgroup_ns;
-> > > +       if (p->nsproxy)
-> > > +               pcgn = p->nsproxy->cgroup_ns;
-> > > +       if (ccgn != pcgn)
-> > > +               return -EACCES;
-> > > +
-> > > +       ccred = current_real_cred();
-> > > +       pcred = rcu_dereference_protected(p->real_cred, 1);
-> > > +
-> > > +       if (ccred->user_ns != pcred->user_ns)
-> > > +               return -EACCES;
-> > > +       if (task_active_pid_ns(current) != task_active_pid_ns(p))
-> > > +               return -EACCES;
-> > > +       return 0;
-> > > +}
+To fix, have the try_to_unmap_one routine check for huge PMD sharing
+by calling huge_pmd_unshare for hugetlbfs huge pages.  If it is a
+shared mapping it will be 'unshared' which removes the page table
+entry and drops the reference on the PMD page.  After this, flush
+caches and TLB.
+
+mmu notifiers are called before locking page tables, but we can not
+be sure of PMD sharing until page tables are locked.  Therefore,
+check for the possibility of PMD sharing before locking so that
+notifiers can prepare for the worst possible case.
+
+Fixes: 39dde65c9940 ("shared page table for hugetlb page")
+Cc: stable@vger.kernel.org
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+---
+ include/linux/hugetlb.h | 14 +++++++++++++
+ mm/hugetlb.c            | 46 +++++++++++++++++++++++++++++++++++++++++
+ mm/rmap.c               | 42 ++++++++++++++++++++++++++++++++++---
+ 3 files changed, 99 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 36fa6a2a82e3..840b43a085cc 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -140,6 +140,8 @@ pte_t *huge_pte_alloc(struct mm_struct *mm,
+ pte_t *huge_pte_offset(struct mm_struct *mm,
+ 		       unsigned long addr, unsigned long sz);
+ int huge_pmd_unshare(struct mm_struct *mm, unsigned long *addr, pte_t *ptep);
++bool huge_pmd_sharing_possible(struct vm_area_struct *vma,
++				unsigned long *start, unsigned long *end);
+ struct page *follow_huge_addr(struct mm_struct *mm, unsigned long address,
+ 			      int write);
+ struct page *follow_huge_pd(struct vm_area_struct *vma,
+@@ -170,6 +172,18 @@ static inline unsigned long hugetlb_total_pages(void)
+ 	return 0;
+ }
+ 
++static inline int huge_pmd_unshare(struct mm_struct *mm, unsigned long *addr,
++					pte_t *ptep)
++{
++	return 0;
++}
++
++static inline bool huge_pmd_sharing_possible(struct vm_area_struct *vma,
++				unsigned long *start, unsigned long *end)
++{
++	return false;
++}
++
+ #define follow_hugetlb_page(m,v,p,vs,a,b,i,w,n)	({ BUG(); 0; })
+ #define follow_huge_addr(mm, addr, write)	ERR_PTR(-EINVAL)
+ #define copy_hugetlb_page_range(src, dst, vma)	({ BUG(); 0; })
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 3103099f64fd..f085019a4724 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -4555,6 +4555,9 @@ static bool vma_shareable(struct vm_area_struct *vma, unsigned long addr)
+ 
+ 	/*
+ 	 * check on proper vm_flags and page table alignment
++	 *
++	 * Note that this is the same check used in huge_pmd_sharing_possible.
++	 * If you change one, consider changing both.
+ 	 */
+ 	if (vma->vm_flags & VM_MAYSHARE &&
+ 	    vma->vm_start <= base && end <= vma->vm_end)
+@@ -4562,6 +4565,43 @@ static bool vma_shareable(struct vm_area_struct *vma, unsigned long addr)
+ 	return false;
+ }
+ 
++/*
++ * Determine if start,end range within vma could be mapped by shared pmd.
++ * If yes, adjust start and end to cover range associated with possible
++ * shared pmd mappings.
++ */
++bool huge_pmd_sharing_possible(struct vm_area_struct *vma,
++				unsigned long *start, unsigned long *end)
++{
++	unsigned long check_addr = *start;
++	bool ret = false;
++
++	if (!(vma->vm_flags & VM_MAYSHARE))
++		return ret;
++
++	for (check_addr = *start; check_addr < *end; check_addr += PUD_SIZE) {
++		unsigned long a_start = check_addr & PUD_MASK;
++		unsigned long a_end = a_start + PUD_SIZE;
++
++		/*
++		 * If sharing is possible, adjust start/end if necessary.
++		 *
++		 * Note that this is the same check used in vma_shareable.  If
++		 * you change one, consider changing both.
++		 */
++		if (vma->vm_start <= a_start && a_end <= vma->vm_end) {
++			if (a_start < *start)
++				*start = a_start;
++			if (a_end > *end)
++				*end = a_end;
++
++			ret = true;
++		}
++	}
++
++	return ret;
++}
++
+ /*
+  * Search for a shareable pmd page for hugetlb. In any case calls pmd_alloc()
+  * and returns the corresponding pte. While this is not necessary for the
+@@ -4659,6 +4699,12 @@ int huge_pmd_unshare(struct mm_struct *mm, unsigned long *addr, pte_t *ptep)
+ {
+ 	return 0;
+ }
++
++bool huge_pmd_sharing_possible(struct vm_area_struct *vma,
++				unsigned long *start, unsigned long *end)
++{
++	return false;
++}
+ #define want_pmd_share()	(0)
+ #endif /* CONFIG_ARCH_WANT_HUGE_PMD_SHARE */
+ 
+diff --git a/mm/rmap.c b/mm/rmap.c
+index eb477809a5c0..8cf853a4b093 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1362,11 +1362,21 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+ 	}
+ 
+ 	/*
+-	 * We have to assume the worse case ie pmd for invalidation. Note that
+-	 * the page can not be free in this function as call of try_to_unmap()
+-	 * must hold a reference on the page.
++	 * For THP, we have to assume the worse case ie pmd for invalidation.
++	 * For hugetlb, it could be much worse if we need to do pud
++	 * invalidation in the case of pmd sharing.
++	 *
++	 * Note that the page can not be free in this function as call of
++	 * try_to_unmap() must hold a reference on the page.
+ 	 */
+ 	end = min(vma->vm_end, start + (PAGE_SIZE << compound_order(page)));
++	if (PageHuge(page)) {
++		/*
++		 * If sharing is possible, start and end will be adjusted
++		 * accordingly.
++		 */
++		(void)huge_pmd_sharing_possible(vma, &start, &end);
++	}
+ 	mmu_notifier_invalidate_range_start(vma->vm_mm, start, end);
+ 
+ 	while (page_vma_mapped_walk(&pvmw)) {
+@@ -1409,6 +1419,32 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+ 		subpage = page - page_to_pfn(page) + pte_pfn(*pvmw.pte);
+ 		address = pvmw.address;
+ 
++		if (PageHuge(page)) {
++			if (huge_pmd_unshare(mm, &address, pvmw.pte)) {
++				/*
++				 * huge_pmd_unshare unmapped an entire PMD
++				 * page.  There is no way of knowing exactly
++				 * which PMDs may be cached for this mm, so
++				 * we must flush them all.  start/end were
++				 * already adjusted above to cover this range.
++				 */
++				flush_cache_range(vma, start, end);
++				flush_tlb_range(vma, start, end);
++				mmu_notifier_invalidate_range(mm, start, end);
++
++				/*
++				 * The ref count of the PMD page was dropped
++				 * which is part of the way map counting
++				 * is done for shared PMDs.  Return 'true'
++				 * here.  When there is no other sharing,
++				 * huge_pmd_unshare returns false and we will
++				 * unmap the actual page and drop map count
++				 * to zero.
++				 */
++				page_vma_mapped_walk_done(&pvmw);
++				break;
++			}
++		}
+ 
+ 		if (IS_ENABLED(CONFIG_MIGRATION) &&
+ 		    (flags & TTU_MIGRATION) &&
+-- 
+2.17.1
+
