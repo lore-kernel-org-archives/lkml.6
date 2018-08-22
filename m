@@ -2,106 +2,202 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B67C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78056C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:48:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B97692148C
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:47:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AOQ8g0mF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B97692148C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 2C4102148C
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:48:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C4102148C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729449AbeHVTMZ (ORCPT
+        id S1729378AbeHVTOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 15:12:25 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:51442 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729257AbeHVTMY (ORCPT
+        Wed, 22 Aug 2018 15:14:04 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33848 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729024AbeHVTOD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 15:12:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=DtDo4cQQlYpJctQYVAg287e1LDGKHg+PXr5W1nBz53Q=; b=AOQ8g0mFgDBL61alQiOuAyiDxh
-        qqZq25A0DVaTD3yaYdSTSnEDjNmpw0WdTTRf42Yi9IMBX8j/O8lpk+AayLo6D9dDe+iH5JhnxZ493
-        n6VTifk+gF+9jwc27RckF1whb4ZVc+IeVJG8kM9iDdrgQm+ziYX/zSh/eevlYCzpJehiC0/bRWylx
-        CijMfNi6t4TBllQhy81e3Q/O3jHPowDI55bNlkEQL3vX9BOVDqW0YR/7Q5fd5r+R7Sh1HL/pIxxjl
-        9NDmWTQcaIu8MgUCci7y134gKJUW+NxpVCNo+KYqZdwHk88xq56AM1Fu6KzbbA3NBBZ8GGuwFTalr
-        ZOjj6vsg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fsVKN-0000WT-Ig; Wed, 22 Aug 2018 15:45:47 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id BD93D2024D723; Wed, 22 Aug 2018 17:45:44 +0200 (CEST)
-Message-ID: <20180822154046.772017055@infradead.org>
-User-Agent: quilt/0.65
-Date:   Wed, 22 Aug 2018 17:30:14 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     torvalds@linux-foundation.org
-Cc:     peterz@infradead.org, luto@kernel.org, x86@kernel.org,
-        bp@alien8.de, will.deacon@arm.com, riel@surriel.com,
-        jannh@google.com, ascannell@google.com, dave.hansen@intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 2/4] mm/tlb: Remove tlb_remove_table() non-concurrent condition
-References: <20180822153012.173508681@infradead.org>
+        Wed, 22 Aug 2018 15:14:03 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7MFibqc065286
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 11:48:38 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m19wcb2n9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 11:48:37 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Wed, 22 Aug 2018 16:48:34 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 22 Aug 2018 16:48:30 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MFmTS036634660
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 Aug 2018 15:48:29 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E609311C054;
+        Wed, 22 Aug 2018 18:48:28 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B76411C069;
+        Wed, 22 Aug 2018 18:48:28 +0100 (BST)
+Received: from oc7330422307.ibm.com (unknown [9.152.224.87])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 22 Aug 2018 18:48:28 +0100 (BST)
+Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
+ control domains
+To:     pmorel@linux.ibm.com, Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+Cc:     Tony Krowiak <akrowiak@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180820162317.08bd7d23.cohuck@redhat.com>
+ <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
+ <20180821172548.57a6c758.cohuck@redhat.com>
+ <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
+ <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
+ <20180822114250.59a250aa.cohuck@redhat.com>
+ <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
+ <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
+ <f84dbcc0-f627-be02-9933-3baa953adc09@linux.ibm.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Wed, 22 Aug 2018 17:48:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <f84dbcc0-f627-be02-9933-3baa953adc09@linux.ibm.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18082215-4275-0000-0000-000002ADB416
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082215-4276-0000-0000-000037B6B9C3
+Message-Id: <219b352b-d5a2-189c-e205-82e7f9ae3d64@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808220158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Will noted that only checking mm_users is incorrect; we should also
-check mm_count in order to cover CPUs that have a lazy reference to
-this mm (and could do speculative TLB operations).
+On 08/22/2018 05:34 PM, Pierre Morel wrote:
+> On 22/08/2018 17:11, Christian Borntraeger wrote:
+>>
+>>
+>> On 08/22/2018 01:03 PM, Pierre Morel wrote:
+>>>> That's interesting.
+>>>>
+>>>>> IMHO this quote is quite a half-full half-empty cup one:
+>>>>> * it mandates the set of usage domains is a subset of the set
+>>>>> of the control domains, but
+>>>>> * it speaks of independent controls, namely about the 'usage domain index'
+>>>>> and the 'control domain index list' and makes the enforcement of the rule
+>>>>> a job of the administrator (instead of codifying it in the controls).
+>>>> I'm wondering if a configuration with a usage domain that is not also a
+>>>> control domain is rejected outright? Anybody tried that? :)
+>>>
+>>> Yes, and no it is not.
+>>> We can use a queue (usage domain) to a AP card for SHA-512 or RSA without
+>>> having to define the queue as a control domain.
+>>
+>> Huh? My HMC allows to add a domain as
+>> - control only domain
+>> - control and usage domain.
+>>
+>> But I am not able to configure a usage-only domain for my LPAR. That seems to match
+>> the current code, no?
+>>
+> 
+> Yes, it may not be configurable by the HMC but if we start a guest with no control domain it is not a problem to access the hardware through the usage domain.
+> 
+> I tested this a long time ago, but tested again today to be sure on my LPAR.
+> 
+> AFAIU adding a control only domain and a control and usage domain
+> allows say:
+> control and usage domain 1
+> control only domain 2
+> 
+> Allow to send a message to domain 2 using queue 1
+> 
+> Allow also to send a domain modifying message to domain 1 using queue 1
+> 
+> control domain are domain which are controlled
 
-If removing this turns out to be a performance issue, we can
-re-instate a more complete check, but in tlb_table_flush() eliding the
-call_rcu_sched().
+So you have changed the code to not automatically make a usage domain a
+control domain in the bitfield (and you could still use it as a usage
+domain). Correct?
+I think this is probably expected. the "usage implies control" seems to 
+be a convention implemented by HMC (lpar) and z/VM but millicode offers 
+the bits to have usage-only domains. As LPAR and z/VM will always enable
+any usage-domain to also be a control domain we should do the same.
 
-Cc: stable@kernel.org
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: David Miller <davem@davemloft.net>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Fixes: 267239116987 ("mm, powerpc: move the RCU page-table freeing into generic code")
-Reported-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- mm/memory.c |    9 ---------
- 1 file changed, 9 deletions(-)
 
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -375,15 +375,6 @@ void tlb_remove_table(struct mmu_gather
- {
- 	struct mmu_table_batch **batch = &tlb->batch;
- 
--	/*
--	 * When there's less then two users of this mm there cannot be a
--	 * concurrent page-table walk.
--	 */
--	if (atomic_read(&tlb->mm->mm_users) < 2) {
--		__tlb_remove_table(table);
--		return;
--	}
--
- 	if (*batch == NULL) {
- 		*batch = (struct mmu_table_batch *)__get_free_page(GFP_NOWAIT | __GFP_NOWARN);
- 		if (*batch == NULL) {
-
+> It seems that the HMC enforce the LPARs to have access to their usage domain (AFAIU from Harald)
 
