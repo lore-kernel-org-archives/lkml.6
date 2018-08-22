@@ -2,199 +2,108 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF25C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 01:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10264C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 01:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 506D221798
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 01:39:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SGR7xr5U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 506D221798
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C8B7C217B4
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 01:40:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B7C217B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727445AbeHVFBk (ORCPT
+        id S1727552AbeHVFCt convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 01:01:40 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42180 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbeHVFBk (ORCPT
+        Wed, 22 Aug 2018 01:02:49 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:51306 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbeHVFCt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 01:01:40 -0400
-Received: by mail-pf1-f193.google.com with SMTP id l9-v6so177762pff.9
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 18:39:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=KDaatQOKL+k3GFMbTp3QYIQpMV9YAFjl8R9ciOLh/Vw=;
-        b=SGR7xr5UKuJA0K64AgxV4iQn3epG7PIwrGtdeLDPN/tCRRfliErQ+oRMrb3fbOoh1z
-         ELiPd+7iSdW1nt/fNoyG9qt4G93c7hYQbcjRvBjoEVW/GDJ98KOJa5Ex6+9zEX+ZbPvQ
-         LVFL47jJc5t0DZn/pW7tcNMkTqPZFlL+BD430NCpc0gRdTZDDWM8uMlRIVEHKO4JEsQU
-         cPz+qfMY2gMz+E7voV3C/Q0YxOcj2vwPi82Fa2fa5xScnXum8xg+6LFjgn+l+ZTS9a3S
-         BNIk66FU1mOgLKaKnXtiNa+t3vYjApoYdZfuhOuYXIGs3hh4JZk1KK5t9/rLSdIQlDDr
-         2L1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=KDaatQOKL+k3GFMbTp3QYIQpMV9YAFjl8R9ciOLh/Vw=;
-        b=j90cWIgpeiHKeNFZjbaB3R2hBV3axqvNCNbt2KuqDQ/+r1l93uACcnkHHT0zlX6+vT
-         ByQj3vqoQAdNh7oGcdPPRoWz1qZk6Lp67PsFWoH9FOS6gco0fEXZ5etD2IV2j51zl9Y4
-         1IgK1RU7Qo5EA4TIBE0XUysF195zuxeA2sa2duRuhxLPh0iqt8x5hyWPuDBF9dfwRAnH
-         ycG03gad9pz5baLfX1RJG3+dW/JIu4brPQeoYn4rnuOhUiU4d0gMDFP7JYWfFY/3EN4r
-         RJCKzD/WYSn4zeCBYBxJ5HFN0+QpLN+U6cbKiIxgXpiuteCaj8s0YpFnSV/mi0DL///E
-         2nCQ==
-X-Gm-Message-State: APzg51BogX1MJf5R9GT6hkjDT6Wyh9Xm981xaoBLLHZqpzrbzgiu0e7W
-        DMhEMqIZz0lKMGYiAqt+WrU=
-X-Google-Smtp-Source: ANB0VdbG/KyzfYZdzS6P5CgGlInzc6uBBpZhgAkeR09QmZ4mqKHFlUYXsMCJR8jMDYSghivQe/e1Tw==
-X-Received: by 2002:a62:1f11:: with SMTP id f17-v6mr5363634pff.168.1534901945000;
-        Tue, 21 Aug 2018 18:39:05 -0700 (PDT)
-Received: from [0.0.0.0] (96.45.178.72.16clouds.com. [96.45.178.72])
-        by smtp.gmail.com with ESMTPSA id q7-v6sm286349pfq.43.2018.08.21.18.38.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 Aug 2018 18:39:03 -0700 (PDT)
-Subject: Re: [RESEND PATCH v10 3/6] mm: page_alloc: reduce unnecessary binary
- search in memblock_next_valid_pfn()
+        Wed, 22 Aug 2018 01:02:49 -0400
+Received: from mailgate01.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w7M1dxko006758
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 22 Aug 2018 10:39:59 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w7M1dx8I026088;
+        Wed, 22 Aug 2018 10:39:59 +0900
+Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id w7M1bci4002501;
+        Wed, 22 Aug 2018 10:39:59 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.150] [10.38.151.150]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-2975987; Wed, 22 Aug 2018 10:37:50 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC22GP.gisp.nec.co.jp ([10.38.151.150]) with mapi id 14.03.0319.002; Wed,
+ 22 Aug 2018 10:37:49 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Philip Derrin <philip@cog.systems>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>,
-        Steve Capper <steve.capper@arm.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
+        "zy.zhengyi@alibaba-inc.com" <zy.zhengyi@alibaba-inc.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Jia He <jia.he@hxt-semitech.com>
-References: <1530867675-9018-1-git-send-email-hejianet@gmail.com>
- <1530867675-9018-4-git-send-email-hejianet@gmail.com>
- <61ca29b9-a985-cce0-03e9-d216791c802c@microsoft.com>
- <334337ca-811e-4a2e-09ff-65ebe37ef6df@gmail.com>
- <20180821140829.7d804678e9db8725f52180c2@linux-foundation.org>
-From:   Jia He <hejianet@gmail.com>
-Message-ID: <5b9ed490-9e17-70ac-6b03-7ae5c6ea7b87@gmail.com>
-Date:   Wed, 22 Aug 2018 09:38:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: Re: [PATCH v2 0/2] mm: soft-offline: fix race against page
+ allocation
+Thread-Topic: [PATCH v2 0/2] mm: soft-offline: fix race against page
+ allocation
+Thread-Index: AQHUNOlnrqT+pxWFwUe9BDyggy7ShKTKcMQA
+Date:   Wed, 22 Aug 2018 01:37:48 +0000
+Message-ID: <20180822013748.GA10343@hori1.linux.bs1.fc.nec.co.jp>
+References: <1531805552-19547-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <20180815154334.f3eecd1029a153421631413a@linux-foundation.org>
+In-Reply-To: <20180815154334.f3eecd1029a153421631413a@linux-foundation.org>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.80]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <FA40E675BD186C44B3B28B91371D0A5B@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <20180821140829.7d804678e9db8725f52180c2@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew
+On Wed, Aug 15, 2018 at 03:43:34PM -0700, Andrew Morton wrote:
+> On Tue, 17 Jul 2018 14:32:30 +0900 Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> wrote:
+> 
+> > I've updated the patchset based on feedbacks:
+> > 
+> > - updated comments (from Andrew),
+> > - moved calling set_hwpoison_free_buddy_page() from mm/migrate.c to mm/memory-failure.c,
+> >   which is necessary to check the return code of set_hwpoison_free_buddy_page(),
+> > - lkp bot reported a build error when only 1/2 is applied.
+> > 
+> >   >    mm/memory-failure.c: In function 'soft_offline_huge_page':
+> >   > >> mm/memory-failure.c:1610:8: error: implicit declaration of function
+> >   > 'set_hwpoison_free_buddy_page'; did you mean 'is_free_buddy_page'?
+> >   > [-Werror=implicit-function-declaration]
+> >   >        if (set_hwpoison_free_buddy_page(page))
+> >   >            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >   >            is_free_buddy_page
+> >   >    cc1: some warnings being treated as errors
+> > 
+> >   set_hwpoison_free_buddy_page() is defined in 2/2, so we can't use it
+> >   in 1/2. Simply doing s/set_hwpoison_free_buddy_page/!TestSetPageHWPoison/
+> >   will fix this.
+> > 
+> > v1: https://lkml.org/lkml/2018/7/12/968
+> > 
+> 
+> Quite a bit of discussion on these two, but no actual acks or
+> review-by's?
 
-On 8/22/2018 5:08 AM, Andrew Morton Wrote:
-> On Tue, 21 Aug 2018 14:14:30 +0800 Jia He <hejianet@gmail.com> wrote:
-> 
->> Hi Pasha
->>
->> On 8/17/2018 9:08 AM, Pasha Tatashin Wrote:
->>>
->>>> Signed-off-by: Jia He <jia.he@hxt-semitech.com>
->>>> ---
->>>>  mm/memblock.c | 37 +++++++++++++++++++++++++++++--------
->>>>  1 file changed, 29 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/mm/memblock.c b/mm/memblock.c
->>>> index ccad225..84f7fa7 100644
->>>> --- a/mm/memblock.c
->>>> +++ b/mm/memblock.c
->>>> @@ -1140,31 +1140,52 @@ int __init_memblock memblock_set_node(phys_addr_t base, phys_addr_t size,
->>>>  #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
->>>>  
->>>>  #ifdef CONFIG_HAVE_MEMBLOCK_PFN_VALID
->>>> +static int early_region_idx __init_memblock = -1;
->>>
->>> One comment:
->>>
->>> This should be __initdata, but even better bring it inside the function
->>> as local static variable.
->>>
->> Seems it should be __initdata_memblock instead of __initdata?
->>
-> 
-> Eh, it's 4 bytes.
-> 
-> It should however be local to the sole function which uses it.
+Really sorry for late response.
+Xishi provided feedback on previous version, but no final ack/reviewed-by.
+This fix should work on the reported issue, but rewriting soft-offlining
+without PageHWPoison flag would be the better fix (no actual patch yet.)
+I'm not sure this patch should go to mainline immediately.
 
-Sorry, I am not clear for this comment^
-early_region_idx records the *last* valid region idx in last
-memblock_next_valid_pfn. So it should be static instead of local variable?
-
-> 
-> And what's this "ulong" thing?  mm/ uses unsigned long.
-
-ok, will change it
-
--- 
-Cheers,
-Jia
-> 
-> --- a/mm/memblock.c~mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn-fix
-> +++ a/mm/memblock.c
-> @@ -1232,15 +1232,15 @@ int __init_memblock memblock_set_node(ph
->  #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
->  
->  #ifdef CONFIG_HAVE_MEMBLOCK_PFN_VALID
-> -static int early_region_idx __init_memblock = -1;
-> -ulong __init_memblock memblock_next_valid_pfn(ulong pfn)
-> +unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
->  {
->  	struct memblock_type *type = &memblock.memory;
->  	struct memblock_region *regions = type->regions;
->  	uint right = type->cnt;
->  	uint mid, left = 0;
-> -	ulong start_pfn, end_pfn, next_start_pfn;
-> +	unsigned long start_pfn, end_pfn, next_start_pfn;
->  	phys_addr_t addr = PFN_PHYS(++pfn);
-> +	static int early_region_idx __initdata_memblock = -1;
->  
->  	/* fast path, return pfn+1 if next pfn is in the same region */
->  	if (early_region_idx != -1) {
-> --- a/include/linux/mmzone.h~mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn-fix
-> +++ a/include/linux/mmzone.h
-> @@ -1269,7 +1269,7 @@ static inline int pfn_present(unsigned l
->  
->  #define early_pfn_valid(pfn)	pfn_valid(pfn)
->  #ifdef CONFIG_HAVE_MEMBLOCK_PFN_VALID
-> -extern ulong memblock_next_valid_pfn(ulong pfn);
-> +extern unsigned long memblock_next_valid_pfn(unsigned long pfn);
->  #define next_valid_pfn(pfn)	memblock_next_valid_pfn(pfn)
->  #endif
->  void sparse_init(void);
-> _
-> 
-> 
-
+Thanks,
+Naoya Horiguchi
