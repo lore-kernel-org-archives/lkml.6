@@ -2,112 +2,111 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC087C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F247C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CB4F2147C
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:32:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I3uHYz87"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB4F2147C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 13C5E214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:32:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13C5E214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729098AbeHVR5d (ORCPT
+        id S1729154AbeHVR57 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 13:57:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728718AbeHVR5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 13:57:33 -0400
-Received: from mail-wm0-f50.google.com (mail-wm0-f50.google.com [74.125.82.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9E3221528
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 14:32:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1534948344;
-        bh=r+/uy4/GSEU3ms8it4N4w5h8LKfcGyk79CJhOskoNtU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=I3uHYz87dwXCCvaEmA9LV4A3NbSr34+v1ot8CKv17uJ9P79BfmO41PrtqMnk+G0c2
-         K9OleDl4WYBrMgmGYu4O6cFsmaAVIyBtQSx0+vzlu4Wd/moPJU9Ju4h9c5Am4C5Uu7
-         rZUJMjT152WpkDZI3CGPYMUXwyQjBcHRd4nn+OfI=
-Received: by mail-wm0-f50.google.com with SMTP id c14-v6so2224975wmb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 07:32:23 -0700 (PDT)
-X-Gm-Message-State: APzg51APwwVyu4YOIAsoNd1BsxT/z9anaN3J5cFkKqpwpt/EM6wqeLMP
-        nARmu+z25YdLKL0jxWkXTq35cTuaf75Tbp4o4nAmJw==
-X-Google-Smtp-Source: ANB0VdaRl0t+3q16TSUSQw0KpBnUsp4F/6LFKXIWyWY6Jj/VvuYA31RizzJWLBp4h7+jNKUk7YAmzvrPj2nZd9wKJrA=
-X-Received: by 2002:a1c:5c93:: with SMTP id q141-v6mr2515245wmb.133.1534948342406;
- Wed, 22 Aug 2018 07:32:22 -0700 (PDT)
+        Wed, 22 Aug 2018 13:57:59 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:34883 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728207AbeHVR57 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 13:57:59 -0400
+Received: by mail-qt0-f193.google.com with SMTP id f19-v6so839460qtf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 07:32:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1SDKLNzSyj8xOwIVfYVd0QgaiIjTSnBiUTw+pmXl/wA=;
+        b=ku93J6yvcgyyGLS7pYmDbSLVouQlrrFjXUb1ZRTdAlDj45yIKGK1x8pkN/towJKI53
+         0W9a5U/6xRoY9JwXlAEf2HIq+m2WBWQ7GhNVzH6Ytxi3nRGMuyAD68Zrl4cqYzA9ujGe
+         55fAtZGqwNdeCmESPKtQZfboJvchJxacqOHq1dZ/ph2xcYzQ44AwYa/JjdeIBj6Mw8Fw
+         5eJ4TICAdkKR7Y+qh2NE5EkR4qSwA96jwP7BtmRvwjdewr2CwoJDvK7lLvhl+McKOATl
+         2HScBFH2FG7sS3C4Qjxq1WUhKumcokd9lDa09a7TOREQdZYO8vInZO1X68Mddg/mpY6I
+         magg==
+X-Gm-Message-State: AOUpUlEYQJYyeROiiWePO7rwlIWAbvCeXjy305QJ37+OI4wLoeMtuyK9
+        /F4TgojFgB93X1t8rD7ai8ThJgEjF9NaC6HhE6s=
+X-Google-Smtp-Source: AA+uWPzZo8tPyPakuINZHDuClasIZVmlk3+keWQa0Gxueo7D6RppGTyBQfxpmIu/bXtW3Q+ghcueN2LXE5OWZNOVCes=
+X-Received: by 2002:a0c:8b67:: with SMTP id d39-v6mr50550447qvc.180.1534948369919;
+ Wed, 22 Aug 2018 07:32:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180822105547.9634-1-johan@kernel.org>
-In-Reply-To: <20180822105547.9634-1-johan@kernel.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 22 Aug 2018 09:32:11 -0500
-X-Gmail-Original-Message-ID: <CABGGisx6CDoDqxTo=q=jKBAb19Xx38N6pR=XrwzBHuSDtp_Wcw@mail.gmail.com>
-Message-ID: <CABGGisx6CDoDqxTo=q=jKBAb19Xx38N6pR=XrwzBHuSDtp_Wcw@mail.gmail.com>
-Subject: Re: [PATCH 0/9] of: fix compatible-child-node lookups
-To:     Johan <johan@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ck.hu@mediatek.com, p.zabel@pengutronix.de,
-        Rob Clark <robdclark@gmail.com>, airlied@linux.ie,
-        Ulf Hansson <ulf.hansson@linaro.org>, rainyfeeling@outlook.com,
-        boris.brezillon@bootlin.com, opendmb@gmail.com,
-        Florian Fainelli <f.fainelli@gmail.com>, davem@davemloft.net,
-        peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        joabreu@synopsys.com, sameo@linux.intel.com, sre@kernel.org
+References: <20180821222416.7771-1-stefan@agner.ch> <CAK8P3a0oaMS12R4tazChMHENQduO0-Wb-gw-inKjH0oz7_5s3g@mail.gmail.com>
+In-Reply-To: <CAK8P3a0oaMS12R4tazChMHENQduO0-Wb-gw-inKjH0oz7_5s3g@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 22 Aug 2018 16:32:33 +0200
+Message-ID: <CAK8P3a03TFBi+kNccTm4WE7u9QdKfbA-Van0WpHH6VzDLtLCtw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: use choice for kernel unwinders
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 5:57 AM Johan Hovold <johan@kernel.org> wrote:
+On Wed, Aug 22, 2018 at 12:02 PM Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> Several drivers currently use of_find_compatible_node() to lookup child
-> nodes while failing to notice that the of_find_ functions search the
-> entire tree depth-first and therefore can match unrelated (non-child)
-> nodes.
-
-That is not quite right. It searches all nodes following 'from', so
-not the entire tree unless 'from' is NULL. The purpose of 'from' is to
-iterate to find all compatible nodes. But you are correct that anyone
-calling of_find_compatible_node directly with from != NULL is wrong.
-
-I'd really like to make of_find_compatible_node() function as
-searching all of the sub-tree as that should be what all the callers
-want (unless they've open coded for_each_compatible_node). Though
-maybe 2 functions to search the whole tree and just immediate children
-is best.
-
-Also, it would be good to remove the type parameter as device_type is
-deprecated (mostly). It looks like most if not all callers setting
-type could drop it and just match on compatible. It seems to just
-serve as additional validation of the DT.
-
-> The fact that these functions also drop a reference to the node they
-> start searching from (e.g. the parent node) is typically also
-> overlooked, something which can lead to use-after-free bugs (e.g. after
-> probe deferrals).
+> On Wed, Aug 22, 2018 at 12:24 AM Stefan Agner <stefan@agner.ch> wrote:
+> >
+> > While in theory multiple unwinders could be compiled in, it does
+> > not make sense in practise. Use a choice to make the unwinder
+> > selection mutually exclusive and mandatory.
+> >
+> > Already before this commit it has not been possible to deselect
+> > FRAME_POINTER. Remove the obsolete comment.
+> >
+> > Furthermore, to produce a meaningful backtrace with FRAME_POINTER
+> > enabled the kernel needs a specific function prologue:
+> >     mov    ip, sp
+> >     stmfd    sp!, {fp, ip, lr, pc}
+> >     sub    fp, ip, #4
+> >
+> > To get to the required prologue gcc uses apcs and no-sched-prolog.
+> > This compiler options are not available on clang, and clang is not
+> > able to generate the required prologue. Make the FRAME_POINTER
+> > config symbol depending on !clang.
+> >
+> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Stefan Agner <stefan@agner.ch>
 >
-> This series adds a new helper, similar to of_get_child_by_name(),
-> that can be used to lookup compatible child nodes, and uses the new
-> helper to fix child-node lookups throughout the tree.
->
-> This is related to the fixes I posted about a year ago, which addressed
-> a similar anti-pattern when looking up child nodes by name. Since it
-> took me more than a year to get all those fixes into Linus' tree (one
-> fix is still pending), and as these fixes depend on the new helper, I'm
-> suggesting that these all go in through Rob's or Greg's trees.
+> Looks ok to me. I've added it to my randconfig test environment, you
+> will hear from me within a day if I run into build regressions.
 
-I'm happy to take them or apply the dependency now and then anything
-not picked up by sub-maintainers for 4.20.
+I needed a small hunk to avoid a warning:
 
-Rob
+WARNING: unmet direct dependencies detected for FRAME_POINTER
+  Depends on [n]: DEBUG_KERNEL [=y] && (M68K || UML || SUPERH) ||
+ARCH_WANT_FRAME_POINTERS [=n]
+  Selected by [y]:
+  - LOCKDEP [=y] && DEBUG_KERNEL [=y] && LOCK_DEBUGGING_SUPPORT [=y]
+&& !MIPS && !PPC && !ARM_UNWIND [=n] && !S390 && !MICROBLAZE && !ARC
+&& !X86
+  - UNWINDER_FRAME_POINTER [=y] && <choice> && !THUMB2_KERNEL [=n] &&
+!CC_IS_CLANG [=n]
+
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 6e27419b90c0..08f914be6248 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -57,6 +57,7 @@ choice
+ config UNWINDER_FRAME_POINTER
+        bool "Frame pointer unwinder"
+        depends on !THUMB2_KERNEL && !CC_IS_CLANG
++       select ARCH_WANT_FRAME_POINTERS
+        select FRAME_POINTER
+        help
+          This option enables the frame pointer unwinder for unwinding
