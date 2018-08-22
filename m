@@ -2,159 +2,154 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E07C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:21:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE6BC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AE4820936
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:21:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVkpNC7n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AE4820936
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8391320A8B
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:22:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8391320A8B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbeHVXsD (ORCPT
+        id S1728306AbeHVXtF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 19:48:03 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45129 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbeHVXsD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 19:48:03 -0400
-Received: by mail-wr1-f65.google.com with SMTP id 20-v6so2631422wrb.12
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 13:21:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=t5uPrUDmNlK04MQOuJY0LHy/NNtg3cNiuXD4u9yAW4E=;
-        b=nVkpNC7n7/EC/CGbfRyOzF2N7hnPMcYSgfvHlUY2IsiY0QmHMskY5F71be4TL/AG/t
-         ZxrIsUs7WpuMFRpuzDUYgQAgVJW8PC/QzMsGmtF1NKQcrMpRMYB8di1RW5USF8ypqtTC
-         CYF4P86AdD42GrNMiQmLk3ekH6w8/k6H31Fkrl1nVu8Oa2B3xUzkXcvUuXQ3qGz0nUUq
-         3sTgtrnmBYnOWc3ignbAXJ8RQIxvOTdIP9RTEIMRG7dFtOOBubzBpv+9rNrMYrFVBbfu
-         5slFDLnVvX/SVmaAJsev6ziDVHwiigQvLETFgje5g9A4h1CB+rGK2vCJYo5O74zq0sEd
-         DfYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=t5uPrUDmNlK04MQOuJY0LHy/NNtg3cNiuXD4u9yAW4E=;
-        b=UT/K70DpUKfLKpN5lAxVVh+m72R7QCTvWHCLTXFgg9uTDwv1e4Xl5E+Os6NYnRAfOP
-         YvpnOl9k9f5DJcN736Y5x43LzBSm5G64a9TwKSSRlZ30TXuBQqu8TK+YgpSKOEkF6yTq
-         /qpNhmwZoChFd2mhJdxWT+f5lChnpGxpAPNUk3iqdMRfISBQ+Ob1bnM1qWqKlMr0Xtco
-         U8mJFJUl3nZ+detuG2vc9XsfLPjObnVeOBo8yh/kEEDNz8WJ/PAI1R5v6Vih+zsW76JE
-         gz3XqgIdYF33uqNKNi7gcJydAUCUf5/TktCi/r5Q6gitjc5m9axvxdFkG7L9KFXdblIy
-         Gf5w==
-X-Gm-Message-State: AOUpUlHeSJ/sIcADIBUHtJm6naxtgRbPaNEyJkF5CsL5lhexI56v4wel
-        +IWisMtKZQHYEermtSxTMWg=
-X-Google-Smtp-Source: AA+uWPzlz21juBLaO/swmQiVTGxKFvbroyXQMsKkoAa7Q9WKizjNJrI565JhgYbGjGBBGagrxEol1g==
-X-Received: by 2002:a5d:6a92:: with SMTP id s18-v6mr36672641wru.44.1534969301508;
-        Wed, 22 Aug 2018 13:21:41 -0700 (PDT)
-Received: from [192.168.1.4] (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
-        by smtp.gmail.com with ESMTPSA id n7-v6sm642138wmc.2.2018.08.22.13.21.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Aug 2018 13:21:40 -0700 (PDT)
-Subject: Re: [PATCH] ARM: spectre-v2: Try to set IBE bit for Cortex-A15 and
- Brahma-B15
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Luca Scalabrino <luca.scalabrino@arm.com>, marc.zyngier@arm.com,
-        Russell King <linux@armlinux.org.uk>,
-        open list <linux-kernel@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20180607225804.28771-1-f.fainelli@gmail.com>
- <e4db9ef9-398f-114a-b5a8-8d8de0b0f85e@gmail.com>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <3698a520-00cd-f904-a031-a7d6f22c8885@gmail.com>
-Date:   Wed, 22 Aug 2018 22:21:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <e4db9ef9-398f-114a-b5a8-8d8de0b0f85e@gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Wed, 22 Aug 2018 19:49:05 -0400
+Received: from mga09.intel.com ([134.134.136.24]:18519 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728264AbeHVXtE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 19:49:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2018 13:22:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,275,1531810800"; 
+   d="scan'208";a="257196697"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by fmsmga006.fm.intel.com with ESMTP; 22 Aug 2018 13:22:42 -0700
+Received: from fmsmsx113.amr.corp.intel.com (10.18.116.7) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 22 Aug 2018 13:22:42 -0700
+Received: from fmsmsx117.amr.corp.intel.com ([169.254.3.210]) by
+ FMSMSX113.amr.corp.intel.com ([169.254.13.40]) with mapi id 14.03.0319.002;
+ Wed, 22 Aug 2018 13:22:41 -0700
+From:   "Jiang, Dave" <dave.jiang@intel.com>
+To:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
+CC:     "Williams, Dan J" <dan.j.williams@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+Subject: [GIT PULL]: libnvdimm updates for 4.19-rc1 v2 [2/2]
+Thread-Topic: [GIT PULL]: libnvdimm updates for 4.19-rc1 v2 [2/2]
+Thread-Index: AQHUOlXg79iT+oqaL0m3FUDsgha+bg==
+Date:   Wed, 22 Aug 2018 20:22:41 +0000
+Message-ID: <e8622920d68c008edf72bcd93a8716fc59c2f55d.camel@intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [143.182.136.93]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <792C77573A39C44495FF3157E89E4539@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/11/2018 03:58 PM, Marek Vasut wrote:
-> On 06/08/2018 12:58 AM, Florian Fainelli wrote:
->> Per the ARM reference manual for the Cortex-A15, The ACTLR:
->>
->>  Is a read/write register.
->>
->>  Common to the Secure and Non-secure states.
->>
->>  Is only accessible from PL1 or higher, with access rights that depend
->>  on the mode:
->>
->>     * Read/write in Secure PL1 modes.
->>
->>     * Read-only and write-ignored in Non-secure PL1 and PL2 modes
->>       if NSACR.NS_SMP is 0.
->>
->>     * Read/write in Non-secure PL1 and PL2 modes if NSACR.NS_SMP
->>       is 1. In this case, all bits are write-ignored except for the SMP bit.
->>
->> We can attempt to set this bit from within the kernel, which helps
->> avoiding firmware side modifications to set the IBE bit when that is
->> impractical. We do this within __v7_ca15mp_setup and __v7_b15mp_setup
->> because by then we already took those labels because the processors we
->> run on do match.
->>
->> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> 
-> I believe this would help on selected R-Car Gen2 SoCs which have CA15
-> cores. Those cores are released from reset by Linux directly and jump to
-> the reset vector set up by Linux in Secure mode.
-> 
-> I was looking for a generic solution after discussing how to mitigate
-> the spectrev2 on such SoCs with Catalin on IRC and this seems to be one
-> option. There was also a suggestion that Russell is working on some sort
-> of generic solution too. Can you comment on that please ?
-
-Is there any feedback on this ?
-
->> ---
->>  arch/arm/mm/proc-v7.S | 8 +++++++-
->>  1 file changed, 7 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/mm/proc-v7.S b/arch/arm/mm/proc-v7.S
->> index 6fe52819e014..a21cf3729efa 100644
->> --- a/arch/arm/mm/proc-v7.S
->> +++ b/arch/arm/mm/proc-v7.S
->> @@ -284,10 +284,16 @@ __v7_cr8mp_setup:
->>  	b	1f
->>  __v7_ca7mp_setup:
->>  __v7_ca12mp_setup:
->> +	b	2f
->>  __v7_ca15mp_setup:
->>  __v7_b15mp_setup:
->> +#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
->> +	mrc	p15, 0, r0, c1, c0, 1
->> +	orr	r0, r0, #1			@ Enable IBE bit
->> +	mcr	p15, 0, r0, c1, c0, 1
->> +#endif
->>  __v7_ca17mp_setup:
->> -	mov	r10, #0
->> +2:	mov	r10, #0
->>  1:	adr	r0, __v7_setup_stack_ptr
->>  	ldr	r12, [r0]
->>  	add	r12, r12, r0			@ the local stack
->>
-> 
-> 
-
-
--- 
-Best regards,
-Marek Vasut
+SGkgTGludXMsDQoNClBsZWFzZSBwdWxsIHRvIHJlY2VpdmUgdGhlIGxpYm52ZGltbSBkYXgtbWVt
+b3J5LWZhaWx1cmUgc2VyaWVzIGZvciB2NC4xOS1yYzEuIEkgaGF2ZSByZW1vdmVkIHRoZQ0Kb2Zm
+ZW5kaW5nIGlsb2cyKCkgY2FsbCBhbmQgZml4ZWQgdXAgdGhlIHBhdGNoIGFjY29yZGluZ2x5Lg0K
+DQpBcyBEYW4gbWVudGlvbmVkLCB0aGUganVzdGlmaWNhdGlvbiBmb3IgcHVzaGluZyB0aGlzIHNv
+b25lciByYXRoZXIgdGhhbiBsYXRlciBpcyB0bw0Kc3RhcnQgdGhlIHBpcGVsaW5lIHRvIHRoZSBk
+aXN0cm9zIHNpbmNlIGVudGVycHJpc2UgaW4tbWVtb3J5LWRhdGFiYXNlDQpkZXZlbG9wZXJzIHJl
+cG9ydGVkIHRoaXMgZ2FwIGluIHRoZSBrZXJuZWwgbWVtb3J5IGVycm9yIGhhbmRsaW5nDQpjb21w
+YXJlZCB0byB0aGUgRFJBTSAvIHBhZ2UgY2FjaGUgY2FzZS4NCg0KSSdtIGluY2x1ZGluZyBEYW4n
+cyBvcmlnaW5hbCBjb3ZlciBmb3IgdGhlIHNlcmllcyBmb3IgY29udGV4dDoNCiINCkFzIGl0IHN0
+YW5kcywgbWVtb3J5X2ZhaWx1cmUoKSBnZXRzIHRob3JvdWdobHkgY29uZnVzZWQgYnkgZGV2X3Bh
+Z2VtYXANCmJhY2tlZCBtYXBwaW5ncy4gVGhlIHJlY292ZXJ5IGNvZGUgaGFzIHNwZWNpZmljIGVu
+YWJsaW5nIGZvciBzZXZlcmFsDQpwb3NzaWJsZSBwYWdlIHN0YXRlcyBhbmQgbmVlZHMgbmV3IGVu
+YWJsaW5nIHRvIGhhbmRsZSBwb2lzb24gaW4gZGF4DQptYXBwaW5ncy4NCg0KSW4gb3JkZXIgdG8g
+c3VwcG9ydCByZWxpYWJsZSByZXZlcnNlIG1hcHBpbmcgb2YgdXNlciBzcGFjZSBhZGRyZXNzZXM6
+DQoNCjEvIEFkZCBuZXcgbG9ja2luZyBpbiB0aGUgbWVtb3J5X2ZhaWx1cmUoKSBybWFwIHBhdGgg
+dG8gcHJldmVudCByYWNlcw0KdGhhdCB3b3VsZCB0eXBpY2FsbHkgYmUgaGFuZGxlZCBieSB0aGUg
+cGFnZSBsb2NrLg0KDQoyLyBTaW5jZSBkZXZfcGFnZW1hcCBwYWdlcyBhcmUgaGlkZGVuIGZyb20g
+dGhlIHBhZ2UgYWxsb2NhdG9yIGFuZCB0aGUNCiJjb21wb3VuZCBwYWdlIiBhY2NvdW50aW5nIG1h
+Y2hpbmVyeSwgYWRkIGEgbWVjaGFuaXNtIHRvIGRldGVybWluZSB0aGUNCnNpemUgb2YgdGhlIG1h
+cHBpbmcgdGhhdCBlbmNvbXBhc3NlcyBhIGdpdmVuIHBvaXNvbmVkIHBmbi4NCg0KMy8gR2l2ZW4g
+cG1lbSBlcnJvcnMgY2FuIGJlIHJlcGFpcmVkLCBjaGFuZ2UgdGhlIHNwZWN1bGF0aXZlbHkgYWNj
+ZXNzZWQNCnBvaXNvbiBwcm90ZWN0aW9uLCBtY2VfdW5tYXBfa3BmbigpLCB0byBiZSByZXZlcnNp
+YmxlIGFuZCBvdGhlcndpc2UNCmFsbG93IG9uZ29pbmcgYWNjZXNzIGZyb20gdGhlIGtlcm5lbC4N
+Cg0KQSBzaWRlIGVmZmVjdCBvZiB0aGlzIGVuYWJsaW5nIGlzIHRoYXQgTUFEVl9IV1BPSVNPTiBi
+ZWNvbWVzIHVzYWJsZSBmb3INCmRheCBtYXBwaW5ncywgaG93ZXZlciB0aGUgcHJpbWFyeSBtb3Rp
+dmF0aW9uIGlzIHRvIGFsbG93IHRoZSBzeXN0ZW0gdG8NCnN1cnZpdmUgdXNlcnNwYWNlIGNvbnN1
+bXB0aW9uIG9mIGhhcmR3YXJlLXBvaXNvbiB2aWEgZGF4LiBTcGVjaWZpY2FsbHkNCnRoZSBjdXJy
+ZW50IGJlaGF2aW9yIGlzOg0KDQogICAgbWNlOiBVbmNvcnJlY3RlZCBoYXJkd2FyZSBtZW1vcnkg
+ZXJyb3IgaW4gdXNlci1hY2Nlc3MgYXQgYWYzNDIxNDIwMA0KICAgIHsxfVtIYXJkd2FyZSBFcnJv
+cl06IEl0IGhhcyBiZWVuIGNvcnJlY3RlZCBieSBoL3cgYW5kIHJlcXVpcmVzIG5vIGZ1cnRoZXIg
+YWN0aW9uDQogICAgbWNlOiBbSGFyZHdhcmUgRXJyb3JdOiBNYWNoaW5lIGNoZWNrIGV2ZW50cyBs
+b2dnZWQNCiAgICB7MX1bSGFyZHdhcmUgRXJyb3JdOiBldmVudCBzZXZlcml0eTogY29ycmVjdGVk
+DQogICAgTWVtb3J5IGZhaWx1cmU6IDB4YWYzNDIxNDogcmVzZXJ2ZWQga2VybmVsIHBhZ2Ugc3Rp
+bGwgcmVmZXJlbmNlZCBieSAxIHVzZXJzDQogICAgWy4uXQ0KICAgIE1lbW9yeSBmYWlsdXJlOiAw
+eGFmMzQyMTQ6IHJlY292ZXJ5IGFjdGlvbiBmb3IgcmVzZXJ2ZWQga2VybmVsIHBhZ2U6IEZhaWxl
+ZA0KICAgIG1jZTogTWVtb3J5IGVycm9yIG5vdCByZWNvdmVyZWQNCiAgICA8cmVib290Pg0KDQou
+Li5hbmQgd2l0aCB0aGVzZSBjaGFuZ2VzOg0KDQogICAgSW5qZWN0aW5nIG1lbW9yeSBmYWlsdXJl
+IGZvciBwZm4gMHgyMGNiMDAgYXQgcHJvY2VzcyB2aXJ0dWFsIGFkZHJlc3MgMHg3Zjc2M2RkMDAw
+MDANCiAgICBNZW1vcnkgZmFpbHVyZTogMHgyMGNiMDA6IEtpbGxpbmcgZGF4LXBtZDo1NDIxIGR1
+ZSB0byBoYXJkd2FyZSBtZW1vcnkgY29ycnVwdGlvbg0KICAgIE1lbW9yeSBmYWlsdXJlOiAweDIw
+Y2IwMDogcmVjb3ZlcnkgYWN0aW9uIGZvciBkYXggcGFnZTogUmVjb3ZlcmVkDQoNCkdpdmVuIGFs
+bCB0aGUgY3Jvc3MgZGVwZW5kZW5jaWVzIEkgcHJvcG9zZSB0YWtpbmcgdGhpcyB0aHJvdWdoDQpu
+dmRpbW0uZ2l0IHdpdGggYWNrcyBmcm9tIE5hb3lhLCB4ODYvY29yZSwgeDg2L1JBUywgYW5kIG9m
+IGNvdXJzZSBkYXgNCmZvbGtzLg0KIg0KDQpJIGhvcGUgeW91IHdpbGwgY29uc2lkZXIgcHVsbGlu
+ZyB0aGUgcGF0Y2ggc2VyaWVzLiBUaGFuayB5b3UhDQoNClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBz
+aW5jZSBjb21taXQgMDIxYzkxNzkxYTVlN2U4NWM1Njc0NTJmMWJlM2U0YzJjNmNiNjA2MzoNCg0K
+ICBMaW51eCA0LjE4LXJjMyAoMjAxOC0wNy0wMSAxNjowNDo1MyAtMDcwMCkNCg0KYXJlIGF2YWls
+YWJsZSBpbiB0aGUgR2l0IHJlcG9zaXRvcnkgYXQ6DQoNCiAgZ2l0QGdpdG9saXRlLmtlcm5lbC5v
+cmc6cHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L252ZGltbS9udmRpbW0uZ2l0IHRhZ3MvbGlibnZk
+aW1tLWZvci00LjE5X2RheC1tZW1vcnktZmFpbHVyZQ0KDQpmb3IgeW91IHRvIGZldGNoIGNoYW5n
+ZXMgdXAgdG8gYzk1M2NjOTg3YWI4N2QxODBlMWQ1ZGUyZjFjMjE3YWJlMzNhYWM3NzoNCg0KICBs
+aWJudmRpbW0sIHBtZW06IFJlc3RvcmUgcGFnZSBhdHRyaWJ1dGVzIHdoZW4gY2xlYXJpbmcgZXJy
+b3JzICgyMDE4LTA4LTIwIDA5OjIyOjQ1IC0wNzAwKQ0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpsaWJudmRpbW0tZm9y
+LTQuMTlfZGF4LW1lbW9yeS1mYWlsdXJlDQoNCiogbWVtb3J5X2ZhaWx1cmUoKSBnZXRzIGNvbmZ1
+c2VkIGJ5IGRldl9wYWdlbWFwIGJhY2tlZCBtYXBwaW5ncy4gVGhlDQogIHJlY292ZXJ5IGNvZGUg
+aGFzIHNwZWNpZmljIGVuYWJsaW5nIGZvciBzZXZlcmFsIHBvc3NpYmxlIHBhZ2Ugc3RhdGVzDQog
+IHRoYXQgbmVlZHMgbmV3IGVuYWJsaW5nIHRvIGhhbmRsZSBwb2lzb24gaW4gZGF4IG1hcHBpbmdz
+LiBUZWFjaA0KICBtZW1vcnlfZmFpbHVyZSgpIGFib3V0IFpPTkVfREVWSUNFIHBhZ2VzLg0KDQot
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tDQpEYW4gV2lsbGlhbXMgKDEzKToNCiAgICAgIGRldmljZS1kYXg6IENvbnZlcnQgdG8g
+dm1mX2luc2VydF9taXhlZCBhbmQgdm1fZmF1bHRfdA0KICAgICAgZGV2aWNlLWRheDogRW5hYmxl
+IHBhZ2VfbWFwcGluZygpDQogICAgICBkZXZpY2UtZGF4OiBTZXQgcGFnZS0+aW5kZXgNCiAgICAg
+IGZpbGVzeXN0ZW0tZGF4OiBTZXQgcGFnZS0+aW5kZXgNCiAgICAgIG1tLCBtYWR2aXNlX2luamVj
+dF9lcnJvcjogRGlzYWJsZSBNQURWX1NPRlRfT0ZGTElORSBmb3IgWk9ORV9ERVZJQ0UgcGFnZXMN
+CiAgICAgIG1tLCBkZXZfcGFnZW1hcDogRG8gbm90IGNsZWFyIC0+bWFwcGluZyBvbiBmaW5hbCBw
+dXQNCiAgICAgIG1tLCBtYWR2aXNlX2luamVjdF9lcnJvcjogTGV0IG1lbW9yeV9mYWlsdXJlKCkg
+b3B0aW9uYWxseSB0YWtlIGEgcGFnZSByZWZlcmVuY2UNCiAgICAgIG1tLCBtZW1vcnlfZmFpbHVy
+ZTogQ29sbGVjdCBtYXBwaW5nIHNpemUgaW4gY29sbGVjdF9wcm9jcygpDQogICAgICBmaWxlc3lz
+dGVtLWRheDogSW50cm9kdWNlIGRheF9sb2NrX21hcHBpbmdfZW50cnkoKQ0KICAgICAgbW0sIG1l
+bW9yeV9mYWlsdXJlOiBUZWFjaCBtZW1vcnlfZmFpbHVyZSgpIGFib3V0IGRldl9wYWdlbWFwIHBh
+Z2VzDQogICAgICB4ODYvbW0vcGF0OiBQcmVwYXJlIHtyZXNlcnZlLCBmcmVlfV9tZW10eXBlKCkg
+Zm9yICJkZWNveSIgYWRkcmVzc2VzDQogICAgICB4ODYvbWVtb3J5X2ZhaWx1cmU6IEludHJvZHVj
+ZSB7c2V0LCBjbGVhcn1fbWNlX25vc3BlYygpDQogICAgICBsaWJudmRpbW0sIHBtZW06IFJlc3Rv
+cmUgcGFnZSBhdHRyaWJ1dGVzIHdoZW4gY2xlYXJpbmcgZXJyb3JzDQoNCiBhcmNoL3g4Ni9pbmNs
+dWRlL2FzbS9zZXRfbWVtb3J5LmggICAgICAgICB8ICA0MiArKysrKysNCiBhcmNoL3g4Ni9rZXJu
+ZWwvY3B1L21jaGVjay9tY2UtaW50ZXJuYWwuaCB8ICAxNSAtLS0NCiBhcmNoL3g4Ni9rZXJuZWwv
+Y3B1L21jaGVjay9tY2UuYyAgICAgICAgICB8ICAzOCArLS0tLS0NCiBhcmNoL3g4Ni9tbS9wYXQu
+YyAgICAgICAgICAgICAgICAgICAgICAgICB8ICAxNiArKysNCiBkcml2ZXJzL2RheC9kZXZpY2Uu
+YyAgICAgICAgICAgICAgICAgICAgICB8ICA3NSArKysrKysrLS0tLQ0KIGRyaXZlcnMvbnZkaW1t
+L3BtZW0uYyAgICAgICAgICAgICAgICAgICAgIHwgIDI2ICsrKysNCiBkcml2ZXJzL252ZGltbS9w
+bWVtLmggICAgICAgICAgICAgICAgICAgICB8ICAxMyArKw0KIGZzL2RheC5jICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIHwgMTI1ICsrKysrKysrKysrKysrKystLQ0KIGluY2x1ZGUv
+bGludXgvZGF4LmggICAgICAgICAgICAgICAgICAgICAgIHwgIDEzICsrDQogaW5jbHVkZS9saW51
+eC9odWdlX21tLmggICAgICAgICAgICAgICAgICAgfCAgIDUgKy0NCiBpbmNsdWRlL2xpbnV4L21t
+LmggICAgICAgICAgICAgICAgICAgICAgICB8ICAgMSArDQogaW5jbHVkZS9saW51eC9zZXRfbWVt
+b3J5LmggICAgICAgICAgICAgICAgfCAgMTQgKysNCiBrZXJuZWwvbWVtcmVtYXAuYyAgICAgICAg
+ICAgICAgICAgICAgICAgICB8ICAgMSAtDQogbW0vaG1tLmMgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgfCAgIDIgKw0KIG1tL2h1Z2VfbWVtb3J5LmMgICAgICAgICAgICAgICAgICAg
+ICAgICAgIHwgICA0ICstDQogbW0vbWFkdmlzZS5jICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgfCAgMTYgKystDQogbW0vbWVtb3J5LWZhaWx1cmUuYyAgICAgICAgICAgICAgICAgICAgICAg
+fCAyMTAgKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tDQogMTcgZmlsZXMgY2hhbmdlZCwg
+NDgxIGluc2VydGlvbnMoKyksIDEzNSBkZWxldGlvbnMoLSkNCg==
