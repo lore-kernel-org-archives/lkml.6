@@ -6,61 +6,61 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B81C04AB9
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 616AEC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4139F214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:00:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EC03214DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:00:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="LkAqiOCM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4139F214C3
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="O9T76Xx5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EC03214DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728961AbeHVOYo (ORCPT
+        id S1728923AbeHVOYo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 22 Aug 2018 10:24:44 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43754 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728603AbeHVOYn (ORCPT
+Received: from mail-lj1-f169.google.com ([209.85.208.169]:37824 "EHLO
+        mail-lj1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728602AbeHVOYo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 10:24:43 -0400
-Received: by mail-lj1-f196.google.com with SMTP id m84-v6so1089675lje.10
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 04:00:17 -0700 (PDT)
+        Wed, 22 Aug 2018 10:24:44 -0400
+Received: by mail-lj1-f169.google.com with SMTP id v9-v6so1109609ljk.4
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 04:00:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=paRhIBVvA98M1YaFRDxC/cTAcsVACbmzPnLIVkrTfM4=;
-        b=LkAqiOCM8aejFFzeAx6ieICxHf2PC+ZjflLE5Ypz58L6u372iikvG1VGjC3xlb2oqL
-         elce+TGMO/LtzCVXkc0wzS3RPqJJyjlfX/NTaxwWoXUt7EHqi40Fk9b/zKxqTGSiEOcD
-         6UmVQWuki/l8ndnI3qDYs018pbbqa6PDTmsLI=
+        bh=rwAmXHn+OcU5IqUJoOuP/J1m7ew5O3BBQGtvvhwIDFE=;
+        b=O9T76Xx5DKbhQU4v0kO3AfC656Ia+Odl9DOSdXw3WTvhsaMt3buGyTcwXe28MNUJ25
+         xIBGxy3cbup/bJD4/lRTCEas+m4E85DYPDyJoP4J6OQFFS/pgnQPVDFXoUIXVPUEzN1x
+         PF06gZNGlA+/p3DHs+VRiWop0+tTiAxJ/vZZc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=paRhIBVvA98M1YaFRDxC/cTAcsVACbmzPnLIVkrTfM4=;
-        b=iGxwlivqLnf3AV/XDbeqaBYWYRRKm3fQanzGOcwUx2G1tEOb2OOgysCsvoCv/Xpb6c
-         rSjSXCkU0XLLaJX6N8WjADOZfuyZxsMFwZpReedrEjvPN6qCDmoR99Y+8FlomnzYQEKs
-         +jSXVKQbeSKiNcRtPY3J4ulf0wAWRQS6agfhITNttuz3B/gSstsCc9BVEXKr/bqXGzVz
-         /ASW52smtVvR2nS+nsyCaBvvxfVj2PHbVm2+O80VTGdkVObAd8VhpMUk9dcKm29nkgU3
-         T0v1z255BWNP2YgmFD5sSI1CXUZ67wuRyyJgoNNC/C243UUXWAiH8lOr6VSADhADCUbo
-         yz7w==
-X-Gm-Message-State: AOUpUlHaadTRdEpxhuoK7epzLwZW43D1TJtZkZ1fL7F23MsGAIWbMlzG
-        lXBP+dtWl7WKPLt+w1kJCrynMw==
-X-Google-Smtp-Source: AA+uWPxPHIC3YhD7yY3VZPherXzSXYr4Nl8JafCDnwNPwSywfhMscjTyjYAemlM9K0E4uBlMFYx64Q==
-X-Received: by 2002:a2e:b007:: with SMTP id y7-v6mr17679017ljk.22.1534935616799;
-        Wed, 22 Aug 2018 04:00:16 -0700 (PDT)
+        bh=rwAmXHn+OcU5IqUJoOuP/J1m7ew5O3BBQGtvvhwIDFE=;
+        b=hYoRHrj++dfGd0iWqBrdhzc/nftgs8tMtnd566X98T2C/JVj5FdhTT6dVBR3kyPZ5t
+         5AcYqJQBXc0It5ZEm7U3L28xMZL1B7k7Au3n+SJCg4hT022lJYw/zU/kudbC9sX751BH
+         OEqHv0IaGnFuB/TgOXghjUSYArvNIjuNn4gO1DdEQfBkj4LKvIIk9KzFIjGWNRDuu0ic
+         uQpyThKSBDwz7DxingFU34CfacoByyI0k/MF0UETEg2bZTrozwWdCsuqNWiJHWCGvaXt
+         DRQMpu0lGStOYmzIVP6JgFfSkCymyx+Oo8CBvX7fHU8gbMAbt1s/4QYSQ37iAf7AEjYu
+         zO8g==
+X-Gm-Message-State: APzg51Dyk3NOi3hknyCs5kun9yt81/YA5eXM/WLfcoib0UZ4GPgQNMoJ
+        GsHjTQVgVqrApSaiwnYKUsy2aw==
+X-Google-Smtp-Source: ANB0VdZCLRaFfPPkK9S9rv7fGuEgFkf+UTa6zOVfbRf8pV62GdJvWWlWk38twY5pQud9GmsWSdhSOg==
+X-Received: by 2002:a2e:8652:: with SMTP id i18-v6mr1848976ljj.43.1534935617742;
+        Wed, 22 Aug 2018 04:00:17 -0700 (PDT)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id y5-v6sm234273ljj.75.2018.08.22.04.00.15
+        by smtp.gmail.com with ESMTPSA id y5-v6sm234273ljj.75.2018.08.22.04.00.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 22 Aug 2018 04:00:16 -0700 (PDT)
+        Wed, 22 Aug 2018 04:00:17 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH 3/4] lib/, include/: avoid const-laundering warnings
-Date:   Wed, 22 Aug 2018 13:00:08 +0200
-Message-Id: <20180822110009.17583-3-linux@rasmusvillemoes.dk>
+Subject: [PATCH 4/4] kernel/, init/: avoid const-laundering warnings
+Date:   Wed, 22 Aug 2018 13:00:09 +0200
+Message-Id: <20180822110009.17583-4-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180822110009.17583-1-linux@rasmusvillemoes.dk>
 References: <20180822110009.17583-1-linux@rasmusvillemoes.dk>
@@ -75,50 +75,50 @@ it const.
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- include/linux/cpumask.h | 2 +-
- lib/bitmap.c            | 2 +-
- lib/parser.c            | 2 +-
+ init/do_mounts.c | 2 +-
+ kernel/module.c  | 2 +-
+ kernel/params.c  | 2 +-
  3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-index 147bdec42215..82f4e39b4dc6 100644
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -633,7 +633,7 @@ static inline int cpumask_parselist_user(const char __user *buf, int len,
-  */
- static inline int cpumask_parse(const char *buf, struct cpumask *dstp)
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index 2c71dabe5626..6eea8bfc8f82 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -122,7 +122,7 @@ static dev_t devt_from_partuuid(const char *uuid_str)
+ 	struct hd_struct *part;
+ 	int offset = 0;
+ 	bool clear_root_wait = false;
+-	char *slash;
++	const char *slash;
+ 
+ 	cmp.uuid = uuid_str;
+ 
+diff --git a/kernel/module.c b/kernel/module.c
+index b046a32520d8..8d7ead11a10f 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -4061,7 +4061,7 @@ static unsigned long mod_find_symname(struct module *mod, const char *name)
+ unsigned long module_kallsyms_lookup_name(const char *name)
  {
--	char *nl = strchr(buf, '\n');
-+	const char *nl = strchr(buf, '\n');
- 	unsigned int len = nl ? (unsigned int)(nl - buf) : strlen(buf);
+ 	struct module *mod;
+-	char *colon;
++	const char *colon;
+ 	unsigned long ret = 0;
  
- 	return bitmap_parse(buf, len, cpumask_bits(dstp), nr_cpumask_bits);
-diff --git a/lib/bitmap.c b/lib/bitmap.c
-index 730969c681cb..de47d7ebbb5f 100644
---- a/lib/bitmap.c
-+++ b/lib/bitmap.c
-@@ -620,7 +620,7 @@ static int __bitmap_parselist(const char *buf, unsigned int buflen,
+ 	/* Don't lock: we're in enough trouble already. */
+diff --git a/kernel/params.c b/kernel/params.c
+index ce89f757e6da..8744aa1e7d8f 100644
+--- a/kernel/params.c
++++ b/kernel/params.c
+@@ -816,7 +816,7 @@ static void __init param_sysfs_builtin(void)
+ 	char modname[MODULE_NAME_LEN];
  
- int bitmap_parselist(const char *bp, unsigned long *maskp, int nmaskbits)
- {
--	char *nl  = strchrnul(bp, '\n');
-+	const char *nl  = strchrnul(bp, '\n');
- 	int len = nl - bp;
+ 	for (kp = __start___param; kp < __stop___param; kp++) {
+-		char *dot;
++		const char *dot;
  
- 	return __bitmap_parselist(bp, len, 0, maskp, nmaskbits);
-diff --git a/lib/parser.c b/lib/parser.c
-index 3278958b472a..ffb09e9cc8f4 100644
---- a/lib/parser.c
-+++ b/lib/parser.c
-@@ -25,7 +25,7 @@
-  */
- static int match_one(char *s, const char *p, substring_t args[])
- {
--	char *meta;
-+	const char *meta;
- 	int argc = 0;
- 
- 	if (!p)
+ 		if (kp->perm == 0)
+ 			continue;
 -- 
 2.16.4
 
