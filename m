@@ -6,40 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0768C43615
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D93CC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7E742147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:38:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7E742147A
+	by mail.kernel.org (Postfix) with ESMTP id D58FD2147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:38:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D58FD2147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbeHVLBu (ORCPT
+        id S1728501AbeHVLBu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 22 Aug 2018 07:01:50 -0400
-Received: from mx.socionext.com ([202.248.49.38]:47191 "EHLO mx.socionext.com"
+Received: from mx.socionext.com ([202.248.49.38]:47199 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728253AbeHVLBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728282AbeHVLBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 22 Aug 2018 07:01:13 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 22 Aug 2018 16:37:31 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 4A88B180237;
-        Wed, 22 Aug 2018 16:37:31 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Wed, 22 Aug 2018 16:37:31 +0900
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 22 Aug 2018 16:37:33 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 0F9276062A;
+        Wed, 22 Aug 2018 16:37:33 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Wed, 22 Aug 2018 16:37:33 +0900
 Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id AEE4C1A0E11;
-        Wed, 22 Aug 2018 16:37:30 +0900 (JST)
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 4D9481A0E11;
+        Wed, 22 Aug 2018 16:37:32 +0900 (JST)
 From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 To:     Tejun Heo <tj@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, linux-ide@vger.kernel.org
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH 06/14] ata: ahci_imx: add second argument of ahci_platform_get_resources()
-Date:   Wed, 22 Aug 2018 16:37:02 +0900
-Message-Id: <1534923430-9692-7-git-send-email-hayashi.kunihiko@socionext.com>
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 12/14] ata: ahci_sunxi: add second argument of ahci_platform_get_resources()
+Date:   Wed, 22 Aug 2018 16:37:08 +0900
+Message-Id: <1534923430-9692-13-git-send-email-hayashi.kunihiko@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1534923430-9692-1-git-send-email-hayashi.kunihiko@socionext.com>
 References: <1534923430-9692-1-git-send-email-hayashi.kunihiko@socionext.com>
@@ -53,18 +54,19 @@ as the second argument of ahci_platform_get_resources(),
 add the argument as initial value 0.
 
 Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
 Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 ---
- drivers/ata/ahci_imx.c | 2 +-
+ drivers/ata/ahci_sunxi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ata/ahci_imx.c b/drivers/ata/ahci_imx.c
-index 6822e2f..b00799d 100644
---- a/drivers/ata/ahci_imx.c
-+++ b/drivers/ata/ahci_imx.c
-@@ -1127,7 +1127,7 @@ static int imx_ahci_probe(struct platform_device *pdev)
- 			return ret;
- 	}
+diff --git a/drivers/ata/ahci_sunxi.c b/drivers/ata/ahci_sunxi.c
+index b264374..631610b 100644
+--- a/drivers/ata/ahci_sunxi.c
++++ b/drivers/ata/ahci_sunxi.c
+@@ -181,7 +181,7 @@ static int ahci_sunxi_probe(struct platform_device *pdev)
+ 	struct ahci_host_priv *hpriv;
+ 	int rc;
  
 -	hpriv = ahci_platform_get_resources(pdev);
 +	hpriv = ahci_platform_get_resources(pdev, 0);
