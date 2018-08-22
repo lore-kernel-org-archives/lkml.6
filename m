@@ -2,88 +2,123 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 247C6C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 21:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6FFC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 21:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDD4B208D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 21:37:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BM29FNWV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDD4B208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2F240208DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 21:42:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F240208DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728018AbeHWBDw (ORCPT
+        id S1727719AbeHWBJE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 21:03:52 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:55837 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727031AbeHWBDw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 21:03:52 -0400
-Received: by mail-it0-f67.google.com with SMTP id d10-v6so4804737itj.5
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 14:37:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SU1pbdkvsKjFPY5p6qZ0sw4ZWpcCqqH/eqjf6E3PztE=;
-        b=BM29FNWVstXrkTJQQL+UqBMgIm4qb/XiY3teoGagKA5Ism1+9tO/d7Td5jTgLaQ0+7
-         5jnmAA4GcbNQHeoHmoqnk2IfjEXyOPlGXRvHtBsfKemxyhDTwFiGJsltB2PZ9/yut4Od
-         cQo3EUW4K/Ru553jXwmZ0pxjQE83eJC6V6J+c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SU1pbdkvsKjFPY5p6qZ0sw4ZWpcCqqH/eqjf6E3PztE=;
-        b=Wyg0qKgNMYnRawWShUG+c8Vwq3QsE/sL579SAr+IOnLzkaeDz+76o2mhe+pfbbzfYD
-         HWVhenimk3Gav71/WU+949t0ufAsRP3XtaWlao6fPNYDsdjFvEPGr5jMoW0m2WHan6rN
-         x/9dmRAzv/9gWMVyqPJKYMoq9LXlNQHTSk09enyFjJfPqFc18/Yy9qaKXnlsaYzdDhJP
-         z81kdXRTe7rs3UVE8QO1UzsrSxpOgBxHzzEhpnKBPz3sgY30aOTcaRiJYRAgnVRnxxlU
-         DGlZWF/4wZxOu3X7eVW7xIRrrsd+c8Je1uLMoSR0yMXSmDPu2EyVPF1WRxc7Q//DCjyy
-         rveQ==
-X-Gm-Message-State: APzg51DOup2Xw5slAtI6AUjeE6DPn+TReaDlc1Qu41BuCmLmwWaB3pYB
-        zEiLSZ4HFIf93+/Ma6Pm+P3cJuJ+hjnNTFCaqCs=
-X-Google-Smtp-Source: ANB0VdajXIId1M2r0naud88gZkgZXNYVGpWSlJGrH+6mUuD1cCsUxy7jBnMBz3BHOAuQarc1dQH5hqa+mIG3pbHY7ac=
-X-Received: by 2002:a24:3046:: with SMTP id q67-v6mr5048532itq.9.1534973836713;
- Wed, 22 Aug 2018 14:37:16 -0700 (PDT)
+        Wed, 22 Aug 2018 21:09:04 -0400
+Received: from mga14.intel.com ([192.55.52.115]:64736 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727007AbeHWBJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 21:09:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2018 14:42:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,275,1531810800"; 
+   d="scan'208";a="64453971"
+Received: from jjorgill-mobl1.amr.corp.intel.com (HELO [10.254.105.144]) ([10.254.105.144])
+  by fmsmga007.fm.intel.com with ESMTP; 22 Aug 2018 14:42:27 -0700
+Subject: Re: [RFC v8 PATCH 3/5] mm: mmap: zap pages with read mmap_sem in
+ munmap
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Yang Shi <yang.shi@linux.alibaba.com>
+References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
+ <e691d054-f807-80ad-9934-a1917d8e2e77@suse.cz>
+ <3c62f605-2244-6a05-2dc4-34a3f1c56300@linux.alibaba.com>
+ <20180822211053.qg3dlzf6pok2x4yk@kshutemo-mobl1>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, mhocko@kernel.org,
+        willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
+ CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
+ 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
+ K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
+ VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
+ e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
+ ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
+ kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
+ rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
+ f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
+ mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
+ UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
+ sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
+ 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
+ cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
+ UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
+ db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
+ lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
+ kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
+ gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
+ AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
+ XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
+ e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
+ pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
+ YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
+ lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
+ M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
+ 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
+ 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
+ OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
+ ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
+ z5cecg==
+Message-ID: <45a5ff36-d53d-9ec3-f869-1b1b7a6de5cb@intel.com>
+Date:   Wed, 22 Aug 2018 14:42:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180822153012.173508681@infradead.org> <20180822154046.717610121@infradead.org>
-In-Reply-To: <20180822154046.717610121@infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 22 Aug 2018 14:37:05 -0700
-Message-ID: <CA+55aFw6bBFnV__JZnzh0ZCSTma5J2ijH8BnMtfK55dnjVp=dw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] x86/mm/tlb: Revert the recent lazy TLB patches
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Rik van Riel <riel@surriel.com>,
-        Jann Horn <jannh@google.com>,
-        Adin Scannell <ascannell@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180822211053.qg3dlzf6pok2x4yk@kshutemo-mobl1>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 8:46 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> Revert [..] in order to simplify the TLB invalidate fixes for x86. We'll try again later.
+On 08/22/2018 02:10 PM, Kirill A. Shutemov wrote:
+>> For x86, mpx_notify_unmap() looks finally zap the VM_MPX vmas in bound table
+>> range with zap_page_range() and doesn't update vm flags, so it sounds ok to
+>> me since vmas have been detached, nobody can find those vmas. But, I'm not
+>> familiar with the details of mpx, maybe Kirill could help to confirm this?
+> I don't see anything obviously dependent on down_write() in
+> mpx_notify_unmap(), but Dave should know better.
 
-Rik, I assume I should take your earlier "yeah, I can try later" as an
-ack for this?
+We need mmap_sem for write in mpx_notify_unmap().
 
-I'll wait a bit more in the hopes of getting reviews/acks, but I'm
-basically chomping at the bit to just apply this series and have this
-issue behind us.
+Its job is to clean up bounds tables, but bounds tables are dynamically
+allocated and destroyed by the kernel.  When we destroy a table, we also
+destroy the VMA for the bounds table *itself*, separate from the VMA
+being unmapped.
 
-             Linus
+But, this code is very likely to go away soon.  If it's causing a
+problem for you, let me know and I'll see if I can get to removing it
+faster.
