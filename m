@@ -2,151 +2,101 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2FBC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89AD9C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:54:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32C43214C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:53:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32C43214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D54221480
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:54:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LlbCFJVD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D54221480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728685AbeHVNRy (ORCPT
+        id S1728731AbeHVNSy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 09:17:54 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33561 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728299AbeHVNRx (ORCPT
+        Wed, 22 Aug 2018 09:18:54 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35121 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728698AbeHVNSy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 09:17:53 -0400
-Received: by mail-lj1-f196.google.com with SMTP id s12-v6so988189ljj.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 02:53:42 -0700 (PDT)
+        Wed, 22 Aug 2018 09:18:54 -0400
+Received: by mail-pg1-f195.google.com with SMTP id z4-v6so704309pgv.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 02:54:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Pu6kSVUsOmoXq5Sx6cBotLUTLntQR3P5sBRANpjnOOA=;
+        b=LlbCFJVDGatuPiuszKGg6iC0IGGlsIRtBwtE/9N0zKQyAcqlcQnpXPIMYaNo5fNTk0
+         hvmAPZ0EcnG2u/ca1rpQn+6WamaUI4NLYzGgjCT4r7V4uS1r9cMETpeJf80EYv9kg/Jx
+         Wh2DFf6ENUXc7PQ6Sxm0LFppPqfNILKdcXtcHPu9bZMKuc9fxL2bIdYm9RnfdegKmTb5
+         08IfzG0882OYfwR7SGMvIQ/dcrb+ky1Q1d+GJTL/PiqCNBLCmS1jbyvIapKIGuVCpISX
+         jcjJf9nUtd9AzSwtkT+enqjqfWXELjZ44gllhPA7QJI01QxhvwU4LC9vJLrUP3nN2D2v
+         VvuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=rCCopusBEhR7W2GcEMhLDPHTAwNTe7aLrwbnxmk0XgA=;
-        b=WlQW55NTuFKACttRRo+jLCVUg9f2S0gvKJyu3Hc6VFDZ4FGDMleSTRQ/TKtnh7DrFp
-         j0agezh6YNi8mou1EPwV/4n3e8FAPLzKMixue4LWqS1JY+w+ElaoSVlvfysSBb09o6q1
-         PVQODZ15Ed6foTn8WZaBes+lB+hqwK7caUGVEci2dDm24TK6e9xr0yMTYHtiGdgsTfGg
-         4ssRJIR6QyxbFri75HQ2vjsznGefEM9cJFMFdPQw3y8hSb1s5M3OVZwPpcIRqRE+hafZ
-         MrDr+9957zMCCn3Iykz5SpEzr4MlQbpxbjfpNdcMmOv7ZnZIr+kq5Pb/oQkaw+FYtDp+
-         ukTw==
-X-Gm-Message-State: AOUpUlF5H9vPWTWE06NvwlggM5ZMInxRjXfdtsdNLm0CfO+j9wG14sfq
-        yqeP5mciDh6UnT5U1egRJHuSqado
-X-Google-Smtp-Source: AA+uWPwIXxXSyHsM4mwsMatfgD3jkS5r11/CQakyUzUySy8WA2ig95PyVHNWdzzfz/PX21pbfdp3DA==
-X-Received: by 2002:a2e:9e55:: with SMTP id g21-v6mr21447144ljk.116.1534931621684;
-        Wed, 22 Aug 2018 02:53:41 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id y131-v6sm233521lfc.26.2018.08.22.02.53.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 22 Aug 2018 02:53:41 -0700 (PDT)
-Date:   Wed, 22 Aug 2018 12:53:27 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com
-Cc:     mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com,
-        matti.vaittinen@fi.rohmeurope.com, linux-kernel@vger.kernel.org
-Subject: [PATCH] regulator: regmap helpers - support overlapping linear ranges
-Message-ID: <20180822095327.GA21659@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Pu6kSVUsOmoXq5Sx6cBotLUTLntQR3P5sBRANpjnOOA=;
+        b=DDCPRpiafcFsSIRWfJvYwncueKCUNjcirhU9pG+YuaTxCEmiWsXq2TW8Mqs6vF/wIv
+         uRcERz8WO4RcVFsViDDesV9L7iJtKhFi0YiYFnMl4G1Usno+OzP/riFOlWEbDxA/yWQD
+         1Fnh8e6RaZhjL61xDfw1s/iTY1U2ToFChjbQoChuh6ZdTSZ69amtQ/lQnVzhA9o5lBcK
+         nmIucDfKQGOywnMSCNOHeuZ5UbnmazNSQC/oEcia4JHBKjQ7T4Fs8+dAcSeb0L9/6Jzc
+         pHv0aCgTPTrAhsYCeh51MyDoGQsVzyPPHXaFEGWYpbsZWlndcxvCp9FPR0LQP6Oo+57p
+         FGPw==
+X-Gm-Message-State: AOUpUlF2Q0IUO1niNwMq1Oc5hy4BnWdG8K/ENR3X5lCownKCEgKyJPOm
+        v8U0Atr88Sp2fiFo5uVx0gg=
+X-Google-Smtp-Source: AA+uWPzlYrIENVQCwdqIRgvcGTVVpclgdHy+zWZgptraQpaJELXWfh6RHdY1n0/qtMU7IdNDYk8RqQ==
+X-Received: by 2002:a63:1a61:: with SMTP id a33-v6mr10372803pgm.9.1534931682890;
+        Wed, 22 Aug 2018 02:54:42 -0700 (PDT)
+Received: from toy.corp.qihoo.net ([104.192.108.9])
+        by smtp.gmail.com with ESMTPSA id z20-v6sm3126105pfd.99.2018.08.22.02.54.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 Aug 2018 02:54:42 -0700 (PDT)
+From:   Jun Yao <yaojun8558363@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v4 0/6] arm64/mm: Move swapper_pg_dir to rodata
+Date:   Wed, 22 Aug 2018 17:54:26 +0800
+Message-Id: <20180822095432.12125-1-yaojun8558363@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't give up voltage mapping if first range with suitable min/max uV
-does not provide the wanted voltage.
+The set_init_mm_pgd() is reimplemented using assembly in order to
+avoid being instrumented by kasan.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
+Test following configs with CONFIG_RANDOMIZE_BASE/UNMAP_KERNEL_AT_EL0/
+CONFIG_ARM64_SW_TTBR0_PAN/CONFIG_KASAN_OUTLINE enabled on qemu:
 
-We may have HW which handles regulator voltage setting like:
-LDO5 voltage reg:
-bit [3] voltage range selection
-bit [2:0] voltage selection where:
+	1. CONFIG_ARM64_4K_PAGES/CONFIG_ARM64_VA_BITS_48
+	2. CONFIG_ARM64_4K_PAGES/CONFIG_ARM64_VA_BITS_39
+	3. CONFIG_ARM64_64K_PAGES/CONFIG_ARM64_VA_BITS_48
+	4. CONFIG_ARM64_64K_PAGES/CONFIG_ARM64_VA_BITS_42
 
-If D[3]=0,
+Jun Yao (6):
+  arm64/mm: Introduce the init_pg_dir.
+  arm64/mm: Pass ttbr1 as a parameter to __enable_mmu().
+  arm64/mm: Create the initial page table in the init_pg_dir.
+  arm64/mm: Create the final page table directly in swapper_pg_dir.
+  arm64/mm: Populate the swapper_pg_dir by fixmap.
+  arm64/mm: Move {idmap_pg_dir .. swapper_pg_dir} to rodata section.
 
-000 = 0.7V
-001 = 0.8V
-010 = 0.9V
-011 = 1.0V
-100 = 1.1V
-101 = 1.2V
-110 = 1.3V
-111 = 1.4V
+ arch/arm64/include/asm/assembler.h | 29 +++++++++++++
+ arch/arm64/include/asm/pgtable.h   | 66 ++++++++++++++++++++++++++----
+ arch/arm64/kernel/head.S           | 48 ++++++++++++++--------
+ arch/arm64/kernel/sleep.S          |  1 +
+ arch/arm64/kernel/vmlinux.lds.S    | 47 ++++++++++++++-------
+ arch/arm64/mm/mmu.c                | 45 ++++++++------------
+ 6 files changed, 168 insertions(+), 68 deletions(-)
 
-If D[3]=1,
-
-000 = 0.675V
-001 = 0.775V
-010 = 0.875V
-011 = 0.975V
-100 = 1.075V
-101 = 1.175V
-110 = 1.275V
-111 = 1.375V
-
-which can be described as:
-
-REGULATOR_LINEAR_VOLTAGE(700000, 0x0, 0x7, 100000)
-REGULATOR_LINEAR_VOLTAGE(675000, 0x8, 0xF, 100000)
-
-If consumer wants to use exactly 775000 uV current implementation of
-regulator_map_voltage_linear_range will pick up first range (as 775000
-is between min uV and max uV for this range) and fail because first
-range is not supporting this voltage. This change makes
-regulator_map_voltage_linear_range to continue checking rest of the
-ranges if they support requested voltage before failing out.
-
-Unfortunately this approach only works if 'range selection bit' follows
-immediately after voltage selection bits - which is not case for
-ROHM BD71837/BD71847 PMICs. Hence I will soon submit patch with helpers
-supporting 'pickable range' register - which would solve also this
-issue. Yet, the 'pickable range' solution is not as elegant as current
-linear range solution is (in my opinion) - hence I suggest this addition
-for cases where we have contagious vsel mask but overlapping linear
-ranges.
-
- drivers/regulator/helpers.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/regulator/helpers.c b/drivers/regulator/helpers.c
-index 2ae7c3ac5940..ef09021dc46e 100644
---- a/drivers/regulator/helpers.c
-+++ b/drivers/regulator/helpers.c
-@@ -321,17 +321,18 @@ int regulator_map_voltage_linear_range(struct regulator_dev *rdev,
- 
- 		ret += range->min_sel;
- 
--		break;
-+		/*
-+		 * Map back into a voltage to verify we're still in bounds.
-+		 * If we are not, then continue checking rest of the ranges.
-+		 */
-+		voltage = rdev->desc->ops->list_voltage(rdev, ret);
-+		if (voltage >= min_uV && voltage <= max_uV)
-+			break;
- 	}
- 
- 	if (i == rdev->desc->n_linear_ranges)
- 		return -EINVAL;
- 
--	/* Map back into a voltage to verify we're still in bounds */
--	voltage = rdev->desc->ops->list_voltage(rdev, ret);
--	if (voltage < min_uV || voltage > max_uV)
--		return -EINVAL;
--
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(regulator_map_voltage_linear_range);
 -- 
-2.14.3
+2.17.1
 
