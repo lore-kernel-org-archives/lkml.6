@@ -2,153 +2,97 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03738C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75389C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A380620989
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:15:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A380620989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2AD0D20BF2
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:16:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="GVXHK++8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AD0D20BF2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbeHVUlh (ORCPT
+        id S1727511AbeHVUmb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 16:41:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35134 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726876AbeHVUlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 16:41:37 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 45108804BAAC;
-        Wed, 22 Aug 2018 17:15:52 +0000 (UTC)
-Received: from [10.36.116.89] (ovpn-116-89.ams2.redhat.com [10.36.116.89])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 945D92166BA1;
-        Wed, 22 Aug 2018 17:15:50 +0000 (UTC)
-Subject: Re: [PATCH v2 5/5] KVM: s390: vsie: Do the CRYCB validation first
-To:     Pierre Morel <pmorel@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-References: <1534956717-14087-1-git-send-email-pmorel@linux.ibm.com>
- <1534956717-14087-6-git-send-email-pmorel@linux.ibm.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <e985a036-1b19-0feb-e50c-d55dec3dc9e7@redhat.com>
-Date:   Wed, 22 Aug 2018 19:15:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1534956717-14087-6-git-send-email-pmorel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 22 Aug 2018 17:15:52 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 22 Aug 2018 17:15:52 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+        Wed, 22 Aug 2018 16:42:31 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41435 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726876AbeHVUmb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 16:42:31 -0400
+Received: by mail-pl0-f67.google.com with SMTP id p4-v6so1142833pll.8
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 10:16:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IIMRiRNGcYzGJ0z2cvH801dtNiQaUXGpNk/Zy5WsLfE=;
+        b=GVXHK++8FWACBTT3xakiZ9OHEu2KNzDJ8JWy0VdmCMNKFenXPYd9GKirZBEZGl+1np
+         A0GLC4LKe3ZBcysDPYvtThQHtLdZOKcGD2UKbVh2763XSNbVl1HRuvJ2HMVLA4l377fA
+         ZCvDjRp9ZJ1tKNOjJMS0PsMYDLGqoKRzHlybNqyZ2od8MTYLKRkF7j8ZDRGaaUjUPDP9
+         XPZ9W0qrF19CE8u21cO2gx4Gx244BQXXGZG/phiWxn52t01lUZTr2ut8cH0aNmNaGcK/
+         /HNZj12c2cDuLH2GspxbykVyvIKvr6jxKlgVDWqGGO6iB3B+hOE5mQb1x/uaSj/zAcZr
+         St6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=IIMRiRNGcYzGJ0z2cvH801dtNiQaUXGpNk/Zy5WsLfE=;
+        b=PtJIvCCmZT6fQ9Q1VvbGCRwBP5upGBbBQYpW+vsZNcRj6/ez1Z/PKv4oJ6ADJWQOZT
+         fKIbpcL9/4jRAwJkin06YMRfBolloNjx0R4fPH9L+TsMDLMZs5UhCCSFc0ORRmSZaIb1
+         qOdHDm3vHYBwamxeUSXJhpAXSmQ2maTZuO/ZbjlXXT+zjW5hD/0Rey5vAdUY4q+mqCWQ
+         YXUeKtyAcPuMvxi9BMikVjuE+JwlYsKdE0phaxp1CvRDTutc9DP9xH98cswUm7N4/lNy
+         iy+A222mEIgvvR9YKU05Bok6UCV+jSr0XFAWFMVnSfKdmHLS6eC/7q1AFwxhavplCHs+
+         pxBg==
+X-Gm-Message-State: AOUpUlEjXhnwlpKD1kfz5dkf8ojXjL5xUcP5k4YmeFzkt5OiG76QhRDy
+        EZfdA6KbBVbCF8aC6OHyTv4ybA==
+X-Google-Smtp-Source: AA+uWPwhgx1WAXlgvufmDAXcmpPO/MeVkt10W0TeUsmJFlw40u1CfvaSNuhx8kZkEf1OK15VTI9e/A==
+X-Received: by 2002:a17:902:b193:: with SMTP id s19-v6mr19267834plr.217.1534958207179;
+        Wed, 22 Aug 2018 10:16:47 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id n4-v6sm2798036pgp.80.2018.08.22.10.16.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 Aug 2018 10:16:46 -0700 (PDT)
+Date:   Wed, 22 Aug 2018 10:16:46 -0700 (PDT)
+X-Google-Original-Date: Wed, 22 Aug 2018 10:09:59 PDT (-0700)
+Subject:     Re: [RFC PATCH 3/5] RISC-V: Add cpu_operatios structure
+In-Reply-To: <20180822060353.GA27106@infradead.org>
+CC:     anup@brainfault.org, Christoph Hellwig <hch@infradead.org>,
+        mark.rutland@arm.com, Damien.LeMoal@wdc.com,
+        linux-kernel@vger.kernel.org, atish.patra@wdc.com,
+        linux-riscv@lists.infradead.org, tglx@linutronix.de
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Message-ID: <mhng-fdb283aa-89d9-4de9-95f7-7886ed854df1@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22.08.2018 18:51, Pierre Morel wrote:
-> When entering the SIE the CRYCB validation better
-> be done independently of the instruction's
-> availability.
-> 
-> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> ---
->  arch/s390/kvm/vsie.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
-> index 7ee4329..fca25aa 100644
-> --- a/arch/s390/kvm/vsie.c
-> +++ b/arch/s390/kvm/vsie.c
-> @@ -164,17 +164,18 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->  	/* format-1 is supported with message-security-assist extension 3 */
->  	if (!test_kvm_facility(vcpu->kvm, 76))
->  		return 0;
-> -	/* we may only allow it if enabled for guest 2 */
-> -	ecb3_flags = scb_o->ecb3 & vcpu->arch.sie_block->ecb3 &
-> -		     (ECB3_AES | ECB3_DEA);
-> -	if (!ecb3_flags)
-> -		return 0;
->  
->  	if ((crycb_addr & PAGE_MASK) != ((crycb_addr + 128) & PAGE_MASK))
->  		return set_validity_icpt(scb_s, 0x003CU);
->  	if (!crycb_addr)
->  		return set_validity_icpt(scb_s, 0x0039U);
->  
-> +	/* we may only allow it if enabled for guest 2 */
-> +	ecb3_flags = scb_o->ecb3 & vcpu->arch.sie_block->ecb3 &
-> +		     (ECB3_AES | ECB3_DEA);
-> +	if (!ecb3_flags)
-> +		return 0;
-> +
->  	/* copy only the wrapping keys */
->  	if (read_guest_real(vcpu, crycb_addr + 72,
->  			    vsie_page->crycb.dea_wrapping_key_mask, 56))
-> 
+On Tue, 21 Aug 2018 23:03:53 PDT (-0700), Christoph Hellwig wrote:
+> On Tue, Aug 21, 2018 at 10:34:38PM +0530, Anup Patel wrote:
+>> The cpu_operations is certainly required because SOC vendors will add
+>> vendor-specific mechanism to selectively bringing-up CPUs/HARTs instead
+>> of all CPUs entering Linux kernel simultaneously. In fact, we might also end-up
+>> having CPU ON/OFF operations in SBI.
+>
+> Your forgot an essential part in your analysis:  Right now we only have
+> one single way to deal with cpu on/offlining, and that is the dummy WFI
+> kind.  Once other ways show up we can build proper infrastructure, but
+> until then this is just a white elephant as we have no idea how these
+> abstractions will look like.
+>
+> And my hope is that we'll just see new SBI calls, in which case we'll
+> just need SBI and dummy version and can avoid all the indirect calls.
 
-That makes sense, especially if ECB3_AES is used but effectively turned
-off by us.
-
-What is the expected behavior if ECB3_AES | ECB3_DEA are not set by g2
-for g3?
-
--- 
-
-Thanks,
-
-David / dhildenb
+Yes, the goal here is to define one good interface via the SBI.  We've got a 
+session at Plumbers this year and one of the blocks is to sit down and talk 
+about this API, hopefully we can make some headway while there.
