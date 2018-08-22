@@ -2,156 +2,155 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B33EBC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16234C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:44:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F01E208C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:43:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="PJxQQmRD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F01E208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id CD79D208C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 16:44:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD79D208C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbeHVUJU (ORCPT
+        id S1727274AbeHVUJy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 16:09:20 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:38834 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726550AbeHVUJU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 16:09:20 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id AEBF610C057E;
-        Wed, 22 Aug 2018 09:43:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1534956223; bh=tWSRTqS8IxJ8KDae8luItOFTlUlcRRPTxeQ4XZKzbHk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=PJxQQmRD9N6Tet62HyphNmKurntZqR/cZErNhTMzBHKKdESPSpFnXSUXRCXd9geuG
-         86FBO6Qi8t2Bx6rEcHSwOfVgX8yRrJXNYc/mYNW1rISJpH+TuZ5OfCTk76RIdxcz87
-         +UDTZzgnNcPAzX4pLdJa/kGueLC89m/GVmuhWN6YCt7AVLIDM0pZB3k12yb5yLZ1Gt
-         FlwpGcpr/uXmKgrxBU2vXf/+0Uv54+v1Wfzyzt0wprjejmS/Kr5Xe7qDs7rzw/rp7o
-         +NYF2zSYtfXWaSCOP9Q5wBblHma2+/txzeO4c/D5djJ71XRqml8ZjZA5ZyWOheomb+
-         gvbBOYTXFlqXA==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id AB74C3343;
-        Wed, 22 Aug 2018 09:43:39 -0700 (PDT)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Wed, 22 Aug 2018 09:43:39 -0700
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Wed, 22 Aug 2018 18:43:37 +0200
-Received: from [10.0.2.15] (10.107.25.72) by DE02WEHTCB.internal.synopsys.com
- (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 22 Aug
- 2018 18:43:36 +0200
-Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Wolfram Sang <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
+        Wed, 22 Aug 2018 16:09:54 -0400
+Received: from muru.com ([72.249.23.125]:54480 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726550AbeHVUJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 16:09:53 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 746B18047;
+        Wed, 22 Aug 2018 16:48:02 +0000 (UTC)
+Date:   Wed, 22 Aug 2018 09:44:13 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     linux-omap@vger.kernel.org
+Cc:     Dave Gerlach <d-gerlach@ti.com>, Faiz Abbas <faiz_abbas@ti.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-CC:     Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        "Kumar Gala" <galak@codeaurora.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
- <20180719152930.3715-2-boris.brezillon@bootlin.com>
-From:   vitor <Vitor.Soares@synopsys.com>
-Message-ID: <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
-Date:   Wed, 22 Aug 2018 17:43:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
+        Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH 3/4] bus: ti-sysc: Fix module register ioremap for larger
+ offsets
+Message-ID: <20180822164413.GH7523@atomide.com>
+References: <20180808080706.100389-1-tony@atomide.com>
+ <20180808080706.100389-4-tony@atomide.com>
 MIME-Version: 1.0
-In-Reply-To: <20180719152930.3715-2-boris.brezillon@bootlin.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.107.25.72]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180808080706.100389-4-tony@atomide.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+* Tony Lindgren <tony@atomide.com> [180808 08:11]:
+>  static int sysc_ioremap(struct sysc *ddata)
+>  {
+> -	u32 size = 0;
+> -
+> -	if (ddata->offsets[SYSC_SYSSTATUS] >= 0)
+> -		size = ddata->offsets[SYSC_SYSSTATUS];
+> -	else if (ddata->offsets[SYSC_SYSCONFIG] >= 0)
+> -		size = ddata->offsets[SYSC_SYSCONFIG];
+> -	else if (ddata->offsets[SYSC_REVISION] >= 0)
+> -		size = ddata->offsets[SYSC_REVISION];
+> -	else
+> +	u32 size;
+> +
+> +	size = max3(ddata->offsets[SYSC_REVISION],
+> +		    ddata->offsets[SYSC_SYSCONFIG],
+> +		    ddata->offsets[SYSC_SYSSTATUS]);
 
+Above should use int size, not u32 size as we can have
+-ENODEV for non-existing registers. And we should also
+check the registeroffset is not beyond the module range
+as pointed out by Dan Carpenter.
 
-On 19-07-2018 16:29, Boris Brezillon wrote:
-> +int i3c_bus_register(struct i3c_bus *i3cbus)
-> +{
-> +	struct i2c_dev_desc *desc;
-> +
-> +	i3c_bus_for_each_i2cdev(i3cbus, desc) {
-> +		switch (desc->boardinfo->lvr & I3C_LVR_I2C_INDEX_MASK) {
-> +		case I3C_LVR_I2C_INDEX(0):
-> +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_FAST)
-> +				i3cbus->mode = I3C_BUS_MODE_MIXED_FAST;
-> +			break;
-> +
-> +		case I3C_LVR_I2C_INDEX(1):
-> +		case I3C_LVR_I2C_INDEX(2):
-> +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_SLOW)
-> +				i3cbus->mode = I3C_BUS_MODE_MIXED_SLOW;
-> +			break;
-> +
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	if (!i3cbus->scl_rate.i3c)
-> +		i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
-> +
-> +	if (!i3cbus->scl_rate.i2c) {
-> +		if (i3cbus->mode == I3C_BUS_MODE_MIXED_SLOW)
-> +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_SCL_RATE;
-> +		else
-> +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_PLUS_SCL_RATE;
-> +	}
-> +
-> +	/*
-> +	 * I3C/I2C frequency may have been overridden, check that user-provided
-> +	 * values are not exceeding max possible frequency.
-> +	 */
-> +	if (i3cbus->scl_rate.i3c > I3C_BUS_MAX_I3C_SCL_RATE ||
-> +	    i3cbus->scl_rate.i2c > I3C_BUS_I2C_FM_PLUS_SCL_RATE) {
-> +		return -EINVAL;
-> +	}
-> +
-> +	dev_set_name(&i3cbus->dev, "i3c-%d", i3cbus->id);
-> +
-> +	return device_add(&i3cbus->dev);
-> +}
-During the tests of the bus with i2c devices I found the i2c_dev_desc 
-objects aren't allocated before this function. This cause i3cbus->mode = 
-I3C_BUS_MODE_PURE.
+Updated patch below with these issues fixed.
 
-I want to do something for the slave and secondary master, do you 
-already have infrastructure that you can share?
+Regards,
 
+Tony
 
-Best regards,
-Vitor Soares
+8< -----------
+From tony Mon Sep 17 00:00:00 2001
+From: Tony Lindgren <tony@atomide.com>
+Date: Wed, 8 Aug 2018 01:07:05 -0700
+Subject: [PATCH] bus: ti-sysc: Fix module register ioremap for larger
+ offsets
+
+We can have the interconnect target module control registers pretty
+much anywhere within the module range. The current code attempts an
+incomplete optimization of the ioremap size but does it wrong and
+it only works for registers at the beginning of the module.
+
+Let's just use the largest control register to calculate the ioremap
+size. The ioremapped range is for most part cached anyways so there
+is no need for size optimization. Let's also update the comments
+accordingly.
+
+Fixes: 0eecc636e5a2 ("bus: ti-sysc: Add minimal TI sysc interconnect
+target driver")
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/bus/ti-sysc.c | 31 ++++++++++++++-----------------
+ 1 file changed, 14 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
+--- a/drivers/bus/ti-sysc.c
++++ b/drivers/bus/ti-sysc.c
+@@ -490,32 +490,29 @@ static int sysc_check_registers(struct sysc *ddata)
+ 
+ /**
+  * syc_ioremap - ioremap register space for the interconnect target module
+- * @ddata: deviec driver data
++ * @ddata: device driver data
+  *
+  * Note that the interconnect target module registers can be anywhere
+- * within the first child device address space. For example, SGX has
+- * them at offset 0x1fc00 in the 32MB module address space. We just
+- * what we need around the interconnect target module registers.
++ * within the interconnect target module range. For example, SGX has
++ * them at offset 0x1fc00 in the 32MB module address space. And cpsw
++ * has them at offset 0x1200 in the CPSW_WR child. Usually the
++ * the interconnect target module registers are at the beginning of
++ * the module range though.
+  */
+ static int sysc_ioremap(struct sysc *ddata)
+ {
+-	u32 size = 0;
+-
+-	if (ddata->offsets[SYSC_SYSSTATUS] >= 0)
+-		size = ddata->offsets[SYSC_SYSSTATUS];
+-	else if (ddata->offsets[SYSC_SYSCONFIG] >= 0)
+-		size = ddata->offsets[SYSC_SYSCONFIG];
+-	else if (ddata->offsets[SYSC_REVISION] >= 0)
+-		size = ddata->offsets[SYSC_REVISION];
+-	else
+-		return -EINVAL;
++	int size;
+ 
+-	size &= 0xfff00;
+-	size += SZ_256;
++	size = max3(ddata->offsets[SYSC_REVISION],
++		    ddata->offsets[SYSC_SYSCONFIG],
++		    ddata->offsets[SYSC_SYSSTATUS]);
++
++	if (size < 0 || (size + sizeof(u32)) > ddata->module_size)
++		return -EINVAL;
+ 
+ 	ddata->module_va = devm_ioremap(ddata->dev,
+ 					ddata->module_pa,
+-					size);
++					size + sizeof(u32));
+ 	if (!ddata->module_va)
+ 		return -EIO;
+ 
+-- 
+2.18.0
