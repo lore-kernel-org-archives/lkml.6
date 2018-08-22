@@ -2,82 +2,130 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB004C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3705C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F8B1208A1
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:43:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZoHifRun"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F8B1208A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 55A93208A1
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 17:48:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55A93208A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbeHVVJH (ORCPT
+        id S1727597AbeHVVN5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 17:09:07 -0400
-Received: from mail-io0-f170.google.com ([209.85.223.170]:36943 "EHLO
-        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbeHVVJH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 17:09:07 -0400
-Received: by mail-io0-f170.google.com with SMTP id v14-v6so2107304iob.4;
-        Wed, 22 Aug 2018 10:43:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NIJlMIgsUHTqF26I42Ulp3qqgTcejI7TJPSGkPwLa/8=;
-        b=ZoHifRunOrAjenTxuFVT5KFONxWcHyifjznrJA3c5utfiR23rGNjlJHD+5Fxkz2fMv
-         9mDaTusiN9b6lvS7DdEWfR3Lpi5DQhNYWJQ832m9vA3Ys1EYBFK4iv7RH/UO6DftDAEc
-         aVoKCCxy61oTzyfetZLqFe5DarT3x6ELAwqug=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NIJlMIgsUHTqF26I42Ulp3qqgTcejI7TJPSGkPwLa/8=;
-        b=WV2Dr4PEqKd80MhXPHyKuOFQP7/RrnDXZCssQ4ZTBkP0rL4posDC9l96OToGHHcmK5
-         55bSL2/Xp0eGC/2n1JCKWSHZJ73EY9411VTsMmyLsi2HAbnoSTpswhNDruhfZhFFhZrt
-         IYWtiAhvDE0DE0DY9QNS3CJrb1Pe8hG7WE8foCvqJTA62XnOGRTunYMIPQhlzHTWnWya
-         mNuUa27qww2Zpt3RqjJgIoRwuDlnqEUdKftM/OAhH+Wfb5+VIm6x64L+wku3z1IvIpSU
-         /QvBhsY0lEwgK/GTbW1Oqr099l6salpPtBMKsf6+vwPCwz+fG+EPpjbIJ51wsgJDA2Y8
-         A+GQ==
-X-Gm-Message-State: AOUpUlHzFwie9G1LfO4tss4Pc/ysiOILSIQlCaah0ZVfhbfZbiD46nXV
-        LIXHePtkB8z0Fuwz84fWTNVsqAZ8x0+XufFf5yU=
-X-Google-Smtp-Source: AA+uWPyplnXZkkNoevta6cOrR1gnq6s8Lh+VKWqc89x3Ri232jB9ct88YZg8+1DOSDlnQ99TtIim1lS5R6F6ec+Lx6w=
-X-Received: by 2002:a6b:f609:: with SMTP id n9-v6mr30988653ioh.259.1534959796448;
- Wed, 22 Aug 2018 10:43:16 -0700 (PDT)
+        Wed, 22 Aug 2018 17:13:57 -0400
+Received: from mga01.intel.com ([192.55.52.88]:19684 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727466AbeHVVN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 17:13:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2018 10:48:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,274,1531810800"; 
+   d="scan'208";a="251075591"
+Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
+  by orsmga005.jf.intel.com with ESMTP; 22 Aug 2018 10:48:04 -0700
+Received: from orsmsx160.amr.corp.intel.com (10.22.226.43) by
+ ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 22 Aug 2018 10:48:03 -0700
+Received: from orsmsx107.amr.corp.intel.com ([169.254.1.245]) by
+ ORSMSX160.amr.corp.intel.com ([169.254.13.106]) with mapi id 14.03.0319.002;
+ Wed, 22 Aug 2018 10:48:03 -0700
+From:   "Schaufler, Casey" <casey.schaufler@intel.com>
+To:     Jann Horn <jannh@google.com>
+CC:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "selinux@tycho.nsa.gov" <selinux@tycho.nsa.gov>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>
+Subject: RE: [PATCH v3 3/5] LSM: Security module checking for side-channel
+ dangers
+Thread-Topic: [PATCH v3 3/5] LSM: Security module checking for side-channel
+ dangers
+Thread-Index: AQHUOOKX5VPJ9yk/5U6pLmxaRABENqTK6xAA///w3HCAAI7tAIAAiPkQgACD7YD//5AmwA==
+Date:   Wed, 22 Aug 2018 17:48:02 +0000
+Message-ID: <99FC4B6EFCEFD44486C35F4C281DC673214407ED@ORSMSX107.amr.corp.intel.com>
+References: <20180821000444.7004-1-casey.schaufler@intel.com>
+ <20180821000444.7004-4-casey.schaufler@intel.com>
+ <CAG48ez1D-DPBP8ACA1W5=XZLNKUeVj7ZOGUG8uJ2nL1xOSR_9Q@mail.gmail.com>
+ <99FC4B6EFCEFD44486C35F4C281DC673214402D3@ORSMSX107.amr.corp.intel.com>
+ <CAG48ez3bh5cFgZ5ZY63pszTV+KX+KC4utRCm7E8en+uF5w6vKw@mail.gmail.com>
+ <99FC4B6EFCEFD44486C35F4C281DC67321440770@ORSMSX107.amr.corp.intel.com>
+ <CAG48ez3OkpcrC34LJTWAvH4ZvREW7jDVkeMBZrLQe6cRSEBheg@mail.gmail.com>
+In-Reply-To: <CAG48ez3OkpcrC34LJTWAvH4ZvREW7jDVkeMBZrLQe6cRSEBheg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTc4YjVmYWMtNjAzYS00MWU2LWE4MzMtMTY0NjFjNTMwMTY2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibHNyQzJnVUtlV2FUaTlnU1NydmxZRGJBeUVKZEMrMkFabVhMS215ank2aVQ3bUJpblJsRzBKT1BmdGFWczQ4UyJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20180813161357.GB1199@bombadil.infradead.org> <0100016562b90938-02b97bb7-eddd-412d-8162-7519a70d4103-000000@email.amazonses.com>
-In-Reply-To: <0100016562b90938-02b97bb7-eddd-412d-8162-7519a70d4103-000000@email.amazonses.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 22 Aug 2018 10:43:05 -0700
-Message-ID: <CA+55aFzN3aq1P8ykE1+XuAR9pbH7nETOyMoBi-N52Ef=WjrFLA@mail.gmail.com>
-Subject: Re: [GIT PULL] XArray for 4.19
-To:     Christoph Lameter <cl@linux.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-mm <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 10:40 AM Christopher Lameter <cl@linux.com> wrote:
->
-> Is this going in this cycle? I have a bunch of stuff on top of this to
-> enable slab object migration.
-
-No.
-
-It was based on a buggy branch that isn't getting pulled, so when I
-started looking at it, the pull request was rejected before I got much
-further.
-
-               Linus
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKYW5uIEhvcm4gW21haWx0bzpq
+YW5uaEBnb29nbGUuY29tXQ0KPiBTZW50OiBXZWRuZXNkYXksIEF1Z3VzdCAyMiwgMjAxOCAxMDow
+NCBBTQ0KPiBUbzogU2NoYXVmbGVyLCBDYXNleSA8Y2FzZXkuc2NoYXVmbGVyQGludGVsLmNvbT4N
+Cj4gQ2M6IEtlcm5lbCBIYXJkZW5pbmcgPGtlcm5lbC1oYXJkZW5pbmdAbGlzdHMub3BlbndhbGwu
+Y29tPjsga2VybmVsIGxpc3QNCj4gPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyBsaW51
+eC1zZWN1cml0eS1tb2R1bGUgPGxpbnV4LXNlY3VyaXR5LQ0KPiBtb2R1bGVAdmdlci5rZXJuZWwu
+b3JnPjsgc2VsaW51eEB0eWNoby5uc2EuZ292OyBIYW5zZW4sIERhdmUNCj4gPGRhdmUuaGFuc2Vu
+QGludGVsLmNvbT47IERvY2ssIERlbmVlbiBUIDxkZW5lZW4udC5kb2NrQGludGVsLmNvbT47DQo+
+IGtyaXN0ZW5AbGludXguaW50ZWwuY29tOyBBcmphbiB2YW4gZGUgVmVuIDxhcmphbkBsaW51eC5p
+bnRlbC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjMgMy81XSBMU006IFNlY3VyaXR5IG1v
+ZHVsZSBjaGVja2luZyBmb3Igc2lkZS1jaGFubmVsDQo+IGRhbmdlcnMNCj4gDQo+IFtTTklQXQ0K
+DQo+ID4gWWVzLCBidXQgaW4gYSBkaWZmZXJlbnQgbmFtZXNwYWNlLiBIZW5jZSB0aGUgbmFtZXNw
+YWNlIGNoZWNrLg0KPiA+DQo+ID4gV2hhdCBJIGhlYXIgeW91IHNheWluZyBpcyB0aGF0IHlvdSBk
+b24ndCB3YW50IHRoZSBjYXBhYmlsaXR5IGNoZWNrDQo+ID4gdG8gYmUgaW5kZXBlbmRlbnQgb2Yg
+dGhlIG5hbWVzcGFjZSBjaGVjay4NCj4gDQo+IFRoZSBjYXBhYmlsaXR5IGNoZWNrIGRvZXNuJ3Qg
+YWx3YXlzIHJlcXVpcmUgYSBuYW1lc3BhY2UgbWF0Y2gsIGFuZCBJDQo+IGRvbid0IGNhcmUgYWJv
+dXQgbm9uLXVzZXIgbmFtZXNwYWNlcyBoZXJlLCBidXQgSSB3b3VsZCBwcmVmZXIgaXQgaWYNCj4g
+QS0+QiB3aXRoIEEgaGF2aW5nIHNvbWUgY2FwYWJpbGl0aWVzIHJlcXVpcmVkIEEncyB1c2VyIG5h
+bWVzcGFjZSB0byBiZQ0KPiBhbmNlc3Rvci1vci1zZWxmIG9mIEIncyB1c2VyIG5hbWVzcGFjZS4g
+QnV0IGFsdGVybmF0aXZlbHk6DQoNCkxvb2tpbmcgYXQgYW5jZXN0b3IgcmVsYXRpb25zIHN0YXJ0
+cyB0byBnZXQgdXMgcHJldHR5IGNsb3NlIHRvIHRoZQ0KcG9pbnQgd2hlcmUgdGhlIGNvc3Qgb2Yg
+Y2hlY2tpbmcgd2lsbCBvdmVyd2hlbG0gdGhlIHNhdmluZ3MuIFRoaXMNCmlzIHNvbWV0aGluZyB3
+ZSBoYXZlIHRvIGJlIHZlcnkgY2FyZWZ1bCBvZi4NCg0KPiA+IFRoaXMgY29uZmxpY3RzIHdpdGgg
+dGhlDQo+ID4gc3Ryb25nIGRlc2lyZSBleHByZXNzZWQgdG8gbWUgd2hlbiBJIHN0YXJ0ZWQgdGhp
+cyB0aGF0IHRoZSBjb25maWd1cmF0aW9uDQo+ID4gc2hvdWxkIGJlIGZsZXhpYmxlLiBJIGNhbiBi
+ZWVmIHVwIHRoZSBkZXNjcmlwdGlvbiBvZiB0aGUgdmFyaW91cyBvcHRpb25zLg0KPiA+IFdvdWxk
+IHRoYXQgYWRkcmVzcyB0aGUgaXNzdWU/DQo+IA0KPiBJdCBzZWVtcyB0byBtZSB0aGF0IGl0IHdv
+dWxkIG1ha2Ugc2Vuc2UgdG8gZXhwcmVzcyB0aGlzIGFzIHNvbWV0aGluZw0KPiBsaWtlIGEgS2Nv
+bmZpZyBkZXBlbmRlbmN5Lg0KDQpJIHRob3VnaHQgYWJvdXQgdGhhdC4gSXQgY291bGQgYmUgdGhl
+IGJlc3QgY2hvaWNlLiBJIHdpbGwgaW52ZXN0aWdhdGUNCmZ1cnRoZXIuDQoNCj4gQnV0IEkgZ3Vl
+c3MgaWYgeW91IGRvY3VtZW50IHRoYXQgdGhlDQo+IGNvbWJpbmF0aW9uIG9mIENPTkZJR19VU0VS
+X05TPXksDQo+IENPTkZJR19TRUNVUklUWV9TSURFQ0hBTk5FTF9OQU1FU1BBQ0VTPW4gYW5kDQo+
+IFNFQ1VSSVRZX1NJREVDSEFOTkVMX0NBUEFCSUxJVElFUz15IGlzIG5vbnNlbnNpY2FsLCB0aGF0
+IHdvcmtzIHRvby4gSQ0KPiBqdXN0IGRvbid0IHNlZSB3aHkgeW91J2Qgd2FudCB0byBwcm92aWRl
+IHN1Y2ggYSBmb290Z3VuPw0KDQpQb2ludC4NCg0KPiBDb25maWd1cmFiaWxpdHkgaXMgbmljZSwg
+YnV0IGlmIHdlIGtub3cgdGhhdCBvbmUgb2YgdGhlIHBvc3NpYmxlDQo+IGNvbmZpZ3VyYXRpb25z
+IGRvZXNuJ3QgbWFrZSBzZW5zZSwgaXQgc2VlbXMgbGlrZSBhIGdvb2QgaWRlYSB0byBqdXN0DQo+
+IG5vdCBhbGxvdyB0aGUgc3lzdGVtIHRvIGJlIGNvbmZpZ3VyZWQgdGhhdCB3YXkuDQoNCkFub3Ro
+ZXIgcG9pbnQuDQoNCj4gWW91IHNheSB0aGF0IHlvdSB3ZXJlIGFza2VkIHRvIG1ha2UgdGhlIGNv
+bmZpZ3VyYXRpb24gZmxleGlibGUuIERpZA0KPiB3aG9ldmVyIHRvbGQgeW91IHRoYXQgYWN0dWFs
+bHkgd2FudCB0aGUgYWJpbGl0eSB0byBjb21wYXJlIHJhdw0KPiBjYXBhYmlsaXR5IHNldHMgb24g
+YSBzeXN0ZW0gd2l0aCBDT05GSUdfVVNFUl9OUz15LCBhbmQgdW5kZXJzdGFuZCB3aGF0DQo+IHNl
+bWFudGljcyB0aGF0IGhhcyAoYW5kIGRvZXNuJ3QgaGF2ZSk/IE9yIHdhcyB0aGVpciBpbnRlbnQg
+bW9yZSBhbG9uZw0KPiB0aGUgbGluZXMgb2YgIndlIHdhbnQgdG8gZmx1c2ggaWYgdGhlIG5ldyB0
+YXNrIGhhcyBoaWdoZXIgcHJpdmlsZWdlcywNCj4gY2FwYWJpbGl0eS13aXNlLCB0aGFuIHRoZSBv
+bGQgdGFzazsgYnV0IHdlIGRvbid0IGV4cGxpY2l0bHkgY2FyZSBhYm91dA0KPiBuYW1lc3BhY2Vz
+Ij8NCg0KV2l0aG91dCBnb2luZyBpbnRvIHRvbyBtdWNoIGRldGFpbCwgaXQncyBhIG1hdHRlciBv
+ZiBwZW9wbGUgd2hvDQp1bmRlcnN0YW5kIGNoaXBzIGFuZCBwZXJmb3JtYW5jZSBiZXR0ZXIgdGhh
+biB0aGV5IHVuZGVyc3RhbmQNCnNlY3VyaXR5IG9yIHRoZSB1c2VyIGV4cGVyaWVuY2UuDQoNCg==
