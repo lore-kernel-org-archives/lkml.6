@@ -2,102 +2,87 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D04DC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC92C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:08:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D00D82148E
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:05:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E4AC214DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:08:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TzSJKryf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D00D82148E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XVm80Tbv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E4AC214DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728580AbeHVM33 (ORCPT
+        id S1728574AbeHVMcd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 08:29:29 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:40534 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728152AbeHVM33 (ORCPT
+        Wed, 22 Aug 2018 08:32:33 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:48482 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728208AbeHVMcc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 08:29:29 -0400
-Received: by mail-pl0-f68.google.com with SMTP id s17-v6so604469plp.7
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 02:05:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WSPAfKTqAURuuMHBFsdjYJISio3g6efb2gzMrkEOxT0=;
-        b=TzSJKryfV1V/C6WHthb78sZgP7TWaNIwGr8w0rhSsdklTB8smayd+Afw0PirQy3Ro6
-         ojfuGPXtLvX+zlHcw0LHgeWIXUoxHXafAWffQA37jcHeiyY0LGDwnCm2XRW5begTdciJ
-         d3dygLUjc0tWyndoeyqBh4uMXZVFtZfAVilieOSFJR3xdVppAYssIfUg/BdpIPzMDXu9
-         ePWk1D1T9n2APJ8yHcGhvFph44HKzGKgRHahf9cqDDhLoIdKMU3uwhs01Cm1Bfygv6Np
-         zp9Roa9G9Jo+g5PUxagRWxO2PB4ePAZUqIdebI5ZSox3zKD9X5fyK5KH4PmdqvWtiKlB
-         JsUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WSPAfKTqAURuuMHBFsdjYJISio3g6efb2gzMrkEOxT0=;
-        b=U1mrsX/nYewJJRcB0FoViQPOC9NRe+CU8y8v8Cgj/dtHLZ53c6EX/OQ+t0krC9AlDf
-         Acvq7z6QWaAEleGJDC4jBNebDzS1qgMyfAPRrntIGINT4ORai+j0nUZ8nPyraMxJJhXg
-         /fF991pcEb7lK+Q6rkZJ691qnilotIy3xOwqKl9QbTNOYDlpdx8CGtSGCoHeMp27QMrI
-         txdrWf5Pwpf9Gxq3UKOf82FRbn09kJkVD/Zsrlzmce6PVI0hHksImksDn2WS8rhyUfVR
-         q6Uan5GJ5fdZmjmK1Y/5DTbOZvl1Izhn+qrPtJ2Ibp0aTXwFi8xYKGh8NyrwzvE6Agif
-         RPiQ==
-X-Gm-Message-State: AOUpUlEotNemn6nCZVkzKcFvo7yvJ8rw6/W1kgXurrPg5VP6Ee8VHz4Z
-        4QPffgdGPuBoTZ9yc3TUSDfFwjJG
-X-Google-Smtp-Source: AA+uWPyE7eNqdJ57SJTeVEAMdXocLOCN0eTjyV9bBIPadbxB/oJJ41C9r7iHwF682vT3dcAsy8Lepw==
-X-Received: by 2002:a17:902:49:: with SMTP id 67-v6mr9519044pla.206.1534928729731;
-        Wed, 22 Aug 2018 02:05:29 -0700 (PDT)
-Received: from Gentoo-PC ([117.204.240.63])
-        by smtp.gmail.com with ESMTPSA id e82-v6sm1981723pfd.40.2018.08.22.02.05.28
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 22 Aug 2018 02:05:29 -0700 (PDT)
-Date:   Wed, 22 Aug 2018 14:35:32 +0530
-From:   Bhaskar Singh <bhaskar.kernel@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8188eu: Fix spelling mistake
-Message-ID: <20180822090532.GA2715@Gentoo-PC>
-References: <20180821014428.GA7914@Gentoo-PC>
- <20180822081636.eu54b6z5g5s7wgfp@mwanda>
+        Wed, 22 Aug 2018 08:32:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2MlIghxPQNJMxSSvYcJQ6trD5NkfV7M80jjYoTVNm1k=; b=XVm80Tbv0ALcd0XUwYMtmRmWR
+        3QXLNvlPIBBwbxoKRPeugLbDxPOWJ0qp8cBMXWy4k8SIu2HQl7kEL2ikye5jMZxJJu8K/RtFVcvUY
+        Nu9W5GMNJFDe7i5ESrjoV1PDaZnr7g46L7JRq0NzhAZA3uP2A0oHRxcFxQAdbU0FVdrMmyh9zU7OT
+        mNFWL2/P/B+QJYv6QmxqRdguMfTMAxWpYEt0AeIjC6Mv0CdfKeSdFWs81aQNa5hJpCx8J/TH1neeP
+        OCQRkcYDoGFifXylADdq3j30/SFYpJnPkuG/5t/A17O1qIW3HOPAQFSx6HdDCd6/TdCE4JtFtSQL7
+        7w0vdWaDw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fsP7p-0007D0-AZ; Wed, 22 Aug 2018 09:08:25 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id EF2622025D75D; Wed, 22 Aug 2018 11:08:23 +0200 (CEST)
+Date:   Wed, 22 Aug 2018 11:08:23 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     syzbot <syzbot+1f56df64bfb3c29dde6f@syzkaller.appspotmail.com>
+Cc:     dvhart@infradead.org, hpa@zytor.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        pbonzini@redhat.com, rkrcmar@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Subject: Re: general protection fault in finish_task_switch (2)
+Message-ID: <20180822090823.GT24124@hirez.programming.kicks-ass.net>
+References: <00000000000035c2ed057315bf85@google.com>
+ <0000000000006e87360573f8b328@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180822081636.eu54b6z5g5s7wgfp@mwanda>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <0000000000006e87360573f8b328@google.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 11:16:36AM +0300, Dan Carpenter wrote:
-> On Tue, Aug 21, 2018 at 07:14:28AM +0530, Bhaskar Singh wrote:
-> > This patch fix spelling mistakes in TODO.
-> > 
+On Tue, Aug 21, 2018 at 02:28:02PM -0700, syzbot wrote:
+> syzbot has found a reproducer for the following crash on:
 > 
-> Btw, it helps when you say which word you're changing, otherwise it
-> takes a while to spot the difference.  We changed "HGz" to "GHz".
-> 
-> Probably someone smarter than I am would have spotted it faster...
-> 
-> regards,
-> dan carpenter
->
+> HEAD commit:    778a33959a8a Merge tag 'please-pull-noboot' of git://git.k..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14a5385a400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=214e4990bd49329f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=1f56df64bfb3c29dde6f
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> userspace arch: i386
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=13ffa561400000
 
-Apologies for the inconvenience and thanks a lot for your suggestion.
+FWIW the lack of whitespace between "repro:" and the URL makes it hard
+to copy paste.
 
-I will definitely follow that.
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10023961400000
 
-Should I send the patch again?
 
-Thanks
-Bhaskar Singh
+> RIP: 0010:__fire_sched_in_preempt_notifiers kernel/sched/core.c:2481
 
+That repro thing does something dodgy with KVM, which then corrupts the
+premption notifier thing. I'm sufficiently KVM clueless to not really
+know where to start looking though..
