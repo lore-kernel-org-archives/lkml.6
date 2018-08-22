@@ -5,135 +5,89 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1FBC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A749EC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:44:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C47C21530
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:41:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C47C21530
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5DDC521528
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 11:44:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DDC521528
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729013AbeHVPGa (ORCPT
+        id S1729026AbeHVPJb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 11:06:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54246 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728553AbeHVPGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 11:06:30 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D794E804BAAD;
-        Wed, 22 Aug 2018 11:41:54 +0000 (UTC)
-Received: from [10.36.117.173] (ovpn-117-173.ams2.redhat.com [10.36.117.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 448372026D74;
-        Wed, 22 Aug 2018 11:41:51 +0000 (UTC)
-Subject: Re: [PATCH] vmx: add missing entries in the l1d_param array
-To:     Bandan Das <bsd@redhat.com>, kvm ML <kvm@vger.kernel.org>
-Cc:     Marcelo Tosatti <mtosatti@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <jpgd0ub4czi.fsf@linux.bootlegged.copy>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <714fa2a3-a690-21e4-0845-ac5827cc0f57@redhat.com>
-Date:   Wed, 22 Aug 2018 13:41:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 22 Aug 2018 11:09:31 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:35947 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728791AbeHVPJb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 11:09:31 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fsRZ9-0005nl-A5; Wed, 22 Aug 2018 13:44:47 +0200
+Date:   Wed, 22 Aug 2018 13:44:44 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+cc:     David Miller <davem@davemloft.net>, helgaas@kernel.org,
+        jian-hong@endlessm.com, nic_swsd@realtek.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@endlessm.com, linux-pci@vger.kernel.org,
+        marc.zyngier@arm.com, hch@lst.de
+Subject: Re: [PATCH] r8169: don't use MSI-X on RTL8106e
+In-Reply-To: <da97e198-7683-e0ff-92a9-3b1b22da3757@gmail.com>
+Message-ID: <alpine.DEB.2.21.1808221222260.2514@nanos.tec.linutronix.de>
+References: <ac30d4e6-6411-09e6-1205-96e3e8e29f6f@gmail.com> <20180820184438.GA154536@bhelgaas-glaptop.roam.corp.google.com> <9d7d960a-6c55-dc4b-7969-f5cf46bff0ce@gmail.com> <20180821.123108.89921430801253333.davem@davemloft.net>
+ <da97e198-7683-e0ff-92a9-3b1b22da3757@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <jpgd0ub4czi.fsf@linux.bootlegged.copy>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 22 Aug 2018 11:41:54 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 22 Aug 2018 11:41:54 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/08/2018 23:38, Bandan Das wrote:
+On Tue, 21 Aug 2018, Heiner Kallweit wrote:
+> On 21.08.2018 21:31, David Miller wrote:
+> > From: Heiner Kallweit <hkallweit1@gmail.com>
+> > Date: Mon, 20 Aug 2018 22:46:48 +0200
+> > 
+> >> I'm in contact with Realtek and according to them few chip versions
+> >> seem to clear MSI-X table entries on resume from suspend. Checking
+> >> with them how this could be fixed / worked around.
+> >> Worst case we may have to disable MSI-X in general.
+> > 
+> > I worry that if the chip does this, and somehow MSI-X is enabled and
+> > an interrupt is generated, the chip will write to the cleared out
+> > MSI-X address.  This will either write garbage into memory or cause
+> > a bus error and require PCI error recovery.
+> > 
+> > It also looks like your test patch doesn't fix things for people who
+> > have tested it.
+> > 
+> The test patch was based on the first info from Realtek which made me
+> think that the base address of the MSI-X table is cleared, what
+> obviously is not the case.
 > 
-> This can cause a host crash if an access attempts
-> to reach the missing entry. Future-proof the get
-> function against any overflows as well.
-> 
-> Signed-off-by: Bandan Das <bsd@redhat.com>
-> ---
->  arch/x86/kvm/vmx.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 46b428c0990e..42c27406b63e 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -203,6 +203,8 @@ static const struct {
->  	{"never",	VMENTER_L1D_FLUSH_NEVER},
->  	{"cond",	VMENTER_L1D_FLUSH_COND},
->  	{"always",	VMENTER_L1D_FLUSH_ALWAYS},
-> +	{"disabled",    VMENTER_L1D_FLUSH_EPT_DISABLED},
-> +	{"not required", VMENTER_L1D_FLUSH_NOT_REQUIRED},
->  };
->  
->  #define L1D_CACHE_ORDER 4
-> @@ -323,7 +325,17 @@ static int vmentry_l1d_flush_set(const char *s, const struct kernel_param *kp)
->  
->  static int vmentry_l1d_flush_get(char *s, const struct kernel_param *kp)
->  {
-> -	return sprintf(s, "%s\n", vmentry_l1d_param[l1tf_vmx_mitigation].option);
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(vmentry_l1d_param); i++) {
-> +		if (vmentry_l1d_param[i].cmd == l1tf_vmx_mitigation)
-> +			break;
-> +	}
-> +
-> +	if (i == ARRAY_SIZE(vmentry_l1d_param))
-> +		return -EINVAL;
-> +
-> +	return sprintf(s, "%s\n", vmentry_l1d_param[i].option);
->  }
->  
->  static const struct kernel_param_ops vmentry_l1d_flush_ops = {
-> 
+> After some further tests it seems that the solution isn't as simple
+> as storing the MSI-X table entries on suspend and restore them on
+> resume. On my system (where MSI-X works fine) MSI-X table entries
+> on resume are partially different from the ones on suspend.
 
-Queued, thanks.
+Which is not a surprise. Please don't try to fiddle with that at the driver
+level. The irq and PCI core code are the ones in charge and if you'd
+restore at the wrong point then hell breaks lose.
 
-Paolo
+Can you please do the following:
+
+ 1) Store the PCI config space at suspend time
+ 2) Compare the PCI config space at resume time and print the difference
+
+Do that on a working and a non-working version of Realtek NICs.
+
+Thanks,
+
+	tglx
+
+
