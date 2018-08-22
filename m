@@ -2,122 +2,113 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B311DC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BFDC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C36C21486
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:45:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C36C21486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 7304821486
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 07:46:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="dsnz6/Dl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7304821486
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbeHVLI6 (ORCPT
+        id S1728165AbeHVLKZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 07:08:58 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:54613 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726838AbeHVLI5 (ORCPT
+        Wed, 22 Aug 2018 07:10:25 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:16687 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726838AbeHVLKZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 07:08:57 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="43780055"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 22 Aug 2018 15:45:08 +0800
-Received: from G08CNEXCHPEKD03.g08.fujitsu.local (unknown [10.167.33.85])
-        by cn.fujitsu.com (Postfix) with ESMTP id 071EB4B6AE0E;
-        Wed, 22 Aug 2018 15:45:08 +0800 (CST)
-Received: from localhost.localdomain (10.167.226.106) by
- G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 22 Aug 2018 15:45:05 +0800
-From:   Dou Liyang <douly.fnst@cn.fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <linux-acpi@vger.kernel.org>
-CC:     <lenb@kernel.org>, <rjw@rjwysocki.net>, <tglx@linutronix.de>,
-        <rafael@kernel.org>, <indou.takao@jp.fujitsu.com>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>
-Subject: [RESEND PATCH v2] acpi/processor: Fix the return value of acpi_processor_ids_walk()
-Date:   Wed, 22 Aug 2018 15:44:53 +0800
-Message-ID: <20180822074453.26959-1-douly.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.14.3
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 071EB4B6AE0E.A0406
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+        Wed, 22 Aug 2018 07:10:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1534924000;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=zlFViGBN6d0EjH1ElwJXezRvFZ0GGXTjV86/DikrrZc=;
+        b=dsnz6/Dl7WJiXuSNaz0B5t2rUOKp4fBU/e5yKW7vbsJLKsUINJJcH4khtRR861YwvC
+        LzUizZ6Q5URmGT4hn/pBFqc1HVqy82R+WmgxIej3cDLTlk5BOH/EP7b6C/DBnuIHzdnR
+        3SiL14Xv2VNkVi5IOqVvmHacb5ySxSdf496sFlAmpk/+W94Au2KsuDKhX7/w7yXUmFKw
+        x/FQ66R0w/AFWEOZIIRrIW+xvwQsNay2tLKxc/PZ/TfDCo+u6ddkOjfgn2C73Ez/U5o5
+        +mctUaaHc3ado4PN3vWCnFVefe/Du/yIociVwGnJGF8jNHeEDWgj7737z7YtlRRWIKMU
+        UA8Q==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBs7wpz98S0o3m2fIKh"
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 43.18 DYNA|AUTH)
+        with ESMTPSA id x038eeu7M7kVPDf
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 22 Aug 2018 09:46:31 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH] drm: omapdrm: displays: fix port_num for opa362 output
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <6854891.0j5LuaEH9O@avalon>
+Date:   Wed, 22 Aug 2018 09:46:30 +0200
+Cc:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        David Airlie <airlied@linux.ie>,
+        Sebastian Reichel <sre@kernel.org>,
+        "Andrew F. Davis" <afd@ti.com>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        letux-kernel@openphoenux.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A1123AD2-C238-4F19-8AF7-3FB8F60BF62D@goldelico.com>
+References: <dccf0cafc194743cd037513ef19e889fb880892d.1532701471.git.hns@goldelico.com> <6854891.0j5LuaEH9O@avalon>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ACPI driver should make sure all the processor IDs in their ACPI Namespace
-are unique. the driver performs a depth-first walk of the namespace tree
-and calls the acpi_processor_ids_walk() to check the duplicate IDs.
+Hi Laurent,
 
-But, the acpi_processor_ids_walk() mistakes the return value. If a
-processor is checked, it returns true which causes the walk break
-immediately, and other processors will never be checked.
+> Am 19.08.2018 um 16:07 schrieb Laurent Pinchart =
+<laurent.pinchart@ideasonboard.com>:
+>=20
+> Hi Nikolaus,
+>=20
+> Thank you for the patch.
+>=20
+> On Friday, 27 July 2018 17:24:32 EEST H. Nikolaus Schaller wrote:
+>> The opa362 amplifier has two ports, an input (usually connected
+>> to the OMAP3 VENC) and an output port connected to the external
+>> connector.
+>>=20
+>> These are usually defined as input port@0 and outpt port@1 in
+>> the DT and really distinguished by the reg =3D <port_num> property
+>> of these nodes.
+>>=20
+>> But we are missing to define the output port as number 1 so
+>> it does not match the DT entry.
+>>=20
+>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+>=20
+> I think this patch is superseded by "[PATCH v3 36/61] drm/omap: dss: =
+Replace=20
+> omap_dss_device port number with bitmask"
 
-Repace the value with AE_OK which is the standard acpi_status value.
-And don't abort the namespace walk even on error.
+looks good and from cursory review it seems to resolve the opa362
+bug as a side-effect. Maybe this can be noted in the commit description.
 
-Fixes 8c8cb30f49b8 ("acpi/processor: Implement DEVICE operator for processor enumeration")
-Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
----
-Changelog:
-  v1 --> v2:
-   - Fix the check against duplicate IDs suggested by Rafael.
-  
-  Now，the duplicate IDs only be found in Ivb42 machine, and we have added this check at 
-  linux-4.9. But, we introduced a bug in linux-4.12 by commit 8c8cb30f49b8.
+What I am not sure how this magically defines the output as
+reg=3D<1> or if we have to swap reg number definitions in the DT.
+But encoder-tfp410.c and encoder-tpd12s015.c seem to do it the
+same way, so it is very likely that it works as defined.
 
-  For resolving the bug, firstly, I removed the check[1]. because Linux will compare
-  the coming ID with present processors when it hot-added a physical CPU and will avoid
-  using duplicate IDs.
+> which should get merged in v4.20.
 
-  But, seems we should consider all the possible processors. So, with this patch, All
-  the processors with the same IDs will never be hot-plugged.
+Well, I had hoped our bug fix makes it into v4.19 and can be
+potentially backported to stable.
 
-[1] https://lkml.org/lkml/2018/5/28/213
----
- drivers/acpi/acpi_processor.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Do you plan to backport you patch? It seems to be quite independent
+and should apply to older releases.
 
-diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
-index 449d86d39965..a59870ccd5ca 100644
---- a/drivers/acpi/acpi_processor.c
-+++ b/drivers/acpi/acpi_processor.c
-@@ -643,7 +643,7 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
- 
- 	status = acpi_get_type(handle, &acpi_type);
- 	if (ACPI_FAILURE(status))
--		return false;
-+		return_ACPI_STATUS(status);
- 
- 	switch (acpi_type) {
- 	case ACPI_TYPE_PROCESSOR:
-@@ -663,11 +663,12 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
- 	}
- 
- 	processor_validated_ids_update(uid);
--	return true;
-+	return AE_OK;
- 
- err:
-+	/* Exit on error, but don't abort the namespace walk */
- 	acpi_handle_info(handle, "Invalid processor object\n");
--	return false;
-+	return AE_OK;
- 
- }
- 
--- 
-2.14.3
-
-
+BR,
+Nikolaus
 
