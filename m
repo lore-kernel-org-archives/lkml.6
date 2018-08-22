@@ -2,157 +2,88 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7222C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6500FC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F39921473
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:53:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A1F321473
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 14:53:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lyUyfBji"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F39921473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PcTVVQGZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A1F321473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729235AbeHVSSS (ORCPT
+        id S1729252AbeHVSSd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 14:18:18 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37617 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728947AbeHVSSR (ORCPT
+        Wed, 22 Aug 2018 14:18:33 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35785 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728947AbeHVSSd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 14:18:17 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u12-v6so590014wrr.4;
-        Wed, 22 Aug 2018 07:53:04 -0700 (PDT)
+        Wed, 22 Aug 2018 14:18:33 -0400
+Received: by mail-it0-f68.google.com with SMTP id 139-v6so3296742itf.0;
+        Wed, 22 Aug 2018 07:53:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=VqoS7idAgGokWKw/mAUzLpwWnvT9zYvcmyvA03tcStw=;
-        b=lyUyfBji0wsUvIlZr/g9TJK2ZWFbVwxXdx1LQKhDwh3ixu3Yj7IqjEJxNqSSIX0Qjh
-         Vij9FOKtZQQhqAWiVVJvEDIWkxGlzziCo202G8FxTCZFv/hW7SzKcY4cAE54KhVxQ+0W
-         bj4H8mJ9Qr26WfRHrr52T4S9Y/NvCkDyFni1uU+MKQb9LvSljVRB5cFcLoiYxGIhqTeR
-         TZ6PFSboBB3QAp3HawCzgVP7RP1qOrp8W3Y5btyO9Cveg1GHYjP+IG71e/PRkFTNhluM
-         kUuOrsZW5qSj9tuDRBNizYrZ8wfTFgxLi/cj8jWkTs6doAP2xD0IirweJIT2y/RtCuGb
-         JPXg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ux9iWoBVSHaIXIhBsX2rNfOiDXt+Zy4ELUNAnpWs+nE=;
+        b=PcTVVQGZpf9C3apBM+FGcHQ7Kop7Z5KQhw3nXGTvKIEmnZX37v/12coUiZpBxnC0I4
+         U/97KUeJtawyOboDFWfEQgQi0L0cWDzEnO1Z9YR2o/plEkMv89MmwOf0cAJAjAf7VR3z
+         osiI9wuqDH4TEXEFRdrLyk5KvTFDd4nkiibec=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=VqoS7idAgGokWKw/mAUzLpwWnvT9zYvcmyvA03tcStw=;
-        b=qukgOCmRH/JEsn2BxL440Kovr+1MK+MLTGuYfbGtm6mXw2Rwj9l/uR1vNgmNS9lubs
-         d0lzIcito7/Xi4CKUjZx0f+nMoJn8OARYqGfPjbLiPmOUPukqhg0SJJl7w6TPgNk2VnA
-         rCkTJsu2s5zXf8NSeU/Vuy89sOrMAC2ec7E0dLOAe3djQH0UBWOa7pTLp2One/hB6Dxc
-         3eIljQ1sKipieonhPfWASD5eOA9pmPw4wSO/YgpN0ioDUwuQhlPDjD+P3u7FQE3nIR1U
-         YX3lsAgtYEmN1LBwsTtH7eQqUreMpJTyjljqxV9P9I9auuCz/y9dsC0VQZcQtLRAg4Pv
-         qBDA==
-X-Gm-Message-State: AOUpUlFPRhcglof51PTtqUU+R8i//Zr45gDhBdImLYalfnIVEVuDRXY4
-        yoO89FICnD3f+Z5eBlh1Or7cR9DX
-X-Google-Smtp-Source: AA+uWPzrVmN4f2t+FKCH/aSLJE9UUGp+Tz9IOWg0tvePCbr8jxnrxHYiPHFlaCb9YZXArn+Up8Htrw==
-X-Received: by 2002:a5d:428a:: with SMTP id k10-v6mr37686899wrq.225.1534949583074;
-        Wed, 22 Aug 2018 07:53:03 -0700 (PDT)
-Received: from 640k.lan (dynamic-adsl-78-12-184-244.clienti.tiscali.it. [78.12.184.244])
-        by smtp.gmail.com with ESMTPSA id 132-v6sm2909832wmd.13.2018.08.22.07.53.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Aug 2018 07:53:02 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     bsd@redhat.com, stable@vger.kernel.org
-Subject: [PATCH] KVM: VMX: fixes for vmentry_l1d_flush module parameter
-Date:   Wed, 22 Aug 2018 16:53:00 +0200
-Message-Id: <1534949580-38261-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ux9iWoBVSHaIXIhBsX2rNfOiDXt+Zy4ELUNAnpWs+nE=;
+        b=kt7zZMz0HF1SWGIR+GkVrU6WdhHS3Qabpfn/U/i4K+iAjjv3m5u2jCrQluM2HCUWBE
+         PfDbSbEw436y1MAzswX+Qqe3prye7thbfMmv3BWdhKiXv3mwCeYImKXqZHwDWC/reo9R
+         CcYDcWnmzsTxtL0Y+WLxSJx32Pn38Fmiwzx+7PGcIphGivBn/MN6nJbu+sRxR1kdTf2g
+         jHhNvmkzsVmzwTM0M7y866r8OYA/ERFCahTqEUNfZr3Nf3pvG0ikruJJC4dHXNZJWrYR
+         7sfWkTxPUCIUUkJji0uh4jnL0KxI9LSEa0HxQYm7UNfbmMQIe7mlr0VHj6Hs+4IwbUCT
+         HYJw==
+X-Gm-Message-State: APzg51CBaABwrx4jyrfFtj+1lKfORHyB2SFA0D9fFfONnU3xvmuTqt5y
+        P0jDlZbkrL1ltFBfP+ogDzQ86u8lB6yt34yKMN/YiQ==
+X-Google-Smtp-Source: ANB0VdYhPwIUBAKj9c/ULDGmIB89s2Iw/ZYiecwE5uY87XAXXpDdq9bpftYir0LTxFxsVjVxQbuHNdGVZva+7PhneOE=
+X-Received: by 2002:a24:8309:: with SMTP id d9-v6mr2951671ite.123.1534949599840;
+ Wed, 22 Aug 2018 07:53:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180822085522.GA14354@veci.piliscsaba.redhat.com>
+In-Reply-To: <20180822085522.GA14354@veci.piliscsaba.redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 22 Aug 2018 07:53:08 -0700
+Message-ID: <CA+55aFzd53LwrBfvdtKx7e_bQPhzsKEvCME1rGbrrY4pG94d=Q@mail.gmail.com>
+Subject: Re: [PATCH] ovl: set I_CREATING on inode being created
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-unionfs@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Two bug fixes:
+On Wed, Aug 22, 2018 at 1:55 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> +       spin_lock(&inode->i_lock);
+> +       inode->i_state |= I_CREATING;
+> +       spin_unlock(&inode->i_lock);
+> +
 
-1) missing entries in the l1d_param array; this can cause a host crash
-if an access attempts to reach the missing entry. Future-proof the get
-function against any overflows as well.  However, the two entries
-VMENTER_L1D_FLUSH_EPT_DISABLED and VMENTER_L1D_FLUSH_NOT_REQUIRED must
-not be accepted by the parse function, so disable them there.
+Why is that spinlock protection there?
 
-2) invalid values must be rejected even if the CPU does not have the
-bug, so test for them before checking boot_cpu_has(X86_BUG_L1TF)
+Isn't this a new inode that cannot possibly be reached any other way yet?
 
-... and a small refactoring, since the .cmd field is redundant with
-the index in the array.
+NOTE! This is a question. Maybe there is something I missed, and there
+*are* other ways to reach that inode. But if that's true, isn't it
+already too late to set I_CREATING?
 
-Reported-by: Bandan Das <bsd@redhat.com>
-Cc: stable@vger.kernel.org
-Fixes: a7b9020b06ec6d7c3f3b0d4ef1a9eba12654f4f7
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/vmx.c | 26 ++++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
+So I'd like some clarification on this point before applying it. It's
+possible that the spinlock is required, I just want to understand why.
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index c76ca8c4befa..8dae47e7267a 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -198,12 +198,14 @@
- 
- static const struct {
- 	const char *option;
--	enum vmx_l1d_flush_state cmd;
-+	bool for_parse;
- } vmentry_l1d_param[] = {
--	{"auto",	VMENTER_L1D_FLUSH_AUTO},
--	{"never",	VMENTER_L1D_FLUSH_NEVER},
--	{"cond",	VMENTER_L1D_FLUSH_COND},
--	{"always",	VMENTER_L1D_FLUSH_ALWAYS},
-+	[VMENTER_L1D_FLUSH_AUTO]	 = {"auto", true},
-+	[VMENTER_L1D_FLUSH_NEVER]	 = {"never", true},
-+	[VMENTER_L1D_FLUSH_COND]	 = {"cond", true},
-+	[VMENTER_L1D_FLUSH_ALWAYS]	 = {"always", true},
-+	[VMENTER_L1D_FLUSH_EPT_DISABLED] = {"EPT disabled", false},
-+	[VMENTER_L1D_FLUSH_NOT_REQUIRED] = {"not required", false},
- };
- 
- #define L1D_CACHE_ORDER 4
-@@ -287,8 +289,9 @@ static int vmentry_l1d_flush_parse(const char *s)
- 
- 	if (s) {
- 		for (i = 0; i < ARRAY_SIZE(vmentry_l1d_param); i++) {
--			if (sysfs_streq(s, vmentry_l1d_param[i].option))
--				return vmentry_l1d_param[i].cmd;
-+			if (vmentry_l1d_param[i].for_parse &&
-+			    sysfs_streq(s, vmentry_l1d_param[i].option))
-+				return i;
- 		}
- 	}
- 	return -EINVAL;
-@@ -298,13 +301,13 @@ static int vmentry_l1d_flush_set(const char *s, const struct kernel_param *kp)
- {
- 	int l1tf, ret;
- 
--	if (!boot_cpu_has(X86_BUG_L1TF))
--		return 0;
--
- 	l1tf = vmentry_l1d_flush_parse(s);
- 	if (l1tf < 0)
- 		return l1tf;
- 
-+	if (!boot_cpu_has(X86_BUG_L1TF))
-+		return 0;
-+
- 	/*
- 	 * Has vmx_init() run already? If not then this is the pre init
- 	 * parameter parsing. In that case just store the value and let
-@@ -324,6 +327,9 @@ static int vmentry_l1d_flush_set(const char *s, const struct kernel_param *kp)
- 
- static int vmentry_l1d_flush_get(char *s, const struct kernel_param *kp)
- {
-+	if (WARN_ON_ONCE(l1tf_vmx_mitigation >= ARRAY_SIZE(vmentry_l1d_param)))
-+		return sprintf(s, "???\n");
-+
- 	return sprintf(s, "%s\n", vmentry_l1d_param[l1tf_vmx_mitigation].option);
- }
- 
--- 
-1.8.3.1
-
+          Linus
