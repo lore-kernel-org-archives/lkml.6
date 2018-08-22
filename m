@@ -2,335 +2,151 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A624C04E85
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 22:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA9EC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 22:05:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2DDB2098B
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 22:00:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2DDB2098B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=triplefau.lt
+	by mail.kernel.org (Postfix) with ESMTP id 41F63208D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 22:05:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41F63208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728336AbeHWB1D (ORCPT
+        id S1726831AbeHWBcL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 21:27:03 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:32892 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727612AbeHWB0w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 21:26:52 -0400
-Received: from relay1-d.mail.gandi.net (unknown [217.70.183.193])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id 9C5AF3A0034
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 23:43:38 +0200 (CEST)
-X-Originating-IP: 88.190.179.123
-Received: from localhost (unknown [88.190.179.123])
-        (Authenticated sender: repk@triplefau.lt)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 4EAE7240002;
-        Wed, 22 Aug 2018 21:43:36 +0000 (UTC)
-From:   Remi Pommarel <repk@triplefau.lt>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Elie Roudninski <xademax@gmail.com>,
-        Remi Pommarel <repk@triplefau.lt>
-Subject: [RFC PATCH 4/4] drivers/tty/vt: add ioctl to manage input specific keyboard configs
-Date:   Wed, 22 Aug 2018 23:50:35 +0200
-Message-Id: <52a9a482f5b45fe37046f436012c6e426fdfca27.1534972814.git.repk@triplefau.lt>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <cover.1534972811.git.repk@triplefau.lt>
-References: <cover.1534972811.git.repk@triplefau.lt>
+        Wed, 22 Aug 2018 21:32:11 -0400
+Received: from mga01.intel.com ([192.55.52.88]:45744 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726164AbeHWBcL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 21:32:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2018 15:05:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,275,1531810800"; 
+   d="scan'208";a="64458556"
+Received: from jjorgill-mobl1.amr.corp.intel.com (HELO [10.254.105.144]) ([10.254.105.144])
+  by fmsmga007.fm.intel.com with ESMTP; 22 Aug 2018 15:03:44 -0700
+Subject: Re: [RFC v8 PATCH 3/5] mm: mmap: zap pages with read mmap_sem in
+ munmap
+To:     owner-linux-mm@kvack.org,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
+ <e691d054-f807-80ad-9934-a1917d8e2e77@suse.cz>
+ <3c62f605-2244-6a05-2dc4-34a3f1c56300@linux.alibaba.com>
+ <20180822211053.qg3dlzf6pok2x4yk@kshutemo-mobl1>
+ <45a5ff36-d53d-9ec3-f869-1b1b7a6de5cb@intel.com>
+ <a1642cf6-f458-3026-dca9-652fbb20f580@linux.alibaba.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, mhocko@kernel.org,
+        willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <7f06e97e-5efa-e0d4-f952-3f01079c7283@intel.com>
+Date:   Wed, 22 Aug 2018 15:03:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <a1642cf6-f458-3026-dca9-652fbb20f580@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because user can use different keyboards with different layouts on the
-same tty, an input could have a different key map from another one. In
-order to use and modify this specific key map the user can call three
-new ioctls:
+On 08/22/2018 02:56 PM, owner-linux-mm@kvack.org wrote:
+> 
+> 
+> On 8/22/18 2:42 PM, Dave Hansen wrote:
+>> On 08/22/2018 02:10 PM, Kirill A. Shutemov wrote:
+>>>> For x86, mpx_notify_unmap() looks finally zap the VM_MPX vmas in
+>>>> bound table
+>>>> range with zap_page_range() and doesn't update vm flags, so it
+>>>> sounds ok to
+>>>> me since vmas have been detached, nobody can find those vmas. But,
+>>>> I'm not
+>>>> familiar with the details of mpx, maybe Kirill could help to confirm
+>>>> this?
+>>> I don't see anything obviously dependent on down_write() in
+>>> mpx_notify_unmap(), but Dave should know better.
+>> We need mmap_sem for write in mpx_notify_unmap().
+>>
+>> Its job is to clean up bounds tables, but bounds tables are dynamically
+>> allocated and destroyed by the kernel.  When we destroy a table, we also
+>> destroy the VMA for the bounds table *itself*, separate from the VMA
+>> being unmapped.
+...
+> Does it depends on unmap_region()? Or IOW, does it has to be called
+> after unmap_region()? Now the calling sequence is:
+> 
+> detach vmas
+> unmap_region()
+> mpx_notify_unmap()
+> 
+> I'm wondering if it is safe to move it up before unmap_region() like:
+> 
+> detach vmas
+> mpx_notify_unmap()
+> unmap_region()
+> 
+> With this change we also can do our optimization to do unmap_region()
+> with read mmap_sem. Otherwise it does cause problem.
 
-1) KDGKBIENT
-	Get an input key map's entry. If the input does not have a
-	specific keyboard config the requested entry is fetched from
-	global key map.
+I think changing the ordering is fine.
 
-2) KDSKBIENT
-	Set an input key map's entry. If the input does not yet have a
-	specific keyboard config, a new one is created with the current
-	global config (the one modified with KDSKBENT) content copied
-	in.
-
-3) KDSKBIRST
-	Reset an input key map. The input does not use a specific
-	keyboard config anymore and keycode translations are done with
-	global key map.
-
-In order to remain compatible with old behavior, an input uses global
-key map by default and KDGKENT/KDSKENT still get/set entries in the
-global key map.
-
-Below is an example of this ioctl usage:
-------------------------- 8< -----------------------------
-struct kbientry kbi = {
-	.id = { /* Input is found by its input_id */
-		.bustype = 0x0003,
-		.product = 0x00B2,
-		.vendor = 0x2319,
-		.version = 0x0200,
-	},
-	.entry = { /* Entry to set or get */
-		.kb_table = 0,
-		.kb_index = 0x10,
-		.kb_value = 0x0B61,
-	},
-};
-int ret;
-
-/* First set new entry for input 0003:00B2:2319:0200 */
-ret = ioctl(fd, KDSKBIENT, &kbi); /* fd is a tty open file */
-if(ret < 0)
-	/* Error handling */
-
-/* Get specific entry, on success kbi.entry.kb_value will be set */
-ret = ioctl(fd, KDSKBIENT, &kbi);
-if(ret < 0)
-	/* Error handling */
-
-/* Reset input key map so that global key_maps is used */
-ret = ioctl(fd, KDSKBIRST, &kbi.id);
-if(ret < 0)
-	/* Error handling */
-------------------------- 8< -----------------------------
-
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-Tested-by: Elie Roudninski <xademax@gmail.com>
----
- drivers/tty/vt/keyboard.c | 126 ++++++++++++++++++++++++++++++++++++++
- drivers/tty/vt/vt_ioctl.c |   9 +++
- fs/compat_ioctl.c         |   3 +
- include/linux/vt_kern.h   |   4 ++
- include/uapi/linux/kd.h   |   9 +++
- 5 files changed, 151 insertions(+)
-
-diff --git a/drivers/tty/vt/keyboard.c b/drivers/tty/vt/keyboard.c
-index 7272e1828838..9707d1ebeab4 100644
---- a/drivers/tty/vt/keyboard.c
-+++ b/drivers/tty/vt/keyboard.c
-@@ -2180,6 +2180,132 @@ int vt_do_kdsk_ioctl(int cmd, struct kbentry __user *user_kbe, int perm,
- 	return ret;
- }
- 
-+/*
-+ * Input keymap helper functions
-+ */
-+struct kbd_lookup_data {
-+	struct input_id *id;
-+	struct kbd_handle *kh;
-+};
-+
-+static int _kbd_get_helper(struct input_handle *handle, void *data)
-+{
-+	struct kbd_handle *kh = hdl_to_kbd_handle(handle);
-+	struct kbd_lookup_data *d = data;
-+
-+	if (memcmp(d->id, &handle->dev->id, sizeof(*d->id)) != 0)
-+		return 0;
-+
-+	d->kh = kh;
-+	kref_get(&kh->ref);
-+	return 1;
-+}
-+
-+/*
-+ * Get an input specific handle.
-+ * The caller will hold a reference on the found kbd_handle, if it exists, and
-+ * should deref it after usage (with kbd_put).
-+ */
-+static int kbd_get(struct kbd_handle **kh, struct input_id *id)
-+{
-+	struct kbd_lookup_data d = {
-+		.id = id,
-+	};
-+	int ret;
-+
-+	ret = input_handler_for_each_handle(&kbd_handler, &d, _kbd_get_helper);
-+	*kh = d.kh;
-+
-+	return (ret == 0);
-+}
-+
-+static void kbd_put(struct kbd_handle *kh)
-+{
-+	kref_put(&kh->ref, kbd_destroy);
-+}
-+
-+int vt_do_kdski_ioctl(int cmd, struct kbientry __user *user_kbie, int perm,
-+		int console)
-+{
-+	struct kbd_struct *kb = kbd_table + console;
-+	struct kbd_handle *kh;
-+	struct kbientry tmp;
-+	ushort val;
-+	int ret = 0;
-+
-+	if (copy_from_user(&tmp, user_kbie, sizeof(struct kbientry))) {
-+		ret = -EFAULT;
-+		goto out;
-+	}
-+
-+	if (!capable(CAP_SYS_TTY_CONFIG))
-+		perm = 0;
-+
-+	ret = kbd_get(&kh, &tmp.id);
-+	if (ret != 0) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	switch (cmd) {
-+	case KDGKBIENT:
-+		val = kc_getent(kb, kh->conf, &tmp.entry);
-+		ret = put_user(val, &user_kbie->entry.kb_value);
-+		break;
-+	case KDSKBIENT:
-+		if (!perm) {
-+			ret = -EPERM;
-+			break;
-+		}
-+		/* A keyconf's keymap is created only if global one is used */
-+		ret = kbd_detach_conf(kh);
-+		if (ret != 0)
-+			break;
-+
-+		ret = kc_setent(kb, kh->conf, &tmp.entry);
-+		break;
-+	}
-+
-+	kbd_put(kh);
-+out:
-+	return ret;
-+}
-+
-+int vt_do_kdskirst_ioctl(int cmd, struct input_id __user *user_iid, int perm,
-+		int console)
-+{
-+	struct kbd_handle *kh;
-+	struct input_id tmp;
-+	unsigned long flags;
-+	int ret;
-+
-+	if (copy_from_user(&tmp, user_iid, sizeof(struct input_id)))
-+		return -EFAULT;
-+
-+	if (!capable(CAP_SYS_TTY_CONFIG))
-+		perm = 0;
-+
-+	if (!perm)
-+		return -EPERM;
-+
-+	ret = kbd_get(&kh, &tmp);
-+	if (ret != 0) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	/* Restore keyboard's configuration to global one */
-+	spin_lock_irqsave(&kbd_event_lock, flags);
-+	kbd_destroy_conf(kh);
-+	kbd_init_conf(kh);
-+	spin_unlock_irqrestore(&kbd_event_lock, flags);
-+
-+	kbd_put(kh);
-+
-+out:
-+	return ret;
-+}
-+
- /* FIXME: This one needs untangling and locking */
- int vt_do_kdgkb_ioctl(int cmd, struct kbsentry __user *user_kdgkb, int perm)
- {
-diff --git a/drivers/tty/vt/vt_ioctl.c b/drivers/tty/vt/vt_ioctl.c
-index a78ad10a119b..ec688d81bab3 100644
---- a/drivers/tty/vt/vt_ioctl.c
-+++ b/drivers/tty/vt/vt_ioctl.c
-@@ -542,6 +542,15 @@ int vt_ioctl(struct tty_struct *tty,
- 		ret = vt_do_kdsk_ioctl(cmd, up, perm, console);
- 		break;
- 
-+	case KDGKBIENT:
-+	case KDSKBIENT:
-+		ret = vt_do_kdski_ioctl(cmd, up, perm, console);
-+		break;
-+
-+	case KDSKBIRST:
-+		ret = vt_do_kdskirst_ioctl(cmd, up, perm, console);
-+		break;
-+
- 	case KDGKBSENT:
- 	case KDSKBSENT:
- 		ret = vt_do_kdgkb_ioctl(cmd, up, perm);
-diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index a9b00942e87d..7863b142234c 100644
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -789,6 +789,9 @@ COMPATIBLE_IOCTL(KDGKBDIACR)
- COMPATIBLE_IOCTL(KDSKBDIACR)
- COMPATIBLE_IOCTL(KDGKBDIACRUC)
- COMPATIBLE_IOCTL(KDSKBDIACRUC)
-+COMPATIBLE_IOCTL(KDGKBIENT)
-+COMPATIBLE_IOCTL(KDSKBIENT)
-+COMPATIBLE_IOCTL(KDSKBIRST)
- COMPATIBLE_IOCTL(KDKBDREP)
- COMPATIBLE_IOCTL(KDGKBLED)
- COMPATIBLE_IOCTL(KDGETLED)
-diff --git a/include/linux/vt_kern.h b/include/linux/vt_kern.h
-index 3fd07912909c..0f17d305b840 100644
---- a/include/linux/vt_kern.h
-+++ b/include/linux/vt_kern.h
-@@ -175,6 +175,10 @@ extern int vt_do_kbkeycode_ioctl(int cmd, struct kbkeycode __user *user_kbkc,
- 								int perm);
- extern int vt_do_kdsk_ioctl(int cmd, struct kbentry __user *user_kbe,
- 					int perm, int console);
-+extern int vt_do_kdski_ioctl(int cmd, struct kbientry __user *user_kbie,
-+					int perm, int console);
-+extern int vt_do_kdskirst_ioctl(int cmd, struct input_id __user *user_iid,
-+					int perm, int console);
- extern int vt_do_kdgkb_ioctl(int cmd, struct kbsentry __user *user_kdgkb,
-                                         int perm);
- extern int vt_do_kdskled(int console, int cmd, unsigned long arg, int perm);
-diff --git a/include/uapi/linux/kd.h b/include/uapi/linux/kd.h
-index 4616b31f84da..be048e9e3f02 100644
---- a/include/uapi/linux/kd.h
-+++ b/include/uapi/linux/kd.h
-@@ -3,6 +3,7 @@
- #define _UAPI_LINUX_KD_H
- #include <linux/types.h>
- #include <linux/compiler.h>
-+#include <linux/input.h>
- 
- /* 0x4B is 'K', to avoid collision with termios and vt */
- 
-@@ -137,6 +138,14 @@ struct kbdiacrsuc {
- #define KDGKBDIACRUC    0x4BFA  /* read kernel accent table - UCS */
- #define KDSKBDIACRUC    0x4BFB  /* write kernel accent table - UCS */
- 
-+struct kbientry {
-+	struct input_id id;
-+	struct kbentry entry;
-+};
-+#define KDGKBIENT 0x4B53 /* Get one entry in input's translation table */
-+#define KDSKBIENT 0x4B54 /* Set one entry in input's translation table */
-+#define KDSKBIRST 0x4B55 /* Set input to use global translation table */
-+
- struct kbkeycode {
- 	unsigned int scancode, keycode;
- };
--- 
-2.18.0
-
+The MPX bounds table unmapping is entirely driven by the VMAs being
+unmapped, so the page table unmapping in unmap_region() should not
+affect it.
