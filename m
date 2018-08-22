@@ -2,123 +2,171 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6FFC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 21:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED6FC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 21:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F240208DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 21:42:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F240208DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5FC64208E8
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 21:43:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FC64208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=triplefau.lt
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbeHWBJE (ORCPT
+        id S1728151AbeHWBKK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 21:09:04 -0400
-Received: from mga14.intel.com ([192.55.52.115]:64736 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727007AbeHWBJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 21:09:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2018 14:42:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,275,1531810800"; 
-   d="scan'208";a="64453971"
-Received: from jjorgill-mobl1.amr.corp.intel.com (HELO [10.254.105.144]) ([10.254.105.144])
-  by fmsmga007.fm.intel.com with ESMTP; 22 Aug 2018 14:42:27 -0700
-Subject: Re: [RFC v8 PATCH 3/5] mm: mmap: zap pages with read mmap_sem in
- munmap
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
- <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
- <e691d054-f807-80ad-9934-a1917d8e2e77@suse.cz>
- <3c62f605-2244-6a05-2dc4-34a3f1c56300@linux.alibaba.com>
- <20180822211053.qg3dlzf6pok2x4yk@kshutemo-mobl1>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, mhocko@kernel.org,
-        willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <45a5ff36-d53d-9ec3-f869-1b1b7a6de5cb@intel.com>
-Date:   Wed, 22 Aug 2018 14:42:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180822211053.qg3dlzf6pok2x4yk@kshutemo-mobl1>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 22 Aug 2018 21:10:10 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:35553 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbeHWBKK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 21:10:10 -0400
+X-Originating-IP: 88.190.179.123
+Received: from localhost (unknown [88.190.179.123])
+        (Authenticated sender: repk@triplefau.lt)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 2899C1C0002;
+        Wed, 22 Aug 2018 21:43:30 +0000 (UTC)
+From:   Remi Pommarel <repk@triplefau.lt>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Elie Roudninski <xademax@gmail.com>,
+        Remi Pommarel <repk@triplefau.lt>
+Subject: [RFC PATCH 3/4] drivers/tty/vt/keyboard.c: Make key_down[] bitmap input dependent
+Date:   Wed, 22 Aug 2018 23:50:34 +0200
+Message-Id: <0024029b8cbfd6e9672e3e620cfc9e4f6b836e03.1534972814.git.repk@triplefau.lt>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <cover.1534972811.git.repk@triplefau.lt>
+References: <cover.1534972811.git.repk@triplefau.lt>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/22/2018 02:10 PM, Kirill A. Shutemov wrote:
->> For x86, mpx_notify_unmap() looks finally zap the VM_MPX vmas in bound table
->> range with zap_page_range() and doesn't update vm flags, so it sounds ok to
->> me since vmas have been detached, nobody can find those vmas. But, I'm not
->> familiar with the details of mpx, maybe Kirill could help to confirm this?
-> I don't see anything obviously dependent on down_write() in
-> mpx_notify_unmap(), but Dave should know better.
+A kbd_handle input can have a specific keyboard config that makes
+keycode to keysym mapping array different from another one. Because
+key_down[] bitmap stores currently pressed key as keycode, it should be
+associated with an input keymap in order to retrieve the associated
+keysym.
 
-We need mmap_sem for write in mpx_notify_unmap().
+Allocating this array in each input allows to retrieve its associated
+keymap.
 
-Its job is to clean up bounds tables, but bounds tables are dynamically
-allocated and destroyed by the kernel.  When we destroy a table, we also
-destroy the VMA for the bounds table *itself*, separate from the VMA
-being unmapped.
+Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+Tested-by: Elie Roudninski <xademax@gmail.com>
+---
+ drivers/tty/vt/keyboard.c | 46 +++++++++++++++++++++++++++------------
+ 1 file changed, 32 insertions(+), 14 deletions(-)
 
-But, this code is very likely to go away soon.  If it's causing a
-problem for you, let me know and I'll see if I can get to removing it
-faster.
+diff --git a/drivers/tty/vt/keyboard.c b/drivers/tty/vt/keyboard.c
+index 4f09331ad5c3..7272e1828838 100644
+--- a/drivers/tty/vt/keyboard.c
++++ b/drivers/tty/vt/keyboard.c
+@@ -122,6 +122,7 @@ struct kbd_handle {
+ 	struct kref ref;
+ 	struct kbd_conf *conf;
+ 	struct input_handle handle;
++	unsigned long key_down[BITS_TO_LONGS(KEY_CNT)];/* keyboard key bitmap */
+ };
+ #define hdl_to_kbd_handle(h) (container_of(h, struct kbd_handle, handle))
+ 
+@@ -140,7 +141,6 @@ static const int NR_TYPES = ARRAY_SIZE(max_vals);
+ static struct input_handler kbd_handler;
+ static DEFINE_SPINLOCK(kbd_event_lock);
+ static DEFINE_SPINLOCK(led_lock);
+-static unsigned long key_down[BITS_TO_LONGS(KEY_CNT)];	/* keyboard key bitmap */
+ static unsigned char shift_down[NR_SHIFT];		/* shift state counters.. */
+ static bool dead_key_next;
+ static int npadch = -1;					/* -1 or number assembled on pad */
+@@ -378,20 +378,18 @@ static void to_utf8(struct vc_data *vc, uint c)
+ 
+ /*
+  * Called after returning from RAW mode or when changing consoles - recompute
+- * shift_down[] and shift_state from key_down[] maybe called when keymap is
+- * undefined, so that shiftkey release is seen. The caller must hold the
+- * kbd_event_lock.
++ * shift_down[] and shift_state from each input's key_down[] maybe called when
++ * keymap is undefined, so that shiftkey release is seen. The caller must hold
++ * the kbd_event_lock.
+  */
+ 
+-static void do_compute_shiftstate(void)
++static int do_compute_input_shiftstate(struct input_handle *handle, void *data)
+ {
++	struct kbd_handle *kh = hdl_to_kbd_handle(handle);
+ 	unsigned int k, sym, val;
+ 
+-	shift_state = 0;
+-	memset(shift_down, 0, sizeof(shift_down));
+-
+-	for_each_set_bit(k, key_down, min(NR_KEYS, KEY_CNT)) {
+-		sym = U(key_maps[0][k]);
++	for_each_set_bit(k, kh->key_down, min(NR_KEYS, KEY_CNT)) {
++		sym = U(kh->conf->maps[0][k]);
+ 		if (KTYP(sym) != KT_SHIFT && KTYP(sym) != KT_SLOCK)
+ 			continue;
+ 
+@@ -402,6 +400,15 @@ static void do_compute_shiftstate(void)
+ 		shift_down[val]++;
+ 		shift_state |= BIT(val);
+ 	}
++	return 0;
++}
++
++static void do_compute_shiftstate(void)
++{
++	shift_state = 0;
++	memset(shift_down, 0, sizeof(shift_down));
++	input_handler_for_each_handle(&kbd_handler, NULL,
++			do_compute_input_shiftstate);
+ }
+ 
+ /* We still have to export this method to vt.c */
+@@ -1278,6 +1285,17 @@ static int sparc_l1_a_state;
+ extern void sun_do_break(void);
+ #endif
+ 
++static int is_alt_down(struct input_handle *handle, void *data)
++{
++	struct kbd_handle *kh = hdl_to_kbd_handle(handle);
++
++	if (test_bit(KEY_LEFTALT, kh->key_down) ||
++			test_bit(KEY_RIGHTALT, kh->key_down))
++		return 1;
++
++	return 0;
++}
++
+ static int emulate_raw(struct vc_data *vc, unsigned int keycode,
+ 		       unsigned char up_flag)
+ {
+@@ -1308,8 +1326,8 @@ static int emulate_raw(struct vc_data *vc, unsigned int keycode,
+ 		 * pressing PrtSc/SysRq alone, but simply 0x54
+ 		 * when pressing Alt+PrtSc/SysRq.
+ 		 */
+-		if (test_bit(KEY_LEFTALT, key_down) ||
+-		    test_bit(KEY_RIGHTALT, key_down)) {
++		if (input_handler_for_each_handle(&kbd_handler, NULL,
++					is_alt_down)) {
+ 			put_queue(vc, 0x54 | up_flag);
+ 		} else {
+ 			put_queue(vc, 0xe0);
+@@ -1424,9 +1442,9 @@ static void kbd_keycode(struct kbd_handle *kh, unsigned int keycode, int down,
+ 	}
+ 
+ 	if (down)
+-		set_bit(keycode, key_down);
++		set_bit(keycode, kh->key_down);
+ 	else
+-		clear_bit(keycode, key_down);
++		clear_bit(keycode, kh->key_down);
+ 
+ 	if (rep &&
+ 	    (!vc_kbd_mode(kbd, VC_REPEAT) ||
+-- 
+2.18.0
+
