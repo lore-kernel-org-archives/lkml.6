@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0255C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CF5C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:55:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FF3721480
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:54:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E300720C0D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:54:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C1tazlfM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FF3721480
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N8Snk1cz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E300720C0D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728849AbeHVNTG (ORCPT
+        id S1728870AbeHVNTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 09:19:06 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45732 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728505AbeHVNTE (ORCPT
+        Wed, 22 Aug 2018 09:19:08 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43155 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728505AbeHVNTG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 09:19:04 -0400
-Received: by mail-pg1-f193.google.com with SMTP id m4-v6so173877pgv.12
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 02:54:54 -0700 (PDT)
+        Wed, 22 Aug 2018 09:19:06 -0400
+Received: by mail-pg1-f194.google.com with SMTP id v66-v6so688315pgb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 02:54:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gedi0Iu1aBcxJqNX97aA3bWPY2S3OoJ67xo3yFH8mUU=;
-        b=C1tazlfMJxvL2YDYIcp3AFZGuDp8l5wspBxBCmf/MtdT18JTYHRhmww+4nCrspEam6
-         Za67r+JEMiwly/1V6KIBKuYFVxRn+R/0QZbMDO/EkcZCs07G4HMJzQ0nZJUE+1oKwa5K
-         nJIAN6UtA6vO/+otKdc4Fc0cI1g7m6f/bbd2yJW14nUBF3vavT1iaeS2b4aYqW6dzwHi
-         sA+A33O5HPh7XAe+tUtlWShUHbB64nzWceA/zzohJmfR6OEtxXd9XRevwDSgvnSZqche
-         vqK09hYBPqZPzN0EpZA7gpxXu3HLudhX+Ea+yQm1Qk81ZEQ04221Catkv6KxYIDB567t
-         xX2A==
+        bh=bxGVGj0JUmnI5zJN3wDw2g+ZjPDsQRcTLZy5X8SjOlQ=;
+        b=N8Snk1czgjI4TwkGmJSijYZlwr0cjMcjegJL65iMLfVMdcaQwiR2gdkdak4Ou4+UDF
+         zUXss+Ky9IOtCY11N57+rIcI17iY/gqHLNQD0DyXuVl1ez1/7VJnql2+GIYxuzNdklQ2
+         oFlN9LiYelipCwJ2c/tc/hfzsDJNZrlPrGZL2KsImI+roiIWPQlsFVWWRjHzOHTS6zUZ
+         imGQVzBkSM0h0SYZIUNRnrrMMaHVItwvstSDesKcSr4K6Pkci77rrbLckVolGcFJc+7R
+         tETBscm9B6GhjLuyN4+MWUkwTIEzFYzZtiUgeVmE6HdDVEDWeI1CDKCHscWKYWNYwgeH
+         0qWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=gedi0Iu1aBcxJqNX97aA3bWPY2S3OoJ67xo3yFH8mUU=;
-        b=O9ALGU6vTkVs7Ep8jK/IX2lca3vHhDssu3Mp1s1/KsYny4bmTU4K20GHxO1yqkZPig
-         K6nyB2EnaV2nScVhyUOypqZgKVkqbyOxiAL36lQoIBIzZHGKT6Bb8Iu/M6wKvENMS4Df
-         +DsDwhfITGUp7Z/6XIEC7sn983ddCco+Bd1Kq3q71bKQpt3Sme9Dcbz44O1DPKCQr/4l
-         mCo/Tz/2T2Ylo8TUzCe4bE4xBirVVObkr6yTsGuACb79BRSFlPPEKu2X8tEv2zCiRIK2
-         dWpSgWXEraWtoQ/wVwL1fJjTH8175W8wP00xfVCPi7ebhG4/CT5X+bSnBMY+7pcK0k9Q
-         87AQ==
-X-Gm-Message-State: AOUpUlGZH8j0KToopZVFXKGZ8Ny/rWg8YCM8looLoJdKoN+qojGB1e+p
-        V5ajfKzAv21iqeFR/WBSFYk=
-X-Google-Smtp-Source: AA+uWPyj5eDaH60i0VEEJGStJBjsSgS7IgmetdbhVYaWgQQotVND2LaQfSJ6U2yhC16g+xC7XcEPrg==
-X-Received: by 2002:a63:5d4b:: with SMTP id o11-v6mr14305643pgm.349.1534931693727;
-        Wed, 22 Aug 2018 02:54:53 -0700 (PDT)
+        bh=bxGVGj0JUmnI5zJN3wDw2g+ZjPDsQRcTLZy5X8SjOlQ=;
+        b=KCFkj/hpjjzlkTufZBs3YUx0uicZIImqLYZIpsNx+ImGpVrVG1T5C5+BtHQqMTM8bz
+         4ebpsF4v5++cfq+puL882f42B2SUKvp+hIZNObArS0QTRybZLbIfwk0XNo+cfhTclhRc
+         c5x5Vn66wR7n4oEavQqPsC5AnpawiiQv/eYUeBiaSqAPDuWr9SdrixdeQDoSgENlTv6n
+         ue5fTcHGSHgiDXny3mp33C/Q3kRtGalvognMnsftJXoLB7uEVy1SBPu511f3lkC9+TeY
+         v43TtTFPU51WPgIm9B3/uljoqNJc4vUypQXkk56R2zdC9nYd1TU+USO2WBc66EnxYAJm
+         P3VA==
+X-Gm-Message-State: AOUpUlFOWOj46W93SXVEybCfDSAK9Bz0E9gsKGh9cfV9nmq7Hsmy5sAF
+        P7u8aDBan0lG6YuXec7JfM0cvCK7
+X-Google-Smtp-Source: AA+uWPwfzp5traUUybQuKMK1Z2qcsZJvd84/7Q+GGoZ2M9oedXpgdTBeLYHDBoZI1NFjUDsf6N15BQ==
+X-Received: by 2002:a63:e841:: with SMTP id a1-v6mr24363555pgk.126.1534931695873;
+        Wed, 22 Aug 2018 02:54:55 -0700 (PDT)
 Received: from toy.corp.qihoo.net ([104.192.108.9])
-        by smtp.gmail.com with ESMTPSA id z20-v6sm3126105pfd.99.2018.08.22.02.54.51
+        by smtp.gmail.com with ESMTPSA id z20-v6sm3126105pfd.99.2018.08.22.02.54.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Aug 2018 02:54:53 -0700 (PDT)
+        Wed, 22 Aug 2018 02:54:55 -0700 (PDT)
 From:   Jun Yao <yaojun8558363@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
         linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v4 5/6] arm64/mm: Populate the swapper_pg_dir by fixmap.
-Date:   Wed, 22 Aug 2018 17:54:31 +0800
-Message-Id: <20180822095432.12125-6-yaojun8558363@gmail.com>
+Subject: [RESEND PATCH v4 6/6] arm64/mm: Move {idmap_pg_dir .. swapper_pg_dir} to rodata section.
+Date:   Wed, 22 Aug 2018 17:54:32 +0800
+Message-Id: <20180822095432.12125-7-yaojun8558363@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180822095432.12125-1-yaojun8558363@gmail.com>
 References: <20180822095432.12125-1-yaojun8558363@gmail.com>
@@ -73,147 +73,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we will move the swapper_pg_dir to rodata section, we need a
-way to update it. The fixmap can handle it. When the swapper_pg_dir
-needs to be updated, we map it dynamically. The map will be
-canceled after the update is complete. In this way, we can defend
-against KSMA(Kernel Space Mirror Attack).
+Move the idmap_pg_dir/tramp_pg_dir/reserved_ttbr0/swapper_pg_dir to
+the rodata section. When the kernel is initialized, the
+idmap_pg_dir, tramp_pg_dir and reserved_ttbr0 will not change. And
+it's safe to move them to rodata section.
 
 Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
 ---
- arch/arm64/include/asm/pgtable.h | 68 ++++++++++++++++++++++++++------
- arch/arm64/mm/mmu.c              |  2 +
- 2 files changed, 59 insertions(+), 11 deletions(-)
+ arch/arm64/kernel/vmlinux.lds.S | 39 ++++++++++++++++++++-------------
+ 1 file changed, 24 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 46ef21ebfe47..d5c3df99af7b 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -45,6 +45,13 @@
- #include <linux/mm_types.h>
- #include <linux/sched.h>
- 
-+extern pgd_t init_pg_dir[PTRS_PER_PGD];
-+extern pgd_t init_pg_end[];
-+extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
-+extern pgd_t swapper_pg_end[];
-+extern pgd_t idmap_pg_dir[PTRS_PER_PGD];
-+extern pgd_t tramp_pg_dir[PTRS_PER_PGD];
+diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
+index 2446911f4262..142528a23b44 100644
+--- a/arch/arm64/kernel/vmlinux.lds.S
++++ b/arch/arm64/kernel/vmlinux.lds.S
+@@ -64,8 +64,13 @@ jiffies = jiffies_64;
+ 	*(.entry.tramp.text)				\
+ 	. = ALIGN(PAGE_SIZE);				\
+ 	__entry_tramp_text_end = .;
 +
- extern void __pte_error(const char *file, int line, unsigned long val);
- extern void __pmd_error(const char *file, int line, unsigned long val);
- extern void __pud_error(const char *file, int line, unsigned long val);
-@@ -428,8 +435,32 @@ extern pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
- 				 PUD_TYPE_TABLE)
++#define TRAMP_PG_TABLE					\
++	tramp_pg_dir = .;				\
++	. += PAGE_SIZE;
+ #else
+ #define TRAMP_TEXT
++#define TRAMP_PG_TABLE
  #endif
  
-+extern spinlock_t swapper_pgdir_lock;
-+
-+#define pgd_set_fixmap(addr)	((pgd_t *)set_fixmap_offset(FIX_PGD, addr))
-+#define pgd_clear_fixmap()	clear_fixmap(FIX_PGD)
-+
-+static inline bool in_swapper_pgdir(void *addr)
-+{
-+	return ((unsigned long)addr & PAGE_MASK) ==
-+		((unsigned long)swapper_pg_dir & PAGE_MASK);
-+}
-+
- static inline void set_pmd(pmd_t *pmdp, pmd_t pmd)
- {
-+#ifdef __PAGETABLE_PMD_FOLDED
-+	if (in_swapper_pgdir(pmdp)) {
-+		pmd_t *fixmap_pmdp;
-+
-+		spin_lock(&swapper_pgdir_lock);
-+		fixmap_pmdp = (pmd_t *)pgd_set_fixmap(__pa(pmdp));
-+		WRITE_ONCE(*fixmap_pmdp, pmd);
-+		dsb(ishst);
-+		pgd_clear_fixmap();
-+		spin_unlock(&swapper_pgdir_lock);
-+		return;
-+	}
+ #define INIT_PG_TABLES					\
+@@ -74,6 +79,24 @@ jiffies = jiffies_64;
+ 	. += SWAPPER_DIR_SIZE;                          \
+ 	init_pg_end = .;
+ 
++#ifdef CONFIG_ARM64_SW_TTBR0_PAN
++#define RESERVED_PG_TABLE				\
++	reserved_ttbr0 = .;				\
++	. += RESERVED_TTBR0_SIZE;
++#else
++#define RESERVED_PG_TABLE
 +#endif
- 	WRITE_ONCE(*pmdp, pmd);
- 	dsb(ishst);
- }
-@@ -480,6 +511,19 @@ static inline phys_addr_t pmd_page_paddr(pmd_t pmd)
- 
- static inline void set_pud(pud_t *pudp, pud_t pud)
- {
-+#ifdef __PAGETABLE_PUD_FOLDED
-+	if (in_swapper_pgdir(pudp)) {
-+		pud_t *fixmap_pudp;
 +
-+		spin_lock(&swapper_pgdir_lock);
-+		fixmap_pudp = (pud_t *)pgd_set_fixmap(__pa(pudp));
-+		WRITE_ONCE(*fixmap_pudp, pud);
-+		dsb(ishst);
-+		pgd_clear_fixmap();
-+		spin_unlock(&swapper_pgdir_lock);
-+		return;
-+	}
-+#endif
- 	WRITE_ONCE(*pudp, pud);
- 	dsb(ishst);
- }
-@@ -532,8 +576,19 @@ static inline phys_addr_t pud_page_paddr(pud_t pud)
- 
- static inline void set_pgd(pgd_t *pgdp, pgd_t pgd)
- {
--	WRITE_ONCE(*pgdp, pgd);
--	dsb(ishst);
-+	if (in_swapper_pgdir(pgdp)) {
-+		pgd_t *fixmap_pgdp;
++#define KERNEL_PG_TABLES				\
++	. = ALIGN(PAGE_SIZE);                           \
++	idmap_pg_dir = .;				\
++	. += IDMAP_DIR_SIZE;				\
++	TRAMP_PG_TABLE					\
++	RESERVED_PG_TABLE				\
++	swapper_pg_dir = .;				\
++	. += PAGE_SIZE;					\
++	swapper_pg_end = .;
 +
-+		spin_lock(&swapper_pgdir_lock);
-+		fixmap_pgdp = pgd_set_fixmap(__pa(pgdp));
-+		WRITE_ONCE(*fixmap_pgdp, pgd);
-+		dsb(ishst);
-+		pgd_clear_fixmap();
-+		spin_unlock(&swapper_pgdir_lock);
-+	} else {
-+		WRITE_ONCE(*pgdp, pgd);
-+		dsb(ishst);
-+	}
- }
- 
- static inline void pgd_clear(pgd_t *pgdp)
-@@ -586,8 +641,6 @@ static inline phys_addr_t pgd_page_paddr(pgd_t pgd)
- /* to find an entry in a kernel page-table-directory */
- #define pgd_offset_k(addr)	pgd_offset(&init_mm, addr)
- 
--#define pgd_set_fixmap(addr)	((pgd_t *)set_fixmap_offset(FIX_PGD, addr))
--#define pgd_clear_fixmap()	clear_fixmap(FIX_PGD)
- 
- static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
- {
-@@ -712,13 +765,6 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
- }
- #endif
- 
--extern pgd_t init_pg_dir[PTRS_PER_PGD];
--extern pgd_t init_pg_end[];
--extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
--extern pgd_t swapper_pg_end[];
--extern pgd_t idmap_pg_dir[PTRS_PER_PGD];
--extern pgd_t tramp_pg_dir[PTRS_PER_PGD];
--
  /*
-  * Encode and decode a swap entry:
-  *	bits 0-1:	present (must be zero)
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index b7f9afb628ac..691a05bbf87b 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -67,6 +67,8 @@ static pte_t bm_pte[PTRS_PER_PTE] __page_aligned_bss;
- static pmd_t bm_pmd[PTRS_PER_PMD] __page_aligned_bss __maybe_unused;
- static pud_t bm_pud[PTRS_PER_PUD] __page_aligned_bss __maybe_unused;
+  * The size of the PE/COFF section that covers the kernel image, which
+  * runs from stext to _edata, must be a round multiple of the PE/COFF
+@@ -143,6 +166,7 @@ SECTIONS
+ 	RO_DATA(PAGE_SIZE)		/* everything from this point to     */
+ 	EXCEPTION_TABLE(8)		/* __init_begin will be marked RO NX */
+ 	NOTES
++	KERNEL_PG_TABLES
  
-+DEFINE_SPINLOCK(swapper_pgdir_lock);
-+
- pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
- 			      unsigned long size, pgprot_t vma_prot)
- {
+ 	. = ALIGN(SEGMENT_ALIGN);
+ 	__init_begin = .;
+@@ -224,21 +248,6 @@ SECTIONS
+ 	BSS_SECTION(0, 0, 0)
+ 
+ 	. = ALIGN(PAGE_SIZE);
+-	idmap_pg_dir = .;
+-	. += IDMAP_DIR_SIZE;
+-
+-#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+-	tramp_pg_dir = .;
+-	. += PAGE_SIZE;
+-#endif
+-
+-#ifdef CONFIG_ARM64_SW_TTBR0_PAN
+-	reserved_ttbr0 = .;
+-	. += RESERVED_TTBR0_SIZE;
+-#endif
+-	swapper_pg_dir = .;
+-	. += PAGE_SIZE;
+-	swapper_pg_end = .;
+ 
+ 	__pecoff_data_size = ABSOLUTE(. - __initdata_begin);
+ 	_end = .;
 -- 
 2.17.1
 
