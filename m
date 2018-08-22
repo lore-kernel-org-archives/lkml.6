@@ -2,83 +2,172 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ACEAC4321D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD83BC04AB9
 	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:09:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C39E2064E
+	by mail.kernel.org (Postfix) with ESMTP id 95A5820850
 	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 08:09:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C39E2064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A5820850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728392AbeHVLc5 (ORCPT
+        id S1728364AbeHVLc5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 22 Aug 2018 07:32:57 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:57082 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728302AbeHVLc4 (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54608 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728292AbeHVLc4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 22 Aug 2018 07:32:56 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7M8980j027782;
-        Wed, 22 Aug 2018 03:09:08 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2kxgv1cwec-1;
-        Wed, 22 Aug 2018 03:09:08 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id E891E611C8A7;
-        Wed, 22 Aug 2018 03:11:02 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 22 Aug 2018
- 09:09:06 +0100
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w7M896Zq022135; Wed,
- 22 Aug 2018 09:09:06 +0100
-Date:   Wed, 22 Aug 2018 09:09:06 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     <sapthagiri.baratam@gmail.com>
-CC:     <lee.jones@linaro.org>, <patches@opensource.cirrus.com>,
-        <linux-kernel@vger.kernel.org>,
-        Sapthagiri Baratam <sapthagiri.baratam@cirrus.com>
-Subject: Re: [PATCH v2] mfd: arizona: Correct calling of runtime_put_sync
-Message-ID: <20180822080906.GR32322@imbe.wolfsonmicro.main>
-References: <5b7c2583.1c69fb81.c4b41.086e@mx.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <5b7c2583.1c69fb81.c4b41.086e@mx.google.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=823 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1808220084
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7M896gM077451
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 04:09:08 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m11hcngje-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 04:09:08 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Wed, 22 Aug 2018 09:09:02 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 22 Aug 2018 09:08:59 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7M88w6M42402018
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 Aug 2018 08:08:58 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 63062AE045;
+        Wed, 22 Aug 2018 11:08:36 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 18233AE053;
+        Wed, 22 Aug 2018 11:08:36 +0100 (BST)
+Received: from morel-ThinkPad-W530.boeblingen.de.ibm.com (unknown [9.152.224.111])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 22 Aug 2018 11:08:36 +0100 (BST)
+From:   Pierre Morel <pmorel@linux.ibm.com>
+To:     david@redhat.com
+Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+Subject: [PATCH] KVM: s390: vsie: Consolidate CRYCB validation
+Date:   Wed, 22 Aug 2018 10:08:57 +0200
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18082208-0012-0000-0000-0000029D0A3C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082208-0013-0000-0000-000020D04C73
+Message-Id: <1534925337-18380-1-git-send-email-pmorel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808220084
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 07:52:44PM +0530, sapthagiri.baratam@gmail.com wrote:
-> From: Sapthagiri Baratam <sapthagiri.baratam@cirrus.com>
-> 
-> Don't call runtime_put_sync when clk32k_ref is ARIZONA_32KZ_MCLK2
-> as there is no corresponding runtime_get_sync call.
-> 
-> MCLK1 is not in the AoD power domain so if it is used as 32kHz clock
-> source we need to hold a runtime PM reference to keep the device from
-> going into low power mode.
-> 
-> fixes: cdd8da8cc66b ("mfd: arizona: Add gating of external MCLKn clocks")
-> Signed-off-by: Sapthagiri Baratam <sapthagiri.baratam@cirrus.com>
-> ---
+Currently when shadowing the CRYCB on SIE entrance, the validation
+tests the following:
+- accept only FORMAT1 or FORMAT2
+- test if MSAext facility (76) is installed
+- accept the CRYCB if no keys are used
+- verifies that the CRYCB format1 is inside a page
+- verifies that the CRYCB origin is not 0
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+This is not following the architecture.
 
-Thanks,
-Charles
+On SIE entrance, the CRYCB must be validated before accepting
+any of its entries.
+
+Let's do the validation in the right order and also verify
+correctly the FORMAT2 CRYCB.
+
+The testing of facility MSAext3 (76) is not useful as it is
+already tested by kvm_crypto_init() to set FORMAT1.
+
+The testing of a null CRYCB origin must be done what ever
+the format of the guest3 CRYCB is.
+
+The CRYCB must be contained inside a page, but the CRYCB size
+depends on the CRYCB format.
+Lets test what the guest2 initialized, we can not trust it to have
+done things right.
+
+Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+---
+ arch/s390/kvm/vsie.c | 35 +++++++++++++++++++++++++----------
+ 1 file changed, 25 insertions(+), 10 deletions(-)
+
+diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
+index a2b28cd..35c3907 100644
+--- a/arch/s390/kvm/vsie.c
++++ b/arch/s390/kvm/vsie.c
+@@ -158,28 +158,43 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+ 	scb_s->crycbd = 0;
+ 	if (!(crycbd_o & vcpu->arch.sie_block->crycbd & CRYCB_FORMAT1))
+ 		return 0;
+-	/* format-1 is supported with message-security-assist extension 3 */
+-	if (!test_kvm_facility(vcpu->kvm, 76))
+-		return 0;
++	/*
++	 * If APIE is set or it the CRYCB Format is FORMAT1 or FORMAT2 with
++	 * APXA installed, the machine checks the validity of crycb origin.
++	 * KVM kvm_s390_crypto_init() makes sure that FORMAT2 is only used
++	 * if APXA is installed.
++	 * The guest2 hypervizor could have set APIE and Format2 so let's
++	 * test all these points.
++	 * We here have always a CRYCB FORMAT1 or FORMAT2 (FORMAT0 was
++	 * refused in previous test).
++	 */
++	if (!crycb_addr)
++		return set_validity_icpt(scb_s, 0x0039U);
++
++	if ((crycbd_o & 0x03) == CRYCB_FORMAT1)
++		if ((crycb_addr & PAGE_MASK) !=
++		   ((crycb_addr + 128) & PAGE_MASK))
++			return set_validity_icpt(scb_s, 0x003CU);
++
++	if ((crycbd_o & 0x03) == CRYCB_FORMAT2)
++		if ((crycb_addr & PAGE_MASK) !=
++		   ((crycb_addr + 256) & PAGE_MASK))
++			return set_validity_icpt(scb_s, 0x003CU);
++
+ 	/* we may only allow it if enabled for guest 2 */
+ 	ecb3_flags = scb_o->ecb3 & vcpu->arch.sie_block->ecb3 &
+ 		     (ECB3_AES | ECB3_DEA);
+ 	if (!ecb3_flags)
+ 		return 0;
+ 
+-	if ((crycb_addr & PAGE_MASK) != ((crycb_addr + 128) & PAGE_MASK))
+-		return set_validity_icpt(scb_s, 0x003CU);
+-	else if (!crycb_addr)
+-		return set_validity_icpt(scb_s, 0x0039U);
+-
+ 	/* copy only the wrapping keys */
+ 	if (read_guest_real(vcpu, crycb_addr + 72,
+ 			    vsie_page->crycb.dea_wrapping_key_mask, 56))
+ 		return set_validity_icpt(scb_s, 0x0035U);
+ 
+ 	scb_s->ecb3 |= ecb3_flags;
+-	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | CRYCB_FORMAT1 |
+-			CRYCB_FORMAT2;
++	/* Set the shadow CRYCB format to format 2 */
++	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | CRYCB_FORMAT2;
+ 
+ 	/* xor both blocks in one run */
+ 	b1 = (unsigned long *) vsie_page->crycb.dea_wrapping_key_mask;
+-- 
+2.7.4
+
