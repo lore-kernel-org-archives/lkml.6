@@ -2,109 +2,198 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F27C3C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 04:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A30AC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 04:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1FD92083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 04:58:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC6A02083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 04:58:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mendozajonas.com header.i=@mendozajonas.com header.b="aZrhQhcq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LLUarz/9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1FD92083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mendozajonas.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XK9CSpXJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC6A02083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbeHVIVW (ORCPT
+        id S1728164AbeHVIVj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 04:21:22 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:42869 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728104AbeHVIVW (ORCPT
+        Wed, 22 Aug 2018 04:21:39 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:46745 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726676AbeHVIVj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 04:21:22 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id 92CD82F5;
-        Wed, 22 Aug 2018 00:58:08 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Wed, 22 Aug 2018 00:58:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        mendozajonas.com; h=cc:date:from:message-id:subject:to
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=XqsnZC+aeLNUENOr5
-        youAetQsJiesBumxStsV4vmDpg=; b=aZrhQhcqiserYlFHz3BbzFvBoEUfaYDrN
-        lL60SxVi7R9wJK6BcxuwFgfP5yRCe9xGr1XOVZ4JRZxJuDPJzTOEe9AXlHWcd8du
-        P49xCvP+O+JDvX8WEZwfDl1hqLiPCBuy7qpNJokvETQ6tYjzvMRsa2uoymaE5yIm
-        88bdL4OfRFwz+tCf33V2md13Ev9f0tdIZcpyRekBJKIZFBdniB5UDDSqsrbtycvV
-        lwTCwwL5xwaesfoVF2fsUIG2hUcX+Mfk3DdxCt1f1Sud+x10XT+2T7pNwvPkFM0x
-        vonkf9cBV6ii2mgKQZvsq4KdrkNTd+zPJRKlXHkRW36+ztYbyU/EQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:date:from:message-id:subject:to
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=XqsnZC+aeLNUENOr5
-        youAetQsJiesBumxStsV4vmDpg=; b=LLUarz/99moY0e5Y8XVLhpr2WgaqzW3OX
-        BF+2HyiIslwg1IIqvMRXhhiIsaXoiu0+AxHbdgvp8VAPVqz+WDoDYDKdt34QMsJ8
-        Gg5Bz+RbLGGm1hAwWuk5ZU3MZwzp1gHzYy3nCQe+ULPzhEW4+ClY7zaCC+9Hvs+0
-        ljtB0cWcgcrR58cqhvZR/ZwPTO8GFGzG9qCwykm0+G4uC0OT3FVDD4xBOeDFYGKC
-        Va84c7JQd5UTFMztyWWxIpLlmuWo2pz3FNlqiNAC7GyagXCEGs660b+65pLGQ/ck
-        rXUclGaTpcOpyqpu0iD4ffTYxz9IuXz5RpYS97nGVL5UB1rUMDY+A==
-X-ME-Proxy: <xmx:X-18W5H7UetTYEtBsGjtEqn-1BTcivB_aUpEMfCCdj-r2UxpDoiW9g>
-    <xmx:X-18WxSBmZHIpU3vLptMmLfmh32jpjMvB2W3ggaoYvug3kVMFa8sMg>
-    <xmx:X-18WzVCjJtJpnzTCB5MPyA6CVPiFkUCkQNS9SUnkt70ailMnROUKA>
-    <xmx:X-18W95yCdrCzE53uLvDjSpX5rGqxFa2CmV3jTU9rcxKYZUreLQFhw>
-    <xmx:X-18W-G5tNghyYipboGdJTML9KEzoO6QGUD3lY-fuNOwm-p2dBNvSw>
-    <xmx:YO18W6aLpkyLcRtXRCQjVW-fOf-HfTBt_8gyN2QH6WHUeiNevp-sow>
-X-ME-Sender: <xms:X-18W0kSjAU8vntNG7EO5r3JhqADjY68DiZSibpSEdMIxd6r3aCgAQ>
-Received: from v4.ozlabs.ibm.com (unknown [122.99.82.10])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 77725E447F;
-        Wed, 22 Aug 2018 00:58:05 -0400 (EDT)
-From:   Samuel Mendoza-Jonas <sam@mendozajonas.com>
-To:     netdev@vger.kernel.org
-Cc:     Samuel Mendoza-Jonas <sam@mendozajonas.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
-Subject: [PATCH net] net/ncsi: Fixup .dumpit message flags and ID check in Netlink handler
-Date:   Wed, 22 Aug 2018 14:57:44 +1000
-Message-Id: <20180822045744.9267-1-sam@mendozajonas.com>
-X-Mailer: git-send-email 2.18.0
+        Wed, 22 Aug 2018 04:21:39 -0400
+Received: by mail-pl0-f65.google.com with SMTP id a4-v6so333405plm.13
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Aug 2018 21:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PvVlNjjev7e1a2EkKES9kW8PruHvnQCFRaLKzejH+rs=;
+        b=XK9CSpXJp0gdfRmKyDnFI687LOYq/famqdzxlZHG4J97RjEDj31DtJ+XQjBcJ8D6YR
+         zKOl028/PZe0iz6+3lUfcFdpwbUttF/RIjifD+ECS6dGmXjigtHMuN/gLFR32vdBP1f3
+         6meavVCbaPjL7UZ1mS+6CymybDuThk+wJCBb8VQOc0CvsqJhYq6AaOZjT5f85ZBUStou
+         inTa/r33U7smcKXDJ2qs2vBp0cXj/8QowU/n0JQfGpFLhirAI9qgcEH84316b9+tyPtc
+         RmepGZ0tGrPHfyN0G7y+9veveT+8neXWQQRY0WS48KThyOzeuCgJX5XaRRGW9XTetH9B
+         jRTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PvVlNjjev7e1a2EkKES9kW8PruHvnQCFRaLKzejH+rs=;
+        b=be0KWlVfNCFPt6TTmeEWNGh2H36e9zWQ+6Ipe4bBRCIKPlM0mUrNxtEjiMVCAZfShF
+         65W2JSdBcBJnaWK4TU9y2nakJZ59NP9Fgz+Dd80QuVbfPFtaCMHj8c4mUVz2kA9tPqe/
+         uCwWrJQLBbt1dvc/EAYGOfs8AxZubu+KxNoPTApSIM9QOvQxNt5v9oCUkWKa2y+3dpT3
+         7/HH1bTcsPWitkeTIkFiIAdFSEIQESdXigc1EQC+zfh/LBONv0amvxC1tUjrKW4PE7vN
+         pzjjTkctz0HesGRCQJoTgRd8JUM46CKd7q5HX29bnyRcOD4pkztyMhg6ypvCnf45y4Ag
+         ggBA==
+X-Gm-Message-State: AOUpUlGcTs4NOuf9ZDhlrqm4rvKquIyGRRrGQWVxMWA8SRpZiuvOA6G/
+        SUPpD7SWj0N1LnieRTX/3BXfZPeN
+X-Google-Smtp-Source: AA+uWPzDlLp94p2H4/VGH5JjnD3dmUMryEjjKAO0Lq3HnbQGy3gW2I+KesTATX6bkDCnN+xj2DJngg==
+X-Received: by 2002:a17:902:e3:: with SMTP id a90-v6mr28821758pla.227.1534913907799;
+        Tue, 21 Aug 2018 21:58:27 -0700 (PDT)
+Received: from localhost ([175.223.33.48])
+        by smtp.gmail.com with ESMTPSA id j16-v6sm1047036pfk.125.2018.08.21.21.58.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 Aug 2018 21:58:26 -0700 (PDT)
+Date:   Wed, 22 Aug 2018 13:58:23 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Martin Wilck <mwilck@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC][PATCH] lib/string: introduce sysfs_strncpy() and
+ sysfs_strlcpy()
+Message-ID: <20180822045823.GA6876@jagdpanzerIV>
+References: <20180821062459.1807-1-sergey.senozhatsky@gmail.com>
+ <0e06858f-3625-692a-582d-d828a3cc3ebe@rasmusvillemoes.dk>
+ <20180821095055.GA400@jagdpanzerIV>
+ <20180821135734.GA19916@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180821135734.GA19916@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ncsi_pkg_info_all_nl() .dumpit handler is missing the NLM_F_MULTI
-flag, causing additional package information after the first to be lost.
-Also fixup a sanity check in ncsi_write_package_info() to reject out of
-range package IDs.
+Hello Greg,
 
-Signed-off-by: Samuel Mendoza-Jonas <sam@mendozajonas.com>
+On (08/21/18 15:57), Greg Kroah-Hartman wrote:
+> > I think that sysfs input is always properly NULL-terminated. It may or
+> > may not contain \n, but \0 is expected to be there. Am I wrong?
+> 
+> sysfs data is always null terminated.
+> 
+> What exactly are you trying to do here?  If a user sends you crappy data
+> in a sysfs file (like leading or trailing whitespace), well, you can
+> always just error out, no problem.
+
+So what we are thinking about is sort of clean up / unification of the
+way ->store() callbacks handle sysfs input. They all have to do the
+same things for "corner case" handling and many of them forget to handle
+some specific cases; or have to come up with extra code; or are not aware
+of the existing API; etc.
+
+For instance, let's look at 325c4b3b81027068 [well, a small part of]
+
 ---
- net/ncsi/ncsi-netlink.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/ncsi/ncsi-netlink.c b/net/ncsi/ncsi-netlink.c
-index 82e6edf9c5d9..45f33d6dedf7 100644
---- a/net/ncsi/ncsi-netlink.c
-+++ b/net/ncsi/ncsi-netlink.c
-@@ -100,7 +100,7 @@ static int ncsi_write_package_info(struct sk_buff *skb,
- 	bool found;
- 	int rc;
+@@ -245,7 +239,7 @@ static ssize_t pm_qos_resume_latency_store(struct device *dev,
  
--	if (id > ndp->package_num) {
-+	if (id > ndp->package_num - 1) {
- 		netdev_info(ndp->ndev.dev, "NCSI: No package with id %u\n", id);
- 		return -ENODEV;
- 	}
-@@ -240,7 +240,7 @@ static int ncsi_pkg_info_all_nl(struct sk_buff *skb,
- 		return 0; /* done */
+                if (value == 0)
+                        value = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
+-       } else if (!strcmp(buf, "n/a") || !strcmp(buf, "n/a\n")) {
++       } else if (sysfs_streq(buf, "n/a")) {
+                value = 0;
+        } else {
+                return -EINVAL;
+@@ -285,9 +279,9 @@ static ssize_t pm_qos_latency_tolerance_store(struct device *dev,
+                if (value < 0)
+                        return -EINVAL;
+        } else {
+-               if (!strcmp(buf, "auto") || !strcmp(buf, "auto\n"))
++               if (sysfs_streq(buf, "auto"))
+                        value = PM_QOS_LATENCY_TOLERANCE_NO_CONSTRAINT;
+-               else if (!strcmp(buf, "any") || !strcmp(buf, "any\n"))
++               else if (sysfs_streq(buf, "any"))
+                        value = PM_QOS_LATENCY_ANY;
+                else
+                        return -EINVAL;
+@@ -342,20 +336,12 @@ static ssize_t
+ wake_store(struct device * dev, struct device_attribute *attr,
+        const char * buf, size_t n)
+ {
+-       char *cp;
+-       int len = n;
+-
+        if (!device_can_wakeup(dev))
+                return -EINVAL;
  
- 	hdr = genlmsg_put(skb, NETLINK_CB(cb->skb).portid, cb->nlh->nlmsg_seq,
--			  &ncsi_genl_family, 0,  NCSI_CMD_PKG_INFO);
-+			  &ncsi_genl_family, NLM_F_MULTI,  NCSI_CMD_PKG_INFO);
- 	if (!hdr) {
- 		rc = -EMSGSIZE;
- 		goto err;
--- 
-2.18.0
+-       cp = memchr(buf, '\n', n);
+-       if (cp)
+-               len = cp - buf;
+-       if (len == sizeof _enabled - 1
+-                       && strncmp(buf, _enabled, sizeof _enabled - 1) == 0)
++       if (sysfs_streq(buf, _enabled))
+                device_set_wakeup_enable(dev, 1);
+-       else if (len == sizeof _disabled - 1
+-                       && strncmp(buf, _disabled, sizeof _disabled - 1) == 0)
++       else if (sysfs_streq(buf, _disabled))
+                device_set_wakeup_enable(dev, 0);
+        else
+                return -EINVAL;
+---
 
+There was quite a bit of code. But these things still can and do happen;
+Andy tweaked the existing code only.
+
+So what we are looking at is a way which would let us to make that part
+of drivers to be simpler and less fragile, perhaps.
+
+> Please always post a user of your new api when you make stuff like this
+> otherwise we do not know how it is used, or even why you are adding it.
+
+Sure, I agree. There is no API proposal yet; so I gave a simple example
+in the commit message and didn't bother to convert any of the existing
+users.
+
+I'm not even sure yet if we want to have a new API. The sort of a
+root cause [it seems so] here is that sysfs input data has irregular
+format. That's why we have irregular handling of
+
+Either in a form of
+
+		if (!strcmp(buf, "auto") || !strcmp(buf, "auto\n"))
+			...
+or in a form of
+
+		if (sz > 0 && value[sz - 1] == '\n')
+			value[sz - 1] = 0x00;
+		if (!strcmp(value, "auto"))
+
+and so on.
+
+So may be, instead of new API which was meant to help make sysfs data
+look uniform, we can do tweaks to sysfs and pass to ->store() callbacks
+data which already has no trailing newline and whitespaces. IOW, make it
+uniform within sysfs. Then we can remove a bunch of code from the existing
+drivers and make it easier for future drivers.
+So sysfs could do strim-ing, etc. and ->store() would always receive data
+which can be directly used as strcmp/strcpy/etc input. Because this is what
+people want to do after all; but they learn at some point that they can't
+and there are newline symbols, etc. to take care of.
+
+What do you think? A new API is probably safer option here; but then,
+again, people can forget to use it, or be unaware of it.
+
+	-ss
