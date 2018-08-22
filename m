@@ -5,151 +5,136 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B87C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E62C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85E8521480
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:42:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85E8521480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
+	by mail.kernel.org (Postfix) with ESMTP id 51DC320BEC
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 09:43:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51DC320BEC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbeHVNHA (ORCPT
+        id S1728719AbeHVNHG convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 09:07:00 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:53664 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728315AbeHVNHA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 09:07:00 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1fsPf7-0007Ix-Av; Wed, 22 Aug 2018 11:42:49 +0200
-Message-ID: <1534930963.25523.87.camel@sipsolutions.net>
-Subject: Re: [PATCH 1/2] workqueue: skip lockdep wq dependency in
- cancel_work_sync()
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        kernel-team@lge.com
-Date:   Wed, 22 Aug 2018 11:42:43 +0200
-In-Reply-To: <20180822091547.GB29722@X58A-UD3R>
-References: <20180821172711.GR3978217@devbig004.ftw2.facebook.com>
-         <1534872621.25523.39.camel@sipsolutions.net>
-         <20180821175550.GS3978217@devbig004.ftw2.facebook.com>
-         <1534879241.25523.44.camel@sipsolutions.net>
-         <20180822024535.GA2414@X58A-UD3R>
-         <1534910543.25523.50.camel@sipsolutions.net>
-         <20180822054731.GB2414@X58A-UD3R>
-         <1534921643.25523.56.camel@sipsolutions.net>
-         <20180822075010.GA29722@X58A-UD3R>
-         <1534924940.25523.70.camel@sipsolutions.net>
-         <20180822091547.GB29722@X58A-UD3R>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 22 Aug 2018 09:07:06 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48820 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728246AbeHVNHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 09:07:06 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6E9C387916;
+        Wed, 22 Aug 2018 09:42:57 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BD18210EE6CB;
+        Wed, 22 Aug 2018 09:42:52 +0000 (UTC)
+Date:   Wed, 22 Aug 2018 11:42:50 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Halil Pasic <pasic@linux.ibm.com>
+Cc:     Tony Krowiak <akrowiak@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
+ control domains
+Message-ID: <20180822114250.59a250aa.cohuck@redhat.com>
+In-Reply-To: <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <20180820162317.08bd7d23.cohuck@redhat.com>
+        <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
+        <20180821172548.57a6c758.cohuck@redhat.com>
+        <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
+        <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 22 Aug 2018 09:42:57 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 22 Aug 2018 09:42:57 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-22 at 18:15 +0900, Byungchul Park wrote:
-> 
-> > thread 1			thread 2 (wq thread)
+On Wed, 22 Aug 2018 01:18:20 +0200
+Halil Pasic <pasic@linux.ibm.com> wrote:
+
+> On 08/21/2018 07:07 PM, Tony Krowiak wrote:
+> > This convention has been enforced by the kernel since v1. This is also
+> > enforced by both the LPAR as well as in z/VM. The following is from the
+> > PR/SM Planning Guide:
 > > 
-> > common_case = false;
-> > queue_work(&my_wq, &work);
-> > mutex_lock(&mutex);
+> > Control Domain
+> > A logical partition's control domains are those cryptographic domains for which remote secure
+> > administration functions can be established and administered from this logical partition. This
+> > logical partition’s control domains must include its usage domains. For each index selected in the
+> > usage domain index list, you must select the same index in the control domain index list
+> >   
+
+That's interesting.
+
+> 
+> IMHO this quote is quite a half-full half-empty cup one:
+> * it mandates the set of usage domains is a subset of the set
+> of the control domains, but
+> * it speaks of independent controls, namely about the 'usage domain index'
+> and the 'control domain index list' and makes the enforcement of the rule
+> a job of the administrator (instead of codifying it in the controls).
+
+I'm wondering if a configuration with a usage domain that is not also a
+control domain is rejected outright? Anybody tried that? :)
+
+> 
 > > 
-> > flush_workqueue(&my_wq);
-> > 				work_function()
-> > 				-> mutex_lock(&mutex);
-> > 				-> schedule(), wait for mutex
-> > wait_for_completion()
-> > 
-> > -> deadlock - we can't make any forward progress here.
+> > Consequently, I'm going to opt for ensuring this is clearly documented. Based on the fact you've
+> > requested clarification of many points described in this section of the doc, I
+> > think I'll try putting my meager skills as a wordsmith to work to hopefully clarify things.
+> > I'll run it by you when I complete that task to see if I've succeeded:)  
 > 
-> I see. Now, I understand what you are talking about.
+> I don't think just a doc update will do. Let me explain why.
 > 
->    if (common_case)
-> 	schedule_and_wait_for_something_that_takes_a_long_time()
+> What describe as "... note that the AQM and ADM masks configured for the
+> mediated matrix device will be logically OR'd together to create the ADM
+> stored in the CRYCB referenced from the guest's SIE state description."
+> is a gotcha at best. The member of struct ap_matrix and the member of the
+> respective apcb in the crycb are both called 'adm', but ap_matrix.adm is
+> not an ADM as we know it from the architecture, but rather ~ AQM & ADM.
 > 
-> should be:
+> I feel pretty strongly about this one. If we want to keep the enforcement
+> in the kernel, I guess, the assign_domain should set the bit corresponding
+> bit not only in ap_matrix.aqm but also in ap_matrix.adm. When the
+> ap_matrix is committed into the crycb no further manipulating the masks
+> should take place.
+
+Would you be fine if the control domain interface stated that it is
+used to configure _additional_ control domains and the usage domain
+interface stated that it is used to define usage and implicitly also
+control domains? (And make the usage domain interface also set the
+equivalent bit in the control domain mask.)
+
 > 
->    if (common_case)
-> 	schedule_and_wait_long_time_so_that_the_work_to_finish()
+> I don't feel strongly about whether to enforce this convention about AQM
+> and ADM in the kernel or not. Frankly, I don't know what is behind the
+> rule. Since I can't tell if any problems are to be expected if this
+> convention is violated, I would feel more comfortable if the rule was
+> accommodated higher in the management stack.
 
-Fair point.
+I guess it depends:
 
-> Ok. I didn't know what you are talking about but now I got it.
-
-great.
-
-> You are talking about who knows whether common_case is true or not,
-> so we must aggresively consider the case the wait_for_completion()
-> so far hasn't been called but may be called in the future.
-
-Yes.
-
-> I think it's a problem of how aggressively we need to check dependencies.
-> If we choose the aggressive option, then we could get reported
-> aggressively but could not avoid aggresive false positives either.
-> I don't want to strongly argue that because it's a problem of policy.
-
-I don't think you could consider a report from "aggressive reporting" to
- be a false positive. It's clearly possible that this happens, and once
-you go to a workqueue you basically don't really know your sequencing
-and timing any more.
-
-> Just, I would consider only waits that actually happened anyway. Of
-> course, we gotta consider the waits definitely even if any actual
-> deadlock doesn't happen since detecting potantial problem is more
-> important than doing on actual ones as you said.
-> 
-> So no big objection to check dependencies aggressively.
-> 
-> > Here we don't have a deadlock, but without the revert we will also not
-> 
-> You misunderstand me. The commit should be reverted or acquire/release
-> pairs should be added in both flush functions.
-
-Ok, I thought you were arguing we shouldn't revert it :)
-
-I don't know whether to revert or just add the pairs in the flush
-functions, because I can't say I understand what the third part of the
-patch does.
-
-> Anyway the annotation should be placed in the path where
-> wait_for_completion() might be called.
-
-Yes, it should be called regardless of whether we actually wait or not,
-i.e. before most of the checking in the functions.
-
-My issue #3 that I outlined is related - we'd like to have lockdep
-understand that if this work was on the WQ it might deadlock, but we
-don't have a way to get the WQ unless the work is scheduled - and in the
-case that it is scheduled we might already hitting the deadlock
-(depending on the order of execution though I guess).
-
-> Absolutly true. You can find my opinion about that in
-> Documentation/locking/crossrelease.txt which has been removed because
-> crossrelease is strong at detecting *potential* deadlock problems.
-
-Ok, you know what, I'm going to read this now ... hang on........
-
-I see. You were trying to solve the problem of completions/context
-transfers in lockdep.
-
-Given the revert of crossrelease though, we can't actually revert your
-patch anyway, and looking at it again I see what you mean by the "name"
-now ...
-
-So yeah, we should only re-add the two acquire/release pairs. I guess
-I'll make a patch for that, replacing my patch 2.
-
-I'm intrigued by the crossrelease - but that's a separate topic.
-
-johannes
+- If this is a case of: "Don't configure control domains that are not
+  also usage domains. You are likely to go through
+  {code,firmware,hardware} paths that are generally not used.",
+  configure it in the kernel.
+- If this rather is "Everybody is doing that, it's a general
+  convention.", configure it higher up in the stack (libvirt?)
