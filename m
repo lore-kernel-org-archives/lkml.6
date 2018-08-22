@@ -2,171 +2,202 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73507C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:12:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32451C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F990214FF
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:12:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F990214FF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D6540214C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 15:12:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="JJlJTTes"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6540214C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729406AbeHVShV (ORCPT
+        id S1729422AbeHVShs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 14:37:21 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42904 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729040AbeHVShU (ORCPT
+        Wed, 22 Aug 2018 14:37:48 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:4893 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728682AbeHVShs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 14:37:20 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7MFAWjw098628
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 11:12:03 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m18gyd9k9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 11:12:02 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Wed, 22 Aug 2018 16:12:00 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 22 Aug 2018 16:11:58 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7MFBuVC40960126
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 22 Aug 2018 15:11:56 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9214A11C05C;
-        Wed, 22 Aug 2018 18:11:56 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D6A4F11C052;
-        Wed, 22 Aug 2018 18:11:55 +0100 (BST)
-Received: from oc7330422307.ibm.com (unknown [9.152.224.87])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 22 Aug 2018 18:11:55 +0100 (BST)
-Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
- control domains
-To:     pmorel@linux.ibm.com, Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-Cc:     Tony Krowiak <akrowiak@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180820162317.08bd7d23.cohuck@redhat.com>
- <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
- <20180821172548.57a6c758.cohuck@redhat.com>
- <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
- <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
- <20180822114250.59a250aa.cohuck@redhat.com>
- <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Wed, 22 Aug 2018 17:11:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
+        Wed, 22 Aug 2018 14:37:48 -0400
+Received: from unknown (HELO relmlir2.idc.renesas.com) ([10.200.68.152])
+  by relmlie3.idc.renesas.com with ESMTP; 23 Aug 2018 00:12:28 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir2.idc.renesas.com (Postfix) with ESMTP id EEEC686E1A;
+        Thu, 23 Aug 2018 00:12:27 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.53,274,1531753200"; 
+   d="scan'208";a="290305108"
+Received: from mail-os2jpn01lp0148.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.148])
+  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 23 Aug 2018 00:12:27 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+GS01DzsplowfmcCchsH57GAXNFCZPbt6U7F8XIPcXE=;
+ b=JJlJTTesGyzMWhPb9rAaSKgxWYeD0lqF0UneDjfHU0F3zPsNdu/1JYF/nD1vwAFIjlEtLvcLkJRla5tvdYq070WkT0GFV3jZ9BWKlvMHS9ILuQ0vuj4pYtJlzDiP9Zs/EubJd6KoGgn8bc885hdHZbhKP6rGQTjedZJyKzRRFtU=
+Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com (52.133.177.145) by
+ TYAPR01MB2959.jpnprd01.prod.outlook.com (20.177.102.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1059.22; Wed, 22 Aug 2018 15:12:26 +0000
+Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com
+ ([fe80::f94e:fc01:f90f:9f3e]) by TYAPR01MB2285.jpnprd01.prod.outlook.com
+ ([fe80::f94e:fc01:f90f:9f3e%4]) with mapi id 15.20.1059.023; Wed, 22 Aug 2018
+ 15:12:26 +0000
+From:   Chris Paterson <Chris.Paterson2@renesas.com>
+To:     Simon Horman <horms@verge.net.au>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+CC:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] dt-bindings: can: rcar_can: Add r8a774a1 support
+Thread-Topic: [PATCH] dt-bindings: can: rcar_can: Add r8a774a1 support
+Thread-Index: AQHUNjf7ffRVJL4Wf0OE3nhhLA8mh6TLnwIAgAA7dCA=
+Date:   Wed, 22 Aug 2018 15:12:26 +0000
+Message-ID: <TYAPR01MB2285834E95AB0D0D3E2C5B72B7300@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+References: <1534516703-11448-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180822104856.34nusjd4ajtwb4ef@verge.net.au>
+In-Reply-To: <20180822104856.34nusjd4ajtwb4ef@verge.net.au>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18082215-0028-0000-0000-000002EE3B07
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082215-0029-0000-0000-000023A77D52
-Message-Id: <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-22_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808220154
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Chris.Paterson2@renesas.com; 
+x-originating-ip: [193.141.219.250]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TYAPR01MB2959;20:fnGG7w4DIywkdDC+GH8cL1UZyuPjO4CZ+eYGKuDIcz3M9JDDtSre9TzjseDvSS9/g4MJYhEi3dJG8z7Ab5crf08C6st7zFUbcl2pULV4zAgDjwjRZveL7rqgzDPeYVqupSDxIWvQbkWJPnJ/zpmNKvb3frJn5htjYsygSrRGtK4=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-correlation-id: c012f556-f925-4b21-4337-08d60841aba4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TYAPR01MB2959;
+x-ms-traffictypediagnostic: TYAPR01MB2959:
+x-microsoft-antispam-prvs: <TYAPR01MB295935A22240036317ED0947B7300@TYAPR01MB2959.jpnprd01.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699016);SRVR:TYAPR01MB2959;BCL:0;PCL:0;RULEID:;SRVR:TYAPR01MB2959;
+x-forefront-prvs: 0772E5DAD5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(366004)(396003)(346002)(39860400002)(199004)(189003)(66066001)(6436002)(6246003)(7696005)(8676002)(26005)(99286004)(97736004)(186003)(54906003)(76176011)(478600001)(53936002)(33656002)(55016002)(4326008)(9686003)(81166006)(6116002)(81156014)(72206003)(74316002)(25786009)(7736002)(5660300001)(3846002)(305945005)(7416002)(476003)(110136005)(2900100001)(5250100002)(86362001)(256004)(102836004)(105586002)(14444005)(2906002)(68736007)(229853002)(106356001)(11346002)(446003)(316002)(6506007)(14454004)(486006)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB2959;H:TYAPR01MB2285.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 9z2sISESnI+15Yj8xI9HQ5hfySx1qhFIWCgCa6C2ySuZyzuSthpue95HzoUjAdrIAb3pik6zAEZkuEZi7SVUoeKidBiwQJAMEx4hotxT82/u1+VkHrVRY4KnnqBUFH1lyBA8QNSR64+MLUChRtqb4YjUx9Nap5DEQh3c9Q1tCf1IGOfbNDAo/91fEAifcD6UafZ3GnsF3xlbp2Al8zK19orXTMg3UahivOvnxNOb/4yLyE70Bf3/nBguGl1KKOmuY179U33kC1kA6l7eEacRtY1RbwkVYT+UwqHTZtJdRf1EN1MrP/7EZjelj06MvIO/1xHnCuWcq2/Wdylpvgeex8DZVd1hLKJBX0d81cFfPUY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c012f556-f925-4b21-4337-08d60841aba4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2018 15:12:26.3194
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB2959
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Simon,
 
+> From: Simon Horman <horms@verge.net.au>
+> Sent: 22 August 2018 11:49
+>=20
+> On Fri, Aug 17, 2018 at 03:38:23PM +0100, Fabrizio Castro wrote:
+> > Document RZ/G2M (r8a774a1) SoC bindings.
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+>=20
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-On 08/22/2018 01:03 PM, Pierre Morel wrote:
->> That's interesting.
->>
->>> IMHO this quote is quite a half-full half-empty cup one:
->>> * it mandates the set of usage domains is a subset of the set
->>> of the control domains, but
->>> * it speaks of independent controls, namely about the 'usage domain index'
->>> and the 'control domain index list' and makes the enforcement of the rule
->>> a job of the administrator (instead of codifying it in the controls).
->> I'm wondering if a configuration with a usage domain that is not also a
->> control domain is rejected outright? Anybody tried that? :)
-> 
-> Yes, and no it is not.
-> We can use a queue (usage domain) to a AP card for SHA-512 or RSA without
-> having to define the queue as a control domain.
+Thank you.
 
-Huh? My HMC allows to add a domain as
-- control only domain
-- control and usage domain.
+>=20
+> > ---
+> > This patch applies on top of next-20180817
+> >
+> >  Documentation/devicetree/bindings/net/can/rcar_can.txt | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> > b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> > index 94a7f33..84afc78 100644
+> > --- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> > +++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> > @@ -4,6 +4,7 @@ Renesas R-Car CAN controller Device Tree Bindings
+> > Required properties:
+> >  - compatible: "renesas,can-r8a7743" if CAN controller is a part of R8A=
+7743
+> SoC.
+> >  	      "renesas,can-r8a7745" if CAN controller is a part of R8A7745 So=
+C.
+> > +	      "renesas,can-r8a774a1" if CAN controller is a part of R8A774A1 =
+SoC.
+> >  	      "renesas,can-r8a7778" if CAN controller is a part of R8A7778 So=
+C.
+> >  	      "renesas,can-r8a7779" if CAN controller is a part of R8A7779 So=
+C.
+> >  	      "renesas,can-r8a7790" if CAN controller is a part of R8A7790 So=
+C.
+> > @@ -16,7 +17,8 @@ Required properties:
+> >  	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible dev=
+ice.
+> >  	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 or RZ/G1
+> >  	      compatible device.
+> > -	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 compatible dev=
+ice.
+> > +	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 or RZ/G2
+> > +	      compatible device.
+> >  	      When compatible with the generic version, nodes must list the
+> >  	      SoC-specific version corresponding to the platform first
+> >  	      followed by the generic version.
+> > @@ -24,7 +26,9 @@ Required properties:
+> >  - reg: physical base address and size of the R-Car CAN register map.
+> >  - interrupts: interrupt specifier for the sole interrupt.
+> >  - clocks: phandles and clock specifiers for 3 CAN clock inputs.
+> > -- clock-names: 3 clock input name strings: "clkp1", "clkp2", "can_clk"=
+.
+> > +- clock-names: 2 clock input name strings for RZ/G2: "clkp1",
+> > +"can_clk", and
+>=20
+> Minor comment: Personally I would start a new sentence at "and".
+>=20
+> Question: Is a driver update required so support 2-clock SoCs?
 
-But I am not able to configure a usage-only domain for my LPAR. That seems to match
-the current code, no?
+The driver will work okay as-is.
 
+In theory CAN could be broken if renesas,can-clock-select is set to 0x1 (cl=
+kp2) in the DT, as this value will be written to the CAN Clock Select Regis=
+ter. However if the documentation is followed there will be no problems.
+
+We should probably update the driver to fix this though, which will be a ch=
+ange specific to all RZ/G2 devices, so perhaps we should also be adding a "=
+renesas,rzg-gen2-can" family compatible string as well? (to driver and docu=
+mentation)
+
+Kind regards, Chris
+
+>=20
+> > +	       3 clock input name strings for every other SoC: "clkp1", "clkp=
+2",
+> > +	       "can_clk".
+> >  - pinctrl-0: pin control group to be used for this controller.
+> >  - pinctrl-names: must be "default".
+> >
+> > --
+> > 2.7.4
+> >
