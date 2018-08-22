@@ -2,70 +2,102 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 793EBC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 04:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC4BC4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 04:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E069021486
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 04:11:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E069021486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ssi.bg
+	by mail.kernel.org (Postfix) with ESMTP id A4BDE214AB
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 04:17:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4BDE214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbeHVHe6 (ORCPT
+        id S1727312AbeHVHkH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 03:34:58 -0400
-Received: from ja.ssi.bg ([178.16.129.10]:42998 "EHLO ja.ssi.bg"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726469AbeHVHe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 03:34:58 -0400
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-        by ja.ssi.bg (8.15.2/8.15.2) with ESMTP id w7M4BfiW002518;
-        Wed, 22 Aug 2018 07:11:41 +0300
-Date:   Wed, 22 Aug 2018 07:11:41 +0300 (EEST)
-From:   Julian Anastasov <ja@ssi.bg>
-To:     Cong Wang <xiyou.wangcong@gmail.com>
-cc:     syzbot+30209ea299c09d8785c9@syzkaller.appspotmail.com,
-        ddstreet@ieee.org, Dmitry Vyukov <dvyukov@google.com>,
+        Wed, 22 Aug 2018 03:40:07 -0400
+Received: from nautica.notk.org ([91.121.71.147]:43653 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726192AbeHVHkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 03:40:07 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id AED98C009; Wed, 22 Aug 2018 06:17:01 +0200 (CEST)
+Date:   Wed, 22 Aug 2018 06:16:46 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     joe@perches.com, Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Arnd Bergmann <arnd@arndb.de>, dwmw@amazon.co.uk,
         LKML <linux-kernel@vger.kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: unregister_netdevice: waiting for DEV to become free (2)
-In-Reply-To: <CAM_iQpVM4wHkW4RKMuDj_Jjof3XbJmAsN0SdSRfneaf94CL0cw@mail.gmail.com>
-Message-ID: <alpine.LFD.2.20.1808220603170.1734@ja.home.ssi.bg>
-References: <0000000000007d22100573d66078@google.com> <alpine.LFD.2.20.1808201527230.2758@ja.home.ssi.bg> <CAM_iQpVM4wHkW4RKMuDj_Jjof3XbJmAsN0SdSRfneaf94CL0cw@mail.gmail.com>
-User-Agent: Alpine 2.20 (LFD 67 2015-01-07)
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] compiler-gcc: get back Clang build
+Message-ID: <20180822041646.GA21716@nautica>
+References: <1534834088-15835-1-git-send-email-yamada.masahiro@socionext.com>
+ <20180821123832.GA19034@nautica>
+ <CAKwvOdmLQen+TWF_F3e5-66vtF3FEnoxjEgZbjmOZ9cv6YrEpA@mail.gmail.com>
+ <acb93bae0086447c7cbe0eec05907335ebae7788.camel@perches.com>
+ <CAKwvOdkLGhdQxx3oV=R2kv290NOv_w8qQ_yHWCVpvmofp7+ivQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdkLGhdQxx3oV=R2kv290NOv_w8qQ_yHWCVpvmofp7+ivQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Nick Desaulniers wrote on Tue, Aug 21, 2018:
+> On Tue, Aug 21, 2018 at 9:45 AM Joe Perches <joe@perches.com> wrote:
+> > > Tested with gcc-7 and clang-8.
+> >
+> > clang-8? Isn't the latest officlal clang 6.0.1 ?
+> [...]
+> > So if something other than 6.0.x is required,
+> > then some additional check should probably be
+> > added to compiler-clang.h as well.
+> 
+> Sure, but that doesn't need to go in Mashiro's patch today.  That can
+> wait for a proper separation between compiler headers where we can
+> then implement improved version checks.
 
-	Hello,
+I can confirm that the patch here works for me with clang 6.0.1 as far
+as bpf programs are concerned (and gcc 8.1.1 for the kernel build itself
+on x86 while I was at it); so at least there is nothing on the
+compiler*.h headers that put off clang 6.0.1
 
-On Mon, 20 Aug 2018, Cong Wang wrote:
 
-> For the one I look into, dst_cache doesn't matter, because the xmit
-> path doesn't even use tunnel dst_cache at all, and it is ip6tnl0 FB
-> device, unlike this one which is tun device.
+(also replying to other subthread)
+From Joe Perches @ 2018-08-21 17:22 UTC:
+> The question remains, if clang can't compile
+> v4.17, why does it immediately matter for v4.19?
 
-	Ops, of course, it is dev tun and not ip tun...
+I haven't had any problem with clang and 4.17 as far as building bpf
+programs is concerned, because the CC_HAVE_ASM_GOTO check is done in
+makefiles that aren't used in the bpf case and not in compiler-gcc.h
+or another header.
 
-> For the one I look into, it seems some fib6_info is not released for
-> some reason. It seems to be the one created by addrconf_prefix_route(),
-> which is supposed to be released by fib6_clean_tree() I think, but it
-> never happens.
+So I guess the "immediately matters for v4.19" depends on how much you
+would care about bcc-compiled BPF programs.
 
-	May be, it is not direct reference to dev but one
-that is moved to loopback, like from dst, route... The repro.c
-creates permanent neighbours and addresses.
 
-Regards
+> Why wouldn't overriding the clang __GNUC_<foo>
+> #defines in compiler-gcc.h work acceptably with
+> adding whatever is necessary to compiler-clang.h?
 
---
-Julian Anastasov <ja@ssi.bg>
+I think that could work, but at the point making a separate
+compiler-common.h and not including compiler-gcc.h for clang sounds
+better to me... More importantly here, either solution sound complex
+enough to require more than a few days and proper testing for all archs
+etc when compared to the partial revert we have here.
+
+-- 
+Dominique Martinet
