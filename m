@@ -2,117 +2,90 @@ Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1EEC4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEC7C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:46:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1F9B208D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:44:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1F9B208D6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
+	by mail.kernel.org (Postfix) with ESMTP id A331B208CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 20:46:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A331B208CC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbeHWAKB (ORCPT
+        id S1727562AbeHWAMY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 20:10:01 -0400
-Received: from shell.v3.sk ([90.176.6.54]:53284 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726760AbeHWAKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 20:10:00 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id CC3FAB5BAF;
-        Wed, 22 Aug 2018 22:43:33 +0200 (CEST)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Re3kFEHfsQWd; Wed, 22 Aug 2018 22:43:19 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id AFC54B5B98;
-        Wed, 22 Aug 2018 22:43:14 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id jNXVU1hubUyr; Wed, 22 Aug 2018 22:43:12 +0200 (CEST)
-Received: from odvarok.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id BB0FCB5B8C;
-        Wed, 22 Aug 2018 22:43:11 +0200 (CEST)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eric Miao <eric.y.miao@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 04/14] ARM: mmp: add a pxa-usb-phy device
-Date:   Wed, 22 Aug 2018 22:42:57 +0200
-Message-Id: <20180822204307.13251-5-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180822204307.13251-1-lkundrak@v3.sk>
-References: <20180822204307.13251-1-lkundrak@v3.sk>
+        Wed, 22 Aug 2018 20:12:24 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:56378 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726581AbeHWAMY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 20:12:24 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0T72p0Py_1534970745;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T72p0Py_1534970745)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 23 Aug 2018 04:45:49 +0800
+Subject: Re: [RFC v8 PATCH 3/5] mm: mmap: zap pages with read mmap_sem in
+ munmap
+To:     Vlastimil Babka <vbabka@suse.cz>, mhocko@kernel.org,
+        willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1534358990-85530-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1534358990-85530-4-git-send-email-yang.shi@linux.alibaba.com>
+ <e691d054-f807-80ad-9934-a1917d8e2e77@suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <3c62f605-2244-6a05-2dc4-34a3f1c56300@linux.alibaba.com>
+Date:   Wed, 22 Aug 2018 13:45:44 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <e691d054-f807-80ad-9934-a1917d8e2e77@suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is to replace the USB PHY initialization code (pxa_usb_phy_init(),
-pxa_usb_phy_deinit()) with a proper PHY driver.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- arch/arm/mach-mmp/devices.c | 21 +++++++++++++++++++++
- arch/arm/mach-mmp/pxa910.h  |  1 +
- 2 files changed, 22 insertions(+)
 
-diff --git a/arch/arm/mach-mmp/devices.c b/arch/arm/mach-mmp/devices.c
-index 671c7a09ab3d..d162fabd38e7 100644
---- a/arch/arm/mach-mmp/devices.c
-+++ b/arch/arm/mach-mmp/devices.c
-@@ -240,6 +240,27 @@ void pxa_usb_phy_deinit(void __iomem *phy_reg)
- #if IS_ENABLED(CONFIG_USB_SUPPORT)
- static u64 __maybe_unused usb_dma_mask = ~(u32)0;
- 
-+#if IS_ENABLED(CONFIG_PHY_PXA_USB)
-+struct resource pxa168_usb_phy_resources[] = {
-+	[0] = {
-+		.start	= PXA168_U2O_PHYBASE,
-+		.end	= PXA168_U2O_PHYBASE + USB_PHY_RANGE,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+struct platform_device pxa168_device_usb_phy = {
-+	.name		= "pxa-usb-phy",
-+	.id		= -1,
-+	.resource	= pxa168_usb_phy_resources,
-+	.num_resources	= ARRAY_SIZE(pxa168_usb_phy_resources),
-+	.dev		=  {
-+		.dma_mask	= &usb_dma_mask,
-+		.coherent_dma_mask = 0xffffffff,
-+	}
-+};
-+#endif /* CONFIG_PHY_PXA_USB */
-+
- #if IS_ENABLED(CONFIG_USB_MV_UDC)
- struct resource pxa168_u2o_resources[] = {
- 	/* regbase */
-diff --git a/arch/arm/mach-mmp/pxa910.h b/arch/arm/mach-mmp/pxa910.h
-index 42009c349eae..2dfe38e4acc1 100644
---- a/arch/arm/mach-mmp/pxa910.h
-+++ b/arch/arm/mach-mmp/pxa910.h
-@@ -22,6 +22,7 @@ extern struct pxa_device_desc pxa910_device_pwm2;
- extern struct pxa_device_desc pxa910_device_pwm3;
- extern struct pxa_device_desc pxa910_device_pwm4;
- extern struct pxa_device_desc pxa910_device_nand;
-+extern struct platform_device pxa168_device_usb_phy;
- extern struct platform_device pxa168_device_u2o;
- extern struct platform_device pxa168_device_u2ootg;
- extern struct platform_device pxa168_device_u2oehci;
--- 
-2.17.1
+On 8/22/18 4:19 AM, Vlastimil Babka wrote:
+> On 08/15/2018 08:49 PM, Yang Shi wrote:
+>> +	downgrade_write(&mm->mmap_sem);
+>> +
+>> +	/* Zap mappings with read mmap_sem */
+>> +	unmap_region(mm, start_vma, prev, start, end);
+>> +
+>> +	arch_unmap(mm, start_vma, start, end);
+> Hmm, did you check that all architectures' arch_unmap() is safe with
+> read mmap_sem instead of write mmap_sem? E.g. x86 does
+> mpx_notify_unmap() there where I would be far from sure at first glance...
+
+Yes, I'm also not quite sure if it is 100% safe or not. I was trying to 
+move this before downgrade_write, however, I'm not sure if it is ok or 
+not too, so I keep the calling sequence.
+
+For architectures, just x86 and ppc really do something. PPC just uses 
+it for vdso unmap which should just happen during process exit, so it 
+sounds safe.
+
+For x86, mpx_notify_unmap() looks finally zap the VM_MPX vmas in bound 
+table range with zap_page_range() and doesn't update vm flags, so it 
+sounds ok to me since vmas have been detached, nobody can find those 
+vmas. But, I'm not familiar with the details of mpx, maybe Kirill could 
+help to confirm this?
+
+Thanks,
+Yang
+
+>
+>> +	remove_vma_list(mm, start_vma);
+>> +	up_read(&mm->mmap_sem);
 
