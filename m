@@ -5,292 +5,94 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D2B5C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C973C4321D
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:20:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 494002148E
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:18:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 494002148E
+	by mail.kernel.org (Postfix) with ESMTP id DC9A52148C
+	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 10:20:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC9A52148C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728805AbeHVNnD (ORCPT
+        id S1728845AbeHVNoT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 09:43:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49738 "EHLO mx1.redhat.com"
+        Wed, 22 Aug 2018 09:44:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52188 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728752AbeHVNnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 09:43:01 -0400
+        id S1728320AbeHVNoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 09:44:19 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DF21E87A70;
-        Wed, 22 Aug 2018 10:18:44 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 33DE163F37;
-        Wed, 22 Aug 2018 10:18:43 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Wanpeng Li <wanpeng.li@hotmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 RESEND 5/5] KVM: x86: hyperv: implement PV IPI send hypercalls
-Date:   Wed, 22 Aug 2018 12:18:32 +0200
-Message-Id: <20180822101832.31763-6-vkuznets@redhat.com>
-In-Reply-To: <20180822101832.31763-1-vkuznets@redhat.com>
-References: <20180822101832.31763-1-vkuznets@redhat.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 3F9AB8151D42;
+        Wed, 22 Aug 2018 10:20:02 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B32894653;
+        Wed, 22 Aug 2018 10:19:57 +0000 (UTC)
+Date:   Wed, 22 Aug 2018 12:19:55 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: Re: [PATCH v9 00/22] guest dedicated crypto adapters
+Message-ID: <20180822121955.6767f8d3.cohuck@redhat.com>
+In-Reply-To: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 22 Aug 2018 10:18:44 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 22 Aug 2018 10:18:44 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 22 Aug 2018 10:20:02 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 22 Aug 2018 10:20:02 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using hypercall for sending IPIs is faster because this allows to specify
-any number of vCPUs (even > 64 with sparse CPU set), the whole procedure
-will take only one VMEXIT.
+On Mon, 13 Aug 2018 17:47:57 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-Current Hyper-V TLFS (v5.0b) claims that HvCallSendSyntheticClusterIpi
-hypercall can't be 'fast' (passing parameters through registers) but
-apparently this is not true, Windows always uses it as 'fast' so we need
-to support that.
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
+> 
+> Notes:
+> =====
+> 
+> Patches 1-4 (by Harald) posted with this series are forthcoming via
+> Martins tree and are based on changes in the ap driver/bus that we use as a
+> foundation. They have been included here because some of the functions
+> in this patch series are dependent upon them.
+> 
+> Patches 5-6 (by David) are posted with this series because they are not
+> currently in our master branch. Patches 19 and 20 of this series are
+> dependent upon them. I believe David's patches are available in the 
+> mainline now.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- Documentation/virtual/kvm/api.txt |   8 +++
- arch/x86/kvm/hyperv.c             | 109 ++++++++++++++++++++++++++++++++++++++
- arch/x86/kvm/trace.h              |  42 +++++++++++++++
- arch/x86/kvm/x86.c                |   1 +
- include/uapi/linux/kvm.h          |   1 +
- 5 files changed, 161 insertions(+)
+What's the current status of David's patches, BTW?
 
-diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-index 7b83b176c662..832ea72d43c1 100644
---- a/Documentation/virtual/kvm/api.txt
-+++ b/Documentation/virtual/kvm/api.txt
-@@ -4690,3 +4690,11 @@ This capability indicates that KVM supports paravirtualized Hyper-V TLB Flush
- hypercalls:
- HvFlushVirtualAddressSpace, HvFlushVirtualAddressSpaceEx,
- HvFlushVirtualAddressList, HvFlushVirtualAddressListEx.
-+
-+8.19 KVM_CAP_HYPERV_SEND_IPI
-+
-+Architectures: x86
-+
-+This capability indicates that KVM supports paravirtualized Hyper-V IPI send
-+hypercalls:
-+HvCallSendSyntheticClusterIpi, HvCallSendSyntheticClusterIpiEx.
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index d1a911132b59..3183cf9bcb63 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -1360,6 +1360,101 @@ static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
- 		((u64)rep_cnt << HV_HYPERCALL_REP_COMP_OFFSET);
- }
- 
-+static u64 kvm_hv_send_ipi(struct kvm_vcpu *current_vcpu, u64 ingpa, u64 outgpa,
-+			   bool ex, bool fast)
-+{
-+	struct kvm *kvm = current_vcpu->kvm;
-+	struct hv_send_ipi_ex send_ipi_ex;
-+	struct hv_send_ipi send_ipi;
-+	struct kvm_vcpu *vcpu;
-+	unsigned long valid_bank_mask;
-+	u64 sparse_banks[64];
-+	int sparse_banks_len, bank, i;
-+	struct kvm_lapic_irq irq = {.delivery_mode = APIC_DM_FIXED};
-+	bool all_cpus;
-+
-+	if (!ex) {
-+		if (!fast) {
-+			if (unlikely(kvm_read_guest(kvm, ingpa, &send_ipi,
-+						    sizeof(send_ipi))))
-+				return HV_STATUS_INVALID_HYPERCALL_INPUT;
-+			sparse_banks[0] = send_ipi.cpu_mask;
-+			irq.vector = send_ipi.vector;
-+		} else {
-+			/* 'reserved' part of hv_send_ipi should be 0 */
-+			if (unlikely(ingpa >> 32 != 0))
-+				return HV_STATUS_INVALID_HYPERCALL_INPUT;
-+			sparse_banks[0] = outgpa;
-+			irq.vector = (u32)ingpa;
-+		}
-+		all_cpus = false;
-+		valid_bank_mask = BIT_ULL(0);
-+
-+		trace_kvm_hv_send_ipi(irq.vector, sparse_banks[0]);
-+	} else {
-+		if (unlikely(kvm_read_guest(kvm, ingpa, &send_ipi_ex,
-+					    sizeof(send_ipi_ex))))
-+			return HV_STATUS_INVALID_HYPERCALL_INPUT;
-+
-+		trace_kvm_hv_send_ipi_ex(send_ipi_ex.vector,
-+					 send_ipi_ex.vp_set.format,
-+					 send_ipi_ex.vp_set.valid_bank_mask);
-+
-+		irq.vector = send_ipi_ex.vector;
-+		valid_bank_mask = send_ipi_ex.vp_set.valid_bank_mask;
-+		sparse_banks_len = bitmap_weight(&valid_bank_mask, 64) *
-+			sizeof(sparse_banks[0]);
-+
-+		all_cpus = send_ipi_ex.vp_set.format == HV_GENERIC_SET_ALL;
-+
-+		if (!sparse_banks_len)
-+			goto ret_success;
-+
-+		if (!all_cpus &&
-+		    kvm_read_guest(kvm,
-+				   ingpa + offsetof(struct hv_send_ipi_ex,
-+						    vp_set.bank_contents),
-+				   sparse_banks,
-+				   sparse_banks_len))
-+			return HV_STATUS_INVALID_HYPERCALL_INPUT;
-+	}
-+
-+	if ((irq.vector < HV_IPI_LOW_VECTOR) ||
-+	    (irq.vector > HV_IPI_HIGH_VECTOR))
-+		return HV_STATUS_INVALID_HYPERCALL_INPUT;
-+
-+	if (all_cpus) {
-+		kvm_for_each_vcpu(i, vcpu, kvm) {
-+			/* We fail only when APIC is disabled */
-+			if (!kvm_apic_set_irq(vcpu, &irq, NULL))
-+				return HV_STATUS_INVALID_HYPERCALL_INPUT;
-+		}
-+		goto ret_success;
-+	}
-+
-+	for_each_set_bit(bank, (unsigned long *)&valid_bank_mask,
-+			 BITS_PER_LONG) {
-+
-+		for_each_set_bit(i, (unsigned long *)&sparse_banks[bank],
-+				 BITS_PER_LONG) {
-+			u32 vp_index = bank * 64 + i;
-+			struct kvm_vcpu *vcpu =
-+				get_vcpu_by_vpidx(kvm, vp_index);
-+
-+			/* Unknown vCPU specified */
-+			if (!vcpu)
-+				return HV_STATUS_INVALID_HYPERCALL_INPUT;
-+
-+			/* We fail only when APIC is disabled */
-+			if (!kvm_apic_set_irq(vcpu, &irq, NULL))
-+				return HV_STATUS_INVALID_HYPERCALL_INPUT;
-+		}
-+	}
-+
-+ret_success:
-+	return HV_STATUS_SUCCESS;
-+}
-+
- bool kvm_hv_hypercall_enabled(struct kvm *kvm)
- {
- 	return READ_ONCE(kvm->arch.hyperv.hv_hypercall) & HV_X64_MSR_HYPERCALL_ENABLE;
-@@ -1529,6 +1624,20 @@ int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
- 		}
- 		ret = kvm_hv_flush_tlb(vcpu, ingpa, rep_cnt, true);
- 		break;
-+	case HVCALL_SEND_IPI:
-+		if (unlikely(rep)) {
-+			ret = HV_STATUS_INVALID_HYPERCALL_INPUT;
-+			break;
-+		}
-+		ret = kvm_hv_send_ipi(vcpu, ingpa, outgpa, false, fast);
-+		break;
-+	case HVCALL_SEND_IPI_EX:
-+		if (unlikely(fast || rep)) {
-+			ret = HV_STATUS_INVALID_HYPERCALL_INPUT;
-+			break;
-+		}
-+		ret = kvm_hv_send_ipi(vcpu, ingpa, outgpa, true, false);
-+		break;
- 	default:
- 		ret = HV_STATUS_INVALID_HYPERCALL_CODE;
- 		break;
-diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
-index 0f997683404f..0659465a745c 100644
---- a/arch/x86/kvm/trace.h
-+++ b/arch/x86/kvm/trace.h
-@@ -1418,6 +1418,48 @@ TRACE_EVENT(kvm_hv_flush_tlb_ex,
- 		  __entry->valid_bank_mask, __entry->format,
- 		  __entry->address_space, __entry->flags)
- );
-+
-+/*
-+ * Tracepoints for kvm_hv_send_ipi.
-+ */
-+TRACE_EVENT(kvm_hv_send_ipi,
-+	TP_PROTO(u32 vector, u64 processor_mask),
-+	TP_ARGS(vector, processor_mask),
-+
-+	TP_STRUCT__entry(
-+		__field(u32, vector)
-+		__field(u64, processor_mask)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->vector = vector;
-+		__entry->processor_mask = processor_mask;
-+	),
-+
-+	TP_printk("vector %x processor_mask 0x%llx",
-+		  __entry->vector, __entry->processor_mask)
-+);
-+
-+TRACE_EVENT(kvm_hv_send_ipi_ex,
-+	TP_PROTO(u32 vector, u64 format, u64 valid_bank_mask),
-+	TP_ARGS(vector, format, valid_bank_mask),
-+
-+	TP_STRUCT__entry(
-+		__field(u32, vector)
-+		__field(u64, format)
-+		__field(u64, valid_bank_mask)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->vector = vector;
-+		__entry->format = format;
-+		__entry->valid_bank_mask = valid_bank_mask;
-+	),
-+
-+	TP_printk("vector %x format %llx valid_bank_mask 0x%llx",
-+		  __entry->vector, __entry->format,
-+		  __entry->valid_bank_mask)
-+);
- #endif /* _TRACE_KVM_H */
- 
- #undef TRACE_INCLUDE_PATH
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 3c83711c0ebe..a5b7ce303b62 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2885,6 +2885,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_HYPERV_VP_INDEX:
- 	case KVM_CAP_HYPERV_EVENTFD:
- 	case KVM_CAP_HYPERV_TLBFLUSH:
-+	case KVM_CAP_HYPERV_SEND_IPI:
- 	case KVM_CAP_PCI_SEGMENT:
- 	case KVM_CAP_DEBUGREGS:
- 	case KVM_CAP_X86_ROBUST_SINGLESTEP:
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 3cf632839337..55da336e7632 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -951,6 +951,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_HYPERV_TLBFLUSH 155
- #define KVM_CAP_S390_HPAGE_1M 156
- #define KVM_CAP_NESTED_STATE 157
-+#define KVM_CAP_HYPERV_SEND_IPI 158
- 
- #ifdef KVM_CAP_IRQ_ROUTING
- 
--- 
-2.14.4
+It's probably easiest to rebase this upon master when the patches have
+hit mainline.
 
+I don't have any comments beyond what I already wrote; we'll hopefully
+be able to figure out that control domain stuff soon.
+
+Would be great to get some LGTM from the vfio-mdev folks :)
+
+I believe Pierre is also doing some fixing in the existing crypto vsie
+code right now?
+
+> 
+> This patch series works with the v6 QEMU patches. There is no new QEMU
+> patchset version yet because there have been no review comments worthy of
+> creating a new series; only a couple of extremely minor nits.
+
+Probably best to repost that once the kernel part is basically through,
+if just to solicit more comments.
