@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD53FC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47996C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92C67208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C67208D6
+	by mail.kernel.org (Postfix) with ESMTP id 0BE66208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BE66208D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730523AbeHWLuM (ORCPT
+        id S1730533AbeHWLuQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:50:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46796 "EHLO
+        Thu, 23 Aug 2018 07:50:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46808 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728096AbeHWLuM (ORCPT
+        with ESMTP id S1728096AbeHWLuP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:50:12 -0400
+        Thu, 23 Aug 2018 07:50:15 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 082B1C83;
-        Thu, 23 Aug 2018 08:21:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3B39DC83;
+        Thu, 23 Aug 2018 08:21:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Neil Horman <nhorman@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 067/217] sctp: fix erroneous inc of snmp SctpFragUsrMsgs
-Date:   Thu, 23 Aug 2018 09:53:00 +0200
-Message-Id: <20180823075508.536277821@linuxfoundation.org>
+Subject: [PATCH 4.14 068/217] KVM: arm/arm64: Drop resource size check for GICV window
+Date:   Thu, 23 Aug 2018 09:53:01 +0200
+Message-Id: <20180823075508.577300108@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -53,38 +51,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-[ Upstream commit fedb1bd3d274b33c432cb83c80c6b3cf54d509c8 ]
+[ Upstream commit ba56bc3a0786992755e6804fbcbdc60ef6cfc24c ]
 
-Currently it is incrementing SctpFragUsrMsgs when the user message size
-is of the exactly same size as the maximum fragment size, which is wrong.
+When booting a 64 KB pages kernel on a ACPI GICv3 system that
+implements support for v2 emulation, the following warning is
+produced
 
-The fix is to increment it only when user message is bigger than the
-maximum fragment size.
+  GICV size 0x2000 not a multiple of page size 0x10000
 
-Fixes: bfd2e4b8734d ("sctp: refactor sctp_datamsg_from_user")
-Signed-off-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Acked-by: Neil Horman <nhorman@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+and support for v2 emulation is disabled, preventing GICv2 VMs
+from being able to run on such hosts.
+
+The reason is that vgic_v3_probe() performs a sanity check on the
+size of the window (it should be a multiple of the page size),
+while the ACPI MADT parsing code hardcodes the size of the window
+to 8 KB. This makes sense, considering that ACPI does not bother
+to describe the size in the first place, under the assumption that
+platforms implementing ACPI will follow the architecture and not
+put anything else in the same 64 KB window.
+
+So let's just drop the sanity check altogether, and assume that
+the window is at least 64 KB in size.
+
+Fixes: 909777324588 ("KVM: arm/arm64: vgic-new: vgic_init: implement kvm_vgic_hyp_init")
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/chunk.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ virt/kvm/arm/vgic/vgic-v3.c |    5 -----
+ 1 file changed, 5 deletions(-)
 
---- a/net/sctp/chunk.c
-+++ b/net/sctp/chunk.c
-@@ -230,7 +230,9 @@ struct sctp_datamsg *sctp_datamsg_from_u
- 	/* Account for a different sized first fragment */
- 	if (msg_len >= first_len) {
- 		msg->can_delay = 0;
--		SCTP_INC_STATS(sock_net(asoc->base.sk), SCTP_MIB_FRAGUSRMSGS);
-+		if (msg_len > first_len)
-+			SCTP_INC_STATS(sock_net(asoc->base.sk),
-+				       SCTP_MIB_FRAGUSRMSGS);
+--- a/virt/kvm/arm/vgic/vgic-v3.c
++++ b/virt/kvm/arm/vgic/vgic-v3.c
+@@ -492,11 +492,6 @@ int vgic_v3_probe(const struct gic_kvm_i
+ 		pr_warn("GICV physical address 0x%llx not page aligned\n",
+ 			(unsigned long long)info->vcpu.start);
+ 		kvm_vgic_global_state.vcpu_base = 0;
+-	} else if (!PAGE_ALIGNED(resource_size(&info->vcpu))) {
+-		pr_warn("GICV size 0x%llx not a multiple of page size 0x%lx\n",
+-			(unsigned long long)resource_size(&info->vcpu),
+-			PAGE_SIZE);
+-		kvm_vgic_global_state.vcpu_base = 0;
  	} else {
- 		/* Which may be the only one... */
- 		first_len = msg_len;
+ 		kvm_vgic_global_state.vcpu_base = info->vcpu.start;
+ 		kvm_vgic_global_state.can_emulate_gicv2 = true;
 
 
