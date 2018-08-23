@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1637C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9DB5C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:19:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73F8F20A8B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:19:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73F8F20A8B
+	by mail.kernel.org (Postfix) with ESMTP id 6C27420A8B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:19:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C27420A8B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730146AbeHWLrx (ORCPT
+        id S1730157AbeHWLr4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:47:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46446 "EHLO
+        Thu, 23 Aug 2018 07:47:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46458 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727292AbeHWLrw (ORCPT
+        with ESMTP id S1727447AbeHWLrz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:47:52 -0400
+        Thu, 23 Aug 2018 07:47:55 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E935FC74;
-        Thu, 23 Aug 2018 08:19:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37533C74;
+        Thu, 23 Aug 2018 08:19:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ray Jui <ray.jui@broadcom.com>,
+        stable@vger.kernel.org, Scott Branden <scott.branden@broadcom.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 033/217] ARM: dts: Cygnus: Fix PCIe controller interrupt type
-Date:   Thu, 23 Aug 2018 09:52:26 +0200
-Message-Id: <20180823075507.013147988@linuxfoundation.org>
+Subject: [PATCH 4.14 034/217] arm64: dts: specify 1.8V EMMC capabilities for bcm958742k
+Date:   Thu, 23 Aug 2018 09:52:27 +0200
+Message-Id: <20180823075507.060943307@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,72 +51,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ray Jui <ray.jui@broadcom.com>
+From: Scott Branden <scott.branden@broadcom.com>
 
-[ Upstream commit 6cb1628ad3506b315cdddd7676db0ff2af378d28 ]
+[ Upstream commit eba92503e980c08ac353d0d669d0bb143979abcd ]
 
-Fix PCIe controller interrupt to use IRQ_TYPE_LEVEL_HIGH for Broadcom
-Cygnus SoC
+Specify 1.8V EMMC capabilities for bcm958742k board to indicate support
+for UHS mode.
 
-Fixes: cd590b50a936 ("ARM: dts: enable PCIe support for Cygnus")
-Fixes: f6b889358a82 ("ARM: dts: Enable MSI support for Broadcom Cygnus")
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+Fixes: d4b4aba6be8a ("arm64: dts: Initial DTS files for Broadcom Stingray SOC")
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/bcm-cygnus.dtsi |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/arm/boot/dts/bcm-cygnus.dtsi
-+++ b/arch/arm/boot/dts/bcm-cygnus.dtsi
-@@ -256,7 +256,7 @@
+--- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+@@ -43,6 +43,10 @@
+ 	enet-phy-lane-swap;
+ };
  
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
--			interrupt-map = <0 0 0 0 &gic GIC_SPI 100 IRQ_TYPE_NONE>;
-+			interrupt-map = <0 0 0 0 &gic GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
- 
- 			linux,pci-domain = <0>;
- 
-@@ -278,10 +278,10 @@
- 				compatible = "brcm,iproc-msi";
- 				msi-controller;
- 				interrupt-parent = <&gic>;
--				interrupts = <GIC_SPI 96 IRQ_TYPE_NONE>,
--					     <GIC_SPI 97 IRQ_TYPE_NONE>,
--					     <GIC_SPI 98 IRQ_TYPE_NONE>,
--					     <GIC_SPI 99 IRQ_TYPE_NONE>;
-+				interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>;
- 			};
- 		};
- 
-@@ -291,7 +291,7 @@
- 
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
--			interrupt-map = <0 0 0 0 &gic GIC_SPI 106 IRQ_TYPE_NONE>;
-+			interrupt-map = <0 0 0 0 &gic GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
- 
- 			linux,pci-domain = <1>;
- 
-@@ -313,10 +313,10 @@
- 				compatible = "brcm,iproc-msi";
- 				msi-controller;
- 				interrupt-parent = <&gic>;
--				interrupts = <GIC_SPI 102 IRQ_TYPE_NONE>,
--					     <GIC_SPI 103 IRQ_TYPE_NONE>,
--					     <GIC_SPI 104 IRQ_TYPE_NONE>,
--					     <GIC_SPI 105 IRQ_TYPE_NONE>;
-+				interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
- 			};
- 		};
- 
++&sdio0 {
++	mmc-ddr-1_8v;
++};
++
+ &uart2 {
+ 	status = "okay";
+ };
 
 
