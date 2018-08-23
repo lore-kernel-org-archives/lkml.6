@@ -2,124 +2,78 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F31F3C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C6FDC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEBA0208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:26:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="fv/dVVzD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEBA0208D6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id BDB64208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:27:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDB64208D6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730169AbeHWLyy (ORCPT
+        id S1730121AbeHWLz5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:54:54 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44922 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729063AbeHWLyx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:54:53 -0400
-Received: by mail-ed1-f68.google.com with SMTP id s10-v6so3032307edb.11
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 01:26:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eX3VcLJSyMNVO36A8iV3wSIN/IJRV3VmVMmeJ/tVKoY=;
-        b=fv/dVVzDM2rH6aj+38gYLaTZobD+D5AflFYQiHknnFZJN+UgUF5lpOjR9VGXqUkF+q
-         q2xZJF6dollWouZv1zJ5qE77gAHRCuuhom5a5YktAEbKVsr9P/NrbGse5Pt06jdaAeQm
-         HR6vEQVOPHytYACyMRSpay3s7LYSDoMpW0+ZE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=eX3VcLJSyMNVO36A8iV3wSIN/IJRV3VmVMmeJ/tVKoY=;
-        b=IXBSlbPJGhtK09G+Ixb8tTmqkl3eh/I1tcSW2srI9+KTmOKQj8a1l4GVGyMj0ouE33
-         CBLoSF9NWABl2Tsg4u24XnId4sEXb0Rxj+sIof7LMSAxQT1q5uW0B74jxWQufa1ticKn
-         nD3ca7mcDqHTsvY1TKdlpCVEVGo3Ik8pD5s8CjifNrAXZEG2obT8JBBc8TH6pgM5BBSR
-         1LjyT0qQLaHxpnfdSXt5Ojs5CJZq+5FX2IOU0BMx4d2JAVgUaLzxF2QPwcA/bsMVVqzw
-         cFcwnH9V1euTdDWmPrBT9nEzOGXyzsUX34bOXtQJnSdQfZsLFATjOjHFyGMq+c/FscvI
-         4zUQ==
-X-Gm-Message-State: APzg51DbfdADDtgN2TTvJYd4UucuBzsr6ZlLQDHmIk+RHn+hPfMn64ye
-        BvkJg8LdpzQYeu9oZ/P9IZG1kg==
-X-Google-Smtp-Source: ANB0VdaMKiVikpBdZknwsPDj6hp4rsnYRXEZm/B1JQGyTY7GlqeqaG39ASJ5VdO//mfhpxkR+Z42cQ==
-X-Received: by 2002:aa7:c990:: with SMTP id c16-v6mr1621971edt.165.1535012781681;
-        Thu, 23 Aug 2018 01:26:21 -0700 (PDT)
-Received: from phenom.ffwll.local (212-51-149-109.fiber7.init7.net. [212.51.149.109])
-        by smtp.gmail.com with ESMTPSA id a9-v6sm1773004edi.26.2018.08.23.01.26.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 Aug 2018 01:26:20 -0700 (PDT)
-Date:   Thu, 23 Aug 2018 10:26:19 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        sean@poorly.run, airlied@linux.ie, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/edid: Add 6 bpc quirk for SDC panel in Lenovo B50-80
-Message-ID: <20180823082618.GZ21634@phenom.ffwll.local>
-Mail-Followup-To: Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        sean@poorly.run, airlied@linux.ie, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20180823055332.7723-1-kai.heng.feng@canonical.com>
+        Thu, 23 Aug 2018 07:55:57 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:53626 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727410AbeHWLz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 07:55:56 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id A0M5xkTKHADr; Thu, 23 Aug 2018 10:27:06 +0200 (CEST)
+Received: from nazgul.tnic (77-85-47-250.ip.btc-net.bg [77.85.47.250])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B87AB1EC0253;
+        Thu, 23 Aug 2018 10:27:05 +0200 (CEST)
+Date:   Thu, 23 Aug 2018 10:27:15 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Pu Wen <puwen@hygon.cn>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        thomas.lendacky@amd.com, mchehab@kernel.org, mikhail.jin@gmail.com,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-edac@vger.kernel.org
+Subject: Re: [PATCH v4 15/16] driver/edac: enable Hygon support to AMD64 EDAC
+ driver
+Message-ID: <20180823082715.GA11742@nazgul.tnic>
+References: <cover.1534599097.git.puwen@hygon.cn>
+ <6275a5a0a0cfbd2c1abc09a5bb41caabecd02e27.1534599097.git.puwen@hygon.cn>
+ <20180821081331.GC24940@nazgul.tnic>
+ <ccbc6572-c16f-7a9b-ab27-54fffac1ba0d@hygon.cn>
+ <20180821112020.GB29972@nazgul.tnic>
+ <6e17958a-6cd8-4c6c-c890-f5f48b084d6f@redhat.com>
+ <20180821130430.GB30528@nazgul.tnic>
+ <36de11c7-8448-2967-2032-ef31d8e8a979@hygon.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180823055332.7723-1-kai.heng.feng@canonical.com>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <36de11c7-8448-2967-2032-ef31d8e8a979@hygon.cn>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 05:53:32AM +0000, Kai-Heng Feng wrote:
-> Another panel that reports "DFP 1.x compliant TMDS" but it supports 6bpc
-> instead of 8 bpc.
-> 
-> Apply 6 bpc quirk for the panel to fix it.
-> 
-> BugLink: https://bugs.launchpad.net/bugs/1788308
-> Cc: <stable@vger.kernel.org> # v4.8+
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+On Wed, Aug 22, 2018 at 09:07:20PM +0800, Pu Wen wrote:
+> Current I think we'd better try to follow the following way:
+> For current version, we will try to minimize the modification and share
+> codes,
+> For later big modification, will try to split codes to make code path
+> more clear.
 
-Applied, thanks.
--Daniel
+Yes, makes sense.
 
-> ---
->  drivers/gpu/drm/drm_edid.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index 5dc742b27ca0..3c9fc99648b7 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -116,6 +116,9 @@ static const struct edid_quirk {
->  	/* CPT panel of Asus UX303LA reports 8 bpc, but is a 6 bpc panel */
->  	{ "CPT", 0x17df, EDID_QUIRK_FORCE_6BPC },
->  
-> +	/* SDC panel of Lenovo B50-80 reports 8 bpc, but is a 6 bpc panel */
-> +	{ "SDC", 0x3652, EDID_QUIRK_FORCE_6BPC },
-> +
->  	/* Belinea 10 15 55 */
->  	{ "MAX", 1516, EDID_QUIRK_PREFER_LARGE_60 },
->  	{ "MAX", 0x77e, EDID_QUIRK_PREFER_LARGE_60 },
-> -- 
-> 2.17.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Thx.
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Regards/Gruss,
+    Boris.
+
+ECO tip #101: Trim your mails when you reply.
+--
