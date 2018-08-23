@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3793C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F7FC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 771052077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 771052077B
+	by mail.kernel.org (Postfix) with ESMTP id 0794B2077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0794B2077B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733219AbeHWMSA (ORCPT
+        id S1733230AbeHWMSF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:18:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51006 "EHLO
+        Thu, 23 Aug 2018 08:18:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51016 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732242AbeHWMR7 (ORCPT
+        with ESMTP id S1732502AbeHWMSE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:17:59 -0400
+        Thu, 23 Aug 2018 08:18:04 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 38EFE941;
-        Thu, 23 Aug 2018 08:49:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B7AB0C74;
+        Thu, 23 Aug 2018 08:49:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, John Soros <sorosj@gmail.com>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 114/324] perf test session topology: Fix test on s390
-Date:   Thu, 23 Aug 2018 09:53:00 +0200
-Message-Id: <20180823075001.560137075@linuxfoundation.org>
+Subject: [PATCH 4.17 097/324] batman-adv: Fix debugfs path for renamed hardif
+Date:   Thu, 23 Aug 2018 09:52:43 +0200
+Message-Id: <20180823075000.710460770@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -54,62 +52,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit b930e62ecd362843002bdf84c2940439822af321 ]
+[ Upstream commit 36dc621ceca1be3ec885aeade5fdafbbcc452a6d ]
 
-On s390 this test case fails because the socket identifiction numbers
-assigned to the CPU are higher than the CPU identification numbers.
+batman-adv is creating special debugfs directories in the init
+net_namespace for each valid hard-interface (net_device). But it is
+possible to rename a net_device to a completely different name then the
+original one.
 
-F/ix this by adding the platform architecture into the perf data header
-flag information. This helps identifiing the test platform and handles
-s390 specifics in process_cpu_topology().
+It can therefore happen that a user registers a new net_device which gets
+the name "wlan0" assigned by default. batman-adv is also adding a new
+directory under $debugfs/batman-adv/ with the name "wlan0".
 
-Before:
+The user then decides to rename this device to "wl_pri" and registers a
+different device. The kernel may now decide to use the name "wlan0" again
+for this new device. batman-adv will detect it as a valid net_device and
+tries to create a directory with the name "wlan0" under
+$debugfs/batman-adv/. But there already exists one with this name under
+this path and thus this fails. batman-adv will detect a problem and
+rollback the registering of this device.
 
-  [root@p23lp27 perf]# perf test -vvvvv -F 39
-  39: Session topology                                      :
-  --- start ---
-  templ file: /tmp/perf-test-iUv755
-  socket_id number is too big.You may need to upgrade the perf tool.
-  ---- end ----
-  Session topology: Skip
-  [root@p23lp27 perf]#
+batman-adv must therefore take care of renaming the debugfs directories
+for hard-interfaces whenever it detects such a net_device rename.
 
-After:
-
-  [root@p23lp27 perf]# perf test -vvvvv -F 39
-  39: Session topology                                      :
-  --- start ---
-  templ file: /tmp/perf-test-8X8VTs
-  CPU 0, core 0, socket 6
-  CPU 1, core 1, socket 3
-  ---- end ----
-  Session topology: Ok
-  [root@p23lp27 perf]#
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Fixes: c84974ed9fb6 ("perf test: Add entry to test cpu topology")
-Link: http://lkml.kernel.org/r/20180611073153.15592-2-tmricht@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 5bc7c1eb44f2 ("batman-adv: add debugfs structure for information per interface")
+Reported-by: John Soros <sorosj@gmail.com>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/tests/topology.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/batman-adv/debugfs.c        |   20 ++++++++++++++++++++
+ net/batman-adv/debugfs.h        |    6 ++++++
+ net/batman-adv/hard-interface.c |    3 +++
+ 3 files changed, 29 insertions(+)
 
---- a/tools/perf/tests/topology.c
-+++ b/tools/perf/tests/topology.c
-@@ -45,6 +45,7 @@ static int session_write_header(char *pa
+--- a/net/batman-adv/debugfs.c
++++ b/net/batman-adv/debugfs.c
+@@ -19,6 +19,7 @@
+ #include "debugfs.h"
+ #include "main.h"
  
- 	perf_header__set_feat(&session->header, HEADER_CPU_TOPOLOGY);
- 	perf_header__set_feat(&session->header, HEADER_NRCPUS);
-+	perf_header__set_feat(&session->header, HEADER_ARCH);
++#include <linux/dcache.h>
+ #include <linux/debugfs.h>
+ #include <linux/err.h>
+ #include <linux/errno.h>
+@@ -344,6 +345,25 @@ out:
+ }
  
- 	session->header.data_size += DATA_SIZE;
+ /**
++ * batadv_debugfs_rename_hardif() - Fix debugfs path for renamed hardif
++ * @hard_iface: hard interface which was renamed
++ */
++void batadv_debugfs_rename_hardif(struct batadv_hard_iface *hard_iface)
++{
++	const char *name = hard_iface->net_dev->name;
++	struct dentry *dir;
++	struct dentry *d;
++
++	dir = hard_iface->debug_dir;
++	if (!dir)
++		return;
++
++	d = debugfs_rename(dir->d_parent, dir, dir->d_parent, name);
++	if (!d)
++		pr_err("Can't rename debugfs dir to %s\n", name);
++}
++
++/**
+  * batadv_debugfs_del_hardif() - delete the base directory for a hard interface
+  *  in debugfs.
+  * @hard_iface: hard interface which is deleted.
+--- a/net/batman-adv/debugfs.h
++++ b/net/batman-adv/debugfs.h
+@@ -32,6 +32,7 @@ void batadv_debugfs_destroy(void);
+ int batadv_debugfs_add_meshif(struct net_device *dev);
+ void batadv_debugfs_del_meshif(struct net_device *dev);
+ int batadv_debugfs_add_hardif(struct batadv_hard_iface *hard_iface);
++void batadv_debugfs_rename_hardif(struct batadv_hard_iface *hard_iface);
+ void batadv_debugfs_del_hardif(struct batadv_hard_iface *hard_iface);
  
+ #else
+@@ -60,6 +61,11 @@ int batadv_debugfs_add_hardif(struct bat
+ }
+ 
+ static inline
++void batadv_debugfs_rename_hardif(struct batadv_hard_iface *hard_iface)
++{
++}
++
++static inline
+ void batadv_debugfs_del_hardif(struct batadv_hard_iface *hard_iface)
+ {
+ }
+--- a/net/batman-adv/hard-interface.c
++++ b/net/batman-adv/hard-interface.c
+@@ -1051,6 +1051,9 @@ static int batadv_hard_if_event(struct n
+ 		if (batadv_is_wifi_hardif(hard_iface))
+ 			hard_iface->num_bcasts = BATADV_NUM_BCASTS_WIRELESS;
+ 		break;
++	case NETDEV_CHANGENAME:
++		batadv_debugfs_rename_hardif(hard_iface);
++		break;
+ 	default:
+ 		break;
+ 	}
 
 
