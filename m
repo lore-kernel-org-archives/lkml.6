@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E42C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3ACEC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:51:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9AFE20839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:51:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9AFE20839
+	by mail.kernel.org (Postfix) with ESMTP id 7B00820839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:51:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B00820839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387617AbeHWMTi (ORCPT
+        id S2387631AbeHWMTl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:19:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51480 "EHLO
+        Thu, 23 Aug 2018 08:19:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51494 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732508AbeHWMTh (ORCPT
+        with ESMTP id S1732230AbeHWMTk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:19:37 -0400
+        Thu, 23 Aug 2018 08:19:40 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 96AC3BE0;
-        Thu, 23 Aug 2018 08:50:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 05387BE0;
+        Thu, 23 Aug 2018 08:51:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Kenzior <denkenz@gmail.com>,
+        stable@vger.kernel.org, Masashi Honma <masashi.honma@gmail.com>,
+        Bob Copeland <bobcopeland@fb.com>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 142/324] mac80211: disable BHs/preemption in ieee80211_tx_control_port()
-Date:   Thu, 23 Aug 2018 09:53:28 +0200
-Message-Id: <20180823075003.047550058@linuxfoundation.org>
+Subject: [PATCH 4.17 143/324] nl80211: relax ht operation checks for mesh
+Date:   Thu, 23 Aug 2018 09:53:29 +0200
+Message-Id: <20180823075003.098419783@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,43 +52,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Denis Kenzior <denkenz@gmail.com>
+From: Bob Copeland <me@bobcopeland.com>
 
-[ Upstream commit e7441c9274a6a5453e06f4c2b8b5f72eca0a3f17 ]
+[ Upstream commit 188f60ab8e787fcbb5ac9d64ede23a0070231f09 ]
 
-On pre-emption enabled kernels the following print was being seen due to
-missing local_bh_disable/local_bh_enable calls.  mac80211 assumes that
-pre-emption is disabled in the data path.
+Commit 9757235f451c, "nl80211: correct checks for
+NL80211_MESHCONF_HT_OPMODE value") relaxed the range for the HT
+operation field in meshconf, while also adding checks requiring
+the non-greenfield and non-ht-sta bits to be set in certain
+circumstances.  The latter bit is actually reserved for mesh BSSes
+according to Table 9-168 in 802.11-2016, so in fact it should not
+be set.
 
-    BUG: using smp_processor_id() in preemptible [00000000] code: iwd/517
-    caller is __ieee80211_subif_start_xmit+0x144/0x210 [mac80211]
-    [...]
-    Call Trace:
-    dump_stack+0x5c/0x80
-    check_preemption_disabled.cold.0+0x46/0x51
-    __ieee80211_subif_start_xmit+0x144/0x210 [mac80211]
+wpa_supplicant sets these bits because the mesh and AP code share
+the same implementation, but authsae does not.  As a result, some
+meshconf updates from authsae which set only the NONHT_MIXED
+protection bits were being rejected.
 
-Fixes: 911806491425 ("mac80211: Add support for tx_control_port")
-Signed-off-by: Denis Kenzior <denkenz@gmail.com>
-[commit message rewrite, fixes tag]
+In order to avoid breaking userspace by changing the rules again,
+simply accept the values with or without the bits set, and mask
+off the reserved bit to match the spec.
+
+While in here, update the 802.11-2012 reference to 802.11-2016.
+
+Fixes: 9757235f451c ("nl80211: correct checks for NL80211_MESHCONF_HT_OPMODE value")
+Cc: Masashi Honma <masashi.honma@gmail.com>
+Signed-off-by: Bob Copeland <bobcopeland@fb.com>
+Reviewed-by: Masashi Honma <masashi.honma@gmail.com>
+Reviewed-by: Masashi Honma <masashi.honma@gmail.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/tx.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/wireless/nl80211.c |   19 +++----------------
+ 1 file changed, 3 insertions(+), 16 deletions(-)
 
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -4800,7 +4800,9 @@ int ieee80211_tx_control_port(struct wip
- 	skb_reset_network_header(skb);
- 	skb_reset_mac_header(skb);
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -6061,7 +6061,7 @@ do {									    \
+ 				  nl80211_check_s32);
+ 	/*
+ 	 * Check HT operation mode based on
+-	 * IEEE 802.11 2012 8.4.2.59 HT Operation element.
++	 * IEEE 802.11-2016 9.4.2.57 HT Operation element.
+ 	 */
+ 	if (tb[NL80211_MESHCONF_HT_OPMODE]) {
+ 		ht_opmode = nla_get_u16(tb[NL80211_MESHCONF_HT_OPMODE]);
+@@ -6071,22 +6071,9 @@ do {									    \
+ 				  IEEE80211_HT_OP_MODE_NON_HT_STA_PRSNT))
+ 			return -EINVAL;
  
-+	local_bh_disable();
- 	__ieee80211_subif_start_xmit(skb, skb->dev, flags);
-+	local_bh_enable();
+-		if ((ht_opmode & IEEE80211_HT_OP_MODE_NON_GF_STA_PRSNT) &&
+-		    (ht_opmode & IEEE80211_HT_OP_MODE_NON_HT_STA_PRSNT))
+-			return -EINVAL;
++		/* NON_HT_STA bit is reserved, but some programs set it */
++		ht_opmode &= ~IEEE80211_HT_OP_MODE_NON_HT_STA_PRSNT;
  
- 	return 0;
- }
+-		switch (ht_opmode & IEEE80211_HT_OP_MODE_PROTECTION) {
+-		case IEEE80211_HT_OP_MODE_PROTECTION_NONE:
+-		case IEEE80211_HT_OP_MODE_PROTECTION_20MHZ:
+-			if (ht_opmode & IEEE80211_HT_OP_MODE_NON_HT_STA_PRSNT)
+-				return -EINVAL;
+-			break;
+-		case IEEE80211_HT_OP_MODE_PROTECTION_NONMEMBER:
+-		case IEEE80211_HT_OP_MODE_PROTECTION_NONHT_MIXED:
+-			if (!(ht_opmode & IEEE80211_HT_OP_MODE_NON_HT_STA_PRSNT))
+-				return -EINVAL;
+-			break;
+-		}
+ 		cfg->ht_opmode = ht_opmode;
+ 		mask |= (1 << (NL80211_MESHCONF_HT_OPMODE - 1));
+ 	}
 
 
