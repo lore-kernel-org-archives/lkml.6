@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBFFDC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B411AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F88B2064E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F88B2064E
+	by mail.kernel.org (Postfix) with ESMTP id 7428E206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7428E206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728630AbeHWLgQ (ORCPT
+        id S1728658AbeHWLgU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:36:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44818 "EHLO
+        Thu, 23 Aug 2018 07:36:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44832 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727976AbeHWLgP (ORCPT
+        with ESMTP id S1727954AbeHWLgT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:36:15 -0400
+        Thu, 23 Aug 2018 07:36:19 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CD8AABB6;
-        Thu, 23 Aug 2018 08:07:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 07D2ABB6;
+        Thu, 23 Aug 2018 08:07:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomasz Duszynski <tduszyns@gmail.com>,
-        Matt Ranostay <matt.ranostay@konsulko.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        stable@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 040/130] iio: pressure: bmp280: fix relative humidity unit
-Date:   Thu, 23 Aug 2018 09:52:36 +0200
-Message-Id: <20180823074929.821955497@linuxfoundation.org>
+Subject: [PATCH 4.9 041/130] brcmfmac: stop watchdog before detach and free everything
+Date:   Thu, 23 Aug 2018 09:52:37 +0200
+Message-Id: <20180823074929.897460859@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -52,43 +54,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomasz Duszynski <tduszyns@gmail.com>
+From: Michael Trimarchi <michael@amarulasolutions.com>
 
-[ Upstream commit 13399ff25f179811ce9c1df1523eb39f9e4a4772 ]
+[ Upstream commit 373c83a801f15b1e3d02d855fad89112bd4ccbe0 ]
 
-According to IIO ABI relative humidity reading should be
-returned in milli percent.
+Using built-in in kernel image without a firmware in filesystem
+or in the kernel image can lead to a kernel NULL pointer deference.
+Watchdog need to be stopped in brcmf_sdio_remove
 
-This patch addresses that by applying proper scaling and
-returning integer instead of fractional format type specifier.
+The system is going down NOW!
+[ 1348.110759] Unable to handle kernel NULL pointer dereference at virtual address 000002f8
+Sent SIGTERM to all processes
+[ 1348.121412] Mem abort info:
+[ 1348.126962]   ESR = 0x96000004
+[ 1348.130023]   Exception class = DABT (current EL), IL = 32 bits
+[ 1348.135948]   SET = 0, FnV = 0
+[ 1348.138997]   EA = 0, S1PTW = 0
+[ 1348.142154] Data abort info:
+[ 1348.145045]   ISV = 0, ISS = 0x00000004
+[ 1348.148884]   CM = 0, WnR = 0
+[ 1348.151861] user pgtable: 4k pages, 48-bit VAs, pgdp = (____ptrval____)
+[ 1348.158475] [00000000000002f8] pgd=0000000000000000
+[ 1348.163364] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+[ 1348.168927] Modules linked in: ipv6
+[ 1348.172421] CPU: 3 PID: 1421 Comm: brcmf_wdog/mmc0 Not tainted 4.17.0-rc5-next-20180517 #18
+[ 1348.180757] Hardware name: Amarula A64-Relic (DT)
+[ 1348.185455] pstate: 60000005 (nZCv daif -PAN -UAO)
+[ 1348.190251] pc : brcmf_sdiod_freezer_count+0x0/0x20
+[ 1348.195124] lr : brcmf_sdio_watchdog_thread+0x64/0x290
+[ 1348.200253] sp : ffff00000b85be30
+[ 1348.203561] x29: ffff00000b85be30 x28: 0000000000000000
+[ 1348.208868] x27: ffff00000b6cb918 x26: ffff80003b990638
+[ 1348.214176] x25: ffff0000087b1a20 x24: ffff80003b94f800
+[ 1348.219483] x23: ffff000008e620c8 x22: ffff000008f0b660
+[ 1348.224790] x21: ffff000008c6a858 x20: 00000000fffffe00
+[ 1348.230097] x19: ffff80003b94f800 x18: 0000000000000001
+[ 1348.235404] x17: 0000ffffab2e8a74 x16: ffff0000080d7de8
+[ 1348.240711] x15: 0000000000000000 x14: 0000000000000400
+[ 1348.246018] x13: 0000000000000400 x12: 0000000000000001
+[ 1348.251324] x11: 00000000000002c4 x10: 0000000000000a10
+[ 1348.256631] x9 : ffff00000b85bc40 x8 : ffff80003be11870
+[ 1348.261937] x7 : ffff80003dfc7308 x6 : 000000078ff08b55
+[ 1348.267243] x5 : 00000139e1058400 x4 : 0000000000000000
+[ 1348.272550] x3 : dead000000000100 x2 : 958f2788d6618100
+[ 1348.277856] x1 : 00000000fffffe00 x0 : 0000000000000000
 
-Note that the fixes tag is before the driver was heavily refactored
-to introduce spi support, so the patch won't apply that far back.
-
-Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
-Fixes: 14beaa8f5ab1 ("iio: pressure: bmp280: add humidity support")
-Acked-by: Matt Ranostay <matt.ranostay@konsulko.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Tested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iio/pressure/bmp280-core.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/iio/pressure/bmp280-core.c
-+++ b/drivers/iio/pressure/bmp280-core.c
-@@ -347,10 +347,9 @@ static int bmp280_read_humid(struct bmp2
- 	adc_humidity = be16_to_cpu(tmp);
- 	comp_humidity = bmp280_compensate_humidity(data, adc_humidity);
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+@@ -4229,6 +4229,13 @@ void brcmf_sdio_remove(struct brcmf_sdio
+ 	brcmf_dbg(TRACE, "Enter\n");
  
--	*val = comp_humidity;
--	*val2 = 1024;
-+	*val = comp_humidity * 1000 / 1024;
+ 	if (bus) {
++		/* Stop watchdog task */
++		if (bus->watchdog_tsk) {
++			send_sig(SIGTERM, bus->watchdog_tsk, 1);
++			kthread_stop(bus->watchdog_tsk);
++			bus->watchdog_tsk = NULL;
++		}
++
+ 		/* De-register interrupt handler */
+ 		brcmf_sdiod_intr_unregister(bus->sdiodev);
  
--	return IIO_VAL_FRACTIONAL;
-+	return IIO_VAL_INT;
- }
- 
- static int bmp280_read_raw(struct iio_dev *indio_dev,
 
 
