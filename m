@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE1CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17150C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93FB12098B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93FB12098B
+	by mail.kernel.org (Postfix) with ESMTP id D1F6E2148C
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1F6E2148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728837AbeHWL30 (ORCPT
+        id S1728851AbeHWL31 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:29:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44320 "EHLO
+        Thu, 23 Aug 2018 07:29:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44308 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728275AbeHWL3Z (ORCPT
+        with ESMTP id S1728803AbeHWL30 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:29:25 -0400
+        Thu, 23 Aug 2018 07:29:26 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B2BBFBB6;
-        Thu, 23 Aug 2018 08:00:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D8818C9D;
+        Thu, 23 Aug 2018 08:01:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Lechner <david@lechnology.com>,
+        stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 61/79] net: usb: rtl8150: demote allmulti message to dev_dbg()
-Date:   Thu, 23 Aug 2018 09:53:37 +0200
-Message-Id: <20180823074923.138104553@linuxfoundation.org>
+Subject: [PATCH 4.4 62/79] net: qca_spi: Avoid packet drop during initial sync
+Date:   Thu, 23 Aug 2018 09:53:38 +0200
+Message-Id: <20180823074923.193035499@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -51,37 +51,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Lechner <david@lechnology.com>
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
-[ Upstream commit 3a9b0455062ffb9d2f6cd4473a76e3456f318c9f ]
+[ Upstream commit b2bab426dc715de147f8039a3fccff27d795f4eb ]
 
-This driver can spam the kernel log with multiple messages of:
+As long as the synchronization with the QCA7000 isn't finished, we
+cannot accept packets from the upper layers. So let the SPI thread
+enable the TX queue after sync and avoid unwanted packet drop.
 
-    net eth0: eth0: allmulti set
-
-Usually 4 or 8 at a time (probably because of using ConnMan).
-
-This message doesn't seem useful, so let's demote it from dev_info()
-to dev_dbg().
-
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Fixes: 291ab06ecf67 ("net: qualcomm: new Ethernet over SPI driver for QCA7000")
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/rtl8150.c |    2 +-
+ drivers/net/ethernet/qualcomm/qca_spi.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/usb/rtl8150.c
-+++ b/drivers/net/usb/rtl8150.c
-@@ -681,7 +681,7 @@ static void rtl8150_set_multicast(struct
- 		   (netdev->flags & IFF_ALLMULTI)) {
- 		rx_creg &= 0xfffe;
- 		rx_creg |= 0x0002;
--		dev_info(&netdev->dev, "%s: allmulti set\n", netdev->name);
-+		dev_dbg(&netdev->dev, "%s: allmulti set\n", netdev->name);
- 	} else {
- 		/* ~RX_MULTICAST, ~RX_PROMISCUOUS */
- 		rx_creg &= 0x00fc;
+--- a/drivers/net/ethernet/qualcomm/qca_spi.c
++++ b/drivers/net/ethernet/qualcomm/qca_spi.c
+@@ -635,7 +635,7 @@ qcaspi_netdev_open(struct net_device *de
+ 		return ret;
+ 	}
+ 
+-	netif_start_queue(qca->net_dev);
++	/* SPI thread takes care of TX queue */
+ 
+ 	return 0;
+ }
 
 
