@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC724C43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D65C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:57:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A274621480
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:57:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A274621480
+	by mail.kernel.org (Postfix) with ESMTP id E02A521473
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:57:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E02A521473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbeHWL0G (ORCPT
+        id S1727636AbeHWL0J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:26:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41638 "EHLO
+        Thu, 23 Aug 2018 07:26:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41650 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbeHWL0F (ORCPT
+        with ESMTP id S1726995AbeHWL0J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:26:05 -0400
+        Thu, 23 Aug 2018 07:26:09 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 66CACBB6;
-        Thu, 23 Aug 2018 07:57:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 96C5B9D2;
+        Thu, 23 Aug 2018 07:57:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Zhizhou Zhang <zhizhouzhang@asrmicro.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        stable@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <james.morris@microsoft.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 13/79] arm64: make secondary_start_kernel() notrace
-Date:   Thu, 23 Aug 2018 09:52:49 +0200
-Message-Id: <20180823074919.560145811@linuxfoundation.org>
+Subject: [PATCH 4.4 22/79] Smack: Mark inode instant in smack_task_to_inode
+Date:   Thu, 23 Aug 2018 09:52:58 +0200
+Message-Id: <20180823074920.150267602@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -53,40 +51,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhizhou Zhang <zhizhouzhang@asrmicro.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
 
-[ Upstream commit b154886f7892499d0d3054026e19dfb9a731df61 ]
+[ Upstream commit 7b4e88434c4e7982fb053c49657e1c8bbb8692d9 ]
 
-We can't call function trace hook before setup percpu offset.
-When entering secondary_start_kernel(), percpu offset has not
-been initialized.  So this lead hotplug malfunction.
-Here is the flow to reproduce this bug:
+Smack: Mark inode instant in smack_task_to_inode
 
-echo 0 > /sys/devices/system/cpu/cpu1/online
-echo function > /sys/kernel/debug/tracing/current_tracer
-echo 1 > /sys/kernel/debug/tracing/tracing_on
-echo 1 > /sys/devices/system/cpu/cpu1/online
+/proc clean-up in commit 1bbc55131e59bd099fdc568d3aa0b42634dbd188
+resulted in smack_task_to_inode() being called before smack_d_instantiate.
+This resulted in the smk_inode value being ignored, even while present
+for files in /proc/self. Marking the inode as instant here fixes that.
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Tested-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Zhizhou Zhang <zhizhouzhang@asrmicro.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/smp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/smack/smack_lsm.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -131,7 +131,7 @@ static void smp_store_cpu_info(unsigned
-  * This is the secondary CPU boot entry.  We're using this CPUs
-  * idle thread stack, but a set of temporary page tables.
-  */
--asmlinkage void secondary_start_kernel(void)
-+asmlinkage notrace void secondary_start_kernel(void)
- {
- 	struct mm_struct *mm = &init_mm;
- 	unsigned int cpu = smp_processor_id();
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -2260,6 +2260,7 @@ static void smack_task_to_inode(struct t
+ 	struct smack_known *skp = smk_of_task_struct(p);
+ 
+ 	isp->smk_inode = skp;
++	isp->smk_flags |= SMK_INODE_INSTANT;
+ }
+ 
+ /*
 
 
