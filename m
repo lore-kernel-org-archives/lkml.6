@@ -6,115 +6,98 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2234BC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3FF0C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 933732150F
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:50:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9427E2150F
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:53:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="F6px5WzB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 933732150F
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="lQo1ptKQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9427E2150F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731931AbeHWQUR (ORCPT
+        id S1731749AbeHWQWk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 12:20:17 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:58254 "EHLO
+        Thu, 23 Aug 2018 12:22:40 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:60650 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727714AbeHWQUR (ORCPT
+        with ESMTP id S1728097AbeHWQWk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 12:20:17 -0400
-Date:   Thu, 23 Aug 2018 14:50:36 +0200
+        Thu, 23 Aug 2018 12:22:40 -0400
+Date:   Thu, 23 Aug 2018 14:52:57 +0200
 From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH] irq: ingenic: Drop dependency on MACH_INGENIC
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>, od@zcrc.me,
-        linux-kernel@vger.kernel.org
-Message-Id: <1535028636.27779.0@crapouillou.net>
-In-Reply-To: <201808230923.wfa0xpst%fengguang.wu@intel.com>
-References: <20180821134937.3637-1-paul@crapouillou.net>
-        <201808230923.wfa0xpst%fengguang.wu@intel.com>
+Subject: RE: [PATCH 3/4] memory: jz4780-nemc: Reduce size of const array
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alex Smith <alex@alex-smith.me.uk>, "od@zcrc.me" <od@zcrc.me>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Message-Id: <1535028777.27779.1@crapouillou.net>
+In-Reply-To: <b8fdca29afcb48aa9ee33cc896c24e66@AcuMS.aculab.com>
+References: <20180822172953.11281-1-paul@crapouillou.net>
+        <20180822172953.11281-3-paul@crapouillou.net>
+        <b8fdca29afcb48aa9ee33cc896c24e66@AcuMS.aculab.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1535028641; bh=be0J8a2cteKbg7u4vEqL7iBsEkcjD2yhGiDf+0pOaRM=; h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding; b=F6px5WzBiSrTjcs7NRLGdbtyxRfgEdW3QWT64776j9M85HenwD/r7vbOXMJqwlowu4YvJ6aUGSImwml4xsEY1Eb4ISYQjDS1ob+zKewKxRBxKRVODm5qNAwpf+Kj1gw8H1yLXOPNj06tJx7gDwFUZVO0upMiKIUHNlYPz8TSodg=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1535028781; bh=OdQWYeBO4PFFPaGdwc/B2Bq5zKDkqx2x0CZlkBEXH4g=; h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding; b=lQo1ptKQxSdCFNRR6GENPzbSjACc6alIY0tfD3XQI/t/jx/+FKq679ppw5ilQFHjifh7zKyhtIXFd63DwvKrZIhGEgJPTwyxQBoDO5he/5Jf7QZmGgpmXd2sFXgRU+q2YcF03ALspuM5o0MpYf2iWLS/I8NIi7sg8LEojJZl0Yc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-OK, forget this patch.
+Hi David,
 
-I need to drop the <asm/mach-jz4740/irq.h> include first and
-there's a bit of work to do before I can achieve that.
+Le jeu. 23 ao=FBt 2018 =E0 12:41, David Laight <David.Laight@ACULAB.COM>=20
+a =E9crit :
+> From: Paul Cercueil
+>>  Sent: 22 August 2018 18:30
+>>  The maximum value found in that array is 15, there's no need to=20
+>> store
+>>  these values as uint32_t, a uint8_t is enough.
+>>=20
+>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  ---
+>>   drivers/memory/jz4780-nemc.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>=20
+>>  diff --git a/drivers/memory/jz4780-nemc.c=20
+>> b/drivers/memory/jz4780-nemc.c
+>>  index bcf06adefc96..ef3f20e46590 100644
+>>  --- a/drivers/memory/jz4780-nemc.c
+>>  +++ b/drivers/memory/jz4780-nemc.c
+>>  @@ -161,7 +161,7 @@ static bool jz4780_nemc_configure_bank(struct=20
+>> jz4780_nemc *nemc,
+>>   	 * Conversion of tBP and tAW cycle counts to values supported by=20
+>> the
+>>   	 * hardware (round up to the next supported value).
+>>   	 */
+>>  -	static const uint32_t convert_tBP_tAW[] =3D {
+>>  +	static const u8 convert_tBP_tAW[] =3D {
+>>   		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+>>=20
+>>   		/* 11 - 12 -> 12 cycles */
+>>  @@ -232,7 +232,7 @@ static bool jz4780_nemc_configure_bank(struct=20
+>> jz4780_nemc *nemc,
+>>   			return false;
+>>   		}
+>>=20
+>>  -		smcr |=3D convert_tBP_tAW[cycles] << NEMC_SMCR_TBP_SHIFT;
+>>  +		smcr |=3D (u32)convert_tBP_tAW[cycles] << NEMC_SMCR_TBP_SHIFT;
+>=20
+> You don't need the cast here.
 
--Paul Cercueil
+OK, I will remove them in V2.
 
-
-Le jeu. 23 ao=FBt 2018 =E0 4:30, kbuild test robot <lkp@intel.com> a=20
-=E9crit :
-> Hi Paul,
 >=20
-> Thank you for the patch! Perhaps something to improve:
+> 	David
 >=20
-> [auto build test WARNING on tip/irq/core]
-> [also build test WARNING on v4.18 next-20180822]
-> [if your patch is applied to the wrong git tree, please drop us a=20
-> note to help improve the system]
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes,=20
+> MK1 1PT, UK
+> Registration No: 1397386 (Wales)
 >=20
-> url:   =20
-> https://github.com/0day-ci/linux/commits/Paul-Cercueil/irq-ingenic-Drop-d=
-ependency-on-MACH_INGENIC/20180822-083429
-> config: mips-allmodconfig (attached as .config)
-> compiler: mips-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget=20
-> https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross=20
-> -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=3D7.2.0 make.cross ARCH=3Dmips
->=20
-> All warnings (new ones prefixed by >>):
->=20
->    In file included from drivers//irqchip/irq-ingenic.c:30:0:
->>>  arch/mips/include/asm/mach-jz4740/irq.h:63:0: warning: "NR_IRQS"=20
->>> redefined
->     #define NR_IRQS (JZ4740_IRQ_ADC_BASE + 6)
->=20
->    In file included from arch/mips/include/asm/irq.h:18:0,
->                     from include/linux/irq.h:23,
->                     from include/asm-generic/hardirq.h:13,
->                     from arch/mips/include/asm/hardirq.h:16,
->                     from include/linux/hardirq.h:9,
->                     from include/linux/interrupt.h:11,
->                     from drivers//irqchip/irq-ingenic.c:19:
->    arch/mips/include/asm/mach-generic/irq.h:12:0: note: this is the=20
-> location of the previous definition
->     #define NR_IRQS 128
->=20
->=20
-> vim +/NR_IRQS +63 arch/mips/include/asm/mach-jz4740/irq.h
->=20
-> 9869848d Lars-Peter Clausen 2010-07-17  62
-> 9869848d Lars-Peter Clausen 2010-07-17 @63  #define NR_IRQS=20
-> (JZ4740_IRQ_ADC_BASE + 6)
-> 9869848d Lars-Peter Clausen 2010-07-17  64
->=20
-> :::::: The code at line 63 was first introduced by commit
-> :::::: 9869848d12601cdddf097a36aebe0b10dc5d177b MIPS: JZ4740: Add IRQ=20
-> handler code
->=20
-> :::::: TO: Lars-Peter Clausen <lars@metafoo.de>
-> :::::: CC: Ralf Baechle <ralf@linux-mips.org>
->=20
-> ---
-> 0-DAY kernel test infrastructure                Open Source=20
-> Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel=20
-> Corporation
 =
 
