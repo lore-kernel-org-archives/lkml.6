@@ -2,151 +2,271 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A1BC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58ED5C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:19:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EF2D20A8B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:19:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E73EE20A8B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:19:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MPqZ5MUx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EF2D20A8B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Z97+KXh/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E73EE20A8B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbeHWUuV (ORCPT
+        id S1727323AbeHWUue (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 16:50:21 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39482 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726928AbeHWUuU (ORCPT
+        Thu, 23 Aug 2018 16:50:34 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41230 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbeHWUue (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 16:50:20 -0400
-Received: by mail-pg1-f195.google.com with SMTP id m3-v6so2028455pgp.6
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:19:38 -0700 (PDT)
+        Thu, 23 Aug 2018 16:50:34 -0400
+Received: by mail-lj1-f193.google.com with SMTP id y17-v6so4749058ljy.8
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:19:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=it7iWgRkhEA+Ct9r5cfYOaQhxWhSkpgjPeR035x+Ia8=;
-        b=MPqZ5MUxDnTh0RRzFrj1fh15U8J6qb4mDpSOxiE02k3JKPhSWxzOkcWXjpESeeyMSL
-         qPfZ7DA7wsmCHhniAq6YsavQpP8ofCKwLb8IEJmp/5i7awmYo8dOg+uklr27Builnn0k
-         qBYXWQhUgJrmhVjLHirfxOlVL4VGHbLDDxGgLGRPfqZVHwnbb5Rw/9ymd/tVwEiqUAtr
-         TyoJtTtWB9/PSpv0QvPLwtw+RLC3C6AYpzWQ2eki6Bij80ITUOd6H4mnZp5X7KujtZiJ
-         xE3dgtzV+UR036zX8yUhhBsTh7T7+mrZJ3unqnCtAug+2TG7qwMRwh1pdgPsJ5kGDDV8
-         il2w==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LArb4wWEhYYayDbIbmrNGSJr8IVBc/t6rm9+PCajr8U=;
+        b=Z97+KXh/b5KPF0gPPp/tV8KF37QH6QnpMqP/VYpW988WmL5ncf2X1yMLy+gwdguv+d
+         ZcoKm7OKEwFCtEWfRDaYrDyxWldFdp2pl041YhNbpzkiXO9PLBDUWsHAHGa+O1FGASGU
+         fHdg4WCCLu0bK+ELQmTkxe4fEntOKEp2jbQZE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=it7iWgRkhEA+Ct9r5cfYOaQhxWhSkpgjPeR035x+Ia8=;
-        b=Ob9ykIT77uWtUtaO5x2DFViEZkNIwzDnHx+tmnKbv6wnKey54h9l6sO5D0j9Qx5RPP
-         dHkF28l104dvBfDWHjmb/5nNEmU06RCe5aQoXq3ACt0FUoMs15HSOJHfZ9vS9u6I3Qd/
-         wTPmZ/PLeVouiYTsW/X2tigCYjNxXl6KIHQuyuFPp1Ot/uhipvHaGzFG85eVBH6XXuU4
-         zO1WDkhLD5u6sOjhKIzk8q6iFo33dNZ+qD/ZT57/dIoKmJ2N3AY8wyNL1F4AmjzGamYz
-         yVi10rlT6xhoqYHvrSTHMscCRzo4Y4+103mdwHrpaLXiRv1XIExRNOcSS3v8UWE01oB5
-         5ltQ==
-X-Gm-Message-State: AOUpUlEKxcPA1tGSfH1JM2H9UuBDUgalGghh4iOIFNV8O90G780uyfP7
-        Ytw+zoq5v8QsBz0YPjWMUL4=
-X-Google-Smtp-Source: AA+uWPzlr58wGLZpWuPip5neWlra8kgq5udK+jU02VCD4/pmMVD0XVgy/kTbbQo7M2Uu8pmNfNtorQ==
-X-Received: by 2002:a17:902:1121:: with SMTP id d30-v6mr47708523pla.250.1535044778460;
-        Thu, 23 Aug 2018 10:19:38 -0700 (PDT)
-Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id b126-v6sm5365973pga.49.2018.08.23.10.19.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 Aug 2018 10:19:37 -0700 (PDT)
-Date:   Thu, 23 Aug 2018 22:49:31 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Joe Perches <joe@perches.com>, NeilBrown <neil@brown.name>,
-        devel@driverdev.osuosl.org,
-        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
-        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>
-Subject: Re: [PATCH v4 1/4] staging: mt7621-mmc: Fix debug macro N_MSG
-Message-ID: <20180823171930.GC18185@nishad>
-References: <cover.1534923403.git.nishadkamdar@gmail.com>
- <2313d873f9a940fcdd4f608ffe3c37ec6a5b6e35.1534923403.git.nishadkamdar@gmail.com>
- <20180822090935.eod5oyodo3xchaxw@mwanda>
- <20180822111052.GA2675@nishad>
- <20180822113844.h5ramq5muiyfwnju@mwanda>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LArb4wWEhYYayDbIbmrNGSJr8IVBc/t6rm9+PCajr8U=;
+        b=iP1zOnL1DBFWhf8SqQxRp0B1wuTUvzdVYzBlbFMfj7pNckwYjW6+P2cBsJthVots2r
+         OZY4icORAH/t0yImu12uZDyxxcDdEYRzlittx1Kh7kPQ+JhdHnrdGknbK+tnzX6mf+Cf
+         515EaOnmjATC1w5Hhvl5ORaLBJ2kc10G0ugbY5J29SXmuNNDE4Wk3yllLX6w2iVoOWHI
+         1ryMGixbhMgBVb4PaFakZfhxt1DeXKfYQlBUHFFpnLphKl4jbj/OzAcVzOH2Eu7z1sNK
+         DBehPe7eE8tZDRa4jpWcnWObM0OiiEIWFY9Z9NcAzkOhu350haHrcwZqU+a6LQr3tAlX
+         2YYw==
+X-Gm-Message-State: AOUpUlGLBrjKqbaZWQIk0dH9hY/0KjqPvCxjJ2omPXLcJDUTMjsetieX
+        hgbDEYDs8utUm7Ogcd73d9H2Zr5byFY=
+X-Google-Smtp-Source: AA+uWPwuNhJTsqAc78RLTkcbJfuozNjCDkX6dVggDX5hQ3oaD9nSnJvWFiblF0tYtP1AxJZPsizUuw==
+X-Received: by 2002:a2e:2282:: with SMTP id i124-v6mr42674352lji.11.1535044790961;
+        Thu, 23 Aug 2018 10:19:50 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id y65-v6sm922794lfa.97.2018.08.23.10.19.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 Aug 2018 10:19:49 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id u83-v6so4733574lje.12
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:19:48 -0700 (PDT)
+X-Received: by 2002:a2e:9941:: with SMTP id r1-v6mr39240782ljj.53.1535044788083;
+ Thu, 23 Aug 2018 10:19:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180822113844.h5ramq5muiyfwnju@mwanda>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1534846649-2456-1-git-send-email-sayalil@codeaurora.org> <1534846649-2456-2-git-send-email-sayalil@codeaurora.org>
+In-Reply-To: <1534846649-2456-2-git-send-email-sayalil@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Thu, 23 Aug 2018 10:19:11 -0700
+X-Gmail-Original-Message-ID: <CAE=gft6tA=B008oS-TP2e-aJ80ZQT_tF3Ngf6Ly5f5r=QqpBng@mail.gmail.com>
+Message-ID: <CAE=gft6tA=B008oS-TP2e-aJ80ZQT_tF3Ngf6Ly5f5r=QqpBng@mail.gmail.com>
+Subject: Re: [PATCH V9 1/2] scsi: ufs: set the device reference clock setting
+To:     sayalil@codeaurora.org
+Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        asutoshd@codeaurora.org, riteshh@codeaurora.org,
+        adrian.hunter@intel.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 02:38:44PM +0300, Dan Carpenter wrote:
-> On Wed, Aug 22, 2018 at 04:40:56PM +0530, Nishad Kamdar wrote:
-> > On Wed, Aug 22, 2018 at 12:09:36PM +0300, Dan Carpenter wrote:
-> > > On Wed, Aug 22, 2018 at 02:04:55PM +0530, Nishad Kamdar wrote:
-> > > > This patch fixes the debug macro N_MSG. Replaces printk with
-> > > > dev_<level> without __func__ or __LINE__ or current->comm and
-> > > > current->pid. Removes the do {} while(0) loop for the single
-> > > > statement macro. Issue found by checkpatch.
-> > > > 
-> > > > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> > > > ---
-> > > >  drivers/staging/mt7621-mmc/dbg.h | 11 ++++-------
-> > > >  1 file changed, 4 insertions(+), 7 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/staging/mt7621-mmc/dbg.h b/drivers/staging/mt7621-mmc/dbg.h
-> > > > index 2f2c56b73987..c56fb896617a 100644
-> > > > --- a/drivers/staging/mt7621-mmc/dbg.h
-> > > > +++ b/drivers/staging/mt7621-mmc/dbg.h
-> > > > @@ -104,13 +104,10 @@ do { \
-> > > >  
-> > > >  #define N_MSG(evt, fmt, args...)
-> > > >  /*
-> > > > -do {    \
-> > > > -    if ((DBG_EVT_##evt) & sd_debug_zone[host->id]) { \
-> > > > -        printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
-> > > > -            host->id,  ##args , __FUNCTION__, __LINE__, current->comm, current->pid);	\
-> > > > -    } \
-> > > > -} while(0)
-> > > > -*/
-> > > > + *if ((DBG_EVT_##evt) & sd_debug_zone[host->id]) { \
-> > > > + *    dev_err(mmc_dev(host->mmc), "%d -> " fmt "\n", host->id, ##args) \
-> > > > + *}
-> > > > + */
-> > > 
-> > > I don't understand what you're trying to do here.  You just commented
-> > > out the macro and turned it into a no-op.  That's not what the patch
-> > > description says.
-> > > 
-> > > To me the original code seems fine.
-> > > 
-> > > regards,
-> > > dan carpenter
-> > >
-> > 
-> > Ok. But the macro definition was already commented.
-> > I just changed printk to dev_err and gave it a better
-> > block comment format.
-> > Should I leave the older version as it is ?
-> 
-> Oh...  Yeah.  You're right.  Sorry about that.
-> 
-> We normally just delete dead code without even thinking hard about it.
-> It turns out that if we delete all the N_MSG() code, it's actually quite
-> a bit.  But probably it's the right thing to do, instead of hanging on
-> to it like a hoarder.
-> 
-> regards,
-> dan carpenter
-> 
+On Tue, Aug 21, 2018 at 3:18 AM Sayali Lokhande <sayalil@codeaurora.org> wrote:
+>
+> From: Subhash Jadavani <subhashj@codeaurora.org>
+>
+> UFS host supplies the reference clock to UFS device and UFS device
+> specification allows host to provide one of the 4 frequencies (19.2 MHz,
+> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
+> device reference clock frequency setting in the device based on what
+> frequency it is supplying to UFS device.
+>
+> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+> ---
+>  drivers/scsi/ufs/ufs.h    | 14 ++++++++
+>  drivers/scsi/ufs/ufshcd.c | 92 +++++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.h |  2 ++
+>  3 files changed, 108 insertions(+)
+>
+> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+> index 14e5bf7..a2e76b1 100644
+> --- a/drivers/scsi/ufs/ufs.h
+> +++ b/drivers/scsi/ufs/ufs.h
+> @@ -378,6 +378,20 @@ enum query_opcode {
+>         UPIU_QUERY_OPCODE_TOGGLE_FLAG   = 0x8,
+>  };
+>
+> +/* bRefClkFreq attribute values */
+> +enum ufs_ref_clk_freq {
+> +       REF_CLK_FREQ_19_2_MHZ   = 0,
+> +       REF_CLK_FREQ_26_MHZ     = 1,
+> +       REF_CLK_FREQ_38_4_MHZ   = 2,
+> +       REF_CLK_FREQ_52_MHZ     = 3,
+> +       REF_CLK_FREQ_INVAL      = -1,
+> +};
+> +
+> +struct ufs_ref_clk {
+> +       u32 freq_hz;
+> +       enum ufs_ref_clk_freq val;
+> +};
+> +
+>  /* Query response result code */
+>  enum {
+>         QUERY_RESULT_SUCCESS                    = 0x00,
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index c5b1bf1..e946844 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -6296,6 +6296,91 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
+>         hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
+>  }
+>
+> +static struct ufs_ref_clk ufs_ref_clk_freqs[] = {
+> +       {19200000, REF_CLK_FREQ_19_2_MHZ},
+> +       {26000000, REF_CLK_FREQ_26_MHZ},
+> +       {38400000, REF_CLK_FREQ_38_4_MHZ},
+> +       {52000000, REF_CLK_FREQ_52_MHZ},
+> +       {0, REF_CLK_FREQ_INVAL},
+> +};
+> +
+> +static inline enum ufs_ref_clk_freq
+> +ufs_get_bref_clk_for_ref_clk_freq_hz(u32 freq)
 
-Ok. I get it.
+This name is a little hairy. Maybe ufs_get_bref_clk_from_hz, or
+ufs_hz_to_bref_clk?
 
-Thanks for the review.
+> +{
+> +       int i = 0;
+> +
+> +       while (ufs_ref_clk_freqs[i].freq_hz != freq) {
+> +               if (!ufs_ref_clk_freqs[i].freq_hz)
+> +                       return REF_CLK_FREQ_INVAL;
+> +               i++;
+> +       }
+> +
+> +       return ufs_ref_clk_freqs[i].val;
+> +}
+> +
+> +void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
+> +{
+> +       struct device *dev = hba->dev;
+> +       struct device_node *np = dev->of_node;
+> +       struct clk *refclk = NULL;
+> +       u32 freq = 0;
+> +
+> +       if (!np)
+> +               return;
+> +
+> +       hba->dev_ref_clk_freq = REF_CLK_FREQ_INVAL;
+> +
+> +       refclk = of_clk_get_by_name(np, "ref_clk");
+> +       if (!refclk)
+> +               return;
+> +
+> +       freq = clk_get_rate(refclk);
+> +       if (freq > REF_CLK_FREQ_52_MHZ) {
 
-regards,
-nishad
+freq is in Hertz, but the enum value will be something like 3. I think
+you should just call your function below, and then check the return
+value of it for the error case you're trying to do here.
+
+> +               dev_err(hba->dev,
+> +               "%s: invalid ref_clk setting = %d\n",
+> +               __func__, freq);
+> +               return;
+> +       }
+> +
+> +       hba->dev_ref_clk_freq =
+> +               ufs_get_bref_clk_for_ref_clk_freq_hz(freq);
+> +}
+> +
+> +static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
+> +{
+> +       int err = 0;
+
+You don't need to initialize this since you immediately assign it below.
+
+> +       int ref_clk = -1;
+> +       u32 freq = (u32)hba->dev_ref_clk_freq;
+
+Is the cast necessary?
+
+> +
+> +       err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
+> +                       QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
+> +
+> +       if (err) {
+> +               dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
+> +                        __func__, err);
+> +               goto out;
+> +       }
+> +
+> +       if (ref_clk == hba->dev_ref_clk_freq)
+> +               goto out; /* nothing to update */
+> +
+> +       err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
+> +                       QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &freq);
+> +
+> +       if (err)
+> +               dev_err(hba->dev, "%s: bRefClkFreq setting to %u Hz failed\n",
+> +               __func__, ufs_ref_clk_freqs[freq].freq_hz);
+> +       /*
+> +        * It is good to print this out here to debug any later failures
+> +        * related to gear switch.
+> +        */
+> +       dev_dbg(hba->dev, "%s: bRefClkFreq setting to %u Hz succeeded\n",
+> +               __func__, ufs_ref_clk_freqs[freq].freq_hz);
+
+In the error case you print out both the failed message and the success message?
+
+> +
+> +out:
+> +       return err;
+> +}
+> +
+>  /**
+>   * ufshcd_probe_hba - probe hba to detect device and initialize
+>   * @hba: per-adapter instance
+> @@ -6361,6 +6446,12 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+>                         "%s: Failed getting max supported power mode\n",
+>                         __func__);
+>         } else {
+> +               /*
+> +                * Set the right value to bRefClkFreq before attempting to
+> +                * switch to HS gears.
+> +                */
+> +               if (hba->dev_ref_clk_freq != REF_CLK_FREQ_INVAL)
+> +                       ufshcd_set_dev_ref_clk(hba);
+>                 ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
+>                 if (ret) {
+>                         dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n",
+> @@ -7693,6 +7784,7 @@ int ufshcd_alloc_host(struct device *dev, struct ufs_hba **hba_handle)
+>
+>         INIT_LIST_HEAD(&hba->clk_list_head);
+>
+> +       ufshcd_parse_dev_ref_clk_freq(hba);
+
+I get an uncomfortable feeling about calling this function from
+alloc_host, given that everybody else calls their parse functions from
+ufshcd_pltfrm_init. I wonder if you should just initialize the new
+member here in alloc_host to the invalid value, and then move the call
+to the parse function where you had it before in ufshcd_pltfrm_init.
+That way you don't have the problems in the previous series with
+leaving the value uninitialized, but you're also not calling of_
+functions from alloc_host, which seems like an abuse of alloc_host.
+
+-Evan
