@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE60C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC84C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7434221486
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7434221486
+	by mail.kernel.org (Postfix) with ESMTP id A33502147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A33502147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731683AbeHWMBH (ORCPT
+        id S1731698AbeHWMBK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:01:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48168 "EHLO
+        Thu, 23 Aug 2018 08:01:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48178 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730940AbeHWMBG (ORCPT
+        with ESMTP id S1729644AbeHWMBJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:01:06 -0400
+        Thu, 23 Aug 2018 08:01:09 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D80E0C74;
-        Thu, 23 Aug 2018 08:32:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3721AC74;
+        Thu, 23 Aug 2018 08:32:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 184/217] drm/nouveau/gem: off by one bugs in nouveau_gem_pushbuf_reloc_apply()
-Date:   Thu, 23 Aug 2018 09:54:57 +0200
-Message-Id: <20180823075513.902115354@linuxfoundation.org>
+Subject: [PATCH 4.14 185/217] hv/netvsc: fix handling of fallback to single queue mode
+Date:   Thu, 23 Aug 2018 09:54:58 +0200
+Message-Id: <20180823075513.946473194@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,41 +52,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Stephen Hemminger <stephen@networkplumber.org>
 
-[ Upstream commit 7f073d011f93e92d4d225526b9ab6b8b0bbd6613 ]
+[ Upstream commit 916c5e1413be058d1c1f6e502db350df890730ce ]
 
-The bo array has req->nr_buffers elements so the > should be >= so we
-don't read beyond the end of the array.
+The netvsc device may need to fallback to running in single queue
+mode if host side only wants to support single queue.
 
-Fixes: a1606a9596e5 ("drm/nouveau: new gem pushbuf interface, bump to 0.0.16")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Recent change for handling mtu broke this in setup logic.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 3ffe64f1a641 ("hv_netvsc: split sub-channel setup into async and sync")
+Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_gem.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/hyperv/rndis_filter.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/nouveau/nouveau_gem.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
-@@ -599,7 +599,7 @@ nouveau_gem_pushbuf_reloc_apply(struct n
- 		struct nouveau_bo *nvbo;
- 		uint32_t data;
+--- a/drivers/net/hyperv/rndis_filter.c
++++ b/drivers/net/hyperv/rndis_filter.c
+@@ -1299,6 +1299,7 @@ out:
+ 	/* setting up multiple channels failed */
+ 	net_device->max_chn = 1;
+ 	net_device->num_chn = 1;
++	return 0;
  
--		if (unlikely(r->bo_index > req->nr_buffers)) {
-+		if (unlikely(r->bo_index >= req->nr_buffers)) {
- 			NV_PRINTK(err, cli, "reloc bo index invalid\n");
- 			ret = -EINVAL;
- 			break;
-@@ -609,7 +609,7 @@ nouveau_gem_pushbuf_reloc_apply(struct n
- 		if (b->presumed.valid)
- 			continue;
- 
--		if (unlikely(r->reloc_bo_index > req->nr_buffers)) {
-+		if (unlikely(r->reloc_bo_index >= req->nr_buffers)) {
- 			NV_PRINTK(err, cli, "reloc container bo index invalid\n");
- 			ret = -EINVAL;
- 			break;
+ err_dev_remv:
+ 	rndis_filter_device_remove(dev, net_device);
 
 
