@@ -2,98 +2,85 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8400AC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F31CC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DD3C20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:12:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aW5J8DW2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DD3C20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 1EB9420684
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:15:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EB9420684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbeHWXnl (ORCPT
+        id S1727136AbeHWXqY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 19:43:41 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39837 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbeHWXnl (ORCPT
+        Thu, 23 Aug 2018 19:46:24 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:34490 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726478AbeHWXqY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 19:43:41 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j8-v6so3371907pff.6;
-        Thu, 23 Aug 2018 13:12:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7E29PjiTr6tnsxUB56qbgA8EVdxPNXEieuilF8HDBcY=;
-        b=aW5J8DW2910UWpHka+/oJQbmfPmBMgBDsuqYsvz7y96uCMrNWKv/JVYY7YtSI6VLTV
-         2AC/Mu1lXN8DY1YTmYXMeK6RdWp834GY1FnV9AumAhoB9BBVRCxr8+DQxVtVQ2pEGhbP
-         0Ne1NDYru41i9WMfTWURNOyxz21fbHnoYwcQlDSo02G0xdrF80HDV/QRY7MvkATvyUDL
-         yCqnSMXYqBUbdomkUzKqbaoKi5um68Siv2wqKEWnKNCddGC6XlUPY5GNW9S9OBE5ZkVm
-         lOXCXB8MQGBGlsd3LXAPQOxWD5kL4zqzHiGQ4WmT8tt34YUnGkrjPQfkUnuCCJCaVX9Y
-         +umQ==
+        Thu, 23 Aug 2018 19:46:24 -0400
+Received: by mail-ua1-f68.google.com with SMTP id r15-v6so4025088uao.1;
+        Thu, 23 Aug 2018 13:15:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7E29PjiTr6tnsxUB56qbgA8EVdxPNXEieuilF8HDBcY=;
-        b=t8JqxxLVVyD9wrBoCZ/wnzRzHSvhp31YCBfk6C2fztePe8NvCXBFhXJk2RfTNMNLH0
-         hUjDHnHBQ3ze4Z4wTZQNHSUr8CgCyFXTdeDo12vAR7u0xCIvxWiXFIQSlXJc9tkMKEet
-         c/6JdkdXZxDiKsHQmsydDpBo+fKkl9bRVOo9Bsuwe+/Dkhpvg8r0WozQK0AkfxoCi991
-         5LC4f505cVUHLV8YFHzK+Yd98yKQ8gviAb4uSqh88pdv70k/UyEFJLfSqrA0U89VHj+u
-         +EDSCFyBuyzq+gFFGAN4SeqfVpqNgSFsxtIj1Evtc5jQDjArN6LmdD4IuLfXqbdleGd+
-         Zk6g==
-X-Gm-Message-State: AOUpUlEPvqu+/TRz2D+YBmaAUe2K+RQs1iEoAXBA6HKFWZdZJ2BJRYKT
-        4C72gO1RbfgKrn+mori17kg=
-X-Google-Smtp-Source: AA+uWPxBptwHUI+IKT6MqizpzMWqzh576qsPeGAF/3Fr8eqM/ScPjaJRckaGK112Y693oR1IDGgL8A==
-X-Received: by 2002:a62:8d7:: with SMTP id 84-v6mr64894927pfi.172.1535055143931;
-        Thu, 23 Aug 2018 13:12:23 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id p3-v6sm6634876pfo.130.2018.08.23.13.12.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Aug 2018 13:12:23 -0700 (PDT)
-Date:   Thu, 23 Aug 2018 13:12:22 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.18 00/22] 4.18.5-stable review
-Message-ID: <20180823201222.GF9368@roeck-us.net>
-References: <20180823074759.234685844@linuxfoundation.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tg7L/KvBOb6HqqKyoePchPFyxqu00W4b2R5FRO7xXPM=;
+        b=T8lyGbmrwWI6vkDXI4lbUD3LolSy2oEETkRuW/0k3MuDEMtTWZJROvh83wjHA3D6G+
+         ITd8SVsNlY5qkKOM2EjdJ+D3aQ3V/OWhBqpyy/s+DYrSTv4IDE5MDOsGjxVhr/0Jv4f1
+         +DtVFhpJy0gBVLXCohngLJ71wuSMXtBBfrhqf9huvLwie5v14bYTipXZMYTTBNA8r6ui
+         X0mKaU3Rlyv8pDf2dCgMrw+6Ufo1EpHPck9gJzlRZPnhnUw3j/D10MNOpIz1QI36043r
+         lQcRogaRNS+ACb4iun0OcGnFg4i6M9v666QVbr+L1S3BIsLhxEJr82NNRR3dpjdEkj8C
+         n96Q==
+X-Gm-Message-State: AOUpUlHL0crzOkJD7oYsso4/4aPfhR6WJnOV/KGnLFdBTZpuKayOybUi
+        W6HlvWghqyCMiWOottjCmMozC6Dn/du0d8U/0IU8Z6q8
+X-Google-Smtp-Source: AA+uWPyPhuhh0ZLBVvTA1UbhgDTJNqfWvcop/P1oP2HKjFlkUCiI14TEpfqSJhuiMHPCCERfZxYd6c0rDmD1LFgmbnQ=
+X-Received: by 2002:ab0:48a4:: with SMTP id x33-v6mr40510536uac.138.1535055306048;
+ Thu, 23 Aug 2018 13:15:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180823074759.234685844@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20180817095425.2630974-1-arnd@arndb.de>
+In-Reply-To: <20180817095425.2630974-1-arnd@arndb.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 23 Aug 2018 22:14:54 +0200
+Message-ID: <CAMuHMdVLRRjoA-6jfLfO9g+nkN7RyVahFiTe_T=rSEEmCPCBpA@mail.gmail.com>
+Subject: Re: [PATCH] media: camss: mark PM functions as __maybe_unused
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Todor Tomov <todor.tomov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        hansverk@cisco.com,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 09:56:26AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.18.5 release.
-> There are 22 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat Aug 25 07:47:43 UTC 2018.
-> Anything received after that time might be too late.
-> 
+On Fri, Aug 17, 2018 at 11:54 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> The empty suspend/resume functions cause a build warning
+> when they are unused:
+>
+> drivers/media/platform/qcom/camss/camss.c:1001:12: error: 'camss_runtime_resume' defined but not used [-Werror=unused-function]
+> drivers/media/platform/qcom/camss/camss.c:996:12: error: 'camss_runtime_suspend' defined but not used [-Werror=unused-function]
+>
+> Mark them as __maybe_unused so the compiler can silently drop them.
+>
+> Fixes: 02afa816dbbf ("media: camss: Add basic runtime PM support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Build results:
-	total: 134 pass: 134 fail: 0
-Qemu test results:
-	total: 302 pass: 302 fail: 0
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Details are available at http://kerneltests.org/builders.
+Gr{oetje,eeting}s,
 
-Guenter
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
