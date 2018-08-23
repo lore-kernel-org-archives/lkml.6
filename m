@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 716BAC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB2E5C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37EC92064E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:09:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37EC92064E
+	by mail.kernel.org (Postfix) with ESMTP id 6E227206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:09:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E227206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729199AbeHWLhZ (ORCPT
+        id S1729223AbeHWLh2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:37:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45068 "EHLO
+        Thu, 23 Aug 2018 07:37:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45074 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727340AbeHWLhY (ORCPT
+        with ESMTP id S1727340AbeHWLh2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:37:24 -0400
+        Thu, 23 Aug 2018 07:37:28 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37ADCBB6;
-        Thu, 23 Aug 2018 08:08:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6CEFEBB6;
+        Thu, 23 Aug 2018 08:09:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 061/130] drm/exynos: decon5433: Fix WINCONx reset value
-Date:   Thu, 23 Aug 2018 09:52:57 +0200
-Message-Id: <20180823074931.369915933@linuxfoundation.org>
+Subject: [PATCH 4.9 062/130] bpf, s390: fix potential memleak when later bpf_jit_prog fails
+Date:   Thu, 23 Aug 2018 09:52:58 +0200
+Message-Id: <20180823074931.460976267@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -52,32 +52,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-[ Upstream commit 7b7aa62c05eac9789c208b946f515983a9255d8d ]
+[ Upstream commit f605ce5eb26ac934fb8106d75d46a2c875a2bf23 ]
 
-The only bits that should be preserved in decon_win_set_fmt() is
-WINCONx_ENWIN_F. All other bits depends on the selected pixel formats and
-are set by the mentioned function.
+If we would ever fail in the bpf_jit_prog() pass that writes the
+actual insns to the image after we got header via bpf_jit_binary_alloc()
+then we also need to make sure to free it through bpf_jit_binary_free()
+again when bailing out. Given we had prior bpf_jit_prog() passes to
+initially probe for clobbered registers, program size and to fill in
+addrs arrray for jump targets, this is more of a theoretical one,
+but at least make sure this doesn't break with future changes.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Fixes: 054623105728 ("s390/bpf: Add s390x eBPF JIT compiler backend")
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/net/bpf_jit_comp.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -199,7 +199,7 @@ static void decon_win_set_pixfmt(struct
- 	unsigned long val;
- 
- 	val = readl(ctx->addr + DECON_WINCONx(win));
--	val &= ~WINCONx_BPPMODE_MASK;
-+	val &= WINCONx_ENWIN_F;
- 
- 	switch (fb->pixel_format) {
- 	case DRM_FORMAT_XRGB1555:
+--- a/arch/s390/net/bpf_jit_comp.c
++++ b/arch/s390/net/bpf_jit_comp.c
+@@ -1386,6 +1386,7 @@ struct bpf_prog *bpf_int_jit_compile(str
+ 		goto free_addrs;
+ 	}
+ 	if (bpf_jit_prog(&jit, fp)) {
++		bpf_jit_binary_free(header);
+ 		fp = orig_fp;
+ 		goto free_addrs;
+ 	}
 
 
