@@ -2,225 +2,129 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 204C9C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 00:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5F0C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 00:28:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BADF3208DB
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 00:25:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BADF3208DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 7F95820A8B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 00:28:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="yqbUxqIj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F95820A8B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbeHWDwZ (ORCPT
+        id S1727643AbeHWDzr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 23:52:25 -0400
-Received: from nautica.notk.org ([91.121.71.147]:51823 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727322AbeHWDwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 23:52:25 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 39CBDC009; Thu, 23 Aug 2018 02:25:23 +0200 (CEST)
-Date:   Thu, 23 Aug 2018 02:25:08 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     torvalds@linux-foundation.org, keescook@chromium.org,
-        joe@perches.com, corbet@lwn.net, yamada.masahiro@socionext.com,
-        arnd@arndb.de, dwmw@amazon.co.uk, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, will.deacon@arm.com, geert@linux-m68k.org,
-        mingo@kernel.org, akpm@linux-foundation.org, daniel@iogearbox.net,
-        hpa@zytor.com
-Subject: Re: [PATCH] include/linux/compiler*.h: make compiler-*.h mutually
- exclusive
-Message-ID: <20180823002508.GA822@nautica>
-References: <20180822233724.110454-1-ndesaulniers@google.com>
+        Wed, 22 Aug 2018 23:55:47 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45129 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727322AbeHWDzr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 23:55:47 -0400
+Received: by mail-wr1-f68.google.com with SMTP id 20-v6so3028739wrb.12
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 17:28:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=6L+ncNStlKcOxmgbMiAHgbGIXqLn7eK23P7cqWQBDR4=;
+        b=yqbUxqIjVAnQ2ymuUlJuQh+ZEcLRNaBisFQfQ2hlOkStQCHwuAosMGTqcoQMI2d1CO
+         OrqD9ZqOcWOn1/f9A9F6iCyx8tlcN4KiPuk54lP8f10rs+rvkeEwWk2NE1uUQIBbj0CF
+         1k6+66LkGHEBO2SWDaLeg+iH+6hj3wdvYBHpp/kswDWBA1A9GYnewKnWl/1PNKmeJaGs
+         q6hjSXo/GuDiMbPivoq7urk4/7wFqP74w1P10HYQyxlrEWxsU6nMEGAqxGyDqhd41g5I
+         ZGYzqaSaEhrOb23e1Q//xk9TqwJuNJHVPgob33+kuUd8bJf4YUL6ROqnau0OjTD0lfTP
+         Gkdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=6L+ncNStlKcOxmgbMiAHgbGIXqLn7eK23P7cqWQBDR4=;
+        b=RdHaYzmEugt4ZAADpiRs1goEG6qgmoKYYB+mJXNqlc9DpFUE7I2NQPT+I4NKWQuNC2
+         dzHTyFTuZn7sdfHXmF7wDE9/WIjJ7iTM5EwaFF/D4fO00MHmbcaKM0WZbYtnzM28/G/Q
+         zBlX0AcazZniCWexE/xhrxAHYp+ko8wgbyQTOjrCa14nfDxXDO1XEMDN5smTz72QBmVv
+         eF+9zm3u7b0Jse9khRQMvMbtK/q7GX6WAWc4VIFuwTqKaO3F2wIJuIoLXdHInQfPLVI9
+         0ubrYlRpQqQG+qpTHqPNb3IwmTjAeuL0SEHGtWuNiSSRK0kxVfadkjK2Qt72F+3yb5ZF
+         UtTg==
+X-Gm-Message-State: AOUpUlFl3rqvy8k+v3goPbyEsa4CUvWnAydk1tJ0PXdSzaOvGfCsO3ap
+        nkY6lrDOdwqdtD1aDRfqDz3yc/ilwVOljUOw+H3sAw==
+X-Google-Smtp-Source: AA+uWPzXBhIkTrUJOArWO2mXGRJjREyqLh0SWMIcV0HJwIsg2ABTABUjJq8ROtXU1oL6Gbl8ZyldZ+4QQih6FEoSyUs=
+X-Received: by 2002:adf:c554:: with SMTP id s20-v6mr35686781wrf.46.1534984124465;
+ Wed, 22 Aug 2018 17:28:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180822233724.110454-1-ndesaulniers@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Wed, 22 Aug 2018 17:28:24 -0700 (PDT)
+In-Reply-To: <CAG48ez0c0L+WyfjDcfx=3wDwOQDOSJM-2JSVUBoWJCaKDVEfbw@mail.gmail.com>
+References: <20180807012257.20157-1-jannh@google.com> <C6369CAA-CBB8-420F-97DB-7A242D9650A8@amacapital.net>
+ <CAG48ez0c0L+WyfjDcfx=3wDwOQDOSJM-2JSVUBoWJCaKDVEfbw@mail.gmail.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Wed, 22 Aug 2018 17:28:24 -0700
+Message-ID: <CALCETrU6gUBiTkpAUKh97y2R1cSftbMcfSTnSYxhZFRKf7vGWQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] x86: WARN() when uaccess helpers fault on kernel addresses
+To:     Jann Horn <jannh@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nick Desaulniers wrote on Wed, Aug 22, 2018:
-> Commit cafa0010cd51 ("Raise the minimum required gcc version to 4.6")
-> recently exposed a brittle part of the build for supporting non-gcc
-> compilers.
-> 
-> Both Clang and ICC define __GNUC__, __GNUC_MINOR__, and
-> __GNUC_PATCHLEVEL__ for quick compatibility with code bases that haven't
-> added compiler specific checks for __clang__ or __INTEL_COMPILER.
-> 
-> This is brittle, as they happened to get compatibility by posing as a
-> certain version of GCC.  This broke when upgrading the minimal version
-> of GCC required to build the kernel, to a version above what ICC and
-> Clang claim to be.
-> 
-> Rather than always including compiler-gcc.h then undefining or
-> redefining macros in compiler-intel.h or compiler-clang.h, let's
-> separate out the compiler specific macro definitions into mutually
-> exclusive headers, do more proper compiler detection, and keep shared
-> definitions in compiler_types.h.
-> 
-> Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Suggested-by: Eli Friedman <efriedma@codeaurora.org>
-> Suggested-by: Joe Perches <joe@perches.com>
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-
-Overall looks good to me, just pointing at the same error I wrote in my
-other mail here -- I saw that by the time I was done writing this this
-patch got taken but that alone will probably warrant a follow-up :/
-
-
-I've also added a few style nitpicks/questions but feel free to ignore
-these.
-
-On a side note, I noticed tools/include/linux/compiler.h includes
-linux/compiler-gcc.h but maybe it should include linux/compiler_types.h?
-(I'm not sure at who uses that header, so it really is an open question
-here)
-
-> ---
->  arch/arm/kernel/asm-offsets.c     |  13 +-
->  drivers/gpu/drm/i915/i915_utils.h |   2 +-
->  drivers/watchdog/kempld_wdt.c     |   5 -
->  include/linux/compiler-clang.h    |  20 ++-
->  include/linux/compiler-gcc.h      |  88 -----------
->  include/linux/compiler-intel.h    |  13 +-
->  include/linux/compiler_types.h    | 238 ++++++++++++++----------------
->  mm/ksm.c                          |   4 +-
->  mm/migrate.c                      |   3 +-
->  9 files changed, 133 insertions(+), 253 deletions(-)
-> 
-> [...]
-> diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-> index 7087446c24c8..5f0754692ce6 100644
-> --- a/include/linux/compiler-clang.h
-> +++ b/include/linux/compiler-clang.h
-> [...]
-> @@ -40,9 +30,17 @@
->   * checks. Unfortunately, we don't know which version of gcc clang
->   * pretends to be, so the macro may or may not be defined.
->   */
-> -#undef COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW
->  #if __has_builtin(__builtin_mul_overflow) && \
->      __has_builtin(__builtin_add_overflow) && \
->      __has_builtin(__builtin_sub_overflow)
->  #define COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW 1
->  #endif
-> +
-> +/* The following are for compatibility with GCC, from compiler-gcc.h,
-> + * and may be redefined here because they should not be shared with other
-> + * compilers, like ICC.
-> + */
-> +#define barrier() (__asm__ __volatile__("" : : : "memory"))
-
-barrier here has gained external () compared to the definition and
-compiler-gcc.h:
-#define barrier() __asm__ __volatile__("": : :"memory")
-
-And this fails with bpf:
-In file included from <built-in>:3:
-In file included from /virtual/include/bcc/helpers.h:23:
-In file included from /lib/modules/4.18.0+/build/include/linux/log2.h:16:
-In file included from /lib/modules/4.18.0+/build/include/linux/bitops.h:18:
-/lib/modules/4.18.0+/build/arch/x86/include/asm/bitops.h:170:2: error: expected expression
-        barrier();
-        ^
-/lib/modules/4.18.0+/build/include/linux/compiler-clang.h:43:20: note: expanded from macro 'barrier'
-#define barrier() (__asm__ __volatile__("" : : : "memory"))
-                   ^
-
-
-> +#define __must_be_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-> +#define __assume_aligned(a, ...)	\
-> +	__attribute__((__assume_aligned__(a, ## __VA_ARGS__)))
-> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-> index 250b9b7cfd60..763bbad1e258 100644
-> --- a/include/linux/compiler-gcc.h
-> +++ b/include/linux/compiler-gcc.h
-> [..]
-> -#define __cold			__attribute__((__cold__))
-> -
->  #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
->  
->  #define __optimize(level)	__attribute__((__optimize__(level)))
-> -#define __nostackprotector	__optimize("no-stack-protector")
-
-I do not see this being added back, it's probably fine though as it
-doesn't look used?
-(I didn't check all removed lines, maybe about half)
-  
->  #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
+On Wed, Aug 22, 2018 at 4:53 PM, Jann Horn <jannh@google.com> wrote:
+> On Tue, Aug 7, 2018 at 4:55 AM Andy Lutomirski <luto@amacapital.net> wrote:
+>> > On Aug 6, 2018, at 6:22 PM, Jann Horn <jannh@google.com> wrote:
+>> > There have been multiple kernel vulnerabilities that permitted userspace to
+>> > pass completely unchecked pointers through to userspace accessors:
+>> >
+>> > - the waitid() bug - commit 96ca579a1ecc ("waitid(): Add missing
+>> >  access_ok() checks")
+>> > - the sg/bsg read/write APIs
+>> > - the infiniband read/write APIs
+>> >
+>> > These don't happen all that often, but when they do happen, it is hard to
+>> > test for them properly; and it is probably also hard to discover them with
+>> > fuzzing. Even when an unmapped kernel address is supplied to such buggy
+>> > code, it just returns -EFAULT instead of doing a proper BUG() or at least
+>> > WARN().
+>> >
+>> > This patch attempts to make such misbehaving code a bit more visible by
+>> > WARN()ing in the pagefault handler code when a userspace accessor causes
+>> > #PF on a kernel address and the current context isn't whitelisted.
+>>
+>> I like this a lot, and, in fact, I once wrote a patch to do something similar. It was before the fancy extable code, though, so it was a mess.  Here are some thoughts:
+>>
+>> - It should be three patches. One patch to add the _UA annotations, one to improve the info passes to the handlers, and one to change behavior.
+>>
+>> - You should pass the vector, the error code, and the address to the handler.
 >
-> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-> index fbf337933fd8..90479a0f3986 100644
-> --- a/include/linux/compiler_types.h
-> +++ b/include/linux/compiler_types.h
-> [...]
->  /* Is this type a native word size -- useful for atomic operations */
-> -#ifndef __native_word
-> -# define __native_word(t) (sizeof(t) == sizeof(char) || sizeof(t) == sizeof(short) || sizeof(t) == sizeof(int) || sizeof(t) == sizeof(long))
-> +#define __native_word(t) \
-> +	(sizeof(t) == sizeof(char) || sizeof(t) == sizeof(short) || \
-> +	 sizeof(t) == sizeof(int) || sizeof(t) == sizeof(long))
-> +
-> +#ifndef __attribute_const__
+> I'm polishing the patch a bit, and I've noticed that to plumb the
+> error code and address through properly, I might need significantly
+> more code churn because of kprobes - I want to make sure I'm not going
+> down the completely wrong path here.
+>
+> I'm extending fixup_exception() to take two extra args "unsigned long
+> error_code, unsigned long fault_addr". Most callers of
+> fixup_exception() are fairly straightforward, but
+> kprobe_fault_handler() has a dozen callchains from different exception
+> handlers, and most of them are coming via notify_die().
 
-I'm not sure I understand the logic of where you removed ifndef and
-where you kept them (but, well, this should work)
+KILL IT WITH FIRE!!!!!!!!
 
-> +#define __attribute_const__	__attribute__((__const__))
->  #endif
->  
-> +#ifndef __noclone
-> +#define __noclone
-> +#endif
-> +
-> +/* Helpers for emitting diagnostics in pragmas. */
->  #ifndef __diag
->  #define __diag(string)
->  #endif
-> @@ -272,4 +174,92 @@ struct ftrace_likely_data {
->  #define __diag_error(compiler, version, option, comment) \
->  	__diag_ ## compiler(version, error, option)
->  
-> +/*
-> + * From the GCC manual:
-> + *
-> + * Many functions have no effects except the return value and their
-> + * return value depends only on the parameters and/or global
-> + * variables.  Such a function can be subject to common subexpression
-> + * elimination and loop optimization just as an arithmetic operator
-> + * would be.
-> + * [...]
-> + */
-> +#define __pure			__attribute__((pure))
-> +#define __aligned(x)		__attribute__((aligned(x)))
-> +#define __aligned_largest	__attribute__((aligned))
-> +#define __printf(a, b)		__attribute__((format(printf, a, b)))
-> +#define __scanf(a, b)		__attribute__((format(scanf, a, b)))
-> +#define __maybe_unused		__attribute__((unused))
-> +#define __always_unused		__attribute__((unused))
-> +#define __mode(x)		__attribute__((mode(x)))
-> +#define __malloc		__attribute__((__malloc__))
-> +#define __used			__attribute__((__used__))
-> +#define __noreturn		__attribute__((noreturn))
-> +#define __packed		__attribute__((packed))
-> +#define __weak			__attribute__((weak))
-> +#define __alias(symbol)		__attribute__((alias(#symbol)))
-> +#define __cold			__attribute__((cold))
-> +#define __section(S)		__attribute__((__section__(#S)))
+More seriously, kill kprobe_exceptions_notify() and just fold the
+contents into do_general_protection().  This notifier chain crap is
+incomprehensible.  I would love to see notify_die() removed entirely,
+and crap like this is just more reason to want it gone.
 
-If you tried to align these, __always_unused and __alias(symbol) look
-off
+> I think there's also some inconsistency between #PF and #GP in the
+> ordering of error handling:
 
-
-Thanks!
--- 
-Dominique
+It's probably a bug.  It's also probably irrelevant, but maybe not.
