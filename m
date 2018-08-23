@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F4EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3788C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:31:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDDE1214AB
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:30:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78E732152D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:31:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ndJThfiO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDDE1214AB
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="flF1tTNp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78E732152D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbeHWVAy (ORCPT
+        id S1727026AbeHWVCD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 17:00:54 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36856 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726429AbeHWVAy (ORCPT
+        Thu, 23 Aug 2018 17:02:03 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42052 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726429AbeHWVCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 17:00:54 -0400
-Received: by mail-pg1-f196.google.com with SMTP id h17-v6so2964517pgv.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:30:09 -0700 (PDT)
+        Thu, 23 Aug 2018 17:02:03 -0400
+Received: by mail-pf1-f193.google.com with SMTP id l9-v6so3125911pff.9
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:31:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=w5hukTJxb3ezS8xTLyHmxRGX/5DIyb26QwctsUXdZIU=;
-        b=ndJThfiOBwNvOSER5Di7Tf32jaae4y1+VTQn1n0Wj0llgXIEDqYy4ILab/6edSXBNp
-         AHD/xKyKsExWuVjwu9PSV6Inuk+yIaANiA3+6gxREoQK7OzfLU8qJWzIP1GOaXkLdcdp
-         2OgbTtOocLnNLGuIT/LzvaErR/vewfLHCOBq4kn9pcZDQcss6ZV4rU6/Z2sOVs60ZqSb
-         H5pyxynQKLCJUsE6a3fCcmIOE9Kvk1F7EoDhX5mGibrFkP7pEtFnleBWO/x3SxMzEv0J
-         BXAw9B25ioukR3stfPYqCcaVZjs6fID6DaJztOQsni0Kw3chUuTzn2lqi58a7u5gSdQv
-         VcLA==
+        bh=VF+275AGBcfncz08rauD54L/NRg1kgWG3YJqjxLIhog=;
+        b=flF1tTNpWNWDobUGJNQandnHEzAzCn1vqqWON2W1Y2pdrt/lFkVf/Zi66ij4laDwkC
+         l8A37plhL+E9VsyYaNa4KNwHVEmu/+ANzgXekHKRQlj8Rqr6u10pZ1gsidorBheucEzd
+         oF1ouFxYUsLp5ovBL5EVRdY4GnatVOEg0F+QjNYhUOF/UYUfWEp56/OXz3sGP/pXjXJI
+         vhnNwR/Xy0Zf3S29t2Dfp+42qodnFqFV2Nn5FmZJ2ZQNtxASzXxbtKF4O/fUd4HLhhrr
+         7JoTgF7ftM2fd56u4j48uaLv1EwpYFGihG1TuyPj6APL6OdY4UT9VirTORuRsKOnDdxu
+         1KeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=w5hukTJxb3ezS8xTLyHmxRGX/5DIyb26QwctsUXdZIU=;
-        b=fj04cWHpjO2e4d4jqy7QQQn5ttXZZboHqkBRT74mvg0rstZXsSw055tXZxy/N1n/+r
-         suFWArUnhXJb6A8X+AnX+GGQGqaWxthVPas2R1w8jEuFQNsh/STDF3Op39M1HvVTsy0X
-         T4h/ADT5O9/eI88MJZZ16rtqdXq7DV3GvWwc+BgWzSWpHQmTYqgGMZ4oB6wRMD7DVb+0
-         aZzHiatGcs+ffU+ucNFInbAG6alCJQIXM+TNK2+p5eTmKeRXXEx1cKBzq/SMjisbe/LZ
-         SadUhuQUwwHQKKQjI1hiPjwLUh9+EvEbHrMMnoEQSCco7k0L/Z1t7Q77lsCsXtjwEIFN
-         xQyA==
-X-Gm-Message-State: AOUpUlElhi1LUZwo6Ymtv0lCCMOgLW/cvWKi7k5Oas1rx3zjSV6RrQ1u
-        332bfr2VZivUrhLEJWeQ7Zg=
-X-Google-Smtp-Source: AA+uWPxXO3vaJ05JFNtFzBRsk5YvtmD5AIYZVbdNS6UAYVSkxg3Oq5FBkU8ihh1a+l2i5FGFEXeTXw==
-X-Received: by 2002:a62:6b88:: with SMTP id g130-v6mr21675029pfc.140.1535045409396;
-        Thu, 23 Aug 2018 10:30:09 -0700 (PDT)
+        bh=VF+275AGBcfncz08rauD54L/NRg1kgWG3YJqjxLIhog=;
+        b=O8LO+nREsjDR7hul6C8cFMIFdaZdYKenFKaGtWkOS2FeAUE2W6nxtM7aGUw9gawXXY
+         W8/ChWPfOUQF2MDgGFC0mAFENpkQA80sKa8a1vTSMMh06yihgnjP/QMqmrWb3SIuqycW
+         IwDgWzqO7K9wg3s8BViaSasjLOVKujFU52baF826DQGkoGI8Z4Hw1FCAugr99MFoz0tF
+         buYusYoqJ2lRoGbJVOSBXngyhFlWo0LhHwRoUj3ye1JlYVLDNtYVV+pkNaqCg45J85gY
+         1dC0kNTJ4IWp1Vn+yeiIAV65kyMg3G+PgzuMBb31uXuSwuCKzoxInbf9m4xvGu4sXju9
+         wJ/w==
+X-Gm-Message-State: APzg51DePiib6/s/tGxYD9zGA2UN2tPkepVyyqVV1XNBDjiChnN/Zwzs
+        OalsPmIUZY4nhKY+pkbjVrg=
+X-Google-Smtp-Source: ANB0VdYwKNcEA7musqDJnAeYmUBUbbDfQaEqictzqOlobE7eUZsP1dcAOhU59X9NAxs9Sblx1eOGvA==
+X-Received: by 2002:a62:46c8:: with SMTP id o69-v6mr7996625pfi.21.1535045478313;
+        Thu, 23 Aug 2018 10:31:18 -0700 (PDT)
 Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id z11-v6sm7020669pff.162.2018.08.23.10.30.06
+        by smtp.gmail.com with ESMTPSA id b1-v6sm6999670pgi.91.2018.08.23.10.31.14
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 Aug 2018 10:30:08 -0700 (PDT)
-Date:   Thu, 23 Aug 2018 23:00:02 +0530
+        Thu, 23 Aug 2018 10:31:17 -0700 (PDT)
+Date:   Thu, 23 Aug 2018 23:01:11 +0530
 From:   Nishad Kamdar <nishadkamdar@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Joe Perches <joe@perches.com>, NeilBrown <neil@brown.name>,
@@ -67,9 +67,9 @@ Cc:     Joe Perches <joe@perches.com>, NeilBrown <neil@brown.name>,
         Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
         linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
         Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH v5 2/4] staging: mt7621-mmc: Fix debug macro ERR_MSG and its
+Subject: [PATCH v5 3/4] staging: mt7621-mmc: Remove macro INIT_MSG and its
  usages
-Message-ID: <8df8527b0b1747e11764f4ed669de99561afe64d.1535038495.git.nishadkamdar@gmail.com>
+Message-ID: <2d6ea5195fcf1071f1ca0f7bea08dd02e9c411ff.1535038495.git.nishadkamdar@gmail.com>
 References: <cover.1535038494.git.nishadkamdar@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -81,312 +81,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace all usages of ERR_MSG with with dev_<level> without __func__
-or __LINE__ or current->comm and current->pid. Remove the do {}
-while(0) loop for the single statement macro. Delete commented
-ERR_MSG() usage. Drop ERR_MSG from dbg.h. Issue found by checkpatch.
+Removed all usages of INIT_MSG and dropped it from dbg.h.
 
 Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 ---
 Changes in v5:
-  - Remove commented ERR_MSG() usage.
+  - No change
 ---
- drivers/staging/mt7621-mmc/dbg.h |   6 --
- drivers/staging/mt7621-mmc/sd.c  | 120 +++++++++++++++++++++----------
- 2 files changed, 81 insertions(+), 45 deletions(-)
+ drivers/staging/mt7621-mmc/dbg.h |  7 -------
+ drivers/staging/mt7621-mmc/sd.c  | 16 ----------------
+ 2 files changed, 23 deletions(-)
 
 diff --git a/drivers/staging/mt7621-mmc/dbg.h b/drivers/staging/mt7621-mmc/dbg.h
-index 6f6b4505337f..28c0cf76664f 100644
+index 28c0cf76664f..a5fdafe80d3d 100644
 --- a/drivers/staging/mt7621-mmc/dbg.h
 +++ b/drivers/staging/mt7621-mmc/dbg.h
-@@ -104,12 +104,6 @@ do { \
+@@ -106,15 +106,8 @@ do { \
  
- #define N_MSG(evt, fmt, args...)
- 
--#define ERR_MSG(fmt, args...) \
+ #if 1
+ //defined CONFIG_MTK_MMC_CD_POLL
+-#define INIT_MSG(fmt, args...)
+ #define IRQ_MSG(fmt, args...)
+ #else
+-#define INIT_MSG(fmt, args...) \
 -do { \
 -	printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
 -	       host->id,  ##args, __FUNCTION__, __LINE__, current->comm, current->pid); \
 -} while (0);
 -
- #if 1
- //defined CONFIG_MTK_MMC_CD_POLL
- #define INIT_MSG(fmt, args...)
+ /* PID in ISR in not corrent */
+ #define IRQ_MSG(fmt, args...) \
+ do { \
 diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
-index 04d23cc7cd4a..dcd036914467 100644
+index dcd036914467..fd02bf819c6c 100644
 --- a/drivers/staging/mt7621-mmc/sd.c
 +++ b/drivers/staging/mt7621-mmc/sd.c
-@@ -466,7 +466,6 @@ static void msdc_set_mclk(struct msdc_host *host, int ddr, unsigned int hz)
- 	//u8  clksrc = hw->clk_src;
+@@ -187,12 +187,10 @@ static u32 hclks[] = {50000000}; /* +/- by chhung */
+ //============================================
+ #define msdc_vcore_on(host) \
+ 	do {								\
+-		INIT_MSG("[+]VMC ref. count<%d>", ++host->pwr_ref);	\
+ 		(void)hwPowerOn(MT65XX_POWER_LDO_VMC, VOL_3300, "SD");	\
+ 	} while (0)
+ #define msdc_vcore_off(host) \
+ 	do {								\
+-		INIT_MSG("[-]VMC ref. count<%d>", --host->pwr_ref);	\
+ 		(void)hwPowerDown(MT65XX_POWER_LDO_VMC, "SD");		\
+ 	} while (0)
  
- 	if (!hz) { // set mmc system clock to 0 ?
--		//ERR_MSG("set mclk to 0!!!");
- 		msdc_reset_hw(host);
- 		return;
- 	}
-@@ -521,7 +520,7 @@ static void msdc_abort_data(struct msdc_host *host)
- {
- 	struct mmc_command *stop = host->mrq->stop;
+@@ -439,7 +437,6 @@ static void msdc_select_clksrc(struct msdc_host *host, unsigned char clksrc)
+ 	u32 val;
  
--	ERR_MSG("Need to Abort.");
-+	dev_err(mmc_dev(host->mmc), "%d -> Need to Abort.\n", host->id);
+ 	BUG_ON(clksrc > 3);
+-	INIT_MSG("set clock source to <%d>", clksrc);
  
- 	msdc_reset_hw(host);
- 	msdc_clr_fifo(host);
-@@ -530,7 +529,8 @@ static void msdc_abort_data(struct msdc_host *host)
- 	// need to check FIFO count 0 ?
+ 	val = readl(host->base + MSDC_CLKSRC_REG);
+ 	if (readl(host->base + MSDC_ECO_VER) >= 4) {
+@@ -508,10 +505,6 @@ static void msdc_set_mclk(struct msdc_host *host, int ddr, unsigned int hz)
+ 	host->mclk = hz;
+ 	msdc_set_timeout(host, host->timeout_ns, host->timeout_clks); // need?
  
- 	if (stop) {  /* try to stop, but may not success */
--		ERR_MSG("stop when abort CMD<%d>", stop->opcode);
-+		dev_err(mmc_dev(host->mmc), "%d -> stop when abort CMD<%d>\n",
-+			host->id, stop->opcode);
- 		(void)msdc_do_command(host, stop, 0, CMD_TIMEOUT);
- 	}
- 
-@@ -688,13 +688,14 @@ static void msdc_pm(pm_message_t state, void *data)
- 
- 	} else if (evt == PM_EVENT_RESUME || evt == PM_EVENT_USER_RESUME) {
- 		if (!host->suspend) {
--			//ERR_MSG("warning: already resume");
- 			return;
- 		}
- 
- 		/* No PM resume when USR suspend */
- 		if (evt == PM_EVENT_RESUME && host->pm_state.event == PM_EVENT_USER_SUSPEND) {
--			ERR_MSG("PM Resume when in USR Suspend");		/* won't happen. */
-+			dev_err(mmc_dev(host->mmc),
-+				"%d -> PM Resume when in USR Suspend\n",
-+				host->id); /* won't happen. */
- 			return;
- 		}
- 
-@@ -812,7 +813,9 @@ static unsigned int msdc_command_start(struct msdc_host   *host,
- 				break;
- 
- 			if (time_after(jiffies, tmo)) {
--				ERR_MSG("XXX cmd_busy timeout: before CMD<%d>", opcode);
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> XXX cmd_busy timeout: before CMD<%d>\n",
-+					host->id, opcode);
- 				cmd->error = -ETIMEDOUT;
- 				msdc_reset_hw(host);
- 				goto end;
-@@ -823,7 +826,9 @@ static unsigned int msdc_command_start(struct msdc_host   *host,
- 			if (!sdc_is_busy())
- 				break;
- 			if (time_after(jiffies, tmo)) {
--				ERR_MSG("XXX sdc_busy timeout: before CMD<%d>", opcode);
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> XXX sdc_busy timeout: before CMD<%d>\n",
-+					host->id, opcode);
- 				cmd->error = -ETIMEDOUT;
- 				msdc_reset_hw(host);
- 				goto end;
-@@ -862,7 +867,9 @@ static unsigned int msdc_command_resp(struct msdc_host   *host,
- 
- 	spin_unlock(&host->lock);
- 	if (!wait_for_completion_timeout(&host->cmd_done, 10 * timeout)) {
--		ERR_MSG("XXX CMD<%d> wait_for_completion timeout ARG<0x%.8x>", opcode, cmd->arg);
-+		dev_err(mmc_dev(host->mmc),
-+			"%d -> XXX CMD<%d> wait_for_completion timeout ARG<0x%.8x>\n",
-+			host->id, opcode, cmd->arg);
- 		cmd->error = -ETIMEDOUT;
- 		msdc_reset_hw(host);
- 	}
-@@ -1125,15 +1132,22 @@ static int msdc_do_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 
- 		spin_unlock(&host->lock);
- 		if (!wait_for_completion_timeout(&host->xfer_done, DAT_TIMEOUT)) {
--			ERR_MSG("XXX CMD<%d> wait xfer_done<%d> timeout!!", cmd->opcode, data->blocks * data->blksz);
--			ERR_MSG("    DMA_SA   = 0x%x",
--				readl(host->base + MSDC_DMA_SA));
--			ERR_MSG("    DMA_CA   = 0x%x",
--				readl(host->base + MSDC_DMA_CA));
--			ERR_MSG("    DMA_CTRL = 0x%x",
--				readl(host->base + MSDC_DMA_CTRL));
--			ERR_MSG("    DMA_CFG  = 0x%x",
--				readl(host->base + MSDC_DMA_CFG));
-+			dev_err(mmc_dev(host->mmc),
-+				"%d -> XXX CMD<%d> wait xfer_done<%d> timeout!!\n",
-+				host->id, cmd->opcode,
-+				data->blocks * data->blksz);
-+			dev_err(mmc_dev(host->mmc),
-+				"%d ->     DMA_SA   = 0x%x\n",
-+				host->id, readl(host->base + MSDC_DMA_SA));
-+			dev_err(mmc_dev(host->mmc),
-+				"%d ->     DMA_CA   = 0x%x\n",
-+				host->id, readl(host->base + MSDC_DMA_CA));
-+			dev_err(mmc_dev(host->mmc),
-+				"%d ->     DMA_CTRL = 0x%x\n",
-+				host->id, readl(host->base + MSDC_DMA_CTRL));
-+			dev_err(mmc_dev(host->mmc),
-+				"%d ->     DMA_CFG  = 0x%x\n",
-+				host->id, readl(host->base + MSDC_DMA_CFG));
- 			data->error = -ETIMEDOUT;
- 
- 			msdc_reset_hw(host);
-@@ -1200,8 +1214,6 @@ static int msdc_do_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 	if (mrq->stop && mrq->stop->error)
- 		host->error |= 0x100;
- 
--	//if (host->error) ERR_MSG("host->error<%d>", host->error);
+-	INIT_MSG("================");
+-	INIT_MSG("!!! Set<%dKHz> Source<%dKHz> -> sclk<%dKHz>", hz / 1000, hclk / 1000, sclk / 1000);
+-	INIT_MSG("================");
 -
- 	return host->error;
+ 	msdc_irq_restore(flags);
  }
  
-@@ -1260,19 +1272,27 @@ static int msdc_tune_cmdrsp(struct msdc_host *host, struct mmc_command *cmd)
- 			if (host->app_cmd) {
- 				result = msdc_app_cmd(host->mmc, host);
- 				if (result) {
--					ERR_MSG("TUNE_CMD app_cmd<%d> failed: RESP_RXDLY<%d>,R_SMPL<%d>",
--						host->mrq->cmd->opcode, cur_rrdly, cur_rsmpl);
-+					dev_err(mmc_dev(host->mmc),
-+						"%d -> TUNE_CMD app_cmd<%d> failed: RESP_RXDLY<%d>,R_SMPL<%d>\n",
-+						host->id,
-+						host->mrq->cmd->opcode,
-+						cur_rrdly, cur_rsmpl);
- 					continue;
- 				}
- 			}
- 			result = msdc_do_command(host, cmd, 0, CMD_TIMEOUT); // not tune.
--			ERR_MSG("TUNE_CMD<%d> %s PAD_CMD_RESP_RXDLY[26:22]<%d> R_SMPL[1]<%d>", cmd->opcode,
--				(result == 0) ? "PASS" : "FAIL", cur_rrdly, cur_rsmpl);
-+			dev_err(mmc_dev(host->mmc),
-+				"%d -> TUNE_CMD<%d> %s PAD_CMD_RESP_RXDLY[26:22]<%d> R_SMPL[1]<%d>\n",
-+				host->id, cmd->opcode,
-+				(result == 0) ? "PASS" : "FAIL", cur_rrdly,
-+				cur_rsmpl);
+@@ -669,12 +662,6 @@ static void msdc_pm(pm_message_t state, void *data)
+ 	struct msdc_host *host = (struct msdc_host *)data;
+ 	int evt = state.event;
  
- 			if (result == 0)
- 				return 0;
- 			if (result != -EIO) {
--				ERR_MSG("TUNE_CMD<%d> Error<%d> not -EIO", cmd->opcode, result);
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> TUNE_CMD<%d> Error<%d> not -EIO\n",
-+					host->id, cmd->opcode, result);
- 				return result;
- 			}
- 
-@@ -1325,7 +1345,10 @@ static int msdc_tune_bread(struct mmc_host *mmc, struct mmc_request *mrq)
- 			if (host->app_cmd) {
- 				result = msdc_app_cmd(host->mmc, host);
- 				if (result) {
--					ERR_MSG("TUNE_BREAD app_cmd<%d> failed", host->mrq->cmd->opcode);
-+					dev_err(mmc_dev(host->mmc),
-+						"%d -> TUNE_BREAD app_cmd<%d> failed\n",
-+						host->id,
-+						host->mrq->cmd->opcode);
- 					continue;
- 				}
- 			}
-@@ -1336,10 +1359,13 @@ static int msdc_tune_bread(struct mmc_host *mmc, struct mmc_request *mrq)
- 				      &dcrc); /* RO */
- 			if (!ddr)
- 				dcrc &= ~SDC_DCRC_STS_NEG;
--			ERR_MSG("TUNE_BREAD<%s> dcrc<0x%x> DATRDDLY0/1<0x%x><0x%x> dsmpl<0x%x>",
--				(result == 0 && dcrc == 0) ? "PASS" : "FAIL", dcrc,
--				readl(host->base + MSDC_DAT_RDDLY0),
--				readl(host->base + MSDC_DAT_RDDLY1), cur_dsmpl);
-+			dev_err(mmc_dev(host->mmc),
-+				"%d -> TUNE_BREAD<%s> dcrc<0x%x> DATRDDLY0/1<0x%x><0x%x> dsmpl<0x%x>\n",
-+				host->id,
-+				(result == 0 && dcrc == 0) ? "PASS" : "FAIL",
-+				dcrc, readl(host->base + MSDC_DAT_RDDLY0),
-+				readl(host->base + MSDC_DAT_RDDLY1),
-+				cur_dsmpl);
- 
- 			/* Fix me: result is 0, but dcrc is still exist */
- 			if (result == 0 && dcrc == 0) {
-@@ -1348,8 +1374,11 @@ static int msdc_tune_bread(struct mmc_host *mmc, struct mmc_request *mrq)
- 				/* there is a case: command timeout, and data phase not processed */
- 				if (mrq->data->error != 0 &&
- 				    mrq->data->error != -EIO) {
--					ERR_MSG("TUNE_READ: result<0x%x> cmd_error<%d> data_error<%d>",
--						result, mrq->cmd->error, mrq->data->error);
-+					dev_err(mmc_dev(host->mmc),
-+						"%d -> TUNE_READ: result<0x%x> cmd_error<%d> data_error<%d>\n",
-+						host->id, result,
-+						mrq->cmd->error,
-+						mrq->data->error);
- 					goto done;
- 				}
- 			}
-@@ -1458,13 +1487,18 @@ static int msdc_tune_bwrite(struct mmc_host *mmc, struct mmc_request *mrq)
- 				if (host->app_cmd) {
- 					result = msdc_app_cmd(host->mmc, host);
- 					if (result) {
--						ERR_MSG("TUNE_BWRITE app_cmd<%d> failed", host->mrq->cmd->opcode);
-+						dev_err(mmc_dev(host->mmc),
-+							"%d -> TUNE_BWRITE app_cmd<%d> failed\n",
-+							host->id,
-+							host->mrq->cmd->opcode);
- 						continue;
- 					}
- 				}
- 				result = msdc_do_request(mmc, mrq);
- 
--				ERR_MSG("TUNE_BWRITE<%s> DSPL<%d> DATWRDLY<%d> MSDC_DAT_RDDLY0<0x%x>",
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> TUNE_BWRITE<%s> DSPL<%d> DATWRDLY<%d> MSDC_DAT_RDDLY0<0x%x>\n",
-+					host->id,
- 					result == 0 ? "PASS" : "FAIL",
- 					cur_dsmpl, cur_wrrdly, cur_rxdly0);
- 
-@@ -1473,8 +1507,11 @@ static int msdc_tune_bwrite(struct mmc_host *mmc, struct mmc_request *mrq)
- 				} else {
- 					/* there is a case: command timeout, and data phase not processed */
- 					if (mrq->data->error != -EIO) {
--						ERR_MSG("TUNE_READ: result<0x%x> cmd_error<%d> data_error<%d>",
--							result, mrq->cmd->error, mrq->data->error);
-+						dev_err(mmc_dev(host->mmc),
-+							"%d -> TUNE_READ: result<0x%x> cmd_error<%d> data_error<%d>\n",
-+							host->id, result,
-+							mrq->cmd->error,
-+							mrq->data->error);
- 						goto done;
- 					}
- 				}
-@@ -1508,7 +1545,8 @@ static int msdc_get_card_status(struct mmc_host *mmc, struct msdc_host *host, u3
- 	if (mmc->card) {
- 		cmd.arg = mmc->card->rca << 16;
- 	} else {
--		ERR_MSG("cmd13 mmc card is null");
-+		dev_err(mmc_dev(host->mmc), "%d -> cmd13 mmc card is null\n",
-+			host->id);
- 		cmd.arg = host->app_cmd_arg;
+-	if (evt == PM_EVENT_USER_RESUME || evt == PM_EVENT_USER_SUSPEND) {
+-		INIT_MSG("USR_%s: suspend<%d> power<%d>",
+-			evt == PM_EVENT_USER_RESUME ? "EVENT_USER_RESUME" : "EVENT_USER_SUSPEND",
+-			host->suspend, host->power_mode);
+-	}
+-
+ 	if (evt == PM_EVENT_SUSPEND || evt == PM_EVENT_USER_SUSPEND) {
+ 		if (host->suspend) /* already suspend */  /* default 0*/
+ 			return;
+@@ -1752,7 +1739,6 @@ static void msdc_ops_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	if (host->mclk != ios->clock) {
+ 		if (ios->clock > 25000000) {
+ 			//if (!(host->hw->flags & MSDC_REMOVABLE)) {
+-			INIT_MSG("SD data latch edge<%d>", MSDC_SMPL_FALLING);
+ 			sdr_set_field(host->base + MSDC_IOCON, MSDC_IOCON_RSPL,
+ 				      MSDC_SMPL_FALLING);
+ 			sdr_set_field(host->base + MSDC_IOCON, MSDC_IOCON_DSPL,
+@@ -1805,7 +1791,6 @@ static int msdc_ops_get_cd(struct mmc_host *mmc)
+ 		return 1;
+ #else
+ 		host->card_inserted = (host->pm_state.event == PM_EVENT_USER_RESUME) ? 1 : 0;
+-		INIT_MSG("sdio ops_get_cd<%d>", host->card_inserted);
+ 		return host->card_inserted;
+ #endif
  	}
- 	cmd.flags = MMC_RSP_SPI_R2 | MMC_RSP_R1 | MMC_CMD_AC;
-@@ -1535,7 +1573,8 @@ static int msdc_check_busy(struct mmc_host *mmc, struct msdc_host *host)
- 		if (err)
- 			return err;
- 		/* need cmd12? */
--		ERR_MSG("cmd<13> resp<0x%x>", status);
-+		dev_err(mmc_dev(host->mmc), "%d -> cmd<13> resp<0x%x>\n",
-+			host->id, status);
- 	} while (R1_CURRENT_STATE(status) == 7);
+@@ -1829,7 +1814,6 @@ static int msdc_ops_get_cd(struct mmc_host *mmc)
+ 		present = 0; /* TODO? Check DAT3 pins for card detection */
+ 	}
  
- 	return err;
-@@ -1559,7 +1598,9 @@ static int msdc_tune_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 	} else {
- 		ret = msdc_check_busy(mmc, host);
- 		if (ret) {
--			ERR_MSG("XXX cmd13 wait program done failed");
-+			dev_err(mmc_dev(host->mmc),
-+				"%d -> XXX cmd13 wait program done failed\n",
-+				host->id);
- 			return ret;
- 		}
- 		/* CRC and TO */
-@@ -2289,7 +2330,8 @@ static int msdc_drv_remove(struct platform_device *pdev)
- 	host = mmc_priv(mmc);
- 	BUG_ON(!host);
+-	INIT_MSG("ops_get_cd return<%d>", present);
+ 	return present;
+ }
  
--	ERR_MSG("removed !!!");
-+	dev_err(mmc_dev(host->mmc), "%d -> removed !!!\n",
-+		host->id);
- 
- 	platform_set_drvdata(pdev, NULL);
- 	mmc_remove_host(host->mmc);
 -- 
 2.17.1
 
