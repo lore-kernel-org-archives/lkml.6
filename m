@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E16FCC43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E2BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6080208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6080208C2
+	by mail.kernel.org (Postfix) with ESMTP id 2BD52208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BD52208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389080AbeHWMja (ORCPT
+        id S2389096AbeHWMjn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:39:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56794 "EHLO
+        Thu, 23 Aug 2018 08:39:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56894 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728107AbeHWMja (ORCPT
+        with ESMTP id S1729607AbeHWMjn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:39:30 -0400
+        Thu, 23 Aug 2018 08:39:43 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A95DB93C;
-        Thu, 23 Aug 2018 09:10:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6F8C193C;
+        Thu, 23 Aug 2018 09:10:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.18 10/22] drm/amdgpu/pm: Fix potential Spectre v1
-Date:   Thu, 23 Aug 2018 09:56:36 +0200
-Message-Id: <20180823074759.821807615@linuxfoundation.org>
+        stable@vger.kernel.org, teika kazura <teika@gmx.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.18 14/22] PCI / ACPI / PM: Resume all bridges on suspend-to-RAM
+Date:   Thu, 23 Aug 2018 09:56:40 +0200
+Message-Id: <20180823074800.090198121@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074759.234685844@linuxfoundation.org>
 References: <20180823074759.234685844@linuxfoundation.org>
@@ -51,53 +52,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit ddf74e79a54070f277ae520722d3bab7f7a6c67a upstream.
+commit 9d64b539b738fc181442caab95f1f76d9bd58539 upstream.
 
-idx can be indirectly controlled by user-space, hence leading to a
-potential exploitation of the Spectre variant 1 vulnerability.
+Commit 26112ddc254c (PCI / ACPI / PM: Resume bridges w/o drivers on
+suspend-to-RAM) attempted to fix a functional regression resulting
+from commit c62ec4610c40 (PM / core: Fix direct_complete handling
+for devices with no callbacks) by resuming PCI bridges without
+drivers (that is, "parallel PCI" ones) during system-wide suspend if
+the target system state is not ACPI S0 (working state).
 
-This issue was detected with the help of Smatch:
+That turns out insufficient, however, as it is reported that, at
+least in one case, the platform firmware gets confused if a PCIe
+root port is suspended before entering the ACPI S3 sleep state.
+That issue was exposed by commit 77b3729ca03 (PCI / PM: Use
+SMART_SUSPEND and LEAVE_SUSPENDED flags for PCIe ports) that allowed
+PCIe ports to stay in runtime suspend during system-wide suspend
+(which is OK for suspend-to-idle, but turns out to be problematic
+otherwise).
 
-drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c:408 amdgpu_set_pp_force_state()
-warn: potential spectre issue 'data.states'
+For this reason, drop the driver check from acpi_pci_need_resume()
+and resume all bridges (including PCIe ports with drivers) during
+system-wide suspend if the target system state is not ACPI S0.
 
-Fix this by sanitizing idx before using it to index data.states
+[If the target system state is ACPI S0, it means suspend-to-idle
+ and the platform firmware is not going to be invoked to actually
+ suspend the system, so there is no need to resume the bridges in
+ that case.]
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: 77b3729ca03 (PCI / PM: Use SMART_SUSPEND and LEAVE_SUSPENDED flags for PCIe ports)
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200675
+Reported-by: teika kazura <teika@gmx.com>
+Tested-by: teika kazura <teika@gmx.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: 4.16+ <stable@vger.kernel.org> # 4.16+: 26112ddc254c (PCI / ACPI / PM: Resume bridges ...)
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pci/pci-acpi.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
-@@ -31,7 +31,7 @@
- #include <linux/power_supply.h>
- #include <linux/hwmon.h>
- #include <linux/hwmon-sysfs.h>
--
-+#include <linux/nospec.h>
+--- a/drivers/pci/pci-acpi.c
++++ b/drivers/pci/pci-acpi.c
+@@ -632,13 +632,11 @@ static bool acpi_pci_need_resume(struct
+ 	/*
+ 	 * In some cases (eg. Samsung 305V4A) leaving a bridge in suspend over
+ 	 * system-wide suspend/resume confuses the platform firmware, so avoid
+-	 * doing that, unless the bridge has a driver that should take care of
+-	 * the PM handling.  According to Section 16.1.6 of ACPI 6.2, endpoint
++	 * doing that.  According to Section 16.1.6 of ACPI 6.2, endpoint
+ 	 * devices are expected to be in D3 before invoking the S3 entry path
+ 	 * from the firmware, so they should not be affected by this issue.
+ 	 */
+-	if (pci_is_bridge(dev) && !dev->driver &&
+-	    acpi_target_system_state() != ACPI_STATE_S0)
++	if (pci_is_bridge(dev) && acpi_target_system_state() != ACPI_STATE_S0)
+ 		return true;
  
- static int amdgpu_debugfs_pm_init(struct amdgpu_device *adev);
- 
-@@ -393,6 +393,7 @@ static ssize_t amdgpu_set_pp_force_state
- 			count = -EINVAL;
- 			goto fail;
- 		}
-+		idx = array_index_nospec(idx, ARRAY_SIZE(data.states));
- 
- 		amdgpu_dpm_get_pp_num_states(adev, &data);
- 		state = data.states[idx];
+ 	if (!adev || !acpi_device_power_manageable(adev))
 
 
