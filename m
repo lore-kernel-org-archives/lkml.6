@@ -6,110 +6,121 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B369C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 01:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2CDC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 01:34:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D78120936
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 01:22:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D78120936
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D3D0208CD
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 01:34:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D3D0208CD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbeHWEtg (ORCPT
+        id S1726985AbeHWFBR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 00:49:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39232 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726985AbeHWEtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 00:49:19 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4DEB840241C3;
-        Thu, 23 Aug 2018 01:22:08 +0000 (UTC)
-Received: from whitewolf.lyude.net.com (ovpn-124-163.rdu2.redhat.com [10.10.124.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D92152026D74;
-        Thu, 23 Aug 2018 01:22:07 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     nouveau@lists.freedesktop.org
-Cc:     Jeffery Miller <jmiller@neverware.com>,
-        Karol Herbst <kherbst@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] drm/nouveau: s/nouveau_backlight_exit/nouveau_backlight_fini/
-Date:   Wed, 22 Aug 2018 21:21:48 -0400
-Message-Id: <20180823012151.20099-4-lyude@redhat.com>
-In-Reply-To: <20180823012151.20099-1-lyude@redhat.com>
-References: <20180823012151.20099-1-lyude@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 23 Aug 2018 01:22:08 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 23 Aug 2018 01:22:08 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+        Thu, 23 Aug 2018 01:01:17 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48363 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726233AbeHWFBR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 01:01:17 -0400
+Received: from mail-pl0-f71.google.com ([209.85.160.71])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1fseVe-0001mq-64
+        for linux-kernel@vger.kernel.org; Thu, 23 Aug 2018 01:34:02 +0000
+Received: by mail-pl0-f71.google.com with SMTP id e8-v6so1742740plt.4
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 18:34:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=V4D7UkXXWqrBPxImEp3Uu9sddqFo5Agazjl0MV7sERg=;
+        b=p8UFeBCXZIKsUA06vPYiow8XlDcXMfTqKUR/QPWbfnBYLjiP/DWs13bM6/aho5oY03
+         r8fynDjByMujxenG05p43xOB4wn0VuYZyCBkTUjQh5pvHwZ6UD40VFDbJPE5Ynhd5Trq
+         V4a1+LmslHCLMrM2H9TN0PRGZ9zV1slQ4Ep+0Iy5pKb7aXsKD/gLjO+fHQ6G6cgb7xxd
+         t8CfHeyNxwzulFi58biuovKcrvr7y5ow7csTRUnxF0O1Kgiri0KV50y+3RH320Gcz7Du
+         FPC62j72vLDW2p0h3S7EkqHOGMirGrmTYBjAPV1Ysf64y/vGQH2Kr7aDNS3Pgm8Xnlpr
+         ZBzA==
+X-Gm-Message-State: AOUpUlHhJAM9/3vBxPZsRJ+9VElPGQp3guZA0Dhuw8CINQB/wDTB6lCD
+        GLVQUvvC3HVqe0gS9knKuDV8OWfsCanjZIETNpJtvuS2n4ncKB3WUCZ2+SIEToNTzabToRfxdjD
+        8SD9gkifDo+9vdmtmGsbGcmNCwSUeCEkim0X48SCdAQ==
+X-Received: by 2002:a17:902:b784:: with SMTP id e4-v6mr26250414pls.204.1534988040923;
+        Wed, 22 Aug 2018 18:34:00 -0700 (PDT)
+X-Google-Smtp-Source: AA+uWPw8awKZNw3cgpMUSzvnAH2Ghmh6C4eCmNyRmyitgk5r3w6MrSosU0ELkbAMg4WVpLjQAA7OsA==
+X-Received: by 2002:a17:902:b784:: with SMTP id e4-v6mr26250400pls.204.1534988040554;
+        Wed, 22 Aug 2018 18:34:00 -0700 (PDT)
+Received: from [192.168.1.206] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
+        by smtp.gmail.com with ESMTPSA id l85-v6sm5072926pfk.34.2018.08.22.18.33.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 Aug 2018 18:34:00 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH] ath9k: turn on btcoex_enable as default
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <6A0F65EF-A7C4-469F-8FAF-CBE314676237@canonical.com>
+Date:   Thu, 23 Aug 2018 09:33:56 +0800
+Cc:     Kalle Valo <kvalo@codeaurora.org>, ath9k-devel@qca.qualcomm.com,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Message-Id: <9AF82E83-2EBE-4076-BAFA-EEA44B1DB423@canonical.com>
+References: <20180208052801.15670-1-kai.heng.feng@canonical.com>
+ <56d650e6-d26f-087c-4e86-2e5d4e859414@nbd.name>
+ <A5972CE9-8325-404A-A63D-ED29E44FB67B@canonical.com>
+ <87k1vmeip8.fsf@kamboji.qca.qualcomm.com>
+ <E500FA42-23F1-433F-9BFB-78A2FD1946AF@canonical.com>
+ <7170e2d5-a59d-8260-fa8e-f02f583b773f@nbd.name>
+ <6A0F65EF-A7C4-469F-8FAF-CBE314676237@canonical.com>
+To:     Felix Fietkau <nbd@nbd.name>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-More consistent with the rest of the codebase, no functional changes
-here.
+at 12:15, Kai Heng Feng <kai.heng.feng@canonical.com> wrote:
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Jeffery Miller <jmiller@neverware.com>
-Cc: Karol Herbst <kherbst@redhat.com>
----
- drivers/gpu/drm/nouveau/nouveau_backlight.c | 2 +-
- drivers/gpu/drm/nouveau/nouveau_connector.c | 2 +-
- drivers/gpu/drm/nouveau/nouveau_connector.h | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+>
+>
+>> On 10 Feb 2018, at 10:05 PM, Felix Fietkau <nbd@nbd.name> wrote:
+>>
+>> On 2018-02-10 14:56, Kai Heng Feng wrote:
+>>>> On 9 Feb 2018, at 3:16 PM, Kalle Valo <kvalo@codeaurora.org> wrote:
+>>>> Sure, but we have to make sure that we don't create regressions on
+>>>> existing systems. For example, did you test this with any system which
+>>>> don't support btcoex? (just asking, haven't tested this myself)
+>>>
+>>> No not really, but I will definitely test it.
+>>> The only module I have that uses ath9k is Dell’s DW1707.
+>>> How do I check if it support btcoex or not?
+>> I just reviewed the code again, and I am sure that we cannot merge this
+>> patch. Enabling the btcoex parameter makes the driver enable a whole
+>> bunch of code starting timers, listening to some GPIOs, etc.
+>>
+>> On non-btcoex systems, some of those GPIOs might be floating or even
+>> connected to different things, which could cause a lot of undefined
+>> behavior.
+>>
+>> This is simply too big a risk, so there absolutely needs to be a
+>> whitelist for systems that need this, otherwise it has to remain
+>> disabled by default.
+>
+> So what information can we use to whitelist btcoex chips?
+> Can we get btcoex support status at ath9k probing?
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_backlight.c b/drivers/gpu/drm/nouveau/nouveau_backlight.c
-index 3e4874f405ab..017d5b7924bb 100644
---- a/drivers/gpu/drm/nouveau/nouveau_backlight.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_backlight.c
-@@ -309,7 +309,7 @@ nouveau_backlight_init(struct drm_connector *connector)
- }
- 
- void
--nouveau_backlight_exit(struct drm_connector *connector)
-+nouveau_backlight_fini(struct drm_connector *connector)
- {
- 	struct nouveau_connector *nv_conn = nouveau_connector(connector);
- 	struct nouveau_backlight *bl = nv_conn->backlight;
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-index 767e892de9c4..3b288be9c3f7 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -911,7 +911,7 @@ nouveau_connector_late_register(struct drm_connector *connector)
- static void
- nouveau_connector_early_unregister(struct drm_connector *connector)
- {
--	nouveau_backlight_exit(connector);
-+	nouveau_backlight_fini(connector);
- }
- 
- static int
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.h b/drivers/gpu/drm/nouveau/nouveau_connector.h
-index 5465ae82fb9f..76e79717e451 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.h
-@@ -190,7 +190,7 @@ struct drm_display_mode *nouveau_conn_native_mode(struct drm_connector *);
- 
- #ifdef CONFIG_DRM_NOUVEAU_BACKLIGHT
- extern int nouveau_backlight_init(struct drm_connector *);
--extern void nouveau_backlight_exit(struct drm_connector *);
-+extern void nouveau_backlight_fini(struct drm_connector *);
- extern void nouveau_backlight_ctor(void);
- extern void nouveau_backlight_dtor(void);
- #else
-@@ -201,7 +201,7 @@ nouveau_backlight_init(struct drm_connector *connector)
- }
- 
- static inline void
--nouveau_backlight_exit(struct drm_connector *connector) {
-+nouveau_backlight_fini(struct drm_connector *connector) {
- }
- 
- static inline void
--- 
-2.17.1
+Sorry for bringing this up again.
+
+Is DMI based match an acceptable approach for ath9k?
+
+Kai-Heng
+
+>
+> Kai-Heng
+>
+>> - Felix
+
 
