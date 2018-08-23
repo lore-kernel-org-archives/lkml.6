@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE58C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A63CC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E71F720839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E71F720839
+	by mail.kernel.org (Postfix) with ESMTP id C415920839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C415920839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388067AbeHWMWE (ORCPT
+        id S2388079AbeHWMWI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:22:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51986 "EHLO
+        Thu, 23 Aug 2018 08:22:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51996 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728574AbeHWMWD (ORCPT
+        with ESMTP id S1728574AbeHWMWI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:22:03 -0400
+        Thu, 23 Aug 2018 08:22:08 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A5D29C74;
-        Thu, 23 Aug 2018 08:53:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0F86C83;
+        Thu, 23 Aug 2018 08:53:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wang Dongsheng <dongsheng.wang@hxt-semitech.com>,
+        stable@vger.kernel.org, Yuiko Oshino <yuiko.oshino@microchip.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 181/324] net: phy: marvell: change default m88e1510 LED configuration
-Date:   Thu, 23 Aug 2018 09:54:07 +0200
-Message-Id: <20180823075005.264686687@linuxfoundation.org>
+Subject: [PATCH 4.17 182/324] smsc75xx: Add workaround for gigabit link up hardware errata.
+Date:   Thu, 23 Aug 2018 09:54:08 +0200
+Message-Id: <20180823075005.319101801@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,126 +51,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+From: Yuiko Oshino <yuiko.oshino@microchip.com>
 
-[ Upstream commit 077772468ec141b22e1e7c0c58bc09e2f9dc8762 ]
+[ Upstream commit d461e3da905332189aad546b2ad9adbe6071c7cc ]
 
-The m88e1121 LED default configuration does not apply m88e151x.
-So add a function to relpace m88e1121 LED configuration.
+In certain conditions, the device may not be able to link in gigabit mode. This software workaround ensures that the device will not enter the failure state.
 
-Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+Fixes: d0cad871703b898a442e4049c532ec39168e5b57 ("SMSC75XX USB 2.0 Gigabit Ethernet Devices")
+Signed-off-by: Yuiko Oshino <yuiko.oshino@microchip.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/marvell.c   |   54 +++++++++++++++++++++++++++++---------------
- include/linux/marvell_phy.h |    2 +
- 2 files changed, 38 insertions(+), 18 deletions(-)
+ drivers/net/usb/smsc75xx.c |   62 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
---- a/drivers/net/phy/marvell.c
-+++ b/drivers/net/phy/marvell.c
-@@ -130,8 +130,9 @@
- #define MII_88E1318S_PHY_WOL_CTRL_CLEAR_WOL_STATUS		BIT(12)
- #define MII_88E1318S_PHY_WOL_CTRL_MAGIC_PACKET_MATCH_ENABLE	BIT(14)
+--- a/drivers/net/usb/smsc75xx.c
++++ b/drivers/net/usb/smsc75xx.c
+@@ -82,6 +82,9 @@ static bool turbo_mode = true;
+ module_param(turbo_mode, bool, 0644);
+ MODULE_PARM_DESC(turbo_mode, "Enable multiple frames per Rx transaction");
  
--#define MII_88E1121_PHY_LED_CTRL	16
-+#define MII_PHY_LED_CTRL	        16
- #define MII_88E1121_PHY_LED_DEF		0x0030
-+#define MII_88E1510_PHY_LED_DEF		0x1177
- 
- #define MII_M1011_PHY_STATUS		0x11
- #define MII_M1011_PHY_STATUS_1000	0x8000
-@@ -632,8 +633,40 @@ error:
- 	return err;
- }
- 
-+static void marvell_config_led(struct phy_device *phydev)
-+{
-+	u16 def_config;
-+	int err;
++static int smsc75xx_link_ok_nopm(struct usbnet *dev);
++static int smsc75xx_phy_gig_workaround(struct usbnet *dev);
 +
-+	switch (MARVELL_PHY_FAMILY_ID(phydev->phy_id)) {
-+	/* Default PHY LED config: LED[0] .. Link, LED[1] .. Activity */
-+	case MARVELL_PHY_FAMILY_ID(MARVELL_PHY_ID_88E1121R):
-+	case MARVELL_PHY_FAMILY_ID(MARVELL_PHY_ID_88E1318S):
-+		def_config = MII_88E1121_PHY_LED_DEF;
-+		break;
-+	/* Default PHY LED config:
-+	 * LED[0] .. 1000Mbps Link
-+	 * LED[1] .. 100Mbps Link
-+	 * LED[2] .. Blink, Activity
-+	 */
-+	case MARVELL_PHY_FAMILY_ID(MARVELL_PHY_ID_88E1510):
-+		def_config = MII_88E1510_PHY_LED_DEF;
-+		break;
-+	default:
-+		return;
-+	}
-+
-+	err = phy_write_paged(phydev, MII_MARVELL_LED_PAGE, MII_PHY_LED_CTRL,
-+			      def_config);
-+	if (err < 0)
-+		pr_warn("Fail to config marvell phy LED.\n");
-+}
-+
- static int marvell_config_init(struct phy_device *phydev)
+ static int __must_check __smsc75xx_read_reg(struct usbnet *dev, u32 index,
+ 					    u32 *data, int in_pm)
  {
-+	/* Set defalut LED */
-+	marvell_config_led(phydev);
-+
- 	/* Set registers from marvell,reg-init DT property */
- 	return marvell_of_reg_init(phydev);
- }
-@@ -813,21 +846,6 @@ static int m88e1111_config_init(struct p
- 	return genphy_soft_reset(phydev);
- }
- 
--static int m88e1121_config_init(struct phy_device *phydev)
--{
--	int err;
--
--	/* Default PHY LED config: LED[0] .. Link, LED[1] .. Activity */
--	err = phy_write_paged(phydev, MII_MARVELL_LED_PAGE,
--			      MII_88E1121_PHY_LED_CTRL,
--			      MII_88E1121_PHY_LED_DEF);
--	if (err < 0)
--		return err;
--
--	/* Set marvell,reg-init configuration from device tree */
--	return marvell_config_init(phydev);
--}
--
- static int m88e1318_config_init(struct phy_device *phydev)
- {
- 	if (phy_interrupt_is_valid(phydev)) {
-@@ -841,7 +859,7 @@ static int m88e1318_config_init(struct p
- 			return err;
+@@ -852,6 +855,9 @@ static int smsc75xx_phy_initialize(struc
+ 		return -EIO;
  	}
  
--	return m88e1121_config_init(phydev);
-+	return marvell_config_init(phydev);
++	/* phy workaround for gig link */
++	smsc75xx_phy_gig_workaround(dev);
++
+ 	smsc75xx_mdio_write(dev->net, dev->mii.phy_id, MII_ADVERTISE,
+ 		ADVERTISE_ALL | ADVERTISE_CSMA | ADVERTISE_PAUSE_CAP |
+ 		ADVERTISE_PAUSE_ASYM);
+@@ -987,6 +993,62 @@ static int smsc75xx_wait_ready(struct us
+ 	return -EIO;
  }
  
- static int m88e1510_config_init(struct phy_device *phydev)
-@@ -2090,7 +2108,7 @@ static struct phy_driver marvell_drivers
- 		.features = PHY_GBIT_FEATURES,
- 		.flags = PHY_HAS_INTERRUPT,
- 		.probe = &m88e1121_probe,
--		.config_init = &m88e1121_config_init,
-+		.config_init = &marvell_config_init,
- 		.config_aneg = &m88e1121_config_aneg,
- 		.read_status = &marvell_read_status,
- 		.ack_interrupt = &marvell_ack_interrupt,
---- a/include/linux/marvell_phy.h
-+++ b/include/linux/marvell_phy.h
-@@ -27,6 +27,8 @@
-  */
- #define MARVELL_PHY_ID_88E6390		0x01410f90
- 
-+#define MARVELL_PHY_FAMILY_ID(id)	((id) >> 4)
++static int smsc75xx_phy_gig_workaround(struct usbnet *dev)
++{
++	struct mii_if_info *mii = &dev->mii;
++	int ret = 0, timeout = 0;
++	u32 buf, link_up = 0;
 +
- /* struct phy_device dev_flags definitions */
- #define MARVELL_PHY_M1145_FLAGS_RESISTANCE	0x00000001
- #define MARVELL_PHY_M1118_DNS323_LEDS		0x00000002
++	/* Set the phy in Gig loopback */
++	smsc75xx_mdio_write(dev->net, mii->phy_id, MII_BMCR, 0x4040);
++
++	/* Wait for the link up */
++	do {
++		link_up = smsc75xx_link_ok_nopm(dev);
++		usleep_range(10000, 20000);
++		timeout++;
++	} while ((!link_up) && (timeout < 1000));
++
++	if (timeout >= 1000) {
++		netdev_warn(dev->net, "Timeout waiting for PHY link up\n");
++		return -EIO;
++	}
++
++	/* phy reset */
++	ret = smsc75xx_read_reg(dev, PMT_CTL, &buf);
++	if (ret < 0) {
++		netdev_warn(dev->net, "Failed to read PMT_CTL: %d\n", ret);
++		return ret;
++	}
++
++	buf |= PMT_CTL_PHY_RST;
++
++	ret = smsc75xx_write_reg(dev, PMT_CTL, buf);
++	if (ret < 0) {
++		netdev_warn(dev->net, "Failed to write PMT_CTL: %d\n", ret);
++		return ret;
++	}
++
++	timeout = 0;
++	do {
++		usleep_range(10000, 20000);
++		ret = smsc75xx_read_reg(dev, PMT_CTL, &buf);
++		if (ret < 0) {
++			netdev_warn(dev->net, "Failed to read PMT_CTL: %d\n",
++				    ret);
++			return ret;
++		}
++		timeout++;
++	} while ((buf & PMT_CTL_PHY_RST) && (timeout < 100));
++
++	if (timeout >= 100) {
++		netdev_warn(dev->net, "timeout waiting for PHY Reset\n");
++		return -EIO;
++	}
++
++	return 0;
++}
++
+ static int smsc75xx_reset(struct usbnet *dev)
+ {
+ 	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
 
 
