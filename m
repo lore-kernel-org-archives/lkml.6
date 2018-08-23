@@ -2,112 +2,111 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 660CCC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 00:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51AD6C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 00:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 132B9208D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 00:40:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEDB62098B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 00:48:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ulU5rZSV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 132B9208D8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Wx79Dcp7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEDB62098B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbeHWEHJ (ORCPT
+        id S1726243AbeHWEPu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 00:07:09 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37186 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbeHWEHJ (ORCPT
+        Thu, 23 Aug 2018 00:15:50 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45964 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbeHWEPu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 00:07:09 -0400
-Received: by mail-lj1-f193.google.com with SMTP id v9-v6so2798099ljk.4;
-        Wed, 22 Aug 2018 17:40:05 -0700 (PDT)
+        Thu, 23 Aug 2018 00:15:50 -0400
+Received: by mail-lj1-f196.google.com with SMTP id u83-v6so2781955lje.12
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 17:48:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=purestorage.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=VrVMbsZ/4z1r5pzEEhDSae4daLlDRqlkU+lMeVN/keg=;
-        b=ulU5rZSV5WOL53aK85kx1BrI4zkRStOAh2v1hcPWyN0hSNmSxaRTZzza4Le6Kd6tNb
-         tXJzP8mIJT08l8SpjnVAv6V7XxnWXeAoPwizx8fCZGccyFBzOWNDfh1Km5huwvMeaY2E
-         ZCbNizhXswF3/bINUUEntRqFiWUqTB2zC5r/Xwa3HhY1OrMp6bdnvDhh/YeZ6c0qnHxR
-         kWkKfytVWNfix5uMtTbaPa3bOHtFZ6YaegBaquSGmHygiMz8w69pctcVTdJLGGx58mOF
-         i1pVUg0LG424wdHMIr0Wevzi9q7W/Kesswr13nQ9+2SJgDu85codUNhsP9fHgDTCccmh
-         o5gg==
+        bh=SL7J54XRlzmYNMr9lpFFkZX1OIMMzBGSjzTjkR8LXAA=;
+        b=Wx79Dcp7dfwGxrBZeBu+RdEN21bcWopZMQ1boT677dK8XkV8MAcj9Ixc6MasgHRlU0
+         +52OGO3RJV6clp26F2L2waHdO2EaZZ3xqC1GdnXoHeaEKTekB1faov07eDB2w/bG+dhN
+         RAem+sFdzLGdC76F0vhBvWz6oQN+lydC7l+Bs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=VrVMbsZ/4z1r5pzEEhDSae4daLlDRqlkU+lMeVN/keg=;
-        b=NAe4BN/eEKQX8eyXqiN4VWDibs1VJeCxIkXLwNln1a9D1+7VHSdpJLZ15gXrA3HT5m
-         GM2ax9zKBFxX/ACxnO2cPgwJ8ANR/GoIPd6QSMs+wmlXY57X4KQRZjG3rPH+ErI5s8tS
-         uah13eL3xFK7n2K7E1bxz9hsBTqBYhofVXTVMF9bf4od+uFsE5rvlz0K5aJON0zKuiY5
-         CigcPr+/ZhRT7fHPjfNWqD+SIm9oJVcL9GPAm3qu3oTyy0qCSU3tIvNVKFVQx3tkMGFU
-         y76uUnlJMkFXVSujCvs1hs4OnmgvkDe2r+78n3LtJ00QBP25FGo6sNXpJeqYH4p24xxD
-         Ephw==
-X-Gm-Message-State: APzg51DGel/FwqS2RUQidjeTpHorM1gtNo2psSZL2Aq77Vmkf4B7m24C
-        eDEABEgMhwvlZbZrg4x21DSslH/CGTQqatstLnY=
-X-Google-Smtp-Source: ANB0VdZe6eB9GMiYXX58Lo9g+vUqxM17hn1j6tOraJRmTDH/d/gkm9goofGncCBja/AQa9buhWHPC6O6ZxNGYdX5MZY=
-X-Received: by 2002:a2e:1290:: with SMTP id 16-v6mr6346400ljs.94.1534984803995;
- Wed, 22 Aug 2018 17:40:03 -0700 (PDT)
+        bh=SL7J54XRlzmYNMr9lpFFkZX1OIMMzBGSjzTjkR8LXAA=;
+        b=dD6KSzEXAgMEZBgkfqotosOfo29QRU8udAJCrzbKQjMe609bqY8mA6XW7L5FQEFJ99
+         BvtcFJdgFzOkZpUivKCzh6cqudaAJlMQ1xuEEx0I1GhGt818oAlVcaIi/fIm1AH+MwQF
+         Lzj/LIyKAlw7HRAgi0Fcy0NBBcUMiMzqAqE9hXcLIaONCXrJMUV4/+NxwzVVtq1AoY/g
+         0FeQvexv8u2fLovGm90JOFolZTtStGzYB8kRRTouSV9ofMU4ZItqf2lBNExSclXpo50n
+         y7NebMxT3i2X3TtJDWrB+yNfr+8H3VT8QZJ73P6DxuzyNrwWhCH8FO76Ui4mqEvMOwiB
+         F/pw==
+X-Gm-Message-State: AOUpUlH2bufvvZJhhhiIT3JlcHHEVnT6ItNFssI7nvuJUKsG/bjGTkHk
+        AZryJm3+e/2isTAHOu9chwoy4mTVKhnzakmI7yJTPA==
+X-Google-Smtp-Source: AA+uWPw3imzYSfYylRRRI7oEG2//SWwQkoDm/L+mST3/6/9uCkHCS2cYHALttfIOgngI7vMcjD4yA95LDEn17IRTl4Q=
+X-Received: by 2002:a2e:9d45:: with SMTP id y5-v6mr40745788ljj.136.1534985324306;
+ Wed, 22 Aug 2018 17:48:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <490A46D5-834E-46A9-9106-A31F94344F99@goldelico.com> <d5093e14-c826-9183-cd94-ecb99a799fc8@infradead.org>
-In-Reply-To: <d5093e14-c826-9183-cd94-ecb99a799fc8@infradead.org>
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date:   Wed, 22 Aug 2018 17:39:52 -0700
-Message-ID: <CAKdAkRQ+BXezzT0JsuSa_-imHq+u-q2P5rMVMCL4=N18VYxSAw@mail.gmail.com>
-Subject: Re: please revert commit ce8556cca6 "kbuild: verify that $DEPMOD is
- installed" introduced in v4.18.4.
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
-        lucas.demarchi@profusion.mobi, lucas.de.marchi@gmail.com,
-        michal.lkml@markovi.net, jeyu@kernel.org, cwhuang@linux.org.tw,
-        "3.8+" <stable@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+References: <20171215092305.994559179@linuxfoundation.org> <20171215092311.347628971@linuxfoundation.org>
+In-Reply-To: <20171215092311.347628971@linuxfoundation.org>
+From:   Roland Dreier <roland@purestorage.com>
+Date:   Wed, 22 Aug 2018 17:48:32 -0700
+Message-ID: <CAL1RGDVgShymmT+TJ3mAHEL7n+qoisk6mQ=Tji_T=0d_QA=VKw@mail.gmail.com>
+Subject: Re: [PATCH 4.4 103/105] Revert "x86/mm/pat: Ensure cpa->pfn only
+ contains page frame numbers"
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        ben.hutchings@codethink.co.uk, matt@codeblueprint.co.uk,
+        bp@suse.de, Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>, luto@kernel.org,
+        ard.biesheuvel@linaro.org, bp@alien8.de, brgerst@gmail.com,
+        davej@codemonkey.org.uk, dvlasenk@redhat.com,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        sai.praneeth.prakhya@intel.com, sds@tycho.nsa.gov,
+        Thomas Gleixner <tglx@linutronix.de>, toshi.kani@hp.com,
+        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Yazen.Ghannam@amd.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 4:35 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+On Fri, Dec 15, 2017 at 2:20 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> This reverts commit 87e2bd898d3a79a8c609f183180adac47879a2a4 which is
+> commit edc3b9129cecd0f0857112136f5b8b1bc1d45918 upstream.
 >
-> On 08/22/2018 11:53 AM, H. Nikolaus Schaller wrote:
-> > This patch requires that /sbin/depmod is installed and installable on
-> > the build host.
-> >
-> > But not all build hosts for cross compiling Linux are Linux systems
-> > and are able to provide a working port of depmod, especially at the
-> > file patch /sbin/depmod.
-> >
-> > I use, for example, a Darwin system to cross compile Linux and I run
-> > depmod -a on the embedded system once, after installing a new Linux
-> > kernel there.
-> >
-> > I have no problem with seeing a warning, but aborting the build process
-> > is IMHO a bad idea since the previous behaviour didn't harm many people
-> > as far as I see. Probably 99% of people compiling Linux kernels do that
-> > on Linux and 99% of those have depmod installed for optimal operation of
-> > their build host. So IMHO printing the warning is good enough.
->
-> Thanks for the report and sorry about the problem.
->
-> I'm OK with changing the error to a warning.
-> Does the patch below work for you?
+> Turns there was too many other issues with this patch to make it viable
+> for the stable tree.
 
-Why would one want a warning on a host that never runs "make modules_install"?
-Can this check be only done when we actually try to install modules?
+This was sort of a long time ago, but does anyone remember why this
+needed to be reverted from 4.4?
 
-Thanks.
+The reason I ask is that without this, commit 02ff2769edbc /
+"x86/mm/pat: Make set_memory_np() L1TF safe" in 4.4.148 is broken.
+That patch has
 
--- 
-Dmitry
+-               set_pud(pud, __pud(cpa->pfn | _PAGE_PSE |
+-                                  massage_pgprot(pud_pgprot)));
++               set_pud(pud, pud_mkhuge(pfn_pud(cpa->pfn,
++                                  canon_pgprot(pud_pgprot))));
+
+(and similarly for pmds) but pfn_pud() is operating on page frame
+numbers and __pud(cpa->pfn... in the old code is operating on physical
+addresses.
+
+This is bad enough that 4.4.148 and all newer 4.4.y crash early in
+boot on some EFI systems that I have.
+
+For now I am re-applying the "ensure cpa->pfn only contains page frame
+numbers" patch, ported on top of 4.4.151.
+
+ - R.
