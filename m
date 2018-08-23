@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E856CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 300DBC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB5F82148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:19:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB5F82148E
+	by mail.kernel.org (Postfix) with ESMTP id EA95F20A8B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:19:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA95F20A8B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730057AbeHWLrj (ORCPT
+        id S1730077AbeHWLrm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:47:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46412 "EHLO
+        Thu, 23 Aug 2018 07:47:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46420 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727760AbeHWLri (ORCPT
+        with ESMTP id S1727760AbeHWLrl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:47:38 -0400
+        Thu, 23 Aug 2018 07:47:41 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 25221C7B;
-        Thu, 23 Aug 2018 08:19:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 57595C83;
+        Thu, 23 Aug 2018 08:19:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gao Feng <gfree.wind@vip.163.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 021/217] netfilter: nf_ct_helper: Fix possible panic after nf_conntrack_helper_unregister
-Date:   Thu, 23 Aug 2018 09:52:14 +0200
-Message-Id: <20180823075506.506080563@linuxfoundation.org>
+Subject: [PATCH 4.14 030/217] ARM: dts: NSP: Fix PCIe controllers interrupt types
+Date:   Thu, 23 Aug 2018 09:52:23 +0200
+Message-Id: <20180823075506.880464866@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,50 +50,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gao Feng <gfree.wind@vip.163.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit ad9852af97587b8abe8102f9ddcb05c9769656f6 ]
+[ Upstream commit 403fde644855bc71318c8db65646383e22653b13 ]
 
-The helper module would be unloaded after nf_conntrack_helper_unregister,
-so it may cause a possible panic caused by race.
+The interrupts for the PCIe controllers should all be of type
+IRQ_TYPE_LEVEL_HIGH instead of IRQ_TYPE_NONE.
 
-nf_ct_iterate_destroy(unhelp, me) reset the helper of conntrack as NULL,
-but maybe someone has gotten the helper pointer during this period. Then
-it would panic, when it accesses the helper and the module was unloaded.
-
-Take an example as following:
-CPU0                                                   CPU1
-ctnetlink_dump_helpinfo
-helper = rcu_dereference(help->helper);
-                                                       unhelp
-                                                       set helper as NULL
-                                                       unload helper module
-helper->to_nlattr(skb, ct);
-
-As above, the cpu0 tries to access the helper and its module is unloaded,
-then the panic happens.
-
-Signed-off-by: Gao Feng <gfree.wind@vip.163.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: d71eb9412088 ("ARM: dts: NSP: Add MSI support on PCI")
+Fixes: 522199029fdc ("ARM: dts: NSP: Fix PCIE DT issue")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/nf_conntrack_helper.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/bcm-nsp.dtsi |   30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
---- a/net/netfilter/nf_conntrack_helper.c
-+++ b/net/netfilter/nf_conntrack_helper.c
-@@ -465,6 +465,11 @@ void nf_conntrack_helper_unregister(stru
+--- a/arch/arm/boot/dts/bcm-nsp.dtsi
++++ b/arch/arm/boot/dts/bcm-nsp.dtsi
+@@ -496,7 +496,7 @@
  
- 	nf_ct_expect_iterate_destroy(expect_iter_me, NULL);
- 	nf_ct_iterate_destroy(unhelp, me);
-+
-+	/* Maybe someone has gotten the helper already when unhelp above.
-+	 * So need to wait it.
-+	 */
-+	synchronize_rcu();
- }
- EXPORT_SYMBOL_GPL(nf_conntrack_helper_unregister);
+ 		#interrupt-cells = <1>;
+ 		interrupt-map-mask = <0 0 0 0>;
+-		interrupt-map = <0 0 0 0 &gic GIC_SPI 131 IRQ_TYPE_NONE>;
++		interrupt-map = <0 0 0 0 &gic GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>;
  
+ 		linux,pci-domain = <0>;
+ 
+@@ -519,10 +519,10 @@
+ 			compatible = "brcm,iproc-msi";
+ 			msi-controller;
+ 			interrupt-parent = <&gic>;
+-			interrupts = <GIC_SPI 127 IRQ_TYPE_NONE>,
+-				     <GIC_SPI 128 IRQ_TYPE_NONE>,
+-				     <GIC_SPI 129 IRQ_TYPE_NONE>,
+-				     <GIC_SPI 130 IRQ_TYPE_NONE>;
++			interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
+ 			brcm,pcie-msi-inten;
+ 		};
+ 	};
+@@ -533,7 +533,7 @@
+ 
+ 		#interrupt-cells = <1>;
+ 		interrupt-map-mask = <0 0 0 0>;
+-		interrupt-map = <0 0 0 0 &gic GIC_SPI 137 IRQ_TYPE_NONE>;
++		interrupt-map = <0 0 0 0 &gic GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 		linux,pci-domain = <1>;
+ 
+@@ -556,10 +556,10 @@
+ 			compatible = "brcm,iproc-msi";
+ 			msi-controller;
+ 			interrupt-parent = <&gic>;
+-			interrupts = <GIC_SPI 133 IRQ_TYPE_NONE>,
+-				     <GIC_SPI 134 IRQ_TYPE_NONE>,
+-				     <GIC_SPI 135 IRQ_TYPE_NONE>,
+-				     <GIC_SPI 136 IRQ_TYPE_NONE>;
++			interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
+ 			brcm,pcie-msi-inten;
+ 		};
+ 	};
+@@ -570,7 +570,7 @@
+ 
+ 		#interrupt-cells = <1>;
+ 		interrupt-map-mask = <0 0 0 0>;
+-		interrupt-map = <0 0 0 0 &gic GIC_SPI 143 IRQ_TYPE_NONE>;
++		interrupt-map = <0 0 0 0 &gic GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 		linux,pci-domain = <2>;
+ 
+@@ -593,10 +593,10 @@
+ 			compatible = "brcm,iproc-msi";
+ 			msi-controller;
+ 			interrupt-parent = <&gic>;
+-			interrupts = <GIC_SPI 139 IRQ_TYPE_NONE>,
+-				     <GIC_SPI 140 IRQ_TYPE_NONE>,
+-				     <GIC_SPI 141 IRQ_TYPE_NONE>,
+-				     <GIC_SPI 142 IRQ_TYPE_NONE>;
++			interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>;
+ 			brcm,pcie-msi-inten;
+ 		};
+ 	};
 
 
