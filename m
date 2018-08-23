@@ -2,117 +2,149 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD82C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 13:45:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D14C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 13:45:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 351A82075E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 13:45:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 351A82075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id F3575208B1
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 13:45:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="rdtvm0Bg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3575208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732543AbeHWROp (ORCPT
+        id S1732604AbeHWRPO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 13:14:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49230 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728617AbeHWROp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 13:14:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 02A35ACA4;
-        Thu, 23 Aug 2018 13:44:56 +0000 (UTC)
-From:   Vlastimil Babka <vbabka@suse.cz>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, stable@vger.kernel.org,
-        Christopher Snowhill <kode54@gmail.com>,
-        xxxxxx xxxxxx <xxxxxx@xxxxxx.xxx>
-Subject: [PATCH] x86/speculation/l1tf: fix off-by-one error when warning that system has too much RAM
-Date:   Thu, 23 Aug 2018 15:44:18 +0200
-Message-Id: <20180823134418.17008-1-vbabka@suse.cz>
-X-Mailer: git-send-email 2.18.0
+        Thu, 23 Aug 2018 13:15:14 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:60220 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728617AbeHWRPO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 13:15:14 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7NDiJSW143843;
+        Thu, 23 Aug 2018 13:45:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=gedQRnJ6r+BhaBHHBzDLjul3gWAh6rbwqicjgeQkR2o=;
+ b=rdtvm0BguBz7ZswKE6aBtCHOV06vJeuJEGXY4+F16gxaOK7ENzCq/D16XK1EU/hZ/NNl
+ ZcRPddzPv8Fgrn0Hakr3nKY1BFIgruak1U0rRrI9ZT4+Jb2GwowM88S4Yrn4stFUt/OQ
+ JSZaQPqmLYhU5ksPRw9t++kmQydzhJeEMAY6ZVRF3Qa899q9euwMqpDQVXIJUtrSx/GA
+ rcTx+re7xv7n+g29lxdTa9f3/EV4/G8ZCrK/Ka+wZXzVkEJhq4VBSE383KM//qImt7XV
+ k7aq9YVpCoyxTQTLd4sWQsQxquyNncrsthMXUWNj3yQwGNfk7UV0jItYrM0PVuU1mRKH /w== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2kxc3r1fdf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 Aug 2018 13:45:18 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7NDjHwX015207
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 Aug 2018 13:45:17 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7NDjGo5025163;
+        Thu, 23 Aug 2018 13:45:17 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 23 Aug 2018 06:45:16 -0700
+Subject: Re: [PATCH] xen/gntdev: fix up blockable calls to mn_invl_range_start
+To:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        linux-mm@kvack.org, xen-devel@lists.xenproject.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>, Juergen Gross <jgross@suse.com>
+References: <20180823120707.10998-1-mhocko@kernel.org>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <565d0ef0-4723-bd1b-95de-cb9aba50fe20@oracle.com>
+Date:   Thu, 23 Aug 2018 09:46:40 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180823120707.10998-1-mhocko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8993 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=931
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808230147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Two users have reported [1] that they have an "extremely unlikely" system
-with more than MAX_PA/2 memory and L1TF mitigation is not effective. In fact
-it's a CPU with 36bits phys limit (64GB) and 32GB memory, but due to holes
-in the e820 map, the main region is almost 500MB over the 32GB limit:
+On 08/23/2018 08:07 AM, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+>
+> 93065ac753e4 ("mm, oom: distinguish blockable mode for mmu notifiers")
+> has introduced blockable parameter to all mmu_notifiers and the notifier
+> has to back off when called in !blockable case and it could block down
+> the road.
+>
+> The above commit implemented that for mn_invl_range_start but both
+> in_range checks are done unconditionally regardless of the blockable
+> mode and as such they would fail all the time for regular calls.
+> Fix this by checking blockable parameter as well.
+>
+> Once we are there we can remove the stale TODO. The lock has to be
+> sleepable because we wait for completion down in gnttab_unmap_refs_sync.
+>
+> Fixes: 93065ac753e4 ("mm, oom: distinguish blockable mode for mmu notifiers")
+> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Cc: Juergen Gross <jgross@suse.com>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-[    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000081effffff] usable
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracel.com>
 
-Suggestions to use 'mem=32G' to prefer L1TF mitigation while losing the 500MB
-revealed, that there's an off-by-one error in the check in
-l1tf_select_mitigation(). l1tf_pfn_limit() returns the last usable pfn
-(inclusive), but it's more common and hopefully less error-prone to return the
-first pfn that's over limit, so this patch changes that and updates the other
-callers.
-
-[1] https://bugzilla.suse.com/show_bug.cgi?id=1105536
-
-Reported-by: xxxxxx xxxxxx <xxxxxx@xxxxxx.xxx>
-Reported-by: Christopher Snowhill <kode54@gmail.com>
-Fixes: 17dbca119312 ("x86/speculation/l1tf: Add sysfs reporting for l1tf")
-Cc: stable@vger.kernel.org
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- arch/x86/include/asm/processor.h | 2 +-
- arch/x86/mm/init.c               | 2 +-
- arch/x86/mm/mmap.c               | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index a0a52274cb4a..c24297268ebc 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -183,7 +183,7 @@ extern void cpu_detect(struct cpuinfo_x86 *c);
- 
- static inline unsigned long long l1tf_pfn_limit(void)
- {
--	return BIT_ULL(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
-+	return BIT_ULL(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT);
- }
- 
- extern void early_cpu_init(void);
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index 02de3d6065c4..63a6f9fcaf20 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -923,7 +923,7 @@ unsigned long max_swapfile_size(void)
- 
- 	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
- 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
--		unsigned long long l1tf_limit = l1tf_pfn_limit() + 1;
-+		unsigned long long l1tf_limit = l1tf_pfn_limit();
- 		/*
- 		 * We encode swap offsets also with 3 bits below those for pfn
- 		 * which makes the usable limit higher.
-diff --git a/arch/x86/mm/mmap.c b/arch/x86/mm/mmap.c
-index f40ab8185d94..1e95d57760cf 100644
---- a/arch/x86/mm/mmap.c
-+++ b/arch/x86/mm/mmap.c
-@@ -257,7 +257,7 @@ bool pfn_modify_allowed(unsigned long pfn, pgprot_t prot)
- 	/* If it's real memory always allow */
- 	if (pfn_valid(pfn))
- 		return true;
--	if (pfn > l1tf_pfn_limit() && !capable(CAP_SYS_ADMIN))
-+	if (pfn >= l1tf_pfn_limit() && !capable(CAP_SYS_ADMIN))
- 		return false;
- 	return true;
- }
--- 
-2.18.0
 
