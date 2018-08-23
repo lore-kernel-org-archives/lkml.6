@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3CECC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E68EEC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 761E821473
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:57:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 761E821473
+	by mail.kernel.org (Postfix) with ESMTP id AFEA121473
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFEA121473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727765AbeHWL0T (ORCPT
+        id S1727798AbeHWL0W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:26:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41684 "EHLO
+        Thu, 23 Aug 2018 07:26:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41698 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbeHWL0S (ORCPT
+        with ESMTP id S1726995AbeHWL0W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:26:18 -0400
+        Thu, 23 Aug 2018 07:26:22 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2C2E19D2;
-        Thu, 23 Aug 2018 07:57:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 59BD9ACC;
+        Thu, 23 Aug 2018 07:57:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Ajay Gupta <ajaykuee@gmail.com>,
+        Nagaraj Annaiah <naga.annaiah@gmail.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 25/79] ARM: dts: am437x: make edt-ft5x06 a wakeup source
-Date:   Thu, 23 Aug 2018 09:53:01 +0200
-Message-Id: <20180823074920.351461245@linuxfoundation.org>
+Subject: [PATCH 4.4 26/79] usb: xhci: increase CRS timeout value
+Date:   Thu, 23 Aug 2018 09:53:02 +0200
+Message-Id: <20180823074920.443357292@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -51,31 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Mack <daniel@zonque.org>
+From: Ajay Gupta <ajaykuee@gmail.com>
 
-[ Upstream commit 49a6ec5b807ea4ad7ebe1f58080ebb8497cb2d2c ]
+[ Upstream commit 305886ca87be480ae159908c2affd135c04215cf ]
 
-The touchscreen driver no longer configures the device as wakeup source by
-default. A "wakeup-source" property is needed.
+Some controllers take almost 55ms to complete controller
+restore state (CRS).
+There is no timeout limit mentioned in xhci specification so
+fixing the issue by increasing the timeout limit to 100ms
 
-Signed-off-by: Daniel Mack <daniel@zonque.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+[reformat code comment -Mathias]
+Signed-off-by: Ajay Gupta <ajaykuee@gmail.com>
+Signed-off-by: Nagaraj Annaiah <naga.annaiah@gmail.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/am437x-sk-evm.dts |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/host/xhci.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/am437x-sk-evm.dts
-+++ b/arch/arm/boot/dts/am437x-sk-evm.dts
-@@ -508,6 +508,8 @@
- 
- 		touchscreen-size-x = <480>;
- 		touchscreen-size-y = <272>;
-+
-+		wakeup-source;
- 	};
- 
- 	tlv320aic3106: tlv320aic3106@1b {
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -1052,8 +1052,13 @@ int xhci_resume(struct xhci_hcd *xhci, b
+ 		command = readl(&xhci->op_regs->command);
+ 		command |= CMD_CRS;
+ 		writel(command, &xhci->op_regs->command);
++		/*
++		 * Some controllers take up to 55+ ms to complete the controller
++		 * restore so setting the timeout to 100ms. Xhci specification
++		 * doesn't mention any timeout value.
++		 */
+ 		if (xhci_handshake(&xhci->op_regs->status,
+-			      STS_RESTORE, 0, 10 * 1000)) {
++			      STS_RESTORE, 0, 100 * 1000)) {
+ 			xhci_warn(xhci, "WARN: xHC restore state timeout\n");
+ 			spin_unlock_irq(&xhci->lock);
+ 			return -ETIMEDOUT;
 
 
