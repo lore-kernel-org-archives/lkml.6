@@ -2,170 +2,89 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F952C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9269AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03A6E208FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:31:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03A6E208FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 44B4C20C0D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:33:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44B4C20C0D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbeHWK7x (ORCPT
+        id S1726845AbeHWLBW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 06:59:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55380 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726068AbeHWK7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 06:59:53 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D0802804BCF4;
-        Thu, 23 Aug 2018 07:31:34 +0000 (UTC)
-Received: from [10.36.117.65] (ovpn-117-65.ams2.redhat.com [10.36.117.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2BAEA2156889;
-        Thu, 23 Aug 2018 07:31:33 +0000 (UTC)
-Subject: Re: [PATCH v2 5/5] KVM: s390: vsie: Do the CRYCB validation first
-To:     pmorel@linux.ibm.com
-Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-References: <1534956717-14087-1-git-send-email-pmorel@linux.ibm.com>
- <1534956717-14087-6-git-send-email-pmorel@linux.ibm.com>
- <e985a036-1b19-0feb-e50c-d55dec3dc9e7@redhat.com>
- <01047750-cdc6-b462-1e4f-c79c1036ab94@linux.ibm.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <18c65e67-c5e6-9c2f-e7ab-962376427369@redhat.com>
-Date:   Thu, 23 Aug 2018 09:31:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 23 Aug 2018 07:01:22 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:41185 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726068AbeHWLBW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 07:01:22 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="43835116"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 23 Aug 2018 15:33:04 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 0F9D74B69E17;
+        Thu, 23 Aug 2018 15:33:00 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 23 Aug 2018 15:33:06 +0800
+Date:   Thu, 23 Aug 2018 15:30:15 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Baoquan He <bhe@redhat.com>
+CC:     <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <keescook@chromium.org>, <n-horiguchi@ah.jp.nec.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
+        <douly.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v5 3/4] x86/boot/KASLR: Walk srat tables to filter
+ immovable memory
+Message-ID: <20180823073015.GB6769@localhost.localdomain>
+References: <20180807065000.30958-1-fanc.fnst@cn.fujitsu.com>
+ <20180807065000.30958-4-fanc.fnst@cn.fujitsu.com>
+ <20180823072535.GL29313@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-In-Reply-To: <01047750-cdc6-b462-1e4f-c79c1036ab94@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 23 Aug 2018 07:31:34 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 23 Aug 2018 07:31:34 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180823072535.GL29313@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 0F9D74B69E17.ABC5B
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.08.2018 09:17, Pierre Morel wrote:
-> On 22/08/2018 19:15, David Hildenbrand wrote:
->> On 22.08.2018 18:51, Pierre Morel wrote:
->>> When entering the SIE the CRYCB validation better
->>> be done independently of the instruction's
->>> availability.
->>>
->>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->>> ---
->>>   arch/s390/kvm/vsie.c | 11 ++++++-----
->>>   1 file changed, 6 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
->>> index 7ee4329..fca25aa 100644
->>> --- a/arch/s390/kvm/vsie.c
->>> +++ b/arch/s390/kvm/vsie.c
->>> @@ -164,17 +164,18 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->>>   	/* format-1 is supported with message-security-assist extension 3 */
->>>   	if (!test_kvm_facility(vcpu->kvm, 76))
->>>   		return 0;
->>> -	/* we may only allow it if enabled for guest 2 */
->>> -	ecb3_flags = scb_o->ecb3 & vcpu->arch.sie_block->ecb3 &
->>> -		     (ECB3_AES | ECB3_DEA);
->>> -	if (!ecb3_flags)
->>> -		return 0;
->>>   
->>>   	if ((crycb_addr & PAGE_MASK) != ((crycb_addr + 128) & PAGE_MASK))
->>>   		return set_validity_icpt(scb_s, 0x003CU);
->>>   	if (!crycb_addr)
->>>   		return set_validity_icpt(scb_s, 0x0039U);
->>>   
->>> +	/* we may only allow it if enabled for guest 2 */
->>> +	ecb3_flags = scb_o->ecb3 & vcpu->arch.sie_block->ecb3 &
->>> +		     (ECB3_AES | ECB3_DEA);
->>> +	if (!ecb3_flags)
->>> +		return 0;
->>> +
->>>   	/* copy only the wrapping keys */
->>>   	if (read_guest_real(vcpu, crycb_addr + 72,
->>>   			    vsie_page->crycb.dea_wrapping_key_mask, 56))
->>>
->>
->> That makes sense, especially if ECB3_AES is used but effectively turned
->> off by us.
->>
->> What is the expected behavior if ECB3_AES | ECB3_DEA are not set by g2
->> for g3?
->>
-> 
-> The use of functions PCKMO-Encrypt-DEA/AES induce a specification error.
-> 
-> However other MSA3 function will continue to be usable.
+On Thu, Aug 23, 2018 at 03:25:35PM +0800, Baoquan He wrote:
+[...]
+>> +static void handle_immovable_mem(void)
+>> +{
+>> +	char *args = (char *)get_cmd_line_ptr();
+>> +	struct acpi_table_header *table_header;
+>> +	struct acpi_subtable_header *table;
+>> +	struct acpi_srat_mem_affinity *ma;
+>> +	unsigned long table_end;
+>> +	int i = 0;
+>> +
+>> +	if (!strstr(args, "movable_node"))
+>
+>If 'acpi=off' specified, better return too here.
 
-No, I meant which checks should be performed here.
-
-> 
-> Regards,
-> Pierre
-> 
-
-
--- 
+Thanks, you are right.
+Yes, I will think about it and add it to a suitable place.
+May the position where we try to get the acpi table is better.
+Or just here is also OK.
 
 Thanks,
+Chao Fan
 
-David / dhildenb
+>
+
+
+
