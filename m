@@ -6,35 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D795C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 000BEC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E566E208DC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E566E208DC
+	by mail.kernel.org (Postfix) with ESMTP id A8C05208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8C05208D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730902AbeHWL5p (ORCPT
+        id S1730921AbeHWL5s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:57:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47542 "EHLO
+        Thu, 23 Aug 2018 07:57:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47564 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729624AbeHWL5p (ORCPT
+        with ESMTP id S1729580AbeHWL5s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:57:45 -0400
+        Thu, 23 Aug 2018 07:57:48 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0259C93;
-        Thu, 23 Aug 2018 08:29:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B3624C83;
+        Thu, 23 Aug 2018 08:29:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junwei Zhang <Jerry.Zhang@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 128/217] drm/amdgpu: fix swapped emit_ib_size in vce3
-Date:   Thu, 23 Aug 2018 09:54:01 +0200
-Message-Id: <20180823075511.321104967@linuxfoundation.org>
+Subject: [PATCH 4.14 129/217] x86/mm/32: Initialize the CR4 shadow before __flush_tlb_all()
+Date:   Thu, 23 Aug 2018 09:54:02 +0200
+Message-Id: <20180823075511.382511531@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,39 +56,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Zhenzhong Duan <zhenzhong.duan@oracle.com>
 
-[ Upstream commit 0859df22ab7cfb3ad2df2caed76cadce6ac33a80 ]
+[ Upstream commit 4fb5f58e8d191f7c81637ad81284e4848afb4244 ]
 
-The phys and vm versions had the values swapped.
+On 32-bit kernels, __flush_tlb_all() may have read the CR4 shadow before the
+initialization of CR4 shadow in cpu_init().
 
-Reviewed-by: Junwei Zhang <Jerry.Zhang@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fix it by adding an explicit cr4_init_shadow() call into start_secondary()
+which is the first function called on non-boot SMP CPUs - ahead of the
+__flush_tlb_all() call.
+
+( This is somewhat of a layering violation, but start_secondary() does
+  CR4 bootstrap in the PCID case anyway. )
+
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Link: http://lkml.kernel.org/r/b07b6ae9-4b57-4b40-b9bc-50c2c67f1d91@default
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/vce_v3_0.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/smpboot.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c
-@@ -899,7 +899,7 @@ static const struct amdgpu_ring_funcs vc
- 	.emit_frame_size =
- 		4 + /* vce_v3_0_emit_pipeline_sync */
- 		6, /* amdgpu_vce_ring_emit_fence x1 no user fence */
--	.emit_ib_size = 5, /* vce_v3_0_ring_emit_ib */
-+	.emit_ib_size = 4, /* amdgpu_vce_ring_emit_ib */
- 	.emit_ib = amdgpu_vce_ring_emit_ib,
- 	.emit_fence = amdgpu_vce_ring_emit_fence,
- 	.test_ring = amdgpu_vce_ring_test_ring,
-@@ -923,7 +923,7 @@ static const struct amdgpu_ring_funcs vc
- 		6 + /* vce_v3_0_emit_vm_flush */
- 		4 + /* vce_v3_0_emit_pipeline_sync */
- 		6 + 6, /* amdgpu_vce_ring_emit_fence x2 vm fence */
--	.emit_ib_size = 4, /* amdgpu_vce_ring_emit_ib */
-+	.emit_ib_size = 5, /* vce_v3_0_ring_emit_ib */
- 	.emit_ib = vce_v3_0_ring_emit_ib,
- 	.emit_vm_flush = vce_v3_0_emit_vm_flush,
- 	.emit_pipeline_sync = vce_v3_0_emit_pipeline_sync,
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -223,6 +223,11 @@ static void notrace start_secondary(void
+ #ifdef CONFIG_X86_32
+ 	/* switch away from the initial page table */
+ 	load_cr3(swapper_pg_dir);
++	/*
++	 * Initialize the CR4 shadow before doing anything that could
++	 * try to read it.
++	 */
++	cr4_init_shadow();
+ 	__flush_tlb_all();
+ #endif
+ 	load_current_idt();
 
 
