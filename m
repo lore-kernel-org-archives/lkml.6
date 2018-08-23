@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56BC9C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 984A3C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BD90208CC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BD90208CC
+	by mail.kernel.org (Postfix) with ESMTP id 55CDD208CC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55CDD208CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388398AbeHWM37 (ORCPT
+        id S2388412AbeHWMaC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:29:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55612 "EHLO
+        Thu, 23 Aug 2018 08:30:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55626 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbeHWM37 (ORCPT
+        with ESMTP id S1726277AbeHWMaC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:29:59 -0400
+        Thu, 23 Aug 2018 08:30:02 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21E06CA5;
-        Thu, 23 Aug 2018 09:01:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4710BCA0;
+        Thu, 23 Aug 2018 09:01:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nishanth Menon <nm@ti.com>,
+        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
         Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 247/324] ARM: DRA7/OMAP5: Enable ACTLR[0] (Enable invalidates of BTB) for secondary cores
-Date:   Thu, 23 Aug 2018 09:55:13 +0200
-Message-Id: <20180823075008.431936006@linuxfoundation.org>
+Subject: [PATCH 4.17 248/324] ARM: dts: am3517.dtsi:  Disable reference to OMAP3 OTG controller
+Date:   Thu, 23 Aug 2018 09:55:14 +0200
+Message-Id: <20180823075008.479474427@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,87 +51,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nishanth Menon <nm@ti.com>
+From: Adam Ford <aford173@gmail.com>
 
-[ Upstream commit 2f8b5b21830aea95989a6e67d8a971297272a086 ]
+[ Upstream commit 923847413f7316b5ced3491769b3fefa6c56a79a ]
 
-Call secure services to enable ACTLR[0] (Enable invalidates of BTB with
-ICIALLU) when branch hardening is enabled for kernel.
+The AM3517 has a different OTG controller location than the OMAP3,
+which is included from omap3.dtsi.  This results in a hwmod error.
+Since the AM3517 has a different OTG controller address, this patch
+disabes one that is isn't available.
 
-On GP devices OMAP5/DRA7, there is no possibility to update secure
-side since "secure world" is ROM and there are no override mechanisms
-possible. On HS devices, appropriate PPA should do the workarounds as
-well.
-
-However, the configuration is only done for secondary core, since it is
-expected that firmware/bootloader will have enabled the required
-configuration for the primary boot core (note: bootloaders typically
-will NOT enable secondary processors, since it has no need to do so).
-
-Signed-off-by: Nishanth Menon <nm@ti.com>
+Signed-off-by: Adam Ford <aford173@gmail.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-omap2/omap-smp.c |   41 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ arch/arm/boot/dts/am3517.dtsi |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/arch/arm/mach-omap2/omap-smp.c
-+++ b/arch/arm/mach-omap2/omap-smp.c
-@@ -109,6 +109,45 @@ void omap5_erratum_workaround_801819(voi
- static inline void omap5_erratum_workaround_801819(void) { }
- #endif
+--- a/arch/arm/boot/dts/am3517.dtsi
++++ b/arch/arm/boot/dts/am3517.dtsi
+@@ -91,6 +91,11 @@
+ 	};
+ };
  
-+#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
-+/*
-+ * Configure ACR and enable ACTLR[0] (Enable invalidates of BTB with
-+ * ICIALLU) to activate the workaround for secondary Core.
-+ * NOTE: it is assumed that the primary core's configuration is done
-+ * by the boot loader (kernel will detect a misconfiguration and complain
-+ * if this is not done).
-+ *
-+ * In General Purpose(GP) devices, ACR bit settings can only be done
-+ * by ROM code in "secure world" using the smc call and there is no
-+ * option to update the "firmware" on such devices. This also works for
-+ * High security(HS) devices, as a backup option in case the
-+ * "update" is not done in the "security firmware".
-+ */
-+static void omap5_secondary_harden_predictor(void)
-+{
-+	u32 acr, acr_mask;
++/* Table Table 5-79 of the TRM shows 480ab000 is reserved */
++&usb_otg_hs {
++	status = "disabled";
++};
 +
-+	asm volatile ("mrc p15, 0, %0, c1, c0, 1" : "=r" (acr));
-+
-+	/*
-+	 * ACTLR[0] (Enable invalidates of BTB with ICIALLU)
-+	 */
-+	acr_mask = BIT(0);
-+
-+	/* Do we already have it done.. if yes, skip expensive smc */
-+	if ((acr & acr_mask) == acr_mask)
-+		return;
-+
-+	acr |= acr_mask;
-+	omap_smc1(OMAP5_DRA7_MON_SET_ACR_INDEX, acr);
-+
-+	pr_debug("%s: ARM ACR setup for CVE_2017_5715 applied on CPU%d\n",
-+		 __func__, smp_processor_id());
-+}
-+#else
-+static inline void omap5_secondary_harden_predictor(void) { }
-+#endif
-+
- static void omap4_secondary_init(unsigned int cpu)
- {
- 	/*
-@@ -131,6 +170,8 @@ static void omap4_secondary_init(unsigne
- 		set_cntfreq();
- 		/* Configure ACR to disable streaming WA for 801819 */
- 		omap5_erratum_workaround_801819();
-+		/* Enable ACR to allow for ICUALLU workaround */
-+		omap5_secondary_harden_predictor();
- 	}
- 
- 	/*
+ &iva {
+ 	status = "disabled";
+ };
 
 
