@@ -2,125 +2,210 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2CDC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 01:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58171C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 01:36:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D3D0208CD
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 01:34:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D3D0208CD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id ECA74208D5
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 01:36:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="0ZbgcEV5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECA74208D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbeHWFBR (ORCPT
+        id S1727162AbeHWFDy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 01:01:17 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48363 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726233AbeHWFBR (ORCPT
+        Thu, 23 Aug 2018 01:03:54 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36833 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726204AbeHWFDy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 01:01:17 -0400
-Received: from mail-pl0-f71.google.com ([209.85.160.71])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1fseVe-0001mq-64
-        for linux-kernel@vger.kernel.org; Thu, 23 Aug 2018 01:34:02 +0000
-Received: by mail-pl0-f71.google.com with SMTP id e8-v6so1742740plt.4
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 18:34:02 -0700 (PDT)
+        Thu, 23 Aug 2018 01:03:54 -0400
+Received: by mail-wr1-f68.google.com with SMTP id m27-v6so3146508wrf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 18:36:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=gfYO0GBE+r+UEJlJxdr+644ej6McVRAnI+QcuUQUj3U=;
+        b=0ZbgcEV5RmKlZqbSQuMV0lTqdBYvN22G6YQfuPblikHYsrR4rjkXL1W3TOQMzJSplI
+         AirsW/UOQHtgQLs50SjFvhEekduBecjIi9sIQHO5sjJ+LRGL2re2zFD00G86IPDyPD1n
+         segmPQRL/vrkhHasw7CTHom8LQKebdeciP8zLFPe1b+8ueAxl00S/aWta8GWhMSNyedo
+         J9B5CLjmUxjYKX0RP7rOLKfCAHz9J91syPo0ZsB7YHvj8uXUd09Kr6GSQ+2WhiH3ponP
+         4huM7mMBMqkoqdcQaxZ17RdIQWU/SxY5YFIgdPn9chT7q8hfHvqxcRAw8UMHxMVhf5le
+         HIIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=V4D7UkXXWqrBPxImEp3Uu9sddqFo5Agazjl0MV7sERg=;
-        b=p8UFeBCXZIKsUA06vPYiow8XlDcXMfTqKUR/QPWbfnBYLjiP/DWs13bM6/aho5oY03
-         r8fynDjByMujxenG05p43xOB4wn0VuYZyCBkTUjQh5pvHwZ6UD40VFDbJPE5Ynhd5Trq
-         V4a1+LmslHCLMrM2H9TN0PRGZ9zV1slQ4Ep+0Iy5pKb7aXsKD/gLjO+fHQ6G6cgb7xxd
-         t8CfHeyNxwzulFi58biuovKcrvr7y5ow7csTRUnxF0O1Kgiri0KV50y+3RH320Gcz7Du
-         FPC62j72vLDW2p0h3S7EkqHOGMirGrmTYBjAPV1Ysf64y/vGQH2Kr7aDNS3Pgm8Xnlpr
-         ZBzA==
-X-Gm-Message-State: AOUpUlHhJAM9/3vBxPZsRJ+9VElPGQp3guZA0Dhuw8CINQB/wDTB6lCD
-        GLVQUvvC3HVqe0gS9knKuDV8OWfsCanjZIETNpJtvuS2n4ncKB3WUCZ2+SIEToNTzabToRfxdjD
-        8SD9gkifDo+9vdmtmGsbGcmNCwSUeCEkim0X48SCdAQ==
-X-Received: by 2002:a17:902:b784:: with SMTP id e4-v6mr26250414pls.204.1534988040923;
-        Wed, 22 Aug 2018 18:34:00 -0700 (PDT)
-X-Google-Smtp-Source: AA+uWPw8awKZNw3cgpMUSzvnAH2Ghmh6C4eCmNyRmyitgk5r3w6MrSosU0ELkbAMg4WVpLjQAA7OsA==
-X-Received: by 2002:a17:902:b784:: with SMTP id e4-v6mr26250400pls.204.1534988040554;
-        Wed, 22 Aug 2018 18:34:00 -0700 (PDT)
-Received: from [192.168.1.206] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
-        by smtp.gmail.com with ESMTPSA id l85-v6sm5072926pfk.34.2018.08.22.18.33.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Aug 2018 18:34:00 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH] ath9k: turn on btcoex_enable as default
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <6A0F65EF-A7C4-469F-8FAF-CBE314676237@canonical.com>
-Date:   Thu, 23 Aug 2018 09:33:56 +0800
-Cc:     Kalle Valo <kvalo@codeaurora.org>, ath9k-devel@qca.qualcomm.com,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-Message-Id: <9AF82E83-2EBE-4076-BAFA-EEA44B1DB423@canonical.com>
-References: <20180208052801.15670-1-kai.heng.feng@canonical.com>
- <56d650e6-d26f-087c-4e86-2e5d4e859414@nbd.name>
- <A5972CE9-8325-404A-A63D-ED29E44FB67B@canonical.com>
- <87k1vmeip8.fsf@kamboji.qca.qualcomm.com>
- <E500FA42-23F1-433F-9BFB-78A2FD1946AF@canonical.com>
- <7170e2d5-a59d-8260-fa8e-f02f583b773f@nbd.name>
- <6A0F65EF-A7C4-469F-8FAF-CBE314676237@canonical.com>
-To:     Felix Fietkau <nbd@nbd.name>
-X-Mailer: Apple Mail (2.3445.9.1)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=gfYO0GBE+r+UEJlJxdr+644ej6McVRAnI+QcuUQUj3U=;
+        b=UCXMN1TCUTs5umeIiklexLW694oVo6dKjO7U18R7LWOb69GUxIZLQee4xNpBV/p+i3
+         pybb7c6FidRdFVg5q61KUSKQcJAFA8N73ksh+xF9ACOqDBu+c216FNabIoful/nmzDDn
+         RElLy0MZWmDi1PAf775hSzk2BAH1Zq+q+pXb68GkE09EE4IPJgMNrQ9NG4u5NWuVLLg4
+         X2zAIjC2qwsj9O/s3d8jlkvSNIZPhMSCCZ3a2YSms2tbIr4RU2tmwmDC7aP1tTT0/Azi
+         Sum9kW8IIXK3bi06QkezRmqKXI8f5tCA5iUmfgMq2lIVasixyDeq7GeE6Evr+bRSZwRK
+         dR8Q==
+X-Gm-Message-State: APzg51CeWpZ1SyJvwB3fl22w6Qv+zPO0ObeAZhdV9fjfAwg9tKy5/CJG
+        IIPnnGFg0tCB8lAAL+eEIaCOOUtTAs2Ac3uaTF22Gg==
+X-Google-Smtp-Source: ANB0VdaDheTETmGkVGGT9ad9r2UunGxVkPK0KCHog0imGV4qOLyB36UXQD2vpN0ydPAm1hpr7i6zg21fNEGMaf4s6+M=
+X-Received: by 2002:a5d:4c45:: with SMTP id n5-v6mr11534639wrt.71.1534988199338;
+ Wed, 22 Aug 2018 18:36:39 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Wed, 22 Aug 2018 18:36:18 -0700 (PDT)
+In-Reply-To: <CAG48ez3fyav-cw-PP+45UwZLy6RjoDAwVgbpziKTj-pnB3zrYg@mail.gmail.com>
+References: <20180807012257.20157-1-jannh@google.com> <C6369CAA-CBB8-420F-97DB-7A242D9650A8@amacapital.net>
+ <CAG48ez0c0L+WyfjDcfx=3wDwOQDOSJM-2JSVUBoWJCaKDVEfbw@mail.gmail.com>
+ <CALCETrU6gUBiTkpAUKh97y2R1cSftbMcfSTnSYxhZFRKf7vGWQ@mail.gmail.com> <CAG48ez3fyav-cw-PP+45UwZLy6RjoDAwVgbpziKTj-pnB3zrYg@mail.gmail.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Wed, 22 Aug 2018 18:36:18 -0700
+Message-ID: <CALCETrXDHE7CJ+vN7hcPaRfn1f5kEiY8u=hxp1TuRZn_r6A3pQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] x86: WARN() when uaccess helpers fault on kernel addresses
+To:     Jann Horn <jannh@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 12:15, Kai Heng Feng <kai.heng.feng@canonical.com> wrote:
-
->
->
->> On 10 Feb 2018, at 10:05 PM, Felix Fietkau <nbd@nbd.name> wrote:
+On Wed, Aug 22, 2018 at 5:55 PM, Jann Horn <jannh@google.com> wrote:
+> On Thu, Aug 23, 2018 at 2:28 AM Andy Lutomirski <luto@amacapital.net> wrote:
 >>
->> On 2018-02-10 14:56, Kai Heng Feng wrote:
->>>> On 9 Feb 2018, at 3:16 PM, Kalle Valo <kvalo@codeaurora.org> wrote:
->>>> Sure, but we have to make sure that we don't create regressions on
->>>> existing systems. For example, did you test this with any system which
->>>> don't support btcoex? (just asking, haven't tested this myself)
->>>
->>> No not really, but I will definitely test it.
->>> The only module I have that uses ath9k is Dell’s DW1707.
->>> How do I check if it support btcoex or not?
->> I just reviewed the code again, and I am sure that we cannot merge this
->> patch. Enabling the btcoex parameter makes the driver enable a whole
->> bunch of code starting timers, listening to some GPIOs, etc.
+>> On Wed, Aug 22, 2018 at 4:53 PM, Jann Horn <jannh@google.com> wrote:
+>> > On Tue, Aug 7, 2018 at 4:55 AM Andy Lutomirski <luto@amacapital.net> wrote:
+>> >> > On Aug 6, 2018, at 6:22 PM, Jann Horn <jannh@google.com> wrote:
+>> >> > There have been multiple kernel vulnerabilities that permitted userspace to
+>> >> > pass completely unchecked pointers through to userspace accessors:
+>> >> >
+>> >> > - the waitid() bug - commit 96ca579a1ecc ("waitid(): Add missing
+>> >> >  access_ok() checks")
+>> >> > - the sg/bsg read/write APIs
+>> >> > - the infiniband read/write APIs
+>> >> >
+>> >> > These don't happen all that often, but when they do happen, it is hard to
+>> >> > test for them properly; and it is probably also hard to discover them with
+>> >> > fuzzing. Even when an unmapped kernel address is supplied to such buggy
+>> >> > code, it just returns -EFAULT instead of doing a proper BUG() or at least
+>> >> > WARN().
+>> >> >
+>> >> > This patch attempts to make such misbehaving code a bit more visible by
+>> >> > WARN()ing in the pagefault handler code when a userspace accessor causes
+>> >> > #PF on a kernel address and the current context isn't whitelisted.
+>> >>
+>> >> I like this a lot, and, in fact, I once wrote a patch to do something similar. It was before the fancy extable code, though, so it was a mess.  Here are some thoughts:
+>> >>
+>> >> - It should be three patches. One patch to add the _UA annotations, one to improve the info passes to the handlers, and one to change behavior.
+>> >>
+>> >> - You should pass the vector, the error code, and the address to the handler.
+>> >
+>> > I'm polishing the patch a bit, and I've noticed that to plumb the
+>> > error code and address through properly, I might need significantly
+>> > more code churn because of kprobes - I want to make sure I'm not going
+>> > down the completely wrong path here.
+>> >
+>> > I'm extending fixup_exception() to take two extra args "unsigned long
+>> > error_code, unsigned long fault_addr". Most callers of
+>> > fixup_exception() are fairly straightforward, but
+>> > kprobe_fault_handler() has a dozen callchains from different exception
+>> > handlers, and most of them are coming via notify_die().
 >>
->> On non-btcoex systems, some of those GPIOs might be floating or even
->> connected to different things, which could cause a lot of undefined
->> behavior.
+>> KILL IT WITH FIRE!!!!!!!!
 >>
->> This is simply too big a risk, so there absolutely needs to be a
->> whitelist for systems that need this, otherwise it has to remain
->> disabled by default.
+>> More seriously, kill kprobe_exceptions_notify() and just fold the
+>> contents into do_general_protection().  This notifier chain crap is
+>> incomprehensible.  I would love to see notify_die() removed entirely,
+>> and crap like this is just more reason to want it gone.
 >
-> So what information can we use to whitelist btcoex chips?
-> Can we get btcoex support status at ath9k probing?
+> This isn't just do_general_protection() though, that's just one
+> example. As far as I can tell, similar stuff happens everywhere where
+> notify_die() is used - #DF, #BR, #BP, #MF and so on.
 
-Sorry for bringing this up again.
+True.  But there aren't actually that many places in the kernel that
+use die notifiers at all.  Here's the complete list, excluding non-x86
+arch-specific ones, annotated a bit:
 
-Is DMI based match an acceptable approach for ath9k?
+arch/x86/kernel/kgdb.c:    retval = register_die_notifier(&kgdb_notifier);
+arch/x86/kernel/kgdb.c:    unregister_die_notifier(&kgdb_notifier);
+arch/x86/kernel/kgdb.c:    unregister_die_notifier(&kgdb_notifier);
 
-Kai-Heng
+OK, maybe not totally crazy for kgdb.
 
->
-> Kai-Heng
->
->> - Felix
+arch/x86/mm/kasan_init_64.c:    register_die_notifier(&kasan_die_notifier);
 
+Should be in traps.c directly.
 
+arch/x86/mm/kmmio.c:    return register_die_notifier(&nb_die);
+arch/x86/mm/kmmio.c:    unregister_die_notifier(&nb_die);
+
+Should probably be in traps.c directly.
+
+drivers/bus/brcmstb_gisb.c:        register_die_notifier(&gisb_die_notifier);
+
+I don't know WTF this is, but it is certainly garbage if anyone ever
+tries to build this on x86.
+
+drivers/dma/sh/shdmac.c:    int err =
+register_die_notifier(&sh_dmae_nmi_notifier);
+drivers/dma/sh/shdmac.c:    unregister_die_notifier(&sh_dmae_nmi_notifier);
+
+SH-specific, I think.  Not really sure.
+
+drivers/firmware/google/gsmi.c:    register_die_notifier(&gsmi_die_notifier);
+drivers/firmware/google/gsmi.c:    unregister_die_notifier(&gsmi_die_notifier);
+
+This is actually an *oops* notifier.  That's totally reasonable, but
+it should be a separate OOPS notification chain.
+
+drivers/hv/vmbus_drv.c:        register_die_notifier(&hyperv_die_block);
+drivers/hv/vmbus_drv.c:        unregister_die_notifier(&hyperv_die_block);
+
+Appears to *want* to be an OOPS notifier, but it appears to be rather
+buggy and to actually catch everything.
+
+drivers/misc/sgi-xp/xpc_main.c:
+(void)unregister_die_notifier(&xpc_die_notifier);
+drivers/misc/sgi-xp/xpc_main.c:    ret =
+register_die_notifier(&xpc_die_notifier);
+drivers/misc/sgi-xp/xpc_main.c:
+(void)unregister_die_notifier(&xpc_die_notifier);
+
+Haven't looked.
+
+kernel/events/hw_breakpoint.c:    return
+register_die_notifier(&hw_breakpoint_exceptions_nb);
+
+This is an utter abomination and needs to be killed.  The #DB code is
+gnarly enough without this particular indirection.  I want to kill it
+on x86.  I have a big #DB cleanup series.  Maybe I'll do it.
+
+kernel/events/uprobes.c:    return register_die_notifier(&uprobe_exception_nb);
+
+For Pete's sake, the code should just call
+uprobe_pre_sstep_notifier(regs)) and uprobe_post_sstep_notifier(regs)
+directly.
+
+kernel/kprobes.c:        err = register_die_notifier(&kprobe_exceptions_nb);
+
+This is yours :)  And it is literally only hooking DIE_GPF.  Just make
+the body empty, add a comment like /* XXX: the core code expects this
+function to exist */ and call the hander from do_general_protection().
+
+kernel/trace/trace.c:    register_die_notifier(&trace_die_notifier);
+
+This is an OOPS notifier.
+
+In any event, the particular offending kprobe notifier is literally
+only checking for DIE_GPF.  So it really can be folded into
+do_general_protection().  Or you could add fault_address to die_args.
