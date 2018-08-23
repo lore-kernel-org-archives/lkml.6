@@ -2,148 +2,220 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BDEC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 13:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E72C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 13:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2987220836
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 13:13:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2987220836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D380A20847
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 13:15:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D380A20847
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729665AbeHWQnU (ORCPT
+        id S1729969AbeHWQop (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 12:43:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43668 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727392AbeHWQnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 12:43:19 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2393887A78;
-        Thu, 23 Aug 2018 13:13:39 +0000 (UTC)
-Received: from [10.36.117.65] (ovpn-117-65.ams2.redhat.com [10.36.117.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 72FADA9EA1;
-        Thu, 23 Aug 2018 13:13:37 +0000 (UTC)
-Subject: Re: [PATCH v3 1/3] KVM: s390: vsie: copy wrapping keys to right place
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
-References: <1535019956-23539-1-git-send-email-pmorel@linux.ibm.com>
- <1535019956-23539-2-git-send-email-pmorel@linux.ibm.com>
- <52c01a4c-48d4-30c7-a780-a33bcdd8accc@de.ibm.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwX4EEwECACgFAljj9eoCGwMFCQlmAYAGCwkI
- BwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEE3eEPcA/4Na5IIP/3T/FIQMxIfNzZshIq687qgG
- 8UbspuE/YSUDdv7r5szYTK6KPTlqN8NAcSfheywbuYD9A4ZeSBWD3/NAVUdrCaRP2IvFyELj
- xoMvfJccbq45BxzgEspg/bVahNbyuBpLBVjVWwRtFCUEXkyazksSv8pdTMAs9IucChvFmmq3
- jJ2vlaz9lYt/lxN246fIVceckPMiUveimngvXZw21VOAhfQ+/sofXF8JCFv2mFcBDoa7eYob
- s0FLpmqFaeNRHAlzMWgSsP80qx5nWWEvRLdKWi533N2vC/EyunN3HcBwVrXH4hxRBMco3jvM
- m8VKLKao9wKj82qSivUnkPIwsAGNPdFoPbgghCQiBjBe6A75Z2xHFrzo7t1jg7nQfIyNC7ez
- MZBJ59sqA9EDMEJPlLNIeJmqslXPjmMFnE7Mby/+335WJYDulsRybN+W5rLT5aMvhC6x6POK
- z55fMNKrMASCzBJum2Fwjf/VnuGRYkhKCqqZ8gJ3OvmR50tInDV2jZ1DQgc3i550T5JDpToh
- dPBxZocIhzg+MBSRDXcJmHOx/7nQm3iQ6iLuwmXsRC6f5FbFefk9EjuTKcLMvBsEx+2DEx0E
- UnmJ4hVg7u1PQ+2Oy+Lh/opK/BDiqlQ8Pz2jiXv5xkECvr/3Sv59hlOCZMOaiLTTjtOIU7Tq
- 7ut6OL64oAq+zsFNBFXLn5EBEADn1959INH2cwYJv0tsxf5MUCghCj/CA/lc/LMthqQ773ga
- uB9mN+F1rE9cyyXb6jyOGn+GUjMbnq1o121Vm0+neKHUCBtHyseBfDXHA6m4B3mUTWo13nid
- 0e4AM71r0DS8+KYh6zvweLX/LL5kQS9GQeT+QNroXcC1NzWbitts6TZ+IrPOwT1hfB4WNC+X
- 2n4AzDqp3+ILiVST2DT4VBc11Gz6jijpC/KI5Al8ZDhRwG47LUiuQmt3yqrmN63V9wzaPhC+
- xbwIsNZlLUvuRnmBPkTJwwrFRZvwu5GPHNndBjVpAfaSTOfppyKBTccu2AXJXWAE1Xjh6GOC
- 8mlFjZwLxWFqdPHR1n2aPVgoiTLk34LR/bXO+e0GpzFXT7enwyvFFFyAS0Nk1q/7EChPcbRb
- hJqEBpRNZemxmg55zC3GLvgLKd5A09MOM2BrMea+l0FUR+PuTenh2YmnmLRTro6eZ/qYwWkC
- u8FFIw4pT0OUDMyLgi+GI1aMpVogTZJ70FgV0pUAlpmrzk/bLbRkF3TwgucpyPtcpmQtTkWS
- gDS50QG9DR/1As3LLLcNkwJBZzBG6PWbvcOyrwMQUF1nl4SSPV0LLH63+BrrHasfJzxKXzqg
- rW28CTAE2x8qi7e/6M/+XXhrsMYG+uaViM7n2je3qKe7ofum3s4vq7oFCPsOgwARAQABwsFl
- BBgBAgAPBQJVy5+RAhsMBQkJZgGAAAoJEE3eEPcA/4NagOsP/jPoIBb/iXVbM+fmSHOjEshl
- KMwEl/m5iLj3iHnHPVLBUWrXPdS7iQijJA/VLxjnFknhaS60hkUNWexDMxVVP/6lbOrs4bDZ
- NEWDMktAeqJaFtxackPszlcpRVkAs6Msn9tu8hlvB517pyUgvuD7ZS9gGOMmYwFQDyytpepo
- YApVV00P0u3AaE0Cj/o71STqGJKZxcVhPaZ+LR+UCBZOyKfEyq+ZN311VpOJZ1IvTExf+S/5
- lqnciDtbO3I4Wq0ArLX1gs1q1XlXLaVaA3yVqeC8E7kOchDNinD3hJS4OX0e1gdsx/e6COvy
- qNg5aL5n0Kl4fcVqM0LdIhsubVs4eiNCa5XMSYpXmVi3HAuFyg9dN+x8thSwI836FoMASwOl
- C7tHsTjnSGufB+D7F7ZBT61BffNBBIm1KdMxcxqLUVXpBQHHlGkbwI+3Ye+nE6HmZH7IwLwV
- W+Ajl7oYF+jeKaH4DZFtgLYGLtZ1LDwKPjX7VAsa4Yx7S5+EBAaZGxK510MjIx6SGrZWBrrV
- TEvdV00F2MnQoeXKzD7O4WFbL55hhyGgfWTHwZ457iN9SgYi1JLPqWkZB0JRXIEtjd4JEQcx
- +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <32563c2f-a346-f371-4a2e-55541a117a89@redhat.com>
-Date:   Thu, 23 Aug 2018 15:13:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 23 Aug 2018 12:44:45 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46296 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729695AbeHWQop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 12:44:45 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E559ED1;
+        Thu, 23 Aug 2018 06:15:05 -0700 (PDT)
+Received: from red-moon (red-moon.emea.arm.com [10.4.13.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 088F13F5BC;
+        Thu, 23 Aug 2018 06:15:03 -0700 (PDT)
+Date:   Thu, 23 Aug 2018 14:15:15 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: WARNING: CPU: 0 PID: 14 at kernel/kthread.c:501
+ kthread_park+0x44/0xa4 (was: Re: kthread: Simplify kthread_park()
+ completion)
+Message-ID: <20180823131505.GA31558@red-moon>
+References: <20180813220011.D03DE21C8F@pdx-korg-gitolite-1.ci.codeaurora.org>
+ <CAMuHMdVg868LgL5xTg5Dp5rReKxoo+8fRy+ETJiMxGWZCp+hWw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <52c01a4c-48d4-30c7-a780-a33bcdd8accc@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 23 Aug 2018 13:13:39 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 23 Aug 2018 13:13:39 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVg868LgL5xTg5Dp5rReKxoo+8fRy+ETJiMxGWZCp+hWw@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.08.2018 15:12, Christian Borntraeger wrote:
+On Tue, Aug 21, 2018 at 08:38:39PM +0200, Geert Uytterhoeven wrote:
+> Hoi Peter,
 > 
+> On Tue, Aug 14, 2018 at 12:00 AM Linux Kernel Mailing List
+> <linux-kernel@vger.kernel.org> wrote:
+> > Web:        https://git.kernel.org/torvalds/c/f83ee19be4272564ad592ef90145db7295229490
+> > Commit:     f83ee19be4272564ad592ef90145db7295229490
+> > Parent:     167a88677b05d6a810f23b871cfb2b5db1808e60
+> > Refname:    refs/heads/master
+> > Author:     Peter Zijlstra <peterz@infradead.org>
+> > AuthorDate: Thu Jun 7 10:55:56 2018 +0200
+> > Committer:  Ingo Molnar <mingo@kernel.org>
+> > CommitDate: Tue Jul 3 09:20:44 2018 +0200
+> >
+> >     kthread: Simplify kthread_park() completion
+> >
+> >     Oleg explains the reason we could hit park+park is that
+> >     smpboot_update_cpumask_percpu_thread()'s
+> >
+> >       for_each_cpu_and(cpu, &tmp, cpu_online_mask)
+> >             smpboot_park_kthread();
+> >
+> >     turns into:
+> >
+> >       for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask, (void)and)
+> >             smpboot_park_kthread();
+> >
+> >     on UP, ignoring the mask. But since we just completely removed that
+> >     function, this is no longer relevant.
+> >
+> >     So revert commit:
+> >
+> >       b1f5b378e126 ("kthread: Allow kthread_park() on a parked kthread")
+> >
+> >     Suggested-by: Oleg Nesterov <oleg@redhat.com>
+> >     Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> >     Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> >     Cc: Peter Zijlstra <peterz@infradead.org>
+> >     Cc: Thomas Gleixner <tglx@linutronix.de>
+> >     Cc: linux-kernel@vger.kernel.org
+> >     Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> > ---
+> >  kernel/kthread.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/kernel/kthread.c b/kernel/kthread.c
+> > index 750cb8082694..11b591ee51ab 100644
+> > --- a/kernel/kthread.c
+> > +++ b/kernel/kthread.c
+> > @@ -190,7 +190,7 @@ static void __kthread_parkme(struct kthread *self)
+> >                 if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
+> >                         break;
+> >
+> > -               complete_all(&self->parked);
+> > +               complete(&self->parked);
+> >                 schedule();
+> >         }
+> >         __set_current_state(TASK_RUNNING);
+> > @@ -465,7 +465,6 @@ void kthread_unpark(struct task_struct *k)
+> >         if (test_bit(KTHREAD_IS_PER_CPU, &kthread->flags))
+> >                 __kthread_bind(k, kthread->cpu, TASK_PARKED);
+> >
+> > -       reinit_completion(&kthread->parked);
+> >         clear_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
+> >         /*
+> >          * __kthread_parkme() will either see !SHOULD_PARK or get the wakeup.
+> > @@ -493,6 +492,9 @@ int kthread_park(struct task_struct *k)
+> >         if (WARN_ON(k->flags & PF_EXITING))
+> >                 return -ENOSYS;
+> >
+> > +       if (WARN_ON_ONCE(test_bit(KTHREAD_SHOULD_PARK, &kthread->flags)))
+> > +               return -EBUSY;
+> > +
+> >         set_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
+> >         if (k != current) {
+> >                 wake_up_process(k);
 > 
-> On 08/23/2018 12:25 PM, Pierre Morel wrote:
->> Copy the key mask to the right offset inside the shadow CRYCB
->>
->> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->> Reviewed-by: David Hildenbrand <david@redhat.com>
->> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
->> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
->> ---
->>  arch/s390/kvm/vsie.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
->> index 9175518..12b9707 100644
->> --- a/arch/s390/kvm/vsie.c
->> +++ b/arch/s390/kvm/vsie.c
->> @@ -173,7 +173,8 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->>  		return set_validity_icpt(scb_s, 0x0039U);
->>  
->>  	/* copy only the wrapping keys */
->> -	if (read_guest_real(vcpu, crycb_addr + 72, &vsie_page->crycb, 56))
->> +	if (read_guest_real(vcpu, crycb_addr + 72,
->> +			    vsie_page->crycb.dea_wrapping_key_mask, 56))
+> The above WARN_ON_ONCE() triggers during psci_checker operation when booting
+> on R-Car Gen3 (arm64) SoCs where a trusted OS is resident on CPU0.
 > 
-> When we fix that code.., dont  we have to XOR the guest3 wrapping keys with
-> the guest2 ones? 
-
-That's done further down in that function.
-
+> Reverting the commit fixes the issue.
 > 
+> Dmesg before/after on R-Car H3 ES2.0:
 > 
->>  		return set_validity_icpt(scb_s, 0x0035U);
->>  
->>  	scb_s->ecb3 |= ecb3_flags;
->>
+>  psci: probing for conduit method from DT.
+>  psci: PSCIv1.0 detected in firmware.
+>  psci: Using standard PSCI v0.2 function IDs
+>  psci: Trusted OS resident on physical CPU 0x0
+>  psci: SMC Calling Convention v1.0
+>  ...
+>  psci_checker: Trying to turn off and on again group 0 (CPUs 0-3)
+> +WARNING: CPU: 0 PID: 14 at kernel/kthread.c:501 kthread_park+0x44/0xa4
+> +Modules linked in:
+> +CPU: 0 PID: 14 Comm: cpuhp/0 Not tainted
+> 4.18.0-salvator-x-00407-gbc763e81b483a4e3 #170
+> +Hardware name: Renesas Salvator-X 2nd version board based on r8a7795
+> ES2.0+ (DT)
+> +pstate: 80400005 (Nzcv daif +PAN -UAO)
+> +pc : kthread_park+0x44/0xa4
+> +lr : smpboot_park_threads+0x88/0x94
+> +sp : ffffff8009dcbca0
+> +x29: ffffff8009dcbca0 x28: ffffff80081156cc
+> +x27: ffffff800900e000 x26: 00000046f7027000
+> +x25: ffffff8008e9cfc0 x24: ffffffc6ffec3fc0
+> +x23: ffffff80090305b8 x22: 0000000000000000
+> +x21: ffffffc6fb8ab200 x20: 0000000000000001
+> +x19: ffffff80090269e8 x18: ffffffc6fb897348
+> +x17: 0000000000000000 x16: 0000000000000000
+> +x15: 0000000000000400 x14: 0000000000000400
+> +x13: 0000000000000400 x12: 0000000000000001
+> +x11: 0000000000000400 x10: 0000000000000400
+> +x9 : 0000000000000125 x8 : 0000000000000000
+> +x7 : ffffff80081156f8 x6 : 0000000000000001
+> +x5 : 0000000000000000 x4 : ffffff8009804b40
+> +x3 : 000000007cbd3c4e x2 : 38716e04a5aa3600
+> +x1 : 0000000004208040 x0 : ffffffc6fb95c240
+> +Call trace:
+> + kthread_park+0x44/0xa4
+> + smpboot_park_threads+0x88/0x94
+> + cpuhp_invoke_callback+0x230/0xcfc
+> + cpuhp_thread_fun+0xb8/0x1d8
+> + smpboot_thread_fn+0x228/0x244
+> + kthread+0x124/0x134
+> + ret_from_fork+0x10/0x18
+> +irq event stamp: 3390
+> +hardirqs last  enabled at (3389): [<ffffff800818729c>]
+> generic_exec_single+0x80/0x11c
+> +hardirqs last disabled at (3390): [<ffffff80080818cc>]
+> do_debug_exception+0x5c/0x17c
+> +softirqs last  enabled at (1810): [<ffffff8008081da8>] __do_softirq+0x160/0x4ec
+> +softirqs last disabled at (1795): [<ffffff80080ed460>] irq_exit+0xa4/0x100
+> +---[ end trace 518ee2fb840813cb ]---
+>  CPU1: shutdown
+>  psci: CPU1 killed.
+> -NOHZ: local_softirq_pending 51
+> +NOHZ: local_softirq_pending 55
+>  CPU2: shutdown
+>  psci: CPU2 killed.
+>  NOHZ: local_softirq_pending 51
+>  CPU3: shutdown
+>  psci: CPU3 killed.
+>  Detected PIPT I-cache on CPU1
+>  CPU1: Booted secondary processor 0x0000000001 [0x411fd073]
+>  Detected PIPT I-cache on CPU2
+>  CPU2: Booted secondary processor 0x0000000002 [0x411fd073]
+>  Detected PIPT I-cache on CPU3
+>  CPU3: Booted secondary processor 0x0000000003 [0x411fd073]
 > 
+> The issue can also be seen on R-Car M3-W and M3-N.  It does not happen
+> on R-Car H3 ES1.0 with an older firmware version, where no trusted OS
+> is running on CPU0 ("psci: Trusted OS migration not required").
 
+The problem is caused by __cpu_disable() returning -EPERM. I was
+expecting the hotplug state machine to rollback the state
+but it seems that, in _cpu_down() the callback following
+CPUHP_TEARDOWN_CPU (ie CPUHP_AP_SMPBOOT_THREADS, that should call
+smpboot_unpark_threads()) is skipped. I am trying to debug the
+hotplug state machine and I am not familiar enough with that code
+to pinpoint an issue but I have more than a feeling that reverting
+the patch removes the warning but does _not_ fix the underlying
+issue.
 
--- 
+You can easily reproduce the problem by tring to hotplug CPU0
+out through sysfs (and AFAICS it is a problem also on other
+arches where __cpu_disable() may return an error).
 
-Thanks,
-
-David / dhildenb
+Lorenzo
