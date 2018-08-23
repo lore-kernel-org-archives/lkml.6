@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00ED0C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CA5C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9F13208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9F13208D6
+	by mail.kernel.org (Postfix) with ESMTP id 95AC3208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95AC3208D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388461AbeHWMaP (ORCPT
+        id S2388470AbeHWMaT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:30:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55666 "EHLO
+        Thu, 23 Aug 2018 08:30:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55672 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbeHWMaP (ORCPT
+        with ESMTP id S1726277AbeHWMaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:30:15 -0400
+        Thu, 23 Aug 2018 08:30:18 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 38761C83;
-        Thu, 23 Aug 2018 09:01:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 642A2CA0;
+        Thu, 23 Aug 2018 09:01:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 224/324] netfilter: nft_compat: explicitly reject ERROR and standard target
-Date:   Thu, 23 Aug 2018 09:54:50 +0200
-Message-Id: <20180823075007.362823755@linuxfoundation.org>
+Subject: [PATCH 4.17 225/324] netfilter: nf_conntrack: Fix possible possible crash on module loading.
+Date:   Thu, 23 Aug 2018 09:54:51 +0200
+Message-Id: <20180823075007.408564453@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,55 +51,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
 
-[ Upstream commit 21d5e078192d244df3d6049f9464fff2f72cfd68 ]
+[ Upstream commit 2045cdfa1b40d66f126f3fd05604fc7c754f0022 ]
 
-iptables-nft never requests these, but make this explicitly illegal.
-If it were quested, kernel could oops as ->eval is NULL, furthermore,
-the builtin targets have no owning module so its possible to rmmod
-eb/ip/ip6_tables module even if they would be loaded.
+Loading the nf_conntrack module with doubled hashsize parameter, i.e.
+	  modprobe nf_conntrack hashsize=12345 hashsize=12345
+causes NULL-ptr deref.
 
-Signed-off-by: Florian Westphal <fw@strlen.de>
+If 'hashsize' specified twice, the nf_conntrack_set_hashsize() function
+will be called also twice.
+The first nf_conntrack_set_hashsize() call will set the
+'nf_conntrack_htable_size' variable:
+
+	nf_conntrack_set_hashsize()
+		...
+		/* On boot, we can set this without any fancy locking. */
+		if (!nf_conntrack_htable_size)
+			return param_set_uint(val, kp);
+
+But on the second invocation, the nf_conntrack_htable_size is already set,
+so the nf_conntrack_set_hashsize() will take a different path and call
+the nf_conntrack_hash_resize() function. Which will crash on the attempt
+to dereference 'nf_conntrack_hash' pointer:
+
+	BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+	RIP: 0010:nf_conntrack_hash_resize+0x255/0x490 [nf_conntrack]
+	Call Trace:
+	 nf_conntrack_set_hashsize+0xcd/0x100 [nf_conntrack]
+	 parse_args+0x1f9/0x5a0
+	 load_module+0x1281/0x1a50
+	 __se_sys_finit_module+0xbe/0xf0
+	 do_syscall_64+0x7c/0x390
+	 entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Fix this, by checking !nf_conntrack_hash instead of
+!nf_conntrack_htable_size. nf_conntrack_hash will be initialized only
+after the module loaded, so the second invocation of the
+nf_conntrack_set_hashsize() won't crash, it will just reinitialize
+nf_conntrack_htable_size again.
+
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/nft_compat.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ net/netfilter/nf_conntrack_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netfilter/nft_compat.c
-+++ b/net/netfilter/nft_compat.c
-@@ -825,10 +825,18 @@ nft_target_select_ops(const struct nft_c
- 	rev = ntohl(nla_get_be32(tb[NFTA_TARGET_REV]));
- 	family = ctx->family;
+--- a/net/netfilter/nf_conntrack_core.c
++++ b/net/netfilter/nf_conntrack_core.c
+@@ -1972,7 +1972,7 @@ int nf_conntrack_set_hashsize(const char
+ 		return -EOPNOTSUPP;
  
-+	if (strcmp(tg_name, XT_ERROR_TARGET) == 0 ||
-+	    strcmp(tg_name, XT_STANDARD_TARGET) == 0 ||
-+	    strcmp(tg_name, "standard") == 0)
-+		return ERR_PTR(-EINVAL);
-+
- 	/* Re-use the existing target if it's already loaded. */
- 	list_for_each_entry(nft_target, &nft_target_list, head) {
- 		struct xt_target *target = nft_target->ops.data;
+ 	/* On boot, we can set this without any fancy locking. */
+-	if (!nf_conntrack_htable_size)
++	if (!nf_conntrack_hash)
+ 		return param_set_uint(val, kp);
  
-+		if (!target->target)
-+			continue;
-+
- 		if (nft_target_cmp(target, tg_name, rev, family))
- 			return &nft_target->ops;
- 	}
-@@ -837,6 +845,11 @@ nft_target_select_ops(const struct nft_c
- 	if (IS_ERR(target))
- 		return ERR_PTR(-ENOENT);
- 
-+	if (!target->target) {
-+		err = -EINVAL;
-+		goto err;
-+	}
-+
- 	if (target->targetsize > nla_len(tb[NFTA_TARGET_INFO])) {
- 		err = -EINVAL;
- 		goto err;
+ 	rc = kstrtouint(val, 0, &hashsize);
 
 
