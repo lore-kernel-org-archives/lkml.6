@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34382C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 922CEC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA1B52147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA1B52147A
+	by mail.kernel.org (Postfix) with ESMTP id 564652147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 564652147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731466AbeHWL7u (ORCPT
+        id S1731425AbeHWL7o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:59:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47950 "EHLO
+        Thu, 23 Aug 2018 07:59:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47934 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730887AbeHWL7t (ORCPT
+        with ESMTP id S1730897AbeHWL7n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:59:49 -0400
+        Thu, 23 Aug 2018 07:59:43 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 44DB1C74;
-        Thu, 23 Aug 2018 08:31:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5981C7B;
+        Thu, 23 Aug 2018 08:31:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taeung Song <treeze.taeung@gmail.com>,
+        stable@vger.kernel.org, Yuiko Oshino <yuiko.oshino@microchip.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 138/217] samples/bpf: add missing <linux/if_vlan.h>
-Date:   Thu, 23 Aug 2018 09:54:11 +0200
-Message-Id: <20180823075511.818775331@linuxfoundation.org>
+Subject: [PATCH 4.14 136/217] smsc75xx: Add workaround for gigabit link up hardware errata.
+Date:   Thu, 23 Aug 2018 09:54:09 +0200
+Message-Id: <20180823075511.736729908@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -52,50 +51,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Taeung Song <treeze.taeung@gmail.com>
+From: Yuiko Oshino <yuiko.oshino@microchip.com>
 
-[ Upstream commit 4d5d33a085335ef469c9a87792bcaaaa8e64d8c4 ]
+[ Upstream commit d461e3da905332189aad546b2ad9adbe6071c7cc ]
 
-This fixes build error regarding redefinition:
+In certain conditions, the device may not be able to link in gigabit mode. This software workaround ensures that the device will not enter the failure state.
 
-    CLANG-bpf  samples/bpf/parse_varlen.o
-  samples/bpf/parse_varlen.c:111:8: error: redefinition of 'vlan_hdr'
-  struct vlan_hdr {
-         ^
-  ./include/linux/if_vlan.h:38:8: note: previous definition is here
-
-So remove duplicate 'struct vlan_hdr' in sample code and include if_vlan.h
-
-Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
-Acked-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: d0cad871703b898a442e4049c532ec39168e5b57 ("SMSC75XX USB 2.0 Gigabit Ethernet Devices")
+Signed-off-by: Yuiko Oshino <yuiko.oshino@microchip.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- samples/bpf/parse_varlen.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/net/usb/smsc75xx.c |   62 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
---- a/samples/bpf/parse_varlen.c
-+++ b/samples/bpf/parse_varlen.c
-@@ -6,6 +6,7 @@
-  */
- #define KBUILD_MODNAME "foo"
- #include <linux/if_ether.h>
-+#include <linux/if_vlan.h>
- #include <linux/ip.h>
- #include <linux/ipv6.h>
- #include <linux/in.h>
-@@ -108,11 +109,6 @@ static int parse_ipv6(void *data, uint64
- 	return 0;
+--- a/drivers/net/usb/smsc75xx.c
++++ b/drivers/net/usb/smsc75xx.c
+@@ -82,6 +82,9 @@ static bool turbo_mode = true;
+ module_param(turbo_mode, bool, 0644);
+ MODULE_PARM_DESC(turbo_mode, "Enable multiple frames per Rx transaction");
+ 
++static int smsc75xx_link_ok_nopm(struct usbnet *dev);
++static int smsc75xx_phy_gig_workaround(struct usbnet *dev);
++
+ static int __must_check __smsc75xx_read_reg(struct usbnet *dev, u32 index,
+ 					    u32 *data, int in_pm)
+ {
+@@ -852,6 +855,9 @@ static int smsc75xx_phy_initialize(struc
+ 		return -EIO;
+ 	}
+ 
++	/* phy workaround for gig link */
++	smsc75xx_phy_gig_workaround(dev);
++
+ 	smsc75xx_mdio_write(dev->net, dev->mii.phy_id, MII_ADVERTISE,
+ 		ADVERTISE_ALL | ADVERTISE_CSMA | ADVERTISE_PAUSE_CAP |
+ 		ADVERTISE_PAUSE_ASYM);
+@@ -987,6 +993,62 @@ static int smsc75xx_wait_ready(struct us
+ 	return -EIO;
  }
  
--struct vlan_hdr {
--	uint16_t h_vlan_TCI;
--	uint16_t h_vlan_encapsulated_proto;
--};
--
- SEC("varlen")
- int handle_ingress(struct __sk_buff *skb)
++static int smsc75xx_phy_gig_workaround(struct usbnet *dev)
++{
++	struct mii_if_info *mii = &dev->mii;
++	int ret = 0, timeout = 0;
++	u32 buf, link_up = 0;
++
++	/* Set the phy in Gig loopback */
++	smsc75xx_mdio_write(dev->net, mii->phy_id, MII_BMCR, 0x4040);
++
++	/* Wait for the link up */
++	do {
++		link_up = smsc75xx_link_ok_nopm(dev);
++		usleep_range(10000, 20000);
++		timeout++;
++	} while ((!link_up) && (timeout < 1000));
++
++	if (timeout >= 1000) {
++		netdev_warn(dev->net, "Timeout waiting for PHY link up\n");
++		return -EIO;
++	}
++
++	/* phy reset */
++	ret = smsc75xx_read_reg(dev, PMT_CTL, &buf);
++	if (ret < 0) {
++		netdev_warn(dev->net, "Failed to read PMT_CTL: %d\n", ret);
++		return ret;
++	}
++
++	buf |= PMT_CTL_PHY_RST;
++
++	ret = smsc75xx_write_reg(dev, PMT_CTL, buf);
++	if (ret < 0) {
++		netdev_warn(dev->net, "Failed to write PMT_CTL: %d\n", ret);
++		return ret;
++	}
++
++	timeout = 0;
++	do {
++		usleep_range(10000, 20000);
++		ret = smsc75xx_read_reg(dev, PMT_CTL, &buf);
++		if (ret < 0) {
++			netdev_warn(dev->net, "Failed to read PMT_CTL: %d\n",
++				    ret);
++			return ret;
++		}
++		timeout++;
++	} while ((buf & PMT_CTL_PHY_RST) && (timeout < 100));
++
++	if (timeout >= 100) {
++		netdev_warn(dev->net, "timeout waiting for PHY Reset\n");
++		return -EIO;
++	}
++
++	return 0;
++}
++
+ static int smsc75xx_reset(struct usbnet *dev)
  {
+ 	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
 
 
