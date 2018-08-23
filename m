@@ -2,105 +2,133 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBBFFC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB2AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:39:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97B6D21568
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:39:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97B6D21568
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 304FC20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:39:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 304FC20657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbeHXAKt (ORCPT
+        id S1727568AbeHXALG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 20:10:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49920 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726473AbeHXAKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 20:10:49 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 08A7C804BAAC;
-        Thu, 23 Aug 2018 20:39:26 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 33CEC101041F;
-        Thu, 23 Aug 2018 20:39:23 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w7NKdNkW007565;
-        Thu, 23 Aug 2018 16:39:23 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w7NKdNQ5007561;
-        Thu, 23 Aug 2018 16:39:23 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Thu, 23 Aug 2018 16:39:23 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-cc:     linux-crypto@vger.kernel.org, Mike Snitzer <msnitzer@redhat.com>,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: Deadlock when using crypto API for block devices
-Message-ID: <alpine.LRH.2.02.1808231621220.8560@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Thu, 23 Aug 2018 20:11:06 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50436 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726473AbeHXALG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 20:11:06 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7NKdOTq188764
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 16:39:42 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m22ggc33u-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 16:39:42 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 23 Aug 2018 16:39:41 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 23 Aug 2018 16:39:39 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7NKdcdU3277120
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 23 Aug 2018 20:39:38 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A119FB2066;
+        Thu, 23 Aug 2018 16:38:42 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 81ECDB205F;
+        Thu, 23 Aug 2018 16:38:42 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 23 Aug 2018 16:38:42 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id D06A516C374D; Thu, 23 Aug 2018 13:39:38 -0700 (PDT)
+Date:   Thu, 23 Aug 2018 13:39:38 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Josh Triplett <josh@joshtriplett.org>
+Cc:     Adam Borowski <kilobyte@angband.pl>, nicolas.pitre@linaro.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Kernel-only deployments?
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180823174359.GA13033@linux.vnet.ibm.com>
+ <20180823185417.y3ung3b553f2d24a@angband.pl>
+ <20180823191604.GB3243@localhost>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 23 Aug 2018 20:39:26 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 23 Aug 2018 20:39:26 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180823191604.GB3243@localhost>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18082320-0060-0000-0000-000002A3520F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009599; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01077839; UDB=6.00555746; IPR=6.00857812;
+ MB=3.00022893; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-23 20:39:41
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082320-0061-0000-0000-000046451F7C
+Message-Id: <20180823203938.GW4225@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=960 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808230213
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+On Thu, Aug 23, 2018 at 12:16:04PM -0700, Josh Triplett wrote:
+> On Thu, Aug 23, 2018 at 08:54:17PM +0200, Adam Borowski wrote:
+> > On Thu, Aug 23, 2018 at 10:43:59AM -0700, Paul E. McKenney wrote:
+> > > The mkinitramfs approach results in about 40MB of initrd, and dracut
+> > > about 10MB.  Most of this is completely useless for rcutorture, which
+> > > isn't interested in mounting filesystems, opening devices, and almost
+> > > all of the other interesting things that mkinitramfs and dracut enable.
+> > > 
+> > > Those who know me will not be at all surprised to learn that I went
+> > > overboard making the resulting initrd as small as possible.  I started
+> > > by throwing out everything not absolutely needed by the dash and sleep
+> > > binaries, which got me down to about 2.5MB, 1.8MB of which was libc.
+> > > This situation of course prompted me to create an initrd containing
+> > > a statically linked binary named "init" and absolutely nothing else
+> > > (not even /dev or /tmp directories), which weighs in at not quite 800KB.
+> > > This is a great improvement over 10MB, to say nothing of 40MB, but 800KB
+> > > for a C-language "for" loop containing nothing more than a single call to
+> > > sleep()?
+> > 
+> > .globl _start
+> > .data
+> > req:    .8byte 999999999, 999999999
+> > .text
+> > _start:
+> >         mov     $35, %rax       # syscall: nanosleep
+> >         mov     $req, %rdi
+> >         xor     %rsi, %rsi
+> >         syscall
+> >         jmp     _start
+> > 
+> > 
+> > as sl.s -o sl.o
+> > ld sl.o -o init
+> > 
+> > 'Ere you go, no libc needed.  If your arch is not amd64, just say so.
+> 
+> "pause" ($34) would also suffice, and would not require an argument or a
+> .data section.
 
-There's a deadlock reported here: 
-https://bugzilla.kernel.org/show_bug.cgi?id=200835
+Cute!  ;-)
 
-* dm-crypt calls crypt_convert in xts mode
-* init_crypt from xts.c calls kmalloc(GFP_KERNEL)
-* kmalloc(GFP_KERNEL) recurses into the XFS filesystem, the filesystem 
-	tries to submit some bios and wait for them, causing a deadlock
+							Thanx, Paul
 
-I was thinking how to fix it, there are several possibilities, but all 
-have some caveats. So, I'd like to ask you as crypto code maintainers, 
-what's the appropriate solution.
-
-
-1. don't set CRYPTO_TFM_REQ_MAY_SLEEP in dm-crypt
-=================================================
-If we don't set it, dm-crypt will use GFP_ATOMIC and GFP_ATOMIC may fail. 
-The function init_crypt in xts.c handles the failure gracefully - but the 
-question is - does the whole crypto code handle allocation failures 
-gracefully? If not and if it returns -ENOMEM somewhere, it would result in 
-I/O errors and data corruption.
-
-I'd like to ask if you as maintainers of the crypto API could say, whether 
-the crypto code handles GFP_ATOMIC allocations failure gracefully or not.
-
-Note that dm-crypt currently uses encryption, hashes and authernticated 
-encryption, so if we go down this path, we must make sure that the code 
-for these operations will never return -ENOMEM.
-
-2. use memalloc_noio_save/memalloc_noio_restore in dm-crypt
-===========================================================
-This makes all allocations use GFP_NOIO implicitly, so it would fix the 
-deadlock. But - the crypto API can offload encryption to the cryptd 
-thread, and if the offload happens, the memalloc_noio_save flag is lost 
-and the allocation can still be done with GFP_KERNEL and cause a deadlock.
-
-3. introduce new flag CRYPTO_TFM_REQ_MAY_SLEEP_NOIO
-===================================================
-Would you like to introduce it?
-
-4. make the whole crypto code use GFP_NOIO instead of GFP_KERNEL?
-=================================================================
-
-
-... any other suggestions?
-
-Mikulas
