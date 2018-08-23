@@ -6,40 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8815BC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE2F3C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C7CF20839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C7CF20839
+	by mail.kernel.org (Postfix) with ESMTP id AA73B20839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA73B20839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387965AbeHWMVc (ORCPT
+        id S2387974AbeHWMVf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:21:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51862 "EHLO
+        Thu, 23 Aug 2018 08:21:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51874 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733155AbeHWMVb (ORCPT
+        with ESMTP id S1732991AbeHWMVf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:21:31 -0400
+        Thu, 23 Aug 2018 08:21:35 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 09E0AC93;
-        Thu, 23 Aug 2018 08:52:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EA34AC5C;
+        Thu, 23 Aug 2018 08:52:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Jason Gerecke <jason.gerecke@wacom.com>,
+        Jiri Kosina <jkosina@suse.cz>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 172/324] x86/mm/32: Initialize the CR4 shadow before __flush_tlb_all()
-Date:   Thu, 23 Aug 2018 09:53:58 +0200
-Message-Id: <20180823075004.792150446@linuxfoundation.org>
+Subject: [PATCH 4.17 173/324] HID: wacom: Correct touch maximum XY of 2nd-gen Intuos
+Date:   Thu, 23 Aug 2018 09:53:59 +0200
+Message-Id: <20180823075004.845870201@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -56,48 +51,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+From: Jason Gerecke <killertofu@gmail.com>
 
-[ Upstream commit 4fb5f58e8d191f7c81637ad81284e4848afb4244 ]
+[ Upstream commit 3b8d573586d1b9dee33edf6cb6f2ca05f4bca568 ]
 
-On 32-bit kernels, __flush_tlb_all() may have read the CR4 shadow before the
-initialization of CR4 shadow in cpu_init().
+The touch sensors on the 2nd-gen Intuos tablets don't use a 4096x4096
+sensor like other similar tablets (3rd-gen Bamboo, Intuos5, etc.).
+The incorrect maximum XY values don't normally affect userspace since
+touch input from these devices is typically relative rather than
+absolute. It does, however, cause problems when absolute distances
+need to be measured, e.g. for gesture recognition. Since the resolution
+of the touch sensor on these devices is 10 units / mm (versus 100 for
+the pen sensor), the proper maximum values can be calculated by simply
+dividing by 10.
 
-Fix it by adding an explicit cr4_init_shadow() call into start_secondary()
-which is the first function called on non-boot SMP CPUs - ahead of the
-__flush_tlb_all() call.
-
-( This is somewhat of a layering violation, but start_secondary() does
-  CR4 bootstrap in the PCID case anyway. )
-
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: http://lkml.kernel.org/r/b07b6ae9-4b57-4b40-b9bc-50c2c67f1d91@default
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: b5fd2a3e92 ("Input: wacom - add support for three new Intuos devices")
+Signed-off-by: Jason Gerecke <jason.gerecke@wacom.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/smpboot.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/hid/wacom_wac.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -222,6 +222,11 @@ static void notrace start_secondary(void
- #ifdef CONFIG_X86_32
- 	/* switch away from the initial page table */
- 	load_cr3(swapper_pg_dir);
-+	/*
-+	 * Initialize the CR4 shadow before doing anything that could
-+	 * try to read it.
-+	 */
-+	cr4_init_shadow();
- 	__flush_tlb_all();
- #endif
- 	load_current_idt();
+--- a/drivers/hid/wacom_wac.c
++++ b/drivers/hid/wacom_wac.c
+@@ -3361,8 +3361,14 @@ void wacom_setup_device_quirks(struct wa
+ 			if (features->type >= INTUOSHT && features->type <= BAMBOO_PT)
+ 				features->device_type |= WACOM_DEVICETYPE_PAD;
+ 
+-			features->x_max = 4096;
+-			features->y_max = 4096;
++			if (features->type == INTUOSHT2) {
++				features->x_max = features->x_max / 10;
++				features->y_max = features->y_max / 10;
++			}
++			else {
++				features->x_max = 4096;
++				features->y_max = 4096;
++			}
+ 		}
+ 		else if (features->pktlen == WACOM_PKGLEN_BBTOUCH) {
+ 			features->device_type |= WACOM_DEVICETYPE_PAD;
 
 
