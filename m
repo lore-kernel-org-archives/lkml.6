@@ -6,93 +6,123 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB58C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F5AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:43:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9662D20C07
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:42:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D59320C07
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:43:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P2P3frIq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9662D20C07
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NXuiClte"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D59320C07
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729224AbeHWOLq (ORCPT
+        id S1729518AbeHWOMj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 10:11:46 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:38101 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728582AbeHWOLq (ORCPT
+        Thu, 23 Aug 2018 10:12:39 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:40395 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729313AbeHWOMj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 10:11:46 -0400
-Received: by mail-it0-f67.google.com with SMTP id p129-v6so5287162ite.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 03:42:40 -0700 (PDT)
+        Thu, 23 Aug 2018 10:12:39 -0400
+Received: by mail-it0-f68.google.com with SMTP id h23-v6so6940280ita.5
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 03:43:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=VZm9LbAzfak1XHPD0HXhsOZFX9/+qXxcgrDmM+plvqo=;
-        b=P2P3frIqnvv9fNID1nHuRnvv57YpHfVCboSegOnk7aPJyUlr1cA/74HYPiNzs0GjKq
-         mPkOOROdqIKuvi0pfKfNCqvE3xvGVD3Omypt0A56w8cW01xPweD93eEfVtY+sN6wjAJG
-         /ClkMd2wsL8prfvoUCYa7wAw8FERw+BFB3g1I=
+        bh=ReE1zRBX9lJQoh1dcoEwTvD7SMWq7KfniaRoSBaiOP4=;
+        b=NXuiClteD+xrP61+LN3EiikKhQdjHwgdiU1GDS9XT2g26WMVxuCiIjmt0PDm0j/iuL
+         R7USeZqlUtNEb7QbkpB5eyJ6iUEwxtEk+zjiUTYAxP/4I2WtM7zSMOYlRmiSjK2SaRXM
+         tOb7jF7p1M6/bYLAlJTir48xDPF7IkOq4jrsw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=VZm9LbAzfak1XHPD0HXhsOZFX9/+qXxcgrDmM+plvqo=;
-        b=LGKK9vqdO54eK1PnHcHBz5vavhPR8M0i9ubUGEvWaqe5w4hQ2jF/6f/2wHwYZHm05A
-         1PfBRppW6tTl5RR7QJfoCLWS/1K/u2TZ9N7Tx1GfHJMGvcYvacAEa02PrKnUBCUVTy5U
-         w8d4bG7U8BSwE28xluCSsZzBuB0slYx1xIN6Mi6VbYe8ZaeUJOsgzmoZUQgbFON5Q8KI
-         xLFtp5nUBN6k6nDv9a98RgQQrlCPil+y4nv565gaDVhXaFKQ2tCrBBgLmutFn0QMOWZ6
-         AjzeY6DPUJRndHRjhvnd+aInokHpiRRk/0usFfs63t4Ih3EHowKK+jp5FA/kZbdRsj/K
-         8+OQ==
-X-Gm-Message-State: APzg51BJT/8Z8rOvm7nTu+7vIfL3VF7hUbdIFperDalpOEnk2kA8MbG8
-        4R5cg4M/ROWcsHylg6rrbGXt+qu6eHhx66+gjPfqwA==
-X-Google-Smtp-Source: ANB0VdabJ0SmThrra1vYGlhWqAsqzk5uj91eOG3jxo6aFWiL/uNEtCT5W3sP52RlcjAAvG6DvO+s/hLmENVcTosjGAM=
-X-Received: by 2002:a24:6b0d:: with SMTP id v13-v6mr6664795itc.16.1535020959779;
- Thu, 23 Aug 2018 03:42:39 -0700 (PDT)
+        bh=ReE1zRBX9lJQoh1dcoEwTvD7SMWq7KfniaRoSBaiOP4=;
+        b=Uy9Yfu4GpMGgymL43mcvmtSVZoLAxUinminjtaVGYYiJ7K1WQePtzsXRVAFvhum85m
+         IdfJCnRGvbzvqAH9XUfG643jAbLtMmHWfoPT/QJ4zj54xeT5866Tjzvj1g+zcnGYmuNI
+         69/TBsWQBt8iZuLSEifSsAemS8sWT22d1ZKJyrJ4kkM27HJ+i8k0NT1TEqF2psmEK67m
+         jRjywAg0LJTYrUcWFJi00nWkI0SwvtyKCA5hbuPccwbWdHbNyba57C8E7qFro9IbpcP/
+         gU6BEVu+2SzHsFUK1rTaPoUB4VDOfrva8OixJrX5oII5/xSuStHL2arFCzmSkOHrZphO
+         au9w==
+X-Gm-Message-State: APzg51CzSp3YdhWPg7taRY/rS/PngezlyK4fF9NRU5toKKdK5mhJorom
+        NQUjmHXfgYqGXirRsUyMvYGm0sy8CK6T7h7aB9dZnQ==
+X-Google-Smtp-Source: ANB0VdYNpZeThq/bfj473w4BXBJDvVjpdm3gMCO4rHjjBWzirny6eoch7De33H0nRZi7IdjdcwuUvV3A2SQik4heYJ4=
+X-Received: by 2002:a24:5f92:: with SMTP id r140-v6mr6478500itb.45.1535021012311;
+ Thu, 23 Aug 2018 03:43:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180820181333.2527-1-jmkrzyszt@gmail.com> <20180820181333.2527-2-jmkrzyszt@gmail.com>
-In-Reply-To: <20180820181333.2527-2-jmkrzyszt@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 23 Aug 2018 12:42:27 +0200
-Message-ID: <CACRpkdb7E7cjZuYx6Cgxv2sNJmxvwqg0dNh3WpALwtnuCsezuw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ARM: OMAP1: ams-delta: assign MODEM IRQ from GPIO descriptor
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     ext Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-serial@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Thu, 23 Aug 2018 03:43:31
+ -0700 (PDT)
+In-Reply-To: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 23 Aug 2018 12:43:31 +0200
+Message-ID: <CAPDyKFore4GkGyMn-4VA-2h1MbNp9sQ0Szif+Mjj5qtM-7autw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] mmc: tmio: refactor TMIO core a bit and add
+ UniPhier SD/eMMC controller support
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 8:12 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-
-> Don't request MODEM IRQ GPIO by its global number in
-> ams_delta_modem_init().  Instead, obtain its GPIO descriptor
-> and assign related IRQ to the MODEM.  Do that from
-> omap_gpio_deps_init(), where the chip is already looked up.  Then, in
-> ams_delta_modem_init(), just check for the IRQ number having been
-> already assigned.
+On 23 August 2018 at 06:44, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 >
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> Add UniPhier SD/eMMC controller support.
+>
+> As a preparation, I changed tmio_mmc_set_clock() to a platform hook.
+> The clock rate setting is platform-specific, and UniPhier variants
+> will add another way.  I thought it would be better to split this
+> to a hook to avoid a mess.
+>
+> V3 is rebase on top of Linus' tree.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+I have queued patch 1 -> 4, waiting for further reviews for patch 5 and 6.
 
-It's a bit unorthodox to have the board files intercept and poke
-around inside the gpio_chip like the code in this file does,
-I prefer to keep it encapsulated inside the GPIO driver.
-However this is the lesser evil... if OMAP1 is ever phased
-over to device tree it will go away, until then it is just nicely
-contained.
+One minor comment of patch 4, see separate email.
 
-Yours,
-Linus Walleij
+Kind regards
+Uffe
+
+>
+> I dropped 6/7 because Renesas added more quirks
+> in the current MW.
+>
+>
+> Masahiro Yamada (6):
+>   mmc: tmio: replace tmio_mmc_clk_stop() calls with tmio_mmc_set_clock()
+>   mmc: tmio: move tmio_mmc_set_clock() to platform hook
+>   dt-bindings: mmc: add DT binding for UniPhier SD/eMMC controller
+>   mmc: uniphier-sd: add UniPhier SD/eMMC controller driver
+>   mmc: renesas_sdhi: merge clk_{start,stop} functions to set_clock
+>   mmc: tmio: refactor CLK_CTL bit calculation
+>
+>  .../devicetree/bindings/mmc/uniphier-sd.txt        |  55 ++
+>  MAINTAINERS                                        |   1 +
+>  drivers/mmc/host/Kconfig                           |  10 +
+>  drivers/mmc/host/Makefile                          |   1 +
+>  drivers/mmc/host/renesas_sdhi_core.c               |  48 +-
+>  drivers/mmc/host/tmio_mmc.c                        |  56 ++
+>  drivers/mmc/host/tmio_mmc.h                        |   4 +-
+>  drivers/mmc/host/tmio_mmc_core.c                   |  92 +--
+>  drivers/mmc/host/uniphier-sd.c                     | 693 +++++++++++++++++++++
+>  9 files changed, 871 insertions(+), 89 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/uniphier-sd.txt
+>  create mode 100644 drivers/mmc/host/uniphier-sd.c
+>
+> --
+> 2.7.4
+>
