@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B98C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3544BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76D9A2147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76D9A2147A
+	by mail.kernel.org (Postfix) with ESMTP id DE63F21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE63F21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbeHWL1a (ORCPT
+        id S1728368AbeHWL1e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:27:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41960 "EHLO
+        Thu, 23 Aug 2018 07:27:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41968 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726978AbeHWL1a (ORCPT
+        with ESMTP id S1726836AbeHWL1d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:27:30 -0400
+        Thu, 23 Aug 2018 07:27:33 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1CA24BB6;
-        Thu, 23 Aug 2018 07:59:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 54FCA9D2;
+        Thu, 23 Aug 2018 07:59:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Stefan Schmidt <stefan@datenfreihafen.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 47/79] ieee802154: at86rf230: switch from BUG_ON() to WARN_ON() on problem
-Date:   Thu, 23 Aug 2018 09:53:23 +0200
-Message-Id: <20180823074922.172707485@linuxfoundation.org>
+Subject: [PATCH 4.4 48/79] ieee802154: at86rf230: use __func__ macro for debug messages
+Date:   Thu, 23 Aug 2018 09:53:24 +0200
+Message-Id: <20180823074922.245271192@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -52,29 +52,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stefan Schmidt <stefan@datenfreihafen.org>
 
-[ Upstream commit 20f330452ad8814f2289a589baf65e21270879a7 ]
+[ Upstream commit 8a81388ec27c4c0adbdecd20e67bb5f411ab46b2 ]
 
-The check is valid but it does not warrant to crash the kernel. A
-WARN_ON() is good enough here.
+Instead of having the function name hard-coded (it might change and we
+forgot to update them in the debug output) we can use __func__ instead
+and also shorter the line so we do not need to break it. Also fix an
+extra blank line while being here.
 Found by checkpatch.
 
 Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ieee802154/at86rf230.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ieee802154/at86rf230.c |   13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
 --- a/drivers/net/ieee802154/at86rf230.c
 +++ b/drivers/net/ieee802154/at86rf230.c
-@@ -932,7 +932,7 @@ at86rf230_xmit(struct ieee802154_hw *hw,
- static int
- at86rf230_ed(struct ieee802154_hw *hw, u8 *level)
- {
--	BUG_ON(!level);
-+	WARN_ON(!level);
- 	*level = 0xbe;
- 	return 0;
+@@ -1108,8 +1108,7 @@ at86rf230_set_hw_addr_filt(struct ieee80
+ 	if (changed & IEEE802154_AFILT_SADDR_CHANGED) {
+ 		u16 addr = le16_to_cpu(filt->short_addr);
+ 
+-		dev_vdbg(&lp->spi->dev,
+-			 "at86rf230_set_hw_addr_filt called for saddr\n");
++		dev_vdbg(&lp->spi->dev, "%s called for saddr\n", __func__);
+ 		__at86rf230_write(lp, RG_SHORT_ADDR_0, addr);
+ 		__at86rf230_write(lp, RG_SHORT_ADDR_1, addr >> 8);
+ 	}
+@@ -1117,8 +1116,7 @@ at86rf230_set_hw_addr_filt(struct ieee80
+ 	if (changed & IEEE802154_AFILT_PANID_CHANGED) {
+ 		u16 pan = le16_to_cpu(filt->pan_id);
+ 
+-		dev_vdbg(&lp->spi->dev,
+-			 "at86rf230_set_hw_addr_filt called for pan id\n");
++		dev_vdbg(&lp->spi->dev, "%s called for pan id\n", __func__);
+ 		__at86rf230_write(lp, RG_PAN_ID_0, pan);
+ 		__at86rf230_write(lp, RG_PAN_ID_1, pan >> 8);
+ 	}
+@@ -1127,15 +1125,13 @@ at86rf230_set_hw_addr_filt(struct ieee80
+ 		u8 i, addr[8];
+ 
+ 		memcpy(addr, &filt->ieee_addr, 8);
+-		dev_vdbg(&lp->spi->dev,
+-			 "at86rf230_set_hw_addr_filt called for IEEE addr\n");
++		dev_vdbg(&lp->spi->dev, "%s called for IEEE addr\n", __func__);
+ 		for (i = 0; i < 8; i++)
+ 			__at86rf230_write(lp, RG_IEEE_ADDR_0 + i, addr[i]);
+ 	}
+ 
+ 	if (changed & IEEE802154_AFILT_PANC_CHANGED) {
+-		dev_vdbg(&lp->spi->dev,
+-			 "at86rf230_set_hw_addr_filt called for panc change\n");
++		dev_vdbg(&lp->spi->dev, "%s called for panc change\n", __func__);
+ 		if (filt->pan_coord)
+ 			at86rf230_write_subreg(lp, SR_AACK_I_AM_COORD, 1);
+ 		else
+@@ -1239,7 +1235,6 @@ at86rf230_set_cca_mode(struct ieee802154
+ 	return at86rf230_write_subreg(lp, SR_CCA_MODE, val);
  }
+ 
+-
+ static int
+ at86rf230_set_cca_ed_level(struct ieee802154_hw *hw, s32 mbm)
+ {
 
 
