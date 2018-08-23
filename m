@@ -2,216 +2,167 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 658C3C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3BB7C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:25:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB34A20936
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:24:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1SG+EEr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB34A20936
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 85A4A20B6F
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:25:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A4A20B6F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbeHWKwy (ORCPT
+        id S1726758AbeHWKx5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 06:52:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47448 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726068AbeHWKwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 06:52:54 -0400
-Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net [67.185.97.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 23 Aug 2018 06:53:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60448 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726144AbeHWKx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 06:53:57 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F13F208FE;
-        Thu, 23 Aug 2018 07:24:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535009078;
-        bh=qU6Q5x5NcT6V9l1PnUQY222rGu09XOk7dznRDhrJPOg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b1SG+EErob+Xeld6SSZlL+jcx0b9mGncoX9uLVUrjSBbhpC5kSKsLQt3idfVyHf1e
-         4KsXEcDHie2Ra8WyukEnRnl2QL6gW5Tn4D+x4ex7H4caVzLxuSbbGkcpMU4sJ8+caF
-         qTMwWu8fIkg1HsvDc4P8mIT5MDGSwepY+bipSjFc=
-Date:   Thu, 23 Aug 2018 00:24:36 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     syzbot <syzbot+6eaf536fd743f5e119c5@syzkaller.appspotmail.com>
-Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
-Subject: Re: WARNING in refcount_inc (3)
-Message-ID: <20180823072435.GC736@sol.localdomain>
-References: <001a113ec036acc2460568bd5427@google.com>
- <20180419224509.GB13221@gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 7737487A82;
+        Thu, 23 Aug 2018 07:25:40 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DD6FD2166BA1;
+        Thu, 23 Aug 2018 07:25:38 +0000 (UTC)
+Date:   Thu, 23 Aug 2018 15:25:35 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        keescook@chromium.org, n-horiguchi@ah.jp.nec.com,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
+        douly.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v5 3/4] x86/boot/KASLR: Walk srat tables to filter
+ immovable memory
+Message-ID: <20180823072535.GL29313@MiWiFi-R3L-srv>
+References: <20180807065000.30958-1-fanc.fnst@cn.fujitsu.com>
+ <20180807065000.30958-4-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180419224509.GB13221@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180807065000.30958-4-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 23 Aug 2018 07:25:40 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 23 Aug 2018 07:25:40 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 03:45:09PM -0700, Eric Biggers wrote:
-> On Sat, Mar 31, 2018 at 04:01:02PM -0700, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot hit the following crash on bpf-next commit
-> > 1379ef828a18d8f81c526b25e4d5685caa2cfd65 (Thu Mar 29 22:09:44 2018 +0000)
-> > Merge branch 'bpf-sockmap-ingress'
-> > syzbot dashboard link:
-> > https://syzkaller.appspot.com/bug?extid=6eaf536fd743f5e119c5
-> > 
-> > So far this crash happened 6 times on bpf-next.
-> > C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6614614900998144
-> > syzkaller reproducer:
-> > https://syzkaller.appspot.com/x/repro.syz?id=5035340528091136
-> > Raw console output:
-> > https://syzkaller.appspot.com/x/log.txt?id=5063394046509056
-> > Kernel config:
-> > https://syzkaller.appspot.com/x/.config?id=-1280663959502969741
-> > compiler: gcc (GCC) 7.1.1 20170620
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+6eaf536fd743f5e119c5@syzkaller.appspotmail.com
-> > It will help syzbot understand when the bug is fixed. See footer for
-> > details.
-> > If you forward the report, please keep this part and the footer.
-> > 
-> > R13: 0000000000000005 R14: 0000000000001380 R15: 00007ffd314c8768
-> > ------------[ cut here ]------------
-> > ------------[ cut here ]------------
-> > refcount_t: increment on 0; use-after-free.
-> > refcount_t: underflow; use-after-free.
-> > WARNING: CPU: 1 PID: 4434 at lib/refcount.c:153 refcount_inc+0x47/0x50
-> > lib/refcount.c:153
-> > WARNING: CPU: 0 PID: 4437 at lib/refcount.c:187
-> > refcount_sub_and_test+0x167/0x1b0 lib/refcount.c:187
-> > Kernel panic - not syncing: panic_on_warn set ...
-> > 
-> > Modules linked in:
-> > CPU: 1 PID: 4434 Comm: syzkaller349430 Not tainted 4.16.0-rc6+ #41
-> > CPU: 0 PID: 4437 Comm: syzkaller349430 Not tainted 4.16.0-rc6+ #41
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > RIP: 0010:refcount_sub_and_test+0x167/0x1b0 lib/refcount.c:187
-> > Call Trace:
-> > RSP: 0018:ffff8801b061f728 EFLAGS: 00010286
-> >  __dump_stack lib/dump_stack.c:17 [inline]
-> >  dump_stack+0x194/0x24d lib/dump_stack.c:53
-> > RAX: dffffc0000000008 RBX: 0000000000000000 RCX: ffffffff815ba4be
-> > RDX: 0000000000000000 RSI: 1ffff100360c3e95 RDI: 1ffff100360c3e6a
-> > RBP: ffff8801b061f7b8 R08: 0000000000000000 R09: 0000000000000000
-> > R10: ffff8801b061f850 R11: 0000000000000000 R12: 1ffff100360c3ee6
-> >  panic+0x1e4/0x41c kernel/panic.c:183
-> > R13: 00000000ffffffff R14: 0000000000000001 R15: ffff8801b1be4184
-> > FS:  0000000001817880(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007ffd314c9000 CR3: 00000001b04a1006 CR4: 00000000001606f0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >  __warn+0x1dc/0x200 kernel/panic.c:547
-> >  report_bug+0x1f4/0x2b0 lib/bug.c:186
-> >  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
-> >  fixup_bug arch/x86/kernel/traps.c:247 [inline]
-> >  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
-> >  refcount_dec_and_test+0x1a/0x20 lib/refcount.c:212
-> >  put_net include/net/net_namespace.h:222 [inline]
-> >  __sk_destruct+0x560/0x920 net/core/sock.c:1592
-> >  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-> >  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
-> > RIP: 0010:refcount_inc+0x47/0x50 lib/refcount.c:153
-> > RSP: 0018:ffff8801b058f860 EFLAGS: 00010286
-> > RAX: dffffc0000000008 RBX: ffff8801ab55a1c4 RCX: ffffffff815ba4be
-> > RDX: 0000000000000000 RSI: 1ffff100360b1ebc RDI: 1ffff100360b1e91
-> > RBP: ffff8801b058f868 R08: 0000000000000000 R09: 0000000000000000
-> >  sk_destruct+0x47/0x80 net/core/sock.c:1601
-> > R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801b058faf8
-> >  __sk_free+0xf1/0x2b0 net/core/sock.c:1612
-> > R13: ffff8801af87b513 R14: ffff8801ab55a1c0 R15: ffff8801af87b501
-> >  sk_free+0x2a/0x40 net/core/sock.c:1623
-> >  sock_put include/net/sock.h:1661 [inline]
-> >  tcp_close+0x967/0x1190 net/ipv4/tcp.c:2329
-> >  get_net include/net/net_namespace.h:204 [inline]
-> >  sk_alloc+0x3f9/0x1440 net/core/sock.c:1540
-> >  inet_release+0xed/0x1c0 net/ipv4/af_inet.c:427
-> >  sock_release+0x8d/0x1e0 net/socket.c:594
-> >  sock_close+0x16/0x20 net/socket.c:1149
-> >  __fput+0x327/0x7e0 fs/file_table.c:209
-> >  ____fput+0x15/0x20 fs/file_table.c:243
-> >  task_work_run+0x199/0x270 kernel/task_work.c:113
-> >  inet_create+0x47c/0xf50 net/ipv4/af_inet.c:320
-> >  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
-> >  exit_to_usermode_loop+0x275/0x2f0 arch/x86/entry/common.c:166
-> >  __sock_create+0x4d4/0x850 net/socket.c:1285
-> >  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-> >  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-> >  do_syscall_64+0x6ec/0x940 arch/x86/entry/common.c:292
-> >  sock_create net/socket.c:1325 [inline]
-> >  SYSC_socket net/socket.c:1355 [inline]
-> >  SyS_socket+0xeb/0x1d0 net/socket.c:1335
-> >  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-> >  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> > RIP: 0033:0x402950
-> > RSP: 002b:00007ffd314c8628 EFLAGS: 00000246
-> >  ORIG_RAX: 0000000000000003
-> > RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000402950
-> > RDX: 00000000000000e0 RSI: 00007ffd314c8f00 RDI: 0000000000000003
-> > RBP: 00007ffd314c8740 R08: 00007ffd314c864c R09: 0000000000000001
-> > R10: 00007ffd314c8740 R11: 0000000000000246 R12: 00000000006cf4c0
-> > R13: 00000000006cee40 R14: 0000000000001380 R15: 00007ffd314c8768
-> > Code:
-> >  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> > 5e
-> > RIP: 0033:0x4456a7
-> > 41
-> > RSP: 002b:00007ffd314c8628 EFLAGS: 00000202 ORIG_RAX: 0000000000000029
-> > 5f
-> > RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00000000004456a7
-> > 5d
-> > RDX: 0000000000000006 RSI: 0000000000000001 RDI: 0000000000000002
-> > RBP: 00007ffd314c8740 R08: 0000000000000000 R09: 0000000000000001
-> > c3
-> > R10: 0000000000000006 R11: 0000000000000202 R12: 0000000000000003
-> > e8
-> > R13: 0000000000000003 R14: 0000000000006cc2 R15: 00007ffd314c8768
-> > 0a 0b be fe 80 3d 20 c9 84 05 00 75 1a e8 fc 0a be fe 48 c7 c7 e0 78 e5 86
-> > c6 05 0b c9 84 05 01 e8 a9 16 8e fe <0f> 0b 31 db eb a3 e8 de 0a be fe 83 fb
-> > ff 0f 85 63 ff ff ff 31
-> > ---[ end trace dd327356f543ce46 ]---
-> > Dumping ftrace buffer:
-> >    (ftrace buffer empty)
-> > Kernel Offset: disabled
-> > Rebooting in 86400 seconds..
-> > 
-> > 
-> > ---
-> > This bug is generated by a dumb bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for details.
-> > Direct all questions to syzkaller@googlegroups.com.
-> > 
-> > syzbot will keep track of this bug report.
-> > If you forgot to add the Reported-by tag, once the fix for this bug is
-> > merged
-> > into any tree, please reply to this email with:
-> > #syz fix: exact-commit-title
+On 08/07/18 at 02:49pm, Chao Fan wrote:
+> If 'CONFIG_MEMORY_HOTREMOVE' specified, walk the acpi srat memory
+> tables, store the immovable memory regions, so that kaslr can get
+> the information abouth where can be selected or not.
+> If 'CONFIG_MEMORY_HOTREMOVE' not specified, go on the old code.
 > 
-> Broken error handling when mounting rpc_pipefs is messing things up.
-> Fixed by patch in vfs/for-linus:
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> ---
+>  arch/x86/boot/compressed/kaslr.c | 59 ++++++++++++++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
 > 
-> #syz fix: rpc_pipefs: deal with early sget() failures
+> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+> index 302517929932..720878f967a3 100644
+> --- a/arch/x86/boot/compressed/kaslr.c
+> +++ b/arch/x86/boot/compressed/kaslr.c
+> @@ -31,6 +31,7 @@
+>  
+>  #include "misc.h"
+>  #include "error.h"
+> +#include "acpitb.h"
+>  #include "../string.h"
+>  
+>  #include <generated/compile.h>
+> @@ -104,6 +105,14 @@ static bool memmap_too_large;
+>  /* Store memory limit specified by "mem=nn[KMG]" or "memmap=nn[KMG]" */
+>  static unsigned long long mem_limit = ULLONG_MAX;
+>  
+> +#ifdef CONFIG_MEMORY_HOTREMOVE
+> +/* Store the immovable memory regions */
+> +static struct mem_vector immovable_mem[MAX_NUMNODES*2];
+> +
+> +/* Store the amount of immovable memory regions */
+> +static int num_immovable_mem;
+> +#endif
+> +
+>  
+>  enum mem_avoid_index {
+>  	MEM_AVOID_ZO_RANGE = 0,
+> @@ -298,6 +307,51 @@ static int handle_mem_options(void)
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_MEMORY_HOTREMOVE
+> +/*
+> + * According to ACPI table, filter the immvoable memory regions
+> + * and store them in immovable_mem[].
+> + */
+> +static void handle_immovable_mem(void)
+> +{
+> +	char *args = (char *)get_cmd_line_ptr();
+> +	struct acpi_table_header *table_header;
+> +	struct acpi_subtable_header *table;
+> +	struct acpi_srat_mem_affinity *ma;
+> +	unsigned long table_end;
+> +	int i = 0;
+> +
+> +	if (!strstr(args, "movable_node"))
+
+If 'acpi=off' specified, better return too here.
+
+> +		return;
+> +
+> +	table_header = get_acpi_srat_table();
+> +	if (!table_header)
+> +		return;
+> +
+> +	table_end = (unsigned long)table_header + table_header->length;
+> +
+> +	table = (struct acpi_subtable_header *)
+> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
+> +
+> +	while (((unsigned long)table) + table->length < table_end) {
+> +		if (table->type == 1) {
+> +			ma = (struct acpi_srat_mem_affinity *)table;
+> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
+> +				immovable_mem[i].start = ma->base_address;
+> +				immovable_mem[i].size = ma->length;
+> +				i++;
+> +			}
+> +
+> +			if (i >= MAX_NUMNODES*2)
+> +				break;
+> +		}
+> +		table = (struct acpi_subtable_header *)
+> +			((unsigned long)table + table->length);
+> +	}
+> +	num_immovable_mem = i;
+> +}
+> +#endif
+> +
+>  /*
+>   * In theory, KASLR can put the kernel anywhere in the range of [16M, 64T).
+>   * The mem_avoid array is used to store the ranges that need to be avoided
+> @@ -421,6 +475,11 @@ static void mem_avoid_init(unsigned long input, unsigned long input_size,
+>  	/* Mark the memmap regions we need to avoid */
+>  	handle_mem_options();
+>  
+> +#ifdef CONFIG_MEMORY_HOTREMOVE
+> +	/* Mark the immovable regions we need to choose */
+> +	handle_immovable_mem();
+> +#endif
+> +
+>  #ifdef CONFIG_X86_VERBOSE_BOOTUP
+>  	/* Make sure video RAM can be used. */
+>  	add_identity_map(0, PMD_SIZE);
+> -- 
+> 2.17.1
 > 
-
-Correction: the patch I mentioned above was dropped, and the fix for this that
-actually went upstream was commit 8e04944f0ea8b83:
-
-#syz fix: mm,vmscan: Allow preallocating memory for register_shrinker().
-
-- Eric
+> 
+> 
