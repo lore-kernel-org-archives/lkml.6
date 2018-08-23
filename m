@@ -6,36 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26ED4C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB63C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD4A92147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD4A92147A
+	by mail.kernel.org (Postfix) with ESMTP id 3B0D621486
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B0D621486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731945AbeHWMIB (ORCPT
+        id S1731957AbeHWMIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:08:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49346 "EHLO
+        Thu, 23 Aug 2018 08:08:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49358 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731040AbeHWMIB (ORCPT
+        with ESMTP id S1730300AbeHWMIE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:08:01 -0400
+        Thu, 23 Aug 2018 08:08:04 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 204118B1;
-        Thu, 23 Aug 2018 08:39:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 233C8941;
+        Thu, 23 Aug 2018 08:39:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        kernel-janitors@vger.kernel.org,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-arm-kernel@lists.infradead.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 008/324] IB/mlx4: Fix an error handling path in mlx4_ib_rereg_user_mr()
-Date:   Thu, 23 Aug 2018 09:51:14 +0200
-Message-Id: <20180823074956.348578374@linuxfoundation.org>
+Subject: [PATCH 4.17 009/324] clocksource/drivers/stm32: Fix error return code
+Date:   Thu, 23 Aug 2018 09:51:15 +0200
+Message-Id: <20180823074956.401371103@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,37 +56,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[ Upstream commit 3dc7c7badb7502ec3e3aa817a8bdd9e53aa54c52 ]
+[ Upstream commit a26ed66c20f080c510fcf5bd448bce204f2c19d7 ]
 
-Before returning -EPERM we should release some resources, as already done
-in the other error handling path of the function.
+Return an error code on failure.
 
-Fixes: d8f9cc328c88 ("IB/mlx4: Mark user MR as writable if actual virtual memory is writable")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Problem found using Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: kernel-janitors@vger.kernel.org
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Link: https://lkml.kernel.org/r1528640655-18948-3-git-send-email-Julia.Lawall@lip6.fr
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx4/mr.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/clocksource/timer-stm32.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/mlx4/mr.c
-+++ b/drivers/infiniband/hw/mlx4/mr.c
-@@ -486,8 +486,11 @@ int mlx4_ib_rereg_user_mr(struct ib_mr *
- 	}
+--- a/drivers/clocksource/timer-stm32.c
++++ b/drivers/clocksource/timer-stm32.c
+@@ -304,8 +304,10 @@ static int __init stm32_timer_init(struc
  
- 	if (flags & IB_MR_REREG_ACCESS) {
--		if (ib_access_writable(mr_access_flags) && !mmr->umem->writable)
--			return -EPERM;
-+		if (ib_access_writable(mr_access_flags) &&
-+		    !mmr->umem->writable) {
-+			err = -EPERM;
-+			goto release_mpt_entry;
-+		}
+ 	to->private_data = kzalloc(sizeof(struct stm32_timer_private),
+ 				   GFP_KERNEL);
+-	if (!to->private_data)
++	if (!to->private_data) {
++		ret = -ENOMEM;
+ 		goto deinit;
++	}
  
- 		err = mlx4_mr_hw_change_access(dev->dev, *pmpt_entry,
- 					       convert_access(mr_access_flags));
+ 	rstc = of_reset_control_get(node, NULL);
+ 	if (!IS_ERR(rstc)) {
 
 
