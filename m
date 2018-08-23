@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E23C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2676C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8E48208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8E48208C2
+	by mail.kernel.org (Postfix) with ESMTP id 77507208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77507208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389257AbeHWMk3 (ORCPT
+        id S2389270AbeHWMkc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:40:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57088 "EHLO
+        Thu, 23 Aug 2018 08:40:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57100 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727875AbeHWMk2 (ORCPT
+        with ESMTP id S1727875AbeHWMkb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:40:28 -0400
+        Thu, 23 Aug 2018 08:40:31 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 86C8BCAC;
-        Thu, 23 Aug 2018 09:11:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AFC91CA8;
+        Thu, 23 Aug 2018 09:11:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jeremy Cline <jcline@redhat.com>, Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.18 08/22] ext4: fix spectre gadget in ext4_mb_regular_allocator()
-Date:   Thu, 23 Aug 2018 09:56:34 +0200
-Message-Id: <20180823074759.671861610@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>
+Subject: [PATCH 4.18 09/22] drm/i915/kvmgt: Fix potential Spectre v1
+Date:   Thu, 23 Aug 2018 09:56:35 +0200
+Message-Id: <20180823074759.753464908@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074759.234685844@linuxfoundation.org>
 References: <20180823074759.234685844@linuxfoundation.org>
@@ -50,54 +51,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeremy Cline <jcline@redhat.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 1a5d5e5d51e75a5bca67dadbcea8c841934b7b85 upstream.
+commit de5372da605d3bca46e3102bab51b7e1c0e0a6f6 upstream.
 
-'ac->ac_g_ex.fe_len' is a user-controlled value which is used in the
-derivation of 'ac->ac_2order'. 'ac->ac_2order', in turn, is used to
-index arrays which makes it a potential spectre gadget. Fix this by
-sanitizing the value assigned to 'ac->ac2_order'.  This covers the
-following accesses found with the help of smatch:
+info.index can be indirectly controlled by user-space, hence leading
+to a potential exploitation of the Spectre variant 1 vulnerability.
 
-* fs/ext4/mballoc.c:1896 ext4_mb_simple_scan_group() warn: potential
-  spectre issue 'grp->bb_counters' [w] (local cap)
+This issue was detected with the help of Smatch:
 
-* fs/ext4/mballoc.c:445 mb_find_buddy() warn: potential spectre issue
-  'EXT4_SB(e4b->bd_sb)->s_mb_offsets' [r] (local cap)
+drivers/gpu/drm/i915/gvt/kvmgt.c:1232 intel_vgpu_ioctl() warn:
+potential spectre issue 'vgpu->vdev.region' [r]
 
-* fs/ext4/mballoc.c:446 mb_find_buddy() warn: potential spectre issue
-  'EXT4_SB(e4b->bd_sb)->s_mb_maxs' [r] (local cap)
+Fix this by sanitizing info.index before indirectly using it to index
+vgpu->vdev.region
 
-Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Jeremy Cline <jcline@redhat.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
 Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/mballoc.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/i915/gvt/kvmgt.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -14,6 +14,7 @@
- #include <linux/log2.h>
- #include <linux/module.h>
- #include <linux/slab.h>
+--- a/drivers/gpu/drm/i915/gvt/kvmgt.c
++++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
+@@ -43,6 +43,8 @@
+ #include <linux/mdev.h>
+ #include <linux/debugfs.h>
+ 
 +#include <linux/nospec.h>
- #include <linux/backing-dev.h>
- #include <trace/events/ext4.h>
++
+ #include "i915_drv.h"
+ #include "gvt.h"
  
-@@ -2140,7 +2141,8 @@ ext4_mb_regular_allocator(struct ext4_al
- 		 * This should tell if fe_len is exactly power of 2
- 		 */
- 		if ((ac->ac_g_ex.fe_len & (~(1 << (i - 1)))) == 0)
--			ac->ac_2order = i - 1;
-+			ac->ac_2order = array_index_nospec(i - 1,
-+							   sb->s_blocksize_bits + 2);
- 	}
+@@ -1084,7 +1086,8 @@ static long intel_vgpu_ioctl(struct mdev
+ 	} else if (cmd == VFIO_DEVICE_GET_REGION_INFO) {
+ 		struct vfio_region_info info;
+ 		struct vfio_info_cap caps = { .buf = NULL, .size = 0 };
+-		int i, ret;
++		unsigned int i;
++		int ret;
+ 		struct vfio_region_info_cap_sparse_mmap *sparse = NULL;
+ 		size_t size;
+ 		int nr_areas = 1;
+@@ -1169,6 +1172,10 @@ static long intel_vgpu_ioctl(struct mdev
+ 				if (info.index >= VFIO_PCI_NUM_REGIONS +
+ 						vgpu->vdev.num_regions)
+ 					return -EINVAL;
++				info.index =
++					array_index_nospec(info.index,
++							VFIO_PCI_NUM_REGIONS +
++							vgpu->vdev.num_regions);
  
- 	/* if stream allocation is enabled, use global goal */
+ 				i = info.index - VFIO_PCI_NUM_REGIONS;
+ 
 
 
