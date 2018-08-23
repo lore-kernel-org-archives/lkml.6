@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B554AC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:48:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC722C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:48:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7963B2077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:48:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7963B2077B
+	by mail.kernel.org (Postfix) with ESMTP id AAD8E2077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:48:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAD8E2077B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733092AbeHWMR0 (ORCPT
+        id S1733109AbeHWMRa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:17:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50898 "EHLO
+        Thu, 23 Aug 2018 08:17:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50908 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732308AbeHWMRZ (ORCPT
+        with ESMTP id S1732308AbeHWMR3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:17:25 -0400
+        Thu, 23 Aug 2018 08:17:29 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E163941;
-        Thu, 23 Aug 2018 08:48:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A0BABC1;
+        Thu, 23 Aug 2018 08:48:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Eckelmann <sven@narfation.org>,
-        Marek Lindner <mareklindner@neomailbox.ch>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
+        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 096/324] batman-adv: Fix bat_v best gw refcnt after netlink dump
-Date:   Thu, 23 Aug 2018 09:52:42 +0200
-Message-Id: <20180823075000.656907998@linuxfoundation.org>
+Subject: [PATCH 4.17 105/324] ARM: dts: am437x: make edt-ft5x06 a wakeup source
+Date:   Thu, 23 Aug 2018 09:52:51 +0200
+Message-Id: <20180823075001.081856889@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,49 +51,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Daniel Mack <daniel@zonque.org>
 
-[ Upstream commit 9713cb0cf19f1cec6c007e3b37be0697042b6720 ]
+[ Upstream commit 49a6ec5b807ea4ad7ebe1f58080ebb8497cb2d2c ]
 
-A reference for the best gateway is taken when the list of gateways in the
-mesh is sent via netlink. This is necessary to check whether the currently
-dumped entry is the currently selected gateway or not. This information is
-then transferred as flag BATADV_ATTR_FLAG_BEST.
+The touchscreen driver no longer configures the device as wakeup source by
+default. A "wakeup-source" property is needed.
 
-After the comparison of the current entry is done,
-batadv_v_gw_dump_entry() has to decrease the reference counter again.
-Otherwise the reference will be held and thus prevents a proper shutdown of
-the batman-adv interfaces (and some of the interfaces enslaved in it).
-
-Fixes: b71bb6f924fe ("batman-adv: add B.A.T.M.A.N. V bat_gw_dump implementations")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/bat_v.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/am437x-sk-evm.dts |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/batman-adv/bat_v.c
-+++ b/net/batman-adv/bat_v.c
-@@ -927,7 +927,7 @@ static int batadv_v_gw_dump_entry(struct
- {
- 	struct batadv_neigh_ifinfo *router_ifinfo = NULL;
- 	struct batadv_neigh_node *router;
--	struct batadv_gw_node *curr_gw;
-+	struct batadv_gw_node *curr_gw = NULL;
- 	int ret = 0;
- 	void *hdr;
+--- a/arch/arm/boot/dts/am437x-sk-evm.dts
++++ b/arch/arm/boot/dts/am437x-sk-evm.dts
+@@ -537,6 +537,8 @@
  
-@@ -995,6 +995,8 @@ static int batadv_v_gw_dump_entry(struct
- 	ret = 0;
+ 		touchscreen-size-x = <480>;
+ 		touchscreen-size-y = <272>;
++
++		wakeup-source;
+ 	};
  
- out:
-+	if (curr_gw)
-+		batadv_gw_node_put(curr_gw);
- 	if (router_ifinfo)
- 		batadv_neigh_ifinfo_put(router_ifinfo);
- 	if (router)
+ 	tlv320aic3106: tlv320aic3106@1b {
 
 
