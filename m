@@ -2,134 +2,102 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB3DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 06:57:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C063C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 06:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CC16208F7
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 06:57:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CC16208F7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3AFB8208F7
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 06:57:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AFB8208F7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbeHWKZc (ORCPT
+        id S1726636AbeHWKZg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 06:25:32 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39660 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726243AbeHWKZb (ORCPT
+        Thu, 23 Aug 2018 06:25:36 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:55589 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726438AbeHWKZf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 06:25:31 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7N6s0il026360
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 02:57:20 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m1qt8gtpx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 02:57:20 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 23 Aug 2018 07:57:18 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 Aug 2018 07:57:14 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7N6vD6b16646204
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 23 Aug 2018 06:57:13 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AB45C4C04E;
-        Thu, 23 Aug 2018 09:57:14 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4D4EF4C044;
-        Thu, 23 Aug 2018 09:57:14 +0100 (BST)
-Received: from [9.152.224.92] (unknown [9.152.224.92])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 23 Aug 2018 09:57:14 +0100 (BST)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v2 4/5] KVM: s390: vsie: Always test the crycbd for NULL
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-References: <1534956717-14087-1-git-send-email-pmorel@linux.ibm.com>
- <1534956717-14087-5-git-send-email-pmorel@linux.ibm.com>
- <c4894cbd-4e4f-74a1-6fe0-6f3c264f297e@redhat.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Thu, 23 Aug 2018 08:57:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 23 Aug 2018 06:25:35 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fsjYT-00008K-Jd; Thu, 23 Aug 2018 08:57:17 +0200
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fsjYT-0002ic-45; Thu, 23 Aug 2018 08:57:17 +0200
+Date:   Thu, 23 Aug 2018 08:57:17 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH] ARM: dts: imx6ull: correct machine model name
+Message-ID: <20180823065717.ibntomnnamkdbyyq@pengutronix.de>
+References: <1535005849-14046-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <c4894cbd-4e4f-74a1-6fe0-6f3c264f297e@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18082306-4275-0000-0000-000002AE009F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082306-4276-0000-0000-000037B7081F
-Message-Id: <b1d0862e-3bf2-bfb4-8926-e8876b7fdb72@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=968 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808230073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1535005849-14046-1-git-send-email-Anson.Huang@nxp.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 08:56:23 up 71 days, 16:05, 66 users,  load average: 0.07, 0.08,
+ 0.08
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/08/2018 19:07, David Hildenbrand wrote:
-> On 22.08.2018 18:51, Pierre Morel wrote:
->> BUG: the crycbd must be tested for null even if
->> not crossing a page boundary (which will never
->> occur in this case anyway).
-> 
-> I don't see the BUG. Can you elaborate? (maybe it is too late for me)
+Hi Anson,
 
-No it was too late for me :)
-The BUG was by me, my brain was fooled by the "else"
-there is not problem there.
-CRCBD is always tested.
+The board name should be in the subject to let the reader know this is
+no generic i.MX6ull change.
 
-Sorry.
+Sascha
 
+On Thu, Aug 23, 2018 at 02:30:49PM +0800, Anson Huang wrote:
+> i.MX6ULL is a lite version of i.MX6UL, its full name
+> is i.MX6 UltraLiteLite, NOT UlltraLite.
 > 
-> Either we return or we check for !crycb_addr
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  arch/arm/boot/dts/imx6ull-14x14-evk.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->>
->> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->> ---
->>   arch/s390/kvm/vsie.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
->> index 0b12916..7ee4329 100644
->> --- a/arch/s390/kvm/vsie.c
->> +++ b/arch/s390/kvm/vsie.c
->> @@ -172,7 +172,7 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->>   
->>   	if ((crycb_addr & PAGE_MASK) != ((crycb_addr + 128) & PAGE_MASK))
->>   		return set_validity_icpt(scb_s, 0x003CU);
->> -	else if (!crycb_addr)
->> +	if (!crycb_addr)
->>   		return set_validity_icpt(scb_s, 0x0039U);
->>   
->>   	/* copy only the wrapping keys */
->>
+> diff --git a/arch/arm/boot/dts/imx6ull-14x14-evk.dts b/arch/arm/boot/dts/imx6ull-14x14-evk.dts
+> index 30ef603..0ba6454 100644
+> --- a/arch/arm/boot/dts/imx6ull-14x14-evk.dts
+> +++ b/arch/arm/boot/dts/imx6ull-14x14-evk.dts
+> @@ -45,7 +45,7 @@
+>  #include "imx6ul-14x14-evk.dtsi"
+>  
+>  / {
+> -	model = "Freescale i.MX6 UlltraLite 14x14 EVK Board";
+> +	model = "Freescale i.MX6 UltraLiteLite 14x14 EVK Board";
+>  	compatible = "fsl,imx6ull-14x14-evk", "fsl,imx6ull";
+>  };
+>  
+> -- 
+> 2.7.4
 > 
 > 
-
 
 -- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
