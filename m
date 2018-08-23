@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 122AFC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F7EC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB9C52083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:42:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB9C52083A
+	by mail.kernel.org (Postfix) with ESMTP id 0CEA62083A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:43:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CEA62083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732325AbeHWMLc (ORCPT
+        id S1732345AbeHWMLg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:11:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50122 "EHLO
+        Thu, 23 Aug 2018 08:11:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50130 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727597AbeHWMLc (ORCPT
+        with ESMTP id S1727597AbeHWMLf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:11:32 -0400
+        Thu, 23 Aug 2018 08:11:35 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 659027F6;
-        Thu, 23 Aug 2018 08:42:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 988DD8B1;
+        Thu, 23 Aug 2018 08:42:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        Michal Kalderon <Michal.Kalderon@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 066/324] qed: Add sanity check for SIMD fastpath handler.
-Date:   Thu, 23 Aug 2018 09:52:12 +0200
-Message-Id: <20180823074959.213012025@linuxfoundation.org>
+Subject: [PATCH 4.17 075/324] blk-mq-debugfs: Off by one in blk_mq_rq_state_name()
+Date:   Thu, 23 Aug 2018 09:52:21 +0200
+Message-Id: <20180823074959.674174537@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -54,45 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 3935a70968820c3994db4de7e6e1c7e814bff875 ]
+[ Upstream commit a1e79188628580465ac6d7a93a313336ee3364f1 ]
 
-Avoid calling a SIMD fastpath handler if it is NULL. The check is needed
-to handle an unlikely scenario where unsolicited interrupt is destined to
-a PF in INTa mode.
+If rq_state == ARRAY_SIZE() then we read one element beyond the end of
+the blk_mq_rq_state_name_array[] array.
 
-Fixes: fe56b9e6a ("qed: Add module with basic common support")
-Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
-Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: ec6dcf63c55c ("blk-mq-debugfs: Show more request state information")
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_main.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ block/blk-mq-debugfs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_main.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
-@@ -566,8 +566,16 @@ static irqreturn_t qed_single_int(int ir
- 		/* Fastpath interrupts */
- 		for (j = 0; j < 64; j++) {
- 			if ((0x2ULL << j) & status) {
--				hwfn->simd_proto_handler[j].func(
--					hwfn->simd_proto_handler[j].token);
-+				struct qed_simd_fp_handler *p_handler =
-+					&hwfn->simd_proto_handler[j];
-+
-+				if (p_handler->func)
-+					p_handler->func(p_handler->token);
-+				else
-+					DP_NOTICE(hwfn,
-+						  "Not calling fastpath handler as it is NULL [handler #%d, status 0x%llx]\n",
-+						  j, status);
-+
- 				status &= ~(0x2ULL << j);
- 				rc = IRQ_HANDLED;
- 			}
+--- a/block/blk-mq-debugfs.c
++++ b/block/blk-mq-debugfs.c
+@@ -357,7 +357,7 @@ static const char *const blk_mq_rq_state
+ 
+ static const char *blk_mq_rq_state_name(enum mq_rq_state rq_state)
+ {
+-	if (WARN_ON_ONCE((unsigned int)rq_state >
++	if (WARN_ON_ONCE((unsigned int)rq_state >=
+ 			 ARRAY_SIZE(blk_mq_rq_state_name_array)))
+ 		return "(?)";
+ 	return blk_mq_rq_state_name_array[rq_state];
 
 
