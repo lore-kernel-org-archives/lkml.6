@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD28EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C3BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 791E6208EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 791E6208EC
+	by mail.kernel.org (Postfix) with ESMTP id DA790208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA790208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388513AbeHWMhs (ORCPT
+        id S2388544AbeHWMhv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:37:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56306 "EHLO
+        Thu, 23 Aug 2018 08:37:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56328 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729119AbeHWMhr (ORCPT
+        with ESMTP id S1729327AbeHWMhu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:37:47 -0400
+        Thu, 23 Aug 2018 08:37:50 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 05F8BBBF;
-        Thu, 23 Aug 2018 09:09:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 27F01C9E;
+        Thu, 23 Aug 2018 09:09:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -35,9 +35,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         peterz@infradead.org, hughd@google.com,
         torvalds@linux-foundation.org, bp@alien8.de, luto@kernel.org,
         ak@linux.intel.com
-Subject: [PATCH 4.17 303/324] mm: Allow non-direct-map arguments to free_reserved_area()
-Date:   Thu, 23 Aug 2018 09:56:09 +0200
-Message-Id: <20180823075011.230793746@linuxfoundation.org>
+Subject: [PATCH 4.17 304/324] x86/mm/init: Pass unconverted symbol addresses to free_init_pages()
+Date:   Thu, 23 Aug 2018 09:56:10 +0200
+Message-Id: <20180823075011.277184066@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -56,29 +56,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-commit 0d83432811f26871295a9bc24d3c387924da6071 upstream.
+commit 9f515cdb411ef34f1aaf4c40bb0c932cf6db5de1 upstream.
 
-free_reserved_area() takes pointers as arguments to show which addresses
-should be freed.  However, it does this in a somewhat ambiguous way.  If it
-gets a kernel direct map address, it always works.  However, if it gets an
-address that is part of the kernel image alias mapping, it can fail.
+The x86 code has several places where it frees parts of kernel image:
 
-It fails if all of the following happen:
- * The specified address is part of the kernel image alias
- * Poisoning is requested (forcing a memset())
- * The address is in a read-only portion of the kernel image
+ 1. Unused SMP alternative
+ 2. __init code
+ 3. The hole between text and rodata
+ 4. The hole between rodata and data
 
-The memset() fails on the read-only mapping, of course.
-free_reserved_area() *is* called both on the direct map and on kernel image
-alias addresses.  We've just lucked out thus far that the kernel image
-alias areas it gets used on are read-write.  I'm fairly sure this has been
-just a happy accident.
+We call free_init_pages() to do this.  Strangely, we convert the symbol
+addresses to kernel direct map addresses in some cases (#3, #4) but not
+others (#1, #2).
 
-It is quite easy to make free_reserved_area() work for all cases: just
-convert the address to a direct map address before doing the memset(), and
-do this unconditionally.  There is little chance of a regression here
-because we previously did a virt_to_page() on the address for the memset,
-so we know these are not highmem pages for which virt_to_page() would fail.
+The virt_to_page() and the other code in free_reserved_area() now works
+fine for for symbol addresses on x86, so don't bother converting the
+addresses to direct map addresses before freeing them.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -104,38 +97,29 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Andi Kleen <ak@linux.intel.com>
-Link: https://lkml.kernel.org/r/20180802225826.1287AE3E@viggo.jf.intel.com
+Link: https://lkml.kernel.org/r/20180802225828.89B2D0E2@viggo.jf.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/page_alloc.c |   16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ arch/x86/mm/init_64.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6933,9 +6933,21 @@ unsigned long free_reserved_area(void *s
- 	start = (void *)PAGE_ALIGN((unsigned long)start);
- 	end = (void *)((unsigned long)end & PAGE_MASK);
- 	for (pos = start; pos < end; pos += PAGE_SIZE, pages++) {
-+		struct page *page = virt_to_page(pos);
-+		void *direct_map_addr;
-+
-+		/*
-+		 * 'direct_map_addr' might be different from 'pos'
-+		 * because some architectures' virt_to_page()
-+		 * work with aliases.  Getting the direct map
-+		 * address ensures that we get a _writeable_
-+		 * alias for the memset().
-+		 */
-+		direct_map_addr = page_address(page);
- 		if ((unsigned int)poison <= 0xFF)
--			memset(pos, poison, PAGE_SIZE);
--		free_reserved_page(virt_to_page(pos));
-+			memset(direct_map_addr, poison, PAGE_SIZE);
-+
-+		free_reserved_page(page);
- 	}
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -1283,12 +1283,8 @@ void mark_rodata_ro(void)
+ 	set_memory_ro(start, (end-start) >> PAGE_SHIFT);
+ #endif
  
- 	if (pages && s)
+-	free_init_pages("unused kernel",
+-			(unsigned long) __va(__pa_symbol(text_end)),
+-			(unsigned long) __va(__pa_symbol(rodata_start)));
+-	free_init_pages("unused kernel",
+-			(unsigned long) __va(__pa_symbol(rodata_end)),
+-			(unsigned long) __va(__pa_symbol(_sdata)));
++	free_init_pages("unused kernel", text_end, rodata_start);
++	free_init_pages("unused kernel", rodata_end, _sdata);
+ 
+ 	debug_checkwx();
+ 
 
 
