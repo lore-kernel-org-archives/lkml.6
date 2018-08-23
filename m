@@ -1,190 +1,256 @@
 Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63668C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F29C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16221208F7
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:11:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16221208F7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5C59F208FA
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:16:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C59F208FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbeHWTl0 (ORCPT
+        id S1726995AbeHWTrK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 15:41:26 -0400
-Received: from mga06.intel.com ([134.134.136.31]:63117 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726649AbeHWTl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 15:41:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2018 09:11:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,278,1531810800"; 
-   d="scan'208";a="67585035"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga008.jf.intel.com with ESMTP; 23 Aug 2018 09:09:36 -0700
-Received: from [10.252.7.112] (abudanko-mobl.ccr.corp.intel.com [10.252.7.112])
-        by linux.intel.com (Postfix) with ESMTP id 361E9580332;
-        Thu, 23 Aug 2018 09:09:33 -0700 (PDT)
-Subject: Re: [PATCH v1 1/2]: perf util: map data buffer for preserving
- collected data
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-References: <1c3fd88f-c408-2863-15b3-221829f3d383@linux.intel.com>
- <e2c4db6b-555b-c029-5c35-986a90b284fe@linux.intel.com>
- <20180823143005.GB4766@kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <62034f55-5d3a-79c7-b983-1e4f16e43c1f@linux.intel.com>
-Date:   Thu, 23 Aug 2018 19:09:32 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 23 Aug 2018 15:47:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50580 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726562AbeHWTrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 15:47:10 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AE2E987A7F;
+        Thu, 23 Aug 2018 16:16:45 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CE32BB278A;
+        Thu, 23 Aug 2018 16:16:43 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Roman Kagan <rkagan@virtuozzo.com>
+Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        Wanpeng Li <wanpeng.li@hotmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 RESEND 5/5] KVM: x86: hyperv: implement PV IPI send hypercalls
+References: <20180822101832.31763-1-vkuznets@redhat.com>
+        <20180822101832.31763-6-vkuznets@redhat.com>
+        <20180823155623.GA5065@rkaganb.sw.ru>
+Date:   Thu, 23 Aug 2018 18:16:42 +0200
+In-Reply-To: <20180823155623.GA5065@rkaganb.sw.ru> (Roman Kagan's message of
+        "Thu, 23 Aug 2018 18:56:23 +0300")
+Message-ID: <87lg8x2h3p.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180823143005.GB4766@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 23 Aug 2018 16:16:45 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 23 Aug 2018 16:16:45 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
+Roman Kagan <rkagan@virtuozzo.com> writes:
 
-On 23.08.2018 17:30, Arnaldo Carvalho de Melo wrote:
-> Em Thu, Aug 23, 2018 at 01:30:47PM +0300, Alexey Budankov escreveu:
->> +++ b/tools/perf/util/evlist.c
->> @@ -718,6 +718,8 @@ static void perf_evlist__munmap_nofree(struct perf_evlist *evlist)
->>  void perf_evlist__munmap(struct perf_evlist *evlist)
->>  {
->>  	perf_evlist__munmap_nofree(evlist);
->> +	if (&evlist->mmap_aio)
-> 
-> Is the above test for evlist->mmap_aio being NULL? I think that '&' is
-> not needed here, with it this test will always be true, right?
-
-Right, looks like a typo.
-
-> 
->> +		zfree(&evlist->mmap_aio);
-> 
->>  	zfree(&evlist->mmap);
->>  	zfree(&evlist->overwrite_mmap);
->>  }
->> @@ -749,6 +751,13 @@ static struct perf_mmap *perf_evlist__alloc_mmap(struct perf_evlist *evlist,
->>  		 */
->>  		refcount_set(&map[i].refcnt, 0);
->>  	}
+> On Wed, Aug 22, 2018 at 12:18:32PM +0200, Vitaly Kuznetsov wrote:
+>> Using hypercall for sending IPIs is faster because this allows to specify
+>> any number of vCPUs (even > 64 with sparse CPU set), the whole procedure
+>> will take only one VMEXIT.
+>> 
+>> Current Hyper-V TLFS (v5.0b) claims that HvCallSendSyntheticClusterIpi
+>> hypercall can't be 'fast' (passing parameters through registers) but
+>> apparently this is not true, Windows always uses it as 'fast' so we need
+>> to support that.
+>> 
+>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> ---
+>>  Documentation/virtual/kvm/api.txt |   8 +++
+>>  arch/x86/kvm/hyperv.c             | 109 ++++++++++++++++++++++++++++++++++++++
+>>  arch/x86/kvm/trace.h              |  42 +++++++++++++++
+>>  arch/x86/kvm/x86.c                |   1 +
+>>  include/uapi/linux/kvm.h          |   1 +
+>>  5 files changed, 161 insertions(+)
+>
+> Looks like I forgot to respond to this one, sorry.
+>
+>> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+>> index 7b83b176c662..832ea72d43c1 100644
+>> --- a/Documentation/virtual/kvm/api.txt
+>> +++ b/Documentation/virtual/kvm/api.txt
+>> @@ -4690,3 +4690,11 @@ This capability indicates that KVM supports paravirtualized Hyper-V TLB Flush
+>>  hypercalls:
+>>  HvFlushVirtualAddressSpace, HvFlushVirtualAddressSpaceEx,
+>>  HvFlushVirtualAddressList, HvFlushVirtualAddressListEx.
 >> +
->> +	evlist->mmap_aio = zalloc(evlist->nr_mmaps * sizeof(struct aiocb *));
-> 
-> Right, and here you could have used calloc(evlist->nr_mmaps, sizeof(struct aiocb *))
-
-yep, make sense.
-
-> 
->> +	if (!evlist->mmap_aio) {
->> +		zfree(&map);
-> 
-> If you use zfree(&map); then map becomes NULL and you do not return NULL
-> in the next line, if you insist in using the following 'return NULL;',
-> then you could as well use just 'free(map);', as 'map' is a local
-> variable and thus we need not set it to NULL :-)
-
-yeah, I see. Let me resend. Thanks!
-
-> 
->> +		return NULL;
->> +	}
+>> +8.19 KVM_CAP_HYPERV_SEND_IPI
 >> +
->>  	return map;
+>> +Architectures: x86
+>> +
+>> +This capability indicates that KVM supports paravirtualized Hyper-V IPI send
+>> +hypercalls:
+>> +HvCallSendSyntheticClusterIpi, HvCallSendSyntheticClusterIpiEx.
+>> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+>> index d1a911132b59..3183cf9bcb63 100644
+>> --- a/arch/x86/kvm/hyperv.c
+>> +++ b/arch/x86/kvm/hyperv.c
+>> @@ -1360,6 +1360,101 @@ static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
+>>  		((u64)rep_cnt << HV_HYPERCALL_REP_COMP_OFFSET);
 >>  }
 >>  
->> diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
->> index dc66436add98..f98b949561fd 100644
->> --- a/tools/perf/util/evlist.h
->> +++ b/tools/perf/util/evlist.h
->> @@ -15,6 +15,7 @@
->>  #include "util.h"
->>  #include <signal.h>
->>  #include <unistd.h>
->> +#include <aio.h>
->>  
->>  struct pollfd;
->>  struct thread_map;
->> @@ -43,6 +44,7 @@ struct perf_evlist {
->>  	} workload;
->>  	struct fdarray	 pollfd;
->>  	struct perf_mmap *mmap;
->> +	struct aiocb	 **mmap_aio;
->>  	struct perf_mmap *overwrite_mmap;
->>  	struct thread_map *threads;
->>  	struct cpu_map	  *cpus;
->> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
->> index fc832676a798..e71d46cb01cc 100644
->> --- a/tools/perf/util/mmap.c
->> +++ b/tools/perf/util/mmap.c
->> @@ -155,6 +155,10 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
->>  
->>  void perf_mmap__munmap(struct perf_mmap *map)
->>  {
->> +	if (map->data != NULL) {
->> +		munmap(map->data, perf_mmap__mmap_len(map));
->> +		map->data = NULL;
+>> +static u64 kvm_hv_send_ipi(struct kvm_vcpu *current_vcpu, u64 ingpa, u64 outgpa,
+>> +			   bool ex, bool fast)
+>> +{
+>> +	struct kvm *kvm = current_vcpu->kvm;
+>> +	struct hv_send_ipi_ex send_ipi_ex;
+>> +	struct hv_send_ipi send_ipi;
+>> +	struct kvm_vcpu *vcpu;
+>> +	unsigned long valid_bank_mask;
+>> +	u64 sparse_banks[64];
+>> +	int sparse_banks_len, bank, i;
+>> +	struct kvm_lapic_irq irq = {.delivery_mode = APIC_DM_FIXED};
+>> +	bool all_cpus;
+>> +
+>> +	if (!ex) {
+>> +		if (!fast) {
+>> +			if (unlikely(kvm_read_guest(kvm, ingpa, &send_ipi,
+>> +						    sizeof(send_ipi))))
+>> +				return HV_STATUS_INVALID_HYPERCALL_INPUT;
+>> +			sparse_banks[0] = send_ipi.cpu_mask;
+>> +			irq.vector = send_ipi.vector;
+>> +		} else {
+>> +			/* 'reserved' part of hv_send_ipi should be 0 */
+>> +			if (unlikely(ingpa >> 32 != 0))
+>> +				return HV_STATUS_INVALID_HYPERCALL_INPUT;
+>> +			sparse_banks[0] = outgpa;
+>> +			irq.vector = (u32)ingpa;
+>> +		}
+>> +		all_cpus = false;
+>> +		valid_bank_mask = BIT_ULL(0);
+>> +
+>> +		trace_kvm_hv_send_ipi(irq.vector, sparse_banks[0]);
+>> +	} else {
+>> +		if (unlikely(kvm_read_guest(kvm, ingpa, &send_ipi_ex,
+>> +					    sizeof(send_ipi_ex))))
+>> +			return HV_STATUS_INVALID_HYPERCALL_INPUT;
+>> +
+>> +		trace_kvm_hv_send_ipi_ex(send_ipi_ex.vector,
+>> +					 send_ipi_ex.vp_set.format,
+>> +					 send_ipi_ex.vp_set.valid_bank_mask);
+>> +
+>> +		irq.vector = send_ipi_ex.vector;
+>> +		valid_bank_mask = send_ipi_ex.vp_set.valid_bank_mask;
+>> +		sparse_banks_len = bitmap_weight(&valid_bank_mask, 64) *
+>> +			sizeof(sparse_banks[0]);
+>> +
+>> +		all_cpus = send_ipi_ex.vp_set.format == HV_GENERIC_SET_ALL;
+>> +
+>> +		if (!sparse_banks_len)
+>> +			goto ret_success;
+>> +
+>> +		if (!all_cpus &&
+>> +		    kvm_read_guest(kvm,
+>> +				   ingpa + offsetof(struct hv_send_ipi_ex,
+>> +						    vp_set.bank_contents),
+>> +				   sparse_banks,
+>> +				   sparse_banks_len))
+>> +			return HV_STATUS_INVALID_HYPERCALL_INPUT;
 >> +	}
->>  	if (map->base != NULL) {
->>  		munmap(map->base, perf_mmap__mmap_len(map));
->>  		map->base = NULL;
->> @@ -190,6 +194,14 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd)
->>  		map->base = NULL;
->>  		return -1;
->>  	}
->> +	map->data = mmap(NULL, perf_mmap__mmap_len(map), PROT_READ | PROT_WRITE,
->> +			MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
->> +	if (map->data == MAP_FAILED) {
->> +		pr_debug2("failed to mmap perf event data buffer, error %d\n",
->> +				errno);
->> +		map->data = NULL;
->> +		return -1;
+>> +
+>> +	if ((irq.vector < HV_IPI_LOW_VECTOR) ||
+>> +	    (irq.vector > HV_IPI_HIGH_VECTOR))
+>> +		return HV_STATUS_INVALID_HYPERCALL_INPUT;
+>> +
+>> +	if (all_cpus) {
+>> +		kvm_for_each_vcpu(i, vcpu, kvm) {
+>> +			/* We fail only when APIC is disabled */
+>> +			if (!kvm_apic_set_irq(vcpu, &irq, NULL))
+>> +				return HV_STATUS_INVALID_HYPERCALL_INPUT;
+>> +		}
+>> +		goto ret_success;
 >> +	}
->>  	map->fd = fd;
->>  
->>  	if (auxtrace_mmap__mmap(&map->auxtrace_mmap,
->> diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
->> index d82294db1295..1974e621e36b 100644
->> --- a/tools/perf/util/mmap.h
->> +++ b/tools/perf/util/mmap.h
->> @@ -6,6 +6,7 @@
->>  #include <linux/types.h>
->>  #include <asm/barrier.h>
->>  #include <stdbool.h>
->> +#include <aio.h>
->>  #include "auxtrace.h"
->>  #include "event.h"
->>  
->> @@ -25,6 +26,8 @@ struct perf_mmap {
->>  	bool		 overwrite;
->>  	struct auxtrace_mmap auxtrace_mmap;
->>  	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
->> +	void 		 *data;
->> +	struct aiocb	 cblock;
->>  };
->>  
->>  /*
->>  
-> 
+>> +
+>> +	for_each_set_bit(bank, (unsigned long *)&valid_bank_mask,
+>> +			 BITS_PER_LONG) {
+>
+> I think you need exactly 64 rather than BITS_PER_LONG
+>
+>> +
+>> +		for_each_set_bit(i, (unsigned long *)&sparse_banks[bank],
+>> +				 BITS_PER_LONG) {
+>
+> ditto
+>
+
+Sure, will do.
+
+>> +			u32 vp_index = bank * 64 + i;
+>> +			struct kvm_vcpu *vcpu =
+>> +				get_vcpu_by_vpidx(kvm, vp_index);
+>> +
+>> +			/* Unknown vCPU specified */
+>> +			if (!vcpu)
+>> +				return HV_STATUS_INVALID_HYPERCALL_INPUT;
+>
+> You may have already fired some IPIs, so returning error here without
+> attempting the remaining vcpus in the request looks inconsistent to me.
+>
+> I don't see a specified way to report partial success from this
+> hypercall.
+>
+> I'd rather continue here.
+>
+
+Basically, we have three choices:
+- Just bail (what we do now)
+- Ignore and continue returning success
+- Ignore and continue returning failure.
+
+but all of them are not perfect.
+
+We could've pre-validated the set but this is kind of expensive and no
+sane OS should be using invalid VP indexes.
+
+>> +
+>> +			/* We fail only when APIC is disabled */
+>> +			if (!kvm_apic_set_irq(vcpu, &irq, NULL))
+>> +				return HV_STATUS_INVALID_HYPERCALL_INPUT;
+>
+> Same here.
+>
+
+This is even worse as this can't be pre-validated reliably without
+pausing all vCPUs first.
+
+OK, let's switch to 'ignore and continue returning success'.
+
+>> +		}
+>> +	}
+>> +
+>> +ret_success:
+>> +	return HV_STATUS_SUCCESS;
+>> +}
+>
+> To my personal taste, this would have been easier to read if the -ex and
+> non-ex versions were separate functions preparing the arguments (vector
+> and mask) and calling into a common helper function to send the ipis.
+
+I would agree but I think it was Radim's suggestion to unify ex- and
+non-ex versions of kvm_hv_flush_tlb() and sending IPIs is not any
+different.
+
+Radim, please let me know if you think we should split them again, I'll
+do it for both functions (either in this series or as a follow-up).
+
+Thanks,
+
+-- 
+  Vitaly
