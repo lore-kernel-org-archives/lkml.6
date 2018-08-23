@@ -3,37 +3,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 350D4C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 784BDC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:00:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEBD3208CC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:00:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEBD3208CC
+	by mail.kernel.org (Postfix) with ESMTP id 38008208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:00:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38008208D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388251AbeHWM3d (ORCPT
+        id S2388263AbeHWM3g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:29:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55520 "EHLO
+        Thu, 23 Aug 2018 08:29:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55534 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbeHWM3c (ORCPT
+        with ESMTP id S1726277AbeHWM3f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:29:32 -0400
+        Thu, 23 Aug 2018 08:29:35 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7F4B5CAC;
-        Thu, 23 Aug 2018 09:00:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90DB7CAD;
+        Thu, 23 Aug 2018 09:00:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Janne Huttunen <janne.huttunen@nokia.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jaroslav Skarvada <jskarvad@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 222/324] drm/armada: fix colorkey mode property
-Date:   Thu, 23 Aug 2018 09:54:48 +0200
-Message-Id: <20180823075007.272659343@linuxfoundation.org>
+Subject: [PATCH 4.17 240/324] perf script python: Fix dict reference counting
+Date:   Thu, 23 Aug 2018 09:55:06 +0200
+Message-Id: <20180823075008.113901449@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -50,91 +57,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Janne Huttunen <janne.huttunen@nokia.com>
 
-[ Upstream commit d378859a667edc99e3473704847698cae97ca2b1 ]
+[ Upstream commit db0ba84c04ef2cf293aaada5ae97531127844d9d ]
 
-The colorkey mode property was not correctly disabling the colorkeying
-when "disabled" mode was selected.  Arrange for this to work as one
-would expect.
+The dictionaries are attached to the parameter tuple that steals the
+references and takes care of releasing them when appropriate.  The code
+should not decrement the reference counts explicitly.  E.g. if libpython
+has been built with reference debugging enabled, the superfluous DECREFs
+will trigger this error when running perf script:
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+  Fatal Python error: Objects/tupleobject.c:238 object at
+  0x7f10f2041b40 has negative ref count -1
+  Aborted (core dumped)
+
+If the reference debugging is not enabled, the superfluous DECREFs might
+cause the dict objects to be silently released while they are still in
+use. This may trigger various other assertions or just cause perf
+crashes and/or weird and unexpected data changes in the stored Python
+objects.
+
+Signed-off-by: Janne Huttunen <janne.huttunen@nokia.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jaroslav Skarvada <jskarvad@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1531133990-17485-1-git-send-email-janne.huttunen@nokia.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/armada/armada_hw.h      |    1 +
- drivers/gpu/drm/armada/armada_overlay.c |   30 ++++++++++++++++++++++--------
- 2 files changed, 23 insertions(+), 8 deletions(-)
+ tools/perf/util/scripting-engines/trace-event-python.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
---- a/drivers/gpu/drm/armada/armada_hw.h
-+++ b/drivers/gpu/drm/armada/armada_hw.h
-@@ -160,6 +160,7 @@ enum {
- 	CFG_ALPHAM_GRA		= 0x1 << 16,
- 	CFG_ALPHAM_CFG		= 0x2 << 16,
- 	CFG_ALPHA_MASK		= 0xff << 8,
-+#define CFG_ALPHA(x)		((x) << 8)
- 	CFG_PIXCMD_MASK		= 0xff,
- };
+--- a/tools/perf/util/scripting-engines/trace-event-python.c
++++ b/tools/perf/util/scripting-engines/trace-event-python.c
+@@ -676,14 +676,11 @@ static void python_process_tracepoint(st
+ 	if (_PyTuple_Resize(&t, n) == -1)
+ 		Py_FatalError("error resizing Python tuple");
  
---- a/drivers/gpu/drm/armada/armada_overlay.c
-+++ b/drivers/gpu/drm/armada/armada_overlay.c
-@@ -28,6 +28,7 @@ struct armada_ovl_plane_properties {
- 	uint16_t contrast;
- 	uint16_t saturation;
- 	uint32_t colorkey_mode;
-+	uint32_t colorkey_enable;
- };
+-	if (!dict) {
++	if (!dict)
+ 		call_object(handler, t, handler_name);
+-	} else {
++	else
+ 		call_object(handler, t, default_handler_name);
+-		Py_DECREF(dict);
+-	}
  
- struct armada_ovl_plane {
-@@ -54,11 +55,13 @@ armada_ovl_update_attr(struct armada_ovl
- 	writel_relaxed(0x00002000, dcrtc->base + LCD_SPU_CBSH_HUE);
- 
- 	spin_lock_irq(&dcrtc->irq_lock);
--	armada_updatel(prop->colorkey_mode | CFG_ALPHAM_GRA,
--		     CFG_CKMODE_MASK | CFG_ALPHAM_MASK | CFG_ALPHA_MASK,
--		     dcrtc->base + LCD_SPU_DMA_CTRL1);
--
--	armada_updatel(ADV_GRACOLORKEY, 0, dcrtc->base + LCD_SPU_ADV_REG);
-+	armada_updatel(prop->colorkey_mode,
-+		       CFG_CKMODE_MASK | CFG_ALPHAM_MASK | CFG_ALPHA_MASK,
-+		       dcrtc->base + LCD_SPU_DMA_CTRL1);
-+	if (dcrtc->variant->has_spu_adv_reg)
-+		armada_updatel(prop->colorkey_enable,
-+			       ADV_GRACOLORKEY | ADV_VIDCOLORKEY,
-+			       dcrtc->base + LCD_SPU_ADV_REG);
- 	spin_unlock_irq(&dcrtc->irq_lock);
+-	Py_XDECREF(all_entries_dict);
+ 	Py_DECREF(t);
  }
  
-@@ -321,8 +324,17 @@ static int armada_ovl_plane_set_property
- 		dplane->prop.colorkey_vb |= K2B(val);
- 		update_attr = true;
- 	} else if (property == priv->colorkey_mode_prop) {
--		dplane->prop.colorkey_mode &= ~CFG_CKMODE_MASK;
--		dplane->prop.colorkey_mode |= CFG_CKMODE(val);
-+		if (val == CKMODE_DISABLE) {
-+			dplane->prop.colorkey_mode =
-+				CFG_CKMODE(CKMODE_DISABLE) |
-+				CFG_ALPHAM_CFG | CFG_ALPHA(255);
-+			dplane->prop.colorkey_enable = 0;
-+		} else {
-+			dplane->prop.colorkey_mode =
-+				CFG_CKMODE(val) |
-+				CFG_ALPHAM_GRA | CFG_ALPHA(0);
-+			dplane->prop.colorkey_enable = ADV_GRACOLORKEY;
-+		}
- 		update_attr = true;
- 	} else if (property == priv->brightness_prop) {
- 		dplane->prop.brightness = val - 256;
-@@ -453,7 +465,9 @@ int armada_overlay_plane_create(struct d
- 	dplane->prop.colorkey_yr = 0xfefefe00;
- 	dplane->prop.colorkey_ug = 0x01010100;
- 	dplane->prop.colorkey_vb = 0x01010100;
--	dplane->prop.colorkey_mode = CFG_CKMODE(CKMODE_RGB);
-+	dplane->prop.colorkey_mode = CFG_CKMODE(CKMODE_RGB) |
-+				     CFG_ALPHAM_GRA | CFG_ALPHA(0);
-+	dplane->prop.colorkey_enable = ADV_GRACOLORKEY;
- 	dplane->prop.brightness = 0;
- 	dplane->prop.contrast = 0x4000;
- 	dplane->prop.saturation = 0x4000;
+@@ -1003,7 +1000,6 @@ static void python_process_general_event
+ 
+ 	call_object(handler, t, handler_name);
+ 
+-	Py_DECREF(dict);
+ 	Py_DECREF(t);
+ }
+ 
 
 
