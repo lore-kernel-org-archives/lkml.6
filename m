@@ -2,168 +2,258 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C81C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE93C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:37:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99A9921568
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:36:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99A9921568
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8325F21568
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:37:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BaM1Solc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8325F21568
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727383AbeHXAH7 (ORCPT
+        id S1727419AbeHXAIg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 20:07:59 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:44472 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727306AbeHXAH7 (ORCPT
+        Thu, 23 Aug 2018 20:08:36 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:45755 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbeHXAIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 20:07:59 -0400
-Received: by mail-qt0-f194.google.com with SMTP id r13-v6so7817141qtr.11
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 13:36:37 -0700 (PDT)
+        Thu, 23 Aug 2018 20:08:35 -0400
+Received: by mail-oi0-f65.google.com with SMTP id t68-v6so407127oie.12
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 13:37:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=B31Nrm4kl7TE48y9/D7bjQbbnioCA5XX0o+dTj6vI2s=;
+        b=BaM1Solc/CLF50tOYx+QrZu4jhCsVRFQHJfSOdHeUoPtUaOcTDXCYmwhtPMnqQOylH
+         q5C0i+1n0zcuKcWXg4vomGNrzHzmtqmPb9m4qFGPoBq1ZalmQtO9jFEfap4VGYf+kXD5
+         7YoMkWDm3Vthm1dqgvakw2qpEST9Od/EbblQGRRm/S1L5Wsb9a/a03e91h4Z3KXIj7kT
+         2ChYow8WKhONM+JrD9LKLN8QCZa+0epKU+HPU8iYZN+uxj3Bj7J5SdiKb/QECvNeT1NN
+         vYhsB6ztffXAW/vE0X/BHh9JzMxfiR5YRWCGQGKjCw3+c7xq6jPoE5/Msx4ZiFNGQRjn
+         b+8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=z84Ml9KefdO2hOQNg672IvjZmE4HtkN1KhujmMnQdzI=;
-        b=sc/wW342td0TU4+uYfzCrXrBjTwyttVzzfLuvDEiaGmkUkPvHMDC0DWMZ4kwYDQ0jl
-         RmL4Yk71rVCQqX9O6UW9Y43xc+QwKvgO4Szc5R+pWyqQtsbDEScaAbkxOuEOUlcgvLY4
-         HcsrXWRYKKkFvpht3bPKtc2jevwARriBWVYhe2vP5A6Myng54icyeqJlAbZkfdyh9aH+
-         nzjs7QciRXVh653Emebc5XgggmWczwu2v1KnzFq2b1aa/340MmZLcpc05He/2RNvB2gl
-         BQKK7Y0/nq+Gr6bn2Mvgmx/lOzlO2wmFLgNVCxNiOyndNf/+RFWp9XwroLbjsADNrXbF
-         SwRQ==
-X-Gm-Message-State: AOUpUlEkfT6jl7Fz7CBy43FAbj1ksNyaq0IfJxKu+0Je0oUC6ouHzEvQ
-        GAp7Cq7GLg78KnWX8uBJkPqdVA==
-X-Google-Smtp-Source: AA+uWPwr4ZROurU2WZkiM37+2awM4ID+Nt3NrQbWRpc191dqfCSW7Du18KFsM7Pgc1GyOCtdgxto2A==
-X-Received: by 2002:ac8:350f:: with SMTP id y15-v6mr19602174qtb.241.1535056597349;
-        Thu, 23 Aug 2018 13:36:37 -0700 (PDT)
-Received: from labbott-redhat.redhat.com ([2601:602:9802:a8dc::7272])
-        by smtp.gmail.com with ESMTPSA id a34-v6sm1824644qta.56.2018.08.23.13.36.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 Aug 2018 13:36:36 -0700 (PDT)
-From:   Laura Abbott <labbott@redhat.com>
-To:     "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Mike Christie <mchristi@redhat.com>,
-        Maurizio Lombardi <mlombard@redhat.com>
-Cc:     Laura Abbott <labbott@redhat.com>, target-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCHv2] iscsi-target: Don't use stack buffer for scatterlist
-Date:   Thu, 23 Aug 2018 13:36:26 -0700
-Message-Id: <20180823203626.15108-1-labbott@redhat.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references;
+        bh=B31Nrm4kl7TE48y9/D7bjQbbnioCA5XX0o+dTj6vI2s=;
+        b=s+kkynj+rly3DyUJrvGy8hsMPi8eR36VOGuPUlJJGHKl2DoxNAyY92mRzf/4/NEaRY
+         tHV8ccmQOc90J6snBLiYJHUjhJ/YZK2Y0WZDuRUQvGg474nM6z5JMfSHIV7CkaaxSRuh
+         y2wWGwiEhTRfmZBuQG5cW644ORdujbG3t6UI/FL3UhQwxhfWvYEUbRBg/kEISQhxGzeS
+         TS4DRr1ckn9WN3x+hoZ6/Bo6noH/aVHQXLP4suRJKOlXHw6IYWIxz8tVKIKXLeZR5R3Z
+         ogk9iaK4f7RTM0YdD+/1FjDo0xQwH2FZH0vdz91vzK6IqGYRDZgAI8Fq9jbucnzsH8+A
+         9UiQ==
+X-Gm-Message-State: APzg51DDzvX2YOsWYzXj9xPHKpNg+tsjm/UiqFynoxU7OHMAEw2dDIX5
+        N0g158pfova3NI//o8nZGA==
+X-Google-Smtp-Source: ANB0VdYINasliKZJv6sBKjqxraH+zKlSpBPBOmT2BQp6kfIgHWjPwTlcGmZzYeSRQpsdFwRVyxQNOg==
+X-Received: by 2002:aca:e504:: with SMTP id c4-v6mr9407910oih.246.1535056632904;
+        Thu, 23 Aug 2018 13:37:12 -0700 (PDT)
+Received: from serve.minyard.net ([47.184.170.128])
+        by smtp.gmail.com with ESMTPSA id m11-v6sm3076562oif.27.2018.08.23.13.37.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 Aug 2018 13:37:12 -0700 (PDT)
+Received: from t430.minyard.net (t430m.minyard.net [192.168.27.3])
+        by serve.minyard.net (Postfix) with ESMTPA id 2EF25B9A;
+        Thu, 23 Aug 2018 15:37:11 -0500 (CDT)
+Received: by t430.minyard.net (Postfix, from userid 1000)
+        id E81023000CF; Thu, 23 Aug 2018 15:37:09 -0500 (CDT)
+From:   minyard@acm.org
+To:     Andrew Banman <abanman@hpe.com>
+Cc:     openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, rja@hpe.com, frank.ramsay@hpe.com,
+        justin.ernst@hpe.com, Corey Minyard <cminyard@mvista.com>
+Subject: [PATCH 1/2] ipmi: Move BT capabilities detection to the detect call
+Date:   Thu, 23 Aug 2018 15:37:02 -0500
+Message-Id: <1535056623-26634-2-git-send-email-minyard@acm.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1535056623-26634-1-git-send-email-minyard@acm.org>
+References: <1535056623-26634-1-git-send-email-minyard@acm.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fedora got a bug report of a crash with iSCSI:
+From: Corey Minyard <cminyard@mvista.com>
 
-kernel BUG at include/linux/scatterlist.h:143!
-...
-RIP: 0010:iscsit_do_crypto_hash_buf+0x154/0x180 [iscsi_target_mod]
-...
- Call Trace:
-  ? iscsi_target_tx_thread+0x200/0x200 [iscsi_target_mod]
-  iscsit_get_rx_pdu+0x4cd/0xa90 [iscsi_target_mod]
-  ? native_sched_clock+0x3e/0xa0
-  ? iscsi_target_tx_thread+0x200/0x200 [iscsi_target_mod]
-  iscsi_target_rx_thread+0x81/0xf0 [iscsi_target_mod]
-  kthread+0x120/0x140
-  ? kthread_create_worker_on_cpu+0x70/0x70
-  ret_from_fork+0x3a/0x50
+The capabilities detection was being done as part of the normal
+state machine, but it was possible for it to be running while
+the upper layers of the IPMI driver were initializing the
+device, resulting in error and failure to initialize.
 
-This is a BUG_ON for using a stack buffer with a scatterlist.
-There are two cases that trigger this bug. Switch to using a
-dynamically allocated buffer for one case and do not assign
-a NULL buffer in another case.
+Move the capabilities detection to the the detect function,
+so it's done before anything else runs on the device.  This also
+simplifies the state machine and removes some code, as a bonus.
 
-Signed-off-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Reported-by: Andrew Banman <abanman@hpe.com>
 ---
-v2: Change the returns to breaks to avoid leaking memory
----
- drivers/target/iscsi/iscsi_target.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ drivers/char/ipmi/ipmi_bt_sm.c | 92 ++++++++++++++++++++++--------------------
+ 1 file changed, 48 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
-index 8e223799347a..086372e87cc6 100644
---- a/drivers/target/iscsi/iscsi_target.c
-+++ b/drivers/target/iscsi/iscsi_target.c
-@@ -1419,7 +1419,8 @@ static void iscsit_do_crypto_hash_buf(struct ahash_request *hash,
+diff --git a/drivers/char/ipmi/ipmi_bt_sm.c b/drivers/char/ipmi/ipmi_bt_sm.c
+index cbc6126..b4133832e 100644
+--- a/drivers/char/ipmi/ipmi_bt_sm.c
++++ b/drivers/char/ipmi/ipmi_bt_sm.c
+@@ -59,8 +59,6 @@ enum bt_states {
+ 	BT_STATE_RESET3,
+ 	BT_STATE_RESTART,
+ 	BT_STATE_PRINTME,
+-	BT_STATE_CAPABILITIES_BEGIN,
+-	BT_STATE_CAPABILITIES_END,
+ 	BT_STATE_LONG_BUSY	/* BT doesn't get hosed :-) */
+ };
  
- 	sg_init_table(sg, ARRAY_SIZE(sg));
- 	sg_set_buf(sg, buf, payload_length);
--	sg_set_buf(sg + 1, pad_bytes, padding);
-+	if (padding)
-+		sg_set_buf(sg + 1, pad_bytes, padding);
- 
- 	ahash_request_set_crypt(hash, sg, data_crc, payload_length + padding);
- 
-@@ -3913,10 +3914,14 @@ static bool iscsi_target_check_conn_state(struct iscsi_conn *conn)
- static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
- {
- 	int ret;
--	u8 buffer[ISCSI_HDR_LEN], opcode;
-+	u8 *buffer, opcode;
- 	u32 checksum = 0, digest = 0;
- 	struct kvec iov;
- 
-+	buffer = kmalloc_array(ISCSI_HDR_LEN, sizeof(*buffer), GFP_KERNEL);
-+	if (!buffer)
-+		return;
-+
- 	while (!kthread_should_stop()) {
- 		/*
- 		 * Ensure that both TX and RX per connection kthreads
-@@ -3933,7 +3938,7 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
- 		ret = rx_data(conn, &iov, 1, ISCSI_HDR_LEN);
- 		if (ret != ISCSI_HDR_LEN) {
- 			iscsit_rx_thread_wait_for_tcp(conn);
--			return;
-+			break;
- 		}
- 
- 		if (conn->conn_ops->HeaderDigest) {
-@@ -3943,7 +3948,7 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
- 			ret = rx_data(conn, &iov, 1, ISCSI_CRC_LEN);
- 			if (ret != ISCSI_CRC_LEN) {
- 				iscsit_rx_thread_wait_for_tcp(conn);
--				return;
-+				break;
- 			}
- 
- 			iscsit_do_crypto_hash_buf(conn->conn_rx_hash, buffer,
-@@ -3967,7 +3972,7 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
- 		}
- 
- 		if (conn->conn_state == TARG_CONN_STATE_IN_LOGOUT)
--			return;
-+			break;
- 
- 		opcode = buffer[0] & ISCSI_OPCODE_MASK;
- 
-@@ -3978,13 +3983,15 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
- 			" while in Discovery Session, rejecting.\n", opcode);
- 			iscsit_add_reject(conn, ISCSI_REASON_PROTOCOL_ERROR,
- 					  buffer);
--			return;
-+			break;
- 		}
- 
- 		ret = iscsi_target_rx_opcode(conn, buffer);
- 		if (ret < 0)
--			return;
-+			break;
+@@ -86,7 +84,6 @@ struct si_sm_data {
+ 	int		error_retries;	/* end of "common" fields */
+ 	int		nonzero_status;	/* hung BMCs stay all 0 */
+ 	enum bt_states	complete;	/* to divert the state machine */
+-	int		BT_CAP_outreqs;
+ 	long		BT_CAP_req2rsp;
+ 	int		BT_CAP_retries;	/* Recommended retries */
+ };
+@@ -137,8 +134,6 @@ static char *state2txt(unsigned char state)
+ 	case BT_STATE_RESET3:		return("RESET3");
+ 	case BT_STATE_RESTART:		return("RESTART");
+ 	case BT_STATE_LONG_BUSY:	return("LONG_BUSY");
+-	case BT_STATE_CAPABILITIES_BEGIN: return("CAP_BEGIN");
+-	case BT_STATE_CAPABILITIES_END:	return("CAP_END");
  	}
-+
-+	kfree(buffer);
+ 	return("BAD STATE");
+ }
+@@ -185,7 +180,6 @@ static unsigned int bt_init_data(struct si_sm_data *bt, struct si_sm_io *io)
+ 	bt->complete = BT_STATE_IDLE;	/* end here */
+ 	bt->BT_CAP_req2rsp = BT_NORMAL_TIMEOUT * USEC_PER_SEC;
+ 	bt->BT_CAP_retries = BT_NORMAL_RETRY_LIMIT;
+-	/* BT_CAP_outreqs == zero is a flag to read BT Capabilities */
+ 	return 3; /* We claim 3 bytes of space; ought to check SPMI table */
  }
  
- int iscsi_target_rx_thread(void *arg)
+@@ -447,7 +441,7 @@ static enum si_sm_result error_recovery(struct si_sm_data *bt,
+ 
+ static enum si_sm_result bt_event(struct si_sm_data *bt, long time)
+ {
+-	unsigned char status, BT_CAP[8];
++	unsigned char status;
+ 	static enum bt_states last_printed = BT_STATE_PRINTME;
+ 	int i;
+ 
+@@ -500,12 +494,6 @@ static enum si_sm_result bt_event(struct si_sm_data *bt, long time)
+ 		if (status & BT_H_BUSY)		/* clear a leftover H_BUSY */
+ 			BT_CONTROL(BT_H_BUSY);
+ 
+-		bt->timeout = bt->BT_CAP_req2rsp;
+-
+-		/* Read BT capabilities if it hasn't been done yet */
+-		if (!bt->BT_CAP_outreqs)
+-			BT_STATE_CHANGE(BT_STATE_CAPABILITIES_BEGIN,
+-					SI_SM_CALL_WITHOUT_DELAY);
+ 		BT_SI_SM_RETURN(SI_SM_IDLE);
+ 
+ 	case BT_STATE_XACTION_START:
+@@ -610,37 +598,6 @@ static enum si_sm_result bt_event(struct si_sm_data *bt, long time)
+ 		BT_STATE_CHANGE(BT_STATE_XACTION_START,
+ 				SI_SM_CALL_WITH_DELAY);
+ 
+-	/*
+-	 * Get BT Capabilities, using timing of upper level state machine.
+-	 * Set outreqs to prevent infinite loop on timeout.
+-	 */
+-	case BT_STATE_CAPABILITIES_BEGIN:
+-		bt->BT_CAP_outreqs = 1;
+-		{
+-			unsigned char GetBT_CAP[] = { 0x18, 0x36 };
+-			bt->state = BT_STATE_IDLE;
+-			bt_start_transaction(bt, GetBT_CAP, sizeof(GetBT_CAP));
+-		}
+-		bt->complete = BT_STATE_CAPABILITIES_END;
+-		BT_STATE_CHANGE(BT_STATE_XACTION_START,
+-				SI_SM_CALL_WITH_DELAY);
+-
+-	case BT_STATE_CAPABILITIES_END:
+-		i = bt_get_result(bt, BT_CAP, sizeof(BT_CAP));
+-		bt_init_data(bt, bt->io);
+-		if ((i == 8) && !BT_CAP[2]) {
+-			bt->BT_CAP_outreqs = BT_CAP[3];
+-			bt->BT_CAP_req2rsp = BT_CAP[6] * USEC_PER_SEC;
+-			bt->BT_CAP_retries = BT_CAP[7];
+-		} else
+-			pr_warn("IPMI BT: using default values\n");
+-		if (!bt->BT_CAP_outreqs)
+-			bt->BT_CAP_outreqs = 1;
+-		pr_warn("IPMI BT: req2rsp=%ld secs retries=%d\n",
+-			bt->BT_CAP_req2rsp / USEC_PER_SEC, bt->BT_CAP_retries);
+-		bt->timeout = bt->BT_CAP_req2rsp;
+-		return SI_SM_CALL_WITHOUT_DELAY;
+-
+ 	default:	/* should never occur */
+ 		return error_recovery(bt,
+ 				      status,
+@@ -651,6 +608,11 @@ static enum si_sm_result bt_event(struct si_sm_data *bt, long time)
+ 
+ static int bt_detect(struct si_sm_data *bt)
+ {
++	unsigned char GetBT_CAP[] = { 0x18, 0x36 };
++	unsigned char BT_CAP[8];
++	enum si_sm_result smi_result;
++	int rv;
++
+ 	/*
+ 	 * It's impossible for the BT status and interrupt registers to be
+ 	 * all 1's, (assuming a properly functioning, self-initialized BMC)
+@@ -661,6 +623,48 @@ static int bt_detect(struct si_sm_data *bt)
+ 	if ((BT_STATUS == 0xFF) && (BT_INTMASK_R == 0xFF))
+ 		return 1;
+ 	reset_flags(bt);
++
++	/*
++	 * Try getting the BT capabilities here.
++	 */
++	rv = bt_start_transaction(bt, GetBT_CAP, sizeof(GetBT_CAP));
++	if (rv) {
++		dev_warn(bt->io->dev,
++			 "Can't start capabilities transaction: %d\n", rv);
++		goto out_no_bt_cap;
++	}
++
++	smi_result = SI_SM_CALL_WITHOUT_DELAY;
++	for (;;) {
++		if (smi_result == SI_SM_CALL_WITH_DELAY ||
++		    smi_result == SI_SM_CALL_WITH_TICK_DELAY) {
++			schedule_timeout_uninterruptible(1);
++			smi_result = bt_event(bt, jiffies_to_usecs(1));
++		} else if (smi_result == SI_SM_CALL_WITHOUT_DELAY) {
++			smi_result = bt_event(bt, 0);
++		} else
++			break;
++	}
++
++	rv = bt_get_result(bt, BT_CAP, sizeof(BT_CAP));
++	bt_init_data(bt, bt->io);
++	if (rv < 8) {
++		dev_warn(bt->io->dev, "bt cap response too short: %d\n", rv);
++		goto out_no_bt_cap;
++	}
++
++	if (BT_CAP[2]) {
++		dev_warn(bt->io->dev, "Error fetching bt cap: %x\n", BT_CAP[2]);
++out_no_bt_cap:
++		dev_warn(bt->io->dev, "using default values\n");
++	} else {
++		bt->BT_CAP_req2rsp = BT_CAP[6] * USEC_PER_SEC;
++		bt->BT_CAP_retries = BT_CAP[7];
++	}
++
++	dev_info(bt->io->dev, "req2rsp=%ld secs retries=%d\n",
++		 bt->BT_CAP_req2rsp / USEC_PER_SEC, bt->BT_CAP_retries);
++
+ 	return 0;
+ }
+ 
 -- 
-2.17.1
+2.7.4
 
