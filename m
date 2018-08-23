@@ -2,101 +2,87 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A244C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2310C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:33:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7519620A8B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:30:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dzI92Lxc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7519620A8B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 932A920A8B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:33:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 932A920A8B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbeHWUAx (ORCPT
+        id S1726282AbeHWUET (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 16:00:53 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33056 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726117AbeHWUAw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 16:00:52 -0400
-Received: by mail-pf1-f193.google.com with SMTP id d4-v6so3034803pfn.0;
-        Thu, 23 Aug 2018 09:30:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=edTxwMLO35/eQgJlbMYfEgrnnCSr57cMZzGPGYhzlMA=;
-        b=dzI92LxcE8HFyHJclPpwRAZKCNMHonnFTSwVDwnZJT1zaXhZTdsihjRCt9KDl0VWty
-         ztr4UXkQdglTzsp6hJR1jzCpO3hGbD4oV0rVDGivjTPHD476Gx0xX31VWHze5ysaIwtG
-         /j2Tboq/5SyjVEjZYa7hkYIBxGWIg0zh+GYaYyXpFmFjRYBJRjY90yXN0J15e7wFJJzD
-         rNVjgWvgIuPGBeIWbRHFugjpjdlyVLvweJtUTF2JWUOnW5F9K6p7FgYBWOEL6oHEwbzc
-         3U4rWJtUg6PALz0lHyEXSWGeDubwSUT+gACFdckedvWkJqg6qIn5UwPO2G2NRGmzd5Zw
-         zdBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=edTxwMLO35/eQgJlbMYfEgrnnCSr57cMZzGPGYhzlMA=;
-        b=W+f3ntzuBGKk1DLHZ4Fjs1jriwruP5cfm2IKFurFiPDt8ObZbskQpFzJywF+g4DdsR
-         Sr48M3RZlqb4PmQ0l8XwoMPQ//0iIZBnwcCCjfj6FbdEr73xgQcUVqss0ICluVXcBfsa
-         qyx24GN9qv0NbI9jjalODVZIjzYNJaHP7dKYqOXfVshSzBVFhwE8PKaZuB6oiZ1cop4f
-         Pxjs76dunYuxFPlXdckibAFM36W4JBkiyd/YTAZzw1R+5Qc/DdHNuDV1VcWUa7oxTkhq
-         vcmov6OqFqe+1UnLxUOUiI9sIOVxT0El4lnQEirVCLWBPjLhOv/3P/k9FaX7szfaLckm
-         Bcaw==
-X-Gm-Message-State: AOUpUlEqkdNZa1KncuGG3JYvfgXpRp3Yvl2Q02TS1MptTJuvceq285KK
-        taUYvotixN+6GjXJZu7+SJU=
-X-Google-Smtp-Source: AA+uWPwKkSPhO7SzLllpc6wniTaybF7AV70jVLa5Uco0tWEKaEL2frJai8cLZ3ELyVlKB/kRS033HQ==
-X-Received: by 2002:a63:26c5:: with SMTP id m188-v6mr21923394pgm.200.1535041823321;
-        Thu, 23 Aug 2018 09:30:23 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id e26-v6sm6260004pfi.70.2018.08.23.09.30.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Aug 2018 09:30:22 -0700 (PDT)
-Date:   Thu, 23 Aug 2018 09:30:21 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/79] 4.4.152-stable review
-Message-ID: <20180823163021.GA8669@roeck-us.net>
-References: <20180823074918.641878835@linuxfoundation.org>
+        Thu, 23 Aug 2018 16:04:19 -0400
+Received: from mout.gmx.net ([212.227.17.21]:58603 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725909AbeHWUET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 16:04:19 -0400
+Received: from localhost.localdomain ([196.52.84.82]) by mail.gmx.com
+ (mrgmx102 [212.227.17.174]) with ESMTPSA (Nemesis) id
+ 0Mh6lB-1fX6Pi265J-00MMa4 for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018
+ 18:33:47 +0200
+From:   "Artem S. Tashkinov" <aros@gmx.com>
+Subject: Disabling CPU vulnerabilities workarounds
+To:     linux-kernel@vger.kernel.org
+Message-ID: <3ef48582-3a0a-e41c-4aee-54b5a38056c6@gmx.com>
+Date:   Thu, 23 Aug 2018 21:33:46 +0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:5fuYoS4VQ9V8wu+8685JlaBKlEh6vVXi/OBlVgSEQnduMB1VH2s
+ zHLwdlS/nvKmdZmLhhBT0JeJPd+02Al+wvkz4dxJaiD9JlQzFF7h/kXSzupUwK33rOJcGLV
+ D97bTyR4e9o7tQK3A758uweM6KIU7D2gzv8n7L8gSlz4GtmiuAKA4aRQj/A6O+wf84o8lSE
+ 1eNo3T3iQSE6pN76I4Z9Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Yaw3JeVYAFM=:COw99ufY6+1WVYpaRVPNHi
+ JPuPXjdPrbQ+TttEEHIRTpAyduC6sWAXKL5vL6aQMcWvHN6FQJQSmN0fM5zeI++pgCbP6h5JR
+ ObkCanlZZ7WHBf4QS1GZ2M+Z0gOsRUUAvdjlrUWEqj0ZCCd1E8FAM97lDrBhbY9wgHBfkBmLW
+ 6lHJ6To8KLwhYnio7V5OjLV1JzfNZ9vrn0VetMfRplmsoLRCcxdkV8cTDALPOXcFtsWCo6B/v
+ neHOdrBJOWYv+At983kjx7pEykJAJGdX50tUjdwnDUc7v1we4OyYXsvA9PPm5nxPQoSQxLAX+
+ UpofN+fYgYMi16XGlO8vpbK2bCtc0EcAchOrkHzYBGqiDwLmWyUlnO2Yc1fAY3hHr69kXSliS
+ rUMNTtsw3dQdDa46zEVH5QsP3aUixhUsOU0PlNU1f0J/w7T0eRtqY914j6fuXKulRKEDCzzCL
+ C9CSDcDZJs8MEdUytAfMKSlZx0nYpZXMZEnw8p6n7OJjRmHaThbWQmSPB+V7u/HOUHtuwRgBq
+ suLQigB801qO29KxQTliza5m731GuZM+tirdcjvrOp2v7O5UTti7DaDab0n7gp30DRd1bcV6s
+ 15d2OrEYp+Mn0seW953PTkR1LK0I+9spqOVejylFxUVzIwwMVY5K4zUDO0fTG1TY7NjFFExYw
+ qx29iERz6t8wz41TYnftSLznQWmoN9VlH77NvGTxhGj+sZX8zWuqEPliYZ/DFjrP6cfnIYIMV
+ Owg0qdaBBrvHjNGrIk0AWGc8g9VuloQrQZeVmGY95BJ0apraEmmqx+rmEmdTLI0+TooQH/3NC
+ MsAe+jn
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 09:52:36AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.152 release.
-> There are 79 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat Aug 25 07:48:51 UTC 2018.
-> Anything received after that time might be too late.
-> 
+Hello LKML,
 
-Early feedback:
+As time goes by more and more fixes of Intel/AMD/ARM CPUs 
+vulnerabilities are added to the Linux kernel without a simple way to 
+disable them all in one fell swoop.
 
-Building i386:tools/perf ... failed
-Building x86_64:tools/perf ... failed
---------------
-Error log:
-  PERF_VERSION = 4.4.151.g6d0c34
-tests/parse-events.c: In function ‘test_event’:
-tests/parse-events.c:1629:3: error: implicit declaration of function ‘parse_events_print_error’
+Disabling is a good option for strictly confined environments where no 
+3d party untrusted code is ever to be run, e.g. a rendering farm, a 
+supercomputer, or even a home server which runs Samba/SSH server and 
+nothing else.
+
+I wonder if someone could wrote a patch which implemented the following 
+two options for the kernel:
+
+* A boot option option which allows to disable most runtime 
+protections/workarounds/fixes (as far as I understand some of them can't 
+be reverted since they are compiled in or use certain GCC flags), e.g. 
+let's call it "insecure" or "insecurecpumode".
+
+* A compile-time CONFIG_ option which disables all these fixes 
+_permanently_ without a way to turn them later back on during runtime.
+
+Right now linux/Documentation/admin-guide/kernel-parameters.txt is a 
+mess of various things which take ages to sift through and there's zero 
+understanding whether you've found everything and correctly disabled it.
+
+
+Best regards,
+Artem
