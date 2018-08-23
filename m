@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E43DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A10A1C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D073A208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D073A208D6
+	by mail.kernel.org (Postfix) with ESMTP id 5D35D2084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D35D2084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388023AbeHWM20 (ORCPT
+        id S2388051AbeHWM22 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:28:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53172 "EHLO
+        Thu, 23 Aug 2018 08:28:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53190 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733015AbeHWM2Z (ORCPT
+        with ESMTP id S1730041AbeHWM22 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:28:25 -0400
+        Thu, 23 Aug 2018 08:28:28 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 62878C83;
-        Thu, 23 Aug 2018 08:59:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8B32FC83;
+        Thu, 23 Aug 2018 08:59:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 219/324] drm/tegra: Fix comparison operator for buffer size
-Date:   Thu, 23 Aug 2018 09:54:45 +0200
-Message-Id: <20180823075007.133208037@linuxfoundation.org>
+Subject: [PATCH 4.17 192/324] netfilter: x_tables: set module owner for icmp(6) matches
+Date:   Thu, 23 Aug 2018 09:54:18 +0200
+Message-Id: <20180823075005.769685123@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,33 +51,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikko Perttunen <mperttunen@nvidia.com>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit 5265f0338bc0feec6c0d544dfe005dec1a93cb93 ]
+[ Upstream commit d376bef9c29b3c65aeee4e785fffcd97ef0a9a81 ]
 
-Here we are checking for the buffer length, not an offset for writing
-to, so using > is correct. The current code incorrectly rejects a
-command buffer ending at the memory buffer's end.
+nft_compat relies on xt_request_find_match to increment
+refcount of the module that provides the match/target.
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+The (builtin) icmp matches did't set the module owner so it
+was possible to rmmod ip(6)tables while icmp extensions were still in use.
+
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/tegra/drm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/netfilter/ip_tables.c  |    1 +
+ net/ipv6/netfilter/ip6_tables.c |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -436,7 +436,7 @@ int tegra_drm_submit(struct tegra_drm_co
- 		 * unaligned offset is malformed and cause commands stream
- 		 * corruption on the buffer address relocation.
- 		 */
--		if (offset & 3 || offset >= obj->gem.size) {
-+		if (offset & 3 || offset > obj->gem.size) {
- 			err = -EINVAL;
- 			goto fail;
- 		}
+--- a/net/ipv4/netfilter/ip_tables.c
++++ b/net/ipv4/netfilter/ip_tables.c
+@@ -1895,6 +1895,7 @@ static struct xt_match ipt_builtin_mt[]
+ 		.checkentry = icmp_checkentry,
+ 		.proto      = IPPROTO_ICMP,
+ 		.family     = NFPROTO_IPV4,
++		.me	    = THIS_MODULE,
+ 	},
+ };
+ 
+--- a/net/ipv6/netfilter/ip6_tables.c
++++ b/net/ipv6/netfilter/ip6_tables.c
+@@ -1907,6 +1907,7 @@ static struct xt_match ip6t_builtin_mt[]
+ 		.checkentry = icmp6_checkentry,
+ 		.proto      = IPPROTO_ICMPV6,
+ 		.family     = NFPROTO_IPV6,
++		.me	    = THIS_MODULE,
+ 	},
+ };
+ 
 
 
