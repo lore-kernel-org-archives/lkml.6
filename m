@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2952EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4889FC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E24A620839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E24A620839
+	by mail.kernel.org (Postfix) with ESMTP id 0C34520839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C34520839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733088AbeHWMT2 (ORCPT
+        id S2387572AbeHWMTb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:19:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51454 "EHLO
+        Thu, 23 Aug 2018 08:19:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51462 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728517AbeHWMT1 (ORCPT
+        with ESMTP id S1728517AbeHWMTb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:19:27 -0400
+        Thu, 23 Aug 2018 08:19:31 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1AC70BE0;
-        Thu, 23 Aug 2018 08:50:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 48499BE0;
+        Thu, 23 Aug 2018 08:50:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Alex Chen <alexchen@synology.com>,
+        Alex Wu <alexwu@synology.com>,
+        Chung-Chiang Cheng <cccheng@synology.com>,
+        BingJing Chang <bingjingc@synology.com>,
+        Shaohua Li <shli@fb.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 139/324] drm/amd/powerplay: correct vega12 thermal support as true
-Date:   Thu, 23 Aug 2018 09:53:25 +0200
-Message-Id: <20180823075002.898914087@linuxfoundation.org>
+Subject: [PATCH 4.17 140/324] md/raid10: fix that replacement cannot complete recovery after reassemble
+Date:   Thu, 23 Aug 2018 09:53:26 +0200
+Message-Id: <20180823075002.947261150@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,30 +54,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Evan Quan <evan.quan@amd.com>
+From: BingJing Chang <bingjingc@synology.com>
 
-[ Upstream commit 363a3d3fb7d478d7dd49b8c6294436b8ba5984cc ]
+[ Upstream commit bda3153998f3eb2cafa4a6311971143628eacdbc ]
 
-Thermal support is enabled on vega12.
+During assemble, the spare marked for replacement is not checked.
+conf->fullsync cannot be updated to be 1. As a result, recovery will
+treat it as a clean array. All recovering sectors are skipped. Original
+device is replaced with the not-recovered spare.
 
-Signed-off-by: Evan Quan <evan.quan@amd.com>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+mdadm -C /dev/md0 -l10 -n4 -pn2 /dev/loop[0123]
+mdadm /dev/md0 -a /dev/loop4
+mdadm /dev/md0 --replace /dev/loop0
+mdadm -S /dev/md0 # stop array during recovery
+
+mdadm -A /dev/md0 /dev/loop[01234]
+
+After reassemble, you can see recovery go on, but it completes
+immediately. In fact, recovery is not actually processed.
+
+To solve this problem, we just add the missing logics for replacment
+spares. (In raid1.c or raid5.c, they have already been checked.)
+
+Reported-by: Alex Chen <alexchen@synology.com>
+Reviewed-by: Alex Wu <alexwu@synology.com>
+Reviewed-by: Chung-Chiang Cheng <cccheng@synology.com>
+Signed-off-by: BingJing Chang <bingjingc@synology.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/vega12_hwmgr.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/md/raid10.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega12_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega12_hwmgr.c
-@@ -82,6 +82,7 @@ static void vega12_set_default_registry_
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -3892,6 +3892,13 @@ static int raid10_run(struct mddev *mdde
+ 			    disk->rdev->saved_raid_disk < 0)
+ 				conf->fullsync = 1;
+ 		}
++
++		if (disk->replacement &&
++		    !test_bit(In_sync, &disk->replacement->flags) &&
++		    disk->replacement->saved_raid_disk < 0) {
++			conf->fullsync = 1;
++		}
++
+ 		disk->recovery_disabled = mddev->recovery_disabled - 1;
+ 	}
  
- 	data->registry_data.disallowed_features = 0x0;
- 	data->registry_data.od_state_in_dc_support = 0;
-+	data->registry_data.thermal_support = 1;
- 	data->registry_data.skip_baco_hardware = 0;
- 
- 	data->registry_data.log_avfs_param = 0;
 
 
