@@ -2,366 +2,154 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1982C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D845C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:17:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4841F206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:15:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="IgD3xUIn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4841F206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
+	by mail.kernel.org (Postfix) with ESMTP id DB704206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:17:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB704206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731937AbeHWRpf (ORCPT
+        id S1731973AbeHWRrC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 13:45:35 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:46057 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730505AbeHWRpf (ORCPT
+        Thu, 23 Aug 2018 13:47:02 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47894 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730226AbeHWRrC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 13:45:35 -0400
-Received: by mail-yw1-f67.google.com with SMTP id p206-v6so1997396ywg.12
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:15:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=88W29AI72il+FA/iFNRnKUVkuihe2MLLK77eUw+823o=;
-        b=IgD3xUInochWJo5QDneIfCUCDLjgWWCvzNLgCwMjHFM7icjPMtT9sLY4+54MJkAnsT
-         qK2spXk5v574udnGSIq/12tMj3yS2RTdLxMJoNkfbjCRH89Y4TDGrp6QhlPwX6CjyFh6
-         t6sqBamLaYtaSyLiVDLKDt4KK1XzyJEMwvKDIYQFqMhLiYkMYdJT1/4xLt7VYkwRwYTI
-         J4Yd+NWwVm/KY6vXaBXBMx1EBtHgm9QKwT+mBjfMvkOB5Tu7rTbtMh8o2KTwxdjy47Pq
-         IkTafdVWbx/hWRpSX5C3QPsztLLvZtR4AiIFH6zUmlEXPdMLIS3+cv5sc++KWQhlKbuB
-         Q+zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=88W29AI72il+FA/iFNRnKUVkuihe2MLLK77eUw+823o=;
-        b=cnXgg669Zz4AQ2gm+3ONiBqsIkdWCyhC7jIWjtiX5dOm1PUO61efLmFZIrynnfhqRS
-         B2/cNRmBDIBGNbuB+AVnH/BayeTRuuTv3BbJdkbMKdtIfQUOsmgaKvdCZcKJyLvMj7na
-         vm36VtpUxbGV1pWkBcygMCpuo1VIyBg2flor99jmZBhW5r25aVTGhi6nB0wiG6+/Wl+C
-         NbA1T/qvcHl1z3tGntaN+Fa7rusLWT3ht5Df+3bm4R3vyCxVBTblKg1EszVf7Ms03m+K
-         ssOj0b+Q8lsMtjiuZ88sW06OIriV6JjryEn0/YxzjnGOILEFEXuzooSb6ggfky2OOuO8
-         CoHA==
-X-Gm-Message-State: APzg51CuYxcefK7gcTy8Ai/kiB1ukzbM8z1OU7qOye4fkPi4Af10fWxO
-        exvVP4Rgj3K7EAlLZlSqp5u0ew==
-X-Google-Smtp-Source: ANB0Vdb2cIbFZHh+aJW9oDY/z8/GA5kGqXHHhO5FVIBkxqZJhScRfezc/eVqBOGg5kBO/LQoQwrcMg==
-X-Received: by 2002:a81:9a03:: with SMTP id r3-v6mr2833687ywg.87.1535033741826;
-        Thu, 23 Aug 2018 07:15:41 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id e126-v6sm1922472ywf.72.2018.08.23.07.15.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 Aug 2018 07:15:41 -0700 (PDT)
-Date:   Thu, 23 Aug 2018 10:15:40 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Lowry Li <lowry.li@arm.com>
-Cc:     liviu.dudau@arm.com, airlied@linux.ie,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        emil.l.velikov@gmail.com, seanpaul@chromium.org,
-        malidp@foss.arm.com, daniel.vetter@intel.com, nd@arm.com
-Subject: Re: [PATCH v5 1/2] drm: Add per-plane pixel blend mode property
-Message-ID: <20180823141540.GA45089@art_vandelay>
-References: <1535013020-23737-1-git-send-email-lowry.li@arm.com>
- <1535013020-23737-2-git-send-email-lowry.li@arm.com>
+        Thu, 23 Aug 2018 13:47:02 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7NEEWoO031663
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:17:08 -0400
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m1utkycw4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:17:08 -0400
+Received: from localhost
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Thu, 23 Aug 2018 08:17:07 -0600
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Thu, 23 Aug 2018 08:17:04 -0600
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7NEH2mT49610786;
+        Thu, 23 Aug 2018 07:17:02 -0700
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 566B913605E;
+        Thu, 23 Aug 2018 08:17:02 -0600 (MDT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 040EC136066;
+        Thu, 23 Aug 2018 08:16:59 -0600 (MDT)
+Received: from oc8043147753.ibm.com (unknown [9.60.75.213])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 23 Aug 2018 08:16:59 -0600 (MDT)
+Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
+ control domains
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     Halil Pasic <pasic@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        pmorel@linux.ibm.com, Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180820162317.08bd7d23.cohuck@redhat.com>
+ <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
+ <20180821172548.57a6c758.cohuck@redhat.com>
+ <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
+ <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
+ <20180822114250.59a250aa.cohuck@redhat.com>
+ <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
+ <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
+ <f84dbcc0-f627-be02-9933-3baa953adc09@linux.ibm.com>
+ <219b352b-d5a2-189c-e205-82e7f9ae3d64@de.ibm.com>
+ <dbb74c9c-93ab-ed05-fad4-ea2aa5f2b71e@linux.ibm.com>
+ <9ef5fcb9-02e0-88e3-007c-eedb14e6db80@linux.ibm.com>
+ <20180823122525.02fc4af3.cohuck@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Thu, 23 Aug 2018 10:16:59 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535013020-23737-2-git-send-email-lowry.li@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180823122525.02fc4af3.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18082314-0036-0000-0000-00000A287140
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009598; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01077711; UDB=6.00555670; IPR=6.00857684;
+ MB=3.00022888; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-23 14:17:06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082314-0037-0000-0000-000048AF891C
+Message-Id: <decfe307-4449-2c85-0b7e-6f2fcdb1164f@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808230151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 04:30:19PM +0800, Lowry Li wrote:
-> Pixel blend modes represent the alpha blending equation
-> selection, describing how the pixels from the current
-> plane are composited with the background.
-> 
-> Adds a pixel_blend_mode to drm_plane_state and a
-> blend_mode_property to drm_plane, and related support
-> functions.
-> 
-> Defines three blend modes in drm_blend.h.
-> 
-> Changes since v1:
->  - Moves the blending equation into the DOC comment
->  - Refines the comments of drm_plane_create_blend_mode_property to not
->    enumerate the #defines, but instead the string values
->  - Uses fg.* instead of pixel.* and plane_alpha instead of plane.alpha
-> Changes since v2:
->  - Refines the comments of drm_plane_create_blend_mode_property:
->       1) Puts the descriptions (after the ":") on a new line
->       2) Adds explaining why @supported_modes need PREMUL as default
-> Changes since v3:
->  - Refines drm_plane_create_blend_mode_property(). drm_property_add_enum()
->    can calculate the index itself just fine, so no point in having the
->    caller pass it in.
->  - Since the current DRM assumption is that alpha is premultiplied
->    as default, define DRM_MODE_BLEND_PREMULTI as 0 will be better.
->  - Refines some comments.
-> Changes since v4:
->  - Adds comments in drm_blend.h.
->  - Removes setting default value in drm_plane_create_blend_mode_property()
->    as it is already in __drm_atomic_helper_plane_reset().
->  - Fixes to use state->pixel_blend_mode instead of using
->    plane->state->pixel_blend_mode in reset function.
->  - Rebases on drm-misc-next.
-> 
-> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+On 08/23/2018 06:25 AM, Cornelia Huck wrote:
+> On Wed, 22 Aug 2018 15:16:19 -0400
+> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+>
+>> One of the things I suggested in a private conversation with Christian
+>> earlier
+>> today was to provide an additional rw sysfs attribute - a boolean - that
+>> indicates
+>> whether all usage domains should also be control domains. The default
+>> could be
+>> true. This would allow one to configure guests with usage-only domains
+>> as well
+>> as satisfy the convention.
+> Would this additional attribute then control "add usage domains to the
+> list of control domains automatically", or "don't allow to add a usage
+> domain if it has not already been added as a control domain"?
 
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
+It was just a proposal that wasn't really discussed at all, but this
+attribute would add usage domains to the list of control domains
+automatically if set to one. That would be the default behavior which
+would be turned off by manually setting it to zero.
 
-I've also Reviewed the userspace component in drm_hwc here:
-https://gitlab.freedesktop.org/drm-hwcomposer/drm-hwcomposer/merge_requests/16#note_24690
+>
+> One thing I'm still unsure about is how libvirt comes into the picture
+> here. Will it consume the setting, or actively manipulate it?
 
-Thanks,
+libvirt is not in the picture. The only thing libvirt does is identify
+which mediated matrix device (i.e., UUID) is to be used by the guest.
 
-Sean
+>
+> [In general, I'm not very clear about how libvirt will interact with the
+> whole infrastructure...]
 
-> Signed-off-by: Lowry Li <lowry.li@arm.com>
-> ---
->  drivers/gpu/drm/drm_atomic.c        |   4 ++
->  drivers/gpu/drm/drm_atomic_helper.c |   1 +
->  drivers/gpu/drm/drm_blend.c         | 123 ++++++++++++++++++++++++++++++++++++
->  include/drm/drm_blend.h             |   6 ++
->  include/drm/drm_plane.h             |   9 +++
->  5 files changed, 143 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> index 3eb061e..d0478ab 100644
-> --- a/drivers/gpu/drm/drm_atomic.c
-> +++ b/drivers/gpu/drm/drm_atomic.c
-> @@ -895,6 +895,8 @@ static int drm_atomic_plane_set_property(struct drm_plane *plane,
->  		state->src_h = val;
->  	} else if (property == plane->alpha_property) {
->  		state->alpha = val;
-> +	} else if (property == plane->blend_mode_property) {
-> +		state->pixel_blend_mode = val;
->  	} else if (property == plane->rotation_property) {
->  		if (!is_power_of_2(val & DRM_MODE_ROTATE_MASK)) {
->  			DRM_DEBUG_ATOMIC("[PLANE:%d:%s] bad rotation bitmask: 0x%llx\n",
-> @@ -968,6 +970,8 @@ static int drm_atomic_plane_set_property(struct drm_plane *plane,
->  		*val = state->src_h;
->  	} else if (property == plane->alpha_property) {
->  		*val = state->alpha;
-> +	} else if (property == plane->blend_mode_property) {
-> +		*val = state->pixel_blend_mode;
->  	} else if (property == plane->rotation_property) {
->  		*val = state->rotation;
->  	} else if (property == plane->zpos_property) {
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index 6dd5036..284a5d2 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -3569,6 +3569,7 @@ void __drm_atomic_helper_plane_reset(struct drm_plane *plane,
->  	/* Reset the alpha value to fully opaque if it matters */
->  	if (plane->alpha_property)
->  		state->alpha = plane->alpha_property->values[1];
-> +	state->pixel_blend_mode = DRM_MODE_BLEND_PREMULTI;
->  
->  	plane->state = state;
->  }
-> diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
-> index a16a74d..402b62d 100644
-> --- a/drivers/gpu/drm/drm_blend.c
-> +++ b/drivers/gpu/drm/drm_blend.c
-> @@ -107,6 +107,52 @@
->   *	planes. Without this property the primary plane is always below the cursor
->   *	plane, and ordering between all other planes is undefined.
->   *
-> + * pixel blend mode:
-> + *	Pixel blend mode is set up with drm_plane_create_blend_mode_property().
-> + *	It adds a blend mode for alpha blending equation selection, describing
-> + *	how the pixels from the current plane are composited with the
-> + *	background.
-> + *
-> + *	 Three alpha blending equations are defined:
-> + *
-> + *	 "None":
-> + *		 Blend formula that ignores the pixel alpha::
-> + *
-> + *			 out.rgb = plane_alpha * fg.rgb +
-> + *				 (1 - plane_alpha) * bg.rgb
-> + *
-> + *	 "Pre-multiplied":
-> + *		 Blend formula that assumes the pixel color values
-> + *		 have been already pre-multiplied with the alpha
-> + *		 channel values::
-> + *
-> + *			 out.rgb = plane_alpha * fg.rgb +
-> + *				 (1 - (plane_alpha * fg.alpha)) * bg.rgb
-> + *
-> + *	 "Coverage":
-> + *		 Blend formula that assumes the pixel color values have not
-> + *		 been pre-multiplied and will do so when blending them to the
-> + *		 background color values::
-> + *
-> + *			 out.rgb = plane_alpha * fg.alpha * fg.rgb +
-> + *				 (1 - (plane_alpha * fg.alpha)) * bg.rgb
-> + *
-> + *	 Using the following symbols:
-> + *
-> + *	 "fg.rgb":
-> + *		 Each of the RGB component values from the plane's pixel
-> + *	 "fg.alpha":
-> + *		 Alpha component value from the plane's pixel. If the plane's
-> + *		 pixel format has no alpha component, then this is assumed to be
-> + *		 1.0. In these cases, this property has no effect, as all three
-> + *		 equations become equivalent.
-> + *	 "bg.rgb":
-> + *		 Each of the RGB component values from the background
-> + *	 "plane_alpha":
-> + *		 Plane alpha value set by the plane "alpha" property. If the
-> + *		 plane does not expose the "alpha" property, then this is
-> + *		 assumed to be 1.0
-> + *
->   * Note that all the property extensions described here apply either to the
->   * plane or the CRTC (e.g. for the background color, which currently is not
->   * exposed and assumed to be black).
-> @@ -448,3 +494,80 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
->  	return 0;
->  }
->  EXPORT_SYMBOL(drm_atomic_normalize_zpos);
-> +
-> +/**
-> + * drm_plane_create_blend_mode_property - create a new blend mode property
-> + * @plane: drm plane
-> + * @supported_modes: bitmask of supported modes, must include
-> + *		     BIT(DRM_MODE_BLEND_PREMULTI). Current DRM assumption is
-> + *		     that alpha is premultiplied, and old userspace can break if
-> + *		     the property defaults to anything else.
-> + *
-> + * This creates a new property describing the blend mode.
-> + *
-> + * The property exposed to userspace is an enumeration property (see
-> + * drm_property_create_enum()) called "pixel blend mode" and has the
-> + * following enumeration values:
-> + *
-> + * "None":
-> + *	Blend formula that ignores the pixel alpha.
-> + *
-> + * "Pre-multiplied":
-> + *	Blend formula that assumes the pixel color values have been already
-> + *	pre-multiplied with the alpha channel values.
-> + *
-> + * "Coverage":
-> + *	Blend formula that assumes the pixel color values have not been
-> + *	pre-multiplied and will do so when blending them to the background color
-> + *	values.
-> + *
-> + * RETURNS:
-> + * Zero for success or -errno
-> + */
-> +int drm_plane_create_blend_mode_property(struct drm_plane *plane,
-> +					 unsigned int supported_modes)
-> +{
-> +	struct drm_device *dev = plane->dev;
-> +	struct drm_property *prop;
-> +	static const struct drm_prop_enum_list props[] = {
-> +		{ DRM_MODE_BLEND_PIXEL_NONE, "None" },
-> +		{ DRM_MODE_BLEND_PREMULTI, "Pre-multiplied" },
-> +		{ DRM_MODE_BLEND_COVERAGE, "Coverage" },
-> +	};
-> +	unsigned int valid_mode_mask = BIT(DRM_MODE_BLEND_PIXEL_NONE) |
-> +				       BIT(DRM_MODE_BLEND_PREMULTI)   |
-> +				       BIT(DRM_MODE_BLEND_COVERAGE);
-> +	int i;
-> +
-> +	if (WARN_ON((supported_modes & ~valid_mode_mask) ||
-> +		    ((supported_modes & BIT(DRM_MODE_BLEND_PREMULTI)) == 0)))
-> +		return -EINVAL;
-> +
-> +	prop = drm_property_create(dev, DRM_MODE_PROP_ENUM,
-> +				   "pixel blend mode",
-> +				   hweight32(supported_modes));
-> +	if (!prop)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(props); i++) {
-> +		int ret;
-> +
-> +		if (!(BIT(props[i].type) & supported_modes))
-> +			continue;
-> +
-> +		ret = drm_property_add_enum(prop, props[i].type,
-> +					    props[i].name);
-> +
-> +		if (ret) {
-> +			drm_property_destroy(dev, prop);
-> +
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	drm_object_attach_property(&plane->base, prop, DRM_MODE_BLEND_PREMULTI);
-> +	plane->blend_mode_property = prop;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(drm_plane_create_blend_mode_property);
-> diff --git a/include/drm/drm_blend.h b/include/drm/drm_blend.h
-> index 330c561..88bdfec 100644
-> --- a/include/drm/drm_blend.h
-> +++ b/include/drm/drm_blend.h
-> @@ -27,6 +27,10 @@
->  #include <linux/ctype.h>
->  #include <drm/drm_mode.h>
->  
-> +#define DRM_MODE_BLEND_PREMULTI		0
-> +#define DRM_MODE_BLEND_COVERAGE		1
-> +#define DRM_MODE_BLEND_PIXEL_NONE	2
-> +
->  struct drm_device;
->  struct drm_atomic_state;
->  struct drm_plane;
-> @@ -52,4 +56,6 @@ int drm_plane_create_zpos_immutable_property(struct drm_plane *plane,
->  					     unsigned int zpos);
->  int drm_atomic_normalize_zpos(struct drm_device *dev,
->  			      struct drm_atomic_state *state);
-> +int drm_plane_create_blend_mode_property(struct drm_plane *plane,
-> +					 unsigned int supported_modes);
->  #endif
-> diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
-> index 8a152dc..35ef64a 100644
-> --- a/include/drm/drm_plane.h
-> +++ b/include/drm/drm_plane.h
-> @@ -117,6 +117,7 @@ struct drm_plane_state {
->  	 * details.
->  	 */
->  	u16 alpha;
-> +	uint16_t pixel_blend_mode;
->  
->  	/**
->  	 * @rotation:
-> @@ -659,6 +660,14 @@ struct drm_plane {
->  	 * drm_plane_create_rotation_property().
->  	 */
->  	struct drm_property *rotation_property;
-> +	/**
-> +	 * @blend_mode_property:
-> +	 * Optional "pixel blend mode" enum property for this plane.
-> +	 * Blend mode property represents the alpha blending equation selection,
-> +	 * describing how the pixels from the current plane are composited with
-> +	 * the background.
-> +	 */
-> +	struct drm_property *blend_mode_property;
->  
->  	/**
->  	 * @color_encoding_property:
-> -- 
-> 1.9.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+The libvirt domain XML will only specify the UUID of the matrix device
+to be used by the guest. Consequently, libvirt will insert the device
+statement for the vfio-ap device into the QEMU command line:
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+-device vfio-ap,syfsdev={path-to-mdev}
+
+All configuration of the mediated device, including the proposed attribute
+above, is handled via sysfs attributes.
+
+>
+
