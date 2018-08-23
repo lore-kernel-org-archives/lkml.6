@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E3EEC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A937C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3455521486
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:38:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3455521486
+	by mail.kernel.org (Postfix) with ESMTP id 60A372147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:38:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60A372147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731312AbeHWMGp (ORCPT
+        id S1731361AbeHWMGt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:06:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49076 "EHLO
+        Thu, 23 Aug 2018 08:06:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49086 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731067AbeHWMGp (ORCPT
+        with ESMTP id S1731039AbeHWMGs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:06:45 -0400
+        Thu, 23 Aug 2018 08:06:48 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 28AAB941;
-        Thu, 23 Aug 2018 08:38:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 574F08B1;
+        Thu, 23 Aug 2018 08:38:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Greg Kroah-Hartman <greg@kroah.com>
-Subject: [PATCH 4.14 211/217] PCI: hotplug: Dont leak pci_slot on registration failure
-Date:   Thu, 23 Aug 2018 09:55:24 +0200
-Message-Id: <20180823075515.193800335@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 194/217] net: qca_spi: Make sure the QCA7000 reset is triggered
+Date:   Thu, 23 Aug 2018 09:55:07 +0200
+Message-Id: <20180823075514.379955104@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,48 +51,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
-commit 4ce6435820d1f1cc2c2788e232735eb244bcc8a3 upstream.
+[ Upstream commit 711c62dfa6bdb4326ca6c587f295ea5c4f7269de ]
 
-If addition of sysfs files fails on registration of a hotplug slot, the
-struct pci_slot as well as the entry in the slot_list is leaked.  The
-issue has been present since the hotplug core was introduced in 2002:
-https://git.kernel.org/tglx/history/c/a8a2069f432c
+In case the SPI thread is not running, a simple reset of sync
+state won't fix the transmit timeout. We also need to wake up the kernel
+thread.
 
-Perhaps the idea was that even though sysfs addition fails, the slot
-should still be usable.  But that's not how drivers use the interface,
-they abort probe if a non-zero value is returned.
-
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org # v2.4.15+
-Cc: Greg Kroah-Hartman <greg@kroah.com>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Fixes: ed7d42e24eff ("net: qca_spi: fix transmit queue timeout handling")
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/pci/hotplug/pci_hotplug_core.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/net/ethernet/qualcomm/qca_spi.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/pci/hotplug/pci_hotplug_core.c
-+++ b/drivers/pci/hotplug/pci_hotplug_core.c
-@@ -452,8 +452,17 @@ int __pci_hp_register(struct hotplug_slo
- 	list_add(&slot->slot_list, &pci_hotplug_slot_list);
+--- a/drivers/net/ethernet/qualcomm/qca_spi.c
++++ b/drivers/net/ethernet/qualcomm/qca_spi.c
+@@ -761,6 +761,9 @@ qcaspi_netdev_tx_timeout(struct net_devi
+ 	qca->net_dev->stats.tx_errors++;
+ 	/* Trigger tx queue flush and QCA7000 reset */
+ 	qca->sync = QCASPI_SYNC_UNKNOWN;
++
++	if (qca->spi_thread)
++		wake_up_process(qca->spi_thread);
+ }
  
- 	result = fs_add_slot(pci_slot);
-+	if (result)
-+		goto err_list_del;
-+
- 	kobject_uevent(&pci_slot->kobj, KOBJ_ADD);
- 	dbg("Added slot %s to the list\n", name);
-+	goto out;
-+
-+err_list_del:
-+	list_del(&slot->slot_list);
-+	pci_slot->hotplug = NULL;
-+	pci_destroy_slot(pci_slot);
- out:
- 	mutex_unlock(&pci_hp_mutex);
- 	return result;
+ static int
 
 
