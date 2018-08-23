@@ -2,179 +2,188 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D4CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D71CAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D467221473
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:40:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D467221473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 8392C208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:44:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8392C208C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728922AbeHWNJS (ORCPT
+        id S1729557AbeHWNNk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 09:09:18 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:2316 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727122AbeHWNJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 09:09:18 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41wzsy6F7Tz9ttSK;
-        Thu, 23 Aug 2018 11:40:22 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id bZ8rv1zRx2nP; Thu, 23 Aug 2018 11:40:22 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41wzsy5bQMz9ttRl;
-        Thu, 23 Aug 2018 11:40:22 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A377D8B894;
-        Thu, 23 Aug 2018 11:40:23 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id Jkja4EK5qbGz; Thu, 23 Aug 2018 11:40:23 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 11E118B75A;
-        Thu, 23 Aug 2018 11:40:23 +0200 (CEST)
-Subject: Re: [PATCH v2 3/4] powerpc/mm: fix a warning when a cache is common
- to PGD and hugepages
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        aneesh.kumar@linux.vnet.ibm.com
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <2f96bf1a8df1091c642de099ed07c34b5ab9b90a.1534258290.git.christophe.leroy@c-s.fr>
- <4aaca2d27429e6bdadc340fd3b96e7c350c4b2f4.1534258290.git.christophe.leroy@c-s.fr>
- <6dea8d0c-c4ab-49aa-da26-a729c18fa818@linux.ibm.com>
- <006e5f33-b816-7508-faac-da26a860659c@c-s.fr>
- <3e6412ac-c645-908f-a3bb-c9a2a72f4b68@linux.ibm.com>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <cb121f38-ac89-4971-fd84-5473e7e9ced5@c-s.fr>
-Date:   Thu, 23 Aug 2018 11:40:22 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 23 Aug 2018 09:13:40 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45211 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727153AbeHWNNj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 09:13:39 -0400
+Received: by mail-wr1-f66.google.com with SMTP id 20-v6so4054033wrb.12
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 02:44:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cpcRsGbw0z3r31ECxEzONbei22xlUGBcywq1hG/oUZE=;
+        b=tkUl88j8v/XGfB96ShcG/nCXBIb1i42z8vMXf+t/TMIDmN63yOTxEE5m9uD0fRljIg
+         EzpexgFhnDG/aypcfVlfWv/LSh0j+v/uLxrAQOJYrNt9AzeacF2NcdP1EWFLCQS1h4i3
+         is7nmFJ0dLeMEhtvqWs9IbPFtYQAuFoPbgP9UHgUAmLjX3ykeiMP2P+pWUn9cDvIRJTm
+         RaZsFLNvXrZgWtMJrF6RRYoTzDNTzQNWb3BjpzYoO8OFyzrPKZWzM9sMi8yQiTK6w3hx
+         6iiv7aY2msSdkfIIqV5AT4UXlwDir6Gxv61R/0rsQqxPUa0QBb9GGIVHz+z8lqlp4nzW
+         z+IQ==
+X-Gm-Message-State: APzg51DKuZMnizKrH5gcynC4ELpXinr9Mfb7rxnMzzZiNJRGbaxCMw0F
+        XDpqG5BK729gRpygUrqdNFU=
+X-Google-Smtp-Source: ANB0VdbQuN0iv0DhLQRbnqCOhtYQQDYR6TIoZZY0pCrprKi+ure6oOUn6/I8rAA56gb0s+Aiy9blqA==
+X-Received: by 2002:a5d:4990:: with SMTP id r16-v6mr1224179wrq.116.1535017484692;
+        Thu, 23 Aug 2018 02:44:44 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id b2-v6sm4351591wmh.3.2018.08.23.02.44.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 Aug 2018 02:44:44 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id 517E7124A71; Thu, 23 Aug 2018 11:44:43 +0200 (CEST)
+Date:   Thu, 23 Aug 2018 11:44:43 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     akpm@linux-foundation.org
+Cc:     mhocko@suse.com, dan.j.williams@intel.com, malat@debian.org,
+        david@redhat.com, Pavel.Tatashin@microsoft.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [RFC PATCH 5/5] mm/memory_hotplug: Simplify
+ node_states_check_changes_offline
+Message-ID: <20180823094443.GA14924@techadventures.net>
+References: <20180822093226.25987-1-osalvador@techadventures.net>
+ <20180822093226.25987-6-osalvador@techadventures.net>
 MIME-Version: 1.0
-In-Reply-To: <3e6412ac-c645-908f-a3bb-c9a2a72f4b68@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180822093226.25987-6-osalvador@techadventures.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 22/08/2018 à 16:20, Aneesh Kumar K.V a écrit :
-> On 08/17/2018 04:14 PM, Christophe LEROY wrote:
->>
->>
->> Le 17/08/2018 à 05:32, Aneesh Kumar K.V a écrit :
->>> On 08/14/2018 08:24 PM, Christophe Leroy wrote:
->>>> While implementing TLB miss HW assistance on the 8xx, the following
->>>> warning was encountered:
->>>>
->>>> [  423.732965] WARNING: CPU: 0 PID: 345 at mm/slub.c:2412 
->>>> ___slab_alloc.constprop.30+0x26c/0x46c
->>>> [  423.733033] CPU: 0 PID: 345 Comm: mmap Not tainted 
->>>> 4.18.0-rc8-00664-g2dfff9121c55 #671
->>>> [  423.733075] NIP:  c0108f90 LR: c0109ad0 CTR: 00000004
->>>> [  423.733121] REGS: c455bba0 TRAP: 0700   Not tainted 
->>>> (4.18.0-rc8-00664-g2dfff9121c55)
->>>> [  423.733147] MSR:  00021032 <ME,IR,DR,RI>  CR: 24224848  XER: 
->>>> 20000000
->>>> [  423.733319]
->>>> [  423.733319] GPR00: c0109ad0 c455bc50 c4521910 c60053c0 007080c0 
->>>> c0011b34 c7fa41e0 c455be30
->>>> [  423.733319] GPR08: 00000001 c00103a0 c7fa41e0 c49afcc4 24282842 
->>>> 10018840 c079b37c 00000040
->>>> [  423.733319] GPR16: 73f00000 00210d00 00000000 00000001 c455a000 
->>>> 00000100 00000200 c455a000
->>>> [  423.733319] GPR24: c60053c0 c0011b34 007080c0 c455a000 c455a000 
->>>> c7fa41e0 00000000 00009032
->>>> [  423.734190] NIP [c0108f90] ___slab_alloc.constprop.30+0x26c/0x46c
->>>> [  423.734257] LR [c0109ad0] kmem_cache_alloc+0x210/0x23c
->>>> [  423.734283] Call Trace:
->>>> [  423.734326] [c455bc50] [00000100] 0x100 (unreliable)
->>>> [  423.734430] [c455bcc0] [c0109ad0] kmem_cache_alloc+0x210/0x23c
->>>> [  423.734543] [c455bcf0] [c0011b34] huge_pte_alloc+0xc0/0x1dc
->>>> [  423.734633] [c455bd20] [c01044dc] hugetlb_fault+0x408/0x48c
->>>> [  423.734720] [c455bdb0] [c0104b20] follow_hugetlb_page+0x14c/0x44c
->>>> [  423.734826] [c455be10] [c00e8e54] __get_user_pages+0x1c4/0x3dc
->>>> [  423.734919] [c455be80] [c00e9924] __mm_populate+0xac/0x140
->>>> [  423.735020] [c455bec0] [c00db14c] vm_mmap_pgoff+0xb4/0xb8
->>>> [  423.735127] [c455bf00] [c00f27c0] ksys_mmap_pgoff+0xcc/0x1fc
->>>> [  423.735222] [c455bf40] [c000e0f8] ret_from_syscall+0x0/0x38
->>>> [  423.735271] Instruction dump:
->>>> [  423.735321] 7cbf482e 38fd0008 7fa6eb78 7fc4f378 4bfff5dd 7fe3fb78 
->>>> 4bfffe24 81370010
->>>> [  423.735536] 71280004 41a2ff88 4840c571 4bffff80 <0fe00000> 
->>>> 4bfffeb8 81340010 712a0004
->>>> [  423.735757] ---[ end trace e9b222919a470790 ]---
->>>>
->>>> This warning occurs when calling kmem_cache_zalloc() on a
->>>> cache having a constructor.
->>>>
->>>> In this case it happens because PGD cache and 512k hugepte cache are
->>>> the same size (4k). While a cache with constructor is created for
->>>> the PGD, hugepages create cache without constructor and uses
->>>> kmem_cache_zalloc(). As both expect a cache with the same size,
->>>> the hugepages reuse the cache created for PGD, hence the conflict.
->>>>
->>>> In order to avoid this conflict, this patch:
->>>> - modifies pgtable_cache_add() so that a zeroising constructor is
->>>> added for any cache size.
->>>> - replaces calls to kmem_cache_zalloc() by kmem_cache_alloc()
->>>>
->>>
->>> Can't we just do kmem_cache_alloc with gfp flags __GFP_ZERO? and 
->>> remove the constructor completely?
->>
->> I don't understand what you mean. That's exactly what I did in v1 (by 
->> using kmem_cache_zalloc()), and you commented that doing this we would 
->> zeroise at allocation whereas the constructors are called when adding 
->> memory to the slab and when freeing the allocated block. Or did I 
->> misunderstood your comment ?
->>
->> static inline void *kmem_cache_zalloc(struct kmem_cache *k, gfp_t flags)
->> {
->>      return kmem_cache_alloc(k, flags | __GFP_ZERO);
->> }
->>
->>
+On Wed, Aug 22, 2018 at 11:32:26AM +0200, Oscar Salvador wrote:
+> From: Oscar Salvador <osalvador@suse.de>
 > 
-> I completely misunderstood kmem_cache_zalloc. I took it as we zero out 
-> after each alloc. I guess your earlier patch is then good. We may want 
-> to double check this, I haven't looked at the slab internals.
-
-In fact no, you were right. When kmem_cache_alloc() is called with 
-__GFP_ZERO, the object gets zeroised at allocation. This is done (at 
-least in SLUB) at the end of function slab_alloc_node()
-
+> This patch tries to simplify node_states_check_changes_offline
+> and make the code more understandable by:
 > 
-> What we want is to make sure when we add new memory to slab, we want it 
-> zeroed. If we are allocating objects from existing slab memory pool, we 
-> don't need to zero out, because when we release objects to slab we make 
-> sure we clear it.
-
-It looks like when we use constructors, they are called when adding an 
-object to the slab and when releasing it back to the slab. So that's 
-exactly what we want then, and therefore I have the feeling that we 
-should go with this v2 approach.
-Those constructors are tiny (most of them are 3 insns) and we have only 
-16 cache sizes hence 16 constructors so it shoudln't be an issue to have 
-unused ones.
-The only small problème I have is that some version of GCC seems to 
-complain about big memset() (132k and 256k ones). Is there a way to tell 
-GCC we really want to do it ?
-
-Christophe
-
+> - Removing the if (N_MEMORY == N_NORMAL_MEMORY) wrong statement
+> - Removing the if (N_MEMORY == N_HIGH_MEMORY) wrong statement
+> - Re-structure the code a bit
+> - Removing confusing comments
 > 
-> -aneesh
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+
+I realized I made a mistake here.
+I was not counting the present pages correctly.
+I will send a new version after the merge-windows gets closed.
+
+Sorry for the noise
+
+For the sake of clarity, the patch should have been:
+
+
+---
+
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 006a7b817724..bca11da4e11f 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1487,23 +1487,12 @@ static void node_states_check_changes_offline(unsigned long nr_pages,
+ 	enum zone_type zt, zone_last = ZONE_NORMAL;
+ 
+ 	/*
+-	 * If we have HIGHMEM or movable node, node_states[N_NORMAL_MEMORY]
+-	 * contains nodes which have zones of 0...ZONE_NORMAL,
+-	 * set zone_last to ZONE_NORMAL.
+-	 *
+-	 * If we don't have HIGHMEM nor movable node,
+-	 * node_states[N_NORMAL_MEMORY] contains nodes which have zones of
+-	 * 0...ZONE_MOVABLE, set zone_last to ZONE_MOVABLE.
+-	 */
+-	if (N_MEMORY == N_NORMAL_MEMORY)
+-		zone_last = ZONE_MOVABLE;
+-
+-	/*
+-	 * check whether node_states[N_NORMAL_MEMORY] will be changed.
+-	 * If the memory to be offline is in a zone of 0...zone_last,
+-	 * and it is the last present memory, 0...zone_last will
+-	 * become empty after offline , thus we can determind we will
+-	 * need to clear the node from node_states[N_NORMAL_MEMORY].
++	 * If the current zone is whithin (0..ZONE_NORMAL],
++	 * check if the amount of pages that are going to be
++	 * offlined is above or equal to the sum of the present
++	 * pages of these zones.
++	 * If that happens, we need to take this node out of
++	 * node_state[N_NORMAL_MEMORY]
+ 	 */
+ 	for (zt = 0; zt <= zone_last; zt++)
+ 		present_pages += pgdat->node_zones[zt].present_pages;
+@@ -1514,21 +1503,15 @@ static void node_states_check_changes_offline(unsigned long nr_pages,
+ 
+ #ifdef CONFIG_HIGHMEM
+ 	/*
+-	 * If we have movable node, node_states[N_HIGH_MEMORY]
+-	 * contains nodes which have zones of 0...ZONE_HIGHMEM,
+-	 * set zone_last to ZONE_HIGHMEM.
+-	 *
+-	 * If we don't have movable node, node_states[N_NORMAL_MEMORY]
+-	 * contains nodes which have zones of 0...ZONE_MOVABLE,
+-	 * set zone_last to ZONE_MOVABLE.
++	 * If the current zone is whithin (0..ZONE_HIGHMEM], check if
++	 * the amount of pages that are going to be offlined is above
++	 * or equal to the sum of the present pages of these zones.
++	 * If that happens, we need to take this node out of
++	 * node_state[N_HIGH_MEMORY]
+ 	 */
+-	zone_last = ZONE_HIGHMEM;
+-	if (N_MEMORY == N_HIGH_MEMORY)
+-		zone_last = ZONE_MOVABLE;
+-
+-	for (; zt <= zone_last; zt++)
+-		present_pages += pgdat->node_zones[zt].present_pages;
+-	if (zone_idx(zone) <= zone_last && nr_pages >= present_pages)
++	zt = ZONE_HIGHMEM;
++	present_pages += pgdat->node_zones[zt].present_pages;
++	if (zone_idx(zone) <= zt && nr_pages >= present_pages)
+ 		arg->status_change_nid_high = zone_to_nid(zone);
+ 	else
+ 		arg->status_change_nid_high = -1;
+@@ -1541,18 +1524,14 @@ static void node_states_check_changes_offline(unsigned long nr_pages,
+ #endif
+ 
+ 	/*
+-	 * node_states[N_HIGH_MEMORY] contains nodes which have 0...ZONE_MOVABLE
++	 * Count pages from ZONE_MOVABLE as well.
++	 * If the amount of pages that are going to be offlined is above
++	 * or equal the sum of the present pages of all zones, we need
++	 * to remove this node from node_state[N_MEMORY]
+ 	 */
+-	zone_last = ZONE_MOVABLE;
++	zt = ZONE_MOVABLE;
++	present_pages += pgdat->node_zones[zt].present_pages;
+ 
+-	/*
+-	 * check whether node_states[N_HIGH_MEMORY] will be changed
+-	 * If we try to offline the last present @nr_pages from the node,
+-	 * we can determind we will need to clear the node from
+-	 * node_states[N_HIGH_MEMORY].
+-	 */
+-	for (; zt <= zone_last; zt++)
+-		present_pages += pgdat->node_zones[zt].present_pages;
+ 	if (nr_pages >= present_pages)
+ 		arg->status_change_nid = zone_to_nid(zone);
+ 	else
+ 
+
+-- 
+Oscar Salvador
+SUSE L3
