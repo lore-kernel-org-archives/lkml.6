@@ -2,105 +2,220 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C790AC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E97D7C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:29:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BC87208FA
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:29:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BC87208FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 84A6B208FA
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:29:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ftVv7hGF";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jFaQwq6j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84A6B208FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732576AbeHWR7M (ORCPT
+        id S1732708AbeHWR7P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 13:59:12 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:13420 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727597AbeHWR7L (ORCPT
+        Thu, 23 Aug 2018 13:59:15 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46642 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727597AbeHWR7O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 13:59:11 -0400
-Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w7NEStWn004802;
-        Thu, 23 Aug 2018 23:28:55 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
- Thu, 23 Aug 2018 23:28:55 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w7NEStwa004799
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 23 Aug 2018 23:28:55 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: [PATCH] apparmor: remove unused label
-To:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Seth Arnold <seth.arnold@canonical.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180823140917.3060915-1-arnd@arndb.de>
- <CAGXu5jJpuPuu+QYhzGc3MbVU7zL0kWfGMOQRf7zg++8WX4TMgw@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <af63df0d-4b06-4095-4a7c-de3f4c1b9026@I-love.SAKURA.ne.jp>
-Date:   Thu, 23 Aug 2018 23:28:52 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJpuPuu+QYhzGc3MbVU7zL0kWfGMOQRf7zg++8WX4TMgw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 23 Aug 2018 13:59:14 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0A43860246; Thu, 23 Aug 2018 14:29:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535034558;
+        bh=aJY2WbHteVqkZBfKr8JOaUIzrN/7nGj9DhTjLitqRus=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ftVv7hGFGQYEC2+qKgYYE9E87kM6Qtt/wtmy+7Owa4UdUoYslqco8uGyw/IKCFYHy
+         LmQ9SPYLcObSfuzz4+0S06LVw3A9QmC7lIdijsVuYu4tGiDMBnuct1ZINJAsD6d3SM
+         6xF13I+tdU79ElD0/nk1Ye+OA2wgF7meVW+xpv50=
+Received: from vgarodia-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vgarodia@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 09D01601C3;
+        Thu, 23 Aug 2018 14:29:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535034557;
+        bh=aJY2WbHteVqkZBfKr8JOaUIzrN/7nGj9DhTjLitqRus=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=jFaQwq6j+8jsivcFsb1zsbB7SSZ2TnSqIM6uX9m4O/S7fHow/NcQXHkBW4j/YORJW
+         7St4H4TgZ5ZwRJTo8ViJxSrMaSKs5OJO7gwlVKRUzMG3QSArG+Eo79sDQLEWQNO9q1
+         G1HsAi7yY6OhxzpO3TWxYg2mDQD1dseBa465OzcI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 09D01601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vgarodia@codeaurora.org
+From:   Vikash Garodia <vgarodia@codeaurora.org>
+To:     stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
+        mchehab@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        andy.gross@linaro.org, arnd@arndb.de, bjorn.andersson@linaro.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, acourbot@chromium.org,
+        vgarodia@codeaurora.org
+Subject: [PATCH v6 2/4] venus: firmware: move load firmware in a separate function
+Date:   Thu, 23 Aug 2018 19:58:46 +0530
+Message-Id: <1535034528-11590-3-git-send-email-vgarodia@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1535034528-11590-1-git-send-email-vgarodia@codeaurora.org>
+References: <1535034528-11590-1-git-send-email-vgarodia@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/08/23 23:21, Kees Cook wrote:
-> On Thu, Aug 23, 2018 at 7:09 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->> After the corresponding 'goto' was removed, we get a warning
->> for the 'fail' label:
->>
->> security/apparmor/policy_unpack.c: In function 'unpack_dfa':
->> security/apparmor/policy_unpack.c:426:1: error: label 'fail' defined but not used [-Werror=unused-label]
->>
->> Fixes: fb5841091f28 ("apparmor: remove no-op permission check in policy_unpack")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> 
-> -Kees
-> 
->> ---
->>  security/apparmor/policy_unpack.c | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
->> index 3647b5834ace..96d8cf68ce65 100644
->> --- a/security/apparmor/policy_unpack.c
->> +++ b/security/apparmor/policy_unpack.c
->> @@ -423,7 +423,6 @@ static struct aa_dfa *unpack_dfa(struct aa_ext *e)
->>
->>         return dfa;
->>
->> -fail:
->>         aa_put_dfa(dfa);
->>         return ERR_PTR(-EPROTO);
+Separate firmware loading part into a new function.
 
-If these lines are unreachable, please remove together...
-And that is what Gustavo A. R. Silva reported before this patch?
+Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+---
+ drivers/media/platform/qcom/venus/core.c     |  4 +-
+ drivers/media/platform/qcom/venus/firmware.c | 55 ++++++++++++++++++----------
+ drivers/media/platform/qcom/venus/firmware.h |  2 +-
+ 3 files changed, 38 insertions(+), 23 deletions(-)
 
->>  }
->> --
->> 2.18.0
->>
-> 
-> 
-> 
+diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+index bb6add9..75b9785 100644
+--- a/drivers/media/platform/qcom/venus/core.c
++++ b/drivers/media/platform/qcom/venus/core.c
+@@ -84,7 +84,7 @@ static void venus_sys_error_handler(struct work_struct *work)
+ 
+ 	pm_runtime_get_sync(core->dev);
+ 
+-	ret |= venus_boot(core->dev, core->res->fwname);
++	ret |= venus_boot(core);
+ 
+ 	ret |= hfi_core_resume(core, true);
+ 
+@@ -284,7 +284,7 @@ static int venus_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto err_runtime_disable;
+ 
+-	ret = venus_boot(dev, core->res->fwname);
++	ret = venus_boot(core);
+ 	if (ret)
+ 		goto err_runtime_disable;
+ 
+diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+index a9d042e..34224eb 100644
+--- a/drivers/media/platform/qcom/venus/firmware.c
++++ b/drivers/media/platform/qcom/venus/firmware.c
+@@ -60,20 +60,18 @@ int venus_set_hw_state(struct venus_core *core, bool resume)
+ 	return 0;
+ }
+ 
+-int venus_boot(struct device *dev, const char *fwname)
++static int venus_load_fw(struct venus_core *core, const char *fwname,
++			 phys_addr_t *mem_phys, size_t *mem_size)
+ {
+ 	const struct firmware *mdt;
+ 	struct device_node *node;
+-	phys_addr_t mem_phys;
++	struct device *dev;
+ 	struct resource r;
+ 	ssize_t fw_size;
+-	size_t mem_size;
+ 	void *mem_va;
+ 	int ret;
+ 
+-	if (!IS_ENABLED(CONFIG_QCOM_MDT_LOADER) || !qcom_scm_is_available())
+-		return -EPROBE_DEFER;
+-
++	dev = core->dev;
+ 	node = of_parse_phandle(dev->of_node, "memory-region", 0);
+ 	if (!node) {
+ 		dev_err(dev, "no memory-region specified\n");
+@@ -84,16 +82,16 @@ int venus_boot(struct device *dev, const char *fwname)
+ 	if (ret)
+ 		return ret;
+ 
+-	mem_phys = r.start;
+-	mem_size = resource_size(&r);
++	*mem_phys = r.start;
++	*mem_size = resource_size(&r);
+ 
+-	if (mem_size < VENUS_FW_MEM_SIZE)
++	if (*mem_size < VENUS_FW_MEM_SIZE)
+ 		return -EINVAL;
+ 
+-	mem_va = memremap(r.start, mem_size, MEMREMAP_WC);
++	mem_va = memremap(r.start, *mem_size, MEMREMAP_WC);
+ 	if (!mem_va) {
+ 		dev_err(dev, "unable to map memory region: %pa+%zx\n",
+-			&r.start, mem_size);
++			&r.start, *mem_size);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -108,23 +106,40 @@ int venus_boot(struct device *dev, const char *fwname)
+ 		goto err_unmap;
+ 	}
+ 
+-	ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va, mem_phys,
+-			    mem_size, NULL);
++	if (core->no_tz)
++		ret = qcom_mdt_load_no_init(dev, mdt, fwname, VENUS_PAS_ID,
++					    mem_va, *mem_phys, *mem_size, NULL);
++	else
++		ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID,
++				    mem_va, *mem_phys, *mem_size, NULL);
+ 
+ 	release_firmware(mdt);
+ 
+-	if (ret)
+-		goto err_unmap;
+-
+-	ret = qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
+-	if (ret)
+-		goto err_unmap;
+-
+ err_unmap:
+ 	memunmap(mem_va);
+ 	return ret;
+ }
+ 
++int venus_boot(struct venus_core *core)
++{
++	struct device *dev = core->dev;
++	phys_addr_t mem_phys;
++	size_t mem_size;
++	int ret;
++
++	if (!IS_ENABLED(CONFIG_QCOM_MDT_LOADER) ||
++	    (!core->no_tz && !qcom_scm_is_available()))
++		return -EPROBE_DEFER;
++
++	ret = venus_load_fw(core, core->res->fwname, &mem_phys, &mem_size);
++	if (ret) {
++		dev_err(dev, "fail to load video firmware\n");
++		return -EINVAL;
++	}
++
++	return qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
++}
++
+ int venus_shutdown(struct device *dev)
+ {
+ 	return qcom_scm_pas_shutdown(VENUS_PAS_ID);
+diff --git a/drivers/media/platform/qcom/venus/firmware.h b/drivers/media/platform/qcom/venus/firmware.h
+index 397570c..1343747 100644
+--- a/drivers/media/platform/qcom/venus/firmware.h
++++ b/drivers/media/platform/qcom/venus/firmware.h
+@@ -16,7 +16,7 @@
+ 
+ struct device;
+ 
+-int venus_boot(struct device *dev, const char *fwname);
++int venus_boot(struct venus_core *core);
+ int venus_shutdown(struct device *dev);
+ int venus_set_hw_state(struct venus_core *core, bool suspend);
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
