@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BCBC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED16C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C804D20847
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C804D20847
+	by mail.kernel.org (Postfix) with ESMTP id 99E6820847
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99E6820847
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387777AbeHWM1r (ORCPT
+        id S2387797AbeHWM1v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:27:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53056 "EHLO
+        Thu, 23 Aug 2018 08:27:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53068 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727293AbeHWM1q (ORCPT
+        with ESMTP id S1727293AbeHWM1u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:27:46 -0400
+        Thu, 23 Aug 2018 08:27:50 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9361C83;
-        Thu, 23 Aug 2018 08:59:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0CC32C83;
+        Thu, 23 Aug 2018 08:59:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 208/324] net/sched: act_csum: fix NULL dereference when goto chain is used
-Date:   Thu, 23 Aug 2018 09:54:34 +0200
-Message-Id: <20180823075006.557749556@linuxfoundation.org>
+Subject: [PATCH 4.17 209/324] net/sched: act_tunnel_key: fix NULL dereference when goto chain is used
+Date:   Thu, 23 Aug 2018 09:54:35 +0200
+Message-Id: <20180823075006.606593167@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -53,53 +53,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit 11a245e2f7bf25fc21f47e4c9c8491841b128890 ]
+[ Upstream commit 38230a3e0e0933bbcf5df6fa469ba0667f667568 ]
 
-the control action in the common member of struct tcf_csum must be a valid
-value, as it can contain the chain index when 'goto chain' is used. Ensure
-that the control action can be read as x->tcfa_action, when x is a pointer
-to struct tc_action and x->ops->type is TCA_ACT_CSUM, to prevent the
-following command:
+the control action in the common member of struct tcf_tunnel_key must be a
+valid value, as it can contain the chain index when 'goto chain' is used.
+Ensure that the control action can be read as x->tcfa_action, when x is a
+pointer to struct tc_action and x->ops->type is TCA_ACT_TUNNEL_KEY, to
+prevent the following command:
 
-  # tc filter add dev $h2 ingress protocol ip pref 1 handle 101 flower \
-  > $tcflags dst_mac $h2mac action csum ip or tcp or udp or sctp goto chain 1
+ # tc filter add dev $h2 ingress protocol ip pref 1 handle 101 flower \
+ > $tcflags dst_mac $h2mac action tunnel_key unset goto chain 1
 
-from triggering a NULL pointer dereference when a matching packet is
-received.
+from causing a NULL dereference when a matching packet is received:
 
  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
- PGD 800000010416b067 P4D 800000010416b067 PUD 1041be067 PMD 0
+ PGD 80000001097ac067 P4D 80000001097ac067 PUD 103b0a067 PMD 0
  Oops: 0000 [#1] SMP PTI
- CPU: 0 PID: 3072 Comm: mausezahn Tainted: G            E     4.18.0-rc2.auguri+ #421
+ CPU: 0 PID: 3491 Comm: mausezahn Tainted: G            E     4.18.0-rc2.auguri+ #421
  Hardware name: Hewlett-Packard HP Z220 CMT Workstation/1790, BIOS K51 v01.58 02/07/2013
  RIP: 0010:tcf_action_exec+0xb8/0x100
  Code: 00 00 00 20 74 1d 83 f8 03 75 09 49 83 c4 08 4d 39 ec 75 bc 48 83 c4 10 5b 5d 41 5c 41 5d 41 5e 41 5f c3 49 8b 97 a8 00 00 00 <48> 8b 12 48 89 55 00 48 83 c4 10 5b 5d 41 5c 41 5d 41 5e 41 5f c3
- RSP: 0018:ffffa020dea03c40 EFLAGS: 00010246
- RAX: 0000000020000001 RBX: ffffa020d7ccef00 RCX: 0000000000000054
- RDX: 0000000000000000 RSI: ffffa020ca5ae000 RDI: ffffa020d7ccef00
- RBP: ffffa020dea03e60 R08: 0000000000000000 R09: ffffa020dea03c9c
- R10: ffffa020dea03c78 R11: 0000000000000008 R12: ffffa020d3fe4f00
- R13: ffffa020d3fe4f08 R14: 0000000000000001 R15: ffffa020d53ca300
- FS:  00007f5a46942740(0000) GS:ffffa020dea00000(0000) knlGS:0000000000000000
+ RSP: 0018:ffff95145ea03c40 EFLAGS: 00010246
+ RAX: 0000000020000001 RBX: ffff9514499e5800 RCX: 0000000000000001
+ RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
+ RBP: ffff95145ea03e60 R08: 0000000000000000 R09: ffff95145ea03c9c
+ R10: ffff95145ea03c78 R11: 0000000000000008 R12: ffff951456a69800
+ R13: ffff951456a69808 R14: 0000000000000001 R15: ffff95144965ee40
+ FS:  00007fd67ee11740(0000) GS:ffff95145ea00000(0000) knlGS:0000000000000000
  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 0000000000000000 CR3: 0000000104218002 CR4: 00000000001606f0
+ CR2: 0000000000000000 CR3: 00000001038a2006 CR4: 00000000001606f0
  Call Trace:
   <IRQ>
   fl_classify+0x1ad/0x1c0 [cls_flower]
-  ? arp_rcv+0x121/0x1b0
-  ? __x2apic_send_IPI_dest+0x40/0x40
-  ? smp_reschedule_interrupt+0x1c/0xd0
-  ? reschedule_interrupt+0xf/0x20
-  ? reschedule_interrupt+0xa/0x20
-  ? device_is_rmrr_locked+0xe/0x50
-  ? iommu_should_identity_map+0x49/0xd0
-  ? __intel_map_single+0x30/0x140
-  ? e1000e_update_rdt_wa.isra.52+0x22/0xb0 [e1000e]
-  ? e1000_alloc_rx_buffers+0x233/0x250 [e1000e]
+  ? __update_load_avg_se.isra.47+0x1ca/0x1d0
+  ? __update_load_avg_se.isra.47+0x1ca/0x1d0
+  ? update_load_avg+0x665/0x690
+  ? update_load_avg+0x665/0x690
   ? kmem_cache_alloc+0x38/0x1c0
   tcf_classify+0x89/0x140
   __netif_receive_skb_core+0x5ea/0xb70
-  ? enqueue_task_fair+0xb6/0x7d0
+  ? enqueue_entity+0xd0/0x270
   ? process_backlog+0x97/0x150
   process_backlog+0x97/0x150
   net_rx_action+0x14b/0x3e0
@@ -121,85 +114,87 @@ received.
   __x64_sys_sendto+0x24/0x30
   do_syscall_64+0x5b/0x180
   entry_SYSCALL_64_after_hwframe+0x44/0xa9
- RIP: 0033:0x7f5a45cbec93
+ RIP: 0033:0x7fd67e18dc93
  Code: 48 8b 0d 18 83 20 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 59 c7 20 00 00 75 13 49 89 ca b8 2c 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 34 c3 48 83 ec 08 e8 2b f7 ff ff 48 89 04 24
- RSP: 002b:00007ffd0ee6d748 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
- RAX: ffffffffffffffda RBX: 0000000001161010 RCX: 00007f5a45cbec93
- RDX: 0000000000000062 RSI: 0000000001161322 RDI: 0000000000000003
- RBP: 00007ffd0ee6d780 R08: 00007ffd0ee6d760 R09: 0000000000000014
+ RSP: 002b:00007ffe0189b748 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+ RAX: ffffffffffffffda RBX: 00000000020ca010 RCX: 00007fd67e18dc93
+ RDX: 0000000000000062 RSI: 00000000020ca322 RDI: 0000000000000003
+ RBP: 00007ffe0189b780 R08: 00007ffe0189b760 R09: 0000000000000014
  R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000062
- R13: 0000000001161322 R14: 00007ffd0ee6d760 R15: 0000000000000003
- Modules linked in: act_csum act_gact cls_flower sch_ingress vrf veth act_tunnel_key(E) xt_CHECKSUM iptable_mangle ipt_MASQUERADE iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack ipt_REJECT nf_reject_ipv4 tun bridge stp llc ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter intel_rapl x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel snd_hda_codec_hdmi snd_hda_codec_realtek kvm snd_hda_codec_generic hp_wmi iTCO_wdt sparse_keymap rfkill mei_wdt iTCO_vendor_support wmi_bmof gpio_ich irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel snd_hda_intel crypto_simd cryptd snd_hda_codec glue_helper snd_hda_core snd_hwdep snd_seq snd_seq_device snd_pcm pcspkr i2c_i801 snd_timer snd sg lpc_ich soundcore wmi mei_me
-  mei ie31200_edac nfsd auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c sr_mod cdrom sd_mod ahci libahci crc32c_intel i915 ixgbe serio_raw libata video dca i2c_algo_bit sfc drm_kms_helper syscopyarea mtd sysfillrect mdio sysimgblt fb_sys_fops drm e1000e i2c_core
+ R13: 00000000020ca322 R14: 00007ffe0189b760 R15: 0000000000000003
+ Modules linked in: act_tunnel_key act_gact cls_flower sch_ingress vrf veth act_csum(E) xt_CHECKSUM iptable_mangle ipt_MASQUERADE iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack ipt_REJECT nf_reject_ipv4 tun bridge stp llc ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter intel_rapl snd_hda_codec_hdmi x86_pkg_temp_thermal intel_powerclamp snd_hda_codec_realtek coretemp snd_hda_codec_generic kvm_intel kvm irqbypass snd_hda_intel crct10dif_pclmul crc32_pclmul hp_wmi ghash_clmulni_intel pcbc snd_hda_codec aesni_intel sparse_keymap rfkill snd_hda_core snd_hwdep snd_seq crypto_simd iTCO_wdt gpio_ich iTCO_vendor_support wmi_bmof cryptd mei_wdt glue_helper snd_seq_device snd_pcm pcspkr snd_timer snd i2c_i801 lpc_ich sg soundcore wmi mei_me
+  mei ie31200_edac nfsd auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c sd_mod sr_mod cdrom i915 video i2c_algo_bit drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ahci crc32c_intel libahci serio_raw sfc libata mtd drm ixgbe mdio i2c_core e1000e dca
  CR2: 0000000000000000
- ---[ end trace 3c9e9d1a77df4026 ]---
+ ---[ end trace 1ab8b5b5d4639dfc ]---
  RIP: 0010:tcf_action_exec+0xb8/0x100
  Code: 00 00 00 20 74 1d 83 f8 03 75 09 49 83 c4 08 4d 39 ec 75 bc 48 83 c4 10 5b 5d 41 5c 41 5d 41 5e 41 5f c3 49 8b 97 a8 00 00 00 <48> 8b 12 48 89 55 00 48 83 c4 10 5b 5d 41 5c 41 5d 41 5e 41 5f c3
- RSP: 0018:ffffa020dea03c40 EFLAGS: 00010246
- RAX: 0000000020000001 RBX: ffffa020d7ccef00 RCX: 0000000000000054
- RDX: 0000000000000000 RSI: ffffa020ca5ae000 RDI: ffffa020d7ccef00
- RBP: ffffa020dea03e60 R08: 0000000000000000 R09: ffffa020dea03c9c
- R10: ffffa020dea03c78 R11: 0000000000000008 R12: ffffa020d3fe4f00
- R13: ffffa020d3fe4f08 R14: 0000000000000001 R15: ffffa020d53ca300
- FS:  00007f5a46942740(0000) GS:ffffa020dea00000(0000) knlGS:0000000000000000
+ RSP: 0018:ffff95145ea03c40 EFLAGS: 00010246
+ RAX: 0000000020000001 RBX: ffff9514499e5800 RCX: 0000000000000001
+ RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
+ RBP: ffff95145ea03e60 R08: 0000000000000000 R09: ffff95145ea03c9c
+ R10: ffff95145ea03c78 R11: 0000000000000008 R12: ffff951456a69800
+ R13: ffff951456a69808 R14: 0000000000000001 R15: ffff95144965ee40
+ FS:  00007fd67ee11740(0000) GS:ffff95145ea00000(0000) knlGS:0000000000000000
  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 0000000000000000 CR3: 0000000104218002 CR4: 00000000001606f0
+ CR2: 0000000000000000 CR3: 00000001038a2006 CR4: 00000000001606f0
  Kernel panic - not syncing: Fatal exception in interrupt
- Kernel Offset: 0x26400000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+ Kernel Offset: 0x11400000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
  ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
 
-Fixes: 9c5f69bbd75a ("net/sched: act_csum: don't use spinlock in the fast path")
+Fixes: d0f6dd8a914f ("net/sched: Introduce act_tunnel_key")
 Signed-off-by: Davide Caratti <dcaratti@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/tc_act/tc_csum.h |    1 -
- net/sched/act_csum.c         |    6 +++---
+ include/net/tc_act/tc_tunnel_key.h |    1 -
+ net/sched/act_tunnel_key.c         |    6 +++---
  2 files changed, 3 insertions(+), 4 deletions(-)
 
---- a/include/net/tc_act/tc_csum.h
-+++ b/include/net/tc_act/tc_csum.h
-@@ -7,7 +7,6 @@
- #include <linux/tc_act/tc_csum.h>
- 
- struct tcf_csum_params {
--	int action;
- 	u32 update_flags;
- 	struct rcu_head rcu;
+--- a/include/net/tc_act/tc_tunnel_key.h
++++ b/include/net/tc_act/tc_tunnel_key.h
+@@ -18,7 +18,6 @@
+ struct tcf_tunnel_key_params {
+ 	struct rcu_head		rcu;
+ 	int			tcft_action;
+-	int			action;
+ 	struct metadata_dst     *tcft_enc_metadata;
  };
---- a/net/sched/act_csum.c
-+++ b/net/sched/act_csum.c
-@@ -91,7 +91,7 @@ static int tcf_csum_init(struct net *net
- 	}
- 	params_old = rtnl_dereference(p->params);
+ 
+--- a/net/sched/act_tunnel_key.c
++++ b/net/sched/act_tunnel_key.c
+@@ -36,7 +36,7 @@ static int tunnel_key_act(struct sk_buff
+ 
+ 	tcf_lastuse_update(&t->tcf_tm);
+ 	bstats_cpu_update(this_cpu_ptr(t->common.cpu_bstats), skb);
+-	action = params->action;
++	action = READ_ONCE(t->tcf_action);
+ 
+ 	switch (params->tcft_action) {
+ 	case TCA_TUNNEL_KEY_ACT_RELEASE:
+@@ -182,7 +182,7 @@ static int tunnel_key_init(struct net *n
+ 
+ 	params_old = rtnl_dereference(t->params);
  
 -	params_new->action = parm->action;
-+	p->tcf_action = parm->action;
- 	params_new->update_flags = parm->update_flags;
- 	rcu_assign_pointer(p->params, params_new);
- 	if (params_old)
-@@ -561,7 +561,7 @@ static int tcf_csum(struct sk_buff *skb,
- 	tcf_lastuse_update(&p->tcf_tm);
- 	bstats_cpu_update(this_cpu_ptr(p->common.cpu_bstats), skb);
++	t->tcf_action = parm->action;
+ 	params_new->tcft_action = parm->t_action;
+ 	params_new->tcft_enc_metadata = metadata;
  
--	action = params->action;
-+	action = READ_ONCE(p->tcf_action);
- 	if (unlikely(action == TC_ACT_SHOT))
- 		goto drop_stats;
- 
-@@ -599,11 +599,11 @@ static int tcf_csum_dump(struct sk_buff
- 		.index   = p->tcf_index,
- 		.refcnt  = p->tcf_refcnt - ref,
- 		.bindcnt = p->tcf_bindcnt - bind,
-+		.action  = p->tcf_action,
+@@ -254,13 +254,13 @@ static int tunnel_key_dump(struct sk_buf
+ 		.index    = t->tcf_index,
+ 		.refcnt   = t->tcf_refcnt - ref,
+ 		.bindcnt  = t->tcf_bindcnt - bind,
++		.action   = t->tcf_action,
  	};
- 	struct tcf_t t;
+ 	struct tcf_t tm;
  
- 	params = rtnl_dereference(p->params);
+ 	params = rtnl_dereference(t->params);
+ 
+ 	opt.t_action = params->tcft_action;
 -	opt.action = params->action;
- 	opt.update_flags = params->update_flags;
  
- 	if (nla_put(skb, TCA_CSUM_PARMS, sizeof(opt), &opt))
+ 	if (nla_put(skb, TCA_TUNNEL_KEY_PARMS, sizeof(opt), &opt))
+ 		goto nla_put_failure;
 
 
