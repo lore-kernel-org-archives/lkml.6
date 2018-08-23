@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CC0C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BC2C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0DF52147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0DF52147A
+	by mail.kernel.org (Postfix) with ESMTP id 197AB2147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 197AB2147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730981AbeHWL6I (ORCPT
+        id S1730995AbeHWL6L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:58:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47626 "EHLO
+        Thu, 23 Aug 2018 07:58:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47638 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727406AbeHWL6I (ORCPT
+        with ESMTP id S1727406AbeHWL6L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:58:08 -0400
+        Thu, 23 Aug 2018 07:58:11 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 322A8C93;
-        Thu, 23 Aug 2018 08:29:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 66AE58B1;
+        Thu, 23 Aug 2018 08:29:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Chen <alexchen@synology.com>,
-        Alex Wu <alexwu@synology.com>,
-        Chung-Chiang Cheng <cccheng@synology.com>,
-        BingJing Chang <bingjingc@synology.com>,
-        Shaohua Li <shli@fb.com>,
+        stable@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 108/217] md/raid10: fix that replacement cannot complete recovery after reassemble
-Date:   Thu, 23 Aug 2018 09:53:41 +0200
-Message-Id: <20180823075510.348692304@linuxfoundation.org>
+Subject: [PATCH 4.14 109/217] dev-dax: check_vma: ratelimit dev_info-s
+Date:   Thu, 23 Aug 2018 09:53:42 +0200
+Message-Id: <20180823075510.388884386@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -54,54 +51,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: BingJing Chang <bingjingc@synology.com>
+From: Jeff Moyer <jmoyer@redhat.com>
 
-[ Upstream commit bda3153998f3eb2cafa4a6311971143628eacdbc ]
+[ Upstream commit 5a14e91d559aee5bdb0e002e1153fd9c4338a29e ]
 
-During assemble, the spare marked for replacement is not checked.
-conf->fullsync cannot be updated to be 1. As a result, recovery will
-treat it as a clean array. All recovering sectors are skipped. Original
-device is replaced with the not-recovered spare.
+This is easily triggered from userspace, so let's ratelimit the
+messages.
 
-mdadm -C /dev/md0 -l10 -n4 -pn2 /dev/loop[0123]
-mdadm /dev/md0 -a /dev/loop4
-mdadm /dev/md0 --replace /dev/loop0
-mdadm -S /dev/md0 # stop array during recovery
-
-mdadm -A /dev/md0 /dev/loop[01234]
-
-After reassemble, you can see recovery go on, but it completes
-immediately. In fact, recovery is not actually processed.
-
-To solve this problem, we just add the missing logics for replacment
-spares. (In raid1.c or raid5.c, they have already been checked.)
-
-Reported-by: Alex Chen <alexchen@synology.com>
-Reviewed-by: Alex Wu <alexwu@synology.com>
-Reviewed-by: Chung-Chiang Cheng <cccheng@synology.com>
-Signed-off-by: BingJing Chang <bingjingc@synology.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Signed-off-by: Jeff Moyer <jmoyer@redhat.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/raid10.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/dax/device.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -3754,6 +3754,13 @@ static int raid10_run(struct mddev *mdde
- 			    disk->rdev->saved_raid_disk < 0)
- 				conf->fullsync = 1;
- 		}
-+
-+		if (disk->replacement &&
-+		    !test_bit(In_sync, &disk->replacement->flags) &&
-+		    disk->replacement->saved_raid_disk < 0) {
-+			conf->fullsync = 1;
-+		}
-+
- 		disk->recovery_disabled = mddev->recovery_disabled - 1;
+--- a/drivers/dax/device.c
++++ b/drivers/dax/device.c
+@@ -188,14 +188,16 @@ static int check_vma(struct dev_dax *dev
+ 
+ 	/* prevent private mappings from being established */
+ 	if ((vma->vm_flags & VM_MAYSHARE) != VM_MAYSHARE) {
+-		dev_info(dev, "%s: %s: fail, attempted private mapping\n",
++		dev_info_ratelimited(dev,
++				"%s: %s: fail, attempted private mapping\n",
+ 				current->comm, func);
+ 		return -EINVAL;
  	}
  
+ 	mask = dax_region->align - 1;
+ 	if (vma->vm_start & mask || vma->vm_end & mask) {
+-		dev_info(dev, "%s: %s: fail, unaligned vma (%#lx - %#lx, %#lx)\n",
++		dev_info_ratelimited(dev,
++				"%s: %s: fail, unaligned vma (%#lx - %#lx, %#lx)\n",
+ 				current->comm, func, vma->vm_start, vma->vm_end,
+ 				mask);
+ 		return -EINVAL;
+@@ -203,13 +205,15 @@ static int check_vma(struct dev_dax *dev
+ 
+ 	if ((dax_region->pfn_flags & (PFN_DEV|PFN_MAP)) == PFN_DEV
+ 			&& (vma->vm_flags & VM_DONTCOPY) == 0) {
+-		dev_info(dev, "%s: %s: fail, dax range requires MADV_DONTFORK\n",
++		dev_info_ratelimited(dev,
++				"%s: %s: fail, dax range requires MADV_DONTFORK\n",
+ 				current->comm, func);
+ 		return -EINVAL;
+ 	}
+ 
+ 	if (!vma_is_dax(vma)) {
+-		dev_info(dev, "%s: %s: fail, vma is not DAX capable\n",
++		dev_info_ratelimited(dev,
++				"%s: %s: fail, vma is not DAX capable\n",
+ 				current->comm, func);
+ 		return -EINVAL;
+ 	}
 
 
