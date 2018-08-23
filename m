@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 053AEC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24790C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:03:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD23E208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:03:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD23E208D6
+	by mail.kernel.org (Postfix) with ESMTP id D7C40208CC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:03:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7C40208CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388664AbeHWMbx (ORCPT
+        id S2388676AbeHWMb5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:31:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55946 "EHLO
+        Thu, 23 Aug 2018 08:31:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55952 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728887AbeHWMbx (ORCPT
+        with ESMTP id S1728887AbeHWMb4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:31:53 -0400
+        Thu, 23 Aug 2018 08:31:56 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3411BC83;
-        Thu, 23 Aug 2018 09:03:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5B542C83;
+        Thu, 23 Aug 2018 09:03:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Allen <jallen@linux.vnet.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 272/324] ibmvnic: Fix error recovery on login failure
-Date:   Thu, 23 Aug 2018 09:55:38 +0200
-Message-Id: <20180823075009.563324727@linuxfoundation.org>
+Subject: [PATCH 4.17 273/324] ARM: dts: omap4-droid4: fix dts w.r.t. pwm
+Date:   Thu, 23 Aug 2018 09:55:39 +0200
+Message-Id: <20180823075009.606158648@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,40 +52,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: John Allen <jallen@linux.ibm.com>
+From: Pavel Machek <pavel@ucw.cz>
 
-[ Upstream commit 3578a7ecb69920efc3885dbd610e98c00dbdf5db ]
+[ Upstream commit d3f6daede246038cf2ea38b78d732f9dd8feb1d6 ]
 
-Testing has uncovered a failure case that is not handled properly. In the
-event that a login fails and we are not able to recover on the spot, we
-return 0 from do_reset, preventing any error recovery code from being
-triggered.  Additionally, the state is set to "probed" meaning that when we
-are able to trigger the error recovery, the driver always comes up in the
-probed state. To handle the case properly, we need to return a failure code
-here and set the adapter state to the state that we entered the reset in
-indicating the state that we would like to come out of the recovery reset
-in.
+pwm node should not be under gpio6 node in the device tree.
 
-Signed-off-by: John Allen <jallen@linux.vnet.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This fixes detection of the pwm on Droid 4.
+
+Fixes: 6d7bdd328da4 ("ARM: dts: omap4-droid4: update touchscreen")
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+[tony@atomide.com: added fixes tag]
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ibm/ibmvnic.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/omap4-droid4-xt894.dts |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -1801,8 +1801,8 @@ static int do_reset(struct ibmvnic_adapt
+--- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
++++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
+@@ -159,13 +159,7 @@
  
- 		rc = ibmvnic_login(netdev);
- 		if (rc) {
--			adapter->state = VNIC_PROBED;
--			return 0;
-+			adapter->state = reset_state;
-+			return rc;
- 		}
+ 		dais = <&mcbsp2_port>, <&mcbsp3_port>;
+ 	};
+-};
+-
+-&dss {
+-	status = "okay";
+-};
  
- 		if (adapter->reset_reason == VNIC_RESET_CHANGE_PARAM ||
+-&gpio6 {
+ 	pwm8: dmtimer-pwm-8 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&vibrator_direction_pin>;
+@@ -192,7 +186,10 @@
+ 		pwm-names = "enable", "direction";
+ 		direction-duty-cycle-ns = <10000000>;
+ 	};
++};
+ 
++&dss {
++	status = "okay";
+ };
+ 
+ &dsi1 {
 
 
