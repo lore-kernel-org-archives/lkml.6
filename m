@@ -2,70 +2,128 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8104FC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5AAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4482320661
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:05:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4482320661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 687B12154F
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:06:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIhTfdRs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 687B12154F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbeHWXgi (ORCPT
+        id S1726847AbeHWXhu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 19:36:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35640 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726459AbeHWXgi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 19:36:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A95C2AE10;
-        Thu, 23 Aug 2018 20:05:21 +0000 (UTC)
-Date:   Thu, 23 Aug 2018 22:05:20 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] x86/speculation/l1tf: suggest what to do on systems with
- too much RAM
-Message-ID: <20180823200520.GW29735@dhcp22.suse.cz>
-References: <20180823134418.17008-1-vbabka@suse.cz>
- <20180823142812.7363-1-vbabka@suse.cz>
- <20180823154648.GD12066@tassilo.jf.intel.com>
- <20180823192547.GS29735@dhcp22.suse.cz>
- <20180823193833.GE12066@tassilo.jf.intel.com>
+        Thu, 23 Aug 2018 19:37:50 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36519 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726459AbeHWXhu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 19:37:50 -0400
+Received: by mail-pf1-f196.google.com with SMTP id b11-v6so3375907pfo.3;
+        Thu, 23 Aug 2018 13:06:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dyBvAe2WITBpsgCNtiSOZ8xEQlWYjd2HWrBaq9BO4ho=;
+        b=HIhTfdRsO1r9BghW3EGkAIYWQySxwnCg/Sr4iRZ0rNfIj1gqDned4xrpFgGWRCFa0+
+         /RW2xet2wBpOFrqYTxUsZiJShppGf2iyfk8CkuZgvgKVCBkP7Gh1mk7QnIdp/MGrTB0W
+         MryiiGD38UC3560FqnKvleuyUor4NpDUu3NvsX/EOva+6SEtWNUUP7gXo+dxA4bWKDGN
+         6i0V3DqiIZX1N4J5fKKF44gKgdpSOPa6inLyGerwOZcWvYrFky5/6058G10R193EedKQ
+         IDWv2w7/PdmMO7YKMFSZWK3k4nDewlhmVmAPCuzSlhm/xLIz0p46mLLAlATNIOxsFXfu
+         5TCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dyBvAe2WITBpsgCNtiSOZ8xEQlWYjd2HWrBaq9BO4ho=;
+        b=cJlkAYYbUkGR+DTSH/uOLUipEzaiP/UzHhrq/yN+zJDXtzJ8w2WJ8PEWG9ksQ77CEY
+         A+DXzpUWrK1/QReV5rJ2JZcDhdTg+faPoPRd2S0cHbzrOOnmTj1guHk/t2mk8fQsIcdV
+         6RuShjmJDCvx3HP+WyqnZWb+s86X9gdAFFYbhDwNIoCue25O7B/dLSwjTDr5aW4AWdRL
+         DcacxFwcmx8u2L3nJMA8mMcuAzshvriljnrlYjc/WJGif48ttgPK5+wE0cjFKZHIjacF
+         gAIMfvOiY+Q+bgkqPlV4SUCC1scNbJwRy5DX7REJriAZc2kcrBGUG0JJiiPoMv8gaKGI
+         x4jA==
+X-Gm-Message-State: AOUpUlHqUeTzc0qtO2H2GhkBZ2hDrZ7UBPbHCmga7z3D3lpQo5LhR8n4
+        +87bHEQq2jhxTA6K8GDizw5eIK4qgoIsJDIyHtI=
+X-Google-Smtp-Source: AA+uWPwYJwYjwXWOESUnrvc2336Gqff9zKT0E1UsgUrAc1fLx4S/X+Yq5WDbpFp6jK1evGUc36Ojb0WLaF2wTV4n7CY=
+X-Received: by 2002:a63:2643:: with SMTP id m64-v6mr29723807pgm.55.1535054794378;
+ Thu, 23 Aug 2018 13:06:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180823193833.GE12066@tassilo.jf.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1535019842-18103-1-git-send-email-hofrat@osadl.org>
+In-Reply-To: <1535019842-18103-1-git-send-email-hofrat@osadl.org>
+From:   Steve French <smfrench@gmail.com>
+Date:   Thu, 23 Aug 2018 15:06:22 -0500
+Message-ID: <CAH2r5muTn2+yP6wdcadGe9WRX6Zr91kdVz29Rh3EcCbuvr4CuQ@mail.gmail.com>
+Subject: Re: [PATCH] cifs: check kmalloc before use
+To:     hofrat@osadl.org
+Cc:     Steve French <sfrench@samba.org>,
+        Jerome Marchand <jmarchan@redhat.com>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 23-08-18 12:38:33, Andi Kleen wrote:
-> > There are people who care about L1TF mitigations. I am not going to
-> > question their motivation. In any case a hint how to make the mitigation
-> > active again sounds more useful than something that sounds as scary as
-> > "you are vulnerable".
-> 
-> FWIW an early version of these patches automatically limited the available
-> memory, but Linus pointed out that people likely prefer their memory.
+merged into cifs-2.6.git for-next
+On Thu, Aug 23, 2018 at 11:02 AM Nicholas Mc Guire <hofrat@osadl.org> wrote:
+>
+> The kmalloc was not being checked - if it fails issue a warning
+> and return -ENOMEM to the caller.
+>
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Fixes: b8da344b74c8 ("cifs: dynamic allocation of ntlmssp blob")
+> ---
+>
+> Problem was located with an experimental coccinelle script
+>
+> Both call-sites will expect non-0 to indicate error so -ENOMEM
+> should be OK here. Setting buflen to 0 seems to be the expected
+> behavior on failure although it will not be checked/used at
+> the call-sites - probably this could be removed here as well as
+> in the handling of authentication error (preceding this change)
+> it was just retained for consistency.
+>
+> Patch was compile tested with: x86_64_defconfig + CONFIG_CIFS=y
+> (with sparse and smatch warning unrelated to proposed change)
+>
+> Patch is against 4.18 (localversion-next is next-20180823)
+>
+>  fs/cifs/sess.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/fs/cifs/sess.c b/fs/cifs/sess.c
+> index 8b0502c..aa23c00 100644
+> --- a/fs/cifs/sess.c
+> +++ b/fs/cifs/sess.c
+> @@ -398,6 +398,12 @@ int build_ntlmssp_auth_blob(unsigned char **pbuffer,
+>                 goto setup_ntlmv2_ret;
+>         }
+>         *pbuffer = kmalloc(size_of_ntlmssp_blob(ses), GFP_KERNEL);
+> +       if (!*pbuffer) {
+> +               rc = -ENOMEM;
+> +               cifs_dbg(VFS, "Error %d during NTLMSSP allocation\n", rc);
+> +               *buflen = 0;
+> +               goto setup_ntlmv2_ret;
+> +       }
+>         sec_blob = (AUTHENTICATE_MESSAGE *)*pbuffer;
+>
+>         memcpy(sec_blob->Signature, NTLMSSP_SIGNATURE, 8);
+> --
+> 2.1.4
+>
 
-Nobody is questioning that. The point is to give them a hint on how to
-make the mitigation active again without going to call for help. The
-message does tell them how to _enable_ it and point them to the
-documentation on how to _decide_.
+
 -- 
-Michal Hocko
-SUSE Labs
+Thanks,
+
+Steve
