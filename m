@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74836C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E5EC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 376C521473
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 376C521473
+	by mail.kernel.org (Postfix) with ESMTP id 95D0A21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95D0A21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728166AbeHWL1B (ORCPT
+        id S1728196AbeHWL1E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:27:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41846 "EHLO
+        Thu, 23 Aug 2018 07:27:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41858 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726898AbeHWL1A (ORCPT
+        with ESMTP id S1727223AbeHWL1E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:27:00 -0400
+        Thu, 23 Aug 2018 07:27:04 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B7E8CBB6;
-        Thu, 23 Aug 2018 07:58:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF1B4BB6;
+        Thu, 23 Aug 2018 07:58:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 21/79] ipv6: mcast: fix unsolicited report interval after receiving querys
-Date:   Thu, 23 Aug 2018 09:52:57 +0200
-Message-Id: <20180823074920.091360210@linuxfoundation.org>
+Subject: [PATCH 4.4 12/79] scsi: xen-scsifront: add error handling for xenbus_printf
+Date:   Thu, 23 Aug 2018 09:52:48 +0200
+Message-Id: <20180823074919.462293334@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -51,58 +51,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-[ Upstream commit 6c6da92808442908287fae8ebb0ca041a52469f4 ]
+[ Upstream commit 93efbd39870474cc536b9caf4a6efeb03b0bc56f ]
 
-After recieving MLD querys, we update idev->mc_maxdelay with max_delay
-from query header. This make the later unsolicited reports have the same
-interval with mc_maxdelay, which means we may send unsolicited reports with
-long interval time instead of default configured interval time.
+When xenbus_printf fails, the lack of error-handling code may
+cause unexpected results.
 
-Also as we will not call ipv6_mc_reset() after device up. This issue will
-be there even after leave the group and join other groups.
+This patch adds error-handling code after calling xenbus_printf.
 
-Fixes: fc4eba58b4c14 ("ipv6: make unsolicited report intervals configurable for mld")
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/mcast.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/scsi/xen-scsifront.c |   33 ++++++++++++++++++++++++++-------
+ 1 file changed, 26 insertions(+), 7 deletions(-)
 
---- a/net/ipv6/mcast.c
-+++ b/net/ipv6/mcast.c
-@@ -2061,7 +2061,8 @@ void ipv6_mc_dad_complete(struct inet6_d
- 		mld_send_initial_cr(idev);
- 		idev->mc_dad_count--;
- 		if (idev->mc_dad_count)
--			mld_dad_start_timer(idev, idev->mc_maxdelay);
-+			mld_dad_start_timer(idev,
-+					    unsolicited_report_interval(idev));
- 	}
+--- a/drivers/scsi/xen-scsifront.c
++++ b/drivers/scsi/xen-scsifront.c
+@@ -676,10 +676,17 @@ static int scsifront_dev_reset_handler(s
+ static int scsifront_sdev_configure(struct scsi_device *sdev)
+ {
+ 	struct vscsifrnt_info *info = shost_priv(sdev->host);
++	int err;
+ 
+-	if (info && current == info->curr)
+-		xenbus_printf(XBT_NIL, info->dev->nodename,
++	if (info && current == info->curr) {
++		err = xenbus_printf(XBT_NIL, info->dev->nodename,
+ 			      info->dev_state_path, "%d", XenbusStateConnected);
++		if (err) {
++			xenbus_dev_error(info->dev, err,
++				"%s: writing dev_state_path", __func__);
++			return err;
++		}
++	}
+ 
+ 	return 0;
+ }
+@@ -687,10 +694,15 @@ static int scsifront_sdev_configure(stru
+ static void scsifront_sdev_destroy(struct scsi_device *sdev)
+ {
+ 	struct vscsifrnt_info *info = shost_priv(sdev->host);
++	int err;
+ 
+-	if (info && current == info->curr)
+-		xenbus_printf(XBT_NIL, info->dev->nodename,
++	if (info && current == info->curr) {
++		err = xenbus_printf(XBT_NIL, info->dev->nodename,
+ 			      info->dev_state_path, "%d", XenbusStateClosed);
++		if (err)
++			xenbus_dev_error(info->dev, err,
++				"%s: writing dev_state_path", __func__);
++	}
  }
  
-@@ -2073,7 +2074,8 @@ static void mld_dad_timer_expire(unsigne
- 	if (idev->mc_dad_count) {
- 		idev->mc_dad_count--;
- 		if (idev->mc_dad_count)
--			mld_dad_start_timer(idev, idev->mc_maxdelay);
-+			mld_dad_start_timer(idev,
-+					    unsolicited_report_interval(idev));
- 	}
- 	in6_dev_put(idev);
- }
-@@ -2431,7 +2433,8 @@ static void mld_ifc_timer_expire(unsigne
- 	if (idev->mc_ifc_count) {
- 		idev->mc_ifc_count--;
- 		if (idev->mc_ifc_count)
--			mld_ifc_start_timer(idev, idev->mc_maxdelay);
-+			mld_ifc_start_timer(idev,
-+					    unsolicited_report_interval(idev));
- 	}
- 	in6_dev_put(idev);
- }
+ static struct scsi_host_template scsifront_sht = {
+@@ -1025,9 +1037,12 @@ static void scsifront_do_lun_hotplug(str
+ 
+ 			if (scsi_add_device(info->host, chn, tgt, lun)) {
+ 				dev_err(&dev->dev, "scsi_add_device\n");
+-				xenbus_printf(XBT_NIL, dev->nodename,
++				err = xenbus_printf(XBT_NIL, dev->nodename,
+ 					      info->dev_state_path,
+ 					      "%d", XenbusStateClosed);
++				if (err)
++					xenbus_dev_error(dev, err,
++						"%s: writing dev_state_path", __func__);
+ 			}
+ 			break;
+ 		case VSCSIFRONT_OP_DEL_LUN:
+@@ -1041,10 +1056,14 @@ static void scsifront_do_lun_hotplug(str
+ 			}
+ 			break;
+ 		case VSCSIFRONT_OP_READD_LUN:
+-			if (device_state == XenbusStateConnected)
+-				xenbus_printf(XBT_NIL, dev->nodename,
++			if (device_state == XenbusStateConnected) {
++				err = xenbus_printf(XBT_NIL, dev->nodename,
+ 					      info->dev_state_path,
+ 					      "%d", XenbusStateConnected);
++				if (err)
++					xenbus_dev_error(dev, err,
++						"%s: writing dev_state_path", __func__);
++			}
+ 			break;
+ 		default:
+ 			break;
 
 
