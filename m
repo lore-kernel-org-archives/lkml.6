@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB5D9C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05067C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2064208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2064208DA
+	by mail.kernel.org (Postfix) with ESMTP id BD58120839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD58120839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388129AbeHWMWV (ORCPT
+        id S2388141AbeHWMWZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:22:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52032 "EHLO
+        Thu, 23 Aug 2018 08:22:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52038 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728574AbeHWMWU (ORCPT
+        with ESMTP id S2387518AbeHWMWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:22:20 -0400
+        Thu, 23 Aug 2018 08:22:24 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9A7E249B;
-        Thu, 23 Aug 2018 08:53:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C795549B;
+        Thu, 23 Aug 2018 08:53:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jim Wilson <jimw@sifive.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
+        stable@vger.kernel.org, Stafford Horne <shorne@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 186/324] RISC-V: Fix PTRACE_SETREGSET bug.
-Date:   Thu, 23 Aug 2018 09:54:12 +0200
-Message-Id: <20180823075005.494264766@linuxfoundation.org>
+Subject: [PATCH 4.17 160/324] openrisc: entry: Fix delay slot exception detection
+Date:   Thu, 23 Aug 2018 09:53:46 +0200
+Message-Id: <20180823075004.060576980@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,30 +50,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jim Wilson <jimw@sifive.com>
+From: Stafford Horne <shorne@gmail.com>
 
-[ Upstream commit 1db9b80980d26fe95c942e0bb8bde2ca715029ad ]
+[ Upstream commit ae15a41a641449f536578b0d9ec0e4ade130deb5 ]
 
-In riscv_gpr_set, pass regs instead of &regs to user_regset_copyin to fix
-gdb segfault.
+Originally in patch e6d20c55a4 ("openrisc: entry: Fix delay slot
+detection") I fixed delay slot detection, but only for QEMU.  We missed
+that hardware delay slot detection using delay slot exception flag (DSX)
+was still broken.  This was because QEMU set the DSX flag in both
+pre-exception supervision register (ESR) and supervision register (SR)
+register, but on real hardware the DSX flag is only set on the SR
+register during exceptions.
 
-Signed-off-by: Jim Wilson <jimw@sifive.com>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+Fix this by carrying the DSX flag into the SR register during exception.
+We also update the DSX flag read locations to read the value from the SR
+register not the pt_regs SR register which represents ESR.  The ESR
+should never have the DSX flag set.
+
+In the process I updated/removed a few comments to match the current
+state.  Including removing a comment saying that the DSX detection logic
+was inefficient and needed to be rewritten.
+
+I have tested this on QEMU with a patch ensuring it matches the hardware
+specification.
+
+Link: https://lists.gnu.org/archive/html/qemu-devel/2018-07/msg00000.html
+Fixes: e6d20c55a4 ("openrisc: entry: Fix delay slot detection")
+Signed-off-by: Stafford Horne <shorne@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/riscv/kernel/ptrace.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/openrisc/kernel/entry.S |    8 +-------
+ arch/openrisc/kernel/head.S  |    9 ++++++---
+ arch/openrisc/kernel/traps.c |    2 +-
+ 3 files changed, 8 insertions(+), 11 deletions(-)
 
---- a/arch/riscv/kernel/ptrace.c
-+++ b/arch/riscv/kernel/ptrace.c
-@@ -50,7 +50,7 @@ static int riscv_gpr_set(struct task_str
- 	struct pt_regs *regs;
+--- a/arch/openrisc/kernel/entry.S
++++ b/arch/openrisc/kernel/entry.S
+@@ -277,12 +277,6 @@ EXCEPTION_ENTRY(_data_page_fault_handler
+ 	l.addi  r3,r1,0                    // pt_regs
+ 	/* r4 set be EXCEPTION_HANDLE */   // effective address of fault
  
- 	regs = task_pt_regs(target);
--	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &regs, 0, -1);
-+	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, regs, 0, -1);
- 	return ret;
+-	/*
+-	 * __PHX__: TODO
+-	 *
+-	 * all this can be written much simpler. look at
+-	 * DTLB miss handler in the CONFIG_GUARD_PROTECTED_CORE part
+-	 */
+ #ifdef CONFIG_OPENRISC_NO_SPR_SR_DSX
+ 	l.lwz   r6,PT_PC(r3)               // address of an offending insn
+ 	l.lwz   r6,0(r6)                   // instruction that caused pf
+@@ -314,7 +308,7 @@ EXCEPTION_ENTRY(_data_page_fault_handler
+ 
+ #else
+ 
+-	l.lwz   r6,PT_SR(r3)               // SR
++	l.mfspr r6,r0,SPR_SR               // SR
+ 	l.andi  r6,r6,SPR_SR_DSX           // check for delay slot exception
+ 	l.sfne  r6,r0                      // exception happened in delay slot
+ 	l.bnf   7f
+--- a/arch/openrisc/kernel/head.S
++++ b/arch/openrisc/kernel/head.S
+@@ -210,8 +210,7 @@
+  *	 r4  - EEAR     exception EA
+  *	 r10 - current	pointing to current_thread_info struct
+  *	 r12 - syscall  0, since we didn't come from syscall
+- *	 r13 - temp	it actually contains new SR, not needed anymore
+- *	 r31 - handler	address of the handler we'll jump to
++ *	 r30 - handler	address of the handler we'll jump to
+  *
+  *	 handler has to save remaining registers to the exception
+  *	 ksp frame *before* tainting them!
+@@ -244,6 +243,7 @@
+ 	/* r1 is KSP, r30 is __pa(KSP) */			;\
+ 	tophys  (r30,r1)					;\
+ 	l.sw    PT_GPR12(r30),r12				;\
++	/* r4 use for tmp before EA */				;\
+ 	l.mfspr r12,r0,SPR_EPCR_BASE				;\
+ 	l.sw    PT_PC(r30),r12					;\
+ 	l.mfspr r12,r0,SPR_ESR_BASE				;\
+@@ -263,7 +263,10 @@
+ 	/* r12 == 1 if we come from syscall */			;\
+ 	CLEAR_GPR(r12)						;\
+ 	/* ----- turn on MMU ----- */				;\
+-	l.ori	r30,r0,(EXCEPTION_SR)				;\
++	/* Carry DSX into exception SR */			;\
++	l.mfspr r30,r0,SPR_SR					;\
++	l.andi	r30,r30,SPR_SR_DSX				;\
++	l.ori	r30,r30,(EXCEPTION_SR)				;\
+ 	l.mtspr	r0,r30,SPR_ESR_BASE				;\
+ 	/* r30:	EA address of handler */			;\
+ 	LOAD_SYMBOL_2_GPR(r30,handler)				;\
+--- a/arch/openrisc/kernel/traps.c
++++ b/arch/openrisc/kernel/traps.c
+@@ -317,7 +317,7 @@ static inline int in_delay_slot(struct p
+ 		return 0;
+ 	}
+ #else
+-	return regs->sr & SPR_SR_DSX;
++	return mfspr(SPR_SR) & SPR_SR_DSX;
+ #endif
  }
  
 
