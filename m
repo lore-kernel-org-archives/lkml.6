@@ -2,160 +2,243 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D50C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F056C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA00B20C09
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:53:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA00B20C09
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C009D2075E
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:55:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="G+AE8/I4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C009D2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732211AbeHWPWn (ORCPT
+        id S1729971AbeHWPYm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 11:22:43 -0400
-Received: from mga03.intel.com ([134.134.136.65]:14311 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729417AbeHWPWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 11:22:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2018 04:53:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,278,1531810800"; 
-   d="scan'208";a="256610600"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.137]) ([10.237.72.137])
-  by fmsmga005.fm.intel.com with ESMTP; 23 Aug 2018 04:53:08 -0700
-Subject: Re: [PATCH v4 3/3] mmc: sdhci-of-dwcmshc: solve 128MB DMA boundary
- limitation
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20180823180549.78e508db@xhacker.debian>
- <20180823180926.444b34b5@xhacker.debian>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <6302a5a4-35cf-3d8f-fcac-a15141fcf1d0@intel.com>
-Date:   Thu, 23 Aug 2018 14:51:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180823180926.444b34b5@xhacker.debian>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 23 Aug 2018 11:24:42 -0400
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:60178 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727406AbeHWPYm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 11:24:42 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 86D8024E1F9D;
+        Thu, 23 Aug 2018 04:55:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1535025319; bh=+T5nke/ZRnOuqKt0LEhKQvOQyWBvTZiNvkY04p5nHuo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=G+AE8/I4EPvx2OuPUTryWengWzOCNH4txqp+wU2EtyFUz6Xclt6cSz7zefSVLPq5y
+         RNUARRSHg8NxD5UFW8PnC2LT6s33TYcO+XP3QG0eyZuj8lcoWo0wKNbVq5vlFPqbOV
+         m45XlDEWevTJgbLpr/9ICOV8LvcIkgcZ0lWvKdDrGmyIfBnB380TWLxkel2snMAkTo
+         +/f2CgUxBzxYAbKwkakUjOK/y8EHFF6xdw3LGg8l6L/vYuNmec5I8Xres26aplRWbs
+         2by1Zx7niazZRTdVYvdrFZG+zAle7sdgYD9r+whxsWPGdEKqPzIc0S1wCqwRopZXEQ
+         nRFUSRvqSEfqQ==
+Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id F2A1D39F0;
+        Thu, 23 Aug 2018 04:55:18 -0700 (PDT)
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by de02.synopsys.com (Postfix) with ESMTP id 63CF73E8D8;
+        Thu, 23 Aug 2018 13:55:17 +0200 (CEST)
+From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com, kishon@ti.com,
+        corbet@lwn.net
+Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: [PATCH] tools/pci: Change pcitest compiling process
+Date:   Thu, 23 Aug 2018 13:55:15 +0200
+Message-Id: <f543d460ccff7891aa08c744fb675eb2c11fb2e7.1535025221.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/08/18 13:09, Jisheng Zhang wrote:
-> When using DMA, if the DMA addr spans 128MB boundary, we have to split
-> the DMA transfer into two so that each one doesn't exceed the boundary.
-> 
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> ---
->  drivers/mmc/host/sdhci-of-dwcmshc.c | 39 +++++++++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> index 1b7cd144fb01..df0a3aeabe19 100644
-> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> @@ -8,21 +8,48 @@
->   */
->  
->  #include <linux/clk.h>
-> +#include <linux/mm.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/sizes.h>
->  
->  #include "sdhci-pltfm.h"
->  
-> +#define BOUNDARY_OK(addr, len) \
-> +	((addr | (SZ_128M - 1)) == ((addr + len - 1) | (SZ_128M - 1)))
-> +
->  struct dwcmshc_priv {
->  	struct clk	*bus_clk;
->  };
->  
-> +/*
-> + * If DMA addr spans 128MB boundary, we split the DMA transfer into two
-> + * so that the DMA transfer doesn't exceed the boundary.
-> + */
-> +static void dwcmshc_adma_write_desc(struct sdhci_host *host, void **desc,
-> +				    dma_addr_t addr, int len, unsigned int cmd)
-> +{
-> +	int tmplen, offset;
-> +
-> +	if (likely(!len || BOUNDARY_OK(addr, len)))
-> +		sdhci_adma_write_desc(host, desc, addr, len, cmd);
+Change tool compiling process in order to be build using the same
+mechanism used in other linux tools (e.g. iio, perf, etc). This will
+allow in future the buildroot tool to build and integrate this tool in
+a more expeditious way.
 
-Doesn't this need a return? i.e.
+Update documentation accordingly.
 
-		return;
-	}
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+---
+ Documentation/PCI/endpoint/pci-test-howto.txt | 19 ++++++----
+ tools/Makefile                                | 13 ++++---
+ tools/pci/Build                               |  1 +
+ tools/pci/Makefile                            | 53 +++++++++++++++++++++++++++
+ 4 files changed, 72 insertions(+), 14 deletions(-)
+ create mode 100644 tools/pci/Build
+ create mode 100644 tools/pci/Makefile
 
-> +
-> +	offset = addr & (SZ_128M - 1);
-> +	tmplen = SZ_128M - offset;
-> +	sdhci_adma_write_desc(host, desc, addr, tmplen, cmd);
-> +
-> +	addr += tmplen;
-> +	len -= tmplen;
-> +	sdhci_adma_write_desc(host, desc, addr, len, cmd);
-> +}
-> +
->  static const struct sdhci_ops sdhci_dwcmshc_ops = {
->  	.set_clock		= sdhci_set_clock,
->  	.set_bus_width		= sdhci_set_bus_width,
->  	.set_uhs_signaling	= sdhci_set_uhs_signaling,
->  	.get_max_clock		= sdhci_pltfm_clk_get_max_clock,
->  	.reset			= sdhci_reset,
-> +	.adma_write_desc	= dwcmshc_adma_write_desc,
->  };
->  
->  static const struct sdhci_pltfm_data sdhci_dwcmshc_pdata = {
-> @@ -36,12 +63,24 @@ static int dwcmshc_probe(struct platform_device *pdev)
->  	struct sdhci_host *host;
->  	struct dwcmshc_priv *priv;
->  	int err;
-> +	u32 extra;
->  
->  	host = sdhci_pltfm_init(pdev, &sdhci_dwcmshc_pdata,
->  				sizeof(struct dwcmshc_priv));
->  	if (IS_ERR(host))
->  		return PTR_ERR(host);
->  
-> +	/*
-> +	 * The DMA table descriptor count is calculated as the maximum
-> +	 * number of segments times 2, to allow for an alignment
-> +	 * descriptor for each segment, plus 1 for a nop end descriptor,
-> +	 * plus extra number for cross 128M boundary handling.
-> +	 */
-> +	extra = DIV_ROUND_UP(totalram_pages, SZ_128M / PAGE_SIZE);
-
-You are assuming here that totalram_pages gives you the highest physical
-page number.  Is that true?
-
-> +	if (extra > SDHCI_MAX_SEGS)
-> +		extra = SDHCI_MAX_SEGS;
-> +	host->adma_table_cnt = SDHCI_MAX_SEGS * 2 + 1 + extra;
-
-That should be:
-
-	host->adma_table_cnt += extra;
-
-> +
->  	pltfm_host = sdhci_priv(host);
->  	priv = sdhci_pltfm_priv(pltfm_host);
->  
-> 
+diff --git a/Documentation/PCI/endpoint/pci-test-howto.txt b/Documentation/PCI/endpoint/pci-test-howto.txt
+index 75f48c3..16df733 100644
+--- a/Documentation/PCI/endpoint/pci-test-howto.txt
++++ b/Documentation/PCI/endpoint/pci-test-howto.txt
+@@ -98,17 +98,20 @@ Note that the devices listed here correspond to the value populated in 1.4 above
+ 2.2 Using Endpoint Test function Device
+ 
+ pcitest.sh added in tools/pci/ can be used to run all the default PCI endpoint
+-tests. Before pcitest.sh can be used pcitest.c should be compiled using the
+-following commands.
++tests. To compile this tool the following commands should be used:
+ 
+-	cd <kernel-dir>
+-	make headers_install ARCH=arm
+-	arm-linux-gnueabihf-gcc -Iusr/include tools/pci/pcitest.c -o pcitest
+-	cp pcitest  <rootfs>/usr/sbin/
+-	cp tools/pci/pcitest.sh <rootfs>
++	# cd <kernel-dir>
++	# make -C tools/pci
++
++or if you desire to compile and install in your system:
++
++	# cd <kernel-dir>
++	# make -C tools/pci install
++
++The tool and script will be located in <rootfs>/usr/bin/
+ 
+ 2.2.1 pcitest.sh Output
+-	# ./pcitest.sh
++	# pcitest.sh
+ 	BAR tests
+ 
+ 	BAR0:           OKAY
+diff --git a/tools/Makefile b/tools/Makefile
+index be02c8b..abb358a 100644
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -21,6 +21,7 @@ help:
+ 	@echo '  leds                   - LEDs  tools'
+ 	@echo '  liblockdep             - user-space wrapper for kernel locking-validator'
+ 	@echo '  bpf                    - misc BPF tools'
++	@echo '  pci                    - PCI tools'
+ 	@echo '  perf                   - Linux performance measurement and analysis tool'
+ 	@echo '  selftests              - various kernel selftests'
+ 	@echo '  spi                    - spi tools'
+@@ -59,7 +60,7 @@ acpi: FORCE
+ cpupower: FORCE
+ 	$(call descend,power/$@)
+ 
+-cgroup firewire hv guest spi usb virtio vm bpf iio gpio objtool leds wmi: FORCE
++cgroup firewire hv guest spi usb virtio vm bpf iio gpio objtool leds wmi pci: FORCE
+ 	$(call descend,$@)
+ 
+ liblockdep: FORCE
+@@ -94,7 +95,7 @@ kvm_stat: FORCE
+ all: acpi cgroup cpupower gpio hv firewire liblockdep \
+ 		perf selftests spi turbostat usb \
+ 		virtio vm bpf x86_energy_perf_policy \
+-		tmon freefall iio objtool kvm_stat wmi
++		tmon freefall iio objtool kvm_stat wmi pci
+ 
+ acpi_install:
+ 	$(call descend,power/$(@:_install=),install)
+@@ -102,7 +103,7 @@ acpi_install:
+ cpupower_install:
+ 	$(call descend,power/$(@:_install=),install)
+ 
+-cgroup_install firewire_install gpio_install hv_install iio_install perf_install spi_install usb_install virtio_install vm_install bpf_install objtool_install wmi_install:
++cgroup_install firewire_install gpio_install hv_install iio_install perf_install spi_install usb_install virtio_install vm_install bpf_install objtool_install wmi_install pci_install:
+ 	$(call descend,$(@:_install=),install)
+ 
+ liblockdep_install:
+@@ -128,7 +129,7 @@ install: acpi_install cgroup_install cpupower_install gpio_install \
+ 		perf_install selftests_install turbostat_install usb_install \
+ 		virtio_install vm_install bpf_install x86_energy_perf_policy_install \
+ 		tmon_install freefall_install objtool_install kvm_stat_install \
+-		wmi_install
++		wmi_install pci_install
+ 
+ acpi_clean:
+ 	$(call descend,power/acpi,clean)
+@@ -136,7 +137,7 @@ acpi_clean:
+ cpupower_clean:
+ 	$(call descend,power/cpupower,clean)
+ 
+-cgroup_clean hv_clean firewire_clean spi_clean usb_clean virtio_clean vm_clean wmi_clean bpf_clean iio_clean gpio_clean objtool_clean leds_clean:
++cgroup_clean hv_clean firewire_clean spi_clean usb_clean virtio_clean vm_clean wmi_clean bpf_clean iio_clean gpio_clean objtool_clean leds_clean pci_clean:
+ 	$(call descend,$(@:_clean=),clean)
+ 
+ liblockdep_clean:
+@@ -174,6 +175,6 @@ clean: acpi_clean cgroup_clean cpupower_clean hv_clean firewire_clean \
+ 		perf_clean selftests_clean turbostat_clean spi_clean usb_clean virtio_clean \
+ 		vm_clean bpf_clean iio_clean x86_energy_perf_policy_clean tmon_clean \
+ 		freefall_clean build_clean libbpf_clean libsubcmd_clean liblockdep_clean \
+-		gpio_clean objtool_clean leds_clean wmi_clean
++		gpio_clean objtool_clean leds_clean wmi_clean pci_clean
+ 
+ .PHONY: FORCE
+diff --git a/tools/pci/Build b/tools/pci/Build
+new file mode 100644
+index 0000000..c375aea
+--- /dev/null
++++ b/tools/pci/Build
+@@ -0,0 +1 @@
++pcitest-y += pcitest.o
+diff --git a/tools/pci/Makefile b/tools/pci/Makefile
+new file mode 100644
+index 0000000..46e4c2f
+--- /dev/null
++++ b/tools/pci/Makefile
+@@ -0,0 +1,53 @@
++# SPDX-License-Identifier: GPL-2.0
++include ../scripts/Makefile.include
++
++bindir ?= /usr/bin
++
++ifeq ($(srctree),)
++srctree := $(patsubst %/,%,$(dir $(CURDIR)))
++srctree := $(patsubst %/,%,$(dir $(srctree)))
++endif
++
++# Do not use make's built-in rules
++# (this improves performance and avoids hard-to-debug behaviour);
++MAKEFLAGS += -r
++
++CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
++
++ALL_TARGETS := pcitest pcitest.sh
++ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
++
++all: $(ALL_PROGRAMS)
++
++export srctree OUTPUT CC LD CFLAGS
++include $(srctree)/tools/build/Makefile.include
++
++#
++# We need the following to be outside of kernel tree
++#
++$(OUTPUT)include/linux/: ../../include/uapi/linux/
++	mkdir -p $(OUTPUT)include/linux/ 2>&1 || true
++	ln -sf $(CURDIR)/../../include/uapi/linux/pcitest.h $@
++
++prepare: $(OUTPUT)include/linux/
++
++PCITEST_IN := $(OUTPUT)pcitest-in.o
++$(PCITEST_IN): prepare FORCE
++	$(Q)$(MAKE) $(build)=pcitest
++$(OUTPUT)pcitest: $(PCITEST_IN)
++	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
++
++clean:
++	rm -f $(ALL_PROGRAMS)
++	rm -rf $(OUTPUT)include/
++	find $(if $(OUTPUT),$(OUTPUT),.) -name '*.o' -delete -o -name '\.*.d' -delete
++
++install: $(ALL_PROGRAMS)
++	install -d -m 755 $(DESTDIR)$(bindir);		\
++	for program in $(ALL_PROGRAMS); do		\
++		install $$program $(DESTDIR)$(bindir);	\
++	done
++
++FORCE:
++
++.PHONY: all install clean FORCE prepare
+-- 
+2.7.4
 
