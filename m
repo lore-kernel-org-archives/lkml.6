@@ -6,38 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 147DDC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 874FCC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CECD42147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CECD42147A
+	by mail.kernel.org (Postfix) with ESMTP id 438F521473
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 438F521473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727825AbeHWL00 (ORCPT
+        id S1727859AbeHWL0a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:26:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41706 "EHLO
+        Thu, 23 Aug 2018 07:26:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41720 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbeHWL00 (ORCPT
+        with ESMTP id S1726995AbeHWL03 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:26:26 -0400
+        Thu, 23 Aug 2018 07:26:29 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F26FF9D2;
-        Thu, 23 Aug 2018 07:58:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 29E6B9D2;
+        Thu, 23 Aug 2018 07:58:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Sandipan Das <sandipan@linux.ibm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 27/79] perf test session topology: Fix test on s390
-Date:   Thu, 23 Aug 2018 09:53:03 +0200
-Message-Id: <20180823074920.480938753@linuxfoundation.org>
+Subject: [PATCH 4.4 28/79] perf report powerpc: Fix crash if callchain is empty
+Date:   Thu, 23 Aug 2018 09:53:04 +0200
+Message-Id: <20180823074920.563553899@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -54,62 +56,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Sandipan Das <sandipan@linux.ibm.com>
 
-[ Upstream commit b930e62ecd362843002bdf84c2940439822af321 ]
+[ Upstream commit 143c99f6ac6812d23254e80844d6e34be897d3e1 ]
 
-On s390 this test case fails because the socket identifiction numbers
-assigned to the CPU are higher than the CPU identification numbers.
+For some cases, the callchain provided by the kernel may be empty. So,
+the callchain ip filtering code will cause a crash if we do not check
+whether the struct ip_callchain pointer is NULL before accessing any
+members.
 
-F/ix this by adding the platform architecture into the perf data header
-flag information. This helps identifiing the test platform and handles
-s390 specifics in process_cpu_topology().
+This can be observed on a powerpc64le system running Fedora 27 as shown
+below.
+
+  # perf record -b -e cycles:u ls
 
 Before:
 
-  [root@p23lp27 perf]# perf test -vvvvv -F 39
-  39: Session topology                                      :
-  --- start ---
-  templ file: /tmp/perf-test-iUv755
-  socket_id number is too big.You may need to upgrade the perf tool.
-  ---- end ----
-  Session topology: Skip
-  [root@p23lp27 perf]#
+  # perf report --branch-history
+
+  perf: Segmentation fault
+  -------- backtrace --------
+  perf[0x1027615c]
+  linux-vdso64.so.1(__kernel_sigtramp_rt64+0x0)[0x7fff856304d8]
+  perf(arch_skip_callchain_idx+0x44)[0x10257c58]
+  perf[0x1017f2e4]
+  perf(thread__resolve_callchain+0x124)[0x1017ff5c]
+  perf(sample__resolve_callchain+0xf0)[0x10172788]
+  ...
 
 After:
 
-  [root@p23lp27 perf]# perf test -vvvvv -F 39
-  39: Session topology                                      :
-  --- start ---
-  templ file: /tmp/perf-test-8X8VTs
-  CPU 0, core 0, socket 6
-  CPU 1, core 1, socket 3
-  ---- end ----
-  Session topology: Ok
-  [root@p23lp27 perf]#
+  # perf report --branch-history
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Fixes: c84974ed9fb6 ("perf test: Add entry to test cpu topology")
-Link: http://lkml.kernel.org/r/20180611073153.15592-2-tmricht@linux.ibm.com
+  Samples: 25  of event 'cycles:u', Event count (approx.): 2306870
+    Overhead  Source:Line            Symbol                   Shared Object
+  +   11.60%  _init+35736            [.] _init                ls
+  +    9.84%  strcoll_l.c:137        [.] __strcoll_l          libc-2.26.so
+  +    9.16%  memcpy.S:175           [.] __memcpy_power7      libc-2.26.so
+  +    9.01%  gconv_charset.h:54     [.] _nl_find_locale      libc-2.26.so
+  +    8.87%  dl-addr.c:52           [.] _dl_addr             libc-2.26.so
+  +    8.83%  _init+236              [.] _init                ls
+  ...
+
+Reported-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
+Acked-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+Link: http://lkml.kernel.org/r/20180611104049.11048-1-sandipan@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/tests/topology.c |    1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/arch/powerpc/util/skip-callchain-idx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/perf/tests/topology.c
-+++ b/tools/perf/tests/topology.c
-@@ -42,6 +42,7 @@ static int session_write_header(char *pa
+--- a/tools/perf/arch/powerpc/util/skip-callchain-idx.c
++++ b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
+@@ -243,7 +243,7 @@ int arch_skip_callchain_idx(struct threa
+ 	u64 ip;
+ 	u64 skip_slot = -1;
  
- 	perf_header__set_feat(&session->header, HEADER_CPU_TOPOLOGY);
- 	perf_header__set_feat(&session->header, HEADER_NRCPUS);
-+	perf_header__set_feat(&session->header, HEADER_ARCH);
+-	if (chain->nr < 3)
++	if (!chain || chain->nr < 3)
+ 		return skip_slot;
  
- 	session->header.data_size += DATA_SIZE;
- 
+ 	ip = chain->ips[2];
 
 
