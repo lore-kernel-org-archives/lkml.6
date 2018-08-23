@@ -6,34 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F03C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFECC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EA3D2148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:17:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EA3D2148E
+	by mail.kernel.org (Postfix) with ESMTP id 1EE642148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EE642148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729456AbeHWLqS (ORCPT
+        id S1729540AbeHWLq1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:46:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46138 "EHLO
+        Thu, 23 Aug 2018 07:46:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46168 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbeHWLqR (ORCPT
+        with ESMTP id S1726246AbeHWLq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:46:17 -0400
+        Thu, 23 Aug 2018 07:46:27 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1B51DC7B;
-        Thu, 23 Aug 2018 08:17:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B81C1C83;
+        Thu, 23 Aug 2018 08:17:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.9 127/130] PCI: pciehp: Fix use-after-free on unplug
-Date:   Thu, 23 Aug 2018 09:54:03 +0200
-Message-Id: <20180823074935.150083728@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Jeff Mahoney <jeffm@suse.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 130/130] reiserfs: fix broken xattr handling (heap corruption, bad retval)
+Date:   Thu, 23 Aug 2018 09:54:06 +0200
+Message-Id: <20180823074935.318038583@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -50,106 +54,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Jann Horn <jannh@google.com>
 
-commit 281e878eab191cce4259abbbf1a0322e3adae02c upstream.
+commit a13f085d111e90469faf2d9965eb39b11c114d7e upstream.
 
-When pciehp is unbound (e.g. on unplug of a Thunderbolt device), the
-hotplug_slot struct is deregistered and thus freed before freeing the
-IRQ.  The IRQ handler and the work items it schedules print the slot
-name referenced from the freed structure in various informational and
-debug log messages, each time resulting in a quadruple dereference of
-freed pointers (hotplug_slot -> pci_slot -> kobject -> name).
+This fixes the following issues:
 
-At best the slot name is logged as "(null)", at worst kernel memory is
-exposed in logs or the driver crashes:
+- When a buffer size is supplied to reiserfs_listxattr() such that each
+  individual name fits, but the concatenation of all names doesn't fit,
+  reiserfs_listxattr() overflows the supplied buffer.  This leads to a
+  kernel heap overflow (verified using KASAN) followed by an out-of-bounds
+  usercopy and is therefore a security bug.
 
-  pciehp 0000:10:00.0:pcie204: Slot((null)): Card not present
+- When a buffer size is supplied to reiserfs_listxattr() such that a
+  name doesn't fit, -ERANGE should be returned.  But reiserfs instead just
+  truncates the list of names; I have verified that if the only xattr on a
+  file has a longer name than the supplied buffer length, listxattr()
+  incorrectly returns zero.
 
-An attacker may provoke the bug by unplugging multiple devices on a
-Thunderbolt daisy chain at once.  Unplugging can also be simulated by
-powering down slots via sysfs.  The bug is particularly easy to trigger
-in poll mode.
+With my patch applied, -ERANGE is returned in both cases and the memory
+corruption doesn't happen anymore.
 
-It has been present since the driver's introduction in 2004:
-https://git.kernel.org/tglx/history/c/c16b4b14d980
+Credit for making me clean this code up a bit goes to Al Viro, who pointed
+out that the ->actor calling convention is suboptimal and should be
+changed.
 
-Fix by rearranging teardown such that the IRQ is freed first.  Run the
-work items queued by the IRQ handler to completion before freeing the
-hotplug_slot struct by draining the work queue from the ->release_slot
-callback which is invoked by pci_hp_deregister().
-
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org # v2.6.4
+Link: http://lkml.kernel.org/r/20180802151539.5373-1-jannh@google.com
+Fixes: 48b32a3553a5 ("reiserfs: use generic xattr handlers")
+Signed-off-by: Jann Horn <jannh@google.com>
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+Cc: Eric Biggers <ebiggers@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/hotplug/pciehp.h      |    1 +
- drivers/pci/hotplug/pciehp_core.c |    7 +++++++
- drivers/pci/hotplug/pciehp_hpc.c  |    5 ++---
- 3 files changed, 10 insertions(+), 3 deletions(-)
+ fs/reiserfs/xattr.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/pci/hotplug/pciehp.h
-+++ b/drivers/pci/hotplug/pciehp.h
-@@ -132,6 +132,7 @@ int pciehp_unconfigure_device(struct slo
- void pciehp_queue_pushbutton_work(struct work_struct *work);
- struct controller *pcie_init(struct pcie_device *dev);
- int pcie_init_notification(struct controller *ctrl);
-+void pcie_shutdown_notification(struct controller *ctrl);
- int pciehp_enable_slot(struct slot *p_slot);
- int pciehp_disable_slot(struct slot *p_slot);
- void pcie_reenable_notification(struct controller *ctrl);
---- a/drivers/pci/hotplug/pciehp_core.c
-+++ b/drivers/pci/hotplug/pciehp_core.c
-@@ -76,6 +76,12 @@ static int reset_slot(struct hotplug_slo
-  */
- static void release_slot(struct hotplug_slot *hotplug_slot)
- {
-+	struct slot *slot = hotplug_slot->private;
-+
-+	/* queued work needs hotplug_slot name */
-+	cancel_delayed_work(&slot->work);
-+	drain_workqueue(slot->wq);
-+
- 	kfree(hotplug_slot->ops);
- 	kfree(hotplug_slot->info);
- 	kfree(hotplug_slot);
-@@ -278,6 +284,7 @@ static void pciehp_remove(struct pcie_de
- {
- 	struct controller *ctrl = get_service_data(dev);
- 
-+	pcie_shutdown_notification(ctrl);
- 	cleanup_slot(ctrl);
- 	pciehp_release_ctrl(ctrl);
- }
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -786,7 +786,7 @@ int pcie_init_notification(struct contro
- 	return 0;
- }
- 
--static void pcie_shutdown_notification(struct controller *ctrl)
-+void pcie_shutdown_notification(struct controller *ctrl)
- {
- 	if (ctrl->notification_enabled) {
- 		pcie_disable_notification(ctrl);
-@@ -821,7 +821,7 @@ abort:
- static void pcie_cleanup_slot(struct controller *ctrl)
- {
- 	struct slot *slot = ctrl->slot;
--	cancel_delayed_work(&slot->work);
-+
- 	destroy_workqueue(slot->wq);
- 	kfree(slot);
- }
-@@ -902,7 +902,6 @@ abort:
- 
- void pciehp_release_ctrl(struct controller *ctrl)
- {
--	pcie_shutdown_notification(ctrl);
- 	pcie_cleanup_slot(ctrl);
- 	kfree(ctrl);
- }
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -791,8 +791,10 @@ static int listxattr_filler(struct dir_c
+ 			return 0;
+ 		size = namelen + 1;
+ 		if (b->buf) {
+-			if (size > b->size)
++			if (b->pos + size > b->size) {
++				b->pos = -ERANGE;
+ 				return -ERANGE;
++			}
+ 			memcpy(b->buf + b->pos, name, namelen);
+ 			b->buf[b->pos + namelen] = 0;
+ 		}
 
 
