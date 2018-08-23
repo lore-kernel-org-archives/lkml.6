@@ -2,161 +2,89 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93AA1C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A88C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5481021557
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:31:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5481021557
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id DCC0121557
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:31:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCC0121557
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbeHXDDK (ORCPT
+        id S1727063AbeHXDDp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 23:03:10 -0400
-Received: from smtprelay0174.hostedemail.com ([216.40.44.174]:57047 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726085AbeHXDDJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 23:03:09 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 7601E83777F0;
-        Thu, 23 Aug 2018 23:31:11 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: ants85_a0a4471a2d42
-X-Filterd-Recvd-Size: 5045
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf13.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 23 Aug 2018 23:31:08 +0000 (UTC)
-Message-ID: <1be357c91f6469c7a9b0e857fd15bad30347fd09.camel@perches.com>
-Subject: Re: [PATCH] include/linux/compiler*.h: make compiler-*.h mutually
- exclusive
-From:   Joe Perches <joe@perches.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Kees Cook <keescook@chromium.org>, asmadeus@codewreck.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Arnd Bergmann <arnd@arndb.de>, dwmw@amazon.co.uk,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        daniel@iogearbox.net, hpa@zytor.com
-Date:   Thu, 23 Aug 2018 16:31:07 -0700
-In-Reply-To: <CAKwvOdncUZZumxuJoLYWwPomNQb8TH+e0K=WaOSc5RjdJL7Uxw@mail.gmail.com>
-References: <20180822233724.110454-1-ndesaulniers@google.com>
-         <20180823002508.GA822@nautica>
-         <CA+55aFx=pDFceeO82pb__K0mCqRmgRDEmkRT2psOKQ=yikRcEw@mail.gmail.com>
-         <CAGXu5jKJdNFcH9isnB0q_Eg=fpfp8NT+jxkgnaeXY8viDT+F1Q@mail.gmail.com>
-         <CAKwvOdmJoEotNMUm=YkuvfAdihnB4SUhbZrc2PDEBScfdrvOjQ@mail.gmail.com>
-         <e5d579d8ef832fbc133e96746ceb6edbd0870cc2.camel@perches.com>
-         <CAKwvOdncUZZumxuJoLYWwPomNQb8TH+e0K=WaOSc5RjdJL7Uxw@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 23 Aug 2018 23:03:45 -0400
+Received: from foss.arm.com ([217.140.101.70]:52010 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726085AbeHXDDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 23:03:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BD5727A9;
+        Thu, 23 Aug 2018 16:31:46 -0700 (PDT)
+Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 417213F2EA;
+        Thu, 23 Aug 2018 16:31:45 -0700 (PDT)
+Date:   Fri, 24 Aug 2018 00:31:43 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     torvalds@linux-foundation.org, luto@kernel.org, x86@kernel.org,
+        bp@alien8.de, riel@surriel.com, jannh@google.com,
+        ascannell@google.com, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH 3/4] mm/tlb, x86/mm: Support invalidating TLB caches for
+ RCU_TABLE_FREE
+Message-ID: <20180823233142.GB4487@brain-police>
+References: <20180822153012.173508681@infradead.org>
+ <20180822154046.823850812@infradead.org>
+ <20180822155527.GF24124@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180822155527.GF24124@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-23 at 16:12 -0700, Nick Desaulniers wrote:
-> On Thu, Aug 23, 2018 at 2:19 PM Joe Perches <joe@perches.com> wrote:
-> > 
-> > On Thu, 2018-08-23 at 14:03 -0700, Nick Desaulniers wrote:
-> > > One reply for a bunch of the various threads, to keep the number of emails down:
-> > > 
-> > > On Wed, Aug 22, 2018 at 5:20 PM Joe Perches <joe@perches.com> wrote:
-> > > > On Wed, 2018-08-22 at 16:37 -0700, Nick Desaulniers wrote:
-> > > > > +/* Compiler specific macros. */
-> > > > >  #ifdef __clang__
-> > > > >  #include <linux/compiler-clang.h>
-> > > > 
-> > > > probably better as
-> > > > 
-> > > > #if defined(__clang)
-> > > > 
-> > > > to match the style of the #elif defined()s below it
-> > > 
-> > > Hi Joe,
-> > > Thanks for the feedback. I always appreciate it.  If you have some
-> > > cleanups, want to send them to me, and I'll bundle them up for a PR?
-> > > I'm ok with that change.
-> > > 
-> > > > > +#ifdef __GNUC_STDC_INLINE__
-> > > > > +# define __gnu_inline        __attribute__((gnu_inline))
-> > > > > +#else
-> > > > > +# define __gnu_inline
-> > > > > +#endif
-> > > > 
-> > > > Perhaps __gnu_inline should be in compiler-gcc and this
-> > > > should use
-> > > > 
-> > > > #ifndef __gnu_inline
-> > > > #define __gnu_inline
-> > > > #endif
-> > > 
-> > > Not this case; it's how we get gnu89 semantics for `extern inline` is
-> > > not compiler specific (therefor should not go in a compiler specific
-> > > header).
-> > 
-> > It's not possible to know that compilers support what
-> > __attribute__((<foo>)) and at what version that support
-> > exists unless it is specified somewhere.
+On Wed, Aug 22, 2018 at 05:55:27PM +0200, Peter Zijlstra wrote:
+> On Wed, Aug 22, 2018 at 05:30:15PM +0200, Peter Zijlstra wrote:
+> > ARM
+> > which later used this put an explicit TLB invalidate in their
+> > __p*_free_tlb() functions, and PowerPC-radix followed that example.
 > 
-> __has_attribute:
-> https://clang.llvm.org/docs/LanguageExtensions.html#has-attribute
+> > +/*
+> > + * If we want tlb_remove_table() to imply TLB invalidates.
+> > + */
+> > +static inline void tlb_table_invalidate(struct mmu_gather *tlb)
+> > +{
+> > +#ifdef CONFIG_HAVE_RCU_TABLE_INVALIDATE
+> > +	/*
+> > +	 * Invalidate page-table caches used by hardware walkers. Then we still
+> > +	 * need to RCU-sched wait while freeing the pages because software
+> > +	 * walkers can still be in-flight.
+> > +	 */
+> > +	__tlb_flush_mmu_tlbonly(tlb);
+> > +#endif
+> > +}
 > 
-> The release notes of GCC-5 mention __has_attribute.
-> https://gcc.gnu.org/gcc-5/changes.html
-
-So not available in the now minimum supported gcc 4.6?
-
-> The point of feature detection is that it _doesn't matter_ what
-> version that support exists.  Either it does and you can use it, or it
-> doesn't and you can decide whether to stop compiling or there's a
-> valid work around.
 > 
-> Feature detection should be preferred to explicit version checks
-> except in 2 specific cases:
-> 1. It's not possible to properly perform feature detection.  Language
-> features should not be added unless it's possible to safely check for
-> them.
-> 2. A very specific version of a very specific compiler is broken and
-> needs to be explicitly guarded against.
+> Nick, Will is already looking at using this to remove the synchronous
+> invalidation from __p*_free_tlb() for ARM, could you have a look to see
+> if PowerPC-radix could benefit from that too?
 > 
-> > As far as I can tell,  gnu_inline is not recognized by clang.
-> > 
-> > https://clang.llvm.org/docs/AttributeReference.html
-> 
-> If that was the case, I would not have added it in commit d03db2bc26f0
-> ("compiler-gcc.h: Add __attribute__((gnu_inline)) to all inline
-> declarations").
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d03db2bc26f0e4a6849ad649a09c9c73fccdc656
+> Basically, using a patch like the below, would give your tlb_flush()
+> information on if tables were removed or not.
 
-Hard to know.
-That commit message does not mention clang.
+Just to say that I have something up and running for arm64 based on this.
+I'll post it once it's seen a bit more testing (either tomorrow or Monday).
 
-> Docs can sometimes fall behind, the lone source of truth is the source code.
-> https://github.com/llvm-mirror/clang/search?q=gnu_inline&unscoped_q=gnu_inline
-
-Which no compiler user should have to read.
-
-> Godbolt is also incredibly helpful for testing various compiler versions:
-> https://godbolt.org/z/uMJ-mo
-
-Thanks for that.
-
-> https://reviews.llvm.org/D51190
-
-That too.
-
-cheers, Joe
+Will
