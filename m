@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CC5C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C21F4C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9871208CD
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9871208CD
+	by mail.kernel.org (Postfix) with ESMTP id 8263A21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8263A21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728675AbeHWL2h (ORCPT
+        id S1728692AbeHWL2k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:28:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42818 "EHLO
+        Thu, 23 Aug 2018 07:28:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43228 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbeHWL2g (ORCPT
+        with ESMTP id S1728677AbeHWL2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:28:36 -0400
+        Thu, 23 Aug 2018 07:28:39 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C6DFECBA;
-        Thu, 23 Aug 2018 08:00:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EFF28ACC;
+        Thu, 23 Aug 2018 08:00:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 59/79] drm/nouveau/gem: off by one bugs in nouveau_gem_pushbuf_reloc_apply()
-Date:   Thu, 23 Aug 2018 09:53:35 +0200
-Message-Id: <20180823074923.009781952@linuxfoundation.org>
+        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jeremy Cline <jcline@redhat.com>, Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.4 68/79] ext4: fix spectre gadget in ext4_mb_regular_allocator()
+Date:   Thu, 23 Aug 2018 09:53:44 +0200
+Message-Id: <20180823074923.626051480@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -51,41 +50,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Jeremy Cline <jcline@redhat.com>
 
-[ Upstream commit 7f073d011f93e92d4d225526b9ab6b8b0bbd6613 ]
+commit 1a5d5e5d51e75a5bca67dadbcea8c841934b7b85 upstream.
 
-The bo array has req->nr_buffers elements so the > should be >= so we
-don't read beyond the end of the array.
+'ac->ac_g_ex.fe_len' is a user-controlled value which is used in the
+derivation of 'ac->ac_2order'. 'ac->ac_2order', in turn, is used to
+index arrays which makes it a potential spectre gadget. Fix this by
+sanitizing the value assigned to 'ac->ac2_order'.  This covers the
+following accesses found with the help of smatch:
 
-Fixes: a1606a9596e5 ("drm/nouveau: new gem pushbuf interface, bump to 0.0.16")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+* fs/ext4/mballoc.c:1896 ext4_mb_simple_scan_group() warn: potential
+  spectre issue 'grp->bb_counters' [w] (local cap)
+
+* fs/ext4/mballoc.c:445 mb_find_buddy() warn: potential spectre issue
+  'EXT4_SB(e4b->bd_sb)->s_mb_offsets' [r] (local cap)
+
+* fs/ext4/mballoc.c:446 mb_find_buddy() warn: potential spectre issue
+  'EXT4_SB(e4b->bd_sb)->s_mb_maxs' [r] (local cap)
+
+Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Jeremy Cline <jcline@redhat.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/gpu/drm/nouveau/nouveau_gem.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/nouveau/nouveau_gem.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
-@@ -602,7 +602,7 @@ nouveau_gem_pushbuf_reloc_apply(struct n
- 		struct nouveau_bo *nvbo;
- 		uint32_t data;
+---
+ fs/ext4/mballoc.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -26,6 +26,7 @@
+ #include <linux/log2.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
++#include <linux/nospec.h>
+ #include <linux/backing-dev.h>
+ #include <trace/events/ext4.h>
  
--		if (unlikely(r->bo_index > req->nr_buffers)) {
-+		if (unlikely(r->bo_index >= req->nr_buffers)) {
- 			NV_PRINTK(err, cli, "reloc bo index invalid\n");
- 			ret = -EINVAL;
- 			break;
-@@ -612,7 +612,7 @@ nouveau_gem_pushbuf_reloc_apply(struct n
- 		if (b->presumed.valid)
- 			continue;
+@@ -2144,7 +2145,8 @@ ext4_mb_regular_allocator(struct ext4_al
+ 		 * This should tell if fe_len is exactly power of 2
+ 		 */
+ 		if ((ac->ac_g_ex.fe_len & (~(1 << (i - 1)))) == 0)
+-			ac->ac_2order = i - 1;
++			ac->ac_2order = array_index_nospec(i - 1,
++							   sb->s_blocksize_bits + 2);
+ 	}
  
--		if (unlikely(r->reloc_bo_index > req->nr_buffers)) {
-+		if (unlikely(r->reloc_bo_index >= req->nr_buffers)) {
- 			NV_PRINTK(err, cli, "reloc container bo index invalid\n");
- 			ret = -EINVAL;
- 			break;
+ 	/* if stream allocation is enabled, use global goal */
 
 
