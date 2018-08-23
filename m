@@ -2,127 +2,123 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7B6C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 04:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4777C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 04:25:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 533CD208EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 04:16:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FCD8208EC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 04:25:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I28S2mks"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 533CD208EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="PPGCWpG/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FCD8208EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728341AbeHWHoc (ORCPT
+        id S1728317AbeHWHx3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 03:44:32 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33936 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727346AbeHWHoc (ORCPT
+        Thu, 23 Aug 2018 03:53:29 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:32392 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726870AbeHWHx3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 03:44:32 -0400
-Received: by mail-pg1-f194.google.com with SMTP id u10-v6so193980pgr.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 21:16:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6LuNhplokyBQiUI1quGe5jRuLsqXcMx56VDItjcDHgs=;
-        b=I28S2mks+vxQouQnYXZtRoy6Kqi+xgIvHVB/7KHQnOVhUobWB3noEkIygMjrrpTotY
-         3CsrUViwocxkpWv8U//d6WVn8SQjbu2ISOBnpMibfcAnXJBHA9Rnu9nuCc7Gof7sNmCA
-         sY09TMCIy4s+bKg2PsC9CDqU/jgh1YQNbKrsNv7+s+s2v3HHL+s+PXhD8HDHxV8GCyGi
-         uMihXdlOYDGN69DD+LuYYnnQMnMqP9HNZ0llcl2PnXdoayMm7IqA71t++PTLj9jsYMTr
-         oxWSeDAvDqZz2m8gDfopBVN70V/6krqdLV8fb/FE5Qg5S4QdpBlwo96n/COBhQ75DR7H
-         ZW+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6LuNhplokyBQiUI1quGe5jRuLsqXcMx56VDItjcDHgs=;
-        b=cEx4/hWvInsrmh4yAWPc5zHapmf9o4zLQQ5cvmMrWzOumX45AsLh8XzBo6X/+leEQ7
-         TxfadOGZvXr1s32Kbj+1xIbv5F/QTqiBN44a72Qf2Et0r76+O1RWngILQhyLR9hhSnXA
-         C56XZsaWjB50jzxZZOUWPVC3s9D5apD9uGktr0/RIhHAwOmQcHcJqC6Z/qxz10l5s5N3
-         +QbZgh6yFaTtJ2XOHse3qe8M/v5MbDatcDFhmOEzd1Mb3KkWRgCnr5E59xR0/iFLxOl4
-         SUGBA2GEqFz0cZWhaChNDyCvYEMHZmR6GP95wHp7doKl0sNGcVAp8NU3X7OpnpNoA5zN
-         E4qA==
-X-Gm-Message-State: AOUpUlGZmWia1yMlUCiTY9eiq/HhFtL0cbID9aYXw4V0BtZUdDqxmVJq
-        CBunr7pqwa8ZvzHvLs1dC8A=
-X-Google-Smtp-Source: AA+uWPwWdlvpLwBSHNK4OMQBsfV/p43A00L90+eA7Fv3qPbpj4yjtsbGhEJTs7aphb7x91ES4uKajQ==
-X-Received: by 2002:a63:d56:: with SMTP id 22-v6mr23585354pgn.107.1534997810784;
-        Wed, 22 Aug 2018 21:16:50 -0700 (PDT)
-Received: from roar.ozlabs.ibm.com ([122.99.82.10])
-        by smtp.gmail.com with ESMTPSA id x65-v6sm4463912pfk.140.2018.08.22.21.16.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 22 Aug 2018 21:16:50 -0700 (PDT)
-Date:   Thu, 23 Aug 2018 14:16:42 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Rik van Riel <riel@surriel.com>,
-        Jann Horn <jannh@google.com>,
-        Adin Scannell <ascannell@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH 2/4] mm/tlb: Remove tlb_remove_table() non-concurrent
- condition
-Message-ID: <20180823141642.38b53175@roar.ozlabs.ibm.com>
-In-Reply-To: <CA+55aFyY4fG8Hhds4ykSm5vUMdxbLdB7mYmC2pOPk8UKBXtpjA@mail.gmail.com>
-References: <20180822153012.173508681@infradead.org>
-        <20180822154046.772017055@infradead.org>
-        <20180823133103.30d6a16b@roar.ozlabs.ibm.com>
-        <CA+55aFyY4fG8Hhds4ykSm5vUMdxbLdB7mYmC2pOPk8UKBXtpjA@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 23 Aug 2018 03:53:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1534998346; x=1566534346;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=KF7QyF6hqWf5lZJXqD5PIKFJaq5UV+tubKsVcz9gZWA=;
+  b=PPGCWpG/JExqmf2mybp7N/jqcfIIcGNZQdgj/rxDHVvGEDpCMz9/7WhR
+   bDTVCk5eHtnYkkTL2E71WQDRxegRWf4andqGOWt+FR1lEMvt3VwcCHTqG
+   wkFawvGtdcM2uI5c4yQBT42xMuFQ6Dvgcs1j1XA3XhZW/rsM2+u/G7tVM
+   f7UAYGQss/9QwBTFWKYuTRhPMGq8D9W+mkQ6NnzUcU/nQfZ7ysMb92S3V
+   xcEQO47ddBqSU1FAAutKvSw6zZGW8wnbFQsol7WmQBTECIeWT8iWW2HRR
+   RIWLwvcBVEu0uUmf6Dru61yhburrur3YlLVufMpXkYyDaxbSNV64pJirB
+   A==;
+X-IronPort-AV: E=Sophos;i="5.53,276,1531756800"; 
+   d="scan'208";a="89121464"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 23 Aug 2018 12:25:46 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP; 22 Aug 2018 21:12:57 -0700
+Received: from usa003209.ad.shared (HELO [10.86.60.90]) ([10.86.60.90])
+  by uls-op-cesaip01.wdc.com with ESMTP; 22 Aug 2018 21:25:46 -0700
+Subject: Re: [RFC PATCH 3/5] RISC-V: Add cpu_operatios structure
+To:     Anup Patel <anup@brainfault.org>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <1534377377-70108-1-git-send-email-atish.patra@wdc.com>
+ <1534377377-70108-4-git-send-email-atish.patra@wdc.com>
+ <CAAhSdy2TeNfjdzWPHtCwrorBu8c9v-u9Ro-eGMbzSwzapfwdjw@mail.gmail.com>
+ <ce39a215-3bb1-d866-0d84-76642acb70bc@wdc.com>
+ <CAAhSdy30Fz0Ki5zMws6hspgn=xwcFLj3VVixH88UWGU+oehBQg@mail.gmail.com>
+ <20180821074826.GA28079@infradead.org>
+ <CAAhSdy2NP4raXXPVvEJyAO127=J9jR3NNEHLF=vigBz=v-Qqkw@mail.gmail.com>
+ <20180822060353.GA27106@infradead.org>
+ <CAAhSdy1jdn7OS1AxwXYZqejUw-qto-5Afbb6o034ahH26E+vyw@mail.gmail.com>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <2b317c0a-aa06-002a-a3f3-148a25e897ae@wdc.com>
+Date:   Thu, 23 Aug 2018 09:55:45 +0530
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAAhSdy1jdn7OS1AxwXYZqejUw-qto-5Afbb6o034ahH26E+vyw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 22 Aug 2018 20:35:16 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> On Wed, Aug 22, 2018 at 8:31 PM Nicholas Piggin <npiggin@gmail.com> wrote:
-> >
-> >
-> > So that leaves speculative operations. I don't see where the problem is
-> > with those either -- this shortcut needs to ensure there are no other
-> > *non speculative* operations. mm_users is correct for that.  
+On 8/22/18 8:54 PM, Anup Patel wrote:
+> On Wed, Aug 22, 2018 at 11:33 AM, Christoph Hellwig <hch@infradead.org> wrote:
+>> On Tue, Aug 21, 2018 at 10:34:38PM +0530, Anup Patel wrote:
+>>> The cpu_operations is certainly required because SOC vendors will add
+>>> vendor-specific mechanism to selectively bringing-up CPUs/HARTs instead
+>>> of all CPUs entering Linux kernel simultaneously. In fact, we might also end-up
+>>> having CPU ON/OFF operations in SBI.
+>>
+>> Your forgot an essential part in your analysis:  Right now we only have
+>> one single way to deal with cpu on/offlining, and that is the dummy WFI
+>> kind.  Once other ways show up we can build proper infrastructure, but
+>> until then this is just a white elephant as we have no idea how these
+>> abstractions will look like.
+>>
+>> And my hope is that we'll just see new SBI calls, in which case we'll
+>> just need SBI and dummy version and can avoid all the indirect calls.
 > 
-> No. Because mm_users doesn't contain any lazy tlb users.
+> IMHO, rather than waiting for new CPU ON/OFF methods to come-up we
+> can keep the cpu_operations ready. Also, we are not re-inventing anything
+> here which we might have to discard later because cpu_operations are
+> already tried and hardened for Linux ARM64.
 > 
-> And yes, those lazy tlbs are all kernel threads, but they can still
-> speculatively load user addresses.
+> I agree with you that in long-term SBI-based CPU ON/OFF will be widely
+> used. Most likely we will have at-least two CPU ON/OFF methods:
+> 1. Existing lottery based spinning
+> 2. New SBI calls
+> 
+> Regards,
+> Anup
+> 
 
-So?
+I am fine with either keeping the cpu_ops infrastructure for now or 
+reintroducing again along with better smp enablement methods.
 
-If the arch does not shoot those all down after the user page tables
-are removed then it's buggy regardless of this short cut.
+Anyways, there were concerns about all existing booting method (all cpu 
+thrown to Linux at the same time). I was thinking to adopt spin table 
+boot method for RISC-V as well. I can drop this patch now and 
+reintroduce with spin table boot method.
 
-The only real problem I could see would be if a page walk cache still
-points to the freed table, then the table gets re-allocated and used
-elsewhere, and meanwhile a speculative access tries to load an entry
-from the page that is an invalid form of page table that might cause
-a machine check or something. That would be (u)arch specific, but if
-that's what we're concerned with here it's a different issue and needs
-to be documented as such.
+Any thoughts ?
 
-I'll have a look at powerpc and see if we can cope with it. If so, I'll
-make it an arch specific opt-in short cut.
-
-Thanks,
-Nick
+Regards,
+Atish
