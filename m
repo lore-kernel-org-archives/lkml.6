@@ -3,123 +3,193 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 581FEC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E56C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF3920836
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:41:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DF3920836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id BB79C20836
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:43:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB79C20836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732336AbeHWSLy (ORCPT
+        id S1732353AbeHWSNg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 14:11:54 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51924 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727974AbeHWSLy (ORCPT
+        Thu, 23 Aug 2018 14:13:36 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.140]:13379 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731795AbeHWSNf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 14:11:54 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7NEfEmR083548
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:41:54 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m1xpbgq7j-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:41:49 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Thu, 23 Aug 2018 10:41:47 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 Aug 2018 10:41:44 -0400
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7NEfhJ746792754
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 23 Aug 2018 14:41:43 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 028D3AC060;
-        Thu, 23 Aug 2018 10:41:54 -0400 (EDT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C7650AC062;
-        Thu, 23 Aug 2018 10:41:51 -0400 (EDT)
-Received: from morokweng.localdomain (unknown [9.85.189.29])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Thu, 23 Aug 2018 10:41:51 -0400 (EDT)
-References: <20180823140917.3060915-1-arnd@arndb.de>
-User-agent: mu4e 1.0; emacs 25.3.1
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Seth Arnold <seth.arnold@canonical.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] apparmor: remove unused label
-In-reply-to: <20180823140917.3060915-1-arnd@arndb.de>
-Date:   Thu, 23 Aug 2018 11:41:36 -0300
+        Thu, 23 Aug 2018 14:13:35 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 6AA244014B5E6
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 09:43:35 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id sqpjfExVhkBj6sqpjfTrQj; Thu, 23 Aug 2018 09:43:35 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.40.214] (port=53226 helo=[192.168.1.71])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fsqpi-001OKT-TN; Thu, 23 Aug 2018 09:43:35 -0500
+To:     Thomas Hellstrom <thellstrom@vmware.com>,
+        Deepak Singh Rawat <drawat@vmware.com>,
+        linux-graphics-maintainer <linux-graphics-maintainer@vmware.com>,
+        Sinclair Yeh <syeh@vmware.com>, David Airlie <airlied@linux.ie>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+References: <20180816193015.GA12093@embeddedor.com>
+ <BYAPR05MB41817986B00F59780A68D63CBA320@BYAPR05MB4181.namprd05.prod.outlook.com>
+ <68b1a4bc-87d8-a93a-edd1-5794ca9e93f6@vmware.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [Linux-graphics-maintainer] [PATCH] drm/vmwgfx: Fix potential
+ Spectre v1
+Message-ID: <0d9c46fd-40a0-4d9b-bd9a-9e0f36da763d@embeddedor.com>
+Date:   Thu, 23 Aug 2018 09:43:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18082314-0072-0000-0000-00000396263F
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009598; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01077719; UDB=6.00555675; IPR=6.00857692;
- MB=3.00022888; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-23 14:41:46
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082314-0073-0000-0000-0000492D5C6E
-Message-Id: <87zhxdrvq7.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=755 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808230155
+In-Reply-To: <68b1a4bc-87d8-a93a-edd1-5794ca9e93f6@vmware.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.40.214
+X-Source-L: No
+X-Exim-ID: 1fsqpi-001OKT-TN
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.250.40.214]:53226
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
-Arnd Bergmann <arnd@arndb.de> writes:
+On 8/21/18 3:19 AM, Thomas Hellstrom wrote:
 
-> After the corresponding 'goto' was removed, we get a warning
-> for the 'fail' label:
->
-> security/apparmor/policy_unpack.c: In function 'unpack_dfa':
-> security/apparmor/policy_unpack.c:426:1: error: label 'fail' defined but not used [-Werror=unused-label]
->
-> Fixes: fb5841091f28 ("apparmor: remove no-op permission check in policy_unpack")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  security/apparmor/policy_unpack.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-> index 3647b5834ace..96d8cf68ce65 100644
-> --- a/security/apparmor/policy_unpack.c
-> +++ b/security/apparmor/policy_unpack.c
-> @@ -423,7 +423,6 @@ static struct aa_dfa *unpack_dfa(struct aa_ext *e)
->
->  	return dfa;
->
-> -fail:
->  	aa_put_dfa(dfa);
->  	return ERR_PTR(-EPROTO);
->  }
+>>>   #include "vmwgfx_drv.h"
+>>>   #include "vmwgfx_reg.h"
+>>> @@ -4520,8 +4521,10 @@ int vmw_execbuf_ioctl(struct drm_device *dev,
+>>> unsigned long data,
+>>>           return -EINVAL;
+>>>       }
+>>>
+>>> -    if (arg.version > 1 &&
+>>> -        copy_from_user(&arg.context_handle,
+>>> +    if (arg.version >= ARRAY_SIZE(copy_offset))
+>>> +        return -EFAULT;
+> 
+> I must admit my understanding of spectre workings in this case is limited, but why do you need to compare
+> arg.version against ARRAY_SIZE here, when it is already checked against DRM_VMW_EXECBUF_VERSION earlier?
+> 
+Oh, I wasn't aware of the value in DRM_VMW_EXECBUF_VERSION. But as arg.version is used to index copy_offset,
+it is safer to compare its value against the actual size of copy_offset.
 
-Shouldn't the two lines after the label be removed as well? IIUC they're
-unreachable now.
+So, what do you think if I replace DRM_VMW_EXECBUF_VERSION with ARRAY_SIZE instead of adding a new check
+against ARRAY_SIZE?
 
+Something like:
+
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+index 1f13457..3ef9f7b 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+@@ -25,6 +25,7 @@
+  *
+  **************************************************************************/
+ #include <linux/sync_file.h>
++#include <linux/nospec.h>
+
+ #include "vmwgfx_drv.h"
+ #include "vmwgfx_reg.h"
+@@ -4514,11 +4515,12 @@ int vmw_execbuf_ioctl(struct drm_device *dev, unsigned long data,
+         * arg.version.
+         */
+
+-       if (unlikely(arg.version > DRM_VMW_EXECBUF_VERSION ||
++       if (unlikely(arg.version > ARRAY_SIZE(copy_offset) ||
+                     arg.version == 0)) {
+                DRM_ERROR("Incorrect execbuf version.\n");
+                return -EINVAL;
+        }
++       arg.version = array_index_nospec(arg.version, ARRAY_SIZE(copy_offset));
+
+        if (arg.version > 1 &&
+            copy_from_user(&arg.context_handle,
+
+
+> 
+> 
+>>> +    arg.version = array_index_nospec(arg.version,
+>>> ARRAY_SIZE(copy_offset));
+>>> +    if (copy_from_user(&arg.context_handle,
+>>>                  (void __user *) (data + copy_offset[0]),
+>>>                  copy_offset[arg.version - 1] -
+>>>                  copy_offset[0]) != 0)
+> 
+> Similarly, we want to perform this copy iff arg.version > 1. Why did you remove that check?
+> 
+
+Yeah, this check must remain in place. I will add it back and send v2.
+
+Thanks for the feedback!
 --
-Thiago Jung Bauermann
-IBM Linux Technology Center
-
+Gustavo
