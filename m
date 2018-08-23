@@ -6,40 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 969B2C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F9CC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A116208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A116208C2
+	by mail.kernel.org (Postfix) with ESMTP id 93E6E208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E6E208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389088AbeHWMjZ (ORCPT
+        id S2389052AbeHWMj2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:39:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56734 "EHLO
+        Thu, 23 Aug 2018 08:39:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56770 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728183AbeHWMjX (ORCPT
+        with ESMTP id S1728183AbeHWMj0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:39:23 -0400
+        Thu, 23 Aug 2018 08:39:26 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45981CA8;
-        Thu, 23 Aug 2018 09:10:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 773A6CAC;
+        Thu, 23 Aug 2018 09:10:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 314/324] packet: refine ring v3 block size test to hold one frame
-Date:   Thu, 23 Aug 2018 09:56:20 +0200
-Message-Id: <20180823075011.803117239@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Borislav Petkov <bp@suse.de>
+Subject: [PATCH 4.18 01/22] EDAC: Add missing MEM_LRDDR4 entry in edac_mem_types[]
+Date:   Thu, 23 Aug 2018 09:56:27 +0200
+Message-Id: <20180823074759.303513950@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
-References: <20180823074955.885811006@linuxfoundation.org>
+In-Reply-To: <20180823074759.234685844@linuxfoundation.org>
+References: <20180823074759.234685844@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -47,70 +48,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 4576cd469d980317c4edd9173f8b694aa71ea3a3 upstream.
+commit b748f2de4b2f578599f46c6000683a8da755bf68 upstream.
 
-TPACKET_V3 stores variable length frames in fixed length blocks.
-Blocks must be able to store a block header, optional private space
-and at least one minimum sized frame.
+The edac_mem_types[] array misses a MEM_LRDDR4 entry, which leads to
+NULL pointer dereference when accessed via sysfs or such.
 
-Frames, even for a zero snaplen packet, store metadata headers and
-optional reserved space.
-
-In the block size bounds check, ensure that the frame of the
-chosen configuration fits. This includes sockaddr_ll and optional
-tp_reserve.
-
-Syzbot was able to construct a ring with insuffient room for the
-sockaddr_ll in the header of a zero-length frame, triggering an
-out-of-bounds write in dev_parse_header.
-
-Convert the comparison to less than, as zero is a valid snap len.
-This matches the test for minimum tp_frame_size immediately below.
-
-Fixes: f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer implementation.")
-Fixes: eb73190f4fbe ("net/packet: refine check for priv area size")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: <stable@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180810141426.8918-1-tiwai@suse.de
+Fixes: 1e8096bb2031 ("EDAC: Add LRDDR4 DRAM type")
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/packet/af_packet.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/edac/edac_mc.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -4258,6 +4258,8 @@ static int packet_set_ring(struct sock *
- 	}
- 
- 	if (req->tp_block_nr) {
-+		unsigned int min_frame_size;
-+
- 		/* Sanity tests and some calculations */
- 		err = -EBUSY;
- 		if (unlikely(rb->pg_vec))
-@@ -4280,12 +4282,12 @@ static int packet_set_ring(struct sock *
- 			goto out;
- 		if (unlikely(!PAGE_ALIGNED(req->tp_block_size)))
- 			goto out;
-+		min_frame_size = po->tp_hdrlen + po->tp_reserve;
- 		if (po->tp_version >= TPACKET_V3 &&
--		    req->tp_block_size <=
--		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + sizeof(struct tpacket3_hdr))
-+		    req->tp_block_size <
-+		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + min_frame_size)
- 			goto out;
--		if (unlikely(req->tp_frame_size < po->tp_hdrlen +
--					po->tp_reserve))
-+		if (unlikely(req->tp_frame_size < min_frame_size))
- 			goto out;
- 		if (unlikely(req->tp_frame_size & (TPACKET_ALIGNMENT - 1)))
- 			goto out;
+--- a/drivers/edac/edac_mc.c
++++ b/drivers/edac/edac_mc.c
+@@ -215,6 +215,7 @@ const char * const edac_mem_types[] = {
+ 	[MEM_LRDDR3]	= "Load-Reduced-DDR3-RAM",
+ 	[MEM_DDR4]	= "Unbuffered-DDR4",
+ 	[MEM_RDDR4]	= "Registered-DDR4",
++	[MEM_LRDDR4]	= "Load-Reduced-DDR4-RAM",
+ 	[MEM_NVDIMM]	= "Non-volatile-RAM",
+ };
+ EXPORT_SYMBOL_GPL(edac_mem_types);
 
 
