@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F05C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8647C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CC9220839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CC9220839
+	by mail.kernel.org (Postfix) with ESMTP id 772AB20839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 772AB20839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387807AbeHWMUq (ORCPT
+        id S2387822AbeHWMUt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:20:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51674 "EHLO
+        Thu, 23 Aug 2018 08:20:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51692 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728555AbeHWMUq (ORCPT
+        with ESMTP id S1728555AbeHWMUs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:20:46 -0400
+        Thu, 23 Aug 2018 08:20:48 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B05A3BE0;
-        Thu, 23 Aug 2018 08:52:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DFE02BE0;
+        Thu, 23 Aug 2018 08:52:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 156/324] dpaa_eth: DPAA SGT needs to be 256B
-Date:   Thu, 23 Aug 2018 09:53:42 +0200
-Message-Id: <20180823075003.846985673@linuxfoundation.org>
+Subject: [PATCH 4.17 130/324] selftests/x86/sigreturn: Do minor cleanups
+Date:   Thu, 23 Aug 2018 09:53:16 +0200
+Message-Id: <20180823075002.467016591@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,69 +55,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Madalin Bucur <madalin.bucur@nxp.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-[ Upstream commit 595e802e53f24642a145cf7f3e4ac9afab4c21ec ]
+[ Upstream commit e8a445dea219c32727016af14f847d2e8f7ebec8 ]
 
-The DPAA HW requires that at least 256 bytes from the start of the
-first scatter-gather table entry are allocated and accessible. The
-hardware reads the maximum size the table can have in one access,
-thus requiring that the allocation and mapping to be done for the
-maximum size of 256B even if there is a smaller number of entries
-in the table.
+We have short names for the requested and resulting register values.
+Use them instead of spelling out the whole register entry for each
+case.
 
-Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/bb3bc1f923a2f6fe7912d22a1068fe29d6033d38.1530076529.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ tools/testing/selftests/x86/sigreturn.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -125,6 +125,9 @@ MODULE_PARM_DESC(tx_timeout, "The Tx tim
- /* Default alignment for start of data in an Rx FD */
- #define DPAA_FD_DATA_ALIGNMENT  16
- 
-+/* The DPAA requires 256 bytes reserved and mapped for the SGT */
-+#define DPAA_SGT_SIZE 256
+--- a/tools/testing/selftests/x86/sigreturn.c
++++ b/tools/testing/selftests/x86/sigreturn.c
+@@ -610,6 +610,7 @@ static int test_valid_sigreturn(int cs_b
+ 	 */
+ 	for (int i = 0; i < NGREG; i++) {
+ 		greg_t req = requested_regs[i], res = resulting_regs[i];
 +
- /* Values for the L3R field of the FM Parse Results
-  */
- /* L3 Type field: First IP Present IPv4 */
-@@ -1617,8 +1620,8 @@ static struct sk_buff *dpaa_cleanup_tx_f
+ 		if (i == REG_TRAPNO || i == REG_IP)
+ 			continue;	/* don't care */
  
- 	if (unlikely(qm_fd_get_format(fd) == qm_fd_sg)) {
- 		nr_frags = skb_shinfo(skb)->nr_frags;
--		dma_unmap_single(dev, addr, qm_fd_get_offset(fd) +
--				 sizeof(struct qm_sg_entry) * (1 + nr_frags),
-+		dma_unmap_single(dev, addr,
-+				 qm_fd_get_offset(fd) + DPAA_SGT_SIZE,
- 				 dma_dir);
+@@ -673,18 +674,18 @@ static int test_valid_sigreturn(int cs_b
+ #endif
  
- 		/* The sgt buffer has been allocated with netdev_alloc_frag(),
-@@ -1903,8 +1906,7 @@ static int skb_to_sg_fd(struct dpaa_priv
- 	void *sgt_buf;
+ 		/* Sanity check on the kernel */
+-		if (i == REG_CX && requested_regs[i] != resulting_regs[i]) {
++		if (i == REG_CX && req != res) {
+ 			printf("[FAIL]\tCX (saved SP) mismatch: requested 0x%llx; got 0x%llx\n",
+-			       (unsigned long long)requested_regs[i],
+-			       (unsigned long long)resulting_regs[i]);
++			       (unsigned long long)req,
++			       (unsigned long long)res);
+ 			nerrs++;
+ 			continue;
+ 		}
  
- 	/* get a page frag to store the SGTable */
--	sz = SKB_DATA_ALIGN(priv->tx_headroom +
--		sizeof(struct qm_sg_entry) * (1 + nr_frags));
-+	sz = SKB_DATA_ALIGN(priv->tx_headroom + DPAA_SGT_SIZE);
- 	sgt_buf = netdev_alloc_frag(sz);
- 	if (unlikely(!sgt_buf)) {
- 		netdev_err(net_dev, "netdev_alloc_frag() failed for size %d\n",
-@@ -1972,9 +1974,8 @@ static int skb_to_sg_fd(struct dpaa_priv
- 	skbh = (struct sk_buff **)buffer_start;
- 	*skbh = skb;
- 
--	addr = dma_map_single(dev, buffer_start, priv->tx_headroom +
--			      sizeof(struct qm_sg_entry) * (1 + nr_frags),
--			      dma_dir);
-+	addr = dma_map_single(dev, buffer_start,
-+			      priv->tx_headroom + DPAA_SGT_SIZE, dma_dir);
- 	if (unlikely(dma_mapping_error(dev, addr))) {
- 		dev_err(dev, "DMA mapping failed");
- 		err = -EINVAL;
+-		if (requested_regs[i] != resulting_regs[i] && !ignore_reg) {
++		if (req != res && !ignore_reg) {
+ 			printf("[FAIL]\tReg %d mismatch: requested 0x%llx; got 0x%llx\n",
+-			       i, (unsigned long long)requested_regs[i],
+-			       (unsigned long long)resulting_regs[i]);
++			       i, (unsigned long long)req,
++			       (unsigned long long)res);
+ 			nerrs++;
+ 		}
+ 	}
 
 
