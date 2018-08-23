@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C70EAC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90F95C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DD2B206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DD2B206B2
+	by mail.kernel.org (Postfix) with ESMTP id 54E1F2064E
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54E1F2064E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbeHWLgf (ORCPT
+        id S1728845AbeHWLgj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:36:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44892 "EHLO
+        Thu, 23 Aug 2018 07:36:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44906 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727627AbeHWLgf (ORCPT
+        with ESMTP id S1727604AbeHWLgi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:36:35 -0400
+        Thu, 23 Aug 2018 07:36:38 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 06373C7B;
-        Thu, 23 Aug 2018 08:08:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 33A16C83;
+        Thu, 23 Aug 2018 08:08:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Michael Thalmeier <michael.thalmeier@hale.at>,
-        Hans de Goede <hdegoede@redhat.com>,
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 046/130] NFC: pn533: Fix wrong GFP flag usage
-Date:   Thu, 23 Aug 2018 09:52:42 +0200
-Message-Id: <20180823074930.215709075@linuxfoundation.org>
+Subject: [PATCH 4.9 047/130] perf test session topology: Fix test on s390
+Date:   Thu, 23 Aug 2018 09:52:43 +0200
+Message-Id: <20180823074930.298718113@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -52,45 +54,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-[ Upstream commit ecc443c03fb14abfb8a6af5e3b2d43b5257e60f2 ]
+[ Upstream commit b930e62ecd362843002bdf84c2940439822af321 ]
 
-pn533_recv_response() is an urb completion handler, so it must use
-GFP_ATOMIC. pn533_usb_send_frame() OTOH runs from a regular sleeping
-context, so the pn533_submit_urb_for_response() there (and only there)
-can use the regular GFP_KERNEL flags.
+On s390 this test case fails because the socket identifiction numbers
+assigned to the CPU are higher than the CPU identification numbers.
 
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1514134
-Fixes: 9815c7cf22da ("NFC: pn533: Separate physical layer from ...")
-Cc: Michael Thalmeier <michael.thalmeier@hale.at>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+F/ix this by adding the platform architecture into the perf data header
+flag information. This helps identifiing the test platform and handles
+s390 specifics in process_cpu_topology().
+
+Before:
+
+  [root@p23lp27 perf]# perf test -vvvvv -F 39
+  39: Session topology                                      :
+  --- start ---
+  templ file: /tmp/perf-test-iUv755
+  socket_id number is too big.You may need to upgrade the perf tool.
+  ---- end ----
+  Session topology: Skip
+  [root@p23lp27 perf]#
+
+After:
+
+  [root@p23lp27 perf]# perf test -vvvvv -F 39
+  39: Session topology                                      :
+  --- start ---
+  templ file: /tmp/perf-test-8X8VTs
+  CPU 0, core 0, socket 6
+  CPU 1, core 1, socket 3
+  ---- end ----
+  Session topology: Ok
+  [root@p23lp27 perf]#
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: c84974ed9fb6 ("perf test: Add entry to test cpu topology")
+Link: http://lkml.kernel.org/r/20180611073153.15592-2-tmricht@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nfc/pn533/usb.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/tests/topology.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/nfc/pn533/usb.c
-+++ b/drivers/nfc/pn533/usb.c
-@@ -71,7 +71,7 @@ static void pn533_recv_response(struct u
- 	struct sk_buff *skb = NULL;
+--- a/tools/perf/tests/topology.c
++++ b/tools/perf/tests/topology.c
+@@ -42,6 +42,7 @@ static int session_write_header(char *pa
  
- 	if (!urb->status) {
--		skb = alloc_skb(urb->actual_length, GFP_KERNEL);
-+		skb = alloc_skb(urb->actual_length, GFP_ATOMIC);
- 		if (!skb) {
- 			nfc_err(&phy->udev->dev, "failed to alloc memory\n");
- 		} else {
-@@ -180,7 +180,7 @@ static int pn533_usb_send_frame(struct p
+ 	perf_header__set_feat(&session->header, HEADER_CPU_TOPOLOGY);
+ 	perf_header__set_feat(&session->header, HEADER_NRCPUS);
++	perf_header__set_feat(&session->header, HEADER_ARCH);
  
- 	if (dev->protocol_type == PN533_PROTO_REQ_RESP) {
- 		/* request for response for sent packet directly */
--		rc = pn533_submit_urb_for_response(phy, GFP_ATOMIC);
-+		rc = pn533_submit_urb_for_response(phy, GFP_KERNEL);
- 		if (rc)
- 			goto error;
- 	} else if (dev->protocol_type == PN533_PROTO_REQ_ACK_RESP) {
+ 	session->header.data_size += DATA_SIZE;
+ 
 
 
