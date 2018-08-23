@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3373EC43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E19C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:38:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED1542147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:38:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED1542147A
+	by mail.kernel.org (Postfix) with ESMTP id ED7E221486
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:38:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED7E221486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731502AbeHWMG7 (ORCPT
+        id S1731541AbeHWMHC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:06:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49118 "EHLO
+        Thu, 23 Aug 2018 08:07:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49128 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731001AbeHWMG6 (ORCPT
+        with ESMTP id S1731001AbeHWMHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:06:58 -0400
+        Thu, 23 Aug 2018 08:07:02 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5C708B1;
-        Thu, 23 Aug 2018 08:38:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 09306941;
+        Thu, 23 Aug 2018 08:38:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.14 214/217] PCI: pciehp: Fix unprotected list iteration in IRQ handler
-Date:   Thu, 23 Aug 2018 09:55:27 +0200
-Message-Id: <20180823075515.333257813@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.14 215/217] i2c: core: ACPI: Properly set status byte to 0 for multi-byte writes
+Date:   Thu, 23 Aug 2018 09:55:28 +0200
+Message-Id: <20180823075515.377709283@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -50,64 +51,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 1204e35bedf4e5015cda559ed8c84789a6dae24e upstream.
+commit c463a158cb6c5d9a85b7d894cd4f8116e8bd6be0 upstream.
 
-Commit b440bde74f04 ("PCI: Add pci_ignore_hotplug() to ignore hotplug
-events for a device") iterates over the devices on a hotplug port's
-subordinate bus in pciehp's IRQ handler without acquiring pci_bus_sem.
-It is thus possible for a user to cause a crash by concurrently
-manipulating the device list, e.g. by disabling slot power via sysfs
-on a different CPU or by initiating a remove/rescan via sysfs.
+acpi_gsb_i2c_write_bytes() returns i2c_transfer()'s return value, which
+is the number of transfers executed on success, so 1.
 
-This can't be fixed by acquiring pci_bus_sem because it may sleep.
-The simplest fix is to avoid the list iteration altogether and just
-check the ignore_hotplug flag on the port itself.  This works because
-pci_ignore_hotplug() sets the flag both on the device as well as on its
-parent bridge.
+The ACPI code expects us to store 0 in gsb->status for success, not 1.
 
-We do lose the ability to print the name of the device blocking hotplug
-in the debug message, but that's probably bearable.
+Specifically this breaks the following code in the Thinkpad 8 DSDT:
 
-Fixes: b440bde74f04 ("PCI: Add pci_ignore_hotplug() to ignore hotplug events for a device")
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+            ECWR = I2CW = ECWR /* \_SB_.I2C1.BAT0.ECWR */
+            If ((ECST == Zero))
+            {
+                ECRD = I2CR /* \_SB_.I2C1.I2CR */
+            }
+
+Before this commit we set ECST to 1, causing the read to never happen
+breaking battery monitoring on the Thinkpad 8.
+
+This commit makes acpi_gsb_i2c_write_bytes() return 0 when i2c_transfer()
+returns 1, so the single write transfer completed successfully, and
+makes it return -EIO on for other (unexpected) return values >= 0.
+
 Cc: stable@vger.kernel.org
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/hotplug/pciehp_hpc.c |   13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+ drivers/i2c/i2c-core-acpi.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -562,8 +562,6 @@ static irqreturn_t pciehp_isr(int irq, v
- {
- 	struct controller *ctrl = (struct controller *)dev_id;
- 	struct pci_dev *pdev = ctrl_dev(ctrl);
--	struct pci_bus *subordinate = pdev->subordinate;
--	struct pci_dev *dev;
- 	struct slot *slot = ctrl->slot;
- 	u16 status, events;
- 	u8 present;
-@@ -611,14 +609,9 @@ static irqreturn_t pciehp_isr(int irq, v
- 		wake_up(&ctrl->queue);
- 	}
+--- a/drivers/i2c/i2c-core-acpi.c
++++ b/drivers/i2c/i2c-core-acpi.c
+@@ -475,11 +475,16 @@ static int acpi_gsb_i2c_write_bytes(stru
+ 	msgs[0].buf = buffer;
  
--	if (subordinate) {
--		list_for_each_entry(dev, &subordinate->devices, bus_list) {
--			if (dev->ignore_hotplug) {
--				ctrl_dbg(ctrl, "ignoring hotplug event %#06x (%s requested no hotplug)\n",
--					 events, pci_name(dev));
--				return IRQ_HANDLED;
--			}
--		}
-+	if (pdev->ignore_hotplug) {
-+		ctrl_dbg(ctrl, "ignoring hotplug event %#06x\n", events);
-+		return IRQ_HANDLED;
- 	}
+ 	ret = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
+-	if (ret < 0)
+-		dev_err(&client->adapter->dev, "i2c write failed\n");
  
- 	/* Check Attention Button Pressed */
+ 	kfree(buffer);
+-	return ret;
++
++	if (ret < 0) {
++		dev_err(&client->adapter->dev, "i2c write failed: %d\n", ret);
++		return ret;
++	}
++
++	/* 1 transfer must have completed successfully */
++	return (ret == 1) ? 0 : -EIO;
+ }
+ 
+ static acpi_status
 
 
