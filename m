@@ -2,335 +2,274 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 233A2C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 15:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82155C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 15:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCA7A20661
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 15:24:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCA7A20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 280DA20661
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 15:25:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 280DA20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726941AbeHWSyK (ORCPT
+        id S1727160AbeHWSzi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 14:54:10 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48178 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726117AbeHWSyH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 14:54:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B8E481650;
-        Thu, 23 Aug 2018 08:23:59 -0700 (PDT)
-Received: from e107564-lin.cambridge.arm.com (e107564-lin.cambridge.arm.com [10.2.131.9])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 61AC73F2EA;
-        Thu, 23 Aug 2018 08:23:57 -0700 (PDT)
-From:   Brian Starkey <brian.starkey@arm.com>
-To:     dri-devel@lists.freedesktop.org, daniel.vetter@ffwll.ch,
-        daniel@fooishbar.org, airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org
-Cc:     linux-kernel@vger.kernel.org, alexandru-cosmin.gheorghe@arm.com,
-        liviu.dudau@arm.com, ayan.halder@arm.com, tfiga@chromium.org,
-        hoegsberg@chromium.org
-Subject: [RFC PATCH v2 3/3] drm/afbc: Add AFBC modifier usage documentation
-Date:   Thu, 23 Aug 2018 16:23:43 +0100
-Message-Id: <20180823152343.6474-4-brian.starkey@arm.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180823152343.6474-1-brian.starkey@arm.com>
-References: <20180823152343.6474-1-brian.starkey@arm.com>
+        Thu, 23 Aug 2018 14:55:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58284 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726928AbeHWSzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 14:55:37 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 85599401EF3C;
+        Thu, 23 Aug 2018 15:25:28 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-116-161.ams2.redhat.com [10.36.116.161])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8A8F9A9F09;
+        Thu, 23 Aug 2018 15:25:24 +0000 (UTC)
+Subject: Re: [RFC 01/13] iommu: Introduce bind_guest_stage API
+To:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jean-philippe.brucker@arm.com,
+        jacob.jun.pan@linux.intel.com, yi.l.liu@linux.intel.com,
+        will.deacon@arm.com, robin.murphy@arm.com
+References: <1535026656-8450-1-git-send-email-eric.auger@redhat.com>
+ <1535026656-8450-2-git-send-email-eric.auger@redhat.com>
+Cc:     marc.zyngier@arm.com, christoffer.dall@arm.com,
+        peter.maydell@linaro.org
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <22c01a4d-c74a-7279-d4ae-39e29a3bc942@redhat.com>
+Date:   Thu, 23 Aug 2018 17:25:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
+MIME-Version: 1.0
+In-Reply-To: <1535026656-8450-2-git-send-email-eric.auger@redhat.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 23 Aug 2018 15:25:28 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 23 Aug 2018 15:25:28 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AFBC is a flexible, proprietary, lossless compression protocol and
-format, with a number of defined DRM format modifiers. To facilitate
-consistency and compatibility between different AFBC producers and
-consumers, document the expectations for usage of the AFBC DRM format
-modifiers in a new .rst chapter.
+Hi,
 
-Signed-off-by: Brian Starkey <brian.starkey@arm.com>
----
- Documentation/gpu/afbc.rst    | 226 ++++++++++++++++++++++++++++++++++++++++++
- Documentation/gpu/drivers.rst |   1 +
- MAINTAINERS                   |   1 +
- include/uapi/drm/drm_fourcc.h |   3 +
- 4 files changed, 231 insertions(+)
- create mode 100644 Documentation/gpu/afbc.rst
+On 08/23/2018 02:17 PM, Eric Auger wrote:
+> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> 
+> In virtualization use case, when a guest is assigned
+> a PCI host device, protected by a virtual IOMMU on a guest,
+> the physical IOMMU must be programmed to be consistent with
+> the guest mappings. If the physical IOMMU supports two
+> translation stages it makes sense to program guest mappings
+> onto the first stage while to host owns the stage 2.
+> 
+> In that case, it is mandated to trap on guest configuration
+> settings and pass those to the physical iommu driver.
+> 
+> This patch adds a new API to the iommu subsystem that allows
+> to bind and unbind the guest configuration data to the host.
+> 
+> A generic iommu_guest_stage_config struct is introduced in
+> a new iommu.h uapi header. This is going to be used by the VFIO
+> user API. We foresee at least 2 specialization of this struct,
+> for PASID table passing and ARM SMMUv3.
+> 
+> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> 
+> ---
+> 
+> This patch generalizes the API introduced by Jacob & co-authors in
+> https://lwn.net/Articles/754331/
+> ---
+>  drivers/iommu/iommu.c      | 19 +++++++++++++++
+>  include/linux/iommu.h      | 23 ++++++++++++++++++
+>  include/uapi/linux/iommu.h | 59 ++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 101 insertions(+)
+>  create mode 100644 include/uapi/linux/iommu.h
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 63b3756..5156172 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -1326,6 +1326,25 @@ int iommu_attach_device(struct iommu_domain *domain, struct device *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(iommu_attach_device);
+>  
+> +int iommu_bind_guest_stage(struct iommu_domain *domain, struct device *dev,
+> +			   struct iommu_guest_stage_config *cfg)
+> +{
+> +	if (unlikely(!domain->ops->bind_guest_stage))
+> +		return -ENODEV;
+> +
+> +	return domain->ops->bind_guest_stage(domain, dev, cfg);
+> +}
+> +EXPORT_SYMBOL_GPL(iommu_bind_guest_stage);
+> +
+> +void iommu_unbind_guest_stage(struct iommu_domain *domain, struct device *dev)
+> +{
+> +	if (unlikely(!domain->ops->unbind_guest_stage))
+> +		return;
+> +
+> +	domain->ops->unbind_guest_stage(domain, dev);
+> +}
+> +EXPORT_SYMBOL_GPL(iommu_unbind_guest_stage);
+> +
+>  static void __iommu_detach_device(struct iommu_domain *domain,
+>  				  struct device *dev)
+>  {
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index 19938ee..aec853d 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -25,6 +25,7 @@
+>  #include <linux/errno.h>
+>  #include <linux/err.h>
+>  #include <linux/of.h>
+> +#include <uapi/linux/iommu.h>
+>  
+>  #define IOMMU_READ	(1 << 0)
+>  #define IOMMU_WRITE	(1 << 1)
+> @@ -187,6 +188,8 @@ struct iommu_resv_region {
+>   * @domain_get_windows: Return the number of windows for a domain
+>   * @of_xlate: add OF master IDs to iommu grouping
+>   * @pgsize_bitmap: bitmap of all possible supported page sizes
+> + * @bind_guest_stage: program the guest stage configuration
+> + * @unbind_guest_stage: unbind the guest stage and restore defaults
+>   */
+>  struct iommu_ops {
+>  	bool (*capable)(enum iommu_cap);
+> @@ -235,6 +238,11 @@ struct iommu_ops {
+>  	int (*of_xlate)(struct device *dev, struct of_phandle_args *args);
+>  	bool (*is_attach_deferred)(struct iommu_domain *domain, struct device *dev);
+>  
+> +	int (*bind_guest_stage)(struct iommu_domain *domain, struct device *dev,
+> +				struct iommu_guest_stage_config *cfg);
+> +	void (*unbind_guest_stage)(struct iommu_domain *domain,
+> +				   struct device *dev);
+> +
+>  	unsigned long pgsize_bitmap;
+>  };
+>  
+> @@ -296,6 +304,10 @@ extern int iommu_attach_device(struct iommu_domain *domain,
+>  			       struct device *dev);
+>  extern void iommu_detach_device(struct iommu_domain *domain,
+>  				struct device *dev);
+> +extern int iommu_bind_guest_stage(struct iommu_domain *domain,
+> +		struct device *dev, struct iommu_guest_stage_config *cfg);
+> +extern void iommu_unbind_guest_stage(struct iommu_domain *domain,
+> +				     struct device *dev);
+>  extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
+>  extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
+>  		     phys_addr_t paddr, size_t size, int prot);
+> @@ -696,6 +708,17 @@ const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
+>  	return NULL;
+>  }
+>  
+> +static inline
+> +int iommu_bind_guest_stage(struct iommu_domain *domain, struct device *dev,
+> +			   struct iommu_guest_stage_config *cfg)
+> +{
+> +	return -ENODEV;
+> +}
+> +static inline
+> +void iommu_unbind_guest_stage(struct iommu_domain *domain, struct device *dev)
+> +{
+> +}
+> +
+>  #endif /* CONFIG_IOMMU_API */
+>  
+>  #endif /* __LINUX_IOMMU_H */
+> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+> new file mode 100644
+> index 0000000..2d1593c
+> --- /dev/null
+> +++ b/include/uapi/linux/iommu.h
+> @@ -0,0 +1,59 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +/*
+> + * IOMMU user API definitions
+> + *
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef _UAPI_IOMMU_H
+> +#define _UAPI_IOMMU_H
+> +
+> +#include <linux/types.h>
+> +
+> +/**
+> + * PASID table data used to bind guest PASID table to the host IOMMU. This will
+> + * enable guest managed first level page tables.
+> + * @version: for future extensions and identification of the data format
+> + * @bytes: size of this structure
+> + * @base_ptr:	PASID table pointer
+> + * @pasid_bits:	number of bits supported in the guest PASID table, must be less
+> + *		or equal than the host supported PASID size.
+> + */
+> +struct iommu_pasid_table_config {
+> +	__u32 version;
+> +#define PASID_TABLE_CFG_VERSION_1 1
+> +	__u32 bytes;
+> +	__u64 base_ptr;
+> +	__u8 pasid_bits;
+> +};
+> +
+> +/**
+> + * Stream Table Entry S1 info
+> + * @disabled: the smmu is disabled
+> + * @bypassed: stage 1 is bypassed
+> + * @aborted: aborted
+> + * @cdptr_dma: GPA of the Context Descriptor
+> + * @asid: address space identified associated to the CD
+> + */
+> +struct iommu_smmu_s1_config {
+> +	__u8 disabled;
+> +	__u8 bypassed;
+> +	__u8 aborted;
+> +	__u64 cdptr_dma;
+> +	__u16 asid;
+This asid field is a leftover. asid is part of the CD (owned by the
+guest) and cannot be conveyed through this API. What is relevant is to
+pass is the guest asid_bits (vSMMU IDR1 info), to be compared with the
+host one. So we end up having something similar to the base_ptr and
+pasid_bits of iommu_pasid_table_config.
 
-diff --git a/Documentation/gpu/afbc.rst b/Documentation/gpu/afbc.rst
-new file mode 100644
-index 000000000000..58d2b6b5d48b
---- /dev/null
-+++ b/Documentation/gpu/afbc.rst
-@@ -0,0 +1,226 @@
-+===================================
-+ Arm Framebuffer Compression (AFBC)
-+===================================
-+
-+AFBC is a proprietary lossless image compression protocol and format.
-+It provides fine-grained random access and minimizes the amount of
-+data transferred between IP blocks.
-+
-+AFBC can be enabled on drivers which support it via use of the AFBC
-+format modifiers defined in drm_fourcc.h. See DRM_FORMAT_MOD_ARM_AFBC(*).
-+
-+All users of the AFBC modifiers must follow the usage guidelines laid
-+out in this document, to ensure compatibility across different AFBC
-+producers and consumers.
-+
-+Components and Ordering
-+=======================
-+
-+AFBC streams can contain several components - where a component
-+corresponds to a color channel (i.e. R, G, B, X, A, Y, Cb, Cr).
-+The assignment of input/output color channels must be consistent
-+between the encoder and the decoder for correct operation, otherwise
-+the consumer will interpret the decoded data incorrectly.
-+
-+Furthermore, when the lossless colorspace transform is used
-+(AFBC_FORMAT_MOD_YTR, which should be enabled for RGB buffers for
-+maximum compression efficiency), the component order must be:
-+
-+ * Component 0: R
-+ * Component 1: G
-+ * Component 2: B
-+
-+The component ordering is communicated via the fourcc code in the
-+fourcc:modifier pair. In general, component '0' is considered to
-+reside in the least-significant bits of the corresponding linear
-+format. For example, COMP(bits):
-+
-+ * DRM_FORMAT_ABGR8888
-+
-+   * Component 0: R(8)
-+   * Component 1: G(8)
-+   * Component 2: B(8)
-+   * Component 3: A(8)
-+
-+ * DRM_FORMAT_BGR888
-+
-+   * Component 0: R(8)
-+   * Component 1: G(8)
-+   * Component 2: B(8)
-+
-+ * DRM_FORMAT_YUYV
-+
-+   * Component 0: Y(8)
-+   * Component 1: Cb(8, 2x1 subsampled)
-+   * Component 2: Cr(8, 2x1 subsampled)
-+
-+In AFBC, 'X' components are not treated any differently from any other
-+component. Therefore, an AFBC buffer with fourcc DRM_FORMAT_XBGR8888
-+encodes with 4 components, like so:
-+
-+ * DRM_FORMAT_XBGR8888
-+
-+   * Component 0: R(8)
-+   * Component 1: G(8)
-+   * Component 2: B(8)
-+   * Component 3: X(8)
-+
-+Please note, however, that the inclusion of a "wasted" 'X' channel is
-+bad for compression efficiency, and so it's recommended to avoid
-+formats containing 'X' bits. If a fourth component is
-+required/expected by the encoder/decoder, then it is recommended to
-+instead use an equivalent format with alpha, setting all alpha bits to
-+'1'. If there is no requirement for a fourth component, then a format
-+which doesn't include alpha can be used, e.g. DRM_FORMAT_BGR888.
-+
-+Number of Planes
-+================
-+
-+Formats which are typically multi-planar in linear layouts (e.g. YUV
-+420), can be encoded into one, or multiple, AFBC planes. As with
-+component order, the encoder and decoder must agree about the number
-+of planes in order to correctly decode the buffer. The fourcc code is
-+used to determine the number of encoded planes in an AFBC buffer,
-+matching the number of planes for the linear (unmodified) format.
-+Within each plane, the component ordering also follows the fourcc
-+code:
-+
-+For example:
-+
-+ * DRM_FORMAT_YUYV: nplanes = 1
-+
-+   * Plane 0:
-+
-+     * Component 0: Y(8)
-+     * Component 1: Cb(8, 2x1 subsampled)
-+     * Component 2: Cr(8, 2x1 subsampled)
-+
-+ * DRM_FORMAT_NV12: nplanes = 2
-+
-+   * Plane 0:
-+
-+     * Component 0: Y(8)
-+
-+   * Plane 1:
-+
-+     * Component 0: Cb(8, 2x1 subsampled)
-+     * Component 1: Cr(8, 2x1 subsampled)
-+
-+Cross-device interoperability
-+=============================
-+
-+For maximum compatibility across devices, the table below defines
-+canonical formats for use between AFBC-enabled devices. Formats which
-+are listed here must be used exactly as specified when using the AFBC
-+modifiers. Formats which are not listed should be avoided.
-+
-+.. flat-table:: AFBC formats
-+
-+   * - Fourcc code
-+     - Description
-+     - Planes/Components
-+
-+   * - DRM_FORMAT_ABGR2101010
-+     - 10-bit per component RGB, with 2-bit alpha
-+     - Plane 0: 4 components
-+              * Component 0: R(10)
-+              * Component 1: G(10)
-+              * Component 2: B(10)
-+              * Component 3: A(2)
-+
-+   * - DRM_FORMAT_ABGR8888
-+     - 8-bit per component RGB, with 8-bit alpha
-+     - Plane 0: 4 components
-+              * Component 0: R(8)
-+              * Component 1: G(8)
-+              * Component 2: B(8)
-+              * Component 3: A(8)
-+
-+   * - DRM_FORMAT_BGR888
-+     - 8-bit per component RGB
-+     - Plane 0: 3 components
-+              * Component 0: R(8)
-+              * Component 1: G(8)
-+              * Component 2: B(8)
-+
-+   * - DRM_FORMAT_BGR565
-+     - 5/6-bit per component RGB
-+     - Plane 0: 3 components
-+              * Component 0: R(5)
-+              * Component 1: G(6)
-+              * Component 2: B(5)
-+
-+   * - DRM_FORMAT_ABGR1555
-+     - 5-bit per component RGB, with 1-bit alpha
-+     - Plane 0: 4 components
-+              * Component 0: R(5)
-+              * Component 1: G(5)
-+              * Component 2: B(5)
-+              * Component 3: A(1)
-+
-+   * - DRM_FORMAT_VUY888
-+     - 8-bit per component YCbCr 444, single plane
-+     - Plane 0: 3 components
-+              * Component 0: Y(8)
-+              * Component 1: Cb(8)
-+              * Component 2: Cr(8)
-+
-+   * - DRM_FORMAT_VUY101010
-+     - 10-bit per component YCbCr 444, single plane
-+     - Plane 0: 3 components
-+              * Component 0: Y(10)
-+              * Component 1: Cb(10)
-+              * Component 2: Cr(10)
-+
-+   * - DRM_FORMAT_YUYV
-+     - 8-bit per component YCbCr 422, single plane
-+     - Plane 0: 3 components
-+              * Component 0: Y(8)
-+              * Component 1: Cb(8, 2x1 subsampled)
-+              * Component 2: Cr(8, 2x1 subsampled)
-+
-+   * - DRM_FORMAT_Y210
-+     - 10-bit per component YCbCr 422, single plane
-+     - Plane 0: 3 components
-+              * Component 0: Y(10)
-+              * Component 1: Cb(10, 2x1 subsampled)
-+              * Component 2: Cr(10, 2x1 subsampled)
-+
-+   * - DRM_FORMAT_YUV420_8BIT
-+     - 8-bit per component YCbCr 420, single plane
-+     - Plane 0: 3 components
-+              * Component 0: Y(8)
-+              * Component 1: Cb(8, 2x2 subsampled)
-+              * Component 2: Cr(8, 2x2 subsampled)
-+
-+   * - DRM_FORMAT_YUV420_10BIT
-+     - 10-bit per component YCbCr 420, single plane
-+     - Plane 0: 3 components
-+              * Component 0: Y(10)
-+              * Component 1: Cb(10, 2x2 subsampled)
-+              * Component 2: Cr(10, 2x2 subsampled)
-+
-+   * - DRM_FORMAT_NV12
-+     - 8-bit per component YCbCr 420, two plane
-+     - Plane 0: 1 component
-+              * Component 0: Y(8)
-+       Plane 1: 2 components
-+              * Component 0: Cb(8, 2x2 subsampled)
-+              * Component 1: Cr(8, 2x2 subsampled)
-+
-+   * - DRM_FORMAT_P010
-+     - 10-bit per component YCbCr 420, two plane
-+     - Plane 0: 1 component
-+              * Component 0: Y(10)
-+       Plane 1: 2 components
-+              * Component 0: Cb(10, 2x2 subsampled)
-+              * Component 1: Cr(10, 2x2 subsampled)
-+
-+   * - DRM_FORMAT_YUV420
-+     - 8-bit per component YCbCr 420, three plane
-+     - Plane 0: 1 component
-+              * Component 0: Y(8)
-+       Plane 1: 1 component
-+              * Component 0: Cb(8, 2x2 subsampled)
-+       Plane 2: 1 component
-+              * Component 0: Cr(8, 2x2 subsampled)
-diff --git a/Documentation/gpu/drivers.rst b/Documentation/gpu/drivers.rst
-index d3ab6abae838..304691cb90e8 100644
---- a/Documentation/gpu/drivers.rst
-+++ b/Documentation/gpu/drivers.rst
-@@ -13,6 +13,7 @@ GPU Driver Documentation
-    vc4
-    bridge/dw-hdmi
-    xen-front
-+   afbc
- 
- .. only::  subproject and html
- 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4af7f6119530..8fb92f162ae1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1036,6 +1036,7 @@ M:	Mali DP Maintainers <malidp@foss.arm.com>
- S:	Supported
- F:	drivers/gpu/drm/arm/
- F:	Documentation/devicetree/bindings/display/arm,malidp.txt
-+F:	Documentation/gpu/afbc.rst
- 
- ARM MFM AND FLOPPY DRIVERS
- M:	Ian Molton <spyro@f2s.com>
-diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-index 41f4610e471c..4ef685a02adc 100644
---- a/include/uapi/drm/drm_fourcc.h
-+++ b/include/uapi/drm/drm_fourcc.h
-@@ -494,6 +494,9 @@ extern "C" {
-  * AFBC has several features which may be supported and/or used, which are
-  * represented using bits in the modifier. Not all combinations are valid,
-  * and different devices or use-cases may support different combinations.
-+ *
-+ * Further information on the use of AFBC modifiers can be found in
-+ * Documentation/gpu/afbc.rst
-  */
- #define DRM_FORMAT_MOD_ARM_AFBC(__afbc_mode)	fourcc_mod_code(ARM, __afbc_mode)
- 
--- 
-2.16.1
+Otherwise, the other fields (disable, bypassed, aborted) can be packed
+as masks in a _u8 flag.
 
+Anyway this API still is at the stage of proof of concept. At least it
+shows the similarities between that use case and the PASID one and
+should encourage to discuss about the relevance to have a unified API to
+pass the guest stage info.
+
+Thanks
+
+Eric
+> +};
+> +
+> +struct iommu_guest_stage_config {
+> +#define PASID_TABLE	(1 << 0)
+> +#define SMMUV3_S1_CFG	(1 << 1)
+> +	__u32 flags;
+> +	union {
+> +		struct iommu_pasid_table_config pasidt;
+> +		struct iommu_smmu_s1_config smmu_s1;
+> +	};
+> +};
+> +
+> +#endif /* _UAPI_IOMMU_H */
+> 
