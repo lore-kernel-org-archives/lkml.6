@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CA5C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E79F7C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95AC3208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95AC3208D6
+	by mail.kernel.org (Postfix) with ESMTP id A9B16208CC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:02:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9B16208CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388470AbeHWMaT (ORCPT
+        id S1733183AbeHWMaz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:30:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55672 "EHLO
+        Thu, 23 Aug 2018 08:30:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55712 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbeHWMaS (ORCPT
+        with ESMTP id S1726277AbeHWMay (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:30:18 -0400
+        Thu, 23 Aug 2018 08:30:54 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 642A2CA0;
-        Thu, 23 Aug 2018 09:01:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB8FABBF;
+        Thu, 23 Aug 2018 09:02:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 225/324] netfilter: nf_conntrack: Fix possible possible crash on module loading.
-Date:   Thu, 23 Aug 2018 09:54:51 +0200
-Message-Id: <20180823075007.408564453@linuxfoundation.org>
+Subject: [PATCH 4.17 226/324] ARC: [plat-hsdk]: Configure APB GPIO controller on ARC HSDK platform
+Date:   Thu, 23 Aug 2018 09:54:52 +0200
+Message-Id: <20180823075007.455243494@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,64 +52,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 
-[ Upstream commit 2045cdfa1b40d66f126f3fd05604fc7c754f0022 ]
+[ Upstream commit ec58ba16e174d7ca24c8955a21cd0a53e0c32fdf ]
 
-Loading the nf_conntrack module with doubled hashsize parameter, i.e.
-	  modprobe nf_conntrack hashsize=12345 hashsize=12345
-causes NULL-ptr deref.
+In case of HSDK we have intermediate INTC in for of DW APB GPIO controller
+which is used as a de-bounce logic for interrupt wires that come from
+outside the board.
 
-If 'hashsize' specified twice, the nf_conntrack_set_hashsize() function
-will be called also twice.
-The first nf_conntrack_set_hashsize() call will set the
-'nf_conntrack_htable_size' variable:
+We cannot use existing "irq-dw-apb-ictl" driver here because all input
+lines are routed to corresponding output lines but not muxed into one
+line (this is configured in RTL and we cannot change this in software).
 
-	nf_conntrack_set_hashsize()
-		...
-		/* On boot, we can set this without any fancy locking. */
-		if (!nf_conntrack_htable_size)
-			return param_set_uint(val, kp);
+But even if we add such a feature to "irq-dw-apb-ictl" driver that won't
+benefit us as higher-level INTC (in case of HSDK it is IDU) anyways has
+per-input control so adding fully-controller intermediate INTC will only
+bring some overhead on interrupt processing but no other benefits.
 
-But on the second invocation, the nf_conntrack_htable_size is already set,
-so the nf_conntrack_set_hashsize() will take a different path and call
-the nf_conntrack_hash_resize() function. Which will crash on the attempt
-to dereference 'nf_conntrack_hash' pointer:
+Thus we just do one-time configuration of DW APB GPIO controller and
+forget about it.
 
-	BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-	RIP: 0010:nf_conntrack_hash_resize+0x255/0x490 [nf_conntrack]
-	Call Trace:
-	 nf_conntrack_set_hashsize+0xcd/0x100 [nf_conntrack]
-	 parse_args+0x1f9/0x5a0
-	 load_module+0x1281/0x1a50
-	 __se_sys_finit_module+0xbe/0xf0
-	 do_syscall_64+0x7c/0x390
-	 entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Based on implementation available on arch/arc/plat-axs10x/axs10x.c file.
 
-Fix this, by checking !nf_conntrack_hash instead of
-!nf_conntrack_htable_size. nf_conntrack_hash will be initialized only
-after the module loaded, so the second invocation of the
-nf_conntrack_set_hashsize() won't crash, it will just reinitialize
-nf_conntrack_htable_size again.
-
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Acked-by: Alexey Brodkin <abrodkin@synopsys.com>
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/nf_conntrack_core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arc/plat-hsdk/platform.c |   62 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
---- a/net/netfilter/nf_conntrack_core.c
-+++ b/net/netfilter/nf_conntrack_core.c
-@@ -1972,7 +1972,7 @@ int nf_conntrack_set_hashsize(const char
- 		return -EOPNOTSUPP;
+--- a/arch/arc/plat-hsdk/platform.c
++++ b/arch/arc/plat-hsdk/platform.c
+@@ -42,6 +42,66 @@ static void __init hsdk_init_per_cpu(uns
+ #define SDIO_UHS_REG_EXT	(SDIO_BASE + 0x108)
+ #define SDIO_UHS_REG_EXT_DIV_2	(2 << 30)
  
- 	/* On boot, we can set this without any fancy locking. */
--	if (!nf_conntrack_htable_size)
-+	if (!nf_conntrack_hash)
- 		return param_set_uint(val, kp);
++#define HSDK_GPIO_INTC          (ARC_PERIPHERAL_BASE + 0x3000)
++
++static void __init hsdk_enable_gpio_intc_wire(void)
++{
++	/*
++	 * Peripherals on CPU Card are wired to cpu intc via intermediate
++	 * DW APB GPIO blocks (mainly for debouncing)
++	 *
++	 *         ---------------------
++	 *        |  snps,archs-intc  |
++	 *        ---------------------
++	 *                  |
++	 *        ----------------------
++	 *        | snps,archs-idu-intc |
++	 *        ----------------------
++	 *         |   |     |   |    |
++	 *         | [eth] [USB]    [... other peripherals]
++	 *         |
++	 * -------------------
++	 * | snps,dw-apb-intc |
++	 * -------------------
++	 *  |      |   |   |
++	 * [Bt] [HAPS]   [... other peripherals]
++	 *
++	 * Current implementation of "irq-dw-apb-ictl" driver doesn't work well
++	 * with stacked INTCs. In particular problem happens if its master INTC
++	 * not yet instantiated. See discussion here -
++	 * https://lkml.org/lkml/2015/3/4/755
++	 *
++	 * So setup the first gpio block as a passive pass thru and hide it from
++	 * DT hardware topology - connect intc directly to cpu intc
++	 * The GPIO "wire" needs to be init nevertheless (here)
++	 *
++	 * One side adv is that peripheral interrupt handling avoids one nested
++	 * intc ISR hop
++	 *
++	 * According to HSDK User's Manual [1], "Table 2 Interrupt Mapping"
++	 * we have the following GPIO input lines used as sources of interrupt:
++	 * - GPIO[0] - Bluetooth interrupt of RS9113 module
++	 * - GPIO[2] - HAPS interrupt (on HapsTrak 3 connector)
++	 * - GPIO[3] - Audio codec (MAX9880A) interrupt
++	 * - GPIO[8-23] - Available on Arduino and PMOD_x headers
++	 * For now there's no use of Arduino and PMOD_x headers in Linux
++	 * use-case so we only enable lines 0, 2 and 3.
++	 *
++	 * [1] https://github.com/foss-for-synopsys-dwc-arc-processors/ARC-Development-Systems-Forum/wiki/docs/ARC_HSDK_User_Guide.pdf
++	 */
++#define GPIO_INTEN              (HSDK_GPIO_INTC + 0x30)
++#define GPIO_INTMASK            (HSDK_GPIO_INTC + 0x34)
++#define GPIO_INTTYPE_LEVEL      (HSDK_GPIO_INTC + 0x38)
++#define GPIO_INT_POLARITY       (HSDK_GPIO_INTC + 0x3c)
++#define GPIO_INT_CONNECTED_MASK	0x0d
++
++	iowrite32(0xffffffff, (void __iomem *) GPIO_INTMASK);
++	iowrite32(~GPIO_INT_CONNECTED_MASK, (void __iomem *) GPIO_INTMASK);
++	iowrite32(0x00000000, (void __iomem *) GPIO_INTTYPE_LEVEL);
++	iowrite32(0xffffffff, (void __iomem *) GPIO_INT_POLARITY);
++	iowrite32(GPIO_INT_CONNECTED_MASK, (void __iomem *) GPIO_INTEN);
++}
++
+ static void __init hsdk_init_early(void)
+ {
+ 	/*
+@@ -62,6 +122,8 @@ static void __init hsdk_init_early(void)
+ 	 * minimum possible div-by-2.
+ 	 */
+ 	iowrite32(SDIO_UHS_REG_EXT_DIV_2, (void __iomem *) SDIO_UHS_REG_EXT);
++
++	hsdk_enable_gpio_intc_wire();
+ }
  
- 	rc = kstrtouint(val, 0, &hashsize);
+ static const char *hsdk_compat[] __initconst = {
 
 
