@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE00C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7FF5C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 205BB21486
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:33:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 205BB21486
+	by mail.kernel.org (Postfix) with ESMTP id 9DE822147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:33:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DE822147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731894AbeHWMCD (ORCPT
+        id S1731907AbeHWMCH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:02:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48366 "EHLO
+        Thu, 23 Aug 2018 08:02:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48380 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729390AbeHWMCD (ORCPT
+        with ESMTP id S1729390AbeHWMCF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:02:03 -0400
+        Thu, 23 Aug 2018 08:02:05 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9059C8B1;
-        Thu, 23 Aug 2018 08:33:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CAE518B1;
+        Thu, 23 Aug 2018 08:33:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 202/217] f2fs: return error during fill_super
-Date:   Thu, 23 Aug 2018 09:55:15 +0200
-Message-Id: <20180823075514.745785998@linuxfoundation.org>
+Subject: [PATCH 4.14 203/217] f2fs: sanity check for total valid node blocks
+Date:   Thu, 23 Aug 2018 09:55:16 +0200
+Message-Id: <20180823075514.787423718@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -53,118 +54,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-commit c39a1b348c4fe172729eff77c533dabc3c7cdaa7 upstream.
+commit 8a29c1260e24e7c9c6ab138aa0017558d8b28208 upstream.
 
-Let's avoid BUG_ON during fill_super, when on-disk was totall corrupted.
+This patch enhances sanity check for SIT entries.
 
+syzbot hit the following crash on upstream commit
+83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
+Merge branch 'fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
+syzbot dashboard link: https://syzkaller.appspot.com/bug?extid=bf9253040425feb155ad
+
+syzkaller reproducer: https://syzkaller.appspot.com/x/repro.syz?id=5692130282438656
+Raw console output: https://syzkaller.appspot.com/x/log.txt?id=5095924598571008
+Kernel config: https://syzkaller.appspot.com/x/.config?id=1808800213120130118
+compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for details.
+If you forward the report, please keep this part and the footer.
+
+F2FS-fs (loop0): invalid crc value
+F2FS-fs (loop0): Try to recover 1th superblock, ret: 0
+F2FS-fs (loop0): Mounted with checkpoint version = d
+F2FS-fs (loop0): Bitmap was wrongly cleared, blk:9740
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/segment.c:1884!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 4508 Comm: syz-executor0 Not tainted 4.17.0-rc1+ #10
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882
+RSP: 0018:ffff8801af526708 EFLAGS: 00010282
+RAX: ffffed0035ea4cc0 RBX: ffff8801ad454f90 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff82eeb87e RDI: ffffed0035ea4cb6
+RBP: ffff8801af526760 R08: ffff8801ad4a2480 R09: ffffed003b5e4f90
+R10: ffffed003b5e4f90 R11: ffff8801daf27c87 R12: ffff8801adb8d380
+R13: 0000000000000001 R14: 0000000000000008 R15: 00000000ffffffff
+FS:  00000000014af940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f06bc223000 CR3: 00000001adb02000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ allocate_data_block+0x66f/0x2050 fs/f2fs/segment.c:2663
+ do_write_page+0x105/0x1b0 fs/f2fs/segment.c:2727
+ write_node_page+0x129/0x350 fs/f2fs/segment.c:2770
+ __write_node_page+0x7da/0x1370 fs/f2fs/node.c:1398
+ sync_node_pages+0x18cf/0x1eb0 fs/f2fs/node.c:1652
+ block_operations+0x429/0xa60 fs/f2fs/checkpoint.c:1088
+ write_checkpoint+0x3ba/0x5380 fs/f2fs/checkpoint.c:1405
+ f2fs_sync_fs+0x2fb/0x6a0 fs/f2fs/super.c:1077
+ __sync_filesystem fs/sync.c:39 [inline]
+ sync_filesystem+0x265/0x310 fs/sync.c:67
+ generic_shutdown_super+0xd7/0x520 fs/super.c:429
+ kill_block_super+0xa4/0x100 fs/super.c:1191
+ kill_f2fs_super+0x9f/0xd0 fs/f2fs/super.c:3030
+ deactivate_locked_super+0x97/0x100 fs/super.c:316
+ deactivate_super+0x188/0x1b0 fs/super.c:347
+ cleanup_mnt+0xbf/0x160 fs/namespace.c:1174
+ __cleanup_mnt+0x16/0x20 fs/namespace.c:1181
+ task_work_run+0x1e4/0x290 kernel/task_work.c:113
+ tracehook_notify_resume include/linux/tracehook.h:191 [inline]
+ exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
+ prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+ syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+ do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457d97
+RSP: 002b:00007ffd46f9c8e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000457d97
+RDX: 00000000014b09a3 RSI: 0000000000000002 RDI: 00007ffd46f9da50
+RBP: 00007ffd46f9da50 R08: 0000000000000000 R09: 0000000000000009
+R10: 0000000000000005 R11: 0000000000000246 R12: 00000000014b0940
+R13: 0000000000000000 R14: 0000000000000002 R15: 000000000000658e
+RIP: update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882 RSP: ffff8801af526708
+---[ end trace f498328bb02610a2 ]---
+
+Reported-and-tested-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+7d6d31d3bc702f566ce3@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+0a725420475916460f12@syzkaller.appspotmail.com
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/segment.c |   16 ++++++++++++----
- fs/f2fs/segment.h |   22 ++++++++++++++++++----
- 2 files changed, 30 insertions(+), 8 deletions(-)
+ fs/f2fs/segment.c |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -3240,7 +3240,7 @@ static int build_curseg(struct f2fs_sb_i
- 	return restore_curseg_summaries(sbi);
- }
- 
--static void build_sit_entries(struct f2fs_sb_info *sbi)
-+static int build_sit_entries(struct f2fs_sb_info *sbi)
- {
- 	struct sit_info *sit_i = SIT_I(sbi);
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
-@@ -3250,6 +3250,7 @@ static void build_sit_entries(struct f2f
- 	int sit_blk_cnt = SIT_BLK_CNT(sbi);
+@@ -3251,6 +3251,7 @@ static int build_sit_entries(struct f2fs
  	unsigned int i, start, end;
  	unsigned int readed, start_blk = 0;
-+	int err = 0;
+ 	int err = 0;
++	block_t total_node_blocks = 0;
  
  	do {
  		readed = ra_meta_pages(sbi, start_blk, BIO_MAX_PAGES,
-@@ -3268,7 +3269,9 @@ static void build_sit_entries(struct f2f
- 			sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
- 			f2fs_put_page(page, 1);
- 
--			check_block_count(sbi, start, &sit);
-+			err = check_block_count(sbi, start, &sit);
-+			if (err)
-+				return err;
+@@ -3273,6 +3274,8 @@ static int build_sit_entries(struct f2fs
+ 			if (err)
+ 				return err;
  			seg_info_from_raw_sit(se, &sit);
++			if (IS_NODESEG(se->type))
++				total_node_blocks += se->valid_blocks;
  
  			/* build discard map only one time */
-@@ -3303,7 +3306,9 @@ static void build_sit_entries(struct f2f
+ 			if (f2fs_discard_en(sbi)) {
+@@ -3305,11 +3308,15 @@ static int build_sit_entries(struct f2fs
+ 		sit = sit_in_journal(journal, i);
  
  		old_valid_blocks = se->valid_blocks;
++		if (IS_NODESEG(se->type))
++			total_node_blocks -= old_valid_blocks;
  
--		check_block_count(sbi, start, &sit);
-+		err = check_block_count(sbi, start, &sit);
-+		if (err)
-+			break;
+ 		err = check_block_count(sbi, start, &sit);
+ 		if (err)
+ 			break;
  		seg_info_from_raw_sit(se, &sit);
++		if (IS_NODESEG(se->type))
++			total_node_blocks += se->valid_blocks;
  
  		if (f2fs_discard_en(sbi)) {
-@@ -3323,6 +3328,7 @@ static void build_sit_entries(struct f2f
+ 			if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
+@@ -3328,6 +3335,15 @@ static int build_sit_entries(struct f2fs
  				se->valid_blocks - old_valid_blocks;
  	}
  	up_read(&curseg->journal_rwsem);
-+	return err;
- }
- 
- static void init_free_segmap(struct f2fs_sb_info *sbi)
-@@ -3492,7 +3498,9 @@ int build_segment_manager(struct f2fs_sb
- 		return err;
- 
- 	/* reinit free segmap based on SIT */
--	build_sit_entries(sbi);
-+	err = build_sit_entries(sbi);
-+	if (err)
-+		return err;
- 
- 	init_free_segmap(sbi);
- 	err = build_dirty_segmap(sbi);
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -625,7 +625,7 @@ static inline void verify_block_addr(str
- /*
-  * Summary block is always treated as an invalid block
-  */
--static inline void check_block_count(struct f2fs_sb_info *sbi,
-+static inline int check_block_count(struct f2fs_sb_info *sbi,
- 		int segno, struct f2fs_sit_entry *raw_sit)
- {
- #ifdef CONFIG_F2FS_CHECK_FS
-@@ -647,11 +647,25 @@ static inline void check_block_count(str
- 		cur_pos = next_pos;
- 		is_valid = !is_valid;
- 	} while (cur_pos < sbi->blocks_per_seg);
--	BUG_ON(GET_SIT_VBLOCKS(raw_sit) != valid_blocks);
 +
-+	if (unlikely(GET_SIT_VBLOCKS(raw_sit) != valid_blocks)) {
++	if (!err && total_node_blocks != valid_node_count(sbi)) {
 +		f2fs_msg(sbi->sb, KERN_ERR,
-+				"Mismatch valid blocks %d vs. %d",
-+					GET_SIT_VBLOCKS(raw_sit), valid_blocks);
++			"SIT is corrupted node# %u vs %u",
++			total_node_blocks, valid_node_count(sbi));
 +		set_sbi_flag(sbi, SBI_NEED_FSCK);
-+		return -EINVAL;
++		err = -EINVAL;
 +	}
- #endif
- 	/* check segment usage, and check boundary of a given segment number */
--	f2fs_bug_on(sbi, GET_SIT_VBLOCKS(raw_sit) > sbi->blocks_per_seg
--					|| segno > TOTAL_SEGS(sbi) - 1);
-+	if (unlikely(GET_SIT_VBLOCKS(raw_sit) > sbi->blocks_per_seg
-+					|| segno > TOTAL_SEGS(sbi) - 1)) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+				"Wrong valid blocks %d or segno %u",
-+					GET_SIT_VBLOCKS(raw_sit), segno);
-+		set_sbi_flag(sbi, SBI_NEED_FSCK);
-+		return -EINVAL;
-+	}
-+	return 0;
++
+ 	return err;
  }
  
- static inline pgoff_t current_sit_addr(struct f2fs_sb_info *sbi,
 
 
