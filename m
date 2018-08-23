@@ -6,44 +6,33 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3FC7C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC5DC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2678208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2678208C2
+	by mail.kernel.org (Postfix) with ESMTP id D2400208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2400208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389232AbeHWMkX (ORCPT
+        id S2389244AbeHWMk0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:40:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57070 "EHLO
+        Thu, 23 Aug 2018 08:40:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57082 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727875AbeHWMkW (ORCPT
+        with ESMTP id S1727875AbeHWMkZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:40:22 -0400
+        Thu, 23 Aug 2018 08:40:25 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E9629BBF;
-        Thu, 23 Aug 2018 09:11:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 575BBCA8;
+        Thu, 23 Aug 2018 09:11:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Hugh Dickins <hughd@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>, Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.18 06/22] x86/mm/init: Remove freed kernel image areas from alias mapping
-Date:   Thu, 23 Aug 2018 09:56:32 +0200
-Message-Id: <20180823074759.565428167@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.18 07/22] powerpc64s: Show ori31 availability in spectre_v1 sysfs file not v2
+Date:   Thu, 23 Aug 2018 09:56:33 +0200
+Message-Id: <20180823074759.631403023@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074759.234685844@linuxfoundation.org>
 References: <20180823074759.234685844@linuxfoundation.org>
@@ -60,200 +49,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit c40a56a7818cfe735fc93a69e1875f8bba834483 upstream.
+commit 6d44acae1937b81cf8115ada8958e04f601f3f2e upstream.
 
-The kernel image is mapped into two places in the virtual address space
-(addresses without KASLR, of course):
+When I added the spectre_v2 information in sysfs, I included the
+availability of the ori31 speculation barrier.
 
-	1. The kernel direct map (0xffff880000000000)
-	2. The "high kernel map" (0xffffffff81000000)
+Although the ori31 barrier can be used to mitigate v2, it's primarily
+intended as a spectre v1 mitigation. Spectre v2 is mitigated by
+hardware changes.
 
-We actually execute out of #2.  If we get the address of a kernel symbol,
-it points to #2, but almost all physical-to-virtual translations point to
+So rework the sysfs files to show the ori31 information in the
+spectre_v1 file, rather than v2.
 
-Parts of the "high kernel map" alias are mapped in the userspace page
-tables with the Global bit for performance reasons.  The parts that we map
-to userspace do not (er, should not) have secrets. When PTI is enabled then
-the global bit is usually not set in the high mapping and just used to
-compensate for poor performance on systems which lack PCID.
+Currently we display eg:
 
-This is fine, except that some areas in the kernel image that are adjacent
-to the non-secret-containing areas are unused holes.  We free these holes
-back into the normal page allocator and reuse them as normal kernel memory.
-The memory will, of course, get *used* via the normal map, but the alias
-mapping is kept.
+  $ grep . spectre_v*
+  spectre_v1:Mitigation: __user pointer sanitization
+  spectre_v2:Mitigation: Indirect branch cache disabled, ori31 speculation barrier enabled
 
-This otherwise unused alias mapping of the holes will, by default keep the
-Global bit, be mapped out to userspace, and be vulnerable to Meltdown.
+After:
 
-Remove the alias mapping of these pages entirely.  This is likely to
-fracture the 2M page mapping the kernel image near these areas, but this
-should affect a minority of the area.
+  $ grep . spectre_v*
+  spectre_v1:Mitigation: __user pointer sanitization, ori31 speculation barrier enabled
+  spectre_v2:Mitigation: Indirect branch cache disabled
 
-The pageattr code changes *all* aliases mapping the physical pages that it
-operates on (by default).  We only want to modify a single alias, so we
-need to tweak its behavior.
-
-This unmapping behavior is currently dependent on PTI being in place.
-Going forward, we should at least consider doing this for all
-configurations.  Having an extra read-write alias for memory is not exactly
-ideal for debugging things like random memory corruption and this does
-undercut features like DEBUG_PAGEALLOC or future work like eXclusive Page
-Frame Ownership (XPFO).
-
-Before this patch:
-
-current_kernel:---[ High Kernel Mapping ]---
-current_kernel-0xffffffff80000000-0xffffffff81000000          16M                               pmd
-current_kernel-0xffffffff81000000-0xffffffff81e00000          14M     ro         PSE     GLB x  pmd
-current_kernel-0xffffffff81e00000-0xffffffff81e11000          68K     ro                 GLB x  pte
-current_kernel-0xffffffff81e11000-0xffffffff82000000        1980K     RW                     NX pte
-current_kernel-0xffffffff82000000-0xffffffff82600000           6M     ro         PSE     GLB NX pmd
-current_kernel-0xffffffff82600000-0xffffffff82c00000           6M     RW         PSE         NX pmd
-current_kernel-0xffffffff82c00000-0xffffffff82e00000           2M     RW                     NX pte
-current_kernel-0xffffffff82e00000-0xffffffff83200000           4M     RW         PSE         NX pmd
-current_kernel-0xffffffff83200000-0xffffffffa0000000         462M                               pmd
-
-  current_user:---[ High Kernel Mapping ]---
-  current_user-0xffffffff80000000-0xffffffff81000000          16M                               pmd
-  current_user-0xffffffff81000000-0xffffffff81e00000          14M     ro         PSE     GLB x  pmd
-  current_user-0xffffffff81e00000-0xffffffff81e11000          68K     ro                 GLB x  pte
-  current_user-0xffffffff81e11000-0xffffffff82000000        1980K     RW                     NX pte
-  current_user-0xffffffff82000000-0xffffffff82600000           6M     ro         PSE     GLB NX pmd
-  current_user-0xffffffff82600000-0xffffffffa0000000         474M                               pmd
-
-After this patch:
-
-current_kernel:---[ High Kernel Mapping ]---
-current_kernel-0xffffffff80000000-0xffffffff81000000          16M                               pmd
-current_kernel-0xffffffff81000000-0xffffffff81e00000          14M     ro         PSE     GLB x  pmd
-current_kernel-0xffffffff81e00000-0xffffffff81e11000          68K     ro                 GLB x  pte
-current_kernel-0xffffffff81e11000-0xffffffff82000000        1980K                               pte
-current_kernel-0xffffffff82000000-0xffffffff82400000           4M     ro         PSE     GLB NX pmd
-current_kernel-0xffffffff82400000-0xffffffff82488000         544K     ro                     NX pte
-current_kernel-0xffffffff82488000-0xffffffff82600000        1504K                               pte
-current_kernel-0xffffffff82600000-0xffffffff82c00000           6M     RW         PSE         NX pmd
-current_kernel-0xffffffff82c00000-0xffffffff82c0d000          52K     RW                     NX pte
-current_kernel-0xffffffff82c0d000-0xffffffff82dc0000        1740K                               pte
-
-  current_user:---[ High Kernel Mapping ]---
-  current_user-0xffffffff80000000-0xffffffff81000000          16M                               pmd
-  current_user-0xffffffff81000000-0xffffffff81e00000          14M     ro         PSE     GLB x  pmd
-  current_user-0xffffffff81e00000-0xffffffff81e11000          68K     ro                 GLB x  pte
-  current_user-0xffffffff81e11000-0xffffffff82000000        1980K                               pte
-  current_user-0xffffffff82000000-0xffffffff82400000           4M     ro         PSE     GLB NX pmd
-  current_user-0xffffffff82400000-0xffffffff82488000         544K     ro                     NX pte
-  current_user-0xffffffff82488000-0xffffffff82600000        1504K                               pte
-  current_user-0xffffffff82600000-0xffffffffa0000000         474M                               pmd
-
-[ tglx: Do not unmap on 32bit as there is only one mapping ]
-
-Fixes: 0f561fce4d69 ("x86/pti: Enable global pages for shared areas")
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kees Cook <keescook@google.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Link: https://lkml.kernel.org/r/20180802225831.5F6A2BFC@viggo.jf.intel.com
+Fixes: d6fbe1c55c55 ("powerpc/64s: Wire up cpu_show_spectre_v2()")
+Cc: stable@vger.kernel.org # v4.17+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/set_memory.h |    1 +
- arch/x86/mm/init.c                |   26 ++++++++++++++++++++++++--
- arch/x86/mm/pageattr.c            |   13 +++++++++++++
- 3 files changed, 38 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/security.c |   27 +++++++++++++++++----------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
---- a/arch/x86/include/asm/set_memory.h
-+++ b/arch/x86/include/asm/set_memory.h
-@@ -46,6 +46,7 @@ int set_memory_np(unsigned long addr, in
- int set_memory_4k(unsigned long addr, int numpages);
- int set_memory_encrypted(unsigned long addr, int numpages);
- int set_memory_decrypted(unsigned long addr, int numpages);
-+int set_memory_np_noalias(unsigned long addr, int numpages);
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -117,25 +117,35 @@ ssize_t cpu_show_meltdown(struct device
  
- int set_memory_array_uc(unsigned long *addr, int addrinarray);
- int set_memory_array_wc(unsigned long *addr, int addrinarray);
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -782,8 +782,30 @@ void free_init_pages(char *what, unsigne
-  */
- void free_kernel_image_pages(void *begin, void *end)
+ ssize_t cpu_show_spectre_v1(struct device *dev, struct device_attribute *attr, char *buf)
  {
--	free_init_pages("unused kernel image",
--			(unsigned long)begin, (unsigned long)end);
-+	unsigned long begin_ul = (unsigned long)begin;
-+	unsigned long end_ul = (unsigned long)end;
-+	unsigned long len_pages = (end_ul - begin_ul) >> PAGE_SHIFT;
+-	if (!security_ftr_enabled(SEC_FTR_BNDS_CHK_SPEC_BAR))
+-		return sprintf(buf, "Not affected\n");
++	struct seq_buf s;
 +
++	seq_buf_init(&s, buf, PAGE_SIZE - 1);
 +
-+	free_init_pages("unused kernel image", begin_ul, end_ul);
++	if (security_ftr_enabled(SEC_FTR_BNDS_CHK_SPEC_BAR)) {
++		if (barrier_nospec_enabled)
++			seq_buf_printf(&s, "Mitigation: __user pointer sanitization");
++		else
++			seq_buf_printf(&s, "Vulnerable");
+ 
+-	if (barrier_nospec_enabled)
+-		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
++		if (security_ftr_enabled(SEC_FTR_SPEC_BAR_ORI31))
++			seq_buf_printf(&s, ", ori31 speculation barrier enabled");
+ 
+-	return sprintf(buf, "Vulnerable\n");
++		seq_buf_printf(&s, "\n");
++	} else
++		seq_buf_printf(&s, "Not affected\n");
 +
-+	/*
-+	 * PTI maps some of the kernel into userspace.  For performance,
-+	 * this includes some kernel areas that do not contain secrets.
-+	 * Those areas might be adjacent to the parts of the kernel image
-+	 * being freed, which may contain secrets.  Remove the "high kernel
-+	 * image mapping" for these freed areas, ensuring they are not even
-+	 * potentially vulnerable to Meltdown regardless of the specific
-+	 * optimizations PTI is currently using.
-+	 *
-+	 * The "noalias" prevents unmapping the direct map alias which is
-+	 * needed to access the freed pages.
-+	 *
-+	 * This is only valid for 64bit kernels. 32bit has only one mapping
-+	 * which can't be treated in this way for obvious reasons.
-+	 */
-+	if (IS_ENABLED(CONFIG_X86_64) && cpu_feature_enabled(X86_FEATURE_PTI))
-+		set_memory_np_noalias(begin_ul, len_pages);
++	return s.len;
  }
  
- void __ref free_initmem(void)
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -53,6 +53,7 @@ static DEFINE_SPINLOCK(cpa_lock);
- #define CPA_FLUSHTLB 1
- #define CPA_ARRAY 2
- #define CPA_PAGES_ARRAY 4
-+#define CPA_NO_CHECK_ALIAS 8 /* Do not search for aliases */
- 
- #ifdef CONFIG_PROC_FS
- static unsigned long direct_pages_count[PG_LEVEL_NUM];
-@@ -1486,6 +1487,9 @@ static int change_page_attr_set_clr(unsi
- 
- 	/* No alias checking for _NX bit modifications */
- 	checkalias = (pgprot_val(mask_set) | pgprot_val(mask_clr)) != _PAGE_NX;
-+	/* Has caller explicitly disabled alias checking? */
-+	if (in_flag & CPA_NO_CHECK_ALIAS)
-+		checkalias = 0;
- 
- 	ret = __change_page_attr_set_clr(&cpa, checkalias);
- 
-@@ -1772,6 +1776,15 @@ int set_memory_np(unsigned long addr, in
- 	return change_page_attr_clear(&addr, numpages, __pgprot(_PAGE_PRESENT), 0);
- }
- 
-+int set_memory_np_noalias(unsigned long addr, int numpages)
-+{
-+	int cpa_flags = CPA_NO_CHECK_ALIAS;
-+
-+	return change_page_attr_set_clr(&addr, numpages, __pgprot(0),
-+					__pgprot(_PAGE_PRESENT), 0,
-+					cpa_flags, NULL);
-+}
-+
- int set_memory_4k(unsigned long addr, int numpages)
+ ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr, char *buf)
  {
- 	return change_page_attr_set_clr(&addr, numpages, __pgprot(0),
+-	bool bcs, ccd, ori;
+ 	struct seq_buf s;
++	bool bcs, ccd;
+ 
+ 	seq_buf_init(&s, buf, PAGE_SIZE - 1);
+ 
+ 	bcs = security_ftr_enabled(SEC_FTR_BCCTRL_SERIALISED);
+ 	ccd = security_ftr_enabled(SEC_FTR_COUNT_CACHE_DISABLED);
+-	ori = security_ftr_enabled(SEC_FTR_SPEC_BAR_ORI31);
+ 
+ 	if (bcs || ccd) {
+ 		seq_buf_printf(&s, "Mitigation: ");
+@@ -151,9 +161,6 @@ ssize_t cpu_show_spectre_v2(struct devic
+ 	} else
+ 		seq_buf_printf(&s, "Vulnerable");
+ 
+-	if (ori)
+-		seq_buf_printf(&s, ", ori31 speculation barrier enabled");
+-
+ 	seq_buf_printf(&s, "\n");
+ 
+ 	return s.len;
 
 
