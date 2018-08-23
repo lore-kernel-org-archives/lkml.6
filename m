@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF87C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C60C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 027B9208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 027B9208C2
+	by mail.kernel.org (Postfix) with ESMTP id A317B206B8
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A317B206B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388932AbeHWMix (ORCPT
+        id S2388939AbeHWMjB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:38:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56558 "EHLO
+        Thu, 23 Aug 2018 08:39:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56582 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728274AbeHWMix (ORCPT
+        with ESMTP id S1728107AbeHWMjA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:38:53 -0400
+        Thu, 23 Aug 2018 08:39:00 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D8C8CA8;
-        Thu, 23 Aug 2018 09:10:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2B3AECAA;
+        Thu, 23 Aug 2018 09:10:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Jeff Mahoney <jeffm@suse.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.17 324/324] reiserfs: fix broken xattr handling (heap corruption, bad retval)
-Date:   Thu, 23 Aug 2018 09:56:30 +0200
-Message-Id: <20180823075012.335959073@linuxfoundation.org>
+        stable@vger.kernel.org, teika kazura <teika@gmx.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.17 317/324] PCI / ACPI / PM: Resume all bridges on suspend-to-RAM
+Date:   Thu, 23 Aug 2018 09:56:23 +0200
+Message-Id: <20180823075011.956610797@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -54,59 +52,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit a13f085d111e90469faf2d9965eb39b11c114d7e upstream.
+commit 9d64b539b738fc181442caab95f1f76d9bd58539 upstream.
 
-This fixes the following issues:
+Commit 26112ddc254c (PCI / ACPI / PM: Resume bridges w/o drivers on
+suspend-to-RAM) attempted to fix a functional regression resulting
+from commit c62ec4610c40 (PM / core: Fix direct_complete handling
+for devices with no callbacks) by resuming PCI bridges without
+drivers (that is, "parallel PCI" ones) during system-wide suspend if
+the target system state is not ACPI S0 (working state).
 
-- When a buffer size is supplied to reiserfs_listxattr() such that each
-  individual name fits, but the concatenation of all names doesn't fit,
-  reiserfs_listxattr() overflows the supplied buffer.  This leads to a
-  kernel heap overflow (verified using KASAN) followed by an out-of-bounds
-  usercopy and is therefore a security bug.
+That turns out insufficient, however, as it is reported that, at
+least in one case, the platform firmware gets confused if a PCIe
+root port is suspended before entering the ACPI S3 sleep state.
+That issue was exposed by commit 77b3729ca03 (PCI / PM: Use
+SMART_SUSPEND and LEAVE_SUSPENDED flags for PCIe ports) that allowed
+PCIe ports to stay in runtime suspend during system-wide suspend
+(which is OK for suspend-to-idle, but turns out to be problematic
+otherwise).
 
-- When a buffer size is supplied to reiserfs_listxattr() such that a
-  name doesn't fit, -ERANGE should be returned.  But reiserfs instead just
-  truncates the list of names; I have verified that if the only xattr on a
-  file has a longer name than the supplied buffer length, listxattr()
-  incorrectly returns zero.
+For this reason, drop the driver check from acpi_pci_need_resume()
+and resume all bridges (including PCIe ports with drivers) during
+system-wide suspend if the target system state is not ACPI S0.
 
-With my patch applied, -ERANGE is returned in both cases and the memory
-corruption doesn't happen anymore.
+[If the target system state is ACPI S0, it means suspend-to-idle
+ and the platform firmware is not going to be invoked to actually
+ suspend the system, so there is no need to resume the bridges in
+ that case.]
 
-Credit for making me clean this code up a bit goes to Al Viro, who pointed
-out that the ->actor calling convention is suboptimal and should be
-changed.
-
-Link: http://lkml.kernel.org/r/20180802151539.5373-1-jannh@google.com
-Fixes: 48b32a3553a5 ("reiserfs: use generic xattr handlers")
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Jeff Mahoney <jeffm@suse.com>
-Cc: Eric Biggers <ebiggers@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 77b3729ca03 (PCI / PM: Use SMART_SUSPEND and LEAVE_SUSPENDED flags for PCIe ports)
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200675
+Reported-by: teika kazura <teika@gmx.com>
+Tested-by: teika kazura <teika@gmx.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: 4.16+ <stable@vger.kernel.org> # 4.16+: 26112ddc254c (PCI / ACPI / PM: Resume bridges ...)
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/reiserfs/xattr.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/pci/pci-acpi.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -792,8 +792,10 @@ static int listxattr_filler(struct dir_c
- 			return 0;
- 		size = namelen + 1;
- 		if (b->buf) {
--			if (size > b->size)
-+			if (b->pos + size > b->size) {
-+				b->pos = -ERANGE;
- 				return -ERANGE;
-+			}
- 			memcpy(b->buf + b->pos, name, namelen);
- 			b->buf[b->pos + namelen] = 0;
- 		}
+--- a/drivers/pci/pci-acpi.c
++++ b/drivers/pci/pci-acpi.c
+@@ -601,13 +601,11 @@ static bool acpi_pci_need_resume(struct
+ 	/*
+ 	 * In some cases (eg. Samsung 305V4A) leaving a bridge in suspend over
+ 	 * system-wide suspend/resume confuses the platform firmware, so avoid
+-	 * doing that, unless the bridge has a driver that should take care of
+-	 * the PM handling.  According to Section 16.1.6 of ACPI 6.2, endpoint
++	 * doing that.  According to Section 16.1.6 of ACPI 6.2, endpoint
+ 	 * devices are expected to be in D3 before invoking the S3 entry path
+ 	 * from the firmware, so they should not be affected by this issue.
+ 	 */
+-	if (pci_is_bridge(dev) && !dev->driver &&
+-	    acpi_target_system_state() != ACPI_STATE_S0)
++	if (pci_is_bridge(dev) && acpi_target_system_state() != ACPI_STATE_S0)
+ 		return true;
+ 
+ 	if (!adev || !acpi_device_power_manageable(adev))
 
 
