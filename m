@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C1FC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53783C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FA132064E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FA132064E
+	by mail.kernel.org (Postfix) with ESMTP id 0CA0D2064E
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CA0D2064E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727765AbeHWLfu (ORCPT
+        id S1728086AbeHWLfx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:35:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44726 "EHLO
+        Thu, 23 Aug 2018 07:35:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44740 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727027AbeHWLft (ORCPT
+        with ESMTP id S1727027AbeHWLfw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:35:49 -0400
+        Thu, 23 Aug 2018 07:35:52 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3CB3FBB6;
-        Thu, 23 Aug 2018 08:07:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 69C77C74;
+        Thu, 23 Aug 2018 08:07:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
-        Tejun Heo <tj@kernel.org>,
+        stable@vger.kernel.org, Gevorg Sahakyan <sahakyan@synopsys.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        William Wu <william.wu@rock-chips.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 017/130] libahci: Fix possible Spectre-v1 pmp indexing in ahci_led_store()
-Date:   Thu, 23 Aug 2018 09:52:13 +0200
-Message-Id: <20180823074928.471574521@linuxfoundation.org>
+Subject: [PATCH 4.9 018/130] usb: dwc2: fix isoc split in transfer with no data
+Date:   Thu, 23 Aug 2018 09:52:14 +0200
+Message-Id: <20180823074928.530604627@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -51,55 +53,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: John Garry <john.garry@huawei.com>
+From: William Wu <william.wu@rock-chips.com>
 
-[ Upstream commit fae2a63737e5973f1426bc139935a0f42e232844 ]
+[ Upstream commit 70c3c8cb83856758025c2a211dd022bc0478922a ]
 
-Currently smatch warns of possible Spectre-V1 issue in ahci_led_store():
-drivers/ata/libahci.c:1150 ahci_led_store() warn: potential spectre issue 'pp->em_priv' (local cap)
+If isoc split in transfer with no data (the length of DATA0
+packet is zero), we can't simply return immediately. Because
+the DATA0 can be the first transaction or the second transaction
+for the isoc split in transaction. If the DATA0 packet with no
+data is in the first transaction, we can return immediately.
+But if the DATA0 packet with no data is in the second transaction
+of isoc split in transaction sequence, we need to increase the
+qtd->isoc_frame_index and giveback urb to device driver if needed,
+otherwise, the MDATA packet will be lost.
 
-Userspace controls @pmp from following callchain:
-em_message->store()
-->ata_scsi_em_message_store()
--->ap->ops->em_store()
---->ahci_led_store()
+A typical test case is that connect the dwc2 controller with an
+usb hs Hub (GL852G-12), and plug an usb fs audio device (Plantronics
+headset) into the downstream port of Hub. Then use the usb mic
+to record, we can find noise when playback.
 
-After the mask+shift @pmp is effectively an 8b value, which is used to
-index into an array of length 8, so sanitize the array index.
+In the case, the isoc split in transaction sequence like this:
 
-Signed-off-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+- SSPLIT IN transaction
+- CSPLIT IN transaction
+  - MDATA packet (176 bytes)
+- CSPLIT IN transaction
+  - DATA0 packet (0 byte)
 
+This patch use both the length of DATA0 and qtd->isoc_split_offset
+to check if the DATA0 is in the second transaction.
+
+Tested-by: Gevorg Sahakyan <sahakyan@synopsys.com>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+Acked-by: Minas Harutyunyan hminas@synopsys.com>
+Signed-off-by: William Wu <william.wu@rock-chips.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/ata/libahci.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/usb/dwc2/hcd_intr.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/ata/libahci.c
-+++ b/drivers/ata/libahci.c
-@@ -35,6 +35,7 @@
- #include <linux/kernel.h>
- #include <linux/gfp.h>
- #include <linux/module.h>
-+#include <linux/nospec.h>
- #include <linux/blkdev.h>
- #include <linux/delay.h>
- #include <linux/interrupt.h>
-@@ -1124,10 +1125,12 @@ static ssize_t ahci_led_store(struct ata
+--- a/drivers/usb/dwc2/hcd_intr.c
++++ b/drivers/usb/dwc2/hcd_intr.c
+@@ -922,9 +922,8 @@ static int dwc2_xfercomp_isoc_split_in(s
+ 	frame_desc = &qtd->urb->iso_descs[qtd->isoc_frame_index];
+ 	len = dwc2_get_actual_xfer_length(hsotg, chan, chnum, qtd,
+ 					  DWC2_HC_XFER_COMPLETE, NULL);
+-	if (!len) {
++	if (!len && !qtd->isoc_split_offset) {
+ 		qtd->complete_split = 0;
+-		qtd->isoc_split_offset = 0;
+ 		return 0;
+ 	}
  
- 	/* get the slot number from the message */
- 	pmp = (state & EM_MSG_LED_PMP_SLOT) >> 8;
--	if (pmp < EM_MAX_SLOTS)
-+	if (pmp < EM_MAX_SLOTS) {
-+		pmp = array_index_nospec(pmp, EM_MAX_SLOTS);
- 		emp = &pp->em_priv[pmp];
--	else
-+	} else {
- 		return -EINVAL;
-+	}
- 
- 	/* mask off the activity bits if we are in sw_activity
- 	 * mode, user should turn off sw_activity before setting
 
 
