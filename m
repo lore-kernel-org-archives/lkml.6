@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AEAEC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC75C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:23:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DADDB208DC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:22:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DADDB208DC
+	by mail.kernel.org (Postfix) with ESMTP id 64CDC208DC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:23:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64CDC208DC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730801AbeHWLv0 (ORCPT
+        id S1730815AbeHWLv3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:51:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47072 "EHLO
+        Thu, 23 Aug 2018 07:51:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47078 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729878AbeHWLv0 (ORCPT
+        with ESMTP id S1730804AbeHWLv3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:51:26 -0400
+        Thu, 23 Aug 2018 07:51:29 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9A70FC9D;
-        Thu, 23 Aug 2018 08:22:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CECEEC9D;
+        Thu, 23 Aug 2018 08:22:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 091/217] perf record: Support s390 random socket_id assignment
-Date:   Thu, 23 Aug 2018 09:53:24 +0200
-Message-Id: <20180823075509.610352494@linuxfoundation.org>
+Subject: [PATCH 4.14 074/217] ipv6: mcast: fix unsolicited report interval after receiving querys
+Date:   Thu, 23 Aug 2018 09:53:07 +0200
+Message-Id: <20180823075508.837510180@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -54,92 +51,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-[ Upstream commit 01766229533f9bdb1144a41b4345c8c7286da7b4 ]
+[ Upstream commit 6c6da92808442908287fae8ebb0ca041a52469f4 ]
 
-On s390 the socket identifier assigned to a CPU identifier is random and
-(depending on the configuration of the LPAR) may be higher than the CPU
-identifier. This is currently not supported.
+After recieving MLD querys, we update idev->mc_maxdelay with max_delay
+from query header. This make the later unsolicited reports have the same
+interval with mc_maxdelay, which means we may send unsolicited reports with
+long interval time instead of default configured interval time.
 
-Fix this by allowing arbitrary socket identifiers being assigned to
-CPU id.
+Also as we will not call ipv6_mc_reset() after device up. This issue will
+be there even after leave the group and join other groups.
 
-Output before:
-
-  [root@p23lp27 perf]# ./perf report --header -I -v
-  ...
-  socket_id number is too big.You may need to upgrade the perf tool.
-  Error:
-  The perf.data file has no samples!
-  # ========
-  # captured on    : Tue May 29 09:29:57 2018
-  # header version : 1
-  ...
-  # Core ID and Socket ID information is not available
-  ...
-  [root@p23lp27 perf]#
-
-Output after:
-
-  [root@p23lp27 perf]# ./perf report --header -I -v
-  ...
-  Error:
-  The perf.data file has no samples!
-  # ========
-  # captured on    : Tue May 29 09:29:57 2018
-  # header version : 1
-  ...
-  # CPU 0: Core ID 0, Socket ID 6
-  # CPU 1: Core ID 1, Socket ID 3
-  # CPU 2: Core ID -1, Socket ID -1
-  ...
-  [root@p23lp27 perf]#
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Link: http://lkml.kernel.org/r/20180611073153.15592-1-tmricht@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: fc4eba58b4c14 ("ipv6: make unsolicited report intervals configurable for mld")
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/header.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ net/ipv6/mcast.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -1824,6 +1824,7 @@ static int process_cpu_topology(struct f
- 	int cpu_nr = ff->ph->env.nr_cpus_avail;
- 	u64 size = 0;
- 	struct perf_header *ph = ff->ph;
-+	bool do_core_id_test = true;
- 
- 	ph->env.cpu = calloc(cpu_nr, sizeof(*ph->env.cpu));
- 	if (!ph->env.cpu)
-@@ -1878,6 +1879,13 @@ static int process_cpu_topology(struct f
- 		return 0;
+--- a/net/ipv6/mcast.c
++++ b/net/ipv6/mcast.c
+@@ -2083,7 +2083,8 @@ void ipv6_mc_dad_complete(struct inet6_d
+ 		mld_send_initial_cr(idev);
+ 		idev->mc_dad_count--;
+ 		if (idev->mc_dad_count)
+-			mld_dad_start_timer(idev, idev->mc_maxdelay);
++			mld_dad_start_timer(idev,
++					    unsolicited_report_interval(idev));
  	}
+ }
  
-+	/* On s390 the socket_id number is not related to the numbers of cpus.
-+	 * The socket_id number might be higher than the numbers of cpus.
-+	 * This depends on the configuration.
-+	 */
-+	if (ph->env.arch && !strncmp(ph->env.arch, "s390", 4))
-+		do_core_id_test = false;
-+
- 	for (i = 0; i < (u32)cpu_nr; i++) {
- 		if (do_read_u32(ff, &nr))
- 			goto free_cpu;
-@@ -1887,7 +1895,7 @@ static int process_cpu_topology(struct f
- 		if (do_read_u32(ff, &nr))
- 			goto free_cpu;
- 
--		if (nr != (u32)-1 && nr > (u32)cpu_nr) {
-+		if (do_core_id_test && nr != (u32)-1 && nr > (u32)cpu_nr) {
- 			pr_debug("socket_id number is too big."
- 				 "You may need to upgrade the perf tool.\n");
- 			goto free_cpu;
+@@ -2095,7 +2096,8 @@ static void mld_dad_timer_expire(unsigne
+ 	if (idev->mc_dad_count) {
+ 		idev->mc_dad_count--;
+ 		if (idev->mc_dad_count)
+-			mld_dad_start_timer(idev, idev->mc_maxdelay);
++			mld_dad_start_timer(idev,
++					    unsolicited_report_interval(idev));
+ 	}
+ 	in6_dev_put(idev);
+ }
+@@ -2453,7 +2455,8 @@ static void mld_ifc_timer_expire(unsigne
+ 	if (idev->mc_ifc_count) {
+ 		idev->mc_ifc_count--;
+ 		if (idev->mc_ifc_count)
+-			mld_ifc_start_timer(idev, idev->mc_maxdelay);
++			mld_ifc_start_timer(idev,
++					    unsolicited_report_interval(idev));
+ 	}
+ 	in6_dev_put(idev);
+ }
 
 
