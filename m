@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 873A7C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A11C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C610208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C610208C2
+	by mail.kernel.org (Postfix) with ESMTP id 4EA85208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EA85208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389115AbeHWMjq (ORCPT
+        id S2389127AbeHWMju (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:39:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56906 "EHLO
+        Thu, 23 Aug 2018 08:39:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56914 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389098AbeHWMjq (ORCPT
+        with ESMTP id S1728136AbeHWMjt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:39:46 -0400
+        Thu, 23 Aug 2018 08:39:49 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 98D0EBBF;
-        Thu, 23 Aug 2018 09:11:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37BCA93C;
+        Thu, 23 Aug 2018 09:11:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Greg Kroah-Hartman <greg@kroah.com>
-Subject: [PATCH 4.18 15/22] PCI: hotplug: Dont leak pci_slot on registration failure
-Date:   Thu, 23 Aug 2018 09:56:41 +0200
-Message-Id: <20180823074800.153884701@linuxfoundation.org>
+        stable@vger.kernel.org, Zachary Zhang <zhangzg@marvell.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: [PATCH 4.18 16/22] PCI: aardvark: Size bridges before resources allocation
+Date:   Thu, 23 Aug 2018 09:56:42 +0200
+Message-Id: <20180823074800.223437041@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074759.234685844@linuxfoundation.org>
 References: <20180823074759.234685844@linuxfoundation.org>
@@ -51,48 +51,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Zachary Zhang <zhangzg@marvell.com>
 
-commit 4ce6435820d1f1cc2c2788e232735eb244bcc8a3 upstream.
+commit 91a2968e245d6ba616db37001fa1a043078b1a65 upstream.
 
-If addition of sysfs files fails on registration of a hotplug slot, the
-struct pci_slot as well as the entry in the slot_list is leaked.  The
-issue has been present since the hotplug core was introduced in 2002:
-https://git.kernel.org/tglx/history/c/a8a2069f432c
+The PCIE I/O and MEM resource allocation mechanism is that root bus
+goes through the following steps:
 
-Perhaps the idea was that even though sysfs addition fails, the slot
-should still be usable.  But that's not how drivers use the interface,
-they abort probe if a non-zero value is returned.
+1. Check PCI bridges' range and computes I/O and Mem base/limits.
 
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org # v2.4.15+
-Cc: Greg Kroah-Hartman <greg@kroah.com>
+2. Sort all subordinate devices I/O and MEM resource requirements and
+   allocate the resources and writes/updates subordinate devices'
+   requirements to PCI bridges I/O and Mem MEM/limits registers.
+
+Currently, PCI Aardvark driver only handles the second step and lacks
+the first step, so there is an I/O and MEM resource allocation failure
+when using a PCI switch. This commit fixes that by sizing bridges
+before doing the resource allocation.
+
+Fixes: 8c39d710363c1 ("PCI: aardvark: Add Aardvark PCI host controller
+driver")
+Signed-off-by: Zachary Zhang <zhangzg@marvell.com>
+[Thomas: edit commit log.]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/hotplug/pci_hotplug_core.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/pci/controller/pci-aardvark.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/pci/hotplug/pci_hotplug_core.c
-+++ b/drivers/pci/hotplug/pci_hotplug_core.c
-@@ -438,8 +438,17 @@ int __pci_hp_register(struct hotplug_slo
- 	list_add(&slot->slot_list, &pci_hotplug_slot_list);
+--- a/drivers/pci/controller/pci-aardvark.c
++++ b/drivers/pci/controller/pci-aardvark.c
+@@ -952,6 +952,7 @@ static int advk_pcie_probe(struct platfo
  
- 	result = fs_add_slot(pci_slot);
-+	if (result)
-+		goto err_list_del;
-+
- 	kobject_uevent(&pci_slot->kobj, KOBJ_ADD);
- 	dbg("Added slot %s to the list\n", name);
-+	goto out;
-+
-+err_list_del:
-+	list_del(&slot->slot_list);
-+	pci_slot->hotplug = NULL;
-+	pci_destroy_slot(pci_slot);
- out:
- 	mutex_unlock(&pci_hp_mutex);
- 	return result;
+ 	bus = bridge->bus;
+ 
++	pci_bus_size_bridges(bus);
+ 	pci_bus_assign_resources(bus);
+ 
+ 	list_for_each_entry(child, &bus->children, node)
 
 
