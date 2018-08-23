@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D1EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6334FC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:00:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 682C32087C
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:00:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 682C32087C
+	by mail.kernel.org (Postfix) with ESMTP id 25F8A208CC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:00:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25F8A208CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388188AbeHWM3C (ORCPT
+        id S2388201AbeHWM3F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:29:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53966 "EHLO
+        Thu, 23 Aug 2018 08:29:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54370 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727941AbeHWM3B (ORCPT
+        with ESMTP id S1727941AbeHWM3F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:29:01 -0400
+        Thu, 23 Aug 2018 08:29:05 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EF298CA0;
-        Thu, 23 Aug 2018 09:00:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9D784CB6;
+        Thu, 23 Aug 2018 09:00:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
+        stable@vger.kernel.org, Vikas Gupta <vikas.gupta@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 231/324] bnxt_en: Do not modify max IRQ count after RDMA driver requests/frees IRQs.
-Date:   Thu, 23 Aug 2018 09:54:57 +0200
-Message-Id: <20180823075007.683385138@linuxfoundation.org>
+Subject: [PATCH 4.17 232/324] bnxt_en: Fix for system hang if request_irq fails
+Date:   Thu, 23 Aug 2018 09:54:58 +0200
+Message-Id: <20180823075007.739074692@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,70 +52,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Chan <michael.chan@broadcom.com>
+From: Vikas Gupta <vikas.gupta@broadcom.com>
 
-[ Upstream commit 30f529473ec962102e8bcd33a6a04f1e1b490ae2 ]
+[ Upstream commit c58387ab1614f6d7fb9e244f214b61e7631421fc ]
 
-Calling bnxt_set_max_func_irqs() to modify the max IRQ count requested or
-freed by the RDMA driver is flawed.  The max IRQ count is checked when
-re-initializing the IRQ vectors and this can happen multiple times
-during ifup or ethtool -L.  If the max IRQ is reduced and the RDMA
-driver is operational, we may not initailize IRQs correctly.  This
-problem shows up on VFs with very small number of MSIX.
+Fix bug in the error code path when bnxt_request_irq() returns failure.
+bnxt_disable_napi() should not be called in this error path because
+NAPI has not been enabled yet.
 
-There is no other logic that relies on the IRQ count excluding the ones
-used by RDMA.  So we fix it by just removing the call to subtract or
-add the IRQs used by RDMA.
-
-Fixes: a588e4580a7e ("bnxt_en: Add interface to support RDMA driver.")
+Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
+Signed-off-by: Vikas Gupta <vikas.gupta@broadcom.com>
 Signed-off-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c     |    2 +-
- drivers/net/ethernet/broadcom/bnxt/bnxt.h     |    1 -
- drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c |    2 --
- 3 files changed, 1 insertion(+), 4 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
 +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -5915,7 +5915,7 @@ unsigned int bnxt_get_max_func_irqs(stru
- 	return min_t(unsigned int, hw_resc->max_irqs, hw_resc->max_cp_rings);
- }
- 
--void bnxt_set_max_func_irqs(struct bnxt *bp, unsigned int max_irqs)
-+static void bnxt_set_max_func_irqs(struct bnxt *bp, unsigned int max_irqs)
- {
- 	bp->hw_resc.max_irqs = max_irqs;
- }
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-@@ -1455,7 +1455,6 @@ void bnxt_set_max_func_stat_ctxs(struct
- unsigned int bnxt_get_max_func_cp_rings(struct bnxt *bp);
- void bnxt_set_max_func_cp_rings(struct bnxt *bp, unsigned int max);
- unsigned int bnxt_get_max_func_irqs(struct bnxt *bp);
--void bnxt_set_max_func_irqs(struct bnxt *bp, unsigned int max);
- int bnxt_get_avail_msix(struct bnxt *bp, int num);
- int bnxt_reserve_rings(struct bnxt *bp);
- void bnxt_tx_disable(struct bnxt *bp);
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c
-@@ -169,7 +169,6 @@ static int bnxt_req_msix_vecs(struct bnx
- 		edev->ulp_tbl[ulp_id].msix_requested = avail_msix;
+@@ -6875,7 +6875,7 @@ static int __bnxt_open_nic(struct bnxt *
+ 		rc = bnxt_request_irq(bp);
+ 		if (rc) {
+ 			netdev_err(bp->dev, "bnxt_request_irq err: %x\n", rc);
+-			goto open_err;
++			goto open_err_irq;
+ 		}
  	}
- 	bnxt_fill_msix_vecs(bp, ent);
--	bnxt_set_max_func_irqs(bp, bnxt_get_max_func_irqs(bp) - avail_msix);
- 	bnxt_set_max_func_cp_rings(bp, max_cp_rings - avail_msix);
- 	edev->flags |= BNXT_EN_FLAG_MSIX_REQUESTED;
- 	return avail_msix;
-@@ -192,7 +191,6 @@ static int bnxt_free_msix_vecs(struct bn
- 	msix_requested = edev->ulp_tbl[ulp_id].msix_requested;
- 	bnxt_set_max_func_cp_rings(bp, max_cp_rings + msix_requested);
- 	edev->ulp_tbl[ulp_id].msix_requested = 0;
--	bnxt_set_max_func_irqs(bp, bnxt_get_max_func_irqs(bp) + msix_requested);
- 	edev->flags &= ~BNXT_EN_FLAG_MSIX_REQUESTED;
- 	if (netif_running(dev)) {
- 		bnxt_close_nic(bp, true, false);
+ 
+@@ -6913,6 +6913,8 @@ static int __bnxt_open_nic(struct bnxt *
+ 
+ open_err:
+ 	bnxt_disable_napi(bp);
++
++open_err_irq:
+ 	bnxt_del_napi(bp);
+ 
+ open_err_free_mem:
 
 
