@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58114C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB5D9C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1890D20839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1890D20839
+	by mail.kernel.org (Postfix) with ESMTP id A2064208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2064208DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388115AbeHWMWS (ORCPT
+        id S2388129AbeHWMWV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:22:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52024 "EHLO
+        Thu, 23 Aug 2018 08:22:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52032 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728574AbeHWMWR (ORCPT
+        with ESMTP id S1728574AbeHWMWU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:22:17 -0400
+        Thu, 23 Aug 2018 08:22:20 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67A0549B;
-        Thu, 23 Aug 2018 08:53:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9A7E249B;
+        Thu, 23 Aug 2018 08:53:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>,
+        stable@vger.kernel.org, Jim Wilson <jimw@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 185/324] RISC-V: Dont include irq-riscv-intc.h
-Date:   Thu, 23 Aug 2018 09:54:11 +0200
-Message-Id: <20180823075005.448172493@linuxfoundation.org>
+Subject: [PATCH 4.17 186/324] RISC-V: Fix PTRACE_SETREGSET bug.
+Date:   Thu, 23 Aug 2018 09:54:12 +0200
+Message-Id: <20180823075005.494264766@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -50,34 +51,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Palmer Dabbelt <palmer@sifive.com>
+From: Jim Wilson <jimw@sifive.com>
 
-[ Upstream commit 8606544890d7dc4f7a740963f70dc1e1d54f8e30 ]
+[ Upstream commit 1db9b80980d26fe95c942e0bb8bde2ca715029ad ]
 
-This file has never existed in the upstream kernel, but it's guarded by
-an #ifdef that's also never existed in the upstream kernel.  As a part
-of our interrupt controller refactoring this header is no longer
-necessary, but this reference managed to sneak in anyway.
+In riscv_gpr_set, pass regs instead of &regs to user_regset_copyin to fix
+gdb segfault.
 
+Signed-off-by: Jim Wilson <jimw@sifive.com>
 Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/riscv/kernel/irq.c |    4 ----
- 1 file changed, 4 deletions(-)
+ arch/riscv/kernel/ptrace.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/riscv/kernel/irq.c
-+++ b/arch/riscv/kernel/irq.c
-@@ -16,10 +16,6 @@
- #include <linux/irqchip.h>
- #include <linux/irqdomain.h>
+--- a/arch/riscv/kernel/ptrace.c
++++ b/arch/riscv/kernel/ptrace.c
+@@ -50,7 +50,7 @@ static int riscv_gpr_set(struct task_str
+ 	struct pt_regs *regs;
  
--#ifdef CONFIG_RISCV_INTC
--#include <linux/irqchip/irq-riscv-intc.h>
--#endif
--
- void __init init_IRQ(void)
- {
- 	irqchip_init();
+ 	regs = task_pt_regs(target);
+-	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &regs, 0, -1);
++	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, regs, 0, -1);
+ 	return ret;
+ }
+ 
 
 
