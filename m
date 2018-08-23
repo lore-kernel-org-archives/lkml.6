@@ -6,40 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C496C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA596C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20751206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20751206B2
+	by mail.kernel.org (Postfix) with ESMTP id AFD342064E
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFD342064E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728862AbeHWLgm (ORCPT
+        id S1728887AbeHWLgp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:36:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44918 "EHLO
+        Thu, 23 Aug 2018 07:36:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44926 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727621AbeHWLgl (ORCPT
+        with ESMTP id S1727562AbeHWLgo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:36:41 -0400
+        Thu, 23 Aug 2018 07:36:44 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 62921C7B;
-        Thu, 23 Aug 2018 08:08:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 88BDCC7B;
+        Thu, 23 Aug 2018 08:08:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Sandipan Das <sandipan@linux.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 048/130] perf report powerpc: Fix crash if callchain is empty
-Date:   Thu, 23 Aug 2018 09:52:44 +0200
-Message-Id: <20180823074930.356269976@linuxfoundation.org>
+Subject: [PATCH 4.9 032/130] net: davinci_emac: match the mdio device against its compatible if possible
+Date:   Thu, 23 Aug 2018 09:52:28 +0200
+Message-Id: <20180823074929.286784714@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -56,72 +52,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sandipan Das <sandipan@linux.ibm.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-[ Upstream commit 143c99f6ac6812d23254e80844d6e34be897d3e1 ]
+[ Upstream commit ea0820bb771175c7d4192fc6f5b5c56b3c6d5239 ]
 
-For some cases, the callchain provided by the kernel may be empty. So,
-the callchain ip filtering code will cause a crash if we do not check
-whether the struct ip_callchain pointer is NULL before accessing any
-members.
+Device tree based systems without of_dev_auxdata will have the mdio
+device named differently than "davinci_mdio(.0)". In this case use the
+device's parent's compatible string for matching
 
-This can be observed on a powerpc64le system running Fedora 27 as shown
-below.
-
-  # perf record -b -e cycles:u ls
-
-Before:
-
-  # perf report --branch-history
-
-  perf: Segmentation fault
-  -------- backtrace --------
-  perf[0x1027615c]
-  linux-vdso64.so.1(__kernel_sigtramp_rt64+0x0)[0x7fff856304d8]
-  perf(arch_skip_callchain_idx+0x44)[0x10257c58]
-  perf[0x1017f2e4]
-  perf(thread__resolve_callchain+0x124)[0x1017ff5c]
-  perf(sample__resolve_callchain+0xf0)[0x10172788]
-  ...
-
-After:
-
-  # perf report --branch-history
-
-  Samples: 25  of event 'cycles:u', Event count (approx.): 2306870
-    Overhead  Source:Line            Symbol                   Shared Object
-  +   11.60%  _init+35736            [.] _init                ls
-  +    9.84%  strcoll_l.c:137        [.] __strcoll_l          libc-2.26.so
-  +    9.16%  memcpy.S:175           [.] __memcpy_power7      libc-2.26.so
-  +    9.01%  gconv_charset.h:54     [.] _nl_find_locale      libc-2.26.so
-  +    8.87%  dl-addr.c:52           [.] _dl_addr             libc-2.26.so
-  +    8.83%  _init+236              [.] _init                ls
-  ...
-
-Reported-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
-Acked-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/20180611104049.11048-1-sandipan@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/arch/powerpc/util/skip-callchain-idx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/ti/davinci_emac.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-+++ b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-@@ -243,7 +243,7 @@ int arch_skip_callchain_idx(struct threa
- 	u64 ip;
- 	u64 skip_slot = -1;
+--- a/drivers/net/ethernet/ti/davinci_emac.c
++++ b/drivers/net/ethernet/ti/davinci_emac.c
+@@ -1387,6 +1387,10 @@ static int emac_devioctl(struct net_devi
  
--	if (chain->nr < 3)
-+	if (!chain || chain->nr < 3)
- 		return skip_slot;
+ static int match_first_device(struct device *dev, void *data)
+ {
++	if (dev->parent && dev->parent->of_node)
++		return of_device_is_compatible(dev->parent->of_node,
++					       "ti,davinci_mdio");
++
+ 	return !strncmp(dev_name(dev), "davinci_mdio", 12);
+ }
  
- 	ip = chain->ips[2];
 
 
