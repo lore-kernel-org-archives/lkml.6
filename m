@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E68EEC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 147DDC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFEA121473
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFEA121473
+	by mail.kernel.org (Postfix) with ESMTP id CECD42147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CECD42147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbeHWL0W (ORCPT
+        id S1727825AbeHWL00 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:26:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41698 "EHLO
+        Thu, 23 Aug 2018 07:26:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41706 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbeHWL0W (ORCPT
+        with ESMTP id S1726995AbeHWL00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:26:22 -0400
+        Thu, 23 Aug 2018 07:26:26 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 59BD9ACC;
-        Thu, 23 Aug 2018 07:57:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F26FF9D2;
+        Thu, 23 Aug 2018 07:58:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ajay Gupta <ajaykuee@gmail.com>,
-        Nagaraj Annaiah <naga.annaiah@gmail.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 26/79] usb: xhci: increase CRS timeout value
-Date:   Thu, 23 Aug 2018 09:53:02 +0200
-Message-Id: <20180823074920.443357292@linuxfoundation.org>
+Subject: [PATCH 4.4 27/79] perf test session topology: Fix test on s390
+Date:   Thu, 23 Aug 2018 09:53:03 +0200
+Message-Id: <20180823074920.480938753@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -52,42 +54,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ajay Gupta <ajaykuee@gmail.com>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-[ Upstream commit 305886ca87be480ae159908c2affd135c04215cf ]
+[ Upstream commit b930e62ecd362843002bdf84c2940439822af321 ]
 
-Some controllers take almost 55ms to complete controller
-restore state (CRS).
-There is no timeout limit mentioned in xhci specification so
-fixing the issue by increasing the timeout limit to 100ms
+On s390 this test case fails because the socket identifiction numbers
+assigned to the CPU are higher than the CPU identification numbers.
 
-[reformat code comment -Mathias]
-Signed-off-by: Ajay Gupta <ajaykuee@gmail.com>
-Signed-off-by: Nagaraj Annaiah <naga.annaiah@gmail.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+F/ix this by adding the platform architecture into the perf data header
+flag information. This helps identifiing the test platform and handles
+s390 specifics in process_cpu_topology().
+
+Before:
+
+  [root@p23lp27 perf]# perf test -vvvvv -F 39
+  39: Session topology                                      :
+  --- start ---
+  templ file: /tmp/perf-test-iUv755
+  socket_id number is too big.You may need to upgrade the perf tool.
+  ---- end ----
+  Session topology: Skip
+  [root@p23lp27 perf]#
+
+After:
+
+  [root@p23lp27 perf]# perf test -vvvvv -F 39
+  39: Session topology                                      :
+  --- start ---
+  templ file: /tmp/perf-test-8X8VTs
+  CPU 0, core 0, socket 6
+  CPU 1, core 1, socket 3
+  ---- end ----
+  Session topology: Ok
+  [root@p23lp27 perf]#
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: c84974ed9fb6 ("perf test: Add entry to test cpu topology")
+Link: http://lkml.kernel.org/r/20180611073153.15592-2-tmricht@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/host/xhci.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ tools/perf/tests/topology.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -1052,8 +1052,13 @@ int xhci_resume(struct xhci_hcd *xhci, b
- 		command = readl(&xhci->op_regs->command);
- 		command |= CMD_CRS;
- 		writel(command, &xhci->op_regs->command);
-+		/*
-+		 * Some controllers take up to 55+ ms to complete the controller
-+		 * restore so setting the timeout to 100ms. Xhci specification
-+		 * doesn't mention any timeout value.
-+		 */
- 		if (xhci_handshake(&xhci->op_regs->status,
--			      STS_RESTORE, 0, 10 * 1000)) {
-+			      STS_RESTORE, 0, 100 * 1000)) {
- 			xhci_warn(xhci, "WARN: xHC restore state timeout\n");
- 			spin_unlock_irq(&xhci->lock);
- 			return -ETIMEDOUT;
+--- a/tools/perf/tests/topology.c
++++ b/tools/perf/tests/topology.c
+@@ -42,6 +42,7 @@ static int session_write_header(char *pa
+ 
+ 	perf_header__set_feat(&session->header, HEADER_CPU_TOPOLOGY);
+ 	perf_header__set_feat(&session->header, HEADER_NRCPUS);
++	perf_header__set_feat(&session->header, HEADER_ARCH);
+ 
+ 	session->header.data_size += DATA_SIZE;
+ 
 
 
