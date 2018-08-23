@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7959C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4B7C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C22420839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:51:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C22420839
+	by mail.kernel.org (Postfix) with ESMTP id D74AD20839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:51:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D74AD20839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387737AbeHWMUH (ORCPT
+        id S2387751AbeHWMUL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:20:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51580 "EHLO
+        Thu, 23 Aug 2018 08:20:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51588 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733225AbeHWMUH (ORCPT
+        with ESMTP id S1732175AbeHWMUK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:20:07 -0400
+        Thu, 23 Aug 2018 08:20:10 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9BC1FBE0;
-        Thu, 23 Aug 2018 08:51:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C4B85C5C;
+        Thu, 23 Aug 2018 08:51:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 150/324] bpf, s390: fix potential memleak when later bpf_jit_prog fails
-Date:   Thu, 23 Aug 2018 09:53:36 +0200
-Message-Id: <20180823075003.501501104@linuxfoundation.org>
+Subject: [PATCH 4.17 151/324] PCI: xilinx: Add missing of_node_put()
+Date:   Thu, 23 Aug 2018 09:53:37 +0200
+Message-Id: <20180823075003.555060723@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,38 +52,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit f605ce5eb26ac934fb8106d75d46a2c875a2bf23 ]
+[ Upstream commit 8c3f9bd851a4d3acf0a0f222d4e9e41c0cd1ea8e ]
 
-If we would ever fail in the bpf_jit_prog() pass that writes the
-actual insns to the image after we got header via bpf_jit_binary_alloc()
-then we also need to make sure to free it through bpf_jit_binary_free()
-again when bailing out. Given we had prior bpf_jit_prog() passes to
-initially probe for clobbered registers, program size and to fill in
-addrs arrray for jump targets, this is more of a theoretical one,
-but at least make sure this doesn't break with future changes.
+The call to of_get_next_child() returns a node pointer with refcount
+incremented thus it must be explicitly decremented here after the last
+usage.
 
-Fixes: 054623105728 ("s390/bpf: Add s390x eBPF JIT compiler backend")
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Fixes: 8961def56845 ("PCI: xilinx: Add Xilinx AXI PCIe Host Bridge IP driver")
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+[lorenzo.pieralisi@arm.com: reworked commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/net/bpf_jit_comp.c |    1 +
+ drivers/pci/host/pcie-xilinx.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/arch/s390/net/bpf_jit_comp.c
-+++ b/arch/s390/net/bpf_jit_comp.c
-@@ -1391,6 +1391,7 @@ struct bpf_prog *bpf_int_jit_compile(str
- 		goto free_addrs;
- 	}
- 	if (bpf_jit_prog(&jit, fp)) {
-+		bpf_jit_binary_free(header);
- 		fp = orig_fp;
- 		goto free_addrs;
- 	}
+--- a/drivers/pci/host/pcie-xilinx.c
++++ b/drivers/pci/host/pcie-xilinx.c
+@@ -507,6 +507,7 @@ static int xilinx_pcie_init_irq_domain(s
+ 	port->leg_domain = irq_domain_add_linear(pcie_intc_node, PCI_NUM_INTX,
+ 						 &intx_domain_ops,
+ 						 port);
++	of_node_put(pcie_intc_node);
+ 	if (!port->leg_domain) {
+ 		dev_err(dev, "Failed to get a INTx IRQ domain\n");
+ 		return -ENODEV;
 
 
