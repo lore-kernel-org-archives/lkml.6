@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E5EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF7CC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95D0A21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95D0A21473
+	by mail.kernel.org (Postfix) with ESMTP id B10A321473
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B10A321473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728196AbeHWL1E (ORCPT
+        id S1728217AbeHWL1H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:27:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41858 "EHLO
+        Thu, 23 Aug 2018 07:27:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41870 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727223AbeHWL1E (ORCPT
+        with ESMTP id S1727223AbeHWL1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:27:04 -0400
+        Thu, 23 Aug 2018 07:27:07 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF1B4BB6;
-        Thu, 23 Aug 2018 07:58:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 16C6CBB6;
+        Thu, 23 Aug 2018 07:58:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Vinod Koul <vkoul@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 12/79] scsi: xen-scsifront: add error handling for xenbus_printf
-Date:   Thu, 23 Aug 2018 09:52:48 +0200
-Message-Id: <20180823074919.462293334@linuxfoundation.org>
+Subject: [PATCH 4.4 32/79] dmaengine: k3dma: Off by one in k3_of_dma_simple_xlate()
+Date:   Thu, 23 Aug 2018 09:53:08 +0200
+Message-Id: <20180823074920.803122611@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -51,94 +51,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhouyang Jia <jiazhouyang09@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 93efbd39870474cc536b9caf4a6efeb03b0bc56f ]
+[ Upstream commit c4c2b7644cc9a41f17a8cc8904efe3f66ae4c7ed ]
 
-When xenbus_printf fails, the lack of error-handling code may
-cause unexpected results.
+The d->chans[] array has d->dma_requests elements so the > should be
+>= here.
 
-This patch adds error-handling code after calling xenbus_printf.
-
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Fixes: 8e6152bc660e ("dmaengine: Add hisilicon k3 DMA engine driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/xen-scsifront.c |   33 ++++++++++++++++++++++++++-------
- 1 file changed, 26 insertions(+), 7 deletions(-)
+ drivers/dma/k3dma.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/xen-scsifront.c
-+++ b/drivers/scsi/xen-scsifront.c
-@@ -676,10 +676,17 @@ static int scsifront_dev_reset_handler(s
- static int scsifront_sdev_configure(struct scsi_device *sdev)
- {
- 	struct vscsifrnt_info *info = shost_priv(sdev->host);
-+	int err;
+--- a/drivers/dma/k3dma.c
++++ b/drivers/dma/k3dma.c
+@@ -660,7 +660,7 @@ static struct dma_chan *k3_of_dma_simple
+ 	struct k3_dma_dev *d = ofdma->of_dma_data;
+ 	unsigned int request = dma_spec->args[0];
  
--	if (info && current == info->curr)
--		xenbus_printf(XBT_NIL, info->dev->nodename,
-+	if (info && current == info->curr) {
-+		err = xenbus_printf(XBT_NIL, info->dev->nodename,
- 			      info->dev_state_path, "%d", XenbusStateConnected);
-+		if (err) {
-+			xenbus_dev_error(info->dev, err,
-+				"%s: writing dev_state_path", __func__);
-+			return err;
-+		}
-+	}
+-	if (request > d->dma_requests)
++	if (request >= d->dma_requests)
+ 		return NULL;
  
- 	return 0;
- }
-@@ -687,10 +694,15 @@ static int scsifront_sdev_configure(stru
- static void scsifront_sdev_destroy(struct scsi_device *sdev)
- {
- 	struct vscsifrnt_info *info = shost_priv(sdev->host);
-+	int err;
- 
--	if (info && current == info->curr)
--		xenbus_printf(XBT_NIL, info->dev->nodename,
-+	if (info && current == info->curr) {
-+		err = xenbus_printf(XBT_NIL, info->dev->nodename,
- 			      info->dev_state_path, "%d", XenbusStateClosed);
-+		if (err)
-+			xenbus_dev_error(info->dev, err,
-+				"%s: writing dev_state_path", __func__);
-+	}
- }
- 
- static struct scsi_host_template scsifront_sht = {
-@@ -1025,9 +1037,12 @@ static void scsifront_do_lun_hotplug(str
- 
- 			if (scsi_add_device(info->host, chn, tgt, lun)) {
- 				dev_err(&dev->dev, "scsi_add_device\n");
--				xenbus_printf(XBT_NIL, dev->nodename,
-+				err = xenbus_printf(XBT_NIL, dev->nodename,
- 					      info->dev_state_path,
- 					      "%d", XenbusStateClosed);
-+				if (err)
-+					xenbus_dev_error(dev, err,
-+						"%s: writing dev_state_path", __func__);
- 			}
- 			break;
- 		case VSCSIFRONT_OP_DEL_LUN:
-@@ -1041,10 +1056,14 @@ static void scsifront_do_lun_hotplug(str
- 			}
- 			break;
- 		case VSCSIFRONT_OP_READD_LUN:
--			if (device_state == XenbusStateConnected)
--				xenbus_printf(XBT_NIL, dev->nodename,
-+			if (device_state == XenbusStateConnected) {
-+				err = xenbus_printf(XBT_NIL, dev->nodename,
- 					      info->dev_state_path,
- 					      "%d", XenbusStateConnected);
-+				if (err)
-+					xenbus_dev_error(dev, err,
-+						"%s: writing dev_state_path", __func__);
-+			}
- 			break;
- 		default:
- 			break;
+ 	return dma_get_slave_channel(&(d->chans[request].vc.chan));
 
 
