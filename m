@@ -2,274 +2,154 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82155C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 15:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61906C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 15:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 280DA20661
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 15:25:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 280DA20661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1738320671
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 15:27:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1738320671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbeHWSzi (ORCPT
+        id S1727290AbeHWS5a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 14:55:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58284 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726928AbeHWSzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 14:55:37 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 85599401EF3C;
-        Thu, 23 Aug 2018 15:25:28 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-116-161.ams2.redhat.com [10.36.116.161])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8A8F9A9F09;
-        Thu, 23 Aug 2018 15:25:24 +0000 (UTC)
-Subject: Re: [RFC 01/13] iommu: Introduce bind_guest_stage API
-To:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, jean-philippe.brucker@arm.com,
-        jacob.jun.pan@linux.intel.com, yi.l.liu@linux.intel.com,
-        will.deacon@arm.com, robin.murphy@arm.com
-References: <1535026656-8450-1-git-send-email-eric.auger@redhat.com>
- <1535026656-8450-2-git-send-email-eric.auger@redhat.com>
-Cc:     marc.zyngier@arm.com, christoffer.dall@arm.com,
-        peter.maydell@linaro.org
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <22c01a4d-c74a-7279-d4ae-39e29a3bc942@redhat.com>
-Date:   Thu, 23 Aug 2018 17:25:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        Thu, 23 Aug 2018 14:57:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47946 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbeHWS5a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 14:57:30 -0400
+Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2D0E6CA0;
+        Thu, 23 Aug 2018 15:27:19 +0000 (UTC)
+Date:   Thu, 23 Aug 2018 17:27:17 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 4.14 210/217] PCI: OF: Fix I/O space page leak
+Message-ID: <20180823152717.GA28242@kroah.com>
+References: <20180823075505.090246914@linuxfoundation.org>
+ <20180823075515.152259931@linuxfoundation.org>
+ <fa1a9728-8deb-867d-04b1-a9959ab48d24@cogentembedded.com>
+ <20180823111728.GA2945@kroah.com>
+ <20180823115628.GA13907@kroah.com>
+ <3128dea4-1b3c-ccf3-3e57-fbb5ea6d3fe5@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <1535026656-8450-2-git-send-email-eric.auger@redhat.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 23 Aug 2018 15:25:28 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 23 Aug 2018 15:25:28 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3128dea4-1b3c-ccf3-3e57-fbb5ea6d3fe5@cogentembedded.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Aug 23, 2018 at 06:20:31PM +0300, Sergei Shtylyov wrote:
+> On 08/23/2018 02:56 PM, Greg Kroah-Hartman wrote:
+> > On Thu, Aug 23, 2018 at 01:17:28PM +0200, Greg Kroah-Hartman wrote:
+> >> On Thu, Aug 23, 2018 at 01:57:35PM +0300, Sergei Shtylyov wrote:
+> >>> On 08/23/2018 10:55 AM, Greg Kroah-Hartman wrote:
+> >>>
+> >>>> 4.14-stable review patch.  If anyone has any objections, please let me know.
+> >>>>
+> >>>> ------------------
+> >>>>
+> >>>> From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>>>
+> >>>> commit a5fb9fb023a1435f2b42bccd7f547560f3a21dc3 upstream.
+> >>>>
+> >>>> When testing the R-Car PCIe driver on the Condor board, if the PCIe PHY
+> >>>> driver was left disabled, the kernel crashed with this BUG:
+> >>>>
+> >>>>   kernel BUG at lib/ioremap.c:72!
+> >>>>   Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+> >>>>   Modules linked in:
+> >>>>   CPU: 0 PID: 39 Comm: kworker/0:1 Not tainted 4.17.0-dirty #1092
+> >>>>   Hardware name: Renesas Condor board based on r8a77980 (DT)
+> >>>>   Workqueue: events deferred_probe_work_func
+> >>>>   pstate: 80000005 (Nzcv daif -PAN -UAO)
+> >>>>   pc : ioremap_page_range+0x370/0x3c8
+> >>>>   lr : ioremap_page_range+0x40/0x3c8
+> >>>>   sp : ffff000008da39e0
+> >>>>   x29: ffff000008da39e0 x28: 00e8000000000f07
+> >>>>   x27: ffff7dfffee00000 x26: 0140000000000000
+> >>>>   x25: ffff7dfffef00000 x24: 00000000000fe100
+> >>>>   x23: ffff80007b906000 x22: ffff000008ab8000
+> >>>>   x21: ffff000008bb1d58 x20: ffff7dfffef00000
+> >>>>   x19: ffff800009c30fb8 x18: 0000000000000001
+> >>>>   x17: 00000000000152d0 x16: 00000000014012d0
+> >>>>   x15: 0000000000000000 x14: 0720072007200720
+> >>>>   x13: 0720072007200720 x12: 0720072007200720
+> >>>>   x11: 0720072007300730 x10: 00000000000000ae
+> >>>>   x9 : 0000000000000000 x8 : ffff7dffff000000
+> >>>>   x7 : 0000000000000000 x6 : 0000000000000100
+> >>>>   x5 : 0000000000000000 x4 : 000000007b906000
+> >>>>   x3 : ffff80007c61a880 x2 : ffff7dfffeefffff
+> >>>>   x1 : 0000000040000000 x0 : 00e80000fe100f07
+> >>>>   Process kworker/0:1 (pid: 39, stack limit = 0x        (ptrval))
+> >>>>   Call trace:
+> >>>>    ioremap_page_range+0x370/0x3c8
+> >>>>    pci_remap_iospace+0x7c/0xac
+> >>>>    pci_parse_request_of_pci_ranges+0x13c/0x190
+> >>>>    rcar_pcie_probe+0x4c/0xb04
+> >>>>    platform_drv_probe+0x50/0xbc
+> >>>>    driver_probe_device+0x21c/0x308
+> >>>>    __device_attach_driver+0x98/0xc8
+> >>>>    bus_for_each_drv+0x54/0x94
+> >>>>    __device_attach+0xc4/0x12c
+> >>>>    device_initial_probe+0x10/0x18
+> >>>>    bus_probe_device+0x90/0x98
+> >>>>    deferred_probe_work_func+0xb0/0x150
+> >>>>    process_one_work+0x12c/0x29c
+> >>>>    worker_thread+0x200/0x3fc
+> >>>>    kthread+0x108/0x134
+> >>>>    ret_from_fork+0x10/0x18
+> >>>>   Code: f9004ba2 54000080 aa0003fb 17ffff48 (d4210000)
+> >>>>
+> >>>> It turned out that pci_remap_iospace() wasn't undone when the driver's
+> >>>> probe failed, and since devm_phy_optional_get() returned -EPROBE_DEFER,
+> >>>> the probe was retried, finally causing the BUG due to trying to remap
+> >>>> already remapped pages.
+> >>>>
+> >>>> Introduce the devm_pci_remap_iospace() managed API and replace the
+> >>>> pci_remap_iospace() call with it to fix the bug.
+> >>>>
+> >>>> Fixes: dbf9826d5797 ("PCI: generic: Convert to DT resource parsing API")
+> >>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>>> [lorenzo.pieralisi@arm.com: split commit/updated the commit log]
+> >>>> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> >>>> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> >>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> >>>> [Backport just for the new api which other patches need - gregkh]
+> >>>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >>>>
+> >>>> ---
+> >>>>  drivers/pci/pci.c   |   38 ++++++++++++++++++++++++++++++++++++++
+> >>>>  include/linux/pci.h |    2 ++
+> >>>>  2 files changed, 40 insertions(+)
+> >>>
+> >>>   You missed a chnage to drivers/pci/host/pci-host-common.c (and 
+> >>> also drivers/pci/host/pcie-rcar.c which wasn't using the generic mode back
+> 
+>    s/mode/code/, of course. :-)
+> 
+> >>> then)...
+> >>
+> >> Yes I totally messed this up, let me fix it...
+> > 
+> > Ok, below is the patch that I replaced the 4.14 and 4.9 versions with,
+> > it should now be resolved, but verifying this would be nice :)
+> 
+>    Unfortunately, it doesn't fix anything on R-Car where this bug was originally
+> encountered and the fix was tested... and you leave no way for it to be fixed. :-(
 
-On 08/23/2018 02:17 PM, Eric Auger wrote:
-> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> 
-> In virtualization use case, when a guest is assigned
-> a PCI host device, protected by a virtual IOMMU on a guest,
-> the physical IOMMU must be programmed to be consistent with
-> the guest mappings. If the physical IOMMU supports two
-> translation stages it makes sense to program guest mappings
-> onto the first stage while to host owns the stage 2.
-> 
-> In that case, it is mandated to trap on guest configuration
-> settings and pass those to the physical iommu driver.
-> 
-> This patch adds a new API to the iommu subsystem that allows
-> to bind and unbind the guest configuration data to the host.
-> 
-> A generic iommu_guest_stage_config struct is introduced in
-> a new iommu.h uapi header. This is going to be used by the VFIO
-> user API. We foresee at least 2 specialization of this struct,
-> for PASID table passing and ARM SMMUv3.
-> 
-> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
-> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> 
-> ---
-> 
-> This patch generalizes the API introduced by Jacob & co-authors in
-> https://lwn.net/Articles/754331/
-> ---
->  drivers/iommu/iommu.c      | 19 +++++++++++++++
->  include/linux/iommu.h      | 23 ++++++++++++++++++
->  include/uapi/linux/iommu.h | 59 ++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 101 insertions(+)
->  create mode 100644 include/uapi/linux/iommu.h
-> 
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 63b3756..5156172 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -1326,6 +1326,25 @@ int iommu_attach_device(struct iommu_domain *domain, struct device *dev)
->  }
->  EXPORT_SYMBOL_GPL(iommu_attach_device);
->  
-> +int iommu_bind_guest_stage(struct iommu_domain *domain, struct device *dev,
-> +			   struct iommu_guest_stage_config *cfg)
-> +{
-> +	if (unlikely(!domain->ops->bind_guest_stage))
-> +		return -ENODEV;
-> +
-> +	return domain->ops->bind_guest_stage(domain, dev, cfg);
-> +}
-> +EXPORT_SYMBOL_GPL(iommu_bind_guest_stage);
-> +
-> +void iommu_unbind_guest_stage(struct iommu_domain *domain, struct device *dev)
-> +{
-> +	if (unlikely(!domain->ops->unbind_guest_stage))
-> +		return;
-> +
-> +	domain->ops->unbind_guest_stage(domain, dev);
-> +}
-> +EXPORT_SYMBOL_GPL(iommu_unbind_guest_stage);
-> +
->  static void __iommu_detach_device(struct iommu_domain *domain,
->  				  struct device *dev)
->  {
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index 19938ee..aec853d 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -25,6 +25,7 @@
->  #include <linux/errno.h>
->  #include <linux/err.h>
->  #include <linux/of.h>
-> +#include <uapi/linux/iommu.h>
->  
->  #define IOMMU_READ	(1 << 0)
->  #define IOMMU_WRITE	(1 << 1)
-> @@ -187,6 +188,8 @@ struct iommu_resv_region {
->   * @domain_get_windows: Return the number of windows for a domain
->   * @of_xlate: add OF master IDs to iommu grouping
->   * @pgsize_bitmap: bitmap of all possible supported page sizes
-> + * @bind_guest_stage: program the guest stage configuration
-> + * @unbind_guest_stage: unbind the guest stage and restore defaults
->   */
->  struct iommu_ops {
->  	bool (*capable)(enum iommu_cap);
-> @@ -235,6 +238,11 @@ struct iommu_ops {
->  	int (*of_xlate)(struct device *dev, struct of_phandle_args *args);
->  	bool (*is_attach_deferred)(struct iommu_domain *domain, struct device *dev);
->  
-> +	int (*bind_guest_stage)(struct iommu_domain *domain, struct device *dev,
-> +				struct iommu_guest_stage_config *cfg);
-> +	void (*unbind_guest_stage)(struct iommu_domain *domain,
-> +				   struct device *dev);
-> +
->  	unsigned long pgsize_bitmap;
->  };
->  
-> @@ -296,6 +304,10 @@ extern int iommu_attach_device(struct iommu_domain *domain,
->  			       struct device *dev);
->  extern void iommu_detach_device(struct iommu_domain *domain,
->  				struct device *dev);
-> +extern int iommu_bind_guest_stage(struct iommu_domain *domain,
-> +		struct device *dev, struct iommu_guest_stage_config *cfg);
-> +extern void iommu_unbind_guest_stage(struct iommu_domain *domain,
-> +				     struct device *dev);
->  extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
->  extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
->  		     phys_addr_t paddr, size_t size, int prot);
-> @@ -696,6 +708,17 @@ const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
->  	return NULL;
->  }
->  
-> +static inline
-> +int iommu_bind_guest_stage(struct iommu_domain *domain, struct device *dev,
-> +			   struct iommu_guest_stage_config *cfg)
-> +{
-> +	return -ENODEV;
-> +}
-> +static inline
-> +void iommu_unbind_guest_stage(struct iommu_domain *domain, struct device *dev)
-> +{
-> +}
-> +
->  #endif /* CONFIG_IOMMU_API */
->  
->  #endif /* __LINUX_IOMMU_H */
-> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
-> new file mode 100644
-> index 0000000..2d1593c
-> --- /dev/null
-> +++ b/include/uapi/linux/iommu.h
-> @@ -0,0 +1,59 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +/*
-> + * IOMMU user API definitions
-> + *
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#ifndef _UAPI_IOMMU_H
-> +#define _UAPI_IOMMU_H
-> +
-> +#include <linux/types.h>
-> +
-> +/**
-> + * PASID table data used to bind guest PASID table to the host IOMMU. This will
-> + * enable guest managed first level page tables.
-> + * @version: for future extensions and identification of the data format
-> + * @bytes: size of this structure
-> + * @base_ptr:	PASID table pointer
-> + * @pasid_bits:	number of bits supported in the guest PASID table, must be less
-> + *		or equal than the host supported PASID size.
-> + */
-> +struct iommu_pasid_table_config {
-> +	__u32 version;
-> +#define PASID_TABLE_CFG_VERSION_1 1
-> +	__u32 bytes;
-> +	__u64 base_ptr;
-> +	__u8 pasid_bits;
-> +};
-> +
-> +/**
-> + * Stream Table Entry S1 info
-> + * @disabled: the smmu is disabled
-> + * @bypassed: stage 1 is bypassed
-> + * @aborted: aborted
-> + * @cdptr_dma: GPA of the Context Descriptor
-> + * @asid: address space identified associated to the CD
-> + */
-> +struct iommu_smmu_s1_config {
-> +	__u8 disabled;
-> +	__u8 bypassed;
-> +	__u8 aborted;
-> +	__u64 cdptr_dma;
-> +	__u16 asid;
-This asid field is a leftover. asid is part of the CD (owned by the
-guest) and cannot be conveyed through this API. What is relevant is to
-pass is the guest asid_bits (vSMMU IDR1 info), to be compared with the
-host one. So we end up having something similar to the base_ptr and
-pasid_bits of iommu_pasid_table_config.
+Really?  Why not?  What is missing here?
 
-Otherwise, the other fields (disable, bypassed, aborted) can be packed
-as masks in a _u8 flag.
-
-Anyway this API still is at the stage of proof of concept. At least it
-shows the similarities between that use case and the PASID one and
-should encourage to discuss about the relevance to have a unified API to
-pass the guest stage info.
-
-Thanks
-
-Eric
-> +};
-> +
-> +struct iommu_guest_stage_config {
-> +#define PASID_TABLE	(1 << 0)
-> +#define SMMUV3_S1_CFG	(1 << 1)
-> +	__u32 flags;
-> +	union {
-> +		struct iommu_pasid_table_config pasidt;
-> +		struct iommu_smmu_s1_config smmu_s1;
-> +	};
-> +};
-> +
-> +#endif /* _UAPI_IOMMU_H */
-> 
+greg k-h
