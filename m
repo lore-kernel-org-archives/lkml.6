@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C99CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7161C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C624E208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:28:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C624E208D6
+	by mail.kernel.org (Postfix) with ESMTP id 6AD1B214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:28:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AD1B214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730526AbeHWL4x (ORCPT
+        id S1730563AbeHWL44 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:56:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47358 "EHLO
+        Thu, 23 Aug 2018 07:56:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47366 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727410AbeHWL4w (ORCPT
+        with ESMTP id S1728754AbeHWL44 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:56:52 -0400
+        Thu, 23 Aug 2018 07:56:56 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6AA5B8B1;
-        Thu, 23 Aug 2018 08:28:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 944408B1;
+        Thu, 23 Aug 2018 08:28:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Inki Dae <inki.dae@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 113/217] drm/exynos: decon5433: Fix per-plane global alpha for XRGB modes
-Date:   Thu, 23 Aug 2018 09:53:46 +0200
-Message-Id: <20180823075510.557050500@linuxfoundation.org>
+Subject: [PATCH 4.14 114/217] drm/exynos: decon5433: Fix WINCONx reset value
+Date:   Thu, 23 Aug 2018 09:53:47 +0200
+Message-Id: <20180823075510.598435661@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -54,31 +54,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit ab337fc274a1957ff0771f19e826c736253f7c39 ]
+[ Upstream commit 7b7aa62c05eac9789c208b946f515983a9255d8d ]
 
-Set per-plane global alpha to maximum value to get proper blending of
-XRGB and ARGB planes. This fixes the strange order of overlapping planes.
+The only bits that should be preserved in decon_win_set_fmt() is
+WINCONx_ENWIN_F. All other bits depends on the selected pixel formats and
+are set by the mentioned function.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
 +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -352,8 +352,8 @@ static void decon_update_plane(struct ex
- 		writel(val, ctx->addr + DECON_VIDOSDxB(win));
- 	}
+@@ -261,7 +261,7 @@ static void decon_win_set_pixfmt(struct
+ 	unsigned long val;
  
--	val = VIDOSD_Wx_ALPHA_R_F(0x0) | VIDOSD_Wx_ALPHA_G_F(0x0) |
--		VIDOSD_Wx_ALPHA_B_F(0x0);
-+	val = VIDOSD_Wx_ALPHA_R_F(0xff) | VIDOSD_Wx_ALPHA_G_F(0xff) |
-+		VIDOSD_Wx_ALPHA_B_F(0xff);
- 	writel(val, ctx->addr + DECON_VIDOSDxC(win));
+ 	val = readl(ctx->addr + DECON_WINCONx(win));
+-	val &= ~WINCONx_BPPMODE_MASK;
++	val &= WINCONx_ENWIN_F;
  
- 	val = VIDOSD_Wx_ALPHA_R_F(0x0) | VIDOSD_Wx_ALPHA_G_F(0x0) |
+ 	switch (fb->format->format) {
+ 	case DRM_FORMAT_XRGB1555:
 
 
