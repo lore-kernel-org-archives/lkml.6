@@ -6,86 +6,150 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B22C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4848BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C01582098B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C01582098B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C55F21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C55F21473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728721AbeHWL25 (ORCPT
+        id S1728767AbeHWL3Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:28:57 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37153 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727878AbeHWL24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:28:56 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 38EAE816AA18E;
-        Thu, 23 Aug 2018 16:00:29 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.399.0; Thu, 23 Aug 2018 16:00:25 +0800
-From:   c00284940 <chenxiang66@hisilicon.com>
-To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linuxarm@huawei.com>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <john.garry@huawei.com>,
-        c00284940 <chenxiang66@hisilicon.com>
-Subject: [PATCH plinth/topic-sas-4.18] {topost} scsi: hisi_sas: send HARD RESET to clear the previous affiliation of STP target port when init device
-Date:   Thu, 23 Aug 2018 15:58:47 +0800
-Message-ID: <1535011127-110586-1-git-send-email-chenxiang66@hisilicon.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 23 Aug 2018 07:29:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44090 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727623AbeHWL3P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 07:29:15 -0400
+Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D47FDBB6;
+        Thu, 23 Aug 2018 08:00:44 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 4.4 77/79] PCI: pciehp: Fix use-after-free on unplug
+Date:   Thu, 23 Aug 2018 09:53:53 +0200
+Message-Id: <20180823074924.260171323@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
+References: <20180823074918.641878835@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If exchange SAS expander from one SAS controller to other SAS controller
-without power down, the STP target port will maintain previous affiliation and
-reject all subsequent connection requests from other STP initiator ports
-with OPEN_REJECT (STP RESOURCES BUSY).
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-To solve this issue, send HARD RESET to clear the previous affiliation of
-STP target port according to SPL(chapter 6.19.4).
+------------------
 
-Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
+From: Lukas Wunner <lukas@wunner.de>
+
+commit 281e878eab191cce4259abbbf1a0322e3adae02c upstream.
+
+When pciehp is unbound (e.g. on unplug of a Thunderbolt device), the
+hotplug_slot struct is deregistered and thus freed before freeing the
+IRQ.  The IRQ handler and the work items it schedules print the slot
+name referenced from the freed structure in various informational and
+debug log messages, each time resulting in a quadruple dereference of
+freed pointers (hotplug_slot -> pci_slot -> kobject -> name).
+
+At best the slot name is logged as "(null)", at worst kernel memory is
+exposed in logs or the driver crashes:
+
+  pciehp 0000:10:00.0:pcie204: Slot((null)): Card not present
+
+An attacker may provoke the bug by unplugging multiple devices on a
+Thunderbolt daisy chain at once.  Unplugging can also be simulated by
+powering down slots via sysfs.  The bug is particularly easy to trigger
+in poll mode.
+
+It has been present since the driver's introduction in 2004:
+https://git.kernel.org/tglx/history/c/c16b4b14d980
+
+Fix by rearranging teardown such that the IRQ is freed first.  Run the
+work items queued by the IRQ handler to completion before freeing the
+hotplug_slot struct by draining the work queue from the ->release_slot
+callback which is invoked by pci_hp_deregister().
+
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: stable@vger.kernel.org # v2.6.4
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/scsi/hisi_sas/hisi_sas_main.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/pci/hotplug/pciehp.h      |    1 +
+ drivers/pci/hotplug/pciehp_core.c |    7 +++++++
+ drivers/pci/hotplug/pciehp_hpc.c  |    5 ++---
+ 3 files changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index bb0fa24..9225138 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -612,6 +612,7 @@ static int hisi_sas_init_device(struct domain_device *device)
- 	struct hisi_sas_tmf_task tmf_task;
- 	int retry = HISI_SAS_SRST_ATA_DISK_CNT;
- 	struct hisi_hba *hisi_hba = dev_to_hisi_hba(device);
-+	struct sas_phy *local_phy;
+--- a/drivers/pci/hotplug/pciehp.h
++++ b/drivers/pci/hotplug/pciehp.h
+@@ -132,6 +132,7 @@ int pciehp_unconfigure_device(struct slo
+ void pciehp_queue_pushbutton_work(struct work_struct *work);
+ struct controller *pcie_init(struct pcie_device *dev);
+ int pcie_init_notification(struct controller *ctrl);
++void pcie_shutdown_notification(struct controller *ctrl);
+ int pciehp_enable_slot(struct slot *p_slot);
+ int pciehp_disable_slot(struct slot *p_slot);
+ void pcie_reenable_notification(struct controller *ctrl);
+--- a/drivers/pci/hotplug/pciehp_core.c
++++ b/drivers/pci/hotplug/pciehp_core.c
+@@ -77,6 +77,12 @@ static int reset_slot		(struct hotplug_s
+  */
+ static void release_slot(struct hotplug_slot *hotplug_slot)
+ {
++	struct slot *slot = hotplug_slot->private;
++
++	/* queued work needs hotplug_slot name */
++	cancel_delayed_work(&slot->work);
++	drain_workqueue(slot->wq);
++
+ 	kfree(hotplug_slot->ops);
+ 	kfree(hotplug_slot->info);
+ 	kfree(hotplug_slot);
+@@ -276,6 +282,7 @@ static void pciehp_remove(struct pcie_de
+ {
+ 	struct controller *ctrl = get_service_data(dev);
  
- 	switch (device->dev_type) {
- 	case SAS_END_DEVICE:
-@@ -627,6 +628,14 @@ static int hisi_sas_init_device(struct domain_device *device)
- 	case SAS_SATA_PM:
- 	case SAS_SATA_PM_PORT:
- 	case SAS_SATA_PENDING:
-+		/*
-+		 * send HARD RESET to clear previous affiliation of
-+		 * STP target port
-+		 */
-+		local_phy = sas_get_local_phy(device);
-+		if (!scsi_is_sas_phy_local(local_phy))
-+			sas_phy_reset(local_phy, 1);
-+		sas_put_local_phy(local_phy);
- 		while (retry-- > 0) {
- 			rc = hisi_sas_softreset_ata_disk(device);
- 			if (!rc)
--- 
-1.9.1
++	pcie_shutdown_notification(ctrl);
+ 	cleanup_slot(ctrl);
+ 	pciehp_release_ctrl(ctrl);
+ }
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -741,7 +741,7 @@ int pcie_init_notification(struct contro
+ 	return 0;
+ }
+ 
+-static void pcie_shutdown_notification(struct controller *ctrl)
++void pcie_shutdown_notification(struct controller *ctrl)
+ {
+ 	if (ctrl->notification_enabled) {
+ 		pcie_disable_notification(ctrl);
+@@ -776,7 +776,7 @@ abort:
+ static void pcie_cleanup_slot(struct controller *ctrl)
+ {
+ 	struct slot *slot = ctrl->slot;
+-	cancel_delayed_work(&slot->work);
++
+ 	destroy_workqueue(slot->wq);
+ 	kfree(slot);
+ }
+@@ -853,7 +853,6 @@ abort:
+ 
+ void pciehp_release_ctrl(struct controller *ctrl)
+ {
+-	pcie_shutdown_notification(ctrl);
+ 	pcie_cleanup_slot(ctrl);
+ 	kfree(ctrl);
+ }
+
 
