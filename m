@@ -2,84 +2,64 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C1A3C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 15:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 089ABC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 15:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F81220661
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 15:21:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F81220661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id A68F120661
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 15:21:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qmzrQ9DR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A68F120661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733057AbeHWSvK (ORCPT
+        id S1727148AbeHWSvw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 14:51:10 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:47368 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731408AbeHWSvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 14:51:10 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 83Apw8Zk5R87; Thu, 23 Aug 2018 17:20:45 +0200 (CEST)
-Received: from nazgul.tnic (77-85-47-250.ip.btc-net.bg [77.85.47.250])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 137E61EC01F6;
-        Thu, 23 Aug 2018 17:20:45 +0200 (CEST)
-Date:   Thu, 23 Aug 2018 17:21:02 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     lijiang <lijiang@redhat.com>
-Cc:     Dave Young <dyoung@redhat.com>, bhe@redhat.com,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        hpa@zytor.com, ebiederm@xmission.com, joro@8bytes.org,
-        thomas.lendacky@amd.com, kexec@lists.infradead.org,
-        iommu@lists.linux-foundation.org
-Subject: Re: [PATCH 1/5 V5] Add a function(ioremap_encrypted) for kdump when
- AMD sme enabled
-Message-ID: <20180823152102.GF21323@nazgul.tnic>
-References: <e7357038-08bd-7ba8-5357-7c91d21d10fe@redhat.com>
- <20180709092901.GA22182@nazgul.tnic>
- <fc6a47ca-1b16-eba5-d15e-ca294e01af93@redhat.com>
- <20180713170857.GB17896@nazgul.tnic>
- <33453712-9b0b-e8b9-08a6-de09e0806dd6@redhat.com>
- <20180720052304.GA9146@dhcp-128-65.nay.redhat.com>
- <20180720073245.GA26926@nazgul.tnic>
- <562d8611-750d-3624-1a1b-df21f39812d6@redhat.com>
- <54D39850-F883-4EC6-B160-0CD88D47A997@alien8.de>
- <53536964-2b57-4630-de91-3d4da2b643a8@redhat.com>
+        Thu, 23 Aug 2018 14:51:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60216 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726734AbeHWSvw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 14:51:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=po6DZaumXmV4HF6eHdYyylaiYRSYAwrP75eUrUE+/rY=; b=qmzrQ9DRL1eMGqxSA9Z97Iu4f
+        0A0miOdZjMTFL5eYemgYaWA3iL70ggkpnr7c/PJ+Q1IYEgg1D7dtW91qenD8rylQdUxOrGQIQb3Ep
+        RX9VzK0GOIAkNyzibNwt5ewC7r3oOs3neFkMpCm1lH/pztzRrPJW5WMkVUwzjT21HVrYwmhTmauaT
+        IEpyU4J24CvLjUBY4J3HgWssm5inpRFbQt/zlEm+/We5Jj5P4jd4cwpkpmCs+K1LjcjDAQs8YnGrv
+        sd+ugDtUl2sKi0RLyDZ1520gx+bCx7a8W+idHjsQWe2ZI4IHeXDk51U9dAuGRSh2ytDMfWcF0aDxc
+        0kSJenQyQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fsrQd-0002Cy-Iw; Thu, 23 Aug 2018 15:21:43 +0000
+Date:   Thu, 23 Aug 2018 08:21:43 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Max Filippov <jcmvbkbc@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        Chris Zankel <chris@zankel.net>
+Subject: Re: [PULL 00/14] Xtensa updates for 4.19
+Message-ID: <20180823152143.GA3049@infradead.org>
+References: <20180822185034.30167-1-jcmvbkbc@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <53536964-2b57-4630-de91-3d4da2b643a8@redhat.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <20180822185034.30167-1-jcmvbkbc@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 01:35:28PM +0800, lijiang wrote:
-> I personally prefer solution A, which is presented in posted patches.
-> What do you think, Boris? And other reviewers?
+>       xtensa: platform-specific handling of coherent memory
 
-Ok, thanks for taking the time and effort in explaning this in detail.
-
-Solution B really turns out to be too complex after all. So as long as
-that @encrypted argument does not need to propagate any further than a
-couple of helpers - as it does now - I guess we can do solution A.
-
-BUT! Wait until next week before sending your patches again because the
-merge window isn't over yet.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-ECO tip #101: Trim your mails when you reply.
---
+How is this supposed to be used?  For the nommu version there only
+are __weak stubs, but no actual implementation.
