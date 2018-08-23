@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFB6C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB92C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:08:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCDEF208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:08:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCDEF208C2
+	by mail.kernel.org (Postfix) with ESMTP id B8CFB208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:08:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8CFB208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388083AbeHWMhc (ORCPT
+        id S2388229AbeHWMhf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:37:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56236 "EHLO
+        Thu, 23 Aug 2018 08:37:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56244 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729119AbeHWMhb (ORCPT
+        with ESMTP id S1729119AbeHWMhe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:37:31 -0400
+        Thu, 23 Aug 2018 08:37:34 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4CC02BBF;
-        Thu, 23 Aug 2018 09:08:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7572EBBF;
+        Thu, 23 Aug 2018 09:08:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 299/324] mm: make vm_area_dup() actually copy the old vma data
-Date:   Thu, 23 Aug 2018 09:56:05 +0200
-Message-Id: <20180823075011.033786809@linuxfoundation.org>
+Subject: [PATCH 4.17 300/324] mm: make vm_area_alloc() initialize core fields
+Date:   Thu, 23 Aug 2018 09:56:06 +0200
+Message-Id: <20180823075011.086119180@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -53,85 +53,204 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit 95faf6992df468f617edb788da8c21c6eed0dfa7 ]
+[ Upstream commit 490fc053865c9cc40f1085ef8a5504f5341f79d2 ]
 
-.. and re-initialize th eanon_vma_chain head.
+Like vm_area_dup(), it initializes the anon_vma_chain head, and the
+basic mm pointer.
 
-This removes some boiler-plate from the users, and also makes it clear
-why it didn't need use the 'zalloc()' version.
+The rest of the fields end up being different for different users,
+although the plan is to also initialize the 'vm_ops' field to a dummy
+entry.
 
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/fork.c |   10 +++++++---
- mm/mmap.c     |    7 -------
- mm/nommu.c    |    1 -
- 3 files changed, 7 insertions(+), 11 deletions(-)
+ arch/ia64/kernel/perfmon.c |    4 +---
+ arch/ia64/mm/init.c        |    8 ++------
+ fs/exec.c                  |    4 +---
+ include/linux/mm.h         |    2 +-
+ kernel/fork.c              |   10 ++++++++--
+ mm/mmap.c                  |   12 +++---------
+ mm/nommu.c                 |    3 +--
+ 7 files changed, 17 insertions(+), 26 deletions(-)
 
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -315,7 +315,13 @@ struct vm_area_struct *vm_area_alloc(voi
+--- a/arch/ia64/kernel/perfmon.c
++++ b/arch/ia64/kernel/perfmon.c
+@@ -2278,17 +2278,15 @@ pfm_smpl_buffer_alloc(struct task_struct
+ 	DPRINT(("smpl_buf @%p\n", smpl_buf));
  
- struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
- {
--	return kmem_cache_alloc(vm_area_cachep, GFP_KERNEL);
-+	struct vm_area_struct *new = kmem_cache_alloc(vm_area_cachep, GFP_KERNEL);
-+
-+	if (new) {
-+		*new = *orig;
-+		INIT_LIST_HEAD(&new->anon_vma_chain);
-+	}
-+	return new;
- }
+ 	/* allocate vma */
+-	vma = vm_area_alloc();
++	vma = vm_area_alloc(mm);
+ 	if (!vma) {
+ 		DPRINT(("Cannot allocate vma\n"));
+ 		goto error_kmem;
+ 	}
+-	INIT_LIST_HEAD(&vma->anon_vma_chain);
  
- void vm_area_free(struct vm_area_struct *vma)
-@@ -473,8 +479,6 @@ static __latent_entropy int dup_mmap(str
- 		tmp = vm_area_dup(mpnt);
- 		if (!tmp)
- 			goto fail_nomem;
--		*tmp = *mpnt;
--		INIT_LIST_HEAD(&tmp->anon_vma_chain);
- 		retval = vma_dup_policy(mpnt, tmp);
- 		if (retval)
- 			goto fail_nomem_policy;
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2624,11 +2624,6 @@ int __split_vma(struct mm_struct *mm, st
- 	if (!new)
+ 	/*
+ 	 * partially initialize the vma for the sampling buffer
+ 	 */
+-	vma->vm_mm	     = mm;
+ 	vma->vm_file	     = get_file(filp);
+ 	vma->vm_flags	     = VM_READ|VM_MAYREAD|VM_DONTEXPAND|VM_DONTDUMP;
+ 	vma->vm_page_prot    = PAGE_READONLY; /* XXX may need to change */
+--- a/arch/ia64/mm/init.c
++++ b/arch/ia64/mm/init.c
+@@ -114,10 +114,8 @@ ia64_init_addr_space (void)
+ 	 * the problem.  When the process attempts to write to the register backing store
+ 	 * for the first time, it will get a SEGFAULT in this case.
+ 	 */
+-	vma = vm_area_alloc();
++	vma = vm_area_alloc(current->mm);
+ 	if (vma) {
+-		INIT_LIST_HEAD(&vma->anon_vma_chain);
+-		vma->vm_mm = current->mm;
+ 		vma->vm_start = current->thread.rbs_bot & PAGE_MASK;
+ 		vma->vm_end = vma->vm_start + PAGE_SIZE;
+ 		vma->vm_flags = VM_DATA_DEFAULT_FLAGS|VM_GROWSUP|VM_ACCOUNT;
+@@ -133,10 +131,8 @@ ia64_init_addr_space (void)
+ 
+ 	/* map NaT-page at address zero to speed up speculative dereferencing of NULL: */
+ 	if (!(current->personality & MMAP_PAGE_ZERO)) {
+-		vma = vm_area_alloc();
++		vma = vm_area_alloc(current->mm);
+ 		if (vma) {
+-			INIT_LIST_HEAD(&vma->anon_vma_chain);
+-			vma->vm_mm = current->mm;
+ 			vma->vm_end = PAGE_SIZE;
+ 			vma->vm_page_prot = __pgprot(pgprot_val(PAGE_READONLY) | _PAGE_MA_NAT);
+ 			vma->vm_flags = VM_READ | VM_MAYREAD | VM_IO |
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -290,7 +290,7 @@ static int __bprm_mm_init(struct linux_b
+ 	struct vm_area_struct *vma = NULL;
+ 	struct mm_struct *mm = bprm->mm;
+ 
+-	bprm->vma = vma = vm_area_alloc();
++	bprm->vma = vma = vm_area_alloc(mm);
+ 	if (!vma)
  		return -ENOMEM;
  
--	/* most fields are the same, copy all, and then fixup */
--	*new = *vma;
--
--	INIT_LIST_HEAD(&new->anon_vma_chain);
--
- 	if (new_below)
- 		new->vm_end = addr;
- 	else {
-@@ -3205,13 +3200,11 @@ struct vm_area_struct *copy_vma(struct v
- 		new_vma = vm_area_dup(vma);
- 		if (!new_vma)
- 			goto out;
--		*new_vma = *vma;
- 		new_vma->vm_start = addr;
- 		new_vma->vm_end = addr + len;
- 		new_vma->vm_pgoff = pgoff;
- 		if (vma_dup_policy(vma, new_vma))
- 			goto out_free_vma;
--		INIT_LIST_HEAD(&new_vma->anon_vma_chain);
- 		if (anon_vma_clone(new_vma, vma))
- 			goto out_free_mempol;
- 		if (new_vma->vm_file)
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -1476,7 +1476,6 @@ int split_vma(struct mm_struct *mm, stru
+@@ -298,7 +298,6 @@ static int __bprm_mm_init(struct linux_b
+ 		err = -EINTR;
+ 		goto err_free;
+ 	}
+-	vma->vm_mm = mm;
+ 
+ 	/*
+ 	 * Place the stack at the largest stack address the architecture
+@@ -311,7 +310,6 @@ static int __bprm_mm_init(struct linux_b
+ 	vma->vm_start = vma->vm_end - PAGE_SIZE;
+ 	vma->vm_flags = VM_SOFTDIRTY | VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP;
+ 	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
+-	INIT_LIST_HEAD(&vma->anon_vma_chain);
+ 
+ 	err = insert_vm_struct(mm, vma);
+ 	if (err)
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -154,7 +154,7 @@ extern int overcommit_kbytes_handler(str
+  * mmap() functions).
+  */
+ 
+-struct vm_area_struct *vm_area_alloc(void);
++struct vm_area_struct *vm_area_alloc(struct mm_struct *);
+ struct vm_area_struct *vm_area_dup(struct vm_area_struct *);
+ void vm_area_free(struct vm_area_struct *);
+ 
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -308,9 +308,15 @@ static struct kmem_cache *vm_area_cachep
+ /* SLAB cache for mm_struct structures (tsk->mm) */
+ static struct kmem_cache *mm_cachep;
+ 
+-struct vm_area_struct *vm_area_alloc(void)
++struct vm_area_struct *vm_area_alloc(struct mm_struct *mm)
+ {
+-	return kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);
++	struct vm_area_struct *vma = kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);
++
++	if (vma) {
++		vma->vm_mm = mm;
++		INIT_LIST_HEAD(&vma->anon_vma_chain);
++	}
++	return vma;
+ }
+ 
+ struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1729,19 +1729,17 @@ unsigned long mmap_region(struct file *f
+ 	 * specific mapper. the address has already been validated, but
+ 	 * not unmapped, but the maps are removed from the list.
+ 	 */
+-	vma = vm_area_alloc();
++	vma = vm_area_alloc(mm);
+ 	if (!vma) {
+ 		error = -ENOMEM;
+ 		goto unacct_error;
  	}
  
- 	/* most fields are the same, copy all, and then fixup */
--	*new = *vma;
- 	*region = *vma->vm_region;
- 	new->vm_region = region;
+-	vma->vm_mm = mm;
+ 	vma->vm_start = addr;
+ 	vma->vm_end = addr + len;
+ 	vma->vm_flags = vm_flags;
+ 	vma->vm_page_prot = vm_get_page_prot(vm_flags);
+ 	vma->vm_pgoff = pgoff;
+-	INIT_LIST_HEAD(&vma->anon_vma_chain);
+ 
+ 	if (file) {
+ 		if (vm_flags & VM_DENYWRITE) {
+@@ -2979,14 +2977,12 @@ static int do_brk_flags(unsigned long ad
+ 	/*
+ 	 * create a vma struct for an anonymous mapping
+ 	 */
+-	vma = vm_area_alloc();
++	vma = vm_area_alloc(mm);
+ 	if (!vma) {
+ 		vm_unacct_memory(len >> PAGE_SHIFT);
+ 		return -ENOMEM;
+ 	}
+ 
+-	INIT_LIST_HEAD(&vma->anon_vma_chain);
+-	vma->vm_mm = mm;
+ 	vma->vm_start = addr;
+ 	vma->vm_end = addr + len;
+ 	vma->vm_pgoff = pgoff;
+@@ -3343,12 +3339,10 @@ static struct vm_area_struct *__install_
+ 	int ret;
+ 	struct vm_area_struct *vma;
+ 
+-	vma = vm_area_alloc();
++	vma = vm_area_alloc(mm);
+ 	if (unlikely(vma == NULL))
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	INIT_LIST_HEAD(&vma->anon_vma_chain);
+-	vma->vm_mm = mm;
+ 	vma->vm_start = addr;
+ 	vma->vm_end = addr + len;
+ 
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -1204,7 +1204,7 @@ unsigned long do_mmap(struct file *file,
+ 	if (!region)
+ 		goto error_getting_region;
+ 
+-	vma = vm_area_alloc();
++	vma = vm_area_alloc(current->mm);
+ 	if (!vma)
+ 		goto error_getting_vma;
+ 
+@@ -1212,7 +1212,6 @@ unsigned long do_mmap(struct file *file,
+ 	region->vm_flags = vm_flags;
+ 	region->vm_pgoff = pgoff;
+ 
+-	INIT_LIST_HEAD(&vma->anon_vma_chain);
+ 	vma->vm_flags = vm_flags;
+ 	vma->vm_pgoff = pgoff;
  
 
 
