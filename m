@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B45E7C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4280DC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7220921473
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:12:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7220921473
+	by mail.kernel.org (Postfix) with ESMTP id 0567321473
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:12:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0567321473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730006AbeHWLke (ORCPT
+        id S1730023AbeHWLki (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:40:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45922 "EHLO
+        Thu, 23 Aug 2018 07:40:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45926 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728918AbeHWLke (ORCPT
+        with ESMTP id S1728918AbeHWLkh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:40:34 -0400
+        Thu, 23 Aug 2018 07:40:37 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1BECEC9E;
-        Thu, 23 Aug 2018 08:12:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4F645C9E;
+        Thu, 23 Aug 2018 08:12:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Schmidt <stefan@datenfreihafen.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 090/130] ieee802154: fakelb: switch from BUG_ON() to WARN_ON() on problem
-Date:   Thu, 23 Aug 2018 09:53:26 +0200
-Message-Id: <20180823074933.021081262@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.9 117/130] KVM: irqfd: fix race between EPOLLHUP and irq_bypass_register_consumer
+Date:   Thu, 23 Aug 2018 09:53:53 +0200
+Message-Id: <20180823074934.590460845@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -50,31 +52,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Schmidt <stefan@datenfreihafen.org>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-[ Upstream commit 8f2fbc6c60ff213369e06a73610fc882a42fdf20 ]
+commit 9432a3175770e06cb83eada2d91fac90c977cb99 upstream.
 
-The check is valid but it does not warrant to crash the kernel. A
-WARN_ON() is good enough here.
-Found by checkpatch.
+A comment warning against this bug is there, but the code is not doing what
+the comment says.  Therefore it is possible that an EPOLLHUP races against
+irq_bypass_register_consumer.  The EPOLLHUP handler schedules irqfd_shutdown,
+and if that runs soon enough, you get a use-after-free.
 
-Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ieee802154/fakelb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ virt/kvm/eventfd.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ieee802154/fakelb.c
-+++ b/drivers/net/ieee802154/fakelb.c
-@@ -49,7 +49,7 @@ struct fakelb_phy {
+--- a/virt/kvm/eventfd.c
++++ b/virt/kvm/eventfd.c
+@@ -405,11 +405,6 @@ kvm_irqfd_assign(struct kvm *kvm, struct
+ 	if (events & POLLIN)
+ 		schedule_work(&irqfd->inject);
  
- static int fakelb_hw_ed(struct ieee802154_hw *hw, u8 *level)
- {
--	BUG_ON(!level);
-+	WARN_ON(!level);
- 	*level = 0xbe;
+-	/*
+-	 * do not drop the file until the irqfd is fully initialized, otherwise
+-	 * we might race against the POLLHUP
+-	 */
+-	fdput(f);
+ #ifdef CONFIG_HAVE_KVM_IRQ_BYPASS
+ 	if (kvm_arch_has_irq_bypass()) {
+ 		irqfd->consumer.token = (void *)irqfd->eventfd;
+@@ -425,6 +420,12 @@ kvm_irqfd_assign(struct kvm *kvm, struct
+ #endif
  
+ 	srcu_read_unlock(&kvm->irq_srcu, idx);
++
++	/*
++	 * do not drop the file until the irqfd is fully initialized, otherwise
++	 * we might race against the POLLHUP
++	 */
++	fdput(f);
  	return 0;
+ 
+ fail:
 
 
