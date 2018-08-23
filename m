@@ -2,166 +2,185 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6534AC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 06:59:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B053C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00AED20936
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 06:59:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="kxRiRtDc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00AED20936
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id C3234208A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:15:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3234208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726429AbeHWK1b (ORCPT
+        id S1726507AbeHWKnf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 06:27:31 -0400
-Received: from mail-eopbgr00055.outbound.protection.outlook.com ([40.107.0.55]:53152
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        Thu, 23 Aug 2018 06:43:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36174 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725909AbeHWK1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 06:27:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vMwLMJDWv3Mgkp3S36D+DCH2lcvhQpVdpoDcJhDvlSU=;
- b=kxRiRtDcgomQ/FR07sO8xa7kcSjXjf8Rf+2vM/Ka+0QqSXuzA64OJR9Fh1pzc4/qb+cd0ktlHBz6ulm8H8HvpoxH+py3ExJJ7OPH6j+dCMxaURK1cBVHAgX/f172WZ4bYM3jhi5lAqgyxHek/Zm7YcciXR//D5zOzQTw9TqCJIY=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.71.159) by
- DB3PR0402MB3866.eurprd04.prod.outlook.com (52.134.71.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1059.23; Thu, 23 Aug 2018 06:59:04 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::c0c1:51f1:411f:f13c]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::c0c1:51f1:411f:f13c%3]) with mapi id 15.20.1059.023; Thu, 23 Aug 2018
- 06:58:50 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Sascha Hauer <s.hauer@pengutronix.de>
-CC:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH] ARM: dts: imx6ull: correct machine model name
-Thread-Topic: [PATCH] ARM: dts: imx6ull: correct machine model name
-Thread-Index: AQHUOqt7Hsif6g0EuEqCRZ4HdtBZgqTM57eAgAAAP3A=
-Date:   Thu, 23 Aug 2018 06:58:49 +0000
-Message-ID: <DB3PR0402MB3916F5B4C327E4F08125C4DAF5370@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1535005849-14046-1-git-send-email-Anson.Huang@nxp.com>
- <20180823065717.ibntomnnamkdbyyq@pengutronix.de>
-In-Reply-To: <20180823065717.ibntomnnamkdbyyq@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3866;6:zPzhrCB9guzOD0It72+w1eVv89u/XWdpsgiGZ1kNE0Epr7AutYDHTszfISslh4dh+YliuGT1m4WTVXIv8RlQKC0CmnGWokz084XZjZhfL0e2kRKksFU2y0Y2oC5p0aCusYc2NyyxVUGedXDk1XUO8Nqe7zWTE3REjf0P1RxSxqshzpk3uy+UGNAz3R1RuGShjWDtp4rTwRzO7tpvhGUzEWbL4jybBl3XTrvgo7pl6KUa/OkXHdW+cqjlq6vnnZDBVvSSqHCqaD7P1G+89EyxIGelozIhs9uhX5FSq4bfVIA2tA+UVoXUdg0xw0TAVn/hyId8Tloz5JBui2RRXcE7jawgY9LItq5i46uz4iK93md4yXdywm2A29GJBmYfabsgrgl2xsZAVUrcL+fVd4t5AR6GgHsXSsYlhe/UlZUG9zb4tXEtJJtCdNKoWuOArmdHkHn35zc9q8i1gb/H3Mn+rw==;5:+voVtkfehNto0VyPZlhhPDD+h0zNp7IhVstX9acGeceo81apZb39FJu1sj6/IVza1HsjW+OcpACyfNSJCTyuJ/ApCeaa8WlHfNCu0Ke9POL4rJNf9dBau4wT5U4m2VkQZuPl3t1Ciy+MsKiji82fsh/dX/vfWYinHDxTQ0x7hVI=;7:RdGxXjXlejy3hzX26rRZp5XnL3DJSyvuwyo946TBQQiGcyCMqvwXCGoVUyyuHrkzAz42HC/2w9Z3CSefzZIHuOhFuR4b/IjKW1PeGJGjgKsZoJU7PlJYbpJNbr5Nm9cLi2JDa0usfn/95UtAj51yLe3mGOMhiBe7adtohLeUkcKy6h2PHoHBKCHpBsp0SttRMpUbD+MSRYMvV78TdRfWKJ1hlQj3HwKOX8KkSWNeyiWZiXahq67YgMxCXanitoWu
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 4361ee67-2635-4e8f-5738-08d608c5e149
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3866;
-x-ms-traffictypediagnostic: DB3PR0402MB3866:
-x-microsoft-antispam-prvs: <DB3PR0402MB386690E0FE48A99ACC3BD45FF5370@DB3PR0402MB3866.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(189930954265078)(185117386973197)(258649278758335)(45079756050767);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(3231311)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699016);SRVR:DB3PR0402MB3866;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3866;
-x-forefront-prvs: 0773BB46AC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(366004)(376002)(346002)(39860400002)(189003)(199004)(13464003)(25786009)(4326008)(106356001)(105586002)(575784001)(97736004)(102836004)(86362001)(45080400002)(66066001)(53546011)(6506007)(478600001)(68736007)(99286004)(8936002)(81156014)(6246003)(81166006)(966005)(14454004)(8676002)(7696005)(76176011)(33656002)(6916009)(44832011)(6436002)(476003)(486006)(229853002)(53936002)(2900100001)(54906003)(6116002)(3846002)(14444005)(256004)(5660300001)(5250100002)(316002)(2906002)(26005)(74316002)(7736002)(186003)(305945005)(55016002)(6306002)(11346002)(446003)(9686003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3866;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: yTAnb4rYQkjSqwl744zfGxJvLuqRl425IQZaP2BF6O8qNjGfopOvd8In69It9aB/aBcXoLI3fZcaEq+ObWt79eeZATkLXgyvQHvujbk4fcGooJTmgtZY0wmabzvl4ERoMBCtoNN7lGmckqzCFFAZzLPMAxfYeI0+uSZDf9ouQh/vkzyr6VYrVbh8iM8F9opTibMgMrT6IWvF8Do4IMW0nWIbC/Cd/2YL3Q2s2J/TvY9ROc+o/li8EU4/WhJ4fdHgcZY2oJN1b7EIlfTkE+Q9XNop9F6I46CdCPPGuswAcQuX8OY6in7BisN8G//0BzK4zwFDNgL587T5eUBN1mkAnev8Swv5u5frG2jXraLlZno=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726068AbeHWKnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 06:43:35 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 13C797A7E7;
+        Thu, 23 Aug 2018 07:15:20 +0000 (UTC)
+Received: from [10.36.117.65] (ovpn-117-65.ams2.redhat.com [10.36.117.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0E56FA9EE7;
+        Thu, 23 Aug 2018 07:15:17 +0000 (UTC)
+Subject: Re: [PATCH v2 3/5] KVM: s390: vsie: Allow support for a host without
+ AP
+To:     pmorel@linux.ibm.com
+Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+References: <1534956717-14087-1-git-send-email-pmorel@linux.ibm.com>
+ <1534956717-14087-4-git-send-email-pmorel@linux.ibm.com>
+ <beb38451-8ec9-59c7-2e51-f9a065b769bf@redhat.com>
+ <b95f7004-b2b8-73f8-50d7-f091769e0f24@linux.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <b58bbff7-c28f-9111-d804-d2107b351876@redhat.com>
+Date:   Thu, 23 Aug 2018 09:15:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4361ee67-2635-4e8f-5738-08d608c5e149
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2018 06:58:49.9092
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3866
+In-Reply-To: <b95f7004-b2b8-73f8-50d7-f091769e0f24@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 23 Aug 2018 07:15:20 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 23 Aug 2018 07:15:20 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Sacha
+On 23.08.2018 08:44, Pierre Morel wrote:
+> On 22/08/2018 19:06, David Hildenbrand wrote:
+>> On 22.08.2018 18:51, Pierre Morel wrote:
+>>> Currently the CRYCB format used in the host for the
+>>> shadowed CRYCB is FORMAT2 while no check is done if
+>>> AP instructions are supported in the host.
+>>>
+>>> We better use the format the host calculated for the
+>>> guest 1 as the host already tested it against its
+>>> facility set.
+>>>
+>>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+>>> ---
+>>>   arch/s390/kvm/vsie.c | 5 +++--
+>>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
+>>> index 56a9d47..0b12916 100644
+>>> --- a/arch/s390/kvm/vsie.c
+>>> +++ b/arch/s390/kvm/vsie.c
+>>> @@ -154,6 +154,7 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+>>>   	const u32 crycb_addr = crycbd_o & 0x7ffffff8U;
+>>>   	unsigned long *b1, *b2;
+>>>   	u8 ecb3_flags;
+>>> +	unsigned long g1_fmt;
+>>>   
+>>>   	scb_s->crycbd = 0;
+>>>   	if (!(crycbd_o == CRYCB_FORMAT1))
+>>> @@ -180,8 +181,8 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+>>>   		return set_validity_icpt(scb_s, 0x0035U);
+>>>   
+>>>   	scb_s->ecb3 |= ecb3_flags;
+>>> -	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | CRYCB_FORMAT1 |
+>>> -			CRYCB_FORMAT2;
+>>> +	g1_fmt = vcpu->arch.sie_block->crycbd & 0x03;
+>>> +	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | g1_fmt;
+>>>   
+>>>   	/* xor both blocks in one run */
+>>>   	b1 = (unsigned long *) vsie_page->crycb.dea_wrapping_key_mask;
+>>>
+>>
+>> This is wrong. I remember that with APXA, if FORMAT2 is available, we
+>> should always use FORMAT2. That's why we explicitly convert it here.
+>>
+> 
+> You are right if FORMAT2 is available we should use FORMAT2
+> but the intention here is to use what KVM crypto init function did,
+> assuming it did the right thing.
+> 
+> Eventually we are running on a host without AP and we should use FORMAT1.
+> 
+> Isn't it correct?
 
-Anson Huang
-Best Regards!
+
+Yes and no :)
+
+No APXA -> FORMAT2 bit is ignored (and that is one of the reasons why I
+am being so strict about simulating HW behavior correctly in nested code
+:) )
+
+This only holds as long as we are not using AP. Because from a MSA3
+perspective, FORMAT1==FORMAT2 (apart from the length/alignment, which is
+fine for us).
+
+Once we support AP (via ECA.28), we'll properly have to create either a
+Format0/Format1/Format2. Then, there is actually a semantically
+difference ("different fields used").
+
+> 
+> Regards,
+> Pierre
+> 
+> 
 
 
-> -----Original Message-----
-> From: Sascha Hauer <s.hauer@pengutronix.de>
-> Sent: Thursday, August 23, 2018 2:57 PM
-> To: Anson Huang <anson.huang@nxp.com>
-> Cc: shawnguo@kernel.org; kernel@pengutronix.de; Fabio Estevam
-> <fabio.estevam@nxp.com>; robh+dt@kernel.org; mark.rutland@arm.com;
-> linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org;
-> linux-kernel@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
-> Subject: Re: [PATCH] ARM: dts: imx6ull: correct machine model name
->=20
-> Hi Anson,
->=20
-> The board name should be in the subject to let the reader know this is no
-> generic i.MX6ull change.
-=20
-Thanks for comment, will fix it in V2 patch.
+-- 
 
-Anson.
+Thanks,
 
->=20
-> Sascha
->=20
-> On Thu, Aug 23, 2018 at 02:30:49PM +0800, Anson Huang wrote:
-> > i.MX6ULL is a lite version of i.MX6UL, its full name is i.MX6
-> > UltraLiteLite, NOT UlltraLite.
-> >
-> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > ---
-> >  arch/arm/boot/dts/imx6ull-14x14-evk.dts | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm/boot/dts/imx6ull-14x14-evk.dts
-> > b/arch/arm/boot/dts/imx6ull-14x14-evk.dts
-> > index 30ef603..0ba6454 100644
-> > --- a/arch/arm/boot/dts/imx6ull-14x14-evk.dts
-> > +++ b/arch/arm/boot/dts/imx6ull-14x14-evk.dts
-> > @@ -45,7 +45,7 @@
-> >  #include "imx6ul-14x14-evk.dtsi"
-> >
-> >  / {
-> > -	model =3D "Freescale i.MX6 UlltraLite 14x14 EVK Board";
-> > +	model =3D "Freescale i.MX6 UltraLiteLite 14x14 EVK Board";
-> >  	compatible =3D "fsl,imx6ull-14x14-evk", "fsl,imx6ull";  };
-> >
-> > --
-> > 2.7.4
-> >
-> >
->=20
-> --
-> Pengutronix e.K.                           |
-> |
-> Industrial Linux Solutions                 |
-> https://emea01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fwww.
-> pengutronix.de%2F&amp;data=3D02%7C01%7Canson.huang%40nxp.com%7C59
-> 4938583dae4ac0ab1208d608c5af45%7C686ea1d3bc2b4c6fa92cd99c5c301635
-> %7C0%7C0%7C636706042476455956&amp;sdata=3DbMBKPPTa17ALKbCF8jvTtIj
-> dviMwKxXMW%2F%2F02xkzWO8%3D&amp;reserved=3D0  |
-> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    =
-|
-> Amtsgericht Hildesheim, HRA 2686           | Fax:
-> +49-5121-206917-5555 |
+David / dhildenb
