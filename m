@@ -3,112 +3,132 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 176C0C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:31:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F51C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C85582087E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:31:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C85582087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 68DCB2154D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:31:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68DCB2154D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731689AbeHWPBC (ORCPT
+        id S1731736AbeHWPBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 11:01:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51640 "EHLO mx1.redhat.com"
+        Thu, 23 Aug 2018 11:01:05 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11601 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726246AbeHWPBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 11:01:01 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 42F9B40216F7;
-        Thu, 23 Aug 2018 11:31:43 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 23265A9EED;
-        Thu, 23 Aug 2018 11:31:37 +0000 (UTC)
-Date:   Thu, 23 Aug 2018 13:31:34 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Pierre Morel <pmorel@linux.ibm.com>
-Cc:     Tony Krowiak <akrowiak@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
- control domains
-Message-ID: <20180823133134.32e1d2f8.cohuck@redhat.com>
-In-Reply-To: <25a44526-a2d6-c632-6a6d-8ca385925731@linux.ibm.com>
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <20180820162317.08bd7d23.cohuck@redhat.com>
-        <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
-        <20180821172548.57a6c758.cohuck@redhat.com>
-        <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
-        <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
-        <20180822114250.59a250aa.cohuck@redhat.com>
-        <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
-        <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
-        <f84dbcc0-f627-be02-9933-3baa953adc09@linux.ibm.com>
-        <219b352b-d5a2-189c-e205-82e7f9ae3d64@de.ibm.com>
-        <dbb74c9c-93ab-ed05-fad4-ea2aa5f2b71e@linux.ibm.com>
-        <9ef5fcb9-02e0-88e3-007c-eedb14e6db80@linux.ibm.com>
-        <20180823122525.02fc4af3.cohuck@redhat.com>
-        <25a44526-a2d6-c632-6a6d-8ca385925731@linux.ibm.com>
-Organization: Red Hat GmbH
+        id S1726246AbeHWPBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 11:01:05 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 9C46FDFBA968A;
+        Thu, 23 Aug 2018 19:31:44 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.399.0; Thu, 23 Aug 2018
+ 19:31:41 +0800
+Message-ID: <5B7E9B1C.40404@huawei.com>
+Date:   Thu, 23 Aug 2018 19:31:40 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+To:     <clm@fb.com>, <jbacik@fb.com>, <dsterba@suse.com>
+CC:     <lufq.fnst@cn.fujitsu.com>, <suy.fnst@cn.fujitsu.com>,
+        <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] btrfs/extent_map: Remove unneeded variable "ret"
+References: <1533474287-15049-1-git-send-email-zhongjiang@huawei.com>
+In-Reply-To: <1533474287-15049-1-git-send-email-zhongjiang@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 23 Aug 2018 11:31:43 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 23 Aug 2018 11:31:43 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 23 Aug 2018 12:43:42 +0200
-Pierre Morel <pmorel@linux.ibm.com> wrote:
+Hi,  dsterba
 
-> On 23/08/2018 12:25, Cornelia Huck wrote:
-> > On Wed, 22 Aug 2018 15:16:19 -0400
-> > Tony Krowiak <akrowiak@linux.ibm.com> wrote:
-> >   
-> >> One of the things I suggested in a private conversation with Christian
-> >> earlier
-> >> today was to provide an additional rw sysfs attribute - a boolean - that
-> >> indicates
-> >> whether all usage domains should also be control domains. The default
-> >> could be
-> >> true. This would allow one to configure guests with usage-only domains
-> >> as well
-> >> as satisfy the convention.  
-> > 
-> > Would this additional attribute then control "add usage domains to the
-> > list of control domains automatically", or "don't allow to add a usage
-> > domain if it has not already been added as a control domain"?
-> > 
-> > One thing I'm still unsure about is how libvirt comes into the picture
-> > here. Will it consume the setting, or actively manipulate it?
-> > 
-> > [In general, I'm not very clear about how libvirt will interact with the
-> > whole infrastructure...]
-> >   
-> 
-> When I read you it convince me that it is not wise to change anything
-> that has been already discuss and could impact the Libvirt.
+Can you pick up the patch? Thanks
 
-My main point basically was that we should get feedback from a libvirt
-POV :) The new attribute may make sense, or not; but I'm really feeling
-a bit in the dark with regard to libvirt.
+Best wishes,
+zhong jiang
+ 
+On 2018/8/5 21:04, zhong jiang wrote:
+> The ret is not used after initalization, and we do not care about
+> the return value. So make it void function.
+>
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+>  fs/btrfs/extent_map.c | 10 ++--------
+>  fs/btrfs/extent_map.h |  4 ++--
+>  2 files changed, 4 insertions(+), 10 deletions(-)
+>
+> diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
+> index 6648d55..da4e4f3 100644
+> --- a/fs/btrfs/extent_map.c
+> +++ b/fs/btrfs/extent_map.c
+> @@ -273,10 +273,9 @@ static void try_merge_map(struct extent_map_tree *tree, struct extent_map *em)
+>   * to the generation that actually added the file item to the inode so we know
+>   * we need to sync this extent when we call fsync().
+>   */
+> -int unpin_extent_cache(struct extent_map_tree *tree, u64 start, u64 len,
+> +void unpin_extent_cache(struct extent_map_tree *tree, u64 start, u64 len,
+>  		       u64 gen)
+>  {
+> -	int ret = 0;
+>  	struct extent_map *em;
+>  	bool prealloc = false;
+>  
+> @@ -308,8 +307,6 @@ int unpin_extent_cache(struct extent_map_tree *tree, u64 start, u64 len,
+>  	free_extent_map(em);
+>  out:
+>  	write_unlock(&tree->lock);
+> -	return ret;
+> -
+>  }
+>  
+>  void clear_em_logging(struct extent_map_tree *tree, struct extent_map *em)
+> @@ -428,16 +425,13 @@ struct extent_map *search_extent_mapping(struct extent_map_tree *tree,
+>   * Removes @em from @tree.  No reference counts are dropped, and no checks
+>   * are done to see if the range is in use
+>   */
+> -int remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em)
+> +void remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em)
+>  {
+> -	int ret = 0;
+> -
+>  	WARN_ON(test_bit(EXTENT_FLAG_PINNED, &em->flags));
+>  	rb_erase(&em->rb_node, &tree->map);
+>  	if (!test_bit(EXTENT_FLAG_LOGGING, &em->flags))
+>  		list_del_init(&em->list);
+>  	RB_CLEAR_NODE(&em->rb_node);
+> -	return ret;
+>  }
+>  
+>  void replace_extent_mapping(struct extent_map_tree *tree,
+> diff --git a/fs/btrfs/extent_map.h b/fs/btrfs/extent_map.h
+> index 25d985e..c80649b 100644
+> --- a/fs/btrfs/extent_map.h
+> +++ b/fs/btrfs/extent_map.h
+> @@ -78,7 +78,7 @@ struct extent_map *lookup_extent_mapping(struct extent_map_tree *tree,
+>  					 u64 start, u64 len);
+>  int add_extent_mapping(struct extent_map_tree *tree,
+>  		       struct extent_map *em, int modified);
+> -int remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em);
+> +void remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em);
+>  void replace_extent_mapping(struct extent_map_tree *tree,
+>  			    struct extent_map *cur,
+>  			    struct extent_map *new,
+> @@ -88,7 +88,7 @@ void replace_extent_mapping(struct extent_map_tree *tree,
+>  void free_extent_map(struct extent_map *em);
+>  int __init extent_map_init(void);
+>  void __cold extent_map_exit(void);
+> -int unpin_extent_cache(struct extent_map_tree *tree, u64 start, u64 len, u64 gen);
+> +void unpin_extent_cache(struct extent_map_tree *tree, u64 start, u64 len, u64 gen);
+>  void clear_em_logging(struct extent_map_tree *tree, struct extent_map *em);
+>  struct extent_map *search_extent_mapping(struct extent_map_tree *tree,
+>  					 u64 start, u64 len);
+
+
