@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F3D8C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD51AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 446D8208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:58:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 446D8208DA
+	by mail.kernel.org (Postfix) with ESMTP id 824362084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:58:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 824362084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728693AbeHWM05 (ORCPT
+        id S1729140AbeHWM1B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:26:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52896 "EHLO
+        Thu, 23 Aug 2018 08:27:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52904 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728512AbeHWM05 (ORCPT
+        with ESMTP id S1728512AbeHWM1A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:26:57 -0400
+        Thu, 23 Aug 2018 08:27:00 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2E853C83;
-        Thu, 23 Aug 2018 08:58:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F2DEC83;
+        Thu, 23 Aug 2018 08:58:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        stable@vger.kernel.org, Junwei Zhang <Jerry.Zhang@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 165/324] usb: xhci: dbc: Dont decrement runtime PM counter if DBC is not started
-Date:   Thu, 23 Aug 2018 09:53:51 +0200
-Message-Id: <20180823075004.329838866@linuxfoundation.org>
+Subject: [PATCH 4.17 166/324] drm/amdgpu: fix swapped emit_ib_size in vce3
+Date:   Thu, 23 Aug 2018 09:53:52 +0200
+Message-Id: <20180823075004.386617885@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,71 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-[ Upstream commit 74cb319bd97dd62881f97ea5a3228f7c2546bf56 ]
+[ Upstream commit 0859df22ab7cfb3ad2df2caed76cadce6ac33a80 ]
 
-pm_runtime_put_sync() gets called everytime in xhci_dbc_stop().
+The phys and vm versions had the values swapped.
 
-If dbc is not started, this makes the runtime PM counter incorrectly
-becomes 0, and calls autosuspend function. Then we'll keep seeing this:
-[54664.762220] xhci_hcd 0000:00:14.0: Root hub is not suspended
-
-So only calls pm_runtime_put_sync() when dbc was started.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Junwei Zhang <Jerry.Zhang@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/host/xhci-dbgcap.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/vce_v3_0.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/host/xhci-dbgcap.c
-+++ b/drivers/usb/host/xhci-dbgcap.c
-@@ -507,16 +507,18 @@ static int xhci_do_dbc_start(struct xhci
- 	return 0;
- }
- 
--static void xhci_do_dbc_stop(struct xhci_hcd *xhci)
-+static int xhci_do_dbc_stop(struct xhci_hcd *xhci)
- {
- 	struct xhci_dbc		*dbc = xhci->dbc;
- 
- 	if (dbc->state == DS_DISABLED)
--		return;
-+		return -1;
- 
- 	writel(0, &dbc->regs->control);
- 	xhci_dbc_mem_cleanup(xhci);
- 	dbc->state = DS_DISABLED;
-+
-+	return 0;
- }
- 
- static int xhci_dbc_start(struct xhci_hcd *xhci)
-@@ -543,6 +545,7 @@ static int xhci_dbc_start(struct xhci_hc
- 
- static void xhci_dbc_stop(struct xhci_hcd *xhci)
- {
-+	int ret;
- 	unsigned long		flags;
- 	struct xhci_dbc		*dbc = xhci->dbc;
- 	struct dbc_port		*port = &dbc->port;
-@@ -555,10 +558,11 @@ static void xhci_dbc_stop(struct xhci_hc
- 		xhci_dbc_tty_unregister_device(xhci);
- 
- 	spin_lock_irqsave(&dbc->lock, flags);
--	xhci_do_dbc_stop(xhci);
-+	ret = xhci_do_dbc_stop(xhci);
- 	spin_unlock_irqrestore(&dbc->lock, flags);
- 
--	pm_runtime_put_sync(xhci_to_hcd(xhci)->self.controller);
-+	if (!ret)
-+		pm_runtime_put_sync(xhci_to_hcd(xhci)->self.controller);
- }
- 
- static void
+--- a/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c
+@@ -899,7 +899,7 @@ static const struct amdgpu_ring_funcs vc
+ 	.emit_frame_size =
+ 		4 + /* vce_v3_0_emit_pipeline_sync */
+ 		6, /* amdgpu_vce_ring_emit_fence x1 no user fence */
+-	.emit_ib_size = 5, /* vce_v3_0_ring_emit_ib */
++	.emit_ib_size = 4, /* amdgpu_vce_ring_emit_ib */
+ 	.emit_ib = amdgpu_vce_ring_emit_ib,
+ 	.emit_fence = amdgpu_vce_ring_emit_fence,
+ 	.test_ring = amdgpu_vce_ring_test_ring,
+@@ -923,7 +923,7 @@ static const struct amdgpu_ring_funcs vc
+ 		6 + /* vce_v3_0_emit_vm_flush */
+ 		4 + /* vce_v3_0_emit_pipeline_sync */
+ 		6 + 6, /* amdgpu_vce_ring_emit_fence x2 vm fence */
+-	.emit_ib_size = 4, /* amdgpu_vce_ring_emit_ib */
++	.emit_ib_size = 5, /* vce_v3_0_ring_emit_ib */
+ 	.emit_ib = vce_v3_0_ring_emit_ib,
+ 	.emit_vm_flush = vce_v3_0_emit_vm_flush,
+ 	.emit_pipeline_sync = vce_v3_0_emit_pipeline_sync,
 
 
