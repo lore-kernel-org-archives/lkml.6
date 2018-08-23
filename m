@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D4FAC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21099C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA78A20839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA78A20839
+	by mail.kernel.org (Postfix) with ESMTP id CF19020839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF19020839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387782AbeHWMUi (ORCPT
+        id S2387794AbeHWMUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:20:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51646 "EHLO
+        Thu, 23 Aug 2018 08:20:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51662 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729025AbeHWMUi (ORCPT
+        with ESMTP id S1728555AbeHWMUm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:20:38 -0400
+        Thu, 23 Aug 2018 08:20:42 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB3D949B;
-        Thu, 23 Aug 2018 08:51:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 829E749B;
+        Thu, 23 Aug 2018 08:52:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 155/324] fsl/fman: fix parser reporting bad checksum on short frames
-Date:   Thu, 23 Aug 2018 09:53:41 +0200
-Message-Id: <20180823075003.775067891@linuxfoundation.org>
+Subject: [PATCH 4.17 129/324] selftests/x86/sigreturn/64: Fix spurious failures on AMD CPUs
+Date:   Thu, 23 Aug 2018 09:53:15 +0200
+Message-Id: <20180823075002.401129446@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,46 +55,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Madalin Bucur <madalin.bucur@nxp.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-[ Upstream commit b95f6fbc8e15803a596ca5e5e21008fba29694c6 ]
+[ Upstream commit ec348020566009d3da9b99f07c05814d13969c78 ]
 
-The FMan hardware parser needs to be configured to remove the
-short frame padding from the checksum calculation, otherwise
-short UDP and TCP frames are likely to be marked as having a
-bad checksum.
+When I wrote the sigreturn test, I didn't realize that AMD's busted
+IRET behavior was different from Intel's busted IRET behavior:
 
-Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+On AMD CPUs, the CPU leaks the high 32 bits of the kernel stack pointer
+to certain userspace contexts.  Gee, thanks.  There's very little
+the kernel can do about it.  Modify the test so it passes.
+
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/86e7fd3564497f657de30a36da4505799eebef01.1530076529.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/freescale/fman/fman_port.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ tools/testing/selftests/x86/sigreturn.c |   46 ++++++++++++++++++++------------
+ 1 file changed, 29 insertions(+), 17 deletions(-)
 
---- a/drivers/net/ethernet/freescale/fman/fman_port.c
-+++ b/drivers/net/ethernet/freescale/fman/fman_port.c
-@@ -324,6 +324,10 @@ struct fman_port_qmi_regs {
- #define HWP_HXS_PHE_REPORT 0x00000800
- #define HWP_HXS_PCAC_PSTAT 0x00000100
- #define HWP_HXS_PCAC_PSTOP 0x00000001
-+#define HWP_HXS_TCP_OFFSET 0xA
-+#define HWP_HXS_UDP_OFFSET 0xB
-+#define HWP_HXS_SH_PAD_REM 0x80000000
-+
- struct fman_port_hwp_regs {
- 	struct {
- 		u32 ssa; /* Soft Sequence Attachment */
-@@ -728,6 +732,10 @@ static void init_hwp(struct fman_port *p
- 		iowrite32be(0xffffffff, &regs->pmda[i].lcv);
- 	}
+--- a/tools/testing/selftests/x86/sigreturn.c
++++ b/tools/testing/selftests/x86/sigreturn.c
+@@ -612,19 +612,38 @@ static int test_valid_sigreturn(int cs_b
+ 		greg_t req = requested_regs[i], res = resulting_regs[i];
+ 		if (i == REG_TRAPNO || i == REG_IP)
+ 			continue;	/* don't care */
+-		if (i == REG_SP) {
+-			printf("\tSP: %llx -> %llx\n", (unsigned long long)req,
+-			       (unsigned long long)res);
  
-+	/* Short packet padding removal from checksum calculation */
-+	iowrite32be(HWP_HXS_SH_PAD_REM, &regs->pmda[HWP_HXS_TCP_OFFSET].ssa);
-+	iowrite32be(HWP_HXS_SH_PAD_REM, &regs->pmda[HWP_HXS_UDP_OFFSET].ssa);
++		if (i == REG_SP) {
+ 			/*
+-			 * In many circumstances, the high 32 bits of rsp
+-			 * are zeroed.  For example, we could be a real
+-			 * 32-bit program, or we could hit any of a number
+-			 * of poorly-documented IRET or segmented ESP
+-			 * oddities.  If this happens, it's okay.
++			 * If we were using a 16-bit stack segment, then
++			 * the kernel is a bit stuck: IRET only restores
++			 * the low 16 bits of ESP/RSP if SS is 16-bit.
++			 * The kernel uses a hack to restore bits 31:16,
++			 * but that hack doesn't help with bits 63:32.
++			 * On Intel CPUs, bits 63:32 end up zeroed, and, on
++			 * AMD CPUs, they leak the high bits of the kernel
++			 * espfix64 stack pointer.  There's very little that
++			 * the kernel can do about it.
++			 *
++			 * Similarly, if we are returning to a 32-bit context,
++			 * the CPU will often lose the high 32 bits of RSP.
+ 			 */
+-			if (res == (req & 0xFFFFFFFF))
+-				continue;  /* OK; not expected to work */
 +
- 	start_port_hwp(port);
- }
++			if (res == req)
++				continue;
++
++			if (cs_bits != 64 && ((res ^ req) & 0xFFFFFFFF) == 0) {
++				printf("[NOTE]\tSP: %llx -> %llx\n",
++				       (unsigned long long)req,
++				       (unsigned long long)res);
++				continue;
++			}
++
++			printf("[FAIL]\tSP mismatch: requested 0x%llx; got 0x%llx\n",
++			       (unsigned long long)requested_regs[i],
++			       (unsigned long long)resulting_regs[i]);
++			nerrs++;
++			continue;
+ 		}
  
+ 		bool ignore_reg = false;
+@@ -663,13 +682,6 @@ static int test_valid_sigreturn(int cs_b
+ 		}
+ 
+ 		if (requested_regs[i] != resulting_regs[i] && !ignore_reg) {
+-			/*
+-			 * SP is particularly interesting here.  The
+-			 * usual cause of failures is that we hit the
+-			 * nasty IRET case of returning to a 16-bit SS,
+-			 * in which case bits 16:31 of the *kernel*
+-			 * stack pointer persist in ESP.
+-			 */
+ 			printf("[FAIL]\tReg %d mismatch: requested 0x%llx; got 0x%llx\n",
+ 			       i, (unsigned long long)requested_regs[i],
+ 			       (unsigned long long)resulting_regs[i]);
 
 
