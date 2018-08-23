@@ -2,127 +2,150 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E1BC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:27:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7D8C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D41820A8B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:27:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D41820A8B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 38DBB2152D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:30:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuZRfyWU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38DBB2152D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbeHXC7I (ORCPT
+        id S1726636AbeHXDCb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 22:59:08 -0400
-Received: from foss.arm.com ([217.140.101.70]:51928 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726148AbeHXC7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 22:59:08 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 479787A9;
-        Thu, 23 Aug 2018 16:27:11 -0700 (PDT)
-Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B711D3F2EA;
-        Thu, 23 Aug 2018 16:27:09 -0700 (PDT)
-Date:   Fri, 24 Aug 2018 00:27:05 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Nick Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        Jann Horn <jannh@google.com>,
-        Adin Scannell <ascannell@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/2] minor mmu_gather patches
-Message-ID: <20180823232704.GA4487@brain-police>
-References: <20180823084709.19717-1-npiggin@gmail.com>
- <CA+55aFxaiv3SMvFUSEnd_p6nuGttUnv2_O3v_G2zCnnc0pV2pA@mail.gmail.com>
- <CA+55aFwEZftzAd9k-kjiaXonP2XeTDYshjY56jmd1CFBaXmGHA@mail.gmail.com>
+        Thu, 23 Aug 2018 23:02:31 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36450 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbeHXDCa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 23:02:30 -0400
+Received: by mail-pg1-f196.google.com with SMTP id h17-v6so3400069pgv.3;
+        Thu, 23 Aug 2018 16:30:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5EwisKCmybbuWrVzUR7BLxIaN5zUrmHv6nnXrV/4jw4=;
+        b=kuZRfyWUOjnI8bjJHmBVMn7KD8HFwCZzYTnp0Q+4DpEtAtRp/IxBdkTd98J9tQteOO
+         80ENzyjR9tdxhOAhIL3L5zJ9SfhyipeXy47QfN41aT2omZ2UKbZOVbXFZ0CiMfFnnY6l
+         9w/PstNZOeIwjcck9j4p4M7Bul6sHSTvcN9qDK1rprHcQympTZ8C/U69wA5R5rjNMvjl
+         y1J5ie3hnmgHwooVv2y+KP5NajIqTys+CvNN06zBNj3lchHMPap2VHJo2Cr25xKuOmod
+         4b8rRuNjASrksbwTfW04I+TFrymNThvL9MWHkgMov9Zv3jydRDeijAFMp88P5rQA3mlU
+         nTFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5EwisKCmybbuWrVzUR7BLxIaN5zUrmHv6nnXrV/4jw4=;
+        b=SvF1lGa7HSK8OB3xs8fXCm2srNTRinay9I3jDgasn6+8SzyIVeGhQPMFT8pXOFGCQy
+         AoFmkWlSlyTX3e6ursN+m/pgJg1dJJArk5cZZ944UGVHyVb3yyHV7ah1LNsBX3j7LToj
+         wmyrsBJGZHOeZrDfu2aWiJq5nf5SeMwDr1+Zv3daChA6B4SJ82yqradsA2A3F4x8++UL
+         yHdO2Rr46avEyzfzyXqx++D3OFhlv3C66tBaq+y0WCP9of99KA3MWOMjzVqceh61h3fa
+         rGiTrXpI6N37HuoFKqM2QG7gjFSMVtLpnmRvVnVQL/kErVnJa+ZCY4LRorYdm84uhxDn
+         Sg9Q==
+X-Gm-Message-State: AOUpUlGaibPwLjz7rnirjCTsTElxahAa18DIuadAVZVWqmOv+XBiFPUY
+        MKEn+PK3ErxPpfE21iveKWo=
+X-Google-Smtp-Source: AA+uWPxMQrwiVDHhPo7lsR03d6jFTZ4H6CtRqw07olaYZ61t6GhnTwfQ6rKTJQ5lkNzA+lIGCSZx2g==
+X-Received: by 2002:a62:c90a:: with SMTP id k10-v6mr63907798pfg.180.1535067031810;
+        Thu, 23 Aug 2018 16:30:31 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id p66-v6sm8720191pfd.65.2018.08.23.16.30.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 Aug 2018 16:30:30 -0700 (PDT)
+Date:   Thu, 23 Aug 2018 16:30:28 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Derek Basehore <dbasehore@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        joe@perches.com, andi@etezian.org, gregkh@linuxfoundation.org
+Subject: Re: [PATCH] Input: elants_i2c - Fix sw reset delays
+Message-ID: <20180823233028.GC53155@dtor-ws>
+References: <20180823231013.254037-1-dbasehore@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+55aFwEZftzAd9k-kjiaXonP2XeTDYshjY56jmd1CFBaXmGHA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180823231013.254037-1-dbasehore@chromium.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Derek,
 
-On Thu, Aug 23, 2018 at 12:37:58PM -0700, Linus Torvalds wrote:
-> On Thu, Aug 23, 2018 at 12:15 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > So right now my "tlb-fixes" branch looks like this:
-> > [..]
-> >
-> > I'll do a few more test builds and boots, but I think I'm going to
-> > merge it in this cleaned-up and re-ordered form.
+On Thu, Aug 23, 2018 at 04:10:13PM -0700, Derek Basehore wrote:
+> We only need to wait 10ms instead of 30ms before starting fastboot or
+> sending IAP on the touchscreen. Also, instead of delaying everytime
+> sw_reset is called, this delays 10ms in the function that starts
+> fastboot. There's also an explicit 20ms delay before sending IAP when
+> updating the firmware, so no additional delay is needed there. This
+> change also has the benefit of not delaying when wakeup is enabled
+> during suspend. This is because sw_reset is called, yet fastboot
+> isn't.
 > 
-> In the meantime, I decided to push out that branch in case anybody
-> wants to look at it.
+> Change-Id: I9e3019720186ba0023891fafeb4fe3d2510e454b
+
+This is not needed ;)
+
+> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> ---
+>  drivers/input/touchscreen/elants_i2c.c | 16 ++++++++++------
+>  1 file changed, 10 insertions(+), 6 deletions(-)
 > 
-> I may rebase it if I - or anybody else - find anything bad there, so
-> consider it non-stable, but I think it's in its final shape modulo
-> issues.
+> diff --git a/drivers/input/touchscreen/elants_i2c.c b/drivers/input/touchscreen/elants_i2c.c
+> index d21ca39b0fdb..18ce04ba0173 100644
+> --- a/drivers/input/touchscreen/elants_i2c.c
+> +++ b/drivers/input/touchscreen/elants_i2c.c
+> @@ -284,12 +284,6 @@ static int elants_i2c_sw_reset(struct i2c_client *client)
+>  		return error;
+>  	}
+>  
+> -	/*
+> -	 * We should wait at least 10 msec (but no more than 40) before
+> -	 * sending fastboot or IAP command to the device.
+> -	 */
+> -	msleep(30);
+> -
+>  	return 0;
+>  }
+>  
+> @@ -500,6 +494,12 @@ static int elants_i2c_fastboot(struct i2c_client *client)
+>  	const u8 boot_cmd[] = { 0x4D, 0x61, 0x69, 0x6E };
+>  	int error;
+>  
+> +	/*
+> +	 * We should wait at least 10 msec (but no more than 40) before sending
+> +	 * fastboot command to the device.
+> +	 */
+> +	usleep_range(10 * 1000, 11 * 1000);
+> +
+>  	error = elants_i2c_send(client, boot_cmd, sizeof(boot_cmd));
+>  	if (error) {
+>  		dev_err(&client->dev, "boot failed: %d\n", error);
+> @@ -643,6 +643,10 @@ static int elants_i2c_do_update_firmware(struct i2c_client *client,
+>  			dev_err(&client->dev, "Failed close idle: %d\n", error);
+>  		msleep(60);
+>  		elants_i2c_sw_reset(client);
+> +		/*
+> +		 * We should wait at least 10 msec (but no more than 40) before
+> +		 * sending IAP command to the device.
+> +		 */
+>  		msleep(20);
 
-Unfortunately, that branch doesn't build for arm64 because of Nick's patch
-moving tlb_flush_mmu_tlbonly() into tlb.h (which I acked!). It's a static
-inline which calls tlb_flush(), which in our case is also a static inline
-but one that is defined in our asm/tlb.h after including asm-generic/tlb.h.
+So the original comment was talking about timing on fastboot or IAP
+command, but the original code had 50 msec wait here (30 from
+elants_i2c_sw_reset plus the 20), thus already violating 40 msec rule
+for IAP. Unless Elan folks can confirm it is OK to reduce the wait here
+I'd prefer we kept it at 50. Firmware update is does not happen that
+often anyway.
 
-Ah, just noticed you've pushed this to master! Please could you take the
-arm64 patch below on top, in order to fix the build?
+Thanks.
 
-Cheers,
-
-Will
-
---->8
-
-From 48ea452db90a91ff2b62a94277daf565e715a126 Mon Sep 17 00:00:00 2001
-From: Will Deacon <will.deacon@arm.com>
-Date: Fri, 24 Aug 2018 00:23:04 +0100
-Subject: [PATCH] arm64: tlb: Provide forward declaration of tlb_flush() before
- including tlb.h
-
-As of commit fd1102f0aade ("mm: mmu_notifier fix for tlb_end_vma"),
-asm-generic/tlb.h now calls tlb_flush() from a static inline function,
-so we need to make sure that it's declared before #including the
-asm-generic header in the arch header.
-
-Signed-off-by: Will Deacon <will.deacon@arm.com>
----
- arch/arm64/include/asm/tlb.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/include/asm/tlb.h b/arch/arm64/include/asm/tlb.h
-index 0ad1cf233470..a3233167be60 100644
---- a/arch/arm64/include/asm/tlb.h
-+++ b/arch/arm64/include/asm/tlb.h
-@@ -33,6 +33,8 @@ static inline void __tlb_remove_table(void *_table)
- #define tlb_remove_entry(tlb, entry)	tlb_remove_page(tlb, entry)
- #endif /* CONFIG_HAVE_RCU_TABLE_FREE */
- 
-+static void tlb_flush(struct mmu_gather *tlb);
-+
- #include <asm-generic/tlb.h>
- 
- static inline void tlb_flush(struct mmu_gather *tlb)
 -- 
-2.7.4
-
+Dmitry
