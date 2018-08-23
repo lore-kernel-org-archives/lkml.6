@@ -3,99 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EF4CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57EFDC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:35:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38ECC2152D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:29:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38ECC2152D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 045D620684
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:35:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 045D620684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729709AbeHWP7G (ORCPT
+        id S1728696AbeHWQEp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 11:59:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56812 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726675AbeHWP7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 11:59:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AEF06AD0C;
-        Thu, 23 Aug 2018 12:29:34 +0000 (UTC)
-From:   =?UTF-8?Q?Martin_Li=c5=a1ka?= <mliska@suse.cz>
-Subject: [PATCH] Properly interpret indirect call in perf annotate.
-To:     linux-perf-users@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>
-Message-ID: <bd1f3932-be2b-85f9-7582-111ee0a43b07@suse.cz>
-Date:   Thu, 23 Aug 2018 14:29:34 +0200
+        Thu, 23 Aug 2018 12:04:45 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45820 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726675AbeHWQEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 12:04:45 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7271DED1;
+        Thu, 23 Aug 2018 05:35:13 -0700 (PDT)
+Received: from [10.4.12.81] (melchizedek.emea.arm.com [10.4.12.81])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1CB963F5BC;
+        Thu, 23 Aug 2018 05:35:09 -0700 (PDT)
+Subject: Re: [PATCH v4 1/5] arm64: export memblock_reserve()d regions via
+ /proc/iomem
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        G Gregory <graeme.gregory@linaro.org>, al.stone@linaro.org,
+        bhsharma@redhat.com, tbaicar@codeaurora.org,
+        kexec@lists.infradead.org, lkml <linux-kernel@vger.kernel.org>,
+        hanjun.guo@linaro.org, Sudeep Holla <sudeep.holla@arm.com>,
+        dyoung@redhat.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20180723015732.24252-1-takahiro.akashi@linaro.org>
+ <20180723015732.24252-2-takahiro.akashi@linaro.org>
+ <CALAqxLU3+tu09M5=D-6xCqweKenfXtZuBGy6tqEP2DoGAs-LNA@mail.gmail.com>
+ <38e0224a-46f8-85c3-abe2-5e89d16810ea@arm.com>
+ <CALAqxLX=BBcjR3kbK8nhddzdtv7tMiDs2OcvMA-e9QNw6Lv3hg@mail.gmail.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <dc5a9115-7536-6d72-18fd-60b5322c870c@arm.com>
+Date:   Thu, 23 Aug 2018 13:35:08 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------0328B748A44F4D19A89A1CE5"
+In-Reply-To: <CALAqxLX=BBcjR3kbK8nhddzdtv7tMiDs2OcvMA-e9QNw6Lv3hg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------0328B748A44F4D19A89A1CE5
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Hi John,
 
-The patch changes interpretation of:
-callq  *0x8(%rbx)
+On 21/08/18 20:38, John Stultz wrote:
+> On Tue, Aug 21, 2018 at 3:22 AM, James Morse <james.morse@arm.com> wrote:
+>> On 08/21/2018 05:39 AM, John Stultz wrote:
+>>>
+>>> Since this patch landed, on the HiKey board at bootup I'm seeing:
+>>>
+>>> [    0.451884] WARNING: CPU: 1 PID: 1 at arch/arm64/kernel/setup.c:271
+>>> reserve_memblock_reserved_regions+0xd4/0x13c
+> ...
+>>>  From skimming the patch, it seems this is maybe expected? Or should
+>>> this warning raise eyebrows? I can't quite figure it out.
+>>
 
-from:
-  0.26 │     → callq  *8
-to:
-  0.26 │     → callq  *0x8(%rbx)
+>>> /proc/iomem now has:
+>>> ...
+>>> 07410000-21efffff : System RAM
+>>>    11000000-1113cfff : reserved
+>>
+>>
+>>> 21f00000-21ffffff : reserved
+>>
+>>
+>> ^ This entry is what triggered the warning.
+>>
+>> It expects that meblock_reserved() memory is also described as memory.
+>> (memblock keeps them as separate lists, so its possible to reserve
+>> memory that doesn't exist... which it looks like your system is doing)
+> 
+> So yea, I suspect the hikey dts isn't quite right here then.
 
-in this can an address is followed by a register, thus
-one can't parse only address.
+The DT mem-reserve code goes and memblock_removes() some regions, instead of
+marking them nomap.
 
-Signed-off-by: Martin Liška <mliska@suse.cz>
----
- tools/perf/util/annotate.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Given memblock has a for_each_resv_unavail_range() that explicitly walks
+reserved && !memory, it looks like this is expected, and its just me thinking
+this is strange.
 
-
-
---------------0328B748A44F4D19A89A1CE5
-Content-Type: text/x-patch;
- name="0001-Properly-interpret-indirect-call-in-perf-annotate.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-Properly-interpret-indirect-call-in-perf-annotate.patch"
-
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index e4268b948e0e..e32ead4744bd 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -246,8 +246,14 @@ static int call__parse(struct arch *arch, struct ins_operands *ops, struct map_s
- 
- indirect_call:
- 	tok = strchr(endptr, '*');
--	if (tok != NULL)
--		ops->target.addr = strtoull(tok + 1, NULL, 16);
-+	if (tok != NULL) {
-+		endptr++;
-+
-+		/* Indirect call can use a non-rip register and offset: callq  *0x8(%rbx).
-+		 * Do not parse such instruction.  */
-+		if (strstr(endptr, "(%r") == NULL)
-+			ops->target.addr = strtoull(endptr, NULL, 16);
-+	}
- 	goto find_target;
- }
- 
+I will come up with a version of this patch that walks the 'System RAM'
+resources that were created during boot, and adds the memblock_reserved()
+regions to them, which should stop this happening.
 
 
---------------0328B748A44F4D19A89A1CE5--
+Thanks,
+
+James
