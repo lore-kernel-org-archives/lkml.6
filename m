@@ -2,131 +2,150 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 817B8C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4AD4C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:31:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F8E12150F
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:23:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F8E12150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 24E202150F
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:31:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="cfXEoODr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24E202150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727153AbeHWXy0 (ORCPT
+        id S1727199AbeHXACU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 19:54:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37216 "EHLO mx1.suse.de"
+        Thu, 23 Aug 2018 20:02:20 -0400
+Received: from mail-sg2apc01on0125.outbound.protection.outlook.com ([104.47.125.125]:10416
+        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726083AbeHWXyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 19:54:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 88BB0B039;
-        Thu, 23 Aug 2018 20:23:04 +0000 (UTC)
-Subject: Re: [PATCH] x86/speculation/l1tf: fix off-by-one error when warning
- that system has too much RAM
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Michal Hocko <mhocko@kernel.org>, stable@vger.kernel.org,
-        Christopher Snowhill <kode54@gmail.com>,
-        George Anchev <studio@anchev.net>
-References: <20180823134418.17008-1-vbabka@suse.cz>
- <20180823154437.GC12066@tassilo.jf.intel.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <f4996252-85ca-eccc-af62-0b8572a3ffc0@suse.cz>
-Date:   Thu, 23 Aug 2018 22:20:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180823154437.GC12066@tassilo.jf.intel.com>
-Content-Type: text/plain; charset=utf-8
+        id S1726473AbeHXACU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 20:02:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rLxUM1/zqIxv4hLiRrgGA1YDQpLwrOVIrHNrynwk19Q=;
+ b=cfXEoODrN+3JqdFnAsZyFR4Q0D/vapLtGK9ox6nYMovUzG72V83y4/LmJj7Px6OJIcrtDaHVawns/hJFiJCJZnjoJ8M3JVnIQiZ6z7p6Ss313hOujBHZiHpx53+9Loiem8pWlT3DPad36spKWlVxGCHM8NamLrAlBISH+YNBiE8=
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
+ PU1P153MB0154.APCP153.PROD.OUTLOOK.COM (10.170.189.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1101.2; Thu, 23 Aug 2018 20:30:47 +0000
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::b835:d23a:7cda:c4e1]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::b835:d23a:7cda:c4e1%2]) with mapi id 15.20.1101.007; Thu, 23 Aug 2018
+ 20:30:47 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     "'gregkh@linuxfoundation.org'" <gregkh@linuxfoundation.org>,
+        KY Srinivasan <kys@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>
+CC:     "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'driverdev-devel@linuxdriverproject.org'" 
+        <driverdev-devel@linuxdriverproject.org>,
+        "'olaf@aepfle.de'" <olaf@aepfle.de>,
+        "'apw@canonical.com'" <apw@canonical.com>,
+        "'jasowang@redhat.com'" <jasowang@redhat.com>,
+        vkuznets <vkuznets@redhat.com>,
+        "'marcelo.cerri@canonical.com'" <marcelo.cerri@canonical.com>
+Subject: [PATCH] Drivers: hv: vmbus: Use raw_smp_processor_id() in
+ vmbus_connect()
+Thread-Topic: [PATCH] Drivers: hv: vmbus: Use raw_smp_processor_id() in
+ vmbus_connect()
+Thread-Index: AdQ7H/34qAH7zeGBQLegJ1KnxB9zFA==
+Date:   Thu, 23 Aug 2018 20:30:47 +0000
+Message-ID: <PU1P153MB01694E53D6A6192A46EA3214BF370@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-08-23T20:30:45.2775317Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com; 
+x-originating-ip: [2001:4898:80e8:8:5d3d:a618:8e0f:f35b]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;PU1P153MB0154;6:Mr9oB/8CnV3TaJiYeV43BlUh2AVshOS4s67r9zY7WKMBXvvSa+phQMX/efsbDhlSfsB++dCF6yeSNxypZuTwbXKj5Ov8Uwr4Ao1Mf5xbKl4TqdKvhy+4idC4lgBmoLXZlbIJi2AuXbSQBJSB39qHLtUJTodPKw36T89eJPeUIvn5WyJBpLmPj1DIKIYYuAXzwMnnUhqwT5AsGE0nAk610RdhgqVLcD0+MNjqqpHa1Lt1RifOFv3f/6I7459YK26hhcPTLYloko9jUn6MOAGuusQkCILdOSR35q4yifxtw1DaGeDeAoGdQZFESz4I2kN/GByynXruSgyN9W1OfugiaPBR0J3PB73gaxoNZ/kIAcbtM4sI3ByEg4ggb+iut0FT/fMYcFBQXiHt5I6kN3FxJSVVMIQk9YG+qQn5lXM1kDPiT5/X0r912ql9n+MBbXNpoTcVh28gTtWiGOlAmHdn4A==;5:6fxxpa9vlxnO/DrnuHxipcgsMqicVQMAT8awU5nCV4r/YJPnTKqGpZecDPbAy3kZWiuKUdfq6DWH2XkkzyvQu3zdHBLajLV46hD9j0ufDaqInuoxxZoBaZTGF85E+Ao/4se9gE9eSheB3GmGEKhmpklLcr3deZBxPzWpg72rVfU=;7:Sr3kTWqAo16hEVHxZLIG8tYMqtDciPwiiA3XBLQfSOwVQ2smi/vajJFAM4cVFv9yCWF8mnbEk1LTCfXPPfPmeAWDSFR0jBGIvpvwr03vhPhUu/VeByuy094ImhhQ585H2mla58mRLTDLbr2Y8+T4Y6KOk1EQsu2/YVpMH1R3S9lUGPnKHp4ypHBwmVAYoHCHWm6DaXhJIf981Kg5wXS8/ltg5VFN5Zae4F/LNsVSA6Xuds2JWm+1C3Uv58CESNif
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: bd153fad-7487-469a-4a09-08d609374f1e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:PU1P153MB0154;
+x-ms-traffictypediagnostic: PU1P153MB0154:
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <PU1P153MB0154CB5D26C63D0CF87AB741BF370@PU1P153MB0154.APCP153.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055)(21532816269658);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699016);SRVR:PU1P153MB0154;BCL:0;PCL:0;RULEID:;SRVR:PU1P153MB0154;
+x-forefront-prvs: 0773BB46AC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(376002)(39860400002)(346002)(396003)(189003)(199004)(106356001)(1511001)(97736004)(2906002)(476003)(6636002)(5250100002)(486006)(99286004)(68736007)(10090500001)(14454004)(102836004)(33656002)(10290500003)(22452003)(46003)(74316002)(305945005)(54906003)(2900100001)(110136005)(9686003)(1857600001)(5660300001)(53936002)(55016002)(316002)(8990500004)(6436002)(14444005)(8936002)(256004)(86362001)(8676002)(86612001)(81166006)(81156014)(25786009)(105586002)(6506007)(186003)(7696005)(7736002)(6116002)(478600001)(4326008)(491001);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0154;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: qvB76d9n+FjNPhqoj6m4EMaGGzrrzAw4P917mVcf8pypF6PK7KuvNSUmist9mwV+iYqPSpRprkiflLdqDdRIZtiMU/4higKaBBemUFx/CwyfOceTXUGXmRBEdHgIrv4pTbqJXQ/zOdIFvfHl7gJrSsMnJUFInTqRPkD3502zPS0UuPeWpv9QxUtyCQ8gwLkO2mrCRYhmHZDwfCJ5Jk03UICLapgZbb/Z0AJZTAw09MnwuZUhpMJYBAktLSywugmMhtI/Mzmp91v3iHDiFb1QeH55NpWlBHEB+vqdyoYl6PnPszgslk0F9HVT2/E757WMCBDBwZJAnKyPMKrJuD8spKyn1dNjlLV7qDWkkqdHvXI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd153fad-7487-469a-4a09-08d609374f1e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2018 20:30:47.0837
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/23/18 5:44 PM, Andi Kleen wrote:
-> On Thu, Aug 23, 2018 at 03:44:18PM +0200, Vlastimil Babka wrote:
->> Two users have reported [1] that they have an "extremely unlikely" system
->> with more than MAX_PA/2 memory and L1TF mitigation is not effective. In fact
->> it's a CPU with 36bits phys limit (64GB) and 32GB memory, but due to holes
->> in the e820 map, the main region is almost 500MB over the 32GB limit:
-> 
-> Ah I see it's a client part with very large DIMMs and someone being
-> very brave and using that much memory without ECC.
 
-Are you trying to mock the users and diminsh their report because of that?
+With CONFIG_DEBUG_PREEMPT=3Dy, I always see this warning:
+BUG: using smp_processor_id() in preemptible [00000000]
 
->>
->> [    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000081effffff] usable
->>
->> Suggestions to use 'mem=32G' to prefer L1TF mitigation while losing the 500MB
->> revealed, that there's an off-by-one error in the check in
->> l1tf_select_mitigation(). l1tf_pfn_limit() returns the last usable pfn
->> (inclusive), but it's more common and hopefully less error-prone to return the
->> first pfn that's over limit, so this patch changes that and updates the other
->> callers.
-> 
-> I can see the off by one, but does it really cause the user's problem?
-> 
-> They will be still over the limit in any case, with or without off-by-one.
-> 
-> So the description has nothing to do with the fix. Or do I miss something?
+Fix the false warning by using raw_smp_processor_id().
 
-The off-by-one happens when 'mem=32G' is used to limit the amount
-memory. It's easier to do "mem=32G" with fixed code than "mem=33554428k"
-to workaround the error.
+Here vmbus_connect() sends a message to the host and waits for the
+host's response. The host will deliver the response message and an
+interrupt on CPU msg->target_vcpu, and later the interrupt handler
+will wake up vmbus_connect(). vmbus_connect() doesn't really have
+to run on the same cpu as CPU msg->target_vcpu, so it's safe to
+use raw_smp_processor_id() here.
 
-> 
-> -Andi
-> 
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: stable@vger.kernel.org
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+---
+ drivers/hv/connection.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hv/connection.c b/drivers/hv/connection.c
+index ced0418..c3b7040 100644
+--- a/drivers/hv/connection.c
++++ b/drivers/hv/connection.c
+@@ -119,8 +119,8 @@ static int vmbus_negotiate_version(struct vmbus_channel=
+_msginfo *msginfo,
+ 	 */
+ 	if (version >=3D VERSION_WIN8_1) {
+ 		msg->target_vcpu =3D
+-			hv_cpu_number_to_vp_number(smp_processor_id());
+-		vmbus_connection.connect_cpu =3D smp_processor_id();
++			hv_cpu_number_to_vp_number(raw_smp_processor_id());
++		vmbus_connection.connect_cpu =3D raw_smp_processor_id();
+ 	} else {
+ 		msg->target_vcpu =3D 0;
+ 		vmbus_connection.connect_cpu =3D 0;
+--=20
+2.7.4
 
