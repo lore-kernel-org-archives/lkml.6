@@ -2,112 +2,125 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83027C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C15FC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E04C21564
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:55:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E04C21564
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 00F632152D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:56:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ue/rnK9s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00F632152D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbeHWV0U (ORCPT
+        id S1727218AbeHWV1j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 17:26:20 -0400
-Received: from gateway30.websitewelcome.com ([192.185.192.34]:37270 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726573AbeHWV0U (ORCPT
+        Thu, 23 Aug 2018 17:27:39 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:40132 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbeHWV1j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 17:26:20 -0400
-X-Greylist: delayed 760 seconds by postgrey-1.27 at vger.kernel.org; Thu, 23 Aug 2018 17:26:19 EDT
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 429803337B
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 12:55:29 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id stpRfSNLwbXuJstpRfojY9; Thu, 23 Aug 2018 12:55:29 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.40.214] (port=36274 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fstpQ-003RFo-Bq; Thu, 23 Aug 2018 12:55:28 -0500
-Date:   Thu, 23 Aug 2018 12:55:27 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH v3] usb: iowarrior: replace kmalloc with kmalloc_array
-Message-ID: <20180823175527.GA26370@embeddedor.com>
+        Thu, 23 Aug 2018 17:27:39 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7NHsBVh173202;
+        Thu, 23 Aug 2018 17:56:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
+ cc : references : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=J45e6s/TdFK87B2UBUUCR/n3oIoF2l9SsCl4HQsJd/o=;
+ b=Ue/rnK9sRAVeVOz4CiP5zhzR6YDX0tABO57RuO5qGAlNhCpKnn+W8S1y644Ln3+8uj2B
+ HMmEWjMT9SoUTo9OPKzUcuaxVJtIb062YClx9JcRf66uQOSkcVKC87pC7MzTscnrf5Cr
+ 8PX+XXtWV4u+56XrJczUic5gpc7g60cE+Jo2/VCzg0l+Tl319nCohHNWJxRex2Yed3Ia
+ 1WT+U028QqbJafoC6A4fE6L8harDqrUkNDqdj7Hd5qMsY0IXxok6fYGtArt6thKePbvc
+ t2wnJn8I0dAqIMwOJVo6mF0c+MyakwgyIAHQLq6qsIPyoDAEs0qeQwGt2LdDEhyqfsmW Ww== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2kxc3r2wcr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 Aug 2018 17:56:35 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7NHuXh2018982
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 Aug 2018 17:56:33 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7NHuV3W030745;
+        Thu, 23 Aug 2018 17:56:32 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 23 Aug 2018 10:56:31 -0700
+Subject: Re: [PATCH v3 1/2] mm: migration: fix migration of huge PMD shared
+ pages
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+References: <20180821205902.21223-2-mike.kravetz@oracle.com>
+ <201808220831.eM0je51n%fengguang.wu@intel.com>
+ <975b740d-26a6-eb3f-c8ca-1a9995d0d343@oracle.com>
+ <20180823124855.GI29735@dhcp22.suse.cz>
+ <12ea5339-f2b1-62b4-6d37-57d737fac34a@oracle.com>
+Message-ID: <df05e2e0-be29-1651-40e7-82dc686919c2@oracle.com>
+Date:   Thu, 23 Aug 2018 10:56:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.40.214
-X-Source-L: No
-X-Exim-ID: 1fstpQ-003RFo-Bq
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.40.214]:36274
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 19
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <12ea5339-f2b1-62b4-6d37-57d737fac34a@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8994 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=912
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808230185
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A common flaw in the kernel is integer overflow during memory allocation
-size calculations. In an effort to reduce the frequency of these bugs,
-kmalloc_array was implemented, which allocates memory for an array,
-while at the same time detects integer overflow.
+On 08/23/2018 10:01 AM, Mike Kravetz wrote:
+> On 08/23/2018 05:48 AM, Michal Hocko wrote:
+>> On Tue 21-08-18 18:10:42, Mike Kravetz wrote:
+>> [...]
+>>
+>> OK, after burning myself when trying to be clever here it seems like
+>> your proposed solution is indeed simpler.
+>>
+>>> +bool huge_pmd_sharing_possible(struct vm_area_struct *vma,
+>>> +				unsigned long *start, unsigned long *end)
+>>> +{
+>>> +	unsigned long check_addr = *start;
+>>> +	bool ret = false;
+>>> +
+>>> +	if (!(vma->vm_flags & VM_MAYSHARE))
+>>> +		return ret;
+>>> +
+>>> +	for (check_addr = *start; check_addr < *end; check_addr += PUD_SIZE) {
+>>> +		unsigned long a_start = check_addr & PUD_MASK;
+>>> +		unsigned long a_end = a_start + PUD_SIZE;
+>>
+>> I guess this should be rather in HPAGE_SIZE * PTRS_PER_PTE units as
+>> huge_pmd_unshare does.
+> 
+> Sure, I can do that.
 
-This patch replaces cases of:
+On second thought, this is more similar to vma_shareable() which uses
+PUD_MASK and PUD_SIZE.  In fact Kirill asked me to put in a common helper
+for this and vma_shareable.  So, I would prefer to leave it as PUD* unless
+you feel strongly.
 
-	kmalloc(a * b, gfp)
+IMO, it would make more sense to change this in huge_pmd_unshare as PMD
+sharing is pretty explicitly tied to PUD_SIZE.  But, that is a future cleanup.
 
-with:
-	kmalloc_array(a, b, gfp)
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
-Changes in v3:
- - Update commit log.
-
-Changes in v2:
- - Align GFP_KERNEL to open parenthesis.
-
- drivers/usb/misc/iowarrior.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
-index c2991b8..ba05dd8 100644
---- a/drivers/usb/misc/iowarrior.c
-+++ b/drivers/usb/misc/iowarrior.c
-@@ -808,8 +808,8 @@ static int iowarrior_probe(struct usb_interface *interface,
- 			 dev->int_in_endpoint->bInterval);
- 	/* create an internal buffer for interrupt data from the device */
- 	dev->read_queue =
--	    kmalloc(((dev->report_size + 1) * MAX_INTERRUPT_BUFFER),
--		    GFP_KERNEL);
-+	    kmalloc_array(dev->report_size + 1, MAX_INTERRUPT_BUFFER,
-+			  GFP_KERNEL);
- 	if (!dev->read_queue)
- 		goto error;
- 	/* Get the serial-number of the chip */
 -- 
-2.7.4
-
+Mike Kravetz
