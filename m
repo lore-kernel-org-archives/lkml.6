@@ -2,101 +2,147 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76232C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 06:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A7B6C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 06:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B07220936
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 06:13:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B07220936
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 9E575208FA
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 06:16:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nxs5DFQD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E575208FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726224AbeHWJlA (ORCPT
+        id S1726261AbeHWJoE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 05:41:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37596 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbeHWJlA (ORCPT
+        Thu, 23 Aug 2018 05:44:04 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41885 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbeHWJoD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 05:41:00 -0400
-Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6543D49B;
-        Thu, 23 Aug 2018 06:12:56 +0000 (UTC)
-Date:   Thu, 23 Aug 2018 08:12:53 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Roland Dreier <roland@purestorage.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        ben.hutchings@codethink.co.uk, matt@codeblueprint.co.uk,
-        bp@suse.de, Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>, luto@kernel.org,
-        ard.biesheuvel@linaro.org, bp@alien8.de, brgerst@gmail.com,
-        davej@codemonkey.org.uk, dvlasenk@redhat.com,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thu, 23 Aug 2018 05:44:03 -0400
+Received: by mail-pg1-f196.google.com with SMTP id s15-v6so2043451pgv.8
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 23:16:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=YtUI8DyAtpFmEodXOKQfAB3BtEcI1JptdY6DCD7ZynE=;
+        b=nxs5DFQDXKqqY/nrINOm8jBn3H66mA9OK2OutvUBNtAz5apUNj4kJ+s/EGJxfns5Kn
+         DdANRgBJcmAy7R6hWz06Mh6nPYbAjLvaGYISI2dMk8H3RxvqiUstREKR5ieenTBJ2Xx+
+         Xy4OjPC2m/H5N4mAat95O7UUSdEums/KwU+G9LF3tuCzOGWVxY4862/DeBP2R9rMdddb
+         Rbrt1RhAe1Iby3JiLOLqA540YpcyqYbnO1uqJ+V8AKdYxvo3Ve9UtAWK8SUQjbzMLrPA
+         fTrfWHxyohAG+GtLTyrbTLf21FkeJapi1M/izlfdF8WMT1TDDAsUuUIBFSyPMWSHIkOR
+         mECA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=YtUI8DyAtpFmEodXOKQfAB3BtEcI1JptdY6DCD7ZynE=;
+        b=PqlX0B7ZfTB/bxVe2BjoK5MAbgZGvX8IXDgCFrxcpgzts6zF00IzUJnncRjvsoLn7J
+         2y+9AA1Gkm5TOT3rBBQQqDr8xnU78ekhPOk+uHkrx2omXGkWR2Rg06hwYT7VgmNJn9SJ
+         jQON6an1i33MWFohaKQSmhGNjRzpFIyLnm1ABErUgvye5CgCPeMB/igWNIaRcMVhzv+q
+         6MZsYhvu0twiJh/TkEEDMtXGrqrMOMWZdlO1hmKBpsDGuWUI7PB4wr+Hqv9cwHEBCTSc
+         EPBKp7FQPiJ3hJGo9sYCDsAwcRpPLKjplozylBZIYMoILrxMGqNXL8d0gHczjOglW8eM
+         4m1w==
+X-Gm-Message-State: AOUpUlFA1G0q0Y4My+ZWMTAFnxinJgdTqQKQsQUo8t4+7xRJviqWqry+
+        nDN0YXCf+hBeu6eHomKeZO8=
+X-Google-Smtp-Source: AA+uWPzvAZQxTbKeja+lInjGAuTMRb37h6QuW8BVwAySJ4qwTJM3fAkb/Em3uhyOJB2Sucvr7QqPaw==
+X-Received: by 2002:a62:398c:: with SMTP id u12-v6mr61588144pfj.9.1535004960759;
+        Wed, 22 Aug 2018 23:16:00 -0700 (PDT)
+Received: from roar.ozlabs.ibm.com ([122.99.82.10])
+        by smtp.gmail.com with ESMTPSA id r25-v6sm4198132pgm.59.2018.08.22.23.15.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 22 Aug 2018 23:16:00 -0700 (PDT)
+Date:   Thu, 23 Aug 2018 16:15:52 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        sai.praneeth.prakhya@intel.com, sds@tycho.nsa.gov,
-        Thomas Gleixner <tglx@linutronix.de>, toshi.kani@hp.com,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Yazen.Ghannam@amd.com
-Subject: Re: [PATCH 4.4 103/105] Revert "x86/mm/pat: Ensure cpa->pfn only
- contains page frame numbers"
-Message-ID: <20180823061253.GA8803@kroah.com>
-References: <20171215092305.994559179@linuxfoundation.org>
- <20171215092311.347628971@linuxfoundation.org>
- <CAL1RGDVgShymmT+TJ3mAHEL7n+qoisk6mQ=Tji_T=0d_QA=VKw@mail.gmail.com>
+        Andrew Lutomirski <luto@kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Rik van Riel <riel@surriel.com>,
+        Jann Horn <jannh@google.com>,
+        Adin Scannell <ascannell@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH 3/4] mm/tlb, x86/mm: Support invalidating TLB caches for
+ RCU_TABLE_FREE
+Message-ID: <20180823161552.6e3114c0@roar.ozlabs.ibm.com>
+In-Reply-To: <457fb409b4dcd213e2f162792e79e31c09cd55a4.camel@kernel.crashing.org>
+References: <20180822153012.173508681@infradead.org>
+        <20180822154046.823850812@infradead.org>
+        <20180822155527.GF24124@hirez.programming.kicks-ass.net>
+        <20180823134525.5f12b0d3@roar.ozlabs.ibm.com>
+        <CA+55aFxneZTFxxxAjLZmj92VUJg6z7hERxJ2cHoth-GC0RuELw@mail.gmail.com>
+        <776104d4c8e4fc680004d69e3a4c2594b638b6d1.camel@au1.ibm.com>
+        <CA+55aFzM77G9-Q6LboPLJ=5gHma66ZQKiMGCMqXoKABirdF98w@mail.gmail.com>
+        <457fb409b4dcd213e2f162792e79e31c09cd55a4.camel@kernel.crashing.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL1RGDVgShymmT+TJ3mAHEL7n+qoisk6mQ=Tji_T=0d_QA=VKw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 05:48:32PM -0700, Roland Dreier wrote:
-> On Fri, Dec 15, 2017 at 2:20 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > This reverts commit 87e2bd898d3a79a8c609f183180adac47879a2a4 which is
-> > commit edc3b9129cecd0f0857112136f5b8b1bc1d45918 upstream.
-> >
-> > Turns there was too many other issues with this patch to make it viable
-> > for the stable tree.
+On Thu, 23 Aug 2018 15:21:30 +1000
+Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
+
+> On Wed, 2018-08-22 at 22:11 -0700, Linus Torvalds wrote:
+> > On Wed, Aug 22, 2018 at 9:54 PM Benjamin Herrenschmidt <benh@au1.ibm.com> wrote:  
+> > > 
+> > > 
+> > > So we do need a different flush instruction for the page tables vs. the
+> > > normal TLB pages.  
+> > 
+> > Right. ARM wants it too. x86 is odd in that a regular "invlpg" already
+> > invalidates all the internal tlb cache nodes.
+> > 
+> > So the "new world order" is exactly that patch that PeterZ sent you, that adds a
+> > 
+> > +       unsigned int            freed_tables : 1;
+> >   
 > 
-> This was sort of a long time ago, but does anyone remember why this
-> needed to be reverted from 4.4?
-
-I tried to dig through my old emails, but could not find anything,
-sorry.
-
-> The reason I ask is that without this, commit 02ff2769edbc /
-> "x86/mm/pat: Make set_memory_np() L1TF safe" in 4.4.148 is broken.
-> That patch has
+>  .../...
 > 
-> -               set_pud(pud, __pud(cpa->pfn | _PAGE_PSE |
-> -                                  massage_pgprot(pud_pgprot)));
-> +               set_pud(pud, pud_mkhuge(pfn_pud(cpa->pfn,
-> +                                  canon_pgprot(pud_pgprot))));
+> > So instead, when you get to the actual "tlb_flush(tlb)", you do
+> > exactly that - flush the tlb. And the mmu_gather structure shows you
+> > how much you need to flush. If you see that "freed_tables" is set,
+> > then you know that you need to also do the special instruction to
+> > flush the inner level caches. The range continues to show the page
+> > range.  
 > 
-> (and similarly for pmds) but pfn_pud() is operating on page frame
-> numbers and __pud(cpa->pfn... in the old code is operating on physical
-> addresses.
+> Yup. That looks like a generic version of the "need_flush_all" flag we
+> have, which is fine by us.
 > 
-> This is bad enough that 4.4.148 and all newer 4.4.y crash early in
-> boot on some EFI systems that I have.
+> Just don't blame powerpc for all the historical crap :-)
 
-Ugh, not good.
+And yes we very much want to remove the x86 hacks from generic code and
+have them use the sane powerpc/radix page walk cache flushing model.
+That would indeed allow us to stop overriding those macros and start
+sharing more code with other archs. We can help write or review code to
+make sure bugs don't creep in when moving it to generic implementation.
+It will be much more relevant to us now because radix is very similar to
+x86.
 
-> For now I am re-applying the "ensure cpa->pfn only contains page frame
-> numbers" patch, ported on top of 4.4.151.
+The hack is not the powerpc override macros though, let's be clear
+about that. Even x86 will be helped out by removing that crap because
+it won't have to do a full TLB flush caused by massive TLB range if it
+frees 0..small number of pages that happen to also free some page
+tables.
 
-I can try to add it back and see what blows up, want me to attempt that?
-:)
-
-thanks,
-
-greg k-h
+Thanks,
+Nick
