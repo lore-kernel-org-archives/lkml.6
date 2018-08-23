@@ -6,195 +6,224 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6DEC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 15:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A275C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 15:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F1A0208FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 15:33:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03FDD208FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 15:37:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="DF1f3QN7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F1A0208FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="GF0eLVZa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03FDD208FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbeHWTEB (ORCPT
+        id S1727883AbeHWTH2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 15:04:01 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44318 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727632AbeHWTEB (ORCPT
+        Thu, 23 Aug 2018 15:07:28 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:38267 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726274AbeHWTH2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 15:04:01 -0400
-Received: by mail-lj1-f193.google.com with SMTP id q127-v6so4484637ljq.11
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 08:33:50 -0700 (PDT)
+        Thu, 23 Aug 2018 15:07:28 -0400
+Received: by mail-it0-f68.google.com with SMTP id p129-v6so6455780ite.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 08:37:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qm23+HF1b8QvHcQOqZAwdsTjtVnIg0slKvKVg/80phc=;
-        b=DF1f3QN7DIaQVRlz16BgKScOXcx4dbrwLLT5/xUzNtfG7lQ1p3V3l/4jScio18zoZn
-         3AW6ShBz2j2/k6fdC6chTf9BQz6qE3waqCIOaN/AHSl9WZ0Uyc4d7lLW4GztgajGQZ8/
-         1oZN9+muLy7Cw1enGV8B8ExTphma/PfYHV63YdShT0EEnTGCywbPfG7mihhcM3ZlzTYB
-         Yy9PsFcKOGgAkoAFDaD+v16kUnN68KDBhFpWVgw5Q8oxfAcu4+/lAXt2WE6JEAYKtUeG
-         3mx/jrag+NjkciiBX2BQ7pmRzfosvO9GsuGI4rPhvJQuNxBflzeHWn5IGNQBnUm3vV/H
-         1P5g==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uZT+MTjSC3CvC3jlZ4jG2rQhh3+JG2Qc933rA4rI6WQ=;
+        b=GF0eLVZaC7zKcMIUKH59zYNO82QfJB0kcaRqxHgAxeaPC8Is8g2prepOAr0wb0BBNW
+         eqQos4ycc7OYL0lId3K/Tuk9l7GODB/F6IzM/JKHfPbXCk4fBq28ffSd8JiWvU7Rc4Cx
+         qaFaQe69L+vOT21T4jTG4yO4v5D8A7WAX3xovamMD0G3Yhdo6tWMujhkKb+vKcFGvB7R
+         UsVy0LMKNl0SHvctizMT5m+GT5kd4PKPbL+xhBdq7sfYlONUDZUNTcV8k19dkjiYr/AF
+         gGcTkLUjqZngwTUDsKh7H6IPdoOObsACoQqRyfxhnAP+3HlbZhFZHiJPfIcTxsWhfgTU
+         eNdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=qm23+HF1b8QvHcQOqZAwdsTjtVnIg0slKvKVg/80phc=;
-        b=GF8O8TyIdkJn13LpDJbACNgH7yNMuWL3nDQ6iWqc7ZrbZTfGMyvQuFusl6x5eWekPd
-         FcQNXGsR/+QaafisGtK/XdGMinyKvCm0MPegGDEM3RnR5ybnApif31cSf6Y37Lp7BoBG
-         PGrfzQDMFofgOSEjS+SwgYvhHZ5Qt29QAUEgqHYJMYH8MY0jmEJv+3BbJ347EG2IgLNa
-         /Nv8nV6OpuwmTMq+BLXalHmv3cFPHNWp66QdevcAu8Bwq19C5/8eHrvA8rb4sB5CvNSC
-         giqGSU9hJhnq6d3rHjAvWAWNsrdZ3Am9TjyEvtNzf46aKm+sU4bkYIQve/hI/WBdAsKJ
-         irxQ==
-X-Gm-Message-State: AOUpUlG/I6I4ZZwSqe3G0B4bGULiXzfvN+rUN+tXDC5QBQLQIx9WTs/C
-        AgjEvQjj61Mi1Fx96E+iAc9pTrgU6Ws=
-X-Google-Smtp-Source: AA+uWPyBNP0+I7tr2Ya2TlW8+6pQhVON04447wV4NOhJIsg8QAe0jPGRe44q+oZEkOz3p+P8Y5BxsA==
-X-Received: by 2002:a2e:9e55:: with SMTP id g21-v6mr25448375ljk.116.1535038429251;
-        Thu, 23 Aug 2018 08:33:49 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.84.155])
-        by smtp.gmail.com with ESMTPSA id b22-v6sm786580ljj.93.2018.08.23.08.33.47
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uZT+MTjSC3CvC3jlZ4jG2rQhh3+JG2Qc933rA4rI6WQ=;
+        b=c+3rNAP9NsaHQThmA2sGcanhRvDdy+UuDCsUf/IW8/tebQUgdUiWbfpieIm1SWa95v
+         V9vr90OA4RHBFOfiMQZBGmmdy28u8idKez9XihBoOFXWJhfzvGeqkkIOiDteXZ9krnmG
+         dwMdElYNnKNODmIET8ER1i9OG/ZzSIkznf/P7ls0xJa1sB+O5ioI/TW+eLn1MnjXLoCk
+         ePTTL6ZaOxeFpgIAV1PmwUH4FT6t1BawL8YcWq/GQi0/Sm+2vdRxtbBaqDSp1+5DkaQW
+         hjtFG2m3JXDRtqjh8riuPuD062gOfJlJDDwWHp4FQnJ4BDRtPVdLjAyyZMOAW3XKIyKQ
+         l3NA==
+X-Gm-Message-State: AOUpUlE0fdc0kqXqjGbGQmJEy4O1iZhg2JnKXj5DYnP/BGq9dpKu+het
+        4yADeULAVHmUZtDQFguIrBGZYw==
+X-Google-Smtp-Source: AA+uWPzD+aeady3vhPE7PfFzyD4eOGJlZdDQg1K/IkRiYq4Dr0QYf4ujQjJXUJXCdy/IGX05w149QA==
+X-Received: by 2002:a02:54c7:: with SMTP id t190-v6mr15787496jaa.92.1535038636482;
+        Thu, 23 Aug 2018 08:37:16 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id r18-v6sm2558301iob.16.2018.08.23.08.37.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Aug 2018 08:33:48 -0700 (PDT)
-Subject: Re: [PATCH 4.14 210/217] PCI: OF: Fix I/O space page leak
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-References: <20180823075505.090246914@linuxfoundation.org>
- <20180823075515.152259931@linuxfoundation.org>
- <fa1a9728-8deb-867d-04b1-a9959ab48d24@cogentembedded.com>
- <20180823111728.GA2945@kroah.com> <20180823115628.GA13907@kroah.com>
- <3128dea4-1b3c-ccf3-3e57-fbb5ea6d3fe5@cogentembedded.com>
- <20180823152717.GA28242@kroah.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <b657548f-7bf5-74e3-2287-f09e54f15c8e@cogentembedded.com>
-Date:   Thu, 23 Aug 2018 18:33:47 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Thu, 23 Aug 2018 08:37:15 -0700 (PDT)
+Subject: Re: [PATCH] blk-wbt: get back the missed wakeup from __wbt_done
+To:     Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        anchalag@amazon.com, van der Linden <fllinden@amazon.com>,
+        Frank <fllinden@amazon.com>
+References: <1535029718-17259-1-git-send-email-jianchao.w.wang@oracle.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <bd84ff08-b75a-0a2f-6b37-07a104452bff@kernel.dk>
+Date:   Thu, 23 Aug 2018 09:37:14 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180823152717.GA28242@kroah.com>
+In-Reply-To: <1535029718-17259-1-git-send-email-jianchao.w.wang@oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/23/2018 06:27 PM, Greg Kroah-Hartman wrote:
-> On Thu, Aug 23, 2018 at 06:20:31PM +0300, Sergei Shtylyov wrote:
->> On 08/23/2018 02:56 PM, Greg Kroah-Hartman wrote:
->>> On Thu, Aug 23, 2018 at 01:17:28PM +0200, Greg Kroah-Hartman wrote:
->>>> On Thu, Aug 23, 2018 at 01:57:35PM +0300, Sergei Shtylyov wrote:
->>>>> On 08/23/2018 10:55 AM, Greg Kroah-Hartman wrote:
->>>>>
->>>>>> 4.14-stable review patch.  If anyone has any objections, please let me know.
->>>>>>
->>>>>> ------------------
->>>>>>
->>>>>> From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>>>>>
->>>>>> commit a5fb9fb023a1435f2b42bccd7f547560f3a21dc3 upstream.
->>>>>>
->>>>>> When testing the R-Car PCIe driver on the Condor board, if the PCIe PHY
->>>>>> driver was left disabled, the kernel crashed with this BUG:
->>>>>>
->>>>>>   kernel BUG at lib/ioremap.c:72!
->>>>>>   Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
->>>>>>   Modules linked in:
->>>>>>   CPU: 0 PID: 39 Comm: kworker/0:1 Not tainted 4.17.0-dirty #1092
->>>>>>   Hardware name: Renesas Condor board based on r8a77980 (DT)
->>>>>>   Workqueue: events deferred_probe_work_func
->>>>>>   pstate: 80000005 (Nzcv daif -PAN -UAO)
->>>>>>   pc : ioremap_page_range+0x370/0x3c8
->>>>>>   lr : ioremap_page_range+0x40/0x3c8
->>>>>>   sp : ffff000008da39e0
->>>>>>   x29: ffff000008da39e0 x28: 00e8000000000f07
->>>>>>   x27: ffff7dfffee00000 x26: 0140000000000000
->>>>>>   x25: ffff7dfffef00000 x24: 00000000000fe100
->>>>>>   x23: ffff80007b906000 x22: ffff000008ab8000
->>>>>>   x21: ffff000008bb1d58 x20: ffff7dfffef00000
->>>>>>   x19: ffff800009c30fb8 x18: 0000000000000001
->>>>>>   x17: 00000000000152d0 x16: 00000000014012d0
->>>>>>   x15: 0000000000000000 x14: 0720072007200720
->>>>>>   x13: 0720072007200720 x12: 0720072007200720
->>>>>>   x11: 0720072007300730 x10: 00000000000000ae
->>>>>>   x9 : 0000000000000000 x8 : ffff7dffff000000
->>>>>>   x7 : 0000000000000000 x6 : 0000000000000100
->>>>>>   x5 : 0000000000000000 x4 : 000000007b906000
->>>>>>   x3 : ffff80007c61a880 x2 : ffff7dfffeefffff
->>>>>>   x1 : 0000000040000000 x0 : 00e80000fe100f07
->>>>>>   Process kworker/0:1 (pid: 39, stack limit = 0x        (ptrval))
->>>>>>   Call trace:
->>>>>>    ioremap_page_range+0x370/0x3c8
->>>>>>    pci_remap_iospace+0x7c/0xac
->>>>>>    pci_parse_request_of_pci_ranges+0x13c/0x190
->>>>>>    rcar_pcie_probe+0x4c/0xb04
->>>>>>    platform_drv_probe+0x50/0xbc
->>>>>>    driver_probe_device+0x21c/0x308
->>>>>>    __device_attach_driver+0x98/0xc8
->>>>>>    bus_for_each_drv+0x54/0x94
->>>>>>    __device_attach+0xc4/0x12c
->>>>>>    device_initial_probe+0x10/0x18
->>>>>>    bus_probe_device+0x90/0x98
->>>>>>    deferred_probe_work_func+0xb0/0x150
->>>>>>    process_one_work+0x12c/0x29c
->>>>>>    worker_thread+0x200/0x3fc
->>>>>>    kthread+0x108/0x134
->>>>>>    ret_from_fork+0x10/0x18
->>>>>>   Code: f9004ba2 54000080 aa0003fb 17ffff48 (d4210000)
->>>>>>
->>>>>> It turned out that pci_remap_iospace() wasn't undone when the driver's
->>>>>> probe failed, and since devm_phy_optional_get() returned -EPROBE_DEFER,
->>>>>> the probe was retried, finally causing the BUG due to trying to remap
->>>>>> already remapped pages.
->>>>>>
->>>>>> Introduce the devm_pci_remap_iospace() managed API and replace the
->>>>>> pci_remap_iospace() call with it to fix the bug.
->>>>>>
->>>>>> Fixes: dbf9826d5797 ("PCI: generic: Convert to DT resource parsing API")
->>>>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>>>>> [lorenzo.pieralisi@arm.com: split commit/updated the commit log]
->>>>>> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
->>>>>> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
->>>>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->>>>>> [Backport just for the new api which other patches need - gregkh]
->>>>>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>>>>
->>>>>> ---
->>>>>>  drivers/pci/pci.c   |   38 ++++++++++++++++++++++++++++++++++++++
->>>>>>  include/linux/pci.h |    2 ++
->>>>>>  2 files changed, 40 insertions(+)
->>>>>
->>>>>   You missed a chnage to drivers/pci/host/pci-host-common.c (and 
->>>>> also drivers/pci/host/pcie-rcar.c which wasn't using the generic mode back
->>
->>    s/mode/code/, of course. :-)
->>
->>>>> then)...
->>>>
->>>> Yes I totally messed this up, let me fix it...
->>>
->>> Ok, below is the patch that I replaced the 4.14 and 4.9 versions with,
->>> it should now be resolved, but verifying this would be nice :)
->>
->>    Unfortunately, it doesn't fix anything on R-Car where this bug was originally
->> encountered and the fix was tested... and you leave no way for it to be fixed. :-(
+On 8/23/18 7:08 AM, Jianchao Wang wrote:
+> 2887e41 (blk-wbt: Avoid lock contention and thundering herd
+> issue in wbt_wait) introduces two cases that could miss wakeup:
+>  - __wbt_done only wakes up one waiter one time. There could be
+>    multiple waiters and (limit - inflight) > 1 at the moment.
 > 
-> Really?  Why not?  What is missing here?
+>  - When the waiter is waked up, it is still on wait queue and set
+>    to TASK_UNINTERRUPTIBLE immediately, so this waiter could be
+>    waked up one more time. If a __wbt_done comes and wakes up
+>    again, the prevous waiter may waste a wakeup.
+> 
+> To fix them and avoid to introduce too much lock contention, we
+> introduce our own wake up func wbt_wake_function in __wbt_wait and
+> use wake_up_all in __wbt_done. wbt_wake_function will try to get
+> wbt budget firstly, if sucesses, wake up the process, otherwise,
+> return -1 to interrupt the wake up loop.
 
-   You just need to fix drivers/pci/host/pcie-rcar.c in this same patch -- because
-this same *upstream* patch fixed the R-Car PCIe driver in 4.18. That driver started
-using the common "PCI-resource-walker" function factored out from pci-host-common.c
-somewhere around 4.17, IIRC...
+I really like this approach, since it'll naturally wake up as many
+as we can instead of either being single wakeups, or wake all.
 
-> greg k-h
+BTW, you added Anchal and Frank to the CC in the patch, but they 
+are not actually CC'ed. Doing that now - can you guys give this
+a whirl? Should still solve the thundering herd issue, but be
+closer to the original logic in terms of wakeup. Actually better,
+since we remain on list and remain ordered.
 
-MBR, Sergei
+Leaving the patch below for you guys.
+
+> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+> Fixes: 2887e41 (blk-wbt: Avoid lock contention and thundering herd issue in wbt_wait)
+> Cc: Anchal Agarwal <anchalag@amazon.com>
+> Cc: Frank van der Linden <fllinden@amazon.com>
+> ---
+>  block/blk-wbt.c | 78 +++++++++++++++++++++++++++++++++++++++------------------
+>  1 file changed, 54 insertions(+), 24 deletions(-)
+> 
+> diff --git a/block/blk-wbt.c b/block/blk-wbt.c
+> index c9358f1..2667590 100644
+> --- a/block/blk-wbt.c
+> +++ b/block/blk-wbt.c
+> @@ -166,7 +166,7 @@ static void __wbt_done(struct rq_qos *rqos, enum wbt_flags wb_acct)
+>  		int diff = limit - inflight;
+>  
+>  		if (!inflight || diff >= rwb->wb_background / 2)
+> -			wake_up(&rqw->wait);
+> +			wake_up_all(&rqw->wait);
+>  	}
+>  }
+>  
+> @@ -481,6 +481,40 @@ static inline unsigned int get_limit(struct rq_wb *rwb, unsigned long rw)
+>  	return limit;
+>  }
+>  
+> +struct wbt_wait_data {
+> +	struct task_struct *curr;
+> +	struct rq_wb *rwb;
+> +	struct rq_wait *rqw;
+> +	unsigned long rw;
+> +};
+> +
+> +static int wbt_wake_function(wait_queue_entry_t *curr, unsigned int mode,
+> +		int wake_flags, void *key)
+> +{
+> +	struct wbt_wait_data *data = curr->private;
+> +
+> +	/*
+> +	 * If fail to get budget, return -1 to interrupt the wake up
+> +	 * loop in __wake_up_common.
+> +	 */
+> +	if (!rq_wait_inc_below(data->rqw, get_limit(data->rwb, data->rw)))
+> +		return -1;
+> +
+> +	wake_up_process(data->curr);
+> +
+> +	list_del_init(&curr->entry);
+> +	return 1;
+> +}
+> +
+> +static inline void wbt_init_wait(struct wait_queue_entry *wait,
+> +		struct wbt_wait_data *data)
+> +{
+> +	INIT_LIST_HEAD(&wait->entry);
+> +	wait->flags = 0;
+> +	wait->func = wbt_wake_function;
+> +	wait->private = data;
+> +}
+> +
+>  /*
+>   * Block if we will exceed our limit, or if we are currently waiting for
+>   * the timer to kick off queuing again.
+> @@ -491,31 +525,27 @@ static void __wbt_wait(struct rq_wb *rwb, enum wbt_flags wb_acct,
+>  	__acquires(lock)
+>  {
+>  	struct rq_wait *rqw = get_rq_wait(rwb, wb_acct);
+> -	DECLARE_WAITQUEUE(wait, current);
+> -	bool has_sleeper;
+> -
+> -	has_sleeper = wq_has_sleeper(&rqw->wait);
+> -	if (!has_sleeper && rq_wait_inc_below(rqw, get_limit(rwb, rw)))
+> +	struct wait_queue_entry wait;
+> +	struct wbt_wait_data data = {
+> +		.curr = current,
+> +		.rwb = rwb,
+> +		.rqw = rqw,
+> +		.rw = rw,
+> +	};
+> +
+> +	if (!wq_has_sleeper(&rqw->wait) &&
+> +			rq_wait_inc_below(rqw, get_limit(rwb, rw)))
+>  		return;
+>  
+> -	add_wait_queue_exclusive(&rqw->wait, &wait);
+> -	do {
+> -		set_current_state(TASK_UNINTERRUPTIBLE);
+> -
+> -		if (!has_sleeper && rq_wait_inc_below(rqw, get_limit(rwb, rw)))
+> -			break;
+> -
+> -		if (lock) {
+> -			spin_unlock_irq(lock);
+> -			io_schedule();
+> -			spin_lock_irq(lock);
+> -		} else
+> -			io_schedule();
+> -		has_sleeper = false;
+> -	} while (1);
+> -
+> -	__set_current_state(TASK_RUNNING);
+> -	remove_wait_queue(&rqw->wait, &wait);
+> +	wbt_init_wait(&wait, &data);
+> +	prepare_to_wait_exclusive(&rqw->wait, &wait,
+> +			TASK_UNINTERRUPTIBLE);
+> +	if (lock) {
+> +		spin_unlock_irq(lock);
+> +		io_schedule();
+> +		spin_lock_irq(lock);
+> +	} else
+> +		io_schedule();
+>  }
+>  
+>  static inline bool wbt_should_throttle(struct rq_wb *rwb, struct bio *bio)
+> 
+
+
+-- 
+Jens Axboe
+
