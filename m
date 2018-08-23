@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D97BC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F64C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39523208DC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39523208DC
+	by mail.kernel.org (Postfix) with ESMTP id 177EB208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 177EB208D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730439AbeHWLtX (ORCPT
+        id S1730451AbeHWLt1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:49:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46724 "EHLO
+        Thu, 23 Aug 2018 07:49:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46742 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728281AbeHWLtW (ORCPT
+        with ESMTP id S1728281AbeHWLt0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:49:22 -0400
+        Thu, 23 Aug 2018 07:49:26 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ACBF0C83;
-        Thu, 23 Aug 2018 08:20:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DFF35C83;
+        Thu, 23 Aug 2018 08:20:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dinh Nguyen <dinguyen@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Gevorg Sahakyan <sahakyan@synopsys.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        William Wu <william.wu@rock-chips.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 061/217] net: stmmac: socfpga: add additional ocp reset line for Stratix10
-Date:   Thu, 23 Aug 2018 09:52:54 +0200
-Message-Id: <20180823075508.284997714@linuxfoundation.org>
+Subject: [PATCH 4.14 044/217] usb: dwc2: alloc dma aligned buffer for isoc split in
+Date:   Thu, 23 Aug 2018 09:52:37 +0200
+Message-Id: <20180823075507.510512111@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,86 +54,282 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dinh Nguyen <dinguyen@kernel.org>
+From: William Wu <william.wu@rock-chips.com>
 
-[ Upstream commit bc8a2d9bcbf1ca548b1deb315d14e1da81945bea ]
+[ Upstream commit af424a410749ed7e0c2bffd3cedbc7c274d0ff6f ]
 
-The Stratix10 platform has an additional reset line, OCP(Open Core Protocol),
-that also needs to get deasserted for the stmmac ethernet controller to work.
-Thus we need to update the Kconfig to include ARCH_STRATIX10 in order to build
-dwmac-socfpga.
+The commit 3bc04e28a030 ("usb: dwc2: host: Get aligned DMA in
+a more supported way") rips out a lot of code to simply the
+allocation of aligned DMA. However, it also introduces a new
+issue when use isoc split in transfer.
 
-Also, remove the redundant check for the reset controller pointer. The
-reset driver already checks for the pointer and returns 0 if the pointer
-is NULL.
+In my test case, I connect the dwc2 controller with an usb hs
+Hub (GL852G-12), and plug an usb fs audio device (Plantronics
+headset) into the downstream port of Hub. Then use the usb mic
+to record, we can find noise when playback.
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+It's because that the usb Hub uses an MDATA for the first
+transaction and a DATA0 for the second transaction for the isoc
+split in transaction. An typical isoc split in transaction sequence
+like this:
+
+- SSPLIT IN transaction
+- CSPLIT IN transaction
+  - MDATA packet
+- CSPLIT IN transaction
+  - DATA0 packet
+
+The DMA address of MDATA (urb->dma) is always DWORD-aligned, but
+the DMA address of DATA0 (urb->dma + qtd->isoc_split_offset) may
+not be DWORD-aligned, it depends on the qtd->isoc_split_offset (the
+length of MDATA). In my test case, the length of MDATA is usually
+unaligned, this cause DATA0 packet transmission error.
+
+This patch use kmem_cache to allocate aligned DMA buf for isoc
+split in transaction. Note that according to usb 2.0 spec, the
+maximum data payload size is 1023 bytes for each fs isoc ep,
+and the maximum allowable interrupt data payload size is 64 bytes
+or less for fs interrupt ep. So we set the size of object to be
+1024 bytes in the kmem cache.
+
+Tested-by: Gevorg Sahakyan <sahakyan@synopsys.com>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+Acked-by: Minas Harutyunyan hminas@synopsys.com>
+Signed-off-by: William Wu <william.wu@rock-chips.com>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/Kconfig         |    2 +-
- drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c |   18 ++++++++++++++----
- 2 files changed, 15 insertions(+), 5 deletions(-)
+ drivers/usb/dwc2/core.h      |    3 +
+ drivers/usb/dwc2/hcd.c       |   89 ++++++++++++++++++++++++++++++++++++++++---
+ drivers/usb/dwc2/hcd.h       |    8 +++
+ drivers/usb/dwc2/hcd_intr.c  |    8 +++
+ drivers/usb/dwc2/hcd_queue.c |    3 +
+ 5 files changed, 106 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-+++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-@@ -111,7 +111,7 @@ config DWMAC_ROCKCHIP
- config DWMAC_SOCFPGA
- 	tristate "SOCFPGA dwmac support"
- 	default ARCH_SOCFPGA
--	depends on OF && (ARCH_SOCFPGA || COMPILE_TEST)
-+	depends on OF && (ARCH_SOCFPGA || ARCH_STRATIX10 || COMPILE_TEST)
- 	select MFD_SYSCON
- 	help
- 	  Support for ethernet controller on Altera SOCFPGA
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-@@ -55,6 +55,7 @@ struct socfpga_dwmac {
- 	struct	device *dev;
- 	struct regmap *sys_mgr_base_addr;
- 	struct reset_control *stmmac_rst;
-+	struct reset_control *stmmac_ocp_rst;
- 	void __iomem *splitter_base;
- 	bool f2h_ptp_ref_clk;
- 	struct tse_pcs pcs;
-@@ -262,8 +263,8 @@ static int socfpga_dwmac_set_phy_mode(st
- 		val = SYSMGR_EMACGRP_CTRL_PHYSEL_ENUM_GMII_MII;
+--- a/drivers/usb/dwc2/core.h
++++ b/drivers/usb/dwc2/core.h
+@@ -872,6 +872,7 @@ struct dwc2_hregs_backup {
+  * @frame_list_sz:      Frame list size
+  * @desc_gen_cache:     Kmem cache for generic descriptors
+  * @desc_hsisoc_cache:  Kmem cache for hs isochronous descriptors
++ * @unaligned_cache:    Kmem cache for DMA mode to handle non-aligned buf
+  *
+  * These are for peripheral mode:
+  *
+@@ -1004,6 +1005,8 @@ struct dwc2_hsotg {
+ 	u32 frame_list_sz;
+ 	struct kmem_cache *desc_gen_cache;
+ 	struct kmem_cache *desc_hsisoc_cache;
++	struct kmem_cache *unaligned_cache;
++#define DWC2_KMEM_UNALIGNED_BUF_SIZE 1024
  
- 	/* Assert reset to the enet controller before changing the phy mode */
--	if (dwmac->stmmac_rst)
--		reset_control_assert(dwmac->stmmac_rst);
-+	reset_control_assert(dwmac->stmmac_ocp_rst);
-+	reset_control_assert(dwmac->stmmac_rst);
- 
- 	regmap_read(sys_mgr_base_addr, reg_offset, &ctrl);
- 	ctrl &= ~(SYSMGR_EMACGRP_CTRL_PHYSEL_MASK << reg_shift);
-@@ -288,8 +289,8 @@ static int socfpga_dwmac_set_phy_mode(st
- 	/* Deassert reset for the phy configuration to be sampled by
- 	 * the enet controller, and operation to start in requested mode
- 	 */
--	if (dwmac->stmmac_rst)
--		reset_control_deassert(dwmac->stmmac_rst);
-+	reset_control_deassert(dwmac->stmmac_ocp_rst);
-+	reset_control_deassert(dwmac->stmmac_rst);
- 	if (phymode == PHY_INTERFACE_MODE_SGMII) {
- 		if (tse_pcs_init(dwmac->pcs.tse_pcs_base, &dwmac->pcs) != 0) {
- 			dev_err(dwmac->dev, "Unable to initialize TSE PCS");
-@@ -324,6 +325,15 @@ static int socfpga_dwmac_probe(struct pl
- 		goto err_remove_config_dt;
+ #ifdef DEBUG
+ 	u32 frrem_samples;
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -1544,11 +1544,20 @@ static void dwc2_hc_start_transfer(struc
  	}
  
-+	dwmac->stmmac_ocp_rst = devm_reset_control_get_optional(dev, "stmmaceth-ocp");
-+	if (IS_ERR(dwmac->stmmac_ocp_rst)) {
-+		ret = PTR_ERR(dwmac->stmmac_ocp_rst);
-+		dev_err(dev, "error getting reset control of ocp %d\n", ret);
-+		goto err_remove_config_dt;
+ 	if (hsotg->params.host_dma) {
+-		dwc2_writel((u32)chan->xfer_dma,
+-			    hsotg->regs + HCDMA(chan->hc_num));
++		dma_addr_t dma_addr;
++
++		if (chan->align_buf) {
++			if (dbg_hc(chan))
++				dev_vdbg(hsotg->dev, "align_buf\n");
++			dma_addr = chan->align_buf;
++		} else {
++			dma_addr = chan->xfer_dma;
++		}
++		dwc2_writel((u32)dma_addr, hsotg->regs + HCDMA(chan->hc_num));
++
+ 		if (dbg_hc(chan))
+ 			dev_vdbg(hsotg->dev, "Wrote %08lx to HCDMA(%d)\n",
+-				 (unsigned long)chan->xfer_dma, chan->hc_num);
++				 (unsigned long)dma_addr, chan->hc_num);
+ 	}
+ 
+ 	/* Start the split */
+@@ -2604,6 +2613,35 @@ static void dwc2_hc_init_xfer(struct dwc
+ 	}
+ }
+ 
++static int dwc2_alloc_split_dma_aligned_buf(struct dwc2_hsotg *hsotg,
++					    struct dwc2_qh *qh,
++					    struct dwc2_host_chan *chan)
++{
++	if (!hsotg->unaligned_cache ||
++	    chan->max_packet > DWC2_KMEM_UNALIGNED_BUF_SIZE)
++		return -ENOMEM;
++
++	if (!qh->dw_align_buf) {
++		qh->dw_align_buf = kmem_cache_alloc(hsotg->unaligned_cache,
++						    GFP_ATOMIC | GFP_DMA);
++		if (!qh->dw_align_buf)
++			return -ENOMEM;
 +	}
 +
-+	reset_control_deassert(dwmac->stmmac_ocp_rst);
++	qh->dw_align_buf_dma = dma_map_single(hsotg->dev, qh->dw_align_buf,
++					      DWC2_KMEM_UNALIGNED_BUF_SIZE,
++					      DMA_FROM_DEVICE);
 +
- 	ret = socfpga_dwmac_parse_data(dwmac, dev);
- 	if (ret) {
- 		dev_err(dev, "Unable to parse OF data\n");
++	if (dma_mapping_error(hsotg->dev, qh->dw_align_buf_dma)) {
++		dev_err(hsotg->dev, "can't map align_buf\n");
++		chan->align_buf = 0;
++		return -EINVAL;
++	}
++
++	chan->align_buf = qh->dw_align_buf_dma;
++	return 0;
++}
++
+ #define DWC2_USB_DMA_ALIGN 4
+ 
+ static void dwc2_free_dma_aligned_buffer(struct urb *urb)
+@@ -2783,6 +2821,32 @@ static int dwc2_assign_and_init_hc(struc
+ 	/* Set the transfer attributes */
+ 	dwc2_hc_init_xfer(hsotg, chan, qtd);
+ 
++	/* For non-dword aligned buffers */
++	if (hsotg->params.host_dma && qh->do_split &&
++	    chan->ep_is_in && (chan->xfer_dma & 0x3)) {
++		dev_vdbg(hsotg->dev, "Non-aligned buffer\n");
++		if (dwc2_alloc_split_dma_aligned_buf(hsotg, qh, chan)) {
++			dev_err(hsotg->dev,
++				"Failed to allocate memory to handle non-aligned buffer\n");
++			/* Add channel back to free list */
++			chan->align_buf = 0;
++			chan->multi_count = 0;
++			list_add_tail(&chan->hc_list_entry,
++				      &hsotg->free_hc_list);
++			qtd->in_process = 0;
++			qh->channel = NULL;
++			return -ENOMEM;
++		}
++	} else {
++		/*
++		 * We assume that DMA is always aligned in non-split
++		 * case or split out case. Warn if not.
++		 */
++		WARN_ON_ONCE(hsotg->params.host_dma &&
++			     (chan->xfer_dma & 0x3));
++		chan->align_buf = 0;
++	}
++
+ 	if (chan->ep_type == USB_ENDPOINT_XFER_INT ||
+ 	    chan->ep_type == USB_ENDPOINT_XFER_ISOC)
+ 		/*
+@@ -5277,6 +5341,19 @@ int dwc2_hcd_init(struct dwc2_hsotg *hso
+ 		}
+ 	}
+ 
++	if (hsotg->params.host_dma) {
++		/*
++		 * Create kmem caches to handle non-aligned buffer
++		 * in Buffer DMA mode.
++		 */
++		hsotg->unaligned_cache = kmem_cache_create("dwc2-unaligned-dma",
++						DWC2_KMEM_UNALIGNED_BUF_SIZE, 4,
++						SLAB_CACHE_DMA, NULL);
++		if (!hsotg->unaligned_cache)
++			dev_err(hsotg->dev,
++				"unable to create dwc2 unaligned cache\n");
++	}
++
+ 	hsotg->otg_port = 1;
+ 	hsotg->frame_list = NULL;
+ 	hsotg->frame_list_dma = 0;
+@@ -5311,8 +5388,9 @@ int dwc2_hcd_init(struct dwc2_hsotg *hso
+ 	return 0;
+ 
+ error4:
+-	kmem_cache_destroy(hsotg->desc_gen_cache);
++	kmem_cache_destroy(hsotg->unaligned_cache);
+ 	kmem_cache_destroy(hsotg->desc_hsisoc_cache);
++	kmem_cache_destroy(hsotg->desc_gen_cache);
+ error3:
+ 	dwc2_hcd_release(hsotg);
+ error2:
+@@ -5353,8 +5431,9 @@ void dwc2_hcd_remove(struct dwc2_hsotg *
+ 	usb_remove_hcd(hcd);
+ 	hsotg->priv = NULL;
+ 
+-	kmem_cache_destroy(hsotg->desc_gen_cache);
++	kmem_cache_destroy(hsotg->unaligned_cache);
+ 	kmem_cache_destroy(hsotg->desc_hsisoc_cache);
++	kmem_cache_destroy(hsotg->desc_gen_cache);
+ 
+ 	dwc2_hcd_release(hsotg);
+ 	usb_put_hcd(hcd);
+--- a/drivers/usb/dwc2/hcd.h
++++ b/drivers/usb/dwc2/hcd.h
+@@ -75,6 +75,8 @@ struct dwc2_qh;
+  *                      (micro)frame
+  * @xfer_buf:           Pointer to current transfer buffer position
+  * @xfer_dma:           DMA address of xfer_buf
++ * @align_buf:          In Buffer DMA mode this will be used if xfer_buf is not
++ *                      DWORD aligned
+  * @xfer_len:           Total number of bytes to transfer
+  * @xfer_count:         Number of bytes transferred so far
+  * @start_pkt_count:    Packet count at start of transfer
+@@ -132,6 +134,7 @@ struct dwc2_host_chan {
+ 
+ 	u8 *xfer_buf;
+ 	dma_addr_t xfer_dma;
++	dma_addr_t align_buf;
+ 	u32 xfer_len;
+ 	u32 xfer_count;
+ 	u16 start_pkt_count;
+@@ -302,6 +305,9 @@ struct dwc2_hs_transfer_time {
+  *                           is tightly packed.
+  * @ls_duration_us:     Duration on the low speed bus schedule.
+  * @ntd:                Actual number of transfer descriptors in a list
++ * @dw_align_buf:       Used instead of original buffer if its physical address
++ *                      is not dword-aligned
++ * @dw_align_buf_dma:   DMA address for dw_align_buf
+  * @qtd_list:           List of QTDs for this QH
+  * @channel:            Host channel currently processing transfers for this QH
+  * @qh_list_entry:      Entry for QH in either the periodic or non-periodic
+@@ -345,6 +351,8 @@ struct dwc2_qh {
+ 	struct dwc2_hs_transfer_time hs_transfers[DWC2_HS_SCHEDULE_UFRAMES];
+ 	u32 ls_start_schedule_slice;
+ 	u16 ntd;
++	u8 *dw_align_buf;
++	dma_addr_t dw_align_buf_dma;
+ 	struct list_head qtd_list;
+ 	struct dwc2_host_chan *channel;
+ 	struct list_head qh_list_entry;
+--- a/drivers/usb/dwc2/hcd_intr.c
++++ b/drivers/usb/dwc2/hcd_intr.c
+@@ -931,6 +931,14 @@ static int dwc2_xfercomp_isoc_split_in(s
+ 
+ 	frame_desc->actual_length += len;
+ 
++	if (chan->align_buf) {
++		dev_vdbg(hsotg->dev, "non-aligned buffer\n");
++		dma_unmap_single(hsotg->dev, chan->qh->dw_align_buf_dma,
++				 DWC2_KMEM_UNALIGNED_BUF_SIZE, DMA_FROM_DEVICE);
++		memcpy(qtd->urb->buf + (chan->xfer_dma - qtd->urb->dma),
++		       chan->qh->dw_align_buf, len);
++	}
++
+ 	qtd->isoc_split_offset += len;
+ 
+ 	hctsiz = dwc2_readl(hsotg->regs + HCTSIZ(chnum));
+--- a/drivers/usb/dwc2/hcd_queue.c
++++ b/drivers/usb/dwc2/hcd_queue.c
+@@ -1632,6 +1632,9 @@ void dwc2_hcd_qh_free(struct dwc2_hsotg
+ 
+ 	if (qh->desc_list)
+ 		dwc2_hcd_qh_free_ddma(hsotg, qh);
++	else if (hsotg->unaligned_cache && qh->dw_align_buf)
++		kmem_cache_free(hsotg->unaligned_cache, qh->dw_align_buf);
++
+ 	kfree(qh);
+ }
+ 
 
 
