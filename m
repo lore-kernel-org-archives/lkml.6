@@ -2,214 +2,203 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FC16C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 03:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79FEFC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 03:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEF79208A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 03:45:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rTA1fJ2N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEF79208A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2333F208CD
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 03:57:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2333F208CD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728333AbeHWHNJ (ORCPT
+        id S1728206AbeHWHYw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 03:13:09 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41158 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbeHWHNJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 03:13:09 -0400
-Received: by mail-pg1-f194.google.com with SMTP id s15-v6so1874405pgv.8
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 20:45:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=i035Tkkf20U58u3KM2ssD8F0uNMkiAtpjbIkK2Z/H/E=;
-        b=rTA1fJ2N7wkYayOknaRPza0CzeH6TG1Wrrl4LQsumU4zL+L7L2jmlmmnZPF5KZ7N2H
-         fo9U5aKEyBK5GPqCStI/BbWTeFnAkNdr4VEa8UaNJ3tuH0tVKDYaDg9l+8FVMRzzlmEP
-         CIBLiEHn+MvWt8lNRl3bxUR73rCJHpfZ+Qsfh9eKIqMkrP9nn4o2DSpMFcx7LrtH9jPj
-         j9a7Zo08qFuF73aD9QCMmSp+Ycr3BTnAFWBgsj/eKD/TnVdYi/rcqINXN81mf05VLpxq
-         dNK5cFlS+zqaFfgSrBeR9oNwBIDRBVPdionVFoNr65mE2AwSfTZR4LMgm4MUbJMZpGIh
-         O0CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=i035Tkkf20U58u3KM2ssD8F0uNMkiAtpjbIkK2Z/H/E=;
-        b=MocCJF8St0x8dDiNEJ+2eMM991n/dWoBPMLtzsz66fmrH45LCmy8KkIkGbdBN5bWiI
-         +Ajhj2DUQRma+Jq+4G+k7OfG6G0pt337nhkf1ZJJY1b7sCKje5iTdPkVjzkOLb3cl2AH
-         njTtTVhLvqIn1RkCqYm5KLEPJryKT/cSXH2PifXMpahE2lMNn2C6xE1dBMO0RFS6/pPm
-         t4fDztWFQ3nE4cToZooLamqUdQJ32MmkfVt+PJ/C+Za5hVAYYP0LffvoJ6AAHwKxJNtQ
-         jB4w6qUMwJQs18VzxsSzXyxIkdBsZpzgVwj3U1LnuHeehGyA5nCfnj4zhGbFZpgqHkBY
-         47sw==
-X-Gm-Message-State: AOUpUlHJcskDQTzvu89j0O3g1h8wq9AyFB+PRwmLzzgKwoP7zNKCcsSp
-        Qn2AODJTvNgMxyr1H8PQ+xcMPNN/
-X-Google-Smtp-Source: AA+uWPz38zv0qJTaEh4gCiW5L4ATP3lcKcsQSrYhfIqYnISi03AJpOHDkijZXwcYeCZF5uU0Af7c4Q==
-X-Received: by 2002:a62:8a4f:: with SMTP id y76-v6mr60663478pfd.233.1534995933015;
-        Wed, 22 Aug 2018 20:45:33 -0700 (PDT)
-Received: from roar.ozlabs.ibm.com ([122.99.82.10])
-        by smtp.gmail.com with ESMTPSA id u11-v6sm6094731pfd.117.2018.08.22.20.45.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 22 Aug 2018 20:45:32 -0700 (PDT)
-Date:   Thu, 23 Aug 2018 13:45:25 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     torvalds@linux-foundation.org, luto@kernel.org, x86@kernel.org,
-        bp@alien8.de, will.deacon@arm.com, riel@surriel.com,
-        jannh@google.com, ascannell@google.com, dave.hansen@intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH 3/4] mm/tlb, x86/mm: Support invalidating TLB caches for
- RCU_TABLE_FREE
-Message-ID: <20180823134525.5f12b0d3@roar.ozlabs.ibm.com>
-In-Reply-To: <20180822155527.GF24124@hirez.programming.kicks-ass.net>
-References: <20180822153012.173508681@infradead.org>
-        <20180822154046.823850812@infradead.org>
-        <20180822155527.GF24124@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 23 Aug 2018 03:24:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54596 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726150AbeHWHYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 03:24:52 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4FC4887916;
+        Thu, 23 Aug 2018 03:57:13 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-99.pek2.redhat.com [10.72.12.99])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7C7452166BA1;
+        Thu, 23 Aug 2018 03:57:09 +0000 (UTC)
+Date:   Thu, 23 Aug 2018 11:57:05 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mike Galbraith <efault@gmx.de>
+Cc:     Baoquan He <bhe@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Kexec Mailing List <kexec@lists.infradead.org>,
+        linux-efi <linux-efi@vger.kernel.org>
+Subject: Re: [PATCH] x86, kdump: Fix efi=noruntime NULL pointer dereference
+Message-ID: <20180823035705.GA5743@dhcp-128-65.nay.redhat.com>
+References: <1533737025.4936.3.camel@gmx.de>
+ <20180809042153.GA4377@dhcp-128-65.nay.redhat.com>
+ <1533800010.5087.71.camel@gmx.de>
+ <20180809091333.GA8008@dhcp-128-65.nay.redhat.com>
+ <CAKv+Gu8KKwNkUdx7tSxEosRvydxmQ2yaasHRJn_LcHPs7p2UYQ@mail.gmail.com>
+ <20180822102310.GA19827@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180822102310.GA19827@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 23 Aug 2018 03:57:13 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 23 Aug 2018 03:57:13 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 22 Aug 2018 17:55:27 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
-
-> On Wed, Aug 22, 2018 at 05:30:15PM +0200, Peter Zijlstra wrote:
-> > ARM
-> > which later used this put an explicit TLB invalidate in their
-> > __p*_free_tlb() functions, and PowerPC-radix followed that example.  
+On 08/22/18 at 06:23pm, Dave Young wrote:
+> On 08/21/18 at 03:39pm, Ard Biesheuvel wrote:
+> > On 9 August 2018 at 11:13, Dave Young <dyoung@redhat.com> wrote:
+> > > On 08/09/18 at 09:33am, Mike Galbraith wrote:
+> > >> On Thu, 2018-08-09 at 12:21 +0800, Dave Young wrote:
+> > >> > Hi Mike,
+> > >> >
+> > >> > Thanks for the patch!
+> > >> > On 08/08/18 at 04:03pm, Mike Galbraith wrote:
+> > >> > > When booting with efi=noruntime, we call efi_runtime_map_copy() while
+> > >> > > loading the kdump kernel, and trip over a NULL efi.memmap.map.  Avoid
+> > >> > > that and a useless allocation when the only mapping we can use (1:1)
+> > >> > > is not available.
+> > >> >
+> > >> > At first glance, efi_get_runtime_map_size should return 0 in case
+> > >> > noruntime.
+> > >>
+> > >> What efi does internally at unmap time is to leave everything except
+> > >> efi.mmap.map untouched, setting it to NULL and turning off EFI_MEMMAP,
+> > >> rendering efi.mmap.map accessors useless/unsafe without first checking
+> > >> EFI_MEMMAP.
+> > >
+> > > Probably the x86 efi_init should reset nr_map to zero in case runtime is
+> > > disabled.  But let's see how Ard thinks about this and cc linux-efi.
+> > >
+> > > As for efi_get_runtime_map_size, it was introduced for x86 kexec use.
+> > > for copying runtime maps,  so I think it is reasonable this function
+> > > return zero in case no runtime.
+> > >
+> > 
+> > I don't see the patch in the context so I cannot comment in great detail.
 > 
-> > +/*
-> > + * If we want tlb_remove_table() to imply TLB invalidates.
-> > + */
-> > +static inline void tlb_table_invalidate(struct mmu_gather *tlb)
-> > +{
-> > +#ifdef CONFIG_HAVE_RCU_TABLE_INVALIDATE
-> > +	/*
-> > +	 * Invalidate page-table caches used by hardware walkers. Then we still
-> > +	 * need to RCU-sched wait while freeing the pages because software
-> > +	 * walkers can still be in-flight.
-> > +	 */
-> > +	__tlb_flush_mmu_tlbonly(tlb);
-> > +#endif
-> > +}  
+> The patch is below:
+> https://lore.kernel.org/lkml/1533737025.4936.3.camel@gmx.de
 > 
+> > 
+> > In any case, it is better to decouple EFI_MEMMAP from EFI_RUNTIME
+> > dependencies. On x86, one may imply the other, but this is not
+> > generally the case.
+> > 
+> > That means that efi_get_runtime_map_size() should probably check the
+> > EFI_RUNTIME flag, and return 0 if it is cleared. Perhaps there are
+> > other places where EFI_MEMMAP flag checks are missing, but I consider
+> > that a separate issue.
 > 
-> Nick, Will is already looking at using this to remove the synchronous
-> invalidation from __p*_free_tlb() for ARM, could you have a look to see
-> if PowerPC-radix could benefit from that too?
-
-powerpc/radix has no such issue, it already does this tracking.
-
-We were discussing this a couple of months ago, I wasn't aware of ARM's
-issue but I suggested x86 could go the same way as powerpc. Would have
-been good to get some feedback on some of the proposed approaches there.
-Because it's not just pwc tracking but if you do this you don't need
-those silly hacks in generic code to expand the TLB address range
-either.
-
-So powerpc has no fundamental problem with making this stuff generic.
-If you need a fix for x86 and ARM for this merge window though, I would
-suggest just copying what powerpc already has. Next time we can
-consider consolidating them all into generic code.
-
-Thanks,
-Nick
-
-
+> Yes, I also agree with to check EFI_RUNTIME_SERVICES. There is no point for
+> efi_get_runtime_map_size to return a value other than 0 in case EFI_RUNTIME_SERVICES
+> is not set ie. via efi=noruntime
 > 
-> Basically, using a patch like the below, would give your tlb_flush()
-> information on if tables were removed or not.
+> Is below patch acceptable?  The copy function can be changed to return
+> an error in case map size == 0, but that can be done later along with
+> the caller size cleanups in kexec code
+
+Forgot to add Mike's reported-by tag..
+
+Mike, since we are going this way, I'm working on a kexec code cleanup,
+but it needs careful testing so still need some time.
+
+Can you help test below efi fix and provide you tested-by if it works?
+
+> ---------------------------------------------------------------------------
 > 
+> efi: check EFI_RUNTIME_SERVICES flag in runtime map copying code
+> 
+> Mike reported a kexec_file_load NULL pointer dereference bug like below:
+> [    5.878262] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+> [    5.879868] PGD 800000013c1f1067 P4D 800000013c1f1067 PUD 13aea7067 PMD 0 
+> [    5.881225] Oops: 0000 [#1] SMP PTI
+> [    5.882068] Modules linked in:
+> [    5.882851] CPU: 0 PID: 394 Comm: kexec Kdump: loaded Not tainted 4.17.0-rc2+ #648
+> [    5.884333] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
+> [    5.885843] RIP: 0010:memcpy_erms+0x6/0x10
+> [    5.886789] RSP: 0018:ffffc9000058bd00 EFLAGS: 00010246
+> [    5.887899] RAX: ffff880138e050b0 RBX: 00000000000980b0 RCX: 0000000000000ba0
+> [    5.889304] RDX: 0000000000000ba0 RSI: 0000000000000000 RDI: ffff880138e050b0
+> [    5.890977] RBP: ffff880138e04000 R08: 0000000000000017 R09: 0000000000000002
+> [    5.892524] R10: 0000000000099000 R11: 00000000000052d0 R12: 0000000039400200
+> [    5.893967] R13: ffff880138e05000 R14: 0000000000000ba0 R15: ffffc90000a4d000
+> [    5.895378] FS:  00007f167c9e6740(0000) GS:ffff88013fc00000(0000) knlGS:0000000000000000
+> [    5.896953] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    5.898143] CR2: 0000000000000000 CR3: 000000013c3ec002 CR4: 00000000001606f0
+> [    5.899542] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [    5.900962] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [    5.902552] Call Trace:
+> [    5.903267]  efi_runtime_map_copy+0x28/0x30
+> [    5.904956]  bzImage64_load+0x59d/0x736
+> [    5.906881]  ? arch_kexec_kernel_image_load+0x6d/0x70
+> [    5.908243]  ? __se_sys_kexec_file_load+0x24b/0x750
+> [    5.909352]  ? _cond_resched+0x19/0x30
+> [    5.910286]  ? do_syscall_64+0x65/0x180
+> [    5.911229]  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> [    5.912365] Code: 90 90 90 90 90 eb 1e 0f 1f 00 48 89 f8 48 89 d1 48 c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 c3 66 0f 1f 44 00 00 48 89 f8 48 89 d1 <f3> a4 c3 0f 1f 80 00 00 00 00 48 89 f8 48 83 fa 20 72 7e 40 38 
+> [    5.916235] RIP: memcpy_erms+0x6/0x10 RSP: ffffc9000058bd00
+> [    5.917507] CR2: 0000000000000000
+> [    5.918762] ---[ end trace 5cf4c4b3b93d7fdd ]---
+> 
+> Changing efi_get_runtime_map_size to return 0 in case runtime is
+> disabled.
+> 
+> Also moving to check EFI_RUNTIME_SERVICES in efi_runtime_map_copy 
+> 
+> Signed-off-by: Dave Young <dyoung@redhat.com>
 > ---
+>  drivers/firmware/efi/runtime-map.c |   12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
 > 
-> --- a/include/asm-generic/tlb.h
-> +++ b/include/asm-generic/tlb.h
-> @@ -96,12 +96,22 @@ struct mmu_gather {
->  #endif
->  	unsigned long		start;
->  	unsigned long		end;
-> -	/* we are in the middle of an operation to clear
-> -	 * a full mm and can make some optimizations */
-> -	unsigned int		fullmm : 1,
-> -	/* we have performed an operation which
-> -	 * requires a complete flush of the tlb */
-> -				need_flush_all : 1;
-> +	/*
-> +	 * we are in the middle of an operation to clear
-> +	 * a full mm and can make some optimizations
-> +	 */
-> +	unsigned int		fullmm : 1;
-> +
-> +	/*
-> +	 * we have performed an operation which
-> +	 * requires a complete flush of the tlb
-> +	 */
-> +	unsigned int		need_flush_all : 1;
-> +
-> +	/*
-> +	 * we have removed page directories
-> +	 */
-> +	unsigned int		freed_tables : 1;
+> --- linux-x86.orig/drivers/firmware/efi/runtime-map.c
+> +++ linux-x86/drivers/firmware/efi/runtime-map.c
+> @@ -138,12 +138,18 @@ add_sysfs_runtime_map_entry(struct kobje
 >  
->  	struct mmu_gather_batch *active;
->  	struct mmu_gather_batch	local;
-> @@ -136,6 +146,7 @@ static inline void __tlb_reset_range(str
->  		tlb->start = TASK_SIZE;
->  		tlb->end = 0;
->  	}
-> +	tlb->freed_tables = 0;
+>  int efi_get_runtime_map_size(void)
+>  {
+> -	return efi.memmap.nr_map * efi.memmap.desc_size;
+> +	if (efi_enabled(EFI_RUNTIME_SERVICES))
+> +		return efi.memmap.nr_map * efi.memmap.desc_size;
+> +
+> +	return 0;
 >  }
 >  
->  static inline void tlb_remove_page_size(struct mmu_gather *tlb,
-> @@ -269,6 +280,7 @@ static inline void tlb_remove_check_page
->  #define pte_free_tlb(tlb, ptep, address)			\
->  	do {							\
->  		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
-> +		tlb->freed_tables = 1;			\
->  		__pte_free_tlb(tlb, ptep, address);		\
->  	} while (0)
->  #endif
-> @@ -276,7 +288,8 @@ static inline void tlb_remove_check_page
->  #ifndef pmd_free_tlb
->  #define pmd_free_tlb(tlb, pmdp, address)			\
->  	do {							\
-> -		__tlb_adjust_range(tlb, address, PAGE_SIZE);		\
-> +		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
-> +		tlb->freed_tables = 1;			\
->  		__pmd_free_tlb(tlb, pmdp, address);		\
->  	} while (0)
->  #endif
-> @@ -286,6 +299,7 @@ static inline void tlb_remove_check_page
->  #define pud_free_tlb(tlb, pudp, address)			\
->  	do {							\
->  		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
-> +		tlb->freed_tables = 1;			\
->  		__pud_free_tlb(tlb, pudp, address);		\
->  	} while (0)
->  #endif
-> @@ -295,7 +309,8 @@ static inline void tlb_remove_check_page
->  #ifndef p4d_free_tlb
->  #define p4d_free_tlb(tlb, pudp, address)			\
->  	do {							\
-> -		__tlb_adjust_range(tlb, address, PAGE_SIZE);		\
-> +		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
-> +		tlb->freed_tables = 1;			\
->  		__p4d_free_tlb(tlb, pudp, address);		\
->  	} while (0)
->  #endif
+>  int efi_get_runtime_map_desc_size(void)
+>  {
+> -	return efi.memmap.desc_size;
+> +	if (efi_enabled(EFI_RUNTIME_SERVICES))
+> +		return efi.memmap.desc_size;
+> +
+> +	return 0;
+>  }
+>  
+>  int efi_runtime_map_copy(void *buf, size_t bufsz)
+> @@ -163,7 +169,7 @@ int __init efi_runtime_map_init(struct k
+>  	struct efi_runtime_map_entry *entry;
+>  	efi_memory_desc_t *md;
+>  
+> -	if (!efi_enabled(EFI_MEMMAP))
+> +	if (!efi_enabled(EFI_RUNTIME_SERVICES))
+>  		return 0;
+>  
+>  	map_entries = kcalloc(efi.memmap.nr_map, sizeof(entry), GFP_KERNEL);
+> 
 
+Thanks
+Dave
