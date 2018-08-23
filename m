@@ -6,35 +6,42 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9876C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BBEC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FD06208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FD06208D6
+	by mail.kernel.org (Postfix) with ESMTP id 2FC61208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FC61208D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730542AbeHWLuT (ORCPT
+        id S1730556AbeHWLuW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:50:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46820 "EHLO
+        Thu, 23 Aug 2018 07:50:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46832 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728096AbeHWLuS (ORCPT
+        with ESMTP id S1728096AbeHWLuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:50:18 -0400
+        Thu, 23 Aug 2018 07:50:21 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6BAEBC83;
-        Thu, 23 Aug 2018 08:21:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6830CC83;
+        Thu, 23 Aug 2018 08:21:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maciej Purski <m.purski@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
+        stable@vger.kernel.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 069/217] drm/bridge/sii8620: fix display of packed pixel modes in MHL2
-Date:   Thu, 23 Aug 2018 09:53:02 +0200
-Message-Id: <20180823075508.625197379@linuxfoundation.org>
+Subject: [PATCH 4.14 070/217] locking/lockdep: Do not record IRQ state within lockdep code
+Date:   Thu, 23 Aug 2018 09:53:03 +0200
+Message-Id: <20180823075508.665575695@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,65 +58,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej Purski <m.purski@samsung.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-[ Upstream commit e8b92efa629dac0e70ea4145c5e70616de5f89c8 ]
+[ Upstream commit fcc784be837714a9173b372ff9fb9b514590dad9 ]
 
-Currently packed pixel modes in MHL2 can't be displayed. The device
-automatically recognizes output format, so setting format other than
-RGB causes failure. Fix it by writing proper values to registers.
+While debugging where things were going wrong with mapping
+enabling/disabling interrupts with the lockdep state and actual real
+enabling and disabling interrupts, I had to silent the IRQ
+disabling/enabling in debug_check_no_locks_freed() because it was
+always showing up as it was called before the splat was.
 
-Tested on MHL1 and MHL2 using various vendors' dongles both in
-DVI and HDMI mode.
+Use raw_local_irq_save/restore() for not only debug_check_no_locks_freed()
+but for all internal lockdep functions, as they hide useful information
+about where interrupts were used incorrectly last.
 
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1516706239-9104-1-git-send-email-m.purski@samsung.com
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Link: https://lkml.kernel.org/lkml/20180404140630.3f4f4c7a@gandalf.local.home
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/bridge/sil-sii8620.c |   17 +----------------
- 1 file changed, 1 insertion(+), 16 deletions(-)
+ kernel/locking/lockdep.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/gpu/drm/bridge/sil-sii8620.c
-+++ b/drivers/gpu/drm/bridge/sil-sii8620.c
-@@ -1038,20 +1038,11 @@ static void sii8620_stop_video(struct si
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -1296,11 +1296,11 @@ unsigned long lockdep_count_forward_deps
+ 	this.parent = NULL;
+ 	this.class = class;
  
- static void sii8620_set_format(struct sii8620 *ctx)
- {
--	u8 out_fmt;
--
- 	if (sii8620_is_mhl3(ctx)) {
- 		sii8620_setbits(ctx, REG_M3_P0CTRL,
- 				BIT_M3_P0CTRL_MHL3_P0_PIXEL_MODE_PACKED,
- 				ctx->use_packed_pixel ? ~0 : 0);
- 	} else {
--		if (ctx->use_packed_pixel)
--			sii8620_write_seq_static(ctx,
--				REG_VID_MODE, BIT_VID_MODE_M1080P,
--				REG_MHL_TOP_CTL, BIT_MHL_TOP_CTL_MHL_PP_SEL | 1,
--				REG_MHLTX_CTL6, 0x60
--			);
--		else
- 			sii8620_write_seq_static(ctx,
- 				REG_VID_MODE, 0,
- 				REG_MHL_TOP_CTL, 1,
-@@ -1059,15 +1050,9 @@ static void sii8620_set_format(struct si
- 			);
- 	}
+-	local_irq_save(flags);
++	raw_local_irq_save(flags);
+ 	arch_spin_lock(&lockdep_lock);
+ 	ret = __lockdep_count_forward_deps(&this);
+ 	arch_spin_unlock(&lockdep_lock);
+-	local_irq_restore(flags);
++	raw_local_irq_restore(flags);
  
--	if (ctx->use_packed_pixel)
--		out_fmt = VAL_TPI_FORMAT(YCBCR422, FULL) |
--			BIT_TPI_OUTPUT_CSCMODE709;
--	else
--		out_fmt = VAL_TPI_FORMAT(RGB, FULL);
--
- 	sii8620_write_seq(ctx,
- 		REG_TPI_INPUT, VAL_TPI_FORMAT(RGB, FULL),
--		REG_TPI_OUTPUT, out_fmt,
-+		REG_TPI_OUTPUT, VAL_TPI_FORMAT(RGB, FULL),
- 	);
+ 	return ret;
  }
+@@ -1323,11 +1323,11 @@ unsigned long lockdep_count_backward_dep
+ 	this.parent = NULL;
+ 	this.class = class;
+ 
+-	local_irq_save(flags);
++	raw_local_irq_save(flags);
+ 	arch_spin_lock(&lockdep_lock);
+ 	ret = __lockdep_count_backward_deps(&this);
+ 	arch_spin_unlock(&lockdep_lock);
+-	local_irq_restore(flags);
++	raw_local_irq_restore(flags);
+ 
+ 	return ret;
+ }
+@@ -4478,7 +4478,7 @@ void debug_check_no_locks_freed(const vo
+ 	if (unlikely(!debug_locks))
+ 		return;
+ 
+-	local_irq_save(flags);
++	raw_local_irq_save(flags);
+ 	for (i = 0; i < curr->lockdep_depth; i++) {
+ 		hlock = curr->held_locks + i;
+ 
+@@ -4489,7 +4489,7 @@ void debug_check_no_locks_freed(const vo
+ 		print_freed_lock_bug(curr, mem_from, mem_from + mem_len, hlock);
+ 		break;
+ 	}
+-	local_irq_restore(flags);
++	raw_local_irq_restore(flags);
+ }
+ EXPORT_SYMBOL_GPL(debug_check_no_locks_freed);
  
 
 
