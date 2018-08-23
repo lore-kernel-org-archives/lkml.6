@@ -6,38 +6,44 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC79EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0CFC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87ED7208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87ED7208C2
+	by mail.kernel.org (Postfix) with ESMTP id D3991208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3991208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388578AbeHWMhy (ORCPT
+        id S2388613AbeHWMh5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:37:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56350 "EHLO
+        Thu, 23 Aug 2018 08:37:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56376 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729119AbeHWMhy (ORCPT
+        with ESMTP id S1729119AbeHWMh5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:37:54 -0400
+        Thu, 23 Aug 2018 08:37:57 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 57E91CA0;
-        Thu, 23 Aug 2018 09:09:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8DD26CA5;
+        Thu, 23 Aug 2018 09:09:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, keescook@google.com,
-        aarcange@redhat.com, jgross@suse.com, jpoimboe@redhat.com,
-        peterz@infradead.org, hughd@google.com,
-        torvalds@linux-foundation.org, bp@alien8.de, luto@kernel.org,
-        ak@linux.intel.com
-Subject: [PATCH 4.17 305/324] x86/mm/init: Add helper for freeing kernel image pages
-Date:   Thu, 23 Aug 2018 09:56:11 +0200
-Message-Id: <20180823075011.331600305@linuxfoundation.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Hugh Dickins <hughd@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>, Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 4.17 306/324] x86/mm/init: Remove freed kernel image areas from alias mapping
+Date:   Thu, 23 Aug 2018 09:56:12 +0200
+Message-Id: <20180823075011.384599953@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -56,26 +62,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-commit 6ea2738e0ca0e626c75202fb051c1e88d7a950fa upstream.
+commit c40a56a7818cfe735fc93a69e1875f8bba834483 upstream.
 
-When chunks of the kernel image are freed, free_init_pages() is used
-directly.  Consolidate the three sites that do this.  Also update the
-string to give an incrementally better description of that memory versus
-what was there before.
+The kernel image is mapped into two places in the virtual address space
+(addresses without KASLR, of course):
 
+	1. The kernel direct map (0xffff880000000000)
+	2. The "high kernel map" (0xffffffff81000000)
+
+We actually execute out of #2.  If we get the address of a kernel symbol,
+it points to #2, but almost all physical-to-virtual translations point to
+
+Parts of the "high kernel map" alias are mapped in the userspace page
+tables with the Global bit for performance reasons.  The parts that we map
+to userspace do not (er, should not) have secrets. When PTI is enabled then
+the global bit is usually not set in the high mapping and just used to
+compensate for poor performance on systems which lack PCID.
+
+This is fine, except that some areas in the kernel image that are adjacent
+to the non-secret-containing areas are unused holes.  We free these holes
+back into the normal page allocator and reuse them as normal kernel memory.
+The memory will, of course, get *used* via the normal map, but the alias
+mapping is kept.
+
+This otherwise unused alias mapping of the holes will, by default keep the
+Global bit, be mapped out to userspace, and be vulnerable to Meltdown.
+
+Remove the alias mapping of these pages entirely.  This is likely to
+fracture the 2M page mapping the kernel image near these areas, but this
+should affect a minority of the area.
+
+The pageattr code changes *all* aliases mapping the physical pages that it
+operates on (by default).  We only want to modify a single alias, so we
+need to tweak its behavior.
+
+This unmapping behavior is currently dependent on PTI being in place.
+Going forward, we should at least consider doing this for all
+configurations.  Having an extra read-write alias for memory is not exactly
+ideal for debugging things like random memory corruption and this does
+undercut features like DEBUG_PAGEALLOC or future work like eXclusive Page
+Frame Ownership (XPFO).
+
+Before this patch:
+
+current_kernel:---[ High Kernel Mapping ]---
+current_kernel-0xffffffff80000000-0xffffffff81000000          16M                               pmd
+current_kernel-0xffffffff81000000-0xffffffff81e00000          14M     ro         PSE     GLB x  pmd
+current_kernel-0xffffffff81e00000-0xffffffff81e11000          68K     ro                 GLB x  pte
+current_kernel-0xffffffff81e11000-0xffffffff82000000        1980K     RW                     NX pte
+current_kernel-0xffffffff82000000-0xffffffff82600000           6M     ro         PSE     GLB NX pmd
+current_kernel-0xffffffff82600000-0xffffffff82c00000           6M     RW         PSE         NX pmd
+current_kernel-0xffffffff82c00000-0xffffffff82e00000           2M     RW                     NX pte
+current_kernel-0xffffffff82e00000-0xffffffff83200000           4M     RW         PSE         NX pmd
+current_kernel-0xffffffff83200000-0xffffffffa0000000         462M                               pmd
+
+  current_user:---[ High Kernel Mapping ]---
+  current_user-0xffffffff80000000-0xffffffff81000000          16M                               pmd
+  current_user-0xffffffff81000000-0xffffffff81e00000          14M     ro         PSE     GLB x  pmd
+  current_user-0xffffffff81e00000-0xffffffff81e11000          68K     ro                 GLB x  pte
+  current_user-0xffffffff81e11000-0xffffffff82000000        1980K     RW                     NX pte
+  current_user-0xffffffff82000000-0xffffffff82600000           6M     ro         PSE     GLB NX pmd
+  current_user-0xffffffff82600000-0xffffffffa0000000         474M                               pmd
+
+After this patch:
+
+current_kernel:---[ High Kernel Mapping ]---
+current_kernel-0xffffffff80000000-0xffffffff81000000          16M                               pmd
+current_kernel-0xffffffff81000000-0xffffffff81e00000          14M     ro         PSE     GLB x  pmd
+current_kernel-0xffffffff81e00000-0xffffffff81e11000          68K     ro                 GLB x  pte
+current_kernel-0xffffffff81e11000-0xffffffff82000000        1980K                               pte
+current_kernel-0xffffffff82000000-0xffffffff82400000           4M     ro         PSE     GLB NX pmd
+current_kernel-0xffffffff82400000-0xffffffff82488000         544K     ro                     NX pte
+current_kernel-0xffffffff82488000-0xffffffff82600000        1504K                               pte
+current_kernel-0xffffffff82600000-0xffffffff82c00000           6M     RW         PSE         NX pmd
+current_kernel-0xffffffff82c00000-0xffffffff82c0d000          52K     RW                     NX pte
+current_kernel-0xffffffff82c0d000-0xffffffff82dc0000        1740K                               pte
+
+  current_user:---[ High Kernel Mapping ]---
+  current_user-0xffffffff80000000-0xffffffff81000000          16M                               pmd
+  current_user-0xffffffff81000000-0xffffffff81e00000          14M     ro         PSE     GLB x  pmd
+  current_user-0xffffffff81e00000-0xffffffff81e11000          68K     ro                 GLB x  pte
+  current_user-0xffffffff81e11000-0xffffffff82000000        1980K                               pte
+  current_user-0xffffffff82000000-0xffffffff82400000           4M     ro         PSE     GLB NX pmd
+  current_user-0xffffffff82400000-0xffffffff82488000         544K     ro                     NX pte
+  current_user-0xffffffff82488000-0xffffffff82600000        1504K                               pte
+  current_user-0xffffffff82600000-0xffffffffa0000000         474M                               pmd
+
+[ tglx: Do not unmap on 32bit as there is only one mapping ]
+
+Fixes: 0f561fce4d69 ("x86/pti: Enable global pages for shared areas")
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: keescook@google.com
-Cc: aarcange@redhat.com
-Cc: jgross@suse.com
-Cc: jpoimboe@redhat.com
-Cc: gregkh@linuxfoundation.org
-Cc: peterz@infradead.org
-Cc: hughd@google.com
-Cc: torvalds@linux-foundation.org
-Cc: bp@alien8.de
-Cc: luto@kernel.org
-Cc: ak@linux.intel.com
 Cc: Kees Cook <keescook@google.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: Juergen Gross <jgross@suse.com>
@@ -87,65 +164,96 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Andi Kleen <ak@linux.intel.com>
-Link: https://lkml.kernel.org/r/20180802225829.FE0E32EA@viggo.jf.intel.com
+Cc: Joerg Roedel <jroedel@suse.de>
+Link: https://lkml.kernel.org/r/20180802225831.5F6A2BFC@viggo.jf.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/processor.h |    1 +
- arch/x86/mm/init.c               |   15 ++++++++++++---
- arch/x86/mm/init_64.c            |    4 ++--
- 3 files changed, 15 insertions(+), 5 deletions(-)
+ arch/x86/include/asm/set_memory.h |    1 +
+ arch/x86/mm/init.c                |   26 ++++++++++++++++++++++++--
+ arch/x86/mm/pageattr.c            |   13 +++++++++++++
+ 3 files changed, 38 insertions(+), 2 deletions(-)
 
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -980,6 +980,7 @@ static inline uint32_t hypervisor_cpuid_
+--- a/arch/x86/include/asm/set_memory.h
++++ b/arch/x86/include/asm/set_memory.h
+@@ -46,6 +46,7 @@ int set_memory_np(unsigned long addr, in
+ int set_memory_4k(unsigned long addr, int numpages);
+ int set_memory_encrypted(unsigned long addr, int numpages);
+ int set_memory_decrypted(unsigned long addr, int numpages);
++int set_memory_np_noalias(unsigned long addr, int numpages);
  
- extern unsigned long arch_align_stack(unsigned long sp);
- extern void free_init_pages(char *what, unsigned long begin, unsigned long end);
-+extern void free_kernel_image_pages(void *begin, void *end);
- 
- void default_idle(void);
- #ifdef	CONFIG_XEN
+ int set_memory_array_uc(unsigned long *addr, int addrinarray);
+ int set_memory_array_wc(unsigned long *addr, int addrinarray);
 --- a/arch/x86/mm/init.c
 +++ b/arch/x86/mm/init.c
-@@ -775,13 +775,22 @@ void free_init_pages(char *what, unsigne
- 	}
+@@ -782,8 +782,30 @@ void free_init_pages(char *what, unsigne
+  */
+ void free_kernel_image_pages(void *begin, void *end)
+ {
+-	free_init_pages("unused kernel image",
+-			(unsigned long)begin, (unsigned long)end);
++	unsigned long begin_ul = (unsigned long)begin;
++	unsigned long end_ul = (unsigned long)end;
++	unsigned long len_pages = (end_ul - begin_ul) >> PAGE_SHIFT;
++
++
++	free_init_pages("unused kernel image", begin_ul, end_ul);
++
++	/*
++	 * PTI maps some of the kernel into userspace.  For performance,
++	 * this includes some kernel areas that do not contain secrets.
++	 * Those areas might be adjacent to the parts of the kernel image
++	 * being freed, which may contain secrets.  Remove the "high kernel
++	 * image mapping" for these freed areas, ensuring they are not even
++	 * potentially vulnerable to Meltdown regardless of the specific
++	 * optimizations PTI is currently using.
++	 *
++	 * The "noalias" prevents unmapping the direct map alias which is
++	 * needed to access the freed pages.
++	 *
++	 * This is only valid for 64bit kernels. 32bit has only one mapping
++	 * which can't be treated in this way for obvious reasons.
++	 */
++	if (IS_ENABLED(CONFIG_X86_64) && cpu_feature_enabled(X86_FEATURE_PTI))
++		set_memory_np_noalias(begin_ul, len_pages);
  }
  
-+/*
-+ * begin/end can be in the direct map or the "high kernel mapping"
-+ * used for the kernel image only.  free_init_pages() will do the
-+ * right thing for either kind of address.
-+ */
-+void free_kernel_image_pages(void *begin, void *end)
+ void __ref free_initmem(void)
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -53,6 +53,7 @@ static DEFINE_SPINLOCK(cpa_lock);
+ #define CPA_FLUSHTLB 1
+ #define CPA_ARRAY 2
+ #define CPA_PAGES_ARRAY 4
++#define CPA_NO_CHECK_ALIAS 8 /* Do not search for aliases */
+ 
+ #ifdef CONFIG_PROC_FS
+ static unsigned long direct_pages_count[PG_LEVEL_NUM];
+@@ -1486,6 +1487,9 @@ static int change_page_attr_set_clr(unsi
+ 
+ 	/* No alias checking for _NX bit modifications */
+ 	checkalias = (pgprot_val(mask_set) | pgprot_val(mask_clr)) != _PAGE_NX;
++	/* Has caller explicitly disabled alias checking? */
++	if (in_flag & CPA_NO_CHECK_ALIAS)
++		checkalias = 0;
+ 
+ 	ret = __change_page_attr_set_clr(&cpa, checkalias);
+ 
+@@ -1772,6 +1776,15 @@ int set_memory_np(unsigned long addr, in
+ 	return change_page_attr_clear(&addr, numpages, __pgprot(_PAGE_PRESENT), 0);
+ }
+ 
++int set_memory_np_noalias(unsigned long addr, int numpages)
 +{
-+	free_init_pages("unused kernel image",
-+			(unsigned long)begin, (unsigned long)end);
++	int cpa_flags = CPA_NO_CHECK_ALIAS;
++
++	return change_page_attr_set_clr(&addr, numpages, __pgprot(0),
++					__pgprot(_PAGE_PRESENT), 0,
++					cpa_flags, NULL);
 +}
 +
- void __ref free_initmem(void)
+ int set_memory_4k(unsigned long addr, int numpages)
  {
- 	e820__reallocate_tables();
- 
--	free_init_pages("unused kernel",
--			(unsigned long)(&__init_begin),
--			(unsigned long)(&__init_end));
-+	free_kernel_image_pages(&__init_begin, &__init_end);
- }
- 
- #ifdef CONFIG_BLK_DEV_INITRD
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1283,8 +1283,8 @@ void mark_rodata_ro(void)
- 	set_memory_ro(start, (end-start) >> PAGE_SHIFT);
- #endif
- 
--	free_init_pages("unused kernel", text_end, rodata_start);
--	free_init_pages("unused kernel", rodata_end, _sdata);
-+	free_kernel_image_pages((void *)text_end, (void *)rodata_start);
-+	free_kernel_image_pages((void *)rodata_end, (void *)_sdata);
- 
- 	debug_checkwx();
- 
+ 	return change_page_attr_set_clr(&addr, numpages, __pgprot(0),
 
 
