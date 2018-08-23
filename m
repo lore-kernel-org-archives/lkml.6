@@ -2,150 +2,171 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35519C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 22:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E611C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 22:28:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E30872150F
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 22:08:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E30872150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 3FE1D21564
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 22:28:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FE1D21564
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728481AbeHXBkg (ORCPT
+        id S1726898AbeHXCAC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 21:40:36 -0400
-Received: from nautica.notk.org ([91.121.71.147]:41787 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726803AbeHXBkg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 21:40:36 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 3FCD2C009; Fri, 24 Aug 2018 00:08:49 +0200 (CEST)
-Date:   Fri, 24 Aug 2018 00:08:34 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        joe@perches.com, Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Arnd Bergmann <arnd@arndb.de>, dwmw@amazon.co.uk,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        daniel@iogearbox.net, hpa@zytor.com
-Subject: Re: [PATCH] include/linux/compiler*.h: make compiler-*.h mutually
- exclusive
-Message-ID: <20180823220834.GA25096@nautica>
-References: <20180822233724.110454-1-ndesaulniers@google.com>
- <20180823002508.GA822@nautica>
- <CA+55aFx=pDFceeO82pb__K0mCqRmgRDEmkRT2psOKQ=yikRcEw@mail.gmail.com>
- <CAGXu5jKJdNFcH9isnB0q_Eg=fpfp8NT+jxkgnaeXY8viDT+F1Q@mail.gmail.com>
- <CAKwvOdmJoEotNMUm=YkuvfAdihnB4SUhbZrc2PDEBScfdrvOjQ@mail.gmail.com>
+        Thu, 23 Aug 2018 22:00:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44444 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726325AbeHXCAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 22:00:02 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9B00E4023ECC;
+        Thu, 23 Aug 2018 22:28:15 +0000 (UTC)
+Received: from whitewolf.lyude.net.com (ovpn-123-57.rdu2.redhat.com [10.10.123.57])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4EFC72026DEF;
+        Thu, 23 Aug 2018 22:28:13 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     nouveau@lists.freedesktop.org
+Cc:     =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>, Ben Skeggs <bskeggs@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/nouveau: Fix nouveau_connector_ddc_detect()
+Date:   Thu, 23 Aug 2018 18:27:49 -0400
+Message-Id: <20180823222749.28659-1-lyude@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdmJoEotNMUm=YkuvfAdihnB4SUhbZrc2PDEBScfdrvOjQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 23 Aug 2018 22:28:15 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 23 Aug 2018 22:28:15 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nick Desaulniers wrote on Thu, Aug 23, 2018:
-> > On a side note, I noticed tools/include/linux/compiler.h includes
-> > linux/compiler-gcc.h but maybe it should include linux/compiler_types.h?
-> > (I'm not sure at who uses that header, so it really is an open question
-> > here)
-> 
-> Without looking into the code, this sounds like compiler.h is wrong.
-> Looking at the source, there's references to ancient Android NDK's
-> (what?! Let me show this to the NDK maintainers).  This whole thing
-> needs to be cleaned up, too, IMO.  Oh, there's two compiler-gcc.h in
-> the tree:
-> 
-> - tools/include/linux/compiler-gcc.h (that's what's being included in
-> the case you point out)
-> - include/linux/compiler-gcc.h
-> 
-> Maybe they can be combined?
+It looks like that when we moved over to using
+drm_connector_for_each_possible_encoder() in nouveau, that one rather
+important part of this function got dropped by accident:
 
-Ah, I didn't notice there is another compiler-gcc...
-Looking closer there seem to be other "reused" headers (almost all of
-the headers in tools/include/linux have a counterpart in include/linux),
-and some e.g. rbtree.h went from being a copy of the main include's to a
-single '#include "../../../../include/linux/rbtree.h"' line to a
-slightly simplified copy again to avoid bringing in rcu as dependency...
+	/*          Right   v   here */
+	for (i = 0; nv_encoder = NULL, i < DRM_CONNECTOR_MAX_ENCODER; i++) {
+		int id = connector->encoder_ids[i];
+		if (id == 0)
+			break;
 
-I think compiler.h could be done with a similar trick with a bit of
-massaging, but as things stand linux/compiler.h includes
-uapi/linux/types.h, and this complains about using kernel headers from
-user space... So this isn't as trivial as just making tools use the
-kernel's include at least.
+Since it's rather difficult to notice: the conditional in this loop is
+actually:
 
+	nv_encoder = NULL, i < DRM_CONNECTOR_MAX_ENCODER
 
+Meaning that all early breaks result in nv_encoder keeping it's value,
+otherwise nv_encoder = NULL. Ugh.
 
-> > If you tried to align these, __always_unused and __alias(symbol) look
-> > off
-> 
-> I have `set tabstop=8` in vim, and it looks correct there, but both
-> `git diff` and github's code viewer show it as off.  Maybe I have my
-> settings wrong in vim and need to go back to first grade, but
-> (personal opinion ahead) you don't have this kind of nonsense
-> (ambiguity around how many spaces a tab should be displayed as in
-> various code viewers) if you just always use spaces everywhere, for
-> everything.  Other large codebases use automatic code formatters (like
-> clang-format) and that prevents holy wars and other distractions.
-> There's even a cool utility called `git-clang-format` that can check
-> just the code you changed, which is useful for not reformatting the
-> entire codebase messing up git blame.
+Since this got dropped, nouveau_connector_ddc_detect() now returns an
+encoder for every single connector, regardless of whether or not it's
+detected:
 
-Right, this is my mistake - the diff view adds a space so these "inner
-tabs" alignments can be messed up.
-FWIW I think checkpatch only complains about leading space-based
-indentation, the inner filling can be whatever you want, but this is
-fine and I was overzealous.
+    [ 1780.056185] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for DP-2
 
+So: fix this to ensure we only return an encoder if we actually found
+one, and clean up the rest of the function while we're at it since it's
+nearly impossible to read properly.
 
-> On Wed, Aug 22, 2018 at 7:43 PM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> > It was previous included by all compilers,
-> > but now it is only by _true_ GCC.
-> 
-> Good catch, and thanks for the report and testing.  I missed that
-> because I was testing x86_64 and arm64 (which I guess don't hit that
-> in the configs I tested) and not arm32.  Should be a simple fix to
-> move it to shared the definition.  Send me a patch, or I'll get to it.
-> 
-> > Even if I move the __naked definition
-> > to <linux/compiler_types.h>,
-> > I see a different error.
-> 
-> Did that regress due to my change?  If so, sorry and I'll look into it
-> more soon.
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Fixes: ddba766dd07e ("drm/nouveau: Use drm_connector_for_each_possible_encoder()")
+---
+ drivers/gpu/drm/nouveau/nouveau_connector.c | 51 ++++++++++++---------
+ 1 file changed, 30 insertions(+), 21 deletions(-)
 
-I've looked at that one quickly and that warning looks legitimate to me,
-I'm not sure why it would appear only now but clang does document[1] not
-allowing the parameters to be used even in extended asm, and gcc
-documentation[2] says "While using extended asm or a mixture of basic
-asm and C code may appear to work, they cannot be depended upon to work
-reliably and are not supported."
-
-[1] http://infocenter.arm.com/help/topic/com.arm.doc.dui0774g/jhg1476893564298.html
-[2] https://gcc.gnu.org/onlinedocs/gcc/ARM-Function-Attributes.html
-
-In this case it looks like the arguments are only used for sanity with
-__asmeq but in the first place the original commit for trusted
-foundations talks about it not respecting the API so naked makes sense
-but they're not making the API function naked (and the one which takes
-an argument does use its argument) so this all feels a bit weird to me.
-
-It might be worth asking the original authors on this one...
-
+diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
+index 3b288be9c3f7..51b6f762f1e1 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_connector.c
++++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
+@@ -414,9 +414,9 @@ nouveau_connector_ddc_detect(struct drm_connector *connector)
+ 	struct nouveau_connector *nv_connector = nouveau_connector(connector);
+ 	struct nouveau_drm *drm = nouveau_drm(dev);
+ 	struct nvkm_gpio *gpio = nvxx_gpio(&drm->client.device);
+-	struct nouveau_encoder *nv_encoder = NULL;
++	struct nouveau_encoder *nv_encoder = NULL, *found = NULL;
+ 	struct drm_encoder *encoder;
+-	int i, panel = -ENODEV;
++	int i, ret, panel = -ENODEV;
+ 
+ 	/* eDP panels need powering on by us (if the VBIOS doesn't default it
+ 	 * to on) before doing any AUX channel transactions.  LVDS panel power
+@@ -433,37 +433,46 @@ nouveau_connector_ddc_detect(struct drm_connector *connector)
+ 	drm_connector_for_each_possible_encoder(connector, encoder, i) {
+ 		nv_encoder = nouveau_encoder(encoder);
+ 
+-		if (nv_encoder->dcb->type == DCB_OUTPUT_DP) {
+-			int ret = nouveau_dp_detect(nv_encoder);
++		switch (nv_encoder->dcb->type) {
++		case DCB_OUTPUT_DP:
++			ret = nouveau_dp_detect(nv_encoder);
+ 			if (ret == NOUVEAU_DP_MST)
+ 				return NULL;
+-			if (ret == NOUVEAU_DP_SST)
+-				break;
+-		} else
+-		if ((vga_switcheroo_handler_flags() &
+-		     VGA_SWITCHEROO_CAN_SWITCH_DDC) &&
+-		    nv_encoder->dcb->type == DCB_OUTPUT_LVDS &&
+-		    nv_encoder->i2c) {
+-			int ret;
++			else if (ret == NOUVEAU_DP_SST)
++				found = nv_encoder;
++
++			break;
++		case DCB_OUTPUT_LVDS:
++			/* Can we actually probe this LVDS display? */
++			if (!((vga_switcheroo_handler_flags() &
++			       VGA_SWITCHEROO_CAN_SWITCH_DDC) &&
++			      nv_encoder->i2c))
++				continue;
++
+ 			vga_switcheroo_lock_ddc(dev->pdev);
+-			ret = nvkm_probe_i2c(nv_encoder->i2c, 0x50);
+-			vga_switcheroo_unlock_ddc(dev->pdev);
+-			if (ret)
+-				break;
+-		} else
+-		if (nv_encoder->i2c) {
+ 			if (nvkm_probe_i2c(nv_encoder->i2c, 0x50))
+-				break;
++				found = nv_encoder;
++			vga_switcheroo_unlock_ddc(dev->pdev);
++
++			break;
++		default:
++			if (nv_encoder->i2c &&
++			    nvkm_probe_i2c(nv_encoder->i2c, 0x50))
++				found = nv_encoder;
++
++			break;
+ 		}
++		if (found)
++			break;
+ 	}
+ 
+ 	/* eDP panel not detected, restore panel power GPIO to previous
+ 	 * state to avoid confusing the SOR for other output types.
+ 	 */
+-	if (!nv_encoder && panel == 0)
++	if (!found && panel == 0)
+ 		nvkm_gpio_set(gpio, 0, DCB_GPIO_PANEL_POWER, 0xff, panel);
+ 
+-	return nv_encoder;
++	return found;
+ }
+ 
+ static struct nouveau_encoder *
 -- 
-Dominique Martinet
+2.17.1
+
