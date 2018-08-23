@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B1D4C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A69A9C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E8EA2098B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E8EA2098B
+	by mail.kernel.org (Postfix) with ESMTP id 69F232098B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69F232098B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729001AbeHWLaB (ORCPT
+        id S1729015AbeHWLaE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:30:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44464 "EHLO
+        Thu, 23 Aug 2018 07:30:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44476 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727789AbeHWLaA (ORCPT
+        with ESMTP id S1727789AbeHWLaD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:30:00 -0400
+        Thu, 23 Aug 2018 07:30:03 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45903C18;
-        Thu, 23 Aug 2018 08:01:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A38E9C18;
+        Thu, 23 Aug 2018 08:01:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 002/130] ARC: Explicitly add -mmedium-calls to CFLAGS
-Date:   Thu, 23 Aug 2018 09:51:58 +0200
-Message-Id: <20180823074927.322799149@linuxfoundation.org>
+Subject: [PATCH 4.9 003/130] usb: dwc3: of-simple: fix use-after-free on remove
+Date:   Thu, 23 Aug 2018 09:51:59 +0200
+Message-Id: <20180823074927.385358729@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -51,79 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Brodkin <abrodkin@synopsys.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 74c11e300c103af47db5b658fdcf28002421e250 ]
+[ Upstream commit 896e518883f18e601335908192e33426c1f599a4 ]
 
-GCC built for arc*-*-linux has "-mmedium-calls" implicitly enabled by default
-thus we don't see any problems during Linux kernel compilation.
------------------------------>8------------------------
-arc-linux-gcc -mcpu=arc700 -Q --help=target | grep calls
-  -mlong-calls                          [disabled]
-  -mmedium-calls                        [enabled]
------------------------------>8------------------------
+The clocks have already been explicitly disabled and put as part of
+remove() so the runtime suspend callback must not be run when balancing
+the runtime PM usage count before returning.
 
-But if we try to use so-called Elf32 toolchain with GCC configured for
-arc*-*-elf* then we'd see the following failure:
------------------------------>8------------------------
-init/do_mounts.o: In function 'init_rootfs':
-do_mounts.c:(.init.text+0x108): relocation truncated to fit: R_ARC_S21W_PCREL
-against symbol 'unregister_filesystem' defined in .text section in fs/filesystems.o
-
-arc-elf32-ld: final link failed: Symbol needs debug section which does not exist
-make: *** [vmlinux] Error 1
------------------------------>8------------------------
-
-That happens because neither "-mmedium-calls" nor "-mlong-calls" are enabled in
-Elf32 GCC:
------------------------------>8------------------------
-arc-elf32-gcc -mcpu=arc700 -Q --help=target | grep calls
-  -mlong-calls                          [disabled]
-  -mmedium-calls                        [disabled]
------------------------------>8------------------------
-
-Now to make it possible to use Elf32 toolchain for building Linux kernel
-we're explicitly add "-mmedium-calls" to CFLAGS.
-
-And since we add "-mmedium-calls" to the global CFLAGS there's no point in
-having per-file copies thus removing them.
-
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-
+Fixes: 16adc674d0d6 ("usb: dwc3: add generic OF glue layer")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arc/Makefile |   15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+ drivers/usb/dwc3/dwc3-of-simple.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arc/Makefile
-+++ b/arch/arc/Makefile
-@@ -18,7 +18,7 @@ endif
+--- a/drivers/usb/dwc3/dwc3-of-simple.c
++++ b/drivers/usb/dwc3/dwc3-of-simple.c
+@@ -132,8 +132,9 @@ static int dwc3_of_simple_remove(struct
  
- KBUILD_DEFCONFIG := nsim_700_defconfig
+ 	of_platform_depopulate(dev);
  
--cflags-y	+= -fno-common -pipe -fno-builtin -D__linux__
-+cflags-y	+= -fno-common -pipe -fno-builtin -mmedium-calls -D__linux__
- cflags-$(CONFIG_ISA_ARCOMPACT)	+= -mA7
- cflags-$(CONFIG_ISA_ARCV2)	+= -mcpu=archs
+-	pm_runtime_put_sync(dev);
+ 	pm_runtime_disable(dev);
++	pm_runtime_put_noidle(dev);
++	pm_runtime_set_suspended(dev);
  
-@@ -141,16 +141,3 @@ dtbs: scripts
- 
- archclean:
- 	$(Q)$(MAKE) $(clean)=$(boot)
--
--# Hacks to enable final link due to absence of link-time branch relexation
--# and gcc choosing optimal(shorter) branches at -O3
--#
--# vineetg Feb 2010: -mlong-calls switched off for overall kernel build
--# However lib/decompress_inflate.o (.init.text) calls
--# zlib_inflate_workspacesize (.text) causing relocation errors.
--# Thus forcing all exten calls in this file to be long calls
--export CFLAGS_decompress_inflate.o = -mmedium-calls
--export CFLAGS_initramfs.o = -mmedium-calls
--ifdef CONFIG_SMP
--export CFLAGS_core.o = -mmedium-calls
--endif
+ 	return 0;
+ }
 
 
