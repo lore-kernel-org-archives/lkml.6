@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A69A9C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6767AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69F232098B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69F232098B
+	by mail.kernel.org (Postfix) with ESMTP id 2D40D21486
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D40D21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729015AbeHWLaE (ORCPT
+        id S1729025AbeHWLaI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:30:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44476 "EHLO
+        Thu, 23 Aug 2018 07:30:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44484 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727789AbeHWLaD (ORCPT
+        with ESMTP id S1727789AbeHWLaH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:30:03 -0400
+        Thu, 23 Aug 2018 07:30:07 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A38E9C18;
-        Thu, 23 Aug 2018 08:01:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0A16BC18;
+        Thu, 23 Aug 2018 08:01:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 003/130] usb: dwc3: of-simple: fix use-after-free on remove
-Date:   Thu, 23 Aug 2018 09:51:59 +0200
-Message-Id: <20180823074927.385358729@linuxfoundation.org>
+Subject: [PATCH 4.9 004/130] netfilter: ipv6: nf_defrag: reduce struct net memory waste
+Date:   Thu, 23 Aug 2018 09:52:00 +0200
+Message-Id: <20180823074927.478511460@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -51,35 +51,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 896e518883f18e601335908192e33426c1f599a4 ]
+[ Upstream commit 9ce7bc036ae4cfe3393232c86e9e1fea2153c237 ]
 
-The clocks have already been explicitly disabled and put as part of
-remove() so the runtime suspend callback must not be run when balancing
-the runtime PM usage count before returning.
+It is a waste of memory to use a full "struct netns_sysctl_ipv6"
+while only one pointer is really used, considering netns_sysctl_ipv6
+keeps growing.
 
-Fixes: 16adc674d0d6 ("usb: dwc3: add generic OF glue layer")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Also, since "struct netns_frags" has cache line alignment,
+it is better to move the frags_hdr pointer outside, otherwise
+we spend a full cache line for this pointer.
+
+This saves 192 bytes of memory per netns.
+
+Fixes: c038a767cd69 ("ipv6: add a new namespace for nf_conntrack_reasm")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc3/dwc3-of-simple.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/net/net_namespace.h             |    1 +
+ include/net/netns/ipv6.h                |    1 -
+ net/ipv6/netfilter/nf_conntrack_reasm.c |    6 +++---
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/dwc3/dwc3-of-simple.c
-+++ b/drivers/usb/dwc3/dwc3-of-simple.c
-@@ -132,8 +132,9 @@ static int dwc3_of_simple_remove(struct
+--- a/include/net/net_namespace.h
++++ b/include/net/net_namespace.h
+@@ -116,6 +116,7 @@ struct net {
+ #endif
+ #if IS_ENABLED(CONFIG_NF_DEFRAG_IPV6)
+ 	struct netns_nf_frag	nf_frag;
++	struct ctl_table_header *nf_frag_frags_hdr;
+ #endif
+ 	struct sock		*nfnl;
+ 	struct sock		*nfnl_stash;
+--- a/include/net/netns/ipv6.h
++++ b/include/net/netns/ipv6.h
+@@ -89,7 +89,6 @@ struct netns_ipv6 {
  
- 	of_platform_depopulate(dev);
+ #if IS_ENABLED(CONFIG_NF_DEFRAG_IPV6)
+ struct netns_nf_frag {
+-	struct netns_sysctl_ipv6 sysctl;
+ 	struct netns_frags	frags;
+ };
+ #endif
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -117,7 +117,7 @@ static int nf_ct_frag6_sysctl_register(s
+ 	if (hdr == NULL)
+ 		goto err_reg;
  
--	pm_runtime_put_sync(dev);
- 	pm_runtime_disable(dev);
-+	pm_runtime_put_noidle(dev);
-+	pm_runtime_set_suspended(dev);
- 
+-	net->nf_frag.sysctl.frags_hdr = hdr;
++	net->nf_frag_frags_hdr = hdr;
  	return 0;
+ 
+ err_reg:
+@@ -131,8 +131,8 @@ static void __net_exit nf_ct_frags6_sysc
+ {
+ 	struct ctl_table *table;
+ 
+-	table = net->nf_frag.sysctl.frags_hdr->ctl_table_arg;
+-	unregister_net_sysctl_table(net->nf_frag.sysctl.frags_hdr);
++	table = net->nf_frag_frags_hdr->ctl_table_arg;
++	unregister_net_sysctl_table(net->nf_frag_frags_hdr);
+ 	if (!net_eq(net, &init_net))
+ 		kfree(table);
  }
 
 
