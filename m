@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE3A1C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4068BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD2E22084A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD2E22084A
+	by mail.kernel.org (Postfix) with ESMTP id E15B720847
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E15B720847
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387817AbeHWM1y (ORCPT
+        id S2387840AbeHWM14 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:27:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53076 "EHLO
+        Thu, 23 Aug 2018 08:27:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53088 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727293AbeHWM1x (ORCPT
+        with ESMTP id S1728294AbeHWM14 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:27:53 -0400
+        Thu, 23 Aug 2018 08:27:56 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30A08C83;
-        Thu, 23 Aug 2018 08:59:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5950FC83;
+        Thu, 23 Aug 2018 08:59:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        stable@vger.kernel.org, John Fastabend <john.fastabend@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 210/324] nvmem: Dont let a NULL cell_id for nvmem_cell_get() crash us
-Date:   Thu, 23 Aug 2018 09:54:36 +0200
-Message-Id: <20180823075006.654702000@linuxfoundation.org>
+Subject: [PATCH 4.17 211/324] bpf: fix sk_skb programs without skb->dev assigned
+Date:   Thu, 23 Aug 2018 09:54:37 +0200
+Message-Id: <20180823075006.712464475@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,75 +51,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Douglas Anderson <dianders@chromium.org>
+From: John Fastabend <john.fastabend@gmail.com>
 
-[ Upstream commit 87ed1405ef09d29a14df43295f7b6a93b63bfe6e ]
+[ Upstream commit 0c6bc6e531a6db36f49622f1f115770160f7afb0 ]
 
-In commit ca04d9d3e1b1 ("phy: qcom-qusb2: New driver for QUSB2 PHY on
-Qcom chips") you can see a call like:
+Multiple BPF helpers in use by sk_skb programs calculate the max
+skb length using the __bpf_skb_max_len function. However, this
+calculates the max length using the skb->dev pointer which can be
+NULL when an sk_skb program is paired with an sk_msg program.
 
-  devm_nvmem_cell_get(dev, NULL);
+To force this a sk_msg program needs to redirect into the ingress
+path of a sock with an attach sk_skb program. Then the the sk_skb
+program would need to call one of the helpers that adjust the skb
+size.
 
-Note that the cell ID passed to the function is NULL.  This is because
-the qcom-qusb2 driver is expected to work only on systems where the
-PHY node is hooked up via device-tree and is nameless.
+To fix the null ptr dereference use SKB_MAX_ALLOC size if no dev
+is available.
 
-This works OK for the most part.  The first thing nvmem_cell_get()
-does is to call of_nvmem_cell_get() and there it's documented that a
-NULL name is fine.  The problem happens when the call to
-of_nvmem_cell_get() returns -EINVAL.  In such a case we'll fall back
-to nvmem_cell_get_from_list() and eventually might (if nvmem_cells
-isn't an empty list) crash with something that looks like:
-
- strcmp
- nvmem_find_cell
- __nvmem_device_get
- nvmem_cell_get_from_list
- nvmem_cell_get
- devm_nvmem_cell_get
- qusb2_phy_probe
-
-There are several different ways we could fix this problem:
-
-One could argue that perhaps the qcom-qusb2 driver should be changed
-to use of_nvmem_cell_get() which is allowed to have a NULL name.  In
-that case, we'd need to add a patche to introduce
-devm_of_nvmem_cell_get() since the qcom-qusb2 driver is using devm
-managed resources.
-
-One could also argue that perhaps we could just add a name to
-qcom-qusb2.  That would be OK but I believe it effectively changes the
-device tree bindings, so maybe it's a no-go.
-
-In this patch I have chosen to fix the problem by simply not crashing
-when a NULL cell_id is passed to nvmem_cell_get().
-
-NOTE: that for the qcom-qusb2 driver the "nvmem-cells" property is
-defined to be optional and thus it's expected to be a common case that
-we would hit this crash and this is more than just a theoretical fix.
-
-Fixes: ca04d9d3e1b1 ("phy: qcom-qusb2: New driver for QUSB2 PHY on Qcom chips")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 8934ce2fd081 ("bpf: sockmap redirect ingress support")
+Signed-off-by: John Fastabend <john.fastabend@gmail.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvmem/core.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/core/filter.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -924,6 +924,10 @@ struct nvmem_cell *nvmem_cell_get(struct
- 			return cell;
- 	}
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -2516,7 +2516,8 @@ static int bpf_skb_net_shrink(struct sk_
  
-+	/* NULL cell_id only allowed for device tree; invalid otherwise */
-+	if (!cell_id)
-+		return ERR_PTR(-EINVAL);
-+
- 	return nvmem_cell_get_from_list(cell_id);
+ static u32 __bpf_skb_max_len(const struct sk_buff *skb)
+ {
+-	return skb->dev->mtu + skb->dev->hard_header_len;
++	return skb->dev ? skb->dev->mtu + skb->dev->hard_header_len :
++			  SKB_MAX_ALLOC;
  }
- EXPORT_SYMBOL_GPL(nvmem_cell_get);
+ 
+ static int bpf_skb_adjust_net(struct sk_buff *skb, s32 len_diff)
 
 
