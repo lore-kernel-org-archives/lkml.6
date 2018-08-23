@@ -6,39 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26716C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:04:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08176C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:04:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D57AA208CC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:04:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D57AA208CC
+	by mail.kernel.org (Postfix) with ESMTP id C08A3208CC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:04:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C08A3208CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388877AbeHWMcv (ORCPT
+        id S2388887AbeHWMc6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:32:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56142 "EHLO
+        Thu, 23 Aug 2018 08:32:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56176 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728841AbeHWMcv (ORCPT
+        with ESMTP id S1728447AbeHWMc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:32:51 -0400
+        Thu, 23 Aug 2018 08:32:58 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4701CC93;
-        Thu, 23 Aug 2018 09:04:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1FA2C83;
+        Thu, 23 Aug 2018 09:04:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
+        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 283/324] PCI: designware: Fix I/O space page leak
-Date:   Thu, 23 Aug 2018 09:55:49 +0200
-Message-Id: <20180823075010.205019634@linuxfoundation.org>
+Subject: [PATCH 4.17 293/324] soc: imx: gpc: restrict register range for regmap access
+Date:   Thu, 23 Aug 2018 09:55:59 +0200
+Message-Id: <20180823075010.709848311@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -55,92 +52,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Anson Huang <Anson.Huang@nxp.com>
 
-[ Upstream commit fd07f5e19c6fcdfa318944764248cf44eb06e532 ]
+[ Upstream commit de2d9b5284bcb5c159c5882ac69f6bfd4dec7c67 ]
 
-When testing the R-Car PCIe driver on the Condor board, if the PCIe PHY
-driver is left disabled, the kernel crashed with this BUG:
+GPC registers are NOT continuous, some registers are
+reserved and accessing them from userspace will trigger
+external abort, add regmap register access table to
+avoid below abort:
 
-  kernel BUG at lib/ioremap.c:72!
-  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-  Modules linked in:
-  CPU: 0 PID: 39 Comm: kworker/0:1 Not tainted 4.17.0-dirty #1092
-  Hardware name: Renesas Condor board based on r8a77980 (DT)
-  Workqueue: events deferred_probe_work_func
-  pstate: 80000005 (Nzcv daif -PAN -UAO)
-  pc : ioremap_page_range+0x370/0x3c8
-  lr : ioremap_page_range+0x40/0x3c8
-  sp : ffff000008da39e0
-  x29: ffff000008da39e0 x28: 00e8000000000f07
-  x27: ffff7dfffee00000 x26: 0140000000000000
-  x25: ffff7dfffef00000 x24: 00000000000fe100
-  x23: ffff80007b906000 x22: ffff000008ab8000
-  x21: ffff000008bb1d58 x20: ffff7dfffef00000
-  x19: ffff800009c30fb8 x18: 0000000000000001
-  x17: 00000000000152d0 x16: 00000000014012d0
-  x15: 0000000000000000 x14: 0720072007200720
-  x13: 0720072007200720 x12: 0720072007200720
-  x11: 0720072007300730 x10: 00000000000000ae
-  x9 : 0000000000000000 x8 : ffff7dffff000000
-  x7 : 0000000000000000 x6 : 0000000000000100
-  x5 : 0000000000000000 x4 : 000000007b906000
-  x3 : ffff80007c61a880 x2 : ffff7dfffeefffff
-  x1 : 0000000040000000 x0 : 00e80000fe100f07
-  Process kworker/0:1 (pid: 39, stack limit = 0x        (ptrval))
-  Call trace:
-   ioremap_page_range+0x370/0x3c8
-   pci_remap_iospace+0x7c/0xac
-   pci_parse_request_of_pci_ranges+0x13c/0x190
-   rcar_pcie_probe+0x4c/0xb04
-   platform_drv_probe+0x50/0xbc
-   driver_probe_device+0x21c/0x308
-   __device_attach_driver+0x98/0xc8
-   bus_for_each_drv+0x54/0x94
-   __device_attach+0xc4/0x12c
-   device_initial_probe+0x10/0x18
-   bus_probe_device+0x90/0x98
-   deferred_probe_work_func+0xb0/0x150
-   process_one_work+0x12c/0x29c
-   worker_thread+0x200/0x3fc
-   kthread+0x108/0x134
-   ret_from_fork+0x10/0x18
-  Code: f9004ba2 54000080 aa0003fb 17ffff48 (d4210000)
+root@imx6slevk:~# cat /sys/kernel/debug/regmap/20dc000.gpc/registers
+[  108.480477] Unhandled fault: imprecise external abort (0x1406) at 0xb6db5004
+[  108.487985] pgd = 42b54bfd
+[  108.490741] [b6db5004] *pgd=ba1b7831
+[  108.494386] Internal error: : 1406 [#1] SMP ARM
+[  108.498943] Modules linked in:
+[  108.502043] CPU: 0 PID: 389 Comm: cat Not tainted 4.18.0-rc1-00074-gc9f1f60-dirty #482
+[  108.509982] Hardware name: Freescale i.MX6 SoloLite (Device Tree)
+[  108.516123] PC is at regmap_mmio_read32le+0x20/0x24
+[  108.521031] LR is at regmap_mmio_read+0x40/0x60
+[  108.525586] pc : [<c059cf74>]    lr : [<c059d1ac>]    psr: 20060093
+[  108.531875] sp : eccf1d98  ip : eccf1da8  fp : eccf1da4
+[  108.537122] r10: ec2d3800  r9 : eccf1f60  r8 : ecfc0000
+[  108.542370] r7 : eccf1e2c  r6 : eccf1e2c  r5 : 00000028  r4 : ec338e00
+[  108.548920] r3 : 00000000  r2 : eccf1e2c  r1 : f0980028  r0 : 00000000
+[  108.555474] Flags: nzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[  108.562720] Control: 10c5387d  Table: acf4004a  DAC: 00000051
+[  108.568491] Process cat (pid: 389, stack limit = 0xd4318a65)
+[  108.574174] Stack: (0xeccf1d98 to 0xeccf2000)
 
-It turned out that pci_remap_iospace() wasn't undone when the driver's
-probe failed, and since devm_phy_optional_get() returned -EPROBE_DEFER,
-the probe was retried, finally causing the BUG due to trying to remap
-already remapped pages.
-
-The DesignWare PCIe controller driver has the same issue.
-
-Replace devm_pci_remap_iospace() with a devm_ managed version to fix the
-bug.
-
-Fixes: cbce7900598c ("PCI: designware: Make driver arch-agnostic")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-[lorenzo.pieralisi@arm.com: updated the commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
+Fixes: 721cabf6c660 ("soc: imx: move PGC handling to a new GPC driver")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/dwc/pcie-designware-host.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/soc/imx/gpc.c |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
---- a/drivers/pci/dwc/pcie-designware-host.c
-+++ b/drivers/pci/dwc/pcie-designware-host.c
-@@ -355,7 +355,8 @@ int dw_pcie_host_init(struct pcie_port *
- 	resource_list_for_each_entry_safe(win, tmp, &bridge->windows) {
- 		switch (resource_type(win->res)) {
- 		case IORESOURCE_IO:
--			ret = pci_remap_iospace(win->res, pp->io_base);
-+			ret = devm_pci_remap_iospace(dev, win->res,
-+						     pp->io_base);
- 			if (ret) {
- 				dev_warn(dev, "error %d: failed to map resource %pR\n",
- 					 ret, win->res);
+--- a/drivers/soc/imx/gpc.c
++++ b/drivers/soc/imx/gpc.c
+@@ -27,9 +27,16 @@
+ #define GPC_PGC_SW2ISO_SHIFT	0x8
+ #define GPC_PGC_SW_SHIFT	0x0
+ 
++#define GPC_PGC_PCI_PDN		0x200
++#define GPC_PGC_PCI_SR		0x20c
++
+ #define GPC_PGC_GPU_PDN		0x260
+ #define GPC_PGC_GPU_PUPSCR	0x264
+ #define GPC_PGC_GPU_PDNSCR	0x268
++#define GPC_PGC_GPU_SR		0x26c
++
++#define GPC_PGC_DISP_PDN	0x240
++#define GPC_PGC_DISP_SR		0x24c
+ 
+ #define GPU_VPU_PUP_REQ		BIT(1)
+ #define GPU_VPU_PDN_REQ		BIT(0)
+@@ -318,10 +325,24 @@ static const struct of_device_id imx_gpc
+ 	{ }
+ };
+ 
++static const struct regmap_range yes_ranges[] = {
++	regmap_reg_range(GPC_CNTR, GPC_CNTR),
++	regmap_reg_range(GPC_PGC_PCI_PDN, GPC_PGC_PCI_SR),
++	regmap_reg_range(GPC_PGC_GPU_PDN, GPC_PGC_GPU_SR),
++	regmap_reg_range(GPC_PGC_DISP_PDN, GPC_PGC_DISP_SR),
++};
++
++static const struct regmap_access_table access_table = {
++	.yes_ranges	= yes_ranges,
++	.n_yes_ranges	= ARRAY_SIZE(yes_ranges),
++};
++
+ static const struct regmap_config imx_gpc_regmap_config = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
++	.rd_table = &access_table,
++	.wr_table = &access_table,
+ 	.max_register = 0x2ac,
+ };
+ 
 
 
