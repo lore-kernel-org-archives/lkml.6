@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC34C04E86
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A6BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4EDE2147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4EDE2147A
+	by mail.kernel.org (Postfix) with ESMTP id EB9A92147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB9A92147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731522AbeHWMAV (ORCPT
+        id S1731533AbeHWMAY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:00:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48010 "EHLO
+        Thu, 23 Aug 2018 08:00:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48026 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728915AbeHWMAU (ORCPT
+        with ESMTP id S1728915AbeHWMAY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:00:20 -0400
+        Thu, 23 Aug 2018 08:00:24 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 64A3BC74;
-        Thu, 23 Aug 2018 08:31:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8D6B18B1;
+        Thu, 23 Aug 2018 08:31:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 163/217] bnxt_en: Always set output parameters in bnxt_get_max_rings().
-Date:   Thu, 23 Aug 2018 09:54:36 +0200
-Message-Id: <20180823075512.906496161@linuxfoundation.org>
+Subject: [PATCH 4.14 172/217] ARM: 8780/1: ftrace: Only set kernel memory back to read-only after boot
+Date:   Thu, 23 Aug 2018 09:54:45 +0200
+Message-Id: <20180823075513.317709814@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,39 +52,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Chan <michael.chan@broadcom.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-[ Upstream commit 78f058a4aa0f2280dc4d45d2c4a95728398ef857 ]
+[ Upstream commit b4c7e2bd2eb4764afe3af9409ff3b1b87116fa30 ]
 
-The current code returns -ENOMEM and does not bother to set the output
-parameters to 0 when no rings are available.  Some callers, such as
-bnxt_get_channels() will display garbage ring numbers when that happens.
-Fix it by always setting the output parameters.
+Dynamic ftrace requires modifying the code segments that are usually
+set to read-only. To do this, a per arch function is called both before
+and after the ftrace modifications are performed. The "before" function
+will set kernel code text to read-write to allow for ftrace to make the
+modifications, and the "after" function will set the kernel code text
+back to "read-only" to keep the kernel code text protected.
 
-Fixes: 6e6c5a57fbe1 ("bnxt_en: Modify bnxt_get_max_rings() to support shared or non shared rings.")
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The issue happens when dynamic ftrace is tested at boot up. The test is
+done before the kernel code text has been set to read-only. But the
+"before" and "after" calls are still performed. The "after" call will
+change the kernel code text to read-only prematurely, and other boot
+code that expects this code to be read-write will fail.
+
+The solution is to add a variable that is set when the kernel code text
+is expected to be converted to read-only, and make the ftrace "before"
+and "after" calls do nothing if that variable is not yet set. This is
+similar to the x86 solution from commit 162396309745 ("ftrace, x86:
+make kernel text writable only for conversions").
+
+Link: http://lkml.kernel.org/r/20180620212906.24b7b66e@vmware.local.home
+
+Reported-by: Stefan Agner <stefan@agner.ch>
+Tested-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mm/init.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -7866,11 +7866,11 @@ int bnxt_get_max_rings(struct bnxt *bp,
- 	int rx, tx, cp;
- 
- 	_bnxt_get_max_rings(bp, &rx, &tx, &cp);
-+	*max_rx = rx;
-+	*max_tx = tx;
- 	if (!rx || !tx || !cp)
- 		return -ENOMEM;
- 
--	*max_rx = rx;
--	*max_tx = tx;
- 	return bnxt_trim_rings(bp, max_rx, max_tx, cp, shared);
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -745,19 +745,28 @@ static int __mark_rodata_ro(void *unused
+ 	return 0;
  }
  
++static int kernel_set_to_readonly __read_mostly;
++
+ void mark_rodata_ro(void)
+ {
++	kernel_set_to_readonly = 1;
+ 	stop_machine(__mark_rodata_ro, NULL, NULL);
+ }
+ 
+ void set_kernel_text_rw(void)
+ {
++	if (!kernel_set_to_readonly)
++		return;
++
+ 	set_section_perms(ro_perms, ARRAY_SIZE(ro_perms), false,
+ 				current->active_mm);
+ }
+ 
+ void set_kernel_text_ro(void)
+ {
++	if (!kernel_set_to_readonly)
++		return;
++
+ 	set_section_perms(ro_perms, ARRAY_SIZE(ro_perms), true,
+ 				current->active_mm);
+ }
 
 
