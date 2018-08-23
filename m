@@ -1,153 +1,221 @@
 Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE6FC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89656C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4915521557
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:30:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4915521557
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
+	by mail.kernel.org (Postfix) with ESMTP id 3CFF7208FA
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:30:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CFF7208FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728426AbeHWN7n (ORCPT
+        id S1728521AbeHWN7y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 09:59:43 -0400
-Received: from smtp3-g21.free.fr ([212.27.42.3]:53687 "EHLO smtp3-g21.free.fr"
+        Thu, 23 Aug 2018 09:59:54 -0400
+Received: from mga07.intel.com ([134.134.136.100]:64286 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726353AbeHWN7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 09:59:43 -0400
-Received: from tock (unknown [89.247.124.232])
-        (Authenticated sender: albeu)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id AA3E613F87E;
-        Thu, 23 Aug 2018 12:29:23 +0200 (CEST)
-Date:   Thu, 23 Aug 2018 12:29:21 +0200
-From:   Alban <albeu@free.fr>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Alban Bedel <albeu@free.fr>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Naren <naren.kernel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 06/29] mtd: Add support for reading MTD devices via
- the nvmem API
-Message-ID: <20180823122921.6857d917@tock>
-In-Reply-To: <20180821150121.4408672f@bbrezillon>
-References: <20180810080526.27207-1-brgl@bgdev.pl>
- <20180810080526.27207-7-brgl@bgdev.pl>
- <20180817182720.6a6e5e8e@bbrezillon>
- <20180819133106.0420df5f@tock>
- <20180819184609.6dcdbb9a@bbrezillon>
- <5b8c30b8-41e1-d59e-542b-fef6c6469ff0@linaro.org>
- <20180820202038.5d3dc195@bbrezillon>
- <e0ec3194-fd3a-9b3d-fba8-f88447eb56e9@linaro.org>
- <20180821133916.3a1c51b1@eos>
- <6db14f9c-edd3-5e43-839c-953bb03097ff@linaro.org>
- <20180821150121.4408672f@bbrezillon>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1726353AbeHWN7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 09:59:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2018 03:30:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,278,1531810800"; 
+   d="scan'208";a="65406997"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga008.fm.intel.com with ESMTP; 23 Aug 2018 03:30:50 -0700
+Received: from [10.125.252.155] (abudanko-mobl.ccr.corp.intel.com [10.125.252.155])
+        by linux.intel.com (Postfix) with ESMTP id 55C435802C8;
+        Thu, 23 Aug 2018 03:30:48 -0700 (PDT)
+Subject: [PATCH v1 1/2]: perf util: map data buffer for preserving collected
+ data
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+References: <1c3fd88f-c408-2863-15b3-221829f3d383@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <e2c4db6b-555b-c029-5c35-986a90b284fe@linux.intel.com>
+Date:   Thu, 23 Aug 2018 13:30:47 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/clJVj=KipsjMDyfNIMePBO1"; protocol="application/pgp-signature"
+In-Reply-To: <1c3fd88f-c408-2863-15b3-221829f3d383@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/clJVj=KipsjMDyfNIMePBO1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, 21 Aug 2018 15:01:21 +0200
-Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+The data buffer and accompanying AIO control block are allocated at 
+perf_mmap object and the mapped data buffer size is equal to 
+the kernel one.
 
-> On Tue, 21 Aug 2018 13:00:04 +0100
-> Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
->=20
-> > On 21/08/18 12:39, Alban wrote: =20
-> > > However we still have the a potential address space clash between
-> > > the nvmem cells and the main device binding.   =20
-> > Can you elaborate?
-> >  =20
->=20
-> Yes, I'd be interested in having a real example too, cause I don't see
-> what this address space clash is.
+The buffer is then used to preserve profiling data ready for dumping 
+and queue it for asynchronous writing into perf trace thru implemented 
+record__aio_write() function.
 
-Let say I have a device that use the following binding:
+mmap_aio control structure of the size equal to the number of per-cpu 
+kernel buffers is used to keep pointers to enqueued AIO control 
+blocks for monitoring of completed AIO operations.
 
-device {
-    compatible =3D "example-device";
-    #address-cells =3D <2>;
-    #size-cells =3D <1>;
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+ tools/perf/builtin-record.c | 18 ++++++++++++++++++
+ tools/perf/util/evlist.c    |  9 +++++++++
+ tools/perf/util/evlist.h    |  2 ++
+ tools/perf/util/mmap.c      | 12 ++++++++++++
+ tools/perf/util/mmap.h      |  3 +++
+ 5 files changed, 44 insertions(+)
 
-    child@0,0 {
-        reg =3D <0x0 0x0>;
-        ...
-    };
-
-    child@1,2 {
-        reg =3D <0x1 0x2>;
-        ...
-    };
-
-};
-
-Now this binding already use the node address space for something,
-so putting a nvmem node as direct child would not work. Here it is
-quiet clear as we have 2 address cells, however even if the number of
-cells and the cells size would match it would still be conceptually
-wrong as both bindings then use the same address space for something
-different.
-
-Alban
-
---Sig_/clJVj=KipsjMDyfNIMePBO1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJbfoyCAAoJEHSUmkuduC2831EQANEODpUrKPBwoUPR5kK9+xS1
-1qpoYGYl6TM2lHAEP7nZP+eNv3rOyBncZoiuVAIAIqYi2cJ1eyury5lRDpgIpZaH
-hYDSyeBefkS/qFTH91x3+CYq5wK8uPKEFoDJcAmj0jDw+dEGk9xRohWF0rSR5AVv
-IKVtiDByjgCLlNBCmzOe9GAxEU9hSZVRck3u84NA9HlklZ+P3dbEotpRkt3c9qsZ
-3HlckafnYuWs3gFW+HP++oALuUa4X7iqHTNi2Wubj/G0K30vhOrSAgCpQty5TqWF
-iYiZq/zfZqDJlDkWOYkW9lSdF0tGlCgfsVOrxG5ByG5jMMtW5B7QREyZrBmQzcuz
-kIoerm0mjZYCfev2rkdtw0FZWXQdDGp9Rjy28B8RnnSMjR3cljid3wyWRZRhtnOY
-6QuHDQ7D5ncqn9LiZIAj4Th6RKgxxd4F7iNDLMY57+GmMVeqdgXJr/vWMXUy+KEu
-k9xO3xr+7l7wy23C35vGw+IK2Y9mrWyuchUNF+waa3gUL2L9ufugB8l6Yp+4OjRx
-ur16kOtTg4ZTYeRryImv8FLrjjm3FT81aKwZthoLL5W4Wxh5WPU0oMe2YWcE7g/G
-K6exE5qdZ285k3uHVgvqXH4SZTcjkqonJZ59Xjl5lb/NWhvMrAY3nXzUH1roM863
-jpGm3PZXS4uPr9TwgjAK
-=952h
------END PGP SIGNATURE-----
-
---Sig_/clJVj=KipsjMDyfNIMePBO1--
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 22ebeb92ac51..a35675e9f3aa 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -53,6 +53,7 @@
+ #include <sys/mman.h>
+ #include <sys/wait.h>
+ #include <linux/time64.h>
++#include <aio.h>
+ 
+ struct switch_output {
+ 	bool		 enabled;
+@@ -121,6 +122,23 @@ static int record__write(struct record *rec, void *bf, size_t size)
+ 	return 0;
+ }
+ 
++static int record__aio_write(int trace_fd, struct aiocb *cblock,
++		void *buf, size_t size, off_t off)
++{
++	cblock->aio_fildes = trace_fd;
++	cblock->aio_buf    = buf;
++	cblock->aio_nbytes = size;
++	cblock->aio_offset = off;
++	cblock->aio_sigevent.sigev_notify = SIGEV_NONE;
++
++	if (aio_write(cblock) == -1) {
++		pr_err("failed to write perf data, error: %m\n");
++		return -1;
++	}
++
++	return 0;
++}
++
+ static int process_synthesized_event(struct perf_tool *tool,
+ 				     union perf_event *event,
+ 				     struct perf_sample *sample __maybe_unused,
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index e7a4b31a84fb..6bce307d2cfb 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -718,6 +718,8 @@ static void perf_evlist__munmap_nofree(struct perf_evlist *evlist)
+ void perf_evlist__munmap(struct perf_evlist *evlist)
+ {
+ 	perf_evlist__munmap_nofree(evlist);
++	if (&evlist->mmap_aio)
++		zfree(&evlist->mmap_aio);
+ 	zfree(&evlist->mmap);
+ 	zfree(&evlist->overwrite_mmap);
+ }
+@@ -749,6 +751,13 @@ static struct perf_mmap *perf_evlist__alloc_mmap(struct perf_evlist *evlist,
+ 		 */
+ 		refcount_set(&map[i].refcnt, 0);
+ 	}
++
++	evlist->mmap_aio = zalloc(evlist->nr_mmaps * sizeof(struct aiocb *));
++	if (!evlist->mmap_aio) {
++		zfree(&map);
++		return NULL;
++	}
++
+ 	return map;
+ }
+ 
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index dc66436add98..f98b949561fd 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -15,6 +15,7 @@
+ #include "util.h"
+ #include <signal.h>
+ #include <unistd.h>
++#include <aio.h>
+ 
+ struct pollfd;
+ struct thread_map;
+@@ -43,6 +44,7 @@ struct perf_evlist {
+ 	} workload;
+ 	struct fdarray	 pollfd;
+ 	struct perf_mmap *mmap;
++	struct aiocb	 **mmap_aio;
+ 	struct perf_mmap *overwrite_mmap;
+ 	struct thread_map *threads;
+ 	struct cpu_map	  *cpus;
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index fc832676a798..e71d46cb01cc 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -155,6 +155,10 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
+ 
+ void perf_mmap__munmap(struct perf_mmap *map)
+ {
++	if (map->data != NULL) {
++		munmap(map->data, perf_mmap__mmap_len(map));
++		map->data = NULL;
++	}
+ 	if (map->base != NULL) {
+ 		munmap(map->base, perf_mmap__mmap_len(map));
+ 		map->base = NULL;
+@@ -190,6 +194,14 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd)
+ 		map->base = NULL;
+ 		return -1;
+ 	}
++	map->data = mmap(NULL, perf_mmap__mmap_len(map), PROT_READ | PROT_WRITE,
++			MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
++	if (map->data == MAP_FAILED) {
++		pr_debug2("failed to mmap perf event data buffer, error %d\n",
++				errno);
++		map->data = NULL;
++		return -1;
++	}
+ 	map->fd = fd;
+ 
+ 	if (auxtrace_mmap__mmap(&map->auxtrace_mmap,
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index d82294db1295..1974e621e36b 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -6,6 +6,7 @@
+ #include <linux/types.h>
+ #include <asm/barrier.h>
+ #include <stdbool.h>
++#include <aio.h>
+ #include "auxtrace.h"
+ #include "event.h"
+ 
+@@ -25,6 +26,8 @@ struct perf_mmap {
+ 	bool		 overwrite;
+ 	struct auxtrace_mmap auxtrace_mmap;
+ 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
++	void 		 *data;
++	struct aiocb	 cblock;
+ };
+ 
+ /*
+ 
