@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F7EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D16AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEE8F208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:12:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEE8F208C2
+	by mail.kernel.org (Postfix) with ESMTP id 60D54208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:12:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60D54208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388569AbeHWMlR (ORCPT
+        id S2388942AbeHWMlU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:41:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57186 "EHLO
+        Thu, 23 Aug 2018 08:41:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57198 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727433AbeHWMlQ (ORCPT
+        with ESMTP id S1727433AbeHWMlT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:41:16 -0400
+        Thu, 23 Aug 2018 08:41:19 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6636B941;
-        Thu, 23 Aug 2018 09:12:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9792A941;
+        Thu, 23 Aug 2018 09:12:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dinh Nguyen <dinguyen@kernel.org>,
+        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 029/130] net: stmmac: socfpga: add additional ocp reset line for Stratix10
-Date:   Thu, 23 Aug 2018 09:52:25 +0200
-Message-Id: <20180823074929.126784913@linuxfoundation.org>
+Subject: [PATCH 4.9 094/130] bnxt_en: Always set output parameters in bnxt_get_max_rings().
+Date:   Thu, 23 Aug 2018 09:53:30 +0200
+Message-Id: <20180823074933.239245155@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -51,86 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dinh Nguyen <dinguyen@kernel.org>
+From: Michael Chan <michael.chan@broadcom.com>
 
-[ Upstream commit bc8a2d9bcbf1ca548b1deb315d14e1da81945bea ]
+[ Upstream commit 78f058a4aa0f2280dc4d45d2c4a95728398ef857 ]
 
-The Stratix10 platform has an additional reset line, OCP(Open Core Protocol),
-that also needs to get deasserted for the stmmac ethernet controller to work.
-Thus we need to update the Kconfig to include ARCH_STRATIX10 in order to build
-dwmac-socfpga.
+The current code returns -ENOMEM and does not bother to set the output
+parameters to 0 when no rings are available.  Some callers, such as
+bnxt_get_channels() will display garbage ring numbers when that happens.
+Fix it by always setting the output parameters.
 
-Also, remove the redundant check for the reset controller pointer. The
-reset driver already checks for the pointer and returns 0 if the pointer
-is NULL.
-
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Fixes: 6e6c5a57fbe1 ("bnxt_en: Modify bnxt_get_max_rings() to support shared or non shared rings.")
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/Kconfig         |    2 +-
- drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c |   18 ++++++++++++++----
- 2 files changed, 15 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-+++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-@@ -83,7 +83,7 @@ config DWMAC_ROCKCHIP
- config DWMAC_SOCFPGA
- 	tristate "SOCFPGA dwmac support"
- 	default ARCH_SOCFPGA
--	depends on OF && (ARCH_SOCFPGA || COMPILE_TEST)
-+	depends on OF && (ARCH_SOCFPGA || ARCH_STRATIX10 || COMPILE_TEST)
- 	select MFD_SYSCON
- 	help
- 	  Support for ethernet controller on Altera SOCFPGA
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-@@ -55,6 +55,7 @@ struct socfpga_dwmac {
- 	struct	device *dev;
- 	struct regmap *sys_mgr_base_addr;
- 	struct reset_control *stmmac_rst;
-+	struct reset_control *stmmac_ocp_rst;
- 	void __iomem *splitter_base;
- 	bool f2h_ptp_ref_clk;
- 	struct tse_pcs pcs;
-@@ -262,8 +263,8 @@ static int socfpga_dwmac_set_phy_mode(st
- 		val = SYSMGR_EMACGRP_CTRL_PHYSEL_ENUM_GMII_MII;
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -6862,11 +6862,11 @@ int bnxt_get_max_rings(struct bnxt *bp,
+ 	int rx, tx, cp;
  
- 	/* Assert reset to the enet controller before changing the phy mode */
--	if (dwmac->stmmac_rst)
--		reset_control_assert(dwmac->stmmac_rst);
-+	reset_control_assert(dwmac->stmmac_ocp_rst);
-+	reset_control_assert(dwmac->stmmac_rst);
+ 	_bnxt_get_max_rings(bp, &rx, &tx, &cp);
++	*max_rx = rx;
++	*max_tx = tx;
+ 	if (!rx || !tx || !cp)
+ 		return -ENOMEM;
  
- 	regmap_read(sys_mgr_base_addr, reg_offset, &ctrl);
- 	ctrl &= ~(SYSMGR_EMACGRP_CTRL_PHYSEL_MASK << reg_shift);
-@@ -285,8 +286,8 @@ static int socfpga_dwmac_set_phy_mode(st
- 	/* Deassert reset for the phy configuration to be sampled by
- 	 * the enet controller, and operation to start in requested mode
- 	 */
--	if (dwmac->stmmac_rst)
--		reset_control_deassert(dwmac->stmmac_rst);
-+	reset_control_deassert(dwmac->stmmac_ocp_rst);
-+	reset_control_deassert(dwmac->stmmac_rst);
- 	if (phymode == PHY_INTERFACE_MODE_SGMII) {
- 		if (tse_pcs_init(dwmac->pcs.tse_pcs_base, &dwmac->pcs) != 0) {
- 			dev_err(dwmac->dev, "Unable to initialize TSE PCS");
-@@ -321,6 +322,15 @@ static int socfpga_dwmac_probe(struct pl
- 		goto err_remove_config_dt;
- 	}
+-	*max_rx = rx;
+-	*max_tx = tx;
+ 	return bnxt_trim_rings(bp, max_rx, max_tx, cp, shared);
+ }
  
-+	dwmac->stmmac_ocp_rst = devm_reset_control_get_optional(dev, "stmmaceth-ocp");
-+	if (IS_ERR(dwmac->stmmac_ocp_rst)) {
-+		ret = PTR_ERR(dwmac->stmmac_ocp_rst);
-+		dev_err(dev, "error getting reset control of ocp %d\n", ret);
-+		goto err_remove_config_dt;
-+	}
-+
-+	reset_control_deassert(dwmac->stmmac_ocp_rst);
-+
- 	ret = socfpga_dwmac_parse_data(dwmac, dev);
- 	if (ret) {
- 		dev_err(dev, "Unable to parse OF data\n");
 
 
