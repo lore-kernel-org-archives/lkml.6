@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A47BC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB8DC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E11B320839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E11B320839
+	by mail.kernel.org (Postfix) with ESMTP id 93A9320839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93A9320839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388092AbeHWMWM (ORCPT
+        id S2388106AbeHWMWP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:22:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52008 "EHLO
+        Thu, 23 Aug 2018 08:22:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52012 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728574AbeHWMWL (ORCPT
+        with ESMTP id S1728574AbeHWMWO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:22:11 -0400
+        Thu, 23 Aug 2018 08:22:14 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0DC67C74;
-        Thu, 23 Aug 2018 08:53:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 38648C5C;
+        Thu, 23 Aug 2018 08:53:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maciej Purski <m.purski@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
+        stable@vger.kernel.org, Andreas Schwab <schwab@suse.de>,
+        Palmer Dabbelt <palmer@sifive.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 183/324] drm/bridge/sii8620: Fix display of packed pixel modes
-Date:   Thu, 23 Aug 2018 09:54:09 +0200
-Message-Id: <20180823075005.362970716@linuxfoundation.org>
+Subject: [PATCH 4.17 184/324] RISC-V: fix R_RISCV_ADD32/R_RISCV_SUB32 relocations
+Date:   Thu, 23 Aug 2018 09:54:10 +0200
+Message-Id: <20180823075005.405817127@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,68 +51,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej Purski <m.purski@samsung.com>
+From: Andreas Schwab <schwab@suse.de>
 
-[ Upstream commit fdddc65ab35d575b42aab411b2dc687601eab680 ]
+[ Upstream commit 781c8fe2da3d2c7c95cd7ffddbab63b80a79da4d ]
 
-Current implementation does not guarantee packed pixel modes working
-with every dongle. There are some dongles, which require selecting
-the output mode explicitly.
+The R_RISCV_ADD32/R_RISCV_SUB32 relocations should add/subtract the
+address of the symbol (without overflow check), not its contents.
 
-Write proper values to registers in packed_pixel mode, based on how it
-is done in vendor's code. Select output color space: RGB
-(no packed pixel) or YCBCR422 (packed pixel).
-
-This reverts commit e8b92efa629dac0e70ea4145c5e70616de5f89c8
-("drm/bridge/sii8620: fix display of packed pixel modes in MHL2").
-
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1530204243-6370-3-git-send-email-m.purski@samsung.com
+Signed-off-by: Andreas Schwab <schwab@suse.de>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/bridge/sil-sii8620.c |   17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ arch/riscv/kernel/module.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/bridge/sil-sii8620.c
-+++ b/drivers/gpu/drm/bridge/sil-sii8620.c
-@@ -1060,21 +1060,36 @@ static void sii8620_stop_video(struct si
- 
- static void sii8620_set_format(struct sii8620 *ctx)
+--- a/arch/riscv/kernel/module.c
++++ b/arch/riscv/kernel/module.c
+@@ -252,14 +252,14 @@ static int apply_r_riscv_align_rela(stru
+ static int apply_r_riscv_add32_rela(struct module *me, u32 *location,
+ 				    Elf_Addr v)
  {
-+	u8 out_fmt;
-+
- 	if (sii8620_is_mhl3(ctx)) {
- 		sii8620_setbits(ctx, REG_M3_P0CTRL,
- 				BIT_M3_P0CTRL_MHL3_P0_PIXEL_MODE_PACKED,
- 				ctx->use_packed_pixel ? ~0 : 0);
- 	} else {
-+		if (ctx->use_packed_pixel) {
-+			sii8620_write_seq_static(ctx,
-+				REG_VID_MODE, BIT_VID_MODE_M1080P,
-+				REG_MHL_TOP_CTL, BIT_MHL_TOP_CTL_MHL_PP_SEL | 1,
-+				REG_MHLTX_CTL6, 0x60
-+			);
-+		} else {
- 			sii8620_write_seq_static(ctx,
- 				REG_VID_MODE, 0,
- 				REG_MHL_TOP_CTL, 1,
- 				REG_MHLTX_CTL6, 0xa0
- 			);
-+		}
- 	}
+-	*(u32 *)location += (*(u32 *)v);
++	*(u32 *)location += (u32)v;
+ 	return 0;
+ }
  
-+	if (ctx->use_packed_pixel)
-+		out_fmt = VAL_TPI_FORMAT(YCBCR422, FULL);
-+	else
-+		out_fmt = VAL_TPI_FORMAT(RGB, FULL);
-+
- 	sii8620_write_seq(ctx,
- 		REG_TPI_INPUT, VAL_TPI_FORMAT(RGB, FULL),
--		REG_TPI_OUTPUT, VAL_TPI_FORMAT(RGB, FULL),
-+		REG_TPI_OUTPUT, out_fmt,
- 	);
+ static int apply_r_riscv_sub32_rela(struct module *me, u32 *location,
+ 				    Elf_Addr v)
+ {
+-	*(u32 *)location -= (*(u32 *)v);
++	*(u32 *)location -= (u32)v;
+ 	return 0;
  }
  
 
