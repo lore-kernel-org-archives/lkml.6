@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB69DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50245C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:41:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A247E20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:41:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A247E20851
+	by mail.kernel.org (Postfix) with ESMTP id 159162083A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:41:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 159162083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732436AbeHWMJy (ORCPT
+        id S1732451AbeHWMJ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:09:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49844 "EHLO
+        Thu, 23 Aug 2018 08:09:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49850 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729381AbeHWMJx (ORCPT
+        with ESMTP id S1729381AbeHWMJ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:09:53 -0400
+        Thu, 23 Aug 2018 08:09:56 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B086C8B1;
-        Thu, 23 Aug 2018 08:41:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB6488B1;
+        Thu, 23 Aug 2018 08:41:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ayan Kumar halder <ayan.halder@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
+        stable@vger.kernel.org, Vijay Immanuel <vijayi@attalasystems.com>,
+        Yonatan Cohen <yonatanc@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 048/324] drm/mali-dp: Rectify the width and height passed to rotmem_required()
-Date:   Thu, 23 Aug 2018 09:51:54 +0200
-Message-Id: <20180823074958.203804015@linuxfoundation.org>
+Subject: [PATCH 4.17 049/324] IB/rxe: Fix missing completion for mem_reg work requests
+Date:   Thu, 23 Aug 2018 09:51:55 +0200
+Message-Id: <20180823074958.253162757@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -53,36 +52,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ayan Kumar Halder <ayan.halder@arm.com>
+From: Vijay Immanuel <vijayi@attalasystems.com>
 
-[ Upstream commit c6cf387ec56c19028333274747bbb4ae145a2d13 ]
+[ Upstream commit 375dc53d032fc11e98036b5f228ad13f7c5933f5 ]
 
-The width and height needs to be swapped
+Run the completer task to post a work completion after processing
+a memory registration or invalidate work request. This covers the
+case where the memory registration or invalidate was the last work
+request posted to the qp.
 
-Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
-Reviewed-by: Brian Starkey <brian.starkey@arm.com>
-Reviewed-by: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
-[rebased on top of v4.18-rc1]
-Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+Signed-off-by: Vijay Immanuel <vijayi@attalasystems.com>
+Reviewed-by: Yonatan Cohen <yonatanc@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/arm/malidp_planes.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/sw/rxe/rxe_req.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/gpu/drm/arm/malidp_planes.c
-+++ b/drivers/gpu/drm/arm/malidp_planes.c
-@@ -236,8 +236,8 @@ static int malidp_de_plane_check(struct
- 	if (state->rotation & MALIDP_ROTATED_MASK) {
- 		int val;
- 
--		val = mp->hwdev->hw->rotmem_required(mp->hwdev, state->crtc_h,
--						     state->crtc_w,
-+		val = mp->hwdev->hw->rotmem_required(mp->hwdev, state->crtc_w,
-+						     state->crtc_h,
- 						     fb->format->format);
- 		if (val < 0)
- 			return val;
+--- a/drivers/infiniband/sw/rxe/rxe_req.c
++++ b/drivers/infiniband/sw/rxe/rxe_req.c
+@@ -645,6 +645,9 @@ next_wqe:
+ 		} else {
+ 			goto exit;
+ 		}
++		if ((wqe->wr.send_flags & IB_SEND_SIGNALED) ||
++		    qp->sq_sig_type == IB_SIGNAL_ALL_WR)
++			rxe_run_task(&qp->comp.task, 1);
+ 		qp->req.wqe_index = next_index(qp->sq.queue,
+ 						qp->req.wqe_index);
+ 		goto next_wqe;
 
 
