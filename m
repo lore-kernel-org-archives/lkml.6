@@ -2,201 +2,119 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B67EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F5BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 141F22150F
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:57:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 141F22150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EED9F2154E
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:58:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EED9F2154E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731916AbeHWQ07 (ORCPT
+        id S1732224AbeHWQ1r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 12:26:59 -0400
-Received: from mga02.intel.com ([134.134.136.20]:20776 "EHLO mga02.intel.com"
+        Thu, 23 Aug 2018 12:27:47 -0400
+Received: from fieldses.org ([173.255.197.46]:52438 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727714AbeHWQ06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 12:26:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2018 05:57:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,278,1531810800"; 
-   d="scan'208";a="256622577"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.137]) ([10.237.72.137])
-  by fmsmga005.fm.intel.com with ESMTP; 23 Aug 2018 05:57:19 -0700
-Subject: Re: [PATCH V5 07/10] mmc: sdhci: Add Auto CMD Auto Select support
-To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Billows Wu <billows.wu@unisoc.com>,
-        Jason Wu <jason.wu@unisoc.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-References: <1534406064-10065-1-git-send-email-zhang.chunyan@linaro.org>
- <1534406064-10065-8-git-send-email-zhang.chunyan@linaro.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <0dc112ca-1c01-d8ae-c6f0-80492264f5a4@intel.com>
-Date:   Thu, 23 Aug 2018 15:55:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727714AbeHWQ1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 12:27:46 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 64DF11E68; Thu, 23 Aug 2018 08:58:10 -0400 (EDT)
+Date:   Thu, 23 Aug 2018 08:58:10 -0400
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] nfsd changes for 4.19
+Message-ID: <20180823125810.GC32415@fieldses.org>
 MIME-Version: 1.0
-In-Reply-To: <1534406064-10065-8-git-send-email-zhang.chunyan@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+From:   bfields@fieldses.org (J. Bruce Fields)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/08/18 10:54, Chunyan Zhang wrote:
-> As SD Host Controller Specification v4.10 documents:
-> Host Controller Version 4.10 defines this "Auto CMD Auto Select" mode.
-> Selection of Auto CMD depends on setting of CMD23 Enable in the Host
-> Control 2 register which indicates whether card supports CMD23. If CMD23
-> Enable =1, Auto CMD23 is used and if CMD23 Enable =0, Auto CMD12 is
-> used. In case of Version 4.10 or later, use of Auto CMD Auto Select is
-> recommended rather than use of Auto CMD12 Enable or Auto CMD23
-> Enable.
-> 
-> This patch add this new mode support.
-> 
-> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
-> ---
->  drivers/mmc/host/sdhci.c | 67 ++++++++++++++++++++++++++++++++++++++++--------
->  drivers/mmc/host/sdhci.h |  2 ++
->  2 files changed, 58 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index a72ad0d..06c2ae9 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -312,6 +312,23 @@ static void sdhci_config_dma(struct sdhci_host *host)
->  	sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
->  }
->  
-> +static void sdhci_enable_cmd23(struct sdhci_host *host)
-> +{
-> +	u16 ctrl2;
-> +
-> +	/*
-> +	 * This is used along with "Auto CMD Auto Select" feature,
-> +	 * which is introduced from v4.10, if card supports CMD23,
-> +	 * Auto CMD23 should be used instead of Auto CMD12.
-> +	 */
-> +	if (host->version >= SDHCI_SPEC_410 &&
-> +	    (host->mmc->caps & MMC_CAP_CMD23)) {
+Please pull nfsd changes for 4.19 from:
 
-The caller has already checked those conditions
+  git://linux-nfs.org/~bfields/linux.git tags/nfsd-4.19
 
-> +		ctrl2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-> +		ctrl2 |= SDHCI_CMD23_ENABLE;
-> +		sdhci_writew(host, ctrl2, SDHCI_HOST_CONTROL2);
-> +	}
-> +}
-> +
->  static void sdhci_init(struct sdhci_host *host, int soft)
->  {
->  	struct mmc_host *mmc = host->mmc;
-> @@ -1095,6 +1112,44 @@ static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
->  	       !mrq->cap_cmd_during_tfr;
->  }
->  
-> +static inline void sdhci_auto_cmd_select(struct sdhci_host *host,
-> +					 struct mmc_command *cmd,
-> +					 u16 *mode)
-> +{
-> +	bool use_cmd12 = sdhci_auto_cmd12(host, cmd->mrq) &&
-> +			 (cmd->opcode != SD_IO_RW_EXTENDED);
-> +	bool use_cmd23 = cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23);
-> +
-> +	/*
-> +	 * In case of Version 4.10 or later, use of 'Auto CMD Auto
-> +	 * Select' is recommended rather than use of 'Auto CMD12
-> +	 * Enable' or 'Auto CMD23 Enable'.
-> +	 */
-> +	if (host->version >= SDHCI_SPEC_410 && (use_cmd12 || use_cmd23)) {
-> +		*mode |= SDHCI_TRNS_AUTO_SEL;
-> +		/*
-> +		 * Note no need to set SDHCI_ARGUMENT2 here, since for version
-> +		 * 4.10 and aboves, it doesn't support stuff bits of CMD23
-> +		 * argument but only number of blocks which have been set
-> +		 * already during prepare data.
+--b.
 
-The argument will only have already been written in v4_mode.
+----------------------------------------------------------------
+Chuck Lever fixed a problem with NFSv4.0 callbacks over GSS from
+multi-homed servers.  The only new feature is a minor bit of protocol
+(change_attr_type) which the client doesn't even use yet.  Other than
+that, various bugfixes and cleanup.
 
-> +		 */
-> +		if (use_cmd23)
-> +			sdhci_enable_cmd23(host);
+----------------------------------------------------------------
+Amir Goldstein (1):
+      nfsd: fix leaked file lock with nfs exported overlayfs
 
-Need to ensure that SDHCI_CMD23_ENABLE is cleared for !use_cmd23
+Benjamin Coddington (1):
+      nfsd: don't advertise a SCSI layout for an unsupported request_queue
 
-> +		return;
-> +	}
-> +
-> +	/*
-> +	 * If we are sending CMD23, CMD12 never gets sent
-> +	 * on successful completion (so no Auto-CMD12).
-> +	 */
-> +	if (use_cmd12) {
-> +		*mode |= SDHCI_TRNS_AUTO_CMD12;
-> +	} else if (use_cmd23) {
-> +		*mode |= SDHCI_TRNS_AUTO_CMD23;
-> +		sdhci_writel(host, cmd->mrq->sbc->arg, SDHCI_ARGUMENT2);
-> +	}
-> +}
-> +
->  static void sdhci_set_transfer_mode(struct sdhci_host *host,
->  	struct mmc_command *cmd)
->  {
-> @@ -1121,17 +1176,7 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
->  
->  	if (mmc_op_multi(cmd->opcode) || data->blocks > 1) {
->  		mode = SDHCI_TRNS_BLK_CNT_EN | SDHCI_TRNS_MULTI;
-> -		/*
-> -		 * If we are sending CMD23, CMD12 never gets sent
-> -		 * on successful completion (so no Auto-CMD12).
-> -		 */
-> -		if (sdhci_auto_cmd12(host, cmd->mrq) &&
-> -		    (cmd->opcode != SD_IO_RW_EXTENDED))
-> -			mode |= SDHCI_TRNS_AUTO_CMD12;
-> -		else if (cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23)) {
-> -			mode |= SDHCI_TRNS_AUTO_CMD23;
-> -			sdhci_writel(host, cmd->mrq->sbc->arg, SDHCI_ARGUMENT2);
-> -		}
-> +		sdhci_auto_cmd_select(host, cmd, &mode);
->  	}
->  
->  	if (data->flags & MMC_DATA_READ)
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index daf8c1e..a8d5be5 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -43,6 +43,7 @@
->  #define  SDHCI_TRNS_BLK_CNT_EN	0x02
->  #define  SDHCI_TRNS_AUTO_CMD12	0x04
->  #define  SDHCI_TRNS_AUTO_CMD23	0x08
-> +#define  SDHCI_TRNS_AUTO_SEL	0x0C
->  #define  SDHCI_TRNS_READ	0x10
->  #define  SDHCI_TRNS_MULTI	0x20
->  
-> @@ -186,6 +187,7 @@
->  #define   SDHCI_CTRL_DRV_TYPE_D		0x0030
->  #define  SDHCI_CTRL_EXEC_TUNING		0x0040
->  #define  SDHCI_CTRL_TUNED_CLK		0x0080
-> +#define  SDHCI_CMD23_ENABLE		0x0800
->  #define  SDHCI_CTRL_V4_MODE		0x1000
->  #define  SDHCI_CTRL_64BIT_ADDR		0x2000
->  #define  SDHCI_CTRL_PRESET_VAL_ENABLE	0x8000
-> 
+Chuck Lever (4):
+      svcrdma: Avoid releasing a page in svc_xprt_release()
+      svcrdma: Clean up Read chunk path
+      NFSD: Refactor the generic write vector fill helper
+      NFSD: Handle full-length symlinks
 
+Eric Biggers (1):
+      nfsd: constify write_op[]
+
+Gustavo A. R. Silva (2):
+      nfsd: Mark expected switch fall-through
+      nfsd: use true and false for boolean values
+
+J. Bruce Fields (9):
+      nfsd4: extend reclaim period for reclaiming clients
+      nfsd4: return default lease period
+      nfsd: fix NFSv4 time_delta attribute
+      nfsd4: support change_attr_type attribute
+      nfsd4: less confusing nfsd4_compound_in_session
+      nfsd4: cleanup sessionid in nfsd4_destroy_session
+      nfsd: update obselete comment referencing the BKL
+      nfsd: clarify check_op_ordering
+      nfsd: fix corrupted reply to badly ordered compound
+
+YueHaibing (1):
+      sunrpc: remove redundant variables 'checksumlen','blocksize' and 'data'
+
+nixiaoming (1):
+      fs/nfsd: Delete invalid assignment statements in nfsd4_decode_exchange_id
+
+zhong jiang (1):
+      rpc: remove unneeded variable 'ret' in rdma_listen_handler
+
+ fs/lockd/clntlock.c                      |  2 +-
+ fs/lockd/clntproc.c                      |  2 +-
+ fs/lockd/svclock.c                       | 16 +++----
+ fs/lockd/svcsubs.c                       |  4 +-
+ fs/nfsd/netns.h                          |  1 +
+ fs/nfsd/nfs3proc.c                       |  5 +-
+ fs/nfsd/nfs4callback.c                   |  1 +
+ fs/nfsd/nfs4layouts.c                    | 11 +----
+ fs/nfsd/nfs4proc.c                       | 41 ++++++++---------
+ fs/nfsd/nfs4state.c                      | 53 +++++++++++++++++-----
+ fs/nfsd/nfs4xdr.c                        | 43 +++++++++++++++---
+ fs/nfsd/nfsctl.c                         |  7 +--
+ fs/nfsd/nfsd.h                           |  1 +
+ fs/nfsd/nfsfh.c                          |  6 +--
+ fs/nfsd/nfsproc.c                        |  5 +-
+ include/linux/lockd/lockd.h              |  4 +-
+ include/linux/nfs4.h                     |  8 ++++
+ include/linux/sunrpc/svc.h               |  4 +-
+ net/sunrpc/auth_gss/gss_krb5_crypto.c    |  2 -
+ net/sunrpc/auth_gss/gss_krb5_wrap.c      |  2 -
+ net/sunrpc/svc.c                         | 78 ++++++++++++--------------------
+ net/sunrpc/xprtrdma/svc_rdma.c           |  2 -
+ net/sunrpc/xprtrdma/svc_rdma_recvfrom.c  |  9 ++--
+ net/sunrpc/xprtrdma/svc_rdma_rw.c        | 32 ++++++-------
+ net/sunrpc/xprtrdma/svc_rdma_sendto.c    |  4 +-
+ net/sunrpc/xprtrdma/svc_rdma_transport.c |  3 +-
+ 26 files changed, 193 insertions(+), 153 deletions(-)
