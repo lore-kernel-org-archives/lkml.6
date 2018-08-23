@@ -2,334 +2,152 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F64C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30280C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 177EB208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 177EB208D6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id D554E208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="EwzSpXLC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D554E208D6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730451AbeHWLt1 (ORCPT
+        id S1729748AbeHWLtt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:49:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46742 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728281AbeHWLt0 (ORCPT
+        Thu, 23 Aug 2018 07:49:49 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33157 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728096AbeHWLts (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:49:26 -0400
-Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DFF35C83;
-        Thu, 23 Aug 2018 08:20:55 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gevorg Sahakyan <sahakyan@synopsys.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        William Wu <william.wu@rock-chips.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 044/217] usb: dwc2: alloc dma aligned buffer for isoc split in
-Date:   Thu, 23 Aug 2018 09:52:37 +0200
-Message-Id: <20180823075507.510512111@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
-References: <20180823075505.090246914@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 23 Aug 2018 07:49:48 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d4-v6so2336830pfn.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 01:21:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jmo0+uf6Nq5OQ3x30/PXzdsoF2UdQTxUC0+1PBESmhM=;
+        b=EwzSpXLCjvurEVf53wHGIELJlRMLxokVIzlANondKQ882F7W8qupStUhUzZd3hb+cV
+         2wvbg6gnxyB+6t/akASos73k6cFyEr+9jVkSbkvsXh4f8qiknqXkLC2Gqgzhh61nlYZt
+         Z/+JPw4IV/tLjUI3TAaoPAIjkc73bTFc8Pbri3hXXyfcWTooqEvqTk6h9b5qJBwTsyer
+         4/i6g8U8/Grg587W0wQc2pwMWJQORDqb7NSYvQi5NPXvhiG+BPyTj4fpz9M7c7UUkZn5
+         Jb2SuTtc9maggEGYxN8Y9iCwJf/OhlL34ij50Imad+9RHfhT+ANff8ZueG0R7MMk8jET
+         iQKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jmo0+uf6Nq5OQ3x30/PXzdsoF2UdQTxUC0+1PBESmhM=;
+        b=b4og20LEpKlasrzCq65TtWvRfGoiUZq8BE4UGlk34bvVNKu5HjTEx0TrFu7YDa8ZFi
+         cLA6LrfE7opHoU013hQStBvtfqWHvhOEBzpct7ATw9wwh14QuafhHYMxJQP+EL1HROhm
+         pWS0rsrtrga+AmzqXW+beiFmfc14w0Q0aInL1GpaS5HM2ecRutVwooMuX+Nu2Gv16PM7
+         R+Fg3+dEF3aMpaVozNbjAMHHTlYDoWoydyPjdUeVO5HANlgQQjZaAyNDjoepakZibtZE
+         zwhnvLBiMthtG8sZQOr/grKQjeZqAyfheqYcyxPyujwa2r+aWUq+DQYR+TKxkPV90hvX
+         pcsA==
+X-Gm-Message-State: AOUpUlHOQULxfMgFRN3tEpBJz2U0Yw+TaVS22cznNxK8N5VmsA7dDREO
+        nnXe3OjjMxj53fKM9RPQcbHPFQ==
+X-Google-Smtp-Source: AA+uWPzkKXPCE1+IsL393eRrDc45XNwJGHnxAVoSTeNUphXIIsKuWlFex6076NaV+Z/2FKgGJ8/mOw==
+X-Received: by 2002:a62:4083:: with SMTP id f3-v6mr61885359pfd.229.1535012478988;
+        Thu, 23 Aug 2018 01:21:18 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([192.55.54.41])
+        by smtp.gmail.com with ESMTPSA id p26-v6sm6616514pfi.183.2018.08.23.01.21.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 Aug 2018 01:21:17 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id DBAB43000BE; Thu, 23 Aug 2018 11:21:12 +0300 (+03)
+Date:   Thu, 23 Aug 2018 11:21:12 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
+        kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] mm: migration: fix migration of huge PMD shared
+ pages
+Message-ID: <20180823082112.xln7rinqcwt54teg@kshutemo-mobl1>
+References: <20180821205902.21223-2-mike.kravetz@oracle.com>
+ <201808220831.eM0je51n%fengguang.wu@intel.com>
+ <975b740d-26a6-eb3f-c8ca-1a9995d0d343@oracle.com>
+ <20180822122848.GL29735@dhcp22.suse.cz>
+ <4a95a24f-534f-0938-f358-2a410817a412@oracle.com>
+ <20180823073035.GT29735@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180823073035.GT29735@dhcp22.suse.cz>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Aug 23, 2018 at 09:30:35AM +0200, Michal Hocko wrote:
+> On Wed 22-08-18 09:48:16, Mike Kravetz wrote:
+> > On 08/22/2018 05:28 AM, Michal Hocko wrote:
+> > > On Tue 21-08-18 18:10:42, Mike Kravetz wrote:
+> > > [...]
+> > >> diff --git a/mm/rmap.c b/mm/rmap.c
+> > >> index eb477809a5c0..8cf853a4b093 100644
+> > >> --- a/mm/rmap.c
+> > >> +++ b/mm/rmap.c
+> > >> @@ -1362,11 +1362,21 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+> > >>  	}
+> > >>  
+> > >>  	/*
+> > >> -	 * We have to assume the worse case ie pmd for invalidation. Note that
+> > >> -	 * the page can not be free in this function as call of try_to_unmap()
+> > >> -	 * must hold a reference on the page.
+> > >> +	 * For THP, we have to assume the worse case ie pmd for invalidation.
+> > >> +	 * For hugetlb, it could be much worse if we need to do pud
+> > >> +	 * invalidation in the case of pmd sharing.
+> > >> +	 *
+> > >> +	 * Note that the page can not be free in this function as call of
+> > >> +	 * try_to_unmap() must hold a reference on the page.
+> > >>  	 */
+> > >>  	end = min(vma->vm_end, start + (PAGE_SIZE << compound_order(page)));
+> > >> +	if (PageHuge(page)) {
+> > >> +		/*
+> > >> +		 * If sharing is possible, start and end will be adjusted
+> > >> +		 * accordingly.
+> > >> +		 */
+> > >> +		(void)huge_pmd_sharing_possible(vma, &start, &end);
+> > >> +	}
+> > >>  	mmu_notifier_invalidate_range_start(vma->vm_mm, start, end);
+> > > 
+> > > I do not get this part. Why don't we simply unconditionally invalidate
+> > > the whole huge page range?
+> > 
+> > In this routine, we are only unmapping a single page.  The existing code
+> > is limiting the invalidate range to that page size: 4K or 2M.  With shared
+> > PMDs, we have the possibility of unmapping a PUD_SIZE area: 1G.  I don't
+> > think we want to unconditionally invalidate 1G.  Is that what you are asking?
+> 
+> But we know that huge_pmd_unshare unmapped a shared pte so we know when
+> to flush 2MB or 1GB. I really do not like how huge_pmd_sharing_possible
+> a) duplicates some checks and b) it updates start/stop out of line.
 
-------------------
+My reading on this is that mmu_notifier_invalidate_range_start() has to be
+called from sleepable context on the full range that *can* be invalidated
+before following mmu_notifier_invalidate_range_end().
 
-From: William Wu <william.wu@rock-chips.com>
+In this case huge_pmd_unshare() may unmap aligned PUD_SIZE around the PMD
+page that effectively enlarge range that has to be covered by
+mmu_notifier_invalidate_range_start(). We cannot yet know if there's any
+shared page tables in the range, so we need to go with worst case
+scenario.
 
-[ Upstream commit af424a410749ed7e0c2bffd3cedbc7c274d0ff6f ]
+I don't see conceptually better solution than what is proposed.
 
-The commit 3bc04e28a030 ("usb: dwc2: host: Get aligned DMA in
-a more supported way") rips out a lot of code to simply the
-allocation of aligned DMA. However, it also introduces a new
-issue when use isoc split in transfer.
-
-In my test case, I connect the dwc2 controller with an usb hs
-Hub (GL852G-12), and plug an usb fs audio device (Plantronics
-headset) into the downstream port of Hub. Then use the usb mic
-to record, we can find noise when playback.
-
-It's because that the usb Hub uses an MDATA for the first
-transaction and a DATA0 for the second transaction for the isoc
-split in transaction. An typical isoc split in transaction sequence
-like this:
-
-- SSPLIT IN transaction
-- CSPLIT IN transaction
-  - MDATA packet
-- CSPLIT IN transaction
-  - DATA0 packet
-
-The DMA address of MDATA (urb->dma) is always DWORD-aligned, but
-the DMA address of DATA0 (urb->dma + qtd->isoc_split_offset) may
-not be DWORD-aligned, it depends on the qtd->isoc_split_offset (the
-length of MDATA). In my test case, the length of MDATA is usually
-unaligned, this cause DATA0 packet transmission error.
-
-This patch use kmem_cache to allocate aligned DMA buf for isoc
-split in transaction. Note that according to usb 2.0 spec, the
-maximum data payload size is 1023 bytes for each fs isoc ep,
-and the maximum allowable interrupt data payload size is 64 bytes
-or less for fs interrupt ep. So we set the size of object to be
-1024 bytes in the kmem cache.
-
-Tested-by: Gevorg Sahakyan <sahakyan@synopsys.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Acked-by: Minas Harutyunyan hminas@synopsys.com>
-Signed-off-by: William Wu <william.wu@rock-chips.com>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/usb/dwc2/core.h      |    3 +
- drivers/usb/dwc2/hcd.c       |   89 ++++++++++++++++++++++++++++++++++++++++---
- drivers/usb/dwc2/hcd.h       |    8 +++
- drivers/usb/dwc2/hcd_intr.c  |    8 +++
- drivers/usb/dwc2/hcd_queue.c |    3 +
- 5 files changed, 106 insertions(+), 5 deletions(-)
-
---- a/drivers/usb/dwc2/core.h
-+++ b/drivers/usb/dwc2/core.h
-@@ -872,6 +872,7 @@ struct dwc2_hregs_backup {
-  * @frame_list_sz:      Frame list size
-  * @desc_gen_cache:     Kmem cache for generic descriptors
-  * @desc_hsisoc_cache:  Kmem cache for hs isochronous descriptors
-+ * @unaligned_cache:    Kmem cache for DMA mode to handle non-aligned buf
-  *
-  * These are for peripheral mode:
-  *
-@@ -1004,6 +1005,8 @@ struct dwc2_hsotg {
- 	u32 frame_list_sz;
- 	struct kmem_cache *desc_gen_cache;
- 	struct kmem_cache *desc_hsisoc_cache;
-+	struct kmem_cache *unaligned_cache;
-+#define DWC2_KMEM_UNALIGNED_BUF_SIZE 1024
- 
- #ifdef DEBUG
- 	u32 frrem_samples;
---- a/drivers/usb/dwc2/hcd.c
-+++ b/drivers/usb/dwc2/hcd.c
-@@ -1544,11 +1544,20 @@ static void dwc2_hc_start_transfer(struc
- 	}
- 
- 	if (hsotg->params.host_dma) {
--		dwc2_writel((u32)chan->xfer_dma,
--			    hsotg->regs + HCDMA(chan->hc_num));
-+		dma_addr_t dma_addr;
-+
-+		if (chan->align_buf) {
-+			if (dbg_hc(chan))
-+				dev_vdbg(hsotg->dev, "align_buf\n");
-+			dma_addr = chan->align_buf;
-+		} else {
-+			dma_addr = chan->xfer_dma;
-+		}
-+		dwc2_writel((u32)dma_addr, hsotg->regs + HCDMA(chan->hc_num));
-+
- 		if (dbg_hc(chan))
- 			dev_vdbg(hsotg->dev, "Wrote %08lx to HCDMA(%d)\n",
--				 (unsigned long)chan->xfer_dma, chan->hc_num);
-+				 (unsigned long)dma_addr, chan->hc_num);
- 	}
- 
- 	/* Start the split */
-@@ -2604,6 +2613,35 @@ static void dwc2_hc_init_xfer(struct dwc
- 	}
- }
- 
-+static int dwc2_alloc_split_dma_aligned_buf(struct dwc2_hsotg *hsotg,
-+					    struct dwc2_qh *qh,
-+					    struct dwc2_host_chan *chan)
-+{
-+	if (!hsotg->unaligned_cache ||
-+	    chan->max_packet > DWC2_KMEM_UNALIGNED_BUF_SIZE)
-+		return -ENOMEM;
-+
-+	if (!qh->dw_align_buf) {
-+		qh->dw_align_buf = kmem_cache_alloc(hsotg->unaligned_cache,
-+						    GFP_ATOMIC | GFP_DMA);
-+		if (!qh->dw_align_buf)
-+			return -ENOMEM;
-+	}
-+
-+	qh->dw_align_buf_dma = dma_map_single(hsotg->dev, qh->dw_align_buf,
-+					      DWC2_KMEM_UNALIGNED_BUF_SIZE,
-+					      DMA_FROM_DEVICE);
-+
-+	if (dma_mapping_error(hsotg->dev, qh->dw_align_buf_dma)) {
-+		dev_err(hsotg->dev, "can't map align_buf\n");
-+		chan->align_buf = 0;
-+		return -EINVAL;
-+	}
-+
-+	chan->align_buf = qh->dw_align_buf_dma;
-+	return 0;
-+}
-+
- #define DWC2_USB_DMA_ALIGN 4
- 
- static void dwc2_free_dma_aligned_buffer(struct urb *urb)
-@@ -2783,6 +2821,32 @@ static int dwc2_assign_and_init_hc(struc
- 	/* Set the transfer attributes */
- 	dwc2_hc_init_xfer(hsotg, chan, qtd);
- 
-+	/* For non-dword aligned buffers */
-+	if (hsotg->params.host_dma && qh->do_split &&
-+	    chan->ep_is_in && (chan->xfer_dma & 0x3)) {
-+		dev_vdbg(hsotg->dev, "Non-aligned buffer\n");
-+		if (dwc2_alloc_split_dma_aligned_buf(hsotg, qh, chan)) {
-+			dev_err(hsotg->dev,
-+				"Failed to allocate memory to handle non-aligned buffer\n");
-+			/* Add channel back to free list */
-+			chan->align_buf = 0;
-+			chan->multi_count = 0;
-+			list_add_tail(&chan->hc_list_entry,
-+				      &hsotg->free_hc_list);
-+			qtd->in_process = 0;
-+			qh->channel = NULL;
-+			return -ENOMEM;
-+		}
-+	} else {
-+		/*
-+		 * We assume that DMA is always aligned in non-split
-+		 * case or split out case. Warn if not.
-+		 */
-+		WARN_ON_ONCE(hsotg->params.host_dma &&
-+			     (chan->xfer_dma & 0x3));
-+		chan->align_buf = 0;
-+	}
-+
- 	if (chan->ep_type == USB_ENDPOINT_XFER_INT ||
- 	    chan->ep_type == USB_ENDPOINT_XFER_ISOC)
- 		/*
-@@ -5277,6 +5341,19 @@ int dwc2_hcd_init(struct dwc2_hsotg *hso
- 		}
- 	}
- 
-+	if (hsotg->params.host_dma) {
-+		/*
-+		 * Create kmem caches to handle non-aligned buffer
-+		 * in Buffer DMA mode.
-+		 */
-+		hsotg->unaligned_cache = kmem_cache_create("dwc2-unaligned-dma",
-+						DWC2_KMEM_UNALIGNED_BUF_SIZE, 4,
-+						SLAB_CACHE_DMA, NULL);
-+		if (!hsotg->unaligned_cache)
-+			dev_err(hsotg->dev,
-+				"unable to create dwc2 unaligned cache\n");
-+	}
-+
- 	hsotg->otg_port = 1;
- 	hsotg->frame_list = NULL;
- 	hsotg->frame_list_dma = 0;
-@@ -5311,8 +5388,9 @@ int dwc2_hcd_init(struct dwc2_hsotg *hso
- 	return 0;
- 
- error4:
--	kmem_cache_destroy(hsotg->desc_gen_cache);
-+	kmem_cache_destroy(hsotg->unaligned_cache);
- 	kmem_cache_destroy(hsotg->desc_hsisoc_cache);
-+	kmem_cache_destroy(hsotg->desc_gen_cache);
- error3:
- 	dwc2_hcd_release(hsotg);
- error2:
-@@ -5353,8 +5431,9 @@ void dwc2_hcd_remove(struct dwc2_hsotg *
- 	usb_remove_hcd(hcd);
- 	hsotg->priv = NULL;
- 
--	kmem_cache_destroy(hsotg->desc_gen_cache);
-+	kmem_cache_destroy(hsotg->unaligned_cache);
- 	kmem_cache_destroy(hsotg->desc_hsisoc_cache);
-+	kmem_cache_destroy(hsotg->desc_gen_cache);
- 
- 	dwc2_hcd_release(hsotg);
- 	usb_put_hcd(hcd);
---- a/drivers/usb/dwc2/hcd.h
-+++ b/drivers/usb/dwc2/hcd.h
-@@ -75,6 +75,8 @@ struct dwc2_qh;
-  *                      (micro)frame
-  * @xfer_buf:           Pointer to current transfer buffer position
-  * @xfer_dma:           DMA address of xfer_buf
-+ * @align_buf:          In Buffer DMA mode this will be used if xfer_buf is not
-+ *                      DWORD aligned
-  * @xfer_len:           Total number of bytes to transfer
-  * @xfer_count:         Number of bytes transferred so far
-  * @start_pkt_count:    Packet count at start of transfer
-@@ -132,6 +134,7 @@ struct dwc2_host_chan {
- 
- 	u8 *xfer_buf;
- 	dma_addr_t xfer_dma;
-+	dma_addr_t align_buf;
- 	u32 xfer_len;
- 	u32 xfer_count;
- 	u16 start_pkt_count;
-@@ -302,6 +305,9 @@ struct dwc2_hs_transfer_time {
-  *                           is tightly packed.
-  * @ls_duration_us:     Duration on the low speed bus schedule.
-  * @ntd:                Actual number of transfer descriptors in a list
-+ * @dw_align_buf:       Used instead of original buffer if its physical address
-+ *                      is not dword-aligned
-+ * @dw_align_buf_dma:   DMA address for dw_align_buf
-  * @qtd_list:           List of QTDs for this QH
-  * @channel:            Host channel currently processing transfers for this QH
-  * @qh_list_entry:      Entry for QH in either the periodic or non-periodic
-@@ -345,6 +351,8 @@ struct dwc2_qh {
- 	struct dwc2_hs_transfer_time hs_transfers[DWC2_HS_SCHEDULE_UFRAMES];
- 	u32 ls_start_schedule_slice;
- 	u16 ntd;
-+	u8 *dw_align_buf;
-+	dma_addr_t dw_align_buf_dma;
- 	struct list_head qtd_list;
- 	struct dwc2_host_chan *channel;
- 	struct list_head qh_list_entry;
---- a/drivers/usb/dwc2/hcd_intr.c
-+++ b/drivers/usb/dwc2/hcd_intr.c
-@@ -931,6 +931,14 @@ static int dwc2_xfercomp_isoc_split_in(s
- 
- 	frame_desc->actual_length += len;
- 
-+	if (chan->align_buf) {
-+		dev_vdbg(hsotg->dev, "non-aligned buffer\n");
-+		dma_unmap_single(hsotg->dev, chan->qh->dw_align_buf_dma,
-+				 DWC2_KMEM_UNALIGNED_BUF_SIZE, DMA_FROM_DEVICE);
-+		memcpy(qtd->urb->buf + (chan->xfer_dma - qtd->urb->dma),
-+		       chan->qh->dw_align_buf, len);
-+	}
-+
- 	qtd->isoc_split_offset += len;
- 
- 	hctsiz = dwc2_readl(hsotg->regs + HCTSIZ(chnum));
---- a/drivers/usb/dwc2/hcd_queue.c
-+++ b/drivers/usb/dwc2/hcd_queue.c
-@@ -1632,6 +1632,9 @@ void dwc2_hcd_qh_free(struct dwc2_hsotg
- 
- 	if (qh->desc_list)
- 		dwc2_hcd_qh_free_ddma(hsotg, qh);
-+	else if (hsotg->unaligned_cache && qh->dw_align_buf)
-+		kmem_cache_free(hsotg->unaligned_cache, qh->dw_align_buf);
-+
- 	kfree(qh);
- }
- 
-
-
+-- 
+ Kirill A. Shutemov
