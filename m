@@ -5,95 +5,84 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2FEC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC305C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:04:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4BE92150F
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:00:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4BE92150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 501BB2150F
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:04:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 501BB2150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbeHXAcZ (ORCPT
+        id S1727610AbeHXAfi convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 20:32:25 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:61313 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727306AbeHXAcY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 20:32:24 -0400
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w7NL0t3f031144;
-        Fri, 24 Aug 2018 06:00:55 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
- Fri, 24 Aug 2018 06:00:55 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w7NL0o9H031131
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Fri, 24 Aug 2018 06:00:55 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
- should_reclaim_retry().
-To:     David Rientjes <rientjes@google.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <9158a23e-7793-7735-e35c-acd540ca59bf@i-love.sakura.ne.jp>
- <20180730144647.GX24267@dhcp22.suse.cz>
- <20180730145425.GE1206094@devbig004.ftw2.facebook.com>
- <0018ac3b-94ee-5f09-e4e0-df53d2cbc925@i-love.sakura.ne.jp>
- <20180730154424.GG1206094@devbig004.ftw2.facebook.com>
- <20180730185110.GB24267@dhcp22.suse.cz>
- <20180730191005.GC24267@dhcp22.suse.cz>
- <6f433d59-4a56-b698-e119-682bb8bf6713@i-love.sakura.ne.jp>
- <20180731050928.GA4557@dhcp22.suse.cz>
- <d11c3aa2-0f14-d882-59c5-6634dc56eed1@i-love.sakura.ne.jp>
- <20180803061653.GB27245@dhcp22.suse.cz>
- <804b50cb-0b17-201a-790b-18604396f826@i-love.sakura.ne.jp>
- <alpine.DEB.2.21.1808231304080.15798@chino.kir.corp.google.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <cb2d635c-c14d-c2cc-868a-d4c447364f0d@i-love.sakura.ne.jp>
-Date:   Fri, 24 Aug 2018 06:00:48 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1808231304080.15798@chino.kir.corp.google.com>
-Content-Type: text/plain; charset=utf-8
+        Thu, 23 Aug 2018 20:35:38 -0400
+Received: from mga05.intel.com ([192.55.52.43]:34485 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727306AbeHXAfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 20:35:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2018 14:04:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,279,1531810800"; 
+   d="scan'208";a="85898320"
+Received: from orsmsx109.amr.corp.intel.com ([10.22.240.7])
+  by orsmga002.jf.intel.com with ESMTP; 23 Aug 2018 14:04:09 -0700
+Received: from orsmsx101.amr.corp.intel.com ([169.254.8.46]) by
+ ORSMSX109.amr.corp.intel.com ([169.254.11.80]) with mapi id 14.03.0319.002;
+ Thu, 23 Aug 2018 14:04:09 -0700
+From:   "Brown, Aaron F" <aaron.f.brown@intel.com>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>,
+        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [Intel-wired-lan] [PATCH 1/2] net: intel: igb: Replace
+ GFP_ATOMIC with GFP_KERNEL in igb_sw_init()
+Thread-Topic: [Intel-wired-lan] [PATCH 1/2] net: intel: igb: Replace
+ GFP_ATOMIC with GFP_KERNEL in igb_sw_init()
+Thread-Index: AQHUJYCyDcK1KNmEWkCbAPhBTkPl1aTN/nMw
+Date:   Thu, 23 Aug 2018 21:04:08 +0000
+Message-ID: <309B89C4C689E141A5FF6A0C5FB2118B9655021D@ORSMSX101.amr.corp.intel.com>
+References: <20180727080453.3198-1-baijiaju1990@gmail.com>
+In-Reply-To: <20180727080453.3198-1-baijiaju1990@gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/08/24 5:06, David Rientjes wrote:
-> For those of us who are tracking CVE-2016-10723 which has peristently been 
-> labeled as "disputed" and with no clear indication of what patches address 
-> it, I am assuming that commit 9bfe5ded054b ("mm, oom: remove sleep from 
-> under oom_lock") and this patch are the intended mitigations?
+> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
+> Behalf Of Jia-Ju Bai
+> Sent: Friday, July 27, 2018 1:05 AM
+> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>
+> Cc: netdev@vger.kernel.org; Jia-Ju Bai <baijiaju1990@gmail.com>; intel-
+> wired-lan@lists.osuosl.org; linux-kernel@vger.kernel.org
+> Subject: [Intel-wired-lan] [PATCH 1/2] net: intel: igb: Replace GFP_ATOMIC
+> with GFP_KERNEL in igb_sw_init()
 > 
-> A list of SHA1s for merged fixed and links to proposed patches to address 
-> this issue would be appreciated.
+> igb_sw_init() is never called in atomic context.
+> It calls kzalloc() and kcalloc() with GFP_ATOMIC, which is not necessary.
+> GFP_ATOMIC can be replaced with GFP_KERNEL.
+> 
+> This is found by a static analysis tool named DCNS written by myself.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  drivers/net/ethernet/intel/igb/igb_main.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
 
-Commit 9bfe5ded054b ("mm, oom: remove sleep from under oom_lock") is a
-mitigation for CVE-2016-10723.
-
-"[PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
-should_reclaim_retry()." is independent from CVE-2016-10723.
-
-We haven't made sure that the OOM reaper / exit_mmap() will get enough CPU
-resources. For example, under a cluster of concurrently allocating realtime
-scheduling priority threads, the OOM reaper takes about 1800 milliseconds
-whereas direct OOM reaping takes only a few milliseconds.
-
-Regards.
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
