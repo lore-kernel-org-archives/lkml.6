@@ -2,178 +2,158 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88534C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B50A1C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:31:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35BDF20A8B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:28:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35BDF20A8B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 355DE213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:31:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="NIIBd4Qo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 355DE213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbeHWM5Z (ORCPT
+        id S1728634AbeHWNAH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:57:25 -0400
-Received: from foss.arm.com ([217.140.101.70]:43506 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726182AbeHWM5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:57:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 22F3780D;
-        Thu, 23 Aug 2018 02:28:35 -0700 (PDT)
-Received: from [10.4.12.81] (melchizedek.emea.arm.com [10.4.12.81])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 83A4F3F2EA;
-        Thu, 23 Aug 2018 02:28:33 -0700 (PDT)
-Subject: Re: [RFC PATCH] EDAC, ghes: Enable per-layer error reporting for ARM
-To:     Tyler Baicar <tbaicar@codeaurora.org>
-Cc:     Borislav Petkov <bp@alien8.de>, harba@qti.qualcomm.com,
-        mchehab@kernel.org, linux-edac@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        wufan@codeaurora.org
-References: <1531762009-15112-1-git-send-email-tbaicar@codeaurora.org>
- <20180719140102.GB25185@nazgul.tnic>
- <94e3a0fb-9b7d-045f-733b-9f063dcb39e4@arm.com>
- <45fefe7d-c6ea-5791-4477-13ecce39ce48@codeaurora.org>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <b568fdcc-ca39-67ea-2799-8ed246c8ffb6@arm.com>
-Date:   Thu, 23 Aug 2018 10:28:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <45fefe7d-c6ea-5791-4477-13ecce39ce48@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+        Thu, 23 Aug 2018 09:00:07 -0400
+Received: from mail-co1nam03on0081.outbound.protection.outlook.com ([104.47.40.81]:37878
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726182AbeHWNAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 09:00:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O64ssM6WIZbKuZjiY0o4FGYsyFvC0yLNNFucspGeqm0=;
+ b=NIIBd4QoITDKimh2KNEgjo68I3oTA8oZhG61XptY613Vhy0wqqF31Smy2YyeZjEf/2r4gY6KR4AmfStMtQ6C1jfy9sCnRA2WTnGe+DE+BIC3+txRveGHlj2TyAd/OU5Pn7j2xeTruKEaV+/UpUXs5pmIRiArarXEzq2SzFwXrHo=
+Received: from CY1PR0501MB1466.namprd05.prod.outlook.com (10.160.149.14) by
+ CY1PR0501MB1737.namprd05.prod.outlook.com (10.163.140.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1101.5; Thu, 23 Aug 2018 09:31:10 +0000
+Received: from CY1PR0501MB1466.namprd05.prod.outlook.com
+ ([fe80::fd33:1b2e:ea31:5669]) by CY1PR0501MB1466.namprd05.prod.outlook.com
+ ([fe80::fd33:1b2e:ea31:5669%5]) with mapi id 15.20.1080.010; Thu, 23 Aug 2018
+ 09:31:09 +0000
+From:   Tiejun Chen <tiejunc@vmware.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>
+CC:     Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Julia Cartwright <julia@ni.com>,
+        Daniel Wagner <daniel.wagner@siemens.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: RE: [ANNOUNCE] 4.14.63-rt40
+Thread-Topic: [ANNOUNCE] 4.14.63-rt40
+Thread-Index: AQHUOkQOccSmKfMc/UepmWNJbbvpHqTNEpIw
+Date:   Thu, 23 Aug 2018 09:31:09 +0000
+Message-ID: <CY1PR0501MB14666E51F4D066F2E0C5208AC5370@CY1PR0501MB1466.namprd05.prod.outlook.com>
+References: <20180822141458.0b6b6af7@gandalf.local.home>
+In-Reply-To: <20180822141458.0b6b6af7@gandalf.local.home>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=tiejunc@vmware.com; 
+x-originating-ip: [66.170.99.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY1PR0501MB1737;20:b2c0sgOw62ZlBXyBZB33DREXq3C46uNzw+/OUuaOoyEm0SMuA47hK2W9Je8JQOMNb951MaeYrgqrb8qh65GFFXb+Sp2IZXS7r6C3bPYErsrgUUWf6frNHQ5c9SiGJA/PBqlV8wbzZIqgOMjgqwYDDZwTkKTZEoIMw/RNypCYQW8=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: bf804294-ba5d-4fa3-8f5d-08d608db2919
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CY1PR0501MB1737;
+x-ms-traffictypediagnostic: CY1PR0501MB1737:
+bcl:    0
+x-microsoft-antispam-prvs: <CY1PR0501MB1737574F6E71CC33D9FEBFCCC5370@CY1PR0501MB1737.namprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(181554191321653)(9452136761055)(189930954265078)(84791874153150)(219752817060721)(126837547833334)(33711482430040)(228905959029699)(145744241990776);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(201708071742011)(7699016);SRVR:CY1PR0501MB1737;BCL:0;PCL:0;RULEID:;SRVR:CY1PR0501MB1737;
+x-forefront-prvs: 0773BB46AC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(136003)(366004)(39860400002)(189003)(199004)(13464003)(53936002)(55016002)(256004)(74316002)(14444005)(76176011)(2906002)(229853002)(6436002)(6306002)(9686003)(316002)(54906003)(8676002)(86362001)(7736002)(6506007)(26005)(81166006)(53546011)(446003)(305945005)(7696005)(486006)(66066001)(99286004)(5250100002)(575784001)(110136005)(81156014)(186003)(11346002)(102836004)(25786009)(8936002)(478600001)(68736007)(14454004)(97736004)(45080400002)(4326008)(5660300001)(2900100001)(7416002)(3846002)(966005)(106356001)(6116002)(105586002)(33656002)(476003)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR0501MB1737;H:CY1PR0501MB1466.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Qb1NrtqV0kDkxrttMTF5T4IeztAHZUBqcekIBIaGNP3h1BFYhGr/XQCHpTdCr3/oh3t1GCav5uQF5xQVArDyzYhrFMw5C83mbsSUMiUB4GOrJI5Nz2gA5l3C/X7NjQj2eXRlqFzUs6K3B4y3KeTZI3jamaAJdX/y7RR9QnXvB+H5ggUBvp8EBVpTm5SS9VgabAH6UPQ/baZ9sGKK3iaHU/dV5pLLSPCuLSou/VJzyDxyCHxTRn8acrxF9Pdu6Y980xgfY94iTIqjpG4IQw+/1+JF4/IbpQZCM9OHOPY5nmoB9N41Sb0RDFfwZgAsV2bBl4xDpL/oUkTypccBQEG8iHVrVP3Er1iuR1ptLULWyIU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf804294-ba5d-4fa3-8f5d-08d608db2919
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2018 09:31:09.8443
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0501MB1737
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi guys,
-
-(CC: +Fan Wu)
-
-On 19/07/18 19:36, Tyler Baicar wrote:
-> On 7/19/2018 10:46 AM, James Morse wrote:
->> On 19/07/18 15:01, Borislav Petkov wrote:
->>> On Mon, Jul 16, 2018 at 01:26:49PM -0400, Tyler Baicar wrote:
->>>> Enable per-layer error reporting for ARM systems so that the error
->>>> counters are incremented per-DIMM.
-
-This 'layer' term seems to be EDAC's artificial view of memory.
-
-
->> I'm guessing this is the mapping between CPER records and the DMItable data.
-
-> Unfortunately the DMI table doesn't actually have channel and DIMM number values
-> which makes this more complicated than I originally thought...
-
->>>> information and enable per layer error reporting for ARM systems so that
->>>> the EDAC error counters are incremented based on DIMM number as per the
->>>> SMBIOS table rather than just incrementing the noinfo counters on the
->>>> memory controller.
-
->> Does this work on x86, and its just the dmi/cper fields have a subtle difference?
-
-> There are CPU specific EDAC drivers for a lot of x86 folks and those drivers
-> populate the layer information in a custom way.
-
-Not for GHES surely?
-
-
-> With more investigation and testing it turns out a simple patch like this is not
-> going to work. This worked for
-> me on a 1DPC board since the card number turned out to always be the same as the
-> index into the DMI table
-> to find the proper DIMM. On a 2DPC board this fails completely. The ghes_edac
-> driver only sets up a single
-> layer so it is only using the card number with this patch.
-
-(DPC == DIMM per Channel?)
-
-
-> So it is only setting up a single layer with all the DIMMs on that layer. In
-> order to properly enable the layers
-> to represent channel and DIMM number on that channel, we would need to have a
-> way of determining the
-> number of channels (which would be layers[0].size) and the number of DIMMs each
-> channel supported
-> (layers[1].size). There doesn't appear to be a way to determine that information
-> at this point.
-
-So, we're after a mapping for EDAC:layers that includes 'channel'?
-
-What would you do with a channel counter? Isn't that part of the SoC? (it can't
-be replaced!)
-
-
-> The goal is to be able to enable the per layer error reporting in the ghes_edac
-> driver so that the per dimm counters exposed in the EDAC sysfs nodes are properly
-> updated.
-
-What do you mean by layer? I can't find anything in the ACPI/UEFI/SMBIOS specs
-that uses this term...
-
-If its just 'per dimm counters' you're after, this looks straightforward.
-
-
-> The other obvious but more messy way would be to have notifiers register to be called
-> by ghes_edac and have a custom EDAC driver for each CPU to properly populate their layer
-> information.
-
-Yuck. This isn't platform specific, its firmware specific. You're hooking the
-driver to say "my firmware thinks 'card' means this".
-
-Where would this information come from? We don't want
-per-soc,per-firmware-version code mangling what was supposed to be a standard
-interface.
-
-... we can't be the first people to try and do this ...
-
-[re-ordered hunk:]
-> This seems pretty hacky to me, so if anyone has other suggestions please share
-> them.
-
-CPER's "Memory Error Record 2" thinks that "NODE, CARD and MODULE should provide
-the information necessary to identify the failing FRU". As EDAC has three
-'levels', these are what they should correspond to for ghes-edac.
-
-I assume NODE means rack/chassis in some distributed system. Lets ignore it as
-it doesn't seem to map to anything in the SMBIOS table.
-
-The CPER record's card and module numbers are useless to us, as we need to know
-how many there will be in advance. (does this version of firmware count from 0
-or 1?)
-
-... but CPER also gives us a 'Card Handle' and 'Module Handle'.
-'Module Handle' maps to SMBIOS:17 Memory Device (aka, a DIMM). The Handle is a
-word-value in the structure, so it doesn't depend on the layout/parse-order of
-the SMBIOS tables. When we count the DIMMs in edac-ghes we can give them some
-level-idx, then use the handle to find which level-idx to use for this DIMM.
-
-ghes_edac_report_mem_error() already picks up the module-handle, but only uses
-it to print the bank/device.
-
-
-'Card' doesn't mean much to me, but it maps to SMBIOS:17 "Memory Array
-Structure", which the Memory Device structure also points to.
-Card then must mean "a collection of memory devices (DIMMs) that operate
-together to form an address space".
-
-This might be what I think of as a memory-controller, or it might be something
-more complicated. Regardless, the CPER records think its relevant.
-
-For the edac:layers, we could walk the DMI table to find these structures, and
-build the layers from them. If the Memory-array-structures are missing, we can
-use the existing 1:NUM_DIMMS approach.
-
-
-Hope this makes sense!
-
-
-Thanks,
-
-James
+U3RldmVuLA0KDQpjb21taXQgN2YxMWE1OTFiYmRiMTExNzkyMjk4MTQ0YzM0NzY1MDZhYTdmMWNh
+OCAoSEVBRCAtPiB2NC4xNC42My1ydDQwLXJlYmFzZSwgdGFnOiB2NC4xNC42My1ydDQwLXJlYmFz
+ZSwgb3JpZ2luL3Y0LjE0LXJ0LXJlYmFzZSkNCkF1dGhvcjogU3RldmVuIFJvc3RlZHQgKFZNd2Fy
+ZSkgPHJvc3RlZHRAZ29vZG1pcy5vcmc+DQpEYXRlOiAgIFdlZCBNYXkgMTYgMDk6MzM6MDAgMjAx
+OCAtMDQwMA0KDQogICAgTGludXggNC4xNC42My1ydDQwIFJFQkFTRQ0KDQpkaWZmIC0tZ2l0IGEv
+bG9jYWx2ZXJzaW9uLXJ0IGIvbG9jYWx2ZXJzaW9uLXJ0DQppbmRleCA5MDI5MGM2NDJlZDUuLmEz
+YjI0MDhjMWRhNiAxMDA2NDQNCi0tLSBhL2xvY2FsdmVyc2lvbi1ydA0KKysrIGIvbG9jYWx2ZXJz
+aW9uLXJ0DQpAQCAtMSArMSBAQA0KLS1ydDI5DQorLXJ0MzcNCiAgICBeDQpJc24ndCBpdCBzdXBw
+b3NlZCB0byBiZSBydDQwPw0KDQpUaGFua3MNClRpZWp1bg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVz
+c2FnZS0tLS0tDQo+IEZyb206IGxpbnV4LXJ0LXVzZXJzLW93bmVyQHZnZXIua2VybmVsLm9yZyA8
+bGludXgtcnQtdXNlcnMtDQo+IG93bmVyQHZnZXIua2VybmVsLm9yZz4gT24gQmVoYWxmIE9mIFN0
+ZXZlbiBSb3N0ZWR0DQo+IFNlbnQ6IFRodXJzZGF5LCBBdWd1c3QgMjMsIDIwMTggMjoxNSBBTQ0K
+PiBUbzogTEtNTCA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47IGxpbnV4LXJ0LXVzZXJz
+IDxsaW51eC1ydC0NCj4gdXNlcnNAdmdlci5rZXJuZWwub3JnPg0KPiBDYzogVGhvbWFzIEdsZWl4
+bmVyIDx0Z2x4QGxpbnV0cm9uaXguZGU+OyBDYXJzdGVuIEVtZGUNCj4gPEMuRW1kZUBvc2FkbC5v
+cmc+OyBKb2huIEthY3VyIDxqa2FjdXJAcmVkaGF0LmNvbT47IFNlYmFzdGlhbiBBbmRyemVqDQo+
+IFNpZXdpb3IgPGJpZ2Vhc3lAbGludXRyb25peC5kZT47IEp1bGlhIENhcnR3cmlnaHQgPGp1bGlh
+QG5pLmNvbT47IERhbmllbA0KPiBXYWduZXIgPGRhbmllbC53YWduZXJAc2llbWVucy5jb20+OyBU
+b20gWmFudXNzaQ0KPiA8dG9tLnphbnVzc2lAbGludXguaW50ZWwuY29tPg0KPiBTdWJqZWN0OiBb
+QU5OT1VOQ0VdIDQuMTQuNjMtcnQ0MA0KPiANCj4gDQo+IERlYXIgUlQgRm9sa3MsDQo+IA0KPiBJ
+J20gcGxlYXNlZCB0byBhbm5vdW5jZSB0aGUgNC4xNC42My1ydDQwIHN0YWJsZSByZWxlYXNlLg0K
+PiANCj4gDQo+IFRoaXMgcmVsZWFzZSBpcyBqdXN0IGFuIHVwZGF0ZSB0byB0aGUgbmV3IHN0YWJs
+ZSA0LjE0LjYzIHZlcnNpb24gYW5kIG5vIFJUDQo+IHNwZWNpZmljIGNoYW5nZXMgaGF2ZSBiZWVu
+IG1hZGUuDQo+IA0KPiBOT1RFOiBUaGVyZSBpcyBhIGtub3duIGlzc3VlIHdpdGggdGhpcyByZWxl
+YXNlLiBUaGUgZml4IGlzIGhlcmU6DQo+IA0KPiANCj4gaHR0cHM6Ly9uYTAxLnNhZmVsaW5rcy5w
+cm90ZWN0aW9uLm91dGxvb2suY29tLz91cmw9aHR0cCUzQSUyRiUyRmxrbWwua2VyDQo+IG5lbC5v
+cmclMkZyJTJGMTUzNDY2MDExNS42MTg3LjQuY2FtZWwlNDBnbXguZGUmYW1wO2RhdGE9MDIlN0Mw
+MSUNCj4gN0N0aWVqdW5jJTQwdm13YXJlLmNvbSU3Q2Y1NTA1YTEyNmJiODQ5MWFjMmRiMDhkNjA4
+NWIyZTE1JTdDYjM5DQo+IDEzOGNhM2NlZTRiNGFhNGQ2Y2Q4M2Q5ZGQ2MmYwJTdDMSU3QzAlN0M2
+MzY3MDU1ODUwNjIxNDI5NTYmYW1wDQo+IDtzZGF0YT12ZEg5eENJakMycFZ3TWdnR0p2VkFrZkly
+cTJqRzNxSmFUaTBhc25xN1NrJTNEJmFtcDtyZXNlcnZlZA0KPiA9MA0KPiANCj4gSSBkaWQgbm90
+IGFwcGx5IGl0IHRvIHRoaXMgcmVsZWFzZSBiZWNhdXNlIGl0IG5lZWRzIHRvIGJlIGFkZGVkIHRv
+IHY0LjE2LXJ0IGZpcnN0DQo+IGJlZm9yZSBpdCBnZXRzIGJhY2twb3J0ZWQuIEZlZWwgZnJlZSB0
+byBhcHBseSBpdCB5b3Vyc2VsZiBpZiB5b3UgaGF2ZSBhbnkNCj4gY29uY2VybnMuDQo+IA0KPiBZ
+b3UgY2FuIGdldCB0aGlzIHJlbGVhc2UgdmlhIHRoZSBnaXQgdHJlZSBhdDoNCj4gDQo+ICAgZ2l0
+Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3J0L2xpbnV4LXN0YWJs
+ZS1ydC5naXQNCj4gDQo+ICAgYnJhbmNoOiB2NC4xNC1ydA0KPiAgIEhlYWQgU0hBMTogZGE2YmVl
+M2NlZjRhZjYwNTY2ZGM1NmYzZDQ4ZmNlMGIxODE2NTEwNw0KPiANCj4gDQo+IE9yIHRvIGJ1aWxk
+IDQuMTQuNjMtcnQ0MCBkaXJlY3RseSwgdGhlIGZvbGxvd2luZyBwYXRjaGVzIHNob3VsZCBiZSBh
+cHBsaWVkOg0KPiANCj4gDQo+IGh0dHBzOi8vbmEwMS5zYWZlbGlua3MucHJvdGVjdGlvbi5vdXRs
+b29rLmNvbS8/dXJsPWh0dHAlM0ElMkYlMkZ3d3cua2UNCj4gcm5lbC5vcmclMkZwdWIlMkZsaW51
+eCUyRmtlcm5lbCUyRnY0LnglMkZsaW51eC0NCj4gNC4xNC50YXIueHomYW1wO2RhdGE9MDIlN0Mw
+MSU3Q3RpZWp1bmMlNDB2bXdhcmUuY29tJTdDZjU1MDVhMTI2YmINCj4gODQ5MWFjMmRiMDhkNjA4
+NWIyZTE1JTdDYjM5MTM4Y2EzY2VlNGI0YWE0ZDZjZDgzZDlkZDYyZjAlN0MxJTcNCj4gQzAlN0M2
+MzY3MDU1ODUwNjIxNTI5NzAmYW1wO3NkYXRhPWN1VFVKT3pQYjhySlNiSzhRTGZxYjVzOWpITllr
+Mw0KPiBXYnJVRGxhNXM2aXhNJTNEJmFtcDtyZXNlcnZlZD0wDQo+IA0KPiANCj4gaHR0cHM6Ly9u
+YTAxLnNhZmVsaW5rcy5wcm90ZWN0aW9uLm91dGxvb2suY29tLz91cmw9aHR0cCUzQSUyRiUyRnd3
+dy5rZQ0KPiBybmVsLm9yZyUyRnB1YiUyRmxpbnV4JTJGa2VybmVsJTJGdjQueCUyRnBhdGNoLQ0K
+PiA0LjE0LjYzLnh6JmFtcDtkYXRhPTAyJTdDMDElN0N0aWVqdW5jJTQwdm13YXJlLmNvbSU3Q2Y1
+NTA1YTEyNmJiDQo+IDg0OTFhYzJkYjA4ZDYwODViMmUxNSU3Q2IzOTEzOGNhM2NlZTRiNGFhNGQ2
+Y2Q4M2Q5ZGQ2MmYwJTdDMSU3DQo+IEMwJTdDNjM2NzA1NTg1MDYyMTUyOTcwJmFtcDtzZGF0YT15
+VnIzbGU0SjJtWWlrJTJCOE1KNzk2S2NFYiUyQg0KPiA3aSUyQmhBa0VXUXQycVo1cTJLWSUzRCZh
+bXA7cmVzZXJ2ZWQ9MA0KPiANCj4gDQo+IGh0dHBzOi8vbmEwMS5zYWZlbGlua3MucHJvdGVjdGlv
+bi5vdXRsb29rLmNvbS8/dXJsPWh0dHAlM0ElMkYlMkZ3d3cua2UNCj4gcm5lbC5vcmclMkZwdWIl
+MkZsaW51eCUyRmtlcm5lbCUyRnByb2plY3RzJTJGcnQlMkY0LjE0JTJGcGF0Y2gtDQo+IDQuMTQu
+NjMtDQo+IHJ0NDAucGF0Y2gueHomYW1wO2RhdGE9MDIlN0MwMSU3Q3RpZWp1bmMlNDB2bXdhcmUu
+Y29tJTdDZjU1MDVhMTI2DQo+IGJiODQ5MWFjMmRiMDhkNjA4NWIyZTE1JTdDYjM5MTM4Y2EzY2Vl
+NGI0YWE0ZDZjZDgzZDlkZDYyZjAlN0MxDQo+ICU3QzAlN0M2MzY3MDU1ODUwNjIxNTI5NzAmYW1w
+O3NkYXRhPVRFY0wzZDNua0c2MjNVRk9nV1pWNXdrckpsDQo+IG9Qc1k3cVhjWjhibSUyRm1GREkl
+M0QmYW1wO3Jlc2VydmVkPTANCj4gDQo+IA0KPiANCj4gDQo+IEVuam95LA0KPiANCj4gLS0gU3Rl
+dmUNCg0K
