@@ -3,224 +3,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCA8C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB58C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F395720C07
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:42:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9662D20C07
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:42:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bHN5uHyC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F395720C07
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P2P3frIq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9662D20C07
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729113AbeHWOLV (ORCPT
+        id S1729224AbeHWOLq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 10:11:21 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:55042 "EHLO
+        Thu, 23 Aug 2018 10:11:46 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:38101 "EHLO
         mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728582AbeHWOLV (ORCPT
+        with ESMTP id S1728582AbeHWOLq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 10:11:21 -0400
-Received: by mail-it0-f67.google.com with SMTP id s7-v6so6882679itb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 03:42:15 -0700 (PDT)
+        Thu, 23 Aug 2018 10:11:46 -0400
+Received: by mail-it0-f67.google.com with SMTP id p129-v6so5287162ite.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 03:42:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=lJD4TWPyWhtu5Wb9c9lyHTXwBjF+RR9GLfOZnOuhWrQ=;
-        b=bHN5uHyCbJV77hijonOkIo/oqzW/d+SenL858UKpnulf+mfUIz5Zjk6qxFnoi87fyK
-         MikC+AWnwmYd8N1OHvO3QteEZamQd+PR+NVdC184wlvMiirinFonsMUEWty2Yt0Ed4nG
-         XeyYEw140TIByVo/mVMy4OXZ6TjGBR6r398KQ=
+        bh=VZm9LbAzfak1XHPD0HXhsOZFX9/+qXxcgrDmM+plvqo=;
+        b=P2P3frIqnvv9fNID1nHuRnvv57YpHfVCboSegOnk7aPJyUlr1cA/74HYPiNzs0GjKq
+         mPkOOROdqIKuvi0pfKfNCqvE3xvGVD3Omypt0A56w8cW01xPweD93eEfVtY+sN6wjAJG
+         /ClkMd2wsL8prfvoUCYa7wAw8FERw+BFB3g1I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=lJD4TWPyWhtu5Wb9c9lyHTXwBjF+RR9GLfOZnOuhWrQ=;
-        b=rLuyI4o2XvUqXI+gvggme48sqRAoynhhdYvadfg9wWPaB4HJ/8A16e8kq2uyHxVI2a
-         tARI41w22ZZLDPnZ5Y5HD/hRLhpC8+xb/7PwS2s4mwmdzbigj5tueWP9T1PlpCa7hHS2
-         y8sMbW/4blMJNn6AqoKn/KeONZ4/V1K8nYCHU3pUA+SB/Gg00lDIy/yl0AswCsB6gqoF
-         p7XtoETztmQE+UQwFyqFIMWZK7vO9gghAuBVjNUgNZZ1DtJgvwcValgD8ZA5gqWnBhtz
-         N2Et5C23eIXrpmPyWTeXL2NViPBqNjLzHuTZoQRVfC2ytUKUurfzBd8TgI+v+M82Jj/x
-         GuAw==
-X-Gm-Message-State: APzg51CvXpi6ej4m9xzgHl8h0jzePnJwVMhNGcJ0oF0ubjWuFvlDmHwR
-        Mt4vHwa4RchlcDkEEF3E8cXnUj2SjAIDl7tkirUlsQ==
-X-Google-Smtp-Source: ANB0VdaI8cjEZ2rx78bFP4ugQM1OO/5FSl9F+9kmZBZhRfKN6EBRbsBjkc2NqjaB7W/9fkiAn11LlJcts88dxxD3gtg=
-X-Received: by 2002:a24:3fc6:: with SMTP id d189-v6mr6025418ita.64.1535020935019;
- Thu, 23 Aug 2018 03:42:15 -0700 (PDT)
+        bh=VZm9LbAzfak1XHPD0HXhsOZFX9/+qXxcgrDmM+plvqo=;
+        b=LGKK9vqdO54eK1PnHcHBz5vavhPR8M0i9ubUGEvWaqe5w4hQ2jF/6f/2wHwYZHm05A
+         1PfBRppW6tTl5RR7QJfoCLWS/1K/u2TZ9N7Tx1GfHJMGvcYvacAEa02PrKnUBCUVTy5U
+         w8d4bG7U8BSwE28xluCSsZzBuB0slYx1xIN6Mi6VbYe8ZaeUJOsgzmoZUQgbFON5Q8KI
+         xLFtp5nUBN6k6nDv9a98RgQQrlCPil+y4nv565gaDVhXaFKQ2tCrBBgLmutFn0QMOWZ6
+         AjzeY6DPUJRndHRjhvnd+aInokHpiRRk/0usFfs63t4Ih3EHowKK+jp5FA/kZbdRsj/K
+         8+OQ==
+X-Gm-Message-State: APzg51BJT/8Z8rOvm7nTu+7vIfL3VF7hUbdIFperDalpOEnk2kA8MbG8
+        4R5cg4M/ROWcsHylg6rrbGXt+qu6eHhx66+gjPfqwA==
+X-Google-Smtp-Source: ANB0VdabJ0SmThrra1vYGlhWqAsqzk5uj91eOG3jxo6aFWiL/uNEtCT5W3sP52RlcjAAvG6DvO+s/hLmENVcTosjGAM=
+X-Received: by 2002:a24:6b0d:: with SMTP id v13-v6mr6664795itc.16.1535020959779;
+ Thu, 23 Aug 2018 03:42:39 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Thu, 23 Aug 2018 03:42:14
- -0700 (PDT)
-In-Reply-To: <20180823084704.GA28696@ulmo>
-References: <1533924522-1037-1-git-send-email-avienamo@nvidia.com> <20180823084704.GA28696@ulmo>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 23 Aug 2018 12:42:14 +0200
-Message-ID: <CAPDyKFq=Ox+BfU+-D-T6pd81x+_WG_P_VztNRTJ97sAEe8sNDQ@mail.gmail.com>
-Subject: Re: [PATCH v2 00/40] Tegra SDHCI add support for HS200 and UHS signaling
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Aapo Vienamo <avienamo@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Stefan Agner <stefan@agner.ch>,
-        DTML <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+References: <20180820181333.2527-1-jmkrzyszt@gmail.com> <20180820181333.2527-2-jmkrzyszt@gmail.com>
+In-Reply-To: <20180820181333.2527-2-jmkrzyszt@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 23 Aug 2018 12:42:27 +0200
+Message-ID: <CACRpkdb7E7cjZuYx6Cgxv2sNJmxvwqg0dNh3WpALwtnuCsezuw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ARM: OMAP1: ams-delta: assign MODEM IRQ from GPIO descriptor
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     ext Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23 August 2018 at 10:47, Thierry Reding <thierry.reding@gmail.com> wrote:
-> On Fri, Aug 10, 2018 at 09:08:02PM +0300, Aapo Vienamo wrote:
->> Hi all,
->>
->> This series implements support for faster signaling modes on Tegra
->> SDHCI controllers. This series consist of several parts: changes
->> requried for 1.8 V signaling and pad control, pad calibration, and
->> tuning. Following earlies patch sets have been merged into this
->> larger set: "Tegra PMC pinctrl pad configuration", "Tegra SDHCI enable
->> 1.8 V signaling on Tegar210 and Tegra186", "Tegra SDHCI update the
->> padautocal procedure". Also the patches for enabling SDHCI tuning
->> are added.
->>
->> Changelog:
->> v2:
->>       - Fix grammar in PMC device tree bindings docs
->>       - Remove a stray line from tegra sdhci bindings
->>       - Cosmetic changes to PMC pinctrl driver
->>       - Fix a typo in "soc/tegra: pmc: Implement
->>         tegra_io_pad_is_powered()" commit message
->>       - Declare mask and value on the same line in
->>         tegra_io_pad_is_powered()
->>       - Move the call to tegra_sdhci_is_pad_and_regulator_valid() to
->>         inside the if condition in tegra_sdhci_reset()
->>       - Use usleep_range() in tegra_sdhci_configure_cal_pad()
->>       - Move sdhci_writel() out of the enable if-else body in
->>         tegra_sdhci_configure_cal_pad()
->>       - Add a delay before starting polling in
->>         tegra_sdhci_pad_autocalib()
->>       - Use usleep_range() in tegra_sdhci_set_tap()
->>       - Rename orig_enabled to status in
->>         tegra_sdhci_configure_card_clk()
->>       - Fix if condition wrapping alignment in tegra_sdhci_set_tap()
->>
->> v1:
->>       - Probe the regulator voltage capabilities to determine whether pinctrl
->>         is needed in tegra_sdhci_r eset
->>       - Don't remove tegra_sdhci_voltage_switch()
->>       - Use dev_warn() in tegra_sdhci_init_pinctrl_info()
->>       - Don't change start_signal_voltage_switch callback if pinctrl info
->>         invalid
->>       - Only call udelay(1) on enable in tegra_sdhci_configure_cal_pad()
->>       - Add nvidia, prefix to pad autocal offset dt props in the example
->>
->> See the original patch sets for earlier changelogs.
->>
->> Aapo Vienamo (40):
->>   dt-bindings: Add Tegra PMC pad configuration bindings
->>   dt-bindings: mmc: tegra: Add pad voltage control properties
->>   dt-bindings: Add Tegra SDHCI pad pdpu offset bindings
->>   dt-bindings: mmc: Add Tegra SDHCI sampling trimmer values
->>   soc/tegra: pmc: Fix pad voltage configuration for Tegra186
->>   soc/tegra: pmc: Factor out DPD register bit calculation
->>   soc/tegra: pmc: Implement tegra_io_pad_is_powered()
->>   soc/tegra: pmc: Use X macro to generate IO pad tables
->>   soc/tegra: pmc: Remove public pad voltage APIs
->>   soc/tegra: pmc: Implement pad configuration via pinctrl
->>   mmc: sdhci: Add a quirk to skip clearing the transfer mode register on
->>     tuning
->>   mmc: tegra: Reconfigure pad voltages during voltage switching
->>   mmc: tegra: Poll for calibration completion
->>   mmc: tegra: Set calibration pad voltage reference
->>   mmc: tegra: Power on the calibration pad
->>   mmc: tegra: Disable card clock during pad calibration
->>   mmc: tegra: Program pad autocal offsets from dt
->>   mmc: tegra: Perform pad calibration after voltage switch
->>   mmc: tegra: Enable pad calibration on Tegra210 and Tegra186
->>   mmc: tegra: Add a workaround for tap value change glitch
->>   mmc: tegra: Parse default trim and tap from dt
->>   mmc: tegra: Configure default tap values
->>   mmc: tegra: Configure default trim value on reset
->>   mmc: tegra: Use standard SDHCI tuning on Tegra210 and Tegra186
->>   mmc: sdhci: Add a quirk to disable card clock during tuning
->>   mmc: tegra: Enable workaround for tuning transfer mode bug
->>   mmc: tegra: Set SDHCI_QUIRK2_TUNE_DIS_CARD_CLK on Tegra210
->>   mmc: tegra: Enable UHS and HS200 modes for Tegra210
->>   mmc: tegra: Enable UHS and HS200 modes for Tegra186
->>   arm64: dts: Add Tegra210 sdmmc pinctrl voltage states
->>   arm64: dts: Add Tegra186 sdmmc pinctrl voltage states
->>   arm64: dts: tegra210-p2180: Allow ldo2 to go down to 1.8 V
->>   arm64: dts: tegra210-p2180: Correct sdmmc4 vqmmc-supply
->>   arm64: dts: tegra210-p2597: Remove no-1-8-v from sdmmc1
->>   arm64: dts: tegra186: Add sdmmc pad auto calibration offsets
->>   arm64: dts: tegra210: Add sdmmc pad auto calibration offsets
->>   arm64: dts: tegra210: Add SDHCI tap and trim values
->>   arm64: dts: tegra186: Add SDHCI tap and trim values
->>   arm64: dts: tegra186: Assign clocks for sdmmc1 and sdmmc4
->>   arm64: dts: tegra210: Assign clocks for sdmmc1 and sdmmc4
->>
->>  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  93 ++++
->>  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 103 ++++
->>  .../bindings/mmc/nvidia,tegra20-sdhci.txt          |  68 +++
->>  arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  74 +++
->>  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |  12 +-
->>  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   1 -
->>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  55 ++
->>  drivers/mmc/host/sdhci-tegra.c                     | 556 +++++++++++++++++++--
->>  drivers/mmc/host/sdhci.c                           |  21 +
->>  drivers/mmc/host/sdhci.h                           |   4 +
->>  drivers/soc/tegra/pmc.c                            | 511 ++++++++++++++-----
->>  include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 +
->>  include/soc/tegra/pmc.h                            |  20 +-
->>  13 files changed, 1324 insertions(+), 212 deletions(-)
->>  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+On Mon, Aug 20, 2018 at 8:12 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+
+> Don't request MODEM IRQ GPIO by its global number in
+> ams_delta_modem_init().  Instead, obtain its GPIO descriptor
+> and assign related IRQ to the MODEM.  Do that from
+> omap_gpio_deps_init(), where the chip is already looked up.  Then, in
+> ams_delta_modem_init(), just check for the IRQ number having been
+> already assigned.
 >
-> Hi Ulf, Adrian,
->
-> I've been running some tests on this on various Tegra boards and this
-> all seems to work fine. I'm also pretty happy with how this turned out,
-> so the whole series is:
->
-> Acked-by: Thierry Reding <treding@nvidia.com>
->
-> In order to get this merged, I think it'd be best for you guys to pick
-> up the MMC patches, since they are all independent of the rest. There is
-> a runtime dependency on the PMC bits for the faster modes, but things
-> will fallback to the status quo if those bits are not enabled. The only
-> dependency here is between the PMC and DTS changes, which I usually pick
-> up into the Tegra tree anyway, so I can sort that out there.
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-Great, thanks for clarifying the dependency.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
->
-> Since I've already gone through the process of splitting up the series,
-> I can offer to rebase the MMC patches on top of v4.19-rc1 when it's out
-> and send a pull request for the MMC patches.
+It's a bit unorthodox to have the board files intercept and poke
+around inside the gpio_chip like the code in this file does,
+I prefer to keep it encapsulated inside the GPIO driver.
+However this is the lesser evil... if OMAP1 is ever phased
+over to device tree it will go away, until then it is just nicely
+contained.
 
-That sounds convenient for me. Please also include the corresponding
-dt doc changes for mmc, as I am normally queuing these via my mmc
-tree.
-
-Although, I think it's better to wait until Adrian has given his ack
-for the series.
-
-> Alternatively I can further
-> split that branch up into two parts, one with the two patches that touch
-> the core and another with the remainder, if that's what you prefer. Or
-> you can of course feel free to apply all of the MMC patches yourselves
-> with my above Acked-by if you want to.
->
-> Any thought on the above?
-
-Let's see how it goes, if there are any struggles, I don't have a
-problem to cherry-pick the mmc parts of the series.
-
-Kind regards
-Uffe
+Yours,
+Linus Walleij
