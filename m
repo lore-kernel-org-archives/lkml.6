@@ -2,129 +2,118 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5F0C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 00:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDF3C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 00:31:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F95820A8B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 00:28:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCD3320893
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 00:31:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="yqbUxqIj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F95820A8B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JCkxaUvQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCD3320893
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727643AbeHWDzr (ORCPT
+        id S1727756AbeHWD6U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 23:55:47 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45129 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727322AbeHWDzr (ORCPT
+        Wed, 22 Aug 2018 23:58:20 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38086 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727322AbeHWD6U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 23:55:47 -0400
-Received: by mail-wr1-f68.google.com with SMTP id 20-v6so3028739wrb.12
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 17:28:45 -0700 (PDT)
+        Wed, 22 Aug 2018 23:58:20 -0400
+Received: by mail-lj1-f195.google.com with SMTP id p6-v6so2787928ljc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 17:31:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=6L+ncNStlKcOxmgbMiAHgbGIXqLn7eK23P7cqWQBDR4=;
-        b=yqbUxqIjVAnQ2ymuUlJuQh+ZEcLRNaBisFQfQ2hlOkStQCHwuAosMGTqcoQMI2d1CO
-         OrqD9ZqOcWOn1/f9A9F6iCyx8tlcN4KiPuk54lP8f10rs+rvkeEwWk2NE1uUQIBbj0CF
-         1k6+66LkGHEBO2SWDaLeg+iH+6hj3wdvYBHpp/kswDWBA1A9GYnewKnWl/1PNKmeJaGs
-         q6hjSXo/GuDiMbPivoq7urk4/7wFqP74w1P10HYQyxlrEWxsU6nMEGAqxGyDqhd41g5I
-         ZGYzqaSaEhrOb23e1Q//xk9TqwJuNJHVPgob33+kuUd8bJf4YUL6ROqnau0OjTD0lfTP
-         Gkdw==
+        bh=6925iiie6tuwwZJFL4Rn5JOI2tv4y6p3InezbfqJRHk=;
+        b=JCkxaUvQwln0nGhaYjgL/au+TN8ozebCjrQt9cQIbR6iiRY/IPFxhw99TmeGXGMqaN
+         +76qQtD1/A1TGhCxZaWk/O4MmWGqsqhrwVZt/5N5o5EcHiUqj4+bRFalkysRI0AuQTU8
+         adiVG1jyOoEdH3KCr/8GYmfokQ2Czl9bOfIk7ZRYvj4Z9BVNLXs0vSs8SOZRW6cZk4ye
+         l/5YSPvsDTmwC+9G83HgQrNVWUXF4tIEcd6oBJqCd61ycIElclJKRzldsNuX0a7Tbo1h
+         Nl/9ZthyHaYM6ihbX6Ll7yfDDvk9mHG0yjk9HPpEK6C7855QsoAArHAsE7k4NDji2mBr
+         qkQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6L+ncNStlKcOxmgbMiAHgbGIXqLn7eK23P7cqWQBDR4=;
-        b=RdHaYzmEugt4ZAADpiRs1goEG6qgmoKYYB+mJXNqlc9DpFUE7I2NQPT+I4NKWQuNC2
-         dzHTyFTuZn7sdfHXmF7wDE9/WIjJ7iTM5EwaFF/D4fO00MHmbcaKM0WZbYtnzM28/G/Q
-         zBlX0AcazZniCWexE/xhrxAHYp+ko8wgbyQTOjrCa14nfDxXDO1XEMDN5smTz72QBmVv
-         eF+9zm3u7b0Jse9khRQMvMbtK/q7GX6WAWc4VIFuwTqKaO3F2wIJuIoLXdHInQfPLVI9
-         0ubrYlRpQqQG+qpTHqPNb3IwmTjAeuL0SEHGtWuNiSSRK0kxVfadkjK2Qt72F+3yb5ZF
-         UtTg==
-X-Gm-Message-State: AOUpUlFl3rqvy8k+v3goPbyEsa4CUvWnAydk1tJ0PXdSzaOvGfCsO3ap
-        nkY6lrDOdwqdtD1aDRfqDz3yc/ilwVOljUOw+H3sAw==
-X-Google-Smtp-Source: AA+uWPzXBhIkTrUJOArWO2mXGRJjREyqLh0SWMIcV0HJwIsg2ABTABUjJq8ROtXU1oL6Gbl8ZyldZ+4QQih6FEoSyUs=
-X-Received: by 2002:adf:c554:: with SMTP id s20-v6mr35686781wrf.46.1534984124465;
- Wed, 22 Aug 2018 17:28:44 -0700 (PDT)
+        bh=6925iiie6tuwwZJFL4Rn5JOI2tv4y6p3InezbfqJRHk=;
+        b=kSDluCLMTRiFhYP9Ls8he1GaxDRrnC899OBsoBLL0nav3C5d0rviX5vaZXyo07j9zN
+         Z6jkuv8hsqtYOXXZ/DDuguXuZR67BQHKinrSx2RbMQ6jd12neg84JRS9Vh2lW3LuR3Tm
+         GZX84KHV7+3NQdjByFlQfjAnibtaJPFyZYniG5run/dhwtHK/UXEoVJwbyACSZ2oMU/i
+         uDW44/LpyZLFEoRxLzqsjF0ph/6c5kq11a21YClGqMKx3NG6gTte3q2JZzP1N2rChpiL
+         R6eqUvjHm899GXiPDnxsBSLLvUpSvGp4qgcmKrhrJsWrh6Rzc0Trm5RnJkTlZFPWAiYM
+         13fA==
+X-Gm-Message-State: APzg51Dj+AI8axRJVZBvcA9TECfGNoBxQl6gi7jOh9YlGrfPYYFK0Asi
+        6+RXCo0Ainy6zuSoelZ4Pm0B1TBTkWmGzYRtDfA=
+X-Google-Smtp-Source: ANB0Vda0+VdBmGJK//3quJd+960wWC2jSnfmz8McMZg1x9vxoYvWuQSPa8DczHNedtLjEomBg+sjRSSgpsNbX17jIBs=
+X-Received: by 2002:a2e:1290:: with SMTP id 16-v6mr6334452ljs.94.1534984276375;
+ Wed, 22 Aug 2018 17:31:16 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Wed, 22 Aug 2018 17:28:24 -0700 (PDT)
-In-Reply-To: <CAG48ez0c0L+WyfjDcfx=3wDwOQDOSJM-2JSVUBoWJCaKDVEfbw@mail.gmail.com>
-References: <20180807012257.20157-1-jannh@google.com> <C6369CAA-CBB8-420F-97DB-7A242D9650A8@amacapital.net>
- <CAG48ez0c0L+WyfjDcfx=3wDwOQDOSJM-2JSVUBoWJCaKDVEfbw@mail.gmail.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Wed, 22 Aug 2018 17:28:24 -0700
-Message-ID: <CALCETrU6gUBiTkpAUKh97y2R1cSftbMcfSTnSYxhZFRKf7vGWQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] x86: WARN() when uaccess helpers fault on kernel addresses
-To:     Jann Horn <jannh@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>
+References: <20180823001519.20056-1-ryans.lee@maximintegrated.com>
+In-Reply-To: <20180823001519.20056-1-ryans.lee@maximintegrated.com>
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date:   Wed, 22 Aug 2018 17:31:04 -0700
+Message-ID: <CAKdAkRT-71tL7U1t_WMenh5kquppsZpiL=0bEyL4RLjj622zqw@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: max98373: Added 10ms delay after amp software reset
+To:     ryans.lee@maximintegrated.com
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        lkml <linux-kernel@vger.kernel.org>, ryan.lee.maxim@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 4:53 PM, Jann Horn <jannh@google.com> wrote:
-> On Tue, Aug 7, 2018 at 4:55 AM Andy Lutomirski <luto@amacapital.net> wrote:
->> > On Aug 6, 2018, at 6:22 PM, Jann Horn <jannh@google.com> wrote:
->> > There have been multiple kernel vulnerabilities that permitted userspace to
->> > pass completely unchecked pointers through to userspace accessors:
->> >
->> > - the waitid() bug - commit 96ca579a1ecc ("waitid(): Add missing
->> >  access_ok() checks")
->> > - the sg/bsg read/write APIs
->> > - the infiniband read/write APIs
->> >
->> > These don't happen all that often, but when they do happen, it is hard to
->> > test for them properly; and it is probably also hard to discover them with
->> > fuzzing. Even when an unmapped kernel address is supplied to such buggy
->> > code, it just returns -EFAULT instead of doing a proper BUG() or at least
->> > WARN().
->> >
->> > This patch attempts to make such misbehaving code a bit more visible by
->> > WARN()ing in the pagefault handler code when a userspace accessor causes
->> > #PF on a kernel address and the current context isn't whitelisted.
->>
->> I like this a lot, and, in fact, I once wrote a patch to do something similar. It was before the fancy extable code, though, so it was a mess.  Here are some thoughts:
->>
->> - It should be three patches. One patch to add the _UA annotations, one to improve the info passes to the handlers, and one to change behavior.
->>
->> - You should pass the vector, the error code, and the address to the handler.
+On Wed, Aug 22, 2018 at 5:21 PM Ryan Lee <ryans.lee@maximintegrated.com> wrote:
 >
-> I'm polishing the patch a bit, and I've noticed that to plumb the
-> error code and address through properly, I might need significantly
-> more code churn because of kprobes - I want to make sure I'm not going
-> down the completely wrong path here.
+> Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
+> ---
+>  Changes : Applied 10ms delay after amp software reset.
+>            10ms guard time is required for stability.
+>  sound/soc/codecs/max98373.c | 2 ++
+>  1 file changed, 2 insertions(+)
 >
-> I'm extending fixup_exception() to take two extra args "unsigned long
-> error_code, unsigned long fault_addr". Most callers of
-> fixup_exception() are fairly straightforward, but
-> kprobe_fault_handler() has a dozen callchains from different exception
-> handlers, and most of them are coming via notify_die().
+> diff --git a/sound/soc/codecs/max98373.c b/sound/soc/codecs/max98373.c
+> index 2764fae..6aaff03 100644
+> --- a/sound/soc/codecs/max98373.c
+> +++ b/sound/soc/codecs/max98373.c
+> @@ -730,6 +730,7 @@ static int max98373_probe(struct snd_soc_component *component)
+>         /* Software Reset */
+>         regmap_write(max98373->regmap,
+>                 MAX98373_R2000_SW_RESET, MAX98373_SOFT_RESET);
+> +       mdelay(10);
 
-KILL IT WITH FIRE!!!!!!!!
+Is it really necessary for the CPU to spin for 10msec here?
+usleep_range() would be better solution.
 
-More seriously, kill kprobe_exceptions_notify() and just fold the
-contents into do_general_protection().  This notifier chain crap is
-incomprehensible.  I would love to see notify_die() removed entirely,
-and crap like this is just more reason to want it gone.
+>
+>         /* IV default slot configuration */
+>         regmap_write(max98373->regmap,
+> @@ -818,6 +819,7 @@ static int max98373_resume(struct device *dev)
+>
+>         regmap_write(max98373->regmap,
+>                 MAX98373_R2000_SW_RESET, MAX98373_SOFT_RESET);
+> +       mdelay(10);
+>         regcache_cache_only(max98373->regmap, false);
+>         regcache_sync(max98373->regmap);
+>         return 0;
+> --
+> 2.7.4
+>
 
-> I think there's also some inconsistency between #PF and #GP in the
-> ordering of error handling:
+Thanks.
 
-It's probably a bug.  It's also probably irrelevant, but maybe not.
+-- 
+Dmitry
