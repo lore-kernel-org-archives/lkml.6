@@ -2,150 +2,161 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7D8C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93AA1C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38DBB2152D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:30:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuZRfyWU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38DBB2152D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5481021557
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:31:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5481021557
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbeHXDCb (ORCPT
+        id S1726818AbeHXDDK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 23:02:31 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36450 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbeHXDCa (ORCPT
+        Thu, 23 Aug 2018 23:03:10 -0400
+Received: from smtprelay0174.hostedemail.com ([216.40.44.174]:57047 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726085AbeHXDDJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 23:02:30 -0400
-Received: by mail-pg1-f196.google.com with SMTP id h17-v6so3400069pgv.3;
-        Thu, 23 Aug 2018 16:30:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5EwisKCmybbuWrVzUR7BLxIaN5zUrmHv6nnXrV/4jw4=;
-        b=kuZRfyWUOjnI8bjJHmBVMn7KD8HFwCZzYTnp0Q+4DpEtAtRp/IxBdkTd98J9tQteOO
-         80ENzyjR9tdxhOAhIL3L5zJ9SfhyipeXy47QfN41aT2omZ2UKbZOVbXFZ0CiMfFnnY6l
-         9w/PstNZOeIwjcck9j4p4M7Bul6sHSTvcN9qDK1rprHcQympTZ8C/U69wA5R5rjNMvjl
-         y1J5ie3hnmgHwooVv2y+KP5NajIqTys+CvNN06zBNj3lchHMPap2VHJo2Cr25xKuOmod
-         4b8rRuNjASrksbwTfW04I+TFrymNThvL9MWHkgMov9Zv3jydRDeijAFMp88P5rQA3mlU
-         nTFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5EwisKCmybbuWrVzUR7BLxIaN5zUrmHv6nnXrV/4jw4=;
-        b=SvF1lGa7HSK8OB3xs8fXCm2srNTRinay9I3jDgasn6+8SzyIVeGhQPMFT8pXOFGCQy
-         AoFmkWlSlyTX3e6ursN+m/pgJg1dJJArk5cZZ944UGVHyVb3yyHV7ah1LNsBX3j7LToj
-         wmyrsBJGZHOeZrDfu2aWiJq5nf5SeMwDr1+Zv3daChA6B4SJ82yqradsA2A3F4x8++UL
-         yHdO2Rr46avEyzfzyXqx++D3OFhlv3C66tBaq+y0WCP9of99KA3MWOMjzVqceh61h3fa
-         rGiTrXpI6N37HuoFKqM2QG7gjFSMVtLpnmRvVnVQL/kErVnJa+ZCY4LRorYdm84uhxDn
-         Sg9Q==
-X-Gm-Message-State: AOUpUlGaibPwLjz7rnirjCTsTElxahAa18DIuadAVZVWqmOv+XBiFPUY
-        MKEn+PK3ErxPpfE21iveKWo=
-X-Google-Smtp-Source: AA+uWPxMQrwiVDHhPo7lsR03d6jFTZ4H6CtRqw07olaYZ61t6GhnTwfQ6rKTJQ5lkNzA+lIGCSZx2g==
-X-Received: by 2002:a62:c90a:: with SMTP id k10-v6mr63907798pfg.180.1535067031810;
-        Thu, 23 Aug 2018 16:30:31 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id p66-v6sm8720191pfd.65.2018.08.23.16.30.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 Aug 2018 16:30:30 -0700 (PDT)
-Date:   Thu, 23 Aug 2018 16:30:28 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Derek Basehore <dbasehore@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        joe@perches.com, andi@etezian.org, gregkh@linuxfoundation.org
-Subject: Re: [PATCH] Input: elants_i2c - Fix sw reset delays
-Message-ID: <20180823233028.GC53155@dtor-ws>
-References: <20180823231013.254037-1-dbasehore@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180823231013.254037-1-dbasehore@chromium.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Thu, 23 Aug 2018 23:03:09 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 7601E83777F0;
+        Thu, 23 Aug 2018 23:31:11 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: ants85_a0a4471a2d42
+X-Filterd-Recvd-Size: 5045
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 23 Aug 2018 23:31:08 +0000 (UTC)
+Message-ID: <1be357c91f6469c7a9b0e857fd15bad30347fd09.camel@perches.com>
+Subject: Re: [PATCH] include/linux/compiler*.h: make compiler-*.h mutually
+ exclusive
+From:   Joe Perches <joe@perches.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Kees Cook <keescook@chromium.org>, asmadeus@codewreck.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Arnd Bergmann <arnd@arndb.de>, dwmw@amazon.co.uk,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        daniel@iogearbox.net, hpa@zytor.com
+Date:   Thu, 23 Aug 2018 16:31:07 -0700
+In-Reply-To: <CAKwvOdncUZZumxuJoLYWwPomNQb8TH+e0K=WaOSc5RjdJL7Uxw@mail.gmail.com>
+References: <20180822233724.110454-1-ndesaulniers@google.com>
+         <20180823002508.GA822@nautica>
+         <CA+55aFx=pDFceeO82pb__K0mCqRmgRDEmkRT2psOKQ=yikRcEw@mail.gmail.com>
+         <CAGXu5jKJdNFcH9isnB0q_Eg=fpfp8NT+jxkgnaeXY8viDT+F1Q@mail.gmail.com>
+         <CAKwvOdmJoEotNMUm=YkuvfAdihnB4SUhbZrc2PDEBScfdrvOjQ@mail.gmail.com>
+         <e5d579d8ef832fbc133e96746ceb6edbd0870cc2.camel@perches.com>
+         <CAKwvOdncUZZumxuJoLYWwPomNQb8TH+e0K=WaOSc5RjdJL7Uxw@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Derek,
-
-On Thu, Aug 23, 2018 at 04:10:13PM -0700, Derek Basehore wrote:
-> We only need to wait 10ms instead of 30ms before starting fastboot or
-> sending IAP on the touchscreen. Also, instead of delaying everytime
-> sw_reset is called, this delays 10ms in the function that starts
-> fastboot. There's also an explicit 20ms delay before sending IAP when
-> updating the firmware, so no additional delay is needed there. This
-> change also has the benefit of not delaying when wakeup is enabled
-> during suspend. This is because sw_reset is called, yet fastboot
-> isn't.
+On Thu, 2018-08-23 at 16:12 -0700, Nick Desaulniers wrote:
+> On Thu, Aug 23, 2018 at 2:19 PM Joe Perches <joe@perches.com> wrote:
+> > 
+> > On Thu, 2018-08-23 at 14:03 -0700, Nick Desaulniers wrote:
+> > > One reply for a bunch of the various threads, to keep the number of emails down:
+> > > 
+> > > On Wed, Aug 22, 2018 at 5:20 PM Joe Perches <joe@perches.com> wrote:
+> > > > On Wed, 2018-08-22 at 16:37 -0700, Nick Desaulniers wrote:
+> > > > > +/* Compiler specific macros. */
+> > > > >  #ifdef __clang__
+> > > > >  #include <linux/compiler-clang.h>
+> > > > 
+> > > > probably better as
+> > > > 
+> > > > #if defined(__clang)
+> > > > 
+> > > > to match the style of the #elif defined()s below it
+> > > 
+> > > Hi Joe,
+> > > Thanks for the feedback. I always appreciate it.  If you have some
+> > > cleanups, want to send them to me, and I'll bundle them up for a PR?
+> > > I'm ok with that change.
+> > > 
+> > > > > +#ifdef __GNUC_STDC_INLINE__
+> > > > > +# define __gnu_inline        __attribute__((gnu_inline))
+> > > > > +#else
+> > > > > +# define __gnu_inline
+> > > > > +#endif
+> > > > 
+> > > > Perhaps __gnu_inline should be in compiler-gcc and this
+> > > > should use
+> > > > 
+> > > > #ifndef __gnu_inline
+> > > > #define __gnu_inline
+> > > > #endif
+> > > 
+> > > Not this case; it's how we get gnu89 semantics for `extern inline` is
+> > > not compiler specific (therefor should not go in a compiler specific
+> > > header).
+> > 
+> > It's not possible to know that compilers support what
+> > __attribute__((<foo>)) and at what version that support
+> > exists unless it is specified somewhere.
 > 
-> Change-Id: I9e3019720186ba0023891fafeb4fe3d2510e454b
-
-This is not needed ;)
-
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> ---
->  drivers/input/touchscreen/elants_i2c.c | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
+> __has_attribute:
+> https://clang.llvm.org/docs/LanguageExtensions.html#has-attribute
 > 
-> diff --git a/drivers/input/touchscreen/elants_i2c.c b/drivers/input/touchscreen/elants_i2c.c
-> index d21ca39b0fdb..18ce04ba0173 100644
-> --- a/drivers/input/touchscreen/elants_i2c.c
-> +++ b/drivers/input/touchscreen/elants_i2c.c
-> @@ -284,12 +284,6 @@ static int elants_i2c_sw_reset(struct i2c_client *client)
->  		return error;
->  	}
->  
-> -	/*
-> -	 * We should wait at least 10 msec (but no more than 40) before
-> -	 * sending fastboot or IAP command to the device.
-> -	 */
-> -	msleep(30);
-> -
->  	return 0;
->  }
->  
-> @@ -500,6 +494,12 @@ static int elants_i2c_fastboot(struct i2c_client *client)
->  	const u8 boot_cmd[] = { 0x4D, 0x61, 0x69, 0x6E };
->  	int error;
->  
-> +	/*
-> +	 * We should wait at least 10 msec (but no more than 40) before sending
-> +	 * fastboot command to the device.
-> +	 */
-> +	usleep_range(10 * 1000, 11 * 1000);
-> +
->  	error = elants_i2c_send(client, boot_cmd, sizeof(boot_cmd));
->  	if (error) {
->  		dev_err(&client->dev, "boot failed: %d\n", error);
-> @@ -643,6 +643,10 @@ static int elants_i2c_do_update_firmware(struct i2c_client *client,
->  			dev_err(&client->dev, "Failed close idle: %d\n", error);
->  		msleep(60);
->  		elants_i2c_sw_reset(client);
-> +		/*
-> +		 * We should wait at least 10 msec (but no more than 40) before
-> +		 * sending IAP command to the device.
-> +		 */
->  		msleep(20);
+> The release notes of GCC-5 mention __has_attribute.
+> https://gcc.gnu.org/gcc-5/changes.html
 
-So the original comment was talking about timing on fastboot or IAP
-command, but the original code had 50 msec wait here (30 from
-elants_i2c_sw_reset plus the 20), thus already violating 40 msec rule
-for IAP. Unless Elan folks can confirm it is OK to reduce the wait here
-I'd prefer we kept it at 50. Firmware update is does not happen that
-often anyway.
+So not available in the now minimum supported gcc 4.6?
 
-Thanks.
+> The point of feature detection is that it _doesn't matter_ what
+> version that support exists.  Either it does and you can use it, or it
+> doesn't and you can decide whether to stop compiling or there's a
+> valid work around.
+> 
+> Feature detection should be preferred to explicit version checks
+> except in 2 specific cases:
+> 1. It's not possible to properly perform feature detection.  Language
+> features should not be added unless it's possible to safely check for
+> them.
+> 2. A very specific version of a very specific compiler is broken and
+> needs to be explicitly guarded against.
+> 
+> > As far as I can tell,  gnu_inline is not recognized by clang.
+> > 
+> > https://clang.llvm.org/docs/AttributeReference.html
+> 
+> If that was the case, I would not have added it in commit d03db2bc26f0
+> ("compiler-gcc.h: Add __attribute__((gnu_inline)) to all inline
+> declarations").
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d03db2bc26f0e4a6849ad649a09c9c73fccdc656
 
--- 
-Dmitry
+Hard to know.
+That commit message does not mention clang.
+
+> Docs can sometimes fall behind, the lone source of truth is the source code.
+> https://github.com/llvm-mirror/clang/search?q=gnu_inline&unscoped_q=gnu_inline
+
+Which no compiler user should have to read.
+
+> Godbolt is also incredibly helpful for testing various compiler versions:
+> https://godbolt.org/z/uMJ-mo
+
+Thanks for that.
+
+> https://reviews.llvm.org/D51190
+
+That too.
+
+cheers, Joe
