@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4992C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8384AC43615
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6872921486
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6872921486
+	by mail.kernel.org (Postfix) with ESMTP id 46D102147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46D102147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731626AbeHWMAv (ORCPT
+        id S1731635AbeHWMAy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:00:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48110 "EHLO
+        Thu, 23 Aug 2018 08:00:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48126 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730656AbeHWMAv (ORCPT
+        with ESMTP id S1728041AbeHWMAx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:00:51 -0400
+        Thu, 23 Aug 2018 08:00:53 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D0F338B1;
-        Thu, 23 Aug 2018 08:32:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 10910C74;
+        Thu, 23 Aug 2018 08:32:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yuchung Cheng <ycheng@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Lawrence Brakmo <brakmo@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 180/217] tcp: remove DELAYED ACK events in DCTCP
-Date:   Thu, 23 Aug 2018 09:54:53 +0200
-Message-Id: <20180823075513.721614174@linuxfoundation.org>
+Subject: [PATCH 4.14 181/217] pinctrl: ingenic: Fix inverted direction for < JZ4770
+Date:   Thu, 23 Aug 2018 09:54:54 +0200
+Message-Id: <20180823075513.763707538@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -54,111 +51,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yuchung Cheng <ycheng@google.com>
+From: Paul Cercueil <paul@crapouillou.net>
 
-[ Upstream commit a69258f7aa2623e0930212f09c586fd06674ad79 ]
+[ Upstream commit 0084a786ca8c84b443f67c4a697b4f2552761650 ]
 
-After fixing the way DCTCP tracking delayed ACKs, the delayed-ACK
-related callbacks are no longer needed
+The .gpio_set_direction() callback was setting inverted direction
+for SoCs older than the JZ4770, this restores the correct behaviour.
 
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Acked-by: Lawrence Brakmo <brakmo@fb.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/tcp.h     |    2 --
- net/ipv4/tcp_dctcp.c  |   25 -------------------------
- net/ipv4/tcp_output.c |    4 ----
- 3 files changed, 31 deletions(-)
+ drivers/pinctrl/pinctrl-ingenic.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -938,8 +938,6 @@ enum tcp_ca_event {
- 	CA_EVENT_LOSS,		/* loss timeout */
- 	CA_EVENT_ECN_NO_CE,	/* ECT set, but not CE marked */
- 	CA_EVENT_ECN_IS_CE,	/* received CE marked IP packet */
--	CA_EVENT_DELAYED_ACK,	/* Delayed ack is sent */
--	CA_EVENT_NON_DELAYED_ACK,
- };
- 
- /* Information about inbound ACK, passed to cong_ops->in_ack_event() */
---- a/net/ipv4/tcp_dctcp.c
-+++ b/net/ipv4/tcp_dctcp.c
-@@ -55,7 +55,6 @@ struct dctcp {
- 	u32 dctcp_alpha;
- 	u32 next_seq;
- 	u32 ce_state;
--	u32 delayed_ack_reserved;
- 	u32 loss_cwnd;
- };
- 
-@@ -96,7 +95,6 @@ static void dctcp_init(struct sock *sk)
- 
- 		ca->dctcp_alpha = min(dctcp_alpha_on_init, DCTCP_MAX_ALPHA);
- 
--		ca->delayed_ack_reserved = 0;
- 		ca->loss_cwnd = 0;
- 		ca->ce_state = 0;
- 
-@@ -230,25 +228,6 @@ static void dctcp_state(struct sock *sk,
+--- a/drivers/pinctrl/pinctrl-ingenic.c
++++ b/drivers/pinctrl/pinctrl-ingenic.c
+@@ -536,7 +536,7 @@ static int ingenic_pinmux_gpio_set_direc
+ 		ingenic_config_pin(jzpc, pin, JZ4770_GPIO_PAT1, input);
+ 	} else {
+ 		ingenic_config_pin(jzpc, pin, JZ4740_GPIO_SELECT, false);
+-		ingenic_config_pin(jzpc, pin, JZ4740_GPIO_DIR, input);
++		ingenic_config_pin(jzpc, pin, JZ4740_GPIO_DIR, !input);
+ 		ingenic_config_pin(jzpc, pin, JZ4740_GPIO_FUNC, false);
  	}
- }
  
--static void dctcp_update_ack_reserved(struct sock *sk, enum tcp_ca_event ev)
--{
--	struct dctcp *ca = inet_csk_ca(sk);
--
--	switch (ev) {
--	case CA_EVENT_DELAYED_ACK:
--		if (!ca->delayed_ack_reserved)
--			ca->delayed_ack_reserved = 1;
--		break;
--	case CA_EVENT_NON_DELAYED_ACK:
--		if (ca->delayed_ack_reserved)
--			ca->delayed_ack_reserved = 0;
--		break;
--	default:
--		/* Don't care for the rest. */
--		break;
--	}
--}
--
- static void dctcp_cwnd_event(struct sock *sk, enum tcp_ca_event ev)
- {
- 	switch (ev) {
-@@ -258,10 +237,6 @@ static void dctcp_cwnd_event(struct sock
- 	case CA_EVENT_ECN_NO_CE:
- 		dctcp_ce_state_1_to_0(sk);
- 		break;
--	case CA_EVENT_DELAYED_ACK:
--	case CA_EVENT_NON_DELAYED_ACK:
--		dctcp_update_ack_reserved(sk, ev);
--		break;
- 	default:
- 		/* Don't care for the rest. */
- 		break;
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -3513,8 +3513,6 @@ void tcp_send_delayed_ack(struct sock *s
- 	int ato = icsk->icsk_ack.ato;
- 	unsigned long timeout;
- 
--	tcp_ca_event(sk, CA_EVENT_DELAYED_ACK);
--
- 	if (ato > TCP_DELACK_MIN) {
- 		const struct tcp_sock *tp = tcp_sk(sk);
- 		int max_ato = HZ / 2;
-@@ -3571,8 +3569,6 @@ void __tcp_send_ack(struct sock *sk, u32
- 	if (sk->sk_state == TCP_CLOSE)
- 		return;
- 
--	tcp_ca_event(sk, CA_EVENT_NON_DELAYED_ACK);
--
- 	/* We are not putting this on the write queue, so
- 	 * tcp_transmit_skb() will set the ownership to this
- 	 * sock.
 
 
