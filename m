@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67789C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E97CC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29F392084A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29F392084A
+	by mail.kernel.org (Postfix) with ESMTP id 03E8F20847
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03E8F20847
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387924AbeHWM2K (ORCPT
+        id S2387940AbeHWM2N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:28:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53128 "EHLO
+        Thu, 23 Aug 2018 08:28:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53134 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727293AbeHWM2J (ORCPT
+        with ESMTP id S2387464AbeHWM2M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:28:09 -0400
+        Thu, 23 Aug 2018 08:28:12 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D5D0CA0;
-        Thu, 23 Aug 2018 08:59:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7E669C83;
+        Thu, 23 Aug 2018 08:59:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Stefan Schmidt <stefan@datenfreihafen.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 215/324] ieee802154: at86rf230: use __func__ macro for debug messages
-Date:   Thu, 23 Aug 2018 09:54:41 +0200
-Message-Id: <20180823075006.920093083@linuxfoundation.org>
+Subject: [PATCH 4.17 216/324] ieee802154: fakelb: switch from BUG_ON() to WARN_ON() on problem
+Date:   Thu, 23 Aug 2018 09:54:42 +0200
+Message-Id: <20180823075006.982973900@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,68 +52,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stefan Schmidt <stefan@datenfreihafen.org>
 
-[ Upstream commit 8a81388ec27c4c0adbdecd20e67bb5f411ab46b2 ]
+[ Upstream commit 8f2fbc6c60ff213369e06a73610fc882a42fdf20 ]
 
-Instead of having the function name hard-coded (it might change and we
-forgot to update them in the debug output) we can use __func__ instead
-and also shorter the line so we do not need to break it. Also fix an
-extra blank line while being here.
+The check is valid but it does not warrant to crash the kernel. A
+WARN_ON() is good enough here.
 Found by checkpatch.
 
 Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ieee802154/at86rf230.c |   13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ drivers/net/ieee802154/fakelb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ieee802154/at86rf230.c
-+++ b/drivers/net/ieee802154/at86rf230.c
-@@ -1121,8 +1121,7 @@ at86rf230_set_hw_addr_filt(struct ieee80
- 	if (changed & IEEE802154_AFILT_SADDR_CHANGED) {
- 		u16 addr = le16_to_cpu(filt->short_addr);
+--- a/drivers/net/ieee802154/fakelb.c
++++ b/drivers/net/ieee802154/fakelb.c
+@@ -49,7 +49,7 @@ struct fakelb_phy {
  
--		dev_vdbg(&lp->spi->dev,
--			 "at86rf230_set_hw_addr_filt called for saddr\n");
-+		dev_vdbg(&lp->spi->dev, "%s called for saddr\n", __func__);
- 		__at86rf230_write(lp, RG_SHORT_ADDR_0, addr);
- 		__at86rf230_write(lp, RG_SHORT_ADDR_1, addr >> 8);
- 	}
-@@ -1130,8 +1129,7 @@ at86rf230_set_hw_addr_filt(struct ieee80
- 	if (changed & IEEE802154_AFILT_PANID_CHANGED) {
- 		u16 pan = le16_to_cpu(filt->pan_id);
- 
--		dev_vdbg(&lp->spi->dev,
--			 "at86rf230_set_hw_addr_filt called for pan id\n");
-+		dev_vdbg(&lp->spi->dev, "%s called for pan id\n", __func__);
- 		__at86rf230_write(lp, RG_PAN_ID_0, pan);
- 		__at86rf230_write(lp, RG_PAN_ID_1, pan >> 8);
- 	}
-@@ -1140,15 +1138,13 @@ at86rf230_set_hw_addr_filt(struct ieee80
- 		u8 i, addr[8];
- 
- 		memcpy(addr, &filt->ieee_addr, 8);
--		dev_vdbg(&lp->spi->dev,
--			 "at86rf230_set_hw_addr_filt called for IEEE addr\n");
-+		dev_vdbg(&lp->spi->dev, "%s called for IEEE addr\n", __func__);
- 		for (i = 0; i < 8; i++)
- 			__at86rf230_write(lp, RG_IEEE_ADDR_0 + i, addr[i]);
- 	}
- 
- 	if (changed & IEEE802154_AFILT_PANC_CHANGED) {
--		dev_vdbg(&lp->spi->dev,
--			 "at86rf230_set_hw_addr_filt called for panc change\n");
-+		dev_vdbg(&lp->spi->dev, "%s called for panc change\n", __func__);
- 		if (filt->pan_coord)
- 			at86rf230_write_subreg(lp, SR_AACK_I_AM_COORD, 1);
- 		else
-@@ -1252,7 +1248,6 @@ at86rf230_set_cca_mode(struct ieee802154
- 	return at86rf230_write_subreg(lp, SR_CCA_MODE, val);
- }
- 
--
- static int
- at86rf230_set_cca_ed_level(struct ieee802154_hw *hw, s32 mbm)
+ static int fakelb_hw_ed(struct ieee802154_hw *hw, u8 *level)
  {
+-	BUG_ON(!level);
++	WARN_ON(!level);
+ 	*level = 0xbe;
+ 
+ 	return 0;
 
 
