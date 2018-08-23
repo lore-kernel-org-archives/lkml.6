@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BF2C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D366C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F8A720A8B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F8A720A8B
+	by mail.kernel.org (Postfix) with ESMTP id 205E820A8B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 205E820A8B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729888AbeHWLrP (ORCPT
+        id S1729902AbeHWLrT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:47:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46340 "EHLO
+        Thu, 23 Aug 2018 07:47:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46352 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728149AbeHWLrP (ORCPT
+        with ESMTP id S1727760AbeHWLrS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:47:15 -0400
+        Thu, 23 Aug 2018 07:47:18 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F1CA7C74;
-        Thu, 23 Aug 2018 08:18:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F112C83;
+        Thu, 23 Aug 2018 08:18:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Maciej Purski <m.purski@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 009/217] IB/mlx4: Fix an error handling path in mlx4_ib_rereg_user_mr()
-Date:   Thu, 23 Aug 2018 09:52:02 +0200
-Message-Id: <20180823075505.885195360@linuxfoundation.org>
+Subject: [PATCH 4.14 010/217] drm/bridge/sii8620: fix loops in EDID fetch logic
+Date:   Thu, 23 Aug 2018 09:52:03 +0200
+Message-Id: <20180823075505.966042647@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -52,37 +52,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+From: Andrzej Hajda <a.hajda@samsung.com>
 
-[ Upstream commit 3dc7c7badb7502ec3e3aa817a8bdd9e53aa54c52 ]
+[ Upstream commit 8e627a1b1ce8feb3e1da4428b71b9b4905f04888 ]
 
-Before returning -EPERM we should release some resources, as already done
-in the other error handling path of the function.
+Function should constantly check if cable is connected and finish
+in finite time.
 
-Fixes: d8f9cc328c88 ("IB/mlx4: Mark user MR as writable if actual virtual memory is writable")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Maciej Purski <m.purski@samsung.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180115173357.31067-4-a.hajda@samsung.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx4/mr.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/bridge/sil-sii8620.c |   31 ++++++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
 
---- a/drivers/infiniband/hw/mlx4/mr.c
-+++ b/drivers/infiniband/hw/mlx4/mr.c
-@@ -247,8 +247,11 @@ int mlx4_ib_rereg_user_mr(struct ib_mr *
- 	}
+--- a/drivers/gpu/drm/bridge/sil-sii8620.c
++++ b/drivers/gpu/drm/bridge/sil-sii8620.c
+@@ -788,6 +788,7 @@ static void sii8620_burst_rx_all(struct
+ static void sii8620_fetch_edid(struct sii8620 *ctx)
+ {
+ 	u8 lm_ddc, ddc_cmd, int3, cbus;
++	unsigned long timeout;
+ 	int fetched, i;
+ 	int edid_len = EDID_LENGTH;
+ 	u8 *edid;
+@@ -837,23 +838,31 @@ static void sii8620_fetch_edid(struct si
+ 			REG_DDC_CMD, ddc_cmd | VAL_DDC_CMD_ENH_DDC_READ_NO_ACK
+ 		);
  
- 	if (flags & IB_MR_REREG_ACCESS) {
--		if (ib_access_writable(mr_access_flags) && !mmr->umem->writable)
--			return -EPERM;
-+		if (ib_access_writable(mr_access_flags) &&
-+		    !mmr->umem->writable) {
-+			err = -EPERM;
-+			goto release_mpt_entry;
+-		do {
+-			int3 = sii8620_readb(ctx, REG_INTR3);
++		int3 = 0;
++		timeout = jiffies + msecs_to_jiffies(200);
++		for (;;) {
+ 			cbus = sii8620_readb(ctx, REG_CBUS_STATUS);
+-
+-			if (int3 & BIT_DDC_CMD_DONE)
+-				break;
+-
+-			if (!(cbus & BIT_CBUS_STATUS_CBUS_CONNECTED)) {
++			if (~cbus & BIT_CBUS_STATUS_CBUS_CONNECTED) {
++				kfree(edid);
++				edid = NULL;
++				goto end;
++			}
++			if (int3 & BIT_DDC_CMD_DONE) {
++				if (sii8620_readb(ctx, REG_DDC_DOUT_CNT)
++				    >= FETCH_SIZE)
++					break;
++			} else {
++				int3 = sii8620_readb(ctx, REG_INTR3);
++			}
++			if (time_is_before_jiffies(timeout)) {
++				ctx->error = -ETIMEDOUT;
++				dev_err(ctx->dev, "timeout during EDID read\n");
+ 				kfree(edid);
+ 				edid = NULL;
+ 				goto end;
+ 			}
+-		} while (1);
+-
+-		sii8620_readb(ctx, REG_DDC_STATUS);
+-		while (sii8620_readb(ctx, REG_DDC_DOUT_CNT) < FETCH_SIZE)
+ 			usleep_range(10, 20);
 +		}
  
- 		err = mlx4_mr_hw_change_access(dev->dev, *pmpt_entry,
- 					       convert_access(mr_access_flags));
+ 		sii8620_read_buf(ctx, REG_DDC_DATA, edid + fetched, FETCH_SIZE);
+ 		if (fetched + FETCH_SIZE == EDID_LENGTH) {
 
 
