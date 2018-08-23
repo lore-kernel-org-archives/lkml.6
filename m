@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC722C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9290CC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAD8E2077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:48:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAD8E2077B
+	by mail.kernel.org (Postfix) with ESMTP id 538202077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:48:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 538202077B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733109AbeHWMRa (ORCPT
+        id S1733122AbeHWMRd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:17:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50908 "EHLO
+        Thu, 23 Aug 2018 08:17:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50916 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732308AbeHWMR3 (ORCPT
+        with ESMTP id S1732308AbeHWMRc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:17:29 -0400
+        Thu, 23 Aug 2018 08:17:32 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A0BABC1;
-        Thu, 23 Aug 2018 08:48:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 694C4941;
+        Thu, 23 Aug 2018 08:48:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 105/324] ARM: dts: am437x: make edt-ft5x06 a wakeup source
-Date:   Thu, 23 Aug 2018 09:52:51 +0200
-Message-Id: <20180823075001.081856889@linuxfoundation.org>
+Subject: [PATCH 4.17 106/324] ALSA: seq: Fix UBSAN warning at SNDRV_SEQ_IOCTL_QUERY_NEXT_CLIENT ioctl
+Date:   Thu, 23 Aug 2018 09:52:52 +0200
+Message-Id: <20180823075001.128541332@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,31 +50,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Mack <daniel@zonque.org>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 49a6ec5b807ea4ad7ebe1f58080ebb8497cb2d2c ]
+[ Upstream commit c9a4c63888dbb79ce4d068ca1dd8b05bc3f156b1 ]
 
-The touchscreen driver no longer configures the device as wakeup source by
-default. A "wakeup-source" property is needed.
+The kernel may spew a WARNING with UBSAN undefined behavior at
+handling ALSA sequencer ioctl SNDRV_SEQ_IOCTL_QUERY_NEXT_CLIENT:
 
-Signed-off-by: Daniel Mack <daniel@zonque.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+UBSAN: Undefined behaviour in sound/core/seq/seq_clientmgr.c:2007:14
+signed integer overflow:
+2147483647 + 1 cannot be represented in type 'int'
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x122/0x1c8 lib/dump_stack.c:113
+ ubsan_epilogue+0x12/0x86 lib/ubsan.c:159
+ handle_overflow+0x1c2/0x21f lib/ubsan.c:190
+  __ubsan_handle_add_overflow+0x2a/0x31 lib/ubsan.c:198
+ snd_seq_ioctl_query_next_client+0x1ac/0x1d0 sound/core/seq/seq_clientmgr.c:2007
+ snd_seq_ioctl+0x264/0x3d0 sound/core/seq/seq_clientmgr.c:2144
+ ....
+
+It happens only when INT_MAX is passed there, as we're incrementing it
+unconditionally.  So the fix is trivial, check the value with
+INT_MAX.  Although the bug itself is fairly harmless, it's better to
+fix it so that fuzzers won't hit this again later.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200211
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/am437x-sk-evm.dts |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/core/seq/seq_clientmgr.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/am437x-sk-evm.dts
-+++ b/arch/arm/boot/dts/am437x-sk-evm.dts
-@@ -537,6 +537,8 @@
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -2004,7 +2004,8 @@ static int snd_seq_ioctl_query_next_clie
+ 	struct snd_seq_client *cptr = NULL;
  
- 		touchscreen-size-x = <480>;
- 		touchscreen-size-y = <272>;
-+
-+		wakeup-source;
- 	};
- 
- 	tlv320aic3106: tlv320aic3106@1b {
+ 	/* search for next client */
+-	info->client++;
++	if (info->client < INT_MAX)
++		info->client++;
+ 	if (info->client < 0)
+ 		info->client = 0;
+ 	for (; info->client < SNDRV_SEQ_MAX_CLIENTS; info->client++) {
 
 
