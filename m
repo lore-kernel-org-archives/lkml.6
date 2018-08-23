@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D231C43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8B8C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D85320851
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:40:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D85320851
+	by mail.kernel.org (Postfix) with ESMTP id 5FC732083A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:40:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FC732083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732187AbeHWMI6 (ORCPT
+        id S1732198AbeHWMJB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:08:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49564 "EHLO
+        Thu, 23 Aug 2018 08:09:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49604 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731323AbeHWMI5 (ORCPT
+        with ESMTP id S1730652AbeHWMJA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:08:57 -0400
+        Thu, 23 Aug 2018 08:09:00 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5B6478B1;
-        Thu, 23 Aug 2018 08:40:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 94A768B1;
+        Thu, 23 Aug 2018 08:40:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fathi Boudra <fathi.boudra@linaro.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 032/324] selftests: sync: add config fragment for testing sync framework
-Date:   Thu, 23 Aug 2018 09:51:38 +0200
-Message-Id: <20180823074957.458163611@linuxfoundation.org>
+Subject: [PATCH 4.17 033/324] ARM: dts: NSP: Fix i2c controller interrupt type
+Date:   Thu, 23 Aug 2018 09:51:39 +0200
+Message-Id: <20180823074957.500674957@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,36 +50,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Fathi Boudra <fathi.boudra@linaro.org>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit d6a3e55131fcb1e5ca1753f4b6f297a177b2fc91 ]
+[ Upstream commit a3e32e78a40017756c71ef6dad429ffe3301126a ]
 
-Unless the software synchronization objects (CONFIG_SW_SYNC) is enabled,
-the sync test will be skipped:
+The i2c controller should use IRQ_TYPE_LEVEL_HIGH instead of
+IRQ_TYPE_NONE.
 
-TAP version 13
-1..0 # Skipped: Sync framework not supported by kernel
-
-Add a config fragment file to be able to run "make kselftest-merge" to
-enable relevant configuration required in order to run the sync test.
-
-Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
-Link: https://lkml.org/lkml/2017/5/5/14
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Fixes: 0f9f27a36d09 ("ARM: dts: NSP: Add I2C support to the DT")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/sync/config |    4 ++++
- 1 file changed, 4 insertions(+)
- create mode 100644 tools/testing/selftests/sync/config
+ arch/arm/boot/dts/bcm-nsp.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- /dev/null
-+++ b/tools/testing/selftests/sync/config
-@@ -0,0 +1,4 @@
-+CONFIG_STAGING=y
-+CONFIG_ANDROID=y
-+CONFIG_SYNC=y
-+CONFIG_SW_SYNC=y
+--- a/arch/arm/boot/dts/bcm-nsp.dtsi
++++ b/arch/arm/boot/dts/bcm-nsp.dtsi
+@@ -391,7 +391,7 @@
+ 			reg = <0x38000 0x50>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			interrupts = <GIC_SPI 89 IRQ_TYPE_NONE>;
++			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-frequency = <100000>;
+ 			dma-coherent;
+ 			status = "disabled";
 
 
