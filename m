@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A80FFC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30CE7C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E42B208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E42B208D6
+	by mail.kernel.org (Postfix) with ESMTP id E7F66208DC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7F66208DC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730932AbeHWL5w (ORCPT
+        id S1730944AbeHWL5z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:57:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47572 "EHLO
+        Thu, 23 Aug 2018 07:57:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47582 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729549AbeHWL5w (ORCPT
+        with ESMTP id S1729549AbeHWL5z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:57:52 -0400
+        Thu, 23 Aug 2018 07:57:55 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1E7298B1;
-        Thu, 23 Aug 2018 08:29:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 52539C74;
+        Thu, 23 Aug 2018 08:29:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Gerecke <jason.gerecke@wacom.com>,
-        Jiri Kosina <jkosina@suse.cz>,
+        stable@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 130/217] HID: wacom: Correct touch maximum XY of 2nd-gen Intuos
-Date:   Thu, 23 Aug 2018 09:54:03 +0200
-Message-Id: <20180823075511.439228599@linuxfoundation.org>
+Subject: [PATCH 4.14 131/217] ARM: imx_v6_v7_defconfig: Select ULPI support
+Date:   Thu, 23 Aug 2018 09:54:04 +0200
+Message-Id: <20180823075511.501118964@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,47 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Gerecke <killertofu@gmail.com>
+From: Fabio Estevam <fabio.estevam@nxp.com>
 
-[ Upstream commit 3b8d573586d1b9dee33edf6cb6f2ca05f4bca568 ]
+[ Upstream commit 157bcc06094c3c5800d3f4676527047b79b618e7 ]
 
-The touch sensors on the 2nd-gen Intuos tablets don't use a 4096x4096
-sensor like other similar tablets (3rd-gen Bamboo, Intuos5, etc.).
-The incorrect maximum XY values don't normally affect userspace since
-touch input from these devices is typically relative rather than
-absolute. It does, however, cause problems when absolute distances
-need to be measured, e.g. for gesture recognition. Since the resolution
-of the touch sensor on these devices is 10 units / mm (versus 100 for
-the pen sensor), the proper maximum values can be calculated by simply
-dividing by 10.
+Select CONFIG_USB_CHIPIDEA_ULPI and CONFIG_USB_ULPI_BUS so that
+USB ULPI can be functional on some boards like imx51-babbge.
 
-Fixes: b5fd2a3e92 ("Input: wacom - add support for three new Intuos devices")
-Signed-off-by: Jason Gerecke <jason.gerecke@wacom.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+This fixes a kernel hang in 4.18-rc1 on i.mx51-babbage, caused by commit
+03e6275ae381 ("usb: chipidea: Fix ULPI on imx51").
+
+Suggested-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hid/wacom_wac.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ arch/arm/configs/imx_v6_v7_defconfig |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/hid/wacom_wac.c
-+++ b/drivers/hid/wacom_wac.c
-@@ -3212,8 +3212,14 @@ void wacom_setup_device_quirks(struct wa
- 			if (features->type >= INTUOSHT && features->type <= BAMBOO_PT)
- 				features->device_type |= WACOM_DEVICETYPE_PAD;
- 
--			features->x_max = 4096;
--			features->y_max = 4096;
-+			if (features->type == INTUOSHT2) {
-+				features->x_max = features->x_max / 10;
-+				features->y_max = features->y_max / 10;
-+			}
-+			else {
-+				features->x_max = 4096;
-+				features->y_max = 4096;
-+			}
- 		}
- 		else if (features->pktlen == WACOM_PKGLEN_BBTOUCH) {
- 			features->device_type |= WACOM_DEVICETYPE_PAD;
+--- a/arch/arm/configs/imx_v6_v7_defconfig
++++ b/arch/arm/configs/imx_v6_v7_defconfig
+@@ -289,6 +289,7 @@ CONFIG_USB_STORAGE=y
+ CONFIG_USB_CHIPIDEA=y
+ CONFIG_USB_CHIPIDEA_UDC=y
+ CONFIG_USB_CHIPIDEA_HOST=y
++CONFIG_USB_CHIPIDEA_ULPI=y
+ CONFIG_USB_SERIAL=m
+ CONFIG_USB_SERIAL_GENERIC=y
+ CONFIG_USB_SERIAL_FTDI_SIO=m
+@@ -325,6 +326,7 @@ CONFIG_USB_GADGETFS=m
+ CONFIG_USB_FUNCTIONFS=m
+ CONFIG_USB_MASS_STORAGE=m
+ CONFIG_USB_G_SERIAL=m
++CONFIG_USB_ULPI_BUS=y
+ CONFIG_MMC=y
+ CONFIG_MMC_SDHCI=y
+ CONFIG_MMC_SDHCI_PLTFM=y
 
 
