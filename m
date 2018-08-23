@@ -3,42 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50ED0C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74155C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:10:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96E7F208C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:10:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96E7F208C4
+	by mail.kernel.org (Postfix) with ESMTP id 2F371208C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:10:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F371208C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729597AbeHWLi6 (ORCPT
+        id S1729607AbeHWLjB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:38:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45578 "EHLO
+        Thu, 23 Aug 2018 07:39:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45602 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727144AbeHWLi6 (ORCPT
+        with ESMTP id S1726694AbeHWLjB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:38:58 -0400
+        Thu, 23 Aug 2018 07:39:01 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5ECDEC74;
-        Thu, 23 Aug 2018 08:10:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 59A01C7B;
+        Thu, 23 Aug 2018 08:10:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 053/130] selftests/x86/sigreturn: Do minor cleanups
-Date:   Thu, 23 Aug 2018 09:52:49 +0200
-Message-Id: <20180823074930.627073664@linuxfoundation.org>
+Subject: [PATCH 4.9 054/130] ARM: dts: da850: Fix interrups property for gpio
+Date:   Thu, 23 Aug 2018 09:52:50 +0200
+Message-Id: <20180823074930.683633636@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -55,61 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Keerthy <j-keerthy@ti.com>
 
-[ Upstream commit e8a445dea219c32727016af14f847d2e8f7ebec8 ]
+[ Upstream commit 3eb1b955cd7ed1e621ace856710006c2a8a7f231 ]
 
-We have short names for the requested and resulting register values.
-Use them instead of spelling out the whole register entry for each
-case.
+The intc #interrupt-cells is equal to 1. Currently gpio
+node has 2 cells per IRQ which is wrong. Remove the additional
+cell for each of the interrupts.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/bb3bc1f923a2f6fe7912d22a1068fe29d6033d38.1530076529.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Fixes: 2e38b946dc54 ("ARM: davinci: da850: add GPIO DT node")
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/x86/sigreturn.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/da850.dtsi |    6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
---- a/tools/testing/selftests/x86/sigreturn.c
-+++ b/tools/testing/selftests/x86/sigreturn.c
-@@ -610,6 +610,7 @@ static int test_valid_sigreturn(int cs_b
- 	 */
- 	for (int i = 0; i < NGREG; i++) {
- 		greg_t req = requested_regs[i], res = resulting_regs[i];
-+
- 		if (i == REG_TRAPNO || i == REG_IP)
- 			continue;	/* don't care */
- 
-@@ -673,18 +674,18 @@ static int test_valid_sigreturn(int cs_b
- #endif
- 
- 		/* Sanity check on the kernel */
--		if (i == REG_CX && requested_regs[i] != resulting_regs[i]) {
-+		if (i == REG_CX && req != res) {
- 			printf("[FAIL]\tCX (saved SP) mismatch: requested 0x%llx; got 0x%llx\n",
--			       (unsigned long long)requested_regs[i],
--			       (unsigned long long)resulting_regs[i]);
-+			       (unsigned long long)req,
-+			       (unsigned long long)res);
- 			nerrs++;
- 			continue;
- 		}
- 
--		if (requested_regs[i] != resulting_regs[i] && !ignore_reg) {
-+		if (req != res && !ignore_reg) {
- 			printf("[FAIL]\tReg %d mismatch: requested 0x%llx; got 0x%llx\n",
--			       i, (unsigned long long)requested_regs[i],
--			       (unsigned long long)resulting_regs[i]);
-+			       i, (unsigned long long)req,
-+			       (unsigned long long)res);
- 			nerrs++;
- 		}
- 	}
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -377,11 +377,7 @@
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			reg = <0x226000 0x1000>;
+-			interrupts = <42 IRQ_TYPE_EDGE_BOTH
+-				43 IRQ_TYPE_EDGE_BOTH 44 IRQ_TYPE_EDGE_BOTH
+-				45 IRQ_TYPE_EDGE_BOTH 46 IRQ_TYPE_EDGE_BOTH
+-				47 IRQ_TYPE_EDGE_BOTH 48 IRQ_TYPE_EDGE_BOTH
+-				49 IRQ_TYPE_EDGE_BOTH 50 IRQ_TYPE_EDGE_BOTH>;
++			interrupts = <42 43 44 45 46 47 48 49 50>;
+ 			ti,ngpio = <144>;
+ 			ti,davinci-gpio-unbanked = <0>;
+ 			status = "disabled";
 
 
