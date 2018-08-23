@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A1EDC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 969B2C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E107F208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E107F208C2
+	by mail.kernel.org (Postfix) with ESMTP id 5A116208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A116208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389002AbeHWMjR (ORCPT
+        id S2389088AbeHWMjZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:39:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56666 "EHLO
+        Thu, 23 Aug 2018 08:39:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56734 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728107AbeHWMjR (ORCPT
+        with ESMTP id S1728183AbeHWMjX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:39:17 -0400
+        Thu, 23 Aug 2018 08:39:23 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B478B93C;
-        Thu, 23 Aug 2018 09:10:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45981CA8;
+        Thu, 23 Aug 2018 09:10:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 4.17 322/324] i2c: core: ACPI: Properly set status byte to 0 for multi-byte writes
-Date:   Thu, 23 Aug 2018 09:56:28 +0200
-Message-Id: <20180823075012.219795887@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 314/324] packet: refine ring v3 block size test to hold one frame
+Date:   Thu, 23 Aug 2018 09:56:20 +0200
+Message-Id: <20180823075011.803117239@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,61 +51,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Willem de Bruijn <willemb@google.com>
 
-commit c463a158cb6c5d9a85b7d894cd4f8116e8bd6be0 upstream.
+commit 4576cd469d980317c4edd9173f8b694aa71ea3a3 upstream.
 
-acpi_gsb_i2c_write_bytes() returns i2c_transfer()'s return value, which
-is the number of transfers executed on success, so 1.
+TPACKET_V3 stores variable length frames in fixed length blocks.
+Blocks must be able to store a block header, optional private space
+and at least one minimum sized frame.
 
-The ACPI code expects us to store 0 in gsb->status for success, not 1.
+Frames, even for a zero snaplen packet, store metadata headers and
+optional reserved space.
 
-Specifically this breaks the following code in the Thinkpad 8 DSDT:
+In the block size bounds check, ensure that the frame of the
+chosen configuration fits. This includes sockaddr_ll and optional
+tp_reserve.
 
-            ECWR = I2CW = ECWR /* \_SB_.I2C1.BAT0.ECWR */
-            If ((ECST == Zero))
-            {
-                ECRD = I2CR /* \_SB_.I2C1.I2CR */
-            }
+Syzbot was able to construct a ring with insuffient room for the
+sockaddr_ll in the header of a zero-length frame, triggering an
+out-of-bounds write in dev_parse_header.
 
-Before this commit we set ECST to 1, causing the read to never happen
-breaking battery monitoring on the Thinkpad 8.
+Convert the comparison to less than, as zero is a valid snap len.
+This matches the test for minimum tp_frame_size immediately below.
 
-This commit makes acpi_gsb_i2c_write_bytes() return 0 when i2c_transfer()
-returns 1, so the single write transfer completed successfully, and
-makes it return -EIO on for other (unexpected) return values >= 0.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Fixes: f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer implementation.")
+Fixes: eb73190f4fbe ("net/packet: refine check for priv area size")
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/i2c-core-acpi.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ net/packet/af_packet.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/i2c/i2c-core-acpi.c
-+++ b/drivers/i2c/i2c-core-acpi.c
-@@ -482,11 +482,16 @@ static int acpi_gsb_i2c_write_bytes(stru
- 	msgs[0].buf = buffer;
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -4258,6 +4258,8 @@ static int packet_set_ring(struct sock *
+ 	}
  
- 	ret = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
--	if (ret < 0)
--		dev_err(&client->adapter->dev, "i2c write failed\n");
- 
- 	kfree(buffer);
--	return ret;
+ 	if (req->tp_block_nr) {
++		unsigned int min_frame_size;
 +
-+	if (ret < 0) {
-+		dev_err(&client->adapter->dev, "i2c write failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* 1 transfer must have completed successfully */
-+	return (ret == 1) ? 0 : -EIO;
- }
- 
- static acpi_status
+ 		/* Sanity tests and some calculations */
+ 		err = -EBUSY;
+ 		if (unlikely(rb->pg_vec))
+@@ -4280,12 +4282,12 @@ static int packet_set_ring(struct sock *
+ 			goto out;
+ 		if (unlikely(!PAGE_ALIGNED(req->tp_block_size)))
+ 			goto out;
++		min_frame_size = po->tp_hdrlen + po->tp_reserve;
+ 		if (po->tp_version >= TPACKET_V3 &&
+-		    req->tp_block_size <=
+-		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + sizeof(struct tpacket3_hdr))
++		    req->tp_block_size <
++		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + min_frame_size)
+ 			goto out;
+-		if (unlikely(req->tp_frame_size < po->tp_hdrlen +
+-					po->tp_reserve))
++		if (unlikely(req->tp_frame_size < min_frame_size))
+ 			goto out;
+ 		if (unlikely(req->tp_frame_size & (TPACKET_ALIGNMENT - 1)))
+ 			goto out;
 
 
