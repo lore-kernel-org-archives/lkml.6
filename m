@@ -3,37 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E45C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A29DBC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44BAD21557
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:21:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44BAD21557
+	by mail.kernel.org (Postfix) with ESMTP id 6C6C52147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:21:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C6C52147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbeHWVwT (ORCPT
+        id S1727409AbeHWVwk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 17:52:19 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36648 "EHLO
+        Thu, 23 Aug 2018 17:52:40 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36657 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbeHWVwT (ORCPT
+        with ESMTP id S1726573AbeHWVwk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 17:52:19 -0400
+        Thu, 23 Aug 2018 17:52:40 -0400
 Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
         by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
         (Exim 4.76)
         (envelope-from <john.johansen@canonical.com>)
-        id 1fsuEV-0006W7-3s; Thu, 23 Aug 2018 18:21:23 +0000
-Subject: Re: [PATCH] apparmor: remove dead code
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        James Morris <jmorris@namei.org>,
+        id 1fsuEq-0006X5-GM; Thu, 23 Aug 2018 18:21:44 +0000
+Subject: Re: [PATCH] apparmor: remove unused label
+To:     Arnd Bergmann <arnd@arndb.de>, James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180823134255.GA12128@embeddedor.com>
+Cc:     Seth Arnold <seth.arnold@canonical.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180823140917.3060915-1-arnd@arndb.de>
 From:   John Johansen <john.johansen@canonical.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
@@ -79,12 +80,12 @@ Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
  qJciYE8TGHkZw1hOku+4OoM2GB5nEDlj+2TF/jLQ+EipX9PkPJYvxfRlC6dK8PKKfX9KdfmA
  IcgHfnV1jSn+8yH2djBPtKiqW0J69aIsyx7iV/03paPCjJh7Xq9vAzydN5U/UA==
 Organization: Canonical
-Message-ID: <715ebd74-d147-df40-436b-79fe26dee606@canonical.com>
-Date:   Thu, 23 Aug 2018 11:21:20 -0700
+Message-ID: <090d76e5-25ef-349c-3160-3f74c9196b38@canonical.com>
+Date:   Thu, 23 Aug 2018 11:21:41 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180823134255.GA12128@embeddedor.com>
+In-Reply-To: <20180823140917.3060915-1-arnd@arndb.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -93,37 +94,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/23/2018 06:42 AM, Gustavo A. R. Silva wrote:
+On 08/23/2018 07:09 AM, Arnd Bergmann wrote:
 
 thank you for the patch, but a fix for this issue was pushed to apparmor-next yesterday
 
-> Due to commit fb5841091f28 ("apparmor: remove no-op permission check
-> in policy_unpack"), there is some leftover code.
+
+> After the corresponding 'goto' was removed, we get a warning
+> for the 'fail' label:
 > 
-> Coverity reports this issue as Structurally dead code. Fix this by
-> removing such code.
+> security/apparmor/policy_unpack.c: In function 'unpack_dfa':
+> security/apparmor/policy_unpack.c:426:1: error: label 'fail' defined but not used [-Werror=unused-label]
 > 
-> Addresses-Coverity-ID: 1472998 ("Structurally dead code")
 > Fixes: fb5841091f28 ("apparmor: remove no-op permission check in policy_unpack")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  security/apparmor/policy_unpack.c | 4 ----
->  1 file changed, 4 deletions(-)
+>  security/apparmor/policy_unpack.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
 > diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-> index 3647b58..21cb384 100644
+> index 3647b5834ace..96d8cf68ce65 100644
 > --- a/security/apparmor/policy_unpack.c
 > +++ b/security/apparmor/policy_unpack.c
-> @@ -422,10 +422,6 @@ static struct aa_dfa *unpack_dfa(struct aa_ext *e)
->  	}
+> @@ -423,7 +423,6 @@ static struct aa_dfa *unpack_dfa(struct aa_ext *e)
 >  
 >  	return dfa;
-> -
-> -fail:
-> -	aa_put_dfa(dfa);
-> -	return ERR_PTR(-EPROTO);
->  }
 >  
->  /**
+> -fail:
+>  	aa_put_dfa(dfa);
+>  	return ERR_PTR(-EPROTO);
+>  }
 > 
 
