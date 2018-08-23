@@ -6,41 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F9CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E16FCC43615
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93E6E208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E6E208C2
+	by mail.kernel.org (Postfix) with ESMTP id A6080208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6080208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389052AbeHWMj2 (ORCPT
+        id S2389080AbeHWMja (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:39:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56770 "EHLO
+        Thu, 23 Aug 2018 08:39:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56794 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728183AbeHWMj0 (ORCPT
+        with ESMTP id S1728107AbeHWMja (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:39:26 -0400
+        Thu, 23 Aug 2018 08:39:30 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 773A6CAC;
-        Thu, 23 Aug 2018 09:10:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A95DB93C;
+        Thu, 23 Aug 2018 09:10:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Yazen Ghannam <Yazen.Ghannam@amd.com>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Borislav Petkov <bp@suse.de>
-Subject: [PATCH 4.18 01/22] EDAC: Add missing MEM_LRDDR4 entry in edac_mem_types[]
-Date:   Thu, 23 Aug 2018 09:56:27 +0200
-Message-Id: <20180823074759.303513950@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.18 10/22] drm/amdgpu/pm: Fix potential Spectre v1
+Date:   Thu, 23 Aug 2018 09:56:36 +0200
+Message-Id: <20180823074759.821807615@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074759.234685844@linuxfoundation.org>
 References: <20180823074759.234685844@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,36 +51,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit b748f2de4b2f578599f46c6000683a8da755bf68 upstream.
+commit ddf74e79a54070f277ae520722d3bab7f7a6c67a upstream.
 
-The edac_mem_types[] array misses a MEM_LRDDR4 entry, which leads to
-NULL pointer dereference when accessed via sysfs or such.
+idx can be indirectly controlled by user-space, hence leading to a
+potential exploitation of the Spectre variant 1 vulnerability.
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: <stable@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20180810141426.8918-1-tiwai@suse.de
-Fixes: 1e8096bb2031 ("EDAC: Add LRDDR4 DRAM type")
-Signed-off-by: Borislav Petkov <bp@suse.de>
+This issue was detected with the help of Smatch:
+
+drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c:408 amdgpu_set_pp_force_state()
+warn: potential spectre issue 'data.states'
+
+Fix this by sanitizing idx before using it to index data.states
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/edac/edac_mc.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/edac/edac_mc.c
-+++ b/drivers/edac/edac_mc.c
-@@ -215,6 +215,7 @@ const char * const edac_mem_types[] = {
- 	[MEM_LRDDR3]	= "Load-Reduced-DDR3-RAM",
- 	[MEM_DDR4]	= "Unbuffered-DDR4",
- 	[MEM_RDDR4]	= "Registered-DDR4",
-+	[MEM_LRDDR4]	= "Load-Reduced-DDR4-RAM",
- 	[MEM_NVDIMM]	= "Non-volatile-RAM",
- };
- EXPORT_SYMBOL_GPL(edac_mem_types);
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
+@@ -31,7 +31,7 @@
+ #include <linux/power_supply.h>
+ #include <linux/hwmon.h>
+ #include <linux/hwmon-sysfs.h>
+-
++#include <linux/nospec.h>
+ 
+ static int amdgpu_debugfs_pm_init(struct amdgpu_device *adev);
+ 
+@@ -393,6 +393,7 @@ static ssize_t amdgpu_set_pp_force_state
+ 			count = -EINVAL;
+ 			goto fail;
+ 		}
++		idx = array_index_nospec(idx, ARRAY_SIZE(data.states));
+ 
+ 		amdgpu_dpm_get_pp_num_states(adev, &data);
+ 		state = data.states[idx];
 
 
