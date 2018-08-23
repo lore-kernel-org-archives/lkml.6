@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13713C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FC3C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCAA920839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCAA920839
+	by mail.kernel.org (Postfix) with ESMTP id D333F208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D333F208DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387523AbeHWMTH (ORCPT
+        id S2387534AbeHWMTL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:19:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51398 "EHLO
+        Thu, 23 Aug 2018 08:19:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51408 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728517AbeHWMTH (ORCPT
+        with ESMTP id S1728517AbeHWMTK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:19:07 -0400
+        Thu, 23 Aug 2018 08:19:10 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC0DCC5C;
-        Thu, 23 Aug 2018 08:50:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DBD81C83;
+        Thu, 23 Aug 2018 08:50:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Ziegler <dev@andreas-ziegler.de>,
-        Sven Eckelmann <sven@narfation.org>,
-        Marek Lindner <mareklindner@neomailbox.ch>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
+        stable@vger.kernel.org,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 095/324] batman-adv: Fix bat_ogm_iv best gw refcnt after netlink dump
-Date:   Thu, 23 Aug 2018 09:52:41 +0200
-Message-Id: <20180823075000.596122448@linuxfoundation.org>
+Subject: [PATCH 4.17 127/324] rds: clean up loopback rds_connections on netns deletion
+Date:   Thu, 23 Aug 2018 09:53:13 +0200
+Message-Id: <20180823075002.256801890@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -53,51 +53,166 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
 
-[ Upstream commit b5685d2687d6612adf5eac519eb7008f74dfd1ec ]
+[ Upstream commit c809195f5523dd4d09403bbb1c9732d548aa0d1e ]
 
-A reference for the best gateway is taken when the list of gateways in the
-mesh is sent via netlink. This is necessary to check whether the currently
-dumped entry is the currently selected gateway or not. This information is
-then transferred as flag BATADV_ATTR_FLAG_BEST.
+The RDS core module creates rds_connections based on callbacks
+from rds_loop_transport when sending/receiving packets to local
+addresses.
 
-After the comparison of the current entry is done,
-batadv_iv_gw_dump_entry() has to decrease the reference counter again.
-Otherwise the reference will be held and thus prevents a proper shutdown of
-the batman-adv interfaces (and some of the interfaces enslaved in it).
+These connections will need to be cleaned up when they are
+created from a netns that is not init_net, and that netns is deleted.
 
-Fixes: efb766af06e3 ("batman-adv: add B.A.T.M.A.N. IV bat_gw_dump implementations")
-Reported-by: Andreas Ziegler <dev@andreas-ziegler.de>
-Tested-by: Andreas Ziegler <dev@andreas-ziegler.de>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Add the changes aligned with the changes from
+commit ebeeb1ad9b8a ("rds: tcp: use rds_destroy_pending() to synchronize
+netns/module teardown and rds connection/workq management") for
+rds_loop_transport
+
+Reported-and-tested-by: syzbot+4c20b3866171ce8441d2@syzkaller.appspotmail.com
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/bat_iv_ogm.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/rds/connection.c |   11 +++++++++-
+ net/rds/loop.c       |   56 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ net/rds/loop.h       |    2 +
+ 3 files changed, 68 insertions(+), 1 deletion(-)
 
---- a/net/batman-adv/bat_iv_ogm.c
-+++ b/net/batman-adv/bat_iv_ogm.c
-@@ -2732,7 +2732,7 @@ static int batadv_iv_gw_dump_entry(struc
+--- a/net/rds/connection.c
++++ b/net/rds/connection.c
+@@ -659,11 +659,19 @@ static void rds_conn_info(struct socket
+ 
+ int rds_conn_init(void)
  {
- 	struct batadv_neigh_ifinfo *router_ifinfo = NULL;
- 	struct batadv_neigh_node *router;
--	struct batadv_gw_node *curr_gw;
-+	struct batadv_gw_node *curr_gw = NULL;
- 	int ret = 0;
- 	void *hdr;
++	int ret;
++
++	ret = rds_loop_net_init(); /* register pernet callback */
++	if (ret)
++		return ret;
++
+ 	rds_conn_slab = kmem_cache_create("rds_connection",
+ 					  sizeof(struct rds_connection),
+ 					  0, 0, NULL);
+-	if (!rds_conn_slab)
++	if (!rds_conn_slab) {
++		rds_loop_net_exit();
+ 		return -ENOMEM;
++	}
  
-@@ -2780,6 +2780,8 @@ static int batadv_iv_gw_dump_entry(struc
- 	ret = 0;
+ 	rds_info_register_func(RDS_INFO_CONNECTIONS, rds_conn_info);
+ 	rds_info_register_func(RDS_INFO_SEND_MESSAGES,
+@@ -676,6 +684,7 @@ int rds_conn_init(void)
  
- out:
-+	if (curr_gw)
-+		batadv_gw_node_put(curr_gw);
- 	if (router_ifinfo)
- 		batadv_neigh_ifinfo_put(router_ifinfo);
- 	if (router)
+ void rds_conn_exit(void)
+ {
++	rds_loop_net_exit(); /* unregister pernet callback */
+ 	rds_loop_exit();
+ 
+ 	WARN_ON(!hlist_empty(rds_conn_hash));
+--- a/net/rds/loop.c
++++ b/net/rds/loop.c
+@@ -33,6 +33,8 @@
+ #include <linux/kernel.h>
+ #include <linux/slab.h>
+ #include <linux/in.h>
++#include <net/net_namespace.h>
++#include <net/netns/generic.h>
+ 
+ #include "rds_single_path.h"
+ #include "rds.h"
+@@ -40,6 +42,17 @@
+ 
+ static DEFINE_SPINLOCK(loop_conns_lock);
+ static LIST_HEAD(loop_conns);
++static atomic_t rds_loop_unloading = ATOMIC_INIT(0);
++
++static void rds_loop_set_unloading(void)
++{
++	atomic_set(&rds_loop_unloading, 1);
++}
++
++static bool rds_loop_is_unloading(struct rds_connection *conn)
++{
++	return atomic_read(&rds_loop_unloading) != 0;
++}
+ 
+ /*
+  * This 'loopback' transport is a special case for flows that originate
+@@ -165,6 +178,8 @@ void rds_loop_exit(void)
+ 	struct rds_loop_connection *lc, *_lc;
+ 	LIST_HEAD(tmp_list);
+ 
++	rds_loop_set_unloading();
++	synchronize_rcu();
+ 	/* avoid calling conn_destroy with irqs off */
+ 	spin_lock_irq(&loop_conns_lock);
+ 	list_splice(&loop_conns, &tmp_list);
+@@ -177,6 +192,46 @@ void rds_loop_exit(void)
+ 	}
+ }
+ 
++static void rds_loop_kill_conns(struct net *net)
++{
++	struct rds_loop_connection *lc, *_lc;
++	LIST_HEAD(tmp_list);
++
++	spin_lock_irq(&loop_conns_lock);
++	list_for_each_entry_safe(lc, _lc, &loop_conns, loop_node)  {
++		struct net *c_net = read_pnet(&lc->conn->c_net);
++
++		if (net != c_net)
++			continue;
++		list_move_tail(&lc->loop_node, &tmp_list);
++	}
++	spin_unlock_irq(&loop_conns_lock);
++
++	list_for_each_entry_safe(lc, _lc, &tmp_list, loop_node) {
++		WARN_ON(lc->conn->c_passive);
++		rds_conn_destroy(lc->conn);
++	}
++}
++
++static void __net_exit rds_loop_exit_net(struct net *net)
++{
++	rds_loop_kill_conns(net);
++}
++
++static struct pernet_operations rds_loop_net_ops = {
++	.exit = rds_loop_exit_net,
++};
++
++int rds_loop_net_init(void)
++{
++	return register_pernet_device(&rds_loop_net_ops);
++}
++
++void rds_loop_net_exit(void)
++{
++	unregister_pernet_device(&rds_loop_net_ops);
++}
++
+ /*
+  * This is missing .xmit_* because loop doesn't go through generic
+  * rds_send_xmit() and doesn't call rds_recv_incoming().  .listen_stop and
+@@ -194,4 +249,5 @@ struct rds_transport rds_loop_transport
+ 	.inc_free		= rds_loop_inc_free,
+ 	.t_name			= "loopback",
+ 	.t_type			= RDS_TRANS_LOOP,
++	.t_unloading		= rds_loop_is_unloading,
+ };
+--- a/net/rds/loop.h
++++ b/net/rds/loop.h
+@@ -5,6 +5,8 @@
+ /* loop.c */
+ extern struct rds_transport rds_loop_transport;
+ 
++int rds_loop_net_init(void);
++void rds_loop_net_exit(void);
+ void rds_loop_exit(void);
+ 
+ #endif
 
 
