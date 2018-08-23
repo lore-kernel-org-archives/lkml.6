@@ -2,86 +2,106 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED5CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:50:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6DAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27288208E9
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:50:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47871208E9
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:55:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PiuyNC3m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27288208E9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="PXZDt2zS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47871208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732883AbeHWSUv (ORCPT
+        id S1732455AbeHWSZC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 14:20:51 -0400
-Received: from mail-io0-f173.google.com ([209.85.223.173]:43442 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730615AbeHWSUv (ORCPT
+        Thu, 23 Aug 2018 14:25:02 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:55851 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731953AbeHWSZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 14:20:51 -0400
-Received: by mail-io0-f173.google.com with SMTP id y10-v6so4491849ioa.10
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:50:50 -0700 (PDT)
+        Thu, 23 Aug 2018 14:25:01 -0400
+Received: by mail-it0-f68.google.com with SMTP id d10-v6so7895724itj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:55:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=N9CVFTF5QYzBCK556n8iOYtmEniKa29whJJ+26h7ajw=;
-        b=PiuyNC3mkumFiVN48hKUXxvLjcsGNWoAVgb+BsnWjj/kmDZI3wEFrzRFDeqyzbSqNd
-         ufJKm7kWdrqQB7ngXkt2qx71hp4uJeryXeZDmszgeAC2eUuRi36CiR6E/r4E+p1RzKHN
-         zK6lQSfT5aNeFXsKQOFUbT8+0RDOvzMR7nvNJAElzHx+rCyh1SEtzjO9ijL3LSiXFIpE
-         p/xus6HCycBDrQ3B4bet25B3yQ5/khV83jpI1YL3QRgyGpVE3BAKFYevFyUvytQHHbXX
-         cSe12JwFhYhzP41aoFXPbwR7acsqQsa5vN5MuYhsfW9c3b3hMuMMg36CsbixjHgGUp6f
-         fzzw==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pgw5dIlS32S9/R0w0dRJVxlBtH0R6iAPxAsrK2N3uiU=;
+        b=PXZDt2zSar94mYy2mpRDouifUuewoqGpDSjkRpIxue2f9hq3kOT7xmUTeJuCzOyZtH
+         CeVoFy5N4k6WpugTKUDlpWkakm+XQEo6Ey4STitOhWrc/6ZZcuu6US5DhTwgN3dQ9cF9
+         PKThZOSZVZ2xYXmpADXaRG7a9vZBqjI9KlBjQ2w/nu8I8YUeGLJPVBfQjLNZZ4+BTj/j
+         XVuc/Jq7cCMRZDFmWmwlqiJJOVXbTQ5V8HoOWz4hM4twl4c2xauGLsUxv5LgezJVqFZ8
+         1A+HAlBRflGmTCBq0CLWMoNO19EPfg7RJNmNu3jYgfF/WafJPievDfd2Jqupwuo9Z2Bc
+         Qc+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=N9CVFTF5QYzBCK556n8iOYtmEniKa29whJJ+26h7ajw=;
-        b=OM2a0gWxofDli2odKPg9+yvRMJXV+t5HYkAs4TvvLXgb2zr03nugeXUCGM/pW5C5YX
-         2NbbD+n+41fW+2hVDe3VKZSeUUsAljt3fMrlWH56EbyfIjTlQagkUGjp7igGUtcK9/Sm
-         a3EzEF1xi2nEjEhCrXx09NCj73PY84O6r6TADym7Awclmjfvckl4Ij+N5UNrORO7G5o7
-         eudp/VscdjAiCfimWfGx3wUP5w5jz6ExxFyTDbCgJ5cSJG9f9ABrCPoW4YB+vdxLkx6T
-         W/llkdRGa0iiD7tWUf2gq4EwrSVnr1NEY4OvzorkmjU3RNAWJJ4HPuxAkL0M9QWDDjU+
-         odmA==
-X-Gm-Message-State: AOUpUlH4deGtoibr/sKEmIAYVMIOikTz7BWD9HsRrZxi+D4qCLULo1UI
-        1M4mIW2inBa92p2DvQc3lZuP6JyvgzfJug/xmKM=
-X-Google-Smtp-Source: AA+uWPyhpU6LCJ+MKCBp9nZaaokmE6P5FTep+H/EFVYN4fe39zd7oIlU40fexoFbk0siPF+vQJttujdxzvIYHe098E8=
-X-Received: by 2002:a5e:c705:: with SMTP id f5-v6mr41541222iop.197.1535035849840;
- Thu, 23 Aug 2018 07:50:49 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pgw5dIlS32S9/R0w0dRJVxlBtH0R6iAPxAsrK2N3uiU=;
+        b=MdxEHMM21XlKqlpscKQ7SfPwuLGtv3n56UjyOWFZ9ywbEsN8ekcI+y3nMxQVJCo2w7
+         epHU5D5uyeMw4CCz2vo9RqhswfAu0VIqlRiZ0kF0k1A199BMVPVLoOOSbGfO1R4zlt1e
+         0+O6RQu8Tq3diYbC4liEJmEuiwsqD9tz7tyUL5l8eR5u1G9D14mr1llq8zb1j7iEiwJU
+         RjMzq2nOClnf3Rglv7Kg1VoB48NNDaYnlJ1XMX9m1/PMSzYsg0pS7XcmWEtuLa8sZEQv
+         5EdHFHBuYl7f6QFjkoqmtWixNZAAzmQAeKf0GynfS07y705e9sVbMKU6dwpmIhDQAxhN
+         JkYQ==
+X-Gm-Message-State: APzg51B/u2p0Z+5nlupujvKIFK9zswhHOFiRkry2wXoTHtOZHvWvXq0k
+        29JNVCW+EVs8QrXuCg/e86Czig==
+X-Google-Smtp-Source: ANB0VdZTs7U9gj8YWiCpbQ00i10Rn3DZT4Un6dpdOkbz9x7KNkOpbqD0zIdFq4h0+J2uiZT8EM2mcQ==
+X-Received: by 2002:a24:a003:: with SMTP id o3-v6mr4471169ite.117.1535036100089;
+        Thu, 23 Aug 2018 07:55:00 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id m5-v6sm1546635itb.6.2018.08.23.07.54.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 Aug 2018 07:54:59 -0700 (PDT)
+Received: from jgg by mlx with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fsr0k-0002bm-Lq; Thu, 23 Aug 2018 08:54:58 -0600
+Date:   Thu, 23 Aug 2018 08:54:58 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        dasaratharaman.chandramouli@intel.com, leonro@mellanox.com,
+        linux-kernel@vger.kernel.org, markb@mellanox.com,
+        monis@mellanox.com, parav@mellanox.com,
+        syzkaller-bugs@googlegroups.com,
+        syzbot <syzbot+29ee8f76017ce6cf03da@syzkaller.appspotmail.com>
+Subject: Re: [RDMA bug] KASAN: use-after-free Read in __list_del_entry_valid
+ (4)
+Message-ID: <20180823145458.GC9366@ziepe.ca>
+References: <001a1141551246502d056845782e@google.com>
+ <001a1140f6ac1677460568489287@google.com>
+ <20180823061630.GB736@sol.localdomain>
 MIME-Version: 1.0
-From:   Kedareswararao Appana <kedare06@gmail.com>
-Date:   Thu, 23 Aug 2018 20:20:36 +0530
-Message-ID: <CANdmM3O_q_dAzVAd5Lk+u_OHqgEkHR2p1ucgEZ5v_tLQ6G+3Rw@mail.gmail.com>
-Subject: Query on dma_set_mask_and_coherent() Usage
-To:     catalin.marinas@arm.com, will.deacon@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180823061630.GB736@sol.localdomain>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+On Wed, Aug 22, 2018 at 11:16:31PM -0700, Eric Biggers wrote:
+> Hello RDMA / InfiniBand maintainers,
+> 
+> This is an RDMA bug and it still occurs on Linus' tree as of today
+> (commit 815f0ddb346c1960).
+> 
+> I've also simplified the reproducer for it; see below after the original report.
+> Apparently it involves a race between RDMA_USER_CM_CMD_RESOLVE_IP and
+> RDMA_USER_CM_CMD_LISTEN.
 
-              On arm64 platform I have booted Linux only with > 32-bit
-Address i.e from 0x800000000 (reg =  <0x8 0x00000000 0x0 0x80000000>)
+That is an amazing reproducer!
 
-In my driver, I am using dma_set_mask_and_coherent(&pdev->dev,
-DMA_BIT_MASK(32)); which should fail if I boot Linux
-with the above configuration but the API is returning success.
+I have a feeling this is the same cause as all the other syzkaller
+bugs in this code: lack of any sane locking at all :\
 
-I have debugged it further and observed that, in the arm64
-dma-mapping.c swiotlb is zero resulting dma_supported ops always
-returning 1
+We've talked about chucking a big lock around this whole thing, but
+nobody has done it yet.. It isn't so simple.
 
-https://elixir.bootlin.com/linux/v4.17.8/source/arch/arm64/mm/dma-mapping.c#L321
-
- I will be grateful if someone can send me some pointers for fixing this issue
-
-Regards,
-Kedar.
+Jason
