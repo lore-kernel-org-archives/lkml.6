@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E49C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:03:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F24C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8585208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:03:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8585208D6
+	by mail.kernel.org (Postfix) with ESMTP id 75E59208CC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:03:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75E59208CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388814AbeHWMcf (ORCPT
+        id S2388827AbeHWMci (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:32:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56094 "EHLO
+        Thu, 23 Aug 2018 08:32:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56102 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728841AbeHWMce (ORCPT
+        with ESMTP id S1728841AbeHWMci (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:32:34 -0400
+        Thu, 23 Aug 2018 08:32:38 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5954EC93;
-        Thu, 23 Aug 2018 09:03:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C6EEBBF;
+        Thu, 23 Aug 2018 09:03:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 257/324] packet: reset network header if packet shorter than ll reserved space
-Date:   Thu, 23 Aug 2018 09:55:23 +0200
-Message-Id: <20180823075008.883058313@linuxfoundation.org>
+Subject: [PATCH 4.17 258/324] rtc: fix alarm read and set offset
+Date:   Thu, 23 Aug 2018 09:55:24 +0200
+Message-Id: <20180823075008.931538622@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,35 +51,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 993675a3100b16a4c80dfd70cbcde8ea7127b31d ]
+[ Upstream commit fd6792bb022e43faa0c4a45b6f25285e21206f9d ]
 
-If variable length link layer headers result in a packet shorter
-than dev->hard_header_len, reset the network header offset. Else
-skb->mac_len may exceed skb->len after skb_mac_reset_len.
+The offset needs to be added after reading the alarm value.
 
-packet_sendmsg_spkt already has similar logic.
+It also needs to be subtracted after the now < alarm test.
 
-Fixes: b84bbaf7a6c8 ("packet: in packet_snd start writing at link layer allocation")
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/packet/af_packet.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/rtc/interface.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2910,6 +2910,8 @@ static int packet_snd(struct socket *soc
- 			goto out_free;
- 	} else if (reserve) {
- 		skb_reserve(skb, -reserve);
-+		if (len < reserve)
-+			skb_reset_network_header(skb);
- 	}
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -265,8 +265,10 @@ int __rtc_read_alarm(struct rtc_device *
+ 			return err;
  
- 	/* Returns -EFAULT on error */
+ 		/* full-function RTCs won't have such missing fields */
+-		if (rtc_valid_tm(&alarm->time) == 0)
++		if (rtc_valid_tm(&alarm->time) == 0) {
++			rtc_add_offset(rtc, &alarm->time);
+ 			return 0;
++		}
+ 
+ 		/* get the "after" timestamp, to detect wrapped fields */
+ 		err = rtc_read_time(rtc, &now);
+@@ -409,7 +411,6 @@ static int __rtc_set_alarm(struct rtc_de
+ 	if (err)
+ 		return err;
+ 
+-	rtc_subtract_offset(rtc, &alarm->time);
+ 	scheduled = rtc_tm_to_time64(&alarm->time);
+ 
+ 	/* Make sure we're not setting alarms in the past */
+@@ -426,6 +427,8 @@ static int __rtc_set_alarm(struct rtc_de
+ 	 * over right here, before we set the alarm.
+ 	 */
+ 
++	rtc_subtract_offset(rtc, &alarm->time);
++
+ 	if (!rtc->ops)
+ 		err = -ENODEV;
+ 	else if (!rtc->ops->set_alarm)
+@@ -467,7 +470,6 @@ int rtc_set_alarm(struct rtc_device *rtc
+ 
+ 	mutex_unlock(&rtc->ops_lock);
+ 
+-	rtc_add_offset(rtc, &alarm->time);
+ 	return err;
+ }
+ EXPORT_SYMBOL_GPL(rtc_set_alarm);
 
 
