@@ -6,36 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D608EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9786DC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BADA208C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:10:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BADA208C4
+	by mail.kernel.org (Postfix) with ESMTP id 5C88F208C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:10:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C88F208C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbeHWLjP (ORCPT
+        id S1729676AbeHWLjS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:39:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45642 "EHLO
+        Thu, 23 Aug 2018 07:39:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45656 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbeHWLjO (ORCPT
+        with ESMTP id S1726694AbeHWLjR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:39:14 -0400
+        Thu, 23 Aug 2018 07:39:17 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 155BBC7B;
-        Thu, 23 Aug 2018 08:10:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 564FEC7B;
+        Thu, 23 Aug 2018 08:10:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masashi Honma <masashi.honma@gmail.com>,
-        Bob Copeland <bobcopeland@fb.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 058/130] nl80211: relax ht operation checks for mesh
-Date:   Thu, 23 Aug 2018 09:52:54 +0200
-Message-Id: <20180823074931.044625650@linuxfoundation.org>
+Subject: [PATCH 4.9 049/130] perf bench: Fix numa report output code
+Date:   Thu, 23 Aug 2018 09:52:45 +0200
+Message-Id: <20180823074930.404575147@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -52,76 +55,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bob Copeland <me@bobcopeland.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit 188f60ab8e787fcbb5ac9d64ede23a0070231f09 ]
+[ Upstream commit 983107072be1a39cbde67d45cb0059138190e015 ]
 
-Commit 9757235f451c, "nl80211: correct checks for
-NL80211_MESHCONF_HT_OPMODE value") relaxed the range for the HT
-operation field in meshconf, while also adding checks requiring
-the non-greenfield and non-ht-sta bits to be set in certain
-circumstances.  The latter bit is actually reserved for mesh BSSes
-according to Table 9-168 in 802.11-2016, so in fact it should not
-be set.
+Currently we can hit following assert when running numa bench:
 
-wpa_supplicant sets these bits because the mesh and AP code share
-the same implementation, but authsae does not.  As a result, some
-meshconf updates from authsae which set only the NONHT_MIXED
-protection bits were being rejected.
+  $ perf bench numa mem -p 3 -t 1 -P 512 -s 100 -zZ0cm --thp 1
+  perf: bench/numa.c:1577: __bench_numa: Assertion `!(!(((wait_stat) & 0x7f) == 0))' failed.
 
-In order to avoid breaking userspace by changing the rules again,
-simply accept the values with or without the bits set, and mask
-off the reserved bit to match the spec.
+The assertion is correct, because we hit the SIGFPE in following line:
 
-While in here, update the 802.11-2012 reference to 802.11-2016.
+  Thread 2.2 "thread 0/0" received signal SIGFPE, Arithmetic exception.
+  [Switching to Thread 0x7fffd28c6700 (LWP 11750)]
+  0x000.. in worker_thread (__tdata=0x7.. ) at bench/numa.c:1257
+  1257 td->speed_gbs = bytes_done / (td->runtime_ns / NSEC_PER_SEC) / 1e9;
 
-Fixes: 9757235f451c ("nl80211: correct checks for NL80211_MESHCONF_HT_OPMODE value")
-Cc: Masashi Honma <masashi.honma@gmail.com>
-Signed-off-by: Bob Copeland <bobcopeland@fb.com>
-Reviewed-by: Masashi Honma <masashi.honma@gmail.com>
-Reviewed-by: Masashi Honma <masashi.honma@gmail.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+We don't check if the runtime is actually bigger than 1 second,
+and thus this might end up with zero division within FPU.
+
+Adding the check to prevent this.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180620094036.17278-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/wireless/nl80211.c |   19 +++----------------
- 1 file changed, 3 insertions(+), 16 deletions(-)
+ tools/perf/bench/numa.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -5847,7 +5847,7 @@ do {									    \
- 				  nl80211_check_s32);
- 	/*
- 	 * Check HT operation mode based on
--	 * IEEE 802.11 2012 8.4.2.59 HT Operation element.
-+	 * IEEE 802.11-2016 9.4.2.57 HT Operation element.
- 	 */
- 	if (tb[NL80211_MESHCONF_HT_OPMODE]) {
- 		ht_opmode = nla_get_u16(tb[NL80211_MESHCONF_HT_OPMODE]);
-@@ -5857,22 +5857,9 @@ do {									    \
- 				  IEEE80211_HT_OP_MODE_NON_HT_STA_PRSNT))
- 			return -EINVAL;
+--- a/tools/perf/bench/numa.c
++++ b/tools/perf/bench/numa.c
+@@ -1093,7 +1093,7 @@ static void *worker_thread(void *__tdata
+ 	u8 *global_data;
+ 	u8 *process_data;
+ 	u8 *thread_data;
+-	u64 bytes_done;
++	u64 bytes_done, secs;
+ 	long work_done;
+ 	u32 l;
+ 	struct rusage rusage;
+@@ -1249,7 +1249,8 @@ static void *worker_thread(void *__tdata
+ 	timersub(&stop, &start0, &diff);
+ 	td->runtime_ns = diff.tv_sec * NSEC_PER_SEC;
+ 	td->runtime_ns += diff.tv_usec * NSEC_PER_USEC;
+-	td->speed_gbs = bytes_done / (td->runtime_ns / NSEC_PER_SEC) / 1e9;
++	secs = td->runtime_ns / NSEC_PER_SEC;
++	td->speed_gbs = secs ? bytes_done / secs / 1e9 : 0;
  
--		if ((ht_opmode & IEEE80211_HT_OP_MODE_NON_GF_STA_PRSNT) &&
--		    (ht_opmode & IEEE80211_HT_OP_MODE_NON_HT_STA_PRSNT))
--			return -EINVAL;
-+		/* NON_HT_STA bit is reserved, but some programs set it */
-+		ht_opmode &= ~IEEE80211_HT_OP_MODE_NON_HT_STA_PRSNT;
- 
--		switch (ht_opmode & IEEE80211_HT_OP_MODE_PROTECTION) {
--		case IEEE80211_HT_OP_MODE_PROTECTION_NONE:
--		case IEEE80211_HT_OP_MODE_PROTECTION_20MHZ:
--			if (ht_opmode & IEEE80211_HT_OP_MODE_NON_HT_STA_PRSNT)
--				return -EINVAL;
--			break;
--		case IEEE80211_HT_OP_MODE_PROTECTION_NONMEMBER:
--		case IEEE80211_HT_OP_MODE_PROTECTION_NONHT_MIXED:
--			if (!(ht_opmode & IEEE80211_HT_OP_MODE_NON_HT_STA_PRSNT))
--				return -EINVAL;
--			break;
--		}
- 		cfg->ht_opmode = ht_opmode;
- 		mask |= (1 << (NL80211_MESHCONF_HT_OPMODE - 1));
- 	}
+ 	getrusage(RUSAGE_THREAD, &rusage);
+ 	td->system_time_ns = rusage.ru_stime.tv_sec * NSEC_PER_SEC;
 
 
