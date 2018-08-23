@@ -3,73 +3,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF16C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 19:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A37C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 19:27:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA51D20841
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 19:25:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA51D20841
+	by mail.kernel.org (Postfix) with ESMTP id 23F7920841
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 19:27:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23F7920841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbeHWW5A (ORCPT
+        id S1726835AbeHWW6V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 18:57:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59496 "EHLO mx1.suse.de"
+        Thu, 23 Aug 2018 18:58:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59684 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726083AbeHWW47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 18:56:59 -0400
+        id S1726083AbeHWW6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 18:58:21 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 60B1FAEC0;
-        Thu, 23 Aug 2018 19:25:50 +0000 (UTC)
-Date:   Thu, 23 Aug 2018 21:25:47 +0200
+        by mx1.suse.de (Postfix) with ESMTP id 4EE2EAEC0;
+        Thu, 23 Aug 2018 19:27:11 +0000 (UTC)
+Date:   Thu, 23 Aug 2018 21:27:09 +0200
 From:   Michal Hocko <mhocko@kernel.org>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
+        Andi Kleen <ak@linux.intel.com>,
         Dave Hansen <dave.hansen@intel.com>, stable@vger.kernel.org
 Subject: Re: [PATCH] x86/speculation/l1tf: suggest what to do on systems with
  too much RAM
-Message-ID: <20180823192547.GS29735@dhcp22.suse.cz>
+Message-ID: <20180823192709.GT29735@dhcp22.suse.cz>
 References: <20180823134418.17008-1-vbabka@suse.cz>
  <20180823142812.7363-1-vbabka@suse.cz>
- <20180823154648.GD12066@tassilo.jf.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180823154648.GD12066@tassilo.jf.intel.com>
+In-Reply-To: <20180823142812.7363-1-vbabka@suse.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 23-08-18 08:46:48, Andi Kleen wrote:
-> On Thu, Aug 23, 2018 at 04:28:12PM +0200, Vlastimil Babka wrote:
-> > Two users have reported [1] that they have an "extremely unlikely" system
-> > with more than MAX_PA/2 memory and L1TF mitigation is not effective. Let's
-> > make the warning more helpful by suggesting the proper mem=X kernel boot param,
-> > a rough calculation of how much RAM can be lost (not precise if there's holes
-> > between MAX_PA/2 and max_pfn in the e820 map) and a link to the L1TF document
-> > to help decide if the mitigation is worth the unusable RAM.
+On Thu 23-08-18 16:28:12, Vlastimil Babka wrote:
+> Two users have reported [1] that they have an "extremely unlikely" system
+> with more than MAX_PA/2 memory and L1TF mitigation is not effective. Let's
+> make the warning more helpful by suggesting the proper mem=X kernel boot param,
+> a rough calculation of how much RAM can be lost (not precise if there's holes
+> between MAX_PA/2 and max_pfn in the e820 map) and a link to the L1TF document
+> to help decide if the mitigation is worth the unusable RAM.
 > 
-> I'm not sure anyone would really do that. After all you probably prefer
-> your memory. And if it's really a non ECC client part they are are
-> already used to to live very dangerously because their undetected RAM bit error
-> rate will be significant. L1TF is probably one of your smaller problems
-> in this case...
+> [1] https://bugzilla.suse.com/show_bug.cgi?id=1105536
+> 
+> Suggested-by: Michal Hocko <mhocko@suse.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-There are people who care about L1TF mitigations. I am not going to
-question their motivation. In any case a hint how to make the mitigation
-active again sounds more useful than something that sounds as scary as
-"you are vulnerable".
+I wouldn't bother with max_pfn-half_pa part but other than that this is
+much more useful than the original message.
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> ---
+>  arch/x86/kernel/cpu/bugs.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index cb4a16292aa7..4b820bb6c504 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -702,6 +702,11 @@ static void __init l1tf_select_mitigation(void)
+>  	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
+>  	if (e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
+>  		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
+> +		pr_info("You may make it effective by booting the kernel with mem=%llu parameter.\n",
+> +				half_pa);
+> +		pr_info("However, doing so will make up to %llu bytes of RAM unusable.\n",
+> +				((u64) max_pfn << PAGE_SHIFT) - half_pa);
+> +		pr_info("Reading Documentation/admin-guide/l1tf.rst might help you decide.");
+>  		return;
+>  	}
+>  
+> -- 
+> 2.18.0
 
 -- 
 Michal Hocko
