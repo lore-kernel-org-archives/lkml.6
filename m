@@ -6,40 +6,44 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95726C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A2DC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 587752077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 587752077B
+	by mail.kernel.org (Postfix) with ESMTP id 57D012086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57D012086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733242AbeHWMSI (ORCPT
+        id S1733255AbeHWMSL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:18:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51028 "EHLO
+        Thu, 23 Aug 2018 08:18:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51058 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732502AbeHWMSH (ORCPT
+        with ESMTP id S1732488AbeHWMSL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:18:07 -0400
+        Thu, 23 Aug 2018 08:18:11 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 02948BC1;
-        Thu, 23 Aug 2018 08:49:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 166D0C74;
+        Thu, 23 Aug 2018 08:49:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Sandipan Das <sandipan@linux.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+        stable@vger.kernel.org, Kim Phillips <kim.phillips@arm.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Richter <tmricht@linux.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 115/324] perf report powerpc: Fix crash if callchain is empty
-Date:   Thu, 23 Aug 2018 09:53:01 +0200
-Message-Id: <20180823075001.624394089@linuxfoundation.org>
+Subject: [PATCH 4.17 116/324] perf tests: Add event parsing error handling to parse events test
+Date:   Thu, 23 Aug 2018 09:53:02 +0200
+Message-Id: <20180823075001.710148493@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -56,72 +60,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sandipan Das <sandipan@linux.ibm.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit 143c99f6ac6812d23254e80844d6e34be897d3e1 ]
+[ Upstream commit 933ccf2002aaef1037cb676622a694f5390c3d59 ]
 
-For some cases, the callchain provided by the kernel may be empty. So,
-the callchain ip filtering code will cause a crash if we do not check
-whether the struct ip_callchain pointer is NULL before accessing any
-members.
+Add missing error handling for parse_events calls in test_event function
+that led to following segfault on s390:
 
-This can be observed on a powerpc64le system running Fedora 27 as shown
-below.
-
-  # perf record -b -e cycles:u ls
-
-Before:
-
-  # perf report --branch-history
-
+  running test 52 'intel_pt//u'
   perf: Segmentation fault
-  -------- backtrace --------
-  perf[0x1027615c]
-  linux-vdso64.so.1(__kernel_sigtramp_rt64+0x0)[0x7fff856304d8]
-  perf(arch_skip_callchain_idx+0x44)[0x10257c58]
-  perf[0x1017f2e4]
-  perf(thread__resolve_callchain+0x124)[0x1017ff5c]
-  perf(sample__resolve_callchain+0xf0)[0x10172788]
   ...
+  /lib64/libc.so.6(vasprintf+0xe6) [0x3fffca3f106]
+  /lib64/libc.so.6(asprintf+0x46) [0x3fffca1aa96]
+  ./perf(parse_events_add_pmu+0xb8) [0x80132088]
+  ./perf(parse_events_parse+0xc62) [0x8019529a]
+  ./perf(parse_events+0x98) [0x801341c0]
+  ./perf(test__parse_events+0x48) [0x800cd140]
+  ./perf(cmd_test+0x26a) [0x800bd44a]
+  test child interrupted
 
-After:
+Adding the struct parse_events_error argument to parse_events call. Also
+adding parse_events_print_error to get more details on the parsing
+failures, like:
 
-  # perf report --branch-history
+  # perf test 6 -v
+  running test 52 'intel_pt//u'failed to parse event 'intel_pt//u', err 1, str 'Cannot find PMU `intel_pt'. Missing kernel support?'
+  event syntax error: 'intel_pt//u'
+                       \___ Cannot find PMU `intel_pt'. Missing kernel support?
 
-  Samples: 25  of event 'cycles:u', Event count (approx.): 2306870
-    Overhead  Source:Line            Symbol                   Shared Object
-  +   11.60%  _init+35736            [.] _init                ls
-  +    9.84%  strcoll_l.c:137        [.] __strcoll_l          libc-2.26.so
-  +    9.16%  memcpy.S:175           [.] __memcpy_power7      libc-2.26.so
-  +    9.01%  gconv_charset.h:54     [.] _nl_find_locale      libc-2.26.so
-  +    8.87%  dl-addr.c:52           [.] _dl_addr             libc-2.26.so
-  +    8.83%  _init+236              [.] _init                ls
-  ...
+Committer note:
 
-Reported-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
-Acked-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/20180611104049.11048-1-sandipan@linux.ibm.com
+Use named initializers in the struct parse_events_error variable to
+avoid breaking the build on centos5, 6 and others with a similar gcc:
+
+  cc1: warnings being treated as errors
+  tests/parse-events.c: In function 'test_event':
+  tests/parse-events.c:1696: error: missing initializer
+  tests/parse-events.c:1696: error: (near initialization for 'err.str')
+
+Reported-by: Kim Phillips <kim.phillips@arm.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Kim Phillips <kim.phillips@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Link: http://lkml.kernel.org/r/20180611093422.1005-1-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/arch/powerpc/util/skip-callchain-idx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/tests/parse-events.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-+++ b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-@@ -243,7 +243,7 @@ int arch_skip_callchain_idx(struct threa
- 	u64 ip;
- 	u64 skip_slot = -1;
+--- a/tools/perf/tests/parse-events.c
++++ b/tools/perf/tests/parse-events.c
+@@ -1672,6 +1672,7 @@ static struct terms_test test__terms[] =
  
--	if (chain->nr < 3)
-+	if (!chain || chain->nr < 3)
- 		return skip_slot;
+ static int test_event(struct evlist_test *e)
+ {
++	struct parse_events_error err = { .idx = 0, };
+ 	struct perf_evlist *evlist;
+ 	int ret;
  
- 	ip = chain->ips[2];
+@@ -1679,10 +1680,11 @@ static int test_event(struct evlist_test
+ 	if (evlist == NULL)
+ 		return -ENOMEM;
+ 
+-	ret = parse_events(evlist, e->name, NULL);
++	ret = parse_events(evlist, e->name, &err);
+ 	if (ret) {
+-		pr_debug("failed to parse event '%s', err %d\n",
+-			 e->name, ret);
++		pr_debug("failed to parse event '%s', err %d, str '%s'\n",
++			 e->name, ret, err.str);
++		parse_events_print_error(&err, e->name);
+ 	} else {
+ 		ret = e->check(evlist);
+ 	}
 
 
