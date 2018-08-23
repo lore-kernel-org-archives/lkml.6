@@ -2,186 +2,142 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 585DFC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 02:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ABFAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 02:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00622208FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 02:43:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3AC9208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 02:45:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="I20NGB/u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00622208FC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aotpEkTi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3AC9208DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbeHWGLA (ORCPT
+        id S1727828AbeHWGMa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 02:11:00 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:49947 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbeHWGLA (ORCPT
+        Thu, 23 Aug 2018 02:12:30 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:49018 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726080AbeHWGM3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 02:11:00 -0400
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id w7N2hKdC023390
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 11:43:20 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w7N2hKdC023390
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1534992201;
-        bh=pr4KSdFDa2kSutSW4zW2TlTft+HohByN6htWclmlZUE=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=I20NGB/uWOqxno6+jd7l09lDUr9G1iHv8mow1Gt/MIPavylzdZRswyooAtuDGsDxP
-         Xn5mMq+TSE8PETydNbRyH3jbPOtpU3CDNiMy4WQXARSHjg3BNOcpr0b8nWzEw+6FZb
-         8sZVogZA9rG9Y/88KY0Ub19C2m84Pl8h6IdfB4P+pHt96tIvHddA9IFWAZ5BaJS4ca
-         AuShgjNrLqPdGgcjlOhiDN8tvur5ylanOOay9PCN0uNkP4xbt3r/DHU1H0xczXpnvV
-         R8201d6JGq9BwXjklnyGpfCZgnRtbkxtMGFV8vcwaZivNeAHFkl3Dal8j6qty/VgLF
-         PZyMMG337L9kQ==
-X-Nifty-SrcIP: [209.85.222.49]
-Received: by mail-ua1-f49.google.com with SMTP id l2-v6so2316113uaf.11
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 19:43:20 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGb9V69OFC/PFY51Q2jo1OKbE3TUrsR1bmgu57l2JUHw/3gvWpI
-        5hzIqgsUjMHGW1jnaHhng3ia2HqTZNMFNeayxAI=
-X-Google-Smtp-Source: AA+uWPwcr0Dp6ZH+JhOTEbInIzb6XPPK99wQeLt5R8vStLAeWaLBGIrUVMFtgR6lF2TE1Xeo4H0ELwpd1xrb7+5rThQ=
-X-Received: by 2002:ab0:14b3:: with SMTP id d48-v6mr39362716uae.88.1534992199514;
- Wed, 22 Aug 2018 19:43:19 -0700 (PDT)
+        Thu, 23 Aug 2018 02:12:29 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7N2ijqY041409;
+        Wed, 22 Aug 2018 21:44:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1534992285;
+        bh=sOzNKhzPEYKnz5ebbYX8WGhMDtsj/JOWLzGnU9uAsCw=;
+        h=From:To:CC:Subject:Date;
+        b=aotpEkTiwPKY08EjoJA7HbhkRDoDz2RXosM9TXS+bzL5dpDSpvQOc7oGNM44ZZ2x+
+         W3Y+K1y44Hw7Vbki1U4jlvfjhzLUyuHH37UCxMdPcg0YvWscUNktTtanlEl7oHTQFZ
+         ocnectyvH2Sk0ZK197EE7zURRaPf1Wn/ED1HcxWM=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7N2ij12006128;
+        Wed, 22 Aug 2018 21:44:45 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 22
+ Aug 2018 21:44:45 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 22 Aug 2018 21:44:45 -0500
+Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7N2ij9e011750;
+        Wed, 22 Aug 2018 21:44:45 -0500
+Received: from localhost (uda0274052.dhcp.ti.com [128.247.59.203])
+        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w7N2iix06328;
+        Wed, 22 Aug 2018 21:44:44 -0500 (CDT)
+From:   Dave Gerlach <d-gerlach@ti.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dave Gerlach <d-gerlach@ti.com>, Keerthy J <j-keerthy@ti.com>
+Subject: [PATCH] cpufreq: ti-cpufreq: Only register platform_device when supported
+Date:   Wed, 22 Aug 2018 21:44:32 -0500
+Message-ID: <20180823024432.7000-1-d-gerlach@ti.com>
+X-Mailer: git-send-email 2.16.1
 MIME-Version: 1.0
-Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Wed, 22 Aug 2018 19:42:39
- -0700 (PDT)
-In-Reply-To: <20180822233724.110454-1-ndesaulniers@google.com>
-References: <20180822233724.110454-1-ndesaulniers@google.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 23 Aug 2018 11:42:39 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQxpmGK=PMt-qMDYvaYcO=SZ9HWudGYqC11aJ-kGXaVoA@mail.gmail.com>
-Message-ID: <CAK7LNAQxpmGK=PMt-qMDYvaYcO=SZ9HWudGYqC11aJ-kGXaVoA@mail.gmail.com>
-Subject: Re: [PATCH] include/linux/compiler*.h: make compiler-*.h mutually exclusive
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Joe Perches <joe@perches.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        asmadeus@codewreck.org, Daniel Borkmann <daniel@iogearbox.net>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nick
+Currently the ti-cpufreq driver blindly registers a 'ti-cpufreq' to force
+the driver to probe on any platforms where the driver is built in.
+However, this should only happen on platforms that actually can make use
+of the driver. There is already functionality in place to match the
+SoC compatible so let's factor this out into a separate call and
+make sure we find a match before creating the ti-cpufreq driver device.
 
-2018-08-23 8:37 GMT+09:00 Nick Desaulniers <ndesaulniers@google.com>:
-> Commit cafa0010cd51 ("Raise the minimum required gcc version to 4.6")
-> recently exposed a brittle part of the build for supporting non-gcc
-> compilers.
->
-> Both Clang and ICC define __GNUC__, __GNUC_MINOR__, and
-> __GNUC_PATCHLEVEL__ for quick compatibility with code bases that haven't
-> added compiler specific checks for __clang__ or __INTEL_COMPILER.
->
-> This is brittle, as they happened to get compatibility by posing as a
-> certain version of GCC.  This broke when upgrading the minimal version
-> of GCC required to build the kernel, to a version above what ICC and
-> Clang claim to be.
->
-> Rather than always including compiler-gcc.h then undefining or
-> redefining macros in compiler-intel.h or compiler-clang.h, let's
-> separate out the compiler specific macro definitions into mutually
-> exclusive headers, do more proper compiler detection, and keep shared
-> definitions in compiler_types.h.
->
-> Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Suggested-by: Eli Friedman <efriedma@codeaurora.org>
-> Suggested-by: Joe Perches <joe@perches.com>
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> ---
->  arch/arm/kernel/asm-offsets.c     |  13 +-
->  drivers/gpu/drm/i915/i915_utils.h |   2 +-
->  drivers/watchdog/kempld_wdt.c     |   5 -
->  include/linux/compiler-clang.h    |  20 ++-
->  include/linux/compiler-gcc.h      |  88 -----------
->  include/linux/compiler-intel.h    |  13 +-
->  include/linux/compiler_types.h    | 238 ++++++++++++++----------------
->  mm/ksm.c                          |   4 +-
->  mm/migrate.c                      |   3 +-
->  9 files changed, 133 insertions(+), 253 deletions(-)
+Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
+---
+ drivers/cpufreq/ti-cpufreq.c | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
-
-
-If I build ARM linux with Clang,
-I see the following error.
-
-
-
-arch/arm/firmware/trusted_foundations.c:34:13: error: variable has
-incomplete type 'void'
-static void __naked tf_generic_smc(u32 type, u32 arg1, u32 arg2)
-            ^
-arch/arm/firmware/trusted_foundations.c:34:20: error: expected ';'
-after top level declarator
-static void __naked tf_generic_smc(u32 type, u32 arg1, u32 arg2)
-                   ^
-                   ;
-arch/arm/firmware/trusted_foundations.c:77:25: error: use of
-undeclared identifier 'trusted_foundations_ops'
-        register_firmware_ops(&trusted_foundations_ops);
-                               ^
-3 errors generated.
-scripts/Makefile.build:307: recipe for target
-'arch/arm/firmware/trusted_foundations.o' failed
-make[2]: *** [arch/arm/firmware/trusted_foundations.o] Error 1
-Makefile:1057: recipe for target 'arch/arm/firmware' failed
-make[1]: *** [arch/arm/firmware] Error 2
-make[1]: *** Waiting for unfinished jobs....
-
-
-
-
-
-__naked is defined in <linux/compiler-gcc.h>
-
-
-It was previous included by all compilers,
-but now it is only by _true_ GCC.
-
-
-Even if I move the __naked definition
-to <linux/compiler_types.h>,
-I see a different error.
-
-
-
-arch/arm/firmware/trusted_foundations.c:47:10: error: parameter
-references not allowed in naked functions
-                : "r" (type), "r" (arg1), "r" (arg2)
-                       ^
-arch/arm/firmware/trusted_foundations.c:34:13: note: attribute is here
-static void __naked tf_generic_smc(u32 type, u32 arg1, u32 arg2)
-            ^
-./include/linux/compiler_types.h:277:33: note: expanded from macro '__naked'
-#define __naked         __attribute__((naked))
-                                       ^
-
-
-
-I do not know what a correct fix is.
-
-
-
-
-
-
-
+diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
+index 3f0e2a14895a..541fdcf17b57 100644
+--- a/drivers/cpufreq/ti-cpufreq.c
++++ b/drivers/cpufreq/ti-cpufreq.c
+@@ -201,19 +201,31 @@ static const struct of_device_id ti_cpufreq_of_match[] = {
+ 	{},
+ };
+ 
++static const struct of_device_id *ti_cpufreq_match_node(void)
++{
++	struct device_node *np;
++	const struct of_device_id *match;
++
++	np = of_find_node_by_path("/");
++	match = of_match_node(ti_cpufreq_of_match, np);
++	of_node_put(np);
++
++	if (!match)
++		return NULL;
++	else
++		return match;
++}
++
+ static int ti_cpufreq_probe(struct platform_device *pdev)
+ {
+ 	u32 version[VERSION_COUNT];
+-	struct device_node *np;
+ 	const struct of_device_id *match;
+ 	struct opp_table *ti_opp_table;
+ 	struct ti_cpufreq_data *opp_data;
+ 	const char * const reg_names[] = {"vdd", "vbb"};
+ 	int ret;
+ 
+-	np = of_find_node_by_path("/");
+-	match = of_match_node(ti_cpufreq_of_match, np);
+-	of_node_put(np);
++	match = ti_cpufreq_match_node();
+ 	if (!match)
+ 		return -ENODEV;
+ 
+@@ -290,7 +302,10 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
+ 
+ static int ti_cpufreq_init(void)
+ {
+-	platform_device_register_simple("ti-cpufreq", -1, NULL, 0);
++	/* Check to ensure we are on a compatible platform */
++	if (ti_cpufreq_match_node())
++		platform_device_register_simple("ti-cpufreq", -1, NULL, 0);
++
+ 	return 0;
+ }
+ module_init(ti_cpufreq_init);
 -- 
-Best Regards
-Masahiro Yamada
+2.16.1
+
