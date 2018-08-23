@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 708B1C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B12C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34280208CC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34280208CC
+	by mail.kernel.org (Postfix) with ESMTP id C3AE8208CC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3AE8208CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388433AbeHWMaJ (ORCPT
+        id S2388446AbeHWMaN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:30:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55642 "EHLO
+        Thu, 23 Aug 2018 08:30:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55652 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbeHWMaI (ORCPT
+        with ESMTP id S1726277AbeHWMaM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:30:08 -0400
+        Thu, 23 Aug 2018 08:30:12 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F1F5ACA0;
-        Thu, 23 Aug 2018 09:01:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30C84C83;
+        Thu, 23 Aug 2018 09:01:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, David Francis <David.Francis@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 223/324] drm/armada: fix irq handling
-Date:   Thu, 23 Aug 2018 09:54:49 +0200
-Message-Id: <20180823075007.321005497@linuxfoundation.org>
+Subject: [PATCH 4.17 250/324] amd/dc/dce100: On dce100, set clocks to 0 on suspend
+Date:   Thu, 23 Aug 2018 09:55:16 +0200
+Message-Id: <20180823075008.562512221@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -50,66 +51,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: David Francis <David.Francis@amd.com>
 
-[ Upstream commit 92298c1cd8e8a6b56322b602ad72b54e6237631d ]
+[ Upstream commit 8d4235f71513cdccd9dc52b674323c3591552bc1 ]
 
-Add the missing locks to the IRQ enable/disable paths, and fix a comment
-in the interrupt handler: reading the ISR clears down the status bits,
-but does not reset the interrupt so it can signal again.  That seems to
-require a write.
+[Why]
+When a dce100 asic was suspended, the clocks were not set to 0.
+Upon resume, the new clock was compared to the existing clock,
+they were found to be the same, and so the clock was not set.
+This resulted in a pernicious blackscreen.
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+[How]
+In atomic commit, check to see if there are any active pipes.
+If no, set clocks to 0
+
+Signed-off-by: David Francis <David.Francis@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/armada/armada_crtc.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c |   19 +++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/armada/armada_crtc.c
-+++ b/drivers/gpu/drm/armada/armada_crtc.c
-@@ -519,8 +519,9 @@ static irqreturn_t armada_drm_irq(int ir
- 	u32 v, stat = readl_relaxed(dcrtc->base + LCD_SPU_IRQ_ISR);
- 
- 	/*
--	 * This is rediculous - rather than writing bits to clear, we
--	 * have to set the actual status register value.  This is racy.
-+	 * Reading the ISR appears to clear bits provided CLEAN_SPU_IRQ_ISR
-+	 * is set.  Writing has some other effect to acknowledge the IRQ -
-+	 * without this, we only get a single IRQ.
- 	 */
- 	writel_relaxed(0, dcrtc->base + LCD_SPU_IRQ_ISR);
- 
-@@ -1116,16 +1117,22 @@ armada_drm_crtc_set_property(struct drm_
- static int armada_drm_crtc_enable_vblank(struct drm_crtc *crtc)
+--- a/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c
+@@ -678,9 +678,22 @@ bool dce100_validate_bandwidth(
+ 	struct dc  *dc,
+ 	struct dc_state *context)
  {
- 	struct armada_crtc *dcrtc = drm_to_armada_crtc(crtc);
-+	unsigned long flags;
+-	/* TODO implement when needed but for now hardcode max value*/
+-	context->bw.dce.dispclk_khz = 681000;
+-	context->bw.dce.yclk_khz = 250000 * MEMORY_TYPE_MULTIPLIER;
++	int i;
++	bool at_least_one_pipe = false;
++
++	for (i = 0; i < dc->res_pool->pipe_count; i++) {
++		if (context->res_ctx.pipe_ctx[i].stream)
++			at_least_one_pipe = true;
++	}
++
++	if (at_least_one_pipe) {
++		/* TODO implement when needed but for now hardcode max value*/
++		context->bw.dce.dispclk_khz = 681000;
++		context->bw.dce.yclk_khz = 250000 * MEMORY_TYPE_MULTIPLIER;
++	} else {
++		context->bw.dce.dispclk_khz = 0;
++		context->bw.dce.yclk_khz = 0;
++	}
  
-+	spin_lock_irqsave(&dcrtc->irq_lock, flags);
- 	armada_drm_crtc_enable_irq(dcrtc, VSYNC_IRQ_ENA);
-+	spin_unlock_irqrestore(&dcrtc->irq_lock, flags);
- 	return 0;
+ 	return true;
  }
- 
- static void armada_drm_crtc_disable_vblank(struct drm_crtc *crtc)
- {
- 	struct armada_crtc *dcrtc = drm_to_armada_crtc(crtc);
-+	unsigned long flags;
- 
-+	spin_lock_irqsave(&dcrtc->irq_lock, flags);
- 	armada_drm_crtc_disable_irq(dcrtc, VSYNC_IRQ_ENA);
-+	spin_unlock_irqrestore(&dcrtc->irq_lock, flags);
- }
- 
- static const struct drm_crtc_funcs armada_crtc_funcs = {
-@@ -1415,6 +1422,7 @@ static int armada_drm_crtc_create(struct
- 		       CFG_PDWN64x66, dcrtc->base + LCD_SPU_SRAM_PARA1);
- 	writel_relaxed(0x2032ff81, dcrtc->base + LCD_SPU_DMA_CTRL1);
- 	writel_relaxed(dcrtc->irq_ena, dcrtc->base + LCD_SPU_IRQ_ENA);
-+	readl_relaxed(dcrtc->base + LCD_SPU_IRQ_ISR);
- 	writel_relaxed(0, dcrtc->base + LCD_SPU_IRQ_ISR);
- 
- 	ret = devm_request_irq(dev, irq, armada_drm_irq, 0, "armada_drm_crtc",
 
 
