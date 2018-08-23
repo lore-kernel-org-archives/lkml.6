@@ -2,106 +2,200 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6DAC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D57C2C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47871208E9
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:55:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="PXZDt2zS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47871208E9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	by mail.kernel.org (Postfix) with ESMTP id 780AE2098B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:59:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 780AE2098B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732455AbeHWSZC (ORCPT
+        id S1732705AbeHWS33 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 14:25:02 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:55851 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731953AbeHWSZB (ORCPT
+        Thu, 23 Aug 2018 14:29:29 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42654 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732158AbeHWS33 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 14:25:01 -0400
-Received: by mail-it0-f68.google.com with SMTP id d10-v6so7895724itj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:55:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pgw5dIlS32S9/R0w0dRJVxlBtH0R6iAPxAsrK2N3uiU=;
-        b=PXZDt2zSar94mYy2mpRDouifUuewoqGpDSjkRpIxue2f9hq3kOT7xmUTeJuCzOyZtH
-         CeVoFy5N4k6WpugTKUDlpWkakm+XQEo6Ey4STitOhWrc/6ZZcuu6US5DhTwgN3dQ9cF9
-         PKThZOSZVZ2xYXmpADXaRG7a9vZBqjI9KlBjQ2w/nu8I8YUeGLJPVBfQjLNZZ4+BTj/j
-         XVuc/Jq7cCMRZDFmWmwlqiJJOVXbTQ5V8HoOWz4hM4twl4c2xauGLsUxv5LgezJVqFZ8
-         1A+HAlBRflGmTCBq0CLWMoNO19EPfg7RJNmNu3jYgfF/WafJPievDfd2Jqupwuo9Z2Bc
-         Qc+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pgw5dIlS32S9/R0w0dRJVxlBtH0R6iAPxAsrK2N3uiU=;
-        b=MdxEHMM21XlKqlpscKQ7SfPwuLGtv3n56UjyOWFZ9ywbEsN8ekcI+y3nMxQVJCo2w7
-         epHU5D5uyeMw4CCz2vo9RqhswfAu0VIqlRiZ0kF0k1A199BMVPVLoOOSbGfO1R4zlt1e
-         0+O6RQu8Tq3diYbC4liEJmEuiwsqD9tz7tyUL5l8eR5u1G9D14mr1llq8zb1j7iEiwJU
-         RjMzq2nOClnf3Rglv7Kg1VoB48NNDaYnlJ1XMX9m1/PMSzYsg0pS7XcmWEtuLa8sZEQv
-         5EdHFHBuYl7f6QFjkoqmtWixNZAAzmQAeKf0GynfS07y705e9sVbMKU6dwpmIhDQAxhN
-         JkYQ==
-X-Gm-Message-State: APzg51B/u2p0Z+5nlupujvKIFK9zswhHOFiRkry2wXoTHtOZHvWvXq0k
-        29JNVCW+EVs8QrXuCg/e86Czig==
-X-Google-Smtp-Source: ANB0VdZTs7U9gj8YWiCpbQ00i10Rn3DZT4Un6dpdOkbz9x7KNkOpbqD0zIdFq4h0+J2uiZT8EM2mcQ==
-X-Received: by 2002:a24:a003:: with SMTP id o3-v6mr4471169ite.117.1535036100089;
-        Thu, 23 Aug 2018 07:55:00 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id m5-v6sm1546635itb.6.2018.08.23.07.54.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 Aug 2018 07:54:59 -0700 (PDT)
-Received: from jgg by mlx with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1fsr0k-0002bm-Lq; Thu, 23 Aug 2018 08:54:58 -0600
-Date:   Thu, 23 Aug 2018 08:54:58 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        dasaratharaman.chandramouli@intel.com, leonro@mellanox.com,
-        linux-kernel@vger.kernel.org, markb@mellanox.com,
-        monis@mellanox.com, parav@mellanox.com,
-        syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+29ee8f76017ce6cf03da@syzkaller.appspotmail.com>
-Subject: Re: [RDMA bug] KASAN: use-after-free Read in __list_del_entry_valid
- (4)
-Message-ID: <20180823145458.GC9366@ziepe.ca>
-References: <001a1141551246502d056845782e@google.com>
- <001a1140f6ac1677460568489287@google.com>
- <20180823061630.GB736@sol.localdomain>
+        Thu, 23 Aug 2018 14:29:29 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7NEtTeR078560
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:59:25 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m1y3xg5km-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:59:25 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Thu, 23 Aug 2018 15:59:23 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 23 Aug 2018 15:59:19 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7NExItu34930900
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 23 Aug 2018 14:59:18 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 681124C052;
+        Thu, 23 Aug 2018 17:59:19 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B71884C04E;
+        Thu, 23 Aug 2018 17:59:18 +0100 (BST)
+Received: from [9.152.224.92] (unknown [9.152.224.92])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 23 Aug 2018 17:59:18 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v9 21/22] KVM: s390: CPU model support for AP
+ virtualization
+To:     David Hildenbrand <david@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <2c2c4859-ed3e-a492-dd59-78529c7768b2@redhat.com>
+ <95e6ee74-69aa-9805-3233-b9ec81fce516@redhat.com>
+ <7e7a35f5-d1eb-7719-c5e8-57d6f19db675@linux.ibm.com>
+ <f5ec13ae-75b4-918e-aaf1-ed97944ff16e@redhat.com>
+ <fec90446-7f94-da28-d958-427a0446854e@linux.ibm.com>
+ <ef6082b7-da96-3a0b-77a0-f41d113d058a@redhat.com>
+ <8d6ae58f-967b-5e4e-0e54-8fb4962cb843@linux.ibm.com>
+ <be13d8fa-1ff7-6800-36b9-7f8320724cbf@redhat.com>
+ <049c5e8a-4f21-a079-0eb6-abe78d812de7@linux.ibm.com>
+ <1721a153-13f0-e695-6c01-cf6b65e1bbfa@linux.ibm.com>
+ <e782de8d-45d8-79fd-165c-c84f431e1d34@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Thu, 23 Aug 2018 16:59:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180823061630.GB736@sol.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <e782de8d-45d8-79fd-165c-c84f431e1d34@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18082314-0012-0000-0000-0000029DBE95
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082314-0013-0000-0000-000020D106EF
+Message-Id: <cd00d49a-f6d0-a911-8cda-8f95f58beb27@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808230157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 11:16:31PM -0700, Eric Biggers wrote:
-> Hello RDMA / InfiniBand maintainers,
+On 23/08/2018 15:38, David Hildenbrand wrote:
+> On 23.08.2018 15:22, Halil Pasic wrote:
+>>
+>>
+>> On 08/23/2018 02:47 PM, Pierre Morel wrote:
+>>> On 23/08/2018 13:12, David Hildenbrand wrote:
+>> [..]
+>>>>>>>
+>>>>>>> I'm confused, which 128 bit?
+>>>>>>
+>>>>>>
+>>>>>> Me too :) , I was assuming this block to be 128bit, but the qci block
+>>>>>> has 128 bytes....
+>>>>>>
+>>>>>> And looking at arch/s390/include/asm/ap.h, there is a lot of information
+>>>>>> contained that is definitely not of interest for CPU models...
+>>>>>>
+>>>>>> I wonder if there is somewhere defined which bits are reserved for
+>>>>>> future features/facilities, compared to ap masks and such.
+>>>>>>
+>>>>>> This is really hard to understand/plan without access to documentation.
+>>>>>>
+>>>>>> You (Halil, Tony, Pier, ...) should have a look if what I described
+>>>>>> related to PQAP(QCI) containing features that should get part of the CPU
+>>>>>> model makes sense or not. For now I was thinking that there is some part
+>>>>>> inside of QCI that is strictly reserved for facilities/features that we
+>>>>>> can use.
+>>
+>> No there is no such part. The architecture documentation is quite confusing
+>> with some aspects (e.g. persistence) of how exactly some of these features
+>> work and are indicated. I'm having a hard time finding my opinion. I may
+>> end up asking some questions later, but for now i have to think first.
+>>
+>> Just one hint. There is a programming note stating that if bit 2 of the
+>> QCI block is one there is at least one AP card in the machine that actually
+>> has APXA installed.
+>>
+>> I read the architecture so that the APXA has a 'cpu part' (if we are
+>> doing APXA the cpu can't spec exception on certain bits not being zor9)
+>> and a 'card(s) part'.
+>>
+>> Since the stuff seems quite difficult to sort out properly, I ask myself
+>> are there real problems we must solve?
+>>
+>> This ultimately seems to be  about the migration, right? You say 'This helps
+>> to catch nasty migration bugs (e.g. APXA suddenly disappearing).' at the very
+>> beginning of the discussion. Yes, we don't have to have an vfio_ap device,
+>> he guest can and will start looking for AP resources if
+>> only the cpu model features installed. So the guest could observe
+>> a disappearing APXA, but I don't think that would lead to problems (with
+>> Linux at least).
+>>
+>> And there ain't much AP a guest can sanely do without if no AP resources
+>> are there.
+>>
+>> I would really prefer not rushing a solution if we don't have to.
+>>
+>>>
+>>>
+>>>>
+>>>> What is apsc, qact, rc8a in the qci blocks? are the facility bits?
+>>>
+>>> Yes, facility bits concerning the AP instructions
+>>>
+>>
+>> According to the current AR document rc8a ain't a facility but bits
+>> 0-2 and 4-7 kind of are.
+>>
 > 
-> This is an RDMA bug and it still occurs on Linus' tree as of today
-> (commit 815f0ddb346c1960).
+> Easy ( :) ) answer. Everything that is the CPU part should get into the
+> CPU model. Everything that is AP specific not. If APXA is not a CPU
+> facility, fine with me to leave it out.
 > 
-> I've also simplified the reproducer for it; see below after the original report.
-> Apparently it involves a race between RDMA_USER_CM_CMD_RESOLVE_IP and
-> RDMA_USER_CM_CMD_LISTEN.
+> Ack to not rushing, but also ack to not leaving out important things.
+> Ack that this stuff is hard to ficure out.
 
-That is an amazing reproducer!
+APXA is not a CPU part, it is a machine part (SIE) and a AP part (QCI,TAPQ),
+it has no influence on CPU instructions but on the AP instructions.
+Consequently, if I understood the definition correctly, it should not go 
+in the CPU model.
 
-I have a feeling this is the same cause as all the other syzkaller
-bugs in this code: lack of any sane locking at all :\
+Regards,
+Pierre
 
-We've talked about chucking a big lock around this whole thing, but
-nobody has done it yet.. It isn't so simple.
 
-Jason
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
+
