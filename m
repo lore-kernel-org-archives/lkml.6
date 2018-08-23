@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E27FC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 371D0C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32D0D20839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32D0D20839
+	by mail.kernel.org (Postfix) with ESMTP id E9F9D20839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F9D20839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387835AbeHWMUw (ORCPT
+        id S2387848AbeHWMUz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:20:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51700 "EHLO
+        Thu, 23 Aug 2018 08:20:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51708 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728555AbeHWMUw (ORCPT
+        with ESMTP id S1728555AbeHWMUz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:20:52 -0400
+        Thu, 23 Aug 2018 08:20:55 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1B78EC5C;
-        Thu, 23 Aug 2018 08:52:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 426F5C5C;
+        Thu, 23 Aug 2018 08:52:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
+        stable@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Olof Johansson <olof@lixom.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 131/324] ARM: dts: da850: Fix interrups property for gpio
-Date:   Thu, 23 Aug 2018 09:53:17 +0200
-Message-Id: <20180823075002.516767924@linuxfoundation.org>
+Subject: [PATCH 4.17 132/324] arm64: dts: uniphier: fix widget name of headphone for LD11/LD20 boards
+Date:   Thu, 23 Aug 2018 09:53:18 +0200
+Message-Id: <20180823075002.567919081@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,37 +53,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Keerthy <j-keerthy@ti.com>
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 
-[ Upstream commit 3eb1b955cd7ed1e621ace856710006c2a8a7f231 ]
+[ Upstream commit 86676c4685f774d818f7a6c401c925bbf2a92903 ]
 
-The intc #interrupt-cells is equal to 1. Currently gpio
-node has 2 cells per IRQ which is wrong. Remove the additional
-cell for each of the interrupts.
+This patch fixes wrong name of headphone widget for receiving events
+of insert/remove headphone plug from simple-card or audio-graph-card.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Fixes: 2e38b946dc54 ("ARM: davinci: da850: add GPIO DT node")
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+If we use wrong widget name then we get warning messages such as
+"asoc-audio-graph-card sound: ASoC: DAPM unknown pin Headphones"
+when the plug is inserted or removed from headphone jack.
+
+Fixes: fb21a0acaa2b7 ("arm64: dts: uniphier: add sound node")
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/da850.dtsi |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts |    2 +-
+ arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/da850.dtsi
-+++ b/arch/arm/boot/dts/da850.dtsi
-@@ -539,11 +539,7 @@
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			reg = <0x226000 0x1000>;
--			interrupts = <42 IRQ_TYPE_EDGE_BOTH
--				43 IRQ_TYPE_EDGE_BOTH 44 IRQ_TYPE_EDGE_BOTH
--				45 IRQ_TYPE_EDGE_BOTH 46 IRQ_TYPE_EDGE_BOTH
--				47 IRQ_TYPE_EDGE_BOTH 48 IRQ_TYPE_EDGE_BOTH
--				49 IRQ_TYPE_EDGE_BOTH 50 IRQ_TYPE_EDGE_BOTH>;
-+			interrupts = <42 43 44 45 46 47 48 49 50>;
- 			ti,ngpio = <144>;
- 			ti,davinci-gpio-unbanked = <0>;
- 			status = "disabled";
+--- a/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts
++++ b/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts
+@@ -54,7 +54,7 @@
+ 	sound {
+ 		compatible = "audio-graph-card";
+ 		label = "UniPhier LD11";
+-		widgets = "Headphone", "Headphone Jack";
++		widgets = "Headphone", "Headphones";
+ 		dais = <&i2s_port2
+ 			&i2s_port3
+ 			&i2s_port4
+--- a/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts
++++ b/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts
+@@ -54,7 +54,7 @@
+ 	sound {
+ 		compatible = "audio-graph-card";
+ 		label = "UniPhier LD20";
+-		widgets = "Headphone", "Headphone Jack";
++		widgets = "Headphone", "Headphones";
+ 		dais = <&i2s_port2
+ 			&i2s_port3
+ 			&i2s_port4
 
 
