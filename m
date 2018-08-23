@@ -6,38 +6,42 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D19C1C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8265AC43615
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9801D2083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:43:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9801D2083A
+	by mail.kernel.org (Postfix) with ESMTP id 3DB3B20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:43:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DB3B20851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732923AbeHWMMM (ORCPT
+        id S1732936AbeHWMMQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:12:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50260 "EHLO
+        Thu, 23 Aug 2018 08:12:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50272 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727597AbeHWMML (ORCPT
+        with ESMTP id S1727597AbeHWMMO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:12:11 -0400
+        Thu, 23 Aug 2018 08:12:14 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6D3FC7F6;
-        Thu, 23 Aug 2018 08:43:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 734218B1;
+        Thu, 23 Aug 2018 08:43:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 085/324] clk: sunxi-ng: replace lib-y with obj-y
-Date:   Thu, 23 Aug 2018 09:52:31 +0200
-Message-Id: <20180823075000.129025953@linuxfoundation.org>
+Subject: [PATCH 4.17 086/324] locking/lockdep: Do not record IRQ state within lockdep code
+Date:   Thu, 23 Aug 2018 09:52:32 +0200
+Message-Id: <20180823075000.177049130@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -54,109 +58,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-[ Upstream commit 12f8c553a503d98b519cca650b188bf51ebdbdbf ]
+[ Upstream commit fcc784be837714a9173b372ff9fb9b514590dad9 ]
 
-We had commit 06e226c7fb23 ("clk: sunxi-ng: Move all clock types to a
-library") and commit 799c43415442 ("kbuild: thin archives make default
-for all archs") in the same development cycle, from different trees.
+While debugging where things were going wrong with mapping
+enabling/disabling interrupts with the lockdep state and actual real
+enabling and disabling interrupts, I had to silent the IRQ
+disabling/enabling in debug_check_no_locks_freed() because it was
+always showing up as it was called before the splat was.
 
-With migration to the thin archive, the entire drivers/clk/sunxi-ng/lib.a
-is linked to the vmlinux.  This does not break build, but we do not get
-any size saving.
+Use raw_local_irq_save/restore() for not only debug_check_no_locks_freed()
+but for all internal lockdep functions, as they hide useful information
+about where interrupts were used incorrectly last.
 
-However, we do not need to go back to the individual Kconfig options.
-The default configuration pulls in all (or most) of the CCU parts anyway.
-Also, once we enable CONFIG_LD_DEAD_CODE_DATA_ELIMINATION, we can simply
-list all files with obj-y, and the linker will drop all unused functions
-by itself.
-
-After the long discussion [1], people there agreed to fix this, but
-nobody sent a patch after all.  I am doing it now.
-
-I lifted up CONFIG_SUNXI_CCU to drivers/clk/Makefile because everything
-in drivers/clk/sunxi-ng/ depends on SUNXI_CCU.
-
-[1] https://patchwork.kernel.org/patch/9796521/
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Link: https://lkml.kernel.org/lkml/20180404140630.3f4f4c7a@gandalf.local.home
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/Makefile          |    2 +-
- drivers/clk/sunxi-ng/Makefile |   39 +++++++++++++++------------------------
- 2 files changed, 16 insertions(+), 25 deletions(-)
+ kernel/locking/lockdep.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -94,7 +94,7 @@ obj-$(CONFIG_ARCH_SPRD)			+= sprd/
- obj-$(CONFIG_ARCH_STI)			+= st/
- obj-$(CONFIG_ARCH_STRATIX10)		+= socfpga/
- obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
--obj-$(CONFIG_ARCH_SUNXI)		+= sunxi-ng/
-+obj-$(CONFIG_SUNXI_CCU)			+= sunxi-ng/
- obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
- obj-y					+= ti/
- obj-$(CONFIG_CLK_UNIPHIER)		+= uniphier/
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -1,24 +1,24 @@
- # SPDX-License-Identifier: GPL-2.0
- # Common objects
--lib-$(CONFIG_SUNXI_CCU)		+= ccu_common.o
--lib-$(CONFIG_SUNXI_CCU)		+= ccu_mmc_timing.o
--lib-$(CONFIG_SUNXI_CCU)		+= ccu_reset.o
-+obj-y				+= ccu_common.o
-+obj-y				+= ccu_mmc_timing.o
-+obj-y				+= ccu_reset.o
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -1261,11 +1261,11 @@ unsigned long lockdep_count_forward_deps
+ 	this.parent = NULL;
+ 	this.class = class;
  
- # Base clock types
--lib-$(CONFIG_SUNXI_CCU)		+= ccu_div.o
--lib-$(CONFIG_SUNXI_CCU)		+= ccu_frac.o
--lib-$(CONFIG_SUNXI_CCU)		+= ccu_gate.o
--lib-$(CONFIG_SUNXI_CCU)		+= ccu_mux.o
--lib-$(CONFIG_SUNXI_CCU)		+= ccu_mult.o
--lib-$(CONFIG_SUNXI_CCU)		+= ccu_phase.o
--lib-$(CONFIG_SUNXI_CCU)		+= ccu_sdm.o
-+obj-y				+= ccu_div.o
-+obj-y				+= ccu_frac.o
-+obj-y				+= ccu_gate.o
-+obj-y				+= ccu_mux.o
-+obj-y				+= ccu_mult.o
-+obj-y				+= ccu_phase.o
-+obj-y				+= ccu_sdm.o
+-	local_irq_save(flags);
++	raw_local_irq_save(flags);
+ 	arch_spin_lock(&lockdep_lock);
+ 	ret = __lockdep_count_forward_deps(&this);
+ 	arch_spin_unlock(&lockdep_lock);
+-	local_irq_restore(flags);
++	raw_local_irq_restore(flags);
  
- # Multi-factor clocks
--lib-$(CONFIG_SUNXI_CCU)		+= ccu_nk.o
--lib-$(CONFIG_SUNXI_CCU)		+= ccu_nkm.o
--lib-$(CONFIG_SUNXI_CCU)		+= ccu_nkmp.o
--lib-$(CONFIG_SUNXI_CCU)		+= ccu_nm.o
--lib-$(CONFIG_SUNXI_CCU)		+= ccu_mp.o
-+obj-y				+= ccu_nk.o
-+obj-y				+= ccu_nkm.o
-+obj-y				+= ccu_nkmp.o
-+obj-y				+= ccu_nm.o
-+obj-y				+= ccu_mp.o
+ 	return ret;
+ }
+@@ -1288,11 +1288,11 @@ unsigned long lockdep_count_backward_dep
+ 	this.parent = NULL;
+ 	this.class = class;
  
- # SoC support
- obj-$(CONFIG_SUN50I_A64_CCU)	+= ccu-sun50i-a64.o
-@@ -37,12 +37,3 @@ obj-$(CONFIG_SUN8I_R40_CCU)	+= ccu-sun8i
- obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80.o
- obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80-de.o
- obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80-usb.o
--
--# The lib-y file goals is supposed to work only in arch/*/lib or lib/. In our
--# case, we want to use that goal, but even though lib.a will be properly
--# generated, it will not be linked in, eventually resulting in a linker error
--# for missing symbols.
--#
--# We can work around that by explicitly adding lib.a to the obj-y goal. This is
--# an undocumented behaviour, but works well for now.
--obj-$(CONFIG_SUNXI_CCU)		+= lib.a
+-	local_irq_save(flags);
++	raw_local_irq_save(flags);
+ 	arch_spin_lock(&lockdep_lock);
+ 	ret = __lockdep_count_backward_deps(&this);
+ 	arch_spin_unlock(&lockdep_lock);
+-	local_irq_restore(flags);
++	raw_local_irq_restore(flags);
+ 
+ 	return ret;
+ }
+@@ -4407,7 +4407,7 @@ void debug_check_no_locks_freed(const vo
+ 	if (unlikely(!debug_locks))
+ 		return;
+ 
+-	local_irq_save(flags);
++	raw_local_irq_save(flags);
+ 	for (i = 0; i < curr->lockdep_depth; i++) {
+ 		hlock = curr->held_locks + i;
+ 
+@@ -4418,7 +4418,7 @@ void debug_check_no_locks_freed(const vo
+ 		print_freed_lock_bug(curr, mem_from, mem_from + mem_len, hlock);
+ 		break;
+ 	}
+-	local_irq_restore(flags);
++	raw_local_irq_restore(flags);
+ }
+ EXPORT_SYMBOL_GPL(debug_check_no_locks_freed);
+ 
 
 
