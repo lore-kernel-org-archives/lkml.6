@@ -2,118 +2,100 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E314C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:24:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EF4CC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:29:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB7C62152D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:24:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB7C62152D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 38ECC2152D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:29:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38ECC2152D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728924AbeHWPxq (ORCPT
+        id S1729709AbeHWP7G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 11:53:46 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:40060 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726332AbeHWPxq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 11:53:46 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id obxZkdwr4Hue; Thu, 23 Aug 2018 14:23:57 +0200 (CEST)
-Received: from nazgul.tnic (77-85-47-250.ip.btc-net.bg [77.85.47.250])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6835C1EC03C0;
-        Thu, 23 Aug 2018 14:23:57 +0200 (CEST)
-Date:   Thu, 23 Aug 2018 14:24:10 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH 1/2] Revert "x86/mce/AMD: Collect error info even if
- valid bits are not set"
-Message-ID: <20180823122410.GA17393@nazgul.tnic>
-References: <20180326191526.64314-1-Yazen.Ghannam@amd.com>
- <20180326193052.GJ25548@pd.tnic>
- <DM5PR12MB191603A2AACAE6F7F923C6F3F8AD0@DM5PR12MB1916.namprd12.prod.outlook.com>
- <20180326200742.GF28372@pd.tnic>
- <DM5PR12MB191601AF532C84190049AD04F8AC0@DM5PR12MB1916.namprd12.prod.outlook.com>
- <DM5PR12MB19162C0D9FF144D311ADC22FF8AC0@DM5PR12MB1916.namprd12.prod.outlook.com>
+        Thu, 23 Aug 2018 11:59:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56812 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726675AbeHWP7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 11:59:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AEF06AD0C;
+        Thu, 23 Aug 2018 12:29:34 +0000 (UTC)
+From:   =?UTF-8?Q?Martin_Li=c5=a1ka?= <mliska@suse.cz>
+Subject: [PATCH] Properly interpret indirect call in perf annotate.
+To:     linux-perf-users@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>
+Message-ID: <bd1f3932-be2b-85f9-7582-111ee0a43b07@suse.cz>
+Date:   Thu, 23 Aug 2018 14:29:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <DM5PR12MB19162C0D9FF144D311ADC22FF8AC0@DM5PR12MB1916.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+Content-Type: multipart/mixed;
+ boundary="------------0328B748A44F4D19A89A1CE5"
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviving an old issue while cleaning my inbox.
+This is a multi-part message in MIME format.
+--------------0328B748A44F4D19A89A1CE5
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 27, 2018 at 03:59:37PM +0000, Ghannam, Yazen wrote:
-> > > On Mon, Mar 26, 2018 at 07:58:51PM +0000, Ghannam, Yazen wrote:
-> > > > So at a minimum, we should always save and report as much as we can.
-> > >
-> > > Only on Zen or all AMD families?
-> > >
-> > 
-> > I'll confirm with the HW folks. I understand it as a change in philosophy
-> > rather than a change in hardware.
-> > 
-> 
-> So this recommendation could apply to all families, but it's okay if we just
+The patch changes interpretation of:
+callq  *0x8(%rbx)
 
-Ok, so I think we should do this, still, as it is exactly what the
-recommendation says: read the MSRs even if the valid bits are not set and it
-doesn't set any Valid bits to confuse error handling downstream.
+from:
+  0.26 │     → callq  *8
+to:
+  0.26 │     → callq  *0x8(%rbx)
 
-This way we'll collect all possible info and then mce_amd.c should stop looking
-at the valid bits too and dump whatever has been logged.
+in this can an address is followed by a register, thus
+one can't parse only address.
 
-Ok?
-
+Signed-off-by: Martin Liška <mliska@suse.cz>
 ---
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index 4b767284b7f5..c14674025615 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -639,10 +639,12 @@ static struct notifier_block mce_default_nb = {
-  */
- static void mce_read_aux(struct mce *m, int i)
- {
--	if (m->status & MCI_STATUS_MISCV)
-+	bool is_amd = m->cpuvendor == X86_VENDOR_AMD;
+ tools/perf/util/annotate.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+
+
+--------------0328B748A44F4D19A89A1CE5
+Content-Type: text/x-patch;
+ name="0001-Properly-interpret-indirect-call-in-perf-annotate.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0001-Properly-interpret-indirect-call-in-perf-annotate.patch"
+
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index e4268b948e0e..e32ead4744bd 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -246,8 +246,14 @@ static int call__parse(struct arch *arch, struct ins_operands *ops, struct map_s
+ 
+ indirect_call:
+ 	tok = strchr(endptr, '*');
+-	if (tok != NULL)
+-		ops->target.addr = strtoull(tok + 1, NULL, 16);
++	if (tok != NULL) {
++		endptr++;
 +
-+	if (m->status & MCI_STATUS_MISCV || is_amd)
- 		m->misc = mce_rdmsrl(msr_ops.misc(i));
- 
--	if (m->status & MCI_STATUS_ADDRV) {
-+	if (m->status & MCI_STATUS_ADDRV || is_amd) {
- 		m->addr = mce_rdmsrl(msr_ops.addr(i));
- 
- 		/*
-@@ -668,7 +670,7 @@ static void mce_read_aux(struct mce *m, int i)
- 	if (mce_flags.smca) {
- 		m->ipid = mce_rdmsrl(MSR_AMD64_SMCA_MCx_IPID(i));
- 
--		if (m->status & MCI_STATUS_SYNDV)
-+		if (m->status & MCI_STATUS_SYNDV || is_amd)
- 			m->synd = mce_rdmsrl(MSR_AMD64_SMCA_MCx_SYND(i));
- 	}
++		/* Indirect call can use a non-rip register and offset: callq  *0x8(%rbx).
++		 * Do not parse such instruction.  */
++		if (strstr(endptr, "(%r") == NULL)
++			ops->target.addr = strtoull(endptr, NULL, 16);
++	}
+ 	goto find_target;
  }
+ 
 
--- 
-Regards/Gruss,
-    Boris.
 
-ECO tip #101: Trim your mails when you reply.
---
+--------------0328B748A44F4D19A89A1CE5--
