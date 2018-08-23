@@ -2,157 +2,150 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C48C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 01:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C68C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 01:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4EBF20936
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 01:40:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4EBF20936
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D647208FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 01:44:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D647208FC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbeHWFHy (ORCPT
+        id S1727355AbeHWFLz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 01:07:54 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:56214 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726915AbeHWFHx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 01:07:53 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="43815238"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 23 Aug 2018 09:40:38 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 27B204B6AE10;
-        Thu, 23 Aug 2018 09:40:36 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 23 Aug 2018 09:40:42 +0800
-Date:   Thu, 23 Aug 2018 09:37:52 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <keescook@chromium.org>, <bhe@redhat.com>,
-        <n-horiguchi@ah.jp.nec.com>
-CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
-        <douly.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v5 0/4] x86/boot/KASLR: Parse ACPI table and limit kaslr
- in immovable memory.
-Message-ID: <20180823013752.GA6769@localhost.localdomain>
-References: <20180807065000.30958-1-fanc.fnst@cn.fujitsu.com>
+        Thu, 23 Aug 2018 01:11:55 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41380 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726233AbeHWFLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 01:11:55 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 580B230820C0;
+        Thu, 23 Aug 2018 01:44:40 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4569F81E25;
+        Thu, 23 Aug 2018 01:44:40 +0000 (UTC)
+Received: from zmail25.collab.prod.int.phx2.redhat.com (zmail25.collab.prod.int.phx2.redhat.com [10.5.83.31])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 07E33180053A;
+        Thu, 23 Aug 2018 01:44:40 +0000 (UTC)
+Date:   Wed, 22 Aug 2018 21:44:39 -0400 (EDT)
+From:   Ronnie Sahlberg <lsahlber@redhat.com>
+To:     Steve French <smfrench@gmail.com>
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        ronnie sahlberg <ronniesahlberg@gmail.com>
+Message-ID: <1700708517.23372352.1534988679944.JavaMail.zimbra@redhat.com>
+In-Reply-To: <CAH2r5mt4Xd7Z86MSxFXNS___sJQjN5KJTH+XLXJcqT0=97wE9A@mail.gmail.com>
+References: <CAH2r5mtO6545itRxAV0KW7NSt7ucvxgHOtg8wUZZ0DMHO-V8XQ@mail.gmail.com> <CAH2r5mt4Xd7Z86MSxFXNS___sJQjN5KJTH+XLXJcqT0=97wE9A@mail.gmail.com>
+Subject: Re: Overview of performance improvements of recent SMB3 compounding
+ patches
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180807065000.30958-1-fanc.fnst@cn.fujitsu.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 27B204B6AE10.AAEDF
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.64.54.77, 10.4.195.26]
+Thread-Topic: Overview of performance improvements of recent SMB3 compounding patches
+Thread-Index: TCQtQ+tUV7kxQDx2YhkWgkxBNHSd0w==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 23 Aug 2018 01:44:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+We also have stat() that drops from 6 to 2 roundtrips.
 
-No reply for 2 weeks, any comments?
+For metadata I think the only remaining low hanging fruit is readdir().
+Currently in cifs.ko scanning a directory takes a minimum of 4 roundtrips :
 
-Thanks,
-Chao Fan
-
-On Tue, Aug 07, 2018 at 02:49:56PM +0800, Chao Fan wrote:
->***Background:
->People reported that kaslr may randomly chooses some positions
->which are located in movable memory regions. This will break memory
->hotplug feature and make the memory can't be removed.
->
->***Solutions:
->There should be a method to limit kaslr to choosing immovable memory
->regions, so there are 2 solutions:
->1) Add a kernel parameter to specify the memory regions.
->2) Get the information of memory hotremove, then kaslr will know the
->   right regions.
->In method 2, information about memory hot remove is in ACPI
->tables, which will be parsed after 'start_kernel', kaslr can't get
->the information.
->In method 1, users should know the regions address and specify in
->kernel parameter.
->
->In the earliest time, I tried to dig ACPI tabls to solve this problem.
->But I didn't splite the code in 'compressed/' and ACPI code, so the patch
->is hard to follow so refused by community.
->Somebody suggest to add a kernel parameter to specify the
->immovable memory so that limit kaslr in these regions. Then I make
->a patchset. After several versions, Ingo gave a suggestion:
->https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1634024.html
->Follow Ingo's suggestion, imitate the ACPI code to parse the acpi
->tables, so that the kaslr can get necessary memory information in
->ACPI tables.
->Since I think ACPI code is independent part, so copy the codes
->and functions to 'compressed/' directory, so that kaslr won't
->influence the initialization of ACPI.
->
->PATCH 1/4 Reuse the head file of linux/acpi.h, and copy a fcuntion from
->          ACPI code.
->PATCH 2/4 Functions to parse ACPI code.
->PATCH 3/4 If 'CONFIG_MEMORY_HOTREMOVE' specified, walk all nodes and
->          store the information of immovable memory regions.
->PATCH 4/4 According to the immovable memory regions, filter the
->          immovable regions which KASLR can choose.
->
->***Test results:
-> - I did a very simple test, and it can get the memory information in
->   bios and efi KVM guest machine, and put it by early printk. But no
->   more tests, so it's with RFC tag.
->
->v1->v2:
-> -  Simplify some code.
->Follow Baoquan He's suggestion:
-> - Reuse the head file of acpi code.
->
->v2->v3:
-> - Test in more conditions, so remove the 'RFC' tag.
-> - Change some comments.
->
->v3->v4:
->Follow Thomas Gleixner's suggetsion:
-> - Put the whole efi related function into #define CONFIG_EFI and return
->   false in the other stub.
-> - Simplify two functions in head file.
->
->v4->v5:
->Follow Dou Liyang's suggestion:
-> - Add more comments about some functions based on kernel code.
-> - Change some typo in comments.
-> - Clean useless variable.
-> - Add check for the boundary of array.
-> - Add check for 'movable_node' parameter
->
->Any comments will be welcome.
->
->
->Chao Fan (4):
->  x86/boot: Add acpitb.h to help parse acpi tables
->  x86/boot: Add acpitb.c to parse acpi tables
->  x86/boot/KASLR: Walk srat tables to filter immovable memory
->  x86/boot/KASLR: Limit kaslr to choosing the immovable memory
->
-> arch/x86/boot/compressed/Makefile |   4 +
-> arch/x86/boot/compressed/acpitb.c | 272 ++++++++++++++++++++++++++++++
-> arch/x86/boot/compressed/acpitb.h |   7 +
-> arch/x86/boot/compressed/kaslr.c  | 125 ++++++++++++--
-> 4 files changed, 397 insertions(+), 11 deletions(-)
-> create mode 100644 arch/x86/boot/compressed/acpitb.c
-> create mode 100644 arch/x86/boot/compressed/acpitb.h
->
->-- 
->2.17.1
->
+open
+query and get data
+query and get the error STATUS_NO_MORE_FILES
+close
 
 
+For small-ish directories (the common case I expect will be that almost all directories will fit in one reply of data)
+we can cut this down to just a single roundtrip by using the compound :
+
+open; query; query; close
+
+If the second query fails with the error above we know we are done and we finished in a single
+roundtrip.
+
+The drawback is for the rare cases where the directory did not fit in the reply, then
+we will have to throw all the data away and re-start from scratch using the old loop thus making all large directory scans
+even slower than they are right now, well just one roundtrip slower but still.
+(Technically, the protocol does support re-opening a directory and resuming at a specific FileIndex  but it is not implemented server-side.)
+
+I think it will still be worth it if we can get the common case to drop from 4 to 1 roundtrip.
+
+It will involve touching cifs_readdir() which is hairy code but if someone would want to tackle this I think there is opportunity to make
+a huge impact on directory listing performance.
+
+
+regards
+ronnie sahlberg
+
+
+
+
+----- Original Message -----
+> From: "Steve French" <smfrench@gmail.com>
+> To: "CIFS" <linux-cifs@vger.kernel.org>, "samba-technical" <samba-technical@lists.samba.org>, "LKML"
+> <linux-kernel@vger.kernel.org>, "linux-fsdevel" <linux-fsdevel@vger.kernel.org>, "ronnie sahlberg"
+> <ronniesahlberg@gmail.com>
+> Sent: Thursday, 23 August, 2018 5:28:01 AM
+> Subject: Re: Overview of performance improvements of recent SMB3 compounding patches
+> 
+> Continuing the experiments with Ronnie's patches show additional
+> promising performance results from other common scenarios:
+> 
+> Very good news that the number of roundtrips (request/response pairs
+> to the server) has dropped so substantially.  Reducing latency, and
+> allowing the server to more efficiently process the requests leads to
+> much better performance for these common operations:
+> 
+> - rename goes from 9 request/response pairs to 5 ("mv /mnt/file /mnt/file1")
+> - hardlink goes from 8 to only 3 (!)  ("ln /mnt/file1 /mnt/file2")
+> - symlink (with mfsymlinks enabled) goes from 11 to 9 ("ln -s
+> /mnt/file1 /mnt/file3")
+> - touch (existing file) 6 down to 4
+> 
+> In current kernel we benefit from compounding now on stafs ("stat -f
+> /mnt"), and in the earlier note I described the improvements in
+> create, unlink, mkdir and rmdir which were also awesome.
+> 
+> This is very exciting.
+> 
+> On Tue, Aug 21, 2018 at 1:24 PM Steve French <smfrench@gmail.com> wrote:
+> >
+> > In experiments today with Ronnie's most recent compounding patches I
+> > see the expected significant improvements in create/mkdir/unlink/rmdir
+> > operations over SMB3 mounts (tests were to Samba but would be similar
+> > to all modern servers).  See below:
+> >
+> > "touch /mnt/file"  goes from 6 request/response pairs to 4 with
+> > Ronnie's compounding patches
+> > "rm /mnt/file" from 5 to 2 request/response pairs
+> > "mkdir /mnt/newdir" 6 pairs to 3 pairs
+> > "rmdir /mnt/newdir" 6 pairs down to 2 pairs
+> >
+> > Good job Ronnie!
+> > --
+> > Thanks,
+> >
+> > Steve
+> 
+> 
+> 
+> --
+> Thanks,
+> 
+> Steve
+> 
