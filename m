@@ -2,144 +2,96 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 266EDC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 19:21:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F483C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 19:21:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D830121557
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 19:21:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xdBLudeI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D830121557
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 3BE2A2150F
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 19:21:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BE2A2150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727322AbeHWWwH (ORCPT
+        id S1727379AbeHWWwb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 18:52:07 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:45650 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbeHWWwF (ORCPT
+        Thu, 23 Aug 2018 18:52:31 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:60798 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725979AbeHWWwb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 18:52:05 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7NJKcu0065506;
-        Thu, 23 Aug 2018 14:20:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1535052038;
-        bh=G855R1hIFQQxOte1LcXkyZCHvaLlOLhLvNcT4DSa2CA=;
-        h=From:To:CC:Subject:Date;
-        b=xdBLudeIUGtvW2IlzFvhHXUoAvS1OJoIOAG+/EkQaVkcQDMoQjBsG+kyPiV7vtJPW
-         FKqT0gPXX1xpwPSgJw9JR7ZknYmImrzoJTw86mTZwV7S3TsrBBC0H5/KeuT3xA9QpY
-         A75+MS9dfR4/2ykdGyhaQhFCQ9AVtvlkvsVUswAs=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7NJKcsA011311;
-        Thu, 23 Aug 2018 14:20:38 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 23
- Aug 2018 14:20:37 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 23 Aug 2018 14:20:37 -0500
-Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7NJKbvB008289;
-        Thu, 23 Aug 2018 14:20:37 -0500
-Received: from localhost (uda0274052.dhcp.ti.com [128.247.59.203])
-        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w7NJKbx04183;
-        Thu, 23 Aug 2018 14:20:37 -0500 (CDT)
-From:   Dave Gerlach <d-gerlach@ti.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, Tony Lindgren <tony@atomide.com>,
-        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dave Gerlach <d-gerlach@ti.com>, Keerthy J <j-keerthy@ti.com>
-Subject: [PATCH v2] cpufreq: ti-cpufreq: Only register platform_device when supported
-Date:   Thu, 23 Aug 2018 14:20:35 -0500
-Message-ID: <20180823192035.22940-1-d-gerlach@ti.com>
-X-Mailer: git-send-email 2.16.1
+        Thu, 23 Aug 2018 18:52:31 -0400
+Received: from relay7-d.mail.gandi.net (unknown [217.70.183.200])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 54B4B3A702F
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 21:12:48 +0200 (CEST)
+X-Originating-IP: 134.134.139.72
+Received: from localhost (jfdmzpr03-ext.jf.intel.com [134.134.139.72])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 8A57120004;
+        Thu, 23 Aug 2018 19:12:45 +0000 (UTC)
+Date:   Thu, 23 Aug 2018 12:12:35 -0700
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     nicolas.pitre@linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: Kernel-only deployments?
+Message-ID: <20180823191235.GA3243@localhost>
+References: <20180823174359.GA13033@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180823174359.GA13033@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the ti-cpufreq driver blindly registers a 'ti-cpufreq' to force
-the driver to probe on any platforms where the driver is built in.
-However, this should only happen on platforms that actually can make use
-of the driver. There is already functionality in place to match the
-SoC compatible so let's factor this out into a separate call and
-make sure we find a match before creating the ti-cpufreq platform device.
+On Thu, Aug 23, 2018 at 10:43:59AM -0700, Paul E. McKenney wrote:
+> Hello!
+> 
+> Does anyone do kernel-only deployments, for example, setting up an
+> embedded device having a Linux kernel and absolutely no userspace
+> whatsoever?
 
-Reviewed-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
----
-v1->v2:
-* Return 'match' directly in ti_cpufreq_match_node.
-* Add Johan's Reviewed-by.
+I would very much *like* to do this. One day I'd like to have a
+CONFIG_USERSPACE that I can disable, and then just have the kernel call
+an in-kernel main() where it would normally start init.
 
- drivers/cpufreq/ti-cpufreq.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+> Those who know me will not be at all surprised to learn that I went
+> overboard making the resulting initrd as small as possible.  I started
+> by throwing out everything not absolutely needed by the dash and sleep
+> binaries, which got me down to about 2.5MB, 1.8MB of which was libc.
+> This situation of course prompted me to create an initrd containing
+> a statically linked binary named "init" and absolutely nothing else
+> (not even /dev or /tmp directories), which weighs in at not quite 800KB.
+> This is a great improvement over 10MB, to say nothing of 40MB, but 800KB
+> for a C-language "for" loop containing nothing more than a single call to
+> sleep()?  Much of the code is there for things that I might do (dl_open(),
+> for example), but don't.  All I can say is that there clearly aren't many
+> of us left who made heavy use of systems with naked-eye-visible bits!
+> (Or naked-finger-feelable, for that matter.)
 
-diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-index 3f0e2a14895a..6b025953ddee 100644
---- a/drivers/cpufreq/ti-cpufreq.c
-+++ b/drivers/cpufreq/ti-cpufreq.c
-@@ -201,19 +201,28 @@ static const struct of_device_id ti_cpufreq_of_match[] = {
- 	{},
- };
- 
-+static const struct of_device_id *ti_cpufreq_match_node(void)
-+{
-+	struct device_node *np;
-+	const struct of_device_id *match;
-+
-+	np = of_find_node_by_path("/");
-+	match = of_match_node(ti_cpufreq_of_match, np);
-+	of_node_put(np);
-+
-+	return match;
-+}
-+
- static int ti_cpufreq_probe(struct platform_device *pdev)
- {
- 	u32 version[VERSION_COUNT];
--	struct device_node *np;
- 	const struct of_device_id *match;
- 	struct opp_table *ti_opp_table;
- 	struct ti_cpufreq_data *opp_data;
- 	const char * const reg_names[] = {"vdd", "vbb"};
- 	int ret;
- 
--	np = of_find_node_by_path("/");
--	match = of_match_node(ti_cpufreq_of_match, np);
--	of_node_put(np);
-+	match = ti_cpufreq_match_node();
- 	if (!match)
- 		return -ENODEV;
- 
-@@ -290,7 +299,10 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
- 
- static int ti_cpufreq_init(void)
- {
--	platform_device_register_simple("ti-cpufreq", -1, NULL, 0);
-+	/* Check to ensure we are on a compatible platform */
-+	if (ti_cpufreq_match_node())
-+		platform_device_register_simple("ti-cpufreq", -1, NULL, 0);
-+
- 	return 0;
- }
- module_init(ti_cpufreq_init);
--- 
-2.16.1
+I have definitely built initramfs images containing nothing but a single
+statically linked /init before.
 
+If you want to make it even smaller, you could avoid linking in libc at
+all, and just write a short assembly stub, but I don't know any way to
+do that *portably* without writing raw assembly for each target
+platform. That would get you down to a few kB though.
+
+> This further prompted the idea of modifying kernel_init() to just loop
+> forever, perhaps not even reaping orphaned zombies [*], given an appropriate
+> Kconfig option and/or kernel boot parameter.  I obviously cannot justify
+> this to save a sub-one-megabyte initrd for rcutorture, no matter how much
+> a wasted 800K might have offended my 30-years-ago self.  If I take this
+> next step, there have to be quite a few others benefiting significantly
+> from it.
+
+I would *love* to have support for omitting userspace entirely. And once
+we have that, we can start ripping out so many other things...
+
+One thought, though: that won't necessarily give you a representative
+rcutorture experience, given that you need to test things like the
+nohz-on-non-idle support, which interacts with "am I in userspace".
