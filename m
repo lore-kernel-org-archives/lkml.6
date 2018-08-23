@@ -2,178 +2,131 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10DCCC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A520BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B859B20644
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:54:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B859B20644
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 47614208FA
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:56:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ITf7XLPp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47614208FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbeHXA0U (ORCPT
+        id S1727594AbeHXA2H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 20:26:20 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59562 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727383AbeHXA0U (ORCPT
+        Thu, 23 Aug 2018 20:28:07 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:46637 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727134AbeHXA2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 20:26:20 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7NKddJT027209
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 16:54:53 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m231vk92f-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 16:54:53 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 23 Aug 2018 16:54:52 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        Thu, 23 Aug 2018 16:54:48 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7NKsmOj25952390;
-        Thu, 23 Aug 2018 20:54:48 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 587A3B2065;
-        Thu, 23 Aug 2018 16:53:52 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 29138B2064;
-        Thu, 23 Aug 2018 16:53:52 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 23 Aug 2018 16:53:52 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 776C516C86E3; Thu, 23 Aug 2018 13:54:48 -0700 (PDT)
-Date:   Thu, 23 Aug 2018 13:54:48 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Bernd Petrovitsch <bernd@petrovitsch.priv.at>
-Cc:     nicolas.pitre@linaro.org, josh@joshtriplett.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Kernel-only deployments?
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180823174359.GA13033@linux.vnet.ibm.com>
- <d47f1f4b828e6099c7db2ca4a4728536b3ad2723.camel@petrovitsch.priv.at>
+        Thu, 23 Aug 2018 20:28:06 -0400
+Received: by mail-yb0-f196.google.com with SMTP id y20-v6so2646422ybi.13
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 13:56:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=HLBdnVGydHPPI9HlCXs/zCai70hz41phfgPqLAwxlJ8=;
+        b=ITf7XLPpVWlOMz1KTRrwAj4bMjco4uvJBDgEsRpfYFx3oDEkBA8ELlX3yjHxqZHTF2
+         Pi6ZuLt5q10hFp8MzwijxouAznQoOQ3MkitnceKpUx1NrUkNnBB3XLIuZtHyRKTMsTGj
+         BoGltCxLmB7BWA2hBIFv45NXC1+7yvngHoadE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=HLBdnVGydHPPI9HlCXs/zCai70hz41phfgPqLAwxlJ8=;
+        b=OY96W5aql4Y5gVwKO9rScOUN+QvIQrqOQhr6ePIKHwLsk2FA9EQAEoeBYtFt5+7cp9
+         MUz5mFaPZ6Hmiy/vWsu7xbVEoVNf0Xx98IKhIozZ3rPtZNW6hn5MKBKub+Tib8IabYgL
+         6dRXyBq6TegQbCEWSSNUVpX31ydIprxMq/mD8xJ71OJ0B5JIXmkK6vS3vjgKlhu7J7Jf
+         iNtf66wG4Q1E3ZDcn9dIm6VAzo7SCfd25aJnXR5MCw4Ve+lmZdUQWbhOdgvptnWS3Udo
+         hflZ/ngjkZTXrud47j8jGUDCnqiHdichW2E9YsBzo6x6R1jPnCE0V6UzFw3Pury3f39e
+         0QGQ==
+X-Gm-Message-State: APzg51AFv3mRB+DAuR22gq2gBC94h389iwcGpailsJYNjcZed3BxG0ap
+        5dZptH6PS/0jMgy2vT4JZCr0oGCkK1Y=
+X-Google-Smtp-Source: ANB0VdbLjtgximlX5sFviMG/cvkVbha3tOIxXpv57F7QxSircHrUwPjfQe0DbMomJfNoT73kcjNZLg==
+X-Received: by 2002:a25:6403:: with SMTP id y3-v6mr5136598ybb.323.1535057799412;
+        Thu, 23 Aug 2018 13:56:39 -0700 (PDT)
+Received: from mail-yb0-f175.google.com (mail-yb0-f175.google.com. [209.85.213.175])
+        by smtp.gmail.com with ESMTPSA id m1-v6sm2426684ywf.96.2018.08.23.13.56.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 Aug 2018 13:56:38 -0700 (PDT)
+Received: by mail-yb0-f175.google.com with SMTP id v13-v6so2652563ybq.12
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 13:56:37 -0700 (PDT)
+X-Received: by 2002:a25:e5c3:: with SMTP id c186-v6mr33242137ybh.209.1535057797080;
+ Thu, 23 Aug 2018 13:56:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d47f1f4b828e6099c7db2ca4a4728536b3ad2723.camel@petrovitsch.priv.at>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18082320-0060-0000-0000-000002A35378
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009599; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01077843; UDB=6.00555749; IPR=6.00857817;
- MB=3.00022894; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-23 20:54:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082320-0061-0000-0000-0000464525C0
-Message-Id: <20180823205448.GZ4225@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808230213
+Received: by 2002:a25:2c11:0:0:0:0:0 with HTTP; Thu, 23 Aug 2018 13:56:35
+ -0700 (PDT)
+In-Reply-To: <20180823185140.GA29028@embeddedor.com>
+References: <20180823185140.GA29028@embeddedor.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 23 Aug 2018 13:56:35 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jKPOVRk5DbFMKu0BV_K-ES+j+6_aApjyo0X8zXBfTYDnw@mail.gmail.com>
+Message-ID: <CAGXu5jKPOVRk5DbFMKu0BV_K-ES+j+6_aApjyo0X8zXBfTYDnw@mail.gmail.com>
+Subject: Re: [PATCH] rtc: sun6i: Use struct_size() in kzalloc()
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-rtc@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 09:52:17PM +0200, Bernd Petrovitsch wrote:
-> Hi all!
-> 
-> On Thu, 2018-08-23 at 10:43 -0700, Paul E. McKenney wrote:
-> > [...]
-> > Does anyone do kernel-only deployments, for example, setting up an
-> > embedded device having a Linux kernel and absolutely no userspace
-> > whatsoever?
-> [...]
-> > You see, rcutorture runs entirely out of initrd, never mounting a real
-> > root partition.  The user has been required to supply the initrd, but
-> 
-> IMHO running programs from the initrd is in user-space, but anyways:
+On Thu, Aug 23, 2018 at 11:51 AM, Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+>
+> struct foo {
+>         int stuff;
+>         void *entry[];
+> };
+>
+> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+>
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+>
+> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/rtc/rtc-sun6i.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
+> index 2cd5a7b..fe07310 100644
+> --- a/drivers/rtc/rtc-sun6i.c
+> +++ b/drivers/rtc/rtc-sun6i.c
+> @@ -199,8 +199,7 @@ static void __init sun6i_rtc_clk_init(struct device_node *node)
+>         if (!rtc)
+>                 return;
+>
+> -       clk_data = kzalloc(sizeof(*clk_data) + (sizeof(*clk_data->hws) * 2),
+> -                          GFP_KERNEL);
+> +       clk_data = kzalloc(struct_size(clk_data, hws, 2), GFP_KERNEL);
+>         if (!clk_data) {
+>                 kfree(rtc);
+>                 return;
 
-Agreed, rcutorture still has a userspace, albeit a small one.  I was
-wondering if I should take the next step and eliminate userspace entirely.
-Josh Triplett pointed out that doing so would reduce my test coverage,
-so the answer is that I should not eliminate userspace entirely for
-rcutorture.
+This looks like entirely correct to me, but I'm surprised the
+Coccinelle script didn't discover this. I guess the isomorphisms don't
+cover the parenthesis?
 
-> Ages ago at some former employer, we built an embedded Linux device on
-> an MPC-860 board (but that shouldn't make a significant difference to
-> other architectures) based on the (at that time) brand new 2.4 kernel
-> which ran completely out of the initrd (which obviously contained the
-> whole root filesystem).
+-Kees
 
-Cute!  The rcutorture test scripts do something similar, but you
-clearly got there long before I did.
-
-> [...]
-> > by throwing out everything not absolutely needed by the dash and sleep
-> > binaries, which got me down to about 2.5MB, 1.8MB of which was libc.
-> 
-> We had a working glibc binary (which as the largest binary on the
-> filesystem) and just used it (and never got time and/or necessity to
-> use something else like ulibc, newlibc or build glibc ourselves to
-> leave all unneeded stuff out).
-> 
-> We basically built the filesystem - the distribution as such;-) - from
-> scratch (only self-crafted `configure` calls around[0]) and - thus -
-> used busybox and ash (IIRC) - so throw dash, core-utils etc. away and
-> just use busybox (or something similar) for further space savings.
-> 
-> The whole startup and daemon management was done with busybox' "init"
-> via a simple /etc/inittab (that were the good old times;-) and it was
-> enough as one can start one-time programs at boot time (e.g. to load
-> kernel modules (and remove the file in the filesystem from the
-> filesystem[0]) or configure stuff via sysctl) and restart daemons. We
-> didn't need run-levels ...
-
-Indeed, concerns about possible additional boot-time kernel-userspace
-interactions led me to use dracut or mkinitramfs if available, and
-hand-craft the "init" binary only if neither was present.
-
-> > This situation of course prompted me to create an initrd containing
-> > a statically linked binary named "init" and absolutely nothing else
-> > (not even /dev or /tmp directories), which weighs in at not quite 800KB.
-> 
-> That is probably the smallest solution - if it's enough. If it's all
-> GPL, just link it statically against dietlibc ....
-
-Sounds like there are a number of reduced-weight libc libraries
-available.
-
-> We had all of the usual directories and a somewhat filled /dev
-> (completely static in the initrd IIRC, no udev or similar dynamic stuff
-> was needed) as we had dropbear as ssh-server, a small webserver+CGI-
-> script for a web interface and a SNMP agent (hacked net-smtp as we had
-> our own configuration daemon and needed SNMP only as a transport
-> protocol).
-
-Cool!  Me, I currently leave networking out.  I compile it into the
-kernel to catch build problems, but don't actually exercise the
-networking code.
-
-> [...]
-> 
-> MfG,
-> 	Bernd
-> 
-> [0]: Every byte counts and size does matter;-)
-
-;-) ;-) ;-)
-
-							Thanx, Paul
-
-> -- 
-> Bernd Petrovitsch                  Email : bernd@petrovitsch.priv.at
->                      LUGA : http://www.luga.at
-> 
-
+-- 
+Kees Cook
+Pixel Security
