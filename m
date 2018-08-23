@@ -3,38 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A10A1C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B50C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D35D2084A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D35D2084A
+	by mail.kernel.org (Postfix) with ESMTP id 091312084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 091312084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388051AbeHWM22 (ORCPT
+        id S2388075AbeHWM2c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:28:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53190 "EHLO
+        Thu, 23 Aug 2018 08:28:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53198 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730041AbeHWM22 (ORCPT
+        with ESMTP id S1727871AbeHWM2b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:28:28 -0400
+        Thu, 23 Aug 2018 08:28:31 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8B32FC83;
-        Thu, 23 Aug 2018 08:59:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B57DEC83;
+        Thu, 23 Aug 2018 08:59:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Tomer Tayar <Tomer.Tayar@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 192/324] netfilter: x_tables: set module owner for icmp(6) matches
-Date:   Thu, 23 Aug 2018 09:54:18 +0200
-Message-Id: <20180823075005.769685123@linuxfoundation.org>
+Subject: [PATCH 4.17 193/324] qed: off by one in qed_parse_mcp_trace_buf()
+Date:   Thu, 23 Aug 2018 09:54:19 +0200
+Message-Id: <20180823075005.821088772@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,44 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit d376bef9c29b3c65aeee4e785fffcd97ef0a9a81 ]
+[ Upstream commit 0df8adbb88db8283f102a2afa91610a502245cb2 ]
 
-nft_compat relies on xt_request_find_match to increment
-refcount of the module that provides the match/target.
+If format_idx == s_mcp_trace_meta.formats_num then we read one element
+beyond the end of the s_mcp_trace_meta.formats[] array.
 
-The (builtin) icmp matches did't set the module owner so it
-was possible to rmmod ip(6)tables while icmp extensions were still in use.
-
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 50bc60cb155c ("qed*: Utilize FW 8.33.11.0")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Tomer Tayar <Tomer.Tayar@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/netfilter/ip_tables.c  |    1 +
- net/ipv6/netfilter/ip6_tables.c |    1 +
- 2 files changed, 2 insertions(+)
+ drivers/net/ethernet/qlogic/qed/qed_debug.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/netfilter/ip_tables.c
-+++ b/net/ipv4/netfilter/ip_tables.c
-@@ -1895,6 +1895,7 @@ static struct xt_match ipt_builtin_mt[]
- 		.checkentry = icmp_checkentry,
- 		.proto      = IPPROTO_ICMP,
- 		.family     = NFPROTO_IPV4,
-+		.me	    = THIS_MODULE,
- 	},
- };
+--- a/drivers/net/ethernet/qlogic/qed/qed_debug.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_debug.c
+@@ -6663,7 +6663,7 @@ static enum dbg_status qed_parse_mcp_tra
+ 		format_idx = header & MFW_TRACE_EVENTID_MASK;
  
---- a/net/ipv6/netfilter/ip6_tables.c
-+++ b/net/ipv6/netfilter/ip6_tables.c
-@@ -1907,6 +1907,7 @@ static struct xt_match ip6t_builtin_mt[]
- 		.checkentry = icmp6_checkentry,
- 		.proto      = IPPROTO_ICMPV6,
- 		.family     = NFPROTO_IPV6,
-+		.me	    = THIS_MODULE,
- 	},
- };
- 
+ 		/* Skip message if its index doesn't exist in the meta data */
+-		if (format_idx > s_mcp_trace_meta.formats_num) {
++		if (format_idx >= s_mcp_trace_meta.formats_num) {
+ 			u8 format_size =
+ 				(u8)((header & MFW_TRACE_PRM_SIZE_MASK) >>
+ 				     MFW_TRACE_PRM_SIZE_SHIFT);
 
 
