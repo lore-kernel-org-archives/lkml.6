@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB8DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58114C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93A9320839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93A9320839
+	by mail.kernel.org (Postfix) with ESMTP id 1890D20839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1890D20839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388106AbeHWMWP (ORCPT
+        id S2388115AbeHWMWS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:22:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52012 "EHLO
+        Thu, 23 Aug 2018 08:22:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52024 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728574AbeHWMWO (ORCPT
+        with ESMTP id S1728574AbeHWMWR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:22:14 -0400
+        Thu, 23 Aug 2018 08:22:17 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 38648C5C;
-        Thu, 23 Aug 2018 08:53:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67A0549B;
+        Thu, 23 Aug 2018 08:53:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Schwab <schwab@suse.de>,
-        Palmer Dabbelt <palmer@sifive.com>,
+        stable@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 184/324] RISC-V: fix R_RISCV_ADD32/R_RISCV_SUB32 relocations
-Date:   Thu, 23 Aug 2018 09:54:10 +0200
-Message-Id: <20180823075005.405817127@linuxfoundation.org>
+Subject: [PATCH 4.17 185/324] RISC-V: Dont include irq-riscv-intc.h
+Date:   Thu, 23 Aug 2018 09:54:11 +0200
+Message-Id: <20180823075005.448172493@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,39 +50,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andreas Schwab <schwab@suse.de>
+From: Palmer Dabbelt <palmer@sifive.com>
 
-[ Upstream commit 781c8fe2da3d2c7c95cd7ffddbab63b80a79da4d ]
+[ Upstream commit 8606544890d7dc4f7a740963f70dc1e1d54f8e30 ]
 
-The R_RISCV_ADD32/R_RISCV_SUB32 relocations should add/subtract the
-address of the symbol (without overflow check), not its contents.
+This file has never existed in the upstream kernel, but it's guarded by
+an #ifdef that's also never existed in the upstream kernel.  As a part
+of our interrupt controller refactoring this header is no longer
+necessary, but this reference managed to sneak in anyway.
 
-Signed-off-by: Andreas Schwab <schwab@suse.de>
 Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/riscv/kernel/module.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/riscv/kernel/irq.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/arch/riscv/kernel/module.c
-+++ b/arch/riscv/kernel/module.c
-@@ -252,14 +252,14 @@ static int apply_r_riscv_align_rela(stru
- static int apply_r_riscv_add32_rela(struct module *me, u32 *location,
- 				    Elf_Addr v)
- {
--	*(u32 *)location += (*(u32 *)v);
-+	*(u32 *)location += (u32)v;
- 	return 0;
- }
+--- a/arch/riscv/kernel/irq.c
++++ b/arch/riscv/kernel/irq.c
+@@ -16,10 +16,6 @@
+ #include <linux/irqchip.h>
+ #include <linux/irqdomain.h>
  
- static int apply_r_riscv_sub32_rela(struct module *me, u32 *location,
- 				    Elf_Addr v)
+-#ifdef CONFIG_RISCV_INTC
+-#include <linux/irqchip/irq-riscv-intc.h>
+-#endif
+-
+ void __init init_IRQ(void)
  {
--	*(u32 *)location -= (*(u32 *)v);
-+	*(u32 *)location -= (u32)v;
- 	return 0;
- }
- 
+ 	irqchip_init();
 
 
