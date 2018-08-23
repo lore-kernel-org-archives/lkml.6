@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD38C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:42:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3DFC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 225AA2083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:42:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 225AA2083A
+	by mail.kernel.org (Postfix) with ESMTP id 3E8582083A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:42:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E8582083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732564AbeHWMKh (ORCPT
+        id S1732580AbeHWMKk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:10:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49950 "EHLO
+        Thu, 23 Aug 2018 08:10:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49962 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729381AbeHWMKh (ORCPT
+        with ESMTP id S1729381AbeHWMKk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:10:37 -0400
+        Thu, 23 Aug 2018 08:10:40 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 872237F6;
-        Thu, 23 Aug 2018 08:42:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C89167F6;
+        Thu, 23 Aug 2018 08:42:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Branden <scott.branden@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Minas Harutyunyan <hminas@synopsys.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 039/324] arm64: dts: specify 1.8V EMMC capabilities for bcm958742k
-Date:   Thu, 23 Aug 2018 09:51:45 +0200
-Message-Id: <20180823074957.783043471@linuxfoundation.org>
+Subject: [PATCH 4.17 057/324] dwc2: gadget: Fix ISOC IN DDMA PID bitfield value calculation
+Date:   Thu, 23 Aug 2018 09:52:03 +0200
+Message-Id: <20180823074958.690820408@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,34 +51,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Scott Branden <scott.branden@broadcom.com>
+From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
 
-[ Upstream commit eba92503e980c08ac353d0d669d0bb143979abcd ]
+[ Upstream commit 1d8e5c00275825fc42aaa5597dab1d0b5b26bb64 ]
 
-Specify 1.8V EMMC capabilities for bcm958742k board to indicate support
-for UHS mode.
+PID bitfield in descriptor should be set based on particular request
+length, not based on EP's mc value. PID value can't be set to 0 even
+request length is 0.
 
-Fixes: d4b4aba6be8a ("arm64: dts: Initial DTS files for Broadcom Stingray SOC")
-Signed-off-by: Scott Branden <scott.branden@broadcom.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Minas Harutyunyan <hminas@synopsys.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/dwc2/gadget.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
-+++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
-@@ -43,6 +43,10 @@
- 	enet-phy-lane-swap;
- };
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -808,6 +808,7 @@ static int dwc2_gadget_fill_isoc_desc(st
+ 	u32 index;
+ 	u32 maxsize = 0;
+ 	u32 mask = 0;
++	u8 pid = 0;
  
-+&sdio0 {
-+	mmc-ddr-1_8v;
-+};
-+
- &uart2 {
- 	status = "okay";
- };
+ 	maxsize = dwc2_gadget_get_desc_params(hs_ep, &mask);
+ 	if (len > maxsize) {
+@@ -853,7 +854,11 @@ static int dwc2_gadget_fill_isoc_desc(st
+ 			 ((len << DEV_DMA_NBYTES_SHIFT) & mask));
+ 
+ 	if (hs_ep->dir_in) {
+-		desc->status |= ((hs_ep->mc << DEV_DMA_ISOC_PID_SHIFT) &
++		if (len)
++			pid = DIV_ROUND_UP(len, hs_ep->ep.maxpacket);
++		else
++			pid = 1;
++		desc->status |= ((pid << DEV_DMA_ISOC_PID_SHIFT) &
+ 				 DEV_DMA_ISOC_PID_MASK) |
+ 				((len % hs_ep->ep.maxpacket) ?
+ 				 DEV_DMA_SHORT : 0) |
 
 
