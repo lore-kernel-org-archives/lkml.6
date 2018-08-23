@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D86B8C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E99BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:48:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E67F2077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:48:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E67F2077B
+	by mail.kernel.org (Postfix) with ESMTP id 145112077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:48:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 145112077B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732967AbeHWMQy (ORCPT
+        id S1732983AbeHWMQ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:16:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50792 "EHLO
+        Thu, 23 Aug 2018 08:16:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50800 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727445AbeHWMQx (ORCPT
+        with ESMTP id S1727445AbeHWMQ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:16:53 -0400
+        Thu, 23 Aug 2018 08:16:56 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3BC38941;
-        Thu, 23 Aug 2018 08:48:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6775A941;
+        Thu, 23 Aug 2018 08:48:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <james.morris@microsoft.com>,
+        stable@vger.kernel.org, "Ivan T. Ivanov" <ivan.ivanov@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, Rob Herring <robh@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 093/324] Smack: Mark inode instant in smack_task_to_inode
-Date:   Thu, 23 Aug 2018 09:52:39 +0200
-Message-Id: <20180823075000.500067280@linuxfoundation.org>
+Subject: [PATCH 4.17 094/324] arm64: dts: msm8916: fix Coresight ETF graph connections
+Date:   Thu, 23 Aug 2018 09:52:40 +0200
+Message-Id: <20180823075000.546309025@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,34 +54,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Casey Schaufler <casey@schaufler-ca.com>
+From: Rob Herring <robh@kernel.org>
 
-[ Upstream commit 7b4e88434c4e7982fb053c49657e1c8bbb8692d9 ]
+[ Upstream commit 6b4154a655a258c67bcfabbd4c3a06637e74ebcd ]
 
-Smack: Mark inode instant in smack_task_to_inode
+The ETF input should be connected to the funnel output, and the ETF
+output should be connected to the replicator input. The labels are wrong
+and these got swapped:
 
-/proc clean-up in commit 1bbc55131e59bd099fdc568d3aa0b42634dbd188
-resulted in smack_task_to_inode() being called before smack_d_instantiate.
-This resulted in the smk_inode value being ignored, even while present
-for files in /proc/self. Marking the inode as instant here fixes that.
+Warning (graph_endpoint): /soc/funnel@821000/ports/port@8/endpoint: graph connection to node '/soc/etf@825000/ports/port@1/endpoint' is not bidirectional
+Warning (graph_endpoint): /soc/replicator@824000/ports/port@2/endpoint: graph connection to node '/soc/etf@825000/ports/port@0/endpoint' is not bidirectional
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Signed-off-by: James Morris <james.morris@microsoft.com>
+Fixes: 7c10da373698 ("arm64: dts: qcom: Add msm8916 CoreSight components")
+Cc: Ivan T. Ivanov <ivan.ivanov@linaro.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>
+Cc: David Brown <david.brown@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Tested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/smack/smack_lsm.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/qcom/msm8916.dtsi |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -2296,6 +2296,7 @@ static void smack_task_to_inode(struct t
- 	struct smack_known *skp = smk_of_task_struct(p);
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -1191,14 +1191,14 @@
  
- 	isp->smk_inode = skp;
-+	isp->smk_flags |= SMK_INODE_INSTANT;
- }
- 
- /*
+ 				port@0 {
+ 					reg = <0>;
+-					etf_out: endpoint {
++					etf_in: endpoint {
+ 						slave-mode;
+ 						remote-endpoint = <&funnel0_out>;
+ 					};
+ 				};
+ 				port@1 {
+ 					reg = <0>;
+-					etf_in: endpoint {
++					etf_out: endpoint {
+ 						remote-endpoint = <&replicator_in>;
+ 					};
+ 				};
 
 
