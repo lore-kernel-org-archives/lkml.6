@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23ED5C43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34382C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAA5A2147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAA5A2147A
+	by mail.kernel.org (Postfix) with ESMTP id EA1B52147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA1B52147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731453AbeHWL7q (ORCPT
+        id S1731466AbeHWL7u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:59:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47944 "EHLO
+        Thu, 23 Aug 2018 07:59:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47950 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730887AbeHWL7q (ORCPT
+        with ESMTP id S1730887AbeHWL7t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:59:46 -0400
+        Thu, 23 Aug 2018 07:59:49 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1EF7CC74;
-        Thu, 23 Aug 2018 08:31:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 44DB1C74;
+        Thu, 23 Aug 2018 08:31:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maciej Purski <m.purski@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
+        stable@vger.kernel.org, Taeung Song <treeze.taeung@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 137/217] drm/bridge/sii8620: Fix display of packed pixel modes
-Date:   Thu, 23 Aug 2018 09:54:10 +0200
-Message-Id: <20180823075511.777032548@linuxfoundation.org>
+Subject: [PATCH 4.14 138/217] samples/bpf: add missing <linux/if_vlan.h>
+Date:   Thu, 23 Aug 2018 09:54:11 +0200
+Message-Id: <20180823075511.818775331@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,69 +52,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej Purski <m.purski@samsung.com>
+From: Taeung Song <treeze.taeung@gmail.com>
 
-[ Upstream commit fdddc65ab35d575b42aab411b2dc687601eab680 ]
+[ Upstream commit 4d5d33a085335ef469c9a87792bcaaaa8e64d8c4 ]
 
-Current implementation does not guarantee packed pixel modes working
-with every dongle. There are some dongles, which require selecting
-the output mode explicitly.
+This fixes build error regarding redefinition:
 
-Write proper values to registers in packed_pixel mode, based on how it
-is done in vendor's code. Select output color space: RGB
-(no packed pixel) or YCBCR422 (packed pixel).
+    CLANG-bpf  samples/bpf/parse_varlen.o
+  samples/bpf/parse_varlen.c:111:8: error: redefinition of 'vlan_hdr'
+  struct vlan_hdr {
+         ^
+  ./include/linux/if_vlan.h:38:8: note: previous definition is here
 
-This reverts commit e8b92efa629dac0e70ea4145c5e70616de5f89c8
-("drm/bridge/sii8620: fix display of packed pixel modes in MHL2").
+So remove duplicate 'struct vlan_hdr' in sample code and include if_vlan.h
 
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1530204243-6370-3-git-send-email-m.purski@samsung.com
+Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
+Acked-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/bridge/sil-sii8620.c |   17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ samples/bpf/parse_varlen.c |    6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
---- a/drivers/gpu/drm/bridge/sil-sii8620.c
-+++ b/drivers/gpu/drm/bridge/sil-sii8620.c
-@@ -1038,21 +1038,36 @@ static void sii8620_stop_video(struct si
- 
- static void sii8620_set_format(struct sii8620 *ctx)
- {
-+	u8 out_fmt;
-+
- 	if (sii8620_is_mhl3(ctx)) {
- 		sii8620_setbits(ctx, REG_M3_P0CTRL,
- 				BIT_M3_P0CTRL_MHL3_P0_PIXEL_MODE_PACKED,
- 				ctx->use_packed_pixel ? ~0 : 0);
- 	} else {
-+		if (ctx->use_packed_pixel) {
-+			sii8620_write_seq_static(ctx,
-+				REG_VID_MODE, BIT_VID_MODE_M1080P,
-+				REG_MHL_TOP_CTL, BIT_MHL_TOP_CTL_MHL_PP_SEL | 1,
-+				REG_MHLTX_CTL6, 0x60
-+			);
-+		} else {
- 			sii8620_write_seq_static(ctx,
- 				REG_VID_MODE, 0,
- 				REG_MHL_TOP_CTL, 1,
- 				REG_MHLTX_CTL6, 0xa0
- 			);
-+		}
- 	}
- 
-+	if (ctx->use_packed_pixel)
-+		out_fmt = VAL_TPI_FORMAT(YCBCR422, FULL);
-+	else
-+		out_fmt = VAL_TPI_FORMAT(RGB, FULL);
-+
- 	sii8620_write_seq(ctx,
- 		REG_TPI_INPUT, VAL_TPI_FORMAT(RGB, FULL),
--		REG_TPI_OUTPUT, VAL_TPI_FORMAT(RGB, FULL),
-+		REG_TPI_OUTPUT, out_fmt,
- 	);
+--- a/samples/bpf/parse_varlen.c
++++ b/samples/bpf/parse_varlen.c
+@@ -6,6 +6,7 @@
+  */
+ #define KBUILD_MODNAME "foo"
+ #include <linux/if_ether.h>
++#include <linux/if_vlan.h>
+ #include <linux/ip.h>
+ #include <linux/ipv6.h>
+ #include <linux/in.h>
+@@ -108,11 +109,6 @@ static int parse_ipv6(void *data, uint64
+ 	return 0;
  }
  
+-struct vlan_hdr {
+-	uint16_t h_vlan_TCI;
+-	uint16_t h_vlan_encapsulated_proto;
+-};
+-
+ SEC("varlen")
+ int handle_ingress(struct __sk_buff *skb)
+ {
 
 
