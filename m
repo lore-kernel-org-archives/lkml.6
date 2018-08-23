@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81638C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76BFFC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41AAB208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41AAB208D6
+	by mail.kernel.org (Postfix) with ESMTP id 3D28D208DC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D28D208DC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730368AbeHWLtE (ORCPT
+        id S1730378AbeHWLtH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:49:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46662 "EHLO
+        Thu, 23 Aug 2018 07:49:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46676 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727953AbeHWLtD (ORCPT
+        with ESMTP id S1727953AbeHWLtG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:49:03 -0400
+        Thu, 23 Aug 2018 07:49:06 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6DD4EC83;
-        Thu, 23 Aug 2018 08:20:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 96C0EC93;
+        Thu, 23 Aug 2018 08:20:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -35,9 +35,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Michal Kalderon <Michal.Kalderon@cavium.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 055/217] qed: Fix possible memory leak in Rx error path handling.
-Date:   Thu, 23 Aug 2018 09:52:48 +0200
-Message-Id: <20180823075508.018988469@linuxfoundation.org>
+Subject: [PATCH 4.14 056/217] qed: Add sanity check for SIMD fastpath handler.
+Date:   Thu, 23 Aug 2018 09:52:49 +0200
+Message-Id: <20180823075508.061010130@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -56,17 +56,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
 
-[ Upstream commit 4f9de4df901fb84709fe3a864dfa4eaf35700f68 ]
+[ Upstream commit 3935a70968820c3994db4de7e6e1c7e814bff875 ]
 
-Memory for packet buffers need to be freed in the error paths as there is
-no consumer (e.g., upper layer) for such packets and that memory will never
-get freed.
-The issue was uncovered when port was attacked with flood of isatap
-packets, these are multicast packets hence were directed at all the PFs.
-For foce PF, this meant they were routed to the ll2 module which in turn
-drops such packets.
+Avoid calling a SIMD fastpath handler if it is NULL. The check is needed
+to handle an unlikely scenario where unsolicited interrupt is destined to
+a PF in INTa mode.
 
-Fixes: 0a7fb11c ("qed: Add Light L2 support")
+Fixes: fe56b9e6a ("qed: Add module with basic common support")
 Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
 Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
 Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
@@ -74,37 +70,29 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_ll2.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_main.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-@@ -201,8 +201,9 @@ void qed_ll2b_complete_rx_packet(void *c
- 
- 	skb = build_skb(buffer->data, 0);
- 	if (!skb) {
--		rc = -ENOMEM;
--		goto out_post;
-+		DP_INFO(cdev, "Failed to build SKB\n");
-+		kfree(buffer->data);
-+		goto out_post1;
- 	}
- 
- 	data->u.placement_offset += NET_SKB_PAD;
-@@ -224,8 +225,14 @@ void qed_ll2b_complete_rx_packet(void *c
- 		cdev->ll2->cbs->rx_cb(cdev->ll2->cb_cookie, skb,
- 				      data->opaque_data_0,
- 				      data->opaque_data_1);
-+	} else {
-+		DP_VERBOSE(p_hwfn, (NETIF_MSG_RX_STATUS | NETIF_MSG_PKTDATA |
-+				    QED_MSG_LL2 | QED_MSG_STORAGE),
-+			   "Dropping the packet\n");
-+		kfree(buffer->data);
- 	}
- 
-+out_post1:
- 	/* Update Buffer information and update FW producer */
- 	buffer->data = new_data;
- 	buffer->phys_addr = new_phys_addr;
+--- a/drivers/net/ethernet/qlogic/qed/qed_main.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
+@@ -565,8 +565,16 @@ static irqreturn_t qed_single_int(int ir
+ 		/* Fastpath interrupts */
+ 		for (j = 0; j < 64; j++) {
+ 			if ((0x2ULL << j) & status) {
+-				hwfn->simd_proto_handler[j].func(
+-					hwfn->simd_proto_handler[j].token);
++				struct qed_simd_fp_handler *p_handler =
++					&hwfn->simd_proto_handler[j];
++
++				if (p_handler->func)
++					p_handler->func(p_handler->token);
++				else
++					DP_NOTICE(hwfn,
++						  "Not calling fastpath handler as it is NULL [handler #%d, status 0x%llx]\n",
++						  j, status);
++
+ 				status &= ~(0x2ULL << j);
+ 				rc = IRQ_HANDLED;
+ 			}
 
 
