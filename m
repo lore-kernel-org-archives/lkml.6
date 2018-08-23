@@ -2,98 +2,116 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF73C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 05:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0F0C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 05:28:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85A6620936
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 05:22:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A6620936
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 9A4432086B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 05:28:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Da0Xkp07"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A4432086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728546AbeHWIut (ORCPT
+        id S1728539AbeHWI4k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 04:50:49 -0400
-Received: from gate.crashing.org ([63.228.1.57]:45428 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728360AbeHWIut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 04:50:49 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w7N5LUBm017882;
-        Thu, 23 Aug 2018 00:21:32 -0500
-Message-ID: <457fb409b4dcd213e2f162792e79e31c09cd55a4.camel@kernel.crashing.org>
-Subject: Re: [PATCH 3/4] mm/tlb, x86/mm: Support invalidating TLB caches for
- RCU_TABLE_FREE
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Nick Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Rik van Riel <riel@surriel.com>,
-        Jann Horn <jannh@google.com>,
-        Adin Scannell <ascannell@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Date:   Thu, 23 Aug 2018 15:21:30 +1000
-In-Reply-To: <CA+55aFzM77G9-Q6LboPLJ=5gHma66ZQKiMGCMqXoKABirdF98w@mail.gmail.com>
-References: <20180822153012.173508681@infradead.org>
-         <20180822154046.823850812@infradead.org>
-         <20180822155527.GF24124@hirez.programming.kicks-ass.net>
-         <20180823134525.5f12b0d3@roar.ozlabs.ibm.com>
-         <CA+55aFxneZTFxxxAjLZmj92VUJg6z7hERxJ2cHoth-GC0RuELw@mail.gmail.com>
-         <776104d4c8e4fc680004d69e3a4c2594b638b6d1.camel@au1.ibm.com>
-         <CA+55aFzM77G9-Q6LboPLJ=5gHma66ZQKiMGCMqXoKABirdF98w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 23 Aug 2018 04:56:40 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:34527 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728360AbeHWI4k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 04:56:40 -0400
+Received: by mail-pl0-f66.google.com with SMTP id f6-v6so1885158plo.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 22:28:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=fHH5TD6YRf77MzHh7sDvwWo7y4Ij078zVJ7PZ5B6Jc8=;
+        b=Da0Xkp07FNXC9kMn04fMUCIVzTR8ZadAm54ZvN9R8lI96iBWYlNVePhPinAn4w8yOp
+         +WFM+IXrIs3e10UILm9gOGulNpRf5t4NBbQOrO5vp7QkjWWglyV863nYe6scG70E02sZ
+         Tr9q9MwixgybejhaXW2QWpf/y2uxTMCzJfPRqcO+M689AQXF7iL6CyqmW0lHgy7vm8+b
+         lvhiHfr1zTHhGoTI46h3xY1qyR3SyL/2pa18VZgP9MxnH6bSWMxcpe351isjBayhxRjk
+         CdgAG6mX9T0zAHkXPuMaj2R9Ap2y0WmCe4V8rlQ2rXbukKSgW8SBe4Wc1bODR1VERmhs
+         pyKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=fHH5TD6YRf77MzHh7sDvwWo7y4Ij078zVJ7PZ5B6Jc8=;
+        b=YvB/WxnP09EJ57fW5Obz70ZZ1QW3+/+Jsw9v8nbNnKpefkhwX+UdQk66+0G2W6RUBq
+         JTEByEeay38kjyQvBnlHd3FueiIJWD6TpQMUSpZxDouk+h907shE+97GUfhs7N2hSxd8
+         hg8VgKEYuWg2dFHYCoaqvKutlD5DH1nHtNg8NzVv1jncCYFtiI1zrzNIWEDoJRctv/Va
+         +rCHpyGU8yy7v3xw6hkjio8xeWfx/vTICRWO63HSgBGZu6YtM1jzdeydhD8TcZGz/jph
+         R5J9yPfsuszXiVOIu/2YFlSL2D9cEqxuFJ3QhYQZ5BkN4E0FalSFW2jypWzwxFdQSc/M
+         cpRg==
+X-Gm-Message-State: AOUpUlGMu9e5zQtVGGMhu2oZZnuuW9mS0AZBXBGaurxxcmB0SQzA/i0e
+        PZuIcKkipar02z5+uqTcjxXSGwkT
+X-Google-Smtp-Source: AA+uWPwhrgM4t7wsYuCL4ibtnuTjZ+UGHfsxQfyvpem9qlFMSh31IdfaRFUp9IMTRumWPdh9J9zgYw==
+X-Received: by 2002:a17:902:24e1:: with SMTP id l30-v6mr25548057plg.315.1535002125000;
+        Wed, 22 Aug 2018 22:28:45 -0700 (PDT)
+Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
+        by smtp.gmail.com with ESMTPSA id k5-v6sm7342405pfj.30.2018.08.22.22.28.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 Aug 2018 22:28:43 -0700 (PDT)
+From:   john.hubbard@gmail.com
+X-Google-Original-From: jhubbard@nvidia.com
+To:     Tomas Winkler <tomas.winkler@intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH] mei: fix use-after-free in mei_cl_write
+Date:   Wed, 22 Aug 2018 22:28:40 -0700
+Message-Id: <20180823052840.16364-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.18.0
+X-NVConfidentiality: public
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-22 at 22:11 -0700, Linus Torvalds wrote:
-> On Wed, Aug 22, 2018 at 9:54 PM Benjamin Herrenschmidt <benh@au1.ibm.com> wrote:
-> > 
-> > 
-> > So we do need a different flush instruction for the page tables vs. the
-> > normal TLB pages.
-> 
-> Right. ARM wants it too. x86 is odd in that a regular "invlpg" already
-> invalidates all the internal tlb cache nodes.
-> 
-> So the "new world order" is exactly that patch that PeterZ sent you, that adds a
-> 
-> +       unsigned int            freed_tables : 1;
-> 
+From: John Hubbard <jhubbard@nvidia.com>
 
- .../...
+KASAN reports a use-after-free during startup, in mei_cl_write:
 
-> So instead, when you get to the actual "tlb_flush(tlb)", you do
-> exactly that - flush the tlb. And the mmu_gather structure shows you
-> how much you need to flush. If you see that "freed_tables" is set,
-> then you know that you need to also do the special instruction to
-> flush the inner level caches. The range continues to show the page
-> range.
+    BUG: KASAN: use-after-free in mei_cl_write+0x601/0x870 [mei]
+       (drivers/misc/mei/client.c:1770)
 
-Yup. That looks like a generic version of the "need_flush_all" flag we
-have, which is fine by us.
+This is caused by commit 98e70866aacb ("mei: add support for variable
+length mei headers."), which changed the return value from len, to
+buf-size. That ends up using a stale buf pointer, because in some
+situations, the cb (callback) is deleted before it gets here.
 
-Just don't blame powerpc for all the historical crap :-)
+However, fortunately, len remains unchanged throughout the function
+(and I don't see anything else that would require re-reading buf->size
+either), so the fix is to simply revert the change, and return len, as
+before.
 
-Cheers,
-Ben.
+CC: Tomas Winkler <tomas.winkler@intel.com>
+CC: Arnd Bergmann <arnd@arndb.de>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ drivers/misc/mei/client.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
->            Linus
+diff --git a/drivers/misc/mei/client.c b/drivers/misc/mei/client.c
+index 4ab6251d418e..ebdcf0b450e2 100644
+--- a/drivers/misc/mei/client.c
++++ b/drivers/misc/mei/client.c
+@@ -1767,7 +1767,7 @@ ssize_t mei_cl_write(struct mei_cl *cl, struct mei_cl_cb *cb)
+ 		}
+ 	}
+ 
+-	rets = buf->size;
++	rets = len;
+ err:
+ 	cl_dbg(dev, cl, "rpm: autosuspend\n");
+ 	pm_runtime_mark_last_busy(dev->dev);
+-- 
+2.18.0
 
