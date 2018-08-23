@@ -2,171 +2,173 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E611C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 22:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDCDAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 22:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FE1D21564
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 22:28:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FE1D21564
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EADBE2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 22:37:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jIuBLl/F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EADBE2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbeHXCAC (ORCPT
+        id S1726649AbeHXCJD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 22:00:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44444 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726325AbeHXCAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 22:00:02 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 23 Aug 2018 22:09:03 -0400
+Received: from ozlabs.org ([203.11.71.1]:42937 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726083AbeHXCJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 22:09:03 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9B00E4023ECC;
-        Thu, 23 Aug 2018 22:28:15 +0000 (UTC)
-Received: from whitewolf.lyude.net.com (ovpn-123-57.rdu2.redhat.com [10.10.123.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4EFC72026DEF;
-        Thu, 23 Aug 2018 22:28:13 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     nouveau@lists.freedesktop.org
-Cc:     =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>, Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/nouveau: Fix nouveau_connector_ddc_detect()
-Date:   Thu, 23 Aug 2018 18:27:49 -0400
-Message-Id: <20180823222749.28659-1-lyude@redhat.com>
+        by ozlabs.org (Postfix) with ESMTPSA id 41xK6J2C3xz9s47;
+        Fri, 24 Aug 2018 08:37:11 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1535063833;
+        bh=4eoCH+ywd7cwNF1u2hndNVxeAxo54/JNi7sTE+nHPOE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=jIuBLl/FL1rZ+5TSvNd1b1prPYyMPNesG6goh4ZzqDpnnQeTg5hY9eMban2saO0/n
+         /MLjiLPKAJolRlkUnn682wyol09PhhsRx7vu1QDXx0COtYfx5AuWYdjlCB5L7lggcH
+         3jDXpmm+/WB2RUjMB5FgXxuNig6FhrsEvE1OMJnXaCGjOUOIijYmvD2fjBK1XjweuM
+         cNsa2fBjH1SCzHjLDlH3ZShm9TW0fTdVHAcENTRDHidlagKHVeox0MP6WFH7MA1qP/
+         drLvdAJecuo6I9km/viWLyX+TBXIyPjNOr0RQNfjMJpJY/cKM4fJW0BA/utJ9Zif13
+         BRPknSFZBXlpw==
+Date:   Fri, 24 Aug 2018 08:37:05 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <james.hogan@imgtec.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: linux-next: manual merge of the mips tree with Linus' tree
+Message-ID: <20180824083705.3c88e3ff@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 23 Aug 2018 22:28:15 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 23 Aug 2018 22:28:15 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/.ir.1uaE6CUGpUgHVaVzhX+"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It looks like that when we moved over to using
-drm_connector_for_each_possible_encoder() in nouveau, that one rather
-important part of this function got dropped by accident:
+--Sig_/.ir.1uaE6CUGpUgHVaVzhX+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-	/*          Right   v   here */
-	for (i = 0; nv_encoder = NULL, i < DRM_CONNECTOR_MAX_ENCODER; i++) {
-		int id = connector->encoder_ids[i];
-		if (id == 0)
-			break;
+Hi all,
 
-Since it's rather difficult to notice: the conditional in this loop is
-actually:
+Today's linux-next merge of the mips tree got a conflict in:
 
-	nv_encoder = NULL, i < DRM_CONNECTOR_MAX_ENCODER
+  include/linux/compiler_types.h
 
-Meaning that all early breaks result in nv_encoder keeping it's value,
-otherwise nv_encoder = NULL. Ugh.
+between commit:
 
-Since this got dropped, nouveau_connector_ddc_detect() now returns an
-encoder for every single connector, regardless of whether or not it's
-detected:
+  815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually excl=
+usive")
 
-    [ 1780.056185] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for DP-2
+from Linus' tree and commit:
 
-So: fix this to ensure we only return an encoder if we actually found
-one, and clean up the rest of the function while we're at it since it's
-nearly impossible to read properly.
+  04f264d3a8b0 ("compiler.h: Allow arch-specific asm/compiler.h")
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Fixes: ddba766dd07e ("drm/nouveau: Use drm_connector_for_each_possible_encoder()")
----
- drivers/gpu/drm/nouveau/nouveau_connector.c | 51 ++++++++++++---------
- 1 file changed, 30 insertions(+), 21 deletions(-)
+from the mips tree.
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-index 3b288be9c3f7..51b6f762f1e1 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -414,9 +414,9 @@ nouveau_connector_ddc_detect(struct drm_connector *connector)
- 	struct nouveau_connector *nv_connector = nouveau_connector(connector);
- 	struct nouveau_drm *drm = nouveau_drm(dev);
- 	struct nvkm_gpio *gpio = nvxx_gpio(&drm->client.device);
--	struct nouveau_encoder *nv_encoder = NULL;
-+	struct nouveau_encoder *nv_encoder = NULL, *found = NULL;
- 	struct drm_encoder *encoder;
--	int i, panel = -ENODEV;
-+	int i, ret, panel = -ENODEV;
- 
- 	/* eDP panels need powering on by us (if the VBIOS doesn't default it
- 	 * to on) before doing any AUX channel transactions.  LVDS panel power
-@@ -433,37 +433,46 @@ nouveau_connector_ddc_detect(struct drm_connector *connector)
- 	drm_connector_for_each_possible_encoder(connector, encoder, i) {
- 		nv_encoder = nouveau_encoder(encoder);
- 
--		if (nv_encoder->dcb->type == DCB_OUTPUT_DP) {
--			int ret = nouveau_dp_detect(nv_encoder);
-+		switch (nv_encoder->dcb->type) {
-+		case DCB_OUTPUT_DP:
-+			ret = nouveau_dp_detect(nv_encoder);
- 			if (ret == NOUVEAU_DP_MST)
- 				return NULL;
--			if (ret == NOUVEAU_DP_SST)
--				break;
--		} else
--		if ((vga_switcheroo_handler_flags() &
--		     VGA_SWITCHEROO_CAN_SWITCH_DDC) &&
--		    nv_encoder->dcb->type == DCB_OUTPUT_LVDS &&
--		    nv_encoder->i2c) {
--			int ret;
-+			else if (ret == NOUVEAU_DP_SST)
-+				found = nv_encoder;
-+
-+			break;
-+		case DCB_OUTPUT_LVDS:
-+			/* Can we actually probe this LVDS display? */
-+			if (!((vga_switcheroo_handler_flags() &
-+			       VGA_SWITCHEROO_CAN_SWITCH_DDC) &&
-+			      nv_encoder->i2c))
-+				continue;
-+
- 			vga_switcheroo_lock_ddc(dev->pdev);
--			ret = nvkm_probe_i2c(nv_encoder->i2c, 0x50);
--			vga_switcheroo_unlock_ddc(dev->pdev);
--			if (ret)
--				break;
--		} else
--		if (nv_encoder->i2c) {
- 			if (nvkm_probe_i2c(nv_encoder->i2c, 0x50))
--				break;
-+				found = nv_encoder;
-+			vga_switcheroo_unlock_ddc(dev->pdev);
-+
-+			break;
-+		default:
-+			if (nv_encoder->i2c &&
-+			    nvkm_probe_i2c(nv_encoder->i2c, 0x50))
-+				found = nv_encoder;
-+
-+			break;
- 		}
-+		if (found)
-+			break;
- 	}
- 
- 	/* eDP panel not detected, restore panel power GPIO to previous
- 	 * state to avoid confusing the SOR for other output types.
- 	 */
--	if (!nv_encoder && panel == 0)
-+	if (!found && panel == 0)
- 		nvkm_gpio_set(gpio, 0, DCB_GPIO_PANEL_POWER, 0xff, panel);
- 
--	return nv_encoder;
-+	return found;
- }
- 
- static struct nouveau_encoder *
--- 
-2.17.1
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/compiler_types.h
+index 90479a0f3986,4be464a07612..000000000000
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@@ -54,20 -54,44 +54,32 @@@ extern void __chk_io_ptr(const volatil
+ =20
+  #ifdef __KERNEL__
+ =20
+ -#ifdef __GNUC__
+ -#include <linux/compiler-gcc.h>
+ -#endif
+ -
+ -#if defined(CC_USING_HOTPATCH) && !defined(__CHECKER__)
+ -#define notrace __attribute__((hotpatch(0,0)))
+ -#else
+ -#define notrace __attribute__((no_instrument_function))
+ -#endif
+ -
+ -/* Intel compiler defines __GNUC__. So we will overwrite implementations
+ - * coming from above header files here
+ - */
+ -#ifdef __INTEL_COMPILER
+ -# include <linux/compiler-intel.h>
+ -#endif
+ -
+ -/* Clang compiler defines __GNUC__. So we will overwrite implementations
+ - * coming from above header files here
+ - */
+ +/* Compiler specific macros. */
+  #ifdef __clang__
+  #include <linux/compiler-clang.h>
+ +#elif defined(__INTEL_COMPILER)
+ +#include <linux/compiler-intel.h>
+ +#elif defined(__GNUC__)
+ +/* The above compilers also define __GNUC__, so order is important here. =
+*/
+ +#include <linux/compiler-gcc.h>
+ +#else
+ +#error "Unknown compiler"
+  #endif
+ =20
++ /*
++  * Some architectures need to provide custom definitions of macros provid=
+ed
++  * by linux/compiler-*.h, and can do so using asm/compiler.h. We include =
+that
++  * conditionally rather than using an asm-generic wrapper in order to avo=
+id
++  * build failures if any C compilation, which will include this file via =
+an
++  * -include argument in c_flags, occurs prior to the asm-generic wrappers=
+ being
++  * generated.
++  */
++ #ifdef CONFIG_HAVE_ARCH_COMPILER_H
++ #include <asm/compiler.h>
++ #endif
++=20
+  /*
+ - * Generic compiler-dependent macros required for kernel
+ + * Generic compiler-independent macros required for kernel
+   * build go below this comment. Actual compiler/compiler version
+   * specific implementations come from the above header files
+   */
+
+--Sig_/.ir.1uaE6CUGpUgHVaVzhX+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt/NxEACgkQAVBC80lX
+0Gyk0QgAlBS17g8mECivuUMvkRpTBZIeCbqkeT3Cd2D6Hb70OFTA0dTFcNRpugPs
+W6P8lpmYmBjpFBy865lDheeCsDyftDQmobKOhKgWQDUeXP8DU+5JACVsEACuDh5X
+Xz3UWz2uNJz8kDBnzDxq9LIsAPFJILJYN2REUxO+ettWu2/M3GUyykHx0hzw8MxG
++okOlxP+nebfNsSJ1JbgndKJsyMcKBuwH1GMKXSV/Oy6KQEKVI30yi/sqQyDzYAI
+sTtUKJa/O02c8YtiX/vzXoHkUWvqadBLr17dlo35WGWeMfEtEu+X4KKkh4i4+7HI
+/X2PNrvFAvqmbikGMFuGuzyi8VIWmw==
+=TS9U
+-----END PGP SIGNATURE-----
+
+--Sig_/.ir.1uaE6CUGpUgHVaVzhX+--
