@@ -3,132 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F51C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AAD2C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68DCB2154D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:31:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68DCB2154D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 321812087E
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:33:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 321812087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731736AbeHWPBF (ORCPT
+        id S1731749AbeHWPCW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 11:01:05 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11601 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726246AbeHWPBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 11:01:05 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 9C46FDFBA968A;
-        Thu, 23 Aug 2018 19:31:44 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.399.0; Thu, 23 Aug 2018
- 19:31:41 +0800
-Message-ID: <5B7E9B1C.40404@huawei.com>
-Date:   Thu, 23 Aug 2018 19:31:40 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Thu, 23 Aug 2018 11:02:22 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35124 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728982AbeHWPCW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 11:02:22 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7NBT10n082184
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:33:03 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m1ugn9ng2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:33:03 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <vaibhav@linux.ibm.com>;
+        Thu, 23 Aug 2018 12:33:01 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 23 Aug 2018 12:32:56 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7NBWtco41156834
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 23 Aug 2018 11:32:55 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2940F11C04A;
+        Thu, 23 Aug 2018 14:32:55 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9973611C052;
+        Thu, 23 Aug 2018 14:32:51 +0100 (BST)
+Received: from vajain21.in.ibm.com (unknown [9.109.223.99])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Thu, 23 Aug 2018 14:32:51 +0100 (BST)
+Received: by vajain21.in.ibm.com (sSMTP sendmail emulation); Thu, 23 Aug 2018 17:02:51 +0530
+From:   Vaibhav Jain <vaibhav@linux.ibm.com>
+To:     Nicholas Piggin <npiggin@gmail.com>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>
+Cc:     "Gautham R . Shenoy" <ego@linux.vnet.ibm.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Stewart Smith <stewart@linux.ibm.com>,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, James Hogan <jhogan@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [Skiboot] [PATCH] opal/hmi: Wakeup the cpu before reading core_fir
+In-Reply-To: <20180821133842.1b13e972@roar.ozlabs.ibm.com>
+References: <20180820183417.dejfsluih7elbclu@pburton-laptop> <20180820223618.22319-1-paul.burton@mips.com> <20180820223618.22319-2-paul.burton@mips.com> <20180820140605.11846-1-vaibhav@linux.ibm.com> <20180821133842.1b13e972@roar.ozlabs.ibm.com>
+Date:   Thu, 23 Aug 2018 17:02:51 +0530
 MIME-Version: 1.0
-To:     <clm@fb.com>, <jbacik@fb.com>, <dsterba@suse.com>
-CC:     <lufq.fnst@cn.fujitsu.com>, <suy.fnst@cn.fujitsu.com>,
-        <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] btrfs/extent_map: Remove unneeded variable "ret"
-References: <1533474287-15049-1-git-send-email-zhongjiang@huawei.com>
-In-Reply-To: <1533474287-15049-1-git-send-email-zhongjiang@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18082311-0016-0000-0000-000001FAACB8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082311-0017-0000-0000-000032510788
+Message-Id: <877ekhnwrg.fsf@vajain21.in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=668 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808230124
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,  dsterba
+Thanks for reviewing this patch Nick
 
-Can you pick up the patch? Thanks
-
-Best wishes,
-zhong jiang
- 
-On 2018/8/5 21:04, zhong jiang wrote:
-> The ret is not used after initalization, and we do not care about
-> the return value. So make it void function.
+Nicholas Piggin <npiggin@gmail.com> writes:
 >
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  fs/btrfs/extent_map.c | 10 ++--------
->  fs/btrfs/extent_map.h |  4 ++--
->  2 files changed, 4 insertions(+), 10 deletions(-)
+> Would it be feasible to enumerate the ranges of scoms that require
+> special wakeup and check for those in xscom_read/write, and warn if
+> spwkup was not set?
 >
-> diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
-> index 6648d55..da4e4f3 100644
-> --- a/fs/btrfs/extent_map.c
-> +++ b/fs/btrfs/extent_map.c
-> @@ -273,10 +273,9 @@ static void try_merge_map(struct extent_map_tree *tree, struct extent_map *em)
->   * to the generation that actually added the file item to the inode so we know
->   * we need to sync this extent when we call fsync().
->   */
-> -int unpin_extent_cache(struct extent_map_tree *tree, u64 start, u64 len,
-> +void unpin_extent_cache(struct extent_map_tree *tree, u64 start, u64 len,
->  		       u64 gen)
->  {
-> -	int ret = 0;
->  	struct extent_map *em;
->  	bool prealloc = false;
->  
-> @@ -308,8 +307,6 @@ int unpin_extent_cache(struct extent_map_tree *tree, u64 start, u64 len,
->  	free_extent_map(em);
->  out:
->  	write_unlock(&tree->lock);
-> -	return ret;
-> -
->  }
->  
->  void clear_em_logging(struct extent_map_tree *tree, struct extent_map *em)
-> @@ -428,16 +425,13 @@ struct extent_map *search_extent_mapping(struct extent_map_tree *tree,
->   * Removes @em from @tree.  No reference counts are dropped, and no checks
->   * are done to see if the range is in use
->   */
-> -int remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em)
-> +void remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em)
->  {
-> -	int ret = 0;
-> -
->  	WARN_ON(test_bit(EXTENT_FLAG_PINNED, &em->flags));
->  	rb_erase(&em->rb_node, &tree->map);
->  	if (!test_bit(EXTENT_FLAG_LOGGING, &em->flags))
->  		list_del_init(&em->list);
->  	RB_CLEAR_NODE(&em->rb_node);
-> -	return ret;
->  }
->  
->  void replace_extent_mapping(struct extent_map_tree *tree,
-> diff --git a/fs/btrfs/extent_map.h b/fs/btrfs/extent_map.h
-> index 25d985e..c80649b 100644
-> --- a/fs/btrfs/extent_map.h
-> +++ b/fs/btrfs/extent_map.h
-> @@ -78,7 +78,7 @@ struct extent_map *lookup_extent_mapping(struct extent_map_tree *tree,
->  					 u64 start, u64 len);
->  int add_extent_mapping(struct extent_map_tree *tree,
->  		       struct extent_map *em, int modified);
-> -int remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em);
-> +void remove_extent_mapping(struct extent_map_tree *tree, struct extent_map *em);
->  void replace_extent_mapping(struct extent_map_tree *tree,
->  			    struct extent_map *cur,
->  			    struct extent_map *new,
-> @@ -88,7 +88,7 @@ void replace_extent_mapping(struct extent_map_tree *tree,
->  void free_extent_map(struct extent_map *em);
->  int __init extent_map_init(void);
->  void __cold extent_map_exit(void);
-> -int unpin_extent_cache(struct extent_map_tree *tree, u64 start, u64 len, u64 gen);
-> +void unpin_extent_cache(struct extent_map_tree *tree, u64 start, u64 len, u64 gen);
->  void clear_em_logging(struct extent_map_tree *tree, struct extent_map *em);
->  struct extent_map *search_extent_mapping(struct extent_map_tree *tree,
->  					 u64 start, u64 len);
+I think that might be racy (Vaidy please correct if I am wrong) as a
+core can change its state when we read its sleep state and when we do
+the actual xscom to read the core_fir.
 
+-- 
+Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+Linux Technology Center, IBM India Pvt. Ltd.
 
