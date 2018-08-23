@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6CCC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA33C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6E042077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:47:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 078152077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:47:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mEGTrO3f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6E042077B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e85lCNW5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 078152077B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732849AbeHWMQA (ORCPT
+        id S1732873AbeHWMQG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:16:00 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:32852 "EHLO
+        Thu, 23 Aug 2018 08:16:06 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38225 "EHLO
         mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727122AbeHWMQA (ORCPT
+        with ESMTP id S1732623AbeHWMQF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:16:00 -0400
-Received: by mail-pf1-f195.google.com with SMTP id d4-v6so2369907pfn.0;
-        Thu, 23 Aug 2018 01:47:22 -0700 (PDT)
+        Thu, 23 Aug 2018 08:16:05 -0400
+Received: by mail-pf1-f195.google.com with SMTP id x17-v6so2358500pfh.5;
+        Thu, 23 Aug 2018 01:47:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=6k6nVoIr0ditQr3HJek6gsje6fl12edfRlaXmMdkuO0=;
-        b=mEGTrO3fv5nnllbAG9dKZ1cud4fgKhuCkRtcpcF2zB3lazkm7qxQY5d5NpOo+seIbC
-         n2vpHHuvRpjHM9xq9/Fob80I4WRUojXvQfvz7f6MTCk96XuHx2ssVKIma+BIJLN/EhjZ
-         fMpN+5XxJNZaIyLv40A+d1LT+RTMBFnOmqRdzY2+7vVH5htXT2j/mKYqLCTBRV1TKaLi
-         1VnZVJX/JVhJk7Lze1kicRZLJU8/LREkTfpurYjTIGjHUjW96oe+qdbwMC9ckk6fVAUA
-         po4zevVC4rUzvhFCXJzrctenEb7wpmDnd47qZ/ZouC1PMUboqQuWm7p02eSCYPur27fu
-         sEwQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=IRhZgLPRx4tzi/e3fxP2vHoZGo1V/TLqfKDUUNoAm38=;
+        b=e85lCNW5ZhdjUCei/RAj9byezOvy9sEmiiZkPkURq+UAHjwaE5/PxcfLUapq8XVJlx
+         pWoX2yLTmaYHUL4Yfgg1iYWsY9wPSO8gwLR7qh58C5BrmBbJkiKMhK2whmZZpP3h+kd0
+         MRW0MDqKR/7vgpjZJrJ7FIHLKjH/U0pfrvPoBQZXbhEQ0LNW2c4OBwVhhYET0X5XChl1
+         YFAW706vZ4vJwGDdKbtiuwMAjyv7nyWXFnwwOMAjDaoOyMWikwDcvWDfaNLPI+JCr768
+         /xJSyNYzqbXu6PKmfyoDn30oJq6Z+etT3FcNl6LjVJtUjvhPdfu883Zi+1ZQ1NE3vj8Q
+         Wrpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6k6nVoIr0ditQr3HJek6gsje6fl12edfRlaXmMdkuO0=;
-        b=a5irenllqNlzG5H38ufS2/A/iyeTQTj0jEtQ58NpDgrgDM21u/R8VvF4xMASibLO2E
-         3wKT+VqcZ/VzMYe53YGtUzHXOeJ8Jh4EU3WtpSvlBqqwxSTF5f1AcydScRMXQerr7QwE
-         0TrHG76Zt7ppO/wdzs+o7oh9vB2GRjzqpWXxhlzXNpZqlO2CjuPQYz39Q3EtD/gcjH8a
-         VBZbVQUyMShoySeV6N1fzjICm2+3l+rRbE+t/J9Eqo+qacxMs6KOBbkfBjvbe1JCwZ4P
-         4aalODAD8yW0EvsEvdNsATKJJolkeUfLpwKVr4G4c+UzJVOvyr+uMQ0lHgI5MwuryJFI
-         7y2A==
-X-Gm-Message-State: AOUpUlHZFzoSulKCaVOWSlIXj9R87cJdnjV8aRKx4/BSwcSUVPfW6Qli
-        w5KWHtjWWaZ4DcA3pTxfuvQ=
-X-Google-Smtp-Source: AA+uWPz9tg60W7s0lbt18az1ksmM78D2c1+qgOiyraDn8hmTJ61Gup0OThzvaVEsv3MMGdj9f5ccWw==
-X-Received: by 2002:a62:6f87:: with SMTP id k129-v6mr61423320pfc.26.1535014042292;
-        Thu, 23 Aug 2018 01:47:22 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=IRhZgLPRx4tzi/e3fxP2vHoZGo1V/TLqfKDUUNoAm38=;
+        b=d+jlXY5R/69bF+LxfgJ00Qpb4eyUR8Kj5SVJL/fMtSVZIPFLAaMzl3Cvp+qQ4wRr+I
+         plHTbNNPSqg4X0Mz3ZkgON1NVcyyN3WTvZH9GwudBdZ2oG2is39o8Wd74A+gu8Ok2sRU
+         9dfD8f5NXV4whGI5xEcndKUL96ANClDtH8aWvi3OpHbqD6BHfGuKwCIqHwqU1rChdh9y
+         moImbLYwqsTC8gGMjwIItOHk/HNj02t1MWfYiyfloJHOoMxGEBwDkbdZ8YfkZ0IcrJh3
+         SLyeCcPVnNaFqfEf3TVIw8n3Zz4KAyKFe829VkG0FiFq8uQYGIYcDXWtkDpG5oiMAVuX
+         T2xg==
+X-Gm-Message-State: AOUpUlF1s3I9rycoRYB87Shg0YqhpH8ZT8JSKsH2hL97ObMpzruUMW3J
+        qNuDo2kLMqdTmhWiMBujVRE=
+X-Google-Smtp-Source: AA+uWPzgnKVeyGDrwd1X5Y4sSxuoZ5U4azvkGjVyP7iTgSuBQqhduD/7xVxtxH+hKFgoJPhXiXJFnA==
+X-Received: by 2002:a63:1c47:: with SMTP id c7-v6mr16501905pgm.38.1535014048116;
+        Thu, 23 Aug 2018 01:47:28 -0700 (PDT)
 Received: from roar.ozlabs.ibm.com. ([122.99.82.10])
-        by smtp.gmail.com with ESMTPSA id w5-v6sm5170503pfn.44.2018.08.23.01.47.16
+        by smtp.gmail.com with ESMTPSA id w5-v6sm5170503pfn.44.2018.08.23.01.47.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Aug 2018 01:47:21 -0700 (PDT)
+        Thu, 23 Aug 2018 01:47:27 -0700 (PDT)
 From:   Nicholas Piggin <npiggin@gmail.com>
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Nicholas Piggin <npiggin@gmail.com>, torvalds@linux-foundation.org,
@@ -67,40 +68,50 @@ Cc:     Nicholas Piggin <npiggin@gmail.com>, torvalds@linux-foundation.org,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         linux-arch@vger.kernel.org
-Subject: [RFC PATCH 0/2] minor mmu_gather patches
-Date:   Thu, 23 Aug 2018 18:47:07 +1000
-Message-Id: <20180823084709.19717-1-npiggin@gmail.com>
+Subject: [RFC PATCH 1/2] mm: move tlb_table_flush to tlb_flush_mmu_free
+Date:   Thu, 23 Aug 2018 18:47:08 +1000
+Message-Id: <20180823084709.19717-2-npiggin@gmail.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180823084709.19717-1-npiggin@gmail.com>
+References: <20180823084709.19717-1-npiggin@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These are split from some patches I posted a while back, I was going
-to take a look and revive the series again after your fixes go in,
-but having another look, it may be that your "[PATCH 3/4] mm/tlb,
-x86/mm: Support invalidating TLB caches for RCU_TABLE_FREE" becomes
-easier after my patch 1.
+There is no need to call this from tlb_flush_mmu_tlbonly, it
+logically belongs with tlb_flush_mmu_free. This allows some
+code consolidation with a subsequent fix.
 
-And I'm not convinced patch 2 is not a real bug at least for ARM64,
-so it may be possible to squeeze it in if it's reviewed very
-carefully (I need to actually reproduce and trace it).
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+---
+ mm/memory.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-So not signed off by yet, but if you think it might be worth doing
-these with your changes, it could be a slightly cleaner end result?
-
-Thanks,
-Nick
-
-
-Nicholas Piggin (2):
-  mm: move tlb_table_flush to tlb_flush_mmu_free
-  mm: mmu_notifier fix for tlb_end_vma
-
- include/asm-generic/tlb.h | 17 +++++++++++++----
- mm/memory.c               | 14 ++------------
- 2 files changed, 15 insertions(+), 16 deletions(-)
-
+diff --git a/mm/memory.c b/mm/memory.c
+index 19f47d7b9b86..7c58310734eb 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -245,9 +245,6 @@ static void tlb_flush_mmu_tlbonly(struct mmu_gather *tlb)
+ 
+ 	tlb_flush(tlb);
+ 	mmu_notifier_invalidate_range(tlb->mm, tlb->start, tlb->end);
+-#ifdef CONFIG_HAVE_RCU_TABLE_FREE
+-	tlb_table_flush(tlb);
+-#endif
+ 	__tlb_reset_range(tlb);
+ }
+ 
+@@ -255,6 +252,9 @@ static void tlb_flush_mmu_free(struct mmu_gather *tlb)
+ {
+ 	struct mmu_gather_batch *batch;
+ 
++#ifdef CONFIG_HAVE_RCU_TABLE_FREE
++	tlb_table_flush(tlb);
++#endif
+ 	for (batch = &tlb->local; batch && batch->nr; batch = batch->next) {
+ 		free_pages_and_swap_cache(batch->pages, batch->nr);
+ 		batch->nr = 0;
 -- 
 2.17.0
 
