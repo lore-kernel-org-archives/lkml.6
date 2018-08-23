@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BCDAC04E86
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CA5C04E87
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 013C1214AB
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 013C1214AB
+	by mail.kernel.org (Postfix) with ESMTP id 2DE552147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DE552147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731898AbeHWMHz (ORCPT
+        id S1731916AbeHWMH6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:07:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49324 "EHLO
+        Thu, 23 Aug 2018 08:07:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49334 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728973AbeHWMHy (ORCPT
+        with ESMTP id S1730149AbeHWMH5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:07:54 -0400
+        Thu, 23 Aug 2018 08:07:57 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C02A2BC1;
-        Thu, 23 Aug 2018 08:39:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ECC43941;
+        Thu, 23 Aug 2018 08:39:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ariel Elior <Ariel.Elior@cavium.com>,
-        Michal Kalderon <Michal.Kalderon@cavium.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Nick Dyer <nick@shmanahar.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 006/324] RDMA/qedr: Fix NULL pointer dereference when running over iWARP without RDMA-CM
-Date:   Thu, 23 Aug 2018 09:51:12 +0200
-Message-Id: <20180823074956.238563732@linuxfoundation.org>
+Subject: [PATCH 4.17 007/324] Input: synaptics-rmi4 - fix axis-swap behavior
+Date:   Thu, 23 Aug 2018 09:51:13 +0200
+Message-Id: <20180823074956.289055684@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -53,41 +52,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Kalderon, Michal" <Michal.Kalderon@cavium.com>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-[ Upstream commit 425cf5c1350a98b81f3ddda160b99c3be613a213 ]
+[ Upstream commit 645a397d325db6e1bb36588095ae637738b37693 ]
 
-Some RoCE specific code in qedr_modify_qp was run over an iWARP device
-when running perftest benchmarks without the -R option.
+The documentation for the touchscreen-swapped-x-y property states that
+swapping is done after inverting if both are used. RMI4 did it the other
+way around, leading to inconsistent behavior with regard to other
+touchscreens.
 
-The commit 3e44e0ee0893 ("IB/providers: Avoid null netdev check for RoCE")
-exposed this. Dropping the check for NULL pointer on ndev in
-qedr_modify_qp lead to a null pointer dereference when running over
-iWARP. Before the code would identify ndev as being NULL and return an
-error.
-
-Fixes: 3e44e0ee0893 ("IB/providers: Avoid null netdev check for RoCE")
-Signed-off-by: Ariel Elior <Ariel.Elior@cavium.com>
-Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
-Reviewed-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Tested-by: Nick Dyer <nick@shmanahar.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/qedr/verbs.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/input/rmi4/rmi_2d_sensor.c |   34 ++++++++++++++++------------------
+ 1 file changed, 16 insertions(+), 18 deletions(-)
 
---- a/drivers/infiniband/hw/qedr/verbs.c
-+++ b/drivers/infiniband/hw/qedr/verbs.c
-@@ -1957,6 +1957,9 @@ int qedr_modify_qp(struct ib_qp *ibqp, s
- 	}
+--- a/drivers/input/rmi4/rmi_2d_sensor.c
++++ b/drivers/input/rmi4/rmi_2d_sensor.c
+@@ -32,15 +32,15 @@ void rmi_2d_sensor_abs_process(struct rm
+ 	if (obj->type == RMI_2D_OBJECT_NONE)
+ 		return;
  
- 	if (attr_mask & (IB_QP_AV | IB_QP_PATH_MTU)) {
-+		if (rdma_protocol_iwarp(&dev->ibdev, 1))
-+			return -EINVAL;
+-	if (axis_align->swap_axes)
+-		swap(obj->x, obj->y);
+-
+ 	if (axis_align->flip_x)
+ 		obj->x = sensor->max_x - obj->x;
+ 
+ 	if (axis_align->flip_y)
+ 		obj->y = sensor->max_y - obj->y;
+ 
++	if (axis_align->swap_axes)
++		swap(obj->x, obj->y);
 +
- 		if (attr_mask & IB_QP_PATH_MTU) {
- 			if (attr->path_mtu < IB_MTU_256 ||
- 			    attr->path_mtu > IB_MTU_4096) {
+ 	/*
+ 	 * Here checking if X offset or y offset are specified is
+ 	 * redundant. We just add the offsets or clip the values.
+@@ -120,15 +120,15 @@ void rmi_2d_sensor_rel_report(struct rmi
+ 	x = min(RMI_2D_REL_POS_MAX, max(RMI_2D_REL_POS_MIN, (int)x));
+ 	y = min(RMI_2D_REL_POS_MAX, max(RMI_2D_REL_POS_MIN, (int)y));
+ 
+-	if (axis_align->swap_axes)
+-		swap(x, y);
+-
+ 	if (axis_align->flip_x)
+ 		x = min(RMI_2D_REL_POS_MAX, -x);
+ 
+ 	if (axis_align->flip_y)
+ 		y = min(RMI_2D_REL_POS_MAX, -y);
+ 
++	if (axis_align->swap_axes)
++		swap(x, y);
++
+ 	if (x || y) {
+ 		input_report_rel(sensor->input, REL_X, x);
+ 		input_report_rel(sensor->input, REL_Y, y);
+@@ -141,17 +141,10 @@ static void rmi_2d_sensor_set_input_para
+ 	struct input_dev *input = sensor->input;
+ 	int res_x;
+ 	int res_y;
++	int max_x, max_y;
+ 	int input_flags = 0;
+ 
+ 	if (sensor->report_abs) {
+-		if (sensor->axis_align.swap_axes) {
+-			swap(sensor->max_x, sensor->max_y);
+-			swap(sensor->axis_align.clip_x_low,
+-			     sensor->axis_align.clip_y_low);
+-			swap(sensor->axis_align.clip_x_high,
+-			     sensor->axis_align.clip_y_high);
+-		}
+-
+ 		sensor->min_x = sensor->axis_align.clip_x_low;
+ 		if (sensor->axis_align.clip_x_high)
+ 			sensor->max_x = min(sensor->max_x,
+@@ -163,14 +156,19 @@ static void rmi_2d_sensor_set_input_para
+ 				sensor->axis_align.clip_y_high);
+ 
+ 		set_bit(EV_ABS, input->evbit);
+-		input_set_abs_params(input, ABS_MT_POSITION_X, 0, sensor->max_x,
+-					0, 0);
+-		input_set_abs_params(input, ABS_MT_POSITION_Y, 0, sensor->max_y,
+-					0, 0);
++
++		max_x = sensor->max_x;
++		max_y = sensor->max_y;
++		if (sensor->axis_align.swap_axes)
++			swap(max_x, max_y);
++		input_set_abs_params(input, ABS_MT_POSITION_X, 0, max_x, 0, 0);
++		input_set_abs_params(input, ABS_MT_POSITION_Y, 0, max_y, 0, 0);
+ 
+ 		if (sensor->x_mm && sensor->y_mm) {
+ 			res_x = (sensor->max_x - sensor->min_x) / sensor->x_mm;
+ 			res_y = (sensor->max_y - sensor->min_y) / sensor->y_mm;
++			if (sensor->axis_align.swap_axes)
++				swap(res_x, res_y);
+ 
+ 			input_abs_set_res(input, ABS_X, res_x);
+ 			input_abs_set_res(input, ABS_Y, res_y);
 
 
