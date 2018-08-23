@@ -3,38 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BDFDC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 716BAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:09:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5367C2064E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5367C2064E
+	by mail.kernel.org (Postfix) with ESMTP id 37EC92064E
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:09:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37EC92064E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729129AbeHWLhQ (ORCPT
+        id S1729199AbeHWLhZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:37:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45040 "EHLO
+        Thu, 23 Aug 2018 07:37:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45068 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbeHWLhP (ORCPT
+        with ESMTP id S1727340AbeHWLhY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:37:15 -0400
+        Thu, 23 Aug 2018 07:37:24 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B01E1BB6;
-        Thu, 23 Aug 2018 08:08:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37ADCBB6;
+        Thu, 23 Aug 2018 08:08:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 050/130] netfilter: nf_log: fix uninit read in nf_log_proc_dostring
-Date:   Thu, 23 Aug 2018 09:52:46 +0200
-Message-Id: <20180823074930.466685460@linuxfoundation.org>
+Subject: [PATCH 4.9 061/130] drm/exynos: decon5433: Fix WINCONx reset value
+Date:   Thu, 23 Aug 2018 09:52:57 +0200
+Message-Id: <20180823074931.369915933@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -51,35 +52,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit dffd22aed2aa1e804bccf19b30a421e89ee2ae61 ]
+[ Upstream commit 7b7aa62c05eac9789c208b946f515983a9255d8d ]
 
-When proc_dostring() is called with a non-zero offset in strict mode, it
-doesn't just write to the ->data buffer, it also reads. Make sure it
-doesn't read uninitialized data.
+The only bits that should be preserved in decon_win_set_fmt() is
+WINCONx_ENWIN_F. All other bits depends on the selected pixel formats and
+are set by the mentioned function.
 
-Fixes: c6ac37d8d884 ("netfilter: nf_log: fix error on write NONE to [...]")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/nf_log.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netfilter/nf_log.c
-+++ b/net/netfilter/nf_log.c
-@@ -426,6 +426,10 @@ static int nf_log_proc_dostring(struct c
- 	if (write) {
- 		struct ctl_table tmp = *table;
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -199,7 +199,7 @@ static void decon_win_set_pixfmt(struct
+ 	unsigned long val;
  
-+		/* proc_dostring() can append to existing strings, so we need to
-+		 * initialize it as an empty string.
-+		 */
-+		buf[0] = '\0';
- 		tmp.data = buf;
- 		r = proc_dostring(&tmp, write, buffer, lenp, ppos);
- 		if (r)
+ 	val = readl(ctx->addr + DECON_WINCONx(win));
+-	val &= ~WINCONx_BPPMODE_MASK;
++	val &= WINCONx_ENWIN_F;
+ 
+ 	switch (fb->pixel_format) {
+ 	case DRM_FORMAT_XRGB1555:
 
 
