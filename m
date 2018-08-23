@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F69C43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D00DC04E85
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAC6F2147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:38:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAC6F2147A
+	by mail.kernel.org (Postfix) with ESMTP id E51922147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:38:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E51922147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731689AbeHWMH2 (ORCPT
+        id S1731715AbeHWMHc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:07:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49220 "EHLO
+        Thu, 23 Aug 2018 08:07:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49232 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730740AbeHWMH2 (ORCPT
+        with ESMTP id S1729811AbeHWMHb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:07:28 -0400
+        Thu, 23 Aug 2018 08:07:31 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C5D5FC93;
-        Thu, 23 Aug 2018 08:38:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2F808B1;
+        Thu, 23 Aug 2018 08:38:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roland Dreier <roland@purestorage.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 200/217] nvme: fix handling of metadata_len for NVME_IOCTL_IO_CMD
-Date:   Thu, 23 Aug 2018 09:55:13 +0200
-Message-Id: <20180823075514.653628335@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.14 201/217] KVM: irqfd: fix race between EPOLLHUP and irq_bypass_register_consumer
+Date:   Thu, 23 Aug 2018 09:55:14 +0200
+Message-Id: <20180823075514.700526560@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -52,34 +52,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roland Dreier <roland@purestorage.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-[ Upstream commit 9b382768135ee3ff282f828c906574a8478e036b ]
+commit 9432a3175770e06cb83eada2d91fac90c977cb99 upstream.
 
-The old code in nvme_user_cmd() passed the userspace virtual address
-from nvme_passthru_cmd.metadata as the length of the metadata buffer
-as well as the address to nvme_submit_user_cmd().
+A comment warning against this bug is there, but the code is not doing what
+the comment says.  Therefore it is possible that an EPOLLHUP races against
+irq_bypass_register_consumer.  The EPOLLHUP handler schedules irqfd_shutdown,
+and if that runs soon enough, you get a use-after-free.
 
-Fixes: 63263d60 ("nvme: Use metadata for passthrough commands")
-Signed-off-by: Roland Dreier <roland@purestorage.com>
-Reviewed-by: Keith Busch <keith.busch@intel.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/host/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ virt/kvm/eventfd.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1016,7 +1016,7 @@ static int nvme_user_cmd(struct nvme_ctr
+--- a/virt/kvm/eventfd.c
++++ b/virt/kvm/eventfd.c
+@@ -405,11 +405,6 @@ kvm_irqfd_assign(struct kvm *kvm, struct
+ 	if (events & POLLIN)
+ 		schedule_work(&irqfd->inject);
  
- 	status = nvme_submit_user_cmd(ns ? ns->queue : ctrl->admin_q, &c,
- 			(void __user *)(uintptr_t)cmd.addr, cmd.data_len,
--			(void __user *)(uintptr_t)cmd.metadata, cmd.metadata,
-+			(void __user *)(uintptr_t)cmd.metadata, cmd.metadata_len,
- 			0, &cmd.result, timeout);
- 	if (status >= 0) {
- 		if (put_user(cmd.result, &ucmd->result))
+-	/*
+-	 * do not drop the file until the irqfd is fully initialized, otherwise
+-	 * we might race against the POLLHUP
+-	 */
+-	fdput(f);
+ #ifdef CONFIG_HAVE_KVM_IRQ_BYPASS
+ 	if (kvm_arch_has_irq_bypass()) {
+ 		irqfd->consumer.token = (void *)irqfd->eventfd;
+@@ -425,6 +420,12 @@ kvm_irqfd_assign(struct kvm *kvm, struct
+ #endif
+ 
+ 	srcu_read_unlock(&kvm->irq_srcu, idx);
++
++	/*
++	 * do not drop the file until the irqfd is fully initialized, otherwise
++	 * we might race against the POLLHUP
++	 */
++	fdput(f);
+ 	return 0;
+ 
+ fail:
 
 
