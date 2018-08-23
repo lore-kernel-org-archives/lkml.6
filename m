@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1977CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F70C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C840B2098B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C840B2098B
+	by mail.kernel.org (Postfix) with ESMTP id AC2BE2098B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC2BE2098B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728890AbeHWL3i (ORCPT
+        id S1728901AbeHWL3l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:29:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44370 "EHLO
+        Thu, 23 Aug 2018 07:29:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44384 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727846AbeHWL3h (ORCPT
+        with ESMTP id S1727846AbeHWL3k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:29:37 -0400
+        Thu, 23 Aug 2018 07:29:40 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DBBE9CA0;
-        Thu, 23 Aug 2018 08:01:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1438DC74;
+        Thu, 23 Aug 2018 08:01:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "linux-kernel@vger.kernel.org, kernel-team@android.com, Daniel Rosenberg" 
-        <drosen@google.com>, Daniel Rosenberg <drosen@google.com>
-Subject: [PATCH 4.4 66/79] staging: android: ion: check for kref overflow
-Date:   Thu, 23 Aug 2018 09:53:42 +0200
-Message-Id: <20180823074923.483861489@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.4 67/79] KVM: irqfd: fix race between EPOLLHUP and irq_bypass_register_consumer
+Date:   Thu, 23 Aug 2018 09:53:43 +0200
+Message-Id: <20180823074923.544978272@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -51,73 +52,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Rosenberg <drosen@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-This patch is against 4.4. It does not apply to master due to a large
-rework of ion in 4.12 which removed the affected functions altogther.
-4c23cbff073f3b9b ("staging: android: ion: Remove import interface")
+commit 9432a3175770e06cb83eada2d91fac90c977cb99 upstream.
 
-Userspace can cause the kref to handles to increment
-arbitrarily high. Ensure it does not overflow.
+A comment warning against this bug is there, but the code is not doing what
+the comment says.  Therefore it is possible that an EPOLLHUP races against
+irq_bypass_register_consumer.  The EPOLLHUP handler schedules irqfd_shutdown,
+and if that runs soon enough, you get a use-after-free.
 
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-v2: Fixed patch corruption :(
+ virt/kvm/eventfd.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-
-It applies from 3.18 to 4.11, although with a trivial conflict resolution
-for the later branches.
- drivers/staging/android/ion/ion.c |   17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
-
---- a/drivers/staging/android/ion/ion.c
-+++ b/drivers/staging/android/ion/ion.c
-@@ -15,6 +15,7 @@
-  *
-  */
+--- a/virt/kvm/eventfd.c
++++ b/virt/kvm/eventfd.c
+@@ -405,11 +405,6 @@ kvm_irqfd_assign(struct kvm *kvm, struct
+ 	if (events & POLLIN)
+ 		schedule_work(&irqfd->inject);
  
-+#include <linux/atomic.h>
- #include <linux/device.h>
- #include <linux/err.h>
- #include <linux/file.h>
-@@ -387,6 +388,16 @@ static void ion_handle_get(struct ion_ha
- 	kref_get(&handle->ref);
- }
+-	/*
+-	 * do not drop the file until the irqfd is fully initialized, otherwise
+-	 * we might race against the POLLHUP
+-	 */
+-	fdput(f);
+ #ifdef CONFIG_HAVE_KVM_IRQ_BYPASS
+ 	irqfd->consumer.token = (void *)irqfd->eventfd;
+ 	irqfd->consumer.add_producer = kvm_arch_irq_bypass_add_producer;
+@@ -423,6 +418,12 @@ kvm_irqfd_assign(struct kvm *kvm, struct
+ #endif
  
-+/* Must hold the client lock */
-+static struct ion_handle *ion_handle_get_check_overflow(
-+					struct ion_handle *handle)
-+{
-+	if (atomic_read(&handle->ref.refcount) + 1 == 0)
-+		return ERR_PTR(-EOVERFLOW);
-+	ion_handle_get(handle);
-+	return handle;
-+}
+ 	srcu_read_unlock(&kvm->irq_srcu, idx);
 +
- static int ion_handle_put_nolock(struct ion_handle *handle)
- {
- 	int ret;
-@@ -433,9 +444,9 @@ static struct ion_handle *ion_handle_get
++	/*
++	 * do not drop the file until the irqfd is fully initialized, otherwise
++	 * we might race against the POLLHUP
++	 */
++	fdput(f);
+ 	return 0;
  
- 	handle = idr_find(&client->idr, id);
- 	if (handle)
--		ion_handle_get(handle);
-+		return ion_handle_get_check_overflow(handle);
- 
--	return handle ? handle : ERR_PTR(-EINVAL);
-+	return ERR_PTR(-EINVAL);
- }
- 
- struct ion_handle *ion_handle_get_by_id(struct ion_client *client,
-@@ -1202,7 +1213,7 @@ struct ion_handle *ion_import_dma_buf(st
- 	/* if a handle exists for this buffer just take a reference to it */
- 	handle = ion_handle_lookup(client, buffer);
- 	if (!IS_ERR(handle)) {
--		ion_handle_get(handle);
-+		handle = ion_handle_get_check_overflow(handle);
- 		mutex_unlock(&client->lock);
- 		goto end;
- 	}
+ fail:
 
 
