@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19685C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5CDC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D57E02098B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D57E02098B
+	by mail.kernel.org (Postfix) with ESMTP id 4F8622098B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F8622098B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728624AbeHWL2T (ORCPT
+        id S1728634AbeHWL2Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:28:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42110 "EHLO
+        Thu, 23 Aug 2018 07:28:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42126 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726836AbeHWL2S (ORCPT
+        with ESMTP id S1726836AbeHWL2Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:28:18 -0400
+        Thu, 23 Aug 2018 07:28:25 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 222A89D2;
-        Thu, 23 Aug 2018 07:59:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B3F38BB6;
+        Thu, 23 Aug 2018 08:00:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Jason Gerecke <jason.gerecke@wacom.com>,
+        Jiri Kosina <jkosina@suse.cz>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 37/79] bnx2x: Fix receiving tx-timeout in error or recovery state.
-Date:   Thu, 23 Aug 2018 09:53:13 +0200
-Message-Id: <20180823074921.381339038@linuxfoundation.org>
+Subject: [PATCH 4.4 39/79] HID: wacom: Correct touch maximum XY of 2nd-gen Intuos
+Date:   Thu, 23 Aug 2018 09:53:15 +0200
+Message-Id: <20180823074921.620626842@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -53,77 +51,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
+From: Jason Gerecke <killertofu@gmail.com>
 
-[ Upstream commit 484c016d9392786ce5c74017c206c706f29f823d ]
+[ Upstream commit 3b8d573586d1b9dee33edf6cb6f2ca05f4bca568 ]
 
-Driver performs the internal reload when it receives tx-timeout event from
-the OS. Internal reload might fail in some scenarios e.g., fatal HW issues.
-In such cases OS still see the link, which would result in undesirable
-functionalities such as re-generation of tx-timeouts.
-The patch addresses this issue by indicating the link-down to OS when
-tx-timeout is detected, and keeping the link in down state till the
-internal reload is successful.
+The touch sensors on the 2nd-gen Intuos tablets don't use a 4096x4096
+sensor like other similar tablets (3rd-gen Bamboo, Intuos5, etc.).
+The incorrect maximum XY values don't normally affect userspace since
+touch input from these devices is typically relative rather than
+absolute. It does, however, cause problems when absolute distances
+need to be measured, e.g. for gesture recognition. Since the resolution
+of the touch sensor on these devices is 10 units / mm (versus 100 for
+the pen sensor), the proper maximum values can be calculated by simply
+dividing by 10.
 
-Please consider applying it to 'net' branch.
-
-Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: b5fd2a3e92 ("Input: wacom - add support for three new Intuos devices")
+Signed-off-by: Jason Gerecke <jason.gerecke@wacom.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x.h      |    1 +
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c  |    6 ++++++
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c |    6 ++++++
- 3 files changed, 13 insertions(+)
+ drivers/hid/wacom_wac.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-@@ -1634,6 +1634,7 @@ struct bnx2x {
- 	struct link_vars	link_vars;
- 	u32			link_cnt;
- 	struct bnx2x_link_report_data last_reported_link;
-+	bool			force_link_down;
+--- a/drivers/hid/wacom_wac.c
++++ b/drivers/hid/wacom_wac.c
+@@ -2487,8 +2487,14 @@ void wacom_setup_device_quirks(struct wa
+ 			if (features->type >= INTUOSHT && features->type <= BAMBOO_PT)
+ 				features->device_type |= WACOM_DEVICETYPE_PAD;
  
- 	struct mdio_if_info	mdio;
- 
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-@@ -1277,6 +1277,11 @@ void __bnx2x_link_report(struct bnx2x *b
- {
- 	struct bnx2x_link_report_data cur_data;
- 
-+	if (bp->force_link_down) {
-+		bp->link_vars.link_up = 0;
-+		return;
-+	}
-+
- 	/* reread mf_cfg */
- 	if (IS_PF(bp) && !CHIP_IS_E1(bp))
- 		bnx2x_read_mf_cfg(bp);
-@@ -2840,6 +2845,7 @@ int bnx2x_nic_load(struct bnx2x *bp, int
- 		bp->pending_max = 0;
- 	}
- 
-+	bp->force_link_down = false;
- 	if (bp->port.pmf) {
- 		rc = bnx2x_initial_phy_init(bp, load_mode);
- 		if (rc)
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -10222,6 +10222,12 @@ static void bnx2x_sp_rtnl_task(struct wo
- 		bp->sp_rtnl_state = 0;
- 		smp_mb();
- 
-+		/* Immediately indicate link as down */
-+		bp->link_vars.link_up = 0;
-+		bp->force_link_down = true;
-+		netif_carrier_off(bp->dev);
-+		BNX2X_ERR("Indicating link is down due to Tx-timeout\n");
-+
- 		bnx2x_nic_unload(bp, UNLOAD_NORMAL, true);
- 		bnx2x_nic_load(bp, LOAD_NORMAL);
- 
+-			features->x_max = 4096;
+-			features->y_max = 4096;
++			if (features->type == INTUOSHT2) {
++				features->x_max = features->x_max / 10;
++				features->y_max = features->y_max / 10;
++			}
++			else {
++				features->x_max = 4096;
++				features->y_max = 4096;
++			}
+ 		}
+ 		else if (features->pktlen == WACOM_PKGLEN_BBTOUCH) {
+ 			features->device_type |= WACOM_DEVICETYPE_PAD;
 
 
