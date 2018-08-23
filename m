@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0EAC43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6136C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:02:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB25C21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:02:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB25C21473
+	by mail.kernel.org (Postfix) with ESMTP id 8B14E21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:02:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B14E21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729107AbeHWLaa (ORCPT
+        id S1729121AbeHWLae (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:30:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44592 "EHLO
+        Thu, 23 Aug 2018 07:30:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44602 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727443AbeHWLaa (ORCPT
+        with ESMTP id S1727443AbeHWLad (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:30:30 -0400
+        Thu, 23 Aug 2018 07:30:33 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AA39FC0C;
-        Thu, 23 Aug 2018 08:02:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DBD1CC0C;
+        Thu, 23 Aug 2018 08:02:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ray Jui <ray.jui@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 014/130] arm64: dts: ns2: Fix I2C controller interrupt type
-Date:   Thu, 23 Aug 2018 09:52:10 +0200
-Message-Id: <20180823074928.307551475@linuxfoundation.org>
+Subject: [PATCH 4.9 023/130] xen/scsiback: add error handling for xenbus_printf
+Date:   Thu, 23 Aug 2018 09:52:19 +0200
+Message-Id: <20180823074928.814530185@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -51,41 +51,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ray Jui <ray.jui@broadcom.com>
+From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-[ Upstream commit e605c287deed45624e8d35a15e3f0b4faab1a62d ]
+[ Upstream commit 7c63ca24c878e0051c91904b72174029320ef4bd ]
 
-Fix I2C controller interrupt to use IRQ_TYPE_LEVEL_HIGH for Broadcom NS2
-SoC.
+When xenbus_printf fails, the lack of error-handling code may
+cause unexpected results.
 
-Fixes: 7ac674e8df7a ("arm64: dts: Add I2C nodes for NS2")
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+This patch adds error-handling code after calling xenbus_printf.
+
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/boot/dts/broadcom/ns2.dtsi |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/xen/xen-scsiback.c |   16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
---- a/arch/arm64/boot/dts/broadcom/ns2.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/ns2.dtsi
-@@ -393,7 +393,7 @@
- 			reg = <0x66080000 0x100>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			interrupts = <GIC_SPI 394 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 394 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-frequency = <100000>;
- 			status = "disabled";
- 		};
-@@ -421,7 +421,7 @@
- 			reg = <0x660b0000 0x100>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			interrupts = <GIC_SPI 395 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-frequency = <100000>;
- 			status = "disabled";
- 		};
+--- a/drivers/xen/xen-scsiback.c
++++ b/drivers/xen/xen-scsiback.c
+@@ -1014,6 +1014,7 @@ static void scsiback_do_add_lun(struct v
+ {
+ 	struct v2p_entry *entry;
+ 	unsigned long flags;
++	int err;
+ 
+ 	if (try) {
+ 		spin_lock_irqsave(&info->v2p_lock, flags);
+@@ -1029,8 +1030,11 @@ static void scsiback_do_add_lun(struct v
+ 			scsiback_del_translation_entry(info, vir);
+ 		}
+ 	} else if (!try) {
+-		xenbus_printf(XBT_NIL, info->dev->nodename, state,
++		err = xenbus_printf(XBT_NIL, info->dev->nodename, state,
+ 			      "%d", XenbusStateClosed);
++		if (err)
++			xenbus_dev_error(info->dev, err,
++				"%s: writing %s", __func__, state);
+ 	}
+ }
+ 
+@@ -1069,8 +1073,11 @@ static void scsiback_do_1lun_hotplug(str
+ 	snprintf(str, sizeof(str), "vscsi-devs/%s/p-dev", ent);
+ 	val = xenbus_read(XBT_NIL, dev->nodename, str, NULL);
+ 	if (IS_ERR(val)) {
+-		xenbus_printf(XBT_NIL, dev->nodename, state,
++		err = xenbus_printf(XBT_NIL, dev->nodename, state,
+ 			      "%d", XenbusStateClosed);
++		if (err)
++			xenbus_dev_error(info->dev, err,
++				"%s: writing %s", __func__, state);
+ 		return;
+ 	}
+ 	strlcpy(phy, val, VSCSI_NAMELEN);
+@@ -1081,8 +1088,11 @@ static void scsiback_do_1lun_hotplug(str
+ 	err = xenbus_scanf(XBT_NIL, dev->nodename, str, "%u:%u:%u:%u",
+ 			   &vir.hst, &vir.chn, &vir.tgt, &vir.lun);
+ 	if (XENBUS_EXIST_ERR(err)) {
+-		xenbus_printf(XBT_NIL, dev->nodename, state,
++		err = xenbus_printf(XBT_NIL, dev->nodename, state,
+ 			      "%d", XenbusStateClosed);
++		if (err)
++			xenbus_dev_error(info->dev, err,
++				"%s: writing %s", __func__, state);
+ 		return;
+ 	}
+ 
 
 
