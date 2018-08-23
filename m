@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5567C04E85
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD8AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5D0A2147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5D0A2147A
+	by mail.kernel.org (Postfix) with ESMTP id 11D2221486
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11D2221486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731562AbeHWMAb (ORCPT
+        id S1731575AbeHWMAe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:00:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48046 "EHLO
+        Thu, 23 Aug 2018 08:00:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48054 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730656AbeHWMAa (ORCPT
+        with ESMTP id S1730656AbeHWMAe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:00:30 -0400
+        Thu, 23 Aug 2018 08:00:34 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03C9D8B1;
-        Thu, 23 Aug 2018 08:31:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3C8598B1;
+        Thu, 23 Aug 2018 08:32:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Shannon Nelson <shannon.nelson@oracle.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 174/217] ARM: dts: am3517.dtsi:  Disable reference to OMAP3 OTG controller
-Date:   Thu, 23 Aug 2018 09:54:47 +0200
-Message-Id: <20180823075513.419371960@linuxfoundation.org>
+Subject: [PATCH 4.14 175/217] ixgbe: Be more careful when modifying MAC filters
+Date:   Thu, 23 Aug 2018 09:54:48 +0200
+Message-Id: <20180823075513.483212513@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,36 +54,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Adam Ford <aford173@gmail.com>
+From: Alexander Duyck <alexander.h.duyck@intel.com>
 
-[ Upstream commit 923847413f7316b5ced3491769b3fefa6c56a79a ]
+[ Upstream commit d14c780c11fbc10f66c43e7b64eefe87ca442bd3 ]
 
-The AM3517 has a different OTG controller location than the OMAP3,
-which is included from omap3.dtsi.  This results in a hwmod error.
-Since the AM3517 has a different OTG controller address, this patch
-disabes one that is isn't available.
+This change makes it so that we are much more explicit about the ordering
+of updates to the receive address register (RAR) table. Prior to this patch
+I believe we may have been updating the table while entries were still
+active, or possibly allowing for reordering of things since we weren't
+explicitly flushing writes to either the lower or upper portion of the
+register prior to accessing the other half.
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Reviewed-by: Shannon Nelson <shannon.nelson@oracle.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/am3517.dtsi |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_common.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/am3517.dtsi
-+++ b/arch/arm/boot/dts/am3517.dtsi
-@@ -87,6 +87,11 @@
- 	};
- };
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
+@@ -1895,7 +1895,12 @@ s32 ixgbe_set_rar_generic(struct ixgbe_h
+ 	if (enable_addr != 0)
+ 		rar_high |= IXGBE_RAH_AV;
  
-+/* Table Table 5-79 of the TRM shows 480ab000 is reserved */
-+&usb_otg_hs {
-+	status = "disabled";
-+};
-+
- &iva {
- 	status = "disabled";
- };
++	/* Record lower 32 bits of MAC address and then make
++	 * sure that write is flushed to hardware before writing
++	 * the upper 16 bits and setting the valid bit.
++	 */
+ 	IXGBE_WRITE_REG(hw, IXGBE_RAL(index), rar_low);
++	IXGBE_WRITE_FLUSH(hw);
+ 	IXGBE_WRITE_REG(hw, IXGBE_RAH(index), rar_high);
+ 
+ 	return 0;
+@@ -1927,8 +1932,13 @@ s32 ixgbe_clear_rar_generic(struct ixgbe
+ 	rar_high = IXGBE_READ_REG(hw, IXGBE_RAH(index));
+ 	rar_high &= ~(0x0000FFFF | IXGBE_RAH_AV);
+ 
+-	IXGBE_WRITE_REG(hw, IXGBE_RAL(index), 0);
++	/* Clear the address valid bit and upper 16 bits of the address
++	 * before clearing the lower bits. This way we aren't updating
++	 * a live filter.
++	 */
+ 	IXGBE_WRITE_REG(hw, IXGBE_RAH(index), rar_high);
++	IXGBE_WRITE_FLUSH(hw);
++	IXGBE_WRITE_REG(hw, IXGBE_RAL(index), 0);
+ 
+ 	/* clear VMDq pool/queue selection for this RAR */
+ 	hw->mac.ops.clear_vmdq(hw, index, IXGBE_CLEAR_VMDQ_ALL);
 
 
