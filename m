@@ -2,116 +2,148 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C15C4C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D264C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B5B92152D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2965F208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:18:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="wnw0hXaK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B5B92152D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZxoAYnI3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2965F208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbeHXCq4 (ORCPT
+        id S1726441AbeHXCt7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 22:46:56 -0400
-Received: from mail-it0-f49.google.com ([209.85.214.49]:40487 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726137AbeHXCq4 (ORCPT
+        Thu, 23 Aug 2018 22:49:59 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:42488 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726156AbeHXCt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 22:46:56 -0400
-Received: by mail-it0-f49.google.com with SMTP id h23-v6so9787987ita.5
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 16:15:01 -0700 (PDT)
+        Thu, 23 Aug 2018 22:49:59 -0400
+Received: by mail-yb0-f195.google.com with SMTP id z12-v6so2835765ybg.9
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 16:18:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6FbHeQunNScSG0Uwffqop67W9nwXKbqVsBjxungr8TY=;
-        b=wnw0hXaKY3uoVAcbkbP+yOI0PPvwk7rQ2CZPH83YH/e740wI8L7sJAB1AiBZqBcyAX
-         czfBkl0c4iNKl7rER/DJRPibK3Qlx1yL1bd+pKzUWZKLuAdarrJaPSTJEd7L2ONtUter
-         /WGhDnPEr8pFxKwqg3EzIMpWZuf2zoSSLfF/JpzF/J9H+0MlctqZMysQ3oWrwYhpGjms
-         y9gAd3hdHaC/9Kl0HfWB/VoM95iY4iCflajOf1zbYo3LpZ+BYnG7b6ygE8jF/jn4lm45
-         83FjwMIblNVLTTDRXiP6OBEd6tLE+MjL2ALluujjfGrgMaUnzfIhF3Aal+PHnPM+E/vW
-         LXYQ==
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=LAES9gX+SQq3A9ke8uOhWLm+0UsOm6t3NtXOL5NYcnI=;
+        b=ZxoAYnI3EGLzTUdoHMyRso57uRnVnLAPGhO299G5ht4gtpAL5E8ABAyOJCer6dMF45
+         GB+7a9e1SvCd7UL4nxccrvruIgHP46Pv8aqMNR4G2V8ONGkTaH7L7BbKOm3nvmHK97DQ
+         Jc7CtCN4jIaj6bBjKY9HN5Hm9lwVmVzj6nV1o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6FbHeQunNScSG0Uwffqop67W9nwXKbqVsBjxungr8TY=;
-        b=HP4Q5whwa8AGQUyoiZn/wKegKbOG33jzWaCz7PXHz+TEEePCzAqrpciolZ1mJprCZE
-         Masd10MzqzG3AkprTiW7WVbf7uwFqP1WDe5myuwLxEpaeV+tHYIXQ1r0CRyEY/H7Kopk
-         +Yj5hngptzP+d86tWmuyBOoN4GmRCj8zT8pmxdfOT/CJFA1348AIIhNAzA9es6TlRxxT
-         VuKSs67m4PLmhtdNIJMnsN8xaaBcLVxkUDP3SjOzG25ix2k+sGyD9puhYtLWokFPO/L5
-         nZhZ9WJ87nuX8qfX5mnZdC5Tb9hfo15yOhyzelrBmf4qrirtZc6wVWBd0MjHyoLh9Pb2
-         5N7Q==
-X-Gm-Message-State: APzg51CkP+xS5vNH23q84Q4mb/ebnNahvqYgUf3CRerFpycpX3uX57pL
-        LldwYVEHzBT2j5G3ucup5O3lft0NB6g=
-X-Google-Smtp-Source: ANB0VdZC/62fpP61glsiZFRS/nwaDkxOKJ/LG4zG46e23DmD+BlcrdBXglN7o34SAEEY3/VGEl9KIg==
-X-Received: by 2002:a02:892a:: with SMTP id o39-v6mr1269857jaj.102.1535066100359;
-        Thu, 23 Aug 2018 16:15:00 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.22.static.utbb.net. [107.191.0.22])
-        by smtp.gmail.com with ESMTPSA id q196-v6sm2216693iod.23.2018.08.23.16.14.58
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=LAES9gX+SQq3A9ke8uOhWLm+0UsOm6t3NtXOL5NYcnI=;
+        b=NYRJR6wSlkx85DbfcFOY4//rSSsgPA09nvOOymUQJAvxwnWD1b0xeTGnjbs/ANVJ81
+         g/Sm9i22Ybq6Vx9CWO4mx0x36As1O0lIt7YsGWrERwhL3ieaytgCxwZSdX1sw5Ln+2qt
+         X1LvB2XJCPLE0sbQU01LcnF5rPRtQHgJVYTQsqYeEwrYT4pmYgFBDOkMQtOirSeUwenV
+         ymhL7dnWjac6GECpXtHh3M8Q+NaWISSFfPT3TmXAVf0dMRCStR7TcN5G7Ic8efMjlQ5k
+         G7GhbtWvxcP3D7O7RvS+plnCLVPcQbnVYtABTTFmvpjNiHUz+IOJuCP0+SkLe5DPyHD8
+         uIKw==
+X-Gm-Message-State: AOUpUlEVNvqAzQhjlMt/8TaD85Ym+8rhw2qZiFbT7ALDkrfKfPvE10z6
+        iV9LFJ1LQTRYHHjguen8qjPw1qnQGtI=
+X-Google-Smtp-Source: AA+uWPwx77NoVeqH+PoA9m8X+dlZSFYLKiRi0iHqG5AbglExJbfCPSYUTaAWm5O0w/EuMiKuq0d9dw==
+X-Received: by 2002:a25:8b85:: with SMTP id j5-v6mr34213526ybl.174.1535066283091;
+        Thu, 23 Aug 2018 16:18:03 -0700 (PDT)
+Received: from mail-yb0-f169.google.com (mail-yb0-f169.google.com. [209.85.213.169])
+        by smtp.gmail.com with ESMTPSA id w80-v6sm1406495ywd.55.2018.08.23.16.18.00
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Aug 2018 16:14:59 -0700 (PDT)
-Subject: Re: [PATCH] blk-wbt: get back the missed wakeup from __wbt_done
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Anchal Agarwal <anchalag@amzn.com>,
-        "van der Linden, Frank" <fllinden@amazon.com>,
-        jianchao.w.wang@oracle.com
-Cc:     "mlinux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1535029718-17259-1-git-send-email-jianchao.w.wang@oracle.com>
- <bd84ff08-b75a-0a2f-6b37-07a104452bff@kernel.dk>
- <da9458c632cb4c4695660664bf7c3fb3@EX13D13UWB002.ant.amazon.com>
- <20180823210144.GB5624@kaos-source-ops-60001.pdx1.amazon.com>
- <3eaa20ce-0599-c405-d979-87d91ea331d2@kernel.dk>
-Message-ID: <969389e7-b1bc-0559-6cc9-9461b034a24f@kernel.dk>
-Date:   Thu, 23 Aug 2018 17:14:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 23 Aug 2018 16:18:00 -0700 (PDT)
+Received: by mail-yb0-f169.google.com with SMTP id o17-v6so2848774yba.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 16:18:00 -0700 (PDT)
+X-Received: by 2002:a25:103:: with SMTP id 3-v6mr34452501ybb.421.1535066280062;
+ Thu, 23 Aug 2018 16:18:00 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <3eaa20ce-0599-c405-d979-87d91ea331d2@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a25:2c11:0:0:0:0:0 with HTTP; Thu, 23 Aug 2018 16:17:59
+ -0700 (PDT)
+In-Reply-To: <20180823230654.GA11576@embeddedor.com>
+References: <20180823230654.GA11576@embeddedor.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 23 Aug 2018 16:17:59 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jK7VQSo=xsYVp5DPmUgULNt+wopyAXnK20z+LxZtyPfZA@mail.gmail.com>
+Message-ID: <CAGXu5jK7VQSo=xsYVp5DPmUgULNt+wopyAXnK20z+LxZtyPfZA@mail.gmail.com>
+Subject: Re: [PATCH] clk: npcm7xx: fix memory allocation
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, openbmc@lists.ozlabs.org,
+        linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/23/18 5:03 PM, Jens Axboe wrote:
->> Hi Jens, This patch looks much cleaner for sure as Frank pointed out
->> too. Basically this looks similar to wake_up_nr only making sure that
->> those woken up requests won't get reordered. This does solves the
->> thundering herd issue. However, I tested the patch against my
->> application and lock contention numbers rose to around 10 times from
->> what I had from your last 3 patches.  Again this did add to drop in
->> of total files read by 0.12% and rate at which they were read by
->> 0.02% but this is not a very significant drop. Is lock contention
->> worth the tradeoff?  I also added missing
->> __set_current_state(TASK_RUNNING) to the patch for testing.
-> 
-> Can you try this variant? I don't think we need a
-> __set_current_state() after io_schedule(), should be fine as-is.
-> 
-> I'm not surprised this will raise contention a bit, since we're now
-> waking N tasks potentially, if N can queue. With the initial change,
-> we'd always just wake one.  That is arguably incorrect. You say it's
-> 10 times higher contention, how does that compare to before your
-> patch?
-> 
-> Is it possible to run something that looks like your workload?
+On Thu, Aug 23, 2018 at 4:06 PM, Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+>
+> struct foo {
+>         int stuff;
+>         void *entry[];
+> };
+>
+> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count,
+> GFP_KERNEL);
+>
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+>
+> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+>
+> Notice that, currently, there is a bug during the allocation:
+>
+> sizeof(npcm7xx_clk_data) should be sizeof(*npcm7xx_clk_data)
+>
+> Fix this bug by using struct_size() in kzalloc()
+>
+> This issue was detected with the help of Coccinelle.
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Additionally, is the contention you are seeing the wait queue, or the
-atomic counter? When you say lock contention, I'm inclined to think it's
-the rqw->wait.lock.
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+> ---
+>  drivers/clk/clk-npcm7xx.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
+> index 740af90..c5edf8f 100644
+> --- a/drivers/clk/clk-npcm7xx.c
+> +++ b/drivers/clk/clk-npcm7xx.c
+> @@ -558,8 +558,8 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
+>         if (!clk_base)
+>                 goto npcm7xx_init_error;
+>
+> -       npcm7xx_clk_data = kzalloc(sizeof(*npcm7xx_clk_data->hws) *
+> -               NPCM7XX_NUM_CLOCKS + sizeof(npcm7xx_clk_data), GFP_KERNEL);
+> +       npcm7xx_clk_data = kzalloc(struct_size(npcm7xx_clk_data, hws,
+> +                                  NPCM7XX_NUM_CLOCKS), GFP_KERNEL);
+>         if (!npcm7xx_clk_data)
+>                 goto npcm7xx_init_np_err;
+>
+> --
+> 2.7.4
+>
+
+
 
 -- 
-Jens Axboe
-
+Kees Cook
+Pixel Security
